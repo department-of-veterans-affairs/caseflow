@@ -3,58 +3,19 @@ import PropTypes from 'prop-types';
 
 const HearingTypeConversionContext = createContext({});
 
+export const SET_UPDATED = 'setUpdated';
+const setUpdated = (appeal, value) => {
+  return { ...appeal, ...value };
+};
+
 export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
-  // Create state for appellant timezone check
-  const [isAppellantTZEmpty, setIsAppellantTZEmpty] = useState(!initialAppeal?.appellantTz);
-
-  /* eslint-disable camelcase */
-  const [isRepTZEmpty, setIsRepTZEmpty] = useState(!initialAppeal?.currentUserTimezone);
-
-  const [originalEmail, setOriginalEmail] = useState(initialAppeal?.appellantEmailAddress || '');
-  /* eslint-enable camelcase */
-
-  // Create state to check if confirm field is empty
-  const [confirmIsEmpty, setConfirmIsEmpty] = useState(true);
-
-  const [emailsMismatch, setEmailsMismatch] = useState(true);
-
   // initiliaze hook to manage state for email validation
   const [isNotValidEmail, setIsNotValidEmail] = useState(false);
 
-  const updateAppellantEmail = (appeal, email) => {
-    appeal.appellantEmailAddress = email;
-
-    return appeal;
-  };
-
-  const updateAppellantConfirmEmail = (appeal, email) => {
-    appeal.appellantConfirmEmailAddress = email;
-
-    return appeal;
-  };
-
-  const updateAppellantTimezone = (appeal, timezone) => {
-    appeal.appellantTz = timezone;
-
-    return appeal;
-  };
-
-  const updatePoaTimezone = (appeal, timezone) => {
-    appeal.currentUserTimezone = timezone;
-
-    return appeal;
-  };
-
   const reducer = (appeal, action) => {
     switch (action.type) {
-    case 'SET_APPELLANT_EMAIL':
-      return updateAppellantEmail(appeal, action.payload);
-    case 'SET_APPELLANT_CONFIRM_EMAIL':
-      return updateAppellantConfirmEmail(appeal, action.payload);
-    case 'SET_APPELLANT_TZ':
-      return updateAppellantTimezone(appeal, action.payload);
-    case 'SET_POA_TZ':
-      return updatePoaTimezone(appeal, action.payload);
+    case SET_UPDATED:
+      return setUpdated(appeal, action.payload);
     default:
       return appeal;
     }
@@ -64,18 +25,8 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
 
   const contextData = {
     updatedAppeal,
-    isAppellantTZEmpty,
-    isRepTZEmpty,
-    confirmIsEmpty,
     isNotValidEmail,
-    originalEmail,
-    emailsMismatch,
-    setIsAppellantTZEmpty,
-    setIsRepTZEmpty,
-    setConfirmIsEmpty,
     setIsNotValidEmail,
-    setOriginalEmail,
-    setEmailsMismatch,
     dispatchAppeal
   };
 
@@ -84,6 +35,25 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
       { children }
     </HearingTypeConversionContext.Provider>
   );
+};
+
+export const updateAppealDispatcher = (appeal, dispatch) => (type, changes) => {
+  console.log(`type: ${type}  changes: ${JSON.stringify(changes)}`);
+  const payload =
+    type === 'appeal' ?
+      {
+        ...appeal,
+        ...changes,
+      } :
+      {
+        ...appeal,
+        [type]: {
+          ...appeal[type],
+          ...changes,
+        },
+      };
+
+  return dispatch({ type: SET_UPDATED, payload });
 };
 
 HearingTypeConversionProvider.propTypes = {

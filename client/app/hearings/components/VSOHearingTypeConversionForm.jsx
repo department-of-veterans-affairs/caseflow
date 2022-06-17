@@ -1,9 +1,9 @@
 import { sprintf } from 'sprintf-js';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 
-import HearingTypeConversionContext from '../contexts/HearingTypeConversionContext';
+import HearingTypeConversionContext, { updateAppealDispatcher } from '../contexts/HearingTypeConversionContext';
 import { VSOAppellantSection } from './VirtualHearings/VSOAppellantSection';
 import { VSORepresentativeSection } from './VirtualHearings/VSORepresentativeSection';
 import { getAppellantTitle } from '../utils';
@@ -12,19 +12,19 @@ import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
 import COPY from '../../../COPY';
 export const VSOHearingTypeConversionForm = ({
-  appeal,
   isLoading,
   onCancel,
   onSubmit,
   type
 }) => {
-
   const {
+    updatedAppeal,
+    dispatchAppeal,
     isNotValidEmail,
-    isAppellantTZEmpty,
-    isRepTZEmpty,
-    emailsMismatch
+    setIsNotValidEmail
   } = useContext(HearingTypeConversionContext);
+
+  const updateAppeal = updateAppealDispatcher(updatedAppeal, dispatchAppeal);
 
   // initialize hook to manage state of affirm permissisons checkbox
   const [checkedPermissions, setCheckedPermissions] = useState(false);
@@ -32,32 +32,25 @@ export const VSOHearingTypeConversionForm = ({
   // initialize hook to manage state of affirm access checkbox
   const [checkedAccess, setCheckedAccess] = useState(false);
 
-  const preventSubmission = () => {
-    return isNotValidEmail ||
-    !checkedAccess ||
-    !checkedPermissions ||
-    isAppellantTZEmpty ||
-    isRepTZEmpty ||
-    emailsMismatch;
-  };
-
   // 'Appellant' or 'Veteran'
-  const appellantTitle = getAppellantTitle(appeal?.appellantIsNotVeteran);
+  const appellantTitle = getAppellantTitle(updatedAppeal?.appellantIsNotVeteran);
 
-  /* eslint-disable camelcase */
   // powerOfAttorney gets loaded into redux store when case details page loads
   const hearing = {
-    representative: appeal?.powerOfAttorney?.representative_name,
-    representativeType: appeal?.powerOfAttorney?.representative_type,
-    appellantFullName: appeal?.appellantFullName,
-    appellantIsNotVeteran: appeal?.appellantIsNotVeteran,
-    veteranFullName: appeal?.veteranFullName,
-    currentUserEmail: appeal?.currentUserEmail,
-    currentUserTimezone: appeal?.currentUserTimezone,
-    appellantTz: appeal?.appellantTz
+    /* eslint-disable camelcase */
+    representative: updatedAppeal?.powerOfAttorney?.representative_name,
+    representativeType: updatedAppeal?.powerOfAttorney?.representative_type,
+    /* eslint-enable camelcase */
+    appellantFullName: updatedAppeal?.appellantFullName,
+    appellantIsNotVeteran: updatedAppeal?.appellantIsNotVeteran,
+    veteranFullName: updatedAppeal?.veteranFullName,
+    appellantTimezone: updatedAppeal?.appellantTimezone,
+    appellantEmailAddress: updatedAppeal?.appellantEmailAddress,
+    representativeEmailAddress: updatedAppeal?.currentUserEmail,
+    representativeTimezone: updatedAppeal?.representativeTimezone,
+    appellantConfirmEmailAddress: updatedAppeal?.appellantConfirmEmailAddress
   };
 
-  /* eslint-enable camelcase */
   // Set the section props
   const sectionProps = {
     appellantTitle,
@@ -66,10 +59,39 @@ export const VSOHearingTypeConversionForm = ({
     showDivider: false,
     showOnlyAppellantName: true,
     showMissingEmailAlert: true,
+    actionType: 'appeal',
+    update: updateAppeal,
+    setIsNotValidEmail,
     type
   };
 
   const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
+
+  const prefillFields = () => {
+    updateAppeal(
+      'appeal', {
+        ...updatedAppeal,
+        representativeTimezone: updatedAppeal.currentUserTimezone,
+        appellantTimezone: updatedAppeal.appellantTz
+      });
+  };
+
+  useEffect(() => {
+    // Ensure representative timezone is populated.
+    prefillFields();
+  }, []);
+
+  const preventSubmission = () => {
+    return isNotValidEmail ||
+      !updatedAppeal?.appellantEmailAddress ||
+      !checkedAccess ||
+      !checkedPermissions ||
+      !updatedAppeal?.appellantTimezone ||
+      !updatedAppeal?.representativeTimezone ||
+      (updatedAppeal?.appellantEmailAddress !==
+        updatedAppeal?.appellantConfirmEmailAddress
+      );
+  };
 
   return (
     <React.Fragment>
@@ -132,7 +154,6 @@ VSOHearingTypeConversionForm.defaultProps = {
 };
 
 VSOHearingTypeConversionForm.propTypes = {
-  appeal: PropTypes.object,
   type: PropTypes.oneOf(['Virtual']),
   isLoading: PropTypes.bool,
   onCancel: PropTypes.func,

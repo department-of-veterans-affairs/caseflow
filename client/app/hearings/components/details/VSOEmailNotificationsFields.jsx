@@ -7,17 +7,17 @@ import { Timezone } from '../VirtualHearings/Timezone';
 import { HelperText } from '../VirtualHearings/HelperText';
 import COPY from '../../../../COPY';
 import { getAppellantTitle, readOnlyEmails } from '../../utils';
-import HearingTypeConversionContext from '../../contexts/HearingTypeConversionContext';
 
 export const VSOEmailNotificationsFields = ({
   errors,
   hearing,
   readOnly,
   time,
-  roTimezone
+  roTimezone,
+  setIsNotValidEmail,
+  actionType,
+  update
 }) => {
-  const { setIsAppellantTZEmpty, updatedAppeal, dispatchAppeal } = useContext(HearingTypeConversionContext);
-
   const disableField = readOnly || readOnlyEmails(hearing);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
 
@@ -31,7 +31,11 @@ export const VSOEmailNotificationsFields = ({
           emailType="appellantEmailAddress"
           error={errors?.appellantEmailAddress}
           helperLabel={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO}
-          email={updatedAppeal.appellantEmailAddress}
+          email={hearing?.appellantEmailAddress}
+          update={update}
+          hearing={hearing}
+          setIsNotValidEmail={setIsNotValidEmail}
+          actionType={actionType}
         />
         <VSOHearingEmail
           required
@@ -40,20 +44,22 @@ export const VSOEmailNotificationsFields = ({
           emailType="appellantEmailAddress"
           error={errors?.appellantEmailAddress}
           showHelper={false}
+          update={update}
+          hearing={hearing}
+          actionType={actionType}
           confirmEmail
         />
         <div
-          value={updatedAppeal.appellantTz}
+          value={hearing.appellantTz}
           className={classNames('usa-grid', { [marginTop(30)]: true })}
           {...input8px}
         >
           <Timezone
             required
-            value={updatedAppeal.appellantTz}
-            onChange={(appellantTz) => {
-              dispatchAppeal({ type: 'SET_APPELLANT_TZ', payload: appellantTz });
-              setIsAppellantTZEmpty(!appellantTz);
-            }}
+            value={hearing?.appellantTimezone}
+            onChange={(appellantTimezone) =>
+              update(actionType, { appellantTimezone })
+            }
             readOnly={disableField}
             time={time}
             roTimezone={roTimezone}
@@ -79,5 +85,10 @@ VSOEmailNotificationsFields.propTypes = {
   hearing: PropTypes.object,
   errors: PropTypes.object,
   initialRepresentativeTz: PropTypes.string,
-  header: PropTypes.string
+  header: PropTypes.string,
+  setEmailsMismatch: PropTypes.func,
+  setIsNotValidEmail: PropTypes.func,
+  setConfirmIsEmpty: PropTypes.func,
+  confirmIsEmpty: PropTypes.bool,
+  actionType: PropTypes.string
 };

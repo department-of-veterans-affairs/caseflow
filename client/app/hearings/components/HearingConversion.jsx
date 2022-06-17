@@ -58,7 +58,8 @@ export const HearingConversion = ({
     representativeEmailType: 'representativeEmailAddress',
     showTimezoneField: true,
     schedulingToVirtual: virtual,
-    userVsoEmployee
+    userVsoEmployee,
+    actionType: 'hearing',
   };
 
   const prefillFields = () => {
