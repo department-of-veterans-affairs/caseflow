@@ -118,6 +118,11 @@ export const AppellantSection = ({
             error={errors?.appellantEmailAddress}
             type={type}
             update={update}
+            helperLabel={userVsoEmployee ?
+              COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO :
+              COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT
+            }
+            showHelper
           />
           {showMissingAlert && (
             <div>
