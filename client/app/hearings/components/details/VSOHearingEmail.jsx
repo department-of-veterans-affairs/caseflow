@@ -142,22 +142,14 @@ export const VSOHearingEmail = ({
     )
   );
 };
+
 VSOHearingEmail.defaultProps = {
   helperLabel: COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT,
   showHelper: true,
+  confirmEmail: false
 };
 
 VSOHearingEmail.propTypes = {
   email: PropTypes.string,
   emailType: PropTypes.string,
   label: PropTypes.string,
-  readOnly: PropTypes.bool,
-  error: PropTypes.string,
-  update: PropTypes.func,
-  required: PropTypes.bool,
-  optional: PropTypes.bool,
-  disabled: PropTypes.bool,
-  helperLabel: PropTypes.string,
-  showHelper: PropTypes.bool,
-  confirmEmail: PropTypes.bool
-};

@@ -1,8 +1,9 @@
 import { get } from 'lodash';
 import { sprintf } from 'sprintf-js';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
+import HearingTypeConversionContext from '../contexts/HearingTypeConversionContext';
 import { VSOHearingTypeConversionForm } from './VSOHearingTypeConversionForm';
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';
 import ApiUtil from '../../util/ApiUtil';
@@ -20,16 +21,22 @@ export const HearingTypeConversion = ({
 }) => {
   const [loading, setLoading] = useState(false);
 
+  const { updatedAppeal } = useContext(HearingTypeConversionContext);
+
   const getSuccessMsg = () => {
     const title = sprintf(
       COPY.CONVERT_HEARING_TYPE_SUCCESS,
-      appeal?.appellantIsNotVeteran ? appeal?.appellantFullName : appeal?.veteranFullName,
+      appeal?.appellantIsNotVeteran ?
+        appeal?.appellantFullName :
+        appeal?.veteranFullName,
       type.toLowerCase()
     );
-    const detail = userIsVsoEmployee ? COPY.VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL :
+    const detail = userIsVsoEmployee ?
+      COPY.VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL :
       sprintf(
         COPY.CONVERT_HEARING_TYPE_SUCCESS_DETAIL,
-        appeal?.closestRegionalOfficeLabel || COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
+          appeal?.closestRegionalOfficeLabel ||
+            COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
       );
 
     return { title, detail };
@@ -47,15 +54,16 @@ export const HearingTypeConversion = ({
             values: {
               changed_hearing_request_type: changedRequestType,
               closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
-              [userIsVsoEmployee && 'email_recipients']:
-              {
-                /* eslint-disable camelcase */
-                appellant_tz: appeal?.appellantTz,
-                representative_tz: appeal?.powerOfAttorney?.representative_tz,
-                appellant_email: appeal?.appellantEmailAddress,
-                representative_email: appeal?.powerOfAttorney?.representative_email_address
-                /* eslint-enable camelcase */
-              }
+              ...(userIsVsoEmployee && {
+                email_recipients: {
+                  /* eslint-disable camelcase */
+                  appellant_tz: updatedAppeal?.appellantTz,
+                  representative_tz: updatedAppeal?.currentUserTimezone,
+                  appellant_email: updatedAppeal?.appellantEmailAddress,
+                  representative_email: updatedAppeal?.currentUserEmail
+                  /* eslint-enable camelcase */
+                }
+              })
             }
           }
         }
@@ -70,7 +78,7 @@ export const HearingTypeConversion = ({
     } catch (err) {
       const error = get(err, 'response.body.errors[0]', {
         title: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_TITLE,
-        detail: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL,
+        detail: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL
       });
 
       props.showErrorMessage(error);
@@ -81,28 +89,26 @@ export const HearingTypeConversion = ({
     }
   };
 
-  return (
-    userIsVsoEmployee ? (
-      <VSOHearingTypeConversionForm
-        appeal={appeal}
-        history={history}
-        isLoading={loading}
-        onCancel={() => history.goBack()}
-        onSubmit={submit}
-        task={task}
-        type={type}
-      />
-    ) : (
-      <HearingTypeConversionForm
-        appeal={appeal}
-        history={history}
-        isLoading={loading}
-        onCancel={() => history.goBack()}
-        onSubmit={submit}
-        task={task}
-        type={type}
-      />
-    )
+  return userIsVsoEmployee ? (
+    <VSOHearingTypeConversionForm
+      appeal={appeal}
+      history={history}
+      isLoading={loading}
+      onCancel={() => history.goBack()}
+      onSubmit={submit}
+      task={task}
+      type={type}
+    />
+  ) : (
+    <HearingTypeConversionForm
+      appeal={appeal}
+      history={history}
+      isLoading={loading}
+      onCancel={() => history.goBack()}
+      onSubmit={submit}
+      task={task}
+      type={type}
+    />
   );
 };
 
