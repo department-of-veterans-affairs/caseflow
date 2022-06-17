@@ -120,7 +120,7 @@ export const AppellantSection = ({
             update={update}
             helperLabel={userVsoEmployee ?
               COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO :
-              COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT
+              COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT
             }
             showHelper
           />
