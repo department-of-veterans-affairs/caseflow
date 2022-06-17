@@ -8,7 +8,10 @@ export const VSOAppellantSection = ({
   hearing,
   showDivider,
   appellantTitle,
-  formFieldsOnly
+  formFieldsOnly,
+  update,
+  appellantTimezone,
+  hearingsForm
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -28,7 +31,12 @@ export const VSOAppellantSection = ({
         <ReadOnly label={`${appellantTitle} Name`} text={appellantName} />
         <VSOEmailNotificationsFields
           hearing={hearing}
-        />
+          update={update}
+          time={hearing.scheduledTimeString}
+          roTimezone={hearing?.regionalOfficeTimezone}
+          requestType={hearing.readableRequestType}
+          appellantTimezone={appellantTimezone}
+          hearingsForm={hearingsForm} />
       </React.Fragment>
     </VirtualHearingSection>
   );
@@ -36,6 +44,7 @@ export const VSOAppellantSection = ({
 
 VSOAppellantSection.defaultProps = {
   schedulingToVirtual: true,
+  hearingsForm: false
 };
 
 VSOAppellantSection.propTypes = {
@@ -56,5 +65,6 @@ VSOAppellantSection.propTypes = {
   formFieldsOnly: PropTypes.bool,
   appellantTimezone: PropTypes.string,
   appellantEmailAddress: PropTypes.string,
-  appellantEmailType: PropTypes.string
+  appellantEmailType: PropTypes.string,
+  hearingsForm: PropTypes.bool
 };
