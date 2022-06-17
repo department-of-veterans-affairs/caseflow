@@ -14,6 +14,18 @@ class WorkQueue::AppealSerializer
     object.email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
   end
 
+  attribute :appellant_email_address do |object|
+    object.appellant ? object.appellant.email_address : "Cannot Find Appellant"
+  end
+
+  attribute :current_user_email do |_, params|
+    params[:user].email
+  end
+
+  attribute :current_user_timezone do |_, params|
+    params[:user].timezone
+  end
+
   attribute :contested_claim, &:contested_claim?
 
   attribute :issues do |object|
