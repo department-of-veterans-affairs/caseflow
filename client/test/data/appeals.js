@@ -30,7 +30,7 @@ export const powerOfAttorney = {
     country: 'USA',
     state: 'CA'
   },
-  representative_email_address: 'tom.brady@caseflow.gov'
+  representative_email_address: 'tom.brady@caseflow.gov',
 };
 
 export const veteranInfo = {
@@ -48,8 +48,8 @@ export const veteranInfo = {
       state: 'FL',
       zip: '12345',
       country: 'USA'
-    }
-  }
+    },
+  },
 };
 
 export const appealData = {
@@ -74,7 +74,8 @@ export const appealData = {
     {
       id: 1,
       description: 'This is a description of the decision'
-    }, {
+    },
+    {
       id: 2,
       description: 'This is a description of another decision'
     }
@@ -108,14 +109,14 @@ export const appealData = {
   veteranDateOfDeath: null,
   attorneyCaseRewriteDetails: {
     note_from_attorney: null,
-    untimely_evidence: null
+    untimely_evidence: null,
   },
   veteranInfo: {
     ...veteranInfo
   },
   readableHearingRequestType: 'Video',
   readableOriginalHearingRequestType: 'Video',
-  appellantTz: 'America/New_York'
+  appellantTz: 'America/New_York',
 };
 
 export const amaAppeal = {
@@ -125,13 +126,32 @@ export const amaAppeal = {
   hearings: [],
 };
 
+export const virtualAppeal = {
+  ...appealData,
+  ...powerOfAttorney,
+  id: '1',
+  veteranFullName: 'Susan Smith',
+  veteranFileNumber: '1234456',
+  docketName: 'AMA',
+  appellantIsNotVeteran: true,
+  appellantFullName: 'Susan Smith',
+  appellantEmailAddress: 'susan@gmail.com',
+  appellantTz: 'Africa/Nairobi',
+  powerOfAttorney: 'Tim Scott',
+  representativeEmail: 'tom.brady@caseflow.gov',
+  currentUserTimezone: 'America/New_York',
+  currentUserEmail: 'tom@brady.com',
+  type: 'Virtual',
+  closestRegionalOffice: 'Somewhere, USA'
+};
+
 export const legacyAppeal = {
   ...appealData,
   id: '1',
   externalId: '1234456',
   docketName: 'Legacy',
   hearings: [],
-  isLegacyAppeal: true
+  isLegacyAppeal: true,
 };
 
 export const legacyAppealForTravelBoard = {
@@ -141,7 +161,7 @@ export const legacyAppealForTravelBoard = {
     ...powerOfAttorney
   },
   readableHearingRequestType: 'Travel',
-  readableOriginalHearingRequestType: 'Travel'
+  readableOriginalHearingRequestType: 'Travel',
 };
 
 export const veteranInfoWithoutEmail = {
@@ -174,9 +194,7 @@ export const openHearingAppeal = {
 export const scheduleHearingDetails = {
   regionalOffice: {
     key: 'RO17',
-    alternate_locations: [
-      'vba_317a', 'vc_0742V', 'vba_317'
-    ],
+    alternate_locations: ['vba_317a', 'vc_0742V', 'vba_317'],
     city: 'St. Petersburg',
     facility_locator_id: 'vba_317',
     hold_hearings: true,
@@ -216,7 +234,7 @@ export const scheduleHearingDetails = {
       distance: 0,
       classification: 'Primary Care CBOC',
       facility_id: 'vba_317a',
-      facility_type: 'va_health_facility'
+      facility_type: 'va_health_facility',
     }
   }
 };
