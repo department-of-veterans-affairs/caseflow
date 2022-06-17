@@ -299,7 +299,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                   className="usa-width-one-half"
                 >
                   <HearingEmail
-                    helperLabel="The hearing time in email notifications is calculated based on the timezone."
+                    helperLabel="This email address will be used to send notifications for this hearing only."
                     label="Veteran Email (for these notifications only)"
                     optional={false}
                     readOnly={true}
