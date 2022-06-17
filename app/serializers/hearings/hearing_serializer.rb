@@ -107,10 +107,10 @@ class HearingSerializer
   attribute :hearing_disposition_task_id, &:open_hearing_disposition_task_id
 
   attribute :current_user_email do |_, params|
-    params[:user].email
+    params[:user]&.email
   end
 
   attribute :current_user_timezone do |_, params|
-    params[:user].timezone
+    params[:user]&.timezone
   end
 end
