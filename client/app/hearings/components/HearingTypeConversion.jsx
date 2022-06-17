@@ -56,8 +56,8 @@ export const HearingTypeConversion = ({
               closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
               ...(userIsVsoEmployee && {
                 email_recipients: {
-                  appellant_tz: updatedAppeal?.appellantTimezone,
-                  representative_tz: updatedAppeal?.representativeTimezone,
+                  appellant_tz: updatedAppeal?.appellantTz,
+                  representative_tz: updatedAppeal?.representativeTz,
                   appellant_email: updatedAppeal?.appellantEmailAddress,
                   representative_email: updatedAppeal?.currentUserEmail
                 }

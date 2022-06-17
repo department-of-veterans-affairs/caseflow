@@ -56,9 +56,9 @@ export const VSOEmailNotificationsFields = ({
         >
           <Timezone
             required
-            value={hearing?.appellantTimezone}
-            onChange={(appellantTimezone) =>
-              update(actionType, { appellantTimezone })
+            value={hearing?.appellantTz}
+            onChange={(appellantTz) =>
+              update(actionType, { appellantTz })
             }
             readOnly={disableField}
             time={time}

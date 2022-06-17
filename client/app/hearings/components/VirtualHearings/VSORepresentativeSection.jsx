@@ -79,9 +79,9 @@ export const VSORepresentativeSection = ({
         >
           <Timezone
             required
-            value={hearing.representativeTimezone}
-            onChange={(representativeTimezone) =>
-              update(actionType, { representativeTimezone })
+            value={hearing.representativeTz}
+            onChange={(representativeTz) =>
+              update(actionType, { representativeTz })
             }
             time={hearing.scheduledTimeString}
             roTimezone={hearing.regionalOfficeTimezone}

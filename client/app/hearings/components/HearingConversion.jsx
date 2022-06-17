@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -16,6 +16,8 @@ import { getAppellantTitle } from '../utils';
 import { HEARING_CONVERSION_TYPES } from '../constants';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
+import { VSORepresentativeSection } from './VirtualHearings/VSORepresentativeSection';
+import { VSOAppellantSection } from './VirtualHearings/VSOAppellantSection';
 
 export const HearingConversion = ({
   hearing: { virtualHearing, ...hearing },
@@ -26,6 +28,8 @@ export const HearingConversion = ({
   update,
   userVsoEmployee
 }) => {
+  const [isNotValidEmail, setIsNotValidEmail] = useState(userVsoEmployee);
+
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const virtual = type === 'change_to_virtual';
   const video = hearing.readableRequestType === 'Video';
@@ -58,6 +62,7 @@ export const HearingConversion = ({
     schedulingToVirtual: virtual,
     userVsoEmployee,
     actionType: 'hearing',
+    setIsNotValidEmail
   };
 
   const prefillFields = () => {
@@ -73,8 +78,6 @@ export const HearingConversion = ({
           hearing?.representativeEmailAddress
       });
   };
-
-  
 
   // Pre-fill representative timezone on mount.
   useEffect(() => {
@@ -106,8 +109,18 @@ export const HearingConversion = ({
           {!video && <HelperText label={COPY.VIRTUAL_HEARING_TIME_HELPER_TEXT} />}
         </div>
       </div>
-      <AppellantSection {...sectionProps} />
-      <RepresentativeSection {...sectionProps} />
+
+      {userVsoEmployee ?
+        (<div>
+          <VSOAppellantSection {...sectionProps} />
+          <VSORepresentativeSection {...sectionProps} readOnly />
+        </div>) :
+        (<div>
+          <AppellantSection {...sectionProps} />
+          <RepresentativeSection {...sectionProps} />
+        </div>)
+      }
+
       <VirtualHearingSection hide={!virtual} label="Veterans Law Judge (VLJ)">
         <div className="usa-grid">
           <div className="usa-width-one-half">
