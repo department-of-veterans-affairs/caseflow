@@ -211,7 +211,6 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
 
       fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
-      fill_in "POA/Representative Email (for these notifications only)", with: fill_in_rep_email
 
       # Update the POA and Appellant Timezones
       click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
