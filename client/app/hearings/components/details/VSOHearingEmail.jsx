@@ -126,6 +126,7 @@ VSOHearingEmail.propTypes = {
   email: PropTypes.string,
   emailType: PropTypes.string,
   label: PropTypes.string,
+<<<<<<< HEAD
   required: PropTypes.bool,
   optional: PropTypes.bool,
   disabled: PropTypes.bool,
@@ -139,3 +140,5 @@ VSOHearingEmail.propTypes = {
   setConfirmIsEmpty: PropTypes.func,
   confirmIsEmpty: PropTypes.bool
 };
+=======
+>>>>>>> origin/isaiah/APPEALS-4532-Hearings-Form-Fields-and-Validation
