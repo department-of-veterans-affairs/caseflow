@@ -54,7 +54,7 @@ export const RepresentativeSection = ({
             errorMessage={errors?.representativeTz}
             required={Boolean(representativeEmailAddress)}
             value={representativeTimezone}
-            onChange={(representativeTz) => 
+            onChange={(representativeTz) =>
               update('hearing', { representativeTz })
             }
             time={hearing.scheduledTimeString}
