@@ -50,9 +50,7 @@ export const HearingConversion = ({
     appellantTitle,
     appellantEmailAddress: hearing?.appellantEmailAddress,
     appellantTimezone: hearing?.appellantTz,
-    representativeEmailAddress: userVsoEmployee ?
-      hearing?.currentUserEmail :
-      hearing?.representativeEmailAddress,
+    representativeEmailAddress: hearing?.representativeEmailAddress,
     representativeTimezone: hearing?.representativeTz,
     appellantEmailType: 'appellantEmailAddress',
     representativeEmailType: 'representativeEmailAddress',
@@ -69,9 +67,14 @@ export const HearingConversion = ({
         ...hearing,
         representativeTz: userVsoEmployee ?
           hearing?.currentUserTimezone :
-          hearing?.representativeTz || hearing?.appellantTz
+          hearing?.representativeTz || hearing?.appellantTz,
+        representativeEmailAddress: userVsoEmployee ?
+          hearing?.currentUserEmail :
+          hearing?.representativeEmailAddress
       });
   };
+
+  
 
   // Pre-fill representative timezone on mount.
   useEffect(() => {
