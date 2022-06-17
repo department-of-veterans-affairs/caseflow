@@ -38,7 +38,6 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
 };
 
 export const updateAppealDispatcher = (appeal, dispatch) => (type, changes) => {
-  console.log(`type: ${type}  changes: ${JSON.stringify(changes)}`);
   const payload =
     type === 'appeal' ?
       {
