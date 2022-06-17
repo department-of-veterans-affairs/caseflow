@@ -3,7 +3,7 @@ import React from 'react';
 import { HearingConversion } from 'app/hearings/components/HearingConversion';
 import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
 import { mount } from 'enzyme';
-import { userWithJudgeRole, amaHearing, vsoUser } from 'test/data';
+import { userWithJudgeRole, amaHearing, vsoUser, anyUser } from 'test/data';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
 import { VirtualHearingSection } from 'app/hearings/components/VirtualHearings/Section';
 import * as DateUtil from 'app/util/DateUtil';
@@ -13,7 +13,6 @@ import { JudgeDropdown } from 'app/components/DataDropdowns';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import { Checkbox } from '../../../../../client/app/components/Checkbox'
 import RadioField from 'app/components/RadioField';
-import { anyUser, vsoUser} from 'test/data';
 import { COPY } from '../../../../../client/COPY.json'
 import { Details } from '../../../../../client/app/hearings/components/Details'
 import { node } from 'prop-types';
@@ -109,7 +108,7 @@ describe('HearingConversion', () => {
     expect(conversion).toMatchSnapshot();
   });
 
-  test('When a VSO user converts to virtual, the checkboxes appear on the form', () => {
+  test('When a VSO user converts to virtual, the checkboxes and banner appear on the form', () => {
     const conversion = mount(
       <HearingConversion
         scheduledFor={amaHearing.scheduledFor.toString()}
