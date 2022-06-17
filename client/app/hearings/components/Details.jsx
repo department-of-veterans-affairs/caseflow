@@ -72,7 +72,7 @@ const HearingDetails = (props) => {
   const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const convertingToVirtual = converting === 'change_to_virtual';
-  const [formNotSubmittable, setFormNotSubmittable] = useState(true);
+  const [formSubmittable, setFormSubmittable] = useState(false);
 
   const canSubmit = () => {
     let allFieldsValid = (
@@ -81,7 +81,7 @@ const HearingDetails = (props) => {
       Boolean(hearing?.representativeTz)
     );
 
-    setFormNotSubmittable(!allFieldsValid);
+    setFormSubmittable(allFieldsValid);
   };
 
   useEffect(() => {
@@ -388,7 +388,7 @@ const HearingDetails = (props) => {
         <span {...css({ float: 'right' })}>
           <Button
             name="Save"
-            disabled={!formsUpdated || (disabled && !userVsoEmployee) || (formNotSubmittable && userVsoEmployee)}
+            disabled={!formsUpdated || (disabled && !userVsoEmployee) || (formSubmittable && userVsoEmployee)}
             loading={loading}
             className="usa-button"
             onClick={async () => await submit(editedEmailsAndTz)}
