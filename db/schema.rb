@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_29_163603) do
+ActiveRecord::Schema.define(version: 2022_04_22_150300) do
+
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -411,6 +412,24 @@ ActiveRecord::Schema.define(version: 2022_03_29_163603) do
     t.index ["appeal_id", "appeal_type"], name: "index_claims_folder_searches_on_appeal_id_and_appeal_type"
     t.index ["updated_at"], name: "index_claims_folder_searches_on_updated_at"
     t.index ["user_id"], name: "index_claims_folder_searches_on_user_id"
+  end
+
+  create_table "conference_links", force: :cascade do |t|
+    t.string "alias", comment: "Alias of the conference"
+    t.string "alias_with_host", comment: "Alieas of the conference for the host"
+    t.boolean "conference_deleted", default: false, null: false, comment: "Flag to represent if a con ference has been deleted"
+    t.integer "conference_id", comment: "Id of the conference"
+    t.datetime "created_at", null: false, comment: "Date and Time of creation"
+    t.bigint "created_by_id", null: false, comment: "User id of the user who created the record. FK on User table"
+    t.bigint "hearing_day_id", null: false, comment: "The associated hearing day id"
+    t.string "host_link", comment: "Conference link generated from external conference service"
+    t.integer "host_pin", comment: "Pin for the host of the conference to get into the conference"
+    t.string "host_pin_long", limit: 8, comment: "Generated host pin stored as a string"
+    t.datetime "updated_at", comment: "Date and Time record was last updated"
+    t.bigint "updated_by_id", comment: "user id of the user to last update the record. FK on the User table"
+    t.index ["created_by_id"], name: "index_created_by_id"
+    t.index ["hearing_day_id"], name: "index_conference_links_on_hearing_day_id"
+    t.index ["updated_by_id"], name: "index_updated_by_id"
   end
 
   create_table "decision_documents", force: :cascade do |t|
@@ -1713,6 +1732,9 @@ ActiveRecord::Schema.define(version: 2022_03_29_163603) do
   add_foreign_key "certifications", "users"
   add_foreign_key "claim_establishments", "dispatch_tasks", column: "task_id"
   add_foreign_key "claims_folder_searches", "users"
+  add_foreign_key "conference_links", "hearing_days"
+  add_foreign_key "conference_links", "users", column: "created_by_id"
+  add_foreign_key "conference_links", "users", column: "updated_by_id"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
