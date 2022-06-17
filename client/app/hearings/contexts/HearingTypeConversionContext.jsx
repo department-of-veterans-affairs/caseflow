@@ -8,9 +8,9 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   const [isAppellantTZEmpty, setIsAppellantTZEmpty] = useState(!initialAppeal?.appellantTz);
 
   /* eslint-disable camelcase */
-  const [isRepTZEmpty, setIsRepTZEmpty] = useState(!initialAppeal?.powerOfAttorney?.representative_tz);
+  const [isRepTZEmpty, setIsRepTZEmpty] = useState(!initialAppeal?.currentUserTimezone);
 
-  const [originalEmail, setOriginalEmail] = useState(initialAppeal?.veteranInfo?.veteran?.email_address || '');
+  const [originalEmail, setOriginalEmail] = useState(initialAppeal?.appellantEmailAddress || '');
   /* eslint-enable camelcase */
 
   // Create state to check if confirm field is empty
@@ -19,7 +19,7 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   const [emailsMismatch, setEmailsMismatch] = useState(true);
 
   // initiliaze hook to manage state for email validation
-  const [isNotValidEmail, setIsNotValidEmail] = useState(true);
+  const [isNotValidEmail, setIsNotValidEmail] = useState(false);
 
   const updateAppellantEmail = (appeal, email) => {
     appeal.appellantEmailAddress = email;
@@ -40,7 +40,7 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   };
 
   const updatePoaTimezone = (appeal, timezone) => {
-    appeal.representativeTz = timezone;
+    appeal.currentUserTimezone = timezone;
 
     return appeal;
   };

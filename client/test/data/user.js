@@ -22,7 +22,8 @@ export const vsoUser = {
   ...anyUser,
   userVsoEmployee: true,
   userCanVsoHearingSchedule: true,
-  userCanAssignHearingSchedule: false
+  userCanAssignHearingSchedule: false,
+  userVsoEmployee: true
 };
 
 

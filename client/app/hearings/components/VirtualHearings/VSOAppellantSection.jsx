@@ -1,26 +1,21 @@
-import React from "react";
-import PropTypes from "prop-types";
-
-import { VirtualHearingSection } from "./Section";
-import { ReadOnly } from "../details/ReadOnly";
-import { VSOEmailNotificationsFields } from "../details/VSOEmailNotificationsFields";
-
+import React from 'react';
+import PropTypes from 'prop-types';
+import { VirtualHearingSection } from './Section';
+import { ReadOnly } from '../details/ReadOnly';
+import { VSOEmailNotificationsFields } from '../details/VSOEmailNotificationsFields';
 export const VSOAppellantSection = ({
-  errors,
   hearing,
   showDivider,
   appellantTitle,
-  formFieldsOnly,
-  update,
-  appellantTimezone
+  formFieldsOnly
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
-  const appellantName = hearing?.appellantIsNotVeteran
-    ? hearing?.appellantFullName ||
-      `${hearing?.appellantFirstName} ${hearing?.appellantLastName}`
-    : hearing?.veteranFullName ||
-      `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`;
+  const appellantName = hearing?.appellantIsNotVeteran ?
+    hearing?.appellantFullName ||
+    `${hearing?.appellantFirstName} ${hearing?.appellantLastName}` :
+    hearing?.veteranFullName ||
+    `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`;
 
   return (
     <VirtualHearingSection
@@ -31,13 +26,8 @@ export const VSOAppellantSection = ({
       <React.Fragment>
         <ReadOnly label={`${appellantTitle} Name`} text={appellantName} />
         <VSOEmailNotificationsFields
-          errors={errors}
           hearing={hearing}
-          update={update}
-          time={hearing.scheduledTimeString}
-          roTimezone={hearing?.regionalOfficeTimezone}
-          requestType={hearing.readableRequestType}
-          appellantTimezone={appellantTimezone} />
+        />
       </React.Fragment>
     </VirtualHearingSection>
   );
@@ -65,6 +55,5 @@ VSOAppellantSection.propTypes = {
   formFieldsOnly: PropTypes.bool,
   appellantTimezone: PropTypes.string,
   appellantEmailAddress: PropTypes.string,
-  appellantEmailType: PropTypes.string,
-  appellantTz: PropTypes.string,
+  appellantEmailType: PropTypes.string
 };
