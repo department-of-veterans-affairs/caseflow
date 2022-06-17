@@ -903,7 +903,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       step "the submit button is disabled at first" do
         click_button("Save")
         expect(page).to have_current_path("hearings/" + hearing.external_id.to_s + "/details")
-      end 
+      end
       step "the submit button is disabled after one checkbox is selected" do
         click_button("affirmPermission")
         click_button("Save")
@@ -913,8 +913,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         click_button("affirmAccess")
         click_button("affirmPermission")
         click_button("Save")
-       
-        # expect success 
+        # expect success
         expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
 
         # might not need all of this 
