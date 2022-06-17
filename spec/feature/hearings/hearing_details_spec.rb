@@ -899,6 +899,36 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION)
       expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_SUBTITLE_3)
       expect(page).to_not have_content(COPY::CENTRAL_OFFICE_CHANGE_TO_VIRTUAL)
+
+      step "the submit button is disabled at first" do
+        click_button("Save")
+        expect(page).to have_current_path("hearings/" + hearing.external_id.to_s + "/details")
+      end 
+      step "the submit button is disabled after one checkbox is selected" do
+        click_button("affirmPermission")
+        click_button("Save")
+        expect(page).to have_current_path("hearings/" + hearing.external_id.to_s + "/details")
+      end
+      step "the submit button goes through after both checkboxes are selected" do
+        click_button("affirmAccess")
+        click_button("affirmPermission")
+        click_button("Save")
+       
+        # expect success 
+        expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
+
+        # might not need all of this 
+        appellant_name = if hearing.appeal.appellant_is_not_veteran
+                           "#{hearing.appellant_first_name} #{hearing.appellant_last_name}"
+                         else
+                           "#{hearing.veteran_first_name} #{hearing.veteran_last_name}"
+                         end
+  
+        success_title = format(COPY::CONVERT_HEARING_TYPE_SUCCESS, appellant_name, "virtual")
+  
+        expect(page).to have_content(success_title)
+        expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
+      end
     end
   end
 end
