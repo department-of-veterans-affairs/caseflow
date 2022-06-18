@@ -18,7 +18,12 @@ RSpec.feature "Convert hearing request type" do
   let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
   let!(:vso_user) { create(:user, :vso_role, email: "DefinitelyNotNull@All.com") }
   let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
-  let!(:poa) { create(:bgs_power_of_attorney, :with_name_cached, appeal: appeal) }
+  let!(:poa) do
+    create(:bgs_power_of_attorney,
+           :with_name_cached,
+           appeal: appeal,
+           claimant_participant_id: appeal.claimant.participant_id)
+  end
 
   context "When appeal has no scheduled hearings" do
     scenario "convert to virtual link appears and leads to task form" do
@@ -56,10 +61,10 @@ RSpec.feature "Convert hearing request type" do
         expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
 
         # Fill out email field and expect validation message on invalid email
-        fill_in "Veteran Email", with: "veteran@vetera"
+        fill_in "Appellant Email", with: "appellant@te"
         find("body").click
         expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL)
-        fill_in "Veteran Email", with: "veteran@veteran.com"
+        fill_in "Appellant Email", with: "appellant@test.com"
 
         # Check if button remains disabled
         expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
