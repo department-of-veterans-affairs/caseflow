@@ -187,51 +187,6 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to have_content(fill_in_veteran_tz)
       expect(page).to have_content(fill_in_rep_tz)
     end
-
-    scenario "vso users are taken to case details page instead of the hearing details
-       if they click cancel" do
-      User.authenticate!(user: vso_user)
-
-      # Ensure user was on Case Details page first so goBack() takes user back to the correct page.
-      visit "/queue/appeals/#{hearing.appeal_external_id}"
-      visit "hearings/" + hearing.external_id.to_s + "/details"
-
-      expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
-
-      click_button("button-Cancel")
-
-      expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
-    end
-
-    scenario "vso user can convert hearing type to virtual" do
-      User.authenticate!(user: vso_user)
-
-      visit "hearings/" + hearing.external_id.to_s + "/details"
-
-      expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
-
-      fill_in "Veteran Email", with: fill_in_veteran_email
-      fill_in "Confirm Veteran Email", with: fill_in_veteran_email
-
-      # Update the POA and Appellant Timezones
-      click_dropdown(name: "representativeTz", index: 5)
-      click_dropdown(name: "appellantTz", index: 2)
-
-      click_button("button-Save")
-
-      expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
-
-      appellant_name = if hearing.appeal.appellant_is_not_veteran
-                         "#{hearing.appellant_first_name} #{hearing.appellant_last_name}"
-                       else
-                         "#{hearing.veteran_first_name} #{hearing.veteran_last_name}"
-                       end
-
-      success_title = format(COPY::CONVERT_HEARING_TYPE_SUCCESS, appellant_name, "virtual")
-
-      expect(page).to have_content(success_title)
-      expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
-    end
   end
 
   shared_examples "all hearing types" do
@@ -748,6 +703,53 @@ RSpec.feature "Hearing Details", :all_dbs do
     end
   end
 
+  shared_examples "converting hearings as a vso" do
+    scenario "vso users are taken to case details page instead of the hearing details
+       if they click cancel" do
+      User.authenticate!(user: vso_user)
+
+      # Ensure user was on Case Details page first so goBack() takes user back to the correct page.
+      visit "/queue/appeals/#{hearing.appeal_external_id}"
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
+
+      click_button("button-Cancel")
+
+      expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
+    end
+
+    scenario "vso user can convert hearing type to virtual" do
+      User.authenticate!(user: vso_user)
+
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
+
+      fill_in "Veteran Email", with: fill_in_veteran_email
+      fill_in "Confirm Veteran Email", with: fill_in_veteran_email
+
+      # Update the POA and Appellant Timezones
+      click_dropdown(name: "representativeTz", index: 5)
+      click_dropdown(name: "appellantTz", index: 2)
+
+      click_button("button-Save")
+
+      expect(page).to have_current_path("/queue/appeals/#{hearing.appeal.uuid}")
+
+      appellant_name = if hearing.appeal.appellant_is_not_veteran
+                         "#{hearing.appellant_first_name} #{hearing.appellant_last_name}"
+                       else
+                         "#{hearing.veteran_first_name} #{hearing.veteran_last_name}"
+                       end
+
+      success_title = format(COPY::CONVERT_HEARING_TYPE_SUCCESS, appellant_name, "virtual")
+
+      expect(page).to have_content(success_title)
+      expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
+    end
+  end
+
   context "with unauthorized user role (non-hearings management)" do
     let!(:current_user) { User.authenticate!(user: user) }
 
@@ -766,6 +768,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
     context "when hearing is AMA" do
       include_examples "all hearing types"
+      include_examples "converting hearings as a vso"
 
       scenario "user can update transcription fields" do
         visit "hearings/" + hearing.external_id.to_s + "/details"
