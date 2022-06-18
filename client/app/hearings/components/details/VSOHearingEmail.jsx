@@ -44,7 +44,7 @@ export const VSOHearingEmail = ({
   };
 
   const confirmEmailCheck = (newEmail, unFocused) => {
-    if (newEmail === hearing.appellantEmailAddress) {
+    if (newEmail === hearing?.appellantEmailAddress) {
       setMessage('');
     } else if (unFocused && newEmail) {
       setMessage(COPY.CONVERT_HEARING_VALIDATE_EMAIL_MATCH);
@@ -54,9 +54,9 @@ export const VSOHearingEmail = ({
   // Rerun original-to-confirmation email matching if original email changes
   useEffect(() => {
     if (confirmEmail) {
-      confirmEmailCheck(hearing.appellantConfirmEmailAddress, true);
+      confirmEmailCheck(hearing?.appellantConfirmEmailAddress, true);
     }
-  }, [hearing.appellantEmailAddress]);
+  }, [hearing?.appellantEmailAddress]);
 
   return (
     confirmEmail ? (

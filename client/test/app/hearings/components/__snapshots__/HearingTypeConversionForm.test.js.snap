@@ -218,6 +218,70 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
                   </div>
                 </ReadOnly>
               </HearingEmail>
+              <VSOHearingEmail
+                confirmEmail={true}
+                helperLabel="This email address will be used to send notifications for this hearing only."
+                label="Confirm Veteran Email"
+                optional={false}
+                readOnly={true}
+                required={true}
+                showHelper={false}
+                type="Virtual"
+              >
+                <TextField
+                  className={
+                    Array [
+                      "cf-form-textinput cf-inline-field",
+                    ]
+                  }
+                  errorMessage=""
+                  name="Confirm Veteran Email"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  optional={false}
+                  required={true}
+                  strongLabel={true}
+                  type="text"
+                  useAriaLabel={false}
+                >
+                  <div
+                    className="cf-form-textinput cf-inline-field   "
+                  >
+                    <label
+                      htmlFor="Confirm Veteran Email"
+                    >
+                      <strong>
+                        <FormLabel
+                          name="Confirm Veteran Email"
+                          optional={false}
+                          required={true}
+                        >
+                          <span>
+                            Confirm Veteran Email
+                            <span
+                              className="cf-required"
+                            >
+                              Required
+                            </span>
+                          </span>
+                        </FormLabel>
+                      </strong>
+                    </label>
+                    <input
+                      className={
+                        Array [
+                          "cf-form-textinput cf-inline-field",
+                        ]
+                      }
+                      id="Confirm Veteran Email"
+                      name="Confirm Veteran Email"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      type="text"
+                    />
+                  </div>
+                </TextField>
+              </VSOHearingEmail>
               <div>
                 <Alert
                   fixed={false}
@@ -618,6 +682,70 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
                   </div>
                 </ReadOnly>
               </HearingEmail>
+              <VSOHearingEmail
+                confirmEmail={true}
+                helperLabel="This email address will be used to send notifications for this hearing only."
+                label="Confirm Veteran Email"
+                optional={false}
+                readOnly={true}
+                required={true}
+                showHelper={false}
+                type="Virtual"
+              >
+                <TextField
+                  className={
+                    Array [
+                      "cf-form-textinput cf-inline-field",
+                    ]
+                  }
+                  errorMessage=""
+                  name="Confirm Veteran Email"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  optional={false}
+                  required={true}
+                  strongLabel={true}
+                  type="text"
+                  useAriaLabel={false}
+                >
+                  <div
+                    className="cf-form-textinput cf-inline-field   "
+                  >
+                    <label
+                      htmlFor="Confirm Veteran Email"
+                    >
+                      <strong>
+                        <FormLabel
+                          name="Confirm Veteran Email"
+                          optional={false}
+                          required={true}
+                        >
+                          <span>
+                            Confirm Veteran Email
+                            <span
+                              className="cf-required"
+                            >
+                              Required
+                            </span>
+                          </span>
+                        </FormLabel>
+                      </strong>
+                    </label>
+                    <input
+                      className={
+                        Array [
+                          "cf-form-textinput cf-inline-field",
+                        ]
+                      }
+                      id="Confirm Veteran Email"
+                      name="Confirm Veteran Email"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      type="text"
+                    />
+                  </div>
+                </TextField>
+              </VSOHearingEmail>
               <div>
                 <Alert
                   fixed={false}
@@ -1018,6 +1146,70 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
                   </div>
                 </ReadOnly>
               </HearingEmail>
+              <VSOHearingEmail
+                confirmEmail={true}
+                helperLabel="This email address will be used to send notifications for this hearing only."
+                label="Confirm Veteran Email"
+                optional={false}
+                readOnly={true}
+                required={true}
+                showHelper={false}
+                type="Virtual"
+              >
+                <TextField
+                  className={
+                    Array [
+                      "cf-form-textinput cf-inline-field",
+                    ]
+                  }
+                  errorMessage=""
+                  name="Confirm Veteran Email"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  optional={false}
+                  required={true}
+                  strongLabel={true}
+                  type="text"
+                  useAriaLabel={false}
+                >
+                  <div
+                    className="cf-form-textinput cf-inline-field   "
+                  >
+                    <label
+                      htmlFor="Confirm Veteran Email"
+                    >
+                      <strong>
+                        <FormLabel
+                          name="Confirm Veteran Email"
+                          optional={false}
+                          required={true}
+                        >
+                          <span>
+                            Confirm Veteran Email
+                            <span
+                              className="cf-required"
+                            >
+                              Required
+                            </span>
+                          </span>
+                        </FormLabel>
+                      </strong>
+                    </label>
+                    <input
+                      className={
+                        Array [
+                          "cf-form-textinput cf-inline-field",
+                        ]
+                      }
+                      id="Confirm Veteran Email"
+                      name="Confirm Veteran Email"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      type="text"
+                    />
+                  </div>
+                </TextField>
+              </VSOHearingEmail>
               <div>
                 <Alert
                   fixed={false}
@@ -1418,6 +1610,70 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
                   </div>
                 </ReadOnly>
               </HearingEmail>
+              <VSOHearingEmail
+                confirmEmail={true}
+                helperLabel="This email address will be used to send notifications for this hearing only."
+                label="Confirm Veteran Email"
+                optional={false}
+                readOnly={true}
+                required={true}
+                showHelper={false}
+                type="Virtual"
+              >
+                <TextField
+                  className={
+                    Array [
+                      "cf-form-textinput cf-inline-field",
+                    ]
+                  }
+                  errorMessage=""
+                  name="Confirm Veteran Email"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  optional={false}
+                  required={true}
+                  strongLabel={true}
+                  type="text"
+                  useAriaLabel={false}
+                >
+                  <div
+                    className="cf-form-textinput cf-inline-field   "
+                  >
+                    <label
+                      htmlFor="Confirm Veteran Email"
+                    >
+                      <strong>
+                        <FormLabel
+                          name="Confirm Veteran Email"
+                          optional={false}
+                          required={true}
+                        >
+                          <span>
+                            Confirm Veteran Email
+                            <span
+                              className="cf-required"
+                            >
+                              Required
+                            </span>
+                          </span>
+                        </FormLabel>
+                      </strong>
+                    </label>
+                    <input
+                      className={
+                        Array [
+                          "cf-form-textinput cf-inline-field",
+                        ]
+                      }
+                      id="Confirm Veteran Email"
+                      name="Confirm Veteran Email"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      type="text"
+                    />
+                  </div>
+                </TextField>
+              </VSOHearingEmail>
               <div>
                 <Alert
                   fixed={false}
