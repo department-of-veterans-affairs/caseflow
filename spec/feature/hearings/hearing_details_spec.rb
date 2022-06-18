@@ -2,7 +2,7 @@
 
 RSpec.feature "Hearing Details", :all_dbs do
   let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
-  let(:vso_user) { create(:user, css_id: "BILLIE_VSO", roles: ["VSO"]) }
+  let(:vso_user) { create(:user, css_id: "BILLIE_VSO", roles: ["VSO"], email: "BILLIE@test.com") }
   let!(:coordinator) { create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG") }
   let!(:vlj) { create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO") }
   let(:hearing) { create(:hearing, :with_tasks, regional_office: "C", scheduled_time: "12:00AM") }
@@ -210,12 +210,12 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
 
-      fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
-      fill_in "POA/Representative Email (for these notifications only)", with: fill_in_rep_email
+      fill_in "Veteran Email", with: fill_in_veteran_email
+      fill_in "Confirm Veteran Email", with: fill_in_veteran_email
 
       # Update the POA and Appellant Timezones
-      click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
-      click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
+      click_dropdown(name: "representativeTz", index: 5)
+      click_dropdown(name: "appellantTz", index: 2)
 
       click_button("button-Save")
 
