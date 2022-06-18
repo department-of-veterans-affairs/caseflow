@@ -30,8 +30,7 @@ export const AppellantSection = ({
   formFieldsOnly,
   appellantTimezone,
   appellantEmailAddress,
-  appellantEmailType,
-  userVsoEmployee
+  appellantEmailType
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -119,20 +118,6 @@ export const AppellantSection = ({
             type={type}
             update={update}
           />
-
-          {!userVsoEmployee && (<VSOHearingEmail
-            required={schedulingToVirtual}
-            optional={!schedulingToVirtual}
-            readOnly={readOnly}
-            label={`Confirm ${appellantTitle} Email`}
-            emailType={appellantEmailType}
-            email={appellantEmailAddress}
-            error={errors?.appellantEmailAddress}
-            type={type}
-            confirmEmail
-            showHelper={false}
-            update={update} />)}
-
           {showMissingAlert && (
             <div>
               <Alert
@@ -170,6 +155,5 @@ AppellantSection.propTypes = {
   formFieldsOnly: PropTypes.bool,
   appellantTimezone: PropTypes.string,
   appellantEmailAddress: PropTypes.string,
-  appellantEmailType: PropTypes.string,
-  userVsoEmployee: PropTypes.bool
+  appellantEmailType: PropTypes.string
 };
