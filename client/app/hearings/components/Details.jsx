@@ -71,6 +71,20 @@ const HearingDetails = (props) => {
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
   const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
   const [isNotValidEmail, setIsNotValidEmail] = useState(userVsoEmployee);
+  const [formSubmittable, setFormSubmittable] = useState(false);
+
+  const canSubmit = () => {
+    let emailFieldsValid = (
+      isNotValidEmail &&
+      hearing?.appellantEmailAddress === hearing?.appellantConfirmEmailAddress
+    );
+
+    setFormSubmittable(emailFieldsValid);
+  };
+
+  useEffect(() => {
+    canSubmit();
+  }, [hearing]);
 
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const convertingToVirtual = converting === 'change_to_virtual';
@@ -367,7 +381,10 @@ const HearingDetails = (props) => {
         <span {...css({ float: 'right' })}>
           <Button
             name="Save"
-            disabled={!formsUpdated || (disabled && !userVsoEmployee)}
+            disabled={!formsUpdated ||
+              (disabled && !userVsoEmployee) ||
+              (formSubmittable && userVsoEmployee)
+            }
             loading={loading}
             className="usa-button"
             onClick={async () => await submit(editedEmailsAndTz)}
