@@ -79,13 +79,10 @@ const HearingDetails = (props) => {
       hearing?.appellantEmailAddress === hearing?.appellantConfirmEmailAddress
     );
 
-    console.log(`can submit: ${emailFieldsValid}`)
-
     setFormSubmittable(emailFieldsValid);
   };
 
   useEffect(() => {
-    console.log("I CHANGED")
     canSubmit();
   }, [hearing]);
 
