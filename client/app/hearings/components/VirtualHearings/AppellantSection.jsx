@@ -9,7 +9,6 @@ import { AddressLine } from '../details/Address';
 import { VirtualHearingSection } from './Section';
 import { HelperText } from './HelperText';
 import { HearingEmail } from '../details/HearingEmail';
-import { VSOHearingEmail } from '../details/VSOHearingEmail';
 import { Timezone } from './Timezone';
 import { marginTop } from '../details/style';
 import { ReadOnly } from '../details/ReadOnly';
