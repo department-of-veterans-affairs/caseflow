@@ -3,7 +3,7 @@ import React from 'react';
 import { HearingConversion } from 'app/hearings/components/HearingConversion';
 import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
 import { mount } from 'enzyme';
-import { userWithJudgeRole, amaHearing } from 'test/data';
+import { userWithJudgeRole, amaHearing, vsoUser } from 'test/data';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
 import { VirtualHearingSection } from 'app/hearings/components/VirtualHearings/Section';
 import * as DateUtil from 'app/util/DateUtil';
@@ -38,6 +38,12 @@ describe('HearingConversion', () => {
     // Assertions
     expect(conversion.find(RadioField)).toHaveLength(0);
     expect(conversion.find(VirtualHearingSection)).toHaveLength(3);
+    // Check for Instructional Text for Non-VSO User
+    expect(
+      conversion.containsMatchingElement(
+        <span>Email notifications will be sent to the Veteran, POA / Representative, and Veterans Law Judge (VLJ).</span>
+      )
+    ).toBeTruthy()
     expect(
       conversion.
         findWhere((node) => node.prop('label') === 'Hearing Date').

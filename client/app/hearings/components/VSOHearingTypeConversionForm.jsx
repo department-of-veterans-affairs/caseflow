@@ -1,8 +1,9 @@
 import { sprintf } from 'sprintf-js';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useContext } from 'react';
 
+import HearingTypeConversionContext from '../contexts/HearingTypeConversionContext';
 import { VSOAppellantSection } from './VirtualHearings/VSOAppellantSection';
 import { VSORepresentativeSection } from './VirtualHearings/VSORepresentativeSection';
 import { getAppellantTitle } from '../utils';
@@ -10,14 +11,36 @@ import { marginTop, saveButton, cancelButton } from './details/style';
 import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
 import COPY from '../../../COPY';
-
 export const VSOHearingTypeConversionForm = ({
   appeal,
   isLoading,
   onCancel,
   onSubmit,
-  type,
+  type
 }) => {
+
+  const {
+    isNotValidEmail,
+    isAppellantTZEmpty,
+    isRepTZEmpty,
+    emailsMismatch
+  } = useContext(HearingTypeConversionContext);
+
+  // initialize hook to manage state of affirm permissisons checkbox
+  const [checkedPermissions, setCheckedPermissions] = useState(false);
+
+  // initialize hook to manage state of affirm access checkbox
+  const [checkedAccess, setCheckedAccess] = useState(false);
+
+  const preventSubmission = () => {
+    return isNotValidEmail ||
+    !checkedAccess ||
+    !checkedPermissions ||
+    isAppellantTZEmpty ||
+    isRepTZEmpty ||
+    emailsMismatch;
+  };
+
   // 'Appellant' or 'Veteran'
   const appellantTitle = getAppellantTitle(appeal?.appellantIsNotVeteran);
 
@@ -29,15 +52,12 @@ export const VSOHearingTypeConversionForm = ({
     appellantFullName: appeal?.appellantFullName,
     appellantIsNotVeteran: appeal?.appellantIsNotVeteran,
     veteranFullName: appeal?.veteranFullName,
+    currentUserEmail: appeal?.currentUserEmail,
+    currentUserTimezone: appeal?.currentUserTimezone,
+    appellantTz: appeal?.appellantTz
   };
 
-  // veteranInfo gets loaded into redux store when case details page loads
-  const virtualHearing = {
-    appellantEmail: appeal?.veteranInfo?.veteran?.email_address,
-    representativeEmail: appeal?.powerOfAttorney?.representative_email_address,
-  };
   /* eslint-enable camelcase */
-
   // Set the section props
   const sectionProps = {
     appellantTitle,
@@ -46,8 +66,7 @@ export const VSOHearingTypeConversionForm = ({
     showDivider: false,
     showOnlyAppellantName: true,
     showMissingEmailAlert: true,
-    type,
-    virtualHearing,
+    type
   };
 
   const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
@@ -61,15 +80,15 @@ export const VSOHearingTypeConversionForm = ({
         <VSORepresentativeSection {...sectionProps} showDivider />
         <Checkbox
           label={COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION}
-          name="affirmPermission"
-          value
-          onChange
+          name="Affirm Permission"
+          value = {checkedPermissions}
+          onChange={() => setCheckedPermissions(!checkedPermissions)}
         />
         <div />
         <Checkbox
           label={
             <div>
-              <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span>
+              <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span><br />
               <a
                 href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf"
                 style={{ textDecoration: 'underline' }}
@@ -78,9 +97,9 @@ export const VSOHearingTypeConversionForm = ({
               </a>
             </div>
           }
-          name="affirmAccess"
-          value
-          onChange
+          name="Affirm Access"
+          value = {checkedAccess}
+          onChange={() => setCheckedAccess(!checkedAccess)}
         />
       </AppSegment>
       <div {...marginTop(30)}>
@@ -98,6 +117,7 @@ export const VSOHearingTypeConversionForm = ({
             loading={isLoading}
             className="usa-button"
             onClick={onSubmit}
+            disabled={preventSubmission()}
           >
             {convertTitle}
           </Button>

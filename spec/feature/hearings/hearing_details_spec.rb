@@ -2,6 +2,7 @@
 
 RSpec.feature "Hearing Details", :all_dbs do
   let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
+  let(:vso_user) { create(:user, css_id: "BILLIE_VSO", roles: ["VSO"]) }
   let!(:coordinator) { create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG") }
   let!(:vlj) { create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO") }
   let(:hearing) { create(:hearing, :with_tasks, regional_office: "C", scheduled_time: "12:00AM") }
@@ -186,11 +187,57 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to have_content(fill_in_veteran_tz)
       expect(page).to have_content(fill_in_rep_tz)
     end
+
+    scenario "vso users are taken to case details page instead of the hearing details
+       if they click cancel" do
+      User.authenticate!(user: vso_user)
+
+      # Ensure user was on Case Details page first so goBack() takes user back to the correct page.
+      visit "/queue/appeals/#{hearing.appeal_external_id}"
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
+
+      click_button("button-Cancel")
+
+      expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
+    end
+
+    scenario "vso user can convert hearing type to virtual" do
+      User.authenticate!(user: vso_user)
+
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
+
+      fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
+      fill_in "POA/Representative Email (for these notifications only)", with: fill_in_rep_email
+
+      # Update the POA and Appellant Timezones
+      click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
+      click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
+
+      click_button("button-Save")
+
+      expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
+
+      appellant_name = if hearing.appeal.appellant_is_not_veteran
+                         "#{hearing.appellant_first_name} #{hearing.appellant_last_name}"
+                       else
+                         "#{hearing.veteran_first_name} #{hearing.veteran_last_name}"
+                       end
+
+      success_title = format(COPY::CONVERT_HEARING_TYPE_SUCCESS, appellant_name, "virtual")
+
+      expect(page).to have_content(success_title)
+      expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
+    end
   end
 
   shared_examples "all hearing types" do
     context "when type is Video" do
       before do
+        User.authenticate!(user: user)
         hearing.hearing_day.update!(regional_office: "RO06", request_type: "V")
       end
 
@@ -835,6 +882,17 @@ RSpec.feature "Hearing Details", :all_dbs do
         expect(page).to have_no_field("copySentDate")
         expect(page).to have_no_field("copyRequested")
       end
+    end
+  end
+
+  context "with VSO user role" do
+    let!(:current_user) { User.authenticate!(roles: ["VSO"]) }
+
+    scenario "user is immediately redirected to the Convert to Virtual form" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+      expect(page).to have_content(format(COPY::CONVERT_HEARING_TITLE, "Virtual"))
+      expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_SUBTITLE_3)
+      expect(page).to_not have_content(COPY::CENTRAL_OFFICE_CHANGE_TO_VIRTUAL)
     end
   end
 end

@@ -147,6 +147,11 @@ const actionableTasksForAppeal = createSelector(
   (tasks) => filter(tasks, (task) => task.availableActions.length)
 );
 
+export const scheduleHearingTasksForAppeal = createSelector(
+  [getAllTasksForAppeal],
+  (tasks) => filter(incompleteTasksSelector(tasks), (task) => task.type === 'ScheduleHearingTask')
+);
+
 export const openScheduleHearingTasksForAppeal = createSelector(
   [actionableTasksForAppeal],
   (tasks) => filter(incompleteTasksSelector(tasks), (task) => task.type === 'ScheduleHearingTask')
