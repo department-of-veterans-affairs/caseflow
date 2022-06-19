@@ -26,6 +26,7 @@ export const VSOEmailNotificationsFields = ({
       <div id="email-section" className="usa-grid">
         <VSOHearingEmail
           required
+          disabled={disableField}
           label={`${appellantTitle} Email`}
           emailType="appellantEmailAddress"
           error={errors?.appellantEmailAddress}
@@ -38,6 +39,7 @@ export const VSOEmailNotificationsFields = ({
         />
         <VSOHearingEmail
           required
+          disabled={disableField}
           label={`Confirm ${appellantTitle} Email`}
           emailType="appellantEmailAddress"
           error={errors?.appellantEmailAddress}
@@ -58,6 +60,7 @@ export const VSOEmailNotificationsFields = ({
             onChange={(appellantTz) =>
               update(actionType, { appellantTz })
             }
+            readOnly={disableField}
             time={time}
             roTimezone={roTimezone}
             name="appellantTz"
