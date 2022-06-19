@@ -219,7 +219,8 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       click_button("button-Save")
 
-      expect(page).to have_current_path("/queue/appeals/#{hearing.appeal.uuid}")
+      appeal_id = appeal.is_a?(Appeal) ? hearing.appeal.uuid : hearing.appeal.id
+      expect(page).to have_current_path("/queue/appeals/#{appeal_id}")
 
       appellant_name = if hearing.appeal.appellant_is_not_veteran
                          "#{hearing.appellant_first_name} #{hearing.appellant_last_name}"
