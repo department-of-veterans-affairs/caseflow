@@ -75,7 +75,7 @@ const HearingDetails = (props) => {
 
   const canSubmit = () => {
     let emailFieldsValid = (
-      isNotValidEmail &&
+      !isNotValidEmail &&
       hearing?.appellantEmailAddress === hearing?.appellantConfirmEmailAddress
     );
 
