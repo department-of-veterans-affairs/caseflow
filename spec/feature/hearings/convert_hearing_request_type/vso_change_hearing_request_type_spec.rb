@@ -6,13 +6,16 @@ RSpec.feature "Convert hearing request type" do
     HearingsManagement.singleton.add_user(hearing_coord)
     vso.add_user(vso_user)
   end
+
   after { FeatureToggle.disable!(:schedule_veteran_virtual_hearing) }
+
   let!(:appeal) do
     a = create(:appeal, :with_schedule_hearing_tasks, :hearing_docket, number_of_claimants: 1)
     a.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.video,
               veteran_is_not_claimant: true)
     a
   end
+
   let!(:hearing_day) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 14.days, regional_office: "RO63") }
   let!(:hearing_day2) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 7.days, regional_office: "RO63") }
   let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
@@ -26,8 +29,6 @@ RSpec.feature "Convert hearing request type" do
   end
 
   def verify_form_pre_population
-    expect(page).to have_content("Convert Hearing To Virtual")
-
     ["#{appeal.appellant.first_name} #{appeal.appellant.last_name}",
      poa.representative_name,
      poa.representative_type,
@@ -40,58 +41,6 @@ RSpec.feature "Convert hearing request type" do
     expect(page).to have_field("Appellant Email", with: appeal.appellant.email_address)
   end
 
-  def test_form_validation
-    # Check if button is disabled on page load
-    expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
-
-    # Affirm checkboxes first to test other fields
-    click_label("Affirm Permission")
-    click_label("Affirm Access")
-
-    # Check if buttone remains disabled
-    expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
-
-    # Fill out email field and expect validation message on invalid email
-    fill_in "Appellant Email", with: "appellant@te"
-    find("body").click
-    expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL)
-    fill_in "Appellant Email", with: "appellant@test.com"
-
-    # Check if button remains disabled
-    expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
-
-    fill_in "Confirm Appellant Email", with: "appellant@not-matching"
-    find("body").click
-    expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
-    fill_in "Confirm Appellant Email", with: "appellant@test.com"
-    expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
-
-    # Set appellant tz to null
-    click_dropdown(name: "appellantTz", index: 0)
-
-    # Check if button remains disabled
-    expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
-
-    # Set rep tz to null
-    click_dropdown(name: "representativeTz", index: 0)
-
-    # Check if button remains disabled
-    expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
-
-    # Set appellant and rep timezones to something not null
-    click_dropdown(name: "appellantTz", index: 1)
-    click_dropdown(name: "representativeTz", index: 2)
-    expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: false)
-
-    # Alter original email to make sure that the confirm email validation picks up on the change.
-    fill_in "Appellant Email", with: "valid@something-different.com"
-    expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
-    expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
-
-    fill_in "Appellant Email", with: "appellant@test.com"
-    expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
-  end
-
   context "When appeal has no scheduled hearings" do
     scenario "convert to virtual link appears and leads to task form" do
       step "navigate to the VSO Form" do
@@ -101,13 +50,57 @@ RSpec.feature "Convert hearing request type" do
         click_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
       end
 
-      step "verify pre-population of Queue form fields" do
-        verify_form_pre_population
-      end
+      step "verify pre-population of Queue form fields and submit it" do
+        # Check if button is disabled on page load
+        expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
 
-      step "test Queue form validation and submit it" do
-        test_form_validation
-        # Convert button should now be enabled
+        # Affirm checkboxes first to test other fields
+        click_label("Affirm Permission")
+        click_label("Affirm Access")
+
+        # Check if buttone remains disabled
+        expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
+
+        # Fill out email field and expect validation message on invalid email
+        fill_in "Appellant Email", with: "appellant@te"
+        find("body").click
+        expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL)
+        fill_in "Appellant Email", with: "appellant@test.com"
+
+        # Check if button remains disabled
+        expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
+
+        fill_in "Confirm Appellant Email", with: "appellant@not-matching"
+        find("body").click
+        expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
+        fill_in "Confirm Appellant Email", with: "appellant@test.com"
+        expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
+
+        # Set appellant tz to null
+        click_dropdown(name: "appellantTz", index: 0)
+
+        # Check if button remains disabled
+        expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
+
+        # Set rep tz to null
+        click_dropdown(name: "representativeTz", index: 0)
+
+        # Check if button remains disabled
+        expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
+
+        # Set appellant and rep timezones to something not null
+        click_dropdown(name: "appellantTz", index: 1)
+        click_dropdown(name: "representativeTz", index: 2)
+        expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: false)
+
+        # Alter original email to make sure that the confirm email validation picks up on the change.
+        fill_in "Appellant Email", with: "valid@something-different.com"
+        expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
+        expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
+
+        fill_in "Appellant Email", with: "appellant@test.com"
+        expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
+
         click_button("Convert Hearing To Virtual")
       end
 
@@ -204,8 +197,52 @@ RSpec.feature "Convert hearing request type" do
       end
 
       step "test Hearings form validation and submit it" do
-        test_form_validation
-        click_button "Convert to Virtual Hearing"
+        # Check if button is disabled on page load
+        expect(page).to have_button("button-Save", disabled: true)
+
+        # Fill out email field and expect validation message on invalid email
+        fill_in "Appellant Email", with: "appellant@te"
+        find("body").click
+        expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL)
+        fill_in "Appellant Email", with: "appellant@test.com"
+
+        # Check if button remains disabled
+        expect(page).to have_button("button-Save", disabled: true)
+
+        fill_in "Confirm Appellant Email", with: "appellant@not-matching"
+        find("body").click
+        expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
+        fill_in "Confirm Appellant Email", with: "appellant@test.com"
+        expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
+
+        # Enable this section once APPEALS-4535 is merged in
+        # click_dropdown(name: "appellantTz", index: 0)
+        # expect(page).to have_button("button-Save", disabled: true)
+        # click_dropdown(name: "representativeTz", index: 0)
+        # expect(page).to have_button("button-Save", disabled: true)
+
+        # Set appellant and rep timezones to something not null
+        click_dropdown(name: "appellantTz", index: 1)
+        click_dropdown(name: "representativeTz", index: 2)
+        expect(page).to have_button("button-Save", disabled: false)
+
+        # Alter original email to make sure that the confirm email validation picks up on the change.
+        fill_in "Appellant Email", with: "valid@something-different.com"
+        expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
+        expect(page).to have_button("button-Save", disabled: true)
+
+        fill_in "Appellant Email", with: "appellant@test.com"
+        expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
+
+        click_button "button-Save"
+      end
+
+      step "Confirm success message" do
+        expect(page).to have_content(
+          "You have successfully converted #{hearing.appellant_first_name} " \
+          "#{hearing.appellant_last_name}'s hearing to virtual"
+        )
+        expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
       end
     end
   end
