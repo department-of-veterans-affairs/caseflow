@@ -89,11 +89,11 @@ class WorkQueue::LegacyAppealSerializer
   end
 
   attribute :current_user_email do |_, params|
-    params[:user].email
+    params[:user]&.email
   end
 
   attribute :current_user_timezone do |_, params|
-    params[:user].timezone
+    params[:user]&.timezone
   end
 
   def self.latest_vacols_attorney_case_review(object)

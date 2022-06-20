@@ -19,11 +19,11 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :current_user_email do |_, params|
-    params[:user].email
+    params[:user]&.email
   end
 
   attribute :current_user_timezone do |_, params|
-    params[:user].timezone
+    params[:user]&.timezone
   end
 
   attribute :contested_claim, &:contested_claim?
