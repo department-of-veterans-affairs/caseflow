@@ -15,7 +15,7 @@ class LegacyHearingSerializer
   attribute :appellant_city
   attribute :appellant_country
   attribute :appellant_email_address do |hearing|
-    hearing.appellant_recipient || hearing.appeal.appellant_email_address
+    hearing.appellant_email_address || hearing.appeal.appellant_email_address
   end
   attribute :appellant_tz do |hearing|
     hearing.appellant_tz || hearing.appeal.appellant_tz
