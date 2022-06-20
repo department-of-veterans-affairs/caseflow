@@ -524,12 +524,26 @@ RSpec.describe HearingsController, type: :controller do
         create(:user, roles: ["Edit HearSched", "Build HearSched"], email: "coordinator@va.gov")
       end
 
-      it "as a vso user" do
-        check_for_current_user_info_in_response(vso_user)
+      context "with an ama hearing" do
+        it "as a vso user" do
+          check_for_current_user_info_in_response(vso_user)
+        end
+
+        it "as a hearings coordinator user" do
+          check_for_current_user_info_in_response(hearings_coordinator_user)
+        end
       end
 
-      it "as a hearings coordinator user" do
-        check_for_current_user_info_in_response(hearings_coordinator_user)
+      context "with a legacy hearing" do
+        subject { get :show, as: :json, params: { id: legacy_hearing.external_id } }
+
+        it "as a vso user" do
+          check_for_current_user_info_in_response(vso_user)
+        end
+
+        it "as a hearings coordinator user" do
+          check_for_current_user_info_in_response(hearings_coordinator_user)
+        end
       end
     end
   end
