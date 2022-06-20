@@ -184,4 +184,20 @@ RSpec.feature "Convert hearing request type" do
       end
     end
   end
+
+  context "When hearing has already been scheduled" do
+    let(:hearing) { create(:hearing, hearing_day: hearing_day, appeal: appeal) }
+
+    scenario "Navigating to the hearing details page and converting the hearing" do
+      step "navigating to the hearing details page takes VSO user to conversion form" do
+        User.authenticate!(user: vso_user)
+        visit "hearings/#{hearing.uuid}/details"
+        expect(page).to have_content(format(COPY::CONVERT_HEARING_TITLE, "Virtual"))
+      end
+
+      step "verify pre-population of Hearings form fields" do
+        verify_form_pre_population
+      end
+    end
+  end
 end
