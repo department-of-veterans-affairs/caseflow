@@ -25,28 +25,32 @@ RSpec.feature "Convert hearing request type" do
            claimant_participant_id: appeal.claimant.participant_id)
   end
 
+  def verify_form_pre_population
+    expect(page).to have_content("Convert Hearing To Virtual")
+
+    ["#{appeal.appellant.first_name} #{appeal.appellant.last_name}",
+     poa.representative_name,
+     poa.representative_type,
+     "Pacific Time (US & Canada)",
+     "Eastern Time (US & Canada)",
+     vso_user.email].each do |field_value|
+      expect(page).to have_content(field_value)
+    end
+
+    expect(page).to have_field("Appellant Email", with: appeal.appellant.email_address)
+  end
+
   context "When appeal has no scheduled hearings" do
     scenario "convert to virtual link appears and leads to task form" do
       step "navigate to the VSO Form" do
         User.authenticate!(user: vso_user)
-        visit "queue/appeals/#{appeal.uuid}"
+        visit "queue/appeals/#{appeal.external_id}"
         expect(page).to have_content("Video")
         click_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
       end
 
-      step "verify pre-population of fields" do
-        expect(page).to have_content("Convert Hearing To Virtual")
-
-        ["#{appeal.appellant.first_name} #{appeal.appellant.last_name}",
-         poa.representative_name,
-         poa.representative_type,
-         "Pacific Time (US & Canada)",
-         "Eastern Time (US & Canada)",
-         vso_user.email].each do |field_value|
-          expect(page).to have_content(field_value)
-        end
-
-        expect(page).to have_field("Appellant Email", with: appeal.appellant.email_address)
+      step "verify pre-population of Queue form fields" do
+        verify_form_pre_population
       end
 
       step "test form validation and submit it" do
