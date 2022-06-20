@@ -41,9 +41,11 @@ describe('HearingConversion', () => {
     // Check for Instructional Text for Non-VSO User
     expect(
       conversion.containsMatchingElement(
-        <span>Email notifications will be sent to the Veteran, POA / Representative, and Veterans Law Judge (VLJ).</span>
+        <span>
+          Email notifications will be sent to the Veteran, POA / Representative, and Veterans Law Judge (VLJ).
+        </span>
       )
-    ).toBeTruthy()
+    ).toBeTruthy();
     expect(
       conversion.
         findWhere((node) => node.prop('label') === 'Hearing Date').
@@ -91,5 +93,4 @@ describe('HearingConversion', () => {
 
     expect(conversion).toMatchSnapshot();
   });
-
 });
