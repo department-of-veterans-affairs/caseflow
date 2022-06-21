@@ -124,8 +124,7 @@ RSpec.feature "Convert hearing request type" do
 
         step "Confirm success message" do
           expect(page).to have_content(
-            "You have successfully converted #{appeal.appellant.first_name} " \
-            "#{appeal.appellant.last_name}'s hearing to virtual"
+            "You have successfully converted #{appellant_full_name}'s hearing to virtual"
           )
           expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
         end
@@ -189,8 +188,7 @@ RSpec.feature "Convert hearing request type" do
 
       step "Confirm success message" do
         expect(page).to have_content(
-          "You have successfully converted #{hearing.appellant_first_name} " \
-          "#{hearing.appellant_last_name}'s hearing to virtual"
+          "You have successfully converted #{appellant_full_name}'s hearing to virtual"
         )
         expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
       end
@@ -211,6 +209,7 @@ RSpec.feature "Convert hearing request type" do
              claimant_participant_id: appeal.claimant.participant_id)
     end
     let!(:appellant_title) { appeal.appellant_is_not_veteran ? "Appellant" : "Veteran" }
+    let!(:appellant_full_name) { "#{hearing.appellant_first_name} #{hearing.appellant_last_name}" }
 
     context "whenever a hearing has not yet been scheduled" do
       it_behaves_like "unscheduled hearings"
@@ -294,6 +293,7 @@ RSpec.feature "Convert hearing request type" do
     end
     let!(:poa) { PowerOfAttorney.new(vacols_id: vacols_case.bfkey, file_number: "VBMS-ID") }
     let!(:appellant_title) { appeal.appellant_is_not_veteran ? "Appellant" : "Veteran" }
+    let!(:appellant_full_name) { "#{hearing.appeal.appellant[:first_name]} #{hearing.appeal.appellant[:last_name]}" }
 
     context "whenever a legacy hearing has not yet been scheduled" do
       it_behaves_like "unscheduled hearings"
