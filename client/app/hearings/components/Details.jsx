@@ -368,6 +368,7 @@ const HearingDetails = (props) => {
       )}
       <div {...css({ overflow: 'hidden' })}>
         <Button
+          id="Cancel"
           name="Cancel"
           linkStyling
           onClick={handleCancelButton}
