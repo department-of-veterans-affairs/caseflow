@@ -924,7 +924,6 @@ RSpec.feature "Hearing Details", :all_dbs do
       step "the submit button goes through after both checkboxes are selected" do
         checkboxes = page.all(".cf-form-checkbox > label")
         checkboxes[1].click
-        byebug
         expect(page).to have_button("Save", disabled: false)
         click_button("Save")
         # expect success
