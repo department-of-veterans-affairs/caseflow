@@ -187,8 +187,6 @@ RSpec.feature "Convert hearing request type" do
       end
 
       step "Confirm success message" do
-        sleep(5)
-        byebug
         expect(page).to have_content(
           "You have successfully converted #{appellant_full_name}'s hearing to virtual"
         )
