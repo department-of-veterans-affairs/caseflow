@@ -379,7 +379,11 @@ const HearingDetails = (props) => {
           <Button
             id="Save"
             name="Save"
-            disabled={!formsUpdated || (disabled && !userVsoEmployee) || (!hearingConversionCheckboxes && userVsoEmployee)}
+            disabled={
+              !formsUpdated ||
+              (disabled && !userVsoEmployee) ||
+              (!hearingConversionCheckboxes && userVsoEmployee)
+            }
             loading={loading}
             className="usa-button"
             onClick={async () => await submit(editedEmailsAndTz)}
