@@ -124,7 +124,7 @@ RSpec.feature "Convert hearing request type" do
 
         step "Confirm success message" do
           expect(page).to have_content(
-            "You have successfully converted #{appellant_full_name}'s hearing to virtual"
+            "You have successfully converted #{appellant_name}'s hearing to virtual"
           )
           expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
         end
@@ -188,7 +188,7 @@ RSpec.feature "Convert hearing request type" do
 
       step "Confirm success message" do
         expect(page).to have_content(
-          "You have successfully converted #{appellant_full_name}'s hearing to virtual"
+          "You have successfully converted #{appellant_name}'s hearing to virtual"
         )
         expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
       end
@@ -274,7 +274,6 @@ RSpec.feature "Convert hearing request type" do
 
       context "converting a scheduled hearing as a VSO user" do
         let!(:hearing) { create(:hearing, hearing_day: hearing_day, appeal: appeal) }
-        let!(:appellant_full_name) { "#{hearing.appellant_first_name} #{hearing.appellant_last_name}" }
 
         it_behaves_like "scheduled hearings"
       end
@@ -300,7 +299,6 @@ RSpec.feature "Convert hearing request type" do
 
     context "whenever a legacy hearing has been scheduled" do
       let!(:hearing) { create(:legacy_hearing, hearing_day: hearing_day2, appeal: appeal) }
-      let!(:appellant_full_name) { "#{hearing.appeal.appellant[:first_name]} #{hearing.appeal.appellant[:last_name]}" }
 
       it_behaves_like "scheduled hearings"
     end
