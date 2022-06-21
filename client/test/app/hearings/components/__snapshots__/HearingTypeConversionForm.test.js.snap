@@ -152,7 +152,6 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
         type="Virtual"
-        userVsoEmployee={false}
         virtualHearing={
           Object {
             "appellantEmail": undefined,
@@ -553,7 +552,6 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
         type="Virtual"
-        userVsoEmployee={false}
         virtualHearing={
           Object {
             "appellantEmail": "Abellona.Valtas@test.com",
@@ -954,7 +952,6 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
         type="Virtual"
-        userVsoEmployee={false}
         virtualHearing={
           Object {
             "appellantEmail": "Abellona.Valtas@test.com",
@@ -1355,7 +1352,6 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
         showMissingEmailAlert={true}
         showOnlyAppellantName={true}
         type="Virtual"
-        userVsoEmployee={false}
         virtualHearing={
           Object {
             "appellantEmail": "Abellona.Valtas@test.com",

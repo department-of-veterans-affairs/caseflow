@@ -103,20 +103,18 @@ export const HearingConversion = ({
       </div>}
       <AppellantSection {...sectionProps} />
       <RepresentativeSection {...sectionProps} />
-      {!userVsoEmployee && <div>
-        <VirtualHearingSection hide={!virtual} label="Veterans Law Judge (VLJ)">
-          <div className="usa-grid">
-            <div className="usa-width-one-half">
-              <JudgeDropdown
-                name="judgeDropdown"
-                value={hearing?.judgeId}
-                onChange={(judgeId) => update('hearing', { judgeId })}
-              />
-            </div>
+      <VirtualHearingSection hide={!virtual || userVsoEmployee} label="Veterans Law Judge (VLJ)">
+        <div className="usa-grid">
+          <div className="usa-width-one-half">
+            <JudgeDropdown
+              name="judgeDropdown"
+              value={hearing?.judgeId}
+              onChange={(judgeId) => update('hearing', { judgeId })}
+            />
           </div>
-          <ReadOnly label="VLJ Email" text={hearing.judge?.email || 'N/A'} />
-        </VirtualHearingSection>
-      </div>}
+        </div>
+        <ReadOnly label="VLJ Email" text={hearing.judge?.email || 'N/A'} />
+      </VirtualHearingSection>
     </AppSegment>
   );
 };

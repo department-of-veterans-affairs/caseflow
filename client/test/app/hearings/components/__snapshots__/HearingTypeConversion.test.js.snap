@@ -256,7 +256,6 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
             showMissingEmailAlert={true}
             showOnlyAppellantName={true}
             type="Virtual"
-            userVsoEmployee={false}
             virtualHearing={
               Object {
                 "appellantEmail": "Abellona.Valtas@test.com",

@@ -29,8 +29,7 @@ export const AppellantSection = ({
   formFieldsOnly,
   appellantTimezone,
   appellantEmailAddress,
-  appellantEmailType,
-  userVsoEmployee
+  appellantEmailType
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -63,21 +62,20 @@ export const AppellantSection = ({
                   label={`${appellantTitle} Name`}
                   text={appellantName}
                 />
-
-                {!userVsoEmployee && (hearing?.appellantIsNotVeteran && hearing?.appellantRelationship) && (
+                {hearing?.appellantIsNotVeteran && hearing?.appellantRelationship && (
                   <ReadOnly
                     label="Relation to Veteran"
                     text={hearing?.appellantRelationship}
                   />
                 )}
-                {!userVsoEmployee && <AddressLine
+                <AddressLine
                   label={`${appellantTitle} Mailing Address`}
                   name={appellantName}
                   addressLine1={hearing?.appellantAddressLine1}
                   addressState={hearing?.appellantState}
                   addressCity={hearing?.appellantCity}
                   addressZip={hearing?.appellantZip}
-                />}
+                />
               </React.Fragment>
             )}
         </React.Fragment>
@@ -118,11 +116,6 @@ export const AppellantSection = ({
             error={errors?.appellantEmailAddress}
             type={type}
             update={update}
-            helperLabel={userVsoEmployee ?
-              COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO :
-              COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT
-            }
-            showHelper
           />
           {showMissingAlert && (
             <div>
@@ -140,8 +133,7 @@ export const AppellantSection = ({
 };
 
 AppellantSection.defaultProps = {
-  schedulingToVirtual: true,
-  userVsoEmployee: false
+  schedulingToVirtual: true
 };
 
 AppellantSection.propTypes = {
@@ -162,6 +154,5 @@ AppellantSection.propTypes = {
   formFieldsOnly: PropTypes.bool,
   appellantTimezone: PropTypes.string,
   appellantEmailAddress: PropTypes.string,
-  appellantEmailType: PropTypes.string,
-  userVsoEmployee: PropTypes.bool
+  appellantEmailType: PropTypes.string
 };
