@@ -15,13 +15,15 @@ RSpec.feature "Convert hearing request type" do
   let!(:vso_user) { create(:user, :vso_role, email: "DefinitelyNotNull@All.com") }
   let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
 
-  def verify_form_pre_population
-    appellant_name = if appeal.is_a?(Appeal)
-                       "#{appeal.appellant.first_name} #{appeal.appellant.last_name}"
-                     else
-                       "#{appeal.appellant[:first_name]} #{appeal.appellant[:last_name]}"
-                     end
+  def appellant_name
+    if appeal.is_a?(Appeal)
+      "#{appeal.appellant.first_name} #{appeal.appellant.last_name}"
+    else
+      "#{appeal.appellant[:first_name]} #{appeal.appellant[:last_name]}"
+    end
+  end
 
+  def verify_form_pre_population
     [appellant_name,
      poa.representative_name,
      poa.representative_type,
@@ -42,6 +44,7 @@ RSpec.feature "Convert hearing request type" do
         step "navigate to the VSO Form" do
           User.authenticate!(user: vso_user)
           visit "queue/appeals/#{appeal.external_id}"
+          find(".usa-grid")
           expect(page).to have_content("Video")
           click_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
         end
@@ -262,17 +265,15 @@ RSpec.feature "Convert hearing request type" do
 
   describe "for legacy appeals and hearings" do
     let(:ssn) { Generators::Random.unique_ssn }
+    let!(:case) { create(:case, :video_hearing_requested) }
     let!(:appeal) do
-      create(:legacy_appeal,
-             :with_schedule_hearing_tasks,
-             vacols_case: create(:case, bfcorlid: "#{ssn}S"))
+      a = create(:legacy_appeal,
+                 :with_schedule_hearing_tasks,
+                 vacols_case: create(:case, :assigned, bfcorlid: "#{ssn}S", user: vso_user))
+      a.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.video)
+      a
     end
-    let!(:poa) do
-      create(:bgs_power_of_attorney,
-             :with_name_cached,
-             appeal: appeal,
-             claimant_participant_id: appeal.sanitized_vbms_id)
-    end
+    let!(:poa) { appeal.power_of_attorney.bgs_power_of_attorney }
 
     context "whenever a legacy hearing has not yet been scheduled" do
       it_behaves_like "unscheduled hearings"
