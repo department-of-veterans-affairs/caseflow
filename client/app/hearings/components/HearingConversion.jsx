@@ -114,6 +114,7 @@ export const HearingConversion = ({
           <Checkbox
             label={COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION}
             name="affirmPermission"
+            id="affirmPermission"
             value={checkboxPermission}
             onChange={(checked) => setCheckboxPermission(checked)}
           />
@@ -131,6 +132,7 @@ export const HearingConversion = ({
               </div>
             }
             name="affirmAccess"
+            id="affirmAccess"
             value={checkboxAccess}
             onChange={(checked) => setCheckboxAccess(checked)}
           />

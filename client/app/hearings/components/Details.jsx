@@ -378,6 +378,7 @@ const HearingDetails = (props) => {
         <span {...css({ float: 'right' })}>
           <Button
             name="Save"
+            id="Save"
             disabled={!formsUpdated || disabled || (!hearingConversionCheckboxes && userVsoEmployee)}
             loading={loading}
             className="usa-button"

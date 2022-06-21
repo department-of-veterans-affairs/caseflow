@@ -890,9 +890,10 @@ RSpec.feature "Hearing Details", :all_dbs do
   end
 
   context "with VSO user role" do
-    let!(:current_user) { User.authenticate!(roles: ["VSO"]) }
+    # let!(:current_user) { User.authenticate!(roles: ["VSO"]) }
 
     scenario "user is immediately redirected to the Convert to Virtual form" do
+      User.authenticate!(user: vso_user)
       visit "hearings/" + hearing.external_id.to_s + "/details"
       expect(page).to have_content(format(COPY::CONVERT_HEARING_TITLE, "Virtual"))
       expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS)
@@ -901,17 +902,30 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to_not have_content(COPY::CENTRAL_OFFICE_CHANGE_TO_VIRTUAL)
 
       step "the submit button is disabled at first" do
-        click_button("Save")
-        expect(page).to have_current_path("hearings/" + hearing.external_id.to_s + "/details")
+        fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
+        fill_in "POA/Representative Email (for these notifications only)", with: fill_in_rep_email
+  
+        # Update the POA and Appellant Timezones
+        click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
+        click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
+
+        expect(page).to have_button("Save", disabled: true)
+        expect(page).to have_current_path("/hearings/" + hearing.external_id.to_s + "/details")
       end
+
       step "the submit button is disabled after one checkbox is selected" do
-        click_button("affirmPermission")
-        click_button("Save")
-        expect(page).to have_current_path("hearings/" + hearing.external_id.to_s + "/details")
+        # find(".cf-form-checkbox").find("label[for=affirmPermission]").click
+        checkboxes = page.all(".cf-form-checkbox > label")
+        checkboxes[0].click
+        expect(page).to have_button("Save", disabled: true)
+        expect(page).to have_current_path("/hearings/" + hearing.external_id.to_s + "/details")
       end
+
       step "the submit button goes through after both checkboxes are selected" do
-        click_button("affirmAccess")
-        click_button("affirmPermission")
+        checkboxes = page.all(".cf-form-checkbox > label")
+        checkboxes[1].click
+        byebug
+        expect(page).to have_button("Save", disabled: false)
         click_button("Save")
         # expect success
         expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
@@ -928,6 +942,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         expect(page).to have_content(success_title)
         expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
       end
+
     end
   end
 end
