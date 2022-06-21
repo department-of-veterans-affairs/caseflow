@@ -76,12 +76,11 @@ export const HearingConversion = ({
       });
   };
 
-  // Pre-fill representative timezone on mount.
   useEffect(() => {
     // Focus the top of the page
     window.scrollTo(0, 0);
 
-    // Set the emails and timezone to defaults if not already set
+    // Set the representative emails and timezone to defaults if not already set
     if (virtual) {
       prefillFields();
     }
