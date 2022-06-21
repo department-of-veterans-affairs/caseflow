@@ -64,7 +64,6 @@ RSpec.feature "Convert hearing request type" do
         step "navigate to the VSO Form" do
           User.authenticate!(user: vso_user)
           visit "queue/appeals/#{appeal.external_id}"
-          find(".usa-grid")
           expect(page).to have_content("Video")
           click_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
         end
@@ -189,7 +188,6 @@ RSpec.feature "Convert hearing request type" do
       end
 
       step "Confirm success message" do
-        find(".usa-alert-heading")
         expect(page).to have_content(
           "You have successfully converted #{hearing.appellant_first_name} " \
           "#{hearing.appellant_last_name}'s hearing to virtual"
