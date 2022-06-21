@@ -23,13 +23,33 @@ RSpec.feature "Convert hearing request type" do
     end
   end
 
+  def timezone_label_by_value(timezone_value)
+    Constants.TIMEZONES.to_h.key(timezone_value)
+  end
+
+  def expected_field_values
+    expected_values = [
+      appellant_name,
+      timezone_label_by_value(appeal.appellant_tz),
+      timezone_label_by_value(appeal.representative_tz),
+      vso_user.email
+    ]
+
+    if appeal.is_a?(Appeal)
+      expected_values.concat([
+                               poa.representative_name,
+                               poa.representative_type
+                             ])
+    else
+      expected_values.concat([
+                               poa.bgs_representative_name,
+                               poa.bgs_representative_type
+                             ])
+    end
+  end
+
   def verify_form_pre_population
-    [appellant_name,
-     poa.representative_name,
-     poa.representative_type,
-     "Pacific Time (US & Canada)",
-     "Eastern Time (US & Canada)",
-     vso_user.email].each do |field_value|
+    expected_field_values.compact.each do |field_value|
       expect(page).to have_content(field_value)
     end
 
@@ -61,18 +81,18 @@ RSpec.feature "Convert hearing request type" do
           expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
 
           # Fill out email field and expect validation message on invalid email
-          fill_in "Appellant Email", with: "appellant@te"
+          fill_in "#{appellant_title} Email", with: "appellant@te"
           find("body").click
           expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL)
-          fill_in "Appellant Email", with: "appellant@test.com"
+          fill_in "#{appellant_title} Email", with: "appellant@test.com"
 
           # Check if button remains disabled
           expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
 
-          fill_in "Confirm Appellant Email", with: "appellant@not-matching"
+          fill_in "Confirm #{appellant_title} Email", with: "appellant@not-matching"
           find("body").click
           expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
-          fill_in "Confirm Appellant Email", with: "appellant@test.com"
+          fill_in "Confirm #{appellant_title} Email", with: "appellant@test.com"
           expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
 
           # Set appellant tz to null
@@ -93,11 +113,11 @@ RSpec.feature "Convert hearing request type" do
           expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: false)
 
           # Alter original email to make sure that the confirm email validation picks up on the change.
-          fill_in "Appellant Email", with: "valid@something-different.com"
+          fill_in "#{appellant_title} Email", with: "valid@something-different.com"
           expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
           expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
 
-          fill_in "Appellant Email", with: "appellant@test.com"
+          fill_in "#{appellant_title} Email", with: "appellant@test.com"
           expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
 
           click_button("Convert Hearing To Virtual")
@@ -132,18 +152,18 @@ RSpec.feature "Convert hearing request type" do
         expect(page).to have_button("button-Save", disabled: true)
 
         # Fill out email field and expect validation message on invalid email
-        fill_in "Appellant Email", with: "appellant@te"
+        fill_in "#{appellant_title} Email", with: "appellant@te"
         find("body").click
         expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL)
-        fill_in "Appellant Email", with: "appellant@test.com"
+        fill_in "#{appellant_title} Email", with: "appellant@test.com"
 
         # Check if button remains disabled
         expect(page).to have_button("button-Save", disabled: true)
 
-        fill_in "Confirm Appellant Email", with: "appellant@not-matching"
+        fill_in "Confirm #{appellant_title} Email", with: "appellant@not-matching"
         find("body").click
         expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
-        fill_in "Confirm Appellant Email", with: "appellant@test.com"
+        fill_in "Confirm #{appellant_title} Email", with: "appellant@test.com"
         expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
 
         # Enable this section once APPEALS-4535 is merged in
@@ -158,11 +178,11 @@ RSpec.feature "Convert hearing request type" do
         expect(page).to have_button("button-Save", disabled: false)
 
         # Alter original email to make sure that the confirm email validation picks up on the change.
-        fill_in "Appellant Email", with: "valid@something-different.com"
+        fill_in "#{appellant_title} Email", with: "valid@something-different.com"
         expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
         expect(page).to have_button("button-Save", disabled: true)
 
-        fill_in "Appellant Email", with: "appellant@test.com"
+        fill_in "#{appellant_title} Email", with: "appellant@test.com"
         expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
 
         click_button "button-Save"
@@ -192,6 +212,7 @@ RSpec.feature "Convert hearing request type" do
              appeal: appeal,
              claimant_participant_id: appeal.claimant.participant_id)
     end
+    let!(:appellant_title) { appeal.appellant_is_not_veteran ? "Appellant" : "Veteran" }
 
     context "whenever a hearing has not yet been scheduled" do
       it_behaves_like "unscheduled hearings"
@@ -265,15 +286,16 @@ RSpec.feature "Convert hearing request type" do
 
   describe "for legacy appeals and hearings" do
     let(:ssn) { Generators::Random.unique_ssn }
-    let!(:case) { create(:case, :video_hearing_requested) }
+    let!(:vacols_case) { create(:case, :representative_american_legion) }
     let!(:appeal) do
       a = create(:legacy_appeal,
                  :with_schedule_hearing_tasks,
-                 vacols_case: create(:case, :assigned, bfcorlid: "#{ssn}S", user: vso_user))
+                 vacols_case: vacols_case)
       a.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.video)
       a
     end
-    let!(:poa) { appeal.power_of_attorney.bgs_power_of_attorney }
+    let!(:poa) { PowerOfAttorney.new(vacols_id: vacols_case.bfkey, file_number: "VBMS-ID") }
+    let!(:appellant_title) { appeal.appellant_is_not_veteran ? "Appellant" : "Veteran" }
 
     context "whenever a legacy hearing has not yet been scheduled" do
       it_behaves_like "unscheduled hearings"
