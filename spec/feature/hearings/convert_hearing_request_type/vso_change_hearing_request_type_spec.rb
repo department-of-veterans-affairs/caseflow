@@ -187,6 +187,8 @@ RSpec.feature "Convert hearing request type" do
       end
 
       step "Confirm success message" do
+        sleep(5)
+        byebug
         expect(page).to have_content(
           "You have successfully converted #{appellant_full_name}'s hearing to virtual"
         )
@@ -209,7 +211,6 @@ RSpec.feature "Convert hearing request type" do
              claimant_participant_id: appeal.claimant.participant_id)
     end
     let!(:appellant_title) { appeal.appellant_is_not_veteran ? "Appellant" : "Veteran" }
-    let!(:appellant_full_name) { "#{hearing.appellant_first_name} #{hearing.appellant_last_name}" }
 
     context "whenever a hearing has not yet been scheduled" do
       it_behaves_like "unscheduled hearings"
@@ -274,7 +275,8 @@ RSpec.feature "Convert hearing request type" do
       end
 
       context "converting a scheduled hearing as a VSO user" do
-        let(:hearing) { create(:hearing, hearing_day: hearing_day, appeal: appeal) }
+        let!(:hearing) { create(:hearing, hearing_day: hearing_day, appeal: appeal) }
+        let!(:appellant_full_name) { "#{hearing.appellant_first_name} #{hearing.appellant_last_name}" }
 
         it_behaves_like "scheduled hearings"
       end
@@ -293,14 +295,14 @@ RSpec.feature "Convert hearing request type" do
     end
     let!(:poa) { PowerOfAttorney.new(vacols_id: vacols_case.bfkey, file_number: "VBMS-ID") }
     let!(:appellant_title) { appeal.appellant_is_not_veteran ? "Appellant" : "Veteran" }
-    let!(:appellant_full_name) { "#{hearing.appeal.appellant[:first_name]} #{hearing.appeal.appellant[:last_name]}" }
 
     context "whenever a legacy hearing has not yet been scheduled" do
       it_behaves_like "unscheduled hearings"
     end
 
     context "whenever a legacy hearing has been scheduled" do
-      let(:hearing) { create(:legacy_hearing, hearing_day: hearing_day2, appeal: appeal) }
+      let!(:hearing) { create(:legacy_hearing, hearing_day: hearing_day2, appeal: appeal) }
+      let!(:appellant_full_name) { "#{hearing.appeal.appellant[:first_name]} #{hearing.appeal.appellant[:last_name]}" }
 
       it_behaves_like "scheduled hearings"
     end
