@@ -136,7 +136,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
       click_dropdown(name: "judgeDropdown", index: 0, wait: 30)
 
-      click_button("button-Save")
+      click_button("Save")
 
       expect(page).to have_no_content(expected_alert)
       expect(page).to have_content(virtual_hearing_alert)
@@ -202,7 +202,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
 
-      click_button("button-Cancel")
+      click_button("Cancel")
 
       expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
     end
@@ -222,7 +222,9 @@ RSpec.feature "Hearing Details", :all_dbs do
       click_label "affirmPermission"
       click_label "affirmAccess"
 
-      click_button("button-Save")
+      sleep(5)
+
+      click_button("Save")
 
       expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
 
@@ -969,7 +971,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       click_dropdown(name: "hearingType", index: 0)
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
 
-      click_button("button-Cancel")
+      click_button("Cancel")
     end
 
     scenario "convert to virtual hearing form does not hide data for hearings user" do
