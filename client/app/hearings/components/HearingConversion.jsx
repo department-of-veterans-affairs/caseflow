@@ -32,6 +32,7 @@ export const HearingConversion = ({
   const virtual = type === 'change_to_virtual';
   const video = hearing.readableRequestType === 'Video';
   const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
+
   let helperLabel = '';
 
   if ((virtual && userVsoEmployee) === true) {
@@ -61,7 +62,8 @@ export const HearingConversion = ({
     appellantEmailType: 'appellantEmailAddress',
     representativeEmailType: 'representativeEmailAddress',
     showTimezoneField: true,
-    schedulingToVirtual: virtual
+    schedulingToVirtual: virtual,
+    userVsoEmployee
   };
 
   const prefillFields = () => {
@@ -92,21 +94,23 @@ export const HearingConversion = ({
     <AppSegment filledBackground>
       <h1 className="cf-margin-bottom-0">{title}</h1>
       <span>{sprintf(helperLabel, appellantTitle)}</span>
-      <ReadOnly label="Hearing Date" text={DateUtil.formatDateStr(scheduledFor)} />
-      <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-        <div className="usa-width-one-half">
-          <HearingTime
-            vertical
-            label="Hearing Time"
-            disableRadioOptions={virtual && !video}
-            enableZone
-            localZone={hearing.regionalOfficeTimezone}
-            onChange={(scheduledTimeString) => update('hearing', { scheduledTimeString })}
-            value={hearing.scheduledTimeString}
-          />
-          {!video && <HelperText label={COPY.VIRTUAL_HEARING_TIME_HELPER_TEXT} />}
+      {!userVsoEmployee && <div>
+        <ReadOnly label="Hearing Date" text={DateUtil.formatDateStr(scheduledFor)} />
+        <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
+          <div className="usa-width-one-half">
+            <HearingTime
+              vertical
+              label="Hearing Time"
+              disableRadioOptions={virtual && !video}
+              enableZone
+              localZone={hearing.regionalOfficeTimezone}
+              onChange={(scheduledTimeString) => update('hearing', { scheduledTimeString })}
+              value={hearing.scheduledTimeString}
+            />
+            {!video && <HelperText label={COPY.VIRTUAL_HEARING_TIME_HELPER_TEXT} />}
+          </div>
         </div>
-      </div>
+      </div>}
       <AppellantSection {...sectionProps} />
       <RepresentativeSection {...sectionProps} />
       {userVsoEmployee &&
@@ -138,7 +142,7 @@ export const HearingConversion = ({
           />
         </div>
       }
-      <VirtualHearingSection hide={!virtual} label="Veterans Law Judge (VLJ)">
+      <VirtualHearingSection hide={!virtual || userVsoEmployee} label="Veterans Law Judge (VLJ)">
         <div className="usa-grid">
           <div className="usa-width-one-half">
             <JudgeDropdown
