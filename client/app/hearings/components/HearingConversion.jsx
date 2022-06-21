@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -129,7 +129,7 @@ export const HearingConversion = ({
                 <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span>
                 <a
                   href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf"
-                  style={{ textDecoration: "underline" }}
+                  style={{ textDecoration: 'underline' }}
                 >
                   Learn more
                 </a>

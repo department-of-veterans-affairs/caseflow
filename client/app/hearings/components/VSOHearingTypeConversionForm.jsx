@@ -91,7 +91,7 @@ export const VSOHearingTypeConversionForm = ({
               <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span><br />
               <a
                 href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf"
-                style={{ textDecoration: "underline" }}
+                style={{ textDecoration: 'underline' }}
               >
                 Learn more
               </a>
@@ -133,7 +133,7 @@ VSOHearingTypeConversionForm.defaultProps = {
 
 VSOHearingTypeConversionForm.propTypes = {
   appeal: PropTypes.object,
-  type: PropTypes.oneOf(["Virtual"]),
+  type: PropTypes.oneOf(['Virtual']),
   isLoading: PropTypes.bool,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
