@@ -114,7 +114,7 @@ RSpec.feature "Convert hearing request type" do
     end
   end
 
-  context "When appeal has no scheduled hearings" do
+  context "When appeal hearing request type is already virtual" do
     scenario "no link appears in hearing section" do
       step "navigate to the VSO Form" do
         appeal.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.virtual)
