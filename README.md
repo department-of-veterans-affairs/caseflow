@@ -132,7 +132,7 @@ Install the base dependencies via Homebrew:
 brew install rbenv nodenv yarn
 brew tap ouchxp/nodenv
 brew install nodenv-nvmrc
-brew tap caskroom/cask
+brew tap homebrew/cask
 brew install --cask chromedriver
 ```
 **Linux**
