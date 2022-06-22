@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "./spec/support/shared_context/shared_context_docket_dates.rb"
 
 describe AppealSeries, :all_dbs do

@@ -261,7 +261,6 @@ describe HigherLevelReviewIntake, :all_dbs do
     context "when a legacy VACOLS opt-in occurs" do
       include_context "legacy appeal", include_shared: true
 
-
       let(:issue_data) do
         {
           profile_date: "2018-04-30T11:11:00.000-04:00",

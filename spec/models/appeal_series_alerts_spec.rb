@@ -219,8 +219,8 @@ describe AppealSeriesAlerts, :all_dbs do
         let(:notice_date) { 61.days.ago }
 
         it "does not include an alert" do
-          expect(alerts.find { |a| a[:type] == :ramp_eligible }).to be_nil
           expect(alerts.find { |a| a[:type] == :ramp_ineligible }).to be_nil
+          expect(alerts.find { |a| a[:type] == :ramp_eligible }).to be_nil
         end
       end
 
