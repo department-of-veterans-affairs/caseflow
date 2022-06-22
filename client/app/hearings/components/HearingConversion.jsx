@@ -126,7 +126,7 @@ export const HearingConversion = ({
           <Checkbox
             label={
               <div>
-                <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span>
+                <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span>&nbsp;
                 <a
                   href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf"
                   style={{ textDecoration: 'underline' }}
