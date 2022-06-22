@@ -107,7 +107,7 @@ describe Representative, :postgres do
         end
       end
 
-      context "when VSO does not represent the appellant" do
+      RSpec.shared_context("when VSO does not represent the appellant") do
         let(:poas) { [] }
 
         context "when the appeal is on the direct_review docket" do
@@ -170,30 +170,7 @@ describe Representative, :postgres do
         end
       end
 
-      context "when VSO does not represent the appellant" do
-        let(:poas) { [] }
-
-        context "when the appeal is on the direct_review docket" do
-          let(:docket) { Constants.AMA_DOCKETS.direct_review }
-          it "should return false for all docket types" do
-            expect(subject).to eq(false)
-          end
-        end
-
-        context "when the appeal is on the evidence_submission docket" do
-          let(:docket) { Constants.AMA_DOCKETS.evidence_submission }
-          it "should return false for all docket types" do
-            expect(subject).to eq(false)
-          end
-        end
-
-        context "when the appeal is on the hearing docket" do
-          let(:docket) { Constants.AMA_DOCKETS.hearing }
-          it "should return false for all docket types" do
-            expect(subject).to eq(false)
-          end
-        end
-      end
+      include_context "when VSO does not represent the appellant"
     end
 
     context "when vso_configs record for this VSO doesn't contain any docket types" do
@@ -229,30 +206,7 @@ describe Representative, :postgres do
         end
       end
 
-      context "when VSO does not represent the appellant" do
-        let(:poas) { [] }
-
-        context "when the appeal is on the direct_review docket" do
-          let(:docket) { Constants.AMA_DOCKETS.direct_review }
-          it "should return false for all docket types" do
-            expect(subject).to eq(false)
-          end
-        end
-
-        context "when the appeal is on the evidence_submission docket" do
-          let(:docket) { Constants.AMA_DOCKETS.evidence_submission }
-          it "should return false for all docket types" do
-            expect(subject).to eq(false)
-          end
-        end
-
-        context "when the appeal is on the hearing docket" do
-          let(:docket) { Constants.AMA_DOCKETS.hearing }
-          it "should return false for all docket types" do
-            expect(subject).to eq(false)
-          end
-        end
-      end
+      include_context "when VSO does not represent the appellant"
     end
   end
 
