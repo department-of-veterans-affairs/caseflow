@@ -222,8 +222,6 @@ RSpec.feature "Hearing Details", :all_dbs do
       click_label "affirmPermission"
       click_label "affirmAccess"
 
-      sleep(5)
-
       click_button("Save")
 
       expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
