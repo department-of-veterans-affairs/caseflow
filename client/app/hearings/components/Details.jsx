@@ -70,6 +70,10 @@ const HearingDetails = (props) => {
   const [emailConfirmationModalType, setEmailConfirmationModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
   const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
+
+  // establish state of checkboxes in HearingConversion
+  const [hearingConversionCheckboxes, setHearingConversionCheckboxes] = useState(false);
+
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const convertingToVirtual = converting === 'change_to_virtual';
   const [formSubmittable, setFormSubmittable] = useState(false);
@@ -342,6 +346,7 @@ const HearingDetails = (props) => {
           scheduledFor={hearing?.scheduledFor}
           errors={virtualHearingErrors}
           userVsoEmployee={userVsoEmployee}
+          updateCheckboxes={setHearingConversionCheckboxes}
         />
       ) : (
         <AppSegment filledBackground>
@@ -378,6 +383,7 @@ const HearingDetails = (props) => {
       )}
       <div {...css({ overflow: 'hidden' })}>
         <Button
+          id="Cancel"
           name="Cancel"
           linkStyling
           onClick={handleCancelButton}
@@ -387,10 +393,12 @@ const HearingDetails = (props) => {
         </Button>
         <span {...css({ float: 'right' })}>
           <Button
+            id="Save"
             name="Save"
             disabled={!formsUpdated ||
               (disabled && !userVsoEmployee) ||
-              (!formSubmittable && userVsoEmployee)
+              (!formSubmittable && userVsoEmployee) ||
+              (!hearingConversionCheckboxes && userVsoEmployee)
             }
             loading={loading}
             className="usa-button"

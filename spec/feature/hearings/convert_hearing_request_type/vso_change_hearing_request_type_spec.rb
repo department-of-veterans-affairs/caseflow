@@ -151,12 +151,12 @@ RSpec.feature "Convert hearing request type" do
         # Check if button is disabled on page load
         expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
 
-        # TODO: Uncomment once 4535 is merged into the feature branch.
-        # click_label("Affirm Permission")
-        # click_label("Affirm Access")
+        # Click on the checkboxes
+        click_label("Affirm Permission")
+        click_label("Affirm Access")
 
         # Check if button remains disabled
-        # expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
 
         # Fill out email field and expect validation message on invalid email
         fill_in "Appellant Email", with: "appellant@test"

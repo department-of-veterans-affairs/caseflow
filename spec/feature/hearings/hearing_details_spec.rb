@@ -136,7 +136,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
       click_dropdown(name: "judgeDropdown", index: 0, wait: 30)
 
-      click_button("button-Save")
+      click_button("Save")
 
       expect(page).to have_no_content(expected_alert)
       expect(page).to have_content(virtual_hearing_alert)
@@ -212,8 +212,6 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
-      expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
-
       fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
       fill_in "POA/Representative Email (for these notifications only)", with: fill_in_rep_email
 
@@ -221,7 +219,10 @@ RSpec.feature "Hearing Details", :all_dbs do
       click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
       click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
 
-      click_button("button-Save")
+      click_label "affirmPermission"
+      click_label "affirmAccess"
+
+      click_button("Save")
 
       expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
 
@@ -890,38 +891,43 @@ RSpec.feature "Hearing Details", :all_dbs do
   end
 
   context "with VSO user role" do
-    let!(:current_user) { User.authenticate!(roles: ["VSO"]) }
+    # let!(:current_user) { User.authenticate!(roles: ["VSO"]) }
 
     scenario "user is immediately redirected to the Convert to Virtual form" do
+      User.authenticate!(user: vso_user)
       visit "hearings/" + hearing.external_id.to_s + "/details"
       expect(page).to have_content(format(COPY::CONVERT_HEARING_TITLE, "Virtual"))
-      # TODO: Uncomment these once 4535 is merged into the feature branch.
-      # expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS)
-      # expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION)
+      expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS)
+      expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION)
       expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_SUBTITLE_3)
       expect(page).to_not have_content(COPY::CENTRAL_OFFICE_CHANGE_TO_VIRTUAL)
 
       step "the submit button is disabled at first" do
-        expect(page).to have_button("button-Save", disabled: true)
-      end
-      step "the submit button is disabled after one checkbox is selected" do
-        # TODO: Uncomment this once 4535 is merged into the feature branch.
-        # click_label("Affirm Permission")
-        expect(page).to have_button("button-Save", disabled: true)
-      end
-      step "the submit button is enabled whenever all fields are populated" do
-        fill_in "Veteran Email", with: "appellant@test.com"
-        # TODO: Remove after 4531 is merged into the feature branch.
-        fill_in "POA/Representative Email (for these notifications only)", with: "rep@test.com"
+        fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
+        fill_in "POA/Representative Email (for these notifications only)", with: fill_in_rep_email
 
-        click_dropdown(name: "appellantTz", index: 1)
-        click_dropdown(name: "representativeTz", index: 2)
-        # TODO: Uncomment this once 4535 is merged into the feature branch.
-        # click_label("Affirm Access")
-        click_button("button-Save")
+        # Update the POA and Appellant Timezones
+        click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
+        click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
+
+        expect(page).to have_button("Save", disabled: true)
+        expect(page).to have_current_path("/hearings/" + hearing.external_id.to_s + "/details")
+      end
+
+      step "the submit button is disabled after one checkbox is selected" do
+        click_label "affirmPermission"
+        expect(page).to have_button("Save", disabled: true)
+        expect(page).to have_current_path("/hearings/" + hearing.external_id.to_s + "/details")
+      end
+
+      step "the submit button goes through after both checkboxes are selected" do
+        click_label "affirmAccess"
+        expect(page).to have_button("Save", disabled: false)
+        click_button("Save")
         # expect success
         expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
 
+        # might not need all of this
         appellant_name = if hearing.appeal.appellant_is_not_veteran
                            "#{hearing.appellant_first_name} #{hearing.appellant_last_name}"
                          else
@@ -959,7 +965,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       click_dropdown(name: "hearingType", index: 0)
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
 
-      click_button("button-Cancel")
+      click_button("Cancel")
     end
 
     scenario "convert to virtual hearing form does not hide data for hearings user" do
