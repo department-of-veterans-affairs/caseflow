@@ -187,11 +187,8 @@ describe SupplementalClaimIntake, :all_dbs do
     end
 
     context "when a legacy VACOLS opt-in occurs" do
-      let(:vacols_issue) { create(:case_issue) }
-      let(:vacols_case) { create(:case, case_issues: [vacols_issue]) }
-      let(:legacy_appeal) do
-        create(:legacy_appeal, vacols_case: vacols_case)
-      end
+      include_context "legacy appeal", include_shared: true
+
 
       let(:issue_data) do
         {
