@@ -1754,6 +1754,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters an NOD Date after original NOD Date" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: nod_date
           find(".cf-form-dropdown", text: "Reason for edit").click
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
