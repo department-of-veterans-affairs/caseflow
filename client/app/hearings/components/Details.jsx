@@ -88,9 +88,6 @@ const HearingDetails = (props) => {
     canSubmit();
   }, [hearing]);
 
-  // establish state of checkboxes in HearingConversion
-  const [hearingConversionCheckboxes, setHearingConversionCheckboxes] = useState(false);
-
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const convertingToVirtual = converting === 'change_to_virtual';
   // Method to reset the state
