@@ -68,7 +68,6 @@ export const VSOHearingTypeConversionForm = ({
     showMissingEmailAlert: true,
     type
   };
-
   const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
 
   return (
