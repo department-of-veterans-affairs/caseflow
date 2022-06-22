@@ -1,28 +1,28 @@
 /* eslint-disable max-lines */
 /* eslint-disable camelcase */
-import React from "react";
-import _, { capitalize, escapeRegExp } from "lodash";
-import moment from "moment";
-import { compareDesc } from "date-fns";
-import StringUtil from "../util/StringUtil";
+import React from 'react';
+import _, { capitalize, escapeRegExp } from 'lodash';
+import moment from 'moment';
+import { compareDesc } from 'date-fns';
+import StringUtil from '../util/StringUtil';
 import {
   redText,
   ISSUE_DISPOSITIONS,
   VACOLS_DISPOSITIONS,
   LEGACY_APPEAL_TYPES,
-} from "./constants";
-import { css } from "glamor";
+} from './constants';
+import { css } from 'glamor';
 
-import ISSUE_INFO from "../../constants/ISSUE_INFO";
-import DIAGNOSTIC_CODE_DESCRIPTIONS from "../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS";
-import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from "../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID";
-import DECISION_TYPES from "../../constants/APPEAL_DECISION_TYPES";
-import TASK_STATUSES from "../../constants/TASK_STATUSES";
-import REGIONAL_OFFICE_INFORMATION from "../../constants/REGIONAL_OFFICE_INFORMATION";
-import HEARING_DISPOSITION_TYPES from "../../constants/HEARING_DISPOSITION_TYPES";
-import COPY from "../../COPY";
-import { COLORS } from "../constants/AppConstants";
-import { formatDateStrUtc } from "../util/DateUtil";
+import ISSUE_INFO from '../../constants/ISSUE_INFO';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS';
+import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES';
+import TASK_STATUSES from '../../constants/TASK_STATUSES';
+import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
+import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
+import COPY from '../../COPY';
+import { COLORS } from '../constants/AppConstants';
+import { formatDateStrUtc } from '../util/DateUtil';
 
 /**
  * For legacy attorney checkout flow, filter out already-decided issues. Undecided
@@ -48,9 +48,9 @@ export const getUndecidedIssues = (issues) =>
   });
 
 export const mostRecentHeldHearingForAppeal = (appeal) => {
-  const hearings = appeal.hearings
-    .filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held)
-    .sort((h1, h2) => (h1.date < h2.date ? 1 : -1));
+  const hearings = appeal.hearings.
+    filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
+    sort((h1, h2) => (h1.date < h2.date ? 1 : -1));
 
   return hearings.length ? hearings[0] : null;
 };
@@ -72,12 +72,12 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
 };
 
 const taskAttributesFromRawTask = (task) => {
-  const decisionPreparedBy = task.attributes.decision_prepared_by?.first_name
-    ? {
-        firstName: task.attributes.decision_prepared_by.first_name,
-        lastName: task.attributes.decision_prepared_by.last_name,
-      }
-    : null;
+  const decisionPreparedBy = task.attributes.decision_prepared_by?.first_name ?
+    {
+      firstName: task.attributes.decision_prepared_by.first_name,
+      lastName: task.attributes.decision_prepared_by.last_name,
+    } :
+    null;
 
   return {
     uniqueId: task.id,
@@ -174,7 +174,7 @@ const appealAttributesFromRawTask = (task) => ({
   externalId: task.attributes.external_appeal_id,
   docketName: task.attributes.docket_name,
   docketRangeDate: task.attributes.docket_range_date,
-  isLegacyAppeal: task.attributes.docket_name === "legacy",
+  isLegacyAppeal: task.attributes.docket_name === 'legacy',
   caseType: task.attributes.case_type,
   isAdvancedOnDocket: task.attributes.aod,
   overtime: task.attributes.overtime,
@@ -299,7 +299,7 @@ export const prepareAppealIssuesForStore = (appeal) => {
   // so we can refer to this property and phase out use of vacols_sequence_id.
   let issues = appeal.attributes.issues;
 
-  if (appeal.attributes.docket_name === "legacy") {
+  if (appeal.attributes.docket_name === 'legacy') {
     issues = issues.map((issue) => ({
       id: issue.vacols_sequence_id,
       ...issue,
@@ -319,7 +319,7 @@ export const prepareAppealHearingsForStore = (appeal) =>
     disposition: hearing.disposition,
     isVirtual: hearing.is_virtual,
     notes: hearing.notes,
-    createdAt: hearing.created_at,
+    createdAt: hearing.created_at
   }));
 
 const prepareAppealAvailableHearingLocationsForStore = (appeal) =>
@@ -346,9 +346,9 @@ const prepareNodDateUpdatesForStore = (appeal) => {
         newDate: nodDateUpdate.new_date,
         oldDate: nodDateUpdate.old_date,
         updatedAt: nodDateUpdate.updated_at,
-        userFirstName: nodDateUpdate.updated_by.split(" ")[0],
-        userLastName: nodDateUpdate.updated_by.split(" ")[
-          nodDateUpdate.updated_by.split(" ").length - 1
+        userFirstName: nodDateUpdate.updated_by.split(' ')[0],
+        userLastName: nodDateUpdate.updated_by.split(' ')[
+          nodDateUpdate.updated_by.split(' ').length - 1
         ],
       })
     );
@@ -377,12 +377,12 @@ export const prepareAppealForStore = (appeals) => {
       contestedClaim: appeal.attributes.contested_claim,
       veteranAppellantDeceased: appeal.attributes.veteran_appellant_deceased,
       withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
-      isLegacyAppeal: appeal.attributes.docket_name === "legacy",
+      isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
       caseType: appeal.attributes.type,
       isAdvancedOnDocket: appeal.attributes.aod,
-      issueCount: (appeal.attributes.docket_name === "legacy"
-        ? getUndecidedIssues(issues)
-        : issues
+      issueCount: (appeal.attributes.docket_name === 'legacy' ?
+        getUndecidedIssues(issues) :
+        issues
       ).length,
       docketNumber: appeal.attributes.docket_number,
       assignedAttorney: appeal.attributes.assigned_attorney,
@@ -407,7 +407,7 @@ export const prepareAppealForStore = (appeals) => {
       currentUserEmail: appeal.attributes.current_user_email,
       currentUserTimezone: appeal.attributes.current_user_timezone,
       completedHearingOnPreviousAppeal:
-        appeal.attributes["completed_hearing_on_previous_appeal?"],
+        appeal.attributes['completed_hearing_on_previous_appeal?'],
       issues: prepareAppealIssuesForStore(appeal),
       decisionIssues: appeal.attributes.decision_issues,
       canEditRequestIssues: appeal.attributes.can_edit_request_issues,
@@ -460,7 +460,6 @@ export const prepareAppealForStore = (appeals) => {
       appellantSubstitution: appeal.attributes.appellant_substitution,
       substitutions: appeal.attributes.substitutions,
       hasSameAppealSubstitution:
-        // eslint-disable-next-line max-len
         appeal.attributes.substitutions?.[0]?.target_appeal_uuid ===
         appeal.attributes.substitutions?.[0]?.source_appeal_uuid,
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
@@ -509,7 +508,7 @@ export const renderAppealType = (appeal) => {
     <React.Fragment>
       {isAdvancedOnDocket && (
         <span>
-          <span {...redText}>AOD</span>,{" "}
+          <span {...redText}>AOD</span>,{' '}
         </span>
       )}
       {cavc ? <span {...redText}>CAVC</span> : <span>{caseType}</span>}
@@ -518,13 +517,13 @@ export const renderAppealType = (appeal) => {
 };
 
 export const renderLegacyAppealType = ({ aod, type }) => {
-  const cavc = type === "Court Remand";
+  const cavc = type === 'Court Remand';
 
   return (
     <React.Fragment>
       {aod && (
         <span>
-          <span {...redText}>AOD</span>,{" "}
+          <span {...redText}>AOD</span>,{' '}
         </span>
       )}
       {cavc ? <span {...redText}>CAVC</span> : <span>{type}</span>}
@@ -534,17 +533,17 @@ export const renderLegacyAppealType = ({ aod, type }) => {
 
 export const getDecisionTypeDisplay = (checkoutFlow) => {
   switch (checkoutFlow) {
-    case DECISION_TYPES.OMO_REQUEST:
-      return "OMO";
-    case DECISION_TYPES.DRAFT_DECISION:
-      return "Draft Decision";
-    default:
-      return StringUtil.titleCase(checkoutFlow);
+  case DECISION_TYPES.OMO_REQUEST:
+    return 'OMO';
+  case DECISION_TYPES.DRAFT_DECISION:
+    return 'Draft Decision';
+  default:
+    return StringUtil.titleCase(checkoutFlow);
   }
 };
 
 export const getIssueProgramDescription = (issue) =>
-  _.get(ISSUE_INFO[issue.program], "description", "") || "Compensation";
+  _.get(ISSUE_INFO[issue.program], 'description', '') || 'Compensation';
 export const getIssueTypeDescription = (issue) => {
   const { program, type, description } = issue;
 
@@ -559,7 +558,7 @@ export const getIssueDiagnosticCodeLabel = (code) => {
   const readableLabel = DIAGNOSTIC_CODE_DESCRIPTIONS[code];
 
   if (!readableLabel) {
-    return "";
+    return '';
   }
 
   return `${code} - ${readableLabel.staff_description}`;
@@ -576,16 +575,16 @@ export const buildCaseReviewPayload = (
   const payload = {
     data: {
       tasks: {
-        type: draftDecisionSubmission
-          ? "AttorneyCaseReview"
-          : "JudgeCaseReview",
+        type: draftDecisionSubmission ?
+          'AttorneyCaseReview' :
+          'JudgeCaseReview',
         ...decision.opts,
       },
     },
   };
   let isLegacyAppeal = false;
 
-  if ("isLegacyAppeal" in args) {
+  if ('isLegacyAppeal' in args) {
     isLegacyAppeal = args.isLegacyAppeal;
     delete args.isLegacyAppeal;
   }
@@ -602,10 +601,10 @@ export const buildCaseReviewPayload = (
 
   if (isLegacyAppeal) {
     payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => {
-      const issueAttrs = ["type", "readjudication", "id"];
+      const issueAttrs = ['type', 'readjudication', 'id'];
 
       if (issue.disposition === VACOLS_DISPOSITIONS.REMANDED) {
-        issueAttrs.push("remand_reasons");
+        issueAttrs.push('remand_reasons');
       }
 
       return _.extend({}, _.pick(issue, issueAttrs), {
@@ -615,7 +614,7 @@ export const buildCaseReviewPayload = (
   } else {
     payload.data.tasks.issues = issues.map((issue) => {
       if (issue.disposition !== ISSUE_DISPOSITIONS.REMANDED) {
-        return _.omit(issue, "remand_reasons");
+        return _.omit(issue, 'remand_reasons');
       }
 
       return issue;
@@ -649,7 +648,7 @@ export const validateWorkProductTypeAndId = (decision) => {
     return newFormat.test(documentId);
   }
 
-  const initialChar = workProduct.includes("IME") ? "M" : "V";
+  const initialChar = workProduct.includes('IME') ? 'M' : 'V';
   const regex = `^${initialChar}\\d{7}\\.\\d{3,4}$`;
   const oldFormat = new RegExp(regex);
 
@@ -674,9 +673,9 @@ export const taskIsOnHold = (task) => {
 export const taskHasCompletedHold = (task) => {
   if (task.onHoldDuration && task.placedOnHoldAt) {
     return (
-      moment()
-        .startOf("day")
-        .diff(moment(task.placedOnHoldAt), "days") >= task.onHoldDuration
+      moment().
+        startOf('day').
+        diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration
     );
   }
 
@@ -695,7 +694,7 @@ export const taskActionData = ({ task, match }) => {
   const endsWith = (search, str) => {
     const esc = escapeRegExp(search);
 
-    const pattern = new RegExp(`${esc}\\)?$`, "gi");
+    const pattern = new RegExp(`${esc}\\)?$`, 'gi');
 
     return pattern.test(str);
   };
@@ -712,9 +711,9 @@ export const taskActionData = ({ task, match }) => {
 };
 
 export const parentTasks = (childrenTasks, allTasks) => {
-  const parentTaskIds = _.map(childrenTasks, "parentId");
+  const parentTaskIds = _.map(childrenTasks, 'parentId');
   const parentTasks = parentTaskIds.map((parentId) => {
-    return _.find(allTasks, ["taskId", parentId?.toString()]);
+    return _.find(allTasks, ['taskId', parentId?.toString()]);
   });
 
   return parentTasks;
@@ -733,19 +732,19 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
 
   // Always want the decision date
   timelineEvents.push({
-    type: "decisionDate",
+    type: 'decisionDate',
     createdAt: appeal.decisionDate || null,
   });
 
   // Possibly add appellant substitution
   if (appeal.appellantSubstitution) {
     timelineEvents.push({
-      type: "substitutionDate",
+      type: 'substitutionDate',
       createdAt: appeal.appellantSubstitution.substitution_date,
     });
 
     timelineEvents.push({
-      type: "substitutionProcessed",
+      type: 'substitutionProcessed',
       createdAt: appeal.appellantSubstitution.created_at,
       createdBy: appeal.appellantSubstitution.created_by,
       originalAppellantFullName:
@@ -794,7 +793,7 @@ export const sortCaseTimelineEvents = (...eventArrays) => {
 export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
   return _.get(
     objWithLocation,
-    "closestRegionalOffice.location_hash.city",
+    'closestRegionalOffice.location_hash.city',
     defaultToUnknown ? COPY.UNKNOWN_REGIONAL_OFFICE : defaultToUnknown
   );
 };
@@ -806,9 +805,9 @@ export const cityForRegionalOfficeCode = (code) => {
 };
 
 export const hasDASRecord = (task, requireDasRecord) => {
-  return task.appeal.isLegacyAppeal && requireDasRecord
-    ? Boolean(task.taskId)
-    : true;
+  return task.appeal.isLegacyAppeal && requireDasRecord ?
+    Boolean(task.taskId) :
+    true;
 };
 
 export const collapseColumn = (requireDasRecord) => (task) =>
@@ -824,9 +823,9 @@ export const labelForLocation = (appeal, userId) => {
   // If there is no location or the appeal is cancelled, don't show a location
   if (
     !appeal.assignedToLocation ||
-    ["cancelled", "docket_switched"].includes(appeal.status)
+    ['cancelled', 'docket_switched'].includes(appeal.status)
   ) {
-    return "";
+    return '';
   }
 
   // REGEX to determine the current user
@@ -858,15 +857,15 @@ export const labelForLocation = (appeal, userId) => {
  */
 export const statusLabel = (appeal) => {
   switch (appeal.status) {
-    case "cancelled":
-      return (
-        <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>
-      );
-    case "docket_switched":
-      return COPY.CASE_LIST_TABLE_DOCKET_SWITCH_LABEL;
-    default:
-      return appeal.status
-        ? StringUtil.snakeCaseToCapitalized(appeal.status)
-        : "";
+  case 'cancelled':
+    return (
+      <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>
+    );
+  case 'docket_switched':
+    return COPY.CASE_LIST_TABLE_DOCKET_SWITCH_LABEL;
+  default:
+    return appeal.status ?
+      StringUtil.snakeCaseToCapitalized(appeal.status) :
+      '';
   }
 };
