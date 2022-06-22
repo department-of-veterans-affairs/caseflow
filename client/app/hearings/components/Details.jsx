@@ -93,7 +93,6 @@ const HearingDetails = (props) => {
 
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const convertingToVirtual = converting === 'change_to_virtual';
-
   // Method to reset the state
   const resetState = (resetHearingObj) => {
     // Reset the state
