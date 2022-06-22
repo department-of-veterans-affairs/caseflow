@@ -916,7 +916,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         # expect success
         expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
 
-        # might not need all of this 
+        # might not need all of this
         appellant_name = if hearing.appeal.appellant_is_not_veteran
                            "#{hearing.appellant_first_name} #{hearing.appellant_last_name}"
                          else
