@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "./spec/support/shared_context/shared_context_legacy_appeal.rb"
+
 describe SupplementalClaimIntake, :all_dbs do
   before do
     Time.zone = "Eastern Time (US & Canada)"
