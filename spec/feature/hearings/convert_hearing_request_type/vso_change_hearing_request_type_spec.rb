@@ -164,10 +164,11 @@ RSpec.feature "Convert hearing request type" do
         fill_in "Confirm #{appellant_title} Email", with: "appellant@test.com"
         expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
 
-        click_dropdown(name: "appellantTz", index: 0)
-        expect(page).to have_button("button-Save", disabled: true)
-        click_dropdown(name: "representativeTz", index: 0)
-        expect(page).to have_button("button-Save", disabled: true)
+        # Enable this section once APPEALS-5832 is merged in
+        # click_dropdown(name: "appellantTz", index: 0)
+        # expect(page).to have_button("button-Save", disabled: true)
+        # click_dropdown(name: "representativeTz", index: 0)
+        # expect(page).to have_button("button-Save", disabled: true)
 
         # Set appellant and rep timezones to something not null
         click_dropdown(name: "appellantTz", index: 1)
