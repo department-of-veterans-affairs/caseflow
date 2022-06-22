@@ -64,7 +64,6 @@ export const VSOHearingTypeConversionForm = ({
     setIsNotValidEmail,
     type
   };
-
   const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
 
   const prefillFields = () => {

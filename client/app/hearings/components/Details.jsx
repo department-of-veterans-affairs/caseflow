@@ -72,11 +72,13 @@ const HearingDetails = (props) => {
   const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
   const [isNotValidEmail, setIsNotValidEmail] = useState(userVsoEmployee);
   const [formSubmittable, setFormSubmittable] = useState(false);
+  const [hearingConversionCheckboxes, setHearingConversionCheckboxes] = useState(false);
 
   const canSubmit = () => {
     let emailFieldsValid = (
       !isNotValidEmail &&
-      hearing?.appellantEmailAddress === hearing?.appellantConfirmEmailAddress
+      hearing?.appellantEmailAddress === hearing?.appellantConfirmEmailAddress &&
+      hearingConversionCheckboxes
     );
 
     setFormSubmittable(emailFieldsValid);
@@ -335,6 +337,7 @@ const HearingDetails = (props) => {
           errors={virtualHearingErrors}
           userVsoEmployee={userVsoEmployee}
           setIsNotValidEmail={setIsNotValidEmail}
+          updateCheckboxes={setHearingConversionCheckboxes}
         />
       ) : (
         <AppSegment filledBackground>
@@ -371,6 +374,7 @@ const HearingDetails = (props) => {
       )}
       <div {...css({ overflow: 'hidden' })}>
         <Button
+          id="Cancel"
           name="Cancel"
           linkStyling
           onClick={handleCancelButton}
@@ -380,6 +384,7 @@ const HearingDetails = (props) => {
         </Button>
         <span {...css({ float: 'right' })}>
           <Button
+            id="Save"
             name="Save"
             disabled={!formsUpdated ||
               (disabled && !userVsoEmployee) ||
