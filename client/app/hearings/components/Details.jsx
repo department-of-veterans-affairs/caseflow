@@ -76,6 +76,9 @@ const HearingDetails = (props) => {
 
   const canSubmit = () => {
     let emailFieldsValid = (
+      Boolean(hearing?.appellantEmailAddress) &&
+      Boolean(hearing?.appellantTz) &&
+      Boolean(hearing?.representativeTz) &&
       !isNotValidEmail &&
       hearing?.appellantEmailAddress === hearing?.appellantConfirmEmailAddress &&
       hearingConversionCheckboxes
@@ -90,6 +93,7 @@ const HearingDetails = (props) => {
 
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const convertingToVirtual = converting === 'change_to_virtual';
+
   // Method to reset the state
   const resetState = (resetHearingObj) => {
     // Reset the state
