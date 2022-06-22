@@ -13,9 +13,7 @@ import { JudgeDropdown } from 'app/components/DataDropdowns';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import { Checkbox } from '../../../../../client/app/components/Checkbox'
 import RadioField from 'app/components/RadioField';
-import { COPY } from '../../../../../client/COPY.json'
-import { Details } from '../../../../../client/app/hearings/components/Details'
-import { node } from 'prop-types';
+import COPY from '../../../../../client/COPY.json'
 
 const updateSpy = jest.fn();
 const defaultTitle = 'Convert to Virtual';
