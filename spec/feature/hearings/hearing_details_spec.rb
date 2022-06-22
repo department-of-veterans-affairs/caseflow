@@ -915,16 +915,13 @@ RSpec.feature "Hearing Details", :all_dbs do
       end
 
       step "the submit button is disabled after one checkbox is selected" do
-        # find(".cf-form-checkbox").find("label[for=affirmPermission]").click
-        checkboxes = page.all(".cf-form-checkbox > label")
-        checkboxes[0].click
+        click_label "affirmPermission"
         expect(page).to have_button("Save", disabled: true)
         expect(page).to have_current_path("/hearings/" + hearing.external_id.to_s + "/details")
       end
 
       step "the submit button goes through after both checkboxes are selected" do
-        checkboxes = page.all(".cf-form-checkbox > label")
-        checkboxes[1].click
+      click_label "affirmAccess"
         expect(page).to have_button("Save", disabled: false)
         click_button("Save")
         # expect success
