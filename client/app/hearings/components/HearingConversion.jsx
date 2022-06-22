@@ -160,7 +160,6 @@ export const HearingConversion = ({
           />
         </div>
       }
-
       <VirtualHearingSection hide={!virtual || userVsoEmployee} label="Veterans Law Judge (VLJ)">
         <div className="usa-grid">
           <div className="usa-width-one-half">
