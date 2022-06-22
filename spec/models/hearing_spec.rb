@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "./spec/support/shared_context/shared_context_hearing.rb"
 
 require "models/concerns/has_virtual_hearing_examples"
@@ -167,7 +168,6 @@ describe Hearing, :postgres do
   end
 
   context "hearing email recipient" do
-    
     include_context "shared context hearing", include_shared: true
 
     shared_context "returns existing recipient" do

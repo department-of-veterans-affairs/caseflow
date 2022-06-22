@@ -147,6 +147,63 @@ RSpec.feature "Convert hearing request type" do
         click_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
         expect(page).to have_current_path("/hearings/#{appeal.hearings.first.uuid}/details")
       end
+      step "test form validation and submit it" do
+        # Check if button is disabled on page load
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
+
+        # Click on the checkboxes
+        click_label("affirmPermission")
+        click_label("affirmAccess")
+
+        # Check if button remains disabled
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
+
+        # Fill out email field and expect validation message on invalid email
+        fill_in "Appellant Email", with: "appellant@test"
+
+        # Check if button remains disabled
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
+
+        # Set appellant tz to null
+        click_dropdown(name: "appellantTz", index: 0)
+
+        # Check if button remains disabled
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
+
+        # Set rep tz to null
+        click_dropdown(name: "representativeTz", index: 0)
+
+        # Check if button remains disabled
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
+
+        # Set appellant and rep timezones to something not null
+        click_dropdown(name: "appellantTz", index: 1)
+        click_dropdown(name: "representativeTz", index: 2)
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: false)
+
+        # set appellant email to null
+        fill_in "Appellant Email", with: ""
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
+
+        # fill appellant email back in
+        fill_in "Appellant Email", with: "appellant@test.com"
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: false)
+
+        # set appellantTz to null then not to null
+        click_dropdown(name: "appellantTz", index: 0)
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
+        click_dropdown(name: "appellantTz", index: 1)
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: false)
+
+        # set the representativeTz to null then not to null
+        click_dropdown(name: "representativeTz", index: 0)
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
+        click_dropdown(name: "representativeTz", index: 2)
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: false)
+
+        # Convert button should now be enabled
+        click_button("Convert to Virtual Hearing")
+      end
     end
   end
 

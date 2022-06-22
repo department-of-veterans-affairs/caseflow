@@ -71,8 +71,26 @@ const HearingDetails = (props) => {
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
   const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
 
+  // establish state of checkboxes in HearingConversion
+  const [hearingConversionCheckboxes, setHearingConversionCheckboxes] = useState(false);
+
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const convertingToVirtual = converting === 'change_to_virtual';
+  const [formSubmittable, setFormSubmittable] = useState(false);
+
+  const canSubmit = () => {
+    let allFieldsValid = (
+      Boolean(hearing?.appellantEmailAddress) &&
+      Boolean(hearing?.appellantTz) &&
+      Boolean(hearing?.representativeTz)
+    );
+
+    setFormSubmittable(allFieldsValid);
+  };
+
+  useEffect(() => {
+    canSubmit();
+  }, [hearing]);
   // Method to reset the state
   const resetState = (resetHearingObj) => {
     // Reset the state
@@ -328,6 +346,7 @@ const HearingDetails = (props) => {
           scheduledFor={hearing?.scheduledFor}
           errors={virtualHearingErrors}
           userVsoEmployee={userVsoEmployee}
+          updateCheckboxes={setHearingConversionCheckboxes}
         />
       ) : (
         <AppSegment filledBackground>
@@ -364,6 +383,7 @@ const HearingDetails = (props) => {
       )}
       <div {...css({ overflow: 'hidden' })}>
         <Button
+          id="Cancel"
           name="Cancel"
           linkStyling
           onClick={handleCancelButton}
@@ -373,8 +393,13 @@ const HearingDetails = (props) => {
         </Button>
         <span {...css({ float: 'right' })}>
           <Button
+            id="Save"
             name="Save"
-            disabled={!formsUpdated || (disabled && !userVsoEmployee)}
+            disabled={!formsUpdated ||
+              (disabled && !userVsoEmployee) ||
+              (!formSubmittable && userVsoEmployee) ||
+              (!hearingConversionCheckboxes && userVsoEmployee)
+            }
             loading={loading}
             className="usa-button"
             onClick={async () => await submit(editedEmailsAndTz)}

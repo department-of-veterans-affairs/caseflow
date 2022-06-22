@@ -1,6 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { date, select, object, radios, boolean } from '@storybook/addon-knobs';
-import { addDecorator } from '@storybook/react';
 
 import { HearingConversion } from './HearingConversion';
 import {
@@ -45,6 +44,8 @@ const Wrapped = (props) => {
       update={updateHearing}
       type={props.type}
       scheduledFor={props.scheduledFor || hearing.scheduledFor}
+      updateCheckboxes={() => 'A checkbox has been checked'}
+      userVsoEmployee={props.userVsoEmployee}
       {...props}
     />
   );
@@ -80,3 +81,8 @@ export const ConvertToVirtual = () => {
 export const ConvertFromVirtual = () => {
   return <Wrapper hearing={amaHearing} type={HEARING_CONVERSION_TYPES[1]} />;
 };
+
+export const ConvertToVirtualAsVSO = () => {
+  return <Wrapper hearing={amaHearing} type={HEARING_CONVERSION_TYPES[0]} userVsoEmployee/>;
+};
+
