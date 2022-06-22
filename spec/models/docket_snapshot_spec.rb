@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "./spec/support/shared_context/shared_context_docket_dates.rb"
 
 describe DocketSnapshot, :all_dbs do
