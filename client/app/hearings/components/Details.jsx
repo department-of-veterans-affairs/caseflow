@@ -76,6 +76,21 @@ const HearingDetails = (props) => {
 
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const convertingToVirtual = converting === 'change_to_virtual';
+  const [formSubmittable, setFormSubmittable] = useState(false);
+
+  const canSubmit = () => {
+    let allFieldsValid = (
+      Boolean(hearing?.appellantEmailAddress) &&
+      Boolean(hearing?.appellantTz) &&
+      Boolean(hearing?.representativeTz)
+    );
+
+    setFormSubmittable(allFieldsValid);
+  };
+
+  useEffect(() => {
+    canSubmit();
+  }, [hearing]);
   // Method to reset the state
   const resetState = (resetHearingObj) => {
     // Reset the state
@@ -380,9 +395,9 @@ const HearingDetails = (props) => {
           <Button
             id="Save"
             name="Save"
-            disabled={
-              !formsUpdated ||
+            disabled={!formsUpdated ||
               (disabled && !userVsoEmployee) ||
+              (!formSubmittable && userVsoEmployee) ||
               (!hearingConversionCheckboxes && userVsoEmployee)
             }
             loading={loading}
