@@ -1,20 +1,12 @@
 # frozen_string_literal: true
 
+require "./spec/support/shared_context/shared_context_docket_dates.rb"
+
 module ApiHelpers
   # rubocop:disable Metrics/AbcSize
+  
   def api_setup_appeal_repository_dockets
-    allow(AppealRepository).to receive(:latest_docket_month) { 11.months.ago.to_date.beginning_of_month }
-    allow(AppealRepository).to receive(:regular_non_aod_docket_count) { 123_456 }
-    allow(AppealRepository).to receive(:docket_counts_by_month) do
-      (1.year.ago.to_date..Time.zone.today).map { |d| Date.new(d.year, d.month, 1) }.uniq.each_with_index.map do |d, i|
-        {
-          "year" => d.year,
-          "month" => d.month,
-          "cumsum_n" => i * 10_000 + 3456,
-          "cumsum_ready_n" => i * 5000 + 3456
-        }
-      end
-    end
+    include_context "docket dates", include_shared: true    
   end
 
   def api_create_legacy_appeal_complete_with_hearings(vbms_id)
