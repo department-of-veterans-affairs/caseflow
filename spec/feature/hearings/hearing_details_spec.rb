@@ -136,7 +136,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
       click_dropdown(name: "judgeDropdown", index: 0, wait: 30)
 
-      click_button("button-Save")
+      click_button("Save")
 
       expect(page).to have_no_content(expected_alert)
       expect(page).to have_content(virtual_hearing_alert)
@@ -202,7 +202,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
 
-      click_button("button-Cancel")
+      click_button("Cancel")
 
       expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
     end
@@ -221,7 +221,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
       click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
 
-      click_button("button-Save")
+      click_button("Save")
 
       expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
 
