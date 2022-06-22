@@ -388,7 +388,10 @@ const HearingDetails = (props) => {
         <span {...css({ float: 'right' })}>
           <Button
             name="Save"
-            disabled={!formsUpdated || (disabled && !userVsoEmployee) || (formSubmittable && userVsoEmployee)}
+            disabled={!formsUpdated ||
+              (disabled && !userVsoEmployee) ||
+              (!formSubmittable && userVsoEmployee)
+            }
             loading={loading}
             className="usa-button"
             onClick={async () => await submit(editedEmailsAndTz)}

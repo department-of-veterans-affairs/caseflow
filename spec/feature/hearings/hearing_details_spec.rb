@@ -115,7 +115,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       fill_in "Notes", with: generate_words(10)
 
       # Save the edited fields
-      click_button("Save")
+      click_button("button-Save")
 
       expect(page).to have_content(expected_alert)
     end
@@ -183,7 +183,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
       click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
 
-      click_button("Save")
+      click_button("button-Save")
 
       expect(page).to have_content(expected_alert)
       expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
@@ -202,7 +202,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
 
-      click_button("button-Cancel")
+      click_button("Cancel")
 
       expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
     end
@@ -473,7 +473,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           visit "hearings/" + hearing.external_id.to_s + "/details"
           fill_in "Veteran Email", with: fill_in_veteran_email
           fill_in "POA/Representative Email", with: fill_in_rep_email
-          click_button("Save")
+          click_button("button-Save")
 
           expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
@@ -502,7 +502,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
           fill_in "Veteran Email", with: ""
           fill_in "POA/Representative Email", with: fill_in_rep_email
-          click_button("Save")
+          click_button("button-Save")
 
           expect(page).to have_content("Veteran email is required")
         end
@@ -523,7 +523,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           visit "hearings/" + hearing.external_id.to_s + "/details"
 
           fill_in "POA/Representative Email", with: fill_in_rep_email
-          click_button("Save")
+          click_button("button-Save")
 
           expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
@@ -548,7 +548,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           visit "hearings/" + hearing.external_id.to_s + "/details"
 
           fill_in "POA/Representative Email", with: ""
-          click_button("Save")
+          click_button("button-Save")
 
           expect(page.has_no_content?(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)).to be(true)
           expect(page).to have_content(COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name)
@@ -558,7 +558,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           visit "hearings/" + hearing.external_id.to_s + "/details"
 
           fill_in "POA/Representative Email", with: "123456"
-          click_button("Save")
+          click_button("button-Save")
 
           expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
@@ -583,7 +583,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           visit "hearings/" + hearing.external_id.to_s + "/details"
 
           fill_in "Veteran Email", with: fill_in_veteran_email
-          click_button("Save")
+          click_button("button-Save")
 
           expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
@@ -618,7 +618,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           visit "hearings/" + hearing.external_id.to_s + "/details"
 
           click_dropdown(name: "representativeTz", index: 1)
-          click_button("Save")
+          click_button("button-Save")
 
           expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
@@ -652,7 +652,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           visit "hearings/" + hearing.external_id.to_s + "/details"
 
           click_dropdown(name: "appellantTz", index: 1)
-          click_button("Save")
+          click_button("button-Save")
 
           expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
@@ -688,7 +688,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
           click_dropdown(name: "representativeTz", index: 1)
           click_dropdown(name: "appellantTz", index: 1)
-          click_button("Save")
+          click_button("button-Save")
 
           expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
@@ -726,7 +726,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
           fill_in "POA/Representative Email", with: fill_in_rep_email
           click_dropdown(name: "appellantTz", index: 1)
-          click_button("Save")
+          click_button("button-Save")
 
           expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE)
           expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
@@ -790,7 +790,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         find("label", text: "Yes, Transcript Requested").click
         fill_in "copySentDate", with: "04052019"
 
-        click_button("Save")
+        click_button("button-Save")
 
         expect(page).to have_content(expected_alert)
       end
@@ -821,7 +821,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
           step "changing only problem type preserves already populated fields" do
             click_dropdown(name: "problemType", index: 0)
-            click_button("Save")
+            click_button("button-Save")
 
             expect(page).to have_content(expected_alert)
 
@@ -838,7 +838,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
           step "changing notes preserves already populated fields and doesn't create new transcription" do
             fill_in "Notes", with: "Test Notes Test Notes"
-            click_button("Save")
+            click_button("button-Save")
 
             expect(page).to have_content(expected_alert)
 
@@ -895,28 +895,33 @@ RSpec.feature "Hearing Details", :all_dbs do
     scenario "user is immediately redirected to the Convert to Virtual form" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
       expect(page).to have_content(format(COPY::CONVERT_HEARING_TITLE, "Virtual"))
-      expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS)
-      expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION)
+      # TODO: Uncomment these once 4535 is merged into the feature branch.
+      # expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS)
+      # expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION)
       expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_SUBTITLE_3)
       expect(page).to_not have_content(COPY::CENTRAL_OFFICE_CHANGE_TO_VIRTUAL)
 
       step "the submit button is disabled at first" do
-        click_button("Save")
-        expect(page).to have_current_path("hearings/" + hearing.external_id.to_s + "/details")
+        expect(page).to have_button("button-Save", disabled: true)
       end
       step "the submit button is disabled after one checkbox is selected" do
-        click_button("affirmPermission")
-        click_button("Save")
-        expect(page).to have_current_path("hearings/" + hearing.external_id.to_s + "/details")
+        # TODO: Uncomment this once 4535 is merged into the feature branch.
+        # click_label("Affirm Permission")
+        expect(page).to have_button("button-Save", disabled: true)
       end
-      step "the submit button goes through after both checkboxes are selected" do
-        click_button("affirmAccess")
-        click_button("affirmPermission")
-        click_button("Save")
+      step "the submit button is enabled whenever all fields are populated" do
+        fill_in "Veteran Email", with: "appellant@test.com"
+        # TODO: Remove after 4531 is merged into the feature branch.
+        fill_in "POA/Representative Email (for these notifications only)", with: "rep@test.com"
+
+        click_dropdown(name: "appellantTz", index: 1)
+        click_dropdown(name: "representativeTz", index: 2)
+        # TODO: Uncomment this once 4535 is merged into the feature branch.
+        # click_label("Affirm Access")
+        click_button("button-Save")
         # expect success
         expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
 
-        # might not need all of this 
         appellant_name = if hearing.appeal.appellant_is_not_veteran
                            "#{hearing.appellant_first_name} #{hearing.appellant_last_name}"
                          else
