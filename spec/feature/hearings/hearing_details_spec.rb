@@ -921,7 +921,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       end
 
       step "the submit button goes through after both checkboxes are selected" do
-      click_label "affirmAccess"
+        click_label "affirmAccess"
         expect(page).to have_button("Save", disabled: false)
         click_button("Save")
         # expect success
