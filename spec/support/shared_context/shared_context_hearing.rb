@@ -51,3 +51,20 @@ RSpec.shared_context "returns existing recipient", shared_context: :appealrepo d
     expect(subject).to eq(email_recipient)
   end
 end
+
+RSpec.shared_context "judge_recipient", shared_context: :appealrepo do
+  context "#judge_recipient" do
+    let(:type) { :judge_hearing_email_recipient }
+    let(:judge_email) { "test3@email.com" }
+    let(:email_address) { judge_email }
+    let(:timezone) { nil }
+    let(:recipient_role) { HearingEmailRecipient::RECIPIENT_ROLES[:judge] }
+
+    subject { hearing.reload.judge_recipient }
+
+    include_context "when there is a virtual hearing"
+    context "when there is an exisiting recipient" do
+      include_context "returns existing recipient"
+    end
+  end
+end
