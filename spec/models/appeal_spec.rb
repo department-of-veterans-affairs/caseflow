@@ -19,8 +19,8 @@ describe Appeal, :all_dbs do
 
     it "creates a new appeal stream with data from the original appeal" do
       expect(subject).to have_attributes(
-        receipt_date: appeal.receipt_date,
         veteran_file_number: appeal.veteran_file_number,
+        receipt_date: appeal.receipt_date,
         legacy_opt_in_approved: appeal.legacy_opt_in_approved,
         veteran_is_not_claimant: appeal.veteran_is_not_claimant,
         stream_docket_number: appeal.docket_number,
