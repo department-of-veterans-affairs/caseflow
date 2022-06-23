@@ -1812,7 +1812,7 @@ describe RequestIssue, :all_dbs do
       expect(rating_request_issue.closed_status).to eq("end_product_canceled")
     end
 
-    context "if the request issue is already closed" do
+    context "if request issue is already closed" do
       let(:closed_at) { 1.day.ago }
       let(:closed_status) { "removed" }
 
@@ -1848,7 +1848,7 @@ describe RequestIssue, :all_dbs do
       let(:closed_at) { 1.day.ago }
       let(:closed_status) { "removed" }
 
-      it "does not reclose the issue" do
+      it "does not reclose issue" do
         subject
         expect(rating_request_issue.closed_at).to eq(closed_at)
         expect(rating_request_issue.closed_status).to eq(closed_status)

@@ -1,21 +1,17 @@
 # frozen_string_literal: true
 
+require "./spec/support/shared_context/shared_context_docket_dates.rb"
+
 describe AppealSeriesAlerts, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-    allow(AppealRepository).to receive(:latest_docket_month) { docket_month }
-    allow(AppealRepository).to receive(:docket_counts_by_month) do
-      (1.year.ago.to_date..Time.zone.today).map { |d| Date.new(d.year, d.month, 1) }.uniq.each_with_index.map do |d, i|
-        {
-          "year" => d.year,
-          "month" => d.month,
-          "cumsum_n" => i * 10_000 + 3456,
-          "cumsum_ready_n" => i * 5000 + 3456
-        }
-      end
-    end
-    DocketSnapshot.create
   end
+
+  include_context "docket dates", include_shared: true  
+
+  before do    
+    DocketSnapshot.create
+  end  
 
   let(:docket_month) { 1.year.ago.to_date.beginning_of_month }
 
