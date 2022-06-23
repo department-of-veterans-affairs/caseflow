@@ -257,14 +257,26 @@ describe AppealHistory, :all_dbs do
 
         let(:description_2) { "" }
 
-        it "merges the series" do
-          merged.save
-          another_merged.save
-          merge_target.save
-          expect(subject.length).to eq 2
-          expect(merged.reload.appeal_series).to eq merge_target.reload.appeal_series
-          expect(merged.appeal_series.merged_appeal_count).to eq 2
+        RSpec.shared_examples "merges the series" do
+          it "merges the series" do
+            merged.save
+            another_merged.save
+            merge_target.save
+            expect(subject.length).to eq 2
+            expect(merged.reload.appeal_series).to eq merge_target.reload.appeal_series
+            expect(merged.appeal_series.merged_appeal_count).to eq 2
+          end
         end
+
+        include_examples "merges the series"
+        # it "merges the series" do
+        #   merged.save
+        #   another_merged.save
+        #   merge_target.save
+        #   expect(subject.length).to eq 2
+        #   expect(merged.reload.appeal_series).to eq merge_target.reload.appeal_series
+        #   expect(merged.appeal_series.merged_appeal_count).to eq 2
+        # end
       end
 
       context "when the issue description is ambiguous" do
@@ -294,14 +306,15 @@ describe AppealHistory, :all_dbs do
           "left From appeal merged on #{500.days.ago.strftime('%m/%d/%y')} (7654321)"
         end
 
-        it "merges the series" do
-          merged.save
-          another_merged.save
-          merge_target.save
-          expect(subject.length).to eq 2
-          expect(merged.reload.appeal_series).to eq merge_target.reload.appeal_series
-          expect(merged.appeal_series.merged_appeal_count).to eq 2
-        end
+        include_examples "merges the series"
+        # it "merges the series" do
+        #   merged.save
+        #   another_merged.save
+        #   merge_target.save
+        #   expect(subject.length).to eq 2
+        #   expect(merged.reload.appeal_series).to eq merge_target.reload.appeal_series
+        #   expect(merged.appeal_series.merged_appeal_count).to eq 2
+        # end
       end
     end
   end
