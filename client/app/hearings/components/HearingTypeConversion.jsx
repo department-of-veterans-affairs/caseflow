@@ -120,5 +120,5 @@ HearingTypeConversion.propTypes = {
   task: PropTypes.object,
   type: PropTypes.oneOf(['Virtual']),
   history: PropTypes.object,
-  userIsVsoEmployee: PropTypes.bool
+  userIsVsoEmployee: PropTypes.bool,
 };

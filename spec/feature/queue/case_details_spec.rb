@@ -1785,6 +1785,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters a reason with invalid Date" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: nod_date
           find(:css, "input[id$='nodDate']").click.send_keys(:delete)
           find(".cf-form-dropdown", text: "Reason for edit").click

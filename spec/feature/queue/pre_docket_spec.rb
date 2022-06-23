@@ -270,7 +270,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&page=1")
 
-        expect(page).to have_content(format(COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE, appeal.veteran_full_name))
+        expect(page).to have_content(
+          format(COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE, appeal.veteran_full_name)
+        )
 
         expect(appeal.tasks.last.assigned_to). to eq camo
       end
