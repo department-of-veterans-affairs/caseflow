@@ -187,12 +187,12 @@ RSpec.feature "Convert hearing request type" do
         # Set appellant and rep timezones to something not null
         click_dropdown(name: "appellantTz", index: 1)
         click_dropdown(name: "representativeTz", index: 2)
-        expect(page).to have_button("button-Save", disabled: false)
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: false)
 
         # Alter original email to make sure that the confirm email validation picks up on the change.
         fill_in "#{appellant_title} Email", with: "valid@something-different.com"
         expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
-        expect(page).to have_button("button-Save", disabled: true)
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
 
         fill_in "#{appellant_title} Email", with: "appellant@test.com"
         expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
