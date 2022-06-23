@@ -147,7 +147,7 @@ RSpec.feature "Convert hearing request type" do
 
       step "test Hearings form validation and submit it" do
         # Check if button is disabled on page load
-        expect(page).to have_button("button-Save", disabled: true)
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
 
         # Fill out email field and expect validation message on invalid email
         fill_in "#{appellant_title} Email", with: "appellant@te"
@@ -156,7 +156,7 @@ RSpec.feature "Convert hearing request type" do
         fill_in "#{appellant_title} Email", with: "appellant@test.com"
 
         # Check if button remains disabled
-        expect(page).to have_button("button-Save", disabled: true)
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
 
         fill_in "Confirm #{appellant_title} Email", with: "appellant@not-matching"
         find("body").click
@@ -165,12 +165,15 @@ RSpec.feature "Convert hearing request type" do
         expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
 
         # set appellant email to null
-        fill_in "Appellant Email", with: ""
+        fill_in "#{appellant_title} Email", with: ""
         expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
 
         # fill appellant email back in
-        fill_in "Appellant Email", with: "appellant@test.com"
-        expect(page).to have_button("Convert to Virtual Hearing", disabled: false)
+        fill_in "#{appellant_title} Email", with: "appellant@test.com"
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
+
+        click_label("affirmPermission")
+        click_label("affirmAccess")
 
         # set appellantTz to null then not to null
         click_dropdown(name: "appellantTz", index: 0)
@@ -197,7 +200,7 @@ RSpec.feature "Convert hearing request type" do
         fill_in "#{appellant_title} Email", with: "appellant@test.com"
         expect(page).to_not have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL_MATCH)
 
-        click_button "button-Save"
+        click_button "Convert to Virtual Hearing"
       end
 
       step "Confirm success message" do

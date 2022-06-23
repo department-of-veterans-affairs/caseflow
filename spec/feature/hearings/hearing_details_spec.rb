@@ -906,8 +906,7 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to_not have_content(COPY::CENTRAL_OFFICE_CHANGE_TO_VIRTUAL)
 
       step "the submit button is disabled at first" do
-        fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
-        fill_in "POA/Representative Email (for these notifications only)", with: fill_in_rep_email
+        fill_in "Veteran Email", with: fill_in_veteran_email
 
         # Update the POA and Appellant Timezones
         click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
