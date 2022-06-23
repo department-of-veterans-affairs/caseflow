@@ -170,22 +170,6 @@ describe Hearing, :postgres do
   context "hearing email recipient" do
     include_context "shared context hearing", include_shared: true
 
-    shared_context "returns existing recipient" do
-      let!(:email_recipient) do
-        create(
-          :hearing_email_recipient,
-          type,
-          hearing: hearing,
-          email_address: email_address,
-          timezone: timezone
-        )
-      end
-
-      it "returns exisiting recipient" do
-        expect(subject).to eq(email_recipient)
-      end
-    end
-
     let(:hearing) { create(:hearing) }
     let(:appellant_email) { nil }
     let(:appellant_tz) { nil }

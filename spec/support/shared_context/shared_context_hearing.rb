@@ -35,3 +35,19 @@ RSpec.shared_context "shared context hearing", shared_context: :appealrepo do
     end
   end
 end
+
+RSpec.shared_context "returns existing recipient", shared_context: :appealrepo do
+  let!(:email_recipient) do
+    create(
+      :hearing_email_recipient,
+      type,
+      hearing: hearing,
+      email_address: email_address,
+      timezone: timezone
+    )
+  end
+
+  it "returns exisiting recipient" do
+    expect(subject).to eq(email_recipient)
+  end
+end
