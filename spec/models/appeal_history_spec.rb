@@ -269,14 +269,6 @@ describe AppealHistory, :all_dbs do
         end
 
         include_examples "merges the series"
-        # it "merges the series" do
-        #   merged.save
-        #   another_merged.save
-        #   merge_target.save
-        #   expect(subject.length).to eq 2
-        #   expect(merged.reload.appeal_series).to eq merge_target.reload.appeal_series
-        #   expect(merged.appeal_series.merged_appeal_count).to eq 2
-        # end
       end
 
       context "when the issue description is ambiguous" do
@@ -307,14 +299,6 @@ describe AppealHistory, :all_dbs do
         end
 
         include_examples "merges the series"
-        # it "merges the series" do
-        #   merged.save
-        #   another_merged.save
-        #   merge_target.save
-        #   expect(subject.length).to eq 2
-        #   expect(merged.reload.appeal_series).to eq merge_target.reload.appeal_series
-        #   expect(merged.appeal_series.merged_appeal_count).to eq 2
-        # end
       end
     end
   end
