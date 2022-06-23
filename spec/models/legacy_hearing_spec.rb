@@ -673,21 +673,21 @@ describe LegacyHearing, :all_dbs do
   context "hearing email recipient" do
     include_context "shared context hearing", include_shared: true
 
-    shared_context "returns existing recipient" do
-      let!(:email_recipient) do
-        create(
-          :hearing_email_recipient,
-          type,
-          hearing: hearing,
-          email_address: email_address,
-          timezone: timezone
-        )
-      end
+    # shared_context "returns existing recipient" do
+    #   let!(:email_recipient) do
+    #     create(
+    #       :hearing_email_recipient,
+    #       type,
+    #       hearing: hearing,
+    #       email_address: email_address,
+    #       timezone: timezone
+    #     )
+    #   end
 
-      it "returns exisiting recipient" do
-        expect(subject).to eq(email_recipient)
-      end
-    end
+    #   it "returns exisiting recipient" do
+    #     expect(subject).to eq(email_recipient)
+    #   end
+    # end
 
     let(:vacols_case) { create(:case) }
     let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
