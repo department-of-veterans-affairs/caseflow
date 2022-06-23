@@ -3,7 +3,6 @@
 require "./spec/support/shared_context/shared_context_docket_dates.rb"
 
 describe TakeDocketSnapshotJob, :all_dbs do
- 
   include_context "docket dates", include_shared: true
 
   context ".perform" do
