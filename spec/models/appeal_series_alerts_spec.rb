@@ -7,11 +7,11 @@ describe AppealSeriesAlerts, :all_dbs do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
-  include_context "docket dates", include_shared: true  
+  include_context "docket dates", include_shared: true
 
-  before do    
+  before do
     DocketSnapshot.create
-  end  
+  end
 
   let(:docket_month) { 1.year.ago.to_date.beginning_of_month }
 
