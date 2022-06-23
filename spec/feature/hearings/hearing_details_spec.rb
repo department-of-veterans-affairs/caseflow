@@ -907,10 +907,11 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       step "the submit button is disabled at first" do
         fill_in "Veteran Email", with: fill_in_veteran_email
+        fill_in "Confirm Veteran Email", with: fill_in_veteran_email
 
         # Update the POA and Appellant Timezones
-        click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
-        click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
+        click_dropdown(name: "representativeTz", index: 1)
+        click_dropdown(name: "appellantTz", index: 5)
 
         expect(page).to have_button("Save", disabled: true)
         expect(page).to have_current_path("/hearings/" + hearing.external_id.to_s + "/details")
