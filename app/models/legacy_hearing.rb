@@ -275,10 +275,10 @@ class LegacyHearing < CaseflowRecord
     ).serializable_hash[:data][:attributes]
   end
 
-  def to_hash_for_worksheet(current_user_id)
+  def to_hash_for_worksheet(current_user)
     ::LegacyHearingSerializer.worksheet(
       self,
-      params: { current_user_id: current_user_id }
+      current_user
     ).serializable_hash[:data][:attributes]
   end
 

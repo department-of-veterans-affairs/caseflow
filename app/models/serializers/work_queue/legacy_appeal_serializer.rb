@@ -88,6 +88,14 @@ class WorkQueue::LegacyAppealSerializer
     latest_vacols_attorney_case_review(object)&.vacols_id
   end
 
+  attribute :current_user_email do |_, params|
+    params[:user]&.email
+  end
+
+  attribute :current_user_timezone do |_, params|
+    params[:user]&.timezone
+  end
+
   def self.latest_vacols_attorney_case_review(object)
     VACOLS::CaseAssignment.latest_task_for_appeal(object.vacols_id)
   end

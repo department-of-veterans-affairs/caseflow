@@ -478,9 +478,7 @@ RSpec.describe HearingsController, type: :controller do
       "#{hour_string}:#{format('%<minutes>02i', minutes: minutes)}"
     end
 
-    subject do
-      get :show, as: :json, params: { id: hearing.external_id }
-    end
+    subject { get :show, as: :json, params: { id: hearing.external_id } }
 
     it "returns hearing details" do
       expect(subject.status).to eq 200
@@ -508,6 +506,45 @@ RSpec.describe HearingsController, type: :controller do
       end
 
       it_should_behave_like "returns the correct hearing time in EST", "05:30"
+    end
+
+    def check_for_current_user_info_in_response(user)
+      User.authenticate!(user: user)
+
+      hearing_json = JSON.parse(subject.body)["data"]
+
+      assert_response :success
+      expect(hearing_json["current_user_email"]).to eq user.email
+      expect(hearing_json["current_user_timezone"]).to eq user.timezone
+    end
+
+    context "current user's email and timezone are included in response" do
+      let!(:vso_user) { create(:user, :vso_role, email: "vso@vso.org") }
+      let!(:hearings_coordinator_user) do
+        create(:user, roles: ["Edit HearSched", "Build HearSched"], email: "coordinator@va.gov")
+      end
+
+      context "with an ama hearing" do
+        it "as a vso user" do
+          check_for_current_user_info_in_response(vso_user)
+        end
+
+        it "as a hearings coordinator user" do
+          check_for_current_user_info_in_response(hearings_coordinator_user)
+        end
+      end
+
+      context "with a legacy hearing" do
+        subject { get :show, as: :json, params: { id: legacy_hearing.external_id } }
+
+        it "as a vso user" do
+          check_for_current_user_info_in_response(vso_user)
+        end
+
+        it "as a hearings coordinator user" do
+          check_for_current_user_info_in_response(hearings_coordinator_user)
+        end
+      end
     end
   end
 

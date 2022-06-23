@@ -70,27 +70,29 @@ const HearingDetails = (props) => {
   const [emailConfirmationModalType, setEmailConfirmationModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
   const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
-
-  // establish state of checkboxes in HearingConversion
+  const [isNotValidEmail, setIsNotValidEmail] = useState(userVsoEmployee);
+  const [formSubmittable, setFormSubmittable] = useState(false);
   const [hearingConversionCheckboxes, setHearingConversionCheckboxes] = useState(false);
 
-  const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
-  const convertingToVirtual = converting === 'change_to_virtual';
-  const [formSubmittable, setFormSubmittable] = useState(false);
-
   const canSubmit = () => {
-    let allFieldsValid = (
+    let emailFieldsValid = (
       Boolean(hearing?.appellantEmailAddress) &&
       Boolean(hearing?.appellantTz) &&
-      Boolean(hearing?.representativeTz)
+      Boolean(hearing?.representativeTz) &&
+      !isNotValidEmail &&
+      hearing?.appellantEmailAddress === hearing?.appellantConfirmEmailAddress &&
+      hearingConversionCheckboxes
     );
 
-    setFormSubmittable(allFieldsValid);
+    setFormSubmittable(emailFieldsValid);
   };
 
   useEffect(() => {
     canSubmit();
-  }, [hearing]);
+  }, [hearing, hearingConversionCheckboxes]);
+
+  const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
+  const convertingToVirtual = converting === 'change_to_virtual';
   // Method to reset the state
   const resetState = (resetHearingObj) => {
     // Reset the state
@@ -110,15 +112,6 @@ const HearingDetails = (props) => {
 
   // Create an effect to remove stale alerts on unmount
   useEffect(() => () => props.clearAlerts(), []);
-
-  // Set hearing attrs to that of a virtual one if the user is a VSO employee
-  // since they will skip interacting with the hearing type dropdown.
-  useEffect(() => {
-    if (userVsoEmployee) {
-      convertHearing('change_to_virtual');
-      updateHearing('virtualHearing', { requestCancelled: false });
-    }
-  }, []);
 
   // Set hearing attrs to that of a virtual one if the user is a VSO employee
   // since they will skip interacting with the hearing type dropdown.
@@ -346,6 +339,7 @@ const HearingDetails = (props) => {
           scheduledFor={hearing?.scheduledFor}
           errors={virtualHearingErrors}
           userVsoEmployee={userVsoEmployee}
+          setIsNotValidEmail={setIsNotValidEmail}
           updateCheckboxes={setHearingConversionCheckboxes}
         />
       ) : (
@@ -397,8 +391,7 @@ const HearingDetails = (props) => {
             name="Save"
             disabled={!formsUpdated ||
               (disabled && !userVsoEmployee) ||
-              (!formSubmittable && userVsoEmployee) ||
-              (!hearingConversionCheckboxes && userVsoEmployee)
+              (!formSubmittable && userVsoEmployee)
             }
             loading={loading}
             className="usa-button"
