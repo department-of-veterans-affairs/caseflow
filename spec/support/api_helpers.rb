@@ -4,9 +4,9 @@ require "./spec/support/shared_context/shared_context_docket_dates.rb"
 
 module ApiHelpers
   # rubocop:disable Metrics/AbcSize
-  
+
   def api_setup_appeal_repository_dockets
-    include_context "docket dates", include_shared: true    
+    include_context "docket dates", include_shared: true
   end
 
   def api_create_legacy_appeal_complete_with_hearings(vbms_id)

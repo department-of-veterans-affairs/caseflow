@@ -91,7 +91,7 @@ describe RampElectionIntake, :all_dbs do
     context "when completion is pending" do
       let(:completion_status) { "pending" }
 
-      it "returns and does nothing" do
+      it "returns and does not do anything" do
         expect(intake).to_not be_persisted
         expect(intake).to_not be_canceled
         expect(intake).to have_attributes(

@@ -138,16 +138,16 @@ describe AttorneyCaseReview, :all_dbs do
          { disposition: "allowed", description: "something4",
            benefit_type: "compensation", diagnostic_code: "9999",
            request_issue_ids: [request_issue5.id] },
-         { disposition: "remanded", description: "something5",
+         { disposition: "allowed", description: "something5",
+           benefit_type: "compensation", diagnostic_code: "9999",
+           request_issue_ids: [request_issue6.id] },
+         { disposition: "remanded", description: "something6",
            benefit_type: "compensation", diagnostic_code: "9999",
            request_issue_ids: [request_issue5.id],
            remand_reasons: [
              { code: "va_records", post_aoj: false },
              { code: "incorrect_notice_sent", post_aoj: true }
-           ] },
-         { disposition: "allowed", description: "something6",
-           benefit_type: "compensation", diagnostic_code: "9999",
-           request_issue_ids: [request_issue6.id] }]
+           ] }]
       end
 
       it "should raise AttorneyJudgeCheckoutError" do
@@ -168,19 +168,19 @@ describe AttorneyCaseReview, :all_dbs do
              { code: "va_records", post_aoj: false },
              { code: "incorrect_notice_sent", post_aoj: true }
            ] },
-         { disposition: "allowed", description: "something3",
-           benefit_type: "compensation", diagnostic_code: "9999",
-           request_issue_ids: [request_issue3.id, request_issue4.id] },
-         { disposition: "allowed", description: "something4",
-           benefit_type: "compensation", diagnostic_code: "9999",
-           request_issue_ids: [request_issue5.id] },
-         { disposition: "remanded", description: "something5",
+         { disposition: "remanded", description: "something3",
            benefit_type: "compensation", diagnostic_code: "9999",
            request_issue_ids: [request_issue5.id],
            remand_reasons: [
              { code: "va_records", post_aoj: false },
              { code: "incorrect_notice_sent", post_aoj: true }
-           ] }]
+           ] },
+         { disposition: "allowed", description: "something4",
+           benefit_type: "compensation", diagnostic_code: "9999",
+           request_issue_ids: [request_issue3.id, request_issue4.id] },
+         { disposition: "allowed", description: "something5",
+           benefit_type: "compensation", diagnostic_code: "9999",
+           request_issue_ids: [request_issue5.id] }]
       end
 
       it "should raise AttorneyJudgeCheckoutError" do
