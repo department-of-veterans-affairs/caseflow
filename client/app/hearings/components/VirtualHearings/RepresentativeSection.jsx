@@ -72,7 +72,7 @@ export const RepresentativeSection = ({
           readOnly={readOnly}
           emailType={representativeEmailType}
           label="POA/Representative Email (for these notifications only)"
-          email={hearing?.representativeEmailAddress}
+          email={representativeEmailAddress}
           error={errors?.representativeEmailAddress}
           type={type}
           update={update}
@@ -102,5 +102,6 @@ RepresentativeSection.propTypes = {
   formFieldsOnly: PropTypes.bool,
   representativeEmailAddress: PropTypes.string,
   representativeTimezone: PropTypes.string,
-  representativeEmailType: PropTypes.string
+  representativeEmailType: PropTypes.string,
+  userVsoEmployee: PropTypes.bool
 };

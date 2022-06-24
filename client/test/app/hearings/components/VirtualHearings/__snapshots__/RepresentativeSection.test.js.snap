@@ -16195,12 +16195,12 @@ SAN FRANCISCO, CA 94103
           </SearchableDropdown>
         </Timezone>
         <HelperText
-          label="The hearing time in email notifications is calculated based on the timezone"
+          label="The hearing time in email notifications is calculated based on the timezone."
         >
           <div
             className="helper-text"
           >
-            The hearing time in email notifications is calculated based on the timezone
+            The hearing time in email notifications is calculated based on the timezone.
           </div>
         </HelperText>
       </div>
@@ -16212,9 +16212,10 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
-          email="tom.brady@caseflow.gov"
+          helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
+          showHelper={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -16231,7 +16232,6 @@ SAN FRANCISCO, CA 94103
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="tom.brady@caseflow.gov"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
@@ -16264,9 +16264,9 @@ SAN FRANCISCO, CA 94103
                 }
                 id="POA/Representative Email (for these notifications only)"
                 name="POA/Representative Email (for these notifications only)"
+                onBlur={[Function]}
                 onChange={[Function]}
                 type="text"
-                value="tom.brady@caseflow.gov"
               />
             </div>
           </TextField>
@@ -16446,16 +16446,17 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
-          email="tom.brady@caseflow.gov"
+          helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
           readOnly={true}
+          showHelper={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
           <ReadOnly
             label="POA/Representative Email (for these notifications only)"
-            text="tom.brady@caseflow.gov"
+            text="None"
           >
             <div
               data-css-1a5irm0=""
@@ -16464,7 +16465,7 @@ SAN FRANCISCO, CA 94103
                 POA/Representative Email (for these notifications only)
               </strong>
               <pre>
-                tom.brady@caseflow.gov
+                None
               </pre>
             </div>
           </ReadOnly>
@@ -16623,9 +16624,10 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
         className="usa-width-one-half"
       >
         <HearingEmail
-          email="tom.brady@caseflow.gov"
+          helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
+          showHelper={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -16642,7 +16644,6 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="tom.brady@caseflow.gov"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
@@ -16675,9 +16676,9 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
                 }
                 id="POA/Representative Email (for these notifications only)"
                 name="POA/Representative Email (for these notifications only)"
+                onBlur={[Function]}
                 onChange={[Function]}
                 type="text"
-                value="tom.brady@caseflow.gov"
               />
             </div>
           </TextField>
@@ -16856,9 +16857,10 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
-          email="tom.brady@caseflow.gov"
+          helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
+          showHelper={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -16875,7 +16877,6 @@ SAN FRANCISCO, CA 94103
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="tom.brady@caseflow.gov"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
@@ -16908,9 +16909,9 @@ SAN FRANCISCO, CA 94103
                 }
                 id="POA/Representative Email (for these notifications only)"
                 name="POA/Representative Email (for these notifications only)"
+                onBlur={[Function]}
                 onChange={[Function]}
                 type="text"
-                value="tom.brady@caseflow.gov"
               />
             </div>
           </TextField>
@@ -17106,9 +17107,10 @@ exports[`RepresentativeSection Shows Representative name when representative add
         className="usa-width-one-half"
       >
         <HearingEmail
-          email="tom.brady@caseflow.gov"
+          helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
+          showHelper={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -17125,7 +17127,6 @@ exports[`RepresentativeSection Shows Representative name when representative add
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="tom.brady@caseflow.gov"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
@@ -17158,9 +17159,9 @@ exports[`RepresentativeSection Shows Representative name when representative add
                 }
                 id="POA/Representative Email (for these notifications only)"
                 name="POA/Representative Email (for these notifications only)"
+                onBlur={[Function]}
                 onChange={[Function]}
                 type="text"
-                value="tom.brady@caseflow.gov"
               />
             </div>
           </TextField>
@@ -17349,9 +17350,10 @@ exports[`RepresentativeSection Shows Representative not present message when no 
         className="usa-width-one-half"
       >
         <HearingEmail
-          email="tom.brady@caseflow.gov"
+          helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
+          showHelper={true}
           type="change_to_virtual"
           update={[MockFunction]}
         >
@@ -17368,7 +17370,6 @@ exports[`RepresentativeSection Shows Representative not present message when no 
             strongLabel={true}
             type="text"
             useAriaLabel={false}
-            value="tom.brady@caseflow.gov"
           >
             <div
               className="cf-form-textinput cf-inline-field   "
@@ -17401,9 +17402,9 @@ exports[`RepresentativeSection Shows Representative not present message when no 
                 }
                 id="POA/Representative Email (for these notifications only)"
                 name="POA/Representative Email (for these notifications only)"
+                onBlur={[Function]}
                 onChange={[Function]}
                 type="text"
-                value="tom.brady@caseflow.gov"
               />
             </div>
           </TextField>

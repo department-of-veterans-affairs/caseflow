@@ -11,7 +11,8 @@ import {
   legacyHearing,
   amaHearing,
   defaultHearing,
-  virtualHearing
+  virtualHearing,
+  vsoUser
 } from 'test/data';
 import Button from 'app/components/Button';
 import DateSelector from 'app/components/DateSelector';
@@ -23,6 +24,7 @@ import TranscriptionRequestInputs from
   'app/hearings/components/details/TranscriptionRequestInputs';
 import EmailConfirmationModal from 'app/hearings/components/EmailConfirmationModal';
 import toJson from 'enzyme-to-json';
+import { node } from 'prop-types';
 
 // Define the function spies
 const saveHearingSpy = jest.fn();
