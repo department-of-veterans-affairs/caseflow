@@ -302,7 +302,7 @@ describe HigherLevelReviewIntake, :all_dbs do
       end
     end
 
-    context "when end product creation fails" do
+    context "when the end product creation fails" do
       let(:unknown_error) do
         Caseflow::Error::EstablishClaimFailedInVBMS.new("error")
       end
