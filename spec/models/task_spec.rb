@@ -866,6 +866,7 @@ describe Task, :all_dbs do
   end
 
   describe ".reassign" do
+    let(:user) { User.authenticate!(roles: ["System Admin"]) }
     let(:org) { Organization.find(create(:organization).id) }
     let(:root_task) { RootTask.find(create(:root_task).id) }
     let(:org_task) { create(:ama_task, parent: root_task, assigned_to: org) }
@@ -1026,11 +1027,12 @@ describe Task, :all_dbs do
       before do
         appeal.overtime = true
         FeatureToggle.enable!(:overtime_revamp)
-        FeatureToggle.disable!(:overtime_persistence)
+        #FeatureToggle.disable!(:overtime_persistence)
       end
 
-      shared_examples "overtime status is changed" do
-        it "clears overtime status on reassignment" do
+      let(:user) { create(:user) }  #Let user be someone that is no registered to the toggle feature list
+      shared_examples "overtime status is changed because user is not on the feature toggle list" do
+        it "clears overtime status on reassignment because user is not on the feature toggle list" do
           expect(appeal.overtime?).to be true
           subject
           expect(appeal.overtime?).to be false
@@ -1046,7 +1048,7 @@ describe Task, :all_dbs do
       after { FeatureToggle.disable!(:overtime_revamp) }
 
       context "when the task type is not a judge or attorney task" do
-        it "does not clear the overtime status on reassignment" do
+        it "does not clear the overtime status on reassignment because user is not on the feature toggle list" do
           expect(appeal.overtime?).to be true
           subject
           expect(appeal.overtime?).to be true
@@ -1056,7 +1058,7 @@ describe Task, :all_dbs do
       context "when the task is a judge task" do
         let(:task) { create(:ama_judge_assign_task, appeal: appeal) }
 
-        it_behaves_like "overtime status is changed"
+        it_behaves_like "overtime status is changed because user is not on the feature toggle list"
       end
 
       context "when the task is an attorney task" do
@@ -1067,7 +1069,7 @@ describe Task, :all_dbs do
 
         subject { task.reassign(params, judge) }
 
-        it_behaves_like "overtime status is changed"
+        it_behaves_like "overtime status is changed because user is not on the feature toggle list"
       end
     end
   end
