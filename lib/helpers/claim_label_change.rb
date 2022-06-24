@@ -25,7 +25,7 @@ module WarRoom
 
       # File open and process.
       File.open("lib/helpers/END_PRODUCT_CODES.json") do |file|
-        codes_hash = JSON.parse(file.read)
+        codes_hash = JSON.parse(fi.read)
       end
 
       # if claim code is in hash return true, else false.
@@ -45,7 +45,7 @@ module WarRoom
       epe.save
     end
 
-    def claim_checker(original_code, new_code)
+    def claim_label_updater(reference_id, original_code, new_code)
       # The End products must be of the same type. (030, 040, 070)
       if same_claim_type(original_code, new_code) == false
         puts("This is a different End Product, cannot claim label change. Aborting...")
@@ -63,10 +63,6 @@ module WarRoom
         puts("Invalid orginal claim label code. Aborting...")
         fail Interrupt
       end
-    end
-
-    def claim_label_updater(reference_id, original_code, new_code)
-      claim_checker(original_code, new_code)
 
       # set the user
       RequestStore[:current_user] = WarRoom.user
