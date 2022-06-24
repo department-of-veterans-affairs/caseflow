@@ -408,11 +408,11 @@
    },
    "vba_350" : {
       "address_1" : "2200 Fort Roots Drive",
-      "address_2" : "Building 111",
+      "address_2" : "Bldg. 65",
       "address_3" : null,
       "city" : "North Little Rock",
       "state" : "AR",
-      "zip" : "72114-1756",
+      "zip" : "72114",
       "timezone" : "America/Chicago"
    },
    "vba_351" : {
