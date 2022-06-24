@@ -102,7 +102,7 @@ describe Document, :postgres do
         end
       end
 
-      context "application is not reader" do
+      RSpec.shared_context "application is not reader" do
         before do
           RequestStore.store[:application] = Faker::Creature::Cat.name
         end
@@ -115,16 +115,17 @@ describe Document, :postgres do
     end
 
     context "EFolderService is Fakes::VBMSService" do
-      context "application is not reader" do
-        before do
-          RequestStore.store[:application] = Faker::Creature::Cat.name
-        end
+      # context "application is not reader" do
+      #   before do
+      #     RequestStore.store[:application] = Faker::Creature::Cat.name
+      #   end
 
-        it "returns the URL for the document in VBMS" do
-          document.id = Random.rand(999_999_999)
-          expect(document.content_url).to eq("/document/#{document.id}/pdf")
-        end
-      end
+      #   it "returns the URL for the document in VBMS" do
+      #     document.id = Random.rand(999_999_999)
+      #     expect(document.content_url).to eq("/document/#{document.id}/pdf")
+      #   end
+      # end
+      shared_context "application is not reader"
 
       context "application is reader" do
         before do
