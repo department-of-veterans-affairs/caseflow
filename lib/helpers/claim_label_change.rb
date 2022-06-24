@@ -11,7 +11,6 @@ module WarRoom
         new_code: new_code,
         user: User.system_user
       )
-
       # Perform the End Product Update. Note the return message.
       ep_update.perform!
 
