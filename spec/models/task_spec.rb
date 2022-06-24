@@ -1027,7 +1027,6 @@ describe Task, :all_dbs do
       before do
         appeal.overtime = true
         FeatureToggle.enable!(:overtime_revamp)
-        #FeatureToggle.disable!(:overtime_persistence)
       end
 
       let(:user) { create(:user) }  #Let user be someone that is no registered to the toggle feature list
