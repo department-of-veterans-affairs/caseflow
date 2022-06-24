@@ -24,7 +24,7 @@ module WarRoom
 
       # File open and process.
       File.open("lib/helpers/END_PRODUCT_CODES.json") do |file|
-        codes_hash = JSON.parse(fi.read)
+        codes_hash = JSON.parse(file.read)
       end
 
       # if claim code is in hash return true, else false.
