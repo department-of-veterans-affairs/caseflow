@@ -392,17 +392,7 @@ describe AppealIntake, :all_dbs do
         ]
       end
 
-      context "legacy_opt_in_approved is false" do
-        it "does not submit a LegacyIssueOptin" do
-          expect(LegacyIssueOptin.count).to eq 0
-
-          subject
-
-          expect(LegacyIssueOptin.count).to eq 0
-        end
-      end
-
-      context "legacy_opt_approved is true" do
+            context "legacy_opt_approved is true" do
         let(:legacy_opt_in_approved) { true }
 
         it "submits a LegacyIssueOptin" do
@@ -412,6 +402,16 @@ describe AppealIntake, :all_dbs do
           subject
 
           expect(LegacyIssueOptin.count).to eq 1
+        end
+      end
+
+      context "legacy_opt_in_approved is false" do
+        it "does not submit a LegacyIssueOptin" do
+          expect(LegacyIssueOptin.count).to eq 0
+
+          subject
+
+          expect(LegacyIssueOptin.count).to eq 0
         end
       end
     end
