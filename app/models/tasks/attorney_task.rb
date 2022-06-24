@@ -65,7 +65,7 @@ class AttorneyTask < Task
   end
 
   def reassign_clears_overtime?
-    false
+    FeatureToggle.enabled?(:overtime_persistence) ? false : true  #Clear Overtime if Toggle is Disabled/Keep Overtime if Toggle is Enabled
   end
 
   def send_back_to_judge_assign!(params = {})
