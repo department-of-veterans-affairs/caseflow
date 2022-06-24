@@ -866,6 +866,7 @@ describe Task, :all_dbs do
   end
 
   describe ".reassign" do
+    let(:user) { User.authenticate!(roles: ["System Admin"]) }
     let(:org) { Organization.find(create(:organization).id) }
     let(:root_task) { RootTask.find(create(:root_task).id) }
     let(:org_task) { create(:ama_task, parent: root_task, assigned_to: org) }
@@ -981,8 +982,56 @@ describe Task, :all_dbs do
     end
 
     context "When the appeal has been marked for overtime" do
-      shared_examples "clears overtime" do
-        it "sets overtime to false" do
+      shared_examples "overtime status is unchanged" do
+        before do
+          appeal.overtime = true
+          FeatureToggle.enable!(:overtime_persistence)
+        end
+        it "does not clear overtime status on reassignment" do
+          expect(appeal.overtime?).to be true
+          subject
+          expect(appeal.overtime?).to be true
+        end
+      end
+
+      let!(:appeal) { create(:appeal) }
+      let(:task) { create(:ama_task, appeal: appeal.reload) }
+
+      after { FeatureToggle.disable!(:overtime_revamp) }
+
+      context "when the task type is not a judge or attorney task" do
+        it "does not clear the overtime status on reassignment" do
+          expect(appeal.overtime?).to be true
+          subject
+          expect(appeal.overtime?).to be true
+        end
+      end
+
+      context "when the task is a judge task" do
+        let(:task) { create(:ama_judge_assign_task, appeal: appeal) }
+
+        it_behaves_like "overtime status is unchanged"
+      end
+
+      context "when the task is an attorney task" do
+        let(:judge) { create(:user, :with_vacols_judge_record) }
+        let(:attorney) { create(:user, :with_vacols_attorney_record) }
+        let(:new_assignee) { create(:user, :with_vacols_attorney_record) }
+        let(:task) { create(:ama_attorney_rewrite_task, assigned_to: attorney, assigned_by: judge, appeal: appeal) }
+
+        subject { task.reassign(params, judge) }
+
+        it_behaves_like "overtime status is unchanged"
+      end
+
+      before do
+        appeal.overtime = true
+        FeatureToggle.enable!(:overtime_revamp)
+      end
+
+      let(:user) { create(:user) }  #Let user be someone that is no registered to the toggle feature list
+      shared_examples "overtime status is changed because user is not on the feature toggle list" do
+        it "clears overtime status on reassignment because user is not on the feature toggle list" do
           expect(appeal.overtime?).to be true
           subject
           expect(appeal.overtime?).to be false
@@ -994,12 +1043,11 @@ describe Task, :all_dbs do
 
       before do
         appeal.overtime = true
-        FeatureToggle.enable!(:overtime_revamp)
       end
       after { FeatureToggle.disable!(:overtime_revamp) }
 
       context "when the task type is not a judge or attorney task" do
-        it "does not clear the overtime status" do
+        it "does not clear the overtime status on reassignment because user is not on the feature toggle list" do
           expect(appeal.overtime?).to be true
           subject
           expect(appeal.overtime?).to be true
@@ -1009,7 +1057,7 @@ describe Task, :all_dbs do
       context "when the task is a judge task" do
         let(:task) { create(:ama_judge_assign_task, appeal: appeal) }
 
-        it_behaves_like "clears overtime"
+        it_behaves_like "overtime status is changed because user is not on the feature toggle list"
       end
 
       context "when the task is an attorney task" do
@@ -1020,7 +1068,7 @@ describe Task, :all_dbs do
 
         subject { task.reassign(params, judge) }
 
-        it_behaves_like "clears overtime"
+        it_behaves_like "overtime status is changed because user is not on the feature toggle list"
       end
     end
   end
