@@ -44,7 +44,7 @@ module WarRoom
       epe.save
     end
 
-    def claim_label_updater(reference_id, original_code, new_code)
+    def claim_checker(original_code, new_code)
       # The End products must be of the same type. (030, 040, 070)
       if same_claim_type(original_code, new_code) == false
         puts("This is a different End Product, cannot claim label change. Aborting...")
@@ -62,6 +62,10 @@ module WarRoom
         puts("Invalid orginal claim label code. Aborting...")
         fail Interrupt
       end
+    end
+
+    def claim_label_updater(reference_id, original_code, new_code)
+      claim_checker(original_code, new_code)
 
       # set the user
       RequestStore[:current_user] = WarRoom.user
