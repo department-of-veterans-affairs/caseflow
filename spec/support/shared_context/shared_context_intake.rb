@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "./spec/support/shared_context/shared_context_legacy_appeal.rb"
+
 RSpec.configure { |rspec| rspec.shared_context_metadata_behavior = :apply_to_host_groups }
 
 RSpec.shared_context "intake", shared_context: :appealrepo do
