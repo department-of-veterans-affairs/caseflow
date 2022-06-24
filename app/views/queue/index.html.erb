@@ -27,6 +27,7 @@
       enable_hearing_time_slots: FeatureToggle.enabled?(:enable_hearing_time_slots, user: current_user),
       schedule_veteran_virtual_hearing: FeatureToggle.enabled?(:schedule_veteran_virtual_hearing, user: current_user),
       overtime_revamp: FeatureToggle.enabled?(:overtime_revamp, user: current_user),
+      overtime_persistence: FeatureToggle.enabled?(:overtime_persistence, user: current_user),
       mdr_cavc_remand: FeatureToggle.enabled?(:mdr_cavc_remand, user: current_user),
       reversal_cavc_remand: FeatureToggle.enabled?(:reversal_cavc_remand, user: current_user),
       dismissal_cavc_remand: FeatureToggle.enabled?(:dismissal_cavc_remand, user: current_user),
