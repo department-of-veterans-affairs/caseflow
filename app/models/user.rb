@@ -522,7 +522,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       user ||= create!(attrs.merge(css_id: css_id.upcase))
       now = Time.zone.now
       attrs[:last_login_at] = now if !user.last_login_at || now - user.last_login_at > LAST_LOGIN_PRECISION
-      user.update!(attrs)
+      user.update!(attrs.compact)
       user_session["pg_user_id"] = user.id
       user
     end
