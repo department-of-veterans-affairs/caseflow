@@ -393,6 +393,6 @@ describe AppealIntake, :all_dbs do
       end
 
       include_context "legacy opt in", include_shared: true
-    end    
+    end
   end
 end

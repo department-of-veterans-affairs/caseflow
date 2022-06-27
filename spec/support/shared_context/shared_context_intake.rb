@@ -24,7 +24,6 @@ RSpec.shared_context "intake", shared_context: :appealrepo do
 end
 
 RSpec.shared_context "legacy opt in", shared_context: :appealrepo do
-  
   context "legacy_opt_in_approved is false" do
     it "does not submit a LegacyIssueOptin" do
       expect(LegacyIssueOptin.count).to eq 0
@@ -46,7 +45,7 @@ RSpec.shared_context "legacy opt in", shared_context: :appealrepo do
       expect(LegacyIssueOptin.count).to eq 1
     end
   end
-end  
+end
 
 RSpec.shared_context "completed intake", shared_context: :appealrepotoo do
   context "when the intake was already complete" do
@@ -71,20 +70,20 @@ RSpec.shared_context "completed intake", shared_context: :appealrepotoo do
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
       expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
     end
-  end   
+  end
 
   context "when end product creation fails" do
-      let(:unknown_error) do
-        Caseflow::Error::EstablishClaimFailedInVBMS.new("error")
-      end
-
-      it "clears pending status" do
-        allow(detail).to receive(:establish!).and_raise(unknown_error)
-
-        subject
-
-        expect(intake.completion_status).to eq("success")
-        expect(intake.detail.establishment_error).to eq(unknown_error.inspect)
-      end
+    let(:unknown_error) do
+      Caseflow::Error::EstablishClaimFailedInVBMS.new("error")
     end
+
+    it "clears pending status" do
+      allow(detail).to receive(:establish!).and_raise(unknown_error)
+
+      subject
+
+      expect(intake.completion_status).to eq("success")
+      expect(intake.detail.establishment_error).to eq(unknown_error.inspect)
+    end
+  end
 end

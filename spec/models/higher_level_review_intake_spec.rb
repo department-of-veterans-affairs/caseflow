@@ -253,10 +253,10 @@ describe HigherLevelReviewIntake, :all_dbs do
           vacols_id: legacy_appeal.vacols_id,
           vacols_sequence_id: vacols_issue.issseq
         }
-      end   
+      end
 
       include_context "legacy opt in", include_shared: true
       include_context "completed intake", include_shared: true
-    end   
+    end
   end
 end
