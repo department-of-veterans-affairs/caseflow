@@ -21,6 +21,7 @@ export const HearingEmail = ({
   optional,
   helperLabel,
   showHelper,
+  actionType
 }) =>
   readOnly ? (
     <ReadOnly label={label} text={email ?? 'None'} />
@@ -40,7 +41,7 @@ export const HearingEmail = ({
           }),
         ]}
         onChange={(newEmail) =>
-          update('hearing', {
+          update(actionType, {
             [emailType]: isEmpty(newEmail) ? null : newEmail,
           })
         }
@@ -52,6 +53,7 @@ export const HearingEmail = ({
 HearingEmail.defaultProps = {
   helperLabel: COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT,
   showHelper: true,
+  actionType: 'hearing'
 };
 
 HearingEmail.propTypes = {
@@ -66,4 +68,5 @@ HearingEmail.propTypes = {
   disabled: PropTypes.bool,
   helperLabel: PropTypes.string,
   showHelper: PropTypes.bool,
+  actionType: PropTypes.string
 };
