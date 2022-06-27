@@ -239,7 +239,7 @@ describe HigherLevelReviewIntake, :all_dbs do
         )
       end
     end
-    
+
     include_context "intake", include_shared: true
 
     context "when the intake is pending" do
@@ -254,6 +254,6 @@ describe HigherLevelReviewIntake, :all_dbs do
       end
     end
 
-  include_context "completed intake", include_shared: true
+    include_context "completed intake", include_shared: true
   end
 end
