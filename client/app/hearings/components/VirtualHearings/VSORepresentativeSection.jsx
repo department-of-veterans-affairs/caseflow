@@ -60,7 +60,7 @@ export const VSORepresentativeSection = ({
         >
           <HearingEmail
             optional
-            readOnly={readOnly}
+            readOnly={hearing.representativeEmailAddress ? false : readOnly}
             emailType="representativeEmailAddress"
             label="POA/Representative Email"
             error={errors?.representativeEmailAddress}
