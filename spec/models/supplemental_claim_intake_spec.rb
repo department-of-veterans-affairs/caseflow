@@ -255,6 +255,5 @@ describe SupplementalClaimIntake, :all_dbs do
     end
 
     include_context "intake", include_shared: true
-    
   end
 end

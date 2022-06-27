@@ -392,7 +392,7 @@ describe AppealIntake, :all_dbs do
         ]
       end
 
-            context "legacy_opt_approved is true" do
+      context "legacy_opt_approved is true" do
         let(:legacy_opt_in_approved) { true }
 
         it "submits a LegacyIssueOptin" do
