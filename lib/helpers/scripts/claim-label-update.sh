@@ -20,6 +20,6 @@ fi
 
 cd /opt/caseflow-certification/src; bin/rails c << DONETOKEN
 
-x = WarRoom::ClaimLabelChange.new
-x.claim_label_updater("$1", "$2", "$3")
+x = WarRoom::ClaimLabelChange.new("$1", "$2", "$3")
+x.claim_label_updater
 DONETOKEN
