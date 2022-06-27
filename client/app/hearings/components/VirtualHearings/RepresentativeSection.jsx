@@ -102,5 +102,6 @@ RepresentativeSection.propTypes = {
   formFieldsOnly: PropTypes.bool,
   representativeEmailAddress: PropTypes.string,
   representativeTimezone: PropTypes.string,
-  representativeEmailType: PropTypes.string
+  representativeEmailType: PropTypes.string,
+  userVsoEmployee: PropTypes.bool
 };

@@ -2,7 +2,7 @@
 
 RSpec.feature "Hearing Details", :all_dbs do
   let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
-  let(:vso_user) { create(:user, css_id: "BILLIE_VSO", roles: ["VSO"]) }
+  let(:vso_user) { create(:user, css_id: "BILLIE_VSO", roles: ["VSO"], email: "BILLIE@test.com") }
   let!(:coordinator) { create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG") }
   let!(:vlj) { create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO") }
   let(:hearing) { create(:hearing, :with_tasks, regional_office: "C", scheduled_time: "12:00AM") }
@@ -212,19 +212,22 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
-      fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
-      fill_in "POA/Representative Email (for these notifications only)", with: fill_in_rep_email
+      expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
+
+      fill_in "Veteran Email", with: fill_in_veteran_email
+      fill_in "Confirm Veteran Email", with: fill_in_veteran_email
 
       # Update the POA and Appellant Timezones
-      click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
-      click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
+      click_dropdown(name: "representativeTz", index: 5)
+      click_dropdown(name: "appellantTz", index: 2)
 
       click_label "affirmPermission"
       click_label "affirmAccess"
 
       click_button("Save")
 
-      expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
+      appeal_id = hearing.appeal.is_a?(Appeal) ? hearing.appeal.uuid : hearing.appeal.external_id
+      expect(page).to have_current_path("/queue/appeals/#{appeal_id}")
 
       appellant_name = if hearing.appeal.appellant_is_not_veteran
                          "#{hearing.appellant_first_name} #{hearing.appellant_last_name}"
@@ -903,12 +906,12 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to_not have_content(COPY::CENTRAL_OFFICE_CHANGE_TO_VIRTUAL)
 
       step "the submit button is disabled at first" do
-        fill_in "Veteran Email (for these notifications only)", with: fill_in_veteran_email
-        fill_in "POA/Representative Email (for these notifications only)", with: fill_in_rep_email
+        fill_in "Veteran Email", with: fill_in_veteran_email
+        fill_in "Confirm Veteran Email", with: fill_in_veteran_email
 
         # Update the POA and Appellant Timezones
-        click_dropdown(name: "representativeTz", text: fill_in_rep_tz)
-        click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
+        click_dropdown(name: "representativeTz", index: 1)
+        click_dropdown(name: "appellantTz", index: 5)
 
         expect(page).to have_button("Save", disabled: true)
         expect(page).to have_current_path("/hearings/" + hearing.external_id.to_s + "/details")

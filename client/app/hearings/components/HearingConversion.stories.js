@@ -78,6 +78,15 @@ export const ConvertToVirtual = () => {
   return <Wrapper hearing={amaHearing} type={HEARING_CONVERSION_TYPES[0]} />;
 };
 
+export const ConvertToVirtualAsVSO = () => {
+  return <Wrapper
+    hearing={amaHearing}
+    type={HEARING_CONVERSION_TYPES[0]}
+    setIsNotValidEmail={() => 'Email Changed'}
+    userVsoEmployee
+  />;
+};
+
 export const ConvertFromVirtual = () => {
   return <Wrapper hearing={amaHearing} type={HEARING_CONVERSION_TYPES[1]} />;
 };

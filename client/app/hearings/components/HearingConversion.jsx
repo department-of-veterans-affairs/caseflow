@@ -16,6 +16,8 @@ import { getAppellantTitle } from '../utils';
 import { HEARING_CONVERSION_TYPES } from '../constants';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
+import { VSORepresentativeSection } from './VirtualHearings/VSORepresentativeSection';
+import { VSOAppellantSection } from './VirtualHearings/VSOAppellantSection';
 import { Checkbox } from '../../components/Checkbox';
 
 export const HearingConversion = ({
@@ -25,8 +27,9 @@ export const HearingConversion = ({
   scheduledFor,
   errors,
   update,
-  updateCheckboxes,
-  userVsoEmployee
+  userVsoEmployee,
+  setIsNotValidEmail,
+  updateCheckboxes
 }) => {
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const virtual = type === 'change_to_virtual';
@@ -56,14 +59,14 @@ export const HearingConversion = ({
     update,
     appellantTitle,
     appellantEmailAddress: hearing?.appellantEmailAddress,
-    appellantTimezone: hearing?.appellantTz,
     representativeEmailAddress: hearing?.representativeEmailAddress,
-    representativeTimezone: hearing?.representativeTz,
     appellantEmailType: 'appellantEmailAddress',
     representativeEmailType: 'representativeEmailAddress',
     showTimezoneField: true,
     schedulingToVirtual: virtual,
-    userVsoEmployee
+    userVsoEmployee,
+    actionType: 'hearing',
+    setIsNotValidEmail
   };
 
   const prefillFields = () => {
@@ -71,7 +74,12 @@ export const HearingConversion = ({
     update(
       'hearing', {
         ...hearing,
-        representativeTz: hearing?.representativeTz || hearing?.appellantTz
+        representativeTz: userVsoEmployee ?
+          hearing?.currentUserTimezone :
+          hearing?.representativeTz || hearing?.appellantTz,
+        representativeEmailAddress: userVsoEmployee ?
+          hearing?.currentUserEmail :
+          hearing?.representativeEmailAddress
       });
   };
 
@@ -84,7 +92,7 @@ export const HearingConversion = ({
     // Focus the top of the page
     window.scrollTo(0, 0);
 
-    // Set the emails and timezone to defaults if not already set
+    // Set the representative emails and timezone to defaults if not already set
     if (virtual) {
       prefillFields();
     }
@@ -111,8 +119,18 @@ export const HearingConversion = ({
           </div>
         </div>
       </div>}
-      <AppellantSection {...sectionProps} />
-      <RepresentativeSection {...sectionProps} />
+
+      {userVsoEmployee ?
+        (<div>
+          <VSOAppellantSection {...sectionProps} />
+          <VSORepresentativeSection {...sectionProps} readOnly />
+        </div>) :
+        (<div>
+          <AppellantSection {...sectionProps} />
+          <RepresentativeSection {...sectionProps} />
+        </div>)
+      }
+
       {userVsoEmployee &&
         <div label="vsoCheckboxes">
           <Checkbox
@@ -165,6 +183,7 @@ HearingConversion.propTypes = {
   errors: PropTypes.object,
   update: PropTypes.func,
   hearing: PropTypes.object.isRequired,
-  updateCheckboxes: PropTypes.func,
-  userVsoEmployee: PropTypes.bool
+  userVsoEmployee: PropTypes.bool,
+  setIsNotValidEmail: PropTypes.func,
+  updateCheckboxes: PropTypes.func
 };

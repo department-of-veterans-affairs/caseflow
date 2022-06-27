@@ -1,9 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import COPY from '../../../../COPY';
-import HearingTypeConversionContext from '../../contexts/HearingTypeConversionContext';
 import { AddressLine } from '../details/Address';
 import { VirtualHearingSection } from './Section';
 import { ReadOnly } from '../details/ReadOnly';
@@ -19,10 +18,10 @@ export const VSORepresentativeSection = ({
   appellantTitle,
   showDivider,
   formFieldsOnly,
-  readOnly
+  readOnly,
+  update,
+  actionType
 }) => {
-  const { setIsRepTZEmpty, updatedAppeal, dispatchAppeal } = useContext(HearingTypeConversionContext);
-
   return (
     <VirtualHearingSection
       formFieldsOnly={formFieldsOnly}
@@ -65,7 +64,9 @@ export const VSORepresentativeSection = ({
             emailType="representativeEmailAddress"
             label="POA/Representative Email"
             error={errors?.representativeEmailAddress}
-            email={updatedAppeal.currentUserEmail}
+            email={hearing.representativeEmailAddress}
+            update={update}
+            actionType={actionType}
           />
         </div>
       </div>
@@ -78,11 +79,10 @@ export const VSORepresentativeSection = ({
         >
           <Timezone
             required
-            value={updatedAppeal.currentUserTimezone}
-            onChange={(repTz) => {
-              dispatchAppeal({ type: 'SET_POA_TZ', payload: repTz });
-              setIsRepTZEmpty(!repTz);
-            }}
+            value={hearing.representativeTz}
+            onChange={(representativeTz) =>
+              update(actionType, { representativeTz })
+            }
             time={hearing.scheduledTimeString}
             roTimezone={hearing.regionalOfficeTimezone}
             label="POA/Representative Timezone"
@@ -113,5 +113,7 @@ VSORepresentativeSection.propTypes = {
   formFieldsOnly: PropTypes.bool,
   representativeEmailAddress: PropTypes.string,
   representativeTimezone: PropTypes.string,
-  currentUserTimezone: PropTypes.string
+  currentUserTimezone: PropTypes.string,
+  update: PropTypes.func,
+  actionType: PropTypes.string
 };
