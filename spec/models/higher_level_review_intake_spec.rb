@@ -242,18 +242,21 @@ describe HigherLevelReviewIntake, :all_dbs do
 
     include_context "intake", include_shared: true
 
-    context "when the intake is pending" do
-      let(:completion_started_at) { Time.zone.now }
+    context "when a legacy VACOLS opt-in occurs" do
+      include_context "legacy appeal", include_shared: true
 
-      it "does nothing" do
-        subject
+      let(:issue_data) do
+        {
+          profile_date: "2018-04-30",
+          reference_id: "reference-id",
+          decision_text: "decision text",
+          vacols_id: legacy_appeal.vacols_id,
+          vacols_sequence_id: vacols_issue.issseq
+        }
+      end   
 
-        expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
-        expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
-        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
-      end
-    end
-
-    include_context "completed intake", include_shared: true
+      include_context "legacy opt in", include_shared: true
+      include_context "completed intake", include_shared: true
+    end   
   end
 end
