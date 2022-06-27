@@ -104,7 +104,7 @@ class ChangeHearingRequestTypeTask < Task
     perform_later_or_now(Hearings::GeomatchAndCacheAppealJob, appeal_id: appeal.id, appeal_type: appeal.class.name)
   end
 
-  def create_or_update_appellant_email_recipients()
+  def create_or_update_appellant_email_recipients
     app_recipient = appeal.email_recipients.find_by(type: "AppellantHearingEmailRecipient")
     # create HER object for appellant
     if app_recipient.blank?
@@ -122,7 +122,7 @@ class ChangeHearingRequestTypeTask < Task
     end
   end
 
-  def create_or_update_representative_email_recipients()
+  def create_or_update_representative_email_recipients
     rep_recipient = appeal.email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
     if rep_recipient.blank?
       # create HER object for representative
@@ -140,9 +140,9 @@ class ChangeHearingRequestTypeTask < Task
     end
   end
 
-  def create_or_update_hearing_email_recipients()
-    create_or_update_appellant_email_recipients()
-    create_or_update_representative_email_recipients()
+  def create_or_update_hearing_email_recipients
+    create_or_update_appellant_email_recipients
+    create_or_update_representative_email_recipients
   end
 
   def set_assignee
