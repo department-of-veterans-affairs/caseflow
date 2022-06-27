@@ -18,32 +18,6 @@ module WarRoom
       pp ep_update
     end
 
-    def claim_code_check(code)
-      # Declare hash
-      codes_hash = []
-
-      # File open and process.
-      File.open("lib/helpers/END_PRODUCT_CODES.json") do |file|
-        codes_hash = JSON.parse(file.read)
-      end
-
-      # if claim code is in hash return true, else false.
-      codes_hash.key?(code)
-    end
-
-    def same_claim_type(old_code, new_code)
-      # Checks the sameness of the first two chacters as a substing
-      old_code[0, 2] == new_code[0, 2]
-    end
-
-    def update_caseflow(epe, new_code)
-      # Update the End Product in Caseflow.
-      epe.update(code: new_code)
-
-      # Save the changes to the End Product.
-      epe.save
-    end
-
     def claim_checker(original_code, new_code)
       # The End products must be of the same type. (030, 040, 070)
       if same_claim_type(original_code, new_code) == false
@@ -100,6 +74,34 @@ module WarRoom
       if claim_label_check != new_code
         update_vbms(epe, original_code, new_code)
       end
+    end
+
+    private
+
+    def claim_code_check(code)
+      # Declare hash
+      codes_hash = []
+
+      # File open and process.
+      File.open("lib/helpers/END_PRODUCT_CODES.json") do |file|
+        codes_hash = JSON.parse(file.read)
+      end
+
+      # if claim code is in hash return true, else false.
+      codes_hash.key?(code)
+    end
+
+    def same_claim_type(old_code, new_code)
+      # Checks the sameness of the first two chacters as a substing
+      old_code[0, 2] == new_code[0, 2]
+    end
+
+    def update_caseflow(epe, new_code)
+      # Update the End Product in Caseflow.
+      epe.update(code: new_code)
+
+      # Save the changes to the End Product.
+      epe.save
     end
   end
 end
