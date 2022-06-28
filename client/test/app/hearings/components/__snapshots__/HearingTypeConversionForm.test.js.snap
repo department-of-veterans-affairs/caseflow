@@ -194,6 +194,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
               className="usa-width-one-half"
             >
               <HearingEmail
+                actionType="hearing"
                 helperLabel="This email address will be used to send notifications for this hearing only."
                 label="Veteran Email (for these notifications only)"
                 optional={false}
@@ -311,6 +312,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
               className="usa-width-one-half"
             >
               <HearingEmail
+                actionType="hearing"
                 helperLabel="This email address will be used to send notifications for this hearing only."
                 label="POA/Representative Email (for these notifications only)"
                 optional={true}
@@ -594,6 +596,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
               className="usa-width-one-half"
             >
               <HearingEmail
+                actionType="hearing"
                 helperLabel="This email address will be used to send notifications for this hearing only."
                 label="Veteran Email (for these notifications only)"
                 optional={false}
@@ -711,6 +714,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
               className="usa-width-one-half"
             >
               <HearingEmail
+                actionType="hearing"
                 helperLabel="This email address will be used to send notifications for this hearing only."
                 label="POA/Representative Email (for these notifications only)"
                 optional={true}
@@ -994,6 +998,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
               className="usa-width-one-half"
             >
               <HearingEmail
+                actionType="hearing"
                 helperLabel="This email address will be used to send notifications for this hearing only."
                 label="Veteran Email (for these notifications only)"
                 optional={false}
@@ -1111,6 +1116,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
               className="usa-width-one-half"
             >
               <HearingEmail
+                actionType="hearing"
                 helperLabel="This email address will be used to send notifications for this hearing only."
                 label="POA/Representative Email (for these notifications only)"
                 optional={true}
@@ -1394,6 +1400,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
               className="usa-width-one-half"
             >
               <HearingEmail
+                actionType="hearing"
                 helperLabel="This email address will be used to send notifications for this hearing only."
                 label="Veteran Email (for these notifications only)"
                 optional={false}
@@ -1511,6 +1518,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
               className="usa-width-one-half"
             >
               <HearingEmail
+                actionType="hearing"
                 helperLabel="This email address will be used to send notifications for this hearing only."
                 label="POA/Representative Email (for these notifications only)"
                 optional={true}

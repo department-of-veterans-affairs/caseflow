@@ -9,6 +9,7 @@ exports[`HearingEmails Does not allow editing when ReadOnly 1`] = `
 
 exports[`HearingEmails Does not show required when ReadOnly 1`] = `
 <HearingEmail
+  actionType="hearing"
   disabled={true}
   email="123@gmail.com"
   emailType="appellantTz"
@@ -104,6 +105,7 @@ exports[`HearingEmails Matches snapshot with default props 1`] = `
 
 exports[`HearingEmails Respects required prop 1`] = `
 <HearingEmail
+  actionType="hearing"
   email="123@gmail.com"
   emailType="appellantTz"
   helperLabel="This email address will be used to send notifications for this hearing only."

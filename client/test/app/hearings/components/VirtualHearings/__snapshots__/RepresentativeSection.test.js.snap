@@ -16212,6 +16212,7 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
+          actionType="hearing"
           helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
@@ -16446,6 +16447,7 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
+          actionType="hearing"
           helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
@@ -16624,6 +16626,7 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
         className="usa-width-one-half"
       >
         <HearingEmail
+          actionType="hearing"
           helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
@@ -16857,6 +16860,7 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
+          actionType="hearing"
           helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
@@ -17107,6 +17111,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
         className="usa-width-one-half"
       >
         <HearingEmail
+          actionType="hearing"
           helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}
@@ -17350,6 +17355,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
         className="usa-width-one-half"
       >
         <HearingEmail
+          actionType="hearing"
           helperLabel="This email address will be used to send notifications for this hearing only."
           label="POA/Representative Email (for these notifications only)"
           optional={true}

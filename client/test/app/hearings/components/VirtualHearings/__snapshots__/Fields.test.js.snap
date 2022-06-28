@@ -16221,6 +16221,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
             className="usa-width-one-third"
           >
             <HearingEmail
+              actionType="hearing"
               disabled={false}
               email="tom.brady@caseflow.gov"
               emailType="appellantEmailAddress"
@@ -32412,6 +32413,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
             className="usa-width-one-third"
           >
             <HearingEmail
+              actionType="hearing"
               disabled={false}
               email="tom.brady@caseflow.gov"
               emailType="representativeEmailAddress"
@@ -48715,6 +48717,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
             className="usa-width-one-third"
           >
             <HearingEmail
+              actionType="hearing"
               disabled={false}
               email="tom.brady@caseflow.gov"
               emailType="appellantEmailAddress"
@@ -64906,6 +64909,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
             className="usa-width-one-third"
           >
             <HearingEmail
+              actionType="hearing"
               disabled={false}
               email="tom.brady@caseflow.gov"
               emailType="representativeEmailAddress"

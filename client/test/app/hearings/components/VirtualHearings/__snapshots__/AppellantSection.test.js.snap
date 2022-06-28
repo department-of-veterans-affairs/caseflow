@@ -194,6 +194,7 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
+          actionType="hearing"
           helperLabel="This email address will be used to send notifications for this hearing only."
           label="Appellant Email (for these notifications only)"
           optional={false}
@@ -438,6 +439,7 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
+          actionType="hearing"
           helperLabel="This email address will be used to send notifications for this hearing only."
           label="Veteran Email (for these notifications only)"
           optional={false}
@@ -656,6 +658,7 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
+          actionType="hearing"
           helperLabel="This email address will be used to send notifications for this hearing only."
           label="Veteran Email (for these notifications only)"
           optional={false}
@@ -16942,6 +16945,7 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
+          actionType="hearing"
           helperLabel="This email address will be used to send notifications for this hearing only."
           label="Veteran Email (for these notifications only)"
           optional={false}
@@ -17197,6 +17201,7 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
+          actionType="hearing"
           helperLabel="This email address will be used to send notifications for this hearing only."
           label="Veteran Email (for these notifications only)"
           optional={false}
@@ -17366,6 +17371,7 @@ exports[`Appellant Does not display address when formFieldsOnly = true 1`] = `
         className="usa-width-one-half"
       >
         <HearingEmail
+          actionType="hearing"
           helperLabel="This email address will be used to send notifications for this hearing only."
           label="Appellant Email (for these notifications only)"
           optional={false}
@@ -17620,6 +17626,7 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half"
       >
         <HearingEmail
+          actionType="hearing"
           helperLabel="This email address will be used to send notifications for this hearing only."
           label="Veteran Email (for these notifications only)"
           optional={false}
