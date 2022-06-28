@@ -6,6 +6,7 @@
 
 class HearingLocation < CaseflowRecord
   belongs_to :hearing, polymorphic: true
+  include LocationAndRegionalOfficeLocationMixin
 
   validates :facility_id, presence: true, on: :create
 
