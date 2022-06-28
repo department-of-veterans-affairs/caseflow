@@ -13,7 +13,6 @@ FactoryBot.define do
       association(
         :hearing_day,
         regional_office: regional_office,
-        scheduled_for: Time.zone.today,
         judge: judge,
         request_type: regional_office.nil? ? "C" : "V",
         created_by: adding_user,
