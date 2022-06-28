@@ -28,7 +28,13 @@ FactoryBot.define do
     end
 
     trait :with_virtual_hearing do
-      hearing { create(:hearing, :virtual) }
+      hearing do
+        create(
+          :hearing,
+          :virtual,
+          hearing_day: create(:hearing_day, scheduled_for: Date.tomorrow)
+        )
+      end
     end
   end
 end
