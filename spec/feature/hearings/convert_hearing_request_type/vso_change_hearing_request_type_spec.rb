@@ -349,11 +349,22 @@ RSpec.feature "Convert hearing request type" do
 
         populate_conversion_form_except_rep_email
 
-        find_field "POA/Representative Email"
-        fill_in "POA/Representative Email", with: "rep@queue.com"
-
         click_label("Affirm Permission")
         click_label("Affirm Access")
+
+        expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
+
+        find_field "POA/Representative Email"
+        fill_in "POA/Representative Email", with: "rep@queue.com"
+        expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: false)
+
+        fill_in "POA/Representative Email", with: "rep@bad-email"
+        expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
+        find("body").click
+        expect(page).to have_content(COPY::VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO)
+
+        fill_in "POA/Representative Email", with: "rep@good-email.com"
+        expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: false)
 
         click_button "button-Convert-Hearing-To-Virtual"
       end
@@ -367,11 +378,22 @@ RSpec.feature "Convert hearing request type" do
 
         populate_conversion_form_except_rep_email
 
-        find_field "POA/Representative Email"
-        fill_in "POA/Representative Email", with: "rep@hearings.com"
-
         click_label("affirmPermission")
         click_label("affirmAccess")
+
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
+
+        find_field "POA/Representative Email"
+        fill_in "POA/Representative Email", with: "rep@hearings.com"
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: false)
+
+        fill_in "POA/Representative Email", with: "rep@bad-hearings-email"
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
+        find("body").click
+        expect(page).to have_content(COPY::VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO)
+
+        fill_in "POA/Representative Email", with: "rep@hearings.com"
+        expect(page).to have_button("Convert to Virtual Hearing", disabled: false)
 
         click_button "Convert to Virtual Hearing"
       end
