@@ -6,7 +6,7 @@
 
 class HearingLocation < CaseflowRecord
   belongs_to :hearing, polymorphic: true
-  include LocationAndRegionalOfficeLocationMixin # Imports .full_street_address
+  include HearingLocationAndRegionalOfficeMixin # Imports .full_street_address
 
   validates :facility_id, presence: true, on: :create
 
