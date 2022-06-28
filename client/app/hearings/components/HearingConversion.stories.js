@@ -45,6 +45,7 @@ const Wrapped = (props) => {
       type={props.type}
       scheduledFor={props.scheduledFor || hearing.scheduledFor}
       updateCheckboxes={() => 'A checkbox has been checked'}
+      setIsNotValidRepEmail={() => 'Rep Email Changed'}
       userVsoEmployee={props.userVsoEmployee}
       {...props}
     />
@@ -83,6 +84,7 @@ export const ConvertToVirtualAsVSO = () => {
     hearing={amaHearing}
     type={HEARING_CONVERSION_TYPES[0]}
     setIsNotValidEmail={() => 'Email Changed'}
+    setIsNotValidRepEmail={() => 'Rep Email Changed'}
     userVsoEmployee
   />;
 };
