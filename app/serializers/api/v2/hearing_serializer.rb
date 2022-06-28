@@ -4,7 +4,7 @@ class Api::V2::HearingSerializer
   include FastJsonapi::ObjectSerializer
 
   attribute :address do |hearing|
-    hearing.hearing_location_or_regional_office.street_address
+    hearing.hearing_location_or_regional_office.full_street_address
   end
   attribute :city do |hearing|
     hearing.hearing_location_or_regional_office.city
