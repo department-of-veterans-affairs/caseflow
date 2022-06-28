@@ -49,7 +49,9 @@ describe('VSOHearingTypeConversionForm', () => {
   });
 
   test('Display current user email on VSOHearingTypeConversionForm', () => {
-    expect(screen.getByText(virtualAppeal.currentUserEmail)).toBeTruthy();
+    expect(
+      screen.getByRole('textbox', { name: 'POA/Representative Email' }).value
+    ).toBe(virtualAppeal.currentUserEmail);
   });
 
   test('Display current user time zone on VSOHearingTypeConversionForm', async () => {

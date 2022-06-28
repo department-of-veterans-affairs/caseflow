@@ -18,6 +18,7 @@ import COPY from '../../../../../client/COPY.json'
 const updateSpy = jest.fn();
 const defaultTitle = 'Convert to Virtual';
 const mockUpdateCheckboxes = jest.fn();
+const mockSetIsNotValidRepEmail = jest.fn();
 
 describe('HearingConversion', () => {
   test('Matches snapshot with default props', () => {
@@ -28,7 +29,8 @@ describe('HearingConversion', () => {
         title={defaultTitle}
         update={updateSpy}
         hearing={amaHearing}
-        updateCheckboxes= {mockUpdateCheckboxes}
+        updateCheckboxes={mockUpdateCheckboxes}
+        setIsNotValidRepEmail={mockSetIsNotValidRepEmail}
       />,
       {
         wrappingComponent: hearingDetailsWrapper(
@@ -78,6 +80,7 @@ describe('HearingConversion', () => {
         update={updateSpy}
         hearing={amaHearing}
         updateCheckboxes= {mockUpdateCheckboxes}
+        setIsNotValidRepEmail={mockSetIsNotValidRepEmail}
         userVsoEmployee= {false}
       />,
       {
@@ -117,6 +120,7 @@ describe('HearingConversion', () => {
         update={updateSpy}
         hearing={amaHearing}
         updateCheckboxes= {mockUpdateCheckboxes}
+        setIsNotValidRepEmail={mockSetIsNotValidRepEmail}
         userVsoEmployee
       />,
       {
