@@ -77,7 +77,7 @@ const HearingDetails = (props) => {
   const [hearingConversionCheckboxes, setHearingConversionCheckboxes] = useState(false);
 
   const canSubmit = () => {
-    let emailFieldsValid = (
+    let allFieldsValid = (
       Boolean(hearing?.appellantEmailAddress) &&
       Boolean(hearing?.appellantTz) &&
       Boolean(hearing?.representativeTz) &&
@@ -87,7 +87,7 @@ const HearingDetails = (props) => {
       hearingConversionCheckboxes
     );
 
-    setFormSubmittable(emailFieldsValid);
+    setFormSubmittable(allFieldsValid);
   };
 
   useEffect(() => {

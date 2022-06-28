@@ -99,7 +99,11 @@ export const HearingConversion = ({
     if (virtual) {
       prefillFields();
 
-      setIsNotValidRepEmail(!hearing?.representativeEmailAddress);
+      if (userVsoEmployee) {
+        setIsNotValidRepEmail(!hearing?.currentUserEmail);
+      } else {
+        setIsNotValidRepEmail(false);
+      }
     }
   }, []);
 
