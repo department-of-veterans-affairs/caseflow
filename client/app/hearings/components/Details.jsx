@@ -69,8 +69,10 @@ const HearingDetails = (props) => {
   const [emailConfirmationModalOpen, setEmailConfirmationModalOpen] = useState(false);
   const [emailConfirmationModalType, setEmailConfirmationModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
+ 
   const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
   const [isNotValidEmail, setIsNotValidEmail] = useState(userVsoEmployee);
+  const [isNotValidRepEmail, setIsNotValidRepEmail] = useState(userVsoEmployee);
   const [formSubmittable, setFormSubmittable] = useState(false);
   const [hearingConversionCheckboxes, setHearingConversionCheckboxes] = useState(false);
 
@@ -80,6 +82,7 @@ const HearingDetails = (props) => {
       Boolean(hearing?.appellantTz) &&
       Boolean(hearing?.representativeTz) &&
       !isNotValidEmail &&
+      !isNotValidRepEmail &&
       hearing?.appellantEmailAddress === hearing?.appellantConfirmEmailAddress &&
       hearingConversionCheckboxes
     );
@@ -340,6 +343,7 @@ const HearingDetails = (props) => {
           errors={virtualHearingErrors}
           userVsoEmployee={userVsoEmployee}
           setIsNotValidEmail={setIsNotValidEmail}
+          setIsNotValidRepEmail={setIsNotValidRepEmail}
           updateCheckboxes={setHearingConversionCheckboxes}
         />
       ) : (

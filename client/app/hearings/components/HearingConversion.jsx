@@ -29,6 +29,7 @@ export const HearingConversion = ({
   update,
   userVsoEmployee,
   setIsNotValidEmail,
+  setIsNotValidRepEmail,
   updateCheckboxes
 }) => {
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
@@ -67,6 +68,7 @@ export const HearingConversion = ({
     userVsoEmployee,
     actionType: 'hearing',
     setIsNotValidEmail,
+    setIsNotValidRepEmail,
     readOnly: userVsoEmployee ? Boolean(hearing?.currentUserEmail) : false
   };
 
@@ -96,6 +98,8 @@ export const HearingConversion = ({
     // Set the representative emails and timezone to defaults if not already set
     if (virtual) {
       prefillFields();
+
+      setIsNotValidRepEmail(!hearing?.representativeEmailAddress);
     }
   }, []);
 
@@ -186,5 +190,6 @@ HearingConversion.propTypes = {
   hearing: PropTypes.object.isRequired,
   userVsoEmployee: PropTypes.bool,
   setIsNotValidEmail: PropTypes.func,
+  setIsNotValidRepEmail: PropTypes.func,
   updateCheckboxes: PropTypes.func
 };
