@@ -355,7 +355,7 @@ RSpec.feature "Convert hearing request type" do
         click_label("Affirm Permission")
         click_label("Affirm Access")
 
-        click_button "Convert Hearing to Virtual"
+        click_button "button-Convert-Hearing-To-Virtual"
       end
     end
 
