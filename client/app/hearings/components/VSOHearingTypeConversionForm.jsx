@@ -21,7 +21,9 @@ export const VSOHearingTypeConversionForm = ({
     updatedAppeal,
     dispatchAppeal,
     isNotValidEmail,
-    setIsNotValidEmail
+    isNotValidRepEmail,
+    setIsNotValidEmail,
+    setIsNotValidRepEmail
   } = useContext(HearingTypeConversionContext);
 
   const updateAppeal = updateAppealDispatcher(updatedAppeal, dispatchAppeal);
@@ -62,6 +64,7 @@ export const VSOHearingTypeConversionForm = ({
     actionType: 'appeal',
     update: updateAppeal,
     setIsNotValidEmail,
+    setIsNotValidRepEmail,
     type
   };
   const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
@@ -78,10 +81,15 @@ export const VSOHearingTypeConversionForm = ({
   useEffect(() => {
     // Ensure representative timezone is populated.
     prefillFields();
+
+    // If the rep's email is present the field will be read-only.
+    // Whether or not the email is valid needs to be perfomed on mount as a result.
+    setIsNotValidRepEmail(!updatedAppeal.currentUserEmail);
   }, []);
 
   const preventSubmission = () => {
     return isNotValidEmail ||
+      isNotValidRepEmail ||
       !updatedAppeal?.appellantEmailAddress ||
       !checkedAccess ||
       !checkedPermissions ||

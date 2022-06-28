@@ -7,7 +7,7 @@ import { AddressLine } from '../details/Address';
 import { VirtualHearingSection } from './Section';
 import { ReadOnly } from '../details/ReadOnly';
 import { HelperText } from './HelperText';
-import { HearingEmail } from '../details/HearingEmail';
+import { VSOHearingEmail } from '../details/VSOHearingEmail';
 import { Timezone } from './Timezone';
 import { marginTop } from '../details/style';
 
@@ -20,7 +20,8 @@ export const VSORepresentativeSection = ({
   formFieldsOnly,
   readOnly,
   update,
-  actionType
+  actionType,
+  setIsNotValidRepEmail
 }) => {
   return (
     <VirtualHearingSection
@@ -58,14 +59,17 @@ export const VSORepresentativeSection = ({
             fullWidth ? 'usa-width-one-whole' : 'usa-width-one-half'
           )}
         >
-          <HearingEmail
+          <VSOHearingEmail
             required
             readOnly={readOnly}
-            emailType="representativeEmailAddress"
             label="POA/Representative Email"
+            emailType="representativeEmailAddress"
             error={errors?.representativeEmailAddress}
-            email={hearing.representativeEmailAddress}
+            helperLabel={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO}
+            email={hearing?.representativeEmailAddress}
             update={update}
+            hearing={hearing}
+            setIsNotValidEmail={setIsNotValidRepEmail}
             actionType={actionType}
           />
         </div>
@@ -115,5 +119,6 @@ VSORepresentativeSection.propTypes = {
   representativeTimezone: PropTypes.string,
   currentUserTimezone: PropTypes.string,
   update: PropTypes.func,
-  actionType: PropTypes.string
+  actionType: PropTypes.string,
+  setIsNotValidRepEmail: PropTypes.func
 };
