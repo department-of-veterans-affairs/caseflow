@@ -61,7 +61,7 @@ class CaseHearingsDetail extends React.PureComponent {
     };
   }
 
-  getHearingAttrs = (hearing, userIsVsoEmployee) => {
+  getHearingAttrs = (hearing, userIsVsoEmployee, vsoVirtualOptIn) => {
     const today = new Date();
     const deadline = today.setDate(today.getDate() + 11);
     const hearingDay = new Date(hearing.date);
@@ -109,7 +109,7 @@ class CaseHearingsDetail extends React.PureComponent {
       }
     );
     // info alert for hearings within 11 days of scheduled date
-    if (userIsVsoEmployee) {
+    if (userIsVsoEmployee && vsoVirtualOptIn) {
       if (!hearing.isVirtual && hearingDay <= deadline) {
         hearingAttrs.push(
           {
@@ -140,7 +140,8 @@ class CaseHearingsDetail extends React.PureComponent {
   getHearingInfo = () => {
     const {
       appeal: { hearings },
-      userIsVsoEmployee
+      userIsVsoEmployee,
+      vsoVirtualOptIn
     } = this.props;
     const orderedHearings = _.orderBy(hearings, 'createdAt', 'desc');
     const uniqueOrderedHearings = _.uniqWith(orderedHearings, _.isEqual);
@@ -158,7 +159,7 @@ class CaseHearingsDetail extends React.PureComponent {
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
-        items={this.getHearingAttrs(hearing, userIsVsoEmployee).map(this.getDetailField)} />
+        items={this.getHearingAttrs(hearing, userIsVsoEmployee, vsoVirtualOptIn).map(this.getDetailField)} />
     </div>);
 
     return <React.Fragment>
@@ -186,7 +187,11 @@ class CaseHearingsDetail extends React.PureComponent {
 
   closeModal = () => this.setState({ modalOpen: false, selectedTask: null })
 
-  getUnscheduledHearingAttrs = (task, appeal, userIsVsoEmployee) => {
+  getUnscheduledHearingAttrs = (task, appeal, userIsVsoEmployee, vsoVirtualOptIn) => {
+    if (userIsVsoEmployee && !vsoVirtualOptIn) {
+      return [];
+    }
+
     if (userIsVsoEmployee) {
       return [
         {
@@ -236,7 +241,8 @@ class CaseHearingsDetail extends React.PureComponent {
     const {
       appeal,
       hearingTasks,
-      userIsVsoEmployee
+      userIsVsoEmployee,
+      vsoVirtualOptIn
     } = this.props;
 
     return hearingTasks.map((task, index) => <div
@@ -247,7 +253,14 @@ class CaseHearingsDetail extends React.PureComponent {
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
-        items={this.getUnscheduledHearingAttrs(task, appeal, userIsVsoEmployee).map(this.getDetailField)} />
+        items={
+          this.getUnscheduledHearingAttrs(
+            task,
+            appeal,
+            userIsVsoEmployee,
+            vsoVirtualOptIn
+          ).map(this.getDetailField)
+        } />
     </div>);
   }
 
@@ -311,6 +324,7 @@ CaseHearingsDetail.propTypes = {
   showVeteranCaseList: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
   hearingTasks: PropTypes.array,
+  vsoVirtualOptIn: PropTypes.bool
 };
 
 const mapStateToProps = (state) => {

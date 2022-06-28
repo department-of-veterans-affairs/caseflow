@@ -2,13 +2,17 @@
 
 RSpec.feature "Convert hearing request type" do
   before do
+    FeatureToggle.enable!(:vso_virtual_opt_in)
     FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
     HearingsManagement.singleton.add_user(hearing_coord)
     vso.add_user(vso_user)
     vso.add_user(vso_user_no_email)
   end
 
-  after { FeatureToggle.disable!(:schedule_veteran_virtual_hearing) }
+  after do
+    FeatureToggle.disable!(:vso_virtual_opt_in)
+    FeatureToggle.disable!(:schedule_veteran_virtual_hearing)
+  end
 
   let!(:hearing_day) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 14.days, regional_office: "RO63") }
   let!(:hearing_day2) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 7.days, regional_office: "RO63") }
