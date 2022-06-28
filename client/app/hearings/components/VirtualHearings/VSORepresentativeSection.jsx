@@ -61,7 +61,7 @@ export const VSORepresentativeSection = ({
         >
           <VSOHearingEmail
             required
-            readOnly={readOnly}
+            disabled={readOnly}
             label="POA/Representative Email"
             emailType="representativeEmailAddress"
             error={errors?.representativeEmailAddress}
