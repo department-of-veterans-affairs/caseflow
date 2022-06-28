@@ -37,8 +37,7 @@ RSpec.feature "Convert hearing request type" do
     expected_values = [
       appellant_name,
       timezone_label_by_value(appeal.appellant_tz),
-      timezone_label_by_value(appeal.representative_tz),
-      vso_user.email
+      timezone_label_by_value(appeal.representative_tz)
     ]
 
     if appeal.is_a?(Appeal)
@@ -58,6 +57,8 @@ RSpec.feature "Convert hearing request type" do
     expected_field_values.compact.each do |field_value|
       expect(page).to have_content(field_value)
     end
+
+    expect(page).to have_field("POA/Representative Email", with: vso_user.email)
 
     if appeal.is_a?(Appeal)
       expect(page).to have_field("Appellant Email", with: appeal.appellant.email_address)
