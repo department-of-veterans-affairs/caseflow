@@ -55,7 +55,7 @@ export const VSOHearingTypeConversionForm = ({
   const sectionProps = {
     appellantTitle,
     hearing,
-    readOnly: true,
+    readOnly: Boolean(updatedAppeal?.currentUserEmail),
     showDivider: false,
     showOnlyAppellantName: true,
     showMissingEmailAlert: true,

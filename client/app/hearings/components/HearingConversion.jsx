@@ -66,7 +66,8 @@ export const HearingConversion = ({
     schedulingToVirtual: virtual,
     userVsoEmployee,
     actionType: 'hearing',
-    setIsNotValidEmail
+    setIsNotValidEmail,
+    readOnly: userVsoEmployee ? Boolean(hearing?.currentUserEmail) : false
   };
 
   const prefillFields = () => {
@@ -123,7 +124,7 @@ export const HearingConversion = ({
       {userVsoEmployee ?
         (<div>
           <VSOAppellantSection {...sectionProps} />
-          <VSORepresentativeSection {...sectionProps} readOnly />
+          <VSORepresentativeSection {...sectionProps} />
         </div>) :
         (<div>
           <AppellantSection {...sectionProps} />

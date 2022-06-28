@@ -22,14 +22,6 @@ export const VSORepresentativeSection = ({
   update,
   actionType
 }) => {
-  const [disableRepEmail, setDisableRepEmail] = useState(readOnly);
-
-  useEffect(() => {
-    if (!hearing.representativeEmailAddress) {
-      setDisableRepEmail(false);
-    }
-  }, []);
-
   return (
     <VirtualHearingSection
       formFieldsOnly={formFieldsOnly}
@@ -68,7 +60,7 @@ export const VSORepresentativeSection = ({
         >
           <HearingEmail
             required
-            readOnly={disableRepEmail}
+            readOnly={readOnly}
             emailType="representativeEmailAddress"
             label="POA/Representative Email"
             error={errors?.representativeEmailAddress}
