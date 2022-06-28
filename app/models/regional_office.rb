@@ -5,7 +5,7 @@ def convert_top_level_key_to_string(hash)
 end
 
 class RegionalOffice
-  include LocationAndRegionalOfficeLocationMixin # Imports .full_street_address
+  include HearingLocationAndRegionalOfficeMixin # Imports .full_street_address
 
   class NotFoundError < StandardError; end
 
