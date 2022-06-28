@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.feature "Hearing Details", :all_dbs do
-  let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
+  let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"], email: "Hearing@Coord.com") }
   let(:vso_user) { create(:user, css_id: "BILLIE_VSO", roles: ["VSO"], email: "BILLIE@test.com") }
   let!(:coordinator) { create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG") }
   let!(:vlj) { create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO") }
