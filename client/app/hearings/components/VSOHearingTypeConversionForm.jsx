@@ -46,7 +46,7 @@ export const VSOHearingTypeConversionForm = ({
     veteranFullName: updatedAppeal?.veteranFullName,
     appellantTz: updatedAppeal?.appellantTz,
     appellantEmailAddress: updatedAppeal?.appellantEmailAddress,
-    representativeEmailAddress: updatedAppeal?.currentUserEmail,
+    representativeEmailAddress: updatedAppeal?.representativeEmailAddress,
     representativeTz: updatedAppeal?.representativeTz,
     appellantConfirmEmailAddress: updatedAppeal?.appellantConfirmEmailAddress
   };
@@ -70,7 +70,8 @@ export const VSOHearingTypeConversionForm = ({
     updateAppeal(
       'appeal', {
         ...updatedAppeal,
-        representativeTz: updatedAppeal.currentUserTimezone
+        representativeTz: updatedAppeal.currentUserTimezone,
+        representativeEmailAddress: updatedAppeal.currentUserEmail
       });
   };
 

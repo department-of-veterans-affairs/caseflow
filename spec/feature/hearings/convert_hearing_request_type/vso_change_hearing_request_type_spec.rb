@@ -5,6 +5,7 @@ RSpec.feature "Convert hearing request type" do
     FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
     HearingsManagement.singleton.add_user(hearing_coord)
     vso.add_user(vso_user)
+    vso.add_user(vso_user_no_email)
   end
 
   after { FeatureToggle.disable!(:schedule_veteran_virtual_hearing) }
@@ -13,6 +14,7 @@ RSpec.feature "Convert hearing request type" do
   let!(:hearing_day2) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 7.days, regional_office: "RO63") }
   let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
   let!(:vso_user) { create(:user, :vso_role, email: "DefinitelyNotNull@All.com") }
+  let!(:vso_user_no_email) { create(:user, :vso_role, email: nil) }
   let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
 
   def appellant_name
@@ -212,7 +214,7 @@ RSpec.feature "Convert hearing request type" do
     end
   end
 
-  describe "for AMA appeals and hearings" do
+  shared_context "AMA non-virtual hearing with POA representation" do
     let!(:appeal) do
       a = create(:appeal, :with_schedule_hearing_tasks, :hearing_docket, number_of_claimants: 1)
       a.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.video,
@@ -226,6 +228,10 @@ RSpec.feature "Convert hearing request type" do
              claimant_participant_id: appeal.claimant.participant_id)
     end
     let!(:appellant_title) { appeal.appellant_is_not_veteran ? "Appellant" : "Veteran" }
+  end
+
+  describe "for AMA appeals and hearings" do
+    include_context "AMA non-virtual hearing with POA representation"
 
     context "whenever a hearing has not yet been scheduled" do
       it_behaves_like "unscheduled hearings"
@@ -318,6 +324,57 @@ RSpec.feature "Convert hearing request type" do
       let!(:hearing) { create(:legacy_hearing, hearing_day: hearing_day2, appeal: appeal) }
 
       it_behaves_like "scheduled hearings"
+    end
+  end
+
+  def populate_conversion_form_except_rep_email
+    find_field "#{appellant_title} Email"
+    fill_in "#{appellant_title} Email", with: "appellant@test.com"
+    fill_in "Confirm #{appellant_title} Email", with: "appellant@test.com"
+
+    click_dropdown(name: "appellantTz", index: 1)
+    click_dropdown(name: "representativeTz", index: 2)
+  end
+
+  describe "whenever current user does not have an email on record" do
+    include_context "AMA non-virtual hearing with POA representation"
+
+    before { User.authenticate!(user: vso_user_no_email) }
+
+    context "for an unscheduled hearing" do
+      it do
+        visit "queue/appeals/#{appeal.uuid}"
+        find_link COPY::VSO_CONVERT_TO_VIRTUAL_TEXT
+        click_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
+
+        populate_conversion_form_except_rep_email
+
+        find_field "POA/Representative Email"
+        fill_in "POA/Representative Email", with: "rep@queue.com"
+
+        click_label("Affirm Permission")
+        click_label("Affirm Access")
+
+        click_button "Convert Hearing to Virtual"
+      end
+    end
+
+    context "for a scheduled hearing" do
+      let!(:hearing) { create(:hearing, hearing_day: hearing_day, appeal: appeal) }
+
+      it do
+        visit "/hearings/#{hearing.uuid}/details"
+
+        populate_conversion_form_except_rep_email
+
+        find_field "POA/Representative Email"
+        fill_in "POA/Representative Email", with: "rep@hearings.com"
+
+        click_label("affirmPermission")
+        click_label("affirmAccess")
+
+        click_button "Convert to Virtual Hearing"
+      end
     end
   end
 end

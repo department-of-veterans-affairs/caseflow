@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -22,6 +22,14 @@ export const VSORepresentativeSection = ({
   update,
   actionType
 }) => {
+  const [disableRepEmail, setDisableRepEmail] = useState(readOnly);
+
+  useEffect(() => {
+    if (!hearing.representativeEmailAddress) {
+      setDisableRepEmail(false);
+    }
+  }, []);
+
   return (
     <VirtualHearingSection
       formFieldsOnly={formFieldsOnly}
@@ -59,8 +67,8 @@ export const VSORepresentativeSection = ({
           )}
         >
           <HearingEmail
-            optional
-            readOnly={hearing.representativeEmailAddress ? readOnly : false}
+            required
+            readOnly={disableRepEmail}
             emailType="representativeEmailAddress"
             label="POA/Representative Email"
             error={errors?.representativeEmailAddress}

@@ -59,7 +59,7 @@ export const HearingTypeConversion = ({
                   appellant_tz: updatedAppeal?.appellantTz,
                   representative_tz: updatedAppeal?.representativeTz,
                   appellant_email: updatedAppeal?.appellantEmailAddress,
-                  representative_email: updatedAppeal?.currentUserEmail
+                  representative_email: updatedAppeal?.representativeEmailAddress
                 }
               })
             }
