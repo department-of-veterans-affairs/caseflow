@@ -11,7 +11,7 @@ class MixinTest
     "vba_422"
   end
 
-  def facility_address(location_key)
+  def facility_address(_)
     {
       "address_1" => "15 New Sudbury Street",
       "address_2" => "JFK Federal Building",
