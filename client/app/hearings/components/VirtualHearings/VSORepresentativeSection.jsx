@@ -21,7 +21,7 @@ export const VSORepresentativeSection = ({
   readOnly,
   update,
   actionType,
-  setIsNotValidRepEmail
+  setIsValidRepEmail
 }) => {
   return (
     <VirtualHearingSection
@@ -69,7 +69,7 @@ export const VSORepresentativeSection = ({
             email={hearing?.representativeEmailAddress}
             update={update}
             hearing={hearing}
-            setIsNotValidEmail={setIsNotValidRepEmail}
+            setIsValidEmail={setIsValidRepEmail}
             actionType={actionType}
             showHelper={!readOnly}
           />
@@ -121,5 +121,5 @@ VSORepresentativeSection.propTypes = {
   currentUserTimezone: PropTypes.string,
   update: PropTypes.func,
   actionType: PropTypes.string,
-  setIsNotValidRepEmail: PropTypes.func
+  setIsValidRepEmail: PropTypes.func
 };

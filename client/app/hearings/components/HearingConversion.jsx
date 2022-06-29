@@ -28,8 +28,8 @@ export const HearingConversion = ({
   errors,
   update,
   userVsoEmployee,
-  setIsNotValidEmail,
-  setIsNotValidRepEmail,
+  setIsValidEmail,
+  setIsValidRepEmail,
   updateCheckboxes
 }) => {
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
@@ -67,8 +67,8 @@ export const HearingConversion = ({
     schedulingToVirtual: virtual,
     userVsoEmployee,
     actionType: 'hearing',
-    setIsNotValidEmail,
-    setIsNotValidRepEmail,
+    setIsValidEmail,
+    setIsValidRepEmail,
     readOnly: userVsoEmployee ? Boolean(hearing?.currentUserEmail) : false
   };
 
@@ -100,9 +100,9 @@ export const HearingConversion = ({
       prefillFields();
 
       if (userVsoEmployee) {
-        setIsNotValidRepEmail(!hearing?.currentUserEmail);
+        setIsValidRepEmail(hearing?.currentUserEmail);
       } else {
-        setIsNotValidRepEmail(false);
+        setIsValidRepEmail(true);
       }
     }
   }, []);
@@ -193,7 +193,7 @@ HearingConversion.propTypes = {
   update: PropTypes.func,
   hearing: PropTypes.object.isRequired,
   userVsoEmployee: PropTypes.bool,
-  setIsNotValidEmail: PropTypes.func,
-  setIsNotValidRepEmail: PropTypes.func,
+  setIsValidEmail: PropTypes.func,
+  setIsValidRepEmail: PropTypes.func,
   updateCheckboxes: PropTypes.func
 };

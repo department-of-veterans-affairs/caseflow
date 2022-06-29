@@ -71,8 +71,8 @@ const HearingDetails = (props) => {
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
 
   const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
-  const [isNotValidEmail, setIsNotValidEmail] = useState(userVsoEmployee);
-  const [isNotValidRepEmail, setIsNotValidRepEmail] = useState(userVsoEmployee);
+  const [isValidEmail, setIsValidEmail] = useState(!userVsoEmployee);
+  const [isValidRepEmail, setIsValidRepEmail] = useState(!userVsoEmployee);
   const [formSubmittable, setFormSubmittable] = useState(false);
   const [hearingConversionCheckboxes, setHearingConversionCheckboxes] = useState(false);
 
@@ -81,8 +81,8 @@ const HearingDetails = (props) => {
       Boolean(hearing?.appellantEmailAddress) &&
       Boolean(hearing?.appellantTz) &&
       Boolean(hearing?.representativeTz) &&
-      !isNotValidEmail &&
-      !isNotValidRepEmail &&
+      isValidEmail &&
+      isValidRepEmail &&
       hearing?.appellantEmailAddress === hearing?.appellantConfirmEmailAddress &&
       hearingConversionCheckboxes
     );
@@ -342,8 +342,8 @@ const HearingDetails = (props) => {
           scheduledFor={hearing?.scheduledFor}
           errors={virtualHearingErrors}
           userVsoEmployee={userVsoEmployee}
-          setIsNotValidEmail={setIsNotValidEmail}
-          setIsNotValidRepEmail={setIsNotValidRepEmail}
+          setIsValidEmail={setIsValidEmail}
+          setIsValidRepEmail={setIsValidRepEmail}
           updateCheckboxes={setHearingConversionCheckboxes}
         />
       ) : (

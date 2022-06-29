@@ -20,10 +20,10 @@ export const VSOHearingTypeConversionForm = ({
   const {
     updatedAppeal,
     dispatchAppeal,
-    isNotValidEmail,
-    isNotValidRepEmail,
-    setIsNotValidEmail,
-    setIsNotValidRepEmail
+    isValidEmail,
+    isValidRepEmail,
+    setIsValidEmail,
+    setIsValidRepEmail
   } = useContext(HearingTypeConversionContext);
 
   const updateAppeal = updateAppealDispatcher(updatedAppeal, dispatchAppeal);
@@ -63,8 +63,8 @@ export const VSOHearingTypeConversionForm = ({
     showMissingEmailAlert: true,
     actionType: 'appeal',
     update: updateAppeal,
-    setIsNotValidEmail,
-    setIsNotValidRepEmail,
+    setIsValidEmail,
+    setIsValidRepEmail,
     type
   };
 
@@ -85,12 +85,12 @@ export const VSOHearingTypeConversionForm = ({
 
     // If the rep's email is present the field will be read-only.
     // Whether or not the email is valid needs to be perfomed on mount as a result.
-    setIsNotValidRepEmail(!updatedAppeal.currentUserEmail);
+    setIsValidRepEmail(updatedAppeal.currentUserEmail);
   }, []);
 
   const preventSubmission = () => {
-    return isNotValidEmail ||
-      isNotValidRepEmail ||
+    return !isValidEmail ||
+      !isValidRepEmail ||
       !updatedAppeal?.appellantEmailAddress ||
       !checkedAccess ||
       !checkedPermissions ||
