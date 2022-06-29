@@ -123,7 +123,7 @@ class CaseHearingsDetail extends React.PureComponent {
           }
         );
       }
-    } else {
+    } else if (!userIsVsoEmployee) {
       hearingAttrs.push(
         {
           label: '',
