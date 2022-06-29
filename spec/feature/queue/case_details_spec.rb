@@ -2345,6 +2345,34 @@ RSpec.feature "Case details", :all_dbs do
       expect(page.has_no_content?("Unscheduled hearing")).to eq(true)
       expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
     end
+
+    context "whenever there is a scheduled hearing" do
+      let!(:hearing_day_close) do
+        create(:hearing_day, :video, scheduled_for: Time.zone.today + 7.days, regional_office: "RO70")
+      end
+
+      let!(:hearing_day_far) do
+        create(:hearing_day, :video, scheduled_for: Time.zone.today + 30.days, regional_office: "RO70")
+      end
+
+      let!(:hearing_within_10_days) { create(:hearing, hearing_day: hearing_day_close) }
+      let!(:hearing_beyond_10_days) { create(:hearing, hearing_day: hearing_day_far) }
+
+      it "when the hearing 10+ days out the hearings details link is omitted" do
+        visit "/queue/appeals/#{hearing_beyond_10_days.appeal.uuid}"
+
+        expect(page.has_content?("Hearings")).to eq(true)
+        expect(page.has_no_content?(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)).to eq(true)
+      end
+
+      it "when the hearing is <10 days out the hearings details link and notification banner are omitted" do
+        visit "/queue/appeals/#{hearing_within_10_days.appeal.uuid}"
+
+        expect(page.has_content?("Hearings")).to eq(true)
+        expect(page.has_no_content?(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)).to eq(true)
+        expect(page.has_no_content?(COPY::VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
+      end
+    end
   end
 
   # National VSO Test
