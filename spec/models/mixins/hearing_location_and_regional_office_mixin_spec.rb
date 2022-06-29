@@ -12,15 +12,15 @@ class MixinTest
   end
 
   def facility_address(location_key)
-      {
-        "address_1"=>"15 New Sudbury Street",
-        "address_2"=>"JFK Federal Building",
-        "address_3"=>nil,
-        "city"=>"Boston",
-        "state"=>"MA",
-        "zip"=>"02203",
-        "timezone"=>"America/New_York"
-      }
+    {
+      "address_1" => "15 New Sudbury Street",
+      "address_2" => "JFK Federal Building",
+      "address_3" => nil,
+      "city" => "Boston",
+      "state" => "MA",
+      "zip" => "02203",
+      "timezone" => "America/New_York"
+    }
   end
 end
 
