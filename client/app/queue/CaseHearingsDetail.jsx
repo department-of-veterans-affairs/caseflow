@@ -117,7 +117,7 @@ class CaseHearingsDetail extends React.PureComponent {
             value:
               <div className="cf-sg-alert-slim">
                 <Alert type="info">
-                  <Link href="https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf">
+                  <Link href="https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf" target="_blank">
                     Contact the Hearing Coordinator
                   </Link>&nbsp;
                   to convert this hearing to virtual
@@ -239,7 +239,7 @@ class CaseHearingsDetail extends React.PureComponent {
             <React.Fragment>
               <div className="cf-sg-alert-slim">
                 <Alert type="info">
-                  <Link href="https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf">
+                  <Link href="https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf" target="_blank">
                     Contact the Hearing Coordinator
                   </Link>&nbsp;
                   to convert this hearing to virtual
