@@ -234,6 +234,11 @@ class CaseHearingsDetail extends React.PureComponent {
 
       return [
         {
+          label: 'Type',
+          value:
+            appeal?.readableHearingRequestType
+        },
+        {
           label: '',
           value:
             <React.Fragment>
