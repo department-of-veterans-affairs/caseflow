@@ -61,7 +61,9 @@ class CaseHearingsDetail extends React.PureComponent {
     };
   }
 
+
   getHearingAttrs = (hearing, userIsVsoEmployee, vsoVirtualOptIn) => {
+
     const today = new Date();
     const deadline = today.setDate(today.getDate() + 11);
     const hearingDay = new Date(hearing.date);
@@ -109,6 +111,7 @@ class CaseHearingsDetail extends React.PureComponent {
       }
     );
     // info alert for hearings within 11 days of scheduled date
+
     if (userIsVsoEmployee && vsoVirtualOptIn) {
       if (!hearing.isVirtual && hearingDay <= deadline) {
         hearingAttrs.push(
@@ -191,7 +194,6 @@ class CaseHearingsDetail extends React.PureComponent {
     if (userIsVsoEmployee && !vsoVirtualOptIn) {
       return [];
     }
-
     if (userIsVsoEmployee) {
       return [
         {
