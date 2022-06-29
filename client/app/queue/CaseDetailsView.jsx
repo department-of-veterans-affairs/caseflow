@@ -94,7 +94,7 @@ export const CaseDetailsView = (props) => {
   );
 
   const updatePOALink =
-        appeal.hasPOA ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
+    appeal.hasPOA ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
 
   const tasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
@@ -172,11 +172,11 @@ export const CaseDetailsView = (props) => {
     appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant;
 
   const editPOAInformation =
-  props.userCanEditUnrecognizedPOA && appeal.appellantType === 'OtherClaimant' &&
-  !appeal.hasPOA && props.featureToggles.edit_unrecognized_appellant_poa;
+    props.userCanEditUnrecognizedPOA && appeal.appellantType === 'OtherClaimant' &&
+    !appeal.hasPOA && props.featureToggles.edit_unrecognized_appellant_poa;
 
   const supportCavcRemand =
-  currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal;
+    currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal;
 
   const hasSubstitution = appealHasSubstitution(appeal);
   const supportPostDispatchSubstitution = supportsSubstitutionPostDispatch({
@@ -322,12 +322,13 @@ export const CaseDetailsView = (props) => {
             actionableScheduledHearingTasks.length ||
             // VSO users will not have any available task actions on the ScheduleHearingTask(s),
             // but prior to a hearing being scheduled they will need the Hearings section rendered anyways.
-            (userIsVsoEmployee && allScheduleHearingTasks.length)
+            (props.vsoVirtualOptIn && userIsVsoEmployee && allScheduleHearingTasks.length)
           ) && (
             <CaseHearingsDetail
               title="Hearings"
               appeal={appeal}
               hearingTasks={userIsVsoEmployee ? allScheduleHearingTasks : parentHearingTasks}
+              vsoVirtualOptIn={props.vsoVirtualOptIn}
             />
           )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
@@ -396,6 +397,7 @@ CaseDetailsView.propTypes = {
   pollHearing: PropTypes.bool,
   stopPollingHearing: PropTypes.func,
   substituteAppellant: PropTypes.object,
+  vsoVirtualOptIn: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

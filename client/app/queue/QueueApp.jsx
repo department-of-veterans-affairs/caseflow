@@ -183,6 +183,7 @@ class QueueApp extends React.PureComponent {
         !this.props.hasCaseDetailsRole && !this.props.userCanViewHearingSchedule
       }
       userCanEditUnrecognizedPOA={this.props.userCanEditUnrecognizedPOA}
+      vsoVirtualOptIn={this.props.featureToggles.vso_virtual_opt_in}
     />
   );
 
