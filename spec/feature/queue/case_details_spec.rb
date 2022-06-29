@@ -2335,7 +2335,7 @@ RSpec.feature "Case details", :all_dbs do
 
   shared_examples "when vso_virtual_opt_in FeatureToggle is disabled" do
     before { FeatureToggle.disable!(:vso_virtual_opt_in) }
-    after { FeatureToggle.enable(:vso_virtual_opt_in) }
+    after { FeatureToggle.enable!(:vso_virtual_opt_in) }
 
     it "the Hearings section does not appear despite
       there being an unscheduled hearing associated with the appeal" do
