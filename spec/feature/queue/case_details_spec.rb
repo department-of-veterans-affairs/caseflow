@@ -1754,6 +1754,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters an NOD Date after original NOD Date" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: nod_date
           find(".cf-form-dropdown", text: "Reason for edit").click
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
@@ -1785,6 +1786,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters a reason with invalid Date" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: nod_date
           find(:css, "input[id$='nodDate']").click.send_keys(:delete)
           find(".cf-form-dropdown", text: "Reason for edit").click
@@ -2327,6 +2329,63 @@ RSpec.feature "Case details", :all_dbs do
 
       context "without feature toggle" do
         it_should_behave_like "vso unrestricted"
+      end
+    end
+  end
+
+  # National VSO Test
+  context "when updating a hearing as a VSO user to virtual hearing" do
+    let!(:vso) { create(:vso) }
+    let!(:vso_user) { create(:user, :vso_role) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: vso) }
+
+    before do
+      vso.add_user(vso_user)
+      User.authenticate!(user: vso_user)
+    end
+
+    it "should not display a dropdown menu for VSO user" do
+      step "go to the correct screen" do
+        visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+        expect(page.has_no_content?("Select an action")).to eq(true)
+      end
+    end
+  end
+
+  # Field VSO Test
+  context "when updating a hearing as a VSO user to virtual hearing" do
+    let!(:field_vso) { create(:field_vso) }
+    let!(:field_vso_user) { create(:user, :vso_role) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: field_vso) }
+
+    before do
+      field_vso.add_user(field_vso_user)
+      User.authenticate!(user: field_vso_user)
+    end
+
+    it "should not display a dropdown menu for VSO user" do
+      step "go to the correct screen" do
+        visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+        expect(page.has_no_content?("Select an action")).to eq(true)
+      end
+    end
+  end
+
+  # Private Bar Test
+  context "when updating a hearing as a Private_Bar user to virtual hearing" do
+    let!(:private_bar) { create(:private_bar) }
+    let!(:private_bar_user) { create(:user, :vso_role) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: private_bar) }
+
+    before do
+      private_bar.add_user(private_bar_user)
+      User.authenticate!(user: private_bar_user)
+    end
+
+    it "should not display a dropdown menu for Private_Bar user" do
+      step "go to the correct screen" do
+        visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+        expect(page.has_no_content?("Select an action")).to eq(true)
       end
     end
   end

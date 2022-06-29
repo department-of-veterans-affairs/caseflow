@@ -773,6 +773,8 @@ ActiveRecord::Schema.define(version: 2022_04_22_150300) do
   end
 
   create_table "hearing_email_recipients", comment: "Recipients of hearings-related emails", force: :cascade do |t|
+    t.bigint "appeal_id", comment: "The ID of the appeal this email recipient is associated with"
+    t.string "appeal_type", comment: "The type of appeal this email recipient is associated with"
     t.datetime "created_at", null: false
     t.string "email_address", comment: "PII. The recipient's email address"
     t.boolean "email_sent", default: false, null: false, comment: "Indicates if a notification email was sent to the recipient."
@@ -781,6 +783,7 @@ ActiveRecord::Schema.define(version: 2022_04_22_150300) do
     t.string "timezone", limit: 50, comment: "The recipient's timezone"
     t.string "type", comment: "The subclass name (i.e. AppellantHearingEmailRecipient)"
     t.datetime "updated_at", null: false
+    t.index ["appeal_type", "appeal_id"], name: "index_hearing_email_recipients_on_appeal_type_and_appeal_id"
     t.index ["hearing_type", "hearing_id"], name: "index_hearing_email_recipients_on_hearing_type_and_hearing_id"
   end
 

@@ -139,7 +139,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_change_hearing_request_type?
-    can?("Build HearSched") || can?("Edit HearSched")
+    can?("Build HearSched") || can?("Edit HearSched") || can?("VSO")
   end
 
   def vacols_uniq_id
