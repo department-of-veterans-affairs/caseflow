@@ -61,7 +61,7 @@ class CaseHearingsDetail extends React.PureComponent {
     };
   }
 
-  getHearingAttrs = (hearing, userIsVsoEmployee, vsoVirtualOptIn) => {
+  getHearingAttrs = (hearing, userIsVsoEmployee, vsoVirtualOptIn, currentUserEmailPresent) => {
     const today = new Date();
     const deadline = today.setDate(today.getDate() + 11);
     const hearingDay = new Date(hearing.date);
@@ -110,7 +110,19 @@ class CaseHearingsDetail extends React.PureComponent {
     );
     // info alert for hearings within 11 days of scheduled date
     if (userIsVsoEmployee && vsoVirtualOptIn) {
-      if (!hearing.isVirtual && hearingDay <= deadline) {
+      if (!currentUserEmailPresent && !hearing.isVirtual) {
+        hearingAttrs.push(
+          {
+            label: '',
+            value:
+              <div className="cf-sg-alert-slim">
+                <Alert type="info">
+                  {COPY.VSO_MISSING_EMAIL_ALERT_TEXT}
+                </Alert>
+              </div>
+          }
+        );
+      } else if (!hearing.isVirtual && hearingDay <= deadline) {
         hearingAttrs.push(
           {
             label: '',
@@ -141,7 +153,8 @@ class CaseHearingsDetail extends React.PureComponent {
     const {
       appeal: { hearings },
       userIsVsoEmployee,
-      vsoVirtualOptIn
+      vsoVirtualOptIn,
+      currentUserEmailPresent
     } = this.props;
     const orderedHearings = _.orderBy(hearings, 'createdAt', 'desc');
     const uniqueOrderedHearings = _.uniqWith(orderedHearings, _.isEqual);
@@ -159,7 +172,12 @@ class CaseHearingsDetail extends React.PureComponent {
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
-        items={this.getHearingAttrs(hearing, userIsVsoEmployee, vsoVirtualOptIn).map(this.getDetailField)} />
+        items={this.getHearingAttrs(
+          hearing,
+          userIsVsoEmployee,
+          vsoVirtualOptIn,
+          currentUserEmailPresent
+        ).map(this.getDetailField)} />
     </div>);
 
     return <React.Fragment>
@@ -187,26 +205,42 @@ class CaseHearingsDetail extends React.PureComponent {
 
   closeModal = () => this.setState({ modalOpen: false, selectedTask: null })
 
-  getUnscheduledHearingAttrs = (task, appeal, userIsVsoEmployee, vsoVirtualOptIn) => {
+  getUnscheduledHearingAttrs = (task, appeal, userIsVsoEmployee, vsoVirtualOptIn, currentUserEmailPresent) => {
     if (userIsVsoEmployee && !vsoVirtualOptIn) {
       return [];
     }
 
     if (userIsVsoEmployee) {
+      if (currentUserEmailPresent) {
+        return [
+          {
+            label: 'Type',
+            value:
+              <React.Fragment>
+                {appeal?.readableHearingRequestType}&nbsp;&nbsp;
+                {appeal?.readableHearingRequestType !== 'Virtual' &&
+                  <Link to={`/queue/appeals/${appeal.externalId}/tasks/` +
+                    `${task.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`}>
+                    {COPY.VSO_CONVERT_TO_VIRTUAL_TEXT}
+                  </Link>
+                }
+              </React.Fragment>
+          },
+        ];
+      }
+
       return [
         {
-          label: 'Type',
+          label: '',
           value:
             <React.Fragment>
-              {appeal?.readableHearingRequestType}&nbsp;&nbsp;
-              {appeal?.readableHearingRequestType !== 'Virtual' &&
-                <Link to={`/queue/appeals/${appeal.externalId}/tasks/` +
-                  `${task.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`}>
-                  {COPY.VSO_CONVERT_TO_VIRTUAL_TEXT}
-                </Link>
-              }
-            </React.Fragment>
-        },
+              <div className="cf-sg-alert-slim">
+                <Alert type="info">
+                  {COPY.VSO_MISSING_EMAIL_ALERT_TEXT}
+                </Alert>
+              </div>
+            </React.Fragment >
+        }
       ];
     }
 
@@ -242,7 +276,8 @@ class CaseHearingsDetail extends React.PureComponent {
       appeal,
       hearingTasks,
       userIsVsoEmployee,
-      vsoVirtualOptIn
+      vsoVirtualOptIn,
+      currentUserEmailPresent
     } = this.props;
 
     return hearingTasks.map((task, index) => <div
@@ -258,7 +293,8 @@ class CaseHearingsDetail extends React.PureComponent {
             task,
             appeal,
             userIsVsoEmployee,
-            vsoVirtualOptIn
+            vsoVirtualOptIn,
+            currentUserEmailPresent
           ).map(this.getDetailField)
         } />
     </div>);
@@ -324,7 +360,8 @@ CaseHearingsDetail.propTypes = {
   showVeteranCaseList: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
   hearingTasks: PropTypes.array,
-  vsoVirtualOptIn: PropTypes.bool
+  vsoVirtualOptIn: PropTypes.bool,
+  currentUserEmailPresent: PropTypes.bool
 };
 
 const mapStateToProps = (state) => {

@@ -329,6 +329,7 @@ export const CaseDetailsView = (props) => {
               appeal={appeal}
               hearingTasks={userIsVsoEmployee ? allScheduleHearingTasks : parentHearingTasks}
               vsoVirtualOptIn={props.vsoVirtualOptIn}
+              currentUserEmailPresent={Boolean(appeal.currentUserEmail)}
             />
           )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
