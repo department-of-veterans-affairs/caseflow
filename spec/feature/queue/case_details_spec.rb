@@ -1764,6 +1764,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters a future NOD Date" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: later_nod_date
           find(".cf-form-dropdown", text: "Reason for edit").click
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
@@ -1775,6 +1776,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters an NOD Date before 01/01/2018" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: before_earliest_date
           find(".cf-form-dropdown", text: "Reason for edit").click
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
@@ -1799,6 +1801,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters a valid NOD Date and reason" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: nod_date
           find(".cf-form-dropdown", text: "Reason for edit").click
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
@@ -1813,6 +1816,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters a valid NOD Date but no reason" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: nod_date
           click_on "Submit"
           expect(page).to have_content "Required."
