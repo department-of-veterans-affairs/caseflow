@@ -71,6 +71,7 @@ export const VSORepresentativeSection = ({
             hearing={hearing}
             setIsNotValidEmail={setIsNotValidRepEmail}
             actionType={actionType}
+            showHelper={!readOnly}
           />
         </div>
       </div>
