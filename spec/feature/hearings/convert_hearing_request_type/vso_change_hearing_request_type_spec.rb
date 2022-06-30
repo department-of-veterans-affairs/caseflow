@@ -288,7 +288,10 @@ RSpec.feature "Convert hearing request type" do
             visit "queue/appeals/#{appeal.uuid}"
 
             expect(page).not_to have_link(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
-            expect(page).to have_link(nil, href: "https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf")
+            expect(page).to have_link(
+              "Contact the Hearing Coordinator to convert to virtual",
+              href: "https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf"
+            )
             expect(page).to have_content(COPY::VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT)
           end
         end
