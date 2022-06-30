@@ -62,9 +62,8 @@ class CaseHearingsDetail extends React.PureComponent {
   }
 
   getHearingAttrs = (hearing, userIsVsoEmployee, vsoVirtualOptIn) => {
-
     const today = new Date();
-    const deadline = today.setDate(today.getDate() + 11);
+    const deadline = today.setDate(today.getDate() + 10);
     const hearingDay = new Date(hearing.date);
     // show convert to virtual link if user is vso, hearing isn't virtual, and scheduled date is not within deadline
     const hearingAttrs = [{
