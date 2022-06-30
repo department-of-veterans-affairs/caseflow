@@ -2366,6 +2366,7 @@ RSpec.feature "Case details", :all_dbs do
         visit "/queue/appeals/#{hearing_beyond_10_days.appeal.uuid}"
 
         expect(page.has_content?("Hearings")).to eq(true)
+        expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
         expect(page.has_no_content?(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)).to eq(true)
       end
 
@@ -2373,6 +2374,7 @@ RSpec.feature "Case details", :all_dbs do
         visit "/queue/appeals/#{hearing_within_10_days.appeal.uuid}"
 
         expect(page.has_content?("Hearings")).to eq(true)
+        expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
         expect(page.has_no_content?(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)).to eq(true)
         expect(page.has_no_content?(COPY::VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
       end
