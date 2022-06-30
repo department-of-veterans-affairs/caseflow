@@ -85,7 +85,7 @@ class CaseHearingsDetail extends React.PureComponent {
       value:
         <React.Fragment>
           {hearing.isVirtual ? 'Virtual' : hearing.type}&nbsp;&nbsp;
-          {userIsVsoEmployee && !hearing.isVirtual && hearingDay > deadline &&
+          {userIsVsoEmployee && !hearing.isVirtual && hearingDay > deadline && currentUserEmailPresent &&
             <Link href={`/hearings/${hearing.externalId}/details`}>{COPY.VSO_CONVERT_TO_VIRTUAL_TEXT}</Link>}
         </React.Fragment>
     },
