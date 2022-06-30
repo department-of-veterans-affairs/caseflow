@@ -80,7 +80,7 @@ class CaseHearingsDetail extends React.PureComponent {
     const deadline = new Date();
     const hearingDay = new Date(hearing.date);
 
-        deadline.setDate(today.getDate() + 10);
+    deadline.setDate(today.getDate() + 10);
     // show convert to virtual link if user is vso, hearing isn't virtual, and scheduled date is not within deadline
     const hearingAttrs = [{
       label: 'Type',
@@ -131,7 +131,7 @@ class CaseHearingsDetail extends React.PureComponent {
     );
     // info alert for hearings within 11 days of scheduled date
     if (userIsVsoEmployee && vsoVirtualOptIn && !hearing.isVirtual && hearingDay > today) {
-      if (hearingDay <= deadline) {
+      if (hearingDay <= deadline && currentUserEmailPresent) {
         hearingAttrs.push(
           {
             label: '',
