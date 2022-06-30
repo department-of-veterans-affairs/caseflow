@@ -122,7 +122,7 @@ class CaseHearingsDetail extends React.PureComponent {
                   {COPY.VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT}
                   <Link href="https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf" target="_blank">
                     Contact the Hearing Coordinator to convert to virtual
-                  </Link>&nbsp;
+                  </Link>
                 </Alert>
               </div>
           }
