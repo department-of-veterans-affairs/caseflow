@@ -79,6 +79,7 @@ class CaseHearingsDetail extends React.PureComponent {
     const today = new Date();
     const deadline = today.setDate(today.getDate() + 11);
     const hearingDay = new Date(hearing.date);
+
     // show convert to virtual link if user is vso, hearing isn't virtual, and scheduled date is not within deadline
     const hearingAttrs = [{
       label: 'Type',
@@ -128,15 +129,8 @@ class CaseHearingsDetail extends React.PureComponent {
       }
     );
     // info alert for hearings within 11 days of scheduled date
-    if (userIsVsoEmployee && vsoVirtualOptIn && !hearing.isVirtual) {
-      if (!currentUserEmailPresent) {
-        hearingAttrs.push(
-          {
-            label: '',
-            value: missingEmailNotification()
-          }
-        );
-      } else if (hearingDay <= deadline) {
+    if (userIsVsoEmployee && vsoVirtualOptIn && !hearing.isVirtual && hearingDay > today) {
+      if (hearingDay <= deadline) {
         hearingAttrs.push(
           {
             label: '',
@@ -146,6 +140,13 @@ class CaseHearingsDetail extends React.PureComponent {
                   {COPY.VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT}
                 </Alert>
               </div>
+          }
+        );
+      } else if (!currentUserEmailPresent) {
+        hearingAttrs.push(
+          {
+            label: '',
+            value: missingEmailNotification()
           }
         );
       }
