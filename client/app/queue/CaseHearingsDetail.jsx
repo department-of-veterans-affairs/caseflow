@@ -51,6 +51,20 @@ const hearingElementsStyle = css({
   }
 });
 
+const missingEmailNotification = () => {
+  return (<React.Fragment>
+    <div className="cf-sg-alert-slim">
+      <Alert type="info">
+        <Link href="https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf" target="_blank">
+          Contact the Hearing Coordinator
+        </Link>&nbsp;
+        to convert this hearing to virtual
+      </Alert>
+    </div>
+  </React.Fragment >
+  )
+};
+
 class CaseHearingsDetail extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -109,23 +123,15 @@ class CaseHearingsDetail extends React.PureComponent {
       }
     );
     // info alert for hearings within 11 days of scheduled date
-    if (userIsVsoEmployee && vsoVirtualOptIn) {
-      if (!currentUserEmailPresent && !hearing.isVirtual) {
+    if (userIsVsoEmployee && vsoVirtualOptIn && !hearing.isVirtual) {
+      if (!currentUserEmailPresent) {
         hearingAttrs.push(
           {
             label: '',
-            value:
-              <div className="cf-sg-alert-slim">
-                <Alert type="info">
-                  <Link href="https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf" target="_blank">
-                    Contact the Hearing Coordinator
-                  </Link>&nbsp;
-                  to convert this hearing to virtual
-                </Alert>
-              </div>
+            value: missingEmailNotification()
           }
         );
-      } else if (!hearing.isVirtual && hearingDay <= deadline) {
+      } else if (hearingDay <= deadline) {
         hearingAttrs.push(
           {
             label: '',
@@ -240,17 +246,7 @@ class CaseHearingsDetail extends React.PureComponent {
         },
         {
           label: '',
-          value:
-            <React.Fragment>
-              <div className="cf-sg-alert-slim">
-                <Alert type="info">
-                  <Link href="https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf" target="_blank">
-                    Contact the Hearing Coordinator
-                  </Link>&nbsp;
-                  to convert this hearing to virtual
-                </Alert>
-              </div>
-            </React.Fragment >
+          value: missingEmailNotification()
         }
       ];
     }
