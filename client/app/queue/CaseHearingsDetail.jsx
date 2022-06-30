@@ -61,7 +61,6 @@ class CaseHearingsDetail extends React.PureComponent {
     };
   }
 
-
   getHearingAttrs = (hearing, userIsVsoEmployee, vsoVirtualOptIn) => {
 
     const today = new Date();
