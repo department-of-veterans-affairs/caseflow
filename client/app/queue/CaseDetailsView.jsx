@@ -322,7 +322,6 @@ export const CaseDetailsView = (props) => {
             actionableScheduledHearingTasks.length ||
             // VSO users will not have any available task actions on the ScheduleHearingTask(s),
             // but prior to a hearing being scheduled they will need the Hearings section rendered anyways.
-
             (props.vsoVirtualOptIn && userIsVsoEmployee && allScheduleHearingTasks.length)
           ) && (
             <CaseHearingsDetail
