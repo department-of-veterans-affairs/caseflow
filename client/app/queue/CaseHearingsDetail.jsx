@@ -62,7 +62,7 @@ const missingEmailNotification = () => {
       </Alert>
     </div>
   </React.Fragment >
-  )
+  );
 };
 
 class CaseHearingsDetail extends React.PureComponent {
