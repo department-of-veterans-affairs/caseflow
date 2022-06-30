@@ -2442,6 +2442,57 @@ RSpec.feature "Case details", :all_dbs do
     it_behaves_like "when vso_virtual_opt_in FeatureToggle is disabled"
   end
 
+  context "when accessing the case details page as a VSO user without an email" do
+    before do
+      FeatureToggle.enable!(:vso_virtual_opt_in)
+      vso_org.add_user(vso_user_no_email)
+      User.authenticate!(user: vso_user_no_email)
+    end
+    after { FeatureToggle.disable!(:vso_virtual_opt_in) }
+
+    let!(:vso_org) { create(:vso) }
+    let!(:vso_user_no_email) { create(:user, :vso_role, email: nil) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: vso_org) }
+
+    subject do
+      page.has_content?("Contact the Hearing Coordinator") && page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
+    end
+
+    context "whenever there is an unscheduled hearing" do
+      it "the conversion link is absent and a notification is displayed" do
+        visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+
+        is_expected.to be true
+      end
+    end
+
+    context "whenever there is a scheduled hearing within 10 days" do
+      let!(:hearing) do
+        create(:hearing,
+               hearing_day: create(:hearing_day, :video, scheduled_for: 5.days.from_now, regional_office: "RO11"))
+      end
+
+      it "the conversion link is absent and a notification is displayed" do
+        visit "/queue/appeals/#{hearing.appeal.uuid}"
+
+        is_expected.to be true
+      end
+    end
+
+    context "whenever there is a scheduled hearing more than 10 days away" do
+      let!(:hearing) do
+        create(:hearing,
+               hearing_day: create(:hearing_day, :video, scheduled_for: 30.days.from_now, regional_office: "RO11"))
+      end
+
+      it "the conversion link is absent and a notification is displayed" do
+        visit "/queue/appeals/#{hearing.appeal.uuid}"
+
+        is_expected.to be true
+      end
+    end
+  end
+
   describe "case title details" do
     shared_examples "show hearing request type" do
       it "displays hearing request type" do
