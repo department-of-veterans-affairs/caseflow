@@ -131,7 +131,7 @@ class CaseHearingsDetail extends React.PureComponent {
     );
     // info alert for hearings within 11 days of scheduled date
     if (userIsVsoEmployee && vsoVirtualOptIn && !hearing.isVirtual && hearingDay > today) {
-      if (hearingDay <= deadline && currentUserEmailPresent) {
+      if (hearingDay <= deadline) {
         hearingAttrs.push(
           {
             label: '',

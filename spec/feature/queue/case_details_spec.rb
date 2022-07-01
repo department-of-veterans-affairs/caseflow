@@ -2352,15 +2352,20 @@ RSpec.feature "Case details", :all_dbs do
 
     context "whenever there is a scheduled hearing" do
       let!(:hearing_day_close) do
-        create(:hearing_day, :video, scheduled_for: Time.zone.today + 7.days, regional_office: "RO70")
+        create(:hearing_day, :video, scheduled_for: 7.days.from_now, regional_office: "RO70")
       end
 
       let!(:hearing_day_far) do
-        create(:hearing_day, :video, scheduled_for: Time.zone.today + 30.days, regional_office: "RO70")
+        create(:hearing_day, :video, scheduled_for: 30.days.from_now, regional_office: "RO70")
+      end
+
+      let!(:hearing_day_past) do
+        create(:hearing_day, :video, scheduled_for: 30.days.before, regional_office: "RO70")
       end
 
       let!(:hearing_within_10_days) { create(:hearing, hearing_day: hearing_day_close) }
       let!(:hearing_beyond_10_days) { create(:hearing, hearing_day: hearing_day_far) }
+      let!(:hearing_in_past) { create(:hearing, hearing_day: hearing_day_past) }
 
       it "when the hearing 10+ days out the hearings details link is omitted" do
         visit "/queue/appeals/#{hearing_beyond_10_days.appeal.uuid}"
@@ -2372,6 +2377,15 @@ RSpec.feature "Case details", :all_dbs do
 
       it "when the hearing is <10 days out the hearings details link and notification banner are omitted" do
         visit "/queue/appeals/#{hearing_within_10_days.appeal.uuid}"
+
+        expect(page.has_content?("Hearings")).to eq(true)
+        expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
+        expect(page.has_no_content?(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)).to eq(true)
+        expect(page.has_no_content?(COPY::VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
+      end
+
+      it "when the hearing is in the past link and notification banner are omitted" do
+        visit "/queue/appeals/#{hearing_in_past.appeal.uuid}"
 
         expect(page.has_content?("Hearings")).to eq(true)
         expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
@@ -2446,11 +2460,16 @@ RSpec.feature "Case details", :all_dbs do
 
   context "when accessing the case details page as a VSO user without an email" do
     before do
+      Timecop.return
       FeatureToggle.enable!(:vso_virtual_opt_in)
       vso_org.add_user(vso_user_no_email)
       User.authenticate!(user: vso_user_no_email)
     end
-    after { FeatureToggle.disable!(:vso_virtual_opt_in) }
+
+    after do
+      Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
+      FeatureToggle.disable!(:vso_virtual_opt_in)
+    end
 
     let!(:vso_org) { create(:vso) }
     let!(:vso_user_no_email) { create(:user, :vso_role, email: nil) }
@@ -2471,7 +2490,31 @@ RSpec.feature "Case details", :all_dbs do
     context "whenever there is a scheduled hearing within 10 days" do
       let!(:hearing) do
         create(:hearing,
-               hearing_day: create(:hearing_day, :video, scheduled_for: 5.days.from_now, regional_office: "RO11"))
+               hearing_day:
+                create(:hearing_day,
+                       :video,
+                       scheduled_for: 5.days.from_now,
+                       regional_office: "RO11"))
+      end
+
+      it "the conversion link is absent and a notification is displayed" do
+        visit "/queue/appeals/#{hearing.appeal.uuid}"
+
+        expect(page.has_content?(COPY::VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT)).to eq true
+        expect(page.has_no_content?("Contact the Hearing Coordinator")).to eq true
+        expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq true
+      end
+    end
+
+    context "whenever there is a scheduled hearing more than 10 days away" do
+      let!(:hearing) do
+        create(:hearing,
+               hearing_day: create(
+                 :hearing_day,
+                 :video,
+                 scheduled_for: 30.days.from_now,
+                 regional_office: "RO13"
+               ))
       end
 
       it "the conversion link is absent and a notification is displayed" do
@@ -2481,16 +2524,21 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
-    context "whenever there is a scheduled hearing more than 10 days away" do
+    context "whenever there is a hearing scheduled in the past" do
       let!(:hearing) do
         create(:hearing,
-               hearing_day: create(:hearing_day, :video, scheduled_for: 30.days.from_now, regional_office: "RO11"))
+               hearing_day: create(
+                 :hearing_day,
+                 :video,
+                 scheduled_for: 30.days.before,
+                 regional_office: "RO14"
+               ))
       end
 
-      it "the conversion link is absent and a notification is displayed" do
-        visit "/queue/appeals/#{hearing.appeal.uuid}"
-
-        is_expected.to be true
+      it "no notifcation banner appears" do
+        expect(page.has_no_content?(COPY::VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT)).to eq true
+        expect(page.has_no_content?("Contact the Hearing Coordinator")).to eq true
+        expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq true
       end
     end
   end
