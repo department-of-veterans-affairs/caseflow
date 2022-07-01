@@ -37,6 +37,7 @@ class LegacyAppeal < CaseflowRecord
       .order(closed_at: :desc, assigned_at: :desc)
       .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: LegacyAppeal.name)
   }, class_name: "Task", foreign_key: :appeal_id
+  has_many :email_recipients, class_name: "HearingEmailRecipient", foreign_key: :appeal_id
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end

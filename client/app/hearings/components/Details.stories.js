@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { select, boolean, button } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
 import { BrowserRouter } from 'react-router-dom';
@@ -15,6 +15,10 @@ import {
   defaultHearing,
   virtualHearing,
 } from '../../../test/data/hearings';
+import {
+  vsoUser,
+  nonVsoUser
+} from '../../../test/data/user'
 import { userWithVirtualHearingsFeatureEnabled } from '../../../test/data/user';
 import { detailsStore, initialState } from '../../../test/data/stores/hearingsStore';
 
@@ -28,12 +32,13 @@ const Wrapper = (props) => {
     <BrowserRouter basename="/hearings">
       <ReduxBase initialState={initialState} store={detailsStore} reducer={reducer}>
         <HearingsUserContext.Provider
-          value={userWithVirtualHearingsFeatureEnabled}
+          value={props.user}
         >
           <HearingsFormContextProvider hearing={props.hearing}>
             <Wrapped hearing={props.hearing} {...props} />
           </HearingsFormContextProvider>
         </HearingsUserContext.Provider>
+
       </ReduxBase>
     </BrowserRouter>
   );
@@ -86,19 +91,23 @@ export const Normal = () => {
   // Create a button to reload the hearing details
   button('Change Hearing', reload);
 
-  return loaded && <Wrapper hearing={controlledHearing} />;
+  return loaded && <Wrapper hearing={controlledHearing} user={nonVsoUser}/>;
 };
 
 export const Video = () => {
-  return <Wrapper hearing={defaultHearing} />;
+  return <Wrapper hearing={defaultHearing} user={nonVsoUser} />;
 };
 
 export const CentralOffice = () => {
-  return <Wrapper hearing={centralHearing} />;
+  return <Wrapper hearing={centralHearing} user={nonVsoUser} />;
 };
 
 export const Virtual = () => {
-  return <Wrapper hearing={amaHearing} />;
+  return <Wrapper hearing={amaHearing} user={nonVsoUser} />;
+};
+
+export const VirtualAsVSO = () =>{
+  return <Wrapper hearing={amaHearing} user={vsoUser} />;
 };
 
 export const Legacy = () => {
@@ -108,6 +117,7 @@ export const Legacy = () => {
         ...defaultHearing,
         docketName: 'rand',
       }}
+      user={nonVsoUser}
     />
   );
 };

@@ -244,8 +244,8 @@ class Hearing < CaseflowRecord
     ::HearingSerializer.default(self).serializable_hash[:data][:attributes]
   end
 
-  def to_hash_for_worksheet(_current_user_id)
-    ::HearingSerializer.worksheet(self).serializable_hash[:data][:attributes]
+  def to_hash_for_worksheet(current_user)
+    ::HearingSerializer.worksheet(self, current_user).serializable_hash[:data][:attributes]
   end
 
   def serialized_email_events

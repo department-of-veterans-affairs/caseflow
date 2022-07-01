@@ -87,19 +87,19 @@ class VirtualHearing < CaseflowRecord
 
   ## BEGIN Email Related accessors
   def appellant_email
-    hearing.appellant_recipient.email_address
+    hearing.appellant_recipient&.email_address
   end
 
   def appellant_tz
-    hearing.appellant_recipient.timezone
+    hearing.appellant_recipient&.timezone
   end
 
   def appellant_email_sent
-    hearing.appellant_recipient.email_sent
+    hearing.appellant_recipient&.email_sent
   end
 
   def appellant_reminder_sent_at
-    hearing.appellant_recipient.reminder_sent_at
+    hearing.appellant_recipient&.reminder_sent_at
   end
 
   def representative_email

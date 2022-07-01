@@ -1754,6 +1754,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters an NOD Date after original NOD Date" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: nod_date
           find(".cf-form-dropdown", text: "Reason for edit").click
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
@@ -1763,6 +1764,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters a future NOD Date" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: later_nod_date
           find(".cf-form-dropdown", text: "Reason for edit").click
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
@@ -1774,6 +1776,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters an NOD Date before 01/01/2018" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: before_earliest_date
           find(".cf-form-dropdown", text: "Reason for edit").click
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
@@ -1785,6 +1788,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters a reason with invalid Date" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: nod_date
           find(:css, "input[id$='nodDate']").click.send_keys(:delete)
           find(".cf-form-dropdown", text: "Reason for edit").click
@@ -1797,6 +1801,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters a valid NOD Date and reason" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: nod_date
           find(".cf-form-dropdown", text: "Reason for edit").click
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
@@ -1811,6 +1816,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters a valid NOD Date but no reason" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: nod_date
           click_on "Submit"
           expect(page).to have_content "Required."
@@ -2329,6 +2335,113 @@ RSpec.feature "Case details", :all_dbs do
         it_should_behave_like "vso unrestricted"
       end
     end
+  end
+
+  shared_examples "when vso_virtual_opt_in FeatureToggle is disabled" do
+    before { FeatureToggle.disable!(:vso_virtual_opt_in) }
+    after { FeatureToggle.enable!(:vso_virtual_opt_in) }
+
+    it "the Hearings section does not appear despite
+      there being an unscheduled hearing associated with the appeal" do
+      visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+
+      expect(page.has_no_content?("Hearings")).to eq(true)
+      expect(page.has_no_content?("Unscheduled hearing")).to eq(true)
+      expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
+    end
+
+    context "whenever there is a scheduled hearing" do
+      let!(:hearing_day_close) do
+        create(:hearing_day, :video, scheduled_for: Time.zone.today + 7.days, regional_office: "RO70")
+      end
+
+      let!(:hearing_day_far) do
+        create(:hearing_day, :video, scheduled_for: Time.zone.today + 30.days, regional_office: "RO70")
+      end
+
+      let!(:hearing_within_10_days) { create(:hearing, hearing_day: hearing_day_close) }
+      let!(:hearing_beyond_10_days) { create(:hearing, hearing_day: hearing_day_far) }
+
+      it "when the hearing 10+ days out the hearings details link is omitted" do
+        visit "/queue/appeals/#{hearing_beyond_10_days.appeal.uuid}"
+
+        expect(page.has_content?("Hearings")).to eq(true)
+        expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
+        expect(page.has_no_content?(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)).to eq(true)
+      end
+
+      it "when the hearing is <10 days out the hearings details link and notification banner are omitted" do
+        visit "/queue/appeals/#{hearing_within_10_days.appeal.uuid}"
+
+        expect(page.has_content?("Hearings")).to eq(true)
+        expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
+        expect(page.has_no_content?(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)).to eq(true)
+        expect(page.has_no_content?(COPY::VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
+      end
+    end
+  end
+
+  # National VSO Test
+  context "when updating a hearing as a VSO user to virtual hearing" do
+    let!(:vso) { create(:vso) }
+    let!(:vso_user) { create(:user, :vso_role) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: vso) }
+
+    before do
+      vso.add_user(vso_user)
+      User.authenticate!(user: vso_user)
+    end
+
+    it "should not display a dropdown menu for VSO user" do
+      step "go to the correct screen" do
+        visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+        expect(page.has_no_content?("Select an action")).to eq(true)
+      end
+    end
+
+    it_behaves_like "when vso_virtual_opt_in FeatureToggle is disabled"
+  end
+
+  # Field VSO Test
+  context "when updating a hearing as a VSO user to virtual hearing" do
+    let!(:field_vso) { create(:field_vso) }
+    let!(:field_vso_user) { create(:user, :vso_role) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: field_vso) }
+
+    before do
+      field_vso.add_user(field_vso_user)
+      User.authenticate!(user: field_vso_user)
+    end
+
+    it "should not display a dropdown menu for VSO user" do
+      step "go to the correct screen" do
+        visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+        expect(page.has_no_content?("Select an action")).to eq(true)
+      end
+    end
+
+    it_behaves_like "when vso_virtual_opt_in FeatureToggle is disabled"
+  end
+
+  # Private Bar Test
+  context "when updating a hearing as a Private_Bar user to virtual hearing" do
+    let!(:private_bar) { create(:private_bar) }
+    let!(:private_bar_user) { create(:user, :vso_role) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: private_bar) }
+
+    before do
+      private_bar.add_user(private_bar_user)
+      User.authenticate!(user: private_bar_user)
+    end
+
+    it "should not display a dropdown menu for Private_Bar user" do
+      step "go to the correct screen" do
+        visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+        expect(page.has_no_content?("Select an action")).to eq(true)
+      end
+    end
+
+    it_behaves_like "when vso_virtual_opt_in FeatureToggle is disabled"
   end
 
   describe "case title details" do

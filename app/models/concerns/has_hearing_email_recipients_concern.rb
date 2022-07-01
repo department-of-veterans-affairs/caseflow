@@ -73,7 +73,16 @@ module HasHearingEmailRecipientsConcern
     reload
     recipient = email_recipients.find_by(type: type.name)
 
-    if recipient.blank?
+    appeal_email_recipient = appeal.email_recipients.find_by(type: type.name)
+
+    if appeal_email_recipient
+      appeal_email_recipient.update!(
+        hearing: self,
+        email_address: email_address,
+        timezone: timezone,
+        email_sent: email_sent
+      )
+    elsif recipient.blank?
       type.create!(
         hearing: self,
         email_address: email_address,
