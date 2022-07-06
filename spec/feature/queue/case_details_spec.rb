@@ -2500,8 +2500,8 @@ RSpec.feature "Case details", :all_dbs do
       it "the conversion link is absent and a notification is displayed" do
         visit "/queue/appeals/#{hearing.appeal.uuid}"
 
-        expect(page.has_content?(COPY::VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT)).to eq true
-        expect(page.has_no_content?("Contact the Hearing Coordinator")).to eq true
+        expect(page.has_content?("Contact the Hearing Coordinator")).to eq true
+        expect(page.has_no_content?(COPY::VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT)).to eq true
         expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq true
       end
     end

@@ -135,7 +135,7 @@ class CaseHearingsDetail extends React.PureComponent {
         !hearing.isVirtual &&
         hearingDay > today
     ) {
-      if (hearingDay <= deadline && currentUserEmailPresent) {
+      if (hearingDay <= deadline) {
         hearingAttrs.push(
           {
             label: '',
