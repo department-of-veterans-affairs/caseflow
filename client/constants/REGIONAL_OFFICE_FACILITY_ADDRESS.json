@@ -408,15 +408,15 @@
    },
    "vba_350" : {
       "address_1" : "2200 Fort Roots Drive",
-      "address_2" : "Bldg. 65",
+      "address_2" : "Building 111",
       "address_3" : null,
       "city" : "North Little Rock",
       "state" : "AR",
-      "zip" : "72114",
+      "zip" : "72114-1756",
       "timezone" : "America/Chicago"
    },
    "vba_351" : {
-      "address_1" : "125 South Main Street",
+      "address_1" : "122 Eastside Blvd.",
       "address_2" : null,
       "address_3" : null,
       "city" : "Muskogee",
@@ -677,12 +677,12 @@
       "timezone" : "America/Kentucky/Louisville"
    },
    "vc_0719V" : {
-      "address_1" : "1407 Union Avenue",
-      "address_2" : "Suite 410",
+      "address_1" : "2605 Nonconnah Blvd",
+      "address_2" : "Suite 160",
       "address_3" : null,
       "city" : "Memphis",
       "state" : "TN",
-      "zip" : "38104",
+      "zip" : "38132",
       "timezone" : "America/Kentucky/Louisville"
    },
    "vc_0720V" : {

@@ -37,7 +37,7 @@ class HearingsController < HearingsApplicationController
   end
 
   def show
-    render json: { data: hearing.to_hash_for_worksheet(current_user.id) }
+    render json: { data: hearing.to_hash_for_worksheet(current_user) }
   end
 
   def update

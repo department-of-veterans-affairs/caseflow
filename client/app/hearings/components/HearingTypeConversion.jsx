@@ -56,12 +56,10 @@ export const HearingTypeConversion = ({
               closest_regional_office: appeal?.closestRegionalOffice || appeal?.regionalOffice?.key,
               ...(userIsVsoEmployee && {
                 email_recipients: {
-                  /* eslint-disable camelcase */
                   appellant_tz: updatedAppeal?.appellantTz,
-                  representative_tz: updatedAppeal?.currentUserTimezone,
+                  representative_tz: updatedAppeal?.representativeTz,
                   appellant_email: updatedAppeal?.appellantEmailAddress,
                   representative_email: updatedAppeal?.currentUserEmail
-                  /* eslint-enable camelcase */
                 }
               })
             }
@@ -91,7 +89,6 @@ export const HearingTypeConversion = ({
 
   return userIsVsoEmployee ? (
     <VSOHearingTypeConversionForm
-      appeal={appeal}
       history={history}
       isLoading={loading}
       onCancel={() => history.goBack()}
@@ -120,5 +117,5 @@ HearingTypeConversion.propTypes = {
   task: PropTypes.object,
   type: PropTypes.oneOf(['Virtual']),
   history: PropTypes.object,
-  userIsVsoEmployee: PropTypes.bool
+  userIsVsoEmployee: PropTypes.bool,
 };

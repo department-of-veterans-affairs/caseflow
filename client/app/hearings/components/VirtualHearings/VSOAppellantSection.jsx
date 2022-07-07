@@ -4,10 +4,14 @@ import { VirtualHearingSection } from './Section';
 import { ReadOnly } from '../details/ReadOnly';
 import { VSOEmailNotificationsFields } from '../details/VSOEmailNotificationsFields';
 export const VSOAppellantSection = ({
+  errors,
   hearing,
   showDivider,
   appellantTitle,
-  formFieldsOnly
+  formFieldsOnly,
+  setIsNotValidEmail,
+  update,
+  actionType
 }) => {
   // Depending on where this component is used, the *FullName fields will be available.
   // If they aren't, the *FirstName/*LastName fields should be available.
@@ -27,6 +31,10 @@ export const VSOAppellantSection = ({
         <ReadOnly label={`${appellantTitle} Name`} text={appellantName} />
         <VSOEmailNotificationsFields
           hearing={hearing}
+          update={update}
+          setIsNotValidEmail={setIsNotValidEmail}
+          actionType={actionType}
+          errors={errors}
         />
       </React.Fragment>
     </VirtualHearingSection>
@@ -35,6 +43,7 @@ export const VSOAppellantSection = ({
 
 VSOAppellantSection.defaultProps = {
   schedulingToVirtual: true,
+  hearingsForm: false
 };
 
 VSOAppellantSection.propTypes = {
@@ -53,7 +62,6 @@ VSOAppellantSection.propTypes = {
   userCanCollectVideoCentralEmails: PropTypes.bool,
   schedulingToVirtual: PropTypes.bool,
   formFieldsOnly: PropTypes.bool,
-  appellantTimezone: PropTypes.string,
-  appellantEmailAddress: PropTypes.string,
-  appellantEmailType: PropTypes.string
+  setIsNotValidEmail: PropTypes.func,
+  actionType: PropTypes.string
 };

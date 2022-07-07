@@ -1,16 +1,16 @@
 /* eslint-disable no-unused-vars */
 
 import PropTypes from 'prop-types';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import classnames from 'classnames';
 
-import HearingTypeConversionContext from '../../contexts/HearingTypeConversionContext';
 import { HelperText } from '../VirtualHearings/HelperText';
 import { enablePadding } from '../details/style';
 import COPY from '../../../../COPY';
 import TextField from '../../../components/TextField';
 
 export const VSOHearingEmail = ({
+  hearing,
   email,
   label,
   required,
@@ -19,18 +19,11 @@ export const VSOHearingEmail = ({
   helperLabel,
   showHelper,
   confirmEmail,
-  emailType
+  emailType,
+  actionType,
+  setIsNotValidEmail,
+  update
 }) => {
-  const {
-    setIsNotValidEmail,
-    setEmailsMismatch,
-    originalEmail,
-    setOriginalEmail,
-    setConfirmIsEmpty,
-    confirmIsEmpty,
-    updatedAppeal,
-    dispatchAppeal
-  } = useContext(HearingTypeConversionContext);
 
   const [message, setMessage] = useState('');
 
@@ -38,9 +31,6 @@ export const VSOHearingEmail = ({
   const emailRegex = /\S+@\S+\.\S+/;
 
   const validateEmail = (newEmail, unFocused) => {
-
-    setOriginalEmail(newEmail);
-
     if (emailRegex.test(newEmail)) {
       setMessage('');
       setIsNotValidEmail(false);
@@ -54,33 +44,19 @@ export const VSOHearingEmail = ({
   };
 
   const confirmEmailCheck = (newEmail, unFocused) => {
-
-    if (newEmail === '') {
-      setConfirmIsEmpty(true);
-    } else {
-      setConfirmIsEmpty(false);
-    }
-
-    if (newEmail === originalEmail) {
+    if (newEmail === hearing?.appellantEmailAddress) {
       setMessage('');
-      setEmailsMismatch(false);
-    } else if (unFocused) {
-      // Only display error message if field focus is exited.
-      if (newEmail && !confirmIsEmpty) {
-        setMessage(COPY.CONVERT_HEARING_VALIDATE_EMAIL_MATCH);
-      }
-      setEmailsMismatch(true);
-    } else {
-      setEmailsMismatch(true);
+    } else if (unFocused && newEmail) {
+      setMessage(COPY.CONVERT_HEARING_VALIDATE_EMAIL_MATCH);
     }
   };
 
   // Rerun original-to-confirmation email matching if original email changes
   useEffect(() => {
     if (confirmEmail) {
-      confirmEmailCheck(updatedAppeal.appellantConfirmEmailAddress, true);
+      confirmEmailCheck(hearing?.appellantConfirmEmailAddress, true);
     }
-  }, [originalEmail]);
+  }, [hearing?.appellantEmailAddress]);
 
   return (
     confirmEmail ? (
@@ -98,9 +74,9 @@ export const VSOHearingEmail = ({
               [enablePadding]: message,
             }),
           ]}
-          onChange={(newEmail) => {
-            confirmEmailCheck(newEmail, false);
-            dispatchAppeal({ type: 'SET_APPELLANT_CONFIRM_EMAIL', payload: newEmail });
+          onChange={(appellantConfirmEmailAddress) => {
+            confirmEmailCheck(appellantConfirmEmailAddress, false);
+            update(actionType, { appellantConfirmEmailAddress });
           }}
           onBlur={(newEmail) => {
             confirmEmailCheck(newEmail, true);
@@ -125,11 +101,7 @@ export const VSOHearingEmail = ({
             }),
           ]}
           onChange={(newEmail) => {
-            dispatchAppeal({
-              type: emailType === 'appellantEmailAddress' ?
-                'SET_APPELLANT_EMAIL' :
-                'SET_POA_EMAIL',
-              payload: newEmail });
+            update(actionType, { [emailType]: newEmail });
             validateEmail(newEmail, false);
           }}
           onBlur={(newEmail) => {
@@ -150,6 +122,7 @@ VSOHearingEmail.defaultProps = {
 };
 
 VSOHearingEmail.propTypes = {
+  hearing: PropTypes.object,
   email: PropTypes.string,
   emailType: PropTypes.string,
   label: PropTypes.string,
@@ -158,5 +131,8 @@ VSOHearingEmail.propTypes = {
   disabled: PropTypes.bool,
   helperLabel: PropTypes.string,
   showHelper: PropTypes.bool,
-  confirmEmail: PropTypes.bool
+  confirmEmail: PropTypes.bool,
+  update: PropTypes.func,
+  actionType: PropTypes.string,
+  setIsNotValidEmail: PropTypes.func
 };
