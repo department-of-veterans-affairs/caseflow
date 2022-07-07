@@ -70,7 +70,7 @@ const HearingDetails = (props) => {
   const [emailConfirmationModalType, setEmailConfirmationModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
   const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
-  const [isNotValidEmail, setIsNotValidEmail] = useState(userVsoEmployee);
+  const [isNotValidEmail, setIsNotValidEmail] = useState(false);
   const [formSubmittable, setFormSubmittable] = useState(false);
   const [hearingConversionCheckboxes, setHearingConversionCheckboxes] = useState(false);
 
@@ -119,6 +119,9 @@ const HearingDetails = (props) => {
     if (userVsoEmployee) {
       convertHearing('change_to_virtual');
       updateHearing('virtualHearing', { requestCancelled: false });
+
+      // Predetermine whether or not appellant email is valid
+      setIsNotValidEmail(!(/\S+@\S+\.\S+/).test(hearing?.appellantEmailAddress));
     }
   }, []);
 
