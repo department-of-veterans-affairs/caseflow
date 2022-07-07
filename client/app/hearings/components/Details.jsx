@@ -119,9 +119,6 @@ const HearingDetails = (props) => {
     if (userVsoEmployee) {
       convertHearing('change_to_virtual');
       updateHearing('virtualHearing', { requestCancelled: false });
-
-      // Predetermine whether or not appellant email is valid
-      setIsValidEmail((/\S+@\S+\.\S+/).test(hearing?.appellantEmailAddress));
     }
   }, []);
 
