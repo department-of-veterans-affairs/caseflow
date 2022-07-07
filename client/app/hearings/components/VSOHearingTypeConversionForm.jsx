@@ -81,7 +81,7 @@ export const VSOHearingTypeConversionForm = ({
   }, []);
 
   const preventSubmission = () => {
-    return isValidEmail ||
+    return !isValidEmail ||
       !updatedAppeal?.appellantEmailAddress ||
       !checkedAccess ||
       !checkedPermissions ||
