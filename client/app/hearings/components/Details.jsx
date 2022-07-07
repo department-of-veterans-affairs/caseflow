@@ -76,10 +76,10 @@ const HearingDetails = (props) => {
 
   const canSubmit = () => {
     let emailFieldsValid = (
-      Boolean(hearing?.appellantEmailAddress) &&
-      Boolean(hearing?.appellantTz) &&
-      Boolean(hearing?.representativeTz) &&
       !isNotValidEmail &&
+      hearing?.appellantEmailAddress &&
+      hearing?.appellantTz &&
+      hearing?.representativeTz &&
       hearing?.appellantEmailAddress === hearing?.appellantConfirmEmailAddress &&
       hearingConversionCheckboxes
     );
