@@ -89,7 +89,7 @@ const HearingDetails = (props) => {
 
   useEffect(() => {
     canSubmit();
-  }, [hearing, hearingConversionCheckboxes]);
+  }, [hearing, isNotValidEmail, hearingConversionCheckboxes]);
 
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const convertingToVirtual = converting === 'change_to_virtual';
