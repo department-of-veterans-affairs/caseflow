@@ -21,7 +21,7 @@ export const VSOHearingEmail = ({
   confirmEmail,
   emailType,
   actionType,
-  setIsNotValidEmail,
+  setIsValidEmail,
   update
 }) => {
 
@@ -33,13 +33,13 @@ export const VSOHearingEmail = ({
   const validateEmail = (newEmail, unFocused) => {
     if (emailRegex.test(newEmail)) {
       setMessage('');
-      setIsNotValidEmail(false);
+      setIsValidEmail(true);
     } else if (unFocused) {
       // Only display error message if field focus is exited.
       setMessage(COPY.CONVERT_HEARING_VALIDATE_EMAIL);
-      setIsNotValidEmail(true);
+      setIsValidEmail(false);
     } else {
-      setIsNotValidEmail(true);
+      setIsValidEmail(false);
     }
   };
 
@@ -134,5 +134,5 @@ VSOHearingEmail.propTypes = {
   confirmEmail: PropTypes.bool,
   update: PropTypes.func,
   actionType: PropTypes.string,
-  setIsNotValidEmail: PropTypes.func
+  setIsValidEmail: PropTypes.func
 };
