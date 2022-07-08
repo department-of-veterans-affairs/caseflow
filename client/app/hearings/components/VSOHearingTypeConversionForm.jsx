@@ -10,6 +10,7 @@ import { getAppellantTitle } from '../utils';
 import { marginTop, saveButton, cancelButton } from './details/style';
 import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
+import Link from '../../components/Link';
 import COPY from '../../../COPY';
 export const VSOHearingTypeConversionForm = ({
   isLoading,
@@ -108,13 +109,10 @@ export const VSOHearingTypeConversionForm = ({
         <Checkbox
           label={
             <div>
-              <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span><br />
-              <a
-                href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf"
-                style={{ textDecoration: 'underline' }}
-              >
+              <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span>&nbsp;
+              <Link href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf" target="_blank">
                 Learn more
-              </a>
+              </Link>
             </div>
           }
           name="Affirm Access"
