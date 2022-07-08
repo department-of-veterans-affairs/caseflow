@@ -42,35 +42,42 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let(:ro_review_instructions) { "Look for PDFs of the decisions in the veteran's folder." }
 
   context "when a VHA case goes through intake" do
+    categories = Constants::ISSUE_CATEGORIES["vha"].grep(/Caregiver/)   
     before { OrganizationsUser.make_user_admin(bva_intake_user, bva_intake) }
 
     it "intaking VHA issues creates pre-docket tasks instead of regular docketing tasks" do
       step "BVA Intake user intakes a VHA case" do
-        User.authenticate!(user: bva_intake_user)
-        start_appeal(veteran, intake_user: bva_intake_user)
-        visit "/intake"
-        expect(page).to have_current_path("/intake/review_request")
-        click_intake_continue
-        expect(page).to have_content("Add / Remove Issues")
+        # categories = Constants::ISSUE_CATEGORIES["vha"].grep(/Caregiver/)        
 
-        click_intake_add_issue
-        fill_in "Benefit type", with: "Veterans Health Administration"
-        find("#issue-benefit-type").send_keys :enter
-        fill_in "Issue category", with: "Caregiver"
-        find("#issue-category").send_keys :enter
-        fill_in "Issue description", with: "I am a VHA issue"
-        fill_in "Decision date", with: 1.month.ago.mdY
+          User.authenticate!(user: bva_intake_user)
+          start_appeal(veteran, intake_user: bva_intake_user)
+          visit "/intake"
+          expect(page).to have_current_path("/intake/review_request")
+          click_intake_continue
+          expect(page).to have_content("Add / Remove Issues")
 
-        expect(page).to have_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
-        safe_click ".add-issue"
-        expect(page).to have_content(COPY::VHA_PRE_DOCKET_ADD_ISSUES_NOTICE)
-        expect(page).to have_button("Submit appeal")
-        click_intake_finish
-        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+          click_intake_add_issue
+          fill_in "Benefit type", with: "Veterans Health Administration"
+          find("#issue-benefit-type").send_keys :enter
 
-        appeal = Appeal.last
-        visit "/queue/appeals/#{appeal.external_id}"
-        expect(page).to have_content("Pre-Docket")
+          categories.each do |c|
+            fill_in "Issue category", with: c
+          end
+
+          find("#issue-category").send_keys :enter
+          fill_in "Issue description", with: "I am a VHA issue"
+          fill_in "Decision date", with: 1.month.ago.mdY
+
+          expect(page).to have_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
+          safe_click ".add-issue"
+          expect(page).to have_content(COPY::VHA_PRE_DOCKET_ADD_ISSUES_NOTICE)
+          expect(page).to have_button("Submit appeal")
+          click_intake_finish
+          expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+
+          appeal = Appeal.last
+          visit "/queue/appeals/#{appeal.external_id}"
+          expect(page).to have_content("Caregiver – Other(Identify the need, not the technical solution)")        
       end
 
       step "Use can search the case and see the Pre Docketed status" do
@@ -312,7 +319,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       click_intake_add_issue
       fill_in "Benefit type", with: "Veterans Health Administration"
       find("#issue-benefit-type").send_keys :enter
-      fill_in "Issue category", with: "Caregiver"
+
+      categories.each do |c|
+        fill_in "Issue category", with: c
+      end
+
       find("#issue-category").send_keys :enter
       fill_in "Issue description", with: "I am a VHA issue"
       fill_in "Decision date", with: 1.month.ago.mdY
