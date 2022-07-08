@@ -70,7 +70,7 @@ const HearingDetails = (props) => {
   const [emailConfirmationModalType, setEmailConfirmationModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
   const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
-  const [isValidEmail, setIsValidEmail] = useState(true);
+  const [isValidEmail, setIsValidEmail] = useState(hearing?.appellantEmailAddress);
   const [formSubmittable, setFormSubmittable] = useState(false);
   const [hearingConversionCheckboxes, setHearingConversionCheckboxes] = useState(false);
 
