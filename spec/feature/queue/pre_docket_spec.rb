@@ -42,7 +42,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let(:ro_review_instructions) { "Look for PDFs of the decisions in the veteran's folder." }
 
   context "when a VHA case goes through intake" do
-    categories = Constants::ISSUE_CATEGORIES["vha"].grep(/Caregiver/)   
+    categories = Constants::ISSUE_CATEGORIES["vha"].grep(/Caregiver/)
     before { OrganizationsUser.make_user_admin(bva_intake_user, bva_intake) }
 
     it "intaking VHA issues creates pre-docket tasks instead of regular docketing tasks" do
@@ -74,7 +74,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           visit "/queue/appeals/#{appeal.external_id}"
           expect(page).to have_content("Pre-Docket")
           expect(page).to have_content(c)
-        end        
+        end
       end
 
       step "Use can search the case and see the Pre Docketed status" do
@@ -275,7 +275,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&page=1")
 
-        expect(page).to have_content(format(COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE, appeal.veteran_full_name))
+        expect(page).to have_content(
+          format(COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE, appeal.veteran_full_name)
+        )
 
         expect(appeal.tasks.last.assigned_to). to eq camo
       end
