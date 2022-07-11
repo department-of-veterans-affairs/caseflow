@@ -47,8 +47,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
     it "intaking VHA issues creates pre-docket tasks instead of regular docketing tasks" do
       step "BVA Intake user intakes a VHA case" do
-        # categories = Constants::ISSUE_CATEGORIES["vha"].grep(/Caregiver/)        
-
+        categories.each do |c|
           User.authenticate!(user: bva_intake_user)
           start_appeal(veteran, intake_user: bva_intake_user)
           visit "/intake"
@@ -59,11 +58,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           click_intake_add_issue
           fill_in "Benefit type", with: "Veterans Health Administration"
           find("#issue-benefit-type").send_keys :enter
-
-          categories.each do |c|
-            fill_in "Issue category", with: c
-          end
-
+          fill_in "Issue category", with: c
           find("#issue-category").send_keys :enter
           fill_in "Issue description", with: "I am a VHA issue"
           fill_in "Decision date", with: 1.month.ago.mdY
@@ -77,7 +72,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           appeal = Appeal.last
           visit "/queue/appeals/#{appeal.external_id}"
-          expect(page).to have_content("Caregiver – Other(Identify the need, not the technical solution)")        
+          expect(page).to have_content("Pre-Docket")
+          expect(page).to have_content(c)
+        end        
       end
 
       step "Use can search the case and see the Pre Docketed status" do
@@ -319,10 +316,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       click_intake_add_issue
       fill_in "Benefit type", with: "Veterans Health Administration"
       find("#issue-benefit-type").send_keys :enter
-
-      categories.each do |c|
-        fill_in "Issue category", with: c
-      end
+      fill_in "Issue category", with: "Caregiver - Eligibility"
 
       find("#issue-category").send_keys :enter
       fill_in "Issue description", with: "I am a VHA issue"
