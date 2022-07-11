@@ -81,7 +81,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
     end
 
-    context "Non-caregiver" do
+    context "non caregiver" do
       it "intaking VHA issues creates pre-docket tasks instead of regular docketing tasks" do
         step "BVA Intake user intakes a VHA case" do
           User.authenticate!(user: bva_intake_user)
