@@ -60,7 +60,7 @@ class HearingMailer < ActionMailer::Base
 
     mail(
       to: recipient_info.email,
-      subject: "Your Board hearing time has changed – Do Not Reply"
+      subject: "Your Board hearing date/time has changed – Do Not Reply"
     )
   end
 
