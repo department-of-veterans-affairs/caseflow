@@ -28,7 +28,8 @@ export const VSOHearingEmail = ({
   const [message, setMessage] = useState('');
 
   // Regex to validate email input in real time
-  const emailRegex = /\S+@\S+\.\S+/;
+  // eslint-disable-next-line max-len
+  const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   const validateEmail = (newEmail, unFocused) => {
     if (emailRegex.test(newEmail)) {
