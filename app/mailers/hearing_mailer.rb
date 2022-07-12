@@ -93,7 +93,7 @@ class HearingMailer < ActionMailer::Base
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
       "Your Board hearing will be held at #{@hearing.hearing_location_or_regional_office.name} – Do Not Reply"
     when HearingEmailRecipient::RECIPIENT_TITLES[:representative]
-      "#{appellant_name}’s hearing will be held at #{@hearing.hearing_location_or_regional_office.name} – Do Not Reply"
+      "There has been a change to your client’s upcoming Board hearing – Do Not Reply"
     end
   end
 
