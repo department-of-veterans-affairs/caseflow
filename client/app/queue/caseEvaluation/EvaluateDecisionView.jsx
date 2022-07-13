@@ -14,6 +14,7 @@ import TextareaField from '../../components/TextareaField';
 import CaseTitle from '../CaseTitle';
 import Alert from '../../components/Alert';
 import TaskSnapshot from '../TaskSnapshot';
+import RadioField from '../../components/RadioField';
 
 import { deleteAppeal } from '../QueueActions';
 import { requestSave } from '../uiReducer/uiActions';
@@ -36,11 +37,17 @@ import DispatchSuccessDetail from '../components/DispatchSuccessDetail';
 import QueueFlowPage from '../components/QueueFlowPage';
 import { JudgeCaseQuality } from './JudgeCaseQuality';
 import { qualityIsDeficient } from '.';
+import { errorStylingNoTopMargin } from './index';
 
 const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });
 const hrStyling = css(marginTop(2), marginBottom(3));
 const subH2Styling = css(paddingLeft(1), { lineHeight: 2 });
+
+const timelinessOpts = Object.entries(JUDGE_CASE_REVIEW_OPTIONS.TIMELINESS).map(([value, displayText]) => ({
+  displayText,
+  value
+}));
 
 class EvaluateDecisionView extends React.PureComponent {
   constructor(props) {
@@ -221,6 +228,19 @@ class EvaluateDecisionView extends React.PureComponent {
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>&nbsp; (
         {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM}): {daysWorked}
         <br />
+        <br />
+        <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBHEAD}</h3>
+        <RadioField
+          vertical
+          hideLabel
+          name=""
+          required
+          // onChange={(val) => setComplexity(val)}
+          // value={complexity}
+          styling={css(marginBottom(0), errorStylingNoTopMargin)}
+          // errorMessage={highlight && !complexity ? 'Choose one' : null}
+          options={timelinessOpts}
+        />
         <hr {...hrStyling} />
         <JudgeCaseQuality
           highlight={highlight}
