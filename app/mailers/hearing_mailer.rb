@@ -91,7 +91,7 @@ class HearingMailer < ActionMailer::Base
     # :reek:RepeatedConditionals
     case recipient_info.title
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
-      "Your Board hearing will be held at #{@hearing.hearing_location_or_regional_office.name} – Do Not Reply"
+      "There has been a change to your upcoming Board Hearing – Do Not Reply"
     when HearingEmailRecipient::RECIPIENT_TITLES[:representative]
       "There has been a change to your client’s upcoming Board hearing – Do Not Reply"
     end
