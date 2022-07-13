@@ -55,6 +55,7 @@ class EvaluateDecisionView extends React.PureComponent {
 
     this.state = {
       one_touch_initiative: false,
+      timeliness: null,
       complexity: null,
       quality: null,
       factors_not_considered: {},
@@ -63,6 +64,7 @@ class EvaluateDecisionView extends React.PureComponent {
       comment: ''
     };
 
+    this.timelinessLabel = React.createRef();
     this.complexityLabel = React.createRef();
     this.qualityAlert = React.createRef();
     this.qualityLabel = React.createRef();
@@ -84,7 +86,13 @@ class EvaluateDecisionView extends React.PureComponent {
 
   validateForm = () => {
     // eslint-disable-next-line camelcase
-    const { areas_for_improvement, factors_not_considered, complexity, quality } = this.state;
+    const { areas_for_improvement, factors_not_considered, complexity, quality, timeliness } = this.state;
+
+    if (!timeliness) {
+      this.scrollTo(this.timelinessLabel.current);
+
+      return false;
+    }
 
     if (!complexity) {
       this.scrollTo(this.complexityLabel.current);
@@ -220,7 +228,7 @@ class EvaluateDecisionView extends React.PureComponent {
             <hr {...hrStyling} />
           </React.Fragment>
         )}
-        <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
+        <h2 {...headerStyling} ref={this.timelinessLabel}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</b>: {dateAssigned.format('M/D/YY')}
         <br />
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}</b>: {decisionSubmitted.format('M/D/YY')}
@@ -235,10 +243,12 @@ class EvaluateDecisionView extends React.PureComponent {
           hideLabel
           name=""
           required
-          // onChange={(val) => setComplexity(val)}
-          // value={complexity}
+          onChange={(value) => {
+            this.setState({ timeliness: value });
+          }}
+          value={this.state.timeliness}
           styling={css(marginBottom(0), errorStylingNoTopMargin)}
-          // errorMessage={highlight && !complexity ? 'Choose one' : null}
+          errorMessage={highlight && !this.state.timeliness ? 'Choose one' : null}
           options={timelinessOpts}
         />
         <hr {...hrStyling} />
