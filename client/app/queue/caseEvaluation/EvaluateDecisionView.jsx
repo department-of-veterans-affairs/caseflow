@@ -86,33 +86,34 @@ class EvaluateDecisionView extends React.PureComponent {
   validateForm = () => {
     // eslint-disable-next-line camelcase
     const { areas_for_improvement, factors_not_considered, complexity, quality, timeliness } = this.state;
+    let isValid = true;
 
     if (!timeliness) {
       this.scrollTo(this.timelinessLabel.current);
 
-      return false;
+      isValid = false;
     }
 
     if (!complexity) {
       this.scrollTo(this.complexityLabel.current);
 
-      return false;
+      isValid = false;
     }
 
     if (!quality) {
       this.scrollTo(this.qualityLabel.current);
 
-      return false;
+      isValid = false;
     }
 
     // eslint-disable-next-line camelcase
     if (qualityIsDeficient(this.state.quality) && _.every([areas_for_improvement, factors_not_considered], _.isEmpty)) {
       this.scrollTo(this.qualityAlert.current);
 
-      return false;
+      isValid = false;
     }
 
-    return true;
+    return isValid;
   };
 
   getPrevStepUrl = () => {
