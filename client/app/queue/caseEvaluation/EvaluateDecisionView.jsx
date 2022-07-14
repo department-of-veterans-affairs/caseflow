@@ -36,8 +36,7 @@ import {
 import DispatchSuccessDetail from '../components/DispatchSuccessDetail';
 import QueueFlowPage from '../components/QueueFlowPage';
 import { JudgeCaseQuality } from './JudgeCaseQuality';
-import { qualityIsDeficient } from '.';
-import { errorStylingNoTopMargin } from './index';
+import { qualityIsDeficient, errorStylingNoTopMargin } from '.';
 
 const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });
