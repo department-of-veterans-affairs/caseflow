@@ -92,15 +92,11 @@ class EvaluateDecisionView extends React.PureComponent {
       this.scrollTo(this.timelinessLabel.current);
 
       isValid = false;
-    }
-
-    if (!complexity) {
+    } else if (!complexity) {
       this.scrollTo(this.complexityLabel.current);
 
       isValid = false;
-    }
-
-    if (!quality) {
+    } else if (!quality) {
       this.scrollTo(this.qualityLabel.current);
 
       isValid = false;

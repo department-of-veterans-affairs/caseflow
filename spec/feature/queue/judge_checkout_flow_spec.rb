@@ -80,6 +80,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       # Evaluate Decision page
       expect(page).to have_content("Evaluate Decision")
 
+      find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["TIMELINESS"]["timely"]).click
       find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
       text_to_click = "3 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['meets_expectations']}"
       find("label", text: text_to_click).click
@@ -150,6 +151,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       expect(page).to_not have_content("Select an action")
       expect(page).to_not have_content("One Touch Initiative")
 
+      find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["TIMELINESS"]["timely"]).click
       find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
       text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
       find("label", text: text_to_click).click
@@ -204,6 +206,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       expect(page).to_not have_content("Select an action")
       expect(page).to_not have_content("One Touch Initiative")
 
+      find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["TIMELINESS"]["timely"]).click
       find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
       text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
       find("label", text: text_to_click).click
@@ -291,6 +294,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         expect(page).to have_content("One Touch Initiative")
         find("label", text: COPY::JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD).click
 
+        find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["TIMELINESS"]["timely"]).click
         find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
         text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
         find("label", text: text_to_click).click
@@ -374,6 +378,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       end
 
       step("Fill out evaluation page") do
+        find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["TIMELINESS"]["timely"]).click
         find("label", text: Constants.JUDGE_CASE_REVIEW_OPTIONS.COMPLEXITY.medium).click
         find("label", text: "3 - #{Constants.JUDGE_CASE_REVIEW_OPTIONS.QUALITY.meets_expectations}").click
         click_on("Continue")
@@ -474,6 +479,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       expect(page).to have_content("One Touch Initiative")
       find("label", text: COPY::JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD).click
 
+      find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["TIMELINESS"]["timely"]).click
       find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
       text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
       find("label", text: text_to_click).click
