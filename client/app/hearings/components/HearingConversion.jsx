@@ -19,6 +19,7 @@ import { AppellantSection } from './VirtualHearings/AppellantSection';
 import { VSORepresentativeSection } from './VirtualHearings/VSORepresentativeSection';
 import { VSOAppellantSection } from './VirtualHearings/VSOAppellantSection';
 import { Checkbox } from '../../components/Checkbox';
+import Link from '../../components/Link';
 
 export const HearingConversion = ({
   hearing: { virtualHearing, ...hearing },
@@ -145,12 +146,9 @@ export const HearingConversion = ({
             label={
               <div>
                 <span>{COPY.CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS}</span>&nbsp;
-                <a
-                  href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf"
-                  style={{ textDecoration: 'underline' }}
-                >
+                <Link href="https://www.bva.va.gov/docs/VirtualHearing_FactSheet.pdf" target="_blank">
                   Learn more
-                </a>
+                </Link>
               </div>
             }
             name="affirmAccess"
