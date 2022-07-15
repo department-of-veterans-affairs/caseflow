@@ -4,12 +4,12 @@
   </p>
   <p>
     <% if @reminder_type == Hearings::ReminderService::SIXTY_DAY_REMINDER || @reminder_type == Hearings::ReminderService::THIRTY_DAY_REMINDER %>
-      You're scheduled for a hearing with a Veterans Law Judge of the Board of Veterans' Appeals.
+      You are scheduled for a hearing with a Veterans Law Judge of the Board of Veterans' Appeals.
     <% else %>
       <% if @virtual_hearing.nil? && @hearing&.request_type ==  "C" %>
-        You're scheduled for a hearing with a Veterans Law Judge of the Board of Veterans' Appeals. You will arrive at <%= @hearing&.hearing_location_or_regional_office&.full_address %> and the Judge will meet with you in person.
+      You are scheduled for a Board of Veterans’ Appeals hearing with a Veterans Law Judge.  <%= @hearing&.hearing_location_or_regional_office&.full_address %> 
       <% elsif @virtual_hearing.nil? &&  @hearing&.request_type == "V" %>
-        You're scheduled for a hearing with a Veterans Law Judge of the Board of Veterans' Appeals. You will arrive at <%= @hearing&.hearing_location_or_regional_office&.full_address %> and the Judge will meet with you via video conference.
+        You are scheduled for a Board of Veterans’ Appeals hearing with a Veterans Law Judge.  <%= @hearing&.hearing_location_or_regional_office&.full_address %> 
       <% else %>
         You're scheduled for a hearing with a Veterans Law Judge of the Board of Veterans' Appeals.
       <% end %>
@@ -23,7 +23,7 @@
 
 <% if @virtual_hearing.present? %>
   <%= content_for :how_to_join do %>
-    <%= render "hearing_mailer/sections/how_to_join" %>
+    <%= render "hearing_mailer/sections/how_to_join",reminder_type:@reminder_type %>
   <% end %>
 
   <%= content_for :test_your_connection do %>
@@ -41,9 +41,7 @@
 
     <h3>What should I expect on the day of my hearing?</h3>
     <p>
-      Bring a photo ID and check in with security 30 minutes prior to the scheduled hearing. You will be subject to security screening, including the inspection of personal belongings. Masks may be required to enter VA facilities. It is against the law to bring firearms or any other dangerous weapons into a federal facility.  </p>
-    <p>
-      Hearings are scheduled in morning and afternoon shifts. The Judge will hold each hearing as soon as possible; however, you should be prepared to wait your turn. The approximate time for each hearing is 30 minutes.
+      Bring a photo ID and check in with security 30 minutes prior to the scheduled hearing. You will be subject to security screening, including the inspection of personal belongings.  It is against the law to bring firearms or other weapons into a federal facility.  Further, mask-wearing and public health  screenings may be required.  
     </p>
   <% end %>
 <% end %>
