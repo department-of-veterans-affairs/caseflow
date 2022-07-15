@@ -9,7 +9,7 @@ export const VSOAppellantSection = ({
   showDivider,
   appellantTitle,
   formFieldsOnly,
-  setIsNotValidEmail,
+  setIsValidEmail,
   update,
   actionType
 }) => {
@@ -32,7 +32,7 @@ export const VSOAppellantSection = ({
         <VSOEmailNotificationsFields
           hearing={hearing}
           update={update}
-          setIsNotValidEmail={setIsNotValidEmail}
+          setIsValidEmail={setIsValidEmail}
           actionType={actionType}
           errors={errors}
         />
@@ -62,6 +62,6 @@ VSOAppellantSection.propTypes = {
   userCanCollectVideoCentralEmails: PropTypes.bool,
   schedulingToVirtual: PropTypes.bool,
   formFieldsOnly: PropTypes.bool,
-  setIsNotValidEmail: PropTypes.func,
+  setIsValidEmail: PropTypes.func,
   actionType: PropTypes.string
 };
