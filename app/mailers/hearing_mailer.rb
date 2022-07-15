@@ -129,7 +129,7 @@ class HearingMailer < ActionMailer::Base
     if recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:representative]
       "Reminder: #{appellant_name}'s Board hearing is #{formatted_time} – Do Not Reply"
     else
-      "Reminder: Your Board hearing is #{formatted_time} – Do Not Reply"
+      "Reminder: Your hearing is #{formatted_time} – Do Not Reply"
     end
   end
 
