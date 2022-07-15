@@ -17,4 +17,4 @@ class SupervisorySeniorCouncil < Organization
   def users_can_create_mail_task?
     true
   end
-  end
+end
