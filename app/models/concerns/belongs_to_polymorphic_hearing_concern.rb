@@ -47,8 +47,8 @@ module BelongsToPolymorphicHearingConcern
         .select_associations.first
 
       type_column = association.foreign_type
-      scope :ama_hearing, -> { where(type_column => "Hearing") }
-      scope :legacy_hearing, -> { where(type_column => "LegacyHearing") }
+      scope :ama, -> { where(type_column => "Hearing") }
+      scope :legacy, -> { where(type_column => "LegacyHearing") }
 
       # Use `:ama_hearing` instead of `:hearing`
       # because `.hearing` is already defined by `belongs_to associated_class_symbol, polymorphic: true` above

@@ -47,8 +47,8 @@ module BelongsToPolymorphicAppealConcern
         .select_associations.first
 
       type_column = association.foreign_type
-      scope :ama_appeal, -> { where(type_column => "Appeal") }
-      scope :legacy_appeal, -> { where(type_column => "LegacyAppeal") }
+      scope :ama, -> { where(type_column => "Appeal") }
+      scope :legacy, -> { where(type_column => "LegacyAppeal") }
 
       # Use `:ama_appeal` instead of `:appeal`
       # because `.appeal` is already defined by `belongs_to associated_class_symbol, polymorphic: true` above
