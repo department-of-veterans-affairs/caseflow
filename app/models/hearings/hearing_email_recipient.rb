@@ -21,10 +21,11 @@ class HearingEmailRecipient < CaseflowRecord
   validates :email_address, presence: true, on: :create
   has_many :email_events, class_name: "SentHearingEmailEvent", foreign_key: :email_recipient_id
 
-  include BelongsToPolymorphicHearingConcern
-  belongs_to_polymorphic_hearing(:hearing)
   include HasAppealUpdatedSince
+  include BelongsToPolymorphicHearingConcern
   include BelongsToPolymorphicAppealConcern
+
+  belongs_to_polymorphic_hearing(:hearing)
   belongs_to_polymorphic_appeal(:appeal)
 
   def reminder_sent_at
