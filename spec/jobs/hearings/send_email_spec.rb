@@ -14,6 +14,14 @@ describe Hearings::SendEmail do
       regional_office: nyc_ro_eastern
     )
   end
+  let(:user) { create(:user) }
+  let(:sent_hearing_email_event) do 
+    SentHearingEmailEvent.create(
+      hearing: hearing,
+      sent_by: user,
+      email_type: "confirmation"
+    )
+  end
   let!(:virtual_hearing) do
     create(
       :virtual_hearing,
@@ -162,6 +170,35 @@ describe Hearings::SendEmail do
         veteran.reload
         expect(veteran.first_name).to eq "Bgsfirstname"
         expect(veteran.last_name).to eq "Bgslastname"
+      end
+    end
+  end
+
+  describe "an email is created" do
+    context "a cancellation email" do
+      it "an appellant's cancellation email is formatted properly" do
+        email = HearingMailer.cancellation(email_recipient_info: appellant_recipient_info, virtual_hearing: virtual_hearing)
+        expect(email.body.encoded).to include "Where do I send written requests?"
+      end
+      it "a representative's cancellation email is formatted properly" do
+        email = HearingMailer.cancellation(email_recipient_info: representative_recipient_info, virtual_hearing: virtual_hearing)
+        expect(email.body.encoded).not_to include "What should I expect on the day of my hearing?"
+      end
+    end
+    context "an updated date/time email" do
+      it "an appellant's updated date/time email is formatted properly" do
+        email = HearingMailer.cancellation(email_recipient_info: appellant_recipient_info, virtual_hearing: virtual_hearing)
+        expect(email.body.encoded).to include "Where do I send written requests?"
+      end
+      it "a representative's updated date/time email is formatted properly" do
+        email = HearingMailer.cancellation(email_recipient_info: representative_recipient_info, virtual_hearing: virtual_hearing)
+        expect(email.body.encoded).not_to include "What should I expect on the day of my hearing?"
+      end
+    end
+    context "a failed to send notification email" do
+      it "the failed to send notification is formatted properly" do
+        email = HearingEmailStatusMailer.notification(sent_hearing_email_event: sent_hearing_email_event)
+        expect(email.encoded).to include("<u>click Save</u>")
       end
     end
   end
