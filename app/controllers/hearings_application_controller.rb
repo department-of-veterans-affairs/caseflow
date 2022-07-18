@@ -11,6 +11,8 @@ class HearingsApplicationController < ApplicationController
   before_action :verify_access_to_reader_or_hearings, only: [:show_hearing_worksheet_index]
   before_action :verify_view_hearing_schedule_access, only: [:index]
 
+  before_action :check_vso_representation, only: [:show_hearing_details_index]
+
   def set_application
     RequestStore.store[:application] = "hearings"
   end
@@ -33,5 +35,16 @@ class HearingsApplicationController < ApplicationController
 
   def check_hearings_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("hearings_out_of_service")
+  end
+
+  private
+
+  def check_vso_representation
+    # Only allow for VSOs to access hearings they are representing
+    if current_user.vso_employee?
+      redirect_to "/unauthorized" && return unless Hearing.find_by_uuid(params[:hearing_id])&.assigned_to_vso?(current_user)
+    end
+
+    true
   end
 end
