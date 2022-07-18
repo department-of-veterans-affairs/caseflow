@@ -303,6 +303,23 @@ RSpec.feature "Convert hearing request type" do
         it_behaves_like "scheduled hearings"
       end
     end
+
+    context "whenever a VSO user from another organization" do
+
+      before { different_vso.add_user(different_vso_user)}
+
+      let!(:hearing) { create(:hearing, hearing_day: hearing_day, appeal: appeal) }
+      let!(:different_vso_user) { create(:user, :vso_role, email: "DefinitelyNotNull@All.com") }
+      let!(:different_vso) { create(:vso, name: "Different VSO", role: "VSO", url: "vso2-url", participant_id: "8999") }
+
+      scenario "does not represent an appellant and attempts to access their hearing" do
+        User.authenticate!(user: different_vso_user)
+
+        visit "/hearings/#{hearing.uuid}/details"
+
+        expect(page).to have_current_path "/unauthorized"
+      end
+    end
   end
 
   describe "for legacy appeals and hearings" do
