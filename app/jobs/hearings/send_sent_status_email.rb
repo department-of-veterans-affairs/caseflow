@@ -25,7 +25,7 @@ class Hearings::SendSentStatusEmail
   # See app/jobs/hearings/send_email.rb::send_email for notes on deliver_now!
   def send_email
     email = HearingEmailStatusMailer.notification(
-      sent_hearing_email_event: @sent_hearing_email_event
+      sent_hearing_email_event: event
     )
     message = email.deliver_now!
     message

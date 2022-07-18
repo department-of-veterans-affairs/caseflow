@@ -28,6 +28,7 @@
 <% if @virtual_hearing.present? %>
   <%= content_for :how_to_join do %>
     <%= render "hearing_mailer/sections/how_to_join",reminder_type:@reminder_type %>
+    <p>IMPORTANT:  You must click on the green video button (icon) to enter the virtual hearing room.</p>
   <% end %>
 
   <%= content_for :test_your_connection do %>
@@ -47,9 +48,13 @@
     <p>
       Bring a photo ID and check in with security 30 minutes prior to the scheduled hearing. You will be subject to security screening, including the inspection of personal belongings.  It is against the law to bring firearms or other weapons into a federal facility.  Further, mask-wearing and public health  screenings may be required.
       </p>
-     <p>
-     Hearings are scheduled in morning and afternoon shifts. The Judge will hold each hearing as soon as possible; however, you should be prepared to wait your turn. The approximate time for each hearing is 30 minutes.
-     </p> 
+      <% if @reminder_type != Hearings::ReminderService::SIXTY_DAY_REMINDER && @reminder_type != Hearings::ReminderService::THIRTY_DAY_REMINDER %>
+        <% if @hearing&.request_type ==  "V" %>
+          <p>
+            Hearings are scheduled in morning and afternoon shifts. The Judge will hold each hearing as soon as possible; however, you should be prepared to wait your turn. The approximate time for each hearing is 30 minutes.
+          </p> 
+        <% end %>
+      <% end %>
   <% end %>
 <% end %>
 <% if @reminder_type == Hearings::ReminderService::SIXTY_DAY_REMINDER || @reminder_type == Hearings::ReminderService::THIRTY_DAY_REMINDER %>
