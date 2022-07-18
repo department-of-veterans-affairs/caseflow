@@ -305,8 +305,7 @@ RSpec.feature "Convert hearing request type" do
     end
 
     context "whenever a VSO user from another organization" do
-
-      before { different_vso.add_user(different_vso_user)}
+      before { different_vso.add_user(different_vso_user) }
 
       let!(:hearing) { create(:hearing, hearing_day: hearing_day, appeal: appeal) }
       let!(:different_vso_user) { create(:user, :vso_role, email: "DefinitelyNotNull@All.com") }
