@@ -973,7 +973,6 @@ feature "Task queue", :all_dbs do
         click_on "Continue"
 
         expect(page).to have_content("Evaluate Decision")
-        find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["TIMELINESS"]["timely"]).click
         find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
         text_to_click = "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}"
         find("label", text: text_to_click).click
