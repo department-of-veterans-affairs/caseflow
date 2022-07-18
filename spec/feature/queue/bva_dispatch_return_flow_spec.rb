@@ -114,6 +114,7 @@ def judge_checkout
   click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
   click_on "Continue" if page.has_content?("No Special Issues")
   click_on "Continue"
+  find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["TIMELINESS"]["timely"]).click
   find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
   text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
   find("label", text: text_to_click).click

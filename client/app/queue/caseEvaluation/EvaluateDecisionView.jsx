@@ -14,6 +14,7 @@ import TextareaField from '../../components/TextareaField';
 import CaseTitle from '../CaseTitle';
 import Alert from '../../components/Alert';
 import TaskSnapshot from '../TaskSnapshot';
+import RadioField from '../../components/RadioField';
 
 import { deleteAppeal } from '../QueueActions';
 import { requestSave } from '../uiReducer/uiActions';
@@ -35,12 +36,17 @@ import {
 import DispatchSuccessDetail from '../components/DispatchSuccessDetail';
 import QueueFlowPage from '../components/QueueFlowPage';
 import { JudgeCaseQuality } from './JudgeCaseQuality';
-import { qualityIsDeficient } from '.';
+import { qualityIsDeficient, errorStylingNoTopMargin } from '.';
 
 const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });
 const hrStyling = css(marginTop(2), marginBottom(3));
 const subH2Styling = css(paddingLeft(1), { lineHeight: 2 });
+
+const timelinessOpts = Object.entries(JUDGE_CASE_REVIEW_OPTIONS.TIMELINESS).map(([value, displayText]) => ({
+  displayText,
+  value
+}));
 
 class EvaluateDecisionView extends React.PureComponent {
   constructor(props) {
@@ -48,6 +54,7 @@ class EvaluateDecisionView extends React.PureComponent {
 
     this.state = {
       one_touch_initiative: false,
+      timeliness: null,
       complexity: null,
       quality: null,
       factors_not_considered: {},
@@ -56,6 +63,7 @@ class EvaluateDecisionView extends React.PureComponent {
       comment: ''
     };
 
+    this.timelinessLabel = React.createRef();
     this.complexityLabel = React.createRef();
     this.qualityAlert = React.createRef();
     this.qualityLabel = React.createRef();
@@ -77,28 +85,31 @@ class EvaluateDecisionView extends React.PureComponent {
 
   validateForm = () => {
     // eslint-disable-next-line camelcase
-    const { areas_for_improvement, factors_not_considered, complexity, quality } = this.state;
+    const { areas_for_improvement, factors_not_considered, complexity, quality, timeliness } = this.state;
+    let isValid = true;
 
-    if (!complexity) {
+    if (!timeliness) {
+      this.scrollTo(this.timelinessLabel.current);
+
+      isValid = false;
+    } else if (!complexity) {
       this.scrollTo(this.complexityLabel.current);
 
-      return false;
-    }
-
-    if (!quality) {
+      isValid = false;
+    } else if (!quality) {
       this.scrollTo(this.qualityLabel.current);
 
-      return false;
+      isValid = false;
     }
 
     // eslint-disable-next-line camelcase
     if (qualityIsDeficient(this.state.quality) && _.every([areas_for_improvement, factors_not_considered], _.isEmpty)) {
       this.scrollTo(this.qualityAlert.current);
 
-      return false;
+      isValid = false;
     }
 
-    return true;
+    return isValid;
   };
 
   getPrevStepUrl = () => {
@@ -213,7 +224,7 @@ class EvaluateDecisionView extends React.PureComponent {
             <hr {...hrStyling} />
           </React.Fragment>
         )}
-        <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
+        <h2 {...headerStyling} ref={this.timelinessLabel}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</b>: {dateAssigned.format('M/D/YY')}
         <br />
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}</b>: {decisionSubmitted.format('M/D/YY')}
@@ -221,6 +232,21 @@ class EvaluateDecisionView extends React.PureComponent {
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>&nbsp; (
         {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM}): {daysWorked}
         <br />
+        <br />
+        <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBHEAD}</h3>
+        <RadioField
+          vertical
+          hideLabel
+          name=""
+          required
+          onChange={(value) => {
+            this.setState({ timeliness: value });
+          }}
+          value={this.state.timeliness}
+          styling={css(marginBottom(0), errorStylingNoTopMargin)}
+          errorMessage={highlight && !this.state.timeliness ? 'Choose one' : null}
+          options={timelinessOpts}
+        />
         <hr {...hrStyling} />
         <JudgeCaseQuality
           highlight={highlight}
