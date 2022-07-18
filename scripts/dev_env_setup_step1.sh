@@ -44,7 +44,7 @@ else
 fi
 
 echo "==> Installing the base dependencies"
-brew install rbenv nodenv yarn jq
+brew install rbenv nodenv yarn jq shared-mime-info
 brew tap ouchxp/nodenv
 brew install nodenv-nvmrc
 brew install postgres
@@ -56,31 +56,17 @@ rbenv init
 nodenv init
 
 if ! grep -q rbenv ~/.bash_profile; then
-	echo "==> Updating ~/.bash_profile"
-	echo '
-	eval "$(rbenv init -)"
-	eval "$(nodenv init -)"
+	echo "==> Updating ~/.zshrc"
+	cat <<-EOF >> ~/.zshrc
 
-	export POSTGRES_HOST=localhost
-	export POSTGRES_USER=postgres
-	export POSTGRES_PASSWORD=postgres
-	export NLS_LANG=AMERICAN_AMERICA.UTF8
-	' >> ~/.bash_profile
-fi
-
-echo "==> Installing PDFtk Server"
-if ! [ -f pdftk_server-2.02-mac_osx-10.11-setup.pkg ]; then
-	brew install wget
-	wget "https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg"
-fi
-echo "==> To install PDFtk, enter your password (i.e., the password to unlock your computer)"
-sudo installer -pkg pdftk_server-2.02-mac_osx-10.11-setup.pkg -target /
-
-echo "==> Installing Docker"
-if which docker > /dev/null; then
-  echo "Docker is already installed. Skipping installation."
-else
-  brew install --cask docker
+		# Caseflow Environment Setup
+		eval "$(rbenv init -)"
+		eval "$(nodenv init -)"
+		export POSTGRES_HOST=localhost
+		export POSTGRES_USER=postgres
+		export POSTGRES_PASSWORD=postgres
+		export NLS_LANG=AMERICAN_AMERICA.UTF8
+	EOF
 fi
 
 echo "==> Installing InstantClient"
@@ -93,19 +79,12 @@ echo "
 You must do the following manually:
 "
 
-echo "1. Run Docker and go into advanced preferences to limit Docker's resources
-   in order to keep FACOLS from consuming your Macbook.
-   Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
-   "
-
-echo "2. In a new terminal, run:
-      docker login -u dsvaappeals
-   The password is in the DSVA 1Password account.
-   Note you can use your personal account as well, you'll just have to accept
-   the license agreement for the Oracle Database docker image.
-   https://store.docker.com/images/oracle-database-enterprise-edition
-   To accept the agreement, checkout with the Oracle image on the docker store.
-   "
+echo "==> Downloading PDFtk Server"
+if ! [ -f pdftk_server-2.02-mac_osx-10.11-setup.pkg ]; then
+	brew install wget
+	wget "https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg"
+fi
+echo "==> To install PDFtk, run the package installer using Privilege Management"
 
 echo "==> Close this terminal, open a new terminal, and run ./dev_env_setup_step2.sh
 	in the new terminal."
