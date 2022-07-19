@@ -6,6 +6,10 @@ RSpec.feature "Convert hearing request type" do
     FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
     HearingsManagement.singleton.add_user(hearing_coord)
     vso.add_user(vso_user)
+
+    allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+      [{ participant_id: vso_participant_id }]
+    )
   end
 
   after do
@@ -15,7 +19,8 @@ RSpec.feature "Convert hearing request type" do
 
   let!(:hearing_day) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 14.days, regional_office: "RO63") }
   let!(:hearing_day2) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 7.days, regional_office: "RO63") }
-  let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
+  let!(:vso_participant_id) { "8054" }
+  let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: vso_participant_id) }
   let!(:vso_user) { create(:user, :vso_role, email: "DefinitelyNotNull@All.com") }
   let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
 
@@ -217,6 +222,8 @@ RSpec.feature "Convert hearing request type" do
   end
 
   describe "for AMA appeals and hearings" do
+    before { TrackVeteranTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: vso) }
+
     let!(:appeal) do
       a = create(:appeal, :with_schedule_hearing_tasks, :hearing_docket, number_of_claimants: 1)
       a.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.video,
