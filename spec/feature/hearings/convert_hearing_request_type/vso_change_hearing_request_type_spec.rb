@@ -367,7 +367,7 @@ RSpec.feature "Convert hearing request type" do
     end
 
     context "whenever a legacy hearing has been scheduled" do
-      let!(:hearing) { create(:legacy_hearing, hearing_day: hearing_day2, appeal: appeal) }
+      let!(:hearing) { create(:legacy_hearing, :for_vacols_case, hearing_day: hearing_day2, appeal: appeal) }
 
       it_behaves_like "scheduled hearings"
     end
