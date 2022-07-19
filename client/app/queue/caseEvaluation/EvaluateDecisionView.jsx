@@ -88,7 +88,7 @@ class EvaluateDecisionView extends React.PureComponent {
     const { areas_for_improvement, factors_not_considered, complexity, quality, timeliness } = this.state;
     let isValid = true;
 
-    if (!timeliness) {
+    if (!timeliness && this.props.displayCaseTimelinessQuestion) {
       this.scrollTo(this.timelinessLabel.current);
 
       isValid = false;
