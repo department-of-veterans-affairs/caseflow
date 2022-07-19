@@ -14,7 +14,7 @@ export const VSOEmailNotificationsFields = ({
   readOnly,
   time,
   roTimezone,
-  setIsNotValidEmail,
+  setIsValidEmail,
   actionType,
   update
 }) => {
@@ -34,7 +34,7 @@ export const VSOEmailNotificationsFields = ({
           email={hearing?.appellantEmailAddress}
           update={update}
           hearing={hearing}
-          setIsNotValidEmail={setIsNotValidEmail}
+          setIsValidEmail={setIsValidEmail}
           actionType={actionType}
         />
         <VSOHearingEmail
@@ -87,7 +87,7 @@ VSOEmailNotificationsFields.propTypes = {
   initialRepresentativeTz: PropTypes.string,
   header: PropTypes.string,
   setEmailsMismatch: PropTypes.func,
-  setIsNotValidEmail: PropTypes.func,
+  setIsValidEmail: PropTypes.func,
   setConfirmIsEmpty: PropTypes.func,
   confirmIsEmpty: PropTypes.bool,
   actionType: PropTypes.string

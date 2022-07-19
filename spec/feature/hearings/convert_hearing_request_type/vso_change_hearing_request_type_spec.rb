@@ -84,7 +84,7 @@ RSpec.feature "Convert hearing request type" do
           expect(page).to have_button("button-Convert-Hearing-To-Virtual", disabled: true)
 
           # Fill out email field and expect validation message on invalid email
-          fill_in "#{appellant_title} Email", with: "appellant@te"
+          fill_in "#{appellant_title} Email", with: "appellant@test.c"
           find("body").click
           expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL)
           fill_in "#{appellant_title} Email", with: "appellant@test.com"
@@ -154,7 +154,7 @@ RSpec.feature "Convert hearing request type" do
         expect(page).to have_button("Convert to Virtual Hearing", disabled: true)
 
         # Fill out email field and expect validation message on invalid email
-        fill_in "#{appellant_title} Email", with: "appellant@te"
+        fill_in "#{appellant_title} Email", with: "appellant@test.c"
         find("body").click
         expect(page).to have_content(COPY::CONVERT_HEARING_VALIDATE_EMAIL)
         fill_in "#{appellant_title} Email", with: "appellant@test.com"
