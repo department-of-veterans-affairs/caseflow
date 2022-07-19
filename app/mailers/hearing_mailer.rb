@@ -125,6 +125,10 @@ class HearingMailer < ActionMailer::Base
     @hearing.appeal.appellant_or_veteran_name
   end
 
+  def appellant_last_name
+    appellant_name.split[-1]
+  end
+
   def reminder_subject
     if recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:representative]
       "Reminder: #{appellant_name}'s Board hearing is #{formatted_time} – Do Not Reply"
@@ -139,7 +143,7 @@ class HearingMailer < ActionMailer::Base
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
       "Your Board hearing has been scheduled – Do Not Reply"
     when HearingEmailRecipient::RECIPIENT_TITLES[:representative]
-      "Confirmation: #{appellant_name}'s Board hearing is #{formatted_time} – Do Not Reply"
+      "Confirmation: #{appellant_last_name}'s Board hearing is #{formatted_time} – Do Not Reply"
     when HearingEmailRecipient::RECIPIENT_TITLES[:judge]
       hearing_date = virtual_hearing.hearing.scheduled_for.to_formatted_s(:short_date)
 
