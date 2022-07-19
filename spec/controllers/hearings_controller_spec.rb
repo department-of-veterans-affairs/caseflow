@@ -321,6 +321,13 @@ RSpec.describe HearingsController, type: :controller do
       end
 
       context "as a VSO user" do
+        before do
+          TrackVeteranTask.create!(appeal: hearing.appeal, parent: hearing.appeal.root_task, assigned_to: vso_org)
+          allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+            [{ participant_id: vso_participant_id }]
+          )
+        end
+
         let(:appellant_email) { "caseflow-veteran2@test.com" }
 
         let!(:virtual_hearing_params) do
@@ -344,8 +351,9 @@ RSpec.describe HearingsController, type: :controller do
             }
           }
         end
-
-        let!(:user) { User.authenticate!(roles: ["VSO"]) }
+        let!(:vso_participant_id) { "12345" }
+        let!(:vso_org) { create(:vso, name: "VSO Org", role: "VSO", url: "vso-url", participant_id: vso_participant_id) }
+        let!(:vso_user) { User.authenticate!(roles: ["VSO"]) }
 
         it "the hearing can be updated" do
           expect(hearing.virtual?).to be false
