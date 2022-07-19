@@ -347,6 +347,8 @@ RSpec.feature "Convert hearing request type" do
   end
 
   describe "for legacy appeals and hearings" do
+    before { TrackVeteranTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: vso) }
+
     let(:ssn) { Generators::Random.unique_ssn }
     let!(:vacols_case) { create(:case, :representative_american_legion) }
     let!(:appeal) do
@@ -356,6 +358,7 @@ RSpec.feature "Convert hearing request type" do
       a.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.video)
       a
     end
+
     let!(:poa) { PowerOfAttorney.new(vacols_id: vacols_case.bfkey, file_number: "VBMS-ID") }
     let!(:appellant_title) { appeal.appellant_is_not_veteran ? "Appellant" : "Veteran" }
 
