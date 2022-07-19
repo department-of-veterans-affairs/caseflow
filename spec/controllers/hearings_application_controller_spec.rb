@@ -47,7 +47,17 @@ RSpec.describe HearingsApplicationController, :postgres, type: :controller do
   end
 
   context "when user has VSO role" do
+    before do
+      TrackVeteranTask.create!(appeal: hearing.appeal, parent: hearing.appeal.root_task, assigned_to: vso_org)
+      allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+        [{ participant_id: participant_id }]
+      )
+    end
+
     let!(:hearing) { create(:hearing, :with_completed_tasks) }
+    let!(:participant_id) { "12345" }
+    let!(:vso_org) { create(:vso, name: "VSO", role: "VSO", participant_id: participant_id) }
+    let!(:vso_user) { create(:user, :vso_role, email: "email@email.com") }
 
     before { User.authenticate!(roles: ["VSO"]) }
 
