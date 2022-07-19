@@ -352,7 +352,9 @@ RSpec.describe HearingsController, type: :controller do
           }
         end
         let!(:vso_participant_id) { "12345" }
-        let!(:vso_org) { create(:vso, name: "VSO Org", role: "VSO", url: "vso-url", participant_id: vso_participant_id) }
+        let!(:vso_org) do
+          create(:vso, name: "VSO Org", role: "VSO", url: "vso-url", participant_id: vso_participant_id)
+        end
         let!(:vso_user) { User.authenticate!(roles: ["VSO"]) }
 
         it "the hearing can be updated" do
