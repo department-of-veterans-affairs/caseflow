@@ -39,7 +39,7 @@ module HearingsConcerns
     def check_vso_representation
       # Only allow for VSOs to access hearings they are representing
       if current_user.vso_employee?
-        unless Hearing.find_by_uuid(params[:hearing_id])&.assigned_to_vso?(current_user)
+        unless Hearing.find_hearing_by_uuid_or_vacols_id(params[:hearing_id])&.assigned_to_vso?(current_user)
           session["return_to"] = request.original_url
           redirect_to "/unauthorized"
         end
