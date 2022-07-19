@@ -211,7 +211,7 @@ class EvaluateDecisionView extends React.PureComponent {
         <TaskSnapshot appealId={appealId} hideDropdown />
         <hr {...hrStyling} />
         {appeal.isLegacyAppeal && (
-          <React.Fragment>
+          <>
             <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_LABEL}</h2>
             <Checkbox
               label={<b>{COPY.JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD}</b>}
@@ -222,7 +222,7 @@ class EvaluateDecisionView extends React.PureComponent {
               }}
             />
             <hr {...hrStyling} />
-          </React.Fragment>
+          </>
         )}
         <h2 {...headerStyling} ref={this.timelinessLabel}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</b>: {dateAssigned.format('M/D/YY')}
@@ -233,7 +233,7 @@ class EvaluateDecisionView extends React.PureComponent {
         {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM}): {daysWorked}
         <br />
         {displayCaseTimelinessQuestion && (
-          <React.Fragment>
+          <>
             <br />
             <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBHEAD}</h3>
             <RadioField
@@ -249,7 +249,7 @@ class EvaluateDecisionView extends React.PureComponent {
               errorMessage={highlight && !this.state.timeliness ? 'Choose one' : null}
               options={timelinessOpts}
             />
-          </React.Fragment>
+          </>
         )}
 
         <hr {...hrStyling} />
