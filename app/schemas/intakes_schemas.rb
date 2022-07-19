@@ -17,6 +17,7 @@ class IntakesSchemas
         date :receipt_date
         string :benefit_type, optional: true, doc: "not applicable to Appeals"
         string :docket_type, optional: true, included_in?: DOCKET_OPTIONS, doc: "Appeals only"
+        string :original_hearing_request_type, optional: true, nullable: true
         string :claimant, optional: true, nullable: true
         string :claimant_type, optional: true, included_in?: %w[veteran dependent attorney other]
         string :payee_code, optional: true, nullable: true
@@ -24,6 +25,7 @@ class IntakesSchemas
         bool :informal_conference, optional: true, doc: "HLRs only"
         bool :same_office, optional: true, nullable: true, doc: "HLRs only"
         bool :legacy_opt_in_approved, optional: true
+        bool :homelessness, optional: true, doc: "Appeals only"
 
         # RAMP-specific fields
         string :option_selected,

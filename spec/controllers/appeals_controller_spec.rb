@@ -547,6 +547,35 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       subject
       expect(appeal.appeal_views.where(user: user).count).to eq 1
     end
+
+    context "with an AMA appeal" do
+      let!(:appeal) { create(:appeal, :hearing_docket) }
+
+      subject { get :show, params: { appeal_id: appeal.external_id }, as: :json }
+
+      it "returns current user's email and timezone as well as appellant's email" do
+        appeal_json = JSON.parse(subject.body)["appeal"]["attributes"]
+
+        assert_response :success
+        expect(appeal_json["current_user_email"]).to eq user.email
+        expect(appeal_json["current_user_timezone"]).to eq user.timezone
+        expect(appeal_json["appellant_email_address"]).to eq appeal.appellant_email_address
+      end
+    end
+
+    context "with a legacy appeal" do
+      let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+
+      subject { get :show, params: { appeal_id: legacy_appeal.external_id }, as: :json }
+
+      it "returns current user's email and timezone" do
+        legacy_appeal_json = JSON.parse(subject.body)["appeal"]["attributes"]
+
+        assert_response :success
+        expect(legacy_appeal_json["current_user_email"]).to eq user.email
+        expect(legacy_appeal_json["current_user_timezone"]).to eq user.timezone
+      end
+    end
   end
 
   describe "GET veteran/:appeal_id" do

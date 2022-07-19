@@ -23,7 +23,6 @@ export const RepresentativeSection = ({
   showDivider,
   formFieldsOnly,
   representativeEmailAddress,
-  representativeTimezone,
   representativeEmailType
 }) => (
   <VirtualHearingSection formFieldsOnly={formFieldsOnly} label="Power of Attorney (POA)" showDivider={showDivider}>
@@ -52,7 +51,7 @@ export const RepresentativeSection = ({
             optional={!representativeEmailAddress}
             errorMessage={errors?.representativeTz}
             required={Boolean(representativeEmailAddress)}
-            value={representativeTimezone}
+            value={hearing?.representativeTz}
             onChange={(representativeTz) =>
               update('hearing', { representativeTz })
             }
@@ -72,7 +71,7 @@ export const RepresentativeSection = ({
           readOnly={readOnly}
           emailType={representativeEmailType}
           label="POA/Representative Email (for these notifications only)"
-          email={hearing?.representativeEmailAddress}
+          email={representativeEmailAddress}
           error={errors?.representativeEmailAddress}
           type={type}
           update={update}
@@ -101,6 +100,6 @@ RepresentativeSection.propTypes = {
   showDivider: PropTypes.bool,
   formFieldsOnly: PropTypes.bool,
   representativeEmailAddress: PropTypes.string,
-  representativeTimezone: PropTypes.string,
-  representativeEmailType: PropTypes.string
+  representativeEmailType: PropTypes.string,
+  userVsoEmployee: PropTypes.bool
 };

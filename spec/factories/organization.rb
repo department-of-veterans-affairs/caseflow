@@ -53,6 +53,14 @@ FactoryBot.define do
       type { VhaRegionalOffice.name }
     end
 
+    factory :education_emo do
+      type { EducationEmo.name }
+    end
+
+    factory :education_rpo do
+      type { EducationRpo.name }
+    end
+
     factory :business_line, class: BusinessLine do
       type { "BusinessLine" }
     end

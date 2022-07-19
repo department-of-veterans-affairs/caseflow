@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_07_213343) do
+ActiveRecord::Schema.define(version: 2022_04_22_150300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -413,6 +413,24 @@ ActiveRecord::Schema.define(version: 2022_03_07_213343) do
     t.index ["user_id"], name: "index_claims_folder_searches_on_user_id"
   end
 
+  create_table "conference_links", force: :cascade do |t|
+    t.string "alias", comment: "Alias of the conference"
+    t.string "alias_with_host", comment: "Alieas of the conference for the host"
+    t.boolean "conference_deleted", default: false, null: false, comment: "Flag to represent if a con ference has been deleted"
+    t.integer "conference_id", comment: "Id of the conference"
+    t.datetime "created_at", null: false, comment: "Date and Time of creation"
+    t.bigint "created_by_id", null: false, comment: "User id of the user who created the record. FK on User table"
+    t.bigint "hearing_day_id", null: false, comment: "The associated hearing day id"
+    t.string "host_link", comment: "Conference link generated from external conference service"
+    t.integer "host_pin", comment: "Pin for the host of the conference to get into the conference"
+    t.string "host_pin_long", limit: 8, comment: "Generated host pin stored as a string"
+    t.datetime "updated_at", comment: "Date and Time record was last updated"
+    t.bigint "updated_by_id", comment: "user id of the user to last update the record. FK on the User table"
+    t.index ["created_by_id"], name: "index_created_by_id"
+    t.index ["hearing_day_id"], name: "index_conference_links_on_hearing_day_id"
+    t.index ["updated_by_id"], name: "index_updated_by_id"
+  end
+
   create_table "decision_documents", force: :cascade do |t|
     t.bigint "appeal_id", null: false
     t.string "appeal_type"
@@ -754,6 +772,8 @@ ActiveRecord::Schema.define(version: 2022_03_07_213343) do
   end
 
   create_table "hearing_email_recipients", comment: "Recipients of hearings-related emails", force: :cascade do |t|
+    t.bigint "appeal_id", comment: "The ID of the appeal this email recipient is associated with"
+    t.string "appeal_type", comment: "The type of appeal this email recipient is associated with"
     t.datetime "created_at", null: false
     t.string "email_address", comment: "PII. The recipient's email address"
     t.boolean "email_sent", default: false, null: false, comment: "Indicates if a notification email was sent to the recipient."
@@ -762,6 +782,7 @@ ActiveRecord::Schema.define(version: 2022_03_07_213343) do
     t.string "timezone", limit: 50, comment: "The recipient's timezone"
     t.string "type", comment: "The subclass name (i.e. AppellantHearingEmailRecipient)"
     t.datetime "updated_at", null: false
+    t.index ["appeal_type", "appeal_id"], name: "index_hearing_email_recipients_on_appeal_type_and_appeal_id"
     t.index ["hearing_type", "hearing_id"], name: "index_hearing_email_recipients_on_hearing_type_and_hearing_id"
   end
 
@@ -1262,6 +1283,7 @@ ActiveRecord::Schema.define(version: 2022_03_07_213343) do
     t.integer "end_product_establishment_id", comment: "The ID of the End Product Establishment created for this request issue."
     t.bigint "ineligible_due_to_id", comment: "If a request issue is ineligible due to another request issue, for example that issue is already being actively reviewed, then the ID of the other request issue is stored here."
     t.string "ineligible_reason", comment: "The reason for a Request Issue being ineligible. If a Request Issue has an ineligible_reason, it is still captured, but it will not get a contention in VBMS or a decision."
+    t.boolean "is_predocket_needed", comment: "Indicates whether or not an issue has been selected to go to the pre-docket queue opposed to normal docketing."
     t.boolean "is_unidentified", comment: "Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
     t.string "nonrating_issue_category", comment: "The category selected for nonrating request issues. These vary by business line."
     t.string "nonrating_issue_description", comment: "The user entered description if the issue is a nonrating issue"
@@ -1712,6 +1734,9 @@ ActiveRecord::Schema.define(version: 2022_03_07_213343) do
   add_foreign_key "certifications", "users"
   add_foreign_key "claim_establishments", "dispatch_tasks", column: "task_id"
   add_foreign_key "claims_folder_searches", "users"
+  add_foreign_key "conference_links", "hearing_days"
+  add_foreign_key "conference_links", "users", column: "created_by_id"
+  add_foreign_key "conference_links", "users", column: "updated_by_id"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"

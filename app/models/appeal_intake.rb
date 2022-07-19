@@ -13,7 +13,6 @@ class AppealIntake < DecisionReviewIntake
 
   def review!(request_params)
     @request_params = request_params
-
     transaction do
       detail.assign_attributes(review_params)
       create_claimant!
@@ -44,6 +43,6 @@ class AppealIntake < DecisionReviewIntake
   end
 
   def review_param_keys
-    %w[receipt_date docket_type legacy_opt_in_approved filed_by_va_gov]
+    %w[receipt_date docket_type legacy_opt_in_approved filed_by_va_gov homelessness original_hearing_request_type]
   end
 end

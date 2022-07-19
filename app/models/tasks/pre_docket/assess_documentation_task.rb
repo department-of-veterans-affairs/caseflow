@@ -53,6 +53,6 @@ class AssessDocumentationTask < Task
   end
 
   def self.label
-    COPY::VHA_ASSESS_DOCUMENTATION_TASK_LABEL
+    COPY::ASSESS_DOCUMENTATION_TASK_LABEL
   end
 end

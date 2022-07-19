@@ -57,7 +57,7 @@ RSpec.feature "Convert hearing request type" do
 
     step "confirm page has the correct success message" do
       expect(page).to have_content(
-        "You have successfully converted #{appeal.veteran_full_name}'s hearing to Virtual"
+        "You have successfully converted #{appeal.veteran_full_name}'s hearing to virtual"
       )
       expect(page).to have_content(
         "The hearing request is in the scheduling queue for the #{ro_message}"

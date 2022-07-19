@@ -199,7 +199,8 @@ class RequestIssue < CaseflowRecord
         ineligible_due_to_id: data[:ineligible_due_to_id],
         edited_description: data[:edited_description],
         correction_type: data[:correction_type],
-        verified_unidentified_issue: data[:verified_unidentified_issue]
+        verified_unidentified_issue: data[:verified_unidentified_issue],
+        is_predocket_needed: data[:is_predocket_needed]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -279,6 +280,21 @@ class RequestIssue < CaseflowRecord
 
   def closed?
     !!closed_at
+  end
+
+  def predocket_needed?
+    user = RequestStore.store[:current_user]
+
+    if benefit_type == "vha" && FeatureToggle.enabled?(:vha_predocket_appeals, user: user) ||
+       benefit_type == "education" && FeatureToggle.enabled?(:edu_predocket_appeals, user: user)
+      !!is_predocket_needed
+    else
+      false
+    end
+  end
+
+  def education_predocket?
+    benefit_type == "education" && predocket_needed?
   end
 
   def description
@@ -513,8 +529,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def requires_record_request_task?
-    user = RequestStore.store[:current_user]
-    return false if benefit_type == "vha" && FeatureToggle.enabled?(:vha_predocket_appeals, user: user)
+    return false if predocket_needed?
 
     eligible? && !is_unidentified && !benefit_type_requires_payee_code?
   end

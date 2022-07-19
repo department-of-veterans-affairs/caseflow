@@ -94,7 +94,7 @@ import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 import { docketSwitchRoutes } from './docketSwitch/docketSwitchRoutes';
 import { substituteAppellantRoutes } from './substituteAppellant/routes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
-import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
+import HearingTypeConversionContainer from '../hearings/components/HearingTypeConversionContainer';
 import HearingTypeConversionModal from '../hearings/components/HearingTypeConversionModal';
 import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
 import { PrivateRoute } from '../components/PrivateRoute';
@@ -183,6 +183,7 @@ class QueueApp extends React.PureComponent {
         !this.props.hasCaseDetailsRole && !this.props.userCanViewHearingSchedule
       }
       userCanEditUnrecognizedPOA={this.props.userCanEditUnrecognizedPOA}
+      vsoVirtualOptIn={this.props.featureToggles.vso_virtual_opt_in}
     />
   );
 
@@ -296,6 +297,10 @@ class QueueApp extends React.PureComponent {
     <AssignToView isTeamAssign {...props.match.params} />
   );
 
+  routedAssignToEducationRpo = (props) => (
+    <AssignToView isTeamAssign {...props.match.params} />
+  );
+
   routedCreateMailTask = (props) => (
     <CreateMailTaskDialog {...props.match.params} />
   );
@@ -340,11 +345,19 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="ready_for_review" {...props.match.params} />
   );
 
+  routedEmoSendToBoardIntakeForReviewModal = (props) => (
+    <CompleteTaskModal modalType="emo_send_to_board_intake_for_review" {...props.match.params} />
+  );
+
+  routedRpoSendToBoardIntakeForReviewModal = (props) => (
+    <CompleteTaskModal modalType="rpo_send_to_board_intake_for_review" {...props.match.params} />
+  );
+
   routedDocketAppeal = (props) => (
     <CompleteTaskModal modalType="docket_appeal" {...props.match.params} />
   );
 
-  routedBvaIntakeReturnToCamo = (props) => (
+  routedBvaIntakeReturnToOrg = (props) => (
     <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />
   );
 
@@ -354,6 +367,11 @@ class QueueApp extends React.PureComponent {
 
   routedReturnToProgramOffice = (props) => (
     <CancelTaskModal {...props.match.params} />
+  );
+
+  routedRpoReturnToEmo = (props) => (
+    <CancelTaskModal {...props.match.params} />
+
   );
 
   routedCancelTaskModal = (props) => (
@@ -442,7 +460,7 @@ class QueueApp extends React.PureComponent {
   );
 
   routedChangeHearingRequestTypeToVirtual = (props) => (
-    <HearingTypeConversion type="Virtual" {...props.match.params} />
+    <HearingTypeConversionContainer type="Virtual" {...props.match.params} />
   );
 
   routedChangeHearingRequestTypeModal = (props) => (
@@ -552,12 +570,12 @@ class QueueApp extends React.PureComponent {
     />
   )
 
-  routedAssignToVhaProgramOffice = (props) => (
-    <AssignToView isTeamAssign {...props.match.params} />
-  );
-
   routedCamoSendToBoardIntake = (props) => (
     <CompleteTaskModal modalType="vha_send_to_board_intake" {...props.match.params} />
+  );
+
+  routedEMOReturnToBoardIntake = (props) => (
+    <CompleteTaskModal modalType="emo_return_to_board_intake" {...props.match.params} />
   );
 
   queueName = () =>
@@ -880,7 +898,13 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.value
                 }`}
-              render={this.routedBvaIntakeReturnToCamo}
+              render={this.routedBvaIntakeReturnToOrg}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.value
+                }`}
+              render={this.routedBvaIntakeReturnToOrg}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
@@ -896,6 +920,12 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.EMO_ASSIGN_TO_RPO.value
+                }`}
+              render={this.routedAssignToEducationRpo}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value
                 }`}
               render={this.routedReturnToCamo}
@@ -905,6 +935,12 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.value
                 }`}
               render={this.routedReturnToProgramOffice}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.value
+                }`}
+              render={this.routedRpoReturnToEmo}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
@@ -1004,15 +1040,15 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
-                }`}
-              render={this.routedAssignToVhaProgramOffice}
-            />
-            <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.value
                 }`}
               render={this.routedCamoSendToBoardIntake}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.EMO_RETURN_TO_BOARD_INTAKE.value
+                }`}
+              render={this.routedEMOReturnToBoardIntake}
             />
 
             <PageRoute
@@ -1036,6 +1072,22 @@ class QueueApp extends React.PureComponent {
                 }`}
               title="Ready for Review | Caseflow"
               render={this.routedVhaCompleteTaskModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
+                }`}
+              title="Ready for Review | Caseflow"
+              render={this.routedEmoSendToBoardIntakeForReviewModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
+                }`}
+              title="Ready for Review | Caseflow"
+              render={this.routedRpoSendToBoardIntakeForReviewModal}
             />
             <PageRoute
               exact

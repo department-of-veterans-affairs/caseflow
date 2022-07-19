@@ -520,10 +520,7 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
       request.headers["TOKEN"] = t
-
-      FeatureToggle.enable!(:send_email_for_dispatched_appeals, users: [user.css_id])
     end
-    after { FeatureToggle.disable!(:send_email_for_dispatched_appeals, users: [user.css_id]) }
 
     context "when some params are missing" do
       let(:params) { { appeal_id: root_task.appeal.external_id, citation_number: citation_number } }

@@ -14,8 +14,12 @@ class LegacyHearingSerializer
   attribute :appellant_address_line_2
   attribute :appellant_city
   attribute :appellant_country
-  attribute :appellant_email_address
-  attribute :appellant_tz
+  attribute :appellant_email_address do |hearing|
+    hearing.appellant_email_address || hearing.appeal.appellant_email_address
+  end
+  attribute :appellant_tz do |hearing|
+    hearing.appellant_tz || hearing.appeal.appellant_tz
+  end
   attribute :appellant_email_id, if: for_full do |hearing|
     hearing.appellant_recipient&.id.to_s
   end
@@ -110,4 +114,12 @@ class LegacyHearingSerializer
   attribute :hearing_disposition_task_id, &:open_hearing_disposition_task_id
   attribute :witness
   attribute :veteran_date_of_death_info, &:rescue_and_check_toggle_veteran_date_of_death_info
+
+  attribute :current_user_email do |_, params|
+    params[:user]&.email
+  end
+
+  attribute :current_user_timezone do |_, params|
+    params[:user]&.timezone
+  end
 end

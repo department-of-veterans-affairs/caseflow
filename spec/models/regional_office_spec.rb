@@ -147,7 +147,7 @@ describe RegionalOffice do
     it "RO50 has correct address" do
       ro = RegionalOffice.find!("RO50")
 
-      expect(ro.full_address).to eq "2200 Fort Roots Drive Bldg. 65, Little Rock AR 72114"
+      expect(ro.full_address).to eq "2200 Fort Roots Drive Building 111, Little Rock AR 72114-1756"
     end
   end
 

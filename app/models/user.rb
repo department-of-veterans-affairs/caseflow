@@ -139,7 +139,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_change_hearing_request_type?
-    can?("Build HearSched") || can?("Edit HearSched")
+    can?("Build HearSched") || can?("Edit HearSched") || can?("VSO")
   end
 
   def vacols_uniq_id
@@ -413,6 +413,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def can_view_team_management?
     member_of_organization?(Bva.singleton)
+  end
+
+  def in_hearing_management_team?
+    member_of_organization?(HearingsManagement.singleton)
   end
 
   def can_view_judge_team_management?

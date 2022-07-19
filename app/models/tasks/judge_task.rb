@@ -43,6 +43,6 @@ class JudgeTask < Task
   end
 
   def reassign_clears_overtime?
-    true
+    FeatureToggle.enabled?(:overtime_persistence, user: RequestStore[:current_user]) ? false : true  
   end
 end

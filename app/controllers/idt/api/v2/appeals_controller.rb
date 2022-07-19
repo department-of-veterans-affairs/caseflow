@@ -26,16 +26,6 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     result = BvaDispatchTask.outcode(appeal, outcode_params, user)
 
     if result.success?
-      if appeal.power_of_attorney.present?
-        if FeatureToggle.enabled?(:send_email_for_dispatched_appeals, user: user)
-          send_outcode_email(appeal)
-        end
-      else
-        message = "No BVA Dispatch POA notification email was sent because no POA is defined"
-        log = { class: self.class, appeal_id: appeal.id, message: message }
-        Rails.logger.warn("BVADispatchEmail #{log}")
-      end
-
       return render json: { message: "Success!" }
     end
 
@@ -160,14 +150,5 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
 
   def outcode_params
     params.permit(:citation_number, :decision_date, :redacted_document_location, :file)
-  end
-
-  def send_outcode_email(appeal)
-    if appeal.is_a?(Appeal)
-      email_address = appeal.power_of_attorney.representative_email_address
-    elsif appeal.is_a?(LegacyAppeal)
-      email_address = appeal.power_of_attorney.bgs_representative_email_address
-    end
-    DispatchEmailJob.new(appeal: appeal, type: "dispatch", email_address: email_address).call
   end
 end
