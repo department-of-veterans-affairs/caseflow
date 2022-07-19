@@ -312,11 +312,29 @@ RSpec.feature "Convert hearing request type" do
     end
 
     context "whenever a VSO user from another organization" do
-      before { different_vso.add_user(different_vso_user) }
+      before do
+        different_vso.add_user(different_vso_user)
+        allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+          [{ participant_id: different_vso_participant_id }]
+        )
+      end
+
+      after do
+        allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+          [{ participant_id: vso_participant_id }]
+        )
+      end
 
       let!(:hearing) { create(:hearing, hearing_day: hearing_day, appeal: appeal) }
       let!(:different_vso_user) { create(:user, :vso_role, email: "DefinitelyNotNull@All.com") }
-      let!(:different_vso) { create(:vso, name: "Different VSO", role: "VSO", url: "vso2-url", participant_id: "8999") }
+      let!(:different_vso_participant_id) { "9999" }
+      let!(:different_vso) do
+        create(:vso,
+               name: "Different VSO",
+               role: "VSO",
+               url: "vso2-url",
+               participant_id: "different_vso_participant_id")
+      end
 
       scenario "does not represent an appellant and attempts to access their hearing" do
         User.authenticate!(user: different_vso_user)
