@@ -49,9 +49,6 @@ RSpec.describe HearingsApplicationController, :postgres, type: :controller do
   context "when user has VSO role" do
     before do
       TrackVeteranTask.create!(appeal: hearing.appeal, parent: hearing.appeal.root_task, assigned_to: vso_org)
-      allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
-        [{ participant_id: participant_id }]
-      )
     end
 
     let!(:hearing) { create(:hearing, :with_completed_tasks) }
@@ -61,13 +58,36 @@ RSpec.describe HearingsApplicationController, :postgres, type: :controller do
 
     before { User.authenticate!(roles: ["VSO"]) }
 
-    it "GET show_hearing_worksheet_index redirects" do
-      get :show_hearing_worksheet_index, params: { hearing_id: hearing.uuid }
-      expect(response.status).to eq 302
+    context "Whenever VSO user represents case" do
+      before do
+        allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+          [{ participant_id: participant_id }]
+        )
+      end
+
+      it "GET show_hearing_worksheet_index redirects" do
+        get :show_hearing_worksheet_index, params: { hearing_id: hearing.uuid }
+        expect(response.status).to eq 302
+      end
+
+      it "GET hearings details page returns a successful response" do
+        get :show_hearing_details_index, params: { hearing_id: hearing.uuid }
+        expect(response.status).to eq 200
+      end
     end
-    it "GET hearings details page returns a successful response" do
-      get :show_hearing_details_index, params: { hearing_id: hearing.uuid }
-      expect(response.status).to eq 200
+
+    context "Whenever VSO user does not represent case" do
+      before do
+        allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+          [{ participant_id: "something-different" }]
+        )
+      end
+
+      it "GET hearings details page returns a redirect to /unauthorized" do
+        get :show_hearing_details_index, params: { hearing_id: hearing.uuid }
+        expect(response.status).to eq 302
+        expect(response).to redirect_to "/unauthorized"
+      end
     end
   end
 end
