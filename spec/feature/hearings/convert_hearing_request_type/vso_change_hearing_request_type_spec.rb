@@ -370,6 +370,21 @@ RSpec.feature "Convert hearing request type" do
       let!(:hearing) { create(:legacy_hearing, :for_vacols_case, hearing_day: hearing_day2, appeal: appeal) }
 
       it_behaves_like "scheduled hearings"
+
+      context "whenever a user from another VSO users tries to access the hearing" do
+        before do
+          allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+            [{ participant_id: "12345" }]
+          )
+          User.authenticate!(roles: ["VSO"])
+        end
+
+        it "they are denied" do
+          visit "/hearings/#{hearing.vacols_id}/details"
+
+          expect(page).to have_current_path "/unauthorized"
+        end
+      end
     end
   end
 end
