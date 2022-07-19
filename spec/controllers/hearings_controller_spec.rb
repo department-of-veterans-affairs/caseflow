@@ -323,9 +323,8 @@ RSpec.describe HearingsController, type: :controller do
       context "as a VSO user" do
         before do
           TrackVeteranTask.create!(appeal: hearing.appeal, parent: hearing.appeal.root_task, assigned_to: vso_org)
-          allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
-            [{ participant_id: vso_participant_id }]
-          )
+          vso_org.add_user(vso_user)
+          User.authenticate!(user: vso_user)
         end
 
         let(:appellant_email) { "caseflow-veteran2@test.com" }
@@ -355,17 +354,37 @@ RSpec.describe HearingsController, type: :controller do
         let!(:vso_org) do
           create(:vso, name: "VSO Org", role: "VSO", url: "vso-url", participant_id: vso_participant_id)
         end
-        let!(:vso_user) { User.authenticate!(roles: ["VSO"]) }
+        let!(:vso_user) { create(:user, :vso_role, email: "test@email.com") }
 
-        it "the hearing can be updated" do
-          expect(hearing.virtual?).to be false
-          expect(hearing.appellant_recipient&.email_address).to_not eq appellant_email
+        context "who is representing the case" do
+          before do
+            allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+              [{ participant_id: vso_participant_id }]
+            )
+          end
 
-          expect(subject.status).to eq(200)
+          it "the hearing can be updated" do
+            expect(hearing.virtual?).to be false
+            expect(hearing.appellant_recipient&.email_address).to_not eq appellant_email
 
-          hearing.reload
-          expect(hearing.appellant_recipient&.email_address).to eq appellant_email
-          expect(hearing.virtual?).to be true
+            expect(subject.status).to eq(200)
+
+            hearing.reload
+            expect(hearing.appellant_recipient&.email_address).to eq appellant_email
+            expect(hearing.virtual?).to be true
+          end
+        end
+
+        context "who is not representing the case" do
+          before do
+            allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+              [{ participant_id: "something-else" }]
+            )
+          end
+
+          it "the hearing cannot be updated" do
+            expect(subject.status).to eq(302)
+          end
         end
       end
     end
