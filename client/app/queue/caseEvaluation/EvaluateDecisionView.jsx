@@ -88,7 +88,7 @@ class EvaluateDecisionView extends React.PureComponent {
     const { areas_for_improvement, factors_not_considered, complexity, quality, timeliness } = this.state;
     let isValid = true;
 
-    if (!timeliness) {
+    if (!timeliness && this.props.displayCaseTimelinessQuestion) {
       this.scrollTo(this.timelinessLabel.current);
 
       isValid = false;
@@ -180,7 +180,7 @@ class EvaluateDecisionView extends React.PureComponent {
   handleCaseQualityChange = (values) => this.setState({ ...values });
 
   render = () => {
-    const { appeal, task, appealId, highlight, error, ...otherProps } = this.props;
+    const { appeal, task, appealId, highlight, error, displayCaseTimelinessQuestion, ...otherProps } = this.props;
 
     const dateAssigned = moment(task.previousTaskAssignedOn);
     const decisionSubmitted = moment(task.assignedOn);
@@ -211,7 +211,7 @@ class EvaluateDecisionView extends React.PureComponent {
         <TaskSnapshot appealId={appealId} hideDropdown />
         <hr {...hrStyling} />
         {appeal.isLegacyAppeal && (
-          <React.Fragment>
+          <>
             <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_LABEL}</h2>
             <Checkbox
               label={<b>{COPY.JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD}</b>}
@@ -222,7 +222,7 @@ class EvaluateDecisionView extends React.PureComponent {
               }}
             />
             <hr {...hrStyling} />
-          </React.Fragment>
+          </>
         )}
         <h2 {...headerStyling} ref={this.timelinessLabel}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</b>: {dateAssigned.format('M/D/YY')}
@@ -232,21 +232,26 @@ class EvaluateDecisionView extends React.PureComponent {
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>&nbsp; (
         {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM}): {daysWorked}
         <br />
-        <br />
-        <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBHEAD}</h3>
-        <RadioField
-          vertical
-          hideLabel
-          name=""
-          required
-          onChange={(value) => {
-            this.setState({ timeliness: value });
-          }}
-          value={this.state.timeliness}
-          styling={css(marginBottom(0), errorStylingNoTopMargin)}
-          errorMessage={highlight && !this.state.timeliness ? 'Choose one' : null}
-          options={timelinessOpts}
-        />
+        {displayCaseTimelinessQuestion && (
+          <>
+            <br />
+            <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBHEAD}</h3>
+            <RadioField
+              vertical
+              hideLabel
+              name=""
+              required
+              onChange={(value) => {
+                this.setState({ timeliness: value });
+              }}
+              value={this.state.timeliness}
+              styling={css(marginBottom(0), errorStylingNoTopMargin)}
+              errorMessage={highlight && !this.state.timeliness ? 'Choose one' : null}
+              options={timelinessOpts}
+            />
+          </>
+        )}
+
         <hr {...hrStyling} />
         <JudgeCaseQuality
           highlight={highlight}
@@ -283,7 +288,8 @@ EvaluateDecisionView.propTypes = {
   error: PropTypes.object,
   highlight: PropTypes.bool,
   requestSave: PropTypes.func,
-  deleteAppeal: PropTypes.func
+  deleteAppeal: PropTypes.func,
+  displayCaseTimelinessQuestion: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {

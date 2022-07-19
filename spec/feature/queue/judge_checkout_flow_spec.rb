@@ -15,7 +15,10 @@ RSpec.feature "Judge checkout flow", :all_dbs do
     # When a judge completes judge checkout we create either a QR or dispatch task. Make sure we have somebody in
     # the BVA dispatch team so that the creation of that task (which round robin assigns org tasks) does not fail.
     BvaDispatch.singleton.add_user(create(:user))
+    FeatureToggle.enable!(:das_case_timeliness)
   end
+
+  after { FeatureToggle.disable!(:das_case_timeliness) }
 
   # Replicates bug in prod: https://github.com/department-of-veterans-affairs/caseflow/issues/13416
   # Scenario: judge opens the Case Details page for the same appeal in two tabs;
