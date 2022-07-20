@@ -171,7 +171,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       case_review = JudgeCaseReview.find_by(task_id: parent_task.id)
       expect(case_review.attorney).to eq attorney_user
       expect(case_review.judge).to eq judge_user
-      expect(case_review.case_timeliness).to eq "timely"
+      expect(case_review.timeliness).to eq "timely"
       expect(case_review.complexity).to eq "easy"
       expect(case_review.quality).to eq "does_not_meet_expectations"
       expect(case_review.one_touch_initiative).to eq false
@@ -227,7 +227,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       case_review = JudgeCaseReview.find_by(task_id: parent_task.id)
       expect(case_review.attorney).to eq attorney_user
       expect(case_review.judge).to eq judge_user
-      expect(case_review.case_timeliness).to eq "timely"
+      expect(case_review.timeliness).to eq "timely"
       expect(case_review.complexity).to eq "easy"
       expect(case_review.quality).to eq "does_not_meet_expectations"
       expect(case_review.one_touch_initiative).to eq false
@@ -394,7 +394,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         case_review = JudgeCaseReview.find_by(task_id: judge_review_task.id)
         expect(case_review.attorney).to eq(attorney_user)
         expect(case_review.judge).to eq(judge_user)
-        expect(case_review.case_timeliness).to eq "timely"
+        expect(case_review.timeliness).to eq "timely"
       end
     end
   end
