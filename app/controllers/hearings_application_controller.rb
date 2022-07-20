@@ -10,7 +10,6 @@ class HearingsApplicationController < ApplicationController
   before_action :verify_access_to_hearings_details, only: [:show_hearing_details_index]
   before_action :verify_access_to_reader_or_hearings, only: [:show_hearing_worksheet_index]
   before_action :verify_view_hearing_schedule_access, only: [:index]
-
   before_action :check_vso_representation, only: [:show_hearing_details_index]
 
   def set_application
