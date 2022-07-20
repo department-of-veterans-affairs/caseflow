@@ -70,7 +70,7 @@ build(){
   echo "--------"
   echo ""
 
-  docker build --force-rm --no-cache --tag  vacols_db:latest $build_facols_dir
+  docker build --platform linux/amd64 --force-rm --no-cache --tag  vacols_db:latest $build_facols_dir
   docker_build_result=$?
   echo ""
   echo "--------"
