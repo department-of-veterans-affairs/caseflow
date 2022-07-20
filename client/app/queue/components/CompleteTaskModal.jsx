@@ -162,14 +162,6 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
     return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1];
   });
 
-  let filteredSendToBoardOpts = sendToBoardOpts;
-
-  if (!props.featureToggles.vha_irregular_appeals) {
-    filteredSendToBoardOpts = sendToBoardOpts.filter((opt) => {
-      return opt.displayText === COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS;
-    });
-  }
-
   return (
     <React.Fragment>
       {programOfficeInstructions.some((i) => i) &&
@@ -193,7 +185,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             vertical
             onChange={(value) => setState({ radio: value })}
             value={state.radio}
-            options={filteredSendToBoardOpts}
+            options={sendToBoardOpts}
             errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.SELECT_RADIO_ERROR : null}
           />
           <TextareaField

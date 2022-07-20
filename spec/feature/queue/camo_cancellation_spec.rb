@@ -20,7 +20,6 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
   before do
     FeatureToggle.enable!(:vha_predocket_appeals)
     FeatureToggle.enable!(:vha_predocket_workflow)
-    FeatureToggle.enable!(:vha_irregular_appeals)
     camo_org.add_user(camo_user)
     bva_intake_org.add_user(bva_intake_user)
   end
@@ -28,7 +27,6 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
   after do
     FeatureToggle.disable!(:vha_predocket_appeals)
     FeatureToggle.disable!(:vha_predocket_workflow)
-    FeatureToggle.disable!(:vha_irregular_appeals)
   end
 
   context "CAMO user can assign a case to BVA intake, recommending cancellation" do
