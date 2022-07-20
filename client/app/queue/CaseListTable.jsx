@@ -45,6 +45,9 @@ class CaseListTable extends React.PureComponent {
         valueFunction: (appeal) => renderAppealType(appeal)
       },
       {
+        header: COPY.CASE_LIST_TABLE_APPEAL_NUMBER_ISSUES_COLUMN_TITLE,
+      },
+      {
         header: COPY.CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE,
         valueFunction: (appeal) => (appeal.decisionDate ? <DateString date={appeal.decisionDate} /> : '')
       },
