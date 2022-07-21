@@ -271,6 +271,15 @@ class AddIssuesPage extends React.Component {
           >
             + Add issue
           </Button>
+
+          <Button
+            name="split-appeal"
+            legacyStyling={false}
+            classNames={['usa-button-secondary']}
+            // onClick={() => this.onClickAddIssue()}
+          >
+            Split appeal
+          </Button>
         </div>
       );
     };
