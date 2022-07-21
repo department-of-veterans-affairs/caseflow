@@ -165,17 +165,4 @@ describe Hearings::SendEmail do
       end
     end
   end
-
-  describe "an email is created" do
-    context "an updated date/time email" do
-      it "an appellant's updated date/time email is formatted properly" do
-        email = HearingMailer.cancellation(email_recipient_info: appellant_recipient_info, virtual_hearing: virtual_hearing)
-        expect(email.body.encoded).to include "Where do I send written requests?"
-      end
-      it "a representative's updated date/time email is formatted properly" do
-        email = HearingMailer.cancellation(email_recipient_info: representative_recipient_info, virtual_hearing: virtual_hearing)
-        expect(email.body.encoded).not_to include "What should I expect on the day of my hearing?"
-      end
-    end
-  end
 end
