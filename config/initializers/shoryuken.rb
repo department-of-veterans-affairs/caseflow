@@ -13,7 +13,7 @@ end
 
 if Rails.application.config.sqs_create_queues
   # create the development queues
-  Shoryuken::Client.sqs.create_queue({ queue_name: 'ActiveJob::Base.queue_name_prefix + '_low_priority'' })
+  Shoryuken::Client.sqs.create_queue({ queue_name: ActiveJob::Base.queue_name_prefix + '_low_priority' })
   Shoryuken::Client.sqs.create_queue({ queue_name: ActiveJob::Base.queue_name_prefix + '_high_priority' })
   Shoryuken::Client.sqs.create_queue({ queue_name: 'send_notifications' })
   Shoryuken::Client.sqs.create_queue({ queue_name: 'receive_notifications' })
