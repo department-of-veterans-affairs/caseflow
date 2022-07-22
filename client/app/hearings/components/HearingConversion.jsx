@@ -29,7 +29,7 @@ export const HearingConversion = ({
   errors,
   update,
   userVsoEmployee,
-  setIsNotValidEmail,
+  setIsValidEmail,
   updateCheckboxes
 }) => {
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
@@ -67,7 +67,7 @@ export const HearingConversion = ({
     schedulingToVirtual: virtual,
     userVsoEmployee,
     actionType: 'hearing',
-    setIsNotValidEmail
+    setIsValidEmail
   };
 
   const prefillFields = () => {
@@ -182,6 +182,6 @@ HearingConversion.propTypes = {
   update: PropTypes.func,
   hearing: PropTypes.object.isRequired,
   userVsoEmployee: PropTypes.bool,
-  setIsNotValidEmail: PropTypes.func,
+  setIsValidEmail: PropTypes.func,
   updateCheckboxes: PropTypes.func
 };
