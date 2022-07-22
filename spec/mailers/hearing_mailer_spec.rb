@@ -1247,14 +1247,6 @@ describe HearingMailer do
         end
 
         describe "#link" do
-          # it "has the test link" do
-          #   expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_info.title))
-          # end
-
-          # it "is guest link" do
-          #   expect(subject.html_part.body).to include(virtual_hearing.guest_link)
-          # end
-
           it "is in correct format" do
             expect(virtual_hearing.guest_link).to eq(
               "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
