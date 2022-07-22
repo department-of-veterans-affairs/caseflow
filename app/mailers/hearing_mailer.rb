@@ -125,6 +125,7 @@ class HearingMailer < ActionMailer::Base
     @hearing.appeal.appellant_or_veteran_name
   end
 
+  # Last name of appellant
   def appellant_last_name
     appellant_name.split[-1]
   end
