@@ -21,25 +21,26 @@ export const VSOHearingEmail = ({
   confirmEmail,
   emailType,
   actionType,
-  setIsNotValidEmail,
+  setIsValidEmail,
   update
 }) => {
 
   const [message, setMessage] = useState('');
 
   // Regex to validate email input in real time
-  const emailRegex = /\S+@\S+\.\S+/;
+  // eslint-disable-next-line max-len
+  const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   const validateEmail = (newEmail, unFocused) => {
     if (emailRegex.test(newEmail)) {
       setMessage('');
-      setIsNotValidEmail(false);
+      setIsValidEmail(true);
     } else if (unFocused) {
       // Only display error message if field focus is exited.
       setMessage(COPY.CONVERT_HEARING_VALIDATE_EMAIL);
-      setIsNotValidEmail(true);
+      setIsValidEmail(false);
     } else {
-      setIsNotValidEmail(true);
+      setIsValidEmail(false);
     }
   };
 
@@ -134,5 +135,5 @@ VSOHearingEmail.propTypes = {
   confirmEmail: PropTypes.bool,
   update: PropTypes.func,
   actionType: PropTypes.string,
-  setIsNotValidEmail: PropTypes.func
+  setIsValidEmail: PropTypes.func
 };

@@ -10,7 +10,7 @@ const setUpdated = (appeal, value) => {
 
 export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
   // initiliaze hook to manage state for email validation
-  const [isNotValidEmail, setIsNotValidEmail] = useState(false);
+  const [isValidEmail, setIsValidEmail] = useState(true);
 
   const reducer = (appeal, action) => {
     switch (action.type) {
@@ -25,8 +25,8 @@ export const HearingTypeConversionProvider = ({ children, initialAppeal }) => {
 
   const contextData = {
     updatedAppeal,
-    isNotValidEmail,
-    setIsNotValidEmail,
+    isValidEmail,
+    setIsValidEmail,
     dispatchAppeal
   };
 
