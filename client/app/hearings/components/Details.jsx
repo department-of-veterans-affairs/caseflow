@@ -70,13 +70,13 @@ const HearingDetails = (props) => {
   const [emailConfirmationModalType, setEmailConfirmationModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
   const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
-  const [isNotValidEmail, setIsNotValidEmail] = useState(userVsoEmployee);
+  const [isValidEmail, setIsValidEmail] = useState(hearing?.appellantEmailAddress);
   const [formSubmittable, setFormSubmittable] = useState(false);
   const [hearingConversionCheckboxes, setHearingConversionCheckboxes] = useState(false);
 
   const canSubmit = () => {
     let emailFieldsValid = (
-      !isNotValidEmail &&
+      isValidEmail &&
       hearing?.appellantEmailAddress &&
       hearing?.appellantTz &&
       hearing?.representativeTz &&
@@ -89,7 +89,7 @@ const HearingDetails = (props) => {
 
   useEffect(() => {
     canSubmit();
-  }, [hearing, isNotValidEmail, hearingConversionCheckboxes]);
+  }, [hearing, isValidEmail, hearingConversionCheckboxes]);
 
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const convertingToVirtual = converting === 'change_to_virtual';
@@ -339,7 +339,7 @@ const HearingDetails = (props) => {
           scheduledFor={hearing?.scheduledFor}
           errors={virtualHearingErrors}
           userVsoEmployee={userVsoEmployee}
-          setIsNotValidEmail={setIsNotValidEmail}
+          setIsValidEmail={setIsValidEmail}
           updateCheckboxes={setHearingConversionCheckboxes}
         />
       ) : (

@@ -21,8 +21,8 @@ export const VSOHearingTypeConversionForm = ({
   const {
     updatedAppeal,
     dispatchAppeal,
-    isNotValidEmail,
-    setIsNotValidEmail
+    isValidEmail,
+    setIsValidEmail
   } = useContext(HearingTypeConversionContext);
 
   const updateAppeal = updateAppealDispatcher(updatedAppeal, dispatchAppeal);
@@ -62,7 +62,7 @@ export const VSOHearingTypeConversionForm = ({
     showMissingEmailAlert: true,
     actionType: 'appeal',
     update: updateAppeal,
-    setIsNotValidEmail,
+    setIsValidEmail,
     type
   };
   const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
@@ -81,7 +81,7 @@ export const VSOHearingTypeConversionForm = ({
   }, []);
 
   const preventSubmission = () => {
-    return isNotValidEmail ||
+    return !isValidEmail ||
       !updatedAppeal?.appellantEmailAddress ||
       !checkedAccess ||
       !checkedPermissions ||
