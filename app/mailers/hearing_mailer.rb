@@ -60,7 +60,7 @@ class HearingMailer < ActionMailer::Base
 
     mail(
       to: recipient_info.email,
-      subject: "Your Board hearing time has changed – Do Not Reply"
+      subject: "Your Board hearing date/time has changed – Do Not Reply"
     )
   end
 
@@ -91,9 +91,9 @@ class HearingMailer < ActionMailer::Base
     # :reek:RepeatedConditionals
     case recipient_info.title
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
-      "Your Board hearing will be held at #{@hearing.hearing_location_or_regional_office.name} – Do Not Reply"
+      "There has been a change to your upcoming Board Hearing – Do Not Reply"
     when HearingEmailRecipient::RECIPIENT_TITLES[:representative]
-      "#{appellant_name}’s hearing will be held at #{@hearing.hearing_location_or_regional_office.name} – Do Not Reply"
+      "There has been a change to your client’s upcoming Board hearing – Do Not Reply"
     end
   end
 
@@ -125,11 +125,16 @@ class HearingMailer < ActionMailer::Base
     @hearing.appeal.appellant_or_veteran_name
   end
 
+  # Last name of appellant
+  def appellant_last_name
+    appellant_name.split[-1]
+  end
+
   def reminder_subject
     if recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:representative]
       "Reminder: #{appellant_name}'s Board hearing is #{formatted_time} – Do Not Reply"
     else
-      "Reminder: Your Board hearing is #{formatted_time} – Do Not Reply"
+      "Reminder: Your hearing is #{formatted_time} – Do Not Reply"
     end
   end
 
@@ -139,7 +144,7 @@ class HearingMailer < ActionMailer::Base
     when HearingEmailRecipient::RECIPIENT_TITLES[:appellant]
       "Your Board hearing has been scheduled – Do Not Reply"
     when HearingEmailRecipient::RECIPIENT_TITLES[:representative]
-      "Confirmation: #{appellant_name}'s Board hearing is #{formatted_time} – Do Not Reply"
+      "Confirmation: #{appellant_last_name}'s Board hearing is #{formatted_time} – Do Not Reply"
     when HearingEmailRecipient::RECIPIENT_TITLES[:judge]
       hearing_date = virtual_hearing.hearing.scheduled_for.to_formatted_s(:short_date)
 
