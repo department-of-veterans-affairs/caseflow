@@ -530,16 +530,18 @@ class Appeal < DecisionReview
       end
 
       next if tasks.any? { |task| task.is_a?(VeteranRecordRequest) && task.assigned_to == business_line }
-
-      VeteranRecordRequest.create!(
-        parent: root_task,
-        appeal: self,
-        assigned_at: Time.zone.now,
-        assigned_to: business_line
-      )
+      # WIP needs extensive testing but does not create veteran record request task for voc_rehab
+      return if business_line.url == "voc-rehab"
+      
+        VeteranRecordRequest.create!(
+          parent: root_task,
+          appeal: self,
+          assigned_at: Time.zone.now,
+          assigned_to: business_line
+        )
     end
   end
-
+  
   def stuck?
     AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
   end
