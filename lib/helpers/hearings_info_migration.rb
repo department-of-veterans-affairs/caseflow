@@ -29,6 +29,49 @@ module WarRoom
       end
     end
 
+    def duplicate_ama_hearing(hearing_uuid, source_appeal_uuid, destination_appeal_uuid)
+      RequestStore[:current_user] = User.system_user
+      ActiveRecord::Base.transaction do
+        appeal_type = "Appeal"
+        hearing = Hearing.find_by_uuid(hearing_uuid)
+        source_appeal = Appeal.find_by_uuid(appeal_uuid)
+        destination_appeal = Appeal.find_by_uuid(appeal_uuid)
+
+        if hearing.nil?
+          fail "Invalid UUID. Hearing not found. Aborting..."
+        end
+        if source_appeal.nil?
+          fail "Invalid UUID. Source Appeal not found. Aborting..."
+        end
+        if destination_appeal.nil?
+          fail "Invalid UUID. Destination Appeal not found. Aborting..."
+        end
+
+        hearing_task = most_recent_hearing_task(destination_appeal.id, appeal_type)
+        schedule_task = most_recent_schedule_hearing_task(destination_appeal.id, appeal_type)
+        if schedule_task.nil? || schedule_task.status == "completed" || schedule_task.status == "cancelled"
+          hearing_task, schedule_task = create_tasks(appeal, "Appeal")
+        end
+        check_old_hearing_task_status(hearing, appeal_type)
+        check_old_disposition_task_status(hearing, appeal_type)
+        
+        #update inputs to come from other Hearing
+        Hearing.create!(
+          appeal: attrs[:appeal],
+          hearing_day_id: hearing_day.id,
+          hearing_location_attributes: attrs[:hearing_location_attrs] || {},
+          scheduled_time: attrs[:scheduled_time_string],
+          override_full_hearing_day_validation: override_full_hearing_day_validation,
+          notes: attrs[:notes]
+        )
+
+        HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent)
+
+        create_and_set_disposition_task(destination_appeal, hearing, hearing_task)
+        schedule_task.update!(status: "completed", closed_at: Time.zone.now, assigned_to:User.find_by_id(User.system_user.id))
+      end
+    end
+
     # Move Legacy Hearings
     def move_legacy_hearing(hearing_vacols_id, appeal_vacols_id)
       RequestStore[:current_user] = User.system_user
