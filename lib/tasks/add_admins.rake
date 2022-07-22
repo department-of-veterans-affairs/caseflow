@@ -5,7 +5,6 @@ namespace :add_admins do
     task :add_single_admin, [:org_id, :user_id] => :environment do |t, args| 
         org = Organization.find(args[:org_id].to_i)
         user = User.find(args[:user_id].to_i)
-
         STDOUT.puts("Organization: #{org.name}")
         STDOUT.puts("User to be admin: #{user.full_name}")
         STDOUT.puts("Is this correct? (y/n)")
@@ -39,6 +38,24 @@ namespace :add_admins do
             end
         else
             STDOUT.puts("Improper input... exiting")
+        end
+    end
+
+    desc "given a user id and a role, assign the role to the user"
+    task :assign_role_to_user, [:user_id] => :environment do |t, args| 
+        user = User.find(args[:user_id].to_i)
+        STDOUT.puts("Enter the role to assign to the user")
+        role = STDIN.gets.chomp
+        STDOUT.puts("Do you want to assign #{user.full_name} the role of #{role}?")
+        STDOUT.puts("y/n?")
+        input = STDIN.gets.chomp
+        if input.downcase == 'y'
+            user_roles = user.roles
+            new_roles = user_roles << role
+            user.update!(roles: new_roles)
+            STDOUT.puts("The user's roles are now #{user.roles}")
+        else 
+            STDOUT.puts("Aborting...")
         end
     end
 end
