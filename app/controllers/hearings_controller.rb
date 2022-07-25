@@ -8,7 +8,7 @@ class HearingsController < HearingsApplicationController
   before_action :verify_access_to_hearings, except: [:show, :update]
   before_action :verify_access_to_hearings_details, only: [:show]
   before_action :verify_access_to_hearings_update, only: [:update]
-  before_action :check_vso_representation, only: [:update]
+  before_action :check_vso_representation, only: [:show, :update]
   before_action :set_hearing_day, only: [:index]
 
   rescue_from ActiveRecord::RecordNotFound do |error|
