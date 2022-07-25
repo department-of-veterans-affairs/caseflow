@@ -32,8 +32,8 @@ namespace :add_admins do
             user_array = input.split(",")
             user_array.each {|n| n.strip}
             user_array.each do |id| 
-                Rake::Task["add_admins:add_single_admin"].reenable
                 Rake.application.invoke_task("add_admins:add_single_admin[#{org_id}, #{id}]")
+                Rake::Task["add_admins:add_single_admin"].reenable
             end
         else
             STDOUT.puts("Improper input... exiting")
@@ -67,8 +67,8 @@ namespace :add_admins do
         user_array.each {|n| n.strip}
 
         user_array.each do |id|
-            Rake::Task["add_admins:assign_role_to_user"].reenable
             Rake.application.invoke_task("add_admins:assign_role_to_user[#{id},#{role}]")
+            Rake::Task["add_admins:assign_role_to_user"].reenable
         end
     end
 end
