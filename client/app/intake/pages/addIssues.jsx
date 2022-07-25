@@ -235,6 +235,8 @@ class AddIssuesPage extends React.Component {
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
     const issuesBySection = formatIssuesBySection(issues);
 
+    const appealId = intakeForms.appeal.claimId;
+
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
 
@@ -272,14 +274,16 @@ class AddIssuesPage extends React.Component {
             + Add issue
           </Button>
 
-          <Button
-            name="split-appeal"
-            legacyStyling={false}
-            classNames={['usa-button-secondary']}
-            // onClick={() => this.onClickAddIssue()}
-          >
-            Split appeal
-          </Button>
+          <a href={`/queue/appeals/${appealId}/create_split`}>
+            <Button
+              name="split-appeal"
+              legacyStyling={false}
+              classNames={['usa-button-secondary']}
+            >
+              Split appeal
+            </Button>
+          </a>
+
         </div>
       );
     };

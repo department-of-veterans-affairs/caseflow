@@ -101,6 +101,7 @@ import { PrivateRoute } from '../components/PrivateRoute';
 import { EditCavcRemandView } from './cavc/EditCavcRemandView';
 import EditAppellantInformation from './editAppellantInformation/EditAppellantInformation';
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
+import SplitAppealView from './splitAppeals/SplitAppealView';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -194,6 +195,10 @@ class QueueApp extends React.PureComponent {
     >
       {this.routedQueueDetail(props)}
     </CaseDetailsLoadingScreen>
+  );
+
+  routedSplitAppeal = (props) => (
+    <SplitAppealView {...props.match.params} />
   );
 
   routedSubmitDecision = (props) => (
@@ -799,11 +804,19 @@ class QueueApp extends React.PureComponent {
               render={this.routedUserManagement}
             />
 
+            <PageRoute
+              exact
+              path="/create_split"
+              title="Split Appeal | Caseflow"
+              render={this.routedSplitAppeal}
+            />
+
             {motionToVacateRoutes.page}
 
             {docketSwitchRoutes.page}
 
             {substituteAppellantRoutes.page}
+
           </Switch>
 
           {/* Modal routes are in their own Switch so they will display above the base routes */}
