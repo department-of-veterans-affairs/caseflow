@@ -39,8 +39,8 @@ module HearingsConcerns
     def check_vso_representation
       # Only allow for VSOs to access hearings they are representing
       if current_user.vso_employee?
-        # Account for the different params between GET and PATCH requests
-        hearing_id = (params[:action] == "update") ? params[:id] : params[:hearing_id]
+        # Account for the different params given by different controllers
+        hearing_id = (params[:action] == "show_hearing_details_index") ? params[:hearing_id] : params[:id]
 
         unless Hearing.find_hearing_by_uuid_or_vacols_id(hearing_id)&.assigned_to_vso?(current_user)
           session["return_to"] = request.original_url
