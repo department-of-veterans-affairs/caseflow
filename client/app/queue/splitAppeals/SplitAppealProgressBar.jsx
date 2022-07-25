@@ -20,7 +20,7 @@ export const SplitAppealProgressBar = () => {
     () =>
       progressBarSections.map(({ title, paths }) => ({
         title,
-        current: paths?.includes(pathname),
+        current: pathname?.includes(paths),
       })),
     [pathname]
   );

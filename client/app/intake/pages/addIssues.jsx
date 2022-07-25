@@ -3,11 +3,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+import _, { identity } from 'lodash';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Redirect } from 'react-router-dom';
+import { Redirect} from 'react-router-dom';
+import { useHistory } from 'react-router';
 
 import RemoveIssueModal from '../components/RemoveIssueModal';
 import CorrectionTypeModal from '../components/CorrectionTypeModal';
@@ -93,6 +94,12 @@ class AddIssuesPage extends React.Component {
       this.props.undoCorrection(index);
     }
   };
+
+  // onClickSplitAppeal = (id) => {
+  //   const { push } = useHistory();
+
+  //   push(`/queue/appeals/${id}/create_split`);
+  // };
 
   withdrawalDateOnChange = (value) => {
     this.props.setIssueWithdrawalDate(value);
@@ -283,6 +290,15 @@ class AddIssuesPage extends React.Component {
               Split appeal
             </Button>
           </a>
+
+          {/* <Button
+              name="split-appeal"
+              legacyStyling={false}
+              classNames={['usa-button-secondary']}
+              onClick={() => this.onClickSplitAppeal(appealId)}
+            >
+              Split appeal 2
+            </Button> */}
 
         </div>
       );

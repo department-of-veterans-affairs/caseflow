@@ -806,7 +806,7 @@ class QueueApp extends React.PureComponent {
 
             <PageRoute
               exact
-              path="/create_split"
+              path="/queue/appeals/:appealId/create_split"
               title="Split Appeal | Caseflow"
               render={this.routedSplitAppeal}
             />
