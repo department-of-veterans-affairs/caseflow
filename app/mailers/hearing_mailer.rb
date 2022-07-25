@@ -57,10 +57,14 @@ class HearingMailer < ActionMailer::Base
     @test_link = virtual_hearing&.test_link(email_recipient_info.title)
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
-
+    if email_recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
+      subject = "Your Board hearing time has changed – Do Not Reply"
+    else
+      subject = "Your Board hearing date/time has changed – Do Not Reply"
+    end
     mail(
       to: recipient_info.email,
-      subject: "Your Board hearing date/time has changed – Do Not Reply"
+      subject: subject
     )
   end
 
