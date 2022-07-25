@@ -36,8 +36,8 @@ module HearingsConcerns
       verify_authorized_roles("Edit HearSched", "Build HearSched", "RO ViewHearSched", "VSO", "Hearing Prep")
     end
 
+    # Only allow for VSOs to access hearings they are representing
     def check_vso_representation
-      # Only allow for VSOs to access hearings they are representing
       if current_user.vso_employee?
         # Account for the different params given by different controllers
         hearing_id = (params[:action] == "show_hearing_details_index") ? params[:hearing_id] : params[:id]
