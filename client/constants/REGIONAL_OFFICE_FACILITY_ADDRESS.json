@@ -694,6 +694,15 @@
       "zip" : "37919",
       "timezone" : "America/Chicago"
    },
+   "vc_0737V" : {
+      "address_1" : "400 Veterans Ave",
+      "address_2" : "Bldg. 3",
+      "address_3" : "Rm. A145",
+      "city" : "Biloxi",
+      "state" : "MS",
+      "zip" : "39531",
+      "timezone" : "America/Chicago"
+   },
    "vha_402GA" : {
       "address_1" : "163 Van Buren Road",
       "address_2" : null,
