@@ -10,6 +10,7 @@ RSpec.describe HearingsController, type: :controller do
   let(:baltimore_ro_eastern) { "RO13" }
   let(:timezone) { "America/New_York" }
   let(:disposition) { nil }
+  let!(:vso_participant_id) { "12345" }
 
   describe "PATCH update" do
     it "should be successful", :aggregate_failures do
@@ -350,7 +351,6 @@ RSpec.describe HearingsController, type: :controller do
             }
           }
         end
-        let!(:vso_participant_id) { "12345" }
         let!(:vso_org) do
           create(:vso, name: "VSO Org", role: "VSO", url: "vso-url", participant_id: vso_participant_id)
         end
@@ -548,12 +548,28 @@ RSpec.describe HearingsController, type: :controller do
     end
 
     context "current user's email and timezone are included in response" do
+      before do
+        allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+          [{ participant_id: vso_participant_id }]
+        )
+        vso_org.add_user(vso_user)
+      end
+
+      let!(:vso_org) do
+        create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: vso_participant_id)
+      end
       let!(:vso_user) { create(:user, :vso_role, email: "vso@vso.org") }
       let!(:hearings_coordinator_user) do
         create(:user, roles: ["Edit HearSched", "Build HearSched"], email: "coordinator@va.gov")
       end
 
       context "with an ama hearing" do
+        before do
+          TrackVeteranTask.create!(appeal: hearing.appeal,
+                                   parent: hearing.appeal.root_task,
+                                   assigned_to: vso_org)
+        end
+
         it "as a vso user" do
           check_for_current_user_info_in_response(vso_user)
         end
@@ -564,6 +580,12 @@ RSpec.describe HearingsController, type: :controller do
       end
 
       context "with a legacy hearing" do
+        before do
+          TrackVeteranTask.create!(appeal: legacy_hearing.appeal,
+                                   parent: legacy_hearing.appeal.root_task,
+                                   assigned_to: vso_org)
+        end
+
         subject { get :show, as: :json, params: { id: legacy_hearing.external_id } }
 
         it "as a vso user" do
