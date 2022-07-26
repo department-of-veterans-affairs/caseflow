@@ -928,6 +928,15 @@
       "zip" : "53916-3124",
       "timezone" : "America/Chicago"
    },
+   "vha_614GN" : {
+      "address_1" : "125 Quarles Lane",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "West Helena",
+      "state" : "AR",
+      "zip" : "72390",
+      "timezone" : "America/Chicago"
+   },
    "vha_618BY" : {
       "address_1" : "3520 Tower Avenue",
       "address_2" : null,
@@ -1288,6 +1297,7 @@
       "zip" : "54311-5855",
       "timezone" : "America/Chicago"
    },
+
    "vha_740GB" : {
       "address_1" : "901 East Hackberry Avenue",
       "address_2" : null,
