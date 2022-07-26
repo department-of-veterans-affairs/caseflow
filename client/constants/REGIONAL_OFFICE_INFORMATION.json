@@ -475,6 +475,8 @@
     "hold_hearings": true,
     "facility_locator_id": "vba_348",
     "alternate_locations": [
+      "vha_653",
+      "vha_653BY",
       "vba_347",
       "vha_653GB",
       "vha_648GA",
