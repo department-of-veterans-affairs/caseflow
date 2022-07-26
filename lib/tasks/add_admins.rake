@@ -23,7 +23,7 @@ namespace :add_admins do
   end
 
   desc "given the org id and an array of user ids, batch add users as admins"
-  task :batch_add_admin do
+  task :batch_add_admins do
     STDOUT.puts("Enter the organization id")
     org_id = STDIN.gets.chomp
     if org_id.to_i.is_a? Integer
@@ -58,7 +58,7 @@ namespace :add_admins do
 
   desc "given a list of user ids, batch assign roles to the users"
   task :batch_assign_roles do
-    STDOUT.puts("Enter the role to assign to the users.")
+    STDOUT.puts("Enter the role to assign to the users. (example: Case Details, Reader, etc.)")
     role = STDIN.gets.chomp
 
     STDOUT.puts("Enter the user ids to be assigned the role #{role} separated by commas (ex: 1, 2, 3...)")
