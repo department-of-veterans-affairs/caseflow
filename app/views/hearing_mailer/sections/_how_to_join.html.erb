@@ -1,5 +1,5 @@
 <h3>
- How to Join on Hearing Day
+ How to Join <%= defined?(reminder_type) && defined?(recipient) && reminder_type != Hearings::ReminderService::SIXTY_DAY_REMINDER && reminder_type != Hearings::ReminderService::THIRTY_DAY_REMINDER && recipient == HearingEmailRecipient::RECIPIENT_TITLES[:appellant] ? "" : "on Hearing Day" %>
 </h3>
 <p>
   Join 15 minutes before your hearing start time.
