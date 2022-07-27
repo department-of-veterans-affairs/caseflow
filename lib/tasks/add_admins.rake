@@ -13,7 +13,6 @@ namespace :add_admins do
       OrganizationsUser.make_user_admin(user, org)
       if OrganizationsUser.find_by(organization_id: org.id, user_id: user.id).nil?
         STDOUT.puts("User #{user.full_name} with ID #{user.id} not added to #{org.name}.")
-
       else
         STDOUT.puts("User #{user.full_name} with ID #{user.id} successfully added to #{org.name}!")
       end
@@ -60,12 +59,10 @@ namespace :add_admins do
   task :batch_assign_roles do
     STDOUT.puts("Enter the role to assign to the users. (example: Case Details, Reader, etc.)")
     role = STDIN.gets.chomp
-
     STDOUT.puts("Enter the user ids to be assigned the role #{role} separated by commas (ex: 1, 2, 3...)")
     input = STDIN.gets.chomp
     user_array = input.split(",")
     user_array.each(&:strip)
-
     user_array.each do |id|
       Rake.application.invoke_task("add_admins:assign_role_to_user[#{id},#{role}]")
       Rake::Task["add_admins:assign_role_to_user"].reenable
