@@ -18,7 +18,7 @@
     <%= yield :rescheduling_or_canceling_your_hearing %>
     <%= yield :additional_reminder_details %>
     <%= yield :signature %>
-    <% if @representative_reminder != true %>
+    <% if @representative_reminder != true && @non_appellant_updated_time != true %>
       <%= render "hearing_mailer/sections/internal_use" %>
     <% end %>
   </body>

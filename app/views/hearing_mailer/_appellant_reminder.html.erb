@@ -27,7 +27,7 @@
 
 <% if @virtual_hearing.present? %>
   <%= content_for :how_to_join do %>
-    <%= render "hearing_mailer/sections/how_to_join",reminder_type:@reminder_type %>
+    <%= render "hearing_mailer/sections/how_to_join", reminder_type:@reminder_type, recipient: HearingEmailRecipient::RECIPIENT_TITLES[:appellant] %>
   <% end %>
 
   <%= content_for :test_your_connection do %>
