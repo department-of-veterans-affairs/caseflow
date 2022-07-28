@@ -51,7 +51,9 @@ export const PAGE_PATHS = {
   CONFIRMATION: '/confirmation',
   CLEARED_EPS: '/cleared_eps',
   OUTCODED: '/outcoded',
-  REQUEST_ISSUE_MISSING_DECISION_DATE: '/missing_decision_date'
+  REQUEST_ISSUE_MISSING_DECISION_DATE: '/missing_decision_date',
+  CREATE_SPLIT: '/create_split',
+  REVIEW_SPLIT: '/review_split'
 };
 
 export const INTAKE_STATES = {
