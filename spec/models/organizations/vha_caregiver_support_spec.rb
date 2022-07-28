@@ -22,6 +22,12 @@ describe VhaCaregiverSupport, :postgres do
     end
   end
 
+  describe ".queue_tabs" do
+    it "returns the expected tabs for use in the VHA CSP organization's queue" do
+      expect(vha_csp.queue_tabs).to match_array []
+    end
+  end
+
   describe ".can_receive_task?" do
     let(:appeal) { create(:appeal) }
     let(:task) { create(:task, appeal: appeal) }
