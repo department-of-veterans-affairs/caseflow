@@ -5,9 +5,11 @@ describe VhaCaregiverSupport, :postgres do
     VhaCaregiverSupport.create(name: "VHA Caregiver Support Program", url: "vha-csp")
   end
 
-  it "VhaCaregiverSupport class has singleton class method defined
-    for providing singleton-like behavior" do
-    expect(VhaCaregiverSupport.respond_to?(:singleton)).to eq true
+  describe ".singleton" do
+    it "VhaCaregiverSupport class has singleton class method defined
+      for providing singleton-like behavior" do
+      expect(VhaCaregiverSupport.respond_to?(:singleton)).to eq true
+    end
   end
 
   describe ".create!" do
