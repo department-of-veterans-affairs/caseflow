@@ -396,6 +396,7 @@
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE": "Decision submitted to judge",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED": "Total days worked by attorney",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM": "does not include days assigned to other teams",
+  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBHEAD": "Was this decision timely?",
 
   "JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_LABEL": "One Touch Initiative",
   "JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD": "Is this case part of the \"One Touch Initiative\"?",
