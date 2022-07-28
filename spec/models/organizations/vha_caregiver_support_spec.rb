@@ -37,4 +37,10 @@ describe VhaCaregiverSupport, :postgres do
       expect(vha_csp.can_receive_task?(task)).to eq(false)
     end
   end
+
+  describe ".COLUMN_NAMES" do
+    it "VHA CSP organization queue tabs have 7 columns by default" do
+      expect(VhaCaregiverSupport::COLUMN_NAMES.count).to eq 7
+    end
+  end
 end
