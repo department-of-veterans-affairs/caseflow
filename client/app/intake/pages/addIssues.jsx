@@ -43,6 +43,7 @@ import { editEpClaimLabel } from '../../intakeEdit/actions/edit';
 import COPY from '../../../COPY';
 import { EditClaimLabelModal } from '../../intakeEdit/components/EditClaimLabelModal';
 import { ConfirmClaimLabelModal } from '../../intakeEdit/components/ConfirmClaimLabelModal';
+import { requestUpdate } from '../../queue/uiReducer/uiActions';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -66,6 +67,12 @@ class AddIssuesPage extends React.Component {
   onClickAddIssue = () => {
     this.setState({ addingIssue: true });
   };
+
+  // navigateToSplitAppealStream should navigate to the SplitAppealStream, but is 
+  // navigating to CaseDetails as a placeholder
+  navigateToSplitAppealStream = () => {
+    window.location.href = `/queue/appeals/${this.props.intakeForms[this.props.formType].claimId}`;
+  }
 
   onClickIssueAction = (index, option = 'remove') => {
     switch (option) {
@@ -260,6 +267,21 @@ class AddIssuesPage extends React.Component {
       intakeData.addedIssues, intakeData.originalIssues
     );
 
+
+    const addSplitAppealButton = () => {
+      return (
+        <div className="cf-actions">
+          <Button
+            name="split-appeal"
+            legacyStyling={false}
+            classNames={['usa-button-secondary']}
+            onClick={() => this.navigateToSplitAppealStream()}
+          >
+            Split appeal
+          </Button>
+        </div>
+      );
+    };
     const addIssueButton = () => {
       return (
         <div className="cf-actions">
@@ -270,6 +292,14 @@ class AddIssuesPage extends React.Component {
             onClick={() => this.onClickAddIssue()}
           >
             + Add issue
+          </Button>
+          <Button
+            name="split-appeal"
+            legacyStyling={false}
+            classNames={['usa-button-secondary']}
+            onClick={() => this.navigateToSplitAppealStream()}
+          >
+            Split appeal
           </Button>
         </div>
       );
