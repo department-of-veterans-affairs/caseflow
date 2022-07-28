@@ -53,8 +53,8 @@ describe VhaCaregiverSupport, :postgres do
       end
 
       describe ".COLUMN_NAMES" do
-        it "VHA CSP organization queue tabs have 7 columns by default" do
-          expect(VhaCaregiverSupport::COLUMN_NAMES.count).to eq 7
+        it "VHA CSP organization queue tabs have 8 columns by default" do
+          expect(VhaCaregiverSupport::COLUMN_NAMES.count).to eq 8
         end
       end
     end
