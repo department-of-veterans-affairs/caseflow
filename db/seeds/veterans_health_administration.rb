@@ -9,8 +9,7 @@ module Seeds
       "Community Care - Veteran and Family Members Program",
       "Member Services - Health Eligibility Center",
       "Member Services - Beneficiary Travel",
-      "Prosthetics",
-      "Caregiver Appeals"
+      "Prosthetics"
     ].freeze
 
     def seed!
