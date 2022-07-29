@@ -5,32 +5,32 @@ module AppellantNotification
 
     class AppealDocketed
         def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.appeal_docketed)
-            #Shoryuken::Client.queues('default').send_message(message_body: {
-    queue_url: "<queue_url>", 	
-    message_body: "Updated participant ID list 7/19/2022",
-    message_attributes: {
-        "claimant" => {
-        value: "<insert participant_id here>",
-        data_type: "String"
-        },
-        "template_id" => {
-        value: “<insert template_id here>”,
-        data_type: "String"
-        },
-        “appeal_id” => {
-        value: <insert appeal_id here>,
-        data_type: “Integer”
-        },
-        “appeal_type” => {
-        value: “<insert appeal_type here>”,
-        data_type: “String”
-        },
-        “status” => {
-        value: “<insert status here>”,
-        data_type: “String”
-    }
-}
-)
+            queue_url: "<queue_url>", 	
+            message_body: "Notification for #{{type}}",
+            msg_bdy = message_attributes: {
+                "claimant" => {
+                value: participant_id,
+                data_type: "String"
+                },
+                "template_id" => {
+                value: template_id,
+                data_type: "String"
+                },
+                “appeal_id” => {
+                value: appeal_id,
+                data_type: “Integer”
+                },
+                “appeal_type” => {
+                value: “type”,
+                data_type: “String”
+                },
+                “status” => {
+                value: “<insert status here>”,
+                data_type: “String”
+                }
+            }
+            Shoryuken::Client.queues('default').send_message(message_body: msg_bdy)
+            
         end
 
         def distribution_task
@@ -47,7 +47,7 @@ module AppellantNotification
 
     class AppealDecisionMailed
         def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.appeal_decision_mailed)
-            ***CODE GOES HERE***
+            #TODO
         end
 
         #Aspect for Legacy Appeals
@@ -65,7 +65,7 @@ module AppellantNotification
 
     class HearingScheduled
         def notify_appellant(appeal_id, participant_id, type, template_idappeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.hearing_scheduled)
-            ***CODE GOES HERE***
+            #TODO
         end
 
         def create_hearing(task_values)    
@@ -76,7 +76,7 @@ module AppellantNotification
 
     class HearingPostponed
         def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.hearing_postponed)
-            ***CODE GOES HERE***
+            #TODO
         end
         
         def postpone!    
@@ -103,7 +103,7 @@ module AppellantNotification
 
     class HearingWithdrawn
         def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.hearing_withdrawn)
-            ***CODE GOES HERE***
+            #TODO
         end
         
         def cancel!    
@@ -114,7 +114,7 @@ module AppellantNotification
 
     class IHPTaskPending
         def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.ihp_task_pending)
-            ***CODE GOES HERE***
+            #TODO
         end
 
         def create_ihp_tasks!
@@ -137,7 +137,7 @@ module AppellantNotification
 
     class IHPTaskComplete
         def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.ihp_task_complete)
-            ***CODE GOES HERE***
+            #TODO
         end
 
         def update_status_if_children_tasks_are_closed(child_task)
@@ -157,7 +157,7 @@ module AppellantNotification
 
     class PrivacyActPending
         def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.privacy_act_pending)
-            ***CODE GOES HERE***
+            #TODO
         end
 
         def create_privacy_act_task
@@ -168,7 +168,7 @@ module AppellantNotification
 
     class PrivacyActComplete
         def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.privacy_act_complete)
-            ***CODE GOES HERE***
+            #TODO
         end
 
         def cascade_closure_from_child_task?(child_task)  
