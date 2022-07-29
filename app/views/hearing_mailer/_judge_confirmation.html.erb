@@ -13,19 +13,11 @@
 
 <%= content_for :date_time do %>
   <%= render "hearing_mailer/sections/date_time" %>
-<% end %>
-
-<%= content_for :how_to_join do %>
-  <%= render "hearing_mailer/sections/how_to_join" %>
-<% end %>
-
-<% content_for :help_desk do %>
-  <%= render "hearing_mailer/sections/help_desk" %>
+  <p>Please contact the assigned hearing coordinator for any assistance</p>
 <% end %>
 
 <%= content_for :signature do %>
-  <p>
-    Hearing Management Branch<br />
-    Board of Veterans' Appeals
-  </p>
+  <p>Hearing Management Branch</p>
+  <p>Board of Veterans' Appeals</p>
 <% end %>
+
