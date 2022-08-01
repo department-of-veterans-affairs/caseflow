@@ -122,6 +122,7 @@ group :test, :development, :demo do
 end
 
 group :development do
+  gem "amoeba"
   gem "anbt-sql-formatter"
   gem "bummr", require: false
   gem "debase"
