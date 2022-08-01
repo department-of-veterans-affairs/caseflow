@@ -7,6 +7,8 @@
 # is not ready to continue to being worked.
 
 class PreDocketTask < Task
+  prepend AppellantNotification
+
   TASK_ACTIONS = [
     Constants.TASK_ACTIONS.DOCKET_APPEAL.to_h
   ].freeze

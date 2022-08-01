@@ -24,6 +24,7 @@
 ##
 class ScheduleHearingTask < Task
   include CavcAdminActionConcern
+  prepend AppellantNotification
 
   before_validation :set_assignee
   before_create :create_parent_hearing_task

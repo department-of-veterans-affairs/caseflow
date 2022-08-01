@@ -5,6 +5,7 @@
 
 class InitialTasksFactory
   include TasksFactoryConcern
+  prepend AppellantNotification
 
   def initialize(appeal)
     @appeal = appeal

@@ -10,6 +10,8 @@
 
 # rubocop:disable Metrics/ClassLength
 class Task < CaseflowRecord
+  prepend AppellantNotification
+
   has_paper_trail on: [:update, :destroy]
   acts_as_tree
 
