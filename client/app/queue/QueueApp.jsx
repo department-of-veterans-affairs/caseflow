@@ -101,7 +101,6 @@ import { PrivateRoute } from '../components/PrivateRoute';
 import { EditCavcRemandView } from './cavc/EditCavcRemandView';
 import EditAppellantInformation from './editAppellantInformation/EditAppellantInformation';
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
-import SplitAppealView from './splitAppeals/SplitAppealView';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -195,10 +194,6 @@ class QueueApp extends React.PureComponent {
     >
       {this.routedQueueDetail(props)}
     </CaseDetailsLoadingScreen>
-  );
-
-  routedSplitAppeal = (props) => (
-    <SplitAppealView {...props.match.params} />
   );
 
   routedSubmitDecision = (props) => (
@@ -802,13 +797,6 @@ class QueueApp extends React.PureComponent {
               path="/user_management"
               title="User Management | Caseflow"
               render={this.routedUserManagement}
-            />
-
-            <PageRoute
-              exact
-              path="/queue/appeals/:appealId/create_split"
-              title="Split Appeal | Caseflow"
-              render={this.routedSplitAppeal}
             />
 
             {motionToVacateRoutes.page}
