@@ -1,52 +1,49 @@
 import React, { useState } from 'react';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
 
-import SplitAppealProgressBar from '../components/SplitAppealProgressBar';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
-import Checkbox from '../../components/Checkbox';
 import CheckboxGroup from '../../components/CheckboxGroup';
 
 import COPY from '../../../COPY.json';
 import SPLIT_APPEAL_REASONS from '../../../constants/SPLIT_APPEAL_REASONS';
+import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+import { formatDateStr } from '../../util/DateUtil';
 
-const issueListStyling = css({ marginTop: '0rem' });
+const issueListStyling = css({ marginTop: '0rem', marginLeft: '6rem' });
 
 const SplitAppealView = (props) => {
   const { serverIntake } = props;
 
   const requestIssues = serverIntake.requestIssues;
-  console.log(requestIssues);
 
   const [reason, setReason] = useState(null);
+  const [otherReason, setOtherReason] = useState(null);
   const [selectedIssues, setSelectedIssues] = useState({});
+
+  const onIssueChange = (evt) => {
+    setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.checked });
+  };
+
 
   const reasonOptions = _.map(SPLIT_APPEAL_REASONS, (value) => ({
     label: value,
     value
   }));
 
-  const getDisplayOptions = (issues = []) => {
-    // CheckboxGroup expects options with id (string) & label
-    console.log(issues);
-    
-    return issues.map(({ id, description, benefit_type, approx_decision_date }, idx) => ({ id: id.toString(),
-      label: `${description}` + '\nBenefit Type:' }));
-  };
-
   const issueOptions = () => requestIssues.map((issue) => ({
     id: issue.id.toString(),
     label:
       <>
         <span>{issue.description}</span><br />
-        <span>Benefit Type: {issue.benefit_type}</span><br />
-        <span>Decision Date: {issue.approx_decision_date}</span>
+        <span>Benefit Type: {BENEFIT_TYPES[issue.benefit_type]}</span><br />
+        <span>Decision Date: {formatDateStr(issue.approx_decision_date)}</span>
+        <br /><br />
       </>
   }));
- 
+
   return (
     <>
       <h1>{COPY.SPLIT_APPEAL_CREATE_TITLE}</h1>
@@ -69,24 +66,21 @@ const SplitAppealView = (props) => {
           id="otherReason"
           textAreaStyling={css({ height: '50px' })}
           maxlength={350}
+          value={otherReason}
           characterLimitTopRight
           optional
         />
       )}
       <br />
 
+      <h3>{COPY.SPLIT_APPEAL_CREATE_SELECT_ISSUES_TITLE}</h3>
       <CheckboxGroup
         vertical
         name="issues"
         label={COPY.SPLIT_APPEAL_CREATE_SELECT_ISSUES_TITLE}
-        // onChange={(event) => {
-        //   setSelectedIssues((prevVals) => ({
-        //     ...prevVals,
-        //     [event.target.getAttribute('id')]: event.target.checked
-        //   }));
-        // }}
-        // value={selectedIssues}
-        // options={getDisplayOptions(requestIssues)}
+        hideLabel
+        values={selectedIssues}
+        onChange={(val) => onIssueChange(val)}
         options={issueOptions()}
         styling={issueListStyling}
         strongLabel
