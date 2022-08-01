@@ -212,6 +212,7 @@ class AddIssuesPage extends React.Component {
       userCanWithdrawIssues
     } = this.props;
     const intakeData = intakeForms[formType];
+    const appealInfo = intakeForms.appeal;
     const { useAmaActivationDate, vhaPreDocketAppeals } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
@@ -289,7 +290,8 @@ class AddIssuesPage extends React.Component {
       return (
         <div className="cf-actions">
           {/* if conditions met, render split appeal button */}
-          {true ? (
+          {console.log(`requestIssues ${appealInfo.requestIssues.length}`)}
+          {appealInfo.requestIssues.length > 1 ? (
             [<Button
               name="add-issue"
               legacyStyling={false}
