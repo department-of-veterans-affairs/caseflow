@@ -43,44 +43,27 @@
 
 class SplitAppealController < ApplicationController
   before_action :react_routed
-  has_many :ama_decision_issues, -> { includes(:ama_decision_documents).references(:decision_documents) },
-  include BelongsToPolymorphicAppealConcern
-  include UpdatedByUserConcern
-
   belongs_to :created_by, class_name: "User"
   belongs_to :source_appeal, class_name: "Appeal"
-  belongs_to :split_appeal, class_name: "Appeal"
-
-  def decision_issues
-    ama_decision_issues if appeal_type == "Appeal"
-    # LegacyAppeals do not have decision_issue records
-  end
-
-  def document_type
-    "BVA Decision"
-  end
-
-  def source
-    "BVA"
-  end
+  belongs_to :split_appeal, class_name: "Appeal",
 
   # We have to always download the file from s3 to make sure it exists locally
   # instead of storing it on the server and relying that it will be there
-  def pdf_location
-    S3Service.fetch_file(s3_location, output_location)
-    output_location
-  end
+  #def pdf_location
+    #S3Service.fetch_file(s3_location, output_location)
+    #output_location
+  #end
 
-  def submit_for_processing!(delay: processing_delay)
-    update_decision_issue_decision_dates! if appeal.is_a?(Appeal)
+  #def submit_for_processing!(delay: processing_delay)
+    #update_decision_issue_decision_dates! if appeal.is_a?(Appeal)
 
-    cache_file!
-    super
+    #cache_file!
+    #super
 
-    if not_processed_or_decision_date_not_in_the_future?
-      ProcessDecisionDocumentJob.perform_later(id)
-    end
-  end
+    #if not_processed_or_decision_date_not_in_the_future?
+      #ProcessDecisionDocumentJob.perform_later(id)
+    #end
+  #end
 
   def process!
     return if processed?
@@ -91,16 +74,15 @@ class SplitAppealController < ApplicationController
     upload_to_vbms!
 
     if appeal.is_a?(Appeal)
-      Appeal = find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id
+      split_appeal = Appeal.find_by_uuid(Uuid: Uuid.id)
       #Change code method here
       fail NotImplementedError if appeal.claimant.is_a?(OtherClaimant)
       # We do not want to process Board Grant Effectuations or create remand supplemental claims
       # Impliment
       p = appeal.create(:title => "Hello World!", :content => "Lorum ipsum dolor")
-      appeal_copy = p.amoeba_dup
-      appeal_copy.save
+      split_appeal = p.amoeba_dup
       p.save
-      puts ("p")
+      puts (split_appeal)
     end
     processed!
   rescue StandardError => error
