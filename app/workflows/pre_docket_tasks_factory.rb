@@ -37,8 +37,8 @@ class PreDocketTasksFactory
   private
 
   def determine_vha_assignee
-    return VhaCamo.singleton unless @appeal.caregiver_has_issues?
+    return VhaCaregiverSupport.singleton if @appeal.caregiver_has_issues?
 
-    VhaCaregiverSupport.singleton
+    VhaCamo.singleton
   end
 end
