@@ -343,7 +343,7 @@ class Appeal < DecisionReview
     request_issues.active.any?(&:education_predocket?)
   end
 
-  def caregiver_issue?
+  def caregiver_has_issues?
     request_issues.active.any? { |ri| ri.nonrating_issue_category =~ /Caregiver/ }
   end
 

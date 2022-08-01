@@ -1201,8 +1201,8 @@ describe Appeal, :all_dbs do
     end
   end
 
-  describe "#caregiver_issue?" do
-    subject { appeal.caregiver_issue? }
+  describe "#caregiver_has_issues?" do
+    subject { appeal.caregiver_has_issues? }
 
     context "appeal has no caregiver tasks" do
       let(:appeal) { create(:appeal, request_issues: [create(:request_issue, :nonrating)]) }
