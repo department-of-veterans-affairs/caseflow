@@ -5,7 +5,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 import CheckboxGroup from '../../components/CheckboxGroup';
 
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import SPLIT_APPEAL_REASONS from '../../../constants/SPLIT_APPEAL_REASONS';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import _ from 'lodash';
@@ -20,13 +20,16 @@ const SplitAppealView = (props) => {
   const requestIssues = serverIntake.requestIssues;
 
   const [reason, setReason] = useState(null);
-  const [otherReason, setOtherReason] = useState(null);
+  const [otherReason, setOtherReason] = useState('');
   const [selectedIssues, setSelectedIssues] = useState({});
 
   const onIssueChange = (evt) => {
     setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.checked });
   };
 
+  const onOtherReasonChange = (value) => {
+    setOtherReason(value);
+  };
 
   const reasonOptions = _.map(SPLIT_APPEAL_REASONS, (value) => ({
     label: value,
@@ -67,7 +70,7 @@ const SplitAppealView = (props) => {
           textAreaStyling={css({ height: '50px' })}
           maxlength={350}
           value={otherReason}
-          characterLimitTopRight
+          onChange={onOtherReasonChange}
           optional
         />
       )}

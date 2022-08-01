@@ -3,7 +3,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import _, { identity } from 'lodash';
+import _ from 'lodash';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -95,7 +95,7 @@ class AddIssuesPage extends React.Component {
     }
   };
 
-  onClickSplitAppeal = (id) => {
+  onClickSplitAppeal =() => {
     return <Redirect to={PAGE_PATHS.CREATE_SPLIT} />;
   };
 
@@ -239,8 +239,6 @@ class AddIssuesPage extends React.Component {
     const issues = formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
     const issuesBySection = formatIssuesBySection(issues);
-
-    const appealId = intakeForms.appeal.claimId;
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
