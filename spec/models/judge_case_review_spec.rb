@@ -6,6 +6,7 @@ def complete_params(judge:, attorney:, location:, vacols_issue1:, vacols_issue2:
     judge: judge,
     task_id: "123456-2013-12-06",
     attorney: attorney,
+    timeliness: "timely",
     complexity: "hard",
     quality: "does_not_meet_expectations",
     comment: "do this",

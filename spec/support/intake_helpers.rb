@@ -309,7 +309,7 @@ module IntakeHelpers
 
   def add_intake_vha_issue(
     benefit_type: "Veterans Health Administration",
-    category: "Caregiver",
+    category: "Caregiver | Eligibility",
     description: "Some description",
     date: "01/01/2016",
     legacy_issues: false
