@@ -19,7 +19,13 @@ class VhaCaregiverSupport < Organization
   end
 
   def queue_tabs
-    []
+    [
+      in_progress_tasks_tab
+    ]
+  end
+
+  def in_progress_tasks_tab
+    ::VhaCaregiverSupportInProgressTasksTab.new(assignee: self)
   end
 
   COLUMN_NAMES = [
