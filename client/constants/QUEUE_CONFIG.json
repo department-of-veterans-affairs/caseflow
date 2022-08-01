@@ -32,6 +32,8 @@
   "EDUCATION_EMO_ASSIGNED_TASKS_TAB_NAME": "education_emo_assigned",
   "EDUCATION_EMO_COMPLETED_TASKS_TAB_NAME": "education_emo_completed",
 
+  "CAREGIVER_SUPPORT_COMPLETED_TASKS_TAB_NAME": "caregiver_support_completed",
+
   "COLUMNS": {
     "APPEAL_TYPE": {
       "filterable": true,
