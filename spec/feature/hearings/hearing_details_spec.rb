@@ -1,11 +1,23 @@
 # frozen_string_literal: true
 
 RSpec.feature "Hearing Details", :all_dbs do
+  before do
+    # VSO users require this task to be active on an appeal for them to access its hearings.
+    TrackVeteranTask.create!(appeal: hearing.appeal, parent: hearing.appeal.root_task, assigned_to: vso_org)
+    allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+      [{ participant_id: vso_participant_id }]
+    )
+
+    vso_org.add_user(vso_user)
+  end
+
   let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
-  let(:vso_user) { create(:user, css_id: "BILLIE_VSO", roles: ["VSO"], email: "BILLIE@test.com") }
+  let!(:vso_participant_id) { "54321" }
+  let!(:vso_org) { create(:vso, name: "VSO", role: "VSO", participant_id: vso_participant_id) }
+  let!(:vso_user) { create(:user, css_id: "BILLIE_VSO", roles: ["VSO"], email: "BILLIE@test.com") }
   let!(:coordinator) { create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG") }
   let!(:vlj) { create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO") }
-  let(:hearing) { create(:hearing, :with_tasks, regional_office: "C", scheduled_time: "12:00AM") }
+  let!(:hearing) { create(:hearing, :with_tasks, regional_office: "C", scheduled_time: "12:00AM") }
   let(:expected_alert) { COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name }
   let(:virtual_hearing_alert) do
     COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
@@ -894,8 +906,6 @@ RSpec.feature "Hearing Details", :all_dbs do
   end
 
   context "with VSO user role" do
-    # let!(:current_user) { User.authenticate!(roles: ["VSO"]) }
-
     scenario "user is immediately redirected to the Convert to Virtual form" do
       User.authenticate!(user: vso_user)
       visit "hearings/" + hearing.external_id.to_s + "/details"

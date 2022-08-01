@@ -35,5 +35,18 @@ module HearingsConcerns
     def verify_view_hearing_schedule_access
       verify_authorized_roles("Edit HearSched", "Build HearSched", "RO ViewHearSched", "VSO", "Hearing Prep")
     end
+
+    # Only allow for VSOs to access hearings they are representing
+    def check_vso_representation
+      if current_user.vso_employee?
+        # Account for the different params given by different controllers
+        hearing_id = (params[:action] == "show_hearing_details_index") ? params[:hearing_id] : params[:id]
+
+        unless Hearing.find_hearing_by_uuid_or_vacols_id(hearing_id)&.assigned_to_vso?(current_user)
+          session["return_to"] = request.original_url
+          redirect_to "/unauthorized"
+        end
+      end
+    end
   end
 end
