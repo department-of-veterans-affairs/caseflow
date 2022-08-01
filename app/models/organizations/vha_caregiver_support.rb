@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 # The VHA Caregiver Support Program Office
+#
+# Although technically a program office within VHA, in almost all facets operates
+# more similarly to the VhaCamo org as opposed to the other VhaProgramOffice orgs.
+#
+# Unlike other POs, this organization will receive appeals directly from Intake and
+# be able to interact with BVA Intake directly without having to go through VHA CAMO
+# as an intermediary.
 
 class VhaCaregiverSupport < Organization
   def self.singleton
