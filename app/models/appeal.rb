@@ -343,6 +343,10 @@ class Appeal < DecisionReview
     request_issues.active.any?(&:education_predocket?)
   end
 
+  def caregiver_issue?
+    request_issues.active.any? { |ri| ri.nonrating_issue_category =~ /Caregiver/ }
+  end
+
   alias cavc? cavc
 
   def cavc_remand

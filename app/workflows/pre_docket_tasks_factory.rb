@@ -15,7 +15,7 @@ class PreDocketTasksFactory
     VhaDocumentSearchTask.create!(
       appeal: @appeal,
       assigned_by: @appeal.intake.user,
-      assigned_to: VhaCamo.singleton,
+      assigned_to: determine_vha_assignee,
       parent: pre_docket_task
     )
   end
@@ -32,5 +32,13 @@ class PreDocketTasksFactory
       assigned_to: EducationEmo.singleton,
       parent: pre_docket_task
     )
+  end
+
+  private
+
+  def determine_vha_assignee
+    return VhaCamo.singleton unless @appeal.caregiver_issue?
+
+    VhaCaregiverSupport.singleton
   end
 end
