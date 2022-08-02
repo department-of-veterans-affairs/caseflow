@@ -1116,7 +1116,7 @@ ActiveRecord::Schema.define(version: 2022_07_19_230336) do
     t.index ["participant_id"], name: "index_organizations_on_participant_id", unique: true
     t.index ["status"], name: "index_organizations_on_status"
     t.index ["updated_at"], name: "index_organizations_on_updated_at"
-    t.index ["url"], name: "index_organizations_on_url"
+    t.index ["url"], name: "index_organizations_on_url", unique: true
   end
 
   create_table "organizations_users", force: :cascade do |t|

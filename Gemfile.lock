@@ -139,8 +139,6 @@ GEM
     akami (1.3.1)
       gyoku (>= 0.4.0)
       nokogiri
-    amoeba (3.2.0)
-      activerecord (>= 4.2.0)
     anbt-sql-formatter (0.1.0)
     arel (9.0.0)
     ast (2.4.0)
@@ -716,7 +714,6 @@ DEPENDENCIES
   activerecord-import
   activerecord-oracle_enhanced-adapter (~> 5.2.0)
   acts_as_tree
-  amoeba
   anbt-sql-formatter
   bgs!
   bootsnap
