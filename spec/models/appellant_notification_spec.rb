@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "helpers/appellant_notification.rb"
+require "models/appellant_notification.rb"
 
 describe AppellantNotification do
   describe AppellantNotification::AppealDocketed do
