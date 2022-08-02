@@ -209,7 +209,8 @@ class AddIssuesPage extends React.Component {
       featureToggles,
       editPage,
       addingIssue,
-      userCanWithdrawIssues
+      userCanWithdrawIssues,
+      userCanSplitAppeal
     } = this.props;
     const intakeData = intakeForms[formType];
     const appealInfo = intakeForms.appeal;
@@ -294,7 +295,8 @@ class AddIssuesPage extends React.Component {
           {console.log(`original issues: ${JSON.stringify(intakeData.originalIssues)}`)}
           {console.log(`added issues: ${JSON.stringify(intakeData.addedIssues)}`)}
 
-          {appealInfo.issueCount > 1 || appealInfo.requestIssues.length > 1 ? (
+          {(appealInfo.issueCount > 1 || appealInfo.requestIssues.length > 1) &&
+            userCanSplitAppeal ? (
             [<Button
               name="add-issue"
               legacyStyling={false}
@@ -561,7 +563,8 @@ AddIssuesPage.propTypes = {
   undoCorrection: PropTypes.func,
   veteran: PropTypes.object,
   withdrawIssue: PropTypes.func,
-  userCanWithdrawIssues: PropTypes.bool
+  userCanWithdrawIssues: PropTypes.bool,
+  userCanSplitAppeal: PropTypes.bool
 };
 
 export const IntakeAddIssuesPage = connect(
@@ -609,7 +612,9 @@ export const EditAddIssuesPage = connect(
     editPage: true,
     activeIssue: state.activeIssue,
     addingIssue: state.addingIssue,
-    userCanWithdrawIssues: state.userCanWithdrawIssues
+    userCanWithdrawIssues: state.userCanWithdrawIssues,
+    userCanSplitAppeal: state.userCanSplitAppeal
+
   }),
   (dispatch) =>
     bindActionCreators(

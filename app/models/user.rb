@@ -118,6 +118,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     CaseReview.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
   end
 
+  def can_split_appeal?
+    ClerkOfTheBoard.singleton.users.include?(self) || SupervisorySeniorCouncil.singleton.users.include?(self)
+  end
+
+
   def can_edit_issues?
     CaseReview.singleton.users.include?(self) || can_intake_appeals?
   end
