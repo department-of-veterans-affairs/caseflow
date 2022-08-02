@@ -118,9 +118,14 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           click_intake_finish
           expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
 
-          appeal = Appeal.last
+          vha_document_search_task = VhaDocumentSearchTask.last
+          appeal = vha_document_search_task.appeal
+          expect(vha_document_search_task.assigned_to).to eq camo
+
           visit "/queue/appeals/#{appeal.external_id}"
           expect(page).to have_content("Pre-Docket")
+
+          expect(page).to have_content(camo.name)
         end
 
         step "Use can search the case and see the Pre Docketed status" do
