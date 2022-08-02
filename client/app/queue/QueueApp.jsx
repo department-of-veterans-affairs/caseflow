@@ -804,7 +804,6 @@ class QueueApp extends React.PureComponent {
             {docketSwitchRoutes.page}
 
             {substituteAppellantRoutes.page}
-
           </Switch>
 
           {/* Modal routes are in their own Switch so they will display above the base routes */}
