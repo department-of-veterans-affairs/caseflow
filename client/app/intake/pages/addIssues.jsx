@@ -283,7 +283,7 @@ class AddIssuesPage extends React.Component {
               legacyStyling={false}
               classNames={['usa-button-secondary']}
             >
-              Split appeal (Intake)
+              Split appeal
             </Button>
           </Link>
 

@@ -201,8 +201,9 @@ export class IntakeEditFrame extends React.PureComponent {
               </AppSegment>
               <AppSegment styling={textAlignRightStyling}>
                 <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
-                {/* TODO: add buttons for split appeal flow*/}
+                {/* review component will add buttons for split appeal flow*/}
               </AppSegment>
+
             </AppFrame>
           </NavigationBar>
 
