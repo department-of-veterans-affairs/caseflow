@@ -9,11 +9,13 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_PATHS } from '../intake/constants';
 import { EditAddIssuesPage } from '../intake/pages/addIssues';
+import SplitAppealView from '../intake/pages/SplitAppealView';
 import DecisionReviewEditCompletedPage from '../intake/pages/decisionReviewEditCompleted';
 import Message from './pages/message';
 import { css } from 'glamor';
 import EditButtons from './components/EditButtons';
 import PropTypes from 'prop-types';
+import SplitAppealProgressBar from '../intake/components/SplitAppealProgressBar';
 
 const textAlignRightStyling = css({
   textAlign: 'right',
@@ -106,6 +108,7 @@ export class IntakeEditFrame extends React.PureComponent {
             defaultUrl="/"
           >
             <AppFrame>
+              <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitAppealProgressBar} />
               <AppSegment filledBackground>
                 <div>
                   <PageRoute
@@ -185,11 +188,25 @@ export class IntakeEditFrame extends React.PureComponent {
                       );
                     }}
                   />
+
+                  <PageRoute
+                    exact
+                    path={PAGE_PATHS.CREATE_SPLIT}
+                    title="Split Appeal | Caseflow Intake"
+                    component={() => {
+                      return (
+                        <SplitAppealView {...this.props} />
+                      );
+                    }}
+                  />
+
                 </div>
               </AppSegment>
               <AppSegment styling={textAlignRightStyling}>
                 <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
+                {/* review component will add buttons for split appeal flow*/}
               </AppSegment>
+
             </AppFrame>
           </NavigationBar>
 

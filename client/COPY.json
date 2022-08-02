@@ -1277,5 +1277,10 @@
   "EMO_ASSIGN_TO_RPO_MODAL_BODY": "Regional Processing Office",
   "EDUCATION_RPO_SELECTOR_PLACEHOLDER": "Select RPO",
   "EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE": "Return to Executive Management Office",
-  "EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION": "You have successfully returned %s's case to the Executive Management Office"
+  "EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION": "You have successfully returned %s's case to the Executive Management Office",
+
+  "SPLIT_APPEAL_CREATE_TITLE": "Create new appeal stream",
+  "SPLIT_APPEAL_CREATE_SUBHEAD": "You can move multiple issues to the new appeal stream as long as the issues can be decided on together. If you need to split the appeal further, you can go through this process with the remaining issues.",
+  "SPLIT_APPEAL_CREATE_REASONING_TITLE": "Please select why this appeal is being split",
+  "SPLIT_APPEAL_CREATE_SELECT_ISSUES_TITLE": "Please select issues(s) to move to the new appeal stream"
 }
