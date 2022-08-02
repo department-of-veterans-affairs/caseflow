@@ -34,7 +34,7 @@ gem "moment_timezone-rails"
 # https://github.com/ankane/multiverse#upgrading-to-rails-6
 gem "multiverse"
 gem "newrelic_rpm"
-gem 'nokogiri', '~> 1.13', '>= 1.13.5'
+gem "nokogiri", "~> 1.13", ">= 1.13.5"
 gem "paper_trail", "~> 10"
 # Used to speed up reporting
 gem "parallel"
@@ -48,7 +48,7 @@ gem "pg", platforms: :ruby
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "~> 5"
-gem 'rack', '~> 2.2', '>= 2.2.3.1'
+gem "rack", "~> 2.2", ">= 2.2.3.1"
 gem "rails", "5.2.4.6"
 # Used to colorize output for rake tasks
 gem "rainbow"
