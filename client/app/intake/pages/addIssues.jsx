@@ -291,20 +291,24 @@ class AddIssuesPage extends React.Component {
         <div className="cf-actions">
           {/* if conditions met, render split appeal button */}
           {console.log(`requestIssues ${appealInfo.requestIssues.length}`)}
-          {appealInfo.requestIssues.length > 1 ? (
+          {console.log(`original issues: ${JSON.stringify(intakeData.originalIssues)}`)}
+          {console.log(`added issues: ${JSON.stringify(intakeData.addedIssues)}`)}
+
+          {appealInfo.issueCount > 1 || appealInfo.requestIssues.length > 1 ? (
             [<Button
               name="add-issue"
               legacyStyling={false}
               classNames={['usa-button-secondary']}
               onClick={() => this.onClickAddIssue()}
             >
-            + Add issue
+            + Add issue:
             </Button>,
             <Button
               name="split-appeal"
               legacyStyling={false}
               classNames={['usa-button-secondary']}
               onClick={() => this.navigateToSplitAppealStream()}
+              disabled={issuesChanged}
             >
             Split appeal
             </Button>]
