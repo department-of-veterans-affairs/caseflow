@@ -8,6 +8,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import RemoveIssueModal from '../components/RemoveIssueModal';
 import CorrectionTypeModal from '../components/CorrectionTypeModal';
@@ -92,6 +93,10 @@ class AddIssuesPage extends React.Component {
     default:
       this.props.undoCorrection(index);
     }
+  };
+
+  onClickSplitAppeal =() => {
+    return <Redirect to={PAGE_PATHS.CREATE_SPLIT} />;
   };
 
   withdrawalDateOnChange = (value) => {
@@ -271,6 +276,17 @@ class AddIssuesPage extends React.Component {
           >
             + Add issue
           </Button>
+
+          <Link to="/create_split">
+            <Button
+              name="split-appeal"
+              legacyStyling={false}
+              classNames={['usa-button-secondary']}
+            >
+              Split appeal (Intake)
+            </Button>
+          </Link>
+
         </div>
       );
     };
