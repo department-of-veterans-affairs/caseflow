@@ -419,7 +419,7 @@ class CompleteTaskModal extends React.Component {
     if (this.props.modalType === 'vha_send_to_board_intake') {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
 
-      if (reviewNotes && previousInstructions) {
+      if (reviewNotes) {
         formattedInstructions = `\n\n**Status:** ${locationLabel}\n\n
         \n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}`;
       }
