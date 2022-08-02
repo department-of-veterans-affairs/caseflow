@@ -2,37 +2,71 @@
 
 # Module containing Aspect Overrides to Classes used to Track Statuses for Appellant Notification
 module AppellantNotification
-  class AppealDocketed
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.appeal_docketed)
-      msg_bdy = {
-        queue_url: "<queue_url>",
-        message_body: "Notification for #{type}",
-        message_attributes: {
-          "claimant" => {
-            value: participant_id,
-            data_type: "String"
-          },
-          "template_id" => {
-            value: template_id,
-            data_type: "String"
-          },
-          "appeal_id" => {
-            value: appeal_id,
-            data_type: "Integer"
-          },
-          "appeal_type" => {
-            value: type,
-            data_type: "String"
-          },
-          "status" => {
-            value: "<insert status here>",
-            data_type: "String"
-          }
+
+  class NoParticipantIdError < StandardError
+    def initialize(appeal_id, message="There is no participant ID")
+      super(message + " for #{appeal_id}")
+    end
+  end
+
+  class NoClaimantError < StandardError
+    def initialize(appeal_id, message="There is no claimant")
+      super(message + " for #{appeal_id}")
+    end
+  end
+
+  def self.handle_errors(participant_id, appeal_id)
+    # claimant = appeal_id.claimant # get claimant from appeal_id
+    claimant = nil # fake that a claimant shows up, can use nil to throw a NoClaimantError or string to make it pass
+    if claimant == nil
+      raise NoClaimantError.new(appeal_id)
+    elsif participant_id == nil
+      raise NoParticipantIdError.new(appeal_id)
+    end
+  end
+  
+  ## Testing just to make sure error throws
+  # raise NoParticipantIdError.new('123456')
+
+  # begin
+  #   raise NoParticipantIdError.new("123456")
+  # rescue => e
+  #   puts "writes to DB about failure"
+  #   could be a way to stop from crashing
+  # end
+
+  def self.notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.appeal_docketed)
+    AppellantNotification.handle_errors(participant_id, appeal_id)
+    msg_bdy = {
+      queue_url: "<queue_url>",
+      message_body: "Notification for #{type}",
+      message_attributes: {
+        "claimant" => {
+          value: participant_id,
+          data_type: "String"
+        },
+        "template_id" => {
+          value: template_id,
+          data_type: "String"
+        },
+        "appeal_id" => {
+          value: appeal_id,
+          data_type: "Integer"
+        },
+        "appeal_type" => {
+          value: type,
+          data_type: "String"
+        },
+        "status" => {
+          value: "<insert status here>",
+          data_type: "String"
         }
       }
-      Shoryuken::Client.queues("default").send_message(message_body: msg_bdy)
-    end
+    }
+    Shoryuken::Client.queues("caseflow_development_send_notification").send_message(message_body: msg_bdy)
+  end
 
+  module AppealDocketed
     def distribution_task
       @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
                              (DistributionTask.create!(appeal: @appeal, parent: @root_task) &&
@@ -45,37 +79,7 @@ module AppellantNotification
     end
   end
 
-  class AppealDecisionMailed
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.appeal_decision_mailed)
-      msg_bdy = {
-        queue_url: "<queue_url>",
-        message_body: "Notification for #{type}",
-        message_attributes: {
-          "claimant" => {
-            value: participant_id,
-            data_type: "String"
-          },
-          "template_id" => {
-            value: template_id,
-            data_type: "String"
-          },
-          "appeal_id" => {
-            value: appeal_id,
-            data_type: "Integer"
-          },
-          "appeal_type" => {
-            value: type,
-            data_type: "String"
-          },
-          "status" => {
-            value: "<insert status here>",
-            data_type: "String"
-          }
-        }
-      }
-      Shoryuken::Client.queues("caseflow_development_send_notifications").send_message(message_body: msg_bdy)
-    end
-
+  module AppealDecisionMailed
     # Aspect for Legacy Appeals
     def complete_root_task!
       super
@@ -89,22 +93,14 @@ module AppellantNotification
     end
   end
 
-  class HearingScheduled
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.hearing_scheduled)
-      # TODO
-    end
-
+  module HearingScheduled
     def create_hearing(task_values)
       super
       notify_appellant(appeal_id, participant_id, type, template_id)
     end
   end
 
-  class HearingPostponed
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.hearing_postponed)
-      # TODO
-    end
-
+  module HearingPostponed
     def postpone!
       super
       notify_appellant(appeal_id, participant_id, type, template_id)
@@ -127,22 +123,14 @@ module AppellantNotification
     end
   end
 
-  class HearingWithdrawn
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.hearing_withdrawn)
-      # TODO
-    end
-
+  module HearingWithdrawn
     def cancel!
       super
       notify_appellant(appeal_id, participant_id, type, template_id)
     end
   end
 
-  class IHPTaskPending
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.ihp_task_pending)
-      # TODO
-    end
-
+  module IHPTaskPending
     def create_ihp_tasks!
       appeal = @parent.appeal
       appeal.representatives.select { |org| org.should_write_ihp?(appeal) }.map do |vso_organization|
@@ -161,11 +149,7 @@ module AppellantNotification
     end
   end
 
-  class IHPTaskComplete
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.ihp_task_complete)
-      # TODO
-    end
-
+  module IHPTaskComplete
     def update_status_if_children_tasks_are_closed(child_task)
       if children.any? && children.open.empty? && on_hold?
         if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
@@ -182,27 +166,27 @@ module AppellantNotification
     end
   end
 
-  class PrivacyActPending
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.privacy_act_pending)
-      # TODO
-    end
-
-    def create_privacy_act_task
+  module PrivacyActPending
+    def self.create_privacy_act_task
       super
-      notify_appellant(appeal_id, participant_id, type, template_id)
+      # AppellantNotification.notify_appellant(appeal_id, participant_id, type, template_id)
+      AppellantNotification.notify_appellant('bib', '2', '3', '4')
     end
+  end
 
-    class PrivacyActComplete
-      def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.privacy_act_complete)
-        # TODO
+  module PrivacyActComplete
+    def cascade_closure_from_child_task?(child_task)
+      if child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
+        notify_appellant(appeal_id, participant_id, type, template_id)
       end
-
-      def cascade_closure_from_child_task?(child_task)
-        if child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
-          notify_appellant(appeal_id, participant_id, type, template_id)
-        end
-        child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
-      end
+      child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
     end
   end
 end
+
+# Crude testing of throwing errors, run 'rails runner /app/models/appellant_notification.rb' in console
+# AppellantNotification.notify_appellant('bib','2','3','4')
+
+AppellantNotification::PrivacyActPending.create_privacy_act_task
+# this works when running above command when super is commented out and artificial data is used
+# maybe inner modules need selfs?
