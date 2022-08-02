@@ -193,9 +193,12 @@ export class IntakeEditFrame extends React.PureComponent {
                     exact
                     path={PAGE_PATHS.CREATE_SPLIT}
                     title="Split Appeal | Caseflow Intake"
-                  >
-                    <SplitAppealView {...this.props} />
-                  </PageRoute>
+                    component={() => {
+                      return (
+                        <SplitAppealView {...this.props} />
+                      );
+                    }}
+                  />
 
                 </div>
               </AppSegment>

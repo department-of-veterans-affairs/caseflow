@@ -182,8 +182,3 @@ export const PAGE_TITLES = {
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
 export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, CUSTOM_HOLD_DURATION_TEXT];
 export const VHA_HOLD_DURATIONS = [15, 30, CUSTOM_HOLD_DURATION_TEXT];
-
-export const PAGE_PATHS = {
-  CREATE: '/create_split',
-  REVIEW: '/review_split'
-};
