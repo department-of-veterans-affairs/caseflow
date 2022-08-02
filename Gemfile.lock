@@ -409,7 +409,7 @@ GEM
       nokogiri (~> 1)
       rake
     mini_mime (1.1.0)
-    mini_portile2 (2.7.1)
+    mini_portile2 (2.8.0)
     minitest (5.14.4)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.20.1)
@@ -428,8 +428,8 @@ GEM
     newrelic_rpm (6.5.0.357)
     nio4r (2.5.8)
     no_proxy_fix (0.1.2)
-    nokogiri (1.13.1)
-      mini_portile2 (~> 2.7.0)
+    nokogiri (1.13.8)
+      mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
@@ -464,7 +464,7 @@ GEM
     puma (5.5.2)
       nio4r (~> 2.0)
     racc (1.6.0)
-    rack (2.2.3)
+    rack (2.2.4)
     rack-contrib (2.1.0)
       rack (~> 2.0)
     rack-test (1.1.0)
@@ -758,7 +758,7 @@ DEPENDENCIES
   moment_timezone-rails
   multiverse
   newrelic_rpm
-  nokogiri (>= 1.11.0.rc4)
+  nokogiri (~> 1.13, >= 1.13.5)
   paper_trail (~> 10)
   parallel
   paranoia (~> 2.2)
@@ -769,7 +769,7 @@ DEPENDENCIES
   pry (~> 0.13.0)
   pry-byebug (~> 3.9)
   puma (~> 5)
-  rack (~> 2.2.3)
+  rack (~> 2.2, >= 2.2.3.1)
   rails (= 5.2.4.6)
   rails-erd
   rainbow
