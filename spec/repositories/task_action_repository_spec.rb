@@ -119,4 +119,15 @@ describe TaskActionRepository, :all_dbs do
       end
     end
   end
+
+  describe "#vha_caregiver_support_mark_task_in_progress" do
+    let(:user) { create(:user) }
+    let(:task) { create(:vha_document_search_task) }
+
+    subject { TaskActionRepository.vha_caregiver_support_mark_task_in_progress(task, user) }
+
+    it "the confirmation banner message title includes the veteran's name" do
+      expect(subject[:message_title]).to include task.appeal.veteran_full_name
+    end
+  end
 end
