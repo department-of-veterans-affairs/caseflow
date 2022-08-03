@@ -9,6 +9,7 @@ import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
+import StringUtil from '../../util/StringUtil';
 
 /* eslint-disable camelcase */
 const InProgressTaskModal = (props) => {
@@ -44,10 +45,7 @@ const InProgressTaskModal = (props) => {
       submit={submit}
     >
       {taskData?.modal_body &&
-        <>
-          <div dangerouslySetInnerHTML={{ __html: taskData.modal_body }} />
-          <br />
-        </>
+          <div> { StringUtil.nl2br(taskData.modal_body) } </div>
       }
     </QueueFlowModal>
   );
