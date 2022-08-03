@@ -4,6 +4,10 @@
 # for a user based upon assigned_to_id where not completed or cancelled.
 module WarRoom
   class CancelActiveTaskArray
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/PerceivedComplexity
     def run(assigned_to_id, task_type)
       # set current user
       RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1",
@@ -29,6 +33,13 @@ module WarRoom
 
       # If a assigned to ID is found, this Checks to see if task type exists in the task table.
       # Checks if the user or organization has tasks in general.
+      if (!user.nil? || organization.nil?) &&
+         Task.where(assigned_to_id: id, type: task_type).nil?
+        puts("Unable to find tasks #{task_type} that were assigned to that User ID of #{id}...")
+        fail Interrupt
+      end
+
+      # Checks that the assigned_to have the specified task type
       if Task.where(assigned_to_id: id, task: task_type).empty?
         puts("Unable to find task type. Have you checked the Metabase
                 task table for task type for specified user or organization
