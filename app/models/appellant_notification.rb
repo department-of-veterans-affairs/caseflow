@@ -136,14 +136,14 @@ module AppellantNotification
       super
       AppellantNotification.notify_appellant(appeal.id, appeal.claimant_participant_id, appeal.class.to_s, 1118)
     end
+  end
 
-    module PrivacyActComplete
-      def cascade_closure_from_child_task?(child_task)
-        if child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
-          AppellantNotification.notify_appellant(child_task.appeal.id, child_task.appeal.claimant_participant_id, child_task.appeal.class.to_s, 1119)
-        end
-        child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
+  module PrivacyActComplete
+    def cascade_closure_from_child_task?(child_task)
+      if child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
+        AppellantNotification.notify_appellant(child_task.appeal.id, child_task.appeal.claimant_participant_id, child_task.appeal.class.to_s, 1119)
       end
+      child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
     end
   end
 end
