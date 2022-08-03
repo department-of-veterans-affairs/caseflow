@@ -2,7 +2,7 @@
   <%= react_component("IntakeEdit", props: {
     userDisplayName: current_user.display_name,
     userCanWithdrawIssues: current_user.can_withdraw_issues?,
-    userCanSplitAppeal: current_user.can_split_appeal?,
+    userCanSplitAppeal: current_user.can_split_appeal?(appeal),
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,
