@@ -4,11 +4,7 @@
 
 class VaNotifyModule
   class << self
-    def va_notify_prepend_enabled?
-      FeatureToggle.enabled?(:va_notify_prepend, user: RequestStore.store[:current_user])
-    end
-
-    if va_notify_prepend_enabled?
+    if FeatureToggle.enabled?(:va_notify_prepend, user: RequestStore.store[:current_user])
       prepend_module
     end
 
