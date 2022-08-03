@@ -9,7 +9,6 @@ describe VhaCaregiverSupportUnassignedTasksTab, :postgres do
     }
   end
   let(:assignee) {create(:vha_caregiver_support)}
-  # let()
   let(:show_reader_link_column) { false }
 
   describe ".column_names" do
