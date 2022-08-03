@@ -15,28 +15,33 @@ module AppellantNotification
     end
   end
 
-  def self.handle_errors(participant_id, appeal_id)
-    # claimant = appeal_id.claimant # get claimant from appeal_id
-    claimant = nil # fake that a claimant shows up, can use nil to throw a NoClaimantError or string to make it pass
+  def self.handle_errors(appeal)
+    appeal_id = appeal.id
+    claimant = appeal.claimant
+    participant_id = appeal.claimant&.participant_id
     if claimant == nil
-      raise NoClaimantError.new(appeal_id)
-    elsif participant_id == nil
-      raise NoParticipantIdError.new(appeal_id)
+      # begin
+        raise NoClaimantError.new(appeal_id)
+      # rescue => exception
+      #   # make sure to send failed status to listener
+      # end
+    elsif participant_id == ""
+      # begin
+        raise NoParticipantIdError.new(appeal_id)
+      # rescue => exception
+      #   # send status to listener
+      # end
     end
   end
-  
-  ## Testing just to make sure error throws
-  # raise NoParticipantIdError.new('123456')
 
-  # begin
-  #   raise NoParticipantIdError.new("123456")
-  # rescue => e
-  #   puts "writes to DB about failure"
-  #   could be a way to stop from crashing
-  # end
+  def self.notify_appellant(appeal)
+    appeal_id = appeal.id
+    participant_id = appeal.participant_id
+    # etc from appeal
+    # get name of inner module from self.name from aaron
 
-  def self.notify_appellant(appeal_id, participant_id, type, template_id = 0)
-    AppellantNotification.handle_errors(participant_id, appeal_id)
+
+    AppellantNotification.handle_errors(appeal)
     msg_bdy = {
       queue_url: "caseflow_development_send_notifications",
       message_body: "Notification for #{type}",
@@ -65,44 +70,49 @@ module AppellantNotification
     }
     Shoryuken::Client.queues("caseflow_development_send_notifications").send_message(message_body: msg_bdy)
   end
+
   module AppealDocketed
+    template_name = self.name.split("::")[1]
     def distribution_task
       @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
                              (DistributionTask.create!(appeal: @appeal, parent: @root_task) &&
-                             AppellantNotification.notify_appellant(@appeal.id, @appeal.claimant_participant_id, @appeal.class.to_s, 1111))
+                             AppellantNotification.notify_appellant(appeal))
     end
 
-    def docket_appeal
+    def self.docket_appeal
       super
-      AppellantNotification.notify_appellant(appeal.id, appeal.claimant_participant_id, appeal.class.to_s, 1111)
+      AppellantNotification.notify_appellant(appeal)
     end
   end
 
   module AppealDecisionMailed
+    template_name = self.name.split("::")[1]
     # Aspect for Legacy Appeals
     def complete_root_task!
       super
-      AppellantNotification.notify_appellant(@appeal.id, @appeal.claimant_participant_id, @appeal.class.to_s, 1112)
+      AppellantNotification.notify_appellant(appeal)
     end
 
     # Aspect for AMA Appeals
     def complete_dispatch_root_task!
       super
-      AppellantNotification.notify_appellant(appeal.id, appeal.claimant_participant_id, appeal.class.to_s, 1112)
+      AppellantNotification.notify_appellant(appeal)
     end
   end
 
   module HearingScheduled
+    template_name = self.name.split("::")[1]
     def create_hearing(task_values)
       super
-      AppellantNotification.notify_appellant(appeal.id, appeal.claimant_participant_id, appeal.class.to_s, 1113)
+      AppellantNotification.notify_appellant(appeal)
     end
   end
 
   module HearingPostponed
+    template_name = self.name.split("::")[1]
     def postpone!
       super
-      AppellantNotification.notify_appellant(appeal.id, appeal.claimant_participant_id, appeal.class.to_s, 1114)
+      AppellantNotification.notify_appellant(appeal)
     end
 
     def mark_hearing_with_disposition(payload_values:, instructions: nil)
@@ -111,7 +121,7 @@ module AppellantNotification
           update_hearing_disposition_and_notes(payload_values)
         elsif payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed
           update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
-          AppellantNotification.notify_appellant(appeal.id, appeal.claimant_participant_id, appeal.class.to_s, 1114)
+          AppellantNotification.notify_appellant(appeal)
         end
         clean_up_virtual_hearing
         reschedule_or_schedule_later(
@@ -123,13 +133,15 @@ module AppellantNotification
   end
 
   module HearingWithdrawn
+    template_name = self.name.split("::")[1]
     def cancel!
       super
-      AppellantNotification.notify_appellant(appeal.id, appeal.claimant_participant_id, appeal.class.to_s, 1115)
+      AppellantNotification.notify_appellant(appeal)
     end
   end
 
   module IHPTaskPending
+    template_name = self.name.split("::")[1]
     def create_ihp_tasks!
       appeal = @parent.appeal
       appeal.representatives.select { |org| org.should_write_ihp?(appeal) }.map do |vso_organization|
@@ -143,12 +155,13 @@ module AppellantNotification
           parent: @parent,
           assigned_to: vso_organization
         )
-        AppellantNotification.notify_appellant(appeal.id, appeal.claimant_participant_id, appeal.class.to_s, 1116)
+        AppellantNotification.notify_appellant(appeal)
       end
     end
   end
 
   module IHPTaskComplete
+    template_name = self.name.split("::")[1]
     def update_status_if_children_tasks_are_closed(child_task)
       if children.any? && children.open.empty? && on_hold?
         if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
@@ -166,14 +179,16 @@ module AppellantNotification
   end
 
   module PrivacyActPending
+    template_name = self.name.split("::")[1]
     def self.create_privacy_act_task
       super
-      # AppellantNotification.notify_appellant(appeal_id, participant_id, type, template_id)
-      AppellantNotification.notify_appellant('bib', '2', '3', '4')
+      AppellantNotification.notify_appellant(appeal_id, participant_id, type, template_id)
+      # AppellantNotification.notify_appellant('bib', '2', '3', '4')
     end
   end
 
   module PrivacyActComplete
+    template_name = self.name.split("::")[1]
     def cascade_closure_from_child_task?(child_task)
       if child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
         AppellantNotification.notify_appellant(child_task.appeal.id, child_task.appeal.claimant_participant_id, child_task.appeal.class.to_s, 1119)
@@ -186,6 +201,6 @@ end
 # Crude testing of throwing errors, run 'rails runner /app/models/appellant_notification.rb' in console
 # AppellantNotification.notify_appellant('bib','2','3','4')
 
-AppellantNotification::PrivacyActPending.create_privacy_act_task
+# AppellantNotification::PrivacyActPending.create_privacy_act_task
 # this works when running above command when super is commented out and artificial data is used
 # maybe inner modules need selfs?
