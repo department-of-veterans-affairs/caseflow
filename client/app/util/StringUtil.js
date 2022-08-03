@@ -127,7 +127,7 @@ const StringUtil = {
 
   // Removes **Details** from previous tasks' instructions from markdown text
   // used within Case Timelines
-  removeDetails(str) {
+  removeInstructionsDetails(str) {
     return str.split('**Detail')[0];
   }
 };
