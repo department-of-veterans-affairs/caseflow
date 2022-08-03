@@ -11,7 +11,7 @@ describe VhaCaregiverSupportCompletedTasksTab, :postgres do
 
   describe ".tab_name" do
     subject { VhaCaregiverSupportCompletedTasksTab.tab_name }
-    
+
     context "the tab name should be appropriately reflected" do
       it "matches what is defined in the QUEUE_CONFIG file" do
         expect(subject).to eq(Constants.QUEUE_CONFIG.CAREGIVER_SUPPORT_COMPLETED_TASKS_TAB_NAME)
@@ -19,7 +19,7 @@ describe VhaCaregiverSupportCompletedTasksTab, :postgres do
       end
     end
   end
-  
+
   describe ".label" do
     subject { tab.label }
 
