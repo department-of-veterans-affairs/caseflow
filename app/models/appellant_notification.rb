@@ -171,7 +171,7 @@ module AppellantNotification
         if %w[RootTask DistributionTask AttorneyTask].include?(child_task.parent.type) &&
            (child_task.type.include?("InformalHearingPresentationTask") ||
            child_task.type.include?("IhpColocatedTask"))
-           AppellantNotification.notify_appellant(child_task.appeal.id, child_task.appeal.claimant_participant_id, child_task.appeal.class.to_s, 1117)
+           AppellantNotification.notify_appellant(appeal)
         end
         update_task_if_children_tasks_are_completed
       end
@@ -182,8 +182,7 @@ module AppellantNotification
     template_name = self.name.split("::")[1]
     def self.create_privacy_act_task
       super
-      AppellantNotification.notify_appellant(appeal_id, participant_id, type, template_id)
-      # AppellantNotification.notify_appellant('bib', '2', '3', '4')
+      AppellantNotification.notify_appellant(appeal)
     end
   end
 
@@ -191,16 +190,11 @@ module AppellantNotification
     template_name = self.name.split("::")[1]
     def cascade_closure_from_child_task?(child_task)
       if child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
-        AppellantNotification.notify_appellant(child_task.appeal.id, child_task.appeal.claimant_participant_id, child_task.appeal.class.to_s, 1119)
+        AppellantNotification.notify_appellant(appeal)
       end
       child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
     end
   end
 end
 
-# Crude testing of throwing errors, run 'rails runner /app/models/appellant_notification.rb' in console
-# AppellantNotification.notify_appellant('bib','2','3','4')
-
-# AppellantNotification::PrivacyActPending.create_privacy_act_task
-# this works when running above command when super is commented out and artificial data is used
-# maybe inner modules need selfs?
+# inner modules need selfs
