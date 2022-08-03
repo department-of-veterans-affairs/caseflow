@@ -108,9 +108,7 @@ class QueueTab
   end
 
   def in_progress_tasks
-    Task.includes(*task_includes).visible_in_queue_table_view
-      .in_progress
-      .where(assigned_to: assignee)
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).in_progress
   end
 
   def recently_completed_tasks
