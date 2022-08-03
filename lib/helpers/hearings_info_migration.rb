@@ -33,11 +33,11 @@ module WarRoom
       RequestStore[:current_user] = User.system_user
       ActiveRecord::Base.transaction do
         appeal_type = "Appeal"
-        hearing = Hearing.find_by_uuid(hearing_uuid)
-        source_appeal = Appeal.find_by_uuid(appeal_uuid)
-        destination_appeal = Appeal.find_by_uuid(appeal_uuid)
+        hearing1 = Hearing.find_by_uuid(hearing_uuid)
+        source_appeal = Appeal.find_by_uuid(source_appeal_uuid)
+        destination_appeal = Appeal.find_by_uuid(destination_appeal_uuid)
 
-        if hearing.nil?
+        if hearing1.nil?
           fail "Invalid UUID. Hearing not found. Aborting..."
         end
         if source_appeal.nil?
@@ -56,13 +56,28 @@ module WarRoom
         check_old_disposition_task_status(hearing, appeal_type)
         
         #update inputs to come from other Hearing
-        Hearing.create!(
-          appeal: attrs[:appeal],
-          hearing_day_id: hearing_day.id,
-          hearing_location_attributes: attrs[:hearing_location_attrs] || {},
-          scheduled_time: attrs[:scheduled_time_string],
-          override_full_hearing_day_validation: override_full_hearing_day_validation,
-          notes: attrs[:notes]
+        hearing2 = Hearing.create!(
+          appeal_id: hearing1.appeal_id,
+          bva_poc: hearing1.bva_poc,
+          created_at: hearing1.created_at,
+          created_by_id: hearing1.created_by_id,
+          disposition: hearing1.disposition,
+          evidence_window_waived: hearing1.evidence_window_waived,
+          hearing_day_id: hearing1.hearing_day_id,
+          judge_id: hearing1.judge_id,
+          military_service: hearing1.military_service,
+          notes: hearing1.notes,
+          prepped: hearing1.prepped,
+          representative_name: hearing1.representative_name,
+          room: hearing1.room,
+          scheduled_time: hearing1.scheduled_time,
+          summary: hearing1.summary,
+          transcript_requested: hearing1.transcript_requested,
+          transcript_sent_date: hearing1.transcript_sent_date,
+          updated_at: Time.now,
+          updated_by_id: User.system_user.id,
+          uuid: destination_appeal_uuid,
+          witness: hearing1.witness>
         )
 
         HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent)
