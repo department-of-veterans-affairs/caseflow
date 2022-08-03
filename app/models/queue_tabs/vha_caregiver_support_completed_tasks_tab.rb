@@ -3,9 +3,6 @@
 class VhaCaregiverSupportCompletedTasksTab < QueueTab
   validate :assignee_is_organization
 
-  attr_accessor :show_reader_link_column, :allow_bulk_assign
-  delegate :column_names, to: :vha_caregiver_support
-
   def label
     COPY::ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE
   end
