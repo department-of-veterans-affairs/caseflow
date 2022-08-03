@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+<<<<<<< HEAD
 require "appellant_notification.rb"
 
 def test_perform_enqueued_jobs
@@ -8,6 +9,9 @@ def test_perform_enqueued_jobs
     end
     assert_performed_jobs 1
 end
+=======
+require "models/appellant_notification.rb"
+>>>>>>> 4b743d79828cf8a58248283d7942ceaf05970468
 
 describe AppellantNotification do
   describe AppellantNotification::AppealDocketed do
