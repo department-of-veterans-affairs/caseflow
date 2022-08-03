@@ -16,6 +16,7 @@ import { css } from 'glamor';
 import EditButtons from './components/EditButtons';
 import PropTypes from 'prop-types';
 import SplitAppealProgressBar from '../intake/components/SplitAppealProgressBar';
+import SplitAppealConfirm from '../intake/pages/SplitAppealConfirm';
 
 const textAlignRightStyling = css({
   textAlign: 'right',
@@ -109,6 +110,7 @@ export class IntakeEditFrame extends React.PureComponent {
           >
             <AppFrame>
               <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitAppealProgressBar} />
+              <Route exact path={PAGE_PATHS.REVIEW_SPLIT} component={SplitAppealProgressBar} />
               <AppSegment filledBackground>
                 <div>
                   <PageRoute
@@ -200,11 +202,21 @@ export class IntakeEditFrame extends React.PureComponent {
                     }}
                   />
 
+                  <PageRoute
+                    exact
+                    path={PAGE_PATHS.REVIEW_SPLIT}
+                    title="Split Appeal | Caseflow Intake"
+                    component={() => {
+                      return (
+                        <SplitAppealConfirm {...this.props} />
+                      );
+                    }}
+                  />
+
                 </div>
               </AppSegment>
               <AppSegment styling={textAlignRightStyling}>
                 <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
-                {/* review component will add buttons for split appeal flow*/}
               </AppSegment>
 
             </AppFrame>
