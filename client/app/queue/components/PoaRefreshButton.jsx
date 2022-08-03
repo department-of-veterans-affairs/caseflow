@@ -34,15 +34,15 @@ export const PoaRefreshButton = ({ appealId }) => {
       >
         {buttonText}
       </Button>
-      /Hardcode the passing of two empty arrays and comment string via a wrapped body. Then Success or fail on case details.
-      /with a status of 200 ok
+      / Mock Button
       <Button
         name="split-appeal"
         legacyStyling={false}
         classNames={['usa-button-secondary']}
-        onClick={() => window.open('/appeals/split')}
-      >
-      Split appeal
+        onClick={this.splitAppealOnClick} > Confirm Appeal
+        onClickSplitAppeal =() => {
+        return <Redirect to={PAGE_PATHS.CREATE_SPLIT} />;
+      };
       </Button>
     </div>
     )}
