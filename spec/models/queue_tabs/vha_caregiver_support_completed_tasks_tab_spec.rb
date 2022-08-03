@@ -9,12 +9,24 @@ describe VhaCaregiverSupportCompletedTasksTab, :postgres do
   end
   let(:assignee) { create(:vha_caregiver_support) }
 
+  describe ".tab_name" do
+    subject { VhaCaregiverSupportCompletedTasksTab.tab_name }
+    
+    context "the tab name should be appropriately reflected" do
+      it "matches what is defined in the QUEUE_CONFIG file" do
+        expect(subject).to eq(Constants.QUEUE_CONFIG.CAREGIVER_SUPPORT_COMPLETED_TASKS_TAB_NAME)
+        expect(subject).to eq("caregiver_support_completed")
+      end
+    end
+  end
+  
   describe ".label" do
     subject { tab.label }
 
     context "the tab label should be appropriately reflected" do
-      it "matches what is in the Copy.json file" do
+      it "matches what is defined in the Copy.json file" do
         expect(subject).to eq(COPY::ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE)
+        expect(subject).to eq("Completed")
       end
     end
   end
@@ -23,8 +35,9 @@ describe VhaCaregiverSupportCompletedTasksTab, :postgres do
     subject { tab.description }
 
     context "the description should be appropriately reflected" do
-      it "matches what is in the Copy.json file" do
+      it "matches what is defined in the Copy.json file" do
         expect(subject).to eq(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+        expect(subject).to eq("Cases completed (last 7 days):")
       end
     end
   end
