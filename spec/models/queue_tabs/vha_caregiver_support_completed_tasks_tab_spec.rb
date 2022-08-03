@@ -9,6 +9,26 @@ describe VhaCaregiverSupportCompletedTasksTab, :postgres do
   end
   let(:assignee) { create(:vha_caregiver_support) }
 
+  describe ".label" do
+    subject { tab.label }
+
+    context "the tab label should be appropriately reflected" do
+      it "matches what is in the Copy.json file" do
+        expect(subject).to eq(COPY::ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE)
+      end
+    end
+  end
+
+  describe ".description" do
+    subject { tab.description }
+
+    context "the description should be appropriately reflected" do
+      it "matches what is in the Copy.json file" do
+        expect(subject).to eq(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+      end
+    end
+  end
+
   describe ".column_names" do
     subject { tab.column_names }
 
