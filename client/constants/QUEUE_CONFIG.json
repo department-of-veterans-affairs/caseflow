@@ -32,6 +32,9 @@
   "EDUCATION_EMO_ASSIGNED_TASKS_TAB_NAME": "education_emo_assigned",
   "EDUCATION_EMO_COMPLETED_TASKS_TAB_NAME": "education_emo_completed",
 
+  "VHA_CAREGIVER_SUPPORT_UNASSIGNED_TASK_TAB_NAME":
+  "vha_caregiver_support_unassigned",
+  
   "COLUMNS": {
     "APPEAL_TYPE": {
       "filterable": true,
