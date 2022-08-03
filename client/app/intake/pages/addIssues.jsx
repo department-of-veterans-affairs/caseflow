@@ -305,6 +305,7 @@ class AddIssuesPage extends React.Component {
             >
             + Add issue:
             </Button>,
+            (' '),
             <Button
               name="split-appeal"
               legacyStyling={false}
