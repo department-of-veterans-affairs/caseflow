@@ -108,7 +108,6 @@ class QueueTab
   end
 
   def in_progress_tasks
-    # Might generalize this and move it somewhere since it's the same across like 4 files
     Task.includes(*task_includes).visible_in_queue_table_view
       .in_progress
       .where(assigned_to: assignee)
