@@ -9,14 +9,11 @@ class VhaDocumentSearchTask < Task
 
   def available_actions(user)
     if assigned_to.user_has_access?(user) &&
-      FeatureToggle.enabled?(:vha_predocket_workflow, user: RequestStore.store[:current_user])
+       FeatureToggle.enabled?(:vha_predocket_workflow, user: RequestStore.store[:current_user])
 
-      case assigned_to
-      in VhaCamo
-        return VHA_CAMO_TASK_ACTIONS
-      in VhaCaregiverSupport
-        return CAREGIVER_TASK_ACTIONS
-      end
+      return VHA_CAMO_TASK_ACTIONS if assigned_to.is_a?(VhaCamo)
+
+      return VHA_CAREGIVER_SUPPORT_TASK_ACTIONS if assigned_to.is_a?(VhaCaregiverSupport)
     else
       []
     end
@@ -27,7 +24,7 @@ class VhaDocumentSearchTask < Task
     Constants.TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.to_h
   ].freeze
 
-  CAREGIVER_TASK_ACTIONS = [
+  VHA_CAREGIVER_SUPPORT_TASK_ACTIONS = [
     Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS.to_h
   ].freeze
 
