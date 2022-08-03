@@ -2,8 +2,38 @@
 
 # Module containing Aspect Overrides to Classes used to Track Statuses for Appellant Notification
 module AppellantNotification
-  class AppealDocketed
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.appeal_docketed)
+
+  def notify_appellant(appeal_id, participant_id, type, template_id = 0)
+    msg_bdy = {
+      queue_url: "caseflow_development_send_notifications",
+      message_body: "Notification for #{type}",
+      message_attributes: {
+        "claimant" => {
+          value: participant_id,
+          data_type: "String"
+        },
+        "template_id" => {
+          value: template_id,
+          data_type: "String"
+        },
+        "appeal_id" => {
+          value: appeal_id,
+          data_type: "Integer"
+        },
+        "appeal_type" => {
+          value: type,
+          data_type: "String"
+        },
+        "status" => {
+          value: "<insert status here>",
+          data_type: "String"
+        }
+      }
+    }
+    Shoryuken::Client.queues("caseflow_development_send_notifications").send_message(message_body: msg_bdy)
+  end
+  module AppealDocketed
+    def notify_appellant(appeal_id, participant_id, type, template_id = 0)
       msg_bdy = {
         queue_url: "<queue_url>",
         message_body: "Notification for #{type}",
@@ -30,23 +60,24 @@ module AppellantNotification
           }
         }
       }
-      Shoryuken::Client.queues("default").send_message(message_body: msg_bdy)
+      # Shoryuken::Client.queues('caseflow_development_send_notifications').send_message(message_body: msg_bdy)
     end
 
     def distribution_task
+      RequestStore[:current_user]=User.system_user
       @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
                              (DistributionTask.create!(appeal: @appeal, parent: @root_task) &&
-                             notify_appellant(appeal_id, participant_id, type, template_id))
+                             notify_appellant(@appeal.id, @appeal.claimant_participant_id, @appeal.class.to_s, 1111))
     end
 
     def docket_appeal
       super
-      notify_appellant(appeal_id, participant_id, type, template_id)
+      notify_appellant(appeal.id, appeal&.appellant&.participant_id, appeal.class.to_s, 1111)
     end
   end
 
-  class AppealDecisionMailed
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.appeal_decision_mailed)
+  module AppealDecisionMailed
+    def notify_appellant(appeal_id, participant_id, type, template_id = 0)
       msg_bdy = {
         queue_url: "<queue_url>",
         message_body: "Notification for #{type}",
@@ -79,7 +110,7 @@ module AppellantNotification
     # Aspect for Legacy Appeals
     def complete_root_task!
       super
-      notify_appellant(appeal_id, participant_id, type, template_id)
+      notify_appellant(@appeal.id, @appeal&.appellant&.participant_id, @appeal.class.to_s, 1112)
     end
 
     # Aspect for AMA Appeals
@@ -89,8 +120,8 @@ module AppellantNotification
     end
   end
 
-  class HearingScheduled
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.hearing_scheduled)
+  module HearingScheduled
+    def notify_appellant(appeal_id, participant_id, type, template_id = 0)
       # TODO
     end
 
@@ -100,8 +131,8 @@ module AppellantNotification
     end
   end
 
-  class HearingPostponed
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.hearing_postponed)
+  module HearingPostponed
+    def notify_appellant(appeal_id, participant_id, type, template_id = 0)
       # TODO
     end
 
@@ -127,8 +158,8 @@ module AppellantNotification
     end
   end
 
-  class HearingWithdrawn
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.hearing_withdrawn)
+  module HearingWithdrawn
+    def notify_appellant(appeal_id, participant_id, type, template_id = 0)
       # TODO
     end
 
@@ -138,8 +169,8 @@ module AppellantNotification
     end
   end
 
-  class IHPTaskPending
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.ihp_task_pending)
+  module IHPTaskPending
+    def notify_appellant(appeal_id, participant_id, type, template_id = 0)
       # TODO
     end
 
@@ -161,7 +192,7 @@ module AppellantNotification
     end
   end
 
-  class IHPTaskComplete
+  module IHPTaskComplete
     def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.ihp_task_complete)
       # TODO
     end
@@ -182,8 +213,8 @@ module AppellantNotification
     end
   end
 
-  class PrivacyActPending
-    def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.privacy_act_pending)
+  module PrivacyActPending
+    def notify_appellant(appeal_id, participant_id, type, template_id = 0)
       # TODO
     end
 
@@ -192,8 +223,8 @@ module AppellantNotification
       notify_appellant(appeal_id, participant_id, type, template_id)
     end
 
-    class PrivacyActComplete
-      def notify_appellant(appeal_id, participant_id, type, template_id = Constants.TEMPLATE_IDS.privacy_act_complete)
+    module PrivacyActComplete
+      def notify_appellant(appeal_id, participant_id, type, template_id = 0)
         # TODO
       end
 
