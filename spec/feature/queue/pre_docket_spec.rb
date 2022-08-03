@@ -105,18 +105,20 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             text: Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS.label
           ).click
 
-          expect(page).to have_current_path("/organizations/#{VhaCaregiverSupport.singleton.url}")
           expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
           expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY)
 
           find("button", class: "usa-button", text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON).click
 
+          find format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, vha_caregiver.name)
           expect(page).to have_content(
             format(
               COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
               appeal.veteran_full_name
             )
           )
+
+          expect(page).to have_current_path("/organizations/#{vha_caregiver.url}")
 
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.in_progress
         end
