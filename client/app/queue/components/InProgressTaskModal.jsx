@@ -43,6 +43,7 @@ const InProgressTaskModal = (props) => {
       title={taskData?.modal_title ?? ''}
       pathAfterSubmit={taskData?.redirect_after ?? '/queue'}
       submit={submit}
+      button={taskData.modal_button_text || 'Submit'}
     >
       {taskData?.modal_body &&
           <div> { StringUtil.nl2br(taskData.modal_body) } </div>
