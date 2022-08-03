@@ -21,7 +21,6 @@
 ##
 class AssignHearingDispositionTask < Task
   include RunAsyncable
-  prepend AppellantNotification
 
   validates :parent, presence: true, parentTask: { task_type: HearingTask }, on: :create
   delegate :hearing, to: :hearing_task, allow_nil: true

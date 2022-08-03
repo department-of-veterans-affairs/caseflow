@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class FoiaColocatedTask < ColocatedTask
-  prepend AppellantNotification
-
   after_create :create_privacy_act_task
 
   def self.label
