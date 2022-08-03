@@ -46,6 +46,7 @@
       vha_irregular_appeals: FeatureToggle.enabled?(:vha_irregular_appeals, user: current_user),
       vso_virtual_opt_in: FeatureToggle.enabled?(:vso_virtual_opt_in, user: current_user),
       das_case_timeliness: FeatureToggle.enabled?(:das_case_timeliness, user: current_user)
+      va_notify_prepend: FeatureToggle.enabled?(:va_notify_prepend, user: current_user)
     }
   }) %>
 <% end %>
