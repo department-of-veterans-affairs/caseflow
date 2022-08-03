@@ -110,7 +110,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           find("button", class: "usa-button", text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON).click
 
-          find format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, VhaCaregiverSupport.singleton.name)
           expect(page).to have_content(
             format(
               COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
