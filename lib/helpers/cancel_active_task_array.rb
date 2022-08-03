@@ -9,35 +9,27 @@ module WarRoom
       RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1",
                                                    station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
       # Sets the id of user or organization.
-      user = assigned_to_id.to_i
+      id = assigned_to_id.to_i
       puts("Checking for a user or organization...")
       # Show the user if found.
-      if User.find_by_id(user).nil?
-        puts("#{user} User Not found")
-        return
+      user = User.find_by_id(id)
+      if user.nil?
+        puts("Unable to find user #{id}")
       end
-
       # Show the organization if found.
-      if !Organization.find_by_id(user).nil?
-        puts("Unable to find organization #{user} based upon Organization.find_by_id.")
-        return
+      organization = Organization.find_by_id(id)
+      if organization.nil?
+        puts("Unable to find organization #{id} based upon Organization.find_by_id.")
       end
-
       # Checks if the assigned_to_id is found in the User or organization table
-      if !User.find_by_id(user).nil? || !Organization.find_by_id(user).nil?
-        puts("Unable to find user or organization by the assigned_to_id of #{user}")
-        return
+      if user.nil? && organization.nil?
+        puts("Unable to find user or organization by the assigned_to_id of #{id}")
+        fail Interrupt
       end
 
       # If a assigned to ID is found, this Checks to see if task type exists in the task table.
       # Checks if the user or organization has tasks in general.
-      if (!User.find_by_id(user).nil? || Organization.find_by_id(user).nil?) &&
-         Task.where(assigned_to_id: user, type: task_type).nil?
-        puts("Unable to find tasks #{task_type} that were assigned to that User ID of #{user}...")
-        fail Interrupt
-      end
-      # Checks that the assigned_to have the specified task type
-      if Task.where(assigned_to_id: user, task: task_type).nil?
+      if Task.where(assigned_to_id: id, task: task_type).empty?
         puts("Unable to find task type. Have you checked the Metabase
                 task table for task type for specified user or organization
                 ? Aborting...")
@@ -46,7 +38,7 @@ module WarRoom
       # Find all of the task types for that user or org, to be
       # cancelled that shows up within the appeal
       # as a "Status" of "assigned", "in_progress", or "on_hold"
-      array_task_ids = Task.where(assigned_to_id: user,
+      array_task_ids = Task.where(assigned_to_id: id,
                                   type: task_type, status: %w[on_hold in_progress assigned])
       puts(array_task_ids.to_s)
       if array_task_ids.empty?
@@ -60,11 +52,10 @@ module WarRoom
                 unless associated, complex, or dependent before or after tasks methods
                 related to other tasks")
       # Cancels the task array from the array_task_ids by the task find by
-      array_task_ids = Task.where(assigned_to_id: user, type: task_type, status: %w[on_hold in_progress assigned])
       RequestStore[:current_user] = User.system_user
       array_task_ids.update(status: Constants.TASK_STATUSES.cancelled,
-                            updated_at: Time.zone.now, cancelled_by_id: RequestStore[:current_user]&.id)
-      puts("Task #{array_task_ids} completed")
+                            updated_at: Time.zone.now, cancelled_by_id: RequestStore[:current_user].id)
+      puts "Task #{array_task_ids} completed"
     end
   end
 end
