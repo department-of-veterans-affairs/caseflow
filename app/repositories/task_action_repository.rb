@@ -598,8 +598,6 @@ class TaskActionRepository
       }
     end
 
-    vha_caregiver_support_mark_task_in_progress
-
     def emo_return_to_board_intake(*)
       {
         modal_title: COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
