@@ -8,8 +8,10 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     FeatureToggle.enable!(:vha_predocket_appeals)
     FeatureToggle.enable!(:visn_predocket_workflow)
     FeatureToggle.enable!(:docket_vha_appeals)
+
     bva_intake.add_user(bva_intake_user)
     camo.add_user(camo_user)
+    vha_caregiver.add_user(vha_caregiver_user)
     emo.add_user(emo_user)
     program_office.add_user(program_office_user)
     regional_office.add_user(regional_office_user)
@@ -23,18 +25,23 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     FeatureToggle.disable!(:docket_vha_appeals)
   end
 
+  # Organizations
   let(:bva_intake) { BvaIntake.singleton }
-  let!(:bva_intake_user) { create(:intake_user) }
   let(:camo) { VhaCamo.singleton }
-  let(:camo_user) { create(:user) }
+  let(:vha_caregiver) { VhaCaregiverSupport.singleton }
   let(:emo) { EducationEmo.singleton }
-  let(:emo_user) { create(:user) }
+  let(:education_rpo) { create(:education_rpo) }
   let(:program_office) { create(:vha_program_office) }
-  let(:program_office_user) { create(:user) }
   let(:regional_office) { create(:vha_regional_office) }
   let(:regional_office_user) { create(:user) }
-  let(:education_rpo) { create(:education_rpo) }
+
+  # Users
+  let!(:bva_intake_user) { create(:intake_user) }
+  let(:camo_user) { create(:user) }
+  let(:vha_caregiver_user) { create(:user) }
+  let(:emo_user) { create(:user) }
   let(:education_rpo_user) { create(:user) }
+  let(:program_office_user) { create(:user) }
 
   let(:veteran) { create(:veteran) }
   let(:po_instructions) { "Please look for this veteran's documents." }
@@ -77,6 +84,38 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             expect(page).to have_content("Pre-Docket")
             expect(page).to have_content(c)
           end
+        end
+
+        step "enacting the 'Mark task as in progress' task action updates
+          the VhaDocumentSearchTask's status to in_progress" do
+          User.authenticate!(user: vha_caregiver_user)
+
+          vha_document_search_task = VhaDocumentSearchTask.last
+          appeal = vha_document_search_task.appeal
+
+          visit "/queue/appeals/#{appeal.external_id}"
+
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS.label
+          ).click
+
+          expect(page).to have_current_path("/organizations/#{VhaCaregiverSupport.singleton.url}")
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY)
+
+          find("button", class: "usa-button", text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON).click
+
+          expect(page).to have_content(
+            format(
+              COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
+              appeal.veteran_full_name
+            )
+          )
+
+          expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.in_progress
         end
       end
     end
