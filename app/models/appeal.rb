@@ -530,6 +530,8 @@ class Appeal < DecisionReview
       end
 
       next if tasks.any? { |task| task.is_a?(VeteranRecordRequest) && task.assigned_to == business_line }
+      # WIP needs extensive testing but does not create veteran record request task for voc_rehab
+      return true if business_line.url == "voc-rehab"
 
       VeteranRecordRequest.create!(
         parent: root_task,
