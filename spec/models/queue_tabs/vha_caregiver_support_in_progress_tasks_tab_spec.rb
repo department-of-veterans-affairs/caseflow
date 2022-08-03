@@ -39,7 +39,7 @@ describe VhaCaregiverSupportInProgressTasksTab, :postgres do
       let!(:assignee_in_progress_tasks) do
         create_list(:vha_document_search_task, 5, :in_progress, assigned_to: assignee)
       end
-      let!(:vha_camo_in_progress_tasks) { create_list(:vha_document_search_task, :in_progress, 9) }
+      let!(:vha_camo_in_progress_tasks) { create_list(:vha_document_search_task, 9, :in_progress) }
       let!(:assignee_assigned_tasks) do
         create_list(:vha_document_search_task, 5, :assigned, assigned_to: assignee)
       end
