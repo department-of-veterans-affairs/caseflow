@@ -68,5 +68,9 @@ module WarRoom
                             updated_at: Time.zone.now, cancelled_by_id: RequestStore[:current_user].id)
       puts "Task #{array_task_ids} completed"
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
   end
 end
