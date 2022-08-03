@@ -91,6 +91,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           User.authenticate!(user: vha_caregiver_user)
 
           vha_document_search_task = VhaDocumentSearchTask.last
+          # This should be removed once APPEALS-7453 is merged in
+          vha_document_search_task.update(assigned_to: vha_caregiver)
+
           appeal = vha_document_search_task.appeal
 
           visit "/queue/appeals/#{appeal.external_id}"
