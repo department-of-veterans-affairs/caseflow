@@ -17,11 +17,8 @@ describe VhaCaregiverSupportUnassignedTasksTab, :postgres do
     context "when only the assignee argument is passed when instantiating an VhaCaregiverSupportUnassignedTasksTab" do
       let(:params) { { assignee: create(:vha_caregiver_support) } }
 
-      it "return the correct number of columns" do
+      it "returns the correct number of columns" do
         expect(subject.length).to eq(8)
-      end
-      it "does not include the reader link column" do
-        expect(subject).to_not include(Constants.QUEUE_CONFIG.COLUMNS.DOCKET_COUNT_READER_LINK.name)
       end
     end
 
@@ -35,6 +32,28 @@ describe VhaCaregiverSupportUnassignedTasksTab, :postgres do
       end
       it "includes the reader link column" do
         expect(subject).to include(Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name)
+      end
+    end
+  end
+  
+  describe ".label" do
+     subject { tab.label }
+
+     context "when tab label is visible" do
+       it "should match defined label for unassigned tasks" do
+        expect(subject).to eq(COPY::VHA_CAREGIVER_SUPPORT_QUEUE_PAGE_UNASSIGNED_TAB_TITLE)
+        expect(subject).to eq("Unassigned")
+       end
+      end
+  end
+  
+  describe ".description" do
+    subject { tab.description }
+
+    context "when we want to show the user the description" do
+      it "matches description for unassigned tasks tab" do
+        expect(subject).to eq(COPY::VHA_CAREGIVER_SUPPORT_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION)
+        expect(subject).to eq("Cases assigned to VHA Caregiver Support Program:")
       end
     end
   end
