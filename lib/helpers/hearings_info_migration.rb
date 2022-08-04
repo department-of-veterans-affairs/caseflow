@@ -5,7 +5,7 @@
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/PerceivedComplexity
 # rubocop:disable Metrics/ParameterLists
-# rubocop:enable Style/SignalException
+# rubocop:disable Style/SignalException
 # Migrates AMA hearings
 module WarRoom
   class HearingsInfoMigration
