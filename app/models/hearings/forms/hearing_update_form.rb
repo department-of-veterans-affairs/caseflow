@@ -27,6 +27,18 @@ class HearingUpdateForm < BaseHearingUpdateForm
     )
   end
 
+  def after_update_hearing
+    if virtual_hearing_created?
+      updated_hearing_type = Constants.HEARING_REQUEST_TYPES.virtual
+    elsif virtual_hearing_cancelled?
+      updated_hearing_type = hearing.original_request_type
+    end
+
+    hearing.appeal.update!(
+      changed_hearing_request_type: updated_hearing_type
+    )
+  end
+
   # rubocop:disable Metrics/MethodLength
   def hearing_updates
     {
