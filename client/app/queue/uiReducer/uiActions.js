@@ -72,6 +72,14 @@ export const setPoaRefreshAlert = (alertType, message, powerOfAttorney) => ({
   }
 });
 
+export const setConfirmAppealSplitAlert = (alertType, message) => ({
+  type: ACTIONS.SET_CONFIRM_APPEAL_SPLIT_ALERT,
+  payload: {
+    alertType,
+    message,
+  }
+});
+
 export const hideSuccessMessage = () => ({
   type: ACTIONS.HIDE_SUCCESS_MESSAGE
 });

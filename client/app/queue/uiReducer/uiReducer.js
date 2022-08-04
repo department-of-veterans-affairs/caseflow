@@ -41,7 +41,8 @@ export const initialState = {
     regionalOffice: null
   },
   targetUser: {},
-  poaAlert: {}
+  poaAlert: {},
+  splitAppealAlert: {}
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -76,6 +77,14 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_POA_REFRESH_ALERT:
     return update(state, {
       poaAlert: {
+        alertType: { $set: action.payload.alertType },
+        message: { $set: action.payload.message },
+        powerOfAttorney: { $set: action.payload.powerOfAttorney }
+      }
+    });
+  case ACTIONS.SET_CONFIRM_APPEAL_SPLIT_ALERT:
+    return update(state, {
+      splitAppealAlert: {
         alertType: { $set: action.payload.alertType },
         message: { $set: action.payload.message },
         powerOfAttorney: { $set: action.payload.powerOfAttorney }
