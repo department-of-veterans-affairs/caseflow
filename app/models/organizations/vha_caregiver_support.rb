@@ -19,7 +19,13 @@ class VhaCaregiverSupport < Organization
   end
 
   def queue_tabs
-    []
+    [
+      unassigned_tasks_tab
+    ]
+  end
+
+  def unassigned_tasks_tab
+    ::VhaCaregiverSupportUnassignedTasksTab.new(assignee: self)
   end
 
   COLUMN_NAMES = [
