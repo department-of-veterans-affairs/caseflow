@@ -34,7 +34,7 @@ export const PoaRefreshButton = ({ appealId }) => {
       >
         {buttonText}
       </Button>
-      / Mock Button
+
       <Button
         name="split-appeal"
         legacyStyling={false}
