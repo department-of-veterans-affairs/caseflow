@@ -57,4 +57,30 @@ describe VhaCaregiverSupportUnassignedTasksTab, :postgres do
       end
     end
   end
+
+  describe ".self.tab_name" do
+    subject { described_class.tab_name }
+
+    context "when the tab name is visible" do
+      it "matches expected tab name" do
+        expect(subject).to eq(Constants.QUEUE_CONFIG.VHA_CAREGIVER_SUPPORT_UNASSIGNED_TASK_TAB_NAME)
+        expect(subject).to eq("vha_caregiver_support_unassigned")
+      end
+    end
+  end
+
+  describe ".tasks" do
+    subject { tab.tasks }
+
+    context "when assignee views unassigned tab" do
+      let!(:assignee_assigned_task) do
+        create_list(:vha_document_search_task, 4, :assigned, assigned_to: assignee)
+      end
+
+      it "returns a list of unassigned tasks" do
+        expect(subject).to match_array assignee_assigned_task
+        expect(subject.empty?).not_to eq true
+      end
+    end
+  end
 end
