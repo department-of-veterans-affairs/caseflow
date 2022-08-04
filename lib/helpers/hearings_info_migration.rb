@@ -1,12 +1,12 @@
 # frozen_string_literal: true
-
+# rubocop:disable all
+# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/CyclomaticComplexity
+# rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/PerceivedComplexity
+# Migrates AMA hearings
 module WarRoom
   class HearingsInfoMigration
-    # rubocop:disable Metrics/AbcSize
-    # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/MethodLength
-    # rubocop:disable Metrics/PerceivedComplexity
-    # Migrates AMA hearings
     def move_ama_hearing(hearing_uuid, appeal_uuid)
       RequestStore[:current_user] = User.system_user
       ActiveRecord::Base.transaction do
@@ -197,9 +197,10 @@ module WarRoom
         disposition_task.update!(status: "cancelled", closed_at: Time.zone.now, cancelled_by_id: User.system_user.id)
       end
     end
-    # rubocop:enable Metrics/AbcSize
-    # rubocop:enable Metrics/CyclomaticComplexity
-    # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/PerceivedComplexity
   end
 end
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/CyclomaticComplexity
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/PerceivedComplexity
+# rubocop:enable all
