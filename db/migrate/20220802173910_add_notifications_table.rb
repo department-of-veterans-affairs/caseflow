@@ -1,11 +1,10 @@
-class AddNotificationsTable < ActiveRecord::Migration[5.2]
+class AddNotificationsTable < Caseflow::Migration
   def change
-    create_table :notifications, id: false do |t|
+    create_table :notifications do |t|
       t.belongs_to :notification_events
-      t.serial     :id, primary_key:true, null: false, comment: "Autoincremented notification ID"
       t.string     :appeals_id, null: false, comment: "ID of the Appeal"
       t.string     :appeals_type, null: false, comment: "Type of Appeal"
-      t.string     :event_type, null: false, foreign_key: true, comment: "Type of Event"
+      t.string     :event_type, null: false, comment: "Type of Event"
       t.date       :event_date, null: false, comment: "Date of Event"
       t.string     :participant_id, comment: "ID of Participant"
       t.timestamp  :notified_at, null: false, comment: "Time Notification was created"
@@ -19,6 +18,6 @@ class AddNotificationsTable < ActiveRecord::Migration[5.2]
       t.timestamp  :updated_at, comment: "TImestamp of when Notification was Updated"
   end
 
-  add_foreign_key "event_type", "notification_events", column: "event_type", validate:false
+  add_foreign_key "notifications", "notification_events", column: "event_type", primary_key: "event_type", validate:false
   end
 end
