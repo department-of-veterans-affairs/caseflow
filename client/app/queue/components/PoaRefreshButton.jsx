@@ -40,9 +40,6 @@ export const PoaRefreshButton = ({ appealId }) => {
         legacyStyling={false}
         classNames={['usa-button-secondary']}
         onClick={this.splitAppealOnClick} > Confirm Appeal
-        onClickSplitAppeal =() => {
-        return <Redirect to={PAGE_PATHS.CREATE_SPLIT} />;
-      };
       </Button>
     </div>
     )}
