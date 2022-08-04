@@ -54,8 +54,7 @@ module WarRoom
         end
         check_old_hearing_task_status(hearing, appeal_type)
         check_old_disposition_task_status(hearing, appeal_type)
-        
-        #update inputs to come from other Hearing
+
         hearing2 = Hearing.create!(
           appeal_id: hearing1.appeal_id,
           bva_poc: hearing1.bva_poc,
@@ -77,7 +76,7 @@ module WarRoom
           updated_at: Time.now,
           updated_by_id: User.system_user.id,
           uuid: destination_appeal_uuid,
-          witness: hearing1.witness>
+          witness: hearing1.witness
         )
 
         HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent)
