@@ -41,26 +41,63 @@ require "appellant_notification.rb"
 
 describe AppellantNotification do
   describe "self.handle_errors" do
-    let!(:appeal) { create(:appeal, number_of_claimants: 1) }
-    describe "with no claimant listed" do
-      let!(:appeal) { create(:appeal, number_of_claimants: 0) }
-      it "raises" do
-        expect { AppellantNotification.handle_errors(appeal) }.to raise_error(AppellantNotification::NoClaimantError)
+    let(:appeal) { create(:appeal, number_of_claimants: 1) }
+    context "with no claimant listed" do
+      let(:appeal) { create(:appeal, number_of_claimants: 0) }
+      it "returns error message" do
+        expect(AppellantNotification.handle_errors(appeal)).to eq AppellantNotification::NoClaimantError.new(appeal.id).message
+        # raise_error(AppellantNotification::NoClaimantError)
       end
     end
-    describe "with no participant_id listed" do
+
+    context "with no participant_id listed" do
       let(:claimant) { create(:claimant, participant_id: "") }
-      let!(:appeal) { create(:appeal) }
-      it "raises" do
-        expect { 
-          appeal.claimants = [claimant]
-          AppellantNotification.handle_errors(appeal) 
-        }.to raise_error(AppellantNotification::NoParticipantIdError)
+      let(:appeal) { create(:appeal) }
+      before do
+        appeal.claimants = [claimant]
+      end
+      it "returns error message" do
+        expect(AppellantNotification.handle_errors(appeal)).to eq AppellantNotification::NoParticipantIdError.new(appeal.id).message
       end
     end
-    describe "with no errors" do
+      
+    context "with no errors" do
       it "doesn't raise" do
-        expect { AppellantNotification.handle_errors(appeal) }.not_to raise_error
+        expect(AppellantNotification.handle_errors(appeal)).to eq "Success"
+      end
+    end
+  end
+
+  describe "self.create_payload" do 
+    let(:good_appeal) { create(:appeal, number_of_claimants: 1) }
+    let(:bad_appeal) { create(:appeal) }
+    let(:bad_claimant) { create(:claimant, participant_id: "") }
+    let(:template_name) { "test" }
+    context "creates a payload with no exceptions" do
+      it "has a status value of success" do
+        # I want to check that msg_bdy contains the success status from handle_errors
+        expect(AppellantNotification.create_payload(good_appeal, template_name)[:message_attributes][:status][:value]).to eq "Success"
+      end
+    end
+    context "creates a payload with exceptions" do
+      before do
+        bad_appeal.claimants = [bad_claimant]
+      end
+      it "does not have a success status" do
+        expect(AppellantNotification.create_payload(bad_appeal, template_name)[:message_attributes][:status][:value]).not_to eq "Success"
+      end
+    end
+  end
+
+  describe "self.notify_appellant" do
+    let(:appeal) { create(:appeal, number_of_claimants: 1) }
+    let(:template_name) { "test" }
+    let(:payload) {Hash.new(status: "Success")}
+    context "sends message to shoryuken" do
+      it "sends the payload" do
+        mock = double(Shoryuken::Client)
+        allow(mock).to receive(:queues).with(ActiveJob::Base.queue_name_prefix + '_send_notifications')
+        allow(mock.queues(ActiveJob::Base.queue_name_prefix + '_send_notifications')).to receive(:send_message).with(payload)
       end
     end
   end
