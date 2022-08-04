@@ -22,7 +22,7 @@ module WarRoom
 
         hearing_task = most_recent_hearing_task(appeal.id, appeal_type)
         schedule_task = most_recent_schedule_hearing_task(appeal.id, appeal_type)
-        if schedule_task.nil? || schedule_task.status == "completed" || schedule_task.status == "cancelled"
+        if can_create_tasks?(schedule_task)
           hearing_task, schedule_task = create_tasks(appeal, "Appeal")
         end
         check_old_hearing_task_status(hearing, appeal_type)
@@ -41,11 +41,11 @@ module WarRoom
       RequestStore[:current_user] = User.system_user
       ActiveRecord::Base.transaction do
         appeal_type = "Appeal"
-        hearing1 = Hearing.find_by_uuid(hearing_uuid)
+        hearing = Hearing.find_by_uuid(hearing_uuid)
         source_appeal = Appeal.find_by_uuid(source_appeal_uuid)
         destination_appeal = Appeal.find_by_uuid(destination_appeal_uuid)
 
-        if hearing1.nil?
+        if hearing.nil?
           fail "Invalid UUID. Hearing not found. Aborting..."
         end
         if source_appeal.nil?
@@ -57,39 +57,24 @@ module WarRoom
 
         hearing_task = most_recent_hearing_task(destination_appeal.id, appeal_type)
         schedule_task = most_recent_schedule_hearing_task(destination_appeal.id, appeal_type)
-        if schedule_task.nil? || schedule_task.status == "completed" || schedule_task.status == "cancelled"
+        if can_create_tasks?(schedule_task)
           hearing_task, schedule_task = create_tasks(appeal, "Appeal")
         end
 
-        hearing2 = Hearing.create!(
-          appeal_id: destination_appeal.appeal_id,
-          bva_poc: hearing1.bva_poc,
-          created_at: hearing1.created_at,
-          created_by_id: hearing1.created_by_id,
-          disposition: hearing1.disposition,
-          evidence_window_waived: hearing1.evidence_window_waived,
-          hearing_day_id: hearing1.hearing_day_id,
-          judge_id: hearing1.judge_id,
-          military_service: hearing1.military_service,
-          notes: hearing1.notes,
-          prepped: hearing1.prepped,
-          representative_name: hearing1.representative_name,
-          room: hearing1.room,
-          scheduled_time: hearing1.scheduled_time,
-          summary: hearing1.summary,
-          transcript_requested: hearing1.transcript_requested,
-          transcript_sent_date: hearing1.transcript_sent_date,
-          updated_at: Time.zone.now,
-          updated_by_id: User.system_user.id,
-          uuid: destination_appeal_uuid,
-          witness: hearing1.witness
-        )
+        attributes = hearing.attributes.select{|attr, value| !%w[id appeal_id updated_at updated_by_id uuid].include?(attr)}
+        attributes.merge!({appeal_id: destination_appeal.appeal_id,
+                          updated_at: Time.zone.now,
+                          updated_by_id: User.system_user.id,
+                          uuid: destination_appeal_uuid
+                         })
 
-        HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent)
+        new_appeal_hearing = Hearing.create!(attributes)
 
-        check_old_hearing_task_status(hearing2, appeal_type)
-        check_old_disposition_task_status(hearing2, appeal_type)
-        create_and_set_disposition_task(destination_appeal, hearing2, hearing_task)
+        HearingTaskAssociation.create!(hearing: new_appeal_hearing, hearing_task: parent)
+
+        check_old_hearing_task_status(new_appeal_hearing, appeal_type)
+        check_old_disposition_task_status(new_appeal_hearing, appeal_type)
+        create_and_set_disposition_task(destination_appeal, new_appeal_hearing, hearing_task)
         schedule_task.update!(status: "completed",
                               closed_at: Time.zone.now,
                               assigned_to: User.find_by_id(User.system_user.id))
@@ -112,7 +97,7 @@ module WarRoom
 
         hearing_task = most_recent_hearing_task(appeal.id, appeal_type)
         schedule_task = most_recent_schedule_hearing_task(appeal.id, appeal_type)
-        if schedule_task.nil? || schedule_task.status == "completed" || schedule_task.status == "cancelled"
+        if can_create_tasks?(schedule_task)
           hearing_task, schedule_task = create_tasks(appeal, appeal_type)
         end
         check_old_hearing_task_status(hearing, appeal_type)
@@ -163,15 +148,18 @@ module WarRoom
     end
 
     def check_old_disposition_task_status(hearing, appeal_type)
-      old_disposition_task = AssignHearingDispositionTask.where(appeal_id: hearing.appeal.id,
+      old_task = AssignHearingDispositionTask.where(appeal_id: hearing.appeal.id,
                                                                 appeal_type: appeal_type).order(created_at: :desc).first
-      @old = old_disposition_task
-      if @old && @old.status != "completed" && @old.status != "cancelled"
 
-        @old.update!(status: "cancelled",
+      if old_task && !%w[completed cancelled].include?(old_task.status)
+        old_task.update!(status: "cancelled",
                      closed_at: Time.zone.now,
                      cancelled_by_id: User.system_user.id)
       end
+    end
+
+    def can_create_tasks?(schedule_task)
+      schedule_task.nil? || %w[completed cancelled].include?(schedule_task.status)
     end
 
     # Wrapper method for creating the tasks for the hearing task tree
