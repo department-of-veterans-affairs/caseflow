@@ -60,11 +60,9 @@ module WarRoom
         if schedule_task.nil? || schedule_task.status == "completed" || schedule_task.status == "cancelled"
           hearing_task, schedule_task = create_tasks(appeal, "Appeal")
         end
-        check_old_hearing_task_status(hearing, appeal_type)
-        check_old_disposition_task_status(hearing, appeal_type)
 
         hearing2 = Hearing.create!(
-          appeal_id: hearing1.appeal_id,
+          appeal_id: destination_appeal.appeal_id,
           bva_poc: hearing1.bva_poc,
           created_at: hearing1.created_at,
           created_by_id: hearing1.created_by_id,
@@ -89,7 +87,9 @@ module WarRoom
 
         HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent)
 
-        create_and_set_disposition_task(destination_appeal, hearing, hearing_task)
+        check_old_hearing_task_status(hearing2, appeal_type)
+        check_old_disposition_task_status(hearing2, appeal_type)
+        create_and_set_disposition_task(destination_appeal, hearing2, hearing_task)
         schedule_task.update!(status: "completed",
                               closed_at: Time.zone.now,
                               assigned_to: User.find_by_id(User.system_user.id))
