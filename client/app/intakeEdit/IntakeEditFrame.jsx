@@ -17,12 +17,14 @@ import EditButtons from './components/EditButtons';
 import PropTypes from 'prop-types';
 import SplitAppealProgressBar from '../intake/components/SplitAppealProgressBar';
 import SplitAppealConfirm from '../intake/pages/SplitAppealConfirm';
+import SplitButtons from './components/SplitButtons';
 
 const textAlignRightStyling = css({
   textAlign: 'right',
 });
 
 export class IntakeEditFrame extends React.PureComponent {
+
   displayClearedEpMessage = (details) => {
     return `Other end products associated with this ${
       details.formName
@@ -197,7 +199,7 @@ export class IntakeEditFrame extends React.PureComponent {
                     title="Split Appeal | Caseflow Intake"
                     component={() => {
                       return (
-                        <SplitAppealView {...this.props} />
+                        <SplitAppealView {...this.props} /* setReasonSelected={setReasonSelected} */ />
                       );
                     }}
                   />
@@ -208,7 +210,7 @@ export class IntakeEditFrame extends React.PureComponent {
                     title="Split Appeal | Caseflow Intake"
                     component={() => {
                       return (
-                        <SplitAppealConfirm {...this.props} />
+                        <SplitAppealConfirm {...this.props} /* reason={reasonSelected} *//>
                       );
                     }}
                   />
@@ -217,6 +219,7 @@ export class IntakeEditFrame extends React.PureComponent {
               </AppSegment>
               <AppSegment styling={textAlignRightStyling}>
                 <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
+                <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitButtons} />
               </AppSegment>
 
             </AppFrame>
