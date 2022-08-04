@@ -18,7 +18,7 @@ class VhaCaregiverSupportUnassignedTasksTab < QueueTab
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).assigned
   end
 
   def column_names
