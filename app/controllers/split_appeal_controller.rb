@@ -4,6 +4,5 @@ class SplitAppealController < ApplicationController
   include FastJsonapi::ObjectSerializer
 
   def index
-    end
   end
 end
