@@ -18,14 +18,10 @@ class VhaCaregiverSupportUnassignedTasksTab < QueueTab
   end
 
   def tasks
-    Tasks.includes(*task_includes).
-    visible_in_queue_table_view.where(assigned_to: assignee).active
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
   end
 
   def column_names
-    if show_reader_link_column
-      COLUMN_NAMES.append(Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name)
-    end
     COLUMN_NAMES
   end
 
