@@ -44,6 +44,10 @@ export const Provider = ({ children }) => {
   );
 };
 
+Provider.propTypes = {
+  children: PropTypes.node
+};
+
 export const IntakeEditFrame = (props) => {
 
   const displayClearedEpMessage = (details) => {
@@ -52,12 +56,6 @@ export const IntakeEditFrame = (props) => {
     } have already been decided,
       so issues are no longer editable. If this is a problem, please contact the Caseflow team
       via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT.`;
-  };
-
-  const displayConfirmationMessage = (details) => {
-    return `${
-      details.veteran.name
-    }'s claim review has been successfully edited. You can close this window.`;
   };
 
   const displayNotEditableMessage = () => {

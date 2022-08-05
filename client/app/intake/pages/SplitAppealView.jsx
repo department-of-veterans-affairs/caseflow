@@ -15,12 +15,17 @@ import { StateContext } from '../../intakeEdit/IntakeEditFrame';
 const issueListStyling = css({ marginTop: '0rem', marginLeft: '6rem' });
 
 const SplitAppealView = (props) => {
-  const { reason, setReason, otherReason, setOtherReason, selectedIssues, setSelectedIssues } = useContext(StateContext);
+  const {
+    reason,
+    setReason,
+    otherReason,
+    setOtherReason,
+    selectedIssues,
+    setSelectedIssues
+  } = useContext(StateContext);
   const { serverIntake } = props;
 
   const requestIssues = serverIntake.requestIssues;
-
-
 
   const onIssueChange = (evt) => {
     setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.checked });
@@ -28,12 +33,10 @@ const SplitAppealView = (props) => {
 
   const onReasonChange = (selection) => {
     setReason(selection.value);
-    console.log(reason);
   };
 
   const onOtherReasonChange = (value) => {
     setOtherReason(value);
-    console.log(reason);
   };
 
   const reasonOptions = _.map(SPLIT_APPEAL_REASONS, (value) => ({
