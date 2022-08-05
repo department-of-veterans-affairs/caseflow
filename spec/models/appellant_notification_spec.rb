@@ -42,6 +42,15 @@ require "appellant_notification.rb"
 describe AppellantNotification do
   describe "self.handle_errors" do
     let(:appeal) { create(:appeal, number_of_claimants: 1) }
+
+    context "if appeal is nil" do
+      let (:empty_appeal) {}
+      it "reports the error" do
+        expect(AppellantNotification).not_to receive(AppellantNotification.notify_appellant)
+        # ???
+      end
+    end
+
     context "with no claimant listed" do
       let(:appeal) { create(:appeal, number_of_claimants: 0) }
       it "returns error message" do
@@ -92,12 +101,11 @@ describe AppellantNotification do
   describe "self.notify_appellant" do
     let(:appeal) { create(:appeal, number_of_claimants: 1) }
     let(:template_name) { "test" }
-    let(:payload) {Hash.new(status: "Success")}
     context "sends message to shoryuken" do
       it "sends the payload" do
-        mock = double(Shoryuken::Client)
-        allow(mock).to receive(:queues).with(ActiveJob::Base.queue_name_prefix + '_send_notifications')
-        allow(mock.queues(ActiveJob::Base.queue_name_prefix + '_send_notifications')).to receive(:send_message).with(payload)
+        queue = double('queue')
+        expect(queue).to receive(:send_message).with(AppellantNotification.create_payload(appeal,template_name))
+        AppellantNotification.notify_appellant(appeal, template_name, queue)
       end
     end
   end

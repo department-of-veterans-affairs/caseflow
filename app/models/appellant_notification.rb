@@ -15,38 +15,59 @@ module AppellantNotification
     end
   end
 
-  def self.handle_errors(appeal)
-    appeal_id = appeal.id
-    claimant = appeal.claimant
-    participant_id = appeal.claimant&.participant_id
-    if claimant == nil
-      begin
-        raise NoClaimantError.new(appeal_id)
-      rescue => exception
-        exception.message
-      end
-    elsif participant_id == ""
-      begin
-        raise NoParticipantIdError.new(appeal_id)
-      rescue => exception
-        exception.message
-      end
-    else
-      "Success"
+  class NoAppealError < StandardError
+    def initialize(appeal_id, message="There is no appeal")
+      super(message + " for #{appeal_id}")
     end
   end
 
-  def self.notify_appellant(appeal, template_name)
+  def self.handle_errors(appeal)
+    if appeal != nil
+      # just rails logger
+      appeal_id = appeal.id
+      claimant = appeal.claimant
+      participant_id = appeal.claimant&.participant_id
+      if claimant == nil
+        begin
+          raise NoClaimantError.new(appeal_id)
+        rescue => exception
+          Rails.logger.error("#{exception.message}\n#{exception.backtrace.join("\n")}")
+          exception.message
+        end
+      elsif participant_id == ""
+        begin
+          raise NoParticipantIdError.new(appeal_id)
+        rescue => exception
+          Rails.logger.error("#{exception.message}\n#{exception.backtrace.join("\n")}")
+          exception.message
+        end
+      else
+        "Success"
+      end
+    else
+    # if appeal is null
+      begin
+        raise NoAppealError.new(appeal)
+      rescue => error
+        Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
+        Raven.capture_exception(error, extra: { hearing_day_id: id, message: error.message })  
+      end
+    # rails logger and raven
+    end
+  end
+
+  def self.notify_appellant(appeal, template_name, queue = Shoryuken::Client.queues(ActiveJob::Base.queue_name_prefix + '_send_notifications'))
     msg_bdy = create_payload(appeal, template_name)
-    Shoryuken::Client.queues(ActiveJob::Base.queue_name_prefix + '_send_notifications').send_message(msg_bdy)
+    queue.send_message(msg_bdy)
   end
 
   def self.create_payload(appeal, template_name)
+    status = AppellantNotification.handle_errors(appeal)
     appeal_id = appeal.id
     participant_id = appeal.claimant.participant_id
     appeal_type = appeal.class.to_s
 
-    status = AppellantNotification.handle_errors(appeal)
+    # find template_id from db using template name
 
     msg_bdy = {
       queue_url: "caseflow_development_send_notifications",
@@ -82,13 +103,13 @@ module AppellantNotification
 
   module AppealDocketed
     @@template_name = self.name.split("::")[1]
-    def self.distribution_task
+    def distribution_task
       @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
                              (DistributionTask.create!(appeal: @appeal, parent: @root_task) &&
                              AppellantNotification.notify_appellant(appeal, @@template_name))
     end
 
-    def self.docket_appeal
+    def docket_appeal
       super
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
@@ -97,13 +118,13 @@ module AppellantNotification
   module AppealDecisionMailed
     @@template_name = self.name.split("::")[1]
     # Aspect for Legacy Appeals
-    def self.complete_root_task!
+    def complete_root_task!
       super
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
 
     # Aspect for AMA Appeals
-    def self.complete_dispatch_root_task!
+    def complete_dispatch_root_task!
       super
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
@@ -111,7 +132,7 @@ module AppellantNotification
 
   module HearingScheduled
     @@template_name = self.name.split("::")[1]
-    def self.create_hearing(task_values)
+    def create_hearing(task_values)
       super
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
@@ -119,12 +140,12 @@ module AppellantNotification
 
   module HearingPostponed
     @@template_name = self.name.split("::")[1]
-    def self.postpone!
+    def postpone!
       super
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
 
-    def self.mark_hearing_with_disposition(payload_values:, instructions: nil)
+    def mark_hearing_with_disposition(payload_values:, instructions: nil)
       multi_transaction do
         if payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
           update_hearing_disposition_and_notes(payload_values)
@@ -143,7 +164,7 @@ module AppellantNotification
 
   module HearingWithdrawn
     @@template_name = self.name.split("::")[1]
-    def self.cancel!
+    def cancel!
       super
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
@@ -151,7 +172,7 @@ module AppellantNotification
 
   module IHPTaskPending
     @@template_name = self.name.split("::")[1]
-    def self.create_ihp_tasks!
+    def create_ihp_tasks!
       appeal = @parent.appeal
       appeal.representatives.select { |org| org.should_write_ihp?(appeal) }.map do |vso_organization|
         # For some RAMP appeals, this method may run twice.
@@ -171,7 +192,7 @@ module AppellantNotification
 
   module IHPTaskComplete
     @@template_name = self.name.split("::")[1]
-    def self.update_status_if_children_tasks_are_closed(child_task)
+    def update_status_if_children_tasks_are_closed(child_task)
       if children.any? && children.open.empty? && on_hold?
         if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
           return all_children_cancelled_or_completed
@@ -189,7 +210,7 @@ module AppellantNotification
 
   module PrivacyActPending
     @@template_name = self.name.split("::")[1]
-    def self.create_privacy_act_task
+    def create_privacy_act_task
       super
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
@@ -197,7 +218,7 @@ module AppellantNotification
 
   module PrivacyActComplete
     @@template_name = self.name.split("::")[1]
-    def self.cascade_closure_from_child_task?(child_task)
+    def cascade_closure_from_child_task?(child_task)
       if child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
         AppellantNotification.notify_appellant(appeal, @@template_name)
       end
