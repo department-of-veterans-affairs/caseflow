@@ -8,7 +8,7 @@ describe VhaCaregiverSupportUnassignedTasksTab, :postgres do
       show_reader_link_column: show_reader_link_column
     }
   end
-  let(:assignee) {create(:vha_caregiver_support)}
+  let(:assignee) { create(:vha_caregiver_support) }
   let(:show_reader_link_column) { false }
 
   describe ".column_names" do
@@ -24,8 +24,10 @@ describe VhaCaregiverSupportUnassignedTasksTab, :postgres do
 
     context "when we want to show the reader link column" do
       let(:show_reader_link_column) { true }
-      let(:params) { { assignee: create(:vha_caregiver_support),
-        show_reader_link_column: show_reader_link_column } }
+      let(:params) do
+        { assignee: create(:vha_caregiver_support),
+          show_reader_link_column: show_reader_link_column }
+      end
 
       it "returns the correct number of columns" do
         expect(subject.length).to eq(8)
@@ -35,18 +37,18 @@ describe VhaCaregiverSupportUnassignedTasksTab, :postgres do
       end
     end
   end
-  
-  describe ".label" do
-     subject { tab.label }
 
-     context "when tab label is visible" do
-       it "should match defined label for unassigned tasks" do
+  describe ".label" do
+    subject { tab.label }
+
+    context "when tab label is visible" do
+      it "should match defined label for unassigned tasks" do
         expect(subject).to eq(COPY::VHA_CAREGIVER_SUPPORT_QUEUE_PAGE_UNASSIGNED_TAB_TITLE)
         expect(subject).to eq("Unassigned")
-       end
       end
+    end
   end
-  
+
   describe ".description" do
     subject { tab.description }
 
