@@ -110,3 +110,33 @@ describe AppellantNotification do
     end
   end
 end
+
+describe AppellantNotification do
+  describe AppellantNotification::AppealDocketed do
+    describe "docket_appeal" do
+      let(:appeal) { create(:appeal, :with_pre_docket_task) }
+      let(:template_name) {"AppealDocketed"}
+      let(:pre_docket_task) {PreDocketTask.find_by(appeal: appeal)}
+      before do
+        PreDocketTask.prepend(AppellantNotification::AppealDocketed)
+      end
+      it "will notify appellant that Predocketed Appeal is docketed" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
+        pre_docket_task.docket_appeal
+      end
+    end
+
+    describe "create_tasks_on_intake_success!" do
+      let(:appeal) { create(:appeal) }
+      let(:template_name) {"AppealDocketed"}
+      before do
+        Appeal.prepend(AppellantNotification::AppealDocketed)
+      end
+      it "will notify appeallant that appeal is docketed on successful intake" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
+        appeal.create_tasks_on_intake_success!
+      end
+    end
+  end
+end
+

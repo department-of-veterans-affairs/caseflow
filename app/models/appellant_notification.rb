@@ -103,15 +103,21 @@ module AppellantNotification
 
   module AppealDocketed
     @@template_name = self.name.split("::")[1]
-    def distribution_task
-      @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
-                             (DistributionTask.create!(appeal: @appeal, parent: @root_task) &&
-                             AppellantNotification.notify_appellant(appeal, @@template_name))
+    
+    def create_tasks_on_intake_success!
+      if vha_has_issues? && FeatureToggle.enabled?(:vha_predocket_appeals, user: RequestStore.store[:current_user])
+        PreDocketTasksFactory.new(self).call_vha
+      elsif edu_predocket_needed?
+        PreDocketTasksFactory.new(self).call_edu
+      else
+        InitialTasksFactory.new(self).create_root_and_sub_tasks! && AppellantNotification.notify_appellant(self, @@template_name)
+      end
+      create_business_line_tasks!
     end
 
     def docket_appeal
       super
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(self.appeal, @@template_name)
     end
   end
 
@@ -192,6 +198,7 @@ module AppellantNotification
 
   module IHPTaskComplete
     @@template_name = self.name.split("::")[1]
+
     def update_status_if_children_tasks_are_closed(child_task)
       if children.any? && children.open.empty? && on_hold?
         if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
@@ -210,6 +217,7 @@ module AppellantNotification
 
   module PrivacyActPending
     @@template_name = self.name.split("::")[1]
+
     def create_privacy_act_task
       super
       AppellantNotification.notify_appellant(appeal, @@template_name)
@@ -220,7 +228,7 @@ module AppellantNotification
     @@template_name = self.name.split("::")[1]
     def cascade_closure_from_child_task?(child_task)
       if child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
-        AppellantNotification.notify_appellant(appeal, @@template_name)
+        AppellantNotification.notify_appellant(self.appeal, @@template_name)
       end
       child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
     end
