@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { css } from 'glamor';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
@@ -11,10 +11,11 @@ import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { formatDateStr } from '../../util/DateUtil';
-
+import { StateContext } from '../../intakeEdit/IntakeEditFrame';
 const issueListStyling = css({ marginTop: '0rem', marginLeft: '6rem' });
 
 const SplitAppealView = (props) => {
+  const { setReasonSelected } = useContext(StateContext);
   const { serverIntake } = props;
 
   const requestIssues = serverIntake.requestIssues;
@@ -27,8 +28,14 @@ const SplitAppealView = (props) => {
     setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.checked });
   };
 
+  const onReasonChange = (selection) => {
+    setReason(selection.value);
+    setReasonSelected(selection.value);
+  };
+
   const onOtherReasonChange = (value) => {
     setOtherReason(value);
+    setReasonSelected(value);
   };
 
   const reasonOptions = _.map(SPLIT_APPEAL_REASONS, (value) => ({
@@ -58,7 +65,7 @@ const SplitAppealView = (props) => {
         label={COPY.SPLIT_APPEAL_CREATE_REASONING_TITLE}
         strongLabel
         value={reason}
-        onChange={(selection) => setReason(selection.value)}
+        onChange={onReasonChange}
         options={reasonOptions}
       />
       <br />
@@ -93,7 +100,7 @@ const SplitAppealView = (props) => {
 };
 
 SplitAppealView.propTypes = {
-  serverIntake: PropTypes.object
+  serverIntake: PropTypes.object,
 };
 
 export default SplitAppealView;

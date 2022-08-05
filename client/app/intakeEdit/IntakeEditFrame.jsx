@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, createContext } from 'react';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
@@ -23,9 +23,23 @@ const textAlignRightStyling = css({
   textAlign: 'right',
 });
 
-export class IntakeEditFrame extends React.PureComponent {
+export const StateContext = createContext({});
 
-  displayClearedEpMessage = (details) => {
+export const Provider = ({ children }) => {
+  const [reasonSelected, setReasonSelected] = useState('');
+
+  return (
+    <StateContext.Provider value={{
+      reasonSelected, setReasonSelected
+    }}>
+      {children}
+    </StateContext.Provider>
+  );
+};
+
+export const IntakeEditFrame = (props) => {
+
+  const displayClearedEpMessage = (details) => {
     return `Other end products associated with this ${
       details.formName
     } have already been decided,
@@ -33,13 +47,13 @@ export class IntakeEditFrame extends React.PureComponent {
       via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT.`;
   };
 
-  displayConfirmationMessage = (details) => {
+  const displayConfirmationMessage = (details) => {
     return `${
       details.veteran.name
     }'s claim review has been successfully edited. You can close this window.`;
   };
 
-  displayNotEditableMessage = () => {
+  const displayNotEditableMessage = () => {
     const { asyncJobUrl } = this.props.serverIntake;
 
     return (
@@ -51,7 +65,7 @@ export class IntakeEditFrame extends React.PureComponent {
     );
   };
 
-  displayCanceledMessage = (details) => {
+  const displayCanceledMessage = (details) => {
     const {
       editIssuesUrl,
       hasClearedNonratingEp,
@@ -75,44 +89,44 @@ export class IntakeEditFrame extends React.PureComponent {
       Go to VBMS claim details and click the “Edit in Caseflow” button to return to edit.`;
   };
 
-  displayOutcodedMessage = () => {
+  const displayOutcodedMessage = () => {
     return 'This appeal has been outcoded and the issues are no longer editable.';
   };
 
-  displayDecisionDateMessage = () => {
+  const displayDecisionDateMessage = () => {
     return 'One or more request issues lack a decision date. Please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or create a YourIT ticket to correct these issues.'; // eslint-disable-line max-len
-  }
+  };
 
-  render() {
-    const { veteran, formType } = this.props.serverIntake;
+  const { veteran, formType } = props.serverIntake;
 
-    const appName = 'Intake';
+  const appName = 'Intake';
 
-    const Router = this.props.router || BrowserRouter;
+  const Router = props.router || BrowserRouter;
 
-    const topMessage = veteran.fileNumber ?
+  const topMessage = veteran.fileNumber ?
       `${veteran.formName} (${veteran.fileNumber})` :
-      null;
+    null;
 
-    const basename = `/${formType}s/${this.props.claimId}/edit/`;
+  const basename = `/${formType}s/${props.claimId}/edit/`;
 
-    return (
-      <Router basename={basename} {...this.props.routerTestProps}>
-        <div>
-          <NavigationBar
-            appName={appName}
-            logoProps={{
-              accentColor: LOGO_COLORS.INTAKE.ACCENT,
-              overlapColor: LOGO_COLORS.INTAKE.OVERLAP,
-            }}
-            userDisplayName={this.props.userDisplayName}
-            dropdownUrls={this.props.dropdownUrls}
-            topMessage={topMessage}
-            defaultUrl="/"
-          >
-            <AppFrame>
-              <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitAppealProgressBar} />
-              <Route exact path={PAGE_PATHS.REVIEW_SPLIT} component={SplitAppealProgressBar} />
+  return (
+    <Router basename={basename} {...props.routerTestProps}>
+      <div>
+        <NavigationBar
+          appName={appName}
+          logoProps={{
+            accentColor: LOGO_COLORS.INTAKE.ACCENT,
+            overlapColor: LOGO_COLORS.INTAKE.OVERLAP,
+          }}
+          userDisplayName={props.userDisplayName}
+          dropdownUrls={props.dropdownUrls}
+          topMessage={topMessage}
+          defaultUrl="/"
+        >
+          <AppFrame>
+            <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitAppealProgressBar} />
+            <Route exact path={PAGE_PATHS.REVIEW_SPLIT} component={SplitAppealProgressBar} />
+            <Provider>
               <AppSegment filledBackground>
                 <div>
                   <PageRoute
@@ -129,7 +143,7 @@ export class IntakeEditFrame extends React.PureComponent {
                       return (
                         <Message
                           title="Review not editable"
-                          displayMessage={this.displayNotEditableMessage}
+                          displayMessage={displayNotEditableMessage}
                         />
                       );
                     }}
@@ -142,7 +156,7 @@ export class IntakeEditFrame extends React.PureComponent {
                       return (
                         <Message
                           title="Review not editable"
-                          displayMessage={this.displayDecisionDateMessage}
+                          displayMessage={displayDecisionDateMessage}
                         />
                       );
                     }}
@@ -155,7 +169,7 @@ export class IntakeEditFrame extends React.PureComponent {
                       return (
                         <Message
                           title="Edit Canceled"
-                          displayMessage={this.displayCanceledMessage}
+                          displayMessage={displayCanceledMessage}
                         />
                       );
                     }}
@@ -174,7 +188,7 @@ export class IntakeEditFrame extends React.PureComponent {
                       return (
                         <Message
                           title="Issues Not Editable"
-                          displayMessage={this.displayClearedEpMessage}
+                          displayMessage={displayClearedEpMessage}
                         />
                       );
                     }}
@@ -187,7 +201,7 @@ export class IntakeEditFrame extends React.PureComponent {
                       return (
                         <Message
                           title="Issues Not Editable"
-                          displayMessage={this.displayOutcodedMessage}
+                          displayMessage={displayOutcodedMessage}
                         />
                       );
                     }}
@@ -199,7 +213,7 @@ export class IntakeEditFrame extends React.PureComponent {
                     title="Split Appeal | Caseflow Intake"
                     component={() => {
                       return (
-                        <SplitAppealView {...this.props} /* setReasonSelected={setReasonSelected} */ />
+                        <SplitAppealView {...props} />
                       );
                     }}
                   />
@@ -210,31 +224,31 @@ export class IntakeEditFrame extends React.PureComponent {
                     title="Split Appeal | Caseflow Intake"
                     component={() => {
                       return (
-                        <SplitAppealConfirm {...this.props} /* reason={reasonSelected} *//>
+                        <SplitAppealConfirm />
                       );
                     }}
                   />
 
                 </div>
               </AppSegment>
-              <AppSegment styling={textAlignRightStyling}>
-                <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
-                <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitButtons} />
-              </AppSegment>
+            </Provider>
+            <AppSegment styling={textAlignRightStyling}>
+              <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
+              <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitButtons} />
+            </AppSegment>
 
-            </AppFrame>
-          </NavigationBar>
+          </AppFrame>
+        </NavigationBar>
 
-          <Footer
-            appName={appName}
-            feedbackUrl={this.props.feedbackUrl}
-            buildDate={this.props.buildDate}
-          />
-        </div>
-      </Router>
-    );
-  }
-}
+        <Footer
+          appName={appName}
+          feedbackUrl={props.feedbackUrl}
+          buildDate={props.buildDate}
+        />
+      </div>
+    </Router>
+  );
+};
 
 IntakeEditFrame.propTypes = {
   feedbackUrl: PropTypes.string.isRequired,
