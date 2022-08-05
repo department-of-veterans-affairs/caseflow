@@ -24,6 +24,16 @@ GIT
       redis-rails
 
 GIT
+  remote: https://github.com/department-of-veterans-affairs/connect-mpi.git
+  revision: a3a58c64f85b980a8b5ea6347430dd73a99ea74c
+  ref: a3a58c64f85b980a8b5ea6347430dd73a99ea74c
+  specs:
+    connect_mpi (0.1)
+      httpclient
+      nokogiri (>= 1.11.0.rc4)
+      savon (~> 2.12)
+
+GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
   revision: 049b3c5068fa6c6d1cae0b58654529316b84be57
   ref: 049b3c5068fa6c6d1cae0b58654529316b84be57
@@ -140,6 +150,7 @@ GEM
     aws-sdk-resources (2.10.112)
       aws-sdk-core (= 2.10.112)
     aws-sigv4 (1.0.2)
+    backport (1.2.0)
     benchmark-ips (2.7.2)
     bootsnap (1.7.5)
       msgpack (~> 1.0)
@@ -214,6 +225,9 @@ GEM
     database_cleaner (1.7.0)
     ddtrace (0.34.1)
       msgpack
+    debase (0.2.4.1)
+      debase-ruby_core_source (>= 0.10.2)
+    debase-ruby_core_source (0.10.14)
     derailed_benchmarks (1.3.6)
       benchmark-ips (~> 2)
       get_process_mem (~> 0)
@@ -282,7 +296,7 @@ GEM
     fasterer (0.6.0)
       colorize (~> 0.7)
       ruby_parser (>= 3.13.0)
-    ffi (1.15.5)
+    ffi (1.11.1)
     foreman (0.85.0)
       thor (~> 0.19.1)
     formatador (0.2.5)
@@ -382,6 +396,7 @@ GEM
       mini_mime (>= 0.1.1)
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
+    maruku (0.7.3)
     memory_profiler (0.9.14)
     meta_request (0.7.2)
       rack-contrib (>= 1.1, < 3)
@@ -394,7 +409,7 @@ GEM
       nokogiri (~> 1)
       rake
     mini_mime (1.1.0)
-    mini_portile2 (2.5.1)
+    mini_portile2 (2.7.1)
     minitest (5.14.4)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.20.1)
@@ -411,10 +426,10 @@ GEM
       thor (~> 0.19)
     nenv (0.3.0)
     newrelic_rpm (6.5.0.357)
-    nio4r (2.5.7)
+    nio4r (2.5.8)
     no_proxy_fix (0.1.2)
-    nokogiri (1.11.4)
-      mini_portile2 (~> 2.5.0)
+    nokogiri (1.13.1)
+      mini_portile2 (~> 2.7.0)
       racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
@@ -446,9 +461,9 @@ GEM
       byebug (~> 11.0)
       pry (~> 0.13.0)
     public_suffix (4.0.6)
-    puma (5.3.2)
+    puma (5.5.2)
       nio4r (~> 2.0)
-    racc (1.5.2)
+    racc (1.6.0)
     rack (2.2.3)
     rack-contrib (2.1.0)
       rack (~> 2.0)
@@ -519,6 +534,8 @@ GEM
     regexp_parser (1.6.0)
     request_store (1.4.1)
       rack (>= 1.4)
+    reverse_markdown (1.4.0)
+      nokogiri
     rexml (3.2.5)
     roo (2.8.2)
       nokogiri (~> 1)
@@ -561,7 +578,10 @@ GEM
       activesupport
       rack (>= 1.1)
       rubocop (>= 0.72.0)
+    ruby-debug-ide (0.7.3)
+      rake (>= 0.8.1)
     ruby-graphviz (1.2.4)
+    ruby-oci8 (2.2.7)
     ruby-plsql (0.7.1)
     ruby-prof (1.4.1)
     ruby-progressbar (1.10.1)
@@ -611,6 +631,18 @@ GEM
     single_cov (1.3.2)
     sixarm_ruby_unaccent (1.2.0)
     socksify (1.7.1)
+    solargraph (0.38.0)
+      backport (~> 1.1)
+      bundler (>= 1.17.2)
+      jaro_winkler (~> 1.5)
+      maruku (~> 0.7, >= 0.7.3)
+      nokogiri (~> 1.9, >= 1.9.1)
+      parser (~> 2.3)
+      reverse_markdown (~> 1.0, >= 1.0.5)
+      rubocop (~> 0.52)
+      thor (~> 0.19, >= 0.19.4)
+      tilt (~> 2.0)
+      yard (~> 0.9)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -655,6 +687,7 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
+    webrick (1.7.0)
     websocket-driver (0.7.3)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -669,6 +702,8 @@ GEM
       nokogiri (~> 1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
+    yard (0.9.27)
+      webrick (~> 1.7.0)
     ziptz (2.1.6)
 
 PLATFORMS
@@ -691,12 +726,14 @@ DEPENDENCIES
   capybara
   capybara-screenshot
   caseflow!
+  connect_mpi!
   connect_vbms!
   console_tree_renderer!
   countries
   danger (~> 6.0)
   database_cleaner
   ddtrace
+  debase
   derailed_benchmarks
   dogstatsd-ruby
   dotenv-rails
@@ -705,7 +742,6 @@ DEPENDENCIES
   faker
   fast_jsonapi
   fasterer
-  ffi (~> 1.15, >= 1.15.4)
   foreman
   fuzzy_match
   govdelivery-tms
@@ -750,6 +786,7 @@ DEPENDENCIES
   rubocop (= 0.79)
   rubocop-performance
   rubocop-rails
+  ruby-debug-ide
   ruby-oci8 (~> 2.2)
   ruby-prof (~> 1.4)
   sass-rails (~> 5.0)
@@ -759,6 +796,7 @@ DEPENDENCIES
   simplecov!
   single_cov
   sniffybara!
+  solargraph
   sql_tracker
   stringex
   strong_migrations

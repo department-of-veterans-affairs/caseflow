@@ -15,6 +15,7 @@ gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fb6fa9658825c143eb8d202b87128f34ca7e210b"
+gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "049b3c5068fa6c6d1cae0b58654529316b84be57"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "countries"
@@ -74,12 +75,11 @@ gem "tzinfo"
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
 gem "ziptz"
-gem 'ffi', '~> 1.15', '>= 1.15.4'
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter", "~> 5.2.0"
-  gem "ruby-oci8", "~> 2.2", platforms: :mswin
+  gem "ruby-oci8", "~> 2.2"
 end
 
 group :test, :development, :demo do
@@ -124,12 +124,15 @@ end
 group :development do
   gem "anbt-sql-formatter"
   gem "bummr", require: false
+  gem "debase"
   gem "derailed_benchmarks"
   gem "dotenv-rails"
   gem "fasterer", require: false
   gem "foreman"
   gem "meta_request"
+  gem "ruby-debug-ide"
   gem "ruby-prof", "~> 1.4"
+  gem "solargraph"
 end
 
 group :test do
