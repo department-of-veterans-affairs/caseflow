@@ -1,0 +1,2 @@
+class NotificationEvent < CaseflowRecord
+end
