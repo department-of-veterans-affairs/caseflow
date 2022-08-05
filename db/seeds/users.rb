@@ -375,18 +375,22 @@ module Seeds
     end
 
     def create_split_appeals_test_users
-      ussc = User.create!(station_id: 101, css_id: "SPLTAPPLSNOW",
-      full_name: "Jon SupervisorySeniorCouncilUser Snow")
+      ussc = User.create!(station_id: 101,
+                          css_id: "SPLTAPPLSNOW",
+                          full_name: "Jon SupervisorySeniorCouncilUser Snow")
       SupervisorySeniorCouncil.singleton.add_user(ussc)
-      ussc2 = User.create!(station_id: 101, css_id: "SPLTAPPLTARGARYEN", 
-      full_name: "Daenerys SupervisorySeniorCouncilUser Targaryen")
+      ussc2 = User.create!(station_id: 101,
+                           css_id: "SPLTAPPLTARGARYEN",
+                           full_name: "Daenerys SupervisorySeniorCouncilUser Targaryen")
       SupervisorySeniorCouncil.singleton.add_user(ussc2)
-      ussccr = User.create!(station_id: 101, css_id: "SPLTAPPLLANNISTER", 
-      full_name: "Jaime SupervisorySeniorCouncilCaseReviewUser Lannister")
+      ussccr = User.create!(station_id: 101,
+                            css_id: "SPLTAPPLLANNISTER",
+                            full_name: "Jaime SupervisorySeniorCouncilCaseReviewUser Lannister")
       SupervisorySeniorCouncil.singleton.add_user(ussccr)
       CaseReview.singleton.add_user(ussccr)
-      ussccr2 = User.create!(station_id: 101, css_id: "SPLTAPPLSTARK", 
-      full_name: "Ned SupervisorySeniorCouncilCaseReviewUser Stark")
+      ussccr2 = User.create!(station_id: 101,
+                             css_id: "SPLTAPPLSTARK",
+                             full_name: "Ned SupervisorySeniorCouncilCaseReviewUser Stark")
       SupervisorySeniorCouncil.singleton.add_user(ussccr2)
       CaseReview.singleton.add_user(ussccr2)
     end
