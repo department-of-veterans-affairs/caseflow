@@ -3,18 +3,16 @@
 # Continuation of Developer Setup at
 # https://github.com/department-of-veterans-affairs/caseflow/blob/master/README.md#install-ruby-dependencies
 
-function brew {
-	arch -x86_64 /usr/local/homebrew/bin/brew "$@"
-}
-
 function detectVersion(){
 	# https://stackoverflow.com/questions/3466166/how-to-check-if-running-in-cygwin-mac-or-linux
 	version="$(sw_vers -productVersion)"
 	echo ${version}
 }
 echo "==> Installing Ruby dependencies"
-RUBY_CONFIGURE_OPTS=--with-openssl-dir=/opt/homebrew/Cellar/openssl@1.1/1.1.1q/ rbenv install $(cat .ruby-version)
+RUBY_CONFIGURE_OPTS=--with-openssl-dir=/usr/local/homebrew/Cellar/openssl@1.1/1.1.1q rbenv install $(cat .ruby-version)
 rbenv rehash
+rbenv local $(cat .ruby-version)
+
 # BUNDLED_WITH<VERSION> is at the bottom Gemfile.lock
 BUNDLED_WITH=$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)
 
@@ -32,7 +30,7 @@ if [ $? == 0 ]; then
 	if [[ "$VERSION" == "10.15"* || "$VERSION" =~ 1[1-9]* ]]; then
 		brew install v8@3.15
 		bundle config build.libv8 --with-system-v8
-		bundle config build.therubyracer --with-v8-dir=$(brew --prefix v8@3.15)
+		bundle config build.therubyracer --with-v8-dir=$(/usr/local/homebrew/bin/brew --prefix v8@3.15)
 	fi
 
 	bundle install
@@ -41,6 +39,7 @@ fi
 echo "==> Installing JavaScript dependencies"
 nodenv install $(cat .nvmrc)
 nodenv rehash
+nodenv local $(cat .nvmrc)
 cd client
 yarn install
 cd ..
