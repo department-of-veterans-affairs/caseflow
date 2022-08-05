@@ -3,7 +3,7 @@ import { StateContext } from '../../intakeEdit/IntakeEditFrame';
 import COPY from '../../../COPY';
 
 const SplitAppealConfirm = () => {
-  const { reasonSelected } = useContext(StateContext);
+  const { reason } = useContext(StateContext);
 
   return (
     <>
@@ -11,7 +11,7 @@ const SplitAppealConfirm = () => {
       <span>{COPY.SPLIT_APPEAL_REVIEW_SUBHEAD}</span>
 
       <br /><br />
-      <u>{COPY.SPLIT_APPEAL_REVIEW_REASONING_TITLE}</u> <span>{reasonSelected}</span>
+      <u>{COPY.SPLIT_APPEAL_REVIEW_REASONING_TITLE}</u> <span>{reason}</span>
     </>
   );
 };

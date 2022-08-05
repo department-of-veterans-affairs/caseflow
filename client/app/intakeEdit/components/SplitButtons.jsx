@@ -1,40 +1,34 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { StateContext } from '../IntakeEditFrame';
 
-class ContinueButtonUnconnected extends React.Component {
+const ContinueButtonUnconnected = (props) => {
+  const { selectedIssues, reason } = useContext(StateContext);
 
-  render = () => {
-    const {
-      splitReason,
-      originalReason,
-    } = this.props;
-
-    const continueDisabled = _.isEqual(
-      splitReason, `${originalReason }hi`
+  const continueDisabled = (_.isEmpty(selectedIssues) || _.isEmpty(reason));
+  const handleClick = () => {
+    return (
+      props.history.push('/review_split')
     );
+  };
 
-    return <span>
-      <Link to="/review_split">
-        <Button
-          name="continue-split"
-          onClick={this.onClickContinue}
-          disabled={continueDisabled}
-        >
+  return <span>
+
+    <Button
+      name="continue-split"
+      onClick={handleClick}
+      disabled={continueDisabled}
+    >
         Continue
-        </Button>
-      </Link>
+    </Button>
 
-    </span>;
-  }
-}
+  </span>;
+};
 
 ContinueButtonUnconnected.propTypes = {
-  splitReason: PropTypes.string,
-  originalReason: PropTypes.string,
   formType: PropTypes.string,
   claimId: PropTypes.string,
   history: PropTypes.object,
@@ -44,8 +38,6 @@ const ContinueButton = connect(
   (state) => ({
     claimId: state.claimId,
     formType: state.formType,
-    splitReason: PropTypes.string,
-    originalReason: PropTypes.string,
   }),
 )(ContinueButtonUnconnected);
 
@@ -58,7 +50,7 @@ class CancelSplitButtonUnconnected extends React.PureComponent {
       onClick={
         () => {
           if (this.props.formType === 'appeal') {
-            window.location.href = `/queue/appeals/${this.props.claimId}/edit`;
+            window.location.href = `/queue/appeals/${this.props.claimId}`;
           } else {
             this.props.history.push('/cancel');
           }

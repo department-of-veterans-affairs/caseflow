@@ -26,11 +26,18 @@ const textAlignRightStyling = css({
 export const StateContext = createContext({});
 
 export const Provider = ({ children }) => {
-  const [reasonSelected, setReasonSelected] = useState('');
+  const [reason, setReason] = useState(null);
+  const [otherReason, setOtherReason] = useState('');
+  const [selectedIssues, setSelectedIssues] = useState({});
 
   return (
     <StateContext.Provider value={{
-      reasonSelected, setReasonSelected
+      reason,
+      setReason,
+      otherReason,
+      setOtherReason,
+      selectedIssues,
+      setSelectedIssues
     }}>
       {children}
     </StateContext.Provider>
@@ -231,12 +238,11 @@ export const IntakeEditFrame = (props) => {
 
                 </div>
               </AppSegment>
+              <AppSegment styling={textAlignRightStyling}>
+                <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
+                <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitButtons} />
+              </AppSegment>
             </Provider>
-            <AppSegment styling={textAlignRightStyling}>
-              <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
-              <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitButtons} />
-            </AppSegment>
-
           </AppFrame>
         </NavigationBar>
 

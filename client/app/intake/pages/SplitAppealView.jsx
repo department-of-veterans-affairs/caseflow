@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { css } from 'glamor';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
@@ -15,14 +15,12 @@ import { StateContext } from '../../intakeEdit/IntakeEditFrame';
 const issueListStyling = css({ marginTop: '0rem', marginLeft: '6rem' });
 
 const SplitAppealView = (props) => {
-  const { setReasonSelected } = useContext(StateContext);
+  const { reason, setReason, otherReason, setOtherReason, selectedIssues, setSelectedIssues } = useContext(StateContext);
   const { serverIntake } = props;
 
   const requestIssues = serverIntake.requestIssues;
 
-  const [reason, setReason] = useState(null);
-  const [otherReason, setOtherReason] = useState('');
-  const [selectedIssues, setSelectedIssues] = useState({});
+
 
   const onIssueChange = (evt) => {
     setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.checked });
@@ -30,12 +28,12 @@ const SplitAppealView = (props) => {
 
   const onReasonChange = (selection) => {
     setReason(selection.value);
-    setReasonSelected(selection.value);
+    console.log(reason);
   };
 
   const onOtherReasonChange = (value) => {
     setOtherReason(value);
-    setReasonSelected(value);
+    console.log(reason);
   };
 
   const reasonOptions = _.map(SPLIT_APPEAL_REASONS, (value) => ({
