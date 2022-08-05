@@ -75,12 +75,11 @@ gem "tzinfo"
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
 gem "ziptz"
-gem 'ffi', '~> 1.15', '>= 1.15.4'
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter", "~> 5.2.0"
-  gem "ruby-oci8", "~> 2.2", platforms: :mswin
+  gem "ruby-oci8", "~> 2.2"
 end
 
 group :test, :development, :demo do
