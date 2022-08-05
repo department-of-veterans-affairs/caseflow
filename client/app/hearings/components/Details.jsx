@@ -207,20 +207,25 @@ const HearingDetails = (props) => {
         hearing
       );
 
+      // Due to the pre-population of the email fields, we want to make sure that
+      // we always send up all email and timezone info during a conversion to a virtual hearing,
+      // especially whenever the default values are not changed.
+      const hearingInfoForRecipients = convertingToVirtual ? hearing : hearingChanges;
+
       const emailRecipientAttributes = [
         omitBy(
           {
-            id: hearing?.appellantEmailId,
-            timezone: hearingChanges?.appellantTz,
-            email_address: hearingChanges?.appellantEmailAddress,
+            id: hearingInfoForRecipients?.appellantEmailId,
+            timezone: hearingInfoForRecipients?.appellantTz,
+            email_address: hearingInfoForRecipients?.appellantEmailAddress,
             type: 'AppellantHearingEmailRecipient'
           }, isUndefined
         ),
         omitBy(
           {
-            id: hearing?.representativeEmailId,
-            timezone: hearingChanges?.representativeTz,
-            email_address: hearingChanges?.representativeEmailAddress,
+            id: hearingInfoForRecipients?.representativeEmailId,
+            timezone: hearingInfoForRecipients?.representativeTz,
+            email_address: hearingInfoForRecipients?.representativeEmailAddress,
             type: 'RepresentativeHearingEmailRecipient'
           }, isUndefined
         )
