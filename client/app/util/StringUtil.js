@@ -123,12 +123,6 @@ const StringUtil = {
         </React.Fragment>
       );
     });
-  },
-
-  // Removes **Details** from previous tasks' instructions from markdown text
-  // used within Case Timelines
-  removeInstructionsDetails(str) {
-    return str.split('**Detail')[0];
   }
 };
 

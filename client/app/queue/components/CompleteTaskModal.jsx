@@ -401,15 +401,15 @@ class CompleteTaskModal extends React.Component {
         if (task.assignedTo.type === 'VhaProgramOffice') {
           reviewNotes = 'Program Office';
 
-          return task && StringUtil.removeInstructionsDetails(task.instructions[1]);
+          return task && task.instructions[1];
         } else if (task.assignedTo.type === 'VhaRegionalOffice') {
           reviewNotes = 'VISN';
 
-          return task && StringUtil.removeInstructionsDetails(task.instructions[1]);
+          return task && task.instructions[1];
         } else if (task.assignedTo.type === 'VhaCamo' && task.instructions.length > 0) {
           reviewNotes = 'CAMO';
 
-          return task && StringUtil.removeInstructionsDetails(task.instructions[1]);
+          return task && task.instructions[1];
         }
       }
 
