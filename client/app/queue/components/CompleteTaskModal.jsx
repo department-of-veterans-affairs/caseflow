@@ -420,14 +420,13 @@ class CompleteTaskModal extends React.Component {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
 
       if (reviewNotes) {
-        formattedInstructions = `\n\n**Status:** ${locationLabel}\n\n
-        \n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}`;
-      }
+        formattedInstructions = `\n\n**Status:** ${locationLabel}\n\n`
+        if (instructions) {
+          const instructionsDetail = `\n\n**CAMO Notes:** ${instructions}`;
 
-      if (instructions) {
-        const instructionsDetail = `\n\n**CAMO Notes:** ${instructions}`;
-
-        formattedInstructions += instructionsDetail;
+          formattedInstructions += instructionsDetail;
+        }
+        formattedInstructions += `\n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}`;
       }
     } else if (this.props.modalType === 'ready_for_review') {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
