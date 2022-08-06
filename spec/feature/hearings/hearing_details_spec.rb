@@ -28,7 +28,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
   let(:pre_loaded_veteran_email) { hearing.appeal.veteran.email_address }
   let(:pre_loaded_rep_email) { hearing.appeal.representative_email_address }
-  let(:fill_in_veteran_email) { "new@email.com" }
+  let(:fill_in_veteran_email) { "veteran@example.com" }
   let(:fill_in_veteran_tz) { "Eastern Time (US & Canada) (12:00 AM)" }
   let(:fill_in_rep_email) { "rep@testingEmail.com" }
   let(:fill_in_rep_tz) { "Mountain Time (US & Canada) (10:00 PM)" }
@@ -482,8 +482,8 @@ RSpec.feature "Hearing Details", :all_dbs do
             hearing: hearing
           )
         end
-        let(:fill_in_veteran_email) { "new@email.com" }
-        let(:fill_in_rep_email) { "rep@testingEmail.com" }
+        let(:fill_in_veteran_email) { "veteran@example.com" }
+        let(:fill_in_rep_email) { "rep@example.com" }
 
         scenario "user can update emails" do
           visit "hearings/" + hearing.external_id.to_s + "/details"
