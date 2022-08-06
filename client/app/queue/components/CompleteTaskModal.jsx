@@ -393,7 +393,7 @@ class CompleteTaskModal extends React.Component {
 
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
-    let formattedInstructions = instructions;
+    let formattedInstructions = [instructions];
     let reviewNotes;
     const previousInstructions = this.props.tasks.map((task) => {
       // Skip if there are no previous instructions
@@ -420,28 +420,31 @@ class CompleteTaskModal extends React.Component {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
 
       if (reviewNotes) {
-        formattedInstructions = `\n\n**Status:** ${locationLabel}\n\n`
-        if (instructions) {
-          const instructionsDetail = `\n\n**CAMO Notes:** ${instructions}`;
+        formattedInstructions.push(`\n\n**Status:** ${locationLabel}\n\n`);
+        formattedInstructions.push(`\n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}`);
+      }
 
-          formattedInstructions += instructionsDetail;
-        }
-        formattedInstructions += `\n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}`;
+      if (instructions) {
+        const instructionsDetail = `\n\n**CAMO Notes:** ${instructions}`;
+
+        const targetIndex = reviewNotes ? 2 : 1;
+
+        formattedInstructions.splice(2, targetIndex, instructionsDetail);
       }
     } else if (this.props.modalType === 'ready_for_review') {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
       const docLocationText = `Documents for this appeal are stored in ${radio === 'other' ? otherInstructions :
         locationLabel}.`;
 
-      formattedInstructions = docLocationText;
+      formattedInstructions.push(docLocationText);
       if (instructions) {
         const instructionsDetail = `\n\n**Detail:**\n\n${instructions}`;
 
-        formattedInstructions += instructionsDetail;
+        formattedInstructions.push(instructionsDetail);
       }
     }
 
-    return formattedInstructions;
+    return formattedInstructions.join('');
   };
 
   validateForm = () => {
