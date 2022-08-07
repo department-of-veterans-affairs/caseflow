@@ -393,7 +393,7 @@ class CompleteTaskModal extends React.Component {
 
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
-    let formattedInstructions = [instructions];
+    const formattedInstructions = [instructions];
     let reviewNotes;
     const previousInstructions = this.props.tasks.map((task) => {
       // Skip if there are no previous instructions
