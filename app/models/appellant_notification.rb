@@ -175,7 +175,6 @@ module AppellantNotification
     def create_ihp_tasks!
         super
         AppellantNotification.notify_appellant(self.appeal, @@template_name)
-      end
     end
   end
 
