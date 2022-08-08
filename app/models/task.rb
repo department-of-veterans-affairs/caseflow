@@ -16,7 +16,6 @@ class Task < CaseflowRecord
   include PrintsTaskTree
   include TaskExtensionForHearings
   include HasAppealUpdatedSince
-  prepend AppellantNotification::IHPTaskComplete
 
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
@@ -101,6 +100,8 @@ class Task < CaseflowRecord
   scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
 
   attr_accessor :skip_check_for_only_open_task_of_type
+
+  prepend AppellantNotification::IhpTaskComplete
 
   ############################################################################################
   ## class methods

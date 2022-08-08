@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
   #Module to notify appellant if IHP Task is Complete
-  module IHPTaskComplete
+  module IhpTaskComplete 
+    extend AppellantNotification
     @@template_name = self.name.split("::")[1]
 
     def update_status_if_children_tasks_are_closed(child_task)

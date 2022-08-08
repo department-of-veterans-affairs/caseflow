@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
   #Module to notify appellant if Privacy Act Request is Pending
-  module PrivacyActPending
+  module PrivacyActPending extend AppellantNotification
     @@template_name = self.name.split("::")[1]
 
     def create_privacy_act_task

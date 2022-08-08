@@ -7,7 +7,6 @@
 # is not ready to continue to being worked.
 
 class PreDocketTask < Task
-  prepend AppellantNotification::AppealDocketed
   TASK_ACTIONS = [
     Constants.TASK_ACTIONS.DOCKET_APPEAL.to_h
   ].freeze
@@ -19,6 +18,8 @@ class PreDocketTask < Task
   EDU_ACTIONS = [
     Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.to_h
   ].freeze
+
+  prepend AppellantNotification::AppealDocketed
 
   def available_actions(user)
     return [] unless assigned_to.user_has_access?(user) && FeatureToggle.enabled?(:docket_vha_appeals, user: user)
