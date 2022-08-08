@@ -43,6 +43,7 @@ class CancelSplitButtonUnconnected extends React.PureComponent {
       id="cancel-edit"
       linkStyling
       willNeverBeLoading
+      styling={{ style: { float: 'left' } }}
       onClick={
         () => {
           if (this.props.formType === 'appeal') {
