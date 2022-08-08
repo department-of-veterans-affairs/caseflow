@@ -203,7 +203,7 @@ module AppellantNotification
     end
   end
 
-  #Module to notify appellant if Privacy Act Request is Complete
+  #Module to notify appellant if Privacy Act Request is Completed
   module PrivacyActComplete
     @@template_name = self.name.split("::")[1]
     def cascade_closure_from_child_task?(child_task)
