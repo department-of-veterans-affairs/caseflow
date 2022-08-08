@@ -124,11 +124,60 @@ describe AppellantNotification do
       before do
         Appeal.prepend(AppellantNotification::AppealDocketed)
       end
-      it "will notify appeallant that appeal is docketed on successful intake" do
+      it "will notify appellant that appeal is docketed on successful intake" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
         appeal.create_tasks_on_intake_success!
       end
     end
+  end
+
+  describe AppellantNotification::AppealDecisionMailed do
+    describe "Legacy Appeal Decision Mailed" do
+      let(:legacy_appeal) { create(:legacy_appeal, :with_root_task) }
+      let(:params) { {appeal_id: legacy_appeal.id, citation_number: "A18123456", decision_date: Time.zone.today, redacted_document_location: "some/filepath", file: "some file"} }
+      let(:template_name) {"AppealDecisionMailed"}
+      let(:dispatch) {LegacyAppealDispatch.new(appeal: legacy_appeal, params: params)}
+      before do
+        LegacyAppealDispatch.prepend(AppellantNotification::AppealDecisionMailed)
+      end
+      it "Will notify appellant that the legacy appeal decision has been mailed" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, template_name)
+        dispatch.complete_root_task!
+      end
+    end 
+
+    describe "AMA Appeal Decision Mailed" do
+      let(:appeal) { create(:appeal, :with_root_task) }
+      let(:params) { {appeal_id: appeal.id, citation_number: "A18123456", decision_date: Time.zone.today, redacted_document_location: "some/filepath", file: "some file"} }
+      let(:user) { create(:user)}
+      let(:template_name) {"AppealDecisionMailed"}
+      let(:dispatch) {AmaAppealDispatch.new(appeal: appeal, params: params, user: user)}
+      before do
+        AmaAppealDispatch.prepend(AppellantNotification::AppealDecisionMailed)
+      end
+      it "Will notify appellant that the legacy appeal decision has been mailed" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
+        dispatch.complete_dispatch_root_task!
+      end
+    end
+  end
+
+  describe AppellantNotification::HearingScheduled do
+    describe "Hearing Scheduled" do
+      let(:appeal) { create(:appeal)}
+      let(:template_name) {"HearingScheduled"}
+      let(:schedule_hearing_task) { create(:schedule_hearing_task) }
+      before do
+        AmaAppealDispatch.prepend(AppellantNotification::HearingScheduled)
+      end      
+      it "Will notify appellant that a hearing has been scheduled" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
+        schedule_hearing_task.create_hearing(task_values)
+      end
+    end
+    
+
+
   end
 end
 
