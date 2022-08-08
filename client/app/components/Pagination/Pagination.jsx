@@ -123,6 +123,7 @@ class Pagination extends React.PureComponent {
         <div className="cf-pagination-summary">
           {paginationSummary}
         </div>
+        {totalPages > 0 && <span className="cf-pagination-page-details">{`Page ${currentPage} of ${totalPages}`}</span> }
         <div className="cf-pagination-pages">
           {paginationButtons}
         </div>

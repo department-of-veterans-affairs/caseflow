@@ -25,11 +25,15 @@ export default class DropdownButton extends React.Component {
   }
 
   componentDidMount = () => {
+    // this is commented out 508 is expected the dropdown
+    // document.addEventListener('focusin', this.onClickOutside);
     document.addEventListener('mousedown', this.onClickOutside);
     document.addEventListener('keydown', this.onClickOutside);
   }
 
   componentWillUnmount = () => {
+    // this is commented out 508 is expected the dropdown
+    // document.removeEventListener('focusin', this.onClickOutside);
     document.removeEventListener('mousedown', this.onClickOutside);
     document.removeEventListener('keydown', this.onClickOutside);
   }
