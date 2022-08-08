@@ -100,19 +100,16 @@ module AppellantNotification
       }
     }
   end
-
+  #Module to notify appellant when an appeal gets docketed
   module AppealDocketed
     @@template_name = self.name.split("::")[1]
     
     def create_tasks_on_intake_success!
-      if vha_has_issues? && FeatureToggle.enabled?(:vha_predocket_appeals, user: RequestStore.store[:current_user])
-        PreDocketTasksFactory.new(self).call_vha
-      elsif edu_predocket_needed?
-        PreDocketTasksFactory.new(self).call_edu
-      else
-        InitialTasksFactory.new(self).create_root_and_sub_tasks! && AppellantNotification.notify_appellant(self, @@template_name)
+      super
+      distribution_task = DistributionTask.find_by(appeal_id: self.id)
+      if (distribution_task)
+        AppellantNotification.notify_appellant(self, @@template_name)
       end
-      create_business_line_tasks!
     end
 
     def docket_appeal
@@ -121,6 +118,7 @@ module AppellantNotification
     end
   end
 
+  #Module to notify appellant if an Appeal Decision is Mailed
   module AppealDecisionMailed
     @@template_name = self.name.split("::")[1]
     # Aspect for Legacy Appeals
@@ -132,42 +130,37 @@ module AppellantNotification
     # Aspect for AMA Appeals
     def complete_dispatch_root_task!
       super
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(@appeal, @@template_name)
     end
   end
 
+  #Module to notify appellant if Hearing is Scheduled
   module HearingScheduled
     @@template_name = self.name.split("::")[1]
     def create_hearing(task_values)
       super
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(self.appeal, @@template_name)
     end
   end
 
+  #Module to notify appellant if Hearing is Postponed
   module HearingPostponed
     @@template_name = self.name.split("::")[1]
     def postpone!
       super
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(self.appeal, @@template_name)
     end
 
     def mark_hearing_with_disposition(payload_values:, instructions: nil)
-      multi_transaction do
-        if payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
-          update_hearing_disposition_and_notes(payload_values)
-        elsif payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed
-          update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
-          AppellantNotification.notify_appellant(appeal, @@template_name)
-        end
-        clean_up_virtual_hearing
-        reschedule_or_schedule_later(
-          instructions: instructions,
-          after_disposition_update: payload_values[:after_disposition_update]
-        )
+      super
+      hearing = Hearing.find_by(appeal_id: self.appeal.id)
+      if (hearing.disposition == Constants.HEARING_DISPOSITION_TYPES.postponed)
+        AppellantNotification.notify_appellant(self.appeal, @@template_name)
       end
     end
   end
 
+  #Module to notify appellant if Hearing is Withdrawn
   module HearingWithdrawn
     @@template_name = self.name.split("::")[1]
     def cancel!
@@ -176,45 +169,31 @@ module AppellantNotification
     end
   end
 
+  #Module to notify appellant if IHP Task is pending
   module IHPTaskPending
     @@template_name = self.name.split("::")[1]
     def create_ihp_tasks!
-      appeal = @parent.appeal
-      appeal.representatives.select { |org| org.should_write_ihp?(appeal) }.map do |vso_organization|
-        # For some RAMP appeals, this method may run twice.
-        existing_task = InformalHearingPresentationTask.find_by(
-          appeal: appeal,
-          assigned_to: vso_organization
-        )
-        existing_task || InformalHearingPresentationTask.create!(
-          appeal: appeal,
-          parent: @parent,
-          assigned_to: vso_organization
-        )
-        AppellantNotification.notify_appellant(appeal, @@template_name)
+        super
+        AppellantNotification.notify_appellant(self.appeal, @@template_name)
       end
     end
   end
 
+  #Module to notify appellant if IHP Task is Complete
   module IHPTaskComplete
     @@template_name = self.name.split("::")[1]
 
     def update_status_if_children_tasks_are_closed(child_task)
-      if children.any? && children.open.empty? && on_hold?
-        if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
-          return all_children_cancelled_or_completed
-        end
-
-        if %w[RootTask DistributionTask AttorneyTask].include?(child_task.parent.type) &&
-           (child_task.type.include?("InformalHearingPresentationTask") ||
-           child_task.type.include?("IhpColocatedTask"))
-           AppellantNotification.notify_appellant(appeal, @@template_name)
-        end
-        update_task_if_children_tasks_are_completed
+      super
+      if %w[RootTask DistributionTask AttorneyTask].include?(child_task.parent.type) &&
+        (child_task.type.include?("InformalHearingPresentationTask") ||
+        child_task.type.include?("IhpColocatedTask"))
+        AppellantNotification.notify_appellant(self.appeal, @@template_name)
       end
     end
   end
 
+  #Module to notify appellant if Privacy Act Request is Pending
   module PrivacyActPending
     @@template_name = self.name.split("::")[1]
 
@@ -224,13 +203,14 @@ module AppellantNotification
     end
   end
 
+  #Module to notify appellant if Privacy Act Request is Complete
   module PrivacyActComplete
     @@template_name = self.name.split("::")[1]
     def cascade_closure_from_child_task?(child_task)
-      if child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
+      super
+      if (self.status == Constants.TASK_STATUSES.completed)
         AppellantNotification.notify_appellant(self.appeal, @@template_name)
       end
-      child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
     end
   end
 end
