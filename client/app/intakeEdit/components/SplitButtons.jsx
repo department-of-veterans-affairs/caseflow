@@ -4,6 +4,7 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 import { StateContext } from '../IntakeEditFrame';
+import { Link } from 'react-router-dom';
 
 const ContinueButtonUnconnected = (props) => {
   const { selectedIssues, reason } = useContext(StateContext);
@@ -15,17 +16,30 @@ const ContinueButtonUnconnected = (props) => {
     );
   };
 
-  return <span>
-
-    <Button
-      name="continue-split"
-      onClick={handleClick}
-      disabled={continueDisabled}
-    >
+  return (
+    <span>
+      {(continueDisabled ? (
+        <Button
+          name="continue-split"
+          onClick={handleClick}
+          disabled={continueDisabled}
+        >
         Continue
-    </Button>
+        </Button>
+      ) : (
+        <Link to="/review_split">
+          <Button
+            name="continue-split"
+            onClick={handleClick}
+            disabled={continueDisabled}
+          >
+        Continue
+          </Button>
+        </Link>
+      ))}
 
-  </span>;
+    </span>
+  );
 };
 
 ContinueButtonUnconnected.propTypes = {
