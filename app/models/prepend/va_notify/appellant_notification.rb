@@ -57,6 +57,7 @@ module AppellantNotification
   end
 
   def self.notify_appellant(appeal, template_name, queue = Shoryuken::Client.queues(ActiveJob::Base.queue_name_prefix + '_send_notifications'))
+    byebug
     msg_bdy = create_payload(appeal, template_name)
     queue.send_message(msg_bdy)
   end
@@ -99,23 +100,6 @@ module AppellantNotification
         }
       }
     }
-  end
-  #Module to notify appellant when an appeal gets docketed
-  module AppealDocketed
-    @@template_name = self.name.split("::")[1]
-    
-    def create_tasks_on_intake_success!
-      super
-      distribution_task = DistributionTask.find_by(appeal_id: self.id)
-      if (distribution_task)
-        AppellantNotification.notify_appellant(self, @@template_name)
-      end
-    end
-
-    def docket_appeal
-      super
-      AppellantNotification.notify_appellant(self.appeal, @@template_name)
-    end
   end
 
   #Module to notify appellant if an Appeal Decision is Mailed

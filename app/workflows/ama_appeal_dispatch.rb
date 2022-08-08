@@ -3,6 +3,7 @@
 class AmaAppealDispatch
   include ActiveModel::Model
   include DecisionDocumentValidator
+  prepend AppellantNotification::AppealDecisionMailed
 
   def initialize(appeal:, params:, user:)
     @appeal = appeal
