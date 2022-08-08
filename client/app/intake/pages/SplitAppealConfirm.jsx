@@ -7,11 +7,15 @@ const SplitAppealConfirm = () => {
 
   return (
     <>
-      <h1>{COPY.SPLIT_APPEAL_REVIEW_TITLE}</h1>
-      <span>{COPY.SPLIT_APPEAL_REVIEW_SUBHEAD}</span>
-
+      <div>
+        <h1 style={{ margin: '0px' }}>{COPY.SPLIT_APPEAL_REVIEW_TITLE}</h1>
+        <span>{COPY.SPLIT_APPEAL_REVIEW_SUBHEAD}</span>
+      </div>
       <br /><br />
-      <u>{COPY.SPLIT_APPEAL_REVIEW_REASONING_TITLE}</u> <span>{reason}</span>
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'left' }}>
+        <u>{COPY.SPLIT_APPEAL_REVIEW_REASONING_TITLE}</u> &ensp;
+        <span style={{ flexBasis: '75%' }}>{reason}</span>
+      </div>
     </>
   );
 };
