@@ -222,9 +222,12 @@ RSpec.feature "Convert hearing request type" do
         )
         expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
 
-        expect(hearing.reload.appeal.changed_hearing_request_type).to eq(
-          Constants.HEARING_REQUEST_TYPES.virtual
-        )
+        # We only display hearing types for AMA hearings
+        if hearing.is_a?(Hearing)
+          expect(hearing.reload.appeal.changed_hearing_request_type).to eq(
+            Constants.HEARING_REQUEST_TYPES.virtual
+          )
+        end
       end
     end
   end
