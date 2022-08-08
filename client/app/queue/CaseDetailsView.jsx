@@ -4,7 +4,7 @@ import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
 
 import { APPELLANT_TYPES, CATEGORIES, TASK_ACTIONS } from './constants';
@@ -95,6 +95,8 @@ export const CaseDetailsView = (props) => {
 
   const updatePOALink =
     appeal.hasPOA ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
+
+  const [splitAppeal, setSplitAppeal] = useState(false);
 
   const tasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
@@ -214,6 +216,15 @@ export const CaseDetailsView = (props) => {
 
   return (
     <React.Fragment>
+      {splitAppeal && (
+        <div>
+          <Alert
+            type="success"
+            title="You have successfully split..."
+            message="This new appeal stream has the same docket number and tasks as the original appeal."
+          />
+        </div>
+      )}
       {!modalIsOpen && error && (
         <div {...alertPaddingStyle}>
           <Alert title={error.title} type="error">
