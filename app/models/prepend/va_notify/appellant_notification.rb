@@ -2,7 +2,6 @@
 
 # Module containing Aspect Overrides to Classes used to Track Statuses for Appellant Notification
 module AppellantNotification
-
   class NoParticipantIdError < StandardError
     def initialize(appeal_id, message="There is no participant ID")
       super(message + " for #{appeal_id}")
@@ -57,7 +56,6 @@ module AppellantNotification
   end
 
   def self.notify_appellant(appeal, template_name, queue = Shoryuken::Client.queues(ActiveJob::Base.queue_name_prefix + '_send_notifications'))
-    byebug
     msg_bdy = create_payload(appeal, template_name)
     queue.send_message(msg_bdy)
   end
@@ -100,100 +98,5 @@ module AppellantNotification
         }
       }
     }
-  end
-
-  #Module to notify appellant if an Appeal Decision is Mailed
-  module AppealDecisionMailed
-    @@template_name = self.name.split("::")[1]
-    # Aspect for Legacy Appeals
-    def complete_root_task!
-      super
-      AppellantNotification.notify_appellant(@appeal, @@template_name)
-    end
-
-    # Aspect for AMA Appeals
-    def complete_dispatch_root_task!
-      super
-      AppellantNotification.notify_appellant(@appeal, @@template_name)
-    end
-  end
-
-  #Module to notify appellant if Hearing is Scheduled
-  module HearingScheduled
-    @@template_name = self.name.split("::")[1]
-    def create_hearing(task_values)
-      super
-      AppellantNotification.notify_appellant(self.appeal, @@template_name)
-    end
-  end
-
-  #Module to notify appellant if Hearing is Postponed
-  module HearingPostponed
-    @@template_name = self.name.split("::")[1]
-    def postpone!
-      super
-      AppellantNotification.notify_appellant(self.appeal, @@template_name)
-    end
-
-    def mark_hearing_with_disposition(payload_values:, instructions: nil)
-      super
-      hearing = Hearing.find_by(appeal_id: self.appeal.id)
-      if (hearing.disposition == Constants.HEARING_DISPOSITION_TYPES.postponed)
-        AppellantNotification.notify_appellant(self.appeal, @@template_name)
-      end
-    end
-  end
-
-  #Module to notify appellant if Hearing is Withdrawn
-  module HearingWithdrawn
-    @@template_name = self.name.split("::")[1]
-    def cancel!
-      super
-      AppellantNotification.notify_appellant(appeal, @@template_name)
-    end
-  end
-
-  #Module to notify appellant if IHP Task is pending
-  module IHPTaskPending
-    @@template_name = self.name.split("::")[1]
-    def create_ihp_tasks!
-        super
-        AppellantNotification.notify_appellant(self.appeal, @@template_name)
-    end
-  end
-
-  #Module to notify appellant if IHP Task is Complete
-  module IHPTaskComplete
-    @@template_name = self.name.split("::")[1]
-
-    def update_status_if_children_tasks_are_closed(child_task)
-      super
-      if %w[RootTask DistributionTask AttorneyTask].include?(child_task.parent.type) &&
-        (child_task.type.include?("InformalHearingPresentationTask") ||
-        child_task.type.include?("IhpColocatedTask"))
-        AppellantNotification.notify_appellant(self.appeal, @@template_name)
-      end
-    end
-  end
-
-  #Module to notify appellant if Privacy Act Request is Pending
-  module PrivacyActPending
-    @@template_name = self.name.split("::")[1]
-
-    def create_privacy_act_task
-      super
-      AppellantNotification.notify_appellant(self.appeal, @@template_name)
-    end
-  end
-
-  #Module to notify appellant if Privacy Act Request is Completed
-  module PrivacyActComplete
-    @@template_name = self.name.split("::")[1]
-    def cascade_closure_from_child_task?(child_task)
-      super
-      if (self.status == Constants.TASK_STATUSES.completed)
-        AppellantNotification.notify_appellant(self.appeal, @@template_name)
-      end
-    end
   end
 end

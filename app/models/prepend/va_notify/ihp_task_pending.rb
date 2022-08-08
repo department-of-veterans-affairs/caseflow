@@ -1,0 +1,10 @@
+ # frozen_string_literal: true
+
+ #Module to notify appellant if IHP Task is pending
+  module IHPTaskPending
+    @@template_name = self.name.split("::")[1]
+    def create_ihp_tasks!
+        super
+        AppellantNotification.notify_appellant(self.appeal, @@template_name)
+    end
+  end
