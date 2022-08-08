@@ -14,6 +14,7 @@ import DecisionReviewEditCompletedPage from '../intake/pages/decisionReviewEditC
 import Message from './pages/message';
 import { css } from 'glamor';
 import EditButtons from './components/EditButtons';
+import CreateButtons from './components/CreateButtons';
 import PropTypes from 'prop-types';
 import SplitAppealProgressBar from '../intake/components/SplitAppealProgressBar';
 import SplitAppealConfirm from '../intake/pages/SplitAppealConfirm';
@@ -212,11 +213,12 @@ export class IntakeEditFrame extends React.PureComponent {
                       );
                     }}
                   />
-
                 </div>
               </AppSegment>
+
               <AppSegment styling={textAlignRightStyling}>
                 <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
+                <Route exact path={PAGE_PATHS.REVIEW_SPLIT} component={CreateButtons} />
               </AppSegment>
 
             </AppFrame>

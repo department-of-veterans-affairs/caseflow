@@ -878,6 +878,8 @@
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
   "CORRECT_REQUEST_ISSUES_SAVE": "Save",
+  "CORRECT_REQUEST_ISSUES_SPLIT_APPEAL": "Split appeal",
+
   "CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TITLE": "Remove review?",
   "CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TEXT": "This will remove the review and cancel all the End Products associated with it.",
   "CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TITLE": "Withdraw appeal and cancel all tasks",
