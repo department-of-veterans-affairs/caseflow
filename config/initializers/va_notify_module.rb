@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-# Custom column types, particularly for VACOLS
-
+# Prepending Appellant Notification modules to relevant classes
 class VaNotifyModule
   if FeatureToggle.enabled?(:va_notify_prepend, user: RequestStore.store[:current_user])
     InitialTasksFactory.prepend(AppellantNotification::AppealDocketed)
