@@ -6,22 +6,16 @@ import Button from '../../components/Button';
 import { StateContext } from '../IntakeEditFrame';
 import { Link } from 'react-router-dom';
 
-const ContinueButtonUnconnected = (props) => {
+const ContinueButtonUnconnected = () => {
   const { selectedIssues, reason } = useContext(StateContext);
 
   const continueDisabled = (_.isEmpty(selectedIssues) || _.isEmpty(reason));
-  const handleClick = () => {
-    return (
-      props.history.push('/review_split')
-    );
-  };
 
   return (
     <span>
       {(continueDisabled ? (
         <Button
           name="continue-split"
-          onClick={handleClick}
           disabled={continueDisabled}
         >
         Continue
@@ -30,7 +24,6 @@ const ContinueButtonUnconnected = (props) => {
         <Link to="/review_split">
           <Button
             name="continue-split"
-            onClick={handleClick}
             disabled={continueDisabled}
           >
         Continue
@@ -42,31 +35,24 @@ const ContinueButtonUnconnected = (props) => {
   );
 };
 
-ContinueButtonUnconnected.propTypes = {
-  history: PropTypes.object,
-};
-
 const ContinueButton = connect(
   () => ({
   }),
 )(ContinueButtonUnconnected);
 
 class CancelSplitButtonUnconnected extends React.PureComponent {
+
+  handleClick = () => {
+    window.location.href = `/queue/appeals/${this.props.claimId}`;
+  }
+
   render = () => {
     return <Button
       id="cancel-edit"
       linkStyling
       willNeverBeLoading
       styling={{ style: { float: 'left' } }}
-      onClick={
-        () => {
-          if (this.props.formType === 'appeal') {
-            window.location.href = `/queue/appeals/${this.props.claimId}`;
-          } else {
-            this.props.history.push('/cancel');
-          }
-        }
-      }
+      onClick={this.handleClick}
     >
       Cancel
     </Button>;
