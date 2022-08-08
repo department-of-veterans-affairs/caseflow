@@ -15,38 +15,59 @@ module AppellantNotification
     end
   end
 
-  def self.handle_errors(appeal)
-    appeal_id = appeal.id
-    claimant = appeal.claimant
-    participant_id = appeal.claimant&.participant_id
-    if claimant == nil
-      begin
-        raise NoClaimantError.new(appeal_id)
-      rescue => exception
-        exception.message
-      end
-    elsif participant_id == ""
-      begin
-        raise NoParticipantIdError.new(appeal_id)
-      rescue => exception
-        exception.message
-      end
-    else
-      "Success"
+  class NoAppealError < StandardError
+    def initialize(appeal_id, message="There is no appeal")
+      super(message + " for #{appeal_id}")
     end
   end
 
-  def self.notify_appellant(appeal, template_name)
+  def self.handle_errors(appeal)
+    if appeal != nil
+      # just rails logger
+      appeal_id = appeal.id
+      claimant = appeal.claimant
+      participant_id = appeal.claimant&.participant_id
+      if claimant == nil
+        begin
+          raise NoClaimantError.new(appeal_id)
+        rescue => exception
+          Rails.logger.error("#{exception.message}\n#{exception.backtrace.join("\n")}")
+          exception.message
+        end
+      elsif participant_id == ""
+        begin
+          raise NoParticipantIdError.new(appeal_id)
+        rescue => exception
+          Rails.logger.error("#{exception.message}\n#{exception.backtrace.join("\n")}")
+          exception.message
+        end
+      else
+        "Success"
+      end
+    else
+    # if appeal is null
+      begin
+        raise NoAppealError.new(appeal)
+      rescue => error
+        Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
+        Raven.capture_exception(error, extra: { hearing_day_id: id, message: error.message })  
+      end
+    # rails logger and raven
+    end
+  end
+
+  def self.notify_appellant(appeal, template_name, queue = Shoryuken::Client.queues(ActiveJob::Base.queue_name_prefix + '_send_notifications'))
     msg_bdy = create_payload(appeal, template_name)
-    Shoryuken::Client.queues(ActiveJob::Base.queue_name_prefix + '_send_notifications').send_message(msg_bdy)
+    queue.send_message(msg_bdy)
   end
 
   def self.create_payload(appeal, template_name)
+    status = AppellantNotification.handle_errors(appeal)
     appeal_id = appeal.id
     participant_id = appeal.claimant.participant_id
     appeal_type = appeal.class.to_s
 
-    status = AppellantNotification.handle_errors(appeal)
+    # find template_id from db using template name
 
     msg_bdy = {
       queue_url: "caseflow_development_send_notifications",
@@ -199,13 +220,12 @@ module AppellantNotification
 
     def create_privacy_act_task
       super
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(self.appeal, @@template_name)
     end
   end
 
   module PrivacyActComplete
     @@template_name = self.name.split("::")[1]
-
     def cascade_closure_from_child_task?(child_task)
       if child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
         AppellantNotification.notify_appellant(self.appeal, @@template_name)
