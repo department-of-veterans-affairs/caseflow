@@ -44,7 +44,7 @@ describe AppellantNotification do
     let(:appeal) { create(:appeal, number_of_claimants: 1) }
 
     context "if appeal is nil" do
-      let (:empty_appeal) {}
+      let(:empty_appeal) {}
       it "reports the error" do
         expect(AppellantNotification).not_to receive(AppellantNotification.notify_appellant)
         # ???
