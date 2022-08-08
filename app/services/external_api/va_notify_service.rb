@@ -3,8 +3,6 @@
 require "json"
 require "base64"
 require "digest"
-
-
 class ExternalApi::VANotifyService
   BASE_URL = ENV["notification-api-url"] || ""
   CLIENT_SECRET = ENV["service-api-key"] || ""
@@ -57,40 +55,26 @@ class ExternalApi::VANotifyService
       send_va_notify_request(request)
     end
 
-
     def create_callback(url, callback_type, bearer_token, callback_channel)
-      request = { 
-
-         body: {
+      request = {
+        body: {
           url: url,
           callback_type: callback_type,
           bearer_token: bearer_token,
           callback_channel: callback_channel
-        
         },
-  
-          headers: HEADERS,
-          endpoint: CALLBACK_ENDPOINT, method: :post
-        
-        }
-  
+        headers: HEADERS,
+        endpoint: CALLBACK_ENDPOINT, method: :post
+      }
+      send_va_notify_request(request)
     end
 
-    def get_callback
-       request = {
+    def get_callbacks
+      request = {
         headers: HEADERS,
         endpoint: CALLBACK_ENDPOINT, method: :get
-
-       }
-       send_va_notify_request(request)
-    end
-  
-    def create_template
-
-    end
-
-    def get_template
-
+      }
+      send_va_notify_request(request)
     end
 
     private
@@ -157,5 +141,4 @@ class ExternalApi::VANotifyService
       request
     end
   end
-  
 end
