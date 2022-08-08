@@ -76,13 +76,6 @@ class ExternalApi::VANotifyService
        send_va_notify_request(request)
     end
   
-    def create_template
-
-    end
-
-    def get_template
-
-    end
     private
 
     def generate_token
