@@ -1,0 +1,2 @@
+module SplitAppealHelper
+end

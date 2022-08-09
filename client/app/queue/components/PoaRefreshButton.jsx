@@ -34,13 +34,6 @@ export const PoaRefreshButton = ({ appealId }) => {
       >
         {buttonText}
       </Button>
-
-      <Button
-        name="split-appeal"
-        legacyStyling={false}
-        classNames={['usa-button-secondary']}
-        onClick={this.splitAppealOnClick} > Confirm Appeal
-      </Button>
     </div>
     )}
   </React.Fragment>;

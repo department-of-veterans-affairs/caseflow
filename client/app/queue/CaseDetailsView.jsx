@@ -375,6 +375,13 @@ export const CaseDetailsView = (props) => {
         </StickyNavContentArea>
         {props.pollHearing && pollHearing()}
       </AppSegment>
+      <Button
+        onClick={() =>
+          push('/split_appeal/split')
+        }
+      >
+        Split Appeals
+      </Button>
     </React.Fragment>
   );
 };
