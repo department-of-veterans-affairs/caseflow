@@ -446,11 +446,11 @@ module Caseflow::Error
   class GovDeliveryBadGatewayError < GovDeliveryApiError; end
   class GovDeliveryServiceUnavailableError < GovDeliveryApiError; end
 
+  # VANotify Errors
   class VANotifyApiError < SerializableError; end
   class VANotifyUnauthorizedError < VANotifyApiError; end
   class VANotifyForbiddenError < VANotifyApiError; end
   class VANotifyNotFoundError < VANotifyApiError; end
   class VANotifyInternalServerError < VANotifyApiError; end
-  class VANotifyBadGatewayError < VANotifyApiError; end
-  class VANotifyServiceUnavailableError < VANotifyApiError; end
+  class VANotifyRateLimitError < VANotifyApiError; end
 end

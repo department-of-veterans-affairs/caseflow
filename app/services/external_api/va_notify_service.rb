@@ -31,9 +31,21 @@ class ExternalApi::VANotifyService
                             name: endpoint) do
         case method
         when :get
-          HTTPI.get(request)
+          response = HTTPI.post(request)
+          return response unless response.code >= 400
+
+          vn_response = ExternalApi::VANotifyService::Response.new(response)
+          fail vn_response.error if vn_response.error.present?
+
+          vn_response
         when :post
-          HTTPI.post(request)
+          response = HTTPI.post(request)
+          return response unless response.code >= 400
+
+          vn_response = ExternalApi::VANotifyService::Response.new(response)
+          fail vn_response.error if vn_response.error.present?
+
+          vn_response
         end
       end
     end
