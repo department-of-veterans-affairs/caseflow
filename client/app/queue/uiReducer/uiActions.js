@@ -1,6 +1,9 @@
 /* eslint-disable no-console */
 import { ACTIONS } from './uiConstants';
 import ApiUtil from '../../util/ApiUtil';
+import { options } from 'superagent';
+import { matchPath } from 'react-router';
+import { values } from 'lodash';
 
 export const resetErrorMessages = () => ({
   type: ACTIONS.RESET_ERROR_MESSAGES
@@ -72,13 +75,6 @@ export const setPoaRefreshAlert = (alertType, message, powerOfAttorney) => ({
   }
 });
 
-export const setSplitAppealAlert = (alertType) => ({
-  type: ACTIONS.SET_POA_REFRESH_ALERT,
-  payload: {
-    alertType,
-  }
-});
-
 export const hideSuccessMessage = () => ({
   type: ACTIONS.HIDE_SUCCESS_MESSAGE
 });
@@ -101,6 +97,24 @@ export const setUserInfo = (userInfo) => ({
   type: ACTIONS.SET_USER_INFO,
   payload: { userInfo }
 });
+
+export const splitAppeal = (appealId) => async (dispatch) => {
+  try {
+    const res = await ApiUtil.post(`/appeals/${appealId}/split_appeal`, { query: { appeal_id: appealId } });
+    // eslint-disable-next-line camelcase
+    const { id, css_id, display_name, full_name } = res?.body?.user;
+    const userInfo = {
+      id,
+      cssId: css_id,
+      fullName: full_name,
+      displayName: display_name,
+    };
+
+    dispatch(setUserInfo(userInfo));
+  } catch (error) {
+    console.error('error fetching user info', error);
+  }
+};
 
 export const fetchUserInfo = (userId) => async (dispatch) => {
   try {

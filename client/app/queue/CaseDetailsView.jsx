@@ -377,7 +377,7 @@ export const CaseDetailsView = (props) => {
       </AppSegment>
       <Button
         onClick={() =>
-          push('/split_appeal/split')
+          push(`/appeals/${appealId}/split_appeal`)
         }
       >
         Split Appeals
