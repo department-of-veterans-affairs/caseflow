@@ -12,7 +12,7 @@ module AppealDocketed
   def create_tasks_on_intake_success!
     # original method defined in app/models/appeal.rb
     super
-    distribution_task = appeal.tasks.of_type(:DistributionTask).first
+    distribution_task = tasks.of_type(:DistributionTask).first
     if distribution_task
       AppellantNotification.notify_appellant(self, @@template_name)
     end
