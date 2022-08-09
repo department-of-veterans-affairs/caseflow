@@ -55,7 +55,7 @@ class BackButtonUnconnected extends React.PureComponent {
       classNames={['usa-button-secondary']}
       onClick={
         () => {
-          if (this.props.formType === 'higher_level_review') {
+          if (this.props.formType === 'appeal') {
             this.props.history.push('/create_split');
           } else {
             this.props.history.push('/cancel');
