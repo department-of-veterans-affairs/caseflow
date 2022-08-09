@@ -1282,5 +1282,8 @@
   "SPLIT_APPEAL_CREATE_TITLE": "Create new appeal stream",
   "SPLIT_APPEAL_CREATE_SUBHEAD": "You can move multiple issues to the new appeal stream as long as the issues can be decided on together. If you need to split the appeal further, you can go through this process with the remaining issues.",
   "SPLIT_APPEAL_CREATE_REASONING_TITLE": "Please select why this appeal is being split",
-  "SPLIT_APPEAL_CREATE_SELECT_ISSUES_TITLE": "Please select issues(s) to move to the new appeal stream"
+  "SPLIT_APPEAL_CREATE_SELECT_ISSUES_TITLE": "Please select issues(s) to move to the new appeal stream",
+  "SPLIT_APPEAL_REVIEW_TITLE": "Review and confirm new appeal stream",
+  "SPLIT_APPEAL_REVIEW_SUBHEAD": "Case history, POA, and Veteran information will be duplicated on the new appeal.",
+  "SPLIT_APPEAL_REVIEW_REASONING_TITLE": "Reason for new appeal stream:"
 }
