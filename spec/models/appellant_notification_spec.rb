@@ -7,32 +7,35 @@ describe AppellantNotification do
     describe "self.handle_errors" do
       let(:appeal) { create(:appeal, number_of_claimants: 1) }
 
-    context "if appeal is nil" do
-      let(:empty_appeal) {}
-      it "reports the error" do
-        expect { AppellantNotification.handle_errors(empty_appeal) }.to raise_error(
-          AppellantNotification::NoAppealError
-        )
+      context "if appeal is nil" do
+        let(:empty_appeal) {}
+        it "reports the error" do
+          expect { AppellantNotification.handle_errors(empty_appeal) }.to raise_error(
+            AppellantNotification::NoAppealError
+          )
+        end
       end
 
-    context "with no claimant listed" do
-      let(:appeal) { create(:appeal, number_of_claimants: 0) }
-      it "returns error message" do
-        expect(AppellantNotification.handle_errors(appeal)).to eq(
-          AppellantNotification::NoClaimantError.new(appeal.id).message
-        )
+      context "with no claimant listed" do
+        let(:appeal) { create(:appeal, number_of_claimants: 0) }
+        it "returns error message" do
+          expect(AppellantNotification.handle_errors(appeal)).to eq(
+            AppellantNotification::NoClaimantError.new(appeal.id).message
+          )
+        end
       end
 
-    context "with no participant_id listed" do
-      let(:claimant) { create(:claimant, participant_id: "") }
-      let(:appeal) { create(:appeal) }
-      before do
-        appeal.claimants = [claimant]
-      end
-      it "returns error message" do
-        expect(AppellantNotification.handle_errors(appeal)).to eq(
-          AppellantNotification::NoParticipantIdError.new(appeal.id).message
-        )
+      context "with no participant_id listed" do
+        let(:claimant) { create(:claimant, participant_id: "") }
+        let(:appeal) { create(:appeal) }
+        before do
+          appeal.claimants = [claimant]
+        end
+        it "returns error message" do
+          expect(AppellantNotification.handle_errors(appeal)).to eq(
+            AppellantNotification::NoParticipantIdError.new(appeal.id).message
+          )
+        end
       end
 
       context "with no errors" do
@@ -42,26 +45,29 @@ describe AppellantNotification do
       end
     end
 
-  describe "self.create_payload" do
-    let(:good_appeal) { create(:appeal, number_of_claimants: 1) }
-    let(:bad_appeal) { create(:appeal) }
-    let(:bad_claimant) { create(:claimant, participant_id: "") }
-    let(:template_name) { "test" }
-    context "creates a payload with no exceptions" do
-      it "has a status value of success" do
-        expect(
-          AppellantNotification.create_payload(good_appeal, template_name)[:message_attributes][:status][:value]
-        ).to eq "Success"
+    describe "self.create_payload" do
+      let(:good_appeal) { create(:appeal, number_of_claimants: 1) }
+      let(:bad_appeal) { create(:appeal) }
+      let(:bad_claimant) { create(:claimant, participant_id: "") }
+      let(:template_name) { "test" }
+
+      context "creates a payload with no exceptions" do
+        it "has a status value of success" do
+          expect(
+            AppellantNotification.create_payload(good_appeal, template_name)[:message_attributes][:status][:value]
+          ).to eq "Success"
+        end
       end
-    end
-    context "creates a payload with errors" do
-      before do
-        bad_appeal.claimants = [bad_claimant]
-      end
-      it "does not have a success status" do
-        expect(
-          AppellantNotification.create_payload(bad_appeal, template_name)[:message_attributes][:status][:value]
-        ).not_to eq "Success"
+
+      context "creates a payload with errors" do
+        before do
+          bad_appeal.claimants = [bad_claimant]
+        end
+        it "does not have a success status" do
+          expect(
+            AppellantNotification.create_payload(bad_appeal, template_name)[:message_attributes][:status][:value]
+          ).not_to eq "Success"
+        end
       end
     end
 
