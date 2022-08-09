@@ -1100,7 +1100,8 @@ ActiveRecord::Schema.define(version: 2022_08_04_135348) do
   end
 
   create_table "notification_events", primary_key: "event_type", id: :string, comment: "Type of Event", force: :cascade do |t|
-    t.uuid "template_id", null: false, comment: "UUID of the VANotify Template"
+    t.uuid "email_template_id", null: false, comment: "Staging Email Template UUID"
+    t.uuid "sms_template_id", null: false, comment: "Staging SMS Template UUID"
   end
 
   create_table "notifications", force: :cascade do |t|
