@@ -9,4 +9,3 @@ module HearingScheduled
     AppellantNotification.notify_appellant(appeal, @@template_name)
   end
 end
-
