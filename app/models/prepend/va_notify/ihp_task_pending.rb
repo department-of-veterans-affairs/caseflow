@@ -10,6 +10,6 @@ module IhpTaskPending
   def create_ihp_tasks!
     # original method defined in app/workflows/ihp_tasks_factory.rb
     super
-    AppellantNotification.notify_appellant(appeal, @@template_name)
+    AppellantNotification.notify_appellant(@parent.appeal, @@template_name)
   end
 end
