@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class IhpTasksFactory
-  prepen dIhpTaskPending
+  prepend IhpTaskPending
 
   def initialize(parent)
     @parent = parent
