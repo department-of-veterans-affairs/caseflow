@@ -18,7 +18,7 @@ export const SplitAppealButton = ({ appealId }) => {
 
   const split = () => {
     setButtonText(<SmallLoader message="Split Appeal" spinnerColor="#417505" />);
-    ApiUtil.post(`/appeals/${appealId}/split_appeal`).then((data) => {
+    ApiUtil.post(`/appeals/${appealId}/split`).then((data) => {
       dispatch(setSplitAppealAlert(data.body.alert_type, data.body.message, data.body.split_appeal));
       setButtonText('Split Appeal');
     });
