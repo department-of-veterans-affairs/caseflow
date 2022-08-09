@@ -3,8 +3,12 @@
 # Module to notify appellant if IHP Task is pending
 module IhpTaskPending
   extend AppellantNotification
-  @@template_name = name.split("::")[1]
+  # rubocop:disable all
+  @@template_name = self.to_s
+  # rubocop:enable all
+
   def create_ihp_tasks!
+    # original method defined in app/workflows/ihp_tasks_factory.rb
     super
     AppellantNotification.notify_appellant(appeal, @@template_name)
   end

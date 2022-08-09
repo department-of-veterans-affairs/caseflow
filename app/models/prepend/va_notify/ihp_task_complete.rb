@@ -3,9 +3,12 @@
 # Module to notify appellant if IHP Task is Complete
 module IhpTaskComplete
   extend AppellantNotification
-  @@template_name = name.split("::")[1]
+  # rubocop:disable all
+  @@template_name = self.to_s
+  # rubocop:enable all
 
   def update_status_if_children_tasks_are_closed(child_task)
+    # original method defined in app/models/task.rb
     super
     if %w[RootTask DistributionTask AttorneyTask].include?(child_task.parent.type) &&
       (child_task.type.include?("InformalHearingPresentationTask") ||

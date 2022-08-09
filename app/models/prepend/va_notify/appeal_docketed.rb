@@ -3,9 +3,14 @@
 # Module to notify appellant when an appeal gets docketed
 module AppealDocketed
   extend AppellantNotification
-  @@template_name = name.split("::")[1]
+  # rubocop:disable all
+  @@template_name = self.to_s
+  # rubocop:enable all
+
+  # AppealDocketed.to_s?
 
   def create_tasks_on_intake_success!
+    # original method defined in app/models/appeal.rb
     super
     distribution_task = DistributionTask.find_by(appeal_id: id)
     if distribution_task
@@ -14,6 +19,7 @@ module AppealDocketed
   end
 
   def docket_appeal
+    # original method defined in app/models/pre_docket_task.rb
     super
     AppellantNotification.notify_appellant(appeal, @@template_name)
   end

@@ -55,6 +55,7 @@ module AppellantNotification
     appeal_type = appeal.class.to_s
 
     # find template_id from db using template name
+    # template_id = Template.find_by(template_name).id
 
     {
       queue_url: "caseflow_development_send_notifications",
