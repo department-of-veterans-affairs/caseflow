@@ -65,7 +65,7 @@ module AppellantNotification
       queue_url: "caseflow_development_send_notifications",
       message_body: "Notification for #{appeal_type}, #{template_name}",
       message_attributes: {
-        claimant: {
+        participant_id: {
           value: participant_id,
           data_type: "String"
         },
