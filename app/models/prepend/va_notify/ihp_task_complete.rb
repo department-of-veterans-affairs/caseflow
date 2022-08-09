@@ -11,8 +11,8 @@ module IhpTaskComplete
     # original method defined in app/models/task.rb
     super
     if %w[RootTask DistributionTask AttorneyTask].include?(child_task.parent.type) &&
-      (child_task.type.include?("InformalHearingPresentationTask") ||
-      child_task.type.include?("IhpColocatedTask"))
+       (child_task.type.include?("InformalHearingPresentationTask") ||
+       child_task.type.include?("IhpColocatedTask"))
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
   end
