@@ -14,15 +14,10 @@ module AppellantNotification
     end
   end
 
-  class NoAppealError < StandardError
-    def initialize(appeal_id, message = "There is no appeal")
-      super(message + " for #{appeal_id}")
-    end
-  end
+  class NoAppealError < StandardError; end
 
   def self.handle_errors(appeal)
     if !appeal.nil?
-      # just rails logger
       appeal_id = appeal.id
       claimant = appeal.claimant
       participant_id = appeal.claimant&.participant_id
@@ -44,14 +39,7 @@ module AppellantNotification
         "Success"
       end
     else
-      # if appeal is null
-      begin
-        fail NoAppealError, appeal
-      rescue StandardError => error
-        Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-        Raven.capture_exception(error, extra: { hearing_day_id: id, message: error.message })
-      end
-      # rails logger and raven
+      fail NoAppealError
     end
   end
 
@@ -68,7 +56,7 @@ module AppellantNotification
 
     # find template_id from db using template name
 
-    msg_bdy = {
+    {
       queue_url: "caseflow_development_send_notifications",
       message_body: "Notification for #{appeal_type}, #{template_name}",
       message_attributes: {

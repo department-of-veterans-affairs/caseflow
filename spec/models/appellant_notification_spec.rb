@@ -2,43 +2,6 @@
 
 require "appellant_notification.rb"
 
-# describe AppellantNotification do
-#   describe AppellantNotification::AppealDocketed do
-#     describe ".distribution_task" do
-#       let(:appeal) { create(:appeal, :with_pre_docket_task) }
-#       let(:task_factory) do
-#         InitialTasksFactory.prepend(AppellantNotification::AppealDocketed)
-#         InitialTasksFactory.new(appeal)
-#       end
-#       it "will notify appellant when an appeal is docketed" do
-#         task_factory.distribution_task
-#         sleep(1)
-#         expect(Shoryuken::Client.sqs.receive_message(
-#                  queue_url: "http://localhost:4576/000000000000/caseflow_development_send_notifications"
-#                )).to eq("Bob")
-#       end
-#     end
-#   end
-# end
-
-# describe AppellantNotification::AppealDocketed do
-#   describe ".distribution_task" do
-#     let(:appeal) { create(:appeal, :with_pre_docket_task) }
-#     let(:spaghetti) do
-#       InitialTasksFactory.prepend(AppellantNotification::AppealDocketed)
-#       InitialTasksFactory.new(appeal)
-#     end
-#     it "will notify appellant when an appeal is docketed" do
-#       spaghetti.distribution_task
-#       expect(appeal.tasks.any? {|t| t.type == "DistributionTask"}).to eq true
-#     end
-#   end
-# end
-
-
-
-
-
 describe AppellantNotification do
   describe "self.handle_errors" do
     let(:appeal) { create(:appeal, number_of_claimants: 1) }
@@ -46,8 +9,7 @@ describe AppellantNotification do
     context "if appeal is nil" do
       let(:empty_appeal) {}
       it "reports the error" do
-        expect(AppellantNotification).not_to receive(AppellantNotification.notify_appellant)
-        # ???
+        expect { AppellantNotification.handle_errors(empty_appeal) }.to raise_error(AppellantNotification::NoAppealError)
       end
     end
 
@@ -55,7 +17,6 @@ describe AppellantNotification do
       let(:appeal) { create(:appeal, number_of_claimants: 0) }
       it "returns error message" do
         expect(AppellantNotification.handle_errors(appeal)).to eq AppellantNotification::NoClaimantError.new(appeal.id).message
-        # raise_error(AppellantNotification::NoClaimantError)
       end
     end
 
@@ -69,7 +30,7 @@ describe AppellantNotification do
         expect(AppellantNotification.handle_errors(appeal)).to eq AppellantNotification::NoParticipantIdError.new(appeal.id).message
       end
     end
-      
+
     context "with no errors" do
       it "doesn't raise" do
         expect(AppellantNotification.handle_errors(appeal)).to eq "Success"
@@ -84,11 +45,10 @@ describe AppellantNotification do
     let(:template_name) { "test" }
     context "creates a payload with no exceptions" do
       it "has a status value of success" do
-        # I want to check that msg_bdy contains the success status from handle_errors
         expect(AppellantNotification.create_payload(good_appeal, template_name)[:message_attributes][:status][:value]).to eq "Success"
       end
     end
-    context "creates a payload with exceptions" do
+    context "creates a payload with errors" do
       before do
         bad_appeal.claimants = [bad_claimant]
       end
@@ -103,8 +63,8 @@ describe AppellantNotification do
     let(:template_name) { "test" }
     context "sends message to shoryuken" do
       it "sends the payload" do
-        queue = double('queue')
-        expect(queue).to receive(:send_message).with(AppellantNotification.create_payload(appeal,template_name))
+        queue = double("queue")
+        expect(queue).to receive(:send_message).with(AppellantNotification.create_payload(appeal, template_name))
         AppellantNotification.notify_appellant(appeal, template_name, queue)
       end
     end
@@ -115,8 +75,8 @@ describe AppellantNotification do
   describe AppellantNotification::AppealDocketed do
     describe "docket_appeal" do
       let(:appeal) { create(:appeal, :with_pre_docket_task) }
-      let(:template_name) {"AppealDocketed"}
-      let(:pre_docket_task) {PreDocketTask.find_by(appeal: appeal)}
+      let(:template_name) { "AppealDocketed" }
+      let(:pre_docket_task) { PreDocketTask.find_by(appeal: appeal) }
       before do
         PreDocketTask.prepend(AppellantNotification::AppealDocketed)
       end
@@ -128,7 +88,7 @@ describe AppellantNotification do
 
     describe "create_tasks_on_intake_success!" do
       let(:appeal) { create(:appeal) }
-      let(:template_name) {"AppealDocketed"}
+      let(:template_name) { "AppealDocketed" }
       before do
         Appeal.prepend(AppellantNotification::AppealDocketed)
       end
@@ -142,9 +102,17 @@ describe AppellantNotification do
   describe AppellantNotification::AppealDecisionMailed do
     describe "Legacy Appeal Decision Mailed" do
       let(:legacy_appeal) { create(:legacy_appeal, :with_root_task) }
-      let(:params) { {appeal_id: legacy_appeal.id, citation_number: "A18123456", decision_date: Time.zone.today, redacted_document_location: "some/filepath", file: "some file"} }
-      let(:template_name) {"AppealDecisionMailed"}
-      let(:dispatch) {LegacyAppealDispatch.new(appeal: legacy_appeal, params: params)}
+      let(:params) do
+        {
+          appeal_id: legacy_appeal.id,
+          citation_number: "A18123456",
+          decision_date: Time.zone.today,
+          redacted_document_location: "some/filepath",
+          file: "some file"
+        }
+      end
+      let(:template_name) { "AppealDecisionMailed" }
+      let(:dispatch) { LegacyAppealDispatch.new(appeal: legacy_appeal, params: params) }
       before do
         LegacyAppealDispatch.prepend(AppellantNotification::AppealDecisionMailed)
       end
@@ -156,10 +124,18 @@ describe AppellantNotification do
 
     describe "AMA Appeal Decision Mailed" do
       let(:appeal) { create(:appeal, :with_root_task) }
-      let(:params) { {appeal_id: appeal.id, citation_number: "A18123456", decision_date: Time.zone.today, redacted_document_location: "some/filepath", file: "some file"} }
-      let(:user) { create(:user)}
-      let(:template_name) {"AppealDecisionMailed"}
-      let(:dispatch) {AmaAppealDispatch.new(appeal: appeal, params: params, user: user)}
+      let(:params) do
+        {
+          appeal_id: legacy_appeal.id,
+          citation_number: "A18123456",
+          decision_date: Time.zone.today,
+          redacted_document_location: "some/filepath",
+          file: "some file"
+        }
+      end
+      let(:user) { create(:user) }
+      let(:template_name) { "AppealDecisionMailed" }
+      let(:dispatch) { AmaAppealDispatch.new(appeal: appeal, params: params, user: user) }
       before do
         AmaAppealDispatch.prepend(AppellantNotification::AppealDecisionMailed)
       end
@@ -171,21 +147,44 @@ describe AppellantNotification do
   end
 
   describe AppellantNotification::HearingScheduled do
-    describe "Hearing Scheduled" do
-      let(:appeal) { create(:appeal)}
-      let(:template_name) {"HearingScheduled"}
-      let(:schedule_hearing_task) { create(:schedule_hearing_task) }
+    describe "#create_hearing" do
+      let(:appeal_hearing) { create(:appeal, :with_schedule_hearing_tasks) }
+      let(:template_name) { "HearingScheduled"}
+      let(:schedule_hearing_task) { ScheduleHearingTask.find_by(appeal: appeal_hearing) }
+      let(:task_values) do
+        {
+          appeal: appeal_hearing,
+          hearing_day_id: create(:hearing_day).id,
+          hearing_location_attributes: {},
+          scheduled_time_string: "11:30am",
+          notes: "none"
+        }
+      end
       before do
-        AmaAppealDispatch.prepend(AppellantNotification::HearingScheduled)
-      end      
-      it "Will notify appellant that a hearing has been scheduled" do
-        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
+        ScheduleHearingTask.prepend(AppellantNotification::HearingScheduled)
+      end
+      it "will notify appellant when a hearing is scheduled" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal_hearing, template_name)
         schedule_hearing_task.create_hearing(task_values)
       end
     end
-    
+  end
 
+  describe AppellantNotification::HearingPostponed do
+    describe "#postpone!" do
+      # let(:appeal_hearing) {create(:appeal, :tied_to_judge)}
+      let(:template_name) { "HearingPostponed" }
+      let(:hearing_disposition_task) { create(:assign_hearing_disposition_task) }
+      before do
+        AssignHearingDispositionTask.prepend(AppellantNotification::HearingPostponed)
+      end
+      it "will notify appellant when a hearing is postponed" do
+        appeal_hearing = hearing_disposition_task.appeal
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal_hearing, template_name)
+        hearing_disposition_task.postpone!
+      end
 
+      # not working yet
+    end
   end
 end
-
