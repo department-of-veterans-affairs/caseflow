@@ -2,8 +2,8 @@
 
 class FoiaColocatedTask < ColocatedTask
   after_create :create_privacy_act_task
-  prepend AppellantNotification::PrivacyActComplete
-  prepend AppellantNotification::PrivacyActPending
+  prepen dPrivacyActComplete
+  prepen dPrivacyActPending
 
   def self.label
     Constants.CO_LOCATED_ADMIN_ACTIONS.foia

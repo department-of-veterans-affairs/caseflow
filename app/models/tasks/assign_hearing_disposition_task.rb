@@ -21,8 +21,8 @@
 ##
 class AssignHearingDispositionTask < Task
   include RunAsyncable
-  prepend AppellantNotification::HearingPostponed
-  prepend AppellantNotification::HearingWithdrawn
+  prepen dHearingPostponed
+  prepen dHearingWithdrawn
 
   validates :parent, presence: true, parentTask: { task_type: HearingTask }, on: :create
   delegate :hearing, to: :hearing_task, allow_nil: true

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class IhpTasksFactory
-  prepend AppellantNotification::IhpTaskPending
+  prepen dIhpTaskPending
 
   def initialize(parent)
     @parent = parent
