@@ -7,7 +7,7 @@ module AppealDocketed
 
   def create_tasks_on_intake_success!
     super
-    distribution_task = DistributionTask.find_by(appeal_id: id)
+    distribution_task = appeal.tasks.of_type(:DistributionTask).first
     if distribution_task
       AppellantNotification.notify_appellant(self, @@template_name)
     end
