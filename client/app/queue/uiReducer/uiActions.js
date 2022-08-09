@@ -72,11 +72,10 @@ export const setPoaRefreshAlert = (alertType, message, powerOfAttorney) => ({
   }
 });
 
-export const setSplitAppealAlert = (alertType, message) => ({
+export const setSplitAppealAlert = (alertType) => ({
   type: ACTIONS.SET_POA_REFRESH_ALERT,
   payload: {
     alertType,
-    message,
   }
 });
 

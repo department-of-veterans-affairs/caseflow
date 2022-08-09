@@ -28,7 +28,7 @@ export const SplitAppealButton = ({ appealId }) => {
     {viewSplitAppealButton && (<div {...spacingStyling}>
       <Button
         type="button"
-        name="Splite Appeal"
+        name="Split Appeal"
         classNames={['usa-button-secondary', 'cf-push-right']}
         onClick={() => split()}
       >

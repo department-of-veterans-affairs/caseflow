@@ -379,4 +379,6 @@ Rails.application.routes.draw do
   post "/mpi/search", to: "mpi#search"
   get "split_appeal/split"
   #post 'split_appeal/split', to: "split_appeal#split", as: 'data'
+  #This needs to be updated to route to CaseDetailsPage for alert banner
+  #Check
 end
