@@ -10,40 +10,41 @@ import Button from '../../components/Button';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 
-class CancelEditButtonUnconnected extends React.PureComponent {
+class CancelButtonUnconnected extends React.PureComponent {
   render = () => {
+    const onClick = this.appealForm;
     return <Button
       id="cancel-edit"
       linkStyling
       willNeverBeLoading
       styling={{ style: { float: 'left' } }}
-      onClick={
-        () => {
-          if (this.props.formType === 'appeal') {
-            window.location.href = `/queue/appeals/${this.props.claimId}`;
-          } else {
-            this.props.history.push('/cancel');
-          }
-        }
-      }
+      onClick={onClick}
     >
       Cancel
     </Button>;
   }
+
+  appealForm = () => {
+    if (this.props.formType === 'appeal') {
+      window.location.href = `/queue/appeals/${this.props.claimId}`;
+    } else {
+      this.props.history.push('/cancel');
+    }
+  }
 }
 
-CancelEditButtonUnconnected.propTypes = {
+CancelButtonUnconnected.propTypes = {
   history: PropTypes.object,
   formType: PropTypes.string,
   claimId: PropTypes.string
 };
 
-const CancelEditButton = connect(
+const CancelButton = connect(
   (state) => ({
     formType: state.formType,
     claimId: state.claimId
   })
-)(CancelEditButtonUnconnected);
+)(CancelButtonUnconnected);
 
 class BackButtonUnconnected extends React.PureComponent {
   render = () => {
@@ -87,11 +88,7 @@ class SplitButtonUnconnected extends React.PureComponent {
       classNames={['cf-submit usa-button']}
       onClick={
         () => {
-          if (this.props.formType === 'appeal') {
-            window.location.href = `/queue/appeals/${this.props.claimId}`;
-          } else {
-            this.props.history.push('/cancel');
-          }
+          window.location.href = `/queue/appeals/${this.props.claimId}`;
         }
       }
     >
@@ -116,7 +113,7 @@ const SplitButton = connect(
 export default class CreateButtons extends React.PureComponent {
   render = () =>
     <div>
-      <CancelEditButton history={this.props.history} />
+      <CancelButton history={this.props.history} />
       <BackButton history={this.props.history} />
       <SplitButton history={this.props.history} />
     </div>
