@@ -130,6 +130,9 @@ class ETL::HearingRecord < ETL::Record
       # do these last as they may raise exceptions in legacy hearings
       target.bva_poc = original.bva_poc
       target.hearing_request_type = original.hearing_request_type
+      if original.hearing_request_type.nil?
+        target.hearing_request_type = Hearing::HEARING_TYPES[hearing_day.request_type&.to_sym]
+      end
 
       target
     end
