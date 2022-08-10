@@ -2,41 +2,91 @@
 
 class Fakes::VANotifyService < ExternalApi::VANotifyService
   class << self
-    def send_notifications(*)
-      fake_email_response
+    # rubocop:disable Metrics/PerceivedComplexity
+    # rubocop:disable Metrics/CyclomaticComplexity
+    def send_notifications(email_address, email_template_id, phone_number, sms_template_id, status = nil)
+      if !email_address.include?("@")
+        return bad_email_address_response
+      end
+
+      if email_template_id.length != 36
+        return bad_email_template_response
+      end
+
+      if phone_number && ((phone_number.length != 12) || (phone_number !~ /^\+/))
+        return bad_phone_number_response
+      end
+
+      if sms_template_id && sms_template_id.length != 36
+        return bad_sms_template_response
+      end
+
+      fake_notification_response(email_address, email_template_id, phone_number, sms_template_id, status)
+    end
+    # rubocop:enable Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/CyclomaticComplexity
+
+    def get_status(notification_id)
+      return bad_notification_response if notification_id.length != 36
+
+      fake_status_response(notification_id)
     end
 
-    def get_status(*)
-      fake_status_response
+    private
+
+    def bad_email_address_response
+      [{
+        "error": "BadRequestError",
+        "message": "email is not valid"
+      }]
     end
 
-    def get_callback(*)
-      fake_get_callback_response
+    def bad_email_template_response
+      [{
+        "error": "BadRequestError",
+        "message": "email template id not valid"
+      }]
     end
 
-    def create_callback(*)
-      fake_create_callback_reponse
+    def bad_phone_number_response
+      [{
+        "error": "BadRequestError",
+        "message": "phone number not valid"
+      }]
     end
 
-    def fake_email_response
-      {
+    def bad_sms_template_response
+      [{
+        "error": "BadRequestError",
+        "message": "sms template id not valid"
+      }]
+    end
+
+    def bad_notification_response
+      [{
+        "error": "BadRequestError",
+        "message": "notification id not valid"
+      }]
+    end
+
+    def fake_notification_response(email_address, email_template_id, phone_number, sms_template_id, status = nil)
+      response = {
         "reference": "string",
-        "template_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        "personalisation": {
-          "full_name": "John Smith",
-          "claim_id": "123456"
-        },
+        "template_id": email_template_id,
+        "personalisation": nil,
         "scheduled_for": "string",
         "billing_code": "string",
-        "email_reply_to_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "email_reply_to_id": email_template_id,
         "email_address": "string"
       }
+      response["personalisation"] = { "appeal_status": status } if status
+      response
     end
 
     # rubocop:disable Metrics/MethodLength
-    def fake_status_response
+    def fake_status_response(notification_id)
       {
-        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "id": notification_id,
         "body": "string",
         "completed_at": "2022-08-08T16:20:50.090Z",
         "created_at": "2022-08-08T16:20:50.090Z",
@@ -71,41 +121,6 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
         "type": "email"
       }
     end
-
-    def fake_get_callback_response
-      {
-        "data": [
-          {
-            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "service_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "url": "string",
-            "callback_type": "delivery_status",
-            "created_at": "string",
-            "updated_at": "string",
-            "updated_by_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "notification_statuses": [
-              "cancelled"
-            ]
-          }
-        ]
-      }
-    end
-
-    def fake_create_callback_reponse
-      {
-        "data": {
-          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "service_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "url": "string",
-          "callback_type": "delivery_status",
-          "created_at": "string",
-          "updated_at": "string",
-          "updated_by_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "notification_statuses": [
-            "cancelled"
-          ]
-        }
-      }
-    end
+    # rubocop:enable Metrics/MethodLength
   end
 end

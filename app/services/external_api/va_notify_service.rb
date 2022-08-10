@@ -6,7 +6,7 @@ require "digest"
 class ExternalApi::VANotifyService
   BASE_URL = ENV["notification-api-url"] || ""
   CLIENT_SECRET = ENV["service-api-key"] || ""
-  SERVICE_ID = ""
+  SERVICE_ID = ENV["service-id"] || ""
   SEND_EMAIL_NOTIFICATION_ENDPOINT = "/v2/notifications/email"
   SEND_SMS_NOTIFICATION_ENDPOINT = "/v2/notifications/sms"
   GET_STATUS_ENDPOINT = "/v2/notifications/"
@@ -17,6 +17,99 @@ class ExternalApi::VANotifyService
   }.freeze
 
   class << self
+    # Send the email and sms notifications
+    # @param {status} The appeal status for a template that requires it
+    def send_notifications(email_address, email_template_id, phone_number, sms_template_id, status = "")
+      email_response = send_va_notify_request(email_request(email_address, email_template_id, status))
+      Rails.logger.info(email_response)
+      if phone_number
+        sms_response = send_va_notify_request(sms_request(phone_number, sms_template_id, status))
+        Rails.logger.info(sms_response)
+      end
+      email_response
+    end
+
+    # Get the status of a notification
+    def get_status(notification_id)
+      request = {
+        headers: HEADERS,
+        endpoint: GET_STATUS_ENDPOINT + notification_id, method: :get
+      }
+      send_va_notify_request(request)
+    end
+
+    private
+
+    # Generate the JWT token
+    def generate_token
+      jwt_secret = CLIENT_SECRET
+      header = {
+        typ: "JWT",
+        alg: ENV["notification-jwt-alg"] || ""
+      }
+      current_timestamp = DateTime.now.strftime("%Q").to_i / 1000.floor
+      data = {
+        iss: SERVICE_ID,
+        iat: current_timestamp
+      }
+      stringified_header = header.to_json.encode("UTF-8")
+      encoded_header = base64url(stringified_header)
+      stringified_data = data.to_json.encode("UTF-8")
+      encoded_data = base64url(stringified_data)
+      token = "#{encoded_header}.#{encoded_data}"
+      signature = OpenSSL::HMAC.digest("SHA256", jwt_secret, token)
+      signature = base64url(signature)
+      signed_token = "#{token}.#{signature}"
+      signed_token
+    end
+
+    # Remove any illegal characters and keeps source at proper format
+    def base64url(source)
+      encoded_source = Base64.encode64(source)
+      encoded_source = encoded_source.sub(/=+$/, "")
+      encoded_source = encoded_source.tr("+", "-")
+      encoded_source = encoded_source.tr("/", "_")
+      encoded_source
+    end
+
+    # Build an email request object
+    def email_request(email_address, email_template_id, status)
+      request = {
+        body: {
+          template_id: email_template_id,
+          email_address: email_address,
+          personalisation: nil
+        },
+        headers: HEADERS,
+        endpoint: SEND_EMAIL_NOTIFICATION_ENDPOINT, method: :post
+      }
+      if status
+        # If a status is given then it will be added to the request object
+        request[:body][:personalisation] = { appeal_status: status }
+      end
+      request
+    end
+
+    # Build a sms request object
+    def sms_request(phone_number, sms_template_id, status)
+      request = {
+        body: {
+          template_id: sms_template_id,
+          phone_number: phone_number,
+          personalisation: nil
+        },
+        headers: HEADERS,
+        endpoint: SEND_SMS_NOTIFICATION_ENDPOINT, method: :post
+      }
+      if status
+        # If a status is given then it will be added to the request object
+        request[:body][:personalisation] = { appeal_status: status }
+      end
+      request
+    end
+
+    # rubocop:disable Metrics/MethodLength
+    # Build and send the request to the server
     def send_va_notify_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
       url = URI.escape(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
@@ -31,114 +124,22 @@ class ExternalApi::VANotifyService
                             name: endpoint) do
         case method
         when :get
-          HTTPI.post(request)
+          response = HTTPI.get(request)
+          service_response = ExternalApi::VANotifyService::Response.new(response)
+          fail service_response.error if service_response.error.present?
+
+          service_response
         when :post
-          HTTPI.post(request)
+          response = HTTPI.post(request)
+          service_response = ExternalApi::VANotifyService::Response.new(response)
+          fail service_response.error if service_response.error.present?
+
+          service_response
+        else
+          fail NotImplementedError
         end
       end
     end
-
-    def send_notifications(email_address, email_template_id, sms_template_id = nil, phone_number = nil, status = "")
-      email_response = send_va_notify_request(email_request(email_address, email_template_id, status))
-      Rails.logger.info(email_response)
-      if phone_number
-        sms_response = send_va_notify_request(sms_request(phone_number, sms_template_id, status))
-        Rails.logger.info(sms_response)
-      end
-    end
-
-    def get_status(notification_id)
-      request = {
-        headers: HEADERS,
-        endpoint: GET_STATUS_ENDPOINT + notification_id, method: :get
-      }
-      send_va_notify_request(request)
-    end
-
-    def create_callback(url, callback_type, bearer_token, callback_channel)
-      request = {
-        body: {
-          url: url,
-          callback_type: callback_type,
-          bearer_token: bearer_token,
-          callback_channel: callback_channel
-        },
-        headers: HEADERS,
-        endpoint: CALLBACK_ENDPOINT, method: :post
-      }
-      send_va_notify_request(request)
-    end
-
-    def get_callbacks
-      request = {
-        headers: HEADERS,
-        endpoint: CALLBACK_ENDPOINT, method: :get
-      }
-      send_va_notify_request(request)
-    end
-
-    private
-
-    def generate_token
-      jwt_secret = CLIENT_SECRET
-      header = {
-        typ: "JWT",
-        alg: "HS256"
-      }
-      current_timestamp = DateTime.now.strftime("%Q").to_i / 1000.floor
-      data = {
-        iss: SERVICE_ID,
-        iat: current_timestamp
-      }
-      stringified_header = header.to_json.encode("UTF-8")
-      encoded_header = base64url(stringified_header)
-      stringified_data = data.to_json.encode("UTF-8")
-      encoded_data = base64url(stringified_data)
-      token = "#{encoded_header}.#{encoded_data}"
-      signature = OpenSSL::HMAC.digest('SHA256', jwt_secret, token)
-      signature = base64url(signature)
-      signed_token = "#{token}.#{signature}"
-      signed_token
-    end
-
-    def base64url(source)
-      encoded_source = Base64.encode64(source)
-      encoded_source = encoded_source.sub(/=+$/, '')
-      encoded_source = encoded_source.gsub(/\+/, '-')
-      encoded_source = encoded_source.gsub(/\//, '_')
-      encoded_source
-    end
-
-    def email_request(email_address, email_template_id, status)
-      request = {
-        body: {
-          template_id: email_template_id,
-          email_address: email_address,
-          personalisation: nil
-        },
-        headers: HEADERS,
-        endpoint: SEND_EMAIL_NOTIFICATION_ENDPOINT, method: :post
-      }
-      if status
-        request[:body][:personalisation] = { appeal_status: status }
-      end
-      request
-    end
-
-    def sms_request(phone_number, sms_template_id, status)
-      request = {
-        body: {
-          template_id: sms_template_id,
-          phone_number: phone_number,
-          personalisation: nil
-        },
-        headers: HEADERS,
-        endpoint: SEND_SMS_NOTIFICATION_ENDPOINT, method: :post
-      }
-      if status
-        request[:body][:personalisation] = { appeal_status: status }
-      end
-      request
-    end
+    # rubocop:enable Metrics/MethodLength
   end
 end

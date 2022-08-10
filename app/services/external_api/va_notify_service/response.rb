@@ -10,14 +10,17 @@ class ExternalApi::VANotifyService::Response
 
   def data; end
 
+  # Wrapper method to check for errors
   def error
     check_for_error
   end
 
+  # Checks if there is no error
   def success?
     !resp.error?
   end
 
+  # Parses response body to an object
   def body
     @body ||= begin
       JSON.parse(resp.body)
@@ -28,14 +31,16 @@ class ExternalApi::VANotifyService::Response
 
   private
 
+  # Error codes and their associated error
   ERROR_LOOKUP = {
     401 => Caseflow::Error::VANotifyUnauthorizedError,
     403 => Caseflow::Error::VANotifyForbiddenError,
     404 => Caseflow::Error::VANotifyNotFoundError,
     429 => Caseflow::Error::VANotifyRateLimitError,
-    500 => Caseflow::Error::VANotifyInternalServerError,
+    500 => Caseflow::Error::VANotifyInternalServerError
   }.freeze
 
+  # Checks for error and returns if found
   def check_for_error
     return if success?
 
@@ -47,6 +52,7 @@ class ExternalApi::VANotifyService::Response
     end
   end
 
+  # Gets the error message from the response
   def error_message
     return "No error message from VANotify" if body.empty?
 
