@@ -186,19 +186,18 @@ describe AppellantNotification do
 
   describe HearingPostponed do
     describe "#postpone!" do
-      # let(:appeal_hearing) {create(:appeal, :tied_to_judge)}
       let(:template_name) { "HearingPostponed" }
-      let(:hearing_disposition_task) { create(:assign_hearing_disposition_task) }
+      let(:postponed_hearing) { create(:hearing, :postponed, :with_tasks) }
       # before do
       #   AssignHearingDispositionTask.prepend(AppellantNotification::HearingPostponed)
       # end
       it "will notify appellant when a hearing is postponed" do
-        appeal_hearing = hearing_disposition_task.appeal
+        appeal_hearing = postponed_hearing.appeal
+        hearing_disposition_task = appeal_hearing.tasks.find_by(type: "AssignHearingDispositionTask")
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal_hearing, template_name)
         hearing_disposition_task.postpone!
       end
-
-      # not working yet
     end
   end
+
 end
