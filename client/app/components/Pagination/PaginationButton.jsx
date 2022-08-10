@@ -12,8 +12,15 @@ class PaginationButton extends React.PureComponent {
       index
     } = this.props;
 
+    const additionalProps = {};
+
+    if (currentPage === index) {
+      additionalProps['aria-current'] = 'page';
+    }
+
     return (
       <button
+        {...additionalProps}
         onClick={(event) => this.handleClick(event, index)}
         aria-label={`Page ${index + 1}`}
         className={currentPage === index ? 'cf-current-page' : ''}
