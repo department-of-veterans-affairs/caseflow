@@ -9,7 +9,6 @@
 # Note: Full list of colocated tasks in /client/constants/CO_LOCATED_ADMIN_ACTIONS.json
 
 class ColocatedTask < Task
-  prepend IhpTaskPending
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
   validate :task_is_unique, on: :create
@@ -17,6 +16,7 @@ class ColocatedTask < Task
   after_update :update_location_in_vacols
 
   class << self
+    prepend IhpTaskPending
     def create_from_params(params, user)
       parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
       verify_user_can_create!(user, parent_task)
