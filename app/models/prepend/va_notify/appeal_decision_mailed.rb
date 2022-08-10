@@ -7,26 +7,11 @@ module AppealDecisionMailed
   @@template_name = self.to_s
   # rubocop:enable all
 
-  # Aspect for Legacy Appeals
-  def complete_root_task!
-    # original method defined in app/workflows/legacy_appeal_dispatch.rb
+  def update_with_instructions(params)
     super
-    # Check for Contested Flag
-    if contested_claim 
+    if name == "BvaDispatchTask" && contested_claim?
       AppellantNotification.notify_appellant(@appeal, "#{@@template_name}Contested")
-    else
-      AppellantNotification.notify_appellant(@appeal, "#{@@template_name}NonContested")
-    end
-  end
-
-  # Aspect for AMA Appeals
-  def complete_dispatch_root_task!
-    # original method defined in app/workflows/ama_appeal_dispatch.rb
-    super
-    # Check for Contested Flag
-    if contested_claim? 
-      AppellantNotification.notify_appellant(@appeal, "#{@@template_name}Contested")
-    else
+    elsif name == "BvaDispatchTask"
       AppellantNotification.notify_appellant(@appeal, "#{@@template_name}NonContested")
     end
   end
