@@ -4,9 +4,10 @@ require "json"
 require "base64"
 require "digest"
 class ExternalApi::VANotifyService
-  BASE_URL = ENV["notification-api-url"] || ""
-  CLIENT_SECRET = ENV["service-api-key"] || ""
-  SERVICE_ID = ENV["service-id"] || ""
+  BASE_URL = ENV["VA_NOTIFY_API_URL"]
+  CLIENT_SECRET = ENV["VA_NOTIFY_API_KEY"]
+  SERVICE_ID = ENV["VA_NOTIFY_SERVICE_ID"]
+  TOKEN_ALG = ENV["VA_NOTIFY_TOKEN_ALG"]
   SEND_EMAIL_NOTIFICATION_ENDPOINT = "/v2/notifications/email"
   SEND_SMS_NOTIFICATION_ENDPOINT = "/v2/notifications/sms"
   GET_STATUS_ENDPOINT = "/v2/notifications/"
@@ -45,7 +46,7 @@ class ExternalApi::VANotifyService
       jwt_secret = CLIENT_SECRET
       header = {
         typ: "JWT",
-        alg: ENV["notification-jwt-alg"] || ""
+        alg: TOKEN_ALG
       }
       current_timestamp = DateTime.now.strftime("%Q").to_i / 1000.floor
       data = {

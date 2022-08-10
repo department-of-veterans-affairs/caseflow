@@ -21,7 +21,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
         return bad_sms_template_response
       end
 
-      fake_notification_response(email_address, email_template_id, phone_number, sms_template_id, status)
+      fake_notification_response(email_template_id)
     end
     # rubocop:enable Metrics/PerceivedComplexity
     # rubocop:enable Metrics/CyclomaticComplexity
@@ -69,17 +69,22 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
       }]
     end
 
-    def fake_notification_response(email_address, email_template_id, phone_number, sms_template_id, status = nil)
+    def fake_notification_response(email_template_id)
       response = {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "reference": "string",
-        "template_id": email_template_id,
-        "personalisation": nil,
+        "uri": "string",
+        "template": {
+          "id": email_template_id,
+          "version": 0,
+          "uri": "string"
+        },
         "scheduled_for": "string",
-        "billing_code": "string",
-        "email_reply_to_id": email_template_id,
-        "email_address": "string"
+        "content": {
+          "body": "string",
+          "subject": "string"
+        }
       }
-      response["personalisation"] = { "appeal_status": status } if status
       response
     end
 
