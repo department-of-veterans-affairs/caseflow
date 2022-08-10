@@ -102,11 +102,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
               >
                 Viewing 1-2 of 2 total
               </div>
-              <span
-                class="cf-pagination-page-details"
-              >
-                Page 1 of 1
-              </span>
               <div
                 class="cf-pagination-pages"
               />
@@ -1111,11 +1106,6 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
               >
                 Viewing 1-2 of 2 total
               </div>
-              <span
-                class="cf-pagination-page-details"
-              >
-                Page 1 of 1
-              </span>
               <div
                 class="cf-pagination-pages"
               />
@@ -1248,11 +1238,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
               >
                 Viewing 1-2 of 2 total
               </div>
-              <span
-                class="cf-pagination-page-details"
-              >
-                Page 1 of 1
-              </span>
               <div
                 class="cf-pagination-pages"
               />
@@ -2237,11 +2222,6 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
               >
                 Viewing 1-2 of 2 total
               </div>
-              <span
-                class="cf-pagination-page-details"
-              >
-                Page 1 of 1
-              </span>
               <div
                 class="cf-pagination-pages"
               />

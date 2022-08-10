@@ -36,7 +36,7 @@ class Pagination extends React.PureComponent {
   };
 
   generateBlankButton = (key) => {
-    return <button disabled key={`blank-button-${key}`}>...</button>;
+    return <button disabled key={`blank-button-${key}`} aria-label={`More Pages`}>...</button>;
   };
 
   render() {
@@ -102,6 +102,7 @@ class Pagination extends React.PureComponent {
       paginationButtons.push(
         <button
           key="previous-button"
+          aria-label="Previous Page"
           disabled={currentPage === 1}
           onClick={() => this.handlePrevious()}>
           Previous
@@ -111,6 +112,7 @@ class Pagination extends React.PureComponent {
       paginationButtons.push(
         <button
           key="next-button"
+          aria-label="Next Page"
           disabled={currentPage === totalPages}
           onClick={() => this.handleNext()}>
           Next
@@ -123,7 +125,6 @@ class Pagination extends React.PureComponent {
         <div className="cf-pagination-summary">
           {paginationSummary}
         </div>
-        {totalPages > 0 && <span className="cf-pagination-page-details">{`Page ${currentPage} of ${totalPages}`}</span> }
         <div className="cf-pagination-pages">
           {paginationButtons}
         </div>

@@ -6962,11 +6962,6 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
         >
           Viewing 1-15 of 20 total
         </div>
-        <span
-          className="cf-pagination-page-details"
-        >
-          Page 1 of 2
-        </span>
         <div
           className="cf-pagination-pages"
         >
@@ -30810,11 +30805,6 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
         >
           Viewing 1-15 of 20 total
         </div>
-        <span
-          className="cf-pagination-page-details"
-        >
-          Page 1 of 2
-        </span>
         <div
           className="cf-pagination-pages"
         >
