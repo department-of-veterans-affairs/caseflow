@@ -11,13 +11,21 @@ module AppealDecisionMailed
   def complete_root_task!
     # original method defined in app/workflows/legacy_appeal_dispatch.rb
     super
-    AppellantNotification.notify_appellant(@appeal, @@template_name)
+    # Check for Contested Flag
+    if contested_claim 
+      AppellantNotification.notify_appellant(@appeal, "#{@@template_name}Contested")
+    else
+      AppellantNotification.notify_appellant(@appeal, "#{@@template_name}NonContested")
   end
 
   # Aspect for AMA Appeals
   def complete_dispatch_root_task!
     # original method defined in app/workflows/ama_appeal_dispatch.rb
     super
-    AppellantNotification.notify_appellant(@appeal, @@template_name)
+    # Check for Contested Flag
+    if contested_claim? 
+      AppellantNotification.notify_appellant(@appeal, "#{@@template_name}Contested")
+    else
+      AppellantNotification.notify_appellant(@appeal, "#{@@template_name}NonContested")
   end
 end
