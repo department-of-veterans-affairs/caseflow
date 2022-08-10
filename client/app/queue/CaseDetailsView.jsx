@@ -375,13 +375,6 @@ export const CaseDetailsView = (props) => {
         </StickyNavContentArea>
         {props.pollHearing && pollHearing()}
       </AppSegment>
-      <Button
-        onClick={() =>
-          location.reload
-        }
-      >
-        Confirm Split
-      </Button>
     </React.Fragment>
   );
 };
