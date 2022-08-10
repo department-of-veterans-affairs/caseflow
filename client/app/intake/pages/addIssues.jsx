@@ -269,24 +269,6 @@ class AddIssuesPage extends React.Component {
       intakeData.addedIssues, intakeData.originalIssues
     );
 
-    // const [splitAppealsCriteria, setSplitAppealsCriteria] = useState(true)
-
-    // previous code 
-    // const addIssueButton = () => {
-    //   return (
-    //     <div className="cf-actions">
-    //       <Button
-    //         name="add-issue"
-    //         legacyStyling={false}
-    //         classNames={['usa-button-secondary']}
-    //         onClick={() => this.onClickAddIssue()}
-    //       >
-    //         + Add issue
-    //       </Button>
-    //     </div>
-    //   );
-    // };
-
     const renderButtons = () => {
       return (
         <div className="cf-actions">
@@ -294,6 +276,7 @@ class AddIssuesPage extends React.Component {
             userCanSplitAppeal ? (
               [<Button
                 name="add-issue"
+                label="add-issue"
                 legacyStyling={false}
                 classNames={['usa-button-secondary']}
                 onClick={() => this.onClickAddIssue()}
@@ -303,6 +286,7 @@ class AddIssuesPage extends React.Component {
               (' '),
               <Button
                 name="split-appeal"
+                label="split-appeal"
                 legacyStyling={false}
                 classNames={['usa-button-secondary']}
                 onClick={() => this.navigateToSplitAppealStream()}

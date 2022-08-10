@@ -25,7 +25,7 @@ class AppealRequestIssuesPolicy
       appeal.tasks.open.where(type: :CavcTask).any?
   end
 
-  def editable_by_ssc_team_member? 
+  def editable_by_ssc_team_member?
     SupervisorySeniorCouncil.singleton.users.include?(user)
   end
 

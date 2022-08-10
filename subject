@@ -1,0 +1,14 @@
+
+[1mFrom:[0m /home/hunjer93bah/appeals/caseflow/spec/models/serializers/work_queue/appeal_serializer_spec.rb:77 :
+
+    [1;34m72[0m:     
+    [1;34m73[0m:     subject { described_class.new(appeal, [35mparams[0m: { [35muser[0m: current_user }) }
+    [1;34m74[0m: 
+    [1;34m75[0m:     binding.pry
+    [1;34m76[0m: 
+ => [1;34m77[0m:     it [31m[1;31m"[0m[31mcan_edit_request_issues returns true[1;31m"[0m[31m[0m [32mdo[0m
+    [1;34m78[0m:       expect(subject.serializable_hash[[33m:can_edit_request_issues[0m]).to eq([1;36mtrue[0m)
+    [1;34m79[0m:     [32mend[0m
+    [1;34m80[0m:   [32mend[0m
+    [1;34m81[0m: [32mend[0m
+
