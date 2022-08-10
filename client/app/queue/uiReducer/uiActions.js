@@ -1,6 +1,11 @@
 /* eslint-disable no-console */
+/* UI Actions are UI elements that can show up on a form or a list as a button,
+link, or context menu. When these UI elements are clicked they execute some JavaScript.
+Most of the time UI Actions are used to perform some server-side update to a record or records. */
 import { ACTIONS } from './uiConstants';
 import ApiUtil from '../../util/ApiUtil';
+import { resolve } from 'core-js/fn/promise';
+import { reject, values } from 'lodash';
 
 export const resetErrorMessages = () => ({
   type: ACTIONS.RESET_ERROR_MESSAGES
@@ -118,6 +123,18 @@ const saveSuccess = (message, response) => (dispatch) => {
   dispatch({ type: ACTIONS.SAVE_SUCCESS });
 
   return Promise.resolve(response);
+};
+
+export const postApealsplit = (splitAppealsButton, success, err) => async (dispatch) => {
+
+  dispatch({ type: ACTIONS.SPLIT_SUCCESS });
+
+  return Promise.splitAppealsButton.then(resolve, reject) => {
+    resolve('Success!');
+    splitsuccess.ApiUtil.post('/appeal/:appeal_id/split_appeal/split')
+    {
+      console.log(response);
+    };
 };
 
 const saveFailure = (err) => (dispatch) => {
