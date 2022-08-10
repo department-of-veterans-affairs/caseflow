@@ -16,6 +16,7 @@ module AppealDecisionMailed
       AppellantNotification.notify_appellant(@appeal, "#{@@template_name}Contested")
     else
       AppellantNotification.notify_appellant(@appeal, "#{@@template_name}NonContested")
+    end
   end
 
   # Aspect for AMA Appeals
@@ -27,5 +28,6 @@ module AppealDecisionMailed
       AppellantNotification.notify_appellant(@appeal, "#{@@template_name}Contested")
     else
       AppellantNotification.notify_appellant(@appeal, "#{@@template_name}NonContested")
+    end
   end
 end
