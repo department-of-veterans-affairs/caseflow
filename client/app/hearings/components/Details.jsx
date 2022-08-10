@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
-import { isUndefined, get, omitBy } from 'lodash';
+import { isUndefined, get, omitBy, isNil } from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import React, { useState, useContext, useEffect } from 'react';
@@ -201,16 +201,11 @@ const HearingDetails = (props) => {
         return openEmailConfirmationModal({ type: 'change_email_or_timezone' });
       }
 
-      // Only send updated properties
-      const { virtualHearing, transcription, ...hearingChanges } = getChanges(
+      // Only send updated properties unless converting to virtual, then send everything.
+      const { virtualHearing, transcription, ...hearingInfo } = convertingToVirtual ? hearing : getChanges(
         initialHearing,
         hearing
       );
-
-      // Due to the pre-population of the email fields, we want to make sure that
-      // we always send up all email and timezone info during a conversion to a virtual hearing,
-      // especially whenever the default values are not changed.
-      const hearingInfo = convertingToVirtual ? hearing : hearingChanges;
 
       const emailRecipientAttributes = [
         omitBy(
@@ -219,7 +214,7 @@ const HearingDetails = (props) => {
             timezone: hearingInfo?.appellantTz,
             email_address: hearingInfo?.appellantEmailAddress,
             type: 'AppellantHearingEmailRecipient'
-          }, isUndefined
+          }, isNil
         ),
         omitBy(
           {
@@ -227,7 +222,7 @@ const HearingDetails = (props) => {
             timezone: hearingInfo?.representativeTz,
             email_address: hearingInfo?.representativeEmailAddress,
             type: 'RepresentativeHearingEmailRecipient'
-          }, isUndefined
+          }, isNil
         )
       ].filter((email) => Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone'));
 
