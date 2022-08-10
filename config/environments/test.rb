@@ -91,7 +91,7 @@ Rails.application.configure do
 
   # VA Notify evnironment variables
   ENV["VA_NOTIFY_API_URL"] ||= "https://staging-api.va.gov/vanotify"
-  ENV["VA_NOTIFY_API_KEY"] ||= "my-secret-key"
+  ENV["VA_NOTIFY_API_KEY"] ||= "secret-key"
   ENV["VA_NOTIFY_SERVICE_ID"] ||= "fake-service-id"
   ENV["VA_NOTIFY_TOKEN_ALG"] ||= "my-secret-algorithm"
 end
