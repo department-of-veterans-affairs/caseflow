@@ -20,7 +20,7 @@ module AppellantNotification
     if !appeal.nil?
       appeal_id = appeal.id
       claimant = appeal.claimant
-      participant_id = appeal.claimant&.participant_id
+      participant_id = appeal.claimant_participant_id
       if claimant.nil?
         begin
           fail NoClaimantError, appeal_id
@@ -28,7 +28,7 @@ module AppellantNotification
           Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
           error.message
         end
-      elsif participant_id == ""
+      elsif participant_id == "" || participant_id.nil?
         begin
           fail NoParticipantIdError, appeal_id
         rescue StandardError => error
@@ -55,7 +55,7 @@ module AppellantNotification
   def self.create_payload(appeal, template_name)
     status = AppellantNotification.handle_errors(appeal)
     appeal_id = appeal.id
-    participant_id = appeal.claimant.participant_id
+    participant_id = appeal.claimant_participant_id
     appeal_type = appeal.class.to_s
 
     # find template_id from db using template name
