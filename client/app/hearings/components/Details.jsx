@@ -143,6 +143,14 @@ const HearingDetails = (props) => {
     };
   };
 
+  const filterEmailAttribute = (email) => {
+    if (convertingToVirtual) {
+      return Object.keys(email).includes('email_address') && email.email_address;
+    }
+
+    return Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone');
+  };
+
   const handleCancelButton = () => {
     if (userVsoEmployee) {
       goBack();
@@ -224,7 +232,7 @@ const HearingDetails = (props) => {
             type: 'RepresentativeHearingEmailRecipient'
           }, isNil
         )
-      ].filter((email) => Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone'));
+      ].filter((email) => filterEmailAttribute(email));
 
       // Put the UI into a loading state
       setLoading(true);
