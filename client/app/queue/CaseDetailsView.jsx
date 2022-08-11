@@ -220,6 +220,10 @@ export const CaseDetailsView = (props) => {
     console.log('Split Appeal Dummy Payload Sent!');
   };
 
+  //const splitappealPost = () => {
+    //console.log('Post Function Success');
+  //};//
+
   return (
     <React.Fragment>
       {!modalIsOpen && error && (
@@ -397,14 +401,9 @@ export const CaseDetailsView = (props) => {
       </Button>
       <div>
       </div>
-      <div>
-        <Button
-          onClick={() =>
-            push('/split_appeal/split')
-          }
-        >Controller Button
-        </Button>
-      </div>
+      <button onClick={() => this.splitappealPost()}>
+        Split Appeal
+      </button>
     </React.Fragment>
   );
 };
