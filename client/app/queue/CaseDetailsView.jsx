@@ -391,17 +391,18 @@ export const CaseDetailsView = (props) => {
       </div>
       <Button
         onClick={() =>
-          push('/appeals/split')}
-      >Controller Button
+          push(`/queue/appeals/${appealId}`)
+        }
+      >Redirect Button
       </Button>
       <div>
       </div>
       <div>
         <Button
           onClick={() =>
-            push(`/queue/appeals/${appealId}`)
+            push('/split_appeal/split')
           }
-        >Redirect Button
+        >Controller Button
         </Button>
       </div>
     </React.Fragment>
