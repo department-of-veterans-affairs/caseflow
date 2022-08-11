@@ -332,6 +332,40 @@ module Seeds
           )
         end
       end
+
+      # Creating appeals with tasks at BVA dispatch and multiple issues for the split appeal stream
+      ## BvaDispatchTask.create_from_root_task(root_task) ##
+
+      # appeals at dispatch
+      5.times do
+        notes = "Pain disorder with 100\% evaluation per examination"
+        notes += ". Created with the at_bva_dispatch factory trait for Split Appeals"
+
+        vet = create(
+          :veteran,
+          file_number: Faker::Number.number(digits: 9).to_s,
+          first_name: Faker::Name.first_name,
+          last_name: Faker::Name.last_name
+        )
+
+        attorney = User.find_by_css_id("BVASCASPER1")
+        judge = User.find_by_css_id("BVAAABSHIRE")
+
+        appeal = create(
+          :appeal,
+          :at_bva_dispatch,
+          number_of_claimants: 1,
+          veteran_file_number: vet.file_number,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          closest_regional_office: "RO17",
+          associated_judge: judge,
+          associated_attorney: attorney,
+          # request_issues: create_list(Constants::ISSUE_CATEGORIES, notes: notes)
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+      end
     end
 
     def create_task_at_quality_review(
