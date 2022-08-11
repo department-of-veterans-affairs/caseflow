@@ -17,6 +17,7 @@
   "CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
   "CASE_LIST_TABLE_APPEAL_STATUS_COLUMN_TITLE": "Status",
   "CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE": "Types",
+  "CASE_LIST_TABLE_APPEAL_NUMBER_ISSUES_COLUMN_TITLE": "Number of Issues",
   "CASE_LIST_TABLE_OFFICE_COLUMN_TITLE": "Office",
   "CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE": "Decision Date",
   "CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE": "Days waiting",
@@ -395,6 +396,7 @@
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE": "Decision submitted to judge",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED": "Total days worked by attorney",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM": "does not include days assigned to other teams",
+  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBHEAD": "Was this decision timely?",
 
   "JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_LABEL": "One Touch Initiative",
   "JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD": "Is this case part of the \"One Touch Initiative\"?",
@@ -876,6 +878,8 @@
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
   "CORRECT_REQUEST_ISSUES_SAVE": "Save",
+  "CORRECT_REQUEST_ISSUES_SPLIT_APPEAL": "Split appeal",
+
   "CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TITLE": "Remove review?",
   "CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TEXT": "This will remove the review and cancel all the End Products associated with it.",
   "CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TITLE": "Withdraw appeal and cancel all tasks",
@@ -1275,5 +1279,13 @@
   "EMO_ASSIGN_TO_RPO_MODAL_BODY": "Regional Processing Office",
   "EDUCATION_RPO_SELECTOR_PLACEHOLDER": "Select RPO",
   "EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE": "Return to Executive Management Office",
-  "EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION": "You have successfully returned %s's case to the Executive Management Office"
+  "EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION": "You have successfully returned %s's case to the Executive Management Office",
+
+  "SPLIT_APPEAL_CREATE_TITLE": "Create new appeal stream",
+  "SPLIT_APPEAL_CREATE_SUBHEAD": "You can move multiple issues to the new appeal stream as long as the issues can be decided on together. If you need to split the appeal further, you can go through this process with the remaining issues.",
+  "SPLIT_APPEAL_CREATE_REASONING_TITLE": "Please select why this appeal is being split",
+  "SPLIT_APPEAL_CREATE_SELECT_ISSUES_TITLE": "Please select issues(s) to move to the new appeal stream",
+  "SPLIT_APPEAL_REVIEW_TITLE": "Review and confirm new appeal stream",
+  "SPLIT_APPEAL_REVIEW_SUBHEAD": "Case history, POA, and Veteran information will be duplicated on the new appeal.",
+  "SPLIT_APPEAL_REVIEW_REASONING_TITLE": "Reason for new appeal stream:"
 }
