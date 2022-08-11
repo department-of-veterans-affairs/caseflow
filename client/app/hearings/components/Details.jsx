@@ -143,18 +143,6 @@ const HearingDetails = (props) => {
     };
   };
 
-  const filterEmailAttribute = (email) => {
-    if (convertingToVirtual) {
-      return Object.keys(email).includes('email_address') && (
-        // Only send up a blank email if a recipient already exists in hearing_email_recipients
-        // Otherwise, the backend will throw a validation error.
-        email.email_address || initialHearing.representativeEmailAddress
-      );
-    }
-
-    return Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone');
-  };
-
   const handleCancelButton = () => {
     if (userVsoEmployee) {
       goBack();
@@ -238,7 +226,7 @@ const HearingDetails = (props) => {
             type: 'RepresentativeHearingEmailRecipient'
           }, isNil
         )
-      ].filter((email) => filterEmailAttribute(email));
+      ].filter((email) => Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone'));
 
       // Put the UI into a loading state
       setLoading(true);
