@@ -7,12 +7,14 @@ module IhpTaskPending
   @@template_name = self.to_s
   # rubocop:enable all
 
+  # AMA Appeals
   def create_ihp_tasks!
     # original method defined in app/workflows/ihp_tasks_factory.rb
     super
     AppellantNotification.notify_appellant(@parent.appeal, @@template_name)
   end
 
+  # LegacyAppeals
   def create_from_params(params, user)
     # original method defined in app/models/tasks/colocated_task.rb
     super
