@@ -343,9 +343,10 @@ feature "Appeal Edit issues", :all_dbs do
       User.authenticate!(user: current_user)
       visit "appeals/#{appeal2.uuid}/edit/"
 
-      binding.pry
 
       expect(page).to have_button("Split appeal")
+
+
     end
   end
 
