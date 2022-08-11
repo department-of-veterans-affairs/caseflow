@@ -7,9 +7,10 @@ module HearingPostponed
   @@template_name = self.to_s
   # rubocop:enable all
 
-  def postpone!
-    # original method defined in app/models/tasks/assign_hearing_disposition_task.rb
+  def update_hearing(hearing_hash)
     super
-    AppellantNotification.notify_appellant(appeal, @@template_name)
+    if hearing_hash[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed
+      AppellantNotification.notify_appellant(appeal, @@template_name)
+    end
   end
 end
