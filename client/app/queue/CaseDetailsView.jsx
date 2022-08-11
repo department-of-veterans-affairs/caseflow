@@ -377,8 +377,8 @@ export const CaseDetailsView = (props) => {
         {props.pollHearing && pollHearing()}
       </AppSegment>
       <Button
-        onClick={() =>
-          push('split_appeal/split')
+        onSubmit={() =>
+          push(`/queue/appeals/${appealId}/split_appeal/split`)
         }
       >
         Split Appeals
