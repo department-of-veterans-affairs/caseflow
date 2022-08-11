@@ -8,6 +8,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import RemoveIssueModal from '../components/RemoveIssueModal';
 import CorrectionTypeModal from '../components/CorrectionTypeModal';
@@ -67,12 +68,6 @@ class AddIssuesPage extends React.Component {
     this.setState({ addingIssue: true });
   };
 
-  // navigateToSplitAppealStream should navigate to the SplitAppealStream, but is 
-  // navigating to CaseDetails as a placeholder
-  navigateToSplitAppealStream = () => {
-    window.location.href = `/queue/appeals/${this.props.intakeForms[this.props.formType].claimId}`;
-  }
-
   onClickIssueAction = (index, option = 'remove') => {
     switch (option) {
     case 'remove':
@@ -98,6 +93,10 @@ class AddIssuesPage extends React.Component {
     default:
       this.props.undoCorrection(index);
     }
+  };
+
+  onClickSplitAppeal =() => {
+    return <Redirect to={PAGE_PATHS.CREATE_SPLIT} />;
   };
 
   withdrawalDateOnChange = (value) => {
@@ -283,16 +282,17 @@ class AddIssuesPage extends React.Component {
             + Add issue:
               </Button>,
               (' '),
-              <Button
-                name="split-appeal"
-                label="split-appeal"
-                legacyStyling={false}
-                classNames={['usa-button-secondary']}
-                onClick={() => this.navigateToSplitAppealStream()}
-                disabled={issuesChanged}
-              >
-            Split appeal
-              </Button>]
+              <Link to="/create_split">
+                <Button
+                  name="split-appeal"
+                  label="split-appeal"
+                  legacyStyling={false}
+                  classNames={['usa-button-secondary']}
+                  disabled={issuesChanged}
+                >
+              Split appeal
+                </Button>
+              </Link>]
             ) : (
               <Button
                 name="add-issue"
@@ -301,8 +301,7 @@ class AddIssuesPage extends React.Component {
                 onClick={() => this.onClickAddIssue()}
               >
             + Add issue
-              </Button>
-            )}
+              </Button>)}
         </div>
       );
     };
