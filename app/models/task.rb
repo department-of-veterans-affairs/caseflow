@@ -102,6 +102,7 @@ class Task < CaseflowRecord
   attr_accessor :skip_check_for_only_open_task_of_type
 
   prepend IhpTaskComplete
+  prepend PrivacyActComplete
 
   ############################################################################################
   ## class methods

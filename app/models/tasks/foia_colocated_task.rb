@@ -2,7 +2,6 @@
 
 class FoiaColocatedTask < ColocatedTask
   after_create :create_privacy_act_task
-  prepend PrivacyActComplete
   prepend PrivacyActPending
 
   def self.label

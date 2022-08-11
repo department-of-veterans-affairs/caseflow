@@ -7,10 +7,10 @@ module PrivacyActComplete
   @@template_name = self.to_s
   # rubocop:enable all
 
-  def cascade_closure_from_child_task?(child_task)
-    # original method defined in app/models/tasks/foia_colocated_task.rb
+  def update_status_if_children_tasks_are_closed(child_task)
+    # original method defined in app/models/task.rb
     super
-    if status == Constants.TASK_STATUSES.completed
+    if type.to_s.include?("Foia") || type.to_s.include?("PrivacyAct")
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
   end
