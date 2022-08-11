@@ -385,16 +385,23 @@ export const CaseDetailsView = (props) => {
       </AppSegment>
       <Button
         onClick={splitappealfailAlert}
-      >Split Appeals
+      >Split Appeals Function
+      </Button>
+      <div>
+      </div>
+      <Button
+        onClick={() =>
+          push('/appeals/split')}
+      >Controller Button
       </Button>
       <div>
       </div>
       <div>
         <Button
           onClick={() =>
-            window.open('/split_appeal/split')
+            push(`/queue/appeals/${appealId}`)
           }
-        >To Controller
+        >Redirect Button
         </Button>
       </div>
     </React.Fragment>
