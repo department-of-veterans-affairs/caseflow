@@ -18,6 +18,7 @@ import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import {
   deepDiff,
   getChanges,
+  getConvertToVirtualChanges,
   getAppellantTitle,
   processAlerts,
   startPolling,
@@ -143,6 +144,14 @@ const HearingDetails = (props) => {
     };
   };
 
+  const filterEmailAttribute = (email) => {
+    if (convertingToVirtual) {
+      return Object.keys(email).includes('email_address') && email.email_address;
+    }
+
+    return Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone');
+  };
+
   const handleCancelButton = () => {
     if (userVsoEmployee) {
       goBack();
@@ -203,7 +212,10 @@ const HearingDetails = (props) => {
 
       // Only send updated properties unless converting to virtual, then send everything.
       const { virtualHearing, transcription, ...hearingInfo } = convertingToVirtual ?
-        omitBy(hearing, isNil) :
+        getConvertToVirtualChanges(
+          initialHearing,
+          hearing
+        ) :
         getChanges(
           initialHearing,
           hearing
@@ -226,7 +238,7 @@ const HearingDetails = (props) => {
             type: 'RepresentativeHearingEmailRecipient'
           }, isNil
         )
-      ].filter((email) => Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone'));
+      ].filter((email) => filterEmailAttribute(email));
 
       // Put the UI into a loading state
       setLoading(true);

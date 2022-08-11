@@ -14,6 +14,7 @@ import {
   reduce,
   isObject,
   isEqual,
+  isNil,
   concat,
   uniq,
   times,
@@ -272,6 +273,25 @@ export const getChanges = (first, second) => {
   const { init, current } = toggleCancelled(first, second, 'virtualHearing');
 
   return deepDiff(init, current);
+};
+
+/**
+ * Method to calculate hearing details changes accounting for hearings being converted to virtual
+ * @param {Object} init -- The initial form details
+ * @param {Object} current -- The current form details
+ */
+export const getConvertToVirtualChanges = (first, second) => {
+  const diff = getChanges(first, second);
+
+  // Always return emails and timezones whenever converting to virtual due to
+  // field pre-population unless they're blank.
+  return omitBy({
+    ...diff,
+    appellantTz: second.appellantTz,
+    appellantEmailAddress: second.appellantEmailAddress,
+    representativeTz: second.representativeTz,
+    representativeEmailAddress: second.representativeEmailAddress
+  }, isNil);
 };
 
 /**
