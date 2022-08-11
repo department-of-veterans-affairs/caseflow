@@ -23,7 +23,6 @@ export const vsoUser = {
   userVsoEmployee: true,
   userCanVsoHearingSchedule: true,
   userCanAssignHearingSchedule: false,
-  userVsoEmployee: true
 };
 
 const attyTemplate = ({ id }) => {
