@@ -214,10 +214,12 @@ const HearingDetails = (props) => {
       }
 
       // Only send updated properties unless converting to virtual, then send everything.
-      const { virtualHearing, transcription, ...hearingInfo } = convertingToVirtual ? hearing : getChanges(
-        initialHearing,
-        hearing
-      );
+      const { virtualHearing, transcription, ...hearingInfo } = convertingToVirtual ?
+        omitBy(hearing, isNil) :
+        getChanges(
+          initialHearing,
+          hearing
+        );
 
       const emailRecipientAttributes = [
         omitBy(
