@@ -214,8 +214,10 @@ export const CaseDetailsView = (props) => {
   localStorage.removeItem('VSOSuccessMsg');
 
   // Here: I'm defining a funtion "alert" to be passed into the button onlink method
-  const splitappealfailalert = () => {
+  const splitappealfailAlert = () => {
     console.log('Split Appeal Fail!');
+    console.log('Split Appeal Success!');
+    console.log('Split Appeal Dummy Payload Sent!');
   };
 
   return (
@@ -382,7 +384,7 @@ export const CaseDetailsView = (props) => {
         {props.pollHearing && pollHearing()}
       </AppSegment>
       <Button
-        onSubmit={splitappealfailalert}
+        onClick={splitappealfailAlert}
       >Split Appeals
       </Button>
     </React.Fragment>
