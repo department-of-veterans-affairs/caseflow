@@ -213,7 +213,8 @@ export const CaseDetailsView = (props) => {
 
   localStorage.removeItem('VSOSuccessMsg');
 
-  // Here: I'm defining a funtion "alert" to be passed into the button onlink method
+  // Here: I'm defining a funtion "alert" to be passed into the button onlink method. Does the post and brings back to case details page.
+  //  Updates the state and causes cause details to render the banners. After the succesful post call update the state to render for succes
   const splitappealfailAlert = () => {
     console.log('Split Appeal Fail!');
     console.log('Split Appeal Success!');
@@ -387,6 +388,16 @@ export const CaseDetailsView = (props) => {
         onClick={splitappealfailAlert}
       >Split Appeals
       </Button>
+      <div>
+      </div>
+      <div>
+        <Button
+          onClick={() =>
+            window.open('/split_appeal/split')
+          }
+        >To Controller
+        </Button>
+      </div>
     </React.Fragment>
   );
 };

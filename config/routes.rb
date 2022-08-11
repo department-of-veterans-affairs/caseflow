@@ -376,6 +376,5 @@ Rails.application.routes.draw do
 
   get "/mpi", to: "mpi#index"
   post "/mpi/search", to: "mpi#search"
-  get "split_appeal/split"
-  post "split_appeal/split", to: "split_appeal#split"
+  post "split_appeal/:appeal_id/split", to: "split_appeal#split"
 end

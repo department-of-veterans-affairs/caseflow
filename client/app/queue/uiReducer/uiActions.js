@@ -275,3 +275,16 @@ export const setHearingDay = (hearingDay) => ({
   type: ACTIONS.SET_HEARING_DAY,
   payload: hearingDay
 });
+
+//Pass in parameters from the state.//
+//const postApealsplit = (splitAppealsButton, success, err) => async (dispatch) => {
+
+  //dispatch({ type: ACTIONS.SPLIT_SUCCESS });
+
+  //return Promise.splitAppealsButton.then(resolve, reject) => {
+    //resolve('Success!');
+    //splitsuccess.ApiUtil.post('/appeal/:appeal_id/split_appeal/split')
+    //{
+      //console.log(response);
+    //};
+//};
