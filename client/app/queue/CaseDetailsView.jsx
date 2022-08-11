@@ -58,7 +58,6 @@ import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
 
-
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
   border: 0,
