@@ -393,7 +393,7 @@ class CompleteTaskModal extends React.Component {
 
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
-    const formattedInstructions = [instructions];
+    const formattedInstructions = [];
     let reviewNotes;
     const previousInstructions = this.props.tasks.map((task) => {
       // Skip if there are no previous instructions
@@ -421,15 +421,15 @@ class CompleteTaskModal extends React.Component {
 
       if (reviewNotes) {
         formattedInstructions.push(`\n\n**Status:** ${locationLabel}\n\n`);
-        formattedInstructions.push(`\n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}`);
+        formattedInstructions.push(`\n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}\n`);
       }
 
       if (instructions) {
         const instructionsDetail = `\n\n**CAMO Notes:** ${instructions}`;
 
-        const targetIndex = reviewNotes ? 2 : 1;
+        const targetIndex = reviewNotes ? 1 : 0;
 
-        formattedInstructions.splice(2, targetIndex, instructionsDetail);
+        formattedInstructions.splice(targetIndex, 0, instructionsDetail);
       }
     } else if (this.props.modalType === 'ready_for_review') {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
@@ -438,7 +438,7 @@ class CompleteTaskModal extends React.Component {
 
       formattedInstructions.push(docLocationText);
       if (instructions) {
-        const instructionsDetail = `\n\n**Detail:**\n\n${instructions}`;
+        const instructionsDetail = `\n\n**Detail:**\n\n${instructions}\n`;
 
         formattedInstructions.push(instructionsDetail);
       }
