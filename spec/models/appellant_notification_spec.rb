@@ -91,9 +91,6 @@ describe AppellantNotification do
       let(:appeal) { create(:appeal, :with_pre_docket_task) }
       let(:template_name) { "AppealDocketed" }
       let(:pre_docket_task) { PreDocketTask.find_by(appeal: appeal) }
-      # before do
-      #   PreDocketTask.prepend(AppellantNotification::AppealDocketed)
-      # end
       it "will notify appellant that Predocketed Appeal is docketed" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
         pre_docket_task.docket_appeal
@@ -103,9 +100,6 @@ describe AppellantNotification do
     describe "create_tasks_on_intake_success!" do
       let(:appeal) { create(:appeal) }
       let(:template_name) { "AppealDocketed" }
-      # before do
-      #   Appeal.prepend(AppellantNotification::AppealDocketed)
-      # end
       it "will notify appellant that appeal is docketed on successful intake" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
         appeal.create_tasks_on_intake_success!
@@ -127,9 +121,6 @@ describe AppellantNotification do
       end
       let(:template_name) { "AppealDecisionMailed" }
       let(:dispatch) { LegacyAppealDispatch.new(appeal: legacy_appeal, params: params) }
-      # before do
-      #   LegacyAppealDispatch.prepend(AppellantNotification::AppealDecisionMailed)
-      # end
       it "Will notify appellant that the legacy appeal decision has been mailed" do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, template_name)
         dispatch.complete_root_task!
@@ -150,9 +141,6 @@ describe AppellantNotification do
       let(:user) { create(:user) }
       let(:template_name) { "AppealDecisionMailed" }
       let(:dispatch) { AmaAppealDispatch.new(appeal: appeal, params: params, user: user) }
-      # before do
-      #   AmaAppealDispatch.prepend(AppellantNotification::AppealDecisionMailed)
-      # end
       it "Will notify appellant that the legacy appeal decision has been mailed" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
         dispatch.complete_dispatch_root_task!
@@ -174,9 +162,6 @@ describe AppellantNotification do
           notes: "none"
         }
       end
-      # before do
-      #   ScheduleHearingTask.prepend(AppellantNotification::HearingScheduled)
-      # end
       it "will notify appellant when a hearing is scheduled" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal_hearing, template_name)
         schedule_hearing_task.create_hearing(task_values)
@@ -188,14 +173,26 @@ describe AppellantNotification do
     describe "#postpone!" do
       let(:template_name) { "HearingPostponed" }
       let(:postponed_hearing) { create(:hearing, :postponed, :with_tasks) }
-      # before do
-      #   AssignHearingDispositionTask.prepend(AppellantNotification::HearingPostponed)
-      # end
+      let(:hearing_hash) { {disposition: "postponed"} }
       it "will notify appellant when a hearing is postponed" do
         appeal_hearing = postponed_hearing.appeal
         hearing_disposition_task = appeal_hearing.tasks.find_by(type: "AssignHearingDispositionTask")
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal_hearing, template_name)
-        hearing_disposition_task.postpone!
+        hearing_disposition_task.update_hearing(hearing_hash)
+      end
+    end
+  end
+
+  describe HearingWithdrawn do
+    describe "#cancel!" do
+      let(:template_name) { "HearingWithdrawn" }
+      let(:withdrawn_hearing) { create(:hearing, :cancelled, :with_tasks) }
+      let(:hearing_hash) { {disposition: "cancelled"} }
+      it "will notify appellant when a hearing is withdrawn/cancelled" do
+        appeal = withdrawn_hearing.appeal
+        hearing_disposition_task = appeal.tasks.find_by(type: "AssignHearingDispositionTask")
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
+        hearing_disposition_task.update_hearing(hearing_hash)
       end
     end
   end
