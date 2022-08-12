@@ -212,6 +212,9 @@ export const CaseDetailsView = (props) => {
 
   localStorage.removeItem('VSOSuccessMsg');
 
+  //Update the state, cause Case Details to re render. After we get back from the post
+  //render the post call.
+
   return (
     <React.Fragment>
       {!modalIsOpen && error && (
@@ -413,6 +416,7 @@ const mapStateToProps = (state) => ({
   pollHearing: state.components.scheduledHearing.polling,
   featureToggles: state.ui.featureToggles,
   substituteAppellant: state.substituteAppellant,
+  response: state.response
 });
 
 const mapDispatchToProps = (dispatch) =>

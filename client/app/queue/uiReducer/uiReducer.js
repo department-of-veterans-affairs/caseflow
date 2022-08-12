@@ -42,7 +42,7 @@ export const initialState = {
   },
   targetUser: {},
   poaAlert: {},
-  splitAppealAlert: {}
+  splitAppeal: {}
 };
 
 const setMessageState = (state, message, msgType) => update(state, {

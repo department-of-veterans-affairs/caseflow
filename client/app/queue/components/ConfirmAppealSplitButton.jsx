@@ -18,7 +18,7 @@ export const ConfirmAppealSplitButton = ({ appealId }) => {
 
   const confirmSplit = () => {
     setButtonText(<SmallLoader message="Confirm Split" spinnerColor="#417505" />);
-    ApiUtil.patch(`/appeals/${appealId}/update_split_appeal_workflow`).then((data) => {
+    ApiUtil.put(`/appeals/${appealId}/update_split_appeal_workflow`).then((data) => {
       dispatch(setConfirmAppealSplitAlert(data.body.alert_type, data.body.message, data.body.split_appeal_workflow));
       setButtonText('Confirm Split');
     });
@@ -43,3 +43,4 @@ export const ConfirmAppealSplitButton = ({ appealId }) => {
 ConfirmAppealSplitButton.propTypes = {
   appealId: PropTypes.string
 };
+
