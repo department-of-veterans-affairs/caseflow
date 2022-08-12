@@ -203,7 +203,7 @@ const HearingDetails = (props) => {
       }
 
       // Only send updated properties unless converting to virtual, then send everything.
-      const { virtualHearing, transcription, ...hearingInfo } = convertingToVirtual ?
+      const { virtualHearing, transcription, ...hearingChanges } = convertingToVirtual ?
         getConvertToVirtualChanges(
           initialHearing,
           hearing
@@ -217,16 +217,16 @@ const HearingDetails = (props) => {
         omitBy(
           {
             id: hearing?.appellantEmailId,
-            timezone: hearingInfo?.appellantTz,
-            email_address: hearingInfo?.appellantEmailAddress,
+            timezone: hearingChanges?.appellantTz,
+            email_address: hearingChanges?.appellantEmailAddress,
             type: 'AppellantHearingEmailRecipient'
           }, isUndefined
         ),
         omitBy(
           {
             id: hearing?.representativeEmailId,
-            timezone: hearingInfo?.representativeTz,
-            email_address: hearingInfo?.representativeEmailAddress,
+            timezone: hearingChanges?.representativeTz,
+            email_address: hearingChanges?.representativeEmailAddress,
             type: 'RepresentativeHearingEmailRecipient'
           }, isUndefined
         )
@@ -238,7 +238,7 @@ const HearingDetails = (props) => {
       // Save the hearing
       const response = await saveHearing({
         hearing: {
-          ...(hearingInfo || {}),
+          ...(hearingChanges || {}),
           // Always send full transcription details because a new record is created each update
           transcription_attributes: transcription ? hearing.transcription : {},
           virtual_hearing_attributes: virtualHearing || {},
