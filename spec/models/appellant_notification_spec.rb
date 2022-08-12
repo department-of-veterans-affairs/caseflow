@@ -109,7 +109,7 @@ describe AppellantNotification do
 
   describe AppealDecisionMailed do
     describe "Legacy Appeal Decision Mailed" do
-      let(:legacy_appeal) { create(:legacy_appeal, :with_root_task) }
+      let(:legacy_appeal) { create(:legacy_appeal, :with_root_task, vbms_id: 123_456) }
       let(:params) do
         {
           appeal_id: legacy_appeal.id,
@@ -119,31 +119,54 @@ describe AppellantNotification do
           file: "some file"
         }
       end
-      let(:template_name) { "AppealDecisionMailed" }
+      let(:contested) { "AppealDecisionMailedContested" }
+      let(:non_contested) { "AppealDecisionMailedNonContested" }
       let(:dispatch) { LegacyAppealDispatch.new(appeal: legacy_appeal, params: params) }
-      it "Will notify appellant that the legacy appeal decision has been mailed" do
-        expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, template_name)
+      it "Will notify appellant that the legacy appeal decision has been mailed (Non Contested)" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, non_contested)
         dispatch.complete_root_task!
       end
+      # DO CONTESTED APPEALS EXIST FOR VACOLS?
+
+      # it "Will notify appellant that the legacy appeal decision has been mailed (Contested)" do
+      #   expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, contested)
+      #   dispatch.complete_root_task!
+      # end
     end
 
     describe "AMA Appeal Decision Mailed" do
-      let(:appeal) { create(:appeal, :with_root_task) }
+      let(:appeal) { create(:appeal, :with_assigned_bva_dispatch_task) }
+      let(:contested_appeal) { create(:appeal, :with_assigned_bva_dispatch_task, :with_request_issues) } 
       let(:params) do
         {
-          appeal_id: legacy_appeal.id,
+          appeal_id: appeal.id,
           citation_number: "A18123456",
           decision_date: Time.zone.today,
           redacted_document_location: "some/filepath",
           file: "some file"
         }
       end
-      let(:user) { create(:user) }
-      let(:template_name) { "AppealDecisionMailed" }
-      let(:dispatch) { AmaAppealDispatch.new(appeal: appeal, params: params, user: user) }
-      it "Will notify appellant that the legacy appeal decision has been mailed" do
-        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
+      let(:contested_params) do
+        {
+          appeal_id: contested_appeal.id,
+          citation_number: "A18123456",
+          decision_date: Time.zone.today,
+          redacted_document_location: "some/filepath",
+          file: "some file"
+        }
+      end
+      let(:contested) { "AppealDecisionMailedContested" }
+      let(:non_contested) { "AppealDecisionMailedNonContested" }
+      let(:dispatch) { AmaAppealDispatch.new(appeal: appeal, params: params, user: User.find(appeal.tasks.find_by(assigned_to_type: "User").assigned_to_id)) }
+      let(:contested_dispatch) { AmaAppealDispatch.new(appeal: contested_appeal, params: contested_params, user: User.find(contested_appeal.tasks.find_by(assigned_to_type: "User").assigned_to_id)) }
+      it "Will notify appellant that the AMA appeal decision has been mailed (Non Contested)" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, non_contested)
         dispatch.complete_dispatch_root_task!
+      end
+      it "Will notify appellant that the AMA appeal decision has been mailed (Contested)" do
+        # not working. not sure how to set up contested flag on appeal
+        expect(AppellantNotification).to receive(:notify_appellant).with(contested_appeal, contested)
+        contested_dispatch.complete_dispatch_root_task!
       end
     end
   end
@@ -173,7 +196,7 @@ describe AppellantNotification do
     describe "#postpone!" do
       let(:template_name) { "HearingPostponed" }
       let(:postponed_hearing) { create(:hearing, :postponed, :with_tasks) }
-      let(:hearing_hash) { {disposition: "postponed"} }
+      let(:hearing_hash) { { disposition: "postponed" } }
       it "will notify appellant when a hearing is postponed" do
         appeal_hearing = postponed_hearing.appeal
         hearing_disposition_task = appeal_hearing.tasks.find_by(type: "AssignHearingDispositionTask")
@@ -187,7 +210,7 @@ describe AppellantNotification do
     describe "#cancel!" do
       let(:template_name) { "HearingWithdrawn" }
       let(:withdrawn_hearing) { create(:hearing, :cancelled, :with_tasks) }
-      let(:hearing_hash) { {disposition: "cancelled"} }
+      let(:hearing_hash) { { disposition: "cancelled" } }
       it "will notify appellant when a hearing is withdrawn/cancelled" do
         appeal = withdrawn_hearing.appeal
         hearing_disposition_task = appeal.tasks.find_by(type: "AssignHearingDispositionTask")
