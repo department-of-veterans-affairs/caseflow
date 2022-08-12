@@ -1760,7 +1760,7 @@ describe('CompleteTaskModal', () => {
       let dataParam = requestPatchSpy.mock.calls[0][1];
       let taskInstructions = dataParam.data.task.instructions;
 
-      expect(taskInstructions).toBe('CAMO -> BVA Intake\n\n**CAMO Notes:** CAMO -> BVA Intake');
+      expect(taskInstructions).toBe('\n**CAMO Notes:** CAMO -> BVA Intake');
     });
 
     test('PO Details appear next to Program Office Notes section', () => {
@@ -1778,7 +1778,7 @@ describe('CompleteTaskModal', () => {
       let taskInstructions = dataParam.data.task.instructions;
 
       /* eslint-disable-next-line max-len */
-      expect(taskInstructions).toBe('CAMO -> BVA Intake\n\n**Status:** Correct documents have been successfully added\n\n\n\n**CAMO Notes:** CAMO -> BVA Intake');
+      expect(taskInstructions).toBe('\n**Status:** Correct documents have been successfully added\n\n**CAMO Notes:** CAMO -> BVA Intake\n\n**Program Office Notes:** Documents for this appeal are stored in VBMS.\n\n**Detail:**\n\n PO back to CAMO!\n\n');
     });
   });
 });
