@@ -354,6 +354,9 @@ Rails.application.routes.draw do
   post "docket_switches", to: "docket_switches#create"
   post "docket_switches/address_ruling", to: "docket_switches#address_ruling"
 
+  resources :split_appeal, only: [:index, :show, :create, :update]
+  post "split_appeal/:appeal_id/split", to: "split_appeal#split"
+
   # :nocov:
   namespace :test do
     get "/error", to: "users#show_error"
@@ -376,5 +379,4 @@ Rails.application.routes.draw do
 
   get "/mpi", to: "mpi#index"
   post "/mpi/search", to: "mpi#search"
-  post "split_appeal/:appeal_id/split", to: "split_appeal#split"
 end

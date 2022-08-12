@@ -57,6 +57,7 @@ import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
 import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
+import ApiUtil from '../util/ApiUtil';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -220,9 +221,41 @@ export const CaseDetailsView = (props) => {
     console.log('Split Appeal Dummy Payload Sent!');
   };
 
-  //const splitappealPost = () => {
-    //console.log('Post Function Success');
-  //};//
+  //// Create some JSON for use in a example
+  //const jsonData = {
+  //  users: [
+  //    {
+  //      name: 'alan',
+  //      age: 23,
+  //      username: 'aturing'
+  //    },
+  //    {
+  //      name: 'john',
+  //      age: 29,
+  //      username: '__john__'
+  //    }
+  //  ]
+  //};
+//
+  //const handleClick () => {
+  //  fetch('http://------------:8080/',
+  //    method: 'POST',
+  //    mode: 'cors',
+  //    body: JSON.stringify(jsonData) // body data type must match "Content-Type" header
+  //  );
+  //};
+
+  handleClick () = fetch('/user').ApiUtil.post('/user', {
+    firstName: 'Fred',
+    lastName: 'Flintstone'
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  })
+  }
 
   return (
     <React.Fragment>
@@ -401,9 +434,14 @@ export const CaseDetailsView = (props) => {
       </Button>
       <div>
       </div>
-      <button onClick={() => this.splitappealPost()}>
-        Split Appeal
-      </button>
+      <div onClick={handleClick} style={{
+        textAlign: 'center',
+        width: '100px',
+        border: '1px solid gray',
+        borderRadius: '5px'
+      }}>
+      Send data to backend
+      </div>
     </React.Fragment>
   );
 };

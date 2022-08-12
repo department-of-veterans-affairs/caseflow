@@ -283,7 +283,7 @@ export const setHearingDay = (hearingDay) => ({
 
   //return Promise.splitAppealsButton.then(resolve, reject) => {
     //resolve('Success!');
-    //splitsuccess.ApiUtil.post('/appeal/:appeal_id/split_appeal/split')
+    //splitsuccess.ApiUtil.post('/appeal/:appeal_id/split_appeal_reason/split')
     //{
       //console.log(response);
     //};
