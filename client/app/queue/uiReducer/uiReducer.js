@@ -85,7 +85,7 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_CONFIRM_APPEAL_SPLIT:
     return update(state, {
       splitAppeal: {
-        alertType: { $set: action.payload.alertType },
+        splitType: { $set: action.payload.splitType },
       }
     });
   case ACTIONS.SET_SELECTING_JUDGE:
