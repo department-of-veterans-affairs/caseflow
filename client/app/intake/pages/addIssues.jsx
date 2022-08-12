@@ -267,41 +267,50 @@ class AddIssuesPage extends React.Component {
       intakeData.addedIssues, intakeData.originalIssues
     );
 
+    const buttonConditionalRendering = () => {
+      if (appealInfo.issueCount === null || appealInfo.requestIssues === null || userCanSplitAppeal === null) {
+        return false;
+      }
+
+      return ((
+        appealInfo.issue > 1 || appealInfo.requestIssues.length > 1) && userCanSplitAppeal);
+
+    };
+
     const renderButtons = () => {
       return (
         <div className="cf-actions">
-          {(appealInfo.issueCount > 1 || appealInfo.requestIssues.length > 1) &&
-            userCanSplitAppeal ? (
-              [<Button
-                name="add-issue"
-                label="add-issue"
-                legacyStyling={false}
-                classNames={['usa-button-secondary']}
-                onClick={() => this.onClickAddIssue()}
-              >
-            + Add issue:
-              </Button>,
-              (' '),
-              <Link to="/create_split">
-                <Button
-                  name="split-appeal"
-                  label="split-appeal"
-                  legacyStyling={false}
-                  classNames={['usa-button-secondary']}
-                  disabled={issuesChanged}
-                >
-              Split appeal
-                </Button>
-              </Link>]
-            ) : (
-              <Button
-                name="add-issue"
-                legacyStyling={false}
-                classNames={['usa-button-secondary']}
-                onClick={() => this.onClickAddIssue()}
-              >
+          {buttonConditionalRendering ? (
+            [<Button
+              name="add-issue"
+              label="add-issue"
+              legacyStyling={false}
+              classNames={['usa-button-secondary']}
+              onClick={() => this.onClickAddIssue()}
+            >
             + Add issue
-              </Button>)}
+            </Button>,
+            (' '),
+            <Link to="/create_split">
+              <Button
+                name="split-appeal"
+                label="split-appeal"
+                legacyStyling={false}
+                classNames={['usa-button-secondary']}
+                disabled={issuesChanged}
+              >
+              Split appeal
+              </Button>
+            </Link>]
+          ) : (
+            <Button
+              name="add-issue"
+              legacyStyling={false}
+              classNames={['usa-button-secondary']}
+              onClick={() => this.onClickAddIssue()}
+            >
+            + Add issue
+            </Button>)}
         </div>
       );
     };
