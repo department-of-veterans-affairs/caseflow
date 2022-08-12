@@ -57,7 +57,6 @@ import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
 import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
-import ApiUtil from '../util/ApiUtil';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -212,50 +211,6 @@ export const CaseDetailsView = (props) => {
   const displayVSOAlert = JSON.parse(localStorage.getItem('VSOSuccessMsg'));
 
   localStorage.removeItem('VSOSuccessMsg');
-
-  // Here: I'm defining a funtion "alert" to be passed into the button onlink method. Does the post and brings back to case details page.
-  //  Updates the state and causes cause details to render the banners. After the succesful post call update the state to render for succes
-  const splitappealfailAlert = () => {
-    console.log('Split Appeal Fail!');
-    console.log('Split Appeal Success!');
-    console.log('Split Appeal Dummy Payload Sent!');
-  };
-
-  //// Create some JSON for use in a example
-  //const jsonData = {
-  //  users: [
-  //    {
-  //      name: 'alan',
-  //      age: 23,
-  //      username: 'aturing'
-  //    },
-  //    {
-  //      name: 'john',
-  //      age: 29,
-  //      username: '__john__'
-  //    }
-  //  ]
-  //};
-//
-  //const handleClick () => {
-  //  fetch('http://------------:8080/',
-  //    method: 'POST',
-  //    mode: 'cors',
-  //    body: JSON.stringify(jsonData) // body data type must match "Content-Type" header
-  //  );
-  //};
-
-  handleClick () = fetch('/user').ApiUtil.post('/user', {
-    firstName: 'Fred',
-    lastName: 'Flintstone'
-  })
-  .then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  })
-  }
 
   return (
     <React.Fragment>
@@ -420,28 +375,6 @@ export const CaseDetailsView = (props) => {
         </StickyNavContentArea>
         {props.pollHearing && pollHearing()}
       </AppSegment>
-      <Button
-        onClick={splitappealfailAlert}
-      >Split Appeals Function
-      </Button>
-      <div>
-      </div>
-      <Button
-        onClick={() =>
-          push(`/queue/appeals/${appealId}`)
-        }
-      >Redirect Button
-      </Button>
-      <div>
-      </div>
-      <div onClick={handleClick} style={{
-        textAlign: 'center',
-        width: '100px',
-        border: '1px solid gray',
-        borderRadius: '5px'
-      }}>
-      Send data to backend
-      </div>
     </React.Fragment>
   );
 };
