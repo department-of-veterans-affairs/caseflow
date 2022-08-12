@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
-import { isUndefined, get, omitBy, isNil } from 'lodash';
+import { isUndefined, get, omitBy } from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import React, { useState, useContext, useEffect } from 'react';
@@ -144,14 +144,6 @@ const HearingDetails = (props) => {
     };
   };
 
-  const filterEmailAttribute = (email) => {
-    if (convertingToVirtual) {
-      return Object.keys(email).includes('email_address') && email.email_address;
-    }
-
-    return Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone');
-  };
-
   const handleCancelButton = () => {
     if (userVsoEmployee) {
       goBack();
@@ -228,7 +220,7 @@ const HearingDetails = (props) => {
             timezone: hearingInfo?.appellantTz,
             email_address: hearingInfo?.appellantEmailAddress,
             type: 'AppellantHearingEmailRecipient'
-          }, isNil
+          }, isUndefined
         ),
         omitBy(
           {
@@ -236,9 +228,9 @@ const HearingDetails = (props) => {
             timezone: hearingInfo?.representativeTz,
             email_address: hearingInfo?.representativeEmailAddress,
             type: 'RepresentativeHearingEmailRecipient'
-          }, isNil
+          }, isUndefined
         )
-      ].filter((email) => filterEmailAttribute(email));
+      ].filter((email) => Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone'));
 
       // Put the UI into a loading state
       setLoading(true);
