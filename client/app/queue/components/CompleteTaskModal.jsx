@@ -487,8 +487,6 @@ class CompleteTaskModal extends React.Component {
       this.getContentArgs()
     );
 
-    console.log(`instrucionnes: ${payload.data.task.instructions}`);
-
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
       this.props.onReceiveAmaTasks(resp.body.tasks.data);
     });
