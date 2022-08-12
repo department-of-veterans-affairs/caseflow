@@ -268,8 +268,12 @@ class AddIssuesPage extends React.Component {
     );
 
     const buttonConditionalRendering = () => {
-      if (appealInfo.requestIssues === null || userCanSplitAppeal === null) {
+      if (appealInfo.requestIssues.length === null || userCanSplitAppeal === null) {
         return false;
+      }
+
+      if (appealInfo.issueCount === null) {
+        return (appealInfo.requestIssues.length > 1 && userCanSplitAppeal);
       }
 
       return ((
@@ -280,7 +284,7 @@ class AddIssuesPage extends React.Component {
     const renderButtons = () => {
       return (
         <div className="cf-actions">
-          {buttonConditionalRendering ? (
+          {buttonConditionalRendering() ? (
             [<Button
               name="add-issue"
               label="add-issue"
