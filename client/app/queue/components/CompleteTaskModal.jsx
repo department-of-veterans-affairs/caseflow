@@ -420,12 +420,12 @@ class CompleteTaskModal extends React.Component {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
 
       if (reviewNotes) {
-        formattedInstructions.push(`\n\n**Status:** ${locationLabel}\n\n`);
+        formattedInstructions.push(`\n**Status:** ${locationLabel}\n`);
         formattedInstructions.push(`\n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}\n`);
       }
 
       if (instructions) {
-        const instructionsDetail = `\n\n**CAMO Notes:** ${instructions}`;
+        const instructionsDetail = `\n**CAMO Notes:** ${instructions}`;
 
         const targetIndex = reviewNotes ? 1 : 0;
 
@@ -486,6 +486,8 @@ class CompleteTaskModal extends React.Component {
       appeal,
       this.getContentArgs()
     );
+
+    console.log(`instrucionnes: ${payload.data.task.instructions}`);
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
       this.props.onReceiveAmaTasks(resp.body.tasks.data);
