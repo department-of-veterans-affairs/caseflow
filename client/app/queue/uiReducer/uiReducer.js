@@ -82,12 +82,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
         powerOfAttorney: { $set: action.payload.powerOfAttorney }
       }
     });
-  case ACTIONS.SET_CONFIRM_APPEAL_SPLIT_ALERT:
+  case ACTIONS.SET_CONFIRM_APPEAL_SPLIT:
     return update(state, {
-      splitAppealAlert: {
+      splitAppeal: {
         alertType: { $set: action.payload.alertType },
-        message: { $set: action.payload.message },
-        powerOfAttorney: { $set: action.payload.powerOfAttorney }
       }
     });
   case ACTIONS.SET_SELECTING_JUDGE:

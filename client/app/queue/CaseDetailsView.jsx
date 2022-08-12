@@ -57,7 +57,7 @@ import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
 import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
-
+import { ConfirmAppealSplitButton } from './components/ConfirmAppealSplitButton';
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
   border: 0,
@@ -375,6 +375,13 @@ export const CaseDetailsView = (props) => {
         </StickyNavContentArea>
         {props.pollHearing && pollHearing()}
       </AppSegment>
+      <Button
+        onClick={() =>
+          push('/appeals/split')
+        }
+      >
+        Confirm Split
+      </Button>
     </React.Fragment>
   );
 };

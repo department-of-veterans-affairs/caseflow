@@ -438,5 +438,10 @@
     "label": "Mark task in progress",
     "value": "modal/mark_task_in_progress",
     "func": "education_rpo_mark_task_in_progress"
+  },
+  "ADD_SPLIT_APPEAL_ACTION": {
+    "label": "Add split appeal action",
+    "value": "modal/split_appeal_task",
+    "func": "split_appeal_action_data"
   }
 }

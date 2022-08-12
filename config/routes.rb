@@ -353,7 +353,7 @@ Rails.application.routes.draw do
   post "post_decision_motions", to: "post_decision_motions#create"
   post "docket_switches", to: "docket_switches#create"
   post "docket_switches/address_ruling", to: "docket_switches#address_ruling"
-
+  post "split_appeal/:appeal_id/split", to: "split_appeal#split"
   # :nocov:
   namespace :test do
     get "/error", to: "users#show_error"

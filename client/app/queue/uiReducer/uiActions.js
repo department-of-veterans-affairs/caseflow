@@ -1,6 +1,10 @@
 /* eslint-disable no-console */
 import { ACTIONS } from './uiConstants';
 import ApiUtil from '../../util/ApiUtil';
+import { ConfirmAppealSplitButton } from '../components/ConfirmAppealSplitButton';
+import { reject } from 'lodash';
+import { resolve } from 'core-js/fn/promise';
+import { bind } from 'core-js/core/function';
 
 export const resetErrorMessages = () => ({
   type: ACTIONS.RESET_ERROR_MESSAGES
@@ -283,3 +287,11 @@ export const setHearingDay = (hearingDay) => ({
   type: ACTIONS.SET_HEARING_DAY,
   payload: hearingDay
 });
+
+//Pass In parameters from the state
+binding.pry
+const postAppealSplit = () => async (dispatchEvent) => {
+  dispatch({ type: ACTIONS.SET_CONFIRM_APPEAL_SPLIT});
+
+  return ()
+};
