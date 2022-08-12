@@ -41,7 +41,7 @@ const camoToBvaIntakeData = {
     judges: {},
     tasks: {},
     amaTasks: {
-      '7929': {
+      7929: {
         uniqueId: '7929',
         isLegacy: false,
         type: 'RootTask',
@@ -99,7 +99,7 @@ const camoToBvaIntakeData = {
         timerEndsAt: null,
         unscheduledHearingNotes: {}
       },
-      '7930': {
+      7930: {
         uniqueId: '7930',
         isLegacy: false,
         type: 'PreDocketTask',
@@ -157,7 +157,7 @@ const camoToBvaIntakeData = {
         timerEndsAt: null,
         unscheduledHearingNotes: {}
       },
-      '7931': {
+      7931: {
         uniqueId: '7931',
         isLegacy: false,
         type: 'VhaDocumentSearchTask',
@@ -828,88 +828,88 @@ const camoToBvaIntakeData = {
 };
 
 const postData = {
-  "tasks": {
-    "data": [
+  tasks: {
+    data: [
       {
-        "id": "7139",
-        "type": "task",
-        "attributes": {
-          "is_legacy": false,
-          "type": "VhaDocumentSearchTask",
-          "label": "Review Documentation",
-          "appeal_id": 1633,
-          "status": "completed",
-          "assigned_at": "2022-08-08T21:24:56.274-04:00",
-          "started_at": null,
-          "created_at": "2022-08-08T21:24:56.274-04:00",
-          "closed_at": "2022-08-08T21:31:10.797-04:00",
-          "cancellation_reason": null,
-          "instructions": [
-            "\n\n**Status:** Correct documents have been successfully added\n\n\n        \n\n**CAMO Notes:** \n\n**CAMO Notes:** CAMO -> BVA Intake"
+        id: '7139',
+        type: 'task',
+        attributes: {
+          is_legacy: false,
+          type: 'VhaDocumentSearchTask',
+          label: 'Review Documentation',
+          appeal_id: 1633,
+          status: 'completed',
+          assigned_at: '2022-08-08T21:24:56.274-04:00',
+          started_at: null,
+          created_at: '2022-08-08T21:24:56.274-04:00',
+          closed_at: '2022-08-08T21:31:10.797-04:00',
+          cancellation_reason: null,
+          instructions: [
+            '\n\n**Status:** Correct documents have been successfully added\n\n\n        \n\n**CAMO Notes:** \n\n**CAMO Notes:** CAMO -> BVA Intake'
           ],
-          "appeal_type": "Appeal",
-          "parent_id": 7138,
-          "timeline_title": "VhaDocumentSearchTask completed",
-          "hide_from_queue_table_view": false,
-          "hide_from_case_timeline": false,
-          "hide_from_task_snapshot": false,
-          "assigned_by": {
-            "first_name": "Ignacio",
-            "last_name": "Shaw",
-            "full_name": "Ignacio BvaIntakeUser Shaw",
-            "css_id": "BVAISHAW",
-            "pg_id": 18
+          appeal_type: 'Appeal',
+          parent_id: 7138,
+          timeline_title: 'VhaDocumentSearchTask completed',
+          hide_from_queue_table_view: false,
+          hide_from_case_timeline: false,
+          hide_from_task_snapshot: false,
+          assigned_by: {
+            first_name: 'Ignacio',
+            last_name: 'Shaw',
+            full_name: 'Ignacio BvaIntakeUser Shaw',
+            css_id: 'BVAISHAW',
+            pg_id: 18
           },
-          "assigned_to": {
-            "css_id": null,
-            "full_name": null,
-            "is_organization": true,
-            "name": "VHA CAMO",
-            "status": "active",
-            "type": "VhaCamo",
-            "id": 30
+          assigned_to: {
+            css_id: null,
+            full_name: null,
+            is_organization: true,
+            name: 'VHA CAMO',
+            status: 'active',
+            type: 'VhaCamo',
+            id: 30
           },
-          "cancelled_by": {
-            "css_id": null
+          cancelled_by: {
+            css_id: null
           },
-          "converted_by": {
-            "css_id": null
+          converted_by: {
+            css_id: null
           },
-          "converted_on": null,
-          "assignee_name": "VHA CAMO",
-          "placed_on_hold_at": null,
-          "on_hold_duration": null,
-          "docket_name": "direct_review",
-          "case_type": "Original",
-          "docket_number": "220731-1633",
-          "docket_range_date": null,
-          "veteran_full_name": "Bob Smithhahn",
-          "veteran_file_number": "500000007",
-          "closest_regional_office": null,
-          "external_appeal_id": "809c244d-1d8b-4fff-b3c7-a9796d71e4e6",
-          "aod": false,
-          "overtime": false,
-          "contested_claim": false,
-          "veteran_appellant_deceased": false,
-          "issue_count": 1,
-          "external_hearing_id": null,
-          "available_hearing_locations": [],
-          "previous_task": {
-            "assigned_at": null
+          converted_on: null,
+          assignee_name: 'VHA CAMO',
+          placed_on_hold_at: null,
+          on_hold_duration: null,
+          docket_name: 'direct_review',
+          case_type: 'Original',
+          docket_number: '220731-1633',
+          docket_range_date: null,
+          veteran_full_name: 'Bob Smithhahn',
+          veteran_file_number: '500000007',
+          closest_regional_office: null,
+          external_appeal_id: '809c244d-1d8b-4fff-b3c7-a9796d71e4e6',
+          aod: false,
+          overtime: false,
+          contested_claim: false,
+          veteran_appellant_deceased: false,
+          issue_count: 1,
+          external_hearing_id: null,
+          available_hearing_locations: [],
+          previous_task: {
+            assigned_at: null
           },
-          "document_id": null,
-          "decision_prepared_by": {
-            "first_name": null,
-            "last_name": null
+          document_id: null,
+          decision_prepared_by: {
+            first_name: null,
+            last_name: null
           },
-          "available_actions": [],
-          "can_move_on_docket_switch": false,
-          "timer_ends_at": null,
-          "unscheduled_hearing_notes": null
+          available_actions: [],
+          can_move_on_docket_switch: false,
+          timer_ends_at: null,
+          unscheduled_hearing_notes: null
         }
       }
     ],
-    "alerts": []
+    alerts: []
   }
 };
 
@@ -945,7 +945,7 @@ const camoToProgramOfficeToCamoData = {
     judges: {},
     tasks: {},
     amaTasks: {
-      '7117': {
+      7117: {
         uniqueId: '7117',
         isLegacy: false,
         type: 'RootTask',
@@ -1003,7 +1003,7 @@ const camoToProgramOfficeToCamoData = {
         timerEndsAt: null,
         unscheduledHearingNotes: {}
       },
-      '7118': {
+      7118: {
         uniqueId: '7118',
         isLegacy: false,
         type: 'PreDocketTask',
@@ -1061,7 +1061,7 @@ const camoToProgramOfficeToCamoData = {
         timerEndsAt: null,
         unscheduledHearingNotes: {}
       },
-      '7119': {
+      7119: {
         uniqueId: '7119',
         isLegacy: false,
         type: 'VhaDocumentSearchTask',
@@ -1164,7 +1164,7 @@ const camoToProgramOfficeToCamoData = {
         timerEndsAt: null,
         unscheduledHearingNotes: {}
       },
-      '7962': {
+      7962: {
         uniqueId: '7962',
         isLegacy: false,
         type: 'AssessDocumentationTask',
@@ -1210,8 +1210,8 @@ const camoToProgramOfficeToCamoData = {
         status: 'completed',
         onHoldDuration: null,
         instructions: [
-          'CAMO -> PO',
-          'PO -> CAMODocuments for this appeal are stored in VBMS.\n\n**Detail:**\n\nPO -> CAMO'
+          'CAMO to PO',
+          'Documents for this appeal are stored in VBMS.\n\n**Detail:**\n\n PO back to CAMO!\n'
         ],
         decisionPreparedBy: null,
         availableActions: [],
