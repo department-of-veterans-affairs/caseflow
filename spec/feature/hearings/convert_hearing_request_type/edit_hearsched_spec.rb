@@ -358,6 +358,8 @@ RSpec.feature "Convert hearing request type" do
           visit "hearings/#{hearing.external_id}/details"
 
           click_dropdown(name: "hearingType", index: 0)
+
+          click_button("Save")
         end
 
         step "update hearing to have a representative email address" do
