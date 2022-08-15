@@ -17,7 +17,6 @@ import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
-import classNames from 'classnames';
 
 const validRadio = (radio) => {
   return radio?.length > 0;
@@ -351,7 +350,6 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SEND_BUTTON,
-    classNames: ['usa-button-red', 'usa-button-hover', 'usa-button-warning'],
   },
 };
 
