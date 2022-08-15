@@ -361,7 +361,7 @@ RSpec.feature "Convert hearing request type" do
 
           click_dropdown(name: "hearingType", index: 0)
 
-          click_button("Convert Hearing To Virtual")
+          click_button("Save")
         end
 
         step "appellant receives email notification" do
