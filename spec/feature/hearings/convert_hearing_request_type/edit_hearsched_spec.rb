@@ -328,7 +328,7 @@ RSpec.feature "Convert hearing request type" do
       end
     end
 
-    context "When not providing hearing participant emails and then later converting hearing to virtual" do
+    context "When not initially providing hearing participant emails and then later converting hearing to virtual" do
       before do
         FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
       end
@@ -348,7 +348,7 @@ RSpec.feature "Convert hearing request type" do
           click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.label)
 
           click_dropdown(name: "appealHearingLocation", index: 0)
-          find(".cf-form-radio-option", text: "8:30 am").click
+          find(".cf-form-radio-option", text: /8:30 am/i).click
           click_button("Submit")
         end
 
@@ -356,6 +356,8 @@ RSpec.feature "Convert hearing request type" do
           hearing = video_appeal.hearings.first
 
           visit "hearings/#{hearing.external_id}/details"
+
+          click_dropdown(name: "hearingType", index: 0)
         end
 
         step "update hearing to have a representative email address" do
