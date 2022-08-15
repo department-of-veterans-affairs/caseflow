@@ -365,6 +365,8 @@ RSpec.feature "Convert hearing request type" do
         end
 
         step "appellant receives email notification" do
+          sleep 5
+
           hearing = video_appeal.reload.hearings.first
 
           expect(hearing.email_events.count).to eq 1
@@ -374,9 +376,15 @@ RSpec.feature "Convert hearing request type" do
           fill_in "POA/Representative Email", with: "representative@example.com"
 
           click_button("Save")
+
+          click_button("button-submit-virtual-hearing")
         end
 
         step "representative recives email notification" do
+          sleep 5
+
+          byebug
+
           hearing = video_appeal.reload.hearings.first
 
           expect(hearing.email_events.count).to eq 2
