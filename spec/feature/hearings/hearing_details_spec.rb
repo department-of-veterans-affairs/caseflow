@@ -970,9 +970,9 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       step "hearing email recipients have been recorded and emails notifications have been sent" do
         expect(hearing.appellant_recipient.email_address).to eq expected_veteran_email
-        expect(hearing.representative_recipient.email_address).to eq fill_in_rep_email
+        expect(hearing.representative_recipient.email_address).to eq current_user.email
 
-        expect(hearing.sent_email_events.count).to eq 2
+        expect(hearing.email_events.count).to eq 2
       end
     end
 
