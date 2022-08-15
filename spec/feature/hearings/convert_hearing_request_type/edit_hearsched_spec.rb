@@ -353,6 +353,8 @@ RSpec.feature "Convert hearing request type" do
         end
 
         step "convert the scheduled hearing to virtual without a representative email address" do
+          find("p", text: "APPEAL STREAM TYPE")
+
           hearing = video_appeal.reload.hearings.first
 
           visit "hearings/#{hearing.external_id}/details"
@@ -363,6 +365,8 @@ RSpec.feature "Convert hearing request type" do
         end
 
         step "appellant receives email notification" do
+          hearing = video_appeal.reload.hearings.first
+
           expect(hearing.email_events.count).to eq 1
         end
 
@@ -373,6 +377,8 @@ RSpec.feature "Convert hearing request type" do
         end
 
         step "representative recives email notification" do
+          hearing = video_appeal.reload.hearings.first
+
           expect(hearing.email_events.count).to eq 2
         end
       end
