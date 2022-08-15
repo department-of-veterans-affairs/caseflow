@@ -101,7 +101,8 @@ module Seeds
       end
 
       # Create AMA appeals for Split Appeals ready for distribution
-      (1..5).each do |num|
+      #todo : add a loop for different issue types inside the appeal creation
+      (1..30).each do |num|
         vet_file_number = format("1415926%<num>02d", num: num)
         create(
           :appeal,
