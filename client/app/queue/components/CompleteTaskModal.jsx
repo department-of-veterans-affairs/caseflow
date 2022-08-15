@@ -527,6 +527,7 @@ class CompleteTaskModal extends React.Component {
         submitDisabled={!this.validateCGForm()}
         validateForm={this.validateForm}
         submit={this.submit}
+        buttonClasses={['button_wrapper']}
         pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
       >
         {this.props.task ?
