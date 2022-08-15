@@ -17,6 +17,7 @@ import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
+import classNames from 'classnames';
 
 const validRadio = (radio) => {
   return radio?.length > 0;
@@ -349,7 +350,8 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SEND_BUTTON
+    buttonText: COPY.MODAL_SEND_BUTTON,
+    classNames: ['usa-button-red', 'usa-button-hover', 'usa-button-warning'],
   },
 };
 
@@ -452,6 +454,23 @@ class CompleteTaskModal extends React.Component {
     return formattedInstructions;
   };
 
+  validateCGForm = () => {
+    const { otherInstructions, radio } = this.state;
+    const modalType = this.props.modalType;
+
+    let isValid = true;
+
+    if (modalType === 'vha_caregiver_support_send_to_board_intake_for_review') {
+      if (radio === 'other') {
+        isValid = validInstructions(otherInstructions) && validRadio(radio);
+      } else {
+        isValid = validRadio(radio);
+      }
+    }
+
+    return isValid;
+  }
+
   validateForm = () => {
     const { instructions, otherInstructions, radio } = this.state;
     const modalType = this.props.modalType;
@@ -505,6 +524,7 @@ class CompleteTaskModal extends React.Component {
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
         button={modalAttributes.buttonText}
+        submitDisabled={!this.validateCGForm()}
         validateForm={this.validateForm}
         submit={this.submit}
         pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
