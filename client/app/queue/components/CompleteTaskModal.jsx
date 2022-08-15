@@ -345,7 +345,7 @@ const MODAL_TYPE_ATTRS = {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE, appeal.veteranFullName)
     }),
-    title: () => COPY.VHA_COMPLETE_TASK_LABEL,
+    title: () => COPY.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SEND_BUTTON
   },
