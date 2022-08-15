@@ -349,7 +349,7 @@ RSpec.feature "Convert hearing request type" do
 
           click_dropdown(name: "appealHearingLocation", index: 0)
           find(".cf-form-radio-option", text: /8:30 am/i).click
-          click_button("Submit")
+          click_button("Schedule")
         end
 
         step "convert the scheduled hearing to virtual without a representative email address" do
