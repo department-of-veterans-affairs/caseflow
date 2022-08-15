@@ -16,7 +16,53 @@ export const setFileNumberSearch = (fileNumber) => ({
   }
 });
 
-//export const splitAppeal = (data)
+export const splitAppeal = (data) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SPLIT_APPEAL,
+    meta: { analytics }
+  });
+
+  const appealId = data.appealId;
+
+  return ApiUtil.post('/appeals', appealId, ENDPOINT_NAMES.SPLIT_APPEAL).
+    then(
+      () => {
+        // send success
+        dispatch({
+          type: ACTIONS.SPLIT_APPEAL_SUCCESS,
+          payload: {
+            appealId: data.appealId,
+            issues: data.selectedIssues,
+            reason: data.reason,
+            otherReason: data.otherReason
+
+          },
+          meta: { analytics }
+        });
+      },
+      (error) => {
+        const responseObject = error.response.body || {};
+        const errorCode = responseObject.error_code || 'default';
+
+        // send error
+        dispatch({
+          type: ACTIONS.SPLIT_APPEAL_FAILURE,
+          payload: {
+            errorCode,
+            errorData: responseObject.error_data || {}
+          },
+          meta: {
+            analytics: {
+              label: errorCode
+            }
+          }
+        });
+        throw error;
+      }
+    ).
+    // catch failure
+    catch((error) => error);
+};
 
 export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => {
   dispatch({
