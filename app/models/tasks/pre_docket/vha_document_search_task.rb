@@ -27,7 +27,7 @@ class VhaDocumentSearchTask < Task
   ].freeze
 
   VHA_CAREGIVER_SUPPORT_TASK_ACTIONS = [
-    Constants.TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.to_h
+    Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW.to_h
     # Return to Board Intake
   ].freeze
 
