@@ -383,8 +383,6 @@ RSpec.feature "Convert hearing request type" do
         step "representative recives email notification" do
           sleep 5
 
-          byebug
-
           hearing = video_appeal.reload.hearings.first
 
           expect(hearing.email_events.count).to eq 2
