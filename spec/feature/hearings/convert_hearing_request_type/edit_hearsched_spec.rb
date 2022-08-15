@@ -329,16 +329,16 @@ RSpec.feature "Convert hearing request type" do
     end
 
     context "When not initially providing hearing participant emails and then later converting hearing to virtual" do
+      let!(:hearing_day) do
+        create(:hearing_day, :video, scheduled_for: Time.zone.today + 10.days, regional_office: "RO39")
+      end
+
       before do
         FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
       end
 
       after do
         FeatureToggle.disable!(:schedule_veteran_virtual_hearing)
-      end
-
-      let!(:hearing_day) do
-        create(:hearing_day, :video, scheduled_for: Time.zone.today + 10.days, regional_office: "RO39")
       end
 
       scenario do
@@ -353,7 +353,7 @@ RSpec.feature "Convert hearing request type" do
         end
 
         step "convert the scheduled hearing to virtual without a representative email address" do
-          hearing = video_appeal.hearings.first
+          hearing = video_appeal.reload.hearings.first
 
           visit "hearings/#{hearing.external_id}/details"
 
