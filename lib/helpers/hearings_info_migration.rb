@@ -6,7 +6,6 @@
 # rubocop:disable Metrics/PerceivedComplexity
 # rubocop:disable Metrics/ParameterLists
 # rubocop:disable Style/SignalException
-# Migrates AMA hearings
 module WarRoom
   class HearingsInfoMigration
     def move_ama_hearing(hearing_uuid, appeal_uuid)
@@ -39,7 +38,7 @@ module WarRoom
       end
     end
 
-    def duplicate_ama_hearing(hearing_uuid, source_appeal_uuid, destination_appeal_uuid)
+    def duplicate_ama_hearing(hearing_uuid, destination_appeal_uuid)
       RequestStore[:current_user] = User.system_user
       ActiveRecord::Base.transaction do
         appeal_type = "Appeal"
@@ -49,9 +48,6 @@ module WarRoom
 
         if hearing.nil?
           fail "Invalid UUID. Hearing not found. Aborting..."
-        end
-        if source_appeal.nil?
-          fail "Invalid UUID. Source Appeal not found. Aborting..."
         end
         if destination_appeal.nil?
           fail "Invalid UUID. Destination Appeal not found. Aborting..."
@@ -72,7 +68,7 @@ module WarRoom
 
         new_appeal_hearing = Hearing.create!(attributes)
 
-        HearingTaskAssociation.create!(hearing: new_appeal_hearing, hearing_task: parent)
+        HearingTaskAssociation.create!(hearing: new_appeal_hearing, hearing_task: hearing_task)
 
         check_old_hearing_task_status(new_appeal_hearing, appeal_type)
         check_old_disposition_task_status(new_appeal_hearing, appeal_type)
@@ -113,6 +109,19 @@ module WarRoom
                               closed_at: Time.zone.now,
                               assigned_to: User.find_by_id(User.system_user.id))
       end
+    end
+
+    def new_transcription_task(destination_appeal_uuid)
+      RequestStore[:current_user] = User.system_user
+      destination_appeal = Appeal.find_by_uuid(destination_appeal_uuid)
+      if destination_appeal.nil?
+        fail "Invalid UUID. Destination Appeal not found. Aborting..."
+      end
+      transcription_task = TranscriptionTask.create!(
+            appeal: destination_appeal,
+            parent: self,
+            assigned_to: TranscriptionTeam.singleton
+          )
     end
 
     # Find the most recent HearingTask
