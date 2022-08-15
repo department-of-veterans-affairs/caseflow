@@ -1,25 +1,47 @@
-# frozen_string_literal: true
-
-describe VhaDocumentSearchTask, :postgres do
-  let(:task) { create(:vha_document_search_task) }
+describe VhaDocumentSearchTask, :postgres do  
   let(:camo) { VhaCamo.singleton }
-  let(:user) { create(:user) }
+  let(:caregiver) { VhaCaregiverSupport.singleton }
+  
 
-  before { camo.add_user(user) }
+  context "camo user" do
+    let(:task) { create(:vha_document_search_task, assigned_to: camo) }
+    let(:user) { create(:user) }
+    before { camo.add_user(user) }
 
-  describe ".label" do
-    before { FeatureToggle.enable!(:vha_predocket_workflow) }
-    after { FeatureToggle.disable!(:vha_predocket_workflow) }
-    it "uses a friendly label" do
-      expect(task.class.label).to eq COPY::REVIEW_DOCUMENTATION_TASK_LABEL
+    describe ".label" do
+      before { FeatureToggle.enable!(:vha_predocket_workflow) }
+      after { FeatureToggle.disable!(:vha_predocket_workflow) }
+      it "uses a friendly label" do
+        expect(task.class.label).to eq COPY::REVIEW_DOCUMENTATION_TASK_LABEL        
+      end
     end
+
+    describe "#available_actions" do
+      before { FeatureToggle.enable!(:vha_predocket_workflow) }
+      after { FeatureToggle.disable!(:vha_predocket_workflow) }
+      subject { task.available_actions(user) }
+      it { is_expected.to eq VhaDocumentSearchTask::VHA_CAMO_TASK_ACTIONS }
+    end   
   end
 
-  describe "#available_actions" do
-    before { FeatureToggle.enable!(:vha_predocket_workflow) }
-    after { FeatureToggle.disable!(:vha_predocket_workflow) }
-    subject { task.available_actions(user) }
+  context "caregiver user" do
+    let(:task) { create(:vha_document_search_task, assigned_to: caregiver) }
+    let(:user) { create(:user) }
+    before { caregiver.add_user(user) }
 
-    it { is_expected.to eq VhaDocumentSearchTask::TASK_ACTIONS }
+    describe ".label" do
+      before { FeatureToggle.enable!(:vha_predocket_workflow) }
+      after { FeatureToggle.disable!(:vha_predocket_workflow) }
+      it "uses a friendly label" do
+        expect(task.class.label).to eq COPY::REVIEW_DOCUMENTATION_TASK_LABEL
+      end
+    end
+
+    describe "#available_actions" do
+      before { FeatureToggle.enable!(:vha_predocket_workflow) }
+      after { FeatureToggle.disable!(:vha_predocket_workflow) }
+      subject { task.available_actions(user) }     
+      it { is_expected.to eq VhaDocumentSearchTask::VHA_CAREGIVER_SUPPORT_TASK_ACTIONS }      
+    end
   end
 end
