@@ -85,6 +85,8 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
   const modalLabel = () => {
     if (getTaskType() === 'AssessDocumentationTask') {
       return COPY.VHA_COMPLETE_TASK_MODAL_TITLE;
+    } else if (getTaskType() === 'VhaDocumentSearchTask') {
+      return StringUtil.nl2br(COPY.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY);
     } else if (getTaskType()?.includes('Education')) {
       return StringUtil.nl2br(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY);
     }

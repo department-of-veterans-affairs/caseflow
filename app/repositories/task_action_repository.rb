@@ -578,7 +578,7 @@ class TaskActionRepository
     def vha_caregiver_support_send_to_board_intake_for_review(task, _)
       {
         modal_title: COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
-        modal_body: COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY,
+        modal_body: format(COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY, task.appeal.veteran_full_name),
         modal_button_text: COPY::MODAL_SEND_BUTTON,
         message_title: format(
           COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE,
