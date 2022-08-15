@@ -16,12 +16,15 @@ class ColocatedTask < Task
   after_update :update_location_in_vacols
 
   class << self
-    prepend IhpTaskPending
+    include IhpTaskPending
+
     def create_from_params(params, user)
       parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
       verify_user_can_create!(user, parent_task)
       params = modify_params_for_create(params)
-      create!(params)
+      new_task = create!(params)
+      notify_appellant_if_ihp(new_task.appeal)
+      return new_task
     end
 
     def create_many_from_params(params_array, user)
