@@ -327,6 +327,41 @@ RSpec.feature "Convert hearing request type" do
         expect(page).to have_content(central_office_appeal.docket_number)
       end
     end
+
+    context "When not providing hearing participant emails and then later converting hearing to virtual" do
+      before do
+        FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+      end
+
+      after do
+        FeatureToggle.disable!(:schedule_veteran_virtual_hearing)
+      end
+
+      let!(:hearing_day) do
+        create(:hearing_day, :video, scheduled_for: Time.zone.today + 10.days, regional_office: "RO39")
+      end
+
+      scenario do
+        visit "/queue/appeals/#{video_appeal.external_id}"
+
+        step "schedule hearing as a video hearing without providing participant email addresses" do
+          click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.label)
+
+          click_dropdown(name: "appealHearingLocation", index: 0)
+          find(".cf-form-radio-option", text: "8:30 am").click
+          click_button("Submit")
+        end
+
+        step "convert the scheduled hearing to virtual without a representative email address" do
+          hearing = video_appeal.hearings.first
+
+          visit "hearings/#{hearing.external_id}/details"
+        end
+
+        step "update hearing to have a representative email address" do
+        end
+      end
+    end
   end
 
   context "for all other users" do
