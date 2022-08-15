@@ -14,14 +14,14 @@ import {
   reduce,
   isObject,
   isEqual,
-  isNil,
   concat,
   uniq,
   times,
   compact,
   sortBy,
   get,
-  map
+  map,
+  isUndefined
 } from 'lodash';
 
 import HEARING_ROOMS_LIST from 'constants/HEARING_ROOMS_LIST';
@@ -291,7 +291,7 @@ export const getConvertToVirtualChanges = (first, second) => {
     appellantEmailAddress: second.appellantEmailAddress,
     representativeTz: second.representativeTz,
     representativeEmailAddress: second.representativeEmailAddress
-  }, isNil);
+  }, isUndefined);
 };
 
 /**

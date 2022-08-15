@@ -206,7 +206,8 @@ const HearingDetails = (props) => {
       const { virtualHearing, transcription, ...hearingChanges } = convertingToVirtual ?
         getConvertToVirtualChanges(
           initialHearing,
-          hearing
+          hearing,
+          userVsoEmployee
         ) :
         getChanges(
           initialHearing,
