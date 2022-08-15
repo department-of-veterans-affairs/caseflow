@@ -341,6 +341,14 @@ const MODAL_TYPE_ATTRS = {
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
   },
+  vha_caregiver_support_send_to_board_intake_for_review: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE, appeal.veteranFullName)
+    }),
+    title: () => COPY.VHA_COMPLETE_TASK_LABEL,
+    getContent: ReadyForReviewModal,
+    buttonText: COPY.MODAL_SUBMIT_BUTTON
+  },
 };
 
 class CompleteTaskModal extends React.Component {
