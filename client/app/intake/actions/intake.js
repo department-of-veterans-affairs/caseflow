@@ -16,6 +16,8 @@ export const setFileNumberSearch = (fileNumber) => ({
   }
 });
 
+//export const splitAppeal = (data)
+
 export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => {
   dispatch({
     type: ACTIONS.FILE_NUMBER_SEARCH_START,

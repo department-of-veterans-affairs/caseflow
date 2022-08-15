@@ -236,7 +236,8 @@ export const ENDPOINT_NAMES = {
   REVIEW_INTAKE: 'review-intake',
   CANCEL_INTAKE: 'cancel-intake',
   COMPLETE_INTAKE: 'complete-intake',
-  ERROR_INTAKE: 'error-intake'
+  ERROR_INTAKE: 'error-intake',
+  SPLIT_APPEAL: 'split'
 };
 
 export const CANCELLATION_REASONS = {
