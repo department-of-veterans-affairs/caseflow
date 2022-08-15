@@ -288,9 +288,12 @@ export const getConvertToVirtualChanges = (first, second) => {
   return omitBy({
     ...diff,
     appellantTz: second.appellantTz,
-    appellantEmailAddress: second.appellantEmailAddress,
+    ...((second.appellantEmailAddress || (!second.appellantEmailAddress && first.appellantEmailAddress)) &&
+        { appellantEmailAddress: second.appellantEmailAddress }),
     representativeTz: second.representativeTz,
-    representativeEmailAddress: second.representativeEmailAddress
+    ...((second.representativeEmailAddress ||
+          (!second.representativeEmailAddress && first.representativeEmailAddress)) &&
+        { representativeEmailAddress: second.representativeEmailAddress })
   }, isUndefined);
 };
 
