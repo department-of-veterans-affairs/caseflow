@@ -362,7 +362,18 @@ RSpec.feature "Convert hearing request type" do
           click_button("Save")
         end
 
+        step "appellant receives email notification" do
+          expect(hearing.email_events.count).to eq 1
+        end
+
         step "update hearing to have a representative email address" do
+          fill_in "POA/Representative Email", with: "representative@example.com"
+
+          click_button("Save")
+        end
+
+        step "representative recives email notification" do
+          expect(hearing.email_events.count).to eq 2
         end
       end
     end
