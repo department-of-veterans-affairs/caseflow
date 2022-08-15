@@ -347,7 +347,7 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.VHA_COMPLETE_TASK_LABEL,
     getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SUBMIT_BUTTON
+    buttonText: COPY.MODAL_SEND_BUTTON
   },
 };
 
