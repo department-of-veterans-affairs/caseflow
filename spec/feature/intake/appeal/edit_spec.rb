@@ -305,6 +305,74 @@ feature "Appeal Edit issues", :all_dbs do
     end
   end
 
+  context "User is a member of the Supervisory Senior Council" do
+    let!(:appeal2) do
+      create(:appeal,
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.evidence_submission,
+             veteran_is_not_claimant: false,
+             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+    end
+    let!(:organization) { SupervisorySeniorCouncil.singleton }
+    let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
+    let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
+    scenario "less than 2 request issues on the appeal, the split appeal button doesn't show" do
+      User.authenticate!(user: current_user)
+      visit "appeals/#{appeal2.uuid}/edit/"
+
+      expect(appeal2.decision_issues.length + appeal2.request_issues.length).to be < 2
+      expect(page).to_not have_button("Split appeal")
+    end
+  end
+
+  context "The user is a member of Supervisory Senior Council and the appeal has 2 or more tasks" do
+    let!(:appeal2) do
+      create(:appeal,
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.evidence_submission,
+             veteran_is_not_claimant: false,
+             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+    end
+    let!(:organization) { SupervisorySeniorCouncil.singleton }
+    let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
+    let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
+    let(:request_issue_1) do
+      create(:request_issue,
+             id: 22,
+             decision_review: appeal2,
+             decision_date: profile_date,
+             contested_rating_issue_reference_id: "def456",
+             contested_rating_issue_profile_date: profile_date,
+             contested_issue_description: "PTSD denied",
+             contention_reference_id: "3897",
+             benefit_type: "Education")
+    end
+
+    let(:request_issue_2) do
+      create(:request_issue,
+             id: 25,
+             decision_review: appeal2,
+             decision_date: profile_date,
+             contested_rating_issue_reference_id: "blah1234",
+             contested_rating_issue_profile_date: profile_date,
+             contested_issue_description: "PTSD denied",
+             contention_reference_id: "78910",
+             benefit_type: "Education")
+    end
+    scenario "the split appeal button shows " do
+      # add issues to the appeal
+      appeal2.request_issues << request_issue_1
+      appeal2.request_issues << request_issue_2
+
+      User.authenticate!(user: current_user)
+      visit "appeals/#{appeal2.uuid}/edit/"
+
+      expect(page).to have_button("Split appeal")
+    end
+  end
+
   context "Veteran is invalid" do
     let!(:veteran) do
       create(:veteran,

@@ -1,18 +1,14 @@
-import _ from 'lodash';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
-import update from 'immutability-helper';
-import pluralize from 'pluralize';
 import PropTypes from 'prop-types';
 
 import Button from '../../components/Button';
 import COPY from '../../../COPY';
-import { sprintf } from 'sprintf-js';
 
 class CancelButtonUnconnected extends React.PureComponent {
   render = () => {
     const onClick = this.appealForm;
+
     return <Button
       id="cancel-edit"
       linkStyling

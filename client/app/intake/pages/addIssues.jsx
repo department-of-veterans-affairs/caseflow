@@ -207,9 +207,11 @@ class AddIssuesPage extends React.Component {
       featureToggles,
       editPage,
       addingIssue,
-      userCanWithdrawIssues
+      userCanWithdrawIssues,
+      userCanSplitAppeal
     } = this.props;
     const intakeData = intakeForms[formType];
+    const appealInfo = intakeForms.appeal;
     const { useAmaActivationDate, vhaPreDocketAppeals } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
@@ -265,28 +267,47 @@ class AddIssuesPage extends React.Component {
       intakeData.addedIssues, intakeData.originalIssues
     );
 
-    const addIssueButton = () => {
+    const buttonConditionalRendering = () => {
+
+      return ((
+        appealInfo?.issueCount > 1 || appealInfo.requestIssues?.length > 1) && userCanSplitAppeal);
+
+    };
+
+    const renderButtons = () => {
       return (
         <div className="cf-actions">
-          <Button
-            name="add-issue"
-            legacyStyling={false}
-            classNames={['usa-button-secondary']}
-            onClick={() => this.onClickAddIssue()}
-          >
-            + Add issue
-          </Button>
-
-          <Link to="/create_split">
-            <Button
-              name="split-appeal"
+          {buttonConditionalRendering() ? (
+            [<Button
+              name="add-issue"
+              label="add-issue"
               legacyStyling={false}
               classNames={['usa-button-secondary']}
+              onClick={() => this.onClickAddIssue()}
             >
+            + Add issue
+            </Button>,
+            (' '),
+            <Link to="/create_split">
+              <Button
+                name="split-appeal"
+                label="split-appeal"
+                legacyStyling={false}
+                classNames={['usa-button-secondary']}
+                disabled={issuesChanged}
+              >
               Split appeal
-            </Button>
-          </Link>
-
+              </Button>
+            </Link>]
+          ) : (
+            <Button
+              name="add-issue"
+              legacyStyling={false}
+              classNames={['usa-button-secondary']}
+              onClick={() => this.onClickAddIssue()}
+            >
+            + Add issue
+            </Button>)}
         </div>
       );
     };
@@ -413,7 +434,7 @@ class AddIssuesPage extends React.Component {
     if (!hideAddIssueButton) {
       rowObjects = rowObjects.concat({
         field: ' ',
-        content: addIssueButton()
+        content: renderButtons()
       });
     }
 
@@ -526,7 +547,8 @@ AddIssuesPage.propTypes = {
   undoCorrection: PropTypes.func,
   veteran: PropTypes.object,
   withdrawIssue: PropTypes.func,
-  userCanWithdrawIssues: PropTypes.bool
+  userCanWithdrawIssues: PropTypes.bool,
+  userCanSplitAppeal: PropTypes.bool
 };
 
 export const IntakeAddIssuesPage = connect(
@@ -574,7 +596,9 @@ export const EditAddIssuesPage = connect(
     editPage: true,
     activeIssue: state.activeIssue,
     addingIssue: state.addingIssue,
-    userCanWithdrawIssues: state.userCanWithdrawIssues
+    userCanWithdrawIssues: state.userCanWithdrawIssues,
+    userCanSplitAppeal: state.userCanSplitAppeal
+
   }),
   (dispatch) =>
     bindActionCreators(
