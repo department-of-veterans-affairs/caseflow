@@ -38,7 +38,7 @@ describe VhaCaregiverSupport, :postgres do
 
       describe ".queue_tabs" do
         it "returns the expected tabs for use in the VHA CSP organization's queue" do
-          expect(vha_csp.queue_tabs).to match_array []
+          expect(vha_csp.queue_tabs).to match_array [VhaCaregiverSupportInProgressTasksTab, VhaCaregiverSupportCompletedTasksTab]
         end
       end
 
