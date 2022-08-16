@@ -1,4 +1,43 @@
 /* eslint-disable max-lines */
+const uiData = {
+  ui: {
+  highlightFormItems: false,
+  messages: {
+    success: null,
+    error: null
+    },
+  saveState: {
+    savePending: false,
+    saveSuccessful: null
+    },
+  featureToggles: {
+    collect_video_and_central_emails: true,
+    enable_hearing_time_slots: true,
+    schedule_veteran_virtual_hearing: true,
+    overtime_revamp: true,
+    overtime_persistence: true,
+    mdr_cavc_remand: true,
+    reversal_cavc_remand: true,
+    dismissal_cavc_remand: true,
+    editNodDate: true,
+    fnod_badge: true,
+    fnod_banner: true,
+    view_nod_date_updates: true,
+    poa_button_refresh: true,
+    poa_auto_refresh: true,
+    poa_auto_ihp_update: true,
+    edit_unrecognized_appellant: true,
+    edit_unrecognized_appellant_poa: true,
+    listed_granted_substitution_before_dismissal: true,
+    restrict_poa_visibility: true,
+    vha_predocket_workflow: true,
+    vha_irregular_appeals: true,
+    vso_virtual_opt_in: true,
+    das_case_timeliness: true
+    }
+  }
+};  
+
 export const camoToBvaIntakeData = {
   queue: {
     amaTasks: {
@@ -241,42 +280,7 @@ export const camoToBvaIntakeData = {
       }
     }
   },
-  ui: {
-    highlightFormItems: false,
-    messages: {
-      success: null,
-      error: null
-    },
-    saveState: {
-      savePending: false,
-      saveSuccessful: null
-    },
-    featureToggles: {
-      collect_video_and_central_emails: true,
-      enable_hearing_time_slots: true,
-      schedule_veteran_virtual_hearing: true,
-      overtime_revamp: true,
-      overtime_persistence: true,
-      mdr_cavc_remand: true,
-      reversal_cavc_remand: true,
-      dismissal_cavc_remand: true,
-      editNodDate: true,
-      fnod_badge: true,
-      fnod_banner: true,
-      view_nod_date_updates: true,
-      poa_button_refresh: true,
-      poa_auto_refresh: true,
-      poa_auto_ihp_update: true,
-      edit_unrecognized_appellant: true,
-      edit_unrecognized_appellant_poa: true,
-      listed_granted_substitution_before_dismissal: true,
-      restrict_poa_visibility: true,
-      vha_predocket_workflow: true,
-      vha_irregular_appeals: true,
-      vso_virtual_opt_in: true,
-      das_case_timeliness: true
-    }
-  }
+  ...uiData
 };
 
 export const postData = {
@@ -638,41 +642,6 @@ export const camoToProgramOfficeToCamoData = {
       }
     }
   },
-  ui: {
-    highlightFormItems: false,
-    messages: {
-      success: null,
-      error: null
-    },
-    saveState: {
-      savePending: false,
-      saveSuccessful: null
-    },
-    featureToggles: {
-      collect_video_and_central_emails: true,
-      enable_hearing_time_slots: true,
-      schedule_veteran_virtual_hearing: true,
-      overtime_revamp: true,
-      overtime_persistence: true,
-      mdr_cavc_remand: true,
-      reversal_cavc_remand: true,
-      dismissal_cavc_remand: true,
-      editNodDate: true,
-      fnod_badge: true,
-      fnod_banner: true,
-      view_nod_date_updates: true,
-      poa_button_refresh: true,
-      poa_auto_refresh: true,
-      poa_auto_ihp_update: true,
-      edit_unrecognized_appellant: true,
-      edit_unrecognized_appellant_poa: true,
-      listed_granted_substitution_before_dismissal: true,
-      restrict_poa_visibility: true,
-      vha_predocket_workflow: true,
-      vha_irregular_appeals: true,
-      vso_virtual_opt_in: true,
-      das_case_timeliness: true
-    }
-  }
+  ...uiData
 };
 /* eslint-enable max-lines */
