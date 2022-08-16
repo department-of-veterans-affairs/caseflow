@@ -114,8 +114,12 @@ describe('CompleteTaskModal', () => {
         'CAMO -> BVA Intake'
       );
 
-      /* eslint-disable-next-line max-len */
-      expect(getReceivedInstructions()).toBe('\n**Status:** Correct documents have been successfully added\n\n**CAMO Notes:** CAMO -> BVA Intake\n\n**Program Office Notes:** Documents for this appeal are stored in VBMS.\n\n**Detail:**\n\n PO back to CAMO!\n\n');
+      expect(getReceivedInstructions()).toBe(
+        '\n**Status:** Correct documents have been successfully added\n\n' +
+        '**CAMO Notes:** CAMO -> BVA Intake\n\n' +
+        '**Program Office Notes:** Documents for this appeal are stored in VBMS.\n\n' +
+        '**Detail:**\n\n PO back to CAMO!\n\n'
+      );
     });
   });
 });
