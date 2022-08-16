@@ -11,7 +11,7 @@ module Seeds
   class PriorityDistributions < Base
     # :nocov:
     def seed!
-      organize_judges
+      # organize_judges
       create_previous_distribtions
       create_cases_tied_to_judges
       create_genpop_cases
@@ -20,6 +20,7 @@ module Seeds
 
     private
 
+    # Without context, this method doesn't make any useful changes to the seed data so I'm not running it
     def organize_judges
       JudgeTeam.unscoped.find_by(name: "BVAACTING").inactive!
       JudgeTeam.find_by(name: "BVAAWAKEFIELD").update!(accepts_priority_pushed_cases: false)
