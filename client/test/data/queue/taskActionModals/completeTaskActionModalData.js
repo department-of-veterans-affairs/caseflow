@@ -37,112 +37,99 @@ const uiData = {
   }
 };
 
+const vhaDocumentSearchTaskData = {
+  7119: {
+    uniqueId: '7119',
+    isLegacy: false,
+    type: 'VhaDocumentSearchTask',
+    appealType: 'Appeal',
+    addedByCssId: null,
+    appealId: 1632,
+    externalAppealId: '419ce568-387c-4ac6-a5f5-00a1554cea36',
+    assignedOn: '2022-08-08T22:11:55.277-04:00',
+    closestRegionalOffice: null,
+    createdAt: '2022-08-02T12:03:32.187-04:00',
+    closedAt: null,
+    startedAt: null,
+    assigneeName: 'VHA CAMO',
+    assignedTo: {
+      cssId: null,
+      name: 'VHA CAMO',
+      id: 31,
+      isOrganization: true,
+      type: 'VhaCamo'
+    },
+    assignedBy: {
+      firstName: 'Ignacio',
+      lastName: 'Shaw',
+      cssId: 'BVAISHAW',
+      pgId: 18
+    },
+    cancelledBy: {
+      cssId: null
+    },
+    cancelReason: null,
+    convertedBy: {
+      cssId: null
+    },
+    convertedOn: null,
+    taskId: '7119',
+    status: 'assigned',
+    instructions: [],
+    availableActions: [
+      {
+        func: 'vha_assign_to_program_office_data',
+        label: 'Assign to Program Office',
+        value: 'modal/assign_to_program_office',
+        data: {
+          options: [
+            {
+              label: 'Community Care - Payment Operations Management',
+              value: 33
+            },
+            {
+              label: 'Community Care - Veteran and Family Members Program',
+              value: 34
+            },
+            {
+              label: 'Member Services - Health Eligibility Center',
+              value: 35
+            },
+            {
+              label: 'Member Services - Beneficiary Travel',
+              value: 36
+            },
+            {
+              label: 'Prosthetics',
+              value: 37
+            }
+          ],
+          modal_title: 'Assign to Program Office',
+          modal_body: 'Provide instructions and context for this action:',
+          modal_selector_placeholder: 'Select Program Office',
+          type: 'AssessDocumentationTask',
+          redirect_after: '/organizations/vha-camo'
+        }
+      },
+      {
+        func: 'vha_send_to_board_intake',
+        label: 'Send to Board Intake',
+        value: 'modal/vha_send_to_board_intake',
+        data: {
+          modal_title: 'Send to Board Intake',
+          type: 'VhaDocumentSearchTask',
+          redirect_after: '/organizations/vha-camo'
+        }
+      }
+    ],
+    timelineTitle: 'VhaDocumentSearchTask completed'
+  }
+};
+
 export const camoToBvaIntakeData = {
   queue: {
     amaTasks: {
-      7931: {
-        uniqueId: '7931',
-        isLegacy: false,
-        type: 'VhaDocumentSearchTask',
-        appealType: 'Appeal',
-        addedByCssId: null,
-        appealId: 1898,
-        externalAppealId: '419ce568-387c-4ac6-a5f5-00a1554cea36',
-        assignedOn: '2022-08-06T21:50:24.435-04:00',
-        closestRegionalOffice: null,
-        createdAt: '2022-08-03T15:07:05.458-04:00',
-        closedAt: null,
-        startedAt: '2022-08-03T15:07:05.490-04:00',
-        assigneeName: 'VHA CAMO',
-        assignedTo: {
-          cssId: null,
-          name: 'VHA CAMO',
-          id: 31,
-          isOrganization: true,
-          type: 'VhaCamo'
-        },
-        assignedBy: {
-          firstName: 'Ignacio',
-          lastName: 'Shaw',
-          cssId: 'BVAISHAW',
-          pgId: 18
-        },
-        cancelledBy: {
-          cssId: null
-        },
-        cancelReason: null,
-        convertedBy: {
-          cssId: null
-        },
-        convertedOn: null,
-        taskId: '7931',
-        parentId: 7930,
-        label: 'Review Documentation',
-        documentId: null,
-        externalHearingId: null,
-        workProduct: null,
-        previousTaskAssignedOn: null,
-        placedOnHoldAt: null,
-        status: 'assigned',
-        onHoldDuration: null,
-        instructions: [],
-        decisionPreparedBy: null,
-        availableActions: [
-          {
-            func: 'vha_assign_to_program_office_data',
-            label: 'Assign to Program Office',
-            value: 'modal/assign_to_program_office',
-            data: {
-              options: [
-                {
-                  label: 'Community Care - Payment Operations Management',
-                  value: 33
-                },
-                {
-                  label: 'Community Care - Veteran and Family Members Program',
-                  value: 34
-                },
-                {
-                  label: 'Member Services - Health Eligibility Center',
-                  value: 35
-                },
-                {
-                  label: 'Member Services - Beneficiary Travel',
-                  value: 36
-                },
-                {
-                  label: 'Prosthetics',
-                  value: 37
-                }
-              ],
-              modal_title: 'Assign to Program Office',
-              modal_body: 'Provide instructions and context for this action:',
-              modal_selector_placeholder: 'Select Program Office',
-              type: 'AssessDocumentationTask',
-              redirect_after: '/organizations/vha-camo'
-            }
-          },
-          {
-            func: 'vha_send_to_board_intake',
-            label: 'Send to Board Intake',
-            value: 'modal/vha_send_to_board_intake',
-            data: {
-              modal_title: 'Send to Board Intake',
-              type: 'VhaDocumentSearchTask',
-              redirect_after: '/organizations/vha-camo'
-            }
-          }
-        ],
-        timelineTitle: 'VhaDocumentSearchTask completed',
-        hideFromQueueTableView: false,
-        hideFromTaskSnapshot: false,
-        hideFromCaseTimeline: false,
-        availableHearingLocations: [],
-        latestInformalHearingPresentationTask: {},
-        canMoveOnDocketSwitch: true,
-        timerEndsAt: null,
-        unscheduledHearingNotes: {}
-      }
+      ...vhaDocumentSearchTaskData
     },
     appeals: {
       '419ce568-387c-4ac6-a5f5-00a1554cea36': {
@@ -243,92 +230,7 @@ export const postData = {
 export const camoToProgramOfficeToCamoData = {
   queue: {
     amaTasks: {
-      7119: {
-        uniqueId: '7119',
-        isLegacy: false,
-        type: 'VhaDocumentSearchTask',
-        appealType: 'Appeal',
-        addedByCssId: null,
-        appealId: 1632,
-        externalAppealId: '419ce568-387c-4ac6-a5f5-00a1554cea36',
-        assignedOn: '2022-08-08T22:11:55.277-04:00',
-        closestRegionalOffice: null,
-        createdAt: '2022-08-02T12:03:32.187-04:00',
-        closedAt: null,
-        startedAt: null,
-        assigneeName: 'VHA CAMO',
-        assignedTo: {
-          cssId: null,
-          name: 'VHA CAMO',
-          id: 31,
-          isOrganization: true,
-          type: 'VhaCamo'
-        },
-        assignedBy: {
-          firstName: 'Ignacio',
-          lastName: 'Shaw',
-          cssId: 'BVAISHAW',
-          pgId: 18
-        },
-        cancelledBy: {
-          cssId: null
-        },
-        cancelReason: null,
-        convertedBy: {
-          cssId: null
-        },
-        convertedOn: null,
-        taskId: '7119',
-        status: 'assigned',
-        instructions: [],
-        availableActions: [
-          {
-            func: 'vha_assign_to_program_office_data',
-            label: 'Assign to Program Office',
-            value: 'modal/assign_to_program_office',
-            data: {
-              options: [
-                {
-                  label: 'Community Care - Payment Operations Management',
-                  value: 33
-                },
-                {
-                  label: 'Community Care - Veteran and Family Members Program',
-                  value: 34
-                },
-                {
-                  label: 'Member Services - Health Eligibility Center',
-                  value: 35
-                },
-                {
-                  label: 'Member Services - Beneficiary Travel',
-                  value: 36
-                },
-                {
-                  label: 'Prosthetics',
-                  value: 37
-                }
-              ],
-              modal_title: 'Assign to Program Office',
-              modal_body: 'Provide instructions and context for this action:',
-              modal_selector_placeholder: 'Select Program Office',
-              type: 'AssessDocumentationTask',
-              redirect_after: '/organizations/vha-camo'
-            }
-          },
-          {
-            func: 'vha_send_to_board_intake',
-            label: 'Send to Board Intake',
-            value: 'modal/vha_send_to_board_intake',
-            data: {
-              modal_title: 'Send to Board Intake',
-              type: 'VhaDocumentSearchTask',
-              redirect_after: '/organizations/vha-camo'
-            }
-          }
-        ],
-        timelineTitle: 'VhaDocumentSearchTask completed'
-      },
+      ...vhaDocumentSearchTaskData,
       7962: {
         uniqueId: '7962',
         isLegacy: false,
