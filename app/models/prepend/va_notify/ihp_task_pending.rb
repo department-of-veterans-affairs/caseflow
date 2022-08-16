@@ -14,12 +14,10 @@ module IhpTaskPending
     AppellantNotification.notify_appellant(@parent.appeal, @@template_name)
   end
 
-  # LegacyAppeals
-  def create_from_params(params, user)
-    # original method defined in app/models/tasks/colocated_task.rb
-    super
+  # Legacy Appeals Mixin used in app/models/tasks/colocated_task.rb
+  def notify_appellant_if_ihp(appeal)
     if name == "IhpColocatedTask"
-      AppellantNotification.notify_appellant(@parent.appeal, @@template_name)
+      AppellantNotification.notify_appellant(appeal, @@template_name)
     end
   end
 end

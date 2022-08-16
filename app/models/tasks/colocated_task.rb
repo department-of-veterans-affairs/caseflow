@@ -22,7 +22,9 @@ class ColocatedTask < Task
       parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
       verify_user_can_create!(user, parent_task)
       params = modify_params_for_create(params)
-      create!(params)
+      new_task = create!(params)
+      notify_appellant_if_ihp(new_task.appeal)
+      return new_task
     end
 
     def create_many_from_params(params_array, user)
@@ -41,7 +43,6 @@ class ColocatedTask < Task
         end
 
         team_tasks = super(params_array, user)
-        byebug
         all_tasks = team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten.compact
 
         all_tasks.map(&:appeal).uniq.each do |appeal|
