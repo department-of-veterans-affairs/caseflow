@@ -14,19 +14,15 @@ export default class PerformanceDegradationBanner extends React.Component {
     super(props);
     this.state = {
       showBanner: false,
-      isRequesting: false
+      isRequesting: false,
+      bgsMessage: false,
+      vbmsMessage: false,
+      vvaMessage: false,
+      vacolsMessage: false,
+      govDeliveryMessage: false,
+      vaDotGovMessage: false
     };
 
-    this.dependencies = {
-      certification: ['BGS.AddressService', 'BGS.OrganizationPoaService', 'BGS.PersonFilenumberService',
-        'BGS.VeteranService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentVersionReference'],
-      reader: ['VBMS', 'VACOLS'],
-      hearing: ['VACOLS'],
-      dispatch: ['BGS.BenefitsService', 'VBMS', 'VACOLS'],
-      other: ['BGS.AddressService', 'BGS.BenefitsService', 'BGS.ClaimantFlashesService', 'BGS.OrganizationPoaService',
-        'BGS.PersonFilenumberService', 'BGS.VeteranService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentVersionReference',
-        'VVA']
-    };
   }
 
   checkDependencies() {
@@ -36,22 +32,42 @@ export default class PerformanceDegradationBanner extends React.Component {
       return;
     }
 
-    this.appName = Object.keys(this.dependencies).filter((key) => {
-      return window.location.pathname.includes(key);
-    })[0] || 'other';
-
     this.setState({ isRequesting: true });
     ApiUtil.get('/dependencies-check').
       then((data) => {
         let report = data.body.dependencies_report;
         // Each app has a relevant report
-        let outageAffectingCurrentApp = report.filter((key) => {
-          return this.dependencies[this.appName].includes(key);
-        });
 
+        report.forEach((el) => {
+          if (el === 'degraded_service_banner_bgs') {
+            this.setState({
+              bgsMessage: true
+            });
+          } else if (el === 'degraded_service_banner_vbms') {
+            this.setState({
+              vbmsMessage: true
+            });
+          } else if (el === 'degraded_service_banner_vva') {
+            this.setState({
+              vvaMessage: true
+            });
+          } else if (el === 'degraded_service_banner_vacols') {
+            this.setState({
+              vacolsMessage: true
+            });
+          } else if (el === 'degraded_service_banner_gov_delivery') {
+            this.setState({
+              govDeliveryMessage: true
+            });
+          } else if (el === 'degraded_service_banner_va_dot_gov') {
+            this.setState({
+              vaDotGovMessage: true
+            });
+          }
+        });
         this.setState({
-          showBanner: Boolean(outageAffectingCurrentApp.length > 0),
-          isRequesting: false
+          showBanner: Boolean(report.length > 0),
+          isRequesting: false,
         });
       }, () => {
         this.setState({
@@ -83,10 +99,30 @@ export default class PerformanceDegradationBanner extends React.Component {
             <div className="banner-icon">
               <WrenchIcon />
             </div>
-            <span className="banner-text">
-              We've detected technical issues in our system.
+            { this.state.bgsMessage && <span className="banner-text">
+              BGS: We've detected technical issues in our system.
               You can continue working, though some users may experience delays.
-            </span>
+            </span> }
+            { this.state.vbmsMessage && <span className="banner-text">
+              VBMS: We've detected technical issues in our system.
+              You can continue working, though some users may experience delays.
+            </span> }
+            { this.state.vvaMessage && <span className="banner-text">
+              VVA: We've detected technical issues in our system.
+              You can continue working, though some users may experience delays.
+            </span> }
+            { this.state.vacolsMessage && <span className="banner-text">
+              VACOLS: We've detected technical issues in our system.
+              You can continue working, though some users may experience delays.
+            </span> }
+            { this.state.govDeliveryMessage && <span className="banner-text">
+              GOV Delivery: We've detected technical issues in our system.
+              You can continue working, though some users may experience delays.
+            </span> }
+            { this.state.vaDotGovMessage && <span className="banner-text">
+              VA.GOV: We've detected technical issues in our system.
+              You can continue working, though some users may experience delays.
+            </span> }
           </div>
         </div>
       }
