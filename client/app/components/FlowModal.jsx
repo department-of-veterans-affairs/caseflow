@@ -53,7 +53,7 @@ export default class FlowModal extends React.PureComponent {
   };
 
   render = () => {
-    const { title, button, children, error, success, submitDisabled } = this.props;
+    const { title, button, buttonClasses, children, error, success, submitDisabled } = this.props;
 
     return (
       <Modal
@@ -65,7 +65,7 @@ export default class FlowModal extends React.PureComponent {
             onClick: this.cancelHandler
           },
           {
-            classNames: this.props.buttonClasses,
+            classNames: buttonClasses,
             name: button,
             disabled: submitDisabled,
             loading: this.state.loading,
@@ -87,7 +87,7 @@ FlowModal.defaultProps = {
   pathAfterSubmit: '/queue',
   submitDisabled: false,
   title: '',
-  buttonClasses: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],  
+  buttonClasses: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning']
 };
 
 FlowModal.propTypes = {
