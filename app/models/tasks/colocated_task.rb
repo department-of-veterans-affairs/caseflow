@@ -16,6 +16,7 @@ class ColocatedTask < Task
   after_update :update_location_in_vacols
 
   class << self
+    prepend PrivacyActPending
     prepend IhpTaskPending
     def create_from_params(params, user)
       parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
@@ -40,7 +41,7 @@ class ColocatedTask < Task
         end
 
         team_tasks = super(params_array, user)
-
+        byebug
         all_tasks = team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten.compact
 
         all_tasks.map(&:appeal).uniq.each do |appeal|
