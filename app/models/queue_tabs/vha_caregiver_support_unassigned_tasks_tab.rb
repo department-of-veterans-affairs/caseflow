@@ -3,8 +3,6 @@
 class VhaCaregiverSupportUnassignedTasksTab < QueueTab
   validate :assignee_is_organization
 
-  attr_accessor :show_reader_link_column, :allow_bulk_assign
-
   def label
     COPY::VHA_CAREGIVER_SUPPORT_QUEUE_PAGE_UNASSIGNED_TAB_TITLE
   end
