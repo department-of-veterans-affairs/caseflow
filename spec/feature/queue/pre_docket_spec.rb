@@ -78,6 +78,45 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             expect(page).to have_content(c)
           end
         end
+
+        step "the 'Documents ready for Board Intake review' sends task to BVA Intake for review" do
+          User.authenticate!(user: vha_caregiver_user)
+
+          vha_document_search_task = VhaDocumentSearchTask.last
+          vha_document_search_task.update(assigned_to: vha_caregiver)
+
+          appeal = vha_document_search_task.appeal
+
+          visit "/queue/appeals/#{appeal.external_id}"
+
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW.label
+          ).click
+
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
+
+          radio_choices = page.all(".cf-form-radio-option > label")
+          expect(radio_choices[0]).to have_content("VBMS")
+          expect(radio_choices[1]).to have_content("Centralized Mail Portal")
+          expect(radio_choices[2]).to have_content("Other")
+  
+          radio_choices[0].click
+        
+          find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
+
+          expect(page).to have_content(
+            format(
+              COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE,
+              appeal.veteran_full_name
+            )
+          )
+
+          expect(page).to have_current_path("/organizations/#{vha_caregiver.url}")          
+        end
       end
     end
 
