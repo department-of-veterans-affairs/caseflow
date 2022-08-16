@@ -417,7 +417,7 @@ module Seeds
     end
 
     def judges_with_judge_teams
-      JudgeTeam.unscoped.map(&:judge)
+      JudgeTeam.pushed_priority_cases_allowed.map(&:judge)
     end
 
     def random_key
