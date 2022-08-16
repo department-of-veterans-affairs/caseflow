@@ -1694,17 +1694,17 @@ const getAppealId = (storeValues) => {
   return Object.keys(storeValues.queue.appealDetails)[0];
 };
 
-const getTaskId = (storeValues) => {
+const getTaskId = (storeValues, taskType) => {
   const tasks = storeValues.queue.amaTasks;
 
   return Object.keys(tasks).find((key) => (
-    tasks[key].type === 'VhaDocumentSearchTask'
+    tasks[key].type === taskType
   ));
 };
 
-const renderCompleteTaskModal = (modalType, storeValues) => {
+const renderCompleteTaskModal = (modalType, storeValues, taskType) => {
   const appealId = getAppealId(storeValues);
-  const taskId = getTaskId(storeValues);
+  const taskId = getTaskId(storeValues, taskType);
 
   const queueReducer = createQueueReducer(storeValues);
   const store = createStore(
@@ -1740,14 +1740,16 @@ afterEach(() => {
 
 describe('CompleteTaskModal', () => {
   describe('vha_send_to_board_intake', () => {
+    const taskType = 'VhaDocumentSearchTask';
+
     test('modal title is Send to Board Intake', () => {
-      renderCompleteTaskModal('vha_send_to_board_intake', camoToBvaIntakeData);
+      renderCompleteTaskModal('vha_send_to_board_intake', camoToBvaIntakeData, taskType);
 
       expect(screen.getByText('Send to Board Intake')).toBeTruthy();
     });
 
     test('CAMO Notes section only appears once whenever CAMO sends appeal back to BVA Intake', () => {
-      renderCompleteTaskModal('vha_send_to_board_intake', camoToBvaIntakeData);
+      renderCompleteTaskModal('vha_send_to_board_intake', camoToBvaIntakeData, taskType);
 
       const radioFieldToSelect = screen.getByLabelText('Correct documents have been successfully added');
       const instructionsField = screen.getByRole('textbox', { name: 'Provide additional context and/or documents:' });
@@ -1764,7 +1766,7 @@ describe('CompleteTaskModal', () => {
     });
 
     test('PO Details appear next to Program Office Notes section', () => {
-      renderCompleteTaskModal('vha_send_to_board_intake', camoToProgramOfficeToCamoData);
+      renderCompleteTaskModal('vha_send_to_board_intake', camoToProgramOfficeToCamoData, taskType);
 
       const radioFieldToSelect = screen.getByLabelText('Correct documents have been successfully added');
       const instructionsField = screen.getByRole('textbox', { name: 'Provide additional context and/or documents:' });
