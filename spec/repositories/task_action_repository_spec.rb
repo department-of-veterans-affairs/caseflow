@@ -119,4 +119,18 @@ describe TaskActionRepository, :all_dbs do
       end
     end
   end
+
+  describe "#vha_caregiver_support_send_to_board_intake_for_review" do
+    let(:user) { create(:user) }
+    let(:task) { create(:vha_document_search_task) }
+
+    subject { TaskActionRepository.vha_caregiver_support_send_to_board_intake_for_review(task, user) }
+
+    it "the confirmation banner message title includes the veteran's name" do
+      expect(COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE).to_not include(
+        task.appeal.veteran_full_name
+      )
+      expect(subject[:message_title]).to include task.appeal.veteran_full_name
+    end
+  end
 end
