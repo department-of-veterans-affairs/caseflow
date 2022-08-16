@@ -218,6 +218,22 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
     return update(state, {
       $toggle: ['cancelModalVisible']
     });
+  case ACTIONS.SPLIT_APPEAL_SUCCESS:
+    return update(state, {
+      requestStatus: {
+        splitAppeal: {
+          $set: REQUEST_STATE.SUCCEEDED
+        }
+      }
+    });
+  case ACTIONS.SPLIT_APPEAL_FAILURE:
+    return update(state, {
+      requestStatus: {
+        splitAppeal: {
+          $set: REQUEST_STATE.FAILED
+        }
+      }
+    });
   default:
     return state;
   }

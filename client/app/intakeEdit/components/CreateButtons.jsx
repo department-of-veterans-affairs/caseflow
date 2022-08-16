@@ -1,9 +1,12 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 
 import Button from '../../components/Button';
 import COPY from '../../../COPY';
+import { splitAppeal } from '../../intake/actions/intake';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class CancelButtonUnconnected extends React.PureComponent {
   render = () => {
@@ -79,32 +82,39 @@ const BackButton = connect(
 
 class SplitButtonUnconnected extends React.PureComponent {
   render = () => {
-    return <Button
-      id="button-submit-update"
-      classNames={['cf-submit usa-button']}
-      onClick={
-        () => {
-          window.location.href = `/queue/appeals/${this.props.claimId}`;
-        }
-      }
-    >
-      { COPY.CORRECT_REQUEST_ISSUES_SPLIT_APPEAL }
-    </Button>;
+    return <div>
+      <Link to={`/queue/appeals/${this.props.claimId}`}>
+        <Button
+          id="button-submit-update"
+          classNames={['cf-submit usa-button']}
+          // on click button sends claim id for dummy data
+          onClick={splitAppeal(
+            { appealId: 1,
+              dummy_data: this.props.claimId })}>
+          { COPY.CORRECT_REQUEST_ISSUES_SPLIT_APPEAL }
+        </Button>;
+      </Link>
+    </div>;
   }
 }
 
 SplitButtonUnconnected.propTypes = {
   history: PropTypes.object,
   formType: PropTypes.string,
-  claimId: PropTypes.string
+  claimId: PropTypes.string,
+  splitAppeal: PropTypes.func
 };
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  splitAppeal
+}, dispatch);
 
 const SplitButton = connect(
   (state) => ({
     formType: state.formType,
     claimId: state.claimId
-  })
-)(SplitButtonUnconnected);
+  }),
+  mapDispatchToProps)(SplitButtonUnconnected);
 
 export default class CreateButtons extends React.PureComponent {
   render = () =>

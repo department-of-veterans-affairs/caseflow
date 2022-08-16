@@ -22,29 +22,21 @@ export const splitAppeal = (data) => (dispatch) => {
     meta: { analytics }
   });
 
-  const appealId = data.appealId;
-
-  return ApiUtil.post('/appeals', appealId, ENDPOINT_NAMES.SPLIT_APPEAL).
+  return ApiUtil.post(`/appeals/${data.appealId}/${ENDPOINT_NAMES.SPLIT_APPEAL}`, data).
     then(
-      () => {
+      (response) => {
         // send success
         dispatch({
           type: ACTIONS.SPLIT_APPEAL_SUCCESS,
-          payload: {
-            appealId: data.appealId,
-            issues: data.selectedIssues,
-            reason: data.reason,
-            otherReason: data.otherReason
-
-          },
+          splitAppeal: response.body,
           meta: { analytics }
         });
       },
-      (error) => {
+      (error) =>{
+        // send error 
         const responseObject = error.response.body || {};
         const errorCode = responseObject.error_code || 'default';
 
-        // send error
         dispatch({
           type: ACTIONS.SPLIT_APPEAL_FAILURE,
           payload: {
@@ -57,11 +49,13 @@ export const splitAppeal = (data) => (dispatch) => {
             }
           }
         });
+
         throw error;
       }
     ).
     // catch failure
-    catch((error) => error);
+    // add failure action
+    catch((error) => console.error(error));
 };
 
 export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => {
