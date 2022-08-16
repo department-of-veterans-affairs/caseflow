@@ -419,17 +419,16 @@ class CompleteTaskModal extends React.Component {
     if (this.props.modalType === 'vha_send_to_board_intake') {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
 
+      formattedInstructions.push(`\n**Status:** ${locationLabel}\n`);
+
       if (reviewNotes) {
-        formattedInstructions.push(`\n**Status:** ${locationLabel}\n`);
         formattedInstructions.push(`\n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}\n`);
       }
 
       if (instructions) {
         const instructionsDetail = `\n**CAMO Notes:** ${instructions}`;
 
-        const targetIndex = reviewNotes ? 1 : 0;
-
-        formattedInstructions.splice(targetIndex, 0, instructionsDetail);
+        formattedInstructions.splice(1, 0, instructionsDetail);
       }
     } else if (this.props.modalType === 'ready_for_review') {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;

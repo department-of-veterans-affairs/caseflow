@@ -102,7 +102,10 @@ describe('CompleteTaskModal', () => {
         'CAMO -> BVA Intake'
       );
 
-      expect(getReceivedInstructions()).toBe('\n**CAMO Notes:** CAMO -> BVA Intake');
+      expect(getReceivedInstructions()).toBe(
+        '\n**Status:** Correct documents have been successfully added\n\n' +
+        '**CAMO Notes:** CAMO -> BVA Intake'
+      );
     });
 
     test('PO Details appear next to Program Office Notes section', () => {
