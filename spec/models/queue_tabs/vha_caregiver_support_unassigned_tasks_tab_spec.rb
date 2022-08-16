@@ -65,7 +65,7 @@ describe VhaCaregiverSupportUnassignedTasksTab, :postgres do
 
     context "when the tab name is visible" do
       it "matches expected tab name" do
-        expect(subject).to eq(Constants.QUEUE_CONFIG.VHA_CAREGIVER_SUPPORT_UNASSIGNED_TASK_TAB_NAME)
+        expect(subject).to eq(Constants.QUEUE_CONFIG.CAREGIVER_SUPPORT_UNASSIGNED_TASK_TAB_NAME)
         expect(subject).to eq("vha_caregiver_support_unassigned")
       end
     end

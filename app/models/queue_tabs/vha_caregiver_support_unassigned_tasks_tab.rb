@@ -10,7 +10,7 @@ class VhaCaregiverSupportUnassignedTasksTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.VHA_CAREGIVER_SUPPORT_UNASSIGNED_TASK_TAB_NAME
+    Constants.QUEUE_CONFIG.CAREGIVER_SUPPORT_UNASSIGNED_TASK_TAB_NAME
   end
 
   def description
