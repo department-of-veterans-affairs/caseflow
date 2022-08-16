@@ -312,8 +312,7 @@
   "ORGANIZATIONAL_QUEUE_PAGE_PENDING_TAB_TITLE": "Pending (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TAB_TITLE": "Ready for Review (%d)",
   "ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE": "Completed",
-
-  "VHA_CAREGIVER_SUPPORT_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases assigned to VHA Caregiver Support Program:",
+  "ORGANIZATIONAL_QUEUE_ASSIGNED_TO_DESCRIPTION": "Cases assigned to %s:",
 
   "TRACKING_TASKS_TAB_TITLE": "All cases",
   "TRACKING_TASKS_TAB_DESCRIPTION": "All AMA cases represented by %s that have been active at the Board of Veterans' Appeals in the past 2 weeks.",

@@ -14,7 +14,7 @@ class VhaCaregiverSupportUnassignedTasksTab < QueueTab
   end
 
   def description
-    format(COPY::VHA_CAREGIVER_SUPPORT_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, assignee.name)
+    format(COPY::ORGANIZATIONAL_QUEUE_ASSIGNED_TO_DESCRIPTION, assignee.name)
   end
 
   def tasks

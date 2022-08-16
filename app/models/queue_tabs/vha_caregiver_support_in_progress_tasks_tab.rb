@@ -12,7 +12,7 @@ class VhaCaregiverSupportInProgressTasksTab < QueueTab
   end
 
   def description
-    COPY::VHA_CAREGIVER_SUPPORT_QUEUE_PAGE_IN_PROGRESS_TASKS_DESCRIPTION
+    format(COPY::ORGANIZATIONAL_QUEUE_ASSIGNED_TO_DESCRIPTION, assignee.name)
   end
 
   def tasks
