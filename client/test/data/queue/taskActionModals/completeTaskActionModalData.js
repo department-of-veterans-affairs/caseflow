@@ -148,25 +148,6 @@ export const postData = {
         id: '7139',
         type: 'task',
         attributes: {
-          is_legacy: false,
-          type: 'VhaDocumentSearchTask',
-          label: 'Review Documentation',
-          appeal_id: 1633,
-          status: 'completed',
-          assigned_at: '2022-08-08T21:24:56.274-04:00',
-          started_at: null,
-          created_at: '2022-08-08T21:24:56.274-04:00',
-          closed_at: '2022-08-08T21:31:10.797-04:00',
-          cancellation_reason: null,
-          instructions: [
-            'fake instructions'
-          ],
-          appeal_type: 'Appeal',
-          parent_id: 7138,
-          timeline_title: 'VhaDocumentSearchTask completed',
-          hide_from_queue_table_view: false,
-          hide_from_case_timeline: false,
-          hide_from_task_snapshot: false,
           assigned_by: {
             first_name: 'Ignacio',
             last_name: 'Shaw',
@@ -189,37 +170,9 @@ export const postData = {
           converted_by: {
             css_id: null
           },
-          converted_on: null,
-          assignee_name: 'VHA CAMO',
-          placed_on_hold_at: null,
-          on_hold_duration: null,
-          docket_name: 'direct_review',
-          case_type: 'Original',
-          docket_number: '220731-1633',
-          docket_range_date: null,
-          veteran_full_name: 'Bob Smithhahn',
-          veteran_file_number: '500000007',
-          closest_regional_office: null,
-          external_appeal_id: '809c244d-1d8b-4fff-b3c7-a9796d71e4e6',
-          aod: false,
-          overtime: false,
-          contested_claim: false,
-          veteran_appellant_deceased: false,
-          issue_count: 1,
-          external_hearing_id: null,
-          available_hearing_locations: [],
           previous_task: {
             assigned_at: null
           },
-          document_id: null,
-          decision_prepared_by: {
-            first_name: null,
-            last_name: null
-          },
-          available_actions: [],
-          can_move_on_docket_switch: false,
-          timer_ends_at: null,
-          unscheduled_hearing_notes: null
         }
       }
     ],
