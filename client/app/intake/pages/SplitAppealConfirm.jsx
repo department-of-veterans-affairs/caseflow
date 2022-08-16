@@ -1,9 +1,16 @@
 import React, { useContext } from 'react';
 import { StateContext } from '../../intakeEdit/IntakeEditFrame';
 import COPY from '../../../COPY';
+import BareList from '../../components/BareList';
 
+const marginLeft = css({ marginLeft: '2rem' });
+const noTopBottomMargin = css({
+  marginTop: 0,
+  marginBottom: 1,
+  marginBottom: '1rem'
+});
 const SplitAppealConfirm = () => {
-  const { reason } = useContext(StateContext);
+  const { selectedIssues, reason } = useContext(StateContext);
 
   return (
     <>
@@ -16,7 +23,26 @@ const SplitAppealConfirm = () => {
         <u>{COPY.SPLIT_APPEAL_REVIEW_REASONING_TITLE}</u> &ensp;
         <span style={{ flexBasis: '75%' }}>{reason}</span>
       </div>
+      <div>
+      <BareList compact
+        listStyle={css(marginLeft, noTopBottomMargin)}
+        ListElementComponent="ul"
+        items={selectedIssues} />
+      </div>
+      <div>
+      <BareList compact
+        listStyle={css(marginLeft, noTopBottomMargin)}
+        ListElementComponent="ul"
+        items={selectedIssues} />
+      </div>
+      <div>
+      <BareList compact
+        listStyle={css(marginLeft, noTopBottomMargin)}
+        ListElementComponent="ul"
+        items={selectedIssues} />
+      </div>
     </>
+    
   );
 };
 
