@@ -284,16 +284,13 @@ export const getConvertToVirtualChanges = (first, second) => {
   const diff = getChanges(first, second);
 
   // Always return emails and timezones whenever converting to virtual due to
-  // field pre-population unless they're blank.
+  // field pre-population. Leave out emails if they're blank to prevent validation issues.
   return omitBy({
     ...diff,
     appellantTz: second.appellantTz,
-    ...((second.appellantEmailAddress || (!second.appellantEmailAddress && first.appellantEmailAddress)) &&
-        { appellantEmailAddress: second.appellantEmailAddress }),
+    ...(second.appellantEmailAddress && { appellantEmailAddress: second.appellantEmailAddress }),
     representativeTz: second.representativeTz,
-    ...((second.representativeEmailAddress ||
-          (!second.representativeEmailAddress && first.representativeEmailAddress)) &&
-        { representativeEmailAddress: second.representativeEmailAddress })
+    ...(second.representativeEmailAddress && { representativeEmailAddress: second.representativeEmailAddress })
   }, isUndefined);
 };
 
