@@ -20,7 +20,7 @@ describe VhaCaregiverSupportUnassignedTasksTab, :postgres do
 
     context "when tab label is visible" do
       it "should match defined label for unassigned tasks" do
-        expect(subject).to eq COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE
+        is_expected.to eq COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE
       end
     end
   end
@@ -30,7 +30,7 @@ describe VhaCaregiverSupportUnassignedTasksTab, :postgres do
 
     context "when we want to show the user the description" do
       it "matches description for unassigned tasks tab" do
-        expect(subject).to eq("Cases assigned to VHA Caregiver Support Program:")
+        is_expected.to eq("Cases assigned to VHA Caregiver Support Program:")
       end
     end
   end
@@ -40,8 +40,8 @@ describe VhaCaregiverSupportUnassignedTasksTab, :postgres do
 
     context "when the tab name is visible" do
       it "matches expected tab name" do
-        expect(subject).to eq(Constants.QUEUE_CONFIG.CAREGIVER_SUPPORT_UNASSIGNED_TASK_TAB_NAME)
-        expect(subject).to eq("vha_caregiver_support_unassigned")
+        is_expected.to eq(Constants.QUEUE_CONFIG.CAREGIVER_SUPPORT_UNASSIGNED_TASK_TAB_NAME)
+        is_expected.to eq("vha_caregiver_support_unassigned")
       end
     end
   end
@@ -55,7 +55,7 @@ describe VhaCaregiverSupportUnassignedTasksTab, :postgres do
       end
 
       it "returns a list of unassigned tasks" do
-        expect(subject).to match_array assignee_assigned_task
+        is_expected.to match_array assignee_assigned_task
         expect(subject.empty?).not_to eq true
       end
     end
