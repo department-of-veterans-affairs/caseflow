@@ -221,10 +221,10 @@ describe DocketCoordinator do
     let(:genpop_evidence_case_count) { 2 }
 
     let(:genpop_priority_cases_count) do
-      genpop_legacy_case_count + genpop_ama_hearing_case_count + genpop_direct_case_count + genpop_evidence_case_count
+      genpop_legacy_case_count + genpop_ama_hearing_case_count + genpop_direct_case_count + genpop_evidence_case_count + tied_ama_hearing_case_count
     end
     let(:all_priority_cases_count) do
-      genpop_priority_cases_count + tied_legacy_case_count + tied_ama_hearing_case_count
+      genpop_priority_cases_count + tied_legacy_case_count
     end
 
     before do
