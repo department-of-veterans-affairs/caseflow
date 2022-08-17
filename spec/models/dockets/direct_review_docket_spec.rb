@@ -16,7 +16,7 @@ describe DirectReviewDocket, :postgres do
     end
 
     it "returns the correct value" do
-      expect(subject).to eq(300)
+      expect(subject).to eq(365)
     end
   end
 
@@ -36,7 +36,7 @@ describe DirectReviewDocket, :postgres do
     end
 
     it "returns the expected count" do
-      expect(subject).to eq(5)
+      expect(subject).to eq(10)
     end
   end
 

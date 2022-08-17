@@ -115,7 +115,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   def priority_target
     @priority_target ||= begin
       distribution_counts = priority_distributions_this_month_for_eligible_judges.values
-      target = (distribution_counts.sum + ready_genpop_priority_appeals_count) / distribution_counts.count
+      target = 0
+      target = (distribution_counts.sum + ready_genpop_priority_appeals_count) / distribution_counts.count unless distribution_counts.count.zero?
 
       # If there are any judges that have previous distributions that are MORE than the currently calculated priority
       # target, no target will be large enough to get all other judges up to their number of cases. Remove them from
