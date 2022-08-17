@@ -1,0 +1,31 @@
+find_executable: checking for pg_config... -------------------- no
+
+--------------------
+
+find_header: checking for libpq-fe.h... -------------------- no
+
+"clang -o conftest -I/Users/matthewray/.rbenv/versions/2.7.3/include/ruby-2.7.0/x86_64-darwin21 -I/Users/matthewray/.rbenv/versions/2.7.3/include/ruby-2.7.0/ruby/backward -I/Users/matthewray/.rbenv/versions/2.7.3/include/ruby-2.7.0 -I. -I/Users/matthewray/.rbenv/versions/2.7.3/include  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdivision-by-zero -Wimplicit-function-declaration -Wimplicit-int -Wmisleading-indentation -Wpointer-arith -Wshorten-64-to-32 -Wwrite-strings -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wunused-variable -Wextra-tokens  -fno-common -pipe conftest.c  -L. -L/Users/matthewray/.rbenv/versions/2.7.3/lib -L. -L/Users/matthewray/.rbenv/versions/2.7.3/lib  -fstack-protector-strong     -lruby.2.7   "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return !!argv[argc];
+6: }
+/* end */
+
+"clang -E -I/Users/matthewray/.rbenv/versions/2.7.3/include/ruby-2.7.0/x86_64-darwin21 -I/Users/matthewray/.rbenv/versions/2.7.3/include/ruby-2.7.0/ruby/backward -I/Users/matthewray/.rbenv/versions/2.7.3/include/ruby-2.7.0 -I. -I/Users/matthewray/.rbenv/versions/2.7.3/include  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT   -O3 -ggdb3 -Wall -Wextra -Wdeprecated-declarations -Wdivision-by-zero -Wimplicit-function-declaration -Wimplicit-int -Wmisleading-indentation -Wpointer-arith -Wshorten-64-to-32 -Wwrite-strings -Wmissing-noreturn -Wno-cast-function-type -Wno-constant-logical-operand -Wno-long-long -Wno-missing-field-initializers -Wno-overlength-strings -Wno-parentheses-equality -Wno-self-assign -Wno-tautological-compare -Wno-unused-parameter -Wno-unused-value -Wunused-variable -Wextra-tokens  -fno-common -pipe  conftest.c -o conftest.i"
+conftest.c:3:10: fatal error: 'libpq-fe.h' file not found
+#include <libpq-fe.h>
+         ^~~~~~~~~~~~
+1 error generated.
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <libpq-fe.h>
+/* end */
+
+--------------------
+
