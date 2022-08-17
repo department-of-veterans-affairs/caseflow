@@ -16,9 +16,9 @@ module PrivacyActPending
 
   # for hearing admin foia/privacy request tasks
   def create_child_task(parent, current_user, params)
-    # in task.rb
     super
-    if name == "HearingAdminActionFoiaPrivacyRequestTask"
+    if (PrivacyActTask.include?(params[:type]) && params[:assigned_to_type].include?("Organization")) ||
+       HearingAdminActionFoiaPrivacyRequestTask.include?(params[:type])
       AppellantNotification.notify_appellant(parent.appeal, @@template_name)
     end
   end
