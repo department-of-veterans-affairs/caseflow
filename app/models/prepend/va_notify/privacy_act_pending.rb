@@ -14,18 +14,6 @@ module PrivacyActPending
     AppellantNotification.notify_appellant(appeal, @@template_name)
   end
 
-<<<<<<< HEAD
-=======
-  # for hearing admin foia/privacy request tasks
-  def create_child_task(parent, current_user, params)
-    super
-    if (PrivacyActTask.include?(params[:type]) && params[:assigned_to_type].include?("Organization")) ||
-       HearingAdminActionFoiaPrivacyRequestTask.include?(params[:type])
-      AppellantNotification.notify_appellant(parent.appeal, @@template_name)
-    end
-  end
-
->>>>>>> 4fc279954d4077cbe26ccfdd0f6d567e3157010d
   # for foia/privacy act mail tasks
   # original method defined in app/models/task.rb
   def create_twin_of_type(params)
@@ -39,8 +27,8 @@ module PrivacyActPending
   # original method defined in app/models/task.rb
   def create_child_task(parent, current_user, params)
     super
-    if %w[PrivacyActTask HearingAdminActionFoiaPrivacyRequestTask].include?(params[:type]) &&
-       params[:assigned_to_type].include?("Organization")
+    if (PrivacyActTask.include?(params[:type]) && params[:assigned_to_type].include?("Organization")) ||
+       (HearingAdminActionFoiaPrivacyRequestTask.include?(params[:type]) && parent.type == "ScheduleHearingTask")
       AppellantNotification.notify_appellant(parent.appeal, @@template_name)
     end
   end
