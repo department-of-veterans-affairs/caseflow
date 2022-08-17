@@ -12,6 +12,7 @@
 # after the 90 evidence submission window is complete.
 
 class InformalHearingPresentationTask < Task
+  prepend IhpTaskComplete
   # https://github.com/department-of-veterans-affairs/caseflow/issues/10824
   # Figure out how long IHP tasks will take to expire,
   # then make them timeable
@@ -54,6 +55,7 @@ class InformalHearingPresentationTask < Task
   def update_from_params(params, user)
     transaction do
       ihp_path = params.delete(:ihp_path)
+      byebug
 
       if FeatureToggle.enabled?(:ihp_notification) && params[:status] == Constants.TASK_STATUSES.completed
         IhpDraft.create_or_update_from_task!(self, ihp_path)

@@ -103,10 +103,13 @@ class Task < CaseflowRecord
 
   prepend IhpTaskComplete
   prepend PrivacyActComplete
+  
 
   ############################################################################################
   ## class methods
   class << self
+    prepend PrivacyActPending
+    
     def label
       name.titlecase
     end
@@ -195,6 +198,7 @@ class Task < CaseflowRecord
     end
 
     def create_child_task(parent, current_user, params)
+      byebug
       Task.create!(
         type: name,
         appeal: parent.appeal,
@@ -469,7 +473,8 @@ class Task < CaseflowRecord
   end
 
   def update_from_params(params, current_user)
-    verify_user_can_update!(current_user)
+    # verify_user_can_update!(current_user)
+    byebug
 
     return reassign(params[:reassign], current_user) if params[:reassign]
 
@@ -574,7 +579,8 @@ class Task < CaseflowRecord
   end
 
   def verify_user_can_update!(user)
-    unless can_be_updated_by_user?(user)
+    # unless can_be_updated_by_user?(user)
+    unless true
       fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
     end
   end
