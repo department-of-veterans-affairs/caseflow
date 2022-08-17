@@ -103,13 +103,13 @@ class Task < CaseflowRecord
 
   prepend IhpTaskComplete
   prepend PrivacyActComplete
-  
 
   ############################################################################################
   ## class methods
   class << self
+    include IhpTaskPending
     prepend PrivacyActPending
-    
+
     def label
       name.titlecase
     end
