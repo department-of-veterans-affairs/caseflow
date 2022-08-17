@@ -584,7 +584,7 @@ class TaskActionRepository
           task.appeal.veteran_full_name
         ),
         type: VhaDocumentSearchTask.name,
-        redirect_after: "/organizations/#{VhaCaregiverSupport.singleton.url}" 
+        redirect_after: "/organizations/#{VhaCaregiverSupport.singleton.url}"
       }
     end
 

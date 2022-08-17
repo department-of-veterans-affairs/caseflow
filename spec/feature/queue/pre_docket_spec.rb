@@ -118,7 +118,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             )
           )
 
-          expect(page).to have_current_path("/organizations/#{VhaCaregiverSupport.singleton.url}")
+          expect(page).to have_current_path("/organizations/vha-csp?tab=caregiver_support_in_progress&page=1")
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
         end
       end
