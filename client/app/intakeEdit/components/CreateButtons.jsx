@@ -2,7 +2,8 @@ import { connect } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-
+import IntakeAppealContext from './IntakeAppealContext';
+import { StateContext } from '../IntakeEditFrame';
 import Button from '../../components/Button';
 import COPY from '../../../COPY';
 import { splitAppeal } from '../../intake/actions/intake';
@@ -47,23 +48,25 @@ const CancelButton = connect(
 
 class BackButtonUnconnected extends React.PureComponent {
   render = () => {
-    return <Button
-      id="cancel-back"
-      linkStyling
-      willNeverBeLoading
-      classNames={['usa-button-secondary']}
-      onClick={
-        () => {
-          if (this.props.formType === 'appeal') {
-            this.props.history.push('/create_split');
-          } else {
-            this.props.history.push('/cancel');
+
+    return (
+      <Button
+        id="cancel-back"
+        linkStyling
+        willNeverBeLoading
+        classNames={['usa-button-secondary']}
+        onClick={
+          () => {
+            if (this.props.formType === 'appeal') {
+              this.props.history.push('/create_split');
+            } else {
+              this.props.history.push('/cancel');
+            }
           }
         }
-      }
-    >
+      >
       Back
-    </Button>;
+      </Button>);
   }
 }
 
@@ -80,21 +83,41 @@ const BackButton = connect(
   })
 )(BackButtonUnconnected);
 
-class SplitButtonUnconnected extends React.PureComponent {
-  render = () => {
-    return <div>
-      <Link to={`/queue/appeals/${this.props.claimId}`}>
-        <Button
-          id="button-submit-update"
-          classNames={['cf-submit usa-button']}
-          // on click button sends claim id for dummy data
-          onClick={splitAppeal(
-            { appealId: 1,
-              dummy_data: this.props.claimId })}>
-          { COPY.CORRECT_REQUEST_ISSUES_SPLIT_APPEAL }
-        </Button>;
-      </Link>
-    </div>;
+class SplitButtonUnconnected extends React.Component {
+
+  render() {
+
+    return (
+      <IntakeAppealContext.Consumer>
+        {(appeal) => (
+          <StateContext.Consumer>
+            {(payloadInfo) => (
+              <div>
+                {console.log(`appeal: ${JSON.stringify(appeal)}`)}
+                {console.log(`payloadInfo: ${JSON.stringify(payloadInfo)}`)}
+                <Link to={`/queue/appeals/${this.props.claimId}`}>
+                  <Button
+                    id="button-submit-update"
+                    classNames={['cf-submit usa-button']}
+                    // on click button sends claim id for dummy data
+                    onClick={splitAppeal(
+                      { appealId: appeal.id,
+                        issues: payloadInfo.selectedIssues,
+                        reason: payloadInfo.reason,
+                        otherReason: payloadInfo.otherReason
+                      })}>
+                    { COPY.CORRECT_REQUEST_ISSUES_SPLIT_APPEAL }
+                  </Button>
+                </Link>
+              </div>
+
+            )}
+          </StateContext.Consumer>
+        )}
+      </IntakeAppealContext.Consumer>
+
+    );
+
   }
 }
 

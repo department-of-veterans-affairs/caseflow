@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 import SplitAppealProgressBar from '../intake/components/SplitAppealProgressBar';
 import SplitAppealConfirm from '../intake/pages/SplitAppealConfirm';
 import SplitButtons from './components/SplitButtons';
+import IntakeAppealContext from './components/IntakeAppealContext';
 
 const textAlignRightStyling = css({
   textAlign: 'right',
@@ -240,7 +241,9 @@ export const IntakeEditFrame = (props) => {
               <AppSegment styling={textAlignRightStyling}>
                 <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
                 <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitButtons} />
-                <Route exact path={PAGE_PATHS.REVIEW_SPLIT} component={CreateButtons} />
+                <IntakeAppealContext.Provider value={props.appeal}>
+                  <Route exact path={PAGE_PATHS.REVIEW_SPLIT} component={CreateButtons} />
+                </IntakeAppealContext.Provider>
               </AppSegment>
             </Provider>
           </AppFrame>
@@ -269,6 +272,7 @@ IntakeEditFrame.propTypes = {
   }),
   dropdownUrls: PropTypes.array,
   userDisplayName: PropTypes.string,
+  appeal: PropTypes.object,
   claimId: PropTypes.string,
   routerTestProps: PropTypes.object,
   router: PropTypes.object,
