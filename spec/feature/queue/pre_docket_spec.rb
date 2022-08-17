@@ -10,7 +10,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     FeatureToggle.enable!(:docket_vha_appeals)
     bva_intake.add_user(bva_intake_user)
     camo.add_user(camo_user)
-    caregiver.add_user(caregiver_user)
+    caregiver.add_user(vha_caregiver_user)
     emo.add_user(emo_user)
     program_office.add_user(program_office_user)
     regional_office.add_user(regional_office_user)
@@ -28,8 +28,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let!(:bva_intake_user) { create(:intake_user) }
   let(:camo) { VhaCamo.singleton }
   let(:camo_user) { create(:user) }
-  let(:caregiver) { VhaCaregiverSupport.singleton }
-  let(:caregiver_user) { create(:user) }
+  let(:vha_caregiver) { VhaCaregiverSupport.singleton }
+  let(:vha_caregiver_user) { create(:user) }
   let(:emo) { EducationEmo.singleton }
   let(:emo_user) { create(:user) }
   let(:program_office) { create(:vha_program_office) }
