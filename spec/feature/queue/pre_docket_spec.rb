@@ -118,8 +118,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             )
           )
 
-          # The expect statement below will fail until APPEALS-7431 is merged in
-          # expect(page.path).to include "/organizations/#{VhaCaregiverSupport.singleton.url}?tab=#{VhaCaregiverSupportUnassignedTasksTab.tab_name}"
+          #TODO The expect statement below will fail until APPEALS-7431 is merged in
+          # expect(page.path).to include(
+          # "/organizations/#{VhaCaregiverSupport.singleton.url}?tab=#
+          # {VhaCaregiverSupportUnassignedTasksTab.tab_name}"
+          # )
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
         end
       end
