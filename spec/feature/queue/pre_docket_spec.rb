@@ -35,6 +35,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let(:regional_office_user) { create(:user) }
   let(:education_rpo) { create(:education_rpo) }
   let(:education_rpo_user) { create(:user) }
+  let(:vha_caregiver) { VhaCaregiverSupport.singleton }
+  let(:vha_caregiver_user) { create(:user) }
 
   let(:veteran) { create(:veteran) }
   let(:po_instructions) { "Please look for this veteran's documents." }
@@ -77,6 +79,50 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             expect(page).to have_content("Pre-Docket")
             expect(page).to have_content(c)
           end
+        end
+
+        step "enacting the 'Return to board intake' task action returns the task to intake" do
+          User.authenticate!(user: vha_caregiver_user)
+
+          vha_document_search_task = VhaDocumentSearchTask.last
+          # This should be removed once APPEALS-7453 is merged in
+          vha_document_search_task.update(assigned_to: vha_caregiver)
+
+          appeal = vha_document_search_task.appeal
+
+          # Maybe visit the queue beforehand and select it from that?
+          visit "/queue/appeals/#{appeal.external_id}"
+
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.label
+          ).click
+
+          # Fill in info and check for disabled submit button and warning text before submitting
+
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY)
+
+          submit_button = find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON)
+
+          expect(submit_button[:disabled]).to eq true
+
+          submit_button.click
+
+          expect(page).to have_content(
+            format(
+              COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_CONFIRMATION_TITLE,
+              appeal.veteran_full_name
+            )
+          )
+
+          expect(page).to have_current_path("/organizations/#{vha_caregiver.url}")
+
+          expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
+
+          # expect(appeal.tasks.last.assigned_to). to eq camo
         end
       end
     end

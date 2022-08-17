@@ -9,6 +9,7 @@ import { sprintf } from 'sprintf-js';
 import RadioField from '../../components/RadioField';
 import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, slimHeight } from '../constants';
 import TextareaField from 'app/components/TextareaField';
+import SearchableDropdown from '../../components/SearchableDropdown';
 import Alert from 'app/components/Alert';
 import COPY from '../../../COPY';
 import { taskById, appealWithDetailSelector, getAllTasksForAppeal } from '../selectors';
@@ -24,6 +25,10 @@ const validRadio = (radio) => {
 
 const validInstructions = (instructions) => {
   return instructions?.length > 0;
+};
+
+const validDropdown = (dropdown) => {
+  return dropdown?.length > 0;
 };
 
 const MarkTaskCompleteModal = ({ props, state, setState }) => {
@@ -272,6 +277,81 @@ SendColocatedTaskModal.propTypes = {
   teamName: PropTypes.string
 };
 
+// Make this stupid thing into an array parser for the constants in COPY.json because this is dumb
+
+const caregiverSupportReturnToBoardOpts = [
+  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DUPLICATE, value: 'duplicate' },
+  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_HLR_PENDING, value: 'hlr pending' },
+  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_SC_PENDING, value: 'sc pending' },
+  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_NOT_PCAFC, value: 'not pcafc' },
+  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_NO_PCAFC_DECISIONS, value: 'no pcafc decisions' },
+  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_NO_PCAFC_TIME, value: 'no pcafc time period' },
+  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_MULTIPLE_PCAFC, value: 'multiple pcafc' },
+  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER, value: 'other' }
+];
+
+const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+
+  const handleDropdownChange = ({ value }) => {
+    setState({ dropdown: value });
+    if (value === 'other') {
+      setState({ otherInstructions: '' });
+    }
+  };
+
+  return (
+    <React.Fragment>
+      {taskConfiguration && taskConfiguration.modal_body}
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        // marginTop doesn't work here?
+        <div style= {{ marginTop: '1.5rem' }}>
+          <SearchableDropdown
+            label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL}
+            defaultText="Select..."
+            name="rejectReason"
+            id="caregiverSupportReturnToBoardIntakeReasonSelection"
+            options={caregiverSupportReturnToBoardOpts}
+            onChange={handleDropdownChange}
+            value={state.dropdown}
+            errorMessage={props.highlightInvalid &&
+              !validDropdown(state.dropdown) ? 'You must select a reason for returning to intake' : null}
+          />
+          {state.dropdown === 'other' &&
+            <TextareaField
+              label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL}
+              name="otherRejectReason"
+              id="completeTaskOtherInstructions"
+              onChange={(value) => setState({ otherInstructions: value })}
+              value={state.otherInstructions}
+              styling={marginTop(4)}
+              textAreaStyling={slimHeight}
+              errorMessage={props.highlightInvalid &&
+                !validInstructions(state.otherInstructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
+            />}
+          <TextareaField
+            label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL}
+            name="instructions"
+            id="caregiverSupportReturnToBoardIntakeInstructions"
+            onChange={(value) => setState({ instructions: value })}
+            value={state.instructions}
+            styling={marginTop(4)}
+            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+            optional
+          />
+        </div>
+      )}
+    </React.Fragment>
+  );
+};
+
+VhaCaregiverSupportReturnToBoardIntakeModal.propTypes = {
+  props: PropTypes.object,
+  setState: PropTypes.func,
+  state: PropTypes.object,
+  highlightInvalid: PropTypes.bool,
+};
+
 const MODAL_TYPE_ATTRS = {
   mark_task_complete: {
     buildSuccessMsg: (appeal, { contact }) => ({
@@ -341,6 +421,17 @@ const MODAL_TYPE_ATTRS = {
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
   },
+  vha_caregiver_support_return_to_board_intake: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_SUCCESS_CONFIRMATION, appeal.veteranFullName)
+    }),
+    title: () => COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+    getContent: VhaCaregiverSupportReturnToBoardIntakeModal,
+    buttonText: COPY.MODAL_RETURN_BUTTON,
+    buttonClasses: ['usa-button'],
+    submitDisabled: ({ state }) => state.dropdown?.length < 1 ||
+                                  (state.dropdown === 'other' && state.otherInstructions?.length < 1)
+  }
 };
 
 class CompleteTaskModal extends React.Component {
@@ -349,6 +440,7 @@ class CompleteTaskModal extends React.Component {
     this.state = {
       instructions: '',
       radio: '',
+      dropdown: '',
       otherInstructions: '',
       errors: {}
     };
@@ -443,7 +535,7 @@ class CompleteTaskModal extends React.Component {
   };
 
   validateForm = () => {
-    const { instructions, otherInstructions, radio } = this.state;
+    const { instructions, otherInstructions, radio, dropdown } = this.state;
     const modalType = this.props.modalType;
 
     let isValid = true;
@@ -461,6 +553,16 @@ class CompleteTaskModal extends React.Component {
         isValid = validInstructions(otherInstructions) && validRadio(radio);
       } else {
         isValid = validRadio(radio);
+      }
+    }
+
+    // TODO: Should make a generic method here where it calls the modals validateForm method
+    // instead of using if statements everywhere
+    if (modalType === 'vha_caregiver_support_return_to_board_intake') {
+      if (dropdown === 'other') {
+        isValid = validInstructions(otherInstructions) && validDropdown(dropdown);
+      } else {
+        isValid = validDropdown(dropdown);
       }
     }
 
@@ -495,6 +597,8 @@ class CompleteTaskModal extends React.Component {
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
         button={modalAttributes.buttonText}
+        buttonClasses={modalAttributes.buttonClasses}
+        submitDisabled={modalAttributes.submitDisabled(this.getContentArgs())}
         validateForm={this.validateForm}
         submit={this.submit}
         pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
