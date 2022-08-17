@@ -10,7 +10,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     FeatureToggle.enable!(:docket_vha_appeals)
     bva_intake.add_user(bva_intake_user)
     camo.add_user(camo_user)
-    caregiver.add_user(vha_caregiver_user)
+    vha_caregiver.add_user(vha_caregiver_user)
     emo.add_user(emo_user)
     program_office.add_user(program_office_user)
     regional_office.add_user(regional_office_user)
