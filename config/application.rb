@@ -74,7 +74,7 @@ module CaseflowCertification
     end
 
     # :nocov:
-    if %w[development ssh_forwarding staging].include?(Rails.env)
+    if %w[development ssh_forwarding].include?(Rails.env)
       # configure pry
       silence_warnings do
         begin

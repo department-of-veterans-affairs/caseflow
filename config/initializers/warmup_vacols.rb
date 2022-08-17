@@ -15,7 +15,7 @@ ActiveSupport.on_load(:active_record_vacols) do
 
   # skip if accessing via 'rails c'
   next if defined? Rails::Console
-  next if Rails.env.staging? || Rails.env.ssh_forwarding?
+  next if Rails.env.ssh_forwarding?
 
   db_config =  Rails.application.config.database_configuration[Rails.env]
 

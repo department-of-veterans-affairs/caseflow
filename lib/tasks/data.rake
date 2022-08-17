@@ -9,11 +9,11 @@ namespace :data do
 
   desc "Prepare test data needed to run a smoke test"
   task prepare: [:environment] do
-    fail staging_only_error unless Rails.env.staging?
+    #{}fail staging_only_error unless Rails.env.staging?
 
-    test_appeal_vacols_id = "2765748"
+    #{}test_appeal_vacols_id = "2765748"
 
-    test_appeal = LegacyAppeal.find_or_create_by_vacols_id(test_appeal_vacols_id)
-    AppealRepository.uncertify(test_appeal)
+    #{}test_appeal = LegacyAppeal.find_or_create_by_vacols_id(test_appeal_vacols_id)
+    #{}AppealRepository.uncertify(test_appeal)
   end
 end
