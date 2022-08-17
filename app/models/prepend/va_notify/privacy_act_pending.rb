@@ -27,9 +27,9 @@ module PrivacyActPending
   # original method defined in app/models/task.rb
   def create_child_task(parent, current_user, params)
     super
-    if (PrivacyActTask.include?(params[:type]) && params[:assigned_to_type].include?("Organization")) ||
-       (HearingAdminActionFoiaPrivacyRequestTask.include?(params[:type]) && parent.type == "ScheduleHearingTask")
-      AppellantNotification.notify_appellant(parent.appeal, @@template_name)
+    if ("PrivacyActTask".include?(params[:type]) && params[:assigned_to_type].include?("Organization")) ||
+       ("HearingAdminActionFoiaPrivacyRequestTask".include?(params[:type]) && parent.type == "ScheduleHearingTask")
+     #{} AppellantNotification.notify_appellant(parent.appeal, @@template_name)
     end
   end
 end
