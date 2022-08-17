@@ -11,12 +11,16 @@ class PreDocketTask < Task
     Constants.TASK_ACTIONS.DOCKET_APPEAL.to_h
   ].freeze
 
-  VHA_ACTIONS = [
+  CAMO_ACTIONS = [
     Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.to_h
   ].freeze
 
   EDU_ACTIONS = [
     Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.to_h
+  ].freeze
+
+  CAREGIVER_ACTIONS = [
+    Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.to_h
   ].freeze
 
   def available_actions(user)
@@ -28,9 +32,11 @@ class PreDocketTask < Task
     return task_actions unless children.all?(&:closed?)
 
     if child_task&.task_is_assigned_to_organization?(VhaCamo.singleton)
-      task_actions.concat(VHA_ACTIONS)
+      task_actions.concat(CAMO_ACTIONS)
     elsif child_task&.task_is_assigned_to_organization?(EducationEmo.singleton)
       task_actions.concat(EDU_ACTIONS)
+    elsif child_task&.task_is_assigned_to_organization?(VhaCaregiverSupport.singleton)
+      task_actions.concat(CAREGIVER_ACTIONS)
     end
 
     task_actions
