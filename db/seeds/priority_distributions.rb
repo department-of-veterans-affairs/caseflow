@@ -99,7 +99,7 @@ module Seeds
       create_unvalidated_completed_distribution(
         traits: [:priority, :this_month],
         judge: judge,
-        statistics: { "batch_size" => rand(10) }
+        statistics: { "batch_size" => 4 }
       )
     end
 
@@ -107,7 +107,7 @@ module Seeds
       create_unvalidated_completed_distribution(
         traits: [:priority, :last_month],
         judge: judge,
-        statistics: { "batch_size" => rand(10) }
+        statistics: { "batch_size" => 4 }
       )
     end
 
@@ -115,12 +115,12 @@ module Seeds
       create_unvalidated_completed_distribution(
         traits: [:this_month],
         judge: judge,
-        statistics: { "batch_size" => rand(10) }
+        statistics: { "batch_size" => 4 }
       )
     end
 
     def create_legacy_ready_priority_cases_tied_to_judge(judge)
-      rand(5).times do
+      2.times do
         create(
           :case,
           :aod,
@@ -134,7 +134,7 @@ module Seeds
     end
 
     def create_legacy_nonready_priority_cases_tied_to_judge(judge)
-      rand(5).times do
+      2.times do
         create(
           :case,
           :aod,
@@ -147,7 +147,7 @@ module Seeds
     end
 
     def create_legacy_ready_nonpriority_cases_tied_to_judge(judge)
-      rand(5).times do
+      2.times do
         create(
           :case,
           :ready_for_distribution,
@@ -160,7 +160,7 @@ module Seeds
     end
 
     def create_hearing_ready_priority_cases_tied_to_judge(judge)
-      rand(5).times do
+      2.times do
         create(
           :appeal,
           :hearing_docket,
@@ -175,7 +175,7 @@ module Seeds
     end
 
     def create_hearing_nonready_priority_cases_tied_to_judge(judge)
-      rand(5).times do
+      2.times do
         create(
           :appeal,
           :hearing_docket,
@@ -190,7 +190,7 @@ module Seeds
     end
 
     def create_hearing_ready_nonpriority_cases_tied_to_judge(judge)
-      rand(5).times do
+      2.times do
         create(
           :appeal,
           :hearing_docket,
@@ -204,7 +204,7 @@ module Seeds
     end
 
     def create_legacy_ready_priority_genpop_cases
-      rand(50).times do
+      20.times do
         create(
           :case,
           :aod,
@@ -216,7 +216,7 @@ module Seeds
     end
 
     def create_legacy_nonready_priority_genpop_cases
-      rand(5).times do
+      2.times do
         create(
           :case,
           :aod,
@@ -227,7 +227,7 @@ module Seeds
     end
 
     def create_legacy_ready_nonpriority_genpop_cases
-      rand(5).times do
+      2.times do
         create(
           :case,
           :ready_for_distribution,
@@ -238,7 +238,7 @@ module Seeds
     end
 
     def create_ama_hearing_ready_priority_genpop_cases
-      rand(50).times do
+      20.times do
         create(
           :appeal,
           :hearing_docket,
@@ -251,7 +251,7 @@ module Seeds
     end
 
     def create_ama_hearing_nonready_priority_genpop_cases
-      rand(5).times do
+      2.times do
         create(
           :appeal,
           :hearing_docket,
@@ -264,7 +264,7 @@ module Seeds
     end
 
     def create_ama_hearing_ready_nonpriority_genpop_cases
-      rand(5).times do
+      2.times do
         create(
           :appeal,
           :hearing_docket,
@@ -276,7 +276,7 @@ module Seeds
     end
 
     def create_direct_review_ready_priority_genpop_cases
-      rand(50).times do
+      20.times do
         create(
           :appeal,
           :direct_review_docket,
@@ -287,7 +287,7 @@ module Seeds
     end
 
     def create_direct_review_nonready_priority_genpop_cases
-      rand(5).times do
+      2.times do
         create(
           :appeal,
           :direct_review_docket,
@@ -298,7 +298,7 @@ module Seeds
     end
 
     def create_direct_review_ready_nonpriority_genpop_cases
-      rand(5).times do
+      2.times do
         create(
           :appeal,
           :direct_review_docket,
@@ -308,7 +308,7 @@ module Seeds
     end
 
     def create_evidence_submission_ready_priority_genpop_cases
-      rand(10).times do
+      4.times do
         create(
           :appeal,
           :evidence_submission_docket,
@@ -319,7 +319,7 @@ module Seeds
     end
 
     def create_evidence_submission_nonready_priority_genpop_cases
-      rand(50).times do
+      20.times do
         create(
           :appeal,
           :evidence_submission_docket,
@@ -330,7 +330,7 @@ module Seeds
     end
 
     def create_evidence_submission_ready_nonpriority_genpop_cases
-      rand(50).times do
+      20.times do
         create(
           :appeal,
           :evidence_submission_docket,
@@ -340,7 +340,7 @@ module Seeds
     end
 
     def create_ready_cavc_genpop_cases
-      rand(10).times do
+      4.times do
         create(
           :appeal,
           :type_cavc_remand,
@@ -350,7 +350,7 @@ module Seeds
     end
 
     def create_ready_cavc_aod_genpop_cases
-      rand(10).times do
+      4.times do
         create(
           :appeal,
           :type_cavc_remand,
@@ -361,7 +361,7 @@ module Seeds
     end
 
     def create_nonready_cavc_genpop_cases
-      rand(50).times do
+      20.times do
         create(
           :appeal,
           :type_cavc_remand
@@ -386,7 +386,7 @@ module Seeds
       create_unvalidated_completed_distribution(
         traits: [:priority, :completed, :this_month],
         judge: User.third,
-        statistics: { "batch_size" => rand(10) }
+        statistics: { "batch_size" => 4 }
       ).distributed_cases.create(
         case_id: case_id,
         priority: case_id,
