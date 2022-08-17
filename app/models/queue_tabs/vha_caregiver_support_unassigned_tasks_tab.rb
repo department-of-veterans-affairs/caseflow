@@ -4,7 +4,7 @@ class VhaCaregiverSupportUnassignedTasksTab < QueueTab
   validate :assignee_is_organization
 
   def label
-    COPY::VHA_CAREGIVER_SUPPORT_QUEUE_PAGE_UNASSIGNED_TAB_TITLE
+    COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE
   end
 
   def self.tab_name

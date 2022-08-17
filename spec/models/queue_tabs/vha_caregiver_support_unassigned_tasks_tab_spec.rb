@@ -20,8 +20,7 @@ describe VhaCaregiverSupportUnassignedTasksTab, :postgres do
 
     context "when tab label is visible" do
       it "should match defined label for unassigned tasks" do
-        expect(subject).to eq(COPY::VHA_CAREGIVER_SUPPORT_QUEUE_PAGE_UNASSIGNED_TAB_TITLE)
-        expect(subject).to eq("Unassigned")
+        expect(subject).to eq COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE
       end
     end
   end
