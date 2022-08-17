@@ -577,14 +577,14 @@ class TaskActionRepository
 
     def vha_caregiver_support_send_to_board_intake_for_review(task, _)
       {
-        modal_title: COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,        
+        modal_title: COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
         modal_button_text: COPY::MODAL_SEND_BUTTON,
         message_title: format(
           COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE,
           task.appeal.veteran_full_name
         ),
         type: VhaDocumentSearchTask.name,
-        redirect_after: "/organizations/#{VhaCaregiverSupport.singleton.url}"#Need to Double Check Later
+        redirect_after: "/organizations/#{VhaCaregiverSupport.singleton.url}" # Need to Double Check Later
       }
     end
 

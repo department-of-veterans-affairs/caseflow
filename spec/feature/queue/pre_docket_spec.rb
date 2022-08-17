@@ -106,9 +106,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(radio_choices[0]).to have_content("VBMS")
           expect(radio_choices[1]).to have_content("Centralized Mail Portal")
           expect(radio_choices[2]).to have_content("Other")
-  
+
           radio_choices[0].click
-        
+
           find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
 
           expect(page).to have_content(
@@ -119,7 +119,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           )
 
           expect(page).to have_current_path("/organizations/#{vha_caregiver.url}")
-          expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed          
+          expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
         end
       end
     end

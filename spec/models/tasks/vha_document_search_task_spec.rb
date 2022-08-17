@@ -1,7 +1,8 @@
-describe VhaDocumentSearchTask, :postgres do  
+# frozen_string_literal: true
+
+describe VhaDocumentSearchTask, :postgres do
   let(:camo) { VhaCamo.singleton }
   let(:caregiver) { VhaCaregiverSupport.singleton }
-  
 
   context "camo user" do
     let(:task) { create(:vha_document_search_task, assigned_to: camo) }
@@ -19,7 +20,7 @@ describe VhaDocumentSearchTask, :postgres do
       before { FeatureToggle.enable!(:vha_predocket_workflow) }
       after { FeatureToggle.disable!(:vha_predocket_workflow) }
       it "uses a friendly label" do
-        expect(task.class.label).to eq COPY::REVIEW_DOCUMENTATION_TASK_LABEL        
+        expect(task.class.label).to eq COPY::REVIEW_DOCUMENTATION_TASK_LABEL
       end
     end
 
@@ -29,7 +30,7 @@ describe VhaDocumentSearchTask, :postgres do
       subject { task.available_actions(user) }
       it { is_expected.to eq VhaDocumentSearchTask::VHA_CAMO_TASK_ACTIONS }
       it { is_expected.not_to eq VhaDocumentSearchTask::VHA_CAREGIVER_SUPPORT_TASK_ACTIONS }
-    end   
+    end
   end
 
   context "caregiver user" do
@@ -55,9 +56,9 @@ describe VhaDocumentSearchTask, :postgres do
     describe "#available_actions" do
       before { FeatureToggle.enable!(:vha_predocket_workflow) }
       after { FeatureToggle.disable!(:vha_predocket_workflow) }
-      subject { task.available_actions(user) }     
+      subject { task.available_actions(user) }
       it { is_expected.to eq VhaDocumentSearchTask::VHA_CAREGIVER_SUPPORT_TASK_ACTIONS }
-      it { is_expected.not_to eq VhaDocumentSearchTask::VHA_CAMO_TASK_ACTIONS }      
+      it { is_expected.not_to eq VhaDocumentSearchTask::VHA_CAMO_TASK_ACTIONS }
     end
   end
 end

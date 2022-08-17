@@ -10,10 +10,10 @@ class VhaDocumentSearchTask < Task
   def available_actions(user)
     if assigned_to.user_has_access?(user) &&
        FeatureToggle.enabled?(:vha_predocket_workflow, user: RequestStore.store[:current_user])
-       
-       return VHA_CAMO_TASK_ACTIONS if assigned_to.is_a?(VhaCamo)
 
-       return VHA_CAREGIVER_SUPPORT_TASK_ACTIONS if assigned_to.is_a?(VhaCaregiverSupport)
+      return VHA_CAMO_TASK_ACTIONS if assigned_to.is_a?(VhaCamo)
+
+      return VHA_CAREGIVER_SUPPORT_TASK_ACTIONS if assigned_to.is_a?(VhaCaregiverSupport)
     else
       []
     end
@@ -33,4 +33,3 @@ class VhaDocumentSearchTask < Task
     COPY::REVIEW_DOCUMENTATION_TASK_LABEL
   end
 end
-
