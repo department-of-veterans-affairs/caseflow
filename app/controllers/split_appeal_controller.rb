@@ -3,7 +3,7 @@
 class SplitAppealController < ApplicationController
   def split_appeal
     # split appeal logic here
-    result = true
+    result = Appeal.new(params)
 
     # chris logic 
     render json: Appeal.find(params[:appeal_id])

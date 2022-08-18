@@ -32,8 +32,8 @@ export const splitAppeal = (data) => (dispatch) => {
           meta: { analytics }
         });
       },
-      (error) =>{
-        // send error 
+      (error) => {
+        // send error
         const responseObject = error.response.body || {};
         const errorCode = responseObject.error_code || 'default';
 
