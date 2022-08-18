@@ -83,8 +83,12 @@ const BackButton = connect(
   })
 )(BackButtonUnconnected);
 
-class SplitButtonUnconnected extends React.Component {
+class SplitButtonUnconnected extends React.PureComponent {
 
+  handleSplitSubmit = (appeal, payloadInfo) => {
+    this.props.splitAppeal(appeal.id, payloadInfo.selectedIssues,
+      payloadInfo.reason, payloadInfo.otherReason);
+  }
   render() {
 
     return (
@@ -100,12 +104,7 @@ class SplitButtonUnconnected extends React.Component {
                     id="button-submit-update"
                     classNames={['cf-submit usa-button']}
                     // on click button sends claim id for dummy data
-                    onClick={splitAppeal(
-                      { appealId: appeal.id,
-                        issues: payloadInfo.selectedIssues,
-                        reason: payloadInfo.reason,
-                        otherReason: payloadInfo.otherReason
-                      })}>
+                    onClick={() => this.handleSplitSubmit(appeal, payloadInfo)}>
                     { COPY.CORRECT_REQUEST_ISSUES_SPLIT_APPEAL }
                   </Button>
                 </Link>
@@ -128,15 +127,17 @@ SplitButtonUnconnected.propTypes = {
   splitAppeal: PropTypes.func
 };
 
+const mapStateToProps = (state) => ({
+  formType: state.formType,
+  claimId: state.claimId
+});
+
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   splitAppeal
 }, dispatch);
 
 const SplitButton = connect(
-  (state) => ({
-    formType: state.formType,
-    claimId: state.claimId
-  }),
+  mapStateToProps,
   mapDispatchToProps)(SplitButtonUnconnected);
 
 export default class CreateButtons extends React.PureComponent {

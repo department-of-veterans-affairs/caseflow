@@ -16,16 +16,27 @@ export const setFileNumberSearch = (fileNumber) => ({
   }
 });
 
-export const splitAppeal = (data) => (dispatch) => {
+export const splitAppeal = (appealId, selectedIssues, reason, otherReason) => (dispatch) => {
   dispatch({
     type: ACTIONS.SET_SPLIT_APPEAL,
     meta: { analytics }
   });
 
-  return ApiUtil.post(`/appeals/${data.appealId}/${ENDPOINT_NAMES.SPLIT_APPEAL}`, data).
+  const data = {
+    appeal_id: appealId,
+    appeal_split_issues: selectedIssues,
+    split_reason: reason,
+    split_other_reason: otherReason
+  };
+
+  return ApiUtil.post(`/appeals/${data.appeal_id}/${ENDPOINT_NAMES.SPLIT_APPEAL}`, data).
     then(
       (response) => {
         // send success
+
+        // console log success for testing
+        console.log('payload sent! Payload values are:');
+        console.log(`id: ${data.appeal_id}, issue: ${data.appeal_split_issues}, split_reason: ${data.split_reason}, other reason: ${data.split_other_reason}`);
         dispatch({
           type: ACTIONS.SPLIT_APPEAL_SUCCESS,
           splitAppeal: response.body,
