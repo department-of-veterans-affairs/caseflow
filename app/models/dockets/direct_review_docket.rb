@@ -15,7 +15,6 @@ class DirectReviewDocket < Docket
     Appeal.where(id: appeal_ids).count
   end
 
-  # TODO: this appears to be dead code leftover from https://github.com/department-of-veterans-affairs/caseflow/pull/16924
   def time_until_due_of_new_appeal
     if Constants.DISTRIBUTION.days_before_goal_due_for_distribution.blank?
       Constants.DISTRIBUTION.direct_docket_time_goal
