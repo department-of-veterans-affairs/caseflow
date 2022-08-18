@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_19_230336) do
+ActiveRecord::Schema.define(version: 2022_08_04_135348) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1099,6 +1099,32 @@ ActiveRecord::Schema.define(version: 2022_07_19_230336) do
     t.index ["updated_at"], name: "index_non_availabilities_on_updated_at"
   end
 
+  create_table "notification_events", primary_key: "event_type", id: :string, comment: "Type of Event", force: :cascade do |t|
+    t.uuid "email_template_id", null: false, comment: "Staging Email Template UUID"
+    t.uuid "sms_template_id", null: false, comment: "Staging SMS Template UUID"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.string "appeals_id", null: false, comment: "ID of the Appeal"
+    t.string "appeals_type", null: false, comment: "Type of Appeal"
+    t.datetime "created_at", comment: "Timestamp of when Noticiation was Created"
+    t.string "email_notification_status", comment: "Status of the Email Notification"
+    t.date "event_date", null: false, comment: "Date of Event"
+    t.string "event_type", null: false, comment: "Type of Event"
+    t.text "notification_content", null: false, comment: "Full Text Content of Notification"
+    t.bigint "notification_events_id"
+    t.string "notification_type", null: false, comment: "Type of Notification that was created"
+    t.datetime "notified_at", null: false, comment: "Time Notification was created"
+    t.string "participant_id", comment: "ID of Participant"
+    t.string "recipient_email", comment: "Participant's Email Address"
+    t.string "recipient_phone_number", comment: "Participants Phone Number"
+    t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
+    t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
+    t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
+    t.index ["notification_events_id"], name: "index_notifications_on_notification_events_id"
+    t.index ["participant_id"], name: "index_participant_id"
+  end
+
   create_table "organizations", force: :cascade do |t|
     t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases"
     t.boolean "ama_only_push", default: false, comment: "whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob"
@@ -1785,6 +1811,7 @@ ActiveRecord::Schema.define(version: 2022_07_19_230336) do
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
   add_foreign_key "non_availabilities", "schedule_periods"
+  add_foreign_key "notifications", "notification_events", column: "event_type", primary_key: "event_type"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"
