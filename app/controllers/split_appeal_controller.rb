@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SplitAppealController < ApplicationController
-  skip_before_action :verify_authenticity_token # REMOVE THIS BEFORE PUUUUSH
+  protect_from_forgery with: :exception
   
   def split_appeal
     # split appeal logic here
