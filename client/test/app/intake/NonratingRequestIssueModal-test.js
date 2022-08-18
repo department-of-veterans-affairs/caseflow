@@ -7,7 +7,6 @@ import { sample1 } from './testData';
 describe('NonratingRequestIssueModal', () => {
   const formType = 'higher_level_review';
   const intakeData = sample1.intakeData;
-  const featureToggles = { vhaPreDocketAppeals: false };
 
   describe('renders', () => {
     it('renders button text', () => {
@@ -15,7 +14,6 @@ describe('NonratingRequestIssueModal', () => {
         <NonratingRequestIssueModal
           formType={formType}
           intakeData={intakeData}
-          featureToggles={featureToggles}
           onSkip={() => null} />
       );
 
@@ -79,7 +77,7 @@ describe('NonratingRequestIssueModal', () => {
   });
 
   describe('on appeal, with EMO Pre-Docket', () => {
-    const featureTogglesEMOPreDocket = { vhaPreDocketAppeals: false, eduPreDocketAppeals: true };
+    const featureTogglesEMOPreDocket = {eduPreDocketAppeals: true };
 
     it(' enabled selecting benefit type of "education" renders PreDocketRadioField', () => {
       const wrapper = mount(
