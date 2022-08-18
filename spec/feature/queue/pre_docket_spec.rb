@@ -14,6 +14,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     program_office.add_user(program_office_user)
     regional_office.add_user(regional_office_user)
     education_rpo.add_user(education_rpo_user)
+    vha_caregiver.add_user(vha_caregiver_user)
   end
 
   after do
@@ -85,7 +86,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           User.authenticate!(user: vha_caregiver_user)
 
           vha_document_search_task = VhaDocumentSearchTask.last
-          # This should be removed once APPEALS-7453 is merged in
           vha_document_search_task.update(assigned_to: vha_caregiver)
 
           appeal = vha_document_search_task.appeal
@@ -93,36 +93,86 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           # Maybe visit the queue beforehand and select it from that?
           visit "/queue/appeals/#{appeal.external_id}"
 
+          task_name = Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.label
+
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find(
             "div",
             class: "cf-select__option",
-            text: Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.label
+            text: task_name
           ).click
-
-          # Fill in info and check for disabled submit button and warning text before submitting
 
           expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
           expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY)
 
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL)
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL)
+
+          # Fill in info and check for disabled submit button and warning text before submitting
           submit_button = find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON)
 
-          expect(submit_button[:disabled]).to eq true
+          expect(submit_button[:disabled]).to eq "true"
+
+          # Open the searchable dropdown to view the options
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT).click
+
+          page_options = all("div.cf-select__option")
+          page_options_text = page_options.map(&:text)
+          controller_options = COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS
+          controller_options = controller_options.values.pluck("LABEL")
+
+          # Verify that all of the options are in the dropdown
+          expect(page_options_text).to eq(controller_options)
+          puts page_options_text.inspect
+          puts controller_options.inspect
+
+          # Click the duplicate option and verify that the button is no longer disabled
+          first_tested_option_text = controller_options.first
+          find("div", class: "cf-select__option", text: first_tested_option_text).click
+          expect(submit_button[:disabled]).to eq "false"
+
+          # Check the other option functionality
+          # This is gross the constant names might be too long
+          conditional_drop_down_text = COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS[
+            "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER"
+          ]["LABEL"]
+
+          # Reclick the dropdown with the new option and change it to "Other"
+          find(".cf-select__control", text: first_tested_option_text).click
+          find("div", class: "cf-select__option", text: conditional_drop_down_text).click
+
+          # Verify the submit button is disabled again and check for the other reason text field
+          expect(submit_button[:disabled]).to eq "true"
+          expect(page).to have_content(
+            COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL
+          )
+
+          # Enter info into the other reason text field
+          # Then verify that the submit button is no longer disabled before submitting
+          fill_in(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL,
+                  with: "Wrong type of documents")
+          expect(submit_button[:disabled]).to eq "false"
 
           submit_button.click
 
           expect(page).to have_content(
             format(
-              COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_CONFIRMATION_TITLE,
+              COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_SUCCESS_CONFIRMATION,
               appeal.veteran_full_name
             )
           )
 
-          expect(page).to have_current_path("/organizations/#{vha_caregiver.url}")
+          # TODO: The expect statement below will fail until APPEALS-7431 is merged in
+          # expect(page.path).to include(
+          # "/organizations/#{VhaCaregiverSupport.singleton.url}?tab=#
+          # {VhaCaregiverSupportUnassignedTasksTab.tab_name}"
+          # )
+
+          expect(current_path).to eq("/organizations/#{vha_caregiver.url}")
 
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
-
-          # expect(appeal.tasks.last.assigned_to). to eq camo
+          expect(appeal.tasks.last.parent.assigned_to). to eq bva_intake
+          expect(appeal.tasks.last.parent.status).to eq Constants.TASK_STATUSES.assigned
         end
       end
     end

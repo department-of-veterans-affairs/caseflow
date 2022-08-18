@@ -18,6 +18,8 @@ import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
+import { valid } from 'glamor';
+import { drop } from 'lodash';
 
 const validRadio = (radio) => {
   return radio?.length > 0;
@@ -277,21 +279,10 @@ SendColocatedTaskModal.propTypes = {
   teamName: PropTypes.string
 };
 
-// Make this stupid thing into an array parser for the constants in COPY.json because this is dumb
-
-const caregiverSupportReturnToBoardOpts = [
-  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DUPLICATE, value: 'duplicate' },
-  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_HLR_PENDING, value: 'hlr pending' },
-  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_SC_PENDING, value: 'sc pending' },
-  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_NOT_PCAFC, value: 'not pcafc' },
-  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_NO_PCAFC_DECISIONS, value: 'no pcafc decisions' },
-  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_NO_PCAFC_TIME, value: 'no pcafc time period' },
-  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_MULTIPLE_PCAFC, value: 'multiple pcafc' },
-  { label: COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER, value: 'other' }
-];
-
 const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
+
+  const dropdownOptions = taskConfiguration.options;
 
   const handleDropdownChange = ({ value }) => {
     setState({ dropdown: value });
@@ -308,10 +299,10 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
         <div style= {{ marginTop: '1.5rem' }}>
           <SearchableDropdown
             label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL}
-            defaultText="Select..."
+            defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
             name="rejectReason"
             id="caregiverSupportReturnToBoardIntakeReasonSelection"
-            options={caregiverSupportReturnToBoardOpts}
+            options={dropdownOptions}
             onChange={handleDropdownChange}
             value={state.dropdown}
             errorMessage={props.highlightInvalid &&
@@ -429,8 +420,14 @@ const MODAL_TYPE_ATTRS = {
     getContent: VhaCaregiverSupportReturnToBoardIntakeModal,
     buttonText: COPY.MODAL_RETURN_BUTTON,
     buttonClasses: ['usa-button'],
-    submitDisabled: ({ state }) => state.dropdown?.length < 1 ||
-                                  (state.dropdown === 'other' && state.otherInstructions?.length < 1)
+    submitDisabled: ({ state }) => (
+      // state.dropdown?.length < 1 || (state.dropdown === 'other' && state.otherInstructions?.length < 1)
+      !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
+    ),
+    customValidation: ({ state }) => (
+      state.dropdown === 'other' ? validInstructions(state.otherInstructions) && validDropdown(state.dropdown) :
+        validDropdown(state.dropdown)
+    )
   }
 };
 
@@ -535,7 +532,7 @@ class CompleteTaskModal extends React.Component {
   };
 
   validateForm = () => {
-    const { instructions, otherInstructions, radio, dropdown } = this.state;
+    const { instructions, otherInstructions, radio } = this.state;
     const modalType = this.props.modalType;
 
     let isValid = true;
@@ -556,14 +553,9 @@ class CompleteTaskModal extends React.Component {
       }
     }
 
-    // TODO: Should make a generic method here where it calls the modals validateForm method
-    // instead of using if statements everywhere
-    if (modalType === 'vha_caregiver_support_return_to_board_intake') {
-      if (dropdown === 'other') {
-        isValid = validInstructions(otherInstructions) && validDropdown(dropdown);
-      } else {
-        isValid = validDropdown(dropdown);
-      }
+    // Can generically add validation to this method via the customValidation method of the modalType declaration
+    if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customValidation === 'function') {
+      isValid = MODAL_TYPE_ATTRS[this.props.modalType].customValidation(this.getContentArgs());
     }
 
     return isValid;
@@ -598,7 +590,7 @@ class CompleteTaskModal extends React.Component {
         title={modalAttributes.title(this.getContentArgs())}
         button={modalAttributes.buttonText}
         buttonClasses={modalAttributes.buttonClasses}
-        submitDisabled={modalAttributes.submitDisabled(this.getContentArgs())}
+        submitDisabled={modalAttributes.submitDisabled?.(this.getContentArgs())}
         validateForm={this.validateForm}
         submit={this.submit}
         pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}

@@ -1056,12 +1056,6 @@ class QueueApp extends React.PureComponent {
                 }`}
               render={this.routedEMOReturnToBoardIntake}
             />
-            <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.value
-              }`}
-              render={this.routedVhaCaregiverSupportReturnToBoardIntake}
-            />
 
             <PageRoute
               exact
@@ -1100,6 +1094,14 @@ class QueueApp extends React.PureComponent {
                 }`}
               title="Ready for Review | Caseflow"
               render={this.routedRpoSendToBoardIntakeForReviewModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.value
+              }`}
+              title="Ready for Review | Caseflow"
+              render={this.routedVhaCaregiverSupportReturnToBoardIntake}
             />
             <PageRoute
               exact
