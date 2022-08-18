@@ -639,8 +639,8 @@ class TaskActionRepository
 
     def vha_caregiver_support_return_to_board_intake(*)
       queue_url = "/organizations/#{VhaCaregiverSupport.singleton.url}"
-      dropdown_options = COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS.map do |_, v|
-        v.transform_keys(&:downcase)
+      dropdown_options = COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS.map do |_, value|
+        value.transform_keys(&:downcase)
       end
       {
         modal_title: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,

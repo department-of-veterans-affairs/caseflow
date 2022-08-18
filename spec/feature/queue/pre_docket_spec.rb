@@ -162,14 +162,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             )
           )
 
-          # TODO: The expect statement below will fail until APPEALS-7431 is merged in
-          # expect(page.path).to include(
-          # "/organizations/#{VhaCaregiverSupport.singleton.url}?tab=#
-          # {VhaCaregiverSupportUnassignedTasksTab.tab_name}"
-          # )
-
           expect(current_path).to eq("/organizations/#{vha_caregiver.url}")
-
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
           expect(appeal.tasks.last.parent.assigned_to). to eq bva_intake
           expect(appeal.tasks.last.parent.status).to eq Constants.TASK_STATUSES.assigned
