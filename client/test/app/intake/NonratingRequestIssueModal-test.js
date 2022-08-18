@@ -14,7 +14,9 @@ describe('NonratingRequestIssueModal', () => {
         <NonratingRequestIssueModal
           formType={formType}
           intakeData={intakeData}
-          onSkip={() => null} />
+          onSkip={() => null}
+          featureToggles={{}}
+        />
       );
 
       const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
