@@ -18,8 +18,6 @@ import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
-import { valid } from 'glamor';
-import { drop } from 'lodash';
 
 const validRadio = (radio) => {
   return radio?.length > 0;
