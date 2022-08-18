@@ -34,17 +34,10 @@ export default class PerformanceDegradationBanner extends React.Component {
       then((data) => {
         let report = data.body.dependencies_report;
 
-        if (report.length === 1) {
-          this.setState({ showBannerOne: true });
-        }
-        if (report.length === 2) {
-          this.setState({ showBannerTwo: true });
-        }
-        if (report.length > 2) {
-          this.setState({ showBannerThree: true });
-        }
-        // Each app has a relevant report
         this.setState({
+          showBannerOne: Boolean(report.length === 1),
+          showBannerTwo: Boolean(report.length === 2),
+          showBannerThree: Boolean(report.length > 2),
           degradedServices: report,
           isRequesting: false,
         });
@@ -80,7 +73,7 @@ export default class PerformanceDegradationBanner extends React.Component {
             <div className="banner-icon">
               <WrenchIcon />
             </div>
-            <b>{ this.state.degradedServices[0] }</b>
+            <b>{this.state.degradedServices[0]}</b>
             <span className="banner-text">
               is experiencing issues. Caseflow performance and availability may be impacted.
             </span>
@@ -106,9 +99,18 @@ export default class PerformanceDegradationBanner extends React.Component {
             <div className="banner-icon">
               <WrenchIcon />
             </div>
-            <b>{this.state.degradedServices[5]}</b> <b>{this.state.degradedServices[4]}</b>
-            <b>{this.state.degradedServices[3]}</b> <b>{this.state.degradedServices[2]}</b>,
-            <b> {this.state.degradedServices[1]}</b> and <b>{this.state.degradedServices[0]}</b>
+            {this.state.degradedServices.length > 2 &&
+            <>
+              {this.state.degradedServices.map((item, index) => {
+                if (index === this.state.degradedServices.length - 1) {
+                  return <span>and <b key={index}>  {item}</b></span>;
+                }
+
+                return <b key={index}> {item}, </b>;
+
+              })}
+            </>
+            }
             <span className="banner-text">
               are experiencing issues. Caseflow performance and availability may be impacted.
             </span>
