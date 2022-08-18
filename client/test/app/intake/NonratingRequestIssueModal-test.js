@@ -41,7 +41,6 @@ describe('NonratingRequestIssueModal', () => {
         <NonratingRequestIssueModal
           formType={formType}
           intakeData={intakeData}
-          featureToggles={featureToggles}
         />);
 
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(false);
@@ -55,7 +54,7 @@ describe('NonratingRequestIssueModal', () => {
         <NonratingRequestIssueModal
           formType={formType}
           intakeData={intakeData}
-          featureToggles={featureToggles} />
+        />
       );
 
       const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
