@@ -441,7 +441,7 @@ class Appeal < DecisionReview
   end
 
   def create_tasks_on_intake_success!
-    if vha_has_issues? && FeatureToggle.enabled?(:vha_predocket_appeals, user: RequestStore.store[:current_user])
+    if vha_has_issues?
       PreDocketTasksFactory.new(self).call_vha
     elsif edu_predocket_needed?
       PreDocketTasksFactory.new(self).call_edu
