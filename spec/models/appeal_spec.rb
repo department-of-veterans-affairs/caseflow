@@ -1185,6 +1185,22 @@ describe Appeal, :all_dbs do
     end
   end
 
+  describe "#caregiver_has_issues?" do
+    subject { appeal.caregiver_has_issues? }
+
+    context "appeal has no caregiver tasks" do
+      let(:appeal) { create(:appeal, request_issues: [create(:request_issue, :nonrating)]) }
+
+      it { expect(subject).to eq false }
+    end
+
+    context "appeal has caregiver tasks" do
+      let(:appeal) { create(:appeal, :with_vha_issue) }
+
+      it { expect(subject).to eq true }
+    end
+  end
+
   describe "#contested_claim?" do
     subject { appeal.contested_claim? }
 
