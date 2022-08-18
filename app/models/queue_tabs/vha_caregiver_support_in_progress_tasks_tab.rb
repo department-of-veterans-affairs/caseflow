@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class VhaProgramOfficeInProgressTasksTab < QueueTab
+class VhaCaregiverSupportInProgressTasksTab < QueueTab
   validate :assignee_is_organization
 
   def label
@@ -8,11 +8,11 @@ class VhaProgramOfficeInProgressTasksTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.VHA_PO_IN_PROGRESS_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.CAREGIVER_SUPPORT_IN_PROGRESS_TASKS_TAB_NAME
   end
 
   def description
-    format(COPY::ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TASKS_DESCRIPTION, assignee.name)
+    COPY::VHA_CAREGIVER_SUPPORT_QUEUE_PAGE_IN_PROGRESS_TASKS_DESCRIPTION
   end
 
   def tasks
@@ -20,6 +20,6 @@ class VhaProgramOfficeInProgressTasksTab < QueueTab
   end
 
   def column_names
-    VhaProgramOffice::COLUMN_NAMES
+    VhaCaregiverSupport::COLUMN_NAMES
   end
 end
