@@ -17,7 +17,11 @@ class DirectReviewDocket < Docket
 
   # TODO: this appears to be dead code leftover from https://github.com/department-of-veterans-affairs/caseflow/pull/16924
   def time_until_due_of_new_appeal
-    Constants.DISTRIBUTION.direct_docket_time_goal.to_i - Constants.DISTRIBUTION.days_before_goal_due_for_distribution.to_i
+    if Constants.DISTRIBUTION.days_before_goal_due_for_distribution.blank?
+      Constants.DISTRIBUTION.direct_docket_time_goal
+    else
+      Constants.DISTRIBUTION.direct_docket_time_goal - Constants.DISTRIBUTION.days_before_goal_due_for_distribution
+    end
   end
 
   def nonpriority_receipts_per_year
