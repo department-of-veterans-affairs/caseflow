@@ -313,7 +313,7 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
               id="completeTaskOtherInstructions"
               onChange={(value) => setState({ otherInstructions: value })}
               value={state.otherInstructions}
-              styling={marginTop(4)}
+              styling={marginTop(2)}
               textAreaStyling={slimHeight}
               errorMessage={props.highlightInvalid &&
                 !validInstructions(state.otherInstructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
@@ -324,7 +324,7 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
             id="caregiverSupportReturnToBoardIntakeInstructions"
             onChange={(value) => setState({ instructions: value })}
             value={state.instructions}
-            styling={marginTop(4)}
+            styling={marginTop(2)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             optional
           />
