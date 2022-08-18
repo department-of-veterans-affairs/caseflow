@@ -9,7 +9,7 @@ class DependenciesReportService
       degraded_service_banner_vva: "VVA",
       degraded_service_banner_vacols: "VACOLS",
       degraded_service_banner_gov_delivery: "GOV DELIVERY",
-      degraded_service_banner_va_dot_gov: "VA DOT GOV"
+      degraded_service_banner_va_dot_gov: "VA.GOV"
     }
       # [:degraded_service_banner_bgs,
       #   :degraded_service_banner_vbms,
