@@ -326,7 +326,7 @@ exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
                 Array [
                   "usa-button-secondary",
                   "usa-button-hover",
-                  "usa-button-warning"
+                  "usa-button-warning",
                 ]
               }
               highlightInvalidFormItems={[Function]}
