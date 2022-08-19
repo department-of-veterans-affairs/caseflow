@@ -9,6 +9,7 @@ import EasyPagination from '../../components/Pagination/EasyPagination';
 
 import AsyncModelNav from '../components/AsyncModelNav';
 import JobRestartButton from '../components/JobRestartButton';
+import ManualJobTriggerMenu from '../components/ManualJobTriggerMenu';
 
 import SearchBar from '../../components/SearchBar';
 import ApiUtil from '../../util/ApiUtil';
@@ -147,28 +148,31 @@ class AsyncableJobsPage extends React.PureComponent {
       }
     }
 
-    return <div className="cf-asyncable-jobs-table">
-      <h1>{!this.state.klassFilterRemoved && this.props.asyncableJobKlass} Jobs</h1>
-      {noResultsMessage}
-      <AsyncModelNav
-        models={this.props.models}
-        fetchedAt={this.props.fetchedAt}
-        asyncableJobKlass={this.props.asyncableJobKlass} />
-      <SearchBar
-        style={{ marginTop: '0.5em' }}
-        size="small"
-        title="Search by Veteran file number"
-        onChange={this.updateVeteranFileNumber}
-        onSubmit={this.handleVeteranIdSearch}
-        loading={this.state.isFetchingSearchResults}
-        submitUsingEnterKey
-      />
-      {rowObjects.length > 0 &&
-          <div>
-            <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
-            <EasyPagination currentCases={rowObjects.length} pagination={this.props.pagination} />
-          </div>
-      }
+    return <div>
+      <div className="cf-asyncable-jobs-table">
+        <h1>{!this.state.klassFilterRemoved && this.props.asyncableJobKlass} Jobs</h1>
+        {noResultsMessage}
+        <AsyncModelNav
+          models={this.props.models}
+          fetchedAt={this.props.fetchedAt}
+          asyncableJobKlass={this.props.asyncableJobKlass} />
+        <SearchBar
+          style={{ marginTop: '0.5em' }}
+          size="small"
+          title="Search by Veteran file number"
+          onChange={this.updateVeteranFileNumber}
+          onSubmit={this.handleVeteranIdSearch}
+          loading={this.state.isFetchingSearchResults}
+          submitUsingEnterKey
+        />
+        {rowObjects.length > 0 &&
+            <div>
+              <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
+              <EasyPagination currentCases={rowObjects.length} pagination={this.props.pagination} />
+            </div>
+        }
+      </div>
+      { this.props.availableJobs && <ManualJobTriggerMenu availableJobs={this.props.availableJobs} /> }
     </div>;
   }
 }
@@ -200,7 +204,8 @@ const JobsPage = connect(
     fetchedAt: state.fetchedAt,
     models: state.models,
     pagination: state.pagination,
-    asyncableJobKlass: state.asyncableJobKlass
+    asyncableJobKlass: state.asyncableJobKlass,
+    availableJobs: state.availableJobs
   })
 )(AsyncableJobsPage);
 
