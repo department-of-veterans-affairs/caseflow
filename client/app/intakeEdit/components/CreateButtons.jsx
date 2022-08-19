@@ -88,6 +88,7 @@ class SplitButtonUnconnected extends React.PureComponent {
   handleSplitSubmit = (appeal, payloadInfo) => {
     this.props.splitAppeal(appeal.id, payloadInfo.selectedIssues,
       payloadInfo.reason, payloadInfo.otherReason);
+    window.location.href = `/queue/appeals/${this.props.claimId}`;
   }
   render() {
 
@@ -100,15 +101,13 @@ class SplitButtonUnconnected extends React.PureComponent {
                 {console.log(`appeal: ${JSON.stringify(appeal)}`)}
                 {console.log(`payloadInfo: ${JSON.stringify(payloadInfo)}`)}
                 {console.log(`claimId: ${this.props.claimId}`)}
-                <Link to={`/../../../queue/appeals/${this.props.claimId}`}>
-                  <Button
-                    id="button-submit-update"
-                    classNames={['cf-submit usa-button']}
-                    // on click button sends claim id for dummy data
-                    onClick={() => this.handleSplitSubmit(appeal, payloadInfo)}>
-                    { COPY.CORRECT_REQUEST_ISSUES_SPLIT_APPEAL }
-                  </Button>
-                </Link>
+                <Button
+                  id="button-submit-update"
+                  classNames={['cf-submit usa-button']}
+                  // on click button sends claim id for dummy data
+                  onClick={() => this.handleSplitSubmit(appeal, payloadInfo)}>
+                  { COPY.CORRECT_REQUEST_ISSUES_SPLIT_APPEAL }
+                </Button>
               </div>
 
             )}
