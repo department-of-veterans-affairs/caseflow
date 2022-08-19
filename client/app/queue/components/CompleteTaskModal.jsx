@@ -499,7 +499,7 @@ class CompleteTaskModal extends React.Component {
         validateForm={this.validateForm}
         submit={this.submit}
         pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
-        submitButtonClassNames={['usa-button', 'usa-button-hover', 'usa-button-warning']}
+        submitButtonClassNames={['usa-button']}
       >
         {this.props.task ?
           modalAttributes.getContent(this.getContentArgs()) :
