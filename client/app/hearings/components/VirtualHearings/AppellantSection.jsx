@@ -27,6 +27,7 @@ export const AppellantSection = ({
   showTimezoneField,
   schedulingToVirtual,
   formFieldsOnly,
+  appellantTimezone,
   appellantEmailAddress,
   appellantEmailType
 }) => {
@@ -88,7 +89,7 @@ export const AppellantSection = ({
             <Timezone
               required={schedulingToVirtual}
               optional={!schedulingToVirtual}
-              value={hearing?.appellantTz}
+              value={appellantTimezone || hearing?.appellantTz}
               onChange={(appellantTz) => update('hearing', { appellantTz })}
               time={hearing?.scheduledTimeString}
               roTimezone={hearing?.regionalOfficeTimezone}
@@ -151,6 +152,7 @@ AppellantSection.propTypes = {
   userCanCollectVideoCentralEmails: PropTypes.bool,
   schedulingToVirtual: PropTypes.bool,
   formFieldsOnly: PropTypes.bool,
+  appellantTimezone: PropTypes.string,
   appellantEmailAddress: PropTypes.string,
   appellantEmailType: PropTypes.string
 };
