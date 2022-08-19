@@ -29,7 +29,7 @@ module PrivacyActPending
     super
     if ("PrivacyActTask".include?(params[:type]) && params[:assigned_to_type].include?("Organization")) ||
        ("HearingAdminActionFoiaPrivacyRequestTask".include?(params[:type]) && parent.type == "ScheduleHearingTask")
-     #{} AppellantNotification.notify_appellant(parent.appeal, @@template_name)
+      AppellantNotification.notify_appellant(parent.appeal, @@template_name)
     end
   end
 end
