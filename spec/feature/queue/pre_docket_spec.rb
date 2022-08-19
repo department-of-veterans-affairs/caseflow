@@ -90,6 +90,31 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             expect(page).to have_content(vha_caregiver.name)
           end
         end
+
+        step "BVA Intake user sees case in Ready for Review tab. They can docket appeal." do
+          User.authenticate!(user: bva_intake_user)
+
+          last_vha_task = VhaDocumentSearchTask.last
+          last_vha_task.completed!
+
+          visit "/organizations/bva-intake?tab=bvaReadyForReview"
+
+          find_link("#{veteran.name} (#{veteran.file_number})").click
+
+          click_dropdown(Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+
+          expect(page).to have_content(
+            format(COPY::DOCKET_APPEAL_MODAL_BODY, "CSP")
+          )
+
+          find("button", class: "usa-button", text: "Submit").click
+        end
+
+        step "Docketed appeal appears in BVA Intake's Completed tab" do
+          visit "/organizations/bva-intake?tab=bvaIntakeCompletedTab"
+
+          expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+        end
       end
     end
 
