@@ -101,7 +101,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           find_link("#{veteran.name} (#{veteran.file_number})").click
 
-          click_dropdown(Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+          click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
 
           expect(page).to have_content(
             format(COPY::DOCKET_APPEAL_MODAL_BODY, "CSP")
@@ -654,7 +654,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       step "BVA Intake's 'Docket appeal' modal contains org name for RPO" do
         find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
 
-        click_dropdown(Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+        click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
 
         expect(page).to have_content(
           format(COPY::DOCKET_APPEAL_MODAL_BODY, "Education")
@@ -897,7 +897,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
       visit "/queue/appeals/#{emo_task.appeal.uuid}"
 
-      click_dropdown(Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+      click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
 
       expect(page).to have_content(
         format(COPY::DOCKET_APPEAL_MODAL_BODY, "Education")
