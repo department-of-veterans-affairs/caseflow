@@ -122,7 +122,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             )
           )
 
-          expect(page).to have_current_path("/organizations/#{vha_caregiver.url}")
+          expect(page.path).to have_current_path("/organizations/#{vha_caregiver.url}", only_path: true)
 
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.in_progress
         end
