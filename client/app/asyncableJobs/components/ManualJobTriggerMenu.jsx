@@ -13,17 +13,23 @@ const ManualJobTriggerMenu = (props) => {
   return (
     <div>
       <h1>Manually Perform Async Jobs</h1>
-      {props.availableJobs.map((jobType) => (
-        <div>
-          <h3>{StringUtil.snakeCaseToCapitalized(jobType)}</h3>
-          <Button
-            name={`trigger-${jobType}-job`}
-            onClick={() => sendJobRequest(jobType)}
-          >
-            Perform Now
-          </Button>
-        </div>
-      ))}
+      <table>
+        {props.availableJobs.map((jobType) => (
+          <tr>
+            <td>
+              <h3>{StringUtil.snakeCaseToCapitalized(jobType)}</h3>
+            </td>
+            <td>
+              <Button
+                name={`trigger-${jobType}-job`}
+                onClick={() => sendJobRequest(jobType)}
+              >
+                Perform Now
+              </Button>
+            </td>
+          </tr>
+        ))}
+      </table>
     </div>
   );
 };
