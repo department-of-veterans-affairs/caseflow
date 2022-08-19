@@ -99,7 +99,8 @@ class SplitButtonUnconnected extends React.PureComponent {
               <div>
                 {console.log(`appeal: ${JSON.stringify(appeal)}`)}
                 {console.log(`payloadInfo: ${JSON.stringify(payloadInfo)}`)}
-                <Link to={`/queue/appeals/${this.props.claimId}`}>
+                {console.log(`claimId: ${this.props.claimId}`)}
+                <Link to={`/../../../queue/appeals/${this.props.claimId}`}>
                   <Button
                     id="button-submit-update"
                     classNames={['cf-submit usa-button']}
