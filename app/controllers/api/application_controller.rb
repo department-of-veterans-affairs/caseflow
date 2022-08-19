@@ -42,10 +42,12 @@ class Api::ApplicationController < ActionController::Base
   end
 
   def verify_authentication_token
-    if FeatureToggle.enabled?(:manually_trigger_async_jobs, user: current_user)
-      Rails.logger.info("API authentication bypassed by #{current_user.css_id}")
-    elsif api_key
+    if api_key
       Rails.logger.info("API authenticated by #{api_key.consumer_name}")
+    elsif FeatureToggle.enabled?(:manually_trigger_async_jobs, user: current_user) && (
+      Rails.env.development? || Rails.env.demo?
+    )
+      Rails.logger.info("API authentication bypassed by #{current_user.css_id}")
     else
       unauthorized
     end
