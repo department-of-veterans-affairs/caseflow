@@ -18,7 +18,7 @@ module PrivacyActPending
   # original method defined in app/models/task.rb
   def create_twin_of_type(params)
     super
-    if type == "PrivacyActMailTask" || type == "FoiaRequestMailTask"
+    if type == "PrivacyActRequestMailTask" || type == "FoiaRequestMailTask"
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
   end

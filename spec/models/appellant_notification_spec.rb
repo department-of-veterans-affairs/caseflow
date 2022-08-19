@@ -220,4 +220,68 @@ describe AppellantNotification do
     end
   end
 
+  describe "FoiaColocatedTask" do
+    let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
+
+    describe "PrivacyActPending" do
+      step "attorney assigns task" do
+      end
+      step "vlj goes in there" do
+      end
+    end
+    describe "PrivacyActComplete" do
+    end
+  end
+  describe "mail task" do
+    let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: mail_team) }
+    let(:params) { {} }
+
+    subject { task_class.child_task_assignee(mail_task, params) }
+    describe "PrivacyActRequestMailTask" do
+      describe "PrivacyActPending" do
+      end
+      describe "PrivacyActComplete" do
+      end
+    end
+    describe "FoiaRequestMailTask" do
+      let(:task_class) { FoiaRequestMailTask }
+      let!(:distribution_task) { create(:distribution_task, parent: root_task) }
+      describe "PrivacyActPending" do
+      end
+      describe "PrivacyActComplete" do
+      end
+    end
+  end
+  describe "HearingAdminFoiaPrivacyRequestTask" do
+    let!(:veteran) { create(:veteran) }
+    let!(:appeal) { create(:appeal, veteran: veteran) }
+    let!(:hearings_management_user) { create(:hearings_coordinator) }
+    describe "PrivacyActPending" do
+    end
+    describe "PrivacyActComplete" do
+    end
+  end
+  describe "PrivacyActTask" do
+    let(:task) { PrivacyActTask.find(create(:privacy_act_task).id) }
+    let(:user) { task.assigned_to }
+    describe "PrivacyActPending" do
+    end
+    describe "PrivacyActComplete" do
+    end
+  end
+  describe "IhpColocatedTask" do
+    let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
+    describe "AMA Appeal" do
+      describe IhpTaskPending do
+      end
+      describe IhpTaskComplete do
+      end
+    end
+  end
+  describe "InformalHearingPresentationTask" do
+    let(:user) { create(:user, roles: ["VSO"]) }
+    let(:org) { create(:organization) }
+    let(:org_task) { create(:informal_hearing_presentation_task, assigned_to: org) }
+    let(:task) { create(:informal_hearing_presentation_task, assigned_to: user, parent: org_task) }
+  end
 end
