@@ -188,7 +188,10 @@ AsyncableJobsPage.propTypes = {
     page_size: PropTypes.number,
     total_jobs: PropTypes.number,
     total_pages: PropTypes.number
-  })
+  }),
+  availableJobs: PropTypes.arrayOf(
+    PropTypes.string
+  )
 };
 
 const JobsPage = connect(

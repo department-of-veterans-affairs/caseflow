@@ -1,6 +1,6 @@
 export const mapDataToInitialState = function(props = {}) {
-  const { serverJobs } = props;
-  const state = serverJobs;
+  const { serverJobs, availableJobs } = props;
+  const state = { availableJobs, ...serverJobs };
 
   if (!state.asyncableJobKlass) {
     state.asyncableJobKlass = '';
