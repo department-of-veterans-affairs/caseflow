@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 import ApiUtil from '../../util/ApiUtil';
+import StringUtil from '../../util/StringUtil';
 
 const ManualJobTriggerMenu = (props) => {
 
@@ -14,7 +15,7 @@ const ManualJobTriggerMenu = (props) => {
       <h1>Manually Perform Async Jobs</h1>
       {props.availableJobs.map((jobType) => (
         <div>
-          <p>{jobType}</p>
+          <h3>{StringUtil.snakeCaseToCapitalized(jobType)}</h3>
           <Button
             name={`trigger-${jobType}-job`}
             onClick={() => sendJobRequest(jobType)}
