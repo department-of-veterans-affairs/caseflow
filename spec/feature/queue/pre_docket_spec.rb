@@ -625,6 +625,16 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_content(COPY::PRE_DOCKET_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
+
+      step "BVA Intake's 'Docket appeal' modal contains org name for RPO" do
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+
+        click_dropdown(Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+
+        expect(page).to have_content(
+          format(COPY::DOCKET_APPEAL_MODAL_BODY, "Education")
+        )
+      end
     end
 
     it "EMO user can return an appeal to BVA Intake" do
@@ -853,6 +863,19 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       )
 
       expect(emo_task.appeal.tasks.last.assigned_to). to eq emo
+    end
+
+    step "BVA Intake's 'Docket appeal' modal contains correct org name" do
+      # Complete new task to send it back to BVA Intake
+      emo_task.appeal.tasks.last.completed!
+
+      visit "/queue/appeals/#{emo_task.appeal.uuid}"
+
+      click_dropdown(Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+
+      expect(page).to have_content(
+        format(COPY::DOCKET_APPEAL_MODAL_BODY, "Education")
+      )
     end
   end
 end
