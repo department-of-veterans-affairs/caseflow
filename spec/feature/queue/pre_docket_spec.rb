@@ -890,7 +890,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       expect(emo_task.appeal.tasks.last.assigned_to). to eq emo
     end
 
-    step "BVA Intake's 'Docket appeal' modal contains correct org name" do
+    it "BVA Intake's 'Docket appeal' modal contains correct org name" do
       # Complete new task to send it back to BVA Intake
       emo_task.appeal.tasks.last.completed!
 
