@@ -45,6 +45,7 @@ const MarkTaskCompleteModal = ({ props, state, setState }) => {
           value={state.instructions}
           styling={marginTop(4)}
           maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+          optional
         />
       )}
     </React.Fragment>

@@ -458,10 +458,21 @@ class TaskActionRepository
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end
 
-    def docket_appeal_data(*)
+    def docket_appeal_data(task, _user)
+      most_recent_child_task = task.children.first
+
+      # The last organization to work the appeal before sending it to BVA Intake
+      # for docketing.
+      pre_docket_org = case most_recent_child_task.assigned_to
+                       when VhaCamo.singleton then "VHA"
+                       when VhaCaregiverSupport.singleton then "CSP"
+                       else
+                         "Education"
+                       end
+
       {
         modal_title: COPY::DOCKET_APPEAL_MODAL_TITLE,
-        modal_body: COPY::DOCKET_APPEAL_MODAL_BODY,
+        modal_body: format(COPY::DOCKET_APPEAL_MODAL_BODY, pre_docket_org),
         modal_alert: COPY::DOCKET_APPEAL_MODAL_NOTICE,
         instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
         redirect_after: "/organizations/#{BvaIntake.singleton.url}"

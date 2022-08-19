@@ -412,7 +412,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label).click
 
     expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_TITLE)
-    expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_BODY)
+    expect(page).to have_content(format(COPY::DOCKET_APPEAL_MODAL_BODY, "VHA"))
     expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_NOTICE)
 
     find("button", class: "usa-button", text: "Confirm").click
