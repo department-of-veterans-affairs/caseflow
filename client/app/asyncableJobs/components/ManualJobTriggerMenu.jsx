@@ -7,7 +7,7 @@ import StringUtil from '../../util/StringUtil';
 const ManualJobTriggerMenu = (props) => {
 
   const sendJobRequest = (jobType) => {
-    ApiUtil.post('api/v1/jobs', { job_type: jobType });
+    ApiUtil.post('api/v1/jobs', { data: { job_type: jobType } });
   };
 
   return (
