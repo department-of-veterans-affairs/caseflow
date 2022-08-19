@@ -1,8 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
+import ApiUtil from '../../util/ApiUtil';
 
 const ManualJobTriggerMenu = (props) => {
+
+  const sendJobRequest = (jobType) => {
+    ApiUtil.post('api/v1/jobs', { job_type: jobType });
+  };
 
   return (
     <div>
@@ -10,7 +15,10 @@ const ManualJobTriggerMenu = (props) => {
       {props.availableJobs.map((jobType) => (
         <div>
           <p>{jobType}</p>
-          <Button>
+          <Button
+            name={`trigger-${jobType}-job`}
+            onClick={() => sendJobRequest(jobType)}
+          >
             Perform Now
           </Button>
         </div>
