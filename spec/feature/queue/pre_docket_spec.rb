@@ -892,7 +892,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
     it "BVA Intake's 'Docket appeal' modal contains correct org name" do
       User.authenticate!(user: bva_intake_user)
-      
+
       # Complete new task to send it back to BVA Intake
       emo_task = create(:education_document_search_task, :assigned, assigned_to: emo)
       emo_task.completed!
