@@ -97,6 +97,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           last_vha_task = VhaDocumentSearchTask.last
           last_vha_task.completed!
 
+          appeal = last_vha_task.appeal
+
           visit "/organizations/bva-intake?tab=bvaReadyForReview"
 
           find_link("#{veteran.name} (#{veteran.file_number})").click
