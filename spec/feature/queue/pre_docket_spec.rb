@@ -107,7 +107,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             format(COPY::DOCKET_APPEAL_MODAL_BODY, "CSP")
           )
 
-          find("button", class: "usa-button", text: "Submit").click
+          find("button", class: "usa-button", text: "Confirm").click
         end
 
         step "Docketed appeal appears in BVA Intake's Completed tab" do
@@ -891,6 +891,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     end
 
     it "BVA Intake's 'Docket appeal' modal contains correct org name" do
+      User.authenticate!(user: bva_intake_user)
+      
       # Complete new task to send it back to BVA Intake
       emo_task = create(:education_document_search_task, :assigned, assigned_to: emo)
       emo_task.completed!
