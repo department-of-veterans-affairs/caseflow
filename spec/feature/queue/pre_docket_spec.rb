@@ -111,7 +111,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         end
 
         step "Docketed appeal appears in BVA Intake's Completed tab" do
-          appeal = last_vha_task.appeal
+          appeal = VhaDocumentSearchTask.last.appeal
 
           visit "/organizations/bva-intake?tab=bvaIntakeCompletedTab"
 
