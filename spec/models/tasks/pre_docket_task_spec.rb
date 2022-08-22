@@ -63,6 +63,48 @@ describe PreDocketTask, :postgres do
         emo_task.completed!
         is_expected.to include Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.to_h
       end
+
+      let(:camo_task) do
+        VhaDocumentSearchTask.create!(
+          appeal: pre_docket_task.appeal,
+          parent: pre_docket_task,
+          assigned_at: Time.zone.now,
+          assigned_to: VhaCamo.singleton
+        )
+      end
+
+      it { is_expected.to eq pre_docket_task.available_actions(user) }
+
+      it "they cannot return an appeal to an organization that already has it" do
+        is_expected.to include Constants.TASK_ACTIONS.DOCKET_APPEAL.to_h
+        is_expected.to_not include Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.to_h
+      end
+
+      it "they can return an appeal to an organization once that org has closed their task" do
+        camo_task.completed!
+        is_expected.to include Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.to_h
+      end
+
+      let(:vha_caregiver_task) do
+        VhaDocumentSearchTask.create!(
+          appeal: pre_docket_task.appeal,
+          parent: pre_docket_task,
+          assigned_at: Time.zone.now,
+          assigned_to: VhaCaregiverSupport.singleton
+        )
+      end
+
+      it { is_expected.to eq pre_docket_task.available_actions(user) }
+
+      it "they cannot return an appeal to an organization that already has it" do
+        is_expected.to include Constants.TASK_ACTIONS.DOCKET_APPEAL.to_h
+        is_expected.to_not include Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.to_h
+      end
+
+      it "they can return an appeal to an organization once that org has closed their task" do
+        vha_caregiver_task.completed!
+        is_expected.to include Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.to_h
+      end
     end
   end
 
