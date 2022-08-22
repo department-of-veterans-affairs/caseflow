@@ -12,7 +12,7 @@ class VhaCaregiverSupportCompletedTasksTab < QueueTab
   end
 
   def description
-    format(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION, assignee.name)
+    COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION    
   end
 
   def tasks
