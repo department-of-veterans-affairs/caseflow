@@ -102,7 +102,6 @@ class MailTask < Task
   end
 
   def create_twin_of_type(params)
-    byebug
     task_type = Object.const_get(params[:type])
     parent_task = task_type.create!(
       appeal: appeal,

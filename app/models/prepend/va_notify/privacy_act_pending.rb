@@ -15,7 +15,7 @@ module PrivacyActPending
   end
 
   # for foia/privacy act mail tasks
-  # original method defined in app/models/task.rb
+  # original method defined in app/models/mail_task.rb
   def create_twin_of_type(params)
     super
     if type == "PrivacyActRequestMailTask" || type == "FoiaRequestMailTask"

@@ -197,7 +197,6 @@ class Task < CaseflowRecord
     end
 
     def create_child_task(parent, current_user, params)
-      byebug
       Task.create!(
         type: name,
         appeal: parent.appeal,
