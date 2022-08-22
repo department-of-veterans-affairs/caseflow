@@ -453,4 +453,5 @@ module Caseflow::Error
   class VANotifyNotFoundError < VANotifyApiError; end
   class VANotifyInternalServerError < VANotifyApiError; end
   class VANotifyRateLimitError < VANotifyApiError; end
+  class EmptyQueueError < StandardError; end
 end
