@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "appellant_notification.rb"
+include IhpTaskPending
 
 describe AppellantNotification do
   describe "class methods" do
@@ -54,7 +55,7 @@ describe AppellantNotification do
       context "creates a payload with no exceptions" do
         it "has a status value of success" do
           expect(
-            AppellantNotification.create_payload(good_appeal, template_name)[:message_attributes][:status][:value]
+            AppellantNotification.create_payload(good_appeal, template_name)[:message_attributes][:status][:string_value]
           ).to eq "Success"
         end
       end
@@ -65,7 +66,7 @@ describe AppellantNotification do
         end
         it "does not have a success status" do
           expect(
-            AppellantNotification.create_payload(bad_appeal, template_name)[:message_attributes][:status][:value]
+            AppellantNotification.create_payload(bad_appeal, template_name)[:message_attributes][:status][:string_value]
           ).not_to eq "Success"
         end
       end
@@ -126,17 +127,17 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, non_contested)
         dispatch.complete_root_task!
       end
-      # DO CONTESTED APPEALS EXIST FOR VACOLS?
-
-      # it "Will notify appellant that the legacy appeal decision has been mailed (Contested)" do
-      #   expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, contested)
-      #   dispatch.complete_root_task!
-      # end
+      it "Will notify appellant that the legacy appeal decision has been mailed (Contested)" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, contested)
+        allow(legacy_appeal).to receive(:contested_claim).and_return(true)
+        legacy_appeal.contested_claim
+        dispatch.complete_root_task!
+      end
     end
 
     describe "AMA Appeal Decision Mailed" do
       let(:appeal) { create(:appeal, :with_assigned_bva_dispatch_task) }
-      let(:contested_appeal) { create(:appeal, :with_assigned_bva_dispatch_task, :with_request_issues) } 
+      let(:contested_appeal) { create(:appeal, :with_assigned_bva_dispatch_task, :with_request_issues) }
       let(:params) do
         {
           appeal_id: appeal.id,
@@ -164,8 +165,9 @@ describe AppellantNotification do
         dispatch.complete_dispatch_root_task!
       end
       it "Will notify appellant that the AMA appeal decision has been mailed (Contested)" do
-        # not working. not sure how to set up contested flag on appeal
         expect(AppellantNotification).to receive(:notify_appellant).with(contested_appeal, contested)
+        allow(contested_appeal).to receive(:contested_claim?).and_return(true)
+        contested_appeal.contested_claim?
         contested_dispatch.complete_dispatch_root_task!
       end
     end
@@ -341,6 +343,62 @@ describe AppellantNotification do
 
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
 
+      end
+    end
+  end
+  describe IhpTaskPending do
+    describe "create_ihp_tasks!" do
+      let(:appeal) { create(:appeal, :active) }
+      let(:root_task) { RootTask.find_by(appeal: appeal) }
+      let(:task_factory) { IhpTasksFactory.new(root_task) }
+      let(:template_name) { "IhpTaskPending" }
+      it "will notify appellant of 'IhpTaskPending' status" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(root_task.appeal, template_name)
+        task_factory.create_ihp_tasks!
+      end
+    end
+
+    describe "notify_appellant_if_ihp(appeal)" do
+      context "A newly created 'IhpColocatedTask'" do
+        let(:user) { create(:user) }
+        let(:org) { create(:organization) }
+        let(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
+        let(:name) { task.type }
+        let(:template_name) { "IhpTaskPending" }
+        it "will notify the appellant of the 'IhpTaskPending' status" do
+          expect(AppellantNotification).to receive(:notify_appellant).with(task.appeal, template_name)
+          notify_appellant_if_ihp(task.appeal)
+        end
+      end
+    end
+  end
+
+  describe IhpTaskComplete do
+    describe "update_from_params" do
+      context "A completed 'IhpColocatedTask'" do
+        let(:user) { create(:user) }
+        let(:org) { create(:organization) }
+        let(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
+        let(:template_name) { "IhpTaskComplete" }
+        it "will notify the appellant of the 'IhpTaskComplete' status" do
+          allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
+          expect(AppellantNotification).to receive(:notify_appellant).with(task.appeal, template_name)
+          task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
+        end
+      end
+    end
+
+    describe "update_from_params" do
+      context "A completed 'InformalHearingPresentationTask'" do
+        let(:user) { create(:user) }
+        let(:org) { create(:organization) }
+        let(:task) { create(:informal_hearing_presentation_task, :in_progress, assigned_to: org) }
+        let(:template_name) { "IhpTaskComplete" }
+        it "will notify the appellant of the 'IhpTaskComplete' status" do
+          allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
+          expect(AppellantNotification).to receive(:notify_appellant).with(task.appeal, template_name)
+          task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
+        end
       end
     end
   end
