@@ -281,4 +281,19 @@ describe AppellantNotification do
       end
     end
   end
+  describe IhpTaskComplete do
+    describe "update_from_params" do
+      context "when task is an 'IhpColocatedTask'" do
+        let(:user) { create(:user) }
+        let(:org) { create(:organization) }
+        let(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
+        let(:template_name) { "IhpTaskComplete" }
+        it "will notify the appellant of 'IhpTaskComplete' status" do
+          allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
+          expect(AppellantNotification).to receive(:notify_appellant).with(task.appeal, template_name)
+          task.update_from_params({ status: Constants.TASK_STATUSES.completed }, user)
+        end
+      end
+    end
+  end
 end
