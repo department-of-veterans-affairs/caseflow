@@ -6,7 +6,7 @@ class SplitAppealController < ApplicationController
   def split_appeal
     params.require(:appeal_id)
 
-    return render json: { message: "Success!" }
+    render json: { message: "Success" }
 
     # render json: { message: params.errors[0] }, status: :bad_request
   end
