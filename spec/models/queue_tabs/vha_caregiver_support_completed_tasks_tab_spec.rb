@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 describe VhaCaregiverSupportCompletedTasksTab, :postgres do
-  let(:tab) { VhaCaregiverSupportCompletedTasksTab.new(params) }
+  let(:completed_tab) { VhaCaregiverSupportCompletedTasksTab.new(params) }
   let(:params) do
     {
       assignee: assignee
     }
   end
-  let(:assignee) { create(:vha_caregiver_support) }
+  let(:assignee) { VhaCaregiverSupport.singleton }
 
   describe ".tab_name" do
     subject { VhaCaregiverSupportCompletedTasksTab.tab_name }
@@ -21,7 +21,7 @@ describe VhaCaregiverSupportCompletedTasksTab, :postgres do
   end
 
   describe ".label" do
-    subject { tab.label }
+    subject { completed_tab.label }
 
     context "the tab label should be appropriately reflected" do
       it "matches what is defined in the Copy.json file" do
@@ -32,7 +32,7 @@ describe VhaCaregiverSupportCompletedTasksTab, :postgres do
   end
 
   describe ".description" do
-    subject { tab.description }
+    subject { completed_tab.description }
 
     context "the description should be appropriately reflected" do
       it "matches what is defined in the Copy.json file" do
@@ -43,7 +43,7 @@ describe VhaCaregiverSupportCompletedTasksTab, :postgres do
   end
 
   describe ".column_names" do
-    subject { tab.column_names }
+    subject { completed_tab.column_names }
 
     context "when only the assignee argument is passed when instantiating an VhaCaregiverSupportCompletedTasksTab" do
       it "returns the correct number of columns" do
@@ -53,7 +53,7 @@ describe VhaCaregiverSupportCompletedTasksTab, :postgres do
   end
 
   describe ".tasks" do
-    subject { tab.tasks }
+    subject { completed_tab.tasks }
     context "when there are tasks completed by the assignee" do
       let!(:assignee_completed_tasks) do
         create_list(:vha_document_search_task, 4, :completed, assigned_to: assignee)
@@ -68,6 +68,16 @@ describe VhaCaregiverSupportCompletedTasksTab, :postgres do
         assignee_completed_tasks.first.update!(closed_at: (Time.zone.now - (1.week + 1.minute)))
         expect(subject).to_not include assignee_completed_tasks.first
         expect(subject).to match_array assignee_completed_tasks[1..-1]
+      end
+
+      it "tasks no longer shows up in the completed tab whenever BVA Intake return the appeal to the VHA CSP" do
+        expect(completed_tab.tasks).to match_array assignee_completed_tasks
+
+        # Add a more recent VHA CSP task to make sure the older one gets removed from the queue
+        targeted_task = assignee_completed_tasks.first
+        VhaDocumentSearchTask.create!(appeal: targeted_task.appeal, parent: targeted_task.parent, assigned_to: assignee)
+
+        expect(completed_tab.tasks).to match_array(assignee_completed_tasks - [targeted_task])
       end
     end
 
