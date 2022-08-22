@@ -197,7 +197,6 @@ class Task < CaseflowRecord
     end
 
     def create_child_task(parent, current_user, params)
-      byebug
       Task.create!(
         type: name,
         appeal: parent.appeal,
@@ -477,6 +476,7 @@ class Task < CaseflowRecord
     return reassign(params[:reassign], current_user) if params[:reassign]
 
     update_with_instructions(params)
+    byebug
 
     [self]
   end
