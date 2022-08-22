@@ -405,22 +405,6 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
     end
 
-    # scenario "Selecting the Select bar and an issue allows the user to click Continue" do
-    #   # add issues to the appeal
-    #   appeal2.request_issues << request_issue_1
-    #   appeal2.request_issues << request_issue_2
-
-    #   User.authenticate!(user: current_user)
-    #   visit("/appeals/#{appeal2.uuid}/edit/create_split")
-
-    #   click_link("Select...", visible: :all)
-    #   # binding.pry
-    #   # select "name", :from => "splitAppealReasonDropdown"
-
-
-    #   # expect(page).to have_button("Continue") 
-    # end
-
     scenario "When the user accesses the review_split page, the page renders as expected" do
       # add issues to the appeal
       appeal2.request_issues << request_issue_1
