@@ -98,9 +98,6 @@ class SplitButtonUnconnected extends React.PureComponent {
           <StateContext.Consumer>
             {(payloadInfo) => (
               <div>
-                {console.log(`appeal: ${JSON.stringify(appeal)}`)}
-                {console.log(`payloadInfo: ${JSON.stringify(payloadInfo)}`)}
-                {console.log(`claimId: ${this.props.claimId}`)}
                 <Button
                   id="button-submit-update"
                   classNames={['cf-submit usa-button']}

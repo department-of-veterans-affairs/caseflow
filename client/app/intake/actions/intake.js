@@ -33,10 +33,6 @@ export const splitAppeal = (appealId, selectedIssues, reason, otherReason) => (d
     then(
       (response) => {
         // send success
-
-        // console log success for testing
-        console.log('payload sent! Payload values are:');
-        console.log(`id: ${data.appeal_id}, issue: ${data.appeal_split_issues}, split_reason: ${data.split_reason}, other reason: ${data.split_other_reason}`);
         dispatch({
           type: ACTIONS.SPLIT_APPEAL_SUCCESS,
           splitAppeal: response.body,
