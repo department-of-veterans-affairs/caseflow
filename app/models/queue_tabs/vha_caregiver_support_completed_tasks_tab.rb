@@ -21,11 +21,11 @@ class VhaCaregiverSupportCompletedTasksTab < QueueTab
     # For every appeal that has a recently completed VHA CSP task, determine
     # which VHA CSP task is actually the most recent for the entire appeal
     # so that the appeal doesn't show up multiple times in the VHA CSP's queue.
-    most_overall_recent_tasks = Task.where(parent_id: parent_task_ids, assigned_to: assignee)
+    most_recent_csp_tasks_per_appeal = Task.where(parent_id: parent_task_ids, assigned_to: assignee)
       .group(:appeal_id)
       .maximum(:id)
 
-    Task.where(id: most_overall_recent_tasks.values).recently_completed
+    Task.where(id: most_recent_csp_tasks_per_appeal.values).recently_completed
   end
 
   def column_names
