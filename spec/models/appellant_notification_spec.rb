@@ -126,17 +126,17 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, non_contested)
         dispatch.complete_root_task!
       end
-      # DO CONTESTED APPEALS EXIST FOR VACOLS?
-
-      # it "Will notify appellant that the legacy appeal decision has been mailed (Contested)" do
-      #   expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, contested)
-      #   dispatch.complete_root_task!
-      # end
+      it "Will notify appellant that the legacy appeal decision has been mailed (Contested)" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, contested)
+        allow(legacy_appeal).to receive(:contested_claim).and_return(true)
+        legacy_appeal.contested_claim
+        dispatch.complete_root_task!
+      end
     end
 
     describe "AMA Appeal Decision Mailed" do
       let(:appeal) { create(:appeal, :with_assigned_bva_dispatch_task) }
-      let(:contested_appeal) { create(:appeal, :with_assigned_bva_dispatch_task, :with_request_issues) } 
+      let(:contested_appeal) { create(:appeal, :with_assigned_bva_dispatch_task, :with_request_issues) }
       let(:params) do
         {
           appeal_id: appeal.id,
@@ -164,8 +164,9 @@ describe AppellantNotification do
         dispatch.complete_dispatch_root_task!
       end
       it "Will notify appellant that the AMA appeal decision has been mailed (Contested)" do
-        # not working. not sure how to set up contested flag on appeal
         expect(AppellantNotification).to receive(:notify_appellant).with(contested_appeal, contested)
+        allow(contested_appeal).to receive(:contested_claim?).and_return(true)
+        contested_appeal.contested_claim?
         contested_dispatch.complete_dispatch_root_task!
       end
     end
@@ -276,8 +277,8 @@ describe AppellantNotification do
       let(:task_factory) { IhpTasksFactory.new(root_task) }
       let(:template_name) { "IhpTaskPending" }
       it "will notify appellant of 'IhpTaskPending' status" do
-      expect(AppellantNotification).to receive(:notify_appellant).with(root_task.appeal, template_name)
-      task_factory.create_ihp_tasks!
+        expect(AppellantNotification).to receive(:notify_appellant).with(root_task.appeal, template_name)
+        task_factory.create_ihp_tasks!
       end
     end
   end
