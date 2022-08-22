@@ -7,7 +7,6 @@ import { StateContext } from '../IntakeEditFrame';
 import Button from '../../components/Button';
 import COPY from '../../../COPY';
 import { splitAppeal } from '../../intake/actions/intake';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class CancelButtonUnconnected extends React.PureComponent {
   render = () => {
