@@ -70,14 +70,23 @@ describe VhaCaregiverSupportCompletedTasksTab, :postgres do
         expect(subject).to match_array assignee_completed_tasks[1..-1]
       end
 
-      it "tasks no longer shows up in the completed tab whenever BVA Intake return the appeal to the VHA CSP" do
+      it "tasks no longer show up in the completed tab whenever BVA Intake return the appeal to the VHA CSP" do
         expect(completed_tab.tasks).to match_array assignee_completed_tasks
 
         # Add a more recent VHA CSP task to make sure the older one gets removed from the queue
         targeted_task = assignee_completed_tasks.first
-        VhaDocumentSearchTask.create!(appeal: targeted_task.appeal, parent: targeted_task.parent, assigned_to: assignee)
+        new_task = VhaDocumentSearchTask.create!(
+          appeal: targeted_task.appeal,
+          parent: targeted_task.parent,
+          assigned_to: assignee
+        )
 
         expect(completed_tab.tasks).to match_array(assignee_completed_tasks - [targeted_task])
+
+        # Newest task appears in completed tab, but the first task that used to be in the completed tab for
+        # the appeal is still omitted.
+        new_task.completed!
+        expect(completed_tab.tasks).to match_array(assignee_completed_tasks + [new_task] - [targeted_task])
       end
     end
 
