@@ -220,18 +220,18 @@ describe AppellantNotification do
     end
   end
 
-  describe "FoiaColocatedTask" do
-    let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
+  # describe "FoiaColocatedTask" do
+  #   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
 
-    describe "PrivacyActPending" do
-      step "attorney assigns task" do
-      end
-      step "vlj goes in there" do
-      end
-    end
-    describe "PrivacyActComplete" do
-    end
-  end
+  #   describe "PrivacyActPending" do
+  #     step "attorney assigns task" do
+  #     end
+  #     step "vlj goes in there" do
+  #     end
+  #   end
+  #   describe "PrivacyActComplete" do
+  #   end
+  # end
   describe "mail task" do
     let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: mail_team) }
     let(:params) { {} }
@@ -269,19 +269,16 @@ describe AppellantNotification do
     describe "PrivacyActComplete" do
     end
   end
-  describe "IhpColocatedTask" do
-    let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
-    describe "AMA Appeal" do
-      describe IhpTaskPending do
-      end
-      describe IhpTaskComplete do
+  describe IhpTaskPending do
+    describe "create_ihp_tasks!" do
+      let(:appeal) { create(:appeal, :active) }
+      let(:root_task) { RootTask.find_by(appeal: appeal) }
+      let(:task_factory) { IhpTasksFactory.new(root_task) }
+      let(:template_name) { "IhpTaskPending" }
+      it "will notify appellant of 'IhpTaskPending' status" do
+      expect(AppellantNotification).to receive(:notify_appellant).with(root_task.appeal, template_name)
+      task_factory.create_ihp_tasks!
       end
     end
-  end
-  describe "InformalHearingPresentationTask" do
-    let(:user) { create(:user, roles: ["VSO"]) }
-    let(:org) { create(:organization) }
-    let(:org_task) { create(:informal_hearing_presentation_task, assigned_to: org) }
-    let(:task) { create(:informal_hearing_presentation_task, assigned_to: user, parent: org_task) }
   end
 end
