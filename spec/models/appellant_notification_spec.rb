@@ -220,68 +220,128 @@ describe AppellantNotification do
     end
   end
 
-  describe "FoiaColocatedTask" do
-    let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
+  describe "FOIA/Privacy Act tasks" do
+    let(:template_pending) { "PrivacyActPending" }
+    let(:template_closed) { "PrivacyActComplete" }
 
-    describe "PrivacyActPending" do
-      step "attorney assigns task" do
+    context "HearingAdminFoiaPrivacyRequestTask" do
+      let!(:veteran) { create(:veteran) }
+      let!(:appeal) { create(:appeal, veteran: veteran) }
+      let!(:hearings_management_user) { create(:hearings_coordinator) }
+      let!(:parent_task) { create(:schedule_hearing_task, appeal: appeal) }
+      let(:task_params_org) do
+        {
+          instructions: "seijhy7fa",
+          type: "HearingAdminActionFoiaPrivacyRequestTask",
+          assigned_to: HearingsManagement
+        }
       end
-      step "vlj goes in there" do
+      let(:task_params_user) do
+        {
+          instructions: "djfkdjfkd",
+          type: "HearingAdminActionFoiaPrivacyRequestTask",
+          assigned_to: hearings_management_user
+        }
       end
-    end
-    describe "PrivacyActComplete" do
-    end
-  end
-  describe "mail task" do
-    let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: mail_team) }
-    let(:params) { {} }
+      before do
+        HearingsManagement.singleton.add_user(hearings_management_user)
+        RequestStore[:current_user] = hearings_management_user
+      end
 
-    subject { task_class.child_task_assignee(mail_task, params) }
-    describe "PrivacyActRequestMailTask" do
-      describe "PrivacyActPending" do
+      it "calls notify_appellant when task is created" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
+        HearingAdminActionFoiaPrivacyRequestTask.create_child_task(parent_task, hearings_management_user, task_params_org)
       end
-      describe "PrivacyActComplete" do
-      end
-    end
-    describe "FoiaRequestMailTask" do
-      let(:task_class) { FoiaRequestMailTask }
-      let!(:distribution_task) { create(:distribution_task, parent: root_task) }
-      describe "PrivacyActPending" do
-      end
-      describe "PrivacyActComplete" do
+      it "calls notify_appellant when task is completed" do
+        task_org = HearingAdminActionFoiaPrivacyRequestTask.find_by(appeal: appeal)
+        # create child task and close it
+        task_user = HearingAdminActionFoiaPrivacyRequestTask.create_child_task(task_org, hearings_management_user, task_params_user)
+        task_user.update!(status: "completed")
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
+        task_org.update_status_if_children_tasks_are_closed(task_user)
       end
     end
-  end
-  describe "HearingAdminFoiaPrivacyRequestTask" do
-    let!(:veteran) { create(:veteran) }
-    let!(:appeal) { create(:appeal, veteran: veteran) }
-    let!(:hearings_management_user) { create(:hearings_coordinator) }
-    describe "PrivacyActPending" do
-    end
-    describe "PrivacyActComplete" do
-    end
-  end
-  describe "PrivacyActTask" do
-    let(:task) { PrivacyActTask.find(create(:privacy_act_task).id) }
-    let(:user) { task.assigned_to }
-    describe "PrivacyActPending" do
-    end
-    describe "PrivacyActComplete" do
-    end
-  end
-  describe "IhpColocatedTask" do
-    let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
-    describe "AMA Appeal" do
-      describe IhpTaskPending do
+
+    # Note: only privacyactrequestmailtask is tested because the process is the same as foiarequestmailtask
+    describe "mail task" do
+      let!(:veteran) { create(:veteran) }
+      let!(:appeal) { create(:appeal, veteran: veteran) }
+      let!(:current_user) { create(:user) }
+      let(:mail_team) { MailTeam.singleton }
+      let(:parent_task) { create(:root_task) }
+      before do
+        mail_team.add_user(user)
       end
-      describe IhpTaskComplete do
+      context "PrivacyActRequestMailTask" do
+        let(:task_params) do
+          {
+            type: "PrivacyActRequestMailTask"
+          }
+        end
+        it "PrivacyActPending" do
+          expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
+          parent_task.create_twin_of_type(task_params)
+        end
+        it "PrivacyActComplete" do
+          task_user = PrivacyActRequestMailTask.find_by(appeal: appeal, assigned_to_type: "User")
+          task_user.update!(status: "completed")
+          expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
+          task_org = PrivacyActRequestMailTask.find_by(appeal: appeal, assigned_to_type: "Organization")
+          task_org.update_status_if_children_tasks_are_closed(task_user)
+        end
       end
     end
-  end
-  describe "InformalHearingPresentationTask" do
-    let(:user) { create(:user, roles: ["VSO"]) }
-    let(:org) { create(:organization) }
-    let(:org_task) { create(:informal_hearing_presentation_task, assigned_to: org) }
-    let(:task) { create(:informal_hearing_presentation_task, assigned_to: user, parent: org_task) }
+
+    context "Colocated Tasks" do
+      let!(:attorney) { create(:user) }
+      let!(:attorney_task) { create(:ama_attorney_task, appeal: appeal, assigned_to: attorney) }
+      let(:vlj_admin) do
+        user = create(:user)
+        OrganizationsUser.make_user_admin(user, Colocated.singleton)
+        user
+      end
+      let(:task_params) do
+        {
+          instructions: "djfkdjf",
+          type: "FoiaColocatedTask",
+          external_id: appeal.uuid,
+          parent_id: attorney_task.id
+        }
+      end
+      let(:privacy_params_org) do
+        {
+          instructions: "kjkjk",
+          type: "PrivacyActTask",
+          assigned_to: Colocated.singleton
+        }
+      end
+      let(:privacy_params_user) do
+        {
+          instructions: "kjkjk",
+          type: "PrivacyActTask",
+          assigned_to: vlj_admin
+        }
+      end
+      it "sends notification when creating a FoiaColocatedTask" do
+        org_task = ColocatedTask.create_from_params(task_params, attorney)
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
+        org_task.create_privacy_act_task
+      end
+      it "sends notification when creating a PrivacyActTask" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
+        Task.create_child_task(org_task, attorney, privacy_params_org)
+      end
+      it "sends notification when completing a PrivacyActTask" do
+        privacy_org_task = PrivacyActTask.find_by(appeal: appeal)
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
+        privacy_org_task.create_child_task(privacy_org_task, vlj_admin, privacy_params_user)
+
+      end
+      it "sends notification when completing a FoiaColocatedTask" do
+
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
+
+      end
+    end
   end
 end
