@@ -357,11 +357,11 @@ feature "Appeal Edit issues", :all_dbs do
              decision_date: profile_date,
              contested_rating_issue_reference_id: "blah1234",
              contested_rating_issue_profile_date: profile_date,
-             contested_issue_description: "PTSD denied",
+             contested_issue_description: "Other Issue Description",
              contention_reference_id: "78910",
              benefit_type: "Education")
     end
-    scenario "the split appeal button shows " do
+    scenario "the split appeal button shows and leads to create_split page" do
       # add issues to the appeal
       appeal2.request_issues << request_issue_1
       appeal2.request_issues << request_issue_2
@@ -370,6 +370,89 @@ feature "Appeal Edit issues", :all_dbs do
       visit "appeals/#{appeal2.uuid}/edit/"
 
       expect(page).to have_button("Split appeal")
+      # clicking the button takes the user to the next page
+      click_button("Split appeal")
+      expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
+    end
+
+    scenario "The SSC user navigates to the split appeal page" do
+      # add issues to the appeal
+      appeal2.request_issues << request_issue_1
+      appeal2.request_issues << request_issue_2
+
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal2.uuid}/edit/create_split")
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Other Issue Description")
+      # expect the select bar, cancel button, and continue button to show
+      expect(page).to have_content("Select...")
+      expect(page).to have_content("Cancel")
+      # expect the continue button to be disabled
+      expect(page).to have_button("Continue", disabled: true)
+    end
+
+    scenario "The cancel button goes back to the edit page when clicked" do
+      # add issues to the appeal
+      appeal2.request_issues << request_issue_1
+      appeal2.request_issues << request_issue_2
+
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal2.uuid}/edit/create_split")
+
+      # click the cancel link and go to queue page
+      click_button("Cancel")
+      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
+    end
+
+    scenario "When the user accesses the review_split page, the page renders as expected" do
+      # add issues to the appeal
+      appeal2.request_issues << request_issue_1
+      appeal2.request_issues << request_issue_2
+
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal2.uuid}/edit/review_split")
+
+      expect(page).to have_content("Cancel")
+      expect(page).to have_button("Back")
+      expect(page).to have_button("Split appeal")
+      expect(page).to have_content("Reason for new appeal stream:")
+    end
+
+    scenario "on the review_split page, the back button takes the user back" do
+      # add issues to the appeal
+      appeal2.request_issues << request_issue_1
+      appeal2.request_issues << request_issue_2
+
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal2.uuid}/edit/review_split")
+
+      click_button("Back")
+      expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
+    end
+
+    scenario "on the review_split page, the cancel button takes the user to queue" do
+      # add issues to the appeal
+      appeal2.request_issues << request_issue_1
+      appeal2.request_issues << request_issue_2
+
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal2.uuid}/edit/review_split")
+
+      click_button("Cancel")
+      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
+    end
+
+    scenario "on the review_split page, the Split appeal button takes the user to queue" do
+      # add issues to the appeal
+      appeal2.request_issues << request_issue_1
+      appeal2.request_issues << request_issue_2
+
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal2.uuid}/edit/review_split")
+
+      click_button("Split appeal")
+      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
     end
   end
 
