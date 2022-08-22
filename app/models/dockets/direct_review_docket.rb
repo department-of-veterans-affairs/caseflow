@@ -15,10 +15,6 @@ class DirectReviewDocket < Docket
     Appeal.where(id: appeal_ids).count
   end
 
-  def time_until_due_of_new_appeal
-    Constants.DISTRIBUTION.direct_docket_time_goal
-  end
-
   def nonpriority_receipts_per_year
     number_of_nonpriority_appeals_received_in_the_past_year
   end
