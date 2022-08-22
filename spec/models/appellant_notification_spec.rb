@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "appellant_notification.rb"
+include IhpTaskPending
 
 describe AppellantNotification do
   describe "class methods" do
@@ -279,6 +280,36 @@ describe AppellantNotification do
       it "will notify appellant of 'IhpTaskPending' status" do
         expect(AppellantNotification).to receive(:notify_appellant).with(root_task.appeal, template_name)
         task_factory.create_ihp_tasks!
+      end
+    end
+
+    describe "notify_appellant_if_ihp(appeal)" do
+      context "A newly created 'IhpColocatedTask'" do
+        let(:user) { create(:user) }
+        let(:org) { create(:organization) }
+        let(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
+        let(:name) { task.type }
+        let(:template_name) { "IhpTaskPending" }
+        it "will notify the appellant of the 'IhpTaskPending' status" do
+          expect(AppellantNotification).to receive(:notify_appellant).with(task.appeal, template_name)
+          notify_appellant_if_ihp(task.appeal)
+        end
+      end
+    end
+  end
+
+  describe IhpTaskComplete do
+    describe "update_from_params" do
+      context "A completed 'IhpColocatedTask'" do
+        let(:user) { create(:user) }
+        let(:org) { create(:organization) }
+        let(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
+        let(:template_name) { "IhpTaskComplete" }
+        it "will notify the appellant of the 'IhpTaskComplete' status" do
+          allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
+          expect(AppellantNotification).to receive(:notify_appellant).with(task.appeal, template_name)
+          task.update_from_params({ status: Constants.TASK_STATUSES.completed }, user)
+        end
       end
     end
   end
