@@ -37,20 +37,6 @@ class PreDocketTask < Task
 
   # all of the existing methods
 
-  private
-
-  def retrieve_additional_task_actions
-    child_task = children.first
-
-    if child_task&.task_is_assigned_to_organization?(VhaCamo.singleton)
-      CAMO_ACTIONS
-    elsif child_task&.task_is_assigned_to_organization?(EducationEmo.singleton)
-      EDU_ACTIONS
-    elsif child_task&.task_is_assigned_to_organization?(VhaCaregiverSupport.singleton)
-      CAREGIVER_ACTIONS
-    end
-  end
-
   def update_from_params(params, current_user)
     multi_transaction do
       verify_user_can_update!(current_user)
@@ -81,5 +67,19 @@ class PreDocketTask < Task
 
   def self.label
     COPY::PRE_DOCKET_TASK_LABEL
+  end
+
+  private
+
+  def retrieve_additional_task_actions
+    child_task = children.first
+
+    if child_task&.task_is_assigned_to_organization?(VhaCamo.singleton)
+      CAMO_ACTIONS
+    elsif child_task&.task_is_assigned_to_organization?(EducationEmo.singleton)
+      EDU_ACTIONS
+    elsif child_task&.task_is_assigned_to_organization?(VhaCaregiverSupport.singleton)
+      CAREGIVER_ACTIONS
+    end
   end
 end
