@@ -4,7 +4,7 @@
 module AppealDocketed
   extend AppellantNotification
   # rubocop:disable all
-  @@template_name = self.to_s
+  @@template_name = "Appeal docketed"
   # rubocop:enable all
 
   # AppealDocketed.to_s?

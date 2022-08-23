@@ -4,7 +4,7 @@
 module IhpTaskPending
   extend AppellantNotification
   # rubocop:disable all
-  @@template_name = self.to_s
+  @@template_name = "VSO IHP pending"
   # rubocop:enable all
 
   # AMA Appeals

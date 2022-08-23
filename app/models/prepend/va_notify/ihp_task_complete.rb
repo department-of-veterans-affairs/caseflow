@@ -4,7 +4,7 @@
 module IhpTaskComplete
   extend AppellantNotification
   # rubocop:disable all
-  @@template_name = self.to_s
+  @@template_name = "VSO IHP complete"
   # rubocop:enable all
 
   # original method in app/models/task.rb

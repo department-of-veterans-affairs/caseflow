@@ -4,7 +4,7 @@
 module PrivacyActPending
   extend AppellantNotification
   # rubocop:disable all
-  @@template_name = self.to_s
+  @@template_name = "Privacy Act request pending"
   # rubocop:enable all
 
   # for foiacolocatedtasks

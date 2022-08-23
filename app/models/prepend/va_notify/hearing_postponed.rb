@@ -4,7 +4,7 @@
 module HearingPostponed
   extend AppellantNotification
   # rubocop:disable all
-  @@template_name = self.to_s
+  @@template_name = "Postponement of hearing"
   # rubocop:enable all
 
   def update_hearing(hearing_hash)

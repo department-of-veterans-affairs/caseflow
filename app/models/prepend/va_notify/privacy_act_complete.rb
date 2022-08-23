@@ -4,7 +4,7 @@
 module PrivacyActComplete
   extend AppellantNotification
   # rubocop:disable all
-  @@template_name = self.to_s
+  @@template_name = "Privacy Act request complete"
   # rubocop:enable all
 
   def update_status_if_children_tasks_are_closed(child_task)

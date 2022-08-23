@@ -4,7 +4,7 @@
 module HearingScheduled
   extend AppellantNotification
   # rubocop:disable all
-  @@template_name = self.to_s
+  @@template_name = "Hearing scheduled"
   # rubocop:enable all
 
   def create_hearing(task_values)
