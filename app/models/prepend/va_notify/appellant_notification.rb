@@ -3,15 +3,22 @@
 # Module containing Aspect Overrides to Classes used to Track Statuses for Appellant Notification
 module AppellantNotification
   class NoParticipantIdError < StandardError
-    def initialize(appeal_id, message = "There is no participant ID")
+    def initialize(appeal_id, message = "There is no participant_id")
       super(message + " for appeal with id #{appeal_id}")
-      # send specific error to logger and generic to VA Notify
+    end
+
+    def status
+      "No participant_id"
     end
   end
 
   class NoClaimantError < StandardError
     def initialize(appeal_id, message = "There is no claimant")
       super(message + " for appeal with id #{appeal_id}")
+    end
+
+    def status
+      "No claimant"
     end
   end
 
@@ -27,14 +34,14 @@ module AppellantNotification
           fail NoClaimantError, appeal_id
         rescue StandardError => error
           Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-          error.message
+          error.status
         end
       elsif participant_id == "" || participant_id.nil?
         begin
           fail NoParticipantIdError, appeal_id
         rescue StandardError => error
           Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-          error.message
+          error.status
         end
       else
         "Success"

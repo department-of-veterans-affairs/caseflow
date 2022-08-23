@@ -21,7 +21,7 @@ describe AppellantNotification do
         let(:appeal) { create(:appeal, number_of_claimants: 0) }
         it "returns error message" do
           expect(AppellantNotification.handle_errors(appeal)).to eq(
-            AppellantNotification::NoClaimantError.new(appeal.id).message
+            AppellantNotification::NoClaimantError.new(appeal.id).status
           )
         end
       end
@@ -34,7 +34,7 @@ describe AppellantNotification do
         end
         it "returns error message" do
           expect(AppellantNotification.handle_errors(appeal)).to eq(
-            AppellantNotification::NoParticipantIdError.new(appeal.id).message
+            AppellantNotification::NoParticipantIdError.new(appeal.id).status
           )
         end
       end
