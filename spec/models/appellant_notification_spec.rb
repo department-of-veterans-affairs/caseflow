@@ -276,22 +276,25 @@ describe AppellantNotification do
       let!(:veteran) { create(:veteran) }
       let!(:appeal) { create(:appeal, veteran: veteran) }
       let!(:current_user) { create(:user) }
-      let(:mail_team) { MailTeam.singleton }
-      let(:parent_task) { create(:root_task) }
+      let(:priv_org) { PrivacyTeam.singleton }
+      let(:root_task) { create(:root_task) }
+      let(:mail_task) { AddressChangeMailTask.create!(appeal: appeal, parent_id: root_task.id, assigned_to: priv_org) }
       before do
-        mail_team.add_user(current_user)
+        priv_org.add_user(current_user)
       end
       context "PrivacyActRequestMailTask" do
         let(:task_params) do
           {
-            type: "PrivacyActRequestMailTask"
+            type: "PrivacyActRequestMailTask",
+            instructions: "fjdkfjwpie"
           }
         end
         it "PrivacyActPending" do
           expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
-          parent_task.create_twin_of_type(task_params)
+          mail_task.create_twin_of_type(task_params)
         end
         it "PrivacyActComplete" do
+          mail_task.create_twin_of_type(task_params)
           task_user = PrivacyActRequestMailTask.find_by(appeal: appeal, assigned_to_type: "User")
           task_user.update!(status: "completed")
           expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
