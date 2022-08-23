@@ -20,7 +20,7 @@ describe AppellantNotification do
       context "with no claimant listed" do
         let(:appeal) { create(:appeal, number_of_claimants: 0) }
         it "returns error message" do
-          expect(AppellantNotification.handle_errors(appeal)).to eq(
+          expect(AppellantNotification.handle_errors(appeal)[:status]).to eq(
             AppellantNotification::NoClaimantError.new(appeal.id).status
           )
         end
@@ -33,7 +33,7 @@ describe AppellantNotification do
           appeal.claimants = [claimant]
         end
         it "returns error message" do
-          expect(AppellantNotification.handle_errors(appeal)).to eq(
+          expect(AppellantNotification.handle_errors(appeal)[:status]).to eq(
             AppellantNotification::NoParticipantIdError.new(appeal.id).status
           )
         end
@@ -43,13 +43,13 @@ describe AppellantNotification do
         let(:legacy_appeal) { create(:legacy_appeal, :with_veteran, vbms_id: 123_456) }
         it "returns success after finding participant_id from BGS" do
           allow(legacy_appeal).to receive(:claimant_participant_id).and_return(nil)
-          expect(AppellantNotification.handle_errors(legacy_appeal)).to eq "Success"
+          expect(AppellantNotification.handle_errors(legacy_appeal)[:status]).to eq "Success"
         end
       end
 
       context "with no errors" do
         it "doesn't raise" do
-          expect(AppellantNotification.handle_errors(appeal)).to eq "Success"
+          expect(AppellantNotification.handle_errors(appeal)[:status]).to eq "Success"
         end
       end
     end
