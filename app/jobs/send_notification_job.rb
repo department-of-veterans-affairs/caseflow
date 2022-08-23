@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 class SendNotificationJob < CaseflowJob
-  queue_as :send_notifications
+  queue_as ApplicationController.dependencies_faked? ? :send_notifications : :"send_notifications.fifo"
   application_attr :hearing_schedule
 
   # rubocop:disable Style/BracesAroundHashParameters
@@ -23,7 +23,7 @@ class SendNotificationJob < CaseflowJob
 
     audit = send_to_va_notify(receive_message_result)
     Shoryuken::Client.sqs.delete_message({ queue_url: queue_url, receipt_handle: message_list.first.receipt_handle })
-    Notification.create!(audit)
+    Notification.create!(audit) unless audit["error"]
   end
   # rubocop:enable Style/BracesAroundHashParameters
 
@@ -33,28 +33,35 @@ class SendNotificationJob < CaseflowJob
     event = NotificationEvent.find_by(event_type: message.message_attributes["template_name"]["string_value"])
     email_template_id = event.email_template_id
     sms_template_id = event.sms_template_id
+    notification_events_id = event.id
     phone_number = ""
-    status = message.message_attributes["status"]["string_value"]
-    phone_number = nil if phone_number.empty?
-    response = VANotifyService.send_notifications(email_address, email_template_id, phone_number, sms_template_id, status)
-    audit_params(message, response)
+    if phone_number.empty?
+      phone_number = nil
+      notification_type = "Email"
+    else notification_type = "Email/Text"
+    end
+    response = VANotifyService.send_notifications(email_address, email_template_id, phone_number, sms_template_id)
+    return response.body if response.code >= 400
+
+    audit_params(message, response, notification_events_id, notification_type)
   end
 
-  def audit_params(message, response)
+  def audit_params(message, response, notification_events_id, notification_type)
     message_attributes = message.message_attributes
     {
       appeals_id: message_attributes["appeal_id"]["string_value"],
       appeals_type: message_attributes["appeal_type"]["string_value"],
+      notification_events_id: notification_events_id,
       event_type: message_attributes["template_name"]["string_value"],
       participant_id: message_attributes["participant_id"]["string_value"],
-      notification_type: message_attributes["template_name"]["string_value"],
+      notification_type: notification_type,
       recipient_email: "",
       recipient_phone_number: "",
-      notified_at: Time.at(message["attributes"]["SentTimestamp"].to_i),
+      notified_at: Time.zone.at(message["attributes"]["SentTimestamp"].to_i),
       notification_content: response.body["content"]["body"],
       event_date: Time.zone.today,
-      email_notification_status: "sent",
-      sms_notification_status: "sent"
+      email_notification_status: message_attributes["status"]["string_value"],
+      sms_notification_status: (notification_type == "Email/Text") ? message_attributes["status"]["string_value"] : ""
     }
   end
 end
