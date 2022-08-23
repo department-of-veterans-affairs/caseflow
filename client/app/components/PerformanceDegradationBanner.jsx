@@ -7,7 +7,7 @@ import * as AppConstants from '../constants/AppConstants';
  * Caseflow Performance Degradation Banner.
  * Shared between all Certification pages.
  * Notifies users if dependencies may be experiencing an outage .
- *
+ * Updated to display one ore more systems when experiencing outages.
  */
 export default class PerformanceDegradationBanner extends React.Component {
   constructor(props) {

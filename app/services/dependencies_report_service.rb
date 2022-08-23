@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# updated to map and display keys with the value of display
 
 class DependenciesReportService
   class << self
@@ -11,12 +12,6 @@ class DependenciesReportService
       degraded_service_banner_gov_delivery: "GOV DELIVERY",
       degraded_service_banner_va_dot_gov: "VA.GOV"
     }
-      # [:degraded_service_banner_bgs,
-      #   :degraded_service_banner_vbms,
-      #   :degraded_service_banner_vva,
-      #   :degraded_service_banner_vacols,
-      #   :degraded_service_banner_gov_delivery,
-      #   :degraded_service_banner_va_dot_gov].freeze
 
     def dependencies_report
 
