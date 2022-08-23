@@ -80,6 +80,8 @@ class PreDocketTask < Task
       EDU_ACTIONS
     elsif child_task&.task_is_assigned_to_organization?(VhaCaregiverSupport.singleton)
       CAREGIVER_ACTIONS
+    else
+      []
     end
   end
 end
