@@ -585,6 +585,7 @@ class TaskActionRepository
         ),
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{VhaCaregiverSupport.singleton.url}"
+        body_optional: true
       }
     end
 
