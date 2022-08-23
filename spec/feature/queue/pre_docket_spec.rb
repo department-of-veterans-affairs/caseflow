@@ -112,6 +112,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
           expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
+          expect(page).to have_content("Optional")
 
           radio_choices = page.all(".cf-form-radio-option > label")
           expect(radio_choices[0]).to have_content("VBMS")
