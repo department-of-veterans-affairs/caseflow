@@ -30,7 +30,7 @@ class PreDocketTask < Task
 
     return task_actions unless children.all?(&:closed?)
 
-    task_actions.concat(get_additional_task_actions)
+    task_actions.concat(retrieve_additional_task_actions)
 
     task_actions
   end
@@ -39,7 +39,7 @@ class PreDocketTask < Task
 
   private
 
-  def get_additional_task_actions
+  def retrieve_additional_task_actions
     child_task = children.first
 
     if child_task&.task_is_assigned_to_organization?(VhaCamo.singleton)
