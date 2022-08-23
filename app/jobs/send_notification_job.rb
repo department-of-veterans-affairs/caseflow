@@ -5,6 +5,26 @@ class SendNotificationJob < CaseflowJob
   queue_as ApplicationController.dependencies_faked? ? :send_notifications : :"send_notifications.fifo"
   application_attr :hearing_schedule
 
+  retry_on(Caseflow::Error::VANotifyNotFoundError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+  end
+
+  retry_on(Caseflow::Error::VANotifyApiError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+  end
+
+  retry_on(Caseflow::Error::VANotifyRateLimitError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+  end
+
+  discard_on(Caseflow::Error::VANotifyUnauthorizedError) do |job, exception|
+    Rails.logger.warn("Discarding #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
+  end
+
+  discard_on(Caseflow::Error::VANotifyForbiddenError) do |job, exception|
+    Rails.logger.warn("Discarding #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
+  end
+
   # rubocop:disable Style/BracesAroundHashParameters
   def perform
     RequestStore.store[:current_user] = User.system_user
@@ -29,18 +49,14 @@ class SendNotificationJob < CaseflowJob
 
   def send_to_va_notify(result)
     message = result.messages.first
-    email_address = ""
+    # email_address = ""
     event = NotificationEvent.find_by(event_type: message.message_attributes["template_name"]["string_value"])
     email_template_id = event.email_template_id
     sms_template_id = event.sms_template_id
     notification_events_id = event.id
-    phone_number = ""
-    if phone_number.empty?
-      phone_number = nil
-      notification_type = "Email"
-    else notification_type = "Email/Text"
-    end
-    response = VANotifyService.send_notifications(email_address, email_template_id, phone_number, sms_template_id)
+    notification_type = "Email/Text"
+    response = VANotifyService.send_notifications(participant_id, email_template_id, phone_number, sms_template_id)
+    # Fake VANotify Error Handling
     return response.body if response.code >= 400
 
     audit_params(message, response, notification_events_id, notification_type)
