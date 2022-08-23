@@ -27,19 +27,28 @@ class PreDocketTask < Task
     return [] unless assigned_to.user_has_access?(user) && FeatureToggle.enabled?(:docket_vha_appeals, user: user)
 
     task_actions = Array.new(TASK_ACTIONS)
-    child_task = children.first
 
     return task_actions unless children.all?(&:closed?)
 
-    if child_task&.task_is_assigned_to_organization?(VhaCamo.singleton)
-      task_actions.concat(CAMO_ACTIONS)
-    elsif child_task&.task_is_assigned_to_organization?(EducationEmo.singleton)
-      task_actions.concat(EDU_ACTIONS)
-    elsif child_task&.task_is_assigned_to_organization?(VhaCaregiverSupport.singleton)
-      task_actions.concat(CAREGIVER_ACTIONS)
-    end
+    task_actions.concat(get_additional_task_actions)
 
     task_actions
+  end
+
+  # all of the existing methods
+
+  private
+
+  def get_additional_task_actions
+    child_task = children.first
+
+    if child_task&.task_is_assigned_to_organization?(VhaCamo.singleton)
+      CAMO_ACTIONS
+    elsif child_task&.task_is_assigned_to_organization?(EducationEmo.singleton)
+      EDU_ACTIONS
+    elsif child_task&.task_is_assigned_to_organization?(VhaCaregiverSupport.singleton)
+      CAREGIVER_ACTIONS
+    end
   end
 
   def update_from_params(params, current_user)
