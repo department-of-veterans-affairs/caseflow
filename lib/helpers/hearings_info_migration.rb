@@ -38,7 +38,7 @@ module WarRoom
       end
     end
 
-    def duplicate_ama_hearing(hearing_uuid, destination_appeal_uuid)
+    def duplicate_ama_hearing(hearing_uuid, source_appeal_uuid, destination_appeal_uuid)
       RequestStore[:current_user] = User.system_user
       ActiveRecord::Base.transaction do
         appeal_type = "Appeal"
@@ -49,6 +49,9 @@ module WarRoom
         if hearing.nil?
           fail "Invalid UUID. Hearing not found. Aborting..."
         end
+        if source_appeal.nil?
+          fail "Invalid UUID. Destination Appeal not found. Aborting..."
+        end
         if destination_appeal.nil?
           fail "Invalid UUID. Destination Appeal not found. Aborting..."
         end
@@ -58,6 +61,15 @@ module WarRoom
         if can_create_tasks?(schedule_task)
           hearing_task, schedule_task = create_tasks(appeal, "Appeal")
         end
+
+        # The 'notes' field here is admin notes, not the notes the judge takes during the hearing (which is in the `summary` field)
+        attributes_to_copy = source_hearing.serializable_hash.symbolize_keys.except(:id, :appeal_id, :created_at, :updated_at, :uuid, :notes, :disposition)
+        # Add an admin note so that we know what happened, also so we can find these later
+        h2_notes = "#{source_hearing.notes}\n\nCaseflow support manually copied this hearing for #{target_appeal.stream_docket_number} from #{source_appeal.stream_docket_number}."
+        # Create the new hearing with modified note and other attributes.
+        target_hearing = Hearing.create!(appeal_id: target_appeal.id, notes: h2_notes, override_full_hearing_day_validation: true, **attributes_to_copy)
+        # Reload it to make the next steps work
+        target_hearing.reload
 
         attributes = hearing.attributes.select{|attr, value| !%w[id appeal_id updated_at updated_by_id uuid].include?(attr)}
         attributes.merge!({appeal_id: destination_appeal.appeal_id,
@@ -111,17 +123,27 @@ module WarRoom
       end
     end
 
-    def new_transcription_task(destination_appeal_uuid)
-      RequestStore[:current_user] = User.system_user
+    def duplicate_virtual_hearing_info((hearing_uuid, destination_appeal_uuid))
+      hearing = Hearing.find_by_uuid(hearing_uuid)
+      source_appeal = Appeal.find_by_uuid(source_appeal_uuid)
       destination_appeal = Appeal.find_by_uuid(destination_appeal_uuid)
+
+      if hearing.nil?
+        fail "Invalid UUID. Hearing not found. Aborting..."
+      end
+      if source_appeal.nil?
+        fail "Invalid UUID. Destination Appeal not found. Aborting..."
+      end
       if destination_appeal.nil?
         fail "Invalid UUID. Destination Appeal not found. Aborting..."
       end
-      transcription_task = TranscriptionTask.create!(
-            appeal: destination_appeal,
-            parent: self,
-            assigned_to: TranscriptionTeam.singleton
-          )
+
+      if hearing.virtual?
+        vh1 = hearing.virtual
+        attributes_to_copy = source_hearing.serializable_hash.symbolize_keys.except(:id, :created_at, :updated_at)
+        vh2 = VirtualHearing.Create!(hearing_id: hearing.id, **attributes_to_copy)
+      
+      end
     end
 
     # Find the most recent HearingTask
