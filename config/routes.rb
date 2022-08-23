@@ -154,6 +154,8 @@ Rails.application.routes.draw do
 
   get '/task_tree/:appeal_type/:appeal_id' => 'task_tree#show'
 
+  post '/appeals/:appeal_id/split' => 'split_appeal#split_appeal'
+
   get '/explain/appeals/:appeal_id' => 'explain#show'
 
   resources :regional_offices, only: [:index]

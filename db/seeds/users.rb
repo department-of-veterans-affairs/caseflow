@@ -79,6 +79,7 @@ module Seeds
       create_mail_team_user
       create_clerk_of_the_board_users
       create_case_search_only_user
+      create_split_appeals_test_users
       create_judge_teams
       create_dvc_teams
       create_hearings_user
@@ -371,6 +372,27 @@ module Seeds
 
     def create_case_search_only_user
       User.create!(station_id: 101, css_id: "CASE_SEARCHER_ONLY", full_name: "Blair CaseSearchAccessNoQueueAccess Lyon")
+    end
+
+    def create_split_appeals_test_users
+      ussc = User.create!(station_id: 101,
+                          css_id: "SPLTAPPLSNOW",
+                          full_name: "Jon SupervisorySeniorCouncilUser Snow")
+      SupervisorySeniorCouncil.singleton.add_user(ussc)
+      ussc2 = User.create!(station_id: 101,
+                           css_id: "SPLTAPPLTARGARYEN",
+                           full_name: "Daenerys SupervisorySeniorCouncilUser Targaryen")
+      SupervisorySeniorCouncil.singleton.add_user(ussc2)
+      ussccr = User.create!(station_id: 101,
+                            css_id: "SPLTAPPLLANNISTER",
+                            full_name: "Jaime SupervisorySeniorCouncilCaseReviewUser Lannister")
+      SupervisorySeniorCouncil.singleton.add_user(ussccr)
+      CaseReview.singleton.add_user(ussccr)
+      ussccr2 = User.create!(station_id: 101,
+                             css_id: "SPLTAPPLSTARK",
+                             full_name: "Ned SupervisorySeniorCouncilCaseReviewUser Stark")
+      SupervisorySeniorCouncil.singleton.add_user(ussccr2)
+      CaseReview.singleton.add_user(ussccr2)
     end
   end
   # rubocop:enable Metrics/AbcSize
