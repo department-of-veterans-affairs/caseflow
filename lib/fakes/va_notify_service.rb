@@ -4,7 +4,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
   class << self
     # rubocop:disable Metrics/PerceivedComplexity
     # rubocop:disable Metrics/CyclomaticComplexity
-    def send_notifications(email_address, email_template_id, phone_number, sms_template_id, status = nil)
+    def send_notifications(email_address, email_template_id, phone_number, sms_template_id)
       if !email_address.include?("@")
         return bad_email_address_response
       end
