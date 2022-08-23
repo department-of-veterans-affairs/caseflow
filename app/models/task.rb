@@ -476,7 +476,6 @@ class Task < CaseflowRecord
     return reassign(params[:reassign], current_user) if params[:reassign]
 
     update_with_instructions(params)
-    byebug
 
     [self]
   end
