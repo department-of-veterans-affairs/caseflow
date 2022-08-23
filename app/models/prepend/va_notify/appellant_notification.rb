@@ -48,7 +48,6 @@ module AppellantNotification
         info[:status] = "Success"
       end
     else
-      byebug
       fail NoAppealError
     end
     info
