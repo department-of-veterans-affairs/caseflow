@@ -221,9 +221,9 @@ RSpec.feature "Start Certification", :all_dbs do
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).to have_content "Caseflow performance and availability may be impacted."
       # Banner is not showing when degraded dependency is irrelevant
-      allow(DependenciesReportService).to receive(:dependencies_report).and_return(["VVA"])
+      allow(DependenciesReportService).to receive(:dependencies_report).and_return([])
       visit "certifications/new/#{appeal_ready.vacols_id}"
-      expect(page).to_not have_content "Caseflow performance and availability may be impacted."
+      expect(page).to_not have_content "We've detected technical issues in our system"
       User.unauthenticate!
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page.has_no_content?("Caseflow performance and availability may be impacted.")).to eq(true)
