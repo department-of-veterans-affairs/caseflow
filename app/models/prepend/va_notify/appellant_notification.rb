@@ -69,9 +69,9 @@ module AppellantNotification
 
   def self.create_payload(appeal, template_name)
     info = AppellantNotification.handle_errors(appeal)
-    appeal_id = appeal.id
-    participant_id = info[:participant_id]
     appeal_type = appeal.class.to_s
+    appeal_id = (appeal_type == "Appeal") ? appeal.uuid : appeal.vacols_id
+    participant_id = info[:participant_id]
     status = info[:status]
 
     {
