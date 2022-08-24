@@ -125,7 +125,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.in_progress
         end
 
-                step "BVA Intake user can return an appeal to CAREGIVER" do
+        step "BVA Intake user can return an appeal to CAREGIVER" do
           appeal = Appeal.last
           vha_document_search_task = VhaDocumentSearchTask.last
           vha_document_search_task.update!(status: Constants.TASK_STATUSES.completed)
