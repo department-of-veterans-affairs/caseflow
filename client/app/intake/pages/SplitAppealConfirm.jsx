@@ -1,40 +1,38 @@
 import React, { useContext } from 'react';
 import { StateContext } from '../../intakeEdit/IntakeEditFrame';
 import COPY from '../../../COPY';
-import {
-  useTable
-} from 'react-table';
+import Table from '../../components/Table';
 
 const SplitAppealConfirm = () => {
   const { reason } = useContext(StateContext);
   const columns = React.useMemo(() => (
     [
       {
-        id: 'columnId_00.3277336290406283',
+        id: '1',
         Header: '',
         accessor: '',
         Footer: '',
         columns: [
           {
-            id: 'columnId_0_00.09075515404177104',
+            id: '2',
             Header: 'Veteran',
             accessor: 'veteran',
             Footer: '',
             columns: [
               {
-                id: 'columnId_0_0_00.6638957174305951',
+                id: '3',
                 Header: 'Docket Number',
-                accessor: 'docket_number',
+                accessor: 'stream_docket_number',
                 Footer: '',
                 columns: [
                   {
-                    id: 'columnId_0_0_0_00.6037342717183949',
+                    id: '4',
                     Header: 'Review Option',
                     accessor: 'review_option',
                     Footer: '',
                     columns: [
                       {
-                        id: 'columnId_0_0_0_0_00.057195930682101714',
+                        id: '5',
                         Header: 'Issues(s)',
                         accessor: 'Key0',
                         Footer: '',
@@ -48,31 +46,31 @@ const SplitAppealConfirm = () => {
         ]
       },
       {
-        id: 'columnId_00.2958969918938521',
+        id: '6',
         Header: 'Original Appeal Stream',
         accessor: 'original_appeal_stream',
         Footer: '',
         columns: [
           {
-            id: 'columnId_0_10.07053272011000855',
+            id: '7',
             Header: 'Veteran Name Placeholder',
             accessor: 'veteran_name_placeholder',
             Footer: '',
             columns: [
               {
-                id: 'columnId_0_1_00.7822271072976499',
+                id: '8',
                 Header: 'Docket Number Value Placeholder',
                 accessor: 'docket_number_value_placeholder',
                 Footer: '',
                 columns: [
                   {
-                    id: 'columnId_0_1_0_00.5711411575180423',
+                    id: '9',
                     Header: 'Review Option Placeholder',
                     accessor: 'review_option_placeholder',
                     Footer: '',
                     columns: [
                       {
-                        id: 'columnId_0_1_0_0_00.011743587193976834',
+                        id: '10',
                         Header: 'Issues Placeholder',
                         Footer: '',
                         accessor: 'Key1'
@@ -86,31 +84,31 @@ const SplitAppealConfirm = () => {
         ]
       },
       {
-        id: 'columnId_00.9225875721769246',
+        id: '11',
         Header: 'New Appeal Stream',
         accessor: 'new_appeal_stream',
         Footer: '',
         columns: [
           {
-            id: 'columnId_0_20.5649273990137622',
+            id: '12',
             Header: 'Veteran Name Placeholder',
             accessor: 'veteran_name_placeholder',
             Footer: '',
             columns: [
               {
-                id: 'columnId_0_2_00.5805703290131536',
+                id: '13',
                 Header: 'Docket Number Value Placeholder',
                 accessor: 'docket_number_value_placeholder',
                 Footer: '',
                 columns: [
                   {
-                    id: 'columnId_0_2_0_00.4474365071881008',
+                    id: '14',
                     Header: 'Review Option Placeholder',
                     accessor: 'review_option_placeholder',
                     Footer: '',
                     columns: [
                       {
-                        id: 'columnId_0_2_0_0_00.4663977107535904',
+                        id: '15',
                         Header: 'Issues Placeholder',
                         Footer: '',
                         accessor: 'Key2'
@@ -125,7 +123,7 @@ const SplitAppealConfirm = () => {
       }
     ]
   ), []);
-  const data = React.useMemo(() => (
+  const rowObjects = React.useMemo(() => (
     [
       {
         Key0: 'Julian',
@@ -149,18 +147,9 @@ const SplitAppealConfirm = () => {
       },
     ]), []);
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable(
-    {
-      columns,
-      data,
-    },
-  );
+  let additionalRowClasses = () => {
+    // no-op unless the issue banner needs to be displayed
+  };
 
   return (
     <>
@@ -175,44 +164,7 @@ const SplitAppealConfirm = () => {
       </div>
       <br /><br />
       <p>Here we will add the table</p>
-      <div>
-        <table
-          {...getTableProps()}
-          border={1}
-          style={{
-            borderCollapse: 'collapse',
-            width: '100%',
-            margin: 'auto'
-          }}
-        >
-          <thead>
-            {headerGroups.map((group) => (
-              <tr {...group.getHeaderGroupProps()}>
-                {group.headers.map((column) => (
-                  <th {...column.getHeaderProps()}>
-                    column.render("Header")
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-              prepareRow(row);
-
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <Table columns={columns} rowObjects={rowObjects} rowClassNames={additionalRowClasses} slowReRendersAreOk />
     </>
   );
 };
