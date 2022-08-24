@@ -1220,6 +1220,10 @@
   "SAVE_UNSCHEDULED_NOTES_ERROR_TITLE": "The hearing notes failed to save.",
   "SAVE_UNSCHEDULED_NOTES_ERROR_DETAIL": "Refresh the page and try again. If the problem persists, please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT.",
 
+  "VHA_LABEL": "VHA",
+  "VHA_CAREGIVER_LABEL": "CSP",
+  "EDUCATION_LABEL": "Education",
+
   "PRE_DOCKET_TASK_LABEL": "Pre-Docket",
   "DOCKET_APPEAL_MODAL_TITLE": "Docket appeal",
   "DOCKET_APPEAL_MODAL_BODY": "Please confirm that the documents provided by %s are available in VBMS before docketing this appeal.",

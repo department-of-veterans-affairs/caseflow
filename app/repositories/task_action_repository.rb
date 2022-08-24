@@ -464,10 +464,10 @@ class TaskActionRepository
       # The last organization to work the appeal before sending it to BVA Intake
       # for docketing.
       pre_docket_org = case most_recent_child_task.assigned_to
-                       when VhaCamo.singleton then "VHA"
-                       when VhaCaregiverSupport.singleton then "CSP"
+                       when VhaCamo.singleton then COPY::VHA_LABEL
+                       when VhaCaregiverSupport.singleton then COPY::VHA_CAREGIVER_LABEL
                        else
-                         "Education"
+                         COPY::EDUCATION_LABEL
                        end
 
       {

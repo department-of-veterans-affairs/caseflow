@@ -138,7 +138,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
 
           expect(page).to have_content(
-            format(COPY::DOCKET_APPEAL_MODAL_BODY, "CSP")
+            format(COPY::DOCKET_APPEAL_MODAL_BODY, COPY::VHA_CAREGIVER_LABEL)
           )
 
           find("button", class: "usa-button", text: "Confirm").click
@@ -465,7 +465,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label).click
 
     expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_TITLE)
-    expect(page).to have_content(format(COPY::DOCKET_APPEAL_MODAL_BODY, "VHA"))
+    expect(page).to have_content(format(COPY::DOCKET_APPEAL_MODAL_BODY, COPY::VHA_LABEL))
     expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_NOTICE)
 
     find("button", class: "usa-button", text: "Confirm").click
@@ -685,7 +685,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
 
         expect(page).to have_content(
-          format(COPY::DOCKET_APPEAL_MODAL_BODY, "Education")
+          format(COPY::DOCKET_APPEAL_MODAL_BODY, COPY::EDUCATION_LABEL)
         )
       end
     end
