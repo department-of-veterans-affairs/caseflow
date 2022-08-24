@@ -148,10 +148,6 @@ RSpec.feature "Convert hearing request type" do
         hearing_id = hearing.is_a?(Hearing) ? hearing.uuid : hearing.vacols_id
         visit "hearings/#{hearing_id}/details"
         expect(page).to have_content format(COPY::CONVERT_HEARING_TITLE, "Virtual")
-
-        expect(hearing.appeal.changed_hearing_request_type).to_not eq(
-          Constants.HEARING_REQUEST_TYPES.virtual
-        )
       end
 
       step "verify pre-population of Hearings form fields" do
@@ -221,13 +217,6 @@ RSpec.feature "Convert hearing request type" do
           "You have successfully converted #{appellant_name}'s hearing to virtual"
         )
         expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
-
-        # We only display hearing types for AMA hearings
-        if hearing.is_a?(Hearing)
-          expect(hearing.reload.appeal.changed_hearing_request_type).to eq(
-            Constants.HEARING_REQUEST_TYPES.virtual
-          )
-        end
       end
     end
   end
