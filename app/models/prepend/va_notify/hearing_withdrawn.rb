@@ -7,6 +7,7 @@ module HearingWithdrawn
   @@template_name = "Withdrawal of hearing"
   # rubocop:enable all
 
+  # original method defined in app/models/tasks/assign_hearing_disposition_task.rb
   def update_hearing(hearing_hash)
     super
     if hearing_hash[:disposition] == Constants.HEARING_DISPOSITION_TYPES.cancelled

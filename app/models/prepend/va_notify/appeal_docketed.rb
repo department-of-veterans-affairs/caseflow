@@ -7,8 +7,6 @@ module AppealDocketed
   @@template_name = "Appeal docketed"
   # rubocop:enable all
 
-  # AppealDocketed.to_s?
-
   def create_tasks_on_intake_success!
     # original method defined in app/models/appeal.rb
     super
