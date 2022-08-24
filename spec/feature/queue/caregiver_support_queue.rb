@@ -16,15 +16,15 @@ feature "VhaCaregiverSupportQueue", :all_dbs do
     let!(:num_in_progress_rows) { 9 }
     let!(:num_completed_rows) { 5 }
 
-    let!(:vha_caregiver_unassigned_tasks) { 
+    let!(:vha_caregiver_unassigned_tasks) do
       create_list(:vha_document_search_task, num_unassigned_rows, :assigned, assigned_to: csp_org)
-    }
-    let!(:vha_caregiver_in_progress_tasks) {
+    end
+    let!(:vha_caregiver_in_progress_tasks) do
       create_list(:vha_document_search_task, num_in_progress_rows, :in_progress, assigned_to: csp_org)
-    }
-    let!(:vha_caregiver_completed_tasks) {
+    end
+    let!(:vha_caregiver_completed_tasks) do
       create_list(:vha_document_search_task, num_completed_rows, :completed, assigned_to: csp_org)
-    }
+    end
 
     before do
       csp_org.add_user(csp_user)
