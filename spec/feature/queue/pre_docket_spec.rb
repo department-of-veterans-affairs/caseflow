@@ -126,9 +126,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         end
 
         step "BVA Intake user can return an appeal to CAREGIVER" do
-          appeal = Appeal.last
           vha_document_search_task = VhaDocumentSearchTask.last
           vha_document_search_task.update!(status: Constants.TASK_STATUSES.completed)
+          appeal = vha_document_search_task.appeal
 
           User.authenticate!(user: bva_intake_user)
 
