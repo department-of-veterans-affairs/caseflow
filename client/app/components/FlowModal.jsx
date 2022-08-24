@@ -87,7 +87,6 @@ FlowModal.defaultProps = {
   pathAfterSubmit: '/queue',
   submitDisabled: false,
   title: '',
-  submitButtonClassNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
   submitButtonClassNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning']
 };
 
