@@ -95,7 +95,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           User.authenticate!(user: vha_caregiver_user)
 
           vha_document_search_task = VhaDocumentSearchTask.last
-          vha_document_search_task.update(assigned_to: vha_caregiver)
+          # vha_document_search_task.update(assigned_to: vha_caregiver)
 
           appeal = vha_document_search_task.appeal
 
@@ -184,10 +184,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           appeal = vha_document_search_task.appeal
 
           visit "/queue/appeals/#{appeal.external_id}"
-
-          puts vha_document_search_task.status
-          # puts vha_document_search_task.assigned_by
-          puts vha_document_search_task.assigned_to
 
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find(
