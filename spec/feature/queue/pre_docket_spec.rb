@@ -88,6 +88,40 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             expect(page).to have_content(vha_caregiver.name)
           end
         end
+
+        step "enacting the 'Mark task as in progress' task action updates
+          the VhaDocumentSearchTask's status to in_progress" do
+          User.authenticate!(user: vha_caregiver_user)
+
+          vha_document_search_task = VhaDocumentSearchTask.last
+
+          appeal = vha_document_search_task.appeal
+
+          visit "/queue/appeals/#{appeal.external_id}"
+
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS.label
+          ).click
+
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY)
+
+          find("button", class: "usa-button", text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON).click
+
+          expect(page).to have_content(
+            format(
+              COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
+              appeal.veteran_full_name
+            )
+          )
+
+          expect(page).to have_current_path("/organizations/#{vha_caregiver.url}", ignore_query: true)
+
+          expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.in_progress
+        end
       end
     end
 
