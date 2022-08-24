@@ -26,29 +26,31 @@ module AppellantNotification
 
   def self.handle_errors(appeal)
     if !appeal.nil?
+      info = {}
       appeal_id = appeal.id
       claimant = appeal.claimant
-      participant_id = appeal.claimant_participant_id || AppellantNotification.legacy_non_vet_claimant_id(appeal)
+      info[:participant_id] = appeal.claimant_participant_id || AppellantNotification.legacy_non_vet_claimant_id(appeal)
       if claimant.nil?
         begin
           fail NoClaimantError, appeal_id
         rescue StandardError => error
           Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-          error.status
+          info[:status] = error.status
         end
-      elsif participant_id == "" || participant_id.nil?
+      elsif info[:participant_id] == "" || info[:participant_id].nil?
         begin
           fail NoParticipantIdError, appeal_id
         rescue StandardError => error
           Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-          error.status
+          info[:status] = error.status
         end
       else
-        "Success"
+        info[:status] = "Success"
       end
     else
       fail NoAppealError
     end
+    info
   end
 
   def self.legacy_non_vet_claimant_id(appeal)
@@ -66,10 +68,11 @@ module AppellantNotification
   end
 
   def self.create_payload(appeal, template_name)
-    status = AppellantNotification.handle_errors(appeal)
+    info = AppellantNotification.handle_errors(appeal)
     appeal_id = appeal.id
-    participant_id = appeal.claimant_participant_id
+    participant_id = info[:participant_id]
     appeal_type = appeal.class.to_s
+    status = info[:status]
 
     {
       queue_url: "caseflow_development_send_notifications",
