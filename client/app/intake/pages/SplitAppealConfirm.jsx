@@ -5,11 +5,11 @@ import COPY from '../../../COPY';
 const SplitAppealConfirm = () => {
   const { reason } = useContext(StateContext);
   const data = [
-    { col1: 'Veteran', col2: 'Some Custom Data', col3: 'Some Custom Data'},
-    { col1: 'Appellant', col2: 'Some Custom Data', col3: 'Some Custom Data'},
-    { col1: 'Docket Number', col2: 'Some Custom Data', col3: 'Some Custom Data'},
-    { col1: 'Review Option', col2: 'Some Custom Data', col3: 'Some Custom Data'},
-    { col1: 'Issues(s)', col2: 'Some Custom Data', col3: 'Some Custom Data'},
+    { col1: 'Veteran', col2: 'Some Custom Data', col3: 'Some Custom Data' },
+    { col1: 'Appellant', col2: 'Some Custom Data', col3: 'Some Custom Data' },
+    { col1: 'Docket Number', col2: 'Some Custom Data', col3: 'Some Custom Data' },
+    { col1: 'Review Option', col2: 'Some Custom Data', col3: 'Some Custom Data' },
+    { col1: 'Issues(s)', col2: 'Some Custom Data', col3: 'Some Custom Data' },
   ];
 
   return (
