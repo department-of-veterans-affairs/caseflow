@@ -372,6 +372,13 @@ exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
               pathAfterSubmit="/queue/appeals/1986897"
               resetSaveState={[Function]}
               submit={[Function]}
+              submitButtonClassNames={
+                Array [
+                  "usa-button-secondary",
+                  "usa-button-hover",
+                  "usa-button-warning",
+                ]
+              }
               submitDisabled={false}
               title="Cancel convert hearing to virtual task"
               validateForm={[Function]}
