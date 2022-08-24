@@ -273,6 +273,13 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
               pathAfterSubmit="/queue"
               resetSaveState={[Function]}
               submit={[Function]}
+              submitButtonClassNames={
+                Array [
+                  "usa-button-secondary",
+                  "usa-button-hover",
+                  "usa-button-warning",
+                ]
+              }
               submitDisabled={false}
               title="Add Court dates"
               validateForm={[Function]}
@@ -912,6 +919,13 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
               pathAfterSubmit="/queue"
               resetSaveState={[Function]}
               submit={[Function]}
+              submitButtonClassNames={
+                Array [
+                  "usa-button-secondary",
+                  "usa-button-hover",
+                  "usa-button-warning",
+                ]
+              }
               submitDisabled={false}
               title="Add Court dates"
               validateForm={[Function]}
