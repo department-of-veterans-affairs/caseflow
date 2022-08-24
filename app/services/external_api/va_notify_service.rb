@@ -4,10 +4,10 @@ require "json"
 require "base64"
 require "digest"
 class ExternalApi::VANotifyService
-  BASE_URL = "https://staging-api.va.gov/vanotify"
-  CLIENT_SECRET = ""
-  SERVICE_ID = ""
-  TOKEN_ALG = "HS256"
+  BASE_URL = ENV["VA_NOTIFY_API_URL"]
+  CLIENT_SECRET = ENV["VA_NOTIFY_API_KEY"]
+  SERVICE_ID = ENV["VA_NOTIFY_SERVICE_ID"]
+  TOKEN_ALG = ENV["VA_NOTIFY_TOKEN_ALG"]
   SEND_EMAIL_NOTIFICATION_ENDPOINT = "/v2/notifications/email"
   SEND_SMS_NOTIFICATION_ENDPOINT = "/v2/notifications/sms"
   GET_STATUS_ENDPOINT = "/v2/notifications/"
@@ -20,11 +20,9 @@ class ExternalApi::VANotifyService
   class << self
     # Send the email and sms notifications
     # @param {status} The appeal status for a template that requires it
-    def send_notifications(participant_id, email_template_id, sms_template_id, status = "")
-      email_response = send_va_notify_request(email_request(participant_id, email_template_id, status))
+    def send_notifications(participant_id, appeal_id, email_template_id, status = "")
+      email_response = send_va_notify_request(email_request(participant_id, appeal_id, email_template_id, status))
       Rails.logger.info(email_response)
-      sms_response = send_va_notify_request(sms_request(participant_id, sms_template_id, status))
-      Rails.logger.info(sms_response)
       email_response
     end
 
@@ -72,15 +70,15 @@ class ExternalApi::VANotifyService
     end
 
     # Build an email request object
-    def email_request(participant_id, email_template_id, status)
+    def email_request(participant_id, appeal_id, email_template_id, status)
       request = {
         body: {
           template_id: email_template_id,
+          reference: appeal_id,
           recipient_identifier: {
-            id_type: "VAPROFILEID",
+            id_type: "PID",
             id_value: participant_id
           },
-          # email_address: email_address,
           personalisation: nil
         },
         headers: HEADERS,
@@ -94,16 +92,16 @@ class ExternalApi::VANotifyService
     end
 
     # Build a sms request object
-    def sms_request(participant_id, sms_template_id, status)
+    def sms_request(participant_id, appeal_id, sms_template_id, status)
       request = {
         body: {
+          reference: appeal_id,
           template_id: sms_template_id,
-          # phone_number: phone_number,
-          personalisation: nil,
           recipient_identifier: {
-            id_type: "VAPROFILEID",
+            id_type: "PID",
             id_value: participant_id
-          }
+          },
+          personalisation: nil
         },
         headers: HEADERS,
         endpoint: SEND_SMS_NOTIFICATION_ENDPOINT, method: :post

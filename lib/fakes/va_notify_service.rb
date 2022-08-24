@@ -2,29 +2,13 @@
 
 class Fakes::VANotifyService < ExternalApi::VANotifyService
   class << self
-    # rubocop:disable Metrics/PerceivedComplexity
-    # rubocop:disable Metrics/CyclomaticComplexity
-    def send_notifications(email_address, email_template_id, phone_number, sms_template_id)
-      if !email_address.include?("@")
-        return bad_email_address_response
-      end
-
+    def send_notifications(participant_id, appeal_id, email_template_id, status = "")
       if email_template_id.length != 36
         return bad_email_template_response
       end
 
-      if phone_number && ((phone_number.length != 12) || (phone_number !~ /^\+/))
-        return bad_phone_number_response
-      end
-
-      if sms_template_id && sms_template_id.length != 36
-        return bad_sms_template_response
-      end
-
       fake_notification_response(email_template_id)
     end
-    # rubocop:enable Metrics/PerceivedComplexity
-    # rubocop:enable Metrics/CyclomaticComplexity
 
     def get_status(notification_id)
       return bad_notification_response if notification_id.length != 36
@@ -94,7 +78,7 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
         200,
         {},
         OpenStruct.new(
-          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6s",
+          "id": SecureRandom.uuid,
           "reference": "string",
           "uri": "string",
           "template": {
