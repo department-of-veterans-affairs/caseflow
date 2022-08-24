@@ -130,12 +130,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         step "the 'Documents ready for Board Intake review' sends task to BVA Intake for review" do
           User.authenticate!(user: vha_caregiver_user)
 
-          vha_document_search_task = VhaDocumentSearchTask.last
-          vha_document_search_task.update(assigned_to: vha_caregiver)
-          vha_document_search_task.update!(status: Constants.TASK_STATUSES.completed)
-
+          vha_document_search_task = VhaDocumentSearchTask.last          
+          vha_document_search_task.update!(status: Constants.TASK_STATUSES.assigned)
+          
           appeal = vha_document_search_task.appeal
-
+         
           visit "/queue/appeals/#{appeal.external_id}"
 
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
