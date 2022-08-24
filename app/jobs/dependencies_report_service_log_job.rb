@@ -6,10 +6,7 @@ class DependenciesReportServiceLogJob < ApplicationJob
   def perform
     outage = DependenciesReportService.dependencies_report
     if outage.present?
-      Rails.logger.error "Caseflow Monitor shows possible outages with " \
-                         "#{outage}"
+      Rails.logger.error "Caseflow Monitor shows possible outages" \
     end
-  rescue StandardError
-    Rails.logger.error "Invalid report from Caseflow Monitor"
   end
 end

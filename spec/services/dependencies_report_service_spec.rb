@@ -1,16 +1,10 @@
 # frozen_string_literal: true
 
 describe DependenciesReportService do
-  DEPENDENCIES_REPORT_WITH_OUTAGES = <<-'EOF'.strip_heredoc.freeze
-    [
-      "BGS",
-      "VACOLS"
-    ]
-  EOF
-  DEPENDENCIES_REPORT_WITHOUT_OUTAGES = <<-'EOF'.strip_heredoc.freeze
-    []
-  EOF
 
+  DEPENDENCIES_REPORT_WITH_OUTAGES = %w[BGS VACOLS].freeze
+  DEPENDENCIES_REPORT_WITHOUT_OUTAGES = [].freeze
+  
   before(:each) do
     Rails.cache.clear
   end
@@ -57,7 +51,7 @@ describe DependenciesReportService do
     end
 
     it "returns and empty array" do
-      expect(DependenciesReportService.dependencies_report).to eq  DEPENDENCIES_REPORT_WITHOUT_OUTAGES
+      expect(DependenciesReportService.dependencies_report).to eq DEPENDENCIES_REPORT_WITHOUT_OUTAGES
     end
   end
 end
