@@ -12,28 +12,32 @@ const SplitAppealConfirm = () => {
       {
         id: 'columnId_00.3277336290406283',
         Header: '',
+        accessor: '',
         Footer: '',
         columns: [
           {
             id: 'columnId_0_00.09075515404177104',
             Header: 'Veteran',
+            accessor: 'veteran',
             Footer: '',
             columns: [
               {
                 id: 'columnId_0_0_00.6638957174305951',
                 Header: 'Docket Number',
+                accessor: 'docket_number',
                 Footer: '',
                 columns: [
                   {
                     id: 'columnId_0_0_0_00.6037342717183949',
                     Header: 'Review Option',
+                    accessor: 'review_option',
                     Footer: '',
                     columns: [
                       {
                         id: 'columnId_0_0_0_0_00.057195930682101714',
                         Header: 'Issues(s)',
+                        accessor: 'Key0',
                         Footer: '',
-                        accessor: 'Key0'
                       }
                     ]
                   }
@@ -46,21 +50,25 @@ const SplitAppealConfirm = () => {
       {
         id: 'columnId_00.2958969918938521',
         Header: 'Original Appeal Stream',
+        accessor: 'original_appeal_stream',
         Footer: '',
         columns: [
           {
             id: 'columnId_0_10.07053272011000855',
             Header: 'Veteran Name Placeholder',
+            accessor: 'veteran_name_placeholder',
             Footer: '',
             columns: [
               {
                 id: 'columnId_0_1_00.7822271072976499',
                 Header: 'Docket Number Value Placeholder',
+                accessor: 'docket_number_value_placeholder',
                 Footer: '',
                 columns: [
                   {
                     id: 'columnId_0_1_0_00.5711411575180423',
                     Header: 'Review Option Placeholder',
+                    accessor: 'review_option_placeholder',
                     Footer: '',
                     columns: [
                       {
@@ -80,21 +88,25 @@ const SplitAppealConfirm = () => {
       {
         id: 'columnId_00.9225875721769246',
         Header: 'New Appeal Stream',
+        accessor: 'new_appeal_stream',
         Footer: '',
         columns: [
           {
             id: 'columnId_0_20.5649273990137622',
             Header: 'Veteran Name Placeholder',
+            accessor: 'veteran_name_placeholder',
             Footer: '',
             columns: [
               {
                 id: 'columnId_0_2_00.5805703290131536',
                 Header: 'Docket Number Value Placeholder',
+                accessor: 'docket_number_value_placeholder',
                 Footer: '',
                 columns: [
                   {
                     id: 'columnId_0_2_0_00.4474365071881008',
                     Header: 'Review Option Placeholder',
+                    accessor: 'review_option_placeholder',
                     Footer: '',
                     columns: [
                       {
@@ -185,7 +197,7 @@ const SplitAppealConfirm = () => {
             ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
+            {rows.map((row) => {
               prepareRow(row);
 
               return (
