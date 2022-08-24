@@ -134,12 +134,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           visit "/queue/appeals/#{appeal.uuid}"
 
-          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-          find(
-            "div",
-            class: "cf-select__option",
-            text: Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.label
-          ).click
+          click_dropdown(text: Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.label)
 
           expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE)
           expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_BODY)

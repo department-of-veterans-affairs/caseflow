@@ -561,17 +561,15 @@ class TaskActionRepository
     end
 
     def bva_intake_return_to_caregiver(task, _user)
-      org = Organization.find(task.assigned_to_id)
-      queue_url = org.url
-      caregiver = VhaCaregiverSupport.singleton
+      caregiver_org = VhaCaregiverSupport.singleton
       {
-        selected: caregiver,
-        options: [{ label: caregiver.name, value: caregiver.id }],
+        selected: caregiver_org,
+        options: [{ label: caregiver_org.name, value: caregiver_org.id }],
         modal_title: COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE,
         modal_body: COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_BODY,
         message_title: format(COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_CONFIRMATION_TITLE, task.appeal.veteran_full_name),
         type: VhaDocumentSearchTask.name,
-        redirect_after: "/organizations/#{queue_url}"
+        redirect_after: "/organizations/#{caregiver_org.url}"
       }
     end
 

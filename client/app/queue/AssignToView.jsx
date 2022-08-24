@@ -59,15 +59,7 @@ class AssignToView extends React.Component {
 
   validateForm = () => {
     if (this.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
-
-      const { instructions } = this.state;
-
-      let isValid = true;
-
-      isValid = validInstructions(instructions);
-
-      return isValid;
-
+      return validInstructions(this.state.instructions);
     }
 
     const actionData = taskActionData(this.props);
