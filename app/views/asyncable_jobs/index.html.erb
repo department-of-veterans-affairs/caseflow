@@ -7,7 +7,7 @@
     flash: flash,
     availableJobs: (
       if FeatureToggle.enabled?(:manually_trigger_async_jobs, user: current_user)
-        Api::V1::JobsController::SUPPORTED_JOBS.keys
+        SUPPORTED_JOBS.keys
       end
     ),
     serverJobs: {
