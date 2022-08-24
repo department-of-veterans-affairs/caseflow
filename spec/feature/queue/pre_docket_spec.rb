@@ -90,33 +90,59 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             expect(page).to have_content(vha_caregiver.name)
           end
         end
+      end
 
-        step "BVA Intake user sees case in Ready for Review tab. They can docket appeal." do
-          User.authenticate!(user: bva_intake_user)
+      step "enacting the 'Mark task as in progress' task action updates
+          the VhaDocumentSearchTask's status to in_progress" do
+        User.authenticate!(user: vha_caregiver_user)
 
-          last_vha_task = VhaDocumentSearchTask.last
-          last_vha_task.completed!
+        vha_document_search_task = VhaDocumentSearchTask.last
 
-          visit "/organizations/bva-intake?tab=bvaReadyForReview"
+        appeal = vha_document_search_task.appeal
 
-          find_link("#{veteran.name} (#{veteran.file_number})").click
+        visit "/queue/appeals/#{appeal.external_id}"
 
-          click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS.label
+        ).click
 
-          expect(page).to have_content(
-            format(COPY::DOCKET_APPEAL_MODAL_BODY, "CSP")
+        expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
+        expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY)
+
+        find("button", class: "usa-button", text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON).click
+
+        expect(page).to have_content(
+          format(
+            COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
+            appeal.veteran_full_name
           )
+        )
 
-          find("button", class: "usa-button", text: "Confirm").click
-        end
+        expect(page).to have_current_path("/organizations/#{vha_caregiver.url}", ignore_query: true)
 
-        step "Docketed appeal appears in BVA Intake's Completed tab" do
-          appeal = VhaDocumentSearchTask.last.appeal
+        expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.in_progress
+      end
 
-          visit "/organizations/bva-intake?tab=bvaIntakeCompletedTab"
+      step "BVA Intake user sees case in Ready for Review tab. They can docket appeal." do
+        User.authenticate!(user: bva_intake_user)
 
-          expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
-        end
+        last_vha_task = VhaDocumentSearchTask.last
+        last_vha_task.completed!
+
+        visit "/organizations/bva-intake?tab=bvaReadyForReview"
+
+        find_link("#{veteran.name} (#{veteran.file_number})").click
+
+        click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+
+        expect(page).to have_content(
+          format(COPY::DOCKET_APPEAL_MODAL_BODY, "CSP")
+        )
+
+        find("button", class: "usa-button", text: "Confirm").click
       end
     end
 
