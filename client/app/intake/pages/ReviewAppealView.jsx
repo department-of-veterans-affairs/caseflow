@@ -6,6 +6,7 @@ import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { formatDateStr } from '../../util/DateUtil';
+
 const issueListStyling = css({ marginTop: '0rem', marginLeft: '6rem' });
 const ReviewAppealView = (props) => {
   const { serverIntake } = props;
