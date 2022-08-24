@@ -13,7 +13,7 @@ class VhaDocumentSearchTask < Task
 
       return VHA_CAMO_TASK_ACTIONS if assigned_to.is_a?(VhaCamo)
 
-      return VHA_CAREGIVER_SUPPORT_TASK_ACTIONS if assigned_to.is_a?(VhaCaregiverSupport)
+      return caregiver_actions if assigned_to.is_a?(VhaCaregiverSupport)
     else
       []
     end
@@ -29,7 +29,23 @@ class VhaDocumentSearchTask < Task
     # Return to Board Intake
   ].freeze
 
+  VHA_CAREGIVER_SUPPORT_TASK_ACTIONS = [
+    # Documents ready for Board Intake review,
+    # Return to Board Intake
+  ].freeze
+
   def self.label
     COPY::REVIEW_DOCUMENTATION_TASK_LABEL
+  end
+
+  private
+
+  def caregiver_actions
+    if status != Constants.TASK_STATUSES.in_progress
+      [Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS.to_h] +
+        VHA_CAREGIVER_SUPPORT_TASK_ACTIONS
+    else
+      VHA_CAREGIVER_SUPPORT_TASK_ACTIONS
+    end
   end
 end
