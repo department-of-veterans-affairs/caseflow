@@ -7,7 +7,7 @@
 # is not ready to continue to being worked.
 
 class PreDocketTask < Task
-  TASK_ACTIONS = [
+  COMMON_TASK_ACTIONS = [
     Constants.TASK_ACTIONS.DOCKET_APPEAL.to_h
   ].freeze
 
@@ -26,16 +26,12 @@ class PreDocketTask < Task
   def available_actions(user)
     return [] unless assigned_to.user_has_access?(user) && FeatureToggle.enabled?(:docket_vha_appeals, user: user)
 
-    task_actions = Array.new(TASK_ACTIONS)
+    task_actions = Array.new(COMMON_TASK_ACTIONS)
 
     return task_actions unless children.all?(&:closed?)
 
     task_actions.concat(retrieve_additional_task_actions)
-
-    task_actions
   end
-
-  # all of the existing methods
 
   def update_from_params(params, current_user)
     multi_transaction do
