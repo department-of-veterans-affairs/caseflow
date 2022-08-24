@@ -223,7 +223,7 @@ class AssignToView extends React.Component {
     }
 
     if (modalProps.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
-      modalProps.buttonClasses = ['usa-button', 'usa-button-warning'];
+      modalProps.submitButtonClassNames = ['usa-button', 'usa-button-warning'];
       modalProps.button = 'Return';
       modalProps.submitDisabled = !this.validateForm();
     }
