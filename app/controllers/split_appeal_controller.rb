@@ -4,7 +4,8 @@ class SplitAppealController < ApplicationController
   protect_from_forgery with: :exception
 
   def split_appeal
-    params.require(:appeal_id)
+    params
+    # binding.pry    
 
     render json: { message: "Success" }
 
