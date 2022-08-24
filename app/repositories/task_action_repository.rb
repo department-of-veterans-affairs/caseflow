@@ -575,6 +575,20 @@ class TaskActionRepository
       }
     end
 
+    def vha_caregiver_support_mark_task_in_progress(task, _)
+      {
+        modal_title: COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
+        modal_body: COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY,
+        modal_button_text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON,
+        message_title: format(
+          COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
+          task.appeal.veteran_full_name
+        ),
+        type: VhaDocumentSearchTask.name,
+        redirect_after: "/organizations/#{VhaCaregiverSupport.singleton.url}"
+      }
+    end
+
     def vha_mark_task_in_progress(task, _user)
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url

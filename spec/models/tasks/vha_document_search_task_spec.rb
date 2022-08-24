@@ -66,7 +66,7 @@ describe VhaDocumentSearchTask, :postgres do
 
         it "all potential actions are available" do
           is_expected.to match_array(
-            # [Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS.to_h] +
+            [Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS.to_h] +
             VhaDocumentSearchTask::VHA_CAREGIVER_SUPPORT_TASK_ACTIONS
           )
         end
