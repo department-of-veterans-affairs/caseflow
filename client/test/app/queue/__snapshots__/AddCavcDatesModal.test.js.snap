@@ -216,13 +216,6 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
           >
             <FlowModal
               button="Submit"
-              buttonClasses={
-                Array [
-                  "usa-button-secondary",
-                  "usa-button-hover",
-                  "usa-button-warning",
-                ]
-              }
               highlightInvalidFormItems={[Function]}
               history={
                 Object {
@@ -862,13 +855,6 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
           >
             <FlowModal
               button="Submit"
-              buttonClasses={
-                Array [
-                  "usa-button-secondary",
-                  "usa-button-hover",
-                  "usa-button-warning",
-                ]
-              }
               highlightInvalidFormItems={[Function]}
               history={
                 Object {
