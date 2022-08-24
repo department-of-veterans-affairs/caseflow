@@ -29,11 +29,6 @@ class VhaDocumentSearchTask < Task
     # Return to Board Intake
   ].freeze
 
-  VHA_CAREGIVER_SUPPORT_TASK_ACTIONS = [
-    # Documents ready for Board Intake review,
-    # Return to Board Intake
-  ].freeze
-
   def self.label
     COPY::REVIEW_DOCUMENTATION_TASK_LABEL
   end

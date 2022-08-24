@@ -132,7 +132,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           vha_document_search_task = VhaDocumentSearchTask.last
           vha_document_search_task.update(assigned_to: vha_caregiver)
-          vha_document_search_task.update!(status: completed)
+          vha_document_search_task.update!(status: Constants.TASK_STATUSES.completed)
 
           appeal = vha_document_search_task.appeal
 

@@ -53,7 +53,7 @@ export default class FlowModal extends React.PureComponent {
   };
 
   render = () => {
-    const { title, button, buttonClasses, children, error, success, submitDisabled } = this.props;
+    const { title, button, children, error, success, submitDisabled } = this.props;
 
     return (
       <Modal
