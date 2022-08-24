@@ -9,10 +9,11 @@ module IhpTaskComplete
 
   # original method in app/models/task.rb
   def update_from_params(params, user)
-    super
+    rtn = super
     if %w[InformalHearingPresentationTask IhpColocatedTask].include?(type) &&
        params[:status] == Constants.TASK_STATUSES.completed
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
+    rtn
   end
 end

@@ -10,8 +10,9 @@ module IhpTaskPending
   # AMA Appeals
   def create_ihp_tasks!
     # original method defined in app/workflows/ihp_tasks_factory.rb
-    super
+    rtn = super
     AppellantNotification.notify_appellant(@parent.appeal, @@template_name)
+    rtn
   end
 
   # Legacy Appeals Mixin used in app/models/tasks/colocated_task.rb

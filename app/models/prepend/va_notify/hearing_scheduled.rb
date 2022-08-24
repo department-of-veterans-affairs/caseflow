@@ -9,7 +9,8 @@ module HearingScheduled
 
   def create_hearing(task_values)
     # original method defined in app/models/tasks/schedule_hearing_task.rb
-    super
+    rtn = super
     AppellantNotification.notify_appellant(appeal, @@template_name)
+    rtn
   end
 end
