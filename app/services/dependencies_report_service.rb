@@ -21,9 +21,9 @@ class DependenciesReportService
         array
       end
     rescue StandardError => error
-    Rails.logger.warn "Exception thrown while checking dependency "\
-          "status: #{error}"
-        false
+      Rails.logger.warn "Exception thrown while checking dependency "\
+        "status: #{error}"
+      false
     end
   end
 end

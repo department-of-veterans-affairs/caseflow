@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 describe DependenciesReportService do
-
   DEPENDENCIES_REPORT_WITH_OUTAGES = %w[BGS VACOLS].freeze
   DEPENDENCIES_REPORT_WITHOUT_OUTAGES = [].freeze
-  
+
   before(:each) do
     Rails.cache.clear
   end
