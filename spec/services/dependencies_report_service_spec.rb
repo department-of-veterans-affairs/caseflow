@@ -51,7 +51,7 @@ describe DependenciesReportService do
     end
   end
 
-  context "when there is an invalid value written to cache"
+  context "when there is an invalid value written to cache" do
     before do
       Rails.cache.write(:degraded_service_banner_bgs, :invalid_entry)
     end
