@@ -55,7 +55,10 @@ module AppellantNotification
 
   def self.legacy_non_vet_claimant_id(appeal)
     # find non veteran claimant participant id for legacy appeals
-    BgsPowerOfAttorney.fetch_bgs_poa_by_participant_id(appeal.veteran.participant_id)[:claimant_participant_id]
+    if !appeal&.veteran&.participant_id.nil?
+      bgs_poa = BgsPowerOfAttorney.fetch_bgs_poa_by_participant_id(appeal&.veteran&.participant_id)
+      bgs_poa.is_a?(Hash) ? bgs_poa[:claimant_participant_id] : nil
+    end
   end
 
   def self.notify_appellant(
