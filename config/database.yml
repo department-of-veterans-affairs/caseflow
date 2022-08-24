@@ -33,6 +33,7 @@ development:
 staging:
   <<: *default
   database: caseflow_certification_staging
+  url: <%= ENV["POSTGRES_URL"] %>
 
 production:
   <<: *default
