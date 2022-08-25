@@ -685,16 +685,35 @@ Rails.cache.write("certification_out_of_service", false)
 ```
 
 ### Degraded Service
-We show a "Degraded Service" banner across all Caseflow applications when [Caseflow Monitor](https://github.com/department-of-veterans-affairs/caseflow-monitor) detects that our dependencies may be down. To enable this banner run the following code from the Rails console:
-```
-Rails.cache.write(:degraded_service_banner, :always_show)
+We show a "Degraded Service" banner across all Caseflow applications when a dependency may be down. When a systems team member is alerted that one of the covered systems is down, they will enable this banner for one or more systems using the following Rails Console commands:
+
+Syntax:
+```ruby
+# display banner for a system that is down
+Rails.cache.write(:degraded_service_banner_<system>, :display)
+
+# hide banner for a system that is no longer down
+Rails.cache.write(:degraded_service_banner_<system>, :hide)
 ```
 
-*DANGER*: If Caseflow Monitor is incorrectly reporting a dependency issue, you can disable the "Degraded Service" banner with the following code:
-```
-Rails.cache.write(:degraded_service_banner, :never_show)
-```
+Systems:
 
+- `bgs`
+- `vbms`
+- `vva`
+- `vacols`
+- `gov_delivery`
+- `va_dot_gov`
+
+Example BGS:
+```ruby
+# how to display the banner when the BGS system is down
+Rails.cache.write(:degraded_service_banner_bgs, :display)
+
+# how to hide the banner when the BGS system is no longer down
+Rails.cache.write(:degraded_service_banner_bgs, :hide)
+```
+*NOTE*: If an invalid value other than `:display` and `:hide` is provided the result is the same as `:hide`
 
 ## Documentation
 We have a lot of technical documentation spread over a lot of different repositories. Here is a non-exhaustive mapping of where to find documentation:
