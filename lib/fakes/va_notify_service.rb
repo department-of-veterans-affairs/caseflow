@@ -3,8 +3,8 @@
 class Fakes::VANotifyService < ExternalApi::VANotifyService
   class << self
     def send_notifications(participant_id, appeal_id, email_template_id, status = "")
-      if email_template_id.length != 36
-        return bad_email_template_response
+      if participant_id.length != 9
+        return bad_participant_id_response
       end
 
       fake_notification_response(email_template_id)
@@ -17,6 +17,17 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
     end
 
     private
+
+    def bad_participant_id_response
+      HTTPI::Response.new(
+        400,
+        {},
+        OpenStruct.new(
+          "error": "BadRequestError",
+          "message": "participant id is not valid"
+        )
+      )
+    end
 
     def bad_email_address_response
       HTTPI::Response.new(

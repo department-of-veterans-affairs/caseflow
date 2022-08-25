@@ -5,15 +5,15 @@ class SendNotificationJob < CaseflowJob
   application_attr :hearing_schedule
 
   retry_on(Caseflow::Error::VANotifyNotFoundError, attempts: 10, wait: :exponentially_longer) do |job, exception|
-    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+    Rails.logger.error("Retrying #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
   end
 
   retry_on(Caseflow::Error::VANotifyInternalServerError, attempts: 10, wait: :exponentially_longer) do |job, exception|
-    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+    Rails.logger.error("Retrying #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
   end
 
   retry_on(Caseflow::Error::VANotifyRateLimitError, attempts: 10, wait: :exponentially_longer) do |job, exception|
-    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+    Rails.logger.error("Retrying #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
   end
 
   discard_on(Caseflow::Error::VANotifyUnauthorizedError) do |job, exception|
@@ -29,6 +29,8 @@ class SendNotificationJob < CaseflowJob
     audit = send_to_va_notify(message)
     Notification.create!(audit) unless audit["error"]
   end
+
+  private
 
   # Send message to VA Notify to send notification
   def send_to_va_notify(message)
@@ -54,7 +56,6 @@ class SendNotificationJob < CaseflowJob
   # Create parameters for creating a notification record in the db
   def audit_params(message, response, notification_events_id, notification_type)
     message_attributes = message[:message_attributes]
-    status = VANotifyService.get_status(response.body["id"]).body
     {
       appeals_id: message_attributes[:appeal_id][:string_value],
       appeals_type: message_attributes[:appeal_type][:string_value],
@@ -62,13 +63,13 @@ class SendNotificationJob < CaseflowJob
       event_type: message_attributes[:template_name][:string_value],
       participant_id: message_attributes[:participant_id][:string_value],
       notification_type: notification_type,
-      recipient_email: status["email_address"],
-      recipient_phone_number: status["phone_number"],
-      notified_at: status["sent_at"],
+      recipient_email: "",
+      recipient_phone_number: "",
+      notified_at: Time.zone.now,
       notification_content: response.body["content"]["body"],
       event_date: Time.zone.today,
-      email_notification_status: status["status"],
-      sms_notification_status: (notification_type == "Email/Text") ? status["status"] : ""
+      email_notification_status: "",
+      sms_notification_status: ""
     }
   end
 end
