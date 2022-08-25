@@ -11,7 +11,11 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :queue
 
-  include AutomaticCaseDistribution
+  if FeatureToggle.enabled?(:disable_acd_proportions)
+    include AllCaseDistribution
+  else
+    include AutomaticCaseDistribution
+  end
 
   def perform
     @tied_distributions = distribute_non_genpop_priority_appeals

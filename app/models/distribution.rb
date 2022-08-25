@@ -2,7 +2,11 @@
 
 class Distribution < CaseflowRecord
   include ActiveModel::Serializers::JSON
-  include AutomaticCaseDistribution
+  if FeatureToggle.enabled?(:disable_acd_proportions)
+    include AllCaseDistribution
+  else
+    include AutomaticCaseDistribution
+  end
 
   has_many :distributed_cases
   belongs_to :judge, class_name: "User"
