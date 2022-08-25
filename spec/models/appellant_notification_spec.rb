@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "appellant_notification.rb"
-include IhpTaskPending
-
 describe AppellantNotification do
   describe "class methods" do
     describe "self.handle_errors" do
@@ -79,18 +76,6 @@ describe AppellantNotification do
         end
       end
     end
-
-    # describe "self.notify_appellant" do
-    #   let(:appeal) { create(:appeal, number_of_claimants: 1) }
-    #   let(:template_name) { "test" }
-    #   context "sends message to shoryuken" do
-    #     it "sends the payload" do
-    #       queue = double("queue")
-    #       expect(queue).to receive(:send_message).with(AppellantNotification.create_payload(appeal, template_name))
-    #       AppellantNotification.notify_appellant(appeal, template_name, queue)
-    #     end
-    #   end
-    # end
   end
 end
 
