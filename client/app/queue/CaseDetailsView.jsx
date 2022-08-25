@@ -96,8 +96,6 @@ export const CaseDetailsView = (props) => {
   const updatePOALink =
     appeal.hasPOA ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
 
-  const splitAppeal = localStorage.getItem('SplitAppealSuccess');
-
   const tasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
   );
@@ -214,15 +212,30 @@ export const CaseDetailsView = (props) => {
 
   localStorage.removeItem('VSOSuccessMsg');
 
+  // Retrieve split appeal success and remove from the store
+  const splitStorage = localStorage.getItem('SplitAppealSuccess');
+
+  localStorage.removeItem('SplitAppealSuccess');
+
+  // if null, leave null, if true, check if value is true with reg expression.
+  const splitAppealSuccess = (splitStorage === null ? null : (/true/i).test(splitStorage));
+
   return (
     <React.Fragment>
-      {splitAppeal && (
+      {splitAppealSuccess && (
         <div>
           <Alert
             type="success"
-            title="You have successfully split..."
+            title={`You have successfully split ${appeal.appellantFullName}'s appeal`}
             message="This new appeal stream has the same docket number and tasks as the original appeal."
           />
+        </div>
+      )}
+      {splitAppealSuccess === false && (
+        <div {...alertPaddingStyle}>
+          <Alert title="Unable to Process Request" type="error">
+            Something went wrong and the appeal was not split.
+          </Alert>
         </div>
       )}
       {!modalIsOpen && error && (
