@@ -15,6 +15,7 @@ const ReviewAppealView = (props) => {
   const requestIssues = serverIntake.requestIssues;
   const { reason } = useContext(StateContext);
   const [selectedIssues, setSelectedIssues] = useState({});
+  
   const [otherReason, setOtherReason] = useState('');
   const onIssueChange = (evt) => {
     setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.checked });
@@ -39,9 +40,9 @@ const ReviewAppealView = (props) => {
 
   return (
     <>
-      <h1>{COPY.REVIEW_SPLIT_APPEAL_CREATE_TITLE}</h1>
       <div>
-        <span>{COPY.REVIEW_SPLIT_APPEAL_CREATE_SUBHEAD}</span>
+        <h1 style={{ margin: '0px' }}>{COPY.SPLIT_APPEAL_REVIEW_TITLE}</h1>
+        <span>{COPY.SPLIT_APPEAL_REVIEW_SUBHEAD}</span>
       </div> &ensp;
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'left' }}>
         <u>{COPY.SPLIT_APPEAL_REVIEW_REASONING_TITLE}</u> &ensp;
@@ -56,8 +57,17 @@ const ReviewAppealView = (props) => {
           </tr>
           <tr>
             <td>{COPY.TABLE_VETERAN}</td>
-            <td>"Rosalia Turner"
-              
+            <td>{requestIssues.map((issue) => {
+              return (
+                <ol type ="1">
+                  <li>
+                    <p>{issue.category}</p>
+                    <p>Benefit type: {issue.benefit_type}</p>
+                    <p>Decision date: {issue.approx_decision_date}</p>
+                  </li>
+                </ol>
+              );
+            })}
             </td>
             <td>"Rosalia Turner"</td>
           </tr>
