@@ -151,8 +151,20 @@ describe AppellantNotification do
       end
       let(:contested) { "Appeal decision mailed (Contested claims)" }
       let(:non_contested) { "Appeal decision mailed (Non-contested claims)" }
-      let(:dispatch) { AmaAppealDispatch.new(appeal: appeal, params: params, user: User.find(appeal.tasks.find_by(assigned_to_type: "User").assigned_to_id)) }
-      let(:contested_dispatch) { AmaAppealDispatch.new(appeal: contested_appeal, params: contested_params, user: User.find(contested_appeal.tasks.find_by(assigned_to_type: "User").assigned_to_id)) }
+      let(:dispatch) do
+        AmaAppealDispatch.new(
+          appeal: appeal,
+          params: params,
+          user: User.find(appeal.tasks.find_by(assigned_to_type: "User").assigned_to_id)
+        )
+      end
+      let(:contested_dispatch) do
+        AmaAppealDispatch.new(
+          appeal: contested_appeal,
+          params: contested_params,
+          user: User.find(contested_appeal.tasks.find_by(assigned_to_type: "User").assigned_to_id)
+        )
+      end
       it "Will notify appellant that the AMA appeal decision has been mailed (Non Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, non_contested)
         dispatch.complete_dispatch_root_task!
@@ -224,8 +236,17 @@ describe AppellantNotification do
       let(:bva) { Bva.singleton }
       let!(:hearings_management_user) { create(:hearings_coordinator) }
       let!(:parent_task) { create(:schedule_hearing_task, appeal: appeal) }
-      let(:hafpr_task) { HearingAdminActionFoiaPrivacyRequestTask.create!(appeal: appeal, parent_id: parent_task.id, assigned_to: bva) }
-      let(:hafpr_child) { create(:hearing_admin_action_foia_privacy_request_task, appeal: appeal, parent: hafpr_task, assigned_to: hearings_management_user) }
+      let(:hafpr_task) do
+        HearingAdminActionFoiaPrivacyRequestTask.create!(appeal: appeal, parent_id: parent_task.id, assigned_to: bva)
+      end
+      let(:hafpr_child) do
+        create(
+          :hearing_admin_action_foia_privacy_request_task,
+          appeal: appeal,
+          parent: hafpr_task,
+          assigned_to: hearings_management_user
+        )
+      end
       let(:task_params_org) do
         {
           instructions: "seijhy7fa",
@@ -257,8 +278,12 @@ describe AppellantNotification do
       let(:priv_org) { PrivacyTeam.singleton }
       let(:root_task) { create(:root_task) }
       let(:mail_task) { AddressChangeMailTask.create!(appeal: appeal, parent_id: root_task.id, assigned_to: priv_org) }
-      let(:foia_task) { PrivacyActRequestMailTask.create!(appeal: appeal, parent_id: root_task.id, assigned_to: priv_org) }
-      let(:foia_child) { PrivacyActRequestMailTask.create!(appeal: appeal, parent_id: mail_task.id, assigned_to: current_user) }
+      let(:foia_task) do
+        PrivacyActRequestMailTask.create!(appeal: appeal, parent_id: root_task.id, assigned_to: priv_org)
+      end
+      let(:foia_child) do
+        PrivacyActRequestMailTask.create!(appeal: appeal, parent_id: mail_task.id, assigned_to: current_user)
+      end
       before do
         priv_org.add_user(current_user)
       end
@@ -318,8 +343,9 @@ describe AppellantNotification do
       let(:current_user) { create(:user) }
       let(:priv_org) { PrivacyTeam.singleton }
       let(:root_task) { create(:root_task) }
-      let(:colocated_task) { IhpColocatedTask.create!(appeal: appeal, parent_id: root_task.id, assigned_by: attorney, assigned_to: priv_org) }
-
+      let(:colocated_task) do
+        IhpColocatedTask.create!(appeal: appeal, parent_id: root_task.id, assigned_by: attorney, assigned_to: priv_org)
+      end
       let(:privacy_params_org) do
         {
           instructions: "seijhy7fa",
