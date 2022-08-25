@@ -1,42 +1,12 @@
-import React, { useState, useContext } from 'react';
-import { css } from 'glamor';
+import React, { useContext } from 'react';
 import COPY from '../../../COPY';
-import SPLIT_APPEAL_REASONS from '../../../constants/SPLIT_APPEAL_REASONS';
-import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
-import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { formatDateStr } from '../../util/DateUtil';
 import { StateContext } from '../../intakeEdit/IntakeEditFrame';
-
-const issueListStyling = css({ marginTop: '0rem', marginLeft: '6rem' });
 
 const ReviewAppealView = (props) => {
   const { serverIntake } = props;
   const requestIssues = serverIntake.requestIssues;
   const { reason } = useContext(StateContext);
-  const [selectedIssues, setSelectedIssues] = useState({});
-  
-  const [otherReason, setOtherReason] = useState('');
-  const onIssueChange = (evt) => {
-    setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.checked });
-  };
-  const onOtherReasonChange = (value) => {
-    setOtherReason(value);
-  };
-  const reasonOptions = _.map(SPLIT_APPEAL_REASONS, (value) => ({
-    label: value,
-    value
-  }));
-  const issueOptions = () => requestIssues.map((issue) => ({
-    id: issue.id.toString(),
-    label:
-      <>
-        <span>{issue.description}</span><br />
-        <span>Benefit Type: {BENEFIT_TYPES[issue.benefit_type]}</span><br />
-        <span>Decision Date: {formatDateStr(issue.approx_decision_date)}</span>
-        <br /><br />
-      </>
-  }));
 
   return (
     <>
