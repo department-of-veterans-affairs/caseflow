@@ -37,20 +37,10 @@ class Api::ApplicationController < ActionController::Base
     RequestStore.store[:current_user] = User.system_user
   end
 
-  def current_user
-    User.from_session(session)
-  end
-
   def verify_authentication_token
-    if api_key
-      Rails.logger.info("API authenticated by #{api_key.consumer_name}")
-    elsif FeatureToggle.enabled?(:manually_trigger_async_jobs, user: current_user) && (
-      Rails.env.development? || Rails.env.demo?
-    )
-      Rails.logger.info("API authentication bypassed by #{current_user.css_id}")
-    else
-      unauthorized
-    end
+    return unauthorized unless api_key
+
+    Rails.logger.info("API authenticated by #{api_key.consumer_name}")
   end
 
   def api_key
