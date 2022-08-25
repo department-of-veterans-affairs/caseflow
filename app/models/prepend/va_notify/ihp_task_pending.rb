@@ -7,18 +7,19 @@ module IhpTaskPending
   @@template_name = "VSO IHP pending"
   # rubocop:enable all
 
-  # AMA Appeals
+  # original method defined in app/workflows/ihp_tasks_factory.rb
   def create_ihp_tasks!
-    # original method defined in app/workflows/ihp_tasks_factory.rb
     rtn = super
     AppellantNotification.notify_appellant(@parent.appeal, @@template_name)
     rtn
   end
 
-  # Legacy Appeals Mixin used in app/models/tasks/colocated_task.rb
-  def notify_appellant_if_ihp(appeal)
+  # original method defined in app/models/tasks/colocated_task.rb
+  def create_from_params(params, user)
+    rtn = super
     if name == "IhpColocatedTask"
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(rtn.appeal, @@template_name)
     end
+    rtn
   end
 end

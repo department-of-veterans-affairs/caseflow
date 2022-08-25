@@ -372,16 +372,32 @@ describe AppellantNotification do
       end
     end
 
-    describe "notify_appellant_if_ihp(appeal)" do
+    describe "create_from_params(params, user)" do
       context "A newly created 'IhpColocatedTask'" do
         let(:user) { create(:user) }
         let(:org) { create(:organization) }
-        let(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
-        let(:name) { task.type }
+        let(:appeal) { create(:appeal, :active) }
+        let(:root_task) { RootTask.find_by(appeal: appeal) }
+        let(:attorney) { create(:user) }
+        let(:colocated_task) do
+          ColocatedTask.create!(appeal: appeal, parent_id: root_task.id, assigned_by: attorney, assigned_to: org)
+        end
         let(:template_name) { "VSO IHP pending" }
+        let(:params) do
+          {
+            instructions: "test",
+            type: "IhpColocatedTask",
+            assigned_to_type: "Organization",
+            parent_id: colocated_task.id,
+            assigned_to: org,
+            appeal: appeal,
+            assigned_by: attorney
+          }
+        end
         it "will notify the appellant of the 'IhpTaskPending' status" do
-          expect(AppellantNotification).to receive(:notify_appellant).with(task.appeal, template_name)
-          notify_appellant_if_ihp(task.appeal)
+          allow(ColocatedTask).to receive(:verify_user_can_create!).with(user, colocated_task).and_return(true)
+          expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
+          IhpColocatedTask.create_from_params(params, user)
         end
       end
     end
