@@ -20,10 +20,6 @@ class DependenciesReportService
         array.push(ALL_DEPENDENCIES_MAP[key]) if value == :display
         array
       end
-    rescue StandardError => error
-      Rails.logger.warn "Exception thrown while checking dependency "\
-        "status: #{error}"
-      false
     end
   end
 end
