@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_19_230336) do
+ActiveRecord::Schema.define(version: 2022_04_22_150300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -957,7 +957,6 @@ ActiveRecord::Schema.define(version: 2022_07_19_230336) do
     t.text "positive_feedback", default: [], array: true
     t.string "quality"
     t.string "task_id", comment: "Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
-    t.string "timeliness", comment: "Documents if the drafted decision by an attorney was provided on a timely or untimely manner."
     t.datetime "updated_at", null: false
     t.index ["appeal_type", "appeal_id"], name: "index_judge_case_reviews_on_appeal_type_and_appeal_id"
     t.index ["updated_at"], name: "index_judge_case_reviews_on_updated_at"
