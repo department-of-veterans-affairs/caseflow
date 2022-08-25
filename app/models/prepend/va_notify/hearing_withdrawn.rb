@@ -9,10 +9,10 @@ module HearingWithdrawn
 
   # original method defined in app/models/tasks/assign_hearing_disposition_task.rb
   def update_hearing(hearing_hash)
-    rtn = super
+    super_return_value = super
     if hearing_hash[:disposition] == Constants.HEARING_DISPOSITION_TYPES.cancelled
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
-    rtn
+    super_return_value
   end
 end

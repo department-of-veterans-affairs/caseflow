@@ -225,7 +225,7 @@ describe AppellantNotification do
       let!(:hearings_management_user) { create(:hearings_coordinator) }
       let!(:parent_task) { create(:schedule_hearing_task, appeal: appeal) }
       let(:hafpr_task) { HearingAdminActionFoiaPrivacyRequestTask.create!(appeal: appeal, parent_id: parent_task.id, assigned_to: bva) }
-      let(:hafpr_child) { create(:hearing_admin_action_foia_privacy_request_task, appeal: appeal, parent: hafpr_task, assigned_to: hearings_management_user)}
+      let(:hafpr_child) { create(:hearing_admin_action_foia_privacy_request_task, appeal: appeal, parent: hafpr_task, assigned_to: hearings_management_user) }
       let(:task_params_org) do
         {
           instructions: "seijhy7fa",

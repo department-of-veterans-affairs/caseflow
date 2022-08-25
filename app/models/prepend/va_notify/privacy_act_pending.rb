@@ -10,29 +10,29 @@ module PrivacyActPending
   # for foiacolocatedtasks
   def create_privacy_act_task
     # original method defined in app/models/tasks/foia_colocated_task.rb
-    rtn = super
+    super_return_value = super
     AppellantNotification.notify_appellant(appeal, @@template_name)
-    rtn
+    super_return_value
   end
 
   # for foia/privacy act mail tasks
   # original method defined in app/models/mail_task.rb
   def create_twin_of_type(params)
-    rtn = super
+    super_return_value = super
     if params[:type] == "PrivacyActRequestMailTask" || params[:type] == "FoiaRequestMailTask"
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
-    rtn
+    super_return_value
   end
 
   # for HearingAdminFoiaPrivacyRequestTask/PrivacyActTask
   # original method defined in app/models/task.rb
   def create_child_task(parent, current_user, params)
-    rtn = super
+    super_return_value = super
     if (params[:type] == "PrivacyActTask" && params[:assigned_to_type].include?("Organization")) ||
        (params[:type] == "HearingAdminActionFoiaPrivacyRequestTask" && parent.type == "ScheduleHearingTask")
       AppellantNotification.notify_appellant(parent.appeal, @@template_name)
     end
-    rtn
+    super_return_value
   end
 end

@@ -9,10 +9,10 @@ module PrivacyActComplete
 
   def update_status_if_children_tasks_are_closed(child_task)
     # original method defined in app/models/task.rb
-    rtn = super
+    super_return_value = super
     if type.to_s.include?("Foia") || type.to_s.include?("PrivacyAct")
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
-    rtn
+    super_return_value
   end
 end

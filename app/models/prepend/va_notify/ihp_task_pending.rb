@@ -9,17 +9,17 @@ module IhpTaskPending
 
   # original method defined in app/workflows/ihp_tasks_factory.rb
   def create_ihp_tasks!
-    rtn = super
+    super_return_value = super
     AppellantNotification.notify_appellant(@parent.appeal, @@template_name)
-    rtn
+    super_return_value
   end
 
   # original method defined in app/models/tasks/colocated_task.rb
   def create_from_params(params, user)
-    rtn = super
+    super_return_value = super
     if name == "IhpColocatedTask"
-      AppellantNotification.notify_appellant(rtn.appeal, @@template_name)
+      AppellantNotification.notify_appellant(super_return_value.appeal, @@template_name)
     end
-    rtn
+    super_return_value
   end
 end

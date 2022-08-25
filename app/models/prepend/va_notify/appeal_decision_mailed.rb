@@ -10,24 +10,24 @@ module AppealDecisionMailed
   # Legacy
   def complete_root_task!
     # original method defined in app/workflows/legacy_appeal_dispatch.rb
-    rtn = super
+    super_return_value = super
     if appeal.contested_claim
       AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Contested claims)")
     else
       AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Non-contested claims)")
     end
-    rtn
+    super_return_value
   end
 
   # AMA
   def complete_dispatch_root_task!
     # original method defined in app/workflows/ama_appeal_dispatch.rb
-    rtn = super
+    super_return_value = super
     if appeal.contested_claim?
       AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Contested claims)")
     else
       AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Non-contested claims)")
     end
-    rtn
+    super_return_value
   end
 end
