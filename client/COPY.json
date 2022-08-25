@@ -1311,8 +1311,8 @@
       "VALUE": "no PCAFC decisions for this individual"
     },
     "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_NO_PCAFC_TIME": {
-      "LABEL": "No PCAFC for identified time period",
-      "VALUE": "no PCAFC for identified time period"
+      "LABEL": "No PCAFC decision for identified time period",
+      "VALUE": "no PCAFC decision for identified time period"
     },
     "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_MULTIPLE_PCAFC": {
       "LABEL": "Multiple PCAFC decisions could apply",

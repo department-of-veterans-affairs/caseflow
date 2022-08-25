@@ -293,7 +293,6 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
     <React.Fragment>
       {taskConfiguration && taskConfiguration.modal_body}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
-        // marginTop doesn't work here?
         <div style= {{ marginTop: '1.5rem' }}>
           <SearchableDropdown
             label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL}
@@ -419,7 +418,6 @@ const MODAL_TYPE_ATTRS = {
     buttonText: COPY.MODAL_RETURN_BUTTON,
     buttonClasses: ['usa-button'],
     submitDisabled: ({ state }) => (
-      // state.dropdown?.length < 1 || (state.dropdown === 'other' && state.otherInstructions?.length < 1)
       !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
     ),
     customValidation: ({ state }) => (
@@ -551,7 +549,7 @@ class CompleteTaskModal extends React.Component {
       }
     }
 
-    // Can generically add validation to this method via the customValidation method of the modalType declaration
+    // Checks validity using the customValidation function defined in the modal constants if it is present
     if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customValidation === 'function') {
       isValid = MODAL_TYPE_ATTRS[this.props.modalType].customValidation(this.getContentArgs());
     }
