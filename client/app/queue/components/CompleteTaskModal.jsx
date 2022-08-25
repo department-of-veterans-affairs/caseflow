@@ -284,6 +284,7 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
 
   const handleDropdownChange = ({ value }) => {
     setState({ dropdown: value });
+    // Might need to remove this if statement since the other instructions might not get reset otherwise?
     if (value === 'other') {
       setState({ otherInstructions: '' });
     }
@@ -423,7 +424,19 @@ const MODAL_TYPE_ATTRS = {
     customValidation: ({ state }) => (
       state.dropdown === 'other' ? validInstructions(state.otherInstructions) && validDropdown(state.dropdown) :
         validDropdown(state.dropdown)
-    )
+    ),
+    customFormatInstructions: ({ state }) => {
+      let formattedInstructions = '';
+
+      if (state.instructions) {
+        formattedInstructions += `\n\n**Detail:**\n${state.instructions}`;
+      }
+
+      formattedInstructions += `\n\nReturn Reason: ${state.dropdown === 'other' ?
+        state.otherInstructions : state.dropdown}`;
+
+      return formattedInstructions;
+    }
   }
 };
 
@@ -522,6 +535,9 @@ class CompleteTaskModal extends React.Component {
 
         formattedInstructions += instructionsDetail;
       }
+    } else if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customFormatInstructions === 'function') {
+      // Decide if this should stomp on formatted instructions or not.
+      formattedInstructions = MODAL_TYPE_ATTRS[this.props.modalType].customFormatInstructions(this.getContentArgs());
     }
 
     return formattedInstructions;
