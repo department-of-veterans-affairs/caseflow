@@ -442,7 +442,7 @@ class CompleteTaskModal extends React.Component {
 
         formattedInstructions.splice(1, 0, instructionsDetail);
       }
-    } else if (this.props.modalType === 'ready_for_review') {
+    } else if (this.props.modalType.includes('for_review')) {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
       const docLocationText = `Documents for this appeal are stored in ${radio === 'other' ? otherInstructions :
         locationLabel}.`;
