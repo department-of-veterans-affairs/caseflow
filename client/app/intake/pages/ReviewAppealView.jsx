@@ -5,11 +5,13 @@ import { StateContext } from '../../intakeEdit/IntakeEditFrame';
 
 const ReviewAppealView = (props) => {
   const { serverIntake } = props;
-  const requestIssues = serverIntake.requestIssues;
   const { reason } = useContext(StateContext);
   const veteran = serverIntake.veteran.name;
   const streamdocketNumber = props.appeal.stream_docket_number;
   const claimantName = props.serverIntake.claimantName;
+  const requestIssues = props.serverIntake.requestIssues;
+
+  {console.log(JSON.stringify(props.serverIntake))}    
 
   return (
     <>
@@ -34,7 +36,7 @@ const ReviewAppealView = (props) => {
             <td>{veteran}</td>
           </tr>
           <tr>
-            <th>Appellant</th>
+            <th>{COPY.APPELLANT}</th>
             <th> {claimantName}</th>
             <th> {claimantName} </th>
           </tr>
@@ -51,17 +53,17 @@ const ReviewAppealView = (props) => {
           <tr>
             <td>{COPY.TABLE_ISSUE}</td>
             <td>
-              {requestIssues.map((issue) => {
-                return (
-                  <ol type ="0">
+              <ol>
+                {requestIssues.map((issue) => {
+                  return (
                     <li>
-                      <p>{issue.category}</p>
+                      <p>{issue.description}</p>
                       <p>Benefit type: {issue.benefit_type}</p>
                       <p>Decision date: {issue.approx_decision_date}</p>
                     </li>
-                  </ol>
-                );
-              })}
+                  );
+                })}
+              </ol>
             </td>
           </tr>
         </table>

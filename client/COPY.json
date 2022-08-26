@@ -1294,5 +1294,6 @@
   "TABLE_VETERAN" : "Veteran",
   "TABLE_DOCKET_NUMBER" : "Docket Number",
   "TABLE_REVIEW_OPTION" : "Review Option",
-  "TABLE_ISSUE" : "Issue(s)"
+  "TABLE_ISSUE" : "Issue(s)",
+  "APPELLANT": "Appellant"
 }
