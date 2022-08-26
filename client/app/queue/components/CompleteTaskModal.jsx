@@ -545,6 +545,8 @@ class CompleteTaskModal extends React.Component {
       formattedInstructions.push(
         MODAL_TYPE_ATTRS[this.props.modalType].customFormatInstructions(this.getContentArgs())
       );
+    } else {
+      formattedInstructions.push(instructions)
     }
 
     return formattedInstructions.join('');
