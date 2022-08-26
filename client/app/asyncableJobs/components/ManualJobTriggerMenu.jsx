@@ -14,7 +14,7 @@ const ManualJobTriggerMenu = (props) => {
     <div>
       <h1>Manually Perform Async Jobs</h1>
       <table>
-        {props.availableJobs.map((jobType) => (
+        {props.supportedJobs.map((jobType) => (
           <tr>
             <td>
               <h3>{StringUtil.snakeCaseToCapitalized(jobType)}</h3>
@@ -35,7 +35,7 @@ const ManualJobTriggerMenu = (props) => {
 };
 
 ManualJobTriggerMenu.propTypes = {
-  availableJobs: PropTypes.arrayOf(
+  supportedJobs: PropTypes.arrayOf(
     PropTypes.string
   )
 };

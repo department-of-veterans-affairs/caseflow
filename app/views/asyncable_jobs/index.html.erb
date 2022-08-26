@@ -5,17 +5,13 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     flash: flash,
-    availableJobs: (
-      if FeatureToggle.enabled?(:manually_trigger_async_jobs, user: current_user)
-        SUPPORTED_JOBS.keys
-      end
-    ),
     serverJobs: {
       jobs: jobs.map(&:asyncable_ui_hash),
       models: AsyncableJobs.models.map(&:name),
       pagination: pagination,
       fetchedAt: Time.zone.now,
-      asyncableJobKlass: allowed_params[:asyncable_job_klass]
+      asyncableJobKlass: allowed_params[:asyncable_job_klass],
+      supportedJobs: current_user.admin? ? SUPPORTED_JOBS.keys : nil
     }
   }) %>
 <% end %>

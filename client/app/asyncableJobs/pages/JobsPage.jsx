@@ -69,70 +69,70 @@ class AsyncableJobsPage extends React.PureComponent {
       });
   }
 
+  jobsColumns = [
+    {
+      header: 'Name',
+      valueFunction: (job, rowId) => {
+        const title = `row ${rowId}`;
+        const href = `/asyncable_jobs/${job.klass}/jobs/${job.id}`;
+
+        return <a title={title} href={href}>{job.klass} {job.id}</a>;
+      }
+    },
+    {
+      header: 'Submitted',
+      valueFunction: (job) => {
+        return this.formatDate(job.submitted_at);
+      }
+    },
+    {
+      header: 'Attempted',
+      valueFunction: (job) => {
+        return this.formatDate(job.attempted_at);
+      }
+    },
+    {
+      header: 'User',
+      valueFunction: (job) => {
+        if (!job.user) {
+          return '';
+        }
+
+        return <a href={`/intake/manager?user_css_id=${job.user}`}>{job.user}</a>;
+      }
+    },
+    {
+      header: 'Error',
+      valueFunction: (job) => {
+        let errorStr = job.error;
+
+        if (errorStr) {
+          errorStr = errorStr.replace(/\s.+/g, '');
+        }
+
+        return <span className="cf-job-error">{errorStr}</span>;
+      }
+    },
+    {
+      header: 'Veteran',
+      valueFunction: (job) => {
+        if (!job.veteran_file_number) {
+          return 'unknown';
+        }
+
+        return job.veteran_file_number;
+      }
+    },
+    {
+      align: 'right',
+      valueFunction: (job) => {
+        return <JobRestartButton job={job} page={this} />;
+      }
+    }
+  ];
+
   render = () => {
     const rowObjects = this.state.jobs;
-
-    const columns = [
-      {
-        header: 'Name',
-        valueFunction: (job, rowId) => {
-          const title = `row ${rowId}`;
-          const href = `/asyncable_jobs/${job.klass}/jobs/${job.id}`;
-
-          return <a title={title} href={href}>{job.klass} {job.id}</a>;
-        }
-      },
-      {
-        header: 'Submitted',
-        valueFunction: (job) => {
-          return this.formatDate(job.submitted_at);
-        }
-      },
-      {
-        header: 'Attempted',
-        valueFunction: (job) => {
-          return this.formatDate(job.attempted_at);
-        }
-      },
-      {
-        header: 'User',
-        valueFunction: (job) => {
-          if (!job.user) {
-            return '';
-          }
-
-          return <a href={`/intake/manager?user_css_id=${job.user}`}>{job.user}</a>;
-        }
-      },
-      {
-        header: 'Error',
-        valueFunction: (job) => {
-          let errorStr = job.error;
-
-          if (errorStr) {
-            errorStr = errorStr.replace(/\s.+/g, '');
-          }
-
-          return <span className="cf-job-error">{errorStr}</span>;
-        }
-      },
-      {
-        header: 'Veteran',
-        valueFunction: (job) => {
-          if (!job.veteran_file_number) {
-            return 'unknown';
-          }
-
-          return job.veteran_file_number;
-        }
-      },
-      {
-        align: 'right',
-        valueFunction: (job) => {
-          return <JobRestartButton job={job} page={this} />;
-        }
-      }
-    ];
 
     const rowClassNames = (rowObject) => {
       return rowObject.restarted ? 'cf-success' : '';
@@ -167,12 +167,16 @@ class AsyncableJobsPage extends React.PureComponent {
         />
         {rowObjects.length > 0 &&
             <div>
-              <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
+              <Table columns={this.jobsColumns}
+                rowObjects={rowObjects}
+                rowClassNames={rowClassNames}
+                slowReRendersAreOk
+              />
               <EasyPagination currentCases={rowObjects.length} pagination={this.props.pagination} />
             </div>
         }
       </div>
-      { this.props.availableJobs && <ManualJobTriggerMenu availableJobs={this.props.availableJobs} /> }
+      { this.props.supportedJobs && <ManualJobTriggerMenu supportedJobs={this.props.supportedJobs} /> }
     </div>;
   }
 }
@@ -193,7 +197,7 @@ AsyncableJobsPage.propTypes = {
     total_jobs: PropTypes.number,
     total_pages: PropTypes.number
   }),
-  availableJobs: PropTypes.arrayOf(
+  supportedJobs: PropTypes.arrayOf(
     PropTypes.string
   )
 };
@@ -205,7 +209,7 @@ const JobsPage = connect(
     models: state.models,
     pagination: state.pagination,
     asyncableJobKlass: state.asyncableJobKlass,
-    availableJobs: state.availableJobs
+    supportedJobs: state.supportedJobs
   })
 )(AsyncableJobsPage);
 
