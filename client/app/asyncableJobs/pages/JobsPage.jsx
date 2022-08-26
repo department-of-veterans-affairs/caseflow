@@ -15,6 +15,8 @@ import ManualJobTriggerMenu from '../components/ManualJobTriggerMenu';
 import SearchBar from '../../components/SearchBar';
 import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
+import { sendJobRequest } from '../actions';
+import { bindActionCreators } from 'redux';
 
 const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
 const JOBS_TAB = 'jobs';
@@ -234,7 +236,13 @@ class AsyncableJobsPage extends React.PureComponent {
 
   renderScheduledJobs = () => {
     return (
-      <ManualJobTriggerMenu supportedJobs={this.props.supportedJobs} />
+      <ManualJobTriggerMenu
+        supportedJobs={this.props.supportedJobs}
+        sendJobRequest={this.props.sendJobRequest}
+        manualJobStatus={this.props.manualJobStatus}
+        manualJobId={this.props.manualJobId}
+        manualJobSuccess={this.props.manualJobSuccess}
+      />
     );
   }
 
@@ -270,15 +278,22 @@ AsyncableJobsPage.propTypes = {
   )
 };
 
-const JobsPage = connect(
-  (state) => ({
-    jobs: state.jobs,
-    fetchedAt: state.fetchedAt,
-    models: state.models,
-    pagination: state.pagination,
-    asyncableJobKlass: state.asyncableJobKlass,
-    supportedJobs: state.supportedJobs
-  })
-)(AsyncableJobsPage);
+const mapStateToProps = (state) => ({
+  jobs: state.jobs,
+  fetchedAt: state.fetchedAt,
+  models: state.models,
+  pagination: state.pagination,
+  asyncableJobKlass: state.asyncableJobKlass,
+  supportedJobs: state.supportedJobs,
+  manualJobStatus: state.manualJobStatus,
+  manualJobSuccess: state.manualJobSuccess,
+  manualJobId: state.manualJobId
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  sendJobRequest
+}, dispatch);
+
+const JobsPage = connect(mapStateToProps, mapDispatchToProps)(AsyncableJobsPage);
 
 export default JobsPage;

@@ -83,6 +83,38 @@
     border-right: 2px solid #aeb0b5;
     padding: 0px 24px 24px 24px;
   }
+
+  .scheduled-jobs-tab {
+
+    .manual-job-banner {
+      text-align: center;
+      padding: 10px;
+      margin-right: 10px;
+
+      &.success {
+        background-color: $color-green-lighter;
+      }
+
+      &.fail {
+        background-color: $color-red-light;
+      }
+    }
+
+    .manual-job-table {
+      display: flex;
+      flex-wrap: wrap;
+
+      tr {
+        width: 50%;
+        padding-right: 10px;
+        padding-bottom: 10px;
+
+        td {
+          width: 100%;
+        }
+      }
+    }
+  }
 }
 
 .job-notes {
