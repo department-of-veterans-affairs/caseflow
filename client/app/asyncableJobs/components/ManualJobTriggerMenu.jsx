@@ -26,10 +26,12 @@ const ManualJobTriggerMenu = (props) => {
         fail: !props.manualJobSuccess,
       }, 'manual-job-banner');
 
+      const status = props.manualJobStatus === 200 ? 'Success' : 'Fail';
+
       return (
         <div className={manualJobBannerClasses}>
           Manual run of <strong>{StringUtil.snakeCaseToCapitalized(manualJobType)}</strong> returned a{' '}
-          <strong>{props.manualJobStatus}</strong>
+          <strong>{status}</strong>
         </div>
       );
     }
