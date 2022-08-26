@@ -2,14 +2,18 @@ import ApiUtil from '../../util/ApiUtil';
 import { ACTIONS } from '../constants';
 
 export const sendJobRequest = (jobType) => (dispatch) => {
-  return ApiUtil.post('api/v1/jobs', { data: { job_type: jobType, perform_now: true } }).
+  dispatch({
+    type: ACTIONS.RESET_MANUAL_JOB,
+  });
+
+  return ApiUtil.post('asyncable_jobs/start_job', { data: { job_type: jobType } }).
     then((response) => {
       dispatch({
         type: ACTIONS.MANUAL_JOB_STARTED,
         payload: {
-          success: response.response.success,
-          job_id: response.response.job_id,
+          success: response.body.success,
           status: response.status,
+          jobType,
         },
       });
 
@@ -19,9 +23,9 @@ export const sendJobRequest = (jobType) => (dispatch) => {
       dispatch({
         type: ACTIONS.MANUAL_JOB_FAILED,
         payload: {
-          success: error.response.success,
-          job_id: error.response.job_id,
+          success: response.body.success,
           status: error.status,
+          jobType,
         } });
 
       return true;

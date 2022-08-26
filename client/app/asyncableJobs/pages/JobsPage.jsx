@@ -240,8 +240,8 @@ class AsyncableJobsPage extends React.PureComponent {
         supportedJobs={this.props.supportedJobs}
         sendJobRequest={this.props.sendJobRequest}
         manualJobStatus={this.props.manualJobStatus}
-        manualJobId={this.props.manualJobId}
         manualJobSuccess={this.props.manualJobSuccess}
+        manualJobType={this.props.manualJobType}
       />
     );
   }
@@ -287,7 +287,7 @@ const mapStateToProps = (state) => ({
   supportedJobs: state.supportedJobs,
   manualJobStatus: state.manualJobStatus,
   manualJobSuccess: state.manualJobSuccess,
-  manualJobId: state.manualJobId
+  manualJobType: state.manualJobType
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

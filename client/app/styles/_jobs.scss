@@ -86,6 +86,11 @@
 
   .scheduled-jobs-tab {
 
+    .loading-div {
+      min-height: 200px;
+      text-align: center;
+    }
+
     .manual-job-banner {
       text-align: center;
       padding: 10px;

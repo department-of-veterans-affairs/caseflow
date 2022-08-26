@@ -2,9 +2,10 @@
 
 class AsyncableJobsController < ApplicationController
   include PaginationConcern
+  include RunAsyncable
 
   before_action :react_routed, :set_application
-  before_action :verify_access, only: [:index]
+  before_action :verify_access, only: [:index, :start_job]
   before_action :verify_job_access, only: [:show]
   skip_before_action :deny_vso_access
 
@@ -43,6 +44,23 @@ class AsyncableJobsController < ApplicationController
       send_to_intake_user: send_to_intake_user
     )
     render json: job_note.serialize
+  end
+
+  def start_job
+    # start job asynchronously as given by the job_type post param
+    job = SUPPORTED_JOBS[allowed_params[:job_type]]
+    return unrecognized_job unless job
+
+    success = true
+
+    begin
+      job.perform_now
+    rescue Exception
+      Rails.logger.error "Manual run of #{allowed_params[:job_type]} failed : #{e.message}"
+      success = false
+    end
+
+    render json: { success: success }, status: :ok
   end
 
   private
@@ -120,10 +138,14 @@ class AsyncableJobsController < ApplicationController
   end
 
   def allowed_params
-    params.permit(:asyncable_job_klass, :id, :page, :note, :send_to_intake_user)
+    params.permit(:asyncable_job_klass, :id, :page, :note, :send_to_intake_user, :job_type, :perform_now)
   end
 
   def veteran_file_number
     request.headers["HTTP_VETERAN_FILE_NUMBER"]
+  end
+
+  def unrecognized_job
+    render json: { error_code: "Unable to start unrecognized job" }, status: :unprocessable_entity
   end
 end
