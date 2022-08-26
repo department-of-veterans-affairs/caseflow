@@ -212,8 +212,32 @@ export const CaseDetailsView = (props) => {
 
   localStorage.removeItem('VSOSuccessMsg');
 
+  // Retrieve split appeal success and remove from the store
+  const splitStorage = localStorage.getItem('SplitAppealSuccess');
+
+  localStorage.removeItem('SplitAppealSuccess');
+
+  // if null, leave null, if true, check if value is true with reg expression.
+  const splitAppealSuccess = (splitStorage === null ? null : (/true/i).test(splitStorage));
+
   return (
     <React.Fragment>
+      {splitAppealSuccess && (
+        <div>
+          <Alert
+            type="success"
+            title={`You have successfully split ${appeal.appellantFullName}'s appeal`}
+            message="This new appeal stream has the same docket number and tasks as the original appeal."
+          />
+        </div>
+      )}
+      {splitAppealSuccess === false && (
+        <div {...alertPaddingStyle}>
+          <Alert title="Unable to Process Request" type="error">
+            Something went wrong and the appeal was not split.
+          </Alert>
+        </div>
+      )}
       {!modalIsOpen && error && (
         <div {...alertPaddingStyle}>
           <Alert title={error.title} type="error">
