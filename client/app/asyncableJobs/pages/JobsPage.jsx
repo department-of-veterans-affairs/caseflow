@@ -25,7 +25,8 @@ class AsyncableJobsPage extends React.PureComponent {
       jobs: this.props.jobs,
       veteranFileNumber: null,
       isFetchingSearchResults: false,
-      klassFilterRemoved: false
+      klassFilterRemoved: false,
+      jobTypeFilter: null,
     };
   }
 
@@ -67,6 +68,20 @@ class AsyncableJobsPage extends React.PureComponent {
           isFetchingSearchResults: false
         });
       });
+  }
+
+  filterOnChange = (jobType) => {
+    this.setState({ jobTypeFilter: jobType });
+  }
+
+  rowObjects = () => {
+    const rowObjects = this.state.jobs;
+
+    if (this.state.jobTypeFilter) {
+      return rowObjects.filter((job) => job.klass === this.state.jobTypeFilter);
+    }
+
+    return rowObjects;
   }
 
   jobsColumns = [
@@ -132,7 +147,7 @@ class AsyncableJobsPage extends React.PureComponent {
   ];
 
   render = () => {
-    const rowObjects = this.state.jobs;
+    const rowObjects = this.rowObjects();
 
     const rowClassNames = (rowObject) => {
       return rowObject.restarted ? 'cf-success' : '';
@@ -155,7 +170,9 @@ class AsyncableJobsPage extends React.PureComponent {
         <AsyncModelNav
           models={this.props.models}
           fetchedAt={this.props.fetchedAt}
-          asyncableJobKlass={this.props.asyncableJobKlass} />
+          asyncableJobKlass={this.props.asyncableJobKlass}
+          filterOnChange={this.filterOnChange}
+        />
         <SearchBar
           style={{ marginTop: '0.5em' }}
           size="small"
