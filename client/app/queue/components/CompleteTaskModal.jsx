@@ -442,6 +442,8 @@ class CompleteTaskModal extends React.Component {
 
         formattedInstructions.push(instructionsDetail);
       }
+    } else {
+      formattedInstructions.push(instructions);
     }
 
     return formattedInstructions.join('');
