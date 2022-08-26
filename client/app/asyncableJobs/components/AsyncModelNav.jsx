@@ -11,13 +11,15 @@ export default class AsyncModelNav extends React.PureComponent {
       return {
         title: model,
         value: model,
-        button: true
+        button: true,
       };
     });
 
+    const label = this.props.currentFilter ? `Filtered by ${this.props.currentFilter}` : 'Filter by Job Type';
+
     return <DropdownButton
       lists={models}
-      label="Filter by Job Type"
+      label={label}
       onClick={this.props.filterOnChange}
     />;
   }
@@ -26,15 +28,18 @@ export default class AsyncModelNav extends React.PureComponent {
     return <div>
       <strong>Last updated:</strong> {moment(this.props.fetchedAt).format(DATE_TIME_FORMAT)}
       <div style={{ marginTop: '.5em' }}>
-        <a style={{ marginRight: '.5em' }}
-          onClick={() => this.props.filterOnChange(null)}
-          className="cf-link-btn"
-        >
-          All jobs
-        </a>
         {this.modelNameLinks()}
-        <a style={{ float: 'right' }} href={'/jobs.csv'} className="cf-link-btn">Download as CSV</a>
+        {
+          this.props.currentFilter && <a style={{ marginRight: '.5em' }}
+            onClick={() => this.props.filterOnChange(null)}
+            className="cf-link-btn"
+          >
+          All jobs
+          </a>
+        }
+        <a style={{ float: 'right' }} href="/jobs.csv" className="cf-link-btn">Download as CSV</a>
       </div>
+      <br />
     </div>;
   }
 }
@@ -43,5 +48,6 @@ AsyncModelNav.propTypes = {
   models: PropTypes.array,
   fetchedAt: PropTypes.string,
   asyncableJobKlass: PropTypes.string,
+  currentFilter: PropTypes.string,
   filterOnChange: PropTypes.func.isRequired,
 };
