@@ -7,6 +7,9 @@ const ReviewAppealView = (props) => {
   const { serverIntake } = props;
   const requestIssues = serverIntake.requestIssues;
   const { reason } = useContext(StateContext);
+  const veteran = serverIntake.veteran.name;
+  const streamdocketNumber = props.appeal.stream_docket_number;
+  const claimantName = props.serverIntake.claimantName;
 
   return (
     <>
@@ -27,24 +30,18 @@ const ReviewAppealView = (props) => {
           </tr>
           <tr>
             <td>{COPY.TABLE_VETERAN}</td>
-            <td>{requestIssues.map((issue) => {
-              return (
-                <ol type ="1">
-                  <li>
-                    <p>{issue.category}</p>
-                    <p>Benefit type: {issue.benefit_type}</p>
-                    <p>Decision date: {issue.approx_decision_date}</p>
-                  </li>
-                </ol>
-              );
-            })}
-            </td>
-            <td>"Rosalia Turner"</td>
+            <td>{veteran}</td>
+            <td>{veteran}</td>
+          </tr>
+          <tr>
+            <th>Appellant</th>
+            <th> {claimantName}</th>
+            <th> {claimantName} </th>
           </tr>
           <tr>
             <td>{COPY.TABLE_DOCKET_NUMBER}</td>
-            <td>"191228-283"</td>
-            <td>"191228-283"</td>
+            <td>{streamdocketNumber}</td>
+            <td>{streamdocketNumber}</td>
           </tr>
           <tr>
             <td>{COPY.TABLE_REVIEW_OPTION}</td>
@@ -56,7 +53,7 @@ const ReviewAppealView = (props) => {
             <td>
               {requestIssues.map((issue) => {
                 return (
-                  <ol type ="1">
+                  <ol type ="0">
                     <li>
                       <p>{issue.category}</p>
                       <p>Benefit type: {issue.benefit_type}</p>
