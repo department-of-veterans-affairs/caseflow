@@ -23,7 +23,7 @@
     button {
       background: none;
       display: block;
-      color: #000000;
+      color: $color-black;
       padding: 10px 20px;
       text-decoration: none;
       width: 100%;
@@ -43,45 +43,45 @@
     }
 
     .no-tab-button {
-      border-right: 2px solid #aeb0b5 !important;
+      border-right: 2px solid $color-gray-light !important;
     }
 
     .jobs-tab-button {
-      border-left: 2px solid #aeb0b5;
-      border-right: 1px solid #aeb0b5;
+      border-left: 2px solid $color-gray-light;
+      border-right: 1px solid $color-gray-light;
     }
 
     .scheduled-jobs-tab-button {
-      border-left: 1px solid #aeb0b5;
-      border-right: 2px solid #aeb0b5;
+      border-left: 1px solid $color-gray-light;
+      border-right: 2px solid $color-gray-light;
     }
 
     .inactive-tab {
       background-color: $color-gray-lightest;
       color: $color-gray-dark;
-      border-top: 2px solid #aeb0b5;
-      border-bottom: 2px solid #aeb0b5;
+      border-top: 2px solid $color-gray-light;
+      border-bottom: 2px solid $color-gray-light;
     }
 
     .active-tab {
       background-color: $color-white;
       color: $color-black;
-      border-top: 4px solid #0071BB;
+      border-top: 4px solid $color-blue;
       cursor: default;
 
       &:hover {
         background-color: $color-white;
-        color: #000000;
+        color: $color-black;
         text-decoration: none;
       }
     }
   }
 
   .tab-border {
-    border-bottom: 2px solid #aeb0b5;
-    border-left: 2px solid #aeb0b5;
-    border-right: 2px solid #aeb0b5;
-    padding: 0px 24px 24px 24px;
+    border-bottom: 2px solid $color-gray-light;
+    border-left: 2px solid $color-gray-light;
+    border-right: 2px solid $color-gray-light;
+    padding: 0 24px 24px 24px;
   }
 
   .scheduled-jobs-tab {

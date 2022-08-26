@@ -138,7 +138,7 @@ class AsyncableJobsController < ApplicationController
   end
 
   def allowed_params
-    params.permit(:asyncable_job_klass, :id, :page, :note, :send_to_intake_user, :job_type, :perform_now)
+    params.permit(:asyncable_job_klass, :id, :page, :note, :send_to_intake_user, :job_type)
   end
 
   def veteran_file_number
