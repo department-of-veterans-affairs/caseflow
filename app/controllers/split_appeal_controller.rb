@@ -5,7 +5,6 @@ class SplitAppealController < ApplicationController
 
   def split_appeal
     params
-    # binding.pry    
 
     render json: { message: "Success" }
 

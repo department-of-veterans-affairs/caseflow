@@ -466,12 +466,14 @@ feature "Appeal Edit issues", :all_dbs do
       click_button("Split appeal")
       expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
       expect(page).to have_content("You have successfully split")
-      expect(page).to have_content("This new appeal stream has the same docket number and tasks as the original appeal.")
+      expect(page).to
+      have_content("This new appeal stream has the same docket number and tasks as the original appeal.")
 
       # resetting the page removes the banner on load.
       page.reset!
       expect(page).to_not have_content("You have successfully split")
-      expect(page).to_not have_content("This new appeal stream has the same docket number and tasks as the original appeal.")
+      expect(page).to_not
+      have_content("This new appeal stream has the same docket number and tasks as the original appeal.")
     end
   end
 

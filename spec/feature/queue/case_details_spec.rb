@@ -1135,8 +1135,7 @@ RSpec.feature "Case details", :all_dbs do
       }
     end
     let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
-    let!(:appeal_serializer) 
-    { WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash }
+    let!(:appeal_serializer) { WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash }
     before do
       User.authenticate!(user: current_user)
       visit("/queue/appeals/#{appeal.uuid}")
