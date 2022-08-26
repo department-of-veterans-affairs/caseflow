@@ -11,8 +11,9 @@ const ManualJobTriggerMenu = (props) => {
   };
 
   return (
-    <div>
-      <h1>Manually Perform Async Jobs</h1>
+    <div className="tab-border scheduled-jobs-tab">
+      <br/>
+      <h1>Manually Perform Scheduled Async Jobs</h1>
       <table>
         {props.supportedJobs.map((jobType) => (
           <tr>

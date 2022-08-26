@@ -12,6 +12,77 @@
 
 .cf-asyncable-jobs-table {
   font-size: 90%;
+
+  .job-tabs-header {
+    display: flex;
+
+    span {
+      width: 100%;
+    }
+
+    button {
+      background: none;
+      display: block;
+      color: #000000;
+      padding: 10px 20px;
+      text-decoration: none;
+      width: 100%;
+      text-align: left;
+      border-radius: 0;
+      font-size: 2.5rem;
+      &:hover {
+        background-color: $color-blue;
+        color: $color-white;
+        text-decoration: none;
+      }
+
+      &:focus {
+        outline: none;
+        box-shadow: none;
+      }
+    }
+
+    .no-tab-button {
+      border-right: 2px solid #aeb0b5 !important;
+    }
+
+    .jobs-tab-button {
+      border-left: 2px solid #aeb0b5;
+      border-right: 1px solid #aeb0b5;
+    }
+
+    .scheduled-jobs-tab-button {
+      border-left: 1px solid #aeb0b5;
+      border-right: 2px solid #aeb0b5;
+    }
+
+    .inactive-tab {
+      background-color: $color-gray-lightest;
+      color: $color-gray-dark;
+      border-top: 2px solid #aeb0b5;
+      border-bottom: 2px solid #aeb0b5;
+    }
+
+    .active-tab {
+      background-color: $color-white;
+      color: $color-black;
+      border-top: 4px solid #0071BB;
+      cursor: default;
+
+      &:hover {
+        background-color: $color-white;
+        color: #000000;
+        text-decoration: none;
+      }
+    }
+  }
+
+  .tab-border {
+    border-bottom: 2px solid #aeb0b5;
+    border-left: 2px solid #aeb0b5;
+    border-right: 2px solid #aeb0b5;
+    padding: 0px 24px 24px 24px;
+  }
 }
 
 .job-notes {
@@ -43,3 +114,4 @@
     margin-right: 1rem;
   }
 }
+

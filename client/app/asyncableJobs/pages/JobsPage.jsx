@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import classNames from 'classnames';
 
 import Table from '../../components/Table';
 import EasyPagination from '../../components/Pagination/EasyPagination';
@@ -13,8 +14,11 @@ import ManualJobTriggerMenu from '../components/ManualJobTriggerMenu';
 
 import SearchBar from '../../components/SearchBar';
 import ApiUtil from '../../util/ApiUtil';
+import Button from '../../components/Button';
 
 const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
+const JOBS_TAB = 'jobs';
+const SCHEDULED_JOBS_TAB = 'scheduled-jobs';
 
 class AsyncableJobsPage extends React.PureComponent {
   constructor(props) {
@@ -27,6 +31,7 @@ class AsyncableJobsPage extends React.PureComponent {
       isFetchingSearchResults: false,
       klassFilterRemoved: false,
       jobTypeFilter: null,
+      currentTab: JOBS_TAB,
     };
   }
 
@@ -72,6 +77,10 @@ class AsyncableJobsPage extends React.PureComponent {
 
   filterOnChange = (jobType) => {
     this.setState({ jobTypeFilter: jobType });
+  }
+
+  tabChange = (tab) => {
+    this.setState({ currentTab: tab });
   }
 
   rowObjects = () => {
@@ -146,7 +155,35 @@ class AsyncableJobsPage extends React.PureComponent {
     }
   ];
 
-  render = () => {
+  getTab = (tab, tabName) => {
+    const activeTab = this.state.currentTab === tab;
+    const showTabs = this.props.supportedJobs !== null;
+
+    const tabClasses = classNames(
+      {
+        'active-tab': activeTab,
+        'inactive-tab': !activeTab,
+        'tab-button': showTabs,
+        'no-tab-button': !showTabs,
+      },
+      `${tab}-tab-button`,
+    );
+
+    return (
+      <Button classNames={tabClasses} onClick={() => this.tabChange(tab)}>
+        {!this.state.klassFilterRemoved && this.props.asyncableJobKlass} {tabName}
+      </Button>
+    );
+  }
+
+  renderTabs = () => {
+    return (<div className="job-tabs-header">
+      {this.getTab(JOBS_TAB, 'Jobs')}
+      {this.props.supportedJobs && this.getTab(SCHEDULED_JOBS_TAB, 'Scheduled Jobs')}
+    </div>);
+  }
+
+  renderJobsTab = () => {
     const rowObjects = this.rowObjects();
 
     const rowClassNames = (rowObject) => {
@@ -163,38 +200,51 @@ class AsyncableJobsPage extends React.PureComponent {
       }
     }
 
+    return (<div className="jobs-tab tab-border">
+      <br />
+      {noResultsMessage}
+      <AsyncModelNav
+        models={this.props.models}
+        fetchedAt={this.props.fetchedAt}
+        asyncableJobKlass={this.props.asyncableJobKlass}
+        filterOnChange={this.filterOnChange}
+        currentFilter={this.state.jobTypeFilter}
+      />
+      <br />
+      <SearchBar
+        style={{ marginTop: '0.5em' }}
+        title={(<strong>Search by Veteran file number:</strong>)}
+        onChange={this.updateVeteranFileNumber}
+        onSubmit={this.handleVeteranIdSearch}
+        loading={this.state.isFetchingSearchResults}
+        submitUsingEnterKey
+      />
+      {rowObjects.length > 0 &&
+      <div>
+        <Table columns={this.jobsColumns}
+          rowObjects={rowObjects}
+          rowClassNames={rowClassNames}
+          slowReRendersAreOk
+        />
+        <EasyPagination currentCases={rowObjects.length} pagination={this.props.pagination} />
+      </div>
+      }
+    </div>);
+  }
+
+  renderScheduledJobs = () => {
+    return (
+      <ManualJobTriggerMenu supportedJobs={this.props.supportedJobs} />
+    );
+  }
+
+  render = () => {
     return <div>
       <div className="cf-asyncable-jobs-table">
-        <h1>{!this.state.klassFilterRemoved && this.props.asyncableJobKlass} Jobs</h1>
-        {noResultsMessage}
-        <AsyncModelNav
-          models={this.props.models}
-          fetchedAt={this.props.fetchedAt}
-          asyncableJobKlass={this.props.asyncableJobKlass}
-          filterOnChange={this.filterOnChange}
-          currentFilter={this.state.jobTypeFilter}
-        />
-        <br/>
-        <SearchBar
-          style={{ marginTop: '0.5em' }}
-          title={(<strong>Search by Veteran file number:</strong>)}
-          onChange={this.updateVeteranFileNumber}
-          onSubmit={this.handleVeteranIdSearch}
-          loading={this.state.isFetchingSearchResults}
-          submitUsingEnterKey
-        />
-        {rowObjects.length > 0 &&
-            <div>
-              <Table columns={this.jobsColumns}
-                rowObjects={rowObjects}
-                rowClassNames={rowClassNames}
-                slowReRendersAreOk
-              />
-              <EasyPagination currentCases={rowObjects.length} pagination={this.props.pagination} />
-            </div>
-        }
+        {this.renderTabs()}
+        {this.state.currentTab === JOBS_TAB && this.renderJobsTab()}
+        {this.state.currentTab === SCHEDULED_JOBS_TAB && this.renderScheduledJobs() }
       </div>
-      { this.props.supportedJobs && <ManualJobTriggerMenu supportedJobs={this.props.supportedJobs} /> }
     </div>;
   }
 }
