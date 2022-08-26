@@ -447,10 +447,11 @@ module Caseflow::Error
   class GovDeliveryServiceUnavailableError < GovDeliveryApiError; end
 
   # VANotify Errors
-  class VANotifyApiError < SerializableError; end
+  class VANotifyApiError < StandardError; end
   class VANotifyUnauthorizedError < VANotifyApiError; end
   class VANotifyForbiddenError < VANotifyApiError; end
   class VANotifyNotFoundError < VANotifyApiError; end
   class VANotifyInternalServerError < VANotifyApiError; end
   class VANotifyRateLimitError < VANotifyApiError; end
+  class EmptyQueueError < StandardError; end
 end

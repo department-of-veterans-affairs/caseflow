@@ -20,13 +20,9 @@ class ExternalApi::VANotifyService
   class << self
     # Send the email and sms notifications
     # @param {status} The appeal status for a template that requires it
-    def send_notifications(email_address, email_template_id, phone_number, sms_template_id, status = "")
-      email_response = send_va_notify_request(email_request(email_address, email_template_id, status))
+    def send_notifications(participant_id, appeal_id, email_template_id, status = "")
+      email_response = send_va_notify_request(email_request(participant_id, appeal_id, email_template_id, status))
       Rails.logger.info(email_response)
-      if phone_number
-        sms_response = send_va_notify_request(sms_request(phone_number, sms_template_id, status))
-        Rails.logger.info(sms_response)
-      end
       email_response
     end
 
@@ -74,11 +70,15 @@ class ExternalApi::VANotifyService
     end
 
     # Build an email request object
-    def email_request(email_address, email_template_id, status)
+    def email_request(participant_id, appeal_id, email_template_id, status)
       request = {
         body: {
           template_id: email_template_id,
-          email_address: email_address,
+          reference: appeal_id,
+          recipient_identifier: {
+            id_type: "PID",
+            id_value: participant_id
+          },
           personalisation: nil
         },
         headers: HEADERS,
@@ -92,11 +92,15 @@ class ExternalApi::VANotifyService
     end
 
     # Build a sms request object
-    def sms_request(phone_number, sms_template_id, status)
+    def sms_request(participant_id, appeal_id, sms_template_id, status)
       request = {
         body: {
+          reference: appeal_id,
           template_id: sms_template_id,
-          phone_number: phone_number,
+          recipient_identifier: {
+            id_type: "PID",
+            id_value: participant_id
+          },
           personalisation: nil
         },
         headers: HEADERS,
