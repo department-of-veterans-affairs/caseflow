@@ -28,6 +28,45 @@ describe SendNotificationJob, type: :job do
       }
     }
   }
+  let(:participant_id) { message[:message_attributes][:participant_id][:string_value] }
+  let(:bad_participant_id) { "123" }
+  let(:appeal_id) { message[:message_attributes][:appeal_id][:string_value] }
+  let(:email_template_id) { "d78cdba9-f02f-43dd-ab89-3ce42cc88078" }
+  let(:appeal_status) { "" }
+  let(:bad_response) {
+    HTTPI::Response.new(
+      400,
+      {},
+      OpenStruct.new(
+        "error": "BadRequestError",
+        "message": "participant id is not valid"
+      )
+    )
+  }
+  let(:good_response) {
+    HTTPI::Response.new(
+      200,
+      {},
+      OpenStruct.new(
+        "id": SecureRandom.uuid,
+        "reference": "string",
+        "uri": "string",
+        "template": {
+          "id" => email_template_id,
+          "version" => 0,
+          "uri" => "string"
+        },
+        "scheduled_for": "string",
+        "content": {
+          "body" => "string",
+          "subject" => "string"
+        }
+      )
+    )
+  }
+  let(:notification_events_id) { "VSO IHP complete" }
+  let(:notification_type) { "VSO IHP complete" }
+  let(:queue_name) { "caseflow_test_send_notifications" }
   # rubocop:enable Style/BlockDelimiters
 
   after do
@@ -36,7 +75,7 @@ describe SendNotificationJob, type: :job do
   end
 
   it "it is the correct queue" do
-    expect(SendNotificationJob.new.queue_name).to eq("caseflow_test_send_notifications")
+    expect(SendNotificationJob.new.queue_name).to eq(queue_name)
   end
 
   context ".perform" do
@@ -46,6 +85,48 @@ describe SendNotificationJob, type: :job do
         expect { job }.to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
       end
 
+      it "processes message" do
+        allow(VANotifyService).to receive(:send_notifications) { bad_response }
+        allow(VANotifyService).to receive(:send_notifications)
+          .with(
+            participant_id,
+            appeal_id,
+            email_template_id,
+            appeal_status
+          )
+        perform_enqueued_jobs do
+          result = SendNotificationJob.perform_later(message)
+          expect(result.arguments[0]).to eq(message)
+        end
+      end
+
+      it "makes audit params" do
+        allow(VANotifyService).to receive(:send_notifications) { bad_response }
+        allow(VANotifyService).to receive(:send_notifications)
+          .with(
+            participant_id,
+            appeal_id,
+            email_template_id,
+            appeal_status
+          )
+        audit_creation_params = {
+          message: message,
+          good_response: good_response,
+          notification_events_id: notification_events_id,
+          notification_type: notification_type
+        }
+        allow_any_instance_of(SendNotificationJob)
+          .to receive(:audit_params) { audit_creation_params }
+        allow_any_instance_of(SendNotificationJob)
+          .to receive(:audit_params)
+          .with(message, good_response, notification_events_id, notification_type)
+        perform_enqueued_jobs do
+          SendNotificationJob.perform_later(message)
+        end
+      end
+    end
+
+    describe "handling errors" do
       it "retries on internal server error" do
         allow_any_instance_of(SendNotificationJob)
           .to receive(:perform)
@@ -91,6 +172,31 @@ describe SendNotificationJob, type: :job do
           .to receive(:perform)
           .and_raise(Caseflow::Error::VANotifyForbiddenError)
         expect(Rails.logger).to receive(:warn).with(/Discarding/)
+        perform_enqueued_jobs do
+          SendNotificationJob.perform_later(message)
+        end
+      end
+
+      it "returns error for fakes" do
+        allow(VANotifyService).to receive(:send_notifications) { bad_response }
+        allow(VANotifyService).to receive(:send_notifications)
+          .with(
+            bad_participant_id,
+            appeal_id,
+            email_template_id,
+            appeal_status
+          )
+        expect(Rails.logger).to receive(:error).with(/Failed with error:/)
+        perform_enqueued_jobs do
+          SendNotificationJob.perform_later(message)
+        end
+      end
+
+      it "retries on retriable error" do
+        allow_any_instance_of(SendNotificationJob)
+          .to receive(:perform)
+          .and_raise(Caseflow::Error::VANotifyInternalServerError)
+        expect_any_instance_of(SendNotificationJob).to receive(:retry_job)
         perform_enqueued_jobs do
           SendNotificationJob.perform_later(message)
         end
