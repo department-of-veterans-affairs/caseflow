@@ -145,7 +145,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           ).click
 
           expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
-          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
+          expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
           expect(page).to have_content("Optional")
 
           radio_choices = page.all(".cf-form-radio-option > label")
@@ -556,7 +556,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           text: Constants.TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
         ).click
         expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
-        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+        expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
 
         radio_choices = page.all(".cf-form-radio-option > label")
         expect(radio_choices[0]).to have_content("VBMS")
@@ -672,7 +672,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           text: Constants.TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
         ).click
         expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
-        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+        expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
 
         radio_choices = page.all(".cf-form-radio-option > label")
         expect(radio_choices[0]).to have_content("VBMS")
@@ -877,7 +877,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         text: Constants.TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
       ).click
       expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
-      expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+      expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
 
       radio_choices = page.all(".cf-form-radio-option > label")
       expect(radio_choices[0]).to have_content("VBMS")

@@ -85,10 +85,8 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
   const modalLabel = () => {
     if (getTaskType() === 'AssessDocumentationTask') {
       return COPY.VHA_COMPLETE_TASK_MODAL_TITLE;
-    } else if (getTaskType() === 'VhaDocumentSearchTask') {
-      return StringUtil.nl2br(COPY.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY);
-    } else if (getTaskType()?.includes('Education')) {
-      return StringUtil.nl2br(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY);
+    } else if ((getTaskType() === 'VhaDocumentSearchTask') || (getTaskType()?.includes('Education'))) {
+      return StringUtil.nl2br(COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY);
     }
 
     return null;
@@ -458,7 +456,7 @@ class CompleteTaskModal extends React.Component {
     return formattedInstructions.join('');
   };
 
-  validateCGForm = () => {
+  validateCaregiverForm = () => {
     const { otherInstructions, radio } = this.state;
     const modalType = this.props.modalType;
 
@@ -527,7 +525,7 @@ class CompleteTaskModal extends React.Component {
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
         button={modalAttributes.buttonText}
-        submitDisabled={!this.validateCGForm()}
+        submitDisabled={!this.validateCaregiverForm()}
         validateForm={this.validateForm}
         submit={this.submit}
         submitButtonClassNames={modalAttributes.buttonClasses}
