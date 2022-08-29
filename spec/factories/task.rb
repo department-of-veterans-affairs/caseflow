@@ -471,6 +471,10 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :hearing_admin_action_foia_privacy_request_task, class: HearingAdminActionFoiaPrivacyRequestTask do
+        assigned_by { nil }
+      end
+
       factory :hearing_admin_action_verify_address_task, class: HearingAdminActionVerifyAddressTask do
         assigned_by { nil }
       end

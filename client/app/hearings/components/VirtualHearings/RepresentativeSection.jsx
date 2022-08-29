@@ -22,6 +22,7 @@ export const RepresentativeSection = ({
   showTimezoneField,
   showDivider,
   formFieldsOnly,
+  representativeTimezone,
   representativeEmailAddress,
   representativeEmailType
 }) => (
@@ -51,7 +52,7 @@ export const RepresentativeSection = ({
             optional={!representativeEmailAddress}
             errorMessage={errors?.representativeTz}
             required={Boolean(representativeEmailAddress)}
-            value={hearing?.representativeTz}
+            value={representativeTimezone || hearing?.representativeTz}
             onChange={(representativeTz) =>
               update('hearing', { representativeTz })
             }
@@ -99,6 +100,7 @@ RepresentativeSection.propTypes = {
   schedulingToVirtual: PropTypes.bool,
   showDivider: PropTypes.bool,
   formFieldsOnly: PropTypes.bool,
+  representativeTimezone: PropTypes.string,
   representativeEmailAddress: PropTypes.string,
   representativeEmailType: PropTypes.string,
   userVsoEmployee: PropTypes.bool
