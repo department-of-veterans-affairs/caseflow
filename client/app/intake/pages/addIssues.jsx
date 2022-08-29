@@ -288,7 +288,7 @@ class AddIssuesPage extends React.Component {
             + Add issue
             </Button>,
             (' '),
-            <Link to="/create_split">
+            <Link to="/create_split" disabled={issuesChanged}>
               <Button
                 name="split-appeal"
                 label="split-appeal"
