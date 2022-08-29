@@ -136,6 +136,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           task_name = Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.label
 
+          other_text_field_text = "Wrong type of documents"
+          optional_text_field_text = "The documents included in the appeal are incorrect"
+
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find(
             "div",
@@ -185,10 +188,17 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL
           )
 
+          # Enter info into the optional text field and verify the submit button is still disabled
+          fill_in(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL,
+                  with: optional_text_field_text)
+
+          expect(submit_button[:disabled]).to eq "true"
+
           # Enter info into the other reason text field
           # Then verify that the submit button is no longer disabled before submitting
           fill_in(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL,
-                  with: "Wrong type of documents")
+                  with: other_text_field_text)
+
           expect(submit_button[:disabled]).to eq "false"
 
           submit_button.click
@@ -201,9 +211,19 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           )
 
           expect(page).to have_current_path("/organizations/#{vha_caregiver.url}", ignore_query: true)
+
+          # Some quick data checks to verify that everything saved successfully
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
           expect(appeal.tasks.last.parent.assigned_to). to eq bva_intake
           expect(appeal.tasks.last.parent.status).to eq Constants.TASK_STATUSES.assigned
+
+          # Navigate to the appeal that was just returned to board intake and verify the timeline
+          visit "/queue/appeals/#{appeal.external_id}"
+          # Click the timeline display link
+          find(".cf-submit", text: "View task instructions").click
+          # Verify the text in the timeline to match the other text field and optional text field.
+          expect(page).to have_content("Other - #{other_text_field_text}")
+          expect(page).to have_content(optional_text_field_text)
         end
       end
     end
