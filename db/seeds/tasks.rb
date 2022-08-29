@@ -11,6 +11,8 @@ module Seeds
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
   class Tasks < Base
+    BFAC_ORIGINAL = 1
+
     def initialize
       @ama_appeals = []
     end
@@ -764,7 +766,9 @@ module Seeds
                            correspondent: correspondent,
                            folder: folder,
                            bfkey: legacy_vacols_id,
-                           bfcorlid: veteran_file_number_legacy_opt_in)
+                           bfcorlid: veteran_file_number_legacy_opt_in,
+                           bfac: BFAC_ORIGINAL,
+                           bfdnod: random_date_within_one_year)
       create(:legacy_appeal, vacols_case: vacols_case)
     end
 
@@ -777,6 +781,8 @@ module Seeds
         correspondent: correspondent,
         bfcorlid: vacols_titrnum,
         bfcurloc: "CASEFLOW",
+        bfac: BFAC_ORIGINAL,
+        bfdnod: random_date_within_one_year,
         folder: vacols_folder
       )
     end
@@ -788,6 +794,8 @@ module Seeds
         correspondent: correspondent,
         bfcorlid: vacols_titrnum,
         bfcurloc: "CASEFLOW",
+        bfac: BFAC_ORIGINAL,
+        bfdnod: random_date_within_one_year,
         folder: vacols_folder
       )
     end
@@ -926,6 +934,10 @@ module Seeds
           note: Faker::Lorem.sentence
         )
       end
+    end
+
+    def random_date_within_one_year
+      rand(1.year.ago..Time.zone.now)
     end
   end
   # rubocop:enable Metrics/ClassLength

@@ -6,6 +6,8 @@ module Seeds
   class Hearings < Base
     include PowerOfAttorneyMapper
 
+    BFAC_ORIGINAL = 1
+
     # Create the available hearing times and issue counts to pull from
     AMA_SCHEDULE_TIMES = %w[13:30 14:00 15:00 15:15 16:15].freeze # times in UTC
     LEGACY_SCHEDULE_TIMES = %w[8:15 9:30 10:15 11:00 11:45].freeze # times in EST
@@ -216,6 +218,7 @@ module Seeds
         bfkey: @bfkey.to_s,
         bfcorkey: @bfcorkey.to_s,
         bfac: %w[1 3].sample, # original or Post remand,
+        bfdnod: random_date_within_one_year,
         correspondent: correspondent
       )
 
@@ -331,6 +334,8 @@ module Seeds
         :travel_board_hearing,
         bfkey: @bfkey.to_s,
         bfcorkey: @bfcorkey.to_s,
+        bfac: BFAC_ORIGINAL,
+        bfdnod: random_date_within_one_year,
         correspondent: correspondent
       )
     end
@@ -355,6 +360,10 @@ module Seeds
           )
         )
       end
+    end
+
+    def random_date_within_one_year
+      rand(1.year.ago..Time.zone.now)
     end
   end
 end

@@ -71,6 +71,8 @@ class VACOLS::CaseDocket < VACOLS::Record
     where BRIEFF.BFMPRO = 'ACT'
       and BRIEFF.BFCURLOC in ('81', '83')
       and BRIEFF.BFBOX is null
+      and BRIEFF.BFAC is not null
+      and BRIEFF.BFDNOD is not null
       and MAIL_BLOCKS_DISTRIBUTION = 0
       and DIARY_BLOCKS_DISTRIBUTION = 0
   "
@@ -243,12 +245,12 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals.map { |appeal| appeal["bfdloout"] }
   end
 
-  def self.age_of_n_oldest_nonpriority_appeals(num)
+  def self.age_of_n_oldest_genpop_nonpriority_appeals(num)
     conn = connection
 
     query = <<-SQL
       #{SELECT_NONPRIORITY_APPEALS}
-      where rownum <= ?
+      where VLJ is null and rownum <= ?
     SQL
 
     fmtd_query = sanitize_sql_array([query, num])

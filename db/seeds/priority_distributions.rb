@@ -9,6 +9,8 @@
 
 module Seeds
   class PriorityDistributions < Base
+    BFAC_ORIGINAL = 1
+
     # :nocov:
     def seed!
       # organize_judges
@@ -128,6 +130,8 @@ module Seeds
           :tied_to_judge,
           tied_judge: judge,
           bfkey: random_key,
+          bfac: BFAC_ORIGINAL,
+          bfdnod: random_date_within_one_year,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
@@ -141,6 +145,8 @@ module Seeds
           :tied_to_judge,
           tied_judge: judge,
           bfkey: random_key,
+          bfac: BFAC_ORIGINAL,
+          bfdnod: random_date_within_one_year,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
@@ -154,6 +160,8 @@ module Seeds
           :tied_to_judge,
           tied_judge: judge,
           bfkey: random_key,
+          bfac: BFAC_ORIGINAL,
+          bfdnod: random_date_within_one_year,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
@@ -210,6 +218,8 @@ module Seeds
           :aod,
           :ready_for_distribution,
           bfkey: random_key,
+          bfac: BFAC_ORIGINAL,
+          bfdnod: random_date_within_one_year,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
@@ -221,6 +231,8 @@ module Seeds
           :case,
           :aod,
           bfkey: random_key,
+          bfac: BFAC_ORIGINAL,
+          bfdnod: random_date_within_one_year,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
@@ -232,6 +244,8 @@ module Seeds
           :case,
           :ready_for_distribution,
           bfkey: random_key,
+          bfac: BFAC_ORIGINAL,
+          bfdnod: random_date_within_one_year,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
@@ -375,6 +389,8 @@ module Seeds
         :aod,
         :ready_for_distribution,
         bfkey: random_key,
+        bfac: BFAC_ORIGINAL,
+        bfdnod: random_date_within_one_year,
         correspondent: create(:correspondent, stafkey: random_key)
       )
       create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case)
@@ -423,6 +439,10 @@ module Seeds
 
     def random_key
       rand.to_s[2..11]
+    end
+
+    def random_date_within_one_year
+      rand(1.year.ago..Time.zone.now)
     end
     # :nocov:
   end

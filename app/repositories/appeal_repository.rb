@@ -774,11 +774,11 @@ class AppealRepository
       end
     end
 
-    def age_of_n_oldest_nonpriority_appeals(num)
-      MetricsService.record("VACOLS: age_of_n_oldest_nonpriority_appeals",
-                            name: "age_of_n_oldest_nonpriority_appeals",
+    def age_of_n_oldest_genpop_nonpriority_appeals(num)
+      MetricsService.record("VACOLS: age_of_n_oldest_genpop_nonpriority_appeals",
+                            name: "age_of_n_oldest_genpop_nonpriority_appeals",
                             service: :vacols) do
-        VACOLS::CaseDocket.age_of_n_oldest_nonpriority_appeals(num)
+        VACOLS::CaseDocket.age_of_n_oldest_genpop_nonpriority_appeals(num)
       end
     end
 

@@ -62,9 +62,9 @@ module AllCaseDistribution
     # If a docket runs out of available appeals, we reallocate its cases to the other dockets.
     until @rem <= 0 || @remaining_docket_proportions.all_zero?
       if FeatureToggle.enabled?(:disable_acd_proportions)
-        distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem, style: "request")
+        distribute_genpop_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem, style: "request")
       else
-        distribute_appeals_according_to_remaining_docket_proportions(style: "request")    
+        distribute_appeals_according_to_remaining_docket_proportions(style: "request")
       end
     end
 
@@ -107,13 +107,13 @@ module AllCaseDistribution
     end
   end
 
-  def distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
+  def distribute_genpop_nonpriority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
     @nonpriority_iterations += 1
-    num_oldest_nonpriority_appeals_by_docket(limit).each do |docket, number_of_appeals_to_distribute|
+    num_oldest_genpop_nonpriority_appeals_by_docket(limit).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
         dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: false, style: style)
       end
-      @rem -= 1
+      @rem -= number_of_appeals_to_distribute
     end
   end
 
@@ -183,11 +183,11 @@ module AllCaseDistribution
       .transform_values(&:count)
   end
 
-  def num_oldest_nonpriority_appeals_by_docket(num)
+  def num_oldest_genpop_nonpriority_appeals_by_docket(num)
     return {} unless num > 0
 
     dockets
-      .flat_map { |sym, docket| docket.age_of_n_oldest_nonpriority_appeals(num).map { |age| [age, sym] } }
+      .flat_map { |sym, docket| docket.age_of_n_oldest_genpop_nonpriority_appeals(num).map { |age| [age, sym] } }
       .sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }
