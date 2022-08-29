@@ -200,7 +200,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             )
           )
 
-          # expect(current_path).to eq("/organizations/#{vha_caregiver.url}")
           expect(page).to have_current_path("/organizations/#{vha_caregiver.url}", ignore_query: true)
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
           expect(appeal.tasks.last.parent.assigned_to). to eq bva_intake
