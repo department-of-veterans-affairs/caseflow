@@ -1283,5 +1283,8 @@
   "EMO_ASSIGN_TO_RPO_MODAL_BODY": "Regional Processing Office",
   "EDUCATION_RPO_SELECTOR_PLACEHOLDER": "Select RPO",
   "EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE": "Return to Executive Management Office",
-  "EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION": "You have successfully returned %s's case to the Executive Management Office"
+  "EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION": "You have successfully returned %s's case to the Executive Management Office",
+
+  "DEGRADED_SYSTEM_SINGULAR": "is experiencing issues. Caseflow performance and availability may be impacted.",
+  "DEGRADED_SYSTEM_PLURAL": "are experiencing issues. Caseflow performance and availability may be impacted."
 }
