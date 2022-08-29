@@ -61,11 +61,7 @@ module AllCaseDistribution
     # Distribute nonpriority appeals from any docket according to the docket proportions.
     # If a docket runs out of available appeals, we reallocate its cases to the other dockets.
     until @rem == 0 || @remaining_docket_proportions.all_zero?
-      if FeatureToggle.enabled?(:disable_acd_proportions)
-        distribute_genpop_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem, style: "request")
-      else
-        distribute_appeals_according_to_remaining_docket_proportions(style: "request")
-      end
+      distribute_genpop_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem, style: "request")
     end
 
     @appeals
@@ -141,21 +137,6 @@ module AllCaseDistribution
       proportion = docket_count.to_f / nonpriority_target
       @remaining_docket_proportions[docket] = [@remaining_docket_proportions[docket] - proportion, 0].max
     end
-  end
-
-  def distribute_appeals_according_to_remaining_docket_proportions(style: "push")
-    @nonpriority_iterations += 1
-    @remaining_docket_proportions
-      .normalize!
-      .stochastic_allocation(@rem)
-      .each do |docket, number_of_appeals_to_distribute|
-        appeals = collect_appeals do
-          dockets[docket].distribute_appeals(
-            self, limit: number_of_appeals_to_distribute, priority: false, style: style, genpop: "any"
-          )
-        end
-        @remaining_docket_proportions[docket] = 0 if appeals.count < number_of_appeals_to_distribute
-      end
   end
 
   def priority_target
