@@ -2,16 +2,40 @@ import React, { useContext } from 'react';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { StateContext } from '../../intakeEdit/IntakeEditFrame';
+import CheckboxGroup from '../../components/CheckboxGroup';
+import { formatDateStr } from '../../util/DateUtil';
+import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
+import { css } from 'glamor';
+import TextareaField from '../../components/TextareaField';
+const issueListStyling = css({ marginTop: '0rem', marginLeft: '6rem' });
 
 const ReviewAppealView = (props) => {
   const { serverIntake } = props;
-  const { reason } = useContext(StateContext);
+  const { reason, setSelectedIssues, selectedIssues, setOtherReason, otherReason } = useContext(StateContext);
   const veteran = serverIntake.veteran.name;
   const streamdocketNumber = props.appeal.stream_docket_number;
   const claimantName = props.serverIntake.claimantName;
   const requestIssues = props.serverIntake.requestIssues;
+  const onIssueChange = (evt) => {
+    setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.checked });
+  };
 
-  {console.log(JSON.stringify(props.serverIntake))}    
+  {console.log(JSON.stringify(props))}
+
+  const issueOptions = () => requestIssues.map((issue) => ({
+    id: issue.id.toString(),
+    label:
+      <>
+        <span>{issue.description}</span><br />
+        <span>Benefit Type: {BENEFIT_TYPES[issue.benefit_type]}</span><br />
+        <span>Decision Date: {formatDateStr(issue.approx_decision_date)}</span>
+        <br /><br />
+      </>
+  }));
+
+  const onOtherReasonChange = (value) => {
+    setOtherReason(value);
+  };
 
   return (
     <>
@@ -65,6 +89,36 @@ const ReviewAppealView = (props) => {
                 })}
               </ol>
             </td>
+            <td>
+              <br />
+              {reason === 'Other' && (
+                <TextareaField
+                  name="reason"
+                  label="Reason for split"
+                  id="otherReason"
+                  textAreaStyling={css({ height: '50px' })}
+                  maxlength={350}
+                  value={otherReason}
+                  onChange={onOtherReasonChange}
+                  optional
+                />
+              )}
+              <br />
+              <CheckboxGroup
+                vertical
+                name="issues"
+                label={COPY.SPLIT_APPEAL_CREATE_SELECT_ISSUES_TITLE}
+                hideLabel
+                id="otherReason"
+                values={selectedIssues}
+                onChange={(val) => onIssueChange(val)}
+                options={issueOptions()}
+                styling={issueListStyling}
+                optional
+              />
+            </td>
+          </tr>
+          <tr>
           </tr>
         </table>
       </div>
