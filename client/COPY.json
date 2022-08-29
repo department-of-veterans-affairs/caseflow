@@ -484,6 +484,7 @@
   "MODAL_CLOSE_BUTTON": "Close",
   "MODAL_CONFIRM_BUTTON": "Confirm",
   "MODAL_RETURN_BUTTON": "Return",
+  "MODAL_MARK_TASK_IN_PROGRESS_BUTTON": "Mark in progress",
 
   "BULK_ASSIGN_BUTTON_TEXT": "Assign Tasks",
   "BULK_ASSIGN_MODAL_TITLE": "Bulk Assign Tasks",
@@ -1252,6 +1253,9 @@
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the CAMO team's Queue",
+  "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_TITLE": "Mark task as in progress",
+  "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY": "By marking task as in progress, you are confirming that you are actively working on collecting documents for this appeal.\n\nOnce marked, other members of your organization will no longer be able to mark this task as in progress.",
+  "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked %s's case as in progress",
   "BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE": "Return appeal to VHA",
   "BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY": "If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA.",
   "BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned %s's case to VHA",
@@ -1276,5 +1280,8 @@
   "EMO_ASSIGN_TO_RPO_MODAL_BODY": "Regional Processing Office",
   "EDUCATION_RPO_SELECTOR_PLACEHOLDER": "Select RPO",
   "EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE": "Return to Executive Management Office",
-  "EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION": "You have successfully returned %s's case to the Executive Management Office"
+  "EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION": "You have successfully returned %s's case to the Executive Management Office",
+
+  "DEGRADED_SYSTEM_SINGULAR": "is experiencing issues. Caseflow performance and availability may be impacted.",
+  "DEGRADED_SYSTEM_PLURAL": "are experiencing issues. Caseflow performance and availability may be impacted."
 }

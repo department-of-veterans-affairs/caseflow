@@ -2,40 +2,24 @@
 
 class DependenciesReportService
   class << self
-    ALL_DEPENDENCIES =
-      ["BGS.FilenumberService",
-       "BGS.PoaService",
-       "BGS.AddressService",
-       "BGS.OrganizationPoaService",
-       "BGS.VeteranService",
-       "BGS.AddressService",
-       "BGS.BenefitsService",
-       "BGS.ClaimantFlashesService",
-       "BGS.PersonFilenumberService",
-       "VACOLS",
-       "VBMS",
-       "VBMS.FindDocumentVersionReference",
-       "VVA"].freeze
-
-    # this method is in case we need list of dependencies/services that are degraded
-    def degraded_dependencies
-      str_report = Rails.cache.read(:dependencies_report)
-      return [] if !str_report
-
-      report = JSON.parse str_report
-      report.values.each_with_object([]) do |element, result|
-        result << element["name"] if element["up_rate_5"].to_i < 50
-      end
-    end
+    ALL_DEPENDENCIES_MAP = {
+      degraded_service_banner_bgs: "BGS",
+      degraded_service_banner_vbms: "VBMS",
+      degraded_service_banner_vva: "VVA",
+      degraded_service_banner_vacols: "VACOLS",
+      degraded_service_banner_gov_delivery: "GOV DELIVERY",
+      degraded_service_banner_va_dot_gov: "VA.GOV"
+    }.freeze
 
     def dependencies_report
-      case Rails.cache.read(:degraded_service_banner)
-      when :always_show
-        return ALL_DEPENDENCIES
-      when :never_show
-        return []
+      # Read All Dependencies written to the cache
+      cache_degraded_services = Rails.cache.read_multi(*ALL_DEPENDENCIES_MAP.keys)
+      # Create New Array, with key and value
+      cache_degraded_services.reduce([]) do |array, (key, value)|
+        # Return Array with only the value :display
+        array.push(ALL_DEPENDENCIES_MAP[key]) if value == :display
+        array
       end
-      degraded_dependencies
     rescue StandardError => error
       Rails.logger.warn "Exception thrown while checking dependency "\
         "status: #{error}"

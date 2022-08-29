@@ -385,21 +385,24 @@ class CompleteTaskModal extends React.Component {
 
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
-    let formattedInstructions = instructions;
+    const formattedInstructions = [];
     let reviewNotes;
     const previousInstructions = this.props.tasks.map((task) => {
-      if (task.assignedTo.type === 'VhaProgramOffice') {
-        reviewNotes = 'Program Office';
+      // Skip if there are no previous instructions
+      if (task.instructions[1]) {
+        if (task.assignedTo.type === 'VhaProgramOffice') {
+          reviewNotes = 'Program Office';
 
-        return task && task.instructions[1];
-      } else if (task.assignedTo.type === 'VhaRegionalOffice') {
-        reviewNotes = 'VISN';
+          return task && task.instructions[1];
+        } else if (task.assignedTo.type === 'VhaRegionalOffice') {
+          reviewNotes = 'VISN';
 
-        return task && task.instructions[1];
-      } else if (task.assignedTo.type === 'VhaCamo') {
-        reviewNotes = 'CAMO';
+          return task && task.instructions[1];
+        } else if (task.assignedTo.type === 'VhaCamo' && task.instructions.length > 0) {
+          reviewNotes = 'CAMO';
 
-        return task && task.instructions[1];
+          return task && task.instructions[1];
+        }
       }
 
       return reviewNotes = null;
@@ -408,30 +411,31 @@ class CompleteTaskModal extends React.Component {
     if (this.props.modalType === 'vha_send_to_board_intake') {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
 
+      formattedInstructions.push(`\n**Status:** ${locationLabel}\n`);
+
       if (reviewNotes) {
-        formattedInstructions = `\n\n**Status:** ${locationLabel}\n\n
-        \n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}`;
+        formattedInstructions.push(`\n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}\n`);
       }
 
       if (instructions) {
-        const instructionsDetail = `\n\n**CAMO Notes:** ${instructions}`;
+        const instructionsDetail = `\n**CAMO Notes:** ${instructions}`;
 
-        formattedInstructions += instructionsDetail;
+        formattedInstructions.splice(1, 0, instructionsDetail);
       }
     } else if (this.props.modalType === 'ready_for_review') {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
       const docLocationText = `Documents for this appeal are stored in ${radio === 'other' ? otherInstructions :
         locationLabel}.`;
 
-      formattedInstructions = docLocationText;
+      formattedInstructions.push(docLocationText);
       if (instructions) {
-        const instructionsDetail = `\n\n**Detail:**\n\n${instructions}`;
+        const instructionsDetail = `\n\n**Detail:**\n\n${instructions}\n`;
 
-        formattedInstructions += instructionsDetail;
+        formattedInstructions.push(instructionsDetail);
       }
     }
 
-    return formattedInstructions;
+    return formattedInstructions.join('');
   };
 
   validateForm = () => {
@@ -477,7 +481,6 @@ class CompleteTaskModal extends React.Component {
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
       this.props.onReceiveAmaTasks(resp.body.tasks.data);
     });
-
   };
 
   render = () => {
