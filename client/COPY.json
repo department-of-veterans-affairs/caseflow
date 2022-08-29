@@ -1288,7 +1288,6 @@
   "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL": "Why is this appeal being returned?",
   "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_SUCCESS_CONFIRMATION": "You have successfully returned %s's case to Board Intake",
   "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL": "Please provide the reason for return",
-
   "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS": {
     "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DUPLICATE": {
       "LABEL": "Duplicate",
@@ -1322,5 +1321,7 @@
       "LABEL": "Other",
       "VALUE": "other"
     }
-  }
+  },
+  "DEGRADED_SYSTEM_SINGULAR": "is experiencing issues. Caseflow performance and availability may be impacted.",
+  "DEGRADED_SYSTEM_PLURAL": "are experiencing issues. Caseflow performance and availability may be impacted."
 }
