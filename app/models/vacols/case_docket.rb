@@ -62,7 +62,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_READY_APPEALS = "
-    select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
+    select BFKEY, BFDNOD, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
     from BRIEFF
     #{VACOLS::Case::JOIN_AOD}
     #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
@@ -105,9 +105,9 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_NONPRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX
+    select BFKEY, BFDNOD, BFDLOOUT, VLJ, DOCKET_INDEX
     from (
-      select BFKEY, BFDLOOUT, rownum DOCKET_INDEX,
+      select BFKEY, BFDNOD, BFDLOOUT, rownum DOCKET_INDEX,
         case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
       from (
         #{SELECT_READY_APPEALS}
@@ -241,6 +241,20 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     appeals = conn.exec_query(fmtd_query).to_hash
     appeals.map { |appeal| appeal["bfdloout"] }
+  end
+
+  def self.age_of_n_oldest_nonpriority_appeals(num)
+    conn = connection
+
+    query = <<-SQL
+      #{SELECT_NONPRIORITY_APPEALS}
+      where rownum <= ?
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, num])
+
+    appeals = conn.exec_query(fmtd_query).to_hash
+    appeals.map { |appeal| appeal["bfdnod"] }
   end
 
   def self.age_of_oldest_priority_appeal

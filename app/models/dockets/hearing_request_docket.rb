@@ -9,10 +9,20 @@ class HearingRequestDocket < Docket
     appeals(priority: true, ready: true)
   end
 
+  def ready_nonpriority_appeals
+    appeals(priority: false, ready: true)
+  end
+
   def age_of_n_oldest_genpop_priority_appeals(num)
     HearingRequestDistributionQuery.new(
       base_relation: ready_priority_appeals.limit(num), genpop: "only_genpop"
     ).call.map(&:ready_for_distribution_at)
+  end
+
+  def age_of_n_oldest_nonpriority_appeals(num)
+    HearingRequestDistributionQuery.new(
+      base_relation: ready_nonpriority_appeals.limit(num), genpop: "only_genpop"
+    ).call.map(&:receipt_date)
   end
 
   # Hearing cases distinguish genpop from cases tied to a judge
