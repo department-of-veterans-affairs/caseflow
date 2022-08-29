@@ -2,21 +2,15 @@
 
 # Job to fetch all currently active AMA Appeals
 class FetchAllActiveAppeals < CaseflowJob
-    queue_with_priority :low_priority
+#    queue_with_priority :low_priority
   
-    def create_ama_appeals_list
-      Rails.logger.info "Fetch Active AMA Appeals"
-    end
-
-    def create_hlr_appeals_list
-        Rails.logger.info "Fetch Active High Level Review Appeals"
-    end
-
-    def create_supplemental_appeals_list
-        Rails.logger.info "Fetch Active Supplemental Claims Appeals"
-    end
-
-    def create_legacy_appeals_list
-        Rails.logger.info "Fetch Active Legacy Appeals"
+    def find_active_appeals
+      #Fetch Active AMA Appeals
+      active_ama_appeals = Array.new
+      ama_appeals = Appeal.open.where(
+        appeal_active: true
+      )
+      ama_info = Array.new
+      active_ama_appeals.each {|i| ama_info << "#{a.id}, #{a.claimaint.participant_id}, AMA Appeal"}
     end
 end
