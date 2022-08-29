@@ -4,6 +4,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   def to_judge_hash(arr)
     arr.each_with_index.map { |count, i| [i, count] }.to_h
   end
+  before { FeatureToggle.enable!(:acd_distribute_all) }
+  after { FeatureToggle.disable!(:acd_distribute_all) }
 
   context ".distribute_non_genpop_priority_appeals" do
     before do
