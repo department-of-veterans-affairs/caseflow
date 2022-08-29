@@ -450,7 +450,8 @@ class CompleteTaskModal extends React.Component {
         const instructionsDetail = `\n\n**Detail:**\n\n${instructions}\n`;
 
         formattedInstructions.push(instructionsDetail);
-      }
+      } else {
+        formattedInstructions.push(instructions);
     }
 
     return formattedInstructions.join('');
