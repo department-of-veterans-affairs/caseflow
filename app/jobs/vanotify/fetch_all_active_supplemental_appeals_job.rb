@@ -12,11 +12,15 @@ class FetchAllActiveSupplementalClaimsJob < CaseflowJob
 
   def find_active_supplemental_claims
     # Fetch Active Supplemantal Claims
-    active_supplemantal_claims = Task.where(
+    active_supplemantal_claims = []
+    active_supplemantal_claim_tasks = Task.where(
       appeal_type: "SupplementalClaim",
       status: %w[assigned on_hold in_progress],
       closed_at: nil
-    )
+    ).uniq(&:appeal_id)
+    active_supplemantal_claim_tasks.each do |task|
+      active_supplemantal_claims.push(task.supplemental_claim)
+    end
     active_supplemantal_claims
   end
 end
