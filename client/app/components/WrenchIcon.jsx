@@ -2,7 +2,7 @@ import React from 'react';
 
 const WrenchIcon = () => {
   return <span>
-    <svg width="27px" height="26px" className="cf-wrench-icon"
+    <svg width="27px" height="22px" className="cf-wrench-icon"
       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 27 26">
       <title>wrench icon</title>
       {/* eslint-disable max-len */}
