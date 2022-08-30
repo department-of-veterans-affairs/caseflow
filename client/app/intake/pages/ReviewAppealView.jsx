@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useContext } from 'react';
+import React, { useContext } from 'react';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { StateContext } from '../../intakeEdit/IntakeEditFrame';
@@ -51,6 +51,7 @@ const ReviewAppealView = (props) => {
       <br />
       {reason === 'Other' && (
         <TextareaField
+          resizestyle={null}
           value={otherReason}
           onChange={onOtherReasonChange}
         />
