@@ -914,6 +914,12 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.value
+                }`}
+              render={this.routedBvaIntakeReturnToOrg}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
                 }`}
               render={this.routedAssignToVhaProgramOffice}
