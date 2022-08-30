@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useState, useReducer, useContext } from 'react';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { StateContext } from '../../intakeEdit/IntakeEditFrame';
@@ -16,6 +16,7 @@ const ReviewAppealView = (props) => {
   const streamdocketNumber = props.appeal.stream_docket_number;
   const claimantName = props.serverIntake.claimantName;
   const requestIssues = props.serverIntake.requestIssues;
+
   const onIssueChange = (evt) => {
     setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.checked });
   };
@@ -33,8 +34,8 @@ const ReviewAppealView = (props) => {
       </>
   }));
 
-  const onOtherReasonChange = (value) => {
-    setOtherReason(value);
+  const onOtherReasonChange = (otherReason) => {
+    setOtherReason(otherReason);
   };
 
   return (
@@ -47,6 +48,14 @@ const ReviewAppealView = (props) => {
         <u>{COPY.SPLIT_APPEAL_REVIEW_REASONING_TITLE}</u> &ensp;
         <span style={{ flexBasis: '75%' }}>{reason}</span>
       </div>
+      <br />
+      {reason === 'Other' && (
+        <TextareaField
+          value={otherReason}
+          onChange={onOtherReasonChange}
+        />
+      )}
+      <br />
       <div className="review_appeal_table">
         <table>
           <tr>
@@ -90,20 +99,6 @@ const ReviewAppealView = (props) => {
               </ol>
             </td>
             <td>
-              <br />
-              {reason === 'Other' && (
-                <TextareaField
-                  name="reason"
-                  label="Reason for split"
-                  id="otherReason"
-                  textAreaStyling={css({ height: '50px' })}
-                  maxlength={350}
-                  value={otherReason}
-                  onChange={onOtherReasonChange}
-                  optional
-                />
-              )}
-              <br />
               <CheckboxGroup
                 vertical
                 name="issues"
