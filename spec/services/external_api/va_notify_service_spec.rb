@@ -11,6 +11,7 @@ describe ExternalApi::VANotifyService do
   let(:notification_response_body) { { "template": { "id" => email_template_id } }.to_json }
   let(:status_response_body) { { "status" => "delivered" }.to_json }
   let(:error_response_body) { { "result": "error", "message": { "token": ["error"] } }.to_json }
+  let(:participant_id) { "+1234567890" }
   let(:phone_number) { "+19876543210" }
   let(:status) { "in-progress" }
   let(:success_response) do
@@ -40,7 +41,7 @@ describe ExternalApi::VANotifyService do
 
   context "notifications sent" do
     describe "email and sms sent" do
-      subject { ExternalApi::VANotifyService.send_notifications(email_address, email_template_id, nil, nil, status) }
+      subject { ExternalApi::VANotifyService.send_notifications(participant_id, email_template_id, status) }
       it "email and sms sent successfully" do
         allow(HTTPI).to receive(:post).and_return(success_response)
         expect(subject.body["template"]["id"]).to eq(email_template_id)
