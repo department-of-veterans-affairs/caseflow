@@ -4,8 +4,6 @@
 
 module Seeds
   class Intake < Base
-    BFAC_ORIGINAL = 1
-
     def seed!
       create_intake_users
       create_higher_level_review_tasks
@@ -230,7 +228,7 @@ module Seeds
         :legacy_appeal,
         vacols_case: create(
           :case,
-          bfac: BFAC_ORIGINAL,
+          :type_original,
           bfdnod: random_date_within_one_year
         ),
         vbms_id: "#{veteran2.file_number}S"

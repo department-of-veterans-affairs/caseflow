@@ -6,8 +6,6 @@ module Seeds
   class Hearings < Base
     include PowerOfAttorneyMapper
 
-    BFAC_ORIGINAL = 1
-
     # Create the available hearing times and issue counts to pull from
     AMA_SCHEDULE_TIMES = %w[13:30 14:00 15:00 15:15 16:15].freeze # times in UTC
     LEGACY_SCHEDULE_TIMES = %w[8:15 9:30 10:15 11:00 11:45].freeze # times in EST
@@ -151,6 +149,8 @@ module Seeds
     end
 
     def create_ama_appeal(issue_count: 1)
+      @ama_appeal_count ||= 0
+      @ama_appeal_count += 1
       veteran = create_veteran
       claimant_participant_id = "RANDOM_CLAIMANT_PID#{veteran.file_number}"
       create_poa(claimant_participant_id: claimant_participant_id)
@@ -160,6 +160,7 @@ module Seeds
         veteran_file_number: veteran.file_number,
         docket_type: Constants.AMA_DOCKETS.hearing,
         stream_type: Constants.AMA_STREAM_TYPES.original,
+        receipt_date: @ama_appeal_count.days.ago,
         veteran_is_not_claimant: Faker::Boolean.boolean,
         issue_count: issue_count,
         claimants: [create(:claimant, participant_id: claimant_participant_id)]
@@ -332,9 +333,9 @@ module Seeds
       create(
         :case,
         :travel_board_hearing,
+        :type_original,
         bfkey: @bfkey.to_s,
         bfcorkey: @bfcorkey.to_s,
-        bfac: BFAC_ORIGINAL,
         bfdnod: random_date_within_one_year,
         correspondent: correspondent
       )
