@@ -11,7 +11,11 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :queue
 
-  include AutomaticCaseDistribution
+  if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+    include AllCaseDistribution
+  else 
+    include AutomaticCaseDistribution
+  end
 
   def perform
     @tied_distributions = distribute_non_genpop_priority_appeals
@@ -28,7 +32,11 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def send_job_report
-    slack_service.send_notification(slack_report.join("\n"), self.class.name, "#appeals-job-alerts")
+    if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+      #Do nothing, place holder for new message path of ALL CASE DISTRIBUTION
+    else
+      slack_service.send_notification(slack_report.join("\n"), self.class.name, "#appeals-job-alerts")
+    end
   end
 
   def slack_report
