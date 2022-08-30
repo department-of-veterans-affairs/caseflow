@@ -1,4 +1,4 @@
-SUPPORTED_JOBS = {
+SCHEDULED_JOBS = {
     "amo_metrics_report" => AMOMetricsReportJob,
     "annual_metrics" => AnnualMetricsReportJob,
     "calculate_dispatch_stats" => CalculateDispatchStatsJob,
@@ -34,3 +34,10 @@ SUPPORTED_JOBS = {
     "update_cached_appeals_attributes_job" => UpdateCachedAppealsAttributesJob,
     "warm_bgs_caches_job" => WarmBgsCachesJob
 }.freeze
+
+DISABLED_JOBS = {
+    "hearing_email_status_job" => Hearings::HearingEmailStatusJob,
+    "heartbeat" => HeartbeatTasksJob,
+}.freeze
+
+SUPPORTED_JOBS = SCHEDULED_JOBS.reject {|k, v| DISABLED_JOBS.key?(k)}.freeze
