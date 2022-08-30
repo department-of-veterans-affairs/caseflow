@@ -21,9 +21,9 @@ RSpec.describe Api::V1::JobsController, :postgres, type: :controller do
       expect(response.status).to eq 422
     end
 
-    it "should successfully start HeartbeatTasksJob asynchronously" do
-      allow(HeartbeatTasksJob).to receive(:perform_later).and_return(HeartbeatTasksJob.new)
-      post :create, params: { "job_type": "heartbeat" }
+    it "should successfully start StatsCollectorJob asynchronously" do
+      allow(StatsCollectorJob).to receive(:perform_later).and_return(StatsCollectorJob.new)
+      post :create, params: { "job_type": "stats_collector" }
       expect(response.status).to eq 200
       expect(response_body["job_id"]).not_to be_empty
     end
