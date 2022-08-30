@@ -2,7 +2,6 @@
 
 class AsyncableJobsController < ApplicationController
   include PaginationConcern
-  include RunAsyncable
 
   before_action :react_routed, :set_application
   before_action :verify_access, only: [:index, :start_job]

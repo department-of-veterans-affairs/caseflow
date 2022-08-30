@@ -13,7 +13,7 @@ export const mapDataToInitialState = function(props = {}) {
 
 export const asyncableJobsReducer = (state = mapDataToInitialState(), action) => {
   switch (action.type) {
-  case ACTIONS.RESET_MANUAL_JOB:
+  case ACTIONS.CLEAR_MANUAL_JOB_TYPE:
     return { ...state, manualJobType: null };
   case ACTIONS.MANUAL_JOB_STARTED:
     return {

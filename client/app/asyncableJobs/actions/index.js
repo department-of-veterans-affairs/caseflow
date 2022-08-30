@@ -3,7 +3,7 @@ import { ACTIONS } from '../constants';
 
 export const sendJobRequest = (jobType) => (dispatch) => {
   dispatch({
-    type: ACTIONS.RESET_MANUAL_JOB,
+    type: ACTIONS.CLEAR_MANUAL_JOB_TYPE,
   });
 
   return ApiUtil.post('asyncable_jobs/start_job', { data: { job_type: jobType } }).

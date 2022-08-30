@@ -114,16 +114,7 @@ export default function TestUsers(props) {
     [filteredUserOptions]
   );
 
-  const featureOptions = props.featuresList.sort((a, b) => {
-    if (a < b) {
-      return -1;
-    }
-    if (a > b) {
-      return 1;
-    }
-
-    return 0;
-  }).map((feature) => ({
+  const featureOptions = props.featuresList.sort().map((feature) => ({
     value: feature,
     label: feature,
     tagId: feature
