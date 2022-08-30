@@ -61,7 +61,7 @@ module AllCaseDistribution
     # Distribute nonpriority appeals from any docket according to the docket proportions.
     # If a docket runs out of available appeals, we reallocate its cases to the other dockets.
     until @rem == 0 || @remaining_docket_proportions.all_zero?
-      distribute_appeals_according_to_remaining_docket_proportions(style: "request")
+      distribute_genpop_priority_appeals_from_all_dockets_by_age_to_limit(@rem, style: "request")
     end
 
     @appeals
@@ -103,6 +103,15 @@ module AllCaseDistribution
     end
   end
 
+  def distribute_genpop_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
+    @priority_iterations += 1
+    num_oldest_genpop_priority_appeals_by_docket(limit).each do |docket, number_of_appeals_to_distribute|
+      collect_appeals do
+        dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: false, style: style)
+      end
+    end
+  end
+
   def ama_statistics
     {
       batch_size: @appeals.count,
@@ -130,19 +139,15 @@ module AllCaseDistribution
     end
   end
 
-  def distribute_appeals_according_to_remaining_docket_proportions(style: "push")
-    @nonpriority_iterations += 1
-    @remaining_docket_proportions
-      .normalize!
-      .stochastic_allocation(@rem)
-      .each do |docket, number_of_appeals_to_distribute|
-        appeals = collect_appeals do
-          dockets[docket].distribute_appeals(
-            self, limit: number_of_appeals_to_distribute, priority: false, style: style, genpop: "any"
-          )
-        end
-        @remaining_docket_proportions[docket] = 0 if appeals.count < number_of_appeals_to_distribute
-      end
+  def num_oldest_genpop_priority_appeals_by_docket(num)
+    return {} unless num > 0
+
+    dockets
+      .flat_map { |sym, docket| docket.age_of_n_oldest_genpop_priority_appeals(num).map { |age| [age, sym] } }
+      .sort_by { |age, _| age }
+      .first(num)
+      .group_by { |_, sym| sym }
+      .transform_values(&:count)
   end
 
   def priority_target
