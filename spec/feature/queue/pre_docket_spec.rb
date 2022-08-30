@@ -959,7 +959,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
 
       expect(page).to have_content(
-        format(COPY::DOCKET_APPEAL_MODAL_BODY, "Education")
+        format(COPY::DOCKET_APPEAL_MODAL_BODY, COPY::EDUCATION_LABEL)
       )
     end
   end
