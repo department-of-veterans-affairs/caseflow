@@ -13,7 +13,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
     include AllCaseDistribution
-  else
+  else 
     include AutomaticCaseDistribution
   end
 
