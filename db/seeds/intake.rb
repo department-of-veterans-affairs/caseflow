@@ -229,7 +229,7 @@ module Seeds
         vacols_case: create(
           :case,
           :type_original,
-          bfdnod: random_date_within_one_year
+          bfdnod: 1.day.ago
         ),
         vbms_id: "#{veteran2.file_number}S"
       )
@@ -253,10 +253,6 @@ module Seeds
 
     def create_bgs_attorneys
       5000.times { create(:bgs_attorney) }
-    end
-
-    def random_date_within_one_year
-      rand(1.year.ago..Time.zone.now)
     end
   end
 end
