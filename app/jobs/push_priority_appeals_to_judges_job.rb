@@ -32,7 +32,11 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def send_job_report
-    slack_service.send_notification(slack_report.join("\n"), self.class.name, "#appeals-job-alerts")
+    if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+      #Do nothing, place holder for new message path of ALL CASE DISTRIBUTION
+    else
+      slack_service.send_notification(slack_report.join("\n"), self.class.name, "#appeals-job-alerts")
+    end
   end
 
   def slack_report
