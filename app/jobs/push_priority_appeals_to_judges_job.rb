@@ -11,7 +11,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :queue
 
-  if FeatureToggle.enabled?(:disable_acd_proportions)
+  if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
     include AllCaseDistribution
   else
     include AutomaticCaseDistribution

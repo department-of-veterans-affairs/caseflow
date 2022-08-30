@@ -2,7 +2,7 @@
 
 class Distribution < CaseflowRecord
   include ActiveModel::Serializers::JSON
-  if FeatureToggle.enabled?(:disable_acd_proportions)
+  if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
     include AllCaseDistribution
   else
     include AutomaticCaseDistribution
