@@ -125,29 +125,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.in_progress
         end
 
-        step "BVA Intake user sees case in Ready for Review tab. They can docket appeal." do
-          User.authenticate!(user: bva_intake_user)
-
-          last_vha_task = VhaDocumentSearchTask.last
-          last_vha_task.completed!
-
-          visit "/organizations/bva-intake?tab=bvaReadyForReview"
-
-          find_link("#{veteran.name} (#{veteran.file_number})").click
-
-          click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
-
-          expect(page).to have_content(
-            format(COPY::DOCKET_APPEAL_MODAL_BODY, COPY::VHA_CAREGIVER_LABEL)
-          )
-
-          find("button", class: "usa-button", text: "Confirm").click
-        end
-
         step "BVA Intake user can return an appeal to CAREGIVER" do
           vha_document_search_task = VhaDocumentSearchTask.last
           vha_document_search_task.update!(status: Constants.TASK_STATUSES.completed)
-          vha_document_search_task.parent.update!(status: Constants.TASK_STATUSES.assigned)
 
           appeal = vha_document_search_task.appeal
 
@@ -172,6 +152,25 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           )
 
           expect(appeal.tasks.last.assigned_to). to eq vha_caregiver
+        end
+
+        step "BVA Intake user sees case in Ready for Review tab. They can docket appeal." do
+          User.authenticate!(user: bva_intake_user)
+
+          last_vha_task = VhaDocumentSearchTask.last
+          last_vha_task.completed!
+
+          visit "/organizations/bva-intake?tab=bvaReadyForReview"
+
+          find_link("#{veteran.name} (#{veteran.file_number})").click
+
+          click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+
+          expect(page).to have_content(
+            format(COPY::DOCKET_APPEAL_MODAL_BODY, COPY::VHA_CAREGIVER_LABEL)
+          )
+
+          find("button", class: "usa-button", text: "Confirm").click
         end
       end
     end
