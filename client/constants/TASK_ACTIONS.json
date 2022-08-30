@@ -370,6 +370,11 @@
     "value": "modal/bva_intake_return_to_camo",
     "func": "bva_intake_return_to_camo"
   },
+  "BVA_INTAKE_RETURN_TO_CAREGIVER": {
+    "label": "Return appeal to VHA Caregiver Support Program",
+    "value": "modal/bva_intake_return_to_caregiver",
+    "func": "bva_intake_return_to_caregiver"
+  },
   "BVA_INTAKE_RETURN_TO_EMO": {
     "label": "Return appeal to Education Service",
     "value": "modal/bva_intake_return_to_emo",
