@@ -27,19 +27,20 @@ module AppellantNotification
   def self.handle_errors(appeal)
     if !appeal.nil?
       info = {}
-      appeal_id = appeal.id
+      info[:appeal_type] = appeal.class.to_s
+      info[:appeal_id] = (info[:appeal_type] == "Appeal") ? appeal.uuid : appeal.vacols_id
       claimant = appeal.claimant
-      info[:participant_id] = appeal.claimant_participant_id || AppellantNotification.legacy_non_vet_claimant_id(appeal)
+      info[:participant_id] = appeal.claimant_participant_id
       if claimant.nil?
         begin
-          fail NoClaimantError, appeal_id
+          fail NoClaimantError, info[:appeal_id]
         rescue StandardError => error
           Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
           info[:status] = error.status
         end
       elsif info[:participant_id] == "" || info[:participant_id].nil?
         begin
-          fail NoParticipantIdError, appeal_id
+          fail NoParticipantIdError, info[:appeal_id]
         rescue StandardError => error
           Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
           info[:status] = error.status
@@ -53,14 +54,6 @@ module AppellantNotification
     info
   end
 
-  def self.legacy_non_vet_claimant_id(appeal)
-    # find non veteran claimant participant id for legacy appeals
-    if !appeal&.veteran&.participant_id.nil?
-      bgs_poa = BgsPowerOfAttorney.fetch_bgs_poa_by_participant_id(appeal&.veteran&.participant_id)
-      bgs_poa.is_a?(Hash) ? bgs_poa[:claimant_participant_id] : nil
-    end
-  end
-
   def self.notify_appellant(
     appeal,
     template_name
@@ -72,36 +65,6 @@ module AppellantNotification
 
   def self.create_payload(appeal, template_name)
     info = AppellantNotification.handle_errors(appeal)
-    appeal_type = appeal.class.to_s
-    appeal_id = (appeal_type == "Appeal") ? appeal.uuid : appeal.vacols_id
-    participant_id = info[:participant_id]
-    status = info[:status]
-
-    {
-      queue_url: "caseflow_development_send_notifications",
-      message_body: "Notification for #{appeal_type}, #{template_name}",
-      message_attributes: {
-        "participant_id": {
-          string_value: participant_id,
-          data_type: "String"
-        },
-        "template_name": {
-          string_value: template_name,
-          data_type: "String"
-        },
-        "appeal_id": {
-          string_value: appeal_id,
-          data_type: "String"
-        },
-        "appeal_type": {
-          string_value: appeal_type, # legacy vs ama
-          data_type: "String"
-        },
-        "status": {
-          string_value: status,
-          data_type: "String"
-        }
-      }
-    }
+    MessageTemplate.new(info, template_name)
   end
 end
