@@ -53,4 +53,11 @@ describe DependenciesReportService do
       expect(DependenciesReportService.dependencies_report).to eq DEPENDENCIES_REPORT_WITHOUT_OUTAGES
     end
   end
+
+  context "throws error" do
+    it "when Rails.cache fails" do
+      allow(Rails.cache).to receive(:read_multi).and_raise("boom")
+      expect(DependenciesReportService.dependencies_report).to eq false
+    end
+  end
 end
