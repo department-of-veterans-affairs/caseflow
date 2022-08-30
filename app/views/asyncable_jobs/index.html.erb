@@ -11,7 +11,7 @@
       pagination: pagination,
       fetchedAt: Time.zone.now,
       asyncableJobKlass: allowed_params[:asyncable_job_klass],
-      supportedJobs: current_user.admin? ? SUPPORTED_JOBS.keys : nil
+      supportedJobs: supported_jobs
     }
   }) %>
 <% end %>

@@ -65,7 +65,7 @@ class AsyncableJobsController < ApplicationController
 
   private
 
-  helper_method :jobs, :job, :allowed_params, :pagination
+  helper_method :jobs, :job, :allowed_params, :pagination, :supported_jobs
 
   def asyncable_job_klass
     @asyncable_job_klass ||= begin
@@ -147,5 +147,9 @@ class AsyncableJobsController < ApplicationController
 
   def unrecognized_job
     render json: { error_code: "Unable to start unrecognized job" }, status: :unprocessable_entity
+  end
+
+  def supported_jobs
+    SUPPORTED_JOBS.keys if FeatureToggle.enabled?(:async_manual_start, user: current_user) && current_user.admin?
   end
 end
