@@ -42,15 +42,22 @@ class SendNotificationJob < CaseflowJob
     notification_type = "Email"
     appeal_id = message_attributes[:appeal_id][:string_value]
     appeal_status = message_attributes[:appeal_status] ? message_attributes[:appeal_status][:string_value] : ""
-    response = VANotifyService.send_notifications(participant_id, appeal_id, email_template_id, appeal_status)
+    
+    # Create Feature Flag for VA Notify SMS
+    if FeatureToggle.enable?(va_notify_sms)
+     va_notify_sms = VANotifyService.send_sms_notification(participant_id,appeal_id,sms_template_id,appeal_status)
+     return va_notify_sms
+    end
+    response = VANotifyService.send_sms_notifications(participant_id, appeal_id, sms_template_id, appeal_status)
+
 
     # Fake VANotify Error Handling
-    if response.code >= 400
+    if response.code !!nil || >= 400
       Rails.logger.error("Failed with error: #{response.body['error']} - #{response.body['message']} ")
       return response.body
     end
 
-    audit_params(message, response, notification_events_id, notification_type)
+    #audit_params(message, response, notification_events_id, notification_type)
   end
 
   # Create parameters for creating a notification record in the db
@@ -72,4 +79,5 @@ class SendNotificationJob < CaseflowJob
       sms_notification_status: ""
     }
   end
-end
+
+

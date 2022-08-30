@@ -7,6 +7,7 @@ class ExternalApi::VANotifyService
   BASE_URL = ENV["VA_NOTIFY_API_URL"]
   CLIENT_SECRET = ENV["VA_NOTIFY_API_KEY"]
   SERVICE_ID = ENV["VA_NOTIFY_SERVICE_ID"]
+  SENDER_ID = ENV["VA_NOTIFY_SMS_SENDER_ID"]
   TOKEN_ALG = ENV["VA_NOTIFY_TOKEN_ALG"]
   SEND_EMAIL_NOTIFICATION_ENDPOINT = "/v2/notifications/email"
   SEND_SMS_NOTIFICATION_ENDPOINT = "/v2/notifications/sms"
@@ -20,11 +21,18 @@ class ExternalApi::VANotifyService
   class << self
     # Send the email and sms notifications
     # @param {status} The appeal status for a template that requires it
-    def send_notifications(participant_id, appeal_id, email_template_id, status = "")
+    def send_email_notifications(participant_id, appeal_id, email_template_id, status = "")
       email_response = send_va_notify_request(email_request(participant_id, appeal_id, email_template_id, status))
       Rails.logger.info(email_response)
       email_response
     end
+    
+      # Send sms notifications
+    def send_sms_notification(participant_id, appeal_id, sms_template_id, status = "")
+       sms_response = send_va_notify_request(sms_request(participant_id, appeal_id, sms_template_id, status))
+       Rails.logger.info(sms_response)
+      sms_response
+     end
 
     # Get the status of a notification
     def get_status(notification_id)
