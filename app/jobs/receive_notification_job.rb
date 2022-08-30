@@ -2,29 +2,28 @@
 
 class ReceiveNotificationJob < CaseflowJob
   queue_as ApplicationController.dependencies_fakes? ? :receive_notifications : :"receive_notifications.fifo"
-  def perform
-    RequestStore.store[:current_user] = User.system_user
-    queue_url = Shoryuken::Client.sqs.get_queue_url(queue_name: queue_name).queue_url
-    receive_message_result = Shoryuken::Client.sqs.receive_message(
-      queue_url: queue_url,
-      message_attribute_names: ["All"],
-      max_number_of_messages: 1,
-      wait_time_seconds: 20,
-      visibility_timeout: 5
-    )
-    message_list = receive_message_result.messages
-    fail Caseflow::Error::EmptyQueueError, "There are no messages in queue yet" if message_list.empty?
+  application_attr :hearing_schedule
 
-    audit = send_to_database(receive_message_result)
-    Shoryuken::Client.sqs.delete_message(queue_url: queue_url, receipt_handle: message_list.first.receipt_handle)
-    Notification.create!(audit) unless audit["error"]
+  def perform(message)
+    RequestStore.store[:current_user] = User.system_user
+    # call to VANotify to obtain status, check if status is same as our record in database, update if necessary
+    send_to_va_notify(message)
   end
 
-  # send queued message to database store
-  def sent_to_database(result)
-    message = result.messages.first
-    # check if current state has changed in database
-    # if so, update and save record
-    # remove queued message
+  # Send message to VA Notify Service API to retreive status
+  def send_to_va_notify(message)
+    message_attributes = message[:message_attributes]
+    appeal_id = message_attributes[:appeal_id][:string_value]
+    notification = Notification.find_by(appeal_id: appeal_id)
+    notification_id = notification.nil? ? "" : notification.id
+    response = VANotifyService.get_status(notification_id)
+
+    # Fake VANotify Error Handling
+    if response.code >= 400
+      Rails.logger.error("Failed with error: #{response.body['error']} - #{response.body['message']} ")
+      return response.body
+    end
+
+    # TODO: If status changed, then update record
   end
 end
