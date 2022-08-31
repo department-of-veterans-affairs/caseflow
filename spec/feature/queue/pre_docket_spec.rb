@@ -225,6 +225,54 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content("Other - #{other_text_field_text}")
           expect(page).to have_content(optional_text_field_text)
         end
+
+        step "BVA Intake user can return an appeal to CAREGIVER" do
+          vha_document_search_task = VhaDocumentSearchTask.last
+          vha_document_search_task.update!(status: Constants.TASK_STATUSES.completed)
+
+          appeal = vha_document_search_task.appeal
+
+          User.authenticate!(user: bva_intake_user)
+
+          visit "/queue/appeals/#{appeal.uuid}"
+
+          click_dropdown(text: Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.label)
+
+          expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE)
+          expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_BODY)
+
+          instructions_textarea = find("textarea", id: "taskInstructions")
+          instructions_textarea.send_keys("Please review this appeal, CAREGIVER.")
+
+          find("button", text: COPY::MODAL_RETURN_BUTTON).click
+
+          expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&page=1")
+
+          expect(page).to have_content(
+            format(COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_CONFIRMATION_TITLE, appeal.veteran_full_name)
+          )
+
+          expect(appeal.tasks.last.assigned_to). to eq vha_caregiver
+        end
+
+        step "BVA Intake user sees case in Ready for Review tab. They can docket appeal." do
+          User.authenticate!(user: bva_intake_user)
+
+          last_vha_task = VhaDocumentSearchTask.last
+          last_vha_task.completed!
+
+          visit "/organizations/bva-intake?tab=bvaReadyForReview"
+
+          find_link("#{veteran.name} (#{veteran.file_number})").click
+
+          click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+
+          expect(page).to have_content(
+            format(COPY::DOCKET_APPEAL_MODAL_BODY, COPY::VHA_CAREGIVER_LABEL)
+          )
+
+          find("button", class: "usa-button", text: "Confirm").click
+        end
       end
     end
 
@@ -547,7 +595,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label).click
 
     expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_TITLE)
-    expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_BODY)
+    expect(page).to have_content(format(COPY::DOCKET_APPEAL_MODAL_BODY, COPY::VHA_CAMO_LABEL))
     expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_NOTICE)
 
     find("button", class: "usa-button", text: "Confirm").click
@@ -759,6 +807,16 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         visit "/organizations/bva-intake?tab=bvaReadyForReview"
         expect(page).to have_content(COPY::PRE_DOCKET_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+
+      step "BVA Intake's 'Docket appeal' modal contains org name for RPO" do
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+
+        click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+
+        expect(page).to have_content(
+          format(COPY::DOCKET_APPEAL_MODAL_BODY, COPY::EDUCATION_LABEL)
+        )
       end
     end
 
@@ -988,6 +1046,22 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       )
 
       expect(emo_task.appeal.tasks.last.assigned_to). to eq emo
+    end
+
+    it "BVA Intake's 'Docket appeal' modal contains correct org name" do
+      User.authenticate!(user: bva_intake_user)
+
+      # Complete new task to send it back to BVA Intake
+      emo_task = create(:education_document_search_task, :assigned, assigned_to: emo)
+      emo_task.completed!
+
+      visit "/queue/appeals/#{emo_task.appeal.uuid}"
+
+      click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+
+      expect(page).to have_content(
+        format(COPY::DOCKET_APPEAL_MODAL_BODY, COPY::EDUCATION_LABEL)
+      )
     end
   end
 end

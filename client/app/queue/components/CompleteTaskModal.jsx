@@ -50,6 +50,7 @@ const MarkTaskCompleteModal = ({ props, state, setState }) => {
           value={state.instructions}
           styling={marginTop(4)}
           maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+          optional
         />
       )}
     </React.Fragment>
@@ -416,7 +417,7 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: VhaCaregiverSupportReturnToBoardIntakeModal,
     buttonText: COPY.MODAL_RETURN_BUTTON,
-    buttonClasses: ['usa-button'],
+    submitButtonClassNames: ['usa-button'],
     submitDisabled: ({ state }) => (
       !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
     ),
@@ -609,11 +610,11 @@ class CompleteTaskModal extends React.Component {
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
         button={modalAttributes.buttonText}
-        buttonClasses={modalAttributes.buttonClasses}
         submitDisabled={modalAttributes.submitDisabled?.(this.getContentArgs())}
         validateForm={this.validateForm}
         submit={this.submit}
         pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
+        submitButtonClassNames={modalAttributes.submitButtonClassNames || ['usa-button']}
       >
         {this.props.task ?
           modalAttributes.getContent(this.getContentArgs()) :

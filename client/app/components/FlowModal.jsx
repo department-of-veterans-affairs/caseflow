@@ -53,7 +53,7 @@ export default class FlowModal extends React.PureComponent {
   };
 
   render = () => {
-    const { title, button, buttonClasses, children, error, success, submitDisabled } = this.props;
+    const { title, button, children, error, success, submitDisabled, submitButtonClassNames } = this.props;
 
     return (
       <Modal
@@ -65,7 +65,7 @@ export default class FlowModal extends React.PureComponent {
             onClick: this.cancelHandler
           },
           {
-            classNames: buttonClasses,
+            classNames: submitButtonClassNames,
             name: button,
             disabled: submitDisabled,
             loading: this.state.loading,
@@ -84,7 +84,7 @@ export default class FlowModal extends React.PureComponent {
 
 FlowModal.defaultProps = {
   button: COPY.MODAL_SUBMIT_BUTTON,
-  buttonClasses: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
+  submitButtonClassNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
   pathAfterSubmit: '/queue',
   submitDisabled: false,
   title: '',
@@ -96,7 +96,6 @@ FlowModal.propTypes = {
   history: PropTypes.object,
   title: PropTypes.string,
   button: PropTypes.string,
-  buttonClasses: PropTypes.array,
   onCancel: PropTypes.func,
   pathAfterSubmit: PropTypes.string,
   // submit should return a promise on which .then() can be called
@@ -106,5 +105,8 @@ FlowModal.propTypes = {
   saveSuccessful: PropTypes.bool,
   success: PropTypes.object,
   error: PropTypes.object,
-  resetSaveState: PropTypes.func
+  resetSaveState: PropTypes.func,
+  submitButtonClassNames: PropTypes.arrayOf(
+    PropTypes.string
+  )
 };
