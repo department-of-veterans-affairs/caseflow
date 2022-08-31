@@ -18,10 +18,10 @@ const ReviewAppealView = (props) => {
   const requestIssues = props.serverIntake.requestIssues;
 
   const onIssueChange = (evt) => {
-    setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.checked });
+    setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.labels[0].innerText });
   };
 
-  {console.log(JSON.stringify(props))}
+  {console.log(target.labels[0].innerText)}
 
   const issueOptions = () => requestIssues.map((issue) => ({
     id: issue.id.toString(),
