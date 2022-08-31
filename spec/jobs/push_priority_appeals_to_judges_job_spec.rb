@@ -374,27 +374,26 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
 
     it "returns ids and age of ready priority appeals not distributed" do
-      expect(subject.second).to eq "*Number of cases tied to judges distributed*: 10"
-      expect(subject.third).to eq "*Number of general population cases distributed*: 10"
+      expect(subject.second).to eq "*Number of cases distributed*: 20"
 
       today = Time.zone.now.to_date
       legacy_days_waiting = (today - legacy_priority_case.bfdloout.to_date).to_i
-      expect(subject[3]).to eq "*Age of oldest legacy case*: #{legacy_days_waiting} days"
+      expect(subject[2]).to eq "*Age of oldest legacy case*: #{legacy_days_waiting} days"
       direct_review_days_waiting = (today - ready_priority_direct_case.ready_for_distribution_at.to_date).to_i
-      expect(subject[4]).to eq "*Age of oldest direct_review case*: #{direct_review_days_waiting} days"
+      expect(subject[3]).to eq "*Age of oldest direct_review case*: #{direct_review_days_waiting} days"
       evidence_submission_days_waiting = (today - ready_priority_evidence_case.ready_for_distribution_at.to_date).to_i
-      expect(subject[5]).to eq "*Age of oldest evidence_submission case*: #{evidence_submission_days_waiting} days"
+      expect(subject[4]).to eq "*Age of oldest evidence_submission case*: #{evidence_submission_days_waiting} days"
       hearing_days_waiting = (today - ready_priority_hearing_case.ready_for_distribution_at.to_date).to_i
-      expect(subject[6]).to eq "*Age of oldest hearing case*: #{hearing_days_waiting} days"
+      expect(subject[5]).to eq "*Age of oldest hearing case*: #{hearing_days_waiting} days"
 
-      expect(subject[7]).to eq "*Number of appeals _not_ distributed*: 4"
+      expect(subject[6]).to eq "*Number of appeals _not_ distributed*: 4"
 
-      expect(subject[10]).to eq "Priority Target: 6"
-      expect(subject[11]).to eq "Previous monthly distributions: #{previous_distributions}"
-      expect(subject[12].include?(legacy_priority_case.bfkey)).to be true
-      expect(subject[13].include?(ready_priority_hearing_case.uuid)).to be true
-      expect(subject[13].include?(ready_priority_evidence_case.uuid)).to be true
-      expect(subject[13].include?(ready_priority_direct_case.uuid)).to be true
+      expect(subject[9]).to eq "Priority Target: 6"
+      expect(subject[10]).to eq "Previous monthly distributions: #{previous_distributions}"
+      expect(subject[11].include?(legacy_priority_case.bfkey)).to be true
+      expect(subject[12].include?(ready_priority_hearing_case.uuid)).to be true
+      expect(subject[12].include?(ready_priority_evidence_case.uuid)).to be true
+      expect(subject[12].include?(ready_priority_direct_case.uuid)).to be true
 
       expect(subject.last).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
     end
