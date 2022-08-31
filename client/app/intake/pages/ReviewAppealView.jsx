@@ -2,16 +2,16 @@ import React, { useContext } from 'react';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { StateContext } from '../../intakeEdit/IntakeEditFrame';
-import CheckboxGroup from '../../components/CheckboxGroup';
 import { formatDateStr } from '../../util/DateUtil';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
-import { css } from 'glamor';
+import { css, target } from 'glamor';
 import TextareaField from '../../components/TextareaField';
+import { setSelectedIssues, selectedIssues, issueOptions } from '../pages/SplitAppealView';
 const issueListStyling = css({ marginTop: '0rem', marginLeft: '6rem' });
 
 const ReviewAppealView = (props) => {
   const { serverIntake } = props;
-  const { reason, setSelectedIssues, selectedIssues, setOtherReason, otherReason } = useContext(StateContext);
+  const { reason, setOtherReason, otherReason } = useContext(StateContext);
   const veteran = serverIntake.veteran.name;
   const streamdocketNumber = props.appeal.stream_docket_number;
   const claimantName = props.serverIntake.claimantName;
@@ -20,24 +20,14 @@ const ReviewAppealView = (props) => {
   const original_hearing_request_type = props.appeal.original_hearing_request_type;
 
   const onIssueChange = (evt) => {
-    setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.checked });
+    setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.labels[0].innerText });
   };
-
-
-  const issueOptions = () => requestIssues.map((issue) => ({
-    id: issue.id.toString(),
-    label:
-      <>
-        <span>{issue.description}</span><br />
-        <span>Benefit Type: {BENEFIT_TYPES[issue.benefit_type]}</span><br />
-        <span>Decision Date: {formatDateStr(issue.approx_decision_date)}</span>
-        <br /><br />
-      </>
-  }));
 
   const onOtherReasonChange = (otherReason) => {
     setOtherReason(otherReason);
   };
+
+  {console.log(target)}
 
   return (
     <>
@@ -109,19 +99,7 @@ const ReviewAppealView = (props) => {
               </ol>
             </td>
             <td>
-              <CheckboxGroup
-                vertical
-                name="issues"
-                label={COPY.SPLIT_APPEAL_CREATE_SELECT_ISSUES_TITLE}
-                hideLabel
-                id="otherReason"
-                values={selectedIssues}
-                onChange={(val) => onIssueChange(val)}
-                options={issueOptions()}
-                styling={issueListStyling}
-                optional
-                disabled
-              />
+            <td>{onIssueChange}</td>
             </td>
           </tr>
           <tr>
