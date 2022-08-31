@@ -35,7 +35,6 @@ module AllCaseDistribution
   def requested_distribution
     @appeals = []
     @rem = batch_size
-    @remaining_docket_proportions = docket_proportions.clone
     @nonpriority_iterations = 0
 
     # Distribute legacy cases tied to a judge down to the board provided limit of 30,
@@ -55,14 +54,8 @@ module AllCaseDistribution
     priority_rem = (priority_target - @appeals.count(&:priority)).clamp(0, @rem)
     distribute_limited_priority_appeals_from_all_dockets(priority_rem, style: "request")
 
-    # As we may have already distributed nonpriority legacy and hearing docket cases, we adjust the docket proportions.
-    deduct_distributed_actuals_from_remaining_docket_proportions(:legacy, :hearing)
-
-    # Distribute nonpriority appeals from any docket according to the docket proportions.
-    # If a docket runs out of available appeals, we reallocate its cases to the other dockets.
-    until @rem == 0 || @remaining_docket_proportions.all_zero?
-      distribute_genpop_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem, style: "request")
-    end
+    # Distribute the oldest nonpriority appeals from any docket if we haven't distributed batch_size appeals
+    distribute_genpop_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem, style: "request") until @rem == 0
 
     @appeals
   end
@@ -125,18 +118,6 @@ module AllCaseDistribution
       hearing_proportion: docket_proportions[:hearing],
       nonpriority_iterations: @nonpriority_iterations
     }
-  end
-
-  def deduct_distributed_actuals_from_remaining_docket_proportions(*dockets)
-    nonpriority_target = batch_size - @appeals.count(&:priority)
-
-    return if nonpriority_target == 0
-
-    dockets.each do |docket|
-      docket_count = @appeals.count { |appeal| appeal.docket == docket.to_s && !appeal.priority }
-      proportion = docket_count.to_f / nonpriority_target
-      @remaining_docket_proportions[docket] = [@remaining_docket_proportions[docket] - proportion, 0].max
-    end
   end
 
   def priority_target
