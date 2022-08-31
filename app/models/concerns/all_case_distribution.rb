@@ -48,14 +48,14 @@ module AllCaseDistribution
     end
 
     distribute_tied_priority_appeals
-    distribute_tied_nonpriority_appeals
+    # distribute_tied_nonpriority_appeals
 
     # If we haven't yet met the priority target, distribute additional priority appeals.
     priority_rem = (priority_target - @appeals.count(&:priority)).clamp(0, @rem)
     distribute_limited_priority_appeals_from_all_dockets(priority_rem, style: "request")
 
     # Distribute the oldest nonpriority appeals from any docket if we haven't distributed batch_size appeals
-    distribute_genpop_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem, style: "request") until @rem == 0
+    distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem) until @rem == 0
 
     @appeals
   end
@@ -96,9 +96,9 @@ module AllCaseDistribution
     end
   end
 
-  def distribute_genpop_nonpriority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
+  def distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
     @nonpriority_iterations += 1
-    num_oldest_genpop_nonpriority_appeals_by_docket(limit).each do |docket, number_of_appeals_to_distribute|
+    num_oldest_nonpriority_appeals_for_judge_by_docket(judge, limit).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
         dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: false, style: style)
       end
@@ -144,11 +144,11 @@ module AllCaseDistribution
       .transform_values(&:count)
   end
 
-  def num_oldest_genpop_nonpriority_appeals_by_docket(num)
+  def num_oldest_nonpriority_appeals_for_judge_by_docket(judge, num)
     return {} unless num > 0
 
     dockets
-      .flat_map { |sym, docket| docket.age_of_n_oldest_genpop_nonpriority_appeals(num).map { |age| [age, sym] } }
+      .flat_map { |sym, docket| docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num).map { |age| [age, sym] } }
       .sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }

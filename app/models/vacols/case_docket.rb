@@ -245,15 +245,17 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals.map { |appeal| appeal["bfdloout"] }
   end
 
-  def self.age_of_n_oldest_genpop_nonpriority_appeals(num)
+  def self.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
     conn = connection
 
     query = <<-SQL
       #{SELECT_NONPRIORITY_APPEALS}
-      where VLJ is null and rownum <= ?
+      where (VLJ = ? or VLJ is null)
+      and rownum <= ?
+      order by BFDNOD
     SQL
 
-    fmtd_query = sanitize_sql_array([query, num])
+    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id, num])
 
     appeals = conn.exec_query(fmtd_query).to_hash
     appeals.map { |appeal| appeal["bfdnod"] }
