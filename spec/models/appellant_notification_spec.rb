@@ -36,14 +36,6 @@ describe AppellantNotification do
         end
       end
 
-      context "can catch some missing participant_id using BGS" do
-        let(:legacy_appeal) { create(:legacy_appeal, :with_veteran, vbms_id: 123_456) }
-        it "returns success after finding participant_id from BGS" do
-          allow(legacy_appeal).to receive(:claimant_participant_id).and_return(nil)
-          expect(AppellantNotification.handle_errors(legacy_appeal)[:status]).to eq "Success"
-        end
-      end
-
       context "with no errors" do
         it "doesn't raise" do
           expect(AppellantNotification.handle_errors(appeal)[:status]).to eq "Success"
@@ -60,7 +52,7 @@ describe AppellantNotification do
       context "creates a payload with no exceptions" do
         it "has a status value of success" do
           expect(
-            AppellantNotification.create_payload(good_appeal, template_name)[:message_attributes][:status][:string_value]
+            AppellantNotification.create_payload(good_appeal, template_name)
           ).to eq "Success"
         end
       end
