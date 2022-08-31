@@ -105,6 +105,29 @@ class Appeal < DecisionReview
 
   alias_attribute :nod_date, :receipt_date # LegacyAppeal parity
 
+  # amoeba gem for splitting appeals
+  amoeba do
+    enable
+    # include_association :advance_on_docket_motion
+    include_association :appeal_views
+    include_association :appellant_substitution
+    include_association :attorney_case_reviews
+    include_association :available_hearing_locations
+    # include_association :cached_appeal_attributes
+    # include_association :cavc_remand, if: !nil?
+    include_association :claims_folder_searches
+    # include_association :hearing_appeal_stream_snapshots
+    include_association :hearings
+    # include_association :ihp_drafts
+    include_association :judge_case_reviews
+    # include_association :legacy_issue_optins
+    include_association :nod_date_updates
+    # include_association :ramp_refilings
+    include_association :tasks
+    include_association :vbms_uploaded_documents
+    include_association :work_mode
+  end
+
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
       appeal: self, use_efolder: true
