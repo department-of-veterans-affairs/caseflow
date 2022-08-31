@@ -17,7 +17,7 @@ module AllCaseDistribution
     @docket_coordinator ||= DocketCoordinator.new
   end
 
-  def all_priority_push_distribution(limit = nil)
+  def priority_push_distribution(limit = nil)
     @appeals = []
     @rem = 0
 
@@ -32,7 +32,7 @@ module AllCaseDistribution
     end
   end
 
-  def all_requested_distribution
+  def requested_distribution
     @appeals = []
     @rem = batch_size
     @remaining_docket_proportions = docket_proportions.clone
