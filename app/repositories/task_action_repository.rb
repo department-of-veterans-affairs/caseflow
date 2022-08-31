@@ -590,20 +590,6 @@ class TaskActionRepository
       }
     end
 
-    def vha_caregiver_support_mark_task_in_progress(task, _)
-      {
-        modal_title: COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
-        modal_body: COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY,
-        modal_button_text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON,
-        message_title: format(
-          COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
-          task.appeal.veteran_full_name
-        ),
-        type: VhaDocumentSearchTask.name,
-        redirect_after: "/organizations/#{VhaCaregiverSupport.singleton.url}"
-      }
-    end
-
     def vha_mark_task_in_progress(task, _user)
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
@@ -663,6 +649,51 @@ class TaskActionRepository
         message_detail: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
+    def vha_caregiver_support_mark_task_in_progress(task, _)
+      in_progress_tab_name = VhaCaregiverSupportInProgressTasksTab.tab_name
+      {
+        modal_title: COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
+        modal_body: COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY,
+        modal_button_text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON,
+        message_title: format(
+          COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
+          task.appeal.veteran_full_name
+        ),
+        type: VhaDocumentSearchTask.name,
+        redirect_after: "/organizations/#{VhaCaregiverSupport.singleton.url}?tab=#{in_progress_tab_name}"
+      }
+    end
+
+    def vha_caregiver_support_return_to_board_intake(*)
+      completed_tab_name = VhaCaregiverSupportCompletedTasksTab.tab_name
+      queue_url = "/organizations/#{VhaCaregiverSupport.singleton.url}?tab=#{completed_tab_name}"
+      dropdown_options = COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS.map do |_, value|
+        value.transform_keys(&:downcase)
+      end
+      {
+        modal_title: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+        modal_body: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY,
+        type: VhaDocumentSearchTask.name,
+        options: dropdown_options,
+        redirect_after: queue_url
+      }
+    end
+
+    def vha_caregiver_support_send_to_board_intake_for_review(task, _)
+      completed_tab_name = VhaCaregiverSupportCompletedTasksTab.tab_name
+      {
+        modal_title: COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
+        modal_button_text: COPY::MODAL_SEND_BUTTON,
+        message_title: format(
+          COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE,
+          task.appeal.veteran_full_name
+        ),
+        type: VhaDocumentSearchTask.name,
+        redirect_after: "/organizations/#{VhaCaregiverSupport.singleton.url}?tab=#{completed_tab_name}",
+        body_optional: true
       }
     end
 
