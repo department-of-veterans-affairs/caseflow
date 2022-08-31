@@ -106,5 +106,7 @@ FlowModal.propTypes = {
   success: PropTypes.object,
   error: PropTypes.object,
   resetSaveState: PropTypes.func,
-  submitButtonClassNames: PropTypes.array
+  submitButtonClassNames: PropTypes.arrayOf(
+    PropTypes.string
+  )
 };
