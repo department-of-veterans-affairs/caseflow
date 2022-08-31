@@ -28,7 +28,7 @@ const SplitAppealView = (props) => {
   const requestIssues = serverIntake.requestIssues;
 
   const onIssueChange = (evt) => {
-    setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.checked });
+    setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.labels[0].innerText });
   };
 
   const onReasonChange = (selection) => {
