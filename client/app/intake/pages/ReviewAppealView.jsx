@@ -16,12 +16,14 @@ const ReviewAppealView = (props) => {
   const streamdocketNumber = props.appeal.stream_docket_number;
   const claimantName = props.serverIntake.claimantName;
   const requestIssues = props.serverIntake.requestIssues;
+  const docketType = props.serverIntake.docketType;
+  const original_hearing_request_type = props.appeal.original_hearing_request_type;
 
   const onIssueChange = (evt) => {
     setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.checked });
   };
 
-  {console.log(JSON.stringify(props))}
+  {console.log(JSON.stringify(props.appeal.hearing_date))}
 
   const issueOptions = () => requestIssues.map((issue) => ({
     id: issue.id.toString(),
@@ -81,8 +83,16 @@ const ReviewAppealView = (props) => {
           </tr>
           <tr>
             <td>{COPY.TABLE_REVIEW_OPTION}</td>
-            <td>"Hearing-Video"</td>
-            <td>"Hearing-Video"</td>
+            <td>{docketType}
+            <div>
+            {original_hearing_request_type}
+            </div>
+            <div>
+            </div>
+            </td>
+            <td>"Date"</td>
+            <td>"Held"</td>
+            <td>"View hearing worksheet link"</td>
           </tr>
           <tr>
             <td>{COPY.TABLE_ISSUE}</td>
@@ -111,6 +121,7 @@ const ReviewAppealView = (props) => {
                 options={issueOptions()}
                 styling={issueListStyling}
                 optional
+                disabled
               />
             </td>
           </tr>
