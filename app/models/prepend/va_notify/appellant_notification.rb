@@ -68,7 +68,10 @@ module AppellantNotification
     msg_bdy = create_payload(appeal, template_name)
     SendNotificationJob.perform_later(msg_bdy)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 810ef919d2fedf21203a9dc2ae5bb736aee6e632
     # queue.send_message(msg_bdy)
 >>>>>>> 810ef919d2fedf21203a9dc2ae5bb736aee6e632
   end
