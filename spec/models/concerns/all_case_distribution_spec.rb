@@ -42,7 +42,7 @@ describe AllCaseDistribution, :all_dbs do
       allow(@new_acd).to receive(:num_oldest_priority_appeals_by_docket)
         .and_return({})
 
-      # distribute genpop nonpriority appeals from all dockets
+      # distribute all nonpriority appeals from all dockets
       allow(@new_acd).to receive(:num_oldest_nonpriority_appeals_for_judge_by_docket)
         .with(@new_acd.judge, @new_acd.batch_size)
         .and_return(nonpriority_count_hash)
