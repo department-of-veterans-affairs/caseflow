@@ -57,27 +57,6 @@ module AllCaseDistribution
     @appeals
   end
 
-  def distribute_tied_nonpriority_appeals
-    # Legacy docket appeals that are tied to judges are only distributed when they are within the docket range.
-    base_args = { genpop: "not_genpop", priority: false, style: "request" }
-    collect_appeals do
-      dockets[:legacy].distribute_appeals(self, base_args.merge(limit: @rem, range: legacy_docket_range))
-    end
-    collect_appeals do
-      dockets[:hearing].distribute_appeals(self, base_args.merge(limit: @rem))
-    end
-  end
-
-  def distribute_tied_priority_appeals
-    base_args = { priority: true, style: "request", genpop: "not_genpop" }
-    collect_appeals do
-      dockets[:legacy].distribute_appeals(self, base_args.merge(limit: @rem))
-    end
-    collect_appeals do
-      dockets[:hearing].distribute_appeals(self, base_args.merge(limit: @rem))
-    end
-  end
-
   def collect_appeals
     appeals = yield
     @rem -= appeals.count
