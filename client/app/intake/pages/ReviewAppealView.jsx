@@ -23,7 +23,6 @@ const ReviewAppealView = (props) => {
     setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.checked });
   };
 
-  {console.log(JSON.stringify(props.appeal.hearing_date))}
 
   const issueOptions = () => requestIssues.map((issue) => ({
     id: issue.id.toString(),
