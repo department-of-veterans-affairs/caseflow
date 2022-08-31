@@ -47,14 +47,11 @@ module AllCaseDistribution
       end
     end
 
-    distribute_tied_priority_appeals
-    # distribute_tied_nonpriority_appeals
-
     # If we haven't yet met the priority target, distribute additional priority appeals.
     priority_rem = (priority_target - @appeals.count(&:priority)).clamp(0, @rem)
     distribute_limited_priority_appeals_from_all_dockets(priority_rem, style: "request")
 
-    # Distribute the oldest nonpriority appeals from any docket if we haven't distributed batch_size appeals
+    # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
     distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem) until @rem == 0
 
     @appeals
