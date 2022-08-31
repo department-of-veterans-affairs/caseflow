@@ -2,12 +2,20 @@
 
 class Fakes::VANotifyService < ExternalApi::VANotifyService
   class << self
-    def send_notifications(participant_id, appeal_id, email_template_id, status = "")
+    def send_email_notifications(participant_id, appeal_id, email_template_id, status = "")
       if participant_id.length != 9
         return bad_participant_id_response
       end
 
       fake_notification_response(email_template_id)
+    end
+
+    def send_sms_notifications(participant_id, appeal_id, sms_template_id, status = "")
+      if participant_id.length != 9
+        return bad_participant_id_response
+      end
+
+      fake_notification_response(sms_template_id)
     end
 
     def get_status(notification_id)

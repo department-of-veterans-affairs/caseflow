@@ -19,7 +19,7 @@ class ExternalApi::VANotifyService
   }.freeze
 
   class << self
-    # Send the email and sms notifications
+    # Send the emailand spec notifications
     # @param {status} The appeal status for a template that requires it
     def send_email_notifications(participant_id, appeal_id, email_template_id, status = "")
       email_response = send_va_notify_request(email_request(participant_id, appeal_id, email_template_id, status))
@@ -27,7 +27,7 @@ class ExternalApi::VANotifyService
       email_response
     end
     
-      # Send sms notifications
+      # Send the sms notifications
     def send_sms_notification(participant_id, appeal_id, sms_template_id, status = "")
        sms_response = send_va_notify_request(sms_request(participant_id, appeal_id, sms_template_id, status))
        Rails.logger.info(sms_response)
