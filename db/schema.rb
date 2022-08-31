@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_30_124000) do
+ActiveRecord::Schema.define(version: 2022_08_30_143800) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1120,7 +1120,7 @@ ActiveRecord::Schema.define(version: 2022_08_30_124000) do
     t.string "recipient_phone_number", comment: "Participants Phone Number"
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
-    t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
+    t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type", unique: true
     t.index ["notification_events_id"], name: "index_notifications_on_notification_events_id"
     t.index ["participant_id"], name: "index_participant_id"
   end
