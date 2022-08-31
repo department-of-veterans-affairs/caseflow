@@ -65,6 +65,6 @@ module AppellantNotification
 
   def self.create_payload(appeal, template_name)
     info = AppellantNotification.handle_errors(appeal)
-    MessageTemplate.new(info, template_name)
+    VANotifyMessageGeneratorJob.new(info, template_name)
   end
 end
