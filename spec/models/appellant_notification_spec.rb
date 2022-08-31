@@ -443,4 +443,17 @@ describe AppellantNotification do
       end
     end
   end
+
+  describe SendNotificationJob do
+    let(:appeal) { create(:appeal, :active) }
+    let(:template) { "Hearing scheduled" }
+    let(:payload) { AppellantNotification.create_payload(appeal, template_name) }
+    describe '#perform' do
+      it 'pushes a new message' do
+        ActiveJob::Base.queue_adapter = :test
+        AppellantNotification.notify_appellant(appeal, template)
+        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+      end
+    end
+  end
 end
