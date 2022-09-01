@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_04_135348) do
+ActiveRecord::Schema.define(version: 2022_09_01_082300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1111,7 +1111,7 @@ ActiveRecord::Schema.define(version: 2022_08_04_135348) do
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
     t.string "event_type", null: false, comment: "Type of Event"
-    t.text "notification_content", null: false, comment: "Full Text Content of Notification"
+    t.text "notification_content", comment: "Full Text Content of Notification"
     t.bigint "notification_events_id"
     t.string "notification_type", null: false, comment: "Type of Notification that was created"
     t.datetime "notified_at", null: false, comment: "Time Notification was created"
