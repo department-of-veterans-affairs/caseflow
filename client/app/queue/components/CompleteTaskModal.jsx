@@ -350,7 +350,6 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SEND_BUTTON,
-    buttonClasses: ['usa-button', 'usa-button-warning']
   },
 };
 
@@ -531,7 +530,6 @@ class CompleteTaskModal extends React.Component {
         submitDisabled={!this.validateCaregiverForm()}
         validateForm={this.validateForm}
         submit={this.submit}
-        submitButtonClassNames={modalAttributes.buttonClasses}
         pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
         submitButtonClassNames={['usa-button']}
       >
