@@ -7,6 +7,7 @@ import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import { css, target } from 'glamor';
 import TextareaField from '../../components/TextareaField';
 import { reason, setOtherReason, otherReason, selectedIssues, setSelectedIssues } from '../pages/SplitAppealView';
+
 const issueListStyling = css({ marginTop: '0rem', marginLeft: '6rem' });
 
 const ReviewAppealView = (props) => {
@@ -28,7 +29,7 @@ const ReviewAppealView = (props) => {
     setOtherReason(otherReason);
   };
 
-  {console.log(JSON.stringify(props.serverIntake.receiptDate))}
+  {console.log(JSON.stringify(props.appeal))}
 
   return (
     <>
