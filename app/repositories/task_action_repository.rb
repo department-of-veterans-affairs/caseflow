@@ -618,7 +618,7 @@ class TaskActionRepository
       {
         modal_title: COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
         type: EducationDocumentSearchTask.name,
-        redirect_after: "/organizations/#{EducationEmo.singleton.url}"
+        redirect_after: "/organizations/#{EducationEmo.singleton.url}"        
       }
     end
 

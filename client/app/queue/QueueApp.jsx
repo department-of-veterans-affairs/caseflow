@@ -351,6 +351,10 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="emo_send_to_board_intake_for_review" {...props.match.params} />
   );
 
+  routedVhaCaregiverSupportSendToBoardIntakeForReviewModal = (props) => (
+    <CompleteTaskModal modalType="vha_caregiver_support_send_to_board_intake_for_review" {...props.match.params} />
+  );
+
   routedRpoSendToBoardIntakeForReviewModal = (props) => (
     <CompleteTaskModal modalType="rpo_send_to_board_intake_for_review" {...props.match.params} />
   );
@@ -1092,6 +1096,14 @@ class QueueApp extends React.PureComponent {
                 }`}
               title="Ready for Review | Caseflow"
               render={this.routedEmoSendToBoardIntakeForReviewModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW.value
+                }`}
+              title="Ready for Review | Caseflow"
+              render={this.routedVhaCaregiverSupportSendToBoardIntakeForReviewModal}
             />
             <PageRoute
               exact
