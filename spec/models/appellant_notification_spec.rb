@@ -36,14 +36,6 @@ describe AppellantNotification do
         end
       end
 
-      context "can catch some missing participant_id using BGS" do
-        let(:legacy_appeal) { create(:legacy_appeal, :with_veteran, vbms_id: 123_456) }
-        it "returns success after finding participant_id from BGS" do
-          allow(legacy_appeal).to receive(:claimant_participant_id).and_return(nil)
-          expect(AppellantNotification.handle_errors(legacy_appeal)[:status]).to eq "Success"
-        end
-      end
-
       context "with no errors" do
         it "doesn't raise" do
           expect(AppellantNotification.handle_errors(appeal)[:status]).to eq "Success"
@@ -440,6 +432,19 @@ describe AppellantNotification do
           expect(AppellantNotification).to receive(:notify_appellant).with(task.appeal, template_name)
           task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
         end
+      end
+    end
+  end
+
+  describe SendNotificationJob do
+    let(:appeal) { create(:appeal, :active) }
+    let(:template) { "Hearing scheduled" }
+    let(:payload) { AppellantNotification.create_payload(appeal, template_name) }
+    describe '#perform' do
+      it 'pushes a new message' do
+        ActiveJob::Base.queue_adapter = :test
+        AppellantNotification.notify_appellant(appeal, template)
+        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
   end
