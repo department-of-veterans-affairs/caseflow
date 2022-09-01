@@ -13,6 +13,35 @@ const uiData = {
   }
 };
 
+const caregiverActions = [
+  {
+    func: 'vha_caregiver_support_mark_task_in_progress',
+    label: 'Mark task as in progress',
+    value: 'modal/mark_task_in_progress',
+    data: {
+      modal_title: 'Mark task as in progress',
+      modal_body: 'By marking task as in progress, you are confirming that you are actively working on collecting documents for this appeal.\n\nOnce marked, other members of your organization will no longer be able to mark this task as in progress.',
+      modal_button_text: 'Mark in progress',
+      message_title: 'You have successfully marked Bob Smithbeer\'s case as in progress',
+      type: 'VhaDocumentSearchTask',
+      redirect_after: '/organizations/vha-csp'
+    }
+  },
+  {
+    func: 'vha_caregiver_support_send_to_board_intake_for_review',
+    label: 'Documents ready for Board Intake review',
+    value: 'modal/vha_caregiver_support_send_to_board_intake_for_review',
+    data: {
+      modal_title: 'Ready for Review',
+      modal_button_text: 'Send',
+      message_title: 'You have successfully sent Bob Smithbeer\'s case to Board Intake for Review',
+      type: 'VhaDocumentSearchTask',
+      redirect_after: '/organizations/vha-csp',
+      body_optional: true
+    }
+  }
+];
+
 const vhaDocumentSearchTaskData = {
   7119: {
     uniqueId: '7119',
@@ -102,10 +131,275 @@ const vhaDocumentSearchTaskData = {
   }
 };
 
+const educationDocumentSearchTaskData = {
+  7162: {
+    uniqueId: '7162',
+    isLegacy: false,
+    type: 'EducationDocumentSearchTask',
+    appealType: 'Appeal',
+    addedByCssId: null,
+    appealId: 1647,
+    externalAppealId: 'adfd7d18-f848-4df5-9df2-9ca43c58dd13',
+    assignedOn: '2022-08-28T12:35:50.482-04:00',
+    closestRegionalOffice: null,
+    createdAt: '2022-08-28T12:35:50.482-04:00',
+    closedAt: null,
+    startedAt: null,
+    assigneeName: 'Executive Management Office',
+    assignedTo: {
+      cssId: null,
+      name: 'Executive Management Office',
+      id: 56,
+      isOrganization: true,
+      type: 'EducationEmo'
+    },
+    assignedBy: {
+      firstName: 'Deborah',
+      lastName: 'Wise',
+      cssId: 'BVADWISE',
+      pgId: 17
+    },
+    cancelledBy: {
+      cssId: null
+    },
+    cancelReason: null,
+    convertedBy: {
+      cssId: null
+    },
+    convertedOn: null,
+    taskId: '7162',
+    parentId: 7161,
+    label: 'Review Documentation',
+    documentId: null,
+    externalHearingId: null,
+    workProduct: null,
+    previousTaskAssignedOn: null,
+    placedOnHoldAt: null,
+    status: 'assigned',
+    onHoldDuration: null,
+    instructions: [],
+    decisionPreparedBy: null,
+    availableActions: [
+      {
+        func: 'emo_assign_to_education_rpo_data',
+        label: 'Assign to Regional Processing Office',
+        value: 'modal/emo_assign_to_education_rpo',
+        data: {
+          options: [
+            {
+              label: 'Buffalo RPO',
+              value: 57
+            },
+            {
+              label: 'Central Office RPO',
+              value: 58
+            },
+            {
+              label: 'Muskogee RPO',
+              value: 59
+            }
+          ],
+          modal_title: 'Assign to RPO',
+          modal_body: 'Provide instructions and context for this action:',
+          modal_selector_placeholder: 'Select RPO',
+          type: 'EducationAssessDocumentationTask',
+          redirect_after: '/organizations/edu-emo',
+          body_optional: true
+        }
+      },
+      {
+        func: 'emo_return_to_board_intake',
+        label: 'Return to Board Intake',
+        value: 'modal/emo_return_to_board_intake',
+        data: {
+          modal_title: 'Return to Board Intake',
+          type: 'EducationDocumentSearchTask',
+          redirect_after: '/organizations/edu-emo'
+        }
+      },
+      {
+        func: 'emo_send_to_board_intake_for_review',
+        label: 'Ready for Review',
+        value: 'modal/emo_send_to_board_intake_for_review',
+        data: {
+          modal_title: 'Ready for Review',
+          type: 'EducationDocumentSearchTask',
+          redirect_after: '/organizations/edu-emo',
+          body_optional: true
+        }
+      }
+    ],
+    timelineTitle: 'EducationDocumentSearchTask completed',
+    hideFromQueueTableView: false,
+    hideFromTaskSnapshot: false,
+    hideFromCaseTimeline: false,
+    availableHearingLocations: [],
+    latestInformalHearingPresentationTask: {},
+    canMoveOnDocketSwitch: true,
+    timerEndsAt: null,
+    unscheduledHearingNotes: {}
+  }
+};
+
+const EducationAssessDocumentationTaskData = {
+  7168: {
+    uniqueId: '7168',
+    isLegacy: false,
+    type: 'EducationAssessDocumentationTask',
+    appealType: 'Appeal',
+    addedByCssId: null,
+    appealId: 1647,
+    externalAppealId: 'adfd7d18-f848-4df5-9df2-9ca43c58dd13',
+    assignedOn: '2022-08-28T14:11:34.079-04:00',
+    closestRegionalOffice: null,
+    createdAt: '2022-08-28T14:11:34.079-04:00',
+    closedAt: null,
+    startedAt: null,
+    assigneeName: 'Buffalo RPO',
+    assignedTo: {
+      cssId: null,
+      name: 'Buffalo RPO',
+      id: 57,
+      isOrganization: true,
+      type: 'EducationRpo'
+    },
+    assignedBy: {
+      firstName: 'Paul',
+      lastName: 'EMO',
+      cssId: 'EMOUSER',
+      pgId: 4229
+    },
+    cancelledBy: {
+      cssId: null
+    },
+    cancelReason: null,
+    convertedBy: {
+      cssId: null
+    },
+    convertedOn: null,
+    taskId: '7168',
+    parentId: 7162,
+    label: 'Assess Documentation',
+    documentId: null,
+    externalHearingId: null,
+    workProduct: null,
+    previousTaskAssignedOn: null,
+    placedOnHoldAt: null,
+    status: 'assigned',
+    onHoldDuration: null,
+    instructions: [
+      ''
+    ],
+    decisionPreparedBy: null,
+    availableActions: [
+      {
+        func: 'education_rpo_return_to_emo',
+        label: 'Return to Executive Management Office',
+        value: 'modal/rpo_return_to_emo',
+        data: {
+          modal_title: 'Return to Executive Management Office',
+          message_title: 'You have successfully returned Bob Smithlesch\'s case to the Executive Management Office',
+          type: 'EducationAssessDocumentationTask',
+          redirect_after: '/organizations/buffalo-rpo',
+          modal_button_text: 'Return'
+        }
+      },
+      {
+        func: 'education_rpo_send_to_board_intake_for_review',
+        label: 'Ready for Review',
+        value: 'modal/rpo_send_to_board_intake_for_review',
+        data: {
+          modal_title: 'Ready for Review',
+          type: 'EducationAssessDocumentationTask',
+          body_optional: true,
+          redirect_after: '/organizations/buffalo-rpo'
+        }
+      },
+      {
+        func: 'education_rpo_mark_task_in_progress',
+        label: 'Mark task in progress',
+        value: 'modal/mark_task_in_progress',
+        data: {
+          modal_title: 'Mark task in progress',
+          modal_body: 'Please confirm that you are actively working on collecting documents for this appeal.  Once confirmed, other members of your organization will no longer be able to mark this task in progress.',
+          message_title: 'You have successfully marked your task as in progress',
+          message_detail: 'This appeal will be visible in the "In Progress" tab of your Queue',
+          type: 'AssessDocumentationTask',
+          redirect_after: '/organizations/buffalo-rpo'
+        }
+      }
+    ],
+    timelineTitle: 'EducationAssessDocumentationTask completed',
+    hideFromQueueTableView: false,
+    hideFromTaskSnapshot: false,
+    hideFromCaseTimeline: false,
+    availableHearingLocations: [],
+    latestInformalHearingPresentationTask: {},
+    canMoveOnDocketSwitch: true,
+    timerEndsAt: null,
+    unscheduledHearingNotes: {}
+  }
+};
+
 export const camoToBvaIntakeData = {
   queue: {
     amaTasks: {
       ...vhaDocumentSearchTaskData
+    },
+    appeals: {
+      '419ce568-387c-4ac6-a5f5-00a1554cea36': {
+        id: '1632',
+        externalId: '419ce568-387c-4ac6-a5f5-00a1554cea36'
+      }
+    }
+  },
+  ...uiData
+};
+
+export const emoToBvaIntakeData = {
+  queue: {
+    amaTasks: {
+      ...educationDocumentSearchTaskData
+    },
+    appeals: {
+      '419ce568-387c-4ac6-a5f5-00a1554cea36': {
+        id: '1632',
+        externalId: '419ce568-387c-4ac6-a5f5-00a1554cea36'
+      }
+    }
+  },
+  ...uiData
+};
+
+export const rpoToBvaIntakeData = {
+  queue: {
+    amaTasks: {
+      ...EducationAssessDocumentationTaskData
+    },
+    appeals: {
+      '419ce568-387c-4ac6-a5f5-00a1554cea36': {
+        id: '1632',
+        externalId: '419ce568-387c-4ac6-a5f5-00a1554cea36'
+      }
+    }
+  },
+  ...uiData
+};
+
+export const caregiverToIntakeData = {
+  queue: {
+    amaTasks: {
+      ...vhaDocumentSearchTaskData,
+      [Object.keys(vhaDocumentSearchTaskData)[0]]: {
+        ...Object.values(vhaDocumentSearchTaskData)[0],
+        availableActions: caregiverActions,
+        assigneeName: 'VHA CAREGEVER',
+        assignedTo: {
+          name: 'VHA CAREGEVER',
+          isOrganization: true,
+          type: 'VhaCaregiver'
+        },
+      }
     },
     appeals: {
       '419ce568-387c-4ac6-a5f5-00a1554cea36': {

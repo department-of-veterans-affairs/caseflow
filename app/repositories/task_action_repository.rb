@@ -615,6 +615,20 @@ class TaskActionRepository
       }
     end
 
+    def vha_caregiver_support_send_to_board_intake_for_review(task, _)
+      {
+        modal_title: COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
+        modal_button_text: COPY::MODAL_SEND_BUTTON,
+        message_title: format(
+          COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE,
+          task.appeal.veteran_full_name
+        ),
+        type: VhaDocumentSearchTask.name,
+        redirect_after: "/organizations/#{VhaCaregiverSupport.singleton.url}",
+        body_optional: true
+      }
+    end
+
     def vha_mark_task_in_progress(task, _user)
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
@@ -632,7 +646,7 @@ class TaskActionRepository
       {
         modal_title: COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
         type: EducationDocumentSearchTask.name,
-        redirect_after: "/organizations/#{EducationEmo.singleton.url}"
+        redirect_after: "/organizations/#{EducationEmo.singleton.url}"        
       }
     end
 
