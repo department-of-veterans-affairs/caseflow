@@ -70,13 +70,12 @@ describe SendNotificationJob, type: :job do
   # rubocop:enable Style/BlockDelimiters
 
   # rspec for feature toggle is turned on, it should allow the message listener to send
-  
-   context "va_notify_sms FeatureToggle" do
-      before{FeatureToggle.enable!(:va_notify_sms)}
-      after{FeatureToggle.disable!(:va_notify_sms)}
-      subject (:job) {SendNotificationJob.perform_later(send_sms_notification)}
-      it {is_expected.to eq (SendNotificationJob.perform_later(send_sms_notification))}
-  end    
+  context "va_notify_sms FeatureToggle" do
+    before{ FeatureToggle.enable!(:va_notify_sms) } 
+    after{ FeatureToggle.disable!(:va_notify_sms) }
+    subject (:job) { SendNotificationJob.perform_later(send_sms_notification) }
+    it { is_expected.to eq(SendNotificationJob.perform_later(send_sms_notification)) }
+  end   
 
   after do
     clear_enqueued_jobs

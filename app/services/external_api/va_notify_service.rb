@@ -109,7 +109,7 @@ class ExternalApi::VANotifyService
             id_type: "PID",
             id_value: participant_id
           },
-          sms_sender_id: SENDER_ID || ""
+          sms_sender_id: SENDER_ID || "",
           personalisation: nil
         },
         headers: HEADERS,

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Purpose: Active Job that handles the processing of VA Notifcation event trigger. 
+# Purpose: Active Job that handles the processing of VA Notifcation event trigger.
 # This job saves the data to an audit table and If the corresponding feature flag is enabled will send
 # an email or SMS request to VA Notify API
 class SendNotificationJob < CaseflowJob
@@ -47,7 +47,7 @@ class SendNotificationJob < CaseflowJob
                 notification_audit_record.email_notification_status = status
                 notification_audit_record.sms_notification_status = status
                 notification_audit_record.save!
-                send_to_va_notify(participant_id, notification_event.id, notification_event.email_template.id, status )
+                send_to_va_notify(participant_id, notification_event.id, notification_event.email_template.id, status)
               else
                 log_error("Unable to find Notification Event in SendNotification Job. Exiting job")
               end  
@@ -72,21 +72,17 @@ class SendNotificationJob < CaseflowJob
     end
   end
 
-private
+  private
 
   # Send message to VA Notify to send notification
 
   def send_to_va_notify(participant_id, notification_id, email_template_id, status = "")
     if FeatureToggle.enabled?(:va_notify_email)
       VANotifyService.send_email_notifications(participant_id, notification_id, email_template_id, status = "")
-
     end
 
     if FeatureToggle.enabled?(:va_notify_sms)
       VANotifyService.send_sms_notifications(participant_id, appeal_id, sms_template_id, status = "")
-
-
-
     end
   end
 
