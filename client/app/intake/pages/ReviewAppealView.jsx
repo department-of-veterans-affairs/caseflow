@@ -6,12 +6,12 @@ import { formatDateStr } from '../../util/DateUtil';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import { css, target } from 'glamor';
 import TextareaField from '../../components/TextareaField';
-import { setSelectedIssues, selectedIssues, issueOptions } from '../pages/SplitAppealView';
+import { reason, setOtherReason, otherReason, selectedIssues, setSelectedIssues } from '../pages/SplitAppealView';
 const issueListStyling = css({ marginTop: '0rem', marginLeft: '6rem' });
 
 const ReviewAppealView = (props) => {
   const { serverIntake } = props;
-  const { reason, setOtherReason, otherReason } = useContext(StateContext);
+  const { reason, setOtherReason, otherReason, selectedIssues, setSelectedIssues } = useContext(StateContext);
   const veteran = serverIntake.veteran.name;
   const streamdocketNumber = props.appeal.stream_docket_number;
   const claimantName = props.serverIntake.claimantName;
@@ -99,7 +99,11 @@ const ReviewAppealView = (props) => {
               </ol>
             </td>
             <td>
-            <td>{"text"}</td>
+            <td>{ <td>
+              <ol>
+                {Object.keys(selectedIssues).map((issueKey) => <li key={issueKey}>{selectedIssues[issueKey]}</li>)}
+              </ol>
+            </td>}</td>
             </td>
           </tr>
           <tr>
