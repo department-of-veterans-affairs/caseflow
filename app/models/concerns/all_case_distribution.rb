@@ -29,6 +29,7 @@ module AllCaseDistribution
     else
       # Distribute <limit> number of cases, regardless of docket type, oldest first.
       distribute_limited_priority_appeals_from_all_dockets(limit, style: "push")
+      distribute_priority_appeals_from_all_dockets_by_age_to_limit(@rem)
     end
   end
 
@@ -55,8 +56,6 @@ module AllCaseDistribution
     priority_rem = (priority_target - @appeals.count(&:priority)).clamp(0, @rem)
     distribute_limited_priority_appeals_from_all_dockets(priority_rem, style: "request")
 
-    # Distribute the oldest nonpriority appeals from any docket if we haven't distributed batch_size appeals
-    distribute_genpop_priority_appeals_from_all_dockets_by_age_to_limit(@rem, style: "request") until @rem == 0
     @appeals
   end
 
@@ -96,9 +95,9 @@ module AllCaseDistribution
     end
   end
 
-  def distribute_genpop_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
+  def distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
     @priority_iterations += 1
-    num_oldest_genpop_priority_appeals_by_docket(limit).each do |docket, number_of_appeals_to_distribute|
+    num_oldest_priority_appeals_by_docket(limit).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
         dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: false, style: style)
       end
@@ -118,17 +117,6 @@ module AllCaseDistribution
       hearing_proportion: docket_proportions[:hearing],
       nonpriority_iterations: @nonpriority_iterations
     }
-  end
-
-  def num_oldest_genpop_priority_appeals_by_docket(num)
-    return {} unless num > 0
-
-    dockets
-      .flat_map { |sym, docket| docket.age_of_n_oldest_genpop_priority_appeals(num).map { |age| [age, sym] } }
-      .sort_by { |age, _| age }
-      .first(num)
-      .group_by { |_, sym| sym }
-      .transform_values(&:count)
   end
 
   def priority_target
