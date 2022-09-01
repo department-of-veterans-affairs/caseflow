@@ -57,10 +57,9 @@ module AppellantNotification
   def self.notify_appellant(
     appeal,
     template_name
-    # queue = Shoryuken::Client.queues(ActiveJob::Base.queue_name_prefix + "_send_notifications.fifo")
   )
     msg_bdy = create_payload(appeal, template_name)
-    # queue.send_message(msg_bdy)
+    SendNotificationJob.perform_later(msg_bdy)
   end
 
   def self.create_payload(appeal, template_name)
