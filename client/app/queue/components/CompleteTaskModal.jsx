@@ -45,6 +45,7 @@ const MarkTaskCompleteModal = ({ props, state, setState }) => {
           value={state.instructions}
           styling={marginTop(4)}
           maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+          optional
         />
       )}
     </React.Fragment>
@@ -532,6 +533,7 @@ class CompleteTaskModal extends React.Component {
         submit={this.submit}
         submitButtonClassNames={modalAttributes.buttonClasses}
         pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
+        submitButtonClassNames={['usa-button']}
       >
         {this.props.task ?
           modalAttributes.getContent(this.getContentArgs()) :
