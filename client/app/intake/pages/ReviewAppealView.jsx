@@ -18,6 +18,7 @@ const ReviewAppealView = (props) => {
   const requestIssues = props.serverIntake.requestIssues;
   const docketType = props.serverIntake.docketType;
   const original_hearing_request_type = props.appeal.original_hearing_request_type;
+  const receiptDate = props.serverIntake.receiptDate;
 
   const onIssueChange = (evt) => {
     setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.labels[0].innerText });
@@ -27,7 +28,7 @@ const ReviewAppealView = (props) => {
     setOtherReason(otherReason);
   };
 
-  {console.log(props)}
+  {console.log(JSON.stringify(props.serverIntake.receiptDate))}
 
   return (
     <>
@@ -73,13 +74,13 @@ const ReviewAppealView = (props) => {
           <tr>
             <td>{COPY.TABLE_REVIEW_OPTION}</td>
             <td>{docketType}
-            <div>
-            {original_hearing_request_type}
-            </div>
-            <div>
-            </div>
+              <div>
+                {original_hearing_request_type}
+              </div>
+              <div>
+                {receiptDate}
+              </div>
             </td>
-            <td>"Date"</td>
             <td>"Held"</td>
             <td>"View hearing worksheet link"</td>
           </tr>
@@ -99,11 +100,9 @@ const ReviewAppealView = (props) => {
               </ol>
             </td>
             <td>
-            <td>{ <td>
               <ol>
                 {Object.keys(selectedIssues).map((issueKey) => <li key={issueKey}>{selectedIssues[issueKey]}</li>)}
               </ol>
-            </td>}</td>
             </td>
           </tr>
           <tr>
