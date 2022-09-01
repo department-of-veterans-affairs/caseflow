@@ -440,7 +440,8 @@ const MODAL_TYPE_ATTRS = {
 
       return formattedInstructions;
     }
-  }
+  },
+
   vha_caregiver_support_send_to_board_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(
@@ -449,6 +450,19 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SEND_BUTTON,
+    submitDisabled: ({ state }) => {
+      const { otherInstructions, radio } = state;
+
+      let isValid = true;
+
+      if (radio === 'other') {
+        isValid = validInstructions(otherInstructions) && validRadio(radio);
+      } else {
+        isValid = validRadio(radio);
+      }
+
+      return !isValid;
+    }
   },
 };
 
@@ -562,52 +576,35 @@ class CompleteTaskModal extends React.Component {
     return formattedInstructions.join('');
   };
 
-  validateCaregiverForm = () => {
-    const { otherInstructions, radio } = this.state;
-    const modalType = this.props.modalType;
+   validateForm = () => {
+     const { instructions, otherInstructions, radio } = this.state;
+     const modalType = this.props.modalType;
 
-    let isValid = true;
+     let isValid = true;
 
-    if (modalType === 'vha_caregiver_support_send_to_board_intake_for_review') {
-      if (radio === 'other') {
-        isValid = validInstructions(otherInstructions) && validRadio(radio);
-      } else {
-        isValid = validRadio(radio);
-      }
-    }
+     if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
+       isValid = validInstructions(instructions) && validRadio(radio);
+     }
 
-    return isValid;
-  }
+     if (modalType === 'emo_return_to_board_intake') {
+       isValid = validInstructions(instructions);
+     }
 
-  validateForm = () => {
-    const { instructions, otherInstructions, radio } = this.state;
-    const modalType = this.props.modalType;
+     if (modalType === 'emo_send_to_board_intake_for_review' || modalType === 'rpo_send_to_board_intake_for_review') {
+       if (radio === 'other') {
+         isValid = validInstructions(otherInstructions) && validRadio(radio);
+       } else {
+         isValid = validRadio(radio);
+       }
+     }
 
-    let isValid = true;
+     // Checks validity using the customValidation function defined in the modal constants if it is present
+     if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customValidation === 'function') {
+       isValid = MODAL_TYPE_ATTRS[this.props.modalType].customValidation(this.getContentArgs());
+     }
 
-    if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
-      isValid = validInstructions(instructions) && validRadio(radio);
-    }
-
-    if (modalType === 'emo_return_to_board_intake') {
-      isValid = validInstructions(instructions);
-    }
-
-    if (modalType === 'emo_send_to_board_intake_for_review' || modalType === 'rpo_send_to_board_intake_for_review') {
-      if (radio === 'other') {
-        isValid = validInstructions(otherInstructions) && validRadio(radio);
-      } else {
-        isValid = validRadio(radio);
-      }
-    }
-
-    // Checks validity using the customValidation function defined in the modal constants if it is present
-    if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customValidation === 'function') {
-      isValid = MODAL_TYPE_ATTRS[this.props.modalType].customValidation(this.getContentArgs());
-    }
-
-    return isValid;
-  }
+     return isValid;
+   }
 
   submit = () => {
     const { task, appeal } = this.props;
