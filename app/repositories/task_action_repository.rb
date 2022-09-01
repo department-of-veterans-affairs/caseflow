@@ -653,7 +653,6 @@ class TaskActionRepository
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
-        # testing here
         modal_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
         modal_body: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_BODY,
         message_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
