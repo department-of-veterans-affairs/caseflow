@@ -268,7 +268,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             )
           )
 
-          expect(page).to have_current_path("/organizations/#{vha_caregiver.url}", ignore_query: true)
+          completed_tab_name = VhaCaregiverSupportCompletedTasksTab.tab_name
+          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{completed_tab_name}&page=1"
+          expect(page).to have_current_path(expected_url)
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
         end
 
