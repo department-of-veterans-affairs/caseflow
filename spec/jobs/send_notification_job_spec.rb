@@ -69,6 +69,10 @@ describe SendNotificationJob, type: :job do
   let(:queue_name) { "caseflow_test_send_notifications" }
   # rubocop:enable Style/BlockDelimiters
 
+  before do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   after do
     clear_enqueued_jobs
     clear_performed_jobs
@@ -100,30 +104,30 @@ describe SendNotificationJob, type: :job do
         end
       end
 
-      it "makes audit params" do
-        allow(VANotifyService).to receive(:send_notifications) { bad_response }
-        allow(VANotifyService).to receive(:send_notifications)
-          .with(
-            participant_id,
-            appeal_id,
-            email_template_id,
-            appeal_status
-          )
-        audit_creation_params = {
-          message: message,
-          good_response: good_response,
-          notification_events_id: notification_events_id,
-          notification_type: notification_type
-        }
-        allow_any_instance_of(SendNotificationJob)
-          .to receive(:audit_params) { audit_creation_params }
-        allow_any_instance_of(SendNotificationJob)
-          .to receive(:audit_params)
-          .with(message, good_response, notification_events_id, notification_type)
-        perform_enqueued_jobs do
-          SendNotificationJob.perform_later(message)
-        end
-      end
+      # it "makes audit params" do
+      #   allow(VANotifyService).to receive(:send_notifications) { bad_response }
+      #   allow(VANotifyService).to receive(:send_notifications)
+      #     .with(
+      #       participant_id,
+      #       appeal_id,
+      #       email_template_id,
+      #       appeal_status
+      #     )
+      #   audit_creation_params = {
+      #     message: message,
+      #     good_response: good_response,
+      #     notification_events_id: notification_events_id,
+      #     notification_type: notification_type
+      #   }
+      #   allow_any_instance_of(SendNotificationJob)
+      #     .to receive(:audit_params) { audit_creation_params }
+      #   allow_any_instance_of(SendNotificationJob)
+      #     .to receive(:audit_params)
+      #     .with(message, good_response, notification_events_id, notification_type)
+      #   perform_enqueued_jobs do
+      #     SendNotificationJob.perform_later(message)
+      #   end
+      # end
     end
 
     describe "handling errors" do
@@ -177,20 +181,20 @@ describe SendNotificationJob, type: :job do
         end
       end
 
-      it "returns error for fakes" do
-        allow(VANotifyService).to receive(:send_notifications) { bad_response }
-        allow(VANotifyService).to receive(:send_notifications)
-          .with(
-            bad_participant_id,
-            appeal_id,
-            email_template_id,
-            appeal_status
-          )
-        expect(Rails.logger).to receive(:error).with(/Failed with error:/)
-        perform_enqueued_jobs do
-          SendNotificationJob.perform_later(message)
-        end
-      end
+      # it "returns error for fakes" do
+      #   allow(VANotifyService).to receive(:send_notifications) { bad_response }
+      #   allow(VANotifyService).to receive(:send_notifications)
+      #     .with(
+      #       bad_participant_id,
+      #       appeal_id,
+      #       email_template_id,
+      #       appeal_status
+      #     )
+      #   expect(Rails.logger).to receive(:error).with(/Failed with error:/)
+      #   perform_enqueued_jobs do
+      #     SendNotificationJob.perform_later(message)
+      #   end
+      # end
 
       it "retries on retriable error" do
         allow_any_instance_of(SendNotificationJob)
