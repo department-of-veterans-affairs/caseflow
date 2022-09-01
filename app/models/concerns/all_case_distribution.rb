@@ -16,20 +16,20 @@ module AllCaseDistribution
   def docket_coordinator
     @docket_coordinator ||= DocketCoordinator.new
   end
-
+#CHANGE THIS??
   def all_priority_push_distribution(limit = nil)
     @appeals = []
     @rem = 0
-
-    if limit.nil?
-      # Distribute priority appeals that are tied to judges (not genpop) with no limit.
-      args = { priority: true, genpop: "not_genpop", style: "push", limit: limit }
-      @appeals += dockets[:legacy].distribute_appeals(self, args)
-      @appeals += dockets[:hearing].distribute_appeals(self, args)
-    else
+#Can this function targeting non_genpop appeals simply be removedsince the distribute_limited_priority_appeals_from_all_dockets function appears to distribute based on appeal age?
+    # if limit.nil?
+    #   # Distribute priority appeals that are tied to judges (not genpop) with no limit.
+    #   args = { priority: true, genpop: "not_genpop", style: "push", limit: limit }
+    #   @appeals += dockets[:legacy].distribute_appeals(self, args)
+    #   @appeals += dockets[:hearing].distribute_appeals(self, args)
+    # else
       # Distribute <limit> number of cases, regardless of docket type, oldest first.
       distribute_limited_priority_appeals_from_all_dockets(limit, style: "push")
-    end
+    # end
   end
 
   def all_requested_distribution
@@ -66,10 +66,14 @@ module AllCaseDistribution
 
     @appeals
   end
-
+#CHANGE THIS?? 
+#would changing the base args to "genpop" vs "non_genpop" allow the appeals to be set correctly?
+#should this be utilizing distribute_limited_priority_appeals_from_all_dockets? or something else all together
   def distribute_tied_nonpriority_appeals
     # Legacy docket appeals that are tied to judges are only distributed when they are within the docket range.
-    base_args = { genpop: "not_genpop", priority: false, style: "request" }
+    base_args = { genpop: "genpop", priority: false, style: "request" }
+#assuming legacy appeals should be prioritized in the same manner, but if they should remain the same, legacy_base_args could be use 
+    #legacy_base_args = { genpop: "non_genpop", priority: false, style: "request" }
     collect_appeals do
       dockets[:legacy].distribute_appeals(self, base_args.merge(limit: @rem, range: legacy_docket_range))
     end
@@ -77,13 +81,14 @@ module AllCaseDistribution
       dockets[:hearing].distribute_appeals(self, base_args.merge(limit: @rem))
     end
   end
-
+#CHANGE THIS??
+#similarly, would changing the base args to "genpop" allow the appeals to be set correctly?
   def distribute_tied_priority_appeals
-    base_args = { priority: true, style: "request", genpop: "not_genpop" }
+    base_args = { priority: true, style: "request", genpop: "genpop" }
     collect_appeals do
       dockets[:legacy].distribute_appeals(self, base_args.merge(limit: @rem))
     end
-    collect_appeals do
+    collect_appeals do 
       dockets[:hearing].distribute_appeals(self, base_args.merge(limit: @rem))
     end
   end
