@@ -18,28 +18,6 @@ describe VANotifySendMessageTemplate do
   end
 
   describe "instance methods" do
-    describe ".queue_url" do
-      it "will return the queue url address" do
-        expect(subject.queue_url).to eq(queue_url)
-      end
-    end
-
-    describe ".message_body" do
-      it "will return the message body contents" do
-        expect(subject.message_body).to eq(
-          VANotifySendMessageTemplate.new(info, template_name).message_body
-        )
-      end
-    end
-
-    describe ".message_atrributes" do
-      it "will return the queue url address" do
-        expect(subject.message_attributes).to eq(
-          VANotifySendMessageTemplate.new(info, template_name).message_attributes
-        )
-      end
-    end
-
     describe ".participant_id" do
       it "will return the participant_id" do
         expect(subject.participant_id).to eq(info[:participant_id])
@@ -64,8 +42,8 @@ describe VANotifySendMessageTemplate do
       end
     end
 
-    describe "#participant_id" do
-      it "will return the participant_id" do
+    describe ".status" do
+      it "will return the status" do
         expect(subject.status).to eq(info[:status])
       end
     end
