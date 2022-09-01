@@ -27,7 +27,7 @@ const ReviewAppealView = (props) => {
     setOtherReason(otherReason);
   };
 
-  {console.log(target)}
+  {console.log(props)}
 
   return (
     <>
@@ -99,7 +99,7 @@ const ReviewAppealView = (props) => {
               </ol>
             </td>
             <td>
-            <td>{onIssueChange}</td>
+            <td>{"text"}</td>
             </td>
           </tr>
           <tr>
