@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Purpose: Active Job that handles the processing of VA Notifcation event trigger. 
+# This job saves the data to an audit table and If the corresponding feature flag is enabled will send
+# an email or SMS request to VA Notify API
 class SendNotificationJob < CaseflowJob
   queue_as ApplicationController.dependencies_faked? ? :send_notifications : :"send_notifications.fifo"
   application_attr :hearing_schedule
@@ -25,60 +28,87 @@ class SendNotificationJob < CaseflowJob
   end
 
   def perform(message)
-    RequestStore.store[:current_user] = User.system_user
-    audit = send_to_va_notify(message)
-    Notification.create!(audit) unless audit["error"]
+    if !message.nil?
+      message_attributes = message[:message_attributes]
+      if !message_attributes.nil?
+        appeals_id = message_attributes[:appeal_id][:string_value]
+        appeals_type = message_attributes[:appeal_type][:string_value]
+        appeals_status = message_attributes[:status] ? message_attributes[:status][:string_value] : ""
+        event_type = message_attributes[:template_name][:string_value]
+
+        if !appeals_id.nil? && !appeals_type.nil? && !event_type.nil?
+          notification_audit_record = create_notfication_audit_record(appeals_id, appeals_type, event_type)
+          if !notification_audit_record.nil?
+            if appeals_status != "No participant_id" && appeals_status != "No claimant"
+              status = appeals_status
+              notification_audit_record.email_notification_status = status
+              notification_audit_record.sms_notification_status = status
+              notification_audit_record.save!
+              send_to_va_notify(message_attributes, appeals_id, appeals_status)
+            else
+              status = (appeal_status == "No particpant_id") ? "No Participant Id Found" : "No Claimant Found"
+              notification_audit_record.email_notification_status = status
+              notification_audit_record.sms_notification_status = status
+              notification_audit_record.save!
+            end
+          else
+            log_error("Audit record was unable to be found or created in SendNotificationListnerJob. Existing Job.")
+          end
+        else
+          log_error("appeals_id or appeal_type or event_type was nil in the SendNotificationListnerJob. Exiting job.")
+        end
+      else
+        log_error("message_attributes was nil on the SendNotificationListnerJob message. Existing Job.")
+      end
+    else
+      log_error("There was no message passed into the SendNotificationListener.perform_later function. Exiting job.")
+    end
   end
 
-  private
+private
 
   # Send message to VA Notify to send notification
-  def send_to_va_notify(message)
-    message_attributes = message[:message_attributes]
-    participant_id = message_attributes[:participant_id][:string_value]
-    event = NotificationEvent.find_by(event_type: message_attributes[:template_name][:string_value])
-    email_template_id = event.nil? ? "" : event.email_template_id
-    sms_template_id = event.nil? ? "" : event.sms_template_id
-    notification_events_id = event.nil? ? "" : event.id
-    notification_type = "Email"
-    appeal_id = message_attributes[:appeal_id][:string_value]
-    appeal_status = message_attributes[:appeal_status] ? message_attributes[:appeal_status][:string_value] : ""
-    
-    #  Create Feature Flag for VA Notify SMS
-    if FeatureToggle.enable?(:va_notify_sms)
-     va_notify_sms = VANotifyService.send_sms_notification(participant_id,appeal_id,sms_template_id,appeal_status)
-    end
-    response = va_notify_sms
 
+  def send_to_va_notify(message_attributes, appeal_id, appeal_status)
+    if FeatureToggle.enabled?(:va_notify_email)
 
-    # Fake VANotify Error Handling
-   
-    if response.code != nil && response.code >= 400
-      Rails.logger.error("Failed with error: #{response.body['error']} - #{response.body['message']} ")
-      return response.body
     end
 
-    audit_params(message, response, notification_events_id, notification_type)
+    if FeatureToggle.enabled?(:va_notify_sms)
+
+
+    end
   end
 
-  # Create parameters for creating a notification record in the db
-  def audit_params(message, response, notification_events_id, notification_type)
-    message_attributes = message[:message_attributes]
-    {
-      appeals_id: message_attributes[:appeal_id][:string_value],
-      appeals_type: message_attributes[:appeal_type][:string_value],
-      notification_events_id: notification_events_id,
-      event_type: message_attributes[:template_name][:string_value],
-      participant_id: message_attributes[:participant_id][:string_value],
+  # Purpose: Method to be called with an error need to be logged to the rails logger
+  #
+  # Params: error_message (Expecting a string) - Message to be logged to the logger
+  #
+  # Response: None
+  def log_error(error_message)
+    Rails.logger.error(error_message)
+  end
+
+  # Purpose: Method to create a new notification table row for the appeal
+  #
+  # Params:
+  # - appeals_id - UUID or Vacols id of the appeals the event triggered
+  # - appeals_type - Polynorphic column to identify teh type of appeal
+  # - - Appeal
+  # - - LegacyAppeal
+  # - event_type: Name of the event that has transpired. Event names can be found in the notification_events table
+  #
+  # Returns: Noticiation active model or nil
+  def create_notfication_audit_record(appeals_id, appeals_type, event_type)
+    notification_type = "Email"
+    Notification.create(
+      appeals_id: appeals_id,
+      appeals_type: appeals_type,
+      event_type: event_type,
       notification_type: notification_type,
-      recipient_email: "",
-      recipient_phone_number: "",
       notified_at: Time.zone.now,
-      notification_content: response.body["content"]["body"],
-      event_date: Time.zone.today,
-      email_notification_status: "",
-      sms_notification_status: ""
-    }
+      event_date: Time.zone.today
+    )
   end
 end
 
