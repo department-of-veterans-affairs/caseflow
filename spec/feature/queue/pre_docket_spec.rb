@@ -28,7 +28,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   # Organizations
   let(:bva_intake) { BvaIntake.singleton }
   let(:camo) { VhaCamo.singleton }
+  let(:camo_user) { create(:user) }
   let(:vha_caregiver) { VhaCaregiverSupport.singleton }
+  let(:vha_caregiver_user) { create(:user) }
   let(:emo) { EducationEmo.singleton }
   let(:education_rpo) { create(:education_rpo) }
   let(:program_office) { create(:vha_program_office) }
@@ -224,6 +226,47 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           # Verify the text in the timeline to match the other text field and optional text field.
           expect(page).to have_content("Other - #{other_text_field_text}")
           expect(page).to have_content(optional_text_field_text)
+        end
+
+        step "the 'Documents ready for Board Intake review' sends task to BVA Intake for review" do
+          User.authenticate!(user: vha_caregiver_user)
+
+          vha_document_search_task = VhaDocumentSearchTask.last          
+          vha_document_search_task.update!(status: Constants.TASK_STATUSES.assigned)
+          
+          appeal = vha_document_search_task.appeal
+         
+          visit "/queue/appeals/#{appeal.external_id}"
+
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW.label
+          ).click
+
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
+          expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
+          expect(page).to have_content("Optional")
+
+          radio_choices = page.all(".cf-form-radio-option > label")
+          expect(radio_choices[0]).to have_content("VBMS")
+          expect(radio_choices[1]).to have_content("Centralized Mail Portal")
+          expect(radio_choices[2]).to have_content("Other")
+
+          radio_choices[0].click
+
+          find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
+
+          expect(page).to have_content(
+            format(
+              COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE,
+              appeal.veteran_full_name
+            )
+          )
+
+          expect(page).to have_current_path("/organizations/#{vha_caregiver.url}", ignore_query: true)
+          expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
         end
 
         step "BVA Intake user can return an appeal to CAREGIVER" do
@@ -662,7 +705,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           text: Constants.TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
         ).click
         expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
-        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+        expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
 
         radio_choices = page.all(".cf-form-radio-option > label")
         expect(radio_choices[0]).to have_content("VBMS")
@@ -778,7 +821,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           text: Constants.TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
         ).click
         expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
-        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+        expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
 
         radio_choices = page.all(".cf-form-radio-option > label")
         expect(radio_choices[0]).to have_content("VBMS")
@@ -993,7 +1036,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         text: Constants.TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
       ).click
       expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
-      expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+      expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
 
       radio_choices = page.all(".cf-form-radio-option > label")
       expect(radio_choices[0]).to have_content("VBMS")
