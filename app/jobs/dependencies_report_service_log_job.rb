@@ -4,13 +4,9 @@ class DependenciesReportServiceLogJob < ApplicationJob
   queue_with_priority :low_priority
 
   def perform
-    outage = DependenciesReportService.degraded_dependencies
+    outage = DependenciesReportService.dependencies_report
     if outage.present?
-      Rails.logger.error "Caseflow Monitor shows possible " \
-                         "#{outage.to_sentence(two_words_connector: ' and ', last_word_connector: ' and ')}" \
-                         " outage".pluralize(outage.size)
+      Rails.logger.error "Caseflow Monitor shows possible outages" \
     end
-  rescue StandardError
-    Rails.logger.error "Invalid report from Caseflow Monitor"
   end
 end
