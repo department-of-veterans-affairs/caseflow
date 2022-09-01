@@ -28,11 +28,22 @@ describe AllCaseDistribution, :all_dbs do
     array
   end
 
-  context "#requested_distribution" do
-    # hash is set up to only use direct_review/evidence_submission so that legacy/hearing can be mocked
-    # the total for each of these dockets needs to equal the batch_size above
-    let(:nonpriority_count_hash) { { legacy: 3, direct_review: 3, evidence_submission: 3, hearing: 3} }
+  def add_dates_to_date_array(num)
+    array = []
+    # Date parses to 01 Sep 2022
+    date = Date.parse("1/9/2022")
+    num.times do
+      array << date
+      date -= 1
+    end
+    array
+  end
 
+  # hash is set up to only use direct_review/evidence_submission so that legacy/hearing can be mocked
+  # the total for each of these dockets needs to equal the batch_size above
+  let(:nonpriority_count_hash) { { legacy: 3, direct_review: 3, evidence_submission: 3, hearing: 3 } }
+
+  context "#requested_distribution" do
     it "calls each method and returns the array of objects received from each method" do
       # method from distributing legacy appeals when :priority_acd enabled
       expect_any_instance_of(LegacyDocket).to receive(:distribute_nonpriority_appeals)
@@ -67,6 +78,38 @@ describe AllCaseDistribution, :all_dbs do
       # requested_distribution is private so .send is used to directly call it
       return_array = @new_acd.send :requested_distribution
       expect(return_array.count).to eq(@new_acd.batch_size)
+    end
+  end
+
+  context "#num_oldest_nonpriority_appeals_for_judge_by_docket" do
+    it "returns an empty hash if provided num is zero" do
+      return_value = @new_acd.send :num_oldest_nonpriority_appeals_for_judge_by_docket, @new_acd.judge, 0
+      expect(return_value).to eq({})
+    end
+
+    it "calls each docket and sorts the return values if num > 0" do
+      expect_any_instance_of(LegacyDocket).to receive(:age_of_n_oldest_nonpriority_appeals_available_to_judge)
+        .with(@new_acd.judge, @new_acd.batch_size)
+        .and_return(add_dates_to_date_array(@new_acd.batch_size))
+
+      expect_any_instance_of(DirectReviewDocket).to receive(:age_of_n_oldest_nonpriority_appeals_available_to_judge)
+        .with(@new_acd.judge, @new_acd.batch_size)
+        .and_return(add_dates_to_date_array(@new_acd.batch_size))
+
+      expect_any_instance_of(EvidenceSubmissionDocket).to receive(:age_of_n_oldest_nonpriority_appeals_available_to_judge)
+        .with(@new_acd.judge, @new_acd.batch_size)
+        .and_return(add_dates_to_date_array(@new_acd.batch_size))
+
+      expect_any_instance_of(HearingRequestDocket).to receive(:age_of_n_oldest_nonpriority_appeals_available_to_judge)
+        .with(@new_acd.judge, @new_acd.batch_size)
+        .and_return(add_dates_to_date_array(@new_acd.batch_size))
+
+      return_array = @new_acd.send(
+        :num_oldest_nonpriority_appeals_for_judge_by_docket,
+        @new_acd.judge,
+        @new_acd.batch_size
+      )
+      expect(return_array).to eq(nonpriority_count_hash)
     end
   end
 end
