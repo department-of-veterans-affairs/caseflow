@@ -69,7 +69,7 @@ const enterModalOptions = (radioSelection, instructionsFieldName, instructions, 
   userEvent.click(radioFieldToSelect);
   userEvent.type(instructionsField, instructions);
   if (otherSource) {
-    const otherSourceField = screen.getByRole('textbox', { name: 'If "Other" was chosen indicate the source.' });
+    const otherSourceField = screen.getByRole('textbox', { name: 'Please indicate the source' });
 
     userEvent.type(otherSourceField, otherSource)
   }

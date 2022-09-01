@@ -110,7 +110,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
           />
           {state.radio === 'other' &&
             <TextareaField
-              label='If "Other" was chosen indicate the source.'
+              label="Please indicate the source"
               name="otherCompleteTaskDocLocation"
               id="completeTaskOtherInstructions"
               onChange={handleTextFieldChange}
