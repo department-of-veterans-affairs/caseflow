@@ -458,10 +458,21 @@ class TaskActionRepository
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end
 
-    def docket_appeal_data(*)
+    def docket_appeal_data(task, _user)
+      most_recent_child_task = task.children.first
+
+      # The last organization to work the appeal before sending it to BVA Intake
+      # for docketing.
+      pre_docket_org = case most_recent_child_task.assigned_to
+                       when VhaCamo.singleton then COPY::VHA_CAMO_LABEL
+                       when VhaCaregiverSupport.singleton then COPY::VHA_CAREGIVER_LABEL
+                       else
+                         COPY::EDUCATION_LABEL
+                       end
+
       {
         modal_title: COPY::DOCKET_APPEAL_MODAL_TITLE,
-        modal_body: COPY::DOCKET_APPEAL_MODAL_BODY,
+        modal_body: format(COPY::DOCKET_APPEAL_MODAL_BODY, pre_docket_org),
         modal_alert: COPY::DOCKET_APPEAL_MODAL_NOTICE,
         instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
         redirect_after: "/organizations/#{BvaIntake.singleton.url}"
@@ -663,6 +674,20 @@ class TaskActionRepository
         message_detail: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
+      }
+    end
+
+    def vha_caregiver_support_return_to_board_intake(*)
+      queue_url = "/organizations/#{VhaCaregiverSupport.singleton.url}"
+      dropdown_options = COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS.map do |_, value|
+        value.transform_keys(&:downcase)
+      end
+      {
+        modal_title: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+        modal_body: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY,
+        type: VhaDocumentSearchTask.name,
+        options: dropdown_options,
+        redirect_after: queue_url
       }
     end
 
