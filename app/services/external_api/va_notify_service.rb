@@ -28,8 +28,8 @@ class ExternalApi::VANotifyService
     end
     
       # Send the sms notifications
-    def send_sms_notification(participant_id, appeal_id, sms_template_id, status = "")
-       sms_response = send_va_notify_request(sms_request(participant_id, appeal_id, sms_template_id, status))
+    def send_sms_notification(participant_id, notification_id, sms_template_id, status = "")
+       sms_response = send_va_notify_request(sms_request(participant_id, notification_id, sms_template_id, status))
        log_info(sms_response)
       sms_response
      end
@@ -100,15 +100,16 @@ class ExternalApi::VANotifyService
     end
 
     # Build a sms request object
-    def sms_request(participant_id, appeal_id, sms_template_id, status)
+    def sms_request(participant_id, notification_id, sms_template_id, status)
       request = {
         body: {
-          reference: appeal_id,
+          reference: notification_id,
           template_id: sms_template_id,
           recipient_identifier: {
             id_type: "PID",
             id_value: participant_id
           },
+          sms_sender_id: SENDER_ID || ""
           personalisation: nil
         },
         headers: HEADERS,
