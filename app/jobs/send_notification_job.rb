@@ -35,15 +35,22 @@ class SendNotificationJob < CaseflowJob
         appeals_type = message_attributes[:appeal_type][:string_value]
         appeals_status = message_attributes[:status] ? message_attributes[:status][:string_value] : ""
         event_type = message_attributes[:template_name][:string_value]
+        participant_id = message_attributes[:participant_id][:string_value]
 
         if !appeals_id.nil? && !appeals_type.nil? && !event_type.nil?
           notification_audit_record = create_notfication_audit_record(appeals_id, appeals_type, event_type)
           if !notification_audit_record.nil?
             if appeals_status != "No participant_id" && appeals_status != "No claimant"
               status = appeals_status
-              notification_audit_record.email_notification_status = status
-              notification_audit_record.sms_notification_status = status
-              notification_audit_record.save!
+              notification_event = NotificationEvent.find_by_event_type(status)
+              if !notification_event.nil?
+                notification_audit_record.email_notification_status = status
+                notification_audit_record.sms_notification_status = status
+                notification_audit_record.save!
+                send_to_va_notify(participant_id, notification_event.id, notification_event.email_template.id, status )
+              else
+                log_error("Unable to find Notification Event in SendNotification Job. Exiting job")
+              end  
               send_to_va_notify(message_attributes, appeals_id, appeals_status)
             else
               status = (appeal_status == "No particpant_id") ? "No Participant Id Found" : "No Claimant Found"
@@ -69,12 +76,15 @@ private
 
   # Send message to VA Notify to send notification
 
-  def send_to_va_notify(message_attributes, appeal_id, appeal_status)
+  def send_to_va_notify(participant_id, notification_id, email_template_id, status = "")
     if FeatureToggle.enabled?(:va_notify_email)
+      VANotifyService.send_email_notifications(participant_id, notification_id, email_template_id, status = "")
 
     end
 
     if FeatureToggle.enabled?(:va_notify_sms)
+      VANotifyService.send_sms_notifications(participant_id, appeal_id, sms_template_id, status = "")
+
 
 
     end

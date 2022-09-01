@@ -21,16 +21,16 @@ class ExternalApi::VANotifyService
   class << self
     # Send the emailand spec notifications
     # @param {status} The appeal status for a template that requires it
-    def send_email_notifications(participant_id, appeal_id, email_template_id, status = "")
-      email_response = send_va_notify_request(email_request(participant_id, appeal_id, email_template_id, status))
-      Rails.logger.info(email_response)
+    def send_email_notifications(participant_id, notification_id, email_template_id, status = "")
+      email_response = send_va_notify_request(email_request(participant_id, notification_id, email_template_id, status))
+      log_info(email_response)
       email_response
     end
     
       # Send the sms notifications
     def send_sms_notification(participant_id, appeal_id, sms_template_id, status = "")
        sms_response = send_va_notify_request(sms_request(participant_id, appeal_id, sms_template_id, status))
-       Rails.logger.info(sms_response)
+       log_info(sms_response)
       sms_response
      end
 
@@ -78,11 +78,11 @@ class ExternalApi::VANotifyService
     end
 
     # Build an email request object
-    def email_request(participant_id, appeal_id, email_template_id, status)
+    def email_request(participant_id, notification_id, email_template_id, status)
       request = {
         body: {
           template_id: email_template_id,
-          reference: appeal_id,
+          reference: notification_id,
           recipient_identifier: {
             id_type: "PID",
             id_value: participant_id
@@ -154,5 +154,9 @@ class ExternalApi::VANotifyService
       end
     end
     # rubocop:enable Metrics/MethodLength
+
+    def log_info(info_message)
+      Rails.logger.info(info_message)
+    end
   end
 end
