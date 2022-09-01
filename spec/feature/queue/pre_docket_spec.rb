@@ -234,11 +234,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         step "the 'Documents ready for Board Intake review' sends task to BVA Intake for review" do
           User.authenticate!(user: vha_caregiver_user)
 
-          vha_document_search_task = VhaDocumentSearchTask.last          
+          vha_document_search_task = VhaDocumentSearchTask.last
           vha_document_search_task.update!(status: Constants.TASK_STATUSES.assigned)
-          
+
           appeal = vha_document_search_task.appeal
-         
+
           visit "/queue/appeals/#{appeal.external_id}"
 
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
@@ -744,7 +744,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           class: "cf-select__option",
           text: Constants.TASK_ACTIONS.EMO_ASSIGN_TO_RPO.label
         ).click
-        expect(page).to have_content(COPY::EMO_ASSIGN_TO_RPO_MODAL_TITLE)
+        expect(page).to have_content(COPY:ASSIGN_TO_RPO_MODAL_TITLE)
         expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
         find(".cf-select__control", text: COPY::EDUCATION_RPO_SELECTOR_PLACEHOLDER).click
 
