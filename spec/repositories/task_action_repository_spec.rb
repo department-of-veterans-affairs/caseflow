@@ -121,7 +121,6 @@ describe TaskActionRepository, :all_dbs do
   end
 
   describe "#vha caregiver support task actions" do
-
     describe "#vha_caregiver_support_return_to_board_intake" do
       let(:user) { create(:user) }
       let(:task) { create(:vha_document_search_task) }
@@ -140,7 +139,6 @@ describe TaskActionRepository, :all_dbs do
       let(:task) { create(:vha_document_search_task) }
 
       context "#vha_caregiver_support_mark_task_in_progress" do
-
         subject { TaskActionRepository.vha_caregiver_support_mark_task_in_progress(task, user) }
 
         it "the confirmation banner message title includes the veteran's name" do
@@ -152,13 +150,11 @@ describe TaskActionRepository, :all_dbs do
       end
     end
 
-
     describe "#vha_caregiver_support_send_to_board_intake_for_review" do
       let(:user) { create(:user) }
       let(:task) { create(:vha_document_search_task) }
 
       context "#vha_caregiver_support_send_to_board_intake_for_review" do
-
         subject { TaskActionRepository.vha_caregiver_support_send_to_board_intake_for_review(task, user) }
 
         it "the confirmation banner message title includes the veteran's name" do
@@ -171,4 +167,3 @@ describe TaskActionRepository, :all_dbs do
     end
   end
 end
-

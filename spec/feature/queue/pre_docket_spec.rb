@@ -744,7 +744,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           class: "cf-select__option",
           text: Constants.TASK_ACTIONS.EMO_ASSIGN_TO_RPO.label
         ).click
-        expect(page).to have_content(COPY:ASSIGN_TO_RPO_MODAL_TITLE)
+        expect(page).to have_content(COPY::ASSIGN_TO_RPO_MODAL_TITLE)
         expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
         find(".cf-select__control", text: COPY::EDUCATION_RPO_SELECTOR_PLACEHOLDER).click
 
