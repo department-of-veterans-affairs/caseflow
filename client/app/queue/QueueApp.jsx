@@ -584,6 +584,10 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="emo_return_to_board_intake" {...props.match.params} />
   );
 
+  routedVhaCaregiverSupportReturnToBoardIntake = (props) => (
+    <CompleteTaskModal modalType="vha_caregiver_support_return_to_board_intake" {...props.match.params} />
+  );
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -1108,6 +1112,14 @@ class QueueApp extends React.PureComponent {
                 }`}
               title="Ready for Review | Caseflow"
               render={this.routedRpoSendToBoardIntakeForReviewModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.value
+              }`}
+              title="Return to Board Intake | Caseflow"
+              render={this.routedVhaCaregiverSupportReturnToBoardIntake}
             />
             <PageRoute
               exact

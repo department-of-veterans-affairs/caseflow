@@ -120,7 +120,7 @@ describe TaskActionRepository, :all_dbs do
     end
   end
 
-  describe "#vha caregiver support task actions" do
+  describe "#vha_caregiver_support_mark_task_in_progress" do
     let(:user) { create(:user) }
     let(:task) { create(:vha_document_search_task) }
 

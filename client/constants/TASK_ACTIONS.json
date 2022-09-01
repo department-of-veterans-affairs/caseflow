@@ -453,5 +453,10 @@
     "label": "Mark task in progress",
     "value": "modal/mark_task_in_progress",
     "func": "education_rpo_mark_task_in_progress"
+  },
+  "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE": {
+    "label": "Return to Board Intake",
+    "value": "modal/vha_caregiver_support_return_to_board_intake",
+    "func": "vha_caregiver_support_return_to_board_intake"
   }
 }

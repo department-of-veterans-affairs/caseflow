@@ -691,6 +691,20 @@ class TaskActionRepository
       }
     end
 
+    def vha_caregiver_support_return_to_board_intake(*)
+      queue_url = "/organizations/#{VhaCaregiverSupport.singleton.url}"
+      dropdown_options = COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS.map do |_, value|
+        value.transform_keys(&:downcase)
+      end
+      {
+        modal_title: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+        modal_body: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY,
+        type: VhaDocumentSearchTask.name,
+        options: dropdown_options,
+        redirect_after: queue_url
+      }
+    end
+
     private
 
     def select_ama_review_decision_action(task)
