@@ -33,18 +33,18 @@ class SendNotificationJob < CaseflowJob
       if !message_attributes.nil?
         appeals_id = message_attributes[:appeal_id][:string_value]
         appeals_type = message_attributes[:appeal_type][:string_value]
-        appeal_status = message_attributes[:status] ? message_attributes[:status][:string_value] : ""
+        appeals_status = message_attributes[:status] ? message_attributes[:status][:string_value] : ""
         event_type = message_attributes[:template_name][:string_value]
 
-        if !appeals_id.nil? && !appeal_type.nil? && !event_type.nil?
-          notification_audit_record = create_or_update_notfication_audit_record(appeals_id, appeals_type, event_type)
+        if !appeals_id.nil? && !appeals_type.nil? && !event_type.nil?
+          notification_audit_record = create_notfication_audit_record(appeals_id, appeals_type, event_type)
           if !notification_audit_record.nil?
-            if appeal_status != "No participant_id" && appeals_status != "No claimant"
+            if appeals_status != "No participant_id" && appeals_status != "No claimant"
               status = appeals_status
               notification_audit_record.email_notification_status = status
               notification_audit_record.sms_notification_status = status
               notification_audit_record.save!
-              send_to_va_notify(message_attributes, appeal_id, appeal_status)
+              send_to_va_notify(message_attributes, appeals_id, appeals_status)
             else
               status = (appeal_status == "No particpant_id") ? "No Participant Id Found" : "No Claimant Found"
               notification_audit_record.email_notification_status = status
@@ -98,10 +98,12 @@ private
   #
   # Returns: Noticiation active model or nil
   def create_notfication_audit_record(appeals_id, appeals_type, event_type)
+    notification_type = "Email"
     Notification.create(
       appeals_id: appeals_id,
       appeals_type: appeals_type,
       event_type: event_type,
+      notification_type: notification_type,
       notified_at: Time.zone.now,
       event_date: Time.zone.today
     )
