@@ -283,4 +283,30 @@ describe Hearing, :postgres do
       expect(hearing.hearing_day_regional_office).to eq(nil)
     end
   end
+
+  describe "#updated_by" do
+    let(:hearing) { create(:hearing) }
+
+    include_context "VSO versus Hearings Team user"
+
+    context "as a VSO user" do
+      before { User.authenticate!(user: vso_user) }
+
+      it "is left as is after update" do
+        hearing.update(disposition: nil)
+
+        expect(hearing.updated_by).to_not eq vso_user
+      end
+    end
+
+    context "as a non-VSO user" do
+      before { User.authenticate!(user: hearings_user) }
+
+      it "is updated to hearings team user after update" do
+        hearing.update(disposition: nil)
+
+        expect(hearing.updated_by).to eq hearings_user
+      end
+    end
+  end
 end

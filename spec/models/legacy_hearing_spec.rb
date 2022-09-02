@@ -708,7 +708,7 @@ describe LegacyHearing, :all_dbs do
           type,
           hearing: hearing,
           email_address: email_address,
-          timezone: timezone,
+          timezone: timezone
         )
       end
 
@@ -776,6 +776,32 @@ describe LegacyHearing, :all_dbs do
       include_context "when there is a virtual hearing"
       context "when there is an exisiting recipient" do
         include_context "returns existing recipient"
+      end
+    end
+
+    describe "#updated_by" do
+      let(:hearing) { create(:legacy_hearing) }
+
+      include_context "VSO versus Hearings Team user"
+
+      context "as a VSO user" do
+        before { User.authenticate!(user: vso_user) }
+
+        it "is left as is after update" do
+          hearing.update(disposition: nil)
+
+          expect(hearing.updated_by).to_not eq vso_user
+        end
+      end
+
+      context "as a non-VSO user" do
+        before { User.authenticate!(user: hearings_user) }
+
+        it "is updated to hearings team user after update" do
+          hearing.update(disposition: nil)
+
+          expect(hearing.updated_by).to eq hearings_user
+        end
       end
     end
   end
