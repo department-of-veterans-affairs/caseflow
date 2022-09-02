@@ -361,6 +361,8 @@ RSpec.describe HearingsController, type: :controller do
             allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
               [{ participant_id: vso_participant_id }]
             )
+
+            hearing.update(updated_by: user)
           end
 
           it "the hearing can be updated" do
@@ -372,6 +374,10 @@ RSpec.describe HearingsController, type: :controller do
             hearing.reload
             expect(hearing.appellant_recipient&.email_address).to eq appellant_email
             expect(hearing.virtual?).to be true
+
+            # VSO user isn't placed into updated_by
+            expect(hearing.updated_by).to_not eq vso_user
+            expect(hearing.updated_by).to eq user
           end
         end
 
