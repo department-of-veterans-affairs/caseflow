@@ -83,7 +83,7 @@
   "TASK_SNAPSHOT_TASK_CANCELER_LABEL": "Cancelled by",
   "TASK_SNAPSHOT_TASK_CANCEL_REASON_LABEL": "Cancellation Reason",
   "TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL": "Assigned on",
-  "TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL": "COMPLETED ON",
+  "TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL": "Completed on",
   "TASK_SNAPSHOT_TASK_CANCELLED_DATE_LABEL": "Cancelled on",
   "TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL": "withdrawn on",
   "TASK_SNAPSHOT_HEARING_REQUEST_CONVERTED_ON_LABEL": "Converted on",
@@ -111,9 +111,6 @@
   "TASK_SNAPSHOT_NO_ACTIVE_LABEL": "There are currently no active tasks",
   "TASK_SNAPSHOT_ACTIVE_TASKS_LABEL": "Currently active tasks",
   "TASK_SNAPSHOT_ADD_NEW_TASK_LABEL": "+ Add a new task",
-  "TASK_SPLIT_BY": "SPLIT BY",
-  "TASK_SPLIT_INSTRUCTION": "TASK INSTRUCTIONS",
-  "TASK_SPLIT_REASON": "REASON FOR SPLIT",
 
   "TASK_SNAPSHOT_CANCEL_REASONS": {
     "poa_change": "POA Change",
@@ -1291,11 +1288,12 @@
   "SPLIT_APPEAL_REVIEW_TITLE": "Review and confirm new appeal stream",
   "SPLIT_APPEAL_REVIEW_SUBHEAD": "Case history, POA, and Veteran information will be duplicated on the new appeal.",
   "SPLIT_APPEAL_REVIEW_REASONING_TITLE": "Reason for new appeal stream:",
-
+  "REVIEW_SPLIT_APPEAL_CREATE_SUBHEAD": "Case history, POA, and Veteran information will be deplicated on the new appeal.",
   "TABLE_ORIGINAL_APPEAL": "Original Appeal Stream",
   "TABLE_NEW_APPEAL": "New Appeal Stream",
-  "TABLE_VETERANT" : "Veterant",
+  "TABLE_VETERAN" : "Veteran",
   "TABLE_DOCKET_NUMBER" : "Docket Number",
   "TABLE_REVIEW_OPTION" : "Review Option",
-  "TABLE_ISSUE" : "Issue(s)"
+  "TABLE_ISSUE" : "Issue(s)",
+  "APPELLANT": "Appellant"
 }
