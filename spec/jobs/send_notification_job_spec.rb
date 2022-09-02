@@ -4,35 +4,33 @@ describe SendNotificationJob, type: :job do
   include ActiveJob::TestHelper
   let(:current_user) { create(:user, roles: ["System Admin"]) }
   # rubocop:disable Style/BlockDelimiters
-  let(:message) {
+  let(:good_template_name) { "Appeal docketed" }
+  let(:error_template_name) { "No Participant Id" }
+  let(:success_status) { "Success" }
+  let(:error_status) { "No participant_id" }
+  let(:success_message_attributes) {
     {
-      queue_url: "http://example_queue",
-      message_body: "Notification",
-      message_attributes: {
-        "participant_id": {
-          data_type: "String",
-          string_value: "123456789"
-        },
-        "template_name": {
-          data_type: "String",
-          string_value: "VSO IHP complete"
-        },
-        "appeal_id": {
-          data_type: "String",
-          string_value: "5d70058f-8641-4155-bae8-5af4b61b1576"
-        },
-        "appeal_type": {
-          string_value: "ama",
-          data_type: "String"
-        }
-      }
+      participant_id: "1234567890",
+      status: success_status,
+      appeal_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+      appeal_type: "Appeal"
     }
   }
-  let(:participant_id) { message[:message_attributes][:participant_id][:string_value] }
+  let(:error_message_attributes) {
+    {
+      participant_id: nil,
+      status: error_status,
+      appeal_id: "5d70058f-8641-4155-bae8-5af4b61b1578",
+      appeal_type: "Appeal"
+    }
+  }
+  let(:good_message) { VANotifySendMessageTemplate.new(success_message_attributes, good_template_name) }
+  let(:bad_message) { VANotifySendMessageTemplate.new(error_message_attributes, error_template_name) }
+  let(:participant_id) { success_message_attributes[:participant_id] }
   let(:bad_participant_id) { "123" }
-  let(:appeal_id) { message[:message_attributes][:appeal_id][:string_value] }
+  let(:appeal_id) { success_message_attributes[:appeal_id] }
   let(:email_template_id) { "d78cdba9-f02f-43dd-ab89-3ce42cc88078" }
-  let(:appeal_status) { "" }
+  # let(:appeal_status) { "" }
   let(:bad_response) {
     HTTPI::Response.new(
       400,
@@ -83,7 +81,7 @@ describe SendNotificationJob, type: :job do
   end
 
   context ".perform" do
-    subject(:job) { SendNotificationJob.perform_later(message) }
+    subject(:job) { SendNotificationJob.perform_later(good_message.as_json) }
     describe "send message to queue" do
       it "has one message in queue" do
         expect { job }.to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
@@ -96,11 +94,12 @@ describe SendNotificationJob, type: :job do
             participant_id,
             appeal_id,
             email_template_id,
-            appeal_status
+            # appeal_status
           )
         perform_enqueued_jobs do
-          result = SendNotificationJob.perform_later(message)
-          expect(result.arguments[0]).to eq(message)
+          result = SendNotificationJob.perform_later(good_message.as_json)
+          byebug
+          expect(result.arguments[0]).to eq(good_message)
         end
       end
 
@@ -137,7 +136,7 @@ describe SendNotificationJob, type: :job do
           .and_raise(Caseflow::Error::VANotifyInternalServerError)
         expect(Rails.logger).to receive(:error).with(/Retrying/)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(message)
+          SendNotificationJob.perform_later(bad_message.as_json)
         end
       end
 
@@ -147,7 +146,7 @@ describe SendNotificationJob, type: :job do
           .and_raise(Caseflow::Error::VANotifyNotFoundError)
         expect(Rails.logger).to receive(:error).with(/Retrying/)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(message)
+          SendNotificationJob.perform_later(bad_message.as_json)
         end
       end
 
@@ -157,7 +156,7 @@ describe SendNotificationJob, type: :job do
           .and_raise(Caseflow::Error::VANotifyRateLimitError)
         expect(Rails.logger).to receive(:error).with(/Retrying/)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(message)
+          SendNotificationJob.perform_later(bad_message.as_json)
         end
       end
 
@@ -167,7 +166,7 @@ describe SendNotificationJob, type: :job do
           .and_raise(Caseflow::Error::VANotifyUnauthorizedError)
         expect(Rails.logger).to receive(:warn).with(/Discarding/)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(message)
+          SendNotificationJob.perform_later(bad_message.as_json)
         end
       end
 
@@ -177,7 +176,7 @@ describe SendNotificationJob, type: :job do
           .and_raise(Caseflow::Error::VANotifyForbiddenError)
         expect(Rails.logger).to receive(:warn).with(/Discarding/)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(message)
+          SendNotificationJob.perform_later(bad_message.as_json)
         end
       end
 
@@ -202,7 +201,7 @@ describe SendNotificationJob, type: :job do
           .and_raise(Caseflow::Error::VANotifyInternalServerError)
         expect_any_instance_of(SendNotificationJob).to receive(:retry_job)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(message)
+          SendNotificationJob.perform_later(good_message.as_json)
         end
       end
     end

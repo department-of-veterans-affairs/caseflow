@@ -29,14 +29,20 @@ class SendNotificationJob < CaseflowJob
 
   def perform(message)
     if !message.nil?
-      message_attributes = message[:message_attributes]
-      if !message_attributes.nil?
-        appeals_id = message_attributes[:appeal_id][:string_value]
-        appeals_type = message_attributes[:appeal_type][:string_value]
-        appeals_status = message_attributes[:status] ? message_attributes[:status][:string_value] : ""
-        event_type = message_attributes[:template_name][:string_value]
+      # message_attributes = message[:message_attributes]
+      appeals_id = message.appeal_id
+      appeals_type = message.appeal_type
+      appeals_status = message.status
+      event_type = message.template_name
+      
+      # if [appeals_id, appeals_type, appeals_status, event_type].none?(&:nil?)
+        # {|a| a.nil?}
+        # appeals_id = message_attributes[:appeal_id][:string_value]
+        # appeals_type = message_attributes[:appeal_type][:string_value]
+        # appeals_status = message_attributes[:status] ? message_attributes[:status][:string_value] : ""
+        # event_type = message_attributes[:template_name][:string_value]
 
-        if !appeals_id.nil? && !appeals_type.nil? && !event_type.nil?
+        if !appeals_id.nil? && !appeals_type.nil? && !event_type.nil? # [appeals_id, appeals_type, appeals_status, event_type].none?(&:nil?)
           notification_audit_record = create_notfication_audit_record(appeals_id, appeals_type, event_type)
           if !notification_audit_record.nil?
             if appeals_status != "No participant_id" && appeals_status != "No claimant"
@@ -52,20 +58,20 @@ class SendNotificationJob < CaseflowJob
               notification_audit_record.save!
             end
           else
-            log_error("Audit record was unable to be found or created in SendNotificationListnerJob. Existing Job.")
+            log_error("Audit record was unable to be found or created in SendNotificationListnerJob. Exiting Job.")
           end
         else
           log_error("appeals_id or appeal_type or event_type was nil in the SendNotificationListnerJob. Exiting job.")
         end
-      else
-        log_error("message_attributes was nil on the SendNotificationListnerJob message. Existing Job.")
-      end
+      # else
+      #   log_error("message_attributes was nil on the SendNotificationListnerJob message. Exiting Job.")
+      # end
     else
       log_error("There was no message passed into the SendNotificationListener.perform_later function. Exiting job.")
     end
   end
 
-private
+  private
 
   # Send message to VA Notify to send notification
   def send_to_va_notify(message_attributes, appeal_id, appeal_status)
@@ -76,6 +82,7 @@ private
     if FeatureToggle.enabled?(:va_notify_sms)
 
     end
+    true
   end
 
   # Purpose: Method to be called with an error need to be logged to the rails logger
