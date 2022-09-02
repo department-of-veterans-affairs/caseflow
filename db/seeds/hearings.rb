@@ -26,6 +26,7 @@ module Seeds
     def initialize
       @bfkey = 1234
       @bfcorkey = 5678
+      @legacy_appeal_count = 0
     end
 
     def seed!
@@ -149,6 +150,8 @@ module Seeds
     end
 
     def create_ama_appeal(issue_count: 1)
+      @ama_appeal_count ||= 0
+      @ama_appeal_count += 1
       veteran = create_veteran
       claimant_participant_id = "RANDOM_CLAIMANT_PID#{veteran.file_number}"
       create_poa(claimant_participant_id: claimant_participant_id)
@@ -158,6 +161,7 @@ module Seeds
         veteran_file_number: veteran.file_number,
         docket_type: Constants.AMA_DOCKETS.hearing,
         stream_type: Constants.AMA_STREAM_TYPES.original,
+        receipt_date: @ama_appeal_count.days.ago,
         veteran_is_not_claimant: Faker::Boolean.boolean,
         issue_count: issue_count,
         claimants: [create(:claimant, participant_id: claimant_participant_id)]
@@ -207,6 +211,7 @@ module Seeds
     def create_legacy_appeal(hearing_day)
       @bfkey += 1
       @bfcorkey += 1
+      @legacy_appeal_count += 1
       # This avoids a flake where stafkey collides with the random stafkey
       # that seeds/priority_distributions.rb uses to create cases. This solution
       # is from seeds/tasks.rb
@@ -216,6 +221,7 @@ module Seeds
         bfkey: @bfkey.to_s,
         bfcorkey: @bfcorkey.to_s,
         bfac: %w[1 3].sample, # original or Post remand,
+        bfdnod: @legacy_appeal_count.days.ago,
         correspondent: correspondent
       )
 
@@ -322,6 +328,7 @@ module Seeds
     def create_travel_board_vacols_case
       @bfkey += 1
       @bfcorkey += 1
+      @legacy_appeal_count += 1
       # This avoids a flake where stafkey collides with the random stafkey
       # that seeds/priority_distributions.rb uses to create cases. This solution
       # is from seeds/tasks.rb
@@ -329,8 +336,10 @@ module Seeds
       create(
         :case,
         :travel_board_hearing,
+        :type_original,
         bfkey: @bfkey.to_s,
         bfcorkey: @bfcorkey.to_s,
+        bfdnod: @legacy_appeal_count.days.ago,
         correspondent: correspondent
       )
     end

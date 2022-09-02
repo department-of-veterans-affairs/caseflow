@@ -226,7 +226,11 @@ module Seeds
       appeal1 = create(:appeal, veteran_file_number: veteran1.file_number)
       appeal2 = create(
         :legacy_appeal,
-        vacols_case: create(:case),
+        vacols_case: create(
+          :case,
+          :type_original,
+          bfdnod: 1.day.ago
+        ),
         vbms_id: "#{veteran2.file_number}S"
       )
 

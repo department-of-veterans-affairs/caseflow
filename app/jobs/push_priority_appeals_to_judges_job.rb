@@ -18,7 +18,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def perform
-    @tied_distributions = distribute_non_genpop_priority_appeals
     @genpop_distributions = distribute_genpop_priority_appeals
     send_job_report
   rescue StandardError => error
@@ -41,8 +40,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def slack_report
     report = []
-    report << "*Number of cases tied to judges distributed*: " \
-              "#{@tied_distributions.map { |distribution| distribution.statistics['batch_size'] }.sum}"
     report << "*Number of general population cases distributed*: " \
               "#{@genpop_distributions.map { |distribution| distribution.statistics['batch_size'] }.sum}"
 
@@ -70,13 +67,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     report << "Legacy appeals not distributed: `LegacyAppeal.where(vacols_id: #{appeals[:legacy]})`"
     report << "AMA appeals not distributed: `Appeal.where(uuid: #{appeals.values.drop(1).flatten})`"
     report << COPY::PRIORITY_PUSH_WARNING_MESSAGE
-  end
-
-  # Distribute all priority cases tied to a judge without limit
-  def distribute_non_genpop_priority_appeals
-    eligible_judges.map do |judge|
-      Distribution.create!(judge: User.find(judge.id), priority_push: true).tap(&:distribute!)
-    end
   end
 
   # Distribute remaining general population cases while attempting to even out the number of priority cases all judges

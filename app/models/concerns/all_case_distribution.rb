@@ -17,26 +17,17 @@ module AllCaseDistribution
     @docket_coordinator ||= DocketCoordinator.new
   end
 
-  def priority_push_distribution(limit = nil)
+  def priority_push_distribution(limit)
     @appeals = []
-    @rem = 0
-
-    if limit.nil?
-      # Distribute priority appeals that are tied to judges (not genpop) with no limit.
-      args = { priority: true, genpop: "not_genpop", style: "push", limit: limit }
-      @appeals += dockets[:legacy].distribute_appeals(self, args)
-      @appeals += dockets[:hearing].distribute_appeals(self, args)
-    else
-      # Distribute <limit> number of cases, regardless of docket type, oldest first.
-      distribute_limited_priority_appeals_from_all_dockets(limit, style: "push")
-      distribute_priority_appeals_from_all_dockets_by_age_to_limit(@rem)
-    end
+    @rem = limit
+    # Distribute <limit> number of cases, regardless of docket type, oldest first.
+    distribute_priority_appeals_from_all_dockets_by_age_to_limit(@rem, style: "push")
+    @appeals
   end
 
   def requested_distribution
     @appeals = []
     @rem = batch_size
-    @remaining_docket_proportions = docket_proportions.clone
     @nonpriority_iterations = 0
 
     # Distribute legacy cases tied to a judge down to the board provided limit of 30,
@@ -48,9 +39,6 @@ module AllCaseDistribution
         )
       end
     end
-
-    distribute_tied_priority_appeals
-    distribute_tied_nonpriority_appeals
 
     # If we haven't yet met the priority target, distribute additional priority appeals.
     priority_rem = (priority_target - @appeals.count(&:priority)).clamp(0, @rem)
@@ -96,10 +84,9 @@ module AllCaseDistribution
   end
 
   def distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
-    @priority_iterations += 1
-    num_oldest_priority_appeals_by_docket(limit).each do |docket, number_of_appeals_to_distribute|
+    num_oldest_priority_appeals_for_judge_by_docket(judge, limit).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
-        dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: false, style: style)
+        dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: true, style: style)
       end
     end
   end
@@ -130,6 +117,17 @@ module AllCaseDistribution
 
   def legacy_docket_range
     (docket_margin_net_of_priority * docket_proportions[:legacy]).round
+  end
+
+  def num_oldest_priority_appeals_for_judge_by_docket(judge, num)
+    return {} unless num > 0
+
+    dockets
+      .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals_available_to_judge(judge, num).map { |age| [age, sym] } }
+      .sort_by { |age, _| age }
+      .first(num)
+      .group_by { |_, sym| sym }
+      .transform_values(&:count)
   end
 
   def num_oldest_priority_appeals_by_docket(num)

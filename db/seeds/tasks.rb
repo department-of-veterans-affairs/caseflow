@@ -11,8 +11,11 @@ module Seeds
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
   class Tasks < Base
+    BFAC_ORIGINAL = 1
+
     def initialize
       @ama_appeals = []
+      @legacy_appeal_count = 0
     end
 
     def seed!
@@ -94,6 +97,7 @@ module Seeds
           veteran_file_number: vet_file_number,
           docket_type: Constants.AMA_DOCKETS.direct_review,
           closest_regional_office: "RO17",
+          receipt_date: num.days.ago,
           request_issues: create_list(
             :request_issue, 2, :nonrating, notes: notes
           )
@@ -111,6 +115,7 @@ module Seeds
           veteran_file_number: vet_file_number,
           docket_type: Constants.AMA_DOCKETS.evidence_submission,
           closest_regional_office: "RO17",
+          receipt_date: num.days.ago,
           request_issues: create_list(
             :request_issue, 2, :nonrating, notes: notes
           )
@@ -128,6 +133,7 @@ module Seeds
           veteran_file_number: vet_file_number,
           docket_type: Constants.AMA_DOCKETS.direct_review,
           closest_regional_office: "RO17",
+          receipt_date: num.days.ago,
           request_issues: create_list(
             :request_issue, 2, :nonrating, notes: notes
           )
@@ -395,13 +401,14 @@ module Seeds
 
     def create_different_hearings_tasks
       (%w[RO17 RO19 RO31 RO43 RO45] + [nil]).each do |regional_office|
-        30.times do
+        30.times do |num|
           appeal = create(
             :appeal,
             :with_request_issues,
             :hearing_docket,
             veteran_is_not_claimant: Faker::Boolean.boolean,
             stream_type: Constants.AMA_STREAM_TYPES.original,
+            receipt_date: num.days.ago,
             claimants: [
               create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO_#{rand(10**10)}")
             ],
@@ -758,36 +765,45 @@ module Seeds
       end
       correspondent = VACOLS::Correspondent.find_or_create_by(stafkey: 100)
       folder = VACOLS::Folder.find_or_create_by(ticknum: legacy_vacols_id, tinum: 1)
+      @legacy_appeal_count += 1
       vacols_case = create(:case_with_soc,
                            :status_advance,
+                           :type_original,
                            case_issues: case_issues,
                            correspondent: correspondent,
                            folder: folder,
                            bfkey: legacy_vacols_id,
-                           bfcorlid: veteran_file_number_legacy_opt_in)
+                           bfcorlid: veteran_file_number_legacy_opt_in,
+                           bfdnod: @legacy_appeal_count.days.ago)
       create(:legacy_appeal, vacols_case: vacols_case)
     end
 
     # This whole section probably belongs in Seeds::Hearings, but since it doesn't actually create
     # a hearing I'm leaving it here for now
     def create_video_vacols_case(vacols_titrnum, vacols_folder, correspondent)
+      @legacy_appeal_count += 1
       create(
         :case,
         :video_hearing_requested,
+        :type_original,
         correspondent: correspondent,
         bfcorlid: vacols_titrnum,
         bfcurloc: "CASEFLOW",
+        bfdnod: @legacy_appeal_count.days.ago,
         folder: vacols_folder
       )
     end
 
     def create_travel_vacols_case(vacols_titrnum, vacols_folder, correspondent)
+      @legacy_appeal_count += 1
       create(
         :case,
         :travel_board_hearing_requested,
+        :type_original,
         correspondent: correspondent,
         bfcorlid: vacols_titrnum,
         bfcurloc: "CASEFLOW",
+        bfdnod: @legacy_appeal_count.days.ago,
         folder: vacols_folder
       )
     end

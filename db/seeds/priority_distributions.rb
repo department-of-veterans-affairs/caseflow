@@ -120,47 +120,53 @@ module Seeds
     end
 
     def create_legacy_ready_priority_cases_tied_to_judge(judge)
-      2.times do
+      2.times do |num|
         create(
           :case,
           :aod,
           :ready_for_distribution,
           :tied_to_judge,
+          :type_original,
           tied_judge: judge,
           bfkey: random_key,
+          bfdnod: num.days.ago,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
     end
 
     def create_legacy_nonready_priority_cases_tied_to_judge(judge)
-      2.times do
+      2.times do |num|
         create(
           :case,
           :aod,
           :tied_to_judge,
+          :type_original,
           tied_judge: judge,
           bfkey: random_key,
+          bfdnod: num.days.ago,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
     end
 
     def create_legacy_ready_nonpriority_cases_tied_to_judge(judge)
-      2.times do
+      2.times do |num|
         create(
           :case,
           :ready_for_distribution,
           :tied_to_judge,
+          :type_original,
           tied_judge: judge,
           bfkey: random_key,
+          bfdnod: num.days.ago,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
     end
 
     def create_hearing_ready_priority_cases_tied_to_judge(judge)
-      2.times do
+      2.times do |num|
         create(
           :appeal,
           :hearing_docket,
@@ -168,6 +174,7 @@ module Seeds
           :advanced_on_docket_due_to_age,
           :held_hearing,
           :tied_to_judge,
+          receipt_date: num.days.ago,
           tied_judge: judge,
           adding_user: User.first
         )
@@ -175,7 +182,7 @@ module Seeds
     end
 
     def create_hearing_nonready_priority_cases_tied_to_judge(judge)
-      2.times do
+      2.times do |num|
         create(
           :appeal,
           :hearing_docket,
@@ -183,6 +190,7 @@ module Seeds
           :advanced_on_docket_due_to_age,
           :held_hearing,
           :tied_to_judge,
+          receipt_date: num.days.ago,
           tied_judge: judge,
           adding_user: User.first
         )
@@ -190,13 +198,14 @@ module Seeds
     end
 
     def create_hearing_ready_nonpriority_cases_tied_to_judge(judge)
-      2.times do
+      2.times do |num|
         create(
           :appeal,
           :hearing_docket,
           :ready_for_distribution,
           :held_hearing,
           :tied_to_judge,
+          receipt_date: num.days.ago,
           tied_judge: judge,
           adding_user: User.first
         )
@@ -204,167 +213,185 @@ module Seeds
     end
 
     def create_legacy_ready_priority_genpop_cases
-      20.times do
+      20.times do |num|
         create(
           :case,
           :aod,
           :ready_for_distribution,
+          :type_original,
           bfkey: random_key,
+          bfdnod: num.days.ago,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
     end
 
     def create_legacy_nonready_priority_genpop_cases
-      2.times do
+      2.times do |num|
         create(
           :case,
           :aod,
+          :type_original,
           bfkey: random_key,
+          bfdnod: num.days.ago,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
     end
 
     def create_legacy_ready_nonpriority_genpop_cases
-      2.times do
+      2.times do |num|
         create(
           :case,
           :ready_for_distribution,
+          :type_original,
           bfkey: random_key,
+          bfdnod: num.days.ago,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
     end
 
     def create_ama_hearing_ready_priority_genpop_cases
-      20.times do
+      20.times do |num|
         create(
           :appeal,
           :hearing_docket,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
           :held_hearing,
+          receipt_date: num.days.ago,
           adding_user: User.first
         )
       end
     end
 
     def create_ama_hearing_nonready_priority_genpop_cases
-      2.times do
+      2.times do |num|
         create(
           :appeal,
           :hearing_docket,
           :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
           :held_hearing,
+          receipt_date: num.days.ago,
           adding_user: User.first
         )
       end
     end
 
     def create_ama_hearing_ready_nonpriority_genpop_cases
-      2.times do
+      2.times do |num|
         create(
           :appeal,
           :hearing_docket,
           :ready_for_distribution,
           :held_hearing,
+          receipt_date: num.days.ago,
           adding_user: User.first
         )
       end
     end
 
     def create_direct_review_ready_priority_genpop_cases
-      20.times do
+      20.times do |num|
         create(
           :appeal,
           :direct_review_docket,
           :ready_for_distribution,
-          :advanced_on_docket_due_to_age
+          :advanced_on_docket_due_to_age,
+          receipt_date: num.days.ago
         )
       end
     end
 
     def create_direct_review_nonready_priority_genpop_cases
-      2.times do
+      2.times do |num|
         create(
           :appeal,
           :direct_review_docket,
           :with_post_intake_tasks,
-          :advanced_on_docket_due_to_age
+          :advanced_on_docket_due_to_age,
+          receipt_date: num.days.ago
         )
       end
     end
 
     def create_direct_review_ready_nonpriority_genpop_cases
-      2.times do
+      2.times do |num|
         create(
           :appeal,
           :direct_review_docket,
-          :ready_for_distribution
+          :ready_for_distribution,
+          receipt_date: num.days.ago
         )
       end
     end
 
     def create_evidence_submission_ready_priority_genpop_cases
-      4.times do
+      4.times do |num|
         create(
           :appeal,
           :evidence_submission_docket,
           :ready_for_distribution,
-          :advanced_on_docket_due_to_age
+          :advanced_on_docket_due_to_age,
+          receipt_date: num.days.ago
         )
       end
     end
 
     def create_evidence_submission_nonready_priority_genpop_cases
-      20.times do
+      20.times do |num|
         create(
           :appeal,
           :evidence_submission_docket,
           :with_post_intake_tasks,
-          :advanced_on_docket_due_to_age
+          :advanced_on_docket_due_to_age,
+          receipt_date: num.days.ago
         )
       end
     end
 
     def create_evidence_submission_ready_nonpriority_genpop_cases
-      20.times do
+      20.times do |num|
         create(
           :appeal,
           :evidence_submission_docket,
-          :ready_for_distribution
+          :ready_for_distribution,
+          receipt_date: num.days.ago
         )
       end
     end
 
     def create_ready_cavc_genpop_cases
-      4.times do
+      4.times do |num|
         create(
           :appeal,
           :type_cavc_remand,
-          :cavc_ready_for_distribution
+          :cavc_ready_for_distribution,
+          receipt_date: num.days.ago
         )
       end
     end
 
     def create_ready_cavc_aod_genpop_cases
-      4.times do
+      4.times do |num|
         create(
           :appeal,
           :type_cavc_remand,
           :cavc_ready_for_distribution,
-          :advanced_on_docket_due_to_age
+          :advanced_on_docket_due_to_age,
+          receipt_date: num.days.ago
         )
       end
     end
 
     def create_nonready_cavc_genpop_cases
-      20.times do
+      20.times do |num|
         create(
           :appeal,
-          :type_cavc_remand
+          :type_cavc_remand,
+          receipt_date: num.days.ago
         )
       end
     end
@@ -374,7 +401,9 @@ module Seeds
         :case,
         :aod,
         :ready_for_distribution,
+        :type_original,
         bfkey: random_key,
+        bfdnod: 1.day.ago,
         correspondent: create(:correspondent, stafkey: random_key)
       )
       create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case)
