@@ -95,7 +95,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   SELECT_PRIORITY_APPEALS = "
     select BFKEY, BFDNOD, BFDLOOUT, VLJ
       from (
-        select BFKEY, BFDLOOUT,
+        select BFKEY, BFDNOD, BFDLOOUT,
           case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
         from (
           #{SELECT_READY_APPEALS}
