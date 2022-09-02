@@ -1,13 +1,9 @@
 # frozen_string_literal: true
 
-require "action_view"
-
 # Job to fetch all currently active Legacy Appeals
 class FetchAllActiveLegacyAppealsJob < CaseflowJob
-  include ActionView::Helpers::DateHelper
   queue_with_priority :low_priority
   def perform
-    find_active_legacy_appeals
   end
 
   private
