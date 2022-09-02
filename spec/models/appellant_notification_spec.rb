@@ -52,7 +52,7 @@ describe AppellantNotification do
       context "creates a payload with no exceptions" do
         it "has a status value of success" do
           expect(
-            AppellantNotification.create_payload(good_appeal, template_name)[:message_attributes][:status][:string_value]
+            AppellantNotification.create_payload(good_appeal, template_name)
           ).to eq "Success"
         end
       end
