@@ -93,13 +93,12 @@ describe SendNotificationJob, type: :job do
           .with(
             participant_id,
             appeal_id,
-            email_template_id,
+            email_template_id
             # appeal_status
           )
         perform_enqueued_jobs do
           result = SendNotificationJob.perform_later(good_message.as_json)
-          byebug
-          expect(result.arguments[0]).to eq(good_message)
+          expect(result.arguments[0]).to eq(good_message.as_json)
         end
       end
 

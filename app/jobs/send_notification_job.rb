@@ -30,17 +30,17 @@ class SendNotificationJob < CaseflowJob
   def perform(message)
     if !message.nil?
       # message_attributes = message[:message_attributes]
-      appeals_id = message.appeal_id
-      appeals_type = message.appeal_type
-      appeals_status = message.status
-      event_type = message.template_name
+      # appeals_id = message.appeal_id
+      # appeals_type = message.appeal_type
+      # appeals_status = message.status
+      # event_type = message.template_name
       
       # if [appeals_id, appeals_type, appeals_status, event_type].none?(&:nil?)
         # {|a| a.nil?}
-        # appeals_id = message_attributes[:appeal_id][:string_value]
-        # appeals_type = message_attributes[:appeal_type][:string_value]
-        # appeals_status = message_attributes[:status] ? message_attributes[:status][:string_value] : ""
-        # event_type = message_attributes[:template_name][:string_value]
+        appeals_id = message[:appeal_id]
+        appeals_type = message[:appeal_type]
+        appeals_status = message[:status] ? message[:status] : ""
+        event_type = message[:template_name]
 
         if !appeals_id.nil? && !appeals_type.nil? && !event_type.nil? # [appeals_id, appeals_type, appeals_status, event_type].none?(&:nil?)
           notification_audit_record = create_notfication_audit_record(appeals_id, appeals_type, event_type)
@@ -50,7 +50,7 @@ class SendNotificationJob < CaseflowJob
               notification_audit_record.email_notification_status = status
               notification_audit_record.sms_notification_status = status
               notification_audit_record.save!
-              send_to_va_notify(message_attributes, appeals_id, appeals_status)
+              # send_to_va_notify(message_attributes, appeals_id, appeals_status)
             else
               status = (appeal_status == "No particpant_id") ? "No Participant Id Found" : "No Claimant Found"
               notification_audit_record.email_notification_status = status
@@ -82,7 +82,6 @@ class SendNotificationJob < CaseflowJob
     if FeatureToggle.enabled?(:va_notify_sms)
 
     end
-    true
   end
 
   # Purpose: Method to be called with an error need to be logged to the rails logger
