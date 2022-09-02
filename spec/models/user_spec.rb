@@ -209,16 +209,27 @@ describe User, :all_dbs do
   end
 
   context "#timezone" do
+    subject { user.timezone }
+
     context "when ro is set" do
-      subject { user.timezone }
       before { user.regional_office = "RO84" }
+
       it { is_expected.to eq("America/New_York") }
     end
 
     context "when ro isn't set" do
-      subject { user.timezone }
       before { user.regional_office = nil }
+
       it { is_expected.to eq("America/Chicago") }
+    end
+
+    context "when ro isn't set and selected_regional_office is" do
+      before do
+        user.regional_office = nil
+        user.update(selected_regional_office: "RO16")
+      end
+
+      it { is_expected.to eq("America/New_York") }
     end
   end
 
