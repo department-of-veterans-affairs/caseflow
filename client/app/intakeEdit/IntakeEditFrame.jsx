@@ -231,11 +231,7 @@ export const IntakeEditFrame = (props) => {
                     title="Split Appeal | Caseflow Intake"
                     component={() => {
                       return (
-<<<<<<< HEAD
-                        <SplitAppealConfirm {...props} />
-=======
                         <ReviewAppealView {...props} />
->>>>>>> stephan/APPEALS-7472V4
                       );
                     }}
                   />
