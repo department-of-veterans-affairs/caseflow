@@ -35,8 +35,16 @@ const ContinueButtonUnconnected = () => {
   );
 };
 
+ContinueButtonUnconnected.propTypes = {
+  history: PropTypes.object,
+  formType: PropTypes.string,
+  claimId: PropTypes.string
+};
+
 const ContinueButton = connect(
-  () => ({
+  (state) => ({
+    formType: state.formType,
+    claimId: state.claimId
   }),
 )(ContinueButtonUnconnected);
 

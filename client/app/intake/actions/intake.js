@@ -29,7 +29,7 @@ export const splitAppeal = (appealId, selectedIssues, reason, otherReason) => (d
     split_other_reason: otherReason
   };
 
-  return ApiUtil.post(`/appeals/${data.appeal_id}/${ENDPOINT_NAMES.SPLIT_APPEAL}`, data).
+  return ApiUtil.post(`/appeals/${data.appeal_id}/${ENDPOINT_NAMES.SPLIT_APPEAL}`, { data }).
     then(
       (response) => {
         // send success

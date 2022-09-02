@@ -231,7 +231,7 @@ export const IntakeEditFrame = (props) => {
                     title="Split Appeal | Caseflow Intake"
                     component={() => {
                       return (
-                        <SplitAppealConfirm />
+                        <SplitAppealConfirm {...props} />
                       );
                     }}
                   />
