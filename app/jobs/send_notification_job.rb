@@ -27,23 +27,19 @@ class SendNotificationJob < CaseflowJob
     Rails.logger.warn("Discarding #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
   end
 
+  # Must receive JSON as argument
   def perform(message)
     if !message.nil?
       # message_attributes = message[:message_attributes]
-      # appeals_id = message.appeal_id
-      # appeals_type = message.appeal_type
-      # appeals_status = message.status
-      # event_type = message.template_name
-      
       # if [appeals_id, appeals_type, appeals_status, event_type].none?(&:nil?)
         # {|a| a.nil?}
-        appeals_id = message[:appeal_id]
-        appeals_type = message[:appeal_type]
-        appeals_status = message[:status] ? message[:status] : ""
-        event_type = message[:template_name]
+        appeals_id = message["appeal_id"]
+        appeals_type = message["appeal_type"]
+        appeals_status = message["status"] || ""
+        event_type = message["template_name"]
 
         if !appeals_id.nil? && !appeals_type.nil? && !event_type.nil? # [appeals_id, appeals_type, appeals_status, event_type].none?(&:nil?)
-          notification_audit_record = create_notfication_audit_record(appeals_id, appeals_type, event_type)
+          notification_audit_record = create_notification_audit_record(appeals_id, appeals_type, event_type)
           if !notification_audit_record.nil?
             if appeals_status != "No participant_id" && appeals_status != "No claimant"
               status = appeals_status
@@ -52,7 +48,7 @@ class SendNotificationJob < CaseflowJob
               notification_audit_record.save!
               # send_to_va_notify(message_attributes, appeals_id, appeals_status)
             else
-              status = (appeal_status == "No particpant_id") ? "No Participant Id Found" : "No Claimant Found"
+              status = (appeals_status == "No particpant_id") ? "No Participant Id Found" : "No Claimant Found"
               notification_audit_record.email_notification_status = status
               notification_audit_record.sms_notification_status = status
               notification_audit_record.save!
@@ -97,13 +93,13 @@ class SendNotificationJob < CaseflowJob
   #
   # Params:
   # - appeals_id - UUID or Vacols id of the appeals the event triggered
-  # - appeals_type - Polynorphic column to identify teh type of appeal
+  # - appeals_type - Polynorphic column to identify the type of appeal
   # - - Appeal
   # - - LegacyAppeal
   # - event_type: Name of the event that has transpired. Event names can be found in the notification_events table
   #
   # Returns: Noticiation active model or nil
-  def create_notfication_audit_record(appeals_id, appeals_type, event_type)
+  def create_notification_audit_record(appeals_id, appeals_type, event_type)
     notification_type = "Email"
     Notification.create(
       appeals_id: appeals_id,

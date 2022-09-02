@@ -5,7 +5,7 @@ describe SendNotificationJob, type: :job do
   let(:current_user) { create(:user, roles: ["System Admin"]) }
   # rubocop:disable Style/BlockDelimiters
   let(:good_template_name) { "Appeal docketed" }
-  let(:error_template_name) { "No Participant Id" }
+  let(:error_template_name) { "No Participant Id Found" }
   let(:success_status) { "Success" }
   let(:error_status) { "No participant_id" }
   let(:success_message_attributes) {
@@ -24,8 +24,17 @@ describe SendNotificationJob, type: :job do
       appeal_type: "Appeal"
     }
   }
+  let(:fail_create_message_attributes) {
+    {
+      participant_id: "1234567890",
+      status: success_status,
+      appeal_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+      appeal_type: nil
+    }
+  }
   let(:good_message) { VANotifySendMessageTemplate.new(success_message_attributes, good_template_name) }
   let(:bad_message) { VANotifySendMessageTemplate.new(error_message_attributes, error_template_name) }
+  let(:fail_create_message) { VANotifySendMessageTemplate.new(fail_create_message_attributes, error_template_name) }
   let(:participant_id) { success_message_attributes[:participant_id] }
   let(:bad_participant_id) { "123" }
   let(:appeal_id) { success_message_attributes[:appeal_id] }
@@ -71,7 +80,7 @@ describe SendNotificationJob, type: :job do
     Seeds::NotificationEvents.new.seed!
   end
 
-  after do
+  after(:each) do
     clear_enqueued_jobs
     clear_performed_jobs
   end
@@ -102,30 +111,41 @@ describe SendNotificationJob, type: :job do
         end
       end
 
-      # it "makes audit params" do
-      #   allow(VANotifyService).to receive(:send_notifications) { bad_response }
-      #   allow(VANotifyService).to receive(:send_notifications)
-      #     .with(
-      #       participant_id,
-      #       appeal_id,
-      #       email_template_id,
-      #       appeal_status
-      #     )
-      #   audit_creation_params = {
-      #     message: message,
-      #     good_response: good_response,
-      #     notification_events_id: notification_events_id,
-      #     notification_type: notification_type
-      #   }
-      #   allow_any_instance_of(SendNotificationJob)
-      #     .to receive(:audit_params) { audit_creation_params }
-      #   allow_any_instance_of(SendNotificationJob)
-      #     .to receive(:audit_params)
-      #     .with(message, good_response, notification_events_id, notification_type)
-      #   perform_enqueued_jobs do
-      #     SendNotificationJob.perform_later(message)
-      #   end
-      # end
+      it "logs error when message is nil" do
+        expect(Rails.logger).to receive(:error).with(/There was no message passed/)
+        perform_enqueued_jobs do
+          SendNotificationJob.perform_later(nil)
+        end
+      end
+
+      it "logs error when appeals_id, appeals_type, or event_type is nil" do
+        expect(Rails.logger).to receive(:error).with(/appeals_id or appeal_type or event_type/)
+        perform_enqueued_jobs do
+          SendNotificationJob.perform_later(fail_create_message.as_json)
+        end
+      end
+
+      it "logs error when audit record is nil" do
+        allow_any_instance_of(SendNotificationJob).to receive(:create_notification_audit_record).and_return(nil)
+        expect(Rails.logger).to receive(:error).with(/Audit record was unable to be found or created/)
+        perform_enqueued_jobs do
+          SendNotificationJob.perform_later(good_message.as_json)
+        end
+      end
+
+      it "does not log error when everything works" do
+        expect(Rails.logger).not_to receive(:error)
+        perform_enqueued_jobs do
+          SendNotificationJob.perform_later(good_message.as_json)
+        end
+      end
+
+      it "saves to db but does not notify when status is not Success" do
+        expect(Rails.logger).not_to receive(:error)
+        perform_enqueued_jobs do
+          SendNotificationJob.perform_later(bad_message.as_json)
+        end
+      end
     end
 
     describe "handling errors" do
