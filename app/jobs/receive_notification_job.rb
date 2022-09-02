@@ -5,25 +5,56 @@ class ReceiveNotificationJob < CaseflowJob
   application_attr :hearing_schedule
 
   def perform(message)
-    RequestStore.store[:current_user] = User.system_user
-    # call to VANotify to obtain status, check if status is same as our record in database, update if necessary
-    send_to_va_notify(message)
+    if !message.nil?
+      message_attributes = message[:message_attributes]
+      if !message_attributes.nil?
+        # load reference value to obtain notification id for record lookup
+        notification_id = message_attributes[:reference][:string_value]
+
+        # load intersecting fields that may change in our database
+        email_address = message_attributes[:email_address][:string_value]
+        phone_number = message_attributes[:phone_number][:string_value]
+        status = message_attributes[:status][:string_value]
+        type = message_attributes[:type][:string_value]
+
+        # load record
+        audit_record = Notification.find_by(id: notification_id)
+
+        compare_notification_audit_record(audit_record, email_address, phone_number, status, type)
+
+
+
+
+      else
+        log_error("message_attributes was nil on the SendNotificationListnerJob message. Existing Job.")
+      end
+    else
+      log_error("There was no message passed into the SendNotificationListener.perform_later function. Exiting job.")
+    end
   end
 
-  # Send message to VA Notify Service API to retreive status
-  def send_to_va_notify(message)
-    message_attributes = message[:message_attributes]
-    appeal_id = message_attributes[:appeal_id][:string_value]
-    notification = Notification.find_by(appeal_id: appeal_id)
-    notification_id = notification.nil? ? "" : notification.id
-    response = VANotifyService.get_status(notification_id)
+private
 
-    # Fake VANotify Error Handling
-    if response.code >= 400
-      Rails.logger.error("Failed with error: #{response.body['error']} - #{response.body['message']} ")
-      return response.body
-    end
+  # Purpose: Method to be called with an error need to be logged to the rails logger
+  #
+  # Params: error_message (Expecting a string) - Message to be logged to the logger
+  #
+  # Response: None
+  def log_error(error_message)
+    Rails.logger.error(error_message)
+  end
 
-    # TODO: If status changed, then update record
+  # Purpose: Method to compare audit record from database with record in message
+  #
+  # Params:
+  # - audit_record - audit record to compare with message
+  # - email_address - email of recipient
+  # - phone_number = phone number of recipient
+  # - status - status of notification
+  # - type - sms or email
+  #
+  # Returns: Updated model
+  def compare_notification_audit_record(audit_record, email_address, phone_number, status, type)
+    
   end
 end
