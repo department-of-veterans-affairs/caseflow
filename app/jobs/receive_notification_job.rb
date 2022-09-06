@@ -23,7 +23,7 @@ class ReceiveNotificationJob < CaseflowJob
         compare_notification_audit_record(audit_record, email_address, phone_number, status, type)
 
       else
-        log_error("message_attributes was nil on the ReceiveNotificationListnerJob message. Existing Job.")
+        log_error("message_attributes was nil on the ReceiveNotificationListenerJob message. Exiting Job.")
       end
     else
       log_error("There was no message passed into the ReceiveNotificationListener. Exiting job.")
@@ -48,21 +48,20 @@ class ReceiveNotificationJob < CaseflowJob
   # - email_address - email of recipient
   # - phone_number = phone number of recipient
   # - status - status of notification
-  # - type - sms or email
+  # - type - sms or email, used to update email/text notification status
   #
   # Returns: Updated model from update_audit_record
   def compare_notification_audit_record(audit_record, email_address, phone_number, status, type)
-    if audit_record.email_address != email_address && !email_address.nil?
+    if !email_address.nil? && audit_record.email_address != email_address
       audit_record.update!(email_address: email_address)
     end
-    if audit_record.phone_number != phone_number && !phone_number.nil?
+    if !phone_number.nil? && audit_record.phone_number != phone_number
       audit_record.update!(phone_number: phone_number)
     end
-    if audit_record.email_notification_status != status && !status.nil?
+    if type == "email" && !status.nil?
       audit_record.update!(email_notification_status: status)
-    end
-    if audit_record.notification_type != type && !type.nil?
-      audit_record.update!(notification_type: type)
+    elsif type == "sms" && !status.nil?
+      audit_record.update!(text_notification_status: status)
     end
     audit_record
   end
