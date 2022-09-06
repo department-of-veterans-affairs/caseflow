@@ -53,16 +53,16 @@ class ReceiveNotificationJob < CaseflowJob
   # Returns: Updated model from update_audit_record
   def compare_notification_audit_record(audit_record, email_address, phone_number, status, type)
     if audit_record.email_address != email_address && !email_address.nil?
-      audit.update!(email_address: email_address)
+      audit_record.update!(email_address: email_address)
     end
     if audit_record.phone_number != phone_number && !phone_number.nil?
-      audit.update!(phone_number: phone_number)
+      audit_record.update!(phone_number: phone_number)
     end
     if audit_record.email_notification_status != status && !status.nil?
-      audit.update!(email_notification_status: status)
+      audit_record.update!(email_notification_status: status)
     end
     if audit_record.notification_type != type && !type.nil?
-      audit.update!(notification_type: type)
+      audit_record.update!(notification_type: type)
     end
     audit_record
   end
