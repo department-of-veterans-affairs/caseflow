@@ -205,7 +205,7 @@ class AddIssuesPage extends React.Component {
       userCanWithdrawIssues
     } = this.props;
     const intakeData = intakeForms[formType];
-    const { useAmaActivationDate, vhaPreDocketAppeals } = featureToggles;
+    const { useAmaActivationDate } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
@@ -325,7 +325,7 @@ class AddIssuesPage extends React.Component {
 
     const issueSectionRow = (sectionIssues, fieldTitle) => {
       const reviewHasVhaIssues = sectionIssues.some((issue) => issue.benefitType === 'vha');
-      const showPreDocketBanner = !editPage && formType === 'appeal' && reviewHasVhaIssues && vhaPreDocketAppeals;
+      const showPreDocketBanner = !editPage && formType === 'appeal' && reviewHasVhaIssues;
 
       return {
         field: fieldTitle,
