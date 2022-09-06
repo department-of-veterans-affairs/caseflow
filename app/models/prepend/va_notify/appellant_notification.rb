@@ -26,31 +26,32 @@ module AppellantNotification
 
   def self.handle_errors(appeal)
     if !appeal.nil?
-      info = {}
-      appeal_id = appeal.id
+      message_attributes = {}
+      message_attributes[:appeal_type] = appeal.class.to_s
+      message_attributes[:appeal_id] = (message_attributes[:appeal_type] == "Appeal") ? appeal.uuid : appeal.vacols_id
       claimant = appeal.claimant
-      info[:participant_id] = appeal.claimant_participant_id
+      message_attributes[:participant_id] = appeal.claimant_participant_id
       if claimant.nil?
         begin
-          fail NoClaimantError, appeal_id
+          fail NoClaimantError, message_attributes[:appeal_id]
         rescue StandardError => error
           Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-          info[:status] = error.status
+          message_attributes[:status] = error.status
         end
-      elsif info[:participant_id] == "" || info[:participant_id].nil?
+      elsif message_attributes[:participant_id] == "" || message_attributes[:participant_id].nil?
         begin
-          fail NoParticipantIdError, appeal_id
+          fail NoParticipantIdError, message_attributes[:appeal_id]
         rescue StandardError => error
           Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-          info[:status] = error.status
+          message_attributes[:status] = error.status
         end
       else
-        info[:status] = "Success"
+        message_attributes[:status] = "Success"
       end
     else
       fail NoAppealError
     end
-    info
+    message_attributes
   end
 
   def self.notify_appellant(
@@ -62,37 +63,7 @@ module AppellantNotification
   end
 
   def self.create_payload(appeal, template_name)
-    info = AppellantNotification.handle_errors(appeal)
-    appeal_type = appeal.class.to_s
-    appeal_id = (appeal_type == "Appeal") ? appeal.uuid : appeal.vacols_id
-    participant_id = info[:participant_id]
-    status = info[:status]
-
-    {
-      queue_url: "caseflow_development_send_notifications",
-      message_body: "Notification for #{appeal_type}, #{template_name}",
-      message_attributes: {
-        "participant_id": {
-          string_value: participant_id,
-          data_type: "String"
-        },
-        "template_name": {
-          string_value: template_name,
-          data_type: "String"
-        },
-        "appeal_id": {
-          string_value: appeal_id,
-          data_type: "String"
-        },
-        "appeal_type": {
-          string_value: appeal_type, # legacy vs ama
-          data_type: "String"
-        },
-        "status": {
-          string_value: status,
-          data_type: "String"
-        }
-      }
-    }
+    message_attributes = AppellantNotification.handle_errors(appeal)
+    VANotifySendMessageTemplate.new(message_attributes, template_name)
   end
 end
