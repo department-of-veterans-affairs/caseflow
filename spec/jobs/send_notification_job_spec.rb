@@ -124,18 +124,14 @@ describe SendNotificationJob, type: :job do
         end
       end
 
-      it "does not log error when everything works" do
+      it "sends to VA Notify when no errors are present" do
         expect(Rails.logger).not_to receive(:error)
-        perform_enqueued_jobs do
-          SendNotificationJob.perform_later(good_message.to_json)
-        end
+        expect { SendNotificationJob.perform_now(good_message.to_json).to receive(:send_to_va_notify) }
       end
 
       it "saves to db but does not notify when status is not Success" do
         expect(Rails.logger).not_to receive(:error)
-        perform_enqueued_jobs do
-          SendNotificationJob.perform_later(bad_message.to_json)
-        end
+        expect { SendNotificationJob.perform_now(good_message.to_json).not_to receive(:send_to_va_notify) }
       end
     end
 

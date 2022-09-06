@@ -32,7 +32,7 @@ class SendNotificationJob < CaseflowJob
     if !message_json.nil?
       message = JSON.parse(message_json, object_class: OpenStruct)
 
-      if !message.appeal_id.nil? && !message.appeal_type.nil? && !message.template_name.nil? # [appeals_id, appeals_type, appeals_status, event_type].none?(&:nil?)
+      if !message.appeal_id.nil? && !message.appeal_type.nil? && !message.template_name.nil?
         notification_audit_record = create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name)
         if !notification_audit_record.nil?
           if message.status != "No participant_id" && message.status != "No claimant"
@@ -42,7 +42,7 @@ class SendNotificationJob < CaseflowJob
             notification_audit_record.save!
             send_to_va_notify(message)
           else
-            status = (message.status == "No particpant_id") ? "No Participant Id Found" : "No Claimant Found"
+            status = (message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
             notification_audit_record.email_notification_status = status
             notification_audit_record.sms_notification_status = status
             notification_audit_record.save!
