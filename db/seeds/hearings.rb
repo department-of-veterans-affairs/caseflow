@@ -221,7 +221,6 @@ module Seeds
         bfkey: @bfkey.to_s,
         bfcorkey: @bfcorkey.to_s,
         bfac: %w[1 3].sample, # original or Post remand,
-        bfdnod: @legacy_appeal_count.days.ago,
         correspondent: correspondent
       )
 
@@ -339,7 +338,6 @@ module Seeds
         :type_original,
         bfkey: @bfkey.to_s,
         bfcorkey: @bfcorkey.to_s,
-        bfdnod: @legacy_appeal_count.days.ago,
         correspondent: correspondent
       )
     end

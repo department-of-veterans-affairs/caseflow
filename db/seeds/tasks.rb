@@ -773,8 +773,7 @@ module Seeds
                            correspondent: correspondent,
                            folder: folder,
                            bfkey: legacy_vacols_id,
-                           bfcorlid: veteran_file_number_legacy_opt_in,
-                           bfdnod: @legacy_appeal_count.days.ago)
+                           bfcorlid: veteran_file_number_legacy_opt_in)
       create(:legacy_appeal, vacols_case: vacols_case)
     end
 
@@ -789,7 +788,6 @@ module Seeds
         correspondent: correspondent,
         bfcorlid: vacols_titrnum,
         bfcurloc: "CASEFLOW",
-        bfdnod: @legacy_appeal_count.days.ago,
         folder: vacols_folder
       )
     end
@@ -803,7 +801,6 @@ module Seeds
         correspondent: correspondent,
         bfcorlid: vacols_titrnum,
         bfcurloc: "CASEFLOW",
-        bfdnod: @legacy_appeal_count.days.ago,
         folder: vacols_folder
       )
     end

@@ -129,7 +129,6 @@ module Seeds
           :type_original,
           tied_judge: judge,
           bfkey: random_key,
-          bfdnod: num.days.ago,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
@@ -144,7 +143,6 @@ module Seeds
           :type_original,
           tied_judge: judge,
           bfkey: random_key,
-          bfdnod: num.days.ago,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
@@ -159,7 +157,6 @@ module Seeds
           :type_original,
           tied_judge: judge,
           bfkey: random_key,
-          bfdnod: num.days.ago,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
@@ -220,7 +217,6 @@ module Seeds
           :ready_for_distribution,
           :type_original,
           bfkey: random_key,
-          bfdnod: num.days.ago,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
@@ -233,7 +229,6 @@ module Seeds
           :aod,
           :type_original,
           bfkey: random_key,
-          bfdnod: num.days.ago,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
@@ -246,7 +241,6 @@ module Seeds
           :ready_for_distribution,
           :type_original,
           bfkey: random_key,
-          bfdnod: num.days.ago,
           correspondent: create(:correspondent, stafkey: random_key)
         )
       end
@@ -403,7 +397,6 @@ module Seeds
         :ready_for_distribution,
         :type_original,
         bfkey: random_key,
-        bfdnod: 1.day.ago,
         correspondent: create(:correspondent, stafkey: random_key)
       )
       create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case)
