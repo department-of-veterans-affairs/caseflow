@@ -60,7 +60,11 @@ class SendNotificationJob < CaseflowJob
 
   private
 
-  # Send message to VA Notify to send notification
+  # Purpose: Send message to VA Notify to send notification
+  #
+  # Params: message (object containing participant_id, appeal_id, template_name) Details from appeal for notification
+  #
+  # Response: None
   def send_to_va_notify(message)
     event = NotificationEvent.find_by(event_type: message.template_name)
     email_template_id = event.email_template_id
