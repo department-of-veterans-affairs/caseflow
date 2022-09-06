@@ -120,7 +120,7 @@ module Seeds
     end
 
     def create_legacy_ready_priority_cases_tied_to_judge(judge)
-      2.times do |num|
+      2.times do
         create(
           :case,
           :aod,
@@ -135,7 +135,7 @@ module Seeds
     end
 
     def create_legacy_nonready_priority_cases_tied_to_judge(judge)
-      2.times do |num|
+      2.times do
         create(
           :case,
           :aod,
@@ -149,7 +149,7 @@ module Seeds
     end
 
     def create_legacy_ready_nonpriority_cases_tied_to_judge(judge)
-      2.times do |num|
+      2.times do
         create(
           :case,
           :ready_for_distribution,
@@ -210,7 +210,7 @@ module Seeds
     end
 
     def create_legacy_ready_priority_genpop_cases
-      20.times do |num|
+      20.times do
         create(
           :case,
           :aod,
@@ -223,7 +223,7 @@ module Seeds
     end
 
     def create_legacy_nonready_priority_genpop_cases
-      2.times do |num|
+      2.times do
         create(
           :case,
           :aod,
@@ -235,7 +235,7 @@ module Seeds
     end
 
     def create_legacy_ready_nonpriority_genpop_cases
-      2.times do |num|
+      2.times do
         create(
           :case,
           :ready_for_distribution,
