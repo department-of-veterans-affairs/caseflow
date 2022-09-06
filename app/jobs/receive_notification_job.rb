@@ -22,18 +22,15 @@ class ReceiveNotificationJob < CaseflowJob
 
         compare_notification_audit_record(audit_record, email_address, phone_number, status, type)
 
-
-
-
       else
-        log_error("message_attributes was nil on the SendNotificationListnerJob message. Existing Job.")
+        log_error("message_attributes was nil on the ReceiveNotificationListnerJob message. Existing Job.")
       end
     else
-      log_error("There was no message passed into the SendNotificationListener.perform_later function. Exiting job.")
+      log_error("There was no message passed into the ReceiveNotificationListener. Exiting job.")
     end
   end
 
-private
+  private
 
   # Purpose: Method to be called with an error need to be logged to the rails logger
   #
@@ -53,8 +50,20 @@ private
   # - status - status of notification
   # - type - sms or email
   #
-  # Returns: Updated model
+  # Returns: Updated model from update_audit_record
   def compare_notification_audit_record(audit_record, email_address, phone_number, status, type)
-    
+    if audit_record.email_address != email_address && !email_address.nil?
+      audit.update!(email_address: email_address)
+    end
+    if audit_record.phone_number != phone_number && !phone_number.nil?
+      audit.update!(phone_number: phone_number)
+    end
+    if audit_record.email_notification_status != status && !status.nil?
+      audit.update!(email_notification_status: status)
+    end
+    if audit_record.notification_type != type && !type.nil?
+      audit.update!(notification_type: type)
+    end
+    audit_record
   end
 end
