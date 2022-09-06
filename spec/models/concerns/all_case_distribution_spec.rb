@@ -56,7 +56,7 @@ describe AllCaseDistribution, :all_dbs do
 
       # distribute all nonpriority appeals from all dockets
       expect(@new_acd).to receive(:num_oldest_nonpriority_appeals_for_judge_by_docket)
-        .with(@new_acd.judge, @new_acd.batch_size)
+        .with(@new_acd, @new_acd.batch_size)
         .and_return(nonpriority_count_hash)
 
       expect_any_instance_of(LegacyDocket).to receive(:distribute_appeals)
@@ -83,7 +83,7 @@ describe AllCaseDistribution, :all_dbs do
 
   context "#num_oldest_nonpriority_appeals_for_judge_by_docket" do
     it "returns an empty hash if provided num is zero" do
-      return_value = @new_acd.send :num_oldest_nonpriority_appeals_for_judge_by_docket, @new_acd.judge, 0
+      return_value = @new_acd.send :num_oldest_nonpriority_appeals_for_judge_by_docket, @new_acd, 0
       expect(return_value).to eq({})
     end
 
@@ -106,7 +106,7 @@ describe AllCaseDistribution, :all_dbs do
 
       return_array = @new_acd.send(
         :num_oldest_nonpriority_appeals_for_judge_by_docket,
-        @new_acd.judge,
+        @new_acd,
         @new_acd.batch_size
       )
       expect(return_array).to eq(nonpriority_count_hash)
