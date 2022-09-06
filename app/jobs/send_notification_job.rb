@@ -27,7 +27,7 @@ class SendNotificationJob < CaseflowJob
     Rails.logger.warn("Discarding #{job.class.name} (#{job.job_id}) because failed with error: #{exception}")
   end
 
-  # Must receive JSON as argument
+  # Must receive JSON string as argument
   def perform(message_json)
     if !message_json.nil?
       message = JSON.parse(message_json, object_class: OpenStruct)
@@ -37,15 +37,11 @@ class SendNotificationJob < CaseflowJob
         if !notification_audit_record.nil?
           if message.status != "No participant_id" && message.status != "No claimant"
             status = message.status
-            notification_audit_record.email_notification_status = status
-            notification_audit_record.sms_notification_status = status
-            notification_audit_record.save!
+            update_notification_audit_record(notification_audit_record, status)
             send_to_va_notify(message)
           else
             status = (message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
-            notification_audit_record.email_notification_status = status
-            notification_audit_record.sms_notification_status = status
-            notification_audit_record.save!
+            update_notification_audit_record(notification_audit_record, status)
           end
         else
           log_error("Audit record was unable to be found or created in SendNotificationListnerJob. Exiting Job.")
@@ -60,11 +56,23 @@ class SendNotificationJob < CaseflowJob
 
   private
 
+  # Purpose: Updates and saves notification status for notification_audit_record
+  #
+  # Params: notification_audit_record: object,
+  #         status: corresponds to NotificationEvent table event name
+  #
+  # Response: Updated notification_audit_record
+  def update_notification_audit_record(notification_audit_record, status)
+    notification_audit_record.email_notification_status = status
+    notification_audit_record.sms_notification_status = status
+    notification_audit_record.save!
+  end
+
   # Purpose: Send message to VA Notify to send notification
   #
   # Params: message (object containing participant_id, appeal_id, template_name) Details from appeal for notification
   #
-  # Response: None
+  # Response: JSON from VA Notify API
   def send_to_va_notify(message)
     event = NotificationEvent.find_by(event_type: message.template_name)
     email_template_id = event.email_template_id
@@ -92,7 +100,7 @@ class SendNotificationJob < CaseflowJob
   #
   # Params:
   # - appeals_id - UUID or Vacols id of the appeals the event triggered
-  # - appeals_type - Polynorphic column to identify the type of appeal
+  # - appeals_type - Polymorphic column to identify the type of appeal
   # - - Appeal
   # - - LegacyAppeal
   # - event_type: Name of the event that has transpired. Event names can be found in the notification_events table
