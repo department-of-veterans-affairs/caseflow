@@ -49,7 +49,9 @@ class Docket
     appeals(priority: true, ready: true).limit(num).map(&:ready_for_distribution_at)
   end
 
-  def age_of_n_oldest_nonpriority_appeals_available_to_judge(_, num)
+  # this method needs to have the same name as the method in legacy_docket.rb for all_case_distribution,
+  # but the judge that is passed in isn't relevant here
+  def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
     appeals(priority: false, ready: true).limit(num).map(&:receipt_date)
   end
 

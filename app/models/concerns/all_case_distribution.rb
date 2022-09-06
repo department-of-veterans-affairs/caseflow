@@ -74,7 +74,7 @@ module AllCaseDistribution
 
   def distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
     @nonpriority_iterations += 1
-    num_oldest_nonpriority_appeals_for_judge_by_docket(judge, limit).each do |docket, number_of_appeals_to_distribute|
+    num_oldest_nonpriority_appeals_for_judge_by_docket(self, limit).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
         dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: false, style: style)
       end
@@ -120,11 +120,11 @@ module AllCaseDistribution
       .transform_values(&:count)
   end
 
-  def num_oldest_nonpriority_appeals_for_judge_by_docket(judge, num)
+  def num_oldest_nonpriority_appeals_for_judge_by_docket(distribution, num)
     return {} unless num > 0
 
     dockets
-      .flat_map { |sym, docket| docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num).map { |age| [age, sym] } }
+      .flat_map { |sym, docket| docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(distribution.judge, num).map { |age| [age, sym] } }
       .sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }

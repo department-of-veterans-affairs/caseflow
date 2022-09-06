@@ -117,7 +117,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
-    )
+    ) order by BFDNOD
   "
 
   # rubocop:disable Metrics/MethodLength
@@ -252,7 +252,6 @@ class VACOLS::CaseDocket < VACOLS::Record
       #{SELECT_NONPRIORITY_APPEALS}
       where (VLJ = ? or VLJ is null)
       and rownum <= ?
-      order by BFDNOD
     SQL
 
     fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id, num])
