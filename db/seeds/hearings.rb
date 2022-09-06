@@ -26,7 +26,6 @@ module Seeds
     def initialize
       @bfkey = 1234
       @bfcorkey = 5678
-      @legacy_appeal_count = 0
     end
 
     def seed!
@@ -211,7 +210,6 @@ module Seeds
     def create_legacy_appeal(hearing_day)
       @bfkey += 1
       @bfcorkey += 1
-      @legacy_appeal_count += 1
       # This avoids a flake where stafkey collides with the random stafkey
       # that seeds/priority_distributions.rb uses to create cases. This solution
       # is from seeds/tasks.rb
@@ -327,7 +325,6 @@ module Seeds
     def create_travel_board_vacols_case
       @bfkey += 1
       @bfcorkey += 1
-      @legacy_appeal_count += 1
       # This avoids a flake where stafkey collides with the random stafkey
       # that seeds/priority_distributions.rb uses to create cases. This solution
       # is from seeds/tasks.rb
