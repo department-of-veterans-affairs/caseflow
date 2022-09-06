@@ -76,3 +76,5 @@ Makefile
 docs/schema/*
 !docs/schema/.keep
 
+# Ignore any database backups
+caseflow-db-backup.gz
