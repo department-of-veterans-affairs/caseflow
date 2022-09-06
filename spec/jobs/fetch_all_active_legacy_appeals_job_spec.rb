@@ -28,6 +28,14 @@ describe FetchAllActiveLegacyAppealsJob do
         expect(subject.send(:find_active_legacy_appeals)).to eq(legacy_task.map(&:appeal))
       end
     end
+    context "when database has a RootTask for a Legacy Appeal with an in_progress status" do
+      before do
+        legacy_task.each { |t| t.update!(status: Constants.TASK_STATUSES.in_progress) }
+      end
+      it "should return an array with the appeal tied to that task" do
+        expect(subject.send(:find_active_legacy_appeals)).to eq(legacy_task.map(&:appeal))
+      end
+    end
     context "when database has a RootTask for a Legacy Appeal with a cancelled status" do
       before do
         legacy_task.each { |t| t.update!(status: Constants.TASK_STATUSES.cancelled) }

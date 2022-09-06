@@ -14,7 +14,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
     active_legacy_appeals_root_tasks = Task.where(
       type: "RootTask",
       appeal_type: "LegacyAppeal",
-      status: %w[assigned on_hold],
+      status: %w[assigned on_hold in_progress],
       closed_at: nil
     )
     active_legacy_appeals_root_tasks.each do |task|
