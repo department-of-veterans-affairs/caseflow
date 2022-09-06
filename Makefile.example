@@ -156,6 +156,18 @@ db-migrate:	## Migrate main Caseflow db
 db-rollback:	## Rollback main Caseflow db
 	bundle exec rake db:rollback
 
+db-backup: ## Backs up main Caseflow db to caseflow-db-backup.gz
+	docker exec -t appeals-db pg_dumpall -c -U postgres | gzip > caseflow-db-backup.gz
+
+db-restore: ## Restores main Caseflow db from caseflow-db-backup.gz
+	bundle exec rake db:drop
+	gzip -dck caseflow-db-backup.gz | docker exec -i appeals-db psql -U postgres
+
+db-freshen: ## Shifts all datetimes in the database up by 60 days
+	bundle exec rake db:freshen_dates
+
+db-restore-and-freshen:	db-restore db-freshen ## Restores main Caseflow db and shifts all of the dates up by 60 days
+
 migrate: etl-migrate etl-test-prepare db-migrate ## Migrate all Rails databases
 
 rollback: etl-rollback db-rollback	## Rollback all Rails databases
@@ -164,6 +176,8 @@ fresh:  ## https://github.com/imsky/git-fresh - updates local master to match or
 	git fresh
 
 reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable feature flags
+
+reset-and-backup: reset db-backup ## Resets databases and makes a backup of the main Caseflow db
 
 reset-dbs: ## Resets Caseflow and ETL database schemas
 	DB=etl bundle exec rake db:drop db:create db:schema:load
