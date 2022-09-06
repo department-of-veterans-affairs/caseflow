@@ -7,6 +7,7 @@ class ExternalApi::VANotifyService
   BASE_URL = ENV["VA_NOTIFY_API_URL"]
   CLIENT_SECRET = ENV["VA_NOTIFY_API_KEY"]
   SERVICE_ID = ENV["VA_NOTIFY_SERVICE_ID"]
+  SENDER_ID = ENV["VA_NOTIFY_SMS_SENDER_ID"]
   TOKEN_ALG = ENV["VA_NOTIFY_TOKEN_ALG"]
   SEND_EMAIL_NOTIFICATION_ENDPOINT = "/v2/notifications/email"
   SEND_SMS_NOTIFICATION_ENDPOINT = "/v2/notifications/sms"
@@ -18,13 +19,20 @@ class ExternalApi::VANotifyService
   }.freeze
 
   class << self
-    # Send the email and sms notifications
+    # Send the emailand spec notifications
     # @param {status} The appeal status for a template that requires it
-    def send_notifications(participant_id, appeal_id, email_template_id, status = "")
-      email_response = send_va_notify_request(email_request(participant_id, appeal_id, email_template_id, status))
-      Rails.logger.info(email_response)
+    def send_email_notifications(participant_id, notification_id, email_template_id, status = "")
+      email_response = send_va_notify_request(email_request(participant_id, notification_id, email_template_id, status))
+      log_info(email_response)
       email_response
     end
+    
+      # Send the sms notifications
+    def send_sms_notifications(participant_id, notification_id, sms_template_id, status = "")
+       sms_response = send_va_notify_request(sms_request(participant_id, notification_id, sms_template_id, status))
+       log_info(sms_response)
+      sms_response
+     end
 
     # Get the status of a notification
     def get_status(notification_id)
@@ -70,11 +78,11 @@ class ExternalApi::VANotifyService
     end
 
     # Build an email request object
-    def email_request(participant_id, appeal_id, email_template_id, status)
+    def email_request(participant_id, notification_id, email_template_id, status)
       request = {
         body: {
           template_id: email_template_id,
-          reference: appeal_id,
+          reference: notification_id,
           recipient_identifier: {
             id_type: "PID",
             id_value: participant_id
@@ -92,15 +100,16 @@ class ExternalApi::VANotifyService
     end
 
     # Build a sms request object
-    def sms_request(participant_id, appeal_id, sms_template_id, status)
+    def sms_request(participant_id, notification_id, sms_template_id, status)
       request = {
         body: {
-          reference: appeal_id,
+          reference: notification_id,
           template_id: sms_template_id,
           recipient_identifier: {
             id_type: "PID",
             id_value: participant_id
           },
+          sms_sender_id: SENDER_ID || "",
           personalisation: nil
         },
         headers: HEADERS,
@@ -146,5 +155,9 @@ class ExternalApi::VANotifyService
       end
     end
     # rubocop:enable Metrics/MethodLength
+
+    def log_info(info_message)
+      Rails.logger.info(info_message)
+    end
   end
 end

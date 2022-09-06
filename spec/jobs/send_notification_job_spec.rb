@@ -39,7 +39,6 @@ describe SendNotificationJob, type: :job do
   let(:bad_participant_id) { "123" }
   let(:appeal_id) { success_message_attributes[:appeal_id] }
   let(:email_template_id) { "d78cdba9-f02f-43dd-ab89-3ce42cc88078" }
-  # let(:appeal_status) { "" }
   let(:bad_response) {
     HTTPI::Response.new(
       400,
@@ -97,14 +96,6 @@ describe SendNotificationJob, type: :job do
       end
 
       it "processes message" do
-        # allow(VANotifyService).to receive(:send_notifications) { bad_response }
-        # allow(VANotifyService).to receive(:send_notifications)
-        #   .with(
-        #     participant_id,
-        #     appeal_id,
-        #     email_template_id
-        #     # appeal_status
-        #   )
         perform_enqueued_jobs do
           result = SendNotificationJob.perform_later(good_message.to_json)
           expect(result.arguments[0]).to eq(good_message.to_json)
@@ -199,21 +190,6 @@ describe SendNotificationJob, type: :job do
         end
       end
 
-      # it "returns error for fakes" do
-      #   allow(VANotifyService).to receive(:send_notifications) { bad_response }
-      #   allow(VANotifyService).to receive(:send_notifications)
-      #     .with(
-      #       bad_participant_id,
-      #       appeal_id,
-      #       email_template_id,
-      #       appeal_status
-      #     )
-      #   expect(Rails.logger).to receive(:error).with(/Failed with error:/)
-      #   perform_enqueued_jobs do
-      #     SendNotificationJob.perform_later(message)
-      #   end
-      # end
-
       it "retries on retriable error" do
         allow_any_instance_of(SendNotificationJob)
           .to receive(:perform)
@@ -222,6 +198,34 @@ describe SendNotificationJob, type: :job do
         perform_enqueued_jobs do
           SendNotificationJob.perform_later(good_message.to_json)
         end
+      end
+    end
+  end
+
+  context "va_notify FeatureToggles" do
+    describe "email" do
+      it "is expected to send when the feature toggle is on" do
+        FeatureToggle.enable!(:va_notify_email)
+        expect(VANotifyService).to receive(:send_email_notifications)
+        SendNotificationJob.perform_now(good_message.to_json)
+      end
+      it "is expected to not send when the feature toggle is off" do
+        FeatureToggle.disable!(:va_notify_email)
+        expect(VANotifyService).not_to receive(:send_email_notifications)
+        SendNotificationJob.perform_now(good_message.to_json)
+      end
+    end
+
+    describe "sms" do
+      it "is expected to send when the feature toggle is on" do
+        FeatureToggle.enable!(:va_notify_sms)
+        expect(VANotifyService).to receive(:send_sms_notifications)
+        SendNotificationJob.perform_now(good_message.to_json)
+      end
+      it "is expected to not send when the feature toggle is off" do
+        FeatureToggle.disable!(:va_notify_sms)
+        expect(VANotifyService).not_to receive(:send_sms_notifications)
+        SendNotificationJob.perform_now(good_message.to_json)
       end
     end
   end
