@@ -117,7 +117,8 @@ class VACOLS::CaseDocket < VACOLS::Record
         order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
-    ) order by BFD19
+      order by BFD19
+    )
   "
 
   # rubocop:disable Metrics/MethodLength
@@ -257,7 +258,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id, num])
 
     appeals = conn.exec_query(fmtd_query).to_hash
-    appeals.map { |appeal| appeal["bf19"] }
+    appeals.map { |appeal| appeal["bfd19"] }
   end
 
   def self.age_of_oldest_priority_appeal
