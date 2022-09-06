@@ -29,12 +29,11 @@ class SendNotificationJob < CaseflowJob
 
   # Must receive JSON string as argument
   def perform(message_json)
-    if !message_json.nil?
+    if message_json
       message = JSON.parse(message_json, object_class: OpenStruct)
-
-      if !message.appeal_id.nil? && !message.appeal_type.nil? && !message.template_name.nil?
+      if message.appeal_id && message.appeal_type && message.template_name
         notification_audit_record = create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name)
-        if !notification_audit_record.nil?
+        if notification_audit_record
           if message.status != "No participant_id" && message.status != "No claimant"
             status = message.status
             update_notification_audit_record(notification_audit_record, status)
@@ -108,6 +107,17 @@ class SendNotificationJob < CaseflowJob
   # Returns: Noticiation active model or nil
   def create_notification_audit_record(appeals_id, appeals_type, event_type)
     notification_type = "Email"
+
+    # if FeatureToggle.enabled?(:va_notify_email)
+    #   notification_type = "Email"
+    # elsif FeatureToggle.enabled?(:va_notify_email, :va_notify_sms)
+    #   notification_type = "Email and SMS"
+    # elsif FeatureToggle.enabled?(:va_notify_sms)
+    #   notification_type = "SMS"
+    # else
+    #   notification_type = "None"
+    # end
+
     Notification.create(
       appeals_id: appeals_id,
       appeals_type: appeals_type,
