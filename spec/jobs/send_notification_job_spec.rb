@@ -90,24 +90,24 @@ describe SendNotificationJob, type: :job do
   end
 
   context ".perform" do
-    subject(:job) { SendNotificationJob.perform_later(good_message.as_json) }
+    subject(:job) { SendNotificationJob.perform_later(good_message.to_json) }
     describe "send message to queue" do
       it "has one message in queue" do
         expect { job }.to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
       end
 
       it "processes message" do
-        allow(VANotifyService).to receive(:send_notifications) { bad_response }
-        allow(VANotifyService).to receive(:send_notifications)
-          .with(
-            participant_id,
-            appeal_id,
-            email_template_id
-            # appeal_status
-          )
+        # allow(VANotifyService).to receive(:send_notifications) { bad_response }
+        # allow(VANotifyService).to receive(:send_notifications)
+        #   .with(
+        #     participant_id,
+        #     appeal_id,
+        #     email_template_id
+        #     # appeal_status
+        #   )
         perform_enqueued_jobs do
-          result = SendNotificationJob.perform_later(good_message.as_json)
-          expect(result.arguments[0]).to eq(good_message.as_json)
+          result = SendNotificationJob.perform_later(good_message.to_json)
+          expect(result.arguments[0]).to eq(good_message.to_json)
         end
       end
 
@@ -121,7 +121,7 @@ describe SendNotificationJob, type: :job do
       it "logs error when appeals_id, appeals_type, or event_type is nil" do
         expect(Rails.logger).to receive(:error).with(/appeals_id or appeal_type or event_type/)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(fail_create_message.as_json)
+          SendNotificationJob.perform_later(fail_create_message.to_json)
         end
       end
 
@@ -129,21 +129,21 @@ describe SendNotificationJob, type: :job do
         allow_any_instance_of(SendNotificationJob).to receive(:create_notification_audit_record).and_return(nil)
         expect(Rails.logger).to receive(:error).with(/Audit record was unable to be found or created/)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(good_message.as_json)
+          SendNotificationJob.perform_later(good_message.to_json)
         end
       end
 
       it "does not log error when everything works" do
         expect(Rails.logger).not_to receive(:error)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(good_message.as_json)
+          SendNotificationJob.perform_later(good_message.to_json)
         end
       end
 
       it "saves to db but does not notify when status is not Success" do
         expect(Rails.logger).not_to receive(:error)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(bad_message.as_json)
+          SendNotificationJob.perform_later(bad_message.to_json)
         end
       end
     end
@@ -155,7 +155,7 @@ describe SendNotificationJob, type: :job do
           .and_raise(Caseflow::Error::VANotifyInternalServerError)
         expect(Rails.logger).to receive(:error).with(/Retrying/)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(bad_message.as_json)
+          SendNotificationJob.perform_later(bad_message.to_json)
         end
       end
 
@@ -165,7 +165,7 @@ describe SendNotificationJob, type: :job do
           .and_raise(Caseflow::Error::VANotifyNotFoundError)
         expect(Rails.logger).to receive(:error).with(/Retrying/)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(bad_message.as_json)
+          SendNotificationJob.perform_later(bad_message.to_json)
         end
       end
 
@@ -175,7 +175,7 @@ describe SendNotificationJob, type: :job do
           .and_raise(Caseflow::Error::VANotifyRateLimitError)
         expect(Rails.logger).to receive(:error).with(/Retrying/)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(bad_message.as_json)
+          SendNotificationJob.perform_later(bad_message.to_json)
         end
       end
 
@@ -185,7 +185,7 @@ describe SendNotificationJob, type: :job do
           .and_raise(Caseflow::Error::VANotifyUnauthorizedError)
         expect(Rails.logger).to receive(:warn).with(/Discarding/)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(bad_message.as_json)
+          SendNotificationJob.perform_later(bad_message.to_json)
         end
       end
 
@@ -195,7 +195,7 @@ describe SendNotificationJob, type: :job do
           .and_raise(Caseflow::Error::VANotifyForbiddenError)
         expect(Rails.logger).to receive(:warn).with(/Discarding/)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(bad_message.as_json)
+          SendNotificationJob.perform_later(bad_message.to_json)
         end
       end
 
@@ -220,7 +220,7 @@ describe SendNotificationJob, type: :job do
           .and_raise(Caseflow::Error::VANotifyInternalServerError)
         expect_any_instance_of(SendNotificationJob).to receive(:retry_job)
         perform_enqueued_jobs do
-          SendNotificationJob.perform_later(good_message.as_json)
+          SendNotificationJob.perform_later(good_message.to_json)
         end
       end
     end

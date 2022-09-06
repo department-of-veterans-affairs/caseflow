@@ -28,40 +28,31 @@ class SendNotificationJob < CaseflowJob
   end
 
   # Must receive JSON as argument
-  def perform(message)
-    if !message.nil?
-      # message_attributes = message[:message_attributes]
-      # if [appeals_id, appeals_type, appeals_status, event_type].none?(&:nil?)
-        # {|a| a.nil?}
-        appeals_id = message["appeal_id"]
-        appeals_type = message["appeal_type"]
-        appeals_status = message["status"] || ""
-        event_type = message["template_name"]
+  def perform(message_json)
+    if !message_json.nil?
+      message = JSON.parse(message_json, object_class: OpenStruct)
 
-        if !appeals_id.nil? && !appeals_type.nil? && !event_type.nil? # [appeals_id, appeals_type, appeals_status, event_type].none?(&:nil?)
-          notification_audit_record = create_notification_audit_record(appeals_id, appeals_type, event_type)
-          if !notification_audit_record.nil?
-            if appeals_status != "No participant_id" && appeals_status != "No claimant"
-              status = appeals_status
-              notification_audit_record.email_notification_status = status
-              notification_audit_record.sms_notification_status = status
-              notification_audit_record.save!
-              # send_to_va_notify(message_attributes, appeals_id, appeals_status)
-            else
-              status = (appeals_status == "No particpant_id") ? "No Participant Id Found" : "No Claimant Found"
-              notification_audit_record.email_notification_status = status
-              notification_audit_record.sms_notification_status = status
-              notification_audit_record.save!
-            end
+      if !message.appeal_id.nil? && !message.appeal_type.nil? && !message.template_name.nil? # [appeals_id, appeals_type, appeals_status, event_type].none?(&:nil?)
+        notification_audit_record = create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name)
+        if !notification_audit_record.nil?
+          if message.status != "No participant_id" && message.status != "No claimant"
+            status = message.status
+            notification_audit_record.email_notification_status = status
+            notification_audit_record.sms_notification_status = status
+            notification_audit_record.save!
+            # send_to_va_notify(message)
           else
-            log_error("Audit record was unable to be found or created in SendNotificationListnerJob. Exiting Job.")
+            status = (message.status == "No particpant_id") ? "No Participant Id Found" : "No Claimant Found"
+            notification_audit_record.email_notification_status = status
+            notification_audit_record.sms_notification_status = status
+            notification_audit_record.save!
           end
         else
-          log_error("appeals_id or appeal_type or event_type was nil in the SendNotificationListnerJob. Exiting job.")
+          log_error("Audit record was unable to be found or created in SendNotificationListnerJob. Exiting Job.")
         end
-      # else
-      #   log_error("message_attributes was nil on the SendNotificationListnerJob message. Exiting Job.")
-      # end
+      else
+        log_error("appeals_id or appeal_type or event_type was nil in the SendNotificationListnerJob. Exiting job.")
+      end
     else
       log_error("There was no message passed into the SendNotificationListener.perform_later function. Exiting job.")
     end
@@ -70,7 +61,7 @@ class SendNotificationJob < CaseflowJob
   private
 
   # Send message to VA Notify to send notification
-  def send_to_va_notify(message_attributes, appeal_id, appeal_status)
+  def send_to_va_notify(message)
     if FeatureToggle.enabled?(:va_notify_email)
 
     end
