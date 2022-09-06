@@ -119,8 +119,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
               appeal.veteran_full_name
             )
           )
-
-          expect(page).to have_current_path("/organizations/#{vha_caregiver.url}", ignore_query: true)
+          in_progress_tab_name = VhaCaregiverSupportInProgressTasksTab.tab_name
+          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{in_progress_tab_name}&page=1"
+          expect(page).to have_current_path(expected_url)
 
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.in_progress
         end
@@ -210,7 +211,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             )
           )
 
-          expect(page).to have_current_path("/organizations/#{vha_caregiver.url}", ignore_query: true)
+          completed_tab_name = VhaCaregiverSupportCompletedTasksTab.tab_name
+          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{completed_tab_name}&page=1"
+          expect(page).to have_current_path(expected_url)
 
           # Some quick data checks to verify that everything saved successfully
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
@@ -263,7 +266,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             )
           )
 
-          expect(page).to have_current_path("/organizations/#{vha_caregiver.url}", ignore_query: true)
+          completed_tab_name = VhaCaregiverSupportCompletedTasksTab.tab_name
+          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{completed_tab_name}&page=1"
+          expect(page).to have_current_path(expected_url)
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
         end
 
