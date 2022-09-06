@@ -44,6 +44,10 @@ class LegacyDocket
     LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
+  def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+    LegacyAppeal.repository.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+  end
+
   def should_distribute?(distribution, style: "push", genpop: "any")
     genpop == "not_genpop" || # always distribute tied cases
       (style == "push" && !JudgeTeam.for_judge(distribution.judge).ama_only_push) ||
