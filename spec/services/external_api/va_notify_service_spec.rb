@@ -9,6 +9,7 @@ describe ExternalApi::VANotifyService do
   let(:notification_id) { "some-fake-notification" }
   let(:email_address) { "test@va.gov" }
   let(:notification_response_body) { { "template": { "id" => email_template_id } }.to_json }
+  let(:sms_notification_response_body) { { "template": { "id" => sms_template_id } }.to_json }
   let(:status_response_body) { { "status" => "delivered" }.to_json }
   let(:error_response_body) { { "result": "error", "message": { "token": ["error"] } }.to_json }
   let(:participant_id) { "+1234567890" }
@@ -16,6 +17,9 @@ describe ExternalApi::VANotifyService do
   let(:status) { "in-progress" }
   let(:success_response) do
     HTTPI::Response.new(200, {}, notification_response_body)
+  end
+  let(:sms_success_response) do
+    HTTPI::Response.new(200, {}, sms_notification_response_body)
   end
   let(:status_success_response) do
     HTTPI::Response.new(200, {}, status_response_body)
@@ -40,11 +44,26 @@ describe ExternalApi::VANotifyService do
   end
 
   context "notifications sent" do
-    describe "email and sms sent" do
-      subject { ExternalApi::VANotifyService.send_notifications(participant_id, email_template_id, status) }
-      it "email and sms sent successfully" do
+    describe "email" do
+      subject { ExternalApi::VANotifyService.send_email_notifications(participant_id, email_template_id, status) }
+      it "email sent successfully" do
         allow(HTTPI).to receive(:post).and_return(success_response)
         expect(subject.body["template"]["id"]).to eq(email_template_id)
+      end
+
+      context "429" do
+        it "throws Caseflow::Error::VANotifyRateLimitError" do
+          allow(HTTPI).to receive(:post).and_return(rate_limit_response)
+          expect { subject }.to raise_error Caseflow::Error::VANotifyRateLimitError
+        end
+      end
+    end
+
+    describe "sms" do
+      subject { ExternalApi::VANotifyService.send_sms_notifications(participant_id, sms_template_id, status) }
+      it "sms sent successfully" do
+        allow(HTTPI).to receive(:post).and_return(sms_success_response)
+        expect(subject.body["template"]["id"]).to eq(sms_template_id)
       end
 
       context "429" do
