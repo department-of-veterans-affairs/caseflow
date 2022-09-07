@@ -27,7 +27,7 @@ namespace :db do
     CaseflowRecord.descendants.each do |t|
       begin
         t.columns.each do |c|
-          if c.type == :datetime
+          if [:datetime, :date].include? c.type
             update_datetime_column_values(t, c.name, days_increase)
           end
         end
