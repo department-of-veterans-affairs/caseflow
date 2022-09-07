@@ -8,8 +8,59 @@ import { css, target } from 'glamor';
 import TextareaField from '../../components/TextareaField';
 import { reason, setOtherReason, otherReason, selectedIssues, setSelectedIssues } from '../pages/SplitAppealView';
 import CaseHearingsDetail from '../../queue/CaseHearingsDetail';
+import _ from 'lodash';
 
-const issueListStyling = css({ marginTop: '0rem', marginLeft: '6rem' });
+// const issueListStyling = css({ marginTop: '0rem', marginLeft: '6rem' });
+
+const styles = {
+  mainTable: css({
+    '& .bolded-header': {
+      fontWeight: 'bold',
+    },
+    '& tr > td': {
+      width: '0%',
+      verticalAlign: 'initial',
+    },
+    '& tr > td > ol > li > p': {
+      margiTop: '0px !important',
+      margiBottom: '0px !important',
+      lineHeight: '0.5em',
+    },
+    '&': {
+      margin: 0,
+    },
+    '& td:first-child': {
+      paddingLeft: '1%',
+    },
+    '& tr:first-of-type td': {
+      borderTop: 'none',
+    },
+    '& tr:last-of-type td': {
+      paddingBottom: '20px',
+      borderBottom: 'none',
+    },
+    '& tr > th': {
+      borderTop: 'none',
+      // border: '1px solid #E2E3E4',
+    },
+    '& tr > td:last-of-type': {
+      borderLeft: '1px solid #979797',
+      paddingLeft: '3%',
+    },
+    '& tr > th:last-of-type': {
+      borderLeft: '1px solid #979797',
+      paddingLeft: '3%',
+    },
+    '& p':{
+      marginTop: '1.5rem',
+      marginBottom: '1.5rem',
+    },
+  }),
+  tableSection: css({
+    marginBottom: '40px',
+    marginTop: '40px'
+  })
+};
 
 const ReviewAppealView = (props) => {
   const { serverIntake } = props;
@@ -19,6 +70,7 @@ const ReviewAppealView = (props) => {
   const claimantName = props.serverIntake.claimantName;
   const requestIssues = props.serverIntake.requestIssues;
   const docketType = props.serverIntake.docketType;
+  const reviewOpt = _.startCase(serverIntake?.docketType?.split('-').join(' '));
   const original_hearing_request_type = props.appeal.original_hearing_request_type;
   const receiptDate = props.serverIntake.receiptDate;
 
@@ -39,8 +91,8 @@ const ReviewAppealView = (props) => {
         <span>{COPY.SPLIT_APPEAL_REVIEW_SUBHEAD}</span>
       </div> &ensp;
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'left' }}>
-        <u>{COPY.SPLIT_APPEAL_REVIEW_REASONING_TITLE}</u> &ensp;
-        <span style={{ flexBasis: '75%' }}>{reason}</span>
+        <u style={{fontSize: '20px' }}>{COPY.SPLIT_APPEAL_REVIEW_REASONING_TITLE}</u> &ensp;
+        <span style={{ flexBasis: '75%', fontSize: '20px' }}>{reason}</span>
       </div>
       <br />
       {reason === 'Other' && (
@@ -51,31 +103,26 @@ const ReviewAppealView = (props) => {
         />
       )}
       <br />
-      <div className="review_appeal_table">
-        <table>
+      <section className={styles.tableSection}>
+        <table className={`usa-table-borderless ${styles.mainTable}`}>
           <tr>
             <th></th>
-            <th> {COPY.TABLE_ORIGINAL_APPEAL}</th>
-            <th> {COPY.TABLE_NEW_APPEAL} </th>
+            <th className="bolded-header"> {COPY.TABLE_ORIGINAL_APPEAL}</th>
+            <th className="bolded-header"> {COPY.TABLE_NEW_APPEAL} </th>
           </tr>
           <tr>
-            <td>{COPY.TABLE_VETERAN}</td>
-            <td>{veteran}</td>
-            <td>{veteran}</td>
+            <td><em>{ claimantName ? COPY.APPELLANT : COPY.TABLE_VETERAN}</em></td>
+            <td>{claimantName ? claimantName : veteran }</td>
+            <td>{claimantName ? claimantName : veteran }</td>
           </tr>
           <tr>
-            <th>{COPY.APPELLANT}</th>
-            <th> {claimantName}</th>
-            <th> {claimantName} </th>
-          </tr>
-          <tr>
-            <td>{COPY.TABLE_DOCKET_NUMBER}</td>
+            <td><em>{COPY.TABLE_DOCKET_NUMBER}</em></td>
             <td>{streamdocketNumber}</td>
             <td>{streamdocketNumber}</td>
           </tr>
           <tr>
-            <td>{COPY.TABLE_REVIEW_OPTION}</td>
-            <td>{docketType}
+            <td><em>{COPY.TABLE_REVIEW_OPTION}</em></td>
+            <td>{reviewOpt}
               <div>
                 {original_hearing_request_type}
               </div>
@@ -83,11 +130,10 @@ const ReviewAppealView = (props) => {
                 {receiptDate}
               </div>
             </td>
-            <td>"Held"</td>
             <td>"View hearing worksheet link"</td>
           </tr>
           <tr>
-            <td>{COPY.TABLE_ISSUE}</td>
+            <td><em>{COPY.TABLE_ISSUE}</em></td>
             <td>
               <ol>
                 {requestIssues.map((issue) => {
@@ -110,7 +156,7 @@ const ReviewAppealView = (props) => {
           <tr>
           </tr>
         </table>
-      </div>
+      </section>
     </>
   );
 };
