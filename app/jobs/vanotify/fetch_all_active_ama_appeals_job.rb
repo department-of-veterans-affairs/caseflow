@@ -1,16 +1,25 @@
 # frozen_string_literal: true
 
-# Job to fetch all currently active AMA Appeals
-class FetchAllActiveAMAAppeals < CaseflowJob
+# Purpose: Job to find all active AMA Appeals.
+#
+# Params: None
+#
+# Returns: Array of active AMA Appeals
+class FetchAllActiveAmaAppealsJob < CaseflowJob
   queue_with_priority :low_priority
   
-    def perform
-      find_active_ama_appeals
-    end
+  def perform
+    find_active_ama_appeals
+  end
 
     private
 
-    #Gets an array of all active AMA Appeals
+    # Purpose: Method to build an array of AMA Appeals that
+    # are not closed and are in assigned/on hold/in progress statuses.
+    #
+    # Params: None
+    #
+    # Returns: Array of active AMA Appeals
     def find_active_ama_appeals
       active_ama_appeals = []
       active_ama_appeals_tasks = Task.where(
