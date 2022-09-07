@@ -49,7 +49,7 @@ class Docket
     appeals(priority: true, ready: true).limit(num).map(&:ready_for_distribution_at)
   end
 
-  def age_of_n_oldest_priority_appeals_available_to_judge(_, num)
+  def age_of_n_oldest_priority_appeals_available_to_judge(_judge, num)
     appeals(priority: true, ready: true).limit(num).map(&:receipt_date)
   end
 

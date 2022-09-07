@@ -18,7 +18,12 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def perform
-    @distributions = distribute_priority_appeals
+    if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+      @distributions = distribute_priority_appeals
+    else
+      @tied_distributions = distribute_non_genpop_priority_appeals
+      @genpop_distributions = distribute_genpop_priority_appeals
+    end
     send_job_report
   rescue StandardError => error
     start_time ||= Time.zone.now # temporary fix to get this job to succeed
@@ -41,7 +46,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   def slack_report
     report = []
     report << "*Number of general population cases distributed*: " \
-              "#{@distributions.map { |distribution| distribution.statistics['batch_size'] }.sum}"
+              "#{@genpop_distributions.map { |distribution| distribution.statistics['batch_size'] }.sum}"
 
     appeals_not_distributed = docket_coordinator.dockets.map do |docket_type, docket|
       report << "*Age of oldest #{docket_type} case*: #{docket.oldest_priority_appeal_days_waiting} days"
@@ -69,8 +74,23 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     report << COPY::PRIORITY_PUSH_WARNING_MESSAGE
   end
 
+  # Distribute all priority cases tied to a judge without limit
+  def distribute_non_genpop_priority_appeals
+    eligible_judges.map do |judge|
+      Distribution.create!(judge: User.find(judge.id), priority_push: true).tap(&:distribute!)
+    end
+  end
   # Distribute remaining general population cases while attempting to even out the number of priority cases all judges
   # have received over one month
+  def distribute_genpop_priority_appeals
+    eligible_judge_target_distributions_with_leftovers.map do |judge_id, target|
+      Distribution.create!(
+        judge: User.find(judge_id),
+        priority_push: true
+      ).tap { |distribution| distribution.distribute!(target) }
+    end
+  end
+
   def distribute_priority_appeals
     eligible_judge_target_distributions_with_leftovers.map do |judge_id, target|
       Distribution.create!(
@@ -96,7 +116,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # Because we cannot distribute fractional cases, there can be cases leftover after taking the priority target
   # into account. This number will always be less than the number of judges that need distribution because division
   def leftover_cases_count
-    ready_priority_appeals_count - target_distributions_for_eligible_judges.values.sum
+    ready_genpop_priority_appeals_count - target_distributions_for_eligible_judges.values.sum
   end
 
   # Calculate the number of cases a judge should receive based on the priority target. Don't toss out judges with 0 as
@@ -115,7 +135,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
       distribution_counts = priority_distributions_this_month_for_eligible_judges.values
       target = 0
       if distribution_counts.count > 0
-        target = (distribution_counts.sum + ready_priority_appeals_count) / distribution_counts.count
+        target = (distribution_counts.sum + ready_genpop_priority_appeals_count) / distribution_counts.count
       end
 
       # If there are any judges that have previous distributions that are MORE than the currently calculated priority
@@ -123,7 +143,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
       # consideration and recalculate the target for all other judges.
       while distribution_counts.any? { |distribution_count| distribution_count > target }
         distribution_counts = distribution_counts.reject { |distribution_count| distribution_count > target }
-        target = (distribution_counts.sum + ready_priority_appeals_count) / distribution_counts.count
+        target = (distribution_counts.sum + ready_genpop_priority_appeals_count) / distribution_counts.count
       end
 
       target
@@ -134,8 +154,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     @docket_coordinator ||= DocketCoordinator.new
   end
 
-  def ready_priority_appeals_count
-    @ready_priority_appeals_count ||= docket_coordinator.genpop_priority_count
+  def ready_genpop_priority_appeals_count
+    @ready_genpop_priority_appeals_count ||= docket_coordinator.genpop_priority_count
   end
 
   # Number of priority distributions every eligible judge has received in the last month

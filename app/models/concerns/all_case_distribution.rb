@@ -19,9 +19,8 @@ module AllCaseDistribution
 
   def priority_push_distribution(limit)
     @appeals = []
-    @rem = limit
     # Distribute <limit> number of cases, regardless of docket type, oldest first.
-    distribute_priority_appeals_from_all_dockets_by_age_to_limit(@rem, style: "push")
+    distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "push")
     @appeals
   end
 
@@ -84,7 +83,7 @@ module AllCaseDistribution
   end
 
   def distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
-    num_oldest_priority_appeals_for_judge_by_docket(judge, limit).each do |docket, number_of_appeals_to_distribute|
+    num_oldest_priority_appeals_for_judge_by_docket(self, limit).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
         dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: true, style: style)
       end
