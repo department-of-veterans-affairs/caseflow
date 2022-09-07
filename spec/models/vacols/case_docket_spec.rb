@@ -84,7 +84,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   let!(:postcavc_ready_case) do
     create(:case,
            :aod,
-           bfd19: 1.year.ago,
+           bfd19: 11.months.ago,
            bfac: "7",
            bfmpro: "ACT",
            bfcurloc: "83",
@@ -477,14 +477,6 @@ describe VACOLS::CaseDocket, :all_dbs do
         expect(subject.count).to eq(1)
         expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
-      end
-      context "when the expected order is reversed" do
-        let(:aod_ready_case_ready_time) { 1.day.ago }
-        it "orders by ready time, not docket date" do
-          expect(subject.count).to eq(1)
-          expect(aod_ready_case.reload.bfcurloc).to eq("81")
-          expect(postcavc_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-        end
       end
     end
 

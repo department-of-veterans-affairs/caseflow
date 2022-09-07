@@ -11,11 +11,9 @@ module Seeds
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
   class Tasks < Base
-    BFAC_ORIGINAL = 1
 
     def initialize
       @ama_appeals = []
-      @legacy_appeal_count = 0
     end
 
     def seed!
@@ -765,7 +763,6 @@ module Seeds
       end
       correspondent = VACOLS::Correspondent.find_or_create_by(stafkey: 100)
       folder = VACOLS::Folder.find_or_create_by(ticknum: legacy_vacols_id, tinum: 1)
-      @legacy_appeal_count += 1
       vacols_case = create(:case_with_soc,
                            :status_advance,
                            :type_original,
@@ -773,15 +770,13 @@ module Seeds
                            correspondent: correspondent,
                            folder: folder,
                            bfkey: legacy_vacols_id,
-                           bfcorlid: veteran_file_number_legacy_opt_in,
-                           bfdnod: @legacy_appeal_count.days.ago)
+                           bfcorlid: veteran_file_number_legacy_opt_in)
       create(:legacy_appeal, vacols_case: vacols_case)
     end
 
     # This whole section probably belongs in Seeds::Hearings, but since it doesn't actually create
     # a hearing I'm leaving it here for now
     def create_video_vacols_case(vacols_titrnum, vacols_folder, correspondent)
-      @legacy_appeal_count += 1
       create(
         :case,
         :video_hearing_requested,
@@ -789,13 +784,11 @@ module Seeds
         correspondent: correspondent,
         bfcorlid: vacols_titrnum,
         bfcurloc: "CASEFLOW",
-        bfdnod: @legacy_appeal_count.days.ago,
         folder: vacols_folder
       )
     end
 
     def create_travel_vacols_case(vacols_titrnum, vacols_folder, correspondent)
-      @legacy_appeal_count += 1
       create(
         :case,
         :travel_board_hearing_requested,
@@ -803,7 +796,6 @@ module Seeds
         correspondent: correspondent,
         bfcorlid: vacols_titrnum,
         bfcurloc: "CASEFLOW",
-        bfdnod: @legacy_appeal_count.days.ago,
         folder: vacols_folder
       )
     end

@@ -13,7 +13,7 @@ describe AllCaseDistribution, :all_dbs do
     end
   end
 
-  before(:all) do
+  before(:each) do
     FeatureToggle.enable!(:priority_acd)
     FeatureToggle.enable!(:acd_distribute_all)
     @new_acd = AllCaseDistributionTest.new(judge: User.new)
@@ -47,7 +47,7 @@ describe AllCaseDistribution, :all_dbs do
     it "calls each method and returns the array of objects received from each method" do
       # distribute all priority appeals from all dockets
       expect(@new_acd).to receive(:num_oldest_priority_appeals_for_judge_by_docket)
-        .with(@new_acd.judge, @new_acd.batch_size)
+        .with(@new_acd, @new_acd.batch_size)
         .and_return(priority_count_hash)
 
       expect_any_instance_of(LegacyDocket).to receive(:distribute_appeals)
@@ -114,7 +114,7 @@ describe AllCaseDistribution, :all_dbs do
 
   context "#num_oldest_priority_appeals_for_judge_by_docket" do
     it "returns an empty hash if provided num is zero" do
-      return_value = @new_acd.send :num_oldest_priority_appeals_for_judge_by_docket, @new_acd.judge, 0
+      return_value = @new_acd.send :num_oldest_priority_appeals_for_judge_by_docket, @new_acd, 0
     end
 
     it "calls each docket and sorts the return values if num > 0" do
@@ -136,7 +136,7 @@ describe AllCaseDistribution, :all_dbs do
 
       return_array = @new_acd.send(
         :num_oldest_priority_appeals_for_judge_by_docket,
-        @new_acd.judge,
+        @new_acd,
         @new_acd.batch_size
       )
       expect(return_array).to eq(priority_count_hash)
@@ -150,20 +150,6 @@ describe AllCaseDistribution, :all_dbs do
     end
 
     it "calls each docket and sorts the return values if num > 0" do
-      expect_any_instance_of(LegacyDocket).to receive(:age_of_n_oldest_priority_appeals_available_to_judge)
-        .with(@new_acd.judge, @new_acd.batch_size)
-        .and_return(add_dates_to_date_array(@new_acd.batch_size))
-
-      expect_any_instance_of(DirectReviewDocket).to receive(:age_of_n_oldest_priority_appeals_available_to_judge)
-        .with(@new_acd.judge, @new_acd.batch_size)
-        .and_return(add_dates_to_date_array(@new_acd.batch_size))
-
-      expect_any_instance_of(EvidenceSubmissionDocket).to receive(:age_of_n_oldest_priority_appeals_available_to_judge)
-        .with(@new_acd.judge, @new_acd.batch_size)
-        .and_return(add_dates_to_date_array(@new_acd.batch_size))
-
-      expect_any_instance_of(HearingRequestDocket).to receive(:age_of_n_oldest_priority_appeals_available_to_judge)
-
       expect_any_instance_of(LegacyDocket).to receive(:age_of_n_oldest_nonpriority_appeals_available_to_judge)
         .with(@new_acd.judge, @new_acd.batch_size)
         .and_return(add_dates_to_date_array(@new_acd.batch_size))

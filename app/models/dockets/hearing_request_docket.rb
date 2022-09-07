@@ -33,7 +33,7 @@ class HearingRequestDocket < Docket
     HearingRequestDistributionQuery.new(base_relation: ready_priority_appeals, genpop: "only_genpop").call.count
   end
 
-  def age_of_n_oldest_priority_appeals_available_to_judge(_, num)
+  def age_of_n_oldest_priority_appeals_available_to_judge(_judge, num)
     HearingRequestDistributionQuery.new(
       base_relation: ready_priority_appeals.limit(num), genpop: "only_genpop"
     ).call.map(&:receipt_date)

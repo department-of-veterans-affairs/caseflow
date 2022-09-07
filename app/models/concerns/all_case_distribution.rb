@@ -18,6 +18,7 @@ module AllCaseDistribution
   end
 
   def priority_push_distribution(limit)
+    @rem = 0
     @appeals = []
     # Distribute <limit> number of cases, regardless of docket type, oldest first.
     distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "push")
@@ -108,11 +109,11 @@ module AllCaseDistribution
     (docket_margin_net_of_priority * docket_proportions[:legacy]).round
   end
 
-  def num_oldest_priority_appeals_for_judge_by_docket(judge, num)
+  def num_oldest_priority_appeals_for_judge_by_docket(distribution, num)
     return {} unless num > 0
 
     dockets
-      .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals_available_to_judge(judge, num).map { |age| [age, sym] } }
+      .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals_available_to_judge(distribution.judge, num).map { |age| [age, sym] } }
       .sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }
