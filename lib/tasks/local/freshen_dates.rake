@@ -2,7 +2,7 @@
 
 require "rainbow"
 
-DEFAULT_DAYS_INCREASE = 60
+DEFAULT_DAYS_INCREASE ||= 60
 
 def update_datetime_column_values(table, column_name, days_increase)
   table.update_all(
