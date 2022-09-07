@@ -43,28 +43,9 @@ module AllCaseDistribution
     priority_rem = (priority_target - @appeals.count(&:priority)).clamp(0, @rem)
     distribute_limited_priority_appeals_from_all_dockets(priority_rem, style: "request")
 
+    # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
+    distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem) until @rem == 0
     @appeals
-  end
-
-  def distribute_tied_nonpriority_appeals
-    # Legacy docket appeals that are tied to judges are only distributed when they are within the docket range.
-    base_args = { genpop: "not_genpop", priority: false, style: "request" }
-    collect_appeals do
-      dockets[:legacy].distribute_appeals(self, base_args.merge(limit: @rem, range: legacy_docket_range))
-    end
-    collect_appeals do
-      dockets[:hearing].distribute_appeals(self, base_args.merge(limit: @rem))
-    end
-  end
-
-  def distribute_tied_priority_appeals
-    base_args = { priority: true, style: "request", genpop: "not_genpop" }
-    collect_appeals do
-      dockets[:legacy].distribute_appeals(self, base_args.merge(limit: @rem))
-    end
-    collect_appeals do
-      dockets[:hearing].distribute_appeals(self, base_args.merge(limit: @rem))
-    end
   end
 
   def collect_appeals
@@ -86,6 +67,15 @@ module AllCaseDistribution
     num_oldest_priority_appeals_for_judge_by_docket(self, limit).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
         dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: true, style: style)
+      end
+    end
+  end
+
+  def distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
+    @nonpriority_iterations += 1
+    num_oldest_nonpriority_appeals_for_judge_by_docket(self, limit).each do |docket, number_of_appeals_to_distribute|
+      collect_appeals do
+        dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: false, style: style)
       end
     end
   end
@@ -139,5 +129,15 @@ module AllCaseDistribution
       .group_by { |_, sym| sym }
       .transform_values(&:count)
   end
+
+  def num_oldest_nonpriority_appeals_for_judge_by_docket(distribution, num)
+    return {} unless num > 0
+
+    dockets
+      .flat_map { |sym, docket| docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(distribution.judge, num).map { |age| [age, sym] } }
+      .sort_by { |age, _| age }
+      .first(num)
+      .group_by { |_, sym| sym }
+      .transform_values(&:count)
+  end
 end
-# rubocop:enable Metrics/ModuleLength

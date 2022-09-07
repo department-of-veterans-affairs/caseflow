@@ -9,10 +9,22 @@ class HearingRequestDocket < Docket
     appeals(priority: true, ready: true)
   end
 
+  def ready_nonpriority_appeals
+    appeals(priority: false, ready: true)
+  end
+
   def age_of_n_oldest_genpop_priority_appeals(num)
     HearingRequestDistributionQuery.new(
       base_relation: ready_priority_appeals.limit(num), genpop: "only_genpop"
     ).call.map(&:ready_for_distribution_at)
+  end
+
+  # this method needs to have the same name as the method in legacy_docket.rb for all_case_distribution,
+  # but the judge that is passed in isn't relevant here
+  def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
+    HearingRequestDistributionQuery.new(
+      base_relation: ready_nonpriority_appeals.limit(num), genpop: "only_genpop"
+    ).call.map(&:receipt_date)
   end
 
   # Hearing cases distinguish genpop from cases tied to a judge
