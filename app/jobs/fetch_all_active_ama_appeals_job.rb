@@ -19,14 +19,14 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     #
     # Params: None
     #
-    # Returns: Array of active AMA Appeals
+    # Returns: Array of active AMA Appeals with Unique IDs (prevents duplicates)
     def find_active_ama_appeals
       active_ama_appeals = []
       active_ama_appeals_tasks = Task.where(
         appeal_type: "Appeal",
-        status: %w[assigned on hold in progress],
+        status: %w[assigned on_hold in_progress],
         closed_at: nil
-      )
+      ).uniq(&:appeal_id)
       active_ama_appeals_tasks.each { |task| active_ama_appeals.push(task.ama_appeal) }
       active_ama_appeals
     end
