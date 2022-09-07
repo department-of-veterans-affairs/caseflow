@@ -11,7 +11,7 @@ def update_datetime_column_values(table, column_name, days_increase)
 end
 
 namespace :db do
-  desc "By default adds 60 days to all non-null datetime values" \
+  desc "By default adds 60 days to all non-null datetime and date values" \
     "in the Caseflow. Another amount of days can be supplied with rake db:freshen_dates DAYS=123"
   task freshen_dates: :environment do
     days_increase = DEFAULT_DAYS_INCREASE
