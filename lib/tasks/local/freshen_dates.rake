@@ -16,10 +16,12 @@ namespace :db do
   task freshen_dates: :environment do
     days_increase = DEFAULT_DAYS_INCREASE
 
-    if ENV.key?("DAYS") && !ENV["DAYS"].match(/^(\d)+$/)
-      fail ArgumentError, "Please specify a valid number of days."
-    else
-      days_increase = ENV["DAYS"].to_i
+    if ENV.key?("DAYS")
+      if /^(\d)+$/.match?(ENV["DAYS"])
+        days_increase = ENV["DAYS"].to_i
+      else
+        fail ArgumentError, "Please specify a valid number of days."
+      end
     end
 
     Rails.application.eager_load!
