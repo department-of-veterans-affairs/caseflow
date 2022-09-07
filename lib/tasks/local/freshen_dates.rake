@@ -27,9 +27,7 @@ namespace :db do
     CaseflowRecord.descendants.each do |t|
       begin
         t.columns.each do |c|
-          if [:datetime, :date].include? c.type
-            update_datetime_column_values(t, c.name, days_increase)
-          end
+          update_datetime_column_values(t, c.name, days_increase) if [:datetime, :date].include? c.type
         end
       rescue TypeError
         # Some models don't actually correspond to an actual db table and do not have columns
