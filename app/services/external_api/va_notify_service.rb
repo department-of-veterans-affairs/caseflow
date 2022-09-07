@@ -19,22 +19,35 @@ class ExternalApi::VANotifyService
   }.freeze
 
   class << self
-    # Send the emailand spec notifications
-    # @param {status} The appeal status for a template that requires it
+    # Purpose: Send the email notifications
+    #
+    # Params: Details from appeal for notification
+    #         participant_id (from appeal for which notification is being generated)
+    #         notification_id: id of the associated Notification in the db
+    #         email_template_id: taken from notification_event table corresponding to correct notification template
+    #         status: appeal status for quarterly notification (not necessary for other notifications)
+    # Return: email_response: JSON response from VA Notify API
     def send_email_notifications(participant_id, notification_id, email_template_id, status = "")
       email_response = send_va_notify_request(email_request(participant_id, notification_id, email_template_id, status))
       log_info(email_response)
       email_response
     end
-    
-      # Send the sms notifications
-    def send_sms_notifications(participant_id, notification_id, sms_template_id, status = "")
-       sms_response = send_va_notify_request(sms_request(participant_id, notification_id, sms_template_id, status))
-       log_info(sms_response)
-      sms_response
-     end
 
-    # Get the status of a notification
+    # Purpose: Send the sms notifications
+    #
+    # Params: Details from appeal for notification
+    #         participant_id (from appeal for which notification is being generated)
+    #         notification_id: id of the associated Notification in the db
+    #         sms_template_id: taken from notification_event table corresponding to correct notification template
+    #         status: appeal status for quarterly notification (not necessary for other notifications)
+    # Return: sms_response: JSON response from VA Notify API
+    def send_sms_notifications(participant_id, notification_id, sms_template_id, status = "")
+      sms_response = send_va_notify_request(sms_request(participant_id, notification_id, sms_template_id, status))
+      log_info(sms_response)
+      sms_response
+    end
+
+    # Purpose: Get the status of a notification
     def get_status(notification_id)
       request = {
         headers: HEADERS,
@@ -45,7 +58,11 @@ class ExternalApi::VANotifyService
 
     private
 
-    # Generate the JWT token
+    # Purpose: Generate the JWT token
+    #
+    # Params: none
+    #
+    # Return: token needed for authentication
     def generate_token
       jwt_secret = CLIENT_SECRET
       header = {
@@ -68,7 +85,11 @@ class ExternalApi::VANotifyService
       signed_token
     end
 
-    # Remove any illegal characters and keeps source at proper format
+    # Purpose: Remove any illegal characters and keeps source at proper format
+    #
+    # Params: string
+    #
+    # Return: sanitized string
     def base64url(source)
       encoded_source = Base64.encode64(source)
       encoded_source = encoded_source.sub(/=+$/, "")
@@ -77,7 +98,15 @@ class ExternalApi::VANotifyService
       encoded_source
     end
 
-    # Build an email request object
+    # Purpose: Build an email request object
+    #
+    # Params: Details from appeal for notification
+    #         participant_id (from appeal for which notification is being generated)
+    #         notification_id: id of the associated Notification in the db
+    #         email_template_id: taken from notification_event table corresponding to correct notification template
+    #         status: appeal status for quarterly notification (not necessary for other notifications)
+    #
+    # Return: Request hash
     def email_request(participant_id, notification_id, email_template_id, status)
       request = {
         body: {
@@ -92,14 +121,22 @@ class ExternalApi::VANotifyService
         headers: HEADERS,
         endpoint: SEND_EMAIL_NOTIFICATION_ENDPOINT, method: :post
       }
-      if status
+      if !status.empty?
         # If a status is given then it will be added to the request object
         request[:body][:personalisation] = { appeal_status: status }
       end
       request
     end
 
-    # Build a sms request object
+    # Purpose: Build an sms request object
+    #
+    # Params: Details from appeal for notification
+    #         participant_id (from appeal for which notification is being generated)
+    #         notification_id: id of the associated Notification in the db
+    #         sms_template_id: taken from notification_event table corresponding to correct notification template
+    #         status: appeal status for quarterly notification (not necessary for other notifications)
+    #
+    # Return: Request hash
     def sms_request(participant_id, notification_id, sms_template_id, status)
       request = {
         body: {
@@ -115,7 +152,7 @@ class ExternalApi::VANotifyService
         headers: HEADERS,
         endpoint: SEND_SMS_NOTIFICATION_ENDPOINT, method: :post
       }
-      if status
+      if !status.empty?
         # If a status is given then it will be added to the request object
         request[:body][:personalisation] = { appeal_status: status }
       end
@@ -123,7 +160,11 @@ class ExternalApi::VANotifyService
     end
 
     # rubocop:disable Metrics/MethodLength
-    # Build and send the request to the server
+    # Purpose: Build and send the request to the server
+    #
+    # Params: general requirements for HTTP request
+    #
+    # Return: service_response: JSON from VA Notify or error
     def send_va_notify_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
       url = URI.escape(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
@@ -156,6 +197,11 @@ class ExternalApi::VANotifyService
     end
     # rubocop:enable Metrics/MethodLength
 
+    # Purpose: Method to be called with info need to be logged to the rails logger
+    #
+    # Params: info_message (Expecting a string) - Message to be logged to the logger
+    #
+    # Response: None
     def log_info(info_message)
       Rails.logger.info(info_message)
     end

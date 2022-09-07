@@ -37,7 +37,7 @@ class SendNotificationJob < CaseflowJob
           if message.status != "No participant_id" && message.status != "No claimant"
             status = message.status
             update_notification_audit_record(notification_audit_record, status)
-            send_to_va_notify(message)
+            send_to_va_notify(message, notification_audit_record.id)
           else
             status = (message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
             update_notification_audit_record(notification_audit_record, status)
@@ -69,20 +69,21 @@ class SendNotificationJob < CaseflowJob
 
   # Purpose: Send message to VA Notify to send notification
   #
-  # Params: message (object containing participant_id, appeal_id, template_name) Details from appeal for notification
+  # Params: message (object containing participant_id, template_name, and others) Details from appeal for notification
+  #         notification_id: ID of the notification_audit record
   #
   # Response: JSON from VA Notify API
-  def send_to_va_notify(message)
+  def send_to_va_notify(message, notification_id)
     event = NotificationEvent.find_by(event_type: message.template_name)
     email_template_id = event.email_template_id
     sms_template_id = event.sms_template_id
 
     if FeatureToggle.enabled?(:va_notify_email)
-      VANotifyService.send_email_notifications(message.participant_id, message.appeal_id, email_template_id, status = "")
+      VANotifyService.send_email_notifications(message.participant_id, notification_id, email_template_id, status = "")
     end
 
     if FeatureToggle.enabled?(:va_notify_sms)
-      VANotifyService.send_sms_notifications(message.participant_id, message.appeal_id, sms_template_id, status = "")
+      VANotifyService.send_sms_notifications(message.participant_id, notification_id, sms_template_id, status = "")
     end
   end
 
@@ -104,19 +105,20 @@ class SendNotificationJob < CaseflowJob
   # - - LegacyAppeal
   # - event_type: Name of the event that has transpired. Event names can be found in the notification_events table
   #
-  # Returns: Noticiation active model or nil
+  # Returns: Notification active model or nil
   def create_notification_audit_record(appeals_id, appeals_type, event_type)
-    notification_type = "Email"
+    # notification_type = "Email"
 
-    # if FeatureToggle.enabled?(:va_notify_email)
-    #   notification_type = "Email"
-    # elsif FeatureToggle.enabled?(:va_notify_email, :va_notify_sms)
-    #   notification_type = "Email and SMS"
-    # elsif FeatureToggle.enabled?(:va_notify_sms)
-    #   notification_type = "SMS"
-    # else
-    #   notification_type = "None"
-    # end
+    notification_type =
+      if FeatureToggle.enabled?(:va_notify_email)
+        "Email"
+      elsif FeatureToggle.enabled?(:va_notify_email) && FeatureToggle.enabled?(:va_notify_sms)
+        "Email and SMS"
+      elsif FeatureToggle.enabled?(:va_notify_sms)
+        "SMS"
+      else
+        "None"
+      end
 
     Notification.create(
       appeals_id: appeals_id,
