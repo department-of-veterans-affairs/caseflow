@@ -163,10 +163,10 @@ db-restore: ## Restores main Caseflow db from caseflow-db-backup.gz
 	bundle exec rake db:drop
 	gzip -dck caseflow-db-backup.gz | docker exec -i appeals-db psql -U postgres
 
-db-freshen: ## Shifts all datetimes in the database up by 60 days
+db-freshen: ## Shifts all datetimes and dates in the database up by 60 days
 	bundle exec rake db:freshen_dates
 
-db-restore-and-freshen:	db-restore db-freshen ## Restores main Caseflow db and shifts all of the dates up by 60 days
+db-restore-and-freshen:	db-restore db-freshen ## Restores main Caseflow db and adds 60 days to all datetimes and dates
 
 migrate: etl-migrate etl-test-prepare db-migrate ## Migrate all Rails databases
 
