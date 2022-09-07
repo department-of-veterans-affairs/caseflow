@@ -30,7 +30,7 @@ namespace :db do
           update_datetime_column_values(t, c.name, days_increase) if [:datetime, :date].include? c.type
         end
       rescue TypeError
-        # Some models don't actually correspond to an actual db table and do not have columns
+        # Some models don't actually correspond to a db table and therefore do not have columns
         puts Rainbow("Skipping #{t.name}").yellow
       end
     end
