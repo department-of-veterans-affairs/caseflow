@@ -30,17 +30,20 @@ class SendNotificationJob < CaseflowJob
   # Must receive JSON string as argument
   def perform(message_json)
     if message_json
+      @va_notify_email = FeatureToggle.enabled?(:va_notify_email)
+      @va_notify_sms = FeatureToggle.enabled?(:va_notify_sms)
       message = JSON.parse(message_json, object_class: OpenStruct)
       if message.appeal_id && message.appeal_type && message.template_name
         notification_audit_record = create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name)
         if notification_audit_record
           if message.status != "No participant_id" && message.status != "No claimant"
-            status = message.status
-            update_notification_audit_record(notification_audit_record, status)
-            send_to_va_notify(message, notification_audit_record.id)
+            to_update = { sms_notification_status: message.status, email_notification_status: message.status }
+            update_notification_audit_record(notification_audit_record, to_update)
+            send_to_va_notify(message, notification_audit_record)
           else
             status = (message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
-            update_notification_audit_record(notification_audit_record, status)
+            to_update = { sms_notification_status: status, email_notification_status: status }
+            update_notification_audit_record(notification_audit_record, to_update)
           end
         else
           log_error("Audit record was unable to be found or created in SendNotificationListnerJob. Exiting Job.")
@@ -58,12 +61,13 @@ class SendNotificationJob < CaseflowJob
   # Purpose: Updates and saves notification status for notification_audit_record
   #
   # Params: notification_audit_record: object,
-  #         status: corresponds to NotificationEvent table event name
+  #         to_update: hash. key corresponds to notification_events column and value corresponds to new value
   #
   # Response: Updated notification_audit_record
-  def update_notification_audit_record(notification_audit_record, status)
-    notification_audit_record.email_notification_status = status
-    notification_audit_record.sms_notification_status = status
+  def update_notification_audit_record(notification_audit_record, to_update)
+    to_update.each do |key, value|
+      notification_audit_record[key] = value
+    end
     notification_audit_record.save!
   end
 
@@ -73,17 +77,25 @@ class SendNotificationJob < CaseflowJob
   #         notification_id: ID of the notification_audit record
   #
   # Response: JSON from VA Notify API
-  def send_to_va_notify(message, notification_id)
+  def send_to_va_notify(message, notification_audit_record)
     event = NotificationEvent.find_by(event_type: message.template_name)
     email_template_id = event.email_template_id
     sms_template_id = event.sms_template_id
 
-    if FeatureToggle.enabled?(:va_notify_email)
-      VANotifyService.send_email_notifications(message.participant_id, notification_id, email_template_id, status = "")
+    if @va_notify_email
+      response = VANotifyService.send_email_notifications(message.participant_id, notification_audit_record.id, email_template_id, status = "")
+      if !response.nil? && response != ""
+        to_update = { notification_content: response["content"] }
+        update_notification_audit_record(notification_audit_record, to_update)
+      end
     end
 
-    if FeatureToggle.enabled?(:va_notify_sms)
-      VANotifyService.send_sms_notifications(message.participant_id, notification_id, sms_template_id, status = "")
+    if @va_notify_sms
+      response = VANotifyService.send_sms_notifications(message.participant_id, notification_audit_record.id, sms_template_id, status = "")
+      if !response.nil? && response != ""
+        to_update = { notification_content: response["content"] }
+        update_notification_audit_record(notification_audit_record, to_update)
+      end
     end
   end
 
@@ -107,14 +119,12 @@ class SendNotificationJob < CaseflowJob
   #
   # Returns: Notification active model or nil
   def create_notification_audit_record(appeals_id, appeals_type, event_type)
-    # notification_type = "Email"
-
     notification_type =
-      if FeatureToggle.enabled?(:va_notify_email)
-        "Email"
-      elsif FeatureToggle.enabled?(:va_notify_email) && FeatureToggle.enabled?(:va_notify_sms)
+      if @va_notify_email && @va_notify_sms
         "Email and SMS"
-      elsif FeatureToggle.enabled?(:va_notify_sms)
+      elsif @va_notify_email
+        "Email"
+      elsif @va_notify_sms
         "SMS"
       else
         "None"
