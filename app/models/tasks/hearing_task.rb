@@ -41,7 +41,8 @@ class HearingTask < Task
     # do not move forward to change location or create ihp if there are
     # other open hearing tasks
 
-    if children.open.empty? && on_hold?
+    #if appeal.tasks.open.where(type: HearingTask.name).where.not(id: self.id).empty?
+    if appeal.tasks.open.where(type: HearingTask.name).where.not(id: self.id).empty?
       if appeal.is_a?(Appeal)
         create_evidence_or_ihp_task
       end
@@ -51,7 +52,7 @@ class HearingTask < Task
       end
     end
 
-    super 
+    super
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
