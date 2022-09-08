@@ -144,7 +144,8 @@ describe ReceiveNotificationJob, type: :job do
         expect { job }.to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
       end
 
-      # After receiving the notification (by notification id), check : if email is same, if number is still nil, if status changed form Success to delivered
+      # After receiving the notification (by notification id), check : if email is same, if number is still nil,
+      # if status changed form Success to delivered
       it "updates notification" do
         hearing_scheduled_event
         notification
