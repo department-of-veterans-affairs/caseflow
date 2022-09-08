@@ -59,7 +59,7 @@ module AppellantNotification
     template_name
   )
     msg_bdy = create_payload(appeal, template_name)
-    SendNotificationJob.perform_later(msg_bdy)
+    SendNotificationJob.perform_later(msg_bdy.to_json)
   end
 
   def self.create_payload(appeal, template_name)
