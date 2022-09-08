@@ -325,6 +325,7 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
             onChange={(value) => setState({ instructions: value })}
             value={state.instructions}
             styling={marginTop(2)}
+            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             optional
           />
         </div>
