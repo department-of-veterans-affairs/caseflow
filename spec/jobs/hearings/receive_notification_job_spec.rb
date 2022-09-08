@@ -121,8 +121,6 @@ describe ReceiveNotificationJob, type: :job do
     expect(ReceiveNotificationJob.new.queue_name).to eq(queue_name)
   end
 
-  # if we got the notification (by notification id), if email is same, if number is still nil, if status changed form Success to delivered
-
   context ".perform" do
     # create notification event record
     let(:hearing_scheduled_event) { create(:notification_event, event_type: "Hearing scheduled", email_template_id: "27bf814b-f065-4fc8-89af-ae1292db894e", sms_template_id: "c2798da3-4c7a-43ed-bc16-599329eaf7cc") }
