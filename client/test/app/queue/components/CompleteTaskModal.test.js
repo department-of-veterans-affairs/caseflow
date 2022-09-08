@@ -96,15 +96,16 @@ describe('CompleteTaskModal', () => {
   describe('vha_send_to_board_intake', () => {
     const taskType = 'VhaDocumentSearchTask';
     const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const modalType = 'vha_send_to_board_intake';
 
     test('modal title is Send to Board Intake', () => {
-      renderCompleteTaskModal('vha_send_to_board_intake', camoToBvaIntakeData, taskType);
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
       expect(screen.getByText('Send to Board Intake')).toBeTruthy();
     });
 
     test('CAMO Notes section only appears once whenever CAMO sends appeal back to BVA Intake', () => {
-      renderCompleteTaskModal('vha_send_to_board_intake', camoToBvaIntakeData, taskType);
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
       enterModalOptions(
         'Correct documents have been successfully added',
@@ -120,7 +121,7 @@ describe('CompleteTaskModal', () => {
     });
 
     test('PO Details appear next to Program Office Notes section', () => {
-      renderCompleteTaskModal('vha_send_to_board_intake', camoToProgramOfficeToCamoData, taskType);
+      renderCompleteTaskModal(modalType, camoToProgramOfficeToCamoData, taskType);
 
       enterModalOptions(
         'Correct documents have been successfully added',
@@ -140,15 +141,16 @@ describe('CompleteTaskModal', () => {
 
   describe('vha_caregiver_support_send_to_board_intake_for_review', () => {
     const taskType = 'VhaDocumentSearchTask';
-    const buttonText = COPY.MODAL_SEND_BUTTON
+    const buttonText = COPY.MODAL_SEND_BUTTON;
+    const modalType = 'vha_caregiver_support_send_to_board_intake_for_review';
 
     test('modal title is Ready for Review', () => {
-      renderCompleteTaskModal('vha_caregiver_support_send_to_board_intake_for_review', caregiverToIntakeData, taskType);
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
       expect(screen.getByText('Ready for Review')).toBeTruthy();
     });
 
     test('When VBMS is chosen in Modal', () => {
-      renderCompleteTaskModal('vha_caregiver_support_send_to_board_intake_for_review', caregiverToIntakeData, taskType);
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
 
       enterModalOptions(
         'VBMS',
@@ -163,7 +165,7 @@ describe('CompleteTaskModal', () => {
     });
 
     test('When Other is Chosen in Modal', () => {
-      renderCompleteTaskModal('vha_caregiver_support_send_to_board_intake_for_review', caregiverToIntakeData, taskType);
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
 
       enterModalOptions(
         'Other',
@@ -182,14 +184,15 @@ describe('CompleteTaskModal', () => {
   describe('emo_send_to_board_intake_for_review', () => {
     const taskType = 'EducationDocumentSearchTask';
     const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const modalType = 'emo_send_to_board_intake_for_review';
 
     test('modal title is Ready for Review', () => {
-      renderCompleteTaskModal('emo_send_to_board_intake_for_review', emoToBvaIntakeData, taskType);
+      renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
       expect(screen.getByText('Ready for Review')).toBeTruthy();
     });
 
     test('When Centralized Mail Portal is chosen in Modal', () => {
-      renderCompleteTaskModal('emo_send_to_board_intake_for_review', emoToBvaIntakeData, taskType);
+      renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
 
       enterModalOptions(
         'Centralized Mail Portal',
@@ -204,7 +207,7 @@ describe('CompleteTaskModal', () => {
     });
 
     test('When Other is Chosen in Modal', () => {
-      renderCompleteTaskModal('emo_send_to_board_intake_for_review', emoToBvaIntakeData, taskType);
+      renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
 
       enterModalOptions(
         'Other',
@@ -223,14 +226,15 @@ describe('CompleteTaskModal', () => {
   describe('rpo_send_to_board_intake_for_review', () => {
     const taskType = 'EducationAssessDocumentationTask';
     const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const modalType = 'rpo_send_to_board_intake_for_review';
 
     test('modal title is Ready for Review', () => {
-      renderCompleteTaskModal('emo_send_to_board_intake_for_review', rpoToBvaIntakeData, taskType);
+      renderCompleteTaskModal(modalType, rpoToBvaIntakeData, taskType);
       expect(screen.getByText('Ready for Review')).toBeTruthy();
     });
 
     test('When Centralized Mail Portal is chosen in Modal', () => {
-      renderCompleteTaskModal('rpo_send_to_board_intake_for_review', rpoToBvaIntakeData, taskType);
+      renderCompleteTaskModal(modalType, rpoToBvaIntakeData, taskType);
 
       enterModalOptions(
         'Centralized Mail Portal',
@@ -245,7 +249,7 @@ describe('CompleteTaskModal', () => {
     });
 
     test('When Other is Chosen in Modal', () => {
-      renderCompleteTaskModal('rpo_send_to_board_intake_for_review', rpoToBvaIntakeData, taskType);
+      renderCompleteTaskModal(modalType, rpoToBvaIntakeData, taskType);
 
       enterModalOptions(
         'Other',
@@ -259,5 +263,9 @@ describe('CompleteTaskModal', () => {
         '\n\n**Detail:**\n\nRPO -> BVA Intake\n'
       );
     });
+  });
+
+  describe('vha_caregiver_support_return_to_board_intake', () => {
+
   });
 });
