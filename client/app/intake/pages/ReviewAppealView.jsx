@@ -82,8 +82,6 @@ const ReviewAppealView = (props) => {
     setOtherReason(otherReason);
   };
 
-  {console.log(JSON.stringify(CaseHearingsDetail))}
-
   return (
     <>
       <div>
