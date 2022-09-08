@@ -41,7 +41,7 @@ class HearingTask < Task
     # do not move forward to change location or create ihp if there are
     # other open hearing tasks
 
-    if children.any? && children.open.empty? && on_hold?
+    if children.open.empty? && on_hold?
       if appeal.is_a?(Appeal)
         create_evidence_or_ihp_task
       end
