@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ReceiveNotificationJob < CaseflowJob
-  queue_as ApplicationController.dependencies_fakes? ? :receive_notifications : :"receive_notifications.fifo"
+  queue_as ApplicationController.dependencies_faked? ? :receive_notifications : :"receive_notifications.fifo"
   application_attr :hearing_schedule
 
   def perform(message)
@@ -52,17 +52,22 @@ class ReceiveNotificationJob < CaseflowJob
   #
   # Returns: Updated model from update_audit_record
   def compare_notification_audit_record(audit_record, email_address, phone_number, status, type)
-    if !email_address.nil? && audit_record.email_address != email_address
-      audit_record.update!(email_address: email_address)
+    status = status.capitalize
+
+    if !email_address.nil? && audit_record.recipient_email != email_address
+      audit_record.update!(recipient_email: email_address)
     end
-    if !phone_number.nil? && audit_record.phone_number != phone_number
-      audit_record.update!(phone_number: phone_number)
+
+    if !phone_number.nil? && audit_record.recipient_phone_number != phone_number
+      audit_record.update!(recipient_phone_number: phone_number)
     end
-    if type == "email" && !status.nil?
+
+    if type == "email" && !status.nil? && status != audit_record.email_notification_status
       audit_record.update!(email_notification_status: status)
-    elsif type == "sms" && !status.nil?
+    elsif type == "sms" && !status.nil? && status != audit_record.text_notification_status
       audit_record.update!(text_notification_status: status)
     end
+
     audit_record
   end
 end
