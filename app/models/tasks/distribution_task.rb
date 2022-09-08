@@ -63,7 +63,7 @@ end
 
 def when_child_task_completed(child_task)
   if appeal.tasks.open.where(type: HearingTask.name).empty? && appeal.is_a?(Appeal)
-    IhpTasksFactory.new(parent).create_ihp_tasks!
+    IhpTasksFactory.new(self).create_ihp_tasks!
   end
 
   super
