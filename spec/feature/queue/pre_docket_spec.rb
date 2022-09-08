@@ -126,7 +126,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.in_progress
         end
 
-        step "enacting the 'Return to board intake' task action returns the task to BVA intake" do
+        step "enacting the 'Return to Board Intake' task action returns the task to BVA intake" do
           User.authenticate!(user: vha_caregiver_user)
 
           vha_document_search_task = VhaDocumentSearchTask.last
