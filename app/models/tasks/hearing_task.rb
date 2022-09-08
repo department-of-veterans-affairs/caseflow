@@ -51,8 +51,7 @@ class HearingTask < Task
       end
     end
 
-    super
-    
+    super 
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
@@ -129,8 +128,6 @@ class HearingTask < Task
           assigned_to: MailTeam.singleton
         )
       end
-    else
-      IhpTasksFactory.new(parent).create_ihp_tasks!
     end
   end
 
