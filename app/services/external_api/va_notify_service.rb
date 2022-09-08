@@ -7,6 +7,7 @@ class ExternalApi::VANotifyService
   BASE_URL = ENV["VA_NOTIFY_API_URL"]
   CLIENT_SECRET = ENV["VA_NOTIFY_API_KEY"]
   SERVICE_ID = ENV["VA_NOTIFY_SERVICE_ID"]
+  SENDER_ID = ENV["VA_NOTIFY_SMS_SENDER_ID"]
   TOKEN_ALG = ENV["VA_NOTIFY_TOKEN_ALG"]
   SEND_EMAIL_NOTIFICATION_ENDPOINT = "/v2/notifications/email"
   SEND_SMS_NOTIFICATION_ENDPOINT = "/v2/notifications/sms"
@@ -18,15 +19,35 @@ class ExternalApi::VANotifyService
   }.freeze
 
   class << self
-    # Send the email and sms notifications
-    # @param {status} The appeal status for a template that requires it
-    def send_notifications(participant_id, appeal_id, email_template_id, status = "")
-      email_response = send_va_notify_request(email_request(participant_id, appeal_id, email_template_id, status))
-      Rails.logger.info(email_response)
+    # Purpose: Send the email notifications
+    #
+    # Params: Details from appeal for notification
+    #         participant_id (from appeal for which notification is being generated)
+    #         notification_id: id of the associated Notification in the db
+    #         email_template_id: taken from notification_event table corresponding to correct notification template
+    #         status: appeal status for quarterly notification (not necessary for other notifications)
+    # Return: email_response: JSON response from VA Notify API
+    def send_email_notifications(participant_id, notification_id, email_template_id, status = "")
+      email_response = send_va_notify_request(email_request(participant_id, notification_id, email_template_id, status))
+      log_info(email_response)
       email_response
     end
 
-    # Get the status of a notification
+    # Purpose: Send the sms notifications
+    #
+    # Params: Details from appeal for notification
+    #         participant_id (from appeal for which notification is being generated)
+    #         notification_id: id of the associated Notification in the db
+    #         sms_template_id: taken from notification_event table corresponding to correct notification template
+    #         status: appeal status for quarterly notification (not necessary for other notifications)
+    # Return: sms_response: JSON response from VA Notify API
+    def send_sms_notifications(participant_id, notification_id, sms_template_id, status = "")
+      sms_response = send_va_notify_request(sms_request(participant_id, notification_id, sms_template_id, status))
+      log_info(sms_response)
+      sms_response
+    end
+
+    # Purpose: Get the status of a notification
     def get_status(notification_id)
       request = {
         headers: HEADERS,
@@ -37,7 +58,11 @@ class ExternalApi::VANotifyService
 
     private
 
-    # Generate the JWT token
+    # Purpose: Generate the JWT token
+    #
+    # Params: none
+    #
+    # Return: token needed for authentication
     def generate_token
       jwt_secret = CLIENT_SECRET
       header = {
@@ -60,7 +85,11 @@ class ExternalApi::VANotifyService
       signed_token
     end
 
-    # Remove any illegal characters and keeps source at proper format
+    # Purpose: Remove any illegal characters and keeps source at proper format
+    #
+    # Params: string
+    #
+    # Return: sanitized string
     def base64url(source)
       encoded_source = Base64.encode64(source)
       encoded_source = encoded_source.sub(/=+$/, "")
@@ -69,12 +98,20 @@ class ExternalApi::VANotifyService
       encoded_source
     end
 
-    # Build an email request object
-    def email_request(participant_id, appeal_id, email_template_id, status)
+    # Purpose: Build an email request object
+    #
+    # Params: Details from appeal for notification
+    #         participant_id (from appeal for which notification is being generated)
+    #         notification_id: id of the associated Notification in the db
+    #         email_template_id: taken from notification_event table corresponding to correct notification template
+    #         status: appeal status for quarterly notification (not necessary for other notifications)
+    #
+    # Return: Request hash
+    def email_request(participant_id, notification_id, email_template_id, status)
       request = {
         body: {
           template_id: email_template_id,
-          reference: appeal_id,
+          reference: notification_id,
           recipient_identifier: {
             id_type: "PID",
             id_value: participant_id
@@ -84,29 +121,38 @@ class ExternalApi::VANotifyService
         headers: HEADERS,
         endpoint: SEND_EMAIL_NOTIFICATION_ENDPOINT, method: :post
       }
-      if status
+      if !status.empty?
         # If a status is given then it will be added to the request object
         request[:body][:personalisation] = { appeal_status: status }
       end
       request
     end
 
-    # Build a sms request object
-    def sms_request(participant_id, appeal_id, sms_template_id, status)
+    # Purpose: Build an sms request object
+    #
+    # Params: Details from appeal for notification
+    #         participant_id (from appeal for which notification is being generated)
+    #         notification_id: id of the associated Notification in the db
+    #         sms_template_id: taken from notification_event table corresponding to correct notification template
+    #         status: appeal status for quarterly notification (not necessary for other notifications)
+    #
+    # Return: Request hash
+    def sms_request(participant_id, notification_id, sms_template_id, status)
       request = {
         body: {
-          reference: appeal_id,
+          reference: notification_id,
           template_id: sms_template_id,
           recipient_identifier: {
             id_type: "PID",
             id_value: participant_id
           },
+          sms_sender_id: SENDER_ID || "",
           personalisation: nil
         },
         headers: HEADERS,
         endpoint: SEND_SMS_NOTIFICATION_ENDPOINT, method: :post
       }
-      if status
+      if !status.empty?
         # If a status is given then it will be added to the request object
         request[:body][:personalisation] = { appeal_status: status }
       end
@@ -114,7 +160,11 @@ class ExternalApi::VANotifyService
     end
 
     # rubocop:disable Metrics/MethodLength
-    # Build and send the request to the server
+    # Purpose: Build and send the request to the server
+    #
+    # Params: general requirements for HTTP request
+    #
+    # Return: service_response: JSON from VA Notify or error
     def send_va_notify_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
       url = URI.escape(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
@@ -146,5 +196,14 @@ class ExternalApi::VANotifyService
       end
     end
     # rubocop:enable Metrics/MethodLength
+
+    # Purpose: Method to be called with info need to be logged to the rails logger
+    #
+    # Params: info_message (Expecting a string) - Message to be logged to the logger
+    #
+    # Response: None
+    def log_info(info_message)
+      Rails.logger.info(info_message)
+    end
   end
 end
