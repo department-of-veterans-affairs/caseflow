@@ -126,6 +126,8 @@ class HearingTask < Task
           assigned_to: MailTeam.singleton
         )
       end
+    else
+      IhpTasksFactory.new(parent).create_ihp_tasks!
     end
   end
 
