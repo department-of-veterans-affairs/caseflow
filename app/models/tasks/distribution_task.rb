@@ -60,3 +60,9 @@ class DistributionTask < Task
     self.assigned_to ||= Bva.singleton
   end
 end
+
+def when_child_task_completed(child_task)
+  if appeal.tasks.open.where(type: HearingTask.name).empty?
+    IhpTasksFactory.new(parent).create_ihp_tasks!
+  end
+end
