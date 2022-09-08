@@ -774,6 +774,14 @@ class AppealRepository
       end
     end
 
+    def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+      MetricsService.record("VACOLS: age_of_n_oldest_nonpriority_appeals_available_to_judge",
+                            name: "age_of_n_oldest_nonpriority_appeals_available_to_judge",
+                            service: :vacols) do
+        VACOLS::CaseDocket.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+      end
+    end
+
     def age_of_oldest_priority_appeal
       MetricsService.record("VACOLS: age_of_oldest_priority_appeal",
                             name: "age_of_oldest_priority_appeal",
