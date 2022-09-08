@@ -6,7 +6,7 @@ import { formatDateStr } from '../../util/DateUtil';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import { css, target } from 'glamor';
 import TextareaField from '../../components/TextareaField';
-import { reason, setOtherReason, otherReason, selectedIssues, setSelectedIssues } from '../pages/SplitAppealView';
+// import { reason, setOtherReason, otherReason, selectedIssues, setSelectedIssues } from '../pages/SplitAppealView';
 import CaseHearingsDetail from '../../queue/CaseHearingsDetail';
 import _ from 'lodash';
 
@@ -22,8 +22,8 @@ const styles = {
       verticalAlign: 'initial',
     },
     '& tr > td > ol > li > p': {
-      margiTop: '0px !important',
-      margiBottom: '0px !important',
+      marginTop: '20px !important',
+      marginBottom: '0px !important',
       lineHeight: '0.5em',
     },
     '&': {
@@ -37,7 +37,7 @@ const styles = {
     },
     '& tr:last-of-type td': {
       paddingBottom: '20px',
-      borderBottom: 'none',
+      borderBottom: '0px solid #9999',
     },
     '& tr > th': {
       borderTop: 'none',
@@ -51,7 +51,7 @@ const styles = {
       borderLeft: '1px solid #979797',
       paddingLeft: '3%',
     },
-    '& p':{
+    '& p': {
       marginTop: '1.5rem',
       marginBottom: '1.5rem',
     },
@@ -64,23 +64,35 @@ const styles = {
 
 const ReviewAppealView = (props) => {
   const { serverIntake } = props;
-  const { reason, setOtherReason, otherReason, selectedIssues, setSelectedIssues } = useContext(StateContext);
-  const veteran = serverIntake.veteran.name;
+  const requestIssues = serverIntake.requestIssues;
   const streamdocketNumber = props.appeal.stream_docket_number;
+
+  const reviewOpt = _.startCase(serverIntake?.docketType?.split('_').join(' '));
+  const { selectedIssues, reason, otherReason } = useContext(StateContext);
+  const veteran = serverIntake.veteran.name;
   const claimantName = props.serverIntake.claimantName;
-  const requestIssues = props.serverIntake.requestIssues;
-  const docketType = props.serverIntake.docketType;
-  const reviewOpt = _.startCase(serverIntake?.docketType?.split('-').join(' '));
-  const original_hearing_request_type = props.appeal.original_hearing_request_type;
   const receiptDate = props.serverIntake.receiptDate;
 
-  const onIssueChange = (evt) => {
-    setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.labels[0].innerText });
-  };
+  // const { serverIntake } = props;
+  // const { reason, setOtherReason, otherReason, selectedIssues, setSelectedIssues } = useContext(StateContext);
 
-  const onOtherReasonChange = (otherReason) => {
-    setOtherReason(otherReason);
-  };
+  // const streamdocketNumber = props.appeal.stream_docket_number;
+
+  // const requestIssues = props.serverIntake.requestIssues;
+  // const docketType = props.serverIntake.docketType;
+  // const reviewOpt = _.startCase(serverIntake?.docketType?.split('-').join(' '));
+  // const original_hearing_request_type = props.appeal.original_hearing_request_type;
+
+
+  // const onIssueChange = (evt) => {
+  //   setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.labels[0].innerText });
+  // };
+
+  // const onOtherReasonChange = (otherReason) => {
+  //   setOtherReason(otherReason);
+  // };
+
+  // {console.log(JSON.stringify(CaseHearingsDetail))}
 
   return (
     <>
@@ -92,14 +104,11 @@ const ReviewAppealView = (props) => {
         <u style={{fontSize: '20px' }}>{COPY.SPLIT_APPEAL_REVIEW_REASONING_TITLE}</u> &ensp;
         <span style={{ flexBasis: '75%', fontSize: '20px' }}>{reason}</span>
       </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'left' }}>
+        {otherReason}
+      </div>
       <br />
-      {reason === 'Other' && (
-        <TextareaField
-          resizestyle={null}
-          value={otherReason}
-          onChange={onOtherReasonChange}
-        />
-      )}
+
       <br />
       <section className={styles.tableSection}>
         <table className={`usa-table-borderless ${styles.mainTable}`}>
@@ -108,11 +117,26 @@ const ReviewAppealView = (props) => {
             <th className="bolded-header"> {COPY.TABLE_ORIGINAL_APPEAL}</th>
             <th className="bolded-header"> {COPY.TABLE_NEW_APPEAL} </th>
           </tr>
-          <tr>
-            <td><em>{ claimantName ? COPY.APPELLANT : COPY.TABLE_VETERAN}</em></td>
-            <td>{claimantName ? claimantName : veteran }</td>
-            <td>{claimantName ? claimantName : veteran }</td>
-          </tr>
+          {serverIntake.veteranIsNotClaimant ?
+            <>
+              <tr>
+                <td><em>{ COPY.TABLE_VETERAN}</em></td>
+                <td>{ veteran}</td>
+                <td>{ veteran}</td>
+              </tr>
+              <tr>
+                <td><em>{COPY.APPELLANT }</em></td>
+                <td>{claimantName }</td>
+                <td>{claimantName }</td>
+              </tr>
+            </> :
+            <tr>
+              <td><em>{ COPY.TABLE_VETERAN}</em></td>
+              <td>{ veteran }</td>
+              <td>{ veteran }</td>
+            </tr>
+          }
+
           <tr>
             <td><em>{COPY.TABLE_DOCKET_NUMBER}</em></td>
             <td>{streamdocketNumber}</td>
@@ -122,7 +146,7 @@ const ReviewAppealView = (props) => {
             <td><em>{COPY.TABLE_REVIEW_OPTION}</em></td>
             <td>{reviewOpt}
               <div>
-                {original_hearing_request_type}
+                {/* {original_hearing_request_type} */}
               </div>
               <div>
                 {receiptDate}
@@ -147,11 +171,9 @@ const ReviewAppealView = (props) => {
             </td>
             <td>
               <ol>
-                {Object.keys(selectedIssues).map((issueKey) => <li key={issueKey}>{selectedIssues[issueKey]}</li>)}
+                <li>{selectedIssues.selectValue.value}</li>
               </ol>
             </td>
-          </tr>
-          <tr>
           </tr>
         </table>
       </section>
