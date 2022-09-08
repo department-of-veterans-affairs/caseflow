@@ -430,11 +430,11 @@ const MODAL_TYPE_ATTRS = {
       if (state.dropdown === 'other') {
         formattedInstructions += `\n**Reason for return:**\nOther - ${state.otherInstructions}`;
       } else {
-        formattedInstructions += `\n**Reason for return:**${state.dropdown}`;
+        formattedInstructions += `\n**Reason for return:** ${state.dropdown}`;
       }
 
       if (state.instructions) {
-        formattedInstructions += `\n**Detail:**\n${state.instructions}`;
+        formattedInstructions += `\n\n**Detail:**\n${state.instructions}`;
       }
 
       return formattedInstructions;
