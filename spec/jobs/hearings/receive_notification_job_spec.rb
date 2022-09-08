@@ -123,11 +123,16 @@ describe ReceiveNotificationJob, type: :job do
 
   context ".perform" do
     # create notification event record
-    let(:hearing_scheduled_event) { create(:notification_event, event_type: "Hearing scheduled", email_template_id: "27bf814b-f065-4fc8-89af-ae1292db894e", sms_template_id: "c2798da3-4c7a-43ed-bc16-599329eaf7cc") }
+    let(:hearing_scheduled_event) do
+      create(:notification_event, event_type: "Hearing scheduled",
+                                  email_template_id: "27bf814b-f065-4fc8-89af-ae1292db894e",
+                                  sms_template_id: "c2798da3-4c7a-43ed-bc16-599329eaf7cc")
+    end
     # create notification record
     let(:notification) do
       create(:notification, id: 9, appeals_id: 4, appeals_type: "Appeal", event_type: "Hearing scheduled",
-                            participant_id: "123456789", notification_type: "Email", recipient_email: "", event_date: Time.zone.now, email_notification_status: "Success")
+                            participant_id: "123456789", notification_type: "Email", recipient_email: "",
+                            event_date: Time.zone.now, email_notification_status: "Success")
     end
 
     # add message to queue
