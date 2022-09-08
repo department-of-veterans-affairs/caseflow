@@ -62,7 +62,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_READY_APPEALS = "
-    select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
+    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
     from BRIEFF
     #{VACOLS::Case::JOIN_AOD}
     #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
@@ -71,6 +71,8 @@ class VACOLS::CaseDocket < VACOLS::Record
     where BRIEFF.BFMPRO = 'ACT'
       and BRIEFF.BFCURLOC in ('81', '83')
       and BRIEFF.BFBOX is null
+      and BRIEFF.BFAC is not null
+      and BRIEFF.BFD19 is not null
       and MAIL_BLOCKS_DISTRIBUTION = 0
       and DIARY_BLOCKS_DISTRIBUTION = 0
   "
@@ -105,9 +107,9 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_NONPRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX
+    select BFKEY, BFD19, BFDLOOUT, VLJ, DOCKET_INDEX
     from (
-      select BFKEY, BFDLOOUT, rownum DOCKET_INDEX,
+      select BFKEY, BFD19, BFDLOOUT, rownum DOCKET_INDEX,
         case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
       from (
         #{SELECT_READY_APPEALS}
@@ -115,6 +117,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      order by BFD19
     )
   "
 
@@ -241,6 +244,21 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     appeals = conn.exec_query(fmtd_query).to_hash
     appeals.map { |appeal| appeal["bfdloout"] }
+  end
+
+  def self.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+    conn = connection
+
+    query = <<-SQL
+      #{SELECT_NONPRIORITY_APPEALS}
+      where (VLJ = ? or VLJ is null)
+      and rownum <= ?
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id, num])
+
+    appeals = conn.exec_query(fmtd_query).to_hash
+    appeals.map { |appeal| appeal["bfd19"] }
   end
 
   def self.age_of_oldest_priority_appeal

@@ -47,7 +47,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   let!(:another_nonpriority_ready_case) do
     create(
       :case,
-      bfd19: 1.year.ago,
+      bfd19: 11.months.ago,
       bfac: "1",
       bfmpro: "ACT",
       bfcurloc: "83",

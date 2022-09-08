@@ -10,6 +10,8 @@ describe Distribution, :all_dbs do
   before do
     Timecop.freeze(Time.zone.now)
   end
+  before { FeatureToggle.enable!(:acd_distribute_all) }
+  after { FeatureToggle.disable!(:acd_distribute_all) }
 
   context "#distributed_cases_count" do
     subject { new_distribution }

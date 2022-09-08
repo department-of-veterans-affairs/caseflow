@@ -94,6 +94,7 @@ module Seeds
           veteran_file_number: vet_file_number,
           docket_type: Constants.AMA_DOCKETS.direct_review,
           closest_regional_office: "RO17",
+          receipt_date: num.days.ago,
           request_issues: create_list(
             :request_issue, 2, :nonrating, notes: notes
           )
@@ -111,6 +112,7 @@ module Seeds
           veteran_file_number: vet_file_number,
           docket_type: Constants.AMA_DOCKETS.evidence_submission,
           closest_regional_office: "RO17",
+          receipt_date: num.days.ago,
           request_issues: create_list(
             :request_issue, 2, :nonrating, notes: notes
           )
@@ -128,6 +130,7 @@ module Seeds
           veteran_file_number: vet_file_number,
           docket_type: Constants.AMA_DOCKETS.direct_review,
           closest_regional_office: "RO17",
+          receipt_date: num.days.ago,
           request_issues: create_list(
             :request_issue, 2, :nonrating, notes: notes
           )
@@ -395,13 +398,14 @@ module Seeds
 
     def create_different_hearings_tasks
       (%w[RO17 RO19 RO31 RO43 RO45] + [nil]).each do |regional_office|
-        30.times do
+        30.times do |num|
           appeal = create(
             :appeal,
             :with_request_issues,
             :hearing_docket,
             veteran_is_not_claimant: Faker::Boolean.boolean,
             stream_type: Constants.AMA_STREAM_TYPES.original,
+            receipt_date: num.days.ago,
             claimants: [
               create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO_#{rand(10**10)}")
             ],
@@ -760,6 +764,7 @@ module Seeds
       folder = VACOLS::Folder.find_or_create_by(ticknum: legacy_vacols_id, tinum: 1)
       vacols_case = create(:case_with_soc,
                            :status_advance,
+                           :type_original,
                            case_issues: case_issues,
                            correspondent: correspondent,
                            folder: folder,
@@ -774,6 +779,7 @@ module Seeds
       create(
         :case,
         :video_hearing_requested,
+        :type_original,
         correspondent: correspondent,
         bfcorlid: vacols_titrnum,
         bfcurloc: "CASEFLOW",
@@ -785,6 +791,7 @@ module Seeds
       create(
         :case,
         :travel_board_hearing_requested,
+        :type_original,
         correspondent: correspondent,
         bfcorlid: vacols_titrnum,
         bfcurloc: "CASEFLOW",
