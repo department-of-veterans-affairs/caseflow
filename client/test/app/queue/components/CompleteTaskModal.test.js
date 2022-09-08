@@ -164,7 +164,7 @@ describe('CompleteTaskModal', () => {
 
       enterModalRadioOptions(
         'VBMS',
-        'Provide details such as file structure or file path',
+        'Provide details such as file structure or file path Optional',
         'CAREGIVER -> BVA Intake',
         buttonText
       );
@@ -179,7 +179,7 @@ describe('CompleteTaskModal', () => {
 
       enterModalRadioOptions(
         'Other',
-        'Provide details such as file structure or file path',
+        'Provide details such as file structure or file path Optional',
         'CAREGIVER -> BVA Intake',
         buttonText,
         'Other Source'
@@ -206,7 +206,7 @@ describe('CompleteTaskModal', () => {
 
       enterModalRadioOptions(
         'Centralized Mail Portal',
-        'Provide details such as file structure or file path',
+        'Provide details such as file structure or file path Optional',
         'EMO -> BVA Intake',
         buttonText
       );
@@ -221,7 +221,7 @@ describe('CompleteTaskModal', () => {
 
       enterModalRadioOptions(
         'Other',
-        'Provide details such as file structure or file path',
+        'Provide details such as file structure or file path Optional',
         'EMO -> BVA Intake',
         buttonText,
         'Other Source'
@@ -248,7 +248,7 @@ describe('CompleteTaskModal', () => {
 
       enterModalRadioOptions(
         'Centralized Mail Portal',
-        'Provide details such as file structure or file path',
+        'Provide details such as file structure or file path Optional',
         'RPO -> BVA Intake',
         buttonText
       );
@@ -263,7 +263,7 @@ describe('CompleteTaskModal', () => {
 
       enterModalRadioOptions(
         'Other',
-        'Provide details such as file structure or file path',
+        'Provide details such as file structure or file path Optional',
         'RPO -> BVA Intake',
         buttonText,
         'Other Source'
@@ -280,12 +280,12 @@ describe('CompleteTaskModal', () => {
     const buttonText = COPY.MODAL_RETURN_BUTTON;
     const modalType = 'vha_caregiver_support_return_to_board_intake';
 
-    test('Modal title to be something', () => {
+    test('Modal title to be "Return to Board Intake"', () => {
       renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
       expect(screen.getByText('Return to Board Intake')).toBeTruthy();
     });
 
-    test('Instructions are formatted properly whenever a non-other reason is selected for return', () => {
+    test('Instructions are formatted properly whenever a non-other reason is selected for return', async () => {
       renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
 
       selectFromDropdown(
@@ -293,10 +293,36 @@ describe('CompleteTaskModal', () => {
         'Not PCAFC related'
       );
 
-      expect(true).toBe(true);
+      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
+
+      expect(getReceivedInstructions()).toBe(
+        '\n**Reason for return:**\nNot PCAFC related'
+      );
     });
 
-    test('Instructions are formatted properly whenever "Other" reason is selected for return', () => {
+    test('Instructions are formatted properly whenever a non-other reason and context is provided', async () => {
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
+
+      selectFromDropdown(
+        'Why is this appeal being returned?',
+        'Not PCAFC related'
+      );
+
+      const optionalTextArea = screen.getByRole(
+        'textbox', { name: 'Provide additional context for this action Optional' }
+      );
+
+      userEvent.type(optionalTextArea, 'Additional context');
+
+      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
+
+      expect(getReceivedInstructions()).toBe(
+        '\n**Reason for return:**\nNot PCAFC related' +
+        '\n\n**Detail:**\nAdditional context'
+      );
+    });
+
+    test('Instructions are formatted properly whenever "Other" reason is selected for return', async () => {
       renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
 
       selectFromDropdown(
@@ -304,7 +330,45 @@ describe('CompleteTaskModal', () => {
         'Other'
       );
 
-      expect(true).toBe(true);
+      const otherTextArea = screen.getByRole(
+        'textbox', { name: 'Please provide the reason for return' }
+      );
+
+      userEvent.type(otherTextArea, 'Reasoning for the return');
+
+      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
+
+      expect(getReceivedInstructions()).toBe(
+        '\n**Reason for return:**\nOther - Reasoning for the return'
+      );
+    });
+
+    test('Instructions are formatted properly when "Other" reason is selected for return plus context', async () => {
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
+
+      selectFromDropdown(
+        'Why is this appeal being returned?',
+        'Other'
+      );
+
+      const otherTextArea = screen.getByRole(
+        'textbox', { name: 'Please provide the reason for return' }
+      );
+
+      userEvent.type(otherTextArea, 'Reasoning for the return');
+
+      const optionalTextArea = screen.getByRole(
+        'textbox', { name: 'Provide additional context for this action Optional' }
+      );
+
+      userEvent.type(optionalTextArea, 'Additional context');
+
+      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
+
+      expect(getReceivedInstructions()).toBe(
+        '\n**Reason for return:**\nOther - Reasoning for the return' +
+        '\n\n**Detail:**\nAdditional context'
+      );
     });
   });
 });
