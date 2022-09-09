@@ -13,6 +13,7 @@ const uiData = {
   }
 };
 
+/* eslint-disable max-len */
 const caregiverActions = [
   {
     func: 'vha_caregiver_support_mark_task_in_progress',
@@ -22,9 +23,9 @@ const caregiverActions = [
       modal_title: 'Mark task as in progress',
       modal_body: 'By marking task as in progress, you are confirming that you are actively working on collecting documents for this appeal.\n\nOnce marked, other members of your organization will no longer be able to mark this task as in progress.',
       modal_button_text: 'Mark in progress',
-      message_title: 'You have successfully marked Bob Smithbeer\'s case as in progress',
+      message_title: 'You have successfully marked Bob Smithswift\'s case as in progress',
       type: 'VhaDocumentSearchTask',
-      redirect_after: '/organizations/vha-csp'
+      redirect_after: '/organizations/vha-csp?tab=caregiver_support_in_progress'
     }
   },
   {
@@ -34,13 +35,59 @@ const caregiverActions = [
     data: {
       modal_title: 'Ready for Review',
       modal_button_text: 'Send',
-      message_title: 'You have successfully sent Bob Smithbeer\'s case to Board Intake for Review',
+      message_title: 'You have successfully sent Bob Smithswift\'s case to Board Intake for Review',
       type: 'VhaDocumentSearchTask',
-      redirect_after: '/organizations/vha-csp',
+      redirect_after: '/organizations/vha-csp?tab=caregiver_support_completed',
       body_optional: true
+    }
+  },
+  {
+    func: 'vha_caregiver_support_return_to_board_intake',
+    label: 'Return to Board Intake',
+    value: 'modal/vha_caregiver_support_return_to_board_intake',
+    data: {
+      modal_title: 'Return to Board Intake',
+      modal_body: 'This appeal will be returned to Board intake.',
+      type: 'VhaDocumentSearchTask',
+      options: [
+        {
+          label: 'Duplicate',
+          value: 'Duplicate'
+        },
+        {
+          label: 'HLR Pending',
+          value: 'HLR Pending'
+        },
+        {
+          label: 'SC Pending',
+          value: 'SC Pending'
+        },
+        {
+          label: 'Not PCAFC related',
+          value: 'Not PCAFC related'
+        },
+        {
+          label: 'No PCAFC decisions for this individual',
+          value: 'no PCAFC decisions for this individual'
+        },
+        {
+          label: 'No PCAFC decision for identified time period',
+          value: 'No PCAFC decision for identified time period'
+        },
+        {
+          label: 'Multiple PCAFC decisions could apply',
+          value: 'Multiple PCAFC decisions could apply'
+        },
+        {
+          label: 'Other',
+          value: 'other'
+        }
+      ],
+      redirect_after: '/organizations/vha-csp?tab=caregiver_support_completed'
     }
   }
 ];
+/* eslint-enable max-len */
 
 const vhaDocumentSearchTaskData = {
   7119: {
