@@ -2,14 +2,60 @@ import React, { useContext } from 'react';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { StateContext } from '../../intakeEdit/IntakeEditFrame';
-import { formatDateStr } from '../../util/DateUtil';
-import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import { css, target } from 'glamor';
-import TextareaField from '../../components/TextareaField';
-import { reason, setOtherReason, otherReason, selectedIssues, setSelectedIssues } from '../pages/SplitAppealView';
 import CaseHearingsDetail from '../../queue/CaseHearingsDetail';
 
-const issueListStyling = css({ marginTop: '0rem', marginLeft: '6rem' });
+const styles = {
+  mainTable: css({
+    '& .bolded-header': {
+      fontWeight: 'bold',
+    },
+    '& tr > td': {
+      width: '.5%',
+      verticalAlign: 'left',
+    },
+    '& tr > td > ol > li > p': {
+      marginTop: '0px !important',
+      paddingBottom: '20px',
+      lineHeight: '0.5em',
+    },
+    '&': {
+      margin: 0,
+    },
+    '& td:first-child': {
+      paddingLeft: '3%',
+    },
+    '& tr:first-of-type td': {
+      borderTop: 'none',
+    },
+    '& tr:last-of-type td': {
+      paddingBottom: '20px',
+      borderBottom: '0px solid #9999',
+    },
+    '& tr > th': {
+      borderTop: 'none',
+      // border: '1px solid #E2E3E4',
+    },
+    '& tr > td:last-of-type': {
+      borderLeft: '1px solid #979797',
+      paddingLeft: '3%',
+    },
+    '& tr > th:last-of-type': {
+      borderLeft: '1px solid #979797',
+      paddingLeft: '3%',
+    },
+    '& p': {
+      marginTop: '1.5rem',
+      marginBottom: '1.5rem',
+    },
+  }),
+  tableSection: css({
+    marginBottom: '40px',
+    marginTop: '40px'
+  })
+};
+
+{console.log(JSON.stringify(CaseHearingsDetail))}
 
 const ReviewAppealView = (props) => {
   const { serverIntake } = props;
@@ -30,8 +76,6 @@ const ReviewAppealView = (props) => {
     setOtherReason(otherReason);
   };
 
-  {console.log(JSON.stringify(CaseHearingsDetail))}
-
   return (
     <>
       <div>
@@ -40,42 +84,54 @@ const ReviewAppealView = (props) => {
       </div> &ensp;
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'left' }}>
         <u>{COPY.SPLIT_APPEAL_REVIEW_REASONING_TITLE}</u> &ensp;
-        <span style={{ flexBasis: '75%' }}>{reason}</span>
+        <span style={{ flexBasis: '75%' }}>{reason} &ensp; {otherReason}</span>
       </div>
       <br />
-      {reason === 'Other' && (
-        <TextareaField
-          resizestyle={null}
-          value={otherReason}
-          onChange={onOtherReasonChange}
-        />
-      )}
       <br />
-      <div className="review_appeal_table">
-        <table>
+      <br />
+      <section className={styles.tableSection}>
+        <table className={`usa-table-borderless ${styles.mainTable}`}>
           <tr>
             <th></th>
-            <th> {COPY.TABLE_ORIGINAL_APPEAL}</th>
-            <th> {COPY.TABLE_NEW_APPEAL} </th>
+            <th className="bolded-header"> {COPY.TABLE_ORIGINAL_APPEAL}</th>
+            <th className="bolded-header"> {COPY.TABLE_NEW_APPEAL} </th>
           </tr>
           <tr>
-            <td>{COPY.TABLE_VETERAN}</td>
-            <td>{veteran}</td>
-            <td>{veteran}</td>
+            <td><em>{ claimantName ? COPY.APPELLANT : COPY.TABLE_VETERAN}</em></td>
+            <td>{claimantName ? claimantName : veteran }</td>
+            <td>{claimantName ? claimantName : veteran }</td>
           </tr>
+          {serverIntake.veteranIsNotClaimant ?
+            <>
+              <tr>
+                <td><em>{COPY.APPELLANT }</em></td>
+                <td>{claimantName }</td>
+                <td>{claimantName }</td>
+              </tr>
+              <tr>
+                <td><em>{ COPY.TABLE_VETERAN}</em></td>
+                <td>{ veteran}</td>
+                <td>{ veteran}</td>
+              </tr>
+            </> :
+            <tr>
+              <td><em>{ COPY.TABLE_VETERAN}</em></td>
+              <td>{ veteran }</td>
+              <td>{ veteran }</td>
+            </tr>
+          }
+
           <tr>
-            <th>{COPY.APPELLANT}</th>
-            <th> {claimantName}</th>
-            <th> {claimantName} </th>
-          </tr>
-          <tr>
-            <td>{COPY.TABLE_DOCKET_NUMBER}</td>
+            <td><em>{COPY.TABLE_DOCKET_NUMBER}</em></td>
             <td>{streamdocketNumber}</td>
             <td>{streamdocketNumber}</td>
           </tr>
           <tr>
-            <td>{COPY.TABLE_REVIEW_OPTION}</td>
-            <td>{docketType}
+            <td><em>{COPY.TABLE_REVIEW_OPTION}</em></td>
+            <td>
+              <div>
+                {docketType}
+              </div>
               <div>
                 {original_hearing_request_type}
               </div>
@@ -83,11 +139,12 @@ const ReviewAppealView = (props) => {
                 {receiptDate}
               </div>
             </td>
-            <td>"Held"</td>
-            <td>"View hearing worksheet link"</td>
+            <td>
+            "Sometext"
+            </td>
           </tr>
           <tr>
-            <td>{COPY.TABLE_ISSUE}</td>
+            <td><em>{COPY.TABLE_ISSUE}</em></td>
             <td>
               <ol>
                 {requestIssues.map((issue) => {
@@ -107,10 +164,8 @@ const ReviewAppealView = (props) => {
               </ol>
             </td>
           </tr>
-          <tr>
-          </tr>
         </table>
-      </div>
+      </section>
     </>
   );
 };
