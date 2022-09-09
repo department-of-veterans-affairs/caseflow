@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # Module to notify appellant if Hearing is Postponed
+# For postponed hearings from daily docket page for AMA  appeals
 module DocketHearingPostponed
   extend AppellantNotification
   # rubocop:disable all
