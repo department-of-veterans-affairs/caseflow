@@ -15,4 +15,13 @@ module HearingPostponed
     end
     super_return_value
   end
+
+  # original method defined in app/models/vacols/case_hearing.rb
+  def update_hearing!(hearing_info)
+    super_return_value = super
+    if hearing_info[:disposition].to_s == "P"
+      AppellantNotification.notify_appellant(appeal, @@template_name)
+    end
+    super_return_value
+  end
 end

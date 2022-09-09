@@ -15,4 +15,22 @@ module HearingWithdrawn
     end
     super_return_value
   end
+
+  # original method defined in app/models/hearings/forms/hearing_update_form.rb
+  def update_hearing
+    super_return_value = super
+    if hearing_updates[:disposition] == Constants.HEARING_DISPOSITION_TYPES.cancelled
+      AppellantNotification.notify_appellant(appeal, @@template_name)
+    end
+    super_return_value
+  end
+
+  # original method defined in app/models/vacols/case_hearing.rb
+  def update_hearing!(hearing_info)
+    super_return_value = super
+    if hearing_info[:disposition].to_s == "C"
+      AppellantNotification.notify_appellant(appeal, @@template_name)
+    end
+    super_return_value
+  end
 end
