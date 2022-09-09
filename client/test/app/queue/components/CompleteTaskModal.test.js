@@ -144,7 +144,7 @@ describe('CompleteTaskModal', () => {
 
     test('modal title is Ready for Review', () => {
       renderCompleteTaskModal('vha_caregiver_support_send_to_board_intake_for_review', caregiverToIntakeData, taskType);
-      expect(screen.getByText('Ready for Review')).toBeTruthy();
+      expect(screen.getByText('Ready for review')).toBeTruthy();
     });
 
     test('When VBMS is chosen in Modal', () => {
@@ -185,7 +185,7 @@ describe('CompleteTaskModal', () => {
 
     test('modal title is Ready for Review', () => {
       renderCompleteTaskModal('emo_send_to_board_intake_for_review', emoToBvaIntakeData, taskType);
-      expect(screen.getByText('Ready for Review')).toBeTruthy();
+      expect(screen.getByText('Ready for review')).toBeTruthy();
     });
 
     test('When Centralized Mail Portal is chosen in Modal', () => {
@@ -226,7 +226,7 @@ describe('CompleteTaskModal', () => {
 
     test('modal title is Ready for Review', () => {
       renderCompleteTaskModal('emo_send_to_board_intake_for_review', rpoToBvaIntakeData, taskType);
-      expect(screen.getByText('Ready for Review')).toBeTruthy();
+      expect(screen.getByText('Ready for review')).toBeTruthy();
     });
 
     test('When Centralized Mail Portal is chosen in Modal', () => {
