@@ -79,7 +79,7 @@ describe DocketCoordinator do
       end
     end
 
-    let(:days_before_goal_due) { Constants.DISTRIBUTION.days_before_goal_due_for_distribution }
+    let(:days_before_goal_due) { Constants.DISTRIBUTION.days_before_goal_due_for_distribution.to_i }
     let(:days_to_decision_goal) { Constants.DISTRIBUTION.direct_docket_time_goal }
 
     let!(:other_direct_review_cases) do
@@ -126,9 +126,9 @@ describe DocketCoordinator do
     context "when there are due direct reviews" do
       it "uses the number of due direct reviews as a proportion of the docket margin net of priority" do
         expect(docket_coordinator.docket_proportions).to include(
-          direct_review: docket_coordinator.due_direct_review_proportion
+          direct_review: Constants.DISTRIBUTION.maximum_direct_review_proportion
         )
-        expect(docket_coordinator.target_number_of_ama_hearings(2.years)).to eq(64)
+        expect(docket_coordinator.target_number_of_ama_hearings(2.years)).to eq(30)
       end
 
       it "sets valid proportions that sum to 1" do
@@ -204,7 +204,7 @@ describe DocketCoordinator do
 
       it "doesn't distribute direct reviews" do
         expect(docket_coordinator.docket_proportions).to include(
-          direct_review: 0.0
+          direct_review: 0.07
         )
       end
     end
@@ -221,10 +221,10 @@ describe DocketCoordinator do
     let(:genpop_evidence_case_count) { 2 }
 
     let(:genpop_priority_cases_count) do
-      genpop_legacy_case_count + genpop_ama_hearing_case_count + genpop_direct_case_count + genpop_evidence_case_count
+      genpop_legacy_case_count + genpop_ama_hearing_case_count + genpop_direct_case_count + genpop_evidence_case_count + tied_ama_hearing_case_count
     end
     let(:all_priority_cases_count) do
-      genpop_priority_cases_count + tied_legacy_case_count + tied_ama_hearing_case_count
+      genpop_priority_cases_count + tied_legacy_case_count
     end
 
     before do
