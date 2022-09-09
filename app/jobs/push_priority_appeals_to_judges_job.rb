@@ -45,6 +45,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def slack_report
     report = []
+    report << "*Number of cases tied to judges distributed*: " \
+              "#{@tied_distributions.map { |distribution| distribution.statistics['batch_size'] }.sum}"
     report << "*Number of general population cases distributed*: " \
               "#{@genpop_distributions.map { |distribution| distribution.statistics['batch_size'] }.sum}"
 

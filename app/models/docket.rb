@@ -115,7 +115,11 @@ class Docket
   end
 
   def scoped_for_priority(scope)
-    scope.priority.ordered_by_distribution_ready_date
+    if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+      scope.priority.order("appeals.receipt_date")
+    else
+      scope.priority.ordered_by_distribution_ready_date
+    end
   end
 
   def docket_appeals

@@ -251,7 +251,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     conn = connection
 
     query = <<-SQL
-      #{SELECT_NONPRIORITY_APPEALS}
+      #{SELECT_PRIORITY_APPEALS}
       where (VLJ = ? or VLJ is null)
       and rownum <= ?
     SQL

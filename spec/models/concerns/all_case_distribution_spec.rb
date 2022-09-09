@@ -81,7 +81,7 @@ describe AllCaseDistribution, :all_dbs do
 
       # returning {} from num_oldest_priority_appeals_by_docket will bypass
       # distribute_limited_priority_appeals_from_all_dockets not iterate over anything
-      expect(@new_acd).to receive(:num_oldest_priority_appeals_by_docket)
+      expect(@new_acd).to receive(:num_oldest_priority_appeals_for_judge_by_docket)
         .and_return({})
 
       # distribute all nonpriority appeals from all dockets
