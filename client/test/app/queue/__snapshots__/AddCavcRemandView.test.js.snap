@@ -274,6 +274,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
             >
               <section
                 className="cf-app-segment cf-app-segment--alt"
+                role="main"
               >
                 <h1>
                   Add a Court remand

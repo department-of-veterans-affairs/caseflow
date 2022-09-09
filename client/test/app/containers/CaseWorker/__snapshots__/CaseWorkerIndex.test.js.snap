@@ -14,7 +14,7 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
             class="cf-push-left"
             data-css-1vh8afw=""
           >
-            <h1
+            <p
               data-css-14vgq4z=""
             >
               <a
@@ -60,7 +60,7 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
                   Dispatch
                 </span>
               </a>
-            </h1>
+            </p>
             <div
               data-css-1mdtwij=""
             />
