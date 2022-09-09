@@ -123,9 +123,15 @@ class Appeal < DecisionReview
     # include_association :legacy_issue_optins
     include_association :nod_date_updates
     # include_association :ramp_refilings
-    include_association :tasks
+    # include_association :tasks
     include_association :vbms_uploaded_documents
     include_association :work_mode
+
+    # # lambda for setting up tasks to be assigned from parent to child
+    # customize(lambda { |_, dup_appeal|
+    #   # remove parent appeal from each task in task tree
+    #   dup_appeal.tasks.each { |task| task.parent_id = nil }
+    # })
   end
 
   def document_fetcher
@@ -258,6 +264,111 @@ class Appeal < DecisionReview
 
   def issues
     { decision_issues: decision_issues, request_issues: request_issues }
+  end
+
+  def clone_task_tree(parent_appeal, user_css_id)
+
+    # get the task tree from the parent
+    parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
+    
+    # define hash to store parent/child relationship values
+    task_parent_to_child_hash = Hash.new
+
+    while parent_appeal.tasks.count != self.tasks.count
+      # cycle each task in the parent
+      parent_ordered_tasks.each do |task| 
+
+        # if the value has a parent and isn't in the dictionary, try to find it in the dictionary or else skip it
+        if !task.parent_id.nil?
+
+          # if the parent value hasn't been created, break
+          break if !task_parent_to_child_hash.has_key?(task.parent_id)
+
+          # otherwise reassign old parent task to new from hash 
+          cloned_task_id = clone_task_w_parent(task, task_parent_to_child_hash[task.parent_id])
+
+          # add the parent/clone id to the hash set 
+          task_parent_to_child_hash[task.id] = cloned_task_id
+        else 
+
+          # if the task has already been copied, break
+          break if task_parent_to_child_hash.has_key?(task.id)
+
+          # else create the task that doesn't have a parent
+          cloned_task_id = self.clone_task(task, user_css_id)
+
+          # add the parent/clone id to the hash set
+          task_parent_to_child_hash[task.id] = cloned_task_id
+        end
+        # break if the tree count is the same
+        break if parent_appeal.tasks.count == self.tasks.count
+      end
+      # break if the tree count is the same
+      break if parent_appeal.tasks.count == self.tasks.count
+    end
+  end
+
+  # clone_task is used for splitting an appeal, tie to css_id for split
+  def clone_task(original_task, user_css_id)
+
+    # clone the task
+    dup_task = original_task.amoeba_dup
+
+    # assign the task to this appeal
+    dup_task.appeal_id = self.id
+
+    # set the status to assigned as placeholder
+    dup_task.status = "assigned"
+
+    # save the task
+    dup_task.save
+
+    # set the status to the correct status 
+    dup_task.status = original_task.status
+
+    # set request store to the user that split the appeal
+    RequestStore[:current_user] = User.find_by_css_id user_css_id
+
+    dup_task.save 
+
+    # return the task id to be added to the dict
+    return dup_task.id
+  end
+
+  def clone_task_w_parent(original_task, parent_task_id)
+
+    # clone the task
+    dup_task = original_task.amoeba_dup
+
+    # assign the task to this appeal
+    dup_task.appeal_id = self.id
+
+    # set the status to assigned as placeholder
+    dup_task.status = "assigned"
+
+    # set the parent to the parent_task_id
+    dup_task.parent_id = parent_task_id
+
+    # save the task
+    dup_task.save
+
+    # set the status to the correct status 
+    dup_task.status = original_task.status
+
+    dup_task.save
+
+    # if the status is cancelled, pull the original canceled ID
+    if dup_task.status == "cancelled"
+      # set request store to original task canceller to handle verification
+      RequestStore[:current_user] = User.find(original_task.cancelled_by_id)
+
+      # confirm task just in case no prompt
+      dup_task.cancelled_by_id = original_task.cancelled_by_id
+      dup_task.save
+    end
+
+    # return the task id to be added to the dict
+    return dup_task.id
   end
 
   def docket_name
