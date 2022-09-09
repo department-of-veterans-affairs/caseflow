@@ -179,7 +179,7 @@ export class SearchableDropdown extends React.Component {
     const value =
       Array.isArray(this.state.value) ||
       isPlainObject(this.state.value) ||
-      isEmpty(this.state.value) ||
+      (typeof (this.state.value) === 'string' && isEmpty(this.state.value)) ||
       isNull(this.state.value) ?
         this.state.value :
         (options || []).find(({ value: val }) => val === this.state.value);
