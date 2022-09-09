@@ -40,9 +40,7 @@ class HearingTask < Task
   def when_child_task_completed(child_task)
     # do not move forward to change location or create ihp if there are
     # other open hearing tasks
-
-    #if appeal.tasks.open.where(type: HearingTask.name).where.not(id: self.id).empty?
-    if appeal.tasks.open.where(type: HearingTask.name).where.not(id: self.id).empty?
+    if appeal.tasks.open.where(type: HearingTask.name).where.not(id: id).empty?
       if appeal.is_a?(Appeal)
         create_evidence_or_ihp_task
       end
