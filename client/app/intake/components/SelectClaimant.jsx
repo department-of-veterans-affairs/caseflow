@@ -82,7 +82,7 @@ export const SelectClaimant = (props) => {
   } = props;
 
   const [newClaimant] = useState(null);
-  const isAppeal = (formType === 'appeal');
+  const isAppeal = true;
 
   const enableAddClaimant = useMemo(
     () => isAppeal && veteranIsNotClaimant,
@@ -174,6 +174,8 @@ export const SelectClaimant = (props) => {
           errorMessage={claimantError || props.errors?.['claimant-options']?.message}
           inputRef={props.register}
         />
+
+        {console.log(radioOpts)}
 
         {shouldShowPayeeCode && (
           <SearchableDropdown
