@@ -6,13 +6,13 @@ class DirectReviewDocket < Docket
   end
 
   def due_count
-    appeal_ids = appeals(priority: false, ready: true)
-      .where("target_decision_date <= ?", Constants.DISTRIBUTION.days_before_goal_due_for_distribution.days.from_now)
+    if Constants.DISTRIBUTION.days_before_goal_due_for_distribution.nil?
+      appeal_ids = appeals(priority: false, ready: true)
+    else
+      appeal_ids = appeals(priority: false, ready: true)
+        .where("target_decision_date <= ?", Constants.DISTRIBUTION.days_before_goal_due_for_distribution.days.from_now)
+    end
     Appeal.where(id: appeal_ids).count
-  end
-
-  def time_until_due_of_new_appeal
-    Constants.DISTRIBUTION.direct_docket_time_goal - Constants.DISTRIBUTION.days_before_goal_due_for_distribution
   end
 
   def nonpriority_receipts_per_year
@@ -29,11 +29,4 @@ class DirectReviewDocket < Docket
     docket_appeals.nonpriority
   end
 
-  def nonpriority_nonihp_ready_appeals
-    docket_appeals
-      .ready_for_distribution
-      .nonpriority
-      .non_ihp
-      .order("receipt_date")
-  end
 end
