@@ -5,7 +5,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
   before do
     FeatureToggle.enable!(:vha_predocket_workflow)
-    FeatureToggle.enable!(:vha_predocket_appeals)
     FeatureToggle.enable!(:visn_predocket_workflow)
     FeatureToggle.enable!(:docket_vha_appeals)
 
@@ -20,7 +19,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
   after do
     FeatureToggle.disable!(:vha_predocket_workflow)
-    FeatureToggle.disable!(:vha_predocket_appeals)
     FeatureToggle.disable!(:visn_predocket_workflow)
     FeatureToggle.disable!(:docket_vha_appeals)
   end
@@ -121,13 +119,14 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
               appeal.veteran_full_name
             )
           )
-
-          expect(page).to have_current_path("/organizations/#{vha_caregiver.url}", ignore_query: true)
+          in_progress_tab_name = VhaCaregiverSupportInProgressTasksTab.tab_name
+          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{in_progress_tab_name}&page=1"
+          expect(page).to have_current_path(expected_url)
 
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.in_progress
         end
 
-        step "enacting the 'Return to board intake' task action returns the task to BVA intake" do
+        step "enacting the 'Return to Board Intake' task action returns the task to BVA intake" do
           User.authenticate!(user: vha_caregiver_user)
 
           vha_document_search_task = VhaDocumentSearchTask.last
@@ -212,7 +211,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             )
           )
 
-          expect(page).to have_current_path("/organizations/#{vha_caregiver.url}", ignore_query: true)
+          completed_tab_name = VhaCaregiverSupportCompletedTasksTab.tab_name
+          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{completed_tab_name}&page=1"
+          expect(page).to have_current_path(expected_url)
 
           # Some quick data checks to verify that everything saved successfully
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
@@ -231,11 +232,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         step "the 'Documents ready for Board Intake review' sends task to BVA Intake for review" do
           User.authenticate!(user: vha_caregiver_user)
 
-          vha_document_search_task = VhaDocumentSearchTask.last          
+          vha_document_search_task = VhaDocumentSearchTask.last
           vha_document_search_task.update!(status: Constants.TASK_STATUSES.assigned)
-          
+
           appeal = vha_document_search_task.appeal
-         
+
           visit "/queue/appeals/#{appeal.external_id}"
 
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
@@ -245,7 +246,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             text: Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW.label
           ).click
 
-          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
+          expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
           expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
           expect(page).to have_content("Optional")
 
@@ -265,7 +266,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             )
           )
 
-          expect(page).to have_current_path("/organizations/#{vha_caregiver.url}", ignore_query: true)
+          completed_tab_name = VhaCaregiverSupportCompletedTasksTab.tab_name
+          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{completed_tab_name}&page=1"
+          expect(page).to have_current_path(expected_url)
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
         end
 
@@ -492,7 +495,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find("div", class: "cf-select__option", text: COPY::VHA_COMPLETE_TASK_LABEL).click
-          expect(page).to have_content(COPY::VHA_COMPLETE_TASK_MODAL_TITLE)
+          expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
           expect(page).to have_content(COPY::VHA_COMPLETE_TASK_MODAL_BODY)
           find("label", text: "VBMS").click
           fill_in(COPY::VHA_COMPLETE_TASK_MODAL_BODY, with: ro_review_instructions)
@@ -704,7 +707,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           class: "cf-select__option",
           text: Constants.TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
         ).click
-        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
+        expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
         expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
 
         radio_choices = page.all(".cf-form-radio-option > label")
@@ -820,7 +823,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           class: "cf-select__option",
           text: Constants.TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
         ).click
-        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
+        expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
         expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
 
         radio_choices = page.all(".cf-form-radio-option > label")
@@ -1035,7 +1038,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         class: "cf-select__option",
         text: Constants.TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
       ).click
-      expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
+      expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
       expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
 
       radio_choices = page.all(".cf-form-radio-option > label")

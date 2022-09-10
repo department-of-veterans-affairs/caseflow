@@ -45,7 +45,6 @@ describe PreDocketTask, :postgres do
       let(:user) { bva_intake_admin_user }
 
       context "emo task" do
-
         let(:emo_task) do
           EducationDocumentSearchTask.create!(
             appeal: pre_docket_task.appeal,

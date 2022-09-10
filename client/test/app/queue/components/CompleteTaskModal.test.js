@@ -1,5 +1,5 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter, Route } from 'react-router';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
@@ -49,20 +49,20 @@ const renderCompleteTaskModal = (modalType, storeValues, taskType) => {
     compose(applyMiddleware(thunk))
   );
 
+  const path = `/queue/appeals/${appealId}/tasks/${taskId}/modal/${modalType}`;
+
   return render(
     <Provider store={store}>
-      <MemoryRouter>
-        <CompleteTaskModal
-          modalType={modalType}
-          appealId={appealId}
-          taskId={taskId}
-        />
+      <MemoryRouter initialEntries={[path]}>
+        <Route component={(props) => {
+          return <CompleteTaskModal {...props} modalType={modalType} appealId={appealId} taskId={taskId} />;
+        }} path={path} />
       </MemoryRouter>
     </Provider>
   );
 };
 
-const enterModalOptions = (radioSelection, instructionsFieldName, instructions, buttonText, otherSource) => {
+const enterModalRadioOptions = (radioSelection, instructionsFieldName, instructions, buttonText, otherSource) => {
   const radioFieldToSelect = screen.getByLabelText(radioSelection);
   const instructionsField = screen.getByRole('textbox', { name: instructionsFieldName });
 
@@ -71,10 +71,20 @@ const enterModalOptions = (radioSelection, instructionsFieldName, instructions, 
   if (otherSource) {
     const otherSourceField = screen.getByRole('textbox', { name: 'Please indicate the source' });
 
-    userEvent.type(otherSourceField, otherSource)
+    userEvent.type(otherSourceField, otherSource);
   }
 
-  userEvent.click(screen.getByRole('button', { name: buttonText  }));
+  userEvent.click(screen.getByRole('button', { name: buttonText }));
+};
+
+const selectFromDropdown = async (
+  dropdownName, dropdownSelection
+) => {
+  const dropdown = screen.getByRole('combobox', { name: dropdownName });
+
+  userEvent.click(dropdown);
+
+  userEvent.click(screen.getByRole('option', { name: dropdownSelection }));
 };
 
 const getReceivedInstructions = () => requestPatchSpy.mock.calls[0][1].data.task.instructions;
@@ -96,17 +106,18 @@ describe('CompleteTaskModal', () => {
   describe('vha_send_to_board_intake', () => {
     const taskType = 'VhaDocumentSearchTask';
     const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const modalType = 'vha_send_to_board_intake';
 
     test('modal title is Send to Board Intake', () => {
-      renderCompleteTaskModal('vha_send_to_board_intake', camoToBvaIntakeData, taskType);
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
       expect(screen.getByText('Send to Board Intake')).toBeTruthy();
     });
 
     test('CAMO Notes section only appears once whenever CAMO sends appeal back to BVA Intake', () => {
-      renderCompleteTaskModal('vha_send_to_board_intake', camoToBvaIntakeData, taskType);
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
-      enterModalOptions(
+      enterModalRadioOptions(
         'Correct documents have been successfully added',
         'Provide additional context and/or documents:',
         'CAMO -> BVA Intake',
@@ -120,9 +131,9 @@ describe('CompleteTaskModal', () => {
     });
 
     test('PO Details appear next to Program Office Notes section', () => {
-      renderCompleteTaskModal('vha_send_to_board_intake', camoToProgramOfficeToCamoData, taskType);
+      renderCompleteTaskModal(modalType, camoToProgramOfficeToCamoData, taskType);
 
-      enterModalOptions(
+      enterModalRadioOptions(
         'Correct documents have been successfully added',
         'Provide additional context and/or documents:',
         'CAMO -> BVA Intake',
@@ -140,19 +151,20 @@ describe('CompleteTaskModal', () => {
 
   describe('vha_caregiver_support_send_to_board_intake_for_review', () => {
     const taskType = 'VhaDocumentSearchTask';
-    const buttonText = COPY.MODAL_SEND_BUTTON
+    const buttonText = COPY.MODAL_SEND_BUTTON;
+    const modalType = 'vha_caregiver_support_send_to_board_intake_for_review';
 
     test('modal title is Ready for Review', () => {
-      renderCompleteTaskModal('vha_caregiver_support_send_to_board_intake_for_review', caregiverToIntakeData, taskType);
-      expect(screen.getByText('Ready for Review')).toBeTruthy();
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
+      expect(screen.getByText('Ready for review')).toBeTruthy();
     });
 
     test('When VBMS is chosen in Modal', () => {
-      renderCompleteTaskModal('vha_caregiver_support_send_to_board_intake_for_review', caregiverToIntakeData, taskType);
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
 
-      enterModalOptions(
+      enterModalRadioOptions(
         'VBMS',
-        'Provide details such as file structure or file path',
+        'Provide details such as file structure or file path Optional',
         'CAREGIVER -> BVA Intake',
         buttonText
       );
@@ -163,11 +175,11 @@ describe('CompleteTaskModal', () => {
     });
 
     test('When Other is Chosen in Modal', () => {
-      renderCompleteTaskModal('vha_caregiver_support_send_to_board_intake_for_review', caregiverToIntakeData, taskType);
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
 
-      enterModalOptions(
+      enterModalRadioOptions(
         'Other',
-        'Provide details such as file structure or file path',
+        'Provide details such as file structure or file path Optional',
         'CAREGIVER -> BVA Intake',
         buttonText,
         'Other Source'
@@ -182,18 +194,19 @@ describe('CompleteTaskModal', () => {
   describe('emo_send_to_board_intake_for_review', () => {
     const taskType = 'EducationDocumentSearchTask';
     const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const modalType = 'emo_send_to_board_intake_for_review';
 
     test('modal title is Ready for Review', () => {
-      renderCompleteTaskModal('emo_send_to_board_intake_for_review', emoToBvaIntakeData, taskType);
-      expect(screen.getByText('Ready for Review')).toBeTruthy();
+      renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
+      expect(screen.getByText('Ready for review')).toBeTruthy();
     });
 
     test('When Centralized Mail Portal is chosen in Modal', () => {
-      renderCompleteTaskModal('emo_send_to_board_intake_for_review', emoToBvaIntakeData, taskType);
+      renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
 
-      enterModalOptions(
+      enterModalRadioOptions(
         'Centralized Mail Portal',
-        'Provide details such as file structure or file path',
+        'Provide details such as file structure or file path Optional',
         'EMO -> BVA Intake',
         buttonText
       );
@@ -204,11 +217,11 @@ describe('CompleteTaskModal', () => {
     });
 
     test('When Other is Chosen in Modal', () => {
-      renderCompleteTaskModal('emo_send_to_board_intake_for_review', emoToBvaIntakeData, taskType);
+      renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
 
-      enterModalOptions(
+      enterModalRadioOptions(
         'Other',
-        'Provide details such as file structure or file path',
+        'Provide details such as file structure or file path Optional',
         'EMO -> BVA Intake',
         buttonText,
         'Other Source'
@@ -223,18 +236,19 @@ describe('CompleteTaskModal', () => {
   describe('rpo_send_to_board_intake_for_review', () => {
     const taskType = 'EducationAssessDocumentationTask';
     const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const modalType = 'rpo_send_to_board_intake_for_review';
 
     test('modal title is Ready for Review', () => {
-      renderCompleteTaskModal('emo_send_to_board_intake_for_review', rpoToBvaIntakeData, taskType);
-      expect(screen.getByText('Ready for Review')).toBeTruthy();
+      renderCompleteTaskModal(modalType, rpoToBvaIntakeData, taskType);
+      expect(screen.getByText('Ready for review')).toBeTruthy();      
     });
 
     test('When Centralized Mail Portal is chosen in Modal', () => {
-      renderCompleteTaskModal('rpo_send_to_board_intake_for_review', rpoToBvaIntakeData, taskType);
+      renderCompleteTaskModal(modalType, rpoToBvaIntakeData, taskType);
 
-      enterModalOptions(
+      enterModalRadioOptions(
         'Centralized Mail Portal',
-        'Provide details such as file structure or file path',
+        'Provide details such as file structure or file path Optional',
         'RPO -> BVA Intake',
         buttonText
       );
@@ -245,11 +259,11 @@ describe('CompleteTaskModal', () => {
     });
 
     test('When Other is Chosen in Modal', () => {
-      renderCompleteTaskModal('rpo_send_to_board_intake_for_review', rpoToBvaIntakeData, taskType);
+      renderCompleteTaskModal(modalType, rpoToBvaIntakeData, taskType);
 
-      enterModalOptions(
+      enterModalRadioOptions(
         'Other',
-        'Provide details such as file structure or file path',
+        'Provide details such as file structure or file path Optional',
         'RPO -> BVA Intake',
         buttonText,
         'Other Source'
@@ -257,6 +271,103 @@ describe('CompleteTaskModal', () => {
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in Other Source.' +
         '\n\n**Detail:**\n\nRPO -> BVA Intake\n'
+      );
+    });
+  });
+
+  describe('vha_caregiver_support_return_to_board_intake', () => {
+    const taskType = 'VhaDocumentSearchTask';
+    const buttonText = COPY.MODAL_RETURN_BUTTON;
+    const modalType = 'vha_caregiver_support_return_to_board_intake';
+
+    test('Modal title to be "Return to Board Intake"', () => {
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
+      expect(screen.getByText('Return to Board Intake')).toBeTruthy();
+    });
+
+    test('Instructions are formatted properly whenever a non-other reason is selected for return', async () => {
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
+
+      selectFromDropdown(
+        'Why is this appeal being returned?',
+        'Not PCAFC related'
+      );
+
+      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
+
+      expect(getReceivedInstructions()).toBe(
+        '\n**Reason for return:**\nNot PCAFC related'
+      );
+    });
+
+    test('Instructions are formatted properly whenever a non-other reason and context is provided', async () => {
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
+
+      selectFromDropdown(
+        'Why is this appeal being returned?',
+        'Not PCAFC related'
+      );
+
+      const optionalTextArea = screen.getByRole(
+        'textbox', { name: 'Provide additional context for this action Optional' }
+      );
+
+      userEvent.type(optionalTextArea, 'Additional context');
+
+      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
+
+      expect(getReceivedInstructions()).toBe(
+        '\n**Reason for return:**\nNot PCAFC related' +
+        '\n\n**Detail:**\nAdditional context'
+      );
+    });
+
+    test('Instructions are formatted properly whenever "Other" reason is selected for return', async () => {
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
+
+      selectFromDropdown(
+        'Why is this appeal being returned?',
+        'Other'
+      );
+
+      const otherTextArea = screen.getByRole(
+        'textbox', { name: 'Please provide the reason for return' }
+      );
+
+      userEvent.type(otherTextArea, 'Reasoning for the return');
+
+      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
+
+      expect(getReceivedInstructions()).toBe(
+        '\n**Reason for return:**\nOther - Reasoning for the return'
+      );
+    });
+
+    test('Instructions are formatted properly when "Other" reason is selected for return plus context', async () => {
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
+
+      selectFromDropdown(
+        'Why is this appeal being returned?',
+        'Other'
+      );
+
+      const otherTextArea = screen.getByRole(
+        'textbox', { name: 'Please provide the reason for return' }
+      );
+
+      userEvent.type(otherTextArea, 'Reasoning for the return');
+
+      const optionalTextArea = screen.getByRole(
+        'textbox', { name: 'Provide additional context for this action Optional' }
+      );
+
+      userEvent.type(optionalTextArea, 'Additional context');
+
+      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
+
+      expect(getReceivedInstructions()).toBe(
+        '\n**Reason for return:**\nOther - Reasoning for the return' +
+        '\n\n**Detail:**\nAdditional context'
       );
     });
   });

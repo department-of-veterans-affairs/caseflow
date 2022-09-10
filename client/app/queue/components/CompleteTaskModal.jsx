@@ -131,9 +131,9 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             name="instructions"
             id="completeTaskInstructions"
             onChange={(value) => setState({ instructions: value })}
+            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             value={state.instructions}
             styling={marginTop(4)}
-            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
               !validInstructions(state.instructions) &&
               !isOptional() ? COPY.EMPTY_INSTRUCTIONS_ERROR :
@@ -349,7 +349,7 @@ const MODAL_TYPE_ATTRS = {
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_PO, appeal.veteranFullName) :
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_VISN, appeal.veteranFullName)
     }),
-    title: () => COPY.VHA_COMPLETE_TASK_LABEL,
+    title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
   },
@@ -390,7 +390,7 @@ const MODAL_TYPE_ATTRS = {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
     }),
-    title: () => COPY.VHA_COMPLETE_TASK_LABEL,
+    title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
   },
@@ -398,7 +398,7 @@ const MODAL_TYPE_ATTRS = {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
     }),
-    title: () => COPY.VHA_COMPLETE_TASK_LABEL,
+    title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
   },
@@ -421,13 +421,13 @@ const MODAL_TYPE_ATTRS = {
       let formattedInstructions = '';
 
       if (state.dropdown === 'other') {
-        formattedInstructions += `\nReason for return: Other - ${state.otherInstructions}`;
+        formattedInstructions += `\n**Reason for return:**\nOther - ${state.otherInstructions}`;
       } else {
-        formattedInstructions += `\nReason for return: ${state.dropdown}`;
+        formattedInstructions += `\n**Reason for return:**\n${state.dropdown}`;
       }
 
       if (state.instructions) {
-        formattedInstructions += `\nDetails:\n${state.instructions}`;
+        formattedInstructions += `\n\n**Detail:**\n${state.instructions}`;
       }
 
       return formattedInstructions;
@@ -439,7 +439,7 @@ const MODAL_TYPE_ATTRS = {
       title: sprintf(
         COPY.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE, appeal.veteranFullName)
     }),
-    title: () => COPY.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
+    title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SEND_BUTTON,
     submitDisabled: ({ state }) => {
