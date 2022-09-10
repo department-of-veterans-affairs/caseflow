@@ -53,7 +53,7 @@ describe HearingRequestDocket, :all_dbs do
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
 
         # This is the only one that is still considered tied (we want only non_genpop)
-        appeal = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
+        create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
 
         # This appeal should not be returned because it is now considered genpop
         outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
@@ -96,8 +96,8 @@ describe HearingRequestDocket, :all_dbs do
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_other_judge
 
         # appeals that should be returned
-        appeal = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-        another = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
+        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
+        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
 
         tasks = subject
 
