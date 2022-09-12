@@ -205,6 +205,62 @@ describe AppellantNotification do
     end
   end
 
+  describe DocketHearingPostponed do
+    describe ".update_hearing" do
+      let!(:user) { create(:user) }
+      let(:nyc_ro_eastern) { "RO06" }
+      let(:video_type) { HearingDay::REQUEST_TYPES[:video] }
+      let(:hearing_day) { create(:hearing_day, regional_office: nyc_ro_eastern, request_type: video_type) }
+      let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
+      context "when a hearing coordinator selects 'postponed' on the daily docket page for an AMA Appeal" do
+        let(:template_name) { "Postponement of hearing" }
+        let(:params) do
+          {
+            hearing: hearing.reload,
+            virtual_hearing_attributes: {
+              appellant_email: "veteran@example.com",
+              representative_email: "representative@example.com"
+            },
+            disposition: Constants.HEARING_DISPOSITION_TYPES.postponed
+          }
+        end
+        let(:hearing_update_form) { HearingUpdateForm.new(params) }
+        it "the appellant will be notified that their hearing has been postponed" do
+          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
+          hearing_update_form.update_hearing
+        end
+      end
+    end
+  end
+
+  describe DocketHearingWithdrawn do
+    describe ".update_hearing" do
+      let!(:user) { create(:user) }
+      let(:nyc_ro_eastern) { "RO06" }
+      let(:video_type) { HearingDay::REQUEST_TYPES[:video] }
+      let(:hearing_day) { create(:hearing_day, regional_office: nyc_ro_eastern, request_type: video_type) }
+      let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
+      context "when a hearing coordinator selects 'cancelled' on the daily docket page for an AMA Appeal" do
+        let(:template_name) { "Withdrawal of hearing" }
+        let(:params) do
+          {
+            hearing: hearing.reload,
+            virtual_hearing_attributes: {
+              appellant_email: "veteran@example.com",
+              representative_email: "representative@example.com"
+            },
+            disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled
+          }
+        end
+        let(:hearing_update_form) { HearingUpdateForm.new(params) }
+        it "the appellant will be notified that their hearing has been withdrawn" do
+          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
+          hearing_update_form.update_hearing
+        end
+      end
+    end
+  end
+
   describe HearingWithdrawn do
     describe "#cancel!" do
       let(:template_name) { "Withdrawal of hearing" }

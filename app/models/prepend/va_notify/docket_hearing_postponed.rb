@@ -12,7 +12,7 @@ module DocketHearingPostponed
   def update_hearing
     super_return_value = super
     if hearing_updates[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed
-      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.notify_appellant(hearing.appeal, @@template_name)
     end
     super_return_value
   end
