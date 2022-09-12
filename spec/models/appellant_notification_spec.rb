@@ -262,7 +262,7 @@ describe AppellantNotification do
   end
 
   describe DocketHearingPostponedLegacy do
-    let(:template_name) { "Postponement of hearing" }
+    let!(:template_name) { "Postponement of hearing" }
     let(:bva) { Bva.singleton }
     let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
     describe ".update_hearing" do
@@ -305,7 +305,7 @@ describe AppellantNotification do
   end
 
   describe DocketHearingWithdrawnLegacy do
-    let(:template_name) { "Withdrawal of hearing" }
+    let!(:template_name) { "Withdrawal of hearing" }
     let(:bva) { Bva.singleton }
     let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
     describe ".update_hearing" do
@@ -335,7 +335,7 @@ describe AppellantNotification do
         end
         let(:hearing_info) do
           {
-            disposition: "P",
+            disposition: "C",
             staff_id: "ID8"
           }
         end
