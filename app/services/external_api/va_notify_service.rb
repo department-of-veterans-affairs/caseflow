@@ -116,7 +116,7 @@ class ExternalApi::VANotifyService
             id_type: "PID",
             id_value: participant_id
           },
-          personalisation: nil
+          personalisation: {}
         },
         headers: HEADERS,
         endpoint: SEND_EMAIL_NOTIFICATION_ENDPOINT, method: :post
@@ -147,7 +147,7 @@ class ExternalApi::VANotifyService
             id_value: participant_id
           },
           sms_sender_id: SENDER_ID || "",
-          personalisation: nil
+          personalisation: {}
         },
         headers: HEADERS,
         endpoint: SEND_SMS_NOTIFICATION_ENDPOINT, method: :post
