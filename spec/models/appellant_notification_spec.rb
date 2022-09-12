@@ -206,8 +206,8 @@ describe AppellantNotification do
   end
 
   describe HearingWithdrawn do
-    describe "#cancel!" do
-      let(:template_name) { "Withdrawal of hearing" }
+    let(:template_name) { "Withdrawal of hearing" }
+    context "case details" do
       let(:withdrawn_hearing) { create(:hearing, :cancelled, :with_tasks) }
       let(:hearing_hash) { { disposition: "cancelled" } }
       it "will notify appellant when a hearing is withdrawn/cancelled" do
@@ -215,6 +215,31 @@ describe AppellantNotification do
         hearing_disposition_task = appeal.tasks.find_by(type: "AssignHearingDispositionTask")
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
         hearing_disposition_task.update_hearing(hearing_hash)
+      end
+    end
+    context "daily docket" do
+      context "AMA" do
+        let(:appeal) { create(:appeal) }
+        let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
+        let(:hearing) { create(:hearing) }
+        it "will notify appellant when a hearing is withdrawn/cancelled" do
+          expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
+
+        end
+      end
+      context "Legacy" do
+        let!(:appeal) { create(:legacy_appeal) }
+        let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
+        let(:hearing) { create(:legacy_hearing) }
+        let(:hearing_info) do
+          {
+            disposition: "cancelled"
+          }
+        end
+        it "will notify appellant when a hearing is withdrawn/cancelled" do
+          expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
+
+        end
       end
     end
   end
