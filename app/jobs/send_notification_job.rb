@@ -85,7 +85,7 @@ class SendNotificationJob < CaseflowJob
     if @va_notify_email
       response = VANotifyService.send_email_notifications(message.participant_id, notification_audit_record.id, email_template_id, status = "")
       if !response.nil? && response != ""
-        to_update = { notification_content: response["content"] }
+        to_update = { notification_content: response.raw_body["content"]["body"] }
         update_notification_audit_record(notification_audit_record, to_update)
       end
     end
@@ -93,7 +93,7 @@ class SendNotificationJob < CaseflowJob
     if @va_notify_sms
       response = VANotifyService.send_sms_notifications(message.participant_id, notification_audit_record.id, sms_template_id, status = "")
       if !response.nil? && response != ""
-        to_update = { notification_content: response["content"] }
+        to_update = { notification_content: response.raw_body["content"]["body"] }
         update_notification_audit_record(notification_audit_record, to_update)
       end
     end
