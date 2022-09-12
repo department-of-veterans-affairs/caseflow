@@ -10,7 +10,7 @@ describe SendNotificationJob, type: :job do
   let(:error_status) { "No participant_id" }
   let(:success_message_attributes) {
     {
-      participant_id: "1234567890",
+      participant_id: "123456789",
       status: success_status,
       appeal_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
       appeal_type: "Appeal"
@@ -26,7 +26,7 @@ describe SendNotificationJob, type: :job do
   }
   let(:fail_create_message_attributes) {
     {
-      participant_id: "1234567890",
+      participant_id: "123456789",
       status: success_status,
       appeal_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
       appeal_type: nil
@@ -205,6 +205,11 @@ describe SendNotificationJob, type: :job do
         expect(VANotifyService).to receive(:send_email_notifications)
         SendNotificationJob.perform_now(good_message.to_json)
       end
+      it "updates the notification_audit_record with content" do
+        FeatureToggle.enable!(:va_notify_email)
+        SendNotificationJob.perform_now(good_message.to_json)
+        expect(Notification.last.notification_content).not_to eq(nil)
+      end
       it "is expected to not send when the feature toggle is off" do
         FeatureToggle.disable!(:va_notify_email)
         expect(VANotifyService).not_to receive(:send_email_notifications)
@@ -217,6 +222,11 @@ describe SendNotificationJob, type: :job do
         FeatureToggle.enable!(:va_notify_sms)
         expect(VANotifyService).to receive(:send_sms_notifications)
         SendNotificationJob.perform_now(good_message.to_json)
+      end
+      it "updates the notification_audit_record with content" do
+        FeatureToggle.enable!(:va_notify_sms)
+        SendNotificationJob.perform_now(good_message.to_json)
+        expect(Notification.last.notification_content).not_to eq(nil)
       end
       it "is expected to not send when the feature toggle is off" do
         FeatureToggle.disable!(:va_notify_sms)
