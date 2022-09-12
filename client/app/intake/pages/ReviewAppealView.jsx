@@ -3,7 +3,7 @@ import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { StateContext } from '../../intakeEdit/IntakeEditFrame';
 import { css, target } from 'glamor';
-import CaseHearingsDetail from '../../queue/CaseHearingsDetail';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 const styles = {
   mainTable: css({
@@ -55,11 +55,10 @@ const styles = {
   })
 };
 
-{console.log(JSON.stringify(CaseHearingsDetail))}
-
 const ReviewAppealView = (props) => {
   const { serverIntake } = props;
   const { reason, setOtherReason, otherReason, selectedIssues, setSelectedIssues } = useContext(StateContext);
+
   const veteran = serverIntake.veteran.name;
   const streamdocketNumber = props.appeal.stream_docket_number;
   const claimantName = props.serverIntake.claimantName;
@@ -67,6 +66,8 @@ const ReviewAppealView = (props) => {
   const docketType = props.serverIntake.docketType;
   const original_hearing_request_type = props.appeal.original_hearing_request_type;
   const receiptDate = props.serverIntake.receiptDate;
+  const hearings = props.hearings;
+  {console.log(JSON.stringify(props.hearings.disposition))}
 
   const onIssueChange = (evt) => {
     setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.labels[0].innerText });
@@ -140,7 +141,12 @@ const ReviewAppealView = (props) => {
               </div>
             </td>
             <td>
-            "Sometext"
+              <Link
+                rel="noopener"
+                target="_blank"
+                href={`/hearings/worksheet/print?keep_open=true&hearing_ids=${hearings[0].uuid}`}>
+                {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
+              </Link>
             </td>
           </tr>
           <tr>
@@ -173,4 +179,4 @@ const ReviewAppealView = (props) => {
 ReviewAppealView.propTypes = {
   serverIntake: PropTypes.object
 };
-export default ReviewAppealView;
+export default (ReviewAppealView);
