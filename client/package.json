@@ -57,7 +57,7 @@
     "@babel/preset-react": "^7.12.7",
     "@babel/register": "^7.12.1",
     "@babel/runtime-corejs2": "^7.12.5",
-    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#5e4e2072f47440856fb807a7740c61f454652892",
+    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#6600c4c1c6e10ed59e290b7c018e8c76bc383734",
     "@fortawesome/fontawesome-free": "^5.3.1",
     "@hookform/resolvers": "^2.0.0-beta.5",
     "@reduxjs/toolkit": "^1.4.0",
