@@ -12,6 +12,7 @@ module DocketHearingPostponedLegacy
   def update_hearing!(hearing_info)
     super_return_value = super
     if hearing_info[:disposition].to_s == "P"
+      appeal = LegacyAppeal.find_by(vacols_id: folder_nr)
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
     super_return_value
