@@ -152,7 +152,7 @@ FactoryBot.define do
       end
 
       after(:create) do |appeal, evaluator|
-        create(:hearing, judge: nil, disposition: "held", appeal: appeal, adding_user: evaluator.adding_user)
+        create(:hearing, :held, judge: nil, appeal: appeal, adding_user: evaluator.adding_user)
       end
     end
 

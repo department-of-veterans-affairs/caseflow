@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :user do
-    sequence(:css_id) { |n| "CSS_ID#{n}" }
+    sequence(:css_id, User.count + 1) { |n| "CSS_ID#{n}" }
 
     station_id { User::BOARD_STATION_ID }
     full_name { "Lauren Roth" }

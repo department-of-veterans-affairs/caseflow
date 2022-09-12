@@ -251,7 +251,7 @@ module Seeds
         create(
           :appeal,
           :hearing_docket,
-          :ready_for_distribution,
+          :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
           :held_hearing,
           receipt_date: num.days.ago,
