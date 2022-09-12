@@ -208,8 +208,8 @@ describe SendNotificationJob, type: :job do
       end
       it "updates the notification_audit_record with content" do
         FeatureToggle.enable!(:va_notify_email)
-        expect(Notification.last.notification_content).not_to eq(nil)
         SendNotificationJob.perform_now(good_message.to_json)
+        expect(Notification.last.notification_content).not_to eq(nil)
       end
       it "is expected to not send when the feature toggle is off" do
         FeatureToggle.disable!(:va_notify_email)
@@ -226,8 +226,8 @@ describe SendNotificationJob, type: :job do
       end
       it "updates the notification_audit_record with content" do
         FeatureToggle.enable!(:va_notify_sms)
-        expect(Notification.last.notification_content).not_to eq(nil)
         SendNotificationJob.perform_now(good_message.to_json)
+        expect(Notification.last.notification_content).not_to eq(nil)
       end
       it "is expected to not send when the feature toggle is off" do
         FeatureToggle.disable!(:va_notify_sms)
