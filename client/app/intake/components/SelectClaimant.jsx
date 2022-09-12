@@ -82,11 +82,11 @@ export const SelectClaimant = (props) => {
   } = props;
 
   const [newClaimant] = useState(null);
-  const isAppeal = true;
+  const isAppeal = (formType === 'appeal');
 
   const enableAddClaimant = useMemo(
-    () => isAppeal && veteranIsNotClaimant,
-    [isAppeal, veteranIsNotClaimant]
+    () => veteranIsNotClaimant,
+    [veteranIsNotClaimant]
   );
 
   const radioOpts = useMemo(() => {
