@@ -1846,7 +1846,7 @@
       "updated_at": null,
       "status": "active",
       "status_updated_at": null,
-      "accepts_priority_pushed_cases": true
+      "accepts_priority_pushed_cases": false
     },
     {
       "id": 141,
@@ -1885,7 +1885,7 @@
       "updated_at": null,
       "status": "active",
       "status_updated_at": null,
-      "accepts_priority_pushed_cases": true
+      "accepts_priority_pushed_cases": false
     },
     {
       "id": 188,
@@ -1898,7 +1898,7 @@
       "updated_at": null,
       "status": "active",
       "status_updated_at": null,
-      "accepts_priority_pushed_cases": true
+      "accepts_priority_pushed_cases": false
     },
     {
       "id": 196,
@@ -1911,7 +1911,7 @@
       "updated_at": null,
       "status": "active",
       "status_updated_at": null,
-      "accepts_priority_pushed_cases": true
+      "accepts_priority_pushed_cases": false
     },
     {
       "id": 213,
