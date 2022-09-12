@@ -34,16 +34,16 @@ class SendNotificationJob < CaseflowJob
       @va_notify_sms = FeatureToggle.enabled?(:va_notify_sms)
       message = JSON.parse(message_json, object_class: OpenStruct)
       if message.appeal_id && message.appeal_type && message.template_name
-        notification_audit_record = create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name)
-        if notification_audit_record
+        @notification_audit_record ||= create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name)
+        if @notification_audit_record
           if message.status != "No participant_id" && message.status != "No claimant"
             to_update = { sms_notification_status: message.status, email_notification_status: message.status }
-            update_notification_audit_record(notification_audit_record, to_update)
-            send_to_va_notify(message, notification_audit_record)
+            update_notification_audit_record(@notification_audit_record, to_update)
+            send_to_va_notify(message, @notification_audit_record)
           else
             status = (message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
             to_update = { sms_notification_status: status, email_notification_status: status }
-            update_notification_audit_record(notification_audit_record, to_update)
+            update_notification_audit_record(@notification_audit_record, to_update)
           end
         else
           log_error("Audit record was unable to be found or created in SendNotificationListnerJob. Exiting Job.")
