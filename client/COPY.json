@@ -287,8 +287,8 @@
   "USER_QUEUE_PAGE_TABLE_TITLE": "Your cases",
   "USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to you:",
   "USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
-  "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last 7 days):",
-  "VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed:",
+  "QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION": "Cases completed (last 7 days):",
+  "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed:",
 
   "EDUCATION_EMO_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of a Regional Processing Office team or Board Intake:",
   "EDUCATION_EMO_QUEUE_PAGE_COMPLETED_TASKS_DESCRIPTION": "Cases completed:",
