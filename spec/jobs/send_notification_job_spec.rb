@@ -3,7 +3,14 @@
 describe SendNotificationJob, type: :job do
   include ActiveJob::TestHelper
   let(:current_user) { create(:user, roles: ["System Admin"]) }
-  let(:notification) { create(:notification, appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576", appeals_type: "Appeal", event_type: "Hearing scheduled", event_date: Time.zone.today, notification_type: "Email") }
+  let(:notification) do
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "Email")
+  end
   # rubocop:disable Style/BlockDelimiters
   let(:good_template_name) { "Appeal docketed" }
   let(:error_template_name) { "No Participant Id Found" }
