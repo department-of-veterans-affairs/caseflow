@@ -205,16 +205,144 @@ describe AppellantNotification do
     end
   end
 
-  describe HearingWithdrawn do
-    describe "#cancel!" do
-      let(:template_name) { "Withdrawal of hearing" }
-      let(:withdrawn_hearing) { create(:hearing, :cancelled, :with_tasks) }
-      let(:hearing_hash) { { disposition: "cancelled" } }
-      it "will notify appellant when a hearing is withdrawn/cancelled" do
-        appeal = withdrawn_hearing.appeal
-        hearing_disposition_task = appeal.tasks.find_by(type: "AssignHearingDispositionTask")
-        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
-        hearing_disposition_task.update_hearing(hearing_hash)
+  describe DocketHearingPostponed do
+    describe ".update_hearing" do
+      let!(:user) { create(:user) }
+      let(:nyc_ro_eastern) { "RO06" }
+      let(:video_type) { HearingDay::REQUEST_TYPES[:video] }
+      let(:hearing_day) { create(:hearing_day, regional_office: nyc_ro_eastern, request_type: video_type) }
+      let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
+      context "when a hearing coordinator selects 'postponed' on the daily docket page for an AMA Appeal" do
+        let(:template_name) { "Postponement of hearing" }
+        let(:params) do
+          {
+            hearing: hearing.reload,
+            virtual_hearing_attributes: {
+              appellant_email: "veteran@example.com",
+              representative_email: "representative@example.com"
+            },
+            disposition: Constants.HEARING_DISPOSITION_TYPES.postponed
+          }
+        end
+        let(:hearing_update_form) { HearingUpdateForm.new(params) }
+        it "the appellant will be notified that their hearing has been postponed" do
+          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
+          hearing_update_form.update_hearing
+        end
+      end
+    end
+  end
+
+  describe DocketHearingWithdrawn do
+    describe ".update_hearing" do
+      let!(:user) { create(:user) }
+      let(:nyc_ro_eastern) { "RO06" }
+      let(:video_type) { HearingDay::REQUEST_TYPES[:video] }
+      let(:hearing_day) { create(:hearing_day, regional_office: nyc_ro_eastern, request_type: video_type) }
+      let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
+      context "when a hearing coordinator selects 'cancelled' on the daily docket page for an AMA Appeal" do
+        let(:template_name) { "Withdrawal of hearing" }
+        let(:params) do
+          {
+            hearing: hearing.reload,
+            virtual_hearing_attributes: {
+              appellant_email: "veteran@example.com",
+              representative_email: "representative@example.com"
+            },
+            disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled
+          }
+        end
+        let(:hearing_update_form) { HearingUpdateForm.new(params) }
+        it "the appellant will be notified that their hearing has been withdrawn" do
+          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
+          hearing_update_form.update_hearing
+        end
+      end
+    end
+  end
+
+  describe DocketHearingPostponedLegacy do
+    let!(:template_name) { "Postponement of hearing" }
+    let(:bva) { Bva.singleton }
+    let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
+    describe ".update_hearing" do
+      before do
+        Bva.singleton.add_user(hearing_coord)
+        RequestStore[:current_user] = hearing_coord
+      end
+      context "Legacy" do
+        let(:ro_id) { "RO04" }
+        let!(:vacols_case) do
+          create(
+            :case,
+            bfregoff: ro_id,
+            bfdocind: HearingDay::REQUEST_TYPES[:video]
+          )
+        end
+        let!(:appeal) do
+          create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: ro_id)
+        end
+        let(:hearing) { create(:legacy_hearing, appeal: appeal) }
+        let!(:case_hearing) do
+          create(
+            :case_hearing,
+            hearing_type: HearingDay::REQUEST_TYPES[:video],
+            folder_nr: appeal.vacols_id
+          )
+        end
+        let(:hearing_info) do
+          {
+            disposition: "P",
+            staff_id: "ID8"
+          }
+        end
+        it "will notify appellant when a hearing is postponed" do
+          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
+          case_hearing.update_hearing!(hearing_info)
+        end
+      end
+    end
+  end
+
+  describe DocketHearingWithdrawnLegacy do
+    let!(:template_name) { "Withdrawal of hearing" }
+    let(:bva) { Bva.singleton }
+    let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
+    describe ".update_hearing" do
+      before do
+        Bva.singleton.add_user(hearing_coord)
+        RequestStore[:current_user] = hearing_coord
+      end
+      context "Legacy" do
+        let(:ro_id) { "RO04" }
+        let!(:vacols_case) do
+          create(
+            :case,
+            bfregoff: ro_id,
+            bfdocind: HearingDay::REQUEST_TYPES[:video]
+          )
+        end
+        let!(:appeal) do
+          create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: ro_id)
+        end
+        let(:hearing) { create(:legacy_hearing, appeal: appeal) }
+        let!(:case_hearing) do
+          create(
+            :case_hearing,
+            hearing_type: HearingDay::REQUEST_TYPES[:video],
+            folder_nr: appeal.vacols_id
+          )
+        end
+        let(:hearing_info) do
+          {
+            disposition: "C",
+            staff_id: "ID8"
+          }
+        end
+        it "will notify appellant when a hearing is withdrawn/cancelled" do
+          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
+          case_hearing.update_hearing!(hearing_info)
+        end
       end
     end
   end
