@@ -58,7 +58,6 @@ const styles = {
 const ReviewAppealView = (props) => {
   const { serverIntake } = props;
   const { reason, setOtherReason, otherReason, selectedIssues, setSelectedIssues } = useContext(StateContext);
-
   const veteran = serverIntake.veteran.name;
   const streamdocketNumber = props.appeal.stream_docket_number;
   const claimantName = props.serverIntake.claimantName;
@@ -67,7 +66,7 @@ const ReviewAppealView = (props) => {
   const original_hearing_request_type = props.appeal.original_hearing_request_type;
   const receiptDate = props.serverIntake.receiptDate;
   const hearings = props.hearings;
-  {console.log(JSON.stringify(props.hearings.disposition))}
+  {console.log(JSON.stringify(props.hearings[0].disposition))}
 
   const onIssueChange = (evt) => {
     setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.labels[0].innerText });
@@ -139,14 +138,39 @@ const ReviewAppealView = (props) => {
               <div>
                 {receiptDate}
               </div>
+              <div>
+                { JSON.stringify(props.hearings[0].disposition) }
+              </div>
+              <div>
+                <Link
+                  rel="noopener"
+                  target="_blank"
+                  href={`/hearings/worksheet/print?keep_open=true&hearing_ids=${hearings[0].uuid}`}>
+                  {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
+                </Link>
+              </div>
             </td>
             <td>
-              <Link
-                rel="noopener"
-                target="_blank"
-                href={`/hearings/worksheet/print?keep_open=true&hearing_ids=${hearings[0].uuid}`}>
-                {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
-              </Link>
+            <div>
+                {docketType}
+              </div>
+              <div>
+                {original_hearing_request_type}
+              </div>
+              <div>
+                {receiptDate}
+              </div>
+              <div>
+                { JSON.stringify(props.hearings[0].disposition) }
+              </div>
+              <div>
+                <Link
+                  rel="noopener"
+                  target="_blank"
+                  href={`/hearings/worksheet/print?keep_open=true&hearing_ids=${hearings[0].uuid}`}>
+                  {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
+                </Link>
+              </div>
             </td>
           </tr>
           <tr>
