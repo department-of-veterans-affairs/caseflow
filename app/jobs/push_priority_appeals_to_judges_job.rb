@@ -94,11 +94,11 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def distribute_priority_appeals
-    eligible_judge_target_distributions_with_leftovers.map do |judge_id, target|
+    eligible_judges.map do |judge_id|
       Distribution.create!(
         judge: User.find(judge_id),
         priority_push: true
-      ).tap { |distribution| distribution.distribute!(target) }
+      ).tap { |distribution| distribution.distribute!(distribution.batch_size) }
     end
   end
 
