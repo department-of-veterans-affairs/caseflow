@@ -185,7 +185,7 @@ export default function TestUsers(props) {
                   Here you can test out different user stories by selecting
                   a Test User and accessing different parts of the application.</p>
                 <section className="usa-form-large">
-                  <h2>User Selector:</h2>
+                  <h3>User Selector:</h3>
                   <SearchableDropdown
                     name="Test user dropdown"
                     hideLabel

@@ -632,7 +632,7 @@ export default class QueueTable extends React.PureComponent {
         aria-label={COPY.CASE_LIST_TABLE_TITLE}
         aria-describedby="case-table-description"
         role="table"
-        id={id ?? "case-table-description"}
+        id={id ?? 'case-table-description'}
         className={`usa-table-borderless ${this.props.className}`}
         {...styling}
       >

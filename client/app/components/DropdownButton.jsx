@@ -84,11 +84,11 @@ export default class DropdownButton extends React.Component {
   render() {
     const { label } = this.props;
 
-    return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer} role="dropdown-button">
+    return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer} >
       <button {...dropdownBtn}
         role="dropdown-button"
         id="dropdown-button"
-        aria-label={label || "dropdown-button"}
+        aria-label={label || 'dropdown-button'}
         aria-haspopup="true"
         aria-expanded="true"
         onClick={this.onMenuClick}
