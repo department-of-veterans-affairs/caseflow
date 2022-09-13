@@ -366,7 +366,7 @@
     "func": "docket_appeal_data"
   },
   "BVA_INTAKE_RETURN_TO_CAMO": {
-    "label": "Return appeal to VHA",
+    "label": "Return appeal to VHA CAMO",
     "value": "modal/bva_intake_return_to_camo",
     "func": "bva_intake_return_to_camo"
   },
