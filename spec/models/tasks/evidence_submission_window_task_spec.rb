@@ -102,6 +102,29 @@ describe EvidenceSubmissionWindowTask, :postgres do
     include_examples "works for all remand subtypes"
   end
 
+  context "appeal with no vso and hearing disposition is no_show, EvidenceSubmissionWindow in Progress" do
+    let(:docket_type) { Constants.AMA_DOCKETS.hearing }
+    let(:hearing) { create(:hearing, :no_show, :with_completed_tasks, appeal: appeal_no_vso) }
+
+    let!(:task) do
+      EvidenceSubmissionWindowTask.create!(
+        appeal: appeal_no_vso,
+        assigned_to: MailTeam.singleton,
+        parent: HearingTaskAssociation.find_by(hearing_id: hearing.id).hearing_task
+      )
+    end
+
+    it "parent HearingTask is on hold and grandparent DistributionTask is on hold" do
+      task.reload
+
+      expect(task.parent.status).to eq(Constants.TASK_STATUSES.on_hold)
+      expect(task.parent.parent.status).to eq(Constants.TASK_STATUSES.on_hold)
+    end
+  end
+
+  include_examples "works for all remand subtypes"
+end
+
   context "on manual completion by user" do
     let(:mail_user) { create(:user) }
     let(:mail_team) { MailTeam.singleton }
