@@ -110,6 +110,7 @@ class StartHoldModal extends React.Component {
       title={TASK_ACTIONS.PLACE_TIMED_HOLD.label}
       pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
       validateForm={this.validateForm}
+      submitButtonClassNames={['usa-button']}
       submit={this.submit}
     >
       {this.props.task.type === 'AssessDocumentationTask' ?
