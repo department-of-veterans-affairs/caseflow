@@ -159,5 +159,22 @@ describe ReceiveNotificationJob, type: :job do
         expect(record.email_notification_status).to eq(message[:message_attributes][:status][:string_value].capitalize)
       end
     end
+
+    describe "errors" do
+      it "logs error when message is nil" do
+        expect(Rails.logger).to receive(:error).with(/There was no message passed/)
+        perform_enqueued_jobs do
+          ReceiveNotificationJob.perform_later(nil)
+        end
+      end
+
+      it "logs error when message_attributes is nil" do
+        message[:message_attributes] = nil
+        expect(Rails.logger).to receive(:error).with(/message_attributes was nil/)
+        perform_enqueued_jobs do
+          ReceiveNotificationJob.perform_later(message)
+        end
+      end
+    end
   end
 end
