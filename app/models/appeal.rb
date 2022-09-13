@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "securerandom"
 
 ##
 # An appeal filed by a Veteran or appellant to the Board of Veterans' Appeals for VA decisions on claims for benefits.
@@ -108,6 +109,20 @@ class Appeal < DecisionReview
   # amoeba gem for splitting appeals
   amoeba do
     enable
+
+    # lambda for setting up a new UUID for the appeal first
+    override(lambda { |_, dup_appeal|
+      # set the UUID to nil so that it is auto generated
+      dup_appeal.uuid = nil
+      # generate UUIDs
+      dup_appeal.uuid = SecureRandom.uuid
+      # make sure the uuid doesn't exist in the database (by some chance)
+      while !Appeal.find_by_uuid(dup_appeal.uuid).nil?
+        # generate new id if not
+        dup_appeal.uuid = SecureRandom.uuid
+      end
+    })
+
     # include_association :advance_on_docket_motion
     include_association :appeal_views
     include_association :appellant_substitution
@@ -118,20 +133,29 @@ class Appeal < DecisionReview
     include_association :claims_folder_searches
     # include_association :hearing_appeal_stream_snapshots
     include_association :hearings
-    # include_association :ihp_drafts
     include_association :judge_case_reviews
     # include_association :legacy_issue_optins
     include_association :nod_date_updates
     # include_association :ramp_refilings
-    # include_association :tasks
     include_association :vbms_uploaded_documents
     include_association :work_mode
 
-    # # lambda for setting up tasks to be assigned from parent to child
-    # customize(lambda { |_, dup_appeal|
-    #   # remove parent appeal from each task in task tree
-    #   dup_appeal.tasks.each { |task| task.parent_id = nil }
-    # })
+    # lambda for setting up a new UUID for the hearing
+    customize(lambda { |_, dup_appeal|
+      # set the UUID to nil so that it is auto generated
+      dup_appeal.hearings.each { |hearing| hearing.uuid = nil }
+      # generate UUIDs
+      dup_appeal.hearings.each { |hearing| hearing.uuid = SecureRandom.uuid }
+      # make sure the uuid doesn't exist in the database (by some chance)
+      dup_appeal.hearings.each do |hearing|
+        while !Hearing.find_by_uuid(hearing.uuid).nil?
+          # generate new id if not 
+          hearing.uuid = SecureRandom.uuid
+        end
+      end
+    })
+
+
   end
 
   def document_fetcher
