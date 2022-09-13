@@ -33,7 +33,6 @@ module Seeds
           build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO"),
           build(:claimant, participant_id: "OTHER_CLAIMANT")
         ],
-        veteran_file_number: "701305078",
         docket_type: Constants.AMA_DOCKETS.direct_review,
         request_issues: create_list(:request_issue, 3, :nonrating, notes: notes)
       )
@@ -42,21 +41,20 @@ module Seeds
       dr = Constants.AMA_DOCKETS.direct_review
       # Older style, tasks to be created later
       [
-        { number_of_claimants: nil, veteran_file_number: "783740847", docket_type: es, request_issue_count: 3 },
-        { number_of_claimants: 1, veteran_file_number: "228081153", docket_type: es, request_issue_count: 1 },
-        { number_of_claimants: 1, veteran_file_number: "152003980", docket_type: dr, request_issue_count: 3 },
-        { number_of_claimants: 1, veteran_file_number: "375273128", docket_type: dr, request_issue_count: 1 },
-        { number_of_claimants: 1, veteran_file_number: "682007349", docket_type: dr, request_issue_count: 5 },
-        { number_of_claimants: 1, veteran_file_number: "231439628", docket_type: dr, request_issue_count: 1 },
-        { number_of_claimants: 1, veteran_file_number: "975191063", docket_type: dr, request_issue_count: 8 },
-        { number_of_claimants: 1, veteran_file_number: "662643660", docket_type: dr, request_issue_count: 8 },
-        { number_of_claimants: 1, veteran_file_number: "162726229", docket_type: dr, request_issue_count: 8 },
-        { number_of_claimants: 1, veteran_file_number: "760362568", docket_type: dr, request_issue_count: 8 }
+        { number_of_claimants: nil, docket_type: es, request_issue_count: 3 },
+        { number_of_claimants: 1, docket_type: es, request_issue_count: 1 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 3 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 1 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 5 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 1 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 8 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 8 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 8 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 8 }
       ].each do |params|
         @ama_appeals << create(
           :appeal,
           number_of_claimants: params[:number_of_claimants],
-          veteran_file_number: params[:veteran_file_number],
           docket_type: params[:docket_type],
           request_issues: create_list(
             :request_issue, params[:request_issue_count], :nonrating, notes: notes
@@ -66,15 +64,14 @@ module Seeds
 
       # Newer style, tasks created through the Factory trait
       [
-        { number_of_claimants: nil, veteran_file_number: "963360019", docket_type: dr, request_issue_count: 2 },
-        { number_of_claimants: 1, veteran_file_number: "604969679", docket_type: dr, request_issue_count: 1 }
+        { number_of_claimants: nil, docket_type: dr, request_issue_count: 2 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 1 }
       ].each do |params|
         create(
           :appeal,
           :assigned_to_judge,
           number_of_claimants: params[:number_of_claimants],
           active_task_assigned_at: Time.zone.now,
-          veteran_file_number: params[:veteran_file_number],
           docket_type: params[:docket_type],
           closest_regional_office: "RO17",
           request_issues: create_list(
@@ -85,13 +82,11 @@ module Seeds
 
       # Create AMA appeals ready for distribution
       (1..30).each do |num|
-        vet_file_number = format("3213213%<num>02d", num: num)
         create(
           :appeal,
           :ready_for_distribution,
           number_of_claimants: 1,
           active_task_assigned_at: Time.zone.now,
-          veteran_file_number: vet_file_number,
           docket_type: Constants.AMA_DOCKETS.direct_review,
           closest_regional_office: "RO17",
           receipt_date: num.days.ago,
@@ -103,13 +98,11 @@ module Seeds
 
       # Create AMA appeals blocked for distribution due to Evidence Window
       (1..30).each do |num|
-        vet_file_number = format("4324324%<num>02d", num: num)
         create(
           :appeal,
           :with_post_intake_tasks,
           number_of_claimants: 1,
           active_task_assigned_at: Time.zone.now,
-          veteran_file_number: vet_file_number,
           docket_type: Constants.AMA_DOCKETS.evidence_submission,
           closest_regional_office: "RO17",
           receipt_date: num.days.ago,
@@ -121,13 +114,11 @@ module Seeds
 
       # Create AMA appeals blocked for distribution due to blocking mail
       (1..30).each do |num|
-        vet_file_number = format("4324334%<num>02d", num: num)
         create(
           :appeal,
           :mail_blocking_distribution,
           number_of_claimants: 1,
           active_task_assigned_at: Time.zone.now,
-          veteran_file_number: vet_file_number,
           docket_type: Constants.AMA_DOCKETS.direct_review,
           closest_regional_office: "RO17",
           receipt_date: num.days.ago,
@@ -136,11 +127,11 @@ module Seeds
           )
         )
       end
-      LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
-      LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
-      LegacyAppeal.create(vacols_id: "2249056", vbms_id: "608428712S")
-      LegacyAppeal.create(vacols_id: "2306397", vbms_id: "779309925S")
-      LegacyAppeal.create(vacols_id: "2657227", vbms_id: "169397130S")
+      LegacyAppeal.find_or_create_by(vacols_id: "2096907", vbms_id: "228081153S")
+      LegacyAppeal.find_or_create_by(vacols_id: "2226048", vbms_id: "213912991S")
+      LegacyAppeal.find_or_create_by(vacols_id: "2249056", vbms_id: "608428712S")
+      LegacyAppeal.find_or_create_by(vacols_id: "2306397", vbms_id: "779309925S")
+      LegacyAppeal.find_or_create_by(vacols_id: "2657227", vbms_id: "169397130S")
     end
 
     def create_tasks
@@ -196,7 +187,6 @@ module Seeds
       Faker::Config.random = Random.new(seed)
       vet = create(
         :veteran,
-        file_number: Faker::Number.number(digits: 9).to_s,
         first_name: Faker::Name.first_name,
         last_name: Faker::Name.last_name
       )
@@ -259,7 +249,6 @@ module Seeds
 
         vet = create(
           :veteran,
-          file_number: Faker::Number.number(digits: 9).to_s,
           first_name: Faker::Name.first_name,
           last_name: Faker::Name.last_name
         )
@@ -301,7 +290,6 @@ module Seeds
 
         vet = create(
           :veteran,
-          file_number: Faker::Number.number(digits: 9).to_s,
           first_name: Faker::Name.first_name,
           last_name: Faker::Name.last_name
         )
@@ -342,7 +330,6 @@ module Seeds
     )
       vet = create(
         :veteran,
-        file_number: Faker::Number.number(digits: 9).to_s,
         first_name: Faker::Name.first_name,
         last_name: Faker::Name.last_name
       )
@@ -455,7 +442,7 @@ module Seeds
     def create_change_hearing_disposition_task
       hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
       hearing_day = create(:hearing_day, created_by: hearings_member, updated_by: hearings_member)
-      veteran = create(:veteran, first_name: "Abellona", last_name: "Valtas", file_number: 123_456_789)
+      veteran = create(:veteran, first_name: "Abellona", last_name: "Valtas")
       appeal = create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number)
       root_task = create(:root_task, appeal: appeal)
       distribution_task = create(:distribution_task, parent: root_task)
@@ -636,10 +623,12 @@ module Seeds
       attorney = User.find_by_css_id("BVASCASPER1")
       judge = User.find_by_css_id("BVAAABSHIRE")
 
-      acting_judge = create(:user, css_id: "BVAACTING", station_id: 101, full_name: "Kris ActingVLJ_AVLJ Merle")
-      create(:staff, :attorney_judge_role, user: acting_judge)
+      if !User.find_by(css_id: "BVAACTING")
+        acting_judge = create(:user, css_id: "BVAACTING", station_id: 101, full_name: "Kris ActingVLJ_AVLJ Merle")
+        create(:staff, :attorney_judge_role, user: acting_judge)
+      end
 
-      JudgeTeam.create_for_judge(acting_judge)
+      JudgeTeam.create_for_judge(acting_judge) unless JudgeTeam.for_judge(acting_judge)
       JudgeTeam.for_judge(judge).add_user(acting_judge)
 
       create_appeal_at_judge_assignment(judge: acting_judge)
@@ -733,7 +722,6 @@ module Seeds
         number_of_claimants: 1,
         associated_judge: judge,
         active_task_assigned_at: assigned_at,
-        veteran_file_number: Generators::Random.unique_ssn,
         docket_type: Constants.AMA_DOCKETS.direct_review,
         closest_regional_office: "RO17",
         request_issues: create_list(

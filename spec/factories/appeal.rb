@@ -6,7 +6,6 @@ FactoryBot.define do
     established_at { Time.zone.now }
     receipt_date { Time.zone.yesterday }
     filed_by_va_gov { false }
-    sequence(:veteran_file_number, 500_000_000)
     uuid { SecureRandom.uuid }
 
     after(:build) do |appeal, evaluator|
@@ -110,7 +109,7 @@ FactoryBot.define do
 
     transient do
       veteran do
-        Veteran.find_by(file_number: veteran_file_number) || create(:veteran, file_number: veteran_file_number)
+        Veteran.find_by(file_number: (generate :veteran_file_number)) || create(:veteran, file_number: (generate :veteran_file_number))
       end
     end
 
@@ -153,6 +152,19 @@ FactoryBot.define do
 
       after(:create) do |appeal, evaluator|
         create(:hearing, :held, judge: nil, appeal: appeal, adding_user: evaluator.adding_user)
+      end
+    end
+
+    trait :held_hearing_and_ready_to_distribute do
+      transient do
+        adding_user { nil }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:hearing, :held, judge: nil, appeal: appeal, adding_user: evaluator.adding_user)
+        appeal.tasks.find_by(type: :TranscriptionTask).update!(status: :completed)
+        appeal.tasks.find_by(type: :EvidenceSubmissionWindowTask).update!(status: :completed)
+        appeal.tasks.find_by(type: :DistributionTask).update!(status: :assigned)
       end
     end
 

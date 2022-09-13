@@ -13,10 +13,8 @@ module Seeds
     def build_veteran
       create(
         :veteran,
-        file_number: 42_424_242,
         first_name: "Joe",
         last_name: "Doe",
-        participant_id: "330000000"
       )
     end
 

@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :case, class: VACOLS::Case do
     sequence(:bfkey) # a.k.a. VACOLS_ID
     sequence(:bfcorkey)
-    sequence(:bfcorlid, 300_000_000) { |n| "#{n}S" }
+    bfcorlid { generate :veteran_file_number }
 
     association :correspondent, factory: :correspondent
 
