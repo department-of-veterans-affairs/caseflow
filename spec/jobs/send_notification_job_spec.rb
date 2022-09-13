@@ -199,6 +199,13 @@ describe SendNotificationJob, type: :job do
     end
   end
 
+  describe "#create_notification_audit_record" do
+    it "creates a new notification object" do
+      expect(Notification).to receive(:create)
+      SendNotificationJob.perform_now(good_message.to_json)
+    end
+  end
+
   context "va_notify FeatureToggles" do
     describe "email" do
       it "is expected to send when the feature toggle is on" do
