@@ -34,7 +34,7 @@ class SendNotificationJob < CaseflowJob
       @va_notify_sms = FeatureToggle.enabled?(:va_notify_sms)
       message = JSON.parse(message_json, object_class: OpenStruct)
       if message.appeal_id && message.appeal_type && message.template_name
-        @notification_audit_record ||= create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name)
+        @notification_audit_record ||= create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name, message.participant_id)
         if @notification_audit_record
           if message.status != "No participant_id" && message.status != "No claimant"
             to_update = { sms_notification_status: message.status, email_notification_status: message.status }
@@ -118,7 +118,7 @@ class SendNotificationJob < CaseflowJob
   # - event_type: Name of the event that has transpired. Event names can be found in the notification_events table
   #
   # Returns: Notification active model or nil
-  def create_notification_audit_record(appeals_id, appeals_type, event_type)
+  def create_notification_audit_record(appeals_id, appeals_type, event_type, participant_id)
     notification_type =
       if @va_notify_email && @va_notify_sms
         "Email and SMS"
@@ -135,6 +135,7 @@ class SendNotificationJob < CaseflowJob
       appeals_type: appeals_type,
       event_type: event_type,
       notification_type: notification_type,
+      participant_id: participant_id,
       notified_at: Time.zone.now,
       event_date: Time.zone.today
     )
