@@ -193,7 +193,7 @@ describe('CompleteTaskModal', () => {
 
   describe('emo_send_to_board_intake_for_review', () => {
     const taskType = 'EducationDocumentSearchTask';
-    const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const buttonText = COPY.MODAL_SEND_BUTTON;
     const modalType = 'emo_send_to_board_intake_for_review';
 
     test('modal title is Ready for Review', () => {
@@ -235,12 +235,12 @@ describe('CompleteTaskModal', () => {
 
   describe('rpo_send_to_board_intake_for_review', () => {
     const taskType = 'EducationAssessDocumentationTask';
-    const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const buttonText = COPY.MODAL_SEND_BUTTON;
     const modalType = 'rpo_send_to_board_intake_for_review';
 
     test('modal title is Ready for Review', () => {
       renderCompleteTaskModal(modalType, rpoToBvaIntakeData, taskType);
-      expect(screen.getByText('Ready for review')).toBeTruthy();      
+      expect(screen.getByText('Ready for review')).toBeTruthy();
     });
 
     test('When Centralized Mail Portal is chosen in Modal', () => {
