@@ -34,7 +34,7 @@ class SeedDB
   def seed
     call_and_log_seed_step :clean_db
 
-    call_and_log_seed_step Seeds::Annotations
+    #call_and_log_seed_step Seeds::Annotations
     call_and_log_seed_step Seeds::Tags
     call_and_log_seed_step Seeds::Users # TODO: must run this before others
     call_and_log_seed_step Seeds::Tasks
