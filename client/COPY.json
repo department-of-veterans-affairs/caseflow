@@ -1260,8 +1260,6 @@
   "PRE_DOCKET_MODAL_BODY": "Provide instructions and context for this action:",
   "VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER": "Select Program Office",
   "VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER": "Select VISN/VA Medical Center",
-  "VHA_COMPLETE_TASK_BUTTON": "Ready for Review",
-  "VHA_COMPLETE_TASK_LABEL": "Ready for Review",
   "VHA_COMPLETE_TASK_MODAL_TITLE": "Where were documents regarding this appeal stored?",
   "VHA_COMPLETE_TASK_MODAL_BODY": "Provide details such as file structure or file path",
   "VHA_COMPLETE_TASK_CONFIRMATION_PO": "Appeal has been marked as ready for review and sent to the CAMO team for review.",
