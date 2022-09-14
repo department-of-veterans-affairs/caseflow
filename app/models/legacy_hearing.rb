@@ -36,6 +36,9 @@ class LegacyHearing < CaseflowRecord
   include HearingConcern
   include HasHearingEmailRecipientsConcern
 
+  prepend DocketHearingWithdrawnLegacy
+  prepend DocketHearingPostponedLegacy
+
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
   # This allows us to easily call `hearing.veteran_first_name` and dynamically

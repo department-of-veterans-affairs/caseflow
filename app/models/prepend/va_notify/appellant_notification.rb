@@ -29,8 +29,15 @@ module AppellantNotification
       message_attributes = {}
       message_attributes[:appeal_type] = appeal.class.to_s
       message_attributes[:appeal_id] = (message_attributes[:appeal_type] == "Appeal") ? appeal.uuid : appeal.vacols_id
-      claimant = appeal.claimant
       message_attributes[:participant_id] = appeal.claimant_participant_id
+      claimant =
+        if message_attributes[:appeal_type] == "Appeal"
+          appeal.claimant
+        elsif message_attributes[:appeal_type] == "LegacyAppeal"
+          veteran = Veteran.find_by(participant_id: message_attributes[:participant_id])
+          person = Person.find_by(participant_id: message_attributes[:participant_id])
+          appeal.appellant_is_not_veteran ? person : veteran
+        end
       if claimant.nil?
         begin
           fail NoClaimantError, message_attributes[:appeal_id]
