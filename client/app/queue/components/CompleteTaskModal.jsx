@@ -359,7 +359,7 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SUBMIT_BUTTON
+    buttonText: COPY.MODAL_SEND_BUTTON
   },
   send_colocated_task: {
     buildSuccessMsg: (appeal, { teamName }) => ({
@@ -400,7 +400,7 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SUBMIT_BUTTON
+    buttonText: COPY.MODAL_SEND_BUTTON
   },
   rpo_send_to_board_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
@@ -408,7 +408,7 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SUBMIT_BUTTON
+    buttonText: COPY.MODAL_SEND_BUTTON
   },
   vha_caregiver_support_return_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
