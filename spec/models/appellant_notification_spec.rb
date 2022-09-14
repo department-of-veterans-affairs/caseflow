@@ -324,7 +324,7 @@ describe AppellantNotification do
           }
         end
         it "will notify appellant when a hearing is withdrawn/cancelled" do
-          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
+          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name
           hearing.update_caseflow_and_vacols(hearing_info)
         end
       end

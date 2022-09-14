@@ -64,8 +64,8 @@ class ReceiveNotificationJob < CaseflowJob
 
     if type == "email" && !status.nil? && status != audit_record.email_notification_status
       audit_record.update!(email_notification_status: status)
-    elsif type == "sms" && !status.nil? && status != audit_record.text_notification_status
-      audit_record.update!(text_notification_status: status)
+    elsif type == "sms" && !status.nil? && status != audit_record.sms_notification_status
+      audit_record.update!(sms_notification_status: status)
     end
 
     audit_record
