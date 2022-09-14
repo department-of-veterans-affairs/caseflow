@@ -1086,7 +1086,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.value
                 }`}
-              title="Ready for Review | Caseflow"
+              title="Ready for review | Caseflow"
               render={this.routedVhaCompleteTaskModal}
             />
             <PageRoute
@@ -1094,7 +1094,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
                 }`}
-              title="Ready for Review | Caseflow"
+              title="Ready for review | Caseflow"
               render={this.routedEmoSendToBoardIntakeForReviewModal}
             />
             <PageRoute
@@ -1102,7 +1102,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW.value
                 }`}
-              title="Ready for Review | Caseflow"
+              title="Ready for review | Caseflow"
               render={this.routedVhaCaregiverSupportSendToBoardIntakeForReviewModal}
             />
             <PageRoute
@@ -1110,7 +1110,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
                 }`}
-              title="Ready for Review | Caseflow"
+              title="Ready for review | Caseflow"
               render={this.routedRpoSendToBoardIntakeForReviewModal}
             />
             <PageRoute
