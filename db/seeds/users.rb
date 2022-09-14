@@ -12,7 +12,13 @@ module Seeds
       "BVAEBECKER" => { attorneys: %w[BVAKBLOCK BVACMERTZ BVAHLUETTGEN] },
       "BVARERDMAN" => { attorneys: %w[BVASRITCHIE BVAJSCHIMMEL BVAKROHAN1] },
       "BVAOSCHOWALT" => { attorneys: %w[BVASCASPER1 BVAOWEHNER BVASFUNK1] },
-      "BVAAWAKEFIELD" => { attorneys: %w[BVAABELANGER] }
+      "BVAAWAKEFIELD" => { attorneys: %w[BVAABELANGER] },
+      # below teams were added for automatic case distribution testing
+      "BVAABODE" => { attorneys: %w[BVAABARTELL BVAABERGE BVAABERNIER] },
+      "BVABDANIEL" => { attorneys: %w[BVABBLOCK BVABCASPER BVABCHAMPLIN] },
+      "BVACGISLASON1" => { attorneys: %w[BVACABERNATH BVACABSHIRE BVACBALISTRE] },
+      "BVADCREMIN" => { attorneys: %w[BVADABBOTT BVADABERNATH BVADBEAHAN] },
+      "BVAEEMARD" => { attorneys: %w[BVAEBLANDA BVAEBUCKRIDG BVAECUMMERAT] }
     }.freeze
 
     DEVELOPMENT_DVC_TEAMS = {
