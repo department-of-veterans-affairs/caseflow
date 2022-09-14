@@ -283,22 +283,14 @@ describe AppellantNotification do
           create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: ro_id)
         end
         let(:hearing) { create(:legacy_hearing, appeal: appeal) }
-        let!(:case_hearing) do
-          create(
-            :case_hearing,
-            hearing_type: HearingDay::REQUEST_TYPES[:video],
-            folder_nr: appeal.vacols_id
-          )
-        end
         let(:hearing_info) do
           {
-            disposition: "P",
-            staff_id: "ID8"
+            disposition: "postponed"
           }
         end
         it "will notify appellant when a hearing is postponed" do
           expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
-          case_hearing.update_hearing!(hearing_info)
+          hearing.update_caseflow_and_vacols(hearing_info)
         end
       end
     end
@@ -326,22 +318,14 @@ describe AppellantNotification do
           create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: ro_id)
         end
         let(:hearing) { create(:legacy_hearing, appeal: appeal) }
-        let!(:case_hearing) do
-          create(
-            :case_hearing,
-            hearing_type: HearingDay::REQUEST_TYPES[:video],
-            folder_nr: appeal.vacols_id
-          )
-        end
         let(:hearing_info) do
           {
-            disposition: "C",
-            staff_id: "ID8"
+            disposition: "cancelled"
           }
         end
         it "will notify appellant when a hearing is withdrawn/cancelled" do
-          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
-          case_hearing.update_hearing!(hearing_info)
+          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name
+          hearing.update_caseflow_and_vacols(hearing_info)
         end
       end
     end
