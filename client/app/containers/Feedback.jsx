@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import AppFrame from '../components/AppFrame';
 import NavigationBar from '../components/NavigationBar';
 import StatusMessage from 'app/components/StatusMessage';
@@ -38,5 +39,11 @@ CSEM Information Security Officer (ISO). Please email your management team for a
       buildDate={props.buildDate} />
   </div>
 </BrowserRouter>;
+
+Feedback.propTypes = {
+  dropdownUrls: PropTypes.array,
+  feedbackUrl: PropTypes.string,
+  buildDate: PropTypes.string
+};
 
 export default Feedback;
