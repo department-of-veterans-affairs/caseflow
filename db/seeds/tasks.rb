@@ -540,6 +540,9 @@ module Seeds
       ].each do |attrs|
         org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
                           assigned_by: attorney }
+        # do not attempt to create a new colocated task if one already exists for the this LegacyAppeal
+        next if org_task_args[:appeal].tasks.map { |t| t.is_a?(ColocatedTask) }.any? { |bool| bool }
+
         create(:colocated_task, attrs[:trait], org_task_args)
       end
     end
@@ -622,8 +625,9 @@ module Seeds
     def create_tasks_at_acting_judge
       attorney = User.find_by_css_id("BVASCASPER1")
       judge = User.find_by_css_id("BVAAABSHIRE")
+      acting_judge = User.find_by(css_id: "BVAACTING")
 
-      if !User.find_by(css_id: "BVAACTING")
+      if !acting_judge
         acting_judge = create(:user, css_id: "BVAACTING", station_id: 101, full_name: "Kris ActingVLJ_AVLJ Merle")
         create(:staff, :attorney_judge_role, user: acting_judge)
       end
@@ -647,6 +651,9 @@ module Seeds
       # - Case 3662859 has a valid decision document, so it is assigned to the AVLJ as a judge
       vacols_case_attorney = VACOLS::Case.find_by(bfkey: "3662860")
       vacols_case_judge = VACOLS::Case.find_by(bfkey: "3662859")
+
+      return if LegacyAppeal.find_by(vacols_id: vacols_case_attorney.bfkey) ||
+                LegacyAppeal.find_by(vacols_id: vacols_case_judge.bfkey)
 
       # Initialize the attorney and judge case issue list
       attorney_case_issues = []
@@ -735,6 +742,8 @@ module Seeds
       # this vet number exists in local/vacols VBMS and BGS setup csv files.
       veteran_file_number_legacy_opt_in = "872958715S"
       legacy_vacols_id = "LEGACYID"
+
+      return if LegacyAppeal.find_by(vacols_id: legacy_vacols_id)
 
       # always delete and start fresh
       VACOLS::Case.where(bfkey: legacy_vacols_id).delete_all
@@ -878,10 +887,17 @@ module Seeds
       RequestStore[:current_user] = user
 
       offsets.each do |offset|
+        docket_number = "180000#{offset}"
+        next unless VACOLS::Folder.find_by(tinum: docket_number).nil?
+
+        # Create the veteran for this legacy appeal
+        veteran = create(:veteran)
+
         # Embed the ro here so that the titrnums are unique across the
         # different ros, otherwise collisions cause errors
-        vacols_titrnum = "1#{regional_office}#{offset}E"
-        docket_number = "180000#{offset}"
+        # vacols_titrnum = "1#{regional_office}#{offset}"
+        vacols_titrnum = veteran.file_number
+
         # Create some video and some travel hearings
         type = offset.even? ? "travel" : "video"
 
@@ -890,8 +906,6 @@ module Seeds
         legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type)
         # Create the task tree, need to create each task like this to avoid user creation and index conflicts
         create_open_schedule_hearing_task_for_legacy(legacy_appeal, user)
-        # Create the veteran for this legacy appeal
-        create(:veteran, file_number: vacols_titrnum)
       end
 
       # Once everything is created, refresh the cache or they won't appear in the UI
