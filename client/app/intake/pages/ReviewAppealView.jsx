@@ -34,7 +34,7 @@ const styles = {
     },
     '& tr > th': {
       borderTop: 'none',
-      //Test border: '1px solid #E2E3E4',
+      // border: '1px solid #E2E3E4',
     },
     '& tr > td:last-of-type': {
       borderLeft: '1px solid #979797',
