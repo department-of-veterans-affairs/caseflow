@@ -201,8 +201,8 @@
     "value": "modal/mark_task_complete",
     "func": "complete_data"
   },
-  "READY_FOR_REVIEW": {
-    "label": "Ready for Review",
+  "VHA_PO_SEND_TO_CAMO_FOR_REVIEW": {
+    "label": "Documents ready for CAMO team review",
     "value": "modal/ready_for_review",
     "func": "vha_complete_data"
   },
@@ -430,7 +430,7 @@
     "func": "vha_caregiver_support_send_to_board_intake_for_review"
   },
   "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW": {
-    "label": "Ready for Review",
+    "label": "Documents ready for Board Intake review",
     "value": "modal/emo_send_to_board_intake_for_review",
     "func": "emo_send_to_board_intake_for_review"
   },
@@ -440,7 +440,7 @@
     "func": "emo_assign_to_education_rpo_data"
   },
   "EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW": {
-    "label": "Ready for Review",
+    "label": "Documents ready for Board Intake review",
     "value": "modal/rpo_send_to_board_intake_for_review",
     "func": "education_rpo_send_to_board_intake_for_review"
   },
