@@ -99,8 +99,8 @@ describe EvidenceSubmissionWindowTask, :postgres do
       end
     end
 
-  include_examples "works for all remand subtypes"
-end
+    include_examples "works for all remand subtypes"
+  end
 
   context "on manual completion by user" do
     let(:mail_user) { create(:user) }
