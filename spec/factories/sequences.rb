@@ -10,6 +10,7 @@ FactoryBot.define do
     VACOLS::Case.all.map(&:bfkey).map(&:to_i).filter { |key| key < 99_999 }.max + 1
   veteran_initial_value = Veteran.all.map(&:file_number).max.to_i + 1
 
+  # BRIEFF.BFCORLID in VACOLS, file_number/veteran_file_number in Caseflow
   sequence :veteran_file_number, veteran_initial_value do |n|
     format("%<n>09d", n: n)
   end

@@ -19,12 +19,14 @@ module Seeds
 
     def create_intake_users
       ["Mail Intake", "Admin Intake"].each do |role|
-        User.create(
-          css_id: "#{role.tr(' ', '')}_LOCAL",
-          roles: [role],
-          station_id: "101",
-          full_name: "Jame Local #{role} Smith"
-        )
+        # do not try to recreate when running seed file after inital seed
+        next if User.find_by(css_id: "#{role.tr(' ', '')}_LOCAL".upcase)
+
+        create(:user,
+               css_id: "#{role.tr(' ', '')}_LOCAL",
+               roles: [role],
+               station_id: "101",
+               full_name: "Jame Local #{role} Smith")
       end
     end
 
@@ -83,112 +85,103 @@ module Seeds
       two_days_in_seconds = 2 * one_day_in_seconds
       thirty_days_in_seconds = 30 * one_day_in_seconds
 
-      higher_level_review = HigherLevelReview.create!(
-        veteran_file_number: veteran.file_number,
-        receipt_date: Time.zone.now - thirty_days_in_seconds,
-        informal_conference: false,
-        same_office: false,
-        benefit_type: "compensation"
-      )
+      higher_level_review = create(:higher_level_review,
+                                   veteran_file_number: veteran.file_number,
+                                   receipt_date: Time.zone.now - thirty_days_in_seconds,
+                                   informal_conference: false,
+                                   same_office: false,
+                                   benefit_type: "compensation")
       higher_level_review.create_claimant!(
         participant_id: rand(600_000_000..999_999_999),
         payee_code: "10",
         type: "DependentClaimant"
       )
 
-      EndProductEstablishment.create!(
-        source: higher_level_review,
-        veteran_file_number: veteran.file_number,
-        claim_date: Time.zone.now - thirty_days_in_seconds,
-        code: ep_rating_code,
-        station: "397",
-        benefit_type_code: "1",
-        payee_code: "00",
-        synced_status: "CAN",
-        claimant_participant_id: veteran.participant_id
-      )
+      create(:end_product_establishment,
+             source: higher_level_review,
+             veteran_file_number: veteran.file_number,
+             claim_date: Time.zone.now - thirty_days_in_seconds,
+             code: ep_rating_code,
+             station: "397",
+             benefit_type_code: "1",
+             payee_code: "00",
+             synced_status: "CAN",
+             claimant_participant_id: veteran.participant_id)
 
-      EndProductEstablishment.create!(
-        source: higher_level_review,
-        veteran_file_number: veteran.file_number,
-        claim_date: Time.zone.now - thirty_days_in_seconds,
-        code: ep_rating_code,
-        station: "397",
-        benefit_type_code: "1",
-        payee_code: "00",
-        synced_status: nil,
-        claimant_participant_id: veteran.participant_id
-      )
+      create(:end_product_establishment,
+             source: higher_level_review,
+             veteran_file_number: veteran.file_number,
+             claim_date: Time.zone.now - thirty_days_in_seconds,
+             code: ep_rating_code,
+             station: "397",
+             benefit_type_code: "1",
+             payee_code: "00",
+             synced_status: nil,
+             claimant_participant_id: veteran.participant_id)
 
-      EndProductEstablishment.create!(
-        source: higher_level_review,
-        veteran_file_number: veteran.file_number,
-        claim_date: Time.zone.now - thirty_days_in_seconds,
-        code: ep_rating_code,
-        station: "397",
-        benefit_type_code: "1",
-        payee_code: "00",
-        synced_status: "PEND",
-        claimant_participant_id: veteran.participant_id
-      )
+      create(:end_product_establishment,
+             source: higher_level_review,
+             veteran_file_number: veteran.file_number,
+             claim_date: Time.zone.now - thirty_days_in_seconds,
+             code: ep_rating_code,
+             station: "397",
+             benefit_type_code: "1",
+             payee_code: "00",
+             synced_status: "PEND",
+             claimant_participant_id: veteran.participant_id)
 
-      EndProductEstablishment.create!(
-        source: higher_level_review,
-        veteran_file_number: veteran.file_number,
-        claim_date: Time.zone.now - thirty_days_in_seconds,
-        code: ep_rating_code,
-        station: "397",
-        benefit_type_code: "1",
-        payee_code: "00",
-        synced_status: "CLR",
-        last_synced_at: Time.zone.now - one_day_in_seconds,
-        claimant_participant_id: veteran.participant_id
-      )
+      create(:end_product_establishment,
+             source: higher_level_review,
+             veteran_file_number: veteran.file_number,
+             claim_date: Time.zone.now - thirty_days_in_seconds,
+             code: ep_rating_code,
+             station: "397",
+             benefit_type_code: "1",
+             payee_code: "00",
+             synced_status: "CLR",
+             last_synced_at: Time.zone.now - one_day_in_seconds,
+             claimant_participant_id: veteran.participant_id)
 
-      EndProductEstablishment.create!(
-        source: higher_level_review,
-        veteran_file_number: veteran.file_number,
-        claim_date: Time.zone.now - thirty_days_in_seconds,
-        code: ep_nonrating_code,
-        station: "397",
-        benefit_type_code: "1",
-        payee_code: "00",
-        synced_status: "CLR",
-        last_synced_at: Time.zone.now - two_days_in_seconds,
-        claimant_participant_id: veteran.participant_id
-      )
+      create(:end_product_establishment,
+             source: higher_level_review,
+             veteran_file_number: veteran.file_number,
+             claim_date: Time.zone.now - thirty_days_in_seconds,
+             code: ep_nonrating_code,
+             station: "397",
+             benefit_type_code: "1",
+             payee_code: "00",
+             synced_status: "CLR",
+             last_synced_at: Time.zone.now - two_days_in_seconds,
+             claimant_participant_id: veteran.participant_id)
 
-      EndProductEstablishment.create!(
-        source: higher_level_review,
-        veteran_file_number: veteran.file_number,
-        claim_date: Time.zone.now - thirty_days_in_seconds,
-        code: ep_rating_code,
-        station: "397",
-        benefit_type_code: "1",
-        payee_code: "00",
-        synced_status: "LOL",
-        claimant_participant_id: veteran.participant_id
-      )
+      create(:end_product_establishment,
+             source: higher_level_review,
+             veteran_file_number: veteran.file_number,
+             claim_date: Time.zone.now - thirty_days_in_seconds,
+             code: ep_rating_code,
+             station: "397",
+             benefit_type_code: "1",
+             payee_code: "00",
+             synced_status: "LOL",
+             claimant_participant_id: veteran.participant_id)
 
-      eligible_request_issue = RequestIssue.create!(
-        decision_review: higher_level_review,
-        nonrating_issue_category: "Military Retired Pay",
-        nonrating_issue_description: "nonrating description",
-        contention_reference_id: "1234",
-        ineligible_reason: nil,
-        benefit_type: "compensation",
-        decision_date: Date.new(2018, 5, 1)
-      )
+      eligible_request_issue =
+        create(:request_issue,
+               decision_review: higher_level_review,
+               nonrating_issue_category: "Military Retired Pay",
+               nonrating_issue_description: "nonrating description",
+               ineligible_reason: nil,
+               benefit_type: "compensation",
+               decision_date: Date.new(2018, 5, 1))
 
-      untimely_request_issue = RequestIssue.create!(
-        decision_review: higher_level_review,
-        nonrating_issue_category: "Active Duty Adjustments",
-        nonrating_issue_description: "nonrating description",
-        contention_reference_id: "12345",
-        decision_date: Date.new(2018, 5, 1),
-        benefit_type: "compensation",
-        ineligible_reason: :untimely
-      )
+      untimely_request_issue =
+        create(:request_issue,
+               decision_review: higher_level_review,
+               nonrating_issue_category: "Active Duty Adjustments",
+               nonrating_issue_description: "nonrating description",
+               decision_date: Date.new(2018, 5, 1),
+               benefit_type: "compensation",
+               ineligible_reason: :untimely)
 
       higher_level_review.create_issues!([
                                            eligible_request_issue,
@@ -196,11 +189,10 @@ module Seeds
                                          ])
       higher_level_review.establish!
 
-      SupplementalClaim.create(
-        veteran_file_number: veteran.file_number,
-        receipt_date: Time.zone.now,
-        benefit_type: "compensation"
-      )
+      create(:supplemental_claim,
+             veteran_file_number: veteran.file_number,
+             receipt_date: Time.zone.now,
+             benefit_type: "compensation")
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -237,7 +229,7 @@ module Seeds
     # rubocop:enable Metrics/MethodLength
 
     def create_bgs_attorneys
-      5000.times { create(:bgs_attorney) }
+      5000.times { create(:bgs_attorney) } if BgsAttorney.count < 5000
     end
   end
 end
