@@ -128,11 +128,13 @@ class Appeal < DecisionReview
     include_association :appellant_substitution
     include_association :attorney_case_reviews
     include_association :available_hearing_locations
+    include_association :special_issue_list
+    include_association :docket_switch
     # include_association :cached_appeal_attributes
     # include_association :cavc_remand, if: !nil?
     include_association :claims_folder_searches
     # include_association :hearing_appeal_stream_snapshots
-    include_association :hearings
+    # include_association :hearings # might need this back
     include_association :judge_case_reviews
     # include_association :legacy_issue_optins
     include_association :nod_date_updates
@@ -140,20 +142,20 @@ class Appeal < DecisionReview
     include_association :vbms_uploaded_documents
     include_association :work_mode
 
-    # lambda for setting up a new UUID for the hearing
-    customize(lambda { |_, dup_appeal|
-      # set the UUID to nil so that it is auto generated
-      dup_appeal.hearings.each { |hearing| hearing.uuid = nil }
-      # generate UUIDs
-      dup_appeal.hearings.each { |hearing| hearing.uuid = SecureRandom.uuid }
-      # make sure the uuid doesn't exist in the database (by some chance)
-      dup_appeal.hearings.each do |hearing|
-        while !Hearing.find_by_uuid(hearing.uuid).nil?
-          # generate new id if not 
-          hearing.uuid = SecureRandom.uuid
-        end
-      end
-    })
+    # # lambda for setting up a new UUID for the hearing
+    # customize(lambda { |_, dup_appeal|
+    #   # set the UUID to nil so that it is auto generated
+    #   dup_appeal.hearings.each { |hearing| hearing.uuid = nil }
+    #   # generate UUIDs
+    #   dup_appeal.hearings.each { |hearing| hearing.uuid = SecureRandom.uuid }
+    #   # make sure the uuid doesn't exist in the database (by some chance)
+    #   dup_appeal.hearings.each do |hearing|
+    #     while !Hearing.find_by_uuid(hearing.uuid).nil?
+    #       # generate new id if not 
+    #       hearing.uuid = SecureRandom.uuid
+    #     end
+    #   end
+    # })
 
 
   end
@@ -288,6 +290,17 @@ class Appeal < DecisionReview
 
   def issues
     { decision_issues: decision_issues, request_issues: request_issues }
+  end
+
+  def clone_hearings(parent_appeal)
+    parent_appeal.hearings.each do |hearing|
+      # clone hearing
+      dup_hearing = hearing.amoeba_dup
+      # assign to current appeal
+      dup_hearing.appeal_id = self.id
+
+      dup_hearing.save
+    end
   end
 
   def clone_task_tree(parent_appeal, user_css_id)

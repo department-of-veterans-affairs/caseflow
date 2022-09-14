@@ -21,5 +21,8 @@ class SplitAppealController < ApplicationController
 
     # update the child task tree with parent, passing CSS ID of user for validation
     dup_appeal.clone_task_tree(appeal, user_css_id)
+
+    # clone the hearings and hearing relations from parent appeal
+    dup_appeal.clone_hearings(appeal)
   end
 end
