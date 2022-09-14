@@ -893,9 +893,6 @@ module Seeds
         # Create the veteran for this legacy appeal
         veteran = create(:veteran)
 
-        # Embed the ro here so that the titrnums are unique across the
-        # different ros, otherwise collisions cause errors
-        # vacols_titrnum = "1#{regional_office}#{offset}"
         vacols_titrnum = veteran.file_number
 
         # Create some video and some travel hearings

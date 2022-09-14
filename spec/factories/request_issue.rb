@@ -5,9 +5,7 @@ FactoryBot.define do
     association(:decision_review, factory: [:appeal, :with_post_intake_tasks])
     benefit_type { "compensation" }
     contested_rating_issue_diagnostic_code { "5008" }
-    # initial value provides 100000 values which allows hundreds of seed runs
-    sequence :contention_reference_id, (RequestIssue.all.map(&:contention_reference_id).map(&:to_i)
-                                                        .filter { |id| id < 100_000 }.max.to_i + 1)
+    contention_reference_id { generate :contention_reference_id }
 
     factory :request_issue_with_epe do
       end_product_establishment { create(:end_product_establishment, source: decision_review) }
