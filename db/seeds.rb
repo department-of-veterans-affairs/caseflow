@@ -34,7 +34,7 @@ class SeedDB
   def seed
     call_and_log_seed_step :clean_db
 
-    #call_and_log_seed_step Seeds::Annotations
+    call_and_log_seed_step Seeds::Annotations
     call_and_log_seed_step Seeds::Tags
     call_and_log_seed_step Seeds::Users # TODO: must run this before others
     call_and_log_seed_step Seeds::Tasks
@@ -45,7 +45,7 @@ class SeedDB
     call_and_log_seed_step Seeds::Substitutions
     call_and_log_seed_step Seeds::DecisionIssues
     call_and_log_seed_step Seeds::CavcAmaAppeals
-    #call_and_log_seed_step Seeds::SanitizedJsonSeeds
+    call_and_log_seed_step Seeds::SanitizedJsonSeeds
     call_and_log_seed_step Seeds::VeteransHealthAdministration
     call_and_log_seed_step Seeds::MTV
     call_and_log_seed_step Seeds::Education
