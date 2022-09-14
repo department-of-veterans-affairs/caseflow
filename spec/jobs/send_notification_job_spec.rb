@@ -3,6 +3,14 @@
 describe SendNotificationJob, type: :job do
   include ActiveJob::TestHelper
   let(:current_user) { create(:user, roles: ["System Admin"]) }
+  let(:notification) do
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "Email")
+  end
   # rubocop:disable Style/BlockDelimiters
   let(:good_template_name) { "Appeal docketed" }
   let(:error_template_name) { "No Participant Id Found" }
@@ -10,7 +18,7 @@ describe SendNotificationJob, type: :job do
   let(:error_status) { "No participant_id" }
   let(:success_message_attributes) {
     {
-      participant_id: "1234567890",
+      participant_id: "123456789",
       status: success_status,
       appeal_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
       appeal_type: "Appeal"
@@ -26,7 +34,7 @@ describe SendNotificationJob, type: :job do
   }
   let(:fail_create_message_attributes) {
     {
-      participant_id: "1234567890",
+      participant_id: "123456789",
       status: success_status,
       appeal_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
       appeal_type: nil
@@ -198,12 +206,24 @@ describe SendNotificationJob, type: :job do
     end
   end
 
+  describe "#create_notification_audit_record" do
+    it "creates a new notification object" do
+      expect(Notification).to receive(:create)
+      SendNotificationJob.perform_now(good_message.to_json)
+    end
+  end
+
   context "va_notify FeatureToggles" do
     describe "email" do
       it "is expected to send when the feature toggle is on" do
         FeatureToggle.enable!(:va_notify_email)
         expect(VANotifyService).to receive(:send_email_notifications)
         SendNotificationJob.perform_now(good_message.to_json)
+      end
+      it "updates the notification_audit_record with content" do
+        FeatureToggle.enable!(:va_notify_email)
+        SendNotificationJob.perform_now(good_message.to_json)
+        expect(Notification.last.notification_content).not_to eq(nil)
       end
       it "is expected to not send when the feature toggle is off" do
         FeatureToggle.disable!(:va_notify_email)
@@ -218,10 +238,27 @@ describe SendNotificationJob, type: :job do
         expect(VANotifyService).to receive(:send_sms_notifications)
         SendNotificationJob.perform_now(good_message.to_json)
       end
+      it "updates the notification_audit_record with content" do
+        FeatureToggle.enable!(:va_notify_sms)
+        SendNotificationJob.perform_now(good_message.to_json)
+        expect(Notification.last.notification_content).not_to eq(nil)
+      end
       it "is expected to not send when the feature toggle is off" do
         FeatureToggle.disable!(:va_notify_sms)
         expect(VANotifyService).not_to receive(:send_sms_notifications)
         SendNotificationJob.perform_now(good_message.to_json)
+      end
+    end
+  end
+
+  context "on retry" do
+    describe "notification object" do
+      it "does not create multiple notification objects" do
+        FeatureToggle.enable!(:va_notify_email)
+        job = SendNotificationJob.new(good_message.to_json)
+        job.instance_variable_set(:@notification_audit_record, notification)
+        expect(Notification).not_to receive(:create)
+        job.perform_now
       end
     end
   end

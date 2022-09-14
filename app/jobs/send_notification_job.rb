@@ -34,16 +34,16 @@ class SendNotificationJob < CaseflowJob
       @va_notify_sms = FeatureToggle.enabled?(:va_notify_sms)
       message = JSON.parse(message_json, object_class: OpenStruct)
       if message.appeal_id && message.appeal_type && message.template_name
-        notification_audit_record = create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name)
-        if notification_audit_record
+        @notification_audit_record ||= create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name, message.participant_id)
+        if @notification_audit_record
           if message.status != "No participant_id" && message.status != "No claimant"
             to_update = { sms_notification_status: message.status, email_notification_status: message.status }
-            update_notification_audit_record(notification_audit_record, to_update)
-            send_to_va_notify(message, notification_audit_record)
+            update_notification_audit_record(@notification_audit_record, to_update)
+            send_to_va_notify(message, @notification_audit_record)
           else
             status = (message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
             to_update = { sms_notification_status: status, email_notification_status: status }
-            update_notification_audit_record(notification_audit_record, to_update)
+            update_notification_audit_record(@notification_audit_record, to_update)
           end
         else
           log_error("Audit record was unable to be found or created in SendNotificationListnerJob. Exiting Job.")
@@ -85,7 +85,7 @@ class SendNotificationJob < CaseflowJob
     if @va_notify_email
       response = VANotifyService.send_email_notifications(message.participant_id, notification_audit_record.id, email_template_id, status = "")
       if !response.nil? && response != ""
-        to_update = { notification_content: response["content"] }
+        to_update = { notification_content: response.body["content"]["body"] }
         update_notification_audit_record(notification_audit_record, to_update)
       end
     end
@@ -93,7 +93,7 @@ class SendNotificationJob < CaseflowJob
     if @va_notify_sms
       response = VANotifyService.send_sms_notifications(message.participant_id, notification_audit_record.id, sms_template_id, status = "")
       if !response.nil? && response != ""
-        to_update = { notification_content: response["content"] }
+        to_update = { notification_content: response.body["content"]["body"] }
         update_notification_audit_record(notification_audit_record, to_update)
       end
     end
@@ -118,7 +118,7 @@ class SendNotificationJob < CaseflowJob
   # - event_type: Name of the event that has transpired. Event names can be found in the notification_events table
   #
   # Returns: Notification active model or nil
-  def create_notification_audit_record(appeals_id, appeals_type, event_type)
+  def create_notification_audit_record(appeals_id, appeals_type, event_type, participant_id)
     notification_type =
       if @va_notify_email && @va_notify_sms
         "Email and SMS"
@@ -135,6 +135,7 @@ class SendNotificationJob < CaseflowJob
       appeals_type: appeals_type,
       event_type: event_type,
       notification_type: notification_type,
+      participant_id: participant_id,
       notified_at: Time.zone.now,
       event_date: Time.zone.today
     )
