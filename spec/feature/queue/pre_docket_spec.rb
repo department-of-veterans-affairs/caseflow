@@ -503,7 +503,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::VHA_COMPLETE_TASK_MODAL_BODY)
           find("label", text: "VBMS").click
           fill_in(COPY::VHA_COMPLETE_TASK_MODAL_BODY, with: ro_review_instructions)
-          find("button", class: "usa-button", text: "Submit").click
+          find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
           expect(page).to have_content(COPY::VHA_COMPLETE_TASK_CONFIRMATION_VISN)
 
           appeal = Appeal.last
@@ -720,7 +720,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(radio_choices[2]).to have_content("Other")
 
         radio_choices[0].click
-        find("button", class: "usa-button", text: "Submit").click
+        find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
 
         expect(page).to have_content("You have successfully sent #{veteran.name}'s case to Board Intake for review")
 
@@ -836,7 +836,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(radio_choices[2]).to have_content("Other")
 
         radio_choices[0].click
-        find("button", class: "usa-button", text: "Submit").click
+        find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
 
         expect(page).to have_content("You have successfully sent #{appeal.veteran.name}'s case to Board Intake")
 
@@ -1051,7 +1051,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       expect(radio_choices[2]).to have_content("Other")
 
       radio_choices[0].click
-      find("button", class: "usa-button", text: "Submit").click
+      find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
 
       expect(page).to have_content("You have successfully sent #{appeal.veteran.name}'s case to Board Intake")
 
