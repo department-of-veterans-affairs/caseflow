@@ -44,10 +44,6 @@ FactoryBot.define do
                                                  :completed,
                                                  parent: hearing_task,
                                                  appeal: appeal)
-        #create(:transcription_task,
-        #       parent: assign_hearing_disposition_task)
-        #create(:evidence_submission_window_task,
-        #       parent: assign_hearing_disposition_task)
         appeal.tasks.find_by(type: :DistributionTask).update!(status: :on_hold)
         assign_hearing_disposition_task.hold!
       end

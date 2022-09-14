@@ -14,7 +14,7 @@ module Seeds
       create(
         :veteran,
         first_name: "Joe",
-        last_name: "Doe",
+        last_name: "Doe"
       )
     end
 

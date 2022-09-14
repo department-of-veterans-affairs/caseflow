@@ -541,7 +541,7 @@ module Seeds
         org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
                           assigned_by: attorney }
         # do not attempt to create a new colocated task if one already exists for the this LegacyAppeal
-        next if org_task_args[:appeal].tasks.map { |t| t.is_a?(ColocatedTask) }.any? { |bool| bool }
+        next if org_task_args[:appeal].tasks.map { |task| task.is_a?(ColocatedTask) }.any? { |bool| bool }
 
         create(:colocated_task, attrs[:trait], org_task_args)
       end
