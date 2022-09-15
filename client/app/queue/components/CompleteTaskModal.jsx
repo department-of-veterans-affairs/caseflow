@@ -348,8 +348,7 @@ const MODAL_TYPE_ATTRS = {
       detail: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, contact)
     }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE,
-    getContent: MarkTaskCompleteModal,
-    buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
+    getContent: MarkTaskCompleteModal
   },
   ready_for_review: {
     buildSuccessMsg: (appeal, { assignedToType }) => ({
@@ -358,12 +357,7 @@ const MODAL_TYPE_ATTRS = {
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_VISN, appeal.veteranFullName)
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
-<<<<<<< HEAD
     getContent: ReadyForReviewModal
-=======
-    getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SEND_BUTTON
->>>>>>> b8c6ae380c... Update modal buttons' text
   },
   send_colocated_task: {
     buildSuccessMsg: (appeal, { teamName }) => ({
@@ -400,24 +394,14 @@ const MODAL_TYPE_ATTRS = {
       title: sprintf(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
-<<<<<<< HEAD
     getContent: ReadyForReviewModal
-=======
-    getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SEND_BUTTON
->>>>>>> b8c6ae380c... Update modal buttons' text
   },
   rpo_send_to_board_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
-<<<<<<< HEAD
     getContent: ReadyForReviewModal
-=======
-    getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SEND_BUTTON
->>>>>>> b8c6ae380c... Update modal buttons' text
   },
   vha_caregiver_support_return_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
@@ -635,11 +619,13 @@ class CompleteTaskModal extends React.Component {
 
   render = () => {
     const modalAttributes = MODAL_TYPE_ATTRS[this.props.modalType];
+    const taskData = taskActionData(this.props);
 
     return (
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
-        button={modalAttributes.buttonText || this.getTaskConfiguration().modal_button_text}
+        /* eslint-disable-next-line camelcase */
+        button={taskData?.modal_button_text ?? (modalAttributes.buttonText || COPY.MODAL_SUBMIT_BUTTON)}
         submitDisabled={modalAttributes.submitDisabled?.(this.getContentArgs())}
         validateForm={this.validateForm}
         submit={this.submit}
