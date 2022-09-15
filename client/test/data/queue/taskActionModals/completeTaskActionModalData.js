@@ -48,6 +48,7 @@ const caregiverActions = [
     data: {
       modal_title: 'Return to Board Intake',
       modal_body: 'This appeal will be returned to Board intake.',
+      modal_button_text: 'Return',
       type: 'VhaDocumentSearchTask',
       options: [
         {
@@ -270,6 +271,7 @@ const educationDocumentSearchTaskData = {
         value: 'modal/emo_send_to_board_intake_for_review',
         data: {
           modal_title: 'Ready for Review',
+          modal_button_text: 'Send',
           type: 'EducationDocumentSearchTask',
           redirect_after: '/organizations/edu-emo',
           body_optional: true
@@ -346,9 +348,9 @@ const EducationAssessDocumentationTaskData = {
         data: {
           modal_title: 'Return to Executive Management Office',
           message_title: 'You have successfully returned Bob Smithlesch\'s case to the Executive Management Office',
+          modal_button_text: 'Return',
           type: 'EducationAssessDocumentationTask',
-          redirect_after: '/organizations/buffalo-rpo',
-          modal_button_text: 'Return'
+          redirect_after: '/organizations/buffalo-rpo'
         }
       },
       {
@@ -359,7 +361,8 @@ const EducationAssessDocumentationTaskData = {
           modal_title: 'Ready for Review',
           type: 'EducationAssessDocumentationTask',
           body_optional: true,
-          redirect_after: '/organizations/buffalo-rpo'
+          redirect_after: '/organizations/buffalo-rpo',
+          modal_button_text: 'Send'
         }
       },
       {
