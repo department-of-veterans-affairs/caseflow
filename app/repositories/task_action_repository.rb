@@ -306,7 +306,8 @@ class TaskActionRepository
 
     def complete_data(task, _user = nil)
       params = {
-        modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym]
+        modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym],
+        modal_button_text: COPY::MARK_TASK_COMPLETE_BUTTON
       }
       params[:modal_body] = COPY::MARK_TASK_COMPLETE_COPY if params[:modal_body].nil?
 
