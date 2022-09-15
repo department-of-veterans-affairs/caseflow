@@ -348,13 +348,11 @@ module Seeds
       )
       root_task = appeal.root_task
 
-      judge = create(:user, station_id: 101)
-      judge.update!(full_name: judge_name) if judge_name
+      judge = User.find_by(full_name: judge_name) || create(:user, station_id: 101, full_name: judge_name)
       create(:staff, :judge_role, user: judge)
       judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
 
-      atty = create(:user, station_id: 101)
-      atty.update!(full_name: attorney_name) if attorney_name
+      atty = User.find_by(full_name: attorney_name) || create(:user, station_id: 101, full_name: attorney_name)
       create(:staff, :attorney_role, user: atty)
       atty_task_params = { appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }
       atty_task = AttorneyTask.create!(atty_task_params)
