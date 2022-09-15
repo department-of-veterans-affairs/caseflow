@@ -98,7 +98,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
       Distribution.create!(
         judge: User.find(judge_id),
         priority_push: true
-      ).tap { |distribution| distribution.distribute!(distribution.batch_size) }
+      ).tap { |distribution| distribution.distribute!(distribution.batch_size - distribution.judge_tasks) }
     end
   end
 
