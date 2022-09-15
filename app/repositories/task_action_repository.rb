@@ -357,6 +357,7 @@ class TaskActionRepository
     def complete_transcription_data(_task, _user)
       {
         modal_body: COPY::COMPLETE_TRANSCRIPTION_BODY,
+        modal_button_text: COPY::MARK_TASK_COMPLETE_BUTTON,
         modal_hide_instructions: true
       }
     end
@@ -731,6 +732,12 @@ class TaskActionRepository
     def send_colocated_task(*)
       {
         modal_button_text: COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
+      }
+    end
+
+    def mark_task_complete_data(*)
+      {
+        modal_button_text: COPY::MARK_TASK_COMPLETE_BUTTON
       }
     end
 
