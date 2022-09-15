@@ -202,7 +202,7 @@
     "func": "complete_data"
   },
   "VHA_PO_SEND_TO_CAMO_FOR_REVIEW": {
-    "label": "Documents ready for VHA CAMO review",
+    "label": "Documents ready for CAMO team review",
     "value": "modal/ready_for_review",
     "func": "vha_complete_data"
   },
