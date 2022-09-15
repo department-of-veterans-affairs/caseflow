@@ -295,7 +295,8 @@
   },
   "SCHEDULE_HEARING_SEND_TO_TEAM": {
     "label": "Hearing does need to be scheduled, create schedule hearing task",
-    "value": "modal/send_colocated_task"
+    "value": "modal/send_colocated_task",
+    "func": "send_colocated_task"
   },
   "SCHEDULE_VETERAN": {
     "label": "Schedule Veteran",

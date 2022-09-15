@@ -364,8 +364,7 @@ const MODAL_TYPE_ATTRS = {
       title: sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION, appeal.veteranFullName, teamName)
     }),
     title: ({ teamName }) => sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, teamName),
-    getContent: SendColocatedTaskModal,
-    buttonText: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
+    getContent: SendColocatedTaskModal
   },
   docket_appeal: {
     buildSuccessMsg: () => ({
@@ -625,7 +624,7 @@ class CompleteTaskModal extends React.Component {
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
         /* eslint-disable-next-line camelcase */
-        button={taskData?.modal_button_text ?? (modalAttributes.buttonText || COPY.MODAL_SUBMIT_BUTTON)}
+        button={taskData?.modal_button_text ?? COPY.MODAL_SUBMIT_BUTTON}
         submitDisabled={modalAttributes.submitDisabled?.(this.getContentArgs())}
         validateForm={this.validateForm}
         submit={this.submit}

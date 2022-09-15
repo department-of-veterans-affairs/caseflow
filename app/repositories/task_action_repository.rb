@@ -727,6 +727,12 @@ class TaskActionRepository
       }
     end
 
+    def send_colocated_task(*)
+      {
+        modal_button_text: COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
+      }
+    end
+
     private
 
     def select_ama_review_decision_action(task)
