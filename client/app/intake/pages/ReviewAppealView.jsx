@@ -7,8 +7,8 @@ import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import { css, target } from 'glamor';
 import TextareaField from '../../components/TextareaField';
 import CaseHearingsDetail from '../../queue/CaseHearingsDetail';
-import { HearingLinks } from '../../hearings/components/details/HearingLinks';
-import { HearingsUserContext } from '../../hearings/contexts/HearingsUserContext';
+// import { HearingLinks } from '../../hearings/components/details/HearingLinks';
+// import { HearingsUserContext } from '../../hearings/contexts/HearingsUserContext';
 import _ from 'lodash';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { ArrowRightIcon, ArrowUpIcon ,GreenCheckmarkIcon, LinkIcon, PageArrowRightIcon, ExternalLinkIcon } from '../../components/icons';
@@ -46,6 +46,9 @@ const styles = {
       borderTop: 'none',
       // border: '1px solid #E2E3E4',
     },
+    '& ol': {
+      paddingLeft: '0.94em !important',
+    },
     '& tr > td:last-of-type': {
       borderLeft: '1px solid #979797',
       paddingLeft: '3%',
@@ -61,6 +64,9 @@ const styles = {
     '& .hearing_view p': {
       marginTop: '0.1rem',
       marginBottom: '0.1rem',
+    },
+    '& g': {
+      fill: '#0071bc !important',
     }
   }),
   tableSection: css({
@@ -81,27 +87,40 @@ const ReviewAppealView = (props) => {
   const hearings = props.hearings;
   const hearingsSize = hearings.length;
   const originalHearingRequestType = _.startCase(props.appeal.original_hearing_request_type);
-  const user = useContext(HearingsUserContext);
+  const PARSE_INT_RADIX = 10;
+  const currentValues = {
+    reason,
+    otherReason,
+    selectedIssues
+  };
 
-  // const { serverIntake } = props;
-  // const { reason, setOtherReason, otherReason, selectedIssues, setSelectedIssues } = useContext(StateContext);
+  if (Object.keys(selectedIssues).length > 0) {
+    localStorage.setItem('myValues', JSON.stringify(currentValues));
+  }
 
-  // const streamdocketNumber = props.appeal.stream_docket_number;
+  const myValues = JSON.parse(localStorage.getItem('myValues'));
+  let selectElement = [];
 
-  // const requestIssues = props.serverIntake.requestIssues;
-  // const docketType = props.serverIntake.docketType;
-  // const reviewOpt = _.startCase(serverIntake?.docketType?.split('-').join(' '));
-  // const original_hearing_request_type = props.appeal.original_hearing_request_type;
+  Object.keys(myValues.selectedIssues).map((key) => {
+    for (let currentItem in requestIssues) {
+      if (requestIssues[currentItem].id === parseInt(key, PARSE_INT_RADIX) && (myValues.selectedIssues[key] === true)) {
+        selectElement = [requestIssues[currentItem], ...selectElement];
+      }
+    }
 
-  // const onIssueChange = (evt) => {
-  //   setSelectedIssues({ ...selectedIssues, [evt.target.name]: evt.target.labels[0].innerText });
-  // };
+    return selectElement;
+  });
+  let selectOriginal = requestIssues;
 
-  // const onOtherReasonChange = (otherReason) => {
-  //   setOtherReason(otherReason);
-  // };
+  Object.keys(myValues.selectedIssues).map((key) => {
+    for (let currentItem in requestIssues) {
+      if (requestIssues[currentItem].id === parseInt(key, PARSE_INT_RADIX) && (myValues.selectedIssues[key] === true)) {
+        selectOriginal.splice(currentItem, 1);
+      }
+    }
 
-  // {console.log(JSON.stringify(CaseHearingsDetail))}
+    return selectOriginal;
+  });
 
   return (
     <>
@@ -111,7 +130,7 @@ const ReviewAppealView = (props) => {
       </div> &ensp;
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'left' }}>
         <u style={{fontSize: '20px' }}>{COPY.SPLIT_APPEAL_REVIEW_REASONING_TITLE}</u> &ensp;
-        <span style={{ flexBasis: '75%' }}>{reason} &ensp; {otherReason}</span>
+        <span style={{ flexBasis: '75%' }}>{myValues.reason} &ensp; {myValues.otherReason}</span>
       </div>
       <br />
       <br />
@@ -160,19 +179,12 @@ const ReviewAppealView = (props) => {
                 <>
                   <p><DateString date={receiptDate} dateFormat="MM/DD/YYYY" /></p>
                   <p> { _.startCase(hearings[0].disposition) } </p>
-                  <HearingLinks
-                    user={user}
-                    hearing={hearings[0]}
-                    // virtualHearing={hearings[0].virtualHearing}
-                    // isVirtual={hearings[0]?.isVirtual}
-                    // wasVirtual={hearings[0]?.wasVirtual}
-                  />
                   <Link
                     rel="noopener"
                     target="_blank"
                     href={`/hearings/worksheet/print?keep_open=true&hearing_ids=${hearings[0].uuid}`}>
                     {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
-                  </Link> <ArrowUpIcon />
+                  </Link> <ExternalLinkIcon />
                 </>
               }
             </td>
@@ -191,7 +203,7 @@ const ReviewAppealView = (props) => {
                     target="_blank"
                     href={`/hearings/worksheet/print?keep_open=true&hearing_ids=${hearings[0].uuid}`}>
                     {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
-                  </Link> <ArrowUpIcon />
+                  </Link> <ExternalLinkIcon />
                 </>
               }
             </td>
@@ -200,7 +212,7 @@ const ReviewAppealView = (props) => {
             <td><em>{COPY.TABLE_ISSUE}</em></td>
             <td>
               <ol>
-                {requestIssues.map((issue) => {
+                {selectOriginal.map((issue) => {
                   return (
                     <li>
                       <p>{issue.description}</p>
@@ -213,7 +225,15 @@ const ReviewAppealView = (props) => {
             </td>
             <td>
               <ol>
-                {Object.keys(selectedIssues).map((issueKey) => <li key={issueKey}>{selectedIssues[issueKey]}</li>)}
+                {selectElement.map((issue) => {
+                  return (
+                    <li>
+                      <p>{issue.description}</p>
+                      <p>Benefit type: {issue.benefit_type}</p>
+                      <p>Decision date: {issue.approx_decision_date}</p>
+                    </li>
+                  );
+                })}
               </ol>
             </td>
           </tr>
