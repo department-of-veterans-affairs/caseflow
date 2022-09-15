@@ -57,7 +57,7 @@ class BackButtonUnconnected extends React.PureComponent {
         onClick={
           () => {
             if (this.props.formType === 'appeal') {
-              this.props.history.push('/create_split');
+              window.location.href = `/appeals/${this.props.claimId}/edit/create_split`;
             } else {
               this.props.history.push('/cancel');
             }
@@ -96,15 +96,13 @@ class SplitButtonUnconnected extends React.PureComponent {
         {(appeal) => (
           <StateContext.Consumer>
             {(payloadInfo) => (
-              <div>
-                <Button
-                  id="button-submit-update"
-                  classNames={['cf-submit usa-button']}
-                  // on click button sends claim id for dummy data
-                  onClick={() => this.handleSplitSubmit(appeal, payloadInfo)}>
-                  { COPY.CORRECT_REQUEST_ISSUES_SPLIT_APPEAL }
-                </Button>
-              </div>
+              <Button
+                id="button-submit-update"
+                classNames={['cf-submit usa-button']}
+                // on click button sends claim id for dummy data
+                onClick={() => this.handleSplitSubmit(appeal, payloadInfo)}>
+                { COPY.CORRECT_REQUEST_ISSUES_SPLIT_APPEAL }
+              </Button>
 
             )}
           </StateContext.Consumer>
