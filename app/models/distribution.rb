@@ -13,7 +13,6 @@ class Distribution < CaseflowRecord
 
   validates :judge, presence: true
   validate :validate_user_is_judge, on: :create
-  validate :validate_number_of_unassigned_cases, on: :create, unless: :priority_push?
   validate :validate_number_of_unassigned_cases, on: :create, unless: :do_not_this_check?
   validate :validate_has_not_exceeded_batch_size, on: :create, unless: !FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
   validate :validate_days_waiting_of_unassigned_cases, on: :create, unless: :priority_push?
