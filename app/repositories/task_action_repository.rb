@@ -29,7 +29,8 @@ class TaskActionRepository
         modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
         modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
-        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name)
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name),
+        modal_button_text: COPY::MARK_TASK_COMPLETE_BUTTON
       }
     end
 
@@ -321,6 +322,7 @@ class TaskActionRepository
       queue_url = org.url
       {
         modal_title: COPY::VHA_COMPLETE_TASK_MODAL_TITLE,
+        modal_button_text: COPY::MODAL_SEND_BUTTON,
         instructions: [],
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
@@ -473,6 +475,7 @@ class TaskActionRepository
       {
         modal_title: COPY::DOCKET_APPEAL_MODAL_TITLE,
         modal_body: format(COPY::DOCKET_APPEAL_MODAL_BODY, pre_docket_org),
+        modal_button_text: COPY::MODAL_CONFIRM_BUTTON,
         modal_alert: COPY::DOCKET_APPEAL_MODAL_NOTICE,
         instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
         redirect_after: "/organizations/#{BvaIntake.singleton.url}"
@@ -482,6 +485,7 @@ class TaskActionRepository
     def vha_send_to_board_intake(*)
       {
         modal_title: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
+        modal_button_text: COPY::MODAL_SUBMIT_BUTTON,
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
       }
@@ -490,6 +494,7 @@ class TaskActionRepository
     def emo_send_to_board_intake_for_review(*)
       {
         modal_title: COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
+        modal_button_text: COPY::MODAL_SEND_BUTTON,
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}",
         body_optional: true
@@ -501,6 +506,7 @@ class TaskActionRepository
       queue_url = org.url
       {
         modal_title: COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
+        modal_button_text: COPY::MODAL_SEND_BUTTON,
         type: EducationAssessDocumentationTask.name,
         body_optional: true,
         redirect_after: "/organizations/#{queue_url}"
@@ -617,6 +623,7 @@ class TaskActionRepository
     def emo_return_to_board_intake(*)
       {
         modal_title: COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}"
       }
@@ -686,6 +693,7 @@ class TaskActionRepository
       {
         modal_title: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
         modal_body: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: VhaDocumentSearchTask.name,
         options: dropdown_options,
         redirect_after: queue_url

@@ -348,8 +348,7 @@ const MODAL_TYPE_ATTRS = {
       detail: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, contact)
     }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE,
-    getContent: MarkTaskCompleteModal,
-    buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
+    getContent: MarkTaskCompleteModal
   },
   ready_for_review: {
     buildSuccessMsg: (appeal, { assignedToType }) => ({
@@ -358,8 +357,7 @@ const MODAL_TYPE_ATTRS = {
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_VISN, appeal.veteranFullName)
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
-    getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SEND_BUTTON
+    getContent: ReadyForReviewModal
   },
   send_colocated_task: {
     buildSuccessMsg: (appeal, { teamName }) => ({
@@ -375,40 +373,35 @@ const MODAL_TYPE_ATTRS = {
       detail: sprintf(COPY.DOCKET_APPEAL_CONFIRMATION_DETAIL)
     }),
     title: () => COPY.DOCKET_APPEAL_MODAL_TITLE,
-    getContent: MarkTaskCompleteModal,
-    buttonText: COPY.MODAL_CONFIRM_BUTTON
+    getContent: MarkTaskCompleteModal
   },
   vha_send_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
     }),
     title: () => COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
-    getContent: SendToBoardIntakeModal,
-    buttonText: COPY.MODAL_SUBMIT_BUTTON
+    getContent: SendToBoardIntakeModal
   },
   emo_return_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.EMO_RETURN_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
     }),
     title: () => COPY.EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
-    getContent: ReturnToBoardIntakeModal,
-    buttonText: COPY.MODAL_RETURN_BUTTON
+    getContent: ReturnToBoardIntakeModal
   },
   emo_send_to_board_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
-    getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SEND_BUTTON
+    getContent: ReadyForReviewModal
   },
   rpo_send_to_board_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
-    getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SEND_BUTTON
+    getContent: ReadyForReviewModal
   },
   vha_caregiver_support_return_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
@@ -416,7 +409,6 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: VhaCaregiverSupportReturnToBoardIntakeModal,
-    buttonText: COPY.MODAL_RETURN_BUTTON,
     submitButtonClassNames: ['usa-button'],
     submitDisabled: ({ state }) => (
       !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
@@ -449,7 +441,6 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SEND_BUTTON,
     submitDisabled: ({ state }) => {
       const { otherInstructions, radio } = state;
 
@@ -628,11 +619,13 @@ class CompleteTaskModal extends React.Component {
 
   render = () => {
     const modalAttributes = MODAL_TYPE_ATTRS[this.props.modalType];
+    const taskData = taskActionData(this.props);
 
     return (
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
-        button={modalAttributes.buttonText}
+        /* eslint-disable-next-line camelcase */
+        button={taskData?.modal_button_text ?? (modalAttributes.buttonText || COPY.MODAL_SUBMIT_BUTTON)}
         submitDisabled={modalAttributes.submitDisabled?.(this.getContentArgs())}
         validateForm={this.validateForm}
         submit={this.submit}
