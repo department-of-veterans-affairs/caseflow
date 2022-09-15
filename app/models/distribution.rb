@@ -31,7 +31,8 @@ class Distribution < CaseflowRecord
   end
 
   def do_not_this_check?
-    return false if feature toggle
+    return false if FeatureToggle
+
     priority_push?
   end
 
@@ -40,8 +41,9 @@ class Distribution < CaseflowRecord
   end
 
   def judge_has_less_than_batch_size
-   return true if judge_tasks.length < batch_size
-   judge_tasks.length + judge_legacy_tasks.length < batch_size
+    return true if judge_tasks.length < batch_size
+
+    judge_tasks.length + judge_legacy_tasks.length < batch_size
   end
 
   def distribute!(limit = nil)
