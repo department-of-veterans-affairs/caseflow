@@ -13,8 +13,8 @@ module Seeds
     def build_veteran
       create(
         :veteran,
-        first_name: "Joe",
-        last_name: "Doe"
+        first_name: "Veteran",
+        last_name: "DecisionIssueSeed"
       )
     end
 

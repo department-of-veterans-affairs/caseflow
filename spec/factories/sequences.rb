@@ -51,6 +51,6 @@ FactoryBot.define do
   # BRIEFF.BFKEY
   sequence :vacols_case_key, case_key_initial_value
 
-  # used in decision_issues factory
-  sequence :contention_reference_id, contention_reference_initial_value
+  # used in request_issues factory
+  # sequence :contention_reference_id, contention_reference_initial_value
 end

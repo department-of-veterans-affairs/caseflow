@@ -14,8 +14,8 @@ module Seeds
     def deceased_vet
       @deceased_vet ||= create(
         :veteran,
-        first_name: "Jane",
-        last_name: "Deceased"
+        first_name: "JaneDeceased",
+        last_name: "SubstitutionsSeed"
       )
     end
 

@@ -36,6 +36,10 @@ FactoryBot.define do
       after(:create) do |hearing, _evaluator|
         appeal = hearing.appeal
         hearing_task = appeal.tasks.find_by(type: :HearingTask)
+        if hearing_task.nil?
+          appeal.create_tasks_on_intake_success!
+          hearing_task = appeal.tasks.find_by(type: :HearingTask)
+        end
         create(:hearing_task_association,
                hearing: hearing,
                hearing_task: hearing_task)
