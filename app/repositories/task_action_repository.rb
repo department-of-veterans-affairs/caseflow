@@ -29,8 +29,7 @@ class TaskActionRepository
         modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
         modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
-        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name),
-        modal_button_text: COPY::MARK_TASK_COMPLETE_BUTTON
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name)
       }
     end
 
