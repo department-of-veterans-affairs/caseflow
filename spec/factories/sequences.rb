@@ -24,15 +24,6 @@ FactoryBot.define do
   end
 
   begin
-    contention_reference_initial_value =
-      RequestIssue.all.map(&:contention_reference_id).map(&:to_i).filter { |id| id < 100_000 }.max.to_i + 1
-  rescue ActiveRecord::StatementInvalid => error
-    raise if !error.message.include?("PG::UndefinedTable")
-
-    contention_reference_initial_value = 1
-  end
-
-  begin
     veteran_initial_value = Veteran.all.map(&:file_number).max.to_i + 1
   rescue ActiveRecord::StatementInvalid => error
     raise if !error.message.include?("PG::UndefinedTable")
@@ -51,6 +42,4 @@ FactoryBot.define do
   # BRIEFF.BFKEY
   sequence :vacols_case_key, case_key_initial_value
 
-  # used in request_issues factory
-  # sequence :contention_reference_id, contention_reference_initial_value
 end

@@ -109,7 +109,7 @@ FactoryBot.define do
 
     transient do
       veteran do
-        Veteran.find_by(file_number: (generate :veteran_file_number)) ||
+        Veteran.find_by(file_number: veteran_file_number) ||
           create(:veteran, file_number: (generate :veteran_file_number))
       end
     end
