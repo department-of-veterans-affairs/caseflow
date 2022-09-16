@@ -15,7 +15,7 @@ import {
   emoToBvaIntakeData,
   rpoToBvaIntakeData,
   vhaPOToBvaIntakeData
-} from '../../../data/queue/taskActionModals/completeTaskActionModalData';
+} from '../../../data/queue/taskActionModals/taskActionModalData';
 import * as uiActions from 'app/queue/uiReducer/uiActions';
 import CompleteTaskModal from 'app/queue/components/CompleteTaskModal';
 
