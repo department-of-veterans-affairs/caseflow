@@ -2,18 +2,11 @@ import React, { useContext } from 'react';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { StateContext } from '../../intakeEdit/IntakeEditFrame';
-import { formatDateStr, DateString } from '../../util/DateUtil';
-import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
-import { css, target } from 'glamor';
-import TextareaField from '../../components/TextareaField';
-import CaseHearingsDetail from '../../queue/CaseHearingsDetail';
-// import { HearingLinks } from '../../hearings/components/details/HearingLinks';
-// import { HearingsUserContext } from '../../hearings/contexts/HearingsUserContext';
+import { DateString } from '../../util/DateUtil';
+import { css } from 'glamor';
 import _ from 'lodash';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import { ArrowRightIcon, ArrowUpIcon ,GreenCheckmarkIcon, LinkIcon, PageArrowRightIcon, ExternalLinkIcon } from '../../components/icons';
-
-// const issueListStyling = css({ marginTop: '0rem', marginLeft: '6rem' });
+import { ExternalLinkIcon } from '../../components/icons';
 
 const styles = {
   mainTable: css({
