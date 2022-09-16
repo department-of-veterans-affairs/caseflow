@@ -1023,7 +1023,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       allow_any_instance_of(described_class).to receive(:distribute_non_genpop_priority_appeals).and_raise(error_msg)
       described_class.perform_now
 
-      expected_msg = ".ERROR. after running for .*: #{error_msg}"
+      expected_msg = "<!here>\n .ERROR. after running for .*: #{error_msg}"
       expect(slack_msg).to match(/^#{expected_msg}/)
     end
   end
