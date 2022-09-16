@@ -922,7 +922,7 @@ export const ReturnToOrgData = {
   ...uiData
 };
 
-export const vhaPOToBvaIntakeData = {
+export const vhaPOToCAMOData = {
   queue: {
     amaTasks: {
       ...AssessDocumentationTaskData
