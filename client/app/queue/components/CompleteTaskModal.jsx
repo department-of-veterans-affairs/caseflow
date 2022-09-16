@@ -18,7 +18,6 @@ import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
-import { copy } from 'superagent';
 
 const validRadio = (radio) => {
   return radio?.length > 0;
