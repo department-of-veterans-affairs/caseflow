@@ -68,7 +68,7 @@ const CancelTaskModal = (props) => {
   if ([
     'AssessDocumentationTask',
     'EducationAssessDocumentationTask',
-  ].includes(task.type)) {
+  ].includes(task?.type)) {
     modalProps.submitDisabled = !validateForm();
   }
 

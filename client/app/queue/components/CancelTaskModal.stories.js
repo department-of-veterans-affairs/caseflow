@@ -2,15 +2,17 @@ import React from 'react';
 
 import CancelTaskModal from './CancelTaskModal';
 import {
-  appealData,
   changeHearingRequestTypeTask,
   changeHearingRequestTypeTaskCancelAction
 } from 'test/data';
+import {
+
+} from '../../../test/data/queue/taskActionModals/taskActionModalData';
 import { queueWrapper as Wrapper } from '../../../test/data/stores/queueStore';
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
 
 export default {
-  title: 'Queue/Components/CancelTaskModal',
+  title: 'Queue/Components/Task Action Modals/CancelTaskModal',
   component: CancelTaskModal,
   parameters: {
     docs: {
@@ -47,3 +49,7 @@ CancelChangeHearingRequestTypeTask.args = {
     taskId: changeHearingRequestTypeTask.uniqueId
   }
 };
+
+export const ReturnCaseToEducationEmoFromRpo = Template.bind({});
+
+export const ReturnCaseToVhaCamoFromVhaPo = Template.bind({});
