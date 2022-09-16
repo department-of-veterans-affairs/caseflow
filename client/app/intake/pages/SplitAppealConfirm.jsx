@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import { formatDateStr } from '../../util/DateUtil';
 
-
 const SplitAppealConfirm = (props) => {
   const { serverIntake } = props;
   const requestIssues = serverIntake.requestIssues;
@@ -87,6 +86,5 @@ const SplitAppealConfirm = (props) => {
 SplitAppealConfirm.propTypes = {
   serverIntake: PropTypes.object
 };
-
 
 export default SplitAppealConfirm;
