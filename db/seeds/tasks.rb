@@ -11,6 +11,7 @@ module Seeds
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
   class Tasks < Base
+
     def initialize
       @ama_appeals = []
     end
