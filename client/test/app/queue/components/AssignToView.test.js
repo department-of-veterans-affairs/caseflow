@@ -14,7 +14,7 @@ import {
   selectFromDropdown,
   clickSubmissionButton
 } from './modalUtils';
-import AssignToView from 'app/queue/components/AssignToView';
+import AssignToView from 'app/queue/AssignToView';
 
 const renderAssignToView = (modalType, storeValues, taskType) => {
   const appealId = getAppealId(storeValues);
@@ -38,3 +38,21 @@ const renderAssignToView = (modalType, storeValues, taskType) => {
     </Provider>
   );
 };
+
+describe('Whenver the EMO assigns an appeal to a Regional Processing Office', () => {
+  it('placeholder', () => {
+    expect(true).toBe(true);
+  });
+});
+
+describe('Whenever VHA CAMO assigns an appeal to a Program Office', () => {
+  it('placeholder', () => {
+    expect(true).toBe(true);
+  });
+});
+
+describe('Whenever a VHA Program Office assigns an appeal to a VISN/Regional Office', () => {
+  it('placeholder', () => {
+    expect(true).toBe(true);
+  });
+});
