@@ -226,6 +226,7 @@ class AssignToView extends React.Component {
       'PreDocketTask',
       'VhaDocumentSearchTask',
       'EducationDocumentSearchTask',
+      'AssessDocumentationTask'
     ].includes(task.type)) {
       modalProps.submitDisabled = !this.validateForm();
     }

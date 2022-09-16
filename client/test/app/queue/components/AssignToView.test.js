@@ -15,7 +15,10 @@ import {
 } from './modalUtils';
 import AssignToView from 'app/queue/AssignToView';
 import {
-  ReturnToOrgData
+  ReturnToOrgData,
+  emoToBvaIntakeData,
+  camoToProgramOfficeToCamoData,
+  vhaPOToCAMOData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
 
 const renderAssignToView = (modalType, storeValues, taskType) => {
@@ -86,33 +89,63 @@ describe('Whenever BVA Intake returns an appeal to', () => {
 
 describe('Whenver the EMO assigns an appeal to a Regional Processing Office', () => {
   const taskType = 'EducationDocumentSearchTask';
-  const buttonText = COPY.MODAL_SUBMIT_BUTTON;
 
-  it('placeholder', () => {
-    renderAssignToView(TASK_ACTIONS.EMO_ASSIGN_TO_RPO.value, ReturnToOrgData, taskType);
+  it('Button Disabled until a RPO is chosen from the dropdown', () => {
+    renderAssignToView(TASK_ACTIONS.EMO_ASSIGN_TO_RPO.value, emoToBvaIntakeData, taskType);
+    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
 
-    expect(true).toBe(true);
+    selectFromDropdown(
+      'Assign to selector',
+      'Buffalo RPO'
+    );
+
+    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).not.toBeDisabled();
   });
 });
 
 describe('Whenever VHA CAMO assigns an appeal to a Program Office', () => {
   const taskType = 'VhaDocumentSearchTask';
-  const buttonText = COPY.MODAL_SUBMIT_BUTTON;
 
-  it('placeholder', () => {
-    renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value, ReturnToOrgData, taskType);
+  it('Submission button is disabled until dropdown and text fields are populated', () => {
+    renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value, camoToProgramOfficeToCamoData, taskType);
+    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
 
-    expect(true).toBe(true);
+    selectFromDropdown(
+      'Assign to selector',
+      'Prosthetics'
+    );
+
+    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+
+    enterTextFieldOptions(
+      'Provide instructions and context for this action:',
+      'Here is the context that you have requested.'
+    );
+
+    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).not.toBeDisabled();
   });
 });
 
-describe('Whenever a VHA Program Office assigns an appeal to a VISN/Regional Office', () => {
+describe.only('Whenever a VHA Program Office assigns an appeal to a VISN/Regional Office', () => {
   const taskType = 'AssessDocumentationTask';
-  const buttonText = COPY.MODAL_SUBMIT_BUTTON;
 
-  it('Submission button is disable until dropdown and text fields are populateds', () => {
-    renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.value, ReturnToOrgData, taskType);
+  it('Submission button is disabled until dropdown and text fields are populated', async () => {
+    renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.value, vhaPOToCAMOData, taskType);
 
-    expect(true).toBe(true);
+    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+
+    selectFromDropdown(
+      'Assign to selector',
+      'Sierra Pacific Network'
+    );
+
+    expect(await screen.findByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+
+    enterTextFieldOptions(
+      'Provide instructions and context for this action:',
+      'Here is the context that you have requested.'
+    );
+
+    expect(await screen.findByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).not.toBeDisabled();
   });
 });
