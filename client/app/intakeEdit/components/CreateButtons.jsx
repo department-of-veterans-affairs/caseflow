@@ -86,7 +86,7 @@ class SplitButtonUnconnected extends React.PureComponent {
 
   handleSplitSubmit = (appeal, payloadInfo) => {
     this.props.splitAppeal(appeal.id, payloadInfo.selectedIssues,
-      payloadInfo.reason, payloadInfo.otherReason);
+      payloadInfo.reason, payloadInfo.otherReason, this.props.user);
     window.location.href = `/queue/appeals/${this.props.claimId}`;
   }
   render() {
@@ -118,7 +118,8 @@ SplitButtonUnconnected.propTypes = {
   history: PropTypes.object,
   formType: PropTypes.string,
   claimId: PropTypes.string,
-  splitAppeal: PropTypes.func
+  splitAppeal: PropTypes.func,
+  user: PropTypes.string,
 };
 
 const mapStateToProps = (state) => ({

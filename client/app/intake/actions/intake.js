@@ -16,7 +16,7 @@ export const setFileNumberSearch = (fileNumber) => ({
   }
 });
 
-export const splitAppeal = (appealId, selectedIssues, reason, otherReason) => (dispatch) => {
+export const splitAppeal = (appealId, selectedIssues, reason, otherReason, user) => (dispatch) => {
   dispatch({
     type: ACTIONS.SET_SPLIT_APPEAL,
     meta: { analytics }
@@ -26,7 +26,8 @@ export const splitAppeal = (appealId, selectedIssues, reason, otherReason) => (d
     appeal_id: appealId,
     appeal_split_issues: selectedIssues,
     split_reason: reason,
-    split_other_reason: otherReason
+    split_other_reason: otherReason,
+    user_css_id: user
   };
 
   return ApiUtil.post(`/appeals/${data.appeal_id}/${ENDPOINT_NAMES.SPLIT_APPEAL}`, { data }).
