@@ -93,9 +93,9 @@ class VACOLS::CaseDocket < VACOLS::Record
   "
 
   SELECT_PRIORITY_APPEALS = "
-    select BFKEY, BFDLOOUT, VLJ
+    select BFKEY, BFD19, BFDLOOUT, VLJ
       from (
-        select BFKEY, BFDLOOUT,
+        select BFKEY, BFD19, BFDLOOUT,
           case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
         from (
           #{SELECT_READY_APPEALS}
@@ -103,8 +103,9 @@ class VACOLS::CaseDocket < VACOLS::Record
           order by BFDLOOUT
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        order by BFD19
       )
-  "
+    "
 
   SELECT_NONPRIORITY_APPEALS = "
     select BFKEY, BFD19, BFDLOOUT, VLJ, DOCKET_INDEX
@@ -244,6 +245,21 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     appeals = conn.exec_query(fmtd_query).to_hash
     appeals.map { |appeal| appeal["bfdloout"] }
+  end
+
+  def self.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+    conn = connection
+
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
+      where (VLJ = ? or VLJ is null)
+      and rownum <= ?
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id, num])
+
+    appeals = conn.exec_query(fmtd_query).to_hash
+    appeals.map { |appeal| appeal["bfd19"] }
   end
 
   def self.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)

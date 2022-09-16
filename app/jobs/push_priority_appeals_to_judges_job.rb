@@ -18,8 +18,12 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def perform
-    @tied_distributions = distribute_non_genpop_priority_appeals
-    @genpop_distributions = distribute_genpop_priority_appeals
+    if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+      @distributions = distribute_priority_appeals
+    else
+      @tied_distributions = distribute_non_genpop_priority_appeals
+      @genpop_distributions = distribute_genpop_priority_appeals
+    end
     send_job_report
   rescue StandardError => error
     start_time ||= Time.zone.now # temporary fix to get this job to succeed
@@ -84,7 +88,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
       Distribution.create!(judge: User.find(judge.id), priority_push: true).tap(&:distribute!)
     end
   end
-
   # Distribute remaining general population cases while attempting to even out the number of priority cases all judges
   # have received over one month
   def distribute_genpop_priority_appeals
@@ -93,6 +96,15 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
         judge: User.find(judge_id),
         priority_push: true
       ).tap { |distribution| distribution.distribute!(target) }
+    end
+  end
+
+  def distribute_priority_appeals
+    eligible_judges.map do |judge_id|
+      Distribution.create!(
+        judge: User.find(judge_id),
+        priority_push: true
+      ).tap { |distribution| distribution.distribute!(distribution.batch_size - (distribution.judge_tasks.length - distribution.judge_legacy_tasks.length)) }
     end
   end
 

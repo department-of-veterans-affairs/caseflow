@@ -7,6 +7,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
   context ".distribute_non_genpop_priority_appeals" do
     before do
+      FeatureToggle.disable!(:acd_distribute_all)
       allow_any_instance_of(DirectReviewDocket)
         .to receive(:nonpriority_receipts_per_year)
         .and_return(100)
@@ -16,6 +17,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         .and_return(1000)
       allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
     end
+    after { FeatureToggle.enable!(:acd_distribute_all) }
 
     let(:ready_priority_bfkey) { "12345" }
     let(:ready_priority_bfkey2) { "12346" }
@@ -1014,6 +1016,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   end
 
   context "when the entire job fails" do
+    before { FeatureToggle.disable!(:acd_distribute_all) }
+    after { FeatureToggle.enable!(:acd_distribute_all) }
     let(:error_msg) { "Some dummy error" }
 
     it "sends a message to Slack that includes the error" do
