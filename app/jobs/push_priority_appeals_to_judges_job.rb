@@ -13,7 +13,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
     include AllCaseDistribution
-  else 
+  else
     include AutomaticCaseDistribution
   end
 
@@ -24,7 +24,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   rescue StandardError => error
     start_time ||= Time.zone.now # temporary fix to get this job to succeed
     duration = time_ago_in_words(start_time)
-    slack_msg = "[ERROR] after running for #{duration}: #{error.message}"
+    slack_msg = "<!here>\n [ERROR] after running for #{duration}: #{error.message}"
     slack_service.send_notification(slack_msg, self.class.name, "#appeals-job-alerts")
     log_error(error)
   ensure
