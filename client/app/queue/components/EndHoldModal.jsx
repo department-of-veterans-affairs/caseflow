@@ -25,6 +25,7 @@ class EndHoldModal extends React.Component {
 
   render = () => <QueueFlowModal
     title={COPY.END_HOLD_MODAL_TITLE}
+    button={COPY.MODAL_END_HOLD_BUTTON}
     pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
     submit={this.submit}
   >

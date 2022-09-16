@@ -500,8 +500,11 @@
   "MODAL_CLOSE_BUTTON": "Close",
   "MODAL_CONFIRM_BUTTON": "Confirm",
   "MODAL_RETURN_BUTTON": "Return",
+  "MODAL_ASSIGN_BUTTON": "Assign",
   "MODAL_MARK_TASK_IN_PROGRESS_BUTTON": "Mark in progress",
   "MODAL_SEND_BUTTON": "Send",
+  "MODAL_PUT_TASK_ON_HOLD_BUTTON": "Put task on hold",
+  "MODAL_END_HOLD_BUTTON": "End hold",
 
   "BULK_ASSIGN_BUTTON_TEXT": "Assign Tasks",
   "BULK_ASSIGN_MODAL_TITLE": "Bulk Assign Tasks",

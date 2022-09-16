@@ -375,40 +375,35 @@ const MODAL_TYPE_ATTRS = {
       detail: sprintf(COPY.DOCKET_APPEAL_CONFIRMATION_DETAIL)
     }),
     title: () => COPY.DOCKET_APPEAL_MODAL_TITLE,
-    getContent: MarkTaskCompleteModal,
-    buttonText: COPY.MODAL_CONFIRM_BUTTON
+    getContent: MarkTaskCompleteModal
   },
   vha_send_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
     }),
     title: () => COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
-    getContent: SendToBoardIntakeModal,
-    buttonText: COPY.MODAL_SUBMIT_BUTTON
+    getContent: SendToBoardIntakeModal
   },
   emo_return_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.EMO_RETURN_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
     }),
     title: () => COPY.EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
-    getContent: ReturnToBoardIntakeModal,
-    buttonText: COPY.MODAL_RETURN_BUTTON
+    getContent: ReturnToBoardIntakeModal
   },
   emo_send_to_board_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
-    getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SUBMIT_BUTTON
+    getContent: ReadyForReviewModal
   },
   rpo_send_to_board_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
-    getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SUBMIT_BUTTON
+    getContent: ReadyForReviewModal
   },
   vha_caregiver_support_return_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
@@ -416,7 +411,6 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: VhaCaregiverSupportReturnToBoardIntakeModal,
-    buttonText: COPY.MODAL_RETURN_BUTTON,
     submitButtonClassNames: ['usa-button'],
     submitDisabled: ({ state }) => (
       !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
@@ -449,7 +443,6 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SEND_BUTTON,
     submitDisabled: ({ state }) => {
       const { otherInstructions, radio } = state;
 
@@ -463,7 +456,7 @@ const MODAL_TYPE_ATTRS = {
 
       return !isValid;
     }
-  },
+  }
 };
 
 class CompleteTaskModal extends React.Component {
@@ -632,7 +625,7 @@ class CompleteTaskModal extends React.Component {
     return (
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
-        button={modalAttributes.buttonText}
+        button={modalAttributes.buttonText || this.getTaskConfiguration().modal_button_text}
         submitDisabled={modalAttributes.submitDisabled?.(this.getContentArgs())}
         validateForm={this.validateForm}
         submit={this.submit}
