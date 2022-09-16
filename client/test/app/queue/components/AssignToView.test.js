@@ -87,7 +87,7 @@ describe('Whenever BVA Intake returns an appeal to', () => {
   });
 });
 
-describe('Whenver the EMO assigns an appeal to a Regional Processing Office', () => {
+describe('Whenever the EMO assigns an appeal to a Regional Processing Office', () => {
   const taskType = 'EducationDocumentSearchTask';
 
   it('Button Disabled until a RPO is chosen from the dropdown', () => {
@@ -126,7 +126,7 @@ describe('Whenever VHA CAMO assigns an appeal to a Program Office', () => {
   });
 });
 
-describe.only('Whenever a VHA Program Office assigns an appeal to a VISN/Regional Office', () => {
+describe('Whenever a VHA Program Office assigns an appeal to a VISN/Regional Office', () => {
   const taskType = 'AssessDocumentationTask';
 
   it('Submission button is disabled until dropdown and text fields are populated', async () => {
@@ -139,13 +139,13 @@ describe.only('Whenever a VHA Program Office assigns an appeal to a VISN/Regiona
       'Sierra Pacific Network'
     );
 
-    expect(await screen.findByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+    expect((await screen.findByText(COPY.MODAL_SUBMIT_BUTTON)).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action:',
       'Here is the context that you have requested.'
     );
 
-    expect(await screen.findByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).not.toBeDisabled();
+    expect((await screen.findByText(COPY.MODAL_SUBMIT_BUTTON)).closest('button')).not.toBeDisabled();
   });
 });
