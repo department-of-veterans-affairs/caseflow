@@ -1289,6 +1289,7 @@
   "SPLIT_APPEAL_REVIEW_SUBHEAD": "Case history, POA, and Veteran information will be duplicated on the new appeal.",
   "SPLIT_APPEAL_REVIEW_REASONING_TITLE": "Reason for new appeal stream:",
   "REVIEW_SPLIT_APPEAL_CREATE_SUBHEAD": "Case history, POA, and Veteran information will be deplicated on the new appeal.",
+  
   "TABLE_ORIGINAL_APPEAL": "Original Appeal Stream",
   "TABLE_NEW_APPEAL": "New Appeal Stream",
   "TABLE_VETERAN" : "Veteran",

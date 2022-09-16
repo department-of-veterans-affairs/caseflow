@@ -29,10 +29,12 @@ export const splitAppeal = (appealId, selectedIssues, reason, otherReason) => (d
     split_other_reason: otherReason
   };
 
-  return ApiUtil.post(`/appeals/${data.appeal_id}/${ENDPOINT_NAMES.SPLIT_APPEAL}`, data).
+  return ApiUtil.post(`/appeals/${data.appeal_id}/${ENDPOINT_NAMES.SPLIT_APPEAL}`, { data }).
     then(
       (response) => {
         // send success
+        // before dispatch, use localStorage to send success to queue banner
+        localStorage.setItem('SplitAppealSuccess', 'true');
         dispatch({
           type: ACTIONS.SPLIT_APPEAL_SUCCESS,
           splitAppeal: response.body,
@@ -43,6 +45,9 @@ export const splitAppeal = (appealId, selectedIssues, reason, otherReason) => (d
         // send error
         const responseObject = error.response.body || {};
         const errorCode = responseObject.error_code || 'default';
+
+        // before dispatch, use localStorage to send fail to queue banner
+        localStorage.setItem('SplitAppealSuccess', 'false');
 
         dispatch({
           type: ACTIONS.SPLIT_APPEAL_FAILURE,
