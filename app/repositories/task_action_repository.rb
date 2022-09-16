@@ -321,6 +321,7 @@ class TaskActionRepository
       queue_url = org.url
       {
         modal_title: COPY::VHA_COMPLETE_TASK_MODAL_TITLE,
+        modal_button_text: COPY::MODAL_SEND_BUTTON,
         instructions: [],
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
@@ -473,6 +474,7 @@ class TaskActionRepository
       {
         modal_title: COPY::DOCKET_APPEAL_MODAL_TITLE,
         modal_body: format(COPY::DOCKET_APPEAL_MODAL_BODY, pre_docket_org),
+        modal_button_text: COPY::MODAL_CONFIRM_BUTTON,
         modal_alert: COPY::DOCKET_APPEAL_MODAL_NOTICE,
         instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
         redirect_after: "/organizations/#{BvaIntake.singleton.url}"
