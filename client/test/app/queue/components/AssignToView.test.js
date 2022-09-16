@@ -129,7 +129,7 @@ describe('Whenever VHA CAMO assigns an appeal to a Program Office', () => {
 describe('Whenever a VHA Program Office assigns an appeal to a VISN/Regional Office', () => {
   const taskType = 'AssessDocumentationTask';
 
-  it('Submission button is disabled until dropdown and text fields are populated', async () => {
+  it('Submission button is disabled until dropdown and text fields are populated', () => {
     renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.value, vhaPOToCAMOData, taskType);
 
     expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
@@ -139,13 +139,13 @@ describe('Whenever a VHA Program Office assigns an appeal to a VISN/Regional Off
       'Sierra Pacific Network'
     );
 
-    expect((await screen.findByText(COPY.MODAL_SUBMIT_BUTTON)).closest('button')).toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action:',
       'Here is the context that you have requested.'
     );
 
-    expect((await screen.findByText(COPY.MODAL_SUBMIT_BUTTON)).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).not.toBeDisabled();
   });
 });
