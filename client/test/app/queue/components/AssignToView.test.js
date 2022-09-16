@@ -89,6 +89,8 @@ describe('Whenver the EMO assigns an appeal to a Regional Processing Office', ()
   const buttonText = COPY.MODAL_SUBMIT_BUTTON;
 
   it('placeholder', () => {
+    renderAssignToView(TASK_ACTIONS.EMO_ASSIGN_TO_RPO.value, ReturnToOrgData, taskType);
+
     expect(true).toBe(true);
   });
 });
@@ -98,6 +100,8 @@ describe('Whenever VHA CAMO assigns an appeal to a Program Office', () => {
   const buttonText = COPY.MODAL_SUBMIT_BUTTON;
 
   it('placeholder', () => {
+    renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value, ReturnToOrgData, taskType);
+
     expect(true).toBe(true);
   });
 });
@@ -106,7 +110,9 @@ describe('Whenever a VHA Program Office assigns an appeal to a VISN/Regional Off
   const taskType = 'AssessDocumentationTask';
   const buttonText = COPY.MODAL_SUBMIT_BUTTON;
 
-  it('placeholder', () => {
+  it('Submission button is disable until dropdown and text fields are populateds', () => {
+    renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.value, ReturnToOrgData, taskType);
+
     expect(true).toBe(true);
   });
 });
