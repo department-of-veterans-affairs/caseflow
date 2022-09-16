@@ -504,9 +504,7 @@ const AssessDocumentationTaskData = {
     placedOnHoldAt: null,
     status: 'assigned',
     onHoldDuration: null,
-    instructions: [
-      'Because I feel like it'
-    ],
+    instructions: [],
     decisionPreparedBy: null,
     availableActions: [
       {
