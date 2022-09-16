@@ -185,6 +185,7 @@ class AssignToView extends React.Component {
     }
 
     return COPY.ASSIGN_TO_USER_DROPDOWN;
+
   };
 
   render = () => {
@@ -201,7 +202,6 @@ class AssignToView extends React.Component {
     const modalProps = {
       title: this.determineTitle(this.props, action, isPulacCerullo, actionData),
       pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
-
       submit: this.submit,
       validateForm: isPulacCerullo ?
         () => {
@@ -214,9 +214,16 @@ class AssignToView extends React.Component {
       modalProps.button = 'Notify';
     }
 
-    if (modalProps.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
+    if ((modalProps.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) || (modalProps.title === COPY.EMO_ASSIGN_TO_RPO_MODAL_TITLE)) {
       modalProps.submitButtonClassNames = ['usa-button', 'usa-button-warning'];
       modalProps.button = 'Return';
+    }
+
+    if ([
+      'PreDocketTask',
+      'VhaDocumentSearchTask',
+      'EducationDocumentSearchTask',
+    ].includes(task.type)) {
       modalProps.submitDisabled = !this.validateForm();
     }
 
