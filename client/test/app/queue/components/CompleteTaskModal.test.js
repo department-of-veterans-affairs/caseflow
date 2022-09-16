@@ -55,8 +55,8 @@ const renderCompleteTaskModal = (modalType, storeValues, taskType) => {
     <Provider store={store}>
       <MemoryRouter initialEntries={[path]}>
         <Route component={(props) => {
-          return <CompleteTaskModal {...props} modalType={modalType} appealId={appealId} taskId={taskId} />;
-        }} path={path} />
+          return <CompleteTaskModal {...props.match.params} modalType={modalType} />;
+        }} path={`/queue/appeals/:appealId/tasks/:taskId/modal/${modalType}`} />
       </MemoryRouter>
     </Provider>
   );
