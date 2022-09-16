@@ -2,12 +2,19 @@
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore, compose } from 'redux';
 import thunk from 'redux-thunk';
 import COPY from '../../../../COPY';
-
+import {
+  createQueueReducer,
+  getAppealId,
+  getTaskId,
+  enterTextFieldOptions,
+  enterModalRadioOptions,
+  selectFromDropdown,
+  clickSubmissionButton
+} from './modalUtils';
 import {
   postData,
   camoToBvaIntakeData,
@@ -21,25 +28,6 @@ import * as uiActions from 'app/queue/uiReducer/uiActions';
 import CompleteTaskModal from 'app/queue/components/CompleteTaskModal';
 
 let requestPatchSpy;
-
-const createQueueReducer = (storeValues) => {
-  return function (state = storeValues) {
-
-    return state;
-  };
-};
-
-const getAppealId = (storeValues) => {
-  return Object.keys(storeValues.queue.appeals)[0];
-};
-
-const getTaskId = (storeValues, taskType) => {
-  const tasks = storeValues.queue.amaTasks;
-
-  return Object.keys(tasks).find((key) => (
-    tasks[key].type === taskType
-  ));
-};
 
 const renderCompleteTaskModal = (modalType, storeValues, taskType) => {
   const appealId = getAppealId(storeValues);
@@ -62,30 +50,6 @@ const renderCompleteTaskModal = (modalType, storeValues, taskType) => {
       </MemoryRouter>
     </Provider>
   );
-};
-
-const enterTextFieldOptions = (instructionsFieldName, instructions) => {
-  const instructionsField = screen.getByRole('textbox', { name: instructionsFieldName });
-
-  userEvent.type(instructionsField, instructions);
-};
-
-const enterModalRadioOptions = (radioSelection) => {
-  const radioFieldToSelect = screen.getByLabelText(radioSelection);
-
-  userEvent.click(radioFieldToSelect);
-};
-
-const selectFromDropdown = async (dropdownName, dropdownSelection) => {
-  const dropdown = screen.getByRole('combobox', { name: dropdownName });
-
-  userEvent.click(dropdown);
-
-  userEvent.click(screen.getByRole('option', { name: dropdownSelection }));
-};
-
-const clickSubmissionButton = (buttonText) => {
-  userEvent.click(screen.getByRole('button', { name: buttonText }));
 };
 
 const getReceivedInstructions = () => requestPatchSpy.mock.calls[0][1].data.task.instructions;
