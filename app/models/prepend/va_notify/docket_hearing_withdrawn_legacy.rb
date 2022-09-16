@@ -5,7 +5,7 @@
 module DocketHearingWithdrawnLegacy
   extend AppellantNotification
   # rubocop:disable all
-  @@template_name = "Withdrawal of hearing"
+  @@template_name = "docket withdraw legacy"
   # rubocop:enable all
 
   # original method defined in app/models/legacy_hearing.rb

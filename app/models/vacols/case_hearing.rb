@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class VACOLS::CaseHearing < VACOLS::Record
-  prepend DocketHearingWithdrawnLegacy
-  prepend DocketHearingPostponedLegacy
   self.table_name = "hearsched"
   self.primary_key = "hearing_pkseq"
 
