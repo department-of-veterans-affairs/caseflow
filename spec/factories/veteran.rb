@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# Whenever a veteran is needed for another factory, create a veteran via this factory and pass in either
+# the Veteran object or veteran.file_number, depending on which factory. The appeals factory should be passed
+# the Veteran object (either in-line or as a variable), while most other factories require the file_number
+
 FactoryBot.define do
   factory :veteran do
     first_name { "Bob" }

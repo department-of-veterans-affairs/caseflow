@@ -30,6 +30,9 @@ FactoryBot.define do
     updated_by { adding_user }
     virtual_hearing { nil }
 
+    # this trait creates a realistic hearing task tree from a completed hearing, but if it needs to
+    # be ready for distribution then the referring class must mark the transcription/evidence
+    # tasks complete and set the distribution task to assigned
     trait :held do
       disposition { Constants.HEARING_DISPOSITION_TYPES.held }
       # TODO: add child tasks from assign_hearing_disposition_task here

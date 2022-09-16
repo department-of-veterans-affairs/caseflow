@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# When using this factory, passing in a created Veteran object is the preferred way of creating an appeal.
+# The required veteran can be created in-line or before the appeal and passed in as the veteran: arg
+# This ensures that the appeal is created with the correct veteran_file_number association
+
 FactoryBot.define do
   factory :appeal do
     docket_type { Constants.AMA_DOCKETS.evidence_submission }
@@ -157,6 +161,7 @@ FactoryBot.define do
       end
     end
 
+    # this method should not be used for seeding data but is required for some tests
     trait :held_hearing_no_tasks do
       transient do
         adding_user { nil }
@@ -167,6 +172,7 @@ FactoryBot.define do
       end
     end
 
+    # this trait should be run with :with_post_intake_tasks so that it creates a correct task tree
     trait :held_hearing_and_ready_to_distribute do
       transient do
         adding_user { nil }
