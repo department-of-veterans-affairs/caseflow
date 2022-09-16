@@ -293,214 +293,7 @@ const educationDocumentSearchTaskData = {
   }
 };
 
-const PreDocketTaskData = {
-  7131: {
-    uniqueId: '7131',
-    isLegacy: false,
-    type: 'PreDocketTask',
-    appealType: 'Appeal',
-    addedByCssId: null,
-    appealId: 1636,
-    externalAppealId: '9aa61272-b781-42f4-a3a5-b820f8b13118',
-    assignedOn: '2022-09-09T07:41:32.557-04:00',
-    closestRegionalOffice: null,
-    createdAt: '2022-09-08T16:26:10.327-04:00',
-    closedAt: null,
-    startedAt: null,
-    assigneeName: 'BVA Intake',
-    assignedTo: {
-      cssId: null,
-      name: 'BVA Intake',
-      id: 4,
-      isOrganization: true,
-      type: 'BvaIntake'
-    },
-    assignedBy: {
-      firstName: 'Deborah',
-      lastName: 'Wise',
-      cssId: 'BVADWISE',
-      pgId: 17
-    },
-    cancelledBy: {
-      cssId: null
-    },
-    cancelReason: null,
-    convertedBy: {
-      cssId: null
-    },
-    convertedOn: null,
-    taskId: '7131',
-    parentId: 7130,
-    label: 'Pre-Docket',
-    documentId: null,
-    externalHearingId: null,
-    workProduct: null,
-    previousTaskAssignedOn: null,
-    placedOnHoldAt: '2022-09-08T16:26:10.386-04:00',
-    status: 'assigned',
-    onHoldDuration: null,
-    instructions: [],
-    decisionPreparedBy: null,
-    availableActions: [
-      {
-        func: 'docket_appeal_data',
-        label: 'Docket appeal',
-        value: 'modal/docket_appeal',
-        data: {
-          modal_title: 'Docket appeal',
-          modal_body: 'Please confirm that the documents provided by Education Service are available in VBMS before docketing this appeal.',
-          modal_alert: 'Once you confirm, the appeal will be established. Please remember to send the docketing letter out to all parties and representatives.',
-          instructions_label: 'Provide instructions and context for this action:',
-          redirect_after: '/organizations/bva-intake'
-        }
-      },
-      {
-        func: 'bva_intake_return_to_emo',
-        label: 'Return appeal to Education Service',
-        value: 'modal/bva_intake_return_to_emo',
-        data: {
-          selected: {
-            id: 56,
-            accepts_priority_pushed_cases: null,
-            ama_only_push: false,
-            ama_only_request: false,
-            created_at: '2022-09-08T13:31:28.398-04:00',
-            name: 'Executive Management Office',
-            participant_id: null,
-            role: null,
-            status: 'active',
-            status_updated_at: null,
-            updated_at: '2022-09-08T13:31:28.398-04:00',
-            url: 'edu-emo'
-          },
-          options: [
-            {
-              label: 'Executive Management Office',
-              value: 56
-            }
-          ],
-          modal_title: 'Return appeal to Education Service',
-          modal_body: 'If you are unable to docket this appeal due to insufficient documentation, you may return this to Education Service.',
-          message_title: 'You have successfully returned Bob Smithhettinger\'s case to Education Service',
-          type: 'EducationDocumentSearchTask',
-          redirect_after: '/organizations/bva-intake'
-        }
-      }
-    ],
-
-    timelineTitle: 'PreDocketTask completed',
-    hideFromQueueTableView: false,
-    hideFromTaskSnapshot: false,
-    hideFromCaseTimeline: false,
-    availableHearingLocations: [],
-    latestInformalHearingPresentationTask: {},
-    canMoveOnDocketSwitch: false,
-    timerEndsAt: null,
-    unscheduledHearingNotes: {}
-  },
-  7144: {
-    uniqueId: '7144',
-    isLegacy: false,
-    type: 'PreDocketTask',
-    appealType: 'Appeal',
-    addedByCssId: null,
-    appealId: 1640,
-    externalAppealId: 'c56890c4-1ea3-4580-8e5b-54fa541dbacd',
-    assignedOn: '2022-09-09T12:50:40.246-04:00',
-    closestRegionalOffice: null,
-    createdAt: '2022-09-09T12:42:21.136-04:00',
-    closedAt: null,
-    startedAt: null,
-    assigneeName: 'BVA Intake',
-    assignedTo: {
-      cssId: null,
-      name: 'BVA Intake',
-      id: 4,
-      isOrganization: true,
-      type: 'BvaIntake'
-    },
-    assignedBy: {
-      firstName: 'Deborah',
-      lastName: 'Wise',
-      cssId: 'BVADWISE',
-      pgId: 17
-    },
-    cancelledBy: {
-      cssId: null
-    },
-    cancelReason: null,
-    convertedBy: {
-      cssId: null
-    },
-    convertedOn: null,
-    taskId: '7144',
-    parentId: 7143,
-    label: 'Pre-Docket',
-    documentId: null,
-    externalHearingId: null,
-    workProduct: null,
-    previousTaskAssignedOn: null,
-    placedOnHoldAt: '2022-09-09T12:42:21.192-04:00',
-    status: 'assigned',
-    onHoldDuration: null,
-    instructions: [],
-    decisionPreparedBy: null,
-    availableActions: [
-      {
-        func: 'docket_appeal_data',
-        label: 'Docket appeal',
-        value: 'modal/docket_appeal',
-        data: {
-          modal_title: 'Docket appeal',
-          modal_body: 'Please confirm that the documents provided by CSP are available in VBMS before docketing this appeal.',
-          modal_alert: 'Once you confirm, the appeal will be established. Please remember to send the docketing letter out to all parties and representatives.',
-          instructions_label: 'Provide instructions and context for this action:',
-          redirect_after: '/organizations/bva-intake'
-        }
-      },
-      {
-        func: 'bva_intake_return_to_caregiver',
-        label: 'Return appeal to VHA Caregiver Support Program',
-        value: 'modal/bva_intake_return_to_caregiver',
-        data: {
-          selected: {
-            id: 32,
-            accepts_priority_pushed_cases: null,
-            ama_only_push: false,
-            ama_only_request: false,
-            created_at: '2022-09-08T13:29:34.779-04:00',
-            name: 'VHA Caregiver Support Program',
-            participant_id: null,
-            role: null,
-            status: 'active',
-            status_updated_at: null,
-            updated_at: '2022-09-08T13:29:34.779-04:00',
-            url: 'vha-csp'
-          },
-          options: [
-            {
-              label: 'VHA Caregiver Support Program',
-              value: 32
-            }
-          ],
-          modal_title: 'Return appeal to VHA Caregiver Support Program',
-          modal_body: 'If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA Caregiver Support Program.',
-          message_title: 'You have successfully returned Bob Smithwuckert\'s case to Caregiver Support Program',
-          type: 'VhaDocumentSearchTask',
-          redirect_after: '/organizations/bva-intake'
-        }
-      }
-    ],
-    timelineTitle: 'PreDocketTask completed',
-    hideFromQueueTableView: false,
-    hideFromTaskSnapshot: false,
-    hideFromCaseTimeline: false,
-    availableHearingLocations: [],
-    latestInformalHearingPresentationTask: {},
-    canMoveOnDocketSwitch: false,
-    timerEndsAt: null,
-    unscheduledHearingNotes: {}
-  },
+const preDocketTaskData = {
   7123: {
     uniqueId: '7123',
     isLegacy: false,
@@ -590,6 +383,70 @@ const PreDocketTaskData = {
           modal_body: 'If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA.',
           message_title: 'You have successfully returned Bob Smithhettinger\'s case to VHA',
           type: 'VhaDocumentSearchTask',
+          redirect_after: '/organizations/bva-intake'
+        }
+      },
+      {
+        func: 'bva_intake_return_to_caregiver',
+        label: 'Return appeal to VHA Caregiver Support Program',
+        value: 'modal/bva_intake_return_to_caregiver',
+        data: {
+          selected: {
+            id: 32,
+            accepts_priority_pushed_cases: null,
+            ama_only_push: false,
+            ama_only_request: false,
+            created_at: '2022-09-08T13:29:34.779-04:00',
+            name: 'VHA Caregiver Support Program',
+            participant_id: null,
+            role: null,
+            status: 'active',
+            status_updated_at: null,
+            updated_at: '2022-09-08T13:29:34.779-04:00',
+            url: 'vha-csp'
+          },
+          options: [
+            {
+              label: 'VHA Caregiver Support Program',
+              value: 32
+            }
+          ],
+          modal_title: 'Return appeal to VHA Caregiver Support Program',
+          modal_body: 'If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA Caregiver Support Program.',
+          message_title: 'You have successfully returned Bob Smithwuckert\'s case to Caregiver Support Program',
+          type: 'VhaDocumentSearchTask',
+          redirect_after: '/organizations/bva-intake'
+        }
+      },
+      {
+        func: 'bva_intake_return_to_emo',
+        label: 'Return appeal to Education Service',
+        value: 'modal/bva_intake_return_to_emo',
+        data: {
+          selected: {
+            id: 56,
+            accepts_priority_pushed_cases: null,
+            ama_only_push: false,
+            ama_only_request: false,
+            created_at: '2022-09-08T13:31:28.398-04:00',
+            name: 'Executive Management Office',
+            participant_id: null,
+            role: null,
+            status: 'active',
+            status_updated_at: null,
+            updated_at: '2022-09-08T13:31:28.398-04:00',
+            url: 'edu-emo'
+          },
+          options: [
+            {
+              label: 'Executive Management Office',
+              value: 56
+            }
+          ],
+          modal_title: 'Return appeal to Education Service',
+          modal_body: 'If you are unable to docket this appeal due to insufficient documentation, you may return this to Education Service.',
+          message_title: 'You have successfully returned Bob Smithhettinger\'s case to Education Service',
+          type: 'EducationDocumentSearchTask',
           redirect_after: '/organizations/bva-intake'
         }
       }
@@ -918,7 +775,7 @@ export const camoToBvaIntakeData = {
 export const ReturnToOrgData = {
   queue: {
     amaTasks: {
-      ...PreDocketTaskData
+      ...preDocketTaskData
     },
     appeals: {
       '419ce568-387c-4ac6-a5f5-00a1554cea36': {
