@@ -41,6 +41,7 @@ const CancelTaskModal = (props) => {
         }
       }
     };
+
     const hearingScheduleLink = taskData?.back_to_hearing_schedule ?
       <p>
         <Link href={`/hearings/schedule/assign?regional_office_key=${hearingDay.regionalOffice}`}>
@@ -60,12 +61,24 @@ const CancelTaskModal = (props) => {
     return props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg);
   };
 
+  const modalProps = {
+
+  };
+
+  if ([
+    'AssessDocumentationTask',
+    'EducationAssessDocumentationTask',
+  ].includes(task.type)) {
+    modalProps.submitDisabled = !validateForm();
+  }
+
   return (
-    <QueueFlowModal
+    <QueueFlowModal {...modalProps}
       title={taskData?.modal_title ?? ''}
       button={taskData?.modal_button_text ?? COPY.MODAL_SUBMIT_BUTTON}
       pathAfterSubmit={taskData?.redirect_after ?? '/queue'}
       submit={submit}
+      // submitDisabled={validateForm}
       validateForm={validateForm}
     >
       {taskData?.modal_body &&
@@ -94,7 +107,8 @@ CancelTaskModal.propTypes = {
   }),
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
-    taskId: PropTypes.string
+    taskId: PropTypes.string,
+    type: PropTypes.string
   }),
   highlightFormItems: PropTypes.bool
 };
