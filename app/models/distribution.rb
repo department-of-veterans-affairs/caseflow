@@ -31,7 +31,7 @@ class Distribution < CaseflowRecord
   end
 
   def is_num_of_cases_exceeded?
-    return false if FeatureToggle
+    return false if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
 
     priority_push?
   end
