@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 const uiData = {
   ui: {
     highlightFormItems: false,
@@ -88,7 +89,6 @@ const caregiverActions = [
     }
   }
 ];
-/* eslint-enable max-len */
 
 const vhaDocumentSearchTaskData = {
   7119: {
@@ -754,6 +754,7 @@ const EducationAssessDocumentationTaskData = {
     unscheduledHearingNotes: {}
   }
 };
+/* eslint-enable max-len */
 
 export const camoToBvaIntakeData = {
   queue: {
@@ -932,3 +933,4 @@ export const camoToProgramOfficeToCamoData = {
   },
   ...uiData
 };
+/* eslint-enable max-lines */
