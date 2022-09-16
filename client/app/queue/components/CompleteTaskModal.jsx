@@ -18,6 +18,7 @@ import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
+import { copy } from 'superagent';
 
 const validRadio = (radio) => {
   return radio?.length > 0;
@@ -358,8 +359,7 @@ const MODAL_TYPE_ATTRS = {
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_VISN, appeal.veteranFullName)
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
-    getContent: ReadyForReviewModal,
-    buttonText: COPY.MODAL_SUBMIT_BUTTON
+    getContent: ReadyForReviewModal
   },
   send_colocated_task: {
     buildSuccessMsg: (appeal, { teamName }) => ({
