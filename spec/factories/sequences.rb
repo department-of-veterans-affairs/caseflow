@@ -41,5 +41,4 @@ FactoryBot.define do
 
   # BRIEFF.BFKEY
   sequence :vacols_case_key, case_key_initial_value
-
 end

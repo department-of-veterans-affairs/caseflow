@@ -6,6 +6,7 @@ FactoryBot.define do
     established_at { Time.zone.now }
     receipt_date { Time.zone.yesterday }
     filed_by_va_gov { false }
+    veteran_file_number { generate :veteran_file_number }
     uuid { SecureRandom.uuid }
 
     after(:build) do |appeal, evaluator|
@@ -153,6 +154,16 @@ FactoryBot.define do
 
       after(:create) do |appeal, evaluator|
         create(:hearing, :held, judge: nil, appeal: appeal, adding_user: evaluator.adding_user)
+      end
+    end
+
+    trait :held_hearing_no_tasks do
+      transient do
+        adding_user { nil }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:hearing, disposition: "held", judge: nil, appeal: appeal, adding_user: evaluator.adding_user)
       end
     end
 

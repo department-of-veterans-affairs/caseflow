@@ -175,6 +175,9 @@ describe HearingRequestDocket, :all_dbs do
     end
 
     context "nonpriority appeals and genpop 'any'" do
+      before { FeatureToggle.enable!(:acd_distribute_all) }
+      after { FeatureToggle.disable!(:acd_distribute_all) }
+
       subject do
         HearingRequestDocket.new.distribute_appeals(
           distribution, priority: false, limit: 10, genpop: "any"
@@ -193,9 +196,12 @@ describe HearingRequestDocket, :all_dbs do
         no_held_hearings = non_priority_with_no_held_hearings
         no_hearings = non_priority_with_no_hearings
         outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
+
+        # would be included if :acd_distribute_all was not enabled
         inside_affinity = create_nonpriority_unblocked_hearing_appeal_within_affinity
 
-        expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity, inside_affinity]
+        expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity]
+        expected_result << inside_affinity if !FeatureToggle.enabled?(:acd_distribute_all)
 
         tasks = subject
 
