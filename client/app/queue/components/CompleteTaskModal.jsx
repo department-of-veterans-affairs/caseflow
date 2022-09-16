@@ -579,7 +579,7 @@ class CompleteTaskModal extends React.Component {
        isValid = validInstructions(instructions);
      }
 
-     if (modalType === 'emo_send_to_board_intake_for_review' || modalType === 'rpo_send_to_board_intake_for_review') {
+     if (modalType.includes('send_to_board_intake_for_review')) {
        if (radio === 'other') {
          isValid = validInstructions(otherInstructions) && validRadio(radio);
        } else {
@@ -617,14 +617,12 @@ class CompleteTaskModal extends React.Component {
 
   render = () => {
     const modalAttributes = MODAL_TYPE_ATTRS[this.props.modalType];
-    const taskData = taskActionData(this.props);
 
     return (
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
-        /* eslint-disable-next-line camelcase */
-        button={taskData?.modal_button_text}
-        submitDisabled={modalAttributes.submitDisabled?.(this.getContentArgs())}
+        button={modalAttributes.buttonText}
+        submitDisabled={!this.validateForm()}
         validateForm={this.validateForm}
         submit={this.submit}
         pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
