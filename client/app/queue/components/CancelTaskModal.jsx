@@ -78,7 +78,6 @@ const CancelTaskModal = (props) => {
       button={taskData?.modal_button_text ?? COPY.MODAL_SUBMIT_BUTTON}
       pathAfterSubmit={taskData?.redirect_after ?? '/queue'}
       submit={submit}
-      // submitDisabled={validateForm}
       validateForm={validateForm}
     >
       {taskData?.modal_body &&
