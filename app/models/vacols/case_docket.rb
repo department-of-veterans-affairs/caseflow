@@ -377,7 +377,8 @@ class VACOLS::CaseDocket < VACOLS::Record
       if dry_run
         conn.exec_query(query).to_hash
       else
-        conn.execute(LOCK_READY_APPEALS)
+        conn.execute(LOCK_READY_APPEALS) unless FeatureToggle.enabled?(:acd_disable_legacy_lock_ready_appeals)
+
         appeals = conn.exec_query(query).to_hash
         return appeals if appeals.empty?
 

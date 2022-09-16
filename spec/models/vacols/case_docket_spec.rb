@@ -3,6 +3,7 @@
 describe VACOLS::CaseDocket, :all_dbs do
   before do
     FeatureToggle.enable!(:test_facols)
+    FeatureToggle.enable!(:acd_disable_legacy_lock_ready_appeals)
   end
 
   after do
