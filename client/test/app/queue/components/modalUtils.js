@@ -27,6 +27,12 @@ export const enterTextFieldOptions = (instructionsFieldName, instructions) => {
   userEvent.type(instructionsField, instructions);
 };
 
+export const selectCustomDays = (customFieldName, days) => {
+  const customField = screen.getByRole('spinbutton', { name: customFieldName });
+
+  userEvent.type(customField, days);
+};
+
 export const enterModalRadioOptions = (radioSelection) => {
   const radioFieldToSelect = screen.getByLabelText(radioSelection);
 
