@@ -98,7 +98,6 @@ class SendNotificationJob < CaseflowJob
       response = VANotifyService.send_email_notifications(message.participant_id, notification_audit_record.id.to_s, email_template_id, status = "")
       if !response.nil? && response != ""
         to_update = { notification_content: response.body["content"]["body"], va_notify_notification_id: response.body["id"] }
-        # should new column be updated from response?
         update_notification_audit_record(notification_audit_record, to_update)
       end
     end
