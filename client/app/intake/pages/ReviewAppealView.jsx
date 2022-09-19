@@ -60,6 +60,12 @@ const styles = {
     },
     '& g': {
       fill: '#0071bc !important',
+    },
+    '& .info': {
+      textDecoration: 'underline;',
+    },
+    '& .text_info': {
+      lineHeight: '1.3em !important',
     }
   }),
   tableSection: css({
@@ -211,9 +217,9 @@ const ReviewAppealView = (props) => {
                 {selectOriginal.map((issue) => {
                   return (
                     <li>
-                      <p>{issue.description}</p>
-                      <p>Benefit type: {issue.benefit_type}</p>
-                      <p>Decision date: {issue.approx_decision_date}</p>
+                      <p><span className="text_info">{issue.description}</span></p>
+                      <p><span className="info">Benefit type:</span>  {_.startCase(issue.benefit_type)}</p>
+                      <p><span className="info">Decision date:</span> <DateString date={issue.approx_decision_date} dateFormat="MM/DD/YYYY" /></p>
                     </li>
                   );
                 })}
@@ -224,9 +230,9 @@ const ReviewAppealView = (props) => {
                 {selectElement.map((issue) => {
                   return (
                     <li>
-                      <p>{issue.description}</p>
-                      <p>Benefit type: {issue.benefit_type}</p>
-                      <p>Decision date: {issue.approx_decision_date}</p>
+                      <p><span className="text_info">{issue.description}</span></p>
+                      <p><span className="info">Benefit type:</span> {_.startCase(issue.benefit_type)}</p>
+                      <p><span className="info">Decision date:</span> <DateString date={issue.approx_decision_date} dateFormat="MM/DD/YYYY" /></p>
                     </li>
                   );
                 })}
