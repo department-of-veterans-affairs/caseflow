@@ -8,8 +8,12 @@
 # Seeds::PriorityDistributions.new.seed!
 
 module Seeds
-  class PriorityDistributions < Base
+  class PriorityDistributions < Base # rubocop:disable Metrics/ClassLength
     # :nocov:
+    def initialize
+      @ready_nonpriority_hearing_case_count = 0
+    end
+
     def seed!
       # organize_judges
       create_previous_distribtions
@@ -74,6 +78,8 @@ module Seeds
     def create_ama_hearing_genpop_cases
       create_ama_hearing_ready_priority_genpop_cases
       create_ama_hearing_ready_nonpriority_genpop_cases
+      create_ama_hearing_ready_nonpriority_genpop_cases_ready_61_days_ago
+      create_ama_hearing_ready_nonpriority_genpop_cases_ready_15_days_ago
       create_ama_hearing_nonready_priority_genpop_cases
     end
 
@@ -120,7 +126,7 @@ module Seeds
     end
 
     def create_legacy_ready_priority_cases_tied_to_judge(judge)
-      2.times do |num|
+      2.times do
         create(
           :case,
           :aod,
@@ -135,7 +141,7 @@ module Seeds
     end
 
     def create_legacy_nonready_priority_cases_tied_to_judge(judge)
-      2.times do |num|
+      2.times do
         create(
           :case,
           :aod,
@@ -149,7 +155,7 @@ module Seeds
     end
 
     def create_legacy_ready_nonpriority_cases_tied_to_judge(judge)
-      2.times do |num|
+      2.times do
         create(
           :case,
           :ready_for_distribution,
@@ -163,7 +169,7 @@ module Seeds
     end
 
     def create_hearing_ready_priority_cases_tied_to_judge(judge)
-      2.times do |num|
+      4.times do |num|
         create(
           :appeal,
           :hearing_docket,
@@ -171,7 +177,7 @@ module Seeds
           :advanced_on_docket_due_to_age,
           :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
-          receipt_date: num.days.ago,
+          receipt_date: num.weeks.ago,
           tied_judge: judge,
           adding_user: User.first
         )
@@ -179,7 +185,7 @@ module Seeds
     end
 
     def create_hearing_nonready_priority_cases_tied_to_judge(judge)
-      2.times do |num|
+      4.times do |num|
         create(
           :appeal,
           :hearing_docket,
@@ -187,7 +193,7 @@ module Seeds
           :advanced_on_docket_due_to_age,
           :held_hearing,
           :tied_to_judge,
-          receipt_date: num.days.ago,
+          receipt_date: num.weeks.ago,
           tied_judge: judge,
           adding_user: User.first
         )
@@ -195,14 +201,15 @@ module Seeds
     end
 
     def create_hearing_ready_nonpriority_cases_tied_to_judge(judge)
-      2.times do |num|
+      2.times do
+        @ready_nonpriority_hearing_case_count += 1
         create(
           :appeal,
           :hearing_docket,
           :with_post_intake_tasks,
           :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
-          receipt_date: num.days.ago,
+          receipt_date: @ready_nonpriority_hearing_case_count.days.ago,
           tied_judge: judge,
           adding_user: User.first
         )
@@ -210,7 +217,7 @@ module Seeds
     end
 
     def create_legacy_ready_priority_genpop_cases
-      20.times do |num|
+      20.times do
         create(
           :case,
           :aod,
@@ -223,7 +230,7 @@ module Seeds
     end
 
     def create_legacy_nonready_priority_genpop_cases
-      2.times do |num|
+      2.times do
         create(
           :case,
           :aod,
@@ -235,7 +242,7 @@ module Seeds
     end
 
     def create_legacy_ready_nonpriority_genpop_cases
-      2.times do |num|
+      2.times do
         create(
           :case,
           :ready_for_distribution,
@@ -261,30 +268,82 @@ module Seeds
     end
 
     def create_ama_hearing_nonready_priority_genpop_cases
-      2.times do |num|
+      4.times do |num|
         create(
           :appeal,
           :hearing_docket,
           :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
           :held_hearing,
-          receipt_date: num.days.ago,
+          receipt_date: num.weeks.ago,
           adding_user: User.first
         )
       end
     end
 
     def create_ama_hearing_ready_nonpriority_genpop_cases
-      2.times do |num|
+      2.times do
+        @ready_nonpriority_hearing_case_count += 1
         create(
           :appeal,
           :hearing_docket,
           :with_post_intake_tasks,
           :held_hearing_and_ready_to_distribute,
-          receipt_date: num.days.ago,
+          receipt_date: @ready_nonpriority_hearing_case_count.days.ago,
           adding_user: User.first
         )
       end
+    end
+
+    # creates a hearing case with dates specifically requested during ACD algorithm changes
+    # Appeal received 92 days ago, hearing tasks complete and ready to distribute 61 days ago
+    def create_ama_hearing_ready_nonpriority_genpop_cases_ready_61_days_ago
+      Timecop.travel(92.days.ago)
+      2.times do
+        appeal = create(:appeal,
+                        :hearing_docket,
+                        :with_post_intake_tasks,
+                        :held_hearing_and_ready_to_distribute,
+                        adding_user: User.first)
+        tasks = appeal.tasks
+        [:TranscriptionTask, :EvidenceSubmissionWindowTask, :AssignHearingDispositionTask].each do |type|
+          date = 31.days.from_now
+          tasks.find_by(type: type).update!(
+            created_at: date, assigned_at: date, closed_at: date, updated_at: date
+          )
+        end
+
+        tasks.find_by(type: :HearingTask).update!(closed_at: 31.days.from_now)
+        tasks.find_by(type: :DistributionTask).update!(assigned_at: 31.days.from_now)
+      end
+      Timecop.return
+    end
+
+    # creates a hearing case with dates specifically requested during ACD algorithm changes
+    # Appeal received 92 days ago, hearing held 61 days ago, evidence window completed and ready for dist 15 days ago
+    def create_ama_hearing_ready_nonpriority_genpop_cases_ready_15_days_ago
+      Timecop.travel(92.days.ago)
+      2.times do
+        appeal = create(:appeal,
+                        :hearing_docket,
+                        :with_post_intake_tasks,
+                        :held_hearing_and_ready_to_distribute,
+                        adding_user: User.first)
+        tasks = appeal.tasks
+        [:TranscriptionTask, :EvidenceSubmissionWindowTask].each do |type|
+          tasks.find_by(type: type).update!(created_at: 31.days.from_now,
+                                            assigned_at: 31.days.from_now,
+                                            closed_at: 77.days.from_now,
+                                            updated_at: 77.days.from_now)
+        end
+
+        tasks.find_by(type: :AssignHearingDispositionTask).update!(
+          created_at: Time.now, assigned_at: Time.now, closed_at: 77.days.from_now, updated_at: 77.days.from_now
+        )
+        tasks.find_by(type: :HearingTask).update!(closed_at: 77.days.from_now)
+        tasks.find_by(type: :DistributionTask).update!(assigned_at: 77.days.from_now)
+      end
+      Timecop.return
     end
 
     def create_direct_review_ready_priority_genpop_cases
@@ -323,7 +382,7 @@ module Seeds
     end
 
     def create_evidence_submission_ready_priority_genpop_cases
-      4.times do |num|
+      20.times do |num|
         create(
           :appeal,
           :evidence_submission_docket,

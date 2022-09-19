@@ -81,7 +81,7 @@ module Seeds
         )
       end
 
-      # Create AMA appeals ready for distribution
+      # Create AMA appeals ready for distribution received this month
       (1..30).each do |num|
         create(
           :appeal,
@@ -97,7 +97,55 @@ module Seeds
         )
       end
 
-      # Create AMA appeals blocked for distribution due to Evidence Window
+      # Create AMA appeals ready for distribution received over a year ago
+      (1..5).each do |num|
+        create(
+          :appeal,
+          :ready_for_distribution,
+          number_of_claimants: 1,
+          active_task_assigned_at: Time.zone.now,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          closest_regional_office: "RO17",
+          receipt_date: (365 + num).days.ago,
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+      end
+
+      # Create AMA appeals ready for distribution received over 65 days ago
+      (1..5).each do |num|
+        create(
+          :appeal,
+          :ready_for_distribution,
+          number_of_claimants: 1,
+          active_task_assigned_at: Time.zone.now,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          closest_regional_office: "RO17",
+          receipt_date: (65 + num).days.ago,
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+      end
+
+      # Create AMA appeals ready for distribution in the future
+      (1..5).each do |num|
+        create(
+          :appeal,
+          :ready_for_distribution,
+          number_of_claimants: 1,
+          active_task_assigned_at: Time.zone.now,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          closest_regional_office: "RO17",
+          receipt_date: num.days.from_now,
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+      end
+
+      # Create AMA appeals blocked for distribution due to Evidence Window received this month
       (1..30).each do |num|
         create(
           :appeal,
@@ -113,7 +161,7 @@ module Seeds
         )
       end
 
-      # Create AMA appeals blocked for distribution due to blocking mail
+      # Create AMA appeals blocked for distribution due to blocking mail received this month
       (1..30).each do |num|
         create(
           :appeal,

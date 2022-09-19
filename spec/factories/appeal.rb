@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-# When using this factory, passing in a created Veteran object is the preferred way of creating an appeal.
+# When using this factory, passing in a created Veteran object is the preferred way of creating an appeal
+# if the veteran object needs to be used in the seed file calling the factory. Otherwise, the factory
+# will create and save a new veteran object when it creates the appeal.
 # The required veteran can be created in-line or before the appeal and passed in as the veteran: arg
-# This ensures that the appeal is created with the correct veteran_file_number association
 
 FactoryBot.define do
   factory :appeal do
@@ -151,6 +152,8 @@ FactoryBot.define do
       docket_type { Constants.AMA_DOCKETS.direct_review }
     end
 
+    # passing a created_at date into any held hearing traits will set all initial task tree tasks to
+    # be created at that date as well
     trait :held_hearing do
       transient do
         adding_user { nil }
@@ -179,7 +182,7 @@ FactoryBot.define do
       end
 
       after(:create) do |appeal, evaluator|
-        create(:hearing, :held, judge: nil, appeal: appeal, adding_user: evaluator.adding_user)
+        create(:hearing, :held, judge: nil, appeal: appeal, created_at: appeal.created_at, adding_user: evaluator.adding_user)
         appeal.tasks.find_by(type: :TranscriptionTask).update!(status: :completed)
         appeal.tasks.find_by(type: :EvidenceSubmissionWindowTask).update!(status: :completed)
         appeal.tasks.find_by(type: :DistributionTask).update!(status: :assigned)
