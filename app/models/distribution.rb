@@ -13,8 +13,7 @@ class Distribution < CaseflowRecord
 
   validates :judge, presence: true
   validate :validate_user_is_judge, on: :create
-  validate :validate_number_of_unassigned_cases, on: :create, unless: :is_num_of_cases_exceeded?
-  validate :validate_has_not_exceeded_batch_size, on: :create, unless: :use_proportions_distribution?
+  validate :validate_number_of_unassigned_cases, on: :create, unless: :priority_push?
   validate :validate_days_waiting_of_unassigned_cases, on: :create, unless: :priority_push?
   validate :validate_judge_has_no_pending_distributions, on: :create
 
@@ -30,28 +29,14 @@ class Distribution < CaseflowRecord
     end
   end
 
-  def is_num_of_cases_exceeded?
-    return false if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
-
-    priority_push?
-  end
-
-  def validate_has_not_exceeded_batch_size
-    errors.add(:judge, :too_many_unassigned_cases) unless judge_has_less_than_batch_size
-  end
-
-  def judge_has_less_than_batch_size
-    return true if judge_tasks.length < batch_size
-
-    judge_tasks.length + judge_legacy_tasks.length < batch_size
-  end
-
   def distribute!(limit = nil)
     return unless %w[pending error].include? status
 
     if status == "error"
       return unless valid?(context: :create)
     end
+
+    return if use_by_docket_date_distribution? && less_than_batch_size?
 
     update!(status: :started, started_at: Time.zone.now)
 
@@ -73,6 +58,14 @@ class Distribution < CaseflowRecord
 
   def distributed_cases_count
     (status == "completed") ? distributed_cases.count : 0
+  end
+
+  def remaining_capacity
+    batch_size - (judge_tasks.length - judge_legacy_tasks.length)
+  end
+
+  def distributed_batch_size
+    statistics&.fetch("batch_size", 0) || 0
   end
 
   private
@@ -144,5 +137,15 @@ class Distribution < CaseflowRecord
     return Constants.DISTRIBUTION.alternative_batch_size if team_batch_size.nil? || team_batch_size == 0
 
     team_batch_size * Constants.DISTRIBUTION.batch_size_per_attorney
+  end
+
+  def use_by_docket_date_distribution?
+    FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+  end
+
+  def less_than_batch_size?
+    return true if judge_tasks.length < batch_size
+
+    judge_tasks.length + judge_legacy_tasks.length < batch_size
   end
 end

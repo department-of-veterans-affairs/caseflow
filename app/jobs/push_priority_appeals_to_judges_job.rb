@@ -41,14 +41,13 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def slack_report
     report = []
-    tied_distributions_sum = @tied_distributions.map { |distribution| distribution.statistics["batch_size"] }.sum
-    genpop_distributions_sum = @genpop_distributions.map { |distribution| distribution.statistics["batch_size"] }.sum
-    total_cases = @distributions.map { |distribution| distribution.statistics["batch_size"] }.sum
-
     if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+      total_cases = @distributions.map { |distribution| distribution.distributed_batch_size }.sum
       report << "*Number of cases distributed*: " \
                 "#{total_cases}"
     else
+      tied_distributions_sum = @tied_distributions.map { |distribution| distribution.distributed_batch_size }.sum
+      genpop_distributions_sum = @genpop_distributions.map { |distribution| distribution.distributed_batch_size }.sum
       report << "*Number of cases tied to judges distributed*: " \
                 "#{tied_distributions_sum}"
       report << "*Number of general population cases distributed*: " \
@@ -100,11 +99,11 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def distribute_priority_appeals
-    eligible_judges.map do |judge_id|
+    eligible_judges.map do |judge|
       Distribution.create!(
-        judge: User.find(judge_id),
+        judge: User.find(judge.id),
         priority_push: true
-      ).tap { |distribution| distribution.distribute!(distribution.batch_size - (distribution.judge_tasks.length - distribution.judge_legacy_tasks.length)) }
+      ).tap { |distribution| distribution.distribute!(distribution.remaining_capacity) }
     end
   end
 
