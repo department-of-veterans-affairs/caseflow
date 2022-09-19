@@ -207,8 +207,8 @@ describe SendNotificationJob, type: :job do
   end
 
   describe "#create_notification_audit_record" do
-    it "creates a new notification object" do
-      expect(Notification).to receive(:create)
+    it "makes a new notification object" do
+      expect(Notification).to receive(:new)
       SendNotificationJob.perform_now(good_message.to_json)
     end
   end
