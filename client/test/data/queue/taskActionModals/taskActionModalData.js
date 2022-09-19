@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-const uiData = {
+export const uiData = {
   ui: {
     highlightFormItems: false,
     messages: {

@@ -1,15 +1,20 @@
 import React from 'react';
+import { MemoryRouter, Route } from 'react-router';
+import { Provider } from 'react-redux';
+import { applyMiddleware, createStore, compose } from 'redux';
+import thunk from 'redux-thunk';
 
-import CancelTaskModal from './CancelTaskModal';
 import {
-  changeHearingRequestTypeTask,
-  changeHearingRequestTypeTaskCancelAction
-} from 'test/data';
+  createQueueReducer,
+  getAppealId,
+  getTaskId
+} from '../../../test/app/queue/components/modalUtils';
 import {
-
+  uiData
 } from '../../../test/data/queue/taskActionModals/taskActionModalData';
-import { queueWrapper as Wrapper } from '../../../test/data/stores/queueStore';
+import { changeHearingRequestTypeTask } from 'test/data';
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
+import CancelTaskModal from './CancelTaskModal';
 
 export default {
   title: 'Queue/Components/Task Action Modals/CancelTaskModal',
@@ -23,31 +28,49 @@ export default {
 };
 
 const Template = (args) => {
-  const { storeArgs, componentArgs } = args;
+  const { storeValues, taskType, modalType } = args;
+
+  const appealId = getAppealId(storeValues);
+  const taskId = getTaskId(storeValues, taskType);
+
+  const queueReducer = createQueueReducer(storeValues);
+  const store = createStore(
+    queueReducer,
+    compose(applyMiddleware(thunk))
+  );
+
+  const path = `/queue/appeals/${appealId}/tasks/${taskId}/modal/${modalType}`;
 
   return (
-    <Wrapper {...storeArgs}>
-      <CancelTaskModal
-        {...componentArgs}
-      />
-    </Wrapper>
+    <Provider store={store}>
+      <MemoryRouter initialEntries={[path]}>
+        <Route component={(props) => {
+          return <CancelTaskModal {...props.match.params} />;
+        }} path={`/queue/appeals/:appealId/tasks/:taskId/modal/${modalType}`} />
+      </MemoryRouter>
+    </Provider>
   );
 };
 
 export const CancelChangeHearingRequestTypeTask = Template.bind({});
 CancelChangeHearingRequestTypeTask.args = {
-  storeArgs: {
+  storeValues: {
     queue: {
-      tasks: [
-        changeHearingRequestTypeTaskCancelAction
-      ]
+      amaTasks: {
+        ...changeHearingRequestTypeTask,
+        type: 'ChangeHearingRequestTypeTask'
+      },
+      appeals: {
+        [changeHearingRequestTypeTask.appealId]: {
+          id: changeHearingRequestTypeTask.uniqueId,
+          externalId: changeHearingRequestTypeTask.appealId
+        }
+      }
     },
-    // The test relies on `props.match` to match against one of the available actions.
-    route: TASK_ACTIONS.CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL.value
+    ...uiData
   },
-  componentArgs: {
-    taskId: changeHearingRequestTypeTask.uniqueId
-  }
+  taskType: 'ChangeHearingRequestTypeTask',
+  modalType: TASK_ACTIONS.CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL.value
 };
 
 export const ReturnCaseToEducationEmoFromRpo = Template.bind({});
