@@ -135,7 +135,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
 
         # Add instructions and try again
         fill_in("instructions", with: "some text")
-        click_on(COPY::MODAL_SUBMIT_BUTTON)
+        click_on(COPY::MODAL_PUT_TASK_ON_HOLD_BUTTON)
 
         # We should see a success message and remain on the case details page.
         expect(page).to have_content(
