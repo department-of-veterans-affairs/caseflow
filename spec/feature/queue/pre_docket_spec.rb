@@ -887,8 +887,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
       step "If no text is entered into the modal's textarea it prevents submission" do
         submit_button = find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON)
-        expect(submit_button[:disabled]).to eq "true"    
-      end      
+        expect(submit_button[:disabled]).to eq "true"
+      end
 
       step "After adding text to the text area the form can be submitted" do
         instructions_textarea = find("textarea", id: "emoReturnToBoardIntakeInstructions")
@@ -961,7 +961,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         submit_button = find("button", text: COPY::MODAL_RETURN_BUTTON)
         expect(submit_button[:disabled]).to eq "true"
-        
+
         instructions_textarea = find("textarea", id: "taskInstructions")
         instructions_textarea.send_keys("Incorrect RPO. Please review.")
         find("button", class: "usa-button-secondary", text: COPY::MODAL_RETURN_BUTTON).click
