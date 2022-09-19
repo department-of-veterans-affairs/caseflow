@@ -21,7 +21,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
       label: 'Completed tasks',
       page: <TaskTableTab
         key="completed"
-        description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
+        description={COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION}
         predefinedColumns={{ includeCompletedDate: true,
           defaultSortIdx: 3 }}
         tasks={this.props.completedTasks} />

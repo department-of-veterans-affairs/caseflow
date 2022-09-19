@@ -18,6 +18,7 @@ import QueueFlowModal from './components/QueueFlowModal';
 import { requestPatch, requestSave, resetSuccessMessages } from './uiReducer/uiActions';
 
 import { taskActionData } from './utils';
+import { includes } from 'lodash';
 
 const validInstructions = (instructions) => {
   return instructions?.length > 0;
@@ -214,9 +215,20 @@ class AssignToView extends React.Component {
       modalProps.button = 'Notify';
     }
 
-    if (modalProps.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
-      modalProps.submitButtonClassNames = ['usa-button', 'usa-button-warning'];
-      modalProps.submitDisabled = !this.validateForm();
+    const uniqueSubmitButtonFunctionalityTitles = [
+      COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE,
+      COPY.EMO_ASSIGN_TO_RPO_MODAL_TITLE,
+      COPY.VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE,
+      COPY.VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE,
+      COPY.BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE,
+      COPY.BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE
+    ];
+
+    if (includes(uniqueSubmitButtonFunctionalityTitles, modalProps.title)) {
+      modalProps.submitButtonClassNames = ['usa-button'];
+      if (modalProps.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
+        modalProps.submitDisabled = !this.validateForm();
+      }
     }
 
     return (
