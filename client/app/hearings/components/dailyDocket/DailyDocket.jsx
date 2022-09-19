@@ -267,7 +267,7 @@ export default class DailyDocket extends React.Component {
               onClickRemoveHearingDay={this.props.onClickRemoveHearingDay}
             />
           </div>
-          <div className="cf-push-right" role="text">
+          <div className="cf-push-right">
             <p {...css({ marginTop: '0px', marginBottom: '0px' })}>
               {!user.userVsoEmployee && (
                 <React.Fragment>
