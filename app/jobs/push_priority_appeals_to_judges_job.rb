@@ -28,27 +28,32 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   rescue StandardError => error
     start_time ||= Time.zone.now # temporary fix to get this job to succeed
     duration = time_ago_in_words(start_time)
-    slack_msg = "[ERROR] after running for #{duration}: #{error.message}"
-    slack_service.send_notification(slack_msg, self.class.name, "#appeals-echo")
+    slack_msg = "<!here>\n [ERROR] after running for #{duration}: #{error.message}"
+    slack_service.send_notification(slack_msg, self.class.name, "#appeals-job-alerts")
     log_error(error)
   ensure
     datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
   end
 
   def send_job_report
-    if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
-      #Do nothing, place holder for new message path of ALL CASE DISTRIBUTION
-    else
-      slack_service.send_notification(slack_report.join("\n"), self.class.name, "#appeals-job-alerts")
-    end
+    slack_service.send_notification(slack_report.join("\n"), self.class.name, "#appeals-job-alerts")
   end
 
   def slack_report
     report = []
-    report << "*Number of cases tied to judges distributed*: " \
-              "#{@tied_distributions.map { |distribution| distribution.statistics['batch_size'] }.sum}"
-    report << "*Number of general population cases distributed*: " \
-              "#{@genpop_distributions.map { |distribution| distribution.statistics['batch_size'] }.sum}"
+    tied_distributions_sum = @tied_distributions.map { |distribution| distribution.statistics["batch_size"] }.sum
+    genpop_distributions_sum = @genpop_distributions.map { |distribution| distribution.statistics["batch_size"] }.sum
+    total_cases = @distributions.map { |distribution| distribution.statistics["batch_size"] }.sum
+
+    if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+      report << "*Number of cases distributed*: " \
+                "#{total_cases}"
+    else
+      report << "*Number of cases tied to judges distributed*: " \
+                "#{tied_distributions_sum}"
+      report << "*Number of general population cases distributed*: " \
+                "#{genpop_distributions_sum}"
+    end
 
     appeals_not_distributed = docket_coordinator.dockets.map do |docket_type, docket|
       report << "*Age of oldest #{docket_type} case*: #{docket.oldest_priority_appeal_days_waiting} days"
@@ -82,6 +87,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
       Distribution.create!(judge: User.find(judge.id), priority_push: true).tap(&:distribute!)
     end
   end
+
   # Distribute remaining general population cases while attempting to even out the number of priority cases all judges
   # have received over one month
   def distribute_genpop_priority_appeals
