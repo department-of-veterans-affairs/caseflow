@@ -10,7 +10,9 @@ import {
   getTaskId
 } from '../../../test/app/queue/components/modalUtils';
 import {
-  uiData
+  uiData,
+  rpoToBvaIntakeData,
+  vhaPOToCAMOData
 } from '../../../test/data/queue/taskActionModals/taskActionModalData';
 import { changeHearingRequestTypeTask } from 'test/data';
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
@@ -58,7 +60,10 @@ CancelChangeHearingRequestTypeTask.args = {
     queue: {
       amaTasks: {
         ...changeHearingRequestTypeTask,
-        type: 'ChangeHearingRequestTypeTask'
+        [Object.keys(changeHearingRequestTypeTask)[0]]: {
+          ...Object.values(changeHearingRequestTypeTask)[0],
+          type: 'ChangeHearingRequestTypeTask'
+        }
       },
       appeals: {
         [changeHearingRequestTypeTask.appealId]: {
@@ -74,5 +79,15 @@ CancelChangeHearingRequestTypeTask.args = {
 };
 
 export const ReturnCaseToEducationEmoFromRpo = Template.bind({});
+ReturnCaseToEducationEmoFromRpo.args = {
+  storeValues: rpoToBvaIntakeData,
+  taskType: 'EducationAssessDocumentationTask',
+  modalType: TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.value
+};
 
 export const ReturnCaseToVhaCamoFromVhaPo = Template.bind({});
+ReturnCaseToVhaCamoFromVhaPo.args = {
+  storeValues: vhaPOToCAMOData,
+  taskType: 'AssessDocumentationTask',
+  modalType: TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value
+};
