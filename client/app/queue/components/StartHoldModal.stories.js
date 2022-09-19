@@ -54,5 +54,5 @@ export const VhaProgramOfficeSetTaskOnHold = Template.bind({});
 VhaProgramOfficeSetTaskOnHold.args = {
   storeValues: vhaPOToCAMOData,
   taskType: 'AssessDocumentationTask',
-  modalType: trimTaskActionValue(TASK_ACTIONS.TOGGLE_TIMED_HOLD.value)
+  modalType: ""
 };
