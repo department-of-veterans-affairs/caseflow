@@ -43,8 +43,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     report = []
     tied_distributions_sum = @tied_distributions.map { |distribution| distribution.statistics["batch_size"] }.sum
     genpop_distributions_sum = @genpop_distributions.map { |distribution| distribution.statistics["batch_size"] }.sum
-    # replace below with new Distribute call when it is finished
-    total_cases = tied_distributions_sum + genpop_distributions_sum
+    total_cases = @distributions.map { |distribution| distribution.statistics["batch_size"] }.sum
 
     if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
       report << "*Number of cases distributed*: " \
@@ -88,6 +87,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
       Distribution.create!(judge: User.find(judge.id), priority_push: true).tap(&:distribute!)
     end
   end
+
   # Distribute remaining general population cases while attempting to even out the number of priority cases all judges
   # have received over one month
   def distribute_genpop_priority_appeals

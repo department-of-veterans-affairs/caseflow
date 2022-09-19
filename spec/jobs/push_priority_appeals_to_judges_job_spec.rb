@@ -368,6 +368,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     before do
       job.instance_variable_set(:@tied_distributions, distributed_cases)
       job.instance_variable_set(:@genpop_distributions, distributed_cases)
+      job.instance_variable_set(:@distributions, distributed_cases)
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(previous_distributions)
       allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(20)
@@ -401,7 +402,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     it "returns the Slack Message associated with By Docket Date Distribution" do
       FeatureToggle.enable!(:acd_distribute_all)
-      expect(subject.second).to eq "*Number of cases distributed*: 20"
+      expect(subject.second).to eq "*Number of cases distributed*: 10"
 
       today = Time.zone.now.to_date
       legacy_days_waiting = (today - legacy_priority_case.bfdloout.to_date).to_i
