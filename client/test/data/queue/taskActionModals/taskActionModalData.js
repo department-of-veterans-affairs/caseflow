@@ -463,7 +463,7 @@ const preDocketTaskData = {
   },
 };
 
-const AssessDocumentationTaskData = {
+const assessDocumentationTaskData = {
   7159: {
     uniqueId: '7159',
     isLegacy: false,
@@ -652,7 +652,7 @@ const AssessDocumentationTaskData = {
   }
 };
 
-const EducationAssessDocumentationTaskData = {
+const educationAssessDocumentationTaskData = {
   7168: {
     uniqueId: '7168',
     isLegacy: false,
@@ -771,7 +771,7 @@ export const camoToBvaIntakeData = {
   ...uiData
 };
 
-export const ReturnToOrgData = {
+export const returnToOrgData = {
   queue: {
     amaTasks: {
       ...preDocketTaskData
@@ -789,7 +789,7 @@ export const ReturnToOrgData = {
 export const vhaPOToCAMOData = {
   queue: {
     amaTasks: {
-      ...AssessDocumentationTaskData
+      ...assessDocumentationTaskData
     },
     appeals: {
       '419ce568-387c-4ac6-a5f5-00a1554cea36': {
@@ -819,7 +819,7 @@ export const emoToBvaIntakeData = {
 export const rpoToBvaIntakeData = {
   queue: {
     amaTasks: {
-      ...EducationAssessDocumentationTaskData
+      ...educationAssessDocumentationTaskData
     },
     appeals: {
       '419ce568-387c-4ac6-a5f5-00a1554cea36': {
