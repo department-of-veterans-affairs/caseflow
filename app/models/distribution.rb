@@ -54,7 +54,7 @@ class Distribution < CaseflowRecord
     (status == "completed") ? distributed_cases.count : 0
   end
 
-  def remaining_capacity
+  def initial_capacity
     batch_size - judge_tasks.length - judge_legacy_tasks.length
   end
 

@@ -27,7 +27,7 @@ module AllCaseDistribution
 
   def requested_distribution
     @appeals = []
-    @rem = remaining_capacity
+    @rem = initial_capacity
     @nonpriority_iterations = 0
 
     distribute_priority_appeals_from_all_dockets_by_age_to_limit(@rem, style: "request")
@@ -73,7 +73,7 @@ module AllCaseDistribution
       evidence_submission_proportion: docket_proportions[:evidence_submission],
       hearing_proportion: docket_proportions[:hearing],
       nonpriority_iterations: @nonpriority_iterations,
-      remaining_capacity: remaining_capacity,
+      initial_capacity: initial_capacity,
     }
   end
 
