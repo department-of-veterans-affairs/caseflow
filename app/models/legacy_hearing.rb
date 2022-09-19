@@ -35,9 +35,8 @@ class LegacyHearing < CaseflowRecord
   include UpdatedByUserConcern
   include HearingConcern
   include HasHearingEmailRecipientsConcern
-
-  prepend DocketHearingWithdrawnLegacy
-  prepend DocketHearingPostponedLegacy
+  prepend HearingWithdrawn
+  prepend HearingPostponed
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
