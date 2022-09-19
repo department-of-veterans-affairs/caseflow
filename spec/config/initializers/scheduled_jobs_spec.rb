@@ -1,4 +1,6 @@
-RSpec.describe 'SCHEDULED_JOBS' do
+# frozen_string_literal: true
+
+RSpec.describe "SCHEDULED_JOBS" do
   describe "for all jobs" do
     SUPPORTED_JOBS.each_value do |job_class|
       it "#{job_class.name} is not queued in default queue" do

@@ -21,7 +21,7 @@ class HearingRequestDocket < Docket
 
   # this method needs to have the same name as the method in legacy_docket.rb for all_case_distribution,
   # but the judge that is passed in isn't relevant here
-###here
+  # ##here
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
     HearingRequestDistributionQuery.new(
       base_relation: ready_nonpriority_appeals.limit(num), genpop: "only_genpop"
@@ -36,24 +36,25 @@ class HearingRequestDocket < Docket
 
   # rubocop:disable Lint/UnusedMethodArgument
   def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1, style: "push")
-#def distribute_appeals(distribution, priority: false, genpop: "default_genpop", limit: 1, style: "push")
+    # def distribute_appeals(distribution, priority: false, genpop: "default_genpop", limit: 1, style: "push")
     base_relation = appeals(priority: priority, ready: true).limit(limit)
 
-#genpop = "only_genpop" if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[current_user])
+    # genpop = "only_genpop" if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[current_user])
 
     appeals = HearingRequestDistributionQuery.new(
       base_relation: base_relation, genpop: genpop, judge: distribution.judge
     ).call
-##why defaulted to any
+    # #why defaulted to any
     appeals = self.class.limit_genpop_appeals(appeals, limit) if genpop.eql? "any"
-##change this to not be only genpop
+    # #change this to not be only genpop
     HearingRequestCaseDistributor.new(
-#appeals: appeals, genpop: genpop, distribution: distribution, priority: priority
+      # appeals: appeals, genpop: genpop, distribution: distribution, priority: priority
       appeals: appeals, genpop: genpop, distribution: distribution, priority: priority
     ).call
   end
+
   # rubocop:enable Lint/UnusedMethodArgument
-## if
+  ## if
   def self.limit_genpop_appeals(appeals_array, limit)
     # genpop 'any' returns 2 arrays of the limited base relation. This means if we only request 2 cases, appeals is a
     # 2x2 array containing 4 cases overall and we will end up distributing 4 cases rather than 2. Instead, reinstate the
