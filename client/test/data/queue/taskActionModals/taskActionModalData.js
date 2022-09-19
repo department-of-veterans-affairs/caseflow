@@ -10,7 +10,9 @@ export const uiData = {
       savePending: false,
       saveSuccessful: null
     },
-    featureToggles: {}
+    featureToggles: {
+      vha_irregular_appeals: true
+    }
   }
 };
 

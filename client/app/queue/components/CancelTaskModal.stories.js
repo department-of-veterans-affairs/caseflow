@@ -10,7 +10,6 @@ import {
   getTaskId
 } from '../../../test/app/queue/components/modalUtils';
 import {
-  uiData,
   rpoToBvaIntakeData,
   vhaPOToCAMOData
 } from '../../../test/data/queue/taskActionModals/taskActionModalData';
