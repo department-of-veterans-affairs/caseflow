@@ -13,12 +13,7 @@ import {
   rpoToBvaIntakeData,
   vhaPOToCAMOData
 } from '../../../test/data/queue/taskActionModals/taskActionModalData';
-import {
-  changeHearingRequestTypeTask,
-  changeHearingRequestTypeTaskCancelAction
-} from 'test/data';
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
-import { queueWrapper as Wrapper } from '../../../test/data/stores/queueStore';
 import CancelTaskModal from './CancelTaskModal';
 
 export default {
