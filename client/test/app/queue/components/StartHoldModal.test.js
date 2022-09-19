@@ -45,7 +45,7 @@ const renderStartHoldModal = (modalType, storeValues, taskType) => {
 describe('Whenever VHA PO places a task on hold for set number of days', () => {
   const taskType = 'AssessDocumentationTask';
 
-  test('Before number of days is selected, button should be disabled', () => {
+  test('Before 15 or 30 days is selected, button should be disabled', () => {
     renderStartHoldModal(TASK_ACTIONS.TOGGLE_TIMED_HOLD.value, vhaPOToCAMOData, taskType);
 
     expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
@@ -72,7 +72,7 @@ describe('Whenever VHA PO places a task on hold for set number of days', () => {
 describe('Whenever VHA PO places a task on hold for custom number of days', () => {
   const taskType = 'AssessDocumentationTask';
 
-  test('Before number of days is selected, button should be disabled', () => {
+  test('Before custom number of days is selected, button should be disabled', () => {
     renderStartHoldModal(TASK_ACTIONS.TOGGLE_TIMED_HOLD.value, vhaPOToCAMOData, taskType);
 
     expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
