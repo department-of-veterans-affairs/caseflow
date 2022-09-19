@@ -57,30 +57,6 @@ const Template = (args) => {
   );
 };
 
-export const CancelChangeHearingRequestTypeTask = () => {
-  const storeArgs = {
-    queue: {
-      tasks: [
-        changeHearingRequestTypeTaskCancelAction
-      ]
-    },
-    // The test relies on `props.match` to match against one of the available actions.
-    route: TASK_ACTIONS.CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL.value
-  };
-
-  const componentArgs = {
-    taskId: changeHearingRequestTypeTask.uniqueId
-  };
-
-  return (
-    <Wrapper {...storeArgs}>
-      <CancelTaskModal
-        {...componentArgs}
-      />
-    </Wrapper>
-  );
-};
-
 export const ReturnCaseToEducationEmoFromRpo = Template.bind({});
 ReturnCaseToEducationEmoFromRpo.args = {
   storeValues: rpoToBvaIntakeData,
