@@ -81,6 +81,7 @@ const ReviewAppealView = (props) => {
   const hearingsSize = hearings.length;
   const originalHearingRequestType = _.startCase(props.appeal.original_hearing_request_type);
   const PARSE_INT_RADIX = 10;
+  const scheduledHearingTime = props.hearings[0].scheduled_time;
   const currentValues = {
     reason,
     otherReason,
@@ -114,6 +115,8 @@ const ReviewAppealView = (props) => {
 
     return selectOriginal;
   });
+
+  {console.log(JSON.stringify(props.hearings[0].scheduled_time))}
 
   return (
     <>
