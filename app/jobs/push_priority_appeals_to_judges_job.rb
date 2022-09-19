@@ -42,12 +42,12 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   def slack_report
     report = []
     if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
-      total_cases = @distributions.map { |distribution| distribution.distributed_batch_size }.sum
+      total_cases = @distributions.map(&:distributed_batch_size).sum
       report << "*Number of cases distributed*: " \
                 "#{total_cases}"
     else
-      tied_distributions_sum = @tied_distributions.map { |distribution| distribution.distributed_batch_size }.sum
-      genpop_distributions_sum = @genpop_distributions.map { |distribution| distribution.distributed_batch_size }.sum
+      tied_distributions_sum = @tied_distributions.map(&:distributed_batch_size).sum
+      genpop_distributions_sum = @genpop_distributions.map(&:distributed_batch_size).sum
       report << "*Number of cases tied to judges distributed*: " \
                 "#{tied_distributions_sum}"
       report << "*Number of general population cases distributed*: " \
