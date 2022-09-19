@@ -261,7 +261,7 @@ describe AppellantNotification do
     end
   end
 
-  describe DocketHearingPostponedLegacy do
+  describe DocketHearingPostponed do
     let!(:template_name) { "Postponement of hearing" }
     let(:bva) { Bva.singleton }
     let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
@@ -296,7 +296,7 @@ describe AppellantNotification do
     end
   end
 
-  describe DocketHearingWithdrawnLegacy do
+  describe DocketHearingWithdrawn do
     let!(:template_name) { "Withdrawal of hearing" }
     let(:bva) { Bva.singleton }
     let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
@@ -324,7 +324,7 @@ describe AppellantNotification do
           }
         end
         it "will notify appellant when a hearing is withdrawn/cancelled" do
-          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name
+          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
           hearing.update_caseflow_and_vacols(hearing_info)
         end
       end
