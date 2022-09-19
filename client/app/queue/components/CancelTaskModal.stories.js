@@ -14,8 +14,12 @@ import {
   rpoToBvaIntakeData,
   vhaPOToCAMOData
 } from '../../../test/data/queue/taskActionModals/taskActionModalData';
-import { changeHearingRequestTypeTask } from 'test/data';
+import {
+  changeHearingRequestTypeTask,
+  changeHearingRequestTypeTaskCancelAction
+} from 'test/data';
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
+import { queueWrapper as Wrapper } from '../../../test/data/stores/queueStore';
 import CancelTaskModal from './CancelTaskModal';
 
 export default {
@@ -54,28 +58,28 @@ const Template = (args) => {
   );
 };
 
-export const CancelChangeHearingRequestTypeTask = Template.bind({});
-CancelChangeHearingRequestTypeTask.args = {
-  storeValues: {
+export const CancelChangeHearingRequestTypeTask = () => {
+  const storeArgs = {
     queue: {
-      amaTasks: {
-        ...changeHearingRequestTypeTask,
-        [Object.keys(changeHearingRequestTypeTask)[0]]: {
-          ...Object.values(changeHearingRequestTypeTask)[0],
-          type: 'ChangeHearingRequestTypeTask'
-        }
-      },
-      appeals: {
-        [changeHearingRequestTypeTask.appealId]: {
-          id: changeHearingRequestTypeTask.uniqueId,
-          externalId: changeHearingRequestTypeTask.appealId
-        }
-      }
+      tasks: [
+        changeHearingRequestTypeTaskCancelAction
+      ]
     },
-    ...uiData
-  },
-  taskType: 'ChangeHearingRequestTypeTask',
-  modalType: TASK_ACTIONS.CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL.value
+    // The test relies on `props.match` to match against one of the available actions.
+    route: TASK_ACTIONS.CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL.value
+  };
+
+  const componentArgs = {
+    taskId: changeHearingRequestTypeTask.uniqueId
+  };
+
+  return (
+    <Wrapper {...storeArgs}>
+      <CancelTaskModal
+        {...componentArgs}
+      />
+    </Wrapper>
+  );
 };
 
 export const ReturnCaseToEducationEmoFromRpo = Template.bind({});
