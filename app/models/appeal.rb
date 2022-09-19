@@ -117,7 +117,7 @@ class Appeal < DecisionReview
       # generate UUIDs
       dup_appeal.uuid = SecureRandom.uuid
       # make sure the uuid doesn't exist in the database (by some chance)
-      while !Appeal.find_by_uuid(dup_appeal.uuid).nil?
+      while Appeal.find_by_uuid(dup_appeal.uuid).nil? == false
         # generate new id if not
         dup_appeal.uuid = SecureRandom.uuid
       end
@@ -130,8 +130,15 @@ class Appeal < DecisionReview
     include_association :available_hearing_locations
     include_association :special_issue_list
     include_association :docket_switch
+    include_association :record_synced_by_job
+    include_association :request_issues_updates
+    include_association :intake
+    include_association :claimants
+    include_association :remand_supplemental_claims
+    # include_association :decision_issues
+    # include_association :request_decision_issues
     # include_association :cached_appeal_attributes
-    # include_association :cavc_remand, if: !nil?
+    # include_association :cavc_remands # this won't work if uncommented
     include_association :claims_folder_searches
     # include_association :hearing_appeal_stream_snapshots
     # include_association :hearings # might need this back
@@ -142,22 +149,21 @@ class Appeal < DecisionReview
     include_association :vbms_uploaded_documents
     include_association :work_mode
 
-    # # lambda for setting up a new UUID for the hearing
-    # customize(lambda { |_, dup_appeal|
-    #   # set the UUID to nil so that it is auto generated
-    #   dup_appeal.hearings.each { |hearing| hearing.uuid = nil }
-    #   # generate UUIDs
-    #   dup_appeal.hearings.each { |hearing| hearing.uuid = SecureRandom.uuid }
-    #   # make sure the uuid doesn't exist in the database (by some chance)
-    #   dup_appeal.hearings.each do |hearing|
-    #     while !Hearing.find_by_uuid(hearing.uuid).nil?
-    #       # generate new id if not 
-    #       hearing.uuid = SecureRandom.uuid
-    #     end
-    #   end
-    # })
+    # lambda for setting up a new UUID for supplemental claims
+    customize(lambda { |_, dup_appeal|
+      # set the UUID to nil so that it is auto generated
+      dup_sup_claims = dup_appeal.remand_supplemental_claims
 
+      dup_sup_claims.each do |sm_claim|
+        sm_claim.uuid = nil
+        sm_claim.uuid = SecureRandom.uuid
 
+        # make sure uuid doesn't exist in the database (by some chance)
+        while SupplementalClaim.find_by(uuid: sm_claim.uuid).nil? == false
+          sm_claim.uuid = SecureRandom.uuid
+        end
+      end
+    })
   end
 
   def document_fetcher
@@ -292,6 +298,81 @@ class Appeal < DecisionReview
     { decision_issues: decision_issues, request_issues: request_issues }
   end
 
+  # need to come back to this one
+  def clone_cavc_remand(parent_appeal)
+    # get cavc remand from the parent appeal
+    original_remand = parent_appeal.cavc_remand
+    # clone
+    dup_remand = original_remand.amoeba_dup
+    # set appeal id to remand_appeal_id
+    dup_remand.remand_appeal_id = id
+    # save
+    binding.pry
+    dup_remand.save
+    binding.pry
+  end
+
+  # clone issues clones request_issues, decision_issues, and decision_request_issues
+  # together in order to maintain relationships to each other
+  def clone_issues(parent_appeal)
+    # create hashes to hold parent/child relations for each model
+    request_issues_parent_to_child_hash = {}
+    decision_review_parent_to_child_hash = {}
+    # clone request issues
+    # get the list of request issues
+    original_request_issues = parent_appeal.request_issues
+    # for each request issue, clone it
+    original_request_issues.each do |r_issue|
+      # clone request issue
+      dup_issue = r_issue.amoeba_dup
+      # set the decision_review_id to the appeal_id
+      dup_issue.decision_review_id = id
+      # save the duplicated issue
+      dup_issue.save
+      # binding.pry
+      # save relationship in hash
+      request_issues_parent_to_child_hash[r_issue.id] = dup_issue.id
+      # binding.pry
+    end
+
+    # clone decision issues
+    original_decision_issues = parent_appeal.decision_issues
+    # iterate
+    original_decision_issues.each do |d_issue|
+      dup_issue = d_issue.amoeba_dup
+      dup_issue.decision_review_id = id
+      dup_issue.save
+      # save relationship in hash
+      decision_review_parent_to_child_hash[d_issue.id] = dup_issue.id
+    end
+
+    # uses hashes to clone request_decision_issues
+    original_request_decision_issues = parent_appeal.request_decision_issues
+    original_request_decision_issues.each do |rd_issue|
+      dup_issue = rd_issue.amoeba_dup
+      # assign request_issue_id from parent relationship
+      dup_issue.request_issue_id = request_issues_parent_to_child_hash[rd_issue.request_issue_id]
+      # assign decision_issue_id from parent relationship
+      dup_issue.decision_issue_id = decision_review_parent_to_child_hash[rd_issue.decision_issue_id]
+      # save
+      dup_issue.save
+    end
+  end
+
+  def clone_ihp_drafts(parent_appeal)
+    # get the list of ihp_drafts from the appeal
+    original_ihp_drafts = IhpDraft.where(appeal_id: parent_appeal.id)
+    # for each ihp_draft, amoeba clone it
+    original_ihp_drafts.each do |draft|
+      # clone draft
+      dup_draft = draft.amoeba_dup
+      # set the appeal_id to this appeal
+      dup_draft.appeal_id = id
+      # save the clone
+      dup_draft.save
+    end
+  end
+
   def clone_hearings(parent_appeal)
     parent_appeal.hearings.each do |hearing|
       # clone hearing
@@ -304,17 +385,15 @@ class Appeal < DecisionReview
   end
 
   def clone_task_tree(parent_appeal, user_css_id)
-
     # get the task tree from the parent
     parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
-    
+
     # define hash to store parent/child relationship values
     task_parent_to_child_hash = Hash.new
 
     while parent_appeal.tasks.count != self.tasks.count
       # cycle each task in the parent
-      parent_ordered_tasks.each do |task| 
-
+      parent_ordered_tasks.each do |task|
         # if the value has a parent and isn't in the dictionary, try to find it in the dictionary or else skip it
         if !task.parent_id.nil?
 
@@ -347,7 +426,6 @@ class Appeal < DecisionReview
 
   # clone_task is used for splitting an appeal, tie to css_id for split
   def clone_task(original_task, user_css_id)
-
     # clone the task
     dup_task = original_task.amoeba_dup
 
@@ -360,20 +438,19 @@ class Appeal < DecisionReview
     # save the task
     dup_task.save
 
-    # set the status to the correct status 
+    # set the status to the correct status
     dup_task.status = original_task.status
 
     # set request store to the user that split the appeal
     RequestStore[:current_user] = User.find_by_css_id user_css_id
 
-    dup_task.save 
+    dup_task.save
 
     # return the task id to be added to the dict
     return dup_task.id
   end
 
   def clone_task_w_parent(original_task, parent_task_id)
-
     # clone the task
     dup_task = original_task.amoeba_dup
 
@@ -389,7 +466,7 @@ class Appeal < DecisionReview
     # save the task
     dup_task.save
 
-    # set the status to the correct status 
+    # set the status to the correct status
     dup_task.status = original_task.status
 
     dup_task.save

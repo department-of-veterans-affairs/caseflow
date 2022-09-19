@@ -68,6 +68,12 @@ class RequestIssue < CaseflowRecord
   before_save :set_contested_rating_issue_profile_date
   before_save :close_if_ineligible!
 
+  # amoeba gem for splitting appeal request issues
+  amoeba do
+    enable
+    exclude_association :decision_review_id
+    exclude_association :request_decision_issues
+  end
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
       super("Request Issue #{request_issue_id} cannot create decision issue " \

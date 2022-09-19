@@ -38,6 +38,12 @@ class CavcRemand < CaseflowRecord
     Constants.CAVC_REMAND_SUBTYPES.mdr.to_sym => Constants.CAVC_REMAND_SUBTYPES.mdr
   }
 
+  # amoeba gem for split appeal duplication
+  amoeba do
+    enable
+    # exclude_association :remand_appeal_id
+  end
+
   # called from the Add Cavc Date Modal
   def add_cavc_dates(params)
     if already_has_mandate?

@@ -16,7 +16,7 @@ class SplitAppealController < ApplicationController
     # duplicate appeal
     dup_appeal = appeal.amoeba_dup
 
-    # save the duplicate 
+    # save the duplicate
     dup_appeal.save
 
     # update the child task tree with parent, passing CSS ID of user for validation
@@ -24,5 +24,14 @@ class SplitAppealController < ApplicationController
 
     # clone the hearings and hearing relations from parent appeal
     dup_appeal.clone_hearings(appeal)
+
+    # if there are ihp drafts, clone them too
+    dup_appeal.clone_ihp_drafts(appeal)
+
+    # if there are cavc_remand, clone them too
+    dup_appeal.clone_cavc_remand(appeal)
+
+    # clones request_issues, decision_issues, and request_decision_issues
+    dup_appeal.clone_issues(appeal)
   end
 end
