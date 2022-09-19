@@ -109,7 +109,7 @@ class StartHoldModal extends React.Component {
     return <QueueFlowModal
       title={TASK_ACTIONS.PLACE_TIMED_HOLD.label}
       pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
-      submitDisabled={!this.validateForm()}
+      submitDisabled={this.props.task.type === 'AssessDocumentationTask' && !this.validateForm()}
       submit={this.submit}
     >
       {this.props.task.type === 'AssessDocumentationTask' ?
