@@ -214,7 +214,7 @@ class AssignToView extends React.Component {
       modalProps.button = 'Notify';
     }
 
-    if ((modalProps.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) || (modalProps.title === COPY.EMO_ASSIGN_TO_RPO_MODAL_TITLE)) {
+    if (modalProps.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
       modalProps.submitButtonClassNames = ['usa-button', 'usa-button-warning'];
       modalProps.button = 'Return';
     }
