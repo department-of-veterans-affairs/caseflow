@@ -915,9 +915,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
 
       step "If no text is entered into the modal's textarea it prevents submission" do
-        find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON).click
-        expect(page).to have_content(COPY::EMPTY_INSTRUCTIONS_ERROR)
+        submit_button = find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON)
+        expect(submit_button[:disabled]).to eq "true"
+        byebug       
       end
+      
 
       step "After adding text to the text area the form can be submitted" do
         instructions_textarea = find("textarea", id: "emoReturnToBoardIntakeInstructions")
