@@ -133,9 +133,4 @@ class Distribution < CaseflowRecord
     FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
   end
 
-  def more_than_batch_size?
-    return true if judge_tasks.length >= batch_size
-
-    judge_tasks.length + judge_legacy_tasks.length >= batch_size
-  end
 end
