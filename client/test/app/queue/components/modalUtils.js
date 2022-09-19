@@ -1,7 +1,7 @@
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
 
-// Use this to create a basically useless reducer for Redux testing in Queue components
+// Use this to create a reducer for Redux testing in Queue components
 export const createQueueReducer = (storeValues) => {
   return function (state = storeValues) {
 
@@ -50,3 +50,7 @@ export const selectFromDropdown = async (dropdownName, dropdownSelection) => {
 export const clickSubmissionButton = (buttonText) => {
   userEvent.click(screen.getByRole('button', { name: buttonText }));
 };
+
+// Extracts the modal type from a TASK_ACTIONS.json entry
+// "modal/<grabs this>"
+export const trimTaskActionValue = (taskActionValue) => taskActionValue.split('/').pop();
