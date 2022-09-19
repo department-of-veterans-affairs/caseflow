@@ -92,14 +92,14 @@ describe('Whenever the EMO assigns an appeal to a Regional Processing Office', (
 
   it('Button Disabled until a RPO is chosen from the dropdown', () => {
     renderAssignToView(TASK_ACTIONS.EMO_ASSIGN_TO_RPO.value, emoToBvaIntakeData, taskType);
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
 
     selectFromDropdown(
       'Assign to selector',
       'Buffalo RPO'
     );
 
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).not.toBeDisabled();
   });
 });
 

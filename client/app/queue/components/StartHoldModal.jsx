@@ -113,6 +113,7 @@ class StartHoldModal extends React.Component {
       validateForm={this.validateForm}
       submitButtonClassNames={['usa-button']}
       submitDisabled={this.props.task.type === 'AssessDocumentationTask' && !this.validateForm()}
+      validateForm={this.validateForm}
       submit={this.submit}
     >
       {this.props.task.type === 'AssessDocumentationTask' ?
