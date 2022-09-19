@@ -55,6 +55,8 @@ class Distribution < CaseflowRecord
       return unless valid?(context: :create)
     end
 
+    return if use_by_docket_date_distribution? && less_than_batch_size?
+
     update!(status: :started, started_at: Time.zone.now)
 
     # this might take awhile due to VACOLS, so set our timeout to 3 minutes (in milliseconds).
@@ -77,7 +79,19 @@ class Distribution < CaseflowRecord
     (status == "completed") ? distributed_cases.count : 0
   end
 
+  def remaining_capacity
+    batch_size - (judge_tasks.length - judge_legacy_tasks.length)
+  end
+
+  def distributed_batch_size
+    statistics&.fetch("batch_size", 0) || 0
+  end
+
   private
+
+  def use_proportions_distribution?
+   !FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+  end
 
   def mark_as_pending
     self.status = "pending"
@@ -142,5 +156,15 @@ class Distribution < CaseflowRecord
     return Constants.DISTRIBUTION.alternative_batch_size if team_batch_size.nil? || team_batch_size == 0
 
     team_batch_size * Constants.DISTRIBUTION.batch_size_per_attorney
+  end
+
+  def use_by_docket_date_distribution?
+    FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+  end
+
+  def less_than_batch_size?
+    return true if judge_tasks.length < batch_size
+
+    judge_tasks.length + judge_legacy_tasks.length < batch_size
   end
 end
