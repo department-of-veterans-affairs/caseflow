@@ -1,4 +1,4 @@
-class AddVaNotifyNotificationIdToNotifications  < Caseflow::Migration
+class AddVaNotifyNotificationIdToNotifications < Caseflow::Migration
   # Purpose: Adding va_notify_notification_id to notifications table so that it can be captured from response from API call
   #
   # Params: None
