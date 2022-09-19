@@ -112,7 +112,7 @@ class StartHoldModal extends React.Component {
       pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
       validateForm={this.validateForm}
       submitButtonClassNames={['usa-button']}
-      submitDisabled={!this.validateForm()}
+      submitDisabled={this.props.task.type === 'AssessDocumentationTask' && !this.validateForm()}
       submit={this.submit}
     >
       {this.props.task.type === 'AssessDocumentationTask' ?
