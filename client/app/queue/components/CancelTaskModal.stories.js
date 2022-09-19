@@ -10,7 +10,6 @@ import {
   getTaskId
 } from '../../../test/app/queue/components/modalUtils';
 import {
-  uiData,
   rpoToBvaIntakeData,
   vhaPOToCAMOData
 } from '../../../test/data/queue/taskActionModals/taskActionModalData';
@@ -55,30 +54,6 @@ const Template = (args) => {
         }} path={`/queue/appeals/:appealId/tasks/:taskId/modal/${modalType}`} />
       </MemoryRouter>
     </Provider>
-  );
-};
-
-export const CancelChangeHearingRequestTypeTask = () => {
-  const storeArgs = {
-    queue: {
-      tasks: [
-        changeHearingRequestTypeTaskCancelAction
-      ]
-    },
-    // The test relies on `props.match` to match against one of the available actions.
-    route: TASK_ACTIONS.CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL.value
-  };
-
-  const componentArgs = {
-    taskId: changeHearingRequestTypeTask.uniqueId
-  };
-
-  return (
-    <Wrapper {...storeArgs}>
-      <CancelTaskModal
-        {...componentArgs}
-      />
-    </Wrapper>
   );
 };
 
