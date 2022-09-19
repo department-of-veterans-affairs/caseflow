@@ -15,7 +15,7 @@ import {
 } from './modalUtils';
 import AssignToView from 'app/queue/AssignToView';
 import {
-  ReturnToOrgData,
+  returnToOrgData,
   emoToBvaIntakeData,
   camoToProgramOfficeToCamoData,
   vhaPOToCAMOData
@@ -37,7 +37,7 @@ const renderAssignToView = (modalType, storeValues, taskType) => {
     <Provider store={store}>
       <MemoryRouter initialEntries={[path]}>
         <Route component={(props) => {
-          return <AssignToView {...props.match.params} modalType={modalType} />;
+          return <AssignToView {...props.match.params} />;
         }} path={`/queue/appeals/:appealId/tasks/:taskId/modal/${modalType}`} />
       </MemoryRouter>
     </Provider>
@@ -48,7 +48,7 @@ describe('Whenever BVA Intake returns an appeal to', () => {
   const taskType = 'PreDocketTask';
 
   it('VHA CAMO', () => {
-    renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.value, ReturnToOrgData, taskType);
+    renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.value, returnToOrgData, taskType);
 
     expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
 
@@ -61,7 +61,7 @@ describe('Whenever BVA Intake returns an appeal to', () => {
   });
 
   it('VHA Caregiver Support Program (CSP)', () => {
-    renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.value, ReturnToOrgData, taskType);
+    renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.value, returnToOrgData, taskType);
 
     expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
 
@@ -74,7 +74,7 @@ describe('Whenever BVA Intake returns an appeal to', () => {
   });
 
   it('Education Service (EMO)', () => {
-    renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.value, ReturnToOrgData, taskType);
+    renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.value, returnToOrgData, taskType);
 
     expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
 
