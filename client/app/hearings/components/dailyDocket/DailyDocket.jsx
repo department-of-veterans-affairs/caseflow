@@ -267,20 +267,26 @@ export default class DailyDocket extends React.Component {
               onClickRemoveHearingDay={this.props.onClickRemoveHearingDay}
             />
           </div>
-          <div className="cf-push-right">
-            <span role="text">
+          <div className="cf-push-right" role="text">
+            <p {...css({ marginTop: '0px', marginBottom: '0px' })}>
               {!user.userVsoEmployee && (
                 <React.Fragment>
                   VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName}
-                  <br />
                 </React.Fragment>
               )}
-              Coordinator: {dailyDocket.bvaPoc} <br />
-              Hearing type: {dailyDocket.readableRequestType} <br />
+            </p>
+            <p {...css({ marginTop: '0px', marginBottom: '0px' })}>
+              Coordinator: {dailyDocket.bvaPoc}
+            </p>
+            <p {...css({ marginTop: '0px', marginBottom: '0px' })}>
+              Hearing type: {dailyDocket.readableRequestType}
+            </p>
+            <p {...css({ marginTop: '0px', marginBottom: '0px' })}>
               Regional office: {dailyDocket.regionalOffice}
-              <br />
+            </p>
+            <p {...css({ marginTop: '0px', marginBottom: '0px' })}>
               Room number: {dailyDocket.room}
-            </span>
+            </p>
           </div>
         </div>
 
