@@ -36,7 +36,7 @@ export default {
 };
 
 const Template = (args) => {
-  const { storeValues, taskType, modalType } = args;
+  const { storeValues, taskType, modalType, assigneeAlreadySelected } = args;
 
   const appealId = getAppealId(storeValues);
   const taskId = getTaskId(storeValues, taskType);
@@ -53,7 +53,7 @@ const Template = (args) => {
     <Provider store={store}>
       <MemoryRouter initialEntries={[path]}>
         <Route component={(props) => {
-          return <AssignToView {...props.match.params} />;
+          return <AssignToView {...props.match.params} assigneeAlreadySelected={assigneeAlreadySelected ?? true} />;
         }} path={`/queue/appeals/:appealId/tasks/:taskId/modal/${modalType}`} />
       </MemoryRouter>
     </Provider>
@@ -85,19 +85,22 @@ export const VhaCamoToVhaPo = Template.bind({});
 VhaCamoToVhaPo.args = {
   storeValues: camoToProgramOfficeToCamoData,
   taskType: 'VhaDocumentSearchTask',
-  modalType: VHA_ASSIGN_TO_PROGRAM_OFFICE.value
+  modalType: VHA_ASSIGN_TO_PROGRAM_OFFICE.value,
+  assigneeAlreadySelected: false
 };
 
 export const VhaPoToVisn = Template.bind({});
 VhaPoToVisn.args = {
   storeValues: vhaPOToCAMOData,
   taskType: 'AssessDocumentationTask',
-  modalType: VHA_ASSIGN_TO_REGIONAL_OFFICE.value
+  modalType: VHA_ASSIGN_TO_REGIONAL_OFFICE.value,
+  assigneeAlreadySelected: false
 };
 
 export const EmoToEducationRpo = Template.bind({});
 EmoToEducationRpo.args = {
   storeValues: emoToBvaIntakeData,
   taskType: 'EducationDocumentSearchTask',
-  modalType: EMO_ASSIGN_TO_RPO.value
+  modalType: EMO_ASSIGN_TO_RPO.value,
+  assigneeAlreadySelected: false
 };
