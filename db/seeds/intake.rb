@@ -20,7 +20,7 @@ module Seeds
     def create_intake_users
       ["Mail Intake", "Admin Intake"].each do |role|
         # do not try to recreate when running seed file after inital seed
-        next if User.find_by(css_id: "#{role.tr(' ', '')}_LOCAL".upcase)
+        next if User.find_by_css_id("#{role.tr(' ', '')}_LOCAL".upcase)
 
         create(:user,
                css_id: "#{role.tr(' ', '')}_LOCAL",

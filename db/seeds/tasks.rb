@@ -624,7 +624,7 @@ module Seeds
     def create_tasks_at_acting_judge
       attorney = User.find_by_css_id("BVASCASPER1")
       judge = User.find_by_css_id("BVAAABSHIRE")
-      acting_judge = User.find_by(css_id: "BVAACTING")
+      acting_judge = User.find_by_css_id("BVAACTING")
 
       if !acting_judge
         acting_judge = create(:user, css_id: "BVAACTING", station_id: 101, full_name: "Kris ActingVLJ_AVLJ Merle")
