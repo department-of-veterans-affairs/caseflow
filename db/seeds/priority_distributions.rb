@@ -453,7 +453,6 @@ module Seeds
         :aod,
         :ready_for_distribution,
         :type_original,
-        bfdnod: 1.day.ago,
         correspondent: create(:correspondent)
       )
       create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case)
