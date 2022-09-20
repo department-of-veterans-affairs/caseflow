@@ -37,7 +37,11 @@ class LegacyDocket
   end
 
   def age_of_oldest_priority_appeal
-    @age_of_oldest_priority_appeal ||= LegacyAppeal.repository.age_of_oldest_priority_appeal
+    if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+      @age_of_oldest_priority_appeal ||= LegacyAppeal.repository.age_of_oldest_priority_appeal_by_docket_date
+    else
+      @age_of_oldest_priority_appeal ||= LegacyAppeal.repository.age_of_oldest_priority_appeal
+    end
   end
 
   def age_of_n_oldest_genpop_priority_appeals(num)

@@ -63,7 +63,9 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
     report << ""
     report << "*Debugging information*"
-    report << "Priority Target: #{priority_target}"
+    if !FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+      report << "Priority Target: #{priority_target}"
+    end
     report << "Previous monthly distributions: #{priority_distributions_this_month_for_eligible_judges}"
 
     if appeals_not_distributed.values.flatten.any?
