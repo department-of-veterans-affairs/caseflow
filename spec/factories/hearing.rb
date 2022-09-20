@@ -35,7 +35,6 @@ FactoryBot.define do
     # tasks complete and set the distribution task to assigned
     trait :held do
       disposition { Constants.HEARING_DISPOSITION_TYPES.held }
-      # TODO: add child tasks from assign_hearing_disposition_task here
       after(:create) do |hearing, _evaluator|
         appeal = hearing.appeal
         hearing_task = appeal.tasks.find_by(type: :HearingTask)
@@ -60,12 +59,10 @@ FactoryBot.define do
 
     trait :postponed do
       disposition { Constants.HEARING_DISPOSITION_TYPES.postponed }
-      # TODO: check if child tasks for these are being created
     end
 
     trait :no_show do
       disposition { Constants.HEARING_DISPOSITION_TYPES.no_show }
-      # TODO: check if child tasks for these are being created
     end
 
     trait :scheduled_in_error do
@@ -74,8 +71,6 @@ FactoryBot.define do
 
     trait :cancelled do
       disposition { Constants.HEARING_DISPOSITION_TYPES.cancelled }
-      # TODO: check if child tasks for these are being created
-      # TODO: check if vacols needs to be updated here
     end
 
     trait :with_tasks do
@@ -124,7 +119,6 @@ FactoryBot.define do
                :completed,
                parent: hearing.hearing_task_association.hearing_task,
                appeal: hearing.appeal)
-        # TODO: add child tasks of assign_hearing_disposition_task here
       end
     end
   end
