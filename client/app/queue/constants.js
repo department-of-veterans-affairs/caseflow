@@ -208,8 +208,11 @@ export const PAGE_TITLES = {
   ASSIGN_HEARING: 'Assign Hearing',
   REMOVE_HEARING_TO_CORRECT_ERROR: 'Remove hearing to correct a scheduling error',
   POSTPONE_HEARING: 'Postpone Hearing',
-  MARK_TASK_COMPLETE: 'Mark Task Complete',
-  
+  CHANGE_TASK_TYPE: 'Change Task Type',
+  CONVERT_HEARING_TO_VIRTUAL: 'Change Hearing Request Type to Virtual',
+  CONVERT_HEARING_TO_VIDEO: 'Change Hearing Request Type to Video',
+  CONVERT_HEARING_TO_CENTRAL: 'Change Hearing Request Type to Central'
+
 };
 
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
