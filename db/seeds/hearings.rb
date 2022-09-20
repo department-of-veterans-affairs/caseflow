@@ -24,8 +24,7 @@ module Seeds
     MEDIUM_RO_DAYS = %w[RO43].freeze
 
     def initialize
-      @bfkey = 1234
-      @bfcorkey = 5678
+      @ama_appeal_count = 0
     end
 
     def seed!
@@ -117,15 +116,14 @@ module Seeds
     end
 
     def hearing_day_for_ro(ro_key:, scheduled_for:)
-      HearingDay.create!(
-        regional_office: %w[C R].include?(ro_key) ? nil : ro_key,
-        room: (ro_key == "R") ? nil : Constants::HEARING_ROOMS_LIST.keys.sample,
-        judge: random_judge_user,
-        request_type: request_type_by_ro_key(ro_key),
-        scheduled_for: scheduled_for,
-        created_by: created_by_user,
-        updated_by: created_by_user
-      )
+      create(:hearing_day,
+             regional_office: %w[C R].include?(ro_key) ? nil : ro_key,
+             room: (ro_key == "R") ? nil : Constants::HEARING_ROOMS_LIST.keys.sample,
+             judge: random_judge_user,
+             request_type: request_type_by_ro_key(ro_key),
+             scheduled_for: scheduled_for,
+             created_by: created_by_user,
+             updated_by: created_by_user)
     end
 
     def ten_percent_of_the_time
@@ -149,7 +147,6 @@ module Seeds
     end
 
     def create_ama_appeal(issue_count: 1)
-      @ama_appeal_count ||= 0
       @ama_appeal_count += 1
       veteran = create_veteran
       claimant_participant_id = "RANDOM_CLAIMANT_PID#{veteran.file_number}"
@@ -208,20 +205,16 @@ module Seeds
     end
 
     def create_legacy_appeal(hearing_day)
-      @bfkey += 1
-      @bfcorkey += 1
-      # This avoids a flake where stafkey collides with the random stafkey
-      # that seeds/priority_distributions.rb uses to create cases. This solution
-      # is from seeds/tasks.rb
-      correspondent = VACOLS::Correspondent.find_or_create_by(stafkey: @bfcorkey.to_s)
+      correspondent = create(:correspondent)
       vacols_case = create(
         :case,
-        bfkey: @bfkey.to_s,
-        bfcorkey: @bfcorkey.to_s,
+        bfcorkey: correspondent.stafkey,
         bfac: %w[1 3].sample, # original or Post remand,
         correspondent: correspondent
       )
 
+      # the :case factory uses the :veteran_file_number sequence if no bfcorlid is provided
+      # so passing veteran_file_number here will correctly use the global sequence
       file_number = LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
       create_veteran(veteran_file_number: file_number)
       create_poa(veteran_file_number: file_number)
@@ -323,18 +316,12 @@ module Seeds
     end
 
     def create_travel_board_vacols_case
-      @bfkey += 1
-      @bfcorkey += 1
-      # This avoids a flake where stafkey collides with the random stafkey
-      # that seeds/priority_distributions.rb uses to create cases. This solution
-      # is from seeds/tasks.rb
-      correspondent = VACOLS::Correspondent.find_or_create_by(stafkey: @bfcorkey.to_s)
+      correspondent = create(:correspondent)
       create(
         :case,
         :travel_board_hearing,
         :type_original,
-        bfkey: @bfkey.to_s,
-        bfcorkey: @bfcorkey.to_s,
+        bfcorkey: correspondent.stafkey,
         correspondent: correspondent
       )
     end
@@ -347,6 +334,8 @@ module Seeds
           veteran_file_number: LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
         )
 
+        # the :case factory uses the :veteran_file_number sequence if no bfcorlid is provided
+        # so passing veteran_file_number here will correctly use the global sequence
         create_poa(veteran_file_number: veteran.file_number)
 
         create(

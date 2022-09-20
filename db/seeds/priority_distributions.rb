@@ -167,9 +167,9 @@ module Seeds
         create(
           :appeal,
           :hearing_docket,
-          :ready_for_distribution,
+          :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
-          :held_hearing,
+          :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
           receipt_date: num.days.ago,
           tied_judge: judge,
@@ -199,8 +199,8 @@ module Seeds
         create(
           :appeal,
           :hearing_docket,
-          :ready_for_distribution,
-          :held_hearing,
+          :with_post_intake_tasks,
+          :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
           receipt_date: num.days.ago,
           tied_judge: judge,
@@ -251,9 +251,9 @@ module Seeds
         create(
           :appeal,
           :hearing_docket,
-          :ready_for_distribution,
+          :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
-          :held_hearing,
+          :held_hearing_and_ready_to_distribute,
           receipt_date: num.days.ago,
           adding_user: User.first
         )
@@ -279,8 +279,8 @@ module Seeds
         create(
           :appeal,
           :hearing_docket,
-          :ready_for_distribution,
-          :held_hearing,
+          :with_post_intake_tasks,
+          :held_hearing_and_ready_to_distribute,
           receipt_date: num.days.ago,
           adding_user: User.first
         )

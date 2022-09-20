@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
+# When using this factory, passing in a created Veteran object is the preferred way of creating an appeal.
+# The required veteran can be created in-line or before the appeal and passed in as the veteran: arg
+# This ensures that the appeal is created with the correct veteran_file_number association
+
 FactoryBot.define do
   factory :appeal do
     docket_type { Constants.AMA_DOCKETS.evidence_submission }
     established_at { Time.zone.now }
     receipt_date { Time.zone.yesterday }
     filed_by_va_gov { false }
-    sequence(:veteran_file_number, 500_000_000)
+    veteran_file_number { generate :veteran_file_number }
     uuid { SecureRandom.uuid }
 
     after(:build) do |appeal, evaluator|
@@ -110,7 +114,8 @@ FactoryBot.define do
 
     transient do
       veteran do
-        Veteran.find_by(file_number: veteran_file_number) || create(:veteran, file_number: veteran_file_number)
+        Veteran.find_by(file_number: veteran_file_number) ||
+          create(:veteran, file_number: (generate :veteran_file_number))
       end
     end
 
@@ -152,7 +157,32 @@ FactoryBot.define do
       end
 
       after(:create) do |appeal, evaluator|
-        create(:hearing, judge: nil, disposition: "held", appeal: appeal, adding_user: evaluator.adding_user)
+        create(:hearing, :held, judge: nil, appeal: appeal, adding_user: evaluator.adding_user)
+      end
+    end
+
+    # this method should not be used for seeding data but is required for some tests
+    trait :held_hearing_no_tasks do
+      transient do
+        adding_user { nil }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:hearing, disposition: "held", judge: nil, appeal: appeal, adding_user: evaluator.adding_user)
+      end
+    end
+
+    # this trait should be run with :with_post_intake_tasks so that it creates a correct task tree
+    trait :held_hearing_and_ready_to_distribute do
+      transient do
+        adding_user { nil }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:hearing, :held, judge: nil, appeal: appeal, adding_user: evaluator.adding_user)
+        appeal.tasks.find_by(type: :TranscriptionTask).update!(status: :completed)
+        appeal.tasks.find_by(type: :EvidenceSubmissionWindowTask).update!(status: :completed)
+        appeal.tasks.find_by(type: :DistributionTask).update!(status: :assigned)
       end
     end
 
