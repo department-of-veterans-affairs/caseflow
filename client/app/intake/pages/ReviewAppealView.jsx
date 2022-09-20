@@ -128,7 +128,7 @@ const ReviewAppealView = (props) => {
         <span>{COPY.SPLIT_APPEAL_REVIEW_SUBHEAD}</span>
       </div> &ensp;
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'left' }}>
-        <u style={{fontSize: '20px' }}>{COPY.SPLIT_APPEAL_REVIEW_REASONING_TITLE}</u> &ensp;
+        <u style={{ fontSize: '20px' }}>{COPY.SPLIT_APPEAL_REVIEW_REASONING_TITLE}</u> &ensp;
         <span style={{ flexBasis: '75%' }}>{myValues.reason} &ensp; {myValues.otherReason}</span>
       </div>
       <br />
@@ -216,7 +216,8 @@ const ReviewAppealView = (props) => {
                     <li>
                       <p><span className="text_info">{issue.description}</span></p>
                       <p><span className="info">Benefit type:</span>  {_.startCase(issue.benefit_type)}</p>
-                      <p><span className="info">Decision date:</span> <DateString date={issue.approx_decision_date} dateFormat="MM/DD/YYYY" /></p>
+                      <p><span className="info">Decision date:</span>
+                        <DateString date={issue.approx_decision_date} dateFormat="MM/DD/YYYY" /></p>
                     </li>
                   );
                 })}
@@ -229,7 +230,8 @@ const ReviewAppealView = (props) => {
                     <li>
                       <p><span className="text_info">{issue.description}</span></p>
                       <p><span className="info">Benefit type:</span> {_.startCase(issue.benefit_type)}</p>
-                      <p><span className="info">Decision date:</span> <DateString date={issue.approx_decision_date} dateFormat="MM/DD/YYYY" /></p>
+                      <p><span className="info">Decision date:</span>
+                        <DateString date={issue.approx_decision_date} dateFormat="MM/DD/YYYY" /></p>
                     </li>
                   );
                 })}
@@ -243,6 +245,9 @@ const ReviewAppealView = (props) => {
 };
 
 ReviewAppealView.propTypes = {
-  serverIntake: PropTypes.object
+  serverIntake: PropTypes.object,
+  appeal: PropTypes.array,
+  hearings: PropTypes.array,
+  hearingDayDate: PropTypes.string,
 };
 export default (ReviewAppealView);

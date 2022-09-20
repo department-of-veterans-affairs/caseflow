@@ -2,24 +2,11 @@ import React, { useContext } from 'react';
 import { StateContext } from '../../intakeEdit/IntakeEditFrame';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
-import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
-import { formatDateStr } from '../../util/DateUtil';
 
 const SplitAppealConfirm = (props) => {
   const { serverIntake } = props;
   const requestIssues = serverIntake.requestIssues;
   const { selectedIssues, reason } = useContext(StateContext);
-
-  const issueOptions = () => requestIssues.map((issue) => ({
-    id: issue.id.toString(),
-    label:
-      <>
-        <span>{issue.description}</span><br />
-        <span>Benefit Type: {BENEFIT_TYPES[issue.benefit_type]}</span><br />
-        <span>Decision Date: {formatDateStr(issue.approx_decision_date)}</span>
-        <br /><br />
-      </>
-  }));
 
   return (
     <>
