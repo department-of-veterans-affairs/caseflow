@@ -79,14 +79,14 @@ class VANotifyStatusUpdateJob < ApplicationJob
   def get_current_status(notification_id, type)
     response = VANotifyService.get_status(notification_id)
     if response.code == 200
-      response_data = response.raw_body
+      response_data = response.body
       if type == "Email"
         { "email_notification_status" => response_data.status, "recipient_email" => response_data.email_address }
       elsif type == "SMS"
         { "sms_notification_status" => response_data.status, "recipient_phone_number" => response_data.phone_number }
       end
     else
-      log_error("VA Notify APi returned error for notification " + notification_id)
+      log_error("VA Notify API returned error for notification " + notification_id)
       nil
     end
   end
