@@ -650,19 +650,19 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path="/queue/:userId/review"
-              title="Review Cases | Caseflow"
+              title={`${PAGE_TITLES.REVIEW_CASES} | Caseflow`}
               render={this.routedTeamQueueList('review')}
             />
             <PageRoute
               path="/queue/:userId/assign"
-              title="Unassigned Cases | Caseflow"
+              title={`${PAGE_TITLES.UNASSIGED_CASES} | Caseflow`}
               render={this.routedTeamQueueList('assign')}
             />
 
             <PageRoute
               exact
               path="/queue/appeals/:appealId"
-              title="Case Details | Caseflow"
+              title={`${PAGE_TITLES.CASE_DETAILS} | Caseflow`}
               render={this.routedQueueDetailWithLoadingScreen}
             />
             <PageRoute
@@ -706,16 +706,16 @@ class QueueApp extends React.PureComponent {
                   'dispositions/:action(add|edit)/:issueId?'
               }
               title={(props) =>
-                  `Draft Decision | ${StringUtil.titleCase(
-                    props.match.params.action
-                  )} Issue`
+                `${PAGE_TITLES.DRAFT_DECISION} | ${StringUtil.titleCase(
+                  props.match.params.action
+                )} Issue`
               }
               render={this.routedAddEditIssue}
             />
             <PageRoute
               exact
               path="/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/remands"
-              title={`Draft Decision | ${
+              title={`${PAGE_TITLES.DRAFT_DECISION} | ${
                   PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()]
                 }`}
               render={this.routedSetIssueRemandReasons}
@@ -726,7 +726,7 @@ class QueueApp extends React.PureComponent {
                 '/queue/appeals/:appealId/tasks/:taskId',
                 ':checkoutFlow(draft_decision|dispatch_decision)/dispositions',
               ].join('/')}
-              title={`Draft Decision | ${
+              title={`${PAGE_TITLES.DRAFT_DECISION} | ${
                   PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()]
                 }`}
               render={this.routedSelectDispositions}
@@ -737,19 +737,19 @@ class QueueApp extends React.PureComponent {
                 '/queue/appeals/:appealId/tasks/:taskId/',
                 ':checkoutFlow(draft_decision|dispatch_decision)/special_issues',
               ].join('')}
-              title={`Draft Decision | ${COPY.SPECIAL_ISSUES_PAGE_TITLE}`}
+              title={`${PAGE_TITLES.DRAFT_DECISION} | ${COPY.SPECIAL_ISSUES_PAGE_TITLE}`}
               render={this.routedSelectSpecialIssues}
             />
             <PageRoute
               exact
               path="/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(dispatch_decision|omo_request)/evaluate"
-              title="Evaluate Decision | Caseflow"
+              title={`${PAGE_TITLES.EVALUATE_DECISION} | Caseflow`}
               render={this.routedEvaluateDecision}
             />
             <PageRoute
               exact
               path="/queue/appeals/:appealId/tasks/:taskId/colocated_task"
-              title="Add Colocated Task | Caseflow"
+              title={`${PAGE_TITLES.ADD_COLOCATED_TASK} | Caseflow`}
               render={this.routedAddColocatedTask}
             />
             <Route
@@ -763,49 +763,49 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path="/queue/appeals/:appealId/add_cavc_remand"
-              title="Add Cavc Remand | Caseflow"
+              title={`${PAGE_TITLES.ADD_CAVC_REMAND} | Caseflow`}
               render={this.routedAddCavcRemand}
             />
             <PageRoute
               exact
               path="/queue/appeals/:appealId/edit_cavc_remand"
-              title="Edit Cavc Remand | Caseflow"
+              title={`${PAGE_TITLES.EDIT_CAVC_REMAND} | Caseflow`}
               render={this.routedEditCavcRemand}
             />
             <PageRoute
               exact
               path="/organizations/:organization/users"
-              title="Organization Users | Caseflow"
+              title={`${PAGE_TITLES.ORGANIZATION_USERS} | Caseflow`}
               render={this.routedOrganizationUsers}
             />
             <PageRoute
               path="/organizations/:organization"
-              title="Organization Queue | Caseflow"
+              title={`${PAGE_TITLES.ORGANIZATION_QUEUE} | Caseflow`}
               render={this.routedOrganization}
             />
 
             <PageRoute
               exact
               path="/queue/appeals/:appealId/edit_appellant_information"
-              title="Edit Appellant Information | Caseflow"
+              title={`${PAGE_TITLES.EDIT_APPELLANT_INFORMATION} | Caseflow`}
               render={this.routedEditAppellantInformation}
             />
 
             <PageRoute
               exact
               path="/queue/appeals/:appealId/edit_poa_information"
-              title="Edit POA Information | Caseflow"
+              title={`${PAGE_TITLES.EDIT_POA_INFORMATION} | Caseflow`}
               render={this.routedEditPOAInformation}
             />
 
             <PageRoute
               path="/team_management"
-              title="Team Management | Caseflow"
+              title={`${PAGE_TITLES.TEAM_MANAGEMENT} | Caseflow`}
               render={this.routedTeamManagement}
             />
             <PageRoute
               path="/user_management"
-              title="User Management | Caseflow"
+              title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
               render={this.routedUserManagement}
             />
 
@@ -1078,7 +1078,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.MARK_COMPLETE.value
                 }`}
-              title="Mark Task Complete | Caseflow"
+              title={`${PAGE_TITLES.MARK_TASK_COMPLETE} | Caseflow`}
               render={this.routedCompleteTaskModal}
             />
             <PageRoute
@@ -1086,7 +1086,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.value
                 }`}
-              title="Ready for review | Caseflow"
+              title={`${PAGE_TITLES.READY_FOR_REVIEW} | Caseflow`}
               render={this.routedVhaCompleteTaskModal}
             />
             <PageRoute
@@ -1094,7 +1094,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
                 }`}
-              title="Ready for review | Caseflow"
+              title={`${PAGE_TITLES.READY_FOR_REVIEW} | Caseflow`}
               render={this.routedEmoSendToBoardIntakeForReviewModal}
             />
             <PageRoute
@@ -1102,7 +1102,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW.value
                 }`}
-              title="Ready for review | Caseflow"
+              title={`${PAGE_TITLES.READY_FOR_REVIEW} | Caseflow`}
               render={this.routedVhaCaregiverSupportSendToBoardIntakeForReviewModal}
             />
             <PageRoute
@@ -1110,7 +1110,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
                 }`}
-              title="Ready for review | Caseflow"
+              title={`${PAGE_TITLES.READY_FOR_REVIEW} | Caseflow`}
               render={this.routedRpoSendToBoardIntakeForReviewModal}
             />
             <PageRoute
@@ -1118,7 +1118,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                 TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.value
               }`}
-              title="Return to Board Intake | Caseflow"
+              title={`${PAGE_TITLES.RETURN_TO_BOARD_INTAKE} | Caseflow`}
               render={this.routedVhaCaregiverSupportReturnToBoardIntake}
             />
             <PageRoute
@@ -1126,7 +1126,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value
                 }`}
-              title="Assign to Pulac-Cerullo | Caseflow"
+              title={`${PAGE_TITLES.ASSIGN_TO_PULAC_CERULLO} | Caseflow`}
               render={this.routedAssignToPulacCerullo}
             />
             <PageRoute
@@ -1134,7 +1134,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.JUDGE_CHECKOUT_PULAC_CERULLO_REMINDER.value
                 }`}
-              title="Assign to Pulac-Cerullo | Caseflow"
+              title={`${PAGE_TITLES.ASSIGN_TO_PULAC_CERULLO} | Caseflow`}
               render={this.routedPulacCerulloReminder}
             />
             <PageRoute
@@ -1142,7 +1142,7 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.
                     CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value
                 }`}
-              title="Cancel Task and Assign Regional Office | Caseflow"
+              title={`${PAGE_TITLES.CANCEL_AND_ASSIGN_TO_RO} | Caseflow`}
               render={this.routedUpdateTaskAndAssignRegionalOfficeModal(
                 TASK_STATUSES.cancelled
               )}
@@ -1151,7 +1151,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.SEND_TO_SCHEDULE_VETERAN_LIST.value
                 }`}
-              title="Send to Schedule Veteran List | Caseflow"
+              title={`${PAGE_TITLES.SEND_TO_SCHEDULE_VETERAN_LIST} | Caseflow`}
               render={this.routedUpdateTaskAndAssignRegionalOfficeModal(
                 TASK_STATUSES.completed
               )}
@@ -1164,7 +1164,7 @@ class QueueApp extends React.PureComponent {
                     TASK_ACTIONS.CANCEL_TASK.value
                   })`
               }
-              title="Cancel Task | Caseflow"
+              title={`${PAGE_TITLES.CANCEL_TASK} | Caseflow`}
               render={this.routedCancelTaskModal}
             />
             <PageRoute
@@ -1172,7 +1172,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value
                 }`}
-              title="Assign Hearing | Caseflow"
+              title={`${PAGE_TITLES.ASSIGN_HEARING} | Caseflow`}
               render={this.routedScheduleVeteran}
             />
             <PageRoute
@@ -1180,7 +1180,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.SCHEDULE_VETERAN.value
                 }`}
-              title="Assign Hearing | Caseflow"
+              title={`${PAGE_TITLES.ASSIGN_HEARING} | Caseflow`}
               render={this.routedAssignHearingModal}
             />
             <PageRoute
@@ -1188,7 +1188,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.REMOVE_HEARING_SCHEDULED_IN_ERROR.value
                 }`}
-              title="Remove hearing to correct a scheduling error | Caseflow"
+              title={`${PAGE_TITLES.REMOVE_HEARING_TO_CORRECT_ERROR} | Caseflow`}
               render={this.routedHearingScheduledInError}
             />
             <PageRoute
@@ -1196,19 +1196,19 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.POSTPONE_HEARING.value
                 }`}
-              title="Postpone Hearing | Caseflow"
+              title={`${PAGE_TITLES.POSTPONE_HEARING} | Caseflow`}
               render={this.routedPostponeHearingModal}
             />
             <PageRoute
               exact
               path="/queue/appeals/:appealId/tasks/:taskId/modal/send_colocated_task"
-              title="Mark Task Complete | Caseflow"
+              title={`${PAGE_TITLES.MARK_TASK_COMPLETE} | Caseflow`}
               render={this.routedSendColocatedTaskModal}
             />
             <PageRoute
               exact
               path="/queue/appeals/:appealId/tasks/:taskId/modal/change_task_type"
-              title="Change Task Type | Caseflow"
+              title={`${PAGE_TITLES.CHANGE_TASK_TYPE} | Caseflow`}
               render={this.routedChangeTaskTypeModal}
             />
             <PageRoute
@@ -1216,7 +1216,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value
                 }`}
-              title="Change Hearing Request Type to Virtual | Caseflow"
+              title={`${PAGE_TITLES.CONVERT_HEARING_TO_VIRTUAL} | Caseflow`}
               render={this.routedChangeHearingRequestTypeToVirtual}
             />
             <PageRoute
@@ -1224,7 +1224,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.value
                 }`}
-              title="Change Hearing Request Type to Video | Caseflow"
+              title={`${PAGE_TITLES.CONVERT_HEARING_TO_VIDEO} | Caseflow`}
               render={(props) =>
                 this.routedChangeHearingRequestTypeModal({
                   ...props,
@@ -1237,7 +1237,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL.value
                 }`}
-              title="Change Hearing Request Type to Central | Caseflow"
+              title={`${PAGE_TITLES.CONVERT_HEARING_TO_CENTRAL} | Caseflow`}
               render={(props) =>
                 this.routedChangeHearingRequestTypeModal({
                   ...props,
