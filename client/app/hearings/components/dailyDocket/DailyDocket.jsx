@@ -268,25 +268,23 @@ export default class DailyDocket extends React.Component {
             />
           </div>
           <div className="cf-push-right">
-            <p {...css({ marginTop: '0px', marginBottom: '0px' })}>
-              {!user.userVsoEmployee && (
-                <React.Fragment>
-                  VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName}
-                </React.Fragment>
-              )}
-            </p>
-            <p {...css({ marginTop: '0px', marginBottom: '0px' })}>
+            {!user.userVsoEmployee && (
+              <React.Fragment>
+                VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName}
+              </React.Fragment>
+            )}
+            <a title= 'Coordinator' {...css({ marginTop: '5px', marginBottom: '0px', color: '#323a45', display: 'block' })}>
               Coordinator: {dailyDocket.bvaPoc}
-            </p>
-            <p {...css({ marginTop: '0px', marginBottom: '0px' })}>
+            </a>
+            <a title='Hearing type' {...css({ marginTop: '5px', marginBottom: '0px', color: '#323a45', display: 'block' })}>
               Hearing type: {dailyDocket.readableRequestType}
-            </p>
-            <p {...css({ marginTop: '0px', marginBottom: '0px' })}>
+            </a>
+            <a title='Regional office' {...css({ marginTop: '5px', marginBottom: '0px', color: '#323a45', display: 'block' })}>
               Regional office: {dailyDocket.regionalOffice}
-            </p>
-            <p {...css({ marginTop: '0px', marginBottom: '0px' })}>
+            </a>
+            <a title='Room number' {...css({ marginTop: '5px', marginBottom: '0px', color: '#323a45', display: 'block' })}>
               Room number: {dailyDocket.room}
-            </p>
+            </a>
           </div>
         </div>
 
