@@ -287,7 +287,7 @@
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE": "Assigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TAB_TITLE": "In Progress (%d)",
-  
+
   "VHA_ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TAB_TITLE": "Ready for Review",
   "VHA_ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On Hold",
   "VHA_ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE": "Completed",
@@ -1016,7 +1016,7 @@
   "INTAKE_LEGACY_OPT_IN_MESSAGE": "Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?",
 
   "INTAKE_HOMELESSNESS_MESSAGE": "Did the claimant check the \"I am experiencing homelessness\" box on the form?",
-  
+
   "ERROR_ADDRESS_LINE_INVALID_CHARACTERS": "This Veteran's address has invalid characters. Please edit it in VBMS or SHARE so each address field does not have invalid characters (including double spaces) then try again.",
   "ERROR_CITY_INVALID_CHARACTERS": "This Veteran's city has invalid characters. Please edit it in VBMS or SHARE so each address field does not have invalid characters (including double spaces) then try again.",
   "ERROR_ADDRESS_TOO_LONG": "This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than 20 characters (including spaces) then try again",
@@ -1256,15 +1256,15 @@
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the CAMO team's Queue",
-  "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_TITLE": "Mark task as in progress",
+  "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_TITLE": "Mark task in progress",
   "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY": "By marking task as in progress, you are confirming that you are actively working on collecting documents for this appeal.\n\nOnce marked, other members of your organization will no longer be able to mark this task as in progress.",
   "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked %s's case as in progress",
   "VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE": "You have successfully sent %s's case to Board Intake for review",
   "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY": "This appeal will be sent to Board Intake for review.\n\nPlease select where the documents for this appeal are stored",
   "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE": "Ready for review",
-  "BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE": "Return appeal to VHA",
-  "BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY": "If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA.",
-  "BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned %s's case to VHA",
+  "BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE": "Return appeal to VHA CAMO",
+  "BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY": "If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA CAMO.",
+  "BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned %s's case to VHA CAMO",
   "BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE": "Return appeal to Education Service",
   "BVA_INTAKE_RETURN_TO_EMO_MODAL_BODY": "If you are unable to docket this appeal due to insufficient documentation, you may return this to Education Service.",
   "BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE": "You have successfully returned %s's case to Education Service",
