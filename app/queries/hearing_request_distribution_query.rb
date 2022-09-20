@@ -35,7 +35,7 @@ class HearingRequestDistributionQuery
 
   # We are combining two queries using an array because using `or` doesn't work
   # due to incompatibilities between the two queries.
-##clean this up; this area doing similar alreay to line 13 maybe?
+  # #clean this up; this area doing similar alreay to line 13 maybe?
   def only_genpop_appeals
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
     [
@@ -63,7 +63,7 @@ class HearingRequestDistributionQuery
 
   module Scopes
     include DistributionScopes
-##check this stuff
+    # #check this stuff
     def most_recent_hearings
       query = <<-SQL
         INNER JOIN
@@ -98,7 +98,8 @@ class HearingRequestDistributionQuery
     def not_tied_to_any_judge
       where(hearings: { disposition: "held", judge_id: nil })
     end
-##
+
+    ##
     def with_no_hearings
       left_joins(:hearings).where(hearings: { id: nil })
     end
