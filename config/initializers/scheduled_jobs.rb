@@ -36,6 +36,8 @@ SCHEDULED_JOBS = {
 }.freeze
 
 DISABLED_JOBS = {
+    "dependencies_check" => DependenciesCheckJob,
+    "dependencies_report_service_log" => DependenciesReportServiceLogJob,
     "hearing_email_status_job" => Hearings::HearingEmailStatusJob,
     "heartbeat" => HeartbeatTasksJob,
 }.freeze

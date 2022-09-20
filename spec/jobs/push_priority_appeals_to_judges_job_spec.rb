@@ -4,8 +4,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   def to_judge_hash(arr)
     arr.each_with_index.map { |count, i| [i, count] }.to_h
   end
-  before { FeatureToggle.enable!(:acd_distribute_all) }
-  after { FeatureToggle.disable!(:acd_distribute_all) }
 
   context ".distribute_non_genpop_priority_appeals" do
     before do
@@ -370,6 +368,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     before do
       job.instance_variable_set(:@tied_distributions, distributed_cases)
       job.instance_variable_set(:@genpop_distributions, distributed_cases)
+      job.instance_variable_set(:@distributions, distributed_cases)
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(previous_distributions)
       allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(20)
@@ -399,6 +398,36 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject[13].include?(ready_priority_direct_case.uuid)).to be true
 
       expect(subject.last).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
+    end
+
+    it "returns the Slack Message associated with By Docket Date Distribution" do
+      FeatureToggle.enable!(:acd_distribute_all)
+      expect(subject.second).to eq "*Number of cases distributed*: 10"
+
+      today = Time.zone.now.to_date
+      legacy_days_waiting = (today - legacy_priority_case.bfdloout.to_date).to_i
+      expect(subject[2]).to eq "*Age of oldest legacy case*: #{legacy_days_waiting} days"
+      direct_review_days_waiting = (today - ready_priority_direct_case.ready_for_distribution_at.to_date).to_i
+      expect(subject[3]).to eq "*Age of oldest direct_review case*: #{direct_review_days_waiting} days"
+      evidence_submission_days_waiting = (today - ready_priority_evidence_case.ready_for_distribution_at.to_date).to_i
+      expect(subject[4]).to eq "*Age of oldest evidence_submission case*: #{evidence_submission_days_waiting} days"
+      hearing_days_waiting = (today - ready_priority_hearing_case.ready_for_distribution_at.to_date).to_i
+      expect(subject[5]).to eq "*Age of oldest hearing case*: #{hearing_days_waiting} days"
+
+      expect(subject[6]).to eq "*Number of appeals _not_ distributed*: 4"
+
+      expect(subject[9]).to eq "Priority Target: 6"
+      expect(subject[10]).to eq "Previous monthly distributions: #{previous_distributions}"
+      expect(subject[11].include?(legacy_priority_case.bfkey)).to be true
+      expect(subject[12].include?(ready_priority_hearing_case.uuid)).to be true
+      expect(subject[12].include?(ready_priority_evidence_case.uuid)).to be true
+      expect(subject[12].include?(ready_priority_direct_case.uuid)).to be true
+
+      expect(subject.last).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
+    end
+
+    after do
+      FeatureToggle.disable!(:acd_distribute_all)
     end
   end
 
@@ -999,7 +1028,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       allow_any_instance_of(described_class).to receive(:distribute_non_genpop_priority_appeals).and_raise(error_msg)
       described_class.perform_now
 
-      expected_msg = ".ERROR. after running for .*: #{error_msg}"
+      expected_msg = "<!here>\n .ERROR. after running for .*: #{error_msg}"
       expect(slack_msg).to match(/^#{expected_msg}/)
     end
   end
