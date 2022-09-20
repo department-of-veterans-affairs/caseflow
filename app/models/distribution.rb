@@ -115,9 +115,8 @@ class Distribution < CaseflowRecord
   end
 
   def assigned_tasks
-    pending_statuses = [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
     judge.tasks.select do |t|
-      t.is_a?(JudgeAssignTask) && pending_statuses.include?(t.status)
+      t.is_a?(JudgeAssignTask) && t.active?
     end
   end
 
@@ -132,5 +131,4 @@ class Distribution < CaseflowRecord
   def use_by_docket_date_distribution?
     FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
   end
-
 end
