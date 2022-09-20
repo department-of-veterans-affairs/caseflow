@@ -273,7 +273,7 @@ export default class DailyDocket extends React.Component {
                 VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName}
               </React.Fragment>
             )}
-            <a title= 'Coordinator' {...css({ marginTop: '5px', marginBottom: '0px', color: '#323a45', display: 'block' })}>
+            <a title={`Coordinator: ${dailyDocket.bvaPoc}`} {...css({ marginTop: '5px', marginBottom: '0px', color: '#323a45', display: 'block' })}>
               Coordinator: {dailyDocket.bvaPoc}
             </a>
             <a title='Hearing type' {...css({ marginTop: '5px', marginBottom: '0px', color: '#323a45', display: 'block' })}>
