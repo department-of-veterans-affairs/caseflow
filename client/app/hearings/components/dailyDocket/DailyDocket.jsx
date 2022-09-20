@@ -212,6 +212,8 @@ export default class DailyDocket extends React.Component {
 
     const { editedDispositionModalProps, scheduledInErrorModalProps } = this.state;
 
+    const judgeName = !user.userVsoEmployee ? `VLJ: ${dailyDocket.judgeFirstName} ${dailyDocket.judgeLastName}` : ''
+
     return (
       <AppSegment filledBackground>
         {editedDispositionModalProps && (
@@ -268,23 +270,14 @@ export default class DailyDocket extends React.Component {
             />
           </div>
           <div className="cf-push-right">
-            {!user.userVsoEmployee && (
-              <React.Fragment>
-                VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName}
-              </React.Fragment>
-            )}
-            <a title={`Coordinator: ${dailyDocket.bvaPoc}`} {...css({ marginTop: '5px', marginBottom: '0px', color: '#323a45', display: 'block' })}>
-              Coordinator: {dailyDocket.bvaPoc}
-            </a>
-            <a title='Hearing type' {...css({ marginTop: '5px', marginBottom: '0px', color: '#323a45', display: 'block' })}>
-              Hearing type: {dailyDocket.readableRequestType}
-            </a>
-            <a title='Regional office' {...css({ marginTop: '5px', marginBottom: '0px', color: '#323a45', display: 'block' })}>
-              Regional office: {dailyDocket.regionalOffice}
-            </a>
-            <a title='Room number' {...css({ marginTop: '5px', marginBottom: '0px', color: '#323a45', display: 'block' })}>
-              Room number: {dailyDocket.room}
-            </a>
+            <pre> {`
+              ${judgeName}
+              Coordinator: ${dailyDocket.bvaPoc}
+              Hearing type: ${dailyDocket.readableRequestType}
+              Regional office: ${dailyDocket.regionalOffice}
+              Room number: ${dailyDocket.room}
+            `}
+            </pre>
           </div>
         </div>
 
