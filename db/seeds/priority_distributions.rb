@@ -126,7 +126,7 @@ module Seeds
     end
 
     def create_legacy_ready_priority_cases_tied_to_judge(judge)
-      2.times do
+      2.times do |num|
         create(
           :case,
           :aod,
@@ -134,8 +134,8 @@ module Seeds
           :tied_to_judge,
           :type_original,
           tied_judge: judge,
-          bfkey: random_key,
-          correspondent: create(:correspondent, stafkey: random_key)
+          bfd19: 1.year.ago.to_date - num.weeks,
+          correspondent: create(:correspondent)
         )
       end
     end
@@ -148,22 +148,21 @@ module Seeds
           :tied_to_judge,
           :type_original,
           tied_judge: judge,
-          bfkey: random_key,
-          correspondent: create(:correspondent, stafkey: random_key)
+          correspondent: create(:correspondent)
         )
       end
     end
 
     def create_legacy_ready_nonpriority_cases_tied_to_judge(judge)
-      2.times do
+      2.times do |num|
         create(
           :case,
           :ready_for_distribution,
           :tied_to_judge,
           :type_original,
           tied_judge: judge,
-          bfkey: random_key,
-          correspondent: create(:correspondent, stafkey: random_key)
+          bfd19: 1.year.ago.to_date - num.weeks,
+          correspondent: create(:correspondent)
         )
       end
     end
@@ -217,14 +216,14 @@ module Seeds
     end
 
     def create_legacy_ready_priority_genpop_cases
-      20.times do
+      20.times do |num|
         create(
           :case,
           :aod,
           :ready_for_distribution,
           :type_original,
-          bfkey: random_key,
-          correspondent: create(:correspondent, stafkey: random_key)
+          bfd19: 1.year.ago.to_date - num.days,
+          correspondent: create(:correspondent)
         )
       end
     end
@@ -235,20 +234,19 @@ module Seeds
           :case,
           :aod,
           :type_original,
-          bfkey: random_key,
-          correspondent: create(:correspondent, stafkey: random_key)
+          correspondent: create(:correspondent)
         )
       end
     end
 
     def create_legacy_ready_nonpriority_genpop_cases
-      2.times do
+      20.times do |num|
         create(
           :case,
           :ready_for_distribution,
           :type_original,
-          bfkey: random_key,
-          correspondent: create(:correspondent, stafkey: random_key)
+          bfd19: 1.year.ago.to_date - num.days,
+          correspondent: create(:correspondent)
         )
       end
     end
@@ -455,9 +453,8 @@ module Seeds
         :aod,
         :ready_for_distribution,
         :type_original,
-        bfkey: random_key,
         bfdnod: 1.day.ago,
-        correspondent: create(:correspondent, stafkey: random_key)
+        correspondent: create(:correspondent)
       )
       create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case)
 
@@ -501,10 +498,6 @@ module Seeds
 
     def judges_with_judge_teams
       JudgeTeam.pushed_priority_cases_allowed.map(&:judge)
-    end
-
-    def random_key
-      rand.to_s[2..11]
     end
     # :nocov:
   end

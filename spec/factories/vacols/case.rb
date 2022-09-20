@@ -236,6 +236,7 @@ FactoryBot.define do
     trait :ready_for_distribution do
       status_active
       bfcurloc { "81" }
+      bfdnod { 13.months.ago.to_date }
       bfd19 { 1.year.ago.to_date }
     end
 
