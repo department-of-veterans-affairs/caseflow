@@ -408,7 +408,6 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: VhaCaregiverSupportReturnToBoardIntakeModal,
-    submitButtonClassNames: ['usa-button'],
     submitDisabled: ({ state }) => (
       !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
     ),
