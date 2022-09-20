@@ -13,10 +13,7 @@ class Distribution < CaseflowRecord
 
   validates :judge, presence: true
   validate :validate_user_is_judge, on: :create
-  validate :validate_number_of_unassigned_cases, on: :create, unless: :num_of_cases_exceeded?
-  validate :validate_has_not_exceeded_batch_size, on: :create, unless: proc {
-    !FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
-  }
+  validate :validate_number_of_unassigned_cases, on: :create, unless: :priority_push?
   validate :validate_days_waiting_of_unassigned_cases, on: :create, unless: :priority_push?
   validate :validate_judge_has_no_pending_distributions, on: :create
 
@@ -30,22 +27,6 @@ class Distribution < CaseflowRecord
     def pending_for_judge(judge)
       where(status: %w[pending started], judge: judge)
     end
-  end
-
-  def num_of_cases_exceeded?
-    return false if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
-
-    priority_push?
-  end
-
-  def validate_has_not_exceeded_batch_size
-    errors.add(:judge, :too_many_unassigned_cases) unless judge_has_less_than_batch_size
-  end
-
-  def judge_has_less_than_batch_size
-    return true if judge_tasks.length < batch_size
-
-    judge_tasks.length + judge_legacy_tasks.length < batch_size
   end
 
   def distribute!(limit = nil)
