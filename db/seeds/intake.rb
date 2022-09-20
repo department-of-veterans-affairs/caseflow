@@ -90,9 +90,9 @@ module Seeds
                                    receipt_date: Time.zone.now - thirty_days_in_seconds,
                                    informal_conference: false,
                                    same_office: false,
-                                   benefit_type: "compensation")
-      higher_level_review.create_claimant!(
-        participant_id: rand(600_000_000..999_999_999),
+                                   benefit_type: "compensation",
+                                   number_of_claimants: 1)
+      higher_level_review.claimants.first.update!(
         payee_code: "10",
         type: "DependentClaimant"
       )

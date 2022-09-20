@@ -31,6 +31,16 @@ FactoryBot.define do
     veteran_initial_value = 1
   end
 
+  begin
+    participant_id_initial_value =
+      # < 1_000_000 avoids collisions with hard coded values for BGS fakes and sanitized JSON seeds
+      Claimant.all.map(&:participant_id).map(&:to_i).filter { |id| id < 1_000_000 }.max
+  rescue ActiveRecord::StatementInvalid => error
+    raise if !error.message.include?("PG::UndefinedTable")
+
+    participant_id_initial_value = 1
+  end
+
   # BRIEFF.BFCORLID in VACOLS, file_number/veteran_file_number in Caseflow
   sequence :veteran_file_number, veteran_initial_value do |n|
     format("%<n>09d", n: n)
@@ -41,4 +51,7 @@ FactoryBot.define do
 
   # BRIEFF.BFKEY
   sequence :vacols_case_key, case_key_initial_value
+
+  # AMA factories: bgs_attorney, bgs_power_of_attorney, claimant, decision_issue, person, relationship, veteran
+  sequence :participant_id, participant_id_initial_value
 end

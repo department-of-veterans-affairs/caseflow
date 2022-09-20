@@ -35,7 +35,6 @@ FactoryBot.define do
     # tasks complete and set the distribution task to assigned
     trait :held do
       disposition { Constants.HEARING_DISPOSITION_TYPES.held }
-      # TODO: add child tasks from assign_hearing_disposition_task here
       after(:create) do |hearing, _evaluator|
         appeal = hearing.appeal
         hearing_task = appeal.tasks.find_by(type: :HearingTask)
@@ -43,6 +42,8 @@ FactoryBot.define do
           appeal.create_tasks_on_intake_success!
           hearing_task = appeal.tasks.find_by(type: :HearingTask)
         end
+        # if a specific date was passed to the created appeal, this will match task dates to that date
+        appeal.tasks.each { |task| task.update!(created_at: appeal.created_at, assigned_at: appeal.created_at) }
         create(:hearing_task_association,
                hearing: hearing,
                hearing_task: hearing_task)
