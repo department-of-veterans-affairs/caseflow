@@ -27,25 +27,13 @@ module AllCaseDistribution
 
   def requested_distribution
     @appeals = []
-    @rem = batch_size
+    @rem = initial_capacity
     @nonpriority_iterations = 0
 
-    # Distribute legacy cases tied to a judge down to the board provided limit of 30,
-    # regardless of the legacy docket range.
-    if FeatureToggle.enabled?(:priority_acd, user: judge)
-      collect_appeals do
-        dockets[:legacy].distribute_nonpriority_appeals(
-          self, style: "request", genpop: "not_genpop", limit: @rem, bust_backlog: true
-        )
-      end
-    end
-
-    # If we haven't yet met the priority target, distribute additional priority appeals.
-    priority_rem = (priority_target - @appeals.count(&:priority)).clamp(0, @rem)
-    distribute_priority_appeals_from_all_dockets_by_age_to_limit(priority_rem, style: "request")
+    distribute_priority_appeals_from_all_dockets_by_age_to_limit(@rem, style: "request")
 
     # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
-    distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem) until @rem == 0
+    distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem) until @rem <= 0
     @appeals
   end
 
@@ -84,7 +72,8 @@ module AllCaseDistribution
       direct_review_proportion: docket_proportions[:direct_review],
       evidence_submission_proportion: docket_proportions[:evidence_submission],
       hearing_proportion: docket_proportions[:hearing],
-      nonpriority_iterations: @nonpriority_iterations
+      nonpriority_iterations: @nonpriority_iterations,
+      initial_capacity: initial_capacity,
     }
   end
 

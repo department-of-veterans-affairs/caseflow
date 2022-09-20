@@ -51,12 +51,6 @@ class Distribution < CaseflowRecord
   def distribute!(limit = nil)
     return unless %w[pending error].include? status
 
-    if status == "error"
-      return unless valid?(context: :create)
-    end
-
-    return if use_by_docket_date_distribution? && less_than_batch_size?
-
     update!(status: :started, started_at: Time.zone.now)
 
     # this might take awhile due to VACOLS, so set our timeout to 3 minutes (in milliseconds).
@@ -79,8 +73,8 @@ class Distribution < CaseflowRecord
     (status == "completed") ? distributed_cases.count : 0
   end
 
-  def remaining_capacity
-    batch_size - (judge_tasks.length - judge_legacy_tasks.length)
+  def initial_capacity
+    batch_size - judge_tasks.length - judge_legacy_tasks.length
   end
 
   def distributed_batch_size
@@ -88,10 +82,6 @@ class Distribution < CaseflowRecord
   end
 
   private
-
-  def use_proportions_distribution?
-   !FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
-  end
 
   def mark_as_pending
     self.status = "pending"
@@ -162,9 +152,4 @@ class Distribution < CaseflowRecord
     FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
   end
 
-  def less_than_batch_size?
-    return true if judge_tasks.length < batch_size
-
-    judge_tasks.length + judge_legacy_tasks.length < batch_size
-  end
 end
