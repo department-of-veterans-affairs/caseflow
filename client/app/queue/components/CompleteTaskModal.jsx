@@ -623,7 +623,7 @@ class CompleteTaskModal extends React.Component {
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
         /* eslint-disable-next-line camelcase */
-        button={taskData?.modal_button_text ?? COPY.MODAL_SUBMIT_BUTTON}
+        button={taskData?.modal_button_text}
         submitDisabled={modalAttributes.submitDisabled?.(this.getContentArgs())}
         validateForm={this.validateForm}
         submit={this.submit}
