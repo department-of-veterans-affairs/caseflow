@@ -5,6 +5,7 @@
     userCanSplitAppeal: current_user.can_split_appeal?(appeal),
     appeal: appeal,
     hearings: appeal.hearings,
+    hearingDayDate: appeal.hearing_day_if_schedueled,
     user: current_user.css_id,
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,

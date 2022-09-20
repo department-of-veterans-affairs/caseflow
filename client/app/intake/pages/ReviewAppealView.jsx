@@ -82,11 +82,11 @@ const ReviewAppealView = (props) => {
   const { selectedIssues, reason, otherReason } = useContext(StateContext);
   const veteran = serverIntake.veteran.name;
   const claimantName = props.serverIntake.claimantName;
-  const receiptDate = props.serverIntake.receiptDate;
   const hearings = props.hearings;
   const hearingsSize = hearings.length;
   const originalHearingRequestType = _.startCase(props.appeal.original_hearing_request_type);
   const PARSE_INT_RADIX = 10;
+  const hearingDayDate = props.hearingDayDate;
   const currentValues = {
     reason,
     otherReason,
@@ -120,8 +120,6 @@ const ReviewAppealView = (props) => {
 
     return selectOriginal;
   });
-
-  {console.log(JSON.stringify(dailyDocket))}
 
   return (
     <>
@@ -178,7 +176,7 @@ const ReviewAppealView = (props) => {
                 hearings[0].disposition !== null
               ) &&
                 <>
-                  <p><DateString date={receiptDate} dateFormat="MM/DD/YYYY" /></p>
+                  <p><DateString date={hearingDayDate} dateFormat="MM/DD/YYYY" /></p>
                   <p> { _.startCase(hearings[0].disposition) } </p>
                   <Link
                     rel="noopener"
@@ -197,7 +195,7 @@ const ReviewAppealView = (props) => {
                 hearings[0].disposition !== null
               ) &&
                 <>
-                  <p><DateString date={receiptDate} dateFormat="MM/DD/YYYY" /></p>
+                  <p><DateString date={hearingDayDate} dateFormat="MM/DD/YYYY" /></p>
                   <p> { _.startCase(hearings[0].disposition) } </p>
                   <Link
                     rel="noopener"
