@@ -182,7 +182,12 @@ FactoryBot.define do
       end
 
       after(:create) do |appeal, evaluator|
-        create(:hearing, :held, judge: nil, appeal: appeal, created_at: appeal.created_at, adding_user: evaluator.adding_user)
+        create(:hearing,
+               :held,
+               judge: nil,
+               appeal: appeal,
+               created_at: appeal.created_at,
+               adding_user: evaluator.adding_user)
         appeal.tasks.find_by(type: :TranscriptionTask).update!(status: :completed)
         appeal.tasks.find_by(type: :EvidenceSubmissionWindowTask).update!(status: :completed)
         appeal.tasks.find_by(type: :DistributionTask).update!(status: :assigned)
