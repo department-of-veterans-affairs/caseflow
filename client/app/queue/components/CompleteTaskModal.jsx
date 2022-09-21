@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import RadioField from '../../components/RadioField';
-import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, setHeight, slimHeight } from '../constants';
+import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, setHeight } from '../constants';
 import TextareaField from 'app/components/TextareaField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Alert from 'app/components/Alert';
@@ -122,7 +122,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
               onChange={handleTextFieldChange}
               value={state.otherInstructions}
               styling={marginTop(4)}
-              textAreaStyling={slimHeight}
+              textAreaStyling={setHeight(4.5)}
               errorMessage={props.highlightInvalid &&
                 !validInstructions(state.otherInstructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
             />}
