@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   # BRIEFF.BFCORLID in VACOLS, file_number/veteran_file_number in Caseflow
-  sequence :veteran_file_number do |n|
+  sequence :vet_file_num do |n|
     format("%<n>09d", n: n)
   end
 

@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :supplemental_claim do
-    veteran_file_number { generate :veteran_file_number }
+    veteran_file_number { generate :vet_file_num }
     receipt_date { 1.month.ago }
     benefit_type { "compensation" }
     uuid { SecureRandom.uuid }
