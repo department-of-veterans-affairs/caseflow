@@ -38,9 +38,13 @@ class HearingRequestDistributionQuery
   # #clean this up; this area doing similar alreay to line 13 maybe?
   def only_genpop_appeals
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
+
+    return no_hearings_or_no_held_hearings if FeatureToggle.enabled?(
+      :acd_distribute_all, user: RequestStore.store[current_user]
+    )
+
     [
       most_recent_held_hearings_not_tied_to_any_judge,
-      most_recent_held_hearings_exceeding_affinity_threshold,
       no_hearings_or_no_held_hearings
     ].flatten.uniq
   end
