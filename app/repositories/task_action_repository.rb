@@ -482,6 +482,7 @@ class TaskActionRepository
     def vha_send_to_board_intake(*)
       {
         modal_title: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
+        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
       }
@@ -513,6 +514,7 @@ class TaskActionRepository
         modal_title: COPY::VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE,
         modal_body: COPY::PRE_DOCKET_MODAL_BODY,
         modal_selector_placeholder: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER,
+        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
       }
@@ -527,7 +529,7 @@ class TaskActionRepository
         modal_body: COPY::PRE_DOCKET_MODAL_BODY,
         modal_selector_placeholder: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER,
         instructions: [],
-        instructions_label: COPY::PRE_DOCKET_INSTRUCTIONS_LABEL,
+        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
@@ -540,6 +542,7 @@ class TaskActionRepository
         modal_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE,
         message_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
         message_detail: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
+        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
@@ -618,7 +621,7 @@ class TaskActionRepository
     def emo_return_to_board_intake(*)
       {
         modal_title: COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
-        instructions_label: COPY::PRE_DOCKET_INSTRUCTIONS_LABEL,
+        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}"
       }
@@ -630,7 +633,7 @@ class TaskActionRepository
         modal_title: COPY::EMO_ASSIGN_TO_RPO_MODAL_TITLE,
         modal_body: COPY::PRE_DOCKET_MODAL_BODY,
         modal_selector_placeholder: COPY::EDUCATION_RPO_SELECTOR_PLACEHOLDER,
-        instructions_label: COPY::PRE_DOCKET_INSTRUCTIONS_LABEL,
+        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
         type: EducationAssessDocumentationTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}",
         body_optional: true
@@ -646,7 +649,7 @@ class TaskActionRepository
           COPY::EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION,
           task.appeal.veteran_full_name
         ),
-        instructions_label: PRE_DOCKET_INSTRUCTIONS_LABEL,
+        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
         type: EducationAssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}",
         modal_button_text: COPY::MODAL_RETURN_BUTTON
