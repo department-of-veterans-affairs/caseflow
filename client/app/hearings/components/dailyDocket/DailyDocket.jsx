@@ -270,8 +270,8 @@ export default class DailyDocket extends React.Component {
             />
           </div>
           <div className="cf-push-right">
+          ${judgeName}
             <pre> {`
-              ${judgeName}
               Coordinator: ${dailyDocket.bvaPoc}
               Hearing type: ${dailyDocket.readableRequestType}
               Regional office: ${dailyDocket.regionalOffice}
