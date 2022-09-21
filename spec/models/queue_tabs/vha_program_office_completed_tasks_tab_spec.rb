@@ -25,7 +25,7 @@ describe VhaProgramOfficeCompletedTasksTab, :postgres do
     subject { tab.label }
 
     it do
-      is_expected.to eq COPY::VHA_ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE
+      is_expected.to eq COPY::ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE
       is_expected.to eq "Completed"
     end
   end
