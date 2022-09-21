@@ -487,7 +487,7 @@ class TaskActionRepository
       {
         modal_title: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
         modal_button_text: COPY::MODAL_SEND_BUTTON,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY,
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
       }
