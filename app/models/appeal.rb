@@ -109,7 +109,6 @@ class Appeal < DecisionReview
   # amoeba gem for splitting appeals
   amoeba do
     enable
-
     # lambda for setting up a new UUID for the appeal first
     override(lambda { |_, dup_appeal|
       # set the UUID to nil so that it is auto generated
@@ -123,7 +122,6 @@ class Appeal < DecisionReview
       end
     })
 
-    # include_association :advance_on_docket_motion
     include_association :appeal_views
     include_association :appellant_substitution
     include_association :attorney_case_reviews
@@ -135,17 +133,9 @@ class Appeal < DecisionReview
     include_association :intake
     include_association :claimants
     include_association :remand_supplemental_claims
-    # include_association :decision_issues
-    # include_association :request_decision_issues
-    # include_association :cached_appeal_attributes
-    # include_association :cavc_remands # this won't work if uncommented
     include_association :claims_folder_searches
-    # include_association :hearing_appeal_stream_snapshots
-    # include_association :hearings # might need this back
     include_association :judge_case_reviews
-    # include_association :legacy_issue_optins
     include_association :nod_date_updates
-    # include_association :ramp_refilings
     include_association :vbms_uploaded_documents
     include_association :work_mode
 
@@ -335,48 +325,35 @@ class Appeal < DecisionReview
   # clone issues clones request_issues, decision_issues, and decision_request_issues
   # together in order to maintain relationships to each other
   def clone_issues(parent_appeal)
-    # create hashes to hold parent/child relations for each model
     request_issues_parent_to_child_hash = {}
     decision_review_parent_to_child_hash = {}
-    # clone request issues
-    # get the list of request issues
+    # clone request issues and add to request issue hash
     original_request_issues = parent_appeal.request_issues
-    # for each request issue, clone it
     original_request_issues.each do |r_issue|
-      # clone request issue
-      dup_issue = r_issue.amoeba_dup
-      # set the decision_review_id to the appeal_id
-      dup_issue.decision_review_id = id
-      # save the duplicated issue
-      dup_issue.save
-      # binding.pry
-      # save relationship in hash
+      dup_issue = clone_issue(r_issue)
       request_issues_parent_to_child_hash[r_issue.id] = dup_issue.id
-      # binding.pry
     end
-
-    # clone decision issues
+    # clone decision issues and add to decision issue hash
     original_decision_issues = parent_appeal.decision_issues
-    # iterate
     original_decision_issues.each do |d_issue|
-      dup_issue = d_issue.amoeba_dup
-      dup_issue.decision_review_id = id
-      dup_issue.save
-      # save relationship in hash
+      dup_issue = clone_issue(d_issue)
       decision_review_parent_to_child_hash[d_issue.id] = dup_issue.id
     end
-
-    # uses hashes to clone request_decision_issues
+    # cycle the hashes to maintain parent/child relationships and save 
     original_request_decision_issues = parent_appeal.request_decision_issues
     original_request_decision_issues.each do |rd_issue|
       dup_issue = rd_issue.amoeba_dup
-      # assign request_issue_id from parent relationship
       dup_issue.request_issue_id = request_issues_parent_to_child_hash[rd_issue.request_issue_id]
-      # assign decision_issue_id from parent relationship
       dup_issue.decision_issue_id = decision_review_parent_to_child_hash[rd_issue.decision_issue_id]
-      # save
       dup_issue.save
     end
+  end
+
+  def clone_issue(issue)
+    dup_issue = issue.amoeba_dup
+    dup_issue.decision_review_id = id
+    dup_issue.save
+    return dup_issue
   end
 
   def clone_ihp_drafts(parent_appeal)
@@ -398,7 +375,7 @@ class Appeal < DecisionReview
       # clone hearing
       dup_hearing = hearing.amoeba_dup
       # assign to current appeal
-      dup_hearing.appeal_id = self.id
+      dup_hearing.appeal_id = id
 
       dup_hearing.save
     end
