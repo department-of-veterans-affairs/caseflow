@@ -212,8 +212,6 @@ export default class DailyDocket extends React.Component {
 
     const { editedDispositionModalProps, scheduledInErrorModalProps } = this.state;
 
-    const judgeName = !user.userVsoEmployee ? `VLJ: ${dailyDocket.judgeFirstName} ${dailyDocket.judgeLastName}` : ''
-
     return (
       <AppSegment filledBackground>
         {editedDispositionModalProps && (
@@ -269,15 +267,18 @@ export default class DailyDocket extends React.Component {
               onClickRemoveHearingDay={this.props.onClickRemoveHearingDay}
             />
           </div>
-          <div className="cf-push-right">
-          ${judgeName}
-            <pre> {`
-              Coordinator: ${dailyDocket.bvaPoc}
-              Hearing type: ${dailyDocket.readableRequestType}
-              Regional office: ${dailyDocket.regionalOffice}
-              Room number: ${dailyDocket.room}
-            `}
-            </pre>
+          <div className="cf-push-right" tabIndex={0}>
+            {!user.userVsoEmployee && (
+              <React.Fragment>
+                VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName}
+                <br />
+              </React.Fragment>
+            )}
+            Coordinator: {dailyDocket.bvaPoc} <br />
+            Hearing type: {dailyDocket.readableRequestType} <br />
+            Regional office: {dailyDocket.regionalOffice}
+            <br />
+            Room number: {dailyDocket.room}
           </div>
         </div>
 
