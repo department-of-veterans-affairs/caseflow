@@ -616,7 +616,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           click_dropdown({ text: "15 days" }, find(".cf-modal-body"))
           fill_in "Notes:", with: "Waiting for response"
 
-          click_on(COPY::MODAL_SUBMIT_BUTTON)
+          click_on(COPY::MODAL_PUT_TASK_ON_HOLD_BUTTON)
 
           expect(page).to have_content("case has been placed on hold")
         end
