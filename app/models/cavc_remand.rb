@@ -41,7 +41,6 @@ class CavcRemand < CaseflowRecord
   # amoeba gem for split appeal duplication
   amoeba do
     enable
-    # exclude_association :remand_appeal_id
   end
 
   # called from the Add Cavc Date Modal

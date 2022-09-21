@@ -298,18 +298,38 @@ class Appeal < DecisionReview
     { decision_issues: decision_issues, request_issues: request_issues }
   end
 
-  # need to come back to this one
-  def clone_cavc_remand(parent_appeal)
+  # finalize_split_appeal contains all the methods to finish the amoeba split
+  def finalize_split_appeal(parent_appeal, user_css_id)
+    # update the child task tree with parent, passing CSS ID of user for validation
+    clone_task_tree(parent_appeal, user_css_id)
+
+    # clone the hearings and hearing relations from parent appeal
+    clone_hearings(parent_appeal)
+
+    # if there are ihp drafts, clone them too
+    clone_ihp_drafts(parent_appeal)
+
+    # if there are cavc_remand, clone them too (need user css id)
+    clone_cavc_remand(parent_appeal, user_css_id)
+
+    # clones request_issues, decision_issues, and request_decision_issues
+    clone_issues(parent_appeal)
+  end
+
+  # clones cavc_remand. Uses user_css_id that did the split to complete the remand split
+  def clone_cavc_remand(parent_appeal, user_css_id)
     # get cavc remand from the parent appeal
     original_remand = parent_appeal.cavc_remand
     # clone
     dup_remand = original_remand.amoeba_dup
     # set appeal id to remand_appeal_id
     dup_remand.remand_appeal_id = id
+    # set source appeal id to parent appeal
+    dup_remand.source_appeal = parent_appeal
+    # set request store to the user that split the appeal
+    RequestStore[:current_user] = User.find_by_css_id user_css_id
     # save
-    binding.pry
     dup_remand.save
-    binding.pry
   end
 
   # clone issues clones request_issues, decision_issues, and decision_request_issues
@@ -405,7 +425,7 @@ class Appeal < DecisionReview
 
           # add the parent/clone id to the hash set 
           task_parent_to_child_hash[task.id] = cloned_task_id
-        else 
+        else
 
           # if the task has already been copied, break
           break if task_parent_to_child_hash.has_key?(task.id)
