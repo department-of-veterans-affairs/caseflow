@@ -4,7 +4,6 @@ class VANotifyStatusUpdateJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
 
-
   QUERY_LIMIT = ENV["VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT"]
 
   # Description: Jobs main perform method that will find all notification records that do not have
@@ -19,16 +18,38 @@ class VANotifyStatusUpdateJob < CaseflowJob
       email_external_id = notification.email_notification_external_id
       case notification.notification_type
       when "Email"
-        update_attributes = get_current_status(email_external_id, "Email")
-        update_notification_audit_record(notification, update_attributes)
+        if !email_external_id.nil?
+          update_attributes = get_current_status(email_external_id, "Email")
+          update_notification_audit_record(notification, update_attributes)
+        else
+          log_error("Notification Record " + notification.id.to_s + "With Email type does not have an external id.")
+          update_notification_audit_record(notification, "email_notification_status" => "No External Id")
+        end
       when "SMS"
-        update_attributes = get_current_status(sms_external_id, "SMS")
-        update_notification_audit_record(notification, update_attributes)
+        if !sms_external_id.nil?
+          update_attributes = get_current_status(sms_external_id, "SMS")
+          update_notification_audit_record(notification, update_attributes)
+        else
+          log_error("Notification Record " + notification.id.to_s + "With SMS type does not have an external id.")
+          update_notification_audit_record(notification, "sms_notification_status" => "No External Id")
+        end
       when "Email and SMS"
-        update_attributes = get_current_status(email_external_id, "Email")
-        update_notification_audit_record(notification, update_attributes)
-        update_attributes = get_current_status(sms_external_id, "SMS")
-        update_notification_audit_record(notification, update_attributes)
+        if !email_external_id.nil?
+          update_attributes = get_current_status(email_external_id, "Email")
+          update_notification_audit_record(notification, update_attributes)
+        else
+          log_error("Notification Record " + notification.id.to_s + "With Email and SMS type does not have an \
+            email external id.")
+          update_notification_audit_record(notification, "email_notification_status" => "No External Id")
+        end
+        if !sms_external_id.nil?
+          update_attributes = get_current_status(sms_external_id, "SMS")
+          update_notification_audit_record(notification, update_attributes)
+        else
+          log_error("Notification Record " + notification.id.to_s + "With Email and SMS type does not have a \
+             SMS external id.")
+          update_notification_audit_record(notification, "sms_notification_status" => "No External Id")
+        end
       end
       notification.save!
     end
@@ -43,7 +64,13 @@ class VANotifyStatusUpdateJob < CaseflowJob
   #
   # Retuns: Lits of Notification records that has QUERY_LIMIT or less records
   def notifications_not_processed
-    find_notifications_not_processed.first(QUERY_LIMIT.to_i)
+    if !QUERY_LIMIT.nil? && QUERY_LIMIT.is_a?(String)
+      find_notifications_not_processed.first(QUERY_LIMIT.to_i)
+    else
+      log_info("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable. \
+         Defaulting to 650.")
+      find_notifications_not_processed.first(650)
+    end
   end
 
   # Description: Method to query the Notification database for Notififcation records that have not been updated with a VA Notify Status 
@@ -65,6 +92,15 @@ class VANotifyStatusUpdateJob < CaseflowJob
   # Retuns: None
   def log_error(message)
     Rails.logger.error(message)
+  end
+
+  # Description: Method to be called when an info message need to be logged
+  #
+  # Params: Info message to be logged
+  #
+  # Retuns: None
+  def log_info(message)
+    Rails.logger.info(message)
   end
 
   # Description: Method that will get the VA Notify Status for the notification based on notification type 
