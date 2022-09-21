@@ -30,16 +30,41 @@ FactoryBot.define do
     updated_by { adding_user }
     virtual_hearing { nil }
 
+    # this trait creates a realistic hearing task tree from a completed hearing, but if it needs to
+    # be ready for distribution then the referring class must mark the transcription/evidence
+    # tasks complete and set the distribution task to assigned
     trait :held do
       disposition { Constants.HEARING_DISPOSITION_TYPES.held }
+      after(:create) do |hearing, _evaluator|
+        appeal = hearing.appeal
+        hearing_task = appeal.tasks.find_by(type: :HearingTask)
+        if hearing_task.nil?
+          appeal.create_tasks_on_intake_success!
+          hearing_task = appeal.tasks.find_by(type: :HearingTask)
+        end
+        # if a specific date was passed to the created appeal, this will match task dates to that date
+        appeal.tasks.each { |task| task.update!(created_at: appeal.created_at, assigned_at: appeal.created_at) }
+        create(:hearing_task_association,
+               hearing: hearing,
+               hearing_task: hearing_task)
+        appeal.tasks.find_by(type: :ScheduleHearingTask).completed!
+        assign_hearing_disposition_task = create(:assign_hearing_disposition_task,
+                                                 :completed,
+                                                 parent: hearing_task,
+                                                 appeal: appeal)
+        appeal.tasks.find_by(type: :DistributionTask).update!(status: :on_hold)
+        assign_hearing_disposition_task.hold!
+      end
     end
 
     trait :postponed do
       disposition { Constants.HEARING_DISPOSITION_TYPES.postponed }
+      # TODO: check if child tasks for these are being created
     end
 
     trait :no_show do
       disposition { Constants.HEARING_DISPOSITION_TYPES.no_show }
+      # TODO: check if child tasks for these are being created
     end
 
     trait :scheduled_in_error do
@@ -48,6 +73,8 @@ FactoryBot.define do
 
     trait :cancelled do
       disposition { Constants.HEARING_DISPOSITION_TYPES.cancelled }
+      # TODO: check if child tasks for these are being created
+      # TODO: check if vacols needs to be updated here
     end
 
     trait :with_tasks do
@@ -96,6 +123,7 @@ FactoryBot.define do
                :completed,
                parent: hearing.hearing_task_association.hearing_task,
                appeal: hearing.appeal)
+        # TODO: add child tasks of assign_hearing_disposition_task here
       end
     end
   end
