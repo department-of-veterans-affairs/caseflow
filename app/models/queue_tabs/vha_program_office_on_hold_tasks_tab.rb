@@ -8,7 +8,7 @@ class VhaProgramOfficeOnHoldTasksTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.ORGANIZATIONAL_QUEUE_ON_HOLD_TAB_TITLE
+    Constants.QUEUE_CONFIG.VHA_PO_ON_HOLD_TASKS_TAB_NAME
   end
 
   def description

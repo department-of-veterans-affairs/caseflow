@@ -8,7 +8,7 @@ class VhaProgramOfficeReadyForReviewTasksTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TAB_TITLE
+    Constants.QUEUE_CONFIG.READY_FOR_REVIEW_TASKS_TAB_NAME
   end
 
   def description
