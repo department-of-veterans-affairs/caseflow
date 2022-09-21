@@ -7,17 +7,18 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   before { FeatureToggle.enable!(:acd_distribute_all) }
   after { FeatureToggle.disable!(:acd_distribute_all) }
 
-  context "Test which Distribution is being included" do
-    before { FeatureToggle.enable!(:acd_distribute_all) }
-    after { FeatureToggle.disable!(:acd_distribute_all) }
-
-    subject { described_class.ancestors }
-
-    it do
-      is_expected.to include AllCaseDistribution
-      is_expected.to_not include AutomaticCaseDistribution
-    end
-  end
+  
+  #context "Test which Distribution is being included" do
+  #  before { FeatureToggle.enable!(:acd_distribute_all) }
+  #  after { FeatureToggle.disable!(:acd_distribute_all) }
+#
+ #   subject { described_class.ancestors }
+#
+ #   it do
+  #    is_expected.to include AllCaseDistribution
+   #   is_expected.to_not include AutomaticCaseDistribution
+    #end
+  #end
 
   context ".distribute_non_genpop_priority_appeals" do
     before do
@@ -29,7 +30,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         .to receive(:nonpriority_decisions_per_year)
         .and_return(1000)
       allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
-      allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:acd_distribute_all).and_return(true)
     end
 
     let(:ready_priority_bfkey) { "12345" }
