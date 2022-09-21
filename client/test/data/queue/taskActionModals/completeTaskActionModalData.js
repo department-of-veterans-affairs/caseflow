@@ -48,6 +48,7 @@ const caregiverActions = [
     data: {
       modal_title: 'Return to Board Intake',
       modal_body: 'This appeal will be returned to Board intake.',
+      modal_button_text: 'Return',
       type: 'VhaDocumentSearchTask',
       options: [
         {
@@ -158,6 +159,7 @@ const vhaDocumentSearchTaskData = {
           ],
           modal_title: 'Assign to Program Office',
           modal_body: 'Provide instructions and context for this action:',
+          modal_button_text: 'Assign',
           modal_selector_placeholder: 'Select Program Office',
           type: 'AssessDocumentationTask',
           redirect_after: '/organizations/vha-camo'
@@ -169,6 +171,7 @@ const vhaDocumentSearchTaskData = {
         value: 'modal/vha_send_to_board_intake',
         data: {
           modal_title: 'Send to Board Intake',
+          modal_button_text: 'Send',
           type: 'VhaDocumentSearchTask',
           redirect_after: '/organizations/vha-camo'
         }
@@ -260,6 +263,7 @@ const educationDocumentSearchTaskData = {
         value: 'modal/emo_return_to_board_intake',
         data: {
           modal_title: 'Return to Board Intake',
+          modal_button_text: 'Return',
           type: 'EducationDocumentSearchTask',
           redirect_after: '/organizations/edu-emo'
         }
@@ -270,6 +274,7 @@ const educationDocumentSearchTaskData = {
         value: 'modal/emo_send_to_board_intake_for_review',
         data: {
           modal_title: 'Ready for Review',
+          modal_button_text: 'Send',
           type: 'EducationDocumentSearchTask',
           redirect_after: '/organizations/edu-emo',
           body_optional: true
@@ -346,6 +351,7 @@ const EducationAssessDocumentationTaskData = {
         data: {
           modal_title: 'Return to Executive Management Office',
           message_title: 'You have successfully returned Bob Smithlesch\'s case to the Executive Management Office',
+          modal_button_text: 'Return',
           type: 'EducationAssessDocumentationTask',
           redirect_after: '/organizations/buffalo-rpo',
           modal_button_text: 'Return'
@@ -357,6 +363,7 @@ const EducationAssessDocumentationTaskData = {
         value: 'modal/rpo_send_to_board_intake_for_review',
         data: {
           modal_title: 'Ready for Review',
+          modal_button_text: 'Send',
           type: 'EducationAssessDocumentationTask',
           body_optional: true,
           redirect_after: '/organizations/buffalo-rpo'
@@ -369,6 +376,7 @@ const EducationAssessDocumentationTaskData = {
         data: {
           modal_title: 'Mark task in progress',
           modal_body: 'Please confirm that you are actively working on collecting documents for this appeal.  Once confirmed, other members of your organization will no longer be able to mark this task in progress.',
+          modal_button_text: 'Mark in progress',
           message_title: 'You have successfully marked your task as in progress',
           message_detail: 'This appeal will be visible in the "In Progress" tab of your Queue',
           type: 'AssessDocumentationTask',

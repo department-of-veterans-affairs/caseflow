@@ -202,7 +202,7 @@ class AssignToView extends React.Component {
     const modalProps = {
       title: this.determineTitle(this.props, action, isPulacCerullo, actionData),
       pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
-
+      ...(actionData.modal_button_text && { button: actionData.modal_button_text }),
       submit: this.submit,
       validateForm: isPulacCerullo ?
         () => {
@@ -225,9 +225,8 @@ class AssignToView extends React.Component {
     ];
 
     if (includes(uniqueSubmitButtonFunctionalityTitles, modalProps.title)) {
-      modalProps.submitButtonClassNames = ['usa-button', 'usa-button-warning'];
+      modalProps.submitButtonClassNames = ['usa-button'];
       if (modalProps.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
-        modalProps.button = 'Return';
         modalProps.submitDisabled = !this.validateForm();
       }
     }
