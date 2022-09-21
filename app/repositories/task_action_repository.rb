@@ -536,6 +536,7 @@ class TaskActionRepository
         modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
         modal_selector_placeholder: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER,
         instructions: [],
+        instructions_label: COPY::PRE_DOCKET_INSTRUCTIONS_LABEL,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
@@ -633,6 +634,7 @@ class TaskActionRepository
       {
         modal_title: COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
+        instructions_label: COPY::PRE_DOCKET_INSTRUCTIONS_LABEL,
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}"
       }
@@ -645,6 +647,7 @@ class TaskActionRepository
         modal_body: COPY::PRE_DOCKET_MODAL_BODY,
         modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
         modal_selector_placeholder: COPY::EDUCATION_RPO_SELECTOR_PLACEHOLDER,
+        instructions_label: COPY::PRE_DOCKET_INSTRUCTIONS_LABEL,
         type: EducationAssessDocumentationTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}",
         body_optional: true
@@ -660,6 +663,7 @@ class TaskActionRepository
           COPY::EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION,
           task.appeal.veteran_full_name
         ),
+        instructions_label: PRE_DOCKET_INSTRUCTIONS_LABEL,
         type: EducationAssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}",
         modal_button_text: COPY::MODAL_RETURN_BUTTON

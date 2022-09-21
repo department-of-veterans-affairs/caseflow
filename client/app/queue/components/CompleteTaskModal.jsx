@@ -238,7 +238,7 @@ const ReturnToBoardIntakeModal = ({ props, state, setState }) => {
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <div>
           <TextareaField
-            label={COPY.EMO_RETURN_TO_BOARD_INTAKE_MODAL_BODY}
+            label={taskConfiguration.instructions_label || COPY.PRE_DOCKET_INSTRUCTIONS_LABEL}
             name="instructions"
             id="emoReturnToBoardIntakeInstructions"
             onChange={(value) => setState({ instructions: value })}
