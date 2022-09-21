@@ -790,6 +790,22 @@ class AppealRepository
       end
     end
 
+    def age_of_oldest_priority_appeal_by_docket_date
+      MetricsService.record("VACOLS: age_of_oldest_priority_appeal",
+                            name: "age_of_oldest_priority_appeal",
+                            service: :vacols) do
+        VACOLS::CaseDocket.age_of_oldest_priority_appeal_by_docket_date
+      end
+    end
+
+    def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+      MetricsService.record("VACOLS: age_of_n_oldest_priority_appeals_available_to_judge",
+                            name: "age_of_n_oldest_priority_appeals_available_to_judge",
+                            service: :vacols) do
+        VACOLS::CaseDocket.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+      end
+    end
+
     def nonpriority_decisions_per_year
       MetricsService.record("VACOLS: nonpriority_decisions_per_year",
                             name: "nonpriority_decisions_per_year",

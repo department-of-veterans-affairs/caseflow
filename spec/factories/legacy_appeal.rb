@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# When using this factory, passing in a VACOLS::Case object as vacols_case is the preferred method. The
+# :case factory in the factories/vacols is used to generate VACOLS cases. This ensures that the correct
+# associations exist between VACOLS and Caseflow, and that the BFKEY of the case is unique.
+
 FactoryBot.define do
   factory :legacy_appeal do
     transient do
