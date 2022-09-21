@@ -41,14 +41,16 @@ class HearingRequestDocket < Docket
 
   # rubocop:disable Lint/UnusedMethodArgument
   def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1, style: "push")
-    # def distribute_appeals(distribution, priority: false, genpop: "default_genpop", limit: 1, style: "push")
     base_relation = appeals(priority: priority, ready: true).limit(limit)
-    # setting genpop to "only_genpop" behind feature toggle as hearing_request_docket uses AMA appeals
+
+    # setting genpop to "only_genpop" behind feature toggle as this module only processes AMA
     genpop = "only_genpop" if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[current_user])
     appeals = HearingRequestDistributionQuery.new(
       base_relation: base_relation, genpop: genpop, judge: distribution.judge
     ).call
+
     appeals = self.class.limit_genpop_appeals(appeals, limit) if genpop.eql? "any"
+
     HearingRequestCaseDistributor.new(
       appeals: appeals, genpop: genpop, distribution: distribution, priority: priority
     ).call
