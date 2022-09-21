@@ -17,7 +17,7 @@ const uiData = {
 const caregiverActions = [
   {
     func: 'vha_caregiver_support_mark_task_in_progress',
-    label: 'Mark task as in progress',
+    label: 'Mark task in progress',
     value: 'modal/mark_task_in_progress',
     data: {
       modal_title: 'Mark task as in progress',
