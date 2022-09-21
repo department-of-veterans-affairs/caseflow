@@ -13,7 +13,7 @@ FactoryBot.define do
   factory :case, class: VACOLS::Case do
     bfkey { generate :vacols_case_key } # a.k.a. VACOLS_ID
     bfcorkey { generate :vacols_correspondent_key }
-    bfcorlid { "#{generate :vet_file_num}S" }
+    bfcorlid { "#{generate :veteran_file_number}S" }
 
     association :correspondent, factory: :correspondent
 

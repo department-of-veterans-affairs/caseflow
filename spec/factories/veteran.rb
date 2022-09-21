@@ -10,7 +10,7 @@ FactoryBot.define do
     last_name { "Smith#{Faker::Name.last_name.downcase.tr('\'', '')}" }
     name_suffix { (bob_smith_count == 1) ? "II" : bob_smith_count.to_s }
     ssn { Generators::Random.unique_ssn }
-    file_number { generate :vet_file_num }
+    file_number { generate :veteran_file_number }
     participant_id { generate :participant_id }
     email_address { "#{first_name}.#{last_name}@test.com" }
     date_of_death { nil }

@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :ramp_election do
-    veteran_file_number { generate :vet_file_num }
+    veteran_file_number { generate :veteran_file_number }
     receipt_date { 1.month.ago }
 
     trait :established do

@@ -11,7 +11,7 @@ FactoryBot.define do
     established_at { Time.zone.now }
     receipt_date { Time.zone.yesterday }
     filed_by_va_gov { false }
-    veteran_file_number { generate :vet_file_num }
+    veteran_file_number { generate :veteran_file_number }
     uuid { SecureRandom.uuid }
 
     after(:build) do |appeal, evaluator|
@@ -116,7 +116,7 @@ FactoryBot.define do
     transient do
       veteran do
         Veteran.find_by(file_number: veteran_file_number) ||
-          create(:veteran, file_number: (generate :vet_file_num))
+          create(:veteran, file_number: (generate :veteran_file_number))
       end
     end
 
