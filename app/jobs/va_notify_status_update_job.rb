@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class VANotifyStatusUpdateJob < ApplicationJob
+class VANotifyStatusUpdateJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
 
@@ -22,8 +22,8 @@ class VANotifyStatusUpdateJob < ApplicationJob
         update_attributes = get_current_status(email_external_id, "Email")
         update_notification_audit_record(notification, update_attributes)
       when "SMS"
-        update_attributes = get_current_status(sms_external_id)
-        update_notification_audit_record(notification, update_attributes, "SMS")
+        update_attributes = get_current_status(sms_external_id, "SMS")
+        update_notification_audit_record(notification, update_attributes)
       when "Email and SMS"
         update_attributes = get_current_status(email_external_id, "Email")
         update_notification_audit_record(notification, update_attributes)
