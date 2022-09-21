@@ -12,7 +12,7 @@ class EducationRpoCompletedTasksTab < QueueTab
   end
 
   def description
-    COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION
+    COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION
   end
 
   # RPO completed tasks include all tasks that have been completed within the last 7 days by the assignee

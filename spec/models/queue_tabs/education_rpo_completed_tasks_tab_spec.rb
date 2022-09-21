@@ -34,7 +34,7 @@ describe EducationRpoCompletedTasksTab, :postgres do
     subject { tab.description }
 
     it do
-      is_expected.to eq COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION
+      is_expected.to eq COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION
     end
   end
 
