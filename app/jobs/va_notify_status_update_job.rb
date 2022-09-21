@@ -115,11 +115,10 @@ class VANotifyStatusUpdateJob < CaseflowJob
   def get_current_status(notification_id, type)
     response = VANotifyService.get_status(notification_id)
     if response.code == 200
-      response_data = response.body
       if type == "Email"
-        { "email_notification_status" => response_data.status, "recipient_email" => response_data.email_address }
+        { "email_notification_status" => response.body["status"], "recipient_email" => response.body["email_address"] }
       elsif type == "SMS"
-        { "sms_notification_status" => response_data.status, "recipient_phone_number" => response_data.phone_number }
+        { "sms_notification_status" => response.body["status"], "recipient_phone_number" => response.body["phone_number"] }
       end
     else
       log_error("VA Notify API returned error for notification " + notification_id)
