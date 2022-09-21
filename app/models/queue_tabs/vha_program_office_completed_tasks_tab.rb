@@ -8,7 +8,7 @@ class VhaProgramOfficeCompletedTasksTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.VHA_PO_COMPLETED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE
   end
 
   def description
