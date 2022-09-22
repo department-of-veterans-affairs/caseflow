@@ -33,16 +33,16 @@ class HearingRequestDistributionQuery
     base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
   end
 
-  # We are combining two queries using an array because using `or` doesn't work
-  # due to incompatibilities between the two queries.
   def only_genpop_appeals
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
 
     # returning early as most_recent_held_hearings_not_tied_to_any_judge is redundant
-    return no_hearings_or_no_held_hearings if FeatureToggle.enabled?(
-      :acd_distribute_all, user: RequestStore.store[current_user]
+    return with_held_hearings.or(no_hearings_or_no_held_hearings) if FeatureToggle.enabled?(
+        :acd_distribute_all, user: RequestStore.store[current_user]
     )
 
+    # We are combining two queries using an array because using `or` doesn't work
+    # due to incompatibilities between the two queries.
     [
       most_recent_held_hearings_not_tied_to_any_judge,
       most_recent_held_hearings_exceeding_affinity_threshold,
@@ -64,6 +64,10 @@ class HearingRequestDistributionQuery
 
   def with_no_held_hearings
     base_relation.with_no_held_hearings
+  end
+
+  def with_held_hearings
+    base_relation.most_recent_hearings.with_held_hearings
   end
 
   module Scopes
@@ -109,6 +113,10 @@ class HearingRequestDistributionQuery
 
     def with_no_held_hearings
       left_joins(:hearings).where.not(hearings: { disposition: "held" })
+    end
+
+    def with_held_hearings
+      where(hearings: { disposition: "held" })
     end
   end
 end
