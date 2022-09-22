@@ -54,10 +54,6 @@ class Distribution < CaseflowRecord
     (status == "completed") ? distributed_cases.count : 0
   end
 
-  def initial_capacity
-    batch_size - judge_tasks.length - judge_legacy_tasks.length
-  end
-
   def distributed_batch_size
     statistics&.fetch("batch_size", 0) || 0
   end
