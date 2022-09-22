@@ -97,9 +97,9 @@ class Distribution < CaseflowRecord
   end
 
   def judge_has_eight_or_fewer_unassigned_cases
-    return false if judge_tasks.length > 8
+    return false if judge_tasks.length > Constants.DISTRIBUTION.request_more_cases_minimum
 
-    judge_tasks.length + judge_legacy_tasks.length <= 8
+    judge_tasks.length + judge_legacy_tasks.length <= Constants.DISTRIBUTION.request_more_cases_minimum
   end
 
   def judge_cases_waiting_longer_than_thirty_days
