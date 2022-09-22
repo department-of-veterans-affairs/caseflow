@@ -15,6 +15,7 @@ class Appeal < DecisionReview
   include HasTaskHistory
   include AppealAvailableHearingLocations
   include HearingRequestTypeConcern
+  prepend AppealDocketed
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -343,6 +344,10 @@ class Appeal < DecisionReview
     request_issues.active.any?(&:education_predocket?)
   end
 
+  def caregiver_has_issues?
+    request_issues.active.any? { |ri| ri.nonrating_issue_category =~ /Caregiver/ }
+  end
+
   alias cavc? cavc
 
   def cavc_remand
@@ -441,7 +446,7 @@ class Appeal < DecisionReview
   end
 
   def create_tasks_on_intake_success!
-    if vha_has_issues? && FeatureToggle.enabled?(:vha_predocket_appeals, user: RequestStore.store[:current_user])
+    if vha_has_issues?
       PreDocketTasksFactory.new(self).call_vha
     elsif edu_predocket_needed?
       PreDocketTasksFactory.new(self).call_edu

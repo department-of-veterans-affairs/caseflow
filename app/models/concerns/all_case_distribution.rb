@@ -74,6 +74,7 @@ module AllCaseDistribution
       hearing_proportion: docket_proportions[:hearing],
       nonpriority_iterations: @nonpriority_iterations,
       initial_capacity: initial_capacity,
+      algorithm: 'by_docket_date'
     }
   end
 

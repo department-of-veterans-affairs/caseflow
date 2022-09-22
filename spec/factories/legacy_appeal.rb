@@ -39,6 +39,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_root_task do
+      after(:create) do |appeal, _evaluator|
+        RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+      end
+    end
+
     trait :with_judge_assign_task do
       after(:create) do |appeal, _evaluator|
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
