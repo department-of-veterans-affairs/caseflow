@@ -56,8 +56,8 @@ class HearingRequestDocket < Docket
       appeals: appeals, genpop: genpop, distribution: distribution, priority: priority
     ).call
   end
-
   # rubocop:enable Lint/UnusedMethodArgument
+
   def self.limit_genpop_appeals(appeals_array, limit)
     # genpop 'any' returns 2 arrays of the limited base relation. This means if we only request 2 cases, appeals is a
     # 2x2 array containing 4 cases overall and we will end up distributing 4 cases rather than 2. Instead, reinstate the
