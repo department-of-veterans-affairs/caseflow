@@ -17,7 +17,7 @@ class EducationRpoCompletedTasksTab < QueueTab
 
   # RPO completed tasks include all tasks that have been completed within the last 7 days by the assignee
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_completed
+    recently_completed_tasks
   end
 
   # Column names defined in each tab in education predocket due to different columns needed

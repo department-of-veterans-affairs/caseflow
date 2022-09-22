@@ -107,8 +107,28 @@ class QueueTab
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).closed
   end
 
+  def active_tasks
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
+  end
+
+  def in_progress_tasks
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).in_progress
+  end
+
   def recently_completed_tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_completed
+  end
+
+  # Recently completed tasks that do not have younger sibling tasks
+  # (tasks with the same parent task but have been created more recently) with the same assignee.
+  def recently_completed_tasks_without_younger_siblings
+    parent_task_ids = recently_completed_tasks.map(&:parent_id)
+
+    most_recent_tasks_per_appeal = Task.where(parent_id: parent_task_ids, assigned_to: assignee)
+      .group(:appeal_id)
+      .maximum(:id)
+
+    Task.where(id: most_recent_tasks_per_appeal.values).recently_completed
   end
 
   def on_hold_task_children

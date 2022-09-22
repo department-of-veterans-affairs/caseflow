@@ -5,36 +5,43 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
   before do
     FeatureToggle.enable!(:vha_predocket_workflow)
-    FeatureToggle.enable!(:vha_predocket_appeals)
     FeatureToggle.enable!(:visn_predocket_workflow)
     FeatureToggle.enable!(:docket_vha_appeals)
+
     bva_intake.add_user(bva_intake_user)
     camo.add_user(camo_user)
     emo.add_user(emo_user)
     program_office.add_user(program_office_user)
     regional_office.add_user(regional_office_user)
     education_rpo.add_user(education_rpo_user)
+    vha_caregiver.add_user(vha_caregiver_user)
   end
 
   after do
     FeatureToggle.disable!(:vha_predocket_workflow)
-    FeatureToggle.disable!(:vha_predocket_appeals)
     FeatureToggle.disable!(:visn_predocket_workflow)
     FeatureToggle.disable!(:docket_vha_appeals)
   end
 
+  # Organizations
   let(:bva_intake) { BvaIntake.singleton }
-  let!(:bva_intake_user) { create(:intake_user) }
   let(:camo) { VhaCamo.singleton }
   let(:camo_user) { create(:user) }
+  let(:vha_caregiver) { VhaCaregiverSupport.singleton }
+  let(:vha_caregiver_user) { create(:user) }
   let(:emo) { EducationEmo.singleton }
-  let(:emo_user) { create(:user) }
+  let(:education_rpo) { create(:education_rpo) }
   let(:program_office) { create(:vha_program_office) }
-  let(:program_office_user) { create(:user) }
   let(:regional_office) { create(:vha_regional_office) }
   let(:regional_office_user) { create(:user) }
-  let(:education_rpo) { create(:education_rpo) }
+
+  # Users
+  let!(:bva_intake_user) { create(:intake_user) }
+  let(:camo_user) { create(:user) }
+  let(:vha_caregiver_user) { create(:user) }
+  let(:emo_user) { create(:user) }
   let(:education_rpo_user) { create(:user) }
+  let(:program_office_user) { create(:user) }
 
   let(:veteran) { create(:veteran) }
   let(:po_instructions) { "Please look for this veteran's documents." }
@@ -49,7 +56,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
       it "intaking VHA issues creates pre-docket tasks instead of regular docketing tasks" do
         step "BVA Intake user intakes a VHA case" do
-          categories.each do |c|
+          categories.each do |category|
             User.authenticate!(user: bva_intake_user)
             start_appeal(veteran, intake_user: bva_intake_user)
             visit "/intake"
@@ -60,7 +67,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             click_intake_add_issue
             fill_in "Benefit type", with: "Veterans Health Administration"
             find("#issue-benefit-type").send_keys :enter
-            fill_in "Issue category", with: c
+            fill_in "Issue category", with: category
             find("#issue-category").send_keys :enter
             fill_in "Issue description", with: "I am a VHA issue"
             fill_in "Decision date", with: 1.month.ago.mdY
@@ -72,11 +79,245 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             click_intake_finish
             expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
 
-            appeal = Appeal.last
+            vha_document_search_task = VhaDocumentSearchTask.last
+            appeal = vha_document_search_task.appeal
+            expect(vha_document_search_task.assigned_to).to eq vha_caregiver
+
             visit "/queue/appeals/#{appeal.external_id}"
             expect(page).to have_content("Pre-Docket")
-            expect(page).to have_content(c)
+            expect(page).to have_content(category)
+
+            expect(page).to have_content(vha_caregiver.name)
           end
+        end
+
+        step "enacting the 'Mark task as in progress' task action updates
+          the VhaDocumentSearchTask's status to in_progress" do
+          User.authenticate!(user: vha_caregiver_user)
+
+          vha_document_search_task = VhaDocumentSearchTask.last
+
+          appeal = vha_document_search_task.appeal
+
+          visit "/queue/appeals/#{appeal.external_id}"
+
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS.label
+          ).click
+
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY)
+
+          find("button", class: "usa-button", text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON).click
+
+          expect(page).to have_content(
+            format(
+              COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
+              appeal.veteran_full_name
+            )
+          )
+          in_progress_tab_name = VhaCaregiverSupportInProgressTasksTab.tab_name
+          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{in_progress_tab_name}&page=1"
+          expect(page).to have_current_path(expected_url)
+
+          expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.in_progress
+        end
+
+        step "enacting the 'Return to Board Intake' task action returns the task to BVA intake" do
+          User.authenticate!(user: vha_caregiver_user)
+
+          vha_document_search_task = VhaDocumentSearchTask.last
+
+          appeal = vha_document_search_task.appeal
+
+          visit "/queue/appeals/#{appeal.external_id}"
+
+          task_name = Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.label
+
+          other_text_field_text = "Wrong type of documents"
+          optional_text_field_text = "The documents included in the appeal are incorrect"
+
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: task_name
+          ).click
+
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY)
+
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL)
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL)
+
+          # Fill in info and check for disabled submit button and warning text before submitting
+          submit_button = find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON)
+
+          expect(submit_button[:disabled]).to eq "true"
+
+          # Open the searchable dropdown to view the options
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT).click
+
+          page_options = all("div.cf-select__option")
+          page_options_text = page_options.map(&:text)
+          controller_options = COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS
+          controller_options = controller_options.values.pluck("LABEL")
+
+          # Verify that all of the options are in the dropdown
+          expect(page_options_text).to eq(controller_options)
+
+          # Click the duplicate option and verify that the button is no longer disabled
+          first_tested_option_text = controller_options.first
+          find("div", class: "cf-select__option", text: first_tested_option_text).click
+          expect(submit_button[:disabled]).to eq "false"
+
+          # Check the other option functionality
+          conditional_drop_down_text = COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS[
+            "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER"
+          ]["LABEL"]
+
+          # Reclick the dropdown with the new option and change it to "Other"
+          find(".cf-select__control", text: first_tested_option_text).click
+          find("div", class: "cf-select__option", text: conditional_drop_down_text).click
+
+          # Verify the submit button is disabled again and check for the other reason text field
+          expect(submit_button[:disabled]).to eq "true"
+          expect(page).to have_content(
+            COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL
+          )
+
+          # Enter info into the optional text field and verify the submit button is still disabled
+          fill_in(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL,
+                  with: optional_text_field_text)
+
+          expect(submit_button[:disabled]).to eq "true"
+
+          # Enter info into the other reason text field
+          # Then verify that the submit button is no longer disabled before submitting
+          fill_in(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL,
+                  with: other_text_field_text)
+
+          expect(submit_button[:disabled]).to eq "false"
+
+          submit_button.click
+
+          expect(page).to have_content(
+            format(
+              COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_SUCCESS_CONFIRMATION,
+              appeal.veteran_full_name
+            )
+          )
+
+          completed_tab_name = VhaCaregiverSupportCompletedTasksTab.tab_name
+          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{completed_tab_name}&page=1"
+          expect(page).to have_current_path(expected_url)
+
+          # Some quick data checks to verify that everything saved successfully
+          expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
+          expect(appeal.tasks.last.parent.assigned_to). to eq bva_intake
+          expect(appeal.tasks.last.parent.status).to eq Constants.TASK_STATUSES.assigned
+
+          # Navigate to the appeal that was just returned to board intake and verify the timeline
+          visit "/queue/appeals/#{appeal.external_id}"
+          # Click the timeline display link
+          find(".cf-submit", text: "View task instructions").click
+          # Verify the text in the timeline to match the other text field and optional text field.
+          expect(page).to have_content("Other - #{other_text_field_text}")
+          expect(page).to have_content(optional_text_field_text)
+        end
+
+        step "the 'Documents ready for Board Intake review' sends task to BVA Intake for review" do
+          User.authenticate!(user: vha_caregiver_user)
+
+          vha_document_search_task = VhaDocumentSearchTask.last
+          vha_document_search_task.update!(status: Constants.TASK_STATUSES.assigned)
+
+          appeal = vha_document_search_task.appeal
+
+          visit "/queue/appeals/#{appeal.external_id}"
+
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW.label
+          ).click
+
+          expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
+          expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
+          expect(page).to have_content("Optional")
+
+          radio_choices = page.all(".cf-form-radio-option > label")
+          expect(radio_choices[0]).to have_content("VBMS")
+          expect(radio_choices[1]).to have_content("Centralized Mail Portal")
+          expect(radio_choices[2]).to have_content("Other")
+
+          radio_choices[0].click
+
+          find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
+
+          expect(page).to have_content(
+            format(
+              COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE,
+              appeal.veteran_full_name
+            )
+          )
+
+          completed_tab_name = VhaCaregiverSupportCompletedTasksTab.tab_name
+          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{completed_tab_name}&page=1"
+          expect(page).to have_current_path(expected_url)
+          expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
+        end
+
+        step "BVA Intake user can return an appeal to CAREGIVER" do
+          vha_document_search_task = VhaDocumentSearchTask.last
+          vha_document_search_task.update!(status: Constants.TASK_STATUSES.completed)
+
+          appeal = vha_document_search_task.appeal
+
+          User.authenticate!(user: bva_intake_user)
+
+          visit "/queue/appeals/#{appeal.uuid}"
+
+          click_dropdown(text: Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.label)
+
+          expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE)
+          expect(page).to have_content(COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_BODY)
+
+          instructions_textarea = find("textarea", id: "taskInstructions")
+          instructions_textarea.send_keys("Please review this appeal, CAREGIVER.")
+
+          find("button", text: COPY::MODAL_RETURN_BUTTON).click
+
+          expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&page=1")
+
+          expect(page).to have_content(
+            format(COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_CONFIRMATION_TITLE, appeal.veteran_full_name)
+          )
+
+          expect(appeal.tasks.last.assigned_to). to eq vha_caregiver
+        end
+
+        step "BVA Intake user sees case in Ready for Review tab. They can docket appeal." do
+          User.authenticate!(user: bva_intake_user)
+
+          last_vha_task = VhaDocumentSearchTask.last
+          last_vha_task.completed!
+
+          visit "/organizations/bva-intake?tab=bvaReadyForReview"
+
+          find_link("#{veteran.name} (#{veteran.file_number})").click
+
+          click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+
+          expect(page).to have_content(
+            format(COPY::DOCKET_APPEAL_MODAL_BODY, COPY::VHA_CAREGIVER_LABEL)
+          )
+
+          find("button", class: "usa-button", text: "Confirm").click
         end
       end
     end
@@ -106,9 +347,14 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           click_intake_finish
           expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
 
-          appeal = Appeal.last
+          vha_document_search_task = VhaDocumentSearchTask.last
+          appeal = vha_document_search_task.appeal
+          expect(vha_document_search_task.assigned_to).to eq camo
+
           visit "/queue/appeals/#{appeal.external_id}"
           expect(page).to have_content("Pre-Docket")
+
+          expect(page).to have_content(camo.name)
         end
 
         step "Use can search the case and see the Pre Docketed status" do
@@ -249,7 +495,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find("div", class: "cf-select__option", text: COPY::VHA_COMPLETE_TASK_LABEL).click
-          expect(page).to have_content(COPY::VHA_COMPLETE_TASK_MODAL_TITLE)
+          expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
           expect(page).to have_content(COPY::VHA_COMPLETE_TASK_MODAL_BODY)
           find("label", text: "VBMS").click
           fill_in(COPY::VHA_COMPLETE_TASK_MODAL_BODY, with: ro_review_instructions)
@@ -395,7 +641,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
     find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label).click
 
     expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_TITLE)
-    expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_BODY)
+    expect(page).to have_content(format(COPY::DOCKET_APPEAL_MODAL_BODY, COPY::VHA_CAMO_LABEL))
     expect(page).to have_content(COPY::DOCKET_APPEAL_MODAL_NOTICE)
 
     find("button", class: "usa-button", text: "Confirm").click
@@ -461,8 +707,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           class: "cf-select__option",
           text: Constants.TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
         ).click
-        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
-        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+        expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
+        expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
 
         radio_choices = page.all(".cf-form-radio-option > label")
         expect(radio_choices[0]).to have_content("VBMS")
@@ -577,8 +823,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           class: "cf-select__option",
           text: Constants.TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
         ).click
-        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
-        expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+        expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
+        expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
 
         radio_choices = page.all(".cf-form-radio-option > label")
         expect(radio_choices[0]).to have_content("VBMS")
@@ -607,6 +853,16 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         visit "/organizations/bva-intake?tab=bvaReadyForReview"
         expect(page).to have_content(COPY::PRE_DOCKET_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+      end
+
+      step "BVA Intake's 'Docket appeal' modal contains org name for RPO" do
+        find_link("#{appeal.veteran.name} (#{appeal.veteran.file_number})").click
+
+        click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+
+        expect(page).to have_content(
+          format(COPY::DOCKET_APPEAL_MODAL_BODY, COPY::EDUCATION_LABEL)
+        )
       end
     end
 
@@ -782,8 +1038,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         class: "cf-select__option",
         text: Constants.TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.label
       ).click
-      expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_TITLE)
-      expect(page).to have_content(COPY::EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY)
+      expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
+      expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
 
       radio_choices = page.all(".cf-form-radio-option > label")
       expect(radio_choices[0]).to have_content("VBMS")
@@ -836,6 +1092,22 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       )
 
       expect(emo_task.appeal.tasks.last.assigned_to). to eq emo
+    end
+
+    it "BVA Intake's 'Docket appeal' modal contains correct org name" do
+      User.authenticate!(user: bva_intake_user)
+
+      # Complete new task to send it back to BVA Intake
+      emo_task = create(:education_document_search_task, :assigned, assigned_to: emo)
+      emo_task.completed!
+
+      visit "/queue/appeals/#{emo_task.appeal.uuid}"
+
+      click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
+
+      expect(page).to have_content(
+        format(COPY::DOCKET_APPEAL_MODAL_BODY, COPY::EDUCATION_LABEL)
+      )
     end
   end
 end

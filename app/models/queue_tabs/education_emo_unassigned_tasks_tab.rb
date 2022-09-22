@@ -19,7 +19,7 @@ class EducationEmoUnassignedTasksTab < QueueTab
 
   # In each case, if the EMO task is assigned, then it should meet each use case for the unassigned tab
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
+    active_tasks
   end
 
   # Column names defined in each tab in education predocket due to different columns needed
