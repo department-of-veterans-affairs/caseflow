@@ -7,11 +7,11 @@
 # is not ready to continue to being worked.
 
 class PreDocketTask < Task
-  TASK_ACTIONS = [
+  COMMON_TASK_ACTIONS = [
     Constants.TASK_ACTIONS.DOCKET_APPEAL.to_h
   ].freeze
 
-  VHA_ACTIONS = [
+  CAMO_ACTIONS = [
     Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.to_h
   ].freeze
 
@@ -19,23 +19,20 @@ class PreDocketTask < Task
     Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.to_h
   ].freeze
 
+  CAREGIVER_ACTIONS = [
+    Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.to_h
+  ].freeze
+
   prepend AppealDocketed
 
   def available_actions(user)
     return [] unless assigned_to.user_has_access?(user) && FeatureToggle.enabled?(:docket_vha_appeals, user: user)
 
-    task_actions = Array.new(TASK_ACTIONS)
-    child_task = children.first
+    task_actions = Array.new(COMMON_TASK_ACTIONS)
 
     return task_actions unless children.all?(&:closed?)
 
-    if child_task&.task_is_assigned_to_organization?(VhaCamo.singleton)
-      task_actions.concat(VHA_ACTIONS)
-    elsif child_task&.task_is_assigned_to_organization?(EducationEmo.singleton)
-      task_actions.concat(EDU_ACTIONS)
-    end
-
-    task_actions
+    task_actions.concat(retrieve_additional_task_actions)
   end
 
   def update_from_params(params, current_user)
@@ -68,5 +65,21 @@ class PreDocketTask < Task
 
   def self.label
     COPY::PRE_DOCKET_TASK_LABEL
+  end
+
+  private
+
+  def retrieve_additional_task_actions
+    child_task = children.first
+
+    if child_task&.task_is_assigned_to_organization?(VhaCamo.singleton)
+      CAMO_ACTIONS
+    elsif child_task&.task_is_assigned_to_organization?(EducationEmo.singleton)
+      EDU_ACTIONS
+    elsif child_task&.task_is_assigned_to_organization?(VhaCaregiverSupport.singleton)
+      CAREGIVER_ACTIONS
+    else
+      []
+    end
   end
 end
