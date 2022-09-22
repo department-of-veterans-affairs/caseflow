@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 class Generators::Random
-  # gets all veteran SSNs that exist in the DB to ensure no data collisions
-  @unique_ssns = Veteran.all.map(&:ssn).map { |ssn| [ssn, 0] }.to_h
-
+  @unique_ssns = {}
+  
   class << self
     def whitespace(len = 16)
       from_set([" ", "\n", "\r", "\t"], len)
