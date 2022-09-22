@@ -172,6 +172,8 @@ class ExternalApi::VANotifyService
       request.open_timeout = 30
       request.read_timeout = 30
       request.body = body.to_json unless body.nil?
+      request.auth.ssl.ssl_version  = :TLSv1_2
+      request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
       request.headers = headers.merge(Authorization: "Bearer " + generate_token)
       sleep 1
       MetricsService.record("api.notifications.va.gov #{method.to_s.upcase} request to #{url}",
