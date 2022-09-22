@@ -21,6 +21,9 @@ class SplitAppealController < ApplicationController
     # save the duplicate
     dup_appeal.save
 
+    # Setting the user_css_id
+    user_css_id = params[:user]
+
     # run extra duplicate methods to finish split
     dup_appeal.finalize_split_appeal(appeal, user_css_id)
   end
