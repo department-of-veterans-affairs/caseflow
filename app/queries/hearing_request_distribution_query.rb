@@ -37,6 +37,12 @@ class HearingRequestDistributionQuery
   # due to incompatibilities between the two queries.
   def only_genpop_appeals
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
+
+    # returning early as most_recent_held_hearings_not_tied_to_any_judge is redundant
+    return no_hearings_or_no_held_hearings if FeatureToggle.enabled?(
+      :acd_distribute_all, user: RequestStore.store[current_user]
+    )
+
     [
       most_recent_held_hearings_not_tied_to_any_judge,
       most_recent_held_hearings_exceeding_affinity_threshold,
@@ -62,7 +68,6 @@ class HearingRequestDistributionQuery
 
   module Scopes
     include DistributionScopes
-
     def most_recent_hearings
       query = <<-SQL
         INNER JOIN
