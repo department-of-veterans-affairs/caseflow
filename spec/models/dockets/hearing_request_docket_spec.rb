@@ -193,12 +193,9 @@ describe HearingRequestDocket, :all_dbs do
         no_held_hearings = non_priority_with_no_held_hearings
         no_hearings = non_priority_with_no_hearings
         outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
-
-        # would be included if :acd_distribute_all was not enabled
         inside_affinity = create_nonpriority_unblocked_hearing_appeal_within_affinity
 
-        expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity]
-        expected_result << inside_affinity if !FeatureToggle.enabled?(:acd_distribute_all)
+        expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity, inside_affinity]
 
         tasks = subject
 
@@ -487,7 +484,10 @@ describe HearingRequestDocket, :all_dbs do
       .update!(status: Constants.TASK_STATUSES.completed, closed_at: 5.days.ago)
 
     # Artificially set the `assigned_at` of DistributionTask so it's in the past
-    DistributionTask.find_by(appeal: appeal).update!(assigned_at: 5.days.ago)
+    DistributionTask.find_by(appeal: appeal).update!(
+      assigned_at: 5.days.ago,
+      status: Constants.TASK_STATUSES.assigned
+    )
 
     # Ensure hearing tied to judge
     Hearing.find_by(appeal: appeal).update!(judge: judge_with_team)
