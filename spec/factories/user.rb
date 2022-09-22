@@ -2,15 +2,6 @@
 
 FactoryBot.define do
   factory :user do
-    # attempt to set initial sequence value; if table doesn't exist, rescue error and set it to 1
-    # begin
-    #   sequence_initial_value = User.count + 1
-    # rescue ActiveRecord::StatementInvalid => error
-    #   raise if !error.message.include?("PG::UndefinedTable")
-    #
-    #   sequence_initial_value = 1
-    # end
-    # sequence(:css_id, sequence_initial_value) { |n| "CSS_ID#{n}" }
     sequence(:css_id) { |n| "CSS_ID#{n}" }
 
     station_id { User::BOARD_STATION_ID }
