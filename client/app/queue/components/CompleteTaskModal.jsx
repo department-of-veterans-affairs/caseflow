@@ -452,7 +452,7 @@ const MODAL_TYPE_ATTRS = {
 
       return !isValid;
     }
-  },
+  }
 };
 
 class CompleteTaskModal extends React.Component {

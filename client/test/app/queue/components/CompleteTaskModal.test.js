@@ -105,7 +105,7 @@ afterEach(() => {
 describe('CompleteTaskModal', () => {
   describe('vha_send_to_board_intake', () => {
     const taskType = 'VhaDocumentSearchTask';
-    const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const buttonText = COPY.MODAL_SEND_BUTTON;
     const modalType = 'vha_send_to_board_intake';
 
     test('modal title is Send to Board Intake', () => {
