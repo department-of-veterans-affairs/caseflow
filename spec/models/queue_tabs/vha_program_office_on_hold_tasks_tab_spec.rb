@@ -25,8 +25,8 @@ describe VhaProgramOfficeOnHoldTasksTab, :postgres do
     subject { tab.label }
 
     it do
-      is_expected.to eq COPY::VHA_ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TAB_TITLE
-      is_expected.to eq "On Hold"
+      is_expected.to eq COPY::ORGANIZATIONAL_QUEUE_ON_HOLD_TAB_TITLE
+      is_expected.to eq "On Hold (%d)"
     end
   end
 
