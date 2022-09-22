@@ -102,7 +102,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
     <React.Fragment>
       {taskConfiguration && taskConfiguration.modal_body}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
-        <div>
+        <div style= {{ marginTop: '1.25rem' }}>
           <RadioField
             name="completeTaskDocLocation"
             id="completeTaskDocLocation"
@@ -121,7 +121,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
               id="completeTaskOtherInstructions"
               onChange={handleTextFieldChange}
               value={state.otherInstructions}
-              styling={marginTop(4)}
+              styling={marginTop(1.0)}
               textAreaStyling={setHeight(4.5)}
               errorMessage={props.highlightInvalid &&
                 !validInstructions(state.otherInstructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
@@ -133,7 +133,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             onChange={(value) => setState({ instructions: value })}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             value={state.instructions}
-            styling={marginTop(4)}
+            styling={marginTop(1.5)}
             errorMessage={props.highlightInvalid &&
               !validInstructions(state.instructions) &&
               !isOptional() ? COPY.EMPTY_INSTRUCTIONS_ERROR :
@@ -208,7 +208,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             id="vhaSendToBoardIntakeInstructions"
             onChange={(value) => setState({ instructions: value })}
             value={state.instructions}
-            styling={marginTop(4)}
+            styling={marginTop(2)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
               !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
