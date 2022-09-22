@@ -195,6 +195,8 @@ describe HearingRequestDocket, :all_dbs do
         outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
         inside_affinity = create_nonpriority_unblocked_hearing_appeal_within_affinity
 
+        byebug
+
         expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity, inside_affinity]
 
         tasks = subject
@@ -466,27 +468,31 @@ describe HearingRequestDocket, :all_dbs do
     appeal
   end
 
+  # rubocop:disable Metrics/AbcSize
   def create_nonpriority_unblocked_hearing_appeal_within_affinity
     appeal = create(:appeal,
                     :with_post_intake_tasks,
                     :held_hearing,
-                    :with_evidence_submission_window_task,
                     :denied_advance_on_docket,
                     docket_type: Constants.AMA_DOCKETS.hearing,
                     created_at: 95.days.ago, # accounting for evidence submission window for better realism
                     adding_user: judge_with_team)
+
     # Complete the ScheduleHearingTask to set up legit tree for when hearing would be created
     ScheduleHearingTask.find_by(appeal: appeal)
       .update!(status: Constants.TASK_STATUSES.completed, closed_at: 90.days.ago)
 
-    # Complete the EvidenceSubmissionWindowTask for 90 days after hearing
+    # Complete EvidenceSubmissionWindowTask and TranscriptionTask for 90 days after hearing
     EvidenceSubmissionWindowTask.find_by(appeal: appeal)
+      .update!(status: Constants.TASK_STATUSES.completed, closed_at: 5.days.ago)
+
+    TranscriptionTask.find_by(appeal: appeal)
       .update!(status: Constants.TASK_STATUSES.completed, closed_at: 5.days.ago)
 
     # Artificially set the `assigned_at` of DistributionTask so it's in the past
     DistributionTask.find_by(appeal: appeal).update!(
-      assigned_at: 5.days.ago,
-      status: Constants.TASK_STATUSES.assigned
+      status: Constants.TASK_STATUSES.assigned,
+      assigned_at: 5.days.ago
     )
 
     # Ensure hearing tied to judge
@@ -494,6 +500,7 @@ describe HearingRequestDocket, :all_dbs do
 
     appeal
   end
+  # rubocop:enable Metrics/AbcSize
 
   def create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
     appeal = create(:appeal,
