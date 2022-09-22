@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class HearingUpdateForm < BaseHearingUpdateForm
+  prepend DocketHearingPostponed
+  prepend DocketHearingWithdrawn
   attr_accessor :advance_on_docket_motion_attributes,
                 :evidence_window_waived, :hearing_issue_notes_attributes,
                 :transcript_sent_date, :transcription_attributes
