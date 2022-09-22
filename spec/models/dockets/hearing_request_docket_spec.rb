@@ -195,8 +195,6 @@ describe HearingRequestDocket, :all_dbs do
         outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
         inside_affinity = create_nonpriority_unblocked_hearing_appeal_within_affinity
 
-        byebug
-
         expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity, inside_affinity]
 
         tasks = subject
