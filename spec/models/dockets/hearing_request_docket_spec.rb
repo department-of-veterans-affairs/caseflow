@@ -175,9 +175,6 @@ describe HearingRequestDocket, :all_dbs do
     end
 
     context "nonpriority appeals and genpop 'any'" do
-      before { FeatureToggle.enable!(:acd_distribute_all) }
-      after { FeatureToggle.disable!(:acd_distribute_all) }
-
       subject do
         HearingRequestDocket.new.distribute_appeals(
           distribution, priority: false, limit: 10, genpop: "any"
