@@ -18,6 +18,7 @@ import StartHoldModal from 'app/queue/components/StartHoldModal';
 import { 
   vhaPOToCAMOData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
+import Button from '../../../../app/components/Button';
 
 const renderStartHoldModal = (modalType, storeValues, taskType) => {
   const appealId = getAppealId(storeValues);
@@ -48,7 +49,7 @@ describe('Whenever VHA PO places a task on hold for set number of days', () => {
   test('Before 15 or 30 days is selected, button should be disabled', () => {
     renderStartHoldModal(TASK_ACTIONS.TOGGLE_TIMED_HOLD.value, vhaPOToCAMOData, taskType);
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByRole('button', { name: COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON })).toBeDisabled();
   });
 
   test('Button should still be disabled after days selected but before text box is populated', async () => {
@@ -59,13 +60,13 @@ describe('Whenever VHA PO places a task on hold for set number of days', () => {
       '15 days'
     );
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByRole('button', { name: COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON })).toBeDisabled();
 
     enterTextFieldOptions(
       'Notes:',
       'Here is the context that you have requested.'
     );
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByRole('button', { name: COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON })).not.toBeDisabled();
   });
 });
 
@@ -75,7 +76,8 @@ describe('Whenever VHA PO places a task on hold for custom number of days', () =
   test('Before custom number of days is selected, button should be disabled', () => {
     renderStartHoldModal(TASK_ACTIONS.TOGGLE_TIMED_HOLD.value, vhaPOToCAMOData, taskType);
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByRole('button', { name: COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON })).toBeDisabled();
+
   });
 
   test('Button should still be disabled after days selected but before text box is populated', async () => {
@@ -86,19 +88,20 @@ describe('Whenever VHA PO places a task on hold for custom number of days', () =
       'Custom'
     );
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByRole('button', { name: COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON })).toBeDisabled();
+
 
     selectCustomDays(
       'Enter a custom number of days for the hold',
       '6'
     );
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByRole('button', { name: COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON })).toBeDisabled();
 
     enterTextFieldOptions(
       'Notes:',
       'Here is the context that you have requested.'
     );
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByRole('button', { name: COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON })).not.toBeDisabled();
   });
 });

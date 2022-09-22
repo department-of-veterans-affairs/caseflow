@@ -254,6 +254,7 @@ const educationDocumentSearchTaskData = {
           modal_title: 'Assign to RPO',
           modal_body: 'Provide instructions and context for this action:',
           modal_selector_placeholder: 'Select RPO',
+          modal_button_text: 'Assign',
           type: 'EducationAssessDocumentationTask',
           redirect_after: '/organizations/edu-emo',
           body_optional: true
@@ -382,6 +383,7 @@ const preDocketTaskData = {
             }
           ],
           modal_title: 'Return appeal to VHA',
+          modal_button_text: 'Return',
           modal_body: 'If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA.',
           message_title: 'You have successfully returned Bob Smithhettinger\'s case to VHA',
           type: 'VhaDocumentSearchTask',
@@ -414,6 +416,7 @@ const preDocketTaskData = {
             }
           ],
           modal_title: 'Return appeal to VHA Caregiver Support Program',
+          modal_button_text: 'Return',
           modal_body: 'If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA Caregiver Support Program.',
           message_title: 'You have successfully returned Bob Smithwuckert\'s case to Caregiver Support Program',
           type: 'VhaDocumentSearchTask',
@@ -446,6 +449,7 @@ const preDocketTaskData = {
             }
           ],
           modal_title: 'Return appeal to Education Service',
+          modal_button_text: 'Return',
           modal_body: 'If you are unable to docket this appeal due to insufficient documentation, you may return this to Education Service.',
           message_title: 'You have successfully returned Bob Smithhettinger\'s case to Education Service',
           type: 'EducationDocumentSearchTask',
@@ -516,7 +520,8 @@ const assessDocumentationTaskData = {
     availableActions: [
       {
         label: 'Put task on hold',
-        value: 'modal/place_timed_hold'
+        value: 'modal/place_timed_hold',
+        modal_button_text: 'Put task on hold'
       },
       {
         func: 'vha_complete_data',
@@ -532,6 +537,7 @@ const assessDocumentationTaskData = {
       {
         func: 'vha_assign_to_regional_office_data',
         label: 'Assign to VISN',
+        modal_button_text: 'Assign',
         value: 'modal/assign_to_regional_office',
         data: {
           options: [
@@ -610,6 +616,7 @@ const assessDocumentationTaskData = {
           ],
           modal_title: 'Assign to VISN/VA Medical Center',
           modal_body: 'Provide instructions and context for this action:',
+          modal_button_text: 'Assign',
           modal_selector_placeholder: 'Select VISN/VA Medical Center',
           instructions: [],
           type: 'AssessDocumentationTask',
@@ -726,8 +733,7 @@ const educationAssessDocumentationTaskData = {
           modal_button_text: 'Send',
           type: 'EducationAssessDocumentationTask',
           body_optional: true,
-          redirect_after: '/organizations/buffalo-rpo',
-          modal_button_text: 'Send'
+          redirect_after: '/organizations/buffalo-rpo'
         }
       },
       {

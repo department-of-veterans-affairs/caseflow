@@ -50,14 +50,14 @@ describe('Whenever BVA Intake returns an appeal to', () => {
   it('VHA CAMO', () => {
     renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.value, returnToOrgData, taskType);
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action:',
       'Here is the context that you have requested.'
     );
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).not.toBeDisabled();
   });
 
   it('VHA Caregiver Support Program (CSP)', () => {
@@ -76,14 +76,14 @@ describe('Whenever BVA Intake returns an appeal to', () => {
   it('Education Service (EMO)', () => {
     renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.value, returnToOrgData, taskType);
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action:',
       'Here is the context that you have requested.'
     );
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).not.toBeDisabled();
   });
 });
 
@@ -92,14 +92,14 @@ describe('Whenever the EMO assigns an appeal to a Regional Processing Office', (
 
   it('Button Disabled until a RPO is chosen from the dropdown', () => {
     renderAssignToView(TASK_ACTIONS.EMO_ASSIGN_TO_RPO.value, emoToBvaIntakeData, taskType);
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).toBeDisabled();
 
     selectFromDropdown(
       'Assign to selector',
       'Buffalo RPO'
     );
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).not.toBeDisabled();
   });
 });
 
@@ -108,21 +108,21 @@ describe('Whenever VHA CAMO assigns an appeal to a Program Office', () => {
 
   it('Submission button is disabled until dropdown and text fields are populated', () => {
     renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value, camoToProgramOfficeToCamoData, taskType);
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).toBeDisabled();
 
     selectFromDropdown(
       'Assign to selector',
       'Prosthetics'
     );
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action:',
       'Here is the context that you have requested.'
     );
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).not.toBeDisabled();
   });
 });
 
@@ -132,20 +132,20 @@ describe('Whenever a VHA Program Office assigns an appeal to a VISN/Regional Off
   it('Submission button is disabled until dropdown and text fields are populated', () => {
     renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.value, vhaPOToCAMOData, taskType);
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).toBeDisabled();
 
     selectFromDropdown(
       'Assign to selector',
       'Sierra Pacific Network'
     );
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action:',
       'Here is the context that you have requested.'
     );
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).not.toBeDisabled();
   });
 });
