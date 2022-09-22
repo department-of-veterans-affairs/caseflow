@@ -106,6 +106,7 @@ describe('CompleteTaskModal', () => {
   describe('vha_send_to_board_intake', () => {
     const taskType = 'VhaDocumentSearchTask';
     const buttonText = COPY.MODAL_SEND_BUTTON;
+    const instructionsLabel = COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY;
     const modalType = 'vha_send_to_board_intake';
 
     test('modal title is Send to Board Intake', () => {
@@ -119,7 +120,7 @@ describe('CompleteTaskModal', () => {
 
       enterModalRadioOptions(
         'Correct documents have been successfully added',
-        'Provide additional context and/or documents:',
+        instructionsLabel,
         'CAMO -> BVA Intake',
         buttonText
       );
@@ -135,7 +136,7 @@ describe('CompleteTaskModal', () => {
 
       enterModalRadioOptions(
         'Correct documents have been successfully added',
-        'Provide additional context and/or documents:',
+        instructionsLabel,
         'CAMO -> BVA Intake',
         buttonText
       );
