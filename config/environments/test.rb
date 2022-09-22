@@ -97,4 +97,5 @@ Rails.application.configure do
   ENV["VA_NOTIFY_API_KEY"] ||= "secret-key"
   ENV["VA_NOTIFY_SERVICE_ID"] ||= "fake-service-id"
   ENV["VA_NOTIFY_TOKEN_ALG"] ||= "my-secret-algorithm"
+  ENV["VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT"] ||= "650"
 end
