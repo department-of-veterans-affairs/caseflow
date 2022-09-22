@@ -45,6 +45,7 @@ class HearingRequestDistributionQuery
 
     [
       most_recent_held_hearings_not_tied_to_any_judge,
+      most_recent_held_hearings_exceeding_affinity_threshold,
       no_hearings_or_no_held_hearings
     ].flatten.uniq
   end
