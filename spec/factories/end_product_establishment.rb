@@ -9,7 +9,7 @@ FactoryBot.define do
     modifier { "030" }
     payee_code { EndProduct::DEFAULT_PAYEE_CODE }
     benefit_type_code { Veteran::BENEFIT_TYPE_CODE_LIVE }
-    user { create(:user) }
+    user { User.find_by(full_name: "Lauren Roth") || create(:user) }
 
     trait :cleared do
       synced_status { "CLR" }

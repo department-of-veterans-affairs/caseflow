@@ -11,8 +11,8 @@ FactoryBot.define do
   # By default, this task is created in a new Legacy appeal
   factory :task do
     assigned_at { rand(30..35).days.ago }
-    association :assigned_by, factory: :user
-    association :assigned_to, factory: :user
+    assigned_by { User.find_by(full_name: "Lauren Roth") || create(:user) }
+    assigned_to { User.find_by(full_name: "Lauren Roth") || create(:user) }
     type { Task.name }
 
     # if a parent is specified, make sure to use that parent's appeal
