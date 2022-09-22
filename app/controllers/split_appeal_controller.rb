@@ -8,9 +8,8 @@ class SplitAppealController < ApplicationController
     split_issue = params[:appeal_split_issues]
     split_other_reason = params[:split_other_reason]
     split_reason = params[:split_reason]
-
+    
     render json: { message: "Success" }
-
     # render json: { message: params.errors[0] }, status: :bad_request
   end
 end
