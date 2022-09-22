@@ -13,6 +13,7 @@ module Seeds
   class Tasks < Base
     def initialize
       @ama_appeals = []
+      file_number_initial_value
     end
 
     def seed!
@@ -23,6 +24,15 @@ module Seeds
     end
 
     private
+
+    # appeals that are ready for distribution use these so they are easier to find for testing
+    def file_number_initial_value
+      @file_number ||= 300_000_000
+      # this seed creates 955 veterans, so +2000 gives a large margin to add more data in the future
+      # n is (@file_number + 1) because @file_number is incremented before using it in factories in calling methods
+      @file_number += 2000 while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
+      @file_number
+    end
 
     def create_ama_appeals
       notes = "Pain disorder with 100\% evaluation per examination"
@@ -82,9 +92,11 @@ module Seeds
 
       # Create AMA appeals ready for distribution received this month
       (1..30).each do |num|
+        @file_number += 1
         create(
           :appeal,
           :ready_for_distribution,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           number_of_claimants: 1,
           active_task_assigned_at: Time.zone.now,
           docket_type: Constants.AMA_DOCKETS.direct_review,
@@ -98,9 +110,11 @@ module Seeds
 
       # Create AMA appeals ready for distribution received over a year ago
       (1..5).each do |num|
+        @file_number += 1
         create(
           :appeal,
           :ready_for_distribution,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           number_of_claimants: 1,
           active_task_assigned_at: Time.zone.now,
           docket_type: Constants.AMA_DOCKETS.direct_review,
@@ -114,9 +128,11 @@ module Seeds
 
       # Create AMA appeals ready for distribution received over 65 days ago
       (1..5).each do |num|
+        @file_number += 1
         create(
           :appeal,
           :ready_for_distribution,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           number_of_claimants: 1,
           active_task_assigned_at: Time.zone.now,
           docket_type: Constants.AMA_DOCKETS.direct_review,
@@ -130,9 +146,11 @@ module Seeds
 
       # Create AMA appeals ready for distribution in the future
       (1..5).each do |num|
+        @file_number += 1
         create(
           :appeal,
           :ready_for_distribution,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           number_of_claimants: 1,
           active_task_assigned_at: Time.zone.now,
           docket_type: Constants.AMA_DOCKETS.direct_review,
@@ -195,7 +213,11 @@ module Seeds
     end
 
     def create_ama_distribution_tasks
-      veteran = create(:veteran, first_name: "Julius", last_name: "Hodge")
+      @file_number += 1
+      veteran = create(:veteran,
+                       first_name: "Julius",
+                       last_name: "Hodge",
+                       file_number: format("%<n>09d", n: @file_number))
       appeal = create(:appeal, veteran: veteran, docket_type: Constants.AMA_DOCKETS.evidence_submission)
       create(
         :request_issue,
@@ -769,9 +791,11 @@ module Seeds
       description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       notes = "Pain disorder with 100\% evaluation per examination"
 
+      @file_number += 1
       create(
         :appeal,
         :assigned_to_judge,
+        veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
         number_of_claimants: 1,
         associated_judge: judge,
         active_task_assigned_at: assigned_at,
