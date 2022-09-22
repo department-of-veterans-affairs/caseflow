@@ -199,8 +199,8 @@ client-build-all client-all: client-test client-demo ## Builds webpack for both 
 one-test:  ## run the rspec test passed in
 	bundle exec rspec $(RUN_ARGS)
 
-run-all-queues: ## start shoryuken with all queue
-	bundle exec shoryuken -q caseflow_development_send_notifications caseflow_development_low_priority caseflow_development_low_priority  -R
+run-all-queues: ## start shoryuken with all queues
+	bundle exec shoryuken -q caseflow_development_send_notifications caseflow_development_high_priority caseflow_development_low_priority  -R
 
 run-low-priority: ## start shoryuken with just the low priority queue
 	bundle exec shoryuken -q caseflow_development_low_priority  -R
