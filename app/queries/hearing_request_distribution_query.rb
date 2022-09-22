@@ -37,9 +37,12 @@ class HearingRequestDistributionQuery
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
 
     # returning early as most_recent_held_hearings_not_tied_to_any_judge is redundant
-    return with_held_hearings.or(no_hearings_or_no_held_hearings) if FeatureToggle.enabled?(
-        :acd_distribute_all, user: RequestStore.store[current_user]
-    )
+    if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[current_user])
+      return [
+          with_held_hearings,
+          no_hearings_or_no_held_hearings
+      ].flatten.uniq
+    end
 
     # We are combining two queries using an array because using `or` doesn't work
     # due to incompatibilities between the two queries.

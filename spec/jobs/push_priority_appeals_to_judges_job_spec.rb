@@ -6,17 +6,17 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   end
 
   
-  #context "Test which Distribution is being included" do
-  #  before { FeatureToggle.enable!(:acd_distribute_all) }
-  #  after { FeatureToggle.disable!(:acd_distribute_all) }
-#
- #   subject { described_class.ancestors }
-#
- #   it do
-  #    is_expected.to include AllCaseDistribution
-   #   is_expected.to_not include AutomaticCaseDistribution
-    #end
-  #end
+  context "Test which Distribution is being included" do
+   before { FeatureToggle.enable!(:acd_distribute_all) }
+   after { FeatureToggle.disable!(:acd_distribute_all) }
+
+   subject { described_class.ancestors }
+
+   xit do
+     is_expected.to include AllCaseDistribution
+     is_expected.to_not include AutomaticCaseDistribution
+    end
+  end
 
   context ".distribute_non_genpop_priority_appeals" do
     before do
@@ -358,11 +358,11 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     it "should only distribute the ready priority cases tied to a judge" do
       expect(subject.count).to eq eligible_judges.count
-      expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [1, 1, 0, 0]
+      expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [3, 1, 0, 0]
 
       # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
       distributed_cases = DistributedCase.where(distribution: subject)
-      expect(distributed_cases.count).to eq 2
+      expect(distributed_cases.count).to eq 4
       expected_array = [ready_priority_bfkey, ready_priority_bfkey2]
       expect(distributed_cases.map(&:case_id)).to match_array expected_array
       # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
