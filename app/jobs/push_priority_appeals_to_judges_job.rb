@@ -18,12 +18,12 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def perform
-    if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
-      @distributions = distribute_priority_appeals
-    else
+    unless FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
       @tied_distributions = distribute_non_genpop_priority_appeals
-      @genpop_distributions = distribute_genpop_priority_appeals
     end
+
+    @genpop_distributions = distribute_genpop_priority_appeals
+
     send_job_report
   rescue StandardError => error
     start_time ||= Time.zone.now # temporary fix to get this job to succeed
@@ -42,7 +42,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   def slack_report
     report = []
     if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
-      total_cases = @distributions.map(&:distributed_batch_size).sum
+      total_cases = @genpop_distributions.map(&:distributed_batch_size).sum
       report << "*Number of cases distributed*: " \
                 "#{total_cases}"
     else
@@ -97,15 +97,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
         judge: User.find(judge_id),
         priority_push: true
       ).tap { |distribution| distribution.distribute!(target) }
-    end
-  end
-
-  def distribute_priority_appeals
-    eligible_judges.map do |judge|
-      Distribution.create!(
-        judge: User.find(judge.id),
-        priority_push: true
-      ).tap { |distribution| distribution.distribute!(distribution.initial_capacity) }
     end
   end
 
