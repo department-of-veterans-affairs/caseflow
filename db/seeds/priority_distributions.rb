@@ -12,6 +12,7 @@ module Seeds
     # :nocov:
     def initialize
       @ready_nonpriority_hearing_case_count = 0
+      initial_file_number
     end
 
     def seed!
@@ -23,6 +24,13 @@ module Seeds
     end
 
     private
+
+    def initial_file_number
+      @file_number ||= 100_000_000
+      # n is (@file_number + 1) because @file_number is incremented before using it in factories in calling methods
+      @file_number += 1000 while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
+      @file_number
+    end
 
     # Without context, this method doesn't make any useful changes to the seed data so I'm not running it
     def organize_judges
@@ -127,6 +135,7 @@ module Seeds
 
     def create_legacy_ready_priority_cases_tied_to_judge(judge)
       2.times do |num|
+        @file_number += 1
         create(
           :case,
           :aod,
@@ -134,6 +143,7 @@ module Seeds
           :tied_to_judge,
           :type_original,
           tied_judge: judge,
+          bfcorlid: create(:veteran, file_number: format("%<n>09d", n: @file_number)).file_number,
           bfd19: 1.year.ago.to_date - num.weeks,
           correspondent: create(:correspondent)
         )
@@ -142,12 +152,14 @@ module Seeds
 
     def create_legacy_nonready_priority_cases_tied_to_judge(judge)
       2.times do
+        @file_number += 1
         create(
           :case,
           :aod,
           :tied_to_judge,
           :type_original,
           tied_judge: judge,
+          bfcorlid: create(:veteran, file_number: format("%<n>09d", n: @file_number)).file_number,
           correspondent: create(:correspondent)
         )
       end
@@ -155,12 +167,14 @@ module Seeds
 
     def create_legacy_ready_nonpriority_cases_tied_to_judge(judge)
       2.times do |num|
+        @file_number += 1
         create(
           :case,
           :ready_for_distribution,
           :tied_to_judge,
           :type_original,
           tied_judge: judge,
+          bfcorlid: create(:veteran, file_number: format("%<n>09d", n: @file_number)).file_number,
           bfd19: 1.year.ago.to_date - num.weeks,
           correspondent: create(:correspondent)
         )
@@ -169,6 +183,7 @@ module Seeds
 
     def create_hearing_ready_priority_cases_tied_to_judge(judge)
       4.times do |num|
+        @file_number += 1
         create(
           :appeal,
           :hearing_docket,
@@ -176,6 +191,7 @@ module Seeds
           :advanced_on_docket_due_to_age,
           :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: num.weeks.ago,
           tied_judge: judge,
           adding_user: User.first
@@ -185,6 +201,7 @@ module Seeds
 
     def create_hearing_nonready_priority_cases_tied_to_judge(judge)
       4.times do |num|
+        @file_number += 1
         create(
           :appeal,
           :hearing_docket,
@@ -192,6 +209,7 @@ module Seeds
           :advanced_on_docket_due_to_age,
           :held_hearing,
           :tied_to_judge,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: num.weeks.ago,
           tied_judge: judge,
           adding_user: User.first
@@ -202,12 +220,14 @@ module Seeds
     def create_hearing_ready_nonpriority_cases_tied_to_judge(judge)
       2.times do
         @ready_nonpriority_hearing_case_count += 1
+        @file_number += 1
         create(
           :appeal,
           :hearing_docket,
           :with_post_intake_tasks,
           :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: @ready_nonpriority_hearing_case_count.days.ago,
           tied_judge: judge,
           adding_user: User.first
@@ -217,11 +237,13 @@ module Seeds
 
     def create_legacy_ready_priority_genpop_cases
       20.times do |num|
+        @file_number += 1
         create(
           :case,
           :aod,
           :ready_for_distribution,
           :type_original,
+          bfcorlid: create(:veteran, file_number: format("%<n>09d", n: @file_number)).file_number,
           bfd19: 1.year.ago.to_date - num.days,
           correspondent: create(:correspondent)
         )
@@ -230,10 +252,12 @@ module Seeds
 
     def create_legacy_nonready_priority_genpop_cases
       2.times do
+        @file_number += 1
         create(
           :case,
           :aod,
           :type_original,
+          bfcorlid: create(:veteran, file_number: format("%<n>09d", n: @file_number)).file_number,
           correspondent: create(:correspondent)
         )
       end
@@ -241,10 +265,12 @@ module Seeds
 
     def create_legacy_ready_nonpriority_genpop_cases
       20.times do |num|
+        @file_number += 1
         create(
           :case,
           :ready_for_distribution,
           :type_original,
+          bfcorlid: create(:veteran, file_number: format("%<n>09d", n: @file_number)).file_number,
           bfd19: 1.year.ago.to_date - num.days,
           correspondent: create(:correspondent)
         )
@@ -253,12 +279,14 @@ module Seeds
 
     def create_ama_hearing_ready_priority_genpop_cases
       20.times do |num|
+        @file_number += 1
         create(
           :appeal,
           :hearing_docket,
           :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
           :held_hearing_and_ready_to_distribute,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: num.days.ago,
           adding_user: User.first
         )
@@ -267,12 +295,14 @@ module Seeds
 
     def create_ama_hearing_nonready_priority_genpop_cases
       4.times do |num|
+        @file_number += 1
         create(
           :appeal,
           :hearing_docket,
           :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
           :held_hearing,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: num.weeks.ago,
           adding_user: User.first
         )
@@ -282,11 +312,13 @@ module Seeds
     def create_ama_hearing_ready_nonpriority_genpop_cases
       2.times do
         @ready_nonpriority_hearing_case_count += 1
+        @file_number += 1
         create(
           :appeal,
           :hearing_docket,
           :with_post_intake_tasks,
           :held_hearing_and_ready_to_distribute,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: @ready_nonpriority_hearing_case_count.days.ago,
           adding_user: User.first
         )
@@ -298,10 +330,12 @@ module Seeds
     def create_ama_hearing_ready_nonpriority_genpop_cases_ready_61_days_ago
       Timecop.travel(92.days.ago)
       2.times do
+        @file_number += 1
         appeal = create(:appeal,
                         :hearing_docket,
                         :with_post_intake_tasks,
                         :held_hearing_and_ready_to_distribute,
+                        veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
                         adding_user: User.first)
         tasks = appeal.tasks
         [:TranscriptionTask, :EvidenceSubmissionWindowTask, :AssignHearingDispositionTask].each do |type|
@@ -322,10 +356,12 @@ module Seeds
     def create_ama_hearing_ready_nonpriority_genpop_cases_ready_15_days_ago
       Timecop.travel(92.days.ago)
       2.times do
+        @file_number += 1
         appeal = create(:appeal,
                         :hearing_docket,
                         :with_post_intake_tasks,
                         :held_hearing_and_ready_to_distribute,
+                        veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
                         adding_user: User.first)
         tasks = appeal.tasks
         [:TranscriptionTask, :EvidenceSubmissionWindowTask].each do |type|
@@ -336,7 +372,7 @@ module Seeds
         end
 
         tasks.find_by(type: :AssignHearingDispositionTask).update!(
-          created_at: Time.now, assigned_at: Time.now, closed_at: 77.days.from_now, updated_at: 77.days.from_now
+          created_at: Time.zone.now, assigned_at: Time.zone.now, closed_at: 77.days.from_now, updated_at: 77.days.from_now
         )
         tasks.find_by(type: :HearingTask).update!(closed_at: 77.days.from_now)
         tasks.find_by(type: :DistributionTask).update!(assigned_at: 77.days.from_now)
@@ -346,11 +382,13 @@ module Seeds
 
     def create_direct_review_ready_priority_genpop_cases
       20.times do |num|
+        @file_number =+ 1
         create(
           :appeal,
           :direct_review_docket,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: num.days.ago
         )
       end
@@ -358,11 +396,13 @@ module Seeds
 
     def create_direct_review_nonready_priority_genpop_cases
       2.times do |num|
+        @file_number += 1
         create(
           :appeal,
           :direct_review_docket,
           :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: num.days.ago
         )
       end
@@ -370,10 +410,12 @@ module Seeds
 
     def create_direct_review_ready_nonpriority_genpop_cases
       2.times do |num|
+        @file_number += 1
         create(
           :appeal,
           :direct_review_docket,
           :ready_for_distribution,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: num.days.ago
         )
       end
@@ -381,11 +423,13 @@ module Seeds
 
     def create_evidence_submission_ready_priority_genpop_cases
       20.times do |num|
+        @file_number += 1
         create(
           :appeal,
           :evidence_submission_docket,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: num.days.ago
         )
       end
@@ -393,11 +437,13 @@ module Seeds
 
     def create_evidence_submission_nonready_priority_genpop_cases
       20.times do |num|
+        @file_number += 1
         create(
           :appeal,
           :evidence_submission_docket,
           :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: num.days.ago
         )
       end
@@ -405,10 +451,12 @@ module Seeds
 
     def create_evidence_submission_ready_nonpriority_genpop_cases
       20.times do |num|
+        @file_number += 1
         create(
           :appeal,
           :evidence_submission_docket,
           :ready_for_distribution,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: num.days.ago
         )
       end
@@ -416,10 +464,12 @@ module Seeds
 
     def create_ready_cavc_genpop_cases
       4.times do |num|
+        @file_number += 1
         create(
           :appeal,
           :type_cavc_remand,
           :cavc_ready_for_distribution,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: num.days.ago
         )
       end
@@ -427,11 +477,13 @@ module Seeds
 
     def create_ready_cavc_aod_genpop_cases
       4.times do |num|
+        @file_number += 1
         create(
           :appeal,
           :type_cavc_remand,
           :cavc_ready_for_distribution,
           :advanced_on_docket_due_to_age,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: num.days.ago
         )
       end
@@ -439,24 +491,27 @@ module Seeds
 
     def create_nonready_cavc_genpop_cases
       20.times do |num|
+        @file_number += 1
         create(
           :appeal,
           :type_cavc_remand,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
           receipt_date: num.days.ago
         )
       end
     end
 
     def create_legacy_appeal_with_previous_distribution
+      @file_number += 1
       vacols_case = create(
         :case,
         :aod,
         :ready_for_distribution,
         :type_original,
+        bfcorlid: create(:veteran, file_number: format("%<n>09d", n: @file_number)).file_number,
         correspondent: create(:correspondent)
       )
       create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case)
-
       create_distribution_for_case_id(vacols_case.bfkey)
     end
 

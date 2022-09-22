@@ -4,14 +4,27 @@
 
 module Seeds
   class MTV < Base
+    def initialize
+      file_number_initial_value
+    end
+
     def seed!
       setup_motion_to_vacate_appeals
     end
 
     private
 
+    # maintains previous file number values while allowing for reseeding
+    def file_number_initial_value
+      @file_number ||= 100_000
+      # this seed file creates 40 new veterans on each run, 100 is sufficient margin to add more data
+      @file_number += 100 while Veteran.find_by(file_number: format("%<n>09d", n: @file_number))
+      @file_number
+    end
+
     def create_decided_appeal(mtv_judge, drafting_attorney)
-      veteran = create(:veteran)
+      veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
+      @file_number += 1
       appeal = create(
         :appeal,
         :dispatched,
