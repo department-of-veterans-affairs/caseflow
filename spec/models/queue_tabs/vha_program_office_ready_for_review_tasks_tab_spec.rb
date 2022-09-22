@@ -26,7 +26,7 @@ describe VhaProgramOfficeReadyForReviewTasksTab, :postgres do
 
     it do
       is_expected.to eq COPY::ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TAB_TITLE
-      is_expected.to eq "Ready for Review"
+      is_expected.to eq "Ready for Review (%d)"
     end
   end
 
