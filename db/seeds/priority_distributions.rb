@@ -135,7 +135,6 @@ module Seeds
 
     def create_legacy_ready_priority_cases_tied_to_judge(judge)
       2.times do |num|
-        @file_number += 1
         create(
           :case,
           :aod,
@@ -143,7 +142,6 @@ module Seeds
           :tied_to_judge,
           :type_original,
           tied_judge: judge,
-          bfcorlid: create(:veteran, file_number: format("%<n>09d", n: @file_number)).file_number,
           bfd19: 1.year.ago.to_date - num.weeks,
           correspondent: create(:correspondent)
         )
@@ -152,14 +150,12 @@ module Seeds
 
     def create_legacy_nonready_priority_cases_tied_to_judge(judge)
       2.times do
-        @file_number += 1
         create(
           :case,
           :aod,
           :tied_to_judge,
           :type_original,
           tied_judge: judge,
-          bfcorlid: create(:veteran, file_number: format("%<n>09d", n: @file_number)).file_number,
           correspondent: create(:correspondent)
         )
       end
@@ -167,14 +163,12 @@ module Seeds
 
     def create_legacy_ready_nonpriority_cases_tied_to_judge(judge)
       2.times do |num|
-        @file_number += 1
         create(
           :case,
           :ready_for_distribution,
           :tied_to_judge,
           :type_original,
           tied_judge: judge,
-          bfcorlid: create(:veteran, file_number: format("%<n>09d", n: @file_number)).file_number,
           bfd19: 1.year.ago.to_date - num.weeks,
           correspondent: create(:correspondent)
         )
@@ -237,13 +231,11 @@ module Seeds
 
     def create_legacy_ready_priority_genpop_cases
       20.times do |num|
-        @file_number += 1
         create(
           :case,
           :aod,
           :ready_for_distribution,
           :type_original,
-          bfcorlid: create(:veteran, file_number: format("%<n>09d", n: @file_number)).file_number,
           bfd19: 1.year.ago.to_date - num.days,
           correspondent: create(:correspondent)
         )
@@ -252,12 +244,10 @@ module Seeds
 
     def create_legacy_nonready_priority_genpop_cases
       2.times do
-        @file_number += 1
         create(
           :case,
           :aod,
           :type_original,
-          bfcorlid: create(:veteran, file_number: format("%<n>09d", n: @file_number)).file_number,
           correspondent: create(:correspondent)
         )
       end
@@ -265,12 +255,10 @@ module Seeds
 
     def create_legacy_ready_nonpriority_genpop_cases
       20.times do |num|
-        @file_number += 1
         create(
           :case,
           :ready_for_distribution,
           :type_original,
-          bfcorlid: create(:veteran, file_number: format("%<n>09d", n: @file_number)).file_number,
           bfd19: 1.year.ago.to_date - num.days,
           correspondent: create(:correspondent)
         )
@@ -382,7 +370,7 @@ module Seeds
 
     def create_direct_review_ready_priority_genpop_cases
       20.times do |num|
-        @file_number =+ 1
+        @file_number += 1
         create(
           :appeal,
           :direct_review_docket,
@@ -502,13 +490,11 @@ module Seeds
     end
 
     def create_legacy_appeal_with_previous_distribution
-      @file_number += 1
       vacols_case = create(
         :case,
         :aod,
         :ready_for_distribution,
         :type_original,
-        bfcorlid: create(:veteran, file_number: format("%<n>09d", n: @file_number)).file_number,
         correspondent: create(:correspondent)
       )
       create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case)
