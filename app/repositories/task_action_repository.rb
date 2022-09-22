@@ -641,7 +641,6 @@ class TaskActionRepository
         modal_title: COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
         instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
-        modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}"
       }
