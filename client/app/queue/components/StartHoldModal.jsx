@@ -50,7 +50,7 @@ class StartHoldModal extends React.Component {
     this.props.resetErrorMessages();
   };
 
-  isVHAHold = () => this.props.task.type === 'AssessDocumentationTask';
+  isVHAHold = () => Boolean(this.props.task.type === 'AssessDocumentationTask');
 
   holdLength = () => this.state.hold === CUSTOM_HOLD_DURATION_TEXT ? this.state.customHold : this.state.hold;
 
@@ -59,7 +59,7 @@ class StartHoldModal extends React.Component {
     const hasHoldLength = Boolean(Number(this.holdLength()));
     const customHoldIsValid = Boolean(this.state.customHold < 31);
 
-    if (this.isVHAHold) {
+    if (this.isVHAHold()) {
       return hasInstructions && hasHoldLength && customHoldIsValid;
     }
 
@@ -105,7 +105,7 @@ class StartHoldModal extends React.Component {
     }));
 
     const handleError = () => {
-      if (this.isVHAHold && invalidDate) {
+      if (this.isVHAHold() && invalidDate) {
 
         return highlightFormItems ? COPY.VHA_PLACE_CUSTOM_HOLD_INVALID_VALUE : null;
       }

@@ -1307,7 +1307,6 @@
   "ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked your task as in progress",
   "ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL": "This appeal will be visible in the \"In Progress\" tab of your Queue",
   "EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
-  "EMO_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "Provide instructions and context for this action",
   "EMO_RETURN_TO_BOARD_INTAKE_CONFIRMATION": "You have successfully returned %s's case to Board Intake",
   "EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO": "You have successfully sent %s's case to Board Intake for review.",
   "EMO_ASSIGN_TO_RPO_MODAL_TITLE": "Assign to RPO",
