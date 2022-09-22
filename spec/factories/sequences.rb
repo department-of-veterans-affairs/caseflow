@@ -9,24 +9,24 @@ FactoryBot.define do
   # BRIEFF.BFCORLID in VACOLS, file_number/veteran_file_number in Caseflow
   sequence :veteran_file_number do |n|
     FactoryBot.rewind_sequences if n == 9999
-    time.concat(format("%<n>05d", n: n))
+    time.concat(format("%<n>04d", n: n))
   end
 
   # CORRES.STAFKEY, BRIEFF.BFCORKEY, FOLDER.TICKNUM
   sequence :vacols_correspondent_key do |n|
     FactoryBot.rewind_sequences if n == 9999
-    time.concat(format("%<n>05d", n: n))
+    time.concat(format("%<n>04d", n: n))
   end
 
   # BRIEFF.BFKEY
   sequence :vacols_case_key do |n|
     FactoryBot.rewind_sequences if n == 9999
-    time.concat(format("%<n>05d", n: n))
+    time.concat(format("%<n>04d", n: n))
   end
 
   # AMA factories: bgs_attorney, bgs_power_of_attorney, claimant, decision_issue, person, relationship, veteran
   sequence :participant_id do |n|
     FactoryBot.rewind_sequences if n == 9999
-    time.concat(format("%<n>05d", n: n))
+    time.concat(format("%<n>04d", n: n))
   end
 end

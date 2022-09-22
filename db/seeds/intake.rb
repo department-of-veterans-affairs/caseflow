@@ -31,23 +31,26 @@ module Seeds
     end
 
     def create_deceased_veteran
+      params = { first_name: "Ed", last_name: "Deceased", date_of_death: Time.zone.yesterday }
+      params[:veteran_file_number] = 45_454_545 unless Veteran.find_by(file_number: 45_454_545)
       create(:veteran,
-             first_name: "Ed",
-             last_name: "Deceased",
-             date_of_death: Time.zone.yesterday)
+             params)
     end
 
     def create_veteran_with_no_dependents
+      params = { first_name: "Robert", last_name: "Lonely" }
+      params[:veteran_file_number] = 44_444_444 unless Veteran.find_by(file_number: 44_444_444)
+      params[:participant_id] = 44_444_444 unless Veteran.find_by(file_number: 44_444_444)
       create(:veteran,
-             first_name: "Robert",
-             last_name: "Lonely")
+             params)
     end
 
     def create_deceased_veteran_with_no_dependents
+      params = { first_name: "Karen", last_name: "Lonely", date_of_death: Time.zone.yesterday }
+      params[:veteran_file_number] = 55_555_555 unless Veteran.find_by(file_number: 55_555_555)
+      params[:participant_id] = 55_555_555 unless Veteran.find_by(file_number: 55_555_555)
       create(:veteran,
-             first_name: "Karen",
-             last_name: "Lonely",
-             date_of_death: Time.zone.yesterday)
+             params)
     end
 
     def create_higher_level_review_tasks
