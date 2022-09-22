@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
-import { marginTop } from './constants';
 import COPY from '../../COPY';
 
 import { taskById, appealWithDetailSelector } from './selectors';
@@ -208,7 +207,7 @@ class AssignToView extends React.Component {
         () => {
           return true;
         } :
-        this.validateForm        
+        this.validateForm
     };
 
     if (isPulacCerullo) {
@@ -233,13 +232,13 @@ class AssignToView extends React.Component {
             <SearchableDropdown
               name="Assign to selector"
               searchable
-              hideLabel
+              hideLabel={actionData.drop_down_label ? null : true}
+              label={actionData.drop_down_label}
               errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
               placeholder={this.determinePlaceholder(this.props, actionData)}
               value={this.state.selectedValue}
               onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
               options={taskActionData(this.props).options}
-              styling={marginTop(1.5)}
             />
             <br />
           </React.Fragment>
@@ -254,7 +253,6 @@ class AssignToView extends React.Component {
             onChange={(value) => this.setState({ instructions: value })}
             value={this.state.instructions}
             optional={actionData.body_optional}
-            styling={marginTop(1.5)}
           />
         )}
         {isPulacCerullo && (

@@ -1247,6 +1247,8 @@
   "SAVE_UNSCHEDULED_NOTES_ERROR_DETAIL": "Refresh the page and try again. If the problem persists, please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT.",
 
   "VHA_CAMO_LABEL": "VHA",
+  "VHA_CAMO_ASSIGN_TO_PROGRAM_OFFICE_DROPDOWN_LABEL": "Program Office",
+  "VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL": "Regional Office",
   "VHA_CAREGIVER_LABEL": "CSP",
   "EDUCATION_LABEL": "Education Service",
 
