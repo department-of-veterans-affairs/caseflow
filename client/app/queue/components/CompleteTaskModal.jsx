@@ -411,9 +411,6 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: VhaCaregiverSupportReturnToBoardIntakeModal,
     submitButtonClassNames: ['usa-button'],
-    submitDisabled: ({ state }) => (
-      !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
-    ),
     customValidation: ({ state }) => (
       state.dropdown === 'other' ? validInstructions(state.otherInstructions) && validDropdown(state.dropdown) :
         validDropdown(state.dropdown)
@@ -442,19 +439,6 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
-    submitDisabled: ({ state }) => {
-      const { otherInstructions, radio } = state;
-
-      let isValid = true;
-
-      if (radio === 'other') {
-        isValid = validInstructions(otherInstructions) && validRadio(radio);
-      } else {
-        isValid = validRadio(radio);
-      }
-
-      return !isValid;
-    }
   }
 };
 
