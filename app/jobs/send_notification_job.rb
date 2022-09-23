@@ -93,9 +93,9 @@ class SendNotificationJob < CaseflowJob
     event = NotificationEvent.find_by(event_type: message.template_name)
     email_template_id = event.email_template_id
     sms_template_id = event.sms_template_id
-    first_name = Appeal.find_by_uuid(message.appeal_id).appellant_first_name || "Appellant"
+    appeal = Appeal.find_by_uuid(message.appeal_id)
+    first_name = appeal&.appellant_first_name || "Appellant"
     status = message.appeal_status || ""
-
     if @va_notify_email
       response = VANotifyService.send_email_notifications(message.participant_id, notification_audit_record.id.to_s, email_template_id, status, first_name)
       if !response.nil? && response != ""
