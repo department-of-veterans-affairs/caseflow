@@ -610,11 +610,13 @@ class CompleteTaskModal extends React.Component {
 
   render = () => {
     const modalAttributes = MODAL_TYPE_ATTRS[this.props.modalType];
+    const taskData = taskActionData(this.props);
 
     return (
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
-        button={modalAttributes.buttonText}
+        /* eslint-disable-next-line camelcase */
+        button={taskData?.modal_button_text}
         submitDisabled={!this.validateForm()}
         validateForm={this.validateForm}
         submit={this.submit}
