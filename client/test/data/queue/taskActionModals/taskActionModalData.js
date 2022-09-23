@@ -721,7 +721,7 @@ const educationAssessDocumentationTaskData = {
           message_title: 'You have successfully returned Bob Smithlesch\'s case to the Executive Management Office',
           modal_button_text: 'Return',
           type: 'EducationAssessDocumentationTask',
-          redirect_after: '/organizations/buffalo-rpo',
+          redirect_after: '/organizations/buffalo-rpo'
         }
       },
       {
@@ -733,7 +733,7 @@ const educationAssessDocumentationTaskData = {
           modal_button_text: 'Send',
           type: 'EducationAssessDocumentationTask',
           body_optional: true,
-          redirect_after: '/organizations/buffalo-rpo'
+          redirect_after: '/organizations/buffalo-rpo',
         }
       },
       {
