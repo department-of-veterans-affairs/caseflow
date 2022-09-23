@@ -8,8 +8,14 @@ FactoryBot.define do
     untimely_evidence { false }
     work_product { "Decision" }
     document_type { "draft_decision" }
-    association :reviewing_judge, factory: :user
-    association :attorney, factory: :user
+    reviewing_judge do
+      User.find_by_css_id("ID_FACT_ACR_J") ||
+        create(:user, css_id: "ID_FACT_ACR_J", full_name: "Jane AttorneyCaseReviewFactory Judge")
+    end
+    attorney do
+      User.find_by_css_id("ID_FACT_ACR_A") ||
+        create(:user, css_id: "ID_FACT_ACR_A", full_name: "Joe AttorneyCaseReviewFactory Atty")
+    end
     appeal { nil }
 
     after(:create) do |case_review, _evaluator|
