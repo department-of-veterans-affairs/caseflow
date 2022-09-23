@@ -27,8 +27,8 @@ class ExternalApi::VANotifyService
     #         email_template_id: taken from notification_event table corresponding to correct notification template
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     # Return: email_response: JSON response from VA Notify API
-    def send_email_notifications(participant_id, notification_id, email_template_id, status = "")
-      email_response = send_va_notify_request(email_request(participant_id, notification_id, email_template_id, status))
+    def send_email_notifications(participant_id, notification_id, email_template_id, status = "", first_name)
+      email_response = send_va_notify_request(email_request(participant_id, notification_id, email_template_id, status, first_name))
       log_info(email_response)
       email_response
     end
@@ -41,8 +41,8 @@ class ExternalApi::VANotifyService
     #         sms_template_id: taken from notification_event table corresponding to correct notification template
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     # Return: sms_response: JSON response from VA Notify API
-    def send_sms_notifications(participant_id, notification_id, sms_template_id, status = "")
-      sms_response = send_va_notify_request(sms_request(participant_id, notification_id, sms_template_id, status))
+    def send_sms_notifications(participant_id, notification_id, sms_template_id, status = "", first_name)
+      sms_response = send_va_notify_request(sms_request(participant_id, notification_id, sms_template_id, status, first_name))
       log_info(sms_response)
       sms_response
     end
@@ -107,7 +107,7 @@ class ExternalApi::VANotifyService
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     #
     # Return: Request hash
-    def email_request(participant_id, notification_id, email_template_id, status)
+    def email_request(participant_id, notification_id, email_template_id, status, first_name)
       request = {
         body: {
           template_id: email_template_id,
@@ -116,14 +116,16 @@ class ExternalApi::VANotifyService
             id_type: "PID",
             id_value: participant_id
           },
-          personalisation: {}
+          personalisation: {
+            first_name: first_name
+          }
         },
         headers: HEADERS,
         endpoint: SEND_EMAIL_NOTIFICATION_ENDPOINT, method: :post
       }
       if !status.empty?
         # If a status is given then it will be added to the request object
-        request[:body][:personalisation] = { appeal_status: status }
+        request[:body][:personalisation][:appeal_status] = status
       end
       request
     end
@@ -137,7 +139,7 @@ class ExternalApi::VANotifyService
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     #
     # Return: Request hash
-    def sms_request(participant_id, notification_id, sms_template_id, status)
+    def sms_request(participant_id, notification_id, sms_template_id, status, first_name)
       request = {
         body: {
           reference: notification_id,
@@ -147,14 +149,16 @@ class ExternalApi::VANotifyService
             id_value: participant_id
           },
           sms_sender_id: SENDER_ID || "",
-          personalisation: {}
+          personalisation: {
+            first_name: first_name
+          }
         },
         headers: HEADERS,
         endpoint: SEND_SMS_NOTIFICATION_ENDPOINT, method: :post
       }
       if !status.empty?
         # If a status is given then it will be added to the request object
-        request[:body][:personalisation] = { appeal_status: status }
+        request[:body][:personalisation][:appeal_status] = status
       end
       request
     end

@@ -93,9 +93,11 @@ class SendNotificationJob < CaseflowJob
     event = NotificationEvent.find_by(event_type: message.template_name)
     email_template_id = event.email_template_id
     sms_template_id = event.sms_template_id
+    first_name = Appeal.find_by_uuid(message.appeal_id).appellant_first_name || "Appellant"
+    status = message.appeal_status || ""
 
     if @va_notify_email
-      response = VANotifyService.send_email_notifications(message.participant_id, notification_audit_record.id.to_s, email_template_id, status = "")
+      response = VANotifyService.send_email_notifications(message.participant_id, notification_audit_record.id.to_s, email_template_id, status, first_name)
       if !response.nil? && response != ""
         to_update = { notification_content: response.body["content"]["body"], email_notification_external_id: response.body["id"] }
         update_notification_audit_record(notification_audit_record, to_update)
@@ -103,7 +105,7 @@ class SendNotificationJob < CaseflowJob
     end
 
     if @va_notify_sms
-      response = VANotifyService.send_sms_notifications(message.participant_id, notification_audit_record.id.to_s, sms_template_id, status = "")
+      response = VANotifyService.send_sms_notifications(message.participant_id, notification_audit_record.id.to_s, sms_template_id, status, first_name)
       if !response.nil? && response != ""
         to_update = { notification_content: response.body["content"]["body"], sms_notification_external_id: response.body["id"] }
         update_notification_audit_record(notification_audit_record, to_update)
