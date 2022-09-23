@@ -215,11 +215,6 @@ class AssignToView extends React.Component {
       modalProps.button = 'Notify';
     }
 
-    if (modalProps.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
-      modalProps.submitButtonClassNames = ['usa-button', 'usa-button-warning'];
-      modalProps.button = 'Return';
-    }
-
     if ([
       'PreDocketTask',
       'VhaDocumentSearchTask',
@@ -227,6 +222,7 @@ class AssignToView extends React.Component {
       'AssessDocumentationTask'
     ].includes(task.type)) {
       modalProps.submitDisabled = !this.validateForm();
+      modalProps.submitButtonClassNames = ['usa-button'];
     }
 
     return (
