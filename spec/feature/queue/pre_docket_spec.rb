@@ -459,6 +459,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           expect(page).to have_current_path("/organizations/#{program_office.url}?tab=po_assigned&page=1")
           expect(page).to have_content("Task assigned to #{regional_office.name}")
+          expect(page).to have_content(format(COPY::ORGANIZATIONAL_QUEUE_ON_HOLD_TAB_TITLE, 1))
         end
 
         step "Regional Office has AssessDocumentationTask in queue" do
@@ -494,7 +495,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           visit "/queue/appeals/#{appeal.external_id}"
 
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-          find("div", class: "cf-select__option", text: COPY::VHA_COMPLETE_TASK_LABEL).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.label
+          ).click
           expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
           expect(page).to have_content(COPY::VHA_COMPLETE_TASK_MODAL_BODY)
           find("label", text: "VBMS").click
@@ -507,6 +512,18 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           find_all("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).first.click
           expect(page).to have_content("Documents for this appeal are stored in VBMS")
           expect(page).to have_content(ro_review_instructions)
+        end
+
+        step "Appeal appears in VHA PO's 'Ready for Review' tab once Regional Office marks it as such" do
+          User.authenticate!(user: program_office_user)
+
+          appeal = Appeal.last
+
+          visit "/organizations/#{program_office.url}/?tab=#{VhaProgramOfficeReadyForReviewTasksTab.tab_name}"
+
+          expect(page).to have_content(format(COPY::ORGANIZATIONAL_QUEUE_ON_HOLD_TAB_TITLE, 0))
+          expect(page).to have_content(format(COPY::ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TAB_TITLE, 1))
+          expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
         end
 
         step "CAMO can return the appeal to BVA Intake" do
@@ -843,6 +860,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
       step "RPO user can find the appeal in the org's Completed Tab" do
         visit "/organizations/#{education_rpo.url}?tab=education_rpo_completed&page=1"
+        expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
         expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
