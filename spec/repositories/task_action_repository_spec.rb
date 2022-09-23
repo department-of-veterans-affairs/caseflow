@@ -120,6 +120,7 @@ describe TaskActionRepository, :all_dbs do
     end
   end
 
+<<<<<<< HEAD
   describe "#vha caregiver support task actions" do
     describe "#vha_caregiver_support_return_to_board_intake" do
       let(:user) { create(:user) }
@@ -166,6 +167,18 @@ describe TaskActionRepository, :all_dbs do
           expect(subject[:message_title]).to include task.appeal.veteran_full_name
         end
       end
+=======
+  describe "#vha_caregiver_support_return_to_board_intake" do
+    let(:user) { create(:user) }
+    let(:task) { create(:vha_document_search_task) }
+
+    subject { TaskActionRepository.vha_caregiver_support_return_to_board_intake(task, user) }
+
+    it "includes modal title, modal body text, and the redirect to the organization page" do
+      expect(subject[:modal_title]).to eq(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
+      expect(subject[:modal_body]).to eq(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY)
+      expect(subject[:redirect_after]).to eq("/organizations/#{VhaCaregiverSupport.singleton.url}")
+>>>>>>> fixing_branch
     end
   end
 end

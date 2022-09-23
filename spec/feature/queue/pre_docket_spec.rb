@@ -41,7 +41,12 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let(:vha_caregiver_user) { create(:user) }
   let(:emo_user) { create(:user) }
   let(:education_rpo_user) { create(:user) }
+<<<<<<< HEAD
   let(:program_office_user) { create(:user) }
+=======
+  let(:vha_caregiver) { VhaCaregiverSupport.singleton }
+  let(:vha_caregiver_user) { create(:user) }
+>>>>>>> fixing_branch
 
   let(:veteran) { create(:veteran) }
   let(:po_instructions) { "Please look for this veteran's documents." }
@@ -91,6 +96,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           end
         end
 
+<<<<<<< HEAD
         step "enacting the 'Mark task as in progress' task action updates
           the VhaDocumentSearchTask's status to in_progress" do
           User.authenticate!(user: vha_caregiver_user)
@@ -133,13 +139,27 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           appeal = vha_document_search_task.appeal
 
+=======
+        step "enacting the 'Return to board intake' task action returns the task to intake" do
+          User.authenticate!(user: vha_caregiver_user)
+
+          vha_document_search_task = VhaDocumentSearchTask.last
+          vha_document_search_task.update(assigned_to: vha_caregiver)
+
+          appeal = vha_document_search_task.appeal
+
+          # Maybe visit the queue beforehand and select it from that?
+>>>>>>> fixing_branch
           visit "/queue/appeals/#{appeal.external_id}"
 
           task_name = Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.label
 
+<<<<<<< HEAD
           other_text_field_text = "Wrong type of documents"
           optional_text_field_text = "The documents included in the appeal are incorrect"
 
+=======
+>>>>>>> fixing_branch
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find(
             "div",
@@ -168,6 +188,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           # Verify that all of the options are in the dropdown
           expect(page_options_text).to eq(controller_options)
+<<<<<<< HEAD
+=======
+          puts page_options_text.inspect
+          puts controller_options.inspect
+>>>>>>> fixing_branch
 
           # Click the duplicate option and verify that the button is no longer disabled
           first_tested_option_text = controller_options.first
@@ -175,6 +200,10 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(submit_button[:disabled]).to eq "false"
 
           # Check the other option functionality
+<<<<<<< HEAD
+=======
+          # This is gross the constant names might be too long
+>>>>>>> fixing_branch
           conditional_drop_down_text = COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS[
             "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER"
           ]["LABEL"]
@@ -189,6 +218,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL
           )
 
+<<<<<<< HEAD
           # Enter info into the optional text field and verify the submit button is still disabled
           fill_in(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL,
                   with: optional_text_field_text)
@@ -200,6 +230,12 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           fill_in(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL,
                   with: other_text_field_text)
 
+=======
+          # Enter info into the other reason text field
+          # Then verify that the submit button is no longer disabled before submitting
+          fill_in(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL,
+                  with: "Wrong type of documents")
+>>>>>>> fixing_branch
           expect(submit_button[:disabled]).to eq "false"
 
           submit_button.click
@@ -211,6 +247,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             )
           )
 
+<<<<<<< HEAD
           completed_tab_name = VhaCaregiverSupportCompletedTasksTab.tab_name
           expected_url = "/organizations/#{vha_caregiver.url}?tab=#{completed_tab_name}&page=1"
           expect(page).to have_current_path(expected_url)
@@ -318,6 +355,12 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           )
 
           find("button", class: "usa-button", text: "Confirm").click
+=======
+          expect(current_path).to eq("/organizations/#{vha_caregiver.url}")
+          expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
+          expect(appeal.tasks.last.parent.assigned_to). to eq bva_intake
+          expect(appeal.tasks.last.parent.status).to eq Constants.TASK_STATUSES.assigned
+>>>>>>> fixing_branch
         end
       end
     end

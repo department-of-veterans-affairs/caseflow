@@ -1118,7 +1118,11 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                 TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.value
               }`}
+<<<<<<< HEAD
               title="Return to Board Intake | Caseflow"
+=======
+              title="Ready for Review | Caseflow"
+>>>>>>> fixing_branch
               render={this.routedVhaCaregiverSupportReturnToBoardIntake}
             />
             <PageRoute

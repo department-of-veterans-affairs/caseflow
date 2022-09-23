@@ -294,6 +294,10 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
     <React.Fragment>
       {taskConfiguration && taskConfiguration.modal_body}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+<<<<<<< HEAD
+=======
+        // marginTop doesn't work here?
+>>>>>>> fixing_branch
         <div style= {{ marginTop: '1.5rem' }}>
           <SearchableDropdown
             label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL}
@@ -313,8 +317,13 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
               id="completeTaskOtherInstructions"
               onChange={(value) => setState({ otherInstructions: value })}
               value={state.otherInstructions}
+<<<<<<< HEAD
               styling={marginTop(2)}
               textAreaStyling={setHeight(4.5)}
+=======
+              styling={marginTop(4)}
+              textAreaStyling={slimHeight}
+>>>>>>> fixing_branch
               errorMessage={props.highlightInvalid &&
                 !validInstructions(state.otherInstructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
             />}
@@ -324,7 +333,11 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
             id="caregiverSupportReturnToBoardIntakeInstructions"
             onChange={(value) => setState({ instructions: value })}
             value={state.instructions}
+<<<<<<< HEAD
             styling={marginTop(2)}
+=======
+            styling={marginTop(4)}
+>>>>>>> fixing_branch
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             optional
           />
@@ -417,13 +430,20 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: VhaCaregiverSupportReturnToBoardIntakeModal,
     buttonText: COPY.MODAL_RETURN_BUTTON,
+<<<<<<< HEAD
     submitButtonClassNames: ['usa-button'],
     submitDisabled: ({ state }) => (
+=======
+    buttonClasses: ['usa-button'],
+    submitDisabled: ({ state }) => (
+      // state.dropdown?.length < 1 || (state.dropdown === 'other' && state.otherInstructions?.length < 1)
+>>>>>>> fixing_branch
       !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
     ),
     customValidation: ({ state }) => (
       state.dropdown === 'other' ? validInstructions(state.otherInstructions) && validDropdown(state.dropdown) :
         validDropdown(state.dropdown)
+<<<<<<< HEAD
     ),
     customFormatInstructions: ({ state }) => {
       let formattedInstructions = '';
@@ -464,6 +484,10 @@ const MODAL_TYPE_ATTRS = {
       return !isValid;
     }
   },
+=======
+    )
+  }
+>>>>>>> fixing_branch
 };
 
 class CompleteTaskModal extends React.Component {
@@ -598,6 +622,7 @@ class CompleteTaskModal extends React.Component {
        }
      }
 
+<<<<<<< HEAD
      // Checks validity using the customValidation function defined in the modal constants if it is present
      if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customValidation === 'function') {
        isValid = MODAL_TYPE_ATTRS[this.props.modalType].customValidation(this.getContentArgs());
@@ -605,6 +630,15 @@ class CompleteTaskModal extends React.Component {
 
      return isValid;
    }
+=======
+    // Can generically add validation to this method via the customValidation method of the modalType declaration
+    if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customValidation === 'function') {
+      isValid = MODAL_TYPE_ATTRS[this.props.modalType].customValidation(this.getContentArgs());
+    }
+
+    return isValid;
+  }
+>>>>>>> fixing_branch
 
   submit = () => {
     const { task, appeal } = this.props;
@@ -633,6 +667,10 @@ class CompleteTaskModal extends React.Component {
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
         button={modalAttributes.buttonText}
+<<<<<<< HEAD
+=======
+        buttonClasses={modalAttributes.buttonClasses}
+>>>>>>> fixing_branch
         submitDisabled={modalAttributes.submitDisabled?.(this.getContentArgs())}
         validateForm={this.validateForm}
         submit={this.submit}

@@ -107,10 +107,13 @@ class QueueTab
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).closed
   end
 
+<<<<<<< HEAD
   def active_tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
   end
 
+=======
+>>>>>>> fixing_branch
   def in_progress_tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).in_progress
   end

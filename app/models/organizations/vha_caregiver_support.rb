@@ -20,16 +20,22 @@ class VhaCaregiverSupport < Organization
 
   def queue_tabs
     [
+<<<<<<< HEAD
       unassigned_tasks_tab,
+=======
+>>>>>>> fixing_branch
       in_progress_tasks_tab,
       completed_tasks_tab
     ]
   end
 
+<<<<<<< HEAD
   def unassigned_tasks_tab
     ::VhaCaregiverSupportUnassignedTasksTab.new(assignee: self)
   end
 
+=======
+>>>>>>> fixing_branch
   def in_progress_tasks_tab
     ::VhaCaregiverSupportInProgressTasksTab.new(assignee: self)
   end

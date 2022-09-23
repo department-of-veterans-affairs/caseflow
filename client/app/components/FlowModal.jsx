@@ -53,7 +53,11 @@ export default class FlowModal extends React.PureComponent {
   };
 
   render = () => {
+<<<<<<< HEAD
     const { title, button, children, error, success, submitDisabled, submitButtonClassNames } = this.props;
+=======
+    const { title, button, buttonClasses, children, error, success, submitDisabled } = this.props;
+>>>>>>> fixing_branch
 
     return (
       <Modal
@@ -65,7 +69,11 @@ export default class FlowModal extends React.PureComponent {
             onClick: this.cancelHandler
           },
           {
+<<<<<<< HEAD
             classNames: submitButtonClassNames,
+=======
+            classNames: buttonClasses,
+>>>>>>> fixing_branch
             name: button,
             disabled: submitDisabled,
             loading: this.state.loading,
@@ -84,7 +92,11 @@ export default class FlowModal extends React.PureComponent {
 
 FlowModal.defaultProps = {
   button: COPY.MODAL_SUBMIT_BUTTON,
+<<<<<<< HEAD
   submitButtonClassNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
+=======
+  buttonClasses: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
+>>>>>>> fixing_branch
   pathAfterSubmit: '/queue',
   submitDisabled: false,
   title: '',
@@ -96,6 +108,7 @@ FlowModal.propTypes = {
   history: PropTypes.object,
   title: PropTypes.string,
   button: PropTypes.string,
+  buttonClasses: PropTypes.array,
   onCancel: PropTypes.func,
   pathAfterSubmit: PropTypes.string,
   // submit should return a promise on which .then() can be called

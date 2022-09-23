@@ -16,7 +16,11 @@ class VhaCaregiverSupportCompletedTasksTab < QueueTab
   end
 
   def tasks
+<<<<<<< HEAD
     recently_completed_tasks_without_younger_siblings
+=======
+    recently_completed_tasks
+>>>>>>> fixing_branch
   end
 
   def column_names
