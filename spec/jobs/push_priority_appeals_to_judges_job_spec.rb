@@ -363,13 +363,13 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
       distributed_cases = DistributedCase.where(distribution: subject)
       expect(distributed_cases.count).to eq 4
-      expected_array = [ready_priority_bfkey, ready_priority_bfkey2]
+      expected_array = [ready_priority_bfkey, ready_priority_bfkey2, ready_priority_uuid, ready_priority_uuid2]
       expect(distributed_cases.map(&:case_id)).to match_array expected_array
       # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-      expected_array2 = %w[legacy legacy]
+      expected_array2 = %w[hearing hearing legacy legacy]
       expect(distributed_cases.map(&:docket)).to match_array expected_array2
       expect(distributed_cases.map(&:priority).uniq).to match_array [true]
-      expect(distributed_cases.map(&:genpop).uniq).to match_array [false]
+      expect(distributed_cases.map(&:genpop).uniq).to match_array [false, true]
     end
   end
 
