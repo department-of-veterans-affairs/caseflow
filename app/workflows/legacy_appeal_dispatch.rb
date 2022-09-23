@@ -3,6 +3,7 @@
 class LegacyAppealDispatch
   include ActiveModel::Model
   include DecisionDocumentValidator
+  prepend AppealDecisionMailed
 
   def initialize(appeal:, params:)
     @appeal = appeal
