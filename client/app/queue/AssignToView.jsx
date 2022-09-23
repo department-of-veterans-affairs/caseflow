@@ -18,7 +18,6 @@ import QueueFlowModal from './components/QueueFlowModal';
 import { requestPatch, requestSave, resetSuccessMessages } from './uiReducer/uiActions';
 
 import { taskActionData } from './utils';
-import { includes } from 'lodash';
 
 const validInstructions = (instructions) => {
   return instructions?.length > 0;
