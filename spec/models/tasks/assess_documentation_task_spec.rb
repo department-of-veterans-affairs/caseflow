@@ -22,7 +22,7 @@ describe AssessDocumentationTask, :postgres do
 
       available_actions = [
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-        Constants.TASK_ACTIONS.READY_FOR_REVIEW.to_h,
+        Constants.TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.to_h,
         Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.to_h,
         Constants.TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.to_h,
         Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.to_h
@@ -41,7 +41,7 @@ describe AssessDocumentationTask, :postgres do
 
       available_actions = [
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-        Constants.TASK_ACTIONS.READY_FOR_REVIEW.to_h,
+        Constants.TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.to_h,
         Constants.TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.to_h,
         Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.to_h
       ]
