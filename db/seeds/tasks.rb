@@ -417,6 +417,7 @@ module Seeds
         )
       )
       root_task = appeal.root_task
+      distribution_task = appeal.tasks.find_by(type: "DistributionTask")
 
       judge = User.find_by(full_name: judge_name) || create(:user, station_id: 101, full_name: judge_name)
       create(:staff, :judge_role, user: judge)
@@ -429,6 +430,7 @@ module Seeds
 
       atty_task.update!(status: Constants.TASK_STATUSES.completed)
       judge_task.update!(status: Constants.TASK_STATUSES.completed)
+      distribution_task.update!(status: Constants.TASK_STATUSES.completed)
 
       qr_org_task = QualityReviewTask.create_from_root_task(root_task)
 
@@ -680,12 +682,15 @@ module Seeds
         )
       end
 
-      create_list(
-        :appeal,
-        8,
-        :with_post_intake_tasks,
-        docket_type: Constants.AMA_DOCKETS.direct_review
-      )
+      8.times do
+        @file_number += 1
+        create(
+          :appeal,
+          :with_post_intake_tasks,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number))
+        )
+      end
 
       create_tasks_at_acting_judge
     end
