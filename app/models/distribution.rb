@@ -46,7 +46,7 @@ class Distribution < CaseflowRecord
     end
   rescue StandardError => error
     # DO NOT use update! because we want to avoid validations and saving any cached associations.
-    update_columns(status: "error", errored_at: Time.zone.now)
+    update_columns(status: "error", errored_at: Time.zone.now, statistics: error_statistics(error))
     raise error
   end
 
@@ -126,5 +126,11 @@ class Distribution < CaseflowRecord
 
   def use_by_docket_date_distribution?
     FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+  end
+
+  def error_statistics(error)
+    {
+        error: error&.message
+    }
   end
 end
