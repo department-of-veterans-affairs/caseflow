@@ -637,6 +637,7 @@ module Seeds
       attorney = User.find_by_css_id("BVASCASPER1")
       judge = User.find_by_css_id("BVAAABSHIRE")
 
+      byebug
       # At Judge Assignment
       # evidence submission docket
       create_task_at_judge_assignment(@ama_appeals[0], judge, 35.days.ago)
