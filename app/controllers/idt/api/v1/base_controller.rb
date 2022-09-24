@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Idt::Api::V1::BaseController < ActionController::Base
+class Idt::Api::V1::BaseController < ApplicationController
   include AuthenticatedControllerAction
 
   protect_from_forgery with: :exception

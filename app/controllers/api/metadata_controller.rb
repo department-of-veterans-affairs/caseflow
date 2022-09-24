@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::MetadataController < ActionController::Base
+class Api::MetadataController < ApplicationController
   protect_from_forgery with: :null_session
 
   VERSION_STATUS = {

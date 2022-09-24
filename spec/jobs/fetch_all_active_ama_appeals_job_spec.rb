@@ -20,60 +20,60 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       subject.perform
     end
   end
-    
+
   describe "find_active_ama_appeals" do
     let!(:ama_task) do
       Array.new(1) { create(:ama_task) }
     end
     context "when database has an appeal" do
       it "should return an array with the data of the appeal" do
-      expect(subject.send(:find_active_ama_appeals)).to eq(ama_task.map(&:appeal))
-    end
-    
-    context "when database has an appeal in on_hold status" do
-      before do
-        ama_task.each { |t| t.update!(status: Constants.TASK_STATUSES.on_hold) }
-      end
-      it "should return an array with the appeal tied to that task" do
         expect(subject.send(:find_active_ama_appeals)).to eq(ama_task.map(&:appeal))
       end
-    end
-    
-    context "when database has an appeal in in_progress status" do
-      before do
-        ama_task.each { |t| t.update!(status: Constants.TASK_STATUSES.in_progress) }
-      end
-      it "should return an array with the appeal tied to that task" do
-        expect(subject.send(:find_active_ama_appeals)).to eq(ama_task.map(&:appeal))
-      end
-    end
 
-    context "when database has an appeal in cancelled status" do
-      before do
-        ama_task.each { |t| t.update!(status: Constants.TASK_STATUSES.cancelled) }
+      context "when database has an appeal in on_hold status" do
+        before do
+          ama_task.each { |t| t.update!(status: Constants.TASK_STATUSES.on_hold) }
+        end
+        it "should return an array with the appeal tied to that task" do
+          expect(subject.send(:find_active_ama_appeals)).to eq(ama_task.map(&:appeal))
+        end
       end
-      it "should not return the appeal tied to that task" do
-        expect(subject.send(:find_active_ama_appeals)).not_to eq(ama_task.map(&:appeal))
-      end
-    end
 
-    context "when database has an appeal in completed status" do
-      before do
-        ama_task.each { |t| t.update!(status: Constants.TASK_STATUSES.completed) }
+      context "when database has an appeal in in_progress status" do
+        before do
+          ama_task.each { |t| t.update!(status: Constants.TASK_STATUSES.in_progress) }
+        end
+        it "should return an array with the appeal tied to that task" do
+          expect(subject.send(:find_active_ama_appeals)).to eq(ama_task.map(&:appeal))
+        end
       end
-      it "should not return the appeal tied to that task" do
-        expect(subject.send(:find_active_ama_appeals)).not_to eq(ama_task.map(&:appeal))
-      end
-    end
 
-    context "When database has a task for an appeal with a non nil closed_at attribute" do
-      before do
-        ama_task.each { |t| t.update!(closed_at: Time.zone.now) }
+      context "when database has an appeal in cancelled status" do
+        before do
+          ama_task.each { |t| t.update!(status: Constants.TASK_STATUSES.cancelled) }
+        end
+        it "should not return the appeal tied to that task" do
+          expect(subject.send(:find_active_ama_appeals)).not_to eq(ama_task.map(&:appeal))
+        end
       end
-      it "should not return the appeal tied to that task" do
-        expect(subject.send(:find_active_ama_appeals)).not_to include(ama_task.map(&:appeal))
+
+      context "when database has an appeal in completed status" do
+        before do
+          ama_task.each { |t| t.update!(status: Constants.TASK_STATUSES.completed) }
+        end
+        it "should not return the appeal tied to that task" do
+          expect(subject.send(:find_active_ama_appeals)).not_to eq(ama_task.map(&:appeal))
+        end
+      end
+
+      context "When database has a task for an appeal with a non nil closed_at attribute" do
+        before do
+          ama_task.each { |t| t.update!(closed_at: Time.zone.now) }
+        end
+        it "should not return the appeal tied to that task" do
+          expect(subject.send(:find_active_ama_appeals)).not_to include(ama_task.map(&:appeal))
+        end
       end
     end
   end
-end
 end

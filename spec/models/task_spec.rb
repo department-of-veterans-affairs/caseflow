@@ -1029,7 +1029,7 @@ describe Task, :all_dbs do
         FeatureToggle.enable!(:overtime_revamp)
       end
 
-      let(:user) { create(:user) }  #Let user be someone that is no registered to the toggle feature list
+      let(:user) { create(:user) } # Let user be someone that is no registered to the toggle feature list
       shared_examples "overtime status is changed because user is not on the feature toggle list" do
         it "clears overtime status on reassignment because user is not on the feature toggle list" do
           expect(appeal.overtime?).to be true

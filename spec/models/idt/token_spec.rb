@@ -7,9 +7,9 @@ describe Idt::Token do
 
   let(:css_id) { "TEST_ID" }
   let(:key_token_pair) { Idt::Token.generate_one_time_key_and_proposed_token }
-  # rubocop:disable Metrics/LineLength
+  # rubocop:disable Layout/LineLength
   let(:invalid_token) { "9373a256a2ac3c3bd320adeeb8a1e4d996ef064d1332357954410f25740bf0c17b6565e152760c461a85587e6a6845457f955ccfa20a8e462a77b776eb10b72c" }
-  # rubocop:enable Metrics/LineLength
+  # rubocop:enable Layout/LineLength
 
   context "#generate_one_time_key_and_proposed_token" do
     it "generates tokens and keys" do

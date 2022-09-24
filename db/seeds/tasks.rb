@@ -2,8 +2,6 @@
 
 # create tasks and their related appeals
 # to do: split this up more logically for legacy, AMA, etc.
-
-# rubocop:disable Metrics/ModuleLength
 module Seeds
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -934,4 +932,3 @@ module Seeds
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
 end
-# rubocop:enable Metrics/ModuleLength

@@ -202,14 +202,14 @@ RSpec.describe IntakesController, :postgres do
       expect(resp).to eq [
         {
           "address": {
-              "address_line_1": "9999 MISSION ST",
-              "address_line_2": "UBER",
-              "address_line_3": "APT 2",
-              "city": "SAN FRANCISCO",
-              "country": "USA",
-              "state": "CA",
-              "zip": "94103"
-            },
+            "address_line_1": "9999 MISSION ST",
+            "address_line_2": "UBER",
+            "address_line_3": "APT 2",
+            "city": "SAN FRANCISCO",
+            "country": "USA",
+            "state": "CA",
+            "zip": "94103"
+          },
           "name": "JOHN SMITH",
           "participant_id": "123"
         }

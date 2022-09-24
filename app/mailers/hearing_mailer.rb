@@ -11,7 +11,7 @@
 # - Generate email subjects based on the type of email.
 # - Create the calendar invites that get attached to the emails.
 ##
-class HearingMailer < ActionMailer::Base
+class HearingMailer < ApplicationMailer
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   layout "hearing_mailer"
   helper VirtualHearings::LinkHelper

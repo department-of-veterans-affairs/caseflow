@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/LineLength
+# rubocop:disable Layout/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 # State machine
@@ -141,6 +141,6 @@ group :test do
   gem "rspec-retry"
   gem "webmock"
 end
-# rubocop:enable Metrics/LineLength
+# rubocop:enable Layout/LineLength
 
 gem "json_schemer", "~> 0.2.16"

@@ -54,7 +54,6 @@ class Form8 < CaseflowRecord
   end
 
   # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/AbcSize
   def assign_attributes_from_appeal(appeal)
     ssoc_dates = appeal.ssoc_dates&.sort || []
@@ -98,7 +97,7 @@ class Form8 < CaseflowRecord
     )
   end
   # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/CyclomaticComplexity
+
   # rubocop:enable Metrics/AbcSize
 
   def update_certification_date
