@@ -49,6 +49,10 @@ FactoryBot.define do
       type { VhaProgramOffice.name }
     end
 
+    factory :vha_caregiver_support do
+      type { VhaCaregiverSupport.name }
+    end
+
     factory :vha_regional_office do
       type { VhaRegionalOffice.name }
     end

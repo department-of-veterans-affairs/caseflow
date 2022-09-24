@@ -16,9 +16,7 @@ class EducationRpoInProgressTasksTab < QueueTab
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view
-      .in_progress
-      .where(assigned_to: assignee)
+    in_progress_tasks
   end
 
   def column_names
