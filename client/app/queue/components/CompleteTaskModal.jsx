@@ -515,14 +515,14 @@ class CompleteTaskModal extends React.Component {
     if (this.props.modalType === 'vha_send_to_board_intake') {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
 
-      formattedInstructions.push(`\n**Status:** ${locationLabel}\n`);
+      formattedInstructions.push(`\n**Status:**\n${locationLabel}\n`);
 
       if (reviewNotes) {
-        formattedInstructions.push(`\n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}\n`);
+        formattedInstructions.push(`\n\n**${reviewNotes} Notes:**\n${previousInstructions.join('')}\n`);
       }
 
       if (instructions) {
-        const instructionsDetail = `\n**CAMO Notes:** ${instructions}`;
+        const instructionsDetail = `\n**CAMO Notes:**\n${instructions}`;
 
         formattedInstructions.splice(1, 0, instructionsDetail);
       }
@@ -533,7 +533,7 @@ class CompleteTaskModal extends React.Component {
 
       formattedInstructions.push(docLocationText);
       if (instructions) {
-        const instructionsDetail = `\n\n**Detail:**\n\n${instructions}\n`;
+        const instructionsDetail = `\n\n**Detail:**\n${instructions}\n`;
 
         formattedInstructions.push(instructionsDetail);
       }
