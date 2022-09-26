@@ -437,6 +437,8 @@ describe AppellantNotification do
       end
       it "sends notification when completing a FoiaColocatedTask" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
+        foiactask = ColocatedTask.create_from_params(foia_colocated_task, attorney)
+        byebug
         foia_child.update!(status: "completed")
       end
     end
