@@ -12,8 +12,8 @@ FactoryBot.define do
   factory :task do
     assigned_at { rand(30..35).days.ago }
     # minimize the number of single-use users by setting assigned_by to an existing user if it exists
-    assigned_by { User.find_by(full_name: "Lauren Roth", station_id: User::BOARD_STATION_ID) || create(:user) }
-    assigned_to { User.find_by(full_name: "TaskFactory User") || create(:user, full_name: "TaskFactory User") }
+    association :assigned_by, factory: :user
+    association :assigned_to, factory: :user
     type { Task.name }
 
     # if a parent is specified, make sure to use that parent's appeal
