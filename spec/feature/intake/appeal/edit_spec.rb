@@ -456,6 +456,9 @@ feature "Appeal Edit issues", :all_dbs do
     end
 
     scenario "when navigating from split_appeal to queue, the success banner displays" do
+      # set success and fail message
+      success_message = "You have successfully split"
+      fail_message = "This new appeal stream has the same docket number and tasks as the original appeal."
       # add issues to the appeal
       appeal2.request_issues << request_issue_1
       appeal2.request_issues << request_issue_2
@@ -465,15 +468,13 @@ feature "Appeal Edit issues", :all_dbs do
 
       click_button("Split appeal")
       expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
-      expect(page).to have_content("You have successfully split")
-      expect(page).to
-      have_content("This new appeal stream has the same docket number and tasks as the original appeal.")
+      expect(page).to have_content(success_message)
+      expect(page).to have_content(fail_message)
 
       # resetting the page removes the banner on load.
       page.reset!
-      expect(page).to_not have_content("You have successfully split")
-      expect(page).to_not
-      have_content("This new appeal stream has the same docket number and tasks as the original appeal.")
+      expect(page).to_not have_content(success_message)
+      expect(page).to_not have_content(fail_message)
     end
   end
 
