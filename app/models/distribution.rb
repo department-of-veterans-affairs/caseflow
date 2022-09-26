@@ -129,10 +129,6 @@ class Distribution < CaseflowRecord
     team_batch_size * Constants.DISTRIBUTION.batch_size_per_attorney
   end
 
-  def use_by_docket_date_distribution?
-    FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
-  end
-
   def error_statistics(error)
     {
         error: error&.full_message
