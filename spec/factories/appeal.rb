@@ -202,6 +202,7 @@ FactoryBot.define do
       after(:create) do |appeal, evaluator|
         hearing_day = create(
           :hearing_day,
+          judge: evaluator.tied_judge,
           scheduled_for: 1.day.ago,
           created_by: evaluator.tied_judge,
           updated_by: evaluator.tied_judge
