@@ -62,8 +62,6 @@ feature "Intake Confirmation Page", :postgres do
   end
 
   describe "when completing an appeal" do
-    before { FeatureToggle.enable!(:vha_predocket_appeals) }
-    after { FeatureToggle.disable!(:vha_predocket_appeals) }
     context "appeal has VHA issues" do
       let(:claim_review_type) { :board_appeal }
       it "displays the correct copy on confirmation page" do

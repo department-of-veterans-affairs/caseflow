@@ -5,7 +5,6 @@ module AllCaseDistribution
   extend ActiveSupport::Concern
 
   delegate :dockets,
-           :docket_proportions,
            :priority_count,
            :direct_review_due_count,
            :total_batch_size,
@@ -27,10 +26,12 @@ module AllCaseDistribution
 
   def requested_distribution
     @appeals = []
-    @rem = initial_capacity
+    @rem = batch_size
     @nonpriority_iterations = 0
 
-    distribute_priority_appeals_from_all_dockets_by_age_to_limit(@rem, style: "request")
+    # If we haven't yet met the priority target, distribute additional priority appeals.
+    priority_rem = priority_target.clamp(0, @rem)
+    distribute_priority_appeals_from_all_dockets_by_age_to_limit(priority_rem, style: "request")
 
     # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
     distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem) until @rem <= 0
@@ -68,26 +69,14 @@ module AllCaseDistribution
       priority_count: priority_count,
       direct_review_due_count: direct_review_due_count,
       legacy_hearing_backlog_count: VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge),
-      legacy_proportion: docket_proportions[:legacy],
-      direct_review_proportion: docket_proportions[:direct_review],
-      evidence_submission_proportion: docket_proportions[:evidence_submission],
-      hearing_proportion: docket_proportions[:hearing],
       nonpriority_iterations: @nonpriority_iterations,
-      initial_capacity: initial_capacity,
+      algorithm: 'by_docket_date'
     }
   end
 
   def priority_target
     proportion = [priority_count.to_f / total_batch_size, 1.0].reject(&:nan?).min
     (proportion * batch_size).ceil
-  end
-
-  def docket_margin_net_of_priority
-    [total_batch_size - priority_count, 0].max
-  end
-
-  def legacy_docket_range
-    (docket_margin_net_of_priority * docket_proportions[:legacy]).round
   end
 
   def num_oldest_priority_appeals_for_judge_by_docket(distribution, num)

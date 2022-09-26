@@ -32,7 +32,8 @@ SCHEDULED_JOBS = {
     "task_timer_job" => TaskTimerJob,
     "update_appellant_representation_job" => UpdateAppellantRepresentationJob,
     "update_cached_appeals_attributes_job" => UpdateCachedAppealsAttributesJob,
-    "warm_bgs_caches_job" => WarmBgsCachesJob
+    "warm_bgs_caches_job" => WarmBgsCachesJob,
+    "va_notify_status_update_job" => VANotifyStatusUpdateJob
 }.freeze
 
 DISABLED_JOBS = {

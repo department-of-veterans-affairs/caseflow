@@ -46,16 +46,12 @@ class Distribution < CaseflowRecord
     end
   rescue StandardError => error
     # DO NOT use update! because we want to avoid validations and saving any cached associations.
-    update_columns(status: "error", errored_at: Time.zone.now)
+    update_columns(status: "error", errored_at: Time.zone.now, statistics: error_statistics(error))
     raise error
   end
 
   def distributed_cases_count
     (status == "completed") ? distributed_cases.count : 0
-  end
-
-  def initial_capacity
-    batch_size - judge_tasks.length - judge_legacy_tasks.length
   end
 
   def distributed_batch_size
@@ -97,9 +93,9 @@ class Distribution < CaseflowRecord
   end
 
   def judge_has_eight_or_fewer_unassigned_cases
-    return false if judge_tasks.length > 8
+    return false if judge_tasks.length > Constants.DISTRIBUTION.request_more_cases_minimum
 
-    judge_tasks.length + judge_legacy_tasks.length <= 8
+    judge_tasks.length + judge_legacy_tasks.length <= Constants.DISTRIBUTION.request_more_cases_minimum
   end
 
   def judge_cases_waiting_longer_than_thirty_days
@@ -115,9 +111,8 @@ class Distribution < CaseflowRecord
   end
 
   def assigned_tasks
-    pending_statuses = [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
     judge.tasks.select do |t|
-      t.is_a?(JudgeAssignTask) && pending_statuses.include?(t.status)
+      t.is_a?(JudgeAssignTask) && t.active?
     end
   end
 
@@ -133,4 +128,9 @@ class Distribution < CaseflowRecord
     FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
   end
 
+  def error_statistics(error)
+    {
+        error: error&.message
+    }
+  end
 end

@@ -16,6 +16,7 @@
 class MailTask < Task
   # Skip unique verification for mail tasks since multiple mail tasks of each type can be created.
   def verify_org_task_unique; end
+  prepend PrivacyActPending
 
   class << self
     def blocking?
@@ -108,7 +109,6 @@ class MailTask < Task
       assigned_by: assigned_by,
       assigned_to: MailTeam.singleton
     )
-
     task_type.create!(
       appeal: appeal,
       parent: parent_task,

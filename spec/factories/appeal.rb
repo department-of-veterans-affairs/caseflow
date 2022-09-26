@@ -234,6 +234,16 @@ FactoryBot.define do
       end
     end
 
+    trait :with_assigned_bva_dispatch_task do
+      after(:create) do |appeal, _evaluator|
+        bva_dispatch = BvaDispatch.singleton
+        bva_dispatch_non_admin = create(:default_user)
+        bva_dispatch.add_user(bva_dispatch_non_admin)
+        root_task = RootTask.find_or_create_by!(appeal: appeal)
+        BvaDispatchTask.create!(assigned_to: bva_dispatch, parent_id: root_task.id, appeal: root_task.appeal)
+      end
+    end
+
     trait :advanced_on_docket_due_to_motion do
       # the appeal has to be established before the motion is created to apply to it.
       established_at { Time.zone.now - 1 }
@@ -522,7 +532,7 @@ FactoryBot.define do
       after(:create) do |appeal|
         create(:request_issue,
                benefit_type: "vha",
-               nonrating_issue_category: "Caregiver",
+               nonrating_issue_category: "Caregiver | Other",
                nonrating_issue_description: "VHA - Caregiver ",
                decision_review: appeal,
                decision_date: 1.month.ago)

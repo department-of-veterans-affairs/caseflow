@@ -58,8 +58,8 @@ class LegacyDocket
 
   def should_distribute?(distribution, style: "push", genpop: "any")
     genpop == "not_genpop" || # always distribute tied cases
-      (style == "push" && !JudgeTeam.for_judge(distribution.judge).ama_only_push) ||
-      (style == "request" && !JudgeTeam.for_judge(distribution.judge).ama_only_request)
+      (style == "push" && !JudgeTeam.for_judge(distribution.judge)&.ama_only_push) ||
+      (style == "request" && !JudgeTeam.for_judge(distribution.judge)&.ama_only_request)
   end
 
   # rubocop:disable Metrics/ParameterLists

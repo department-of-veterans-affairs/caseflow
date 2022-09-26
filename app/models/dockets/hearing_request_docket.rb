@@ -43,6 +43,9 @@ class HearingRequestDocket < Docket
   def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1, style: "push")
     base_relation = appeals(priority: priority, ready: true).limit(limit)
 
+    # setting genpop to "only_genpop" behind feature toggle as this module only processes AMA
+    genpop = "only_genpop" if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+
     appeals = HearingRequestDistributionQuery.new(
       base_relation: base_relation, genpop: genpop, judge: distribution.judge
     ).call
