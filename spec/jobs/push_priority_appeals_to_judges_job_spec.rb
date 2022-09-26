@@ -13,7 +13,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
    subject { described_class.ancestors }
 
    xit do
-     is_expected.to include AllCaseDistribution
+     is_expected.to include ByDocketDateDistribution
      is_expected.to_not include AutomaticCaseDistribution
     end
   end

@@ -12,7 +12,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   application_attr :queue
 
   if FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
-    include AllCaseDistribution
+    include ByDocketDateDistribution
   else
     include AutomaticCaseDistribution
   end
