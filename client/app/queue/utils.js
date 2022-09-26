@@ -928,3 +928,34 @@ export const statusLabel = (appeal) => {
       '';
   }
 };
+
+export const getPreviousTaskInstructions = (tasks) => {
+  let reviewNotes;
+
+  const previousInstructions = tasks.map((task) => {
+    // Skip if there are no previous instructions
+    if (task.instructions[1]) {
+      if (task.assignedTo.type === 'VhaProgramOffice') {
+        reviewNotes = 'Program Office';
+
+        return task && task.instructions[1];
+      } else if (task.assignedTo.type === 'VhaRegionalOffice') {
+        reviewNotes = 'VISN';
+
+        return task && task.instructions[1];
+      } else if (task.assignedTo.type === 'VhaCamo' && task.instructions.length > 0) {
+        reviewNotes = 'CAMO';
+
+        return task && task.instructions[1];
+      } else if (task.assignedTo.type === 'EducationRpo' && task.instructions.length > 0) {
+        reviewNotes = 'Regional Processing Office';
+
+        return task && task.instructions[1];
+      }
+    }
+
+    return reviewNotes = null;
+  });
+
+  return { reviewNotes, previousInstructions };
+};

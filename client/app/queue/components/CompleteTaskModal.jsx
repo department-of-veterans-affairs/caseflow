@@ -15,7 +15,10 @@ import COPY from '../../../COPY';
 import { taskById, appealWithDetailSelector, getAllTasksForAppeal } from '../selectors';
 import { onReceiveAmaTasks } from '../QueueActions';
 import { requestPatch } from '../uiReducer/uiActions';
-import { taskActionData } from '../utils';
+import {
+  taskActionData,
+  getPreviousTaskInstructions
+ } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
 
@@ -490,31 +493,7 @@ class CompleteTaskModal extends React.Component {
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
     const formattedInstructions = [];
-    let reviewNotes;
-    const previousInstructions = this.props.tasks.map((task) => {
-      // Skip if there are no previous instructions
-      if (task.instructions?.[1]) {
-        if (task.assignedTo.type === 'VhaProgramOffice') {
-          reviewNotes = 'Program Office';
-
-          return task && task.instructions[1];
-        } else if (task.assignedTo.type === 'VhaRegionalOffice') {
-          reviewNotes = 'VISN';
-
-          return task && task.instructions[1];
-        } else if (task.assignedTo.type === 'VhaCamo' && task.instructions.length > 0) {
-          reviewNotes = 'CAMO';
-
-          return task && task.instructions[1];
-        } else if (task.assignedTo.type === 'EducationRpo' && task.instructions.length > 0) {
-          reviewNotes = 'Regional Processing Office';
-
-          return task && task.instructions[1];
-        }
-      }
-
-      return reviewNotes = null;
-    });
+    const { previousInstructions, reviewNotes } = getPreviousTaskInstructions(this.props.tasks);
 
     if (this.props.modalType === 'vha_send_to_board_intake') {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
