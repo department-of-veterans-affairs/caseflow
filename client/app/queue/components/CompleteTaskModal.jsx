@@ -7,8 +7,9 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import RadioField from '../../components/RadioField';
-import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, slimHeight } from '../constants';
+import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, setHeight, slimHeight } from '../constants';
 import TextareaField from 'app/components/TextareaField';
+import SearchableDropdown from '../../components/SearchableDropdown';
 import Alert from 'app/components/Alert';
 import COPY from '../../../COPY';
 import { taskById, appealWithDetailSelector, getAllTasksForAppeal } from '../selectors';
@@ -24,6 +25,10 @@ const validRadio = (radio) => {
 
 const validInstructions = (instructions) => {
   return instructions?.length > 0;
+};
+
+const validDropdown = (dropdown) => {
+  return dropdown?.length > 0;
 };
 
 const MarkTaskCompleteModal = ({ props, state, setState }) => {
@@ -45,6 +50,7 @@ const MarkTaskCompleteModal = ({ props, state, setState }) => {
           value={state.instructions}
           styling={marginTop(4)}
           maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+          optional
         />
       )}
     </React.Fragment>
@@ -85,8 +91,8 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
   const modalLabel = () => {
     if (getTaskType() === 'AssessDocumentationTask') {
       return COPY.VHA_COMPLETE_TASK_MODAL_TITLE;
-    } else if (getTaskType()?.includes('Education')) {
-      return StringUtil.nl2br(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_MODAL_BODY);
+    } else if ((getTaskType() === 'VhaDocumentSearchTask') || (getTaskType()?.includes('Education'))) {
+      return StringUtil.nl2br(COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY);
     }
 
     return null;
@@ -110,7 +116,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
           />
           {state.radio === 'other' &&
             <TextareaField
-              label='If "Other" was chosen indicate the source.'
+              label="Please indicate the source"
               name="otherCompleteTaskDocLocation"
               id="completeTaskOtherInstructions"
               onChange={handleTextFieldChange}
@@ -125,9 +131,9 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             name="instructions"
             id="completeTaskInstructions"
             onChange={(value) => setState({ instructions: value })}
+            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             value={state.instructions}
             styling={marginTop(4)}
-            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
               !validInstructions(state.instructions) &&
               !isOptional() ? COPY.EMPTY_INSTRUCTIONS_ERROR :
@@ -272,6 +278,69 @@ SendColocatedTaskModal.propTypes = {
   teamName: PropTypes.string
 };
 
+const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+
+  const dropdownOptions = taskConfiguration.options;
+
+  const handleDropdownChange = ({ value }) => {
+    setState({ dropdown: value });
+    if (value === 'other') {
+      setState({ otherInstructions: '' });
+    }
+  };
+
+  return (
+    <React.Fragment>
+      {taskConfiguration && taskConfiguration.modal_body}
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        <div style= {{ marginTop: '1.5rem' }}>
+          <SearchableDropdown
+            label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL}
+            defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
+            name="rejectReason"
+            id="caregiverSupportReturnToBoardIntakeReasonSelection"
+            options={dropdownOptions}
+            onChange={handleDropdownChange}
+            value={state.dropdown}
+            errorMessage={props.highlightInvalid &&
+              !validDropdown(state.dropdown) ? 'You must select a reason for returning to intake' : null}
+          />
+          {state.dropdown === 'other' &&
+            <TextareaField
+              label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL}
+              name="otherRejectReason"
+              id="completeTaskOtherInstructions"
+              onChange={(value) => setState({ otherInstructions: value })}
+              value={state.otherInstructions}
+              styling={marginTop(2)}
+              textAreaStyling={setHeight(4.5)}
+              errorMessage={props.highlightInvalid &&
+                !validInstructions(state.otherInstructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
+            />}
+          <TextareaField
+            label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL}
+            name="instructions"
+            id="caregiverSupportReturnToBoardIntakeInstructions"
+            onChange={(value) => setState({ instructions: value })}
+            value={state.instructions}
+            styling={marginTop(2)}
+            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+            optional
+          />
+        </div>
+      )}
+    </React.Fragment>
+  );
+};
+
+VhaCaregiverSupportReturnToBoardIntakeModal.propTypes = {
+  props: PropTypes.object,
+  setState: PropTypes.func,
+  state: PropTypes.object,
+  highlightInvalid: PropTypes.bool,
+};
+
 const MODAL_TYPE_ATTRS = {
   mark_task_complete: {
     buildSuccessMsg: (appeal, { contact }) => ({
@@ -288,7 +357,7 @@ const MODAL_TYPE_ATTRS = {
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_PO, appeal.veteranFullName) :
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_VISN, appeal.veteranFullName)
     }),
-    title: () => COPY.VHA_COMPLETE_TASK_LABEL,
+    title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
   },
@@ -329,7 +398,7 @@ const MODAL_TYPE_ATTRS = {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
     }),
-    title: () => COPY.VHA_COMPLETE_TASK_LABEL,
+    title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
   },
@@ -337,9 +406,63 @@ const MODAL_TYPE_ATTRS = {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO, appeal.veteranFullName)
     }),
-    title: () => COPY.VHA_COMPLETE_TASK_LABEL,
+    title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SUBMIT_BUTTON
+  },
+  vha_caregiver_support_return_to_board_intake: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_SUCCESS_CONFIRMATION, appeal.veteranFullName)
+    }),
+    title: () => COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+    getContent: VhaCaregiverSupportReturnToBoardIntakeModal,
+    buttonText: COPY.MODAL_RETURN_BUTTON,
+    submitButtonClassNames: ['usa-button'],
+    submitDisabled: ({ state }) => (
+      !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
+    ),
+    customValidation: ({ state }) => (
+      state.dropdown === 'other' ? validInstructions(state.otherInstructions) && validDropdown(state.dropdown) :
+        validDropdown(state.dropdown)
+    ),
+    customFormatInstructions: ({ state }) => {
+      let formattedInstructions = '';
+
+      if (state.dropdown === 'other') {
+        formattedInstructions += `\n**Reason for return:**\nOther - ${state.otherInstructions}`;
+      } else {
+        formattedInstructions += `\n**Reason for return:**\n${state.dropdown}`;
+      }
+
+      if (state.instructions) {
+        formattedInstructions += `\n\n**Detail:**\n${state.instructions}`;
+      }
+
+      return formattedInstructions;
+    }
+  },
+
+  vha_caregiver_support_send_to_board_intake_for_review: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(
+        COPY.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE, appeal.veteranFullName)
+    }),
+    title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
+    getContent: ReadyForReviewModal,
+    buttonText: COPY.MODAL_SEND_BUTTON,
+    submitDisabled: ({ state }) => {
+      const { otherInstructions, radio } = state;
+
+      let isValid = true;
+
+      if (radio === 'other') {
+        isValid = validInstructions(otherInstructions) && validRadio(radio);
+      } else {
+        isValid = validRadio(radio);
+      }
+
+      return !isValid;
+    }
   },
 };
 
@@ -349,6 +472,7 @@ class CompleteTaskModal extends React.Component {
     this.state = {
       instructions: '',
       radio: '',
+      dropdown: '',
       otherInstructions: '',
       errors: {}
     };
@@ -393,21 +517,24 @@ class CompleteTaskModal extends React.Component {
 
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
-    let formattedInstructions = instructions;
+    const formattedInstructions = [];
     let reviewNotes;
     const previousInstructions = this.props.tasks.map((task) => {
-      if (task.assignedTo.type === 'VhaProgramOffice') {
-        reviewNotes = 'Program Office';
+      // Skip if there are no previous instructions
+      if (task.instructions[1]) {
+        if (task.assignedTo.type === 'VhaProgramOffice') {
+          reviewNotes = 'Program Office';
 
-        return task && task.instructions[1];
-      } else if (task.assignedTo.type === 'VhaRegionalOffice') {
-        reviewNotes = 'VISN';
+          return task && task.instructions[1];
+        } else if (task.assignedTo.type === 'VhaRegionalOffice') {
+          reviewNotes = 'VISN';
 
-        return task && task.instructions[1];
-      } else if (task.assignedTo.type === 'VhaCamo') {
-        reviewNotes = 'CAMO';
+          return task && task.instructions[1];
+        } else if (task.assignedTo.type === 'VhaCamo' && task.instructions.length > 0) {
+          reviewNotes = 'CAMO';
 
-        return task && task.instructions[1];
+          return task && task.instructions[1];
+        }
       }
 
       return reviewNotes = null;
@@ -416,56 +543,68 @@ class CompleteTaskModal extends React.Component {
     if (this.props.modalType === 'vha_send_to_board_intake') {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
 
+      formattedInstructions.push(`\n**Status:** ${locationLabel}\n`);
+
       if (reviewNotes) {
-        formattedInstructions = `\n\n**Status:** ${locationLabel}\n\n
-        \n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}`;
+        formattedInstructions.push(`\n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}\n`);
       }
 
       if (instructions) {
-        const instructionsDetail = `\n\n**CAMO Notes:** ${instructions}`;
+        const instructionsDetail = `\n**CAMO Notes:** ${instructions}`;
 
-        formattedInstructions += instructionsDetail;
+        formattedInstructions.splice(1, 0, instructionsDetail);
       }
-    } else if (this.props.modalType === 'ready_for_review') {
+    } else if (this.props.modalType.includes('for_review')) {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
       const docLocationText = `Documents for this appeal are stored in ${radio === 'other' ? otherInstructions :
         locationLabel}.`;
 
-      formattedInstructions = docLocationText;
+      formattedInstructions.push(docLocationText);
       if (instructions) {
-        const instructionsDetail = `\n\n**Detail:**\n\n${instructions}`;
+        const instructionsDetail = `\n\n**Detail:**\n\n${instructions}\n`;
 
-        formattedInstructions += instructionsDetail;
+        formattedInstructions.push(instructionsDetail);
       }
+    } else if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customFormatInstructions === 'function') {
+      formattedInstructions.push(
+        MODAL_TYPE_ATTRS[this.props.modalType].customFormatInstructions(this.getContentArgs())
+      );
+    } else {
+      formattedInstructions.push(instructions);
     }
 
-    return formattedInstructions;
+    return formattedInstructions.join('');
   };
 
-  validateForm = () => {
-    const { instructions, otherInstructions, radio } = this.state;
-    const modalType = this.props.modalType;
+   validateForm = () => {
+     const { instructions, otherInstructions, radio } = this.state;
+     const modalType = this.props.modalType;
 
-    let isValid = true;
+     let isValid = true;
 
-    if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
-      isValid = validInstructions(instructions) && validRadio(radio);
-    }
+     if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
+       isValid = validInstructions(instructions) && validRadio(radio);
+     }
 
-    if (modalType === 'emo_return_to_board_intake') {
-      isValid = validInstructions(instructions);
-    }
+     if (modalType === 'emo_return_to_board_intake') {
+       isValid = validInstructions(instructions);
+     }
 
-    if (modalType === 'emo_send_to_board_intake_for_review' || modalType === 'rpo_send_to_board_intake_for_review') {
-      if (radio === 'other') {
-        isValid = validInstructions(otherInstructions) && validRadio(radio);
-      } else {
-        isValid = validRadio(radio);
-      }
-    }
+     if (modalType === 'emo_send_to_board_intake_for_review' || modalType === 'rpo_send_to_board_intake_for_review') {
+       if (radio === 'other') {
+         isValid = validInstructions(otherInstructions) && validRadio(radio);
+       } else {
+         isValid = validRadio(radio);
+       }
+     }
 
-    return isValid;
-  }
+     // Checks validity using the customValidation function defined in the modal constants if it is present
+     if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customValidation === 'function') {
+       isValid = MODAL_TYPE_ATTRS[this.props.modalType].customValidation(this.getContentArgs());
+     }
+
+     return isValid;
+   }
 
   submit = () => {
     const { task, appeal } = this.props;
@@ -485,7 +624,6 @@ class CompleteTaskModal extends React.Component {
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
       this.props.onReceiveAmaTasks(resp.body.tasks.data);
     });
-
   };
 
   render = () => {
@@ -495,9 +633,11 @@ class CompleteTaskModal extends React.Component {
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
         button={modalAttributes.buttonText}
+        submitDisabled={modalAttributes.submitDisabled?.(this.getContentArgs())}
         validateForm={this.validateForm}
         submit={this.submit}
         pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
+        submitButtonClassNames={modalAttributes.submitButtonClassNames || ['usa-button']}
       >
         {this.props.task ?
           modalAttributes.getContent(this.getContentArgs()) :
