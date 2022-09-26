@@ -520,6 +520,10 @@ class CompleteTaskModal extends React.Component {
 
         formattedInstructions.push(instructionsDetail);
       }
+
+      if (reviewNotes) {
+        formattedInstructions.push(`\n\n**${reviewNotes} Notes:**\n${previousInstructions.join('')}\n`);
+      }
     } else if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customFormatInstructions === 'function') {
       formattedInstructions.push(
         MODAL_TYPE_ATTRS[this.props.modalType].customFormatInstructions(this.getContentArgs())
