@@ -42,8 +42,7 @@ module Seeds
         file_number: format("%<n>09d", n: @file_number),
         participant_id: format("%<n>09d", n: @participant_id)
       }
-      params << options
-      create(:veteran, params)
+      create(:veteran, params.merge(options))
     end
 
     def create_ama_appeals
