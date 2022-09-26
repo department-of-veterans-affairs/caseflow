@@ -952,7 +952,7 @@ module Seeds
         next unless VACOLS::Folder.find_by(tinum: docket_number).nil?
 
         # Create the veteran for this legacy appeal
-        veteran = build_veteran
+        veteran = create_veteran
 
         vacols_titrnum = veteran.file_number
 
