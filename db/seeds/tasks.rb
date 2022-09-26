@@ -13,7 +13,7 @@ module Seeds
   class Tasks < Base
     def initialize
       @ama_appeals = []
-      file_number_initial_value
+      initial_file_number_and_participant_id
     end
 
     def seed!
@@ -25,13 +25,25 @@ module Seeds
 
     private
 
-    # appeals that are ready for distribution use these so they are easier to find for testing
-    def file_number_initial_value
-      @file_number ||= 300_000_000
-      # this seed creates 955 veterans, so +2000 gives a large margin to add more data in the future
+    def initial_file_number_and_participant_id
+      @file_number ||= 100_000_000
+      @participant_id ||= 500_000_000
       # n is (@file_number + 1) because @file_number is incremented before using it in factories in calling methods
-      @file_number += 2000 while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
-      @file_number
+      while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
+        @file_number += 2000
+        @participant_id += 2000
+      end
+    end
+
+    def create_veteran(options = {})
+      @file_number += 1
+      @participant_id += 1
+      params = {
+        file_number: format("%<n>09d", n: @file_number),
+        participant_id: format("%<n>09d", n: @participant_id)
+      }
+      params << options
+      create(:veteran, params)
     end
 
     def create_ama_appeals
@@ -92,11 +104,10 @@ module Seeds
 
       # Create AMA appeals ready for distribution received this month
       (1..30).each do |num|
-        @file_number += 1
         create(
           :appeal,
           :ready_for_distribution,
-          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
+          veteran: create_veteran,
           number_of_claimants: 1,
           active_task_assigned_at: Time.zone.now,
           docket_type: Constants.AMA_DOCKETS.direct_review,
@@ -110,11 +121,10 @@ module Seeds
 
       # Create AMA appeals ready for distribution received over a year ago
       (1..5).each do |num|
-        @file_number += 1
         create(
           :appeal,
           :ready_for_distribution,
-          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
+          veteran: create_veteran,
           number_of_claimants: 1,
           active_task_assigned_at: Time.zone.now,
           docket_type: Constants.AMA_DOCKETS.direct_review,
@@ -128,11 +138,10 @@ module Seeds
 
       # Create AMA appeals ready for distribution received over 65 days ago
       (1..5).each do |num|
-        @file_number += 1
         create(
           :appeal,
           :ready_for_distribution,
-          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
+          veteran: create_veteran,
           number_of_claimants: 1,
           active_task_assigned_at: Time.zone.now,
           docket_type: Constants.AMA_DOCKETS.direct_review,
@@ -146,11 +155,10 @@ module Seeds
 
       # Create AMA appeals ready for distribution in the future
       (1..5).each do |num|
-        @file_number += 1
         create(
           :appeal,
           :ready_for_distribution,
-          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
+          veteran: create_veteran,
           number_of_claimants: 1,
           active_task_assigned_at: Time.zone.now,
           docket_type: Constants.AMA_DOCKETS.direct_review,
@@ -213,11 +221,7 @@ module Seeds
     end
 
     def create_ama_distribution_tasks
-      @file_number += 1
-      veteran = create(:veteran,
-                       first_name: "Julius",
-                       last_name: "Hodge",
-                       file_number: format("%<n>09d", n: @file_number))
+      veteran = create_veteran(first_name: "Julius", last_name: "Hodge")
       appeal = create(:appeal, veteran: veteran, docket_type: Constants.AMA_DOCKETS.evidence_submission)
       create(
         :request_issue,
@@ -255,11 +259,7 @@ module Seeds
 
     def create_task_at_bva_dispatch(seed = Faker::Number.number(digits: 3))
       Faker::Config.random = Random.new(seed)
-      vet = create(
-        :veteran,
-        first_name: Faker::Name.first_name,
-        last_name: Faker::Name.last_name
-      )
+      vet = create_veteran(first_name: Faker::Name.first_name, last_name: Faker::Name.last_name)
 
       notes = "Pain disorder with 100\% evaluation per examination"
       notes += ". Created with the inital_tasks factory trait and moved thru"
@@ -317,11 +317,7 @@ module Seeds
         notes = "Pain disorder with 100\% evaluation per examination"
         notes += ". Created with the at_bva_dispatch factory trait"
 
-        vet = create(
-          :veteran,
-          first_name: Faker::Name.first_name,
-          last_name: Faker::Name.last_name
-        )
+        vet = create_veteran(first_name: Faker::Name.first_name, last_name: Faker::Name.last_name)
 
         attorney = User.find_by_css_id("BVASCASPER1")
         judge = User.find_by_css_id("BVAAABSHIRE")
@@ -358,11 +354,7 @@ module Seeds
         notes = "Pain disorder with 100\% evaluation per examination"
         notes += ". Created with the dispatched factory trait"
 
-        vet = create(
-          :veteran,
-          first_name: Faker::Name.first_name,
-          last_name: Faker::Name.last_name
-        )
+        vet = create_veteran(first_name: Faker::Name.first_name, last_name: Faker::Name.last_name)
 
         attorney = User.find_by_css_id("BVASCASPER1")
         judge = User.find_by_css_id("BVAAABSHIRE")
@@ -398,11 +390,7 @@ module Seeds
     def create_task_at_quality_review(
       judge_name = "Madhu Judge_CaseAtQR Burnham", attorney_name = "Bailey Attorney_CaseAtQR Eoin"
     )
-      vet = create(
-        :veteran,
-        first_name: Faker::Name.first_name,
-        last_name: Faker::Name.last_name
-      )
+      vet = create_veteran(first_name: Faker::Name.first_name, last_name: Faker::Name.last_name)
       notes = "Pain disorder with 100\% evaluation per examination"
 
       appeal = create(
@@ -512,7 +500,7 @@ module Seeds
     def create_change_hearing_disposition_task
       hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
       hearing_day = create(:hearing_day, created_by: hearings_member, updated_by: hearings_member)
-      veteran = create(:veteran, first_name: "Abellona", last_name: "Valtas")
+      veteran = create_veteran(first_name: "Abellona", last_name: "Valtas")
       appeal = create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number)
       root_task = create(:root_task, appeal: appeal)
       distribution_task = create(:distribution_task, parent: root_task)
@@ -683,12 +671,11 @@ module Seeds
       end
 
       8.times do
-        @file_number += 1
         create(
           :appeal,
           :with_post_intake_tasks,
           docket_type: Constants.AMA_DOCKETS.direct_review,
-          veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number))
+          veteran: create_veteran
         )
       end
 
@@ -796,11 +783,10 @@ module Seeds
       description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       notes = "Pain disorder with 100\% evaluation per examination"
 
-      @file_number += 1
       create(
         :appeal,
         :assigned_to_judge,
-        veteran: create(:veteran, file_number: format("%<n>09d", n: @file_number)),
+        veteran: create_veteran,
         number_of_claimants: 1,
         associated_judge: judge,
         active_task_assigned_at: assigned_at,
@@ -966,7 +952,7 @@ module Seeds
         next unless VACOLS::Folder.find_by(tinum: docket_number).nil?
 
         # Create the veteran for this legacy appeal
-        veteran = create(:veteran)
+        veteran = build_veteran
 
         vacols_titrnum = veteran.file_number
 

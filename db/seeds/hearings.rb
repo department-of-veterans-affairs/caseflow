@@ -25,6 +25,7 @@ module Seeds
 
     def initialize
       @ama_appeal_count = 0
+      initial_file_number_and_participant_id
     end
 
     def seed!
@@ -36,6 +37,16 @@ module Seeds
     end
 
     private
+
+    def initial_file_number_and_participant_id
+      @file_number ||= 300_000_000
+      @participant_id ||= 700_000_000
+      # n is (@file_number + 1) because @file_number is incremented before using it in factories in calling methods
+      while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
+        @file_number += 2000
+        @participant_id += 2000
+      end
+    end
 
     def create_ama_hearings_for_day(day, count)
       count.times do
@@ -292,9 +303,12 @@ module Seeds
 
     # creates fake veteran given a file number
     def create_veteran(veteran_file_number: nil)
+      @file_number += 1
+      @participant_id += 1
       veteran_fields = {
         first_name: Faker::Name.first_name,
         last_name: Faker::Name.last_name,
+        participant_id: format("%<n>09d", n: @participant_id),
         bgs_veteran_record: {
           date_of_birth: Faker::Date.birthday(min_age: 35, max_age: 80).strftime("%m/%d/%Y"),
           date_of_death: nil,
@@ -307,12 +321,8 @@ module Seeds
           city: Faker::Address.city
         }
       }
-      veteran_fields[:file_number] = veteran_file_number if veteran_file_number.present?
-
-      create(
-        :veteran,
-        **veteran_fields
-      )
+      veteran_fields[:file_number] = veteran_file_number || format("%<n>09d", n: @file_number)
+      create(:veteran, **veteran_fields)
     end
 
     def create_travel_board_vacols_case
