@@ -8,6 +8,7 @@ export const StatusMessage = (props) => {
     checklist,
     checklistClassNames,
     leadMessageList,
+    messageTag,
     messageText,
     title,
     wrapInAppSegment,
@@ -33,17 +34,19 @@ export const StatusMessage = (props) => {
     'cf-app-segment cf-app-segment--alt': wrapInAppSegment
   });
 
+  const MessageTag = messageTag;
+
   return <div id="certifications-generate" className={wrapperClassName}>
     <h1 className={getClassNames()}>{title}</h1>
 
     { children ?
-      <h2 className="cf-msg-screen-deck">
+      <MessageTag className="cf-msg-screen-deck">
         {children}
-      </h2> :
+      </MessageTag> :
       map(leadMessageList, (listValue, i) =>
-        <h2 className="cf-msg-screen-deck" key={i}>
+        <MessageTag className="cf-msg-screen-deck" key={i}>
           {listValue}
-        </h2>)
+        </MessageTag>)
     }
     {type === 'success' && checklist && <ul className={checklistClassNames.join(' ')}>
       {checklist.map((listValue, i) => <li key={i}>{listValue}</li>)}
@@ -57,7 +60,8 @@ export const StatusMessage = (props) => {
 StatusMessage.defaultProps = {
   checklistClassNames: ['cf-success-checklist', 'cf-left-padding'],
   wrapInAppSegment: true,
-  type: 'status'
+  type: 'status',
+  messageTag: 'h2'
 };
 
 StatusMessage.propTypes = {
@@ -82,6 +86,8 @@ StatusMessage.propTypes = {
    * another
    */
   leadMessageList: PropTypes.array,
+
+  messageTag: PropTypes.string,
 
   /**
    * Text to display beneath the provided `children` (or `leadMessageList`) and checklist.
