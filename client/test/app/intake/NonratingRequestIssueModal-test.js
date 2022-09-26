@@ -7,7 +7,6 @@ import { sample1 } from './testData';
 describe('NonratingRequestIssueModal', () => {
   const formType = 'higher_level_review';
   const intakeData = sample1.intakeData;
-  const featureToggles = { vhaPreDocketAppeals: false };
 
   describe('renders', () => {
     it('renders button text', () => {
@@ -15,8 +14,9 @@ describe('NonratingRequestIssueModal', () => {
         <NonratingRequestIssueModal
           formType={formType}
           intakeData={intakeData}
-          featureToggles={featureToggles}
-          onSkip={() => null} />
+          onSkip={() => null}
+          featureToggles={{}}
+        />
       );
 
       const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
@@ -43,7 +43,7 @@ describe('NonratingRequestIssueModal', () => {
         <NonratingRequestIssueModal
           formType={formType}
           intakeData={intakeData}
-          featureToggles={featureToggles}
+          featureToggles={{}}
         />);
 
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(false);
@@ -57,7 +57,7 @@ describe('NonratingRequestIssueModal', () => {
         <NonratingRequestIssueModal
           formType={formType}
           intakeData={intakeData}
-          featureToggles={featureToggles} />
+          featureToggles={{}} />
       );
 
       const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
@@ -79,7 +79,7 @@ describe('NonratingRequestIssueModal', () => {
   });
 
   describe('on appeal, with EMO Pre-Docket', () => {
-    const featureTogglesEMOPreDocket = { vhaPreDocketAppeals: false, eduPreDocketAppeals: true };
+    const featureTogglesEMOPreDocket = {eduPreDocketAppeals: true };
 
     it(' enabled selecting benefit type of "education" renders PreDocketRadioField', () => {
       const wrapper = mount(

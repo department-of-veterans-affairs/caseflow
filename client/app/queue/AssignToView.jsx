@@ -19,6 +19,10 @@ import { requestPatch, requestSave, resetSuccessMessages } from './uiReducer/uiA
 
 import { taskActionData } from './utils';
 
+const validInstructions = (instructions) => {
+  return instructions?.length > 0;
+};
+
 const selectedAction = (props) => {
   const actionData = taskActionData(props);
 
@@ -54,6 +58,10 @@ class AssignToView extends React.Component {
   componentDidMount = () => this.props.resetSuccessMessages();
 
   validateForm = () => {
+    if (this.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
+      return validInstructions(this.state.instructions);
+    }
+
     const actionData = taskActionData(this.props);
 
     if (actionData.body_optional) {
@@ -193,6 +201,7 @@ class AssignToView extends React.Component {
     const modalProps = {
       title: this.determineTitle(this.props, action, isPulacCerullo, actionData),
       pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
+
       submit: this.submit,
       validateForm: isPulacCerullo ?
         () => {
@@ -203,6 +212,12 @@ class AssignToView extends React.Component {
 
     if (isPulacCerullo) {
       modalProps.button = 'Notify';
+    }
+
+    if (modalProps.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
+      modalProps.submitButtonClassNames = ['usa-button', 'usa-button-warning'];
+      modalProps.button = 'Return';
+      modalProps.submitDisabled = !this.validateForm();
     }
 
     return (
