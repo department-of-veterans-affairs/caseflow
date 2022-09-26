@@ -419,8 +419,7 @@ describe AppellantNotification do
         OrganizationsUser.make_user_admin(user, Colocated.singleton)
         user
       end
-      # let!(:foia_parent) { create(:foia_task, appeal: appeal, assigned_to: vlj_admin, parent_id: attorney_task.id) }
-      # let!(:foia_child) { create(:foia_task, appeal: appeal, assigned_to: vlj_admin, parent_id: foia_parent.id) }
+
       let(:foia_colocated_task) do
         {
           instructions: "kjkjk",
