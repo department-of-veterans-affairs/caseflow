@@ -2,7 +2,7 @@
 
 class Generators::Random
   @unique_ssns = {}
-  
+
   class << self
     def whitespace(len = 16)
       from_set([" ", "\n", "\r", "\t"], len)
