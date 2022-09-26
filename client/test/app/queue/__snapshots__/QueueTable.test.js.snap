@@ -809,6 +809,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
       aria-describedby="case-table-description"
       aria-label="Appeals"
       className="usa-table-borderless undefined"
+      id="case-table-description"
       role="table"
     >
       <caption
@@ -1473,6 +1474,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
       aria-describedby="case-table-description"
       aria-label="Appeals"
       className="usa-table-borderless undefined"
+      id="case-table-description"
       role="table"
     >
       <caption
@@ -1966,6 +1968,7 @@ exports[`QueueTable render() Matches snapshot with default props 1`] = `
     aria-describedby="case-table-description"
     aria-label="Appeals"
     className="usa-table-borderless undefined"
+    id="case-table-description"
     role="table"
   >
     <caption
@@ -5390,7 +5393,6 @@ exports[`QueueTable render() Renders loading component instead of body when load
       >
         <section
           className="testClasses"
-          role="main"
         >
           <div
             data-css-1ogvp9u=""
@@ -7019,6 +7021,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
       aria-describedby="case-table-description"
       aria-label="Appeals"
       className="usa-table-borderless undefined"
+      id="case-table-description"
       role="table"
     >
       <caption
