@@ -46,7 +46,12 @@ class Distribution < CaseflowRecord
     end
   rescue StandardError => error
     # DO NOT use update! because we want to avoid validations and saving any cached associations.
-    update_columns(status: "error", errored_at: Time.zone.now, statistics: error_statistics(error))
+    # Prevent prod database from getting Stacktraces as this is debugging information
+    if Rails.deploy_env?(:prod)
+      update_columns(status: "error", errored_at: Time.zone.now)
+    else
+      update_columns(status: "error", errored_at: Time.zone.now, statistics: error_statistics(error))
+    end
     raise error
   end
 
@@ -130,7 +135,7 @@ class Distribution < CaseflowRecord
 
   def error_statistics(error)
     {
-        error: error&.message
+        error: error&.full_message
     }
   end
 end
