@@ -99,8 +99,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Status:** Correct documents have been successfully added\n\n' +
-        '**CAMO Notes:** CAMO -> BVA Intake'
+        '\n**Status:**\nCorrect documents have been successfully added\n\n' +
+        '**CAMO Notes:**\nCAMO -> BVA Intake'
       );
     });
 
@@ -123,10 +123,10 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Status:** Correct documents have been successfully added\n\n' +
-        '**CAMO Notes:** CAMO -> BVA Intake\n\n' +
-        '**Program Office Notes:** Documents for this appeal are stored in VBMS.\n\n' +
-        '**Detail:**\n\n PO back to CAMO!\n\n'
+        '\n**Status:**\nCorrect documents have been successfully added\n\n' +
+        '**CAMO Notes:**\nCAMO -> BVA Intake\n\n' +
+        '**Program Office Notes:**\nDocuments for this appeal are stored in VBMS.\n\n' +
+        '**Detail:**\n PO back to CAMO!\n\n'
       );
     });
 
@@ -203,7 +203,7 @@ describe('CompleteTaskModal', () => {
 
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in Centralized Mail Portal.' +
-        '\n\n**Detail:**\n\nVHA PO -> BVA Intake\n'
+        '\n\n**Detail:**\nVHA PO -> BVA Intake\n'
       );
     });
 
@@ -234,7 +234,7 @@ describe('CompleteTaskModal', () => {
 
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in Other Source.' +
-        '\n\n**Detail:**\n\nPO -> CAMO\n'
+        '\n\n**Detail:**\nPO -> CAMO\n'
       );
     });
   });
@@ -344,7 +344,7 @@ describe('CompleteTaskModal', () => {
 
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in VBMS.' +
-        '\n\n**Detail:**\n\nCAREGIVER -> BVA Intake\n'
+        '\n\n**Detail:**\nCAREGIVER -> BVA Intake\n'
       );
     });
 
@@ -375,7 +375,7 @@ describe('CompleteTaskModal', () => {
 
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in Other Source.' +
-        '\n\n**Detail:**\n\nCAREGIVER -> BVA Intake\n'
+        '\n\n**Detail:**\nCAREGIVER -> BVA Intake\n'
       );
     });
   });
@@ -408,7 +408,7 @@ describe('CompleteTaskModal', () => {
 
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in Centralized Mail Portal.' +
-        '\n\n**Detail:**\n\nEMO -> BVA Intake\n'
+        '\n\n**Detail:**\nEMO -> BVA Intake\n'
       );
     });
 
@@ -439,7 +439,7 @@ describe('CompleteTaskModal', () => {
 
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in Other Source.' +
-        '\n\n**Detail:**\n\nEMO -> BVA Intake\n'
+        '\n\n**Detail:**\nEMO -> BVA Intake\n'
       );
     });
   });
@@ -472,7 +472,7 @@ describe('CompleteTaskModal', () => {
 
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in Centralized Mail Portal.' +
-        '\n\n**Detail:**\n\nRPO -> BVA Intake\n'
+        '\n\n**Detail:**\nRPO -> BVA Intake\n'
       );
     });
 
@@ -503,7 +503,7 @@ describe('CompleteTaskModal', () => {
 
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in Other Source.' +
-        '\n\n**Detail:**\n\nRPO -> BVA Intake\n'
+        '\n\n**Detail:**\nRPO -> BVA Intake\n'
       );
     });
   });

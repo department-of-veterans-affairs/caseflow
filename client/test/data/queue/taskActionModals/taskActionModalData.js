@@ -1044,7 +1044,7 @@ export const camoToProgramOfficeToCamoData = {
         label: 'Assess Documentation',
         instructions: [
           'CAMO to PO',
-          'Documents for this appeal are stored in VBMS.\n\n**Detail:**\n\n PO back to CAMO!\n'
+          'Documents for this appeal are stored in VBMS.\n\n**Detail:**\n PO back to CAMO!\n'
         ],
         timelineTitle: 'AssessDocumentationTask completed',
       }
