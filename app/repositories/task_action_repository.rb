@@ -486,7 +486,6 @@ class TaskActionRepository
     def vha_send_to_board_intake(*)
       {
         modal_title: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
-        modal_button_text: COPY::MODAL_SUBMIT_BUTTON,
         type: VhaDocumentSearchTask.name,
         modal_button_text: COPY::MODAL_SEND_BUTTON,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
@@ -498,7 +497,6 @@ class TaskActionRepository
         modal_title: COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
         modal_button_text: COPY::MODAL_SEND_BUTTON,
         type: EducationDocumentSearchTask.name,
-        modal_button_text: COPY::MODAL_SEND_BUTTON,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}",
         body_optional: true
       }
