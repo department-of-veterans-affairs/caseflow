@@ -506,6 +506,10 @@ class CompleteTaskModal extends React.Component {
           reviewNotes = 'CAMO';
 
           return task && task.instructions[1];
+        } else if (task.assignedTo.type === 'EducationRpo' && task.instructions.length > 0) {
+          reviewNotes = 'Regional Processing Office';
+
+          return task && task.instructions[1];
         }
       }
 
