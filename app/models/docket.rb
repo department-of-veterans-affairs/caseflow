@@ -53,14 +53,14 @@ class Docket
     appeals(priority: true, ready: true).limit(num).map(&:receipt_date)
   end
 
-  # this method needs to have the same name as the method in legacy_docket.rb for all_case_distribution,
+  # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
   # but the judge that is passed in isn't relevant here
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
     appeals(priority: false, ready: true).limit(num).map(&:receipt_date)
   end
 
   def age_of_oldest_priority_appeal
-    if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+    if FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
       @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.receipt_date
     else
       @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
@@ -120,7 +120,7 @@ class Docket
   end
 
   def scoped_for_priority(scope)
-    if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+    if FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
       scope.priority.order("appeals.receipt_date")
     else
       scope.priority.ordered_by_distribution_ready_date
