@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-# When using this factory, passing in a created Veteran object is the preferred way of creating a case.
-# The required veteran can be created in-line or before the case and passed in as the bfcorlid: arg
+# When using this factory, pass in a pre-created veteran's file_number as the bfcorlid: arg
 # This ensures that the case is created with the correct veteran_file_number association, and ensures that
 # no unique index constraints are violated between VACOLS and Caseflow.
 #

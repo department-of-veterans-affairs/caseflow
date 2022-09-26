@@ -4,10 +4,10 @@ FactoryBot.define do
   factory :hearing do
     transient do
       regional_office { nil }
-      adding_user { association(:user) }
+      adding_user { User.find_by_full_name("Lauren Roth") || create(:user) }
     end
     appeal { association(:appeal, :hearing_docket) }
-    judge { association(:user, roles: ["Hearing Prep"]) }
+    judge { User.find_by(full_name: "Lauren Roth", roles: ["Hearing Prep"]) || create(:user, roles: ["Hearing Prep"]) }
     uuid { SecureRandom.uuid }
     hearing_day do
       association(
@@ -59,12 +59,10 @@ FactoryBot.define do
 
     trait :postponed do
       disposition { Constants.HEARING_DISPOSITION_TYPES.postponed }
-      # TODO: check if child tasks for these are being created
     end
 
     trait :no_show do
       disposition { Constants.HEARING_DISPOSITION_TYPES.no_show }
-      # TODO: check if child tasks for these are being created
     end
 
     trait :scheduled_in_error do
@@ -73,8 +71,6 @@ FactoryBot.define do
 
     trait :cancelled do
       disposition { Constants.HEARING_DISPOSITION_TYPES.cancelled }
-      # TODO: check if child tasks for these are being created
-      # TODO: check if vacols needs to be updated here
     end
 
     trait :with_tasks do
@@ -123,7 +119,6 @@ FactoryBot.define do
                :completed,
                parent: hearing.hearing_task_association.hearing_task,
                appeal: hearing.appeal)
-        # TODO: add child tasks of assign_hearing_disposition_task here
       end
     end
   end

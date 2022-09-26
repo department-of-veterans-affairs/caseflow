@@ -12,6 +12,7 @@ module Seeds
     # :nocov:
     def initialize
       @ready_nonpriority_hearing_case_count = 0
+      initial_file_number_and_participant_id
     end
 
     def seed!
@@ -23,6 +24,26 @@ module Seeds
     end
 
     private
+
+    def initial_file_number_and_participant_id
+      @file_number ||= 200_000_000
+      @participant_id ||= 600_000_000
+      # n is (@file_number + 1) because @file_number is incremented before using it in factories in calling methods
+      while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
+        @file_number += 1000
+        @participant_id += 1000
+      end
+    end
+
+    def create_veteran
+      @file_number += 1
+      @participant_id += 1
+      create(
+        :veteran,
+        file_number: format("%<n>09d", n: @file_number),
+        participant_id: format("%<n>09d", n: @participant_id)
+      )
+    end
 
     # Without context, this method doesn't make any useful changes to the seed data so I'm not running it
     def organize_judges
@@ -42,6 +63,9 @@ module Seeds
       judges_with_tied_cases.each do |judge|
         create_legacy_cases_tied_to_judge(judge)
         create_hearing_cases_tied_to_judge(judge)
+      end
+      judges_with_tied_cases.first(5).each do |judge|
+        create_extra_ready_hearing_nonpriority_case_for_judge(judge)
       end
     end
 
@@ -176,6 +200,7 @@ module Seeds
           :advanced_on_docket_due_to_age,
           :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
+          veteran: create_veteran,
           receipt_date: num.weeks.ago,
           tied_judge: judge,
           adding_user: User.first
@@ -192,6 +217,7 @@ module Seeds
           :advanced_on_docket_due_to_age,
           :held_hearing,
           :tied_to_judge,
+          veteran: create_veteran,
           receipt_date: num.weeks.ago,
           tied_judge: judge,
           adding_user: User.first
@@ -208,11 +234,27 @@ module Seeds
           :with_post_intake_tasks,
           :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
+          veteran: create_veteran,
           receipt_date: @ready_nonpriority_hearing_case_count.days.ago,
           tied_judge: judge,
           adding_user: User.first
         )
       end
+    end
+
+    # create one extra hearing per judge for testing ACD changes
+    def create_extra_ready_hearing_nonpriority_case_for_judge(judge)
+      create(
+        :appeal,
+        :hearing_docket,
+        :with_post_intake_tasks,
+        :held_hearing_and_ready_to_distribute,
+        :tied_to_judge,
+        veteran: create_veteran,
+        receipt_date: 4.months.ago,
+        tied_judge: judge,
+        adding_user: User.first
+      )
     end
 
     def create_legacy_ready_priority_genpop_cases
@@ -259,6 +301,7 @@ module Seeds
           :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
           :held_hearing_and_ready_to_distribute,
+          veteran: create_veteran,
           receipt_date: num.days.ago,
           adding_user: User.first
         )
@@ -273,6 +316,7 @@ module Seeds
           :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
           :held_hearing,
+          veteran: create_veteran,
           receipt_date: num.weeks.ago,
           adding_user: User.first
         )
@@ -287,6 +331,7 @@ module Seeds
           :hearing_docket,
           :with_post_intake_tasks,
           :held_hearing_and_ready_to_distribute,
+          veteran: create_veteran,
           receipt_date: @ready_nonpriority_hearing_case_count.days.ago,
           adding_user: User.first
         )
@@ -302,6 +347,7 @@ module Seeds
                         :hearing_docket,
                         :with_post_intake_tasks,
                         :held_hearing_and_ready_to_distribute,
+                        veteran: create_veteran,
                         adding_user: User.first)
         tasks = appeal.tasks
         [:TranscriptionTask, :EvidenceSubmissionWindowTask, :AssignHearingDispositionTask].each do |type|
@@ -326,6 +372,7 @@ module Seeds
                         :hearing_docket,
                         :with_post_intake_tasks,
                         :held_hearing_and_ready_to_distribute,
+                        veteran: create_veteran,
                         adding_user: User.first)
         tasks = appeal.tasks
         [:TranscriptionTask, :EvidenceSubmissionWindowTask].each do |type|
@@ -336,7 +383,7 @@ module Seeds
         end
 
         tasks.find_by(type: :AssignHearingDispositionTask).update!(
-          created_at: Time.now, assigned_at: Time.now, closed_at: 77.days.from_now, updated_at: 77.days.from_now
+          created_at: Time.zone.now, assigned_at: Time.zone.now, closed_at: 77.days.from_now, updated_at: 77.days.from_now
         )
         tasks.find_by(type: :HearingTask).update!(closed_at: 77.days.from_now)
         tasks.find_by(type: :DistributionTask).update!(assigned_at: 77.days.from_now)
@@ -351,6 +398,7 @@ module Seeds
           :direct_review_docket,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
+          veteran: create_veteran,
           receipt_date: num.days.ago
         )
       end
@@ -363,6 +411,7 @@ module Seeds
           :direct_review_docket,
           :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
+          veteran: create_veteran,
           receipt_date: num.days.ago
         )
       end
@@ -374,6 +423,7 @@ module Seeds
           :appeal,
           :direct_review_docket,
           :ready_for_distribution,
+          veteran: create_veteran,
           receipt_date: num.days.ago
         )
       end
@@ -386,6 +436,7 @@ module Seeds
           :evidence_submission_docket,
           :ready_for_distribution,
           :advanced_on_docket_due_to_age,
+          veteran: create_veteran,
           receipt_date: num.days.ago
         )
       end
@@ -398,6 +449,7 @@ module Seeds
           :evidence_submission_docket,
           :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
+          veteran: create_veteran,
           receipt_date: num.days.ago
         )
       end
@@ -409,6 +461,7 @@ module Seeds
           :appeal,
           :evidence_submission_docket,
           :ready_for_distribution,
+          veteran: create_veteran,
           receipt_date: num.days.ago
         )
       end
@@ -420,6 +473,7 @@ module Seeds
           :appeal,
           :type_cavc_remand,
           :cavc_ready_for_distribution,
+          veteran: create_veteran,
           receipt_date: num.days.ago
         )
       end
@@ -432,6 +486,7 @@ module Seeds
           :type_cavc_remand,
           :cavc_ready_for_distribution,
           :advanced_on_docket_due_to_age,
+          veteran: create_veteran,
           receipt_date: num.days.ago
         )
       end
@@ -442,6 +497,7 @@ module Seeds
         create(
           :appeal,
           :type_cavc_remand,
+          veteran: create_veteran,
           receipt_date: num.days.ago
         )
       end
@@ -456,7 +512,6 @@ module Seeds
         correspondent: create(:correspondent)
       )
       create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case)
-
       create_distribution_for_case_id(vacols_case.bfkey)
     end
 
