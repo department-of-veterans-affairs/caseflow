@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/ModuleLength
-module AllCaseDistribution
+module ByDocketDateDistribution
   extend ActiveSupport::Concern
 
   delegate :dockets,

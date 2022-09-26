@@ -215,7 +215,7 @@ describe DocketCoordinator do
 
     let(:tied_legacy_case_count) { 5 }
     let(:genpop_legacy_case_count) { 4 }
-    let(:tied_ama_hearing_case_count) { 3 } if !FeatureToggle.enabled?(:acd_distribute_all)
+    let(:tied_ama_hearing_case_count) { 3 } if !FeatureToggle.enabled?(:acd_distribute_by_docket_date)
     let(:genpop_ama_hearing_case_count) { 2 }
     let(:genpop_direct_case_count) { 2 }
     let(:genpop_evidence_case_count) { 2 }

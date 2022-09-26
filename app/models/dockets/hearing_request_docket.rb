@@ -19,7 +19,7 @@ class HearingRequestDocket < Docket
     ).call.map(&:ready_for_distribution_at)
   end
 
-  # this method needs to have the same name as the method in legacy_docket.rb for all_case_distribution,
+  # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
   # but the judge that is passed in isn't relevant here
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
     HearingRequestDistributionQuery.new(
@@ -44,7 +44,7 @@ class HearingRequestDocket < Docket
     base_relation = appeals(priority: priority, ready: true).limit(limit)
 
     # setting genpop to "only_genpop" behind feature toggle as this module only processes AMA
-    genpop = "only_genpop" if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+    genpop = "only_genpop" if FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
 
     appeals = HearingRequestDistributionQuery.new(
       base_relation: base_relation, genpop: genpop, judge: distribution.judge

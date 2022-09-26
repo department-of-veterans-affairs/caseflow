@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe AllCaseDistribution, :all_dbs do
-  class AllCaseDistributionTest
+describe ByDocketDateDistribution, :all_dbs do
+  class ByDocketDateDistributionTest
     include ActiveModel::Model
-    include AllCaseDistribution
+    include ByDocketDateDistribution
 
     attr_accessor :judge
 
@@ -15,8 +15,8 @@ describe AllCaseDistribution, :all_dbs do
 
   before(:each) do
     FeatureToggle.enable!(:priority_acd)
-    FeatureToggle.enable!(:acd_distribute_all)
-    @new_acd = AllCaseDistributionTest.new(judge: User.new)
+    FeatureToggle.enable!(:acd_distribute_by_docket_date)
+    @new_acd = ByDocketDateDistributionTest.new(judge: User.new)
   end
 
   # used to put {num} ambiguous objects into an array to mock the return array from requested_distribution
