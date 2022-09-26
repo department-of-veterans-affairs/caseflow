@@ -18,8 +18,14 @@ FactoryBot.define do
     representative_email_sent { false }
     appellant_tz { nil }
     representative_tz { nil }
-    association :created_by, factory: :user
-    association :updated_by, factory: :user
+    created_by do
+      User.find_by_css_id("ID_FACT_VIRTUALHEARING") ||
+        create(:user, css_id: "ID_FACT_VIRTUALHEARING", full_name: "Joe VirtualHearingFactory User")
+    end
+    updated_by do
+      User.find_by_css_id("ID_FACT_VIRTUALHEARING") ||
+        create(:user, css_id: "ID_FACT_VIRTUALHEARING", full_name: "Joe VirtualHearingFactory User")
+    end
     establishment { build(:virtual_hearing_establishment) }
     guest_pin_long { nil }
     created_at { Time.zone.now }

@@ -11,8 +11,9 @@ FactoryBot.define do
   # By default, this task is created in a new Legacy appeal
   factory :task do
     assigned_at { rand(30..35).days.ago }
-    association :assigned_by, factory: :user
-    association :assigned_to, factory: :user
+    # minimize the number of single-use users by setting assigned_by to an existing user if it exists
+    assigned_by { User.find_by(full_name: "Lauren Roth", station_id: User::BOARD_STATION_ID) || create(:user) }
+    assigned_to { User.find_by(full_name: "TaskFactory User") || create(:user, full_name: "TaskFactory User") }
     type { Task.name }
 
     # if a parent is specified, make sure to use that parent's appeal
@@ -317,7 +318,7 @@ FactoryBot.define do
       end
 
       factory :timed_hold_task, class: TimedHoldTask do
-        assigned_to { create(:user) }
+        assigned_to { User.find_by(full_name: "Lauren Roth") || create(:user) }
         days_on_hold { rand(1..100) }
         parent { create(:ama_task, appeal: appeal) }
       end
@@ -411,8 +412,8 @@ FactoryBot.define do
 
       factory :ama_attorney_task, class: AttorneyTask do
         parent { create(:ama_judge_decision_review_task, appeal: appeal) }
-        assigned_by { create(:user) }
-        assigned_to { create(:user) }
+        assigned_by { User.find_by(full_name: "Lauren Roth") || create(:user) }
+        assigned_to { User.find_by(full_name: "Lauren Roth") || create(:user) }
 
         after(:build) do |_task, evaluator|
           if evaluator.assigned_by
