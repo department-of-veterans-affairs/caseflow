@@ -339,6 +339,28 @@ describe HearingRequestDocket, :all_dbs do
         expect(HearingRequestDocket.new.count(priority: true, ready: true)).to eq 1
       end
     end
+
+    context "age_of_n_oldest_priority_appeals_available_to_judge" do
+      let(:judge_user) { create(:user) }
+      subject { HearingRequestDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(:judge_user, 3) }
+
+      it "returns the receipt_date field of the oldest hearing priority appeals ready for distribution" do
+        appeal = create_priority_distributable_hearing_appeal_not_tied_to_any_judge
+        expect(HearingRequestDocket.new.count(priority: true, ready: true)).to eq 1
+        expect(subject).to eq([appeal.receipt_date])
+      end
+    end
+
+    context "age_of_n_oldest_nonpriority_appeals_available_to_judge" do
+      let(:judge_user) { create(:user) }
+      subject { HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(:judge_user, 3) }
+
+      it "returns the receipt_date field of the oldest hearing nonpriority appeals ready for distribution" do
+        appeal = create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
+        expect(HearingRequestDocket.new.count(priority: false, ready: true)).to eq 1
+        expect(subject).to eq([appeal.receipt_date])
+      end
+    end
   end
 
   private
