@@ -419,8 +419,8 @@ describe AppellantNotification do
         OrganizationsUser.make_user_admin(user, Colocated.singleton)
         user
       end
-      let!(:foia_parent) { create(:foia_task, appeal: appeal, assigned_to: vlj_admin, parent_id: attorney_task.id) }
-      let!(:foia_child) { create(:foia_task, appeal: appeal, assigned_to: vlj_admin, parent_id: foia_parent.id) }
+      # let!(:foia_parent) { create(:foia_task, appeal: appeal, assigned_to: vlj_admin, parent_id: attorney_task.id) }
+      # let!(:foia_child) { create(:foia_task, appeal: appeal, assigned_to: vlj_admin, parent_id: foia_parent.id) }
       let(:foia_colocated_task) do
         {
           instructions: "kjkjk",
@@ -436,10 +436,9 @@ describe AppellantNotification do
         ColocatedTask.create_from_params(foia_colocated_task, attorney)
       end
       it "sends notification when completing a FoiaColocatedTask" do
+        foia_c_task = ColocatedTask.create_from_params(foia_colocated_task, attorney)
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
-        foiactask = ColocatedTask.create_from_params(foia_colocated_task, attorney)
-        byebug
-        foia_child.update!(status: "completed")
+        foia_c_task.children.first.update!(status: "completed")
       end
     end
 
