@@ -318,7 +318,7 @@ FactoryBot.define do
       end
 
       factory :timed_hold_task, class: TimedHoldTask do
-        assigned_to { User.find_by(full_name: "Lauren Roth") || create(:user) }
+        assigned_to { create(:user) }
         days_on_hold { rand(1..100) }
         parent { create(:ama_task, appeal: appeal) }
       end
