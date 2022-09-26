@@ -7,8 +7,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
   
   context "Test which Distribution is being included" do
-   before { FeatureToggle.enable!(:acd_distribute_all) }
-   after { FeatureToggle.disable!(:acd_distribute_all) }
+   before { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
+   after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
 
    subject { described_class.ancestors }
 
@@ -20,7 +20,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
   context ".distribute_non_genpop_priority_appeals" do
     before do
-      FeatureToggle.disable!(:acd_distribute_all)
+      FeatureToggle.disable!(:acd_distribute_by_docket_date)
       allow_any_instance_of(DirectReviewDocket)
         .to receive(:nonpriority_receipts_per_year)
         .and_return(100)
@@ -30,7 +30,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         .and_return(1000)
       allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
     end
-    after { FeatureToggle.enable!(:acd_distribute_all) }
+    after { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
 
     let(:ready_priority_bfkey) { "12345" }
     let(:ready_priority_bfkey2) { "12346" }
@@ -198,7 +198,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
   context ".distribute_non_genpop_priority_appeals - All Case Distribution" do
     before do
-      FeatureToggle.enable!(:acd_distribute_all)
+      FeatureToggle.enable!(:acd_distribute_by_docket_date)
       allow_any_instance_of(DirectReviewDocket)
         .to receive(:nonpriority_receipts_per_year)
         .and_return(100)
@@ -489,7 +489,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
   context ".distribute_genpop_priority_appeals - All Case Distribution" do
     before do
-      FeatureToggle.enable!(:acd_distribute_all)
+      FeatureToggle.enable!(:acd_distribute_by_docket_date)
       allow_any_instance_of(DirectReviewDocket)
         .to receive(:nonpriority_receipts_per_year)
         .and_return(100)
@@ -706,7 +706,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
 
     it "returns the Slack Message associated with By Docket Date Distribution" do
-      FeatureToggle.enable!(:acd_distribute_all)
+      FeatureToggle.enable!(:acd_distribute_by_docket_date)
       expect(subject.second).to eq "*Number of cases distributed*: 10"
 
       today = Time.zone.now.to_date
@@ -731,12 +731,12 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
 
     after do
-      FeatureToggle.disable!(:acd_distribute_all)
+      FeatureToggle.disable!(:acd_distribute_by_docket_date)
     end
   end
 
   context ".slack_report - All Case Distribution" do
-    FeatureToggle.enable!(:acd_distribute_all)
+    FeatureToggle.enable!(:acd_distribute_by_docket_date)
     let!(:job) { PushPriorityAppealsToJudgesJob.new }
     let(:previous_distributions) { to_judge_hash([4, 3, 2, 1, 0]) }
     let!(:legacy_priority_case) do
@@ -977,7 +977,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   context ".eligible_judge_target_distributions_with_leftovers - All Case Distribution" do
     shared_examples "correct target distributions with leftovers" do
       before do
-        FeatureToggle.enable!(:acd_distribute_all)
+        FeatureToggle.enable!(:acd_distribute_by_docket_date)
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
           .to receive(:priority_distributions_this_month_for_eligible_judges)
           .and_return(to_judge_hash(distribution_counts))
@@ -1155,7 +1155,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
   context ".leftover_cases_count - All Case Distribution" do
     before do
-      FeatureToggle.enable!(:acd_distribute_all)
+      FeatureToggle.enable!(:acd_distribute_by_docket_date)
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:target_distributions_for_eligible_judges).and_return(target_distributions)
       allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(priority_count)
@@ -1722,7 +1722,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     subject { PushPriorityAppealsToJudgesJob.new.priority_distributions_this_month_for_eligible_judges }
 
     before do
-      FeatureToggle.enable!(:acd_distribute_all)
+      FeatureToggle.enable!(:acd_distribute_by_docket_date)
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:priority_distributions_this_month_for_all_judges)
         .and_return(
@@ -1881,8 +1881,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   end
 
   context "when the entire job fails" do
-    before { FeatureToggle.disable!(:acd_distribute_all) }
-    after { FeatureToggle.enable!(:acd_distribute_all) }
+    before { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
+    after { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
     let(:error_msg) { "Some dummy error" }
 
     it "sends a message to Slack that includes the error" do

@@ -2,7 +2,7 @@
 
 class Distribution < CaseflowRecord
   include ActiveModel::Serializers::JSON
-  if FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+  if FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
     include AllCaseDistribution
   else
     include AutomaticCaseDistribution
@@ -125,7 +125,7 @@ class Distribution < CaseflowRecord
   end
 
   def use_by_docket_date_distribution?
-    FeatureToggle.enabled?(:acd_distribute_all, user: RequestStore.store[:current_user])
+    FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 
   def error_statistics(error)

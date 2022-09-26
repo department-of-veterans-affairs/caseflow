@@ -15,7 +15,7 @@ describe AllCaseDistribution, :all_dbs do
 
   before(:each) do
     FeatureToggle.enable!(:priority_acd)
-    FeatureToggle.enable!(:acd_distribute_all)
+    FeatureToggle.enable!(:acd_distribute_by_docket_date)
     @new_acd = AllCaseDistributionTest.new(judge: User.new)
   end
 
