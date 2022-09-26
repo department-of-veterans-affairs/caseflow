@@ -14,7 +14,7 @@ class HearingRequestDocket < Docket
   end
 
   def age_of_n_oldest_genpop_priority_appeals(num)
-    HearingRequestDistributionQuery.new(
+    hearing_distribution_query(
       base_relation: ready_priority_appeals.limit(num), genpop: "only_genpop"
     ).call.map(&:ready_for_distribution_at)
   end
@@ -22,7 +22,7 @@ class HearingRequestDocket < Docket
   # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
   # but the judge that is passed in isn't relevant here
   def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
-    HearingRequestDistributionQuery.new(
+    hearing_distribution_query(
       base_relation: ready_nonpriority_appeals.limit(num), genpop: "only_genpop"
     ).call.map(&:receipt_date)
   end
@@ -30,11 +30,11 @@ class HearingRequestDocket < Docket
   # Hearing cases distinguish genpop from cases tied to a judge
   # Returns number of ready priority appeals that are not tied to a judge
   def genpop_priority_count
-    HearingRequestDistributionQuery.new(base_relation: ready_priority_appeals, genpop: "only_genpop").call.count
+    hearing_distribution_query(base_relation: ready_priority_appeals, genpop: "only_genpop").call.count
   end
 
   def age_of_n_oldest_priority_appeals_available_to_judge(_judge, num)
-    HearingRequestDistributionQuery.new(
+    hearing_distribution_query(
       base_relation: ready_priority_appeals.limit(num), genpop: "only_genpop"
     ).call.map(&:receipt_date)
   end
@@ -44,11 +44,9 @@ class HearingRequestDocket < Docket
     base_relation = appeals(priority: priority, ready: true).limit(limit)
 
     # setting genpop to "only_genpop" behind feature toggle as this module only processes AMA
-    genpop = "only_genpop" if FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+    genpop = "only_genpop" if use_by_docket_date?
 
-    appeals = HearingRequestDistributionQuery.new(
-      base_relation: base_relation, genpop: genpop, judge: distribution.judge
-    ).call
+    appeals = hearing_distribution_query(base_relation: base_relation, genpop: genpop, judge: distribution.judge).call
 
     appeals = self.class.limit_genpop_appeals(appeals, limit) if genpop.eql? "any"
 
@@ -57,6 +55,14 @@ class HearingRequestDocket < Docket
     ).call
   end
   # rubocop:enable Lint/UnusedMethodArgument
+
+  # Common creation of the query object so can pass in feature toggle checks
+  def hearing_distribution_query(base_relation:, genpop:, judge: nil)
+    HearingRequestDistributionQuery.new(
+        base_relation: base_relation, genpop: genpop, judge: judge,
+        use_by_docket_date: use_by_docket_date?
+    )
+  end
 
   def self.limit_genpop_appeals(appeals_array, limit)
     # genpop 'any' returns 2 arrays of the limited base relation. This means if we only request 2 cases, appeals is a

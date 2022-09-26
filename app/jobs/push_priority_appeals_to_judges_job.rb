@@ -18,7 +18,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def perform
-    unless FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+    unless use_by_docket_date?
       @tied_distributions = distribute_non_genpop_priority_appeals
     end
 
@@ -41,7 +41,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def slack_report
     report = []
-    if FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+    if use_by_docket_date?
       total_cases = @genpop_distributions.map(&:distributed_batch_size).sum
       report << "*Number of cases distributed*: " \
                 "#{total_cases}"
@@ -63,7 +63,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
     report << ""
     report << "*Debugging information*"
-    if !FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+    unless use_by_docket_date?
       report << "Priority Target: #{priority_target}"
     end
     report << "Previous monthly distributions: #{priority_distributions_this_month_for_eligible_judges}"
@@ -177,5 +177,9 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def priority_distributions_this_month
     Distribution.priority_pushed.completed.where(completed_at: 30.days.ago..Time.zone.now)
+  end
+
+  def use_by_docket_date?
+    FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 end

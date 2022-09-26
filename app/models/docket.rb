@@ -60,7 +60,7 @@ class Docket
   end
 
   def age_of_oldest_priority_appeal
-    if FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+    if use_by_docket_date?
       @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.receipt_date
     else
       @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
@@ -120,7 +120,7 @@ class Docket
   end
 
   def scoped_for_priority(scope)
-    if FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+    if use_by_docket_date?
       scope.priority.order("appeals.receipt_date")
     else
       scope.priority.ordered_by_distribution_ready_date
@@ -147,6 +147,10 @@ class Docket
 
       judge_task
     end
+  end
+
+  def use_by_docket_date?
+    FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 
   module Scopes
