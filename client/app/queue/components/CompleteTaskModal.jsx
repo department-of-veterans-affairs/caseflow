@@ -494,7 +494,7 @@ class CompleteTaskModal extends React.Component {
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
     const formattedInstructions = [];
-    const { previousInstructions, reviewNotes } = getPreviousTaskInstructions(this.props.tasks); 
+    const { previousInstructions, reviewNotes } = getPreviousTaskInstructions(this.props.tasks);
 
     if (this.props.modalType === 'vha_send_to_board_intake') {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
@@ -522,7 +522,8 @@ class CompleteTaskModal extends React.Component {
         formattedInstructions.push(instructionsDetail);
       }
 
-      if (reviewNotes) {
+      // Do not add "Regional Processing Office Notes" section when RPO is sending to Intake for review
+      if (reviewNotes && reviewNotes !== 'Regional Processing Office') {
         formattedInstructions.push(`\n\n**${reviewNotes} Notes:**\n${previousInstructions.join('')}\n`);
       }
     } else if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customFormatInstructions === 'function') {
