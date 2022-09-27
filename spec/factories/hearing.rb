@@ -4,10 +4,10 @@ FactoryBot.define do
   factory :hearing do
     transient do
       regional_office { nil }
-      adding_user { User.find_by_full_name("Lauren Roth") || create(:user) }
+      adding_user { create(:user) }
     end
     appeal { association(:appeal, :hearing_docket) }
-    judge { User.find_by(full_name: "Lauren Roth", roles: ["Hearing Prep"]) || create(:user, roles: ["Hearing Prep"]) }
+    judge { create(:user, roles: ["Hearing Prep"]) }
     uuid { SecureRandom.uuid }
     hearing_day do
       association(
