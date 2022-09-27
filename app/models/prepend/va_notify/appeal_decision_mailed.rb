@@ -11,11 +11,11 @@ module AppealDecisionMailed
   def process!
     super_return_value = super
     if processed?
-      case appeal.class
-      when Appeal
+      case appeal_type
+      when "Appeal"
         template = appeal.contested_claim? ? "#{@@template_name} (Contested claims)" : "#{@@template_name} (Non-contested claims)"
         AppellantNotification.notify_appellant(appeal, template)
-      when LegacyAppeal
+      when "LegacyAppeal"
         template = appeal.contested_claim ? "#{@@template_name} (Contested claims)" : "#{@@template_name} (Non-contested claims)"
         AppellantNotification.notify_appellant(appeal, template)
       end
