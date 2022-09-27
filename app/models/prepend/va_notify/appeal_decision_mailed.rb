@@ -7,47 +7,17 @@ module AppealDecisionMailed
   @@template_name = "Appeal decision mailed"
   # rubocop:enable all
 
-  # # Legacy
-  # def complete_root_task!
-  #   # original method defined in app/workflows/legacy_appeal_dispatch.rb
-  #   super_return_value = super
-  #   if appeal.contested_claim
-  #     AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Contested claims)")
-  #   else
-  #     AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Non-contested claims)")
-  #   end
-  #   super_return_value
-  # end
-
-  # # AMA
-  # def complete_dispatch_root_task!
-  #   # original method defined in app/workflows/ama_appeal_dispatch.rb
-  #   super_return_value = super
-  #   if appeal.contested_claim?
-  #     AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Contested claims)")
-  #   else
-  #     AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Non-contested claims)")
-  #   end
-  #   super_return_value
-  # end
-
+  # original method defined in app/models/decision_document.rb
   def process!
-    # original method defined in app/models/decision_document.rb
     super_return_value = super
-    if processed!
+    if processed?
       case appeal.class
       when Appeal
-        if appeal.contested_claim?
-          AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Contested claims)")
-        else
-          AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Non-contested claims)")
-        end
+        template = appeal.contested_claim? ? "#{@@template_name} (Contested claims)" : "#{@@template_name} (Non-contested claims)"
+        AppellantNotification.notify_appellant(appeal, template)
       when LegacyAppeal
-        if appeal.contested_claim
-          AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Contested claims)")
-        else
-          AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Non-contested claims)")
-        end
+        template = appeal.contested_claim ? "#{@@template_name} (Contested claims)" : "#{@@template_name} (Non-contested claims)"
+        AppellantNotification.notify_appellant(appeal, template)
       end
     end
     super_return_value
