@@ -11,7 +11,6 @@ FactoryBot.define do
   # By default, this task is created in a new Legacy appeal
   factory :task do
     assigned_at { rand(30..35).days.ago }
-    # minimize the number of single-use users by setting assigned_by to an existing user if it exists
     association :assigned_by, factory: :user
     association :assigned_to, factory: :user
     type { Task.name }

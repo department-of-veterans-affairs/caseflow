@@ -9,7 +9,6 @@ FactoryBot.define do
     modifier { "030" }
     payee_code { EndProduct::DEFAULT_PAYEE_CODE }
     benefit_type_code { Veteran::BENEFIT_TYPE_CODE_LIVE }
-    # find user by the default user factory values, or create that user if it doesn't exist
     user { create(:user) }
 
     trait :cleared do
