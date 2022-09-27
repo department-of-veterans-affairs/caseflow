@@ -10,13 +10,18 @@ import {
   createQueueReducer,
   getAppealId,
   getTaskId,
-  enterTextFieldOptions
+  enterTextFieldOptions,
+  clickSubmissionButton
 } from './modalUtils';
 import CancelTaskModal from 'app/queue/components/CancelTaskModal';
 import {
   rpoToBvaIntakeData,
-  vhaPOToCAMOData
+  vhaPOToCAMOData,
+  postData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
+import * as uiActions from 'app/queue/uiReducer/uiActions';
+
+let requestPatchSpy;
 
 const renderCancelTaskModal = (modalType, storeValues, taskType) => {
   const appealId = getAppealId(storeValues);
@@ -41,37 +46,86 @@ const renderCancelTaskModal = (modalType, storeValues, taskType) => {
   );
 };
 
+const getReceivedInstructions = () => requestPatchSpy.mock.calls[0][1].data.task.instructions;
+
+beforeEach(() => {
+  requestPatchSpy = jest.spyOn(uiActions, 'requestPatch').
+    mockImplementation(() => jest.fn(() => Promise.resolve({
+      body: {
+        ...postData
+      }
+    })));
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
 describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
   const taskType = 'AssessDocumentationTask';
+  const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+  const additionalContextText = 'This appeal has been sent to the wrong program office. Please review.';
 
   test('Button Disabled until text field is populated', () => {
     renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaPOToCAMOData, taskType);
 
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
-      'Provide instructions and context for this action',
-      'Here is the context that you have requested.'
+      'Provide instructions and context for this action:',
+      additionalContextText
     );
 
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+  });
+
+  test('Resultant case timeline entry labels reason for cancellation', () => {
+    renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaPOToCAMOData, taskType);
+
+    enterTextFieldOptions(
+      'Provide instructions and context for this action:',
+      additionalContextText
+    );
+
+    clickSubmissionButton(buttonText);
+
+    expect(getReceivedInstructions()).toBe(
+      `**Reason for cancellation:**\n${additionalContextText}`
+    );
   });
 });
 
 describe('Whenever RPO returns an appeal to EMO', () => {
   const taskType = 'EducationAssessDocumentationTask';
+  const buttonText = COPY.MODAL_RETURN_BUTTON;
+  const additionalContextText = 'This appeal has been sent to the wrong RPO. Please review.';
 
   test('Button Disabled until text field is populated', () => {
     renderCancelTaskModal(TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.value, rpoToBvaIntakeData, taskType);
 
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
-      'Provide instructions and context for this action',
-      'Here is the context that you have requested.'
+      'Provide instructions and context for this action:',
+      additionalContextText
     );
 
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+  });
+
+  test('Resultant case timeline entry labels reason for cancellation', () => {
+    renderCancelTaskModal(TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.value, rpoToBvaIntakeData, taskType);
+
+    enterTextFieldOptions(
+      'Provide instructions and context for this action:',
+      additionalContextText
+    );
+
+    clickSubmissionButton(buttonText);
+
+    expect(getReceivedInstructions()).toBe(
+      `**Reason for cancellation:**\n${additionalContextText}`
+    );
   });
 });
 
