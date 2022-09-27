@@ -68,6 +68,15 @@ describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
   const buttonText = COPY.MODAL_SUBMIT_BUTTON;
   const additionalContextText = 'This appeal has been sent to the wrong program office. Please review.';
 
+  test('Submission button has correct CSS class', () => {
+    renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaPOToCAMOData, taskType);
+
+    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+  });
+
   test('Button Disabled until text field is populated', () => {
     renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaPOToCAMOData, taskType);
 
@@ -101,6 +110,15 @@ describe('Whenever RPO returns an appeal to EMO', () => {
   const taskType = 'EducationAssessDocumentationTask';
   const buttonText = COPY.MODAL_RETURN_BUTTON;
   const additionalContextText = 'This appeal has been sent to the wrong RPO. Please review.';
+
+  test('Submission button has correct CSS class', () => {
+    renderCancelTaskModal(TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.value, rpoToBvaIntakeData, taskType);
+
+    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+  });
 
   test('Button Disabled until text field is populated', () => {
     renderCancelTaskModal(TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.value, rpoToBvaIntakeData, taskType);
