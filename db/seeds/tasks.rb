@@ -405,7 +405,7 @@ module Seeds
       judge_task.update!(status: Constants.TASK_STATUSES.completed)
 
       BvaDispatchTask.create_from_root_task(root_task)
-      appeal.tasks.where(type: 'BvaDispatchTask').map(&:completed!)
+      appeal.tasks.where(type: "BvaDispatchTask").map(&:completed!)
     end
 
     def create_task_at_quality_review(
