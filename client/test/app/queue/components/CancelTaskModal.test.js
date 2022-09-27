@@ -11,7 +11,6 @@ import {
   getAppealId,
   getTaskId,
   enterTextFieldOptions
-
 } from './modalUtils';
 import CancelTaskModal from 'app/queue/components/CancelTaskModal';
 import {
