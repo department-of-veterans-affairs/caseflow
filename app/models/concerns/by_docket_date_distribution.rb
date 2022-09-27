@@ -3,18 +3,9 @@
 # rubocop:disable Metrics/ModuleLength
 module ByDocketDateDistribution
   extend ActiveSupport::Concern
-
-  delegate :dockets,
-           :priority_count,
-           :direct_review_due_count,
-           :total_batch_size,
-           to: :docket_coordinator
+  include CaseDistribution
 
   private
-
-  def docket_coordinator
-    @docket_coordinator ||= DocketCoordinator.new
-  end
 
   def priority_push_distribution(limit)
     @rem = 0
@@ -36,13 +27,6 @@ module ByDocketDateDistribution
     # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
     distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem) until @rem <= 0
     @appeals
-  end
-
-  def collect_appeals
-    appeals = yield
-    @rem -= appeals.count
-    @appeals += appeals
-    appeals
   end
 
   def distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
@@ -72,11 +56,6 @@ module ByDocketDateDistribution
       nonpriority_iterations: @nonpriority_iterations,
       algorithm: 'by_docket_date'
     }
-  end
-
-  def priority_target
-    proportion = [priority_count.to_f / total_batch_size, 1.0].reject(&:nan?).min
-    (proportion * batch_size).ceil
   end
 
   def num_oldest_priority_appeals_for_judge_by_docket(distribution, num)
