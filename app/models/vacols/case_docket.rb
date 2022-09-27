@@ -318,7 +318,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.age_of_oldest_priority_appeal_by_docket_date
     query = <<-SQL
-      #{SELECT_PRIORITY_APPEALS}
+      #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
       where rownum <= ?
     SQL
 
