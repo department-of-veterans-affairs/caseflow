@@ -17,9 +17,9 @@ import EditButtons from './components/EditButtons';
 import CreateButtons from './components/CreateButtons';
 import PropTypes from 'prop-types';
 import SplitAppealProgressBar from '../intake/components/SplitAppealProgressBar';
-import SplitAppealConfirm from '../intake/pages/SplitAppealConfirm';
 import SplitButtons from './components/SplitButtons';
 import IntakeAppealContext from './components/IntakeAppealContext';
+import ReviewAppealView from '../intake/pages/ReviewAppealView';
 
 const textAlignRightStyling = css({
   textAlign: 'right',
@@ -231,7 +231,7 @@ export const IntakeEditFrame = (props) => {
                     title="Split Appeal | Caseflow Intake"
                     component={() => {
                       return (
-                        <SplitAppealConfirm />
+                        <ReviewAppealView {...props} />
                       );
                     }}
                   />

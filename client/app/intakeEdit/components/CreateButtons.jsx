@@ -57,7 +57,7 @@ class BackButtonUnconnected extends React.PureComponent {
         onClick={
           () => {
             if (this.props.formType === 'appeal') {
-              this.props.history.push('/create_split');
+              window.location.href = `/appeals/${this.props.claimId}/edit/create_split`;
             } else {
               this.props.history.push('/cancel');
             }
@@ -86,7 +86,7 @@ class SplitButtonUnconnected extends React.PureComponent {
 
   handleSplitSubmit = (appeal, payloadInfo) => {
     this.props.splitAppeal(appeal.id, payloadInfo.selectedIssues,
-      payloadInfo.reason, payloadInfo.otherReason);
+      payloadInfo.reason, payloadInfo.otherReason, this.props.user);
     window.location.href = `/queue/appeals/${this.props.claimId}`;
   }
   render() {
@@ -96,15 +96,13 @@ class SplitButtonUnconnected extends React.PureComponent {
         {(appeal) => (
           <StateContext.Consumer>
             {(payloadInfo) => (
-              <div>
-                <Button
-                  id="button-submit-update"
-                  classNames={['cf-submit usa-button']}
-                  // on click button sends claim id for dummy data
-                  onClick={() => this.handleSplitSubmit(appeal, payloadInfo)}>
-                  { COPY.CORRECT_REQUEST_ISSUES_SPLIT_APPEAL }
-                </Button>
-              </div>
+              <Button
+                id="button-submit-update"
+                classNames={['cf-submit usa-button']}
+                // on click button sends claim id for dummy data
+                onClick={() => this.handleSplitSubmit(appeal, payloadInfo)}>
+                { COPY.CORRECT_REQUEST_ISSUES_SPLIT_APPEAL }
+              </Button>
 
             )}
           </StateContext.Consumer>
@@ -120,7 +118,8 @@ SplitButtonUnconnected.propTypes = {
   history: PropTypes.object,
   formType: PropTypes.string,
   claimId: PropTypes.string,
-  splitAppeal: PropTypes.func
+  splitAppeal: PropTypes.func,
+  user: PropTypes.string,
 };
 
 const mapStateToProps = (state) => ({

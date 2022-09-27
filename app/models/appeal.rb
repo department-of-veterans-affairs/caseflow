@@ -156,6 +156,17 @@ class Appeal < DecisionReview
     })
   end
 
+  def hearing_day_if_schedueled
+    hearing_date = Hearing.find_by(appeal_id: self.id)
+    
+    if hearing_date.nil? 
+      return nil
+    
+    else
+      return hearing_date.hearing_day.scheduled_for
+    end
+  end
+
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
       appeal: self, use_efolder: true

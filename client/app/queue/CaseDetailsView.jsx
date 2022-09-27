@@ -395,7 +395,7 @@ export const CaseDetailsView = (props) => {
             />
           )}
 
-          <CaseTimeline title="Case Timeline" appeal={appeal} />
+          <CaseTimeline title="Case Timeline" appeal={appeal} statusSplit={splitAppealSuccess} />
         </StickyNavContentArea>
         {props.pollHearing && pollHearing()}
       </AppSegment>
