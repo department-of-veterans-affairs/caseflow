@@ -8,7 +8,6 @@ exports[`DocketSwitchReviewRequestForm default values full grant populates with 
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-      role="main"
     >
       <h1>
         Switch Docket: Review Claimant 1's Request
@@ -200,7 +199,6 @@ exports[`DocketSwitchReviewRequestForm default values partial grant populates wi
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-      role="main"
     >
       <h1>
         Switch Docket: Review Claimant 1's Request
@@ -433,7 +431,6 @@ exports[`DocketSwitchReviewRequestForm renders correctly 1`] = `
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-      role="main"
     >
       <h1>
         Switch Docket: Review Claimant 1's Request
