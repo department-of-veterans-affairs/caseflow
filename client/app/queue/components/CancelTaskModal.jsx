@@ -24,6 +24,14 @@ const CancelTaskModal = (props) => {
 
   const [instructions, setInstructions] = useState('');
 
+  const formatInstructions = () => {
+    if (instructions.length > 0) {
+      return `**Reason for cancellation:**\n${instructions}`
+    }
+
+    return instructions;
+  };
+
   const validateForm = () => {
     if (!shouldShowTaskInstructions) {
       return true;
@@ -31,12 +39,13 @@ const CancelTaskModal = (props) => {
 
     return instructions.length > 0;
   };
+
   const submit = () => {
     const payload = {
       data: {
         task: {
           status: TASK_STATUSES.cancelled,
-          instructions,
+          instructions: formatInstructions(),
           ...(taskData?.business_payloads && { business_payloads: taskData?.business_payloads })
         }
       }
