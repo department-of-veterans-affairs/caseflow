@@ -10,8 +10,7 @@ module IhpTaskPending
   # original method defined in app/workflows/ihp_tasks_factory.rb
   def create_ihp_tasks!
     super_return_value = super
-    task_array = []
-    super_return_value.each { |task| task_array.push(task.class.to_s) }
+    appeal_tasks_created = super_return_value.map { |task| task.class.to_s }
     if task_array.any?("InformalHearingPresentationTask")
       AppellantNotification.notify_appellant(@parent.appeal, @@template_name)
     end
