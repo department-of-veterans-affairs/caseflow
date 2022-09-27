@@ -24,10 +24,6 @@ const validInstructions = (instructions) => {
   return instructions?.length > 0;
 };
 
-const validInstructions = (instructions) => {
-  return instructions?.length > 0;
-};
-
 const selectedAction = (props) => {
   const actionData = taskActionData(props);
 
