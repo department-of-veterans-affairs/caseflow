@@ -34,12 +34,22 @@ module AppealDecisionMailed
   def process!
     # original method defined in app/models/decision_document.rb
     super_return_value = super
-    if appeal.contested_claim?
-      AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Contested claims)")
-    else
-      AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Non-contested claims)")
+    if processed!
+      case appeal.class
+      when Appeal
+        if appeal.contested_claim?
+          AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Contested claims)")
+        else
+          AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Non-contested claims)")
+        end
+      when LegacyAppeal
+        if appeal.contested_claim
+          AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Contested claims)")
+        else
+          AppellantNotification.notify_appellant(@appeal, "#{@@template_name} (Non-contested claims)")
+        end
+      end
     end
     super_return_value
   end
-
 end
