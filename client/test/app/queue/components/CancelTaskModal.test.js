@@ -50,11 +50,13 @@ const getReceivedInstructions = () => requestPatchSpy.mock.calls[0][1].data.task
 
 beforeEach(() => {
   requestPatchSpy = jest.spyOn(uiActions, 'requestPatch').
-    mockImplementation(() => jest.fn(() => Promise.resolve({
-      body: {
-        ...postData
+    mockImplementation(() => jest.fn(() => Promise.resolve(
+      {
+        body: {
+          ...postData
+        }
       }
-    })));
+    )));
 });
 
 afterEach(() => {
