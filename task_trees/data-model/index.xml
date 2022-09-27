@@ -12,7 +12,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/data-model/certification.html</guid>
-      <description>Caseflow Certification #    Certification tables diagram  Certifications #  Caseflow Certification ensures accurate Veteran and appeal information are transferred from the Veterans Benefits Administration (VBA) to the Board of Veterans Appeals (BVA). The Certifications table facilitates this process by ensuring necessary documentation has been submitted with an Appeal and is consistent between VBMS and VACOLS. Caseflow Certification is also responsible for verifying the veteran&amp;rsquo;s representation and hearings request are accurate and ready to be sent to the Board.</description>
+      <description>Caseflow Certification # Certification tables diagram Certifications # Caseflow Certification ensures accurate Veteran and appeal information are transferred from the Veterans Benefits Administration (VBA) to the Board of Veterans Appeals (BVA). The Certifications table facilitates this process by ensuring necessary documentation has been submitted with an Appeal and is consistent between VBMS and VACOLS. Caseflow Certification is also responsible for verifying the veteran&amp;rsquo;s representation and hearings request are accurate and ready to be sent to the Board.</description>
     </item>
     
     <item>
@@ -21,9 +21,9 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/data-model/intake.html</guid>
-      <description>Caseflow Intake #    Intake  Caseflow Intake  Intake Data Model  Intake tables diagram  Decision Reviews #  Intake is the source of all AMA decision review request submissions. There are three decision review lanes: Appeals, HigherLevelReviews, and SupplementalClaims.
+      <description>Caseflow Intake # Intake Caseflow Intake Intake Data Model Intake tables diagram Decision Reviews # Intake is the source of all AMA decision review request submissions. There are three decision review lanes: Appeals, HigherLevelReviews, and SupplementalClaims.
 Class diagram of relevant terminology:
-  DecisionReview   Appeal  ClaimReview   SupplementalClaim  HigherLevelReview      Appeals #   Appeals represent an AMA review that gets filed with the Board of Veterans&#39; Appeals (BVA).</description>
+DecisionReview Appeal ClaimReview SupplementalClaim HigherLevelReview Appeals # Appeals represent an AMA review that gets filed with the Board of Veterans&amp;rsquo; Appeals (BVA). Refer to Intake tables diagram below.</description>
     </item>
     
     <item>
@@ -32,7 +32,7 @@ Class diagram of relevant terminology:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/data-model/hearings.html</guid>
-      <description>Caseflow Hearings #    Caseflow Hearings  Hearing Request Type  Hearings tables diagram  Hearings #  Veterans have the option to have a hearing with a Veterans Law Judge (VLJ) as part of the appeals process. At these hearings, a VLJ meets with a veteran or representative to go over the case. It is not a defense but a chance for a Veteran to provide additional details.</description>
+      <description>Caseflow Hearings # Caseflow Hearings Hearing Request Type Hearings tables diagram Hearings # Veterans have the option to have a hearing with a Veterans Law Judge (VLJ) as part of the appeals process. At these hearings, a VLJ meets with a veteran or representative to go over the case. It is not a defense but a chance for a Veteran to provide additional details. After a hearing is conducted, the recordings are sent to the transcription office, and then entered into VBMS.</description>
     </item>
     
     <item>
@@ -41,7 +41,7 @@ Class diagram of relevant terminology:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/data-model/reader.html</guid>
-      <description>Caseflow Reader #    Caseflow Reader and Reader Backend  Reader tables diagram  Documents #   Caseflow Reader allows users to access all of the documents related to the Veteran for an appeal. Users first interact with a document list page which presents a list of the documents. Upon selection of a particular document, they are redirected to the document view page where they can view and interact with the document.</description>
+      <description>Caseflow Reader # Caseflow Reader and Reader Backend Reader tables diagram Documents # Caseflow Reader allows users to access all of the documents related to the Veteran for an appeal. Users first interact with a document list page which presents a list of the documents. Upon selection of a particular document, they are redirected to the document view page where they can view and interact with the document. Documents are populated by eFolder, which retrieves them from two upstream dependencies: VBMS &amp;amp; VVA &amp;ndash; see Reader Backend for details.</description>
     </item>
     
     <item>
@@ -50,8 +50,8 @@ Class diagram of relevant terminology:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/data-model/efolder_express.html</guid>
-      <description>eFolder Express #    eFolder Express tables diagram  Caseflow eFolder Express (EE) serves the specific role of allowing users to bulk download all of a Veteran&amp;rsquo;s files at once. It is the only Caseflow product that has a separate code repository and runs on separate servers.
-Records #  When mentioning a Veteran&amp;rsquo;s files in EE, those can vary between PDFs, TIFFs, and IMGs. The Records table exists to store references to these files</description>
+      <description>eFolder Express # eFolder Express tables diagram Caseflow eFolder Express (EE) serves the specific role of allowing users to bulk download all of a Veteran&amp;rsquo;s files at once. It is the only Caseflow product that has a separate code repository and runs on separate servers.
+Records # When mentioning a Veteran&amp;rsquo;s files in EE, those can vary between PDFs, TIFFs, and IMGs. The Records table exists to store references to these files</description>
     </item>
     
     <item>
@@ -60,7 +60,7 @@ Records #  When mentioning a Veteran&amp;rsquo;s files in EE, those can vary bet
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/data-model/queue.html</guid>
-      <description>Caseflow Queue #    Caseflow Queue   Organizations  Tasks   Tasks talk      Queue tables diagram  Appeal, Task User, OrganizationsUser, Organization, JudgeTeam organizations    Appeals #  Queue is the portion of Caseflow users utilize when an appeal has reached the Decision phase and is ready to be reviewed by judges and attorneys for processing. Queue services both AMA and Legacy appeals, the behavior of each varying slightly.</description>
+      <description>Caseflow Queue # Caseflow Queue Organizations Tasks Tasks talk Queue tables diagram Appeal, Task User, OrganizationsUser, Organization, JudgeTeam organizations Appeals # Queue is the portion of Caseflow users utilize when an appeal has reached the Decision phase and is ready to be reviewed by judges and attorneys for processing. Queue services both AMA and Legacy appeals, the behavior of each varying slightly. One of the main differences is that AMAs are contained within Caseflow whereas much of the data for Legacy appeals is extracted from VACOLS.</description>
     </item>
     
     <item>
@@ -69,8 +69,8 @@ Records #  When mentioning a Veteran&amp;rsquo;s files in EE, those can vary bet
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/data-model/dispatch.html</guid>
-      <description>Caseflow Dispatch #    Caseflow Dispatch  BVA Dispatch  Dispatch tables diagram  Caseflow Dispatch exists to create EndProducts in VBMS from completed cases in VACOLS. Users of Dispatch, VBA Office of Administrative Review (OAR) employees, are presented with VACOLS cases that have received a decision and need to be routed to the correct VBA entity to update a Veteran&amp;rsquo;s benefits.
-LegacyAppeals #  The LegacyAppeals table is utilized by numerous Caseflow products.</description>
+      <description>Caseflow Dispatch # Caseflow Dispatch BVA Dispatch Dispatch tables diagram Caseflow Dispatch exists to create EndProducts in VBMS from completed cases in VACOLS. Users of Dispatch, VBA Office of Administrative Review (OAR) employees, are presented with VACOLS cases that have received a decision and need to be routed to the correct VBA entity to update a Veteran&amp;rsquo;s benefits.
+LegacyAppeals # The LegacyAppeals table is utilized by numerous Caseflow products. A description can be found above in the Certification section.</description>
     </item>
     
   </channel>

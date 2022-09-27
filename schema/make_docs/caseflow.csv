@@ -59,6 +59,7 @@ appeals,establishment_last_submitted_at,datetime,,,,,,Timestamp for when the the
 appeals,establishment_processed_at,datetime,,,,,,Timestamp for when the establishment has succeeded in processing.
 appeals,establishment_submitted_at,datetime,,,,,,Timestamp for when the the intake was submitted for asynchronous processing.
 appeals,filed_by_va_gov,boolean,,,,,,Indicates whether or not this form came from VA.gov
+appeals,homelessness,boolean ∗,x,,,,,Indicates whether or not a veteran is experiencing homelessness
 appeals,id,integer (8) PK,x,x,,,,
 appeals,legacy_opt_in_approved,boolean,,,,,,Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review.
 appeals,original_hearing_request_type,string,,,,,,The hearing type preference for an appellant before any changes were made in Caseflow
@@ -280,7 +281,7 @@ claim_establishments,email_ro_id,string,,,,,,
 claim_establishments,ep_code,string,,,,,,
 claim_establishments,id,integer PK,x,x,,,,
 claim_establishments,outcoding_date,datetime,,,,,,
-claim_establishments,task_id,integer FK,,,x,,,
+claim_establishments,task_id,integer FK,,,x,,x,references dispatch_tasks
 claim_establishments,updated_at,datetime ∗,x,,,,x,
 claimants,,,,,,,,This table bridges decision reviews to participants when the participant is listed as a claimant on the decision review. A participant can be a claimant on multiple decision reviews.
 claimants,created_at,datetime,,,,,,
@@ -300,6 +301,20 @@ claims_folder_searches,id,integer PK,x,x,,,,
 claims_folder_searches,query,string,,,,,,
 claims_folder_searches,updated_at,datetime,,,,,x,
 claims_folder_searches,user_id,integer FK,,,x,,x,
+conference_links,,,,,,,,
+conference_links,alias,string,,,,,,Alias of the conference
+conference_links,alias_with_host,string,,,,,,Alieas of the conference for the host
+conference_links,conference_deleted,boolean ∗,x,,,,,Flag to represent if a con ference has been deleted
+conference_links,conference_id,integer,,,,,,Id of the conference
+conference_links,created_at,datetime ∗,x,,,,,Date and Time of creation
+conference_links,created_by_id,integer (8) ∗ FK,x,,x,,x,User id of the user who created the record. FK on User table
+conference_links,hearing_day_id,integer (8) ∗ FK,x,,x,,x,The associated hearing day id
+conference_links,host_link,string,,,,,,Conference link generated from external conference service
+conference_links,host_pin,integer,,,,,,Pin for the host of the conference to get into the conference
+conference_links,host_pin_long,string (8),,,,,,Generated host pin stored as a string
+conference_links,id,integer (8) PK,x,x,,,,
+conference_links,updated_at,datetime,,,,,,Date and Time record was last updated
+conference_links,updated_by_id,integer (8) FK,,,x,,x,user id of the user to last update the record. FK on the User table
 decision_documents,,,,,,,,
 decision_documents,appeal_id,integer (8) ∗ FK,x,,x,,x,
 decision_documents,appeal_type,string,,,,,,
@@ -355,7 +370,7 @@ dispatch_tasks,user_id,integer FK,,,x,,x,
 distributed_cases,,,,,,,,
 distributed_cases,case_id,string ∗,x,,,,x,
 distributed_cases,created_at,datetime,,,,,,
-distributed_cases,distribution_id,integer FK,,,x,,,
+distributed_cases,distribution_id,integer FK,,,x,,x,
 distributed_cases,docket,string ∗,x,,,,,
 distributed_cases,docket_index,integer ∗,x,,,,,
 distributed_cases,genpop,boolean,,,,,,
@@ -595,6 +610,8 @@ hearing_days,slot_length_minutes,integer,,,,,,The length in minutes of each time
 hearing_days,updated_at,datetime ∗,x,,,,x,Automatic timestamp of when hearing day was updated
 hearing_days,updated_by_id,integer (8) ∗ FK,x,,x,,x,The ID of the user who most recently updated the Hearing Day
 hearing_email_recipients,,,,,,,,Recipients of hearings-related emails
+hearing_email_recipients,appeal_id,integer (8) FK,,,x,,x,The ID of the appeal this email recipient is associated with
+hearing_email_recipients,appeal_type,string,,,,,x,The type of appeal this email recipient is associated with
 hearing_email_recipients,created_at,datetime ∗,x,,,,,
 hearing_email_recipients,email_address,string ∗,x,,,,,PII. The recipient's email address
 hearing_email_recipients,email_sent,boolean ∗,x,,,,,Indicates if a notification email was sent to the recipient.
@@ -714,6 +731,7 @@ judge_case_reviews,one_touch_initiative,boolean,,,,,,
 judge_case_reviews,positive_feedback,text,,,,,,
 judge_case_reviews,quality,string ∗,x,,,,,
 judge_case_reviews,task_id,string ∗ FK,x,,x,,,"Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
+judge_case_reviews,timeliness,string,,,,,,Documents if the drafted decision by an attorney was provided on a timely or untimely manner.
 judge_case_reviews,updated_at,datetime ∗,x,,,,x,
 legacy_appeals,,,,,,,,
 legacy_appeals,appeal_series_id,integer (8) FK,,,x,,x,
@@ -816,6 +834,28 @@ non_availabilities,object_identifier,string ∗,x,,,,,
 non_availabilities,schedule_period_id,integer (8) ∗ FK,x,,x,,x,
 non_availabilities,type,string ∗,x,,,,,
 non_availabilities,updated_at,datetime ∗,x,,,,x,
+notifications,,,,,,,,
+notifications,appeals_id,string ∗,x,,,,x,ID of the Appeal
+notifications,appeals_type,string ∗,x,,,,x,Type of Appeal
+notifications,created_at,datetime,,,,,,Timestamp of when Noticiation was Created
+notifications,email_notification_external_id,string,,,,,,VA Notify Notification Id for the email notification send through their API 
+notifications,email_notification_status,string,,,,,,Status of the Email Notification
+notifications,event_date,date ∗,x,,,,,Date of Event
+notifications,event_type,string ∗,x,,,,,Type of Event
+notifications,id,integer (8) PK,x,x,,,,
+notifications,notification_content,text,,,,,,Full Text Content of Notification
+notifications,notification_type,string ∗,x,,,,,Type of Notification that was created
+notifications,notified_at,datetime ∗,x,,,,,Time Notification was created
+notifications,participant_id,string,,,,,x,ID of Participant
+notifications,recipient_email,string,,,,,,Participant's Email Address
+notifications,recipient_phone_number,string,,,,,,Participants Phone Number
+notifications,sms_notification_external_id,string,,,,,,VA Notify Notification Id for the sms notification send through their API 
+notifications,sms_notification_status,string,,,,,,Status of SMS/Text Notification
+notifications,updated_at,datetime,,,,,,TImestamp of when Notification was Updated
+notification_events,,,,,,,,Type of Event
+notification_events,email_template_id,uuid ∗,x,,,,,Staging Email Template UUID
+notification_events,event_type,string PK,x,x,,,,
+notification_events,sms_template_id,uuid ∗,x,,,,,Staging SMS Template UUID
 organizations,,,,,,,,
 organizations,accepts_priority_pushed_cases,boolean,,,,,x,Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases
 organizations,ama_only_push,boolean,,,,,,whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob
@@ -959,6 +999,7 @@ request_issues,end_product_establishment_id,integer FK,,,x,,x,The ID of the End 
 request_issues,id,integer (8) PK,x,x,,,,
 request_issues,ineligible_due_to_id,integer (8) FK,,,x,,x,"If a request issue is ineligible due to another request issue, for example that issue is already being actively reviewed, then the ID of the other request issue is stored here."
 request_issues,ineligible_reason,string,,,,,x,"The reason for a Request Issue being ineligible. If a Request Issue has an ineligible_reason, it is still captured, but it will not get a contention in VBMS or a decision."
+request_issues,is_predocket_needed,boolean,,,,,,Indicates whether or not an issue has been selected to go to the pre-docket queue opposed to normal docketing.
 request_issues,is_unidentified,boolean,,,,,,"Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
 request_issues,nonrating_issue_category,string,,,,,,The category selected for nonrating request issues. These vary by business line.
 request_issues,nonrating_issue_description,string,,,,,,The user entered description if the issue is a nonrating issue

@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="VACOLS Schema #   https://github.com/department-of-veterans-affairs/VACOLS/blob/master/vacols_schema.sql
-VACOLS - VBMS Mapping #   CORRES table contains most of Veteran&rsquo;s info (should match VBMS) TIVBMS field allows us to determine if the claim is ready for VBMS TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands) BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated  Table Joins #  Table joins    TABLE TABLE JOIN ON     Brieff Corres bfcorkey = stafkey   Folder Corres ticorkey = stafkey   Brieff Folder bfkey = ticknum   Brieff Attach bfkey = imgtkky   Brieff Assign bfkey = tsktknum   Brieff Mail bfkey = mlfolder   Brieff Cova bfkey = cvfolder   Brieff PriorLoc bfkey = lockey   Brieff Issues bfkey = isskey   Brieff Hearsched bfkey = folder_nr   Brieff Decass bfkey = defolder   Brieff Othdocs bfkey = ticknum   Staff Employee stafkey = login_id   Issues Rmdrea isskey = rmdkey   Issues Rmdrea issseq = rmdissseq      Also check out visualization of table relationships.">
+<meta name="description" content="VACOLS Schema # https://github.com/department-of-veterans-affairs/VACOLS/blob/master/vacols_schema.sql
+VACOLS - VBMS Mapping # CORRES table contains most of Veteran&rsquo;s info (should match VBMS) TIVBMS field allows us to determine if the claim is ready for VBMS TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands) BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated Table Joins # Table joins TABLE TABLE JOIN ON Brieff Corres bfcorkey = stafkey Folder Corres ticorkey = stafkey Brieff Folder bfkey = ticknum Brieff Attach bfkey = imgtkky Brieff Assign bfkey = tsktknum Brieff Mail bfkey = mlfolder Brieff Cova bfkey = cvfolder Brieff PriorLoc bfkey = lockey Brieff Issues bfkey = isskey Brieff Hearsched bfkey = folder_nr Brieff Decass bfkey = defolder Brieff Othdocs bfkey = ticknum Staff Employee stafkey = login_id Issues Rmdrea isskey = rmdkey Issues Rmdrea issseq = rmdissseq Also check out visualization of table relationships.">
 <meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="VACOLS Schema" />
-<meta property="og:description" content="VACOLS Schema #   https://github.com/department-of-veterans-affairs/VACOLS/blob/master/vacols_schema.sql
-VACOLS - VBMS Mapping #   CORRES table contains most of Veteran&rsquo;s info (should match VBMS) TIVBMS field allows us to determine if the claim is ready for VBMS TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands) BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated  Table Joins #  Table joins    TABLE TABLE JOIN ON     Brieff Corres bfcorkey = stafkey   Folder Corres ticorkey = stafkey   Brieff Folder bfkey = ticknum   Brieff Attach bfkey = imgtkky   Brieff Assign bfkey = tsktknum   Brieff Mail bfkey = mlfolder   Brieff Cova bfkey = cvfolder   Brieff PriorLoc bfkey = lockey   Brieff Issues bfkey = isskey   Brieff Hearsched bfkey = folder_nr   Brieff Decass bfkey = defolder   Brieff Othdocs bfkey = ticknum   Staff Employee stafkey = login_id   Issues Rmdrea isskey = rmdkey   Issues Rmdrea issseq = rmdissseq      Also check out visualization of table relationships." />
+<meta property="og:description" content="VACOLS Schema # https://github.com/department-of-veterans-affairs/VACOLS/blob/master/vacols_schema.sql
+VACOLS - VBMS Mapping # CORRES table contains most of Veteran&rsquo;s info (should match VBMS) TIVBMS field allows us to determine if the claim is ready for VBMS TIOCTIME of no greater than 3 days ago will let us pull that specific Full Grant (no time limit on Partial/Remands) BRIEFF.BFREGOFF and BFCURLOC, PRIORLOC.LOCDIN and LOCDOUT, ASSIGN.TSKRQACT will be updated by Dispatch must be validated Table Joins # Table joins TABLE TABLE JOIN ON Brieff Corres bfcorkey = stafkey Folder Corres ticorkey = stafkey Brieff Folder bfkey = ticknum Brieff Attach bfkey = imgtkky Brieff Assign bfkey = tsktknum Brieff Mail bfkey = mlfolder Brieff Cova bfkey = cvfolder Brieff PriorLoc bfkey = lockey Brieff Issues bfkey = isskey Brieff Hearsched bfkey = folder_nr Brieff Decass bfkey = defolder Brieff Othdocs bfkey = ticknum Staff Employee stafkey = login_id Issues Rmdrea isskey = rmdkey Issues Rmdrea issseq = rmdissseq Also check out visualization of table relationships." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/vacols_schema.html" /><meta property="article:section" content="schema" />
 
@@ -18,7 +18,7 @@ VACOLS - VBMS Mapping #   CORRES table contains most of Veteran&rsquo;s info (sh
 <link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/caseflow/task_trees/book.min.ca918a1851cb640f46d02aeb342f9722369ca7bdc4eda15d8d9048c31d455275.css" integrity="sha256-ypGKGFHLZA9G0CrrNC&#43;XIjacp73E7aFdjZBIwx1FUnU=" crossorigin="anonymous">
   <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
-  <script defer src="/caseflow/task_trees/en.search.min.08aba2b0b376afa88ba1a929e9dcc8f8de84940085024f9490bb4c66a7c86139.js" integrity="sha256-CKuisLN2r6iLoakp6dzI&#43;N6ElACFAk&#43;UkLtMZqfIYTk=" crossorigin="anonymous"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.a7ab998278eb2dd0aa3c71f065448d4a669bbb9bc337a3879a9ba4bca7575055.js" integrity="sha256-p6uZgnjrLdCqPHHwZUSNSmabu5vDN6OHmpukvKdXUFU=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -564,7 +564,7 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
 
 
  
@@ -765,17 +765,17 @@ https://github.com/alex-shpak/hugo-book
 </h3>
 <details ><summary>Unique indexes</summary>
   <div class="markdown-inner">
-    <pre tabindex="0"><code>$ grep &quot;CREATE UNIQUE INDEX&quot; vacols_schema.sql
-CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;BRFFKEY_IDX&quot; ON &quot;VACOLS&quot;.&quot;BRIEFF&quot; (&quot;BFKEY&quot;)
-CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;CSTAFKEY_IDX&quot; ON &quot;VACOLS&quot;.&quot;CORRES&quot; (&quot;STAFKEY&quot;)
-CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;INV_ID_IDX&quot; ON &quot;VACOLS&quot;.&quot;INVENTORY&quot; (&quot;INV_ID&quot;)
-CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;MAILACT_UNQ&quot; ON &quot;VACOLS&quot;.&quot;MAILACT&quot; (&quot;MAFOLDER&quot;, &quot;MASEQ&quot;, &quot;MAACTION&quot;, &quot;MAASSIGNEE&quot;, &quot;MACOMPDATE&quot;)
-CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;PK_REPKEY_ADDTIME&quot; ON &quot;VACOLS&quot;.&quot;REP&quot; (&quot;REPKEY&quot;, &quot;REPADDTIME&quot;)
-CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;ROSTAFF_IDX&quot; ON &quot;VACOLS&quot;.&quot;ROSTAFF&quot; (&quot;RODOMAINID&quot;, &quot;ROUSERID&quot;)
-CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;SYS_C0012075&quot; ON &quot;VACOLS&quot;.&quot;HEARSCHED&quot; (&quot;HEARING_PKSEQ&quot;)
-CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;TBKEY_IDX&quot; ON &quot;VACOLS&quot;.&quot;TBSCHED&quot; (&quot;TBYEAR&quot;, &quot;TBTRIP&quot;, &quot;TBLEG&quot;)
-CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;TICKNUM_IDX&quot; ON &quot;VACOLS&quot;.&quot;FOLDER&quot; (&quot;TICKNUM&quot;)
-CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;VABARCODE_IDX&quot; ON &quot;VACOLS&quot;.&quot;BVAINV&quot; (&quot;VABARCODE&quot;)
+    <pre tabindex="0"><code>$ grep &#34;CREATE UNIQUE INDEX&#34; vacols_schema.sql
+CREATE UNIQUE INDEX &#34;VACOLS&#34;.&#34;BRFFKEY_IDX&#34; ON &#34;VACOLS&#34;.&#34;BRIEFF&#34; (&#34;BFKEY&#34;)
+CREATE UNIQUE INDEX &#34;VACOLS&#34;.&#34;CSTAFKEY_IDX&#34; ON &#34;VACOLS&#34;.&#34;CORRES&#34; (&#34;STAFKEY&#34;)
+CREATE UNIQUE INDEX &#34;VACOLS&#34;.&#34;INV_ID_IDX&#34; ON &#34;VACOLS&#34;.&#34;INVENTORY&#34; (&#34;INV_ID&#34;)
+CREATE UNIQUE INDEX &#34;VACOLS&#34;.&#34;MAILACT_UNQ&#34; ON &#34;VACOLS&#34;.&#34;MAILACT&#34; (&#34;MAFOLDER&#34;, &#34;MASEQ&#34;, &#34;MAACTION&#34;, &#34;MAASSIGNEE&#34;, &#34;MACOMPDATE&#34;)
+CREATE UNIQUE INDEX &#34;VACOLS&#34;.&#34;PK_REPKEY_ADDTIME&#34; ON &#34;VACOLS&#34;.&#34;REP&#34; (&#34;REPKEY&#34;, &#34;REPADDTIME&#34;)
+CREATE UNIQUE INDEX &#34;VACOLS&#34;.&#34;ROSTAFF_IDX&#34; ON &#34;VACOLS&#34;.&#34;ROSTAFF&#34; (&#34;RODOMAINID&#34;, &#34;ROUSERID&#34;)
+CREATE UNIQUE INDEX &#34;VACOLS&#34;.&#34;SYS_C0012075&#34; ON &#34;VACOLS&#34;.&#34;HEARSCHED&#34; (&#34;HEARING_PKSEQ&#34;)
+CREATE UNIQUE INDEX &#34;VACOLS&#34;.&#34;TBKEY_IDX&#34; ON &#34;VACOLS&#34;.&#34;TBSCHED&#34; (&#34;TBYEAR&#34;, &#34;TBTRIP&#34;, &#34;TBLEG&#34;)
+CREATE UNIQUE INDEX &#34;VACOLS&#34;.&#34;TICKNUM_IDX&#34; ON &#34;VACOLS&#34;.&#34;FOLDER&#34; (&#34;TICKNUM&#34;)
+CREATE UNIQUE INDEX &#34;VACOLS&#34;.&#34;VABARCODE_IDX&#34; ON &#34;VACOLS&#34;.&#34;BVAINV&#34; (&#34;VABARCODE&#34;)
 </code></pre>
   </div>
 </details>
@@ -786,11 +786,11 @@ CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;VABARCODE_IDX&quot; ON &quot;VACOLS
 </h3>
 <details ><summary>Primary indexes</summary>
   <div class="markdown-inner">
-    <pre tabindex="0"><code>$ grep &quot;PRIMARY&quot; vacols_schema.sql
-	CONSTRAINT &quot;VABARCODE_IDX&quot; PRIMARY KEY (&quot;VABARCODE&quot;)
-	PRIMARY KEY (&quot;HEARING_PKSEQ&quot;)
-	CONSTRAINT &quot;PK_REPKEY_ADDTIME&quot; PRIMARY KEY (&quot;REPKEY&quot;, &quot;REPADDTIME&quot;)
-	CONSTRAINT &quot;TBKEY_IDX&quot; PRIMARY KEY (&quot;TBYEAR&quot;, &quot;TBTRIP&quot;, &quot;TBLEG&quot;)
+    <pre tabindex="0"><code>$ grep &#34;PRIMARY&#34; vacols_schema.sql
+	CONSTRAINT &#34;VABARCODE_IDX&#34; PRIMARY KEY (&#34;VABARCODE&#34;)
+	PRIMARY KEY (&#34;HEARING_PKSEQ&#34;)
+	CONSTRAINT &#34;PK_REPKEY_ADDTIME&#34; PRIMARY KEY (&#34;REPKEY&#34;, &#34;REPADDTIME&#34;)
+	CONSTRAINT &#34;TBKEY_IDX&#34; PRIMARY KEY (&#34;TBYEAR&#34;, &#34;TBTRIP&#34;, &#34;TBLEG&#34;)
 </code></pre>
   </div>
 </details>
@@ -4555,7 +4555,7 @@ CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;VABARCODE_IDX&quot; ON &quot;VACOLS
 <td>RMDDEV</td>
 <td>VARCHAR2</td>
 <td>2</td>
-<td>R1' = RO Error; &lsquo;R2&rsquo; = Post RO Event</td>
+<td>R1&rsquo; = RO Error; &lsquo;R2&rsquo; = Post RO Event</td>
 <td></td>
 </tr>
 </tbody>
@@ -5147,7 +5147,7 @@ CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;VABARCODE_IDX&quot; ON &quot;VACOLS
 <td>SSPARE1</td>
 <td>VARCHAR2</td>
 <td>20</td>
-<td>Y' or &lsquo;N&rsquo;</td>
+<td>Y&rsquo; or &lsquo;N&rsquo;</td>
 <td></td>
 </tr>
 <tr>
@@ -5155,7 +5155,7 @@ CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;VABARCODE_IDX&quot; ON &quot;VACOLS
 <td>SSPARE2</td>
 <td>VARCHAR2</td>
 <td>20</td>
-<td>Y' or &lsquo;N&rsquo;</td>
+<td>Y&rsquo; or &lsquo;N&rsquo;</td>
 <td></td>
 </tr>
 <tr>
@@ -6496,7 +6496,7 @@ CREATE UNIQUE INDEX &quot;VACOLS&quot;.&quot;VABARCODE_IDX&quot; ON &quot;VACOLS
 
 
 
-  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}})()</script>
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}})()</script>
 
 
  

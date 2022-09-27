@@ -12,10 +12,10 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows/intake-workflow.html</guid>
-      <description>Intake Workflow #  Intake creates data that can trace a claim through its initial decision, through any requests to contest that decision or subsequent decisions, all the way to the final decision(s).
+      <description>Intake Workflow # Intake creates data that can trace a claim through its initial decision, through any requests to contest that decision or subsequent decisions, all the way to the final decision(s).
 It helps present data to veterans in the same way they already view decision reviews, as an extension to their original claim.
- Issues presentation
-Mail Intake #   mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) graph TD claim -- claim_decision claim_decision -- V[Veteran] V -- |form| BvaMail[BVA mail intake] BvaMail -.</description>
+Issues presentation
+Mail Intake # graph TD claim --&gt; claim_decision claim_decision --&gt; V[Veteran] V --&gt; |form| BvaMail[BVA mail intake] BvaMail -.</description>
     </item>
     
   </channel>

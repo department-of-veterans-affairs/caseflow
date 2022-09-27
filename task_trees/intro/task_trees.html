@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Data-Driven Documentation of Task Trees #  Purpose and uses #  The main purpose of this documentation is to use actual appeal data to inform and supplement current documentation, which may be outdated or lack technical detail. This documentation expands on the Tasks wiki documentation and validates the Explaining Caseflow Tasks slide deck with up-to-date concrete examples.
+<meta name="description" content="Data-Driven Documentation of Task Trees # Purpose and uses # The main purpose of this documentation is to use actual appeal data to inform and supplement current documentation, which may be outdated or lack technical detail. This documentation expands on the Tasks wiki documentation and validates the Explaining Caseflow Tasks slide deck with up-to-date concrete examples.
 This documentation is useful for the following:
- General onboarding: New team members can browse through this documentation to gain an understanding of task types (with realistic examples of task trees), their relationships, and their counts, which can help prioritize their learning strategy.">
+General onboarding: New team members can browse through this documentation to gain an understanding of task types (with realistic examples of task trees), their relationships, and their counts, which can help prioritize their learning strategy.">
 <meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Task Trees README" />
-<meta property="og:description" content="Data-Driven Documentation of Task Trees #  Purpose and uses #  The main purpose of this documentation is to use actual appeal data to inform and supplement current documentation, which may be outdated or lack technical detail. This documentation expands on the Tasks wiki documentation and validates the Explaining Caseflow Tasks slide deck with up-to-date concrete examples.
+<meta property="og:description" content="Data-Driven Documentation of Task Trees # Purpose and uses # The main purpose of this documentation is to use actual appeal data to inform and supplement current documentation, which may be outdated or lack technical detail. This documentation expands on the Tasks wiki documentation and validates the Explaining Caseflow Tasks slide deck with up-to-date concrete examples.
 This documentation is useful for the following:
- General onboarding: New team members can browse through this documentation to gain an understanding of task types (with realistic examples of task trees), their relationships, and their counts, which can help prioritize their learning strategy." />
+General onboarding: New team members can browse through this documentation to gain an understanding of task types (with realistic examples of task trees), their relationships, and their counts, which can help prioritize their learning strategy." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://department-of-veterans-affairs.github.io/caseflow/task_trees/intro/task_trees.html" /><meta property="article:section" content="intro" />
 
@@ -20,7 +20,7 @@ This documentation is useful for the following:
 <link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/caseflow/task_trees/book.min.ca918a1851cb640f46d02aeb342f9722369ca7bdc4eda15d8d9048c31d455275.css" integrity="sha256-ypGKGFHLZA9G0CrrNC&#43;XIjacp73E7aFdjZBIwx1FUnU=" crossorigin="anonymous">
   <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
-  <script defer src="/caseflow/task_trees/en.search.min.08aba2b0b376afa88ba1a929e9dcc8f8de84940085024f9490bb4c66a7c86139.js" integrity="sha256-CKuisLN2r6iLoakp6dzI&#43;N6ElACFAk&#43;UkLtMZqfIYTk=" crossorigin="anonymous"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.a7ab998278eb2dd0aa3c71f065448d4a669bbb9bc337a3879a9ba4bca7575055.js" integrity="sha256-p6uZgnjrLdCqPHHwZUSNSmabu5vDN6OHmpukvKdXUFU=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -566,7 +566,7 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
 
 
  
@@ -731,22 +731,22 @@ Each task has its own page (i.e., an <code>md</code> file).</p>
 </ul>
 <details><summary>Task creation order combined from 3 task pages</summary>
 <pre tabindex="0"><code>digraph G {
-  rankdir=&quot;LR&quot;;
-  &quot;DistributionTask_Organization&quot; -&gt; &quot;TrackVeteranTask_Organization&quot; [label=1]
-  &quot;EvidenceSubmissionWindowTask_Organization&quot; -&gt; &quot;TrackVeteranTask_Organization&quot; [label=2]
-  &quot;EvidenceSubmissionWindowTask_Organization&quot; -&gt; &quot;SpecialCaseMovementTask_User&quot; [label=1]
-  &quot;DistributionTask_Organization&quot; -&gt; &quot;JudgeAssignTask_User&quot; [label=16]
-  &quot;EvidenceSubmissionWindowTask_Organization&quot; -&gt; &quot;JudgeAssignTask_User&quot; [label=2]
-  &quot;DistributionTask_Organization&quot; -&gt; &quot;ScheduleHearingTask_Organization&quot; [label=128]
-  &quot;RootTask_Organization&quot; -&gt; &quot;DistributionTask_Organization&quot; [label=102]
-  &quot;DistributionTask_Organization&quot; -&gt; &quot;EvidenceOrArgumentMailTask_Organization&quot; [label=1]
-  &quot;EvidenceSubmissionWindowTask_Organization&quot; -&gt; &quot;InformalHearingPresentationTask_Organization&quot; [label=9]
-  &quot;DistributionTask_Organization&quot; -&gt; &quot;SpecialCaseMovementTask_User&quot; [label=1]
-  &quot;DistributionTask_Organization&quot; -&gt; &quot;EvidenceSubmissionWindowTask_Organization&quot; [label=103]
-  &quot;RootTask_Organization&quot; -&gt; &quot;TrackVeteranTask_Organization&quot; [label=301]
-  &quot;DistributionTask_Organization&quot; -&gt; &quot;InformalHearingPresentationTask_Organization&quot; [label=75]
-  &quot;TrackVeteranTask_Organization&quot; -&gt; &quot;DistributionTask_Organization&quot; [label=301]
-  &quot;DistributionTask_Organization&quot; -&gt; &quot;TranslationTask_Organization&quot; [label=1]
+  rankdir=&#34;LR&#34;;
+  &#34;DistributionTask_Organization&#34; -&gt; &#34;TrackVeteranTask_Organization&#34; [label=1]
+  &#34;EvidenceSubmissionWindowTask_Organization&#34; -&gt; &#34;TrackVeteranTask_Organization&#34; [label=2]
+  &#34;EvidenceSubmissionWindowTask_Organization&#34; -&gt; &#34;SpecialCaseMovementTask_User&#34; [label=1]
+  &#34;DistributionTask_Organization&#34; -&gt; &#34;JudgeAssignTask_User&#34; [label=16]
+  &#34;EvidenceSubmissionWindowTask_Organization&#34; -&gt; &#34;JudgeAssignTask_User&#34; [label=2]
+  &#34;DistributionTask_Organization&#34; -&gt; &#34;ScheduleHearingTask_Organization&#34; [label=128]
+  &#34;RootTask_Organization&#34; -&gt; &#34;DistributionTask_Organization&#34; [label=102]
+  &#34;DistributionTask_Organization&#34; -&gt; &#34;EvidenceOrArgumentMailTask_Organization&#34; [label=1]
+  &#34;EvidenceSubmissionWindowTask_Organization&#34; -&gt; &#34;InformalHearingPresentationTask_Organization&#34; [label=9]
+  &#34;DistributionTask_Organization&#34; -&gt; &#34;SpecialCaseMovementTask_User&#34; [label=1]
+  &#34;DistributionTask_Organization&#34; -&gt; &#34;EvidenceSubmissionWindowTask_Organization&#34; [label=103]
+  &#34;RootTask_Organization&#34; -&gt; &#34;TrackVeteranTask_Organization&#34; [label=301]
+  &#34;DistributionTask_Organization&#34; -&gt; &#34;InformalHearingPresentationTask_Organization&#34; [label=75]
+  &#34;TrackVeteranTask_Organization&#34; -&gt; &#34;DistributionTask_Organization&#34; [label=301]
+  &#34;DistributionTask_Organization&#34; -&gt; &#34;TranslationTask_Organization&#34; [label=1]
 }
 </code></pre></details>
 <p><a href="RTO.DTO.ESWTO.dot.png"><img src="RTO.DTO.ESWTO.dot.png" alt="RTO.DTO.ESWTO" /></a></p>
@@ -794,7 +794,7 @@ Each task has its own page (i.e., an <code>md</code> file).</p>
 
 
 
-  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}})()</script>
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}})()</script>
 
 
  

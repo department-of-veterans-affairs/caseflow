@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Appeal Workflow #   mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) graph TD V[Veteran] --|claim| firstRO[DRO] firstRO --|claim decision| V %% start(start appeal) -.- V V --|appeal forms| R(Regional Office) subgraph -VBA- firstRO R -- choice{choice?} choice -- |Supp Claim| DRO[DRO] choice -- |HLR| DRO end DRO -- |decision| V choice -- |Board appeal, NOD| docket{docket?} choice -- |Legacy appeal, before AMA| Certification Certification -- InActiv[Activation] InActiv -- H[Hearing] subgraph -Hearing- H[Hearing] end docket -- |Hearing| InH docket -- |Evid Subm| In docket -- |Direct Review| In subgraph -Intake- InH(Intake for Hearing) In(Intake) end InH -- H[Hearing] H -- Transcription In -- VSO In -- ACD[ACD] VSO -- ACD[ACD] Transcription -- ACD[ACD] ACD -- JAT[Judge assigns] InActiv -- JAT subgraph -Decision- JAT -- AT[Attorney task] VLJSupport[VLJ support] -.">
+<meta name="description" content="Appeal Workflow # graph TD V[Veteran] --&gt;|claim| firstRO[DRO] firstRO --&gt;|claim decision| V %% start(start appeal) -.- V V --&gt;|appeal forms| R(Regional Office) subgraph -VBA- firstRO R --&gt; choice{choice?} choice --&gt; |Supp Claim| DRO[DRO] choice --&gt; |HLR| DRO end DRO --&gt; |decision| V choice --&gt; |Board appeal, NOD| docket{docket?} choice --&gt; |Legacy appeal, before AMA| Certification Certification --&gt; InActiv[Activation] InActiv --&gt; H[Hearing] subgraph -Hearing- H[Hearing] end docket --&gt; |Hearing| InH docket --&gt; |Evid Subm| In docket --&gt; |Direct Review| In subgraph -Intake- InH(Intake for Hearing) In(Intake) end InH --&gt; H[Hearing] H --&gt; Transcription In --&gt; VSO In --&gt; ACD[ACD] VSO --&gt; ACD[ACD] Transcription --&gt; ACD[ACD] ACD --&gt; JAT[Judge assigns] InActiv --&gt; JAT subgraph -Decision- JAT --&gt; AT[Attorney task] VLJSupport[VLJ support] -.">
 <meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Appeal Workflow" />
-<meta property="og:description" content="Appeal Workflow #   mermaid.initialize({ &#34;flowchart&#34;: { &#34;useMaxWidth&#34;:true }, &#34;theme&#34;: &#34;default&#34; } ) graph TD V[Veteran] --|claim| firstRO[DRO] firstRO --|claim decision| V %% start(start appeal) -.- V V --|appeal forms| R(Regional Office) subgraph -VBA- firstRO R -- choice{choice?} choice -- |Supp Claim| DRO[DRO] choice -- |HLR| DRO end DRO -- |decision| V choice -- |Board appeal, NOD| docket{docket?} choice -- |Legacy appeal, before AMA| Certification Certification -- InActiv[Activation] InActiv -- H[Hearing] subgraph -Hearing- H[Hearing] end docket -- |Hearing| InH docket -- |Evid Subm| In docket -- |Direct Review| In subgraph -Intake- InH(Intake for Hearing) In(Intake) end InH -- H[Hearing] H -- Transcription In -- VSO In -- ACD[ACD] VSO -- ACD[ACD] Transcription -- ACD[ACD] ACD -- JAT[Judge assigns] InActiv -- JAT subgraph -Decision- JAT -- AT[Attorney task] VLJSupport[VLJ support] -." />
+<meta property="og:description" content="Appeal Workflow # graph TD V[Veteran] --&gt;|claim| firstRO[DRO] firstRO --&gt;|claim decision| V %% start(start appeal) -.- V V --&gt;|appeal forms| R(Regional Office) subgraph -VBA- firstRO R --&gt; choice{choice?} choice --&gt; |Supp Claim| DRO[DRO] choice --&gt; |HLR| DRO end DRO --&gt; |decision| V choice --&gt; |Board appeal, NOD| docket{docket?} choice --&gt; |Legacy appeal, before AMA| Certification Certification --&gt; InActiv[Activation] InActiv --&gt; H[Hearing] subgraph -Hearing- H[Hearing] end docket --&gt; |Hearing| InH docket --&gt; |Evid Subm| In docket --&gt; |Direct Review| In subgraph -Intake- InH(Intake for Hearing) In(Intake) end InH --&gt; H[Hearing] H --&gt; Transcription In --&gt; VSO In --&gt; ACD[ACD] VSO --&gt; ACD[ACD] Transcription --&gt; ACD[ACD] ACD --&gt; JAT[Judge assigns] InActiv --&gt; JAT subgraph -Decision- JAT --&gt; AT[Attorney task] VLJSupport[VLJ support] -." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows/appeal-workflow.html" /><meta property="article:section" content="workflows" />
 
@@ -16,7 +16,7 @@
 <link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/caseflow/task_trees/book.min.ca918a1851cb640f46d02aeb342f9722369ca7bdc4eda15d8d9048c31d455275.css" integrity="sha256-ypGKGFHLZA9G0CrrNC&#43;XIjacp73E7aFdjZBIwx1FUnU=" crossorigin="anonymous">
   <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
-  <script defer src="/caseflow/task_trees/en.search.min.08aba2b0b376afa88ba1a929e9dcc8f8de84940085024f9490bb4c66a7c86139.js" integrity="sha256-CKuisLN2r6iLoakp6dzI&#43;N6ElACFAk&#43;UkLtMZqfIYTk=" crossorigin="anonymous"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.a7ab998278eb2dd0aa3c71f065448d4a669bbb9bc337a3879a9ba4bca7575055.js" integrity="sha256-p6uZgnjrLdCqPHHwZUSNSmabu5vDN6OHmpukvKdXUFU=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -562,7 +562,7 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
 
 
  
@@ -739,7 +739,7 @@ Enacted --> Closed
 
 
 
-  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}})()</script>
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}})()</script>
 
 
  

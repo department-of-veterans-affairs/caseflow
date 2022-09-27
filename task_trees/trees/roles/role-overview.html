@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="| All Roles | Attorney | Judge | Colocated | Acting Judge | Dispatch User | Regional Office User | Intake User | Hearings User |
-Roles Overview #  There are a number of different roles available within Caseflow defined primarily by which functions they are allowed to perform.
-  Attorney  Judge  Colocated  Acting Judge  Dispatch User  Regional Office User  Intake User  Hearings User  Users with a particular role will have access to perform different actions on tasks that have been assigned to them in their queue.">
+Roles Overview # There are a number of different roles available within Caseflow defined primarily by which functions they are allowed to perform.
+Attorney Judge Colocated Acting Judge Dispatch User Regional Office User Intake User Hearings User Users with a particular role will have access to perform different actions on tasks that have been assigned to them in their queue.">
 <meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Roles Overview" />
 <meta property="og:description" content="| All Roles | Attorney | Judge | Colocated | Acting Judge | Dispatch User | Regional Office User | Intake User | Hearings User |
-Roles Overview #  There are a number of different roles available within Caseflow defined primarily by which functions they are allowed to perform.
-  Attorney  Judge  Colocated  Acting Judge  Dispatch User  Regional Office User  Intake User  Hearings User  Users with a particular role will have access to perform different actions on tasks that have been assigned to them in their queue." />
+Roles Overview # There are a number of different roles available within Caseflow defined primarily by which functions they are allowed to perform.
+Attorney Judge Colocated Acting Judge Dispatch User Regional Office User Intake User Hearings User Users with a particular role will have access to perform different actions on tasks that have been assigned to them in their queue." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/roles/role-overview.html" /><meta property="article:section" content="trees" />
 
@@ -20,7 +20,7 @@ Roles Overview #  There are a number of different roles available within Caseflo
 <link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/caseflow/task_trees/book.min.ca918a1851cb640f46d02aeb342f9722369ca7bdc4eda15d8d9048c31d455275.css" integrity="sha256-ypGKGFHLZA9G0CrrNC&#43;XIjacp73E7aFdjZBIwx1FUnU=" crossorigin="anonymous">
   <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
-  <script defer src="/caseflow/task_trees/en.search.min.08aba2b0b376afa88ba1a929e9dcc8f8de84940085024f9490bb4c66a7c86139.js" integrity="sha256-CKuisLN2r6iLoakp6dzI&#43;N6ElACFAk&#43;UkLtMZqfIYTk=" crossorigin="anonymous"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.a7ab998278eb2dd0aa3c71f065448d4a669bbb9bc337a3879a9ba4bca7575055.js" integrity="sha256-p6uZgnjrLdCqPHHwZUSNSmabu5vDN6OHmpukvKdXUFU=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -566,7 +566,7 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-  <script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
 
 
  
@@ -691,12 +691,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 <p>The Caseflow access control logic is implemented by checking several different attributes about the user. These attributes can come from a few different systems and use different methods to determine access.</p>
 <p>The primary method for determining roles on a user is called <code>roles</code></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">roles</span>
-  (self<span style="color:#f92672">[</span><span style="color:#e6db74">:roles</span><span style="color:#f92672">]</span> <span style="color:#f92672">||</span> <span style="color:#f92672">[]</span>)<span style="color:#f92672">.</span>inject(<span style="color:#f92672">[]</span>) <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>result, role<span style="color:#f92672">|</span>
-    result<span style="color:#f92672">.</span>concat(<span style="color:#f92672">[</span>role<span style="color:#f92672">]</span>)<span style="color:#f92672">.</span>concat(<span style="color:#66d9ef">FUNCTION_ALIASES</span><span style="color:#f92672">[</span>role<span style="color:#f92672">]</span> <span style="color:#f92672">||</span> <span style="color:#f92672">[]</span>)
-  <span style="color:#66d9ef">end</span>
-<span style="color:#66d9ef">end</span>
-</code></pre></div><p>Additional methods for verifying user roles are as follows</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">roles</span>
+</span></span><span style="display:flex;"><span>  (self<span style="color:#f92672">[</span><span style="color:#e6db74">:roles</span><span style="color:#f92672">]</span> <span style="color:#f92672">||</span> <span style="color:#f92672">[]</span>)<span style="color:#f92672">.</span>inject(<span style="color:#f92672">[]</span>) <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>result, role<span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span>    result<span style="color:#f92672">.</span>concat(<span style="color:#f92672">[</span>role<span style="color:#f92672">]</span>)<span style="color:#f92672">.</span>concat(<span style="color:#66d9ef">FUNCTION_ALIASES</span><span style="color:#f92672">[</span>role<span style="color:#f92672">]</span> <span style="color:#f92672">||</span> <span style="color:#f92672">[]</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>Additional methods for verifying user roles are as follows</p>
 <h3 id="by-organization">
   By Organization
   <small><a class="anchor-heading" href="#by-organization" aria-labelledby="by-organization">#</a></small>
@@ -766,7 +766,7 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-  <script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}})()</script>
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}})()</script>
 
 
  
