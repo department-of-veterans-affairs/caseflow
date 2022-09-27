@@ -66,7 +66,8 @@ const CancelTaskModal = (props) => {
 
   if (
     getModalTitle === COPY.EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE ||
-    getModalTitle === COPY.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE
+    getModalTitle === COPY.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE ||
+    getModalTitle === COPY.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_MODAL_TITLE
   ) {
     modalProps.submitButtonClassNames = ['usa-button'];
   }
