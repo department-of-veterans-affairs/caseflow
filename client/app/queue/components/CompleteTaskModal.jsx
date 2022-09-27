@@ -88,15 +88,6 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
   const handleTextFieldChange = (value) => {
     setState({ otherInstructions: value });
   };
-  const modalLabel = () => {
-    if (getTaskType() === 'AssessDocumentationTask') {
-      return COPY.VHA_COMPLETE_TASK_MODAL_TITLE;
-    } else if ((getTaskType() === 'VhaDocumentSearchTask') || (getTaskType()?.includes('Education'))) {
-      return StringUtil.nl2br(COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY);
-    }
-
-    return null;
-  };
 
   return (
     <React.Fragment>
@@ -106,7 +97,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
           <RadioField
             name="completeTaskDocLocation"
             id="completeTaskDocLocation"
-            label={modalLabel()}
+            label={StringUtil.nl2br(COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)}
             inputRef={props.register}
             vertical
             onChange={handleRadioChange}
