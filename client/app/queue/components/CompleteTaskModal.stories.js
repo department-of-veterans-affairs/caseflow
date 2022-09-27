@@ -16,7 +16,8 @@ import {
   emoToBvaIntakeData,
   rpoToBvaIntakeData,
   vhaPOToCAMOData,
-  visnData
+  visnData,
+  returnToOrgData
 } from '../../../test/data/queue/taskActionModals/taskActionModalData';
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
 import CompleteTaskModal from './CompleteTaskModal';
@@ -55,6 +56,13 @@ const Template = (args) => {
       </MemoryRouter>
     </Provider>
   );
+};
+
+export const DocketAppeal = Template.bind({});
+DocketAppeal.args = {
+  storeValues: returnToOrgData,
+  taskType: 'PreDocketTask',
+  modalType: trimTaskActionValue(TASK_ACTIONS.DOCKET_APPEAL.value)
 };
 
 export const VhaCamoToBoardIntake = Template.bind({});
