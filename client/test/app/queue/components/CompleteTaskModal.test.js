@@ -13,7 +13,8 @@ import {
   enterTextFieldOptions,
   enterModalRadioOptions,
   selectFromDropdown,
-  clickSubmissionButton
+  clickSubmissionButton,
+  createSpyRequestPatch
 } from './modalUtils';
 import {
   postData,
@@ -24,7 +25,6 @@ import {
   rpoToBvaIntakeData,
   vhaPOToCAMOData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
-import * as uiActions from 'app/queue/uiReducer/uiActions';
 import CompleteTaskModal from 'app/queue/components/CompleteTaskModal';
 
 let requestPatchSpy;
@@ -55,12 +55,7 @@ const renderCompleteTaskModal = (modalType, storeValues, taskType) => {
 const getReceivedInstructions = () => requestPatchSpy.mock.calls[0][1].data.task.instructions;
 
 beforeEach(() => {
-  requestPatchSpy = jest.spyOn(uiActions, 'requestPatch').
-    mockImplementation(() => jest.fn(() => Promise.resolve({
-      body: {
-        ...postData
-      }
-    })));
+  requestPatchSpy = createSpyRequestPatch(postData);
 });
 
 afterEach(() => {

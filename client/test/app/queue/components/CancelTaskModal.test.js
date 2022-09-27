@@ -11,7 +11,8 @@ import {
   getAppealId,
   getTaskId,
   enterTextFieldOptions,
-  clickSubmissionButton
+  clickSubmissionButton,
+  createSpyRequestPatch
 } from './modalUtils';
 import CancelTaskModal from 'app/queue/components/CancelTaskModal';
 import {
@@ -19,7 +20,6 @@ import {
   vhaPOToCAMOData,
   postData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
-import * as uiActions from 'app/queue/uiReducer/uiActions';
 
 let requestPatchSpy;
 
@@ -49,14 +49,7 @@ const renderCancelTaskModal = (modalType, storeValues, taskType) => {
 const getReceivedInstructions = () => requestPatchSpy.mock.calls[0][1].data.task.instructions;
 
 beforeEach(() => {
-  requestPatchSpy = jest.spyOn(uiActions, 'requestPatch').
-    mockImplementation(() => jest.fn(() => Promise.resolve(
-      {
-        body: {
-          ...postData
-        }
-      }
-    )));
+  requestPatchSpy = createSpyRequestPatch(postData);
 });
 
 afterEach(() => {
