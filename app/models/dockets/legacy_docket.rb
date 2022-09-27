@@ -149,8 +149,4 @@ class LegacyDocket < Docket
   def nod_count
     @nod_count ||= LegacyAppeal.repository.nod_count
   end
-
-  def use_by_docket_date?
-    FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
-  end
 end
