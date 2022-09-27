@@ -79,6 +79,15 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText('Send to Board Intake')).toBeTruthy();
     });
 
+    test('Submission button has correct CSS class', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+      expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+      expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+    });
+
     test('Before Radio button is Chosen, button should be disabled', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
       expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
@@ -143,6 +152,15 @@ describe('CompleteTaskModal', () => {
     test('modal title is Ready for review', () => {
       renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
       expect(screen.getByText('Ready for review')).toBeTruthy();
+    });
+
+    test('Submission button has correct CSS class', () => {
+      renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
+
+      const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+      expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+      expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -216,6 +234,15 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText('Ready for review')).toBeTruthy();
     });
 
+    test('Submission button has correct CSS class', () => {
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
+
+      const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+      expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+      expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+    });
+
     test('Before Radio button is Chosen, button should be disabled', () => {
       renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
       expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
@@ -287,6 +314,15 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText('Ready for review')).toBeTruthy();
     });
 
+    test('Submission button has correct CSS class', () => {
+      renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
+
+      const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+      expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+      expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+    });
+
     test('Before Radio button is Chosen, button should be disabled', () => {
       renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
       expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
@@ -354,6 +390,15 @@ describe('CompleteTaskModal', () => {
     test('modal title is Ready for Review', () => {
       renderCompleteTaskModal(modalType, rpoToBvaIntakeData, taskType);
       expect(screen.getByText('Ready for review')).toBeTruthy();
+    });
+
+    test('Submission button has correct CSS class', () => {
+      renderCompleteTaskModal(modalType, rpoToBvaIntakeData, taskType);
+
+      const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+      expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+      expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -425,6 +470,15 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText('Return to Board Intake')).toBeTruthy();
     });
 
+    test('Submission button has correct CSS class', () => {
+      renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
+
+      const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+      expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+      expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+    });
+
     test('When mandatory text box is empty, button should be disabled', () => {
       renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
       expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
@@ -452,6 +506,15 @@ describe('CompleteTaskModal', () => {
     test('Modal title to be "Return to Board Intake"', () => {
       renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
       expect(screen.getByText('Return to Board Intake')).toBeTruthy();
+    });
+
+    test('Submission button has correct CSS class', () => {
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
+
+      const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+      expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+      expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
