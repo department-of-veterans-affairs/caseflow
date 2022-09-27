@@ -71,10 +71,10 @@ describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
   test('Submission button has correct CSS class', () => {
     renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaPOToCAMOData, taskType);
 
-    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+    const submissionButton = screen.getByText(buttonText).closest('button');
 
-    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+    expect(submissionButton).toHaveClass('usa-button');
+    expect(submissionButton).not.toHaveClass('usa-button-secondary');
   });
 
   test('Button Disabled until text field is populated', () => {
@@ -114,10 +114,10 @@ describe('Whenever RPO returns an appeal to EMO', () => {
   test('Submission button has correct CSS class', () => {
     renderCancelTaskModal(TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.value, rpoToBvaIntakeData, taskType);
 
-    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+    const submissionButton = screen.getByText(buttonText).closest('button');
 
-    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+    expect(submissionButton).toHaveClass('usa-button');
+    expect(submissionButton).not.toHaveClass('usa-button-secondary');
   });
 
   test('Button Disabled until text field is populated', () => {

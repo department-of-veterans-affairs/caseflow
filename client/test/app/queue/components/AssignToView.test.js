@@ -51,10 +51,10 @@ describe('Whenever BVA Intake returns an appeal to', () => {
   test('Submission button for BVA Intake to VHA CAMO has correct CSS class', () => {
     renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.value, returnToOrgData, taskType);
 
-    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+    const submissionButton = screen.getByText(buttonText).closest('button');
 
-    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+    expect(submissionButton).toHaveClass('usa-button');
+    expect(submissionButton).not.toHaveClass('usa-button-secondary');
   });
 
   it('VHA CAMO', () => {
@@ -73,10 +73,10 @@ describe('Whenever BVA Intake returns an appeal to', () => {
   test('Submission button for BVA Intake to VHA CSP has correct CSS class', () => {
     renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.value, returnToOrgData, taskType);
 
-    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+    const submissionButton = screen.getByText(buttonText).closest('button');
 
-    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+    expect(submissionButton).toHaveClass('usa-button');
+    expect(submissionButton).not.toHaveClass('usa-button-secondary');
   });
 
   it('VHA Caregiver Support Program (CSP)', () => {
@@ -95,10 +95,10 @@ describe('Whenever BVA Intake returns an appeal to', () => {
   test('Submission button for BVA Intake to EMO has correct CSS class', () => {
     renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.value, returnToOrgData, taskType);
 
-    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+    const submissionButton = screen.getByText(buttonText).closest('button');
 
-    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+    expect(submissionButton).toHaveClass('usa-button');
+    expect(submissionButton).not.toHaveClass('usa-button-secondary');
   });
 
   it('Education Service (EMO)', () => {
@@ -134,10 +134,10 @@ describe('Whenever the EMO assigns an appeal to a Regional Processing Office', (
   test('Submission button has correct CSS class', () => {
     renderAssignToView(TASK_ACTIONS.EMO_ASSIGN_TO_RPO.value, emoToBvaIntakeData, taskType);
 
-    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+    const submissionButton = screen.getByText(buttonText).closest('button');
 
-    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+    expect(submissionButton).toHaveClass('usa-button');
+    expect(submissionButton).not.toHaveClass('usa-button-secondary');
   });
 });
 
@@ -167,10 +167,10 @@ describe('Whenever VHA CAMO assigns an appeal to a Program Office', () => {
   test('Submission button has correct CSS class', () => {
     renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value, camoToProgramOfficeToCamoData, taskType);
 
-    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+    const submissionButton = screen.getByText(buttonText).closest('button');
 
-    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+    expect(submissionButton).toHaveClass('usa-button');
+    expect(submissionButton).not.toHaveClass('usa-button-secondary');
   });
 });
 
@@ -201,9 +201,9 @@ describe('Whenever a VHA Program Office assigns an appeal to a VISN/Regional Off
   test('Submission button has correct CSS class', () => {
     renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.value, vhaPOToCAMOData, taskType);
 
-    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+    const submissionButton = screen.getByText(buttonText).closest('button');
 
-    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+    expect(submissionButton).toHaveClass('usa-button');
+    expect(submissionButton).not.toHaveClass('usa-button-secondary');
   });
 });

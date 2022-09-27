@@ -83,10 +83,10 @@ describe('CompleteTaskModal', () => {
     test('Submission button has correct CSS class', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
-      const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+      const submissionButton = screen.getByText(buttonText).closest('button');
 
-      expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-      expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+      expect(submissionButton).toHaveClass('usa-button');
+      expect(submissionButton).not.toHaveClass('usa-button-secondary');
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -195,10 +195,10 @@ describe('CompleteTaskModal', () => {
     test('Submission button has correct CSS class', () => {
       renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
 
-      const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+      const submissionButton = screen.getByText(buttonText).closest('button');
 
-      expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-      expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+      expect(submissionButton).toHaveClass('usa-button');
+      expect(submissionButton).not.toHaveClass('usa-button-secondary');
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -352,10 +352,10 @@ describe('CompleteTaskModal', () => {
     test('Submission button has correct CSS class', () => {
       renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
 
-      const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+      const submissionButton = screen.getByText(buttonText).closest('button');
 
-      expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-      expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+      expect(submissionButton).toHaveClass('usa-button');
+      expect(submissionButton).not.toHaveClass('usa-button-secondary');
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -430,10 +430,10 @@ describe('CompleteTaskModal', () => {
     test('Submission button has correct CSS class', () => {
       renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
 
-      const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+      const submissionButton = screen.getByText(buttonText).closest('button');
 
-      expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-      expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+      expect(submissionButton).toHaveClass('usa-button');
+      expect(submissionButton).not.toHaveClass('usa-button-secondary');
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -508,10 +508,10 @@ describe('CompleteTaskModal', () => {
     test('Submission button has correct CSS class', () => {
       renderCompleteTaskModal(modalType, rpoToBvaIntakeData, taskType);
 
-      const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+      const submissionButton = screen.getByText(buttonText).closest('button');
 
-      expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-      expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+      expect(submissionButton).toHaveClass('usa-button');
+      expect(submissionButton).not.toHaveClass('usa-button-secondary');
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -586,10 +586,10 @@ describe('CompleteTaskModal', () => {
     test('Submission button has correct CSS class', () => {
       renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
 
-      const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+      const submissionButton = screen.getByText(buttonText).closest('button');
 
-      expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-      expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+      expect(submissionButton).toHaveClass('usa-button');
+      expect(submissionButton).not.toHaveClass('usa-button-secondary');
     });
 
     test('When mandatory text box is empty, button should be disabled', () => {
@@ -624,10 +624,10 @@ describe('CompleteTaskModal', () => {
     test('Submission button has correct CSS class', () => {
       renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
 
-      const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+      const submissionButton = screen.getByText(buttonText).closest('button');
 
-      expect(submissionButtonClasses.contains('usa-button')).toBe(true);
-      expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+      expect(submissionButton).toHaveClass('usa-button');
+      expect(submissionButton).not.toHaveClass('usa-button-secondary');
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
