@@ -46,106 +46,164 @@ const renderAssignToView = (modalType, storeValues, taskType) => {
 
 describe('Whenever BVA Intake returns an appeal to', () => {
   const taskType = 'PreDocketTask';
+  const buttonText = COPY.MODAL_RETURN_BUTTON;
+
+  test('Submission button for BVA Intake to VHA CAMO has correct CSS class', () => {
+    renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.value, returnToOrgData, taskType);
+
+    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
+  });
 
   it('VHA CAMO', () => {
     renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.value, returnToOrgData, taskType);
 
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+  });
+
+  test('Submission button for BVA Intake to VHA CSP has correct CSS class', () => {
+    renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.value, returnToOrgData, taskType);
+
+    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
   });
 
   it('VHA Caregiver Support Program (CSP)', () => {
     renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.value, returnToOrgData, taskType);
 
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+  });
+
+  test('Submission button for BVA Intake to EMO has correct CSS class', () => {
+    renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.value, returnToOrgData, taskType);
+
+    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
   });
 
   it('Education Service (EMO)', () => {
     renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.value, returnToOrgData, taskType);
 
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
   });
 });
 
 describe('Whenever the EMO assigns an appeal to a Regional Processing Office', () => {
   const taskType = 'EducationDocumentSearchTask';
+  const buttonText = COPY.MODAL_ASSIGN_BUTTON;
 
   it('Button Disabled until a RPO is chosen from the dropdown', () => {
     renderAssignToView(TASK_ACTIONS.EMO_ASSIGN_TO_RPO.value, emoToBvaIntakeData, taskType);
-    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     selectFromDropdown(
       'Assign to selector',
       'Buffalo RPO'
     );
 
-    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+  });
+
+  test('Submission button has correct CSS class', () => {
+    renderAssignToView(TASK_ACTIONS.EMO_ASSIGN_TO_RPO.value, emoToBvaIntakeData, taskType);
+
+    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
   });
 });
 
 describe('Whenever VHA CAMO assigns an appeal to a Program Office', () => {
   const taskType = 'VhaDocumentSearchTask';
+  const buttonText = COPY.MODAL_ASSIGN_BUTTON;
 
   it('Submission button is disabled until dropdown and text fields are populated', () => {
     renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value, camoToProgramOfficeToCamoData, taskType);
-    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     selectFromDropdown(
       'Assign to selector',
       'Prosthetics'
     );
 
-    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 
-    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+  });
+
+  test('Submission button has correct CSS class', () => {
+    renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value, camoToProgramOfficeToCamoData, taskType);
+
+    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
   });
 });
 
 describe('Whenever a VHA Program Office assigns an appeal to a VISN/Regional Office', () => {
   const taskType = 'AssessDocumentationTask';
+  const buttonText = COPY.MODAL_ASSIGN_BUTTON;
 
   it('Submission button is disabled until dropdown and text fields are populated', () => {
     renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.value, vhaPOToCAMOData, taskType);
 
-    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     selectFromDropdown(
       'Assign to selector',
       'Sierra Pacific Network'
     );
 
-    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 
-    expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+  });
+
+  test('Submission button has correct CSS class', () => {
+    renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.value, vhaPOToCAMOData, taskType);
+
+    const submissionButtonClasses = screen.getByText(buttonText).closest('button').classList;
+
+    expect(submissionButtonClasses.contains('usa-button')).toBe(true);
+    expect(submissionButtonClasses.contains('usa-button-secondary')).not.toBe(true);
   });
 });
