@@ -11,7 +11,7 @@ module IhpTaskPending
   def create_ihp_tasks!
     super_return_value = super
     appeal_tasks_created = super_return_value.map { |task| task.class.to_s }
-    if task_array.any?("InformalHearingPresentationTask")
+    if appeal_tasks_created.any?("InformalHearingPresentationTask")
       AppellantNotification.notify_appellant(@parent.appeal, @@template_name)
     end
     super_return_value
@@ -21,7 +21,7 @@ module IhpTaskPending
   def create_from_params(params, user)
     super_return_value = super
     task_array = []
-    super_return_value.appeal.tasks.each { |task| task_array.push(task.class.to_s) }
+    super_return_value&.appeal.tasks.each { |task| task_array.push(task.class.to_s) }
     if super_return_value.class.to_s == "IhpColocatedTask" && task_array.include?("IhpColocatedTask")
       AppellantNotification.notify_appellant(super_return_value.appeal, @@template_name)
     end
