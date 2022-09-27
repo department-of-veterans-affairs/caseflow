@@ -365,8 +365,7 @@ const EducationAssessDocumentationTaskData = {
           modal_button_text: 'Send',
           type: 'EducationAssessDocumentationTask',
           body_optional: true,
-          redirect_after: '/organizations/buffalo-rpo',
-          modal_button_text: 'Send'
+          redirect_after: '/organizations/buffalo-rpo'
         }
       },
       {

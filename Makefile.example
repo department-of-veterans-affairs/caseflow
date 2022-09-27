@@ -62,6 +62,9 @@ up:  ## Start the docker containers
 
 down:	## Stop the docker containers
 	docker-compose down
+	
+down-m1:  ## Stop the docker containers on a M1 Mac
+	docker-compose -f docker-compose-m1.yml down
 
 run: up ready  ## Start rails server and frontend server
 	foreman start
@@ -184,6 +187,18 @@ client-build-all client-all: client-test client-demo ## Builds webpack for both 
 
 one-test:  ## run the rspec test passed in
 	bundle exec rspec $(RUN_ARGS)
+
+run-all-queues: ## start shoryuken with all queues
+	bundle exec shoryuken -q caseflow_development_send_notifications caseflow_development_high_priority caseflow_development_low_priority  -R
+
+run-low-priority: ## start shoryuken with just the low priority queue
+	bundle exec shoryuken -q caseflow_development_low_priority  -R
+
+run-high-priority: ## start shoryuken with just the high priority queue
+	bundle exec shoryuken -q caseflow_development_high_priority  -R
+
+run-send-notifications: ## start shoryuken with just the send_notification queue
+	bundle exec shoryuken -q caseflow_development_send_notifications  -R
 
 jest: ## Run jest tests
 	cd client && yarn jest
