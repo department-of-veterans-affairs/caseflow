@@ -930,31 +930,30 @@ export const statusLabel = (appeal) => {
 };
 
 export const getPreviousTaskInstructions = (tasks) => {
-  let reviewNotes;
+  let reviewNotes = null;
 
   const previousInstructions = tasks.map((task) => {
     // Skip if there are no previous instructions
-    if (task.instructions[1]) {
-      if (task.assignedTo.type === 'VhaProgramOffice') {
+    if (task.instructions[1] && task.instructions.length > 0) {
+      switch (task.assignedTo.type) {
+      case 'VhaProgramOffice':
         reviewNotes = 'Program Office';
-
-        return task && task.instructions[1];
-      } else if (task.assignedTo.type === 'VhaRegionalOffice') {
+        break;
+      case 'VhaRegionalOffice':
         reviewNotes = 'VISN';
-
-        return task && task.instructions[1];
-      } else if (task.assignedTo.type === 'VhaCamo' && task.instructions.length > 0) {
+        break;
+      case 'VhaCamo':
         reviewNotes = 'CAMO';
-
-        return task && task.instructions[1];
-      } else if (task.assignedTo.type === 'EducationRpo' && task.instructions.length > 0) {
+        break;
+      case 'EducationRpo':
         reviewNotes = 'Regional Processing Office';
-
-        return task && task.instructions[1];
+        break;
+      default:
+        break;
       }
     }
 
-    return reviewNotes = null;
+    return reviewNotes ? task.instructions[1] : null;
   });
 
   return { reviewNotes, previousInstructions };
