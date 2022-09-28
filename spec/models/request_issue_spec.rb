@@ -733,9 +733,6 @@ describe RequestIssue, :all_dbs do
   end
 
   context ".predocket_needed on a vha issue" do
-    before { FeatureToggle.enable!(:vha_predocket_appeals) }
-    after { FeatureToggle.disable!(:vha_predocket_appeals) }
-
     context "is_predocket_needed is true" do
       let!(:request_issue) { create(:request_issue, benefit_type: "vha", is_predocket_needed: true) }
 

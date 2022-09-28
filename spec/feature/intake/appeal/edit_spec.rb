@@ -474,24 +474,33 @@ feature "Appeal Edit issues", :all_dbs do
         row3_1 .should eq('Appellant')
       end
     end
-
-    # scenario "on the review_split page, testing if veteran and appellant are different" do
-    #   skill_form(appeal2)
-    #   binding.pry
-    #   if expect(appeal2.veteran_is_not_claimant).to be(true)
-    #     page.find(:css, 'table', text: 'Veteran')
-    #     row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
-    #     row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
-    #     row2_1 .should eq('Veteran')
-    #     row3_1 .should eq('Appellant')
-    #   end
-    # end
-
+    
     scenario "on the review_split page, appeal type is no hearing" do
       skill_form(appeal2)
       expect(appeal2.docket_type).not_to have_content('hearing') 
     end
 
+    scenario "when navigating from split_appeal to queue, the success banner displays" do
+      # set success and fail message
+      success_message = "You have successfully split"
+      fail_message = "This new appeal stream has the same docket number and tasks as the original appeal."
+      # add issues to the appeal
+      appeal2.request_issues << request_issue_1
+      appeal2.request_issues << request_issue_2
+
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal2.uuid}/edit/review_split")
+
+      click_button("Split appeal")
+      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
+      expect(page).to have_content(success_message)
+      expect(page).to have_content(fail_message)
+
+      # resetting the page removes the banner on load.
+      page.reset!
+      expect(page).to_not have_content(success_message)
+      expect(page).to_not have_content(fail_message)
+    end
   end
 
   context "Veteran is invalid" do

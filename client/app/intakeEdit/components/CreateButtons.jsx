@@ -85,9 +85,13 @@ const BackButton = connect(
 class SplitButtonUnconnected extends React.PureComponent {
 
   handleSplitSubmit = (appeal, payloadInfo) => {
-    this.props.splitAppeal(appeal.id, payloadInfo.selectedIssues,
+
+    const response = this.props.splitAppeal(appeal.id, payloadInfo.selectedIssues,
       payloadInfo.reason, payloadInfo.otherReason, this.props.user);
-    window.location.href = `/queue/appeals/${this.props.claimId}`;
+
+    response.then(() => {
+      window.location.href = `/queue/appeals/${this.props.claimId}`;
+    });
   }
   render() {
 

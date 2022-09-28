@@ -63,7 +63,7 @@ const getChecklistItems = (featureToggles, formType, requestIssues, isInformalCo
   if (formType === 'appeal') {
     let statusMessage = 'Appeal created:';
 
-    if (checkIssuesForVha(requestIssues) && featureToggles.vhaPreDocketAppeals) {
+    if (checkIssuesForVha(requestIssues)) {
       statusMessage = 'Appeal created and sent to VHA for document assessment.';
     }
 

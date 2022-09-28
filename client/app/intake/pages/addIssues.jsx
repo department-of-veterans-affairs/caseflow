@@ -212,7 +212,7 @@ class AddIssuesPage extends React.Component {
     } = this.props;
     const intakeData = intakeForms[formType];
     const appealInfo = intakeForms.appeal;
-    const { useAmaActivationDate, vhaPreDocketAppeals } = featureToggles;
+    const { useAmaActivationDate } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
@@ -288,7 +288,7 @@ class AddIssuesPage extends React.Component {
             + Add issue
             </Button>,
             (' '),
-            <Link to="/create_split">
+            <Link to="/create_split" disabled={issuesChanged}>
               <Button
                 name="split-appeal"
                 label="split-appeal"
@@ -362,7 +362,7 @@ class AddIssuesPage extends React.Component {
 
     const issueSectionRow = (sectionIssues, fieldTitle) => {
       const reviewHasVhaIssues = sectionIssues.some((issue) => issue.benefitType === 'vha');
-      const showPreDocketBanner = !editPage && formType === 'appeal' && reviewHasVhaIssues && vhaPreDocketAppeals;
+      const showPreDocketBanner = !editPage && formType === 'appeal' && reviewHasVhaIssues;
 
       return {
         field: fieldTitle,
