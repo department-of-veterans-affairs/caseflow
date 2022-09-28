@@ -208,6 +208,11 @@
     "value": "modal/ready_for_review",
     "func": "vha_complete_data"
   },
+  "VHA_VISN_SEND_TO_VHA_PO_FOR_REVIEW": {
+    "label": "Documents ready for VHA Program Office team review",
+    "value": "modal/ready_for_review",
+    "func": "vha_complete_data"
+  },
   "PLACE_TIMED_HOLD": {
     "label": "Put task on hold",
     "value": "modal/place_timed_hold"
