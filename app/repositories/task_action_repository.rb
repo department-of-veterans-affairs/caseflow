@@ -496,6 +496,7 @@ class TaskActionRepository
     def emo_send_to_board_intake_for_review(*)
       {
         modal_title: COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
+        modal_button_text: COPY::MODAL_SEND_BUTTON,
         type: EducationDocumentSearchTask.name,
         modal_button_text: COPY::MODAL_SEND_BUTTON,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}",
