@@ -270,7 +270,8 @@ class AddIssuesPage extends React.Component {
     const buttonConditionalRendering = () => {
 
       return ((
-        this.props.split_appeal_workflow && (appealInfo?.issueCount > 1 || appealInfo.requestIssues?.length > 1) && userCanSplitAppeal));
+        appealInfo?.issueCount > 1 || appealInfo.requestIssues?.length > 1) &&
+        userCanSplitAppeal && this.props.featureToggles.split_appeal_workflow);
 
     };
 
