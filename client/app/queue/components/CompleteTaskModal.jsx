@@ -408,7 +408,6 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: VhaCaregiverSupportReturnToBoardIntakeModal,
-    submitButtonClassNames: ['usa-button'],
     customValidation: ({ state }) => (
       state.dropdown === 'other' ? validInstructions(state.otherInstructions) && validDropdown(state.dropdown) :
         validDropdown(state.dropdown)
@@ -615,12 +614,11 @@ class CompleteTaskModal extends React.Component {
     return (
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
-        /* eslint-disable-next-line camelcase */
-        button={taskData?.modal_button_text}
+        button={taskData.modal_button_text}
         submitDisabled={!this.validateForm()}
         validateForm={this.validateForm}
         submit={this.submit}
-        pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
+        pathAfterSubmit={taskData.redirect_after || '/queue'}
         submitButtonClassNames={modalAttributes.submitButtonClassNames || ['usa-button']}
       >
         {this.props.task ?
