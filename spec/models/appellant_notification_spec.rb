@@ -386,7 +386,7 @@ describe AppellantNotification do
         PrivacyActRequestMailTask.create!(appeal: appeal, parent_id: root_task.id, assigned_to: priv_org)
       end
       let(:foia_child) do
-        PrivacyActRequestMailTask.create!(appeal: appeal, parent_id: mail_task.id, assigned_to: current_user)
+        PrivacyActRequestMailTask.create!(appeal: appeal, parent_id: foia_task.id, assigned_to: current_user)
       end
       before do
         priv_org.add_user(current_user)
@@ -398,13 +398,18 @@ describe AppellantNotification do
             instructions: "fjdkfjwpie"
           }
         end
-        it "PrivacyActPending" do
+        it "sends a notification when PrivacyActRequestMailTask is created" do
           expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
           mail_task.create_twin_of_type(task_params)
         end
-        it "PrivacyActComplete" do
+        it "sends a notification when PrivacyActRequestMailTask is completed" do
           expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
           foia_child.update!(status: "completed")
+          foia_task.update_status_if_children_tasks_are_closed(foia_child)
+        end
+        it "does not sends a notification when PrivacyActRequestMailTask is cancelled" do
+          expect(AppellantNotification).not_to receive(:notify_appellant).with(appeal, template_closed)
+          foia_child.update!(status: "cancelled")
           foia_task.update_status_if_children_tasks_are_closed(foia_child)
         end
       end
@@ -419,8 +424,7 @@ describe AppellantNotification do
         OrganizationsUser.make_user_admin(user, Colocated.singleton)
         user
       end
-      let!(:foia_parent) { create(:foia_task, appeal: appeal, assigned_to: vlj_admin, parent_id: attorney_task.id) }
-      let!(:foia_child) { create(:foia_task, appeal: appeal, assigned_to: vlj_admin, parent_id: foia_parent.id) }
+
       let(:foia_colocated_task) do
         {
           instructions: "kjkjk",
@@ -436,8 +440,14 @@ describe AppellantNotification do
         ColocatedTask.create_from_params(foia_colocated_task, attorney)
       end
       it "sends notification when completing a FoiaColocatedTask" do
+        foia_c_task = ColocatedTask.create_from_params(foia_colocated_task, attorney)
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
-        foia_child.update!(status: "completed")
+        foia_c_task.children.first.update!(status: "completed")
+      end
+      it "does not send a notification when cancelling a FoiaColocatedTask" do
+        foia_c_task = ColocatedTask.create_from_params(foia_colocated_task, attorney)
+        expect(AppellantNotification).not_to receive(:notify_appellant).with(appeal, template_closed)
+        foia_c_task.children.first.update!(status: "cancelled")
       end
     end
 
@@ -476,19 +486,65 @@ describe AppellantNotification do
     end
   end
   describe IhpTaskPending do
-    describe "create_ihp_tasks!" do
-      let(:appeal) { create(:appeal, :active) }
-      let(:root_task) { RootTask.find_by(appeal: appeal) }
-      let(:task_factory) { IhpTasksFactory.new(root_task) }
-      let(:template_name) { "VSO IHP pending" }
-      it "will notify appellant of 'IhpTaskPending' status" do
-        expect(AppellantNotification).to receive(:notify_appellant).with(root_task.appeal, template_name)
-        task_factory.create_ihp_tasks!
+    describe "#create_ihp_tasks!" do
+      context "If the appellant has a VSO" do
+        let(:participant_id_with_pva) { "1234" }
+        let(:appeal) do
+          create(:appeal, :active, claimants: [
+                  create(:claimant, participant_id: participant_id_with_pva)
+                ])
+        end
+        let(:root_task) { RootTask.find_by(appeal: appeal) }
+        let!(:vso) do
+          Vso.create(
+            name: "Paralyzed Veterans Of America",
+            role: "VSO",
+            url: "paralyzed-veterans-of-america",
+            participant_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
+          )
+        end
+        let(:task_factory) { IhpTasksFactory.new(root_task) }
+        let(:template_name) { "VSO IHP pending" }
+        before do
+          allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+            .with([participant_id_with_pva]) do
+              { participant_id_with_pva => Fakes::BGSServicePOA.paralyzed_veterans_vso_mapped }
+            end
+        end
+        it "The appellant WILL recieve an 'IhpTaskPending' notification" do
+          expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
+          task_factory.create_ihp_tasks!
+        end
+      end
+      context "If the appellant does not have a VSO" do
+        let(:participant_id_with_nil) { "1234" }
+        before do
+          allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+            .with([participant_id_with_nil]).and_return(
+              participant_id_with_nil => nil
+            )
+        end
+        let(:appeal) do
+          create(:appeal, :active, claimants: [create(:claimant, participant_id: participant_id_with_nil)])
+        end
+        let!(:vso) do
+          Vso.create(
+            name: "Test VSO",
+            url: "test-vso"
+          )
+        end
+        let(:root_task) { RootTask.find_by(appeal: appeal) }
+        let(:task_factory) { IhpTasksFactory.new(root_task) }
+        let(:template_name) { "VSO IHP pending" }
+        it "The appellant will NOT recieve an 'IhpTaskPending' notification" do
+          expect(AppellantNotification).not_to receive(:notify_appellant).with(appeal, template_name)
+          task_factory.create_ihp_tasks!
+        end
       end
     end
 
-    describe "create_from_params(params, user)" do
-      context "A newly created 'IhpColocatedTask'" do
+    describe "#create_from_params(params, user)" do
+      context "When an 'IhpColocatedTask' has been created" do
         let(:user) { create(:user) }
         let(:org) { create(:organization) }
         let(:appeal) { create(:appeal, :active) }
@@ -509,7 +565,7 @@ describe AppellantNotification do
             assigned_by: attorney
           }
         end
-        it "will notify the appellant of the 'IhpTaskPending' status" do
+        it "The appellant will recieve an 'IhpTaskPending' notification" do
           allow(ColocatedTask).to receive(:verify_user_can_create!).with(user, colocated_task).and_return(true)
           expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
           IhpColocatedTask.create_from_params(params, user)
