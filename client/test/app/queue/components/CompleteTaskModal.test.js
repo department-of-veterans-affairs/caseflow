@@ -98,7 +98,7 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
       enterTextFieldOptions(
-        'Provide additional context and/or documents:',
+        COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY,
         'CAMO -> BVA Intake'
       );
 
@@ -122,7 +122,7 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
       enterTextFieldOptions(
-        'Provide additional context and/or documents:',
+        COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY,
         'CAMO -> BVA Intake'
       );
 
@@ -434,7 +434,7 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
       enterTextFieldOptions(
-        'Provide instructions and context for this action:',
+        COPY.PRE_DOCKET_MODAL_BODY,
         'EMO Return to Board Intake'
       );
 
