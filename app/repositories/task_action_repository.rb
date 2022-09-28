@@ -319,10 +319,12 @@ class TaskActionRepository
 
     def vha_complete_data(task, _user)
       org = Organization.find(task.assigned_to_id)
+      org_to_receive = org.is_a?(VhaProgramOffice) ? "VHA CAMO" : "VHA Program Office"
       queue_url = org.url
       {
-        modal_title: COPY::VHA_COMPLETE_TASK_MODAL_TITLE,
+        modal_title: COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,      
         modal_button_text: COPY::MODAL_SEND_BUTTON,
+        radio_field_label: format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, org_to_receive),        
         instructions: [],
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
