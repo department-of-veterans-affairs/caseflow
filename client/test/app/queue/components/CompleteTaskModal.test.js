@@ -158,6 +158,12 @@ describe('CompleteTaskModal', () => {
         '\n\n PO back to CAMO!\n\n'
       );
     });
+  });
+
+  describe('ready_for_review', () => {
+    const taskType = 'AssessDocumentationTask';
+    const buttonText = COPY.MODAL_SEND_BUTTON;
+    const modalType = 'ready_for_review';
 
     test('modal title is Ready for review', () => {
       renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);

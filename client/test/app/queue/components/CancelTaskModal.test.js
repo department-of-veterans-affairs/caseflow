@@ -48,14 +48,14 @@ describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
   test('Button Disabled until text field is populated', () => {
     renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaPOToCAMOData, taskType);
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action:',
       'Here is the context that you have requested.'
     );
 
-    expect(screen.getByText(COPY.MODAL_SUBMIT_BUTTON).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).not.toBeDisabled();
   });
 });
 
