@@ -1287,6 +1287,7 @@
   "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY": "By marking task as in progress, you are confirming that you are actively working on collecting documents for this appeal.\n\nOnce marked, other members of your organization will no longer be able to mark this task as in progress.",
   "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked %s's case as in progress",
   "VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE": "You have successfully sent %s's case to Board Intake for review",
+  "DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY": "This appeal will be sent to %s for review.\n\nPlease select where the documents for this appeal are stored",
   "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY": "This appeal will be sent to Board Intake for review.\n\nPlease select where the documents for this appeal are stored",
   "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE": "Ready for review",
   "BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE": "Return appeal to VHA CAMO",
