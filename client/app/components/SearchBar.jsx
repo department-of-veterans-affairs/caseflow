@@ -133,11 +133,12 @@ export default class SearchBar extends React.Component {
     });
 
     return (
-      <span className={searchTypeClasses} role="search">
+      <form className={searchTypeClasses} role="search">
         <label className={title ? label : 'usa-sr-only'} htmlFor={id}>
           {title || 'Search'}
         </label>
         <input
+          aria-label='Enter your search term'
           ref={this.setInputRef}
           className={searchClasses}
           id={id}
@@ -188,7 +189,7 @@ export default class SearchBar extends React.Component {
             <span className={buttonClassNames}>Search</span>
           </Button>
         )}
-      </span>
+      </form>
     );
   }
 }
