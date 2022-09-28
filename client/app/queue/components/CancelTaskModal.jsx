@@ -41,6 +41,7 @@ const CancelTaskModal = (props) => {
         }
       }
     };
+
     const hearingScheduleLink = taskData?.back_to_hearing_schedule ?
       <p>
         <Link href={`/hearings/schedule/assign?regional_office_key=${hearingDay.regionalOffice}`}>
@@ -106,7 +107,8 @@ CancelTaskModal.propTypes = {
   }),
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
-    taskId: PropTypes.string
+    taskId: PropTypes.string,
+    type: PropTypes.string
   }),
   highlightFormItems: PropTypes.bool
 };
