@@ -357,15 +357,16 @@ module Seeds
         :with_vacols_attorney_record,
         station_id: 101,
         css_id: "COB_USER",
-        full_name: "Clark ClerkOfTheBoardUser Bard"
+        full_name: "Clark ClerkOfTheBoardUser Bard",
+        roles: ["Hearing Prep"]
       )
       ClerkOfTheBoard.singleton.add_user(atty)
 
-      judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE")
+      judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE", roles: ["Hearing Prep"])
       create(:staff, :judge_role, sdomainid: judge.css_id)
       ClerkOfTheBoard.singleton.add_user(judge)
 
-      admin = create(:user, full_name: "Ty ClerkOfTheBoardAdmin Cobb", css_id: "BVATCOBB")
+      admin = create(:user, full_name: "Ty ClerkOfTheBoardAdmin Cobb", css_id: "BVATCOBB", roles: ["Hearing Prep"])
       ClerkOfTheBoard.singleton.add_user(admin)
       OrganizationsUser.make_user_admin(admin, ClerkOfTheBoard.singleton)
     end

@@ -46,6 +46,16 @@ feature "Appeal Edit issues", :all_dbs do
            legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
   end
 
+  let!(:appeal2) do
+    create(:appeal,
+           veteran_file_number: veteran.file_number,
+           receipt_date: receipt_date,
+           docket_type: Constants.AMA_DOCKETS.evidence_submission,
+           veteran_is_not_claimant: false,
+           legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+  end
+
+
   let!(:appeal_intake) do
     create(:intake, user: current_user, detail: appeal, veteran_file_number: veteran.file_number)
   end
@@ -184,7 +194,6 @@ feature "Appeal Edit issues", :all_dbs do
         description: "A description!",
         date: profile_date.mdY
       )
-
       click_edit_submit_and_confirm
 
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
@@ -196,6 +205,7 @@ feature "Appeal Edit issues", :all_dbs do
       # duplicate issues should be neither added nor removed
       expect(request_issue_update.added_issues.map(&:id)).to_not include(non_modified_ids)
       expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
+      
     end
   end
 
@@ -306,42 +316,27 @@ feature "Appeal Edit issues", :all_dbs do
   end
 
   context "User is a member of the Supervisory Senior Council" do
-    let!(:appeal2) do
-      create(:appeal,
-             veteran_file_number: veteran.file_number,
-             receipt_date: receipt_date,
-             docket_type: Constants.AMA_DOCKETS.evidence_submission,
-             veteran_is_not_claimant: false,
-             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
-    end
+
     let!(:organization) { SupervisorySeniorCouncil.singleton }
     let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
     let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
     scenario "less than 2 request issues on the appeal, the split appeal button doesn't show" do
       User.authenticate!(user: current_user)
       visit "appeals/#{appeal2.uuid}/edit/"
-
       expect(appeal2.decision_issues.length + appeal2.request_issues.length).to be < 2
       expect(page).to_not have_button("Split appeal")
     end
   end
 
   context "The user is a member of Supervisory Senior Council and the appeal has 2 or more tasks" do
-    let!(:appeal2) do
-      create(:appeal,
-             veteran_file_number: veteran.file_number,
-             receipt_date: receipt_date,
-             docket_type: Constants.AMA_DOCKETS.evidence_submission,
-             veteran_is_not_claimant: false,
-             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
-    end
+
     let!(:organization) { SupervisorySeniorCouncil.singleton }
     let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
     let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
     let(:request_issue_1) do
       create(:request_issue,
              id: 22,
-             decision_review: appeal2,
+             decision_review: appeal,
              decision_date: profile_date,
              contested_rating_issue_reference_id: "def456",
              contested_rating_issue_profile_date: profile_date,
@@ -353,7 +348,7 @@ feature "Appeal Edit issues", :all_dbs do
     let(:request_issue_2) do
       create(:request_issue,
              id: 25,
-             decision_review: appeal2,
+             decision_review: appeal,
              decision_date: profile_date,
              contested_rating_issue_reference_id: "blah1234",
              contested_rating_issue_profile_date: profile_date,
@@ -361,17 +356,19 @@ feature "Appeal Edit issues", :all_dbs do
              contention_reference_id: "78910",
              benefit_type: "Education")
     end
+
     scenario "the split appeal button shows and leads to create_split page" do
       # add issues to the appeal
       appeal2.request_issues << request_issue_1
       appeal2.request_issues << request_issue_2
-
+      
       User.authenticate!(user: current_user)
       visit "appeals/#{appeal2.uuid}/edit/"
 
       expect(page).to have_button("Split appeal")
       # clicking the button takes the user to the next page
       click_button("Split appeal")
+      
       expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
     end
 
@@ -405,55 +402,96 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
     end
 
-    scenario "When the user accesses the review_split page, the page renders as expected" do
+    def skill_form(appeal)
       # add issues to the appeal
-      appeal2.request_issues << request_issue_1
-      appeal2.request_issues << request_issue_2
+      appeal.request_issues << request_issue_1
+      appeal.request_issues << request_issue_2
 
       User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal2.uuid}/edit/review_split")
+      visit("/appeals/#{appeal.uuid}/edit/create_split")
+      
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Other Issue Description")
+      find("label", text: "PTSD denied").click
+      expect(page).to have_content("Select...")
+    
+      find(:css, '.cf-select').select_option
+      find(:css, '.cf-select__menu').click
+      
+      click_button("Continue")
+      expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/review_split")
+    end
 
+    scenario "The SSC user navigates to the split appeal page to review page" do
+      skill_form(appeal2)
+    end
+
+    scenario "When the user accesses the review_split page, the page renders as expected" do
+      # add issues to the appeal
+      skill_form(appeal2)
+      
+      expect(page).to have_table("review_table")
       expect(page).to have_content("Cancel")
       expect(page).to have_button("Back")
       expect(page).to have_button("Split appeal")
       expect(page).to have_content("Reason for new appeal stream:")
+
     end
 
     scenario "on the review_split page, the back button takes the user back" do
-      # add issues to the appeal
-      appeal2.request_issues << request_issue_1
-      appeal2.request_issues << request_issue_2
-
-      User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal2.uuid}/edit/review_split")
+      skill_form(appeal2)
 
       click_button("Back")
       expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
     end
 
     scenario "on the review_split page, the cancel button takes the user to queue" do
-      # add issues to the appeal
-      appeal2.request_issues << request_issue_1
-      appeal2.request_issues << request_issue_2
-
-      User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal2.uuid}/edit/review_split")
+      skill_form(appeal2)
 
       click_button("Cancel")
       expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
     end
 
     scenario "on the review_split page, the Split appeal button takes the user to queue" do
-      # add issues to the appeal
-      appeal2.request_issues << request_issue_1
-      appeal2.request_issues << request_issue_2
-
-      User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal2.uuid}/edit/review_split")
+      skill_form(appeal2)
 
       click_button("Split appeal")
       expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
     end
+
+    scenario "on the review_split page, testing appellant and veteran" do
+      skill_form(appeal2)
+      if expect(appeal2.veteran_is_not_claimant).to be(false)
+        row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
+        row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
+        row2_1 .should eq('Veteran')
+        row3_1 .should eq('Docket Number')
+      else
+        row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
+        row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
+        row2_1 .should eq('Veteran')
+        row3_1 .should eq('Appellant')
+      end
+    end
+
+    # scenario "on the review_split page, testing if veteran and appellant are different" do
+    #   skill_form(appeal2)
+    #   binding.pry
+    #   if expect(appeal2.veteran_is_not_claimant).to be(true)
+    #     page.find(:css, 'table', text: 'Veteran')
+    #     row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
+    #     row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
+    #     row2_1 .should eq('Veteran')
+    #     row3_1 .should eq('Appellant')
+    #   end
+    # end
+
+    scenario "on the review_split page, appeal type is no hearing" do
+      skill_form(appeal2)
+      expect(appeal2.docket_type).not_to have_content('hearing') 
+    end
+
   end
 
   context "Veteran is invalid" do
