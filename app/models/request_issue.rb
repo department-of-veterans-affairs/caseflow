@@ -291,7 +291,7 @@ class RequestIssue < CaseflowRecord
   def predocket_needed?
     user = RequestStore.store[:current_user]
 
-    if benefit_type == "vha" && FeatureToggle.enabled?(:vha_predocket_appeals, user: user) ||
+    if benefit_type == "vha" ||
        benefit_type == "education" && FeatureToggle.enabled?(:edu_predocket_appeals, user: user)
       !!is_predocket_needed
     else

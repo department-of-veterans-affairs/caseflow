@@ -809,6 +809,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
       aria-describedby="case-table-description"
       aria-label="Appeals"
       className="usa-table-borderless undefined"
+      id="case-table-description"
       role="table"
     >
       <caption
@@ -1473,6 +1474,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
       aria-describedby="case-table-description"
       aria-label="Appeals"
       className="usa-table-borderless undefined"
+      id="case-table-description"
       role="table"
     >
       <caption
@@ -1966,6 +1968,7 @@ exports[`QueueTable render() Matches snapshot with default props 1`] = `
     aria-describedby="case-table-description"
     aria-label="Appeals"
     className="usa-table-borderless undefined"
+    id="case-table-description"
     role="table"
   >
     <caption
@@ -5390,7 +5393,6 @@ exports[`QueueTable render() Renders loading component instead of body when load
       >
         <section
           className="testClasses"
-          role="main"
         >
           <div
             data-css-1ogvp9u=""
@@ -6966,7 +6968,6 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
           className="cf-pagination-pages"
         >
           <button
-            aria-label="Previous Page"
             disabled={true}
             key="previous-button"
             onClick={[Function]}
@@ -6980,8 +6981,6 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
             key="pagination-button-0"
           >
             <button
-              aria-current="page"
-              aria-label="Page 1"
               className="cf-current-page"
               name="page-button-0"
               onClick={[Function]}
@@ -6996,7 +6995,6 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
             key="pagination-button-1"
           >
             <button
-              aria-label="Page 2"
               className=""
               name="page-button-1"
               onClick={[Function]}
@@ -7005,7 +7003,6 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
             </button>
           </PaginationButton>
           <button
-            aria-label="Next Page"
             disabled={false}
             key="next-button"
             onClick={[Function]}
@@ -7019,6 +7016,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
       aria-describedby="case-table-description"
       aria-label="Appeals"
       className="usa-table-borderless undefined"
+      id="case-table-description"
       role="table"
     >
       <caption
@@ -30814,7 +30812,6 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
           className="cf-pagination-pages"
         >
           <button
-            aria-label="Previous Page"
             disabled={true}
             key="previous-button"
             onClick={[Function]}
@@ -30828,8 +30825,6 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
             key="pagination-button-0"
           >
             <button
-              aria-current="page"
-              aria-label="Page 1"
               className="cf-current-page"
               name="page-button-0"
               onClick={[Function]}
@@ -30844,7 +30839,6 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
             key="pagination-button-1"
           >
             <button
-              aria-label="Page 2"
               className=""
               name="page-button-1"
               onClick={[Function]}
@@ -30853,7 +30847,6 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
             </button>
           </PaginationButton>
           <button
-            aria-label="Next Page"
             disabled={false}
             key="next-button"
             onClick={[Function]}

@@ -95,6 +95,7 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
   </div>
   <main
     data-css-pw7rlt=""
+    role="main"
   >
     <div
       class="cf-app-segment cf-app-segment--alt"
