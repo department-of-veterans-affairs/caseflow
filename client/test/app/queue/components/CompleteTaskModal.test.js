@@ -137,7 +137,7 @@ describe('CompleteTaskModal', () => {
 
   describe('ready_for_review', () => {
     const taskType = 'AssessDocumentationTask';
-    const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const buttonText = COPY.MODAL_SEND_BUTTON;
     const modalType = 'ready_for_review';
 
     test('modal title is Ready for review', () => {
