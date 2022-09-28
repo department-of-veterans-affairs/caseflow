@@ -67,7 +67,7 @@ export const VhaPoToVhaCamo = Template.bind({});
 VhaPoToVhaCamo.args = {
   storeValues: vhaPOToCAMOData,
   taskType: 'AssessDocumentationTask',
-  modalType: trimTaskActionValue(TASK_ACTIONS.READY_FOR_REVIEW.value)
+  modalType: trimTaskActionValue(TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.value)
 };
 
 export const VhaCaregiverSupportProgramToBoardIntakeForReview = Template.bind({});

@@ -529,6 +529,7 @@ const assessDocumentationTaskData = {
         value: 'modal/ready_for_review',
         data: {
           modal_title: 'Where were documents regarding this appeal stored?',
+          modal_button_text: 'Send',
           instructions: [],
           type: 'AssessDocumentationTask',
           redirect_after: '/organizations/prosthetics'
@@ -537,7 +538,6 @@ const assessDocumentationTaskData = {
       {
         func: 'vha_assign_to_regional_office_data',
         label: 'Assign to VISN',
-        modal_button_text: 'Assign',
         value: 'modal/assign_to_regional_office',
         data: {
           options: [
@@ -630,6 +630,7 @@ const assessDocumentationTaskData = {
         data: {
           modal_title: 'Return to CAMO team',
           message_title: 'You have successfully returned this appeal to the CAMO team',
+          modal_button_text: 'Return',
           message_detail: 'This appeal will be removed from your Queue and placed in the CAMO team\'s Queue',
           type: 'AssessDocumentationTask',
           redirect_after: '/organizations/prosthetics'
