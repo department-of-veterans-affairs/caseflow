@@ -41,6 +41,7 @@ const CancelTaskModal = (props) => {
         }
       }
     };
+
     const hearingScheduleLink = taskData?.back_to_hearing_schedule ?
       <p>
         <Link href={`/hearings/schedule/assign?regional_office_key=${hearingDay.regionalOffice}`}>
@@ -69,6 +70,13 @@ const CancelTaskModal = (props) => {
     getModalTitle === COPY.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE
   ) {
     modalProps.submitButtonClassNames = ['usa-button'];
+  }
+
+  if ([
+    'AssessDocumentationTask',
+    'EducationAssessDocumentationTask',
+  ].includes(task?.type)) {
+    modalProps.submitDisabled = !validateForm();
   }
 
   return (
@@ -106,7 +114,8 @@ CancelTaskModal.propTypes = {
   }),
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
-    taskId: PropTypes.string
+    taskId: PropTypes.string,
+    type: PropTypes.string
   }),
   highlightFormItems: PropTypes.bool
 };
