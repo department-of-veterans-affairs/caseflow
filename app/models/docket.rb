@@ -15,7 +15,7 @@ class Docket
 
     if ready
       scope = scope.ready_for_distribution
-      scope = adjust_for_genpop(scope, genpop, judge) if judge.present?
+      scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
     end
 
     return scoped_for_priority(scope) if priority == true
