@@ -195,145 +195,88 @@ describe AppellantNotification do
     describe "#postpone!" do
       let(:template_name) { "Postponement of hearing" }
 
-      context "AMA hearing" do
-        let!(:ama_hearing) { create(:hearing, :with_tasks) }
+      shared_examples "Whenever updating hearing via Daily Docket page" do
+        context "Whenever disposition is being set to postponed" do
+          let!(:hearing_hash) { { hearing: hearing, disposition: "postponed" } }
 
-        context "Whenever updating hearing via Daily Docket page" do
+          it "appellant is notified whenever hearing is postponed" do
+            appeal = hearing.appeal
 
-          subject { HearingUpdateForm.new(hearing_hash).update }
+            expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name).once
 
-          context "Whenever disposition is being set to postponed" do
-            let!(:hearing_hash) { { hearing: ama_hearing, disposition: "postponed" } }
-
-            it "appellant is notified whenever hearing is postponed" do
-              appeal = ama_hearing.appeal
-
-              expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name).once
-
-              subject
-            end
-          end
-
-          context "Whenever disposition is being set to no_show" do
-            let!(:hearing_hash) { { hearing: ama_hearing, disposition: "no_show" } }
-
-            it "appellant is notified whenever hearing is postponed" do
-              appeal = ama_hearing.appeal
-
-              expect(AppellantNotification).to_not receive(:notify_appellant).with(appeal, template_name)
-
-              subject
-            end
-          end
-
-          context "Whenever notes are changed" do
-            let!(:hearing_hash) { { hearing: ama_hearing, notes: "Here are my awesome notes." } }
-
-            it "appellant is not notified" do
-              expect(AppellantNotification).to_not receive(:notify_appellant)
-
-              subject
-            end
+            subject
           end
         end
 
-        context "Whenever updating hearing via AssignHearingDispositionTask" do
-          context "Whenever postponing the hearing" do
-            let!(:hearing_hash) { { disposition: "postponed" } }
+        context "Whenever disposition is being set to no_show" do
+          let!(:hearing_hash) { { hearing: hearing, disposition: "no_show" } }
 
-            it "will notify appellant when a hearing is postponed" do
-              appeal = ama_hearing.appeal
+          it "appellant is notified whenever hearing is postponed" do
+            appeal = hearing.appeal
 
-              expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name).once
+            expect(AppellantNotification).to_not receive(:notify_appellant).with(appeal, template_name)
 
-              hearing_disposition_task = appeal.tasks.find_by(type: "AssignHearingDispositionTask")
-              hearing_disposition_task.update_hearing(hearing_hash)
-            end
+            subject
           end
+        end
 
-          context "Whenever setting disposition to no_show" do
-            let!(:hearing_hash) { { disposition: "no_show" } }
+        context "Whenever notes are changed" do
+          let!(:hearing_hash) { { hearing: hearing, notes: "Here are my awesome notes." } }
 
-            it "will NOT notify appellant when a hearing is set to a disposition of no_show" do
-              appeal = ama_hearing.appeal
+          it "appellant is not notified" do
+            expect(AppellantNotification).to_not receive(:notify_appellant)
 
-              expect(AppellantNotification).to_not receive(:notify_appellant)
-
-              hearing_disposition_task = appeal.tasks.find_by(type: "AssignHearingDispositionTask")
-              hearing_disposition_task.update_hearing(hearing_hash)
-            end
+            subject
           end
         end
       end
 
+      shared_examples "Whenever updating hearing via AssignHearingDispositionTask" do
+        context "Whenever postponing the hearing" do
+          let!(:hearing_hash) { { disposition: "postponed" } }
+
+          it "will notify appellant when a hearing is postponed" do
+            appeal = hearing.appeal
+
+            expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name).once
+
+            hearing_disposition_task = appeal.tasks.find_by(type: "AssignHearingDispositionTask")
+            hearing_disposition_task.update_hearing(hearing_hash)
+          end
+        end
+
+        context "Whenever setting disposition to no_show" do
+          let!(:hearing_hash) { { disposition: "no_show" } }
+
+          it "will NOT notify appellant when a hearing is set to a disposition of no_show" do
+            appeal = hearing.appeal
+
+            expect(AppellantNotification).to_not receive(:notify_appellant)
+
+            hearing_disposition_task = appeal.tasks.find_by(type: "AssignHearingDispositionTask")
+            hearing_disposition_task.update_hearing(hearing_hash)
+          end
+        end
+      end
+
+      context "AMA hearing" do
+        let!(:hearing) { create(:hearing, :with_tasks) }
+
+        subject { HearingUpdateForm.new(hearing_hash).update }
+
+        include_examples "Whenever updating hearing via Daily Docket page"
+        include_examples "Whenever updating hearing via AssignHearingDispositionTask"
+      end
+
       context "Legacy hearing" do
-        let(:legacy_hearing) { create(:legacy_hearing, :with_tasks) }
+        let!(:hearing) { create(:legacy_hearing, :with_tasks) }
+
+        subject { LegacyHearingUpdateForm.new(hearing_hash).update }
 
         before { RequestStore.store[:current_user] = User.system_user }
 
-        context "Whenever updating hearing via Daily Docket page" do
-          subject { LegacyHearingUpdateForm.new(hearing_hash).update }
-
-          context "Whenever disposition is being set to postponed" do
-            let!(:hearing_hash) { { hearing: legacy_hearing, disposition: "postponed" } }
-
-            it "appellant is notified whenever hearing is postponed" do
-              legacy_appeal = legacy_hearing.appeal
-
-              expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, template_name).once
-
-              subject
-            end
-          end
-
-          context "Whenever disposition is being set to no_show" do
-            let!(:hearing_hash) { { hearing: legacy_hearing, disposition: "no_show" } }
-
-            it "appellant is notified whenever hearing is postponed" do
-              expect(AppellantNotification).to_not receive(:notify_appellant)
-
-              subject
-            end
-          end
-
-          context "Whenever notes are changed" do
-            let!(:hearing_hash) { { hearing: legacy_hearing, notes: "Here are my awesome notes." } }
-
-            it "appellant is not notified" do
-              expect(AppellantNotification).to_not receive(:notify_appellant)
-
-              subject
-            end
-          end
-        end
-
-        context "Whenever updating hearing via AssignHearingDispositionTask" do
-          context "Whenever postponing the hearing" do
-            let!(:hearing_hash) { { disposition: "postponed" } }
-
-            it "will notify appellant when a hearing is postponed" do
-              legacy_appeal = legacy_hearing.appeal
-
-              expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, template_name).once
-
-              hearing_disposition_task = legacy_appeal.tasks.find_by(type: "AssignHearingDispositionTask")
-              hearing_disposition_task.update_hearing(hearing_hash)
-            end
-          end
-
-          context "Whenever setting disposition to no_show" do
-            let!(:hearing_hash) { { disposition: "no_show" } }
-
-            it "will NOT notify appellant when a hearing is set to a disposition of no_show" do
-              legacy_appeal = legacy_hearing.appeal
-
-              expect(AppellantNotification).to_not receive(:notify_appellant)
-
-              hearing_disposition_task = legacy_appeal.tasks.find_by(type: "AssignHearingDispositionTask")
-              hearing_disposition_task.update_hearing(hearing_hash)
-            end
-          end
-        end
+        include_examples "Whenever updating hearing via Daily Docket page"
+        include_examples "Whenever updating hearing via AssignHearingDispositionTask"
       end
     end
   end
