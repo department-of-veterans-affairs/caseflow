@@ -122,6 +122,8 @@ module Seeds
     def create_cavc_genpop_cases
       create_ready_cavc_genpop_cases
       create_ready_cavc_aod_genpop_cases
+      create_ready_cavc_genpop_cases_within_affinity_lever
+      create_ready_cavc_genpop_cases_outside_of_affinity_lever
       create_nonready_cavc_genpop_cases
     end
 
@@ -496,6 +498,34 @@ module Seeds
           receipt_date: num.days.ago
         )
       end
+    end
+
+    # 5 cases to test removal of cavc affinity lever in by_docket_date
+    # the interaction of appeal and cavc_remand factory isn't very clear, so use Timecop to set receipt date
+    def create_ready_cavc_genpop_cases_within_affinity_lever
+      Timecop.travel(14.days.ago)
+      4.times do
+        create(
+          :appeal,
+          :direct_review_docket,
+          :type_cavc_remand,
+          :cavc_ready_for_distribution
+        )
+      end
+      Timecop.return
+    end
+
+    def create_ready_cavc_genpop_cases_outside_of_affinity_lever
+      Timecop.travel(28.days.ago)
+      4.times do
+        create(
+          :appeal,
+          :direct_review_docket,
+          :type_cavc_remand,
+          :cavc_ready_for_distribution
+        )
+      end
+      Timecop.return
     end
 
     def create_nonready_cavc_genpop_cases
