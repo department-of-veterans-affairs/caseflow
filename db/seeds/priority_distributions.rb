@@ -509,7 +509,8 @@ module Seeds
           :appeal,
           :direct_review_docket,
           :type_cavc_remand,
-          :cavc_ready_for_distribution
+          :cavc_ready_for_distribution,
+          veteran: create_veteran
         )
       end
       Timecop.return
@@ -522,7 +523,8 @@ module Seeds
           :appeal,
           :direct_review_docket,
           :type_cavc_remand,
-          :cavc_ready_for_distribution
+          :cavc_ready_for_distribution,
+          veteran: create_veteran
         )
       end
       Timecop.return
