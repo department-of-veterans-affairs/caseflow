@@ -174,10 +174,10 @@ describe TaskActionRepository, :all_dbs do
     before do
       FeatureToggle.enable!(:visn_predocket_workflow)
     end
-  
+
     after do
       FeatureToggle.disable!(:visn_predocket_workflow)
-    end    
+    end
 
     describe "#vha_po_send_to_vha_camo_for_review" do
       let(:assigned_tab_name) { VhaProgramOfficeAssignedTasksTab.tab_name }
