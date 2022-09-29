@@ -194,13 +194,146 @@ describe AppellantNotification do
   describe HearingPostponed do
     describe "#postpone!" do
       let(:template_name) { "Postponement of hearing" }
-      let(:postponed_hearing) { create(:hearing, :postponed, :with_tasks) }
-      let(:hearing_hash) { { disposition: "postponed" } }
-      it "will notify appellant when a hearing is postponed" do
-        appeal_hearing = postponed_hearing.appeal
-        hearing_disposition_task = appeal_hearing.tasks.find_by(type: "AssignHearingDispositionTask")
-        expect(AppellantNotification).to receive(:notify_appellant).with(appeal_hearing, template_name)
-        hearing_disposition_task.update_hearing(hearing_hash)
+
+      context "AMA hearing" do
+        let!(:ama_hearing) { create(:hearing, :with_tasks) }
+
+        context "Whenever updating hearing via Daily Docket page" do
+
+          subject { HearingUpdateForm.new(hearing_hash).update }
+
+          context "Whenever disposition is being set to postponed" do
+            let!(:hearing_hash) { { hearing: ama_hearing, disposition: "postponed" } }
+
+            it "appellant is notified whenever hearing is postponed" do
+              appeal = ama_hearing.appeal
+
+              expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name).once
+
+              subject
+            end
+          end
+
+          context "Whenever disposition is being set to no_show" do
+            let!(:hearing_hash) { { hearing: ama_hearing, disposition: "no_show" } }
+
+            it "appellant is notified whenever hearing is postponed" do
+              appeal = ama_hearing.appeal
+
+              expect(AppellantNotification).to_not receive(:notify_appellant).with(appeal, template_name)
+
+              subject
+            end
+          end
+
+          context "Whenever notes are changed" do
+            let!(:hearing_hash) { { hearing: ama_hearing, notes: "Here are my awesome notes." } }
+
+            it "appellant is not notified" do
+              expect(AppellantNotification).to_not receive(:notify_appellant)
+
+              subject
+            end
+          end
+        end
+
+        context "Whenever updating hearing via AssignHearingDispositionTask" do
+          context "Whenever postponing the hearing" do
+            let!(:hearing_hash) { { disposition: "postponed" } }
+
+            it "will notify appellant when a hearing is postponed" do
+              appeal = ama_hearing.appeal
+
+              expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name).once
+
+              hearing_disposition_task = appeal.tasks.find_by(type: "AssignHearingDispositionTask")
+              hearing_disposition_task.update_hearing(hearing_hash)
+            end
+          end
+
+          context "Whenever setting disposition to no_show" do
+            let!(:hearing_hash) { { disposition: "no_show" } }
+
+            it "will NOT notify appellant when a hearing is set to a disposition of no_show" do
+              appeal = ama_hearing.appeal
+
+              expect(AppellantNotification).to_not receive(:notify_appellant)
+
+              hearing_disposition_task = appeal.tasks.find_by(type: "AssignHearingDispositionTask")
+              hearing_disposition_task.update_hearing(hearing_hash)
+            end
+          end
+        end
+      end
+
+      context "Legacy hearing" do
+        let(:legacy_hearing) { create(:legacy_hearing, :with_tasks) }
+
+        before { RequestStore.store[:current_user] = User.system_user }
+
+        context "Whenever updating hearing via Daily Docket page" do
+          subject { LegacyHearingUpdateForm.new(hearing_hash).update }
+
+          context "Whenever disposition is being set to postponed" do
+            let!(:hearing_hash) { { hearing: legacy_hearing, disposition: "postponed" } }
+
+            it "appellant is notified whenever hearing is postponed" do
+              legacy_appeal = legacy_hearing.appeal
+
+              expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, template_name).once
+
+              subject
+            end
+          end
+
+          context "Whenever disposition is being set to no_show" do
+            let!(:hearing_hash) { { hearing: legacy_hearing, disposition: "no_show" } }
+
+            it "appellant is notified whenever hearing is postponed" do
+              expect(AppellantNotification).to_not receive(:notify_appellant)
+
+              subject
+            end
+          end
+
+          context "Whenever notes are changed" do
+            let!(:hearing_hash) { { hearing: legacy_hearing, notes: "Here are my awesome notes." } }
+
+            it "appellant is not notified" do
+              expect(AppellantNotification).to_not receive(:notify_appellant)
+
+              subject
+            end
+          end
+        end
+
+        context "Whenever updating hearing via AssignHearingDispositionTask" do
+          context "Whenever postponing the hearing" do
+            let!(:hearing_hash) { { disposition: "postponed" } }
+
+            it "will notify appellant when a hearing is postponed" do
+              legacy_appeal = legacy_hearing.appeal
+
+              expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, template_name).once
+
+              hearing_disposition_task = legacy_appeal.tasks.find_by(type: "AssignHearingDispositionTask")
+              hearing_disposition_task.update_hearing(hearing_hash)
+            end
+          end
+
+          context "Whenever setting disposition to no_show" do
+            let!(:hearing_hash) { { disposition: "no_show" } }
+
+            it "will NOT notify appellant when a hearing is set to a disposition of no_show" do
+              legacy_appeal = legacy_hearing.appeal
+
+              expect(AppellantNotification).to_not receive(:notify_appellant)
+
+              hearing_disposition_task = legacy_appeal.tasks.find_by(type: "AssignHearingDispositionTask")
+              hearing_disposition_task.update_hearing(hearing_hash)
+            end
+          end
+        end
       end
     end
   end
