@@ -11,7 +11,7 @@ class AssessDocumentationTask < Task
 
   # Actions that can be taken on both organization and user tasks
   DEFAULT_ACTIONS = [
-    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h    
+    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
   ].freeze
 
   PO_ACTIONS = [
