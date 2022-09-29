@@ -147,6 +147,29 @@ describe('CompleteTaskModal', () => {
         '**Detail:**\n\n PO back to CAMO!\n\n'
       );
     });
+
+    test('No Errors are thrown if any task in tree has null instructions', () => {
+
+      const taskIDs = Object.keys(camoToProgramOfficeToCamoData.queue.amaTasks);
+
+      const taskDataWithNullInstructions = camoToProgramOfficeToCamoData;
+
+      taskIDs.forEach((id) => taskDataWithNullInstructions.queue.amaTasks[id].instructions = null);
+
+      renderCompleteTaskModal(modalType, taskDataWithNullInstructions, taskType);
+
+      enterModalRadioOptions(
+        'Correct documents have been successfully added',
+        'Provide additional context and/or documents:',
+        'Null test',
+        buttonText
+      );
+
+      expect(getReceivedInstructions()).toBe(
+        '\n**Status:** Correct documents have been successfully added' +
+        '\n\n**CAMO Notes:** Null test'
+      );
+    });
   });
 
   describe('vha_caregiver_support_send_to_board_intake_for_review', () => {

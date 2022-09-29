@@ -165,7 +165,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
   // if the VhaProgramOffice has completed a task, show the task instructions in the modal
   const programOfficeInstructions = props.tasks.map((task) => {
-    return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1];
+    return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions?.[1];
   });
 
   let filteredSendToBoardOpts = sendToBoardOpts;
