@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class LegacyDocket < Docket
-
   def docket_type
     "legacy"
   end

@@ -5,16 +5,15 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     arr.each_with_index.map { |count, i| [i, count] }.to_h
   end
 
-  
   context "Test which Distribution is being included" do
-   before { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
-   after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
+    before { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
+    after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
 
-   subject { described_class.ancestors }
+    subject { described_class.ancestors }
 
-   xit do
-     is_expected.to include ByDocketDateDistribution
-     is_expected.to_not include AutomaticCaseDistribution
+    xit do
+      is_expected.to include ByDocketDateDistribution
+      is_expected.to_not include AutomaticCaseDistribution
     end
   end
 

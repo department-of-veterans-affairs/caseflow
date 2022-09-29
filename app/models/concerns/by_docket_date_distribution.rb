@@ -54,7 +54,7 @@ module ByDocketDateDistribution
       direct_review_due_count: direct_review_due_count,
       legacy_hearing_backlog_count: VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge),
       nonpriority_iterations: @nonpriority_iterations,
-      algorithm: 'by_docket_date'
+      algorithm: "by_docket_date"
     }
   end
 

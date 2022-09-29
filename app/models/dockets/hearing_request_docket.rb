@@ -59,8 +59,8 @@ class HearingRequestDocket < Docket
   # Common creation of the query object so can pass in feature toggle checks
   def hearing_distribution_query(base_relation:, genpop:, judge: nil)
     HearingRequestDistributionQuery.new(
-        base_relation: base_relation, genpop: genpop, judge: judge,
-        use_by_docket_date: use_by_docket_date?
+      base_relation: base_relation, genpop: genpop, judge: judge,
+      use_by_docket_date: use_by_docket_date?
     )
   end
 
