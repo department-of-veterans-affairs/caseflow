@@ -31,6 +31,7 @@ class SendNotificationJob < CaseflowJob
   def perform(message_json)
     if message_json
       @va_notify_email = FeatureToggle.enabled?(:va_notify_email)
+      Task.find_by(appeal_id: message.appeal_id)
       @va_notify_sms = FeatureToggle.enabled?(:va_notify_sms)
       message = JSON.parse(message_json, object_class: OpenStruct)
       if message.appeal_id && message.appeal_type && message.template_name
