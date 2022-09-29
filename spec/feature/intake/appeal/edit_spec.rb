@@ -329,14 +329,13 @@ feature "Appeal Edit issues", :all_dbs do
   end
 
   context "The user is a member of Supervisory Senior Council and the appeal has 2 or more tasks" do
-
     let!(:organization) { SupervisorySeniorCouncil.singleton }
     let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
     let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
     let(:request_issue_1) do
       create(:request_issue,
              id: 22,
-             decision_review: appeal,
+             decision_review: appeal2,
              decision_date: profile_date,
              contested_rating_issue_reference_id: "def456",
              contested_rating_issue_profile_date: profile_date,
@@ -348,7 +347,7 @@ feature "Appeal Edit issues", :all_dbs do
     let(:request_issue_2) do
       create(:request_issue,
              id: 25,
-             decision_review: appeal,
+             decision_review: appeal2,
              decision_date: profile_date,
              contested_rating_issue_reference_id: "blah1234",
              contested_rating_issue_profile_date: profile_date,
@@ -423,6 +422,33 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/review_split")
     end
 
+    def wait_for_ajax
+      max_time = Capybara::Helpers.monotonic_time + Capybara.default_max_wait_time
+      while Capybara::Helpers.monotonic_time < max_time
+        finished = finished_all_ajax_requests?
+        if finished
+          break
+        else
+          sleep 0.1
+        end
+      end
+      raise 'wait_for_ajax timeout' unless finished
+    end
+
+    def finished_all_ajax_requests?
+      page.evaluate_script(<<~EOS
+    ((typeof window.jQuery === 'undefined')
+     || (typeof window.jQuery.active === 'undefined')
+     || (window.jQuery.active === 0))
+    && ((typeof window.injectedJQueryFromNode === 'undefined')
+     || (typeof window.injectedJQueryFromNode.active === 'undefined')
+     || (window.injectedJQueryFromNode.active === 0))
+    && ((typeof window.httpClients === 'undefined')
+     || (window.httpClients.every(function (client) { return (client.activeRequestCount === 0); })))
+      EOS
+      )
+    end
+
     scenario "The SSC user navigates to the split appeal page to review page" do
       skill_form(appeal2)
     end
@@ -453,53 +479,35 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
     end
 
-    scenario "on the review_split page, the Split appeal button takes the user to queue" do
+    scenario "on the review_split page, testing appellant and vetera" do
       skill_form(appeal2)
-
-      click_button("Split appeal")
-      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
-    end
-
-    scenario "on the review_split page, testing appellant and veteran" do
-      skill_form(appeal2)
+      # binding.pry
       if expect(appeal2.veteran_is_not_claimant).to be(false)
         row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
         row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
-        row2_1 .should eq('Veteran')
-        row3_1 .should eq('Docket Number')
+        expect(row2_1).to eq('Veteran')
+        expect(row3_1).to eq('Docket Number')
       else
         row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
         row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
-        row2_1 .should eq('Veteran')
-        row3_1 .should eq('Appellant')
+        expect(row2_1).to eq('Veteran')
+        expect(row3_1).to eq('Appellant')
       end
     end
-    
+
     scenario "on the review_split page, appeal type is no hearing" do
       skill_form(appeal2)
       expect(appeal2.docket_type).not_to have_content('hearing') 
     end
 
-    scenario "when navigating from split_appeal to queue, the success banner displays" do
-      # set success and fail message
-      success_message = "You have successfully split"
-      fail_message = "This new appeal stream has the same docket number and tasks as the original appeal."
-      # add issues to the appeal
-      appeal2.request_issues << request_issue_1
-      appeal2.request_issues << request_issue_2
-
-      User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal2.uuid}/edit/review_split")
+    scenario "on the review_split page, the Split appeal button takes the user to queue" do
+      skill_form(appeal2)
 
       click_button("Split appeal")
-      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
-      expect(page).to have_content(success_message)
-      expect(page).to have_content(fail_message)
-
-      # resetting the page removes the banner on load.
-      page.reset!
-      expect(page).to_not have_content(success_message)
-      expect(page).to_not have_content(fail_message)
+      #wait_for_ajax
+      # page.find(:xpath, '/queue/appeals/#{appeal2.uuid}')
+      # assert_current_path("/queue/appeals/#{appeal2.uuid}")
+      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}",  ignore_query: true)
     end
   end
 
