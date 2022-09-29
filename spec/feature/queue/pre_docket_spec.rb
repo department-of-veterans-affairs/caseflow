@@ -78,6 +78,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             expect(page).to have_button("Submit appeal")
             click_intake_finish
             expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+            expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_PRE_DOCKET_INTAKE_SUCCESS_TITLE)
 
             vha_document_search_task = VhaDocumentSearchTask.last
             appeal = vha_document_search_task.appeal
@@ -346,6 +347,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_button("Submit appeal")
           click_intake_finish
           expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+          expect(page).to have_content(COPY::VHA_CAMO_PRE_DOCKET_INTAKE_SUCCESS_TITLE)
 
           vha_document_search_task = VhaDocumentSearchTask.last
           appeal = vha_document_search_task.appeal
@@ -700,6 +702,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_button("Submit appeal")
         click_intake_finish
         expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+        expect(page).to have_content(COPY::EDUCATION_PRE_DOCKET_INTAKE_SUCCESS_TITLE)
       end
 
       step "User can search the case and see the Pre Docketed status" do
