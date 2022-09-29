@@ -17,10 +17,10 @@ module Seeds
 
     def seed!
       # organize_judges
-      #create_previous_distribtions
-      #create_cases_tied_to_judges
+      create_previous_distribtions
+      create_cases_tied_to_judges
       create_genpop_cases
-      #create_errorable_cases
+      create_errorable_cases
     end
 
     private
@@ -70,10 +70,10 @@ module Seeds
     end
 
     def create_genpop_cases
-      #create_legacy_genpop_cases
-      #create_ama_hearing_genpop_cases
-      #create_direct_review_genpop_cases
-      #create_evidence_submission_genpop_cases
+      create_legacy_genpop_cases
+      create_ama_hearing_genpop_cases
+      create_direct_review_genpop_cases
+      create_evidence_submission_genpop_cases
       create_cavc_genpop_cases
     end
 
