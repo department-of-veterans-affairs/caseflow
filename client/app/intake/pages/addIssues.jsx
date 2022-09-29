@@ -267,7 +267,7 @@ class AddIssuesPage extends React.Component {
       intakeData.addedIssues, intakeData.originalIssues
     );
 
-    const buttonConditionalRendering = () => {
+    const splitButtonVisible = () => {
 
       return ((
         appealInfo?.issueCount > 1 || appealInfo.requestIssues?.length > 1) &&
@@ -278,7 +278,7 @@ class AddIssuesPage extends React.Component {
     const renderButtons = () => {
       return (
         <div className="cf-actions">
-          {buttonConditionalRendering() ? (
+          {splitButtonVisible() ? (
             [<Button
               name="add-issue"
               label="add-issue"
