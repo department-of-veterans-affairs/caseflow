@@ -197,7 +197,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       return <SmallLoader message="Creating task..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
     }
 
-    let title = checkIfPreDocketed(requestIssues) ? preDocketTitle(requestIssues) : COPY.INTAKE_SUCESS_TITLE;
+    let title = checkIfPreDocketed(requestIssues) ? preDocketTitle(requestIssues) : COPY.INTAKE_SUCCESS_TITLE;
 
     const deceasedVeteranAlert = () => {
       return (
