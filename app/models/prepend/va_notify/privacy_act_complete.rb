@@ -10,11 +10,11 @@ module PrivacyActComplete
   def update_status_if_children_tasks_are_closed(child_task)
     # original method defined in app/models/task.rb
     super_return_value = super
-    if ((type.to_s.include?("Foia") &&
-      (!type.to_s.include?("FoiaTask") ||
-      type.to_s == "FoiaRequestMailTask" && children.first.assigned_to == "Organization")) ||
-      (type.to_s.include?("PrivacyAct") || (type.to_s == "PrivacyActRequestMailTask" && children.first.assigned_to == "Organization"))) &&
+    if (%w[FoiaColocatedTask HearingAdminActionFoiaPrivacyRequestTask PrivacyActTask].include?(type.to_s) ||
+       ((type.to_s == "FoiaRequestMailTask" || type.to_s == "PrivacyActRequestMailTask") &&
+       children.first.assigned_to_type == "Organization")) &&
        status == Constants.TASK_STATUSES.completed
+      # appellant notification call
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
     super_return_value
@@ -24,7 +24,8 @@ module PrivacyActComplete
   # for Privacy Act Tasks that are only assigned to an Organization
   def update_with_instructions(params)
     super_return_value = super
-    if type.to_s == "PrivacyActTask" && assigned_to == "Organization"
+    if type.to_s == "PrivacyActTask" && assigned_to_type == "Organization" &&
+       status == Constants.TASK_STATUSES.completed
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
     super_return_value
