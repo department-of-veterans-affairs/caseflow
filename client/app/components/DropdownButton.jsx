@@ -40,7 +40,9 @@ export default class DropdownButton extends React.Component {
   setWrapperRef = (node) => this.wrapperRef = node
 
   onClickOutside = (event) => {
-    if (this.wrapperRef && !this.wrapperRef.contains(event.target) && this.state.menu) {
+    // event.path is [html, document, Window] when clicking the scroll bar and always more when clicking content
+    // this stops the menu from closing if a user clicks to use the scroll bar with the menu open
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target) && event.path[2] !== window && this.state.menu) {
       this.setState({
         menu: false
       });
