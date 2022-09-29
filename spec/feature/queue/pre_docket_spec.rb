@@ -446,7 +446,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
         end
 
-        step "Regional Program can send appeal to VHA CAMO as Ready for Review" do
+        step "Program Office can send appeal to VHA CAMO as Ready for Review" do
           appeal = Appeal.last
           visit "/queue/appeals/#{appeal.external_id}"
 
@@ -459,7 +459,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
           expect(page).to have_content(format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, "VHA CAMO"))
           find("label", text: "VBMS").click
-          fill_in(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, with: po_review_instructions)
+          fill_in(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, with: po_instructions)
           find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
           expect(page).to have_content(COPY::VHA_COMPLETE_TASK_CONFIRMATION_PO)
 
@@ -467,7 +467,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           visit "/queue/appeals/#{appeal.external_id}"
           find_all("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).first.click
           expect(page).to have_content("Documents for this appeal are stored in VBMS")
-          expect(page).to have_content(po_review_instructions)
+          expect(page).to have_content(po_instructions)
         end
 
         step "Program Office can assign AssessDocumentationTask to Regional Office" do
