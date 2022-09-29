@@ -163,7 +163,7 @@ describe('CompleteTaskModal', () => {
     });
   });
 
-  describe('ready_for_review', () => {
+  describe('Vha Po send to Vha Camo for review', () => {
     const taskType = 'AssessDocumentationTask';
     const buttonText = COPY.MODAL_SEND_BUTTON;
     const modalType = 'ready_for_review';
@@ -171,6 +171,10 @@ describe('CompleteTaskModal', () => {
     test('modal title is Ready for review', () => {
       renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
       expect(screen.getByText('Ready for review')).toBeTruthy();
+    });
+
+    test('modal text indicates appeal will be sent to VHA CAMO', () => {
+      renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
       expect(screen.getByText('This appeal will be sent to VHA CAMO for review.Please select where the documents for this appeal are stored')).toBeTruthy();
     });
 
@@ -235,7 +239,7 @@ describe('CompleteTaskModal', () => {
     });
   });
 
-  describe('ready_for_review2', () => {
+  describe('Vha Ro send to Vha Po for review', () => {
     const taskType = 'AssessDocumentationTask';
     const buttonText = COPY.MODAL_SEND_BUTTON;
     const modalType = 'ready_for_review';
@@ -243,6 +247,10 @@ describe('CompleteTaskModal', () => {
     test('modal title is Ready for review', () => {
       renderCompleteTaskModal(modalType, visnData, taskType);
       expect(screen.getByText('Ready for review')).toBeTruthy();
+    });
+
+    test('modal text indicates appeal will be sent to VHA Program Office', () => {
+      renderCompleteTaskModal(modalType, visnData, taskType);
       expect(screen.getByText('This appeal will be sent to VHA Program Office for review.Please select where the documents for this appeal are stored')).toBeTruthy();
     });
 
