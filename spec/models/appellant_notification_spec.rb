@@ -228,6 +228,14 @@ describe AppellantNotification do
 
             subject
           end
+
+          it "Whenever the hearing is already postponed, and notes are changed, appellant is not notified" do
+            hearing.update!(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
+
+            expect(AppellantNotification).to_not receive(:notify_appellant)
+
+            subject
+          end
         end
       end
 
