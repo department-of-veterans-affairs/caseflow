@@ -21,9 +21,7 @@ describe WorkQueue::LegacyTaskSerializer do
       # users that have added legacy tasks to VACOLS.
       # This implementation bridges that gap for these tests.
       user = create(:user)
-      user.define_singleton_method(:name) do
-        full_name
-      end
+      user.define_singleton_method(:name) { full_name }
       user
     end
     let(:task_details) do
