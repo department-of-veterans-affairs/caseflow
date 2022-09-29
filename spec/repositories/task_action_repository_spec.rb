@@ -190,8 +190,8 @@ describe TaskActionRepository, :all_dbs do
       subject { TaskActionRepository.vha_complete_data(program_office_task, user) }
 
       it "the modal body includes the text This appeal will be sent to VHA CAMO for review" do
-        expect(subject[:radio_field_label]).
-        to eq(format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, "VHA CAMO"))
+        expect(subject[:radio_field_label])
+          .to eq(format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, "VHA CAMO"))
       end
     end
 
@@ -206,8 +206,8 @@ describe TaskActionRepository, :all_dbs do
       subject { TaskActionRepository.vha_complete_data(regional_office_task, user) }
 
       it "the modal body includes the text This appeal will be sent to VHA Program Office for review" do
-        expect(subject[:radio_field_label]).
-        to eq(format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, "VHA Program Office"))
+        expect(subject[:radio_field_label])
+          .to eq(format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, "VHA Program Office"))
       end
     end
   end
