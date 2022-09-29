@@ -459,7 +459,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
           expect(page).to have_content(format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, "VHA CAMO"))
           find("label", text: "VBMS").click
-          fill_in(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, with: po_instructions)
+          fill_in(COPY::VHA_COMPLETE_TASK_MODAL_BODY, with: po_instructions)
           find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
           expect(page).to have_content(COPY::VHA_COMPLETE_TASK_CONFIRMATION_PO)
 
@@ -536,7 +536,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
           expect(page).to have_content(format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, "VHA Program Office"))
           find("label", text: "VBMS").click
-          fill_in(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, with: ro_review_instructions)
+          fill_in(COPY::VHA_COMPLETE_TASK_MODAL_BODY, with: ro_review_instructions)
           find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
           expect(page).to have_content(COPY::VHA_COMPLETE_TASK_CONFIRMATION_VISN)
 
