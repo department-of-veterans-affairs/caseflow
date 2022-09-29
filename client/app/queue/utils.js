@@ -934,7 +934,7 @@ export const getPreviousTaskInstructions = (tasks) => {
 
   const previousInstructions = tasks.map((task) => {
     // Skip if there are no previous instructions
-    if (task.instructions[1] && task.instructions.length > 0) {
+    if (task.instructions?.[1] && task.instructions.length > 0) {
       switch (task.assignedTo.type) {
       case 'VhaProgramOffice':
         reviewNotes = 'Program Office';
