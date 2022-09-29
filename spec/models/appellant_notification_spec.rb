@@ -197,7 +197,7 @@ describe AppellantNotification do
 
       shared_examples "Whenever updating hearing via Daily Docket page" do
         context "Whenever disposition is being set to postponed" do
-          let!(:hearing_hash) { { hearing: hearing, disposition: "postponed" } }
+          let!(:hearing_hash) { { hearing: hearing, disposition: Constants.HEARING_DISPOSITION_TYPES.postponed } }
 
           it "appellant is notified whenever hearing is postponed" do
             appeal = hearing.appeal
@@ -209,9 +209,9 @@ describe AppellantNotification do
         end
 
         context "Whenever disposition is being set to no_show" do
-          let!(:hearing_hash) { { hearing: hearing, disposition: "no_show" } }
+          let!(:hearing_hash) { { hearing: hearing, disposition: Constants.HEARING_DISPOSITION_TYPES.no_show } }
 
-          it "appellant is notified whenever hearing is postponed" do
+          it "appellant is NOT notified whenever hearing disposition is set to no_show" do
             appeal = hearing.appeal
 
             expect(AppellantNotification).to_not receive(:notify_appellant).with(appeal, template_name)
@@ -233,7 +233,7 @@ describe AppellantNotification do
 
       shared_examples "Whenever updating hearing via AssignHearingDispositionTask" do
         context "Whenever postponing the hearing" do
-          let!(:hearing_hash) { { disposition: "postponed" } }
+          let!(:hearing_hash) { { disposition: Constants.HEARING_DISPOSITION_TYPES.postponed } }
 
           it "will notify appellant when a hearing is postponed" do
             appeal = hearing.appeal
@@ -246,7 +246,7 @@ describe AppellantNotification do
         end
 
         context "Whenever setting disposition to no_show" do
-          let!(:hearing_hash) { { disposition: "no_show" } }
+          let!(:hearing_hash) { { disposition: Constants.HEARING_DISPOSITION_TYPES.no_show } }
 
           it "will NOT notify appellant when a hearing is set to a disposition of no_show" do
             appeal = hearing.appeal
