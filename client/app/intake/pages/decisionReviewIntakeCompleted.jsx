@@ -82,7 +82,7 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIs
   return leadMessageArr;
 };
 
-const getChecklistItems = (featureToggles, formType, requestIssues, isInformalConferenceRequested) => {
+const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
   if (formType === 'appeal') {
@@ -158,7 +158,6 @@ class VacolsOptInList extends React.PureComponent {
 class DecisionReviewIntakeCompleted extends React.PureComponent {
   render() {
     const {
-      featureToggles,
       veteran,
       formType,
       intakeStatus,
@@ -230,7 +229,6 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       }
       checklist={
         getChecklistItems(
-          featureToggles,
           formType,
           requestIssues,
           informalConference
@@ -253,7 +251,6 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
 
 export default connect(
   (state) => ({
-    featureToggles: state.featureToggles,
     veteran: state.intake.veteran,
     formType: state.intake.formType,
     asyncJobUrl: state.intake.asyncJobUrl,
