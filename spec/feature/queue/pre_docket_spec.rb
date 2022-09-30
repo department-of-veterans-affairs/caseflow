@@ -446,30 +446,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
         end
 
-        step "Program Office can send appeal to VHA CAMO as Ready for Review" do
-          appeal = Appeal.last
-          sleep(10)
-          visit "/queue/appeals/#{appeal.external_id}"
-
-          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-          find(
-            "div",
-            class: "cf-select__option",
-            text: Constants.TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.label
-          ).click
-          expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
-          expect(page).to have_content(format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, "VHA CAMO"))
-          find("label", text: "VBMS").click
-          fill_in(COPY::VHA_COMPLETE_TASK_MODAL_BODY, with: po_instructions)
-          find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
-          expect(page).to have_content(COPY::VHA_COMPLETE_TASK_CONFIRMATION_PO)
-
-          visit "/queue/appeals/#{appeal.external_id}"
-          find_all("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).first.click
-          expect(page).to have_content("Documents for this appeal are stored in VBMS")
-          expect(page).to have_content(po_instructions)
-        end
-
         step "Program Office can assign AssessDocumentationTask to Regional Office" do
           appeal = Appeal.last
           visit "/queue/appeals/#{appeal.external_id}"
@@ -557,6 +533,29 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(format(COPY::ORGANIZATIONAL_QUEUE_ON_HOLD_TAB_TITLE, 0))
           expect(page).to have_content(format(COPY::ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TAB_TITLE, 1))
           expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
+        end
+
+        step "Program Office can send appeal to VHA CAMO as Ready for Review" do
+          appeal = Appeal.last
+          visit "/queue/appeals/#{appeal.external_id}"
+
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.label
+          ).click
+          expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
+          expect(page).to have_content(format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, "VHA CAMO"))
+          find("label", text: "VBMS").click
+          fill_in(COPY::VHA_COMPLETE_TASK_MODAL_BODY, with: po_instructions)
+          find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
+          expect(page).to have_content(COPY::VHA_COMPLETE_TASK_CONFIRMATION_PO)
+
+          visit "/queue/appeals/#{appeal.external_id}"
+          find_all("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).first.click
+          expect(page).to have_content("Documents for this appeal are stored in VBMS")
+          expect(page).to have_content(po_instructions)
         end
 
         step "CAMO can return the appeal to BVA Intake" do
