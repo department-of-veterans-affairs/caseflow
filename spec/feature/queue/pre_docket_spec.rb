@@ -447,9 +447,6 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         end
 
         step "Program Office can send appeal to VHA CAMO as Ready for Review" do
-          appeal = Appeal.last
-          visit "/queue/appeals/#{appeal.external_id}"
-
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find(
             "div",
@@ -459,7 +456,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
           expect(page).to have_content(format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, "VHA CAMO"))
           find("label", text: "VBMS").click
-          fill_in(COPY::VHA_COMPLETE_TASK_MODAL_BODY, with: "test")
+          fill_in(COPY::VHA_COMPLETE_TASK_MODAL_BODY, with: po_instructions)
           find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
           expect(page).to have_content(COPY::VHA_COMPLETE_TASK_CONFIRMATION_PO)
 
