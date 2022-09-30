@@ -929,13 +929,22 @@ export const statusLabel = (appeal) => {
   }
 };
 
-export const getPreviousTaskInstructions = (parentTask, tasks) => {
-  let reviewNotes = null;
+const getMostRecentChildTask = (parentTask, tasks) => {
+  // Sorts tasks by ID in descending order
+  const sortedTasks = tasks.sort((task_a, task_b) => {
+    return (parseInt(task_a.taskId, 10) > parseInt(task_b.taskId, 10)) ? -1 : 1;
+  });
 
-  const childTask = tasks.find((task) => {
+  return sortedTasks.find((task) => {
     // The taskId value is a string while parentId is an integer..
     return task.parentId === parseInt(parentTask.taskId, 10);
   });
+};
+
+export const getPreviousTaskInstructions = (parentTask, tasks) => {
+  let reviewNotes = null;
+
+  const childTask = getMostRecentChildTask(parentTask, tasks);
 
   if (childTask && childTask.instructions?.[1] && childTask.instructions.length > 0) {
     switch (childTask.assignedTo.type) {
