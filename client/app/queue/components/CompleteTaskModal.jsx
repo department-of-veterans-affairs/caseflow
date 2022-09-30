@@ -183,8 +183,8 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
     <React.Fragment>
       {programOfficeInstructions.some((i) => i) &&
         <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
-      {programOfficeInstructions.map((text) => (
-        <React.Fragment>
+      {programOfficeInstructions.map((text, index) => (
+        <React.Fragment key={index}>
           <div>
             <ReactMarkdown>{text}</ReactMarkdown>
           </div>
@@ -493,7 +493,10 @@ class CompleteTaskModal extends React.Component {
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
     const formattedInstructions = [];
-    const { previousInstructions, reviewNotes } = getPreviousTaskInstructions(this.props.tasks);
+    const {
+      previousInstructions,
+      reviewNotes
+    } = getPreviousTaskInstructions(this.props.task, this.props.tasks);
 
     if (this.props.modalType === 'vha_send_to_board_intake') {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
@@ -501,7 +504,7 @@ class CompleteTaskModal extends React.Component {
       formattedInstructions.push(`\n**Status:**\n${locationLabel}\n`);
 
       if (reviewNotes) {
-        formattedInstructions.push(`\n\n**${reviewNotes} Notes:**\n${previousInstructions.join('')}\n`);
+        formattedInstructions.push(`\n\n**${reviewNotes} Notes:**\n${previousInstructions}\n`);
       }
 
       if (instructions) {
@@ -524,7 +527,7 @@ class CompleteTaskModal extends React.Component {
 
       // Do not add "Regional Processing Office Notes" section when RPO is sending to Intake for review
       if (reviewNotes && reviewNotes !== 'Regional Processing Office') {
-        formattedInstructions.push(`\n\n**${reviewNotes} Notes:**\n${previousInstructions.join('')}\n`);
+        formattedInstructions.push(`\n\n**${reviewNotes} Notes:**\n${previousInstructions}\n`);
       }
     } else if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customFormatInstructions === 'function') {
       formattedInstructions.push(

@@ -929,32 +929,34 @@ export const statusLabel = (appeal) => {
   }
 };
 
-export const getPreviousTaskInstructions = (tasks) => {
+export const getPreviousTaskInstructions = (parentTask, tasks) => {
   let reviewNotes = null;
 
-  const previousInstructions = tasks.map((task) => {
-    // Skip if there are no previous instructions
-    if (task.instructions?.[1] && task.instructions.length > 0) {
-      switch (task.assignedTo.type) {
-      case 'VhaProgramOffice':
-        reviewNotes = 'Program Office';
-        break;
-      case 'VhaRegionalOffice':
-        reviewNotes = 'VISN';
-        break;
-      case 'VhaCamo':
-        reviewNotes = 'CAMO';
-        break;
-      case 'EducationRpo':
-        reviewNotes = 'Regional Processing Office';
-        break;
-      default:
-        break;
-      }
-    }
-
-    return reviewNotes ? task.instructions[1] : null;
+  const childTask = tasks.find((task) => {
+    // The taskId value is a string while parentId is an integer..
+    return task.parentId === parseInt(parentTask.taskId, 10);
   });
+
+  if (childTask && childTask.instructions?.[1] && childTask.instructions.length > 0) {
+    switch (childTask.assignedTo.type) {
+    case 'VhaProgramOffice':
+      reviewNotes = 'Program Office';
+      break;
+    case 'VhaRegionalOffice':
+      reviewNotes = 'VISN';
+      break;
+    case 'VhaCamo':
+      reviewNotes = 'CAMO';
+      break;
+    case 'EducationRpo':
+      reviewNotes = 'Regional Processing Office';
+      break;
+    default:
+      break;
+    }
+  }
+
+  const previousInstructions = reviewNotes ? childTask.instructions?.[1] : null;
 
   return { reviewNotes, previousInstructions };
 };
