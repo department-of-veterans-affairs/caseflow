@@ -85,6 +85,7 @@ const BackButton = connect(
 class SplitButtonUnconnected extends React.PureComponent {
 
   handleSplitSubmit = (appeal, payloadInfo) => {
+
     const response = this.props.splitAppeal(appeal.id, payloadInfo.selectedIssues,
       payloadInfo.reason, payloadInfo.otherReason, this.props.user);
 

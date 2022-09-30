@@ -135,7 +135,7 @@ const ReviewAppealView = (props) => {
       <br />
       <br />
       <section className={styles.tableSection}>
-        <table className={`usa-table-borderless ${styles.mainTable}`}>
+        <table className={`usa-table-borderless ${styles.mainTable}`} id="review_table">
           <tr>
             <th></th>
             <th className="bolded-header"> {COPY.TABLE_ORIGINAL_APPEAL}</th>
