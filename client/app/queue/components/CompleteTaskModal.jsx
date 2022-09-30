@@ -18,7 +18,7 @@ import { requestPatch } from '../uiReducer/uiActions';
 import {
   taskActionData,
   getPreviousTaskInstructions
- } from '../utils';
+} from '../utils';
 import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
 
@@ -511,7 +511,8 @@ class CompleteTaskModal extends React.Component {
       }
     } else if (this.props.modalType.includes('for_review')) {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
-      const docLocationText = `**Status:**\nDocuments for this appeal are stored in ${radio === 'other' ? otherInstructions :
+      const docLocationText = `**Status:**\nDocuments for this appeal are stored in ${radio === 'other' ?
+        otherInstructions :
         locationLabel}.`;
 
       formattedInstructions.push(docLocationText);
