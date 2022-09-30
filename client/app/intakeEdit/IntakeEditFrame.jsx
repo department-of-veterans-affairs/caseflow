@@ -237,14 +237,13 @@ export const IntakeEditFrame = (props) => {
                   />
                 </div>
               </AppSegment>
-              {props.featureToggles.split_appeal_workflow && (
-                <AppSegment styling={textAlignRightStyling}>
-                  <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
-                  <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitButtons} />
-                  <IntakeAppealContext.Provider value={props.appeal}>
-                    <Route exact path={PAGE_PATHS.REVIEW_SPLIT} component={CreateButtons} />
-                  </IntakeAppealContext.Provider>
-                </AppSegment>)}
+              <AppSegment styling={textAlignRightStyling}>
+                <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
+                <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitButtons} />
+                <IntakeAppealContext.Provider value={props.appeal}>
+                  <Route exact path={PAGE_PATHS.REVIEW_SPLIT} component={CreateButtons} />
+                </IntakeAppealContext.Provider>
+              </AppSegment>
             </Provider>
           </AppFrame>
         </NavigationBar>
