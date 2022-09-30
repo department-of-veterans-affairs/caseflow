@@ -18,22 +18,36 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def perform
-    unless use_by_docket_date?
-      @tied_distributions = distribute_non_genpop_priority_appeals
+    begin
+      attempts ||= 1
+      unless use_by_docket_date?
+        @tied_distributions = distribute_non_genpop_priority_appeals
+      end
+
+      @genpop_distributions = distribute_genpop_priority_appeals
+
+      send_job_report
+
+    rescue OCIError => error
+      puts("Push Priority because failed with error: #{error}")
+      if (attempts += 1) < 3
+        puts("Retrying Push Priority")
+        retry
+      end
+
+      puts("--------------------------------")
+      puts("Retry attemps exceeded")
     end
 
-    @genpop_distributions = distribute_genpop_priority_appeals
-
-    send_job_report
-  rescue StandardError => error
-    start_time ||= Time.zone.now # temporary fix to get this job to succeed
-    duration = time_ago_in_words(start_time)
-    slack_msg = "<!here>\n [ERROR] after running for #{duration}: #{error.message}"
-    slack_service.send_notification(slack_msg, self.class.name, "#appeals-job-alerts")
-    log_error(error)
-  ensure
-    datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
-  end
+    rescue StandardError => error
+      start_time ||= Time.zone.now # temporary fix to get this job to succeed
+      duration = time_ago_in_words(start_time)
+      slack_msg = "<!here>\n [ERROR] after running for #{duration}: #{error.message}"
+      slack_service.send_notification(slack_msg, self.class.name, "#appeals-job-alerts")
+      log_error(error)
+    ensure
+      datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
+    end
 
   def send_job_report
     slack_service.send_notification(slack_report.join("\n"), self.class.name, "#appeals-job-alerts")
