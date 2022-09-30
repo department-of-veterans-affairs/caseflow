@@ -507,7 +507,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           find(
             "div",
             class: "cf-select__option",
-            text: Constants.VHA_VISN_SEND_TO_VHA_PO_FOR_REVIEW.label
+            text: Constants.TASK_ACTIONS.VHA_VISN_SEND_TO_VHA_PO_FOR_REVIEW.label
           ).click
           expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
           expect(page).to have_content(format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, "VHA Program Office"))
