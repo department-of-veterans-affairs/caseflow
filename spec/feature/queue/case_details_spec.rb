@@ -1113,6 +1113,7 @@ RSpec.feature "Case details", :all_dbs do
     let!(:appeal_serializer) { WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash }
     before do
       User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:split_appeal_workflow)
       visit("/queue/appeals/#{appeal.uuid}")
     end
     it "should display the 'Correct issues' link" do
@@ -1138,6 +1139,7 @@ RSpec.feature "Case details", :all_dbs do
     let!(:appeal_serializer) { WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash }
     before do
       User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:split_appeal_workflow)
       visit("/queue/appeals/#{appeal.uuid}")
     end
     it "should not display the 'Correct issues' link" do
