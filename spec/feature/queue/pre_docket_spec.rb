@@ -447,6 +447,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         end
 
         step "Program Office can send appeal to VHA CAMO as Ready for Review" do
+          appeal = Appeal.last
+          visit "/queue/appeals/#{appeal.external_id}"
+          
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find(
             "div",
