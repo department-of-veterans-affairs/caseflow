@@ -58,7 +58,7 @@ afterEach(() => {
 
 describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
   const taskType = 'AssessDocumentationTask';
-  const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+  const buttonText = COPY.MODAL_RETURN_BUTTON;
   const additionalContextText = 'This appeal has been sent to the wrong program office. Please review.';
 
   test('Submission button has correct CSS class', () => {
