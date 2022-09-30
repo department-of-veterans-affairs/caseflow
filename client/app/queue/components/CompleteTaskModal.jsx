@@ -356,6 +356,8 @@ const MODAL_TYPE_ATTRS = {
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_PO, appeal.veteranFullName) :
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_VISN, appeal.veteranFullName)
     }),
+    // Title is obtained via taskActionData instead.
+    title: () => null,
     getContent: ReadyForReviewModal
   },
   send_colocated_task: {
