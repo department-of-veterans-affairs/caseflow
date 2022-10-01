@@ -24,11 +24,7 @@ PreCommit:
     on_warn: fail
     problem_on_unmodified_line: ignore
     command: ['bundle', 'exec', 'fasterer']
-  # Other
-  YamlSyntax:
-    enabled: true
-  JsonSyntax:
-    enabled: true
+  # Javascript
   EsLint:
     enabled: true
     on_warn: fail
@@ -37,3 +33,13 @@ PreCommit:
     include:
       - '**/*.js'
       - '**/*.jsx'
+  # Other
+  YamlSyntax:
+    enabled: true
+    on_warn: fail
+  JsonSyntax:
+    enabled: true
+    on_warn: fail
+  ScssLint:
+    enabled: true
+    on_warn: fail
