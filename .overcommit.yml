@@ -1,4 +1,12 @@
 # Run overcommit --sign to use file after update
+#
+# To skip a test:
+# SKIP=TestName git commit
+# Ex: SKIP=Rubocop git commit -m "My commit message"
+#
+# To skip all tests:
+# OVERCOMMIT_DISABLE=1 git commit
+#
 
 PreCommit:
   # All
@@ -16,3 +24,8 @@ PreCommit:
     on_warn: fail
     problem_on_unmodified_line: ignore
     command: ['bundle', 'exec', 'fasterer']
+  # Other
+  YamlSyntax:
+    enabled: true
+  JsonSyntax:
+    enabled: true
