@@ -11,7 +11,7 @@
 PreCommit:
   # All
   TrailingWhitespace:
-    enabled: true
+    enabled: false
     problem_on_unmodified_line: ignore
   # Ruby/Rails
   RuboCop:
@@ -29,3 +29,11 @@ PreCommit:
     enabled: true
   JsonSyntax:
     enabled: true
+  EsLint:
+    enabled: true
+    on_warn: fail
+    problem_on_unmodified_line: ignore
+    required_executable: './client//node_modules/.bin/eslint'
+    include:
+      - '**/*.js'
+      - '**/*.jsx'
