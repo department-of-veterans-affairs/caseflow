@@ -1,0 +1,14 @@
+# In order to use, run:
+# ln -s overcommit.yml.example .overcommit.yml
+
+PreCommit:
+  # All
+  TrailingWhitespace:
+    enabled: true
+    problem_on_unmodified_line: ignore
+  # Ruby/Rails
+  RuboCop:
+    enabled: true
+    on_warn: fail
+    problem_on_unmodified_line: ignore
+    command: ['bundle', 'exec', 'rubocop']
