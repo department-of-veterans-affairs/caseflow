@@ -930,8 +930,11 @@ export const statusLabel = (appeal) => {
 };
 
 const getMostRecentChildTask = (parentTask, tasks) => {
+  // Ignores LegacyTasks as they're only ever the children of RootTasks.
+  const amaTasks = tasks.filter((task) => !task.is_legacy);
+
   // Sorts tasks by ID in descending order
-  const sortedTasks = tasks.sort((task_a, task_b) => {
+  const sortedTasks = amaTasks.sort((task_a, task_b) => {
     return (parseInt(task_a.taskId, 10) > parseInt(task_b.taskId, 10)) ? -1 : 1;
   });
 
