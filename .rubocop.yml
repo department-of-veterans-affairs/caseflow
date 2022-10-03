@@ -14,9 +14,8 @@ AllCops:
     - './.simplecov'
     - 'client/node_modules/**/*'
     - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
-    - 'db/seeds/*'
-  TargetRailsVersion: 5.1
-  TargetRubyVersion: 2.5
+  TargetRailsVersion: 5.2.4.6
+  TargetRubyVersion: 2.7.3
   UseCache: true
 
 Bundler/OrderedGems:
