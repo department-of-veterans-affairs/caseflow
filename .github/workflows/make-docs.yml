@@ -109,15 +109,26 @@ jobs:
 
       # The following is adapted from: https://github.com/SwiftDocOrg/github-wiki-publish-action/blob/v1/entrypoint.sh
       # and https://github.com/Andrew-Chen-Wang/github-wiki-action/blob/master/entrypoint.sh
-      # and https://github.community/t/how-to-updade-repo-wiki-from-github-actions/121151/7
+      # and https://github.community/t/how-to-updade-repo-wiki-from-github-actions/121151/7'
+
+      - name: Find and extract branch name
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: current_branch
+
+      - name: Get current date and time
+        run: echo "##[set-output name=date;]$(echo ${date + '%Y-%m-%d'}"
+        id: current_date
+
       - name: Checkout branch main-gh-pages
         uses: actions/checkout@v2
         with:
           ref: main-gh-pages
-          path: main-gh-pages_checkout
+          path: main-gh-pages_${{ steps.current_date.outputs.date }}_${{ steps.current_branch.outputs.branch }}
+
       - name: Copy results of `make docs` to checkout of main-gh-pages
         run: |
-          rsync -av --exclude .git --exclude .keep "docs/schema/" "main-gh-pages_checkout/schema/make_docs/"
+          rsync -av --exclude .git --exclude .keep "docs/schema/" "main-gh-pages_${{ steps.date.outputs.date }}_${{ steps.current_branch.outputs.branch }}/schema/make_docs/"
+
       - name: Update Jailer-generated DB schema docs for Caseflow using results of `make docs`
         env:
           POSTGRES_DB: caseflow_certification_test
@@ -125,8 +136,9 @@ jobs:
           POSTGRES_USER: postgres
         run: |
           CASEFLOW_HOME=`pwd`
-          cd main-gh-pages_checkout/schema/bin
+          cd main-gh-pages_${{ steps.date.outputs.date }}_${{ steps.current_branch.outputs.branch }}/schema/bin
           sh ./gen_jailer_schema_docs.sh "$CASEFLOW_HOME" ../make_docs/caseflow-jailer_polymorphic_associations.csv
+
       - name: Compare (and locally commit) generated docs against main-gh-pages branch
         id: compare_docs
         env:
@@ -134,7 +146,7 @@ jobs:
           WIKI_COMMIT_USER_EMAIL: 'Quillman_Samantha@bah.com'
           WIKI_COMMIT_USER_NAME: 'samantha-quillman'
         run: |
-          cd main-gh-pages_checkout
+          cd main-gh-pages_${{ steps.date.outputs.date }}_${{ steps.current_branch.outputs.branch }}
 
           make github_action_pre_commit_hook
 
@@ -154,25 +166,3 @@ jobs:
             git commit -m "$WIKI_COMMIT_MESSAGE"
             echo "::endgroup::"
           fi
-
-      - name: Create/Update PR to merge into main-gh-pages
-        id: create_pr
-        if: steps.compare_docs.outputs.changes_docs == 'true'
-        uses: peter-evans/create-pull-request@v3
-        with:
-          path: "main-gh-pages_checkout/"
-          base: "main-gh-pages"
-          branch: "gh-actions/make_docs-update_docs"
-          delete-branch: true # when closing PR
-          commit-message: '`make docs` GH Action: automatically update DB schema documentation files'
-          title: "GH Action: update DB documentation"
-          body: "This PR was created by GitHub Action `make_docs` to automatically update DB documentation."
-          labels: "Type: Documentation"
-          reviewers: samantha-quillman
-          assignees: ${{ github.event.commits[0].committer.username }}
-      - name: PR info
-        if: steps.create_pr.outcome == 'success'
-        run: |
-          echo "PR ${{ steps.create_pr.outputs.pull-request-operation }}"
-          echo "Pull Request Number - ${{ steps.create_pr.outputs.pull-request-number }}"
-          echo "Pull Request URL - ${{ steps.create_pr.outputs.pull-request-url }}"
