@@ -55,7 +55,6 @@ feature "Appeal Edit issues", :all_dbs do
            legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
   end
 
-
   let!(:appeal_intake) do
     create(:intake, user: current_user, detail: appeal, veteran_file_number: veteran.file_number)
   end
@@ -205,7 +204,6 @@ feature "Appeal Edit issues", :all_dbs do
       # duplicate issues should be neither added nor removed
       expect(request_issue_update.added_issues.map(&:id)).to_not include(non_modified_ids)
       expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
-      
     end
   end
 
@@ -316,7 +314,6 @@ feature "Appeal Edit issues", :all_dbs do
   end
 
   context "User is a member of the Supervisory Senior Council" do
-
     let!(:organization) { SupervisorySeniorCouncil.singleton }
     let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
     let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
@@ -360,14 +357,14 @@ feature "Appeal Edit issues", :all_dbs do
       # add issues to the appeal
       appeal2.request_issues << request_issue_1
       appeal2.request_issues << request_issue_2
-      
+
       User.authenticate!(user: current_user)
       visit "appeals/#{appeal2.uuid}/edit/"
 
       expect(page).to have_button("Split appeal")
       # clicking the button takes the user to the next page
       click_button("Split appeal")
-      
+
       expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
     end
 
@@ -408,16 +405,16 @@ feature "Appeal Edit issues", :all_dbs do
 
       User.authenticate!(user: current_user)
       visit("/appeals/#{appeal.uuid}/edit/create_split")
-      
+
       # expect issue descritions to display
       expect(page).to have_content("PTSD denied")
       expect(page).to have_content("Other Issue Description")
       find("label", text: "PTSD denied").click
       expect(page).to have_content("Select...")
-    
-      find(:css, '.cf-select').select_option
-      find(:css, '.cf-select__menu').click
-      
+
+      find(:css, ".cf-select").select_option
+      find(:css, ".cf-select__menu").click
+
       click_button("Continue")
       expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/review_split")
     end
@@ -432,21 +429,21 @@ feature "Appeal Edit issues", :all_dbs do
           sleep 0.1
         end
       end
-      raise 'wait_for_ajax timeout' unless finished
+      raise "wait_for_ajax timeout" unless finished
     end
 
     def finished_all_ajax_requests?
       page.evaluate_script(<<~EOS
-    ((typeof window.jQuery === 'undefined')
-     || (typeof window.jQuery.active === 'undefined')
-     || (window.jQuery.active === 0))
-    && ((typeof window.injectedJQueryFromNode === 'undefined')
-     || (typeof window.injectedJQueryFromNode.active === 'undefined')
-     || (window.injectedJQueryFromNode.active === 0))
-    && ((typeof window.httpClients === 'undefined')
-     || (window.httpClients.every(function (client) { return (client.activeRequestCount === 0); })))
+        ((typeof window.jQuery === 'undefined')
+        || (typeof window.jQuery.active === 'undefined')
+        || (window.jQuery.active === 0))
+        && ((typeof window.injectedJQueryFromNode === 'undefined')
+        || (typeof window.injectedJQueryFromNode.active === 'undefined')
+        || (window.injectedJQueryFromNode.active === 0))
+        && ((typeof window.httpClients === 'undefined')
+        || (window.httpClients.every(function (client) { return (client.activeRequestCount === 0); })))
       EOS
-      )
+                          )
     end
 
     scenario "The SSC user navigates to the split appeal page to review page" do
@@ -456,13 +453,12 @@ feature "Appeal Edit issues", :all_dbs do
     scenario "When the user accesses the review_split page, the page renders as expected" do
       # add issues to the appeal
       skill_form(appeal2)
-      
+
       expect(page).to have_table("review_table")
       expect(page).to have_content("Cancel")
       expect(page).to have_button("Back")
       expect(page).to have_button("Split appeal")
       expect(page).to have_content("Reason for new appeal stream:")
-
     end
 
     scenario "on the review_split page, the back button takes the user back" do
@@ -485,29 +481,29 @@ feature "Appeal Edit issues", :all_dbs do
       if expect(appeal2.veteran_is_not_claimant).to be(false)
         row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
         row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
-        expect(row2_1).to eq('Veteran')
-        expect(row3_1).to eq('Docket Number')
+        expect(row2_1).to eq("Veteran")
+        expect(row3_1).to eq("Docket Number")
       else
         row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
         row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
-        expect(row2_1).to eq('Veteran')
-        expect(row3_1).to eq('Appellant')
+        expect(row2_1).to eq("Veteran")
+        expect(row3_1).to eq("Appellant")
       end
     end
 
     scenario "on the review_split page, appeal type is no hearing" do
       skill_form(appeal2)
-      expect(appeal2.docket_type).not_to have_content('hearing') 
+      expect(appeal2.docket_type).not_to have_content("hearing")
     end
 
     scenario "on the review_split page, the Split appeal button takes the user to queue" do
       skill_form(appeal2)
 
       click_button("Split appeal")
-      #wait_for_ajax
+      # wait_for_ajax
       # page.find(:xpath, '/queue/appeals/#{appeal2.uuid}')
       # assert_current_path("/queue/appeals/#{appeal2.uuid}")
-      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}",  ignore_query: true)
+      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
     end
   end
 

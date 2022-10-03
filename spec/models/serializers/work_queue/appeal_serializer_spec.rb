@@ -70,6 +70,11 @@ describe WorkQueue::AppealSerializer, :all_dbs do
     let!(:organization) { SupervisorySeniorCouncil.singleton }
     let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
 
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:split_appeal_workflow)
+    end
+
     subject { described_class.new(appeal, params: { user: current_user }) }
 
     it "can_edit_request_issues returns true" do
