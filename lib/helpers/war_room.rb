@@ -26,7 +26,7 @@ module WarRoom
       dd = appeal.decision_document
 
       FixFileNumberWizard.run(appeal: appeal)
-      #need to do y or q
+      # need to do y or q
     end
 
     def legacy_run(vacols_id)
@@ -45,7 +45,7 @@ module WarRoom
       appeal.treee
 
       FixFileNumberWizard.run(appeal: appeal)
-      #need to do y or q
+      # need to do y or q
     end
   end
 

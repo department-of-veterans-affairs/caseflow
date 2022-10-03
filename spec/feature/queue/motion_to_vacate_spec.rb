@@ -898,7 +898,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
           expect(vacate_stream.decision_issues.size).to eq(6)
 
-          remanded = vacate_stream.decision_issues.select { |di| di.remanded? }
+          remanded = vacate_stream.decision_issues.select(&:remanded?)
           remanded1 = remanded.find { |di| di.description.eql? "remanded test" }
           remanded2 = remanded.find { |di| di.description.eql? "remanded test 2" }
 
@@ -1027,7 +1027,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
           "sent to #{judge.full_name} for review."
         )
 
-        judge_task = vacate_stream.tasks.find_by(type: 'JudgeDecisionReviewTask');
+        judge_task = vacate_stream.tasks.find_by(type: "JudgeDecisionReviewTask")
 
         expect(vacate_stream.decision_issues.size).to eq(3)
         expect(vacate_stream.tasks.size).to eq(4)

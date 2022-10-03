@@ -15,6 +15,7 @@ module WarRoom
         if appeal.nil?
           fail "Invalid UUID. Appeal not found. Aborting..."
         end
+
         hearing_task = most_recent_hearing_task(appeal.id, appeal_type)
         schedule_task = most_recent_schedule_hearing_task(appeal.id, appeal_type)
         if schedule_task.nil? || schedule_task.status == "completed" || schedule_task.status == "cancelled"
@@ -25,7 +26,7 @@ module WarRoom
         hearing.update!(appeal_id: appeal.id, updated_by_id: User.system_user.id)
         HearingTaskAssociation.find_by(hearing_id: hearing.id, hearing_type: "Hearing").update!(hearing_task_id: hearing_task.id)
         create_and_set_disposition_task(appeal, hearing, hearing_task)
-        schedule_task.update!(status: "completed", closed_at: Time.zone.now, assigned_to:User.find_by_id(User.system_user.id))
+        schedule_task.update!(status: "completed", closed_at: Time.zone.now, assigned_to: User.find_by_id(User.system_user.id))
       end
     end
 
@@ -42,6 +43,7 @@ module WarRoom
         if appeal.nil?
           fail "INVALID VACOLS ID. Appeal not found. Aborting..."
         end
+
         hearing_task = most_recent_hearing_task(appeal.id, appeal_type)
         schedule_task = most_recent_schedule_hearing_task(appeal.id, appeal_type)
         if schedule_task.nil? || schedule_task.status == "completed" || schedule_task.status == "cancelled"
@@ -99,7 +101,7 @@ module WarRoom
 
     # Wrapper method for creating the tasks for the hearing task tree
     def create_tasks(appeal, appeal_type)
-      create_args = {appeal: appeal, assigned_to: User.find_by_id(User.system_user.id), assigned_by_id: User.system_user.id}
+      create_args = { appeal: appeal, assigned_to: User.find_by_id(User.system_user.id), assigned_by_id: User.system_user.id }
       distribution_task = put_distribution_task_on_hold(appeal, appeal_type)
       hearing_task = create_hearing_task(create_args, distribution_task)
       schedule_task = ScheduleHearingTask.create!(**create_args, parent: hearing_task)
