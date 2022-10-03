@@ -116,16 +116,16 @@ jobs:
         id: current_branch
 
       - name: Get current date and time
-        run: echo "##[set-output name=date;]$(echo ${date + '%Y-%m-%d'}"
+        run: echo "##[set-output name=date;]$(echo $(date +'%Y-%m-%d'))"
         id: current_date
 
-      - name: Checkout branch main-gh-pages
+      - name: Create new copy of main-gh-pages into new local branch
         uses: actions/checkout@v2
         with:
           ref: main-gh-pages
           path: main-gh-pages_${{ steps.current_date.outputs.date }}_${{ steps.current_branch.outputs.branch }}
 
-      - name: Copy results of `make docs` to checkout of main-gh-pages
+      - name: Copy results of `make docs` to copy of main-gh-pages
         run: |
           rsync -av --exclude .git --exclude .keep "docs/schema/" "main-gh-pages_${{ steps.date.outputs.date }}_${{ steps.current_branch.outputs.branch }}/schema/make_docs/"
 
