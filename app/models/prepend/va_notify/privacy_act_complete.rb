@@ -10,8 +10,8 @@ module PrivacyActComplete
   def update_status_if_children_tasks_are_closed(child_task)
     # original method defined in app/models/task.rb
     super_return_value = super
-    if (type.to_s.include?("Foia") && !parent.type.to_s.include?("Foia")) ||
-       (type.to_s.include?("PrivacyAct") && !parent.type.to_s.include?("PrivacyAct")) &&
+    if ((type.to_s.include?("Foia") && !parent.type.to_s.include?("Foia")) ||
+       (type.to_s.include?("PrivacyAct") && !parent.type.to_s.include?("PrivacyAct"))) &&
        status == Constants.TASK_STATUSES.completed
       # appellant notification call
       AppellantNotification.notify_appellant(appeal, @@template_name)
