@@ -164,9 +164,11 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def eligible_judges
-    @eligible_judges ||=
-      JudgeTeam.pushed_priority_cases_allowed.map(&:judge)
-        .reject { |judge| Distribution.where(judge_id: judge.id).where("created_at >= ?", 1.hour.ago).count > 0 }
+    @eligible_judges ||= JudgeTeam.pushed_priority_cases_allowed.map(&:judge)
+      .reject { |judge| Distribution.where(judge_id: judge.id).where("created_at >= ?", 5.minutes.ago).count > 0 }
+    @eligible_judges.select(&:judge_in_vacols?) unless true
+
+    @eligible_judges
   end
 
   # Produces a hash of judge_id and the number of cases distributed to them in the last month

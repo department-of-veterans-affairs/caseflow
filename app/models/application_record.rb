@@ -26,7 +26,11 @@ end
 ActiveRecord::Base.class_eval do
   def self.multi_transaction
     ActiveRecord::Base.transaction do
-      VACOLS::Record.transaction { yield }
+      if true
+        yield
+      else
+        VACOLS::Record.transaction { yield }
+      end
     end
   end
 

@@ -12,7 +12,7 @@ class Distribution < CaseflowRecord
   belongs_to :judge, class_name: "User"
 
   validates :judge, presence: true
-  validate :validate_user_is_judge, on: :create
+  validate :validate_user_is_judge, on: :create, unless: :priority_push?
   validate :validate_number_of_unassigned_cases, on: :create, unless: :priority_push?
   validate :validate_days_waiting_of_unassigned_cases, on: :create, unless: :priority_push?
   validate :validate_judge_has_no_pending_distributions, on: :create
