@@ -132,4 +132,13 @@ describe VANotifyStatusUpdateJob, type: :job do
       job.perform_now
     end
   end
+
+  context "#notifications_not_processed" do
+    subject(:job) { VANotifyStatusUpdateJob.perform_later }
+    it "queries the notification table using activerecord" do
+      allow(job).to receive(:find_notifications_not_processed).and_return([])
+      expect(job).to receive(:find_notifications_not_processed)
+      job.perform_now
+    end
+  end
 end
