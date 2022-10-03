@@ -388,7 +388,14 @@ const MODAL_TYPE_ATTRS = {
       title: sprintf(COPY.EMO_RETURN_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
     }),
     title: () => COPY.EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
-    getContent: ReturnToBoardIntakeModal
+    getContent: ReturnToBoardIntakeModal,
+    customFormatInstructions: ({ state }) => {
+      if (state.instructions.length > 0) {
+        return `\n**Reason for return:**\n${state.instructions}`;
+      }
+
+      return state.instructions;
+    }
   },
   emo_send_to_board_intake_for_review: {
     buildSuccessMsg: (appeal) => ({

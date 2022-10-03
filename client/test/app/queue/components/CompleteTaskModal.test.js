@@ -601,6 +601,7 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
+        '\n**Reason for return:**\n' +
         'EMO Return to Board Intake'
       );
     });
