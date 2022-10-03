@@ -20,8 +20,10 @@ module HearingWithdrawn
   # Legacy Hearing Withdrawn from the Daily Docket
   # original method defined in app/models/legacy_hearing.rb
   def update_caseflow_and_vacols(hearing_hash)
+    current_disposition = vacols_record.hearing_disp
     super_return_value = super
-    if hearing_hash[:disposition] == Constants.HEARING_DISPOSITION_TYPES.cancelled
+    new_disposition = hearing_hash[:disposition]
+    if cancelled? && current_disposition != new_disposition[0]&.capitalize
       appeal = LegacyAppeal.find(appeal_id)
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
