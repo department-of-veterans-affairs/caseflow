@@ -50,6 +50,7 @@ module WarRoom
 
     private
 
+    # :reek:FeatureEnvy
     def get_veteran_info(legacy_appeal)
       # Get information about the appeal for the dispatch task and pass it along to OAR
       # This information is sent to Jennifer.Schleicher@va.gov in an encrypted email
