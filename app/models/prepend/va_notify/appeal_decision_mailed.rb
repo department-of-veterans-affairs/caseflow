@@ -7,7 +7,11 @@ module AppealDecisionMailed
   @@template_name = "Appeal decision mailed"
   # rubocop:enable all
 
-  # original method defined in app/models/decision_document.rb
+  # Purpose: Adds VA Notify integration to the original method defined in app/models/decision_document.rb
+  #
+  # Params: none
+  #
+  # Response: returns true if successfully processed, returns false if not successfully processed (will not notify)
   def process!
     super_return_value = super
     if processed?
