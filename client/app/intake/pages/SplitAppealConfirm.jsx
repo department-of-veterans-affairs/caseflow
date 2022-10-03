@@ -66,6 +66,30 @@ const SplitAppealConfirm = (props) => {
 
         </table>
       </div>
+      <br /><br />
+      <p>The table currently dynamically renders data from an array.
+        The Array.map() method allows you to iterate over an array and modify
+        its elements using a callback function.The callback function will then
+        be executed on each of the array’s elements. In this case, we will just
+        return a table row on each iteration</p>
+      <div className="App">
+        <table>
+          <tr>
+            <th></th>
+            <th>Original Appeal Stream</th>
+            <th>New Appeal Stream</th>
+          </tr>
+          {data.map((val, key) => {
+            return (
+              <tr key={key}>
+                <td>{val.col1}</td>
+                <td>{val.col2}</td>
+                <td>{val.col3}</td>
+              </tr>
+            );
+          })}
+        </table>
+      </div>
     </>
   );
 };
