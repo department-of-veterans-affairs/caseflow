@@ -222,7 +222,7 @@ export const CaseDetailsView = (props) => {
 
   return (
     <React.Fragment>
-      {splitAppealSuccess && (
+      {(splitAppealSuccess && props.featureToggles.split_appeal_workflow) && (
         <div>
           <Alert
             type="success"
@@ -231,7 +231,7 @@ export const CaseDetailsView = (props) => {
           />
         </div>
       )}
-      {splitAppealSuccess === false && (
+      {(splitAppealSuccess === false && props.featureToggles.split_appeal_workflow) && (
         <div {...alertPaddingStyle}>
           <Alert title="Unable to Process Request" type="error">
             Something went wrong and the appeal was not split.

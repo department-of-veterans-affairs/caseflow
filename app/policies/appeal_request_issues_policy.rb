@@ -26,7 +26,8 @@ class AppealRequestIssuesPolicy
   end
 
   def editable_by_ssc_team_member?
-    SupervisorySeniorCouncil.singleton.users.include?(user)
+    SupervisorySeniorCouncil.singleton.users.include?(user) &&
+      FeatureToggle.enabled?(:split_appeal_workflow)
   end
 
   def current_user_can_edit_issues?

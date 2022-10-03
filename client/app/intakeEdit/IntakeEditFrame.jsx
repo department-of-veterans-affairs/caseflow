@@ -237,7 +237,6 @@ export const IntakeEditFrame = (props) => {
                   />
                 </div>
               </AppSegment>
-
               <AppSegment styling={textAlignRightStyling}>
                 <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
                 <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitButtons} />
@@ -275,7 +274,7 @@ IntakeEditFrame.propTypes = {
   appeal: PropTypes.object,
   claimId: PropTypes.string,
   routerTestProps: PropTypes.object,
-  router: PropTypes.object,
+  router: PropTypes.object
 };
 
 export default IntakeEditFrame;

@@ -4,28 +4,31 @@ class SplitAppealController < ApplicationController
   protect_from_forgery with: :exception
 
   def split_appeal
-    appeal_id = params[:appeal_id]
-    split_issue = params[:appeal_split_issues]
-    split_other_reason = params[:split_other_reason]
-    split_reason = params[:split_reason]
+    if FeatureToggle.enabled?(:split_appeal_workflow)
 
-    render json: { message: "Success" }
+      appeal_id = params[:appeal_id]
+      split_issue = params[:appeal_split_issues]
+      split_other_reason = params[:split_other_reason]
+      split_reason = params[:split_reason]
 
-    # render json: { message: params.errors[0] }, status: :bad_request
+      render json: { message: "Success" }
 
-    # get appeal from params
-    appeal = Appeal.find(appeal_id)
+      # render json: { message: params.errors[0] }, status: :bad_request
 
-    # duplicate appeal
-    dup_appeal = appeal.amoeba_dup
+      # get appeal from params
+      appeal = Appeal.find(appeal_id)
 
-    # save the duplicate
-    dup_appeal.save
+      # duplicate appeal
+      dup_appeal = appeal.amoeba_dup
 
-    # Setting the user_css_id
-    user_css_id = params[:user]
+      # save the duplicate
+      dup_appeal.save
 
-    # run extra duplicate methods to finish split
-    dup_appeal.finalize_split_appeal(appeal, user_css_id)
+      # Setting the user_css_id
+      user_css_id = params[:user]
+
+      # run extra duplicate methods to finish split
+      dup_appeal.finalize_split_appeal(appeal, user_css_id)
+    end
   end
 end
