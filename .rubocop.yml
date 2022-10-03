@@ -92,6 +92,14 @@ Rails/ApplicationController:
     - app/controllers/idt/api/v1/base_controller.rb
     - app/controllers/idt/api/v1/tokens_controller.rb
 
+Rails/ApplicationMailer:
+  Enabled: true
+  Exclude:
+    - app/mailers/dispatch_mailer.rb
+    - app/mailers/hearing_email_status_mailer.rb
+    - app/mailers/hearing_mailer.rb
+    - app/mailers/test/hearings_profile_mailer.rb
+
 Rails/InverseOf:
   Enabled: false
 

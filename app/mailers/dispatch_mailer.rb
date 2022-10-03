@@ -4,7 +4,7 @@
 # DispatchMailer will:
 # - Generate emails from the templates in app/views/dispatch_mailer
 ##
-class DispatchMailer < ApplicationMailer
+class DispatchMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   layout "dispatch_mailer"
   helper VirtualHearings::LinkHelper

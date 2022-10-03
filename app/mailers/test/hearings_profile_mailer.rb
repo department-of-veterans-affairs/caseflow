@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Test::HearingsProfileMailer < ApplicationMailer
+class Test::HearingsProfileMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
 
   def call(email_address:, mail_body:)
