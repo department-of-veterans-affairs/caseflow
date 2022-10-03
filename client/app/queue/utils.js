@@ -968,7 +968,7 @@ export const getPreviousTaskInstructions = (parentTask, tasks) => {
     }
   }
 
-  const previousInstructions = reviewNotes ?? childTask.instructions?.[1];
+  const previousInstructions = reviewNotes ? childTask.instructions?.[1] : null;
 
   return { reviewNotes, previousInstructions };
 };
