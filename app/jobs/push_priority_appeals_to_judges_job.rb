@@ -63,9 +63,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
     report << ""
     report << "*Debugging information*"
-    unless use_by_docket_date?
-      report << "Priority Target: #{priority_target}"
-    end
+    report << "Priority Target: #{priority_target}"
     report << "Previous monthly distributions: #{priority_distributions_this_month_for_eligible_judges}"
 
     if appeals_not_distributed.values.flatten.any?
