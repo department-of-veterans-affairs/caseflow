@@ -160,7 +160,7 @@ const vhaDocumentSearchTaskData = {
             }
           ],
           modal_title: 'Assign to Program Office',
-          modal_body: 'Provide instructions and context for this action',
+          modal_body: 'Provide instructions and context for this action:',
           modal_button_text: 'Assign',
           modal_selector_placeholder: 'Select Program Office',
           type: 'AssessDocumentationTask',
@@ -252,7 +252,7 @@ const educationDocumentSearchTaskData = {
             }
           ],
           modal_title: 'Assign to RPO',
-          modal_body: 'Provide instructions and context for this action',
+          modal_body: 'Provide instructions and context for this action:',
           modal_selector_placeholder: 'Select RPO',
           modal_button_text: 'Assign',
           type: 'EducationAssessDocumentationTask',
@@ -267,7 +267,6 @@ const educationDocumentSearchTaskData = {
         data: {
           modal_title: 'Return to Board Intake',
           modal_button_text: 'Return',
-          instructions_label: 'Provide instructions and context for this action',
           type: 'EducationDocumentSearchTask',
           redirect_after: '/organizations/edu-emo'
         }
@@ -354,7 +353,7 @@ const preDocketTaskData = {
           modal_title: 'Docket appeal',
           modal_body: 'Please confirm that the documents provided by VHA are available in VBMS before docketing this appeal.',
           modal_alert: 'Once you confirm, the appeal will be established. Please remember to send the docketing letter out to all parties and representatives.',
-          instructions_label: 'Provide instructions and context for this action',
+          instructions_label: 'Provide instructions and context for this action:',
           redirect_after: '/organizations/bva-intake'
         }
       },
@@ -617,7 +616,7 @@ const assessDocumentationTaskData = {
             }
           ],
           modal_title: 'Assign to VISN/VA Medical Center',
-          modal_body: 'Provide instructions and context for this action',
+          modal_body: 'Provide instructions and context for this action:',
           modal_button_text: 'Assign',
           modal_selector_placeholder: 'Select VISN/VA Medical Center',
           instructions: [],
@@ -835,7 +834,7 @@ const educationAssessDocumentationTaskData = {
           modal_button_text: 'Send',
           type: 'EducationAssessDocumentationTask',
           body_optional: true,
-          redirect_after: '/organizations/buffalo-rpo'
+          redirect_after: '/organizations/buffalo-rpo',
         }
       },
       {
