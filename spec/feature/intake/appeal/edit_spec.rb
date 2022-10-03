@@ -359,6 +359,7 @@ feature "Appeal Edit issues", :all_dbs do
       appeal2.request_issues << request_issue_2
 
       User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:split_appeal_workflow)
       visit "appeals/#{appeal2.uuid}/edit/"
 
       expect(page).to have_button("Split appeal")
@@ -366,6 +367,8 @@ feature "Appeal Edit issues", :all_dbs do
       click_button("Split appeal")
 
       expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
+
+      FeatureToggle.disable!(:split_appeal_workflow)
     end
 
     scenario "The SSC user navigates to the split appeal page" do
