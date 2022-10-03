@@ -24,9 +24,16 @@ module WarRoom
         check_old_hearing_task_status(hearing, appeal_type)
         check_old_disposition_task_status(hearing, appeal_type)
         hearing.update!(appeal_id: appeal.id, updated_by_id: User.system_user.id)
-        HearingTaskAssociation.find_by(hearing_id: hearing.id, hearing_type: "Hearing").update!(hearing_task_id: hearing_task.id)
+        HearingTaskAssociation.find_by(
+          hearing_id: hearing.id,
+          hearing_type: "Hearing"
+        ).update!(hearing_task_id: hearing_task.id)
         create_and_set_disposition_task(appeal, hearing, hearing_task)
-        schedule_task.update!(status: "completed", closed_at: Time.zone.now, assigned_to: User.find_by_id(User.system_user.id))
+        schedule_task.update!(
+          status: "completed",
+          closed_at: Time.zone.now,
+          assigned_to: User.find_by_id(User.system_user.id)
+        )
       end
     end
 
@@ -53,9 +60,16 @@ module WarRoom
         check_old_disposition_task_status(hearing, appeal_type)
         hearing.update!(appeal_id: appeal.id, updated_by_id: User.system_user.id)
         VACOLS::CaseHearing.find_by(hearing_pkseq: hearing_vacols_id).update!(folder_nr: appeal_vacols_id)
-        HearingTaskAssociation.find_by(hearing_id: hearing.id, hearing_type: "LegacyHearing").update!(hearing_task_id: hearing_task.id)
+        HearingTaskAssociation.find_by(
+          hearing_id: hearing.id,
+          hearing_type: "LegacyHearing"
+        ).update!(hearing_task_id: hearing_task.id)
         create_and_set_disposition_task(appeal, hearing, hearing_task)
-        schedule_task.update!(status: "completed", closed_at: Time.zone.now, assigned_to: User.find_by_id(User.system_user.id))
+        schedule_task.update!(
+          status: "completed",
+          closed_at: Time.zone.now,
+          assigned_to: User.find_by_id(User.system_user.id)
+        )
       end
     end
 
@@ -86,22 +100,38 @@ module WarRoom
     # Checks if the HearingTask of the old appeal is on hold
     # It gets set to complete if it is
     def check_old_hearing_task_status(hearing, appeal_type)
-      old_hearing_task = HearingTask.where(appeal_id: hearing.appeal.id, appeal_type: appeal_type).order(created_at: :desc).first
+      old_hearing_task = HearingTask.where(
+        appeal_id: hearing.appeal.id,
+        appeal_type: appeal_type
+      ).order(created_at: :desc).first
       if old_hearing_task.status == "on_hold"
         old_hearing_task.update!(status: "cancelled", closed_at: Time.zone.now, cancelled_by_id: User.system_user.id)
       end
     end
 
     def check_old_disposition_task_status(hearing, appeal_type)
-      old_disposition_task = AssignHearingDispositionTask.where(appeal_id: hearing.appeal.id, appeal_type: appeal_type).order(created_at: :desc).first
-      if old_disposition_task && old_disposition_task.status != "completed" && old_disposition_task.status != "cancelled"
-        old_disposition_task.update!(status: "cancelled", closed_at: Time.zone.now, cancelled_by_id: User.system_user.id)
+      old_disposition_task = AssignHearingDispositionTask.where(
+        appeal_id: hearing.appeal.id,
+        appeal_type:
+        appeal_type
+      ).order(created_at: :desc).first
+      if old_disposition_task && old_disposition_task.status != "completed" &&
+         old_disposition_task.status != "cancelled"
+        old_disposition_task.update!(
+          status: "cancelled",
+          closed_at: Time.zone.now,
+          cancelled_by_id: User.system_user.id
+        )
       end
     end
 
     # Wrapper method for creating the tasks for the hearing task tree
     def create_tasks(appeal, appeal_type)
-      create_args = { appeal: appeal, assigned_to: User.find_by_id(User.system_user.id), assigned_by_id: User.system_user.id }
+      create_args = {
+        appeal: appeal,
+        assigned_to: User.find_by_id(User.system_user.id),
+        assigned_by_id: User.system_user.id
+      }
       distribution_task = put_distribution_task_on_hold(appeal, appeal_type)
       hearing_task = create_hearing_task(create_args, distribution_task)
       schedule_task = ScheduleHearingTask.create!(**create_args, parent: hearing_task)
@@ -111,7 +141,12 @@ module WarRoom
     # Creates the AssignHearingDispositionTask
     # If there is already a disposition the task is set to complete
     def create_and_set_disposition_task(appeal, hearing, hearing_task)
-      disposition_task = AssignHearingDispositionTask.create!(assigned_to: Bva.singleton, assigned_by_id: User.system_user.id, parent: hearing_task, appeal: appeal)
+      disposition_task = AssignHearingDispositionTask.create!(
+        assigned_to: Bva.singleton,
+        assigned_by_id: User.system_user.id,
+        parent: hearing_task,
+        appeal: appeal
+      )
       if hearing.disposition == "held" || hearing.disposition == "no_show"
         disposition_task.update!(status: "completed", closed_at: Time.zone.now)
       elsif hearing.disposition == "postponed" || hearing.disposition == "scheduled_in_error"

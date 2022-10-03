@@ -8,7 +8,12 @@ module WarRoom
   class Outcode
     def ama_run(uuid_pass_in)
       # set current user
-      RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+      RequestStore[:current_user] = OpenStruct.new(
+        ip_address: "127.0.0.1",
+        station_id: "283",
+        css_id: "CSFLOW",
+        regional_office: "DSUSER"
+      )
 
       uuid = uuid_pass_in
       # set appeal parameter
@@ -31,7 +36,12 @@ module WarRoom
 
     def legacy_run(vacols_id)
       # set current user
-      RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+      RequestStore[:current_user] = OpenStruct.new(
+        ip_address: "127.0.0.1",
+        station_id: "283",
+        css_id: "CSFLOW",
+        regional_office: "DSUSER"
+      )
 
       # set appeal parameter
       appeal = LegacyAppeal.find_by_vacols_id(vacols_id)

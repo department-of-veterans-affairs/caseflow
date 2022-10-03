@@ -190,7 +190,9 @@ class CheckTaskTree
     end.select(&:any?).flatten
   end
 
-  # `Organization.unscoped{TrackVeteranTask.includes(:assigned_to).reject{|task| task.assigned_to.is_a?(Representative)}}`
+  # Organization.unscoped{TrackVeteranTask.includes(:assigned_to).reject do |task|
+  #    task.assigned_to.is_a?(Representative)}
+  # end
   def track_veteran_task_assigned_to_non_representative
     Organization.unscoped do
       TrackVeteranTask.where(appeal: @appeal).reject { |task| task.assigned_to.is_a?(Representative) }

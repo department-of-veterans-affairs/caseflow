@@ -57,7 +57,8 @@ class VANotifyStatusUpdateJob < CaseflowJob
 
   private
 
-  # Description: Method that applies a query limit to the list of notification records that will get the status checked for
+  # Description: Method that applies a query limit to the list of
+  # notification records that will get the status checked for
   # them from VA Notiufy
   #
   # Params: None
@@ -73,7 +74,8 @@ class VANotifyStatusUpdateJob < CaseflowJob
     end
   end
 
-  # Description: Method to query the Notification database for Notififcation records that have not been updated with a VA Notify Status
+  # Description: Method to query the Notification database for
+  # Notififcation records that have not been updated with a VA Notify Status
   #
   # Params: None
   #
@@ -116,9 +118,15 @@ class VANotifyStatusUpdateJob < CaseflowJob
     response = VANotifyService.get_status(notification_id)
     if response.code == 200
       if type == "Email"
-        { "email_notification_status" => response.body["status"], "recipient_email" => response.body["email_address"] }
+        {
+          "email_notification_status" => response.body["status"],
+          "recipient_email" => response.body["email_address"]
+        }
       elsif type == "SMS"
-        { "sms_notification_status" => response.body["status"], "recipient_phone_number" => response.body["phone_number"] }
+        {
+          "sms_notification_status" => response.body["status"],
+          "recipient_phone_number" => response.body["phone_number"]
+        }
       end
     else
       log_error("VA Notify API returned error for notification " + notification_id)

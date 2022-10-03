@@ -56,7 +56,7 @@ module WarRoom
       if claim_code_check(new_code) == false
         puts("Invalid new claim label code. Aborting...")
         fail Interrupt
-       end
+      end
 
       # Check that the old claim code is valid for record
       if claim_code_check(original_code) == false
@@ -74,7 +74,7 @@ module WarRoom
       if epe.nil?
         puts("Unable to find EPE for that reference id. Aborting...")
         fail Interrupt
-       end
+      end
 
       # check the EPE by printing to console.
       pp epe
@@ -82,7 +82,7 @@ module WarRoom
       # check caseflow
       if epe.code != new_code
         update_caseflow(epe, new_code)
-       end
+      end
 
       # check VBMS
       bgs = BGSService.new.client.claims

@@ -417,7 +417,11 @@ describe AppellantNotification do
 
       it "calls notify_appellant when task is created" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
-        HearingAdminActionFoiaPrivacyRequestTask.create_child_task(parent_task, hearings_management_user, task_params_org)
+        HearingAdminActionFoiaPrivacyRequestTask.create_child_task(
+          parent_task,
+          hearings_management_user,
+          task_params_org
+        )
       end
       it "calls notify_appellant when task is completed" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
@@ -520,8 +524,12 @@ describe AppellantNotification do
           assigned_to_type: "Organization"
         }
       end
-      let(:privacy_parent) { PrivacyActTask.create!(appeal: appeal, parent_id: colocated_task.id, assigned_to: priv_org) }
-      let(:privacy_child) { PrivacyActTask.create!(appeal: appeal, parent_id: privacy_parent.id, assigned_to: current_user) }
+      let(:privacy_parent) do
+        PrivacyActTask.create!(appeal: appeal, parent_id: colocated_task.id, assigned_to: priv_org)
+      end
+      let(:privacy_child) do
+        PrivacyActTask.create!(appeal: appeal, parent_id: privacy_parent.id, assigned_to: current_user)
+      end
       before do
         priv_org.add_user(current_user)
       end

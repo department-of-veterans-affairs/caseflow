@@ -10,6 +10,7 @@ module Seeds
 
     private
 
+    # rubocop:disable Layout/LineLength
     def create_notification_events
       NotificationEvent.create(event_type: "Quarterly Notification", email_template_id: "d9cf3926-d6b7-4ec7-ba06-a430741db68c", sms_template_id: "44ac639e-e90b-4423-8d7b-acfa8e5131d8")
       NotificationEvent.create(event_type: "Appeal docketed", email_template_id: "ae2f0d17-247f-47ee-8f1a-b83a71e0f050", sms_template_id: "9953f7e8-80cb-4fe4-aaef-0309410c84e3")
@@ -26,5 +27,6 @@ module Seeds
       NotificationEvent.create(event_type: "No Participant Id Found", email_template_id: "f54a9779-24b0-46a3-b2c1-494d42db0614", sms_template_id: "663c2b42-3381-46e4-9d48-f336d79901bc")
       NotificationEvent.create(event_type: "No Claimant Found", email_template_id: "ff871007-1f40-455d-beb3-5f2c71d065fc", sms_template_id: "364dd348-d577-44e8-82de-9fa000d6cd74")
     end
+    # rubocop:enable Layout/LineLength
   end
 end

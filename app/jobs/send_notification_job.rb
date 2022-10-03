@@ -34,7 +34,12 @@ class SendNotificationJob < CaseflowJob
       @va_notify_sms = FeatureToggle.enabled?(:va_notify_sms)
       message = JSON.parse(message_json, object_class: OpenStruct)
       if message.appeal_id && message.appeal_type && message.template_name
-        notification_audit_record = create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name, message.participant_id)
+        notification_audit_record = create_notification_audit_record(
+          message.appeal_id,
+          message.appeal_type,
+          message.template_name,
+          message.participant_id
+        )
         if notification_audit_record
           if message.status != "No participant_id" && message.status != "No claimant"
             to_update = {}
@@ -97,17 +102,31 @@ class SendNotificationJob < CaseflowJob
     first_name = appeal&.appellant_first_name || "Appellant"
     status = message.appeal_status || ""
     if @va_notify_email
-      response = VANotifyService.send_email_notifications(message.participant_id, notification_audit_record.id.to_s, email_template_id, status, first_name)
+      response = VANotifyService.send_email_notifications(
+        message.participant_id,
+        notification_audit_record.id.to_s,
+        email_template_id, status, first_name
+      )
       if !response.nil? && response != ""
-        to_update = { notification_content: response.body["content"]["body"], email_notification_external_id: response.body["id"] }
+        to_update = {
+          notification_content: response.body["content"]["body"],
+          email_notification_external_id: response.body["id"]
+        }
         update_notification_audit_record(notification_audit_record, to_update)
       end
     end
 
     if @va_notify_sms
-      response = VANotifyService.send_sms_notifications(message.participant_id, notification_audit_record.id.to_s, sms_template_id, status, first_name)
+      response = VANotifyService.send_sms_notifications(
+        message.participant_id,
+        notification_audit_record.id.to_s,
+        sms_template_id, status, first_name
+      )
       if !response.nil? && response != ""
-        to_update = { notification_content: response.body["content"]["body"], sms_notification_external_id: response.body["id"] }
+        to_update = {
+          notification_content: response.body["content"]["body"],
+          sms_notification_external_id: response.body["id"]
+        }
         update_notification_audit_record(notification_audit_record, to_update)
       end
     end

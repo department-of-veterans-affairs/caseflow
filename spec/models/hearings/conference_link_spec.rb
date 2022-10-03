@@ -20,7 +20,9 @@ describe ConferenceLink do
       let(:user) { create(:user) }
       it "raises the missing PIN key error" do
         RequestStore[:current_user] = user
-        expect { described_class.create(hearing_day_id: hearing_day.id) }.to raise_error VirtualHearings::LinkService::PINKeyMissingError
+        expect do
+          described_class.create(hearing_day_id: hearing_day.id)
+        end.to raise_error VirtualHearings::LinkService::PINKeyMissingError
       end
     end
 
@@ -33,7 +35,9 @@ describe ConferenceLink do
       let(:user) { create(:user) }
       it "raises the missing host error" do
         RequestStore[:current_user] = user
-        expect { described_class.create(hearing_day_id: hearing_day.id) }.to raise_error VirtualHearings::LinkService::URLHostMissingError
+        expect do
+          described_class.create(hearing_day_id: hearing_day.id)
+        end.to raise_error VirtualHearings::LinkService::URLHostMissingError
       end
     end
 
@@ -46,7 +50,9 @@ describe ConferenceLink do
       let(:user) { create(:user) }
       it "raises the missing path error" do
         RequestStore[:current_user] = user
-        expect { described_class.create(hearing_day_id: hearing_day.id) }.to raise_error VirtualHearings::LinkService::URLPathMissingError
+        expect do
+          described_class.create(hearing_day_id: hearing_day.id)
+        end.to raise_error VirtualHearings::LinkService::URLPathMissingError
       end
     end
 
@@ -55,7 +61,9 @@ describe ConferenceLink do
       let(:user) { create(:user) }
       it "raises the missing PIN key error" do
         RequestStore[:current_user] = user
-        expect { described_class.create(hearing_day_id: hearing_day.id) }.to raise_error VirtualHearings::LinkService::PINKeyMissingError
+        expect do
+          described_class.create(hearing_day_id: hearing_day.id)
+        end.to raise_error VirtualHearings::LinkService::PINKeyMissingError
       end
     end
   end
