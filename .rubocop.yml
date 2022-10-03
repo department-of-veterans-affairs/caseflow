@@ -82,6 +82,16 @@ Rails/HelperInstanceVariable:
   Exclude:
     - app/helpers/test/hearings_profile_helper.rb
 
+Rails/ApplicationController:
+  Enabled: true
+  Exclude:
+    - app/controllers/api/docs/v3/docs_controller.rb
+    - app/controllers/api/metadata_controller.rb
+    - app/controllers/application_base_controller.rb
+    - app/controllers/health_checks_controller.rb
+    - app/controllers/idt/api/v1/base_controller.rb
+    - app/controllers/idt/api/v1/tokens_controller.rb
+
 Rails/InverseOf:
   Enabled: false
 
