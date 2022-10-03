@@ -33,7 +33,7 @@ let requestPatchSpy;
 const renderCompleteTaskModal = (modalType, storeValues, taskType) => {
   const appealId = getAppealId(storeValues);
   const taskId = getTaskId(storeValues, taskType);
-  
+
   const queueReducer = createQueueReducer(storeValues);
   const store = createStore(
     queueReducer,
@@ -148,7 +148,8 @@ describe('CompleteTaskModal', () => {
 
     test('modal text indicates appeal will be sent to VHA CAMO', () => {
       renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
-      expect(screen.getByText('This appeal will be sent to VHA CAMO for review.Please select where the documents for this appeal are stored')).toBeTruthy();
+      expect(screen.getByText('This appeal will be sent to VHA CAMO for review.' +
+      'Please select where the documents for this appeal are stored')).toBeTruthy();
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -224,7 +225,8 @@ describe('CompleteTaskModal', () => {
 
     test('modal text indicates appeal will be sent to VHA Program Office', () => {
       renderCompleteTaskModal(modalType, visnData, taskType);
-      expect(screen.getByText('This appeal will be sent to VHA Program Office for review.Please select where the documents for this appeal are stored')).toBeTruthy();
+      expect(screen.getByText('This appeal will be sent to VHA Program Office for review.' +
+      'Please select where the documents for this appeal are stored')).toBeTruthy();
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -287,7 +289,6 @@ describe('CompleteTaskModal', () => {
       );
     });
   });
-
 
   describe('vha_caregiver_support_send_to_board_intake_for_review', () => {
     const taskType = 'VhaDocumentSearchTask';
