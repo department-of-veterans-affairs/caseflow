@@ -24,6 +24,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
         @tied_distributions = distribute_non_genpop_priority_appeals
       end
 
+      puts("Attempt: #{attempts}")
+
       @genpop_distributions = distribute_genpop_priority_appeals
 
       send_job_report
@@ -106,6 +108,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # Distribute remaining general population cases while attempting to even out the number of priority cases all judges
   # have received over one month
   def distribute_genpop_priority_appeals
+    puts("in distribute_genpop_priority_appeals")
     eligible_judge_target_distributions_with_leftovers.map do |judge_id, target|
       Distribution.create!(
         judge: User.find(judge_id),
@@ -178,7 +181,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def eligible_judges
-    @eligible_judges ||= JudgeTeam.pushed_priority_cases_allowed.map(&:judge)
+    # @eligible_judges ||= JudgeTeam.pushed_priority_cases_allowed.map(&:judge)
+    @eligible_judges ||= JudgeTeam.pushed_priority_cases_allowed.map(&:judge).reject { |j| Distribution.where(judge_id: j.id).where("created_at >= ?", 2.hours.ago).count > 0 }
   end
 
   # Produces a hash of judge_id and the number of cases distributed to them in the last month
