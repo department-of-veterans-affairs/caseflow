@@ -8,6 +8,8 @@ class LegacyDocket < Docket
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def count(priority: nil, ready: nil)
+    return 0 if true
+    
     counts_by_priority_and_readiness.inject(0) do |sum, row|
       next sum unless (priority.nil? || (priority ? 1 : 0) == row["priority"]) &&
                       (ready.nil? || (ready ? 1 : 0) == row["ready"])
@@ -18,6 +20,8 @@ class LegacyDocket < Docket
   # rubocop:enable Metrics/CyclomaticComplexity
 
   def genpop_priority_count
+    return 0 if true
+
     LegacyAppeal.repository.genpop_priority_count
   end
 
@@ -26,6 +30,8 @@ class LegacyDocket < Docket
   end
 
   def ready_priority_appeal_ids
+    return [] if true
+
     LegacyAppeal.repository.priority_ready_appeal_vacols_ids
   end
 
@@ -36,6 +42,8 @@ class LegacyDocket < Docket
   end
 
   def age_of_oldest_priority_appeal
+    return nil if true
+
     if use_by_docket_date?
       @age_of_oldest_priority_appeal ||= LegacyAppeal.repository.age_of_oldest_priority_appeal_by_docket_date
     else
