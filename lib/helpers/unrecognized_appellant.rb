@@ -22,20 +22,7 @@ module WarRoom
       # the queue because the tasks are sorted oldest to newest
       ec.update!(user_id: nil, assigned_at: nil, started_at: nil, created_at: Time.zone.now, aasm_state: "unassigned")
 
-      # Get information about the appeal for the dispatch task and pass it along to OAR
-      # This information is sent to Jennifer.Schleicher@va.gov in an encrypted email
-      veteran_info = {
-        vacols_appeal_id: la.vacols_id,
-        veteran_name: [
-          la.veteran_first_name,
-          la.veteran_middle_initial,
-          la.veteran_last_name,
-          la.veteran_name_suffix
-        ].compact.join(" "),
-        veteran_file_number: la.veteran_file_number
-      }
-      puts veteran_info
-      veteran_info
+      get_veteran_info(lA)
     end
 
     def self.run_complete(dispatch_task_id)
@@ -58,17 +45,23 @@ module WarRoom
       ec.update!(aasm_state: "completed",
                  comment: "Task has been completed by Caseflow dev team as per instruction by OAR")
 
+      get_veteran_info(la)
+    end
+
+    private
+
+    def get_veteran_info(legacy_appeal)
       # Get information about the appeal for the dispatch task and pass it along to OAR
       # This information is sent to Jennifer.Schleicher@va.gov in an encrypted email
       veteran_info = {
         vacols_appeal_id: la.vacols_id,
         veteran_name: [
-          la.veteran_first_name,
-          la.veteran_middle_initial,
-          la.veteran_last_name,
-          la.veteran_name_suffix
+          legacy_appeal.veteran_first_name,
+          legacy_appeal.veteran_middle_initial,
+          legacy_appeal.veteran_last_name,
+          legacy_appeal.veteran_name_suffix
         ].compact.join(" "),
-        veteran_file_number: la.veteran_file_number
+        veteran_file_number: legacy_appeal.veteran_file_number
       }
       puts veteran_info
       veteran_info
