@@ -70,9 +70,9 @@ const isCancelled = (task) => {
   return task.status === TASK_STATUSES.cancelled;
 };
 
-const isSplited = (task) => {
-  return task.status === TASK_STATUSES.splited;
-};
+// const isSplited = (task) => {
+//   return task.status === TASK_STATUSES.splited;
+// };
 
 const tdClassNames = (timeline, task) => {
   const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
@@ -230,13 +230,13 @@ class TaskRows extends React.PureComponent {
   splitByListItem = (task) => {
     // task.splitBy??
     const spliter = task.cancelledBy?.cssId;
-    const spliter1 = 'User Testing';
+    // const spliter1 = 'User Testing';
 
-    if (spliter1) {
+    if (spliter) {
       return (
         <div className="cf-row-wrapper">
           <dt>{COPY.TASK_SPLIT_BY}</dt>
-          <dd>{spliter1}</dd>
+          <dd>{spliter}</dd>
         </div>
       );
     }
@@ -250,8 +250,8 @@ class TaskRows extends React.PureComponent {
 
   splitReasonListItem = (task) => {
     // task.splitReason??
-    const reason = 'testing';
-    const reason1 = task.cancelReason;
+    // const reason = 'testing';
+    const reason = task.cancelReason;
 
     return reason ? <div className="cf-row-wrapper"><dt>{COPY.TASK_SPLIT_REASON}</dt>
       <dd>{reason}</dd></div> : null;
@@ -423,23 +423,23 @@ class TaskRows extends React.PureComponent {
       index,
       timeline,
       appeal,
-      statusSplit,
+      // statusSplit,
     } = templateConfig;
 
-    let timelineTitle = '';
+    // let timelineTitle = '';
 
-    // const timelineTitle = isCancelled(task) ?
-    //   `${task.type} cancelled` :
-    //   task.timelineTitle;
+    const timelineTitle = isCancelled(task) ?
+      `${task.type} cancelled` :
+      task.timelineTitle;
 
-    if (isCancelled(task)) {
-      timelineTitle = `${task.type} cancelled`;
-    }
-    if (this.props.statusSplit) {
-      timelineTitle = 'SplitAppeal Task completed';
-    } else {
-      timelineTitle = task.timelineTitle;
-    }
+    // if (isCancelled(task)) {
+    //   timelineTitle = `${task.type} cancelled`;
+    // }
+    // if (this.props.statusSplit) {
+    //   timelineTitle = 'SplitAppeal Task completed';
+    // } else {
+    //   timelineTitle = task.timelineTitle;
+    // }
 
     return (
       <tr key={task.uniqueId}>
@@ -447,7 +447,7 @@ class TaskRows extends React.PureComponent {
           {...taskTimeContainerStyling}
           className={timeline ? taskTimeTimelineContainerStyling : ''}
         >
-          {this.props.statusSplit ? (
+          {/* {this.props.statusSplit ? (
             <CaseDetailsDescriptionList>
               {this.assignedOnListItem(task)}
               {this.splitAtListItem(task)}
@@ -459,14 +459,22 @@ class TaskRows extends React.PureComponent {
               {this.closedOrCancelledAtListItem(task)}
               {!task.closedAt && this.daysWaitingListItem(task)}
             </CaseDetailsDescriptionList>
-          }
+          } */}
+
+          <CaseDetailsDescriptionList>
+            {this.assignedOnListItem(task)}
+            {this.closedOrCancelledAtListItem(task)}
+            {!task.closedAt && this.daysWaitingListItem(task)}
+          </CaseDetailsDescriptionList>
 
         </td>
         <td
           {...taskInfoWithIconContainer}
           className={tdClassNames(timeline, task)}
         >
-          {(() => {
+          {isCancelled(task) ? <CancelIcon /> : closedAtIcon(task, timeline)}
+
+          {/* {(() => {
             if (this.props.statusSplit) {
               return <GreenCheckmarkIcon />;
             } else if (isCancelled(task)) {
@@ -475,7 +483,7 @@ class TaskRows extends React.PureComponent {
 
             return closedAtIcon(task, timeline);
           }
-          )()}
+          )()} */}
 
           {((index < sortedTimelineEvents.length && timeline) ||
             (index < this.state.activeTasks.length - 1 && !timeline)) && (
@@ -492,7 +500,12 @@ class TaskRows extends React.PureComponent {
           {...taskInformationContainerStyling}
           className={timeline ? 'taskInformationTimelineContainerStyling' : ''}
         >
-          {this.props.statusSplit ? (
+          <CaseDetailsDescriptionList>
+            {timeline && timelineTitle}
+            {this.showTimelineDescriptionItems(task, timeline)}
+          </CaseDetailsDescriptionList>
+
+          {/* {this.props.statusSplit ? (
             <CaseDetailsDescriptionList>
               {timeline && timelineTitle}
               {this.showTimelineDescriptionSplitItems(task, timeline)}
@@ -502,7 +515,7 @@ class TaskRows extends React.PureComponent {
               {timeline && timelineTitle}
               {this.showTimelineDescriptionItems(task, timeline)}
             </CaseDetailsDescriptionList>
-          }
+          } */}
 
         </td>
         {!timeline && (
@@ -545,7 +558,7 @@ class TaskRows extends React.PureComponent {
   };
 
   render = () => {
-    const { appeal, taskList, timeline, statusSplit } = this.props;
+    const { appeal, taskList, timeline } = this.props;
     // Non-tasks are only relevant for the main Case Timeline
     const eventsFromAppeal = timeline ?
       timelineEventsFromAppeal({ appeal }) :
@@ -565,7 +578,7 @@ class TaskRows extends React.PureComponent {
               timeline,
               taskList,
               index,
-              statusSplit,
+              // statusSplit,
             });
           }
 
@@ -651,7 +664,7 @@ TaskRows.propTypes = {
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool,
-  statusSplit: PropTypes.bool,
+  // statusSplit: PropTypes.bool,
 };
 
 export default TaskRows;
