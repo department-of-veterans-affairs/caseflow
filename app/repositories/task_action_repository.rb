@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class TaskActionRepository
   class << self
     def assign_to_organization_data(task, _user = nil)
@@ -765,3 +766,4 @@ class TaskActionRepository
     end
   end
 end
+# rubocop:enable Metrics/ClassLength
