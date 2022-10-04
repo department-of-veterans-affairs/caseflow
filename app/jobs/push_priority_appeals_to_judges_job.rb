@@ -20,12 +20,11 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   @skip_vacols = false
 
   def perform
-    attempts ||= 1
     unless use_by_docket_date?
       @tied_distributions = distribute_non_genpop_priority_appeals
     end
 
-    puts("Attempt: #{attempts}")
+    @genpop_distributions = distribute_genpop_priority_appeals
 
     send_job_report
   rescue ActiveRecord::StatementInvalid, OCIError, StandardError => error
@@ -104,7 +103,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # Distribute remaining general population cases while attempting to even out the number of priority cases all judges
   # have received over one month
   def distribute_genpop_priority_appeals
-    puts("in distribute_genpop_priority_appeals")
     eligible_judge_target_distributions_with_leftovers.map do |judge_id, target|
       Distribution.create!(
         judge: User.find(judge_id),
