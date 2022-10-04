@@ -46,7 +46,7 @@ class Distribution < CaseflowRecord
 
       update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
     end
-  rescue StandardError => error
+  rescue ActiveRecord::StatementInvalid, OCIError, StandardError => error
     # DO NOT use update! because we want to avoid validations and saving any cached associations.
     # Prevent prod database from getting Stacktraces as this is debugging information
     if Rails.deploy_env?(:prod)

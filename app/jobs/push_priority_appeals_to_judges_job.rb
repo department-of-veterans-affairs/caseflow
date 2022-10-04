@@ -17,8 +17,9 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     include AutomaticCaseDistribution
   end
 
+  @skip_vacols = false
+
   def perform
-    @skip_vacols ||= false
     unless use_by_docket_date?
       @tied_distributions = distribute_non_genpop_priority_appeals
     end
@@ -39,6 +40,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     log_error(error)
   ensure
     datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
+    @skip_vacols = false
   end
 
   def send_job_report
@@ -177,6 +179,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def eligible_judges
+    # TODO: increase the time here when not required to be low for testing
     eligible_judges = JudgeTeam.pushed_priority_cases_allowed.map(&:judge)
       .reject { |judge| Distribution.where(judge_id: judge.id).where("created_at >= ?", 1.minute.ago).count > 0 }
     eligible_judges.select(&:judge_in_vacols?) unless @skip_vacols
