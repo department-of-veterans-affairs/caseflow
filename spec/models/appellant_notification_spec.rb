@@ -302,7 +302,7 @@ describe AppellantNotification do
         let!(:appeal_postponed) do
           create(:legacy_appeal, vacols_case: vacols_case_postponed, closest_regional_office: ro_id_postponed)
         end
-        let(:hearing_postponed) { create(:legacy_hearing, appeal: appeal_postponed, disposition: 'P') }
+        let(:hearing_postponed) { create(:legacy_hearing, appeal: appeal_postponed, disposition: "P") }
 
         it "will notify appellant when a hearing is postponed" do
           expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
@@ -345,7 +345,7 @@ describe AppellantNotification do
             disposition: "cancelled"
           }
         end
-        # create legacy hearing for "should not notify appellant if a postponed hearing updates to postponed" check
+        # create legacy hearing for "should not notify appellant if a cancelled hearing updates to cancelled" check
         let(:ro_id_cancelled) { "RO05" }
         let!(:vacols_case_cancelled) do
           create(
@@ -357,7 +357,7 @@ describe AppellantNotification do
         let!(:appeal_cancelled) do
           create(:legacy_appeal, vacols_case: vacols_case_cancelled, closest_regional_office: ro_id_cancelled)
         end
-        let(:hearing_cancelled) { create(:legacy_hearing, appeal: appeal_cancelled, disposition: 'C') }
+        let(:hearing_cancelled) { create(:legacy_hearing, appeal: appeal_cancelled, disposition: "C") }
 
         it "will notify appellant when a hearing is withdrawn/cancelled" do
           expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
