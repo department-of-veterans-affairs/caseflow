@@ -148,7 +148,7 @@ describe('CompleteTaskModal', () => {
       );
     });
 
-    test.only('No errors are thrown if any task in tree has null instructions', () => {
+    test('No errors are thrown if any task in tree has null instructions', () => {
 
       const taskIDs = Object.keys(camoToProgramOfficeToCamoData.queue.amaTasks);
 
