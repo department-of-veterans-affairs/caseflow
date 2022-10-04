@@ -9,7 +9,7 @@ task default: ["ci:warning", :spec, "ci:other"]
 
 namespace :ci do
   desc "Warns against running the tests in serial"
-  task :warning do
+  task warning: :environment do
     puts Rainbow("Warning! You are running the tasks in serial which is very slow.").red
     puts Rainbow("Please try `rake ci:all` to run the tests faster in parallel").red
   end
@@ -23,7 +23,7 @@ namespace :ci do
   task other: %w[ci:verify_code_coverage lint security js_tests]
 
   desc "Verify code coverge (via simplecov) after tests have been run in parallel"
-  task :verify_code_coverage do
+  task verify_code_coverage: :environment do
     puts "\nVerifying code coverage"
     require "simplecov"
 
@@ -47,7 +47,7 @@ namespace :ci do
   end
 
   desc "Verify code coverage on CircleCI "
-  task :circleci_verify_code_coverage do
+  task circleci_verify_code_coverage: :environment do
     require "simplecov"
     $stdout.sync = true
 

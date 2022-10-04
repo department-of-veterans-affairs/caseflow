@@ -2,7 +2,7 @@
 
 namespace :local do
   desc "build local development environment"
-  task :build do
+  task build: :environment do
     puts ">>> BEGIN local:build"
     puts ">>> 01/08 Downloading FACOLS image from ECR"
     system("./local/vacols/build_push.sh rake") || abort
