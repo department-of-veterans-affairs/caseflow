@@ -109,7 +109,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js 'specialIssue` value
-  # rubocop:disable Metrics/LineLength
+  # rubocop:disable Layout/LineLength
   SPECIAL_ISSUES = {
     contaminated_water_at_camp_lejeune: "Contaminated Water at Camp LeJeune",
     dic_death_or_accrued_benefits_united_states: "DIC - death, or accrued benefits - United States",
@@ -137,7 +137,7 @@ class LegacyAppeal < CaseflowRecord
     vocational_rehab: "Vocational Rehabilitation and Employment",
     waiver_of_overpayment: "Waiver of Overpayment"
   }.freeze
-  # rubocop:enable Metrics/LineLength
+  # rubocop:enable Layout/LineLength
 
   # Codes for Appeals Status API
   TYPE_CODES = {
