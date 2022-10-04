@@ -148,13 +148,17 @@ describe('CompleteTaskModal', () => {
       );
     });
 
-    test('No Errors are thrown if any task in tree has null instructions', () => {
+    test.only('No errors are thrown if any task in tree has null instructions', () => {
 
       const taskIDs = Object.keys(camoToProgramOfficeToCamoData.queue.amaTasks);
 
       const taskDataWithNullInstructions = camoToProgramOfficeToCamoData;
 
-      taskIDs.forEach((id) => taskDataWithNullInstructions.queue.amaTasks[id].instructions = null);
+      taskIDs.forEach((id) => {
+        if (taskDataWithNullInstructions.queue.amaTasks[id].assignedTo.type !== 'VhaProgramOffice') {
+          taskDataWithNullInstructions.queue.amaTasks[id].instructions = null;
+        }
+      });
 
       renderCompleteTaskModal(modalType, taskDataWithNullInstructions, taskType);
 
@@ -167,7 +171,10 @@ describe('CompleteTaskModal', () => {
 
       expect(getReceivedInstructions()).toBe(
         '\n**Status:** Correct documents have been successfully added' +
-        '\n\n**CAMO Notes:** Null test'
+        '\n\n**CAMO Notes:** Null test\n' +
+        '\n**Program Office Notes:** Documents for this appeal are stored in VBMS.' +
+        '\n\n**Detail:**' +
+        '\n\n PO back to CAMO!\n\n'
       );
     });
   });
