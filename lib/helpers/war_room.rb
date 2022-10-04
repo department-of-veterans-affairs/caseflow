@@ -28,7 +28,7 @@ module WarRoom
       appeal.treee
 
       # set decision document variable
-      dd = appeal.decision_document
+      appeal.decision_document
 
       FixFileNumberWizard.run(appeal: appeal)
       # need to do y or q
