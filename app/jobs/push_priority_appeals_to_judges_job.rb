@@ -141,6 +141,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # Calculates a target that will distribute all ready appeals so the remaining counts for each judge will produce
   # even case counts over a full month (or as close as we can get to it)
   def priority_target
+    return @priority_target if @priority_target
+
     @priority_target ||= begin
       distribution_counts = priority_distributions_this_month_for_eligible_judges.values
       target = 0
@@ -170,12 +172,12 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   # Number of priority distributions every eligible judge has received in the last month
   def priority_distributions_this_month_for_eligible_judges
-    @priority_distributions_this_month_for_eligible_judges ||=
+    @priority_distributions_this_month_for_eligible_judges =
       eligible_judges.map { |judge| [judge.id, priority_distributions_this_month_for_all_judges[judge.id] || 0] }.to_h
   end
 
   def eligible_judges
-    eligible_judges ||= JudgeTeam.pushed_priority_cases_allowed.map(&:judge)
+    eligible_judges = JudgeTeam.pushed_priority_cases_allowed.map(&:judge)
       .reject { |judge| Distribution.where(judge_id: judge.id).where("created_at >= ?", 1.minute.ago).count > 0 }
     eligible_judges.select(&:judge_in_vacols?) unless @skip_vacols
 
