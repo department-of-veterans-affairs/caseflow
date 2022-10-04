@@ -796,6 +796,7 @@ feature "Task queue", :all_dbs do
           ).click
           find("button", text: "Send case").click
           expect(page).to have_content(/Bob Smith.*'s case has been sent to the Confirm schedule hearing team/)
+          appeal.reload.tasks
           expect(appeal.tasks.pluck(:type)).to include(
             ScheduleHearingTask.name, HearingTask.name, DistributionTask.name
           )
