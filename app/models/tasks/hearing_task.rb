@@ -38,17 +38,19 @@ class HearingTask < Task
   end
 
   def when_child_task_completed(child_task)
-    super
-
     # do not move forward to change location or create ihp if there are
     # other open hearing tasks
-    return unless appeal.tasks.open.where(type: HearingTask.name).empty?
+    if appeal.tasks.open.where(type: HearingTask.name).where.not(id: id).empty?
+      if appeal.is_a?(Appeal)
+        create_evidence_or_ihp_task
+      end
 
-    if appeal.is_a?(LegacyAppeal)
-      update_legacy_appeal_location
-    elsif appeal.is_a?(Appeal)
-      create_evidence_or_ihp_task
+      if appeal.is_a?(LegacyAppeal)
+        update_legacy_appeal_location
+      end
     end
+
+    super
   end
 
   def create_change_hearing_disposition_task(instructions = nil)

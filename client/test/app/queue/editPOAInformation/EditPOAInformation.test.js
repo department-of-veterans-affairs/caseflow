@@ -1,5 +1,4 @@
 import React from 'react';
-import { axe } from 'jest-axe';
 import { mount } from 'enzyme';
 
 import EditPOAInformation from 'app/queue/editPOAInformation/EditPOAInformation';
@@ -20,13 +19,5 @@ describe('EditPOAInformation', () => {
     const container = setup();
 
     expect(container).toMatchSnapshot();
-  });
-
-  it('passes a11y testing', async () => {
-    const container = setup();
-
-    const results = await axe(container.html());
-
-    expect(results).toHaveNoViolations();
   });
 });

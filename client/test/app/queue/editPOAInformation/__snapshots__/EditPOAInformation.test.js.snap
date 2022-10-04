@@ -169,7 +169,6 @@ exports[`EditPOAInformation renders default state correctly 1`] = `
         >
           <section
             className="cf-app-segment cf-app-segment--alt"
-            role="main"
           >
             <ClaimantForm
               POA={true}
