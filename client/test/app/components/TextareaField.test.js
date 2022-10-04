@@ -129,14 +129,16 @@ describe('TextareaField', () => {
         maxlength={limit}
         onChange={changeSpy}
         name={name}
-        characterLimitTopRight={true}
-        value={'Notes'}
+        characterLimitTopRight
+        value="Notes"
       />
     );
+
     expect(textField.find('i')).toHaveLength(1);
-    expect(textField.find('p').first().props().style).toEqual(
+    expect(textField.find('p').first().
+      props().style).toEqual(
       { float: 'right', marginBottom: 0, lineHeight: 'inherit' }
     );
     expect(textField).toMatchSnapshot();
-  })
+  });
 });

@@ -10,7 +10,7 @@ export const regionalOfficeCities = {
 };
 
 export const roList = map(
-  regionalOfficesJsonResponse['regional_offices'],
+  regionalOfficesJsonResponse.regional_offices,
   (value, key) => ({ label: value.label, value: { key, ...value } })
 );
 

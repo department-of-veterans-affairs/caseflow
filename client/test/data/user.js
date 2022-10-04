@@ -16,7 +16,7 @@ export const userWithJudgeRole = {
 export const nonVsoUser = {
   ...anyUser,
   userVsoEmployee: false
-}
+};
 
 export const vsoUser = {
   ...anyUser,

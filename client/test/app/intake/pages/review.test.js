@@ -4,9 +4,9 @@ import { subDays, addDays } from 'date-fns';
 
 const assertValidSchema = async (schema, testSchema, useAmaActivationDate, isValid) => {
 
-  await schema
-    .isValid(testSchema, { context: { useAmaActivationDate } })
-    .then((valid) => expect(valid).toBe(isValid));
+  await schema.
+    isValid(testSchema, { context: { useAmaActivationDate } }).
+    then((valid) => expect(valid).toBe(isValid));
 };
 
 const BEFORE_AMA_DATE = subDays(new Date(DATES.AMA_ACTIVATION), 1);
@@ -35,13 +35,13 @@ describe('schema', () => {
       validSchema['original-hearing-request-type'] = null;
       await assertValidSchema(reviewAppealSchema, validSchema, true, true);
     });
-    
+
     it('hearing type is valid', async () => {
       const validSchema = validReviewAppealData;
 
       await assertValidSchema(reviewAppealSchema, validSchema, true, true);
     });
-    
+
     describe('homelessness-type', () => {
       it(' field is valid', async () => {
         await assertValidSchema(reviewAppealSchema, validReviewAppealData, true, true);

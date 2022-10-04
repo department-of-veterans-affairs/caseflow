@@ -14,7 +14,7 @@ const getClaimantField = (veteran, intakeData) => {
   let claimantDisplayText = [claimantName, claimantRelationship].filter(Boolean).join(', ');
 
   if (payeeCode) {
-    claimantDisplayText += ` (payee code ${payeeCode})`
+    claimantDisplayText += ` (payee code ${payeeCode})`;
   }
 
   return [{
@@ -54,7 +54,7 @@ export const legacyIssue = (issue, legacyAppeals) => {
       throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
     }
 
-    return _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })
+    return _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) });
   }
 };
 

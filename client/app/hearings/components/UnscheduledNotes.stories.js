@@ -14,7 +14,8 @@ export default {
 };
 
 const Template = (args) => {
-  const [notes, setNotes] = useState(args.unscheduledNotes ?? '')
+  const [notes, setNotes] = useState(args.unscheduledNotes ?? '');
+
   return (
     <UnscheduledNotes
       {...args}
@@ -24,8 +25,8 @@ const Template = (args) => {
       }}
       unscheduledNotes={notes}
     />
-  )
-}
+  );
+};
 
 export const Basic = Template.bind({});
 Basic.args = {
@@ -33,10 +34,10 @@ Basic.args = {
   updatedAt: '2020-09-08T10:03:49.210-04:00',
   unscheduledNotes: 'Type notes here',
   onChange: () => {}
-}
+};
 
 export const FirstEdit = Template.bind({});
 FirstEdit.args = {
   onChange: () => {},
   unscheduledNotes: ''
-}
+};

@@ -7,7 +7,7 @@ const clerkOfTheBoardAttorneys = [
   { value: 2, label: 'COB Attorney 2' },
 ];
 
-const instructions = ["**Summary:** Summary\n\n**Is this a timely request:** Yes\n\n**Recommendation:** Grant all issues\n\n**Draft letter:** http://www.va.gov"];
+const instructions = ['**Summary:** Summary\n\n**Is this a timely request:** Yes\n\n**Recommendation:** Grant all issues\n\n**Draft letter:** http://www.va.gov'];
 
 export default {
   title: 'Queue/Docket Switch/DocketSwitchRulingForm',

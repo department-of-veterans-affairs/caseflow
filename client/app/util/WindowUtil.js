@@ -6,6 +6,6 @@ export default {
   // Does a reload with POST data.
   reloadWithPOST() {
     // https://stackoverflow.com/questions/41020403/reload-a-page-with-location-href-or-window-location-reloadtrue
-    window.location.reload()
+    window.location.reload();
   }
 };

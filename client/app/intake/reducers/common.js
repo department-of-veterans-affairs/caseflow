@@ -188,11 +188,11 @@ export const commonStateFromServerIntake = (serverIntake) => {
     claimantName: {
       $set: serverIntake.claimantName
     },
-     claimantRelationship: {
+    claimantRelationship: {
       $set: serverIntake.claimantRelationship
     },
     powerOfAttorneyName: {
-     $set: serverIntake.powerOfAttorneyName
+      $set: serverIntake.powerOfAttorneyName
     },
     payeeCode: {
       $set: serverIntake.payeeCode

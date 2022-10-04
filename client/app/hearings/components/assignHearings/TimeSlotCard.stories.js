@@ -5,7 +5,7 @@ import { LEGACY_APPEAL_TYPES } from '../../../queue/constants';
 import { TimeSlotCard } from './TimeSlotCard';
 import HEARING_TIME_OPTIONS from '../../../../constants/HEARING_TIME_OPTIONS';
 import { roTimezones } from '../../utils';
-import { defaultHearing, defaultHearingDay } from '../../../../test/data/hearings'
+import { defaultHearing, defaultHearingDay } from '../../../../test/data/hearings';
 
 export default {
   title: 'Hearings/Components/Assign Hearings/TimeSlotCard',

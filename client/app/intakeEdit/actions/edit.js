@@ -77,19 +77,20 @@ export const editEpClaimLabel = (claimId, formType, previousCode, selectedCode) 
         sessionStorage.setItem('veteranSearchPageAlert', JSON.stringify(alert));
         window.location.replace(`${PAGE_PATHS.SEARCH}?veteran_ids=${veteranId}`);
       }
-    }, 
+    },
     (error) => {
       const responseObject = error.response.body || {};
       const responseErrorCode = responseObject.error_code;
-      
-        dispatch({
-          type: ACTIONS.EDIT_EP_CLAIM_LABEL_FAILED,
-          payload: {
-           errorCode: responseErrorCode
-          },
-          meta: { analytics }
-        });
-      }
 
-    ).catch((error) => error);
+      dispatch({
+        type: ACTIONS.EDIT_EP_CLAIM_LABEL_FAILED,
+        payload: {
+          errorCode: responseErrorCode
+        },
+        meta: { analytics }
+      });
+    }
+
+  ).
+    catch((error) => error);
 };

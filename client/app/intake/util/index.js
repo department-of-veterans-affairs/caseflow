@@ -99,23 +99,25 @@ export const formatSearchableDropdownOptions = (options) => {
 export const validateReviewData = (intakeData, intakeType) => {
   const fields = REVIEW_DATA_FIELDS[intakeType];
   let errorCodes = {};
+
   for (const fieldName in fields) {
     const field = fields[fieldName];
+
     if (field.required && intakeData[field.key] == null) {
       errorCodes[fieldName] = ['blank'];
     }
   }
-  if (intakeData.receiptDate && intakeData.receiptDate > (new Date).toISOString()) {
+  if (intakeData.receiptDate && intakeData.receiptDate > (new Date()).toISOString()) {
     errorCodes.receipt_date = ['in_future'];
   }
   if (['dependent', 'attorney'].includes(intakeData.claimantType) && !intakeData.claimant) {
     errorCodes.claimant = ['blank'];
   }
+
   return (Object.keys(errorCodes).length ? errorCodes : null);
 };
 
-
-  // Converts all object and nested keys to snake case
+// Converts all object and nested keys to snake case
 const keysToSnakeCase = (object) => {
   let snakeCaseObject = _.cloneDeep(object);
 
@@ -127,14 +129,15 @@ const keysToSnakeCase = (object) => {
   // Recursively apply throughout object
   return _.mapValues(
     snakeCaseObject,
-    value => {
+    (value) => {
       if (_.isPlainObject(value)) {
         return keysToSnakeCase(value);
       } else if (_.isArray(value)) {
         return _.map(value, keysToSnakeCase);
-      } else {
-        return value;
       }
+
+      return value;
+
     }
   );
 };
@@ -142,8 +145,10 @@ const keysToSnakeCase = (object) => {
 export const prepareReviewData = (intakeData, intakeType) => {
   const fields = REVIEW_DATA_FIELDS[intakeType];
   const result = {};
+
   for (let fieldName in fields) {
     result[fieldName] = intakeData[fields[fieldName].key];
   }
+
   return keysToSnakeCase(result);
 };

@@ -11,7 +11,7 @@ export default {
 
 const Template = (args) => (
   <ReduxBase
-    initialState={{ components: { alerts: args.alerts }}}
+    initialState={{ components: { alerts: args.alerts } }}
     reducer={reducers}
   >
     <UserAlerts />

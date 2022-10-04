@@ -11,14 +11,14 @@ export default {
 };
 
 const Template = (args) => (
-  <DocketStartTimes {...args}>
-  </DocketStartTimes >
+  <DocketStartTimes {...args} />
 );
+
 export const Default = Template.bind({});
 Default.args = {
   roTimezone: 'America/Los_Angeles',
   hearingStartTime: null,
   setSlotCount: () => {},
   setHearingStartTime: () => {}
-}
+};
 

@@ -5,7 +5,7 @@ import DocketSwitchAlertBanner from './DocketSwitchAlertBanner';
 
 const RouterDecorator = (Story) => (
   <MemoryRouter>
-	<Story />
+    <Story />
   </MemoryRouter>
 );
 
@@ -20,7 +20,7 @@ const partialGrantDocketSwitch = {
   docket_type: 'evidence_submission',
   new_docket_stream_id: '2',
   old_docket_stream_id: '3'
-}
+};
 
 const appeal = {
   externalId: '1',
@@ -50,7 +50,7 @@ const Template = (args) => (
 
 export const FullGrant = Template.bind({});
 FullGrant.args = {
-  appeal: appeal
+  appeal
 };
 
 export const PartialGrantNewDocket = Template.bind({});

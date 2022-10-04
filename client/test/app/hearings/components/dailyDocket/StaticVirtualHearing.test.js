@@ -14,35 +14,35 @@ describe('StaticVirtualHearing', () => {
     hearing: amaHearing
   };
 
-
   it('renders correctly', () => {
     const { container } = render(<StaticVirtualHearing {...defaultProps} />);
 
     expect(container).toMatchSnapshot();
-  })
+  });
 
   it('passes a11y testing', async () => {
     const { container } = render(<StaticVirtualHearing {...defaultProps} />);
 
     const results = await axe(container);
+
     expect(results).toHaveNoViolations();
-  })
+  });
 
   it('displays correct label for host user', () => {
     const component = render(
-      <StaticVirtualHearing {...defaultProps} user={{ userId: amaHearing.judgeId }}/>
+      <StaticVirtualHearing {...defaultProps} user={{ userId: amaHearing.judgeId }} />
     );
 
     expect(component).toMatchSnapshot();
-    expect(screen.getByText(COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL)).toBeInTheDocument()
-  })
+    expect(screen.getByText(COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL)).toBeInTheDocument();
+  });
 
   it('displays correct label for guest user', () => {
     const component = render(
-      <StaticVirtualHearing {...defaultProps} user={vsoUser}/>
+      <StaticVirtualHearing {...defaultProps} user={vsoUser} />
     );
 
     expect(component).toMatchSnapshot();
-    expect(screen.getByText(COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL)).toBeInTheDocument()
-  })
-})
+    expect(screen.getByText(COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL)).toBeInTheDocument();
+  });
+});

@@ -24,8 +24,8 @@ Basic.args = {
   appeal: {
     ...legacyAppealForTravelBoard
   },
-  type: "Virtual"
-}
+  type: 'Virtual'
+};
 
 export const Appellant = Template.bind({});
 Appellant.args = {
@@ -34,16 +34,16 @@ Appellant.args = {
     ...Basic.args.appeal,
     appellantIsNotVeteran: true
   }
-}
+};
 
 export const CentralOffice = Template.bind({});
 CentralOffice.args = {
   ...Basic.args,
   appeal: {
     ...Basic.args.appeal,
-    closestRegionalOfficeLabel: "Central Office"
+    closestRegionalOfficeLabel: 'Central Office'
   }
-}
+};
 
 export const MissingVeteranEmailAlert = Template.bind({});
 MissingVeteranEmailAlert.args = {
@@ -54,7 +54,7 @@ MissingVeteranEmailAlert.args = {
       ...veteranInfoWithoutEmail
     }
   }
-}
+};
 
 export const AppealNotGeomatchedYet = Template.bind({});
 AppealNotGeomatchedYet.args = {

@@ -7,12 +7,13 @@ import { UnscheduledNotes } from 'app/hearings/components/UnscheduledNotes';
 
 describe('UnscheduledNotes', () => {
   const onChange = jest.fn();
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  const inputText = 'Type notes here'
-  const maxCharLimit = 1000
+  const inputText = 'Type notes here';
+  const maxCharLimit = 1000;
   const defaultProps = {
     updatedByCssId: 'VACOUSER',
     updatedAt: '2020-09-08T10:03:49.210-04:00',
@@ -36,10 +37,10 @@ describe('UnscheduledNotes', () => {
 
   it('correctly calls onChange', async () => {
     const container = render(
-      <UnscheduledNotes {...defaultProps} unscheduledNotes={''} />
+      <UnscheduledNotes {...defaultProps} unscheduledNotes="" />
     );
 
-    const inputField = container.getByLabelText('Notes')
+    const inputField = container.getByLabelText('Notes');
 
     await userEvent.type(inputField, inputText);
 
@@ -51,13 +52,14 @@ describe('UnscheduledNotes', () => {
   it('displays character limit info when notes is present', () => {
     render(<UnscheduledNotes {...defaultProps} />);
 
-    const charLimitMessage = `${maxCharLimit - inputText.length} characters left`
-    expect(screen.getByText(charLimitMessage)).toBeInTheDocument()
+    const charLimitMessage = `${maxCharLimit - inputText.length} characters left`;
+
+    expect(screen.getByText(charLimitMessage)).toBeInTheDocument();
   });
 
   it('does not display textfield when readonly is passed as prop', () => {
-    render(<UnscheduledNotes {...defaultProps} readonly/>);
+    render(<UnscheduledNotes {...defaultProps} readonly />);
 
-    expect(screen.queryByLabelText('Notes')).not.toBeInTheDocument()
-  })
-})
+    expect(screen.queryByLabelText('Notes')).not.toBeInTheDocument();
+  });
+});

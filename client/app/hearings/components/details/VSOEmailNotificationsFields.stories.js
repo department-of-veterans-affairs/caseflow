@@ -1,8 +1,8 @@
-import { VSOEmailNotificationFields } from "./VSOEmailNotificationsFields";
+import { VSOEmailNotificationFields } from './VSOEmailNotificationsFields';
 
 export default {
-    title: "VSOEmailNotificationsFields", 
-    component: VSOEmailNotificationsFields
-}
+  title: 'VSOEmailNotificationsFields',
+  component: VSOEmailNotificationsFields
+};
 
-export const VSOEmailNotificationsFields = () => <VSOEmailNotificationsFields />
+export const VSOEmailNotificationsFields = () => <VSOEmailNotificationsFields />;

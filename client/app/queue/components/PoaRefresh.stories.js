@@ -35,5 +35,4 @@ const Template = ({ poaSyncDateFeature, ...componentArgs }) => {
   </Wrapper>;
 };
 
-
 export const Default = Template.bind({});

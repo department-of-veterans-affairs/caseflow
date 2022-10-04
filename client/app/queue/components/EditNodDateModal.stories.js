@@ -12,7 +12,7 @@ export default {
       iframeHeight: 700,
     },
   },
-  args: {nodDate: '2020-10-01'},
+  args: { nodDate: '2020-10-01' },
   argTypes: {
     onCancel: { action: 'cancel' },
     onSubmit: { action: 'submit' },

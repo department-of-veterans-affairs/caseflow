@@ -72,6 +72,6 @@ describe('HearingLinks', () => {
     expect(form).toMatchSnapshot();
     expect(form.find(VirtualHearingLink)).toHaveLength(1);
     // Ensure it's the guest link
-    expect(form.find(VirtualHearingLink).prop('link')).toEqual(amaHearing.virtualHearing.guestLink)
-  })
+    expect(form.find(VirtualHearingLink).prop('link')).toEqual(amaHearing.virtualHearing.guestLink);
+  });
 });

@@ -18,7 +18,6 @@ export default {
   }
 };
 
-
 const Template = ({ PoaRefreshButtonFeature, ...componentArgs }) => {
   const storeArgs = {
     ui: {
@@ -29,7 +28,7 @@ const Template = ({ PoaRefreshButtonFeature, ...componentArgs }) => {
   };
 
   return <Wrapper {...storeArgs}>
-    <PoaRefreshButton appealId={amaAppeal.externalId}  {...componentArgs} />
+    <PoaRefreshButton appealId={amaAppeal.externalId} {...componentArgs} />
   </Wrapper>;
 };
 

@@ -8,4 +8,4 @@ export const Template = (args) => (
 );
 
 export const Loader = Template.bind({});
-Loader.args = {message: "Loading...", spinnerColor: LOGO_COLORS.READER.ACCENT };
+Loader.args = { message: 'Loading...', spinnerColor: LOGO_COLORS.READER.ACCENT };

@@ -26,6 +26,7 @@ export default {
 
 const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 const store = getStore();
+
 store.dispatch(setCanViewOvertimeStatus(true));
 
 const Template = (args) => (

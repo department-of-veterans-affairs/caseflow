@@ -18,8 +18,8 @@ import {
 import {
   vsoUser,
   nonVsoUser
-} from '../../../test/data/user'
-import { userWithVirtualHearingsFeatureEnabled } from '../../../test/data/user';
+  , userWithVirtualHearingsFeatureEnabled } from '../../../test/data/user';
+
 import { detailsStore, initialState } from '../../../test/data/stores/hearingsStore';
 
 export default {
@@ -91,7 +91,7 @@ export const Normal = () => {
   // Create a button to reload the hearing details
   button('Change Hearing', reload);
 
-  return loaded && <Wrapper hearing={controlledHearing} user={nonVsoUser}/>;
+  return loaded && <Wrapper hearing={controlledHearing} user={nonVsoUser} />;
 };
 
 export const Video = () => {
@@ -106,7 +106,7 @@ export const Virtual = () => {
   return <Wrapper hearing={amaHearing} user={nonVsoUser} />;
 };
 
-export const VirtualAsVSO = () =>{
+export const VirtualAsVSO = () => {
   return <Wrapper hearing={amaHearing} user={vsoUser} />;
 };
 

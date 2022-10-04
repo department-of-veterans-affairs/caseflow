@@ -72,7 +72,8 @@ describe('AddCavcDatesModal', () => {
 
   describe('form validations', () => {
     const errorClass = '.usa-input-error-message';
-    const futureDate = moment(new Date().toISOString()).add(2, 'day').format('YYYY-MM-DD');
+    const futureDate = moment(new Date().toISOString()).add(2, 'day').
+      format('YYYY-MM-DD');
 
     const validationErrorShows = (cavcModal, errorMessage) => {
       clickSubmit(cavcModal);

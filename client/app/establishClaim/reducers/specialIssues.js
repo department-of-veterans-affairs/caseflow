@@ -6,7 +6,7 @@ export const getSpecialIssuesInitialState = function(props = {}) {
 
   let initialState = {};
 
-  const enabled_special_issues  = enabledSpecialIssues()
+  const enabled_special_issues = enabledSpecialIssues();
 
   enabled_special_issues.forEach((issue) => {
 
@@ -31,6 +31,7 @@ let specialIssues = function(state = getSpecialIssuesInitialState(), action) {
     let newState = Object.assign({}, state);
 
     newState[action.payload.specialIssue] = action.payload.value;
+
     return newState;
   }
   default:

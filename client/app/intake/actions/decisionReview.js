@@ -81,7 +81,7 @@ export const setFiledByVaGov = (filedByVaGov) => ({
   payload: {
     filedByVaGov
   }
-})
+});
 
 export const setLegacyOptInApproved = (legacyOptInApproved) => ({
   type: ACTIONS.SET_LEGACY_OPT_IN_APPROVED,

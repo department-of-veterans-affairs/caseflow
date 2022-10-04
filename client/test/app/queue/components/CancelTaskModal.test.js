@@ -18,7 +18,7 @@ describe('CancelTaskModal', () => {
       <CancelTaskModal
         requestPatch={requestPatchMock}
         taskId={changeHearingRequestTypeTask.uniqueId}
-        match={{path: TASK_ACTIONS.CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}}
+        match={{ path: TASK_ACTIONS.CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL.value }}
       />,
       {
         wrappingComponent: queueWrapper,

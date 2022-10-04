@@ -13,18 +13,18 @@ export default {
 
 const TIMEOUT_MS = 4000;
 const createLoadPromise = () => new Promise(() => {});
-const createFailingPromise = () => new Promise((resolve, reject) => setTimeout(() => reject({ status: 502 }), TIMEOUT_MS/10))
-const createSlowPromise = () => new Promise((resolve, reject) => setTimeout(() => resolve(), TIMEOUT_MS))
+const createFailingPromise = () => new Promise((resolve, reject) => setTimeout(() => reject({ status: 502 }), TIMEOUT_MS / 10));
+const createSlowPromise = () => new Promise((resolve, reject) => setTimeout(() => resolve(), TIMEOUT_MS));
 
 const Template = (args) => {
   return <LoadingDataDisplay {...args} >
     <p>Request succeeded</p>
-  </LoadingDataDisplay>
-}
+  </LoadingDataDisplay>;
+};
 
 export const Loading = Template.bind({});
 Loading.args = {
-  createLoadPromise: createLoadPromise,
+  createLoadPromise,
   loadingComponentProps: {
     spinnerColor: '#56b605',
     message: 'Loading the hearing details...'
@@ -36,10 +36,10 @@ Error.args = {
   ...Loading.args,
   createLoadPromise: createFailingPromise,
   failStatusMessageChildren: 'Failed to load hearing details'
-}
+};
 
 export const Slow = Template.bind({});
 Slow.args = {
   ...Loading.args,
   createLoadPromise: createSlowPromise
-}
+};

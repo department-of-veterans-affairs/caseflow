@@ -25,7 +25,8 @@ describe('ReadOnlyHearingTimeWithZone', () => {
       ];
 
       timezones.forEach((timezone) => {
-        const hearingStartTime = moment(startTime).tz(timezone).format('HH:mm')
+        const hearingStartTime = moment(startTime).tz(timezone).
+          format('HH:mm');
         const form = mount(
           <ReadOnlyHearingTimeWithZone
             hearingStartTime={hearingStartTime ?? null}
@@ -34,12 +35,14 @@ describe('ReadOnlyHearingTimeWithZone', () => {
           />
         );
         const zoneName = shortZoneName(timezone);
+
         expect(form).toMatchSnapshot();
         if (hearingStartTime === null) {
           expect(form.exists('ReadOnly')).toBe(false);
         } else {
           expect(form.exists('ReadOnly')).toBe(true);
           const dateTime = moment(hearingStartTime).tz(timezone, true);
+
           if (zoneName === 'Eastern') {
             expect(
               form.find(ReadOnly).prop('text')
@@ -48,11 +51,12 @@ describe('ReadOnlyHearingTimeWithZone', () => {
             expect(
               form.find(ReadOnly).prop('text')
             ).toEqual(
-              `${dateTime.format('h:mm A')} ${zoneName} / ${moment(dateTime).tz('America/New_York').format('h:mm A')} Eastern`
+              `${dateTime.format('h:mm A')} ${zoneName} / ${moment(dateTime).tz('America/New_York').
+                format('h:mm A')} Eastern`
             );
           }
         }
-      })
-    })
+      });
+    });
   });
 });

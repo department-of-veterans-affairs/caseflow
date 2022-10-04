@@ -37,7 +37,6 @@ describe('formatDocketSwitchRuling', () => {
         disposition,
       });
 
-
       expect(res).toMatch(
         new RegExp(
           'I am proceeding with a partial switch\\. {2}\\n {2}\\n'

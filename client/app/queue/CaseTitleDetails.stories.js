@@ -19,7 +19,6 @@ const Template = (args) => (
   <CaseTitleDetails {...args} />
 );
 
-
 export const AppealInHearingDocket = Template.bind({});
 AppealInHearingDocket.args = {
   appeal: {
@@ -31,7 +30,7 @@ AppealInHearingDocket.args = {
   userIsVsoEmployee: false,
   featureToggles: {},
   legacyJudgeTasks: []
-}
+};
 
 export const AppealNotInHearingDocket = Template.bind({});
 AppealNotInHearingDocket.args = {
@@ -41,4 +40,4 @@ AppealNotInHearingDocket.args = {
     docketName: 'Evidence',
     readableHearingRequestType: 'Central'
   }
-}
+};

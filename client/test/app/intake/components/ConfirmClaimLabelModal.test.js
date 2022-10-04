@@ -9,7 +9,7 @@ import { ConfirmClaimLabelModal } from 'app/intakeEdit/components/ConfirmClaimLa
 describe('ConfirmClaimLabelModal', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
-  const defaults = { onCancel, onSubmit, previousEpCode: '030HLRR', newEpCode: "030HLRNR" };
+  const defaults = { onCancel, onSubmit, previousEpCode: '030HLRR', newEpCode: '030HLRNR' };
 
   afterEach(() => {
     jest.clearAllMocks();

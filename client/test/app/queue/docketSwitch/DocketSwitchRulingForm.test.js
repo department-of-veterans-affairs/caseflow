@@ -20,7 +20,7 @@ describe('DocketSwitchRulingForm', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
   const appellantName = 'Claimant 1';
-  const instructions = ["**Summary:** Summary\n\n**Is this a timely request:** Yes\n\n**Recommendation:** Grant all issues\n\n**Draft letter:** http://www.va.gov"];
+  const instructions = ['**Summary:** Summary\n\n**Is this a timely request:** Yes\n\n**Recommendation:** Grant all issues\n\n**Draft letter:** http://www.va.gov'];
   const defaults = { onSubmit, onCancel, appellantName, clerkOfTheBoardAttorneys, instructions };
 
   beforeEach(() => {
@@ -33,7 +33,9 @@ describe('DocketSwitchRulingForm', () => {
     expect(container).toMatchSnapshot();
 
     expect(screen.getByText(sprintf(DOCKET_SWITCH_RULING_TITLE, appellantName))).toBeInTheDocument();
-    const instructionParts = DOCKET_SWITCH_RULING_INSTRUCTIONS.split("**").join("").split("\n\n");
+    const instructionParts = DOCKET_SWITCH_RULING_INSTRUCTIONS.split('**').join('').
+      split('\n\n');
+
     // The markdown formatting in COPY makes it a little tricky to automatically test the instructions
     // Including first two parts here (but there are more)
     expect(screen.getByText(instructionParts[0])).toBeInTheDocument();
@@ -61,7 +63,7 @@ describe('DocketSwitchRulingForm', () => {
       await userEvent.click(submit);
       expect(onSubmit).not.toHaveBeenCalled();
 
-      await fillOutDocketSwitchForm(submit, context)
+      await fillOutDocketSwitchForm(submit, context);
 
       await waitFor(() => {
         expect(submit).toBeEnabled();
@@ -84,7 +86,7 @@ describe('DocketSwitchRulingForm', () => {
       await userEvent.click(submit);
       expect(onSubmit).not.toHaveBeenCalled();
 
-      await fillOutDocketSwitchForm(submit, null)
+      await fillOutDocketSwitchForm(submit, null);
 
       await waitFor(() => {
         expect(submit).toBeEnabled();
@@ -94,7 +96,7 @@ describe('DocketSwitchRulingForm', () => {
       await waitFor(() => {
         expect(onSubmit).toHaveBeenCalled();
       });
-    })
+    });
     const fillOutDocketSwitchForm = async (submit, context) => {
       await waitFor(() => {
         expect(submit).toBeDisabled();
@@ -116,7 +118,7 @@ describe('DocketSwitchRulingForm', () => {
         screen.getByLabelText(/assign to office of the clerk of the board/i),
         clerkOfTheBoardAttorneys[1].label
       );
-    }
+    };
   });
 
   it.skip('fires onSubmit with correct values', async () => {

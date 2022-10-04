@@ -12,7 +12,7 @@ export default {
 
 const appealId = amaAppeal.externalId;
 
-const Template = ({...componentArgs}) => {
+const Template = ({ ...componentArgs }) => {
   const storeArgs = {
   };
 

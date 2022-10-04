@@ -75,7 +75,7 @@ export const schema = yup.object().shape({
     is: (relationship, hidePOAForm) => relationship !== 'attorney' && !hidePOAForm,
     then: yup.string().required(),
   }),
-  listedAttorney: yup.object().when(['relationship','$hideListedAttorney'], {
+  listedAttorney: yup.object().when(['relationship', '$hideListedAttorney'], {
     is: (relationship, hideListedAttorney) => (relationship === 'attorney' && !hideListedAttorney),
     then: yup.object().required(),
   }),

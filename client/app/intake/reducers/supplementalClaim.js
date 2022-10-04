@@ -17,6 +17,7 @@ const updateFromServerIntake = (state, serverIntake) => {
   }
 
   const commonState = commonStateFromServerIntake(serverIntake);
+
   return update(state, {
     ...commonState,
     benefitType: {
