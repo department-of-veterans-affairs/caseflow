@@ -890,7 +890,7 @@ export const getPreviousTaskInstructions = (parentTask, tasks) => {
 
   const childTask = getMostRecentChildTask(parentTask, tasks);
 
-  if (childTask && childTask.instructions?.[1]) {
+  if (childTask && childTask.instructions[1]) {
     switch (childTask.assignedTo.type) {
     case 'VhaProgramOffice':
       reviewNotes = 'Program Office';
