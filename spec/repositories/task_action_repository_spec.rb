@@ -180,8 +180,6 @@ describe TaskActionRepository, :all_dbs do
     end
 
     describe "#vha_po_send_to_vha_camo_for_review" do
-      let(:assigned_tab_name) { VhaProgramOfficeAssignedTasksTab.tab_name }
-      let(:redirect_url) { "/organizations/#{VhaProgramOffice.url}?tab=#{assigned_tab_name}" }
       let(:program_office) { VhaProgramOffice.create!(name: "Program Office", url: "Program Office") }
       let(:program_office_task) { create(:assess_documentation_task, assigned_to: program_office) }
 
@@ -196,8 +194,6 @@ describe TaskActionRepository, :all_dbs do
     end
 
     describe "#vha_ro_send_to_vha_po_for_review" do
-      # let(:completed_tab_name) { VhaProgramOfficeCompletedTasksTab.tab_name }
-      # let(:redirect_url) { "/organizations/#{VhaProgramOffice.url}?tab=#{completed_tab_name}" }
       let(:regional_office) { VhaRegionalOffice.create!(name: "Regional Office", url: "Regional Office") }
       let(:regional_office_task) { create(:assess_documentation_task, assigned_to: regional_office) }
 

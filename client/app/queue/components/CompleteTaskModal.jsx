@@ -356,8 +356,6 @@ const MODAL_TYPE_ATTRS = {
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_PO, appeal.veteranFullName) :
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_VISN, appeal.veteranFullName)
     }),
-    // Title is obtained via taskActionData instead.
-    title: () => null,
     getContent: ReadyForReviewModal
   },
   send_colocated_task: {
@@ -614,7 +612,7 @@ class CompleteTaskModal extends React.Component {
 
     return (
       <QueueFlowModal
-        title={taskData.modal_title || modalAttributes.title(this.getContentArgs())}
+        title={taskData.modal_title || (modalAttributes.title && modalAttributes.title(this.getContentArgs()))}
         /* eslint-disable-next-line camelcase */
         button={taskData?.modal_button_text}
         submitDisabled={modalAttributes.submitDisabled?.(this.getContentArgs())}
