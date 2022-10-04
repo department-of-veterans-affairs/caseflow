@@ -471,7 +471,7 @@ describe AppellantNotification do
         }
       end
       let(:privacy_parent) { PrivacyActTask.create!(appeal: appeal, parent_id: colocated_task.id, assigned_to: priv_org) }
-      let(:privacy_child) { PrivacyActTask.create!(appeal: appeal, parent_id: privacy_parent.id, assigned_to: priv_org) }
+      let(:privacy_child) { PrivacyActTask.create!(appeal: appeal, parent_id: privacy_parent.id, assigned_to: current_user) }
       before do
         priv_org.add_user(current_user)
       end
@@ -479,9 +479,13 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
         PrivacyActTask.create_child_task(colocated_task, attorney, privacy_params_org)
       end
-      it "sends notification when completing a PrivacyActTask" do
+      it "sends notification when completing a PrivacyActTask assigned to user" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
         privacy_child.update!(status: "completed")
+      end
+      it "sends notification when completing a PrivacyActTask assigned to organization" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
+        privacy_parent.update_with_instructions(status: "completed")
       end
     end
   end
