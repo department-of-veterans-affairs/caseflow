@@ -721,11 +721,13 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
       expect(subject[6]).to eq "*Number of appeals _not_ distributed*: 4"
 
-      expect(subject[9]).to eq "Previous monthly distributions: #{previous_distributions}"
-      expect(subject[10].include?(legacy_priority_case.bfkey)).to be true
-      expect(subject[11].include?(ready_priority_hearing_case.uuid)).to be true
-      expect(subject[11].include?(ready_priority_evidence_case.uuid)).to be true
-      expect(subject[11].include?(ready_priority_direct_case.uuid)).to be true
+      expect(subject[9]).to eq "Priority Target: 6"
+      expect(subject[10]).to eq "Previous monthly distributions: #{previous_distributions}"
+      expect(subject[11].include?(legacy_priority_case.bfkey)).to be true
+      expect(subject[12].include?(ready_priority_hearing_case.uuid)).to be true
+      expect(subject[12].include?(ready_priority_evidence_case.uuid)).to be true
+      expect(subject[12].include?(ready_priority_direct_case.uuid)).to be true
+
 
       expect(subject.last).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
     end

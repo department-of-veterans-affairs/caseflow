@@ -354,25 +354,34 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
-    # Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930.
-    # Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding
-    # of clear and unmistakable error, which would result in a brand new docket number being assigned.
-    # An updated docket number format will need to be in place for legacy appeals by 2030 in order
-    # to ensure that docket numbers are sorted correctly.
+    if use_by_docket_date?
+      query = <<-SQL
+        #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
+        where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+        and (DOCKET_INDEX <= ? or 1 = ?)
+        and rownum <= ?
+      SQL
+    else
+      # Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930.
+      # Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding
+      # of clear and unmistakable error, which would result in a brand new docket number being assigned.
+      # An updated docket number format will need to be in place for legacy appeals by 2030 in order
+      # to ensure that docket numbers are sorted correctly.
 
-    # When requesting to bust the backlog of cases tied to a judge, distribute enough cases to get down to 30 while
-    # still respecting the enforced limit on how many cases can be distributed
-    if bust_backlog
-      number_of_hearings_over_limit = nonpriority_hearing_cases_for_judge_count(judge) - HEARING_BACKLOG_LIMIT
-      limit = (number_of_hearings_over_limit > 0) ? [number_of_hearings_over_limit, limit].min : 0
+      # When requesting to bust the backlog of cases tied to a judge, distribute enough cases to get down to 30 while
+      # still respecting the enforced limit on how many cases can be distributed
+      if bust_backlog
+        number_of_hearings_over_limit = nonpriority_hearing_cases_for_judge_count(judge) - HEARING_BACKLOG_LIMIT
+        limit = (number_of_hearings_over_limit > 0) ? [number_of_hearings_over_limit, limit].min : 0
+      end
+
+      query = <<-SQL
+        #{SELECT_NONPRIORITY_APPEALS}
+        where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+        and (DOCKET_INDEX <= ? or 1 = ?)
+        and rownum <= ?
+      SQL
     end
-
-    query = <<-SQL
-      #{SELECT_NONPRIORITY_APPEALS}
-      where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
-      and (DOCKET_INDEX <= ? or 1 = ?)
-      and rownum <= ?
-    SQL
 
     fmtd_query = sanitize_sql_array([
                                       query,
@@ -389,11 +398,19 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
-    query = <<-SQL
-      #{SELECT_PRIORITY_APPEALS}
-      where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
-      and (rownum <= ? or 1 = ?)
-    SQL
+    if use_by_docket_date?
+      query = <<-SQL
+        #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+        where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+        and (rownum <= ? or 1 = ?)
+      SQL
+    else
+      query = <<-SQL
+        #{SELECT_PRIORITY_APPEALS}
+        where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+        and (rownum <= ? or 1 = ?)
+      SQL
+    end
 
     fmtd_query = sanitize_sql_array([
                                       query,
@@ -431,5 +448,9 @@ class VACOLS::CaseDocket < VACOLS::Record
         appeals
       end
     end
+  end
+
+  def self.use_by_docket_date?
+    FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 end
