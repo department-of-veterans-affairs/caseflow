@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class DocketCoordinator
+  def initialize(skip_vacols: false)
+    @skip_vacols = skip_vacols
+  end
+  
   def dockets
     @dockets ||= {
       legacy: LegacyDocket.new,
@@ -91,13 +95,19 @@ class DocketCoordinator
 
   def priority_count
     @priority_count ||= dockets
+      .select { |key, _| key != :legacy || (key == :legacy && !@skip_vacols) }
       .values
       .map { |docket| docket.count(priority: true, ready: true) }
       .sum
   end
 
   def genpop_priority_count
-    @genpop_priority_count ||= dockets.values.map(&:genpop_priority_count).sum
+    @genpop_priority_count ||=
+      dockets
+        .select { |key, _| key != :legacy || (key == :legacy && !@skip_vacols) }
+        .values
+        .map(&:genpop_priority_count)
+        .sum
   end
 
   def direct_review_due_count

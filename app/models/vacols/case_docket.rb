@@ -276,8 +276,6 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
-    return [] if true
-    
     conn = connection
 
     query = <<-SQL
@@ -339,8 +337,6 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.nonpriority_hearing_cases_for_judge_count(judge)
-    return 0 if true
-
     query = <<-SQL
       #{SELECT_NONPRIORITY_APPEALS}
       where (VLJ = ?)
