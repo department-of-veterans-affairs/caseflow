@@ -11,6 +11,8 @@ class Distribution < CaseflowRecord
   has_many :distributed_cases
   belongs_to :judge, class_name: "User"
 
+  attr_accessor :skip_vacols
+
   validates :judge, presence: true
   validate :validate_user_is_judge, on: :create, unless: :priority_push?
   validate :validate_number_of_unassigned_cases, on: :create, unless: :priority_push?

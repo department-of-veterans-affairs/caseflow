@@ -32,8 +32,8 @@ module ByDocketDateDistribution
   def distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
     num_oldest_priority_appeals_for_judge_by_docket(self, limit).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
-        next if docket == 'legacy' && true
-        
+        next if docket == 'legacy' && @skip_vacols
+
         dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: true, style: style)
       end
     end
@@ -49,21 +49,26 @@ module ByDocketDateDistribution
   end
 
   def ama_statistics
-    {
+    @ama_statistics = {
       batch_size: @appeals.count,
       total_batch_size: total_batch_size,
       priority_count: priority_count,
       direct_review_due_count: direct_review_due_count,
-      legacy_hearing_backlog_count: VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge),
       nonpriority_iterations: @nonpriority_iterations,
       algorithm: 'by_docket_date'
     }
+    if !@skip_vacols
+      @ama_statistics[:legacy_hearing_backlog_count] =
+        VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge)
+    end
+    @ama_statistics
   end
 
   def num_oldest_priority_appeals_for_judge_by_docket(distribution, num)
     return {} unless num > 0
 
     dockets
+      .select { |key, _| key != :legacy || (key == :legacy && !@skip_vacols) }
       .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals_available_to_judge(distribution.judge, num).map { |age| [age, sym] } }
       .sort_by { |age, _| age }
       .first(num)
@@ -75,6 +80,7 @@ module ByDocketDateDistribution
     return {} unless num > 0
 
     dockets
+      .select { |key, _| key != :legacy || (key == :legacy && !@skip_vacols) }
       .flat_map { |sym, docket| docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(distribution.judge, num).map { |age| [age, sym] } }
       .sort_by { |age, _| age }
       .first(num)
