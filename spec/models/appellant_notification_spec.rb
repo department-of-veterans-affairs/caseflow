@@ -98,6 +98,8 @@ describe AppellantNotification do
       let(:legacy_appeal) { create(:legacy_appeal, :with_root_task, vbms_id: 123_456) }
       let(:params) do
         {
+          appeal: legacy_appeal,
+          appeal_type: legacy_appeal.class.to_s,
           appeal_id: legacy_appeal.id,
           citation_number: "A18123456",
           decision_date: Time.zone.today,
@@ -110,13 +112,15 @@ describe AppellantNotification do
       let(:dispatch) { LegacyAppealDispatch.new(appeal: legacy_appeal, params: params) }
       it "Will notify appellant that the legacy appeal decision has been mailed (Non Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, non_contested)
-        dispatch.complete_root_task!
+        decision_document = dispatch.send "create_decision_document_and_submit_for_processing!", params
+        decision_document.process!
       end
       it "Will notify appellant that the legacy appeal decision has been mailed (Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, contested)
         allow(legacy_appeal).to receive(:contested_claim).and_return(true)
         legacy_appeal.contested_claim
-        dispatch.complete_root_task!
+        decision_document = dispatch.send "create_decision_document_and_submit_for_processing!", params
+        decision_document.process!
       end
     end
 
@@ -125,6 +129,8 @@ describe AppellantNotification do
       let(:contested_appeal) { create(:appeal, :with_assigned_bva_dispatch_task, :with_request_issues) }
       let(:params) do
         {
+          appeal: appeal,
+          appeal_type: appeal.class.to_s,
           appeal_id: appeal.id,
           citation_number: "A18123456",
           decision_date: Time.zone.today,
@@ -134,6 +140,8 @@ describe AppellantNotification do
       end
       let(:contested_params) do
         {
+          appeal: contested_appeal,
+          appeal_type: contested_appeal.class.to_s,
           appeal_id: contested_appeal.id,
           citation_number: "A18123456",
           decision_date: Time.zone.today,
@@ -159,13 +167,15 @@ describe AppellantNotification do
       end
       it "Will notify appellant that the AMA appeal decision has been mailed (Non Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, non_contested)
-        dispatch.complete_dispatch_root_task!
+        decision_document = dispatch.send "create_decision_document_and_submit_for_processing!", params
+        decision_document.process!
       end
       it "Will notify appellant that the AMA appeal decision has been mailed (Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(contested_appeal, contested)
         allow(contested_appeal).to receive(:contested_claim?).and_return(true)
         contested_appeal.contested_claim?
-        contested_dispatch.complete_dispatch_root_task!
+        contested_decision_document = contested_dispatch.send "create_decision_document_and_submit_for_processing!", contested_params
+        contested_decision_document.process!
       end
     end
   end
