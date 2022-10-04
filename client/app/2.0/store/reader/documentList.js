@@ -1,6 +1,6 @@
 // External Dependencies
-import { createSlice, createAction, createAsyncThunk, current } from '@reduxjs/toolkit';
-import { isNil, pickBy, isEmpty } from 'lodash';
+import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { isNil, pickBy } from 'lodash';
 import querystring from 'querystring';
 
 // Local Dependencies
@@ -124,7 +124,11 @@ const documentListSlice = createSlice({
         state.filterCriteria.category[action.payload.categoryName] = action.payload.checked;
       },
       prepare: (categoryName, checked, props) =>
-        addMetaLabel(`${checked ? 'select' : 'unselect'}-category-filter`, { categoryName, checked, ...props }, categoryName)
+        addMetaLabel(
+          `${checked ? 'select' : 'unselect'}-category-filter`,
+          { categoryName, checked, ...props },
+          categoryName
+        )
     },
     toggleDropdownFilterVisibility: {
       reducer: (state, action) => {

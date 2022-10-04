@@ -35,10 +35,12 @@ export const virtualHearing = {
     aliasWithHost: 'BVA0000009@care.evn.va.gov',
     hostPin: '8600030#',
     guestPin: '2684353125#',
+    /* eslint-disable max-len*/
     hostLink:
       'https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host',
     guestLink:
       'https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest',
+    /* eslint-enable max-len*/
     jobCompleted: true,
   },
 };

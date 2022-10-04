@@ -150,7 +150,7 @@ describe('OrgRow', () => {
 
       describe('request cases dropdown', () => {
         const labelText = 'requestedDistribution-1';
-        const dropdownOpts = requestCasesOpts.map((opt) => opt.label);
+
         const testOpts = [
           { label: requestCasesOpts[0].label, payload: { ama_only_request: false } },
           { label: requestCasesOpts[1].label, payload: { ama_only_request: true } },

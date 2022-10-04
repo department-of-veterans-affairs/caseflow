@@ -76,7 +76,7 @@ export const certificationUpdateStart = (params, dispatch) => {
     poa_correct_in_bgs: poaCorrectInBgs
   };
 
-  /* eslint-enable "camelcase" */
+  /* eslint-enable camelcase */
 
   ApiUtil.put(`/certifications/${params.vacolsId}/update_v2`, { data: { update } }).
     then(() => {

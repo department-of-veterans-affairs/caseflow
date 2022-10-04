@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { select, boolean, button } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
 import { BrowserRouter } from 'react-router-dom';
@@ -48,11 +48,11 @@ const Wrapped = (props) => {
   return (
     <Details
       hearing={props.hearing}
-      saveHearing={(e) => action('save')(e.target)}
-      goBack={(e) => action('save')(e.target)}
-      onReceiveAlerts={(e) => action('save')(e.target)}
-      onReceiveTransitioningAlert={(e) => action('save')(e.target)}
-      transitionAlert={(e) => action('save')(e.target)}
+      saveHearing={(event) => action('save')(event.target)}
+      goBack={(event) => action('save')(event.target)}
+      onReceiveAlerts={(event) => action('save')(event.target)}
+      onReceiveTransitioningAlert={(event) => action('save')(event.target)}
+      transitionAlert={(event) => action('save')(event.target)}
     />
   );
 };

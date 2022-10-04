@@ -48,7 +48,7 @@ export const certificationUpdateStart = (params, dispatch) => {
     form9_type: form9Type,
     hearing_preference: params.hearingPreference
   };
-  /* eslint-enable "camelcase" */
+  /* eslint-enable camelcase */
 
   ApiUtil.put(`/certifications/${params.vacolsId}/update_v2`, { data: { update } }).
     then(() => {

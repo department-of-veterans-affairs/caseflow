@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 const uiData = {
   ui: {
     highlightFormItems: false,
@@ -13,7 +14,6 @@ const uiData = {
   }
 };
 
-/* eslint-disable max-len */
 const caregiverActions = [
   {
     func: 'vha_caregiver_support_mark_task_in_progress',
@@ -368,6 +368,7 @@ const EducationAssessDocumentationTaskData = {
         value: 'modal/mark_task_in_progress',
         data: {
           modal_title: 'Mark task in progress',
+          /* eslint-disable-next-line max-len*/
           modal_body: 'Please confirm that you are actively working on collecting documents for this appeal.  Once confirmed, other members of your organization will no longer be able to mark this task in progress.',
           message_title: 'You have successfully marked your task as in progress',
           message_detail: 'This appeal will be visible in the "In Progress" tab of your Queue',
@@ -535,3 +536,4 @@ export const camoToProgramOfficeToCamoData = {
   },
   ...uiData
 };
+/* eslint-enable max-lines */

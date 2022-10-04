@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { IssueRemandReasonCheckbox } from 'app/queue/components/remandReasons/IssueRemandReasonCheckbox';
-import COPY from 'COPY';
+import COPY from '../../../../../COPY';
 
 describe('IssueRemandReasonCheckbox', () => {
   const onChange = jest.fn();

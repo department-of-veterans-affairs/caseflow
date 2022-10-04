@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { HearingTypeConversion } from './HearingTypeConversion';
-import { legacyAppealForTravelBoard, veteranInfoWithoutEmail } from '../../../test/data/appeals';
+import { legacyAppealForTravelBoard } from '../../../test/data/appeals';
 import { queueWrapper as Wrapper } from '../../../test/data/stores/queueStore';
 
 export default {

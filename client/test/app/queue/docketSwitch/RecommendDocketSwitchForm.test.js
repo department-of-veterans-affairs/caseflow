@@ -7,7 +7,7 @@ import { RecommendDocketSwitchForm } from 'app/queue/docketSwitch/recommendDocke
 import {
   DOCKET_SWITCH_RECOMMENDATION_TITLE,
   DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS,
-} from 'COPY';
+} from '../../../../COPY';
 import { sprintf } from 'sprintf-js';
 
 const judgeOptions = [

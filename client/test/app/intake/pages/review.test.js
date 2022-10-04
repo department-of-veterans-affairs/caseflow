@@ -18,7 +18,6 @@ const AFTER_AMA_TEST_DATE = addDays(new Date(DATES.AMA_ACTIVATION_TEST), 1);
 const validReviewAppealData = {
   'receipt-date': AFTER_AMA_DATE,
   'docket-type': 'docket',
-  'docket-type': 'type',
   'homelessness-type': 'false',
   'original-hearing-request-type': 'video',
   'legacy-opt-in': 'true',

@@ -41,7 +41,7 @@ export const certificationUpdateStart = (params, dispatch) => {
     certifying_official_title: certifyingOfficialTitle
   };
 
-  /* eslint-enable "camelcase" */
+  /* eslint-enable camelcase */
 
   ApiUtil.post(`/certifications/${params.vacolsId}/certify_v2`, { data: { update } }).
     then(() => {

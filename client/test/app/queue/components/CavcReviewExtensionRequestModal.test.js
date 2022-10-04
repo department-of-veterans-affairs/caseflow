@@ -4,7 +4,7 @@ import { mount } from 'enzyme';
 import { CavcReviewExtensionRequestModalUnconnected } from 'app/queue/components/CavcReviewExtensionRequestModal';
 import { SearchableDropdown } from 'app/components/SearchableDropdown';
 
-import COPY from 'COPY';
+import COPY from '../../../../COPY';
 
 describe('CavcReviewExtensionRequestModal', () => {
   beforeEach(() => jest.clearAllMocks());

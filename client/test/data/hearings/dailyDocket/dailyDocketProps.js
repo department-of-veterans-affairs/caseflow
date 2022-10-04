@@ -647,6 +647,7 @@ export const dailyDocketPropsConferenceLinkError = {
     updatedAt: '2022-05-23T14:04:28.593-04:00',
     conferenceLink: {
       hostPin: '1116504',
+      /* eslint-disable-next-line max-len*/
       hostLink: 'https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000004@example.va.gov&pin=1116504&role=host',
       alias: null
     }

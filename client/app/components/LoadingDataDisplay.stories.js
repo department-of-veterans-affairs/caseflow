@@ -13,7 +13,9 @@ export default {
 
 const TIMEOUT_MS = 4000;
 const createLoadPromise = () => new Promise(() => {});
-const createFailingPromise = () => new Promise((resolve, reject) => setTimeout(() => reject({ status: 502 }), TIMEOUT_MS / 10));
+const createFailingPromise = () => new Promise(
+  (resolve, reject) => setTimeout(() => reject({ status: 502 }), TIMEOUT_MS / 10)
+);
 const createSlowPromise = () => new Promise((resolve, reject) => setTimeout(() => resolve(), TIMEOUT_MS));
 
 const Template = (args) => {
