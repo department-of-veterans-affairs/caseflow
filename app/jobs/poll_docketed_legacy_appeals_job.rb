@@ -35,14 +35,14 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
   # Purpose: To filter for legacy appeals that didnt already get an appeal docketed notification sent
   # Params: vacols_ids - An array of vacols ids for docketed legacy appeals
   # Return: an array of vacols ids
-  def filter_duplicate_legacy_notifications(vacols_ids) 
+  def filter_duplicate_legacy_notifications(vacols_ids)
     duplicate_ids = Notification.where(appeals_id: vacols_ids).pluck(:appeals_id)
     vacols_ids.reject { |id| duplicate_ids.include?(id) }
   end
 
   # Purpose: To send the 'appeal docketed' notification for the legacy appeals
-  # Params: vacols_ids - An array of filtered vacols ids for legacy appeals that didnt already have the notification sent
-  # Return: The filtered vacols ids that was received after filtering out all ids that already existed in the notifications table
+  # Params: vacols_ids - An array of filtered vacols ids for legacy appeals that didnt already have notifications sent
+  # Return: The vacols ids that filtered out the duplicates
   def send_legacy_notifications(vacols_ids)
     vacols_ids.each do |vacols_id|
       AppellantNotification.notify_appellant(LegacyAppeal.find_by_vacols_id(vacols_id), "Hearing docketed")

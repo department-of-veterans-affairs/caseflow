@@ -11,6 +11,8 @@ describe PollDocketedLegacyAppealsJob, type: :job do
 
     let(:vacols_ids) { %w[12340 12341 12342 12343 12344 12345 12346 12347 12348 12349] }
     let(:bfac_codes) { %w[1 3 7] }
+
+    # rubocop:disable Style/BlockDelimiters
     let(:cases) {
       create_list(:case, 10) do |vacols_case, i|
         bfmpro = (i == 2 || i == 5) ? "HIS" : "ACT"
@@ -44,6 +46,8 @@ describe PollDocketedLegacyAppealsJob, type: :job do
       claim_histories_copy.slice!(2, 4)
       claim_histories_copy
     }
+    # rubocop:enable Style/BlockDelimiters
+
     let(:recent_docketed_appeal_ids) { %w[12340 12346 12348] }
 
     let(:filtered_docketed_appeal_ids) { %w[12340 12346] }
@@ -59,9 +63,11 @@ describe PollDocketedLegacyAppealsJob, type: :job do
       expect(PollDocketedLegacyAppealsJob.new.claim_histories).to eq(filtered_claim_histories)
     end
 
+    # rubocop:disable Layout/LineLength
     it "should filter for all cases that have been recently docketed" do
       expect(PollDocketedLegacyAppealsJob.new.most_recent_docketed_appeals(filtered_claim_histories)).to eq(recent_docketed_appeal_ids)
     end
+    # rubocop:enable Layout/LineLength
 
     it "should filter for all legacy appeals that havent already gotten a notification yet" do
       expect(PollDocketedLegacyAppealsJob.perform_now).to eq(filtered_docketed_appeal_ids)
