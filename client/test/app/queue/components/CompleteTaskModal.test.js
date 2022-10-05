@@ -71,6 +71,7 @@ describe('CompleteTaskModal', () => {
   describe('vha_send_to_board_intake', () => {
     const taskType = 'VhaDocumentSearchTask';
     const buttonText = COPY.MODAL_SEND_BUTTON;
+    const instructionsLabel = COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY;
     const modalType = 'vha_send_to_board_intake';
 
     test('modal title is Send to Board Intake', () => {
@@ -88,13 +89,16 @@ describe('CompleteTaskModal', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
       enterModalRadioOptions(
-        'Correct documents have been successfully added'
+        'Correct documents have been successfully added',
+        instructionsLabel,
+        'CAMO -> BVA Intake',
+        buttonText
       );
 
       expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
       enterTextFieldOptions(
-        'Provide additional context and/or documents:',
+        COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY,
         'CAMO -> BVA Intake'
       );
 
@@ -118,7 +122,7 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
       enterTextFieldOptions(
-        'Provide additional context and/or documents:',
+        COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY,
         'CAMO -> BVA Intake'
       );
 
@@ -430,7 +434,7 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
       enterTextFieldOptions(
-        'Provide instructions and context for this action:',
+        COPY.PRE_DOCKET_MODAL_BODY,
         'EMO Return to Board Intake'
       );
 
