@@ -49,6 +49,10 @@ class Distribution < CaseflowRecord
   rescue ActiveRecord::StatementInvalid, OCIError, StandardError => error
     # DO NOT use update! because we want to avoid validations and saving any cached associations.
     # Prevent prod database from getting Stacktraces as this is debugging information
+    if (error.class == ActiveRecord::StatementInvalid || OCIError)
+      docket_details = "<!here> Error occurred while distributing #{@current_docket} docket cases"}
+      slack_service.send_notification(docket_details.join("\n"), self.class.name, "#appeals-job-alerts")
+    end
     if Rails.deploy_env?(:prod)
       update_columns(status: "error", errored_at: Time.zone.now)
     else
