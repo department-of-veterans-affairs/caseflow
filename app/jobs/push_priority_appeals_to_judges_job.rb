@@ -30,7 +30,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   rescue ActiveRecord::StatementInvalid, OCIError, StandardError => error
     if (error.class == ActiveRecord::StatementInvalid || OCIError) && !@skip_vacols
       @skip_vacols = true
-      puts "##### VACOLS ERROR: #{error}, skip VACOLS: #{@skip_vacols}"
       retry
     end
     start_time ||= Time.zone.now # temporary fix to get this job to succeed
@@ -143,9 +142,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # Calculates a target that will distribute all ready appeals so the remaining counts for each judge will produce
   # even case counts over a full month (or as close as we can get to it)
   def priority_target
-    return @priority_target if @priority_target
-
-    @priority_target ||= begin
+    @priority_target = begin
       distribution_counts = priority_distributions_this_month_for_eligible_judges.values
       target = 0
       if distribution_counts.count > 0
