@@ -61,7 +61,7 @@ export const IntakeEditFrame = (props) => {
   };
 
   const displayNotEditableMessage = () => {
-    const { asyncJobUrl } = this.props.serverIntake;
+    const { asyncJobUrl } = props.serverIntake.asyncJobUrl;
 
     return (
       <React.Fragment>
