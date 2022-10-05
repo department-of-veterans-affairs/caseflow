@@ -15,10 +15,9 @@ import {
   selectCustomDays
 } from './modalUtils';
 import StartHoldModal from 'app/queue/components/StartHoldModal';
-import { 
+import {
   vhaPOToCAMOData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
-import Button from '../../../../app/components/Button';
 
 const renderStartHoldModal = (modalType, storeValues, taskType) => {
   const appealId = getAppealId(storeValues);
@@ -63,7 +62,7 @@ describe('Whenever VHA PO places a task on hold for set number of days', () => {
     expect(screen.getByRole('button', { name: COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON })).toBeDisabled();
 
     enterTextFieldOptions(
-      'Notes:',
+      'Notes',
       'Here is the context that you have requested.'
     );
     expect(screen.getByRole('button', { name: COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON })).not.toBeDisabled();
@@ -99,7 +98,7 @@ describe('Whenever VHA PO places a task on hold for custom number of days', () =
     expect(screen.getByRole('button', { name: COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON })).toBeDisabled();
 
     enterTextFieldOptions(
-      'Notes:',
+      'Notes',
       'Here is the context that you have requested.'
     );
     expect(screen.getByRole('button', { name: COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON })).not.toBeDisabled();

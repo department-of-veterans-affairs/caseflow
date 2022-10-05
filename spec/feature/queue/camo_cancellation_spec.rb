@@ -49,11 +49,11 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
       end
       step "trigger error state" do
         submit_button = find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON)
-        expect(submit_button[:disabled]).to eq "true"       
+        expect(submit_button[:disabled]).to eq "true"
       end
       step "submit valid form" do
         find("label", text: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_APPEALABLE).click
-        fill_in("Provide additional context and/or documents:", with: "This should be cancelled.")
+        fill_in(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY, with: "This should be cancelled.")
         find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
       end
       step "redirect and confirmation" do
