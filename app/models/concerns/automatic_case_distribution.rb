@@ -99,7 +99,7 @@ module AutomaticCaseDistribution
       evidence_submission_proportion: docket_proportions[:evidence_submission],
       hearing_proportion: docket_proportions[:hearing],
       nonpriority_iterations: @nonpriority_iterations,
-      algorithm: 'proportions'
+      algorithm: "proportions"
     }
   end
 

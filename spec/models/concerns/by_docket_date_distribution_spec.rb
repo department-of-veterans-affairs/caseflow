@@ -107,7 +107,6 @@ describe ByDocketDateDistribution, :all_dbs do
     end
   end
 
-
   context "#num_oldest_priority_appeals_for_judge_by_docket" do
     it "returns an empty hash if provided num is zero" do
       return_value = @new_acd.send :num_oldest_priority_appeals_for_judge_by_docket, @new_acd, 0
@@ -163,7 +162,7 @@ describe ByDocketDateDistribution, :all_dbs do
         .and_return(add_dates_to_date_array(@new_acd.batch_size))
 
       return_array = @new_acd.send(
-      :num_oldest_nonpriority_appeals_for_judge_by_docket,
+        :num_oldest_nonpriority_appeals_for_judge_by_docket,
         @new_acd,
         @new_acd.batch_size
       )

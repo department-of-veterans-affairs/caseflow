@@ -54,7 +54,7 @@ module ByDocketDateDistribution
       direct_review_due_count: direct_review_due_count,
       legacy_hearing_backlog_count: VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge),
       nonpriority_iterations: @nonpriority_iterations,
-      algorithm: 'by_docket_date'
+      algorithm: "by_docket_date"
     }
   end
 
@@ -62,7 +62,8 @@ module ByDocketDateDistribution
     return {} unless num > 0
 
     dockets
-      .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals_available_to_judge(distribution.judge, num).map { |age| [age, sym] } }
+      .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals_available_to_judge(
+        distribution.judge, num).map { |age| [age, sym] } }
       .sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }
@@ -73,7 +74,8 @@ module ByDocketDateDistribution
     return {} unless num > 0
 
     dockets
-      .flat_map { |sym, docket| docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(distribution.judge, num).map { |age| [age, sym] } }
+      .flat_map { |sym, docket| docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(
+        distribution.judge, num).map { |age| [age, sym] } }
       .sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }

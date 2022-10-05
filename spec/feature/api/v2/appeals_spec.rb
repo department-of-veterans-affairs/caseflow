@@ -294,7 +294,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
     let(:legacy_opt_in_approved) { false }
     let(:veteran_is_not_claimant) { false }
     let(:profile_date) { receipt_date - 1 }
-    let(:veteran) { create(:veteran, file_number: veteran_file_number)}
+    let(:veteran) { create(:veteran, file_number: veteran_file_number) }
 
     let!(:hlr) do
       create(:higher_level_review,

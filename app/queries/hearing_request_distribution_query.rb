@@ -40,8 +40,8 @@ class HearingRequestDistributionQuery
     # returning early as most_recent_held_hearings_not_tied_to_any_judge is redundant
     if @use_by_docket_date
       return [
-          with_held_hearings,
-          no_hearings_or_no_held_hearings
+        with_held_hearings,
+        no_hearings_or_no_held_hearings
       ].flatten.uniq
     end
 
