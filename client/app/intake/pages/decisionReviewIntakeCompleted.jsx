@@ -96,7 +96,7 @@ const getChecklistItems = (formType, requestIssues, isInformalConferenceRequeste
     }
 
     if (checkIssuesForEducation(requestIssues) && checkIfPreDocketed(requestIssues)) {
-      statusMessage = 'Appeal created and sent to Education for document assessment.';
+      statusMessage = 'Appeal created and sent to Education Service for document assessment.';
     }
 
     return [<Fragment>
