@@ -76,7 +76,13 @@ export const formatRelationships = (relationships) => {
 };
 
 export const getDefaultPayeeCode = (state, claimant) => {
-  return (claimant ? _.find(state.relationships, { value: claimant }).defaultPayeeCode : null);
+  if (claimant) {
+    const defaultPayeeCode = _.find(state.relationships, { value: claimant })?.defaultPayeeCode;
+
+    return defaultPayeeCode ?? null;
+  }
+
+  return null;
 };
 
 export const formatRadioOptions = (options) => {
