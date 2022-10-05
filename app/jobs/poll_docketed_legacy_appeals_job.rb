@@ -8,13 +8,14 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
 
   def perform
     vacols_ids = most_recent_docketed_appeals(claim_histories)
-    send_legacy_notifications(vacols_ids)
+    filtered_vacols_ids = filter_duplicate_legacy_notifications(vacols_ids)
+    send_legacy_notifications(filtered_vacols_ids)
   end
 
   # Purpose: To get a list of claim location histories to be used to get the date for docketing
   # Return: An array of case location history records
   def claim_histories
-    vacols_appeals = VACOLS::CaseDocket.where(bfmpro: "ACT", bfac: %w[1 3 7])
+    vacols_appeals = VACOLS::Case.where(bfmpro: "ACT", bfac: %w[1 3 7])
     VACOLS::Priorloc.where(lockey: vacols_appeals.pluck(:bfkey), locstto: "01")
   end
 
@@ -31,15 +32,21 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
     vacols_ids
   end
 
-  # Purpose: To send the 'appeal docketed' notification for the legacy appeals
-  # Params: vacols_ids - An array of vacols ids used for check for duplicate emails and the legacy appeal itself
-  # Return: The filtered vacols ids that was recieved after filtering out all ids that already existed in the notifications table
-  def send_legacy_notifications(vacols_ids)
+  # Purpose: To filter for legacy appeals that didnt already get an appeal docketed notification sent
+  # Params: vacols_ids - An array of vacols ids for docketed legacy appeals
+  # Return: an array of vacols ids
+  def filter_duplicate_legacy_notifications(vacols_ids) 
     duplicate_ids = Notification.where(appeals_id: vacols_ids).pluck(:appeals_id)
-    filtered_vacols_ids = vacols_ids.reject { |id| duplicate_ids.include?(id) }
-    filtered_vacols_ids.each do |vacols_id|
+    vacols_ids.reject { |id| duplicate_ids.include?(id) }
+  end
+
+  # Purpose: To send the 'appeal docketed' notification for the legacy appeals
+  # Params: vacols_ids - An array of filtered vacols ids for legacy appeals that didnt already have the notification sent
+  # Return: The filtered vacols ids that was received after filtering out all ids that already existed in the notifications table
+  def send_legacy_notifications(vacols_ids)
+    vacols_ids.each do |vacols_id|
       AppellantNotification.notify_appellant(LegacyAppeal.find_by_vacols_id(vacols_id), "Hearing docketed")
     end
-    filtered_vacols_ids
+    vacols_ids
   end
 end
