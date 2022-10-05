@@ -727,7 +727,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject[12].include?(ready_priority_evidence_case.uuid)).to be true
       expect(subject[12].include?(ready_priority_direct_case.uuid)).to be true
 
-
       expect(subject.last).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
     end
 

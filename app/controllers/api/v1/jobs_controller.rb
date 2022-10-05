@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Api::V1::JobsController < Api::ApplicationController
-
   def create
     # start job asynchronously as given by the job_type post param
     job = SUPPORTED_JOBS[params.require(:job_type)]
