@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+
 class HearingRequestDocket < Docket
   def docket_type
     Constants.AMA_DOCKETS.hearing
