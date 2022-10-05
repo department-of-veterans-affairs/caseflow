@@ -42,12 +42,14 @@ const PageRoutes = [
     path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`}
     title="Address Motion to Vacate | Caseflow"
     component={AddressMotionToVacateView}
+    key="queueAddressMotionToVacate"
   />,
 
   // This route handles the remaining checkout flow
   <Route
     path="/queue/appeals/:appealId/tasks/:taskId/motion_to_vacate_checkout"
     component={MotionToVacateFlowContainer}
+    key="queueMotionToVacateCheckout"
   />
 ];
 
@@ -61,11 +63,13 @@ const ModalRoutes = [
     ].join('/')}
     title="Return to Litigation Support | Caseflow"
     component={RoutedReturnToLitSupport}
+    key="modalReturnToLitSupport"
   />,
 
   <Route
     path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`}
     component={ReviewMotionToVacateView}
+    key="modalSendMotionToVacateToJudge"
   />
 ];
 

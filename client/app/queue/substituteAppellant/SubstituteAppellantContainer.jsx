@@ -35,21 +35,21 @@ export const SubstituteAppellantContainer = () => {
   return (
     <AppSegment>
       <ProgressBar sections={pbSections} />
-      <Switch>
+      <Switch key="appellantViewsSwitch">
         <Redirect exact from={[url, `${url}/`]} to={`${url}/basics`} />
-        <Route path={`${path}/basics`} title="Substitute Appellant | Caseflow">
+        <Route path={`${path}/basics`} title="Substitute Appellant | Caseflow" key="substituteAppellantBasicView">
           <SubstituteAppellantBasicsView />
         </Route>
 
-        <Route path={`${path}/poa`} title="Substitute Appellant | Caseflow">
+        <Route path={`${path}/poa`} title="Substitute Appellant | Caseflow" key="substituteAppellantPOAView">
           <SubstituteAppellantPoaView />
         </Route>
 
-        <Route path={`${path}/tasks`} title="Substitute Appellant | Caseflow">
+        <Route path={`${path}/tasks`} title="Substitute Appellant | Caseflow" key="substituteAppellantTasksView">
           <SubstituteAppellantTasksView />
         </Route>
 
-        <Route path={`${path}/review`} title="Substitute Appellant | Caseflow">
+        <Route path={`${path}/review`} title="Substitute Appellant | Caseflow" key="substituteAppellantReview">
           <SubstituteAppellantReviewContainer />
         </Route>
       </Switch>

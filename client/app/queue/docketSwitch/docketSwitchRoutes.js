@@ -14,6 +14,7 @@ const PageRoutes = [
       TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.value
     }`}
     title={`${TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.label} | Caseflow`}
+    key="queueDocketSwitchSendToJudge"
   >
     <RecommendDocketSwitchContainer />
   </PageRoute>,
@@ -23,19 +24,21 @@ const PageRoutes = [
       TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.value
     }`}
     title={`${TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.label} | Caseflow`}
+    key="queueDocketSwitchJudgeRuling"
   >
     <DocketSwitchRulingContainer />
   </PageRoute>,
 
   // This route handles the remaining checkout flow
-  <Route path="/queue/appeals/:appealId/tasks/:taskId/docket_switch/checkout">
+  <Route path="/queue/appeals/:appealId/tasks/:taskId/docket_switch/checkout" key="leftoverCheckoutFlowRoute">
     {/* The component here will add additional `Switch` and child routes */}
-    <Switch>
+    <Switch key="docketSwitchCheckoutSwitch">
       <PageRoute
         path={`/queue/appeals/:appealId/tasks/:taskId/${
       TASK_ACTIONS.DOCKET_SWITCH_DENIED.value
     }`}
         title={`${TASK_ACTIONS.DOCKET_SWITCH_DENIED.label} | Caseflow`}
+        key="queueDocketSwitchDenied"
       >
         <DocketSwitchDenialContainer />
       </PageRoute>
@@ -44,6 +47,7 @@ const PageRoutes = [
       TASK_ACTIONS.DOCKET_SWITCH_GRANTED.value
     }`}
         title={`${TASK_ACTIONS.DOCKET_SWITCH_GRANTED.label} | Caseflow`}
+        key="queueDocketSwitchGranted"
       >
         <DocketSwitchGrantContainer />
       </PageRoute>
