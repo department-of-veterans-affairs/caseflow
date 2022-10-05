@@ -725,4 +725,8 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   })
 };
 
+// Individual Rows do not need rowObjects and instead need a singular rowObject
+delete Row.propTypes.rowObjects;
+Row.propTypes = { ...Row.propTypes, ...{ rowObject: PropTypes.object.isRequired } };
+
 /* eslint-enable max-lines */

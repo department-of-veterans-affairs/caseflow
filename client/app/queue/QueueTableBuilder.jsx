@@ -195,7 +195,7 @@ class QueueTableBuilder extends React.PureComponent {
             totalTaskCount={totalTaskCount}
             taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
             tabPaginationOptions={
-              paginationOptions.tab === tabConfig.name && paginationOptions
+              (paginationOptions.tab === tabConfig.name && paginationOptions) || {}
             }
             useTaskPagesApi={
               config.use_task_pages_api && !tabConfig.contains_legacy_tasks

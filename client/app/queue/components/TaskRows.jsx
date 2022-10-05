@@ -449,7 +449,7 @@ class TaskRows extends React.PureComponent {
     };
     const ComponentName = componentMap[componentProps.timelineEvent?.type];
 
-    return ComponentName ? <ComponentName {...componentProps} /> : null;
+    return ComponentName ? <ComponentName key="timelineComponent" {...componentProps} /> : null;
   };
 
   render = () => {
