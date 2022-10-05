@@ -61,7 +61,7 @@ export const IntakeEditFrame = (props) => {
   };
 
   const displayNotEditableMessage = () => {
-    const { asyncJobUrl } = this.props.serverIntake;
+    const asyncJobUrl = props.serverIntake.asyncJobUrl;
 
     return (
       <React.Fragment>
@@ -73,11 +73,9 @@ export const IntakeEditFrame = (props) => {
   };
 
   const displayCanceledMessage = (details) => {
-    const {
-      editIssuesUrl,
-      hasClearedNonratingEp,
-      hasClearedRatingEp,
-    } = this.props.serverIntake;
+    const editIssuesUrl = props.serverIntake.editIssuesUrl;
+    const hasClearedNonratingEp = props.serverIntake.hasClearedNonratingEp;
+    const hasClearedRatingEp = props.serverIntake.hasClearedRatingEp;
 
     if (hasClearedNonratingEp || hasClearedRatingEp) {
       return (
