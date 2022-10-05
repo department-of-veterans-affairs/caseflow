@@ -30,6 +30,10 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     duration = time_ago_in_words(start_time)
     slack_msg = "<!here>\n [ERROR] after running for #{duration}: #{error.message}"
     slack_service.send_notification(slack_msg, self.class.name, "#appeals-job-alerts")
+    if error.code == 12170
+      docket_details = docket_coordinator.dockets.map{|docket_type, d| "<!here> Error occurred while distributing #{docket_type} docket cases"}
+      slack_service.send_notification(docket_details.join("\n"), self.class.name, "#appeals-job-alerts")
+    end
     log_error(error)
   ensure
     datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
