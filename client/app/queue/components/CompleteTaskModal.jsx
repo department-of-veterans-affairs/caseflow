@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import RadioField from '../../components/RadioField';
-import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, setHeight, slimHeight } from '../constants';
+import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, setHeight } from '../constants';
 import TextareaField from 'app/components/TextareaField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Alert from 'app/components/Alert';
@@ -105,7 +105,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
     <React.Fragment>
       {taskConfiguration && taskConfiguration.modal_body}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
-        <div>
+        <div style= {{ marginTop: '1.25rem' }}>
           <RadioField
             name="completeTaskDocLocation"
             id="completeTaskDocLocation"
@@ -124,8 +124,8 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
               id="completeTaskOtherInstructions"
               onChange={handleTextFieldChange}
               value={state.otherInstructions}
-              styling={marginTop(4)}
-              textAreaStyling={slimHeight}
+              styling={marginTop(1.0)}
+              textAreaStyling={setHeight(4.5)}
               errorMessage={props.highlightInvalid &&
                 !validInstructions(state.otherInstructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
             />}
@@ -136,7 +136,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             onChange={(value) => setState({ instructions: value })}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             value={state.instructions}
-            styling={marginTop(4)}
+            styling={marginTop(1.5)}
             errorMessage={props.highlightInvalid &&
               !validInstructions(state.instructions) &&
               !isOptional() ? COPY.EMPTY_INSTRUCTIONS_ERROR :
@@ -206,12 +206,12 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.SELECT_RADIO_ERROR : null}
           />
           <TextareaField
-            label={COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY}
+            label={taskConfiguration.instructions_label || COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY}
             name="instructions"
             id="vhaSendToBoardIntakeInstructions"
             onChange={(value) => setState({ instructions: value })}
             value={state.instructions}
-            styling={marginTop(4)}
+            styling={marginTop(2)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
               !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
@@ -241,7 +241,7 @@ const ReturnToBoardIntakeModal = ({ props, state, setState }) => {
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <div>
           <TextareaField
-            label={COPY.EMO_RETURN_TO_BOARD_INTAKE_MODAL_BODY}
+            label={taskConfiguration.instructions_label || COPY.PRE_DOCKET_INSTRUCTIONS_LABEL}
             name="instructions"
             id="emoReturnToBoardIntakeInstructions"
             onChange={(value) => setState({ instructions: value })}
@@ -613,12 +613,11 @@ class CompleteTaskModal extends React.Component {
     return (
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
-        /* eslint-disable-next-line camelcase */
-        button={taskData?.modal_button_text}
+        button={taskData.modal_button_text}
         submitDisabled={!this.validateForm()}
         validateForm={this.validateForm}
         submit={this.submit}
-        pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
+        pathAfterSubmit={taskData.redirect_after || '/queue'}
         submitButtonClassNames={modalAttributes.submitButtonClassNames || ['usa-button']}
       >
         {this.props.task ?

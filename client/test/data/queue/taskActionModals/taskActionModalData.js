@@ -252,7 +252,7 @@ const educationDocumentSearchTaskData = {
             }
           ],
           modal_title: 'Assign to RPO',
-          modal_body: 'Provide instructions and context for this action:',
+          modal_body: 'Provide instructions and context for this action',
           modal_selector_placeholder: 'Select RPO',
           modal_button_text: 'Assign',
           type: 'EducationAssessDocumentationTask',
@@ -267,6 +267,7 @@ const educationDocumentSearchTaskData = {
         data: {
           modal_title: 'Return to Board Intake',
           modal_button_text: 'Return',
+          instructions_label: 'Provide instructions and context for this action',
           type: 'EducationDocumentSearchTask',
           redirect_after: '/organizations/edu-emo'
         }

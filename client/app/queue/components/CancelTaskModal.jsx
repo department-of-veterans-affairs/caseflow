@@ -72,20 +72,13 @@ const CancelTaskModal = (props) => {
 
   // Additional properties - should be removed later once generic submit buttons are styled the same across all modals
   const modalProps = {};
-  const getModalTitle = get(taskData, 'modal_title');
-
-  if (
-    getModalTitle === COPY.EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE ||
-    getModalTitle === COPY.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE
-  ) {
-    modalProps.submitButtonClassNames = ['usa-button'];
-  }
 
   if ([
     'AssessDocumentationTask',
     'EducationAssessDocumentationTask',
   ].includes(task?.type)) {
     modalProps.submitDisabled = !validateForm();
+    modalProps.submitButtonClassNames = ['usa-button'];
   }
 
   return (
@@ -105,7 +98,7 @@ const CancelTaskModal = (props) => {
       }
       {shouldShowTaskInstructions &&
         <TextareaField
-          name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+          name={taskData?.instructions_label ?? COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           errorMessage={highlightFormItems && instructions.length === 0 ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
           id="taskInstructions"
           onChange={setInstructions}

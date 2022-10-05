@@ -78,6 +78,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             expect(page).to have_button("Submit appeal")
             click_intake_finish
             expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+            expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_PRE_DOCKET_INTAKE_SUCCESS_TITLE)
 
             vha_document_search_task = VhaDocumentSearchTask.last
             appeal = vha_document_search_task.appeal
@@ -346,6 +347,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_button("Submit appeal")
           click_intake_finish
           expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+          expect(page).to have_content(COPY::VHA_CAMO_PRE_DOCKET_INTAKE_SUCCESS_TITLE)
 
           vha_document_search_task = VhaDocumentSearchTask.last
           appeal = vha_document_search_task.appeal
@@ -398,7 +400,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
           find(".cf-select__control", text: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER).click
           find("div", class: "cf-select__option", text: program_office.name).click
-          fill_in("Provide instructions and context for this action:", with: po_instructions)
+          fill_in(COPY::PRE_DOCKET_MODAL_BODY, with: po_instructions)
           find("button", class: "usa-button", text: COPY::MODAL_ASSIGN_BUTTON).click
 
           expect(page).to have_current_path("/organizations/#{camo.url}?tab=camo_assigned&page=1")
@@ -454,7 +456,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
           find(".cf-select__control", text: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER).click
           find("div", class: "cf-select__option", text: regional_office.name).click
-          fill_in("Provide instructions and context for this action:", with: ro_instructions)
+          fill_in(COPY::PRE_DOCKET_MODAL_BODY, with: ro_instructions)
           find("button", class: "usa-button", text: COPY::MODAL_ASSIGN_BUTTON).click
 
           expect(page).to have_current_path("/organizations/#{program_office.url}?tab=po_assigned&page=1")
@@ -543,7 +545,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY)
 
           find("label", text: "Correct documents have been successfully added").click
-          fill_in("Provide additional context and/or documents:", with: "This appeal is ready to be docketed.")
+          fill_in(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY, with: "This appeal is ready to be docketed.")
           find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
 
           expect(page).to have_content(
@@ -700,6 +702,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_button("Submit appeal")
         click_intake_finish
         expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+        expect(page).to have_content(COPY::EDUCATION_PRE_DOCKET_INTAKE_SUCCESS_TITLE)
       end
 
       step "User can search the case and see the Pre Docketed status" do
@@ -900,7 +903,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find(class: "cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.EMO_RETURN_TO_BOARD_INTAKE.label).click
         expect(page).to have_content(COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
-        expect(page).to have_content(COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_BODY)
+        expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
       end
 
       step "If no text is entered into the modal's textarea it prevents submission" do
