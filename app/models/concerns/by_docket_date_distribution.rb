@@ -10,6 +10,7 @@ module ByDocketDateDistribution
   def priority_push_distribution(limit)
     @rem = 0
     @appeals = []
+    @current_docket = {docket: nil, step: nil}
     # Distribute <limit> number of cases, regardless of docket type, oldest first.
     distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "push")
     @appeals
@@ -19,6 +20,7 @@ module ByDocketDateDistribution
     @appeals = []
     @rem = batch_size
     @nonpriority_iterations = 0
+    @current_docket = {docket: nil, step: nil}
 
     # If we haven't yet met the priority target, distribute additional priority appeals.
     priority_rem = priority_target.clamp(0, @rem)
@@ -32,6 +34,8 @@ module ByDocketDateDistribution
   def distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "request")
     num_oldest_priority_appeals_for_judge_by_docket(self, limit).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
+        @current_docket[:docket] = docket
+        @current_docket[:step] = "distribute"
         dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: true, style: style)
       end
     end
@@ -41,6 +45,8 @@ module ByDocketDateDistribution
     @nonpriority_iterations += 1
     num_oldest_nonpriority_appeals_for_judge_by_docket(self, limit).each do |docket, number_of_appeals_to_distribute|
       collect_appeals do
+        @current_docket[:docket] = docket
+        @current_docket[:step] = "distribute"
         dockets[docket].distribute_appeals(self, limit: number_of_appeals_to_distribute, priority: false, style: style)
       end
     end
@@ -62,7 +68,11 @@ module ByDocketDateDistribution
     return {} unless num > 0
 
     dockets
-      .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals_available_to_judge(distribution.judge, num).map { |age| [age, sym] } }
+      .flat_map do |sym, docket|
+        @current_docket[:docket] = docket
+        @current_docket[:step] = "counts"
+        docket.age_of_n_oldest_priority_appeals_available_to_judge(distribution.judge, num).map { |age| [age, sym] }
+      end
       .sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }
@@ -73,7 +83,11 @@ module ByDocketDateDistribution
     return {} unless num > 0
 
     dockets
-      .flat_map { |sym, docket| docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(distribution.judge, num).map { |age| [age, sym] } }
+      .flat_map do |sym, docket|
+        @current_docket[:docket] = docket
+        @current_docket[:step] = "counts"
+        docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(distribution.judge, num).map { |age| [age, sym] }
+      end
       .sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }
