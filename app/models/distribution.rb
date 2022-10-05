@@ -11,8 +11,10 @@ class Distribution < CaseflowRecord
   has_many :distributed_cases
   belongs_to :judge, class_name: "User"
 
+  attr_accessor :skip_vacols
+
   validates :judge, presence: true
-  validate :validate_user_is_judge, on: :create
+  validate :validate_user_is_judge, on: :create, unless: :priority_push?
   validate :validate_number_of_unassigned_cases, on: :create, unless: :priority_push?
   validate :validate_days_waiting_of_unassigned_cases, on: :create, unless: :priority_push?
   validate :validate_judge_has_no_pending_distributions, on: :create
@@ -44,7 +46,7 @@ class Distribution < CaseflowRecord
 
       update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
     end
-  rescue StandardError => error
+  rescue ActiveRecord::StatementInvalid, OCIError, StandardError => error
     # DO NOT use update! because we want to avoid validations and saving any cached associations.
     # Prevent prod database from getting Stacktraces as this is debugging information
     if Rails.deploy_env?(:prod)

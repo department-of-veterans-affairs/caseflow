@@ -17,6 +17,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     include AutomaticCaseDistribution
   end
 
+  @skip_vacols = false
+
   def perform
     unless use_by_docket_date?
       @tied_distributions = distribute_non_genpop_priority_appeals
@@ -25,7 +27,11 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     @genpop_distributions = distribute_genpop_priority_appeals
 
     send_job_report
-  rescue StandardError => error
+  rescue ActiveRecord::StatementInvalid, OCIError, StandardError => error
+    if (error.class == ActiveRecord::StatementInvalid || OCIError) && !@skip_vacols
+      @skip_vacols = true
+      retry
+    end
     start_time ||= Time.zone.now # temporary fix to get this job to succeed
     duration = time_ago_in_words(start_time)
     slack_msg = "<!here>\n [ERROR] after running for #{duration}: #{error.message}"
@@ -37,6 +43,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     log_error(error)
   ensure
     datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
+    @skip_vacols = false
   end
 
   def send_job_report
@@ -58,7 +65,10 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
                 "#{genpop_distributions_sum}"
     end
 
-    appeals_not_distributed = docket_coordinator.dockets.map do |docket_type, docket|
+    appeals_not_distributed = docket_coordinator
+      .dockets
+      .select { |key, _| key != :legacy || (key == :legacy && !@skip_vacols) }
+      .map do |docket_type, docket|
       report << "*Age of oldest #{docket_type} case*: #{docket.oldest_priority_appeal_days_waiting} days"
       [docket_type, docket.ready_priority_appeal_ids]
     end.to_h
@@ -99,7 +109,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     eligible_judge_target_distributions_with_leftovers.map do |judge_id, target|
       Distribution.create!(
         judge: User.find(judge_id),
-        priority_push: true
+        priority_push: true,
+        skip_vacols: @skip_vacols
       ).tap { |distribution| distribution.distribute!(target) }
     end
   end
@@ -135,7 +146,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # Calculates a target that will distribute all ready appeals so the remaining counts for each judge will produce
   # even case counts over a full month (or as close as we can get to it)
   def priority_target
-    @priority_target ||= begin
+    @priority_target = begin
       distribution_counts = priority_distributions_this_month_for_eligible_judges.values
       target = 0
       if distribution_counts.count > 0
@@ -155,7 +166,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def docket_coordinator
-    @docket_coordinator ||= DocketCoordinator.new
+    @docket_coordinator = DocketCoordinator.new(skip_vacols: @skip_vacols)
   end
 
   def ready_genpop_priority_appeals_count
@@ -164,11 +175,17 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   # Number of priority distributions every eligible judge has received in the last month
   def priority_distributions_this_month_for_eligible_judges
-    eligible_judges.map { |judge| [judge.id, priority_distributions_this_month_for_all_judges[judge.id] || 0] }.to_h
+    @priority_distributions_this_month_for_eligible_judges =
+      eligible_judges.map { |judge| [judge.id, priority_distributions_this_month_for_all_judges[judge.id] || 0] }.to_h
   end
 
   def eligible_judges
-    @eligible_judges ||= JudgeTeam.pushed_priority_cases_allowed.map(&:judge)
+    # TODO: increase the time here when not required to be low for testing
+    eligible_judges = JudgeTeam.pushed_priority_cases_allowed.map(&:judge)
+      .reject { |judge| Distribution.where(judge_id: judge.id).where("created_at >= ?", 1.minute.ago).count > 0 }
+    eligible_judges.select(&:judge_in_vacols?) unless @skip_vacols
+
+    eligible_judges
   end
 
   # Produces a hash of judge_id and the number of cases distributed to them in the last month

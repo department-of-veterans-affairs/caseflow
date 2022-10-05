@@ -31,7 +31,11 @@ ActiveRecord::Base.class_eval do
   end
 
   def multi_transaction
-    self.class.multi_transaction { yield }
+    if skip_vacols
+      ActiveRecord::Base.transaction { yield }
+    else
+      self.class.multi_transaction { yield }
+    end
   end
 end
 # :nocov:

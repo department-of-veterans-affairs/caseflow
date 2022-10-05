@@ -13,7 +13,7 @@ module CaseDistribution
   private
 
   def docket_coordinator
-    @docket_coordinator ||= DocketCoordinator.new
+    @docket_coordinator ||= DocketCoordinator.new(skip_vacols: @skip_vacols)
   end
 
   def priority_push_distribution(limit = nil)

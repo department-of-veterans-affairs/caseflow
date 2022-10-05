@@ -122,6 +122,8 @@ module Seeds
     def create_cavc_genpop_cases
       create_ready_cavc_genpop_cases
       create_ready_cavc_aod_genpop_cases
+      create_ready_cavc_genpop_cases_within_affinity_lever
+      create_ready_cavc_genpop_cases_outside_of_affinity_lever
       create_nonready_cavc_genpop_cases
     end
 
@@ -341,7 +343,7 @@ module Seeds
     # creates a hearing case with dates specifically requested during ACD algorithm changes
     # Appeal received 92 days ago, hearing tasks complete and ready to distribute 61 days ago
     def create_ama_hearing_ready_nonpriority_genpop_cases_ready_61_days_ago
-      Timecop.travel(92.days.ago)
+      Timecop.travel(95.days.ago)
       2.times do
         appeal = create(:appeal,
                         :hearing_docket,
@@ -351,22 +353,23 @@ module Seeds
                         adding_user: User.first)
         tasks = appeal.tasks
         [:TranscriptionTask, :EvidenceSubmissionWindowTask, :AssignHearingDispositionTask].each do |type|
-          date = 31.days.from_now
+          date = 30.days.from_now
           tasks.find_by(type: type).update!(
             created_at: date, assigned_at: date, closed_at: date, updated_at: date
           )
         end
 
-        tasks.find_by(type: :HearingTask).update!(closed_at: 31.days.from_now)
-        tasks.find_by(type: :DistributionTask).update!(assigned_at: 31.days.from_now)
+        tasks.find_by(type: :HearingTask).update!(closed_at: 30.days.from_now)
+        tasks.find_by(type: :DistributionTask).update!(assigned_at: 30.days.from_now)
       end
       Timecop.return
     end
 
     # creates a hearing case with dates specifically requested during ACD algorithm changes
-    # Appeal received 92 days ago, hearing held 61 days ago, evidence window completed and ready for dist 15 days ago
+    # Appeal received 95 days ago, hearing held 65 days ago,
+    # evidence window completed over 64 days ago,ready for dist 18 days ago
     def create_ama_hearing_ready_nonpriority_genpop_cases_ready_15_days_ago
-      Timecop.travel(92.days.ago)
+      Timecop.travel(95.days.ago)
       2.times do
         appeal = create(:appeal,
                         :hearing_docket,
@@ -375,16 +378,21 @@ module Seeds
                         veteran: create_veteran,
                         adding_user: User.first)
         tasks = appeal.tasks
-        [:TranscriptionTask, :EvidenceSubmissionWindowTask].each do |type|
-          tasks.find_by(type: type).update!(created_at: 31.days.from_now,
-                                            assigned_at: 31.days.from_now,
-                                            closed_at: 77.days.from_now,
-                                            updated_at: 77.days.from_now)
-        end
 
-        tasks.find_by(type: :AssignHearingDispositionTask).update!(
-          created_at: Time.zone.now, assigned_at: Time.zone.now, closed_at: 77.days.from_now, updated_at: 77.days.from_now
-        )
+        tasks.find_by(type: :TranscriptionTask).update!(created_at: 30.days.from_now,
+                                                        assigned_at: 30.days.from_now,
+                                                        closed_at: 77.days.from_now,
+                                                        updated_at: 77.days.from_now)
+
+        tasks.find_by(type: :EvidenceSubmissionWindowTask).update!(created_at: 30.days.from_now,
+                                                                   assigned_at: 30.days.from_now,
+                                                                   closed_at: 31.days.from_now,
+                                                                   updated_at: 31.days.from_now)
+
+        tasks.find_by(type: :AssignHearingDispositionTask).update!(created_at: Time.zone.now,
+                                                                   assigned_at: Time.zone.now,
+                                                                   closed_at: 77.days.from_now,
+                                                                   updated_at: 77.days.from_now)
         tasks.find_by(type: :HearingTask).update!(closed_at: 77.days.from_now)
         tasks.find_by(type: :DistributionTask).update!(assigned_at: 77.days.from_now)
       end
@@ -490,6 +498,36 @@ module Seeds
           receipt_date: num.days.ago
         )
       end
+    end
+
+    # 5 cases to test removal of cavc affinity lever in by_docket_date
+    # the interaction of appeal and cavc_remand factory isn't very clear, so use Timecop to set receipt date
+    def create_ready_cavc_genpop_cases_within_affinity_lever
+      Timecop.travel(14.days.ago)
+      4.times do
+        create(
+          :appeal,
+          :direct_review_docket,
+          :type_cavc_remand,
+          :cavc_ready_for_distribution,
+          veteran: create_veteran
+        )
+      end
+      Timecop.return
+    end
+
+    def create_ready_cavc_genpop_cases_outside_of_affinity_lever
+      Timecop.travel(28.days.ago)
+      4.times do
+        create(
+          :appeal,
+          :direct_review_docket,
+          :type_cavc_remand,
+          :cavc_ready_for_distribution,
+          veteran: create_veteran
+        )
+      end
+      Timecop.return
     end
 
     def create_nonready_cavc_genpop_cases

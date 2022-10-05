@@ -5,8 +5,8 @@ FactoryBot.define do
     scheduled_for { Date.tomorrow }
     request_type { HearingDay::REQUEST_TYPES[:central] }
     room { "2" }
-    created_by { User.find_by_full_name("Lauren Roth") || create(:user) }
-    updated_by { User.find_by_full_name("Lauren Roth") || create(:user) }
+    created_by { create(:user) }
+    updated_by { create(:user) }
 
     trait :video do
       request_type { HearingDay::REQUEST_TYPES[:video] }
