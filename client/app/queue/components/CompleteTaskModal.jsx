@@ -93,7 +93,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
   };
   const modalLabel = () => {
     if (getTaskType() === 'AssessDocumentationTask') {
-      return COPY.VHA_COMPLETE_TASK_MODAL_TITLE;
+      return StringUtil.nl2br(taskConfiguration.radio_field_label);
     } else if ((getTaskType() === 'VhaDocumentSearchTask') || (getTaskType()?.includes('Education'))) {
       return StringUtil.nl2br(COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY);
     }
@@ -103,7 +103,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
 
   return (
     <React.Fragment>
-      {taskConfiguration && taskConfiguration.modal_body}
+      {taskConfiguration && StringUtil.nl2br(taskConfiguration.modal_body)}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <div style= {{ marginTop: '1.25rem' }}>
           <RadioField
@@ -359,7 +359,6 @@ const MODAL_TYPE_ATTRS = {
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_PO, appeal.veteranFullName) :
         sprintf(COPY.VHA_COMPLETE_TASK_CONFIRMATION_VISN, appeal.veteranFullName)
     }),
-    title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal
   },
   send_colocated_task: {
@@ -614,8 +613,9 @@ class CompleteTaskModal extends React.Component {
 
     return (
       <QueueFlowModal
-        title={modalAttributes.title(this.getContentArgs())}
-        button={taskData.modal_button_text}
+        title={taskData.modal_title || (modalAttributes.title && modalAttributes.title(this.getContentArgs()))}
+        /* eslint-disable-next-line camelcase */
+        button={taskData?.modal_button_text}
         submitDisabled={!this.validateForm()}
         validateForm={this.validateForm}
         submit={this.submit}

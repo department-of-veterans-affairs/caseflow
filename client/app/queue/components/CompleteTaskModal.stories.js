@@ -16,7 +16,8 @@ import {
   emoToBvaIntakeData,
   rpoToBvaIntakeData,
   vhaPOToCAMOData,
-  returnToOrgData
+  returnToOrgData,
+  visnData
 } from '../../../test/data/queue/taskActionModals/taskActionModalData';
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
 import CompleteTaskModal from './CompleteTaskModal';
@@ -76,6 +77,13 @@ VhaPoToVhaCamo.args = {
   storeValues: vhaPOToCAMOData,
   taskType: 'AssessDocumentationTask',
   modalType: trimTaskActionValue(TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.value)
+};
+
+export const VhaRoToVhaPo = Template.bind({});
+VhaRoToVhaPo.args = {
+  storeValues: visnData,
+  taskType: 'AssessDocumentationTask',
+  modalType: trimTaskActionValue(TASK_ACTIONS.VHA_VISN_SEND_TO_VHA_PO_FOR_REVIEW.value)
 };
 
 export const VhaCaregiverSupportProgramToBoardIntakeForReview = Template.bind({});
