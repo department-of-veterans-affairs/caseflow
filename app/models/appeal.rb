@@ -401,23 +401,26 @@ class Appeal < DecisionReview
         # if the value has a parent and isn't in the dictionary, try to find it in the dictionary or else skip it
         if !task.parent_id.nil?
           # if the parent value hasn't been created, break
-          break if !task_parent_to_child_hash.key?(task.parent_id)
+          next if !task_parent_to_child_hash.key?(task.parent_id)
 
           # otherwise reassign old parent task to new from hash
           cloned_task_id = clone_task_w_parent(task, task_parent_to_child_hash[task.parent_id])
           # add the parent/clone id to the hash set
           task_parent_to_child_hash[task.id] = cloned_task_id
+
         else
           # if the task has already been copied, break
-          break if task_parent_to_child_hash.key?(task.id)
+          next if task_parent_to_child_hash.key?(task.id)
 
           # else create the task that doesn't have a parent
           cloned_task_id = clone_task(task, user_css_id)
           # add the parent/clone id to the hash set
           task_parent_to_child_hash[task.id] = cloned_task_id
         end
+
         # break if the tree count is the same
         break if parent_appeal.tasks.count == tasks.count
+
       end
       # break if the tree count is the same
       break if parent_appeal.tasks.count == tasks.count
@@ -463,13 +466,10 @@ class Appeal < DecisionReview
     # set the parent to the parent_task_id
     dup_task.parent_id = parent_task_id
 
-    # save the task
-    dup_task.save
-
     # set the status to the correct status
     dup_task.status = original_task.status
 
-    dup_task.save
+    dup_task.save(validate: false)
 
     # if the status is cancelled, pull the original canceled ID
     if dup_task.status == "cancelled"
