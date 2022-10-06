@@ -10,10 +10,10 @@ module HearingPostponed
   # Legacy Hearing Postponed from the Daily Docket
   # original method defined in app/models/legacy_hearing.rb
   def update_caseflow_and_vacols(hearing_hash)
-    current_disposition = vacols_record.hearing_disp
+    original_disposition = vacols_record.hearing_disp
     super_return_value = super
     new_disposition = vacols_record.hearing_disp
-    if postponed? && current_disposition != new_disposition[0]&.capitalize
+    if postponed? && original_disposition != new_disposition
       appeal = LegacyAppeal.find(appeal_id)
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
