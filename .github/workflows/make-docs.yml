@@ -109,26 +109,15 @@ jobs:
 
       # The following is adapted from: https://github.com/SwiftDocOrg/github-wiki-publish-action/blob/v1/entrypoint.sh
       # and https://github.com/Andrew-Chen-Wang/github-wiki-action/blob/master/entrypoint.sh
-      # and https://github.community/t/how-to-updade-repo-wiki-from-github-actions/121151/7'
-
-      - name: Find and extract branch name
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: current_branch
-
-      - name: Get current date and time
-        run: echo "##[set-output name=date;]$(echo $(date +'%Y-%m-%d'))"
-        id: current_date
-
-      - name: Create new copy of main-gh-pages into new local branch
+      # and https://github.community/t/how-to-updade-repo-wiki-from-github-actions/121151/7
+      - name: Checkout branch main-gh-pages
         uses: actions/checkout@v2
         with:
           ref: main-gh-pages
-          path: main-gh-pages_${{ steps.current_date.outputs.date }}_${{ steps.current_branch.outputs.branch }}
-
-      - name: Copy results of `make docs` to copy of main-gh-pages
+          path: main-gh-pages_checkout
+      - name: Copy results of `make docs` to checkout of main-gh-pages
         run: |
-          rsync -av --exclude .git --exclude .keep "docs/schema/" "main-gh-pages_${{ steps.date.outputs.date }}_${{ steps.current_branch.outputs.branch }}/schema/make_docs/"
-
+          rsync -av --exclude .git --exclude .keep "docs/schema/" "main-gh-pages_checkout/schema/make_docs/"
       - name: Update Jailer-generated DB schema docs for Caseflow using results of `make docs`
         env:
           POSTGRES_DB: caseflow_certification_test
@@ -136,9 +125,8 @@ jobs:
           POSTGRES_USER: postgres
         run: |
           CASEFLOW_HOME=`pwd`
-          cd main-gh-pages_${{ steps.date.outputs.date }}_${{ steps.current_branch.outputs.branch }}/schema/bin
+          cd main-gh-pages_checkout/schema/bin
           sh ./gen_jailer_schema_docs.sh "$CASEFLOW_HOME" ../make_docs/caseflow-jailer_polymorphic_associations.csv
-
       - name: Compare (and locally commit) generated docs against main-gh-pages branch
         id: compare_docs
         env:
@@ -146,7 +134,7 @@ jobs:
           WIKI_COMMIT_USER_EMAIL: 'Quillman_Samantha@bah.com'
           WIKI_COMMIT_USER_NAME: 'samantha-quillman'
         run: |
-          cd main-gh-pages_${{ steps.date.outputs.date }}_${{ steps.current_branch.outputs.branch }}
+          cd main-gh-pages_checkout
 
           make github_action_pre_commit_hook
 
