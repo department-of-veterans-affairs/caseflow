@@ -22,7 +22,7 @@ module HearingWithdrawn
   def update_caseflow_and_vacols(hearing_hash)
     current_disposition = vacols_record.hearing_disp
     super_return_value = super
-    new_disposition = hearing_hash[:disposition]
+    new_disposition = vacols_record.hearing_disp
     if cancelled? && current_disposition != new_disposition[0]&.capitalize
       appeal = LegacyAppeal.find(appeal_id)
       AppellantNotification.notify_appellant(appeal, @@template_name)

@@ -12,7 +12,7 @@ module HearingPostponed
   def update_caseflow_and_vacols(hearing_hash)
     current_disposition = vacols_record.hearing_disp
     super_return_value = super
-    new_disposition = hearing_hash[:disposition]
+    new_disposition = vacols_record.hearing_disp
     if postponed? && current_disposition != new_disposition[0]&.capitalize
       appeal = LegacyAppeal.find(appeal_id)
       AppellantNotification.notify_appellant(appeal, @@template_name)
@@ -21,7 +21,7 @@ module HearingPostponed
   end
 
   # Legacy OR AMA Hearing Postponed from Queue
-  # original method defined in app/models/tasks/assign_hearing_disposition_task.rb  
+  # original method defined in app/models/tasks/assign_hearing_disposition_task.rb
   def update_hearing(hearing_hash)
     super_return_value = super
     if hearing_hash[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed && appeal.class.to_s == "Appeal"
