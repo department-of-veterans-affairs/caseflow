@@ -100,6 +100,7 @@ class Task < CaseflowRecord
   scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
 
   attr_accessor :skip_check_for_only_open_task_of_type
+  attr_accessor :skip_vacols
 
   prepend IhpTaskComplete
   prepend PrivacyActComplete
