@@ -586,7 +586,7 @@ FactoryBot.define do
         parent { create(:abstract_motion_to_vacate_task, appeal: appeal) }
         assigned_by { User.find_by_css_id("JUDGE_1") || create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
         assigned_to do
-          User.find_by_css_id("LIT_SUPPORT_ATTY_1") || 
+          User.find_by_css_id("LIT_SUPPORT_ATTY_1") ||
             create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1")
         end
       end

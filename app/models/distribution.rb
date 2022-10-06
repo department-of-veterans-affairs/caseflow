@@ -139,7 +139,7 @@ class Distribution < CaseflowRecord
 
   def error_statistics(error)
     {
-        error: error&.full_message
+      error: error&.full_message
     }
   end
 end
