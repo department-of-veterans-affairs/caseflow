@@ -6,6 +6,8 @@ describe ByDocketDateDistribution, :all_dbs do
     include ByDocketDateDistribution
 
     attr_accessor :judge
+    attr_accessor :current_docket
+    attr_accessor :skip_vacols
 
     # the value here doesn't matter but if a test is checking batch_size then its values need to add to this
     def batch_size
@@ -16,7 +18,7 @@ describe ByDocketDateDistribution, :all_dbs do
   before(:each) do
     FeatureToggle.enable!(:priority_acd)
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
-    @new_acd = ByDocketDateDistributionTest.new(judge: User.new)
+    @new_acd = ByDocketDateDistributionTest.new(judge: User.new, current_docket: {}, skip_vacols: false)
   end
 
   # used to put {num} ambiguous objects into an array to mock the return array from requested_distribution
