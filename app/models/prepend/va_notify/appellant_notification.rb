@@ -66,7 +66,28 @@ module AppellantNotification
     template_name
   )
     msg_bdy = create_payload(appeal, template_name)
-    SendNotificationJob.perform_later(msg_bdy.to_json)
+    notification_type =
+      if FeatureToggle.enabled?(:va_notify_email) && FeatureToggle.enabled?(:va_notify_sms)
+        "Email and SMS"
+      elsif FeatureToggle.enabled?(:va_notify_email)
+        "Email"
+      elsif FeatureToggle.enabled?(:va_notify_sms)
+        "SMS"
+      else
+        "None"
+      end
+    if template_name == "Appeal docketed"
+      Notification.create!(
+        appeals_id: msg_bdy.appeal_id,
+        appeals_type: msg_bdy.appeal_type,
+        event_type: template_name,
+        notification_type: notification_type,
+        participant_id: msg_bdy.participant_id,
+        notified_at: Time.zone.now,
+        event_date: Time.zone.today
+      )
+    end
+    SendNotificationJob.perform_now(msg_bdy.to_json)
   end
 
   def self.create_payload(appeal, template_name)
