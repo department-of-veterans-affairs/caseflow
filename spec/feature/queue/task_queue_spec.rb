@@ -670,7 +670,7 @@ feature "Task queue", :all_dbs do
       end
 
       it "shows the correct filters" do
-        visit(organization.path)
+        visit organization.path
         expect(page).to have_content(
           format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
         )
