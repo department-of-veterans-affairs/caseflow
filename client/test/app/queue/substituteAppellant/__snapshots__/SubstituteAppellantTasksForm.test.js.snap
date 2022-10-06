@@ -5,6 +5,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <section
         class="css-1kmvzpy"
@@ -126,6 +127,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <section
         class="css-1kmvzpy"

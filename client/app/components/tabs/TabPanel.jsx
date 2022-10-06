@@ -38,18 +38,13 @@ export const TabPanel = ({
     }
   }, [active, ctx.mountOnEnter, ctx.unmountOnExit, children]);
 
-  const tabActive = () => {
-    // note: tabPanelTabIndex is passed from TestUsers -- this val accounts for JAWs accessibility quirk
-    return active ? 0 : -1;
-  };
-
   return (
     <Component
       role="tabpanel"
       id={`${ctx.idPrefix}-tabpanel-${value}`}
       aria-hidden={!active}
       className={classNames}
-      tabIndex={tabPanelTabIndex || tabActive()}
+      tabIndex={tabPanelTabIndex}
     >
       {contents}
     </Component>

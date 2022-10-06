@@ -5,6 +5,7 @@ exports[`SubstituteAppellantBasicsForm with blank form renders default state cor
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <section
         class="css-1kmvzpy"
@@ -121,6 +122,7 @@ exports[`SubstituteAppellantBasicsForm with existing form data renders default s
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <section
         class="css-1kmvzpy"

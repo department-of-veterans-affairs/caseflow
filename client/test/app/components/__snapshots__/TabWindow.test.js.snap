@@ -116,7 +116,7 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
                 className="tabPanel active"
                 id="main-tabpanel-0"
                 role="tabpanel"
-                tabIndex={[Function]}
+                tabIndex={null}
               >
                 Content
               </div>
@@ -132,7 +132,7 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
                 className="tabPanel"
                 id="main-tabpanel-1"
                 role="tabpanel"
-                tabIndex={[Function]}
+                tabIndex={null}
               />
             </TabPanel>
           </div>
@@ -259,7 +259,7 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
                 className="tabPanel active"
                 id="main-tabpanel-0"
                 role="tabpanel"
-                tabIndex={[Function]}
+                tabIndex={null}
               >
                 Content
               </div>
@@ -275,7 +275,7 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
                 className="tabPanel"
                 id="main-tabpanel-1"
                 role="tabpanel"
-                tabIndex={[Function]}
+                tabIndex={null}
               />
             </TabPanel>
           </div>
@@ -413,7 +413,7 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
                 className="tabPanel active"
                 id="main-tabpanel-0"
                 role="tabpanel"
-                tabIndex={[Function]}
+                tabIndex={null}
               >
                 Content
               </div>
@@ -429,7 +429,7 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
                 className="tabPanel"
                 id="main-tabpanel-1"
                 role="tabpanel"
-                tabIndex={[Function]}
+                tabIndex={null}
               />
             </TabPanel>
           </div>
@@ -556,7 +556,7 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
                 className="tabPanel"
                 id="main-tabpanel-0"
                 role="tabpanel"
-                tabIndex={[Function]}
+                tabIndex={null}
               />
             </TabPanel>
             <TabPanel
@@ -570,7 +570,7 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
                 className="tabPanel active"
                 id="main-tabpanel-1"
                 role="tabpanel"
-                tabIndex={[Function]}
+                tabIndex={null}
               >
                 Some other content
               </div>
