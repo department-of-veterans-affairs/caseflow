@@ -272,7 +272,7 @@ FactoryBot.define do
       appeal { @overrides[:parent] ? @overrides[:parent].appeal : create(:appeal) }
 
       before :create do |task, _eval|
-        task.update(type: task.class.name)
+        task.update(type: task.class.name) unless task.type == task.class.name
       end
 
       # Uses parent factory `:colocated_task`
