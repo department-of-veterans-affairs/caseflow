@@ -521,11 +521,13 @@ class CompleteTaskModal extends React.Component {
       }
     } else if (this.props.modalType.includes('for_review')) {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
+
       const docLocationText = `**Status:**\nDocuments for this appeal are stored in ${radio === 'other' ?
         otherInstructions :
         locationLabel}.`;
 
       formattedInstructions.push(docLocationText);
+
       if (instructions) {
         const instructionsDetail = `\n\n**Detail:**\n${instructions}\n`;
 
