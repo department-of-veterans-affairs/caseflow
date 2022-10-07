@@ -92,6 +92,23 @@ class Hearing < CaseflowRecord
     C: "Central"
   }.freeze
 
+  amoeba do
+    exclude_association :appeal
+
+    # lambda for setting up a new UUID for the hearing first
+    customize(lambda { |_, dup_hearing|
+      # set the UUID to nil so that it is auto generated
+      dup_hearing.uuid = nil
+      # generate UUIDs
+      dup_hearing.uuid = SecureRandom.uuid
+      # make sure the uuid doesn't exist in the database (by some chance)
+      while Hearing.find_by_uuid(dup_hearing.uuid).nil? == false
+        # generate new id if not
+        dup_hearing.uuid = SecureRandom.uuid
+      end
+    })
+  end
+
   def check_available_slots
     fail HearingDayFull if hearing_day_full?
   end

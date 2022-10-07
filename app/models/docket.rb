@@ -15,7 +15,7 @@ class Docket
 
     if ready
       scope = scope.ready_for_distribution
-      scope = adjust_for_genpop(scope, genpop, judge) if judge.present?
+      scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
     end
 
     return scoped_for_priority(scope) if priority == true
@@ -49,8 +49,22 @@ class Docket
     appeals(priority: true, ready: true).limit(num).map(&:ready_for_distribution_at)
   end
 
+  def age_of_n_oldest_priority_appeals_available_to_judge(_judge, num)
+    appeals(priority: true, ready: true).limit(num).map(&:receipt_date)
+  end
+
+  # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
+  # but the judge that is passed in isn't relevant here
+  def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
+    appeals(priority: false, ready: true).limit(num).map(&:receipt_date)
+  end
+
   def age_of_oldest_priority_appeal
-    @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+    if use_by_docket_date?
+      @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.receipt_date
+    else
+      @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+    end
   end
 
   def oldest_priority_appeal_days_waiting
@@ -106,7 +120,11 @@ class Docket
   end
 
   def scoped_for_priority(scope)
-    scope.priority.ordered_by_distribution_ready_date
+    if use_by_docket_date?
+      scope.priority.order("appeals.receipt_date")
+    else
+      scope.priority.ordered_by_distribution_ready_date
+    end
   end
 
   def docket_appeals
@@ -129,6 +147,10 @@ class Docket
 
       judge_task
     end
+  end
+
+  def use_by_docket_date?
+    FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 
   module Scopes

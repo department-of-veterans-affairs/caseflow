@@ -12,12 +12,9 @@ module Seeds
 
     # We will create the vet w/o date of death and update later due to task tree considerations
     def deceased_vet
-      @deceased_vet ||= create(
-        :veteran,
-        file_number: 54_545_454,
-        first_name: "Jane",
-        last_name: "Deceased"
-      )
+      params = { first_name: "JaneDeceased", last_name: "SubstitutionsSeed" }
+      params[:file_number] = 54_545_454 unless Veteran.find_by(file_number: 54_545_454)
+      @deceased_vet ||= create(:veteran, params)
     end
 
     def date_of_death
