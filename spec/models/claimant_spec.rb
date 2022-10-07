@@ -346,6 +346,10 @@ describe Claimant, :postgres do
       expect(DependentClaimant.unrecognized_claimant?).to eq false
     end
 
+    it "AttorneyClaimant isn't considered an unrecognized claimant" do
+      expect(AttorneyClaimant.unrecognized_claimant?).to eq false
+    end
+
     it "OtherClaimant is considered an unrecognized claimant" do
       expect(OtherClaimant.unrecognized_claimant?).to eq true
     end
