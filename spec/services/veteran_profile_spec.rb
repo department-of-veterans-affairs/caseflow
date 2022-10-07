@@ -22,7 +22,9 @@ describe VeteranProfile, :postgres do
     }
   end
 
-  let!(:appeal) { create(:appeal, veteran_file_number: file_number) }
+  let(:veteran) { build(:veteran, file_number: file_number) }
+
+  let!(:appeal) { create(:appeal, veteran: veteran) }
   let!(:hlr) { create(:higher_level_review, veteran_file_number: file_number) }
 
   describe "#call" do
