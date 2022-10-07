@@ -7,5 +7,6 @@
   "hearing_case_affinity_days": 0,
   "maximum_direct_review_proportion": 0.07,
   "minimum_legacy_proportion": 0.9,
-  "nod_adjustment": 0.4
+  "nod_adjustment": 0.4,
+  "request_more_cases_minimum": 8
 }
