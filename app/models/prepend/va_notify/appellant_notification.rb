@@ -77,17 +77,19 @@ module AppellantNotification
         "None"
       end
     if template_name == "Appeal docketed"
-      Notification.create!(
+      notification = Notification.create!(
         appeals_id: msg_bdy.appeal_id,
         appeals_type: msg_bdy.appeal_type,
         event_type: template_name,
         notification_type: notification_type,
         participant_id: msg_bdy.participant_id,
-        notified_at: Time.zone.now,
         event_date: Time.zone.today
       )
     end
-    SendNotificationJob.perform_now(msg_bdy.to_json)
+    if template_name == "Appeal docketed" && !FeatureToggle.enabled?(:appeal_docketed_event) && msg_bdy.appeal_type == "LegacyAppeal"
+      notification.update!(email_enabled: false)
+    else SendNotificationJob.perform_now(msg_bdy.to_json)
+    end
   end
 
   def self.create_payload(appeal, template_name)

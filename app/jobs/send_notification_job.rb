@@ -45,7 +45,10 @@ class SendNotificationJob < CaseflowJob
               to_update[:sms_notification_status] = message.status
             end
             update_notification_audit_record(notification_audit_record, to_update)
-            send_to_va_notify(message, notification_audit_record)
+            if message.template_name == "Appeal docketed" && message.appeal_type == "LegacyAppeal" && !FeatureToggle.enabled?(:appeal_docketed_notification)
+              notification_audit_record.update!(email_enabled: false)
+            else send_to_va_notify(message, notification_audit_record)
+            end
           else
             status = (message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
             to_update = {}
@@ -145,7 +148,9 @@ class SendNotificationJob < CaseflowJob
       end
 
     if event_type == "Appeal docketed"
-      Notification.find_by(appeals_id: appeals_id, event_type: event_type, notification_type: notification_type)
+      notification = Notification.find_by(appeals_id: appeals_id, event_type: event_type, notification_type: notification_type)
+      notification.update!(notified_at: Time.zone.now)
+      notification
     else
       Notification.new(
         appeals_id: appeals_id,
