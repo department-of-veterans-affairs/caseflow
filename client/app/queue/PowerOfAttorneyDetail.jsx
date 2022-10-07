@@ -11,6 +11,7 @@ import Address from './components/Address';
 import BareList from '../components/BareList';
 import { PoaRefresh } from './components/PoaRefresh';
 import COPY from '../../COPY';
+import { APPELLANT_TYPES } from './constants';
 import Alert from '../components/Alert';
 
 /**
@@ -128,9 +129,9 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
 
   const renderPoaLogic = () => {
     const isRecognizedAppellant = ![
-      'OtherClaimant',
-      'AttorneyClaimant',
-      'HealthcareProviderClaimant'
+      APPELLANT_TYPES.OTHER_CLAIMANT,
+      APPELLANT_TYPES.ATTORNEY_CLAIMANT,
+      APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT
     ].includes(appellantType);
 
     if (isRecognizedAppellant && isRecognizedPoa) {
