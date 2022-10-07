@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class HearingRequestDistributionQuery
-  def initialize(base_relation:, genpop:, judge: nil)
+  def initialize(base_relation:, genpop:, judge: nil, use_by_docket_date: false)
     @base_relation = base_relation.extending(Scopes)
     @genpop = genpop
     @judge = judge
+    @use_by_docket_date = use_by_docket_date
   end
 
   def call
@@ -33,10 +34,19 @@ class HearingRequestDistributionQuery
     base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
   end
 
-  # We are combining two queries using an array because using `or` doesn't work
-  # due to incompatibilities between the two queries.
   def only_genpop_appeals
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
+
+    # returning early as most_recent_held_hearings_not_tied_to_any_judge is redundant
+    if @use_by_docket_date
+      return [
+        with_held_hearings,
+        no_hearings_or_no_held_hearings
+      ].flatten.uniq
+    end
+
+    # We are combining two queries using an array because using `or` doesn't work
+    # due to incompatibilities between the two queries.
     [
       most_recent_held_hearings_not_tied_to_any_judge,
       most_recent_held_hearings_exceeding_affinity_threshold,
@@ -60,9 +70,12 @@ class HearingRequestDistributionQuery
     base_relation.with_no_held_hearings
   end
 
+  def with_held_hearings
+    base_relation.most_recent_hearings.with_held_hearings
+  end
+
   module Scopes
     include DistributionScopes
-
     def most_recent_hearings
       query = <<-SQL
         INNER JOIN
@@ -104,6 +117,10 @@ class HearingRequestDistributionQuery
 
     def with_no_held_hearings
       left_joins(:hearings).where.not(hearings: { disposition: "held" })
+    end
+
+    def with_held_hearings
+      where(hearings: { disposition: "held" })
     end
   end
 end
