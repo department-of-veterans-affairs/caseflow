@@ -281,6 +281,7 @@ describe AppellantNotification do
         RequestStore[:current_user] = hearing_coord
       end
       context "Legacy" do
+        # create legacy hearing for "will notify appellant when a hearing is postponed" check
         let(:ro_id) { "RO04" }
         let!(:vacols_case) do
           create(
@@ -298,9 +299,29 @@ describe AppellantNotification do
             disposition: "postponed"
           }
         end
+
+        # create legacy hearing for "should not notify appellant if a postponed hearing updates to postponed" check
+        let(:ro_id_postponed) { "RO05" }
+        let!(:vacols_case_postponed) do
+          create(
+            :case,
+            bfregoff: ro_id_postponed,
+            bfdocind: HearingDay::REQUEST_TYPES[:video]
+          )
+        end
+        let!(:appeal_postponed) do
+          create(:legacy_appeal, vacols_case: vacols_case_postponed, closest_regional_office: ro_id_postponed)
+        end
+        let(:hearing_postponed) { create(:legacy_hearing, appeal: appeal_postponed, disposition: "P") }
+
         it "will notify appellant when a hearing is postponed" do
           expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
           hearing.update_caseflow_and_vacols(hearing_info)
+        end
+
+        it "should not notify appellant if a postponed hearing updates to postponed" do
+          expect(AppellantNotification).to_not receive(:notify_appellant).with(hearing_postponed.appeal, template_name)
+          hearing_postponed.update_caseflow_and_vacols(hearing_info)
         end
       end
     end
@@ -316,6 +337,7 @@ describe AppellantNotification do
         RequestStore[:current_user] = hearing_coord
       end
       context "Legacy" do
+        # create legacy hearing for "will notify appellant when a hearing is postponed" check
         let(:ro_id) { "RO04" }
         let!(:vacols_case) do
           create(
@@ -333,9 +355,27 @@ describe AppellantNotification do
             disposition: "cancelled"
           }
         end
+        # create legacy hearing for "should not notify appellant if a cancelled hearing updates to cancelled" check
+        let(:ro_id_cancelled) { "RO05" }
+        let!(:vacols_case_cancelled) do
+          create(
+            :case,
+            bfregoff: ro_id_cancelled,
+            bfdocind: HearingDay::REQUEST_TYPES[:video]
+          )
+        end
+        let!(:appeal_cancelled) do
+          create(:legacy_appeal, vacols_case: vacols_case_cancelled, closest_regional_office: ro_id_cancelled)
+        end
+        let(:hearing_cancelled) { create(:legacy_hearing, appeal: appeal_cancelled, disposition: "C") }
+
         it "will notify appellant when a hearing is withdrawn/cancelled" do
           expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
           hearing.update_caseflow_and_vacols(hearing_info)
+        end
+        it "should not notify appellant if a cancelled hearing updates to cancelled" do
+          expect(AppellantNotification).to_not receive(:notify_appellant).with(hearing_cancelled.appeal, template_name)
+          hearing_cancelled.update_caseflow_and_vacols(hearing_info)
         end
       end
     end
