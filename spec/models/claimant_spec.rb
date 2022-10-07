@@ -328,4 +328,30 @@ describe Claimant, :postgres do
       expect(attorney_claimant.name).to eq("William Jennings Bryan")
     end
   end
+
+  context ".unrecognized_claimant?" do
+    it "Claimant isn't considered an unrecognized claimant" do
+      expect(Claimant.unrecognized_claimant?).to eq false
+    end
+
+    it "VeteranClaimant isn't considered an unrecognized claimant" do
+      expect(VeteranClaimant.unrecognized_claimant?).to eq false
+    end
+
+    it "BgsRelatedClaimant isn't considered an unrecognized claimant" do
+      expect(BgsRelatedClaimant.unrecognized_claimant?).to eq false
+    end
+
+    it "DependentClaimant isn't considered an unrecognized claimant" do
+      expect(DependentClaimant.unrecognized_claimant?).to eq false
+    end
+
+    it "OtherClaimant is considered an unrecognized claimant" do
+      expect(OtherClaimant.unrecognized_claimant?).to eq true
+    end
+
+    it "HealthcareProviderClaimant is considered an unrecognized claimant" do
+      expect(HealthcareProviderClaimant.unrecognized_claimant?).to eq true
+    end
+  end
 end
