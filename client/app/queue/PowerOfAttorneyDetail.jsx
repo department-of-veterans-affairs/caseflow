@@ -127,7 +127,11 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
   const isRecognizedPoa = poa.representative_type !== 'Unrecognized representative';
 
   const renderPoaLogic = () => {
-    const isRecognizedAppellant = !['OtherClaimant', 'AttorneyClaimant'].includes(appellantType);
+    const isRecognizedAppellant = ![
+      'OtherClaimant',
+      'AttorneyClaimant',
+      'HealthcareProviderClaimant'
+    ].includes(appellantType);
 
     if (isRecognizedAppellant && isRecognizedPoa) {
       return <PoaRefresh powerOfAttorney={poa} appealId={appealId} {...detailListStyling} />;
