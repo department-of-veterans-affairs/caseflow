@@ -88,7 +88,7 @@ module AppellantNotification
     end
     if template_name == "Appeal docketed" && !FeatureToggle.enabled?(:appeal_docketed_event) && msg_bdy.appeal_type == "LegacyAppeal"
       notification.update!(email_enabled: false)
-    else SendNotificationJob.perform_now(msg_bdy.to_json)
+    else SendNotificationJob.perform_later(msg_bdy.to_json)
     end
   end
 
