@@ -11,12 +11,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :queue
 
-  if FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
-    include ByDocketDateDistribution
-  else
-    include AutomaticCaseDistribution
-  end
-
   def perform
     unless use_by_docket_date?
       @tied_distributions = distribute_non_genpop_priority_appeals
