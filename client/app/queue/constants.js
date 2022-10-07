@@ -124,6 +124,7 @@ export const APPELLANT_TYPES = {
   OTHER_CLAIMANT: 'OtherClaimant',
   ATTORNEY_CLAIMANT: 'AttorneyClaimant',
   VETERAN_CLAIMANT: 'VeteranClaimant',
+  HEALTHCARE_PROVIDER_CLAIMANT: 'HealthcareProviderClaimant'
 };
 
 export const SEARCH_ERROR_FOR = {
