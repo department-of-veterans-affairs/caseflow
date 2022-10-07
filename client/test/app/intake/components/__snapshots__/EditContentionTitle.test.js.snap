@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditContentionTitle renders correctly in default mode 1`] = `
+<div>
+  <div>
+    <div
+      class="issue-edit-text"
+    >
+      <span>
+        <button
+          class="cf-btn-link edit-contention-issue usa-button"
+          type="button"
+        >
+          Edit contention title
+        </button>
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`EditContentionTitle renders correctly in edit mode 1`] = `
+<div>
+  <div>
+    <div
+      class="issue-text-style"
+    >
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="3. Contention title"
+        >
+          <strong>
+            <span>
+              3. Contention title
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="3. Contention title"
+          name="3. Contention title"
+          placeholder="Tinnitus"
+        >
+          Tinnitus
+        </textarea>
+      </div>
+      <p>
+        Tinnitus
+      </p>
+      
+      <div
+        class="issue-text-buttons"
+      >
+        <span>
+          <button
+            class="cf-btn-link usa-button"
+            type="button"
+          >
+            Cancel
+          </button>
+        </span>
+        <span>
+          <button
+            class="cf-submit issue-edit-submit-button usa-button"
+            id="button-submit-issue"
+            type="button"
+          >
+            Submit
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

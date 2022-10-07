@@ -1,0 +1,177 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HearingEmails Does not allow editing when ReadOnly 1`] = `
+<ReadOnly
+  label="Appellant Email"
+  text="123@gmail.com"
+/>
+`;
+
+exports[`HearingEmails Does not show required when ReadOnly 1`] = `
+<HearingEmail
+  disabled={true}
+  email="123@gmail.com"
+  emailType="appellantTz"
+  helperLabel="This email address will be used to send notifications for this hearing only."
+  label="Appellant Email"
+  required={true}
+  showHelper={true}
+>
+  <TextField
+    className={
+      Array [
+        "cf-form-textinput cf-inline-field",
+      ]
+    }
+    name="Appellant Email"
+    onChange={[Function]}
+    optional={false}
+    readOnly={true}
+    required={false}
+    strongLabel={true}
+    type="text"
+    useAriaLabel={false}
+    value="123@gmail.com"
+  >
+    <div
+      className="cf-form-textinput cf-inline-field   "
+    >
+      <label
+        htmlFor="Appellant Email"
+      >
+        <strong>
+          <FormLabel
+            name="Appellant Email"
+            optional={false}
+            required={false}
+          >
+            <span>
+              Appellant Email
+            </span>
+          </FormLabel>
+        </strong>
+      </label>
+      <input
+        className={
+          Array [
+            "cf-form-textinput cf-inline-field",
+          ]
+        }
+        id="Appellant Email"
+        name="Appellant Email"
+        onBlur={[Function]}
+        onChange={[Function]}
+        readOnly={true}
+        type="text"
+        value="123@gmail.com"
+      />
+    </div>
+  </TextField>
+  <HelperText
+    label="This email address will be used to send notifications for this hearing only."
+  >
+    <div
+      className="helper-text"
+    >
+      This email address will be used to send notifications for this hearing only.
+    </div>
+  </HelperText>
+</HearingEmail>
+`;
+
+exports[`HearingEmails Matches snapshot with default props 1`] = `
+<Fragment>
+  <TextField
+    className={
+      Array [
+        "cf-form-textinput cf-inline-field",
+      ]
+    }
+    name="Appellant Email"
+    onChange={[Function]}
+    optional={false}
+    required={false}
+    strongLabel={true}
+    type="text"
+    useAriaLabel={false}
+    value="123@gmail.com"
+  />
+  <HelperText
+    label="This email address will be used to send notifications for this hearing only."
+  />
+</Fragment>
+`;
+
+exports[`HearingEmails Respects required prop 1`] = `
+<HearingEmail
+  email="123@gmail.com"
+  emailType="appellantTz"
+  helperLabel="This email address will be used to send notifications for this hearing only."
+  label="Appellant Email"
+  required={true}
+  showHelper={true}
+>
+  <TextField
+    className={
+      Array [
+        "cf-form-textinput cf-inline-field",
+      ]
+    }
+    name="Appellant Email"
+    onChange={[Function]}
+    optional={false}
+    required={true}
+    strongLabel={true}
+    type="text"
+    useAriaLabel={false}
+    value="123@gmail.com"
+  >
+    <div
+      className="cf-form-textinput cf-inline-field   "
+    >
+      <label
+        htmlFor="Appellant Email"
+      >
+        <strong>
+          <FormLabel
+            name="Appellant Email"
+            optional={false}
+            required={true}
+          >
+            <span>
+              Appellant Email
+              <span
+                className="cf-required"
+              >
+                Required
+              </span>
+            </span>
+          </FormLabel>
+        </strong>
+      </label>
+      <input
+        className={
+          Array [
+            "cf-form-textinput cf-inline-field",
+          ]
+        }
+        id="Appellant Email"
+        name="Appellant Email"
+        onBlur={[Function]}
+        onChange={[Function]}
+        type="text"
+        value="123@gmail.com"
+      />
+    </div>
+  </TextField>
+  <HelperText
+    label="This email address will be used to send notifications for this hearing only."
+  >
+    <div
+      className="helper-text"
+    >
+      This email address will be used to send notifications for this hearing only.
+    </div>
+  </HelperText>
+</HearingEmail>
+`;

@@ -1,0 +1,187 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`sortCaseTimelineEvents with NOD date updates sorts the substitution date item into proper place 1`] = `
+Array [
+  Object {
+    "createdAt": 2021-05-01T16:00:00.000Z,
+    "type": "decisionDate",
+  },
+  Object {
+    "createdAt": 2021-04-25T16:00:00.000Z,
+    "type": "AttorneyTask",
+  },
+  Object {
+    "createdAt": 2021-04-24T16:00:00.000Z,
+    "type": "JudgeDecisionTask",
+  },
+  Object {
+    "createdAt": 2021-04-23T16:00:00.000Z,
+    "type": "JudgeAssignTask",
+  },
+  Object {
+    "createdAt": 2021-04-22T16:00:00.000Z,
+    "type": "nodDateUpdate",
+  },
+  Object {
+    "createdAt": 2021-04-21T15:59:55.000Z,
+    "type": "DistributionTask",
+  },
+  Object {
+    "createdAt": 2021-04-21T15:59:50.000Z,
+    "type": "RootTask",
+  },
+]
+`;
+
+exports[`sortCaseTimelineEvents with basic post-distribution tasks properly sorts timeline events 1`] = `
+Array [
+  Object {
+    "createdAt": 2021-05-01T16:00:00.000Z,
+    "type": "decisionDate",
+  },
+  Object {
+    "createdAt": 2021-04-25T16:00:00.000Z,
+    "type": "AttorneyTask",
+  },
+  Object {
+    "createdAt": 2021-04-24T16:00:00.000Z,
+    "type": "JudgeDecisionTask",
+  },
+  Object {
+    "createdAt": 2021-04-23T16:00:00.000Z,
+    "type": "JudgeAssignTask",
+  },
+  Object {
+    "createdAt": 2021-04-21T15:59:55.000Z,
+    "type": "DistributionTask",
+  },
+  Object {
+    "createdAt": 2021-04-21T15:59:50.000Z,
+    "type": "RootTask",
+  },
+]
+`;
+
+exports[`sortCaseTimelineEvents with substitution date sorts the substitution date item into proper place 1`] = `
+Array [
+  Object {
+    "createdAt": 2021-05-01T16:00:00.000Z,
+    "type": "decisionDate",
+  },
+  Object {
+    "createdAt": 2021-04-25T16:00:00.000Z,
+    "type": "AttorneyTask",
+  },
+  Object {
+    "createdAt": 2021-04-24T16:00:00.000Z,
+    "type": "JudgeDecisionTask",
+  },
+  Object {
+    "createdAt": 2021-04-23T16:00:00.000Z,
+    "type": "JudgeAssignTask",
+  },
+  Object {
+    "createdAt": 2021-04-21T15:59:55.000Z,
+    "type": "DistributionTask",
+  },
+  Object {
+    "createdAt": 2021-04-21T15:59:50.000Z,
+    "type": "RootTask",
+  },
+  Object {
+    "createdAt": 2021-04-11T16:00:00.000Z,
+    "type": "substitutionDate",
+  },
+]
+`;
+
+exports[`sortCaseTimelineEvents without decision date sorts the unset decision date at the top to show pending 1`] = `
+Array [
+  Object {
+    "createdAt": null,
+    "type": "decisionDate",
+  },
+  Object {
+    "createdAt": 2021-04-25T16:00:00.000Z,
+    "type": "AttorneyTask",
+  },
+  Object {
+    "createdAt": 2021-04-24T16:00:00.000Z,
+    "type": "JudgeDecisionTask",
+  },
+  Object {
+    "createdAt": 2021-04-23T16:00:00.000Z,
+    "type": "JudgeAssignTask",
+  },
+  Object {
+    "createdAt": 2021-04-21T15:59:55.000Z,
+    "type": "DistributionTask",
+  },
+  Object {
+    "createdAt": 2021-04-21T15:59:50.000Z,
+    "type": "RootTask",
+  },
+]
+`;
+
+exports[`sortCaseTimelineEvents without decision date with substitution date sorts the substitution date item into proper place 1`] = `
+Array [
+  Object {
+    "createdAt": null,
+    "type": "decisionDate",
+  },
+  Object {
+    "createdAt": 2021-04-25T16:00:00.000Z,
+    "type": "AttorneyTask",
+  },
+  Object {
+    "createdAt": 2021-04-24T16:00:00.000Z,
+    "type": "JudgeDecisionTask",
+  },
+  Object {
+    "createdAt": 2021-04-23T16:00:00.000Z,
+    "type": "JudgeAssignTask",
+  },
+  Object {
+    "createdAt": 2021-04-21T15:59:55.000Z,
+    "type": "DistributionTask",
+  },
+  Object {
+    "createdAt": 2021-04-21T15:59:50.000Z,
+    "type": "RootTask",
+  },
+  Object {
+    "createdAt": 2021-04-11T16:00:00.000Z,
+    "type": "substitutionDate",
+  },
+]
+`;
+
+exports[`timelineEventsFromAppeal returns all event items for substitutionDate 1`] = `
+Array [
+  Object {
+    "createdAt": 2021-05-01T16:00:00.000Z,
+    "type": "decisionDate",
+  },
+  Object {
+    "createdAt": 2021-05-10T16:00:00.000Z,
+    "type": "substitutionDate",
+  },
+  Object {
+    "createdAt": 2021-05-12T04:00:00.000Z,
+    "createdBy": "Clark Bard",
+    "originalAppellantFullName": "Jane Doe",
+    "substituteFullName": "Testy McTesterson",
+    "type": "substitutionProcessed",
+  },
+]
+`;
+
+exports[`timelineEventsFromAppeal returns event item for decisionDate 1`] = `
+Array [
+  Object {
+    "createdAt": 2021-05-01T16:00:00.000Z,
+    "type": "decisionDate",
+  },
+]
+`;

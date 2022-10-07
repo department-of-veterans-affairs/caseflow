@@ -1,0 +1,425 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DocketSwitchReviewConfirm renders correctly 1`] = `
+<div>
+  <section
+    class="cf-app-segment cf-app-segment--alt"
+    role="main"
+  >
+    <h1>
+      Switch Docket: Review and Confirm
+    </h1>
+    <p>
+      <strong>
+        You are switching from Direct Review to Hearing. Tasks specific to the Direct Review docket will be automatically removed, and tasks associated with the Hearing docket will be automatically created.
+      </strong>
+    </p>
+    <p>
+      Please review all the information below before switching the docket. Once you confirm, tasks will be sent to the appropriate team or individual and the original docket number of the appeal will be preserved.
+    </p>
+    <table
+      class="usa-table-borderless css-1t3jtyy"
+    >
+      <tbody>
+        <tr>
+          <td>
+            Veteran
+          </td>
+          <td>
+            Foo Bar
+          </td>
+        </tr>
+        <tr>
+          <td>
+            VA Form - 10182 Receipt Date
+          </td>
+          <td>
+            1/1/2021
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Docket Switch Receipt Date
+          </td>
+          <td>
+            1/24/2021
+          </td>
+        </tr>
+        <tr>
+          <td>
+            New Review option
+          </td>
+          <td>
+            Hearing
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Issues switched to new docket
+          </td>
+          <td>
+            <table
+              class="usa-table-borderless"
+            >
+              <tbody>
+                <tr>
+                  <td>
+                    <div>
+                      1. PTSD denied
+                    </div>
+                    <div>
+                      Decision date:
+                       
+                      1/21/2021
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div>
+                      2. Left knee denied
+                    </div>
+                    <div>
+                      Decision date:
+                       
+                      1/21/2021
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div>
+                      3. Right knee denied
+                    </div>
+                    <div>
+                      Decision date:
+                       
+                      1/21/2021
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div>
+                      4. Right knee granted at 90%
+                    </div>
+                    <div>
+                      Decision date:
+                       
+                      1/21/2021
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Transferred/Added tasks
+          </td>
+          <td>
+            <table
+              class="usa-table-borderless"
+            >
+              <tbody>
+                <tr>
+                  <td>
+                    <div>
+                      <em />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div>
+                      1. Task Type A
+                    </div>
+                    <div>
+                      <em>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                      </em>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div>
+                      2. Task Type B
+                    </div>
+                    <div>
+                      <em>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                      </em>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div>
+                      3. Task Type C
+                    </div>
+                    <div>
+                      <em>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                      </em>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+  <div
+    class="controls cf-app-segment"
+  >
+    <div
+      data-css-63oe3q=""
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          data-css-wn5k45=""
+          id="button-next-button"
+          type="button"
+        >
+          Confirm docket switch
+        </button>
+      </span>
+      <button
+        class="cf-btn-link usa-button"
+        id="button-cancel-button"
+        type="button"
+      >
+        Cancel
+      </button>
+      <button
+        class="cf-right-side cf-prev-step usa-button-secondary usa-button"
+        id="button-back-button"
+        type="button"
+      >
+        Back
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DocketSwitchReviewConfirm with alternate claimant renders the claimant row 1`] = `
+<div>
+  <section
+    class="cf-app-segment cf-app-segment--alt"
+    role="main"
+  >
+    <h1>
+      Switch Docket: Review and Confirm
+    </h1>
+    <p>
+      <strong>
+        You are switching from Direct Review to Hearing. Tasks specific to the Direct Review docket will be automatically removed, and tasks associated with the Hearing docket will be automatically created.
+      </strong>
+    </p>
+    <p>
+      Please review all the information below before switching the docket. Once you confirm, tasks will be sent to the appropriate team or individual and the original docket number of the appeal will be preserved.
+    </p>
+    <table
+      class="usa-table-borderless css-1t3jtyy"
+    >
+      <tbody>
+        <tr>
+          <td>
+            Veteran
+          </td>
+          <td>
+            Foo Bar
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Claimant
+          </td>
+          <td>
+            Jane Doe
+          </td>
+        </tr>
+        <tr>
+          <td>
+            VA Form - 10182 Receipt Date
+          </td>
+          <td>
+            1/1/2021
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Docket Switch Receipt Date
+          </td>
+          <td>
+            1/24/2021
+          </td>
+        </tr>
+        <tr>
+          <td>
+            New Review option
+          </td>
+          <td>
+            Hearing
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Issues switched to new docket
+          </td>
+          <td>
+            <table
+              class="usa-table-borderless"
+            >
+              <tbody>
+                <tr>
+                  <td>
+                    <div>
+                      1. PTSD denied
+                    </div>
+                    <div>
+                      Decision date:
+                       
+                      1/21/2021
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div>
+                      2. Left knee denied
+                    </div>
+                    <div>
+                      Decision date:
+                       
+                      1/21/2021
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div>
+                      3. Right knee denied
+                    </div>
+                    <div>
+                      Decision date:
+                       
+                      1/21/2021
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div>
+                      4. Right knee granted at 90%
+                    </div>
+                    <div>
+                      Decision date:
+                       
+                      1/21/2021
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Transferred/Added tasks
+          </td>
+          <td>
+            <table
+              class="usa-table-borderless"
+            >
+              <tbody>
+                <tr>
+                  <td>
+                    <div>
+                      <em />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div>
+                      1. Task Type A
+                    </div>
+                    <div>
+                      <em>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                      </em>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div>
+                      2. Task Type B
+                    </div>
+                    <div>
+                      <em>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                      </em>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div>
+                      3. Task Type C
+                    </div>
+                    <div>
+                      <em>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                      </em>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+  <div
+    class="controls cf-app-segment"
+  >
+    <div
+      data-css-63oe3q=""
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          data-css-wn5k45=""
+          id="button-next-button"
+          type="button"
+        >
+          Confirm docket switch
+        </button>
+      </span>
+      <button
+        class="cf-btn-link usa-button"
+        id="button-cancel-button"
+        type="button"
+      >
+        Cancel
+      </button>
+      <button
+        class="cf-right-side cf-prev-step usa-button-secondary usa-button"
+        id="button-back-button"
+        type="button"
+      >
+        Back
+      </button>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button renders properly 1`] = `
+<div>
+  <span>
+    <button
+      aria-label="test-button-aria"
+      class="cf-submit usa-button"
+      id="button-test-button"
+      type="button"
+    >
+      Click me
+    </button>
+  </span>
+</div>
+`;

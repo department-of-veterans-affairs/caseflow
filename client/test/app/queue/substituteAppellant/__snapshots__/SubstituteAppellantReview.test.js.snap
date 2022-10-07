@@ -1,0 +1,176 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SubstituteAppellantReview renders correctly 1`] = `
+<div>
+  <section
+    class="cf-app-segment cf-app-segment--alt"
+    role="main"
+  >
+    <section
+      class="css-1kmvzpy"
+    >
+      <h1>
+        Review and confirm
+      </h1>
+      <div>
+        Review the details below to make sure the information is correct before submitting. If you need to make changes, please go back to the associated section.
+      </div>
+    </section>
+    <section
+      class="css-1urdhzr"
+    >
+      <h2>
+        About the appellant
+      </h2>
+      <table
+        class="usa-table-borderless css-x3zbi1"
+      >
+        <tbody>
+          <tr>
+            <td
+              class="bolded-header"
+            >
+              Substitution granted by the RO
+            </td>
+            <td>
+              03/25/2021
+            </td>
+          </tr>
+          <tr>
+            <td
+              class="bolded-header"
+            >
+              Name
+            </td>
+            <td />
+          </tr>
+          <tr>
+            <td
+              class="bolded-header"
+            >
+              Relation to Veteran
+            </td>
+            <td />
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section
+      class="css-1urdhzr"
+    >
+      <h2>
+        Reactivated tasks
+      </h2>
+      <table
+        class="usa-table-borderless css-x3zbi1"
+      >
+        <tbody>
+          <tr
+            class="task-detail"
+          >
+            <td>
+              Root 
+            </td>
+            <td />
+          </tr>
+          <tr
+            class="task-detail"
+          >
+            <td>
+              Distribution 
+            </td>
+            <td />
+          </tr>
+          <tr
+            class="task-detail"
+          >
+            <td>
+              Evidence Submission Window 
+            </td>
+            <td>
+              <span
+                class="bolded-header"
+              >
+                End date: 
+              </span>
+              05/29/2021
+            </td>
+          </tr>
+          <tr
+            class="task-detail"
+          >
+            <td>
+              Assign
+            </td>
+            <td />
+          </tr>
+          <tr
+            class="task-detail"
+          >
+            <td>
+              Review
+            </td>
+            <td />
+          </tr>
+          <tr
+            class="task-detail"
+          >
+            <td>
+              Draft decision
+            </td>
+            <td />
+          </tr>
+          <tr
+            class="task-detail"
+          >
+            <td>
+              Board Dispatch
+            </td>
+            <td />
+          </tr>
+          <tr
+            class="task-detail"
+          >
+            <td>
+              Board Dispatch
+            </td>
+            <td />
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </section>
+  <div
+    class="controls cf-app-segment"
+  >
+    <div
+      data-css-63oe3q=""
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          data-css-wn5k45=""
+          id="button-next-button"
+          type="button"
+        >
+          Confirm
+        </button>
+      </span>
+      <button
+        class="cf-btn-link usa-button"
+        id="button-cancel-button"
+        type="button"
+      >
+        Cancel
+      </button>
+      <button
+        class="cf-right-side cf-prev-step usa-button-secondary usa-button"
+        id="button-back-button"
+        type="button"
+      >
+        Back
+      </button>
+    </div>
+  </div>
+</div>
+`;

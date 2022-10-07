@@ -1,0 +1,297 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DocketSwitchRulingForm renders correctly 1`] = `
+<div>
+  <form
+    aria-label="Rule on Docket Switch"
+    class="docket-switch-ruling"
+  >
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Switch Docket: Rule on Claimant 1's Request
+      </h1>
+      <div
+        data-css-1sbm5ab=""
+      >
+        <p>
+          <strong>
+            Provided below is a summary of the pertinent facts used by the Office of the Clerk of the Board to prepare a docket switch ruling. Determine how you would like to rule on this request to switch dockets and select the corresponding button below.
+          </strong>
+        </p>
+        <p>
+          The hyperlink takes you to a draft ruling letter based on the recommended ruling. Please feel free to make any necessary edits to the ruling letter. You may then sign the letter.
+        </p>
+        <p>
+          If you have any questions, or need assistance making edits to the ruling letter, please 
+          <a
+            href="mailto:BVA.Clerk@va.gov"
+          >
+            email
+          </a>
+           the Office of the Clerk of the Board or use the text box below to provide any additional context or instructions.
+        </p>
+        <p>
+          When you click "Confirm," the task will automatically be returned to the individual who assigned it to you. If you would like to return the task to a different individual, please use the drop down box to select a different name.
+        </p>
+      </div>
+      <hr
+        data-css-1sbm5ab=""
+      />
+      <div
+        data-css-1sbm5ab=""
+      >
+        <p>
+          <strong>
+            Summary:
+          </strong>
+           Summary
+        </p>
+        <p>
+          <strong>
+            Is this a timely request:
+          </strong>
+           Yes
+        </p>
+        <p>
+          <strong>
+            Recommendation:
+          </strong>
+           Grant all issues
+        </p>
+        <p>
+          <strong>
+            Draft letter:
+          </strong>
+           
+          <a
+            href="http://www.va.gov"
+            target="_blank"
+          >
+            http://www.va.gov
+          </a>
+        </p>
+      </div>
+      <hr
+        data-css-1sbm5ab=""
+      />
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              How will you rule on this docket switch?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_granted"
+              name="disposition"
+              type="radio"
+              value="granted"
+            />
+            <label
+              class=""
+              for="disposition_granted"
+            >
+              Grant all issues
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_partially_granted"
+              name="disposition"
+              type="radio"
+              value="partially_granted"
+            />
+            <label
+              class=""
+              for="disposition_partially_granted"
+            >
+              Grant a partial switch
+            </label>
+            <div
+              class="cf-form-radio-help helpText"
+            >
+              e.g. if the Board is only granting a few issues
+            </div>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="disposition_denied"
+              name="disposition"
+              type="radio"
+              value="denied"
+            />
+            <label
+              class=""
+              for="disposition_denied"
+            >
+              Deny all issues
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="context"
+        >
+          <strong>
+            <span>
+              Provide any additional context and instructions
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="context"
+          name="context"
+        />
+      </div>
+      <div
+        style="max-width: 35rem;"
+      >
+        <div
+          class=""
+        >
+          <div
+            class="cf-form-dropdown dropdown-attorney"
+          >
+            <label
+              class="question-label"
+              for="attorney"
+              id="attorney-label"
+            >
+              <strong>
+                <span>
+                  Assign to Office of the Clerk of the Board
+                </span>
+              </strong>
+            </label>
+            <div
+              class="cf-select"
+            >
+              <div
+                class=" css-2b097c-container"
+              >
+                <div
+                  class="cf-select__control css-yk16xz-control"
+                >
+                  <div
+                    class="cf-select__value-container css-g1d714-ValueContainer"
+                  >
+                    <div
+                      class="cf-select__placeholder css-1wa3eu0-placeholder"
+                    >
+                      Select attorney
+                    </div>
+                    <div
+                      class="css-81nyic-Input"
+                    >
+                      <div
+                        class="cf-select__input"
+                        style="display: inline-block;"
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          aria-labelledby="attorney-label"
+                          aria-owns="attorney-listbox"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          id="attorney"
+                          role="combobox"
+                          spellcheck="false"
+                          style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-6q0nyr-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="attorney"
+                  type="hidden"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          id="submit-submit"
+          type="submit"
+        >
+          Submit
+        </button>
+      </span>
+      <span>
+        <button
+          class="cf-right-side usa-button-secondary usa-button"
+          id="button-Cancel"
+          style="margin-right: 1rem;"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+    </div>
+  </form>
+</div>
+`;

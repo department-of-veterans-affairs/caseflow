@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VsoVisibilityAlert renders correctly 1`] = `
+<div>
+  <div
+    class="usa-alert usa-alert-info"
+    role="alert"
+  >
+    <div
+      class="usa-alert-body"
+    >
+      <h2
+        class="usa-alert-heading"
+      >
+        Information Accuracy and Visibility Update
+      </h2>
+      <div
+        class="usa-alert-text"
+      >
+        In order to provide only timely and accurate appeals information, some changes have been made in Caseflow limiting the following: Pre-disposition data and draft decisions are no longer available until decisions have been signed by a VLJ and dispatched.
+      </div>
+    </div>
+  </div>
+</div>
+`;

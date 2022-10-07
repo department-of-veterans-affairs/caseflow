@@ -1,0 +1,235 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SubstituteAppellantBasicsForm with blank form renders default state correctly 1`] = `
+<div>
+  <form>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <section
+        class="css-1kmvzpy"
+      >
+        <h1>
+          Select substitute appellant
+        </h1>
+        <div>
+          Complete the details below to create the appeal for the substitute for this case.
+        </div>
+      </section>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="substitutionDate"
+        >
+          <strong>
+            <span>
+              When was substitution granted for this appellant?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="substitutionDate"
+          max="9999-12-31"
+          name="substitutionDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Please select the substitute from the following claimants.
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="participantId_123456"
+              name="participantId"
+              type="radio"
+              value="123456"
+            />
+            <label
+              class=""
+              for="participantId_123456"
+            >
+              John Doe, Spouse
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="participantId_654321"
+              name="participantId"
+              type="radio"
+              value="654321"
+            />
+            <label
+              class=""
+              for="participantId_654321"
+            >
+              Jen Doe, Child
+            </label>
+          </div>
+        </div>
+      </fieldset>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          id="submit-submit"
+          type="submit"
+        >
+          Continue
+        </button>
+      </span>
+      <span>
+        <button
+          class="cf-right-side usa-button-secondary usa-button"
+          id="button-Cancel"
+          style="margin-right: 1rem;"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`SubstituteAppellantBasicsForm with existing form data renders default state correctly 1`] = `
+<div>
+  <form>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <section
+        class="css-1kmvzpy"
+      >
+        <h1>
+          Select substitute appellant
+        </h1>
+        <div>
+          Complete the details below to create the appeal for the substitute for this case.
+        </div>
+      </section>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="substitutionDate"
+        >
+          <strong>
+            <span>
+              When was substitution granted for this appellant?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="substitutionDate"
+          max="9999-12-31"
+          name="substitutionDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Please select the substitute from the following claimants.
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="participantId_123456"
+              name="participantId"
+              type="radio"
+              value="123456"
+            />
+            <label
+              class=""
+              for="participantId_123456"
+            >
+              John Doe, Spouse
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="participantId_654321"
+              name="participantId"
+              type="radio"
+              value="654321"
+            />
+            <label
+              class=""
+              for="participantId_654321"
+            >
+              Jen Doe, Child
+            </label>
+          </div>
+        </div>
+      </fieldset>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          id="submit-submit"
+          type="submit"
+        >
+          Continue
+        </button>
+      </span>
+      <span>
+        <button
+          class="cf-right-side usa-button-secondary usa-button"
+          id="button-Cancel"
+          style="margin-right: 1rem;"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+    </div>
+  </form>
+</div>
+`;
