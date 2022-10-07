@@ -5,7 +5,7 @@ RSpec.describe SplitAppealController, :postgres do
   let(:split_other_reason) { "Some split_other_reason" }
   let(:split_reason) { "Some split_other_reason" }
   let(:appeal) { Appeal.find(appeal_id) }
-     
+
   it "Will split the appeal on click" do
     let(FeatureToggle.enabled?(:split_appeal_workflow)) == True;
     let(:user_css_id) { "SPLTAPPLSNOW" }
