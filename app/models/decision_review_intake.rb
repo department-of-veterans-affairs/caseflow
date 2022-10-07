@@ -49,7 +49,7 @@ class DecisionReviewIntake < Intake
       payee_code: (need_payee_code? ? request_params[:payee_code] : nil)
     )
 
-    if claimant.is_a?(OtherClaimant)
+    if claimant.unrecognized_claimant?
       claimant.save_unrecognized_details!(
         request_params[:unlisted_claimant],
         request_params[:poa]
@@ -134,6 +134,8 @@ class DecisionReviewIntake < Intake
     when "VeteranClaimant"
       veteran.participant_id
     when "OtherClaimant"
+      ""
+    when "HealthcareProviderClaimant"
       ""
     else
       request_params[:claimant]
