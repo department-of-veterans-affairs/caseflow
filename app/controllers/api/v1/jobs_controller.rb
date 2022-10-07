@@ -40,7 +40,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "va_notify_status_update_job" => VANotifyStatusUpdateJob,
     "poll_docketed_legacy_appeals_job" => PollDocketedLegacyAppealsJob
   }.freeze
-
+  
   def create
     # start job asynchronously as given by the job_type post param
     job = SUPPORTED_JOBS[params.require(:job_type)]
