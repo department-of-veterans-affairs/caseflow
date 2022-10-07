@@ -75,7 +75,7 @@ describe TasksForAppeal do
         end
 
         context "hearing has been held" do
-          let!(:hearing) { create(:hearing, :with_tasks, :held, appeal: appeal) }
+          let!(:hearing) { create(:hearing, :held, appeal: appeal) }
 
           it "includes the HearingTask" do
             expect(subject.find { |t| t.is_a?(HearingTask) }).to_not be_nil
