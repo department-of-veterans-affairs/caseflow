@@ -49,10 +49,9 @@ export const AppellantDetail = ({ appeal, substitutionDate }) => {
   }
 
   const editNotice = () => {
-    if ([
-      APPELLANT_TYPES.OTHER_CLAIMANT,
-      APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT
-    ].includes(appellantType)) {
+    if ([APPELLANT_TYPES.OTHER_CLAIMANT, APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT].includes(
+      appellantType
+    )) {
       return CASE_DETAILS_UNRECOGNIZED_APPELLANT;
     } else if (appellantType === APPELLANT_TYPES.ATTORNEY_CLAIMANT) {
       return CASE_DETAILS_UNRECOGNIZED_ATTORNEY_APPELLANT;
