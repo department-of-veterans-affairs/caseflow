@@ -12,7 +12,7 @@ describe HealthcareProviderClaimant do
   subject { appeal_with_healthcare_provider_claimant.claimant }
 
   context "#unrecognized_claimant?" do
-    it "HealthcareProvider is considered an unrecognized appellant" do
+    it "HealthcareProvider is considered an unrecognized claimant" do
       expect(subject.unrecognized_claimant?).to eq true
     end
   end
