@@ -35,12 +35,3 @@ SCHEDULED_JOBS = {
     "warm_bgs_caches_job" => WarmBgsCachesJob,
     "va_notify_status_update_job" => VANotifyStatusUpdateJob
 }.freeze
-
-DISABLED_JOBS = {
-    "dependencies_check" => DependenciesCheckJob,
-    "dependencies_report_service_log" => DependenciesReportServiceLogJob,
-    "hearing_email_status_job" => Hearings::HearingEmailStatusJob,
-    "heartbeat" => HeartbeatTasksJob,
-}.freeze
-
-SUPPORTED_JOBS = SCHEDULED_JOBS.freeze
