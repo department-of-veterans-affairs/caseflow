@@ -43,4 +43,4 @@ DISABLED_JOBS = {
     "heartbeat" => HeartbeatTasksJob,
 }.freeze
 
-SUPPORTED_JOBS = SCHEDULED_JOBS.reject {|k, v| DISABLED_JOBS.key?(k)}.freeze
+SUPPORTED_JOBS = SCHEDULED_JOBS.freeze
