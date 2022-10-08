@@ -125,17 +125,17 @@ class DecisionReviewIntake < Intake
   end
 
   def veteran_is_not_claimant
-    claimant_class_name != "VeteranClaimant"
+    claimant_class_name != VeteranClaimant.name
   end
 
   # If user has specified a different claimant, use that
   def participant_id
     case claimant_class_name
-    when "VeteranClaimant"
+    when VeteranClaimant.name
       veteran.participant_id
-    when "OtherClaimant"
+    when OtherClaimant.name
       ""
-    when "HealthcareProviderClaimant"
+    when HealthcareProviderClaimant.name
       ""
     else
       request_params[:claimant]
