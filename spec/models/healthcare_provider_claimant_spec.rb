@@ -1,19 +1,13 @@
 # frozen_string_literal: true
 
 describe HealthcareProviderClaimant do
-  let(:appeal_with_healthcare_provider_claimant) do
-    create(
-      :appeal,
-      has_healthcare_provider_claimant: true,
-      veteran_is_not_claimant: true
-    )
-  end
+  let(:claimant) { create(:claimant, type: "HealthcareProviderClaimant") }
 
-  subject { appeal_with_healthcare_provider_claimant.claimant }
+  describe "#unrecognized_claimant?" do
+    subject { claimant.unrecognized_claimant? }
 
-  context "#unrecognized_claimant?" do
-    it "HealthcareProvider is considered an unrecognized claimant" do
-      expect(subject.unrecognized_claimant?).to eq true
+    it "HealthcareProviderClaimant is considered an unrecognized claimant" do
+      is_expected.to eq true
     end
   end
 end
