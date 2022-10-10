@@ -25,7 +25,8 @@
     "dev": "yarn run dev:clear-build && NODE_ENV=development yarn run build -w",
     "dev:hot": "webpack-dev-server",
     "storybook": "start-storybook -p 6006",
-    "build:storybook": "build-storybook -o ../public/storybook"
+    "build:storybook": "build-storybook -o ../public/storybook",
+    "prepare": "cd .. && client/node_modules/.bin/husky install"
   },
   "cacheDirectories": [
     "node_modules",
