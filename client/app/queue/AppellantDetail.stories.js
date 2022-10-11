@@ -9,7 +9,7 @@ const selectAppellantDetails = ({ appellantFullName, appellantAddress, appellant
   ({ appellantFullName, appellantAddress, appellantRelationship, appellantType });
 
 export default {
-  title: 'Queue/AppellantDetail',
+  title: 'Queue/Case Details/AppellantDetail',
   component: AppellantDetail,
   parameters: { controls: { expanded: true } },
 };
