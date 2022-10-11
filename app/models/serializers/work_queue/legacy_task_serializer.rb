@@ -105,6 +105,8 @@ class WorkQueue::LegacyTaskSerializer
   attribute :instructions do |object|
     if object.class == JudgeLegacyDecisionReviewTask
       [object.appeal.attorney_case_review&.note].compact
+    else
+      []
     end
   end
 end

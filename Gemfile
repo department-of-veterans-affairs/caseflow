@@ -7,6 +7,9 @@ source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 gem "aasm", "4.11.0"
 gem "activerecord-import"
 gem "acts_as_tree"
+
+# amoeba gem for cloning appeals
+gem "amoeba"
 # BGS
 
 gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf"
