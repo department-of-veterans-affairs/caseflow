@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useMemo } from 'react';
 import _ from 'lodash';
 
+
 import { APPELLANT_TYPES, CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import {
@@ -47,6 +48,7 @@ import VeteranCasesView from './VeteranCasesView';
 import VeteranDetail from './VeteranDetail';
 import { startPolling } from '../hearings/utils';
 import FnodBanner from './components/FnodBanner';
+
 import {
   appealHasSubstitution,
   isAppealDispatched,
@@ -57,6 +59,7 @@ import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
 import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
+import { NotificationPage } from './NotificationPage';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -70,6 +73,7 @@ const anchorEditLinkStyling = css({
   fontSize: '1.5rem',
   fontWeight: 'normal',
   margin: '5px',
+
 });
 
 const alertPaddingStyle = css({
@@ -395,8 +399,18 @@ export const CaseDetailsView = (props) => {
             />
           )}
 
-          <CaseTimeline title="Case Timeline" appeal={appeal} />
-        </StickyNavContentArea>
+          <CaseTimeline title="Case Timeline test" appeal={appeal}
+            additionalHeaderContent={
+              true && (
+                <span className="cf-push-right" {...anchorEditLinkStyling}>
+                  <Link to={`/queue/appeals/${appealId}/notificationpage`}>
+                    {COPY.VIEW_NOTIFICATION_LINK}
+                  </Link>
+                </span>
+              )
+            }
+          />
+        </StickyNavContentArea >
         {props.pollHearing && pollHearing()}
       </AppSegment>
     </React.Fragment>
