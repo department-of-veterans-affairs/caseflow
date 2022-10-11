@@ -36,7 +36,7 @@ const caregiverActions = [
     label: 'Documents ready for Board Intake review',
     value: 'modal/vha_caregiver_support_send_to_board_intake_for_review',
     data: {
-      modal_title: 'Ready for Review',
+      modal_title: 'Ready for review',
       modal_button_text: 'Send',
       message_title: 'You have successfully sent Bob Smithswift\'s case to Board Intake for Review',
       type: 'VhaDocumentSearchTask',
@@ -277,7 +277,7 @@ const educationDocumentSearchTaskData = {
         label: 'Ready for Review',
         value: 'modal/emo_send_to_board_intake_for_review',
         data: {
-          modal_title: 'Ready for Review',
+          modal_title: 'Ready for review',
           modal_button_text: 'Send',
           type: 'EducationDocumentSearchTask',
           redirect_after: '/organizations/edu-emo',
@@ -529,8 +529,9 @@ const assessDocumentationTaskData = {
         label: 'Ready for Review',
         value: 'modal/ready_for_review',
         data: {
-          modal_title: 'Where were documents regarding this appeal stored?',
+          modal_title: 'Ready for review',
           modal_button_text: 'Send',
+          radio_field_label: 'This appeal will be sent to VHA CAMO for review.\n\nPlease select where the documents for this appeal are stored',
           instructions: [],
           type: 'AssessDocumentationTask',
           redirect_after: '/organizations/prosthetics'
@@ -660,7 +661,106 @@ const assessDocumentationTaskData = {
     canMoveOnDocketSwitch: true,
     timerEndsAt: null,
     unscheduledHearingNotes: {}
-  }
+  },
+};
+
+const assessVISNData = {
+  7217: {
+    uniqueId: '7217',
+    isLegacy: false,
+    type: 'AssessDocumentationTask',
+    appealType: 'Appeal',
+    addedByCssId: null,
+    appealId: 1657,
+    externalAppealId: 'b41145a6-6c8b-4e02-a4d9-0963ae61c15a',
+    assignedOn: '2022-09-23T15:55:28.334-04:00',
+    closestRegionalOffice: null,
+    createdAt: '2022-09-23T15:55:28.334-04:00',
+    closedAt: null,
+    startedAt: null,
+    assigneeName: 'Sierra Pacific Network',
+    assignedTo: {
+      cssId: null,
+      name: 'Sierra Pacific Network',
+      id: 53,
+      isOrganization: true,
+      type: 'VhaRegionalOffice'
+    },
+    assignedBy: {
+      firstName: 'Channing',
+      lastName: 'Katz',
+      cssId: 'VHAPOADMIN',
+      pgId: 4206
+    },
+    cancelledBy: {
+      cssId: null
+    },
+    cancelReason: null,
+    convertedBy: {
+      cssId: null
+    },
+    convertedOn: null,
+    taskId: '7217',
+    parentId: 7216,
+    label: 'Assess Documentation',
+    documentId: null,
+    externalHearingId: null,
+    workProduct: null,
+    previousTaskAssignedOn: null,
+    placedOnHoldAt: null,
+    status: 'assigned',
+    onHoldDuration: null,
+    instructions: [
+      'Assign to Sierra Pacific'
+    ],
+    decisionPreparedBy: null,
+    availableActions: [
+      {
+        label: 'Put task on hold',
+        value: 'modal/place_timed_hold'
+      },
+      {
+        func: 'vha_regional_office_return_to_program_office',
+        label: 'Return to Program Office',
+        value: 'modal/return_to_program_office',
+        data: {
+          modal_title: 'Return to Program Office',
+          message_title: 'You have successfully returned this appeal to the Program Office',
+          message_detail: 'This appeal will be removed from your Queue and placed in the Program Office\'s Queue',
+          modal_button_text: 'Return',
+          type: 'AssessDocumentationTask',
+          redirect_after: '/organizations/sierra-pacific-network'
+        }
+      },
+      {
+        func: 'vha_complete_data',
+        label: 'Documents ready for VHA Program Office team review',
+        value: 'modal/ready_for_review',
+        data: {
+          modal_title: 'Ready for review',
+          modal_button_text: 'Send',
+          radio_field_label: 'This appeal will be sent to VHA Program Office for review.\n\nPlease select where the documents for this appeal are stored',
+          instructions: [],
+          type: 'AssessDocumentationTask',
+          redirect_after: '/organizations/sierra-pacific-network'
+        }
+      },
+      {
+        func: 'vha_mark_task_in_progress',
+        label: 'Mark task in progress',
+        value: 'modal/mark_task_in_progress',
+        data: {
+          modal_title: 'Mark task in progress',
+          modal_body: 'Please confirm that you are actively working on collecting documents for this appeal.  Once confirmed, other members of your organization will no longer be able to mark this task in progress.',
+          message_title: 'You have successfully marked your task as in progress',
+          message_detail: 'This appeal will be visible in the "In Progress" tab of your Queue',
+          modal_button_text: 'Mark in progress',
+          type: 'AssessDocumentationTask',
+          redirect_after: '/organizations/sierra-pacific-network'
+        }
+      }
+    ]
+  },
 };
 
 const educationAssessDocumentationTaskData = {
@@ -731,7 +831,7 @@ const educationAssessDocumentationTaskData = {
         label: 'Ready for Review',
         value: 'modal/rpo_send_to_board_intake_for_review',
         data: {
-          modal_title: 'Ready for Review',
+          modal_title: 'Ready for review',
           modal_button_text: 'Send',
           type: 'EducationAssessDocumentationTask',
           body_optional: true,
@@ -785,6 +885,21 @@ export const returnToOrgData = {
   queue: {
     amaTasks: {
       ...preDocketTaskData
+    },
+    appeals: {
+      '419ce568-387c-4ac6-a5f5-00a1554cea36': {
+        id: '1632',
+        externalId: '419ce568-387c-4ac6-a5f5-00a1554cea36'
+      }
+    }
+  },
+  ...uiData
+};
+
+export const visnData = {
+  queue: {
+    amaTasks: {
+      ...assessVISNData
     },
     appeals: {
       '419ce568-387c-4ac6-a5f5-00a1554cea36': {
