@@ -24,8 +24,8 @@ module Seeds
     MEDIUM_RO_DAYS = %w[RO43].freeze
 
     def initialize
-      @bfkey = 1234
-      @bfcorkey = 5678
+      @ama_appeal_count = 0
+      initial_file_number_and_participant_id
     end
 
     def seed!
@@ -37,6 +37,16 @@ module Seeds
     end
 
     private
+
+    def initial_file_number_and_participant_id
+      @file_number ||= 300_000_000
+      @participant_id ||= 700_000_000
+      # n is (@file_number + 1) because @file_number is incremented before using it in factories in calling methods
+      while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
+        @file_number += 2000
+        @participant_id += 2000
+      end
+    end
 
     def create_ama_hearings_for_day(day, count)
       count.times do
@@ -117,15 +127,14 @@ module Seeds
     end
 
     def hearing_day_for_ro(ro_key:, scheduled_for:)
-      HearingDay.create!(
-        regional_office: %w[C R].include?(ro_key) ? nil : ro_key,
-        room: (ro_key == "R") ? nil : Constants::HEARING_ROOMS_LIST.keys.sample,
-        judge: random_judge_user,
-        request_type: request_type_by_ro_key(ro_key),
-        scheduled_for: scheduled_for,
-        created_by: created_by_user,
-        updated_by: created_by_user
-      )
+      create(:hearing_day,
+             regional_office: %w[C R].include?(ro_key) ? nil : ro_key,
+             room: (ro_key == "R") ? nil : Constants::HEARING_ROOMS_LIST.keys.sample,
+             judge: random_judge_user,
+             request_type: request_type_by_ro_key(ro_key),
+             scheduled_for: scheduled_for,
+             created_by: created_by_user,
+             updated_by: created_by_user)
     end
 
     def ten_percent_of_the_time
@@ -149,6 +158,7 @@ module Seeds
     end
 
     def create_ama_appeal(issue_count: 1)
+      @ama_appeal_count += 1
       veteran = create_veteran
       claimant_participant_id = "RANDOM_CLAIMANT_PID#{veteran.file_number}"
       create_poa(claimant_participant_id: claimant_participant_id)
@@ -158,6 +168,7 @@ module Seeds
         veteran_file_number: veteran.file_number,
         docket_type: Constants.AMA_DOCKETS.hearing,
         stream_type: Constants.AMA_STREAM_TYPES.original,
+        receipt_date: @ama_appeal_count.days.ago,
         veteran_is_not_claimant: Faker::Boolean.boolean,
         issue_count: issue_count,
         claimants: [create(:claimant, participant_id: claimant_participant_id)]
@@ -205,20 +216,16 @@ module Seeds
     end
 
     def create_legacy_appeal(hearing_day)
-      @bfkey += 1
-      @bfcorkey += 1
-      # This avoids a flake where stafkey collides with the random stafkey
-      # that seeds/priority_distributions.rb uses to create cases. This solution
-      # is from seeds/tasks.rb
-      correspondent = VACOLS::Correspondent.find_or_create_by(stafkey: @bfcorkey.to_s)
+      correspondent = create(:correspondent)
       vacols_case = create(
         :case,
-        bfkey: @bfkey.to_s,
-        bfcorkey: @bfcorkey.to_s,
+        bfcorkey: correspondent.stafkey,
         bfac: %w[1 3].sample, # original or Post remand,
         correspondent: correspondent
       )
 
+      # the :case factory uses the :veteran_file_number sequence if no bfcorlid is provided
+      # so passing veteran_file_number here will correctly use the global sequence
       file_number = LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
       create_veteran(veteran_file_number: file_number)
       create_poa(veteran_file_number: file_number)
@@ -296,9 +303,12 @@ module Seeds
 
     # creates fake veteran given a file number
     def create_veteran(veteran_file_number: nil)
+      @file_number += 1
+      @participant_id += 1
       veteran_fields = {
         first_name: Faker::Name.first_name,
         last_name: Faker::Name.last_name,
+        participant_id: format("%<n>09d", n: @participant_id),
         bgs_veteran_record: {
           date_of_birth: Faker::Date.birthday(min_age: 35, max_age: 80).strftime("%m/%d/%Y"),
           date_of_death: nil,
@@ -311,26 +321,17 @@ module Seeds
           city: Faker::Address.city
         }
       }
-      veteran_fields[:file_number] = veteran_file_number if veteran_file_number.present?
-
-      create(
-        :veteran,
-        **veteran_fields
-      )
+      veteran_fields[:file_number] = veteran_file_number || format("%<n>09d", n: @file_number)
+      create(:veteran, **veteran_fields)
     end
 
     def create_travel_board_vacols_case
-      @bfkey += 1
-      @bfcorkey += 1
-      # This avoids a flake where stafkey collides with the random stafkey
-      # that seeds/priority_distributions.rb uses to create cases. This solution
-      # is from seeds/tasks.rb
-      correspondent = VACOLS::Correspondent.find_or_create_by(stafkey: @bfcorkey.to_s)
+      correspondent = create(:correspondent)
       create(
         :case,
         :travel_board_hearing,
-        bfkey: @bfkey.to_s,
-        bfcorkey: @bfcorkey.to_s,
+        :type_original,
+        bfcorkey: correspondent.stafkey,
         correspondent: correspondent
       )
     end
@@ -343,6 +344,8 @@ module Seeds
           veteran_file_number: LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
         )
 
+        # the :case factory uses the :veteran_file_number sequence if no bfcorlid is provided
+        # so passing veteran_file_number here will correctly use the global sequence
         create_poa(veteran_file_number: veteran.file_number)
 
         create(

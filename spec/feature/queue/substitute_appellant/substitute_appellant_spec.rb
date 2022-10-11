@@ -37,7 +37,7 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
         let(:docket_type) { Constants.AMA_DOCKETS.hearing }
         let(:appeal) do
           create(:appeal,
-                 :dispatched, :with_decision_issue, :held_hearing,
+                 :dispatched, :with_decision_issue, :held_hearing_no_tasks,
                  docket_type: docket_type,
                  disposition: "dismissed_death",
                  receipt_date: veteran.date_of_death + 5.days,
@@ -96,7 +96,7 @@ RSpec.feature "granting substitute appellant for appeals", :all_dbs do
           let(:appeal) do
             create(:appeal,
                    :assigned_to_judge,
-                   :held_hearing,
+                   :held_hearing_no_tasks,
                    associated_judge: judge,
                    docket_type: docket_type,
                    receipt_date: veteran.date_of_death + 5.days,
