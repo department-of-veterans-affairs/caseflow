@@ -10,6 +10,11 @@
 #
 # To stop tracking changes to this file once more, run:
 #  git update-index --assume-unchanged .husky/pre-commit
+#
+# To be able to run the pre-commit script again, run:
+#  chmod +x .husky/pre-commit
+#  
+
 
 FILES=$(git diff --cached --name-only)
 [ -z "$FILES" ] && exit 0
