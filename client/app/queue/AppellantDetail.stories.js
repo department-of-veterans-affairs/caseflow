@@ -27,3 +27,21 @@ WithHealthcareProviderClaimant.args = selectAppellantDetails(
     appellantType: APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT
   }
 );
+
+export const WithOtherClaimant = Template.bind({});
+WithOtherClaimant.args = selectAppellantDetails(
+  {
+    ...appeal,
+    appellantRelationship: 'Other',
+    appellantType: APPELLANT_TYPES.OTHER_CLAIMANT
+  }
+);
+
+export const WithAttorneyClaimant = Template.bind({});
+WithAttorneyClaimant.args = selectAppellantDetails(
+  {
+    ...appeal,
+    appellantRelationship: 'Attorney',
+    appellantType: APPELLANT_TYPES.ATTORNEY_CLAIMANT
+  }
+);
