@@ -156,6 +156,20 @@ export const SelectClaimant = (props) => {
     );
   };
 
+  const nonListedClaimantLabel = () => {
+    return (
+      <p
+        id="nonListedClaimantLabel"
+        style={{ marginTop: '8.95px', marginBottom: '-25px' }}
+      >
+        {SELECT_NON_LISTED_CLAIMANT_LABEL}
+
+        <br />
+        <br />
+      </p>
+    );
+  };
+
   const noClaimantsCopy = () => {
     return (
       <p id="noClaimants" className="cf-red-text">
@@ -174,7 +188,7 @@ export const SelectClaimant = (props) => {
       <div>
         <RadioField
           name="claimant-options"
-          label={claimantLabel()}
+          label={showClaimantNotListedOption ? nonListedClaimantLabel() : claimantLabel()}
           strongLabel
           vertical
           options={radioOpts}
