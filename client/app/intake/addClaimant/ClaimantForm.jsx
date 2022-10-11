@@ -17,6 +17,7 @@ import TextField from 'app/components/TextField';
 
 const relationshipOpts = [
   { value: 'attorney', label: 'Attorney (previously or currently)' },
+  { value: 'healthcare provider', label: 'Healthcare Provider' },
   { value: 'child', label: 'Child' },
   { value: 'spouse', label: 'Spouse' },
   { value: 'other', label: 'Other' },
