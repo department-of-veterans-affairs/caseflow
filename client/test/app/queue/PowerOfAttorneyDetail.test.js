@@ -41,23 +41,9 @@ const renderPowerOfAttorneyDetailUnconnected = (storeValues, appellantType) => {
   );
 };
 
-const queueStoreValues = {
-  loadingAppealDetail: {
-    [appeal.externalId]: {
-      powerOfAttorney: {
-        loading: false
-      },
-      veteranInfo: {
-        loading: false
-      }
-    }
-  }
-};
-
 const createStoreValues = (hasPOA, appellantType, editPOAInformation) => {
   return {
     queue: {
-      ...queueStoreValues,
       appeals: {
         ...appeal,
         hasPOA,
@@ -67,8 +53,8 @@ const createStoreValues = (hasPOA, appellantType, editPOAInformation) => {
     },
     ui: {
       poaAlert: {
-        message: 'Test message',
-        alertType: 'success',
+        message: 'Info banner message',
+        alertType: 'info',
         powerOfAttorney
       },
       featureToggles: {
