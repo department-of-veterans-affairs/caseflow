@@ -3,6 +3,10 @@
 require_relative "tasks/task_shared_examples.rb"
 
 describe TaskSorter, :all_dbs do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe ".new" do
     subject { TaskSorter.new(args) }
 

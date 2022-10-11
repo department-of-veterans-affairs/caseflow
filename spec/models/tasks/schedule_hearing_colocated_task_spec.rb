@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe ScheduleHearingColocatedTask, :all_dbs do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe ".completed!" do
     let(:appeal) { create(:appeal, :at_attorney_drafting) }
     let(:parent) { AttorneyTask.find_by(appeal: appeal) }

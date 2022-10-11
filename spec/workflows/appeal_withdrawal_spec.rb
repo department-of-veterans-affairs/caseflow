@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe "Withdrawing an appeal", :postgres do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "appeal has one request issue and it is withdrawn" do
     it "allows it to be distributed" do
       add_blocking_mail_task_to_appeal

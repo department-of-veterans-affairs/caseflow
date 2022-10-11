@@ -20,6 +20,7 @@ feature "Task Tree", :all_dbs do
     end
 
     before do
+      Seeds::NotificationEvents.new.seed!
       User.authenticate!(user: attorney_user)
       visit "/task_tree/Appeal/#{appeal.external_id}"
     end

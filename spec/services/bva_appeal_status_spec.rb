@@ -3,6 +3,10 @@
 describe BVAAppealStatus, :all_dbs do
   include SQLHelpers
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   include_context "AMA Tableau SQL"
 
   context "one row for each category" do

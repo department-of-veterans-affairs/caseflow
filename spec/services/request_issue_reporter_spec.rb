@@ -19,6 +19,10 @@ describe RequestIssueReporter, :postgres do
     ]
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "#as_csv" do
     subject { described_class.new.as_csv }
 

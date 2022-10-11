@@ -5,6 +5,10 @@ describe ETL::Builder, :etl, :all_dbs do
 
   include_context "AMA Tableau SQL"
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let!(:vacols_user1) { create(:staff, :judge_role) }
   let!(:vacols_user2) { create(:staff, :attorney_judge_role) }
   let!(:user1) { create(:user, css_id: vacols_user1.sdomainid) }

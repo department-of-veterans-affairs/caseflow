@@ -10,6 +10,10 @@ describe LegacyOptinManager, :all_dbs do
     Timecop.freeze(Time.zone.now)
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let(:user) { Generators::User.build }
   let(:closed_disposition_date) { 1.year.ago.to_date }
   let(:folder_close_date) { closed_disposition_date - 1.day }

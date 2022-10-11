@@ -3,6 +3,10 @@
 require_relative "./shared_setup.rb"
 
 RSpec.feature "granting substitute appellant for appeals", :all_dbs do
+  before do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "with a dismissed appeal" do
     let(:veteran) { create(:veteran, date_of_death: Time.zone.parse("2021-07-04")) }
     let(:appeal) do

@@ -10,6 +10,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
   end
 
   before do
+    Seeds::NotificationEvents.new.seed!
     api_setup_appeal_repository_dockets
   end
 

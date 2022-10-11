@@ -8,6 +8,10 @@ class AsyncableJobsController < ApplicationController
   before_action :verify_job_access, only: [:show]
   skip_before_action :deny_vso_access
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   def index
     if asyncable_job_klass
       @jobs = asyncable_job_klass.potentially_stuck.limit(page_size).offset(page_start)

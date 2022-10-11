@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe BulkTaskAssignment, :postgres do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "#process" do
     let(:organization) { HearingsManagement.singleton }
     let!(:no_show_hearing_task1) do

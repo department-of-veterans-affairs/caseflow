@@ -7,6 +7,10 @@ describe TaskTreeRenderModule do
   let!(:ama_attorney_task) { create(:ama_attorney_task, parent: root_task) }
   let!(:task_no_parent) { create(:track_veteran_task, appeal: appeal) }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "#tree is called on an appeal" do
     it "returns all tasks for the appeal" do
       rows_hash, metadata = appeal.tree_hash

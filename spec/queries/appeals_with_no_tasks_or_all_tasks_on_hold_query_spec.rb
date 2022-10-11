@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let!(:appeal_with_zero_tasks) { create(:appeal) }
   let!(:appeal_with_one_task) { create(:root_task, :assigned).appeal }
   let!(:appeal_with_only_active_track_veteran_task) do

@@ -8,6 +8,10 @@ describe PostDecisionMotionDeleter, :all_dbs do
 
   subject { PostDecisionMotionDeleter.new(task, instructions) }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "#process" do
     it "deletes the motion and stream, and creates a new judge task" do
       subject.process

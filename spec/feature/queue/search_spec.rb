@@ -10,6 +10,7 @@ feature "Search", :all_dbs do
   let!(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case)) }
 
   before do
+    Seeds::NotificationEvents.new.seed!
     User.authenticate!(user: attorney_user)
   end
 

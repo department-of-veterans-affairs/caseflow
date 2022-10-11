@@ -8,6 +8,10 @@ describe TaskPager, :all_dbs do
 
   before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) unless assignee.nil? }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe ".new" do
     shared_examples "missing required property" do
       it "raises an error" do

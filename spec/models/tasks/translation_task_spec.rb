@@ -7,6 +7,10 @@ describe TranslationTask, :postgres do
 
     subject { TranslationTask.create_from_root_task(root_task) }
 
+    before(:all) do
+      Seeds::NotificationEvents.new.seed!
+    end
+
     it "creates a new TranslationTask" do
       expect(TranslationTask.all.count).to eq 0
 

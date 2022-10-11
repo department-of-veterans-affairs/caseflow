@@ -5,6 +5,10 @@ describe ContestableIssue, :postgres do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let(:decision_review) do
     create(
       :higher_level_review,

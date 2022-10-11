@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe PushPriorityAppealsToJudgesJob, :all_dbs do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   def to_judge_hash(arr)
     arr.each_with_index.map { |count, i| [i, count] }.to_h
   end

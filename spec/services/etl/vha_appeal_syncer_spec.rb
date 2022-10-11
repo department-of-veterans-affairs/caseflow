@@ -6,6 +6,10 @@ describe ETL::VhaAppealSyncer, :etl, :all_dbs do
   let(:origin_class) { Appeal }
   let(:target_class) { ETL::DecisionReview::Appeal }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   before do
     create(:request_issue, benefit_type: "vha")
     # we want a non-vha appeal to exist and be skipped.

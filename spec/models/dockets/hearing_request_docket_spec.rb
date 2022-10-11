@@ -5,6 +5,10 @@ describe HearingRequestDocket, :all_dbs do
     let(:judge_user) { create(:user, last_login_at: Time.zone.now) }
     let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
+    before(:all) do
+      Seeds::NotificationEvents.new.seed!
+    end
+
     subject { HearingRequestDocket.new.age_of_n_oldest_genpop_priority_appeals(10) }
 
     it "only returns priority, distributable, hearing docket appeals that match the following conditions:

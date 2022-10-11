@@ -5,6 +5,10 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
     User.authenticate!(roles: ["Build HearSched"])
   end
 
+  before do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   # rubocop:disable Metrics/AbcSize
   def assignment_process(file, start_date, end_date)
     # Navigate to the build hearings schedule screen

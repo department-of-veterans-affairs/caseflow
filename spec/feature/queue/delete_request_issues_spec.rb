@@ -3,6 +3,10 @@
 feature "correcting issues", :postgres do
   include IntakeHelpers
 
+  before do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "deleting a request issue that has one decision issue" do
     it "deletes the decision issue" do
       appeal = appeal_with_one_decision_issue

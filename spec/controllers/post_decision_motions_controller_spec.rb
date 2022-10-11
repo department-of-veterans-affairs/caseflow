@@ -12,6 +12,10 @@ describe PostDecisionMotionsController do
     User.stub = judge
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "#create", :postgres do
     context "when the motion is invalid" do
       it "returns an error" do

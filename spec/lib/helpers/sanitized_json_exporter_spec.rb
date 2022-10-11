@@ -7,6 +7,10 @@ require "helpers/sanitized_json_importer.rb"
 describe "SanitizedJsonExporter/Importer" do
   SjConfiguration = SanitizedJsonConfiguration
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe ".invalid_ssn" do
     subject { SjConfiguration.new.invalid_ssn(nil, ssn) }
     context "given 9-digit number" do

@@ -9,6 +9,10 @@ describe ETL::UnknownStatusWithClosedTasksQuery, :etl, :all_dbs do
     end
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   before do
     ETL::Builder.new.full
   end

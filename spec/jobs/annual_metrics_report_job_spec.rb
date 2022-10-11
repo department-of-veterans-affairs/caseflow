@@ -3,6 +3,10 @@
 describe AnnualMetricsReportJob, :postgres do
   include_context "Metrics Reports"
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   # rubocop:disable Metrics/LineLength
   let(:report) do
     [

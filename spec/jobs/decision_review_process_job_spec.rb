@@ -19,6 +19,10 @@ class AClaimReview
 end
 
 describe DecisionReviewProcessJob do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   before do
     allow(Raven).to receive(:extra_context)
   end

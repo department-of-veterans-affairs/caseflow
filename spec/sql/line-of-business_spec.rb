@@ -16,6 +16,10 @@ describe "Line of Business extract example", :postgres do
   let!(:vha_sc) { create(:supplemental_claim, :processed, benefit_type: "vha", veteran_file_number: vet2.file_number) }
   let!(:vha_sc_decision_issue) { create(:decision_issue, decision_review: vha_sc) }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   before do
     # Create negative examples, such as a non-VHA appeal and non-established supplemental claims
     create(:request_issue, benefit_type: "foobar")

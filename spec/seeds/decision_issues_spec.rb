@@ -4,6 +4,10 @@ describe Seeds::DecisionIssues do
   describe "#seed!" do
     subject { described_class.new.seed! }
 
+    before(:all) do
+      Seeds::NotificationEvents.new.seed!
+    end
+
     it "creates a decision issue with a decision date in the future" do
       expect { subject }.to_not raise_error
       veteran = Veteran.find_by(first_name: "Veteran", last_name: "DecisionIssues")

@@ -16,6 +16,10 @@ describe JudgeAssignTaskCreator do
 
       subject { JudgeAssignTaskCreator.new(appeal: appeal, judge: second_judge, assigned_by_id: assigned_by_id).call }
 
+      before(:all) do
+        Seeds::NotificationEvents.new.seed!
+      end
+
       before do
         appeal.tasks.find_by_type(:DistributionTask).assigned!
       end

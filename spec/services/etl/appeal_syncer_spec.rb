@@ -5,6 +5,10 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
 
   include_context "AMA Tableau SQL"
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let(:etl_build) { ETL::Build.create }
 
   describe "#origin_class" do

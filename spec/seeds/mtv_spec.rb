@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe Seeds::MTV do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "#seed!" do
     subject { described_class.new.seed! }
 

@@ -7,6 +7,11 @@ describe Metrics::NonDenialDecisions, :postgres do
   let(:date_range) { Metrics::DateRange.new(start_date, end_date) }
   let(:number_of_decisions_in_range) { 25 }
   let(:number_of_end_products_created_in_7_days) { 10 }
+
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   before do
     bva_dispatcher = create(:user)
     BvaDispatch.singleton.add_user(bva_dispatcher)

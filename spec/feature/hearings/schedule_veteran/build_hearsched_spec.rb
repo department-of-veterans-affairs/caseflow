@@ -17,6 +17,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     let(:fill_in_unscheduled_notes) { "Fill in unscheduled notes" }
 
     before do
+      Seeds::NotificationEvents.new.seed!
       HearingsManagement.singleton.add_user(current_user)
       HearingAdmin.singleton.add_user(current_user)
       HearingsManagement.singleton.add_user(other_user)

@@ -3,6 +3,10 @@
 describe HearingDayFilledSlotsQuery do
   subject { HearingDayFilledSlotsQuery.new([hearing_day_one, hearing_day_two]).call }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "hearings days with mix of hearings and legacy hearings" do
     let(:hearing_day_one) { create(:hearing_day) }
     let(:hearing_day_two) { create(:hearing_day) }

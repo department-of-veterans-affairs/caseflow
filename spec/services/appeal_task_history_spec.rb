@@ -7,6 +7,10 @@ describe AppealTaskHistory, :postgres do
   let(:legacy_appeal_task) { legacy_appeal.tasks.find { |task| task.type == "ScheduleHearingTask" } }
   let(:user) { create(:user) }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   before do
     PaperTrail.request.whodunnit = user.id
     Timecop.freeze(Time.zone.now) # don't bother tracking timestamp changes in specs

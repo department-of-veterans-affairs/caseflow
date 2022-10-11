@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe DirectReviewDocket, :postgres do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "#docket_type" do
     subject { DirectReviewDocket.new.docket_type }
     it "returns the correct docket type" do

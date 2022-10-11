@@ -5,6 +5,10 @@ describe AppealIntake, :all_dbs do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let(:veteran_file_number) { "64205555" }
   let(:user) { Generators::User.build }
   let(:detail) { nil }

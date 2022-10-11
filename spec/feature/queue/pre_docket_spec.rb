@@ -4,6 +4,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   include IntakeHelpers
 
   before do
+    Seeds::NotificationEvents.new.seed!
     FeatureToggle.enable!(:vha_predocket_workflow)
     FeatureToggle.enable!(:visn_predocket_workflow)
     FeatureToggle.enable!(:docket_vha_appeals)

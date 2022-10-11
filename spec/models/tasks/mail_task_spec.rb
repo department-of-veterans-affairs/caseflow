@@ -8,6 +8,10 @@ describe MailTask, :postgres do
     mail_team.add_user(user)
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe ".create_from_params" do
     # Use AodMotionMailTask because we do create subclasses of MailTask, never MailTask itself.
     let(:task_class) { AodMotionMailTask }

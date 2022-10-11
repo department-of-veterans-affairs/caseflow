@@ -5,6 +5,10 @@ require_relative "appeal_shared_examples"
 describe Appeal, :all_dbs do
   include IntakeHelpers
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end

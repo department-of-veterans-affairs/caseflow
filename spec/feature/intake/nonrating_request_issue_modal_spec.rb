@@ -4,6 +4,7 @@ feature "Nonrating Request Issue Modal", :postgres do
   include IntakeHelpers
 
   before do
+    Seeds::NotificationEvents.new.seed!
     Timecop.freeze(post_ama_start_date)
   end
 

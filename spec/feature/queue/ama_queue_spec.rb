@@ -12,6 +12,7 @@ feature "AmaQueue", :all_dbs do
     let(:no_queue_user) { create(:user, roles: ["Case Details"]) }
 
     before do
+      Seeds::NotificationEvents.new.seed!
       User.authenticate!(user: no_queue_user)
     end
 

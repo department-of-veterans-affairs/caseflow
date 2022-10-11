@@ -6,6 +6,10 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
   let(:base_url) { "va.gov" }
   let(:params) { { include_addresses: include_addresses, base_url: base_url } }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   subject { described_class.new(appeal, params: params) }
 
   context "badges attribute" do

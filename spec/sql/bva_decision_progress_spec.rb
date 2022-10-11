@@ -3,6 +3,10 @@
 describe "BVA Decision Progress report", :all_dbs do
   include SQLHelpers
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   include_context "AMA Tableau SQL"
 
   context "expected report" do

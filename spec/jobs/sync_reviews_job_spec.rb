@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe SyncReviewsJob, :postgres do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context ".perform" do
     let!(:end_product_establishment_more_recently_synced) do
       create(:end_product_establishment, last_synced_at: 1.day.ago, established_at: 4.days.ago)

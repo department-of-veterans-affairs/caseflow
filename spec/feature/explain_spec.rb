@@ -9,6 +9,7 @@ require "helpers/hearing_renderer.rb"
 RSpec.feature "Explain JSON" do
   let(:user_roles) { ["System Admin"] }
   before do
+    Seeds::NotificationEvents.new.seed!
     User.authenticate!(roles: user_roles)
   end
 

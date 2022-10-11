@@ -16,6 +16,10 @@ describe EvidenceSubmissionWindowTask, :postgres do
            ])
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   before do
     Vso.create(
       name: "Paralyzed Veterans Of America",

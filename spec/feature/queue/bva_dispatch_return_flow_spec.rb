@@ -38,6 +38,7 @@ feature "BVA Dispatch Return Flow", :all_dbs do
   end
 
   before do
+    Seeds::NotificationEvents.new.seed!
     # No catching for QualityReview
     allow(QualityReviewCaseSelector).to receive(:select_case_for_quality_review?).and_return(false)
 

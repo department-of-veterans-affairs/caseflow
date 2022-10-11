@@ -23,6 +23,10 @@ describe TasksAssignedToInactiveUsersChecker, :postgres do
     appeal
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "#call" do
     it "reports 1 appeals stuck" do
       subject.call

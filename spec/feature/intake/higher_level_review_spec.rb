@@ -4,6 +4,7 @@ feature "Higher-Level Review", :all_dbs do
   include IntakeHelpers
 
   before do
+    Seeds::NotificationEvents.new.seed!
     Timecop.freeze(post_ama_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original

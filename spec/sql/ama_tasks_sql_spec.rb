@@ -3,6 +3,10 @@
 describe "AMA Tasks Tableau data source", :all_dbs do
   include SQLHelpers
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   include_context "AMA Tableau SQL"
 
   context "one row for each Appeal" do

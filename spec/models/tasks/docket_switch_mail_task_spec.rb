@@ -9,6 +9,10 @@ describe DocketSwitchMailTask, :postgres do
   let(:distribution_task) { create(:distribution_task, :completed, appeal: appeal) }
   let(:appeal) { create(:appeal) }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let(:task_actions) do
     [
       Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,

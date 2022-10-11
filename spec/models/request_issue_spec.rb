@@ -6,6 +6,10 @@ describe RequestIssue, :all_dbs do
     FeatureToggle.enable!(:use_ama_activation_date)
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   after { FeatureToggle.disable!(:use_ama_activation_date) }
 
   let(:contested_rating_issue_reference_id) { "abc123" }

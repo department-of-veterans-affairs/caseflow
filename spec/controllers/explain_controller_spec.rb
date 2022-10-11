@@ -8,6 +8,10 @@ require "helpers/hearing_renderer.rb"
 describe ExplainController, :all_dbs, type: :controller do
   include TaskHelpers
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "GET explain/appeals/:appeal_id" do
     let(:user_roles) { ["System Admin"] }
     before do

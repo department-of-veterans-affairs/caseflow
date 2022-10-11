@@ -6,6 +6,10 @@ RSpec.describe CavcRemandsController, type: :controller do
     User.authenticate!(user: lit_support_user)
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let!(:lit_support_user) do
     CavcLitigationSupport.singleton.add_user(create(:user))
     CavcLitigationSupport.singleton.users.first

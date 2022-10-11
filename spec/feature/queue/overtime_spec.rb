@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.feature "Overtime", :all_dbs do
+  before do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   shared_examples "shows overtime badge" do
     it "shows an overtime badge" do
       expect(page).to have_selector(".cf-overtime-badge")

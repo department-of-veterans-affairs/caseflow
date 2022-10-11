@@ -6,6 +6,10 @@ describe BelongsToPolymorphicAppealConcern do
   let!(:decision_doc) { create(:decision_document, appeal: create(:appeal, :with_decision_issue, :at_bva_dispatch)) }
   let!(:legacy_decision_doc) { create(:decision_document, appeal: create(:legacy_appeal)) }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "concern is included in DecisionDocument" do
     it "`ama_appeal` returns the AMA appeal" do
       expect(decision_doc.ama_appeal).to eq decision_doc.appeal

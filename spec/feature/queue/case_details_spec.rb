@@ -9,6 +9,7 @@ end
 RSpec.feature "Case details", :all_dbs do
   let!(:frontend_time) { Time.zone.now } # The frontend does not abide by Timecop's time
   before do
+    Seeds::NotificationEvents.new.seed!
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end
 

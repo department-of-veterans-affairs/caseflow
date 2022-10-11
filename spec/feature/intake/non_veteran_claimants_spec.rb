@@ -6,8 +6,10 @@ feature "Non-veteran claimants", :postgres do
   include IntakeHelpers
 
   before do
+    Seeds::NotificationEvents.new.seed!
     setup_intake_flags
   end
+  
 
   let(:veteran_file_number) { "123412345" }
   let!(:veteran) do

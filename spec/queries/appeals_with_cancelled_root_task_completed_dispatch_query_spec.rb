@@ -8,6 +8,10 @@ describe AppealsWithCancelledRootTaskCompletedDispatchQuery, :postgres do
     appeal
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "#call" do
     subject { described_class.new.call }
 

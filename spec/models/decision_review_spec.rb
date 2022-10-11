@@ -6,6 +6,10 @@ describe DecisionReview, :postgres do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let(:participant_id) { "1234" }
   let(:veteran) { create(:veteran, participant_id: participant_id) }
   let(:higher_level_review) do

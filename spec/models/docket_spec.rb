@@ -59,6 +59,10 @@ describe Docket, :all_dbs do
              docket_type: Constants.AMA_DOCKETS.direct_review)
     end
 
+    before(:all) do
+      Seeds::NotificationEvents.new.seed!
+    end
+
     context "docket type" do
       # docket_type is implemented in the subclasses and should error if called here
       context "when docket type is called directly" do

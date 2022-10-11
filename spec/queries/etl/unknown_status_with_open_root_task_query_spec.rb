@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe ETL::UnknownStatusWithOpenRootTaskQuery, :etl, :all_dbs do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let!(:unknown_appeal) do
     create(:appeal, :with_post_intake_tasks).tap do |appeal|
       root_task = appeal.root_task

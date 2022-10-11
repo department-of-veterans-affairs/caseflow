@@ -5,6 +5,10 @@ describe MultipleOpenRootChildTaskChecker do
   let!(:appeal2) { create(:appeal, :with_schedule_hearing_tasks) }
   let!(:appeal3) { create(:appeal, :at_attorney_drafting) }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   it "reports to correct slack channel" do
     subject.call
     expect(subject.slack_channel).to eq("#appeals-echo")

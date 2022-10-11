@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe EndProductEstablishment, :postgres do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
 

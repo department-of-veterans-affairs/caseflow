@@ -3,6 +3,10 @@
 describe SameAppealSubstitutionTasksFactory, :postgres do
   before { JudgeTeam.for_judge(judge).add_user(attorney) }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let(:hearing_appeal) { create(:appeal, :hearing_docket, :assigned_to_judge, associated_judge: judge) }
 
   let!(:schedule_hearing_task) { hearing_appeal.tasks.of_type(:ScheduleHearingTask).first }

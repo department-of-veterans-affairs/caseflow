@@ -4,6 +4,10 @@ require "helpers/sanitized_json_configuration.rb"
 require "helpers/sanitized_json_importer.rb"
 
 describe AppellantSubstitution do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe ".same_appeal_substitution_allowed?" do
     let(:created_by) { create(:user) }
     let(:created_by_id) { created_by.id }

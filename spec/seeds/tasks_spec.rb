@@ -4,6 +4,10 @@ describe Seeds::Tasks, :all_dbs do
   describe "#seed!" do
     subject { described_class.new.seed! }
 
+    before(:all) do
+      Seeds::NotificationEvents.new.seed!
+    end
+
     before do
       # to do: these are expensive to run, esp Facols.
       # make Seeds::Tasks less dependent on them.

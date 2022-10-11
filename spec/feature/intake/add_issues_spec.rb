@@ -4,6 +4,7 @@ feature "Intake Add Issues Page", :all_dbs do
   include IntakeHelpers
 
   before do
+    Seeds::NotificationEvents.new.seed!
     setup_intake_flags
   end
 

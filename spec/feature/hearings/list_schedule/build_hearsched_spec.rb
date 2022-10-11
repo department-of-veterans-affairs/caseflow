@@ -3,6 +3,10 @@
 RSpec.feature "List Schedule for Build HearSched", :all_dbs do
   let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"]) }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "Correct buttons are displayed" do
     let!(:hearing) { create(:hearing) }
 

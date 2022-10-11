@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe Task, :all_dbs do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "includes PrintsTaskTree concern" do
     describe ".structure" do
       let(:root_task) { create(:root_task) }

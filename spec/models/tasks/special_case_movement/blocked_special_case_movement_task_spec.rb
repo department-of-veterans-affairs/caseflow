@@ -3,6 +3,10 @@
 require_relative "../special_case_movement_shared_examples"
 
 describe BlockedSpecialCaseMovementTask do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe ".create" do
     context "with Case Movement Team user" do
       let(:cm_user) { create(:user) }

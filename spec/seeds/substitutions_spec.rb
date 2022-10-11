@@ -4,6 +4,10 @@ describe Seeds::Substitutions do
   describe "#seed!" do
     subject { described_class.new.seed! }
 
+    before(:all) do
+      Seeds::NotificationEvents.new.seed!
+    end
+
     before do
       Seeds::Users.new.seed!
       Seeds::Facols.new.local_vacols_staff!

@@ -6,6 +6,10 @@ RSpec.describe AppellantSubstitutionsController, type: :controller do
     User.authenticate!(user: cob_user)
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let!(:cob_user) do
     ClerkOfTheBoard.singleton.add_user(create(:user))
     ClerkOfTheBoard.singleton.users.first

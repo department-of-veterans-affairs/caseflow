@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe WarmBgsCachesJob, :all_dbs do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "#perform" do
     let(:address_cache_key) { "bgs-participant-address-" }
     let(:ro_id) { "RO04" }

@@ -4,6 +4,7 @@ feature "Appeal Edit issues", :all_dbs do
   include IntakeHelpers
 
   before do
+    Seeds::NotificationEvents.new.seed!
     Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing

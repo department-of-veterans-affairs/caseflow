@@ -7,6 +7,10 @@ describe Hearings::HearingDayController, :all_dbs do
     User.authenticate!(user: user)
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "GET index" do
     let(:params) { {} }
 

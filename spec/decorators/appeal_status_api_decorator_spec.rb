@@ -5,6 +5,10 @@ describe AppealStatusApiDecorator, :all_dbs do
     Timecop.freeze(pre_ama_start_date)
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "#program" do
     subject { described_class.new(appeal).program }
 

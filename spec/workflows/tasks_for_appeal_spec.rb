@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe TasksForAppeal do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "#call" do
     context "for a VSO user" do
       let!(:org) { create(:vso) }

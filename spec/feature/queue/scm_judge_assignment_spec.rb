@@ -18,6 +18,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
   let(:current_user) { scm_user }
 
   before do
+    Seeds::NotificationEvents.new.seed!
     team_attorneys.each do |attorney|
       create(:staff, :attorney_role, user: attorney, stitle: "DF")
       judge_one_team.add_user(attorney)

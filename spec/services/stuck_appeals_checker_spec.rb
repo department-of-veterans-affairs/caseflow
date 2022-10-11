@@ -52,6 +52,10 @@ describe StuckAppealsChecker, :postgres do
     [dispatched_appeal_with_open_track_vet]
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "#call" do
     it "reports 5 appeals stuck" do
       subject.call
