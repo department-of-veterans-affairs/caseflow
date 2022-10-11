@@ -1,4 +1,16 @@
 #!/bin/sh
+
+# Script that will be ran by husky as a pre-commit git hook.
+#
+# In order to update and have changed reflected on the remote, run:
+#  git update-index --no-assume-unchanged .husky/pre-commit
+#
+# Be sure to run the following before pushing updates:
+#  chmod -x .husky/pre-commit
+#
+# To stop tracking changes to this file once more, run:
+#  git update-index --assume-unchanged .husky/pre-commit
+
 FILES=$(git diff --cached --name-only)
 [ -z "$FILES" ] && exit 0
 
