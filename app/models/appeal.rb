@@ -330,7 +330,7 @@ class Appeal < DecisionReview
   end
 
   # finalize_split_appeal contains all the methods to finish the amoeba split
-  def finalize_split_appeal(parent_appeal, user_css_id)
+  def finalize_split_appeal(parent_appeal, user_css_id, split_issues)
     # update the child task tree with parent, passing CSS ID of user for validation
     self&.clone_task_tree(parent_appeal, user_css_id)
     # clone the hearings and hearing relations from parent appeal
@@ -340,7 +340,7 @@ class Appeal < DecisionReview
     # if there are cavc_remand, clone them too (need user css id)
     self&.clone_cavc_remand(parent_appeal, user_css_id)
     # clones request_issues, decision_issues, and request_decision_issues
-    self&.clone_issues(parent_appeal)
+    self&.clone_issues(parent_appeal, split_issues)
     # set split appeal process flag to false
     appeal_split_process(false)
     # set the duplication split flag
@@ -367,7 +367,7 @@ class Appeal < DecisionReview
 
   # clone issues clones request_issues, decision_issues, and decision_request_issues
   # together in order to maintain relationships to each other
-  def clone_issues(parent_appeal)
+  def clone_issues(parent_appeal, split_request_issues)
     request_issues_parent_to_child_hash = {}
     decision_review_parent_to_child_hash = {}
     # clone request issues and add to request issue hash

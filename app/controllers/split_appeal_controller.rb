@@ -7,7 +7,7 @@ class SplitAppealController < ApplicationController
     if FeatureToggle.enabled?(:split_appeal_workflow)
 
       appeal_id = params[:appeal_id]
-      split_issue = params[:appeal_split_issues]
+      split_issues = params[:appeal_split_issues].keys
       split_other_reason = params[:split_other_reason]
       split_reason = params[:split_reason]
 
@@ -28,7 +28,7 @@ class SplitAppealController < ApplicationController
       user_css_id = params[:user]
 
       # run extra duplicate methods to finish split
-      dup_appeal.finalize_split_appeal(appeal, user_css_id)
+      dup_appeal.finalize_split_appeal(appeal, user_css_id, split_issues)
     end
   end
 end
