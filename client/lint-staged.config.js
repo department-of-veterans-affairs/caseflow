@@ -1,8 +1,9 @@
 // lint-staged.config.js
 module.exports = {
-  '../**/*.rb': (files) =>
+  '../{app,spec,config,lib}/**/*.{rb,erb,rake}': (files) =>
     `bundle exec rubocop ${files.join(' ')} -a --force-exclusion`,
+  './**/*.{js,jsx}': ['eslint --fix'],
   './**/*.md': ['prettier --write'],
-  './**/*.js': ['eslint --fix'],
-  './**/*.jsx': ['eslint --fix']
+  './**/*.json': ['prettier --write'],
+  '*.scss': ['prettier --write']
 };
