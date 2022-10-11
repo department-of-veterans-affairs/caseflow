@@ -1,5 +1,5 @@
 digraph belongs_to_erd {
-	graph [bb="0,0,2442.8,4245",
+	graph [bb="0,0,2442.8,4330",
 		rankdir=LR
 	];
 	node [label="\N"];
@@ -79,7 +79,7 @@ digraph belongs_to_erd {
 	Task	[color="#0000ff",
 		fillcolor="#00ff00",
 		fontcolor="#0000ff",
-		label="Task|(110 tasks)",
+		label="Task|(112 tasks)",
 		shape=record,
 		style=filled,
 		];
@@ -260,55 +260,13 @@ digraph belongs_to_erd {
 		];
 	DecisionDocument -> appeal_type	[label=appeal,
 		];
-	AvailableHearingLocations	[fillcolor="#66ccff",
-		label="AvailableHearingLocations\n(associated with: Veteran)",
-		style=filled,
-		];
-	AvailableHearingLocations -> appeal_type	[label=appeal,
-		];
-	VbmsUploadedDocument	[fillcolor="#ff5050",
-		label=VbmsUploadedDocument,
-		shape=note,
-		style=filled,
-		];
-	VbmsUploadedDocument -> appeal_type	[label=appeal,
-		];
-	SpecialIssueList	[
-		label=SpecialIssueList,
-		];
-	SpecialIssueList -> appeal_type	[label=appeal,
-		];
-	NodDateUpdate	[
-		label="NodDateUpdate\n(associated with: User)",
-		];
-	NodDateUpdate -> Appeal	[label=appeal,
-		];
-	record_type	[color="#0000ff",
-		fillcolor="#ffff00",
-		fontcolor="#0000ff",
-		label="record_type|Appeal,\nLegacyAppeal",
-		shape=record,
-		style=filled,
-		];
-	record_type -> decision_review_type	[color="#6600cc",
-		fontcolor="#6600cc",
-		label="(subset of)",
-		];
-	RecordSyncedByJob	[
-		label=RecordSyncedByJob,
-		];
-	RecordSyncedByJob -> record_type	[label=record,
-		];
-	WorkMode	[
-		label=WorkMode,
-		];
-	WorkMode -> appeal_type	[label=appeal,
-		];
 	HearingEmailRecipient	[fillcolor="#66ccff",
 		label=HearingEmailRecipient,
 		style=filled,
 		];
 	HearingEmailRecipient -> hearing_type	[label=hearing,
+		];
+	HearingEmailRecipient -> appeal_type	[label=appeal,
 		];
 	VirtualHearing	[fillcolor="#66ccff",
 		label=VirtualHearing,
@@ -371,6 +329,50 @@ digraph belongs_to_erd {
 	AppealStreamSnapshot -> LegacyAppeal	[label=appeal,
 		];
 	AppealStreamSnapshot -> LegacyHearing	[label=hearing,
+		];
+	VbmsUploadedDocument	[fillcolor="#ff5050",
+		label=VbmsUploadedDocument,
+		shape=note,
+		style=filled,
+		];
+	VbmsUploadedDocument -> appeal_type	[label=appeal,
+		];
+	AvailableHearingLocations	[fillcolor="#66ccff",
+		label="AvailableHearingLocations\n(associated with: Veteran)",
+		style=filled,
+		];
+	AvailableHearingLocations -> appeal_type	[label=appeal,
+		];
+	SpecialIssueList	[
+		label=SpecialIssueList,
+		];
+	SpecialIssueList -> appeal_type	[label=appeal,
+		];
+	NodDateUpdate	[
+		label="NodDateUpdate\n(associated with: User)",
+		];
+	NodDateUpdate -> Appeal	[label=appeal,
+		];
+	record_type	[color="#0000ff",
+		fillcolor="#ffff00",
+		fontcolor="#0000ff",
+		label="record_type|Appeal,\nLegacyAppeal",
+		shape=record,
+		style=filled,
+		];
+	record_type -> decision_review_type	[color="#6600cc",
+		fontcolor="#6600cc",
+		label="(subset of)",
+		];
+	RecordSyncedByJob	[
+		label=RecordSyncedByJob,
+		];
+	RecordSyncedByJob -> record_type	[label=record,
+		];
+	WorkMode	[
+		label=WorkMode,
+		];
+	WorkMode -> appeal_type	[label=appeal,
 		];
 	CavcRemand	[
 		label=CavcRemand,
@@ -519,6 +521,11 @@ digraph belongs_to_erd {
 		label=Allocation,
 		];
 	Allocation -> SchedulePeriod	[label=schedule_period,
+		];
+	ConferenceLink	[
+		label=ConferenceLink,
+		];
+	ConferenceLink -> HearingDay	[label=hearing_day,
 		];
 	SentHearingAdminEmailEvent	[fillcolor="#66ccff",
 		label=SentHearingAdminEmailEvent,
@@ -768,16 +775,22 @@ digraph belongs_to_erd {
 		];
 	AppellantHearingEmailRecipient -> hearing_type	[label=hearing,
 		];
+	AppellantHearingEmailRecipient -> appeal_type	[label=appeal,
+		];
 	JudgeHearingEmailRecipient	[fillcolor="#66ccff",
 		label=JudgeHearingEmailRecipient,
 		style=filled,
 		];
 	JudgeHearingEmailRecipient -> hearing_type	[label=hearing,
 		];
+	JudgeHearingEmailRecipient -> appeal_type	[label=appeal,
+		];
 	RepresentativeHearingEmailRecipient	[fillcolor="#66ccff",
 		label=RepresentativeHearingEmailRecipient,
 		style=filled,
 		];
 	RepresentativeHearingEmailRecipient -> hearing_type	[label=hearing,
+		];
+	RepresentativeHearingEmailRecipient -> appeal_type	[label=appeal,
 		];
 }

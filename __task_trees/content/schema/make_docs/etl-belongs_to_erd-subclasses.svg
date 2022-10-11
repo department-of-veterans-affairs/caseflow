@@ -150,7 +150,7 @@
 <polygon fill="#00ff00" stroke="#0000ff" points="75.5,-355 75.5,-401 171.5,-401 171.5,-355 75.5,-355"/>
 <text text-anchor="middle" x="123.5" y="-385.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">Task</text>
 <polyline fill="none" stroke="#0000ff" points="75.5,-378 171.5,-378 "/>
-<text text-anchor="middle" x="123.5" y="-362.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">(110 tasks)</text>
+<text text-anchor="middle" x="123.5" y="-362.8" font-family="Times,serif" font-size="14.00" fill="#0000ff">(112 tasks)</text>
 </g>
 <!-- Task&#45;&gt;Task -->
 <g id="edge26" class="edge">

@@ -1,5 +1,5 @@
 digraph belongs_to_erd_subclasses {
-	graph [bb="0,0,3974.1,3428.9",
+	graph [bb="0,0,3974.1,3804.9",
 		rankdir=LR
 	];
 	node [label="\N"];
@@ -100,7 +100,7 @@ digraph belongs_to_erd_subclasses {
 	Task	[color="#0000ff",
 		fillcolor="#00ff00",
 		fontcolor="#0000ff",
-		label="Task|(110 tasks)",
+		label="Task|(112 tasks)",
 		shape=record,
 		style=filled,
 		];
@@ -323,50 +323,6 @@ digraph belongs_to_erd_subclasses {
 		];
 	DecisionDocument -> appeal_type	[label=appeal,
 		];
-	AvailableHearingLocations	[fillcolor="#66ccff",
-		label="AvailableHearingLocations\n(associated with: Veteran)",
-		style=filled,
-		];
-	AvailableHearingLocations -> appeal_type	[label=appeal,
-		];
-	VbmsUploadedDocument	[fillcolor="#ff5050",
-		label=VbmsUploadedDocument,
-		shape=note,
-		style=filled,
-		];
-	VbmsUploadedDocument -> appeal_type	[label=appeal,
-		];
-	SpecialIssueList	[
-		label=SpecialIssueList,
-		];
-	SpecialIssueList -> appeal_type	[label=appeal,
-		];
-	NodDateUpdate	[
-		label="NodDateUpdate\n(associated with: User)",
-		];
-	NodDateUpdate -> Appeal	[label=appeal,
-		];
-	record_type	[color="#0000ff",
-		fillcolor="#ffff00",
-		fontcolor="#0000ff",
-		label="record_type|Appeal,\nLegacyAppeal",
-		shape=record,
-		style=filled,
-		];
-	record_type -> decision_review_type	[color="#6600cc",
-		fontcolor="#6600cc",
-		label="(subset of)",
-		];
-	RecordSyncedByJob	[
-		label=RecordSyncedByJob,
-		];
-	RecordSyncedByJob -> record_type	[label=record,
-		];
-	WorkMode	[
-		label=WorkMode,
-		];
-	WorkMode -> appeal_type	[label=appeal,
-		];
 	HearingEmailRecipient	[color="#000099",
 		fillcolor="#66ccff",
 		fontcolor="#000099",
@@ -375,6 +331,8 @@ digraph belongs_to_erd_subclasses {
 		style=dashed,
 		];
 	HearingEmailRecipient -> hearing_type	[label=hearing,
+		];
+	HearingEmailRecipient -> appeal_type	[label=appeal,
 		];
 	AppellantHearingEmailRecipient	[fillcolor="#66ccff",
 		label=AppellantHearingEmailRecipient,
@@ -455,6 +413,50 @@ digraph belongs_to_erd_subclasses {
 	AppealStreamSnapshot -> LegacyAppeal	[label=appeal,
 		];
 	AppealStreamSnapshot -> LegacyHearing	[label=hearing,
+		];
+	VbmsUploadedDocument	[fillcolor="#ff5050",
+		label=VbmsUploadedDocument,
+		shape=note,
+		style=filled,
+		];
+	VbmsUploadedDocument -> appeal_type	[label=appeal,
+		];
+	AvailableHearingLocations	[fillcolor="#66ccff",
+		label="AvailableHearingLocations\n(associated with: Veteran)",
+		style=filled,
+		];
+	AvailableHearingLocations -> appeal_type	[label=appeal,
+		];
+	SpecialIssueList	[
+		label=SpecialIssueList,
+		];
+	SpecialIssueList -> appeal_type	[label=appeal,
+		];
+	NodDateUpdate	[
+		label="NodDateUpdate\n(associated with: User)",
+		];
+	NodDateUpdate -> Appeal	[label=appeal,
+		];
+	record_type	[color="#0000ff",
+		fillcolor="#ffff00",
+		fontcolor="#0000ff",
+		label="record_type|Appeal,\nLegacyAppeal",
+		shape=record,
+		style=filled,
+		];
+	record_type -> decision_review_type	[color="#6600cc",
+		fontcolor="#6600cc",
+		label="(subset of)",
+		];
+	RecordSyncedByJob	[
+		label=RecordSyncedByJob,
+		];
+	RecordSyncedByJob -> record_type	[label=record,
+		];
+	WorkMode	[
+		label=WorkMode,
+		];
+	WorkMode -> appeal_type	[label=appeal,
 		];
 	CavcRemand	[
 		label=CavcRemand,
@@ -557,6 +559,18 @@ digraph belongs_to_erd_subclasses {
 		];
 	Organization -> Colocated	[color="#000099",
 		style=dotted];
+	EducationEmo	[fillcolor="#d9d9ff",
+		label=EducationEmo,
+		style=filled,
+		];
+	Organization -> EducationEmo	[color="#000099",
+		style=dotted];
+	EducationRpo	[fillcolor="#d9d9ff",
+		label=EducationRpo,
+		style=filled,
+		];
+	Organization -> EducationRpo	[color="#000099",
+		style=dotted];
 	HearingAdmin	[fillcolor="#d9d9ff",
 		label=HearingAdmin,
 		style=filled,
@@ -622,6 +636,12 @@ digraph belongs_to_erd_subclasses {
 		style=filled,
 		];
 	Organization -> VhaCamo	[color="#000099",
+		style=dotted];
+	VhaCaregiverSupport	[fillcolor="#d9d9ff",
+		label=VhaCaregiverSupport,
+		style=filled,
+		];
+	Organization -> VhaCaregiverSupport	[color="#000099",
 		style=dotted];
 	VhaProgramOffice	[fillcolor="#d9d9ff",
 		label=VhaProgramOffice,
@@ -771,6 +791,11 @@ digraph belongs_to_erd_subclasses {
 		label=Allocation,
 		];
 	Allocation -> SchedulePeriod	[label=schedule_period,
+		];
+	ConferenceLink	[
+		label=ConferenceLink,
+		];
+	ConferenceLink -> HearingDay	[label=hearing_day,
 		];
 	SentHearingAdminEmailEvent	[fillcolor="#66ccff",
 		label=SentHearingAdminEmailEvent,
@@ -1012,9 +1037,15 @@ digraph belongs_to_erd_subclasses {
 		];
 	AppellantHearingEmailRecipient -> hearing_type	[label=hearing,
 		];
+	AppellantHearingEmailRecipient -> appeal_type	[label=appeal,
+		];
 	JudgeHearingEmailRecipient -> hearing_type	[label=hearing,
 		];
+	JudgeHearingEmailRecipient -> appeal_type	[label=appeal,
+		];
 	RepresentativeHearingEmailRecipient -> hearing_type	[label=hearing,
+		];
+	RepresentativeHearingEmailRecipient -> appeal_type	[label=appeal,
 		];
 	DecisionReview -> Appeal	[color="#000099",
 		style=dotted];

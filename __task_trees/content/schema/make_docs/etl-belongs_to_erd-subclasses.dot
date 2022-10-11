@@ -65,7 +65,7 @@ digraph belongs_to_erd_subclasses {
 	Task	[color="#0000ff",
 		fillcolor="#00ff00",
 		fontcolor="#0000ff",
-		label="Task|(110 tasks)",
+		label="Task|(112 tasks)",
 		shape=record,
 		style=filled,
 		];

@@ -838,7 +838,7 @@ notifications,,,,,,,,
 notifications,appeals_id,string ∗,x,,,,x,ID of the Appeal
 notifications,appeals_type,string ∗,x,,,,x,Type of Appeal
 notifications,created_at,datetime,,,,,,Timestamp of when Noticiation was Created
-notifications,email_notification_external_id,string,,,,,,VA Notify Notification Id for the email notification send through their API 
+notifications,email_notification_external_id,string,,,,,,
 notifications,email_notification_status,string,,,,,,Status of the Email Notification
 notifications,event_date,date ∗,x,,,,,Date of Event
 notifications,event_type,string ∗,x,,,,,Type of Event
@@ -849,7 +849,7 @@ notifications,notified_at,datetime ∗,x,,,,,Time Notification was created
 notifications,participant_id,string,,,,,x,ID of Participant
 notifications,recipient_email,string,,,,,,Participant's Email Address
 notifications,recipient_phone_number,string,,,,,,Participants Phone Number
-notifications,sms_notification_external_id,string,,,,,,VA Notify Notification Id for the sms notification send through their API 
+notifications,sms_notification_external_id,string,,,,,,
 notifications,sms_notification_status,string,,,,,,Status of SMS/Text Notification
 notifications,updated_at,datetime,,,,,,TImestamp of when Notification was Updated
 notification_events,,,,,,,,Type of Event

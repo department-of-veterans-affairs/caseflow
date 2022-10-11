@@ -1,5 +1,5 @@
 digraph subclasses {
-	graph [bb="0,0,1778.1,6203",
+	graph [bb="0,0,1778.1,6365",
 		rankdir=LR,
 		splines=line
 	];
@@ -123,6 +123,18 @@ digraph subclasses {
 		];
 	Organization -> Colocated	[color="#000099",
 		style=dotted];
+	EducationEmo	[fillcolor="#d9d9ff",
+		label=EducationEmo,
+		style=filled,
+		];
+	Organization -> EducationEmo	[color="#000099",
+		style=dotted];
+	EducationRpo	[fillcolor="#d9d9ff",
+		label=EducationRpo,
+		style=filled,
+		];
+	Organization -> EducationRpo	[color="#000099",
+		style=dotted];
 	HearingAdmin	[fillcolor="#d9d9ff",
 		label=HearingAdmin,
 		style=filled,
@@ -188,6 +200,12 @@ digraph subclasses {
 		style=filled,
 		];
 	Organization -> VhaCamo	[color="#000099",
+		style=dotted];
+	VhaCaregiverSupport	[fillcolor="#d9d9ff",
+		label=VhaCaregiverSupport,
+		style=filled,
+		];
+	Organization -> VhaCaregiverSupport	[color="#000099",
 		style=dotted];
 	VhaProgramOffice	[fillcolor="#d9d9ff",
 		label=VhaProgramOffice,
@@ -429,6 +447,18 @@ digraph subclasses {
 		style=filled,
 		];
 	Task -> VhaDocumentSearchTask	[color="#000099",
+		style=dotted];
+	EducationDocumentSearchTask	[fillcolor="#00ff00",
+		label=EducationDocumentSearchTask,
+		style=filled,
+		];
+	Task -> EducationDocumentSearchTask	[color="#000099",
+		style=dotted];
+	EducationAssessDocumentationTask	[fillcolor="#00ff00",
+		label=EducationAssessDocumentationTask,
+		style=filled,
+		];
+	Task -> EducationAssessDocumentationTask	[color="#000099",
 		style=dotted];
 	AbstractMotionToVacateTask	[fillcolor="#00ff00",
 		label=AbstractMotionToVacateTask,
