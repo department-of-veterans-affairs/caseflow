@@ -6,11 +6,10 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import { applyMiddleware, createStore, compose } from 'redux';
 
-import PowerOfAttorneyDetail from 'app/queue/PowerOfAttorneyDetail';
+import { PowerOfAttorneyDetailUnconnected } from 'app/queue/PowerOfAttorneyDetail';
 
 import { amaAppeal as appeal, powerOfAttorney } from 'test/data/appeals';
 import { APPELLANT_TYPES } from 'app/queue/constants';
-import COPY from '../../../COPY';
 
 const createQueueReducer = (storeValues) => {
   return (state = storeValues) => {
@@ -19,7 +18,7 @@ const createQueueReducer = (storeValues) => {
   };
 };
 
-const renderPowerOfAttorneyDetail = (storeValues, appellantType) => {
+const renderPowerOfAttorneyDetailUnconnected = (storeValues, appellantType) => {
 
   const queueReducer = createQueueReducer(storeValues);
 
@@ -31,10 +30,11 @@ const renderPowerOfAttorneyDetail = (storeValues, appellantType) => {
   return render(
     <Provider store={store}>
       <MemoryRouter>
-        <PowerOfAttorneyDetail
-          title={COPY.CASE_DETAILS_POA_SUBSTITUTE}
+        <PowerOfAttorneyDetailUnconnected
           appealId={Object.keys(storeValues.queue.appeals)[0]}
           appellantType={appellantType}
+          poaAlert={storeValues.ui.poaAlert}
+          powerOfAttorney={powerOfAttorney}
         />
       </MemoryRouter>
     </Provider>
@@ -54,7 +54,7 @@ const queueStoreValues = {
   }
 };
 
-const createStoreValues = (hasPOA, appellantType, poaAlert, editPOAInformation) => {
+const createStoreValues = (hasPOA, appellantType, editPOAInformation) => {
   return {
     queue: {
       ...queueStoreValues,
@@ -66,7 +66,14 @@ const createStoreValues = (hasPOA, appellantType, poaAlert, editPOAInformation) 
       }
     },
     ui: {
-      poaAlert
+      poaAlert: {
+        message: 'Test message',
+        alertType: 'success',
+        powerOfAttorney
+      },
+      featureToggles: {
+        poa_button_refresh: true
+      }
     },
     editPOAInformation
   };
@@ -74,18 +81,26 @@ const createStoreValues = (hasPOA, appellantType, poaAlert, editPOAInformation) 
 
 describe('POA Refresh button', () => {
   test('Does not appear if claimant is an OtherClaimant', () => {
-    const storeValues = createStoreValues(false, APPELLANT_TYPES.OTHER_CLAIMANT, false, false);
+    const storeValues = createStoreValues(true, APPELLANT_TYPES.OTHER_CLAIMANT, false);
 
-    renderPowerOfAttorneyDetail(storeValues, APPELLANT_TYPES.OTHER_CLAIMANT);
+    renderPowerOfAttorneyDetailUnconnected(storeValues, APPELLANT_TYPES.OTHER_CLAIMANT);
 
-    expect(screen.queryByText('POA Refresh')).not.toBeTruthy();
+    expect(screen.queryByText('Refresh POA')).not.toBeTruthy();
   });
 
   test('Does not appear if claimant is a HealthcareProviderClaimant', () => {
-    const storeValues = createStoreValues(false, APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT, false, false);
+    const storeValues = createStoreValues(true, APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT, false);
 
-    renderPowerOfAttorneyDetail(storeValues, APPELLANT_TYPES.OTHER_CLAIMANT);
+    renderPowerOfAttorneyDetailUnconnected(storeValues, APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT);
 
-    expect(screen.queryByText('POA Refresh')).not.toBeTruthy();
+    expect(screen.queryByText('Refresh POA')).not.toBeTruthy();
+  });
+
+  test('Appears if claimant is a VeteranClaimant', () => {
+    const storeValues = createStoreValues(true, APPELLANT_TYPES.VETERAN_CLAIMANT, false);
+
+    renderPowerOfAttorneyDetailUnconnected(storeValues, APPELLANT_TYPES.VETERAN_CLAIMANT);
+
+    expect(screen.queryByText('Refresh POA')).toBeTruthy();
   });
 });
