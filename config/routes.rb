@@ -75,6 +75,7 @@ Rails.application.routes.draw do
         post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
         get 'appeals/:appeal_id/documents', to: 'appeals#appeal_documents'
         get 'appeals/:appeal_id/documents/:document_id', to: 'appeals#appeals_single_document'
+        post ':prefix/upload_document', to: 'upload_vbms_document#create'
       end
     end
   end
