@@ -196,8 +196,7 @@ class AsyncableJobsPage extends React.PureComponent {
         asyncableJobKlass={this.props.asyncableJobKlass} />
       <SearchBar
         style={{ marginTop: '0.5em' }}
-        size="small"
-        title="Search by Veteran file number"
+        title={(<strong>Search by Veteran file number:</strong>)}
         onChange={this.updateVeteranFileNumber}
         onSubmit={this.handleVeteranIdSearch}
         loading={this.state.isFetchingSearchResults}
