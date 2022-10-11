@@ -51,7 +51,9 @@ export const PAGE_PATHS = {
   CONFIRMATION: '/confirmation',
   CLEARED_EPS: '/cleared_eps',
   OUTCODED: '/outcoded',
-  REQUEST_ISSUE_MISSING_DECISION_DATE: '/missing_decision_date'
+  REQUEST_ISSUE_MISSING_DECISION_DATE: '/missing_decision_date',
+  CREATE_SPLIT: '/create_split',
+  REVIEW_SPLIT: '/review_split'
 };
 
 export const INTAKE_STATES = {
@@ -157,6 +159,9 @@ export const ACTIONS = {
   NO_ISSUES_SELECTED_ERROR: 'NO_ISSUES_SELECTED_ERROR',
   SET_EDIT_CONTENTION_TEXT: 'SET_EDIT_CONTENTION_TEXT',
   SET_HOMELESSNESS_TYPE: 'SET_HOMELESSNESS_TYPE',
+  SET_SPLIT_APPEAL: 'SET_SPLIT_APPEAL',
+  SPLIT_APPEAL_SUCCESS: 'SPLIT_APPEAL_SUCCESS',
+  SPLIT_APPEAL_FAILURE: 'SPLIT_APPEAL_FAILURE'
 };
 
 export const REVIEW_OPTIONS = {
@@ -234,7 +239,8 @@ export const ENDPOINT_NAMES = {
   REVIEW_INTAKE: 'review-intake',
   CANCEL_INTAKE: 'cancel-intake',
   COMPLETE_INTAKE: 'complete-intake',
-  ERROR_INTAKE: 'error-intake'
+  ERROR_INTAKE: 'error-intake',
+  SPLIT_APPEAL: 'split'
 };
 
 export const CANCELLATION_REASONS = {

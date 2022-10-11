@@ -8,6 +8,7 @@ module DocketHearingWithdrawn
   @@template_name = "Withdrawal of hearing"
   # rubocop:enable all
 
+  # AMA Hearing Withdrawn from the Daily Docket
   # original method defined in app/models/hearings/forms/hearing_update_form.rb
   def update_hearing
     super_return_value = super

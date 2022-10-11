@@ -1,11 +1,17 @@
 # frozen_string_literal: true
 
+# Whenever a veteran is needed for another factory, create a veteran via this factory and pass in either
+# the Veteran object or veteran.file_number, depending on which factory. The appeals factory should be passed
+# the Veteran object (either in-line or as a variable), while most other factories require the file_number
+
 FactoryBot.define do
   factory :veteran do
     first_name { "Bob" }
     last_name { "Smith#{Faker::Name.last_name.downcase.tr('\'', '')}" }
     name_suffix { (bob_smith_count == 1) ? "II" : bob_smith_count.to_s }
     ssn { Generators::Random.unique_ssn }
+    file_number { generate :veteran_file_number }
+    participant_id { generate :participant_id }
     email_address { "#{first_name}.#{last_name}@test.com" }
     date_of_death { nil }
 
@@ -28,9 +34,6 @@ FactoryBot.define do
         }
       end
     end
-
-    sequence(:file_number, 100_000_000)
-    sequence(:participant_id, 500_000_000)
 
     after(:build) do |veteran, evaluator|
       Fakes::BGSService.store_veteran_record(
