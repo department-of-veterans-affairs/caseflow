@@ -76,3 +76,5 @@ Makefile
 docs/schema/*
 !docs/schema/.keep
 
+# Git hooks
+.husky/pre-commit
