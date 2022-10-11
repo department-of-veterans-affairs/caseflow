@@ -9,6 +9,10 @@ class LegacyIssueOptin < CaseflowRecord
 
   delegate :vacols_id, :vacols_id=, :vacols_sequence_id, :vacols_sequence_id=, to: :request_issue
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   class << self
     def opt_ins_for_related_remand_issues(vacols_id)
       joins(:request_issue)

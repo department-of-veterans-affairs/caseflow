@@ -6,6 +6,10 @@ describe ClaimReviewAsyncStatsReporter, :postgres do
     Timecop.freeze(seven_am_random_date)
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let(:veteran) { create(:veteran) }
 
   let!(:hlrs) do

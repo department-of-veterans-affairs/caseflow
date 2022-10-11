@@ -7,6 +7,10 @@ describe ETL::TaskSyncer, :etl, :all_dbs do
 
   let(:etl_build) { ETL::Build.create }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "#call" do
     subject { described_class.new(etl_build: etl_build).call }
 

@@ -4,6 +4,7 @@ feature "Appeal Intake", :all_dbs do
   include IntakeHelpers
 
   before do
+    Seeds::NotificationEvents.new.seed!
     Timecop.freeze(post_ama_start_date)
     BvaIntake.singleton.add_user(current_user)
   end

@@ -5,6 +5,10 @@ feature "Task queue", :all_dbs do
 
   before { Colocated.singleton.add_user(vlj_support_staffer) }
 
+  before do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "attorney user with assigned tasks" do
     let(:attorney_user) { create(:user) }
 

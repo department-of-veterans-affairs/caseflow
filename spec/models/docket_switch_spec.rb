@@ -43,6 +43,10 @@ RSpec.describe DocketSwitch, type: :model do
     cotb_team.add_user(cotb_user)
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "#process!" do
     subject { docket_switch.process! }
 

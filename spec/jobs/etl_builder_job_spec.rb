@@ -5,6 +5,10 @@ describe ETLBuilderJob, :etl, :all_dbs do
 
   include_context "AMA Tableau SQL"
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "when error occurs" do
     subject { job.perform_now }
     let(:job) { described_class.new }

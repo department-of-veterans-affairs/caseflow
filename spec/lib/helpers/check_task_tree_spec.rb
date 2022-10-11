@@ -6,6 +6,10 @@ describe "CheckTaskTree" do
   let(:errors) { CheckTaskTree.call(appeal, verbose: false).first }
   let(:appeal) { create(:appeal) }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "when run against a legacy appeal" do
     let(:legacy_appeal) { create(:legacy_appeal) }
     subject { CheckTaskTree.new(legacy_appeal).check }

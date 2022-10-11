@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe IssueSerializer, :all_dbs do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   def issues_hash(object)
     IssueSerializer.new(object, is_collection: true).serializable_hash[:data].collect { |issue| issue[:attributes] }
   end

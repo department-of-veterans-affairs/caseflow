@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe RequestIssuesUpdate, :all_dbs do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   before do
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 20))

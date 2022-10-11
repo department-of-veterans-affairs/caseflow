@@ -15,6 +15,10 @@ describe SetAppealAgeAodJob, :postgres do
     let(:inactive_age_aod_appeal) { create(:appeal, :advanced_on_docket_due_to_age) }
     let(:cancelled_age_aod_appeal) { create(:appeal, :advanced_on_docket_due_to_age, :cancelled) }
 
+    before(:all) do
+      Seeds::NotificationEvents.new.seed!
+    end
+
     before do
       allow_any_instance_of(SlackService).to receive(:send_notification) do |_, msg, title|
         @slack_msg = msg

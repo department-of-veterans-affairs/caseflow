@@ -16,6 +16,10 @@ end
 describe Dispatch::Task, :postgres do
   before { Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0)) }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let(:appeal) { Generators::LegacyAppeal.create }
   let(:task) { FakeTask.create(appeal: appeal, aasm_state: aasm_state, user: assigned_user) }
   let(:user) { Generators::User.create(full_name: "Robert Smith") }

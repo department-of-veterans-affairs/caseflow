@@ -4,6 +4,7 @@ feature "Intake Review Page", :postgres do
   include IntakeHelpers
 
   before do
+    Seeds::NotificationEvents.new.seed!
     setup_intake_flags
   end
 

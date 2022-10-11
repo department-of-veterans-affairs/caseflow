@@ -11,6 +11,10 @@ describe DecisionDateChecker, :postgres do
     ]
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   context "# call" do
     it "should find request issues without decision dates" do
       subject.call

@@ -4,6 +4,10 @@ describe Seeds::CavcAmaAppeals do
   describe "#seed!" do
     subject { described_class.new.seed! }
 
+    before(:all) do
+      Seeds::NotificationEvents.new.seed!
+    end
+
     before do
       # Users and Facols are expensive to run, it'd be nice to
       # make Seeds::* less dependent

@@ -9,6 +9,10 @@ describe AppealFinder, :all_dbs do
   let!(:legacy_appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case)) }
   let(:second_appeal) { create(:appeal, veteran: veteran, stream_docket_number: appeal.stream_docket_number) }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe ".find_appeals_by_docket_number" do
     subject { described_class.find_appeals_by_docket_number(docket_number) }
 

@@ -10,6 +10,10 @@ describe "FinderConsoleMethods" do
   let(:console_shell) { DummyClass.new }
   before { console_shell.extend FinderConsoleMethods }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "FinderConsoleMethods._appeal" do
     subject { console_shell._appeal(identifier) }
     context "identifier is a UUID" do

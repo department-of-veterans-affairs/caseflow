@@ -10,6 +10,10 @@ describe CavcCorrespondenceMailTask do
     CavcLitigationSupport.singleton.add_user(cavc_lit_user)
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe ".available_actions" do
     let(:appeal) { create(:appeal, :type_cavc_remand) }
     let(:mail_task) do

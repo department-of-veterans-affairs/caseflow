@@ -2,6 +2,7 @@
 
 feature "Asyncable Jobs index", :postgres do
   before do
+    Seeds::NotificationEvents.new.seed!
     Timecop.freeze(Time.zone.now)
   end
 

@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe AppealDecisionIssuesPolicy, :postgres do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "#visible_decision_issues" do
     subject { AppealDecisionIssuesPolicy.new(user: user, appeal: appeal).visible_decision_issues }
 

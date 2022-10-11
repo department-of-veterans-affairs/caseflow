@@ -15,6 +15,7 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
   end
 
   before do
+    Seeds::NotificationEvents.new.seed!
     SpecialCaseMovementTeam.singleton.add_user(scm_user)
     User.authenticate!(user: scm_user)
   end

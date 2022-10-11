@@ -11,6 +11,10 @@ describe MandateHoldTask, :postgres do
   let(:appeal) { cavc_remand.remand_appeal }
   let(:cavc_task) { appeal.tasks.open.of_type(:CavcTask).last }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe ".create" do
     subject { described_class.create(parent: parent_task, appeal: appeal) }
     let(:parent_task) { cavc_task }

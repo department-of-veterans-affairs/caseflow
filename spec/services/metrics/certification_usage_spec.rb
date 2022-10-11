@@ -3,6 +3,10 @@
 describe Metrics::CertificationUsage, :all_dbs do
   include_context "Metrics Reports"
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "#call" do
     subject { described_class.new(date_range).call }
 

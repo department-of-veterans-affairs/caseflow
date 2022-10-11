@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe DocketCoordinator do
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "direct review docket steady state" do
     before do
       FeatureToggle.enable!(:test_facols)

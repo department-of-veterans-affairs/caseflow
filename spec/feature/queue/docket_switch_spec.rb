@@ -3,6 +3,7 @@
 RSpec.feature "Docket Switch", :all_dbs do
   include QueueHelpers
   before do
+    Seeds::NotificationEvents.new.seed!
     FeatureToggle.enable!(:docket_switch)
     cotb_org.add_user(cotb_attorney)
     cotb_org.add_user(cotb_non_attorney)

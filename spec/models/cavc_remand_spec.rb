@@ -27,6 +27,10 @@ describe CavcRemand do
   let(:federal_circuit) { nil }
   let(:instructions) { "Instructions!" }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe ".create!" do
     subject { CavcRemand.create!(params) }
 

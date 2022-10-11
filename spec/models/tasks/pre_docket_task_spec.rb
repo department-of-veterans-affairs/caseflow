@@ -8,6 +8,10 @@ describe PreDocketTask, :postgres do
   let!(:bva_intake_user) { create(:intake_user) }
   let!(:bva_intake_admin_user) { create(:intake_admin_user) }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   before do
     bva_intake.add_user(bva_intake_user)
     bva_intake.add_user(bva_intake_admin_user)

@@ -3,6 +3,10 @@
 describe HearingDayRequestTypeQuery do
   subject { HearingDayRequestTypeQuery.new.call }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   shared_examples_for "it returns correct hash with expected key and value" do |expected_type|
     it "returns a hash with the hearing day id as key and '#{expected_type}' as value" do
       expect(subject).to have_key(hearing_day.id)

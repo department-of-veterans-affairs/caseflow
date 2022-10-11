@@ -7,6 +7,10 @@ describe DocketRangeJob do
     let(:appeals_with_nil_docket_range_date) { 16 }
     let(:target_number_of_appeals) { 15 }
 
+    before(:all) do
+      Seeds::NotificationEvents.new.seed!
+    end
+
     before do
       docket_range_date = Time.utc(today.year, today.month, 1)
 

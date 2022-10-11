@@ -10,6 +10,11 @@ describe DocketSwitch::TaskHandler, :all_dbs do
     create(:staff, :judge_role, sdomainid: judge.css_id)
     create_list(:user, 6).each { |u| colocated_org.add_user(u) }
   end
+
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   after { FeatureToggle.disable!(:docket_switch) }
 
   let(:cotb_org) { ClerkOfTheBoard.singleton }

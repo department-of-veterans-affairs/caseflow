@@ -14,6 +14,10 @@ describe "BusinessLineReporter" do
   let(:third_appeal) { create(:appeal, :with_post_intake_tasks) }
   let(:third_ama_task) { create(:ama_task, appeal: third_appeal, assigned_to: business_line) }
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
     first_ama_task.completed!

@@ -6,6 +6,10 @@ describe EngineeringTask, :postgres do
     User.authenticate!(user: sys_admin)
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let(:org_admin) { create(:user) { |u| OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton) } }
   let(:other_user) { create(:user) }
 

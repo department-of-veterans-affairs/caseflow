@@ -5,6 +5,10 @@ describe SupplementalClaim, :postgres do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
 
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   let(:veteran_file_number) { "64205555" }
   let(:ssn) { "64205555" }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555", ssn: ssn) }
