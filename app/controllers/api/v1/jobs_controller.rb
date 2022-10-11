@@ -42,7 +42,7 @@ class Api::V1::JobsController < Api::ApplicationController
 
   def create
     # start job asynchronously as given by the job_type post param
-    job = SUPPORTED_JOBS[params.require(:job_type)]
+    job = SCHEDULED_JOBS[params.require(:job_type)]
     return unrecognized_job unless job
 
     job = job.perform_later

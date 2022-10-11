@@ -51,7 +51,7 @@ class AsyncableJobsController < ApplicationController
 
   def start_job
     # start job asynchronously as given by the job_type post param
-    job = SUPPORTED_JOBS[allowed_params[:job_type]]
+    job = SCHEDULED_JOBS[allowed_params[:job_type]]
     return unrecognized_job unless job
 
     success = true
@@ -153,6 +153,6 @@ class AsyncableJobsController < ApplicationController
   end
 
   def supported_jobs
-    SUPPORTED_JOBS.keys if FeatureToggle.enabled?(:async_manual_start, user: current_user) && current_user.admin?
+    SCHEDULED_JOBS.keys if FeatureToggle.enabled?(:async_manual_start, user: current_user) && current_user.admin?
   end
 end
