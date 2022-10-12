@@ -46,7 +46,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
 
   // Return to homepage of Intake upon cancellation
   const detectCancellation = useMemo(() => {
-    return (formType) ? null : <Redirect to={PAGE_PATHS.BEGIN} />;
+    return formType ? null : <Redirect to={PAGE_PATHS.BEGIN} />;
   }, [formType]);
 
   // Redirect to Review page if review page data is not present (e.g. from a page reload)
