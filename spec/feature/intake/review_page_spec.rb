@@ -438,6 +438,36 @@ feature "Intake Review Page", :postgres do
         end
       end
     end
+
+    context "when the user cancels the intake on the Add Claimant page" do
+      before { FeatureToggle.enable!(:non_veteran_claimants) }
+      after { FeatureToggle.disable!(:non_veteran_claimants) }
+
+      it "redirects back to the Intake start page" do
+        start_appeal(veteran, receipt_date: "01/01/2022")
+
+        visit "/intake"
+
+        # Review page
+        expect(page).to have_current_path("/intake/review_request")
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        find("label", text: "Claimant not listed", match: :prefer_exact).click
+        click_intake_continue
+
+        # Cancellation Modal
+        safe_click "#cancel-intake"
+        within_fieldset("Please select the reason you are canceling this intake.") do
+          find("label", text: "System error").click
+        end
+        safe_click ".confirm-cancel"
+
+        # Post-redirect to homepage
+        expect(page).to have_content("Welcome to Caseflow Intake!")
+        expect(page).to have_current_path("/intake/")
+      end
+    end
   end
 end
 
