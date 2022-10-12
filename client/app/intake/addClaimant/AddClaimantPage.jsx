@@ -36,13 +36,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
     })
   );
 
-  // Return to homepage of Intake upon cancellation
-  const detectCancellation = useMemo(() => {
-    if (!formType) {
-      return <Redirect to={PAGE_PATHS.BEGIN} />;
-    }
-  }, [formType]);
-
   const selectedForm = useMemo(() => {
     return Object.values(FORM_TYPES).find((item) => item.key === formType);
   }, [formType]);
@@ -50,6 +43,11 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
     return selectedForm ? intakeForms[camelCase(formType)] : null;
   }, [intakeForms, formType, selectedForm]);
   const intakeStatus = getIntakeStatus(useSelector((state) => state));
+
+  // Return to homepage of Intake upon cancellation
+  const detectCancellation = useMemo(() => {
+    return (formType) ? null : <Redirect to={PAGE_PATHS.BEGIN} />;
+  }, [formType]);
 
   // Redirect to Review page if review page data is not present (e.g. from a page reload)
   if (intakeStatus === INTAKE_STATES.STARTED && !intakeData.receiptDate) {
