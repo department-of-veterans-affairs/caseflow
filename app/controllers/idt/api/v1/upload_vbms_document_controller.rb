@@ -23,4 +23,15 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
       render json: result.errors[0], status: :bad_request
     end
   end
+
+  def create_without_appeal
+    result = PrepareDocumentUploadToVbms.new(request.parameters, current_user).call
+
+    if result.success?
+      render json: { message: "Document successfully queued for upload." }
+    else
+      render json: result.errors[0], status: :bad_request
+    end
+
+  end
 end
