@@ -87,6 +87,9 @@ module AppellantNotification
         event_date: Time.zone.today,
         email_enabled: false
       )
+      SendNotificationJob.perform_later(msg_bdy.to_json)
+    elsif template_name == "Appeal docketed" && !FeatureToggle.enabled?(:appeal_docketed_event) && msg_bdy.appeal_type == "LegacyAppeal"
+      nil
     else SendNotificationJob.perform_later(msg_bdy.to_json)
     end
     # rubocop:enable Layout/LineLength
