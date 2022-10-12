@@ -36,13 +36,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
     })
   );
 
-  // Return to homepage of Intake upon cancellation
-  const detectCancellation = useMemo(() => {
-    if (!formType) {
-      return <Redirect to={PAGE_PATHS.BEGIN} />;
-    }
-  }, [formType]);
-
   const selectedForm = useMemo(() => {
     return Object.values(FORM_TYPES).find((item) => item.key === formType);
   }, [formType]);
