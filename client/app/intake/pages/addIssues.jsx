@@ -8,6 +8,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import RemoveIssueModal from '../components/RemoveIssueModal';
 import CorrectionTypeModal from '../components/CorrectionTypeModal';
@@ -92,6 +93,10 @@ class AddIssuesPage extends React.Component {
     default:
       this.props.undoCorrection(index);
     }
+  };
+
+  onClickSplitAppeal =() => {
+    return <Redirect to={PAGE_PATHS.CREATE_SPLIT} />;
   };
 
   withdrawalDateOnChange = (value) => {
@@ -202,9 +207,11 @@ class AddIssuesPage extends React.Component {
       featureToggles,
       editPage,
       addingIssue,
-      userCanWithdrawIssues
+      userCanWithdrawIssues,
+      userCanSplitAppeal
     } = this.props;
     const intakeData = intakeForms[formType];
+    const appealInfo = intakeForms.appeal;
     const { useAmaActivationDate } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
@@ -260,17 +267,48 @@ class AddIssuesPage extends React.Component {
       intakeData.addedIssues, intakeData.originalIssues
     );
 
-    const addIssueButton = () => {
+    const splitButtonVisible = () => {
+
+      return ((
+        appealInfo?.issueCount > 1 || appealInfo.requestIssues?.length > 1) &&
+        userCanSplitAppeal && this.props.featureToggles.split_appeal_workflow);
+
+    };
+
+    const renderButtons = () => {
       return (
         <div className="cf-actions">
-          <Button
-            name="add-issue"
-            legacyStyling={false}
-            classNames={['usa-button-secondary']}
-            onClick={() => this.onClickAddIssue()}
-          >
+          {splitButtonVisible() ? (
+            [<Button
+              name="add-issue"
+              label="add-issue"
+              legacyStyling={false}
+              classNames={['usa-button-secondary']}
+              onClick={() => this.onClickAddIssue()}
+            >
             + Add issue
-          </Button>
+            </Button>,
+            (' '),
+            <Link to="/create_split" disabled={issuesChanged}>
+              <Button
+                name="split-appeal"
+                label="split-appeal"
+                legacyStyling={false}
+                classNames={['usa-button-secondary']}
+                disabled={issuesChanged}
+              >
+              Split appeal
+              </Button>
+            </Link>]
+          ) : (
+            <Button
+              name="add-issue"
+              legacyStyling={false}
+              classNames={['usa-button-secondary']}
+              onClick={() => this.onClickAddIssue()}
+            >
+            + Add issue
+            </Button>)}
         </div>
       );
     };
@@ -397,7 +435,7 @@ class AddIssuesPage extends React.Component {
     if (!hideAddIssueButton) {
       rowObjects = rowObjects.concat({
         field: ' ',
-        content: addIssueButton()
+        content: renderButtons()
       });
     }
 
@@ -510,7 +548,8 @@ AddIssuesPage.propTypes = {
   undoCorrection: PropTypes.func,
   veteran: PropTypes.object,
   withdrawIssue: PropTypes.func,
-  userCanWithdrawIssues: PropTypes.bool
+  userCanWithdrawIssues: PropTypes.bool,
+  userCanSplitAppeal: PropTypes.bool
 };
 
 export const IntakeAddIssuesPage = connect(
@@ -558,7 +597,9 @@ export const EditAddIssuesPage = connect(
     editPage: true,
     activeIssue: state.activeIssue,
     addingIssue: state.addingIssue,
-    userCanWithdrawIssues: state.userCanWithdrawIssues
+    userCanWithdrawIssues: state.userCanWithdrawIssues,
+    userCanSplitAppeal: state.userCanSplitAppeal
+
   }),
   (dispatch) =>
     bindActionCreators(

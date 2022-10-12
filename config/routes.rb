@@ -154,6 +154,8 @@ Rails.application.routes.draw do
 
   get '/task_tree/:appeal_type/:appeal_id' => 'task_tree#show'
 
+  post '/appeals/:appeal_id/split' => 'split_appeal#split_appeal'
+
   get '/explain/appeals/:appeal_id' => 'explain#show'
 
   resources :regional_offices, only: [:index]
@@ -252,7 +254,9 @@ Rails.application.routes.draw do
     resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
     post "jobs/:id/note", to: "asyncable_jobs#add_note"
   end
+
   match '/jobs' => 'asyncable_jobs#index', via: [:get]
+  post "/asyncable_jobs/start_job", to: "asyncable_jobs#start_job"
 
   scope path: "/inbox" do
     get "/", to: "inbox#index"
