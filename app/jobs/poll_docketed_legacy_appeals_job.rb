@@ -9,7 +9,7 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
   def perform
     vacols_ids = most_recent_docketed_appeals(claim_histories)
     filtered_vacols_ids = filter_duplicate_legacy_notifications(vacols_ids)
-    send_legacy_notifications(filtered_vacols_ids)
+    send_legacy_notifications(filtered_vacols_ids) if FeatureToggle.enabled?(:appeal_docketed_notification)
   end
 
   # Purpose: To get a list of claim location histories to be used to get the date for docketing

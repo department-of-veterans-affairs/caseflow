@@ -147,10 +147,21 @@ class SendNotificationJob < CaseflowJob
         "None"
       end
 
-    if event_type == "Appeal docketed"
-      notification = Notification.find_by(appeals_id: appeals_id, event_type: event_type, notification_type: notification_type)
-      notification.update!(notified_at: Time.zone.now)
-      notification
+    if event_type == "Appeal docketed" && appeals_type == "LegacyAppeal"
+      notification = Notification.where(appeals_id: appeals_id, event_type: event_type, notification_type: notification_type, appeals_type: appeals_type, event_date: Time.zone.today).last
+      if !notification.nil?
+        notification
+      else
+        Notification.new(
+          appeals_id: appeals_id,
+          appeals_type: appeals_type,
+          event_type: event_type,
+          notification_type: notification_type,
+          participant_id: participant_id,
+          notified_at: Time.zone.now,
+          event_date: Time.zone.today
+        )
+      end
     else
       Notification.new(
         appeals_id: appeals_id,

@@ -70,6 +70,7 @@ describe PollDocketedLegacyAppealsJob, type: :job do
     # rubocop:enable Layout/LineLength
 
     it "should filter for all legacy appeals that havent already gotten a notification yet" do
+      FeatureToggle.enable!(:appeal_docketed_notification)
       expect(PollDocketedLegacyAppealsJob.perform_now).to eq(filtered_docketed_appeal_ids)
     end
   end
