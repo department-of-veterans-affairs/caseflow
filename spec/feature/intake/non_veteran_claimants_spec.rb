@@ -465,6 +465,51 @@ feature "Non-veteran claimants", :postgres do
         expect(page).to have_button("Continue to next step", disabled: false)
       end
     end
+
+    context "when the user cancels the intake on the Add POA page" do
+      it "redirects back to the Intake start page" do
+        start_appeal(veteran, receipt_date: "09/01/2022")
+
+        # Review page
+        visit "/intake"
+        expect(page).to have_current_path("/intake/review_request")
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        find("label", text: "Claimant not listed", match: :prefer_exact).click
+        click_intake_continue
+
+        # Add Claimant Page
+        fill_in("Relationship to the Veteran", with: "Spouse").send_keys :enter
+
+        fill_in "First name", with: Faker::Name.first_name
+        fill_in "Last name", with: Faker::Name.last_name
+        fill_in "Street address 1", with: Faker::Address.street_address
+        fill_in "City", with: Faker::Address.city
+        fill_in("State", with: Faker::Address.state_abbr).send_keys :enter
+        fill_in("Zip", with: "12345").send_keys :enter
+        fill_in("Country", with: "United States").send_keys :enter
+        within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        click_intake_continue
+
+        # Add POA Page
+        expect(page).to have_content("Add Claimant's POA")
+        expect(page).to have_current_path("/intake/add_power_of_attorney")
+
+        # Cancellation Modal
+        safe_click "#cancel-intake"
+        within_fieldset("Please select the reason you are canceling this intake.") do
+          find("label", text: "System error").click
+        end
+        safe_click ".confirm-cancel"
+
+        # Post-redirect to homepage
+        expect(page).to have_content("Welcome to Caseflow Intake!")
+        expect(page).to have_current_path("/intake/")
+      end
+    end
   end
 
   def add_existing_attorney(attorney)
