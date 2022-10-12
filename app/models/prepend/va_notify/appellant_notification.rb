@@ -76,6 +76,7 @@ module AppellantNotification
       else
         "None"
       end
+    # rubocop:disable Layout/LineLength
     if template_name == "Appeal docketed" && FeatureToggle.enabled?(:appeal_docketed_event) && msg_bdy.appeal_type == "LegacyAppeal"
       Notification.create!(
         appeals_id: msg_bdy.appeal_id,
@@ -88,6 +89,7 @@ module AppellantNotification
       )
     else SendNotificationJob.perform_later(msg_bdy.to_json)
     end
+    # rubocop:enable Layout/LineLength
   end
 
   def self.create_payload(appeal, template_name)

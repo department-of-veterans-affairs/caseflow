@@ -48,7 +48,7 @@ class SendNotificationJob < CaseflowJob
             end
             update_notification_audit_record(notification_audit_record, to_update)
             if message.template_name == "Appeal docketed" && message.appeal_type == "LegacyAppeal" && !FeatureToggle.enabled?(:appeal_docketed_notification)
-              notification_audit_record.update!(email_enabled: false)
+              nil
             else send_to_va_notify(message, notification_audit_record)
             end
           else
