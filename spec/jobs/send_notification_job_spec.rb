@@ -340,6 +340,14 @@ describe SendNotificationJob, type: :job do
   end
 
   context "feature flags for sending legacy notifications" do
+    it "should only send notifications when feature flag is turned on" do
+      FeatureToggle.enable!(:appeal_docketed_notification)
+      job = SendNotificationJob.new(legacy_message.to_json)
+      job.instance_variable_set(:@notification_audit_record, notification)
+      expect(job).to receive(:send_to_va_notify)
+      job.perform_now
+    end
+
     it "should not send notifications when feature flag is turned off" do
       FeatureToggle.disable!(:appeal_docketed_notification)
       job = SendNotificationJob.new(legacy_message.to_json)
