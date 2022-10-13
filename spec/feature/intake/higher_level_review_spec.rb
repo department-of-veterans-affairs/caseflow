@@ -132,7 +132,7 @@ feature "Higher-Level Review", :all_dbs do
       find("label", text: "Yes", match: :prefer_exact).click
     end
 
-    expect(page).to have_content("Please select the claimant listed on the form.")
+    expect(page).to have_content("Please select the claimant listed on the form. If the claimant is not listed, please select 'Claimant not listed' and add their information in the next step.")
 
     # We do not need to select payee codes for non-VBMS business lines
     expect(page).to_not have_content("What is the payee code for this claimant?")
@@ -142,9 +142,12 @@ feature "Higher-Level Review", :all_dbs do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
 
+    expect(page).to have_content("Please select the claimant listed on the form.")
+
     expect(page).to have_content("What is the payee code for this claimant?")
     expect(page).to have_content("Bob Vance, Spouse")
     expect(page).to_not have_content("Cathy Smith, Child")
+
 
     click_intake_continue
 
