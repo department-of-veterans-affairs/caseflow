@@ -184,7 +184,7 @@ describe Claimant, :postgres do
       let(:claimant) do
         create(:claimant,
                participant_id: "no-such-pid",
-               decision_review: build(:appeal, veteran_file_number: "no-such-file-number"))
+               decision_review: build(:appeal, veteran: build(:veteran, file_number: "no-such-file-number")))
       end
 
       let!(:bgs_service) { BGSService.new }
