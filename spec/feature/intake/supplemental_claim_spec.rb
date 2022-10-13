@@ -97,16 +97,27 @@ feature "Supplemental Claim Intake", :all_dbs do
     end
 
     expect(page).to_not have_content("Please select the claimant listed on the form.")
+    expect(page).to_not have_content("What is the payee code for this claimant?")
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "Yes", match: :prefer_exact).click
     end
 
+    expect(page).to have_content("Please select the claimant listed on the form. If the claimant is not listed, please select 'Claimant not listed' and add their information in the next step.")
+    
+    # Switch the benefit type to compensation to test choosing the payee code.
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
+
     expect(page).to have_content("Please select the claimant listed on the form.")
+
+    expect(page).to have_content("What is the payee code for this claimant?")
     expect(page).to have_content("Foo Bar, Spouse")
     expect(page).to have_content("Baz Qux, Child")
 
     find("label", text: "Baz Qux, Child", match: :prefer_exact).click
 
+    expect(page).to have_content("What is the payee code for this claimant?")
     fill_in "What is the payee code for this claimant?", with: "11 - C&P First Child"
     find("#cf-payee-code").send_keys :enter
 
