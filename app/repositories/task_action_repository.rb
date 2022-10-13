@@ -477,7 +477,7 @@ class TaskActionRepository
 
       {
         modal_title: COPY::DOCKET_APPEAL_MODAL_TITLE,
-        modal_body: format(COPY::DOCKET_APPEAL_MODAL_BODY, pre_docket_org),
+        modal_body: format(COPY::DOCKET_APPEAL_MODAL_BODY, pre_docket_org, "VBMS"),
         modal_button_text: COPY::MODAL_CONFIRM_BUTTON,
         modal_alert: COPY::DOCKET_APPEAL_MODAL_NOTICE,
         instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
