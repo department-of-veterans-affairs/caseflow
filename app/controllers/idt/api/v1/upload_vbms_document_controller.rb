@@ -22,7 +22,8 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   def create
     # Find veteran from veteran file nummber of ssn
     if request.parameters["veteran_file_number"] != "" || request.parameters["veteran_ssn"] != ""
-      veteran = Veteran.find_by_file_number_or_ssn(request.parameters["veteran_ssn"])
+      veteran = Veteran.find_by_file_number_or_ssn(request.parameters["veteran_file_number"]) ||
+                Veteran.find_by_file_number_or_ssn(request.parameters["veteran_ssn"])
       if veteran.nil?
         begin
           fail NoAppealError, request.parameters["appeal_id"]
@@ -49,7 +50,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
         request.parameters["veteran_file_number"] = appeal.veteran_file_number
       end
     end
-    byebug
+
     result = PrepareDocumentUploadToVbms.new(request.parameters, current_user).call
 
     if result.success?
