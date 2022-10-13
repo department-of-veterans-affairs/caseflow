@@ -14,30 +14,41 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     end
   end
 
-  def create
-    if request.parameters["appeal_id"] != ""
-      result = "placeholder"
-    elsif request.parameters["veteran_ssn"] != ""
-      result = "placeholder"
-    elsif request.parameters["veteran_file_number"] != ""
-      result = "placeholder"
-    end
-
-    if result.success?
-      render json: { message: "Document successfully queued for upload." }
-    else
-      render json: result.errors[0], status: :bad_request
-    end
+  def log_error(error)
+    Raven.capture_exception(error)
+    Rails.logger.error(error)
   end
 
-  def create_without_appeal
-    result = PrepareDocumentUploadToVbms.new(request.parameters, current_user).call
+  def create
+    if request.parameters["veteran_file_number"] != "" || request.parameters["veteran_ssn"] != ""
+      veteran = Veteran.find_by_file_number_or_ssn(request.parameters["veteran_ssn"])
+      if veteran.nil?
+        render json: { status: 400, error_id: SecureRandom.uuid, error_message: "The veteran was unable to be found." }, status: :not_found
+      end
+      file_num = request.parameters["veteran_file_number"]
+      
+    elsif request.parameters["appeal_id"] != ""
+      appeal = LegacyAppeal.find_by_vacols_id(request.parameters["appeal_id"]) || Appeal.find_by_uuid(request.parameters["appeal_id"])
+      if appeal.nil?
+        begin
+          fail NoAppealError, request.parameters["appeal_id"]
+        rescue StandardError => error
+          log_error(error)
+          render json: { status: 400, error_id: SecureRandom.uuid, error_message: "The appeal was unable to be found." }, status: :not_found
+        end
+      elsif appeal.appeal_type == "LegacyAppeal"
+        file_num = appeal.sanitized_vbms_id
+      else
+        file_num = appeal.veteran_file_number
+      end
+    end
+
+    result = PrepareDocumentUploadToVbms.new(file_num, current_user).call
 
     if result.success?
       render json: { message: "Document successfully queued for upload." }
     else
       render json: result.errors[0], status: :bad_request
     end
-
   end
 end
