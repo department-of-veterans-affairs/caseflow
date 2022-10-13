@@ -8,5 +8,15 @@
 FILES=$(git diff --cached --name-only)
 [ -z "$FILES" ] && exit 0
 
+# Check for executable files. Exits if any are found.
+for file in $FILES; do
+  if [[ -x "$file" ]]; then
+    echo "There was an attempt to commit an executable file. Please unstage it or run \`chmod -x $file\`" > /dev/stderr
+    echo "If you are intentionally trying to commit an executable file then commit with \`git commit --no-verify\`" > /dev/stderr
+    echo "Note: You can set git to ignore file permission changes with \`git config core.fileMode false\`" > /dev/stderr
+    exit 1
+  fi
+done
+
 # Run lint-staged on all staged
 echo "$FILES" | (cd $(git rev-parse --show-toplevel)/client; yarn lint-staged)
