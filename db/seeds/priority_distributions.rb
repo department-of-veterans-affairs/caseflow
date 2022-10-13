@@ -365,6 +365,9 @@ module Seeds
       Timecop.return
     end
 
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
+
     # creates a hearing case with dates specifically requested during ACD algorithm changes
     # Appeal received 95 days ago, hearing held 65 days ago,
     # evidence window completed over 64 days ago,ready for dist 18 days ago
@@ -398,6 +401,8 @@ module Seeds
       end
       Timecop.return
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
 
     def create_direct_review_ready_priority_genpop_cases
       20.times do |num|
