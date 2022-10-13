@@ -365,30 +365,15 @@ class Appeal < DecisionReview
     dup_remand&.save
   end
 
-  # clone issues clones request_issues, decision_issues, and decision_request_issues
-  # together in order to maintain relationships to each other
+  # clone issues clones request_issues.
+  # this version ignores decision issues and request_decision issues
   def clone_issues(parent_appeal, split_request_issues)
-    request_issues_parent_to_child_hash = {}
-    decision_review_parent_to_child_hash = {}
-    # clone request issues and add to request issue hash
-    original_request_issues = parent_appeal.request_issues
-    original_request_issues.each do |r_issue|
-      dup_issue = clone_issue(r_issue)
-      request_issues_parent_to_child_hash[r_issue.id] = dup_issue.id
-    end
-    # clone decision issues and add to decision issue hash
-    original_decision_issues = parent_appeal.decision_issues
-    original_decision_issues.each do |d_issue|
-      dup_issue = clone_issue(d_issue)
-      decision_review_parent_to_child_hash[d_issue.id] = dup_issue.id
-    end
-    # cycle the hashes to maintain parent/child relationships and save
-    original_request_decision_issues = parent_appeal.request_decision_issues
-    original_request_decision_issues.each do |rd_issue|
-      dup_issue = rd_issue&.amoeba_dup
-      dup_issue&.request_issue_id = request_issues_parent_to_child_hash[rd_issue.request_issue_id]
-      dup_issue&.decision_issue_id = decision_review_parent_to_child_hash[rd_issue.decision_issue_id]
-      dup_issue&.save
+    # cycle the split_request_issues list from the payload
+    split_request_issues.each do |r_issue_id|
+      # find the request issue from the parent appeal
+      r_issue = parent_appeal.request_issues.find(r_issue_id.to_i)
+      clone_issue(r_issue)
+      # logic to turn off the request issue here
     end
   end
 
