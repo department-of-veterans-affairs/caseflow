@@ -4,8 +4,9 @@ import { useArgs } from '@storybook/client-api';
 import { SelectClaimant } from './SelectClaimant';
 
 const relationships = [
-  { value: '123456', displayText: 'John Doe, Spouse' },
-  { value: '654321', displayText: 'Jen Doe, Child' },
+  { value: '123456', displayText: 'Bob Vance, Spouse' },
+  { value: '654321', displayText: 'Cathy Smith, Child' },
+  { value: '789123', displayText: 'Tom Brady, Child' },
 ];
 
 const defaultArgs = {
@@ -52,4 +53,48 @@ Basic.parameters = {
     storyDescription:
       'Used during intake process to select a claimant with some sort of relationship to the veteran',
   },
+};
+
+export const HLRWithVBMSBenTypes = Template.bind({});
+HLRWithVBMSBenTypes.args = {
+  appellantName: 'Jane Doe',
+  formType: 'higher_level_review',
+  isVeteranDeceased: false,
+  veteranIsNotClaimant: true,
+  enableAddClaimant: true,
+  relationships,
+  benefitType: 'pension',
+};
+
+export const HLRWithNonVBMSBenTypes = Template.bind({});
+HLRWithNonVBMSBenTypes.args = {
+  appellantName: 'Jane Doe',
+  formType: 'higher_level_review',
+  isVeteranDeceased: false,
+  veteranIsNotClaimant: true,
+  enableAddClaimant: true,
+  relationships,
+  benefitType: 'education',
+};
+
+export const SCWithVBMSBenTypes = Template.bind({});
+SCWithVBMSBenTypes.args = {
+  appellantName: 'Jane Doe',
+  formType: 'higher_level_review',
+  isVeteranDeceased: false,
+  veteranIsNotClaimant: true,
+  enableAddClaimant: true,
+  relationships,
+  benefitType: 'pension',
+};
+
+export const SCWithNonVBMSBenTypes = Template.bind({});
+SCWithNonVBMSBenTypes.args = {
+  appellantName: 'Jane Doe',
+  formType: 'higher_level_review',
+  isVeteranDeceased: false,
+  veteranIsNotClaimant: true,
+  enableAddClaimant: true,
+  relationships,
+  benefitType: 'education',
 };
