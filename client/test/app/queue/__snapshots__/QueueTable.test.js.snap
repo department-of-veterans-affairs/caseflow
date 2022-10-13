@@ -5393,7 +5393,6 @@ exports[`QueueTable render() Renders loading component instead of body when load
       >
         <section
           className="testClasses"
-          role="main"
         >
           <div
             data-css-1ogvp9u=""
