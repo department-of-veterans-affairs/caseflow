@@ -188,6 +188,7 @@ module Seeds
     # rubocop:enable Metrics/AbcSize
 
     # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
     def fully_processed_vacate_appeal(mtv_judge, drafting_attorney, lit_support_user)
       3.times do
         original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
@@ -215,6 +216,7 @@ module Seeds
       end
     end
     # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
 
     def setup_motion_to_vacate_appeals
       lit_support_user = User.find_by(css_id: "LIT_SUPPORT_USER")
