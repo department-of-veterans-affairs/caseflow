@@ -370,11 +370,28 @@ class Appeal < DecisionReview
   def clone_issues(parent_appeal, split_request_issues)
     request_issues_parent_to_child_hash = {}
     decision_review_parent_to_child_hash = {}
-    # clone request issues and add to request issue hash
+
+    # cycle the split_request_issues list from the payload
+    split_request_issues.each do |r_issue_id|
+      # find the request issue from the parent appeal
+      r_issue = parent_appeal.request_issues.find(r_issue_id.to_i)
+      clone_issue(r_issue)
+      #########################
+      # logic to parent_appeal request issues to "on hold"
+      #########################
+    end
+    # clone request issues that have a decision issue and add to request issue hash
     original_request_issues = parent_appeal.request_issues
     original_request_issues.each do |r_issue|
+      # next if the issue has been copied or it doesn't have a decision issue
+      next if (split_request_issues.include? r_issue.id.to_s) || r_issue.decision_issue_ids.empty?
+
       dup_issue = clone_issue(r_issue)
       request_issues_parent_to_child_hash[r_issue.id] = dup_issue.id
+
+      #########################
+      # logic to put the request issues with decision issues "on hold"
+      #########################
     end
     # clone decision issues and add to decision issue hash
     original_decision_issues = parent_appeal.decision_issues
