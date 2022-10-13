@@ -20,13 +20,20 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def create
+    # Find veteran from veteran file nummber of ssn
     if request.parameters["veteran_file_number"] != "" || request.parameters["veteran_ssn"] != ""
       veteran = Veteran.find_by_file_number_or_ssn(request.parameters["veteran_ssn"])
       if veteran.nil?
-        render json: { status: 400, error_id: SecureRandom.uuid, error_message: "The veteran was unable to be found." }, status: :not_found
+        begin
+          fail NoAppealError, request.parameters["appeal_id"]
+        rescue StandardError => error
+          log_error(error)
+          render json: { status: 400, error_id: SecureRandom.uuid, error_message: "The veteran was unable to be found." }, status: :not_found
+        end
       end
-      file_num = request.parameters["veteran_file_number"]
-      
+      request.parameters["veteran_file_number"] = veteran.file_number
+
+    # Find veteran from appeal id
     elsif request.parameters["appeal_id"] != ""
       appeal = LegacyAppeal.find_by_vacols_id(request.parameters["appeal_id"]) || Appeal.find_by_uuid(request.parameters["appeal_id"])
       if appeal.nil?
@@ -37,13 +44,13 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
           render json: { status: 400, error_id: SecureRandom.uuid, error_message: "The appeal was unable to be found." }, status: :not_found
         end
       elsif appeal.appeal_type == "LegacyAppeal"
-        file_num = appeal.sanitized_vbms_id
+        request.parameters["veteran_file_number"] = appeal.sanitized_vbms_id
       else
-        file_num = appeal.veteran_file_number
+        request.parameters["veteran_file_number"] = appeal.veteran_file_number
       end
     end
-
-    result = PrepareDocumentUploadToVbms.new(file_num, current_user).call
+    byebug
+    result = PrepareDocumentUploadToVbms.new(request.parameters, current_user).call
 
     if result.success?
       render json: { message: "Document successfully queued for upload." }
