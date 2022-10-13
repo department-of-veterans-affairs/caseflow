@@ -84,6 +84,92 @@ feature "Appeal Edit issues", :all_dbs do
 
   let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
 
+  # create_appeal_with_type(Constants.AMA_DOCKETS.evidence_submission)
+  # create_appeal_with_type(Constants.AMA_DOCKETS.direct_review)
+  # create_appeal_with_type(Constants.AMA_DOCKETS.hearing)
+
+  def create_appeal_intake_with_type(current_type)
+
+    let!(:current_user) do
+      User.authenticate!(roles: ["Mail Intake"])
+    end
+  
+    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+    let(:last_week) { Time.zone.now - 7.days }
+    let(:receipt_date) { Time.zone.today - 20.days }
+    let(:profile_date) { (receipt_date - 30.days).to_datetime }
+    let!(:rating) { generate_rating_with_defined_contention(veteran, receipt_date, profile_date) }
+    let!(:rating_before_ama) { generate_pre_ama_rating(veteran) }
+    let!(:rating_before_ama_from_ramp) { generate_rating_before_ama_from_ramp(veteran) }
+    let!(:ratings_with_legacy_issues) do
+      generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
+    end
+    let(:request_issue_decision_mdY) { rating_request_issue.decision_or_promulgation_date.mdY }
+    let(:legacy_opt_in_approved) { false }
+
+    let!(:appeal) do
+      create(:appeal,
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: current_type,
+             veteran_is_not_claimant: false,
+             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+    end
+  
+  
+    let!(:appeal_intake) do
+      create(:intake, user: current_user, detail: appeal, veteran_file_number: veteran.file_number)
+    end
+  
+    let(:nonrating_request_issue_attributes) do
+      {
+        decision_review: appeal,
+        nonrating_issue_category: "Military Retired Pay",
+        nonrating_issue_description: "nonrating description",
+        contention_reference_id: "1234",
+        decision_date: 1.month.ago
+      }
+    end
+  
+    let!(:nonrating_request_issue) { create(:request_issue, nonrating_request_issue_attributes) }
+  
+    let(:rating_request_issue_attributes) do
+      {
+        decision_review: appeal,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: profile_date,
+        contested_issue_description: "PTSD denied",
+        contention_reference_id: "4567"
+      }
+    end
+  
+    let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
+    return appeal
+  end
+
+  def add_issue_to_appeal(type_appeal, num_issue)
+    appeal = create_appeal_with_type(type_appeal)
+
+    benefit_type =["Compensation", "Pension & Survivor's Benefits", "Fiduciary", "Insurance" , "Education"]
+    contested_issue_description =["Other Issue Description", "PTSD denied", "Testing", "PTSD Issue ", "Here your Description"]
+    reference_id =["blah1234", "ertt1596", "wsde1258", "qwer6547", "rtyu7896"]
+    while num_issue >= 1
+      let(:request_issue) do
+        create(:request_issue,
+               id: 25,
+               decision_review: appeal,
+               decision_date: profile_date,
+               contested_rating_issue_reference_id: reference_id[num_issue],
+               contested_rating_issue_profile_date: profile_date,
+               contested_issue_description: contested_issue_description[num_issue],
+               contention_reference_id: rand(10000...20000).to_s,
+               benefit_type: benefit_type[num_issue])
+      end
+      appeal.request_issues << request_issue
+      num_issue = num_issue - 1
+    end 
+  end
+
   scenario "allows adding/removing issues" do
     visit "appeals/#{appeal.uuid}/edit/"
 
@@ -403,6 +489,8 @@ feature "Appeal Edit issues", :all_dbs do
 
     def skill_form(appeal)
       # add issues to the appeal
+      # add_issue_to_appeal(Constants.AMA_DOCKETS.evidence_submission, 2)
+
       appeal.request_issues << request_issue_1
       appeal.request_issues << request_issue_2
 
@@ -419,7 +507,7 @@ feature "Appeal Edit issues", :all_dbs do
       find(:css, '.cf-select__menu').click
       
       click_button("Continue")
-      expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/review_split")
+      expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/review_split")
     end
 
     def wait_for_ajax
