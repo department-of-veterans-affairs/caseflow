@@ -3,13 +3,11 @@
 class PrepareDocumentUploadToVbms
   include ActiveModel::Model
 
-  validates :appeal, :file, presence: true
+  validates :file, presence: true
   validate :valid_document_type
 
-  delegate :veteran, to: :appeal
-
   def initialize(params, user)
-    @params = params.slice(:appeal_id, :document_type, :file)
+    @params = params.slice(:file_number, :document_type, :file)
     @document_type = @params[:document_type]
     @user = user
   end
