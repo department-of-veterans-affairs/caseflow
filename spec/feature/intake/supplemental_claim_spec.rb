@@ -56,10 +56,10 @@ feature "Supplemental Claim Intake", :all_dbs do
   let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
 
   before do
-    FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) 
+    FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
   end
   after do
-    FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) 
+    FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
   end
 
   it "Creates an end product" do
@@ -110,7 +110,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     end
 
     expect(page).to have_content("Please select the claimant listed on the form. If the claimant is not listed, please select \"Claimant not listed\" and add their information in the next step.")
-    
+
     # Switch the benefit type to compensation to test choosing the payee code.
     within_fieldset("What is the Benefit Type?") do
       find("label", text: "Compensation", match: :prefer_exact).click

@@ -52,12 +52,12 @@ feature "Higher-Level Review", :all_dbs do
   before do
     FeatureToggle.enable!(:filed_by_va_gov_hlr)
     FeatureToggle.enable!(:updated_intake_forms)
-    FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) 
+    FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
   end
   after do
     FeatureToggle.disable!(:filed_by_va_gov_hlr)
     FeatureToggle.disable!(:updated_intake_forms)
-    FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) 
+    FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
   end
 
 
