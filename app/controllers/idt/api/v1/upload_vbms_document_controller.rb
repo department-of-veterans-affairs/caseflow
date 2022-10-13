@@ -15,7 +15,13 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def create
-    result = PrepareDocumentUploadToVbms.new(request.parameters, current_user).call
+    if request.parameters["appeal_id"] != ""
+      result = "placeholder"
+    elsif request.parameters["veteran_ssn"] != ""
+      result = "placeholder"
+    elsif request.parameters["veteran_file_number"] != ""
+      result = "placeholder"
+    end
 
     if result.success?
       render json: { message: "Document successfully queued for upload." }
