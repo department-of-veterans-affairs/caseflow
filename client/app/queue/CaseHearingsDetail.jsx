@@ -4,21 +4,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
-
 import BareList from '../components/BareList';
-import {
-  boldText,
-  LEGACY_APPEAL_TYPES
-} from './constants';
+import { boldText, LEGACY_APPEAL_TYPES } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Tooltip from '../components/Tooltip';
 import { PencilIcon } from '../components/icons/PencilIcon';
 import Button from '../components/Button';
 import Alert from '../components/Alert';
-
 import EditUnscheduledNotesModal from '../hearings/components/EditUnscheduledNotesModal';
 import { UnscheduledNotes } from '../hearings/components/UnscheduledNotes';
-
 import COPY from '../../COPY';
 import { DateString } from '../util/DateUtil';
 import { showVeteranCaseList } from './uiReducer/uiActions';
@@ -174,10 +168,7 @@ class CaseHearingsDetail extends React.PureComponent {
 
   getHearingInfo = () => {
     const {
-      appeal: { hearings },
-      userIsVsoEmployee,
-      vsoVirtualOptIn,
-      currentUserEmailPresent
+      appeal: { hearings }, userIsVsoEmployee, vsoVirtualOptIn, currentUserEmailPresent
     } = this.props;
     const orderedHearings = _.orderBy(hearings, 'createdAt', 'desc');
     const uniqueOrderedHearings = _.uniqWith(orderedHearings, _.isEqual);

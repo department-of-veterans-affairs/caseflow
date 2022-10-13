@@ -59,6 +59,20 @@ class Task < CaseflowRecord
     Constants.TASK_CANCELLATION_REASONS.substitution.to_sym => Constants.TASK_CANCELLATION_REASONS.substitution
   }
 
+  amoeba do
+    include_association :appeal_type
+    include_association :assigned_by_id
+    include_association :assigned_to_id
+    include_association :assigned_to_type
+    include_association :cancellation_reason
+    include_association :cancelled_by_id
+    include_association :closed_at
+    include_association :instructions
+    include_association :placed_on_hold_at
+    include_association :started_at
+    include_association :type
+  end
+
   # This suppresses a warning about the :open scope overwriting the Kernel#open method
   # https://ruby-doc.org/core-2.6.3/Kernel.html#method-i-open
   class << self; undef_method :open; end
