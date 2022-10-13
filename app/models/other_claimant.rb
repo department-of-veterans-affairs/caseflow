@@ -6,7 +6,7 @@
 # Currently used for attorney fee cases when the attorney isn't found in the BGS attorney database.
 
 class OtherClaimant < Claimant
-  delegate :name, :first_name, :middle_name, :last_name, :suffix,
+  delegate :name, :first_name, :middle_name, :last_name, :suffix, :ssn,
            :address, :address_line_1, :address_line_2, :address_line_3,
            :city, :state, :zip, :country, :date_of_birth,
            :email_address, :phone_number,
@@ -31,6 +31,9 @@ class OtherClaimant < Claimant
   end
 
   def save_unrecognized_details!(params, poa_params)
+    puts "inside the save unrecognized details method, but params is nil da fuck"
+    puts params.inspect
+    puts poa_params.inspect
     poa_form = params.delete(:poa_form)
     params.delete(:listed_attorney)
     appellant = create_appellant!(params)

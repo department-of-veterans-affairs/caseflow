@@ -48,8 +48,8 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
   if (intakeStatus === INTAKE_STATES.STARTED && !intakeData.receiptDate) {
     return <Redirect to={PAGE_PATHS.REVIEW} />;
   }
-
-  const methods = useClaimantForm({ defaultValues: claimant });
+  console.log(`form type in add claimant page before useClaimantForm: ${formType}`);
+  const methods = useClaimantForm({ defaultValues: claimant, formType });
   const {
     formState: { isValid },
     handleSubmit,
@@ -67,6 +67,9 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
     } else {
       intakeData.unlistedClaimant = claimant;
     }
+    // console.log(intakeId);
+    // console.log(intakeData);
+    // console.log(selectedForm.formName);
     dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
     dispatch(clearClaimant());
     push('/add_issues');
@@ -75,6 +78,17 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
   const onSubmit = (formData) => {
     if (formData.firstName) {
       formData.partyType = 'individual';
+    }
+
+    // Database schema will not allow nulls for state, but it's possibly an optional field for individuals now.
+    if (formData.state === null) {
+      formData.state = '';
+    }
+
+    // Adjust the claimant type for Healthcare Providers so it will be contantized properly
+    if (formData.relationship === 'Healthcare Provider' || formData.relationship === 'healthcare_provider') {
+      // formData.relationship = 'HealthcareProvider';
+      formData.claimantType = 'HealthcareProvider';
     }
 
     dispatch(editClaimantInformation({ formData }));
@@ -118,6 +132,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
           onSubmit={onSubmit}
           onAttorneySearch={onAttorneySearch}
           dateOfBirthFieldToggle={featureToggles?.dateOfBirthField || false}
+          formType={formType}
         />
         {confirmModal && (
           <AddClaimantConfirmationModal

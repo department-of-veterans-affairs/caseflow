@@ -1566,6 +1566,7 @@ ActiveRecord::Schema.define(version: 2022_09_20_122149) do
     t.string "phone_number", comment: "PII"
     t.string "state", null: false
     t.string "suffix", comment: "PII"
+    t.string "ssn", comment: "PII. Social Security Number"
     t.datetime "updated_at", null: false
     t.string "zip", null: false
   end

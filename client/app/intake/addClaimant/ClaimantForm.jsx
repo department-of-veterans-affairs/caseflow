@@ -14,13 +14,7 @@ import DateSelector from 'app/components/DateSelector';
 import RadioField from 'app/components/RadioField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import TextField from 'app/components/TextField';
-
-const relationshipOpts = [
-  { value: 'attorney', label: 'Attorney (previously or currently)' },
-  { value: 'child', label: 'Child' },
-  { value: 'spouse', label: 'Spouse' },
-  { value: 'other', label: 'Other' },
-];
+import { css } from 'glamor';
 
 const partyTypeOpts = [
   { displayText: 'Organization', value: 'organization' },
@@ -45,6 +39,12 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
   return options;
 };
 
+const suffixDivLabelStyle = css({
+  ' .cf-optional:nth-child(1)': {
+    marginLeft: '0.5em',
+  }
+});
+
 // We'll show all items returned from the backend instead of using default substring matching
 const filterOption = () => true;
 
@@ -52,6 +52,7 @@ export const ClaimantForm = ({
   onAttorneySearch = fetchAttorneys,
   onSubmit,
   dateOfBirthFieldToggle = true,
+  formType,
   ...props
 }) => {
   const methods = useFormContext();
@@ -65,12 +66,29 @@ export const ClaimantForm = ({
   const watchPartyType = watch('partyType');
   const watchListedAttorney = watch('listedAttorney');
   const attorneyRelationship = watchRelationship === 'attorney';
+  const healthCareProviderRelationship = watchRelationship === 'healthcare_provider';
   const attorneyNotListed = watchListedAttorney?.value === 'not_listed';
   const listedAttorney = attorneyRelationship && watchListedAttorney?.value && !attorneyNotListed;
-  const showPartyType = watchRelationship === 'other' || (watchRelationship === 'attorney' && attorneyNotListed);
+  const showPartyType = watchRelationship === 'other' ||
+    (attorneyRelationship && attorneyNotListed) ||
+    healthCareProviderRelationship;
   const partyType = (showPartyType && watchPartyType) || (dependentRelationship && 'individual');
-
   const isOrgPartyType = watchPartyType === 'organization';
+  const isIndividualPartyType = watchPartyType === 'individual';
+  // Look into use effect to set this instead of passing it as a param?
+  const isHLROrSCForm = formType === 'higher_level_review' || formType === 'supplemental_claim';
+
+  const relationshipOpts = [
+    { value: 'attorney', label: 'Attorney (previously or currently)' },
+    { value: 'child', label: 'Child' },
+    { value: 'spouse', label: 'Spouse' },
+    ...(isHLROrSCForm ? [{ value: 'healthcare_provider', label: 'Healthcare Provider' }] : []),
+    { value: 'other', label: 'Other' },
+  ];
+
+  console.log('form type is');
+  console.log(formType);
+  console.log(`is hlr or sc form: ${isHLROrSCForm}`);
 
   const asyncFn = useCallback(
     debounce((search, callback) => {
@@ -82,10 +100,18 @@ export const ClaimantForm = ({
   );
 
   useEffect(() => {
-    if (watchRelationship !== 'attorney') {
+    if (!attorneyRelationship) {
       setValue('listedAttorney', null);
     }
   }, [watchRelationship]);
+
+  // This is so freaking stupid why do I have to do this to set an initial value
+  // Look at useMemo instead of useEffect
+  useEffect(() => {
+    if (isHLROrSCForm) {
+      setValue('country', 'USA');
+    }
+  }, [watchRelationship, watchPartyType]);
 
   return (
     <>
@@ -109,7 +135,7 @@ export const ClaimantForm = ({
           )}
         />}
         <br />
-        {watchRelationship === 'attorney' && !props.hideListedAttorney && (
+        {attorneyRelationship && !props.hideListedAttorney && (
           <Controller
             control={control}
             name="listedAttorney"
@@ -157,7 +183,7 @@ export const ClaimantForm = ({
           />
         )}
         <br />
-        {partyType === 'individual' && (
+        {isIndividualPartyType && (
           <>
             <FieldDiv>
               <TextField
@@ -181,11 +207,10 @@ export const ClaimantForm = ({
                 name="lastName"
                 label="Last name"
                 inputRef={register}
-                optional
                 strongLabel
               />
             </FieldDiv>
-            <SuffixDOB>
+            <SuffixDOB {...suffixDivLabelStyle}>
               <TextField
                 name="suffix"
                 label="Suffix"
@@ -193,7 +218,7 @@ export const ClaimantForm = ({
                 optional
                 strongLabel
               />
-              { dateOfBirthFieldToggle && !props.POA &&
+              {dateOfBirthFieldToggle && !props.POA &&
                 <DateSelector
                   optional
                   inputRef={register({
@@ -206,9 +231,20 @@ export const ClaimantForm = ({
                 />
               }
             </SuffixDOB>
+            {isIndividualPartyType &&
+              <SocialSecurityNumber>
+                <TextField
+                  name="ssn"
+                  label="Social Security Number"
+                  inputRef={register}
+                  optional
+                  strongLabel
+                />
+              </SocialSecurityNumber>
+            }
           </>
         )}
-        {partyType === 'organization' && (
+        {isOrgPartyType && (
           <TextField
             name="name"
             label="Organization name"
@@ -221,6 +257,8 @@ export const ClaimantForm = ({
             <AddressForm
               {...methods}
               isOrgPartyType={isOrgPartyType}
+              isIndividualPartyType={isIndividualPartyType}
+              isHLROrSCForm={isHLROrSCForm} // passing this around everywhere is kind of gross
             />
             <FieldDiv>
               <TextField
@@ -266,6 +304,7 @@ ClaimantForm.propTypes = {
   editAppellantHeader: PropTypes.string,
   editAppellantDescription: PropTypes.string,
   hidePOAForm: PropTypes.bool,
+  formType: PropTypes.string,
   hideListedAttorney: PropTypes.bool,
   POA: PropTypes.bool
 };
@@ -288,3 +327,9 @@ const PhoneNumber = styled.div`
 const ClaimantAddress = styled.div`
   margin-top: 1.5em;
 `;
+
+const SocialSecurityNumber = styled.div`
+  margin-bottom: 0;
+  margin-top: 0;
+`;
+

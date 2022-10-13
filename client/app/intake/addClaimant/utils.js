@@ -75,7 +75,72 @@ export const schema = yup.object().shape({
     is: (relationship, hidePOAForm) => relationship !== 'attorney' && !hidePOAForm,
     then: yup.string().required(),
   }),
-  listedAttorney: yup.object().when(['relationship','$hideListedAttorney'], {
+  listedAttorney: yup.object().when(['relationship', '$hideListedAttorney'], {
+    is: (relationship, hideListedAttorney) => (relationship === 'attorney' && !hideListedAttorney),
+    then: yup.object().required(),
+  }),
+});
+
+export const schemaHLR = yup.object().shape({
+  relationship: yup.string().when(['$hideListedAttorney'], {
+    is: (hideListedAttorney) => !hideListedAttorney,
+    then: yup.string().required(),
+  }),
+  partyType: yup.string().when(['listedAttorney', 'relationship'], {
+    is: (listedAttorney, relationship) =>
+      listedAttorney?.value === 'not_listed' || relationship === 'other',
+    then: yup.string().required(),
+  }),
+  firstName: yup.string().when(['partyType', 'relationship'], {
+    is: (partyType, relationship) => partyType === 'individual' || ['spouse', 'child'].includes(relationship),
+    then: yup.string().required(),
+  }),
+  middleName: yup.string(),
+  lastName: yup.string().when(['partyType', 'relationship'], {
+    is: (partyType, relationship) => partyType === 'individual' || ['spouse', 'child'].includes(relationship),
+    then: yup.string().required(),
+  }),
+  suffix: yup.string(),
+  dateOfBirth: yup.date().
+    nullable().
+    max(yearsFromToday(14), AGE_MIN_ERR).
+    min(yearsFromToday(118), AGE_MAX_ERR),
+  name: yup.string().when('partyType', {
+    is: 'organization',
+    then: yup.string().required(),
+  }),
+  addressLine1: yup.string().when('partyType', {
+    is: 'organization',
+    then: yup.string().required(),
+  }),
+  addressLine2: yup.string(),
+  addressLine3: yup.string(),
+  city: yup.string().when(['partyType', 'relationship'], {
+    is: (partyType, relationship) => (partyType === 'organization' || ['spouse', 'child'].includes(relationship)),
+    then: yup.string().required(),
+  }),
+  state: yup.string().nullable().
+    when('partyType', {
+      is: 'organization',
+      then: yup.string().required(),
+    }),
+  zip: yup.string().when(['partyType', 'relationship'], {
+    is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
+    then: yup.
+      string().
+      max(25),
+  }),
+  country: yup.string().when('partyType', {
+    is: 'organization',
+    then: yup.string().required(),
+  }),
+  emailAddress: yup.string().email(),
+  phoneNumber: yup.string(),
+  poaForm: yup.string().when(['relationship', '$hidePOAForm'], {
+    is: (relationship, hidePOAForm) => relationship !== 'attorney' && !hidePOAForm,
+    then: yup.string().required(),
+  }),
+  listedAttorney: yup.object().when(['relationship', '$hideListedAttorney'], {
     is: (relationship, hideListedAttorney) => (relationship === 'attorney' && !hideListedAttorney),
     then: yup.object().required(),
   }),
@@ -89,11 +154,13 @@ export const defaultFormValues = {
   middleName: '',
   lastName: '',
   suffix: '',
+  ssn: '',
   dateOfBirth: null,
   addressLine1: '',
   addressLine2: '',
   addressLine3: '',
   city: '',
+  // TODO Might change this since the database doesn't allow nulls for state
   state: null,
   zip: '',
   country: '',
@@ -103,10 +170,19 @@ export const defaultFormValues = {
   listedAttorney: null
 };
 
-export const useClaimantForm = ({ defaultValues = {} } = {}, hidePOAForm = false, hideListedAttorney = false) => {
+export const useClaimantForm = (
+  { defaultValues = {}, formType } = {},
+  hidePOAForm = false,
+  hideListedAttorney = false
+) => {
 
+  // TODO check if a new schema is needed for HLR/SC for claimant form so it doesn't affect appeals
+  const isHLROrSCForm = formType === 'higher_level_review' || formType === 'supplemental_claim';
+
+  console.log(`in useClaimantForm with attribute: ${isHLROrSCForm}`);
+  console.log(formType);
   const methods = useForm({
-    resolver: yupResolver(schema),
+    resolver: isHLROrSCForm ? yupResolver(schemaHLR) : yupResolver(schema),
     context: { hidePOAForm, hideListedAttorney },
     mode: 'onChange',
     reValidateMode: 'onChange',

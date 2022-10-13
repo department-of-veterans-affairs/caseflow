@@ -25,6 +25,11 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
   }
 
   const data = prepareReviewData(intakeData, intakeType);
+  console.log('intake data')
+  console.log(intakeData);
+  console.log('prepared data');
+  console.log(data);
+  // return true;
 
   return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).then(
     (response) => {

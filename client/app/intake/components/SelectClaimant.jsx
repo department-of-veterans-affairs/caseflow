@@ -83,18 +83,22 @@ export const SelectClaimant = (props) => {
 
   const [newClaimant] = useState(null);
   const isAppeal = (formType === 'appeal');
+  const isHigherLevelReview = (formType === 'higher_level_review');
+  const isSupplementalClaim = (formType === 'supplemental_claim');
 
   const enableAddClaimant = useMemo(
-    () => isAppeal && veteranIsNotClaimant,
+    () => (isAppeal || isHigherLevelReview || isSupplementalClaim) && veteranIsNotClaimant,
     [isAppeal, veteranIsNotClaimant]
   );
 
   const radioOpts = useMemo(() => {
     return [
       ...relationships,
+      // TODO: This is probably going to be done on a seperate page and could probably be removed. Check for other uses
       ...(newClaimant ? [newClaimant] : []),
       // Conditionally include "Claimant not listed" option
       ...(enableAddClaimant ? [claimantNotListedOpt] : []),
+
     ];
   }, [newClaimant, relationships, enableAddClaimant]);
 
