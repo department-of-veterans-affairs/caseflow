@@ -32,16 +32,20 @@ class SplitAppealController < ApplicationController
           # run extra duplicate methods to finish split
           dup_appeal.finalize_split_appeal(appeal, user_css_id)
 
-          # for testing
-          raise ActiveRecord::Rollback
+          # # for testing
+          # raise ActiveRecord::Rollback
 
         # rescue finalize_split_appeal error handling
-        rescue Caseflow::Error::SerializableError, Hearing::HearingDayFull => error
+        rescue Caseflow::Error::SerializableError => error
           # display message
           puts "The appeal could not be split because of this error..."
           puts error.message
           # rollback the record
           raise ActiveRecord::Rollback
+
+        # rescue and continue for HearingDayFull error
+        rescue Hearing::HearingDayFull
+          next
         end
       end
     end
