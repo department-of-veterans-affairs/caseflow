@@ -31,9 +31,10 @@ class OtherClaimant < Claimant
   end
 
   def save_unrecognized_details!(params, poa_params)
-    puts "inside the save unrecognized details method, but params is nil da fuck"
+    puts "inside the save unrecognized details method, but params is nil da fu"
     puts params.inspect
     puts poa_params.inspect
+    # TODO is this a dead line of code? Does poa_form ever get used anywhere
     poa_form = params.delete(:poa_form)
     params.delete(:listed_attorney)
     appellant = create_appellant!(params)

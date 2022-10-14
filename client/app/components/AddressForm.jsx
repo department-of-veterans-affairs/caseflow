@@ -48,7 +48,7 @@ export const AddressForm = ({ control, register, watch, isOrgPartyType, isIndivi
         </StreetAddress>
       )}
       <CityState>
-        <TextField name="city" label="City" inputRef={register} strongLabel optional={isIndividualPartyType} />
+        <TextField name="city" label="City" inputRef={register} strongLabel optional={optionalIndividualHLRField} />
         <Controller
           control={control}
           name="state"
@@ -81,7 +81,6 @@ export const AddressForm = ({ control, register, watch, isOrgPartyType, isIndivi
           label="Country"
           optional={optionalIndividualHLRField}
           inputRef={register}
-          placeholder="USA"
           strongLabel
         />
       </ZipCountry>

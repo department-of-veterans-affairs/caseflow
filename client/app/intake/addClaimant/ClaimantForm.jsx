@@ -183,7 +183,7 @@ export const ClaimantForm = ({
           />
         )}
         <br />
-        {isIndividualPartyType && (
+        {(isIndividualPartyType || dependentRelationship) && (
           <>
             <FieldDiv>
               <TextField
@@ -206,6 +206,7 @@ export const ClaimantForm = ({
               <TextField
                 name="lastName"
                 label="Last name"
+                optional={!isHLROrSCForm}
                 inputRef={register}
                 strongLabel
               />
@@ -231,7 +232,7 @@ export const ClaimantForm = ({
                 />
               }
             </SuffixDOB>
-            {isIndividualPartyType &&
+            {(isIndividualPartyType || dependentRelationship) && isHLROrSCForm &&
               <SocialSecurityNumber>
                 <TextField
                   name="ssn"
