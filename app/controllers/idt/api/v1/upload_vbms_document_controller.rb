@@ -19,11 +19,15 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     Rails.logger.error(error)
   end
 
+  def bgs
+    @bgs ||= BGSService.new
+  end
+
   def create
     # Find veteran from veteran file nummber of ssn
     if request.parameters["veteran_file_number"] != "" || request.parameters["veteran_ssn"] != ""
-      veteran = Veteran.find_by_file_number_or_ssn(request.parameters["veteran_file_number"]) ||
-                Veteran.find_by_file_number_or_ssn(request.parameters["veteran_ssn"])
+      veteran = bgs.fetch_veteran_info(request.parameters["veteran_file_number"]) ||
+                bgs.fetch_file_number_by_ssn(request.parameters["veteran_ssn"])
       if veteran.nil?
         begin
           fail NoAppealError, request.parameters["appeal_id"]
