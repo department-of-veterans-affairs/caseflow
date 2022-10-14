@@ -612,9 +612,6 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="emo_return_to_board_intake" {...props.match.params} />
   );
 
-  routedNotifications = (props) => (
-    <Notifications appealId={props.match.params.appealId}{...props.match.params} />
-  );
 
   routedVhaCaregiverSupportReturnToBoardIntake = (props) => (
     <CompleteTaskModal modalType="vha_caregiver_support_return_to_board_intake" {...props.match.params} />

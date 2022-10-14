@@ -34,20 +34,20 @@ import AppellantDetail from './AppellantDetail';
 import COPY, { CASE_DETAILS_POA_SUBSTITUTE } from 'app/../COPY';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import CaseHearingsDetail from './CaseHearingsDetail';
-import { CaseTimeline } from './CaseTimeline';
+// import { CaseTimeline } from './CaseTimeline';
 import CaseTitle from './CaseTitle';
 import notifications from './notifications';
 import CaseTitleDetails from './CaseTitleDetails';
 import CavcDetail from './CavcDetail';
 import CaseDetailsPostDispatchActions from './CaseDetailsPostDispatchActions';
 import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
-import StickyNavContentArea from './StickyNavContentArea';
+// import StickyNavContentArea from './StickyNavContentArea';
 import TaskSnapshot from './TaskSnapshot';
 import UserAlerts from '../components/UserAlerts';
 import VeteranCasesView from './VeteranCasesView';
 import VeteranDetail from './VeteranDetail';
 import { startPolling } from '../hearings/utils';
-import FnodBanner from './components/FnodBanner';
+// import FnodBanner from './components/FnodBanner';
 import {
   appealHasSubstitution,
   isAppealDispatched,
@@ -62,6 +62,10 @@ import Notifications from './notifications';
 import QueueTableBuilder from './QueueTableBuilder';
 
 // TODO: Pull this horizontal rule styling out somewhere.
+const notificationsStyling = css({
+  fontSize: '5rem',
+
+})
 const horizontalRuleStyling = css({
   border: 0,
   borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
@@ -284,6 +288,10 @@ export const CaseDetailsView = (props) => {
               {COPY.SUBSTITUTE_APPELLANT_BUTTON}
             </Button>
           </div>
+        //   <div className={notificationsStyling}>
+        //   <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Facilis ipsa nisi laboriosam consectetur asperiores? Est!</p>
+          
+        // </div>
         )}
         {appeal.veteranDateOfDeath && props.featureToggles.fnod_banner && (
           <FnodBanner appeal={appeal} />
@@ -299,7 +307,7 @@ export const CaseDetailsView = (props) => {
         <CaseTitleDetails
           appealId={appealId}
           redirectUrl={window.location.pathname}
-          userCanAccessReader={props.userCanAccessReader}
+          // userCanAccessReader={props.userCanAccessReader}
         />
         {veteranCaseListIsVisible && (
           <VeteranCasesView
@@ -307,7 +315,7 @@ export const CaseDetailsView = (props) => {
             veteranId={appeal.veteranFileNumber}
           />
         )}
-        <hr {...horizontalRuleStyling} />
+        {/* <hr {...horizontalRuleStyling} /> */}
         
           {(appeal.hearings.length ||
             appeal.completedHearingOnPreviousAppeal ||
@@ -320,7 +328,7 @@ export const CaseDetailsView = (props) => {
 
 
 
-          <CaseTimeline title="Case Timeline" appeal={appeal} />
+          {/* <CaseTimeline title="Case Timeline" appeal={appeal} /> */}
         
         {props.pollHearing && pollHearing()}
       </AppSegment>
