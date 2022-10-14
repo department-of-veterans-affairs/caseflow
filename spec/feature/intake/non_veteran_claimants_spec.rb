@@ -29,7 +29,7 @@ feature "Non-veteran claimants", :postgres do
   end
 
   let(:decision_date) { 3.months.ago.mdY }
-
+  
   context "when intaking appeals with non_veteran_claimants" do
     let(:attorneys) do
       Array.new(15) { create(:bgs_attorney) }
@@ -441,6 +441,79 @@ feature "Non-veteran claimants", :postgres do
         # Check that form is prepopulated with existing appellant information
         expect(find("#firstName").value).to eq "Darlyn"
         expect(find("#lastName").value).to eq "Duck"
+      end
+    end
+
+    context "when intaking a Higher Level Review with a non-veteran claimant" do
+      it "HLR with Non-Veteran Claimant and VBMS Benefit Type" do
+
+        start_higher_level_review(
+          veteran,
+          benefit_type: "compensation"
+        )
+        visit "/intake"
+
+        expect(page).to have_current_path("/intake/review_request")
+
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        expect(page).not_to have_content("Claimant not listed")
+        expect(page).to have_content("What is the payee code for this claimant?")       
+      end
+
+      it "HLR with Non-Veteran Claimant and Non-VBMS Benefit Type" do
+
+        start_higher_level_review(
+          veteran,
+          benefit_type: "insurance"
+        )
+        visit "/intake"
+
+        expect(page).to have_current_path("/intake/review_request")
+
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        expect(page).to have_content("Claimant not listed")
+        expect(page).not_to have_content("What is the payee code for this claimant?")       
+      end
+    end
+    
+
+    context "when intaking a Supplemental Claim with a non-veteran claimant" do
+      it "SC with Non-Veteran Claimant and VBMS Benefit Type" do
+
+        start_supplemental_claim(
+          veteran,       
+          benefit_type: "compensation",          
+        )
+        visit "/intake"
+
+        expect(page).to have_current_path("/intake/review_request")
+
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        expect(page).not_to have_content("Claimant not listed")
+        expect(page).to have_content("What is the payee code for this claimant?")       
+      end
+
+      it "SC with Non-Veteran Claimant and Non-VBMS Benefit Type" do
+
+        start_supplemental_claim(
+          veteran,       
+          benefit_type: "insurance",          
+        )
+        visit "/intake"
+
+        expect(page).to have_current_path("/intake/review_request")
+
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        expect(page).to have_content("Claimant not listed")
+        expect(page).not_to have_content("What is the payee code for this claimant?")       
       end
     end
 
