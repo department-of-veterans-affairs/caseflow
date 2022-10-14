@@ -12,23 +12,35 @@ class SplitAppealController < ApplicationController
       split_reason = params[:split_reason]
 
       render json: { message: "Success" }
-
-      # render json: { message: params.errors[0] }, status: :bad_request
-
       # get appeal from params
       appeal = Appeal.find(appeal_id)
-
-      # duplicate appeal
-      dup_appeal = appeal.amoeba_dup
-
-      # save the duplicate
-      dup_appeal.save
-
-      # Setting the user_css_id
-      user_css_id = params[:user]
-
-      # run extra duplicate methods to finish split
-      dup_appeal.finalize_split_appeal(appeal, user_css_id)
+      if (appeal)
+        # duplicate appeal & save 
+        dup_appeal = appeal.amoeba_dup
+        dup_appeal.save
+  
+        # Setting the user_css_id
+        user_css_id = RequestStore[:current_user]
+  
+        if split_other_reason.strip.empty?
+          instructions = split_reason
+        else
+          instructions= split_other_reason
+        end
+        
+        Task.transaction do
+          spt = SplitAppealTask.create!(appeal: appeal,
+              parent: appeal.root_task,
+              assigned_to: user_css_id,
+              assigned_by: user_css_id,
+              assigned_at: Time.zone.now)
+          
+          spt.instructions.push(instructions)
+          spt.update!(status: Constants.TASK_STATUSES.completed)
+          dup_appeal.finalize_split_appeal(appeal, user_css_id.css_id)
+        end
+      else
+        raise ActiveRecord::Rollback
+      end
     end
   end
-end
