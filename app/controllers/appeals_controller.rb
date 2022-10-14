@@ -14,7 +14,7 @@ class AppealsController < ApplicationController
     :most_recent_hearing
   ]
 
-  @@results_per_page = 1
+  @@results_per_page = 15
   def index
     respond_to do |format|
       format.html { render template: "queue/index" }
@@ -51,13 +51,12 @@ class AppealsController < ApplicationController
 
   def show_notification_list
     @params = params
-    @current_page = params[:page].try(:to_i) || 1
+    @current_page = params[:page].try(:to_i) || 2
     results = get_notifications_from_params(params, @current_page)
     # notifications_to_show = results[0]
     # total_number_of_pages = results[1]
     # total_number_of_pages = results[-1]
-    byebug
-    results.pop
+    # results.pop
 
 
 
@@ -66,18 +65,24 @@ class AppealsController < ApplicationController
 
   def get_notifications_from_params(params, current_page)
     notifications = Notification.where(appeals_id: params[:appeal_id])
-    queried_notifications = notifications.filter{ |notification| notification.event_type.include? params[:event_type]}
+    # params include?
+    # event_type = params[:event_type]
+    # queried_notifications = notifications.filter{ |notification| notification.event_type.include? params[:event_type]}
+    queried_notifications = notifications
     pages_count = (queried_notifications.count/@@results_per_page.to_f).ceil
-    index = (@@results_per_page * pages_count) - @@results_per_page
+    index = (@@results_per_page * current_page) - @@results_per_page
+    # index = starting_index
+    max_index = current_page == pages_count ? index + (queried_notifications.count - index) : index + @@results_per_page
     i = 0
     response = []
 
-    while i < (@@results_per_page)
-      response.push(queried_notifications[index])
+    while i < @@results_per_page && index < max_index
+      response.push(queried_notifications[index].id)
       i += 1
       index += 1
     end
     response.push(pages_count)
+    response.push(current_page)
 
     # start = @@results_per_page * (@current_page - 1)
     # results = notifications[start, @@results_per_page]
