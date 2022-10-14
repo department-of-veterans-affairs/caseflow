@@ -29,6 +29,10 @@ class HigherLevelReview < ClaimReview
     create_remand_supplemental_claims!
   end
 
+  def appeal_split_process?
+    false
+  end
+
   # needed for appeal status api
 
   def review_status_id

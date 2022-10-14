@@ -31,6 +31,10 @@ class SupplementalClaim < ClaimReview
     !!decision_review_remanded
   end
 
+  def appeal_split_process?
+    false
+  end
+
   # needed for appeal status api
 
   def review_status_id
