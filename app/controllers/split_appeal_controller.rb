@@ -44,3 +44,4 @@ class SplitAppealController < ApplicationController
       end
     end
   end
+end
