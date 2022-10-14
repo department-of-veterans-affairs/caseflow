@@ -101,6 +101,11 @@ import { PrivateRoute } from '../components/PrivateRoute';
 import { EditCavcRemandView } from './cavc/EditCavcRemandView';
 import EditAppellantInformation from './editAppellantInformation/EditAppellantInformation';
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
+import { Notifications } from './notifications';
+import NotificationsView from './NotificationsView';
+
+
+
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -334,6 +339,29 @@ class QueueApp extends React.PureComponent {
       {...props.match.params}
     />
   );
+  routedNotifications = (props) => (
+    <NotificationsView
+      userCanScheduleVirtualHearings={
+        this.props.featureToggles.schedule_veteran_virtual_hearing
+      }
+      appealId={props.match.params.appealId}
+      userCanAccessReader={
+        !this.props.hasCaseDetailsRole && !this.props.userCanViewHearingSchedule
+      }
+      userCanEditUnrecognizedPOA={this.props.userCanEditUnrecognizedPOA}
+      vsoVirtualOptIn={this.props.featureToggles.vso_virtual_opt_in}
+    />
+  );
+
+  routedNotificationsWithLoadingScreen = (props) => (
+    <CaseDetailsLoadingScreen
+      {...this.propsForQueueLoadingScreen()}
+      appealId={props.match.params.appealId}
+    >
+      {this.routedNotifications(props)}
+    </CaseDetailsLoadingScreen>
+  );
+
 
   routedReassignToUser = (props) => (
     <AssignToView isReassignAction {...props.match.params} />
@@ -584,6 +612,10 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="emo_return_to_board_intake" {...props.match.params} />
   );
 
+  routedNotifications = (props) => (
+    <Notifications appealId={props.match.params.appealId}{...props.match.params} />
+  );
+
   routedVhaCaregiverSupportReturnToBoardIntake = (props) => (
     <CompleteTaskModal modalType="vha_caregiver_support_return_to_board_intake" {...props.match.params} />
   );
@@ -658,6 +690,19 @@ class QueueApp extends React.PureComponent {
               title="Unassigned Cases | Caseflow"
               render={this.routedTeamQueueList('assign')}
             />
+
+            {/* <PageRoute
+              path="/queue/appeals/:appealId/Notifications"
+              title="Notifications | Caseflow"
+              render={this.routedNotifications}
+            /> */}
+
+          <PageRoute
+            exact
+            path="/queue/appeals/:appealId/notifications"
+            title="Notifications | Caseflow"
+            render={this.routedNotificationsWithLoadingScreen}
+          />
 
             <PageRoute
               exact

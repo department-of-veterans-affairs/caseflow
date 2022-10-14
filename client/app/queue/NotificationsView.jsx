@@ -36,6 +36,7 @@ import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import CaseHearingsDetail from './CaseHearingsDetail';
 import { CaseTimeline } from './CaseTimeline';
 import CaseTitle from './CaseTitle';
+import notifications from './notifications';
 import CaseTitleDetails from './CaseTitleDetails';
 import CavcDetail from './CavcDetail';
 import CaseDetailsPostDispatchActions from './CaseDetailsPostDispatchActions';
@@ -57,6 +58,8 @@ import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
 import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
+import Notifications from './notifications';
+import QueueTableBuilder from './QueueTableBuilder';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -163,7 +166,7 @@ export const CaseDetailsView = (props) => {
 
   const doPulacCerulloReminder = useMemo(
     () => needsPulacCerulloAlert(appeal, tasks),
-    [appeal, tasks],
+    [appeal, tasks]
   );
 
   const appealIsDispatched = isAppealDispatched(appeal);
@@ -270,7 +273,7 @@ export const CaseDetailsView = (props) => {
         </div>
       )}
       <AppSegment filledBackground>
-        <CaseTitle appeal={appeal} />
+        <Notifications appeal={appeal} />
         {supportPendingAppealSubstitution && (
           <div {...sectionGap}>
             <Button
@@ -304,99 +307,21 @@ export const CaseDetailsView = (props) => {
             veteranId={appeal.veteranFileNumber}
           />
         )}
-        <TaskSnapshot
-          appealId={appealId}
-          showPulacCerulloAlert={doPulacCerulloReminder}
-        />
         <hr {...horizontalRuleStyling} />
-        <StickyNavContentArea>
-          <CaseDetailsIssueList
-            title="Issues"
-            isLegacyAppeal={appeal.isLegacyAppeal}
-            additionalHeaderContent={
-              appeal.canEditRequestIssues && (
-                <span className="cf-push-right" {...anchorEditLinkStyling}>
-                  <Link href={`/appeals/${appealId}/edit`}>
-                    {COPY.CORRECT_REQUEST_ISSUES_LINK}
-                  </Link>
-                </span>
-              )
-            }
-            issues={appeal.issues}
-            decisionIssues={appeal.decisionIssues}
-          />
-          <PowerOfAttorneyDetail
-            title={CASE_DETAILS_POA_SUBSTITUTE}
-            appealId={appealId}
-            additionalHeaderContent={
-              editPOAInformation && (
-                <span
-                  className="cf-push-right"
-                  {...editAppellantInformationLinkStyling}
-                >
-                  <Link to={`/queue/appeals/${appealId}/edit_poa_information`}>
-                    {updatePOALink}
-                  </Link>
-                </span>
-              )
-            }
-          />
+        
           {(appeal.hearings.length ||
             appeal.completedHearingOnPreviousAppeal ||
             actionableScheduledHearingTasks.length ||
             // VSO users will not have any available task actions on the ScheduleHearingTask(s),
             // but prior to a hearing being scheduled they will need the Hearings section rendered anyways.
             (props.vsoVirtualOptIn && userIsVsoEmployee && allScheduleHearingTasks.length)
-          ) && (
-            <CaseHearingsDetail
-              title="Hearings"
-              appeal={appeal}
-              hearingTasks={userIsVsoEmployee ? allScheduleHearingTasks : parentHearingTasks}
-              vsoVirtualOptIn={props.vsoVirtualOptIn}
-              currentUserEmailPresent={Boolean(appeal.currentUserEmail)}
-            />
-          )}
-          <VeteranDetail title="About the Veteran" appealId={appealId} />
-          {appeal.appellantIsNotVeteran && !_.isNull(appeal.appellantFullName) && (
-            <AppellantDetail
-              title="About the Appellant"
-              appeal={appeal}
-              substitutionDate={appeal.appellantSubstitution?.substitution_date} // eslint-disable-line camelcase
-              additionalHeaderContent={
-                editAppellantInformation && (
-                  <span
-                    className="cf-push-right"
-                    {...editAppellantInformationLinkStyling}
-                  >
-                    <Link
-                      to={`/queue/appeals/${appealId}/edit_appellant_information`}
-                    >
-                      {COPY.EDIT_APPELLANT_INFORMATION_LINK}
-                    </Link>
-                  </span>
-                )
-              }
-            />
-          )}
+          )
+          }
 
-          {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand && (
-            <CavcDetail
-              title="CAVC Remand"
-              additionalHeaderContent={
-                canEditCavcRemands && (
-                  <span className="cf-push-right" {...anchorEditLinkStyling}>
-                    <Link to={`/queue/appeals/${appealId}/edit_cavc_remand`}>
-                      {COPY.CORRECT_CAVC_REMAND_LINK}
-                    </Link>
-                  </span>
-                )
-              }
-              {...appeal.cavcRemand}
-            />
-          )}
+
 
           <CaseTimeline title="Case Timeline" appeal={appeal} />
-        </StickyNavContentArea>
+        
         {props.pollHearing && pollHearing()}
       </AppSegment>
     </React.Fragment>
