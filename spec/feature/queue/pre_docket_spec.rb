@@ -518,7 +518,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           appeal = Appeal.last
           visit "/queue/appeals/#{appeal.external_id}"
-          find_all("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).first.click
+
+          find_all("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL)[1].click
           expect(page).to have_content("Documents for this appeal are stored in VBMS")
           expect(page).to have_content(ro_review_instructions)
         end
