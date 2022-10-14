@@ -49,7 +49,6 @@ class SplitAppealController < ApplicationController
           updated_by_id: user_css_id,
           working_split_status: Constants.TASK_STATUSES.in_progress
         );
-        end
         #iterate over the request issues array and update accordingly for old & new
       end
 
