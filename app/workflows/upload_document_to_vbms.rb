@@ -57,7 +57,7 @@ class UploadDocumentToVbms
   def upload_to_vbms!
     return if document.uploaded_to_vbms_at
 
-    VBMSService.upload_document_to_vbms(file_number, self)
+    VBMSService.upload_document_to_vbms_veteran(file_number, self)
     document.update!(uploaded_to_vbms_at: Time.zone.now)
   end
 
