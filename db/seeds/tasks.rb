@@ -211,7 +211,6 @@ module Seeds
       create_ama_distribution_tasks
       create_bva_dispatch_user_with_tasks
       create_bva_dispatch_user_for_split_appeals
-      create_bva_dispatch_user_for_split_appeals
       create_qr_tasks
       create_different_hearings_tasks
       create_legacy_hearing_tasks
