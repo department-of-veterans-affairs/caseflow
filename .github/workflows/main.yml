@@ -19,5 +19,5 @@ jobs:
           git fetch --unshallow
           git checkout development
           git pull
-          git merge --no-ff master -m "Auto-merge master back to dev"
+          git merge -Xtheirs --no-ff master -m "Auto-merge master back to dev"
           git push
