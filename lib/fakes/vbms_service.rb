@@ -105,7 +105,7 @@ class Fakes::VBMSService
     end
   end
 
-  def self.upload_document_to_vbms(appeal, form8)
+  def self.upload_document_to_vbms(veteran_file_number, form8)
     @uploaded_form8 = form8
     @uploaded_form8_appeal = appeal
   end
