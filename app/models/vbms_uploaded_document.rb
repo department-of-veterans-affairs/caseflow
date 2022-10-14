@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class VbmsUploadedDocument < CaseflowRecord
-  include HasAppealUpdatedSince
+  # include HasAppealUpdatedSince
 
-  include BelongsToPolymorphicAppealConcern
-  belongs_to_polymorphic_appeal :appeal
+  # include BelongsToPolymorphicAppealConcern
+  # belongs_to_polymorphic_appeal :appeal
 
   validates :document_type, presence: true
 

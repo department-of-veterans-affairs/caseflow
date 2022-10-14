@@ -30,12 +30,8 @@ class PrepareDocumentUploadToVbms
   attr_accessor :success
   attr_reader :document_type, :params, :user
 
-  def appeal
-    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
-  end
-
   def veteran_file_number
-    @veteran_file_number = @params[:veteran_file_number]
+    @params[:veteran_file_number]
   end
 
   def file
@@ -48,8 +44,7 @@ class PrepareDocumentUploadToVbms
 
   def document_params
     {
-      appeal_id: appeal.id,
-      appeal_type: appeal.class.name,
+      veteran_file_number: veteran_file_number,
       document_type: document_type,
       file: file
     }
@@ -64,10 +59,10 @@ class PrepareDocumentUploadToVbms
   end
 
   def throw_error_if_file_number_not_match_bgs
-    unless veteran.file_number == BGSService.new.fetch_file_number_by_ssn(veteran.ssn)
+    if BGSService.new.fetch_veteran_info(veteran_file_number).nil?
       fail(
         Caseflow::Error::BgsFileNumberMismatch,
-        appeal_id: appeal.id, user_id: user.id
+        file_number: veteran_file_number, user_id: user.id
       )
     end
   end
