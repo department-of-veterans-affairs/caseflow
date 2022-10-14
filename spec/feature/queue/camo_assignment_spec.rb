@@ -17,7 +17,6 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
   end
 
   before do
-    FeatureToggle.enable!(:vha_predocket_appeals)
     FeatureToggle.enable!(:vha_predocket_workflow)
     camo_org.add_user(camo_user)
     vha_po_org.add_user(vha_po_user)
@@ -25,7 +24,6 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
   end
 
   after do
-    FeatureToggle.disable!(:vha_predocket_appeals)
     FeatureToggle.disable!(:vha_predocket_workflow)
   end
 

@@ -6,6 +6,10 @@ RSpec.feature "Convert hearing request type" do
     FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
     HearingsManagement.singleton.add_user(hearing_coord)
     vso.add_user(vso_user)
+
+    allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+      [{ participant_id: vso_participant_id }]
+    )
   end
 
   after do
@@ -15,7 +19,8 @@ RSpec.feature "Convert hearing request type" do
 
   let!(:hearing_day) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 14.days, regional_office: "RO63") }
   let!(:hearing_day2) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 7.days, regional_office: "RO63") }
-  let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
+  let!(:vso_participant_id) { "8054" }
+  let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: vso_participant_id) }
   let!(:vso_user) { create(:user, :vso_role, email: "DefinitelyNotNull@All.com") }
   let!(:hearing_coord) { create(:user, roles: ["Edit HearSched", "Build HearSched"]) }
 
@@ -143,6 +148,10 @@ RSpec.feature "Convert hearing request type" do
         hearing_id = hearing.is_a?(Hearing) ? hearing.uuid : hearing.vacols_id
         visit "hearings/#{hearing_id}/details"
         expect(page).to have_content format(COPY::CONVERT_HEARING_TITLE, "Virtual")
+
+        expect(hearing.appeal.changed_hearing_request_type).to_not eq(
+          Constants.HEARING_REQUEST_TYPES.virtual
+        )
       end
 
       step "verify pre-population of Hearings form fields" do
@@ -212,11 +221,20 @@ RSpec.feature "Convert hearing request type" do
           "You have successfully converted #{appellant_name}'s hearing to virtual"
         )
         expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
+
+        # We only display hearing types for AMA hearings
+        if hearing.is_a?(Hearing)
+          expect(hearing.reload.appeal.changed_hearing_request_type).to eq(
+            Constants.HEARING_REQUEST_TYPES.virtual
+          )
+        end
       end
     end
   end
 
   describe "for AMA appeals and hearings" do
+    before { TrackVeteranTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: vso) }
+
     let!(:appeal) do
       a = create(:appeal, :with_schedule_hearing_tasks, :hearing_docket, number_of_claimants: 1)
       a.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.video,
@@ -303,9 +321,45 @@ RSpec.feature "Convert hearing request type" do
         it_behaves_like "scheduled hearings"
       end
     end
+
+    context "whenever a VSO user from another organization" do
+      before do
+        different_vso.add_user(different_vso_user)
+        allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+          [{ participant_id: different_vso_participant_id }]
+        )
+      end
+
+      after do
+        allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+          [{ participant_id: vso_participant_id }]
+        )
+      end
+
+      let!(:hearing) { create(:hearing, hearing_day: hearing_day, appeal: appeal) }
+      let!(:different_vso_user) { create(:user, :vso_role, email: "DefinitelyNotNull@All.com") }
+      let!(:different_vso_participant_id) { "9999" }
+      let!(:different_vso) do
+        create(:vso,
+               name: "Different VSO",
+               role: "VSO",
+               url: "vso2-url",
+               participant_id: "different_vso_participant_id")
+      end
+
+      scenario "does not represent an appellant and attempts to access their hearing" do
+        User.authenticate!(user: different_vso_user)
+
+        visit "/hearings/#{hearing.uuid}/details"
+
+        expect(page).to have_current_path "/unauthorized"
+      end
+    end
   end
 
   describe "for legacy appeals and hearings" do
+    before { TrackVeteranTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: vso) }
+
     let(:ssn) { Generators::Random.unique_ssn }
     let!(:vacols_case) { create(:case, :representative_american_legion) }
     let!(:appeal) do
@@ -315,6 +369,7 @@ RSpec.feature "Convert hearing request type" do
       a.update!(changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.video)
       a
     end
+
     let!(:poa) { PowerOfAttorney.new(vacols_id: vacols_case.bfkey, file_number: "VBMS-ID") }
     let!(:appellant_title) { appeal.appellant_is_not_veteran ? "Appellant" : "Veteran" }
 
@@ -323,9 +378,24 @@ RSpec.feature "Convert hearing request type" do
     end
 
     context "whenever a legacy hearing has been scheduled" do
-      let!(:hearing) { create(:legacy_hearing, hearing_day: hearing_day2, appeal: appeal) }
+      let!(:hearing) { create(:legacy_hearing, :for_vacols_case, hearing_day: hearing_day2, appeal: appeal) }
 
       it_behaves_like "scheduled hearings"
+
+      context "whenever a user from another VSO users tries to access the hearing" do
+        before do
+          allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+            [{ participant_id: "12345" }]
+          )
+          User.authenticate!(roles: ["VSO"])
+        end
+
+        it "they are denied" do
+          visit "/hearings/#{hearing.vacols_id}/details"
+
+          expect(page).to have_current_path "/unauthorized"
+        end
+      end
     end
   end
 end

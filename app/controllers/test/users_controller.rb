@@ -59,7 +59,8 @@ class Test::UsersController < ApplicationController
       name: "Miscellaneous",
       links: {
         styleguide: "/styleguide",
-        stats: "/stats"
+        stats: "/stats",
+        jobs: "/jobs"
       }
     }
   ].freeze

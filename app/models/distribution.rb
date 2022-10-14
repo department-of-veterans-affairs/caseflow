@@ -2,7 +2,11 @@
 
 class Distribution < CaseflowRecord
   include ActiveModel::Serializers::JSON
-  include AutomaticCaseDistribution
+  if FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+    include ByDocketDateDistribution
+  else
+    include AutomaticCaseDistribution
+  end
 
   has_many :distributed_cases
   belongs_to :judge, class_name: "User"
@@ -28,10 +32,6 @@ class Distribution < CaseflowRecord
   def distribute!(limit = nil)
     return unless %w[pending error].include? status
 
-    if status == "error"
-      return unless valid?(context: :create)
-    end
-
     update!(status: :started, started_at: Time.zone.now)
 
     # this might take awhile due to VACOLS, so set our timeout to 3 minutes (in milliseconds).
@@ -46,12 +46,21 @@ class Distribution < CaseflowRecord
     end
   rescue StandardError => error
     # DO NOT use update! because we want to avoid validations and saving any cached associations.
-    update_columns(status: "error", errored_at: Time.zone.now)
+    # Prevent prod database from getting Stacktraces as this is debugging information
+    if Rails.deploy_env?(:prod)
+      update_columns(status: "error", errored_at: Time.zone.now)
+    else
+      update_columns(status: "error", errored_at: Time.zone.now, statistics: error_statistics(error))
+    end
     raise error
   end
 
   def distributed_cases_count
     (status == "completed") ? distributed_cases.count : 0
+  end
+
+  def distributed_batch_size
+    statistics&.fetch("batch_size", 0) || 0
   end
 
   private
@@ -89,9 +98,9 @@ class Distribution < CaseflowRecord
   end
 
   def judge_has_eight_or_fewer_unassigned_cases
-    return false if judge_tasks.length > 8
+    return false if judge_tasks.length > Constants.DISTRIBUTION.request_more_cases_minimum
 
-    judge_tasks.length + judge_legacy_tasks.length <= 8
+    judge_tasks.length + judge_legacy_tasks.length <= Constants.DISTRIBUTION.request_more_cases_minimum
   end
 
   def judge_cases_waiting_longer_than_thirty_days
@@ -107,9 +116,8 @@ class Distribution < CaseflowRecord
   end
 
   def assigned_tasks
-    pending_statuses = [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
     judge.tasks.select do |t|
-      t.is_a?(JudgeAssignTask) && pending_statuses.include?(t.status)
+      t.is_a?(JudgeAssignTask) && t.active?
     end
   end
 
@@ -119,5 +127,11 @@ class Distribution < CaseflowRecord
     return Constants.DISTRIBUTION.alternative_batch_size if team_batch_size.nil? || team_batch_size == 0
 
     team_batch_size * Constants.DISTRIBUTION.batch_size_per_attorney
+  end
+
+  def error_statistics(error)
+    {
+      error: error&.full_message
+    }
   end
 end

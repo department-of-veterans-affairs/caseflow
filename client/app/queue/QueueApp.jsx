@@ -252,7 +252,9 @@ class QueueApp extends React.PureComponent {
   };
 
   routedEvaluateDecision = (props) => (
-    <EvaluateDecisionView nextStep="/queue" {...props.match.params} />
+    <EvaluateDecisionView nextStep="/queue"
+      displayCaseTimelinessQuestion={this.props.featureToggles.das_case_timeliness}
+      {...props.match.params} />
   );
 
   routedAddColocatedTask = (props) => (
@@ -347,6 +349,10 @@ class QueueApp extends React.PureComponent {
 
   routedEmoSendToBoardIntakeForReviewModal = (props) => (
     <CompleteTaskModal modalType="emo_send_to_board_intake_for_review" {...props.match.params} />
+  );
+
+  routedVhaCaregiverSupportSendToBoardIntakeForReviewModal = (props) => (
+    <CompleteTaskModal modalType="vha_caregiver_support_send_to_board_intake_for_review" {...props.match.params} />
   );
 
   routedRpoSendToBoardIntakeForReviewModal = (props) => (
@@ -576,6 +582,10 @@ class QueueApp extends React.PureComponent {
 
   routedEMOReturnToBoardIntake = (props) => (
     <CompleteTaskModal modalType="emo_return_to_board_intake" {...props.match.params} />
+  );
+
+  routedVhaCaregiverSupportReturnToBoardIntake = (props) => (
+    <CompleteTaskModal modalType="vha_caregiver_support_return_to_board_intake" {...props.match.params} />
   );
 
   queueName = () =>
@@ -908,6 +918,12 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.value
+                }`}
+              render={this.routedBvaIntakeReturnToOrg}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.value
                 }`}
               render={this.routedAssignToVhaProgramOffice}
@@ -1084,10 +1100,26 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW.value
+                }`}
+              title="Ready for Review | Caseflow"
+              render={this.routedVhaCaregiverSupportSendToBoardIntakeForReviewModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
                 }`}
               title="Ready for Review | Caseflow"
               render={this.routedRpoSendToBoardIntakeForReviewModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.value
+              }`}
+              title="Return to Board Intake | Caseflow"
+              render={this.routedVhaCaregiverSupportReturnToBoardIntake}
             />
             <PageRoute
               exact

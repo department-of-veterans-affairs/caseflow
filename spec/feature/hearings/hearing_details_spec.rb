@@ -1,11 +1,23 @@
 # frozen_string_literal: true
 
 RSpec.feature "Hearing Details", :all_dbs do
+  before do
+    # VSO users require this task to be active on an appeal for them to access its hearings.
+    TrackVeteranTask.create!(appeal: hearing.appeal, parent: hearing.appeal.root_task, assigned_to: vso_org)
+    allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+      [{ participant_id: vso_participant_id }]
+    )
+
+    vso_org.add_user(vso_user)
+  end
+
   let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
-  let(:vso_user) { create(:user, css_id: "BILLIE_VSO", roles: ["VSO"], email: "BILLIE@test.com") }
+  let!(:vso_participant_id) { "54321" }
+  let!(:vso_org) { create(:vso, name: "VSO", role: "VSO", participant_id: vso_participant_id) }
+  let!(:vso_user) { create(:user, css_id: "BILLIE_VSO", roles: ["VSO"], email: "BILLIE@test.com") }
   let!(:coordinator) { create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG") }
   let!(:vlj) { create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO") }
-  let(:hearing) { create(:hearing, :with_tasks, regional_office: "C", scheduled_time: "12:00AM") }
+  let!(:hearing) { create(:hearing, :with_tasks, regional_office: "C", scheduled_time: "12:00AM") }
   let(:expected_alert) { COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name }
   let(:virtual_hearing_alert) do
     COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
@@ -16,7 +28,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
   let(:pre_loaded_veteran_email) { hearing.appeal.veteran.email_address }
   let(:pre_loaded_rep_email) { hearing.appeal.representative_email_address }
-  let(:fill_in_veteran_email) { "new@email.com" }
+  let(:fill_in_veteran_email) { "veteran@example.com" }
   let(:fill_in_veteran_tz) { "Eastern Time (US & Canada) (12:00 AM)" }
   let(:fill_in_rep_email) { "rep@testingEmail.com" }
   let(:fill_in_rep_tz) { "Mountain Time (US & Canada) (10:00 PM)" }
@@ -470,8 +482,8 @@ RSpec.feature "Hearing Details", :all_dbs do
             hearing: hearing
           )
         end
-        let(:fill_in_veteran_email) { "new@email.com" }
-        let(:fill_in_rep_email) { "rep@testingEmail.com" }
+        let(:fill_in_veteran_email) { "veteran@example.com" }
+        let(:fill_in_rep_email) { "rep@example.com" }
 
         scenario "user can update emails" do
           visit "hearings/" + hearing.external_id.to_s + "/details"
@@ -894,9 +906,14 @@ RSpec.feature "Hearing Details", :all_dbs do
   end
 
   context "with VSO user role" do
-    # let!(:current_user) { User.authenticate!(roles: ["VSO"]) }
+    let(:expected_veteran_email) { hearing.appeal.appellant_email_address }
 
     scenario "user is immediately redirected to the Convert to Virtual form" do
+      step "hearing is not virtual on hearing itself and appeal" do
+        expect(hearing.virtual?).to eq false
+        expect(hearing.appeal.changed_hearing_request_type).to_not eq Constants.HEARING_REQUEST_TYPES.virtual
+      end
+
       User.authenticate!(user: vso_user)
       visit "hearings/" + hearing.external_id.to_s + "/details"
       expect(page).to have_content(format(COPY::CONVERT_HEARING_TITLE, "Virtual"))
@@ -906,8 +923,9 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to_not have_content(COPY::CENTRAL_OFFICE_CHANGE_TO_VIRTUAL)
 
       step "the submit button is disabled at first" do
-        fill_in "Veteran Email", with: fill_in_veteran_email
-        fill_in "Confirm Veteran Email", with: fill_in_veteran_email
+        # Veteran email field should be pre-populated.
+        expect(page).to have_field("Veteran Email", with: expected_veteran_email)
+        fill_in "Confirm Veteran Email", with: expected_veteran_email
 
         # Update the POA and Appellant Timezones
         click_dropdown(name: "representativeTz", index: 1)
@@ -941,6 +959,20 @@ RSpec.feature "Hearing Details", :all_dbs do
 
         expect(page).to have_content(success_title)
         expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
+      end
+
+      step "hearing is now virtual on both hearing itself and its appeal" do
+        hearing.reload
+
+        expect(hearing.virtual?).to eq true
+        expect(hearing.appeal.changed_hearing_request_type).to eq Constants.HEARING_REQUEST_TYPES.virtual
+      end
+
+      step "hearing email recipients have been recorded and emails notifications have been sent" do
+        expect(hearing.appellant_recipient.email_address).to eq expected_veteran_email
+        expect(hearing.representative_recipient.email_address).to eq current_user.email
+
+        expect(hearing.email_events.count).to eq 2
       end
     end
 
