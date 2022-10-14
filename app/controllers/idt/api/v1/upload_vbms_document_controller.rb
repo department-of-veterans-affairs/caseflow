@@ -26,12 +26,20 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   def create
     # Find veteran from veteran file nummber of ssn
     if request.parameters["veteran_file_number"] != ""
-      continue
+      veteran = bgs.fetch_veteran_info(request.parameters["veteran_file_number"])
+      if veteran.nil?
+        begin
+          fail NoAppealError, request.parameters["veteran_file_number"]
+        rescue StandardError => error
+          log_error(error)
+          render json: { status: 400, error_id: SecureRandom.uuid, error_message: "The veteran was unable to be found." }, status: :not_found
+        end
+      end
     elsif request.parameters["veteran_ssn"] != ""
       file_number = bgs.fetch_file_number_by_ssn(request.parameters["veteran_ssn"])
       if file_number.nil?
         begin
-          fail NoAppealError, request.parameters["appeal_id"]
+          fail NoAppealError, request.parameters["veteran_ssn"]
         rescue StandardError => error
           log_error(error)
           render json: { status: 400, error_id: SecureRandom.uuid, error_message: "The veteran was unable to be found." }, status: :not_found
@@ -55,7 +63,6 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
         request.parameters["veteran_file_number"] = appeal.veteran_file_number
       end
     end
-
     result = PrepareDocumentUploadToVbms.new(request.parameters, current_user).call
 
     if result.success?
