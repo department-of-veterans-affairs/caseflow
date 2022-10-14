@@ -7,11 +7,11 @@ class SplitCorrelationTable < CaseflowRecord
   def create_split_record
     # Performs a query to see if the orginal apeal UUID has been split and if not found, creates the record.
     # It also updates the original request issues to on_hold for the original appeal.
-    if SplitCorrelationTable.find_by(original_appeal_uuid: appeal.uuid) == false;
+    if SplitCorrelationTable.find_by(original_appeal_uuid: appeal.uuid) == false
       SplitCorrelationTable.create!(
-        appeal_id: dup_appeal.id, 
-        appeal_type: dup_appeal.docket_type, 
-        appeal_uuid: dup_appeal.uuid, 
+        appeal_id: dup_appeal.id,
+        appeal_type: dup_appeal.docket_type,
+        appeal_uuid: dup_appeal.uuid,
         created_at: Time.zone.now.utc,
         created_by_id: user_css_id,
         original_appeal_id: appeal.id,
@@ -25,8 +25,7 @@ class SplitCorrelationTable < CaseflowRecord
         updated_by_id: user_css_id,
         working_split_status: Constants.TASK_STATUSES.in_progress
       )
-      return create_split_record
-      #iterate over the request issues array and update accordingly for old & new
+      # iterate over the request issues array and update accordingly for old & new
     end
   end
 end
