@@ -483,6 +483,9 @@ class Appeal < DecisionReview
 
     # return the task id to be added to the dict
     return dup_task.id
+
+    # creates split record
+    SplitCorrelationTable.create_split_record(appeal_id, split_issue, split_other_reason, split_reason, appeal, dup_appeal, user_css_id)
   end
 
   def docket_name

@@ -4,7 +4,6 @@ class SplitCorrelationTable < CaseflowRecord
   # f1b68d5f-1c40-4807-bde5-e6ee4652a732
   # Creates the split appeal record in Caseflow and with table being referenced in tableau.
   # Creation of the table records is subject to change in area of relationship_type & working_split_status
-  binding.pry
   def create_split_record
     # Performs a query to see if the orginal apeal UUID has been split and if not found, creates the record.
     # It also updates the original request issues to on_hold for the original appeal.
