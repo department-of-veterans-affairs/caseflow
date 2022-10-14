@@ -8,11 +8,13 @@ class AppealsController < ApplicationController
     :index,
     :power_of_attorney,
     :show_case_list,
+    :show_notification_list,
     :show,
     :veteran,
     :most_recent_hearing
   ]
 
+  @@results_per_page = 1
   def index
     respond_to do |format|
       format.html { render template: "queue/index" }
@@ -45,6 +47,42 @@ class AppealsController < ApplicationController
         render_search_results_as_json(result)
       end
     end
+  end
+
+  def show_notification_list
+    @params = params
+    @current_page = params[:page].try(:to_i) || 1
+    results = get_notifications_from_params(params, @current_page)
+    # notifications_to_show = results[0]
+    # total_number_of_pages = results[1]
+    # total_number_of_pages = results[-1]
+    byebug
+    results.pop
+
+    
+
+    render json: results
+  end
+
+  def get_notifications_from_params(params, current_page)
+    notifications = Notification.where(appeals_id: params[:appeal_id])
+    queried_notifications = notifications.filter{ |notification| notification.event_type.include? params[:event_type]}
+    pages_count = (queried_notifications.count/@@results_per_page.to_f).ceil
+    index = (@@results_per_page * pages_count) - @@results_per_page
+    i = 0
+    response = []
+
+    while i < (@@results_per_page)
+      response.push(queried_notifications[index])
+      i += 1
+      index += 1
+    end
+    response.push(pages_count)
+
+    # start = @@results_per_page * (@current_page - 1)
+    # results = notifications[start, @@results_per_page]
+    # [queried_notifications, pages_count]
+    response
   end
 
   def document_count
@@ -188,6 +226,10 @@ class AppealsController < ApplicationController
     end
   end
 
+  def render_json_notifications(appeal)
+    render Notification.find_by(vacols_id: appeal.vacols_id).as_json
+  end
+
   def review_removed_message
     claimant_name = appeal.veteran_full_name
     "You have successfully removed #{appeal.class.review_title} for #{claimant_name}
@@ -296,5 +338,12 @@ class AppealsController < ApplicationController
       alert_type: "error",
       message: "Something went wrong"
     }, status: :unprocessable_entity
+  end
+
+  def render_test(appeal_id)
+    notifications = Notification.find_by(vacols_id: appeal_id)
+    render json: {
+      notification_type: notifications.event_type
+    }
   end
 end
