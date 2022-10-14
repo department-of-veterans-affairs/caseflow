@@ -23,6 +23,8 @@ class PreDocketTask < Task
     Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.to_h
   ].freeze
 
+  prepend AppealDocketed
+
   def available_actions(user)
     return [] unless assigned_to.user_has_access?(user) && FeatureToggle.enabled?(:docket_vha_appeals, user: user)
 
