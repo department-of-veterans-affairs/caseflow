@@ -177,13 +177,11 @@ export const useClaimantForm = (
   hidePOAForm = false,
   hideListedAttorney = false
 ) => {
+  const isHLROrSCForm = [
+    FORM_TYPES.HIGHER_LEVEL_REVIEW.key,
+    FORM_TYPES.SUPPLEMENTAL_CLAIM.key
+  ].includes(selectedForm.key);
 
-  // TODO check if a new schema is needed for HLR/SC for claimant form so it doesn't affect appeals
-  const isHLROrSCForm1 = selectedForm === 'higher_level_review' || selectedForm === 'supplemental_claim';
-  const isHLROrSCForm = [FORM_TYPES.HIGHER_LEVEL_REVIEW.key, FORM_TYPES.SUPPLEMENTAL_CLAIM.key].includes(selectedForm.key);
-
-  console.log(`in useClaimantForm with attribute: ${isHLROrSCForm1}`);
-  console.log(selectedForm);
   const methods = useForm({
     resolver: isHLROrSCForm ? yupResolver(schemaHLR) : yupResolver(schema),
     context: { hidePOAForm, hideListedAttorney },

@@ -50,10 +50,6 @@ class DecisionReviewIntake < Intake
     )
 
     if claimant.is_a?(OtherClaimant)
-      puts "we get to save recognized details with a created claimant"
-      puts claimant.inspect
-      puts "all the params"
-      puts request_params.inspect
       claimant.save_unrecognized_details!(
         request_params[:unlisted_claimant],
         request_params[:poa]

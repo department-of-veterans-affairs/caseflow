@@ -48,7 +48,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
   if (intakeStatus === INTAKE_STATES.STARTED && !intakeData.receiptDate) {
     return <Redirect to={PAGE_PATHS.REVIEW} />;
   }
-  console.log(`form type in add claimant page before useClaimantForm: ${selectedForm}`);
+
   const methods = useClaimantForm({ defaultValues: claimant, selectedForm });
   const {
     formState: { isValid },
@@ -67,9 +67,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
     } else {
       intakeData.unlistedClaimant = claimant;
     }
-    // console.log(intakeId);
-    // console.log(intakeData);
-    // console.log(selectedForm.formName);
+
     dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
     dispatch(clearClaimant());
     push('/add_issues');
