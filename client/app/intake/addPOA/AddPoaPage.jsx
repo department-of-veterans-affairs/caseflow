@@ -71,9 +71,6 @@ export const AddPoaPage = () => {
     handleSubmit
   } = methods;
 
-  /* eslint-disable no-unused-vars */
-  // This code will likely be needed in submission (see handleConfirm)
-  // Remove eslint-disable once used
   const emailValidationError = errors.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
 
   const { formType, id: intakeId } = useSelector((state) => state.intake);
@@ -241,12 +238,14 @@ export const AddPoaPage = () => {
           )}
 
           {showPartyType && watchPartyType === 'organization' && (
-            <TextField
-              name="name"
-              label="Organization name"
-              inputRef={register}
-              strongLabel
-            />
+            <FieldDiv>
+              <TextField
+                name="name"
+                label="Organization name"
+                inputRef={register}
+                strongLabel
+              />
+            </FieldDiv>
           )}
           {showAdditionalFields && (
             <div>

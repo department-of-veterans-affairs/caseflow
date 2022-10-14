@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { sub } from 'date-fns';
 import { camelCase, reduce, startCase } from 'lodash';
+import { FORM_TYPES } from '../constants';
 
 import ApiUtil from 'app/util/ApiUtil';
 import { DOB_INVALID_ERRS } from 'app/../COPY';
@@ -172,16 +173,17 @@ export const defaultFormValues = {
 };
 
 export const useClaimantForm = (
-  { defaultValues = {}, formType } = {},
+  { defaultValues = {}, selectedForm } = {},
   hidePOAForm = false,
   hideListedAttorney = false
 ) => {
 
   // TODO check if a new schema is needed for HLR/SC for claimant form so it doesn't affect appeals
-  const isHLROrSCForm = formType === 'higher_level_review' || formType === 'supplemental_claim';
+  const isHLROrSCForm1 = selectedForm === 'higher_level_review' || selectedForm === 'supplemental_claim';
+  const isHLROrSCForm = [FORM_TYPES.HIGHER_LEVEL_REVIEW.key, FORM_TYPES.SUPPLEMENTAL_CLAIM.key].includes(selectedForm.key);
 
-  console.log(`in useClaimantForm with attribute: ${isHLROrSCForm}`);
-  console.log(formType);
+  console.log(`in useClaimantForm with attribute: ${isHLROrSCForm1}`);
+  console.log(selectedForm);
   const methods = useForm({
     resolver: isHLROrSCForm ? yupResolver(schemaHLR) : yupResolver(schema),
     context: { hidePOAForm, hideListedAttorney },

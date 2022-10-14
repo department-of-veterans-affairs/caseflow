@@ -48,8 +48,8 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
   if (intakeStatus === INTAKE_STATES.STARTED && !intakeData.receiptDate) {
     return <Redirect to={PAGE_PATHS.REVIEW} />;
   }
-  console.log(`form type in add claimant page before useClaimantForm: ${formType}`);
-  const methods = useClaimantForm({ defaultValues: claimant, formType });
+  console.log(`form type in add claimant page before useClaimantForm: ${selectedForm}`);
+  const methods = useClaimantForm({ defaultValues: claimant, selectedForm });
   const {
     formState: { isValid },
     handleSubmit,

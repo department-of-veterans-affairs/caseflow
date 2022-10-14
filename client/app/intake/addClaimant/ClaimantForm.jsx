@@ -246,12 +246,14 @@ export const ClaimantForm = ({
           </>
         )}
         {isOrgPartyType && (
-          <TextField
-            name="name"
-            label="Organization name"
-            inputRef={register}
-            strongLabel
-          />
+          <FieldDiv>
+            <TextField
+              name="name"
+              label="Organization name"
+              inputRef={register}
+              strongLabel
+            />
+          </FieldDiv>
         )}
         {partyType && (
           <>

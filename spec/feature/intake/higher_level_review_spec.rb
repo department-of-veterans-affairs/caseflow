@@ -506,7 +506,8 @@ feature "Higher-Level Review", :all_dbs do
     test_veteran,
     is_comp: true,
     claim_participant_id: nil,
-    legacy_opt_in_approved: false
+    legacy_opt_in_approved: false,
+    unlisted_claimant: false
   )
 
     higher_level_review = HigherLevelReview.create!(
@@ -524,14 +525,15 @@ feature "Higher-Level Review", :all_dbs do
       user: current_user, started_at: 5.minutes.ago,
       detail: higher_level_review
     )
-
-    claimant_class = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
-    participant_id = claim_participant_id || test_veteran.participant_id
-    claimant_class.create!(
-      decision_review: higher_level_review,
-      participant_id: participant_id,
-      payee_code: claim_participant_id.present? ? "02" : "00"
-    )
+    if !unlisted_claimant
+      claimant_class = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
+      participant_id = claim_participant_id || test_veteran.participant_id
+      claimant_class.create!(
+        decision_review: higher_level_review,
+        participant_id: participant_id,
+        payee_code: claim_participant_id.present? ? "02" : "00"
+      )
+    end
 
     higher_level_review.start_review!
 
@@ -1506,6 +1508,103 @@ feature "Higher-Level Review", :all_dbs do
     it "disables prior contestable issues" do
       start_higher_level_review(veteran)
       check_decision_issue_chain(start_date)
+    end
+  end
+
+  # TODO: move this to intake helpers
+  def click_claimant_not_listed
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+
+    within_fieldset(COPY::SELECT_CLAIMANT_LABEL) do
+      find("label", text: "Claimant not listed", match: :prefer_exact).click
+    end
+  end
+
+  def add_new_claimant
+    fill_in "First name", with: new_individual_claimant[:first_name]
+    fill_in "Last name", with: new_individual_claimant[:last_name]
+    fill_in "Street address 1", with: new_individual_claimant[:address1]
+    fill_in "City", with: new_individual_claimant[:city]
+    fill_in("State", with: new_individual_claimant[:state]).send_keys :enter
+    fill_in("Zip", with: new_individual_claimant[:zip]).send_keys :enter
+    fill_in("Country", with: new_individual_claimant[:country]).send_keys :enter
+    fill_in "Claimant email", with: new_individual_claimant[:email]
+  end
+  context "creating HLRs with unlisted claimants" do
+    let(:new_individual_claimant) do
+      {
+        first_name: "Michelle",
+        last_name: "McClaimant",
+        address1: "123 Main St",
+        city: "San Francisco",
+        state: "CA",
+        zip: "94123",
+        country: "United States",
+        email: "claimant@example.com"
+      }
+    end
+
+    let(:other_claimant_type) do
+      "Other"
+    end
+
+    let(:healthcare_provider_type) do
+      "Healthcare Provider"
+    end
+
+    let(:relationship_dropdown_options) do
+      [
+        "Attorney (previously or currently)", "Child", "Spouse", "Healthcare Provider", "Other"
+      ]
+    end
+
+    scenario "creating a HLR with an unlisted claimant - verify dropdown relationship options" do
+      start_higher_level_review(veteran, is_comp: false, unlisted_claimant: true)
+      visit "/intake/"
+      click_claimant_not_listed
+
+      click_intake_continue
+      # Check that we are on the add claimant page
+      expect(page).to have_content("Add Claimant")
+
+      # Open the searchable dropdown to view the options
+      find(".cf-select__control", text: "Select...").click
+      page_options = all("div.cf-select__option")
+      page_options_text = page_options.map(&:text)
+
+      # Verify that all of the options are in the dropdown
+      expect(page_options_text).to eq(relationship_dropdown_options)
+    end
+
+    scenario "creating a HLR with an unlisted claimant with relationship other with type individual" do
+      start_higher_level_review(veteran, is_comp: false, unlisted_claimant: true)
+      visit "/intake/"
+      click_claimant_not_listed
+
+      click_intake_continue
+      # Select other from the dropdown
+      fill_in("Relationship to the Veteran", with: other_claimant_type).send_keys :enter
+      expect(page).to have_content("Is the claimant an organization or individual?")
+
+      within_fieldset("Is the claimant an organization or individual?") do
+        find("label", text: "Individual", match: :prefer_exact).click
+      end
+      add_new_claimant
+      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+        find("label", text: "No", match: :prefer_exact).click
+      end
+      click_button "Continue to next step"
+
+      # Review climant modal
+      expect(page).to have_content("Review and confirm claimant information")
+      click_button "Confirm"
+
+      expect(page).to have_content("Add / Remove Issues")
+      claimant_name = "#{new_individual_claimant[:first_name]} #{new_individual_claimant[:last_name]}"
+      claimant_string = "#{claimant_name}, #{other_claimant_type}"
+      expect(page).to have_content(claimant_string)
     end
   end
 end
