@@ -106,7 +106,6 @@ class Fakes::VBMSService
   end
 
   def self.upload_document_to_vbms(veteran_file_number, form8)
-    byebug
     @uploaded_form8 = form8
     @veteran_file_number = veteran_file_number
   end
