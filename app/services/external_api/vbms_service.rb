@@ -38,7 +38,13 @@ class ExternalApi::VBMSService
     ExternalApi::VbmsDocumentSeriesForAppeal.new(file_number: appeal.veteran_file_number).fetch
   end
 
-  def self.upload_document_to_vbms(veteran_file_number, uploadable_document)
+  def self.upload_document_to_vbms(appeal, uploadable_document)
+    @vbms_client ||= init_vbms_client
+    response = initialize_upload(appeal.veteran_file_number, uploadable_document)
+    upload_document(appeal.veteran_file_number, response.upload_token, uploadable_document.pdf_location)
+  end
+
+  def self.upload_document_to_vbms_veteran(veteran_file_number, uploadable_document)
     @vbms_client ||= init_vbms_client
     response = initialize_upload(veteran_file_number, uploadable_document)
     upload_document(veteran_file_number, response.upload_token, uploadable_document.pdf_location)
