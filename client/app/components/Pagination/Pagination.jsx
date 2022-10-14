@@ -36,7 +36,8 @@ class Pagination extends React.PureComponent {
   };
 
   generateBlankButton = (key) => {
-    return <button disabled key={`blank-button-${key}`}>...</button>;
+    // eslint-disable-next-line react/jsx-curly-brace-presence
+    return <button disabled key={`blank-button-${key}`} aria-label={'More Pages'}>...</button>;
   };
 
   render() {
