@@ -387,6 +387,79 @@ module Seeds
       end
     end
 
+    def create_bva_dispatch_user_for_split_appeals
+      BvaDispatch.singleton.add_user(User.find_or_create_by(css_id: "BVAGBLACK", station_id: "101"))
+
+      (1..30).each do |rand_seed|
+        create_task_at_bva_dispatch_for_split_appeals(rand_seed)
+      end
+    end
+
+    def create_task_at_bva_dispatch_for_split_appeals(seed = Faker::Number.number(digits: 3))
+      Faker::Config.random = Random.new(seed)
+
+      vet_file_number = format("1415926%<num>02d", num: seed)
+      vet = create(
+        :veteran,
+        file_number: vet_file_number,
+        first_name: Faker::Name.first_name,
+        last_name: Faker::Name.last_name
+      )
+
+      notes = "Pain disorder with 100\% evaluation per examination"
+      notes += ". Created with the initial_tasks factory trait and moved thru"
+
+      # Create appeal with numerous request
+      appeal = create(
+        :appeal,
+        :with_post_intake_tasks,
+        number_of_claimants: 1,
+        veteran_file_number: vet.file_number,
+        docket_type: Constants.AMA_DOCKETS.hearing,
+        closest_regional_office: "RO17",
+        request_issues: create_list(
+          :request_issue, 4, :nonrating, notes: notes
+        )
+      )
+
+      root_task = appeal.root_task
+      judge = User.find_by_css_id("BVAAWAKEFIELD")
+      judge_task = create(
+        :ama_judge_decision_review_task,
+        assigned_to: judge,
+        appeal: appeal,
+        parent: root_task
+      )
+
+      atty = User.find_by_css_id("BVAABELANGER")
+      atty_task = create(
+        :ama_attorney_task,
+        :in_progress,
+        assigned_to: atty,
+        assigned_by: judge,
+        parent: judge_task,
+        appeal: appeal
+      )
+
+      appeal.request_issues.each do |request_issue|
+        create(
+          :decision_issue,
+          :nonrating,
+          disposition: "allowed",
+          decision_review: appeal,
+          request_issues: [request_issue],
+          rating_promulgation_date: 2.months.ago,
+          benefit_type: request_issue.benefit_type
+        )
+      end
+
+      atty_task.update!(status: Constants.TASK_STATUSES.completed)
+      judge_task.update!(status: Constants.TASK_STATUSES.completed)
+
+      BvaDispatchTask.create_from_root_task(root_task)
+      appeal.tasks.where(type: "BvaDispatchTask").map(&:completed!)
+    end
+
     def create_task_at_quality_review(
       judge_name = "Madhu Judge_CaseAtQR Burnham", attorney_name = "Bailey Attorney_CaseAtQR Eoin"
     )
