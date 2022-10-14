@@ -1115,7 +1115,7 @@ class LegacyAppeal < CaseflowRecord
       fail "No Certification found for appeal being certified" unless certification
 
       repository.certify(appeal: appeal, certification: certification)
-      vbms.upload_document_to_vbms(appeal, form8)
+      vbms.upload_document_to_vbms(appeal.vbms_id, form8)
       vbms.clean_document(form8.pdf_location) unless Rails.env.development?
     end
 
