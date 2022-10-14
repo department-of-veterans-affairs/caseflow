@@ -57,7 +57,7 @@ class UploadDocumentToVbms
   def upload_to_vbms!
     return if document.uploaded_to_vbms_at
 
-    VBMSService.upload_document_to_vbms(appeal, self)
+    VBMSService.upload_document_to_vbms(file_number, self)
     document.update!(uploaded_to_vbms_at: Time.zone.now)
   end
 
@@ -78,10 +78,10 @@ class UploadDocumentToVbms
   end
 
   def pdf_name
-    "appeal-#{appeal.external_id}-doc-#{document.id}.pdf"
+    "veteran-#{file_number}-doc-#{document.id}.pdf"
   end
 
-  def appeal
-    document.appeal
+  def file_number
+    document.veteran_file_number
   end
 end
