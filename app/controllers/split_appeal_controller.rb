@@ -5,7 +5,7 @@ class SplitAppealController < ApplicationController
 
   def split_appeal
     if FeatureToggle.enabled?(:split_appeal_workflow)
-
+      #Missing original appeal Issues and would have to be added to the payload of the useContext in ReviewAppealView
       appeal_id = params[:appeal_id]
       split_issue = params[:appeal_split_issues]
       split_other_reason = params[:split_other_reason]

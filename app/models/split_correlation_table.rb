@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 class SplitCorrelationTable < CaseflowRecord
-  class URLPathMissingError < StandardError; end
-  # Creates the split appeal record in Caseflow and with table being referenced in tableau.
-  # Creation of the table records is subject to change in area of relationship_type & working_split_status
-
-  private 
-
   def create_split_record
     Rails.logger.info(
       "Trying to create split record for Appeal Id #{original_appeal_id} or UUID #{original_appeal_uuid}."
