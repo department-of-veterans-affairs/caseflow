@@ -262,7 +262,7 @@ export const ClaimantForm = ({
             <AddressForm
               {...methods}
               isOrgPartyType={isOrgPartyType}
-              isIndividualPartyType={isIndividualPartyType || (isHLROrSCForm && dependentRelationship)}
+              isIndividualPartyType={isIndividualPartyType || dependentRelationship}
               isHLROrSCForm={isHLROrSCForm} // passing this around everywhere is kind of gross
             />
             <FieldDiv>

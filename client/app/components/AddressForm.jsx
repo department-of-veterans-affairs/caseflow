@@ -57,7 +57,7 @@ export const AddressForm = ({ control, register, watch, isOrgPartyType, isIndivi
               inputRef={ref}
               {...rest}
               label="State"
-              optional={optionalIndividualHLRField}
+              optional={!isHLROrSCForm || optionalIndividualHLRField}
               options={STATES}
               filterOption={createFilter({ matchFrom: 'start' })}
               onChange={(valObj) => onChange(valObj?.value)}

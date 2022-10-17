@@ -174,7 +174,7 @@ export const defaultFormValues = {
 };
 
 export const useClaimantForm = (
-  { defaultValues = {}, selectedForm } = {},
+  { defaultValues = {}, selectedForm = {} } = {},
   hidePOAForm = false,
   hideListedAttorney = false
 ) => {
