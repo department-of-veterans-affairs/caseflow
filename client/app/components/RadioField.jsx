@@ -107,26 +107,28 @@ export const RadioField = (props) => {
             key={`${idPart}-${option.value}-${i}`}
           >
             <TooltipWrapper option={option}>
-              <input
-                name={name}
-                onChange={handleChange}
-                type="radio"
-                id={`${idPart}_${option.value}`}
-                value={option.value}
-                // eslint-disable-next-line no-undefined
-                checked={controlled ? value === option.value : undefined}
-                disabled={Boolean(option.disabled)}
-                ref={inputRef}
-                {...inputProps}
-              />
+              <>
+                <input
+                  name={name}
+                  onChange={handleChange}
+                  type="radio"
+                  id={`${idPart}_${option.value}`}
+                  value={option.value}
+                  // eslint-disable-next-line no-undefined
+                  checked={controlled ? value === option.value : undefined}
+                  disabled={Boolean(option.disabled)}
+                  ref={inputRef}
+                  {...inputProps}
+                />
+                <label
+                  className={option.disabled ? 'disabled' : ''}
+                  htmlFor={`${idPart}_${option.value}`}
+                >
+                  {option.displayText || option.displayElem}
+                </label>
+                {option.help && <RadioFieldHelpText help={option.help} />}
+              </>
             </TooltipWrapper>
-            <label
-              className={option.disabled ? 'disabled' : ''}
-              htmlFor={`${idPart}_${option.value}`}
-            >
-              {option.displayText || option.displayElem}
-            </label>
-            {option.help && <RadioFieldHelpText help={option.help} />}
           </div>
         ))}
       </div>
