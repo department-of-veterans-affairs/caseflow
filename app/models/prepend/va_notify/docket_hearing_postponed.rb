@@ -8,6 +8,7 @@ module DocketHearingPostponed
   @@template_name = "Postponement of hearing"
   # rubocop:enable all
 
+  # AMA Hearing Postponed from the Daily Docket
   # original method defined in app/models/hearings/forms/hearing_update_form.rb
   def update_hearing
     super_return_value = super
