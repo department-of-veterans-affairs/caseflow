@@ -116,8 +116,7 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
     context "records for multiple classes where _id exists but the associated record doesn't" do
       let(:document_params) do
         {
-          appeal_id: appeal.id,
-          appeal_type: appeal.class.name,
+          veteran_file_number: appeal.veteran_file_number,
           document_type: "BVA Decision",
           file: ""
         }
