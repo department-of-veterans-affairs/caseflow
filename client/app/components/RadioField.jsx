@@ -28,6 +28,7 @@ const TooltipWrapper = ({ option, children }) =>
     <Tooltip
       id={`tooltip-${option.value}`}
       text={option.tooltipText}
+      position="right"
     >
       {children}
     </Tooltip> :
