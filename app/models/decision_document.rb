@@ -133,6 +133,7 @@ class DecisionDocument < CaseflowRecord
 
   def upload_to_vbms!
     return if uploaded_to_vbms_at
+
     VBMSService.upload_document_to_vbms(appeal, self)
     update!(uploaded_to_vbms_at: Time.zone.now)
   end
