@@ -94,7 +94,7 @@ export const SelectClaimant = (props) => {
   }, [formType, benefitType]);
 
   const enableAddClaimant = useMemo(
-    () => showClaimantNotListedOption && veteranIsNotClaimant && featureToggles.hlrScUnrecognizedClaimants,
+    () => showClaimantNotListedOption && veteranIsNotClaimant,
     [showClaimantNotListedOption, veteranIsNotClaimant]
   );
 
