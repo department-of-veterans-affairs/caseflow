@@ -3,8 +3,8 @@
 # These steps will cancel ALL Tasks for a particular task type;
 # for a user based upon assigned_to_id where not completed or cancelled.
 module WarRoom
-  class CancelActiveTaskArray
-      def run(assigned_to_id, task_type)
+    class CancelActiveTaskArray
+        def run(assigned_to_id, task_type)
         # set current user
         RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1",
                                                      station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
@@ -44,7 +44,7 @@ module WarRoom
         # cancelled that shows up within the appeal
         # as a "Status" of "assigned", "in_progress", or "on_hold"
         array_task_ids = Task.where(assigned_to_id: user,
-                                  type: task_type, status: %w[on_hold in_progress assigned])
+                                    type: task_type, status: %w[on_hold in_progress assigned])
         puts(array_task_ids.to_s)
         if array_task_ids.empty?
           puts("Unable to establish array of the task type
@@ -62,6 +62,6 @@ module WarRoom
         array_task_ids.update(status: Constants.TASK_STATUSES.cancelled,
                               updated_at: Time.zone.now, cancelled_by_id: RequestStore[:current_user]&.id)
         puts "Task #{array_task_ids} completed"
-      end
+    end
     end
 end
