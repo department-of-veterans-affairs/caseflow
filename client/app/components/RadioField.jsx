@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 import RequiredIndicator from './RequiredIndicator';
 import StringUtil from '../util/StringUtil';
+import Tooltip from './Tooltip';
 
 import { helpText } from './RadioField.module.scss';
 
@@ -17,6 +18,19 @@ const RadioFieldHelpText = ({ help, className }) => {
 RadioFieldHelpText.propTypes = {
   help: PropTypes.string.isRequired,
   className: PropTypes.string,
+};
+
+/*
+* Wraps a radio option in a Tooltip component if option has tooltipText
+*/
+const TooltipWrapper = ({option, children}) =>
+  option.tooltipText ? <Tooltip> {children}</Tooltip> : children;
+
+TooltipWrapper.propTypes = {
+  option: PropTypes.shapeOf({
+    tooltipText: PropTypes.string
+  }),
+  children: PropTypes.node
 };
 
 /**
