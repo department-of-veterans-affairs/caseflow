@@ -82,7 +82,8 @@ export const getDefaultPayeeCode = (state, claimant) => {
 export const formatRadioOptions = (options) => {
   return _.map(options, (value, key) => {
     return { value: key,
-      displayText: value };
+      displayText: value,
+      tooltipText: 'Hi Mom!' };
   });
 };
 
