@@ -1522,7 +1522,8 @@ feature "Higher-Level Review", :all_dbs do
     end
   end
 
-  def add_new_claimant
+  # TODO: move this to intake helpers
+  def add_new_individual_claimant
     fill_in "First name", with: new_individual_claimant[:first_name]
     fill_in "Last name", with: new_individual_claimant[:last_name]
     fill_in "Street address 1", with: new_individual_claimant[:address1]
@@ -1532,6 +1533,8 @@ feature "Higher-Level Review", :all_dbs do
     fill_in("Country", with: new_individual_claimant[:country]).send_keys :enter
     fill_in "Claimant email", with: new_individual_claimant[:email]
   end
+
+  # TODO: Decide if this should be in HLR or in non_veterans_claimants_spec
   context "creating HLRs with unlisted claimants" do
     let(:new_individual_claimant) do
       {
@@ -1550,8 +1553,20 @@ feature "Higher-Level Review", :all_dbs do
       "Other"
     end
 
-    let(:healthcare_provider_type) do
+    let(:healthcare_provider_claimant_type) do
       "Healthcare Provider"
+    end
+
+    let(:child_provider_claimant_type) do
+      "Child"
+    end
+
+    let(:spouse_provider_claimant_type) do
+      "Spouse"
+    end
+
+    let(:attorney_claimant_type) do
+      "Attorney (previously or currently)"
     end
 
     let(:relationship_dropdown_options) do
@@ -1560,6 +1575,7 @@ feature "Higher-Level Review", :all_dbs do
       ]
     end
 
+    # TODO: make these into reusable examples to avoid so much repeated code
     scenario "creating a HLR with an unlisted claimant - verify dropdown relationship options" do
       start_higher_level_review(veteran, is_comp: false, unlisted_claimant: true)
       visit "/intake/"
@@ -1591,7 +1607,7 @@ feature "Higher-Level Review", :all_dbs do
       within_fieldset("Is the claimant an organization or individual?") do
         find("label", text: "Individual", match: :prefer_exact).click
       end
-      add_new_claimant
+      add_new_individual_claimant
       within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
         find("label", text: "No", match: :prefer_exact).click
       end
@@ -1605,6 +1621,175 @@ feature "Higher-Level Review", :all_dbs do
       claimant_name = "#{new_individual_claimant[:first_name]} #{new_individual_claimant[:last_name]}"
       claimant_string = "#{claimant_name}, #{other_claimant_type}"
       expect(page).to have_content(claimant_string)
+    end
+
+    scenario "creating a HLR with an unlisted claimant with relationship Healthcare Provider with type individual" do
+      start_higher_level_review(veteran, is_comp: false, unlisted_claimant: true)
+      visit "/intake/"
+      click_claimant_not_listed
+
+      click_intake_continue
+      # Select other from the dropdown
+      fill_in("Relationship to the Veteran", with: healthcare_provider_claimant_type).send_keys :enter
+      expect(page).to have_content("Is the claimant an organization or individual?")
+
+      within_fieldset("Is the claimant an organization or individual?") do
+        find("label", text: "Individual", match: :prefer_exact).click
+      end
+      add_new_individual_claimant
+      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+        find("label", text: "No", match: :prefer_exact).click
+      end
+      click_button "Continue to next step"
+
+      # Review climant modal
+      expect(page).to have_content("Review and confirm claimant information")
+      click_button "Confirm"
+
+      expect(page).to have_content("Add / Remove Issues")
+      claimant_name = "#{new_individual_claimant[:first_name]} #{new_individual_claimant[:last_name]}"
+      claimant_string = "#{claimant_name}, #{healthcare_provider_claimant_type}"
+      expect(page).to have_content(claimant_string)
+    end
+
+    scenario "creating a HLR with an unlisted claimant with relationship Child" do
+      start_higher_level_review(veteran, is_comp: false, unlisted_claimant: true)
+      visit "/intake/"
+      click_claimant_not_listed
+
+      click_intake_continue
+      # Select other from the dropdown
+      fill_in("Relationship to the Veteran", with: child_provider_claimant_type).send_keys :enter
+
+      add_new_individual_claimant
+      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+        find("label", text: "No", match: :prefer_exact).click
+      end
+      click_button "Continue to next step"
+
+      # Review climant modal
+      expect(page).to have_content("Review and confirm claimant information")
+      click_button "Confirm"
+
+      expect(page).to have_content("Add / Remove Issues")
+      claimant_name = "#{new_individual_claimant[:first_name]} #{new_individual_claimant[:last_name]}"
+      claimant_string = "#{claimant_name}, #{child_provider_claimant_type}"
+      expect(page).to have_content(claimant_string)
+    end
+
+    scenario "creating a HLR with an unlisted claimant with relationship Spouse" do
+      start_higher_level_review(veteran, is_comp: false, unlisted_claimant: true)
+      visit "/intake/"
+      click_claimant_not_listed
+
+      click_intake_continue
+      # Select other from the dropdown
+      fill_in("Relationship to the Veteran", with: spouse_provider_claimant_type).send_keys :enter
+
+      add_new_individual_claimant
+      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+        find("label", text: "No", match: :prefer_exact).click
+      end
+      click_button "Continue to next step"
+
+      # Review climant modal
+      expect(page).to have_content("Review and confirm claimant information")
+      click_button "Confirm"
+
+      expect(page).to have_content("Add / Remove Issues")
+      claimant_name = "#{new_individual_claimant[:first_name]} #{new_individual_claimant[:last_name]}"
+      claimant_string = "#{claimant_name}, #{spouse_provider_claimant_type}"
+      expect(page).to have_content(claimant_string)
+    end
+
+    scenario "creating a HLR with an unlisted individual claimant has the appropriate required form fields" do
+      start_higher_level_review(veteran, is_comp: false, unlisted_claimant: true)
+      visit "/intake/"
+      click_claimant_not_listed
+
+      click_intake_continue
+      # Select other from the dropdown
+      fill_in("Relationship to the Veteran", with: spouse_provider_claimant_type).send_keys :enter
+
+      continue_button = find("button", text: "Continue to next step")
+      expect(continue_button[:disabled]).to eq "true"
+
+      fill_in "First name", with: new_individual_claimant[:first_name]
+      expect(continue_button[:disabled]).to eq "true"
+      fill_in "Last name", with: new_individual_claimant[:last_name]
+      expect(continue_button[:disabled]).to eq "true"
+
+      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+        find("label", text: "No", match: :prefer_exact).click
+      end
+
+      expect(continue_button[:disabled]).to eq "false"
+
+      # reload the page and change the relationship child to check the required fields
+      visit "/intake/add_claimant"
+      continue_button = find("button", text: "Continue to next step")
+      fill_in("Relationship to the Veteran", with: child_provider_claimant_type).send_keys :enter
+      expect(continue_button[:disabled]).to eq "true"
+
+      fill_in "First name", with: new_individual_claimant[:first_name]
+      expect(continue_button[:disabled]).to eq "true"
+      fill_in "Last name", with: new_individual_claimant[:last_name]
+      expect(continue_button[:disabled]).to eq "true"
+      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+        find("label", text: "No", match: :prefer_exact).click
+      end
+      expect(continue_button[:disabled]).to eq "false"
+
+      # Reload page and change the relationship to other as individual to check the required fields
+      visit "/intake/add_claimant"
+      continue_button = find("button", text: "Continue to next step")
+      fill_in("Relationship to the Veteran", with: other_claimant_type).send_keys :enter
+      expect(continue_button[:disabled]).to eq "true"
+      within_fieldset("Is the claimant an organization or individual?") do
+        find("label", text: "Individual", match: :prefer_exact).click
+      end
+      fill_in "First name", with: new_individual_claimant[:first_name]
+      expect(continue_button[:disabled]).to eq "true"
+      fill_in "Last name", with: new_individual_claimant[:last_name]
+      expect(continue_button[:disabled]).to eq "true"
+      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+        find("label", text: "No", match: :prefer_exact).click
+      end
+      expect(continue_button[:disabled]).to eq "false"
+
+      # Reload page and change the relationship to healthcare provider as individual to check the required fields
+      visit "/intake/add_claimant"
+      continue_button = find("button", text: "Continue to next step")
+      fill_in("Relationship to the Veteran", with: healthcare_provider_claimant_type).send_keys :enter
+      expect(continue_button[:disabled]).to eq "true"
+      within_fieldset("Is the claimant an organization or individual?") do
+        find("label", text: "Individual", match: :prefer_exact).click
+      end
+      fill_in "First name", with: new_individual_claimant[:first_name]
+      expect(continue_button[:disabled]).to eq "true"
+      fill_in "Last name", with: new_individual_claimant[:last_name]
+      expect(continue_button[:disabled]).to eq "true"
+      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+        find("label", text: "No", match: :prefer_exact).click
+      end
+      expect(continue_button[:disabled]).to eq "false"
+
+      # Reload page and change the relationship to Attorney as individual to check the required fields
+      visit "/intake/add_claimant"
+      continue_button = find("button", text: "Continue to next step")
+      fill_in("Relationship to the Veteran", with: attorney_claimant_type).send_keys :enter
+      # Uh oh this doesn't work for this searchable dropdown
+      # fill_in("Claimant's name", with: "Name not listed").send_keys :enter
+      fill_in("Claimant's name", with: "Name not listed")
+      find("div", class: "cf-select__option", text: "Name not listed").click
+      expect(continue_button[:disabled]).to eq "true"
+      within_fieldset("Is the claimant an organization or individual?") do
+        find("label", text: "Individual", match: :prefer_exact).click
+      end
+      fill_in "First name", with: new_individual_claimant[:first_name]
+      expect(continue_button[:disabled]).to eq "true"
+      fill_in "Last name", with: new_individual_claimant[:last_name]
+      expect(continue_button[:disabled]).to eq "false"
     end
   end
 end

@@ -116,8 +116,8 @@ export const schemaHLR = yup.object().shape({
   }),
   addressLine2: yup.string(),
   addressLine3: yup.string(),
-  city: yup.string().when(['partyType', 'relationship'], {
-    is: (partyType, relationship) => (partyType === 'organization' || ['spouse', 'child'].includes(relationship)),
+  city: yup.string().when('partyType', {
+    is: 'organization',
     then: yup.string().required(),
   }),
   state: yup.string().nullable().
@@ -145,6 +145,7 @@ export const schemaHLR = yup.object().shape({
     is: (relationship, hideListedAttorney) => (relationship === 'attorney' && !hideListedAttorney),
     then: yup.object().required(),
   }),
+  ssn: yup.string(),
 });
 
 export const defaultFormValues = {

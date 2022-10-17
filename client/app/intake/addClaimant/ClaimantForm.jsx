@@ -45,6 +45,7 @@ const suffixDivLabelStyle = css({
   }
 });
 
+// TODO: This doesn't work exactly how it should. Searching is awkward and text matching doesn't sync up with backend
 // We'll show all items returned from the backend instead of using default substring matching
 const filterOption = () => true;
 
@@ -144,6 +145,7 @@ export const ClaimantForm = ({
               <FieldDiv>
                 <SearchableDropdown
                   {...rest}
+                  // Unsure if props.POA is ever used since the AddPoaPage exists as a seperate thing.
                   label={`${props.POA ? 'Representative' : 'Claimant'}'s name`}
                   filterOption={filterOption}
                   async={asyncFn}
@@ -260,7 +262,7 @@ export const ClaimantForm = ({
             <AddressForm
               {...methods}
               isOrgPartyType={isOrgPartyType}
-              isIndividualPartyType={isIndividualPartyType}
+              isIndividualPartyType={isIndividualPartyType || (isHLROrSCForm && dependentRelationship)}
               isHLROrSCForm={isHLROrSCForm} // passing this around everywhere is kind of gross
             />
             <FieldDiv>
