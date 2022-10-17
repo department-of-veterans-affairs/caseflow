@@ -32,7 +32,6 @@ class ForeignKeyPolymorphicAssociationJob < CaseflowJob
     AttorneyCaseReview => [APPEAL_ASSOCIATION_DETAILS],
     JudgeCaseReview => [APPEAL_ASSOCIATION_DETAILS],
     SpecialIssueList => [APPEAL_ASSOCIATION_DETAILS],
-    VbmsUploadedDocument => [APPEAL_ASSOCIATION_DETAILS],
 
     Task => [
       { id_column: :appeal_id,
