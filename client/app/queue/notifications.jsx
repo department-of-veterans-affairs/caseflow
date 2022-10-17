@@ -1,61 +1,9 @@
-// import React from 'react';
-// // import PropTypes from 'prop-types';
-// // import { connect } from 'react-redux';
-// import { bindActionCreators } from 'redux';
-// // import { Link } from 'react-router-dom';
-// // import { CaseTitle } from './CaseTitle'; 
-// // import CaseTitleDetails from './CaseTitleDetails';
-// // // import { useSelector } from 'react-redux';
-// //  import { appealWithDetailSelector } from './selectors';
-// // import { isAppealDispatched } from './substituteAppellant/caseDetails/utils';
-// import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-// import Button from '../components/Button';
-// // import FnodBanner from './components/FnodBanner';
-//  import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
-//  import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
-//  import {
-//   appealHasSubstitution,
-//   isAppealDispatched,
-//   supportsSubstitutionPostDispatch,
-//   supportsSubstitutionPreDispatch,
-// } from './substituteAppellant/caseDetails/utils';
-// import { AppealHasSubstitutionAlert } from './substituteAppellant/caseDetails/AppealHasSubstitutionAlert';
-
-
-
-
-// export const Notifications = () => {
-//   // const { appeal, appealId, veteranCaseListIsVisible } = this.props;
-//   // const sectionGap = css({ marginBottom: '3rem' });
-//   const appeal={
-//     veteranFullName: "Eric Moore",
-//     verteranFileNumber: "123456789"
-//   }
-
-//   return (
-//     <div>
-//       <AppSegment />
-//       <Button />
-//       <VsoVisibilityAlert />
-//       <shouldShowVsoVisibilityAlert />
-//       <AppealHasSubstitutionAlert />
-//       {/* <CaseTitle /> */}
-    
-//       {/* <CaseTitle appeal={appeal} /> */}
-//     </div>
-
-//   )
-  
-// };
-
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-
 import { COLORS } from 'app/constants/AppConstants';
 import BadgeArea from 'app/components/badges/BadgeArea';
 import CopyTextButton from 'app/components/CopyTextButton';
@@ -86,7 +34,7 @@ const listStyling = css({
 const listItemStyling = css({
   display: 'inline',
   padding: '0.5rem 1.5rem 0.5rem 0',
-  ':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
+  // ':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
   ':not(:first-child)': { paddingLeft: '1.5rem' }
 });
 
@@ -97,6 +45,7 @@ const viewCasesStyling = css({
 class CaseTitle extends React.PureComponent {
   render = () => {
     const { appeal, veteranCaseListIsVisible } = this.props;
+    const subheader = ["DOCKET NUMBER", "APPEALS STREAM TYPE", "HEARING TYPE"];
 
     return (
       <CaseTitleScaffolding heading={"Case notifications for " + appeal.veteranFullName}>
@@ -105,7 +54,7 @@ class CaseTitle extends React.PureComponent {
           <CopyTextButton text={appeal.veteranFileNumber} label="Veteran ID" />
         </React.Fragment>
 
-        <span {...viewCasesStyling}> 
+        <span {...viewCasesStyling}>
           {/* <Link href="#" onClick={this.props.toggleVeteranCaseList}>{veteranCaseListIsVisible ? 'Hide' : 'View'} all cases</Link> */}
         </span>
         <BadgeArea appeal={appeal} isHorizontal />
@@ -113,6 +62,7 @@ class CaseTitle extends React.PureComponent {
     );
   };
 }
+
 
 CaseTitle.propTypes = {
   appeal: PropTypes.object.isRequired,
@@ -122,10 +72,10 @@ CaseTitle.propTypes = {
   toggleVeteranCaseList: PropTypes.func
 };
 
-CaseTitle.defaultProps = {
-  taskType: 'Draft Decision',
-  analyticsSource: 'queue_task'
-};
+// CaseTitle.defaultProps = {
+//   taskType: 'Draft Decision',
+//   analyticsSource: 'queue_task'
+// };
 
 const CaseTitleScaffolding = (props) => (
   <div {...containingDivStyling}>
@@ -149,14 +99,21 @@ CaseTitleScaffolding.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  veteranCaseListIsVisible: state.ui.veteranCaseListIsVisible,
-  userIsVsoEmployee: state.ui.userIsVsoEmployee
+  scheduledHearingId: state.components.scheduledHearing.externalId,
+  pollHearing: state.components.scheduledHearing.polling,
+  featureToggles: state.ui.featureToggles,
+  substituteAppellant: state.substituteAppellant,
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      toggleVeteranCaseList
+      clearAlerts,
+      resetErrorMessages,
+      resetSuccessMessages,
+      transitionAlert,
+      stopPollingHearing,
+      setHearingDay
     },
     dispatch
   );
@@ -164,4 +121,4 @@ const mapDispatchToProps = (dispatch) =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CaseTitle);
+)(CaseDetailsView);

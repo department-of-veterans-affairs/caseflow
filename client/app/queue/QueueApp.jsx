@@ -101,7 +101,6 @@ import { PrivateRoute } from '../components/PrivateRoute';
 import { EditCavcRemandView } from './cavc/EditCavcRemandView';
 import EditAppellantInformation from './editAppellantInformation/EditAppellantInformation';
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
-import { Notifications } from './notifications';
 import NotificationsView from './NotificationsView';
 
 
