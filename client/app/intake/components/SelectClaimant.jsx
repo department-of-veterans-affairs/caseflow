@@ -80,19 +80,21 @@ export const SelectClaimant = (props) => {
     payeeCode,
     payeeCodeError,
     setPayeeCode,
+    featureToggles
   } = props;
 
   const [newClaimant] = useState(null);
   const isAppeal = (formType === 'appeal');
   const isNotRamp = (formType !== 'ramp_refiling', formType !== 'ramp_election');
+
   const showClaimantNotListedOption = useMemo(() => {
     return (
-      isNotRamp && !VBMS_BENEFIT_TYPES.includes(benefitType)
+      isNotRamp && !VBMS_BENEFIT_TYPES.includes(benefitType) && featureToggles.hlrScUnrecognizedClaimants
     );
   }, [formType, benefitType]);
 
   const enableAddClaimant = useMemo(
-    () => showClaimantNotListedOption && veteranIsNotClaimant,
+    () => showClaimantNotListedOption && veteranIsNotClaimant && featureToggles.hlrScUnrecognizedClaimants,
     [showClaimantNotListedOption, veteranIsNotClaimant]
   );
 
@@ -143,24 +145,10 @@ export const SelectClaimant = (props) => {
   const claimantLabel = () => {
     return (
       <p
-        id="claimantLabel"
+        id={showClaimantNotListedOption ? 'nonListedClaimantLabel' : 'claimantLabel'}
         style={{ marginTop: '8.95px', marginBottom: '-25px' }}
       >
-        {SELECT_CLAIMANT_LABEL}
-
-        <br />
-        <br />
-      </p>
-    );
-  };
-
-  const nonListedClaimantLabel = () => {
-    return (
-      <p
-        id="nonListedClaimantLabel"
-        style={{ marginTop: '8.95px', marginBottom: '-25px' }}
-      >
-        {SELECT_NON_LISTED_CLAIMANT_LABEL}
+        {showClaimantNotListedOption ? SELECT_NON_LISTED_CLAIMANT_LABEL : SELECT_CLAIMANT_LABEL}
 
         <br />
         <br />
@@ -186,7 +174,7 @@ export const SelectClaimant = (props) => {
       <div>
         <RadioField
           name="claimant-options"
-          label={showClaimantNotListedOption ? nonListedClaimantLabel() : claimantLabel()}
+          label={claimantLabel()}
           strongLabel
           vertical
           options={radioOpts}
@@ -282,7 +270,10 @@ SelectClaimant.propTypes = {
   payeeCodeError: PropTypes.string,
   setPayeeCode: PropTypes.func,
   register: PropTypes.func,
-  errors: PropTypes.array
+  errors: PropTypes.array,
+  featureToggles: PropTypes.shape({
+    hlrScUnrecognizedClaimants: PropTypes.bool
+  })
 };
 
 const selectClaimantValidations = () => ({
