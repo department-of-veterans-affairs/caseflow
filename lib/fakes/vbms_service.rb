@@ -105,9 +105,14 @@ class Fakes::VBMSService
     end
   end
 
-  def self.upload_document_to_vbms(veteran_file_number, form8)
+  def self.upload_document_to_vbms(appeal, form8)
     @uploaded_form8 = form8
     @uploaded_form8_appeal = appeal
+  end
+
+  def self.upload_document_to_vbms_veteran(file_number, form8)
+    @uploaded_form8 = form8
+    @veteran_file_number = file_number
   end
 
   def self.clean_document(_location)
