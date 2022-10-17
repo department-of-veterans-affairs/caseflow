@@ -6,7 +6,7 @@ module WarRoom
  class CancelActiveTaskArray
     def run(assigned_to_id, task_type)
         # set current user
-        RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1",
+      RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1",
                                                      station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
         # Sets the id of user or organization.
         user = assigned_to_id.to_i
