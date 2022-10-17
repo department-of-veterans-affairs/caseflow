@@ -3,6 +3,12 @@
 exports[`CaseWorkerIndex renders correctly 1`] = `
 <div>
   <div>
+    <a
+      class="skip-link"
+      href="#Main"
+    >
+      Skip to Content
+    </a>
     <header
       data-css-uo1yys=""
     >
@@ -95,6 +101,7 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
   </div>
   <main
     data-css-pw7rlt=""
+    id="Main"
     role="main"
   >
     <div
