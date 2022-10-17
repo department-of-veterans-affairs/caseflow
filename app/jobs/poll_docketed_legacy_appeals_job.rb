@@ -6,7 +6,7 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
   queue_as :low_priority
   application_attr :hearing_schedule
 
-  LEGACY_DOCKETED = "INNER JOIN priorloc ON brieff.bfkey = priorloc.lockey WHERE brieff.bfac IN ('1','3','7') AND locstto = '81' AND trunc(locdout) = trunc(sysdate)"
+  LEGACY_DOCKETED = "INNER JOIN priorloc ON brieff.bfkey = priorloc.lockey WHERE brieff.bfac IN ('1','3','7') AND locstto = '01' AND trunc(locdout) = trunc(sysdate)"
 
   def perform
     vacols_ids = most_recent_docketed_appeals(LEGACY_DOCKETED)
