@@ -125,7 +125,7 @@ class Appeal < DecisionReview
 
       # set appeal_split_process to turn off validation while the appeal
       # split is happening.
-      dup_appeal.appeal_split_process(true)
+      dup_appeal.&appeal_split_process(true)
     })
 
     include_association :appeal_views
