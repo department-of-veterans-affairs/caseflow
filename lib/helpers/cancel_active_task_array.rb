@@ -13,7 +13,8 @@ module WarRoom
         puts("Checking for a user or organization...")
   
         # Show the user if found.
-        User.find_by_id(user).nil? ? : end
+        if User.find_by_id(user).nil?
+        end
         # Show the organization if found.
         if !Organization.find_by_id(user).nil?
         else

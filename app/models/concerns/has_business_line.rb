@@ -7,7 +7,7 @@ module HasBusinessLine
     business_line_name = Constants::BENEFIT_TYPES[benefit_type]
     business_line_name_canceled = "Canceled"
     if business_line_name == "Veterans Readiness and Employment"
-      @business_line ||= BusinessLine.find_or_create_by(name: business_line_name_canceled, 
+      @business_line ||= BusinessLine.find_or_create_by(name: business_line_name_canceled,
                                                         type: "Canceled") { |org| org.url = benefit_type }
     else
       @business_line ||= BusinessLine.find_or_create_by(name: business_line_name) { |org| org.url = benefit_type }

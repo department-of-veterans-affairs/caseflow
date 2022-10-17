@@ -2,6 +2,6 @@
 
 class Canceled < Organization
   def tasks_url
-      "/decision_reviews/#{url}"
+    "/decision_reviews/#{url}"
   end
 end

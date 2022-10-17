@@ -784,7 +784,9 @@ class Appeal < DecisionReview
       next if tasks.any? { |task| task.is_a?(VeteranRecordRequest) && task.assigned_to == business_line }
       # WIP needs extensive testing but does not create veteran record request task for voc_rehab
       return if business_line.url == "voc-rehab"
-        VeteranRecordRequest.create!(
+
+        VeteranRecordRequest.create!
+        (
           parent: root_task,
           appeal: self,
           assigned_at: Time.zone.now,
@@ -796,7 +798,6 @@ class Appeal < DecisionReview
   def stuck?
     AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
   end
-  
   # We are ready for BVA dispatch if
   #  - the appeal is not at Quality Review
   #  - the appeal has not already completed BVA Dispatch
