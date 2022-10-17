@@ -29,6 +29,16 @@ class SplitAppealController < ApplicationController
 
       # run extra duplicate methods to finish split
       dup_appeal.finalize_split_appeal(appeal, user_css_id)
+
+      SplitCorrelationTable.create_split_record(
+        appeal_id,
+        split_issue,
+        split_other_reason,
+        split_reason,
+        appeal,
+        dup_appeal,
+        user_css_id
+      )
     end
   end
 end
