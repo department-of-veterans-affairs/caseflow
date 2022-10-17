@@ -57,8 +57,6 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
           log_error(error)
           # render json: { status: 400, error_id: SecureRandom.uuid, error_message: "The appeal was unable to be found." }, status: :not_found
         end
-      elsif appeal.appeal_type == "LegacyAppeal"
-        request.parameters["veteran_file_number"] = appeal.sanitized_vbms_id
       else
         request.parameters["veteran_file_number"] = appeal.veteran_file_number
       end

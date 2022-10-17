@@ -77,9 +77,8 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
       end
 
       context "when veteran file number doesn't match in BGS" do
-        let(:file_number) { appeal.veteran.file_number + "123" }
-
         it "returns a HTTP 500 error" do
+          params["veteran_file_number"] = file_number + "123"
           post :create, params: params
           expect(response).to have_attributes(status: 500)
           errors = JSON.parse(response.body)["errors"]
@@ -105,8 +104,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         let(:uploaded_document) { instance_double(VbmsUploadedDocument, id: 1) }
         let(:document_params) do
           {
-            appeal_id: appeal.id,
-            appeal_type: appeal.class.name,
+            veteran_file_number: file_number,
             document_type: params[:document_type],
             file: params[:file]
           }
