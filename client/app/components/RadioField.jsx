@@ -24,7 +24,7 @@ RadioFieldHelpText.propTypes = {
 * Wraps a radio option in a Tooltip component if option has tooltipText
 */
 const TooltipWrapper = ({option, children}) =>
-  option.tooltipText ? <Tooltip> {children}</Tooltip> : children;
+  option.tooltipText ? <Tooltip> {children} </Tooltip> : children;
 
 TooltipWrapper.propTypes = {
   option: PropTypes.shapeOf({
