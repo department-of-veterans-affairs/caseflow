@@ -38,7 +38,7 @@ class SendNotificationJob < CaseflowJob
       if message.appeal_id && message.appeal_type && message.template_name
         notification_audit_record = create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name, message.participant_id)
         if notification_audit_record
-          if message.status != "No participant_id"
+          if message.status != "No participant_id" && message.status != "No claimant"
             to_update = {}
             if @va_notify_email
               to_update[:email_notification_status] = message.status
