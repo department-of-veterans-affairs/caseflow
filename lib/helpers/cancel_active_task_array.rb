@@ -3,7 +3,7 @@
 # These steps will cancel ALL Tasks for a particular task type;
 # for a user based upon assigned_to_id where not completed or cancelled.
 module WarRoom
-    class CancelActiveTaskArray
+  class CancelActiveTaskArray
       def run(assigned_to_id, task_type)
         # set current user
         RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1",
@@ -13,9 +13,7 @@ module WarRoom
         puts("Checking for a user or organization...")
   
         # Show the user if found.
-        if User.find_by_id(user).nil?;
-        else
-        end
+        User.find_by_id(user).nil? ? : end
         # Show the organization if found.
         if !Organization.find_by_id(user).nil?
         else
@@ -27,7 +25,6 @@ module WarRoom
           puts("Unable to find user or organization by the assigned_to_id of #{user}")
           fail Interrupt
         end
-  
         # If a assigned to ID is found, this Checks to see if task type exists in the task table.
         # Checks if the user or organization has tasks in general.
         if (!User.find_by_id(user).nil? || Organization.find_by_id(user).nil?) &&
@@ -45,7 +42,7 @@ module WarRoom
         # Find all of the task types for that user or org, to be
         # cancelled that shows up within the appeal
         # as a "Status" of "assigned", "in_progress", or "on_hold"
-        array_task_ids=Task.where(assigned_to_id: user,
+        array_task_ids = Task.where(assigned_to_id: user,
                                   type: task_type, status: %w[on_hold in_progress assigned])
         puts(array_task_ids.to_s)
         if array_task_ids.empty?
@@ -59,11 +56,11 @@ module WarRoom
                   unless associated, complex, or dependent before or after tasks methods
                   related to other tasks")
         # Cancels the task array from the array_task_ids by the task find by
-        array_task_ids=Task.where(assigned_to_id: user, type: task_type, status: %w[on_hold in_progress assigned])
+        array_task_ids = Task.where(assigned_to_id: user, type: task_type, status: %w[on_hold in_progress assigned])
         RequestStore[:current_user] = User.system_user
         array_task_ids.update(status: Constants.TASK_STATUSES.cancelled,
                               updated_at: Time.zone.now, cancelled_by_id: RequestStore[:current_user]&.id)
         puts "Task #{array_task_ids} completed"
       end
     end
-  end
+end
