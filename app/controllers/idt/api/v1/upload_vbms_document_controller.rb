@@ -25,37 +25,37 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   def create
     # Find veteran from veteran file nummber of ssn
-    if request.parameters["veteran_file_number"] != ""
+    if request.parameters["veteran_file_number"].present?
       veteran = bgs.fetch_veteran_info(request.parameters["veteran_file_number"])
       if veteran.nil?
         begin
           fail NoAppealError, request.parameters["veteran_file_number"]
         rescue StandardError => error
           log_error(error)
-          render json: { status: 400, error_id: SecureRandom.uuid, error_message: "The veteran was unable to be found." }, status: :not_found
+          # render json: { status: 400, error_id: SecureRandom.uuid, error_message: "The veteran was unable to be found." }, status: :not_found
         end
       end
-    elsif request.parameters["veteran_ssn"] != ""
+    elsif request.parameters["veteran_ssn"].present?
       file_number = bgs.fetch_file_number_by_ssn(request.parameters["veteran_ssn"])
       if file_number.nil?
         begin
           fail NoAppealError, request.parameters["veteran_ssn"]
         rescue StandardError => error
           log_error(error)
-          render json: { status: 400, error_id: SecureRandom.uuid, error_message: "The veteran was unable to be found." }, status: :not_found
+          # render json: { status: 400, error_id: SecureRandom.uuid, error_message: "The veteran was unable to be found." }, status: :not_found
         end
       end
       request.parameters["veteran_file_number"] = file_number
 
     # Find veteran from appeal id
-    elsif request.parameters["appeal_id"] != ""
+    elsif request.parameters["appeal_id"].present?
       appeal = LegacyAppeal.find_by_vacols_id(request.parameters["appeal_id"]) || Appeal.find_by_uuid(request.parameters["appeal_id"])
       if appeal.nil?
         begin
           fail NoAppealError, request.parameters["appeal_id"]
         rescue StandardError => error
           log_error(error)
-          render json: { status: 400, error_id: SecureRandom.uuid, error_message: "The appeal was unable to be found." }, status: :not_found
+          # render json: { status: 400, error_id: SecureRandom.uuid, error_message: "The appeal was unable to be found." }, status: :not_found
         end
       elsif appeal.appeal_type == "LegacyAppeal"
         request.parameters["veteran_file_number"] = appeal.sanitized_vbms_id
