@@ -3,15 +3,14 @@
 # These steps will cancel ALL Tasks for a particular task type;
 # for a user based upon assigned_to_id where not completed or cancelled.
 module WarRoom
-    class CancelActiveTaskArray
-        def run(assigned_to_id, task_type)
+ class CancelActiveTaskArray
+    def run(assigned_to_id, task_type)
         # set current user
         RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1",
                                                      station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
         # Sets the id of user or organization.
         user = assigned_to_id.to_i
         puts("Checking for a user or organization...")
-  
         # Show the user if found.
         if User.find_by_id(user).nil?
         end
@@ -63,5 +62,5 @@ module WarRoom
                               updated_at: Time.zone.now, cancelled_by_id: RequestStore[:current_user]&.id)
         puts "Task #{array_task_ids} completed"
     end
-    end
+  end
 end

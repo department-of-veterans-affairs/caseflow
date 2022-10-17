@@ -797,6 +797,7 @@ class Appeal < DecisionReview
   def stuck?
     AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
   end
+
   # We are ready for BVA dispatch if
   #  - the appeal is not at Quality Review
   #  - the appeal has not already completed BVA Dispatch
