@@ -460,7 +460,7 @@ feature "Non-veteran claimants", :postgres do
         within_fieldset("Is the claimant someone other than the Veteran?") do
           find("label", text: "Yes", match: :prefer_exact).click
         end
-        expect(page).to have_no_content("Claimant not listed")   
+        expect(page).to have_no_content("Claimant not listed")
         expect(page).to have_content("What is the payee code for this claimant?")
       end
 
@@ -477,7 +477,7 @@ feature "Non-veteran claimants", :postgres do
           find("label", text: "Yes", match: :prefer_exact).click
         end
         expect(page).to have_content("Claimant not listed")
-        expect(page).to have_no_content("What is the payee code for this claimant?")       
+        expect(page).to have_no_content("What is the payee code for this claimant?")
       end
     end
 
@@ -494,7 +494,7 @@ feature "Non-veteran claimants", :postgres do
         within_fieldset("Is the claimant someone other than the Veteran?") do
           find("label", text: "Yes", match: :prefer_exact).click
         end
-        expect(page).to have_no_content("Claimant not listed")   
+        expect(page).to have_no_content("Claimant not listed")
         expect(page).to have_content("What is the payee code for this claimant?")
       end
 
@@ -511,7 +511,7 @@ feature "Non-veteran claimants", :postgres do
           find("label", text: "Yes", match: :prefer_exact).click
         end
         expect(page).to have_content("Claimant not listed")
-        expect(page).to have_no_content("What is the payee code for this claimant?")        
+        expect(page).to have_no_content("What is the payee code for this claimant?")
       end
     end
 

@@ -104,8 +104,8 @@ feature "Supplemental Claim Intake", :all_dbs do
     end
 
     expect(page).to_not have_content(
-      "Please select the claimant listed on the form. If the claimant is not listed, 
-      please select \"Claimant not listed\" and add their information in the next step."
+      "Please select the claimant listed on the form. If the claimant is not listed," \
+      "please select \"Claimant not listed\" and add their information in the next step."
     )
     expect(page).to_not have_content("What is the payee code for this claimant?")
     within_fieldset("Is the claimant someone other than the Veteran?") do
@@ -113,8 +113,8 @@ feature "Supplemental Claim Intake", :all_dbs do
     end
 
     expect(page).to have_content(
-      "Please select the claimant listed on the form. If the claimant is not listed, 
-      please select \"Claimant not listed\" and add their information in the next step."
+      "Please select the claimant listed on the form. If the claimant is not listed," \
+      "please select \"Claimant not listed\" and add their information in the next step."
     )
 
     # Switch the benefit type to compensation to test choosing the payee code.

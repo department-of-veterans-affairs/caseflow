@@ -129,8 +129,8 @@ feature "Higher-Level Review", :all_dbs do
     end
 
     expect(page).to_not have_content(
-      "Please select the claimant listed on the form. If the claimant is not listed, 
-      please select \"Claimant not listed\" and add their information in the next step."
+      "Please select the claimant listed on the form. If the claimant is not listed," \
+      "please select \"Claimant not listed\" and add their information in the next step."
     )
     expect(page).to_not have_content("What is the payee code for this claimant?")
     within_fieldset("Is the claimant someone other than the Veteran?") do
@@ -138,8 +138,8 @@ feature "Higher-Level Review", :all_dbs do
     end
 
     expect(page).to have_content(
-      "Please select the claimant listed on the form. If the claimant is not listed, 
-      please select \"Claimant not listed\" and add their information in the next step."
+      "Please select the claimant listed on the form. If the claimant is not listed," \
+      "please select \"Claimant not listed\" and add their information in the next step."
     )
 
     # We do not need to select payee codes for non-VBMS business lines
