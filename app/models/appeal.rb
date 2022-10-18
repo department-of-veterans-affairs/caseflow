@@ -397,6 +397,8 @@ class Appeal < DecisionReview
       # assign to current appeal
       dup_hearing&.appeal_id = id
 
+      # set split process on dup_hearing
+      dup_hearing.appeal.appeal_split_process = true
       dup_hearing&.save
     end
   end
@@ -447,6 +449,9 @@ class Appeal < DecisionReview
     # set the status to assigned as placeholder
     dup_task.status = "assigned"
 
+    # set the appeal split process to true for the task
+    dup_task.appeal.appeal_split_process = true
+
     # save the task
     dup_task.save
 
@@ -474,6 +479,9 @@ class Appeal < DecisionReview
 
     # set the parent to the parent_task_id
     dup_task.parent_id = parent_task_id
+
+    # set the appeal split process to true for the task
+    dup_task.appeal.appeal_split_process = true
 
     # save the task
     dup_task.save(validate: false)
