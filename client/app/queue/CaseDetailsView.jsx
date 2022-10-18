@@ -424,6 +424,7 @@ CaseDetailsView.propTypes = {
   substituteAppellant: PropTypes.object,
   vsoVirtualOptIn: PropTypes.bool
   
+  
 };
 
 const mapStateToProps = (state) => ({

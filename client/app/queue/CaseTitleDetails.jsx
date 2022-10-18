@@ -121,7 +121,8 @@ export class CaseTitleDetails extends React.PureComponent {
       legacyJudgeTasks,
       legacyAttorneyTasks,
       userCssId,
-      userRole
+      userRole,
+      hideOTSection
     } = this.props;
 
     const { highlightModal, documentIdError } = this.state;
@@ -131,7 +132,8 @@ export class CaseTitleDetails extends React.PureComponent {
     // is there a legacy judge task assigned to the user or legacy attorney task assigned by the user
     const relevantLegacyTasks = legacyJudgeTasks.concat(legacyAttorneyTasks);
 
-    const showOvertimeButton = userRole === 'Judge' && (relevantLegacyTasks.length > 0 || userIsAssignedAmaJudge);
+    const showOvertimeButton = !hideOTSection && (userRole === 'Judge' && (relevantLegacyTasks.length > 0 || userIsAssignedAmaJudge));
+
 
     // for ama appeal, use docket name, for legacy appeal docket name is always legacy so
     // we need to check if the request type is any of threee :central, video, travel or null
@@ -265,7 +267,12 @@ CaseTitleDetails.propTypes = {
   resetDecisionOptions: PropTypes.func,
   stageAppeal: PropTypes.func,
   legacyJudgeTasks: PropTypes.array,
-  legacyAttorneyTasks: PropTypes.array
+  legacyAttorneyTasks: PropTypes.array,
+  hideOTSection: PropTypes.bool
+};
+
+CaseTitleDetails.defaultProps = {
+  hideOTSection: false
 };
 
 const mapStateToProps = (state, ownProps) => {
