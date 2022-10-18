@@ -34,10 +34,12 @@ feature "Intake Review Page", :postgres do
     before do
       FeatureToggle.enable!(:use_ama_activation_date)
       FeatureToggle.enable!(:non_veteran_claimants)
+      FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) 
     end
     after do
       FeatureToggle.disable!(:use_ama_activation_date)
       FeatureToggle.disable!(:non_veteran_claimants)
+      FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) 
     end
     it "shows correct error with blank or pre-AMA dates" do
       start_appeal(veteran, receipt_date: nil)
@@ -441,6 +443,8 @@ feature "Intake Review Page", :postgres do
 
     context "when the user cancels the intake on the Add Claimant page" do
       before { FeatureToggle.enable!(:non_veteran_claimants) }
+      before { FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) }
+      after { FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) }
       after { FeatureToggle.disable!(:non_veteran_claimants) }
 
       it "redirects back to the Intake start page" do
