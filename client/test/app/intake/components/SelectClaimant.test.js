@@ -29,6 +29,7 @@ describe('SelectClaimant', () => {
   const defaultProps = {
     formType: 'appeal',
     relationships: defaultRelationships,
+    featureToggles: { hlrScUnrecognizedClaimants: true },
     setVeteranIsNotClaimant
   };
 
@@ -50,6 +51,7 @@ describe('SelectClaimant', () => {
         formType={props.formType}
         veteranIsNotClaimant={props.veteranIsNotClaimant}
         setVeteranIsNotClaimant={setVeteranIsNotClaimant}
+        featureToggles={props.featureToggles}
       />
     );
   };
@@ -71,7 +73,8 @@ describe('SelectClaimant', () => {
   });
 
   describe('with formType', () => {
-    const setupProps = { toggled: true };
+    const featureToggles = { hlrScUnrecognizedClaimants: true };
+    const setupProps = { toggled: true, featureToggles };
 
     it('renders correctly', () => {
       const { container } = renderSelectClaimant(setupProps);
@@ -90,7 +93,8 @@ describe('SelectClaimant', () => {
 
   describe("with formType 'appeal'", () => {
     const formType = { formType: 'appeal' };
-    const setupProps = { ...formType, toggled: true };
+    const featureToggles = { hlrScUnrecognizedClaimants: true };
+    const setupProps = { ...formType, toggled: true, featureToggles };
 
     it('disables different-claimant-option_false radio button and does NOT fire off setVeteranIsNotClaimant', () => {
       renderSelectClaimant(setupProps);
@@ -147,7 +151,8 @@ describe('SelectClaimant', () => {
   });
 
   describe("with formType not 'appeal'", () => {
-    const setupProps = { toggled: true };
+    const featureToggles = { hlrScUnrecognizedClaimants: true };
+    const setupProps = { toggled: true, featureToggles };
 
     it('disables different-claimant-option_false radio button & fires off setVeteranIsNotClaimant', () => {
       renderSelectClaimant(setupProps);
@@ -186,6 +191,16 @@ describe('SelectClaimant', () => {
       expect(screen.queryByRole('radio', { name: /claimant not listed/i })).toBeInTheDocument();
       expect(screen.queryByText('What is the payee code for this claimant?')).not.toBeInTheDocument();
     });
+
+    it('shows feature toggle is functioning correctly', () => {
+      const benefitType = 'loan_guaranty';
+      const featureToggles = { hlrScUnrecognizedClaimants: false };
+      const setupProps = { ...defaultProps, formType, veteranIsNotClaimant, benefitType, featureToggles };
+
+      renderSelectClaimant(setupProps);
+
+      expect(screen.queryByRole('radio', { name: /claimant not listed/i })).not.toBeInTheDocument();
+    });
   });
 
   describe("with formType 'supplemental_claim'", () => {
@@ -206,7 +221,8 @@ describe('SelectClaimant', () => {
 
     it('long label, "Claimant Not Listed" option, no payee code dropdown if other than first 3 benefit types', () => {
       const benefitType = 'loan_guaranty';
-      const setupProps = { ...defaultProps, formType, veteranIsNotClaimant, benefitType };
+      const featureToggles = { hlrScUnrecognizedClaimants: true };
+      const setupProps = { ...defaultProps, formType, veteranIsNotClaimant, benefitType, featureToggles };
 
       renderSelectClaimant(setupProps);
 
@@ -214,6 +230,16 @@ describe('SelectClaimant', () => {
       expect(screen.queryByText(COPY.SELECT_CLAIMANT_LABEL)).not.toBeInTheDocument();
       expect(screen.queryByRole('radio', { name: /claimant not listed/i })).toBeInTheDocument();
       expect(screen.queryByText('What is the payee code for this claimant?')).not.toBeInTheDocument();
+    });
+
+    it('shows feature toggle is functioning correctly', () => {
+      const benefitType = 'loan_guaranty';
+      const featureToggles = { hlrScUnrecognizedClaimants: false };
+      const setupProps = { ...defaultProps, formType, veteranIsNotClaimant, benefitType, featureToggles };
+
+      renderSelectClaimant(setupProps);
+
+      expect(screen.queryByRole('radio', { name: /claimant not listed/i })).not.toBeInTheDocument();
     });
   });
 });
