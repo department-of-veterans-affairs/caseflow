@@ -239,14 +239,8 @@ feature "Higher-Level Review", :all_dbs do
     expect(page).to have_content(claimant_string)
   end
 
-  # TODO: Decide if this should be in HLR or in non_veterans_claimants_spec
-  context "creating HLRs with unlisted claimants" do
-    let(:intake_type) do
-      start_higher_level_review(veteran, is_comp: false, unlisted_claimant: true)
-    end
-
-    # TODO: make these into reusable examples to avoid so much repeated code
-    scenario "creating a HLR with an unlisted claimant - verify dropdown relationship options" do
+  shared_examples "HLR/SC intake unlisted claimant" do
+    scenario "creating a HLR/SC intake with an unlisted claimant - verify dropdown relationship options" do
       start_intake
       visit "/intake/"
       click_claimant_not_listed
@@ -270,7 +264,7 @@ feature "Higher-Level Review", :all_dbs do
         other_claimant_type
       end
 
-      scenario "creating a HLR with an unlisted claimant with relationship other with type individual" do
+      scenario "creating a HLR/SC intake with an unlisted claimant with relationship other with type individual" do
         start_intake
         visit "/intake/"
         click_claimant_not_listed
@@ -290,7 +284,7 @@ feature "Higher-Level Review", :all_dbs do
         verify_individual_claimant_on_add_issues
       end
 
-      scenario "creating a HLR with an unlisted claimant with relationship other with type organization" do
+      scenario "creating a HLR/SC intake with an unlisted claimant with relationship other with type organization" do
         start_intake
         visit "/intake/"
         click_claimant_not_listed
@@ -318,7 +312,7 @@ feature "Higher-Level Review", :all_dbs do
         healthcare_provider_claimant_type
       end
 
-      scenario "creating a HLR with an unlisted claimant with relationship Healthcare Provider with type individual" do
+      scenario "creating a HLR/SC intake with an unlisted claimant with relationship Healthcare Provider with type individual" do
         start_intake
         visit "/intake/"
         click_claimant_not_listed
@@ -338,7 +332,7 @@ feature "Higher-Level Review", :all_dbs do
         verify_individual_claimant_on_add_issues
       end
 
-      scenario "creating a HLR with an unlisted claimant with relationship
+      scenario "creating a HLR/SC intake with an unlisted claimant with relationship
       healthcare provider with type organization" do
         start_intake
         visit "/intake/"
@@ -365,7 +359,7 @@ feature "Higher-Level Review", :all_dbs do
         child_provider_claimant_type
       end
 
-      scenario "creating a HLR with an unlisted claimant with relationship Child" do
+      scenario "creating a HLR/SC intake with an unlisted claimant with relationship Child" do
         start_intake
         visit "/intake/"
         click_claimant_not_listed
@@ -391,7 +385,7 @@ feature "Higher-Level Review", :all_dbs do
         spouse_provider_claimant_type
       end
 
-      scenario "creating a HLR with an unlisted claimant with relationship Spouse" do
+      scenario "creating a HLR/SC intake with an unlisted claimant with relationship Spouse" do
         start_intake
         visit "/intake/"
         click_claimant_not_listed
@@ -412,7 +406,7 @@ feature "Higher-Level Review", :all_dbs do
       end
     end
 
-    scenario "creating a HLR with an unlisted individual claimant has the appropriate required form fields" do
+    scenario "creating a HLR/SC intake with an unlisted individual claimant has the appropriate required form fields" do
       start_intake
       visit "/intake/"
       click_claimant_not_listed
@@ -497,5 +491,21 @@ feature "Higher-Level Review", :all_dbs do
       fill_in "Last name", with: new_individual_claimant[:last_name]
       expect(continue_button[:disabled]).to eq "false"
     end
+  end
+
+  context "creating Supplemental Claims with unlisted claimants" do
+    let(:intake_type) do
+      start_supplemental_claim(veteran, is_comp: false)
+    end
+
+    it_behaves_like "HLR/SC intake unlisted claimant"
+  end
+
+  context "creating Higher Level Reviews with unlisted claimants" do
+    let(:intake_type) do
+      start_higher_level_review(veteran, is_comp: false, unlisted_claimant: true)
+    end
+
+    it_behaves_like "HLR/SC intake unlisted claimant"
   end
 end
