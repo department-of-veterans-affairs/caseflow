@@ -2,12 +2,12 @@ import React from 'react';
 
 import { CaseTimeline } from './CaseTimeline';
 
-import { legacyAppealForTravelBoard } from '../../test/data/appeals';
-import { changeHearingRequestTypeTask } from '../../test/data/tasks';
+import { splitAppeal1 } from '../../test/data/appeals';
+import { splitAppealTask } from '../../test/data/tasks';
 import { queueWrapper as Wrapper } from '../../test/data/stores/queueStore';
 
 export default {
-  title: 'Queue/CaseTimeline',
+  title: 'Queue/CaseTimeline/SplitAppeal',
   component: CaseTimeline,
   parameters: {
     docs: {
@@ -23,10 +23,12 @@ const Template = (args) => (
   </Wrapper>
 );
 
-export const CompletedChangeHearingRequestTypeTask = Template.bind({});
-CompletedChangeHearingRequestTypeTask.args = {
+export const CompleteSplitAppealTask = Template.bind({});
+CompleteSplitAppealTask.args = {
   appeal: {
-    ...legacyAppealForTravelBoard
+    ...splitAppeal1
   },
-  tasks: [changeHearingRequestTypeTask]
+  editNodDateEnabled: false,
+  statusSplit: true,
+  tasks: [splitAppealTask]
 };

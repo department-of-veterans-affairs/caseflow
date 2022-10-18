@@ -141,4 +141,67 @@ export const generateAmaTask = (overrides = {}) => ({
   ...amaTaskData,
   ...overrides,
 });
+
+export const splitAppealTask = {
+  ...amaTaskData,
+  uniqueId: '8663',
+  isLegacy: false,
+  type: 'SplitAppealTask',
+  appealType: 'Appeal',
+  addedByCssId: null,
+  appealId: 2016,
+  externalAppealId: 'c482facd-e8d1-4dac-8a2f-7190be5aa282',
+  assignedOn: '2022-10-12T23:46:22.005-04:00',
+  closestRegionalOffice: null,
+  createdAt: '2022-10-12T23:47:12.935-04:00',
+  closedAt: '2022-10-12T23:47:12.949-04:00',
+  startedAt: null,
+  assigneeName: 'SPLTAPPLSNOW',
+  assignedTo: {
+    cssId: 'SPLTAPPLSNOW',
+    name: 'SPLTAPPLSNOW',
+    id: 82,
+    isOrganization: false,
+    type: 'User'
+  },
+  assignedBy: {
+    firstName: 'Jon',
+    lastName: 'Snow',
+    cssId: 'SPLTAPPLSNOW',
+    pgId: 82
+  },
+  cancelledBy: {
+    cssId: null
+  },
+  cancelReason: null,
+  convertedBy: {
+    cssId: null
+  },
+  convertedOn: null,
+  taskId: '8663',
+  parentId: 8661,
+  label: 'Split Appeal Task',
+  documentId: null,
+  externalHearingId: null,
+  workProduct: null,
+  previousTaskAssignedOn: null,
+  placedOnHoldAt: null,
+  status: 'completed',
+  onHoldDuration: null,
+  instructions: [
+    'Originate from different Administrations (i.e. VBA and VHA)'
+  ],
+  decisionPreparedBy: null,
+  availableActions: [],
+  timelineTitle: 'SplitAppealTask completed',
+  hideFromQueueTableView: false,
+  hideFromTaskSnapshot: false,
+  hideFromCaseTimeline: false,
+  availableHearingLocations: [],
+  latestInformalHearingPresentationTask: {},
+  canMoveOnDocketSwitch: false,
+  timerEndsAt: null,
+  unscheduledHearingNotes: {}
+};
+
 /* eslint-enable camelcase */
