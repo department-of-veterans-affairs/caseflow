@@ -45,10 +45,10 @@ const viewCasesStyling = css({
 class CaseTitle extends React.PureComponent {
   render = () => {
     const { appeal, veteranCaseListIsVisible } = this.props;
-    const subheader = ["DOCKET NUMBER", "APPEALS STREAM TYPE", "HEARING TYPE"];
+   
 
     return (
-      <CaseTitleScaffolding heading={"Case notifications for " + appeal.veteranFullName}>
+      <CaseTitleScaffolding heading={'Case notifications for ' + appeal.veteranFullName}>
         <React.Fragment>
           Veteran ID:&nbsp;
           <CopyTextButton text={appeal.veteranFileNumber} label="Veteran ID" />

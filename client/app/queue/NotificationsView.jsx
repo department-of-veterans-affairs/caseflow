@@ -33,6 +33,8 @@ import {
 } from './uiReducer/uiActions';
 import CaseTitleDetails from './CaseTitleDetails';
 
+
+
 const sectionGap = css({ marginTop: '3.5rem' });
 
 export const NotificationsView = (props) => {
@@ -59,7 +61,7 @@ export const NotificationsView = (props) => {
   return (
     <React.Fragment>
       <AppSegment filledBackground>
-        <CaseTitle appeal={appeal} />
+        <CaseTitle titleHeader = {'Case notifications for ' + appeal.veteranFullName} appeal={appeal} />
         {supportPendingAppealSubstitution && (
           <div {...sectionGap}>
             <Button
@@ -74,7 +76,7 @@ export const NotificationsView = (props) => {
         <CaseTitleDetails
           appealId={appealId}
           redirectUrl={window.location.pathname}
-          userCanAccessReader={props.userCanAccessReader}
+          // userCanAccessReader={props.userCanAccessReader}
         />
         <div {...sectionGap}>
           <p>VA Notify sent these status notifications to the Appellant about their case.</p>
@@ -87,6 +89,8 @@ export const NotificationsView = (props) => {
   );
 
 };
+
+
 
 NotificationsView.propTypes = {
   appeal: PropTypes.object,
