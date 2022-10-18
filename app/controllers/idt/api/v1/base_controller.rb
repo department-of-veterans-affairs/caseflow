@@ -10,8 +10,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
 
   # :nocov:
   rescue_from StandardError do |error|
-    formatted_error = format_error(error)
-    log_error(formatted_error)
+    log_error(error)
     if error.class.method_defined?(:serialize_response)
       render(error.serialize_response)
     else
@@ -26,6 +25,20 @@ class Idt::Api::V1::BaseController < ActionController::Base
 
   rescue_from Caseflow::Error::InvalidFileNumber do |_e|
     render(json: { message: "Please enter a file number in the 'FILENUMBER' header" }, status: :unprocessable_entity)
+  end
+
+  rescue_from Caseflow::Error::VeteranNotFound do |error|
+    message = " The veteran was unable to be found."
+    exception_uuid = SecureRandom.uuid
+    render(json: { message: "IDT Exception ID: " + exception_uuid + message }, status: :bad_request)
+    log_error(error)
+  end
+
+  rescue_from Caseflow::Error::AppealNotFound do |error|
+    message = " The appeal was unable to be found."
+    exception_uuid = SecureRandom.uuid
+    render(json: { message: "IDT Exception ID: " + exception_uuid + message }, status: :bad_request)
+    log_error(error)
   end
 
   def validate_token
@@ -49,12 +62,6 @@ class Idt::Api::V1::BaseController < ActionController::Base
       RequestStore.store[:current_user] = user
       user
     end
-  end
-
-  def format_error(error)
-    # generate uuid
-    exception_uuid = SecureRandom.uuid
-    error.message = "IDT Exception ID: " + exception_uuid + message
   end
 
   # set_raven_user via AuthenticatedControllerAction expects a current_user
