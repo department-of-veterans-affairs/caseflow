@@ -7,7 +7,7 @@ import {
   featureToggleReducer,
   mapDataToFeatureToggle,
 } from './reducers/featureToggles';
-import Admin from './pages/admin';
+import Admin from './pages/Admin';
 import { BrowserRouter } from 'react-router-dom';
 
 export const reducer = combineReducers({
