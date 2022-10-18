@@ -423,6 +423,7 @@ CaseDetailsView.propTypes = {
   stopPollingHearing: PropTypes.func,
   substituteAppellant: PropTypes.object,
   vsoVirtualOptIn: PropTypes.bool
+  
 };
 
 const mapStateToProps = (state) => ({
