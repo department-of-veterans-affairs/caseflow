@@ -3,9 +3,9 @@
 class SystemAdminEvent < CaseflowRecord
   belongs_to :user, optional: false
 
-  validates :type, presence: true
+  validates :event_type, presence: true
 
-  enum type: {
+  enum event_type: {
     veteran_extract: "veteran_extract",
     ran_scheduled_job: "ran_scheduled_job"
   }
