@@ -97,7 +97,6 @@ export const SelectClaimant = (props) => {
       ...(newClaimant ? [newClaimant] : []),
       // Conditionally include "Claimant not listed" option
       ...(enableAddClaimant ? [claimantNotListedOpt] : []),
-
     ];
   }, [newClaimant, relationships, enableAddClaimant]);
 
