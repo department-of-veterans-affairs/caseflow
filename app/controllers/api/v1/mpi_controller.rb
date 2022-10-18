@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V1::MPIController < Api::ApplicationController
+class Api::V1::MpiController < Api::ApplicationController
   # {POST Method for Veteran ID, Deceased Indicator, Deceased Time}
   def veteran_updates
 
