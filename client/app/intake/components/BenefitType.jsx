@@ -11,7 +11,8 @@ export default class BenefitType extends React.PureComponent {
       value,
       errorMessage,
       onChange,
-      register
+      register,
+      userCanSelectVHA
     } = this.props;
 
     return <div className="cf-benefit-type" style={{ marginTop: '10px' }} >
@@ -20,7 +21,7 @@ export default class BenefitType extends React.PureComponent {
         label="What is the Benefit Type?"
         strongLabel
         vertical
-        options={formatRadioOptions(BENEFIT_TYPES)}
+        options={formatRadioOptions(BENEFIT_TYPES, userCanSelectVHA)}
         onChange={onChange}
         value={value}
         errorMessage={errorMessage}
@@ -68,4 +69,5 @@ BenefitType.propTypes = {
   formName: PropTypes.string.isRequired,
   benefitTypes: PropTypes.object.isRequired,
   featureToggles: PropTypes.object.isRequired,
+  userCanSelectVHA: PropTypes.bool
 };
