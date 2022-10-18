@@ -15,6 +15,7 @@ const defaultArgs = {
   isVeteranDeceased: false,
   veteranIsNotClaimant: true,
   enableAddClaimant: true,
+  featureToggles: true,
   relationships,
 };
 
@@ -26,6 +27,7 @@ export default {
   args: defaultArgs,
   argTypes: {
     veteranIsNotClaimant: { control: 'boolean' },
+    featureToggles: { control: 'boolean' },
   },
 };
 
@@ -37,11 +39,15 @@ const Template = (args) => {
   const setVeteranIsNotClaimant = (veteranIsNotClaimant) =>
     updateArgs({ veteranIsNotClaimant });
 
+  const setFeatureToggle = (featureToggles) =>
+    updateArgs({ featureToggles });
+
   return (
     <SelectClaimant
       {...args}
       setClaimant={handleSetClaimant}
       setVeteranIsNotClaimant={setVeteranIsNotClaimant}
+      setFeatureToggle={setFeatureToggle}
     />
   );
 };
@@ -62,6 +68,7 @@ HLRWithVBMSBenTypes.args = {
   isVeteranDeceased: false,
   veteranIsNotClaimant: true,
   enableAddClaimant: true,
+  featureToggles: { hlrScUnrecognizedClaimants: true },
   relationships,
   benefitType: 'pension',
 };
@@ -73,6 +80,7 @@ HLRWithNonVBMSBenTypes.args = {
   isVeteranDeceased: false,
   veteranIsNotClaimant: true,
   enableAddClaimant: true,
+  featureToggles: { hlrScUnrecognizedClaimants: true },
   relationships,
   benefitType: 'education',
 };
@@ -84,6 +92,7 @@ SCWithVBMSBenTypes.args = {
   isVeteranDeceased: false,
   veteranIsNotClaimant: true,
   enableAddClaimant: true,
+  featureToggles: { hlrScUnrecognizedClaimants: true },
   relationships,
   benefitType: 'pension',
 };
@@ -95,6 +104,7 @@ SCWithNonVBMSBenTypes.args = {
   isVeteranDeceased: false,
   veteranIsNotClaimant: true,
   enableAddClaimant: true,
+  featureToggles: { hlrScUnrecognizedClaimants: true },
   relationships,
   benefitType: 'education',
 };
