@@ -34,12 +34,20 @@ feature "Intake Review Page", :postgres do
     before do
       FeatureToggle.enable!(:use_ama_activation_date)
       FeatureToggle.enable!(:non_veteran_claimants)
+<<<<<<< HEAD
       FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
+=======
+      FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) 
+>>>>>>> 03a5b026b7... Add Feature Toggle to Spec Tests
     end
     after do
       FeatureToggle.disable!(:use_ama_activation_date)
       FeatureToggle.disable!(:non_veteran_claimants)
+<<<<<<< HEAD
       FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
+=======
+      FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) 
+>>>>>>> 03a5b026b7... Add Feature Toggle to Spec Tests
     end
     it "shows correct error with blank or pre-AMA dates" do
       start_appeal(veteran, receipt_date: nil)

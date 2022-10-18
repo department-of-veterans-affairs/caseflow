@@ -448,6 +448,7 @@ feature "Non-veteran claimants", :postgres do
     end
 
     context "when intaking a Higher Level Review with a non-veteran claimant" do
+      
       it "HLR with Non-Veteran Claimant and VBMS Benefit Type" do
         start_higher_level_review(
           veteran,
@@ -482,6 +483,7 @@ feature "Non-veteran claimants", :postgres do
     end
 
     context "when intaking a Supplemental Claim with a non-veteran claimant" do
+     
       it "SC with Non-Veteran Claimant and VBMS Benefit Type" do
         start_supplemental_claim(
           veteran,
