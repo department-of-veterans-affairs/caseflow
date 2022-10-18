@@ -138,6 +138,7 @@ export default class SearchBar extends React.Component {
           {title || 'Search'}
         </label>
         <input
+          aria-label="Enter your search term"
           ref={this.setInputRef}
           className={searchClasses}
           id={id}
