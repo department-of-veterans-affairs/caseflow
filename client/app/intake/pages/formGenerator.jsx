@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import { reject, map } from 'lodash';
+import ReactMarkdown from 'react-markdown';
+
 import RadioField from '../../components/RadioField';
 import ReceiptDateInput from './receiptDateInput';
 import { setDocketType, setOriginalHearingRequestType, setHomelessnessType
@@ -46,15 +48,17 @@ const rampElectionRadioOptions = map(rampElectionReviewOptions, (option) => ({
   value: option.key,
   displayText: option.name,
 }));
+
+const isAppeal = (formName) => formName === FORM_TYPES.APPEAL.formName;
+
 const formFieldMapping = (props) => {
-  const isAppeal = props.formName === FORM_TYPES.APPEAL.formName;
   const renderBooleanValue = (propKey) => {
     // eslint-disable-next-line no-undefined
     return props[propKey] === null || props[propKey] === undefined ? null : props[propKey].toString();
   };
   const renderVaGovValue = () => {
     // eslint-disable-next-line no-undefined
-    if (isAppeal && (props.filedByVaGov === null || props.filedByVaGov === undefined)) {
+    if (isAppeal(props.formName) && (props.filedByVaGov === null || props.filedByVaGov === undefined)) {
       return 'false';
     }
 
@@ -254,6 +258,8 @@ const FormGenerator = (props) => {
   };
   const showInvalidVeteranError = !props.veteranValid && VBMS_BENEFIT_TYPES.includes(props.benefitType);
 
+  const showVhaRequirementBanner = !(isAppeal(props.formName)) && !props.userIsVhaStaff;
+
   return (
     <div>
       <h1>{props.formHeader(props.veteranName)}</h1>
@@ -277,6 +283,11 @@ const FormGenerator = (props) => {
           errorData={props.veteranInvalidFields}
         />
       )}
+      {showVhaRequirementBanner &&
+        <Alert type="info" title={COPY.INTAKE_VHA_REQUIREMENT_BANNER_HEADER}>
+          <ReactMarkdown source={COPY.INTAKE_VHA_REQUIREMENT_BANNER_TEXT} />
+        </Alert>
+      }
       {Object.keys(props.schema.fields).map((field) => formFieldMapping(props)[field])}
     </div>
   );
@@ -338,7 +349,9 @@ FormGenerator.propTypes = {
   homelessness: PropTypes.string,
   setHomelessnessType: PropTypes.func,
   homelessnessError: PropTypes.string,
-  isReviewed: PropTypes.bool
+  isReviewed: PropTypes.bool,
+  formName: PropTypes.string,
+  userIsVhaStaff: PropTypes.bool
 };
 export default connect(
   (state, props) => ({
