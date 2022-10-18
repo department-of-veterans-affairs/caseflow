@@ -20,7 +20,7 @@ const yearsFromToday = (years) => {
   return sub(new Date(), { years });
 };
 
-export const schema = yup.object().shape({
+const sharedValidation = {
   relationship: yup.string().when(['$hideListedAttorney'], {
     is: (hideListedAttorney) => !hideListedAttorney,
     then: yup.string().required(),
@@ -36,7 +36,6 @@ export const schema = yup.object().shape({
     then: yup.string().required(),
   }),
   middleName: yup.string(),
-  lastName: yup.string(),
   suffix: yup.string(),
   dateOfBirth: yup.date().
     nullable().
@@ -46,29 +45,13 @@ export const schema = yup.object().shape({
     is: 'organization',
     then: yup.string().required(),
   }),
-  addressLine1: yup.string().when(['partyType', 'relationship'], {
-    is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
-    then: yup.string().required(),
-  }),
   addressLine2: yup.string(),
   addressLine3: yup.string(),
-  city: yup.string().when(['partyType', 'relationship'], {
-    is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
-    then: yup.string().required(),
-  }),
-  state: yup.string().when(['partyType', 'relationship'], {
-    is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
-    then: yup.string().required(),
-  }),
   zip: yup.string().when(['partyType', 'relationship'], {
     is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
     then: yup.
       string().
       max(25),
-  }),
-  country: yup.string().when(['partyType', 'relationship'], {
-    is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
-    then: yup.string().required(),
   }),
   emailAddress: yup.string().email(),
   phoneNumber: yup.string(),
@@ -80,42 +63,38 @@ export const schema = yup.object().shape({
     is: (relationship, hideListedAttorney) => (relationship === 'attorney' && !hideListedAttorney),
     then: yup.object().required(),
   }),
+};
+
+export const schema = yup.object().shape({
+  lastName: yup.string(),
+  addressLine1: yup.string().when(['partyType', 'relationship'], {
+    is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
+    then: yup.string().required(),
+  }),
+  city: yup.string().when(['partyType', 'relationship'], {
+    is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
+    then: yup.string().required(),
+  }),
+  state: yup.string().when(['partyType', 'relationship'], {
+    is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
+    then: yup.string().required(),
+  }),
+  country: yup.string().when(['partyType', 'relationship'], {
+    is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
+    then: yup.string().required(),
+  }),
+  ...sharedValidation
 });
 
 export const schemaHLR = yup.object().shape({
-  relationship: yup.string().when(['$hideListedAttorney'], {
-    is: (hideListedAttorney) => !hideListedAttorney,
-    then: yup.string().required(),
-  }),
-  partyType: yup.string().when(['listedAttorney', 'relationship'], {
-    is: (listedAttorney, relationship) =>
-      listedAttorney?.value === 'not_listed' || relationship === 'other',
-    then: yup.string().required(),
-  }),
-  firstName: yup.string().when(['partyType', 'relationship'], {
-    is: (partyType, relationship) => partyType === 'individual' || ['spouse', 'child'].includes(relationship),
-    then: yup.string().required(),
-  }),
-  middleName: yup.string(),
   lastName: yup.string().when(['partyType', 'relationship'], {
     is: (partyType, relationship) => partyType === 'individual' || ['spouse', 'child'].includes(relationship),
-    then: yup.string().required(),
-  }),
-  suffix: yup.string(),
-  dateOfBirth: yup.date().
-    nullable().
-    max(yearsFromToday(14), AGE_MIN_ERR).
-    min(yearsFromToday(118), AGE_MAX_ERR),
-  name: yup.string().when('partyType', {
-    is: 'organization',
     then: yup.string().required(),
   }),
   addressLine1: yup.string().when('partyType', {
     is: 'organization',
     then: yup.string().required(),
   }),
-  addressLine2: yup.string(),
-  addressLine3: yup.string(),
   city: yup.string().when('partyType', {
     is: 'organization',
     then: yup.string().required(),
@@ -125,27 +104,12 @@ export const schemaHLR = yup.object().shape({
       is: 'organization',
       then: yup.string().required(),
     }),
-  zip: yup.string().when(['partyType', 'relationship'], {
-    is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
-    then: yup.
-      string().
-      max(25),
-  }),
   country: yup.string().when('partyType', {
     is: 'organization',
     then: yup.string().required(),
   }),
-  emailAddress: yup.string().email(),
-  phoneNumber: yup.string(),
-  poaForm: yup.string().when(['relationship', '$hidePOAForm'], {
-    is: (relationship, hidePOAForm) => relationship !== 'attorney' && !hidePOAForm,
-    then: yup.string().required(),
-  }),
-  listedAttorney: yup.object().when(['relationship', '$hideListedAttorney'], {
-    is: (relationship, hideListedAttorney) => (relationship === 'attorney' && !hideListedAttorney),
-    then: yup.object().required(),
-  }),
   ssn: yup.string(),
+  ...sharedValidation,
 });
 
 export const defaultFormValues = {

@@ -87,10 +87,6 @@ export const ClaimantForm = ({
     { value: 'other', label: 'Other' },
   ];
 
-  console.log('form type is');
-  console.log(formType);
-  console.log(`is hlr or sc form: ${isHLROrSCForm}`);
-
   const asyncFn = useCallback(
     debounce((search, callback) => {
       getAttorneyClaimantOpts(search, onAttorneySearch).then((res) =>
@@ -263,7 +259,8 @@ export const ClaimantForm = ({
               {...methods}
               isOrgPartyType={isOrgPartyType}
               isIndividualPartyType={isIndividualPartyType || dependentRelationship}
-              isHLROrSCForm={isHLROrSCForm} // passing this around everywhere is kind of gross
+              // TODO: passing this around everywhere is kind of gross
+              isHLROrSCForm={isHLROrSCForm}
             />
             <FieldDiv>
               <TextField
