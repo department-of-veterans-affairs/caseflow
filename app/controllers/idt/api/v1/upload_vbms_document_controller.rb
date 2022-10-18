@@ -14,9 +14,8 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     if request.parameters["appeal_id"].present?
       appeal = LegacyAppeal.find_by_vacols_id(request.parameters["appeal_id"]) || Appeal.find_by_uuid(request.parameters["appeal_id"])
       if appeal.nil?
-        fail RecordNotFound, request.parameters["appeal_id"]
+        fail Caseflow::Error::AppealNotFound, SecureRandom.uuid + " The appeal was unable to be found."
       else
-
         request.parameters["veteran_file_number"] = appeal.veteran_file_number
       end
 
@@ -24,14 +23,14 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     elsif request.parameters["veteran_file_number"].present?
       veteran = bgs.fetch_veteran_info(request.parameters["veteran_file_number"])
       if veteran.nil?
-        fail InvalidFileNumber, request.parameters["veteran_file_number"]
+        fail Caseflow::Error::VeteranNotFound, SecureRandom.uuid + " The veteran was unable to be found."
       end
 
     # Find file number from ssn and check with bgs
     elsif request.parameters["veteran_ssn"].present?
       file_number = bgs.fetch_file_number_by_ssn(request.parameters["veteran_ssn"])
       if file_number.nil?
-        fail InvalidFileNumber, request.parameters["veteran_ssn"]
+        fail Caseflow::Error::VeteranNotFound, SecureRandom.uuid + " The veteran was unable to be found."
       end
 
       request.parameters["veteran_file_number"] = file_number
