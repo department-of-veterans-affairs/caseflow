@@ -1,6 +1,5 @@
 class RemoveAppealTypeAndAppealIdAsIndexFromVbmsUploadedDocuments < Caseflow::Migration
   def change
-    remove_index :vbms_uploaded_documents, :appeal_id
-    remove_index :vbms_uploaded_documents, name: "index_vbms_uploaded_documents_on_appeal_type_and_appeal_id"
+    remove_index :vbms_uploaded_documents, column: [:appeal_id, :appeal_type]
   end
 end
