@@ -59,7 +59,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) 
   end
   after do
-    FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) 
+    FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) 
   end
 
   it "Creates an end product" do
