@@ -51,7 +51,7 @@ class AppealsController < ApplicationController
   def show_notification_list
     @@results_per_page = 15
     @params = params.permit(
-      :appeal_id, :event_type, :email_notification_status, :sms_notification_status,
+      :appeals_id, :event_type, :email_notification_status, :sms_notification_status,
       :notification_type, :recipient_phone_number, :recipient_email, :page
     )
     results = get_notifications_from_params(@params)
@@ -309,34 +309,37 @@ class AppealsController < ApplicationController
     }, status: :unprocessable_entity
   end
 
-  # Purpose: Queries Notification with query params and returns all Notification objects that match, total number of pages, and current page number
+  # Purpose: Queries Notification with query params and returns all Notification objects that match,
+  # total number of pages, and current page number
   #
-  # Params: appeal_id (vacols_id OR uuid), event_type, notification_type. email_notification_status, sms_notification_status, recipient_phone_number, recipient_email
+  # Params: appeal_id (vacols_id OR uuid), event_type, notification_type. email_notification_status,
+  # sms_notification_status, recipient_phone_number, recipient_email
   #
-  # Response: Returns an array of all retrieved Notification objects, the total number of pages needed to display those objects, and the current page number
+  # Response: Returns an array of all retrieved Notification objects, the total number of pages needed to display those
+  # objects, and the current page number
   def get_notifications_from_params(params)
-    @notifications = Notification.where(appeals_id: params[:appeal_id])
-    queries = {}
-    queries[:event_type] = params[:event_type] if params[:event_type].present?
-    queries[:notification_type] = params[:notification_type] if params[:notification_type].present?
-    queries[:email_notification_status] = params[:email_notification_status] if params[:email_notification_status].present?
-    queries[:sms_notification_status] = params[:sms_notification_status] if params[:sms_notification_status].present?
-    queries[:recipient_phone_number] = params[:recipient_phone_number] if params[:recipient_phone_number].present?
-    queries[:recipient_email] = params[:recipient_email] if params[:recipient_email].present?
-    queried_notifications = @notifications.where(queries)
+    queried_notifications = Notification.where(params.to_h.except(:page))
+
+    # Return 'Record Not Found' if no notifications could be retrieved
     if queried_notifications == []
       fail ActiveRecord::RecordNotFound, params[:appeal_id]
     end
+
+    # Calculate the total number of pages needed to display all notifications
     if queried_notifications.count < 1
       pages_count = 1
     else
       pages_count = (queried_notifications.count/@@results_per_page.to_f).ceil
     end
+
+    # Default to 1st page if query parameter asks for results on a page number that exceeds pages_count
     if params[:page].to_i < (pages_count + 1)
       current_page = params[:page].try(:to_i) || 1
     else
       current_page = 1
     end
+
+    # Add all retrieved notifications for the current page to an array
     current_page_notifications = []
     index = (@@results_per_page * current_page) - @@results_per_page
     max_index = current_page == pages_count ? index + (queried_notifications.count - index) : index + @@results_per_page
@@ -344,6 +347,9 @@ class AppealsController < ApplicationController
       current_page_notifications.push(queried_notifications[index])
       index += 1
     end
+
+    # Return a serialized response of all notifications, total number of pages needed to display those notifications,
+    # and current page number
     response = {
       notifications: WorkQueue::NotificationSerializer.new(current_page_notifications),
       total_pages: pages_count,
