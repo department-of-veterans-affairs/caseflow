@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { bindActionCreators } from 'redux';
 import { connect, useSelector } from 'react-redux';
 import { css } from 'glamor';
