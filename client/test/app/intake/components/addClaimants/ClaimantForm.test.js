@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, render, waitFor, fireEvent } from '@testing-library/react';
+import { screen, render, waitFor, fireEvent, waitForElement } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
 import { axe } from 'jest-axe';
@@ -10,6 +10,7 @@ import { ClaimantForm } from 'app/intake/addClaimant/ClaimantForm';
 import { useClaimantForm } from 'app/intake/addClaimant/utils';
 import { fillForm, relationshipOpts, relationshipOptsHlrSc } from './testUtils';
 import { ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
+import { Simulate } from 'react-dom/test-utils';
 
 const FormWrapper = ({ children, defaultValues }) => {
   const methods = useClaimantForm({ defaultValues });
@@ -196,13 +197,38 @@ describe('HlrScClaimantForm', () => {
 
     await selectRelationship(3);
 
+    // Set type to organization
+    await userEvent.click(
+      screen.getByRole('radio', { name: /organization/i })
+    );
+
     expect(container).toMatchSnapshot();
+
+    // Set type to individual
+    await userEvent.click(
+      screen.getByRole('radio', { name: /individual/i })
+    );
+
+    expect(container).toMatchSnapshot();
+
   });
 
   it('renders other relationship state correctly', async () => {
     const { container } = setup();
 
     await selectRelationship(4);
+
+    // Set type to organization
+    await userEvent.click(
+      screen.getByRole('radio', { name: /organization/i })
+    );
+
+    expect(container).toMatchSnapshot();
+
+    // Set type to individual
+    await userEvent.click(
+      screen.getByRole('radio', { name: /individual/i })
+    );
 
     expect(container).toMatchSnapshot();
   });
