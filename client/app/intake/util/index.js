@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS, REVIEW_DATA_FIELDS, CLAIMANT_ERRORS } from '../constants';
-import { INTAKE_VHA_REQUIREMENT_INFO } from '../../../COPY';
+import { INTAKE_VHA_REQUIREMENT_TOOLTIP_TEXT } from '../../../COPY';
 import DATES from '../../../constants/DATES';
 import { formatDateStr } from '../../util/DateUtil';
 
@@ -88,7 +88,7 @@ export const formatRadioOptions = (options, userCanSelectVHA) => {
       return {
         ...radioData,
         disabled: true,
-        tooltipText: INTAKE_VHA_REQUIREMENT_INFO
+        tooltipText: INTAKE_VHA_REQUIREMENT_TOOLTIP_TEXT
       };
     }
 
