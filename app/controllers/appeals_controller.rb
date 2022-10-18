@@ -14,7 +14,6 @@ class AppealsController < ApplicationController
     :most_recent_hearing
   ]
 
-  @@results_per_page = 15
   def index
     respond_to do |format|
       format.html { render template: "queue/index" }
@@ -50,44 +49,13 @@ class AppealsController < ApplicationController
   end
 
   def show_notification_list
-    @params = params
-    @current_page = params[:page].try(:to_i) || 2
-    results = get_notifications_from_params(params, @current_page)
-    # notifications_to_show = results[0]
-    # total_number_of_pages = results[1]
-    # total_number_of_pages = results[-1]
-    # results.pop
-
-
-
+    @@results_per_page = 15
+    @params = params.permit(
+      :appeal_id, :event_type, :email_notification_status, :sms_notification_status,
+      :notification_type, :recipient_phone_number, :recipient_email, :page
+    )
+    results = get_notifications_from_params(@params)
     render json: results
-  end
-
-  def get_notifications_from_params(params, current_page)
-    notifications = Notification.where(appeals_id: params[:appeal_id])
-    # params include?
-    # event_type = params[:event_type]
-    # queried_notifications = notifications.filter{ |notification| notification.event_type.include? params[:event_type]}
-    queried_notifications = notifications
-    pages_count = (queried_notifications.count/@@results_per_page.to_f).ceil
-    index = (@@results_per_page * current_page) - @@results_per_page
-    # index = starting_index
-    max_index = current_page == pages_count ? index + (queried_notifications.count - index) : index + @@results_per_page
-    i = 0
-    response = []
-
-    while i < @@results_per_page && index < max_index
-      response.push(queried_notifications[index].id)
-      i += 1
-      index += 1
-    end
-    response.push(pages_count)
-    response.push(current_page)
-
-    # start = @@results_per_page * (@current_page - 1)
-    # results = notifications[start, @@results_per_page]
-    # [queried_notifications, pages_count]
-    response
   end
 
   def document_count
@@ -231,10 +199,6 @@ class AppealsController < ApplicationController
     end
   end
 
-  def render_json_notifications(appeal)
-    render Notification.find_by(vacols_id: appeal.vacols_id).as_json
-  end
-
   def review_removed_message
     claimant_name = appeal.veteran_full_name
     "You have successfully removed #{appeal.class.review_title} for #{claimant_name}
@@ -345,10 +309,38 @@ class AppealsController < ApplicationController
     }, status: :unprocessable_entity
   end
 
-  def render_test(appeal_id)
-    notifications = Notification.find_by(vacols_id: appeal_id)
-    render json: {
-      notification_type: notifications.event_type
+  # Purpose: Queries Notification with query params and returns all Notification objects that match, total number of pages, and current page number
+  #
+  # Params: appeal_id (vacols_id OR uuid), event_type, notification_type. email_notification_status, sms_notification_status, recipient_phone_number, recipient_email
+  #
+  # Response: Returns an array of all retrieved Notification objects, the total number of pages needed to display those objects, and the current page number
+  def get_notifications_from_params(params)
+    current_page = params[:page].try(:to_i) || 1
+    @notifications = Notification.where(appeals_id: params[:appeal_id])
+    queries = {}
+    queries[:event_type] = params[:event_type] if params[:event_type].present?
+    queries[:notification_type] = params[:notification_type] if params[:notification_type].present?
+    queries[:email_notification_status] = params[:email_notification_status] if params[:email_notification_status].present?
+    queries[:sms_notification_status] = params[:sms_notification_status] if params[:sms_notification_status].present?
+    queries[:recipient_phone_number] = params[:recipient_phone_number] if params[:recipient_phone_number].present?
+    queries[:recipient_email] = params[:recipient_email] if params[:recipient_email].present?
+    queried_notifications = @notifications.where(queries)
+    pages_count = (queried_notifications.count/@@results_per_page.to_f).ceil
+    index = (@@results_per_page * current_page) - @@results_per_page
+    max_index = current_page == pages_count ? index + (queried_notifications.count - index) : index + @@results_per_page
+    loop_index = 0
+    response = {
+      notifications: [],
+      total_pages: "",
+      current_page: ""
     }
+    while loop_index < @@results_per_page && index < max_index
+      response[:notifications].push(queried_notifications[index]) unless queried_notifications.nil?
+      loop_index += 1
+      index += 1
+    end
+    response[:total_pages] = pages_count
+    response[:current_page] = current_page
+    response
   end
 end
