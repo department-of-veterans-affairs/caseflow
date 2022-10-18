@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS, REVIEW_DATA_FIELDS, CLAIMANT_ERRORS } from '../constants';
+import { INTAKE_VHA_REQUIREMENT_INFO } from '../../../COPY';
 import DATES from '../../../constants/DATES';
 import { formatDateStr } from '../../util/DateUtil';
 
@@ -79,11 +80,19 @@ export const getDefaultPayeeCode = (state, claimant) => {
   return (claimant ? _.find(state.relationships, { value: claimant }).defaultPayeeCode : null);
 };
 
-export const formatRadioOptions = (options) => {
+export const formatRadioOptions = (options, userCanSelectVHA) => {
   return _.map(options, (value, key) => {
-    return { value: key,
-      displayText: value,
-      tooltipText: 'Hi Mom!' };
+    const radioData = { value: key, displayText: value };
+
+    if (key === 'vha' && !userCanSelectVHA) {
+      return {
+        ...radioData,
+        disabled: true,
+        tooltipText: INTAKE_VHA_REQUIREMENT_INFO
+      };
+    }
+
+    return radioData;
   });
 };
 
