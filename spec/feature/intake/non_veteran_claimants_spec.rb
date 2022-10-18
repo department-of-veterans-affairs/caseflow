@@ -31,6 +31,9 @@ feature "Non-veteran claimants", :postgres do
   let(:decision_date) { 3.months.ago.mdY }
   
   context "when intaking appeals with non_veteran_claimants" do
+    before { FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) }
+    after { FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) }
+
     let(:attorneys) do
       Array.new(15) { create(:bgs_attorney) }
     end
@@ -445,6 +448,7 @@ feature "Non-veteran claimants", :postgres do
     end
 
     context "when intaking a Higher Level Review with a non-veteran claimant" do
+      
       it "HLR with Non-Veteran Claimant and VBMS Benefit Type" do
 
         start_higher_level_review(
@@ -482,6 +486,7 @@ feature "Non-veteran claimants", :postgres do
     
 
     context "when intaking a Supplemental Claim with a non-veteran claimant" do
+     
       it "SC with Non-Veteran Claimant and VBMS Benefit Type" do
 
         start_supplemental_claim(

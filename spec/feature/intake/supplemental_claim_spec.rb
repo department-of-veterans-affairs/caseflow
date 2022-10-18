@@ -55,6 +55,13 @@ feature "Supplemental Claim Intake", :all_dbs do
   let!(:future_rating) { generate_future_rating(veteran, future_rating_promulgation_date, future_rating_profile_date) }
   let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
 
+  before do
+    FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) 
+  end
+  after do
+    FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) 
+  end
+
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
