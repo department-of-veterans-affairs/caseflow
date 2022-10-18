@@ -785,12 +785,12 @@ class Appeal < DecisionReview
       # WIP needs extensive testing but does not create veteran record request task for voc_rehab
       return if business_line.url == "voc-rehab"
 
-        VeteranRecordRequest.create!(
-          parent: root_task,
-          appeal: self,
-          assigned_at: Time.zone.now,
-          assigned_to: business_line
-        )
+      VeteranRecordRequest.create!(
+        parent: root_task,
+        appeal: self,
+        assigned_at: Time.zone.now,
+        assigned_to: business_line
+      )
     end
   end
 
