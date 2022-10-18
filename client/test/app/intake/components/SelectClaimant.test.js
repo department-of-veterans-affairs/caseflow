@@ -193,9 +193,8 @@ describe('SelectClaimant', () => {
     });
 
     it('shows feature toggle is functioning correctly', () => {
-      const benefitType = 'loan_guaranty';
       const featureToggles = { hlrScUnrecognizedClaimants: false };
-      const setupProps = { ...defaultProps, formType, veteranIsNotClaimant, benefitType, featureToggles };
+      const setupProps = { ...defaultProps, formType, veteranIsNotClaimant, benefitType: 'education', featureToggles };
 
       renderSelectClaimant(setupProps);
 
