@@ -94,7 +94,6 @@ export const SelectClaimant = (props) => {
   const radioOpts = useMemo(() => {
     return [
       ...relationships,
-      // TODO: This is probably going to be done on a seperate page and could probably be removed. Check for other uses
       ...(newClaimant ? [newClaimant] : []),
       // Conditionally include "Claimant not listed" option
       ...(enableAddClaimant ? [claimantNotListedOpt] : []),

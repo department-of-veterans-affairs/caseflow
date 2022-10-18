@@ -129,7 +129,6 @@ export const defaultFormValues = {
   // TODO Might change this since the database doesn't allow nulls for state
   state: null,
   zip: '',
-  // TODO Might change this to USA here, but would make it harder to only limit it to HLR/SC
   country: '',
   emailAddress: '',
   phoneNumber: '',
