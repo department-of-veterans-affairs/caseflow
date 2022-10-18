@@ -315,7 +315,6 @@ class AppealsController < ApplicationController
   #
   # Response: Returns an array of all retrieved Notification objects, the total number of pages needed to display those objects, and the current page number
   def get_notifications_from_params(params)
-    current_page = params[:page].try(:to_i) || 1
     @notifications = Notification.where(appeals_id: params[:appeal_id])
     queries = {}
     queries[:event_type] = params[:event_type] if params[:event_type].present?
@@ -325,22 +324,31 @@ class AppealsController < ApplicationController
     queries[:recipient_phone_number] = params[:recipient_phone_number] if params[:recipient_phone_number].present?
     queries[:recipient_email] = params[:recipient_email] if params[:recipient_email].present?
     queried_notifications = @notifications.where(queries)
-    pages_count = (queried_notifications.count/@@results_per_page.to_f).ceil
+    if queried_notifications.count < 1
+      pages_count = 1
+    else
+      pages_count = (queried_notifications.count/@@results_per_page.to_f).ceil
+    end
+    if params[:page].to_i < (pages_count + 1)
+      current_page = params[:page].try(:to_i) || 1
+    else
+      current_page = 1
+    end
+    current_page_notifications = []
     index = (@@results_per_page * current_page) - @@results_per_page
     max_index = current_page == pages_count ? index + (queried_notifications.count - index) : index + @@results_per_page
-    loop_index = 0
-    response = {
-      notifications: [],
-      total_pages: "",
-      current_page: ""
-    }
-    while loop_index < @@results_per_page && index < max_index
-      response[:notifications].push(queried_notifications[index]) unless queried_notifications.nil?
-      loop_index += 1
+    while index < max_index
+      current_page_notifications.push(queried_notifications[index])
       index += 1
     end
-    response[:total_pages] = pages_count
-    response[:current_page] = current_page
-    response
+    response = {
+      notifications: ::WorkQueue::NotificationSerializer.new(current_page_notifications),
+      total_pages: pages_count,
+      current_page: current_page
+    }
+    # response[:notifications] = ::WorkQueue::NotificationSerializer.new(current_page_notifications) unless current_page_notifications.nil?
+    # response[:total_pages] = pages_count
+    # response[:current_page] = current_page
+    # response
   end
 end
