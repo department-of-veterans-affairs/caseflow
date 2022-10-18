@@ -2,6 +2,10 @@
 
 # These steps will cancel ALL Tasks for a particular task type;
 # for a user based upon assigned_to_id where not completed or cancelled.
+# rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/CyclomaticComplexity
+# rubocop:disable Metrics/PerceivedComplexity
 module WarRoom
   class CancelActiveTaskArray
     def run(assigned_to_id, task_type)
@@ -62,5 +66,9 @@ module WarRoom
                             updated_at: Time.zone.now, cancelled_by_id: RequestStore[:current_user]&.id)
       puts("Task #{array_task_ids} completed")
     end
-   end
+  end
 end
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/CyclomaticComplexity
+# rubocop:enable Metrics/PerceivedComplexity
