@@ -97,7 +97,7 @@ class IntakesController < ApplicationController
     {
       userDisplayName: current_user.display_name,
       userCanIntakeAppeals: current_user.can_intake_appeals?,
-      userIsVHAStaff: current_user.vha_staff_member?,
+      userIsVhaStaff: current_user.vha_staff_member?,
       serverIntake: intake_ui_hash,
       dropdownUrls: dropdown_urls,
       page: "Intake",
