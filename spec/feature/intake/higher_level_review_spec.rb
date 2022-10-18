@@ -57,8 +57,10 @@ feature "Higher-Level Review", :all_dbs do
   after do
     FeatureToggle.disable!(:filed_by_va_gov_hlr)
     FeatureToggle.disable!(:updated_intake_forms)
-    FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) 
+    FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) 
   end
+
+
 
   it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
