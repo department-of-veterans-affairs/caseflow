@@ -324,6 +324,9 @@ class AppealsController < ApplicationController
     queries[:recipient_phone_number] = params[:recipient_phone_number] if params[:recipient_phone_number].present?
     queries[:recipient_email] = params[:recipient_email] if params[:recipient_email].present?
     queried_notifications = @notifications.where(queries)
+    if queried_notifications == []
+      fail ActiveRecord::RecordNotFound, params[:appeal_id]
+    end
     if queried_notifications.count < 1
       pages_count = 1
     else
@@ -342,13 +345,9 @@ class AppealsController < ApplicationController
       index += 1
     end
     response = {
-      notifications: ::WorkQueue::NotificationSerializer.new(current_page_notifications),
+      notifications: WorkQueue::NotificationSerializer.new(current_page_notifications),
       total_pages: pages_count,
       current_page: current_page
     }
-    # response[:notifications] = ::WorkQueue::NotificationSerializer.new(current_page_notifications) unless current_page_notifications.nil?
-    # response[:total_pages] = pages_count
-    # response[:current_page] = current_page
-    # response
   end
 end
