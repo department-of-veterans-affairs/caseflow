@@ -52,15 +52,13 @@ feature "Higher-Level Review", :all_dbs do
   before do
     FeatureToggle.enable!(:filed_by_va_gov_hlr)
     FeatureToggle.enable!(:updated_intake_forms)
-    FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) 
+    FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
   end
   after do
     FeatureToggle.disable!(:filed_by_va_gov_hlr)
     FeatureToggle.disable!(:updated_intake_forms)
-    FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) 
+    FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
   end
-
-
 
   it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
@@ -151,7 +149,6 @@ feature "Higher-Level Review", :all_dbs do
     expect(page).to have_content("What is the payee code for this claimant?")
     expect(page).to have_content("Bob Vance, Spouse")
     expect(page).to_not have_content("Cathy Smith, Child")
-
 
     click_intake_continue
 

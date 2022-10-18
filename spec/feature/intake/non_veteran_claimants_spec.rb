@@ -29,7 +29,7 @@ feature "Non-veteran claimants", :postgres do
   end
 
   let(:decision_date) { 3.months.ago.mdY }
-  
+
   context "when intaking appeals with non_veteran_claimants" do
     before { FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) }
     after { FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) }
@@ -448,9 +448,7 @@ feature "Non-veteran claimants", :postgres do
     end
 
     context "when intaking a Higher Level Review with a non-veteran claimant" do
-      
       it "HLR with Non-Veteran Claimant and VBMS Benefit Type" do
-
         start_higher_level_review(
           veteran,
           benefit_type: "compensation"
@@ -463,11 +461,10 @@ feature "Non-veteran claimants", :postgres do
           find("label", text: "Yes", match: :prefer_exact).click
         end
         expect(page).not_to have_content("Claimant not listed")
-        expect(page).to have_content("What is the payee code for this claimant?")       
+        expect(page).to have_content("What is the payee code for this claimant?")
       end
 
       it "HLR with Non-Veteran Claimant and Non-VBMS Benefit Type" do
-
         start_higher_level_review(
           veteran,
           benefit_type: "insurance"
@@ -480,18 +477,15 @@ feature "Non-veteran claimants", :postgres do
           find("label", text: "Yes", match: :prefer_exact).click
         end
         expect(page).to have_content("Claimant not listed")
-        expect(page).not_to have_content("What is the payee code for this claimant?")       
+        expect(page).not_to have_content("What is the payee code for this claimant?")
       end
     end
-    
 
     context "when intaking a Supplemental Claim with a non-veteran claimant" do
-     
       it "SC with Non-Veteran Claimant and VBMS Benefit Type" do
-
         start_supplemental_claim(
-          veteran,       
-          benefit_type: "compensation",          
+          veteran,
+          benefit_type: "compensation"
         )
         visit "/intake"
 
@@ -501,14 +495,13 @@ feature "Non-veteran claimants", :postgres do
           find("label", text: "Yes", match: :prefer_exact).click
         end
         expect(page).not_to have_content("Claimant not listed")
-        expect(page).to have_content("What is the payee code for this claimant?")       
+        expect(page).to have_content("What is the payee code for this claimant?")
       end
 
       it "SC with Non-Veteran Claimant and Non-VBMS Benefit Type" do
-
         start_supplemental_claim(
-          veteran,       
-          benefit_type: "insurance",          
+          veteran,
+          benefit_type: "insurance"
         )
         visit "/intake"
 
@@ -518,7 +511,7 @@ feature "Non-veteran claimants", :postgres do
           find("label", text: "Yes", match: :prefer_exact).click
         end
         expect(page).to have_content("Claimant not listed")
-        expect(page).not_to have_content("What is the payee code for this claimant?")       
+        expect(page).not_to have_content("What is the payee code for this claimant?")
       end
     end
 
