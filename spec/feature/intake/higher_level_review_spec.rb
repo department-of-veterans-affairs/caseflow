@@ -129,7 +129,7 @@ feature "Higher-Level Review", :all_dbs do
     end
 
     expect(page).to_not have_content(
-      "Please select the claimant listed on the form. If the claimant is not listed," \
+      "Please select the claimant listed on the form. If the claimant is not listed, " \
       "please select \"Claimant not listed\" and add their information in the next step."
     )
     expect(page).to_not have_content("What is the payee code for this claimant?")
@@ -138,7 +138,7 @@ feature "Higher-Level Review", :all_dbs do
     end
 
     expect(page).to have_content(
-      "Please select the claimant listed on the form. If the claimant is not listed," \
+      "Please select the claimant listed on the form. If the claimant is not listed, " \
       "please select \"Claimant not listed\" and add their information in the next step."
     )
 
