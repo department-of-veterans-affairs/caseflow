@@ -145,4 +145,12 @@ describe OtherClaimant, :postgres do
       expect(subject).to be_truthy
     end
   end
+
+  describe "#unrecognized_claimant?" do
+    subject { claimant.unrecognized_claimant? }
+
+    it "OtherClaimant is considered an unrecognized claimant" do
+      is_expected.to eq true
+    end
+  end
 end
