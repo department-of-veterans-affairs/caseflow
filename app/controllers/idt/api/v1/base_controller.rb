@@ -10,7 +10,8 @@ class Idt::Api::V1::BaseController < ActionController::Base
 
   # :nocov:
   rescue_from StandardError do |error|
-    log_error(error)
+    formated_error = format_error(error)
+    log_error(formated_error)
     if error.class.method_defined?(:serialize_response)
       render(error.serialize_response)
     else
@@ -48,6 +49,11 @@ class Idt::Api::V1::BaseController < ActionController::Base
       RequestStore.store[:current_user] = user
       user
     end
+  end
+
+  def format_error(error)
+    #generate uuid
+    error.message = "IDT Exception ID: " exception_uuid + message
   end
 
   # set_raven_user via AuthenticatedControllerAction expects a current_user
