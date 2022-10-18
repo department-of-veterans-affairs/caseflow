@@ -1534,12 +1534,34 @@ feature "Higher-Level Review", :all_dbs do
     fill_in "Claimant email", with: new_individual_claimant[:email]
   end
 
+  def add_new_organization_claimant
+    fill_in "Organization name", with: new_organizational_claimant[:organization_name]
+    fill_in "Street address 1", with: new_organizational_claimant[:address1]
+    fill_in "City", with: new_organizational_claimant[:city]
+    fill_in("State", with: new_organizational_claimant[:state]).send_keys :enter
+    fill_in("Zip", with: new_organizational_claimant[:zip]).send_keys :enter
+    fill_in("Country", with: new_organizational_claimant[:country]).send_keys :enter
+    fill_in "Claimant email", with: new_organizational_claimant[:email]
+  end
+
   # TODO: Decide if this should be in HLR or in non_veterans_claimants_spec
   context "creating HLRs with unlisted claimants" do
     let(:new_individual_claimant) do
       {
         first_name: "Michelle",
         last_name: "McClaimant",
+        address1: "123 Main St",
+        city: "San Francisco",
+        state: "CA",
+        zip: "94123",
+        country: "United States",
+        email: "claimant@example.com"
+      }
+    end
+
+    let(:new_organizational_claimant) do
+      {
+        organization_name: "Claimant Inc",
         address1: "123 Main St",
         city: "San Francisco",
         state: "CA",
@@ -1623,6 +1645,35 @@ feature "Higher-Level Review", :all_dbs do
       expect(page).to have_content(claimant_string)
     end
 
+    scenario "creating a HLR with an unlisted claimant with relationship other with type organization" do
+      start_higher_level_review(veteran, is_comp: false, unlisted_claimant: true)
+      visit "/intake/"
+      click_claimant_not_listed
+
+      click_intake_continue
+      # Select other from the dropdown
+      fill_in("Relationship to the Veteran", with: other_claimant_type).send_keys :enter
+      expect(page).to have_content("Is the claimant an organization or individual?")
+
+      within_fieldset("Is the claimant an organization or individual?") do
+        find("label", text: "Organization", match: :prefer_exact).click
+      end
+      add_new_organization_claimant
+      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+        find("label", text: "No", match: :prefer_exact).click
+      end
+      click_button "Continue to next step"
+
+      # Review climant modal
+      expect(page).to have_content("Review and confirm claimant information")
+      click_button "Confirm"
+
+      expect(page).to have_content("Add / Remove Issues")
+      claimant_name = "#{new_organizational_claimant[:organization_name]}}"
+      claimant_string = "#{claimant_name}, #{other_claimant_type}"
+      expect(page).to have_content(claimant_string)
+    end
+
     scenario "creating a HLR with an unlisted claimant with relationship Healthcare Provider with type individual" do
       start_higher_level_review(veteran, is_comp: false, unlisted_claimant: true)
       visit "/intake/"
@@ -1648,6 +1699,35 @@ feature "Higher-Level Review", :all_dbs do
 
       expect(page).to have_content("Add / Remove Issues")
       claimant_name = "#{new_individual_claimant[:first_name]} #{new_individual_claimant[:last_name]}"
+      claimant_string = "#{claimant_name}, #{healthcare_provider_claimant_type}"
+      expect(page).to have_content(claimant_string)
+    end
+
+    scenario "creating a HLR with an unlisted claimant with relationship healthcare provider with type organization" do
+      start_higher_level_review(veteran, is_comp: false, unlisted_claimant: true)
+      visit "/intake/"
+      click_claimant_not_listed
+
+      click_intake_continue
+      # Select other from the dropdown
+      fill_in("Relationship to the Veteran", with: healthcare_provider_claimant_type).send_keys :enter
+      expect(page).to have_content("Is the claimant an organization or individual?")
+
+      within_fieldset("Is the claimant an organization or individual?") do
+        find("label", text: "Organization", match: :prefer_exact).click
+      end
+      add_new_organization_claimant
+      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+        find("label", text: "No", match: :prefer_exact).click
+      end
+      click_button "Continue to next step"
+
+      # Review climant modal
+      expect(page).to have_content("Review and confirm claimant information")
+      click_button "Confirm"
+
+      expect(page).to have_content("Add / Remove Issues")
+      claimant_name = "#{new_organizational_claimant[:organization_name]}}"
       claimant_string = "#{claimant_name}, #{healthcare_provider_claimant_type}"
       expect(page).to have_content(claimant_string)
     end
