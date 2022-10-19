@@ -68,6 +68,12 @@ class RequestIssue < CaseflowRecord
   before_save :set_contested_rating_issue_profile_date
   before_save :close_if_ineligible!
 
+  # amoeba gem for splitting appeal request issues
+  amoeba do
+    enable
+    exclude_association :decision_review_id
+    exclude_association :request_decision_issues
+  end
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
       super("Request Issue #{request_issue_id} cannot create decision issue " \
@@ -285,7 +291,7 @@ class RequestIssue < CaseflowRecord
   def predocket_needed?
     user = RequestStore.store[:current_user]
 
-    if benefit_type == "vha" && FeatureToggle.enabled?(:vha_predocket_appeals, user: user) ||
+    if benefit_type == "vha" ||
        benefit_type == "education" && FeatureToggle.enabled?(:edu_predocket_appeals, user: user)
       !!is_predocket_needed
     else

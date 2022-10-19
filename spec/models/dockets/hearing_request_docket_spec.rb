@@ -339,6 +339,28 @@ describe HearingRequestDocket, :all_dbs do
         expect(HearingRequestDocket.new.count(priority: true, ready: true)).to eq 1
       end
     end
+
+    context "age_of_n_oldest_priority_appeals_available_to_judge" do
+      let(:judge_user) { create(:user) }
+      subject { HearingRequestDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(:judge_user, 3) }
+
+      it "returns the receipt_date field of the oldest hearing priority appeals ready for distribution" do
+        appeal = create_priority_distributable_hearing_appeal_not_tied_to_any_judge
+        expect(HearingRequestDocket.new.count(priority: true, ready: true)).to eq 1
+        expect(subject).to eq([appeal.receipt_date])
+      end
+    end
+
+    context "age_of_n_oldest_nonpriority_appeals_available_to_judge" do
+      let(:judge_user) { create(:user) }
+      subject { HearingRequestDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(:judge_user, 3) }
+
+      it "returns the receipt_date field of the oldest hearing nonpriority appeals ready for distribution" do
+        appeal = create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
+        expect(HearingRequestDocket.new.count(priority: false, ready: true)).to eq 1
+        expect(subject).to eq([appeal.receipt_date])
+      end
+    end
   end
 
   private
@@ -466,31 +488,39 @@ describe HearingRequestDocket, :all_dbs do
     appeal
   end
 
+  # rubocop:disable Metrics/AbcSize
   def create_nonpriority_unblocked_hearing_appeal_within_affinity
     appeal = create(:appeal,
                     :with_post_intake_tasks,
                     :held_hearing,
-                    :with_evidence_submission_window_task,
                     :denied_advance_on_docket,
                     docket_type: Constants.AMA_DOCKETS.hearing,
                     created_at: 95.days.ago, # accounting for evidence submission window for better realism
                     adding_user: judge_with_team)
+
     # Complete the ScheduleHearingTask to set up legit tree for when hearing would be created
     ScheduleHearingTask.find_by(appeal: appeal)
       .update!(status: Constants.TASK_STATUSES.completed, closed_at: 90.days.ago)
 
-    # Complete the EvidenceSubmissionWindowTask for 90 days after hearing
+    # Complete EvidenceSubmissionWindowTask and TranscriptionTask for 90 days after hearing
     EvidenceSubmissionWindowTask.find_by(appeal: appeal)
       .update!(status: Constants.TASK_STATUSES.completed, closed_at: 5.days.ago)
 
+    TranscriptionTask.find_by(appeal: appeal)
+      .update!(status: Constants.TASK_STATUSES.completed, closed_at: 5.days.ago)
+
     # Artificially set the `assigned_at` of DistributionTask so it's in the past
-    DistributionTask.find_by(appeal: appeal).update!(assigned_at: 5.days.ago)
+    DistributionTask.find_by(appeal: appeal).update!(
+      status: Constants.TASK_STATUSES.assigned,
+      assigned_at: 5.days.ago
+    )
 
     # Ensure hearing tied to judge
     Hearing.find_by(appeal: appeal).update!(judge: judge_with_team)
 
     appeal
   end
+  # rubocop:enable Metrics/AbcSize
 
   def create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
     appeal = create(:appeal,

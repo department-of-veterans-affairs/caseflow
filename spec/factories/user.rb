@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :user do
-    sequence(:css_id) { |n| "CSS_ID#{n}" }
+    css_id { "CSS_ID#{generate :css_id}" }
 
     station_id { User::BOARD_STATION_ID }
     full_name { "Lauren Roth" }
