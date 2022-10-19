@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 class SplitAppealController < ApplicationController
-  #protect_from_forgery with: :exception
+  protect_from_forgery with: :exception
 
   def split_appeal
     if FeatureToggle.enabled?(:split_appeal_workflow)
-      #Missing original appeal Issues and would have to be added to the payload of the useContext in ReviewAppealView
       appeal_id = params[:appeal_id]
       split_issue = params[:appeal_split_issues]
       split_other_reason = params[:split_other_reason]
@@ -47,7 +46,23 @@ class SplitAppealController < ApplicationController
         updated_by_id = current_user.id,
         working_split_status = Constants.TASK_STATUSES.in_progress
       ]
-      SplitCorrelationTable.create!(appeal_id: create_split_record[0], appeal_type: create_split_record[1], appeal_uuid: create_split_record[2], created_at: create_split_record[3], created_by_id: create_split_record[4], original_appeal_id: create_split_record[5], original_appeal_uuid: create_split_record[6], original_request_issue_ids: create_split_record[7], relationship_type: create_split_record[8], split_other_reason: create_split_record[9], split_reason: create_split_record[10], split_request_issue_ids: create_split_record[11], updated_at: create_split_record[12], updated_by_id: create_split_record[13], working_split_status: create_split_record[14])
+      SplitCorrelationTable.create!(
+        appeal_id: create_split_record[0],
+        appeal_type: create_split_record[1],
+        appeal_uuid: create_split_record[2],
+        created_at: create_split_record[3],
+        created_by_id: create_split_record[4],
+        original_appeal_id: create_split_record[5],
+        original_appeal_uuid: create_split_record[6],
+        original_request_issue_ids: create_split_record[7],
+        relationship_type: create_split_record[8],
+        split_other_reason: create_split_record[9],
+        split_reason: create_split_record[10],
+        split_request_issue_ids: create_split_record[11],
+        updated_at: create_split_record[12],
+        updated_by_id: create_split_record[13],
+        working_split_status: create_split_record[14])
+        
       original_request_issue_ids.each do |id|
         original_request_issue_id = id
         original_request_issue = RequestIssue.find_by_id(original_request_issue_id)
