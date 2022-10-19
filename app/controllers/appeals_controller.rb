@@ -322,7 +322,7 @@ class AppealsController < ApplicationController
 
     # Return 'Record Not Found' if no notifications could be retrieved
     if queried_notifications == []
-      fail ActiveRecord::RecordNotFound, params[:appeal_id]
+      fail ActiveRecord::RecordNotFound, params[:appeals_id]
     end
 
     # Calculate the total number of pages needed to display all notifications
