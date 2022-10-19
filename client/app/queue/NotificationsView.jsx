@@ -76,6 +76,7 @@ export const NotificationsView = (props) => {
         <CaseTitleDetails
           appealId={appealId}
           redirectUrl={window.location.pathname}
+          hideOTSection
           // userCanAccessReader={props.userCanAccessReader}
         />
         <div {...sectionGap}>
@@ -111,7 +112,12 @@ NotificationsView.propTypes = {
   pollHearing: PropTypes.bool,
   stopPollingHearing: PropTypes.func,
   substituteAppellant: PropTypes.object,
-  vsoVirtualOptIn: PropTypes.bool
+  vsoVirtualOptIn: PropTypes.bool,
+  hideOTSection: PropTypes.bool
+};
+
+NotificationsView.defaultProps = {
+  hideOTSection: true
 };
 
 const mapStateToProps = (state) => ({
