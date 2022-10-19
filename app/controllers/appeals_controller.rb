@@ -318,12 +318,22 @@ class AppealsController < ApplicationController
   # Response: Returns an array of all retrieved Notification objects, the total number of pages needed to display those
   # objects, and the current page number
   def get_notifications_from_params(params)
-    queried_notifications = Notification.where(params.to_h.except(:page))
+    # Retrieve notifications based on query parameters and current page
+    @notifications = Notification.where(appeals_id: params[:appeals_id])
+    queried_notifications = @notifications.where(params.to_h.except(:appeals_id, :page))
 
-    # Return 'Record Not Found' if no notifications could be retrieved
+    # Throw 'Record Not Found' if no notifications could be retrieved
     if queried_notifications == []
       fail ActiveRecord::RecordNotFound, params[:appeals_id]
     end
+
+    # Get all selectable options that notifications can be filtered by
+    event_types = @notifications.map(&:event_type).uniq.compact
+    notification_types = @notifications.map(&:notification_type).uniq.compact
+    recipient_info = (@notifications.map(&:recipient_phone_number) +
+     @notifications.map(&:recipient_email)).uniq.select! { |element| element&.size.to_i > 0 }
+    statuses = (@notifications.map(&:email_notification_status) +
+     @notifications.map(&:sms_notification_status)).uniq.select! { |element| element&.size.to_i > 0 }
 
     # Calculate the total number of pages needed to display all notifications
     if queried_notifications.count < 1
@@ -352,8 +362,12 @@ class AppealsController < ApplicationController
     # and current page number
     response = {
       notifications: WorkQueue::NotificationSerializer.new(current_page_notifications),
-      total_pages: pages_count,
-      current_page: current_page
+      selectable_event_types: event_types,
+      selectable_notification_types: notification_types,
+      selectable_recipient_info: recipient_info ? recipient_info : [],
+      selectable_statuses: statuses ? statuses : [],
+      current_page: current_page,
+      total_pages: pages_count
     }
   end
 end
