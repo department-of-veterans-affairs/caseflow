@@ -98,6 +98,8 @@ describe AppellantNotification do
       let(:legacy_appeal) { create(:legacy_appeal, :with_root_task, vbms_id: 123_456) }
       let(:params) do
         {
+          appeal: legacy_appeal,
+          appeal_type: legacy_appeal.class.to_s,
           appeal_id: legacy_appeal.id,
           citation_number: "A18123456",
           decision_date: Time.zone.today,
@@ -110,13 +112,15 @@ describe AppellantNotification do
       let(:dispatch) { LegacyAppealDispatch.new(appeal: legacy_appeal, params: params) }
       it "Will notify appellant that the legacy appeal decision has been mailed (Non Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, non_contested)
-        dispatch.complete_root_task!
+        decision_document = dispatch.send "create_decision_document_and_submit_for_processing!", params
+        decision_document.process!
       end
       it "Will notify appellant that the legacy appeal decision has been mailed (Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, contested)
         allow(legacy_appeal).to receive(:contested_claim).and_return(true)
         legacy_appeal.contested_claim
-        dispatch.complete_root_task!
+        decision_document = dispatch.send "create_decision_document_and_submit_for_processing!", params
+        decision_document.process!
       end
     end
 
@@ -125,6 +129,8 @@ describe AppellantNotification do
       let(:contested_appeal) { create(:appeal, :with_assigned_bva_dispatch_task, :with_request_issues) }
       let(:params) do
         {
+          appeal: appeal,
+          appeal_type: appeal.class.to_s,
           appeal_id: appeal.id,
           citation_number: "A18123456",
           decision_date: Time.zone.today,
@@ -134,6 +140,8 @@ describe AppellantNotification do
       end
       let(:contested_params) do
         {
+          appeal: contested_appeal,
+          appeal_type: contested_appeal.class.to_s,
           appeal_id: contested_appeal.id,
           citation_number: "A18123456",
           decision_date: Time.zone.today,
@@ -159,13 +167,15 @@ describe AppellantNotification do
       end
       it "Will notify appellant that the AMA appeal decision has been mailed (Non Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, non_contested)
-        dispatch.complete_dispatch_root_task!
+        decision_document = dispatch.send "create_decision_document_and_submit_for_processing!", params
+        decision_document.process!
       end
       it "Will notify appellant that the AMA appeal decision has been mailed (Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(contested_appeal, contested)
         allow(contested_appeal).to receive(:contested_claim?).and_return(true)
         contested_appeal.contested_claim?
-        contested_dispatch.complete_dispatch_root_task!
+        contested_decision_document = contested_dispatch.send "create_decision_document_and_submit_for_processing!", contested_params
+        contested_decision_document.process!
       end
     end
   end
@@ -271,6 +281,7 @@ describe AppellantNotification do
         RequestStore[:current_user] = hearing_coord
       end
       context "Legacy" do
+        # create legacy hearing for "will notify appellant when a hearing is postponed" check
         let(:ro_id) { "RO04" }
         let!(:vacols_case) do
           create(
@@ -288,9 +299,29 @@ describe AppellantNotification do
             disposition: "postponed"
           }
         end
+
+        # create legacy hearing for "should not notify appellant if a postponed hearing updates to postponed" check
+        let(:ro_id_postponed) { "RO05" }
+        let!(:vacols_case_postponed) do
+          create(
+            :case,
+            bfregoff: ro_id_postponed,
+            bfdocind: HearingDay::REQUEST_TYPES[:video]
+          )
+        end
+        let!(:appeal_postponed) do
+          create(:legacy_appeal, vacols_case: vacols_case_postponed, closest_regional_office: ro_id_postponed)
+        end
+        let(:hearing_postponed) { create(:legacy_hearing, appeal: appeal_postponed, disposition: "P") }
+
         it "will notify appellant when a hearing is postponed" do
           expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
           hearing.update_caseflow_and_vacols(hearing_info)
+        end
+
+        it "should not notify appellant if a postponed hearing updates to postponed" do
+          expect(AppellantNotification).to_not receive(:notify_appellant).with(hearing_postponed.appeal, template_name)
+          hearing_postponed.update_caseflow_and_vacols(hearing_info)
         end
       end
     end
@@ -306,6 +337,7 @@ describe AppellantNotification do
         RequestStore[:current_user] = hearing_coord
       end
       context "Legacy" do
+        # create legacy hearing for "will notify appellant when a hearing is postponed" check
         let(:ro_id) { "RO04" }
         let!(:vacols_case) do
           create(
@@ -323,9 +355,27 @@ describe AppellantNotification do
             disposition: "cancelled"
           }
         end
+        # create legacy hearing for "should not notify appellant if a cancelled hearing updates to cancelled" check
+        let(:ro_id_cancelled) { "RO05" }
+        let!(:vacols_case_cancelled) do
+          create(
+            :case,
+            bfregoff: ro_id_cancelled,
+            bfdocind: HearingDay::REQUEST_TYPES[:video]
+          )
+        end
+        let!(:appeal_cancelled) do
+          create(:legacy_appeal, vacols_case: vacols_case_cancelled, closest_regional_office: ro_id_cancelled)
+        end
+        let(:hearing_cancelled) { create(:legacy_hearing, appeal: appeal_cancelled, disposition: "C") }
+
         it "will notify appellant when a hearing is withdrawn/cancelled" do
           expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
           hearing.update_caseflow_and_vacols(hearing_info)
+        end
+        it "should not notify appellant if a cancelled hearing updates to cancelled" do
+          expect(AppellantNotification).to_not receive(:notify_appellant).with(hearing_cancelled.appeal, template_name)
+          hearing_cancelled.update_caseflow_and_vacols(hearing_info)
         end
       end
     end
@@ -471,7 +521,7 @@ describe AppellantNotification do
         }
       end
       let(:privacy_parent) { PrivacyActTask.create!(appeal: appeal, parent_id: colocated_task.id, assigned_to: priv_org) }
-      let(:privacy_child) { PrivacyActTask.create!(appeal: appeal, parent_id: privacy_parent.id, assigned_to: priv_org) }
+      let(:privacy_child) { PrivacyActTask.create!(appeal: appeal, parent_id: privacy_parent.id, assigned_to: current_user) }
       before do
         priv_org.add_user(current_user)
       end
@@ -479,9 +529,13 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
         PrivacyActTask.create_child_task(colocated_task, attorney, privacy_params_org)
       end
-      it "sends notification when completing a PrivacyActTask" do
+      it "sends notification when completing a PrivacyActTask assigned to user" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
         privacy_child.update!(status: "completed")
+      end
+      it "sends notification when completing a PrivacyActTask assigned to organization" do
+        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
+        privacy_parent.update_with_instructions(status: "completed")
       end
     end
   end
