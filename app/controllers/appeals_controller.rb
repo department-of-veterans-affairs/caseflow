@@ -8,7 +8,7 @@ class AppealsController < ApplicationController
     :index,
     :power_of_attorney,
     :show_case_list,
-    :get_notification_list,
+    :fetch_notification_list,
     :show,
     :veteran,
     :most_recent_hearing
@@ -48,11 +48,10 @@ class AppealsController < ApplicationController
     end
   end
 
-  def get_notification_list
+  def fetch_notification_list
     @@results_per_page = 15
     @params = params.permit(
-      :appeals_id, :event_type, :email_notification_status, :sms_notification_status,
-      :notification_type, :recipient_phone_number, :recipient_email, :page
+      :appeals_id, :event_type, :status, :notification_type, :recipient_info, :page
     )
     results = get_notifications_from_params(@params)
     render json: results
@@ -320,10 +319,40 @@ class AppealsController < ApplicationController
   def get_notifications_from_params(params)
     # Retrieve notifications based on query parameters and current page
     @notifications = Notification.where(appeals_id: params[:appeals_id])
-    queried_notifications = @notifications.where(params.to_h.except(:appeals_id, :page))
+    @queried_notifications = @notifications.where(params.to_h.except(:appeals_id, :recipient_info, :status, :page))
+    
+    if params[:recipient_info].present?
+      recipient_email = @queried_notifications.where(recipient_email: params[:recipient_info])
+      recipient_phone_number = @queried_notifications.where(recipient_phone_number: params[:recipient_info])
+    end
+
+    if params[:status].present?
+      email_notification_status = @queried_notifications.where(email_notification_status: params[:status])
+      sms_notification_status = @queried_notifications.where(sms_notification_status: params[:status])
+    end
+
+    if recipient_email != [] && params[:recipient_info].present?
+      @queried_notifications = @queried_notifications.where(recipient_email: params[:recipient_info])
+    end
+
+    if recipient_phone_number != [] && params[:recipient_info].present?
+      @queried_notifications = @queried_notifications.where(recipient_phone_number: params[:recipient_info])
+    end
+
+    if email_notification_status != [] && params[:status].present?
+      @email_status = @queried_notifications.where(email_notification_status: params[:status])
+    end
+
+    if sms_notification_status != [] && params[:status].present?
+      @sms_status = @queried_notifications.where(sms_notification_status: params[:status])
+    end
+
+    if sms_notification_status != [] && email_notification_status != [] && params[:status].present?
+      @queried_notifications = @email_status.merge(@sms_status).uniq
+    end
 
     # Throw 'Record Not Found' if no notifications could be retrieved
-    if queried_notifications == []
+    if @queried_notifications == []
       fail ActiveRecord::RecordNotFound, params[:appeals_id]
     end
 
@@ -336,10 +365,10 @@ class AppealsController < ApplicationController
      @notifications.map(&:sms_notification_status)).uniq.select! { |element| element&.size.to_i > 0 }
 
     # Calculate the total number of pages needed to display all notifications
-    if queried_notifications.count < 1
+    if @queried_notifications.count < 1
       pages_count = 1
     else
-      pages_count = (queried_notifications.count/@@results_per_page.to_f).ceil
+      pages_count = (@queried_notifications.count/@@results_per_page.to_f).ceil
     end
 
     # Default to 1st page if query parameter asks for results on a page number that exceeds pages_count
@@ -352,9 +381,9 @@ class AppealsController < ApplicationController
     # Add all retrieved notifications for the current page to an array
     current_page_notifications = []
     index = (@@results_per_page * current_page) - @@results_per_page
-    max_index = current_page == pages_count ? index + (queried_notifications.count - index) : index + @@results_per_page
+    max_index = current_page == pages_count ? index + (@queried_notifications.count - index) : index + @@results_per_page
     while index < max_index
-      current_page_notifications.push(queried_notifications[index])
+      current_page_notifications.push(@queried_notifications[index])
       index += 1
     end
 
