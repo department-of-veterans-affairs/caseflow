@@ -182,7 +182,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
   return (
     <React.Fragment>
       {programOfficeInstructions.some((i) => i) &&
-        <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
+        <h3 style= {{ color: '#323a45' }}>Notes from Program Office:</h3>}
       {programOfficeInstructions.map((text, index) => (
         <React.Fragment key={index}>
           <div>
@@ -391,7 +391,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ReturnToBoardIntakeModal,
     customFormatInstructions: ({ state }) => {
       if (state.instructions.length > 0) {
-        return `\n**Reason for return:**\n${state.instructions}`;
+        return `\n##### REASON FOR RETURN:\n${state.instructions}`;
       }
 
       return state.instructions;
@@ -425,13 +425,13 @@ const MODAL_TYPE_ATTRS = {
       let formattedInstructions = '';
 
       if (state.dropdown === 'other') {
-        formattedInstructions += `\n**Reason for return:**\nOther - ${state.otherInstructions}`;
+        formattedInstructions += `\n##### REASON FOR RETURN:\nOther - ${state.otherInstructions}`;
       } else {
-        formattedInstructions += `\n**Reason for return:**\n${state.dropdown}`;
+        formattedInstructions += `\n##### REASON FOR RETURN:\n${state.dropdown}`;
       }
 
       if (state.instructions) {
-        formattedInstructions += `\n\n**Detail:**\n${state.instructions}`;
+        formattedInstructions += `\n\n##### DETAILS:\n${state.instructions}`;
       }
 
       return formattedInstructions;
@@ -508,35 +508,35 @@ class CompleteTaskModal extends React.Component {
     if (this.props.modalType === 'vha_send_to_board_intake') {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
 
-      formattedInstructions.push(`\n**Status:**\n${locationLabel}\n`);
-
-      if (reviewNotes) {
-        formattedInstructions.push(`\n\n**${reviewNotes} Notes:**\n${previousInstructions}\n`);
+      if (instructions && previousInstructions) {
+        formattedInstructions.push('### CAMO Notes:\n');
       }
 
-      if (instructions) {
-        const instructionsDetail = `\n**CAMO Notes:**\n${instructions}`;
+      formattedInstructions.push(`\n##### STATUS:**\n${locationLabel}\n`);
 
-        formattedInstructions.splice(1, 0, instructionsDetail);
+      if (instructions) {
+        formattedInstructions.push(`\n\n##### DETAILS:\n${instructions}\n`);
+      }
+
+      if (reviewNotes) {
+        formattedInstructions.push(`\n\n### ${reviewNotes} Notes:\n${previousInstructions}\n`);
       }
     } else if (this.props.modalType.includes('for_review')) {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
 
-      const docLocationText = `**Status:**\nDocuments for this appeal are stored in ${radio === 'other' ?
+      const docLocationText = `##### STATUS:\nDocuments for this appeal are stored in ${radio === 'other' ?
         otherInstructions :
         locationLabel}.`;
 
       formattedInstructions.push(docLocationText);
 
       if (instructions) {
-        const instructionsDetail = `\n\n**Detail:**\n${instructions}\n`;
-
-        formattedInstructions.push(instructionsDetail);
+        formattedInstructions.push(`\n\n##### DETAILS:\n${instructions}\n`);
       }
 
       // Do not add "Regional Processing Office Notes" section when RPO is sending to Intake for review
       if (reviewNotes && reviewNotes !== 'Regional Processing Office') {
-        formattedInstructions.push(`\n\n**${reviewNotes} Notes:**\n${previousInstructions}\n`);
+        formattedInstructions.push(`\n### ${reviewNotes} Notes:\n${previousInstructions}\n`);
       }
     } else if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customFormatInstructions === 'function') {
       formattedInstructions.push(
