@@ -6,6 +6,10 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
   queue_as :low_priority
   application_attr :hearing_schedule
 
+  before_perform do |job|
+    JOB_ATTR = job
+  end
+
   LEGACY_DOCKETED = "INNER JOIN priorloc ON brieff.bfkey = priorloc.lockey WHERE brieff.bfac IN ('1','3','7') AND locstto = '01' AND trunc(locdout) = trunc(sysdate)"
 
   def perform
@@ -32,14 +36,21 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
     vacols_ids.reject { |id| duplicate_ids.include?(id) }
   end
 
+  # rubocop:disable all
   # Purpose: To send the 'appeal docketed' notification for the legacy appeals
   # Params: vacols_ids - An array of filtered vacols ids for legacy appeals that didnt already have notifications sent
   # Return: The vacols ids that filtered out the duplicates
   def send_legacy_notifications(vacols_ids)
     Rails.logger.info("Found #{vacols_ids.count} legacy appeals that have been recently docketed and have not gotten docketed notifications")
     vacols_ids.each do |vacols_id|
-      AppellantNotification.notify_appellant(LegacyAppeal.find_by_vacols_id(vacols_id), "Appeal docketed")
+      begin
+        AppellantNotification.notify_appellant(LegacyAppeal.find_by_vacols_id(vacols_id), "Appeal docketed")
+      rescue Exception => ex 
+        Rails.logger.error("#{ex.class}: #{ex.message} on #{JOB_ATTR.class} of ID:#{JOB_ATTR.job_id}\n #{ex.backtrace.join("\n")}")
+        next
+      end
     end
     vacols_ids
   end
+  # rubocop:enable all
 end
