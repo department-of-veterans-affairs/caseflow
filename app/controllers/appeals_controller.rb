@@ -321,32 +321,39 @@ class AppealsController < ApplicationController
     @notifications = Notification.where(appeals_id: params[:appeals_id])
     @queried_notifications = @notifications.where(params.to_h.except(:appeals_id, :recipient_info, :status, :page))
 
+    # Check for recipient info query parameter
     if params[:recipient_info].present?
       recipient_email = @queried_notifications.where(recipient_email: params[:recipient_info])
       recipient_phone_number = @queried_notifications.where(recipient_phone_number: params[:recipient_info])
     end
 
+    # Check for status query parameter
     if params[:status].present?
       email_notification_status = @queried_notifications.where(email_notification_status: params[:status])
       sms_notification_status = @queried_notifications.where(sms_notification_status: params[:status])
     end
 
+    # Retrieve notifications matching recipient info query parameter if it is an email
     if recipient_email != [] && params[:recipient_info].present?
       @queried_notifications = @queried_notifications.where(recipient_email: params[:recipient_info])
     end
 
+    # Retrieve notifications matching recipient info query parameter if it is a phone number
     if recipient_phone_number != [] && params[:recipient_info].present?
       @queried_notifications = @queried_notifications.where(recipient_phone_number: params[:recipient_info])
     end
 
+    # Retrieve notifications matchcing status query parameter for emails
     if email_notification_status != [] && params[:status].present?
       @email_status = @queried_notifications.where(email_notification_status: params[:status])
     end
 
+    # Retrieve notifications matchcing status query parameter for sms
     if sms_notification_status != [] && params[:status].present?
       @sms_status = @queried_notifications.where(sms_notification_status: params[:status])
     end
 
+    # Merge results of sms and email statuses if both are present
     if sms_notification_status != [] && email_notification_status != [] && params[:status].present?
       @queried_notifications = @email_status.merge(@sms_status).uniq
     end
