@@ -185,7 +185,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
         <h3 style= {{ color: '#323a45' }}>Notes from Program Office:</h3>}
       {programOfficeInstructions.map((text, index) => (
         <React.Fragment key={index}>
-          <div>
+          <div className="task-instructions">
             <ReactMarkdown>{text}</ReactMarkdown>
           </div>
         </React.Fragment>
