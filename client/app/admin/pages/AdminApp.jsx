@@ -1,5 +1,7 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Switch } from 'react-router-dom';
+// import PageRoute from '../components/PageRoute';
+import PageRoute from '../../components/PageRoute';
 // import ReduxBase from '../components/ReduxBase';
 // import reducers from '../reducers/index';
 // export const Admin = ({
@@ -18,7 +20,17 @@ import { BrowserRouter } from 'react-router-dom';
 
 export default class AdminApp extends React.PureComponent {
   render = () => <BrowserRouter basename="/admin">
-    <h1>System Admin UI</h1>
+    <div>
+      <Switch>
+        <PageRoute
+          exact
+          path="/admin"
+          title="AdminApp"
+          render={this.AdminApp}
+        />
+      </Switch>
+      <h1>System Admin UI</h1>
+    </div>
   </BrowserRouter>
 }
 
