@@ -352,16 +352,6 @@ class QueueApp extends React.PureComponent {
     />
   );
 
-  routedNotificationsWithLoadingScreen = (props) => (
-    <CaseDetailsLoadingScreen
-      {...this.propsForQueueLoadingScreen()}
-      appealId={props.match.params.appealId}
-    >
-      {this.routedNotifications(props)}
-    </CaseDetailsLoadingScreen>
-  );
-
-
   routedReassignToUser = (props) => (
     <AssignToView isReassignAction {...props.match.params} />
   );
@@ -686,12 +676,6 @@ class QueueApp extends React.PureComponent {
               title="Unassigned Cases | Caseflow"
               render={this.routedTeamQueueList('assign')}
             />
-
-            {/* <PageRoute
-              path="/queue/appeals/:appealId/Notifications"
-              title="Notifications | Caseflow"
-              render={this.routedNotifications}
-            /> */}
 
             <PageRoute
               exact
