@@ -506,8 +506,7 @@ feature "Higher-Level Review", :all_dbs do
     test_veteran,
     is_comp: true,
     claim_participant_id: nil,
-    legacy_opt_in_approved: false,
-    unlisted_claimant: false
+    legacy_opt_in_approved: false
   )
 
     higher_level_review = HigherLevelReview.create!(
@@ -525,15 +524,14 @@ feature "Higher-Level Review", :all_dbs do
       user: current_user, started_at: 5.minutes.ago,
       detail: higher_level_review
     )
-    if !unlisted_claimant
-      claimant_class = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
-      participant_id = claim_participant_id || test_veteran.participant_id
-      claimant_class.create!(
-        decision_review: higher_level_review,
-        participant_id: participant_id,
-        payee_code: claim_participant_id.present? ? "02" : "00"
-      )
-    end
+
+    claimant_class = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
+    participant_id = claim_participant_id || test_veteran.participant_id
+    claimant_class.create!(
+      decision_review: higher_level_review,
+      participant_id: participant_id,
+      payee_code: claim_participant_id.present? ? "02" : "00"
+    )
 
     higher_level_review.start_review!
 

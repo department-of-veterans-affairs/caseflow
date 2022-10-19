@@ -3,14 +3,6 @@
 feature "Higher-Level Review", :all_dbs do
   include IntakeHelpers
 
-  before do
-    Timecop.freeze(post_ama_start_date)
-
-    allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-    allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-    allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
-  end
-
   let(:veteran_file_number) { "123412345" }
 
   let!(:current_user) do
@@ -32,83 +24,16 @@ feature "Higher-Level Review", :all_dbs do
   let(:receipt_date) { Time.zone.today - 5.days }
 
   before do
+    Timecop.freeze(post_ama_start_date)
+    allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+    allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
     FeatureToggle.enable!(:filed_by_va_gov_hlr)
     FeatureToggle.enable!(:updated_intake_forms)
   end
   after do
     FeatureToggle.disable!(:filed_by_va_gov_hlr)
     FeatureToggle.disable!(:updated_intake_forms)
-  end
-
-  # this version is slightly different from what is in IntakeHelpers
-  # TODO it would be good to reconcile and save some duplication.
-  def start_higher_level_review(
-    test_veteran,
-    is_comp: true,
-    claim_participant_id: nil,
-    legacy_opt_in_approved: false,
-    unlisted_claimant: false
-  )
-
-    higher_level_review = HigherLevelReview.create!(
-      veteran_file_number: test_veteran.file_number,
-      filed_by_va_gov: false,
-      receipt_date: receipt_date,
-      informal_conference: false,
-      benefit_type: is_comp ? "compensation" : "education",
-      legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: claim_participant_id.present?
-    )
-
-    intake = HigherLevelReviewIntake.create!(
-      veteran_file_number: test_veteran.file_number,
-      user: current_user, started_at: 5.minutes.ago,
-      detail: higher_level_review
-    )
-    if !unlisted_claimant
-      claimant_class = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
-      participant_id = claim_participant_id || test_veteran.participant_id
-      claimant_class.create!(
-        decision_review: higher_level_review,
-        participant_id: participant_id,
-        payee_code: claim_participant_id.present? ? "02" : "00"
-      )
-    end
-
-    higher_level_review.start_review!
-
-    [higher_level_review, intake]
-  end
-
-  def start_supplemental_claim(
-    test_veteran,
-    is_comp: true,
-    legacy_opt_in_approved: false,
-    veteran_is_not_claimant: false
-  )
-
-    supplemental_claim = SupplementalClaim.create!(
-      veteran_file_number: test_veteran.file_number,
-      receipt_date: receipt_date,
-      benefit_type: is_comp ? "compensation" : "education",
-      legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: veteran_is_not_claimant
-    )
-
-    intake = SupplementalClaimIntake.create!(
-      veteran_file_number: test_veteran.file_number,
-      user: current_user,
-      started_at: 5.minutes.ago,
-      detail: supplemental_claim
-    )
-
-    VeteranClaimant.create!(
-      decision_review: supplemental_claim,
-      participant_id: test_veteran.participant_id
-    )
-
-    supplemental_claim.start_review!
-    [supplemental_claim, intake]
   end
 
   # Specific shared context
@@ -312,7 +237,8 @@ feature "Higher-Level Review", :all_dbs do
         healthcare_provider_claimant_type
       end
 
-      scenario "creating a HLR/SC intake with an unlisted claimant with relationship Healthcare Provider with type individual" do
+      scenario "creating a HLR/SC intake with an unlisted claimant " \
+        "with relationship Healthcare Provider with type individual" do
         start_intake
         visit "/intake/"
         click_claimant_not_listed
@@ -332,8 +258,8 @@ feature "Higher-Level Review", :all_dbs do
         verify_individual_claimant_on_add_issues
       end
 
-      scenario "creating a HLR/SC intake with an unlisted claimant with relationship
-      healthcare provider with type organization" do
+      scenario "creating a HLR/SC intake with an unlisted claimant with relationship " \
+        "healthcare provider with type organization" do
         start_intake
         visit "/intake/"
         click_claimant_not_listed
@@ -495,7 +421,7 @@ feature "Higher-Level Review", :all_dbs do
 
   context "creating Supplemental Claims with unlisted claimants" do
     let(:intake_type) do
-      start_supplemental_claim(veteran, is_comp: false)
+      start_supplemental_claim(veteran, is_comp: false, no_claimant: true)
     end
 
     it_behaves_like "HLR/SC intake unlisted claimant"
@@ -503,7 +429,7 @@ feature "Higher-Level Review", :all_dbs do
 
   context "creating Higher Level Reviews with unlisted claimants" do
     let(:intake_type) do
-      start_higher_level_review(veteran, is_comp: false, unlisted_claimant: true)
+      start_higher_level_review(veteran, is_comp: false, no_claimant: true)
     end
 
     it_behaves_like "HLR/SC intake unlisted claimant"
