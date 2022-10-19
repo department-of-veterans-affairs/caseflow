@@ -53,7 +53,11 @@ class AsyncableJobsController < ApplicationController
     success = true
 
     begin
-      job.perform_now
+      if Rails.deploy_env?(:prod) || Rails.deploy_env?(:uat)
+        job.perform_later
+      else
+        job.perform_now
+      end
     rescue Exception => e
       Rails.logger.error "Manual run of #{allowed_params[:job_type]} failed : #{e.message}"
       success = false
