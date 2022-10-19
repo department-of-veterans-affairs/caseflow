@@ -2,8 +2,8 @@ import React from 'react';
 
 import { CaseTimeline } from './CaseTimeline';
 
-import { splitAppeal1 } from '../../test/data/appeals';
-import { splitAppealTask } from '../../test/data/tasks';
+import { splitAppeal } from '../../test/data/appeals';
+import { splitAppealTask, amaTasksSplit } from '../../test/data/tasks';
 import { queueWrapper as Wrapper } from '../../test/data/stores/queueStore';
 
 export default {
@@ -18,7 +18,7 @@ export default {
 };
 
 const Template = (args) => (
-  <Wrapper>
+  <Wrapper {...args} >
     <CaseTimeline {...args} />
   </Wrapper>
 );
@@ -26,9 +26,12 @@ const Template = (args) => (
 export const CompleteSplitAppealTask = Template.bind({});
 CompleteSplitAppealTask.args = {
   appeal: {
-    ...splitAppeal1
+    ...splitAppeal
   },
-  editNodDateEnabled: false,
-  statusSplit: true,
-  tasks: [splitAppealTask]
+  tasks: [splitAppealTask],
+  queue: {
+    amaTasks: {
+      [splitAppealTask.uniqueId]: splitAppealTask
+    }
+  }
 };

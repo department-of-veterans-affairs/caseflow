@@ -253,7 +253,7 @@ export const amaAppealHearingData = {
 export const splitAppeal = {
   ...appealData,
   id: '541',
-  externalId: '2afefa82-5736-47c8-a977-0b4b8586f73e',
+  externalId: 'c482facd-e8d1-4dac-8a2f-7190be5aa282',
   hearings: [],
 };
 

@@ -18,14 +18,14 @@ export default {
 
 const Template = (args) => <SplitAppealBannerAlert {...args} />;
 
-export const Default = Template.bind({});
-Default.args = {
+export const SuccessBanner = Template.bind({});
+SuccessBanner.args = {
   splitAppealSuccess: true,
   workflow: true,
 };
 
 export const ErrorBanner = Template.bind({});
-Default.args = {
+ErrorBanner.args = {
   splitAppealSuccess: false,
   workflow: true,
 };
