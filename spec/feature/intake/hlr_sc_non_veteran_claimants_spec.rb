@@ -50,7 +50,7 @@ feature "Higher-Level Review", :all_dbs do
     }
   end
 
-  let(:new_organizational_claimant) do
+  let(:new_organization_claimant) do
     {
       organization_name: "Claimant Inc",
       address1: "123 Main St",
@@ -110,13 +110,13 @@ feature "Higher-Level Review", :all_dbs do
   end
 
   def add_new_organization_claimant
-    fill_in "Organization name", with: new_organizational_claimant[:organization_name]
-    fill_in "Street address 1", with: new_organizational_claimant[:address1]
-    fill_in "City", with: new_organizational_claimant[:city]
-    fill_in("State", with: new_organizational_claimant[:state]).send_keys :enter
-    fill_in("Zip", with: new_organizational_claimant[:zip]).send_keys :enter
-    fill_in("Country", with: new_organizational_claimant[:country]).send_keys :enter
-    fill_in "Claimant email", with: new_organizational_claimant[:email]
+    fill_in "Organization name", with: new_organization_claimant[:organization_name]
+    fill_in "Street address 1", with: new_organization_claimant[:address1]
+    fill_in "City", with: new_organization_claimant[:city]
+    fill_in("State", with: new_organization_claimant[:state]).send_keys :enter
+    fill_in("Zip", with: new_organization_claimant[:zip]).send_keys :enter
+    fill_in("Country", with: new_organization_claimant[:country]).send_keys :enter
+    fill_in "Claimant email", with: new_organization_claimant[:email]
   end
 
   def start_intake
@@ -151,15 +151,39 @@ feature "Higher-Level Review", :all_dbs do
 
   def verify_individual_claimant_on_add_issues
     expect(page).to have_content("Add / Remove Issues")
+    # Fix the attorney string for the test
+    if claimant_type == "Attorney (previously or currently)"
+      claimant_type = "Attorney"
+    end
     claimant_name = "#{new_individual_claimant[:first_name]} #{new_individual_claimant[:last_name]}"
     claimant_string = "#{claimant_name}, #{claimant_type}"
     expect(page).to have_content(claimant_string)
   end
 
-  def verify_organizational_claimant_on_add_issues
+  def verify_organization_claimant_on_add_issues
     expect(page).to have_content("Add / Remove Issues")
-    claimant_string = "#{new_organizational_claimant[:organization_name]}, #{claimant_type}"
+    # Fix the attorney string for the test
+    if claimant_type == "Attorney (previously or currently)"
+      claimant_type = "Attorney"
+    end
+    claimant_string = "#{new_organization_claimant[:organization_name]}, #{claimant_type}"
     expect(page).to have_content(claimant_string)
+  end
+
+  def advance_to_add_unlisted_claimant_page
+    start_intake
+    visit "/intake/"
+    click_claimant_not_listed
+    click_intake_continue
+
+    # Select claimant type specified by each test type
+    fill_in("Relationship to the Veteran", with: claimant_type).send_keys :enter
+  end
+
+  def add_existing_attorney(attorney)
+    fill_in "Claimant's name", with: attorney.name
+    find("div", class: "cf-select__option", text: attorney.name).click
+    # select_claimant(0)
   end
 
   shared_examples "HLR/SC intake unlisted claimant" do
@@ -182,6 +206,66 @@ feature "Higher-Level Review", :all_dbs do
       expect(page_options_text).to eq(relationship_dropdown_options)
     end
 
+    context("attorney unlisted claimant") do
+      let(:claimant_type) do
+        attorney_claimant_type
+      end
+
+      context("attorney claimant Name not listed") do
+        scenario "unlisted claimant with relationship attorney with Name not listed with party type individual" do
+          advance_to_add_unlisted_claimant_page
+
+          # Unidentified attorney
+          fill_in("Claimant's name", with: "Name not listed")
+          find("div", class: "cf-select__option", text: "Name not listed").click
+          select_individual_party_type
+          add_new_individual_claimant
+          click_button "Continue to next step"
+          expect(page).to have_content("Review and confirm claimant information")
+          expect(page).to have_content("Intake does not have a Form 21-22")
+          click_button "Confirm"
+          verify_individual_claimant_on_add_issues
+        end
+
+        scenario "unlisted claimant with relationship attorney with Name not listed with party type organization" do
+          advance_to_add_unlisted_claimant_page
+          # Unidentified attorney
+          fill_in("Claimant's name", with: "Name not listed")
+          find("div", class: "cf-select__option", text: "Name not listed").click
+          select_organization_party_type
+          add_new_organization_claimant
+          click_button "Continue to next step"
+          expect(page).to have_content("Review and confirm claimant information")
+          expect(page).to have_content("Intake does not have a Form 21-22")
+          click_button "Confirm"
+          verify_organization_claimant_on_add_issues
+        end
+      end
+
+      context("existing attorney") do
+        let(:attorneys) do
+          Array.new(15) { create(:bgs_attorney) }
+        end
+
+        let(:attorney) do
+          attorneys.last
+        end
+
+        scenario "unlisted claimant with relationship attorney that already exists" do
+          advance_to_add_unlisted_claimant_page
+          add_existing_attorney(attorney)
+          click_button "Continue to next step"
+          expect(page).to have_content("Review and confirm claimant information")
+          match_string = attorney.address[:address_line_1]
+          expect(page.body).to match(%r{#{match_string}}i)
+          expect(page).to have_content("Intake does not have a Form 21-22")
+          click_button "Confirm"
+          expect(page).to have_content("Add / Remove Issues")
+          expect(page).to have_content("#{attorney.name}, Attorney")
+        end
+      end
+    end
+
     context("other unlisted claimant") do
       let(:claimant_type) do
         other_claimant_type
@@ -194,7 +278,7 @@ feature "Higher-Level Review", :all_dbs do
 
         click_intake_continue
         # Select other from the dropdown
-        fill_in("Relationship to the Veteran", with: other_claimant_type).send_keys :enter
+        fill_in("Relationship to the Veteran", with: claimant_type).send_keys :enter
         select_individual_party_type
         add_new_individual_claimant
         click_does_not_have_va_form
@@ -215,7 +299,7 @@ feature "Higher-Level Review", :all_dbs do
         click_intake_continue
 
         # Select other from the dropdown
-        fill_in("Relationship to the Veteran", with: other_claimant_type).send_keys :enter
+        fill_in("Relationship to the Veteran", with: claimant_type).send_keys :enter
 
         select_organization_party_type
         add_new_organization_claimant
@@ -226,7 +310,7 @@ feature "Higher-Level Review", :all_dbs do
         expect(page).to have_content("Review and confirm claimant information")
         click_button "Confirm"
 
-        verify_organizational_claimant_on_add_issues
+        verify_organization_claimant_on_add_issues
       end
     end
 
@@ -274,7 +358,7 @@ feature "Higher-Level Review", :all_dbs do
         expect(page).to have_content("Review and confirm claimant information")
         click_button "Confirm"
 
-        verify_organizational_claimant_on_add_issues
+        verify_organization_claimant_on_add_issues
       end
     end
 
@@ -398,8 +482,6 @@ feature "Higher-Level Review", :all_dbs do
       visit "/intake/add_claimant"
       continue_button = find("button", text: "Continue to next step")
       fill_in("Relationship to the Veteran", with: attorney_claimant_type).send_keys :enter
-      # Uh oh this doesn't work for this searchable dropdown
-      # fill_in("Claimant's name", with: "Name not listed").send_keys :enter
       fill_in("Claimant's name", with: "Name not listed")
       find("div", class: "cf-select__option", text: "Name not listed").click
       expect(continue_button[:disabled]).to eq "true"

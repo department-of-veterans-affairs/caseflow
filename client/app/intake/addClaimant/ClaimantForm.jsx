@@ -45,7 +45,6 @@ const suffixDivLabelStyle = css({
   }
 });
 
-// TODO: This doesn't work exactly how it should. Searching is awkward and text matching doesn't sync up with backend
 // We'll show all items returned from the backend instead of using default substring matching
 const filterOption = () => true;
 
