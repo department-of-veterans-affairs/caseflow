@@ -60,7 +60,8 @@ class Test::UsersController < ApplicationController
       links: {
         styleguide: "/styleguide",
         stats: "/stats",
-        jobs: "/jobs"
+        jobs: "/jobs",
+        admin: "/admin"
       }
     }
   ].freeze
