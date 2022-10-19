@@ -52,18 +52,18 @@ class SplitAppealController < ApplicationController
         original_request_issue_id = id
         original_request_issue = RequestIssue.find_by_id(original_request_issue_id)
         original_request_issue.update!(
-                split_issue_status: Constants.TASK_STATUSES.on_hold,
-                updated_at: Time.zone.now.utc
-              )
+          split_issue_status: Constants.TASK_STATUSES.on_hold,
+          updated_at: Time.zone.now.utc
+        )
       end
 
       split_request_issue_ids.each do |id|
         split_request_issue_id = id
         split_request_issue = RequestIssue.find_by_id(split_request_issue_id)
         split_request_issue.update!(
-                split_issue_status: Constants.TASK_STATUSES.in_progress,
-                updated_at: Time.zone.now.utc
-              )
+          split_issue_status: Constants.TASK_STATUSES.in_progress,
+          updated_at: Time.zone.now.utc
+        )
       end
     end
   end
