@@ -319,7 +319,7 @@ class AppealsController < ApplicationController
   def get_notifications_from_params(params)
     # Retrieve notifications based on query parameters and current page
     @notifications = Notification.where(appeals_id: params[:appeals_id])
-    @queried_notifications = @notifications.where(params.to_h.except(:appeals_id, :recipient_info, :status, :page))
+    @queried_notifications = @notifications.where(params.to_h.except(:appeals_id, :recipient_information, :status, :page))
 
     # Check for recipient info query parameter
     if params[:recipient_information].present?
