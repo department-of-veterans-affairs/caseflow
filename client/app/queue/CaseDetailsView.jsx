@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { bindActionCreators } from 'redux';
 import { connect, useSelector } from 'react-redux';
 import { css } from 'glamor';
@@ -454,3 +455,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(CaseDetailsView);
+/* eslint-enable max-lines */
