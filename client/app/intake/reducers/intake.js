@@ -67,7 +67,8 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
     requestStatus: {
       fileNumberSearch: REQUEST_STATE.NOT_STARTED,
       cancel: REQUEST_STATE.NOT_STARTED
-    }
+    },
+    splitAppeal: null
   }, data.serverIntake)
 );
 
@@ -217,6 +218,18 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
   case ACTIONS.TOGGLE_CANCEL_MODAL:
     return update(state, {
       $toggle: ['cancelModalVisible']
+    });
+  case ACTIONS.SPLIT_APPEAL_SUCCESS:
+    return update(state, {
+      splitAppeal: {
+        $set: REQUEST_STATE.SUCCEEDED
+      }
+    });
+  case ACTIONS.SPLIT_APPEAL_FAILURE:
+    return update(state, {
+      splitAppeal: {
+        $set: REQUEST_STATE.FAILED
+      }
     });
   default:
     return state;

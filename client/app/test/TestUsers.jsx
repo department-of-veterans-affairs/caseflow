@@ -114,7 +114,7 @@ export default function TestUsers(props) {
     [filteredUserOptions]
   );
 
-  const featureOptions = props.featuresList.map((feature) => ({
+  const featureOptions = props.featuresList.sort().map((feature) => ({
     value: feature,
     label: feature,
     tagId: feature

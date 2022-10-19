@@ -267,7 +267,7 @@ export default class DailyDocket extends React.Component {
               onClickRemoveHearingDay={this.props.onClickRemoveHearingDay}
             />
           </div>
-          <div className="cf-push-right">
+          <div className="cf-push-right" tabIndex={0}>
             {!user.userVsoEmployee && (
               <React.Fragment>
                 VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName}

@@ -17,6 +17,7 @@
   "CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
   "CASE_LIST_TABLE_APPEAL_STATUS_COLUMN_TITLE": "Status",
   "CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE": "Types",
+  "CASE_LIST_TABLE_APPEAL_NUMBER_ISSUES_COLUMN_TITLE": "Number of Issues",
   "CASE_LIST_TABLE_OFFICE_COLUMN_TITLE": "Office",
   "CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE": "Decision Date",
   "CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE": "Days waiting",
@@ -880,6 +881,8 @@
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
   "CORRECT_REQUEST_ISSUES_SAVE": "Save",
+  "CORRECT_REQUEST_ISSUES_SPLIT_APPEAL": "Split appeal",
+
   "CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TITLE": "Remove review?",
   "CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TEXT": "This will remove the review and cancel all the End Products associated with it.",
   "CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TITLE": "Withdraw appeal and cancel all tasks",
@@ -1273,7 +1276,7 @@
   "BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE": "You have successfully returned %s's case to Education Service",
   "BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE": "Return appeal to VHA Caregiver Support Program",
   "BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_BODY": "If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA Caregiver Support Program.",
-  "BVA_INTAKE_RETURN_TO_CAREGIVER_CONFIRMATION_TITLE": "You have successfully returned %s's case to Caregiver Support Program",
+  "BVA_INTAKE_RETURN_TO_CAREGIVER_CONFIRMATION_TITLE": "You have successfully returned %s's case to VHA Caregiver Support Program",
   "VHA_PLACE_CUSTOM_HOLD_INVALID_VALUE": "The maximum allowable on hold time is 30 days",
   "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_MODAL_TITLE": "Return to Program Office",
   "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_TITLE": "You have successfully returned this appeal to the Program Office",
@@ -1332,5 +1335,20 @@
     }
   },
   "DEGRADED_SYSTEM_SINGULAR": "is experiencing issues. Caseflow performance and availability may be impacted.",
-  "DEGRADED_SYSTEM_PLURAL": "are experiencing issues. Caseflow performance and availability may be impacted."
+  "DEGRADED_SYSTEM_PLURAL": "are experiencing issues. Caseflow performance and availability may be impacted.",
+  "SPLIT_APPEAL_CREATE_TITLE": "Create new appeal stream",
+  "SPLIT_APPEAL_CREATE_SUBHEAD": "You can move multiple issues to the new appeal stream as long as the issues can be decided on together. If you need to split the appeal further, you can go through this process with the remaining issues.",
+  "SPLIT_APPEAL_CREATE_REASONING_TITLE": "Please select why this appeal is being split",
+  "SPLIT_APPEAL_CREATE_SELECT_ISSUES_TITLE": "Please select issues(s) to move to the new appeal stream",
+  "SPLIT_APPEAL_REVIEW_TITLE": "Review and confirm new appeal stream",
+  "SPLIT_APPEAL_REVIEW_SUBHEAD": "Case history, POA, and Veteran information will be duplicated on the new appeal.",
+  "SPLIT_APPEAL_REVIEW_REASONING_TITLE": "Reason for new appeal stream:",
+  "REVIEW_SPLIT_APPEAL_CREATE_SUBHEAD": "Case history, POA, and Veteran information will be deplicated on the new appeal.",
+  "TABLE_ORIGINAL_APPEAL": "Original Appeal Stream",
+  "TABLE_NEW_APPEAL": "New Appeal Stream",
+  "TABLE_VETERAN" : "Veteran",
+  "TABLE_DOCKET_NUMBER" : "Docket Number",
+  "TABLE_REVIEW_OPTION" : "Review Option",
+  "TABLE_ISSUE" : "Issue(s)",
+  "APPELLANT": "Appellant"
 }
