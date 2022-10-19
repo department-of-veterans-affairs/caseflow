@@ -51,7 +51,7 @@ class AppealsController < ApplicationController
   def fetch_notification_list
     @@results_per_page = 15
     @params = params.permit(
-      :appeals_id, :event_type, :status, :notification_type, :recipient_info, :page
+      :appeals_id, :event_type, :status, :notification_type, :recipient_information, :page
     )
     results = get_notifications_from_params(@params)
     render json: results
@@ -322,9 +322,9 @@ class AppealsController < ApplicationController
     @queried_notifications = @notifications.where(params.to_h.except(:appeals_id, :recipient_info, :status, :page))
 
     # Check for recipient info query parameter
-    if params[:recipient_info].present?
-      recipient_email = @queried_notifications.where(recipient_email: params[:recipient_info])
-      recipient_phone_number = @queried_notifications.where(recipient_phone_number: params[:recipient_info])
+    if params[:recipient_information].present?
+      recipient_email = @queried_notifications.where(recipient_email: params[:recipient_information])
+      recipient_phone_number = @queried_notifications.where(recipient_phone_number: params[:recipient_information])
     end
 
     # Check for status query parameter
@@ -334,12 +334,12 @@ class AppealsController < ApplicationController
     end
 
     # Retrieve notifications matching recipient info query parameter if it is an email
-    if recipient_email != [] && params[:recipient_info].present?
+    if recipient_email != [] && params[:recipient_information].present?
       @queried_notifications = @queried_notifications.where(recipient_email: params[:recipient_info])
     end
 
     # Retrieve notifications matching recipient info query parameter if it is a phone number
-    if recipient_phone_number != [] && params[:recipient_info].present?
+    if recipient_phone_number != [] && params[:recipient_information].present?
       @queried_notifications = @queried_notifications.where(recipient_phone_number: params[:recipient_info])
     end
 
