@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-RSpec.describe SplitAppealController, type: 'request' do
+RSpec.describe SplitAppealController, type: :controller do
     describe "POST split_appeal" do
       let(:ssc_user) { create(:user, roles: '{Hearing Prep,Reader,SPLTAPPLLANNISTER}')}
 
@@ -21,7 +21,8 @@ RSpec.describe SplitAppealController, type: 'request' do
         end
 
         it "creates a new split appeal" do 
-            expect { post "/appeals/#{valid_params[:appeal_id]}/split", params: valid_params }.to change(Appeal, :count).by(+1)
+            post :split_appeal, params: valid_params
+            expect(Appeal.count).to be(+1)
             expect(response).to have_http_status :success
         end
       end
@@ -40,8 +41,9 @@ RSpec.describe SplitAppealController, type: 'request' do
         end
 
         it "doesn't create the new split appeal" do
-            post "/appeals/#{invalid_params[:appeal_id]}/split", params: invalid_params 
+            post :split_appeal, params: invalid_params 
             expect Appeal.count == 0
+            expect(response).to have_http_status :success
         end
       end
 
