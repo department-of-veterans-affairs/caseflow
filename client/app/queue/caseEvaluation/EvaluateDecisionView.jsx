@@ -29,6 +29,7 @@ import {
   marginTop,
   paddingLeft,
   fullWidth,
+  redText,
   VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
   JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH
@@ -42,6 +43,9 @@ const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });
 const hrStyling = css(marginTop(2), marginBottom(3));
 const subH2Styling = css(paddingLeft(1), { lineHeight: 2 });
+const caseTimelineStyling = css({ display: 'flex' })
+const caseTypeStyling = css({ width: '15%' })
+const attorneyAssignedStyling = css({ width: '30%' })
 
 const timelinessOpts = Object.entries(JUDGE_CASE_REVIEW_OPTIONS.TIMELINESS).map(([value, displayText]) => ({
   displayText,
@@ -184,6 +188,9 @@ class EvaluateDecisionView extends React.PureComponent {
 
     const dateAssigned = moment(task.previousTaskAssignedOn);
     const decisionSubmitted = moment(task.assignedOn);
+    const caseType = task.caseType;
+    const aod = task.aod;
+    const cavc = caseType === 'Court Remand';
     const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
 
     return (
@@ -225,7 +232,20 @@ class EvaluateDecisionView extends React.PureComponent {
           </>
         )}
         <h2 {...headerStyling} ref={this.timelinessLabel}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
-        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</b>: {dateAssigned.format('M/D/YY')}
+        <div {...caseTimelineStyling} >
+          <span {...caseTypeStyling}>
+            <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_CASE_TYPE}</b>: 
+            { aod && <span {...redText}> AOD</span> }
+            { cavc && <span {...redText}> CAVC</span> }
+            { !aod && !cavc && <span> {caseType}</span> }
+          </span>
+          <span {...attorneyAssignedStyling}>
+            <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_TOTAL_DAYS_ATTORNEY_ASSIGNED}</b>: {dateAssigned.format('M/D/YY')}
+          </span>
+          <span>
+            <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>: {daysWorked}
+          </span>
+        </div>
         <br />
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}</b>: {decisionSubmitted.format('M/D/YY')}
         <br />
