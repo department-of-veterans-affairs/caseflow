@@ -83,10 +83,10 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
       formData.state = '';
     }
 
-    // Adjust the claimant type for Healthcare Providers so it will be contantized properly
+    // Adjust the claimant type for Healthcare Providers so it will be constantized properly
     if (formData.relationship === 'Healthcare Provider' || formData.relationship === 'healthcare_provider') {
-      // formData.relationship = 'HealthcareProvider';
-      formData.claimantType = 'HealthcareProvider';
+      formData.relationship = 'Healthcare Provider';
+      intakeData.claimantType = 'HealthcareProvider';
     }
 
     dispatch(editClaimantInformation({ formData }));

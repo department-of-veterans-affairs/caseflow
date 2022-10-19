@@ -133,7 +133,7 @@ class DecisionReviewIntake < Intake
     case claimant_class_name
     when "VeteranClaimant"
       veteran.participant_id
-    when "OtherClaimant"
+    when "OtherClaimant" || "HealthcareProvider"
       ""
     else
       request_params[:claimant]

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-feature "Higher-Level Review", :all_dbs do
+feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_dbs do
   include IntakeHelpers
 
   let(:veteran_file_number) { "123412345" }
@@ -183,7 +183,6 @@ feature "Higher-Level Review", :all_dbs do
   def add_existing_attorney(attorney)
     fill_in "Claimant's name", with: attorney.name
     find("div", class: "cf-select__option", text: attorney.name).click
-    # select_claimant(0)
   end
 
   shared_examples "HLR/SC intake unlisted claimant" do
