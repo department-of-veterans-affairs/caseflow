@@ -515,6 +515,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       )
     end
 
+    def first_time_logging_in?(session)
+      user = User.find_by_css_id(session["user"]["css_id"])
+
+      return true unless user.last_login_at
+
+      false
+    end
+
     def from_session(session)
       user_session = session["user"] ||= authentication_service.default_user_session
 
