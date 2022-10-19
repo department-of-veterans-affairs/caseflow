@@ -88,7 +88,6 @@ feature "Higher-Level Review", :all_dbs do
     ]
   end
 
-  # TODO: move this to intake helpers
   def click_claimant_not_listed
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -99,7 +98,6 @@ feature "Higher-Level Review", :all_dbs do
     end
   end
 
-  # TODO: move this to intake helpers
   def add_new_individual_claimant
     fill_in "First name", with: new_individual_claimant[:first_name]
     fill_in "Last name", with: new_individual_claimant[:last_name]
