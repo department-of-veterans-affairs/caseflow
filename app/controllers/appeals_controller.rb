@@ -335,12 +335,12 @@ class AppealsController < ApplicationController
 
     # Retrieve notifications matching recipient info query parameter if it is an email
     if recipient_email != [] && params[:recipient_information].present?
-      @queried_notifications = @queried_notifications.where(recipient_email: params[:recipient_info])
+      @queried_notifications = @queried_notifications.where(recipient_email: params[:recipient_information])
     end
 
     # Retrieve notifications matching recipient info query parameter if it is a phone number
     if recipient_phone_number != [] && params[:recipient_information].present?
-      @queried_notifications = @queried_notifications.where(recipient_phone_number: params[:recipient_info])
+      @queried_notifications = @queried_notifications.where(recipient_phone_number: params[:recipient_information])
     end
 
     # Retrieve notifications matchcing status query parameter for emails
