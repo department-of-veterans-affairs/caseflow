@@ -5,7 +5,6 @@ import queueReducer, { initialState } from './reducers';
 import QueueApp from './QueueApp';
 import ReduxBase from '../components/ReduxBase';
 import { createBrowserHistory } from 'history';
-import CaseTitle from './CaseTitle';
 
 const history = createBrowserHistory();
 

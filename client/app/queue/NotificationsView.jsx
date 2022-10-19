@@ -32,6 +32,7 @@ import {
   setHearingDay,
 } from './uiReducer/uiActions';
 import CaseTitleDetails from './CaseTitleDetails';
+// import QueueTable from './QueueTable';
 
 
 
@@ -77,12 +78,14 @@ export const NotificationsView = (props) => {
           appealId={appealId}
           redirectUrl={window.location.pathname}
           hideOTSection
-          // userCanAccessReader={props.userCanAccessReader}
+          userCanAccessReader={props.userCanAccessReader}
         />
         <div {...sectionGap}>
           <p>VA Notify sent these status notifications to the Appellant about their case.</p>
 
         </div>
+
+        {/* <QueueTable /> */}
 
       </AppSegment>
 

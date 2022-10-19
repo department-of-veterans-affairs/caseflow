@@ -163,7 +163,7 @@ export const CaseDetailsView = (props) => {
 
   const doPulacCerulloReminder = useMemo(
     () => needsPulacCerulloAlert(appeal, tasks),
-    [appeal, tasks],
+    [appeal, tasks]
   );
 
   const appealIsDispatched = isAppealDispatched(appeal);
@@ -423,10 +423,7 @@ CaseDetailsView.propTypes = {
   stopPollingHearing: PropTypes.func,
   substituteAppellant: PropTypes.object,
   vsoVirtualOptIn: PropTypes.bool
-  
-  
 };
-
 const mapStateToProps = (state) => ({
   scheduledHearingId: state.components.scheduledHearing.externalId,
   pollHearing: state.components.scheduledHearing.polling,
