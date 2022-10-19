@@ -8,7 +8,7 @@ class AppealsController < ApplicationController
     :index,
     :power_of_attorney,
     :show_case_list,
-    :show_notification_list,
+    :get_notification_list,
     :show,
     :veteran,
     :most_recent_hearing
