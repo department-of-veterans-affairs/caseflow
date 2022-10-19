@@ -94,7 +94,7 @@ describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
     clickSubmissionButton(buttonText);
 
     expect(getReceivedInstructions()).toBe(
-      `**Reason for cancellation:**\n${additionalContextText}`
+      `##### REASON FOR CANCELLATION:\n${additionalContextText}`
     );
   });
 });
@@ -137,7 +137,7 @@ describe('Whenever RPO returns an appeal to EMO', () => {
     clickSubmissionButton(buttonText);
 
     expect(getReceivedInstructions()).toBe(
-      `**Reason for cancellation:**\n${additionalContextText}`
+      `##### REASON FOR CANCELLATION:\n${additionalContextText}`
     );
   });
 });

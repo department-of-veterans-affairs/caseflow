@@ -512,14 +512,14 @@ class CompleteTaskModal extends React.Component {
         formattedInstructions.push('### CAMO Notes:\n');
       }
 
-      formattedInstructions.push(`\n##### STATUS:**\n${locationLabel}\n`);
+      formattedInstructions.push(`\n##### STATUS:\n${locationLabel}\n`);
 
       if (instructions) {
-        formattedInstructions.push(`\n\n##### DETAILS:\n${instructions}\n`);
+        formattedInstructions.push(`\n##### DETAILS:\n${instructions}\n`);
       }
 
       if (reviewNotes) {
-        formattedInstructions.push(`\n\n### ${reviewNotes} Notes:\n${previousInstructions}\n`);
+        formattedInstructions.push(`\n### ${reviewNotes} Notes:\n${previousInstructions}\n`);
       }
     } else if (this.props.modalType.includes('for_review')) {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
