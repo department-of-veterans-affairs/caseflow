@@ -258,7 +258,7 @@ const FormGenerator = (props) => {
   };
   const showInvalidVeteranError = !props.veteranValid && VBMS_BENEFIT_TYPES.includes(props.benefitType);
 
-  const showVhaRequirementBanner = !(isAppeal(props.formName)) && !props.userIsVhaStaff;
+  const showVhaRequirementBanner = !isAppeal(props.formName) && !props.userIsVhaStaff;
 
   return (
     <div>
