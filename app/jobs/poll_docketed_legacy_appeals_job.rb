@@ -9,6 +9,7 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
   LEGACY_DOCKETED = "INNER JOIN priorloc ON brieff.bfkey = priorloc.lockey WHERE brieff.bfac IN ('1','3','7') AND locstto = '01' AND trunc(locdout) = trunc(sysdate)"
 
   def perform
+    RequestStore.store[:current_user] = User.system_user
     vacols_ids = most_recent_docketed_appeals(LEGACY_DOCKETED)
     filtered_vacols_ids = filter_duplicate_legacy_notifications(vacols_ids)
     send_legacy_notifications(filtered_vacols_ids)
