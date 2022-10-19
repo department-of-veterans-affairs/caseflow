@@ -22,7 +22,8 @@ class SplitCorrelationTable < CaseflowRecord
       split_request_issue_ids: create_split_record[11],
       updated_at: create_split_record[12],
       updated_by_id: create_split_record[13],
-      working_split_status: create_split_record[14])
+      working_split_status: create_split_record[14]
+    )
 
     original_request_issue_ids.each do |id|
       original_request_issue_id = id
