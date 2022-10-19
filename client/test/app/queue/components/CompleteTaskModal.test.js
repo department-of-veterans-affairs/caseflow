@@ -112,8 +112,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Status:**\nCorrect documents have been successfully added\n\n' +
-        '**CAMO Notes:**\nCAMO -> BVA Intake'
+        '\n##### STATUS:\nCorrect documents have been successfully added\n' +
+        '\n##### DETAILS:\nCAMO -> BVA Intake\n'
       );
     });
 
@@ -136,10 +136,12 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Status:**\nCorrect documents have been successfully added\n\n' +
-        '**CAMO Notes:**\nCAMO -> BVA Intake\n\n' +
-        '**Program Office Notes:**\nDocuments for this appeal are stored in VBMS.\n\n' +
-        '**Detail:**\n PO back to CAMO!\n\n'
+        '### CAMO Notes:\n' +
+        '\n##### STATUS:\nCorrect documents have been successfully added\n' +
+        '\n##### DETAILS:\nCAMO -> BVA Intake\n' +
+        '\n### Program Office Notes:' +
+        '\n##### STATUS:\nDocuments for this appeal are stored in VBMS.\n' +
+        '\n##### DETAILS:\n PO back to CAMO!\n\n'
       );
     });
   });
@@ -193,8 +195,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '**Status:**\nDocuments for this appeal are stored in Centralized Mail Portal.' +
-        '\n\n**Detail:**\nVHA PO -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Centralized Mail Portal.' +
+        '\n\n##### DETAILS:\nVHA PO -> BVA Intake\n'
       );
     });
 
@@ -224,8 +226,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '**Status:**\nDocuments for this appeal are stored in Other Source.' +
-        '\n\n**Detail:**\nPO -> CAMO\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Other Source.' +
+        '\n\n##### DETAILS:\nPO -> CAMO\n'
       );
     });
   });
@@ -270,8 +272,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '**Status:**\nDocuments for this appeal are stored in Centralized Mail Portal.' +
-        '\n\n**Detail:**\nVHA PO -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Centralized Mail Portal.' +
+        '\n\n##### DETAILS:\nVHA PO -> BVA Intake\n'
       );
     });
 
@@ -301,8 +303,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '**Status:**\nDocuments for this appeal are stored in Other Source.' +
-        '\n\n**Detail:**\nPO -> CAMO\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Other Source.' +
+        '\n\n##### DETAILS:\nPO -> CAMO\n'
       );
     });
   });
@@ -348,8 +350,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '**Status:**\nDocuments for this appeal are stored in VBMS.' +
-        '\n\n**Detail:**\nCAREGIVER -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in VBMS.' +
+        '\n\n##### DETAILS:\nCAREGIVER -> BVA Intake\n'
       );
     });
 
@@ -381,8 +383,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '**Status:**\nDocuments for this appeal are stored in Other Source.' +
-        '\n\n**Detail:**\nCAREGIVER -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Other Source.' +
+        '\n\n##### DETAILS:\nCAREGIVER -> BVA Intake\n'
       );
     });
   });
@@ -428,8 +430,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '**Status:**\nDocuments for this appeal are stored in Centralized Mail Portal.' +
-        '\n\n**Detail:**\nEMO -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Centralized Mail Portal.' +
+        '\n\n##### DETAILS:\nEMO -> BVA Intake\n'
       );
     });
 
@@ -459,8 +461,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '**Status:**\nDocuments for this appeal are stored in Other Source.' +
-        '\n\n**Detail:**\nEMO -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Other Source.' +
+        '\n\n##### DETAILS:\nEMO -> BVA Intake\n'
       );
     });
   });
@@ -506,8 +508,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '**Status:**\nDocuments for this appeal are stored in Centralized Mail Portal.' +
-        '\n\n**Detail:**\nRPO -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Centralized Mail Portal.' +
+        '\n\n##### DETAILS:\nRPO -> BVA Intake\n'
       );
     });
 
@@ -537,8 +539,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '**Status:**\nDocuments for this appeal are stored in Other Source.' +
-        '\n\n**Detail:**\nRPO -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Other Source.' +
+        '\n\n##### DETAILS:\nRPO -> BVA Intake\n'
       );
     });
   });
@@ -576,7 +578,7 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Reason for return:**\n' +
+        '\n##### REASON FOR RETURN:\n' +
         'EMO Return to Board Intake'
       );
     });
@@ -619,7 +621,7 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Reason for return:**\nNot PCAFC related'
+        '\n##### REASON FOR RETURN:\nNot PCAFC related'
       );
     });
 
@@ -641,8 +643,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Reason for return:**\nNot PCAFC related' +
-        '\n\n**Detail:**\nAdditional context'
+        '\n##### REASON FOR RETURN:\nNot PCAFC related' +
+        '\n\n##### DETAILS:\nAdditional context'
       );
     });
 
@@ -666,7 +668,7 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Reason for return:**\nOther - Reasoning for the return'
+        '\n##### REASON FOR RETURN:\nOther - Reasoning for the return'
       );
     });
 
@@ -695,8 +697,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Reason for return:**\nOther - Reasoning for the return' +
-        '\n\n**Detail:**\nAdditional context'
+        '\n##### REASON FOR RETURN:\nOther - Reasoning for the return' +
+        '\n\n##### DETAILS:\nAdditional context'
       );
     });
   });
