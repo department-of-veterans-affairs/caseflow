@@ -10,6 +10,6 @@ class Api::V1::MpiController < Api::ApplicationController
   end
 
   def allowed_params
-    params.permit(:veterans_id, :deceasedInd, :deceasedTime)
+    params.permit(:veterans_id, :deceased_ind, :deceased_time)
   end
 end
