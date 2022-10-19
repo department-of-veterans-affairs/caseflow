@@ -126,8 +126,7 @@ export const defaultFormValues = {
   addressLine2: '',
   addressLine3: '',
   city: '',
-  // TODO Might change this since the database doesn't allow nulls for state
-  state: null,
+  state: '',
   zip: '',
   country: '',
   emailAddress: '',

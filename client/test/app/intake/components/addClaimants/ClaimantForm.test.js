@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, render, waitFor, fireEvent, waitForElement } from '@testing-library/react';
+import { screen, render, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
 import { axe } from 'jest-axe';
@@ -10,7 +10,6 @@ import { ClaimantForm } from 'app/intake/addClaimant/ClaimantForm';
 import { useClaimantForm } from 'app/intake/addClaimant/utils';
 import { fillForm, relationshipOpts, relationshipOptsHlrSc } from './testUtils';
 import { ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
-import { Simulate } from 'react-dom/test-utils';
 
 const FormWrapper = ({ children, defaultValues }) => {
   const methods = useClaimantForm({ defaultValues });

@@ -76,8 +76,8 @@ export const ClaimantForm = ({
   const partyType = (showPartyType && watchPartyType) || (dependentRelationship && 'individual');
   const isOrgPartyType = watchPartyType === 'organization';
   const isIndividualPartyType = watchPartyType === 'individual';
-  // Look into use effect to set this instead of passing it as a param?
-  const isHLROrSCForm = formType === 'higher_level_review' || formType === 'supplemental_claim';
+  const isHLROrSCForm = formType === Constants.FORM_TYPES.HIGHER_LEVEL_REVIEW.key ||
+    formType === Constants.FORM_TYPES.SUPPLEMENTAL_CLAIM.key;
 
   const relationshipOpts = [
     { value: 'attorney', label: 'Attorney (previously or currently)' },
@@ -102,8 +102,7 @@ export const ClaimantForm = ({
     }
   }, [watchRelationship]);
 
-  // This is so freaking stupid why do I have to do this to set an initial value
-  // Look at useMemo instead of useEffect
+  // Set the initial value of the country field to USA if it's an hlr/sc form
   useEffect(() => {
     if (isHLROrSCForm) {
       setValue('country', 'USA');
@@ -141,7 +140,6 @@ export const ClaimantForm = ({
               <FieldDiv>
                 <SearchableDropdown
                   {...rest}
-                  // Unsure if props.POA is ever used since the AddPoaPage exists as a seperate thing.
                   label={`${props.POA ? 'Representative' : 'Claimant'}'s name`}
                   filterOption={filterOption}
                   async={asyncFn}
@@ -259,7 +257,6 @@ export const ClaimantForm = ({
               {...methods}
               isOrgPartyType={isOrgPartyType}
               isIndividualPartyType={isIndividualPartyType || dependentRelationship}
-              // TODO: passing this around everywhere is kind of gross
               isHLROrSCForm={isHLROrSCForm}
             />
             <FieldDiv>
