@@ -48,7 +48,7 @@ class AppealsController < ApplicationController
     end
   end
 
-  def show_notification_list
+  def get_notification_list
     @@results_per_page = 15
     @params = params.permit(
       :appeals_id, :event_type, :email_notification_status, :sms_notification_status,
