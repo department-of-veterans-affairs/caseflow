@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_06_175355) do
+ActiveRecord::Schema.define(version: 2022_09_20_122149) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1109,13 +1109,13 @@ ActiveRecord::Schema.define(version: 2022_10_06_175355) do
     t.string "appeals_type", null: false, comment: "Type of Appeal"
     t.datetime "created_at", comment: "Timestamp of when Noticiation was Created"
     t.boolean "email_enabled", default: true, null: false
-    t.string "email_notification_external_id"
+    t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
     t.string "event_type", null: false, comment: "Type of Event"
     t.text "notification_content", comment: "Full Text Content of Notification"
     t.string "notification_type", null: false, comment: "Type of Notification that was created"
-    t.datetime "notified_at", comment: "Time Notification was created"
+    t.datetime "notified_at", null: false, comment: "Time Notification was created"
     t.string "participant_id", comment: "ID of Participant"
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
