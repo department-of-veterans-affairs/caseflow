@@ -2,8 +2,6 @@
 
 require "securerandom"
 
-require "securerandom"
-
 ##
 # An appeal filed by a Veteran or appellant to the Board of Veterans' Appeals for VA decisions on claims for benefits.
 # This is the type of appeal created by the Veterans Appeals Improvement and Modernization Act (AMA),
