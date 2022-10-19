@@ -2,5 +2,3 @@
 
 class SplitCorrelationTable < CaseflowRecord
 end
-
-end
