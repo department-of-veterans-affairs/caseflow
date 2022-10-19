@@ -16,7 +16,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
     if error.class.method_defined?(:serialize_response)
       render(error.serialize_response)
     else
-      render json: { message: "IDT Standard Error ID: " + uuid + "Unexpected error: #{error.message}" }, status: :internal_server_error
+      render json: { message: "IDT Standard Error ID: " + uuid + " Unexpected error: #{error.message}" }, status: :internal_server_error
     end
   end
   # :nocov:
@@ -25,14 +25,14 @@ class Idt::Api::V1::BaseController < ActionController::Base
     log_error(error)
     uuid = SecureRandom.uuid
     Rails.logger.error("IDT Standard Error ID: " + uuid)
-    render(json: { message: "IDT Standard Error ID: " + uuid + "Record not found" }, status: :not_found)
+    render(json: { message: "IDT Standard Error ID: " + uuid + " Record not found" }, status: :not_found)
   end
 
   rescue_from Caseflow::Error::InvalidFileNumber do |error|
     log_error(error)
     uuid = SecureRandom.uuid
     Rails.logger.error("IDT Standard Error ID: " + uuid)
-    render(json: { message: "IDT Standard Error ID: " + uuid + "Please enter a file number in the 'FILENUMBER' header" }, status: :unprocessable_entity)
+    render(json: { message: "IDT Standard Error ID: " + uuid + " Please enter a file number in the 'FILENUMBER' header" }, status: :unprocessable_entity)
   end
 
   rescue_from Caseflow::Error::VeteranNotFound do |error|
