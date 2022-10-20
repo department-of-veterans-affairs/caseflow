@@ -52,15 +52,21 @@ class WorkQueue::DecisionReviewTaskSerializer
   attribute :id
   attribute :created_at
 
-  attribute :veteran_participant_id do |object|
-    decision_review(object).veteran.participant_id
-  end
-
   attribute :assigned_on, &:assigned_at
   attribute :closed_at
   attribute :started_at
 
   attribute :type do |object|
     decision_review(object).is_a?(Appeal) ? "Board Grant" : decision_review(object).class.review_title
+  end
+
+  attribute :veteran_info do |object|
+    veteran = decision_review(object).veteran
+
+    {
+      ssn: veteran.ssn,
+      file_number: veteran.file_number,
+      participant_id: veteran.participant_id
+    }
   end
 end
