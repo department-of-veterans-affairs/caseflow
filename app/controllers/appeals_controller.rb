@@ -365,11 +365,11 @@ class AppealsController < ApplicationController
 
     # Get all selectable options that notifications can be filtered by
     event_types = @notifications.map(&:event_type).uniq.compact
-    notification_types = @notifications.map(&:notification_type).uniq.compact
+    notification_types = @notifications.map(&:notification_type).uniq.reject(&:blank?)
     recipient_info = (@notifications.map(&:recipient_phone_number) +
-     @notifications.map(&:recipient_email)).uniq.select! { |element| element&.size.to_i > 0 }
+     @notifications.map(&:recipient_email)).uniq.reject(&:blank?)
     statuses = (@notifications.map(&:email_notification_status) +
-     @notifications.map(&:sms_notification_status)).uniq.select! { |element| element&.size.to_i > 0 }
+     @notifications.map(&:sms_notification_status)).uniq.reject(&:blank?)
 
     # Calculate the total number of pages needed to display all notifications
     if @queried_notifications.count < 1
