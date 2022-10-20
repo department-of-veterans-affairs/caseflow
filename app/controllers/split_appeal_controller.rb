@@ -63,7 +63,7 @@ class SplitAppealController < ApplicationController
         updated_by_id: create_split_record[13],
         working_split_status: create_split_record[14]
       )
-      
+    
       original_request_issue_ids.each do |id|
         original_request_issue_id = id
         original_request_issue = RequestIssue.find_by_id(original_request_issue_id)
