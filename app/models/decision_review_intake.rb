@@ -43,9 +43,6 @@ class DecisionReviewIntake < Intake
     # re-creating ensures that associated records get cleaned up and the correct validations run.
     Claimant.find_by(decision_review: detail)&.destroy!
 
-    puts "**********************************************in here**********************************************"
-    puts claimant_class_name.inspect
-
     claimant = claimant_class_name.constantize.create!(
       decision_review: detail,
       participant_id: participant_id,
