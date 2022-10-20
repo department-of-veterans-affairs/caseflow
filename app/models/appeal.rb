@@ -107,6 +107,7 @@ class Appeal < DecisionReview
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
   alias_attribute :nod_date, :receipt_date # LegacyAppeal parity
+  attr_accessor :duplicate_split_appeal, :original_split_appeal, :appeal_split_process
 
   # amoeba gem for splitting appeals
   amoeba do
@@ -125,7 +126,7 @@ class Appeal < DecisionReview
 
       # set appeal_split_process to turn off validation while the appeal
       # split is happening.
-      dup_appeal.&appeal_split_process(true)
+      dup_appeal.appeal_split_process = true
     })
 
     include_association :appeal_views
@@ -160,30 +161,6 @@ class Appeal < DecisionReview
         end
       end
     })
-  end
-
-  def appeal_split_process(value)
-    @appeal_split_process = value
-  end
-
-  def appeal_split_process?
-    @appeal_split_process
-  end
-
-  def original_split_appeal(value)
-    @original_split_appeal = value
-  end
-
-  def original_split_appeal?
-    @original_split_appeal
-  end
-
-  def duplicate_split_appeal?
-    @duplicate_split_appeal
-  end
-
-  def duplicate_split_appeal(value)
-    @duplicate_split_appeal = value
   end
 
   def hearing_day_if_schedueled
@@ -342,11 +319,11 @@ class Appeal < DecisionReview
     # clones request_issues, decision_issues, and request_decision_issues
     self&.clone_issues(parent_appeal, split_issues)
     # set split appeal process flag to false
-    appeal_split_process(false)
+    self.appeal_split_process = false
     # set the duplication split flag
-    duplicate_split_appeal(true)
-    # set the parent original split appeal flat
-    parent_appeal.original_split_appeal(true)
+    self.duplicate_split_appeal = true
+    # set the parent original split appeal to true
+    parent_appeal.original_split_appeal = true
   end
 
   # clones cavc_remand. Uses user_css_id that did the split to complete the remand split
@@ -428,6 +405,8 @@ class Appeal < DecisionReview
       # assign to current appeal
       dup_hearing&.appeal_id = id
 
+      # set split process on dup_hearing
+      dup_hearing.appeal.appeal_split_process = true
       dup_hearing&.save
     end
   end
@@ -478,6 +457,9 @@ class Appeal < DecisionReview
     # set the status to assigned as placeholder
     dup_task.status = "assigned"
 
+    # set the appeal split process to true for the task
+    dup_task.appeal.appeal_split_process = true
+
     # save the task
     dup_task.save
 
@@ -505,6 +487,9 @@ class Appeal < DecisionReview
 
     # set the parent to the parent_task_id
     dup_task.parent_id = parent_task_id
+
+    # set the appeal split process to true for the task
+    dup_task.appeal.appeal_split_process = true
 
     # save the task
     dup_task.save(validate: false)

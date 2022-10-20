@@ -11,6 +11,8 @@ class SupplementalClaim < ClaimReview
       .where("#{table_name}.decision_review_remanded_type='Appeal'")
   }
 
+  attr_accessor :appeal_split_process
+
   def ui_hash
     Intake::SupplementalClaimSerializer.new(self).serializable_hash[:data][:attributes]
   end
@@ -29,10 +31,6 @@ class SupplementalClaim < ClaimReview
 
   def decision_review_remanded?
     !!decision_review_remanded
-  end
-
-  def appeal_split_process?
-    false
   end
 
   # needed for appeal status api
