@@ -20,6 +20,7 @@ import {
   DECEASED_CLAIMANT_MESSAGE,
   NO_RELATIONSHIPS,
   SELECT_CLAIMANT_LABEL,
+  SELECT_NON_LISTED_CLAIMANT_LABEL,
 } from 'app/../COPY';
 import Alert from 'app/components/Alert';
 import Button from 'app/components/Button';
@@ -79,6 +80,7 @@ export const SelectClaimant = (props) => {
     payeeCode,
     payeeCodeError,
     setPayeeCode,
+    featureToggles
   } = props;
 
   const [newClaimant] = useState(null);
@@ -86,9 +88,17 @@ export const SelectClaimant = (props) => {
   const isHigherLevelReview = (formType === 'higher_level_review');
   const isSupplementalClaim = (formType === 'supplemental_claim');
 
+  const isNotRamp = (isAppeal || isHigherLevelReview || isSupplementalClaim);
+
+  const showClaimantNotListedOption = useMemo(() => {
+    return (
+      isNotRamp && !VBMS_BENEFIT_TYPES.includes(benefitType) && featureToggles.hlrScUnrecognizedClaimants
+    );
+  }, [formType, benefitType]);
+
   const enableAddClaimant = useMemo(
-    () => (isAppeal || isHigherLevelReview || isSupplementalClaim) && veteranIsNotClaimant,
-    [isAppeal, veteranIsNotClaimant]
+    () => showClaimantNotListedOption && veteranIsNotClaimant,
+    [showClaimantNotListedOption, veteranIsNotClaimant]
   );
 
   const radioOpts = useMemo(() => {
@@ -138,10 +148,10 @@ export const SelectClaimant = (props) => {
   const claimantLabel = () => {
     return (
       <p
-        id="claimantLabel"
+        id={showClaimantNotListedOption ? 'nonListedClaimantLabel' : 'claimantLabel'}
         style={{ marginTop: '8.95px', marginBottom: '-25px' }}
       >
-        {SELECT_CLAIMANT_LABEL}
+        {showClaimantNotListedOption ? SELECT_NON_LISTED_CLAIMANT_LABEL : SELECT_CLAIMANT_LABEL}
 
         <br />
         <br />
@@ -263,7 +273,10 @@ SelectClaimant.propTypes = {
   payeeCodeError: PropTypes.string,
   setPayeeCode: PropTypes.func,
   register: PropTypes.func,
-  errors: PropTypes.array
+  errors: PropTypes.array,
+  featureToggles: PropTypes.shape({
+    hlrScUnrecognizedClaimants: PropTypes.bool
+  })
 };
 
 const selectClaimantValidations = () => ({

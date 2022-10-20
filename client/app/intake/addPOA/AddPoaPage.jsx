@@ -91,6 +91,11 @@ export const AddPoaPage = () => {
   }, [intakeForms, formType, selectedForm]);
   const intakeStatus = getIntakeStatus(useSelector((state) => state));
 
+  // Return to homepage of Intake upon cancellation
+  const detectCancellation = useMemo(() => {
+    return formType ? null : <Redirect to={PAGE_PATHS.BEGIN} />;
+  }, [formType]);
+
   // Redirect to page where data needs to be re-populated (e.g. from a page reload)
   if (intakeStatus === INTAKE_STATES.STARTED) {
     if (!intakeData.receiptDate) {
@@ -284,6 +289,7 @@ export const AddPoaPage = () => {
           />
         )}
       </IntakeLayout>
+      {detectCancellation}
     </FormProvider>
   );
 };
