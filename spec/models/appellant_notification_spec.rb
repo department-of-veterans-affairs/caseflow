@@ -174,7 +174,10 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(contested_appeal, contested)
         allow(contested_appeal).to receive(:contested_claim?).and_return(true)
         contested_appeal.contested_claim?
-        contested_decision_document = contested_dispatch.send "create_decision_document_and_submit_for_processing!", contested_params
+        contested_decision_document = contested_dispatch.send(
+          "create_decision_document_and_submit_for_processing!",
+          contested_params
+        )
         contested_decision_document.process!
       end
     end

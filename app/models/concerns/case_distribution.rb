@@ -16,7 +16,7 @@ module CaseDistribution
     @docket_coordinator ||= DocketCoordinator.new
   end
 
-  def priority_push_distribution(limit = nil)
+  def priority_push_distribution(_limit = nil)
     fail Caseflow::Error::MustImplementInSubclass
   end
 

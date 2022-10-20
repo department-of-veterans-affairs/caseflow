@@ -54,8 +54,8 @@ class AsyncableJobsController < ApplicationController
 
     begin
       job.perform_now
-    rescue Exception => e
-      Rails.logger.error "Manual run of #{allowed_params[:job_type]} failed : #{e.message}"
+    rescue Exception => error
+      Rails.logger.error "Manual run of #{allowed_params[:job_type]} failed : #{error.message}"
       success = false
     end
 

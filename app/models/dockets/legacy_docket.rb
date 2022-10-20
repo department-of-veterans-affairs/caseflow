@@ -35,11 +35,11 @@ class LegacyDocket < Docket
   end
 
   def age_of_oldest_priority_appeal
-    if use_by_docket_date?
-      @age_of_oldest_priority_appeal ||= LegacyAppeal.repository.age_of_oldest_priority_appeal_by_docket_date
-    else
-      @age_of_oldest_priority_appeal ||= LegacyAppeal.repository.age_of_oldest_priority_appeal
-    end
+    @age_of_oldest_priority_appeal ||= if use_by_docket_date?
+                                         LegacyAppeal.repository.age_of_oldest_priority_appeal_by_docket_date
+                                       else
+                                         LegacyAppeal.repository.age_of_oldest_priority_appeal
+                                       end
   end
 
   def age_of_n_oldest_genpop_priority_appeals(num)

@@ -153,7 +153,9 @@ describe ByDocketDateDistribution, :all_dbs do
         .with(@new_acd.judge, @new_acd.batch_size)
         .and_return(add_dates_to_date_array(@new_acd.batch_size))
 
-      expect_any_instance_of(EvidenceSubmissionDocket).to receive(:age_of_n_oldest_nonpriority_appeals_available_to_judge)
+      expect_any_instance_of(EvidenceSubmissionDocket).to receive(
+        :age_of_n_oldest_nonpriority_appeals_available_to_judge
+      )
         .with(@new_acd.judge, @new_acd.batch_size)
         .and_return(add_dates_to_date_array(@new_acd.batch_size))
 

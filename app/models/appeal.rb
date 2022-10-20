@@ -151,9 +151,7 @@ class Appeal < DecisionReview
         sm_claim.uuid = SecureRandom.uuid
 
         # make sure uuid doesn't exist in the database (by some chance)
-        while SupplementalClaim.find_by(uuid: sm_claim.uuid).nil? == false
-          sm_claim.uuid = SecureRandom.uuid
-        end
+        sm_claim.uuid = SecureRandom.uuid while SupplementalClaim.find_by(uuid: sm_claim.uuid).nil? == false
       end
     })
   end
@@ -162,10 +160,10 @@ class Appeal < DecisionReview
     hearing_date = Hearing.find_by(appeal_id: id)
 
     if hearing_date.nil?
-      return nil
+      nil
 
     else
-      return hearing_date.hearing_day.scheduled_for
+      hearing_date.hearing_day.scheduled_for
     end
   end
 
@@ -362,7 +360,7 @@ class Appeal < DecisionReview
     dup_issue = issue.amoeba_dup
     dup_issue.decision_review_id = id
     dup_issue.save
-    return dup_issue
+    dup_issue
   end
 
   def clone_ihp_drafts(parent_appeal)
@@ -447,7 +445,7 @@ class Appeal < DecisionReview
     dup_task.save
 
     # return the task id to be added to the dict
-    return dup_task.id
+    dup_task.id
   end
 
   def clone_task_w_parent(original_task, parent_task_id)
@@ -482,7 +480,7 @@ class Appeal < DecisionReview
     end
 
     # return the task id to be added to the dict
-    return dup_task.id
+    dup_task.id
   end
 
   def docket_name

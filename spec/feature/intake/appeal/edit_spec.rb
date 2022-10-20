@@ -432,7 +432,7 @@ feature "Appeal Edit issues", :all_dbs do
           sleep 0.1
         end
       end
-      raise "wait_for_ajax timeout" unless finished
+      fail "wait_for_ajax timeout" unless finished
     end
 
     def finished_all_ajax_requests?

@@ -398,19 +398,19 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
-    if use_by_docket_date?
-      query = <<-SQL
+    query = if use_by_docket_date?
+              <<-SQL
         #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
         where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
         and (rownum <= ? or 1 = ?)
-      SQL
-    else
-      query = <<-SQL
+              SQL
+            else
+              <<-SQL
         #{SELECT_PRIORITY_APPEALS}
         where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
         and (rownum <= ? or 1 = ?)
-      SQL
-    end
+              SQL
+            end
 
     fmtd_query = sanitize_sql_array([
                                       query,

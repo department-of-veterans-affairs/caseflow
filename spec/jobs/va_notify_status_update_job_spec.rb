@@ -115,7 +115,9 @@ describe VANotifyStatusUpdateJob, type: :job do
         it "logs when external id is not present" do
           allow(job).to receive(:notifications_not_processed).and_return([email_and_sms])
           job.perform_now
-          expect(email_and_sms.sms_notification_status && email_and_sms.email_notification_status).to eq("No External Id")
+          expect(
+            email_and_sms.sms_notification_status && email_and_sms.email_notification_status
+          ).to eq("No External Id")
         end
       end
     end

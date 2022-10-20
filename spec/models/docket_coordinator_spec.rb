@@ -232,8 +232,10 @@ describe DocketCoordinator do
     end
 
     before do
-      tied_legacy_case_count.times { create(:case, :type_cavc_remand, :ready_for_distribution,
-        :tied_to_judge, tied_judge: judge) }
+      tied_legacy_case_count.times do
+        create(:case, :type_cavc_remand, :ready_for_distribution,
+               :tied_to_judge, tied_judge: judge)
+      end
       genpop_legacy_case_count.times { create(:case, :type_cavc_remand, :ready_for_distribution) }
       tied_ama_hearing_case_count.times do
         create(
