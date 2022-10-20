@@ -61,7 +61,7 @@ class Test::UsersController < ApplicationController
         styleguide: "/styleguide",
         stats: "/stats",
         jobs: "/jobs",
-        test_veterans: "test/data"
+        test_veterans: "/test/data"
       }
     }
   ].freeze
