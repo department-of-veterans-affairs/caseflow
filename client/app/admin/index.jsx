@@ -4,8 +4,10 @@ import ReduxBase from '../components/ReduxBase';
 // import { combineReducers } from 'redux';
 // import IntakeFrame from './IntakeFrame';
 // import { intakeReducer, mapDataToInitialIntake } from './reducers/intake';
-// import index from './reducers';
+import index from './reducers';
 import AdminApp from './pages/AdminApp';
+import { Router } from 'react-router';
+import { createBrowserHistory } from 'history';
 // import { BrowserRouter } from 'react-router-dom';
 
 // export const reducer = combineReducers({
@@ -50,8 +52,18 @@ import AdminApp from './pages/AdminApp';
 
 // export default Admin;
 
-const Admin = (props) => <ReduxBase>
-  <AdminApp {...props} />
-</ReduxBase>;
+const history = createBrowserHistory();
+
+const Admin = (props) => {
+  return (
+    <ReduxBase
+      reducer={index}
+    >
+      <Router history={history}>
+        <AdminApp {...props} />
+      </Router>
+    </ReduxBase>
+  );
+};
 
 export default Admin;
