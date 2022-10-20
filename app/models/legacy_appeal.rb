@@ -228,6 +228,10 @@ class LegacyAppeal < CaseflowRecord
     (decision_date + 120.days).to_date
   end
 
+  def appeal_split_process?
+    false
+  end
+
   def appellant_address
     appellant_address_from_bgs = bgs_address_service&.address
 
