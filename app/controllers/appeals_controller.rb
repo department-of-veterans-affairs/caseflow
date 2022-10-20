@@ -312,13 +312,13 @@ class AppealsController < ApplicationController
   # Response: Returns an array of all retrieved notifications
   def find_notifications_by_appeals_id(appeals_id)
     # Retrieve notifications based on appeals_id
-    @notifications = Notification.where(appeals_id: appeals_id)
+    notifications = Notification.where(appeals_id: appeals_id)
 
     # Throw 'Record Not Found' if no notifications could be retrieved OR return notifications
-    if @notifications == []
+    if notifications == []
       fail ActiveRecord::RecordNotFound, appeals_id
     else
-      WorkQueue::NotificationSerializer.new(@notifications).serializable_hash[:data]
+      WorkQueue::NotificationSerializer.new(notifications).serializable_hash[:data]
     end
   end
 end
