@@ -95,7 +95,7 @@ Rails/ApplicationController:
 Rails/ApplicationMailer:
   Enabled: true
   Exclude:
-    - app/mailers/*.rb
+    - app/mailers/**/*.rb
 
 Rails/InverseOf:
   Enabled: false
