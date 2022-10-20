@@ -149,24 +149,38 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
     click_has_va_form(option_text)
   end
 
+  def verify_individual_add_claimant_modal_information
+    claimant_name = "#{new_individual_claimant[:first_name]} #{new_individual_claimant[:last_name]}"
+
+    within("#add_claimant_modal") do
+      expect(page).to have_content("Review and confirm claimant information")
+      expect(page).to have_content(claimant_name)
+      expect(page).to have_content("Intake does not have a Form 21-22")
+    end
+  end
+
+  def verify_organization_add_claimant_modal_information
+    within("#add_claimant_modal") do
+      expect(page).to have_content("Review and confirm claimant information")
+      expect(page).to have_content(new_organization_claimant[:organization_name])
+      expect(page).to have_content("Intake does not have a Form 21-22")
+    end
+  end
+
   def verify_individual_claimant_on_add_issues
     expect(page).to have_content("Add / Remove Issues")
     # Fix the attorney string for the test
-    if claimant_type == "Attorney (previously or currently)"
-      claimant_type = "Attorney"
-    end
+    claimant_type_string = (claimant_type == "Attorney (previously or currently)") ? "Attorney" : claimant_type
     claimant_name = "#{new_individual_claimant[:first_name]} #{new_individual_claimant[:last_name]}"
-    claimant_string = "#{claimant_name}, #{claimant_type}"
+    claimant_string = "#{claimant_name}, #{claimant_type_string}"
     expect(page).to have_content(claimant_string)
   end
 
   def verify_organization_claimant_on_add_issues
     expect(page).to have_content("Add / Remove Issues")
     # Fix the attorney string for the test
-    if claimant_type == "Attorney (previously or currently)"
-      claimant_type = "Attorney"
-    end
-    claimant_string = "#{new_organization_claimant[:organization_name]}, #{claimant_type}"
+    claimant_type_string = (claimant_type == "Attorney (previously or currently)") ? "Attorney" : claimant_type
+    claimant_string = "#{new_organization_claimant[:organization_name]}, #{claimant_type_string}"
     expect(page).to have_content(claimant_string)
   end
 
@@ -271,42 +285,28 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
       end
 
       scenario "creating a HLR/SC intake with an unlisted claimant with relationship other with type individual" do
-        start_intake
-        visit "/intake/"
-        click_claimant_not_listed
-
-        click_intake_continue
-        # Select other from the dropdown
-        fill_in("Relationship to the Veteran", with: claimant_type).send_keys :enter
+        advance_to_add_unlisted_claimant_page
         select_individual_party_type
         add_new_individual_claimant
         click_does_not_have_va_form
         click_button "Continue to next step"
+        verify_individual_add_claimant_modal_information
 
-        # Review climant modal
-        expect(page).to have_content("Review and confirm claimant information")
         click_button "Confirm"
 
         verify_individual_claimant_on_add_issues
       end
 
       scenario "creating a HLR/SC intake with an unlisted claimant with relationship other with type organization" do
-        start_intake
-        visit "/intake/"
-        click_claimant_not_listed
-
-        click_intake_continue
-
-        # Select other from the dropdown
-        fill_in("Relationship to the Veteran", with: claimant_type).send_keys :enter
+        advance_to_add_unlisted_claimant_page
 
         select_organization_party_type
         add_new_organization_claimant
         click_does_not_have_va_form
         click_button "Continue to next step"
 
-        # Review climant modal
-        expect(page).to have_content("Review and confirm claimant information")
+        verify_organization_add_claimant_modal_information
+
         click_button "Confirm"
 
         verify_organization_claimant_on_add_issues
@@ -320,20 +320,13 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
 
       scenario "creating a HLR/SC intake with an unlisted claimant " \
         "with relationship Healthcare Provider with type individual" do
-        start_intake
-        visit "/intake/"
-        click_claimant_not_listed
-
-        click_intake_continue
-        # Select other from the dropdown
-        fill_in("Relationship to the Veteran", with: claimant_type).send_keys :enter
+        advance_to_add_unlisted_claimant_page
         select_individual_party_type
         add_new_individual_claimant
         click_does_not_have_va_form
         click_button "Continue to next step"
+        verify_individual_add_claimant_modal_information
 
-        # Review climant modal
-        expect(page).to have_content("Review and confirm claimant information")
         click_button "Confirm"
 
         verify_individual_claimant_on_add_issues
@@ -341,20 +334,13 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
 
       scenario "creating a HLR/SC intake with an unlisted claimant with relationship " \
         "healthcare provider with type organization" do
-        start_intake
-        visit "/intake/"
-        click_claimant_not_listed
-
-        click_intake_continue
-        # Select other from the dropdown
-        fill_in("Relationship to the Veteran", with: claimant_type).send_keys :enter
+        advance_to_add_unlisted_claimant_page
         select_organization_party_type
         add_new_organization_claimant
         click_does_not_have_va_form
         click_button "Continue to next step"
+        verify_organization_add_claimant_modal_information
 
-        # Review climant modal
-        expect(page).to have_content("Review and confirm claimant information")
         click_button "Confirm"
 
         verify_organization_claimant_on_add_issues
@@ -367,20 +353,14 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
       end
 
       scenario "creating a HLR/SC intake with an unlisted claimant with relationship Child" do
-        start_intake
-        visit "/intake/"
-        click_claimant_not_listed
-
-        click_intake_continue
-        # Select other from the dropdown
-        fill_in("Relationship to the Veteran", with: claimant_type).send_keys :enter
+        advance_to_add_unlisted_claimant_page
 
         add_new_individual_claimant
         click_does_not_have_va_form
         click_button "Continue to next step"
 
         # Review climant modal
-        expect(page).to have_content("Review and confirm claimant information")
+        verify_individual_add_claimant_modal_information
         click_button "Confirm"
 
         verify_individual_claimant_on_add_issues
@@ -393,13 +373,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
       end
 
       scenario "creating a HLR/SC intake with an unlisted claimant with relationship Spouse" do
-        start_intake
-        visit "/intake/"
-        click_claimant_not_listed
-
-        click_intake_continue
-        # Select other from the dropdown
-        fill_in("Relationship to the Veteran", with: claimant_type).send_keys :enter
+        advance_to_add_unlisted_claimant_page
 
         add_new_individual_claimant
         click_does_not_have_va_form

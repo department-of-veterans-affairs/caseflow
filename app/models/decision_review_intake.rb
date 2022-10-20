@@ -43,6 +43,9 @@ class DecisionReviewIntake < Intake
     # re-creating ensures that associated records get cleaned up and the correct validations run.
     Claimant.find_by(decision_review: detail)&.destroy!
 
+    puts "**********************************************in here**********************************************"
+    puts claimant_class_name.inspect
+
     claimant = claimant_class_name.constantize.create!(
       decision_review: detail,
       participant_id: participant_id,
@@ -121,7 +124,13 @@ class DecisionReviewIntake < Intake
   end
 
   def claimant_class_name
-    "#{request_params[:claimant_type]&.capitalize}Claimant"
+    "#{constantize_param_string(request_params[:claimant_type])}Claimant"
+  end
+
+  def constantize_param_string(name)
+    if name
+      name.titleize.split(" ").join
+    end
   end
 
   def veteran_is_not_claimant
