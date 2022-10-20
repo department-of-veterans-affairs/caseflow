@@ -365,15 +365,38 @@ class Appeal < DecisionReview
     dup_remand&.save
   end
 
-  # clone issues clones request_issues.
-  # this version ignores decision issues and request_decision issues
+  # clone issues clones request_issues the user selected
+  # and anydecision_issues/decision_request_issues tied to the request issue
   def clone_issues(parent_appeal, split_request_issues)
+
     # cycle the split_request_issues list from the payload
     split_request_issues.each do |r_issue_id|
       # find the request issue from the parent appeal
       r_issue = parent_appeal.request_issues.find(r_issue_id.to_i)
-      clone_issue(r_issue)
-      # logic to turn off the request issue here
+      dup_r_issue = clone_issue(r_issue)
+
+      #########################
+      # logic to put the parent request issues "on hold"
+      #########################
+
+      # if the request_issue has a cooresponding decision_issue
+      if(!r_issue.request_decision_issues.empty?)
+        # copy the request_decision_issues
+        r_issue.request_decision_issues.each do |rd_issue|
+          # get the decision issue id
+          decision_issue_id = rd_issue.decision_issue_id
+          # get the decision issue 
+          d_issue = DecisionIssue.find(decision_issue_id)
+          # clone decision issue
+          dup_d_issue = clone_issue(d_issue)
+          # clone request_decision_issue
+          dup_rd_issue = rd_issue.amoeba_dup
+          # set the request_issue_id and decision_issue_id
+          dup_rd_issue.request_issue_id = dup_r_issue.id
+          dup_rd_issue.decision_issue_id = dup_d_issue.id
+          dup_rd_issue.save!
+        end
+      end
     end
   end
 
