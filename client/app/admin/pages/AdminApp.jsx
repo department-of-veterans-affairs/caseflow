@@ -20,6 +20,7 @@ import reducers from '../reducers/index';
 
 export default class AdminApp extends React.PureComponent {
   render = () => <BrowserRouter basename="/admin">
+    <h1>System Admin UI</h1>
     <div>
       <Switch>
         <PageRoute
@@ -29,7 +30,6 @@ export default class AdminApp extends React.PureComponent {
           render={this.admin}
         />
       </Switch>
-      <h1>System Admin UI</h1>
     </div>
   </BrowserRouter>
 }
