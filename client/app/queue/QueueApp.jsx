@@ -351,6 +351,14 @@ class QueueApp extends React.PureComponent {
       vsoVirtualOptIn={this.props.featureToggles.vso_virtual_opt_in}
     />
   );
+  routedNotificationsWithLoadingScreen = (props) => (
+    <CaseDetailsLoadingScreen
+      {...this.propsForQueueLoadingScreen()}
+      appealId={props.match.params.appealId}
+    >
+      {this.routedNotifications(props)}
+    </CaseDetailsLoadingScreen>
+  );
 
   routedReassignToUser = (props) => (
     <AssignToView isReassignAction {...props.match.params} />
