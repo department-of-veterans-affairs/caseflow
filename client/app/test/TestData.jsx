@@ -58,6 +58,8 @@ export default class TestData extends React.PureComponent {
             <h1>Local Veteran Records</h1>
             <div>
               <p>These fake Veteran records are available locally.</p>
+              <p>Click on the file numbers to search for the veteran.</p>
+              <p>If a cell does not have a link the value used in the search url was not found.</p>
               <table>
                 <tbody className="test-data-table">
                   {veterans.map((veteran) => (
