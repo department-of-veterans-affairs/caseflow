@@ -59,7 +59,9 @@ class TaskTableTab extends React.PureComponent {
 
     const filteredTasks = this.state.allTasks.filter((task) => {
       return task.claimant.name.toLowerCase().includes(lowercaseSearchText) ||
-        task.veteran_participant_id.includes(searchText);
+        task.veteran_info.participant_id.includes(searchText) ||
+        task.veteran_info.ssn.includes(searchText) ||
+        task.veteran_info.file_number.includes(searchText);
     });
 
     this.setState({ shownTasks: filteredTasks,
