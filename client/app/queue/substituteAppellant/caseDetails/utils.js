@@ -5,7 +5,7 @@ export const appealHasDeathDismissal = (appeal) => {
 
 export const appealSupportsSubstitution = (appeal) => {
   return (
-    // AMA-only
+    // AMA-only 
     !appeal.isLegacyAppeal &&
     // Currently only allow substitutions for veteran
     !appeal.appellantIsNotVeteran &&
