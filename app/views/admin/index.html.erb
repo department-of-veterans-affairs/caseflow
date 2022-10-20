@@ -11,9 +11,11 @@
     # caseSearchHomePage: case_search_home_page,
     dropdownUrls: dropdown_urls,
     applicationUrls: application_urls,
-    feedbackUrl: feedback_url
+    feedbackUrl: feedback_url,
     
-    # featureToggles: {
+    featureToggles: {
+      sys_admin_page: FeatureToggle.enabled?(:sys_admin_page, user: current_user)
+    }
     #   collect_video_and_central_emails: FeatureToggle.enabled?(:collect_video_and_central_emails, user: current_user),
     #   enable_hearing_time_slots: FeatureToggle.enabled?(:enable_hearing_time_slots, user: current_user),
     #   schedule_veteran_virtual_hearing: FeatureToggle.enabled?(:schedule_veteran_virtual_hearing, user: current_user),
@@ -38,6 +40,5 @@
     #   vso_virtual_opt_in: FeatureToggle.enabled?(:vso_virtual_opt_in, user: current_user),
     #   das_case_timeliness: FeatureToggle.enabled?(:das_case_timeliness, user: current_user),
     #   split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user)
-    # }
   }) %>
 <% end %>
