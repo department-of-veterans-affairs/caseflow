@@ -8,6 +8,7 @@ module ByDocketDateDistribution
   private
 
   def priority_push_distribution(limit)
+    @priority_target = limit
     @rem = 0
     @appeals = []
     # Distribute <limit> number of cases, regardless of docket type, oldest first.
@@ -50,10 +51,15 @@ module ByDocketDateDistribution
     {
       batch_size: @appeals.count,
       total_batch_size: total_batch_size,
-      priority_count: priority_count,
-      direct_review_due_count: direct_review_due_count,
-      legacy_hearing_backlog_count: VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge),
-      nonpriority_iterations: @nonpriority_iterations,
+      priority: {
+        count: priority_count,
+        target: @priority_target
+      },
+      nonpriority: {
+        direct_review_due_count: direct_review_due_count,
+        legacy_hearing_backlog_count: legacy_hearing_backlog_count(judge),
+        iterations: @nonpriority_iterations
+      },
       algorithm: "by_docket_date"
     }
   end
