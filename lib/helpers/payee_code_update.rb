@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 # End Products in VBMS get established (through the processing of End Product Establishments in Caseflow)
-# with a payee code. That code corresponds to the type of claimant on the claim (Veteran - 00, Spouse - 10, Child - 11 ).
+# with a payee code. That code corresponds to the type of
+# claimant on the claim (Veteran - 00, Spouse - 10, Child - 11 ).
 # If a claim gets established with the incorrect payee code we do not have the ability to update the payee code in VBMS.
 # Therefore we need to cancel the claim and re establish it with the correct payee code.
 
@@ -10,7 +11,12 @@ module WarRoom
   class PayeeCodeUpdate
     def run(reference_id, correct_payee_code)
       # set current user
-      RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+      RequestStore[:current_user] = OpenStruct.new(
+        ip_address: "127.0.0.1",
+        station_id: "283",
+        css_id: "CSFLOW",
+        regional_office: "DSUSER"
+      )
 
       # Sets the variable End Product Establishment by the reference_id/Claim ID
       epe = EndProductEstablishment.find_by(reference_id: reference_id)
@@ -40,7 +46,7 @@ module WarRoom
         claim_date: epe.claim_date,
         code: epe.code,
         station: epe.station,
-        claimant_participant_id: (!claimant.nil?) ? claimant.participant_id : epe.claimant_participant_id,
+        claimant_participant_id: claimant.nil? ? epe.claimant_participant_id : claimant.participant_id,
         payee_code: correct_payee_code,
         doc_reference_id: epe.doc_reference_id,
         development_item_reference_id: epe.development_item_reference_id,
@@ -59,7 +65,12 @@ module WarRoom
 
       else
         # All other forms of EPEs, you will connect it to the Request Issues on the old EPE.
-        epe.source.request_issues.update_all(end_product_establishment_id: epe2.id, contention_reference_id: nil, closed_status: nil, closed_at: nil)
+        epe.source.request_issues.update_all(
+          end_product_establishment_id: epe2.id,
+          contention_reference_id: nil,
+          closed_status: nil,
+          closed_at: nil
+        )
       end
 
       # Establishes the new EP
