@@ -33,8 +33,8 @@ export const documentState = (state) => {
   const documents = getFilteredDocuments(state);
 
   // Calculate the number of documents
-  const docsCount = state.reader.documentList.filteredDocIds ?
-    state.reader.documentList.filteredDocIds.length :
+  const docsCount = getFilteredDocIds(state) ?
+    getFilteredDocIds(state).length :
     Object.values(documents).length;
 
   // Return the Filtered Documents and count
@@ -92,20 +92,48 @@ export const documentListScreen = (state) => {
 export const documentScreen = (state) => {
   // Get the filtered documents and count
   const { documents, docsCount } = documentState(state);
-  const categories = Object.keys(documentCategories).reduce((list, key) => {
-    // Set the current Category
-    const cat = state.reader.documentViewer.selected[formatCategoryName(key)] ? key : '';
+  const getSelectedDoc = (state) => state.reader.documentViewer.selected;
 
-    // Return the Categories Object
-    return {
-      ...list,
-      [cat]: true
-    };
-  }, {});
+  const getCategories = createSelector(getSelectedDoc, (selectedDoc) => {
+    return Object.keys(documentCategories).reduce((list, key) => {
+      // Set the current Category
+      const cat = selectedDoc[formatCategoryName(key)] ? key : '';
+
+      // Return the Categories Object
+      console.log({ key });
+      console.log({ cat });
+      console.log({ ...list });
+      return {
+        ...list,
+        [cat]: true
+      };
+    }, {})
+  })
+
+  const categories = getCategories(state);
+
+  // const categories = Object.keys(documentCategories).reduce((list, key) => {
+  //   // Set the current Category
+  //   const cat = state.reader.documentViewer.selected[formatCategoryName(key)] ? key : '';
+
+  //   // Return the Categories Object
+  //   return {
+  //     ...list,
+  //     [cat]: true
+  //   };
+  // }, {});
+
 
   // Filter the comments for the current document
-  const comments = state.reader.annotationLayer.comments.filter((comment) =>
-    comment.document_id === state.reader.documentViewer.selected.id);
+
+  const getAllComments = state => state.reader.annotationLayer.comments
+  const getComments = createSelector([getAllComments, getSelectedDoc],
+    (allComments, selectedDoc) =>
+      allComments.filter((comment) =>
+        comment.document_id === selectedDoc.id)
+  );
+
+  const comments = getComments(state);
 
   return {
     documents,
