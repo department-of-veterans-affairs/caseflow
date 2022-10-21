@@ -11,6 +11,8 @@
   "CASE_SEARCH_DATA_LOAD_FAILED_MESSAGE": "Unable to load cases",
   "CONTESTED_ISSUE": "Issue",
 
+  "DECISION_REVIEW_SEARCH_TITLE": "Search by Claimant Name, Veteran Participant ID, File number, or SSN",
+
   "CASE_LIST_TABLE_TITLE": "Appeals",
   "CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
   "CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket",

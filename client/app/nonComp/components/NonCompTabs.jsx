@@ -85,6 +85,7 @@ class TaskTableTab extends React.PureComponent {
           onClearSearch={this.onClearSearch}
           isSearchAhead
           value={this.state.searchText}
+          title={COPY.DECISION_REVIEW_SEARCH_TITLE}
         />
       </div>
       <div className="section-hearings-list">
