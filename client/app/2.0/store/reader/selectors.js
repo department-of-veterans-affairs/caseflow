@@ -1,16 +1,27 @@
 // Local Dependencies
 import { documentCategories } from 'store/constants/reader';
 import { documentsView, formatTagOptions, formatTagValue, formatCategoryName } from 'utils/reader';
+import { createSelector } from 'reselect';
 import { isEmpty } from 'lodash';
 
 /**
  * Filtered Documents state
  */
-export const filteredDocuments = ({ reader }) =>
-  reader.documentList.filteredDocIds.reduce(
-    (list, id) => ({ ...list, [id]: reader.documentList.documents[id] }),
+// export const filteredDocuments = ({ reader }) =>
+//   reader.documentList.filteredDocIds.reduce(
+//     (list, id) => ({ ...list, [id]: reader.documentList.documents[id] }),
+//     {}
+//   );
+const getFilteredDocIds = (state) => state.reader.documentList.filteredDocIds;
+const getAllDocs = (state) => state.reader.documentList.documents;
+
+export const getFilteredDocuments = createSelector(
+  [getFilteredDocIds, getAllDocs],
+  (filteredDocIds, allDocs) => filteredDocIds.reduce(
+    (list, id) => ({ ...list, [id]: allDocs[id] }),
     {}
-  );
+  )
+)
 
 /**
  * Selector for the Documents
@@ -19,7 +30,7 @@ export const filteredDocuments = ({ reader }) =>
  */
 export const documentState = (state) => {
   // Set the filtered documents
-  const documents = filteredDocuments(state);
+  const documents = getFilteredDocuments(state);
 
   // Calculate the number of documents
   const docsCount = state.reader.documentList.filteredDocIds ?

@@ -113,7 +113,8 @@ const config = {
 
 if (devBuild) {
   console.log('Webpack dev build for Rails'); // eslint-disable-line no-console
-  config.devtool = 'eval-source-map';
+  // config.devtool = 'eval-source-map';
+  config.devtool = 'cheap-module-source-map';
 } else {
   console.log('Webpack production build for Rails'); // eslint-disable-line no-console
   console.log('Generating source maps...'); // eslint-disable-line no-console
