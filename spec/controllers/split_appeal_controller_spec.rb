@@ -26,7 +26,7 @@ RSpec.describe SplitAppealController, type: :controller do
 
       it "creates a new split appeal" do 
           post :split_appeal, params: valid_params
-          expect(response).to have_http_status :success
+          expect(response.status).to eq 201
           original_appeal = Appeal.first
           dup_appeal = Appeal.last
           expect(original_appeal.stream_docket_number).to eq(dup_appeal.stream_docket_number)
