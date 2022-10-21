@@ -313,7 +313,7 @@ class Task < CaseflowRecord
   # task active at a time for a single appeal.
   def verify_org_task_unique
     # do not verify for split appeal process
-    return if appeal&.appeal_split_process?
+    return if appeal.appeal_split_process == true
     return if !open?
 
     if appeal.tasks.open.where(
