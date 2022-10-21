@@ -59,14 +59,18 @@ const state = {
 
 describe('NotificationsTest', () => {
 
-
   it('renders title correctly', () => {
+    const { container } = setup(state);
+    const header = container.querySelector('h1').innerHTML;
 
-    const {container} = setup(state);
-    const header = container.querySelector('h1').innerHTML
-    expect(header).toBe('Case notifications for Bob Smithschumm')
-  
+    expect(header).toBe('Case notifications for Bob Smithschumm');
   });
 
+  it('renders description correctly', () => {
+    const { container } = setup(state);
+    const description = container.querySelector('.notification-text').innerHTML;
+
+    expect(description).toBe('VA Notify sent these status notifications to the Appellant about their case.');
+  });
 });
 
