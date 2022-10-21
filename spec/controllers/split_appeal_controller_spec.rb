@@ -1,5 +1,7 @@
 # frozen_string_literal: true
+
 RSpec.describe SplitAppealController, type: :controller do
+
   describe "POST split_appeal" do
     let(:ssc_user) { create(:user, roles: '{Hearing Prep,Reader,SPLTAPPLLANNISTER}')}
 
@@ -15,10 +17,10 @@ RSpec.describe SplitAppealController, type: :controller do
       # let(:request_issue_params, {request_issue.id => true})
       let(:valid_params) do
           {
-              appeal_id: 1,
-              appeal_split_issues: {request_issue.id => true},
-              split_reason: "Include a motion for CUE with respect to a prior Board decision",
-              split_other_reason: ""
+            appeal_id: 1,
+            appeal_split_issues: {request_issue.id => true},
+            split_reason: "Include a motion for CUE with respect to a prior Board decision",
+            split_other_reason: ""
           }
       end
 
@@ -37,10 +39,10 @@ RSpec.describe SplitAppealController, type: :controller do
       let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
       let(:invalid_params) do
           {
-              appeal_id: "fail",
-              appeal_split_issues: {request_issue.id.to_s => true},
-              split_reason: "Include a motion for CUE with respect to a prior Board decision",
-              split_other_reason: ""
+            appeal_id: "fail",
+            appeal_split_issues: {request_issue.id.to_s => true},
+            split_reason: "Include a motion for CUE with respect to a prior Board decision",
+            split_other_reason: ""
           }
       end
 
@@ -57,10 +59,10 @@ RSpec.describe SplitAppealController, type: :controller do
       let(:original_appeal) { create(:appeal) }
       let(:valid_params) do
         {
-            appeal_id: original_appeal.id,
-            appeal_split_issues: {request_issue.id.to_s => true},
-            split_reason: "Include a motion for CUE with respect to a prior Board decision",
-            split_other_reason: ""
+          appeal_id: original_appeal.id,
+          appeal_split_issues: {request_issue.id.to_s => true},
+          split_reason: "Include a motion for CUE with respect to a prior Board decision",
+          split_other_reason: ""
         }
       end
       it "maintains the same relations as the original appeal" do
@@ -68,7 +70,6 @@ RSpec.describe SplitAppealController, type: :controller do
         dup_appeal = Appeal.last
         expect(original_appeal.stream_docket_number).equal? dup_appeal.stream_docket_number
       end
-
     end
     context "with an appeal that has a full hearing day" do
       let(:benefit_type1) { "compensation" }
@@ -97,10 +98,10 @@ RSpec.describe SplitAppealController, type: :controller do
       end
       let(:valid_params) do
           {
-              appeal_id: appeal.id,
-              appeal_split_issues: {request_issue.id.to_s => true},
-              split_reason: "Include a motion for CUE with respect to a prior Board decision",
-              split_other_reason: ""
+            appeal_id: appeal.id,
+            appeal_split_issues: {request_issue.id.to_s => true},
+            split_reason: "Include a motion for CUE with respect to a prior Board decision",
+            split_other_reason: ""
           }
       end
       it "creates the split appeal despite the hearing_day being full" do
