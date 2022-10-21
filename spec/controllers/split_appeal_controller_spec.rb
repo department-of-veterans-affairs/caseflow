@@ -13,11 +13,11 @@ RSpec.describe SplitAppealController, type: :controller do
     context "with valid parameters" do
       let(:benefit_type1) { "compensation" }
       let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
-
+      let(:appeal) { create(:appeal)}
       # let(:request_issue_params, {request_issue.id => true})
       let(:valid_params) do
           {
-            appeal_id: 1,
+            appeal_id: appeal.id,
             appeal_split_issues: {request_issue.id => true},
             split_reason: "Include a motion for CUE with respect to a prior Board decision",
             split_other_reason: ""
@@ -27,10 +27,9 @@ RSpec.describe SplitAppealController, type: :controller do
       it "creates a new split appeal" do 
           post :split_appeal, params: valid_params
           expect(response.status).to eq 201
-          original_appeal = Appeal.first
           dup_appeal = Appeal.last
-          expect(original_appeal.stream_docket_number).to eq(dup_appeal.stream_docket_number)
-          expect(original_appeal.veteran_file_number).to eq(dup_appeal.veteran_file_number)
+          expect(appeal.stream_docket_number).to eq(dup_appeal.stream_docket_number)
+          expect(appeal.veteran_file_number).to eq(dup_appeal.veteran_file_number)
       end
     end
 
