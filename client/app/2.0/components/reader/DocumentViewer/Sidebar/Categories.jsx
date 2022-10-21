@@ -13,7 +13,6 @@ import { CannotSaveAlert } from 'components/shared/CannotSaveAlert';
 export const SidebarCategories = ({ error, categories, handleCategoryToggle, ...props }) => (
   <div className="cf-category-sidebar">
     {error?.category?.visible && <CannotSaveAlert />}
-    {console.log({categories})}
     <CategoryPicker
       {...props}
       allowReadOnly

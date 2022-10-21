@@ -98,11 +98,7 @@ export const documentScreen = (state) => {
     return Object.keys(documentCategories).reduce((list, key) => {
       // Set the current Category
       const cat = selectedDoc[formatCategoryName(key)] ? key : '';
-
       // Return the Categories Object
-      console.log({ key });
-      console.log({ cat });
-      console.log({ ...list });
       return {
         ...list,
         [cat]: true
@@ -111,18 +107,6 @@ export const documentScreen = (state) => {
   })
 
   const categories = getCategories(state);
-
-  // const categories = Object.keys(documentCategories).reduce((list, key) => {
-  //   // Set the current Category
-  //   const cat = state.reader.documentViewer.selected[formatCategoryName(key)] ? key : '';
-
-  //   // Return the Categories Object
-  //   return {
-  //     ...list,
-  //     [cat]: true
-  //   };
-  // }, {});
-
 
   // Filter the comments for the current document
 
@@ -134,6 +118,14 @@ export const documentScreen = (state) => {
   );
 
   const comments = getComments(state);
+  // Get the tag options for the current document
+  const getTagOptions = createSelector([getAllDocs],
+    (allDocs) => {
+      return formatTagValue(
+        formatTagOptions(allDocs)
+      )
+    })
+  const tagOptions = getTagOptions(state)
 
   return {
     documents,
@@ -149,9 +141,7 @@ export const documentScreen = (state) => {
     editingTag: state.reader.documentViewer.editingTag,
     pendingCategory: state.reader.documentViewer.pendingCategory,
     documentTags: state.reader.documentViewer.tags,
-    tagOptions: formatTagValue(
-      formatTagOptions(state.reader.documentList.documents)
-    ),
+    tagOptions,
     viewport: state.reader.documentViewer.viewport,
     keyboardInfoOpen: state.reader.documentViewer.keyboardInfoOpen,
     pendingDeletion: state.reader.annotationLayer.pendingDeletion,
