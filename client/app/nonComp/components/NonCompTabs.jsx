@@ -79,7 +79,7 @@ class TaskTableTab extends React.PureComponent {
       <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
         <SearchBar
           id="searchBar"
-          size="small"
+          size="big"
           onChange={this.onSearch}
           placeholder="Type to search..."
           onClearSearch={this.onClearSearch}
