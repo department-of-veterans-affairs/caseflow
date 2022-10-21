@@ -81,7 +81,7 @@ export const NotificationsView = (props) => {
           userCanAccessReader={props.userCanAccessReader}
         />
         <div {...sectionGap}>
-          <p>VA Notify sent these status notifications to the Appellant about their case.</p>
+          <p className="notification-text">VA Notify sent these status notifications to the Appellant about their case.</p>
 
         </div>
 

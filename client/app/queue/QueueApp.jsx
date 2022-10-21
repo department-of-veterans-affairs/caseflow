@@ -103,9 +103,6 @@ import EditAppellantInformation from './editAppellantInformation/EditAppellantIn
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
 
-
-
-
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
@@ -608,7 +605,6 @@ class QueueApp extends React.PureComponent {
   routedEMOReturnToBoardIntake = (props) => (
     <CompleteTaskModal modalType="emo_return_to_board_intake" {...props.match.params} />
   );
-
 
   routedVhaCaregiverSupportReturnToBoardIntake = (props) => (
     <CompleteTaskModal modalType="vha_caregiver_support_return_to_board_intake" {...props.match.params} />
