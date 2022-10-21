@@ -10,8 +10,6 @@ class Api::V1::MpiController < Api::ApplicationController
       deceased_time: allowed_params[:deceased_time]
     }
 
-    #result = VACOLS::Correspondent.test_call_please_ignore
-
     result = VACOLS::Correspondent.update_veteran_nod(veteran)
     render json: { success: result }, status: :ok
   end

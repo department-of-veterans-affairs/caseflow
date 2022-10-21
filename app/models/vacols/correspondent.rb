@@ -6,14 +6,12 @@ class VACOLS::Correspondent < VACOLS::Record
 
   has_many :cases, foreign_key: :bfcorkey
 
-  def self.test_call_please_ignore
-    Rails.logger.info("Test call please ignore")
-    true
-  end
-
   def self.update_veteran_nod(veteran)
-    MetricsService.record("VACOLS: update_veteran_nod_in_vacols",
-                          name: "update_veteran_nod_in_vacols",
+    MetricsService.record("VACOLS: Update veteran NOD:
+                          ID = #{veteran[:id]},
+                          deceased_ind = #{veteran[:deceased_ind]},
+                          deceased_time = #{veteran[:deceased_time]}",
+                          name: "VACOLS::Correspondent.update_veteran_nod_in_vacols",
                           service: :vacols) do
       update_veteran_nod_in_vacols(veteran)
     end
@@ -29,7 +27,6 @@ class VACOLS::Correspondent < VACOLS::Record
 
       return unless should_update_veteran?(veteran, find_veteran_by_ssn(veteran[:id]))
 
-      Rails.logger.info("Updating veteran deceased information")
       update_veteran_sfnod(veteran[:id], veteran[:deceased_time])
     end
 
@@ -57,6 +54,8 @@ class VACOLS::Correspondent < VACOLS::Record
     end
 
     def update_veteran_sfnod(ssn, deceased_time)
+      Rails.logger.info("Updating veteran's deceased information")
+
       query = <<-SQL
         update CORRES
         set SFNOD = TO_DATE(?, 'YYYYMMDD')
