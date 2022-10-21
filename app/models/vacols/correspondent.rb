@@ -6,6 +6,7 @@ class VACOLS::Correspondent < VACOLS::Record
 
   has_many :cases, foreign_key: :bfcorkey
 
+  # veteran must be hash containing at least values for { id, deceased_ind, deceased_time }
   def self.update_veteran_nod(veteran)
     MetricsService.record("VACOLS: Update veteran NOD:
                           ID = #{veteran[:id]},
@@ -20,7 +21,6 @@ class VACOLS::Correspondent < VACOLS::Record
   class << self
     private
 
-    # vet_updates must be hash containing at least values for { id, deceased_time }
     def update_veteran_nod_in_vacols(veteran)
       return Rails.logger.info("Veteran deceased indicator is false or null") unless veteran[:deceased_ind]
       return Rails.logger.info("No deceased time was provided") if veteran[:deceased_time].nil?
@@ -37,6 +37,7 @@ class VACOLS::Correspondent < VACOLS::Record
         where SSN = ?
       SQL
 
+      # exec_query is used so that the return value(s) from the query are directly usable
       connection.exec_query(sanitize_sql_array([query, ssn]))
     end
 
@@ -62,6 +63,7 @@ class VACOLS::Correspondent < VACOLS::Record
         where SSN = ?
       SQL
 
+      # execute is used here because it directly modifies the rows and exec_query produces a binding error
       connection.execute(sanitize_sql_array([query, deceased_time, ssn]))
     end
   end
