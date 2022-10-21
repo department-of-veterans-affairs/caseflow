@@ -10,6 +10,8 @@ class UnrecognizedAppellant < CaseflowRecord
   has_many :versions, class_name: "UnrecognizedAppellant", foreign_key: "current_version_id"
   belongs_to :current_version, class_name: "UnrecognizedAppellant"
 
+  # Testing something for Billy
+
   belongs_to :created_by, class_name: "User"
 
   def power_of_attorney
