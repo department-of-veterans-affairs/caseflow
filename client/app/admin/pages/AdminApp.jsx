@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
-// import PageRoute from '../components/PageRoute';
+import PropTypes from 'prop-types';
 import PageRoute from '../../components/PageRoute';
 // import ReduxBase from '../components/ReduxBase';
 import reducers from '../reducers/index';
@@ -15,9 +15,9 @@ export default class AdminApp extends React.PureComponent {
     <NavigationBar
       wideApp
       defaultUrl="/admin"
-      // userDisplayName={this.props.userDisplayName}
-      // dropdownUrls={this.props.dropdownUrls}
-      // applicationUrls={this.props.applicationUrls}
+      userDisplayName={this.props.userDisplayName}
+      dropdownUrls={this.props.dropdownUrls}
+      applicationUrls={this.props.applicationUrls}
       logoProps={{
         overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
         accentColor: LOGO_COLORS.QUEUE.ACCENT,
@@ -45,8 +45,8 @@ export default class AdminApp extends React.PureComponent {
     <Footer
       wideApp
       appName=""
-      // feedbackUrl={this.props.feedbackUrl}
-      // buildDate={this.props.buildDate}
+      feedbackUrl={this.props.feedbackUrl}
+      buildDate={this.props.buildDate}
     />
   </BrowserRouter>
 }
@@ -54,5 +54,9 @@ export default class AdminApp extends React.PureComponent {
 export const reducer = reducers;
 
 AdminApp.propTypes = {
-
+  userDisplayName: PropTypes.string.isRequired,
+  dropdownUrls: PropTypes.array,
+  applicationUrls: PropTypes.array,
+  feedbackUrl: PropTypes.string.isRequired,
+  buildDate: PropTypes.string,
 };
