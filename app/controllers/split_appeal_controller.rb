@@ -12,10 +12,6 @@ class SplitAppealController < ApplicationController
         split_other_reason = params[:split_other_reason]
         split_reason = params[:split_reason]
 
-        render json: { message: "Success" }
-
-        # render json: { message: params.errors[0] }, status: :bad_request
-
         # get appeal from params
         appeal = Appeal.find(appeal_id)
 
@@ -36,6 +32,11 @@ class SplitAppealController < ApplicationController
 
         # set the appeal split process to false
         appeal.appeal_split_process = false
+
+        # send success response 
+        dup_appeal.reload
+        appeal.reload
+        render json: { split_appeal: dup_appeal, original_appeal: appeal }, status: :created
       end
     end
   end
