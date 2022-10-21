@@ -65,9 +65,6 @@ up-m1:  ## Start the docker containers on a M1 Mac
 
 down:	## Stop the docker containers
 	docker-compose down
-	
-down-m1:  ## Stop the docker containers on a M1 Mac
-	docker-compose -f docker-compose-m1.yml down
 
 down-m1:  ## Stop the docker containers on a M1 Mac
 	docker-compose -f docker-compose-m1.yml down
