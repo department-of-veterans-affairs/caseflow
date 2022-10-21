@@ -122,7 +122,8 @@ class CancelIntakeModal extends BaseForm {
             name: 'Close',
             onClick: closeHandler
           },
-          { classNames: ['usa-button', 'usa-button-secondary', 'confirm-cancel'],
+          {
+            classNames: ['usa-button', 'confirm-cancel'],
             name: 'Cancel intake',
             onClick: this.handleSubmitCancel
           }
