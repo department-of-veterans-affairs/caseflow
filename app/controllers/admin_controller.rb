@@ -10,7 +10,6 @@ class AdminController < ApplicationController
   # Verifies user is admin and that feature toggle is enabled before showing admin page
   def verify_access
     return true if current_user.admin? && FeatureToggle.enabled?(:sys_admin_page, user: current_user)
-    
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
       "couldn't access #{request.original_url}")
 
