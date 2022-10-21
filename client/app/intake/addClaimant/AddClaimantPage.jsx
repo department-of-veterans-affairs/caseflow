@@ -83,6 +83,11 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
       formData.state = '';
     }
 
+    // Remove dashes and spaces from SSN before submitting it to the server
+    if (formData.ssn) {
+      formData.ssn = formData.ssn.replace(/-|\s/g, '');
+    }
+
     // Adjust the claimant type for Healthcare Providers so it will be constantized properly
     if (formData.relationship === 'healthcare_provider') {
       intakeData.claimantType = 'healthcare_provider';

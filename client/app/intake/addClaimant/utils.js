@@ -8,7 +8,7 @@ import { camelCase, reduce, startCase } from 'lodash';
 import { FORM_TYPES } from '../constants';
 
 import ApiUtil from 'app/util/ApiUtil';
-import { DOB_INVALID_ERRS } from 'app/../COPY';
+import { DOB_INVALID_ERRS, SSN_INVALID_ERR } from 'app/../COPY';
 
 const { AGE_MIN_ERR, AGE_MAX_ERR } = DOB_INVALID_ERRS;
 
@@ -19,6 +19,8 @@ const additionalFieldsRequired = (partyType, relationship) => {
 const yearsFromToday = (years) => {
   return sub(new Date(), { years });
 };
+
+const ssnRegex = /^(?!000|666)[0-9]{3}([ -]?)(?!00)[0-9]{2}\1(?!0000)[0-9]{4}$/gm;
 
 const sharedValidation = {
   relationship: yup.string().when(['$hideListedAttorney'], {
@@ -108,7 +110,14 @@ export const schemaHLR = yup.object().shape({
     is: 'organization',
     then: yup.string().required(),
   }),
-  ssn: yup.string(),
+  ssn: yup.string().
+    matches(
+      ssnRegex,
+      {
+        message: SSN_INVALID_ERR,
+        excludeEmptyString: true
+      }
+    ),
   ...sharedValidation,
 });
 

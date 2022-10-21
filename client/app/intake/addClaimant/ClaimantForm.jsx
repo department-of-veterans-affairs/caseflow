@@ -60,6 +60,7 @@ export const ClaimantForm = ({
 
   const emailValidationError = errors?.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
   const dobValidationError = errors?.dateOfBirth && errors.dateOfBirth.message;
+  const ssnValidationError = errors?.ssn && errors.ssn.message;
 
   const watchRelationship = watch('relationship');
   const dependentRelationship = ['spouse', 'child'].includes(watchRelationship);
@@ -230,6 +231,7 @@ export const ClaimantForm = ({
             {(isIndividualPartyType || dependentRelationship) && isHLROrSCForm &&
               <SocialSecurityNumber>
                 <TextField
+                  validationError={ssnValidationError}
                   name="ssn"
                   label="Social Security Number"
                   inputRef={register}
@@ -327,7 +329,7 @@ const ClaimantAddress = styled.div`
 `;
 
 const SocialSecurityNumber = styled.div`
-  margin-bottom: 0;
+  margin-bottom: 1.5em;
   margin-top: 0;
 `;
 
