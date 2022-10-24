@@ -53,7 +53,11 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
       [docket_type, docket.ready_priority_appeal_ids]
     end.to_h
 
-    report << "*Number of appeals _not_ distributed*: #{appeals_not_distributed.values.flatten.count}"
+    report << "*Total Number of appeals _not_ distributed*: #{appeals_not_distributed.values.flatten.count}"
+    docket_coordinator.dockets.each_pair do |sym, docket|
+      report << "*Number of #{sym} appeals _not_ distributed*: #{docket.count(priority: true, ready: true)}"
+    end
+    report << "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: #{legacy_not_genpop_count}"
 
     report << ""
     report << "*Debugging information*"
@@ -173,5 +177,9 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def use_by_docket_date?
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+  end
+
+  def legacy_not_genpop_count
+    docket_coordinator.dockets[:legacy].not_genpop_priority_count
   end
 end
