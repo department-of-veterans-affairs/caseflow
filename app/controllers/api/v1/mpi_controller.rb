@@ -8,7 +8,7 @@ class Api::V1::MpiController < Api::ApplicationController
       deceased_ind: allowed_params[:deceased_ind],
       deceased_time: allowed_params[:deceased_time]
     }
-    
+
     # result will be true if an update was made, or nil otherwise
     result = VACOLS::Correspondent.update_veteran_nod(veteran)
     render json: { success: result }, status: :ok
