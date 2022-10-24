@@ -19,21 +19,24 @@ module Seeds
     def initial_id_values
       @file_number ||= 400_000_000
       @participant_id ||= 800_000_000
-      while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
+      while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1)) ||
+            VACOLS::Correspondent.find_by(ssn: format("%<n>09d", n: @file_number + 1))
         @file_number += 2000
         @participant_id += 2000
       end
     end
 
-    def create_veteran(options = {})
-      @file_number += 1
-      @participant_id += 1
-      params = {
-        file_number: format("%<n>09d", n: @file_number),
-        participant_id: format("%<n>09d", n: @participant_id)
-      }
-      create(:veteran, params.merge(options))
-    end
+    # this is commented out because it isn't needed right now, but if you need to create a caseflow veteran
+    #  object use this method to increment ID numbers properly
+    # def create_veteran(options = {})
+    #   @file_number += 1
+    #   @participant_id += 1
+    #   params = {
+    #     file_number: format("%<n>09d", n: @file_number),
+    #     participant_id: format("%<n>09d", n: @participant_id)
+    #   }
+    #   create(:veteran, params.merge(options))
+    # end
 
     # Create appeals in VACOLS to test veteran NOD updates
     def create_data_for_nod_update_testing
