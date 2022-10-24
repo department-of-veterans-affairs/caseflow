@@ -201,23 +201,6 @@ module Seeds
         )
       end
 
-      # Create appeals in VACOLS not ready for distribution to test veteran NOD updates
-      5.times do
-        @file_number += 1
-        @participant_id += 1
-        create(
-          :case,
-          :type_original,
-          :status_active,
-          correspondent: create(
-            :correspondent,
-            stafkey: format("%<n>09d", n: @participant_id),
-            ssn: format("%<n>09d", n: @participant_id),
-            snamel: "TestUpdateNOD"
-          )
-        )
-      end
-
       LegacyAppeal.find_or_create_by(vacols_id: "2096907", vbms_id: "228081153S")
       LegacyAppeal.find_or_create_by(vacols_id: "2226048", vbms_id: "213912991S")
       LegacyAppeal.find_or_create_by(vacols_id: "2249056", vbms_id: "608428712S")
