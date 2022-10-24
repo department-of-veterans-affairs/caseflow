@@ -1,0 +1,22 @@
+create table appeal_states_audit (
+	id BIGINT not null,
+	appeal_states_id BIGINT not null,
+	type_of_change CHAR(1) not null,
+	appeal_id VARCHAR not null,
+	appeal_type VARCHAR not null,
+	updated_by_id bigint,
+	updated_at timestamp,
+	created_by_id bigint not null,
+	created_at timestamp not null,
+	appeal_docketed boolean not null,
+	privacy_act_pending boolean not null,
+	privacy_act_complete boolean not null,
+	vso_ihp_pending boolean not null,
+	vso_ihp_complete boolean not null,
+	hearing_scheduled boolean not null,
+	hearing_posponed boolean not null,
+	hearing_withdrawn boolean not null,
+	decision_mailed boolean not null,
+	appeal_cancelled boolean not null,
+	scheduled_in_error boolean not null
+)
