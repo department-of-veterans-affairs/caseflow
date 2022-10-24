@@ -16,4 +16,8 @@ class AdminController < ApplicationController
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
   end
+
+  def veteran_extract
+
+  end
 end
