@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import renderer from "react-test-renderer";
 import { NotificationsView } from 'app/queue/NotificationsView';
 import {
   BrowserRouter as Router,
@@ -71,6 +72,12 @@ describe('NotificationsTest', () => {
     const description = container.querySelector('.notification-text').innerHTML;
 
     expect(description).toBe('VA Notify sent these status notifications to the Appellant about their case.');
+  });
+
+  it('matches snapshot', () => {
+    const { container } = setup(state);
+
+    expect(container).toMatchSnapshot();
   });
 });
 
