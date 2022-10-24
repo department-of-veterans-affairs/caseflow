@@ -39,6 +39,7 @@ class LegacyAppeal < CaseflowRecord
   }, class_name: "Task", foreign_key: :appeal_id
   has_many :email_recipients, class_name: "HearingEmailRecipient", foreign_key: :appeal_id
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
+  has_one :appeal_state, foreign_key: :appeal_id, primary_key: :vacols_id
 
   class UnknownLocationError < StandardError; end
 
