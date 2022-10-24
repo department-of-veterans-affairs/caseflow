@@ -200,7 +200,6 @@ module Seeds
           )
         )
       end
-
       LegacyAppeal.find_or_create_by(vacols_id: "2096907", vbms_id: "228081153S")
       LegacyAppeal.find_or_create_by(vacols_id: "2226048", vbms_id: "213912991S")
       LegacyAppeal.find_or_create_by(vacols_id: "2249056", vbms_id: "608428712S")
