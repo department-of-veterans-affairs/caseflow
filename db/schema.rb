@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_09_20_122149) do
+ActiveRecord::Schema.define(version: 2022_10_18_173134) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1460,6 +1460,17 @@ ActiveRecord::Schema.define(version: 2022_09_20_122149) do
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
+  create_table "system_admin_events", force: :cascade do |t|
+    t.datetime "completed_at", comment: "Timestamp of when event was completed without error"
+    t.datetime "created_at", comment: "Timestamp of when event was initiated"
+    t.datetime "errored_at", comment: "Timestamp of when event failed due to error"
+    t.string "event_type", null: false, comment: "Type of event"
+    t.json "info", comment: "Additional information about the event"
+    t.datetime "updated_at", comment: "Timestamp of when event was last updated"
+    t.bigint "user_id", null: false, comment: "User who initiated the event"
+    t.index ["user_id"], name: "index_system_admin_events_on_user_id"
+  end
+
   create_table "tags", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "text"
@@ -1831,6 +1842,7 @@ ActiveRecord::Schema.define(version: 2022_09_20_122149) do
   add_foreign_key "sent_hearing_admin_email_events", "sent_hearing_email_events"
   add_foreign_key "sent_hearing_email_events", "hearing_email_recipients", column: "email_recipient_id"
   add_foreign_key "sent_hearing_email_events", "users", column: "sent_by_id"
+  add_foreign_key "system_admin_events", "users"
   add_foreign_key "task_timers", "tasks"
   add_foreign_key "tasks", "tasks", column: "parent_id"
   add_foreign_key "tasks", "users", column: "assigned_by_id"
