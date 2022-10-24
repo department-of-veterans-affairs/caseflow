@@ -68,10 +68,10 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def add_stuck_appeals_to_report(report, appeals)
+    report.unshift(COPY::PRIORITY_PUSH_WARNING_MESSAGE)
     report.unshift("[WARN]")
     report << "Legacy appeals not distributed: `LegacyAppeal.where(vacols_id: #{appeals[:legacy]})`"
     report << "AMA appeals not distributed: `Appeal.where(uuid: #{appeals.values.drop(1).flatten})`"
-    report << COPY::PRIORITY_PUSH_WARNING_MESSAGE
   end
 
   # Distribute all priority cases tied to a judge without limit

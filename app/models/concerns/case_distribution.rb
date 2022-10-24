@@ -6,8 +6,10 @@ module CaseDistribution
   delegate :dockets,
            :docket_proportions,
            :priority_count,
+           :nonpriority_count,
            :direct_review_due_count,
            :total_batch_size,
+           :legacy_hearing_backlog_count,
            to: :docket_coordinator
 
   private

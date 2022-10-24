@@ -96,6 +96,13 @@ class DocketCoordinator
       .sum
   end
 
+  def nonpriority_count
+    @nonpriority_count ||= dockets
+      .values
+      .map { |docket| docket.count(priority: false, ready: true) }
+      .sum
+  end
+
   def genpop_priority_count
     @genpop_priority_count ||= dockets.values.map(&:genpop_priority_count).sum
   end
