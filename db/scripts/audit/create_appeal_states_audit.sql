@@ -1,4 +1,4 @@
-create table appeal_states_audit (
+create table caseflow_audit.appeal_states_audit (
 	id BIGINT not null,
 	appeal_states_id BIGINT not null,
 	type_of_change CHAR(1) not null,
