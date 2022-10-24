@@ -37,7 +37,7 @@
   },"6": {
     "doc": "README",
     "title": "Previewing changes",
-    "content": "To preview changes locally, run the website generators locally as follows: . make run # Alternatively, to run from a clean state: make clean_run . If it’s the first time running it, install some tools: . bundle install make install_jekyll_diagram_dependencies # only needed to view diagrams locally . To update the subsites: . make build_subsites . which puts the subsites as subdirectories under the _site directory. ",
+    "content": "To preview changes locally, run the website generators locally as follows: . make run # Alternatively, to run from a clean state: make clean_run . If it’s the first time running it, install some tools: . bundle install make install_jekyll_diagram_dependencies # only needed to view diagrams locally Stephan Ward - 10/21/2023 comment: Used 'sudo apt install graphviz' to fix dependency issue to view graphs. To update the subsites: . make build_subsites . which puts the subsites as subdirectories under the _site directory. ",
     "url": "/caseflow/README.html#previewing-changes",
     "relUrl": "/README.html#previewing-changes"
   },"7": {
