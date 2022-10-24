@@ -17,8 +17,8 @@ module Seeds
     private
 
     def initial_id_values
-      @file_number ||= 300_000_000
-      @participant_id ||= 700_000_000
+      @file_number ||= 400_000_000
+      @participant_id ||= 800_000_000
       while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
         @file_number += 2000
         @participant_id += 2000
