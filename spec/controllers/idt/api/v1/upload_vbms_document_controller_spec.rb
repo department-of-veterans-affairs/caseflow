@@ -3,8 +3,8 @@
 RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :controller do
   describe "POST /idt/api/v1/appeals/:appeal_id/upload_document" do
     let(:user) { create(:user) }
-    let(:veteran) { create(:veteran) }
     let(:appeal) { create(:appeal) }
+    let(:veteran) { appeal.veteran }
     let(:file_number) { appeal.veteran.file_number }
     let(:valid_document_type) { "BVA Decision" }
     let(:params) do
@@ -86,6 +86,35 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
           expect(err_msg).to eq "File can't be blank"
           expect(response.status).to eq(400)
+        end
+      end
+
+      context "when appeal id doesn't match in database" do
+        it "returns an AppealNotFound error" do
+          params["appeal_id"] = appeal.uuid + "123"
+          post :create, params: params
+          expect(response).to have_attributes(status: 400)
+          error_msg = JSON.parse(response.body)["message"]
+          expect(error_msg).to include("The appeal was unable to be found.")
+        end
+      end
+
+      context "when veteran file number doesn't match in BGS" do
+        it "returns a VeteranNotFound error" do
+          params_file_number["veteran_file_number"] = file_number + "123"
+          post :create, params: params_file_number
+          expect(response).to have_attributes(status: 400)
+          error_msg = JSON.parse(response.body)["message"]
+          expect(error_msg).to include("The veteran was unable to be found.")
+        end
+      end
+      context "when veteran ssn doesn't match in BGS" do
+        it "returns a VeteranNotFound error" do
+          params_ssn["veteran_ssn"] = veteran.ssn + "123"
+          post :create, params: params_ssn
+          expect(response).to have_attributes(status: 400)
+          error_msg = JSON.parse(response.body)["message"]
+          expect(error_msg).to include("The veteran was unable to be found.")
         end
       end
 
