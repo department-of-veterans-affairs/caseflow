@@ -51,14 +51,14 @@ module ByDocketDateDistribution
   def priority_stats
     {
       count: priority_count,
-      target: @push_priority_target
+      priority_target: @push_priority_target
     }
   end
 
   def nonpriority_stats
     {
       count: nonpriority_count,
-      target: @request_priority_count
+      priority_target: @request_priority_count
     }
   end
 
