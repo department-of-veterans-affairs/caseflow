@@ -1013,7 +1013,7 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-fubCfw eANWpN"
+      class="sc-fubCfw jWpDCb"
     >
       <div
         class="cf-form-textinput   "
@@ -2406,7 +2406,7 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
       </div>
     </div>
     <div
-      class="sc-fubCfw eANWpN"
+      class="sc-fubCfw jWpDCb"
     >
       <div
         class="cf-form-textinput   "
