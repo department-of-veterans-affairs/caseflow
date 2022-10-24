@@ -480,7 +480,6 @@ feature "Appeal Edit issues", :all_dbs do
 
     scenario "on the review_split page, testing appellant and vetera" do
       skill_form(appeal2)
-      # binding.pry
       if expect(appeal2.veteran_is_not_claimant).to be(false)
         row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
         row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
