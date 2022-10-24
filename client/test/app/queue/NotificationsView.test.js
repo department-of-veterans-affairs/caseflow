@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { axe } from 'jest-axe';
 
 const createReducer = (storeValues) => {
   return function (state = storeValues) {
@@ -79,5 +80,14 @@ describe('NotificationsTest', () => {
 
     expect(container).toMatchSnapshot();
   });
+
+  it('Virtual passes a11y testing', async () => {
+    const { container } = setup(state);
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
+
 });
 
