@@ -23,7 +23,7 @@ const data = Array.from({ length: totalRecords }, () => ({
   },
 }));
 
-export const performQuery = async (search = '') => {
+const performQuery = async (search = '') => {
   const regex = RegExp(search, 'i');
 
   return data.filter((item) => regex.test(item.name));
