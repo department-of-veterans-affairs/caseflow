@@ -238,7 +238,7 @@ export const IntakeEditFrame = (props) => {
               <AppSegment styling={textAlignRightStyling}>
                 <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
                 <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitButtons} />
-                <IntakeAppealContext.Provider value={props.appeal}>
+                <IntakeAppealContext.Provider value={[props.appeal, props.user]}>
                   <Route exact path={PAGE_PATHS.REVIEW_SPLIT} component={CreateButtons} />
                 </IntakeAppealContext.Provider>
               </AppSegment>
@@ -271,6 +271,7 @@ IntakeEditFrame.propTypes = {
   userDisplayName: PropTypes.string,
   appeal: PropTypes.object,
   claimId: PropTypes.string,
+  user: PropTypes.string,
   routerTestProps: PropTypes.object,
   router: PropTypes.object
 };
