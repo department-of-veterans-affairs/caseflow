@@ -9,6 +9,7 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 const ManualJobTriggerMenu = (props) => {
 
   const [loading, setLoading] = useState(false);
+  const [runAsync, setRunAsync] = useState(null);
   const [manualJobType, setManualJobType] = useState(null);
 
   useEffect(() => {
@@ -27,10 +28,11 @@ const ManualJobTriggerMenu = (props) => {
       }, 'manual-job-banner');
 
       const status = props.manualJobSuccess ? 'succeeded' : 'failed';
+      const verb = runAsync ? 'Scheduling' : 'Manual run';
 
       return (
         <div className={manualJobBannerClasses}>
-          Manual run of <strong>{StringUtil.snakeCaseToCapitalized(manualJobType)}</strong> has{' '}
+          {verb} of <strong>{StringUtil.snakeCaseToCapitalized(manualJobType)}</strong> has{' '}
           <strong>{status}</strong>
         </div>
       );
@@ -64,10 +66,23 @@ const ManualJobTriggerMenu = (props) => {
                     name={`trigger-${jobType}-job`}
                     onClick={() => {
                       setLoading(true);
-                      props.sendJobRequest(jobType);
+                      setRunAsync(false);
+                      props.sendJobRequest(jobType, false);
                     }}
                   >
                 Perform Now
+                  </Button>
+                </td>
+                <td>
+                  <Button
+                    name={`trigger-${jobType}-job`}
+                    onClick={() => {
+                      setLoading(true);
+                      setRunAsync(true);
+                      props.sendJobRequest(jobType, true);
+                    }}
+                  >
+                Perform Later
                   </Button>
                 </td>
               </tr>
