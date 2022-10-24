@@ -32,6 +32,7 @@ import {
   setHearingDay,
 } from './uiReducer/uiActions';
 import CaseTitleDetails from './CaseTitleDetails';
+import QueueTable from './QueueTable';
 
 const sectionGap = css({ marginTop: '3.5rem' });
 
@@ -78,8 +79,14 @@ export const NotificationsView = (props) => {
           userCanAccessReader={props.userCanAccessReader}
         />
         <div {...sectionGap}>
-          <p className="notification-text">VA Notify sent these status notifications to the Appellant about their case.</p>
-
+          <p>VA Notify sent these status notifications to the Appellant about their case.</p>
+          <div className='notification-table'>
+             <QueueTable
+             columns={[]}
+             rowObjects={[]}
+             enablePagination
+             />
+          </div>
         </div>
 
       </AppSegment>
