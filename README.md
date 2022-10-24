@@ -89,6 +89,7 @@ If it's the first time running it, install some tools:
 ```
 bundle install
 make install_jekyll_diagram_dependencies # only needed to view diagrams locally
+Stephan Ward - 10/21/2023 comment: Used 'sudo apt install graphviz' to fix dependency issue to view graphs.
 ```
 
 To update the subsites:
