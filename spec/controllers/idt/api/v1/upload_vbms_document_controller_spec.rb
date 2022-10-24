@@ -80,6 +80,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         it "returns a HTTP 500 error" do
           params["veteran_file_number"] = file_number + "123"
           post :create, params: params
+          byebug
           expect(response).to have_attributes(status: 500)
           errors = JSON.parse(response.body)["errors"]
           expect(errors[0]).to include(
@@ -95,7 +96,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
           post :create, params: params
           err_msg = JSON.parse(response.body)["message"]
 
-          expect(err_msg).to eq "Unexpected error: job error"
+          expect(err_msg).to include "Unexpected error: job error"
           expect(response.status).to eq(500)
         end
       end
