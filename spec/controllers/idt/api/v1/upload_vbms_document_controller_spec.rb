@@ -3,11 +3,24 @@
 RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :controller do
   describe "POST /idt/api/v1/appeals/:appeal_id/upload_document" do
     let(:user) { create(:user) }
+    let(:veteran) { create(:veteran) }
     let(:appeal) { create(:appeal) }
     let(:file_number) { appeal.veteran.file_number }
     let(:valid_document_type) { "BVA Decision" }
     let(:params) do
       { appeal_id: appeal.external_id,
+        file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
+        document_type: valid_document_type }
+    end
+
+    let(:params_file_number) do
+      { veteran_file_number: veteran.file_number,
+        file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
+        document_type: valid_document_type }
+    end
+
+    let(:params_ssn) do
+      { veteran_ssn: veteran.ssn,
         file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
         document_type: valid_document_type }
     end
@@ -73,20 +86,6 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
           expect(err_msg).to eq "File can't be blank"
           expect(response.status).to eq(400)
-        end
-      end
-
-      context "when veteran file number doesn't match in BGS" do
-        it "returns a HTTP 500 error" do
-          params["veteran_file_number"] = file_number + "123"
-          byebug
-          post :create, params: params
-          expect(response).to have_attributes(status: 500)
-          errors = JSON.parse(response.body)["errors"]
-          expect(errors[0]).to include(
-            "title" => "VBMS::FilenumberDoesNotExist",
-            "detail" => "The veteran file number does not match the file number in VBMS"
-          )
         end
       end
 
