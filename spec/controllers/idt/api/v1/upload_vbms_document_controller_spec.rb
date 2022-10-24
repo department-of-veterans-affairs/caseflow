@@ -4,10 +4,23 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
   describe "POST /idt/api/v1/appeals/:appeal_id/upload_document" do
     let(:user) { create(:user) }
     let(:appeal) { create(:appeal) }
+    let(:veteran) { appeal.veteran }
     let(:file_number) { appeal.veteran.file_number }
     let(:valid_document_type) { "BVA Decision" }
     let(:params) do
       { appeal_id: appeal.external_id,
+        file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
+        document_type: valid_document_type }
+    end
+
+    let(:params_file_number) do
+      { veteran_file_number: veteran.file_number,
+        file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
+        document_type: valid_document_type }
+    end
+
+    let(:params_ssn) do
+      { veteran_ssn: veteran.ssn,
         file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
         document_type: valid_document_type }
     end
@@ -76,17 +89,32 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         end
       end
 
-      context "when veteran file number doesn't match in BGS" do
-        let(:file_number) { appeal.veteran.file_number + "123" }
-
-        it "returns a HTTP 500 error" do
+      context "when appeal id doesn't match in database" do
+        it "returns an AppealNotFound error" do
+          params["appeal_id"] = appeal.uuid + "123"
           post :create, params: params
-          expect(response).to have_attributes(status: 500)
-          errors = JSON.parse(response.body)["errors"]
-          expect(errors[0]).to include(
-            "title" => "VBMS::FilenumberDoesNotExist",
-            "detail" => "The veteran file number does not match the file number in VBMS"
-          )
+          expect(response).to have_attributes(status: 400)
+          error_msg = JSON.parse(response.body)["message"]
+          expect(error_msg).to include("The appeal was unable to be found.")
+        end
+      end
+
+      context "when veteran file number doesn't match in BGS" do
+        it "returns a VeteranNotFound error" do
+          params_file_number["veteran_file_number"] = file_number + "123"
+          post :create, params: params_file_number
+          expect(response).to have_attributes(status: 400)
+          error_msg = JSON.parse(response.body)["message"]
+          expect(error_msg).to include("The veteran was unable to be found.")
+        end
+      end
+      context "when veteran ssn doesn't match in BGS" do
+        it "returns a VeteranNotFound error" do
+          params_ssn["veteran_ssn"] = veteran.ssn + "123"
+          post :create, params: params_ssn
+          expect(response).to have_attributes(status: 400)
+          error_msg = JSON.parse(response.body)["message"]
+          expect(error_msg).to include("The veteran was unable to be found.")
         end
       end
 
@@ -96,7 +124,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
           post :create, params: params
           err_msg = JSON.parse(response.body)["message"]
 
-          expect(err_msg).to eq "Unexpected error: job error"
+          expect(err_msg).to include "Unexpected error: job error"
           expect(response.status).to eq(500)
         end
       end
@@ -105,8 +133,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         let(:uploaded_document) { instance_double(VbmsUploadedDocument, id: 1) }
         let(:document_params) do
           {
-            appeal_id: appeal.id,
-            appeal_type: appeal.class.name,
+            veteran_file_number: file_number,
             document_type: params[:document_type],
             file: params[:file]
           }
