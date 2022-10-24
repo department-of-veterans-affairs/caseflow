@@ -12,8 +12,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: Set Git config
       run: |
-          git config --local user.email "jeremy.shields@va.gov"
-          git config --local user.name "Jeremy Shields"
+          git config --local user.email "stephan.ward@va.gov"
+          git config --local user.name "Stephan Ward"
     - name: Merge master back to dev
       run: |
           git fetch --unshallow

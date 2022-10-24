@@ -131,8 +131,8 @@ jobs:
         id: compare_docs
         env:
           WIKI_COMMIT_MESSAGE: '`make docs` GH Action: automatically update DB schema documentation files'
-          WIKI_COMMIT_USER_EMAIL: 'Quillman_Samantha@bah.com'
-          WIKI_COMMIT_USER_NAME: 'samantha-quillman'
+          WIKI_COMMIT_USER_EMAIL: 'stephan.ward@va.gov'
+          WIKI_COMMIT_USER_NAME: 'Stephan Ward'
         run: |
           cd main-gh-pages_checkout
 
