@@ -18,7 +18,6 @@ import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import {
   deepDiff,
   getChanges,
-  getConvertToVirtualChanges,
   getAppellantTitle,
   processAlerts,
   startPolling,
@@ -144,14 +143,6 @@ const HearingDetails = (props) => {
     };
   };
 
-  const filterEmailAttribute = (email) => {
-    if (convertingToVirtual) {
-      return Object.keys(email).includes('email_address') && email.email_address;
-    }
-
-    return Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone');
-  };
-
   const handleCancelButton = () => {
     if (userVsoEmployee) {
       goBack();
@@ -210,16 +201,11 @@ const HearingDetails = (props) => {
         return openEmailConfirmationModal({ type: 'change_email_or_timezone' });
       }
 
-      // Only send updated properties unless converting to virtual, then send everything.
-      const { virtualHearing, transcription, ...hearingChanges } = convertingToVirtual ?
-        getConvertToVirtualChanges(
-          initialHearing,
-          hearing
-        ) :
-        getChanges(
-          initialHearing,
-          hearing
-        );
+      // Only send updated properties
+      const { virtualHearing, transcription, ...hearingChanges } = getChanges(
+        initialHearing,
+        hearing
+      );
 
       const emailRecipientAttributes = [
         omitBy(
@@ -238,7 +224,7 @@ const HearingDetails = (props) => {
             type: 'RepresentativeHearingEmailRecipient'
           }, isUndefined
         )
-      ].filter((email) => filterEmailAttribute(email));
+      ].filter((email) => Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone'));
 
       // Put the UI into a loading state
       setLoading(true);
