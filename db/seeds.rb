@@ -51,6 +51,7 @@ class SeedDB
     call_and_log_seed_step Seeds::Education
     call_and_log_seed_step Seeds::NotificationEvents
     call_and_log_seed_step Seeds::PriorityDistributions
+    call_and_log_seed_step Seeds::TestCaseData
   end
 end
 
