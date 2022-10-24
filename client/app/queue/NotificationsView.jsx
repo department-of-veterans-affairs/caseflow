@@ -1,0 +1,149 @@
+import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect, useSelector } from 'react-redux';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import React, { useEffect, useMemo } from 'react';
+import {
+  appealHasSubstitution,
+  isAppealDispatched,
+  supportsSubstitutionPostDispatch,
+  supportsSubstitutionPreDispatch,
+} from './substituteAppellant/caseDetails/utils';
+import { useHistory } from 'react-router';
+import {
+  appealWithDetailSelector,
+  getAllTasksForAppeal,
+  openScheduleHearingTasksForAppeal,
+  allHearingTasksForAppeal,
+  scheduleHearingTasksForAppeal
+} from './selectors';
+import Button from '../components/Button';
+import CaseTitle from './CaseTitle';
+import COPY, { CASE_DETAILS_POA_SUBSTITUTE } from 'app/../COPY';
+import { css } from 'glamor';
+import {
+  stopPollingHearing,
+  transitionAlert,
+  clearAlerts,
+} from '../components/common/actions';
+import {
+  resetErrorMessages,
+  resetSuccessMessages,
+  setHearingDay,
+} from './uiReducer/uiActions';
+import CaseTitleDetails from './CaseTitleDetails';
+// import QueueTable from './QueueTable';
+
+
+
+const sectionGap = css({ marginTop: '3.5rem' });
+
+export const NotificationsView = (props) => {
+  const { push } = useHistory();
+  const { appealId, featureToggles } = props;
+  const appeal = useSelector((state) =>
+    appealWithDetailSelector(state, { appealId })
+  );
+  const currentUserOnClerkOfTheBoard = useSelector((state) =>
+    state.ui.organizations.some((organization) =>
+      ['Clerk of the Board'].includes(organization.name)
+    )
+  );
+  const userIsCobAdmin = useSelector(
+    (state) => state.ui.userIsCobAdmin
+  );
+  const supportPendingAppealSubstitution = supportsSubstitutionPreDispatch({
+    appeal,
+    currentUserOnClerkOfTheBoard,
+    featureToggles,
+    userIsCobAdmin
+  });
+
+  return (
+    <React.Fragment>
+      <AppSegment filledBackground>
+        <CaseTitle titleHeader = {'Case notifications for ' + appeal.veteranFullName} appeal={appeal} />
+        {supportPendingAppealSubstitution && (
+          <div {...sectionGap}>
+            <Button
+              onClick={() =>
+                push(`/queue/appeals/${appealId}/substitute_appellant`)
+              }
+            >
+              {COPY.SUBSTITUTE_APPELLANT_BUTTON}
+            </Button>
+          </div>
+        )}
+        <CaseTitleDetails
+          appealId={appealId}
+          redirectUrl={window.location.pathname}
+          hideOTSection
+          userCanAccessReader={props.userCanAccessReader}
+        />
+        <div {...sectionGap}>
+          <p>VA Notify sent these status notifications to the Appellant about their case.</p>
+
+        </div>
+
+        {/* <QueueTable /> */}
+
+      </AppSegment>
+
+    </React.Fragment>
+  );
+
+};
+
+
+
+NotificationsView.propTypes = {
+  appeal: PropTypes.object,
+  appealId: PropTypes.string.isRequired,
+  clearAlerts: PropTypes.func,
+  tasks: PropTypes.array,
+  error: PropTypes.object,
+  featureToggles: PropTypes.object,
+  resetErrorMessages: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
+  setHearingDay: PropTypes.func,
+  success: PropTypes.object,
+  userCanAccessReader: PropTypes.bool,
+  veteranCaseListIsVisible: PropTypes.bool,
+  userCanScheduleVirtualHearings: PropTypes.bool,
+  userCanEditUnrecognizedPOA: PropTypes.bool,
+  scheduledHearingId: PropTypes.string,
+  pollHearing: PropTypes.bool,
+  stopPollingHearing: PropTypes.func,
+  substituteAppellant: PropTypes.object,
+  vsoVirtualOptIn: PropTypes.bool,
+  hideOTSection: PropTypes.bool
+};
+
+NotificationsView.defaultProps = {
+  hideOTSection: true
+};
+
+const mapStateToProps = (state) => ({
+  scheduledHearingId: state.components.scheduledHearing.externalId,
+  pollHearing: state.components.scheduledHearing.polling,
+  featureToggles: state.ui.featureToggles,
+  substituteAppellant: state.substituteAppellant,
+});
+
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      clearAlerts,
+      resetErrorMessages,
+      resetSuccessMessages,
+      transitionAlert,
+      stopPollingHearing,
+      setHearingDay
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NotificationsView);
