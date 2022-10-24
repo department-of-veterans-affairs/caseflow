@@ -54,8 +54,9 @@ class SplitAppealController < ApplicationController
           dup_appeal.reload
           appeal.reload
           render json: { split_appeal: dup_appeal, original_appeal: appeal }, status: :created
-      else
-        raise ActiveRecord::Rollback
+        else
+          raise ActiveRecord::Rollback
+        end
       end
     end
   end
