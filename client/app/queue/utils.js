@@ -968,7 +968,7 @@ export const getPreviousTaskInstructions = (parentTask, tasks) => {
     }
   }
 
-  const previousInstructions = reviewNotes ? childTask.instructions.pop() : null;
+  const previousInstructions = reviewNotes ? childTask.instructions.slice(-1)[0] : null;
 
   return { reviewNotes, previousInstructions };
 };
