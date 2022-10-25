@@ -34,6 +34,7 @@ describe MpiUpdatePersonEvent do
         .to raise_error(ArgumentError)
     end
 
+    # creates an array of events, then reject any where .valid? is true and count the result
     it "succeeds with an api_key and each valid update_type" do
       updates = []
       i = 0
