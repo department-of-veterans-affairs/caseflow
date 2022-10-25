@@ -120,7 +120,6 @@ export const AddPoaPage = () => {
   const handleBack = () => goBack();
 
   const watchPartyType = watch('partyType');
-  const showIndividualNameFields = watchPartyType === 'individual';
 
   const watchListedAttorney = watch('listedAttorney');
   const attorneyNotListed = watchListedAttorney?.value === 'not_listed';
@@ -128,6 +127,9 @@ export const AddPoaPage = () => {
   const showAdditionalFields = watchPartyType && showPartyType;
 
   const isOrgPartyType = watchPartyType === 'organization';
+  const isIndividualPartyType = watchPartyType === 'individual';
+  const isHLROrSCForm = formType === FORM_TYPES.HIGHER_LEVEL_REVIEW.key ||
+    formType === FORM_TYPES.SUPPLEMENTAL_CLAIM.key;
 
   const asyncFn = useCallback(
     debounce((search, callback) => {
@@ -197,7 +199,7 @@ export const AddPoaPage = () => {
           )}
 
           <br />
-          {showIndividualNameFields && (
+          {isIndividualPartyType && (
             <>
               <FieldDiv>
                 <TextField
@@ -237,7 +239,7 @@ export const AddPoaPage = () => {
             </>
           )}
 
-          {showPartyType && watchPartyType === 'organization' && (
+          {showPartyType && isOrgPartyType && (
             <FieldDiv>
               <TextField
                 name="name"
@@ -252,6 +254,7 @@ export const AddPoaPage = () => {
               <AddressForm
                 {...methods}
                 isOrgPartyType={isOrgPartyType}
+                isIndividualPartyType={isIndividualPartyType}
               />
               <FieldDiv>
                 <TextField
