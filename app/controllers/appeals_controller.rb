@@ -316,8 +316,10 @@ class AppealsController < ApplicationController
   #
   # Response: Returns an array of all retrieved notifications
   def find_notifications_by_appeals_id(appeals_id)
-    # Retrieve notifications based on appeals_id
+    # Retrieve notifications based on appeals_id, excluding statuses of 'No participant_id' & 'No claimant'
     notifications = Notification.where(appeals_id: appeals_id)
+      .merge(Notification.where.not(email_notification_status: ["No participant_id", "No claimant"],
+                                    sms_notification_status: ["No participant_id", "No claimant"]))
 
     # If no notifications were found, return an empty array, else return serialized notifications
     if notifications == []
