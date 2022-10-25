@@ -32,9 +32,11 @@ import {
   setHearingDay,
 } from './uiReducer/uiActions';
 import CaseTitleDetails from './CaseTitleDetails';
-import QueueTable from './QueueTable';
 
 const sectionGap = css({ marginTop: '3.5rem' });
+
+import NotificationTable from './components/NotificationTable';
+import QueueTableBuilder from './QueueTableBuilder';
 
 export const NotificationsView = (props) => {
   const { push } = useHistory();
@@ -80,15 +82,10 @@ export const NotificationsView = (props) => {
         />
         <div {...sectionGap}>
           <p>VA Notify sent these status notifications to the Appellant about their case.</p>
-          <div className='notification-table'>
-             <QueueTable
-             columns={[]}
-             rowObjects={[]}
-             enablePagination
-             />
+          <div className="notification-table">
+            <NotificationTable />
           </div>
         </div>
-
       </AppSegment>
 
     </React.Fragment>
