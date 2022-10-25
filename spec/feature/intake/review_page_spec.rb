@@ -306,7 +306,7 @@ feature "Intake Review Page", :postgres do
           FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
         end
 
-        after do          
+        after do
           FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
         end
 
