@@ -10,12 +10,12 @@ const relationships = [
 ];
 
 const defaultArgs = {
-  appellantName: 'Jane Doe',
   formType: 'appeal',
   isVeteranDeceased: false,
   veteranIsNotClaimant: true,
   enableAddClaimant: true,
-  featureToggles: true,
+  featureToggles: { hlrScUnrecognizedClaimants: true },
+  benefitType: 'education',
   relationships,
 };
 
@@ -27,84 +27,44 @@ export default {
   args: defaultArgs,
   argTypes: {
     veteranIsNotClaimant: { control: 'boolean' },
-    featureToggles: { control: 'boolean' },
+    featureToggles: { control: 'object' },
+    benefitType: { control: { type: 'select', options: ['pension', 'education'] } },
+    formType: {
+      control: {
+        type: 'select',
+        options: [
+          'appeal', 'higher_level_review', 'supplemental_claim', 'ramp_refilling', 'ramp_election'
+        ]
+      }
+    },
   },
 };
 
 const Template = (args) => {
-  const [updateArgs] = useArgs();
+  // eslint-disable-next-line no-unused-vars
+  const [_, updateArgs] = useArgs();
+
   const handleSetClaimant = ({ claimant, claimantType }) =>
     updateArgs({ claimant, claimantType });
 
   const setVeteranIsNotClaimant = (veteranIsNotClaimant) =>
     updateArgs({ veteranIsNotClaimant });
 
-  const setFeatureToggle = (featureToggles) =>
-    updateArgs({ featureToggles });
-
   return (
     <SelectClaimant
       {...args}
       setClaimant={handleSetClaimant}
       setVeteranIsNotClaimant={setVeteranIsNotClaimant}
-      setFeatureToggle={setFeatureToggle}
     />
   );
 };
 
 export const Basic = Template.bind({});
-
+Basic.args = {};
+Basic.storyName = 'Default Select Claimant';
 Basic.parameters = {
   docs: {
     storyDescription:
       'Used during intake process to select a claimant with some sort of relationship to the veteran',
   },
-};
-
-export const HLRWithVBMSBenTypes = Template.bind({});
-HLRWithVBMSBenTypes.args = {
-  appellantName: 'Jane Doe',
-  formType: 'higher_level_review',
-  isVeteranDeceased: false,
-  veteranIsNotClaimant: true,
-  enableAddClaimant: true,
-  featureToggles: { hlrScUnrecognizedClaimants: true },
-  relationships,
-  benefitType: 'pension',
-};
-
-export const HLRWithNonVBMSBenTypes = Template.bind({});
-HLRWithNonVBMSBenTypes.args = {
-  appellantName: 'Jane Doe',
-  formType: 'higher_level_review',
-  isVeteranDeceased: false,
-  veteranIsNotClaimant: true,
-  enableAddClaimant: true,
-  featureToggles: { hlrScUnrecognizedClaimants: true },
-  relationships,
-  benefitType: 'education',
-};
-
-export const SCWithVBMSBenTypes = Template.bind({});
-SCWithVBMSBenTypes.args = {
-  appellantName: 'Jane Doe',
-  formType: 'higher_level_review',
-  isVeteranDeceased: false,
-  veteranIsNotClaimant: true,
-  enableAddClaimant: true,
-  featureToggles: { hlrScUnrecognizedClaimants: true },
-  relationships,
-  benefitType: 'pension',
-};
-
-export const SCWithNonVBMSBenTypes = Template.bind({});
-SCWithNonVBMSBenTypes.args = {
-  appellantName: 'Jane Doe',
-  formType: 'higher_level_review',
-  isVeteranDeceased: false,
-  veteranIsNotClaimant: true,
-  enableAddClaimant: true,
-  featureToggles: { hlrScUnrecognizedClaimants: true },
-  relationships,
-  benefitType: 'education',
 };
