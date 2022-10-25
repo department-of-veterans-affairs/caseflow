@@ -14,7 +14,7 @@ import { isEmpty } from 'lodash';
 //   );
 const getFilteredDocIds = (state) => state.reader.documentList.filteredDocIds;
 const getAllDocs = (state) => state.reader.documentList.documents;
-
+const getSelectedDoc = (state) => state.reader.documentViewer.selected;
 export const getFilteredDocuments = createSelector(
   [getFilteredDocIds, getAllDocs],
   (filteredDocIds, allDocs) => filteredDocIds.reduce(
@@ -22,7 +22,14 @@ export const getFilteredDocuments = createSelector(
     {}
   )
 )
-
+const getFilterCriteria = (state) => state.reader.documentList.filterCriteria
+export const getdocsFiltered = createSelector(
+  [getFilterCriteria], (filterCriteria) => {
+    return filterCriteria.searchQuery ||
+    !isEmpty(filterCriteria.category) ||
+    !isEmpty(filterCriteria.tag)
+  }
+)
 /**
  * Selector for the Documents
  * @param {Object} state -- The current Redux Store state
@@ -54,25 +61,24 @@ export const documentListScreen = (state) => {
     reduce((list, doc) => [...list, ...doc.tags], []).
     filter((tags, index, list) => list.findIndex((tag) => tag.text === tags.text) === index);
 
+  const docsFiltered = getdocsFiltered(state);
+
   return {
     documents,
     docsCount,
-    docsFiltered:
-      state.reader.documentList.filterCriteria.searchQuery ||
-      !isEmpty(state.reader.documentList.filterCriteria.category) ||
-      !isEmpty(state.reader.documentList.filterCriteria.tag),
-    tagOptions: formatTagOptions(state.reader.documentList.documents),
-    currentDocument: state.reader.documentViewer.selected,
-    storeDocuments: state.reader.documentList.documents,
+    docsFiltered,
+    tagOptions: formatTagOptions(getAllDocs(state)),
+    currentDocument: getSelectedDoc(state),
+    storeDocuments: getAllDocs(state),
     documentList: state.reader.documentList,
     comments: state.reader.annotationLayer.comments,
     documentsView: documentsView(
       Object.values(documents),
-      state.reader.documentList.filterCriteria,
+      getFilterCriteria(state),
       state.reader.documentList.view
     ),
-    filterCriteria: state.reader.documentList.filterCriteria,
-    filteredDocIds: state.reader.documentList.filteredDocIds,
+    filterCriteria: getFilterCriteria(state),
+    filteredDocIds: getFilteredDocIds(state),
     searchCategoryHighlights:
       state.reader.documentList.searchCategoryHighlights,
     manifestVbmsFetchedAt: state.reader.documentList.manifestVbmsFetchedAt,
@@ -127,15 +133,15 @@ export const documentScreen = (state) => {
     })
   const tagOptions = getTagOptions(state)
 
+  const docsFiltered = getdocsFiltered(state);
+
+
   return {
     documents,
     docsCount,
     categories,
     comments,
-    docsFiltered:
-      state.reader.documentList.filterCriteria.searchQuery ||
-      !isEmpty(state.reader.documentList.filterCriteria.category) ||
-      !isEmpty(state.reader.documentList.filterCriteria.tag),
+    docsFiltered,
     currentPageIndex: state.reader.documentViewer.currentPageIndex,
     pendingTag: state.reader.documentViewer.pendingTag,
     editingTag: state.reader.documentViewer.editingTag,
@@ -156,14 +162,14 @@ export const documentScreen = (state) => {
     windowingOverscan: state.reader.documentViewer.windowingOverscan,
     deleteCommentId: state.reader.documentViewer.deleteCommentId,
     shareCommentId: state.reader.documentViewer.shareCommentId,
-    filterCriteria: state.reader.documentList.filterCriteria,
+    filterCriteria: getFilterCriteria(state),
     openSections: state.reader.documentViewer.openedAccordionSections,
-    currentDocument: state.reader.documentViewer.selected,
-    filteredDocIds: state.reader.documentList.filteredDocIds,
+    currentDocument: getSelectedDoc(state),
+    filteredDocIds: getFilteredDocIds(state),
     appeal: state.reader.appeal.selected,
     searchCategoryHighlights:
       state.reader.documentList.searchCategoryHighlights,
-    storeDocuments: state.reader.documentList.documents,
+    storeDocuments: getAllDocs(state),
     annotationLayer: state.reader.annotationLayer,
     hidePdfSidebar: state.reader.documentViewer.hidePdfSidebar,
     hideSearchBar: state.reader.documentViewer.hideSearchBar,
