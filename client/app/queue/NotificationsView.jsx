@@ -32,9 +32,6 @@ import {
   setHearingDay,
 } from './uiReducer/uiActions';
 import CaseTitleDetails from './CaseTitleDetails';
-// import QueueTable from './QueueTable';
-
-
 
 const sectionGap = css({ marginTop: '3.5rem' });
 
@@ -85,16 +82,12 @@ export const NotificationsView = (props) => {
 
         </div>
 
-        {/* <QueueTable /> */}
-
       </AppSegment>
 
     </React.Fragment>
   );
 
 };
-
-
 
 NotificationsView.propTypes = {
   appeal: PropTypes.object,
