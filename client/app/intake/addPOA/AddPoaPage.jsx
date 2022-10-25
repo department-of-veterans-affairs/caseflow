@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, Controller } from 'react-hook-form';
 import { Redirect } from 'react-router-dom';
 import { useAddPoaForm } from './utils';
@@ -62,17 +62,6 @@ export const AddPoaPage = () => {
   const [confirmModal, setConfirmModal] = useState(false);
   const { claimant, poa } = useSelector((state) => state.addClaimant);
 
-  const methods = useAddPoaForm({ defaultValues: poa });
-  const {
-    control,
-    register,
-    watch,
-    formState: { isValid, errors },
-    handleSubmit
-  } = methods;
-
-  const emailValidationError = errors.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
-
   const { formType, id: intakeId } = useSelector((state) => state.intake);
 
   const intakeForms = useSelector(
@@ -99,6 +88,18 @@ export const AddPoaPage = () => {
       return <Redirect to={PAGE_PATHS.ADD_CLAIMANT} />;
     }
   }
+
+  const methods = useAddPoaForm({ defaultValues: poa, selectedForm });
+  const {
+    control,
+    register,
+    watch,
+    setValue,
+    formState: { isValid, errors },
+    handleSubmit
+  } = methods;
+
+  const emailValidationError = errors.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
 
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
@@ -139,6 +140,13 @@ export const AddPoaPage = () => {
     }, 250),
     [fetchAttorneys]
   );
+
+  // Set the initial value of the country field to USA if it's an hlr/sc form
+  useEffect(() => {
+    if (isHLROrSCForm) {
+      setValue('country', 'USA');
+    }
+  }, [watchPartyType]);
 
   return (
     <FormProvider {...methods}>
@@ -223,7 +231,7 @@ export const AddPoaPage = () => {
                   name="lastName"
                   label="Last name"
                   inputRef={register}
-                  optional
+                  optional={!isHLROrSCForm}
                   strongLabel
                 />
               </FieldDiv>
@@ -255,6 +263,7 @@ export const AddPoaPage = () => {
                 {...methods}
                 isOrgPartyType={isOrgPartyType}
                 isIndividualPartyType={isIndividualPartyType}
+                isHLROrSCForm={isHLROrSCForm}
               />
               <FieldDiv>
                 <TextField
