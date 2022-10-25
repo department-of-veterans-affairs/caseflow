@@ -13,8 +13,8 @@ export const eventTypeColumn = (notifications) => {
     columnName: 'Event',
     tableData: notifications,
     filterOptions,
-    label: "Filter by event type",
-    valueName: "Event",
+    label: 'Filter by event type',
+    valueName: 'Event',
     valueFunction: (notification) => notification.event_type
   };
 };
@@ -24,10 +24,16 @@ export const notificationDateColumn = (notifications) => {
     header: COPY.NOTIFICATION_DATE_COLUMN_NAME,
     name: NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_DATE.name,
     enableFilter: NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_DATE.filterable,
-    columnName: 'notification.date',
+    columnName: 'Notification Date',
     tableData: notifications,
-    valueName: "Date",
-    valueFunction: (notification) => notification.event_date,
+    valueName: 'Notification Date',
+    valueFunction: (notification) => {
+      const dateArr = notification.event_date.split("-");
+
+      dateArr.push(dateArr.shift());
+
+      return dateArr.join('/');
+    },
     getSortValue: (notification) => notification.event_date
   };
 };
@@ -37,9 +43,9 @@ export const notificationTypeColumn = (notifications) => {
     header: COPY.NOTIFICATION_TYPE_COLUMN_NAME,
     name: NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_TYPE.name,
     enableFilter: NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_TYPE.filterable,
-    columnName: 'notification.type',
+    columnName: 'Notification Type',
     tableData: notifications,
-    valueName: "Type",
+    valueName: 'Notification Type',
     valueFunction: (notification) => notification.notification_type
   };
 };
@@ -49,9 +55,9 @@ export const recipientInformationColumn = (notifications) => {
     header: COPY.NOTIFICATION_RECIPIENT_INFORMATION,
     name: NOTIFICATION_CONFIG.COLUMNS.RECIPIENT_INFORMATION.name,
     enableFilter: NOTIFICATION_CONFIG.COLUMNS.RECIPIENT_INFORMATION.filterable,
-    columnName: 'notification.recipient_information',
+    columnName: 'Recipient Information',
     tableData: notifications,
-    valueName: "Recipient Info",
+    valueName: 'Recipient Information',
     valueFunction: (notification) => notification.recipient_email
   };
 };
@@ -61,7 +67,7 @@ export const statusColumn = (notifications) => {
     header: COPY.NOTIFICATION_STATUS,
     name: NOTIFICATION_CONFIG.COLUMNS.STATUS.name,
     enableFilter: NOTIFICATION_CONFIG.COLUMNS.STATUS.filterable,
-    columnName: 'notification.status',
+    columnName: 'Staus',
     tableData: notifications,
     valueName: 'Status',
     valueFunction: (notification) => {
