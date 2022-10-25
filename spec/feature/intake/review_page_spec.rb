@@ -303,6 +303,11 @@ feature "Intake Review Page", :postgres do
       context "when there are no relationships" do
         before do
           allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return([])
+          FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
+        end
+
+        after do          
+          FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
         end
 
         context "higher level review" do

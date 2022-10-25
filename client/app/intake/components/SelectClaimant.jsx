@@ -89,7 +89,8 @@ export const SelectClaimant = (props) => {
 
   const showClaimantNotListedOption = useMemo(() => {
     return (
-      isNotRamp && !VBMS_BENEFIT_TYPES.includes(benefitType) && featureToggles.hlrScUnrecognizedClaimants
+      ((isNotRamp && featureToggles.hlrScUnrecognizedClaimants) || isAppeal) &&
+       !VBMS_BENEFIT_TYPES.includes(benefitType)
     );
   }, [formType, benefitType]);
 
