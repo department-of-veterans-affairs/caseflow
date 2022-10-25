@@ -317,24 +317,17 @@ class AppealsController < ApplicationController
   # Response: Returns an array of all retrieved notifications
   def find_notifications_by_appeals_id(appeals_id)
     # Retrieve notifications based on appeals_id, excluding statuses of 'No participant_id' & 'No claimant'
-    notifications = Notification.where(appeals_id: appeals_id)
-      .merge(Notification.where.not(email_notification_status: ["No participant_id", "No claimant"],
-                                    sms_notification_status: ["No participant_id", "No claimant"]))
+    @all_notifications = Notification.where(appeals_id: appeals_id)
+    @allowed_notifications = @all_notifications.where(email_notification_status: nil)
+      .or(@all_notifications.where.not(email_notification_status: ["No participant_id", "No claimant"]))
+      .merge(@all_notifications.where(sms_notification_status: nil)
+      .or(@all_notifications.where.not(sms_notification_status: ["No participant_id", "No claimant"])))
 
     # If no notifications were found, return an empty array, else return serialized notifications
-    if notifications == []
+    if @allowed_notifications == []
       []
     else
-      current_page = 1
-    end
-
-    # Add all retrieved notifications for the current page to an array
-    current_page_notifications = []
-    index = (@@results_per_page * current_page) - @@results_per_page
-    max_index = current_page == pages_count ? index + (@queried_notifications.count - index) : index + @@results_per_page
-    while index < max_index
-      current_page_notifications.push(@queried_notifications[index])
-      index += 1
+      WorkQueue::NotificationSerializer.new(@allowed_notifications).serializable_hash[:data]
     end
 
     # Return a serialized response of all notifications, total number of pages needed to display those notifications,
