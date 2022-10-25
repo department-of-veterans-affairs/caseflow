@@ -702,4 +702,81 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "GET an appeal's notifications using 'appeals/:appeals_id/notifications' endpoint" do
+    let(:legacy_appeal) { create(:legacy_appeal) }
+    let!(:ama_appeal) do
+      create(
+        :appeal,
+        veteran_file_number: "500000102",
+        receipt_date: 6.months.ago.to_date.mdY
+      )
+    end
+    let(:ama_appeals_type) { "Appeal" }
+    let(:legacy_appeals_type) { "LegacyAppeal" }
+    let(:bad_appeals_id) { "bad appeals_id" }
+
+    before do
+      Seeds::NotificationEvents.new.seed!
+      User.authenticate!(roles: ["System Admin"])
+    end
+
+    let!(:notifications) do
+      [
+        create(:notification, appeals_id: legacy_appeal.vacols_id, appeals_type: legacy_appeals_type, event_date: 6.days.ago, event_type: "Appeal docketed", notification_type: "SMS"),
+        create(:notification, appeals_id: ama_appeal.uuid, appeals_type: ama_appeals_type, event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "Email")
+      ]
+    end
+
+    context "when controller action #fetch_notification_list is made with a vacols_id" do
+      subject do
+        get :fetch_notification_list, params: { appeals_id: legacy_appeal.vacols_id }
+      end
+      it "should return one notification" do
+        subject
+        # assert_response(:success)
+        response_body = JSON.parse(subject.body)
+        expect(response_body.count).to eq 1
+      end
+      it "should have the event type of 'Appeal docketed'" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body.first["attributes"]["event_type"]).to eq "Appeal docketed"
+      end
+      it "should return a successful response" do
+        subject
+        assert_response(:success)
+      end
+    end
+
+    context "when controller action #fetch_notification_list is made with a uuid" do
+      subject do
+        get :fetch_notification_list, params: { appeals_id: ama_appeal.uuid }
+      end
+      it "should return one notification" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body.count).to eq 1
+      end
+      it "should have the event type of 'Hearing scheduled'" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body.first["attributes"]["event_type"]).to eq "Hearing scheduled"
+      end
+      it "should return a succesful response" do
+        subject
+        assert_response(:success)
+      end
+    end
+
+    context "when controller action #fetch_notification_list is made with an appeals_id that is not in the Notification Table" do
+      subject do
+        get :fetch_notification_list, params: { appeals_id: bad_appeals_id }
+      end
+      it "should return a 404 error" do
+        subject
+        assert_response(:not_found)
+      end
+    end
+  end
 end
