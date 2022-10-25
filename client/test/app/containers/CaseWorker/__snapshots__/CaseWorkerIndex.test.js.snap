@@ -95,6 +95,7 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
   </div>
   <main
     data-css-pw7rlt=""
+    id="Main"
     role="main"
   >
     <div
