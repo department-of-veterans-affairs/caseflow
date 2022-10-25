@@ -702,7 +702,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     end
   end
 
-  describe "GET an appeal's notifications using 'appeals/:appeal_id/notifications' endpoint" do
+  describe "GET an appeal's notifications using 'appeals/:appeals_id/notifications' endpoint" do
     let(:legacy_appeal) { create(:legacy_appeal) }
     let!(:ama_appeal) do
       create(
