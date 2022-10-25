@@ -1352,7 +1352,10 @@
   "APPELLANT": "Appellant",
 
   "NOTIFICATION_EVENT_TYPE_COLUMN_NAME": "Event",
-  "NOTIFICATION_DATE_COLUMN_NAME": "Notification Date"
+  "NOTIFICATION_DATE_COLUMN_NAME": "Notification Date",
+  "NOTIFICATION_TYPE_COLUMN_NAME": "Notification Type",
+  "NOTIFICATION_RECIPIENT_INFORMATION": "Recipient Information",
+  "NOTIFICATION_STATUS": "Status"
 
 
 }
