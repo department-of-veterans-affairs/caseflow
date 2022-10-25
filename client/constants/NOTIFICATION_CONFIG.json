@@ -1,0 +1,9 @@
+{
+    "COLUMNS": {
+      "EVENT_TYPE": {
+        "name": "notificationEventTypeColumn",
+        "filterable": true
+      }
+    }
+}
+

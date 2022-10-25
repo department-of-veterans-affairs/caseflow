@@ -1350,5 +1350,9 @@
   "TABLE_DOCKET_NUMBER" : "Docket Number",
   "TABLE_REVIEW_OPTION" : "Review Option",
   "TABLE_ISSUE" : "Issue(s)",
-  "APPELLANT": "Appellant"
+  "APPELLANT": "Appellant",
+
+  "NOTIFICATION_EVENT_TYPE_COLUMN_NAME": "Event"
+
+
 }
