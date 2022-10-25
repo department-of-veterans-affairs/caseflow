@@ -177,7 +177,7 @@ class Test::UsersController < ApplicationController
   helper_method :user_session
 
   def veteran_records
-    return [] if !Rails.env.development? || Rails.deploy_env?(:prod) || Rails.deploy_env?(:preprod)
+    redirect_to "/unauthorized" if Rails.deploy_env?(:prod) || Rails.deploy_env?(:preprod)
 
     build_veteran_profile_records
   end
