@@ -2,10 +2,8 @@ import React from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import PageRoute from '../../components/PageRoute';
-// import ReduxBase from '../components/ReduxBase';
 import reducers from '../reducers/index';
 import NavigationBar from '../../components/NavigationBar';
-import CaseSearchLink from '../../components/CaseSearchLink';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import AppFrame from '../../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -22,7 +20,6 @@ export default class AdminApp extends React.PureComponent {
         overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
         accentColor: LOGO_COLORS.QUEUE.ACCENT,
       }}
-      rightNavElement={<CaseSearchLink />}
       appName="System Admin"
     >
       <AppFrame wideApp>
