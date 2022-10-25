@@ -6,8 +6,19 @@
       },
       "NOTIFICATION_DATE": {
         "name": "notificationDateColumn",
-        "filterable": false,
-        "backendCanSort": true
+        "filterable": false
+      },
+      "NOTIFICATION_TYPE": {
+        "name": "notificationTypeColumn",
+        "filterable": true
+      },
+      "RECIPIENT_INFORMATION": {
+        "name": "notificationRecipientInformationColumn",
+        "filterable": true
+      },
+      "STATUS": {
+        "name": "notificationStatusColumn",
+        "filterable": true
       }
     }
 }
