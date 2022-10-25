@@ -3,6 +3,11 @@
       "EVENT_TYPE": {
         "name": "notificationEventTypeColumn",
         "filterable": true
+      },
+      "NOTIFICATION_DATE": {
+        "name": "notificationDateColumn",
+        "filterable": false,
+        "backendCanSort": true
       }
     }
 }

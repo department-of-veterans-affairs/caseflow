@@ -1,21 +1,55 @@
 import React from 'react';
 import QueueTable from '../QueueTable';
-import { eventTypeColumn } from './NotificationTableColumns';
-import { badgesColumn } from './TaskTableColumns';
+import { eventTypeColumn, notificationDateColumn } from './NotificationTableColumns';
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
-import { filter } from 'lodash';
 
 const NotificationTable = () => {
-  // Retrieves notification table columns
-  const getNotificationColumns = () => {
-    return [
-      badgesColumn(),
-      eventTypeColumn()
-    ];
-  };
-
+  const data = [{
+        "id" : 24,
+        "appeals_id" : "601560025",
+        "appeals_type" : "LegacyAppeal",
+        "created_at" : "2022-10-19T19:07:57.179Z",
+        "email_enabled" : true,
+        "email_notification_external_id" : null,
+        "email_notification_status" : null,
+        "event_date" : "2022-10-19",
+        "event_type" : "Appeal docketed",
+        "notification_content" : null,
+        "notification_type" : "Email and SMS",
+        "notified_at" : null,
+        "participant_id" : "500000123",
+        "recipient_email" : null,
+        "recipient_phone_number" : null,
+        "sms_notification_external_id" : null,
+        "sms_notification_status" : null,
+        "updated_at" : "2022-10-19T19:07:57.179Z"
+      },
+      {
+        "id" : 25,
+        "appeals_id" : "601620353",
+        "appeals_type" : "LegacyAppeal",
+        "created_at" : "2022-10-19T19:07:58.267Z",
+        "email_enabled" : true,
+        "email_notification_external_id" : null,
+        "email_notification_status" : null,
+        "event_date" : "2022-10-20",
+        "event_type" : "Hearing scheduled",
+        "notification_content" : null,
+        "notification_type" : "Email and SMS",
+        "notified_at" : null,
+        "participant_id" : null,
+        "recipient_email" : null,
+        "recipient_phone_number" : null,
+        "sms_notification_external_id" : null,
+        "sms_notification_status" : null,
+        "updated_at" : "2022-10-19T19:07:58.267Z"
+      }
+    ]
   const createColumnObject = (column) => {
-    const functionForColumn = { [NOTIFICATION_CONFIG.COLUMNS.EVENT_TYPE.name]: eventTypeColumn([]) };
+    const functionForColumn = {
+      [NOTIFICATION_CONFIG.COLUMNS.EVENT_TYPE.name]: eventTypeColumn(data),
+      [NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_DATE.name]: notificationDateColumn(data)
+    };
 
     return functionForColumn[column.name];
   };
@@ -33,7 +67,7 @@ const NotificationTable = () => {
   return (
     <QueueTable
       columns={columnsFromConfig(NOTIFICATION_CONFIG.COLUMNS)}
-      rowObjects={[]}
+      rowObjects={data}
       enablePagination
       casesPerPage={15}
       numberofPages={1}
