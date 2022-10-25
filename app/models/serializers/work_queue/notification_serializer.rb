@@ -9,5 +9,4 @@ class WorkQueue::NotificationSerializer
   attribute :recipient_phone_number
   attribute :email_notification_status
   attribute :sms_notification_status
-  attribute :notification_content
 end
