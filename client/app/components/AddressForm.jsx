@@ -14,7 +14,7 @@ export const AddressForm = ({ control, register, watch, isOrgPartyType, isIndivi
     [STATES, watchState]
   );
 
-  const optionalIndividualHLRField = Boolean(isIndividualPartyType && isHLROrSCForm);
+  const optionalIndividualHLROrSCField = Boolean(isIndividualPartyType && isHLROrSCForm);
 
   return (
     <React.Fragment>
@@ -23,7 +23,7 @@ export const AddressForm = ({ control, register, watch, isOrgPartyType, isIndivi
           name="addressLine1"
           label="Street address 1"
           inputRef={register}
-          optional={optionalIndividualHLRField}
+          optional={optionalIndividualHLROrSCField}
           strongLabel
         />
       </FieldDiv>
@@ -48,7 +48,7 @@ export const AddressForm = ({ control, register, watch, isOrgPartyType, isIndivi
         </StreetAddress>
       )}
       <CityState>
-        <TextField name="city" label="City" inputRef={register} strongLabel optional={optionalIndividualHLRField} />
+        <TextField name="city" label="City" inputRef={register} strongLabel optional={optionalIndividualHLROrSCField} />
         <Controller
           control={control}
           name="state"
@@ -57,7 +57,7 @@ export const AddressForm = ({ control, register, watch, isOrgPartyType, isIndivi
               inputRef={ref}
               {...rest}
               label="State"
-              optional={!isHLROrSCForm || optionalIndividualHLRField}
+              optional={!isHLROrSCForm || optionalIndividualHLROrSCField}
               options={STATES}
               filterOption={createFilter({ matchFrom: 'start' })}
               onChange={(valObj) => onChange(valObj?.value)}
@@ -79,7 +79,7 @@ export const AddressForm = ({ control, register, watch, isOrgPartyType, isIndivi
         <TextField
           name="country"
           label="Country"
-          optional={optionalIndividualHLRField}
+          optional={optionalIndividualHLROrSCField}
           inputRef={register}
           strongLabel
         />
