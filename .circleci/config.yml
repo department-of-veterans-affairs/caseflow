@@ -1,5 +1,9 @@
 version: 2.1
 
+browser_tools_versions: &browser_versions
+  chrome-version: 106.0.5249.119
+  firefox-version: 106.0.1
+
 commands:
   install_ruby_dependencies:
     description: "Install Ruby Dependencies"
@@ -203,8 +207,7 @@ jobs:
           command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
       - browser-tools/install-browser-tools:
-          chrome-version: 106.0.5249.119
-          firefox-version: 106.0.1
+          <<: *browser_versions
 
       - install_ruby_dependencies
 
@@ -339,8 +342,7 @@ jobs:
     resource_class: large
     steps:
       - browser-tools/install-browser-tools:
-          chrome-version: 106.0.5249.119
-          firefox-version: 106.0.1
+          <<: *browser_versions
       - checkout
       - run:
           name: Install python-2 as a node-gyp@3.8.0 dependency
