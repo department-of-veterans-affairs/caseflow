@@ -1601,8 +1601,8 @@ ActiveRecord::Schema.define(version: 2022_10_25_184724) do
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
-    t.bigint "appeal_id", null: false
-    t.string "appeal_type", null: false
+    t.bigint "appeal_id"
+    t.string "appeal_type"
     t.datetime "attempted_at"
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.datetime "created_at", null: false
