@@ -3,7 +3,7 @@
 class UploadDocumentToVbms
   S3_SUB_BUCKET = "idt-uploaded-documents"
 
-  delegate :document_type, to: :document
+  delegate :document_type, :document_subject, :document_name, to: :document
 
   def initialize(document:)
     @document = document
