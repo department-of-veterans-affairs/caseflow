@@ -15,7 +15,7 @@ export const eventTypeColumn = (notifications) => {
     filterOptions,
     label: 'Filter by event type',
     valueName: 'Event',
-    valueFunction: (notification) => notification.event_type
+    valueFunction: (notification) => notification.attributes.event_type
   };
 };
 
@@ -28,13 +28,13 @@ export const notificationDateColumn = (notifications) => {
     tableData: notifications,
     valueName: 'Notification Date',
     valueFunction: (notification) => {
-      const dateArr = notification.event_date.split("-");
+      const dateArr = notification.attributes.event_date.split('-');
 
       dateArr.push(dateArr.shift());
 
       return dateArr.join('/');
     },
-    getSortValue: (notification) => notification.event_date
+    getSortValue: (notification) => notification.attributes.event_date
   };
 };
 
@@ -46,7 +46,7 @@ export const notificationTypeColumn = (notifications) => {
     columnName: 'Notification Type',
     tableData: notifications,
     valueName: 'Notification Type',
-    valueFunction: (notification) => notification.notification_type
+    valueFunction: (notification) => "Email"
   };
 };
 
@@ -58,7 +58,7 @@ export const recipientInformationColumn = (notifications) => {
     columnName: 'Recipient Information',
     tableData: notifications,
     valueName: 'Recipient Information',
-    valueFunction: (notification) => notification.recipient_email
+    valueFunction: (notification) => notification.attributes.recipient_email
   };
 };
 
@@ -71,7 +71,7 @@ export const statusColumn = (notifications) => {
     tableData: notifications,
     valueName: 'Status',
     valueFunction: (notification) => {
-      const email = notification.email_notification_status;
+      const email = notification.attributes.email_notification_status;
 
       return email.charAt(0).toUpperCase() + email.slice(1);
     }
