@@ -18,7 +18,7 @@ class SplitAppealController < ApplicationController
         # set the appeal_split_process to true
         appeal.appeal_split_process = true
 
-        if (appeal)
+        if appeal
           # duplicate appeal
           dup_appeal = appeal.amoeba_dup
 
