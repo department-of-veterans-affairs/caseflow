@@ -61,6 +61,16 @@ module AppellantNotification
     message_attributes
   end
 
+  def appeal_mapper(appeal_id, appeal_type, event)
+    appeal_status = AppealStatus.find_by(appeal_id: appeal_id, appeal_type: appeal_type, event: event)
+    if appeal_status
+      appeal_status.appeal_id = appeal_id
+
+    else
+      AppealStatus.create(appeal_id: appeal_id, appeal_type: appeal_type, event: event)
+    end
+  end
+
   def self.notify_appellant(
     appeal,
     template_name
