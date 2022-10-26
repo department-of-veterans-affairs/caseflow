@@ -254,7 +254,9 @@ Rails.application.routes.draw do
     resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
     post "jobs/:id/note", to: "asyncable_jobs#add_note"
   end
+
   match '/jobs' => 'asyncable_jobs#index', via: [:get]
+  post "/asyncable_jobs/start_job", to: "asyncable_jobs#start_job"
 
   scope path: "/inbox" do
     get "/", to: "inbox#index"
