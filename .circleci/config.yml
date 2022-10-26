@@ -203,8 +203,8 @@ jobs:
           command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
       - browser-tools/install-browser-tools:
-        chrome-version: 106.0.5249.119
-        firefox-version: 106.0.1
+          chrome-version: 106.0.5249.119
+          firefox-version: 106.0.1
 
       - install_ruby_dependencies
 
@@ -339,8 +339,8 @@ jobs:
     resource_class: large
     steps:
       - browser-tools/install-browser-tools:
-        chrome-version: 106.0.5249.119
-        firefox-version: 106.0.1
+          chrome-version: 106.0.5249.119
+          firefox-version: 106.0.1
       - checkout
       - run:
           name: Install python-2 as a node-gyp@3.8.0 dependency
