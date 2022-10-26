@@ -46,7 +46,7 @@ export const notificationTypeColumn = (notifications) => {
     columnName: 'Notification Type',
     tableData: notifications,
     valueName: 'Notification Type',
-    valueFunction: (notification) => "Email"
+    valueFunction: (notification) => notification.attributes.notification_type
   };
 };
 

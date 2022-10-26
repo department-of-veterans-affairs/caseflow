@@ -2,10 +2,12 @@
 
 class WorkQueue::NotificationSerializer
   include FastJsonapi::ObjectSerializer
-  attribute :email_notification_status
+  attribute :notification_type
   attribute :event_date
   attribute :event_type
   attribute :recipient_email
   attribute :recipient_phone_number
+  attribute :email_notification_status
   attribute :sms_notification_status
+  attribute :notification_content
 end
