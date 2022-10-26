@@ -61,6 +61,8 @@ module AppellantNotification
     message_attributes
   end
 
+  # Updates caseflow_audit database when notification event is triggered
+  # to keep track of the state of each appeal
   def appeal_mapper(appeal_id, appeal_type, event)
     appeal_status = AppealStatus.find_by(appeal_id: appeal_id, appeal_type: appeal_type)
     if appeal_status
