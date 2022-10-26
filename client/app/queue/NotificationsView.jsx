@@ -2,24 +2,13 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect, useSelector } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import React, { useEffect, useMemo } from 'react';
-import {
-  appealHasSubstitution,
-  isAppealDispatched,
-  supportsSubstitutionPostDispatch,
-  supportsSubstitutionPreDispatch,
-} from './substituteAppellant/caseDetails/utils';
+import React from 'react';
+import { supportsSubstitutionPreDispatch } from './substituteAppellant/caseDetails/utils';
 import { useHistory } from 'react-router';
-import {
-  appealWithDetailSelector,
-  getAllTasksForAppeal,
-  openScheduleHearingTasksForAppeal,
-  allHearingTasksForAppeal,
-  scheduleHearingTasksForAppeal
-} from './selectors';
+import { appealWithDetailSelector } from './selectors';
 import Button from '../components/Button';
 import CaseTitle from './CaseTitle';
-import COPY, { CASE_DETAILS_POA_SUBSTITUTE } from 'app/../COPY';
+import COPY from 'app/../COPY';
 import { css } from 'glamor';
 import {
   stopPollingHearing,
@@ -36,7 +25,6 @@ import CaseTitleDetails from './CaseTitleDetails';
 const sectionGap = css({ marginTop: '3.5rem' });
 
 import NotificationTable from './components/NotificationTable';
-import QueueTableBuilder from './QueueTableBuilder';
 
 export const NotificationsView = (props) => {
   const { push } = useHistory();
@@ -81,9 +69,9 @@ export const NotificationsView = (props) => {
           userCanAccessReader={props.userCanAccessReader}
         />
         <div {...sectionGap}>
-          <p>VA Notify sent these status notifications to the Appellant about their case.</p>
+          <p className="notification-text">VA Notify sent these status notifications to the Appellant about their case.</p>
           <div className="notification-table">
-            <NotificationTable />
+            <NotificationTable appealId={appealId} />
           </div>
         </div>
       </AppSegment>

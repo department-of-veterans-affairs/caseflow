@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import QueueTable from '../QueueTable';
 import {
   eventTypeColumn,
@@ -7,24 +8,30 @@ import {
   recipientInformationColumn,
   statusColumn } from './NotificationTableColumns';
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
-import { useState, useEffect } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 
-const NotificationTable = () => {
+const NotificationTable = ({ appealId }) => {
 
   const [notificationList, setNotificationList] = useState([]);
 
   const fetchNotifications = () => {
-  ApiUtil.get("/appeals/e7646b46-3b1d-4cff-9988-a891e3626a2d/notifications")
-  .then(((response) => {
-    const { notifications } = response.body;
-    setNotificationList(notifications.data)
-  })).catch(((setNotificationList([]))));
-};
+    const url = `/appeals/${appealId}/notifications`;
+
+    ApiUtil.get(url).
+      then((response) => {
+        const { notifications } = response.body;
+
+        setNotificationList(notifications.data);
+      }).
+      catch((response) => {
+        console.error(response);
+        setNotificationList([]);
+      });
+  };
 
   useEffect(() => {
-    fetchNotifications()
-  },[])
+    fetchNotifications();
+  }, []);
 
   const createColumnObject = (column) => {
     const functionForColumn = {
@@ -57,6 +64,10 @@ const NotificationTable = () => {
       numberofPages={1}
     />
   );
+};
+
+NotificationTable.propTypes = {
+  appealId: PropTypes.string.isRequired,
 };
 
 export default NotificationTable;
