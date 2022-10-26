@@ -22,7 +22,7 @@
 
 <% if !browser.ie? %>
   <%= env_javascript_include_tag(static: ['webpack-bundle'],
-                                 hot: ['http://localhost:3500/webpack-bundle.js'], crossorigin: "anonymous") %>
+                                 hot: ['http://localhost:3500/webpack-bundle.js']) %>
 <% end %>
 
   <%= csrf_meta_tags %>
