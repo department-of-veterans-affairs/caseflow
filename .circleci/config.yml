@@ -202,7 +202,9 @@ jobs:
           name: Setup testfiles directory
           command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
-      - browser-tools/install-browser-tools
+      - browser-tools/install-browser-tools:
+          chrome-version: 107.0.5304.67
+    
       - install_ruby_dependencies
 
       - install_dockerize
