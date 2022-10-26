@@ -58,7 +58,13 @@ export const recipientInformationColumn = (notifications) => {
     columnName: 'Recipient Information',
     tableData: notifications,
     valueName: 'Recipient Information',
-    valueFunction: (notification) => notification.attributes.recipient_email
+    valueFunction: (notification) => {
+      if (notification.attributes.email_notification_status !== 'delivered') {
+        return '—';
+      }
+
+      return notification.attributes.recipient_email;
+    }
   };
 };
 

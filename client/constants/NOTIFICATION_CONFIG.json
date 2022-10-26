@@ -6,7 +6,9 @@
       },
       "NOTIFICATION_DATE": {
         "name": "notificationDateColumn",
-        "filterable": false
+        "filterable": false,
+        "sorting_table": "notifications",
+        "sorting_columns": ["notification_date"]
       },
       "NOTIFICATION_TYPE": {
         "name": "notificationTypeColumn",
@@ -20,6 +22,8 @@
         "name": "notificationStatusColumn",
         "filterable": true
       }
-    }
+    },
+    "COLUMN_SORT_ORDER_ASC": "asc",
+    "COLUMN_SORT_ORDER_DESC": "desc"
 }
 
