@@ -406,8 +406,8 @@ feature "Appeal Edit issues", :all_dbs do
       visit("/appeals/#{appeal.uuid}/edit/create_split")
 
       # expect issue descritions to display
-      # expect(page).to have_content("PTSD denied")
-      # expect(page).to have_content("Other Issue Description")
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Military Retired Pay - nonrating description")
       find("label", text: "PTSD denied").click
       expect(page).to have_content("Select...")
       expect(page).to have_button("Continue", disabled: true)
