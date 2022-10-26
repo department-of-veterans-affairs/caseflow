@@ -65,10 +65,10 @@ module AppellantNotification
     appeal_status = AppealStatus.find_by(appeal_id: appeal_id, appeal_type: appeal_type, event: event)
     if appeal_status
       appeal_status.appeal_id = appeal_id
-
     else
-      AppealStatus.create(appeal_id: appeal_id, appeal_type: appeal_type, event: event)
+      appeal_status = AppealStatus.create(appeal_id: appeal_id, appeal_type: appeal_type, event: event)
     end
+    appeal_status.update(event: true)
   end
 
   def self.notify_appellant(

@@ -16,6 +16,7 @@ module PrivacyActComplete
       # appellant notification call
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
+    appeal_mapper(appeal.id, appeal.type, "privacy_act_complete")
     super_return_value
   end
 
@@ -27,6 +28,7 @@ module PrivacyActComplete
        status == Constants.TASK_STATUSES.completed
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
+    appeal_mapper(appeal.id, appeal.type, "privacy_act_complete")
     super_return_value
   end
 end

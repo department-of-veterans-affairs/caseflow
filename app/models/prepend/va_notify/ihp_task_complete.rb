@@ -14,6 +14,7 @@ module IhpTaskComplete
        params[:status] == Constants.TASK_STATUSES.completed
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
+    appeal_mapper(appeal.id, appeal.type, "vso_ihp_complete")
     super_return_value
   end
 end

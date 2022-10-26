@@ -14,6 +14,7 @@ module HearingWithdrawn
     if hearing_hash[:disposition] == Constants.HEARING_DISPOSITION_TYPES.cancelled && appeal.class.to_s == "Appeal"
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
+    appeal_mapper(appeal.id, appeal.type, "hearing_withdrawn")
     super_return_value
   end
 
@@ -27,6 +28,7 @@ module HearingWithdrawn
       appeal = LegacyAppeal.find(appeal_id)
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
+    appeal_mapper(appeal.id, appeal.type, "hearing_withdrawn")
     super_return_value
   end
 end

@@ -14,6 +14,7 @@ module AppealDocketed
     if distribution_task
       AppellantNotification.notify_appellant(self, @@template_name)
     end
+    appeal_mapper(appeal.id, appeal.type, @@template_name)
     super_return_value
   end
 
@@ -21,6 +22,7 @@ module AppealDocketed
     # original method defined in app/models/pre_docket_task.rb
     super_return_value = super
     AppellantNotification.notify_appellant(appeal, @@template_name)
+    appeal_mapper(appeal.id, appeal.type, "appeal_docketex")
     super_return_value
   end
 end
