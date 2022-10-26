@@ -2,7 +2,7 @@
 
 RSpec.describe SplitAppealController, type: :controller do
   describe "POST split_appeal" do
-    let(:ssc_user) { create(:user, roles: "{Hearing Prep,Reader,SPLTAPPLLANNISTER}")}
+    let(:ssc_user) { create(:user, roles: "{Hearing Prep,Reader,SPLTAPPLLANNISTER}") }
 
     before do
       User.authenticate!(user: ssc_user)
