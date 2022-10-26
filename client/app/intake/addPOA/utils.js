@@ -4,10 +4,6 @@ import { FORM_TYPES } from '../constants';
 import * as yup from 'yup';
 
 const sharedValidation = {
-
-};
-
-export const schema = yup.object().shape({
   listedAttorney: yup.object().required(),
   partyType: yup.string().when('listedAttorney', {
     is: (value) =>
@@ -19,18 +15,29 @@ export const schema = yup.object().shape({
     then: yup.string().required(),
   }),
   middleName: yup.string(),
-  lastName: yup.string(),
-  suffix: yup.string(),
   name: yup.string().when('partyType', {
     is: 'organization',
     then: yup.string().required(),
   }),
+  suffix: yup.string(),
+  addressLine2: yup.string(),
+  addressLine3: yup.string(),
+  zip: yup.string().when('partyType', {
+    is: (value) => ['individual', 'organization'].includes(value),
+    then: yup.
+      string().
+      max(25),
+  }),
+  emailAddress: yup.string().email(),
+  phoneNumber: yup.string()
+};
+
+export const schema = yup.object().shape({
+  lastName: yup.string(),
   addressLine1: yup.string().when('partyType', {
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required(),
   }),
-  addressLine2: yup.string(),
-  addressLine3: yup.string(),
   city: yup.string().when('partyType', {
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required(),
@@ -39,47 +46,22 @@ export const schema = yup.object().shape({
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required(),
   }),
-  zip: yup.string().when('partyType', {
-    is: (value) => ['individual', 'organization'].includes(value),
-    then: yup.
-      string().
-      max(25),
-  }),
   country: yup.string().when('partyType', {
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required(),
   }),
-  emailAddress: yup.string().email(),
-  phoneNumber: yup.string(),
+  ...sharedValidation
 });
 
 export const schemaHlrOrSc = yup.object().shape({
-  listedAttorney: yup.object().required(),
-  partyType: yup.string().when('listedAttorney', {
-    is: (value) =>
-      value?.value === 'not_listed',
-    then: yup.string().required(),
-  }),
-  firstName: yup.string().when('partyType', {
-    is: 'individual',
-    then: yup.string().required(),
-  }),
-  middleName: yup.string(),
   lastName: yup.string().when('partyType', {
     is: 'individual',
     then: yup.string().required(),
   }),
-  suffix: yup.string(),
-  name: yup.string().when('partyType', {
-    is: 'organization',
-    then: yup.string().required(),
-  }),
   addressLine1: yup.string().when('partyType', {
     is: 'organization',
     then: yup.string().required(),
   }),
-  addressLine2: yup.string(),
-  addressLine3: yup.string(),
   city: yup.string().when('partyType', {
     is: 'organization',
     then: yup.string().required(),
@@ -88,18 +70,11 @@ export const schemaHlrOrSc = yup.object().shape({
     is: 'organization',
     then: yup.string().required(),
   }),
-  zip: yup.string().when('partyType', {
-    is: (value) => ['individual', 'organization'].includes(value),
-    then: yup.
-      string().
-      max(25),
-  }),
   country: yup.string().when('partyType', {
     is: 'organization',
     then: yup.string().required(),
   }),
-  emailAddress: yup.string().email(),
-  phoneNumber: yup.string(),
+  ...sharedValidation
 });
 
 const defaultFormValues = {
