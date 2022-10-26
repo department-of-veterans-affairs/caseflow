@@ -46,7 +46,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
   end
 
   rescue_from Caseflow::Error::VaDotGovInvalidInputError do |error|
-    render(json: { message: "IDT Exception ID: " + error.message }, status: :forbidden)
+    render(json: { message: error.message }, status: :forbidden)
   end
 
   def validate_token
