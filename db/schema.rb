@@ -89,7 +89,7 @@ ActiveRecord::Schema.define(version: 2022_10_24_182600) do
   create_table "appeal_states", force: :cascade do |t|
     t.boolean "appeal_cancelled", default: false, null: false, comment: "When true, appeal's root task is cancelled"
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
-    t.string "appeal_id", null: false, comment: "AMA of Legacy Appeal ID"
+    t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
     t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"

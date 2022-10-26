@@ -1,7 +1,7 @@
 class CreateAppealStates < Caseflow::Migration
   def change
     create_table :appeal_states do |t|
-      t.string :appeal_id, null: false, comment: "AMA or Legacy Appeal ID"
+      t.bigint :appeal_id, null: false, comment: "AMA or Legacy Appeal ID"
       t.string :appeal_type, null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
       t.bigint :updated_by_id, null: true, references: [:users, :id], comment: "User id of the last user that updated the record"
       t.bigint :created_by_id, null: false, references: [:users, :id], comment: "User id of the user that inserted the record"
