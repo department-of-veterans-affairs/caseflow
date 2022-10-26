@@ -9,6 +9,7 @@ Please use either <a href="microsoft-edge:<%= request.original_url %>">Microsoft
 </p>
 <% else %>
   <body class="cf-app-<%= application %>">
+  <a class="skip-link" href="#Main">Skip to Content</a>
     <div class="cf-content">
       <div class="cf-content-inside<%= ' full-page' if content_for?(:full_page_content) %>">
         <% if current_user && current_user.authenticated? %>
