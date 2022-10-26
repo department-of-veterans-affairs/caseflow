@@ -318,9 +318,8 @@ class Appeal < DecisionReview
     self&.clone_issues(parent_appeal)
     # update the child task tree with parent, passing CSS ID of user for validation
     self&.clone_task_tree(parent_appeal, user_css_id)
-    
     # if there is an AOD for the parent appeal, clone
-    unless AdvanceOnDocketMotion.where(appeal_id: parent_appeal.id).nil?
+    if !AdvanceOnDocketMotion.find_by(appeal_id: parent_appeal.id).nil?
       self&.clone_aod(parent_appeal)
     end
     # set split appeal process flag to false
