@@ -19,18 +19,17 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
         params["veteran_file_number"] = appeal.veteran_file_number
       end
 
-    # check file number with bgs
-    elsif params["veteran_file_number"].present?
-      veteran = bgs.fetch_veteran_info(params["veteran_file_number"])
-      if veteran.nil?
-        fail Caseflow::Error::VeteranNotFound, "IDT Standard Error ID: " + SecureRandom.uuid + " The veteran was unable to be found."
-      end
-
-    # Find file number from ssn and check with bgs
-    elsif params["veteran_ssn"].present?
-      file_number = bgs.fetch_file_number_by_ssn(params["veteran_ssn"])
-      if file_number.nil?
-        fail Caseflow::Error::VeteranNotFound, "IDT Standard Error ID: " + SecureRandom.uuid + " The veteran was unable to be found."
+    else
+      # check to see if veteran_identifier length is 9
+      if params["veteran_identifier"].length == 9
+        # check with bgs to see if it is a file number, if not then check again to see if it is SSN
+        file_number = bgs.fetch_veteran_info(params["veteran_identifier"])[:file_number] || bgs.fetch_file_number_by_ssn(params["veteran_identifier"])
+        if file_number.nil?
+          fail Caseflow::Error::VeteranNotFound, "IDT Standard Error ID: " + SecureRandom.uuid + " The veteran was unable to be found."
+        end
+      else
+        # throw error to say that length must be 9
+        fail Caseflow::Error::VaDotGovInvalidInputError, "IDT Standard Error ID: " + SecureRandom.uuid + "Veteran identifier must contain 9 characters."
       end
 
       params["veteran_file_number"] = file_number
