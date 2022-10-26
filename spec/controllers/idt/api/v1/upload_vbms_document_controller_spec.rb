@@ -13,14 +13,8 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         document_type: valid_document_type }
     end
 
-    let(:params_file_number) do
-      { veteran_file_number: veteran.file_number,
-        file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
-        document_type: valid_document_type }
-    end
-
-    let(:params_ssn) do
-      { veteran_ssn: veteran.ssn,
+    let(:params_identifier) do
+      { veteran_identifier: veteran.file_number,
         file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
         document_type: valid_document_type }
     end
@@ -99,19 +93,20 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         end
       end
 
-      context "when veteran file number doesn't match in BGS" do
-        it "returns a VeteranNotFound error" do
-          params_file_number["veteran_file_number"] = file_number + "123"
-          post :create, params: params_file_number
-          expect(response).to have_attributes(status: 400)
+      context "when veteran identifier is an incorrect length" do
+        it "returns an invalid input error" do
+          params_identifier["veteran_identifier"] = file_number + "123"
+          post :create, params: params_identifier
+          expect(response).to have_attributes(status: 403)
           error_msg = JSON.parse(response.body)["message"]
-          expect(error_msg).to include("The veteran was unable to be found.")
+          expect(error_msg).to include("Veteran identifier must contain 9 characters.")
         end
       end
-      context "when veteran ssn doesn't match in BGS" do
+
+      context "when veteran identifier doesn't match in BGS" do
         it "returns a VeteranNotFound error" do
-          params_ssn["veteran_ssn"] = veteran.ssn + "123"
-          post :create, params: params_ssn
+          params_identifier["veteran_identifier"] = "123456789"
+          post :create, params: params_identifier
           expect(response).to have_attributes(status: 400)
           error_msg = JSON.parse(response.body)["message"]
           expect(error_msg).to include("The veteran was unable to be found.")
@@ -135,7 +130,9 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
           {
             veteran_file_number: file_number,
             document_type: params[:document_type],
-            file: params[:file]
+            file: params[:file],
+            document_name: nil,
+            document_subject: nil
           }
         end
 
