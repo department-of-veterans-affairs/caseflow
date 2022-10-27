@@ -19,4 +19,4 @@ create table caseflow_audit.appeal_states_audit (
 	decision_mailed boolean not null,
 	appeal_cancelled boolean not null,
 	scheduled_in_error boolean not null
-)
+);
