@@ -702,10 +702,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject[15]).to eq "Priority Target: 6"
       expect(subject[16]).to eq "Previous monthly distributions: #{previous_distributions}"
       expect(subject[17]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
-      expect(subject[18].include?(legacy_priority_case.bfkey)).to be true
-      expect(subject[19].include?(ready_priority_hearing_case.uuid)).to be true
-      expect(subject[19].include?(ready_priority_evidence_case.uuid)).to be true
-      expect(subject[19].include?(ready_priority_direct_case.uuid)).to be true
+      expect(subject[18].include?(ready_priority_hearing_case.uuid)).to be true
+      expect(subject[18].include?(ready_priority_evidence_case.uuid)).to be true
+      expect(subject[18].include?(ready_priority_direct_case.uuid)).to be true
+      expect(subject[19].include?(legacy_priority_case.bfkey)).to be true
     end
 
     it "returns the Slack Message associated with By Docket Date Distribution" do
@@ -732,10 +732,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject[14]).to eq "Priority Target: 6"
       expect(subject[15]).to eq "Previous monthly distributions: #{previous_distributions}"
       expect(subject[16]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
-      expect(subject[17].include?(legacy_priority_case.bfkey)).to be true
-      expect(subject[18].include?(ready_priority_hearing_case.uuid)).to be true
-      expect(subject[18].include?(ready_priority_evidence_case.uuid)).to be true
-      expect(subject[18].include?(ready_priority_direct_case.uuid)).to be true
+      expect(subject[17].include?(ready_priority_hearing_case.uuid)).to be true
+      expect(subject[17].include?(ready_priority_evidence_case.uuid)).to be true
+      expect(subject[17].include?(ready_priority_direct_case.uuid)).to be true
+      expect(subject[18].include?(legacy_priority_case.bfkey)).to be true
     end
 
     after do
@@ -844,10 +844,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject[15]).to eq "Priority Target: 6"
       expect(subject[16]).to eq "Previous monthly distributions: #{previous_distributions}"
       expect(subject[17]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
-      expect(subject[18].include?(legacy_priority_case.bfkey)).to be true
-      expect(subject[19].include?(ready_priority_hearing_case.uuid)).to be true
-      expect(subject[19].include?(ready_priority_evidence_case.uuid)).to be true
-      expect(subject[19].include?(ready_priority_direct_case.uuid)).to be true
+      expect(subject[18].include?(ready_priority_hearing_case.uuid)).to be true
+      expect(subject[18].include?(ready_priority_evidence_case.uuid)).to be true
+      expect(subject[18].include?(ready_priority_direct_case.uuid)).to be true
+      expect(subject[19].include?(legacy_priority_case.bfkey)).to be true
     end
   end
 
