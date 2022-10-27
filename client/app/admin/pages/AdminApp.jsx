@@ -8,6 +8,7 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import AppFrame from '../../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
+import GenerateButton from '../components/GenerateButton';
 export default class AdminApp extends React.PureComponent {
   render = () => <BrowserRouter basename="/admin">
     <NavigationBar
@@ -34,6 +35,7 @@ export default class AdminApp extends React.PureComponent {
                 title="admin"
                 render={this.admin}
               />
+              <GenerateButton />
             </Switch>
           </div>
         </AppSegment>
