@@ -1,1 +1,1 @@
-create schema caseflow_audit
+create schema caseflow_audit;
