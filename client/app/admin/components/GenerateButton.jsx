@@ -1,17 +1,21 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+
 import Button from '../../components/Button';
-// import { toggleCancelModal as toggleCancelModalAction } from '../actions/intake';
-// import { REQUEST_STATE } from '../constants';
-// import { connect } from 'react-redux';
-// import { bindActionCreators } from 'redux';
 
 class GenerateButton extends React.PureComponent {
+  // TODO This function for testing purposes only
+  onClickChangeText = () => {
+    let x = document.getElementById('generate-extract');
+
+    if (x.innerHTML === 'Generate') {
+      x.innerHTML = 'Button Clicked.';
+    } else {
+      x.innerHTML = 'Generate';
+    }
+  };
+
   render = () => {
     const {
-      // electionLoading,
-      // refilingLoading,
-      // toggleCancelModal,
       ...btnProps
     } = this.props;
 
@@ -20,8 +24,8 @@ class GenerateButton extends React.PureComponent {
         id="generate-extract"
         linkStyling
         willNeverBeLoading
-        // disabled={electionLoading || refilingLoading}
-        // onClick={toggleCancelModal}
+        // TODO this onClick function will need to be changed
+        onClick={() => this.onClickChangeText()}
         {...btnProps}
       >
         Generate
@@ -30,26 +34,6 @@ class GenerateButton extends React.PureComponent {
   };
 }
 GenerateButton.propTypes = {
-  // electionLoading: PropTypes.bool,
-  // refilingLoading: PropTypes.bool,
-  // toggleCancelModal: PropTypes.func,
 };
 
-// const ConnectedCancelButton = connect(
-//   () => ({
-//     electionLoading:
-//       rampElection.requestStatus.completeIntake === REQUEST_STATE.IN_PROGRESS,
-//     refilingLoading:
-//       rampRefiling.requestStatus.completeIntake === REQUEST_STATE.IN_PROGRESS,
-//   }),
-//   (dispatch) =>
-//     bindActionCreators(
-//       {
-//         toggleCancelModal: toggleCancelModalAction,
-//       },
-//       dispatch
-//     )
-// )(GenerateButton);
-
-// export default ConnectedCancelButton;
 export default GenerateButton;
