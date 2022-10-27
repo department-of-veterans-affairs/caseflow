@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_18_173134) do
+ActiveRecord::Schema.define(version: 2022_10_25_164533) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1076,6 +1076,15 @@ ActiveRecord::Schema.define(version: 2022_10_18_173134) do
     t.index ["updated_at"], name: "index_messages_on_updated_at"
   end
 
+  create_table "mpi_update_person_events", force: :cascade do |t|
+    t.bigint "api_key_id", null: false, comment: "API Key used to initiate the event"
+    t.datetime "completed_at", comment: "Timestamp of when update was completed, regardless of success or failure"
+    t.datetime "created_at", comment: "Timestamp of when update was initiated"
+    t.json "info", comment: "Additional information about the update"
+    t.string "update_type", null: false, comment: "Type or Result of update"
+    t.index ["api_key_id"], name: "index_mpi_update_person_events_on_api_key_id"
+  end
+
   create_table "nod_date_updates", comment: "Tracks changes to an AMA appeal's receipt date (aka, NOD date)", force: :cascade do |t|
     t.bigint "appeal_id", null: false, comment: "Appeal for which the NOD date is being edited"
     t.string "change_reason", null: false, comment: "Reason for change: entry_error or new_info"
@@ -1819,6 +1828,7 @@ ActiveRecord::Schema.define(version: 2022_10_18_173134) do
   add_foreign_key "legacy_issue_optins", "request_issues"
   add_foreign_key "legacy_issues", "request_issues"
   add_foreign_key "messages", "users"
+  add_foreign_key "mpi_update_person_events", "api_keys"
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
   add_foreign_key "non_availabilities", "schedule_periods"
