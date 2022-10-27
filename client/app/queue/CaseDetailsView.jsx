@@ -4,12 +4,11 @@ import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
 
-
 import { APPELLANT_TYPES, CATEGORIES, TASK_ACTIONS } from './constants';
-import { COLORS } from '../constants/AppConstants';
+import { COLORS, ICON_SIZES } from '../constants/AppConstants';
 import {
   appealWithDetailSelector,
   getAllTasksForAppeal,
@@ -48,7 +47,6 @@ import VeteranCasesView from './VeteranCasesView';
 import VeteranDetail from './VeteranDetail';
 import { startPolling } from '../hearings/utils';
 import FnodBanner from './components/FnodBanner';
-
 import {
   appealHasSubstitution,
   isAppealDispatched,
@@ -60,8 +58,13 @@ import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
 import { NotificationPage } from './NotificationPage';
+import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
+
 
 // TODO: Pull this horizontal rule styling out somewhere.
+
+const ICON_POSITION_FIX = css({ position: 'relative', top: 3 });
+
 const horizontalRuleStyling = css({
   border: 0,
   borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
@@ -73,7 +76,6 @@ const anchorEditLinkStyling = css({
   fontSize: '1.5rem',
   fontWeight: 'normal',
   margin: '5px',
-
 });
 
 const alertPaddingStyle = css({
@@ -96,7 +98,7 @@ export const CaseDetailsView = (props) => {
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
-
+  const [notificationCount, setNotificationCount] = useState(1);
   const updatePOALink =
     appeal.hasPOA ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
 
@@ -399,13 +401,17 @@ export const CaseDetailsView = (props) => {
             />
           )}
 
-          <CaseTimeline title="Case Timeline test" appeal={appeal}
+          <CaseTimeline title="Case Timeline Test" appeal={appeal}
             additionalHeaderContent={
               true && (
                 <span className="cf-push-right" {...anchorEditLinkStyling}>
-                  <Link to={`/queue/appeals/${appealId}/notificationpage`}>
+                  { notificationCount > 0 && <Link to={`/queue/appeals/${appealId}/notificationpage`}>
                     {COPY.VIEW_NOTIFICATION_LINK}
-                  </Link>
+                    &nbsp;
+                    <span {...ICON_POSITION_FIX}>
+                      <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
+                    </span>
+                  </Link>}
                 </span>
               )
             }
