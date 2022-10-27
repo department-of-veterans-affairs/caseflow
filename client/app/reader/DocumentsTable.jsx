@@ -24,14 +24,13 @@ import {
   toggleDropdownFilterVisibility,
 } from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
-import {
-  SortArrowUp,
-  SortArrowDown,
-  DoubleArrow,
-} from '../components/RenderFunctions';
+import { SortArrowDownIcon } from '../components/icons/SortArrowDownIcon';
+import { SortArrowUpIcon } from '../components/icons/SortArrowUpIcon';
+import { DoubleArrowIcon } from '../components/icons/DoubleArrowIcon';
+
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
-import FilterIcon from '../components/FilterIcon';
+import FilterIcon from '../components/icons/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
 
@@ -98,11 +97,11 @@ class DocumentsTable extends React.Component {
   // eslint-disable-next-line max-statements
   getDocumentColumns = (row) => {
     const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? (
-      <SortArrowUp />
+      <SortArrowUpIcon />
     ) : (
-      <SortArrowDown />
+      <SortArrowDownIcon />
     );
-    const notSortedIcon = <DoubleArrow />;
+    const notSortedIcon = <DoubleArrowIcon />;
 
     const anyFiltersSet = (filterType) =>
       Boolean(_.some(this.props.docFilterCriteria[filterType]));

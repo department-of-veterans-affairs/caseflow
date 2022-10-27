@@ -55,8 +55,23 @@ class Task < CaseflowRecord
   }
 
   enum cancellation_reason: {
-    Constants.TASK_CANCELLATION_REASONS.poa_change.to_sym => Constants.TASK_CANCELLATION_REASONS.poa_change
+    Constants.TASK_CANCELLATION_REASONS.poa_change.to_sym => Constants.TASK_CANCELLATION_REASONS.poa_change,
+    Constants.TASK_CANCELLATION_REASONS.substitution.to_sym => Constants.TASK_CANCELLATION_REASONS.substitution
   }
+
+  amoeba do
+    include_association :appeal_type
+    include_association :assigned_by_id
+    include_association :assigned_to_id
+    include_association :assigned_to_type
+    include_association :cancellation_reason
+    include_association :cancelled_by_id
+    include_association :closed_at
+    include_association :instructions
+    include_association :placed_on_hold_at
+    include_association :started_at
+    include_association :type
+  end
 
   # This suppresses a warning about the :open scope overwriting the Kernel#open method
   # https://ruby-doc.org/core-2.6.3/Kernel.html#method-i-open
@@ -100,9 +115,14 @@ class Task < CaseflowRecord
 
   attr_accessor :skip_check_for_only_open_task_of_type
 
+  prepend IhpTaskComplete
+  prepend PrivacyActComplete
+
   ############################################################################################
   ## class methods
   class << self
+    prepend PrivacyActPending
+
     def label
       name.titlecase
     end
@@ -809,6 +829,16 @@ class Task < CaseflowRecord
         return all_children_cancelled_or_completed
       end
 
+      update_task_if_children_tasks_are_completed
+    end
+  end
+
+  # If an Education pre-docket RPO task is completed and sent to BVA Intake
+  # then the parent Education EMO task should also be completed.
+  def update_task_if_children_tasks_are_completed
+    if type == EducationDocumentSearchTask.name && children.last.completed?
+      update!(status: Constants.TASK_STATUSES.completed)
+    else
       update!(status: Constants.TASK_STATUSES.assigned)
     end
   end
@@ -823,6 +853,10 @@ class Task < CaseflowRecord
 
   def all_children_cancelled?
     children.pluck(:status).uniq == [Constants.TASK_STATUSES.cancelled]
+  end
+
+  def all_children_completed?
+    children.pluck(:status).uniq == [Constants.TASK_STATUSES.completed]
   end
 
   def cascade_closure_from_child_task?(child_task)

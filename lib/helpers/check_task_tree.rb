@@ -47,9 +47,14 @@ class CheckTaskTree
     @errors = []
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
   def check(verbose: true)
-    puts "Checking #{@appeal.class.name} #{@appeal.id} with status: #{@appeal.status.status} ..." if verbose
+    unless @appeal.is_a?(Appeal)
+      puts "This checker is only for AMA appeals"
+      return
+    end
+
+    puts "Checking #{@appeal.class.name} #{@appeal.id} with status: #{status} ..." if verbose
 
     check_task_attributes
     check_parent_child_tasks
@@ -118,8 +123,12 @@ class CheckTaskTree
     unless extra_open_org_tasks.blank?
       @errors << "There should be no more than 1 open org task of type #{extra_open_org_tasks}"
     end
+    if open_exclusive_root_children_tasks.count > 1
+      open_task_types = open_exclusive_root_children_tasks.pluck(:type, :id)
+      @errors << "There should be no more than 1 open among these root-children tasks: #{open_task_types}"
+    end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
 
   def check_task_prerequisites
     unless missing_dispatch_task_prerequisite.blank?
@@ -188,6 +197,7 @@ class CheckTaskTree
     end
   end
 
+  # See OpenTasksWithParentNotOnHold
   def open_tasks_with_parent_not_on_hold
     child_tasks.open.reject { |task| task.parent&.status == "on_hold" }
   end
@@ -329,7 +339,7 @@ class CheckTaskTree
     hearing_tasks.drop 1
   end
 
-  # Task types where only one should be open at a time.
+  # Task types where only one of each type should be open at a time.
   # Some of these have Rails validations to prevent more than 1 open of the task type
   # but the validations can be subverted, so let's check them here just in case.
   # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/tasks-overview.html
@@ -342,6 +352,7 @@ class CheckTaskTree
                              JudgeDispatchReturnTask AttorneyDispatchReturnTask
                              VeteranRecordRequest].freeze
   SINGULAR_OPEN_ORG_TASKS ||= %w[QualityReviewTask BvaDispatchTask].freeze
+
   def extra_open_tasks
     @appeal.tasks.select(:type).open.of_type(SINGULAR_OPEN_TASKS).group(:type).having("count(*) > 1").count
   end
@@ -349,6 +360,10 @@ class CheckTaskTree
   def extra_open_org_tasks
     @appeal.tasks.select(:type).open.assigned_to_any_org.of_type(SINGULAR_OPEN_ORG_TASKS)
       .group(:type).having("count(*) > 1").count
+  end
+
+  def open_exclusive_root_children_tasks
+    MultipleOpenRootChildTaskChecker.open_exclusive_root_children_tasks(@appeal)
   end
 
   # See DecisionReviewTasksForInactiveAppealsChecker

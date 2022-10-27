@@ -36,6 +36,9 @@ Rails.application.routes.draw do
           get "contestable_issues(/:benefit_type)", to: "contestable_issues#index"
         end
         resources :higher_level_reviews, only: [:create, :show]
+        namespace :supplemental_claims do
+          get "contestable_issues(/:benefit_type)", to: "contestable_issues#index"
+        end
         resources :supplemental_claims, only: [:create, :show]
         namespace :appeals do
           get 'contestable_issues', to: "contestable_issues#index"
@@ -65,6 +68,13 @@ Rails.application.routes.draw do
         get 'judges', to: 'judges#index'
         get 'user', to: 'users#index'
         get 'veterans', to: 'veterans#details'
+      end
+      namespace :v2 do
+        get 'appeals', to: 'appeals#details'
+        get 'appeals/:appeal_id', to: 'appeals#reader_appeal'
+        post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
+        get 'appeals/:appeal_id/documents', to: 'appeals#appeal_documents'
+        get 'appeals/:appeal_id/documents/:document_id', to: 'appeals#appeals_single_document'
       end
     end
   end
@@ -144,6 +154,8 @@ Rails.application.routes.draw do
 
   get '/task_tree/:appeal_type/:appeal_id' => 'task_tree#show'
 
+  post '/appeals/:appeal_id/split' => 'split_appeal#split_appeal'
+
   get '/explain/appeals/:appeal_id' => 'explain#show'
 
   resources :regional_offices, only: [:index]
@@ -168,8 +180,8 @@ Rails.application.routes.draw do
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
   get 'hearings/schedule/add_hearing_day', to: "hearings/hearing_day#index"
-  get 'hearings/:hearing_id/details', to: "hearings_application#show_hearing_index"
-  get 'hearings/:hearing_id/worksheet', to: "hearings_application#show_hearing_index"
+  get 'hearings/:hearing_id/details', to: "hearings_application#show_hearing_details_index"
+  get 'hearings/:hearing_id/worksheet', to: "hearings_application#show_hearing_worksheet_index"
   get 'hearings/:id/virtual_hearing_job_status', to: 'hearings#virtual_hearing_job_status'
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
   get 'hearings/schedule/docket/:id/edit', to: "hearings/hearing_day#index"
@@ -242,7 +254,9 @@ Rails.application.routes.draw do
     resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
     post "jobs/:id/note", to: "asyncable_jobs#add_note"
   end
+
   match '/jobs' => 'asyncable_jobs#index', via: [:get]
+  post "/asyncable_jobs/start_job", to: "asyncable_jobs#start_job"
 
   scope path: "/inbox" do
     get "/", to: "inbox#index"
@@ -363,4 +377,7 @@ Rails.application.routes.draw do
   # :nocov:
 
   get "/route_docs", to: "route_docs#index"
+
+  get "/mpi", to: "mpi#index"
+  post "/mpi/search", to: "mpi#search"
 end

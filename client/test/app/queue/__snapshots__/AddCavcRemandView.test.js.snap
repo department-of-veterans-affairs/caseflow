@@ -274,7 +274,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
             >
               <section
                 className="cf-app-segment cf-app-segment--alt"
-                role="main"
               >
                 <h1>
                   Add a Court remand
@@ -326,6 +325,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       }
                       id="docket-number"
                       name="docket-number"
+                      onBlur={[Function]}
                       onChange={[Function]}
                       type="text"
                       value=""
@@ -3787,6 +3787,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                         id="decision-date"
                         max="9999-12-31"
                         name="decision-date"
+                        onBlur={[Function]}
                         onChange={[Function]}
                         placeholder="mm/dd/yyyy"
                         type="date"

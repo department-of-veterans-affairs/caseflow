@@ -3,18 +3,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Internal Dependencies
-import { Keyboard } from 'app/components/RenderFunctions';
+import { KeyboardIcon } from 'app/components/icons/KeyboardIcon';
 import Button from 'app/components/Button';
 
 /**
- * Keyboard Info Component
+ * KeyboardIcon Info Component
  * @param {Object} props -- Contains functions for toggling the keyboard info
  */
 export const KeyboardInfo = ({ toggleKeyboardInfo }) => (
   <div className="cf-keyboard-shortcuts">
     <Button
       id="cf-open-keyboard-modal"
-      name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
+      name={<span><KeyboardIcon />&nbsp; View keyboard shortcuts</span>}
       onClick={() => toggleKeyboardInfo(true)}
       classNames={['cf-btn-link']}
     />

@@ -1,7 +1,9 @@
 import * as yup from 'yup';
 import StringUtil from 'app/util/StringUtil';
 
-import COPY from 'app/../COPY';
+import { CAVC_ALL_ISSUES_ERROR, CAVC_DECISION_DATE_PAST, CAVC_DECISION_DATE_ERROR,
+  CAVC_JUDGEMENT_DATE_ERROR, CAVC_JUDGEMENT_DATE_PAST,
+  CAVC_MANDATE_DATE_ERROR, CAVC_MANDATE_DATE_PAST, CAVC_NO_ISSUES_ERROR } from 'app/../COPY';
 import CAVC_JUDGE_FULL_NAMES from 'constants/CAVC_JUDGE_FULL_NAMES';
 import CAVC_REMAND_SUBTYPES from 'constants/CAVC_REMAND_SUBTYPES';
 import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
@@ -21,8 +23,9 @@ export const allRemandTypeOpts = Object.entries(CAVC_REMAND_SUBTYPE_NAMES).map(
 );
 
 export const generateSchema = ({ maxIssues }) => {
-  const requireDateBeforeToday = yup.
+  const requireValidDate = yup.
     date().
+    min(new Date(2018, 0, 1)).
     max(new Date()).
     required();
 
@@ -55,35 +58,51 @@ export const generateSchema = ({ maxIssues }) => {
         required('Please specify the type of remand').
         oneOf(allRemandTypeOpts.map((opt) => opt.value)),
     }),
-    remandDatesProvided: yup.string().when('decisionType', {
-      is: 'remand',
+    remandDatesProvided: yup.string().when('remandType', {
+      is: (val) => val !== CAVC_REMAND_SUBTYPES.mdr,
       then: yup.string(),
       otherwise: yup.string().required('Choose one'),
     }),
     decisionDate: yup.
       date().
-      max(new Date()).
+      min(new Date(2018, 0, 1), CAVC_DECISION_DATE_PAST).
+      max(new Date(), CAVC_DECISION_DATE_ERROR).
       required(),
     mandateSame: yup.boolean(), // EditCavcTodo: remove if not needed; see remandDatesProvided
     judgementDate: yup.mixed().when('remandDatesProvided', {
       is: 'yes',
-      then: requireDateBeforeToday,
+      then: requireValidDate,
     }),
     mandateDate: yup.mixed().when('remandDatesProvided', {
       is: 'yes',
-      then: requireDateBeforeToday,
+      then: requireValidDate,
     }),
     issueIds: yup.
       array().
       of(yup.string()).
       when('remandType', {
         is: 'jmr',
-        then: yup.array().length(maxIssues, COPY.CAVC_ALL_ISSUES_ERROR),
-        otherwise: yup.array().min(1, COPY.CAVC_NO_ISSUES_ERROR),
+        then: yup.array().length(maxIssues, CAVC_ALL_ISSUES_ERROR),
+        otherwise: yup.array().min(1, CAVC_NO_ISSUES_ERROR),
       }),
     federalCircuit: yup.boolean(),
     instructions: yup.string().required(),
   });
+};
+
+const errorMessages = {
+  judgementDate: {
+    min: CAVC_JUDGEMENT_DATE_PAST,
+    max: CAVC_JUDGEMENT_DATE_ERROR
+  },
+  mandateDate: {
+    min: CAVC_MANDATE_DATE_PAST,
+    max: CAVC_MANDATE_DATE_ERROR
+  }
+};
+
+export const parseDateFieldErrors = (fieldName, errorType) => {
+  return errorMessages[fieldName][errorType];
 };
 
 export const getSupportedDecisionTypes = (featureToggles) => {

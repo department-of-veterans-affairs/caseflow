@@ -158,7 +158,7 @@ RSpec.shared_examples "Change hearing disposition" do
         fill_in "Notes", with: instructions_text
         click_button("Submit")
 
-        expect(page).to have_content(format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESASAGE, hearing_task.id))
+        expect(page).to have_content(format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESSAGE, hearing_task.id))
       end
     end
   end

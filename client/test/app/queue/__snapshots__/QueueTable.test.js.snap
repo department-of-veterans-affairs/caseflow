@@ -484,8 +484,10 @@ exports[`QueueTable HeaderRow Can sort when not using the tasks API and getting 
           role="button"
           tabIndex="0"
         >
-          <DoubleArrow
+          <DoubleArrowIcon
             bottomColor="#d6d7d9"
+            className="table-icon"
+            size={17}
             topColor="#d6d7d9"
           />
         </span>
@@ -552,8 +554,10 @@ exports[`QueueTable HeaderRow Can sort when the backend can sort and getting col
           role="button"
           tabIndex="0"
         >
-          <DoubleArrow
+          <DoubleArrowIcon
             bottomColor="#d6d7d9"
+            className="table-icon"
+            size={17}
             topColor="#d6d7d9"
           />
         </span>
@@ -805,6 +809,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
       aria-describedby="case-table-description"
       aria-label="Appeals"
       className="usa-table-borderless undefined"
+      id="case-table-description"
       role="table"
     >
       <caption
@@ -990,20 +995,22 @@ exports[`QueueTable render() Can filter rows 1`] = `
                     >
                       <UnselectedFilterIcon
                         className="table-icon"
+                        color="#fff"
                         onClick={[Function]}
                         onKeyDown={[Function]}
                         role="button"
+                        size={20}
+                        strokeColor="#212121"
                         tabIndex="0"
                       >
                         <svg
                           className="table-icon unselected-filter-icon"
-                          height="21px"
+                          height={20}
                           onClick={[Function]}
                           onKeyDown={[Function]}
                           role="button"
                           tabIndex="0"
                           viewBox="0 0 21 21"
-                          width="21px"
                         >
                           <g
                             fill="none"
@@ -1014,11 +1021,10 @@ exports[`QueueTable render() Can filter rows 1`] = `
                             <g>
                               <rect
                                 className="unselected-filter-icon-border"
-                                fill="#FFFFFF"
+                                fill="#fff"
                                 fillRule="nonzero"
                                 height="20"
                                 rx="2"
-                                stroke="#5B616B"
                                 width="20"
                                 x="0.5"
                                 y="0.5"
@@ -1026,7 +1032,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
                               <path
                                 className="unselected-filter-icon-inner"
                                 d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
-                                fill="#1A1A1A"
+                                fill="#212121"
                               />
                             </g>
                           </g>
@@ -1468,6 +1474,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
       aria-describedby="case-table-description"
       aria-label="Appeals"
       className="usa-table-borderless undefined"
+      id="case-table-description"
       role="table"
     >
       <caption
@@ -1603,16 +1610,17 @@ exports[`QueueTable render() Can sort rows 1`] = `
                   role="button"
                   tabIndex="0"
                 >
-                  <DoubleArrow
+                  <DoubleArrowIcon
                     bottomColor="#d6d7d9"
+                    className="table-icon"
+                    size={17}
                     topColor="#d6d7d9"
                   >
                     <svg
                       className="table-icon"
-                      height="16px"
+                      height={17}
                       version="1.1"
                       viewBox="0 0 13 16"
-                      width="13px"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <g
@@ -1651,7 +1659,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
                         </g>
                       </g>
                     </svg>
-                  </DoubleArrow>
+                  </DoubleArrowIcon>
                 </span>
               </span>
             </th>
@@ -1960,6 +1968,7 @@ exports[`QueueTable render() Matches snapshot with default props 1`] = `
     aria-describedby="case-table-description"
     aria-label="Appeals"
     className="usa-table-borderless undefined"
+    id="case-table-description"
     role="table"
   >
     <caption
@@ -5384,14 +5393,14 @@ exports[`QueueTable render() Renders loading component instead of body when load
       >
         <section
           className="testClasses"
-          role="main"
         >
           <div
             data-css-1ogvp9u=""
           >
-            <LoadingSymbol
+            <LoadingIcon
+              className="cf-loading-button-symbol cf-small-loader-symbol"
               color="#844e9f"
-              size="150px"
+              size={150}
               text=""
             >
               <div>
@@ -5431,7 +5440,7 @@ exports[`QueueTable render() Renders loading component instead of body when load
                   </svg>
                 </div>
               </div>
-            </LoadingSymbol>
+            </LoadingIcon>
             <p />
           </div>
         </section>
@@ -6959,6 +6968,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
           className="cf-pagination-pages"
         >
           <button
+            aria-label="Previous Page"
             disabled={true}
             key="previous-button"
             onClick={[Function]}
@@ -6972,6 +6982,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
             key="pagination-button-0"
           >
             <button
+              aria-current="page"
+              aria-label="Page 1"
               className="cf-current-page"
               name="page-button-0"
               onClick={[Function]}
@@ -6986,6 +6998,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
             key="pagination-button-1"
           >
             <button
+              aria-label="Page 2"
               className=""
               name="page-button-1"
               onClick={[Function]}
@@ -6994,6 +7007,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
             </button>
           </PaginationButton>
           <button
+            aria-label="Next Page"
             disabled={false}
             key="next-button"
             onClick={[Function]}
@@ -7007,6 +7021,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
       aria-describedby="case-table-description"
       aria-label="Appeals"
       className="usa-table-borderless undefined"
+      id="case-table-description"
       role="table"
     >
       <caption
@@ -30802,6 +30817,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
           className="cf-pagination-pages"
         >
           <button
+            aria-label="Previous Page"
             disabled={true}
             key="previous-button"
             onClick={[Function]}
@@ -30815,6 +30831,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
             key="pagination-button-0"
           >
             <button
+              aria-current="page"
+              aria-label="Page 1"
               className="cf-current-page"
               name="page-button-0"
               onClick={[Function]}
@@ -30829,6 +30847,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
             key="pagination-button-1"
           >
             <button
+              aria-label="Page 2"
               className=""
               name="page-button-1"
               onClick={[Function]}
@@ -30837,6 +30856,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
             </button>
           </PaginationButton>
           <button
+            aria-label="Next Page"
             disabled={false}
             key="next-button"
             onClick={[Function]}

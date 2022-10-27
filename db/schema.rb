@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_30_175237) do
+ActiveRecord::Schema.define(version: 2022_10_06_175355) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
     t.string "reason", comment: "VLJ's rationale for their decision on motion to AOD."
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.index ["appeal_type", "appeal_id"], name: "index_aod_motion_on_appeal_id_and_appeal_type"
     t.index ["granted"], name: "index_advance_on_docket_motions_on_granted"
     t.index ["person_id"], name: "index_advance_on_docket_motions_on_person_id"
     t.index ["updated_at"], name: "index_advance_on_docket_motions_on_updated_at"
@@ -110,6 +111,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
     t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the the intake was submitted for asynchronous processing."
     t.boolean "filed_by_va_gov", comment: "Indicates whether or not this form came from VA.gov"
+    t.boolean "homelessness", default: false, null: false, comment: "Indicates whether or not a veteran is experiencing homelessness"
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
     t.string "original_hearing_request_type", comment: "The hearing type preference for an appellant before any changes were made in Caseflow"
     t.string "poa_participant_id", comment: "Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
@@ -379,8 +381,9 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
     t.string "email_ro_id"
     t.string "ep_code"
     t.datetime "outcoding_date"
-    t.integer "task_id"
+    t.integer "task_id", comment: "references dispatch_tasks"
     t.datetime "updated_at", null: false
+    t.index ["task_id"], name: "index_claim_establishments_on_task_id"
     t.index ["updated_at"], name: "index_claim_establishments_on_updated_at"
   end
 
@@ -408,6 +411,24 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
     t.index ["appeal_id", "appeal_type"], name: "index_claims_folder_searches_on_appeal_id_and_appeal_type"
     t.index ["updated_at"], name: "index_claims_folder_searches_on_updated_at"
     t.index ["user_id"], name: "index_claims_folder_searches_on_user_id"
+  end
+
+  create_table "conference_links", force: :cascade do |t|
+    t.string "alias", comment: "Alias of the conference"
+    t.string "alias_with_host", comment: "Alieas of the conference for the host"
+    t.boolean "conference_deleted", default: false, null: false, comment: "Flag to represent if a con ference has been deleted"
+    t.integer "conference_id", comment: "Id of the conference"
+    t.datetime "created_at", null: false, comment: "Date and Time of creation"
+    t.bigint "created_by_id", null: false, comment: "User id of the user who created the record. FK on User table"
+    t.bigint "hearing_day_id", null: false, comment: "The associated hearing day id"
+    t.string "host_link", comment: "Conference link generated from external conference service"
+    t.integer "host_pin", comment: "Pin for the host of the conference to get into the conference"
+    t.string "host_pin_long", limit: 8, comment: "Generated host pin stored as a string"
+    t.datetime "updated_at", comment: "Date and Time record was last updated"
+    t.bigint "updated_by_id", comment: "user id of the user to last update the record. FK on the User table"
+    t.index ["created_by_id"], name: "index_created_by_id"
+    t.index ["hearing_day_id"], name: "index_conference_links_on_hearing_day_id"
+    t.index ["updated_by_id"], name: "index_updated_by_id"
   end
 
   create_table "decision_documents", force: :cascade do |t|
@@ -457,7 +478,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
-    t.string "aasm_state"
+    t.string "aasm_state", comment: "Current task state: unprepared, unassigned, assigned, started, reviewed, completed"
     t.integer "appeal_id", null: false
     t.datetime "assigned_at"
     t.string "comment"
@@ -471,6 +492,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
     t.string "type", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+    t.index ["aasm_state"], name: "index_dispatch_tasks_on_aasm_state"
     t.index ["updated_at"], name: "index_dispatch_tasks_on_updated_at"
     t.index ["user_id"], name: "index_dispatch_tasks_on_user_id"
   end
@@ -488,6 +510,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
     t.integer "task_id"
     t.datetime "updated_at"
     t.index ["case_id"], name: "index_distributed_cases_on_case_id", unique: true
+    t.index ["distribution_id"], name: "index_distributed_cases_on_distribution_id"
     t.index ["updated_at"], name: "index_distributed_cases_on_updated_at"
   end
 
@@ -749,6 +772,8 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
   end
 
   create_table "hearing_email_recipients", comment: "Recipients of hearings-related emails", force: :cascade do |t|
+    t.bigint "appeal_id", comment: "The ID of the appeal this email recipient is associated with"
+    t.string "appeal_type", comment: "The type of appeal this email recipient is associated with"
     t.datetime "created_at", null: false
     t.string "email_address", comment: "PII. The recipient's email address"
     t.boolean "email_sent", default: false, null: false, comment: "Indicates if a notification email was sent to the recipient."
@@ -757,6 +782,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
     t.string "timezone", limit: 50, comment: "The recipient's timezone"
     t.string "type", comment: "The subclass name (i.e. AppellantHearingEmailRecipient)"
     t.datetime "updated_at", null: false
+    t.index ["appeal_type", "appeal_id"], name: "index_hearing_email_recipients_on_appeal_type_and_appeal_id"
     t.index ["hearing_type", "hearing_id"], name: "index_hearing_email_recipients_on_hearing_type_and_hearing_id"
   end
 
@@ -931,6 +957,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
     t.text "positive_feedback", default: [], array: true
     t.string "quality"
     t.string "task_id", comment: "Refers to the tasks table for AMA appeals, but uses syntax `<vacols_id>-YYYY-MM-DD` for legacy appeals"
+    t.string "timeliness", comment: "Documents if the drafted decision by an attorney was provided on a timely or untimely manner."
     t.datetime "updated_at", null: false
     t.index ["appeal_type", "appeal_id"], name: "index_judge_case_reviews_on_appeal_type_and_appeal_id"
     t.index ["updated_at"], name: "index_judge_case_reviews_on_updated_at"
@@ -1070,6 +1097,33 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
     t.datetime "updated_at", null: false
     t.index ["schedule_period_id"], name: "index_non_availabilities_on_schedule_period_id"
     t.index ["updated_at"], name: "index_non_availabilities_on_updated_at"
+  end
+
+  create_table "notification_events", primary_key: "event_type", id: :string, comment: "Type of Event", force: :cascade do |t|
+    t.uuid "email_template_id", null: false, comment: "Staging Email Template UUID"
+    t.uuid "sms_template_id", null: false, comment: "Staging SMS Template UUID"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.string "appeals_id", null: false, comment: "ID of the Appeal"
+    t.string "appeals_type", null: false, comment: "Type of Appeal"
+    t.datetime "created_at", comment: "Timestamp of when Noticiation was Created"
+    t.boolean "email_enabled", default: true, null: false
+    t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
+    t.string "email_notification_status", comment: "Status of the Email Notification"
+    t.date "event_date", null: false, comment: "Date of Event"
+    t.string "event_type", null: false, comment: "Type of Event"
+    t.text "notification_content", comment: "Full Text Content of Notification"
+    t.string "notification_type", null: false, comment: "Type of Notification that was created"
+    t.datetime "notified_at", comment: "Time Notification was created"
+    t.string "participant_id", comment: "ID of Participant"
+    t.string "recipient_email", comment: "Participant's Email Address"
+    t.string "recipient_phone_number", comment: "Participants Phone Number"
+    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
+    t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
+    t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
+    t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
+    t.index ["participant_id"], name: "index_participant_id"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -1257,6 +1311,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
     t.integer "end_product_establishment_id", comment: "The ID of the End Product Establishment created for this request issue."
     t.bigint "ineligible_due_to_id", comment: "If a request issue is ineligible due to another request issue, for example that issue is already being actively reviewed, then the ID of the other request issue is stored here."
     t.string "ineligible_reason", comment: "The reason for a Request Issue being ineligible. If a Request Issue has an ineligible_reason, it is still captured, but it will not get a contention in VBMS or a decision."
+    t.boolean "is_predocket_needed", comment: "Indicates whether or not an issue has been selected to go to the pre-docket queue opposed to normal docketing."
     t.boolean "is_unidentified", comment: "Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
     t.string "nonrating_issue_category", comment: "The category selected for nonrating request issues. These vary by business line."
     t.string "nonrating_issue_description", comment: "The user entered description if the issue is a nonrating issue"
@@ -1707,6 +1762,9 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
   add_foreign_key "certifications", "users"
   add_foreign_key "claim_establishments", "dispatch_tasks", column: "task_id"
   add_foreign_key "claims_folder_searches", "users"
+  add_foreign_key "conference_links", "hearing_days"
+  add_foreign_key "conference_links", "users", column: "created_by_id"
+  add_foreign_key "conference_links", "users", column: "updated_by_id"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
@@ -1754,6 +1812,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_175237) do
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
   add_foreign_key "non_availabilities", "schedule_periods"
+  add_foreign_key "notifications", "notification_events", column: "event_type", primary_key: "event_type"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"

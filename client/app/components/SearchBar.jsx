@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CloseIconSmall, LoadingSymbol } from './RenderFunctions';
+import { LoadingIcon } from './icons/LoadingIcon';
+import { CloseIcon } from './icons/CloseIcon';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import Button from './Button';
 import classnames from 'classnames';
@@ -69,9 +70,9 @@ export default class SearchBar extends React.Component {
     if (this.props.loading) {
       return (
         <div className="search-text-spinner">
-          <LoadingSymbol
+          <LoadingIcon
             text=""
-            size="25px"
+            size={25}
             color={spinnerColor}
           />
         </div>
@@ -137,6 +138,7 @@ export default class SearchBar extends React.Component {
           {title || 'Search'}
         </label>
         <input
+          aria-label="Enter your search term"
           ref={this.setInputRef}
           className={searchClasses}
           id={id}
@@ -168,7 +170,11 @@ export default class SearchBar extends React.Component {
             classNames={['cf-pdf-button cf-search-close-icon']}
             onClick={onClearSearch}
           >
-            <CloseIconSmall />
+            <CloseIcon
+              size={12}
+              color="#000"
+              className=""
+            />
           </Button>
         )}
         {!isSearchAhead && (

@@ -13,8 +13,14 @@ export const userWithJudgeRole = {
   userHasHearingPrepRole: true,
 };
 
+export const nonVsoUser = {
+  ...anyUser,
+  userVsoEmployee: false
+}
+
 export const vsoUser = {
   ...anyUser,
+  userVsoEmployee: true,
   userCanVsoHearingSchedule: true,
   userCanAssignHearingSchedule: false
 };

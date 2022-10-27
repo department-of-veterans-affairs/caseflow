@@ -16,15 +16,11 @@ import Alert from '../../components/Alert';
 import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 
 const checkIssuesForVha = (requestIssues) => {
-  let hasVhaIssues = false;
+  return requestIssues.some((ri) => ri.benefitType === 'vha');
+};
 
-  requestIssues.forEach((ri) => {
-    if (ri.benefitType === 'vha') {
-      hasVhaIssues = true;
-    }
-  });
-
-  return hasVhaIssues;
+const checkIfPreDocketed = (requestIssues) => {
+  return requestIssues.some((ri) => ri.isPreDocketNeeded === true);
 };
 
 const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIssuesUrl, completedReview }) => {
@@ -67,7 +63,7 @@ const getChecklistItems = (featureToggles, formType, requestIssues, isInformalCo
   if (formType === 'appeal') {
     let statusMessage = 'Appeal created:';
 
-    if (checkIssuesForVha(requestIssues) && featureToggles.vhaPreDocketAppeals) {
+    if (checkIssuesForVha(requestIssues)) {
       statusMessage = 'Appeal created and sent to VHA for document assessment.';
     }
 
@@ -169,11 +165,9 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       return <SmallLoader message="Creating task..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
     }
 
-    let title = 'Intake completed';
-
-    if (checkIssuesForVha(requestIssues) && featureToggles.vhaPreDocketAppeals) {
-      title = 'Appeal recorded in pre-docket queue';
-    }
+    let title = checkIfPreDocketed(requestIssues) ?
+      'Appeal recorded in pre-docket queue' :
+      'Intake completed';
 
     const deceasedVeteranAlert = () => {
       return (

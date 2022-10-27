@@ -19,6 +19,8 @@ export const HearingEmail = ({
   required,
   disabled,
   optional,
+  helperLabel,
+  showHelper,
 }) =>
   readOnly ? (
     <ReadOnly label={label} text={email ?? 'None'} />
@@ -43,9 +45,14 @@ export const HearingEmail = ({
           })
         }
       />
-      <HelperText label={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT} />
+      {showHelper ? <HelperText label={helperLabel} /> : null}
     </React.Fragment>
   );
+
+HearingEmail.defaultProps = {
+  helperLabel: COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT,
+  showHelper: true,
+};
 
 HearingEmail.propTypes = {
   email: PropTypes.string,
@@ -57,4 +64,6 @@ HearingEmail.propTypes = {
   required: PropTypes.bool,
   optional: PropTypes.bool,
   disabled: PropTypes.bool,
+  helperLabel: PropTypes.string,
+  showHelper: PropTypes.bool,
 };

@@ -54,7 +54,7 @@ describe('ClaimantForm', () => {
       );
     };
 
-    it('disables submit until all  fields valid', async () => {
+    it('disables submit until all fields valid', async () => {
       setup();
 
       expect(onSubmit).not.toHaveBeenCalled();

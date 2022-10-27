@@ -524,7 +524,7 @@ describe AssignHearingDispositionTask, :all_dbs do
     end
 
     it "fails with missing hearing association error" do
-      message = format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESASAGE, hearing_task.id)
+      message = format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESSAGE, hearing_task.id)
       expect { subject }.to raise_error(AssignHearingDispositionTask::HearingAssociationMissing).with_message(message)
     end
   end
@@ -844,6 +844,24 @@ describe AssignHearingDispositionTask, :all_dbs do
             expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:transcription])
           end
         end
+      end
+    end
+  end
+
+  describe "confirm verify_org_task_unique prevents multiple open AssignHearingDispositionTasks" do
+    context "an appeal already has one AssignHearingDispositionTask open" do
+      let(:appeal) { create(:appeal) }
+      let(:parent) { create(:hearing_task, appeal: appeal) }
+      let(:hearing) { create(:hearing, appeal: appeal) }
+
+      before do
+        described_class.create_assign_hearing_disposition_task!(appeal, parent, hearing)
+      end
+
+      subject { described_class.create_assign_hearing_disposition_task!(appeal, parent, hearing) }
+
+      it "should throw an error" do
+        expect { subject }.to raise_error(Caseflow::Error::DuplicateOrgTask)
       end
     end
   end

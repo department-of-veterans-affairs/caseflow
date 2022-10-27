@@ -281,7 +281,6 @@ feature "Intake", :all_dbs do
           fill_in search_bar_title, with: "123419876"
           click_on "Search"
           expect(page).to have_content("Veterans Readiness and Employment")
-          expect(page).to_not have_content(Constants.BENEFIT_TYPES.voc_rehab)
         end
 
         it "shows 'Veterans Readiness and Employment' as benefit type option for HLR form" do
@@ -292,7 +291,6 @@ feature "Intake", :all_dbs do
           fill_in search_bar_title, with: "123419876"
           click_on "Search"
           expect(page).to have_content("Veterans Readiness and Employment")
-          expect(page).to_not have_content("Vocational Rehabilitation and Employment")
         end
 
         context "when removing same office question" do
@@ -305,31 +303,6 @@ feature "Intake", :all_dbs do
             click_on "Search"
             expect(page).to_not have_content("Was an interview by the same office requested?")
           end
-        end
-      end
-
-      context "when implementing existing form" do
-        before { FeatureToggle.disable!(:updated_intake_forms) }
-        it "shows 'Vocational Rehabilitation and Employment' as a benefit type option for SC" do
-          visit "/intake"
-          select_form(Constants.INTAKE_FORM_NAMES.supplemental_claim)
-          safe_click ".cf-submit.usa-button"
-
-          fill_in search_bar_title, with: "123419876"
-          click_on "Search"
-          expect(page).to have_content("Vocational Rehabilitation and Employment")
-          expect(page).to_not have_content("Veterans Readiness and Employment")
-        end
-
-        it "shows 'Vocational Rehabilitation and Employment' as a benefit type option fro HLR" do
-          visit "/intake"
-          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
-          safe_click ".cf-submit.usa-button"
-
-          fill_in search_bar_title, with: "123419876"
-          click_on "Search"
-          expect(page).to have_content("Vocational Rehabilitation and Employment")
-          expect(page).to_not have_content("Veterans Readiness and Employment")
         end
       end
     end
@@ -718,7 +691,7 @@ feature "Intake", :all_dbs do
 
           click_intake_add_issue
           add_intake_nonrating_issue(
-            benefit_type: "Vocational Rehabilitation and Employment",
+            benefit_type: "Veterans Readiness and Employment",
             category: "Additional Training",
             description: "Description for Additional Training",
             date: 1.month.ago.mdY,
@@ -742,6 +715,175 @@ feature "Intake", :all_dbs do
           expect(page).to have_content(
             "Please check the Veteran's pay grade data in VBMS or SHARE to ensure all values are valid and try again"
           )
+        end
+      end
+
+      context "Homelessness field" do
+        context "updatedAppealForm FeatureToggle is enabled" do
+          before { FeatureToggle.enable!(:updated_appeal_form) }
+          after { FeatureToggle.disable!(:updated_appeal_form) }
+
+          scenario "Homelessness field is visible" do
+            visit "/intake"
+
+            select_form(Constants.INTAKE_FORM_NAMES.appeal)
+            safe_click ".cf-submit.usa-button"
+
+            fill_in search_bar_title, with: "12341234"
+            click_on "Search"
+
+            expect(page).to have_current_path("/intake/review_request")
+            expect(page).to have_content(COPY::INTAKE_HOMELESSNESS_MESSAGE)
+          end
+        end
+
+        context "updatedAppealForm FeatureToggle is disabled" do
+          before { FeatureToggle.disable!(:updated_appeal_form) }
+
+          scenario "Homelessness field is not visible" do
+            visit "/intake"
+
+            select_form(Constants.INTAKE_FORM_NAMES.appeal)
+            safe_click ".cf-submit.usa-button"
+
+            fill_in search_bar_title, with: "12341234"
+            click_on "Search"
+
+            expect(page).to have_current_path("/intake/review_request")
+            expect(page).to_not have_content(COPY::INTAKE_HOMELESSNESS_MESSAGE)
+          end
+        end
+      end
+    end
+
+    context "Veteran requests Hearing" do
+      before { FeatureToggle.enable!(:updated_appeal_form) }
+      after { FeatureToggle.disable!(:updated_appeal_form) }
+
+      scenario "Hearing is selected as docket type but Hearing Type is left unselected" do
+        visit "/intake"
+
+        select_form(Constants.INTAKE_FORM_NAMES.appeal)
+        safe_click ".cf-submit.usa-button"
+
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/review_request")
+
+        fill_in "What is the Receipt Date of this form?", with: Time.zone.now.mdY
+
+        within_fieldset("Was this form submitted through VA.gov?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+
+        within_fieldset("Which review option did the Veteran request?") do
+          find("label", text: "Hearing", match: :prefer_exact).click
+        end
+
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "No", match: :prefer_exact).click
+        end
+
+        within_fieldset("Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?") do
+          find("label", text: "N/A", match: :prefer_exact).click
+        end
+
+        expect(page).to have_content("Please Select Hearing Type")
+
+        click_intake_continue
+        expect(page).to have_current_path("/intake/add_issues")
+      end
+
+      scenario "Hearing is selected as docket type and a Hearing Type is selected" do
+        visit "/intake"
+
+        select_form(Constants.INTAKE_FORM_NAMES.appeal)
+        safe_click ".cf-submit.usa-button"
+
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/review_request")
+
+        fill_in "What is the Receipt Date of this form?", with: Time.zone.now.mdY
+
+        within_fieldset("Was this form submitted through VA.gov?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+
+        within_fieldset("Which review option did the Veteran request?") do
+          find("label", text: "Hearing", match: :prefer_exact).click
+        end
+
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "No", match: :prefer_exact).click
+        end
+
+        within_fieldset("Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?") do
+          find("label", text: "N/A", match: :prefer_exact).click
+        end
+
+        expect(page).to have_content("Please Select Hearing Type")
+        fill_in("Please Select Hearing Type", with: "Virtual Telehearing").send_keys :enter
+
+        click_intake_continue
+        expect(page).to have_current_path("/intake/add_issues")
+      end
+    end
+
+    context "Education Issue on Appeal" do
+      context "eduPreDocketAppeals FeatureToggle is enabled" do
+        before { FeatureToggle.enable!(:edu_predocket_appeals) }
+        after { FeatureToggle.disable!(:edu_predocket_appeals) }
+
+        scenario "pre-docket selection is available with education issue in add issues modal" do
+          start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing)
+
+          visit "/intake"
+          click_intake_continue
+
+          expect(page).to have_current_path("/intake/add_issues")
+
+          click_intake_add_issue
+
+          select_intake_nonrating_benefit_type("Education")
+
+          expect(page).to have_content("Is pre-docketing needed for this issue?")
+        end
+
+        scenario "pre-docket select is not available with compensation issue in add issues modal" do
+          start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing)
+
+          visit "/intake"
+          click_intake_continue
+
+          expect(page).to have_current_path("/intake/add_issues")
+
+          click_intake_add_issue
+
+          select_intake_nonrating_benefit_type("Compensation")
+
+          expect(page).to_not have_content("Is pre-docketing needed for this issue?")
+        end
+      end
+
+      context "eduPreDocketAppeals FeatureToggle is disabled" do
+        before { FeatureToggle.disable!(:edu_predocket_appeals) }
+
+        scenario "pre-docket selection is not available with education issue in add issues modal" do
+          start_appeal(veteran, docket_type: Constants.AMA_DOCKETS.hearing)
+
+          visit "/intake"
+          click_intake_continue
+
+          expect(page).to have_current_path("/intake/add_issues")
+
+          click_intake_add_issue
+
+          select_intake_nonrating_benefit_type("Education")
+
+          expect(page).to_not have_content("Is pre-docketing needed for this issue?")
         end
       end
     end

@@ -130,6 +130,8 @@ export const AddPoaPage = () => {
   const showPartyType = attorneyNotListed;
   const showAdditionalFields = watchPartyType && showPartyType;
 
+  const isOrgPartyType = watchPartyType === 'organization';
+
   const asyncFn = useCallback(
     debounce((search, callback) => {
       getAttorneyClaimantOpts(search, fetchAttorneys).then((res) =>
@@ -248,7 +250,10 @@ export const AddPoaPage = () => {
           )}
           {showAdditionalFields && (
             <div>
-              <AddressForm {...methods} />
+              <AddressForm
+                {...methods}
+                isOrgPartyType={isOrgPartyType}
+              />
               <FieldDiv>
                 <TextField
                   validationError={emailValidationError}

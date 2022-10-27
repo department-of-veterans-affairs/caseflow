@@ -89,7 +89,7 @@ export const AppellantSection = ({
             <Timezone
               required={schedulingToVirtual}
               optional={!schedulingToVirtual}
-              value={appellantTimezone}
+              value={appellantTimezone || hearing?.appellantTz}
               onChange={(appellantTz) => update('hearing', { appellantTz })}
               time={hearing?.scheduledTimeString}
               roTimezone={hearing?.regionalOfficeTimezone}

@@ -151,11 +151,12 @@ const taskAttributesFromRawTask = (task) => {
     timerEndsAt: task.attributes.timer_ends_at,
     unscheduledHearingNotes: {
       updatedAt: task.attributes.unscheduled_hearing_notes?.updated_at,
-      updatedByCssId: task.attributes.unscheduled_hearing_notes?.updated_by_css_id,
+      updatedByCssId:
+        task.attributes.unscheduled_hearing_notes?.updated_by_css_id,
       notes: task.attributes.unscheduled_hearing_notes?.notes
     },
     ownedBy: task.attributes.owned_by,
-    daysSinceLastSatusChange: task.attributes.days_since_last_status_change,
+    daysSinceLastStatusChange: task.attributes.days_since_last_status_change,
     daysSinceBoardIntake: task.attributes.days_since_board_intake,
   };
 };
@@ -250,6 +251,7 @@ export const prepareLegacyTasksForStore = (tasks) => {
       hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
       hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
       hideFromCaseTimeline: task.attributes.hide_from_case_timeline,
+      instructions: task.attributes.instructions,
       latestInformalHearingPresentationTask: {
         requestedAt:
           task.attributes.latest_informal_hearing_presentation_task
@@ -363,6 +365,10 @@ export const prepareAppealForStore = (appeals) => {
 
     accumulator[appeal.attributes.external_id] = {
       id: appeal.id,
+      appellant_hearing_email_recipient:
+        appeal.attributes.appellant_hearing_email_recipient,
+      representative_hearing_email_recipient:
+        appeal.attributes.representative_hearing_email_recipient,
       externalId: appeal.attributes.external_id,
       docketName: appeal.attributes.docket_name,
       withdrawn: appeal.attributes.withdrawn,
@@ -398,6 +404,8 @@ export const prepareAppealForStore = (appeals) => {
   const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
     accumulator[appeal.attributes.external_id] = {
       hearings: prepareAppealHearingsForStore(appeal),
+      currentUserEmail: appeal.attributes.current_user_email,
+      currentUserTimezone: appeal.attributes.current_user_timezone,
       completedHearingOnPreviousAppeal:
         appeal.attributes['completed_hearing_on_previous_appeal?'],
       issues: prepareAppealIssuesForStore(appeal),
@@ -451,10 +459,9 @@ export const prepareAppealForStore = (appeals) => {
       switchedDockets: appeal.attributes.switched_dockets,
       appellantSubstitution: appeal.attributes.appellant_substitution,
       substitutions: appeal.attributes.substitutions,
-      hasSameAppealSubstitution: (
-      // eslint-disable-next-line max-len
-        appeal.attributes.substitutions?.[0]?.target_appeal_uuid === appeal.attributes.substitutions?.[0]?.source_appeal_uuid
-      ),
+      hasSameAppealSubstitution:
+        appeal.attributes.substitutions?.[0]?.target_appeal_uuid ===
+        appeal.attributes.substitutions?.[0]?.source_appeal_uuid,
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
       remandJudgeName: appeal.attributes.remand_judge_name,
     };
@@ -700,7 +707,7 @@ export const taskActionData = ({ task, match }) => {
     return relevantAction.data;
   }
 
-  return null;
+  return {};
 };
 
 export const parentTasks = (childrenTasks, allTasks) => {
@@ -740,17 +747,20 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
       type: 'substitutionProcessed',
       createdAt: appeal.appellantSubstitution.created_at,
       createdBy: appeal.appellantSubstitution.created_by,
-      originalAppellantFullName: appeal.appellantSubstitution.original_appellant_full_name,
-      substituteFullName: appeal.appellantSubstitution.substitute_full_name
+      originalAppellantFullName:
+        appeal.appellantSubstitution.original_appellant_full_name,
+      substituteFullName: appeal.appellantSubstitution.substitute_full_name,
     });
   }
 
   // Add any edits of NOD date
   if (appeal.nodDateUpdates) {
-    timelineEvents.push(...(appeal.nodDateUpdates.map((item) => ({
-      ...item,
-      type: 'nodDateUpdate'
-    }))));
+    timelineEvents.push(
+      ...appeal.nodDateUpdates.map((item) => ({
+        ...item,
+        type: 'nodDateUpdate',
+      }))
+    );
   }
 
   return timelineEvents;

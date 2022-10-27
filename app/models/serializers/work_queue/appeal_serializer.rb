@@ -7,6 +7,25 @@ class WorkQueue::AppealSerializer
   attribute :assigned_attorney
   attribute :assigned_judge
 
+  attribute :appellant_hearing_email_recipient do |object|
+    object.email_recipients.find_by(type: "AppellantHearingEmailRecipient")
+  end
+  attribute :representative_hearing_email_recipient do |object|
+    object.email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
+  end
+
+  attribute :appellant_email_address do |object|
+    object.appellant ? object.appellant.email_address : "Cannot Find Appellant"
+  end
+
+  attribute :current_user_email do |_, params|
+    params[:user]&.email
+  end
+
+  attribute :current_user_timezone do |_, params|
+    params[:user]&.timezone
+  end
+
   attribute :contested_claim, &:contested_claim?
 
   attribute :issues do |object|
@@ -60,7 +79,7 @@ class WorkQueue::AppealSerializer
     # in addition to those on the new/target appeal; this avoids copying them to new appeal stream
     associated_hearings = []
 
-    if object.substitution_appeal?
+    if object.separate_appeal_substitution?
       associated_hearings = hearings(object.appellant_substitution.source_appeal, params)
     end
 

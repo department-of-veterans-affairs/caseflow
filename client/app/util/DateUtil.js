@@ -62,9 +62,10 @@ export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
     return arrayOfDateStrings.map((dateString) => {
       return formatDateStr(dateString);
     }).join(', ');
-  } else {
-    return ""
   }
+
+  return '';
+
 };
 
 export const DateString = ({ date, dateFormat = 'MM/DD/YY', inputFormat = 'YYYY-MM-DD', style }) => <span {...style}>
@@ -160,3 +161,9 @@ export const getDisplayTime = (scheduledTimeString, timezone) => {
 export const getMinutesToMilliseconds = (minutes) => {
   return minutes * 60 * 1000;
 };
+
+export const daysSinceAssigned = (task) => moment().startOf('day').
+  diff(moment(task.assignedOn), 'days');
+
+export const daysSincePlacedOnHold = (task) => moment().startOf('day').
+  diff(task.placedOnHoldAt, 'days');

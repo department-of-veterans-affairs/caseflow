@@ -6,11 +6,9 @@ import PropTypes from 'prop-types';
 import { toolbarStyles } from 'styles/reader/Document/PDF';
 import Button from 'app/components/Button';
 import TextField from 'app/components/TextField';
-import {
-  FilterIcon,
-  PageArrowLeft,
-  PageArrowRight,
-} from 'app/components/RenderFunctions';
+import { FilterNoOutlineIcon } from 'app/components/icons/FilterNoOutlineIcon';
+import { PageArrowLeftIcon } from 'app/components/icons/PageArrowLeftIcon';
+import { PageArrowRightIcon } from 'app/components/icons/PageArrowRightIcon';
 
 /**
  * Document Footer displays the PDF footer controls
@@ -39,7 +37,7 @@ export const DocumentFooter = ({
           onClick={prevDoc}
           ariaLabel="previous PDF"
         >
-          <PageArrowLeft />
+          <PageArrowLeftIcon />
           <span className="left-button-label">Previous</span>
         </Button>
       )}
@@ -72,7 +70,7 @@ export const DocumentFooter = ({
         </span>
       )}
       <span className="doc-list-progress-indicator">
-        {docsFiltered && <FilterIcon />}
+        {docsFiltered && <FilterNoOutlineIcon />}
         Document {currentIndex + 1} of {filteredDocIds.length}
       </span>
     </div>
@@ -86,7 +84,7 @@ export const DocumentFooter = ({
           ariaLabel="next PDF"
         >
           <span className="right-button-label">Next</span>
-          <PageArrowRight />
+          <PageArrowRightIcon />
         </Button>
       )}
     </div>

@@ -18,7 +18,7 @@ class BvaIntakePendingTab < QueueTab
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
+    on_hold_task_children.open
   end
 
   def column_names

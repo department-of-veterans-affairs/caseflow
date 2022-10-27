@@ -3,7 +3,8 @@ import React from 'react';
 // components
 import TabWindow from '../../components/TabWindow';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import { CrossIcon, CheckIcon } from '../../components/RenderFunctions';
+import { CrossIcon } from '../../components/icons/fontAwesome/CrossIcon';
+import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
 import PropTypes from 'prop-types';
 
 export default class StyleGuideTabs extends React.PureComponent {

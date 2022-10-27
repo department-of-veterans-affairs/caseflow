@@ -1,16 +1,16 @@
 import React from 'react';
-import { mount } from 'enzyme';
 
 import EditAppellantInformation from 'app/queue/editAppellantInformation/EditAppellantInformation';
 import { queueWrapper } from 'test/data/stores/queueStore';
 
 import { amaAppeal } from '../../../data/appeals';
+import { render } from '@testing-library/react';
 
 describe('EditAppellantInformation', () => {
   const setup = () => {
-    return mount(<EditAppellantInformation appealId={amaAppeal.externalId} />,
+    return render(<EditAppellantInformation appealId={amaAppeal.externalId} />,
       {
-        wrappingComponent: queueWrapper,
+        wrapper: queueWrapper,
       });
   };
 

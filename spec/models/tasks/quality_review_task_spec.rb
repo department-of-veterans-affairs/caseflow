@@ -74,4 +74,15 @@ describe QualityReviewTask, :all_dbs do
       expect(qr_task.status).to eq(Constants.TASK_STATUSES.assigned)
     end
   end
+
+  describe "creating a QualityReviewTask when an appeal has one open" do
+    before do
+      QualityReviewTask.create_from_root_task(root_task)
+    end
+
+    subject { QualityReviewTask.create_from_root_task(root_task) }
+    it "throws an error" do
+      expect { subject }.to raise_error(Caseflow::Error::DuplicateOrgTask)
+    end
+  end
 end

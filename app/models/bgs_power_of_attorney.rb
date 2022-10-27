@@ -7,8 +7,6 @@ class BgsPowerOfAttorney < CaseflowRecord
   has_many :claimants, primary_key: :claimant_participant_id, foreign_key: :participant_id
   has_one :representative, primary_key: :poa_participant_id, foreign_key: :participant_id
 
-  delegate :email_address, to: :person, prefix: :representative, allow_nil: true
-
   validates :claimant_participant_id,
             :poa_participant_id,
             :representative_name,
@@ -113,6 +111,10 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   def representative_address
     @representative_address ||= load_bgs_address!
+  end
+
+  def representative_email_address
+    @representative_email_address ||= load_bgs_email_address!
   end
 
   def poa_participant_id
@@ -229,6 +231,12 @@ class BgsPowerOfAttorney < CaseflowRecord
     return nil if !participant_id
 
     BgsAddressService.new(participant_id: poa_participant_id).address
+  end
+
+  def load_bgs_email_address!
+    return nil if !participant_id
+
+    BgsAddressService.new(participant_id: poa_participant_id).email_address
   end
 
   def update_ihp_enabled?

@@ -20,8 +20,7 @@ import React from 'react';
 // queueSectionOrder:        for Queue display, the order to display
 // isAmaRelevant:            whether issue is relevant to AMA cases
 
-
-//# Note: If the `snakeCase` field here is changed or added for LegacyAppeals, they must also be changed in app/models/legacy_appeal.rb SPECIAL_ISSUES const
+// # Note: If the `snakeCase` field here is changed or added for LegacyAppeals, they must also be changed in app/models/legacy_appeal.rb SPECIAL_ISSUES const
 export const SPECIAL_ISSUES = [
   {
     display: 'Contaminated Water at Camp LeJeune',
@@ -310,8 +309,8 @@ export const SPECIAL_ISSUES = [
     queueSectionOrder: 4
   },
   {
-    display: 'Vocational Rehabilitation and Employment',
-    queueDisplay: 'Vocational Rehabilitation and Employment (VR&E)',
+    display: 'Veterans Readiness and Employment',
+    queueDisplay: 'Veterans Readiness and Employment (VR&E)',
     specialIssue: 'vocationalRehab',
     snakeCase: 'vocational_rehab',
     stationOfJurisdiction: 'regional',

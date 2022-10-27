@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { GithubIcon } from './RenderFunctions';
+import { GithubIcon } from './icons/fontAwesome/GithubIcon';
 
 export default class StyleGuideComponentTitle extends React.PureComponent {
   render() {

@@ -21,7 +21,7 @@ import {
   baseColumns
 } from 'test/data';
 import Tooltip from 'app/components/Tooltip';
-import { DoubleArrow } from 'app/components/RenderFunctions';
+import { DoubleArrowIcon } from 'app/components/icons/DoubleArrowIcon';
 import TableFilter from 'app/components/TableFilter';
 import { COLORS, LOGO_COLORS } from 'app/constants/AppConstants';
 import * as glamor from 'glamor';
@@ -39,7 +39,7 @@ const ColumnContent = ({ label, filter, sort, filterProps, headerStyle, iconStyl
     <span>{label}</span>
     {sort && (
       <span {...iconStyle} aria-label={`Sort by ${label}`} role="button" tabIndex="0">
-        <DoubleArrow />
+        <DoubleArrowIcon />
       </span>
     )}
     {filter && <TableFilter {...filterProps} />}
@@ -203,22 +203,22 @@ describe('QueueTable', () => {
 
       // Assertions
       expect(header).toMatchSnapshot();
-      expect(header.find(DoubleArrow)).toHaveLength(1);
+      expect(header.find(DoubleArrowIcon)).toHaveLength(1);
       expect(sortMock).toHaveBeenCalledWith(sortColumns[2].name);
 
       // Test sorting colors
-      expect(header.find(DoubleArrow).prop('topColor')).toEqual(COLORS.GREY_LIGHT);
-      expect(header.find(DoubleArrow).prop('bottomColor')).toEqual(COLORS.GREY_LIGHT);
+      expect(header.find(DoubleArrowIcon).prop('topColor')).toEqual(COLORS.GREY_LIGHT);
+      expect(header.find(DoubleArrowIcon).prop('bottomColor')).toEqual(COLORS.GREY_LIGHT);
 
       // Test Ascending the sort order
       header.setProps({ sortColName: 'type', sortAscending: true });
-      expect(header.find(DoubleArrow).prop('topColor')).toEqual(COLORS.GREY_LIGHT);
-      expect(header.find(DoubleArrow).prop('bottomColor')).toEqual(COLORS.PRIMARY);
+      expect(header.find(DoubleArrowIcon).prop('topColor')).toEqual(COLORS.GREY_LIGHT);
+      expect(header.find(DoubleArrowIcon).prop('bottomColor')).toEqual(COLORS.PRIMARY);
 
       // Test Descending the sort order
       header.setProps({ sortColName: 'type', sortAscending: false });
-      expect(header.find(DoubleArrow).prop('topColor')).toEqual(COLORS.PRIMARY);
-      expect(header.find(DoubleArrow).prop('bottomColor')).toEqual(COLORS.GREY_LIGHT);
+      expect(header.find(DoubleArrowIcon).prop('topColor')).toEqual(COLORS.PRIMARY);
+      expect(header.find(DoubleArrowIcon).prop('bottomColor')).toEqual(COLORS.GREY_LIGHT);
     });
 
     test('Can sort when the backend can sort and getting column sort value', () => {
@@ -240,22 +240,22 @@ describe('QueueTable', () => {
 
       // Assertions
       expect(header).toMatchSnapshot();
-      expect(header.find(DoubleArrow)).toHaveLength(1);
+      expect(header.find(DoubleArrowIcon)).toHaveLength(1);
       expect(sortMock).toHaveBeenCalledWith(backendSortColumns[2].name);
 
       // Test sorting colors
-      expect(header.find(DoubleArrow).prop('topColor')).toEqual(COLORS.GREY_LIGHT);
-      expect(header.find(DoubleArrow).prop('bottomColor')).toEqual(COLORS.GREY_LIGHT);
+      expect(header.find(DoubleArrowIcon).prop('topColor')).toEqual(COLORS.GREY_LIGHT);
+      expect(header.find(DoubleArrowIcon).prop('bottomColor')).toEqual(COLORS.GREY_LIGHT);
 
       // Test Ascending the sort order
       header.setProps({ sortColName: 'type', sortAscending: true });
-      expect(header.find(DoubleArrow).prop('topColor')).toEqual(COLORS.GREY_LIGHT);
-      expect(header.find(DoubleArrow).prop('bottomColor')).toEqual(COLORS.PRIMARY);
+      expect(header.find(DoubleArrowIcon).prop('topColor')).toEqual(COLORS.GREY_LIGHT);
+      expect(header.find(DoubleArrowIcon).prop('bottomColor')).toEqual(COLORS.PRIMARY);
 
       // Test Descending the sort order
       header.setProps({ sortColName: 'type', sortAscending: false });
-      expect(header.find(DoubleArrow).prop('topColor')).toEqual(COLORS.PRIMARY);
-      expect(header.find(DoubleArrow).prop('bottomColor')).toEqual(COLORS.GREY_LIGHT);
+      expect(header.find(DoubleArrowIcon).prop('topColor')).toEqual(COLORS.PRIMARY);
+      expect(header.find(DoubleArrowIcon).prop('bottomColor')).toEqual(COLORS.GREY_LIGHT);
     });
 
     test('Can filter when not using task pages API and filtering is enabled', () => {
@@ -458,7 +458,7 @@ describe('QueueTable', () => {
 
       // Negative tests
       expect(table.find(TableFilter)).toHaveLength(0);
-      expect(table.find(DoubleArrow)).toHaveLength(0);
+      expect(table.find(DoubleArrowIcon)).toHaveLength(0);
     });
 
     test('Renders pagination when set', () => {

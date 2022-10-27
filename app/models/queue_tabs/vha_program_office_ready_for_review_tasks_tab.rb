@@ -22,7 +22,6 @@ class VhaProgramOfficeReadyForReviewTasksTab < QueueTab
   end
 
   def tasks
-    # byebug
     Task.includes(*task_includes).visible_in_queue_table_view
       .where(id: parent_ids_with_completed_child_assess_documentation_task)
   end

@@ -122,16 +122,8 @@ describe Appeal, :all_dbs do
     context "when the appeal has only vha issues" do
       let(:request_issues) do
         [
-          create(:request_issue, benefit_type: "vha")
+          create(:request_issue, benefit_type: "vha", is_predocket_needed: true)
         ]
-      end
-
-      before do
-        FeatureToggle.enable!(:vha_predocket_appeals)
-      end
-
-      after do
-        FeatureToggle.disable!(:vha_predocket_appeals)
       end
 
       it "does not create business line tasks" do
@@ -144,20 +136,56 @@ describe Appeal, :all_dbs do
     context "when the appeal has vha and non-vha issues" do
       let(:request_issues) do
         [
-          create(:request_issue, benefit_type: "vha"),
-          create(:request_issue, benefit_type: "education")
+          create(:request_issue, benefit_type: "vha", is_predocket_needed: true),
+          create(:request_issue, benefit_type: "nca")
+        ]
+      end
+
+      it "does create business line tasks" do
+        expect(VeteranRecordRequest).to receive(:create!)
+
+        subject
+      end
+    end
+
+    context "when the appeal has a pre-docket education issue" do
+      let(:request_issues) do
+        [
+          create(:request_issue, benefit_type: "education", is_predocket_needed: true)
         ]
       end
 
       before do
-        FeatureToggle.enable!(:vha_predocket_appeals)
+        FeatureToggle.enable!(:edu_predocket_appeals)
       end
 
       after do
-        FeatureToggle.disable!(:vha_predocket_appeals)
+        FeatureToggle.disable!(:edu_predocket_appeals)
       end
 
       it "does not create business line tasks" do
+        expect(VeteranRecordRequest).to_not receive(:create!)
+
+        subject
+      end
+    end
+
+    context "when the appeal has a non pre-docket education issue" do
+      let(:request_issues) do
+        [
+          create(:request_issue, benefit_type: "education", is_predocket_needed: false)
+        ]
+      end
+
+      before do
+        FeatureToggle.enable!(:edu_predocket_appeals)
+      end
+
+      after do
+        FeatureToggle.disable!(:edu_predocket_appeals)
+      end
+
+      it "does create business line tasks" do
         expect(VeteranRecordRequest).to receive(:create!)
 
         subject
@@ -1157,6 +1185,22 @@ describe Appeal, :all_dbs do
     end
   end
 
+  describe "#caregiver_has_issues?" do
+    subject { appeal.caregiver_has_issues? }
+
+    context "appeal has no caregiver tasks" do
+      let(:appeal) { create(:appeal, request_issues: [create(:request_issue, :nonrating)]) }
+
+      it { expect(subject).to eq false }
+    end
+
+    context "appeal has caregiver tasks" do
+      let(:appeal) { create(:appeal, :with_vha_issue) }
+
+      it { expect(subject).to eq true }
+    end
+  end
+
   describe "#contested_claim?" do
     subject { appeal.contested_claim? }
 
@@ -1174,6 +1218,15 @@ describe Appeal, :all_dbs do
       context "contains string 'Contested Claim'" do
         let(:benefit_type) { "compensation" }
         let(:issue_category) { "Contested Claims - Insurance" }
+
+        it "returns true" do
+          expect(subject).to be_truthy
+        end
+      end
+
+      context "contains string 'Contested Death'" do
+        let(:benefit_type) { "compensation" }
+        let(:issue_category) { "Contested Death Claim | Other" }
 
         it "returns true" do
           expect(subject).to be_truthy

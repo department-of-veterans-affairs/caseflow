@@ -11,15 +11,17 @@ import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
 import { axe } from 'jest-axe';
 
-import COPY from 'app/../COPY';
+import { ADD_CAVC_PAGE_TITLE, EDIT_CAVC_PAGE_TITLE } from 'app/../COPY';
 import { EditCavcRemandForm } from 'app/queue/cavc/EditCavcRemandForm';
 
 import {
-  existingValues,
   decisionIssues,
+  existingValues,
+  remandDatesProvided,
   supportedDecisionTypes,
   supportedRemandTypes,
 } from 'test/data/queue/cavc';
+import { add, format } from 'date-fns';
 
 const getDecisionGroup = () => {
   return screen.getByRole('group', { name: /how are you proceeding/i });
@@ -87,10 +89,10 @@ describe('EditCavcRemandForm', () => {
         const { container } = setup();
 
         expect(container).toMatchSnapshot();
-        expect(screen.getByText(COPY.ADD_CAVC_PAGE_TITLE)).toBeInTheDocument();
+        expect(screen.getByText(ADD_CAVC_PAGE_TITLE)).toBeInTheDocument();
       });
 
-      it.only('passes a11y testing', async () => {
+      it('passes a11y testing', async () => {
         const { container } = setup();
 
         const results = await axe(container);
@@ -188,7 +190,7 @@ describe('EditCavcRemandForm', () => {
         const { container } = setup({ existingValues });
 
         expect(container).toMatchSnapshot();
-        expect(screen.getByText(COPY.EDIT_CAVC_PAGE_TITLE)).toBeInTheDocument();
+        expect(screen.getByText(EDIT_CAVC_PAGE_TITLE)).toBeInTheDocument();
       });
 
       it('passes a11y testing', async () => {
@@ -206,6 +208,62 @@ describe('EditCavcRemandForm', () => {
 
       userEvent.click(screen.getByRole('button', { name: /cancel/i }));
       expect(onCancel).toHaveBeenCalled();
+    });
+  });
+
+  describe('submitting invalid dates', () => {
+    it('displays an error message for a future decision date', async () => {
+      setup({ existingValues });
+      const decisionDateInput = screen.getByLabelText(/What is the Court's decision date?/i);
+      const invalidDate = format(add(new Date(), { days: 7 }), 'yyyy-MM-dd');
+
+      // Enter date
+      fireEvent.change(decisionDateInput, { target: { value: invalidDate } });
+
+      const submit = screen.getByRole('button', { name: /submit/i });
+
+      // Submit to trigger validation
+      await userEvent.click(submit);
+      expect(onSubmit).not.toHaveBeenCalled();
+      await waitFor(() => {
+        expect(screen.getByText(/Please select a valid date for the court's decision/i)).toBeInTheDocument();
+      });
+    });
+
+    it('displays error messages for judgement dates before January 1, 2018', async () => {
+      setup({ existingValues: remandDatesProvided });
+      const judgementDateInput = screen.getByLabelText(/What is the Court's judgement date?/i);
+      const judgementDate = format(new Date(2017, 0, 12), 'yyyy-MM-dd');
+
+      // Enter date
+      fireEvent.change(judgementDateInput, { target: { value: judgementDate } });
+
+      const submit = screen.getByRole('button', { name: /submit/i });
+
+      // Submit to trigger validation
+      await userEvent.click(submit);
+      expect(onSubmit).not.toHaveBeenCalled();
+      await waitFor(() => {
+        expect(screen.getByText(/judgement date cannot be before/i)).toBeInTheDocument();
+      });
+    });
+
+    it('displays error messages for mandate dates before January 1, 2018', async () => {
+      setup({ existingValues: remandDatesProvided });
+      const mandateDateInput = screen.getByLabelText(/What is the Court's mandate date?/i);
+      const mandateDate = format(new Date(2017, 5, 12), 'yyyy-MM-dd');
+
+      // Enter date
+      fireEvent.change(mandateDateInput, { target: { value: mandateDate } });
+
+      const submit = screen.getByRole('button', { name: /submit/i });
+
+      // Submit to trigger validation
+      await userEvent.click(submit);
+      expect(onSubmit).not.toHaveBeenCalled();
+      await waitFor(() => {
+        expect(screen.getByText(/mandate date cannot be before/i)).toBeInTheDocument();
+      });
     });
   });
 });

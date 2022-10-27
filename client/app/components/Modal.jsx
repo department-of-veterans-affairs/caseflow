@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ScrollLock from 'react-scrolllock';
-import { CloseIcon } from './RenderFunctions';
+import { CloseIcon } from './icons/CloseIcon';
 import Button from './Button';
 import _ from 'lodash';
 import { css } from 'glamor';

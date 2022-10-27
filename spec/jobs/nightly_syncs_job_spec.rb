@@ -31,6 +31,9 @@ describe NightlySyncsJob, :all_dbs do
     end
 
     context "dangling LegacyAppeal" do
+      class FakeTask < Dispatch::Task
+      end
+
       context "with zero tasks" do
         let!(:legacy_appeal) { create(:legacy_appeal) }
 
@@ -38,6 +41,31 @@ describe NightlySyncsJob, :all_dbs do
           subject
 
           expect { legacy_appeal.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+
+        context "and an open dispatch_task" do
+          let!(:dispatch_task) { FakeTask.create(appeal: legacy_appeal, aasm_state: :unassigned) }
+
+          it "cancels all open dispatch_task and leaves the legacy appeal intact" do
+            expect(dispatch_task.open?).to eq true
+            subject
+
+            expect(legacy_appeal.reload).to_not be_nil
+            expect(legacy_appeal.reload.tasks.open).to be_empty
+            expect(legacy_appeal.reload.dispatch_tasks.open).to be_empty
+          end
+        end
+        context "and a closed dispatch_task" do
+          let!(:dispatch_task) { FakeTask.create(appeal: legacy_appeal, aasm_state: :completed, user: nil) }
+
+          it "leaves the legacy appeal intact" do
+            expect(dispatch_task.open?).to eq false
+            subject
+
+            expect(legacy_appeal.reload).to_not be_nil
+            expect(legacy_appeal.reload.tasks.open).to be_empty
+            expect(legacy_appeal.reload.dispatch_tasks.open).to be_empty
+          end
         end
       end
 
@@ -49,6 +77,33 @@ describe NightlySyncsJob, :all_dbs do
 
           expect(legacy_appeal.reload).to_not be_nil
           expect(legacy_appeal.reload.tasks.open).to be_empty
+        end
+
+        context "and open dispatch_task" do
+          let!(:dispatch_task) { FakeTask.create(appeal: legacy_appeal, aasm_state: :unassigned) }
+
+          it "cancels all open *tasks and leaves the legacy appeal intact" do
+            expect(legacy_appeal.reload.tasks.open).not_to be_empty
+            expect(legacy_appeal.reload.dispatch_tasks.open).not_to be_empty
+            subject
+
+            expect(legacy_appeal.reload).to_not be_nil
+            expect(legacy_appeal.reload.tasks.open).to be_empty
+            expect(legacy_appeal.reload.dispatch_tasks.open).to be_empty
+          end
+        end
+        context "and closed dispatch_task" do
+          let!(:dispatch_task) { FakeTask.create(appeal: legacy_appeal, aasm_state: :completed, user: nil) }
+
+          it "cancels all open tasks and leaves the legacy appeal intact" do
+            expect(legacy_appeal.reload.tasks.open).not_to be_empty
+            expect(legacy_appeal.reload.dispatch_tasks.open).to be_empty
+            subject
+
+            expect(legacy_appeal.reload).to_not be_nil
+            expect(legacy_appeal.reload.tasks.open).to be_empty
+            expect(legacy_appeal.reload.dispatch_tasks.open).to be_empty
+          end
         end
       end
 

@@ -4,10 +4,10 @@ FactoryBot.define do
   factory :hearing do
     transient do
       regional_office { nil }
-      adding_user { association(:user) }
+      adding_user { create(:user) }
     end
     appeal { association(:appeal, :hearing_docket) }
-    judge { association(:user, roles: ["Hearing Prep"]) }
+    judge { create(:user, roles: ["Hearing Prep"]) }
     uuid { SecureRandom.uuid }
     hearing_day do
       association(
@@ -30,8 +30,35 @@ FactoryBot.define do
     updated_by { adding_user }
     virtual_hearing { nil }
 
+    # this trait creates a realistic hearing task tree from a completed hearing, but if it needs to
+    # be ready for distribution then the referring class must mark the transcription/evidence
+    # tasks complete and set the distribution task to assigned
     trait :held do
       disposition { Constants.HEARING_DISPOSITION_TYPES.held }
+      after(:create) do |hearing, _evaluator|
+        appeal = hearing.appeal
+        hearing_task = appeal.tasks.find_by(type: :HearingTask)
+        if hearing_task.nil?
+          appeal.create_tasks_on_intake_success!
+          hearing_task = appeal.tasks.find_by(type: :HearingTask)
+        end
+        # if a specific date was passed to the created appeal, this will match task dates to that date
+        appeal.tasks.each { |task| task.update!(created_at: appeal.created_at, assigned_at: appeal.created_at) }
+        create(:hearing_task_association,
+               hearing: hearing,
+               hearing_task: hearing_task)
+        appeal.tasks.find_by(type: :ScheduleHearingTask).completed!
+        assign_hearing_disposition_task = create(:assign_hearing_disposition_task,
+                                                 :completed,
+                                                 parent: hearing_task,
+                                                 appeal: appeal)
+        appeal.tasks.find_by(type: :DistributionTask).update!(status: :on_hold)
+        assign_hearing_disposition_task.hold!
+      end
+    end
+
+    trait :postponed do
+      disposition { Constants.HEARING_DISPOSITION_TYPES.postponed }
     end
 
     trait :no_show do

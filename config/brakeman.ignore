@@ -27,7 +27,7 @@
       "check_name": "SendFile",
       "message": "Model attribute used in file name",
       "file": "app/controllers/hearings/schedule_periods_controller.rb",
-      "line": 56,
+      "line": 79,
       "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
       "code": "send_file(SchedulePeriod.find(params[:schedule_period_id]).spreadsheet_location, :type => \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\", :disposition => (\"attachment; filename='#{SchedulePeriod.find(params[:schedule_period_id]).file_name}'\"))",
       "render_path": null,
@@ -240,7 +240,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/task.rb",
-      "line": 216,
+      "line": 236,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Arel.sql(\"CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, #{CachedAppeal.table_name}.docket_number #{order}, #{Task.table_name}.created_at #{order}\")",
       "render_path": null,
@@ -252,8 +252,28 @@
       "user_input": "order",
       "confidence": "Medium",
       "note": ""
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "b7c72cc9ada184e07d9ee28ed88a582353f76433ae8c4677d82953523cc90c92",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/idt/api/v2/appeals_controller.rb",
+      "line": 49,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(Document.find(document_id).serve, :type => \"application/pdf\", :disposition => (\"attachment; filename='#{current_document[0][\"type\"]}-#{document_id}.pdf'\"))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Idt::Api::V2::AppealsController",
+        "method": "appeals_single_document"
+      },
+      "user_input": "Document.find(document_id).serve",
+      "confidence": "Medium",
+      "note": ""
     }
   ],
-  "updated": "2020-11-03 13:47:15 -0500",
-  "brakeman_version": "4.7.1"
+  "updated": "2022-02-02 09:46:55 -0500",
+  "brakeman_version": "5.2.0"
 }

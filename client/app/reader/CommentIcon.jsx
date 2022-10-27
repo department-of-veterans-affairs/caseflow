@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { CommentSymbol } from '../components/RenderFunctions';
+import { ReaderCommentIcon } from '../components/icons/ReaderCommentIcon';
 
 export class CommentIcon extends React.Component {
   onClick = () => {
@@ -39,7 +39,7 @@ export class CommentIcon extends React.Component {
       onClick={this.onClick}
       draggable={this.props.onDrag !== null}
       onDragStart={this.onDragStart}>
-      <CommentSymbol
+      <ReaderCommentIcon
         selected={selected}
         id={this.props.comment.uuid}
       />

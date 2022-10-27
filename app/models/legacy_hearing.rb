@@ -35,6 +35,8 @@ class LegacyHearing < CaseflowRecord
   include UpdatedByUserConcern
   include HearingConcern
   include HasHearingEmailRecipientsConcern
+  prepend HearingWithdrawn
+  prepend HearingPostponed
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -275,10 +277,10 @@ class LegacyHearing < CaseflowRecord
     ).serializable_hash[:data][:attributes]
   end
 
-  def to_hash_for_worksheet(current_user_id)
+  def to_hash_for_worksheet(current_user)
     ::LegacyHearingSerializer.worksheet(
       self,
-      params: { current_user_id: current_user_id }
+      current_user
     ).serializable_hash[:data][:attributes]
   end
 
@@ -370,5 +372,12 @@ class LegacyHearing < CaseflowRecord
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
+  end
+
+  # Also see weekend_and_holiday in hearing.rb
+  def weekend_and_holiday(day)
+    holiday = Holidays.on(day, :federal_reserve, :observed).any?
+    weekend = day.saturday? || day.sunday?
+    [weekend, holiday]
   end
 end

@@ -30,7 +30,7 @@ class BvaIntake < Organization
     Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
     Constants.QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
     Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
-    Constants.QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST.name,
+    Constants.QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST_ACTION.name,
     Constants.QUEUE_CONFIG.COLUMNS.DAYS_SINCE_INTAKE.name
   ].compact
 end

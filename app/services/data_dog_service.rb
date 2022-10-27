@@ -11,7 +11,7 @@ class DataDogService
     @statsd.increment(stat_name, tags: tags, by: by)
   end
 
-  def self.record_runtime(metric_group:, app_name:, start_time:)
+  def self.record_runtime(metric_group:, app_name:, start_time: Time.zone.now)
     metric_name = "runtime"
     job_duration_seconds = Time.zone.now - start_time
 

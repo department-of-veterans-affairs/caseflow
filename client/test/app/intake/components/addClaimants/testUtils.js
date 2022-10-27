@@ -34,7 +34,7 @@ export const fillForm = async () => {
   await userEvent.type(screen.getByRole('textbox', { name: /City/i }), city);
 
   // select state
-  await selectEvent.select(screen.getByLabelText('State'), [STATES[7].label]);
+  await selectEvent.select(screen.getByRole('combobox', { name: /state/i }), [STATES[7].label]);
 
   // Enter zip
   await userEvent.type(screen.getByRole('textbox', { name: /Zip/i }), zip);

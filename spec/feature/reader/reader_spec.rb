@@ -516,7 +516,7 @@ RSpec.feature "Reader", :all_dbs do
         expect(find("#button-save")["disabled"]).to eq("true")
       end
 
-      scenario "alt+enter shortcut doesn't trigger save" do
+      scenario "alt+enter shortcut doesn't trigger save", skip: true do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
         add_comment_without_clicking_save(random_whitespace_no_tab)
 
@@ -1264,7 +1264,7 @@ RSpec.feature "Reader", :all_dbs do
       expect(search_input.value).to eq("")
     end
 
-    scenario "Navigate Search Results with Keyboard" do
+    scenario "Navigate Search Results with Keyboard", skip: true do
       open_search_bar
 
       internal_text = find("#search-internal-text")
@@ -1370,7 +1370,7 @@ RSpec.feature "Reader", :all_dbs do
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
 
-    scenario "Open the last document on the page and return to list" do
+    scenario "Open the last document on the page and return to list", skip: true do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents.last.id}"
 
       click_on "Back"

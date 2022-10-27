@@ -108,8 +108,9 @@ class IntakesController < ApplicationController
         dateOfBirthField: FeatureToggle.enabled?(:date_of_birth_field, user: current_user),
         covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
         filedByVaGovHlr: FeatureToggle.enabled?(:filed_by_va_gov_hlr, user: current_user),
-        vhaPreDocketAppeals: FeatureToggle.enabled?(:vha_predocket_appeals, user: current_user),
-        updatedIntakeForms: FeatureToggle.enabled?(:updated_intake_forms, user: current_user)
+        updatedIntakeForms: FeatureToggle.enabled?(:updated_intake_forms, user: current_user),
+        eduPreDocketAppeals: FeatureToggle.enabled?(:edu_predocket_appeals, user: current_user),
+        updatedAppealForm: FeatureToggle.enabled?(:updated_appeal_form, user: current_user)
       }
     }
   rescue StandardError => error

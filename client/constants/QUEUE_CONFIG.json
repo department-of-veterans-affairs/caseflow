@@ -12,17 +12,29 @@
   "SUGGESTED_HEARING_LOCATION_COLUMN_NAME": "suggestedLocation",
   "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorneyName",
   "HEARING_REQUEST_TYPE_COLUMN_NAME": "hearingRequestType",
-  "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReview",
   "BVA_READY_FOR_REVIEW_TASKS_TAB_NAME": "bvaReadyForReview",
   "PENDING_TASKS_TAB_NAME": "pending",
   "BVA_INTAKE_COMPLETED_TAB_NAME": "bvaIntakeCompletedTab",
   "TRANSCRIPTION_TASK_LABEL": "Transcription Task",
   "CAMO_ASSIGNED_TASKS_TAB_NAME": "camo_assigned",
+  "CAMO_IN_PROGRESS_TASKS_TAB_NAME": "camo_in_progress",
   "VHA_PO_ASSIGNED_TASKS_TAB_NAME": "po_assigned",
   "VHA_PO_IN_PROGRESS_TASKS_TAB_NAME": "po_inProgressTab",
   "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReviewTab",
   "VHA_PO_ON_HOLD_TASKS_TAB_NAME": "po_on_hold",
   "VHA_PO_COMPLETED_TASKS_TAB_NAME": "po_completed",
+  
+  "EDUCATION_RPO_ASSIGNED_TASKS_TAB_NAME": "education_rpo_assigned",
+  "EDUCATION_RPO_IN_PROGRESS_TASKS_TAB_NAME": "education_rpo_in_progress",
+  "EDUCATION_RPO_COMPLETED_TASKS_TAB_NAME": "education_rpo_completed",
+
+  "EDUCATION_EMO_UNASSIGNED_TASKS_TAB_NAME": "education_emo_unassigned",
+  "EDUCATION_EMO_ASSIGNED_TASKS_TAB_NAME": "education_emo_assigned",
+  "EDUCATION_EMO_COMPLETED_TASKS_TAB_NAME": "education_emo_completed",
+
+  "CAREGIVER_SUPPORT_UNASSIGNED_TASK_TAB_NAME": "vha_caregiver_support_unassigned",
+  "CAREGIVER_SUPPORT_IN_PROGRESS_TASKS_TAB_NAME": "caregiver_support_in_progress",
+  "CAREGIVER_SUPPORT_COMPLETED_TASKS_TAB_NAME": "caregiver_support_completed",
 
   "COLUMNS": {
     "APPEAL_TYPE": {
@@ -42,8 +54,8 @@
     "DAYS_ON_HOLD": {
       "name": "daysOnHoldColumn"
     },
-    "DAYS_SINCE_LAST": {
-      "name": "daysSinceLastColumn"
+    "DAYS_SINCE_LAST_ACTION": {
+      "name": "daysSinceLastActionColumn"
     },
     "DAYS_SINCE_INTAKE": {
       "name": "daysSinceIntakeColumn"
@@ -54,9 +66,7 @@
       "sorting_columns": ["assigned_at"]
     },
     "LAST_ACTION": {
-      "name": "lastActionColumn",
-      "sorting_table": "tasks",
-      "sorting_columns": ["updated_at"]
+      "name": "lastActionColumn"
     },
     "DOCKET_NUMBER": {
       "filterable": true,
@@ -122,7 +132,7 @@
     "TASK_OWNER": {
       "name": "taskOwnerColumn",
       "sorting_table": "assignees",
-      "sorting_columns": ["display_name"]
+      "sorting_columns": ["type", "action", "created_at"]
     },
     "TASK_TYPE": {
       "filterable": true,
@@ -133,7 +143,7 @@
     "VAMC_OWNER": {
       "name": "vamcOwnerColumn",
       "sorting_table": "assignees",
-      "sorting_columns": ["display_name"]
+      "sorting_columns": ["type", "action", "created_at"]
     }
   },
 

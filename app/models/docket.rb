@@ -7,19 +7,22 @@ class Docket
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  def appeals(priority: nil, ready: nil)
+  # :reek:LongParameterList
+  def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
 
     scope = docket_appeals.active
-    scope = scope.ready_for_distribution if ready == true
 
-    if priority == true
-      scope = scope.priority
-      return scope.ordered_by_distribution_ready_date
+    if ready
+      scope = scope.ready_for_distribution
+      scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
     end
 
+    return scoped_for_priority(scope) if priority == true
+
     scope = scope.nonpriority if priority == false
-    scope.order("receipt_date")
+
+    scope.order("appeals.receipt_date")
   end
 
   def count(priority: nil, ready: nil)
@@ -46,8 +49,22 @@ class Docket
     appeals(priority: true, ready: true).limit(num).map(&:ready_for_distribution_at)
   end
 
+  def age_of_n_oldest_priority_appeals_available_to_judge(_judge, num)
+    appeals(priority: true, ready: true).limit(num).map(&:receipt_date)
+  end
+
+  # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
+  # but the judge that is passed in isn't relevant here
+  def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
+    appeals(priority: false, ready: true).limit(num).map(&:receipt_date)
+  end
+
   def age_of_oldest_priority_appeal
-    @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+    if use_by_docket_date?
+      @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.receipt_date
+    else
+      @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+    end
   end
 
   def oldest_priority_appeal_days_waiting
@@ -63,7 +80,7 @@ class Docket
   # rubocop:disable Lint/UnusedMethodArgument
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
-    appeals = appeals(priority: priority, ready: true).limit(limit)
+    appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
     tasks.map do |task|
       # If a distributed case already exists for this appeal, alter the existing distributed case's case id.
@@ -97,6 +114,19 @@ class Docket
 
   private
 
+  # :reek:ControlParameter
+  def adjust_for_genpop(scope, genpop, judge)
+    (genpop == "not_genpop") ? scope.non_genpop_for_judge(judge) : scope.genpop
+  end
+
+  def scoped_for_priority(scope)
+    if use_by_docket_date?
+      scope.priority.order("appeals.receipt_date")
+    else
+      scope.priority.ordered_by_distribution_ready_date
+    end
+  end
+
   def docket_appeals
     Appeal.where(docket_type: docket_type).extending(Scopes)
   end
@@ -119,7 +149,13 @@ class Docket
     end
   end
 
+  def use_by_docket_date?
+    FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+  end
+
   module Scopes
+    include DistributionScopes
+
     def priority
       include_aod_motions
         .where("advance_on_docket_motions.created_at > appeals.established_at")
@@ -148,6 +184,33 @@ class Docket
         .group("appeals.id")
         .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
                 DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
+    end
+
+    def genpop
+      joins(with_assigned_distribution_task_sql)
+        .where(
+          "appeals.stream_type != ? OR distribution_task.assigned_at <= ?",
+          Constants.AMA_STREAM_TYPES.court_remand,
+          Constants.DISTRIBUTION.cavc_affinity_days.days.ago
+        )
+    end
+
+    def with_original_appeal_and_judge_task
+      joins("LEFT JOIN cavc_remands ON cavc_remands.remand_appeal_id = appeals.id")
+        .joins("LEFT JOIN appeals AS original_cavc_appeal ON original_cavc_appeal.id = cavc_remands.source_appeal_id")
+        .joins(
+          "LEFT JOIN tasks AS original_judge_task ON original_judge_task.appeal_id = original_cavc_appeal.id
+           AND original_judge_task.type = 'JudgeDecisionReviewTask'
+           AND original_judge_task.status = 'completed'"
+        )
+    end
+
+    # Within the first 21 days, the appeal should be distributed only to the issuing judge.
+    def non_genpop_for_judge(judge)
+      joins(with_assigned_distribution_task_sql)
+        .with_original_appeal_and_judge_task
+        .where("distribution_task.assigned_at > ?", Constants.DISTRIBUTION.cavc_affinity_days.days.ago)
+        .where(original_judge_task: { assigned_to_id: judge.id })
     end
 
     def ordered_by_distribution_ready_date

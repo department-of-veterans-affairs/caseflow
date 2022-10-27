@@ -26,14 +26,20 @@ import {
   HoldOpenDropdown
 } from './DailyDocketRowInputs';
 import { HearingTime } from '../modalForms/HearingTime';
-import { deepDiff, isPreviouslyScheduledHearing, pollVirtualHearingData, handleEdit } from '../../utils';
+import {
+  deepDiff,
+  isPreviouslyScheduledHearing,
+  pollVirtualHearingData,
+  handleEdit,
+  userJudgeOrCoordinator
+} from '../../utils';
 import { docketRowStyle, inputSpacing } from './style';
 import { onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert } from '../../../components/common/actions';
 import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
 import ApiUtil from '../../../util/ApiUtil';
 import Button from '../../../components/Button';
 import HearingText from './DailyDocketRowDisplayText';
-import EmailModalConfirmation from '../EmailModalConfirmation';
+import EmailConfirmationModal from '../EmailConfirmationModal';
 
 const SaveButton = ({ hearing, loading, cancelUpdate, saveHearing }) => {
   return (
@@ -80,7 +86,7 @@ class DailyDocketRow extends React.Component {
       loading: false,
       edited: false,
       editedFields: [],
-      virtualHearingModalActive: false,
+      emailConfirmationModal: false,
       startPolling: null
     };
   }
@@ -122,12 +128,12 @@ class DailyDocketRow extends React.Component {
     });
   };
 
-  openVirtualHearingModal = () => {
-    this.setState({ virtualHearingModalActive: true });
+  openEmailConfirmationModal = () => {
+    this.setState({ emailConfirmationModal: true });
   };
 
-  closeVirtualHearingModal = () => {
-    this.setState({ virtualHearingModalActive: false });
+  closeEmailConfirmationModal = () => {
+    this.setState({ emailConfirmationModal: false });
   };
 
   cancelUpdate = () => {
@@ -266,6 +272,13 @@ class DailyDocketRow extends React.Component {
 
   isLegacyHearing = () => this.props.hearing?.docketName === 'legacy';
 
+  conferenceLinkOnClick = () => {
+    const { conferenceLink } = this.props;
+
+    window.open(conferenceLink?.hostLink, 'Recording Session').focus();
+
+  }
+
   getInputProps = () => {
     const { hearing, readOnly } = this.props;
 
@@ -298,7 +311,7 @@ class DailyDocketRow extends React.Component {
             this.update({ scheduledTimeString });
 
             if (scheduledTimeString !== null) {
-              this.openVirtualHearingModal();
+              this.openEmailConfirmationModal();
             }
           }}
           value={hearing?.scheduledTimeString}
@@ -362,12 +375,17 @@ class DailyDocketRow extends React.Component {
     return (
       <div {...inputSpacing}>
         {hearing?.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />}
+        {hearing?.isVirtual !== true && userJudgeOrCoordinator(user, hearing) && <Button
+          classNames={['usa-button-secondary']}
+          type="button"
+          disabled={this.props.conferenceLinkError}
+          onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button> }
         <DispositionDropdown
           {...inputProps}
           cancelUpdate={this.cancelUpdate}
           saveHearing={this.saveThenUpdateDisposition}
           openDispositionModal={openDispositionModal}
-          readOnly={readOnly || (hearing?.isVirtual && !hearing?.virtualHearing?.jobCompleted)}
+          readOnly={readOnly}
         />
         {user.userHasHearingPrepRole && this.isAmaHearing() && <Waive90DayHoldCheckbox {...inputProps} />}
         <TranscriptRequestedCheckbox {...inputProps} />
@@ -393,9 +411,9 @@ class DailyDocketRow extends React.Component {
     });
   };
 
-  renderVirtualHearingModal = (user, hearing) => (
-    <EmailModalConfirmation
-      closeModal={this.closeVirtualHearingModal}
+  renderEmailConfirmationModal = (user, hearing) => (
+    <EmailConfirmationModal
+      closeModal={this.closeEmailConfirmationModal}
       hearing={hearing}
       timeWasEdited={this.state.initialState.scheduledTimeString !== get(hearing, 'scheduledTimeString')}
       virtualHearing={hearing?.virtualHearing || {}}
@@ -435,9 +453,9 @@ class DailyDocketRow extends React.Component {
           {this.getLeftColumn()}
           {this.getRightColumn(index)}
         </div>
-        {this.state.virtualHearingModalActive &&
+        {this.state.emailConfirmationModal &&
           hearing?.isVirtual &&
-          this.renderVirtualHearingModal(user, hearing)}
+          this.renderEmailConfirmationModal(user, hearing)}
         {this.state.aodModalActive && (
           <AodModal
             advanceOnDocketMotion={hearing?.advanceOnDocketMotion || {}}
@@ -491,11 +509,15 @@ DailyDocketRow.propTypes = {
   }),
   onReceiveAlerts: PropTypes.func,
   onReceiveTransitioningAlert: PropTypes.func,
-  transitionAlert: PropTypes.func
+  transitionAlert: PropTypes.func,
+  conferenceLink: PropTypes.object,
+  conferenceLinkError: PropTypes.bool
 };
 
 const mapStateToProps = (state, props) => ({
-  hearing: { ...props.hearing, ...state.dailyDocket.hearings[props.hearingId] }
+  hearing: { ...props.hearing, ...state.dailyDocket.hearings[props.hearingId] },
+  conferenceLink: state.dailyDocket.hearingDay.conferenceLink,
+  conferenceLinkError: state.dailyDocket.conferenceLinkError
 });
 
 const mapDispatchToProps = (dispatch, props) =>

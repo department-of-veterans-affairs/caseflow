@@ -6,7 +6,7 @@ class BgsAddressService
 
   attr_accessor :participant_id
 
-  bgs_attr_accessor :address_line_1, :address_line_2, :address_line_3, :city, :country, :state, :zip
+  bgs_attr_accessor :address_line_1, :address_line_2, :address_line_3, :city, :country, :state, :zip, :email_addrs
 
   class << self
     def cache_key_for_participant_id(participant_id)
@@ -38,6 +38,12 @@ class BgsAddressService
       country: country,
       state: state
     }
+  end
+
+  def email_address
+    return nil unless found?
+
+    email_addrs
   end
 
   def cache_key

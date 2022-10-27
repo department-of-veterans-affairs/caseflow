@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :higher_level_review do
-    sequence(:veteran_file_number, &:to_s)
+    veteran_file_number { generate :veteran_file_number }
     receipt_date { 1.month.ago }
     benefit_type { "compensation" }
     uuid { SecureRandom.uuid }

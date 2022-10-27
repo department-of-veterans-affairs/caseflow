@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import { Accordion } from '../components/Accordion';
 import { CATEGORIES } from './analytics';
 import { COMMENT_ACCORDION_KEY } from '../reader/PdfViewer/actionTypes';
-import { Keyboard } from '../components/RenderFunctions';
+import { KeyboardIcon } from '../components/icons/KeyboardIcon';
 import { commentColumns, commentInstructions, documentsColumns,
   documentsInstructions, searchColumns, searchInstructions,
   categoryColumns, categoryInstructions } from './PdfKeyboardInfo';
@@ -196,7 +196,7 @@ export class PdfSidebar extends React.Component {
       <div className="cf-keyboard-shortcuts">
         <Button
           id="cf-open-keyboard-modal"
-          name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
+          name={<span><KeyboardIcon />&nbsp; View keyboard shortcuts</span>}
           onClick={this.openKeyboardModal}
           classNames={['cf-btn-link']}
         />

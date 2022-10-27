@@ -7,4 +7,12 @@ class Intake::AppealIntakeSerializer < Intake::DecisionReviewIntakeSerializer
   attribute :docket_type do |object|
     object.detail.docket_type
   end
+
+  attribute :homelessness do |object|
+    object.detail.homelessness
+  end
+
+  attribute :original_hearing_request_type do |object|
+    object.detail.original_hearing_request_type
+  end
 end

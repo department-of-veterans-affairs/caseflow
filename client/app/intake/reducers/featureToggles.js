@@ -5,9 +5,6 @@ const updateFromServerFeatures = (state, featureToggles) => {
     useAmaActivationDate: {
       $set: Boolean(featureToggles.useAmaActivationDate)
     },
-    vhaPreDocketAppeals: {
-      $set: Boolean(featureToggles.vhaPreDocketAppeals)
-    },
     correctClaimReviews: {
       $set: Boolean(featureToggles.correctClaimReviews)
     },
@@ -20,6 +17,12 @@ const updateFromServerFeatures = (state, featureToggles) => {
     updatedIntakeForms: {
       $set: Boolean(featureToggles.updatedIntakeForms)
     },
+    eduPreDocketAppeals: {
+      $set: Boolean(featureToggles.eduPreDocketAppeals)
+    },
+    updatedAppealForm: {
+      $set: Boolean(featureToggles.updatedAppealForm)
+    }
   });
 };
 
@@ -27,10 +30,11 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
   updateFromServerFeatures(
     {
       useAmaActivationDate: false,
-      vhaPreDocketAppeals: false,
       correctClaimReviews: false,
       filedByVaGovHlr: false,
       updatedIntakeForms: false,
+      eduPreDocketAppeals: false,
+      updatedAppealForm: false
     },
     data.featureToggles
   );

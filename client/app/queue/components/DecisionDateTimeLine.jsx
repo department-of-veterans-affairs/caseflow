@@ -1,7 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import COPY from '../../../COPY.json';
-import { GrayDot, GreenCheckmark, CancelIcon } from '../../components/RenderFunctions';
+import COPY from '../../../COPY';
+import { GrayDotIcon } from '../../components/icons/GrayDotIcon';
+import { GreenCheckmarkIcon } from '../../components/icons/GreenCheckmarkIcon';
+import { CancelIcon } from '../../components/icons/CancelIcon';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import { caseTimelineTasksForAppeal } from '../../queue/selectors';
 import moment from 'moment';
@@ -39,13 +42,13 @@ class DecisionDateTimeLine extends React.PureComponent {
 
     const showStylingIcon = () => {
       if (appeal.decisionDate) {
-        return <span className="timelineLeftPaddingStyle"><GreenCheckmark /></span>;
+        return <span className="timelineLeftPaddingStyle"><GreenCheckmarkIcon /></span>;
       }
       if (appeal.withdrawn) {
         return <span className="timelineLeftPaddingStyle"><CancelIcon /></span>;
       }
 
-      return <span className="greyDotTimelineStyling"><GrayDot /></span>;
+      return <span className="greyDotTimelineStyling"><GrayDotIcon size={25} /></span>;
     };
 
     const showTaskListStyling = () => {
@@ -73,6 +76,12 @@ class DecisionDateTimeLine extends React.PureComponent {
     </React.Fragment>;
   }
 }
+
+DecisionDateTimeLine.propTypes = {
+  appeal: PropTypes.object,
+  taskList: PropTypes.array,
+  timeline: PropTypes.any
+};
 
 const mapStateToProps = (state, ownProps) => {
   return {

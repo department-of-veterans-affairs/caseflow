@@ -118,6 +118,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     CaseReview.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
   end
 
+  def can_split_appeal?(appeal)
+    member_of_cob_or_ssc? && !appeal.tasks.completed.find_by(type: [BvaDispatchTask.name])
+  end
+
+  def member_of_cob_or_ssc?
+    member_of_organization?(ClerkOfTheBoard.singleton) || member_of_organization?(SupervisorySeniorCouncil.singleton)
+  end
+
   def can_edit_issues?
     CaseReview.singleton.users.include?(self) || can_intake_appeals?
   end
@@ -139,7 +147,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_change_hearing_request_type?
-    can?("Build HearSched") || can?("Edit HearSched")
+    can?("Build HearSched") || can?("Edit HearSched") || can?("VSO")
   end
 
   def vacols_uniq_id
@@ -413,6 +421,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def can_view_team_management?
     member_of_organization?(Bva.singleton)
+  end
+
+  def in_hearing_management_team?
+    member_of_organization?(HearingsManagement.singleton)
   end
 
   def can_view_judge_team_management?

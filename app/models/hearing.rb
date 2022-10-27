@@ -92,6 +92,23 @@ class Hearing < CaseflowRecord
     C: "Central"
   }.freeze
 
+  amoeba do
+    exclude_association :appeal
+
+    # lambda for setting up a new UUID for the hearing first
+    customize(lambda { |_, dup_hearing|
+      # set the UUID to nil so that it is auto generated
+      dup_hearing.uuid = nil
+      # generate UUIDs
+      dup_hearing.uuid = SecureRandom.uuid
+      # make sure the uuid doesn't exist in the database (by some chance)
+      while Hearing.find_by_uuid(dup_hearing.uuid).nil? == false
+        # generate new id if not
+        dup_hearing.uuid = SecureRandom.uuid
+      end
+    })
+  end
+
   def check_available_slots
     fail HearingDayFull if hearing_day_full?
   end
@@ -244,8 +261,8 @@ class Hearing < CaseflowRecord
     ::HearingSerializer.default(self).serializable_hash[:data][:attributes]
   end
 
-  def to_hash_for_worksheet(_current_user_id)
-    ::HearingSerializer.worksheet(self).serializable_hash[:data][:attributes]
+  def to_hash_for_worksheet(current_user)
+    ::HearingSerializer.worksheet(self, current_user).serializable_hash[:data][:attributes]
   end
 
   def serialized_email_events
@@ -258,5 +275,12 @@ class Hearing < CaseflowRecord
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
+  end
+
+  # Also see weekend_and_holiday in legacy_hearing.rb
+  def weekend_and_holiday(day)
+    holiday = Holidays.on(day, :federal_reserve, :observed).any?
+    weekend = day.saturday? || day.sunday?
+    [weekend, holiday]
   end
 end

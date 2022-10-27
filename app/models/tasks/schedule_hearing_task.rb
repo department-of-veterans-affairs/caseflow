@@ -24,6 +24,7 @@
 ##
 class ScheduleHearingTask < Task
   include CavcAdminActionConcern
+  prepend HearingScheduled
 
   before_validation :set_assignee
   before_create :create_parent_hearing_task
@@ -47,9 +48,26 @@ class ScheduleHearingTask < Task
     end
   end
 
+  def verify_vso_can_change_hearing_to_virtual!(params)
+    unless changed_hearing_request_type_present?(params) && change_hearing_request_type_valid?(params)
+      fail Caseflow::Error::ActionForbiddenError, message: "The hearing request type was either missing or invalid"
+    end
+
+    request_type = changed_request_type_from_params(params)
+
+    unless request_type == Constants.HEARING_REQUEST_TYPES.virtual
+      fail Caseflow::Error::ActionForbiddenError,
+           message: "Current user can only convert hearing request types to virtual"
+    end
+  end
+
   def update_from_params(params, current_user)
     multi_transaction do
-      verify_user_can_update!(current_user)
+      if current_user.vso_employee?
+        verify_vso_can_change_hearing_to_virtual!(params)
+      else
+        verify_user_can_update!(current_user)
+      end
 
       # If the change_hearing_request_type is the same in the DB and the params,
       # don't update anything and return an empty array
@@ -99,6 +117,8 @@ class ScheduleHearingTask < Task
   end
 
   def available_actions(user)
+    return [] if user.vso_employee?
+
     hearing_admin_actions = available_hearing_user_actions(user)
 
     if (assigned_to &.== user) || HearingsManagement.singleton.user_has_access?(user)
@@ -118,7 +138,6 @@ class ScheduleHearingTask < Task
     hearing_admin_actions
   end
 
-  # Override the available user actions to inject change hearing request type tasks
   def available_hearing_user_actions(user)
     # Capture the parent user actions
     parent_admin_actions = super(user)

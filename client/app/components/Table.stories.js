@@ -25,7 +25,7 @@ const columns = [
   }
 ];
 
-const columnsWithAction = _.concat(columns, [
+const columnsWithAction = concat(columns, [
   {
     header: 'Poke',
     align: 'right',

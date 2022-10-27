@@ -41,16 +41,12 @@ export const supportsSubstitutionPreDispatch = ({
 export const supportsSubstitutionPostDispatch = ({
   appeal,
   currentUserOnClerkOfTheBoard,
-  featureToggles,
   hasSubstitution,
   userIsCobAdmin,
 }) => {
   return (
     appealSupportsSubstitution(appeal) &&
     currentUserOnClerkOfTheBoard &&
-    // Substitute appellants for hearings require separate feature toggle
-    (appeal.docketName !== 'hearing' ||
-      featureToggles.hearings_substitution_death_dismissal) &&
     // For now, only allow a single substitution from a given appeal
     !hasSubstitution &&
     // Only admins can perform sub on cases w/o all issues having disposition `dismissed_death`

@@ -5,7 +5,7 @@ import React from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import Tooltip from '../components/Tooltip';
 import { COLORS } from '../constants/AppConstants';
-import { ClipboardIcon } from '../components/RenderFunctions';
+import { ClipboardIcon } from '../components//icons/ClipboardIcon';
 import { isEmpty } from 'lodash';
 
 export const clipboardButtonStyling = (defaults) =>

@@ -1,4 +1,4 @@
-import { CategoryIcon } from '../components/RenderFunctions';
+import { CategoryIcon } from '../components/icons/CategoryIcon';
 import React from 'react';
 
 // If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.

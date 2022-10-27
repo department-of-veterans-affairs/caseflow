@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import { css, hover } from 'glamor';
 import _ from 'lodash';
 import Tooltip from '../components/Tooltip';
-import { DoubleArrow } from '../components/RenderFunctions';
+import { DoubleArrowIcon } from '../components/icons/DoubleArrowIcon';
 import TableFilter from '../components/TableFilter';
 import FilterSummary from '../components/FilterSummary';
 import Pagination from '../components/Pagination/Pagination';
@@ -138,7 +138,7 @@ export const HeaderRow = (props) => {
                 tabIndex="0"
                 onClick={() => props.setSortOrder(column.name)}
               >
-                <DoubleArrow topColor={topColor} bottomColor={botColor} />
+                <DoubleArrowIcon topColor={topColor} bottomColor={botColor} />
               </span>
             );
           }
@@ -632,7 +632,7 @@ export default class QueueTable extends React.PureComponent {
         aria-label={COPY.CASE_LIST_TABLE_TITLE}
         aria-describedby="case-table-description"
         role="table"
-        id={id}
+        id={id ?? 'case-table-description'}
         className={`usa-table-borderless ${this.props.className}`}
         {...styling}
       >

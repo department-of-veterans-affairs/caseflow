@@ -15,10 +15,19 @@ class VhaProgramOfficeOnHoldTasksTab < QueueTab
     format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION, assignee.name)
   end
 
+  def po_on_hold_tasks
+    on_hold_tasks.where(type: :AssessDocumentationTask)
+  end
+
+  def parents_with_child_assess_documentation_task_ids
+    on_hold_task_children.where(type: AssessDocumentationTask.name)
+      .pluck(:parent_id).uniq
+  end
+
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view
-      .on_hold
-      .where(assigned_to: assignee)
+    Task.includes(*task_includes).visible_in_queue_table_view.where(
+      id: (po_on_hold_tasks.map(&:id) + visible_child_task_ids) - parents_with_child_assess_documentation_task_ids
+    )
   end
 
   def column_names

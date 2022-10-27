@@ -387,6 +387,11 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
             <strong>
               <span>
                 State
+                <span
+                  class="cf-optional"
+                >
+                  Optional
+                </span>
               </span>
             </strong>
           </label>

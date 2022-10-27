@@ -57,7 +57,7 @@ RSpec.feature "Convert hearing request type" do
 
     step "confirm page has the correct success message" do
       expect(page).to have_content(
-        "You have successfully converted #{appeal.veteran_full_name}'s hearing to Virtual"
+        "You have successfully converted #{appeal.veteran_full_name}'s hearing to virtual"
       )
       expect(page).to have_content(
         "The hearing request is in the scheduling queue for the #{ro_message}"
@@ -325,6 +325,68 @@ RSpec.feature "Convert hearing request type" do
         click_button("AMA Veterans Waiting")
 
         expect(page).to have_content(central_office_appeal.docket_number)
+      end
+    end
+
+    context "When not initially providing hearing participant emails and then later converting hearing to virtual" do
+      let!(:hearing_day) do
+        create(:hearing_day, :video, scheduled_for: Time.zone.today + 10.days, regional_office: "RO39")
+      end
+
+      before do
+        FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+      end
+
+      after do
+        FeatureToggle.disable!(:schedule_veteran_virtual_hearing)
+      end
+
+      scenario do
+        visit "/queue/appeals/#{video_appeal.external_id}"
+
+        step "schedule hearing as a video hearing without providing participant email addresses" do
+          click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.label)
+
+          click_dropdown(name: "appealHearingLocation", index: 0)
+          find(".cf-form-radio-option", text: /8:30 am/i).click
+          click_button("Schedule")
+        end
+
+        step "convert the scheduled hearing to virtual without a representative email address" do
+          find("p", text: "APPEAL STREAM TYPE")
+
+          hearing = video_appeal.reload.hearings.first
+
+          visit "hearings/#{hearing.external_id}/details"
+
+          click_dropdown(name: "hearingType", index: 0)
+
+          click_button("Save")
+        end
+
+        step "appellant receives email notification" do
+          sleep 5
+
+          hearing = video_appeal.reload.hearings.first
+
+          expect(hearing.email_events.count).to eq 1
+        end
+
+        step "update hearing to have a representative email address" do
+          fill_in "POA/Representative Email", with: "representative@example.com"
+
+          click_button("Save")
+
+          click_button("button-submit-virtual-hearing")
+        end
+
+        step "representative recives email notification" do
+          sleep 5
+
+          hearing = video_appeal.reload.hearings.first
+
+          expect(hearing.email_events.count).to eq 2
+        end
       end
     end
   end

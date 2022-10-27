@@ -18,10 +18,10 @@ Object {
           >
              
             <svg
-              height="16px"
+              class=""
+              height="20"
               version="1.1"
               viewBox="0 0 18 16"
-              width="18px"
               xmlns="http://www.w3.org/2000/svg"
             >
               <g
@@ -68,10 +68,10 @@ Object {
         >
            
           <svg
-            height="16px"
+            class=""
+            height="20"
             version="1.1"
             viewBox="0 0 18 16"
-            width="18px"
             xmlns="http://www.w3.org/2000/svg"
           >
             <g
@@ -175,10 +175,10 @@ Object {
           >
              
             <svg
-              height="16px"
+              class=""
+              height="20"
               version="1.1"
               viewBox="0 0 18 16"
-              width="18px"
               xmlns="http://www.w3.org/2000/svg"
             >
               <g
@@ -225,10 +225,10 @@ Object {
         >
            
           <svg
-            height="16px"
+            class=""
+            height="20"
             version="1.1"
             viewBox="0 0 18 16"
-            width="18px"
             xmlns="http://www.w3.org/2000/svg"
           >
             <g
@@ -329,10 +329,10 @@ exports[`StaticVirtualHearing renders correctly 1`] = `
       >
          
         <svg
-          height="16px"
+          class=""
+          height="20"
           version="1.1"
           viewBox="0 0 18 16"
-          width="18px"
           xmlns="http://www.w3.org/2000/svg"
         >
           <g

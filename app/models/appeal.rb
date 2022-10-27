@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "securerandom"
+
 ##
 # An appeal filed by a Veteran or appellant to the Board of Veterans' Appeals for VA decisions on claims for benefits.
 # This is the type of appeal created by the Veterans Appeals Improvement and Modernization Act (AMA),
@@ -15,10 +17,12 @@ class Appeal < DecisionReview
   include HasTaskHistory
   include AppealAvailableHearingLocations
   include HearingRequestTypeConcern
+  prepend AppealDocketed
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
   has_many :hearings
+  has_many :email_recipients, class_name: "HearingEmailRecipient"
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
 
   # decision_documents is effectively a has_one until post decisional motions are supported
@@ -80,6 +84,7 @@ class Appeal < DecisionReview
     validate :validate_receipt_date
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }
+    validates :homelessness, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
   end
 
@@ -102,6 +107,67 @@ class Appeal < DecisionReview
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
   alias_attribute :nod_date, :receipt_date # LegacyAppeal parity
+
+  # amoeba gem for splitting appeals
+  amoeba do
+    enable
+    # lambda for setting up a new UUID for the appeal first
+    override(lambda { |_, dup_appeal|
+      # set the UUID to nil so that it is auto generated
+      dup_appeal.uuid = nil
+      # generate UUIDs
+      dup_appeal.uuid = SecureRandom.uuid
+      # make sure the uuid doesn't exist in the database (by some chance)
+      while Appeal.find_by_uuid(dup_appeal.uuid).nil? == false
+        # generate new id if not
+        dup_appeal.uuid = SecureRandom.uuid
+      end
+    })
+
+    include_association :appeal_views
+    include_association :appellant_substitution
+    include_association :attorney_case_reviews
+    include_association :available_hearing_locations
+    include_association :special_issue_list
+    include_association :docket_switch
+    include_association :record_synced_by_job
+    include_association :request_issues_updates
+    include_association :intake
+    include_association :claimants
+    include_association :remand_supplemental_claims
+    include_association :claims_folder_searches
+    include_association :judge_case_reviews
+    include_association :nod_date_updates
+    include_association :vbms_uploaded_documents
+    include_association :work_mode
+
+    # lambda for setting up a new UUID for supplemental claims
+    customize(lambda { |_, dup_appeal|
+      # set the UUID to nil so that it is auto generated
+      dup_sup_claims = dup_appeal.remand_supplemental_claims
+
+      dup_sup_claims.each do |sm_claim|
+        sm_claim.uuid = nil
+        sm_claim.uuid = SecureRandom.uuid
+
+        # make sure uuid doesn't exist in the database (by some chance)
+        while SupplementalClaim.find_by(uuid: sm_claim.uuid).nil? == false
+          sm_claim.uuid = SecureRandom.uuid
+        end
+      end
+    })
+  end
+
+  def hearing_day_if_schedueled
+    hearing_date = Hearing.find_by(appeal_id: id)
+
+    if hearing_date.nil?
+      return nil
+
+    else
+      return hearing_date.hearing_day.scheduled_for
+    end
+  end
 
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
@@ -171,7 +237,7 @@ class Appeal < DecisionReview
   def contested_claim?
     return false unless FeatureToggle.enabled?(:indicator_for_contested_claims)
 
-    category_substrings = ["Contested Claims", "Apportionment"]
+    category_substrings = %w[Contested Apportionment]
 
     request_issues.any? do |request_issue|
       category_substrings.any? { |substring| request_issue.nonrating_issue_category&.include?(substring) }
@@ -233,6 +299,190 @@ class Appeal < DecisionReview
 
   def issues
     { decision_issues: decision_issues, request_issues: request_issues }
+  end
+
+  # finalize_split_appeal contains all the methods to finish the amoeba split
+  def finalize_split_appeal(parent_appeal, user_css_id)
+    # update the child task tree with parent, passing CSS ID of user for validation
+    self&.clone_task_tree(parent_appeal, user_css_id)
+    # clone the hearings and hearing relations from parent appeal
+    self&.clone_hearings(parent_appeal)
+    # if there are ihp drafts, clone them too
+    self&.clone_ihp_drafts(parent_appeal)
+    # if there are cavc_remand, clone them too (need user css id)
+    self&.clone_cavc_remand(parent_appeal, user_css_id)
+    # clones request_issues, decision_issues, and request_decision_issues
+    self&.clone_issues(parent_appeal)
+  end
+
+  # clones cavc_remand. Uses user_css_id that did the split to complete the remand split
+  def clone_cavc_remand(parent_appeal, user_css_id)
+    # get cavc remand from the parent appeal
+    original_remand = parent_appeal.cavc_remand
+    # clone w error handling
+    dup_remand = original_remand&.amoeba_dup
+    # set appeal id to remand_appeal_id
+    dup_remand&.remand_appeal_id = id
+    # set source appeal id to parent appeal
+    dup_remand&.source_appeal = parent_appeal
+    # set request store to the user that split the appeal
+    RequestStore[:current_user] = User.find_by_css_id user_css_id
+    # save
+    dup_remand&.save
+  end
+
+  # clone issues clones request_issues, decision_issues, and decision_request_issues
+  # together in order to maintain relationships to each other
+  def clone_issues(parent_appeal)
+    request_issues_parent_to_child_hash = {}
+    decision_review_parent_to_child_hash = {}
+    # clone request issues and add to request issue hash
+    original_request_issues = parent_appeal.request_issues
+    original_request_issues.each do |r_issue|
+      dup_issue = clone_issue(r_issue)
+      request_issues_parent_to_child_hash[r_issue.id] = dup_issue.id
+    end
+    # clone decision issues and add to decision issue hash
+    original_decision_issues = parent_appeal.decision_issues
+    original_decision_issues.each do |d_issue|
+      dup_issue = clone_issue(d_issue)
+      decision_review_parent_to_child_hash[d_issue.id] = dup_issue.id
+    end
+    # cycle the hashes to maintain parent/child relationships and save
+    original_request_decision_issues = parent_appeal.request_decision_issues
+    original_request_decision_issues.each do |rd_issue|
+      dup_issue = rd_issue&.amoeba_dup
+      dup_issue&.request_issue_id = request_issues_parent_to_child_hash[rd_issue.request_issue_id]
+      dup_issue&.decision_issue_id = decision_review_parent_to_child_hash[rd_issue.decision_issue_id]
+      dup_issue&.save
+    end
+  end
+
+  def clone_issue(issue)
+    dup_issue = issue.amoeba_dup
+    dup_issue.decision_review_id = id
+    dup_issue.save
+    return dup_issue
+  end
+
+  def clone_ihp_drafts(parent_appeal)
+    # get the list of ihp_drafts from the appeal
+    original_ihp_drafts = IhpDraft.where(appeal_id: parent_appeal.id)
+    # for each ihp_draft, amoeba clone it
+    original_ihp_drafts.each do |draft|
+      # clone draft
+      dup_draft = draft&.amoeba_dup
+      # set the appeal_id to this appeal
+      dup_draft&.appeal_id = id
+      # save the clone
+      dup_draft&.save
+    end
+  end
+
+  def clone_hearings(parent_appeal)
+    parent_appeal.hearings.each do |hearing|
+      # clone hearing
+      dup_hearing = hearing&.amoeba_dup
+      # assign to current appeal
+      dup_hearing&.appeal_id = id
+
+      dup_hearing&.save
+    end
+  end
+
+  def clone_task_tree(parent_appeal, user_css_id)
+    # get the task tree from the parent
+    parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
+    # define hash to store parent/child relationship values
+    task_parent_to_child_hash = {}
+    while parent_appeal.tasks.count != tasks.count && !parent_appeal.tasks.nil?
+      # cycle each task in the parent
+      parent_ordered_tasks.each do |task|
+        # if the value has a parent and isn't in the dictionary, try to find it in the dictionary or else skip it
+        if !task.parent_id.nil?
+          # if the parent value hasn't been created, break
+          break if !task_parent_to_child_hash.key?(task.parent_id)
+
+          # otherwise reassign old parent task to new from hash
+          cloned_task_id = clone_task_w_parent(task, task_parent_to_child_hash[task.parent_id])
+          # add the parent/clone id to the hash set
+          task_parent_to_child_hash[task.id] = cloned_task_id
+        else
+          # if the task has already been copied, break
+          break if task_parent_to_child_hash.key?(task.id)
+
+          # else create the task that doesn't have a parent
+          cloned_task_id = clone_task(task, user_css_id)
+          # add the parent/clone id to the hash set
+          task_parent_to_child_hash[task.id] = cloned_task_id
+        end
+        # break if the tree count is the same
+        break if parent_appeal.tasks.count == tasks.count
+      end
+      # break if the tree count is the same
+      break if parent_appeal.tasks.count == tasks.count
+    end
+  end
+
+  # clone_task is used for splitting an appeal, tie to css_id for split
+  def clone_task(original_task, user_css_id)
+    # clone the task
+    dup_task = original_task.amoeba_dup
+
+    # assign the task to this appeal
+    dup_task.appeal_id = id
+
+    # set the status to assigned as placeholder
+    dup_task.status = "assigned"
+
+    # save the task
+    dup_task.save
+
+    # set the status to the correct status
+    dup_task.status = original_task.status
+
+    # set request store to the user that split the appeal
+    RequestStore[:current_user] = User.find_by_css_id user_css_id
+
+    dup_task.save
+
+    # return the task id to be added to the dict
+    return dup_task.id
+  end
+
+  def clone_task_w_parent(original_task, parent_task_id)
+    # clone the task
+    dup_task = original_task.amoeba_dup
+
+    # assign the task to this appeal
+    dup_task.appeal_id = id
+
+    # set the status to assigned as placeholder
+    dup_task.status = "assigned"
+
+    # set the parent to the parent_task_id
+    dup_task.parent_id = parent_task_id
+
+    # save the task
+    dup_task.save
+
+    # set the status to the correct status
+    dup_task.status = original_task.status
+
+    dup_task.save
+
+    # if the status is cancelled, pull the original canceled ID
+    if dup_task.status == "cancelled"
+      # set request store to original task canceller to handle verification
+      RequestStore[:current_user] = User.find(original_task.cancelled_by_id)
+
+      # confirm task just in case no prompt
+      dup_task.cancelled_by_id = original_task.cancelled_by_id
+      dup_task.save
+    end
+
+    # return the task id to be added to the dict
+    return dup_task.id
   end
 
   def docket_name
@@ -337,6 +587,14 @@ class Appeal < DecisionReview
     request_issues.active.any? { |ri| ri.benefit_type == "vha" }
   end
 
+  def edu_predocket_needed?
+    request_issues.active.any?(&:education_predocket?)
+  end
+
+  def caregiver_has_issues?
+    request_issues.active.any? { |ri| ri.nonrating_issue_category =~ /Caregiver/ }
+  end
+
   alias cavc? cavc
 
   def cavc_remand
@@ -355,7 +613,7 @@ class Appeal < DecisionReview
   end
 
   # Determine if we are on a separate substitution appeal (used in serializer)
-  def substitution_appeal?
+  def separate_appeal_substitution?
     appellant_substitution && id != appellant_substitution.source_appeal.id
   end
 
@@ -435,8 +693,10 @@ class Appeal < DecisionReview
   end
 
   def create_tasks_on_intake_success!
-    if vha_has_issues? && FeatureToggle.enabled?(:vha_predocket_appeals, user: RequestStore.store[:current_user])
-      PreDocketTasksFactory.new(self).call
+    if vha_has_issues?
+      PreDocketTasksFactory.new(self).call_vha
+    elsif edu_predocket_needed?
+      PreDocketTasksFactory.new(self).call_edu
     else
       InitialTasksFactory.new(self).create_root_and_sub_tasks!
     end

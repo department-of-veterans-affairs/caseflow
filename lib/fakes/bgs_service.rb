@@ -765,6 +765,7 @@ class Fakes::BGSService
       city_nm: FakeConstants.BGS_SERVICE.DEFAULT_CITY,
       cntry_nm: FakeConstants.BGS_SERVICE.DEFAULT_COUNTRY,
       efctv_dt: 15.days.ago.to_formatted_s(:short_date),
+      email_addrs_txt: "jamie.fakerton@caseflowdemo.com",
       jrn_dt: 15.days.ago.to_formatted_s(:short_date),
       jrn_lctn_id: "283",
       jrn_obj_id: "SHARE  - PCAN",

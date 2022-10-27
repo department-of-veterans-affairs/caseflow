@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ClipboardIcon } from '../../components/RenderFunctions';
+import { ClipboardIcon } from '../../components/icons/ClipboardIcon';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { css } from 'glamor';
 

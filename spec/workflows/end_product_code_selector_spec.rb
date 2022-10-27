@@ -159,9 +159,22 @@ describe "Request Issue Correction Cleaner", :postgres do
             decision_date: decision_date
           )
         end
+        let(:date_of_death) { nil }
+        let!(:veteran) do
+          create(:veteran, file_number: decision_review.veteran_file_number,
+                           date_of_death: date_of_death)
+        end
 
-        it "returns a itf_rating EP code" do
+        it "returns the ITF EP code" do
           expect(subject).to eq("040SCRGTY")
+        end
+
+        context "when the veteran is deceased" do
+          let(:date_of_death) { Time.zone.yesterday }
+
+          it "returns the non-ITF EP code" do
+            expect(subject).to eq("040SCR")
+          end
         end
       end
 

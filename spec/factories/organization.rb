@@ -49,8 +49,20 @@ FactoryBot.define do
       type { VhaProgramOffice.name }
     end
 
+    factory :vha_caregiver_support do
+      type { VhaCaregiverSupport.name }
+    end
+
     factory :vha_regional_office do
       type { VhaRegionalOffice.name }
+    end
+
+    factory :education_emo do
+      type { EducationEmo.name }
+    end
+
+    factory :education_rpo do
+      type { EducationRpo.name }
     end
 
     factory :business_line, class: BusinessLine do
