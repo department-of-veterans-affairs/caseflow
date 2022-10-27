@@ -41,7 +41,7 @@ RSpec.describe SplitAppealController, type: :controller do
         created_by_id = current_user.id,
         original_appeal_id = appeal.id,
         original_appeal_uuid = appeal.uuid,
-        original_request_issue_ids = [appeal.request_issues.ids],
+        original_request_issue_ids = appeal.request_issues.ids,
         relationship_type = "split_appeal",
         split_other_reason = split_other_reason,
         split_reason = split_reason,
