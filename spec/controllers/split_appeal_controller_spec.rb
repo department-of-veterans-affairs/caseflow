@@ -23,6 +23,7 @@ RSpec.describe SplitAppealController, type: :controller do
           user_css_id: ssc_user.css_id
         }
       end
+      let(:original_request_issue_ids) { [1,2,3] }
 
       it "creates a new split appeal" do
         post :split_appeal, params: valid_params
@@ -30,6 +31,44 @@ RSpec.describe SplitAppealController, type: :controller do
         dup_appeal = Appeal.last
         expect(appeal.stream_docket_number).to eq(dup_appeal.stream_docket_number)
         expect(appeal.veteran_file_number).to eq(dup_appeal.veteran_file_number)
+      end
+
+      it "creates a split record for SplitCorrelationTable in DB" do
+        post :split_appeal, params: valid_params
+        expect(response.status).to eq 201
+        dup_appeal = Appeal.last
+        appeal_id = dup_appeal.id
+        appeal_type = dup_appeal.docket_type,
+        appeal_uuid = dup_appeal.uuid,
+        created_at = Time.zone.now.utc,
+        created_by_id = current_user.id,
+        original_appeal_id = appeal.id,
+        original_appeal_uuid = appeal.uuid,
+        original_request_issue_ids = appeal.request_issues.ids,
+        relationship_type = "split_appeal",
+        split_other_reason = split_other_reason,
+        split_reason = split_reason,
+        split_request_issue_ids = dup_appeal.request_issues.ids,
+        updated_at = Time.zone.now.utc,
+        updated_by_id = current_user.id,
+        working_split_status = Constants.TASK_STATUSES.in_progress
+        split_correlation_table_create = SplitCorrelationTable.create!(
+        appeal_id: appeal_id,
+        appeal_type: appeal_type,
+        appeal_uuid: appeal_uuid,
+        created_at: created_at,
+        created_by_id: created_by_id,
+        original_appeal_id: original_appeal_id,
+        original_appeal_uuid: original_appeal_uuid,
+        original_request_issue_ids: original_request_issue_ids,
+        relationship_type: relationship_type,
+        split_other_reason: split_other_reason,
+        split_reason: "Include a motion for CUE with respect to a prior Board decision",
+        split_request_issue_ids: split_request_issue_ids,
+        updated_at: updated_at,
+        updated_by_id: updated_by_id,
+        working_split_status: working_split_status
+        )
       end
 
       it "creates a split appeal task on the original and duplicate appeal" do
