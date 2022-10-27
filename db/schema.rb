@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_24_182600) do
+ActiveRecord::Schema.define(version: 2022_10_27_143447) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1136,7 +1136,7 @@ ActiveRecord::Schema.define(version: 2022_10_24_182600) do
     t.string "event_type", null: false, comment: "Type of Event"
     t.text "notification_content", comment: "Full Text Content of Notification"
     t.string "notification_type", null: false, comment: "Type of Notification that was created"
-    t.datetime "notified_at", null: false, comment: "Time Notification was created"
+    t.datetime "notified_at", comment: "Time Notification was created"
     t.string "participant_id", comment: "ID of Participant"
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
