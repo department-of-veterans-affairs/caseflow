@@ -14,34 +14,47 @@ const NotificationTable = ({ appealId }) => {
 
   const [notificationList, setNotificationList] = useState([]);
 
+  const splitNotifications = (notifications) => {
+    const tableNotifications = [];
+
+    for (let i = 0; i < notifications.length; i++) {
+      const notification = notifications[i];
+      const type = notification.attributes.notification_type;
+
+      if (type === 'Email and SMS') {
+        tableNotifications.push(
+          { ...notification, attributes: { ...notification.attributes, notification_type: 'Email' } },
+          { ...notification, attributes: { ...notification.attributes, notification_type: 'SMS' } }
+        );
+      } else if (type === 'Email' || type === 'SMS') {
+        tableNotifications.push(notification);
+      }
+    }
+
+    return tableNotifications;
+  };
+
   // Purpose: Send a request call to the backend endpoint for notifications
-  const fetchNotifications = () => {
+  const fetchNotifications = async () => {
     const url = `/appeals/${appealId}/notifications`;
 
-    ApiUtil.get(url).
-      then((response) => {
-        const { notifications } = response.body;
-        const tableNotifications = [];
+    const data = await ApiUtil.get(url).
+      then((response) => response.body).
+      catch((response) => console.error(response));
 
-        for (let i = 0; i < notifications.data.length; i++) {
-          const notification = notifications.data[i];
+    return data;
+  };
 
-          tableNotifications.push(
-            {...notification, attributes: {...notification.attributes, notification_type: "Email"}},
-            { ...notification, attributes: {...notification.attributes, notification_type: "Text"} }
-          );
-        }
-        setNotificationList(tableNotifications);
-      }).
-      catch((response) => {
-        console.error(response);
-        setNotificationList([]);
-      });
+  const updateNotificationList = async () => {
+    const notifications = await fetchNotifications();
+    const tableNotifications = splitNotifications(notifications);
+
+    setNotificationList(tableNotifications);
   };
 
   // Do the fetch only once per load
   useEffect(() => {
-    fetchNotifications();
+    updateNotificationList();
   }, []);
 
   const createColumnObject = (column) => {
