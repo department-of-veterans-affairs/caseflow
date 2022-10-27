@@ -46,7 +46,15 @@ export const notificationTypeColumn = (notifications) => {
     columnName: 'Notification Type',
     tableData: notifications,
     valueName: 'Notification Type',
-    valueFunction: (notification) => notification.attributes.notification_type
+    valueFunction: (notification) => {
+      const type = notification.attributes.notification_type;
+
+      if (type === 'SMS') {
+        return 'Text';
+      }
+
+      return type;
+    }
   };
 };
 
@@ -59,7 +67,10 @@ export const recipientInformationColumn = (notifications) => {
     tableData: notifications,
     valueName: 'Recipient Information',
     valueFunction: (notification) => {
-      if (notification.attributes.email_notification_status !== 'delivered') {
+      const type = notification.attributes.notification_type;
+      const status = notification.attributes[`${type.toLowerCase()}_notification_status`];
+
+      if (status !== 'delivered') {
         return '—';
       }
 
@@ -77,9 +88,14 @@ export const statusColumn = (notifications) => {
     tableData: notifications,
     valueName: 'Status',
     valueFunction: (notification) => {
-      const email = notification.attributes.email_notification_status;
+      const type = notification.attributes.notification_type;
+      const status = notification.attributes[`${type.toLowerCase()}_notification_status`];
 
-      return email.charAt(0).toUpperCase() + email.slice(1);
+      if (status === 'Success') {
+        return 'Sent';
+      }
+
+      return status.charAt(0).toUpperCase() + status.slice(1);
     }
   };
 };
