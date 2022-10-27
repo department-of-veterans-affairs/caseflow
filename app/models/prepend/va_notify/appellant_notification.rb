@@ -68,7 +68,7 @@ module AppellantNotification
     if appeal_status
       appeal_status.appeal_id = appeal_id
     else
-      appeal_status = AppealStatus.create(appeal_id: appeal_id, appeal_type: appeal_type)
+      appeal_status = AppealStatus.create!(appeal_id: appeal_id, appeal_type: appeal_type)
     end
     case event
     when "decision_mailed"
