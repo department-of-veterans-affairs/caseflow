@@ -61,34 +61,40 @@ module AppellantNotification
     message_attributes
   end
 
+  def current_user
+    RequestStore[:current_user]
+  end
+
   # Updates caseflow_audit database when notification event is triggered
   # to keep track of the state of each appeal
   def self.appeal_mapper(appeal_id, appeal_type, event)
-    appeal_status = AppealStatus.find_by(appeal_id: appeal_id, appeal_type: appeal_type)
-    if appeal_status
-      appeal_status.appeal_id = appeal_id
+    appeal_state = AppealState.find_by(appeal_id: appeal_id, appeal_type: appeal_type)
+    if appeal_state
+      appeal_state.update!(updated_by_id: current_user.id)
+      appeal_state.update!(updated_at: Time.zone.now)
     else
-      appeal_status = AppealStatus.create!(appeal_id: appeal_id, appeal_type: appeal_type)
+      appeal_state = AppealState.create!(appeal_id: appeal_id, appeal_type: appeal_type, created_at: Time.zone.now,
+                                         created_by_id: current_user.id)
     end
     case event
     when "decision_mailed"
-      appeal_status.update!(decision_mailed: true)
+      appeal_state.update!(decision_mailed: true)
     when "appeal_docketed"
-      appeal_status.update!(appeal_docketed: true)
+      appeal_state.update!(appeal_docketed: true)
     when "hearing_postponed"
-      appeal_status.update!(hearing_postponed: true)
+      appeal_state.update!(hearing_postponed: true)
     when "hearing_withdrawn"
-      appeal_status.update!(hearing_withdrawn: true)
+      appeal_state.update!(hearing_withdrawn: true)
     when "hearing_scheduled"
-      appeal_status.update!(hearing_scheduled: true)
+      appeal_state.update!(hearing_scheduled: true)
     when "vso_ihp_pending"
-      appeal_status.update!(vso_ihp_pending: true)
+      appeal_state.update!(vso_ihp_pending: true)
     when "vso_ihp_complete"
-      appeal_status.update!(vso_ihp_complete: true)
+      appeal_state.update!(vso_ihp_complete: true)
     when "privacy_act_pending"
-      appeal_status.update!(privacy_act_pending: true)
+      appeal_state.update!(privacy_act_pending: true)
     when "privacy_act_complete"
-      appeal_status.update!(privacy_act_complete: true)
+      appeal_state.update!(privacy_act_complete: true)
     end
   end
 
