@@ -47,20 +47,6 @@ echo "==> Setting up rbenv and nodenv"
 rbenv init
 nodenv init
 
-if ! grep -q rbenv ~/.zshrc; then
-	echo "==> Updating ~/.zshrc"
-	cat <<-EOF >> ~/.zshrc
-
-		# Caseflow Environment Setup
-		eval "$(rbenv init -)"
-		eval "$(nodenv init -)"
-		export POSTGRES_HOST=localhost
-		export POSTGRES_USER=postgres
-		export POSTGRES_PASSWORD=postgres
-		export NLS_LANG=AMERICAN_AMERICA.UTF8
-	EOF
-fi
-
 echo "==> Installing InstantClient"
 brew tap InstantClientTap/instantclient
 brew install instantclient-basic
