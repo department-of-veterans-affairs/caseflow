@@ -103,9 +103,6 @@ import EditAppellantInformation from './editAppellantInformation/EditAppellantIn
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
 
-
-
-
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
