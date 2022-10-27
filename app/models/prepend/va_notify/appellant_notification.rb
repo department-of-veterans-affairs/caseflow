@@ -64,32 +64,33 @@ module AppellantNotification
   # Updates caseflow_audit database when notification event is triggered
   # to keep track of the state of each appeal
   def appeal_mapper(appeal_id, appeal_type, event)
-    appeal_status = AppealStatus.find_by(appeal_id: appeal_id, appeal_type: appeal_type)
-    if appeal_status
-      appeal_status.appeal_id = appeal_id
-    else
-      appeal_status = AppealStatus.create!(appeal_id: appeal_id, appeal_type: appeal_type)
-    end
-    case event
-    when "decision_mailed"
-      appeal_status.update!(decision_mailed: true)
-    when "appeal_docketed"
-      appeal_status.update!(appeal_docketed: true)
-    when "hearing_postponed"
-      appeal_status.update!(hearing_postponed: true)
-    when "hearing_withdrawn"
-      appeal_status.update!(hearing_withdrawn: true)
-    when "hearing_scheduled"
-      appeal_status.update!(hearing_scheduled: true)
-    when "vso_ihp_pending"
-      appeal_status.update!(vso_ihp_pending: true)
-    when "vso_ihp_complete"
-      appeal_status.update!(vso_ihp_complete: true)
-    when "privacy_act_pending"
-      appeal_status.update!(privacy_act_pending: true)
-    when "privacy_act_complete"
-      appeal_status.update!(privacy_act_complete: true)
-    end
+    return nil
+    # appeal_status = AppealStatus.find_by(appeal_id: appeal_id, appeal_type: appeal_type)
+    # if appeal_status
+    #   appeal_status.appeal_id = appeal_id
+    # else
+    #   appeal_status = AppealStatus.create!(appeal_id: appeal_id, appeal_type: appeal_type)
+    # end
+    # case event
+    # when "decision_mailed"
+    #   appeal_status.update!(decision_mailed: true)
+    # when "appeal_docketed"
+    #   appeal_status.update!(appeal_docketed: true)
+    # when "hearing_postponed"
+    #   appeal_status.update!(hearing_postponed: true)
+    # when "hearing_withdrawn"
+    #   appeal_status.update!(hearing_withdrawn: true)
+    # when "hearing_scheduled"
+    #   appeal_status.update!(hearing_scheduled: true)
+    # when "vso_ihp_pending"
+    #   appeal_status.update!(vso_ihp_pending: true)
+    # when "vso_ihp_complete"
+    #   appeal_status.update!(vso_ihp_complete: true)
+    # when "privacy_act_pending"
+    #   appeal_status.update!(privacy_act_pending: true)
+    # when "privacy_act_complete"
+    #   appeal_status.update!(privacy_act_complete: true)
+    # end
   end
 
   def self.notify_appellant(
