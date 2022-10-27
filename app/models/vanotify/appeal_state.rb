@@ -2,5 +2,5 @@
 
 class AppealState < CaseflowRecord
   include BelongsToPolymorphicAppealConcern
-  belongs_to_polymorphic_appeal :appeal, include_decision_review_classes: true
+  belongs_to_polymorphic_appeal(:appeal)
 end
