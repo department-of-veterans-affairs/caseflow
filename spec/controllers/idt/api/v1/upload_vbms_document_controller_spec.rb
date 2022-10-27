@@ -105,7 +105,9 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
       context "when veteran identifier doesn't match in BGS" do
         it "returns a VeteranNotFound error" do
-          params_identifier["veteran_identifier"] = "123456789"
+          # params_identifier["veteran_identifier"] = "123456789"
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_return(nil)
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn).and_return(nil)
           post :create, params: params_identifier
           expect(response).to have_attributes(status: 400)
           error_msg = JSON.parse(response.body)["message"]
