@@ -15,7 +15,7 @@ module DocketHearingPostponed
     if hearing_updates[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed
       AppellantNotification.notify_appellant(hearing.appeal, @@template_name)
     end
-    appeal_mapper(hearing.appeal.id, hearing.appeal.type, "hearing_postponed")
+    AppellantNotification.appeal_mapper(hearing.appeal.id, hearing.appeal.type, "hearing_postponed")
     super_return_value
   end
 end

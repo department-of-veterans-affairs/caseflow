@@ -14,7 +14,7 @@ module IhpTaskPending
     if appeal_tasks_created.any?("InformalHearingPresentationTask")
       AppellantNotification.notify_appellant(@parent.appeal, @@template_name)
     end
-    appeal_mapper(appeal.id, appeal.type, "vso_ihp_pending")
+    AppellantNotification.appeal_mapper(@parent.appeal.id, @parent.appeal.type, "vso_ihp_pending")
     super_return_value
   end
 
@@ -24,9 +24,10 @@ module IhpTaskPending
     task_array = []
     super_return_value&.appeal.tasks.each { |task| task_array.push(task.class.to_s) }
     if super_return_value.class.to_s == "IhpColocatedTask" && task_array.include?("IhpColocatedTask")
-      AppellantNotification.notify_appellant(super_return_value.appeal, @@template_name)
+      appeal = super_return_value.appeal
+      AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.appeal_mapper(appeal.id, appeal.type, "vso_ihp_pending")
     end
-    appeal_mapper(appeal.id, appeal.type, "vso_ihp_pending")
     super_return_value
   end
 end

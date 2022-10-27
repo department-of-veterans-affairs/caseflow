@@ -24,7 +24,7 @@ module AppealDecisionMailed
         AppellantNotification.notify_appellant(appeal, template)
       end
     end
-    appeal_mapper(appeal.id, appeal.type, "decision_mailed")
+    AppellantNotification.appeal_mapper(appeal.id, appeal.type, "decision_mailed")
     super_return_value
   end
 end
