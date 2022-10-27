@@ -12,7 +12,6 @@ RSpec.describe SplitAppealController, type: :controller do
     context "with valid parameters" do
       let(:benefit_type1) { "compensation" }
       let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
-      let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
       let(:root_task) { RootTask.find(create(:root_task).id) }
       let(:appeal) { create(:appeal, tasks: [root_task]) }
       let(:valid_params) do

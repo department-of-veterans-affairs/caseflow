@@ -101,7 +101,7 @@ class SplitAppealController < ApplicationController
               updated_at: Time.zone.now.utc
             )
           end
-    
+        
           split_request_issue_ids.each do |id|
             split_request_issue_id = id
             split_request_issue = RequestIssue.find_by_id(split_request_issue_id)
