@@ -20,7 +20,7 @@ module UpdatedByUserConcern
   end
 
   def vso_hearing_update
-    (is_a?(Hearing) || is_a?(LegacyHearing) || is_a?(VirtualHearing)) &&
+    (is_a?(Hearing) || is_a?(LegacyHearing)) &&
       RequestStore.store[:current_user]&.vso_employee?
   end
 end

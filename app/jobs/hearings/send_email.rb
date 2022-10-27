@@ -178,13 +178,19 @@ class Hearings::SendEmail
       email_address: recipient_info.email,
       external_message_id: external_id,
       recipient_role: recipient_is_veteran ? "veteran" : recipient_info.title.downcase,
-      sent_by: email_type_is_reminder? ? User.system_user : hearing.virtual_hearing.updated_by,
+      sent_by: email_type_is_reminder? ? User.system_user : determine_sender,
       email_recipient: recipient_info.hearing_email_recipient
     )
   rescue StandardError => error
     Raven.capture_exception(error)
   end
   # :nocov:
+
+  def determine_sender
+    proposed_sender = hearing.virtual_hearing.updated_by
+
+    proposed_sender.vso_employee? ? User.system_user : proposed_sender
+  end
 
   def judge_recipient_info
     EmailRecipientInfo.new(
