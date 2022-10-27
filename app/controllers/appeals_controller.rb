@@ -49,11 +49,8 @@ class AppealsController < ApplicationController
   end
 
   def fetch_notification_list
-    @@results_per_page = 15
-    @params = params.permit(
-      :appeals_id, :event_type, :status, :notification_type, :recipient_information, :page
-    )
-    results = get_notifications_from_params(@params)
+    appeals_id = params[:appeals_id]
+    results = find_notifications_by_appeals_id(appeals_id)
     render json: results
   end
 
