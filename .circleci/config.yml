@@ -1,5 +1,9 @@
 version: 2.1
 
+browser_tools_versions: &browser_versions
+  chrome-version: 106.0.5249.119
+  firefox-version: 106.0.1
+
 commands:
   install_ruby_dependencies:
     description: "Install Ruby Dependencies"
@@ -70,7 +74,7 @@ commands:
             DISABLE_FACTORY_BOT_INITIALIZERS: 1
 
 orbs:
-  browser-tools: circleci/browser-tools@1.2
+  browser-tools: circleci/browser-tools@1.4.0
 jobs:
   # build workspace
   build_workspace:
@@ -202,7 +206,9 @@ jobs:
           name: Setup testfiles directory
           command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
-      - browser-tools/install-browser-tools
+      - browser-tools/install-browser-tools:
+          <<: *browser_versions
+
       - install_ruby_dependencies
 
       - install_dockerize
@@ -335,7 +341,8 @@ jobs:
           - COVERAGE_DIR: /home/circleci/coverage
     resource_class: large
     steps:
-      - browser-tools/install-browser-tools
+      - browser-tools/install-browser-tools:
+          <<: *browser_versions
       - checkout
       - run:
           name: Install python-2 as a node-gyp@3.8.0 dependency

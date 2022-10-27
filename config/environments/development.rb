@@ -37,6 +37,11 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
+  # Don't care if the mailer can't send.
+  config.action_mailer.raise_delivery_errors = false
+
+  config.action_mailer.perform_caching = false
+
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
@@ -87,19 +92,7 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  if ENV["WITH_TEST_EMAIL_SERVER"]
-    config.action_mailer.delivery_method = :smtp
-    config.action_mailer.smtp_settings = {
-      port: ENV["TEST_MAIL_SERVER_PORT"] || 1025,
-      address: 'localhost'
-    }
-  else
-    # Don't care if the mailer can't send.
-    config.action_mailer.raise_delivery_errors = false
-
-    config.action_mailer.perform_caching = false
-    config.action_mailer.delivery_method = :test
-  end
+  config.action_mailer.delivery_method = :test
 
   # eFolder API URL to retrieve appeal documents
   config.efolder_url = "http://localhost:4000"
