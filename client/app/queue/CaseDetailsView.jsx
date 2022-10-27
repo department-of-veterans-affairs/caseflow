@@ -424,7 +424,6 @@ CaseDetailsView.propTypes = {
   substituteAppellant: PropTypes.object,
   vsoVirtualOptIn: PropTypes.bool
 };
-
 const mapStateToProps = (state) => ({
   scheduledHearingId: state.components.scheduledHearing.externalId,
   pollHearing: state.components.scheduledHearing.polling,

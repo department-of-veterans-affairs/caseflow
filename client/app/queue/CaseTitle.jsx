@@ -49,7 +49,7 @@ class CaseTitle extends React.PureComponent {
     const { appeal, veteranCaseListIsVisible } = this.props;
 
     return (
-      <CaseTitleScaffolding heading={appeal.veteranFullName}>
+      <CaseTitleScaffolding heading={this.props.titleHeader != "" ? this.props.titleHeader : appeal.veteranFullName}>
         <React.Fragment>
           Veteran ID:&nbsp;
           <CopyTextButton text={appeal.veteranFileNumber} label="Veteran ID" />
@@ -69,7 +69,8 @@ CaseTitle.propTypes = {
   taskType: PropTypes.string,
   analyticsSource: PropTypes.string,
   veteranCaseListIsVisible: PropTypes.bool,
-  toggleVeteranCaseList: PropTypes.func
+  toggleVeteranCaseList: PropTypes.func,
+  titleHeader: PropTypes.string
 };
 
 CaseTitle.defaultProps = {
