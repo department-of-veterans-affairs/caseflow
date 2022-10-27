@@ -14,7 +14,7 @@ module AppealDocketed
     if distribution_task
       AppellantNotification.notify_appellant(self, @@template_name)
     end
-    appeal_mapper(appeal.id, appeal.type, "appeal_docketed")
+    appeal_mapper(id, type, "appeal_docketed")
     super_return_value
   end
 

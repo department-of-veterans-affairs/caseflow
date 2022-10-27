@@ -75,6 +75,7 @@ describe AppellantNotification do
   describe AppealDocketed do
     describe "docket_appeal" do
       let(:appeal) { create(:appeal, :with_pre_docket_task) }
+      let(:appeal_state) { create(:appeal_state, appeal: appeal) }
       let(:template_name) { "Appeal docketed" }
       let(:pre_docket_task) { PreDocketTask.find_by(appeal: appeal) }
       it "will notify appellant that Predocketed Appeal is docketed" do
@@ -85,6 +86,7 @@ describe AppellantNotification do
 
     describe "create_tasks_on_intake_success!" do
       let(:appeal) { create(:appeal) }
+      let(:appeal_state) { create(:appeal_state, appeal: appeal) }
       let(:template_name) { "Appeal docketed" }
       it "will notify appellant that appeal is docketed on successful intake" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
@@ -96,6 +98,7 @@ describe AppellantNotification do
   describe AppealDecisionMailed do
     describe "Legacy Appeal Decision Mailed" do
       let(:legacy_appeal) { create(:legacy_appeal, :with_root_task, vbms_id: 123_456) }
+      let(:appeal_state) { create(:appeal_state, appeal: legacy_appeal) }
       let(:params) do
         {
           appeal: legacy_appeal,
@@ -126,6 +129,7 @@ describe AppellantNotification do
 
     describe "AMA Appeal Decision Mailed" do
       let(:appeal) { create(:appeal, :with_assigned_bva_dispatch_task) }
+      let(:appeal_state) { create(:appeal_state, appeal: appeal) }
       let(:contested_appeal) { create(:appeal, :with_assigned_bva_dispatch_task, :with_request_issues) }
       let(:params) do
         {
@@ -183,6 +187,7 @@ describe AppellantNotification do
   describe HearingScheduled do
     describe "#create_hearing" do
       let(:appeal_hearing) { create(:appeal, :with_schedule_hearing_tasks) }
+      let(:appeal_state) { create(:appeal_state, appeal: appeal_hearing) }
       let(:template_name) { "Hearing scheduled" }
       let(:schedule_hearing_task) { ScheduleHearingTask.find_by(appeal: appeal_hearing) }
       let(:task_values) do
@@ -205,6 +210,7 @@ describe AppellantNotification do
     describe "#postpone!" do
       let(:template_name) { "Postponement of hearing" }
       let(:postponed_hearing) { create(:hearing, :postponed, :with_tasks) }
+      let(:appeal_state) { create(:appeal_state, appeal: postponed_hearing.appeal) }
       let(:hearing_hash) { { disposition: "postponed" } }
       it "will notify appellant when a hearing is postponed" do
         appeal_hearing = postponed_hearing.appeal
@@ -222,6 +228,7 @@ describe AppellantNotification do
       let(:video_type) { HearingDay::REQUEST_TYPES[:video] }
       let(:hearing_day) { create(:hearing_day, regional_office: nyc_ro_eastern, request_type: video_type) }
       let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
+      let(:appeal_state) { create(:appeal_state, appeal: hearing.appeal) }
       context "when a hearing coordinator selects 'postponed' on the daily docket page for an AMA Appeal" do
         let(:template_name) { "Postponement of hearing" }
         let(:params) do
@@ -250,6 +257,7 @@ describe AppellantNotification do
       let(:video_type) { HearingDay::REQUEST_TYPES[:video] }
       let(:hearing_day) { create(:hearing_day, regional_office: nyc_ro_eastern, request_type: video_type) }
       let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
+      let(:appeal_state) { create(:appeal_state, appeal: hearing.appeal) }
       context "when a hearing coordinator selects 'cancelled' on the daily docket page for an AMA Appeal" do
         let(:template_name) { "Withdrawal of hearing" }
         let(:params) do
@@ -293,6 +301,7 @@ describe AppellantNotification do
         let!(:appeal) do
           create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: ro_id)
         end
+        let(:appeal_state) { create(:appeal_state, appeal: appeal) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal) }
         let(:hearing_info) do
           {
@@ -313,6 +322,7 @@ describe AppellantNotification do
           create(:legacy_appeal, vacols_case: vacols_case_postponed, closest_regional_office: ro_id_postponed)
         end
         let(:hearing_postponed) { create(:legacy_hearing, appeal: appeal_postponed, disposition: "P") }
+        let(:appeal_state) { create(:appeal_state, appeal: appeal_postponed) }
 
         it "will notify appellant when a hearing is postponed" do
           expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
@@ -349,6 +359,7 @@ describe AppellantNotification do
         let!(:appeal) do
           create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: ro_id)
         end
+        let(:appeal_state) { create(:appeal_state, appeal: appeal) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal) }
         let(:hearing_info) do
           {
@@ -368,7 +379,7 @@ describe AppellantNotification do
           create(:legacy_appeal, vacols_case: vacols_case_cancelled, closest_regional_office: ro_id_cancelled)
         end
         let(:hearing_cancelled) { create(:legacy_hearing, appeal: appeal_cancelled, disposition: "C") }
-
+        let(:appeal_state) { create(:appeal_state, appeal: appeal_cancelled) }
         it "will notify appellant when a hearing is withdrawn/cancelled" do
           expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
           hearing.update_caseflow_and_vacols(hearing_info)
@@ -387,6 +398,7 @@ describe AppellantNotification do
 
     context "HearingAdminFoiaPrivacyRequestTask" do
       let(:appeal) { create(:appeal) }
+      let(:appeal_state) { create(:appeal_state, appeal: appeal) }
       let(:bva) { Bva.singleton }
       let!(:hearings_management_user) { create(:hearings_coordinator) }
       let!(:parent_task) { create(:schedule_hearing_task, appeal: appeal) }
@@ -428,6 +440,7 @@ describe AppellantNotification do
     # Note: only privacyactrequestmailtask is tested because the process is the same as foiarequestmailtask
     describe "mail task" do
       let(:appeal) { create(:appeal) }
+      let(:appeal_state) { create(:appeal_state, appeal: appeal) }
       let(:current_user) { create(:user) }
       let(:priv_org) { PrivacyTeam.singleton }
       let(:root_task) { create(:root_task) }
@@ -467,6 +480,7 @@ describe AppellantNotification do
 
     context "Foia Colocated Tasks" do
       let(:appeal) { create(:appeal) }
+      let(:appeal_state) { create(:appeal_state, appeal: appeal) }
       let!(:attorney) { create(:user) }
       let!(:attorney_task) { create(:ama_attorney_task, appeal: appeal, assigned_to: attorney) }
       let(:vlj_admin) do
@@ -503,6 +517,7 @@ describe AppellantNotification do
 
     context "Privacy Act Tasks" do
       let(:appeal) { create(:appeal) }
+      let(:appeal_state) { create(:appeal_state, appeal: appeal) }
       let(:attorney) { create(:user) }
       let(:current_user) { create(:user) }
       let(:priv_org) { PrivacyTeam.singleton }
@@ -544,10 +559,9 @@ describe AppellantNotification do
       context "If the appellant has a VSO" do
         let(:participant_id_with_pva) { "1234" }
         let(:appeal) do
-          create(:appeal, :active, claimants: [
-                  create(:claimant, participant_id: participant_id_with_pva)
-                ])
+          create(:appeal, :active, claimants: [create(:claimant, participant_id: participant_id_with_pva)])
         end
+        let(:appeal_state) { create(:appeal_state, appeal: appeal) }
         let(:root_task) { RootTask.find_by(appeal: appeal) }
         let!(:vso) do
           Vso.create(
@@ -581,6 +595,7 @@ describe AppellantNotification do
         let(:appeal) do
           create(:appeal, :active, claimants: [create(:claimant, participant_id: participant_id_with_nil)])
         end
+        let(:appeal_state) { create(:appeal_state, appeal: appeal) }
         let!(:vso) do
           Vso.create(
             name: "Test VSO",
@@ -602,6 +617,7 @@ describe AppellantNotification do
         let(:user) { create(:user) }
         let(:org) { create(:organization) }
         let(:appeal) { create(:appeal, :active) }
+        let(:appeal_state) { create(:appeal_state, appeal: appeal) }
         let(:root_task) { RootTask.find_by(appeal: appeal) }
         let(:attorney) { create(:user) }
         let(:colocated_task) do
@@ -634,6 +650,7 @@ describe AppellantNotification do
         let(:user) { create(:user) }
         let(:org) { create(:organization) }
         let(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
+        let(:appeal_state) { create(:appeal_state, appeal: task.appeal) }
         let(:template_name) { "VSO IHP complete" }
         it "will notify the appellant of the 'IhpTaskComplete' status" do
           allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
@@ -648,6 +665,7 @@ describe AppellantNotification do
         let(:user) { create(:user) }
         let(:org) { create(:organization) }
         let(:task) { create(:informal_hearing_presentation_task, :in_progress, assigned_to: org) }
+        let(:appeal_state) { create(:appeal_state, appeal: task.appeal) }
         let(:template_name) { "VSO IHP complete" }
         it "will notify the appellant of the 'IhpTaskComplete' status" do
           allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
