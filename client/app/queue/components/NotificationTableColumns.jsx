@@ -2,6 +2,9 @@ import COPY from '../../../COPY';
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
 import EVENT_TYPE_FILTERS from '../../../constants/EVENT_TYPE_FILTERS';
 
+// Purpose: These are all column objects for the notifications table
+// Params: notifications - The list of notifications
+
 export const eventTypeColumn = (notifications) => {
   const filterOptions = Object.values(EVENT_TYPE_FILTERS);
 
@@ -10,12 +13,13 @@ export const eventTypeColumn = (notifications) => {
     name: NOTIFICATION_CONFIG.COLUMNS.EVENT_TYPE.name,
     enableFilter: NOTIFICATION_CONFIG.COLUMNS.EVENT_TYPE.filterable,
     customFilterLabels: EVENT_TYPE_FILTERS,
-    columnName: 'Event',
+    columnName: 'event_type',
     tableData: notifications,
     filterOptions,
+    anyFiltersAreSet: true,
     label: 'Filter by event type',
     valueName: 'Event',
-    valueFunction: (notification) => notification.attributes.event_type
+    valueFunction: (notification) => notification.event_type
   };
 };
 
@@ -24,17 +28,17 @@ export const notificationDateColumn = (notifications) => {
     header: COPY.NOTIFICATION_DATE_COLUMN_NAME,
     name: NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_DATE.name,
     enableFilter: NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_DATE.filterable,
-    columnName: 'Notification Date',
+    columnName: 'event_date',
     tableData: notifications,
     valueName: 'Notification Date',
     valueFunction: (notification) => {
-      const dateArr = notification.attributes.event_date.split('-');
+      const dateArr = notification.event_date.split('-');
 
       dateArr.push(dateArr.shift());
 
       return dateArr.join('/');
     },
-    getSortValue: (notification) => notification.attributes.event_date
+    getSortValue: (notification) => notification.event_date
   };
 };
 
@@ -43,18 +47,11 @@ export const notificationTypeColumn = (notifications) => {
     header: COPY.NOTIFICATION_TYPE_COLUMN_NAME,
     name: NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_TYPE.name,
     enableFilter: NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_TYPE.filterable,
-    columnName: 'Notification Type',
+    anyFiltersAreSet: true,
+    columnName: 'notification_type',
     tableData: notifications,
     valueName: 'Notification Type',
-    valueFunction: (notification) => {
-      const type = notification.attributes.notification_type;
-
-      if (type === 'SMS') {
-        return 'Text';
-      }
-
-      return type;
-    }
+    valueFunction: (notification) => notification.notification_type
   };
 };
 
@@ -63,19 +60,12 @@ export const recipientInformationColumn = (notifications) => {
     header: COPY.NOTIFICATION_RECIPIENT_INFORMATION,
     name: NOTIFICATION_CONFIG.COLUMNS.RECIPIENT_INFORMATION.name,
     enableFilter: NOTIFICATION_CONFIG.COLUMNS.RECIPIENT_INFORMATION.filterable,
-    columnName: 'Recipient Information',
+    anyFiltersAreSet: true,
+    columnName: 'recipient_information',
     tableData: notifications,
     valueName: 'Recipient Information',
-    valueFunction: (notification) => {
-      const type = notification.attributes.notification_type;
-      const status = notification.attributes[`${type.toLowerCase()}_notification_status`];
-
-      if (status !== 'delivered') {
-        return '—';
-      }
-
-      return notification.attributes.recipient_email;
-    }
+    // eslint-disable-next-line no-negated-condition
+    valueFunction: (notification) => notification.status !== 'delivered' ? '—' : notification.recipient_information
   };
 };
 
@@ -84,16 +74,12 @@ export const statusColumn = (notifications) => {
     header: COPY.NOTIFICATION_STATUS,
     name: NOTIFICATION_CONFIG.COLUMNS.STATUS.name,
     enableFilter: NOTIFICATION_CONFIG.COLUMNS.STATUS.filterable,
-    columnName: 'Staus',
+    anyFiltersAreSet: true,
+    columnName: 'status',
     tableData: notifications,
     valueName: 'Status',
     valueFunction: (notification) => {
-      const type = notification.attributes.notification_type;
-      const status = notification.attributes[`${type.toLowerCase()}_notification_status`];
-
-      if (status === 'Success') {
-        return 'Sent';
-      }
+      const status = notification.status;
 
       return status.charAt(0).toUpperCase() + status.slice(1);
     }
