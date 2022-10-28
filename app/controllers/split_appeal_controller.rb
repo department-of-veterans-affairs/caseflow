@@ -92,13 +92,13 @@ class SplitAppealController < ApplicationController
             updated_by_id: create_split_record[13],
             working_split_status: create_split_record[14]
           )
+
           original_request_issue_ids.each do |id|
             original_request_issue_id = id
             original_request_issue = RequestIssue.find_by_id(original_request_issue_id)
             original_request_issue.update!(
               split_issue_status: Constants.TASK_STATUSES.on_hold,
             )
-            original_request_issues.save
           end
         
           split_request_issue_ids.each do |id|
@@ -107,7 +107,6 @@ class SplitAppealController < ApplicationController
             split_request_issue.update!(
               split_issue_status: Constants.TASK_STATUSES.in_progress,
             )
-            split_request_issue.save
           end
         else
           fail ActiveRecord::Rollback
