@@ -1,16 +1,30 @@
 // Local Dependencies
 import { documentCategories } from 'store/constants/reader';
 import { documentsView, formatTagOptions, formatTagValue, formatCategoryName } from 'utils/reader';
+import { createSelector } from 'reselect';
 import { isEmpty } from 'lodash';
 
 /**
  * Filtered Documents state
  */
-export const filteredDocuments = ({ reader }) =>
-  reader.documentList.filteredDocIds.reduce(
-    (list, id) => ({ ...list, [id]: reader.documentList.documents[id] }),
+// export const filteredDocuments = ({ reader }) =>
+//   reader.documentList.filteredDocIds.reduce(
+//     (list, id) => ({ ...list, [id]: reader.documentList.documents[id] }),
+//     {}
+//   );
+const getFilteredDocIds = (state) => state.reader.documentList.filteredDocIds;
+const getAllDocs = (state) => state.reader.documentList.documents;
+
+const getFilterCriteria = (state) => state.reader.documentList.filterCriteria;
+const getView = (state) => state.reader.documentList.view;
+
+export const getFilteredDocuments = createSelector(
+  [getFilteredDocIds, getAllDocs],
+  (filteredDocIds, allDocs) => filteredDocIds.reduce(
+    (list, id) => ({ ...list, [id]: allDocs[id] }),
     {}
-  );
+  )
+)
 
 /**
  * Selector for the Documents
@@ -19,11 +33,11 @@ export const filteredDocuments = ({ reader }) =>
  */
 export const documentState = (state) => {
   // Set the filtered documents
-  const documents = filteredDocuments(state);
+  const documents = getFilteredDocuments(state);
 
   // Calculate the number of documents
-  const docsCount = state.reader.documentList.filteredDocIds ?
-    state.reader.documentList.filteredDocIds.length :
+  const docsCount = getFilteredDocIds(state) ?
+    getFilteredDocIds(state).length :
     Object.values(documents).length;
 
   // Return the Filtered Documents and count
@@ -43,6 +57,17 @@ export const documentListScreen = (state) => {
     reduce((list, doc) => [...list, ...doc.tags], []).
     filter((tags, index, list) => list.findIndex((tag) => tag.text === tags.text) === index);
 
+  const getDocumentsView = createSelector([getAllDocs, getFilterCriteria, getView],
+    (docs, filterCriteria, view) => {
+      return documentsView(Object.values(docs), filterCriteria, view);
+    });
+
+//  documentsView: documentsView(
+//    Object.values(documents),
+//    state.reader.documentList.filterCriteria,
+//    state.reader.documentList.view
+//  ),
+
   return {
     documents,
     docsCount,
@@ -55,11 +80,7 @@ export const documentListScreen = (state) => {
     storeDocuments: state.reader.documentList.documents,
     documentList: state.reader.documentList,
     comments: state.reader.annotationLayer.comments,
-    documentsView: documentsView(
-      Object.values(documents),
-      state.reader.documentList.filterCriteria,
-      state.reader.documentList.view
-    ),
+    documentsView: getDocumentsView(state),
     filterCriteria: state.reader.documentList.filterCriteria,
     filteredDocIds: state.reader.documentList.filteredDocIds,
     searchCategoryHighlights:
@@ -81,20 +102,41 @@ export const documentListScreen = (state) => {
 export const documentScreen = (state) => {
   // Get the filtered documents and count
   const { documents, docsCount } = documentState(state);
-  const categories = Object.keys(documentCategories).reduce((list, key) => {
-    // Set the current Category
-    const cat = state.reader.documentViewer.selected[formatCategoryName(key)] ? key : '';
+  const getSelectedDoc = (state) => state.reader.documentViewer.selected;
 
-    // Return the Categories Object
-    return {
-      ...list,
-      [cat]: true
-    };
-  }, {});
+  const getCategories = createSelector(getSelectedDoc, (selectedDoc) => {
+    return Object.keys(documentCategories).reduce((list, key) => {
+      // Set the current Category
+      const cat = selectedDoc[formatCategoryName(key)] ? key : '';
+
+      // Return the Categories Object
+      return {
+        ...list,
+        [cat]: true
+      };
+    }, {})
+  })
+
+  const categories = getCategories(state);
 
   // Filter the comments for the current document
-  const comments = state.reader.annotationLayer.comments.filter((comment) =>
-    comment.document_id === state.reader.documentViewer.selected.id);
+
+  const getAllComments = state => state.reader.annotationLayer.comments
+  const getComments = createSelector([getAllComments, getSelectedDoc],
+    (allComments, selectedDoc) =>
+      allComments.filter((comment) =>
+        comment.document_id === selectedDoc.id)
+  );
+
+  const comments = getComments(state);
+  // Get the tag options for the current document
+  const getTagOptions = createSelector([getAllDocs],
+    (allDocs) => {
+      return formatTagValue(
+        formatTagOptions(allDocs)
+      )
+    })
+  const tagOptions = getTagOptions(state)
 
   return {
     documents,
@@ -110,9 +152,7 @@ export const documentScreen = (state) => {
     editingTag: state.reader.documentViewer.editingTag,
     pendingCategory: state.reader.documentViewer.pendingCategory,
     documentTags: state.reader.documentViewer.tags,
-    tagOptions: formatTagValue(
-      formatTagOptions(state.reader.documentList.documents)
-    ),
+    tagOptions,
     viewport: state.reader.documentViewer.viewport,
     keyboardInfoOpen: state.reader.documentViewer.keyboardInfoOpen,
     pendingDeletion: state.reader.annotationLayer.pendingDeletion,
