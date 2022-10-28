@@ -45,10 +45,6 @@ class Idt::Api::V1::BaseController < ActionController::Base
     render(json: { message: "IDT Exception ID: " + error.message }, status: :bad_request)
   end
 
-  rescue_from Caseflow::Error::VaDotGovInvalidInputError do |error|
-    render(json: { message: error.message }, status: :forbidden)
-  end
-
   def validate_token
     return render json: { message: "Missing token" }, status: :bad_request unless token
     return render json: { message: "Invalid token" }, status: :forbidden unless Idt::Token.active?(token)
