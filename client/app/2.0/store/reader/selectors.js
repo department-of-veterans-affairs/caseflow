@@ -10,17 +10,10 @@ import { isEmpty } from 'lodash';
 
 const getFilteredDocIds = (state) => state.reader.documentList.filteredDocIds;
 const getAllDocs = (state) => state.reader.documentList.documents;
-
 const getView = (state) => state.reader.documentList.view;
-
-export const getFilteredDocuments = createSelector(
-  [getFilteredDocIds, getAllDocs],
-  (filteredDocIds, allDocs) => filteredDocIds.reduce(
-    (list, id) => ({ ...list, [id]: allDocs[id] }),
-//     {}
-//   );
-const getAllDocs = (state) => state.reader.documentList.documents;
 const getSelectedDoc = (state) => state.reader.documentViewer.selected;
+const getFilterCriteria = (state) => state.reader.documentList.filterCriteria
+
 export const getFilteredDocuments = createSelector(
   [getFilteredDocIds, getAllDocs],
   (filteredDocIds, allDocs) => filteredDocIds.reduce(
@@ -28,7 +21,7 @@ export const getFilteredDocuments = createSelector(
     {}
   )
 )
-const getFilterCriteria = (state) => state.reader.documentList.filterCriteria
+
 export const getdocsFiltered = createSelector(
   [getFilterCriteria], (filterCriteria) => {
     return filterCriteria.searchQuery ||
@@ -36,6 +29,7 @@ export const getdocsFiltered = createSelector(
       !isEmpty(filterCriteria.tag)
   }
 )
+
 /**
  * Selector for the Documents
  * @param {Object} state -- The current Redux Store state
@@ -74,7 +68,7 @@ export const documentListScreen = (state) => {
   // Get the filtered documents and count
   const { documents, docsCount } = documentState(state);
 
-  Object.values(state.reader.documentList.documents).
+  Object.values(getAllDocs(state)).
     reduce((list, doc) => [...list, ...doc.tags], []).
     filter((tags, index, list) => list.findIndex((tag) => tag.text === tags.text) === index);
 
@@ -83,7 +77,20 @@ export const documentListScreen = (state) => {
       return documentsView(Object.values(docs), filterCriteria, view);
     });
 
-  const docsFiltered = getdocsFiltered(state);
+    const startDF = performance.now();
+    const docsFiltered = getdocsFiltered(state);
+  const endFD = performance.now();
+  console.log(`------docsFiltered--------
+  Start: ${startDF}
+  End: ${endFD}
+  Duration: ${endFD - startDF}ms`);
+  const startDV = performance.now();
+  const documentView = getDocumentsView(state);
+  const endDV = performance.now();
+  console.log(`------documentsView--------
+  Start: ${startDV}
+  End: ${endDV}
+  Duration: ${endDV - startDV}ms`);
 
   return {
     documents,
@@ -94,7 +101,7 @@ export const documentListScreen = (state) => {
     storeDocuments: getAllDocs(state),
     documentList: state.reader.documentList,
     comments: state.reader.annotationLayer.comments,
-    documentsView:getDocumentsView(state),
+    documentsView: documentView,
     filterCriteria: getFilterCriteria(state),
     filteredDocIds: getFilteredDocIds(state),
     searchCategoryHighlights:
@@ -116,7 +123,6 @@ export const documentListScreen = (state) => {
 export const documentScreen = (state) => {
   // Get the filtered documents and count
   const { documents, docsCount } = documentState(state);
-  const getSelectedDoc = (state) => state.reader.documentViewer.selected;
 
   const getCategories = createSelector(getSelectedDoc, (selectedDoc) => {
     return Object.keys(documentCategories).reduce((list, key) => {
