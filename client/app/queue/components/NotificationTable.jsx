@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import QueueTable from '../QueueTable';
@@ -14,20 +15,50 @@ const NotificationTable = ({ appealId }) => {
 
   const [notificationList, setNotificationList] = useState([]);
 
-  const splitNotifications = (notifications) => {
+  // Purpose: This function generates one or two entries for each record depending on notification type
+  // Params: notifications - The notification list recieved from get request call
+  // Return: The generated table entries
+  const generateTableEntries = (notifications) => {
     const tableNotifications = [];
 
     for (let i = 0; i < notifications.length; i++) {
-      const notification = notifications[i];
-      const type = notification.attributes.notification_type;
+      const {
+        email_notification_status,
+        sms_notification_status,
+        notification_content,
+        notification_type,
+        recipient_email,
+        recipient_phone_number,
+        event_type,
+        event_date,
+      } = notifications[i].attributes;
 
-      if (type === 'Email and SMS') {
-        tableNotifications.push(
-          { ...notification, attributes: { ...notification.attributes, notification_type: 'Email' } },
-          { ...notification, attributes: { ...notification.attributes, notification_type: 'SMS' } }
-        );
-      } else if (type === 'Email' || type === 'SMS') {
-        tableNotifications.push(notification);
+      const email_notification = {
+        status: email_notification_status === 'Success' ? 'Sent' : email_notification_status,
+        content: notification_content,
+        notification_type: 'Email',
+        // eslint-disable-next-line no-negated-condition
+        recipient_information: recipient_email,
+        event_type,
+        event_date
+      };
+
+      const sms_notification = {
+        status: sms_notification_status === 'Success' ? 'Sent' : sms_notification_status,
+        content: notification_content,
+        notification_type: 'Text',
+        // eslint-disable-next-line no-negated-condition
+        recipient_information: recipient_phone_number,
+        event_type,
+        event_date
+      };
+
+      if (notification_type === 'Email and SMS') {
+        tableNotifications.push(email_notification, sms_notification);
+      } else if (notification_type === 'Email') {
+        tableNotifications.push(email_notification);
+      } else if (notification_type === 'SMS') {
+        tableNotifications.push(sms_notification);
       }
     }
 
@@ -35,8 +66,10 @@ const NotificationTable = ({ appealId }) => {
   };
 
   // Purpose: Send a request call to the backend endpoint for notifications
-  const fetchNotifications = async () => {
-    const url = `/appeals/${appealId}/notifications`;
+  // Params: id - uuis or vacols id of an AMA appeal or Legacy Appeal
+  // Return: The fetched data from the endpoint
+  const fetchNotifications = async (id) => {
+    const url = `/appeals/${id}/notifications`;
 
     const data = await ApiUtil.get(url).
       then((response) => response.body).
@@ -45,9 +78,10 @@ const NotificationTable = ({ appealId }) => {
     return data;
   };
 
+  // Purpose: It will update the notificationList state with the new entries that have been generated
   const updateNotificationList = async () => {
-    const notifications = await fetchNotifications();
-    const tableNotifications = splitNotifications(notifications);
+    const notifications = await fetchNotifications(appealId);
+    const tableNotifications = generateTableEntries(notifications);
 
     setNotificationList(tableNotifications);
   };
@@ -57,6 +91,9 @@ const NotificationTable = ({ appealId }) => {
     updateNotificationList();
   }, []);
 
+  // Purpose: This is a mapping for the column types and the functions it will use to generate the column and row data
+  // Params: column - A column type
+  // Return: The generated column
   const createColumnObject = (column) => {
     const functionForColumn = {
       [NOTIFICATION_CONFIG.COLUMNS.EVENT_TYPE.name]: eventTypeColumn(notificationList),
@@ -69,6 +106,9 @@ const NotificationTable = ({ appealId }) => {
     return functionForColumn[column.name];
   };
 
+  // Purpose: This will generate the columns
+  // Params: columns - All of the columns that will be used for the table
+  // Return: The generated columns
   const columnsFromConfig = (columns) => {
     const builtColumns = [];
 
@@ -85,7 +125,6 @@ const NotificationTable = ({ appealId }) => {
       rowObjects={notificationList}
       enablePagination
       casesPerPage={15}
-      numberofPages={1}
       sortColName="Notification Date"
       defaultSort={{
         sortColName: 'notificationDateColumn',
