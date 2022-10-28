@@ -98,7 +98,6 @@ class SplitAppealController < ApplicationController
             binding.pry
             original_request_issue.update!(
               split_issue_status: Constants.TASK_STATUSES.on_hold,
-              updated_at: Time.zone.now.utc
             )
             original_request_issues.save
           end
@@ -109,7 +108,6 @@ class SplitAppealController < ApplicationController
             binding.pry
             split_request_issue.update!(
               split_issue_status: Constants.TASK_STATUSES.in_progress,
-              updated_at: Time.zone.now.utc
             )
             split_request_issue.save
           end
