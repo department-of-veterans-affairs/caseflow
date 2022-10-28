@@ -75,6 +75,7 @@ class SplitAppealController < ApplicationController
             updated_by_id = current_user.id,
             working_split_status = Constants.TASK_STATUSES.in_progress
           ]
+        
           SplitCorrelationTable.create!(
             appeal_id: create_split_record[0],
             appeal_type: create_split_record[1],
