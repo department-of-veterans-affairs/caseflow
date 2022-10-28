@@ -585,7 +585,7 @@ class CompleteTaskModal extends React.Component {
     }
 
     return isValid;
-  }
+  };
 
   submit = () => {
     const { task, appeal } = this.props;
