@@ -30,10 +30,12 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
     allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
     FeatureToggle.enable!(:filed_by_va_gov_hlr)
     FeatureToggle.enable!(:updated_intake_forms)
+    FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
   end
   after do
     FeatureToggle.disable!(:filed_by_va_gov_hlr)
     FeatureToggle.disable!(:updated_intake_forms)
+    FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
   end
 
   # Specific shared context
