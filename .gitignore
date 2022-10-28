@@ -79,3 +79,4 @@ docs/schema/*
 # VS Code Config Files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
