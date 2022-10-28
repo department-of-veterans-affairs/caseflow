@@ -1,6 +1,6 @@
 class UpdateAppealStatesUpdatedAtColumn < Caseflow::Migration
   # Purpose: Method to update the appeal_state.updated_at column to be nullable
-  # when this migration is apllied
+  # when this migration is applied
   #
   # Params: None
   #
@@ -9,7 +9,7 @@ class UpdateAppealStatesUpdatedAtColumn < Caseflow::Migration
     change_column_null :appeal_states, :updated_at, true
   end
 
-  # Purpose: Method to update the appeal_state.notification_content column to not be nullable
+  # Purpose: Method to update the appeal_state.updated_at column to not be nullable
   # when this migration is rollbacked
   #
   # Params: None
