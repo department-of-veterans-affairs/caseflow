@@ -8,7 +8,8 @@ class AppealRequestIssuesPolicy
 
   def editable?
     editable_by_case_review_team_member? || case_is_in_active_review_by_current_user? ||
-      hearing_is_assigned_to_judge_user? || editable_by_cavc_team_member?
+      hearing_is_assigned_to_judge_user? || editable_by_cavc_team_member? ||
+      editable_by_ssc_team_member?
   end
 
   private
@@ -22,6 +23,11 @@ class AppealRequestIssuesPolicy
   def editable_by_cavc_team_member?
     CavcLitigationSupport.singleton.users.include?(user) &&
       appeal.tasks.open.where(type: :CavcTask).any?
+  end
+
+  def editable_by_ssc_team_member?
+    SupervisorySeniorCouncil.singleton.users.include?(user) &&
+      FeatureToggle.enabled?(:split_appeal_workflow)
   end
 
   def current_user_can_edit_issues?
