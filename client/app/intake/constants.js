@@ -13,6 +13,7 @@ export const FORM_TYPES = {
     key: 'higher_level_review',
     name: INTAKE_FORM_NAMES.higher_level_review,
     shortName: INTAKE_FORM_NAMES_SHORT.higher_level_review,
+    unlisted_claimant: { key: 'unlistedClaimant' },
     category: 'decisionReview',
     formName: 'higherLevelReview'
   },
@@ -20,6 +21,7 @@ export const FORM_TYPES = {
     key: 'supplemental_claim',
     name: INTAKE_FORM_NAMES.supplemental_claim,
     shortName: INTAKE_FORM_NAMES_SHORT.supplemental_claim,
+    unlisted_claimant: { key: 'unlistedClaimant' },
     category: 'decisionReview',
     formName: 'supplementalClaim'
   },

@@ -34,10 +34,12 @@ feature "Intake Review Page", :postgres do
     before do
       FeatureToggle.enable!(:use_ama_activation_date)
       FeatureToggle.enable!(:non_veteran_claimants)
+      FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
     end
     after do
       FeatureToggle.disable!(:use_ama_activation_date)
       FeatureToggle.disable!(:non_veteran_claimants)
+      FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
     end
     it "shows correct error with blank or pre-AMA dates" do
       start_appeal(veteran, receipt_date: nil)
@@ -301,6 +303,11 @@ feature "Intake Review Page", :postgres do
       context "when there are no relationships" do
         before do
           allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return([])
+          FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
+        end
+
+        after do
+          FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
         end
 
         context "higher level review" do
@@ -436,6 +443,38 @@ feature "Intake Review Page", :postgres do
         def select_claimant(index = 0)
           click_dropdown({ index: index }, find(".dropdown-claimant"))
         end
+      end
+    end
+
+    context "when the user cancels the intake on the Add Claimant page" do
+      before { FeatureToggle.enable!(:non_veteran_claimants) }
+      before { FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) }
+      after { FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) }
+      after { FeatureToggle.disable!(:non_veteran_claimants) }
+
+      it "redirects back to the Intake start page" do
+        start_appeal(veteran, receipt_date: "01/01/2022")
+
+        visit "/intake"
+
+        # Review page
+        expect(page).to have_current_path("/intake/review_request")
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        find("label", text: "Claimant not listed", match: :prefer_exact).click
+        click_intake_continue
+
+        # Cancellation Modal
+        safe_click "#cancel-intake"
+        within_fieldset("Please select the reason you are canceling this intake.") do
+          find("label", text: "System error").click
+        end
+        safe_click ".confirm-cancel"
+
+        # Post-redirect to homepage
+        expect(page).to have_content("Welcome to Caseflow Intake!")
+        expect(page).to have_current_path("/intake/")
       end
     end
   end
