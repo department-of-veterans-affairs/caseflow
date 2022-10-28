@@ -7,12 +7,18 @@ import { isEmpty } from 'lodash';
 /**
  * Filtered Documents state
  */
-// export const filteredDocuments = ({ reader }) =>
-//   reader.documentList.filteredDocIds.reduce(
-//     (list, id) => ({ ...list, [id]: reader.documentList.documents[id] }),
+
+const getFilteredDocIds = (state) => state.reader.documentList.filteredDocIds;
+const getAllDocs = (state) => state.reader.documentList.documents;
+
+const getView = (state) => state.reader.documentList.view;
+
+export const getFilteredDocuments = createSelector(
+  [getFilteredDocIds, getAllDocs],
+  (filteredDocIds, allDocs) => filteredDocIds.reduce(
+    (list, id) => ({ ...list, [id]: allDocs[id] }),
 //     {}
 //   );
-const getFilteredDocIds = (state) => state.reader.documentList.filteredDocIds;
 const getAllDocs = (state) => state.reader.documentList.documents;
 const getSelectedDoc = (state) => state.reader.documentViewer.selected;
 export const getFilteredDocuments = createSelector(
@@ -72,6 +78,11 @@ export const documentListScreen = (state) => {
     reduce((list, doc) => [...list, ...doc.tags], []).
     filter((tags, index, list) => list.findIndex((tag) => tag.text === tags.text) === index);
 
+  const getDocumentsView = createSelector([getAllDocs, getFilterCriteria, getView],
+    (docs, filterCriteria, view) => {
+      return documentsView(Object.values(docs), filterCriteria, view);
+    });
+
   const docsFiltered = getdocsFiltered(state);
 
   return {
@@ -83,11 +94,7 @@ export const documentListScreen = (state) => {
     storeDocuments: getAllDocs(state),
     documentList: state.reader.documentList,
     comments: state.reader.annotationLayer.comments,
-    documentsView: documentsView(
-      Object.values(documents),
-      getFilterCriteria(state),
-      state.reader.documentList.view
-    ),
+    documentsView:getDocumentsView(state),
     filterCriteria: getFilterCriteria(state),
     filteredDocIds: getFilteredDocIds(state),
     searchCategoryHighlights:
