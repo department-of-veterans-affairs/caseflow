@@ -9,7 +9,17 @@ class Api::V1::MpiController < Api::ApplicationController
       deceased_time: allowed_params[:deceased_time]
     }
 
-    # result will be true if an update was made, or nil otherwise
+    update_veteran = MpiUpdatePersonEvent.create(api_key: api_key, created_at: Time.zone.now)
+
+    if veteran[:deceased_ind]
+      update_veteran.update!(update_type: :already_deceased, completed_at: Time.zone.now, info: veteran)
+    end
+
+    if !veteran[:deceased_ind] || veteran[:deceased_ind] == nil
+      update_veteran.update!(update_type: :missing_deceased_info, completed_at: Time.zone.now, info: veteran)
+    end
+
+    # result will be 1 if an update was made, or nil otherwise
     result = VACOLS::Correspondent.update_veteran_nod(veteran)
     render json: { success: result }, status: :ok
   end
