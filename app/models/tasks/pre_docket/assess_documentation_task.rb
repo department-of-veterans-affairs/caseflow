@@ -47,12 +47,6 @@ class AssessDocumentationTask < Task
     task_actions
   end
 
-  def when_child_task_completed(child_task)
-    append_instruction(child_task.instructions.last) if child_task.assigned_to.is_a?(VhaRegionalOffice)
-
-    super
-  end
-
   def self.label
     COPY::ASSESS_DOCUMENTATION_TASK_LABEL
   end

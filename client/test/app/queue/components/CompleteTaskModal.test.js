@@ -13,7 +13,8 @@ import {
   enterTextFieldOptions,
   enterModalRadioOptions,
   selectFromDropdown,
-  clickSubmissionButton
+  clickSubmissionButton,
+  createSpyRequestPatch
 } from './modalUtils';
 import {
   postData,
@@ -25,7 +26,6 @@ import {
   vhaPOToCAMOData,
   visnData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
-import * as uiActions from 'app/queue/uiReducer/uiActions';
 import CompleteTaskModal from 'app/queue/components/CompleteTaskModal';
 
 let requestPatchSpy;
@@ -56,12 +56,7 @@ const renderCompleteTaskModal = (modalType, storeValues, taskType) => {
 const getReceivedInstructions = () => requestPatchSpy.mock.calls[0][1].data.task.instructions;
 
 beforeEach(() => {
-  requestPatchSpy = jest.spyOn(uiActions, 'requestPatch').
-    mockImplementation(() => jest.fn(() => Promise.resolve({
-      body: {
-        ...postData
-      }
-    })));
+  requestPatchSpy = createSpyRequestPatch(postData);
 });
 
 afterEach(() => {
@@ -79,6 +74,15 @@ describe('CompleteTaskModal', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
       expect(screen.getByText('Send to Board Intake')).toBeTruthy();
+    });
+
+    test('Submission button has correct CSS class', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      const submissionButton = screen.getByText(buttonText).closest('button');
+
+      expect(submissionButton).toHaveClass('usa-button');
+      expect(submissionButton).not.toHaveClass('usa-button-secondary');
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -108,8 +112,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Status:** Correct documents have been successfully added\n\n' +
-        '**CAMO Notes:** CAMO -> BVA Intake'
+        '\n##### STATUS:\nCorrect documents have been successfully added\n' +
+        '\n##### DETAILS:\nCAMO -> BVA Intake\n'
       );
     });
 
@@ -132,10 +136,12 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Status:** Correct documents have been successfully added\n\n' +
-        '**CAMO Notes:** CAMO -> BVA Intake\n\n' +
-        '**Program Office Notes:** Documents for this appeal are stored in VBMS.\n\n' +
-        '**Detail:**\n\n PO back to CAMO!\n\n'
+        '### CAMO Notes:\n' +
+        '\n##### STATUS:\nCorrect documents have been successfully added\n' +
+        '\n##### DETAILS:\nCAMO -> BVA Intake\n' +
+        '\n### Program Office Notes:' +
+        '\n##### STATUS:\nDocuments for this appeal are stored in VBMS.\n' +
+        '\n##### DETAILS:\n PO back to CAMO!\n\n'
       );
     });
   });
@@ -148,6 +154,15 @@ describe('CompleteTaskModal', () => {
     test('modal title is Ready for review', () => {
       renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
       expect(screen.getByText('Ready for review')).toBeTruthy();
+    });
+
+    test('Submission button has correct CSS class', () => {
+      renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
+
+      const submissionButton = screen.getByText(buttonText).closest('button');
+
+      expect(submissionButton).toHaveClass('usa-button');
+      expect(submissionButton).not.toHaveClass('usa-button-secondary');
     });
 
     test('modal text indicates appeal will be sent to VHA CAMO', () => {
@@ -180,8 +195,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        'Documents for this appeal are stored in Centralized Mail Portal.' +
-        '\n\n**Detail:**\n\nVHA PO -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Centralized Mail Portal.' +
+        '\n\n##### DETAILS:\nVHA PO -> BVA Intake\n'
       );
     });
 
@@ -211,8 +226,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        'Documents for this appeal are stored in Other Source.' +
-        '\n\n**Detail:**\n\nPO -> CAMO\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Other Source.' +
+        '\n\n##### DETAILS:\nPO -> CAMO\n'
       );
     });
   });
@@ -257,8 +272,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        'Documents for this appeal are stored in Centralized Mail Portal.' +
-        '\n\n**Detail:**\n\nVHA PO -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Centralized Mail Portal.' +
+        '\n\n##### DETAILS:\nVHA PO -> BVA Intake\n'
       );
     });
 
@@ -288,8 +303,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        'Documents for this appeal are stored in Other Source.' +
-        '\n\n**Detail:**\n\nPO -> CAMO\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Other Source.' +
+        '\n\n##### DETAILS:\nPO -> CAMO\n'
       );
     });
   });
@@ -302,6 +317,15 @@ describe('CompleteTaskModal', () => {
     test('modal title is Ready for Review', () => {
       renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
       expect(screen.getByText('Ready for review')).toBeTruthy();
+    });
+
+    test('Submission button has correct CSS class', () => {
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
+
+      const submissionButton = screen.getByText(buttonText).closest('button');
+
+      expect(submissionButton).toHaveClass('usa-button');
+      expect(submissionButton).not.toHaveClass('usa-button-secondary');
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -326,8 +350,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        'Documents for this appeal are stored in VBMS.' +
-        '\n\n**Detail:**\n\nCAREGIVER -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in VBMS.' +
+        '\n\n##### DETAILS:\nCAREGIVER -> BVA Intake\n'
       );
     });
 
@@ -359,8 +383,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        'Documents for this appeal are stored in Other Source.' +
-        '\n\n**Detail:**\n\nCAREGIVER -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Other Source.' +
+        '\n\n##### DETAILS:\nCAREGIVER -> BVA Intake\n'
       );
     });
   });
@@ -375,6 +399,15 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText('Ready for review')).toBeTruthy();
     });
 
+    test('Submission button has correct CSS class', () => {
+      renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
+
+      const submissionButton = screen.getByText(buttonText).closest('button');
+
+      expect(submissionButton).toHaveClass('usa-button');
+      expect(submissionButton).not.toHaveClass('usa-button-secondary');
+    });
+
     test('Before Radio button is Chosen, button should be disabled', () => {
       renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
       expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
@@ -397,8 +430,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        'Documents for this appeal are stored in Centralized Mail Portal.' +
-        '\n\n**Detail:**\n\nEMO -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Centralized Mail Portal.' +
+        '\n\n##### DETAILS:\nEMO -> BVA Intake\n'
       );
     });
 
@@ -428,8 +461,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        'Documents for this appeal are stored in Other Source.' +
-        '\n\n**Detail:**\n\nEMO -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Other Source.' +
+        '\n\n##### DETAILS:\nEMO -> BVA Intake\n'
       );
     });
   });
@@ -444,6 +477,15 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText('Ready for review')).toBeTruthy();
     });
 
+    test('Submission button has correct CSS class', () => {
+      renderCompleteTaskModal(modalType, rpoToBvaIntakeData, taskType);
+
+      const submissionButton = screen.getByText(buttonText).closest('button');
+
+      expect(submissionButton).toHaveClass('usa-button');
+      expect(submissionButton).not.toHaveClass('usa-button-secondary');
+    });
+
     test('Before Radio button is Chosen, button should be disabled', () => {
       renderCompleteTaskModal(modalType, rpoToBvaIntakeData, taskType);
       expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
@@ -466,8 +508,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        'Documents for this appeal are stored in Centralized Mail Portal.' +
-        '\n\n**Detail:**\n\nRPO -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Centralized Mail Portal.' +
+        '\n\n##### DETAILS:\nRPO -> BVA Intake\n'
       );
     });
 
@@ -497,8 +539,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        'Documents for this appeal are stored in Other Source.' +
-        '\n\n**Detail:**\n\nRPO -> BVA Intake\n'
+        '##### STATUS:\nDocuments for this appeal are stored in Other Source.' +
+        '\n\n##### DETAILS:\nRPO -> BVA Intake\n'
       );
     });
   });
@@ -511,6 +553,15 @@ describe('CompleteTaskModal', () => {
     test('modal title is Return to Board Intake', () => {
       renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
       expect(screen.getByText('Return to Board Intake')).toBeTruthy();
+    });
+
+    test('Submission button has correct CSS class', () => {
+      renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
+
+      const submissionButton = screen.getByText(buttonText).closest('button');
+
+      expect(submissionButton).toHaveClass('usa-button');
+      expect(submissionButton).not.toHaveClass('usa-button-secondary');
     });
 
     test('When mandatory text box is empty, button should be disabled', () => {
@@ -527,6 +578,7 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
+        '\n##### REASON FOR RETURN:\n' +
         'EMO Return to Board Intake'
       );
     });
@@ -540,6 +592,15 @@ describe('CompleteTaskModal', () => {
     test('Modal title to be "Return to Board Intake"', () => {
       renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
       expect(screen.getByText('Return to Board Intake')).toBeTruthy();
+    });
+
+    test('Submission button has correct CSS class', () => {
+      renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
+
+      const submissionButton = screen.getByText(buttonText).closest('button');
+
+      expect(submissionButton).toHaveClass('usa-button');
+      expect(submissionButton).not.toHaveClass('usa-button-secondary');
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -560,7 +621,7 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Reason for return:**\nNot PCAFC related'
+        '\n##### REASON FOR RETURN:\nNot PCAFC related'
       );
     });
 
@@ -582,8 +643,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Reason for return:**\nNot PCAFC related' +
-        '\n\n**Detail:**\nAdditional context'
+        '\n##### REASON FOR RETURN:\nNot PCAFC related' +
+        '\n\n##### DETAILS:\nAdditional context'
       );
     });
 
@@ -607,7 +668,7 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Reason for return:**\nOther - Reasoning for the return'
+        '\n##### REASON FOR RETURN:\nOther - Reasoning for the return'
       );
     });
 
@@ -636,8 +697,8 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Reason for return:**\nOther - Reasoning for the return' +
-        '\n\n**Detail:**\nAdditional context'
+        '\n##### REASON FOR RETURN:\nOther - Reasoning for the return' +
+        '\n\n##### DETAILS:\nAdditional context'
       );
     });
   });
