@@ -26,8 +26,8 @@ const getFilterCriteria = (state) => state.reader.documentList.filterCriteria
 export const getdocsFiltered = createSelector(
   [getFilterCriteria], (filterCriteria) => {
     return filterCriteria.searchQuery ||
-    !isEmpty(filterCriteria.category) ||
-    !isEmpty(filterCriteria.tag)
+      !isEmpty(filterCriteria.category) ||
+      !isEmpty(filterCriteria.tag)
   }
 )
 /**
@@ -37,12 +37,23 @@ export const getdocsFiltered = createSelector(
  */
 export const documentState = (state) => {
   // Set the filtered documents
+  const startFD = performance.now();
   const documents = getFilteredDocuments(state);
-
+  const endFD = performance.now();
+  console.log(`------filteredDocuments--------
+  Start: ${startFD}
+  End: ${endFD}
+  Duration: ${endFD - startFD}ms`);
   // Calculate the number of documents
+  const startDC = performance.now();
   const docsCount = getFilteredDocIds(state) ?
     getFilteredDocIds(state).length :
     Object.values(documents).length;
+  const endDC = performance.now();
+  console.log(`------docsCount--------
+     Start: ${startDC}
+     End: ${endDC}
+     Duration: ${endDC - startDC}ms`);
 
   // Return the Filtered Documents and count
   return { documents, docsCount };
@@ -111,19 +122,32 @@ export const documentScreen = (state) => {
       };
     }, {})
   })
-
+  
+  
+  
+  const startCAT = performance.now();
   const categories = getCategories(state);
-
+  const endCAT = performance.now();
+  console.log(`------categories--------
+   Start: ${startCAT}
+   End: ${endCAT}
+   Duration: ${endCAT - startCAT}ms`);
   // Filter the comments for the current document
 
   const getAllComments = state => state.reader.annotationLayer.comments
   const getComments = createSelector([getAllComments, getSelectedDoc],
     (allComments, selectedDoc) =>
-      allComments.filter((comment) =>
-        comment.document_id === selectedDoc.id)
-  );
-
+    allComments.filter((comment) =>
+    comment.document_id === selectedDoc.id)
+    );
+    
+    const startCOM = performance.now();
   const comments = getComments(state);
+  const endCOM = performance.now();
+   console.log(`------comments--------
+   Start: ${startCOM}
+   End: ${endCOM}
+   Duration: ${endCOM - startCOM}ms`);
   // Get the tag options for the current document
   const getTagOptions = createSelector([getAllDocs],
     (allDocs) => {
