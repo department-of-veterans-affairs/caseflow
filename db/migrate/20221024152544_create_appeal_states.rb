@@ -16,8 +16,7 @@ class CreateAppealStates < Caseflow::Migration
       t.boolean :decision_mailed, null: false, default: false, comment: "When true, appeal has decision mail request complete"
       t.boolean :appeal_cancelled, null: false, default: false, comment: "When true, appeal's root task is cancelled"
       t.boolean :scheduled_in_error, null: false, default: false, comment: "When true, hearing was scheduled in error and none scheduled"
-      t.timestamp  :created_at, null: false, comment: "Date and Time the record was inserted into the table"
-      t.timestamp  :updated_at, null: true, comment: "Date and time the record was last updated"
+      t.timestamps
     end
   end
 end
