@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_08_031628) do
+ActiveRecord::Schema.define(version: 2022_10_14_181613) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1108,7 +1108,7 @@ ActiveRecord::Schema.define(version: 2022_10_08_031628) do
     t.string "appeals_id", null: false, comment: "ID of the Appeal"
     t.string "appeals_type", null: false, comment: "Type of Appeal"
     t.datetime "created_at", comment: "Timestamp of when Noticiation was Created"
-    t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
+    t.string "email_notification_external_id"
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
     t.string "event_type", null: false, comment: "Type of Event"
@@ -1118,7 +1118,7 @@ ActiveRecord::Schema.define(version: 2022_10_08_031628) do
     t.string "participant_id", comment: "ID of Participant"
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
-    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
+    t.string "sms_notification_external_id"
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
@@ -1541,7 +1541,7 @@ ActiveRecord::Schema.define(version: 2022_10_08_031628) do
     t.bigint "created_by_id", null: false, comment: "The user that created this version of the unrecognized appellant"
     t.bigint "current_version_id", comment: "The current version for this unrecognized appellant"
     t.string "poa_participant_id", comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
-    t.string "relationship", null: false, comment: "Relationship to veteran. Allowed values: attorney, child, spouse, other"
+    t.string "relationship", null: false, comment: "Relationship to veteran. Allowed values: attorney, child, spouse, other, or healthcare_provider."
     t.bigint "unrecognized_party_detail_id", comment: "Contact details"
     t.bigint "unrecognized_power_of_attorney_id", comment: "Appellant's POA, if they aren't in CorpDB."
     t.datetime "updated_at", null: false
