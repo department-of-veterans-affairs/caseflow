@@ -14,8 +14,8 @@ module DocketHearingWithdrawn
     super_return_value = super
     if hearing_updates[:disposition] == Constants.HEARING_DISPOSITION_TYPES.cancelled
       AppellantNotification.notify_appellant(hearing.appeal, @@template_name)
+      AppellantNotification.appeal_mapper(hearing.appeal.id, hearing.appeal.class.to_s, "hearing_withdrawn")
     end
-    AppellantNotification.appeal_mapper(hearing.appeal.id, hearing.appeal.type, "hearing_withdrawn")
     super_return_value
   end
 end

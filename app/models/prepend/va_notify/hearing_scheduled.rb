@@ -11,7 +11,7 @@ module HearingScheduled
     # original method defined in app/models/tasks/schedule_hearing_task.rb
     super_return_value = super
     AppellantNotification.notify_appellant(appeal, @@template_name)
-    AppellantNotification.appeal_mapper(appeal.id, appeal.type, "hearing_scheduled")
+    AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_scheduled")
     super_return_value
   end
 end

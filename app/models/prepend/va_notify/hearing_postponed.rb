@@ -16,7 +16,7 @@ module HearingPostponed
     if postponed? && original_disposition != new_disposition
       appeal = LegacyAppeal.find(appeal_id)
       AppellantNotification.notify_appellant(appeal, @@template_name)
-      AppellantNotification.appeal_mapper(appeal.id, appeal.type, "hearing_postponed")
+      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_postponed")
     end
     super_return_value
   end
@@ -27,8 +27,8 @@ module HearingPostponed
     super_return_value = super
     if hearing_hash[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed && appeal.class.to_s == "Appeal"
       AppellantNotification.notify_appellant(appeal, @@template_name)
+      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_postponed")
     end
-    AppellantNotification.appeal_mapper(appeal.id, appeal.type, "hearing_postponed")
     super_return_value
   end
 end

@@ -13,7 +13,7 @@ module IhpTaskComplete
     if %w[InformalHearingPresentationTask IhpColocatedTask].include?(type) &&
        params[:status] == Constants.TASK_STATUSES.completed
       AppellantNotification.notify_appellant(appeal, @@template_name)
-      AppellantNotification.appeal_mapper(appeal.id, appeal.type, "vso_ihp_complete")
+      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "vso_ihp_complete")
     end
     super_return_value
   end

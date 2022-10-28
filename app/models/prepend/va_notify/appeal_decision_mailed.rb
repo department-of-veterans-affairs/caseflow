@@ -23,8 +23,8 @@ module AppealDecisionMailed
         template = appeal.contested_claim ? "#{@@template_name} (Contested claims)" : "#{@@template_name} (Non-contested claims)"
         AppellantNotification.notify_appellant(appeal, template)
       end
+      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "decision_mailed")
     end
-    AppellantNotification.appeal_mapper(appeal.id, appeal.type, "decision_mailed")
     super_return_value
   end
 end
