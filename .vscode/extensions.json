@@ -1,0 +1,19 @@
+{
+  "recommendations": [
+    "castwide.ruby-debug",
+    "castwide.solargraph",
+    "codezombiech.gitignore",
+    "dbaeumer.vscode-eslint",
+    "donjayamanne.git-extension-pack",
+    "donjayamanne.githistory",
+    "eamodio.gitlens",
+    "GitHub.vscode-pull-request-github",
+    "misogi.ruby-rubocop",
+    "ms-azuretools.vscode-docker",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg",
+    "rebornix.ruby",
+    "wingrunr21.vscode-ruby",
+    "ziyasal.vscode-open-in-github"
+  ]
+}

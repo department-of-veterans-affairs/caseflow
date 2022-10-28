@@ -76,3 +76,6 @@ Makefile
 docs/schema/*
 !docs/schema/.keep
 
+# VS Code Config Files
+.vscode/*
+!.vscode/extensions.json
