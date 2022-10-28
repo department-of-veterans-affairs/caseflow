@@ -102,7 +102,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
     <React.Fragment>
       {taskConfiguration && StringUtil.nl2br(taskConfiguration.modal_body)}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
-        <div style= {{ marginTop: '1.25rem' }}>
+        <div style={{ marginTop: '1.25rem' }}>
           <RadioField
             name="completeTaskDocLocation"
             id="completeTaskDocLocation"
@@ -179,7 +179,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
   return (
     <React.Fragment>
       {programOfficeInstructions.some((i) => i) &&
-        <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
+        <strong style={{ color: '#323a45' }}>Notes from Program Office:</strong>}
       {programOfficeInstructions.map((text) => (
         <React.Fragment>
           <div>
@@ -190,7 +190,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
       {taskConfiguration && taskConfiguration.modal_body}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <div>
-          <hr style= {{ marginBottom: '1.5em' }} />
+          <hr style={{ marginBottom: '1.5em' }} />
           <RadioField
             name="sendToBoardIntakeOptions"
             id="sendToBoardIntakeOptions"
@@ -294,7 +294,7 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
     <React.Fragment>
       {taskConfiguration && taskConfiguration.modal_body}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
-        <div style= {{ marginTop: '1.5rem' }}>
+        <div style={{ marginTop: '1.5rem' }}>
           <SearchableDropdown
             label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL}
             defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
@@ -548,43 +548,43 @@ class CompleteTaskModal extends React.Component {
     return formattedInstructions.join('');
   };
 
-   validateForm = () => {
-     const { instructions, otherInstructions, radio } = this.state;
-     const modalType = this.props.modalType;
+  validateForm = () => {
+    const { instructions, otherInstructions, radio } = this.state;
+    const modalType = this.props.modalType;
 
-     let isValid = true;
+    let isValid = true;
 
-     if (modalType === 'vha_send_to_board_intake') {
-       isValid = validInstructions(instructions) && validRadio(radio);
-     }
+    if (modalType === 'vha_send_to_board_intake') {
+      isValid = validInstructions(instructions) && validRadio(radio);
+    }
 
-     if (modalType === ('ready_for_review')) {
-       if (radio === 'other') {
-         isValid = validInstructions(otherInstructions) && validRadio(radio) && validInstructions(instructions);
-       } else {
-         isValid = validRadio(radio) && validInstructions(instructions);
-       }
-     }
+    if (modalType === ('ready_for_review')) {
+      if (radio === 'other') {
+        isValid = validInstructions(otherInstructions) && validRadio(radio) && validInstructions(instructions);
+      } else {
+        isValid = validRadio(radio) && validInstructions(instructions);
+      }
+    }
 
-     if (modalType === 'emo_return_to_board_intake') {
-       isValid = validInstructions(instructions);
-     }
+    if (modalType === 'emo_return_to_board_intake') {
+      isValid = validInstructions(instructions);
+    }
 
-     if (modalType.includes('send_to_board_intake_for_review')) {
-       if (radio === 'other') {
-         isValid = validInstructions(otherInstructions) && validRadio(radio);
-       } else {
-         isValid = validRadio(radio);
-       }
-     }
+    if (modalType.includes('send_to_board_intake_for_review')) {
+      if (radio === 'other') {
+        isValid = validInstructions(otherInstructions) && validRadio(radio);
+      } else {
+        isValid = validRadio(radio);
+      }
+    }
 
-     // Checks validity using the customValidation function defined in the modal constants if it is present
-     if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customValidation === 'function') {
-       isValid = MODAL_TYPE_ATTRS[this.props.modalType].customValidation(this.getContentArgs());
-     }
+    // Checks validity using the customValidation function defined in the modal constants if it is present
+    if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customValidation === 'function') {
+      isValid = MODAL_TYPE_ATTRS[this.props.modalType].customValidation(this.getContentArgs());
+    }
 
-     return isValid;
-   }
+    return isValid;
+  }
 
   submit = () => {
     const { task, appeal } = this.props;

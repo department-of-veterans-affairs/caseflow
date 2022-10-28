@@ -215,7 +215,7 @@ describe DocketCoordinator do
 
     let(:tied_legacy_case_count) { 5 }
     let(:genpop_legacy_case_count) { 4 }
-    let(:tied_ama_hearing_case_count) { 3 }
+    let(:tied_ama_hearing_case_count) { 3 } if !FeatureToggle.enabled?(:acd_distribute_by_docket_date)
     let(:genpop_ama_hearing_case_count) { 2 }
     let(:genpop_direct_case_count) { 2 }
     let(:genpop_evidence_case_count) { 2 }
@@ -228,15 +228,15 @@ describe DocketCoordinator do
     end
 
     before do
-      tied_legacy_case_count.times { create(:case, :aod, :ready_for_distribution, :tied_to_judge, tied_judge: judge) }
-      genpop_legacy_case_count.times { create(:case, :aod, :ready_for_distribution) }
+      tied_legacy_case_count.times { create(:case, :type_cavc_remand, :ready_for_distribution,
+        :tied_to_judge, tied_judge: judge) }
+      genpop_legacy_case_count.times { create(:case, :type_cavc_remand, :ready_for_distribution) }
       tied_ama_hearing_case_count.times do
         create(
           :appeal,
           :hearing_docket,
-          :ready_for_distribution,
           :advanced_on_docket_due_to_age,
-          :held_hearing,
+          :held_hearing_and_ready_to_distribute,
           :tied_to_judge,
           tied_judge: judge,
           adding_user: judge
@@ -246,9 +246,8 @@ describe DocketCoordinator do
         create(
           :appeal,
           :hearing_docket,
-          :ready_for_distribution,
           :advanced_on_docket_due_to_age,
-          :held_hearing,
+          :held_hearing_and_ready_to_distribute,
           adding_user: judge
         )
       end

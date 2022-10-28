@@ -1093,6 +1093,60 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
+  context "When a current user is a member of Supervisory Senior Council organization" do
+    let(:appeal) { create(:appeal) }
+    let(:current_user) { create(:user) }
+    let!(:organization) { SupervisorySeniorCouncil.singleton }
+    let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
+    let(:receipt_date) { Time.zone.today - 20.days }
+    let(:profile_date) { (receipt_date - 30.days).to_datetime }
+    let(:rating_request_issue_attributes) do
+      {
+        decision_review: appeal,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: profile_date,
+        contested_issue_description: "PTSD denied",
+        contention_reference_id: "4567"
+      }
+    end
+    let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
+    let!(:appeal_serializer) { WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash }
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:split_appeal_workflow)
+      visit("/queue/appeals/#{appeal.uuid}")
+    end
+    it "should display the 'Correct issues' link" do
+      expect(page).to have_content("Correct issues")
+    end
+  end
+
+  context "When a user isn't a member of the Supervisory Senior Council" do
+    let(:appeal) { create(:appeal) }
+    let(:current_user) { create(:user) }
+    let(:receipt_date) { Time.zone.today - 20.days }
+    let(:profile_date) { (receipt_date - 30.days).to_datetime }
+    let(:rating_request_issue_attributes) do
+      {
+        decision_review: appeal,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: profile_date,
+        contested_issue_description: "PTSD denied",
+        contention_reference_id: "4567"
+      }
+    end
+    let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
+    let!(:appeal_serializer) { WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash }
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:split_appeal_workflow)
+      visit("/queue/appeals/#{appeal.uuid}")
+    end
+    it "should not display the 'Correct issues' link" do
+      expect(page).to_not have_content("Correct issues")
+    end
+  end
+
   describe "Appeal has requested to switch dockets" do
     let!(:full_grant_docket_switch) { create(:docket_switch) }
     let!(:partial_grant_docket_switch) { create(:docket_switch, :partially_granted) }

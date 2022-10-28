@@ -153,7 +153,7 @@ describe('CompleteTaskModal', () => {
     test('modal text indicates appeal will be sent to VHA CAMO', () => {
       renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
       expect(screen.getByText('This appeal will be sent to VHA CAMO for review.' +
-      'Please select where the documents for this appeal are stored')).toBeTruthy();
+        'Please select where the documents for this appeal are stored')).toBeTruthy();
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -230,7 +230,7 @@ describe('CompleteTaskModal', () => {
     test('modal text indicates appeal will be sent to VHA Program Office', () => {
       renderCompleteTaskModal(modalType, visnData, taskType);
       expect(screen.getByText('This appeal will be sent to VHA Program Office for review.' +
-      'Please select where the documents for this appeal are stored')).toBeTruthy();
+        'Please select where the documents for this appeal are stored')).toBeTruthy();
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {

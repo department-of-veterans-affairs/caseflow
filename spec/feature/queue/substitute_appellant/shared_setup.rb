@@ -54,7 +54,11 @@ RSpec.shared_examples("fill substitution form") do
       appeal.reload
       visit "/queue/appeals/#{appeal.uuid}"
 
+      # refresh the page if the case hasn't finished processing the create/load yet
+      visit "/queue/appeals/#{appeal.uuid}" if page.has_text? "Unable to load this case"
+
       # Navigate to substitution page
+      expect(page).to have_content "+ Add Substitute"
       page.find("button", text: "+ Add Substitute").click
 
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/substitute_appellant/basics")
