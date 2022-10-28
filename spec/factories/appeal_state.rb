@@ -5,9 +5,9 @@ FactoryBot.define do
     appeal_id { nil }
     appeal_type { nil }
     created_at { Time.zone.now - 5.hours }
-    created_by_id { 1 }
+    created_by_id { User.first.id }
     updated_at { Time.zone.now }
-    updated_by_id { 1 }
+    updated_by_id { User.first.id }
     appeal_docketed { false }
     privacy_act_pending { false }
     privacy_act_complete { false }

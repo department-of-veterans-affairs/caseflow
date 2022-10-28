@@ -61,20 +61,17 @@ module AppellantNotification
     message_attributes
   end
 
-  def current_user
-    RequestStore[:current_user]
-  end
-
   # Updates caseflow_audit database when notification event is triggered
   # to keep track of the state of each appeal
   def self.appeal_mapper(appeal_id, appeal_type, event)
+    byebug
     appeal_state = AppealState.find_by(appeal_id: appeal_id, appeal_type: appeal_type)
     if appeal_state
       appeal_state.update!(updated_by_id: current_user.id)
       appeal_state.update!(updated_at: Time.zone.now)
     else
       appeal_state = AppealState.create!(appeal_id: appeal_id, appeal_type: appeal_type, created_at: Time.zone.now,
-                                         created_by_id: current_user.id)
+                                         created_by_id: RequestStore[:current_user].id)
     end
     case event
     when "decision_mailed"
