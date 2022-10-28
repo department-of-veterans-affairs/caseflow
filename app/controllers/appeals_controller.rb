@@ -305,11 +305,9 @@ class AppealsController < ApplicationController
     }, status: :unprocessable_entity
   end
 
-  # Purpose: Queries Notification with query params and returns all Notification objects that match,
-  # total number of pages, and current page number
+  # Purpose: Fetches all notifications for an appeal
   #
-  # Params: appeal_id (vacols_id OR uuid), event_type, notification_type. email_notification_status,
-  # sms_notification_status, recipient_phone_number, recipient_email
+  # Params: appeals_id (vacols_id OR uuid)
   #
   # Response: Returns an array of all retrieved notifications
   def find_notifications_by_appeals_id(appeals_id)
@@ -326,17 +324,5 @@ class AppealsController < ApplicationController
     else
       WorkQueue::NotificationSerializer.new(@allowed_notifications).serializable_hash[:data]
     end
-
-    # Return a serialized response of all notifications, total number of pages needed to display those notifications,
-    # and current page number
-    response = {
-      notifications: WorkQueue::NotificationSerializer.new(current_page_notifications),
-      selectable_event_types: event_types,
-      selectable_notification_types: notification_types,
-      selectable_recipient_info: recipient_info ? recipient_info : [],
-      selectable_statuses: statuses ? statuses : [],
-      current_page: current_page,
-      total_pages: pages_count
-    }
   end
 end
