@@ -9,7 +9,6 @@ import { AddClaimantButtons } from '../addClaimant/AddClaimantButtons';
 import styled from 'styled-components';
 import { useHistory } from 'react-router';
 import { camelCase, debounce } from 'lodash';
-import ApiUtil from '../../util/ApiUtil';
 import RadioField from 'app/components/RadioField';
 import Address from 'app/queue/components/Address';
 import AddressForm from 'app/components/AddressForm';
@@ -17,23 +16,16 @@ import TextField from 'app/components/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { editPoaInformation, clearPoa, clearClaimant } from 'app/intake/reducers/addClaimantSlice';
 import { AddClaimantConfirmationModal } from '../addClaimant/AddClaimantConfirmationModal';
-import { formatAddress } from '../addClaimant/utils';
+import { fetchAttorneys, formatAddress } from '../addClaimant/utils';
 import { FORM_TYPES, PAGE_PATHS, INTAKE_STATES } from '../constants';
 import { getIntakeStatus } from '../selectors';
 import { submitReview } from '../actions/decisionReview';
+import PropTypes from 'prop-types';
 
 const partyTypeOpts = [
   { displayText: 'Organization', value: 'organization' },
   { displayText: 'Individual', value: 'individual' },
 ];
-
-const fetchAttorneys = async (search = '') => {
-  const res = await ApiUtil.get('/intake/attorneys', {
-    query: { query: search },
-  });
-
-  return res?.body;
-};
 
 const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
   // Enforce minimum search length (we'll simply return empty array rather than throw error)
@@ -55,7 +47,7 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
 
 const filterOption = () => true;
 
-export const AddPoaPage = () => {
+export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
 
@@ -134,11 +126,11 @@ export const AddPoaPage = () => {
 
   const asyncFn = useCallback(
     debounce((search, callback) => {
-      getAttorneyClaimantOpts(search, fetchAttorneys).then((res) =>
-        callback(res)
+      getAttorneyClaimantOpts(search, onAttorneySearch).then((attorneyOptions) =>
+        callback(attorneyOptions)
       );
     }, 250),
-    [fetchAttorneys]
+    [onAttorneySearch]
   );
 
   // Set the initial value of the country field to USA if it's an hlr/sc form
@@ -298,6 +290,10 @@ export const AddPoaPage = () => {
       </IntakeLayout>
     </FormProvider>
   );
+};
+
+AddPoaPage.propTypes = {
+  onAttorneySearch: PropTypes.func
 };
 
 const FieldDiv = styled.div`
