@@ -41,6 +41,7 @@ class CavcRemand < CaseflowRecord
   # amoeba gem for split appeal duplication
   amoeba do
     enable
+    exclude_association :power_of_attorney, if: :represented_by_attorney?
   end
 
   # called from the Add Cavc Date Modal

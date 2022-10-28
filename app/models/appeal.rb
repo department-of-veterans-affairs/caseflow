@@ -318,6 +318,10 @@ class Appeal < DecisionReview
     self&.clone_issues(parent_appeal)
     # update the child task tree with parent, passing CSS ID of user for validation
     self&.clone_task_tree(parent_appeal, user_css_id)
+    # if there is an AOD for the parent appeal, clone
+    if !AdvanceOnDocketMotion.find_by(appeal_id: parent_appeal.id).nil?
+      self&.clone_aod(parent_appeal)
+    end
     # set split appeal process flag to false
     self.appeal_split_process = false
     # set the duplication split flag
@@ -367,6 +371,19 @@ class Appeal < DecisionReview
       dup_issue&.decision_issue_id = decision_review_parent_to_child_hash[rd_issue.decision_issue_id]
       dup_issue&.save
     end
+  end
+
+  def clone_aod(parent_appeal)
+    # find the appeal AOD
+    aod = AdvanceOnDocketMotion.find_by(appeal_id: parent_appeal.id)
+    # create a new advance on docket for the duplicate appeal
+    AdvanceOnDocketMotion.create!(
+      user_id: aod.user_id,
+      person_id: claimant.person.id,
+      granted: aod.granted,
+      reason: aod.reason,
+      appeal: self
+    )
   end
 
   def clone_issue(issue)
