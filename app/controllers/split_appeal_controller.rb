@@ -95,7 +95,6 @@ class SplitAppealController < ApplicationController
           original_request_issue_ids.each do |id|
             original_request_issue_id = id
             original_request_issue = RequestIssue.find_by_id(original_request_issue_id)
-            binding.pry
             original_request_issue.update!(
               split_issue_status: Constants.TASK_STATUSES.on_hold,
             )
@@ -105,7 +104,6 @@ class SplitAppealController < ApplicationController
           split_request_issue_ids.each do |id|
             split_request_issue_id = id
             split_request_issue = RequestIssue.find_by_id(split_request_issue_id)
-            binding.pry
             split_request_issue.update!(
               split_issue_status: Constants.TASK_STATUSES.in_progress,
             )
