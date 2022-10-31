@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Table from '../components/Table';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import NavigationBar from '../components/NavigationBar';
 import AppFrame from '../components/AppFrame';
@@ -14,33 +15,19 @@ export default class TestData extends React.PureComponent {
     };
   }
 
-  renderTd = (veteran) => {
-    if (veteran.id === null) {
-      return (
-        <td>{veteran.file_number}</td>
-      );
-    }
-
-    return (
-      <td>
-        <a href={`/search?veteran_ids=${veteran.id}`}>{veteran.file_number}</a>
-      </td>
-    );
-  }
-
   render() {
-    const veterans = this.props.veteranRecords;
-
-    veterans.sort((veteranA, veteranB) => {
-      if (veteranA.file_number < veteranB.file_number) {
-        return -1;
+    const veteranColumns = [
+      {
+        header: 'File Number',
+        valueFunction: (rec) => (rec.file_number)
+      },
+      {
+        header: 'Description',
+        valueFunction: (rec) => (rec.description)
       }
-      if (veteranA.file_number > veteranB.file_number) {
-        return 1;
-      }
+    ];
 
-      return 0;
-    });
+    const veteranRecords = this.props.veteranRecords;
 
     return <BrowserRouter>
       <div>
@@ -57,17 +44,7 @@ export default class TestData extends React.PureComponent {
             <h1>Local Veteran Records</h1>
             <div>
               <p>These fake Veteran records are available locally.</p>
-              <p>Click on the file numbers to search for the veteran.</p>
-              <p>If a cell does not have a link the value used in the search url was not found.</p>
-              <table>
-                <tbody className="test-data-table">
-                  {veterans.map((veteran) => (
-                    <tr>
-                      {this.renderTd(veteran)}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <Table columns={veteranColumns} rowObjects={veteranRecords} />
             </div>
           </AppSegment>
         </AppFrame>

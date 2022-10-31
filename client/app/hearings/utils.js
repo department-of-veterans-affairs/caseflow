@@ -20,7 +20,8 @@ import {
   compact,
   sortBy,
   get,
-  map
+  map,
+  isUndefined
 } from 'lodash';
 
 import HEARING_ROOMS_LIST from 'constants/HEARING_ROOMS_LIST';
@@ -164,13 +165,13 @@ export const isEdited = (init, current) => {
 
   // Handle the value comparison
   switch (current) {
-  // Empty strings should be treated the same as false and null
-  case '':
-  case false:
-    return current != falsy;
+    // Empty strings should be treated the same as false and null
+    case '':
+    case false:
+      return current != falsy;
     // Default to compare the initial with the current value
-  default:
-    return !isEqual(current, init);
+    default:
+      return !isEqual(current, init);
   }
 };
 
@@ -272,6 +273,25 @@ export const getChanges = (first, second) => {
   const { init, current } = toggleCancelled(first, second, 'virtualHearing');
 
   return deepDiff(init, current);
+};
+
+/**
+ * Method to calculate hearing details changes accounting for hearings being converted to virtual
+ * @param {Object} init -- The initial form details
+ * @param {Object} current -- The current form details
+ */
+export const getConvertToVirtualChanges = (first, second) => {
+  const diff = getChanges(first, second);
+
+  // Always return emails and timezones whenever converting to virtual due to
+  // field pre-population. Leave out emails if they're blank to prevent validation issues.
+  return omitBy({
+    ...diff,
+    appellantTz: second.appellantTz,
+    ...(second.appellantEmailAddress && { appellantEmailAddress: second.appellantEmailAddress }),
+    representativeTz: second.representativeTz,
+    ...(second.representativeEmailAddress && { representativeEmailAddress: second.representativeEmailAddress })
+  }, isUndefined);
 };
 
 /**
@@ -483,7 +503,7 @@ export const parseVirtualHearingErrors = (msg, hearing) => {
   return messages.split(',').reduce((list, message) => ({
     ...list,
     [(/Representative/).test(message) ? 'representativeEmailAddress' : 'appellantEmailAddress']:
-       message.replace('Appellant', getAppellantTitle(hearing?.appellantIsNotVeteran))
+      message.replace('Appellant', getAppellantTitle(hearing?.appellantIsNotVeteran))
   }), {});
 };
 
@@ -525,13 +545,13 @@ export const taskPayload = (values, task = {}) => ({
  */
 export const formatChangeRequestType = (type) => {
   switch (type) {
-  case 'Virtual':
-    return HEARING_REQUEST_TYPES.virtual;
-  case 'Video':
-    return HEARING_REQUEST_TYPES.video;
-  case 'Central':
-  default:
-    return HEARING_REQUEST_TYPES.central;
+    case 'Virtual':
+      return HEARING_REQUEST_TYPES.virtual;
+    case 'Video':
+      return HEARING_REQUEST_TYPES.video;
+    case 'Central':
+    default:
+      return HEARING_REQUEST_TYPES.central;
   }
 };
 
@@ -948,7 +968,7 @@ export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
 
   if (virtual) {
     return `When you schedule the hearing, the ${recipientLabel} and ` +
-     'Judge will receive an email with connection information for the virtual hearing.';
+      'Judge will receive an email with connection information for the virtual hearing.';
   }
 
   return `The ${recipientLabel} will receive email reminders 7 and 3 days before the hearing. ` +
@@ -1142,22 +1162,38 @@ export const scheduleData = ({ hearingSchedule, user }) => {
   const columns = columnsForUser(user, columnData);
 
   const exportHeaders = [
-    { label: 'ID',
-      key: 'id' },
-    { label: 'Scheduled For',
-      key: 'scheduledFor' },
-    { label: 'Type',
-      key: 'readableRequestType' },
-    { label: 'Regional Office',
-      key: 'regionalOffice' },
-    { label: 'Room',
-      key: 'room' },
-    { label: 'CSS ID',
-      key: 'judgeCssId' },
-    { label: 'VLJ',
-      key: 'vlj' },
-    { label: 'Hearings Scheduled',
-      key: 'hearingsScheduled' }
+    {
+      label: 'ID',
+      key: 'id'
+    },
+    {
+      label: 'Scheduled For',
+      key: 'scheduledFor'
+    },
+    {
+      label: 'Type',
+      key: 'readableRequestType'
+    },
+    {
+      label: 'Regional Office',
+      key: 'regionalOffice'
+    },
+    {
+      label: 'Room',
+      key: 'room'
+    },
+    {
+      label: 'CSS ID',
+      key: 'judgeCssId'
+    },
+    {
+      label: 'VLJ',
+      key: 'vlj'
+    },
+    {
+      label: 'Hearings Scheduled',
+      key: 'hearingsScheduled'
+    }
   ];
 
   const headers = headersforUser(user, exportHeaders);

@@ -174,10 +174,7 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(contested_appeal, contested)
         allow(contested_appeal).to receive(:contested_claim?).and_return(true)
         contested_appeal.contested_claim?
-        contested_decision_document = contested_dispatch.send(
-          "create_decision_document_and_submit_for_processing!",
-          contested_params
-        )
+        contested_decision_document = contested_dispatch.send "create_decision_document_and_submit_for_processing!", contested_params
         contested_decision_document.process!
       end
     end
@@ -420,11 +417,7 @@ describe AppellantNotification do
 
       it "calls notify_appellant when task is created" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
-        HearingAdminActionFoiaPrivacyRequestTask.create_child_task(
-          parent_task,
-          hearings_management_user,
-          task_params_org
-        )
+        HearingAdminActionFoiaPrivacyRequestTask.create_child_task(parent_task, hearings_management_user, task_params_org)
       end
       it "calls notify_appellant when task is completed" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
@@ -527,12 +520,8 @@ describe AppellantNotification do
           assigned_to_type: "Organization"
         }
       end
-      let(:privacy_parent) do
-        PrivacyActTask.create!(appeal: appeal, parent_id: colocated_task.id, assigned_to: priv_org)
-      end
-      let(:privacy_child) do
-        PrivacyActTask.create!(appeal: appeal, parent_id: privacy_parent.id, assigned_to: current_user)
-      end
+      let(:privacy_parent) { PrivacyActTask.create!(appeal: appeal, parent_id: colocated_task.id, assigned_to: priv_org) }
+      let(:privacy_child) { PrivacyActTask.create!(appeal: appeal, parent_id: privacy_parent.id, assigned_to: current_user) }
       before do
         priv_org.add_user(current_user)
       end
@@ -556,8 +545,8 @@ describe AppellantNotification do
         let(:participant_id_with_pva) { "1234" }
         let(:appeal) do
           create(:appeal, :active, claimants: [
-                   create(:claimant, participant_id: participant_id_with_pva)
-                 ])
+                  create(:claimant, participant_id: participant_id_with_pva)
+                ])
         end
         let(:root_task) { RootTask.find_by(appeal: appeal) }
         let!(:vso) do
@@ -673,10 +662,12 @@ describe AppellantNotification do
     let(:appeal) { create(:appeal, :active) }
     let(:template) { "Hearing scheduled" }
     let(:payload) { AppellantNotification.create_payload(appeal, template_name) }
-
-    it "pushes a new message" do
-      ActiveJob::Base.queue_adapter = :test
-      expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+    describe '#perform' do
+      it 'pushes a new message' do
+        ActiveJob::Base.queue_adapter = :test
+        AppellantNotification.notify_appellant(appeal, template)
+        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+      end
     end
   end
 end
