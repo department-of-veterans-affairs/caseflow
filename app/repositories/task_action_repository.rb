@@ -741,6 +741,7 @@ class TaskActionRepository
 
     def send_colocated_task(*)
       {
+        modal_button_text: COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
       }
     end
 
