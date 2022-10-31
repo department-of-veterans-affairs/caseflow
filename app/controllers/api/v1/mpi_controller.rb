@@ -11,11 +11,9 @@ class Api::V1::MpiController < Api::ApplicationController
 
     update_veteran = MpiUpdatePersonEvent.create(api_key: api_key, created_at: Time.zone.now)
 
-    if veteran[:deceased_ind]
+    if veteran[:deceased_ind] == "true"
       update_veteran.update!(update_type: :already_deceased, completed_at: Time.zone.now, info: veteran)
-    end
-
-    if !veteran[:deceased_ind] || veteran[:deceased_ind] == nil
+    else
       update_veteran.update!(update_type: :missing_deceased_info, completed_at: Time.zone.now, info: veteran)
     end
 
