@@ -7,7 +7,7 @@ class PrepareDocumentUploadToVbms
   validate :valid_document_type
 
   def initialize(params, user)
-    @params = params.slice(:veteran_file_number, :document_type, :file)
+    @params = params.slice(:veteran_file_number, :document_type, :document_subject, :document_name, :file)
     @document_type = @params[:document_type]
     @user = user
   end
@@ -34,6 +34,14 @@ class PrepareDocumentUploadToVbms
     @params[:veteran_file_number]
   end
 
+  def document_subject
+    @params[:document_subject]
+  end
+
+  def document_name
+    @params[:document_name]
+  end
+
   def file
     @params[:file]
   end
@@ -45,6 +53,8 @@ class PrepareDocumentUploadToVbms
   def document_params
     {
       veteran_file_number: veteran_file_number,
+      document_name: document_name,
+      document_subject: document_subject,
       document_type: document_type,
       file: file
     }

@@ -52,7 +52,7 @@ class ExternalApi::VBMSService
 
   def self.initialize_upload(veteran_file_number, uploadable_document)
     content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
-    filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
+    filename = uploadable_document.document_name.presence || SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
     request = VBMS::Requests::InitializeUpload.new(
       content_hash: content_hash,
       filename: filename,
@@ -60,7 +60,7 @@ class ExternalApi::VBMSService
       va_receive_date: Time.zone.now,
       doc_type: uploadable_document.document_type_id,
       source: uploadable_document.source,
-      subject: uploadable_document.document_type,
+      subject: uploadable_document.document_subject.presence || uploadable_document.document_type,
       new_mail: true
     )
     send_and_log_request(veteran_file_number, request)

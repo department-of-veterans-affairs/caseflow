@@ -19,16 +19,8 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
         params["veteran_file_number"] = appeal.veteran_file_number
       end
 
-    # check file number with bgs
-    elsif params["veteran_file_number"].present?
-      veteran = bgs.fetch_veteran_info(params["veteran_file_number"])
-      if veteran.nil?
-        fail Caseflow::Error::VeteranNotFound, "IDT Standard Error ID: " + SecureRandom.uuid + " The veteran was unable to be found."
-      end
-
-    # Find file number from ssn and check with bgs
-    elsif params["veteran_ssn"].present?
-      file_number = bgs.fetch_file_number_by_ssn(params["veteran_ssn"])
+    else
+      file_number = bgs.fetch_veteran_info(params["veteran_identifier"])&.dig(:file_number) || bgs.fetch_file_number_by_ssn(params["veteran_identifier"])
       if file_number.nil?
         fail Caseflow::Error::VeteranNotFound, "IDT Standard Error ID: " + SecureRandom.uuid + " The veteran was unable to be found."
       end
