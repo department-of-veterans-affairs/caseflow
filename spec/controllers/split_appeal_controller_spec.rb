@@ -68,6 +68,55 @@ RSpec.describe SplitAppealController, type: :controller do
       end
     end
 
+    context "Entering in another reason should return nil for split_reason" do
+      let(:root_task) { RootTask.find(create(:root_task).id) }
+      let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
+      let(:request_issue2) { create(:request_issue, benefit_type: benefit_type1) }
+      let(:benefit_type1) { "compensation" }
+      let(:request_issue3) { create(:request_issue, benefit_type: benefit_type2) }
+      let(:benefit_type2) { "pension" }
+      let(:appeal) { create(:appeal, tasks: [root_task], request_issues: [request_issue, request_issue2, request_issue3]) }
+      let(:valid_params) do
+        {
+          appeal_id: appeal.id,
+          appeal_split_issues: { request_issue.id => true },
+          split_reason: "other",
+          split_other_reason: "Some Other Reason",
+          user_css_id: ssc_user.css_id
+        }
+      end
+
+      it "creates a new split appeal" do
+        post :split_appeal, params: valid_params
+        expect(response.status).to eq 201
+        dup_appeal = Appeal.last
+        expect(appeal.stream_docket_number).to eq(dup_appeal.stream_docket_number)
+        expect(appeal.veteran_file_number).to eq(dup_appeal.veteran_file_number)
+      end
+
+      it "creates a split record for SplitCorrelationTable in DB and tasks" do
+        post :split_appeal, params: valid_params
+        dup_appeal = Appeal.last
+        appeal_type = dup_appeal.docket_type,
+        appeal_uuid = dup_appeal.uuid,
+        created_at = Time.zone.now.utc,
+        created_by_id = current_user.id,
+        original_appeal_id = appeal.id,
+        original_appeal_uuid = appeal.uuid,
+        original_request_issue_ids = [request_issue.id, request_issue2.id, request_issue3.id],
+        relationship_type = "split_appeal",
+        split_other_reason = split_other_reason,
+        split_reason = split_reason,
+        split_request_issue_ids = [],
+        updated_at = Time.zone.now.utc,
+        updated_by_id = current_user.id,
+        working_split_status = Constants.TASK_STATUSES.in_progress
+        appeal_split_task = appeal.tasks.where(type: "SplitAppealTask").first
+        dup_split_task = dup_appeal.tasks.where(type: "SplitAppealTask").first
+        expect(SCT.split_other_reason).to eq("")
+      end
+    end
+
     context "with invalid parameters" do
       let(:benefit_type1) { "compensation" }
       let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
