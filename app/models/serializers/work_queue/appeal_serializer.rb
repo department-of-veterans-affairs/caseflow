@@ -273,4 +273,8 @@ class WorkQueue::AppealSerializer
       WorkQueue::DocketSwitchSerializer.new(docket_switch).serializable_hash[:data][:attributes]
     end
   end
+
+  attribute :has_notifications do |object|
+    Notification.where("appeals_id = ? AND appeals_type = 'Appeal'", object.id.to_s).any?
+  end
 end
