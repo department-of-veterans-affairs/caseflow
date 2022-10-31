@@ -700,7 +700,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject[12]).to eq "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1"
 
       expect(subject[15]).to eq "Priority Target: 6"
-      expect(subject[16]).to eq "Previous monthly distributions: #{previous_distributions}"
+      expect(subject[16]).to eq "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
       expect(subject[17]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
       expect(subject[18].include?(ready_priority_hearing_case.uuid)).to be true
       expect(subject[18].include?(ready_priority_evidence_case.uuid)).to be true
@@ -730,7 +730,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject[11]).to eq "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1"
 
       expect(subject[14]).to eq "Priority Target: 6"
-      expect(subject[15]).to eq "Previous monthly distributions: #{previous_distributions}"
+      expect(subject[15]).to eq "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
       expect(subject[16]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
       expect(subject[17].include?(ready_priority_hearing_case.uuid)).to be true
       expect(subject[17].include?(ready_priority_evidence_case.uuid)).to be true
@@ -842,7 +842,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject[12]).to eq "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1"
 
       expect(subject[15]).to eq "Priority Target: 6"
-      expect(subject[16]).to eq "Previous monthly distributions: #{previous_distributions}"
+      expect(subject[16]).to eq "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
       expect(subject[17]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
       expect(subject[18].include?(ready_priority_hearing_case.uuid)).to be true
       expect(subject[18].include?(ready_priority_evidence_case.uuid)).to be true
