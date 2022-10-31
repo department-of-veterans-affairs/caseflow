@@ -750,59 +750,59 @@ class TaskActionRepository
       }
     end
 
-    private
-      return Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.appeal.vacate?
+      private
 
-      Constants.TASK_ACTIONS.REVIEW_AMA_DECISION_SP_ISSUES.to_h
+    return Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.appeal.vacate?
+
+    Constants.TASK_ACTIONS.REVIEW_AMA_DECISION_SP_ISSUES.to_h
     end
 
-    def select_withdraw_hearing_copy(appeal)
-      if appeal.is_a?(Appeal)
-        COPY::WITHDRAW_HEARING["AMA"]
-      elsif appeal.representative_is_colocated_vso? # a colocated vso is also part of `Service Organization`
-        COPY::WITHDRAW_HEARING["LEGACY_COLOCATED_POA"]
-      elsif appeal.representative_is_organization?
-        COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_ORGANIZATION"]
-      elsif appeal.representative_is_agent?
-        COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_PRIVATE_ATTORNEY"]
-      else
-        # Assumption: the above Legacy POA cases are comprehensive meaning the catch-all
-        #             case will only happen if there is no POA.
-        COPY::WITHDRAW_HEARING["LEGACY_NO_POA"]
-      end
+  def select_withdraw_hearing_copy(appeal)
+    if appeal.is_a?(Appeal)
+      COPY::WITHDRAW_HEARING["AMA"]
+    elsif appeal.representative_is_colocated_vso? # a colocated vso is also part of `Service Organization`
+      COPY::WITHDRAW_HEARING["LEGACY_COLOCATED_POA"]
+    elsif appeal.representative_is_organization?
+      COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_ORGANIZATION"]
+    elsif appeal.representative_is_agent?
+      COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_PRIVATE_ATTORNEY"]
+    else
+      # Assumption: the above Legacy POA cases are comprehensive meaning the catch-all
+      #             case will only happen if there is no POA.
+      COPY::WITHDRAW_HEARING["LEGACY_NO_POA"]
     end
+  end
 
-    def task_assigner_name(task)
-      task.assigned_by&.full_name || "the assigner"
+  def task_assigner_name(task)
+    task.assigned_by&.full_name || "the assigner"
+  end
+
+  def organizations_to_options(organizations)
+    organizations&.map do |org|
+      {
+        label: org.name,
+        value: org.id
+      }
     end
+  end
 
-    def organizations_to_options(organizations)
-      organizations&.map do |org|
-        {
-          label: org.name,
-          value: org.id
-        }
-      end
+  def users_to_options(users)
+    users.map do |user|
+      {
+        label: user.full_name,
+        value: user.id
+      }
     end
+  end
 
-    def users_to_options(users)
-      users.map do |user|
-        {
-          label: user.full_name,
-          value: user.id
-        }
-      end
-    end
-
-    # Exclude users who aren't active or to whom the task is already assigned.
-    def potential_task_assignees(task)
-      if task.assigned_to.is_a?(Organization)
-        task.assigned_to.users.active
-      elsif task.parent&.assigned_to.is_a?(Organization)
-        task.parent.assigned_to.users.active.reject { |check_user| check_user == task.assigned_to }
-      else
-        []
-      end
+  # Exclude users who aren't active or to whom the task is already assigned.
+  def potential_task_assignees(task)
+    if task.assigned_to.is_a?(Organization)
+      task.assigned_to.users.active
+    elsif task.parent&.assigned_to.is_a?(Organization)
+      task.parent.assigned_to.users.active.reject { |check_user| check_user == task.assigned_to }
+    else
+      []
     end
   end
 end
