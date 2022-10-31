@@ -3,5 +3,7 @@
 class AppealState < CaseflowRecord
   include HasAppealUpdatedSince
   include BelongsToPolymorphicAppealConcern
+  include CreatedByUserConcern
+  include UpdatedByUserConcern
   belongs_to_polymorphic_appeal(:appeal)
 end
