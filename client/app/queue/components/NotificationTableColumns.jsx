@@ -1,3 +1,5 @@
+import React from 'react'
+import { COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
 import EVENT_TYPE_FILTERS from '../../../constants/EVENT_TYPE_FILTERS';
@@ -5,8 +7,10 @@ import EVENT_TYPE_FILTERS from '../../../constants/EVENT_TYPE_FILTERS';
 // Purpose: These are all column objects for the notifications table
 // Params: notifications - The list of notifications
 
+// Styling for the event type column values
+const eventTypeStyling = { color: COLORS.PRIMARY, fontWeight: 'bold', cursor: 'pointer' };
+
 export const eventTypeColumn = (notifications) => {
-  const filterOptions = Object.values(EVENT_TYPE_FILTERS);
 
   return {
     header: COPY.NOTIFICATION_EVENT_TYPE_COLUMN_NAME,
@@ -15,11 +19,11 @@ export const eventTypeColumn = (notifications) => {
     customFilterLabels: EVENT_TYPE_FILTERS,
     columnName: 'event_type',
     tableData: notifications,
-    filterOptions,
     anyFiltersAreSet: true,
     label: 'Filter by event type',
     valueName: 'Event',
-    valueFunction: (notification) => notification.event_type
+    valueFunction: (notification) => <span style={eventTypeStyling}>{notification.event_type}</span>
+
   };
 };
 
