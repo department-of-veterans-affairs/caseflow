@@ -201,6 +201,7 @@ class AssignToView extends React.Component {
       title: this.determineTitle(this.props, action, isPulacCerullo, actionData),
       pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
       ...(actionData.modal_button_text && { button: actionData.modal_button_text }),
+
       submit: this.submit,
       validateForm: isPulacCerullo ?
         () => {
