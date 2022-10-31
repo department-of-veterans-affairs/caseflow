@@ -169,7 +169,7 @@ export const isEdited = (init, current) => {
   case '':
   case false:
     return current != falsy;
-  // Default to compare the initial with the current value
+    // Default to compare the initial with the current value
   default:
     return !isEqual(current, init);
   }
@@ -968,7 +968,7 @@ export const formatNotificationLabel = (hearing, virtual, appellantTitle) => {
 
   if (virtual) {
     return `When you schedule the hearing, the ${recipientLabel} and ` +
-      'Judge will receive an email with connection information for the virtual hearing.';
+     'Judge will receive an email with connection information for the virtual hearing.';
   }
 
   return `The ${recipientLabel} will receive email reminders 7 and 3 days before the hearing. ` +
