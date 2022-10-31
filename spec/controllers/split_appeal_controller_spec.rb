@@ -41,7 +41,7 @@ RSpec.describe SplitAppealController, type: :controller do
         created_by_id = current_user.id,
         original_appeal_id = appeal.id,
         original_appeal_uuid = appeal.uuid,
-        original_request_issue_ids = appeal.request_issues.ids,
+        original_request_issue_ids = ["1","2"],
         relationship_type = "split_appeal",
         split_other_reason = split_other_reason,
         split_reason = split_reason,
@@ -51,9 +51,10 @@ RSpec.describe SplitAppealController, type: :controller do
         working_split_status = Constants.TASK_STATUSES.in_progress
         SCT = SplitCorrelationTable.first
         expect(SCT.appeal_id).to eq(dup_appeal.id)
-        expect(SCT.original_request_issue_ids).to eq([])
-        expect(SCT.split_request_issue_ids).to eq([2])
+        expect(SCT.original_request_issue_ids).to eq(["1","2"])
+        expect(SCT.split_request_issue_ids).to eq(["1","2","3"])
         expect(SCT.original_appeal_id).to eq(appeal.id)
+        binding.pry
       end
 
       it "creates a split appeal task on the original and duplicate appeal" do
