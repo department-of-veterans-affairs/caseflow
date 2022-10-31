@@ -683,9 +683,9 @@ class QueueApp extends React.PureComponent {
 
             <PageRoute
               exact
-              path="/queue/appeals/:appealId/notificationpage"
-              title="Notification | Caseflow"
-              render={this.routedNotificationPage}
+              path="/queue/appeals/:appealId/notifications"
+              title="Notifications | Caseflow"
+              render={this.routedNotifications}
             />
 
             <PageRoute

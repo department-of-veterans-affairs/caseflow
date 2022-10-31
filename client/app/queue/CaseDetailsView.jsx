@@ -6,6 +6,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
+import ApiUtil from '../util/ApiUtil';
 
 import { APPELLANT_TYPES, CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS, ICON_SIZES } from '../constants/AppConstants';
@@ -57,7 +58,7 @@ import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
 import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
-import { NotificationPage } from './NotificationPage';
+import { NotificationView } from './NotificationsView';
 import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
 
 
@@ -146,6 +147,19 @@ export const CaseDetailsView = (props) => {
       }
     );
 
+    // Purpose: Send a request call to the backend endpoint for notifications
+    const fetchNotifications = async () => {
+      const url = `/appeals/${appealId}/notifications`;
+  
+      const data = await ApiUtil.get(url).
+        then((response) => response.body).
+        catch((response) => console.error(response));
+  
+      return data;
+    };
+
+    
+
   useEffect(() => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
 
@@ -166,6 +180,18 @@ export const CaseDetailsView = (props) => {
       });
     }
   }, []);
+
+  const ShowNotificationsLink = () => {
+    fetchNotifications (
+
+    );
+
+  };
+// useEffect(async () => {
+//     const notifications = await fetchNotifications(appealId)
+//     setNotificationCount(notifications.length)
+//   }, []);
+  
 
   const doPulacCerulloReminder = useMemo(
     () => needsPulacCerulloAlert(appeal, tasks),
@@ -401,17 +427,17 @@ export const CaseDetailsView = (props) => {
             />
           )}
 
-          <CaseTimeline title="Case Timeline Test" appeal={appeal}
+          <CaseTimeline title="Case Timeline" appeal={appeal}
             additionalHeaderContent={
               true && (
                 <span className="cf-push-right" {...anchorEditLinkStyling}>
-                  { notificationCount > 0 && <Link to={`/queue/appeals/${appealId}/notificationpage`}>
+                  <Link to={`/queue/appeals/${appealId}/notifications`}>
                     {COPY.VIEW_NOTIFICATION_LINK}
                     &nbsp;
                     <span {...ICON_POSITION_FIX}>
                       <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
                     </span>
-                  </Link>}
+                  </Link>
                 </span>
               )
             }
