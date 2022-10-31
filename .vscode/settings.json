@@ -5,6 +5,7 @@
   "eslint.workingDirectories": [
     "./client"
   ],
+  "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
   "git.autofetch": true,
 }
