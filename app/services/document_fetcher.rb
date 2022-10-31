@@ -98,6 +98,11 @@ class DocumentFetcher
   def fetch_documents_from_service!
     doc_struct = document_service.fetch_documents_for(appeal, RequestStore.store[:current_user])
 
+      # 10000.times { |i| 
+      # specialId = i + 10000000
+      # newdoc = Document.new({category_medical: true, category_other: true, category_procedural: true, description: "THE NEW ONE", file_number: "2169798411", previous_document_version_id: nil, received_at: "2022-10-19", series_id: "3823199", type: "BVA Decision New", upload_date: "2022-10-25", vbms_document_id: specialId.to_s})
+      # doc_struct[:documents].push(newdoc)
+      # }
     self.documents = deduplicate(doc_struct[:documents], "fetched_documents")
     self.manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
     self.manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
