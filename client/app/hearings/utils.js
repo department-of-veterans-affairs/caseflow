@@ -165,13 +165,13 @@ export const isEdited = (init, current) => {
 
   // Handle the value comparison
   switch (current) {
-    // Empty strings should be treated the same as false and null
-    case '':
-    case false:
-      return current != falsy;
-    // Default to compare the initial with the current value
-    default:
-      return !isEqual(current, init);
+  // Empty strings should be treated the same as false and null
+  case '':
+  case false:
+    return current != falsy;
+  // Default to compare the initial with the current value
+  default:
+    return !isEqual(current, init);
   }
 };
 
@@ -503,7 +503,7 @@ export const parseVirtualHearingErrors = (msg, hearing) => {
   return messages.split(',').reduce((list, message) => ({
     ...list,
     [(/Representative/).test(message) ? 'representativeEmailAddress' : 'appellantEmailAddress']:
-      message.replace('Appellant', getAppellantTitle(hearing?.appellantIsNotVeteran))
+       message.replace('Appellant', getAppellantTitle(hearing?.appellantIsNotVeteran))
   }), {});
 };
 
@@ -545,13 +545,13 @@ export const taskPayload = (values, task = {}) => ({
  */
 export const formatChangeRequestType = (type) => {
   switch (type) {
-    case 'Virtual':
-      return HEARING_REQUEST_TYPES.virtual;
-    case 'Video':
-      return HEARING_REQUEST_TYPES.video;
-    case 'Central':
-    default:
-      return HEARING_REQUEST_TYPES.central;
+  case 'Virtual':
+    return HEARING_REQUEST_TYPES.virtual;
+  case 'Video':
+    return HEARING_REQUEST_TYPES.video;
+  case 'Central':
+  default:
+    return HEARING_REQUEST_TYPES.central;
   }
 };
 
@@ -1162,38 +1162,22 @@ export const scheduleData = ({ hearingSchedule, user }) => {
   const columns = columnsForUser(user, columnData);
 
   const exportHeaders = [
-    {
-      label: 'ID',
-      key: 'id'
-    },
-    {
-      label: 'Scheduled For',
-      key: 'scheduledFor'
-    },
-    {
-      label: 'Type',
-      key: 'readableRequestType'
-    },
-    {
-      label: 'Regional Office',
-      key: 'regionalOffice'
-    },
-    {
-      label: 'Room',
-      key: 'room'
-    },
-    {
-      label: 'CSS ID',
-      key: 'judgeCssId'
-    },
-    {
-      label: 'VLJ',
-      key: 'vlj'
-    },
-    {
-      label: 'Hearings Scheduled',
-      key: 'hearingsScheduled'
-    }
+    { label: 'ID',
+      key: 'id' },
+    { label: 'Scheduled For',
+      key: 'scheduledFor' },
+    { label: 'Type',
+      key: 'readableRequestType' },
+    { label: 'Regional Office',
+      key: 'regionalOffice' },
+    { label: 'Room',
+      key: 'room' },
+    { label: 'CSS ID',
+      key: 'judgeCssId' },
+    { label: 'VLJ',
+      key: 'vlj' },
+    { label: 'Hearings Scheduled',
+      key: 'hearingsScheduled' }
   ];
 
   const headers = headersforUser(user, exportHeaders);
