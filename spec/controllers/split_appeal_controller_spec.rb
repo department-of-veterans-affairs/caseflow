@@ -68,7 +68,7 @@ RSpec.describe SplitAppealController, type: :controller do
       end
     end
 
-    context "Entering in another reason should return nil for split_reason" do
+    context "split_other_reason record saves" do
       let(:root_task) { RootTask.find(create(:root_task).id) }
       let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
       let(:request_issue2) { create(:request_issue, benefit_type: benefit_type1) }
@@ -133,6 +133,24 @@ RSpec.describe SplitAppealController, type: :controller do
         post :split_appeal, params: invalid_params
         expect Appeal.count == 0
         expect(response).to have_http_status 404
+      end
+    end
+
+    context "with complete failure make sure SplitCorrelationTable does not create" do
+      let(:benefit_type1) { "compensation" }
+      let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
+      let(:invalid_params) do
+        {
+          appeal_id: "fail",
+          appeal_split_issues: { request_issue.id.to_s => true },
+          split_reason: "Include a motion for CUE with respect to a prior Board decision",
+          split_other_reason: ""
+        }
+      end
+
+      it "doesn't create the new split appeal and performs a active record rollback" do
+        post :split_appeal, params: invalid_params
+        expect(SplitCorrelationTable.last).to eq(nil)
       end
     end
 
