@@ -93,16 +93,6 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         end
       end
 
-      context "when veteran identifier is an incorrect length" do
-        it "returns an invalid input error" do
-          params_identifier["veteran_identifier"] = file_number + "123"
-          post :create, params: params_identifier
-          expect(response).to have_attributes(status: 403)
-          error_msg = JSON.parse(response.body)["message"]
-          expect(error_msg).to include("Veteran identifier must contain 9 characters.")
-        end
-      end
-
       context "when veteran identifier doesn't match in BGS" do
         it "returns a VeteranNotFound error" do
           allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_return(nil)
