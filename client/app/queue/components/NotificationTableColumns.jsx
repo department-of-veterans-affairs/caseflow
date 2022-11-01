@@ -5,6 +5,7 @@ import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
 import EVENT_TYPE_FILTERS from '../../../constants/EVENT_TYPE_FILTERS';
 import Button from '../../components/Button';
 import NotificationModal from './NotificationModal';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 // Purpose: These are all column objects for the notifications table
 // Params: notifications - The list of notifications
@@ -37,8 +38,8 @@ export const eventTypeColumn = (notifications) => {
     valueName: 'Event',
     valueFunction: (notification) => 
     <span>
-      <Button onClick={openModal()}>{notification.event_type}</Button>
-      {modalState ? <NotificationModal eventType={notification.event_type} notificationContent={JSON.stringify(notification.content)} /> : <></>}
+      <Link onClick={openModal}>{notification.event_type}</Link>
+      {modalState ? <NotificationModal eventType={notification.event_type} notificationContent={notification.content} closeNotificationModal={closeModal} /> : <></>}
       </span>
     
     // <span style={eventTypeStyling}>{notification.event_type}</span>
