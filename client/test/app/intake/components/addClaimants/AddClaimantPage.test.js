@@ -1,15 +1,14 @@
 import React from 'react';
-import {
-  screen,
-  render,
-  waitFor,
-} from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
+import { createMemoryHistory } from 'history';
 
 import { AddClaimantPage } from 'app/intake/addClaimant/AddClaimantPage';
-import { IntakeProviders } from '../../testUtils';
+import { renderIntakePage } from '../../testUtils';
+import { generateInitialState } from 'app/intake/index';
+import { PAGE_PATHS } from 'app/intake/constants';
 import { fillForm, relationshipOpts } from './testUtils';
 
 describe('AddClaimantPage', () => {
@@ -20,10 +19,13 @@ describe('AddClaimantPage', () => {
     jest.clearAllMocks();
   });
   const defaults = { onSubmit, onBack };
-  const setup = () => {
-    return render(<AddClaimantPage {...defaults} />, {
-      wrapper: IntakeProviders,
-    });
+  const setup = (
+    storeValues,
+    history = createMemoryHistory({ initialEntries: [PAGE_PATHS.ADD_POWER_OF_ATTORNEY] }),
+  ) => {
+    const page = <AddClaimantPage {...defaults} />;
+
+    return renderIntakePage(page, storeValues, history);
   };
 
   it('renders default state correctly', () => {
@@ -93,5 +95,19 @@ describe('AddClaimantPage', () => {
         expect(submit).not.toBeDisabled();
       });
     }, 15000);
+  });
+
+  it('redirects from to Intake homepage upon cancellation', async () => {
+    const storeValues = generateInitialState();
+
+    storeValues.intake = {
+      ...storeValues.intake,
+      // Whenever formType is null, this means that the intake was cancelled
+      formType: null
+    };
+
+    const { history } = setup(storeValues);
+
+    expect(await history.location.pathname).toBe('/');
   });
 });
