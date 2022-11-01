@@ -19,11 +19,12 @@ module AppealDecisionMailed
       when "Appeal"
         template = appeal.contested_claim? ? "#{@@template_name} (Contested claims)" : "#{@@template_name} (Non-contested claims)"
         AppellantNotification.notify_appellant(appeal, template)
+        AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "decision_mailed")
       when "LegacyAppeal"
         template = appeal.contested_claim ? "#{@@template_name} (Contested claims)" : "#{@@template_name} (Non-contested claims)"
         AppellantNotification.notify_appellant(appeal, template)
+        AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "decision_mailed")
       end
-      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "decision_mailed")
     end
     super_return_value
   end
