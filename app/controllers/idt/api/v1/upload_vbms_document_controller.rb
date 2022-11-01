@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
+  include ApiRequestLoggingConcern
+
   protect_from_forgery with: :exception
   skip_before_action :verify_authenticity_token, only: [:create]
   before_action :verify_access
@@ -10,6 +12,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def create
+    appeal = nil
     # Find veteran from appeal id and check with db
     if params["appeal_id"].present?
       appeal = LegacyAppeal.find_by_vacols_id(params["appeal_id"]) || Appeal.find_by_uuid(params["appeal_id"])
@@ -27,7 +30,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
       params["veteran_file_number"] = file_number
     end
-    result = PrepareDocumentUploadToVbms.new(params, current_user).call
+    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal).call
 
     if result.success?
       render json: { message: "Document successfully queued for upload." }

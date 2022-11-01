@@ -6,16 +6,17 @@ class PrepareDocumentUploadToVbms
   validates :veteran_file_number, :file, presence: true
   validate :valid_document_type
 
-  def initialize(params, user)
+  def initialize(params, user, appeal = nil)
     @params = params.slice(:veteran_file_number, :document_type, :document_subject, :document_name, :file)
     @document_type = @params[:document_type]
     @user = user
+    @appeal = appeal
   end
 
   def call
     success = valid?
     if success
-      throw_error_if_file_number_not_match_bgs
+      @params[:veteran_file_number] = throw_error_if_file_number_not_match_bgs
       VbmsUploadedDocument.create(document_params).tap do |document|
         document.cache_file
         UploadDocumentToVbmsJob.perform_later(document_id: document.id, initiator_css_id: user.css_id)
@@ -50,6 +51,14 @@ class PrepareDocumentUploadToVbms
     errors.add(:document_type, "is not recognized") unless Document.type_id(document_type)
   end
 
+  def bgs_service
+    @bgs_service || BGSService.new
+  end
+
+  def veteran_ssn
+    (!@appeal.nil? && !@appeal.veteran_ssn.nil? && !@appeal.veteran_ssn.empty?) ? @appeal.veteran_ssn : nil
+  end
+
   def document_params
     {
       veteran_file_number: veteran_file_number,
@@ -69,11 +78,21 @@ class PrepareDocumentUploadToVbms
   end
 
   def throw_error_if_file_number_not_match_bgs
-    if BGSService.new.fetch_veteran_info(veteran_file_number).nil?
-      fail(
-        Caseflow::Error::BgsFileNumberMismatch,
-        file_number: veteran_file_number, user_id: user.id
-      )
+    bgs_file_number = nil
+    if !veteran_file_number.nil?
+      bgs_file_number = bgs_service.fetch_file_number_by_ssn(veteran_ssn)
+    end
+    if bgs_service.fetch_veteran_info(veteran_file_number).nil?
+      if !bgs_file_number.blank? && !bgs_service.fetch_veteran_info(bgs_file_number).nil?
+        bgs_file_number
+      else
+        fail(
+          Caseflow::Error::BgsFileNumberMismatch,
+          file_number: veteran_file_number, user_id: user.id
+        )
+      end
+    else
+      veteran_file_number
     end
   end
 end
