@@ -13,7 +13,7 @@ class SplitAppealController < ApplicationController
         split_reason = params[:split_reason]
 
         # Returns a 404 Not Found error if the appeal can not be found to be split
-        begin 
+        begin
           appeal = Appeal.find(appeal_id)
         rescue
           return render plain: "404 Not Found", status: 404
@@ -70,7 +70,7 @@ class SplitAppealController < ApplicationController
           updated_by_id = current_user.id,
           working_split_status = Constants.TASK_STATUSES.in_progress
         ]
-      
+
         SplitCorrelationTable.create!(
           appeal_id: create_split_record[0],
           appeal_type: create_split_record[1],
@@ -88,21 +88,21 @@ class SplitAppealController < ApplicationController
           updated_by_id: create_split_record[13],
           working_split_status: create_split_record[14]
         )
-        
+      
         original_request_issue_ids.each do |id|
           original_request_issue_id = id
           original_request_issue = RequestIssue.find_by_id(original_request_issue_id)
           original_request_issue.update!(
-            split_issue_status: Constants.TASK_STATUSES.on_hold,
+            split_issue_status: Constants.TASK_STATUSES.on_hold
           )
           original_request_issue.save!
         end
-      
+
         split_request_issue_ids.each do |id|
           split_request_issue_id = id
           split_request_issue = RequestIssue.find_by_id(split_request_issue_id)
           split_request_issue.update!(
-            split_issue_status: Constants.TASK_STATUSES.in_progress,
+            split_issue_status: Constants.TASK_STATUSES.in_progress
           )
           split_request_issue.save!
         end
