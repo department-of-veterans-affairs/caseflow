@@ -251,10 +251,7 @@ class EvaluateDecisionView extends React.PureComponent {
         <br />
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}</b>: {decisionSubmitted.format('M/D/YY')}
         <br />
-        {
-          show? <AttorneyTaskTimeline title="Attorney Task Timeline" />:null
-        } 
-        <button onClick={()=>setShow(true)}> appeal= {appeal} </button>
+        <AttorneyTaskTimeline title="Attorney Task Timeline" appeal={appeal} />
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>&nbsp; (
         {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM}): {daysWorked}
         <br />
