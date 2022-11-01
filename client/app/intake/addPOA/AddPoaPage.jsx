@@ -94,7 +94,7 @@ export const AddPoaPage = () => {
   }, [intakeForms, formType, selectedForm]);
   const intakeStatus = getIntakeStatus(useSelector((state) => state));
 
-  const intakeIsCancelled = useMemo(() => formType, [formType]);
+  const intakeIsCancelled = useMemo(() => !formType, [formType]);
 
   // Redirect to page where data needs to be re-populated (e.g. from a page reload)
   if (intakeStatus === INTAKE_STATES.STARTED) {
