@@ -15,9 +15,8 @@ describe PollDocketedLegacyAppealsJob, type: :job do
     # rubocop:disable Style/BlockDelimiters
     let(:cases) {
       create_list(:case, 10) do |vacols_case, i|
-        bfmpro = (i == 2 || i == 5) ? "HIS" : "ACT"
         bfac = (i == 4) ? "4" : bfac_codes.sample
-        vacols_case.update!(bfkey: vacols_ids[i], bfmpro: bfmpro, bfac: bfac)
+        vacols_case.update!(bfkey: vacols_ids[i], bfac: bfac)
       end
     }
     let(:legacy_appeals) {
@@ -34,7 +33,7 @@ describe PollDocketedLegacyAppealsJob, type: :job do
     }
     let(:notification) {
       create(:notification,
-             appeals_id: "12348",
+             appeals_id: "12342",
              appeals_type: "LegacyAppeal",
              event_date: Time.zone.today,
              event_type: "Appeal docketed",
@@ -46,11 +45,17 @@ describe PollDocketedLegacyAppealsJob, type: :job do
       claim_histories_copy.slice!(2, 4)
       claim_histories_copy
     }
+
+    let(:recent_docketed_appeal_ids) { %w[12340 12342 12346 12348] }
+
+    let(:filtered_docketed_appeal_ids) { %w[12340 12346 12348] }
+
+    let(:query) {
+      "INNER JOIN priorloc
+      ON brieff.bfkey = priorloc.lockey WHERE brieff.bfac IN ('1','3','7')
+      AND locstto = '01' AND trunc(locdout) = trunc(sysdate)"
+    }
     # rubocop:enable Style/BlockDelimiters
-
-    let(:recent_docketed_appeal_ids) { %w[12340 12346 12348] }
-
-    let(:filtered_docketed_appeal_ids) { %w[12340 12346] }
 
     before(:each) do
       cases
@@ -59,15 +64,9 @@ describe PollDocketedLegacyAppealsJob, type: :job do
       notification
     end
 
-    it "should filter for all claim histories of cases that are in docketed status" do
-      expect(PollDocketedLegacyAppealsJob.new.claim_histories).to eq(filtered_claim_histories)
-    end
-
-    # rubocop:disable Layout/LineLength
     it "should filter for all cases that have been recently docketed" do
-      expect(PollDocketedLegacyAppealsJob.new.most_recent_docketed_appeals(filtered_claim_histories)).to eq(recent_docketed_appeal_ids)
+      expect(PollDocketedLegacyAppealsJob.new.most_recent_docketed_appeals(query)).to eq(recent_docketed_appeal_ids)
     end
-    # rubocop:enable Layout/LineLength
 
     it "should filter for all legacy appeals that havent already gotten a notification yet" do
       expect(PollDocketedLegacyAppealsJob.perform_now).to eq(filtered_docketed_appeal_ids)

@@ -36,7 +36,12 @@ class SendNotificationJob < CaseflowJob
       @va_notify_sms = FeatureToggle.enabled?(:va_notify_sms)
       message = JSON.parse(message_json, object_class: OpenStruct)
       if message.appeal_id && message.appeal_type && message.template_name
-        notification_audit_record = create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name, message.participant_id)
+        notification_audit_record = create_notification_audit_record(
+          message.appeal_id,
+          message.appeal_type,
+          message.template_name,
+          message.participant_id
+        )
         if notification_audit_record
           if message.status != "No participant_id" && message.status != "No claimant"
             to_update = {}
@@ -48,7 +53,7 @@ class SendNotificationJob < CaseflowJob
             end
             update_notification_audit_record(notification_audit_record, to_update)
             if message.template_name == "Appeal docketed" && message.appeal_type == "LegacyAppeal" && !FeatureToggle.enabled?(:appeal_docketed_notification)
-              nil
+              notification_audit_record.update!(email_enabled: false)
             else send_to_va_notify(message, notification_audit_record)
             end
           else
