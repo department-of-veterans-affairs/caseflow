@@ -21,7 +21,7 @@ describe('AddClaimantPage', () => {
   const defaults = { onSubmit, onBack };
   const setup = (
     storeValues,
-    history = createMemoryHistory({ initialEntries: [PAGE_PATHS.ADD_POWER_OF_ATTORNEY] }),
+    history = createMemoryHistory({ initialEntries: [PAGE_PATHS.ADD_CLAIMANT] }),
   ) => {
     const page = <AddClaimantPage {...defaults} />;
 
@@ -97,17 +97,33 @@ describe('AddClaimantPage', () => {
     }, 15000);
   });
 
-  it('redirects from to Intake homepage upon cancellation', async () => {
-    const storeValues = generateInitialState();
+  describe('Redirection to Intake home page', () => {
+    let storeValues;
 
-    storeValues.intake = {
-      ...storeValues.intake,
-      // Whenever formType is null, this means that the intake was cancelled
-      formType: null
-    };
+    beforeEach(() => {
+      storeValues = generateInitialState();
+    });
 
-    const { history } = setup(storeValues);
+    it('takes place whenever intake has been cancelled (formType === null)', async () => {
+      storeValues.intake = {
+        ...storeValues.intake,
+        formType: null
+      };
 
-    expect(await history.location.pathname).toBe('/');
+      const { history } = setup(storeValues);
+
+      expect(await history.location.pathname).toBe(PAGE_PATHS.BEGIN);
+    });
+
+    it('does not take place is there is a formType, indicating no cancellation', async () => {
+      storeValues.intake = {
+        ...storeValues.intake,
+        formType: 'appeal'
+      };
+
+      const { history } = setup(storeValues);
+
+      expect(await history.location.pathname).toBe(PAGE_PATHS.ADD_CLAIMANT);
+    });
   });
 });
