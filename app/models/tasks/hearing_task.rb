@@ -45,13 +45,14 @@ class HearingTask < Task
         create_evidence_or_ihp_task
       end
     end
+
+    super
+
     if appeal.tasks.open.where(type: HearingTask.name).empty?
       if appeal.is_a?(LegacyAppeal)
         update_legacy_appeal_location
       end
     end
-
-    super
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
