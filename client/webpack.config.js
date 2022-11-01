@@ -66,8 +66,8 @@ const config = {
             options: {
               plugins: [
                 devBuild &&
-                !testBuild &&
-                require.resolve('react-refresh/babel'),
+                  !testBuild &&
+                  require.resolve('react-refresh/babel'),
               ].filter(Boolean),
             },
           },
