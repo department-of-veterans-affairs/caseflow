@@ -13,7 +13,7 @@ global.scrollTo = jest.fn();
 
 // Spy to ignore console warnings
 jest.spyOn(console, 'warn').mockReturnValue();
-// jest.spyOn(console, 'log').mockReturnValue();
+jest.spyOn(console, 'log').mockReturnValue();
 jest.spyOn(console, 'error').mockReturnValue();
 
 // Mock the Date generated for all tests
