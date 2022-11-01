@@ -44,6 +44,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
   }, [intakeForms, formType, selectedForm]);
   const intakeStatus = getIntakeStatus(useSelector((state) => state));
 
+  // Redirect to Intake homepage if formType is null
   const intakeIsCancelled = useMemo(() => !formType, [formType]);
 
   // Redirect to Review page if review page data is not present (e.g. from a page reload)

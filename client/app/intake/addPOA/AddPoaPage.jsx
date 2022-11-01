@@ -94,6 +94,7 @@ export const AddPoaPage = () => {
   }, [intakeForms, formType, selectedForm]);
   const intakeStatus = getIntakeStatus(useSelector((state) => state));
 
+  // Redirect to Intake homepage if formType is null
   const intakeIsCancelled = useMemo(() => !formType, [formType]);
 
   // Redirect to page where data needs to be re-populated (e.g. from a page reload)
