@@ -275,6 +275,6 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :has_notifications do |object|
-    Notification.where("appeals_id = ? AND appeals_type = 'Appeal'", object.id.to_s).any?
+    Notification.where("appeals_id = ? AND appeals_type = 'Appeal'", object.uuid.to_s).any?
   end
 end

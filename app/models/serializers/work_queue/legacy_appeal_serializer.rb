@@ -97,7 +97,7 @@ class WorkQueue::LegacyAppealSerializer
   end
 
   attribute :has_notifications do |object|
-    Notification.where("appeals_id = ? AND appeals_type = 'LegacyAppeal'", object.id.to_s).any?
+    Notification.where("appeals_id = ? AND appeals_type = 'LegacyAppeal'", object.vacols_id.to_s).any?
   end
 
   def self.latest_vacols_attorney_case_review(object)

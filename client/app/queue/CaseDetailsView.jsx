@@ -99,7 +99,7 @@ export const CaseDetailsView = (props) => {
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
-  const [notificationCount, setNotificationCount] = useState(1);
+
   const updatePOALink =
     appeal.hasPOA ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
 
@@ -147,19 +147,6 @@ export const CaseDetailsView = (props) => {
       }
     );
 
-    // Purpose: Send a request call to the backend endpoint for notifications
-    const fetchNotifications = async () => {
-      const url = `/appeals/${appealId}/notifications`;
-  
-      const data = await ApiUtil.get(url).
-        then((response) => response.body).
-        catch((response) => console.error(response));
-  
-      return data;
-    };
-
-    
-
   useEffect(() => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
 
@@ -180,18 +167,6 @@ export const CaseDetailsView = (props) => {
       });
     }
   }, []);
-
-  const ShowNotificationsLink = () => {
-    fetchNotifications (
-
-    );
-
-  };
-// useEffect(async () => {
-//     const notifications = await fetchNotifications(appealId)
-//     setNotificationCount(notifications.length)
-//   }, []);
-  
 
   const doPulacCerulloReminder = useMemo(
     () => needsPulacCerulloAlert(appeal, tasks),
@@ -431,13 +406,13 @@ export const CaseDetailsView = (props) => {
             additionalHeaderContent={
               true && (
                 <span className="cf-push-right" {...anchorEditLinkStyling}>
-                  <Link to={`/queue/appeals/${appealId}/notifications`}>
+                  { appeal.hasNotifications && <Link to={`/queue/appeals/${appealId}/notifications`}>
                     {COPY.VIEW_NOTIFICATION_LINK}
                     &nbsp;
                     <span {...ICON_POSITION_FIX}>
                       <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
                     </span>
-                  </Link>
+                  </Link>}
                 </span>
               )
             }
