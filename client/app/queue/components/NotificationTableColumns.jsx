@@ -15,7 +15,7 @@ const eventTypeStyling = {fontWeight: 'bold'};
 export const eventTypeColumn = (notifications) => {
 
   const [modalState, setModalState] = useState(false);
-  console.log({notifications})
+  console.log({modalState})
 
   const openModal = () =>{
     setModalState(true);
@@ -38,7 +38,7 @@ export const eventTypeColumn = (notifications) => {
     valueFunction: (notification) => 
     <span>
       <Button onClick={openModal()}>{notification.event_type}</Button>
-      {/* {modalState ? <NotificationModal eventType={notification.event_type} notificationContent={notification.content} /> : <></>} */}
+      {modalState ? <NotificationModal eventType={notification.event_type} notificationContent={JSON.stringify(notification.content)} /> : <></>}
       </span>
     
     // <span style={eventTypeStyling}>{notification.event_type}</span>

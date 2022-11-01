@@ -9,7 +9,7 @@ const NotificationModal = ({eventType, notificationContent, closeNotificationMod
         <Modal 
         title={eventType} 
         confirmButton={
-            <Button classNames={['usa-button-primary']}>
+            <Button onClick={closeNotificationModal} classNames={['usa-button-primary']}>
                 Close
             </Button>
             }
