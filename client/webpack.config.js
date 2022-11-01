@@ -66,8 +66,8 @@ const config = {
             options: {
               plugins: [
                 devBuild &&
-                  !testBuild &&
-                  require.resolve('react-refresh/babel'),
+                !testBuild &&
+                require.resolve('react-refresh/babel'),
               ].filter(Boolean),
             },
           },
@@ -113,8 +113,7 @@ const config = {
 
 if (devBuild) {
   console.log('Webpack dev build for Rails'); // eslint-disable-line no-console
-  // config.devtool = 'eval-source-map';
-  config.devtool = 'cheap-module-source-map';
+  config.devtool = 'eval-source-map';
 } else {
   console.log('Webpack production build for Rails'); // eslint-disable-line no-console
   console.log('Generating source maps...'); // eslint-disable-line no-console
