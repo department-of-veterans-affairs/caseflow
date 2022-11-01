@@ -107,6 +107,7 @@ class Appeal < DecisionReview
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
   alias_attribute :nod_date, :receipt_date # LegacyAppeal parity
+  attr_accessor :duplicate_split_appeal, :original_split_appeal, :appeal_split_process
 
   # amoeba gem for splitting appeals
   amoeba do
@@ -125,7 +126,7 @@ class Appeal < DecisionReview
 
       # set appeal_split_process to turn off validation while the appeal
       # split is happening.
-      dup_appeal.&appeal_split_process(true)
+      dup_appeal.appeal_split_process = true
     })
 
     include_association :appeal_views
@@ -160,30 +161,6 @@ class Appeal < DecisionReview
         end
       end
     })
-  end
-
-  def appeal_split_process(value)
-    @appeal_split_process = value
-  end
-
-  def appeal_split_process?
-    @appeal_split_process
-  end
-
-  def original_split_appeal(value)
-    @original_split_appeal = value
-  end
-
-  def original_split_appeal?
-    @original_split_appeal
-  end
-
-  def duplicate_split_appeal?
-    @duplicate_split_appeal
-  end
-
-  def duplicate_split_appeal(value)
-    @duplicate_split_appeal = value
   end
 
   def hearing_day_if_schedueled
@@ -340,19 +317,17 @@ class Appeal < DecisionReview
     # if there are cavc_remand, clone them too (need user css id)
     self&.clone_cavc_remand(parent_appeal, user_css_id)
     # clones request_issues, decision_issues, and request_decision_issues
-    self&.clone_issues(parent_appeal)
-    # update the child task tree with parent, passing CSS ID of user for validation
-    self&.clone_task_tree(parent_appeal, user_css_id, split_issues)
+    self&.clone_issues(parent_appeal, split_issues)
     # if there is an AOD for the parent appeal, clone
     if !AdvanceOnDocketMotion.find_by(appeal_id: parent_appeal.id).nil?
       self&.clone_aod(parent_appeal)
     end
     # set split appeal process flag to false
-    appeal_split_process(false)
+    self.appeal_split_process = false
     # set the duplication split flag
-    duplicate_split_appeal(true)
+    self.duplicate_split_appeal = true
     # set the parent original split appeal flat
-    parent_appeal.original_split_appeal(true)
+    parent_appeal.original_split_appeal = true
   end
 
   # clones cavc_remand. Uses user_css_id that did the split to complete the remand split

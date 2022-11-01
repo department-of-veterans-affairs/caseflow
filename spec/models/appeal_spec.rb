@@ -1742,38 +1742,7 @@ describe Appeal, :all_dbs do
         end
       end
     end
-    context "when an appeal has claimants" do
-      it "should duplicate the appeals and claimants for the same veteran" do
-        original_appeal = create(
-          :appeal,
-          request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes"),
-          claimants: [create(:claimant)]
-        )
-        subject { claimant.advanced_on_docket_motion_granted?(original_appeal) }
-        AdvanceOnDocketMotion.create_or_update_by_appeal(original_appeal, granted: true, reason: "age")
-        expect(subject).to be_truthy
-        dup_appeal = original_appeal.amoeba_dup
-        dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
-        dup_claimant = dup_appeal.claimants.first
-        original_claimant = original_appeal.claimants.first
-        expect(dup_appeal.id).not_to eq(original_appeal.id)
-        expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
-        expect(dup_appeal.veteran_file_number).to eq(original_appeal.veteran_file_number)
-        expect(dup_appeal.request_issues.count).to eq(original_appeal.request_issues.count)
-        expect(dup_appeal.id).not_to eq(original_appeal.id)
-        expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
-        expect(dup_appeal.veteran_file_number).to eq(original_appeal.veteran_file_number)
-        expect(dup_appeal.request_issues.count).to eq(original_appeal.request_issues.count)
-        expect(dup_claimant.id).not_to eq(original_claimant.id)
-        expect(dup_claimant.decision_review_id).not_to eq(original_claimant.decision_review_id)
-        expect(dup_claimant.decision_review_type).to eq(original_claimant.decision_review_type)
-        expect(dup_claimant.notes).to eq(original_claimant.notes)
-        expect(dup_claimant.participant_id).to eq(original_claimant.participant_id)
-        expect(dup_claimant.payee_code).to eq(original_claimant.payee_code)
-        expect(dup_claimant.type).to eq(original_claimant.type)
-      end
-    end
+  
     context "when an appeal has with cavc remand" do
       it "should duplicate the appeals and with cavc remand for the same veteran" do
         original_appeal = create(
