@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
 import EVENT_TYPE_FILTERS from '../../../constants/EVENT_TYPE_FILTERS';
 import Button from '../../components/Button';
+import NotificationModal from './NotificationModal';
 
 // Purpose: These are all column objects for the notifications table
 // Params: notifications - The list of notifications
@@ -12,6 +13,17 @@ import Button from '../../components/Button';
 const eventTypeStyling = {fontWeight: 'bold'};
 
 export const eventTypeColumn = (notifications) => {
+
+  const [modalState, setModalState] = useState(false);
+  console.log({notifications})
+
+  const openModal = () =>{
+    setModalState(true);
+  }
+
+  const closeModal = () =>{
+    setModalState(false);
+  }
 
   return {
     header: COPY.NOTIFICATION_EVENT_TYPE_COLUMN_NAME,
@@ -23,7 +35,11 @@ export const eventTypeColumn = (notifications) => {
     anyFiltersAreSet: true,
     label: 'Filter by event type',
     valueName: 'Event',
-    valueFunction: (notification) => <span><Button classNames={['usa-button']}>{notification.event_type}</Button></span>
+    valueFunction: (notification) => 
+    <span>
+      <Button onClick={openModal()}>{notification.event_type}</Button>
+      {/* {modalState ? <NotificationModal eventType={notification.event_type} notificationContent={notification.content} /> : <></>} */}
+      </span>
     
     // <span style={eventTypeStyling}>{notification.event_type}</span>
 

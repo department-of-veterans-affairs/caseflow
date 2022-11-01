@@ -3,16 +3,17 @@ import Modal from '../../components/Modal'
 import Button from '../../components/Button'
 import PropTypes from 'prop-types'
 
-const NotificationModal = ({eventType, notificationContent}) => {
+const NotificationModal = ({eventType, notificationContent, closeNotificationModal}) => {
   return (
     <div>
         <Modal 
         title={eventType} 
-        cancelButton={
-            <Button classNames={['cf-btn-link']}>
+        confirmButton={
+            <Button classNames={['usa-button-primary']}>
                 Close
             </Button>
             }
+        closeHandler={closeNotificationModal}
         >
             {notificationContent}
         </Modal>
@@ -23,6 +24,7 @@ const NotificationModal = ({eventType, notificationContent}) => {
 NotificationModal.propTypes = {
     eventType: PropTypes.string,
     notificationContent: PropTypes.string,
+    closeNotificationModal: PropTypes.func,
 }
 
 export default NotificationModal
