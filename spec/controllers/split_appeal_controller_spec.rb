@@ -16,7 +16,10 @@ RSpec.describe SplitAppealController, type: :controller do
       let(:benefit_type1) { "compensation" }
       let(:request_issue3) { create(:request_issue, benefit_type: benefit_type2) }
       let(:benefit_type2) { "pension" }
-      let(:appeal) { create(:appeal, tasks: [root_task], request_issues: [request_issue, request_issue2, request_issue3]) }
+      let(:appeal) { create(
+        :appeal, tasks: [root_task],
+        request_issues: [request_issue, request_issue2, request_issue3]
+        ) }
       let(:valid_params) do
         {
           appeal_id: appeal.id,
@@ -75,7 +78,11 @@ RSpec.describe SplitAppealController, type: :controller do
       let(:benefit_type1) { "compensation" }
       let(:request_issue3) { create(:request_issue, benefit_type: benefit_type2) }
       let(:benefit_type2) { "pension" }
-      let(:appeal) { create(:appeal, tasks: [root_task], request_issues: [request_issue, request_issue2, request_issue3]) }
+      let(:appeal) { create(
+        :appeal,
+        tasks: [root_task],
+        request_issues: [request_issue, request_issue2, request_issue3]
+        ) }
       let(:valid_params) do
         {
           appeal_id: appeal.id,
