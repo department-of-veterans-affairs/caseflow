@@ -11,6 +11,19 @@ import {
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
 import ApiUtil from '../../util/ApiUtil';
 
+// Purpose: Send a request call to the backend endpoint for notifications
+  // Params: id - uuis or vacols id of an AMA appeal or Legacy Appeal
+  // Return: The fetched data from the endpoint
+  export const fetchNotifications = async (id) => {
+    const url = `/appeals/${id}/notifications`;
+
+    const data = await ApiUtil.get(url).
+      then((response) => response.body).
+      catch((response) => console.error(response));
+
+    return data;
+  };
+
 const NotificationTable = ({ appealId }) => {
 
   const [notificationList, setNotificationList] = useState([]);
@@ -19,9 +32,14 @@ const NotificationTable = ({ appealId }) => {
   // Params: notifications - The notification list recieved from get request call
   // Return: The generated table entries
   const generateTableEntries = (notifications) => {
+    let notificationsArr = notifications;
+
+    if (!notifications) {
+      notificationsArr = [];
+    }
     const tableNotifications = [];
 
-    for (let i = 0; i < notifications.length; i++) {
+    for (let i = 0; i < notificationsArr.length; i++) {
       const {
         email_notification_status,
         sms_notification_status,
@@ -63,19 +81,6 @@ const NotificationTable = ({ appealId }) => {
     }
 
     return tableNotifications;
-  };
-
-  // Purpose: Send a request call to the backend endpoint for notifications
-  // Params: id - uuis or vacols id of an AMA appeal or Legacy Appeal
-  // Return: The fetched data from the endpoint
-  const fetchNotifications = async (id) => {
-    const url = `/appeals/${id}/notifications`;
-
-    const data = await ApiUtil.get(url).
-      then((response) => response.body).
-      catch((response) => console.error(response));
-
-    return data;
   };
 
   // Purpose: It will update the notificationList state with the new entries that have been generated
