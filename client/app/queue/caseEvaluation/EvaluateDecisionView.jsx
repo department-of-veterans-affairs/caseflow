@@ -190,6 +190,7 @@ class EvaluateDecisionView extends React.PureComponent {
     const dateAssigned = moment(task.previousTaskAssignedOn);
     const decisionSubmitted = moment(task.assignedOn);
     const caseType = task.caseType;
+    const [show, setShow] = React.useState();
     const aod = task.aod;
     const cavc = caseType === 'Court Remand';
     const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
@@ -250,7 +251,10 @@ class EvaluateDecisionView extends React.PureComponent {
         <br />
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}</b>: {decisionSubmitted.format('M/D/YY')}
         <br />
-        <AttorneyTaskTimeline title="Attorney Task Timeline" appeal={appeal} />
+        {
+          show? <AttorneyTaskTimeline title="Attorney Task Timeline" />:null
+        } 
+        <button onClick={()=>setShow(true)}> appeal= {appeal} </button>
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>&nbsp; (
         {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM}): {daysWorked}
         <br />
