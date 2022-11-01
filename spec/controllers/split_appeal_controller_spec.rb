@@ -117,8 +117,6 @@ RSpec.describe SplitAppealController, type: :controller do
       end
     end
 
-    subject { post :split_appeal, params: invalid_params }
-
     context "with invalid parameters" do
       let(:benefit_type1) { "compensation" }
       let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
@@ -132,12 +130,10 @@ RSpec.describe SplitAppealController, type: :controller do
       end
 
       it "doesn't create the new split appeal" do
-        expect { subject }.to raise_error do |error|
-          expect(error).to be_a(ActiveRecord::Rollback)
-        end
-        binding.pry
+        post :split_appeal, params: invalid_params
         expect Appeal.count == 0
         expect(response).to have_http_status 404
+        expect(response.body).to eq("404 Not Found")
       end
     end
 

@@ -12,11 +12,11 @@ class SplitAppealController < ApplicationController
         split_other_reason = params[:split_other_reason]
         split_reason = params[:split_reason]
 
+        # Returns a 404 Not Found error if the appeal can not be found to be split
         begin 
           appeal = Appeal.find(appeal_id)
         rescue
-          render plain: "404 Not Found", status: 404
-          fail ActiveRecord::RecordNotFound
+          return render plain: "404 Not Found", status: 404
         end
 
         # set the appeal_split_process to true
@@ -106,9 +106,6 @@ class SplitAppealController < ApplicationController
           )
           split_request_issue.save!
         end
-        #else
-        #  fail ActiveRecord::Rollback
-        #end
       end
     end
   end
