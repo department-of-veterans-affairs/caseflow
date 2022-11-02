@@ -2276,6 +2276,47 @@ describe Appeal, :all_dbs do
         expect(original_decision_issue.rating_promulgation_date).to eq(dup_decision_issue.rating_promulgation_date)
         expect(original_decision_issue.subject_text).to eq(dup_decision_issue.subject_text)
       end
+      it "should only duplicate the request issues selected" do
+        original_appeal = create(
+          :appeal, #:with_decision_issue,
+          request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes"),
+          decision_issues: create_list(:decision_issue, 1)
+        )
+        create(
+          :request_decision_issue,
+          request_issue: original_appeal.request_issues.first,
+          decision_issue: original_appeal.decision_issues.first
+        )
+        selected_request_issues = [original_appeal.request_issues.first.id.to_s]
+        dup_appeal = original_appeal.amoeba_dup
+        dup_appeal.save
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", selected_request_issues)
+        original_decision_issue = original_appeal.decision_issues.first
+        dup_decision_issue = dup_appeal.decision_issues.first
+
+        expect(dup_appeal.id).not_to eq(original_appeal.id)
+        expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
+        expect(dup_appeal.request_issues.count).not_to eq(original_appeal.request_issues.count)
+        expect(dup_appeal.request_issues.count).to eq(1)
+        expect(dup_appeal.veteran_file_number).to eq(original_appeal.veteran_file_number)
+        expect(dup_appeal.decision_issues.count).to eq(original_appeal.decision_issues.count)
+        expect(original_decision_issue.id).not_to eq(dup_decision_issue.id)
+        expect(original_decision_issue.decision_review_id).not_to eq(dup_decision_issue.decision_review_id)
+        expect(original_decision_issue.benefit_type).to eq(dup_decision_issue.benefit_type)
+        expect(original_decision_issue.decision_review_type).to eq(dup_decision_issue.decision_review_type)
+        expect(original_decision_issue.decision_text).to eq(dup_decision_issue.decision_text)
+        expect(original_decision_issue.deleted_at).to eq(dup_decision_issue.deleted_at)
+        expect(original_decision_issue.description).to eq(dup_decision_issue.description)
+        expect(original_decision_issue.diagnostic_code).to eq(dup_decision_issue.diagnostic_code)
+        expect(original_decision_issue.end_product_last_action_date)
+          .to eq(dup_decision_issue.end_product_last_action_date)
+        expect(original_decision_issue.participant_id).to eq(dup_decision_issue.participant_id)
+        expect(original_decision_issue.percent_number).to eq(dup_decision_issue.percent_number)
+        expect(original_decision_issue.rating_issue_reference_id).to eq(dup_decision_issue.rating_issue_reference_id)
+        expect(original_decision_issue.rating_profile_date).to eq(dup_decision_issue.rating_profile_date)
+        expect(original_decision_issue.rating_promulgation_date).to eq(dup_decision_issue.rating_promulgation_date)
+        expect(original_decision_issue.subject_text).to eq(dup_decision_issue.subject_text)
+      end
     end
   end
 end
