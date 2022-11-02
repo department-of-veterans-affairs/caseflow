@@ -62,6 +62,7 @@ import { NotificationView } from './NotificationsView';
 import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
 
 
+
 // TODO: Pull this horizontal rule styling out somewhere.
 
 const ICON_POSITION_FIX = css({ position: 'relative', top: 3 });
@@ -406,7 +407,7 @@ export const CaseDetailsView = (props) => {
             additionalHeaderContent={
               true && (
                 <span className="cf-push-right" {...anchorEditLinkStyling}>
-                  { appeal.hasNotifications && <Link to={`/queue/appeals/${appealId}/notifications`}>
+                  { appeal.hasNotifications && <Link href={`/queue/appeals/${appealId}/notifications`} target="_blank">
                     {COPY.VIEW_NOTIFICATION_LINK}
                     &nbsp;
                     <span {...ICON_POSITION_FIX}>
