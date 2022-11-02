@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_25_164533) do
+ActiveRecord::Schema.define(version: 2022_10_25_184724) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1128,7 +1128,7 @@ ActiveRecord::Schema.define(version: 2022_10_25_164533) do
     t.string "participant_id", comment: "ID of Participant"
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
-    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
+    t.string "sms_notification_external_id"
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
@@ -1621,11 +1621,13 @@ ActiveRecord::Schema.define(version: 2022_10_25_164533) do
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
-    t.bigint "appeal_id", null: false, comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
-    t.string "appeal_type", null: false, comment: "'Appeal' or 'LegacyAppeal'"
+    t.bigint "appeal_id"
+    t.string "appeal_type"
     t.datetime "attempted_at"
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.datetime "created_at", null: false
+    t.string "document_name"
+    t.string "document_subject"
     t.string "document_type", null: false
     t.string "error"
     t.datetime "last_submitted_at"
@@ -1633,9 +1635,9 @@ ActiveRecord::Schema.define(version: 2022_10_25_164533) do
     t.datetime "submitted_at"
     t.datetime "updated_at", null: false
     t.datetime "uploaded_to_vbms_at"
-    t.index ["appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_id"
-    t.index ["appeal_type", "appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_type_and_appeal_id"
+    t.string "veteran_file_number"
     t.index ["updated_at"], name: "index_vbms_uploaded_documents_on_updated_at"
+    t.index ["veteran_file_number"], name: "index_vbms_uploaded_documents_on_veteran_file_number"
   end
 
   create_table "versions", id: :serial, force: :cascade do |t|
