@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
-import { COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
 import EVENT_TYPE_FILTERS from '../../../constants/EVENT_TYPE_FILTERS';
-import Button from '../../components/Button';
 import NotificationModal from './NotificationModal';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
@@ -16,7 +14,6 @@ const eventTypeStyling = {fontWeight: 'bold'};
 export const eventTypeColumn = (notifications) => {
 
   const [modalState, setModalState] = useState(false);
-  console.log({modalState})
 
   const openModal = () =>{
     setModalState(true);
@@ -36,14 +33,15 @@ export const eventTypeColumn = (notifications) => {
     anyFiltersAreSet: true,
     label: 'Filter by event type',
     valueName: 'Event',
-    valueFunction: (notification) => 
-    <span>
-      <Link onClick={openModal}>{notification.event_type}</Link>
-      {modalState ? <NotificationModal eventType={notification.event_type} notificationContent={notification.content} closeNotificationModal={closeModal} /> : <></>}
+    valueFunction: (notification) =>
+      <span>
+        <span style={eventTypeStyling}>
+          <Link onClick={openModal}>{notification.event_type}</Link>
+        </span>
+        {modalState && (
+          <NotificationModal eventType={notification.event_type} notificationContent={notification.content} closeNotificationModal={closeModal} />
+        )}
       </span>
-    
-    // <span style={eventTypeStyling}>{notification.event_type}</span>
-
   };
 };
 
