@@ -47,7 +47,7 @@ class HearingTask < Task
       # super call must happen after AMA check to hold distribution,
       # but before the Legacy check to prevent premature location update.
       super
-  
+
       if appeal.tasks.open.where(type: HearingTask.name).empty? && appeal.is_a?(LegacyAppeal)
         update_legacy_appeal_location
       end
@@ -56,12 +56,12 @@ class HearingTask < Task
         if appeal.is_a?(Appeal)
           create_evidence_or_ihp_task
         end
-  
+
         if appeal.is_a?(LegacyAppeal)
           update_legacy_appeal_location
         end
       end
-  
+
       super
     end
   end
