@@ -7,7 +7,6 @@ import { getAllTasksForAppeal } from './selectors';
 
 export const AttorneyTaskTimeline = ({ appeal }) => {
   const tasks = useSelector((state) => getAllTasksForAppeal(state, { appealId: appeal.externalId }));
-  const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);
 
   return (
     <React.Fragment>

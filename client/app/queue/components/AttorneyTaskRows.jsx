@@ -28,11 +28,11 @@ export const grayLineStyling = css({
   margin: 'auto',
   position: 'absolute',
   top: '0px',
-  left: '5.5%',
+  left: '45.5%',
   bottom: 0
 });
 
-const grayLineContainer = css({
+export const grayLineContainer = css({
   textAlign: 'center',
   border: 'none',
   padding: '0 0 0 0',
@@ -44,10 +44,13 @@ const grayLineContainer = css({
 export const attorneyTaskContainer = css({
   border: 'none',
   verticalAlign: 'top',
-  padding: '3px',
-  paddingBottom: '3rem',
-  marginLeft: '5px',
-  width: '95%'
+  paddingBottom: '1rem',
+  width: '85%'
+});
+
+export const attorneyTaskTimelineContainer = css({
+  border: 'none',
+  paddingLeft: '25px'
 });
 
 class AttorneyTaskRows extends React.PureComponent {
@@ -86,13 +89,14 @@ class AttorneyTaskRows extends React.PureComponent {
   taskTemplate = (templateConfig) => {
     const {
       task,
-      sortedTimelineEvents,
-      index,
       timeline,
     } = templateConfig;
 
     return (
       <tr key={task.uniqueId}>
+        <td {...attorneyTaskTimelineContainer}>
+          <div></div>
+        </td>
         <td {...grayLineContainer}>
           <div {...grayLineStyling} />
         </td>
@@ -115,7 +119,6 @@ class AttorneyTaskRows extends React.PureComponent {
 
   timelineComponent = (componentProps) => {
     const componentMap = {
-  //    decisionDate: DecisionDateTimeLine,
       nodDateUpdate: NodDateUpdateTimeline,
       substitutionDate: SubstituteAppellantTimelineEvent,
       substitutionProcessed: SubstitutionProcessedTimelineEvent
@@ -159,6 +162,15 @@ class AttorneyTaskRows extends React.PureComponent {
 
           return this.taskTemplate(templateConfig);
         })}
+        <tr {...attorneyTaskTimelineContainer} >
+          <td {...attorneyTaskTimelineContainer}></td>
+          <td {...grayLineContainer}>
+            <div {...grayLineStyling} />
+          </td>
+          <td {...attorneyTaskContainer}>
+            <button>Hide Timeline</button>
+          </td>
+        </tr>
       </React.Fragment>
     );
   };
