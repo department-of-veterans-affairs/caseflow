@@ -260,6 +260,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     organizations.any?
   end
 
+  def vha_staff_member?
+    member_of_organization?(BusinessLine.find_by(url: "vha"))
+  end
+
   def granted?(thing)
     Functions.granted?(thing, css_id)
   end
