@@ -38,6 +38,30 @@ class HearingTask < Task
   end
 
   def when_child_task_completed(child_task)
+    if FeatureToggle.enabled?(:appeals_10769_test)
+      when_child_task_completed_appeals10769(child_task)
+    else
+      when_child_task_completed_original(child_task)
+    end
+  end
+
+  def when_child_task_completed_original(child_task)
+    # do not move forward to change location or create ihp if there are
+    # other open hearing tasks
+    if appeal.tasks.open.where(type: HearingTask.name).where.not(id: id).empty?
+      if appeal.is_a?(Appeal)
+        create_evidence_or_ihp_task
+      end
+
+      if appeal.is_a?(LegacyAppeal)
+        update_legacy_appeal_location
+      end
+    end
+
+    super
+  end
+
+  def when_child_task_completed_appeals10769(child_task)
     # do not move forward to change location or create ihp if there are
     # other open hearing tasks
     if appeal.tasks.open.where(type: HearingTask.name).where.not(id: id).empty? && appeal.is_a?(Appeal)
@@ -45,8 +69,8 @@ class HearingTask < Task
     end
     # super call must happen after AMA check to hold distribution,
     # but before the Legacy check to prevent premature location update.
-    super
-  
+    super.when_child_task_completed(child_task)
+
     if appeal.tasks.open.where(type: HearingTask.name).empty? && appeal.is_a?(LegacyAppeal)
       update_legacy_appeal_location
     end
