@@ -8,7 +8,8 @@ class SplitAppealController < ApplicationController
       # create transaction for split appeal validation
       Appeal.transaction do
         appeal_id = params[:appeal_id]
-        split_issues = params[:appeal_split_issues].keys
+        # remove any issues selected that are false (i.e not checked by user)
+        split_issues = params[:appeal_split_issues].keep_if { |_, value| value }.keys
         split_other_reason = params[:split_other_reason]
         split_reason = params[:split_reason]
 
