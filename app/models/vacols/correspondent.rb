@@ -31,7 +31,7 @@ class VACOLS::Correspondent < VACOLS::Record
         Rails.logger.info("Veteran deceased indicator is false or null")
         update_type = :missing_deceased_info
       end
-      if veteran[:deceased_time].nil?
+      if veteran[:deceased_time].nil? || veteran[:deceased_time] == ""
         Rails.logger.info("No deceased time was provided")
         update_type = :missing_deceased_info
       end
