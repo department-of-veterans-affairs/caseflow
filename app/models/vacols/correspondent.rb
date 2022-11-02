@@ -49,7 +49,7 @@ class VACOLS::Correspondent < VACOLS::Record
   end
 
   # Take in a collection and return a csv friendly format
-  def self.to_csv(input)
+  def self.as_csv(input)
     CSV.generate do |csv|
         csv << %w[
           VET_LAST_NAME 
@@ -72,7 +72,7 @@ class VACOLS::Correspondent < VACOLS::Record
           APPELLANT_VACOLS_INTERNAL_ID
           RELATIONSHIP_TO_VETERAN
         ]
-        input.find_each do |record|
+        input.each do |record|
           csv << record.values
         end
       end

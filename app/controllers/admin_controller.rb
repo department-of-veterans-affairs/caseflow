@@ -5,7 +5,6 @@ class AdminController < ApplicationController
 
   def index
     render "admin/index"
-    
   end
 
   # Verifies user is admin and that feature toggle is enabled before showing admin page
@@ -23,14 +22,14 @@ class AdminController < ApplicationController
     if results.empty?
       return true
     else
+      formated_data = VACOLS::Correspondent.as_csv(results)
       respond_to do |format|
+        byebug
+        format.html
         format.csv do
-          response.headers['Content-Type'] = 'text/csv'
-          send_data VACOLS::Correspondent.to_csv(results), filename: Date.today.to_s
+          send_data formated_data, filename: Date.today.to_s, content_type: 'text/csv'
         end
       end
-
-      # return results
     end
     
 
