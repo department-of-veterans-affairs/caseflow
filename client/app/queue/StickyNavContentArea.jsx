@@ -121,7 +121,7 @@ export const anchorJumpLinkStyling = css({
 });
 
 const ContentSection = ({ element }) => <React.Fragment>
-  <h2 {...sectionHeadingStyling} >
+  <h2 {...sectionHeadingStyling}>
     <a id={`${getIdForElement(element)}`} {...anchorJumpLinkStyling}>{element.props.title}</a>
     {element.props.additionalHeaderContent && element.props.additionalHeaderContent}
   </h2>

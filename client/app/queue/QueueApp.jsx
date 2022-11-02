@@ -694,7 +694,6 @@ class QueueApp extends React.PureComponent {
               title="Case Details | Caseflow"
               render={this.routedQueueDetailWithLoadingScreen}
             />
-
             <PageRoute
               path={[
                 '/queue/appeals/:appealId/tasks/:taskId/modal/:modalType',
