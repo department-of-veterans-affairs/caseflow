@@ -441,6 +441,23 @@ describe User, :all_dbs do
     end
   end
 
+  context ".vha_staff_member?" do
+    let(:vha_business_line) { create(:business_line, url: "vha") }
+    let(:user) { create(:user) }
+
+    subject { user.vha_staff_member? }
+
+    context "whenever user is a member of the VHA business line" do
+      before { vha_business_line.add_user(user) }
+
+      it { is_expected.to be true }
+    end
+
+    context "whenever user is not a member of the VHA business line" do
+      it { is_expected.to be false }
+    end
+  end
+
   context "#when BGS data is setup" do
     let(:participant_id) { "123456" }
     let(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID }
