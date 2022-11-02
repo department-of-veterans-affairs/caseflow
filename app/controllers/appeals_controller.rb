@@ -314,9 +314,9 @@ class AppealsController < ApplicationController
     # Retrieve notifications based on appeals_id, excluding statuses of 'No participant_id' & 'No claimant'
     @all_notifications = Notification.where(appeals_id: appeals_id)
     @allowed_notifications = @all_notifications.where(email_notification_status: nil)
-      .or(@all_notifications.where.not(email_notification_status: ["No participant_id", "No claimant"]))
+      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found"]))
       .merge(@all_notifications.where(sms_notification_status: nil)
-      .or(@all_notifications.where.not(sms_notification_status: ["No participant_id", "No claimant"])))
+      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found"])))
 
     # If no notifications were found, return an empty array, else return serialized notifications
     if @allowed_notifications == []
