@@ -262,7 +262,7 @@ module Seeds
       vet = create_veteran(first_name: Faker::Name.first_name, last_name: Faker::Name.last_name)
 
       notes = "Pain disorder with 100\% evaluation per examination"
-      notes += ". Created with the initial_tasks factory trait and moved thru"
+      notes += ". Created with the inital_tasks factory trait and moved thru"
 
       appeal = create(
         :appeal,
