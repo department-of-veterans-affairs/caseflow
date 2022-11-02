@@ -2,6 +2,7 @@ import React from 'react'
 import Modal from '../../components/Modal'
 import Button from '../../components/Button'
 import PropTypes from 'prop-types'
+import COPY from '../../../COPY';
 
 const NotificationModal = ({eventType, notificationContent, closeNotificationModal}) => {
   return (
@@ -15,7 +16,9 @@ const NotificationModal = ({eventType, notificationContent, closeNotificationMod
             }
         closeHandler={closeNotificationModal}
         >
-            {notificationContent}
+            <span>{COPY.NOTIFICATION_CONTENT_MESSAGE}</span>
+            <br/><br/>
+            <span>"{notificationContent}"</span>
         </Modal>
     </div>
   )
