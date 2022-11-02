@@ -58,7 +58,7 @@ class HearingTask < Task
       end
     end
 
-    super
+    super.when_child_task_completed(child_task)
   end
 
   def when_child_task_completed_appeals10769(child_task)
