@@ -32,7 +32,6 @@ class AsyncableJobsPage extends React.PureComponent {
       veteranFileNumber: null,
       isFetchingSearchResults: false,
       klassFilterRemoved: false,
-      jobTypeFilter: null,
       currentTab: JOBS_TAB,
     };
   }
@@ -76,23 +75,9 @@ class AsyncableJobsPage extends React.PureComponent {
         });
       });
   }
-
-  filterOnChange = (jobType) => {
-    this.setState({ jobTypeFilter: jobType });
-  }
-
+  
   tabChange = (tab) => {
     this.setState({ currentTab: tab });
-  }
-
-  rowObjects = () => {
-    const rowObjects = this.state.jobs;
-
-    if (this.state.jobTypeFilter) {
-      return rowObjects.filter((job) => job.klass === this.state.jobTypeFilter);
-    }
-
-    return rowObjects;
   }
 
   jobsColumns = [
@@ -173,20 +158,20 @@ class AsyncableJobsPage extends React.PureComponent {
 
     return (
       <Button classNames={tabClasses} onClick={() => this.tabChange(tab)}>
-        {!this.state.klassFilterRemoved && this.props.asyncableJobKlass} {tabName}
+        {tabName}
       </Button>
     );
   }
 
   renderTabs = () => {
     return (<div className="job-tabs-header">
-      {this.getTab(JOBS_TAB, 'Jobs')}
+      {this.getTab(JOBS_TAB, `${!this.state.klassFilterRemoved && this.props.asyncableJobKlass} Jobs`)}
       {this.props.supportedJobs && this.getTab(SCHEDULED_JOBS_TAB, 'Scheduled Jobs')}
     </div>);
   }
 
   renderJobsTab = () => {
-    const rowObjects = this.rowObjects();
+    const rowObjects = this.state.jobs;
 
     const rowClassNames = (rowObject) => {
       return rowObject.restarted ? 'cf-success' : '';
@@ -208,11 +193,7 @@ class AsyncableJobsPage extends React.PureComponent {
       <AsyncModelNav
         models={this.props.models}
         fetchedAt={this.props.fetchedAt}
-        asyncableJobKlass={this.props.asyncableJobKlass}
-        filterOnChange={this.filterOnChange}
-        currentFilter={this.state.jobTypeFilter}
-      />
-      <br />
+        asyncableJobKlass={this.props.asyncableJobKlass} />
       <SearchBar
         style={{ marginTop: '0.5em' }}
         title={(<strong>Search by Veteran file number:</strong>)}
