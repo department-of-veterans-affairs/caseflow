@@ -117,7 +117,7 @@ export default class DropdownButton extends React.Component {
         id="dropdown-button"
         aria-label={label || 'dropdown-button'}
         aria-haspopup="true"
-        aria-expanded="true"
+        aria-expanded="false"
         onClick={this.onMenuClick}
         className="cf-dropdown-trigger usa-button usa-button-secondary">
         {label}
