@@ -6,17 +6,7 @@ import PropTypes from 'prop-types';
 import { COLORS } from '../../constants/AppConstants';
 import Button from '../../components/Button';
 import COPY from '../../../COPY';
-import { CancelIcon } from '../../components/icons/CancelIcon';
-import { GrayDotIcon } from '../../components/icons/GrayDotIcon';
-import { GreenCheckmarkIcon } from '../../components/icons/GreenCheckmarkIcon';
-import { taskIsOnHold, sortCaseTimelineEvents, timelineEventsFromAppeal } from '../utils';
-import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
-import ActionsDropdown from '../components/ActionsDropdown';
-import OnHoldLabel from '../components/OnHoldLabel';
-import TASK_STATUSES from '../../../constants/TASK_STATUSES';
-import DecisionDateTimeLine from '../components/DecisionDateTimeLine';
-import ReactMarkdown from 'react-markdown';
-import { EditNodDateModalContainer } from './EditNodDateModal';
+import { sortCaseTimelineEvents, timelineEventsFromAppeal } from '../utils';
 import { NodDateUpdateTimeline } from './NodDateUpdateTimeline';
 import { SubstituteAppellantTimelineEvent } from '../substituteAppellant/timelineEvent/SubstituteAppellantTimelineEvent'; // eslint-disable-line max-len
 import { SubstitutionProcessedTimelineEvent } from '../substituteAppellant/timelineEvent/SubstitutionProcessedTimelineEvent'; // eslint-disable-line max-len
@@ -79,7 +69,7 @@ class AttorneyTaskRows extends React.PureComponent {
     if (task) {
       const today = moment().startOf('day');
       const dateAssigned = moment(task.assignedOn).format('MM/DD/YYYY');
-      const dateClosed = moment(task.closedAt).format('MM/DD/YYYY');
+      const dateClosed = task.closedAt ? moment(task.closedAt).format('MM/DD/YYYY') : ''
       const taskDateFormat = ' (' + dateAssigned + ' - ' + dateClosed + ')';
 
       return (

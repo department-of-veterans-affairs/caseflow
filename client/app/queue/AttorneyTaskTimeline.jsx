@@ -8,7 +8,8 @@ import { css } from 'glamor';
 
 export const AttorneyTaskTimeline = ({ appeal }) => {
   const tasks = useSelector((state) => getAllTasksForAppeal(state, { appealId: appeal.externalId }));
-  const TimelineStyling = css({ margin: '1rem 0'})
+  const TimelineStyling = css({ margin: '1rem 0' });
+
   return (
     <React.Fragment>
       <table {...TimelineStyling} id="attorney-task-timeline-table" summary="attorney timeline table">
