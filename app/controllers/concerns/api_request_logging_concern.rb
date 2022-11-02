@@ -8,7 +8,7 @@ module ApiRequestLoggingConcern
   end
 
   def log_api_request
-    log = "request_id: " + request.uuid + "\n" \
+    log = "request_id: " + request.uuid.to_s + "\n" \
           "endpoint: " + request.fullpath.to_s + "\n" \
           "payload: " + params.to_s + "\n" \
           "method: " + request.method.to_s + "\n" \
