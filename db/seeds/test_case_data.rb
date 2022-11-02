@@ -2,11 +2,35 @@
 
 module Seeds
   class TestCaseData < Base
+    def initialize
+      initial_id_values
+    end
+
     def seed!
       create_limbo_appeals
     end
 
     private
+
+    def initial_id_values
+      @file_number ||= 400_000_000
+      @participant_id ||= 800_000_000
+      while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1)) ||
+            VACOLS::Correspondent.find_by(ssn: format("%<n>09d", n: @file_number + 1))
+        @file_number += 2000
+        @participant_id += 2000
+      end
+    end
+
+    def create_veteran(options = {})
+      @file_number += 1
+      @participant_id += 1
+      params = {
+        file_number: format("%<n>09d", n: @file_number),
+        participant_id: format("%<n>09d", n: @participant_id)
+      }
+      create(:veteran, params.merge(options))
+    end
 
     def create_limbo_appeals
       5.times do
@@ -23,7 +47,7 @@ module Seeds
                       :direct_review_docket,
                       :ready_for_distribution,
                       :type_cavc_remand,
-                      veteran: create(:veteran, first_name: "TestAppeal", last_name: "NoPerson"))
+                      veteran: create_veteran(first_name: "TestAppeal", last_name: "NoPerson"))
       appeal.claimants.first.person.delete
     end
 
@@ -31,7 +55,7 @@ module Seeds
       appeal = create(:appeal,
                       :direct_review_docket,
                       :ready_for_distribution,
-                      veteran: create(:veteran, first_name: "TestAppeal", last_name: "NoPerson"))
+                      veteran: create_veteran(first_name: "TestAppeal", last_name: "NoPerson"))
       appeal.claimants.first.person.delete
     end
 
@@ -41,7 +65,7 @@ module Seeds
       appeal = create(:appeal,
                       :direct_review_docket,
                       :ready_for_distribution,
-                      veteran: create(:veteran, first_name: "TestAppeal", last_name: "NullDateOfBirth"))
+                      veteran: create_veteran(first_name: "TestAppeal", last_name: "NullDateOfBirth"))
       person = appeal.claimants.first.person
       person.date_of_birth = nil
       person.save!
