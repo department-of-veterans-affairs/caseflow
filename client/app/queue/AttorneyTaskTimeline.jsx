@@ -5,7 +5,6 @@ import AttorneyTaskRows from './components/AttorneyTaskRows';
 import { getAllTasksForAppeal } from './selectors';
 import { css } from 'glamor';
 
-
 export const AttorneyTaskTimeline = ({ appeal }) => {
   const tasks = useSelector((state) => getAllTasksForAppeal(state, { appealId: appeal.externalId }));
   const TimelineStyling = css({ margin: '1rem 0' });

@@ -11,7 +11,6 @@ import { NodDateUpdateTimeline } from './NodDateUpdateTimeline';
 import { SubstituteAppellantTimelineEvent } from '../substituteAppellant/timelineEvent/SubstituteAppellantTimelineEvent'; // eslint-disable-line max-len
 import { SubstitutionProcessedTimelineEvent } from '../substituteAppellant/timelineEvent/SubstitutionProcessedTimelineEvent'; // eslint-disable-line max-len
 
-
 export const grayLineStyling = css({
   width: '5px',
   background: COLORS.GREY_DARK,
@@ -67,10 +66,9 @@ class AttorneyTaskRows extends React.PureComponent {
 
   datesTaskWorked = (task) => {
     if (task) {
-      const today = moment().startOf('day');
       const dateAssigned = moment(task.assignedOn).format('MM/DD/YYYY');
-      const dateClosed = task.closedAt ? moment(task.closedAt).format('MM/DD/YYYY') : ''
-      const taskDateFormat = ' (' + dateAssigned + ' - ' + dateClosed + ')';
+      const dateClosed = task.closedAt ? moment(task.closedAt).format('MM/DD/YYYY') : '';
+      const taskDateFormat = ` (${dateAssigned} - ${dateClosed})`;
 
       return (
         <React.Fragment>
