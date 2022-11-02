@@ -63,6 +63,18 @@ class AttorneyTaskRows extends React.PureComponent {
     };
   }
 
+  toggleTimelineVisibility = (appeal) => {
+    const previousState = Object.assign(
+      {},
+      this.state.timelineIsVisible
+    );
+
+    previousState[appeal.uniqueId] = previousState[appeal.uniqueId] ?
+      !previousState[appeal.uniqueId] :
+      true;
+    this.setState({ timelineIsVisible: previousState });
+  };
+
   datesTaskWorked = (task) => {
     if (task) {
       const today = moment().startOf('day');
@@ -141,7 +153,7 @@ class AttorneyTaskRows extends React.PureComponent {
 
     return (
       <React.Fragment key={appeal.externalId}>
-        {sortedTimelineEvents.map((timelineEvent, index) => {
+        {this.state.timelineIsVisible[appeal.uniqueId] && sortedTimelineEvents.map((timelineEvent, index) => {
           if (timeline && this.timelineOnly(timelineEvent.type)) {
             return this.timelineComponent({
               timelineEvent,
@@ -168,7 +180,17 @@ class AttorneyTaskRows extends React.PureComponent {
             <div {...grayLineStyling} />
           </td>
           <td {...attorneyTaskContainer}>
-            <button>Hide Timeline</button>
+            <Button
+              linkStyling
+              styling={css({ padding: '0' })}
+              id={appeal.uniqueId}
+              name={
+                this.state.timelineIsVisible[appeal.uniqueId] ?
+                  COPY.TASK_SNAPSHOT_HIDE_TIMELINE_LABEL :
+                  COPY.TASK_SNAPSHOT_VIEW_TIMELINE_LABEL
+              }
+              onClick={() => this.toggleTimelineVisibility(appeal)}
+            />
           </td>
         </tr>
       </React.Fragment>
