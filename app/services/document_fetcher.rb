@@ -59,9 +59,8 @@ class DocumentFetcher
     # from the latest version of the document (i.e., the latest id having the same series_id) in Caseflow.
     # The created document then becomes the latest version among the documents with the same series_id.
     series_id_docs = Document.where(vbms_document_id: docs_to_create.select(&:series_id).pluck(:vbms_document_id))
-    copy_metadata_from_document(series_id_docs, vbms_doc_ver_ids)
+    copy_metadata_from_document(series_id_docs, vbms_doc_ver_ids) 
     created_docs = retrieve_created_docs_including_nondb_attributes(docs_to_create)
-
     updated_docs + created_docs
   end
 
@@ -75,11 +74,14 @@ class DocumentFetcher
     series_id_hash = Document.includes(:annotations, :tags)
       .where(series_id: created_docs_with_series_id.pluck(:series_id))
       .where.not(vbms_document_id: vbms_doc_ver_ids).group_by(&:series_id)
-    created_docs_with_series_id.map do |document|
-      # update the DB for each doc individually; this could be optimized if needed
+
+    document_structs = created_docs_with_series_id.map do |document|
       previous_documents = series_id_hash[document.series_id]&.sort_by(&:id)
-      document.copy_metadata_from_document(previous_documents.last) if previous_documents.present?
+      document.prepare_metadata_from_document(previous_documents.last) if previous_documents.present?
+      document
     end
+
+    Document.bulk_merge_and_save(document_structs)
   end
 
   def retrieve_created_docs_including_nondb_attributes(docs_to_create)

@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 describe DocumentFetcher, :postgres do
   let(:appeal) { Generators::LegacyAppeal.build }
   let(:document_fetcher) { DocumentFetcher.new(appeal: appeal, use_efolder: true) }
@@ -331,17 +330,17 @@ describe DocumentFetcher, :postgres do
           # Uncomment the following to see a count of SQL queries
           # pp query_data.values.pluck(:sql, :count)
           doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
-          expect(doc_insert_queries.pluck(:count).max).to eq 1
+          expect(doc_insert_queries.pluck(:count).max).to eq 2
 
           # When metadata exists for a previous version of a document, queries remain inefficient
           annotns_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"annotations\"") }
-          expect(annotns_insert_queries.pluck(:count).max).to eq older_documents_with_metadata.count
+          expect(annotns_insert_queries.pluck(:count).max).to eq 1
 
           doctags_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents_tags") }
-          expect(doctags_insert_queries.pluck(:count).max).to eq older_documents_with_metadata.count
+          expect(doctags_insert_queries.pluck(:count).max).to eq 1
 
           doc_update_queries = query_data.values.select { |o| o[:sql].start_with?("UPDATE \"documents\"") }
-          expect(doc_update_queries.pluck(:count).max).to eq older_documents_with_metadata.count
+          expect(doc_update_queries.pluck(:count).max).to eq nil
         end
 
         context "when there are duplicate documents returned from document_service" do
@@ -371,11 +370,12 @@ describe DocumentFetcher, :postgres do
               document_fetcher.find_or_create_documents!
             end
 
+            # Uncomment the following to see a count of SQL queries
             # pp query_data.values.pluck(:sql, :count)
             doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
-            expect(doc_insert_queries.pluck(:count).max).to eq 1
+            expect(doc_insert_queries.pluck(:count).max).to eq 2
             expect(query_data.values.select { |o| o[:sql].start_with?("UPDATE \"documents\"") }.pluck(:count).max)
-              .to eq(older_documents_with_metadata.count)
+              .to eq(nil)
           end
         end
       end
