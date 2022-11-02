@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import COPY from '../../../COPY';
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
 import EVENT_TYPE_FILTERS from '../../../constants/EVENT_TYPE_FILTERS';
@@ -11,17 +11,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 // Styling for the event type column values
 const eventTypeStyling = {fontWeight: 'bold'};
 
-export const eventTypeColumn = (notifications) => {
-
-  const [modalState, setModalState] = useState(false);
-
-  const openModal = () =>{
-    setModalState(true);
-  }
-
-  const closeModal = () =>{
-    setModalState(false);
-  }
+export const eventTypeColumn = (notifications, modalState, openModal, closeModal) => {
 
   return {
     header: COPY.NOTIFICATION_EVENT_TYPE_COLUMN_NAME,
@@ -38,9 +28,11 @@ export const eventTypeColumn = (notifications) => {
         <span style={eventTypeStyling}>
           <Link onClick={openModal}>{notification.event_type}</Link>
         </span>
+        <span>
         {modalState && (
           <NotificationModal eventType={notification.event_type} notificationContent={notification.content} closeNotificationModal={closeModal} />
         )}
+        </span>
       </span>
   };
 };

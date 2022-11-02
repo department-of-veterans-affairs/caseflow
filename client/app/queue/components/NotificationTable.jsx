@@ -11,7 +11,7 @@ import {
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
 import ApiUtil from '../../util/ApiUtil';
 
-const NotificationTable = ({ appealId }) => {
+const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
 
   const [notificationList, setNotificationList] = useState([]);
 
@@ -96,7 +96,7 @@ const NotificationTable = ({ appealId }) => {
   // Return: The generated column
   const createColumnObject = (column) => {
     const functionForColumn = {
-      [NOTIFICATION_CONFIG.COLUMNS.EVENT_TYPE.name]: eventTypeColumn(notificationList),
+      [NOTIFICATION_CONFIG.COLUMNS.EVENT_TYPE.name]: eventTypeColumn(notificationList, modalState, openModal, closeModal),
       [NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_DATE.name]: notificationDateColumn(notificationList),
       [NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_TYPE.name]: notificationTypeColumn(notificationList),
       [NOTIFICATION_CONFIG.COLUMNS.RECIPIENT_INFORMATION.name]: recipientInformationColumn(notificationList),
@@ -136,6 +136,9 @@ const NotificationTable = ({ appealId }) => {
 
 NotificationTable.propTypes = {
   appealId: PropTypes.string.isRequired,
+  modalState: PropTypes.bool,
+  openModal: PropTypes.func,
+  closeModal: PropTypes.func
 };
 
 export default NotificationTable;
