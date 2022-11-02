@@ -1,33 +1,33 @@
-import React from 'react'
-import Modal from '../../components/Modal'
-import Button from '../../components/Button'
-import PropTypes from 'prop-types'
+import React from 'react';
+import Modal from '../../components/Modal';
+import Button from '../../components/Button';
+import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 
-const NotificationModal = ({eventType, notificationContent, closeNotificationModal}) => {
+const NotificationModal = ({ eventType, notificationContent, closeNotificationModal }) => {
   return (
     <div>
-        <Modal 
-        title={eventType} 
+      <Modal
+        title={eventType}
         confirmButton={
-            <Button onClick={closeNotificationModal} classNames={['usa-button-primary']}>
+          <Button onClick={closeNotificationModal} classNames={['usa-button-primary']}>
                 Close
-            </Button>
-            }
+          </Button>
+        }
         closeHandler={closeNotificationModal}
-        >
-            <span>{COPY.NOTIFICATION_CONTENT_MESSAGE}</span>
-            <br/><br/>
-            <span>"{notificationContent}"</span>
-        </Modal>
+      >
+        <span>{COPY.NOTIFICATION_CONTENT_MESSAGE}</span>
+        <br /><br />
+        <span>"{notificationContent}"</span>
+      </Modal>
     </div>
-  )
-}
+  );
+};
 
 NotificationModal.propTypes = {
-    eventType: PropTypes.string,
-    notificationContent: PropTypes.string,
-    closeNotificationModal: PropTypes.func,
-}
+  eventType: PropTypes.string,
+  notificationContent: PropTypes.string,
+  closeNotificationModal: PropTypes.func,
+};
 
-export default NotificationModal
+export default NotificationModal;

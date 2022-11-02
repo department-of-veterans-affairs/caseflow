@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { NotificationsView } from 'app/queue/NotificationsView';
 import {
   BrowserRouter as Router,
-} from "react-router-dom";
+} from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { axe } from 'jest-axe';
@@ -20,6 +20,7 @@ const setup = (state) => {
     attr2: 'qrdfds'
   };
   const store = createStore(reducer);
+
   return render(
     <Provider store={store} >
       <Router>

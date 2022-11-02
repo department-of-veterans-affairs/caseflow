@@ -59,14 +59,14 @@ exports[`NotificationsTest matches snapshot 1`] = `
               role="tooltip"
             >
               <style>
-
-	.t00000000-0000-0000-0000-000000000000 {
+                
+  	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
-	}
+  	}
 
-	.t00000000-0000-0000-0000-000000000000.place-top {
+  	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
     .t00000000-0000-0000-0000-000000000000.place-top::before {
@@ -133,7 +133,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Click to copy
             </div>
@@ -200,7 +200,9 @@ exports[`NotificationsTest matches snapshot 1`] = `
     <div
       data-css-48ja=""
     >
-      <p>
+      <p
+        class="notification-text"
+      >
         VA Notify sent these status notifications to the Appellant about their case.
       </p>
       <div
@@ -233,7 +235,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                 role="row"
               >
                 <th
-                  aria-labelledby="header-event"
+                  aria-labelledby="header-eventType"
                   class=""
                   role="columnheader"
                   scope="col"
@@ -243,7 +245,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                     data-css-9shxm7=""
                   >
                     <span
-                      id="header-event"
+                      id="header-eventType"
                     >
                       Event
                     </span>
@@ -287,7 +289,8 @@ exports[`NotificationsTest matches snapshot 1`] = `
                   </span>
                 </th>
                 <th
-                  aria-labelledby="header-notificationDate"
+                  aria-labelledby="header-eventDate"
+                  aria-sort="ascending"
                   class=""
                   role="columnheader"
                   scope="col"
@@ -297,7 +300,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                     data-css-9shxm7=""
                   >
                     <span
-                      id="header-notificationDate"
+                      id="header-eventDate"
                     >
                       Notification Date
                     </span>
@@ -336,7 +339,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                               </g>
                             </g>
                             <g
-                              fill="#d6d7d9"
+                              fill="#0071bc"
                               transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
                             >
                               <g
@@ -372,6 +375,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                       data-css-ilmt4b=""
                     >
                       <svg
+                        aria-label="Filter by notification type"
                         class="table-icon unselected-filter-icon"
                         height="20"
                         role="button"
@@ -425,6 +429,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                       data-css-ilmt4b=""
                     >
                       <svg
+                        aria-label="Filter by recipient information column"
                         class="table-icon unselected-filter-icon"
                         height="20"
                         role="button"
@@ -460,7 +465,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                   </span>
                 </th>
                 <th
-                  aria-labelledby="header-staus"
+                  aria-labelledby="header-status"
                   class=""
                   role="columnheader"
                   scope="col"
@@ -470,7 +475,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                     data-css-9shxm7=""
                   >
                     <span
-                      id="header-staus"
+                      id="header-status"
                     >
                       Status
                     </span>
@@ -478,6 +483,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                       data-css-ilmt4b=""
                     >
                       <svg
+                        aria-label="Filter by status column"
                         class="table-icon unselected-filter-icon"
                         height="20"
                         role="button"

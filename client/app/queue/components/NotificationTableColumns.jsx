@@ -1,17 +1,16 @@
-import React from 'react'
+import React from 'react';
 import COPY from '../../../COPY';
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
 import EVENT_TYPE_FILTERS from '../../../constants/EVENT_TYPE_FILTERS';
-import NotificationModal from './NotificationModal';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 // Purpose: These are all column objects for the notifications table
 // Params: notifications - The list of notifications
 
 // Styling for the event type column values
-const eventTypeStyling = {fontWeight: 'bold'};
+const eventTypeStyling = { fontWeight: 'bold' };
 
-export const eventTypeColumn = (notifications, modalState, openModal, closeModal) => {
+export const eventTypeColumn = (notifications, modalState, openModal, handleNotification, notificationState) => {
 
   return {
     header: COPY.NOTIFICATION_EVENT_TYPE_COLUMN_NAME,
@@ -26,12 +25,13 @@ export const eventTypeColumn = (notifications, modalState, openModal, closeModal
     valueFunction: (notification) =>
       <span>
         <span style={eventTypeStyling}>
-          <Link onClick={openModal}>{notification.event_type}</Link>
-        </span>
-        <span>
-        {modalState && (
-          <NotificationModal eventType={notification.event_type} notificationContent={notification.content} closeNotificationModal={closeModal} />
-        )}
+          <Link onClick={() => {
+            openModal();
+            handleNotification(notification);
+          }}
+          >
+            {notification.event_type}
+          </Link>
         </span>
       </span>
   };
@@ -62,6 +62,7 @@ export const notificationTypeColumn = (notifications) => {
     name: NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_TYPE.name,
     enableFilter: NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_TYPE.filterable,
     anyFiltersAreSet: true,
+    label: 'Filter by notification type',
     columnName: 'notification_type',
     tableData: notifications,
     valueName: 'Notification Type',
@@ -75,6 +76,7 @@ export const recipientInformationColumn = (notifications) => {
     name: NOTIFICATION_CONFIG.COLUMNS.RECIPIENT_INFORMATION.name,
     enableFilter: NOTIFICATION_CONFIG.COLUMNS.RECIPIENT_INFORMATION.filterable,
     anyFiltersAreSet: true,
+    label: 'Filter by recipient information column',
     columnName: 'recipient_information',
     tableData: notifications,
     valueName: 'Recipient Information',
@@ -89,6 +91,7 @@ export const statusColumn = (notifications) => {
     name: NOTIFICATION_CONFIG.COLUMNS.STATUS.name,
     enableFilter: NOTIFICATION_CONFIG.COLUMNS.STATUS.filterable,
     anyFiltersAreSet: true,
+    label: 'Filter by status column',
     columnName: 'status',
     tableData: notifications,
     valueName: 'Status',
