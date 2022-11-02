@@ -18,6 +18,10 @@ class VACOLS::Correspondent < VACOLS::Record
     end
   end
 
+  def self.find_veteran(ssn)
+    find_veteran_by_ssn(ssn)
+  end
+
   class << self
     private
 
