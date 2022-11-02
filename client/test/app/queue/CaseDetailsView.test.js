@@ -71,12 +71,16 @@ const renderCaseDetailsView = (hasNotifications, appealData) => {
 describe('NotificationsLink', () => {
   describe('When there are notifications', () => {
     it('link appears with ama appeal', () => {
-      renderCaseDetailsView(true,amaAppeal);
+      renderCaseDetailsView(true, amaAppeal);
 
       expect(screen.getByRole('link', { name: COPY.VIEW_NOTIFICATION_LINK })).toBeTruthy();
     });
 
-    // legacy with notifications
+    it('link appears with legacy appeal', () => {
+      renderCaseDetailsView(true, legacyAppeal);
+
+      expect(screen.getByRole('link', { name: COPY.VIEW_NOTIFICATION_LINK })).toBeTruthy();
+    });
   });
 
   describe('When there are\'not notifications', () => {
