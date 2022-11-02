@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+# test
 # rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
