@@ -61,7 +61,7 @@ module AppellantNotification
     message_attributes
   end
 
-  # Updates caseflow_audit database when notification event is triggered
+  # Updates appeal_state database when notification event is triggered
   # to keep track of the state of each appeal
   def self.appeal_mapper(appeal_id, appeal_type, event)
     current_user = RequestStore[:current_user] || User.system_user

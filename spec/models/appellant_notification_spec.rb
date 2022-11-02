@@ -325,7 +325,7 @@ describe AppellantNotification do
         let(:appeal_state) { create(:appeal_state, appeal_id: appeal_postponed.id, appeal_type: appeal_postponed.class.to_s) }
 
         it "will notify appellant when a hearing is postponed" do
-          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
+          expect(AppellantNotification).to receive(:notify_appellant).with(hearing_postponed.appeal, template_name)
           hearing.update_caseflow_and_vacols(hearing_info)
         end
 
