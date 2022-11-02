@@ -297,7 +297,7 @@ class ClaimReview < DecisionReview
   end
 
   def matching_request_issue(contention_id)
-    RequestIssue.find_by!(contention_reference_id: contention_id)
+    RequestIssue.where(contention_reference_id: contention_id).not(split_issue_status: "on_hold")
   end
 
   def issue_active_status(_issue)
