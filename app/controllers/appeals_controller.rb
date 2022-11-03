@@ -311,14 +311,12 @@ class AppealsController < ApplicationController
   #
   # Response: Returns an array of all retrieved notifications
   def find_notifications_by_appeals_id(appeals_id)
-    # Retrieve notifications based on appeals_id
+    # Retrieve notifications based on appeals_id, excluding statuses of 'No participant_id' & 'No claimant'
     @all_notifications = Notification.where(appeals_id: appeals_id)
-    # Exclude notifications with statuses of 'No Participant Id Found', 'No Claimant Found', and 'No External Id'
     @allowed_notifications = @all_notifications.where(email_notification_status: nil)
       .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
       .merge(@all_notifications.where(sms_notification_status: nil)
       .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"])))
-
     # If no notifications were found, return an empty array, else return serialized notifications
     if @allowed_notifications == []
       []
