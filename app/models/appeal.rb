@@ -435,6 +435,8 @@ class Appeal < DecisionReview
       # assign to current appeal
       dup_hearing&.appeal_id = id
 
+      # set split process on dup_hearing
+      dup_hearing.appeal.appeal_split_process = true
       dup_hearing&.save
     end
   end
