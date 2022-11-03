@@ -8,19 +8,19 @@ class Api::V1::MpiController < Api::ApplicationController
       deceased_ind: allowed_params[:deceased_ind],
       deceased_time: allowed_params[:deceased_time]
     }
+    response_info_column = { veteran_id: veteran[:id] }
     mpi_update = MpiUpdatePersonEvent.create!(api_key: api_key, created_at: Time.zone.now, update_type: :started)
-    info_column = { veteran_id: veteran[:id] }
     result = VACOLS::Correspondent.update_veteran_nod(veteran)
     if result == :successful
       updated_veteran = VACOLS::Correspondent.find_veteran(veteran[:id])
-      info_column[:updated_column] = "deceased_time"
-      info_column[:updated_deceased_time] = updated_veteran.rows.first[1]
+      response_info_column[:updated_column] = "deceased_time"
+      response_info_column[:updated_deceased_time] = updated_veteran.rows.first[1]
     end
-    mpi_update.update!(update_type: result, completed_at: Time.zone.now, info: info_column)
+    mpi_update.update!(update_type: result, completed_at: Time.zone.now, info: response_info_column)
     render json: { success: result }, status: :ok
   rescue StandardError => error
-    info_column[:error] = error
-    mpi_update.update!(update_type: :error, completed_at: Time.zone.now, info: info_column)
+    response_info_column[:error] = error
+    mpi_update.update!(update_type: :error, completed_at: Time.zone.now, info: response_info_column)
     raise error
   end
 
