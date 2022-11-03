@@ -1043,6 +1043,7 @@ describe LegacyAppeal, :all_dbs do
       it "uploads the correct form 8 using AppealRepository" do
         expect { subject }.to_not raise_error
         expect(Fakes::VBMSService.uploaded_form8.id).to eq(@form8.id)
+        expect(Fakes::VBMSService.uploaded_form8_appeal).to eq(appeal)
       end
     end
 
