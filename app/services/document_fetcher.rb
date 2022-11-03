@@ -99,7 +99,6 @@ class DocumentFetcher
 
   def fetch_documents_from_service!
     doc_struct = document_service.fetch_documents_for(appeal, RequestStore.store[:current_user])
-
     self.documents = deduplicate(doc_struct[:documents], "fetched_documents")
     self.manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
     self.manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
