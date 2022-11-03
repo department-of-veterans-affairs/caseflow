@@ -746,16 +746,16 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
                               email_notification_status: "Success", sms_notification_status: nil),
         create(:notification, appeals_id: legacy_appeal_without_claimant.vacols_id, appeals_type: legacy_appeals_type,
                               event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS",
-                              email_notification_status: nil, sms_notification_status: "No claimant"),
+                              email_notification_status: nil, sms_notification_status: "No Claimant Found"),
         create(:notification, appeals_id: legacy_appeal_without_participant_id.vacols_id, appeals_type: legacy_appeals_type,
                               event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS",
-                              email_notification_status: nil, sms_notification_status: "No participant_id"),
+                              email_notification_status: nil, sms_notification_status: "No Participant Id Found"),
         create(:notification, appeals_id: ama_appeal_without_claimant.uuid, appeals_type: ama_appeals_type,
                               event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "Email",
-                              email_notification_status: "No claimant", sms_notification_status: nil),
+                              email_notification_status: "No Claimant Found", sms_notification_status: nil),
         create(:notification, appeals_id: ama_appeal_without_participant_id.uuid, appeals_type: ama_appeals_type,
                               event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS", 
-                              email_notification_status: nil, sms_notification_status: "No participant_id")
+                              email_notification_status: nil, sms_notification_status: "No Participant Id Found")
       ]
     end
 
@@ -799,7 +799,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
     end
 
-    context "when controller action #fetch_notification_list is made with a vacols_id that has no participant_id" do
+    context "when controller action #fetch_notification_list is made with a vacols_id that has no participant id" do
       subject do
         get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_participant_id.vacols_id }
       end
@@ -859,7 +859,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
     end
 
-    context "when controller action #fetch_notification_list is made with a uuid that has no participant_id" do
+    context "when controller action #fetch_notification_list is made with a uuid that has no participant id" do
       subject do
         get :fetch_notification_list, params: { appeals_id: ama_appeal_without_participant_id.uuid }
       end
