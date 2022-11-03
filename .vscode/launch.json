@@ -37,6 +37,20 @@
       ],
       "useBundler": true,
       "showDebuggerOutput": true
+    },
+    {
+      "name": "Caseflow Frontend",
+      "type": "node",
+      "request": "launch",
+      "program": "node_modules/webpack-dev-server/bin/webpack-dev-server.js",
+      "cwd": "${workspaceRoot}/client"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Caseflow Frontend and Backend",
+      "configurations": ["Caseflow Frontend", "Caseflow Backend"],
+      "stopAll": true
     }
   ]
 }
