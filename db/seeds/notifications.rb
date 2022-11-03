@@ -11,6 +11,7 @@ module Seeds
     end
 
     def seed!
+      create_first_ama_appeal
       create_second_ama_appeal
       create_third_ama_appeal
       create_fourth_ama_appeal
