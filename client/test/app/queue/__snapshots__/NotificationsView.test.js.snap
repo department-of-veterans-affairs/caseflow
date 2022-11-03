@@ -4,7 +4,6 @@ exports[`NotificationsTest matches snapshot 1`] = `
 <div>
   <section
     class="cf-app-segment cf-app-segment--alt"
-    role="main"
   >
     <div
       data-css-bui2vg=""
