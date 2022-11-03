@@ -40,29 +40,15 @@ class HearingTask < Task
   def when_child_task_completed(child_task)
     # do not move forward to change location or create ihp if there are
     # other open hearing tasks
-    if FeatureToggle.enabled?(:appeals_10769_test, user: RequestStore.store[:current_user])
-      if appeal.tasks.open.where(type: HearingTask.name).where.not(id: id).empty? && appeal.is_a?(Appeal)
-        create_evidence_or_ihp_task
-      end
-      # super call must happen after AMA check to hold distribution,
-      # but before the Legacy check to prevent premature location update.
-      super
+    if appeal.tasks.open.where(type: HearingTask.name).where.not(id: id).empty? && appeal.is_a?(Appeal)
+      create_evidence_or_ihp_task
+    end
+    # super call must happen after AMA check to hold distribution,
+    # but before the Legacy check to prevent premature location update.
+    super
 
-      if appeal.tasks.open.where(type: HearingTask.name).empty? && appeal.is_a?(LegacyAppeal)
-        update_legacy_appeal_location
-      end
-    else
-      if appeal.tasks.open.where(type: HearingTask.name).where.not(id: id).empty?
-        if appeal.is_a?(Appeal)
-          create_evidence_or_ihp_task
-        end
-
-        if appeal.is_a?(LegacyAppeal)
-          update_legacy_appeal_location
-        end
-      end
-
-      super
+    if appeal.tasks.open.where(type: HearingTask.name).empty? && appeal.is_a?(LegacyAppeal)
+      update_legacy_appeal_location
     end
   end
 
