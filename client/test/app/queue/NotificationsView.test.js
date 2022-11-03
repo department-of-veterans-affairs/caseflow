@@ -1,21 +1,32 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import renderer from "react-test-renderer";
+import { render } from '@testing-library/react';
 import { NotificationsView } from 'app/queue/NotificationsView';
 import {
   BrowserRouter as Router,
-} from "react-router-dom";
+} from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { axe } from 'jest-axe';
+import ApiUtil from '../../../app/util/ApiUtil';
+
+const createSpyGet = (data) => {
+  return jest.spyOn(ApiUtil, 'get').
+    mockImplementation(() => new Promise((resolve) => resolve({ body: data })));
+};
+
+beforeEach(() => {
+  createSpyGet([]);
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
 
 const createReducer = (storeValues) => {
   return function (state = storeValues) {
-
     return state;
   };
 };
-
 const setup = (state) => {
   const reducer = createReducer(state);
   const props = {
@@ -23,7 +34,6 @@ const setup = (state) => {
     attr: 'dedfsd',
     attr2: 'qrdfds'
   };
-
   const store = createStore(reducer);
 
   return render(
@@ -42,13 +52,11 @@ const appeal = {
   veteranFileNumber: '200000161',
   hearings: [],
 };
-
 const state = {
   queue: {
     appealId: 'e1bdff31-4268-4fd4-a157-ebbd48013d91',
     appeals: { 'e1bdff31-4268-4fd4-a157-ebbd48013d91': appeal },
     mostRecentlyHeldHearingForAppeal: {}
-
   },
   appealId: 'e1bdff31-4268-4fd4-a157-ebbd48013d91',
   ui: {
@@ -60,7 +68,6 @@ const state = {
 };
 
 describe('NotificationsTest', () => {
-
   it('renders title correctly', () => {
     const { container } = setup(state);
     const header = container.querySelector('h1').innerHTML;
@@ -81,13 +88,11 @@ describe('NotificationsTest', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it('Virtual passes a11y testing', async () => {
+  it('Virtual passes ally testing', async () => {
     const { container } = setup(state);
-
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
   });
-
 });
 
