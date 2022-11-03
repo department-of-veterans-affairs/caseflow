@@ -196,6 +196,17 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
         class="cf-push-right"
       >
         <a
+          href="https://caseflow.statuspage.io"
+          target="_blank"
+        >
+          Track Caseflow Status
+        </a>
+        <span
+          data-css-1bblw8p=""
+        >
+          |
+        </span>
+        <a
           target="_blank"
         >
           Send feedback

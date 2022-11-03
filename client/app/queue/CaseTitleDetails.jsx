@@ -266,7 +266,8 @@ CaseTitleDetails.propTypes = {
   stageAppeal: PropTypes.func,
   legacyJudgeTasks: PropTypes.array,
   legacyAttorneyTasks: PropTypes.array,
-  hideOTSection: PropTypes.bool
+  hideOTSection: PropTypes.bool,
+  hasNotifications: PropTypes.bool
 };
 
 CaseTitleDetails.defaultProps = {
