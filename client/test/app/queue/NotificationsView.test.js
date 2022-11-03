@@ -7,6 +7,21 @@ import {
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { axe } from 'jest-axe';
+import ApiUtil from '../../../app/util/ApiUtil';
+
+const createSpyGet = (data) => {
+  return jest.spyOn(ApiUtil, 'get').
+    mockImplementation(() => new Promise((resolve) => resolve({ body: data })));
+};
+
+beforeEach(() => {
+  createSpyGet([]);
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
 const createReducer = (storeValues) => {
   return function (state = storeValues) {
     return state;
@@ -73,7 +88,7 @@ describe('NotificationsTest', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it('Virtual passes a11y testing', async () => {
+  it('Virtual passes ally testing', async () => {
     const { container } = setup(state);
     const results = await axe(container);
 
