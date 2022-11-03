@@ -11,7 +11,7 @@ class Api::V1::MpiController < Api::ApplicationController
     response_info_column = { veteran_id: veteran[:id] }
     mpi_update = MpiUpdatePersonEvent.create!(api_key: api_key, created_at: Time.zone.now, update_type: :started)
     result = VACOLS::Correspondent.update_veteran_nod(veteran)
-    if result == :successful
+    if result == :successful || result == :already_deceased_time_changed
       updated_veteran = VACOLS::Correspondent.find_veteran(veteran[:id])
       response_info_column[:updated_column] = "deceased_time"
       response_info_column[:updated_deceased_time] = updated_veteran.rows.first[1]

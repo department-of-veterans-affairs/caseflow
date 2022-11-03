@@ -10,6 +10,7 @@ class MpiUpdatePersonEvent < CaseflowRecord
     no_veteran: "NO_VETERAN",
     multiple_veterans: "MULTIPLE_VETERANS",
     already_deceased: "ALREADY_DECEASED",
+    already_deceased_time_changed: "ALREADY_DECEASED",
     missing_deceased_info: "MISSING_DECEASED_INFO",
     successful: "SUCCESSFUL",
     error: "ERROR"

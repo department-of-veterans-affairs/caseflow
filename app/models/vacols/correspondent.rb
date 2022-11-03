@@ -77,8 +77,9 @@ class VACOLS::Correspondent < VACOLS::Record
       update_type
     end
 
-    def update_veteran_sfnod(ssn, deceased_time)
+    def update_veteran_sfnod(ssn, deceased_time, vet_in_vacols)
       Rails.logger.info("Updating veteran's deceased information")
+      current_deceased_time = vet_in_vacols.rows.first[1]
 
       query = <<-SQL
         update CORRES
@@ -88,7 +89,11 @@ class VACOLS::Correspondent < VACOLS::Record
 
       # execute is used here because it directly modifies the rows and exec_query produces a binding error
       connection.execute(sanitize_sql_array([query, deceased_time, ssn]))
-      :successful
+      if current_deceased_time.nil?
+        :successful
+      else
+        :already_deceased_time_changed
+      end
     end
   end
 end
