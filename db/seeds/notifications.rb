@@ -29,7 +29,7 @@ module Seeds
             email_notification_status: "delivered",
             event_date: "2022-10-29",
             event_type: "Appeal docketed",
-            notification_content: appeal_docketed_text
+            notification_content: appeal_docketed_text,
             notification_type: "Email",
             notified_at: "2022-10-27",
             participant_id:"601520010",
@@ -104,7 +104,7 @@ module Seeds
             email_notification_status: "delivered",
             event_date: "2022-10-29",
             event_type: "Appeal docketed",
-            notification_content: appeal_docketed_text
+            notification_content: appeal_docketed_text,
             notification_type: "Email",
             notified_at: "2022-10-27",
             participant_id:"601520010",
