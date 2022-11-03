@@ -15,8 +15,8 @@ class SplitAppealController < ApplicationController
         # Returns a 404 Not Found error if the appeal can not be found to be split
         begin
           appeal = Appeal.find(appeal_id)
-        rescue
-          return render plain: "404 Not Found", status: 404
+        rescue StandardError
+          return render plain: "404 Not Found", status: :not_found
         end
 
         # set the appeal_split_process to true
@@ -29,11 +29,11 @@ class SplitAppealController < ApplicationController
         # Setting the user_css_id
         user_css_id = params[:user_css_id]
         split_user = User.find_by_css_id user_css_id
-        if split_other_reason.strip.empty?
-          instructions = split_reason
-        else
-          instructions = split_other_reason
-        end
+        instructions = if split_other_reason.strip.empty?
+                         split_reason
+                       else
+                         split_other_reason
+                       end
         Task.transaction do
           spt = SplitAppealTask.create!(
             appeal: appeal,
