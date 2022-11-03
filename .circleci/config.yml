@@ -331,7 +331,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: cimg/ruby:2.7.3-browsers # NodeJS Version defined in ./nvmrc
+      - image: cimg/ruby:3.0.4-browsers # NodeJS Version defined in ./nvmrc
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - NODE_ENV: test
