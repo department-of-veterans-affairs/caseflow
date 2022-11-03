@@ -130,13 +130,14 @@ class RequestIssue < CaseflowRecord
     end
 
     def eligible
-      where(ineligible_reason: nil, split_issue_status: nil) || where(ineligible_reason: nil, split_issue_status: "in_progress")
+      where(ineligible_reason: nil)
     end
 
-    # "Active" issues are issues that need decisions. They are not on a split_issue_status of "on_hold" or "complete"
-    # They show up as contentions in VBMS and issues in Caseflow Queue. 
+    # "Active" issues are issues that need decisions.
+    # They show up as contentions in VBMS and issues in Caseflow Queue.
     def active
-      eligible.where(closed_at: nil, split_issue_status: nil) || eligible.where(closed_at: nil, split_issue_status: "in_progress")
+      eligible.where(closed_at: nil, 
+      split_issue_status: "in_progress") || where(ineligible_reason: nil, split_issue_status: nil)
     end
 
     def active_or_ineligible
