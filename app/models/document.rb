@@ -200,20 +200,27 @@ class Document < CaseflowRecord
     :received_at,
     :upload_date,
     :vbms_document_id,
-    :series_id
+    :category_medical,
+    :category_other,
+    :category_procedural,
+    :previous_document_version_id
   ].freeze
 
   # efficient version of merge_into that also saves to DB
   def self.bulk_merge_and_save(document_structs)
     # Bulk update
     Document.import(document_structs,
-                    on_duplicate_key_update: { conflict_target: [:vbms_document_id], columns: COLUMNS_TO_MERGE })
+                    on_duplicate_key_update: {
+                      conflict_target: [:vbms_document_id],
+                      columns: COLUMNS_TO_MERGE
+                    },
+                    recursive: true)
 
     # Use 1 SQL query to get the docs and set non-database attributes on the results
     doc_struct_hash = document_structs.index_by(&:vbms_document_id)
-    Document.where(vbms_document_id: document_structs.pluck(:vbms_document_id)).map do |document|
-      doc_struct = doc_struct_hash[document.vbms_document_id]
-      document.assign_nondatabase_attributes(doc_struct)
+    Document.where(vbms_document_id: document_structs.pluck(:vbms_document_id)).map do |doc|
+      doc_struct = doc_struct_hash[doc.vbms_document_id]
+      doc.assign_nondatabase_attributes(doc_struct)
     end
   end
 
@@ -245,6 +252,18 @@ class Document < CaseflowRecord
     else
       "/document/#{id}/pdf"
     end
+  end
+
+  # :reek:FeatureEnvy
+  def prepare_metadata_from_document(source_document)
+    documents_tags.build(source_document.documents_tags.map { |tag| tag.dup.attributes })
+    annotations.build(source_document.annotations.map { |annotation| annotation.dup.attributes })
+    assign_attributes(
+      category_procedural: source_document.category_procedural,
+      category_medical: source_document.category_medical,
+      category_other: source_document.category_other,
+      previous_document_version_id: source_document.id
+    )
   end
 
   def copy_metadata_from_document(source_document)
