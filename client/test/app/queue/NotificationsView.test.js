@@ -95,4 +95,3 @@ describe('NotificationsTest', () => {
     expect(results).toHaveNoViolations();
   });
 });
-

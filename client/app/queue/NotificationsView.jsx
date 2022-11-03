@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect, useSelector } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import React from 'react';
+import React, { useState } from 'react';
 import { supportsSubstitutionPreDispatch } from './substituteAppellant/caseDetails/utils';
 import { useHistory } from 'react-router';
 import { appealWithDetailSelector } from './selectors';
@@ -27,6 +27,13 @@ const sectionGap = css({ marginTop: '3.5rem' });
 import NotificationTable from './components/NotificationTable';
 
 export const NotificationsView = (props) => {
+  const [modalState, setModalState] = useState(false);
+  const openModal = () =>{
+    setModalState(true);
+  };
+  const closeModal = () =>{
+    setModalState(false);
+  };
   const { push } = useHistory();
   const { appealId, featureToggles } = props;
   const appeal = useSelector((state) =>
@@ -71,7 +78,7 @@ export const NotificationsView = (props) => {
         <div {...sectionGap}>
           <p className="notification-text">VA Notify sent these status notifications to the Appellant about their case.</p>
           <div className="notification-table">
-            <NotificationTable appealId={appealId} />
+            <NotificationTable appealId={appealId} modalState={modalState} openModal={openModal} closeModal={closeModal} />
           </div>
         </div>
       </AppSegment>
