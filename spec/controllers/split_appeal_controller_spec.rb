@@ -195,7 +195,7 @@ RSpec.describe SplitAppealController, type: :controller do
         )
       end
       let(:root_task) { RootTask.find(create(:root_task).id) }
-      let(:appeal) { create(:appeal, tasks: [root_task]) }
+      let(:appeal) { create(:appeal, tasks: [root_task], request_issues: [request_issue]) }
       let!(:hearing) do
         create(
           :hearing,
