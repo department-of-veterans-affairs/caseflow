@@ -73,7 +73,7 @@ describe('NotificationsTest', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it('Virtual passes a11y testing', async () => {
+  it('Virtual passes ally testing', async () => {
     const { container } = setup(state);
     const results = await axe(container);
 
