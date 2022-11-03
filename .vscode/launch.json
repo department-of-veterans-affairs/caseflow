@@ -11,9 +11,24 @@
       "program": "${workspaceRoot}/bin/rails",
       "env": {
         "REACT_ON_RAILS_ENV": "HOT",
-        // Uncomment '"WITH_EMAIL_TEST_SERVER": true' if you'd like to have ActionMailer messages go to a local server.
-        // See https://github.com/department-of-veterans-affairs/caseflow/wiki/Testing-Action-Mailer-Messages-Locally
-        //"WITH_EMAIL_TEST_SERVER": true,
+      },
+      "args": [
+        "server",
+        "-p",
+        "3000"
+      ],
+      "useBundler": true,
+      "showDebuggerOutput": true
+    },
+    {
+      "name": "Caseflow Backend with Email",
+      "type": "Ruby",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/rails",
+      "env": {
+        "REACT_ON_RAILS_ENV": "HOT",
+        // For more info: https://github.com/department-of-veterans-affairs/caseflow/wiki/Testing-Action-Mailer-Messages-Locally
+        "WITH_EMAIL_TEST_SERVER": true,
       },
       "args": [
         "server",
