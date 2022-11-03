@@ -241,7 +241,7 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
           it "appeal is not found and get not found message" do
             get :reader_appeal, params: { appeal_id: "1234" }
             response_body = JSON.parse(response.body)
-            expect(response_body["message"]).to eq "Record not found"
+            expect(response_body["message"]).to include "Record not found"
           end
         end
       end
@@ -274,7 +274,7 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
           it "appeal is not found and get not found message" do
             get :reader_appeal, params: { appeal_id: "1234" }
             response_body = JSON.parse(response.body)
-            expect(response_body["message"]).to eq "Record not found"
+            expect(response_body["message"]).to include "Record not found"
           end
         end
       end
@@ -307,7 +307,7 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
           it "appeal is not found and get not found message" do
             get :reader_appeal, params: { appeal_id: "1234" }
             response_body = JSON.parse(response.body)
-            expect(response_body["message"]).to eq "Record not found"
+            expect(response_body["message"]).to include "Record not found"
           end
         end
       end
