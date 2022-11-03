@@ -4,7 +4,12 @@ class AdminController < ApplicationController
   before_action :verify_access, only: [:index]
 
   def index
-    render "admin/index"
+    respond_to do |format|
+      format.html { render "admin/index" }
+      format.csv do
+        self.veteran_extract
+      end
+    end
   end
 
   # Verifies user is admin and that feature toggle is enabled before showing admin page
@@ -15,5 +20,22 @@ class AdminController < ApplicationController
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
+  end
+
+  def veteran_extract
+    results = VACOLS::Correspondent.extract
+    if results.empty?
+      return true
+    else
+      formated_data = VACOLS::Correspondent.as_csv(results)
+      filename = Time.zone.now.strftime("veteran-extract-%Y%m%d.csv")
+      send_data formated_data, filename: filename, content_type: 'text/csv'
+    end
+    
+
+    # error handling
+  rescue StandardError => error
+    render json: { error_code: error_id }, status: :internal_server_error
+    return false
   end
 end

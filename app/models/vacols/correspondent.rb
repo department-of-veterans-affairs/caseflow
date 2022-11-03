@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class VACOLS::Correspondent < VACOLS::Record
+  require 'csv'
   self.table_name = "corres"
   self.primary_key = "stafkey"
 
@@ -16,6 +17,65 @@ class VACOLS::Correspondent < VACOLS::Record
                           service: :vacols) do
       update_veteran_nod_in_vacols(veteran)
     end
+  end
+
+  def self.extract 
+    query = <<-SQL
+      select          
+        snamel as vet_last_name,
+        snamef as vet_first_name,
+        snamemi as vet_middle_name,
+        sdob as vet_date_of_birth,
+        ssn as vet_ssn,
+        null as vet_participant_id,
+        slogid as vet_file_number,
+        sspare1 as appellant_last_name,
+        sspare2 as appellant_first_name,
+        sspare3 as appellant_middle_name,
+        null as appellant_date_of_birth,
+        null as appellant_ssn,
+        sgender as appellant_gender,
+        ''|| saddrst1 || ' ' || saddrst2 || ' ' || saddrcty || ' ' || saddrstt || ' ' || saddrzip || '' as appellant_address,
+        ''|| STELW || ' ' || stelh ||'' as appellant_phone,
+        null as appellant_email,
+        null as appellant_edi_pi,
+        null as appellant_corp_PID,
+        stafkey as appellant_vacols_internal_id,
+        susrtyp as relationship_to_veteran
+      from corres
+    SQL
+
+    connection.exec_query(query).to_hash
+  end
+
+  # Take in a collection and return a csv friendly format
+  def self.as_csv(input)
+    CSV.generate do |csv|
+        csv << %w[
+          VET_LAST_NAME 
+          VET_FIRST_NAME
+          VET_MIDDLE_NAME
+          VET_DATE_OF_BIRTH
+          VET_SSN
+          VET_PARTICIPANT_ID	
+          VET_FILE_NUMBER
+          APPELLANT_LAST_NAME
+          APPELLANT_FIRST_NAME	
+          APPELLANT_MIDDLE_NAME	
+          APPELLANT_DATE_OF_BIRTH	
+          APPELLANT_SSN	APPELLANT_GENDER
+          APPELLANT_ADDRESS
+          APPELLANT_PHONE
+          APPELLANT_EMAIL
+          APPELLANT_EDI_PI
+          APPELLANT_CORP_PID	
+          APPELLANT_VACOLS_INTERNAL_ID
+          RELATIONSHIP_TO_VETERAN
+        ]
+        input.each do |record|
+          csv << record.values
+        end
+      end
   end
 
   class << self
