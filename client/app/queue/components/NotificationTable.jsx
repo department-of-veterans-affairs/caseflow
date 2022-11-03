@@ -77,7 +77,8 @@ const NotificationTable = ({ appealId }) => {
     const url = `/appeals/${id}/notifications`;
 
     const data = await ApiUtil.get(url).
-      then((response) => response.body);
+      then((response) => response.body).
+      catch(() => []);
 
     return data;
   };
