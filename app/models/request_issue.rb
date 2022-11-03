@@ -130,7 +130,7 @@ class RequestIssue < CaseflowRecord
     end
 
     def eligible
-      where(ineligible_reason: nil, split_issue_status: nil) || where(ineligible_reason: nil, , split_issue_status: "in_progress")
+      where(ineligible_reason: nil, split_issue_status: nil) || where(ineligible_reason: nil, split_issue_status: "in_progress")
     end
 
     # "Active" issues are issues that need decisions. They are not on a split_issue_status of "on_hold" or "complete"
