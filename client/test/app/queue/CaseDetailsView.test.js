@@ -61,7 +61,7 @@ const renderCaseDetailsView = (hasNotifications, appealData) => {
 
   const props = { ...defaultProps, appealId: appealData.id };
 
-  render(
+  return render(
     <Wrapper {...storeValues} >
       <CaseDetailsView {...props} />
     </Wrapper>
@@ -85,7 +85,19 @@ describe('NotificationsLink', () => {
 
   describe('When there are\'not notifications', () => {
     // ama without notifications
+    it('link does not appears with ama appeal', () => {
+      const {container} = renderCaseDetailsView(false, amaAppeal);
+      const link = container.querySelector('#notification-link');
 
+      expect(link).toBeNull()
     // legacy without notifications
+    });
+
+    it('link does not appears with legacy appeal', () => {
+      const {container} = renderCaseDetailsView(false, legacyAppeal);
+      const link = container.querySelector('#notification-link');
+
+      expect(link).toBeNull();
+    });
   });
 });

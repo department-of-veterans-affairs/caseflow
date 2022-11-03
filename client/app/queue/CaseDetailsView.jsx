@@ -407,7 +407,7 @@ export const CaseDetailsView = (props) => {
             additionalHeaderContent={
               true && (
                 <span className="cf-push-right" {...anchorEditLinkStyling}>
-                  { appeal.hasNotifications && <Link href={`/queue/appeals/${appealId}/notifications`} target="_blank">
+                  { appeal.hasNotifications && <Link id="notification-link" href={`/queue/appeals/${appealId}/notifications`} target="_blank">
                     {COPY.VIEW_NOTIFICATION_LINK}
                     &nbsp;
                     <span {...ICON_POSITION_FIX}>
