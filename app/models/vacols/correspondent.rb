@@ -26,15 +26,7 @@ class VACOLS::Correspondent < VACOLS::Record
     private
 
     def update_veteran_nod_in_vacols(veteran)
-      update_type = nil
-      if veteran[:deceased_ind].nil? || veteran[:deceased_ind] != "true"
-        Rails.logger.info("Veteran deceased indicator is false or null")
-        update_type = :missing_deceased_info
-      end
-      if veteran[:deceased_time].nil? || veteran[:deceased_time] == ""
-        Rails.logger.info("No deceased time was provided")
-        update_type = :missing_deceased_info
-      end
+      update_type = missing_deceased_ind(veteran[:deceased_ind], veteran[:deceased_time])
 
       return update_type unless update_type.nil?
 
@@ -42,7 +34,19 @@ class VACOLS::Correspondent < VACOLS::Record
 
       return update_type if update_type != true
 
-      update_veteran_sfnod(veteran[:id], veteran[:deceased_time])
+      update_veteran_sfnod(veteran[:id], veteran[:deceased_time], find_veteran_by_ssn(veteran[:id]))
+    end
+
+    def missing_deceased_ind(veteran_deceased_ind, veteran_deceased_time)
+      if veteran_deceased_ind.nil? || veteran_deceased_ind != "true"
+        Rails.logger.info("Veteran deceased indicator is false or null")
+        return :missing_deceased_info
+      end
+      if veteran_deceased_time.nil? || veteran_deceased_time == ""
+        Rails.logger.info("No deceased time was provided")
+        return :missing_deceased_info
+      end
+      nil
     end
 
     def find_veteran_by_ssn(ssn)
