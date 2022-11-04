@@ -6,7 +6,7 @@ describe VACOLS::Correspondent do
     let(:good_veteran_different_deceased_time) { { id: "333333333", deceased_ind: "true", deceased_time: "20001111" } }
     let(:veteran_nil_deceased_ind) { { id: "123456789", deceased_ind: nil, deceased_time: "20111012" } }
     let(:veteran_nil_deceased_time) { { id: "123456789", deceased_ind: "true", deceased_time: nil } }
-    let(:veteran_not_in_vacols) { { id: "000000000", deceased_ind: true, deceased_time: "20111012" } }
+    let(:veteran_not_in_vacols) { { id: "000000000", deceased_ind: "true", deceased_time: "20111012" } }
     let(:veteran_ssn_multiple_matches) { { id: "111111111", deceased_ind: "true", deceased_time: "20111012" } }
     # deceased_time for this case needs to be 1.day.ago because the factorybot create method
     # in the before block doesn't translate the date format correctly
