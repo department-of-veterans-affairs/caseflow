@@ -75,23 +75,36 @@ module AppellantNotification
     end
     case event
     when "decision_mailed"
-      appeal_state.update!(decision_mailed: true)
+      decision_mailed_update(appeal_state)
     when "appeal_docketed"
       appeal_state.update!(appeal_docketed: true)
     when "hearing_postponed"
       appeal_state.update!(hearing_postponed: true)
+      appeal_state.update!(hearing_scheduled: false)
     when "hearing_withdrawn"
       appeal_state.update!(hearing_withdrawn: true)
+      appeal_state.update!(hearing_postponed: false)
+      appeal_state.update!(hearing_scheduled: false)
     when "hearing_scheduled"
       appeal_state.update!(hearing_scheduled: true)
+      appeal_state.update!(hearing_postponed: false)
     when "vso_ihp_pending"
       appeal_state.update!(vso_ihp_pending: true)
+      appeal_state.update!(vso_ihp_complete: false)
     when "vso_ihp_complete"
-      appeal_state.update!(vso_ihp_complete: true)
+      if !appeal.tasks.open.where(type.include?("Ihp")) ||
+         !appeal.tasks.open.where(type.include?("InformalHearingPresentationTask"))
+        appeal_state.update!(vso_ihp_complete: true)
+        appeal_state.update!(vso_ihp_pending: false)
+      end
     when "privacy_act_pending"
       appeal_state.update!(privacy_act_pending: true)
+      appeal_state.update!(privacy_act_complete: false)
     when "privacy_act_complete"
-      appeal_state.update!(privacy_act_complete: true)
+      if !appeal.tasks.open.where(type.include?("Foia")) || !appeal.tasks.open.where(type.include?("PrivacyAct"))
+        appeal_state.update!(privacy_act_complete: true)
+        appeal_state.update!(privacy_act_pending: false)
+      end
     end
   end
 
@@ -132,4 +145,20 @@ module AppellantNotification
     message_attributes = AppellantNotification.handle_errors(appeal)
     VANotifySendMessageTemplate.new(message_attributes, template_name)
   end
+
+  private
+
+  def decision_mailed_update(appeal_state)
+    appeal_state.update!(decision_mailed: true)
+    appeal_state.update!(appeal_docketed: false)
+    appeal_state.update!(hearing_postponed: false)
+    appeal_state.update!(hearing_withdrawn: false)
+    appeal_state.update!(hearing_scheduled: false)
+    appeal_state.update!(vso_ihp_pending: false)
+    appeal_state.update!(vso_ihp_complete: false)
+    appeal_state.update!(privacy_act_pending: false)
+    appeal_state.update!(privacy_act_complete: false)
+  end
+
+
 end
