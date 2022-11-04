@@ -37,6 +37,17 @@
         "${command:workbench.action.tasks.terminate}",
         "${command:workbench.action.acceptSelectedQuickOpenItem}",
       ]
+    },
+    // The below will require docker to be installed.
+    {
+      "label": "Run maildev server",
+      "type": "shell",
+      "command": "docker run -d -p 1080:1080 -p 1025:1025 --name maildev-server maildev/maildev",
+    },
+    {
+      "label": "Stop maildev server",
+      "type": "shell",
+      "command": "(docker stop maildev-server) || true"
     }
   ]
 }

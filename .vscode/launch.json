@@ -36,7 +36,9 @@
         "3000"
       ],
       "useBundler": true,
-      "showDebuggerOutput": true
+      "showDebuggerOutput": true,
+      "preLaunchTask": "Run maildev server",
+      "postDebugTask": "Stop maildev server",
     },
     {
       "name": "Caseflow Frontend",
