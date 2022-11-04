@@ -85,8 +85,17 @@ const BackButton = connect(
 class SplitButtonUnconnected extends React.PureComponent {
 
   handleSplitSubmit = (appeal, payloadInfo, userCssId) => {
+    const cleanedIssues = [];
 
-    const response = this.props.splitAppeal(appeal.id, payloadInfo.selectedIssues,
+    // since selectedIssues come in as a Hash, clean to only have request issue id selected
+    Object.entries(payloadInfo.selectedIssues).forEach((item) => {
+      // if the value is true, push the request issue id
+      if (item[1] === true) {
+        cleanedIssues.push(item[0]);
+      }
+    });
+
+    const response = this.props.splitAppeal(appeal.id, cleanedIssues,
       payloadInfo.reason, payloadInfo.otherReason, userCssId);
 
     response.then(() => {
