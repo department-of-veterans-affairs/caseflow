@@ -46,11 +46,15 @@ class ExternalApi::VBMSService
 
   def self.upload_document_to_vbms_veteran(veteran_file_number, uploadable_document)
     @vbms_client ||= init_vbms_client
-    response = initialize_upload(veteran_file_number, uploadable_document)
+    response = initialize_upload_veteran(veteran_file_number, uploadable_document)
     upload_document(veteran_file_number, response.upload_token, uploadable_document.pdf_location)
   end
 
-  def self.initialize_upload(veteran_file_number, uploadable_document)
+  def self.initialize_upload()
+
+  end
+
+  def self.initialize_upload_veteran(veteran_file_number, uploadable_document)
     content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
     filename = uploadable_document.document_name.presence || SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
     request = VBMS::Requests::InitializeUpload.new(
