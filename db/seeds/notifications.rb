@@ -256,11 +256,20 @@ module Seeds
         "have one, or contact the hearing coordinator for your region. For a list of hearing coordinators by "\
         "region with contact information, please visit https://www.bva.va.gov.")
       Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 3.days.ago, event_type: "VSO IHP pending", notification_type: "Email and SMS",
-        recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success")
+        recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
+        notification_content: "You filed an appeal with the Board of Veterans' Appeals. Your case has been assigned to your "\
+        "Veterans Service Organization to provide written argument. Once the argument has been received, "\
+        "the Board of Veterans' Appeals will resume processing of your appeal.")
       Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 2.days.ago, event_type: "VSO IHP complete", notification_type: "Email and SMS",
-        recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success")
+        recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
+        notification_content: "The Board of Veterans' Appeals received the written argument from your Veterans Service "\
+        "Organization. The Board will continue processing your appeal, but it must work cases in docket "\
+        "order (the order received). If you have any questions please reach out to your Veterans Service "\
+        "Organization or log onto VA.gov for additional information.")
       Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: "Appeal decision mailed (Non-contested claims)",
         notification_type: "Email and SMS", recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
+        notification_content: "The Board of Veterans' Appeals issued a decision on your appeal that will be sent to you and to "\
+        "your representative, if you have one, shortly.",
         sms_notification_status: "permanent-failure")
 
       # Multiple Notifications for Legacy Appeal 2309289
