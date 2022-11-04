@@ -43,7 +43,7 @@ class RequestIssue < CaseflowRecord
     appeal_to_higher_level_review: "appeal_to_higher_level_review",
     before_ama: "before_ama",
     legacy_issue_not_withdrawn: "legacy_issue_not_withdrawn",
-    legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
+    legacy_appeal_not_eligible: "legacy_appeal_not_eligible",
   }
 
   enum closed_status: {
@@ -136,8 +136,7 @@ class RequestIssue < CaseflowRecord
     # "Active" issues are issues that need decisions.
     # They show up as contentions in VBMS and issues in Caseflow Queue.
     def active
-      eligible.where(closed_at: nil, 
-      split_issue_status: "in_progress") || eligible.where(closed_at: nil, split_issue_status: nil)
+      eligible.where(closed_at: nil, split_issue_status: [nil, "in_progress"])
     end
 
     def active_or_ineligible
