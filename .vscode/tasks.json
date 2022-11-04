@@ -1,42 +1,42 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "Run webpack-dev-server",
-			"type": "shell",
-			"command": "yarn dev:hot",
-			"isBackground": true,
-			"options": {
-				"cwd": "${workspaceRoot}/client",
-				"env": {
-					"NODE_ENV": "development"
-				}
-			},
-			"problemMatcher": [
-				{
-					"pattern": [
-						{
-							"regexp": ".",
-							"file": 1,
-							"location": 2,
-							"message": 3
-						}
-					],
-					"background": {
-						"activeOnStart": true,
-						"beginsPattern": "Webpack dev build for Rails",
-						"endsPattern": "Compiled successfully.",
-					}
-				}
-			]
-		},
-		{
-			"label": "Stop webpack-dev-server",
-			"type": "process",
-			"command": [
-				"${command:workbench.action.tasks.terminate}",
-				"${command:workbench.action.acceptSelectedQuickOpenItem}",
-			]
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run webpack-dev-server",
+      "type": "shell",
+      "command": "yarn dev:hot",
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceRoot}/client",
+        "env": {
+          "NODE_ENV": "development"
+        }
+      },
+      "problemMatcher": [
+        {
+          "pattern": [
+            {
+              "regexp": ".",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "Webpack dev build for Rails",
+            "endsPattern": "Compiled successfully.",
+          }
+        }
+      ]
+    },
+    {
+      "label": "Stop webpack-dev-server",
+      "type": "process",
+      "command": [
+        "${command:workbench.action.tasks.terminate}",
+        "${command:workbench.action.acceptSelectedQuickOpenItem}",
+      ]
+    }
+  ]
 }
