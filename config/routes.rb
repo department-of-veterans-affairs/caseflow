@@ -66,6 +66,7 @@ Rails.application.routes.draw do
         post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
         post 'appeals/:appeal_id/upload_document', to: 'upload_vbms_document#create'
         get 'judges', to: 'judges#index'
+        post 'upload_document', to: 'upload_vbms_document#create'
         get 'user', to: 'users#index'
         get 'veterans', to: 'veterans#details'
       end
