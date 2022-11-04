@@ -40,7 +40,7 @@ class ExternalApi::VBMSService
 
   def self.upload_document_to_vbms(appeal, uploadable_document)
     @vbms_client ||= init_vbms_client
-    response = initialize_upload(appeal.veteran_file_number, uploadable_document)
+    response = initialize_upload(appeal, uploadable_document)
     upload_document(appeal.veteran_file_number, response.upload_token, uploadable_document.pdf_location)
   end
 
