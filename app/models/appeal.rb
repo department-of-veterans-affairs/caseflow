@@ -142,7 +142,6 @@ class Appeal < DecisionReview
     include_association :claims_folder_searches
     include_association :judge_case_reviews
     include_association :nod_date_updates
-    include_association :vbms_uploaded_documents
     include_association :work_mode
 
     # lambda for setting up a new UUID for supplemental claims
@@ -365,7 +364,7 @@ class Appeal < DecisionReview
         r_issue.request_decision_issues.each do |rd_issue|
           # get the decision issue id
           decision_issue_id = rd_issue.decision_issue_id
-          # get the decision issue 
+          # get the decision issue
           d_issue = DecisionIssue.find(decision_issue_id)
           # clone decision issue
           dup_d_issue = clone_issue(d_issue)
