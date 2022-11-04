@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_14_181613) do
+ActiveRecord::Schema.define(version: 2022_10_25_172851) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1564,6 +1564,7 @@ ActiveRecord::Schema.define(version: 2022_10_14_181613) do
     t.string "name", null: false, comment: "PII. Name of organization, or first name or mononym of person"
     t.string "party_type", null: false, comment: "The type of this party. Allowed values: individual, organization"
     t.string "phone_number", comment: "PII"
+    t.string "ssn", comment: "PII. Social Security Number"
     t.string "state", null: false
     t.string "suffix", comment: "PII"
     t.datetime "updated_at", null: false
