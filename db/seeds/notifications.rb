@@ -65,7 +65,7 @@ module Seeds
     end
 
     def create_first_ama_appeal(issue_count: 1)
-      veteran = create_veteran("999999990", "Abellona", "Abellona Valtas")
+      veteran = create_veteran("999999990", "Abellona", "Valtas")
       claimant_participant_id = "RANDOM_CLAIMANT_PID#{veteran.file_number}"
       create_poa(veteran.file_number, claimant_participant_id)
       create(
