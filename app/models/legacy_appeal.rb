@@ -25,7 +25,6 @@ class LegacyAppeal < CaseflowRecord
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_many :decision_documents, as: :appeal
-  has_many :vbms_uploaded_documents, as: :appeal
   has_one :special_issue_list, as: :appeal
   has_many :record_synced_by_job, as: :record
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
