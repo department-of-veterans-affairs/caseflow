@@ -50,7 +50,7 @@ RSpec.describe SplitAppealController, type: :controller do
         dup_split_task = dup_appeal.tasks.where(type: "SplitAppealTask").first
         SCT = SplitCorrelationTable.last
         expect(SCT.appeal_id).to eq(dup_appeal.id)
-        expect(SCT.original_request_issue_ids).to eq([request_issue3.id, request_issue2.id, request_issue.id])
+        expect(SCT.original_request_issue_ids).to include(request_issue3.id, request_issue2.id, request_issue.id)
         expect(SCT.original_appeal_id).to eq(appeal.id)
         expect(appeal.tasks.where(type: "SplitAppealTask").count).to eq(1)
         expect(appeal_split_task.parent_id).to eq(appeal.root_task.id)
