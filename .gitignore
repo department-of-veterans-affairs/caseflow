@@ -78,3 +78,10 @@ docs/schema/*
 
 # Ignore any database backups
 caseflow-db-backup.gz
+
+# VS Code Config Files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
