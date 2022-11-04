@@ -10,10 +10,17 @@ import {
   statusColumn } from './NotificationTableColumns';
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
 import ApiUtil from '../../util/ApiUtil';
+import NotificationModal from './NotificationModal';
 
-const NotificationTable = ({ appealId }) => {
+const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
 
   const [notificationList, setNotificationList] = useState([]);
+
+  const [notificationState, setNotificationState] = useState({});
+
+  const handleNotification = (state) => {
+    setNotificationState(state);
+  };
 
   // Purpose: This function generates one or two entries for each record depending on notification type
   // Params: notifications - The notification list recieved from get request call
@@ -78,7 +85,7 @@ const NotificationTable = ({ appealId }) => {
 
     const data = await ApiUtil.get(url).
       then((response) => response.body).
-      catch(() => []);
+      catch((response) => console.error(response));
 
     return data;
   };
@@ -101,7 +108,7 @@ const NotificationTable = ({ appealId }) => {
   // Return: The generated column
   const createColumnObject = (column) => {
     const functionForColumn = {
-      [NOTIFICATION_CONFIG.COLUMNS.EVENT_TYPE.name]: eventTypeColumn(notificationList),
+      [NOTIFICATION_CONFIG.COLUMNS.EVENT_TYPE.name]: eventTypeColumn(notificationList, modalState, openModal, handleNotification, notificationState),
       [NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_DATE.name]: notificationDateColumn(notificationList),
       [NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_TYPE.name]: notificationTypeColumn(notificationList),
       [NOTIFICATION_CONFIG.COLUMNS.RECIPIENT_INFORMATION.name]: recipientInformationColumn(notificationList),
@@ -125,22 +132,28 @@ const NotificationTable = ({ appealId }) => {
   };
 
   return (
-    <QueueTable
-      columns={columnsFromConfig(NOTIFICATION_CONFIG.COLUMNS)}
-      rowObjects={notificationList}
-      enablePagination
-      casesPerPage={15}
-      sortColName="Notification Date"
-      defaultSort={{
-        sortColName: 'notificationDateColumn',
-        sortAscending: true
-      }}
-    />
+    <>
+      <QueueTable
+        columns={columnsFromConfig(NOTIFICATION_CONFIG.COLUMNS)}
+        rowObjects={notificationList}
+        enablePagination
+        casesPerPage={15}
+        sortColName="Notification Date"
+        defaultSort={{
+          sortColName: 'notificationDateColumn',
+          sortAscending: true
+        }}
+      />
+      {modalState && <NotificationModal eventType={notificationState.event_type} notificationContent={notificationState.content} closeNotificationModal={closeModal} />}
+    </>
   );
 };
 
 NotificationTable.propTypes = {
   appealId: PropTypes.string.isRequired,
+  modalState: PropTypes.bool,
+  openModal: PropTypes.func,
+  closeModal: PropTypes.func
 };
 
 export default NotificationTable;

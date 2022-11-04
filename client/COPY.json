@@ -1355,5 +1355,6 @@
   "NOTIFICATION_DATE_COLUMN_NAME": "Notification Date",
   "NOTIFICATION_TYPE_COLUMN_NAME": "Notification Type",
   "NOTIFICATION_RECIPIENT_INFORMATION": "Recipient Information",
-  "NOTIFICATION_STATUS": "Status"
+  "NOTIFICATION_STATUS": "Status",
+  "NOTIFICATION_CONTENT_MESSAGE": "The following message was sent to the Appellant: "
 }
