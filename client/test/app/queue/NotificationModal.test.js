@@ -33,7 +33,7 @@ describe('NotificationModal', () => {
     expect(screen.getByText(defaultProps.eventType)).toBeInTheDocument();
   });
 
-  it('renders body content', () => {
+  it('renders body content', async () => {
     setupComponent();
 
     expect(screen.getByTestId('body-content')).toBeInTheDocument();
