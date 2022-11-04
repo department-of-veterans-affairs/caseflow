@@ -17,7 +17,7 @@ describe('NotificationModal', () => {
   };
 
   const setupComponent = () => {
-    return render(<NotificationModal {...defaultProps}/>
+    return render(<NotificationModal {...defaultProps} />
     );
   };
 
