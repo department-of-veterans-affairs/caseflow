@@ -67,6 +67,7 @@ Rails.application.routes.draw do
         post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
         post 'appeals/:appeal_id/upload_document', to: 'upload_vbms_document#create'
         get 'judges', to: 'judges#index'
+        post 'upload_document', to: 'upload_vbms_document#create'
         get 'user', to: 'users#index'
         get 'veterans', to: 'veterans#details'
       end
@@ -380,7 +381,7 @@ Rails.application.routes.draw do
   get "/route_docs", to: "route_docs#index"
 
   get "/admin", to: "admin#index"
-
+  post "admin/veteran_extract", to: "admin#veteran_extract"
   get "/mpi", to: "mpi#index"
   post "/mpi/search", to: "mpi#search"
 end
