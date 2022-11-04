@@ -142,7 +142,6 @@ class Appeal < DecisionReview
     include_association :claims_folder_searches
     include_association :judge_case_reviews
     include_association :nod_date_updates
-    include_association :vbms_uploaded_documents
     include_association :work_mode
 
     # lambda for setting up a new UUID for supplemental claims
@@ -306,7 +305,9 @@ class Appeal < DecisionReview
   end
 
   # finalize_split_appeal contains all the methods to finish the amoeba split
-  def finalize_split_appeal(parent_appeal, user_css_id)
+  def finalize_split_appeal(parent_appeal, user_css_id, split_issues)
+    # update the child task tree with parent, passing CSS ID of user for validation
+    self&.clone_task_tree(parent_appeal, user_css_id)
     # clone the hearings and hearing relations from parent appeal
     self&.clone_hearings(parent_appeal)
     # if there are ihp drafts, clone them too
@@ -314,9 +315,7 @@ class Appeal < DecisionReview
     # if there are cavc_remand, clone them too (need user css id)
     self&.clone_cavc_remand(parent_appeal, user_css_id)
     # clones request_issues, decision_issues, and request_decision_issues
-    self&.clone_issues(parent_appeal)
-    # update the child task tree with parent, passing CSS ID of user for validation
-    self&.clone_task_tree(parent_appeal, user_css_id)
+    self&.clone_issues(parent_appeal, split_issues)
     # if there is an AOD for the parent appeal, clone
     if !AdvanceOnDocketMotion.find_by(appeal_id: parent_appeal.id).nil?
       self&.clone_aod(parent_appeal)
@@ -325,7 +324,7 @@ class Appeal < DecisionReview
     self.appeal_split_process = false
     # set the duplication split flag
     self.duplicate_split_appeal = true
-    # set the parent original split appeal to true
+    # set the parent original split appeal flat
     parent_appeal.original_split_appeal = true
   end
 
@@ -345,31 +344,58 @@ class Appeal < DecisionReview
     dup_remand&.save
   end
 
-  # clone issues clones request_issues, decision_issues, and decision_request_issues
-  # together in order to maintain relationships to each other
-  def clone_issues(parent_appeal)
-    request_issues_parent_to_child_hash = {}
-    decision_review_parent_to_child_hash = {}
-    # clone request issues and add to request issue hash
-    original_request_issues = parent_appeal.request_issues
-    original_request_issues.each do |r_issue|
-      dup_issue = clone_issue(r_issue)
-      request_issues_parent_to_child_hash[r_issue.id] = dup_issue.id
+  # clone issues clones request_issues the user selected
+  # and anydecision_issues/decision_request_issues tied to the request issue
+  def clone_issues(parent_appeal, split_request_issues)
+
+    # cycle the split_request_issues list from the payload
+    split_request_issues.each do |r_issue_id|
+      # find the request issue from the parent appeal
+      r_issue = parent_appeal.request_issues.find(r_issue_id.to_i)
+      dup_r_issue = clone_issue(r_issue)
+
+      # set original issue on hold and duplicate issue to in_progress
+      r_issue.update!(
+        split_issue_status: Constants.TASK_STATUSES.on_hold
+      )
+      r_issue.save!
+      dup_r_issue.update!(
+        split_issue_status: Constants.TASK_STATUSES.in_progress
+      )
+      dup_r_issue.save!
+
+      # skip copying decision issues if there aren't any
+      next if r_issue.request_decision_issues.empty?
+
+      # copy the request_decision_issues
+      r_issue.request_decision_issues.each do |rd_issue|
+        # get the decision issue id
+        decision_issue_id = rd_issue.decision_issue_id
+        # get the decision issue
+        d_issue = DecisionIssue.find(decision_issue_id)
+        # clone decision issue
+        dup_d_issue = clone_issue(d_issue)
+        # clone request_decision_issue
+        dup_rd_issue = rd_issue.amoeba_dup
+        # set the request_issue_id and decision_issue_id
+        dup_rd_issue.request_issue_id = dup_r_issue.id
+        dup_rd_issue.decision_issue_id = dup_d_issue.id
+        dup_rd_issue.save!
+      end
     end
-    # clone decision issues and add to decision issue hash
-    original_decision_issues = parent_appeal.decision_issues
-    original_decision_issues.each do |d_issue|
-      dup_issue = clone_issue(d_issue)
-      decision_review_parent_to_child_hash[d_issue.id] = dup_issue.id
-    end
-    # cycle the hashes to maintain parent/child relationships and save
-    original_request_decision_issues = parent_appeal.request_decision_issues
-    original_request_decision_issues.each do |rd_issue|
-      dup_issue = rd_issue&.amoeba_dup
-      dup_issue&.request_issue_id = request_issues_parent_to_child_hash[rd_issue.request_issue_id]
-      dup_issue&.decision_issue_id = decision_review_parent_to_child_hash[rd_issue.decision_issue_id]
-      dup_issue&.save
-    end
+  end
+
+  def clone_aod(parent_appeal)
+    # find the appeal AOD
+    aod = AdvanceOnDocketMotion.find_by(appeal_id: parent_appeal.id)
+    # create a new advance on docket for the duplicate appeal
+    AdvanceOnDocketMotion.create!(
+      user_id: aod.user_id,
+      person_id: claimant.person.id,
+      granted: aod.granted,
+      reason: aod.reason,
+      appeal: self
+    )
   end
 
   def clone_aod(parent_appeal)

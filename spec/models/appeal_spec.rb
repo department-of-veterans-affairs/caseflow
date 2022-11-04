@@ -1523,10 +1523,12 @@ describe Appeal, :all_dbs do
           :appeal,
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
         )
+        all_request_issues = appeal_with_numerous_issues.request_issues.ids.map(&:to_s)
+
         if appeal.evidence_submission_docket? && (appeal.docket_name == "evidence_submission")
           dup_appeal = appeal_with_numerous_issues.amoeba_dup
           dup_appeal.save
-          dup_appeal.finalize_split_appeal(appeal_with_numerous_issues, "APPEAL_USER")
+          dup_appeal.finalize_split_appeal(appeal_with_numerous_issues, "APPEAL_USER", all_request_issues)
 
           expect(dup_appeal.id).not_to eq(appeal_with_numerous_issues.id)
           expect(dup_appeal.uuid).not_to eq(appeal_with_numerous_issues.uuid)
@@ -1567,11 +1569,13 @@ describe Appeal, :all_dbs do
           :appeal, docket_type: Constants.AMA_DOCKETS.hearing,
                    request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
         )
+        all_request_issues = appeal_with_hearings.request_issues.ids.map(&:to_s)
+
         original_hearing = create(:hearing, appeal: appeal_with_hearings)
         if appeal_with_hearings.hearing_docket? && (appeal_with_hearings.docket_name == "hearing")
           dup_appeal = appeal_with_hearings.amoeba_dup
           dup_appeal.save
-          dup_appeal.finalize_split_appeal(appeal_with_hearings, "APPEAL_USER")
+          dup_appeal.finalize_split_appeal(appeal_with_hearings, "APPEAL_USER", all_request_issues)
           duplicated_hearing = dup_appeal.hearings.first
           expect(dup_appeal.id).not_to eq(appeal_with_hearings.id)
           expect(dup_appeal.uuid).not_to eq(appeal_with_hearings.uuid)
@@ -1607,11 +1611,12 @@ describe Appeal, :all_dbs do
           :appeal,
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
         )
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
         original_hearing = create(:hearing, appeal: original_appeal)
         original_hearing_email_recipient = create(:hearing_email_recipient, hearing: original_hearing)
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         duplicated_hearing_email_recipient = dup_appeal.hearings.first.email_recipients.first
         expect(dup_appeal.id).not_to eq(original_appeal.id)
         expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
@@ -1640,9 +1645,10 @@ describe Appeal, :all_dbs do
           :colocated_task, :ihp, appeal: original_appeal,
                                  parent: root_task, assigned_at: Date.new(2001, 2, 3)
         )
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         dup_informal_hearing_task = dup_appeal.tasks.where(type: "IhpColocatedTask").first
 
         expect(dup_appeal.id).not_to eq(original_appeal.id)
@@ -1674,12 +1680,13 @@ describe Appeal, :all_dbs do
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes"),
           claimants: [create(:claimant)]
         )
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
         subject { claimant.advanced_on_docket_motion_granted?(original_appeal) }
         AdvanceOnDocketMotion.create_or_update_by_appeal(original_appeal, granted: true, reason: "age")
         expect(subject).to be_truthy
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         dup_claimant = dup_appeal.claimants.first
         original_claimant = original_appeal.claimants.first
         expect(dup_appeal.id).not_to eq(original_appeal.id)
@@ -1713,10 +1720,11 @@ describe Appeal, :all_dbs do
           cancelled_by_id: regular_user.id,
           closed_at: Time.zone.now
         )
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
 
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         expect(dup_appeal.id).not_to eq(original_appeal.id)
         expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
         expect(dup_appeal.veteran_file_number).to eq(original_appeal.veteran_file_number)
@@ -1749,9 +1757,10 @@ describe Appeal, :all_dbs do
           :appeal, :type_cavc_remand,
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
         )
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         expect(dup_appeal.id).not_to eq(original_appeal.id)
         expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
         expect(dup_appeal.veteran_file_number).to eq(original_appeal.veteran_file_number)
@@ -1780,9 +1789,11 @@ describe Appeal, :all_dbs do
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
         )
         original_appellant_substitution = create(:appellant_substitution, target_appeal_id: original_appeal.id)
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
+
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         dup_appellant_substitution = dup_appeal.appellant_substitution
         expect(dup_appeal.id).not_to eq(original_appeal.id)
         expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
@@ -1806,9 +1817,11 @@ describe Appeal, :all_dbs do
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
         )
         create(:available_hearing_locations, :RO17, appeal: original_appeal)
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
+
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
 
         available_hearing_locations = dup_appeal.available_hearing_locations.first
         original_available_hearing_location = original_appeal.available_hearing_locations.first
@@ -1850,9 +1863,11 @@ describe Appeal, :all_dbs do
           appeal_type: "Appeal",
           last_viewed_at: Date.new, user_id: regular_user.id
         )
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
+
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         dup_appeal_view = dup_appeal.appeal_views.first
         expect(dup_appeal.id).not_to eq(original_appeal.id)
         expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
@@ -1873,10 +1888,11 @@ describe Appeal, :all_dbs do
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
         )
         original_appeal.docket_switch = create(:docket_switch)
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
 
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         dup_docket_switch = dup_appeal.docket_switch
         original_docket_switch = original_appeal.docket_switch
 
@@ -1909,9 +1925,11 @@ describe Appeal, :all_dbs do
           organization: create(:organization),
           path: "\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\AML\\AMA IHPs\\VetName 12345.pdf"
         )
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
+
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         original_ihp_draft = IhpDraft.where(appeal: original_appeal).first
         dup_ihp_draft = IhpDraft.where(appeal: dup_appeal).first
         expect(dup_appeal.id).not_to eq(original_appeal.id)
@@ -1932,9 +1950,11 @@ describe Appeal, :all_dbs do
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
         )
         original_work_mode = WorkMode.create(appeal_id: original_appeal.id, appeal_type: "Appeal")
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
+
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         expect(dup_appeal.id).not_to eq(original_appeal.id)
         expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
         expect(dup_appeal.veteran_file_number).to eq(original_appeal.veteran_file_number)
@@ -1959,9 +1979,11 @@ describe Appeal, :all_dbs do
           query: "test query here",
           user_id: regular_user.id
         )
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
+
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues )
         original_cfs = original_appeal.claims_folder_searches.first
         dup_cfs = dup_appeal.claims_folder_searches.first
         expect(dup_appeal.id).not_to eq(original_appeal.id)
@@ -1977,35 +1999,6 @@ describe Appeal, :all_dbs do
       end
     end
 
-    context "when an appeal has with vbms uploaded document" do
-      it "should duplicate the appeals and with vbms uploaded document for the same veteran" do
-        original_appeal = create(
-          :appeal,
-          request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
-        )
-        VbmsUploadedDocument.create(
-          appeal_id: original_appeal.id,
-          appeal_type: "Appeal",
-          document_type: "BVA Decision", uploaded_to_vbms_at: Date.new
-        )
-        dup_appeal = original_appeal.amoeba_dup
-        dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
-        original_vbms = original_appeal.vbms_uploaded_documents.first
-        dup_vbms = dup_appeal.vbms_uploaded_documents.first
-        expect(dup_appeal.id).not_to eq(original_appeal.id)
-        expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
-        expect(dup_appeal.veteran_file_number).to eq(original_appeal.veteran_file_number)
-        expect(dup_appeal.request_issues.count).to eq(original_appeal.request_issues.count)
-        expect(dup_appeal.vbms_uploaded_documents.count).to eq(original_appeal.vbms_uploaded_documents.count)
-        expect(original_vbms.id).not_to eq(dup_vbms.id)
-        expect(original_vbms.appeal_id).not_to eq(dup_vbms.appeal_id)
-        expect(original_vbms.appeal_type).to eq(dup_vbms.appeal_type)
-        expect(original_vbms.document_type).to eq(dup_vbms.document_type)
-        expect(original_vbms.uploaded_to_vbms_at).to eq(dup_vbms.uploaded_to_vbms_at)
-      end
-    end
-
     context "when an appeal has with nod date update" do
       it "should duplicate the appeals and with nod date update for the same veteran" do
         original_appeal = create(
@@ -2017,9 +2010,11 @@ describe Appeal, :all_dbs do
           change_reason: "entry_error",
           new_date: Date.new, old_date: Date.new, user_id: regular_user.id
         )
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
+
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         original_ndu = original_appeal.nod_date_updates.first
         dup_ndu = dup_appeal.nod_date_updates.first
         expect(dup_appeal.id).not_to eq(original_appeal.id)
@@ -2047,9 +2042,11 @@ describe Appeal, :all_dbs do
           record_id: original_appeal.id,
           record_type: "Appeal", sync_job_name: "job name here"
         )
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
+
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         original_rsb_job = original_appeal.record_synced_by_job.first
         dup_rsb_job = dup_appeal.record_synced_by_job.first
         expect(dup_appeal.id).not_to eq(original_appeal.id)
@@ -2072,9 +2069,11 @@ describe Appeal, :all_dbs do
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
         )
         SpecialIssueList.create(appeal_id: original_appeal.id, appeal_type: "Appeal", blue_water: true)
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
+
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         original_ndu = original_appeal.special_issue_list
         dup_ndu = dup_appeal.special_issue_list
         expect(dup_appeal.id).not_to eq(original_appeal.id)
@@ -2132,9 +2131,11 @@ describe Appeal, :all_dbs do
           :appeal,
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
         )
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
+
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         original_power_of_attorney = original_appeal.power_of_attorney
         dup_power_of_attorney = dup_appeal.power_of_attorney
         expect(dup_appeal.id).not_to eq(original_appeal.id)
@@ -2174,9 +2175,11 @@ describe Appeal, :all_dbs do
           attempted_at: Time.zone.now, last_submitted_at: Time.zone.now
         )
         original_appeal.request_issues_updates = [original_riu]
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
+
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         original_request_issues_update = original_appeal.request_issues_updates.first
         dup_request_issues_update = dup_appeal.request_issues_updates.first
         expect(dup_appeal.id).not_to eq(original_appeal.id)
@@ -2204,17 +2207,67 @@ describe Appeal, :all_dbs do
     context "when an appeal has numerous decision issues" do
       it "should duplicate the appeals and numerous decision issues for the same veteran" do
         original_appeal = create(
-          :appeal, :with_decision_issue,
-          request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
+          :appeal, #:with_decision_issue,
+          request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes"),
+          decision_issues: create_list(:decision_issue, 1)
         )
+        create(
+          :request_decision_issue,
+          request_issue: original_appeal.request_issues.first,
+          decision_issue: original_appeal.decision_issues.first
+        )
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
+
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER")
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         original_decision_issue = original_appeal.decision_issues.first
         dup_decision_issue = dup_appeal.decision_issues.first
 
         expect(dup_appeal.id).not_to eq(original_appeal.id)
         expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
+        expect(dup_appeal.veteran_file_number).to eq(original_appeal.veteran_file_number)
+        expect(dup_appeal.decision_issues.count).to eq(original_appeal.decision_issues.count)
+        expect(original_decision_issue.id).not_to eq(dup_decision_issue.id)
+        expect(original_decision_issue.decision_review_id).not_to eq(dup_decision_issue.decision_review_id)
+        expect(original_decision_issue.benefit_type).to eq(dup_decision_issue.benefit_type)
+        expect(original_decision_issue.decision_review_type).to eq(dup_decision_issue.decision_review_type)
+        expect(original_decision_issue.decision_text).to eq(dup_decision_issue.decision_text)
+        expect(original_decision_issue.deleted_at).to eq(dup_decision_issue.deleted_at)
+        expect(original_decision_issue.description).to eq(dup_decision_issue.description)
+        expect(original_decision_issue.diagnostic_code).to eq(dup_decision_issue.diagnostic_code)
+        expect(original_decision_issue.end_product_last_action_date)
+          .to eq(dup_decision_issue.end_product_last_action_date)
+        expect(original_decision_issue.participant_id).to eq(dup_decision_issue.participant_id)
+        expect(original_decision_issue.percent_number).to eq(dup_decision_issue.percent_number)
+        expect(original_decision_issue.rating_issue_reference_id).to eq(dup_decision_issue.rating_issue_reference_id)
+        expect(original_decision_issue.rating_profile_date).to eq(dup_decision_issue.rating_profile_date)
+        expect(original_decision_issue.rating_promulgation_date).to eq(dup_decision_issue.rating_promulgation_date)
+        expect(original_decision_issue.subject_text).to eq(dup_decision_issue.subject_text)
+      end
+
+      it "should only duplicate the request issues selected and set the original issue to 'on hold'" do
+        original_appeal = create(
+          :appeal, #:with_decision_issue,
+          request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes"),
+          decision_issues: create_list(:decision_issue, 1)
+        )
+        create(
+          :request_decision_issue,
+          request_issue: original_appeal.request_issues.first,
+          decision_issue: original_appeal.decision_issues.first
+        )
+        selected_request_issues = [original_appeal.request_issues.first.id.to_s]
+        dup_appeal = original_appeal.amoeba_dup
+        dup_appeal.save
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", selected_request_issues)
+        original_decision_issue = original_appeal.decision_issues.first
+        dup_decision_issue = dup_appeal.decision_issues.first
+        original_appeal.reload
+        expect(dup_appeal.request_issues.count).not_to eq(original_appeal.request_issues.count)
+        expect(dup_appeal.request_issues.count).to eq(1)
+        expect(dup_appeal.request_issues.first.split_issue_status).to eq("in_progress")
+        expect(original_appeal.request_issues.first.split_issue_status).to eq("on_hold")
         expect(dup_appeal.veteran_file_number).to eq(original_appeal.veteran_file_number)
         expect(dup_appeal.decision_issues.count).to eq(original_appeal.decision_issues.count)
         expect(original_decision_issue.id).not_to eq(dup_decision_issue.id)

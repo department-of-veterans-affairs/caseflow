@@ -8,7 +8,8 @@ class SplitAppealController < ApplicationController
       # create transaction for split appeal validation
       Appeal.transaction do
         appeal_id = params[:appeal_id]
-        split_issue = params[:appeal_split_issues]
+        # remove any issues selected that are false (i.e not checked by user)
+        split_issues = params[:appeal_split_issues]
         split_other_reason = params[:split_other_reason]
         split_reason = params[:split_reason]
 
@@ -46,7 +47,7 @@ class SplitAppealController < ApplicationController
           spt.update!(status: Constants.TASK_STATUSES.completed)
         end
         # run extra duplicate methods to finish split
-        dup_appeal.finalize_split_appeal(appeal, user_css_id)
+        dup_appeal.finalize_split_appeal(appeal, user_css_id, split_issues)
         # set the appeal split process to false
         appeal.appeal_split_process = false
         # send success response
@@ -65,7 +66,7 @@ class SplitAppealController < ApplicationController
           relationship_type = "split_appeal",
           split_other_reason = split_other_reason,
           split_reason = split_reason,
-          split_request_issue_ids = split_issue.keys,
+          split_request_issue_ids = split_issues,
           updated_at = Time.zone.now.utc,
           updated_by_id = current_user.id,
           working_split_status = Constants.TASK_STATUSES.in_progress
@@ -88,22 +89,6 @@ class SplitAppealController < ApplicationController
           updated_by_id: create_split_record[13],
           working_split_status: create_split_record[14]
         )
-        original_request_issue_ids.each do |id|
-          original_request_issue_id = id
-          original_request_issue = RequestIssue.find_by_id(original_request_issue_id)
-          original_request_issue.update!(
-            split_issue_status: Constants.TASK_STATUSES.on_hold
-          )
-          original_request_issue.save!
-        end
-        split_request_issue_ids.each do |id|
-          split_request_issue_id = id
-          split_request_issue = RequestIssue.find_by_id(split_request_issue_id)
-          split_request_issue.update!(
-            split_issue_status: Constants.TASK_STATUSES.in_progress
-          )
-          split_request_issue.save!
-        end
       end
     end
   end

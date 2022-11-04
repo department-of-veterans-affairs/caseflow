@@ -12,18 +12,22 @@ RSpec.describe SplitAppealController, type: :controller do
     context "with valid parameters create a appeal with 3 request issues" do
       let(:root_task) { RootTask.find(create(:root_task).id) }
       let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
-      let(:request_issue2) { create(:request_issue, benefit_type: benefit_type1) }
+      let(:request_issue2) { create(:request_issue, benefit_type: benefit_type2) }
       let(:benefit_type1) { "compensation" }
       let(:request_issue3) { create(:request_issue, benefit_type: benefit_type2) }
       let(:benefit_type2) { "pension" }
-      let(:appeal) { create(
-        :appeal, tasks: [root_task],
-        request_issues: [request_issue, request_issue2, request_issue3]
-        ) }
+      let!(:appeal) do
+        create(
+          :appeal,
+          tasks: [root_task],
+          request_issues: [request_issue, request_issue2, request_issue3]
+        )
+      end
+
       let(:valid_params) do
         {
           appeal_id: appeal.id,
-          appeal_split_issues: { request_issue.id => true },
+          appeal_split_issues: [request_issue.id.to_s, request_issue2.id.to_s],
           split_reason: "Include a motion for CUE with respect to a prior Board decision",
           split_other_reason: "",
           user_css_id: ssc_user.css_id
@@ -36,30 +40,17 @@ RSpec.describe SplitAppealController, type: :controller do
         dup_appeal = Appeal.last
         expect(appeal.stream_docket_number).to eq(dup_appeal.stream_docket_number)
         expect(appeal.veteran_file_number).to eq(dup_appeal.veteran_file_number)
+        expect(dup_appeal.request_issues.count).to eq(2)
       end
 
       it "creates a split record for SplitCorrelationTable in DB and tasks" do
         post :split_appeal, params: valid_params
         dup_appeal = Appeal.last
-        appeal_type = dup_appeal.docket_type,
-        appeal_uuid = dup_appeal.uuid,
-        created_at = Time.zone.now.utc,
-        created_by_id = current_user.id,
-        original_appeal_id = appeal.id,
-        original_appeal_uuid = appeal.uuid,
-        original_request_issue_ids = [request_issue.id, request_issue2.id, request_issue3.id],
-        relationship_type = "split_appeal",
-        split_other_reason = split_other_reason,
-        split_reason = split_reason,
-        split_request_issue_ids = [],
-        updated_at = Time.zone.now.utc,
-        updated_by_id = current_user.id,
-        working_split_status = Constants.TASK_STATUSES.in_progress
         appeal_split_task = appeal.tasks.where(type: "SplitAppealTask").first
         dup_split_task = dup_appeal.tasks.where(type: "SplitAppealTask").first
         SCT = SplitCorrelationTable.last
         expect(SCT.appeal_id).to eq(dup_appeal.id)
-        expect(SCT.original_request_issue_ids).to eq([request_issue3.id, request_issue2.id, request_issue.id])
+        expect(SCT.original_request_issue_ids).to include(request_issue3.id, request_issue2.id, request_issue.id)
         expect(SCT.original_appeal_id).to eq(appeal.id)
         expect(appeal.tasks.where(type: "SplitAppealTask").count).to eq(1)
         expect(appeal_split_task.parent_id).to eq(appeal.root_task.id)
@@ -78,16 +69,18 @@ RSpec.describe SplitAppealController, type: :controller do
       let(:benefit_type1) { "compensation" }
       let(:request_issue3) { create(:request_issue, benefit_type: benefit_type2) }
       let(:benefit_type2) { "pension" }
-      let(:appeal) { create(
-        :appeal,
-        tasks: [root_task],
-        request_issues: [request_issue, request_issue2, request_issue3]
-        ) }
+      let(:appeal) do
+        create(
+          :appeal,
+          tasks: [root_task],
+          request_issues: [request_issue, request_issue2, request_issue3]
+        )
+      end
       let(:valid_params) do
         {
           appeal_id: appeal.id,
-          appeal_split_issues: { request_issue.id => true },
-          split_reason: "other",
+          appeal_split_issues: [request_issue.id.to_s],
+          split_reason: "Other",
           split_other_reason: "Some Other Reason",
           user_css_id: ssc_user.css_id
         }
@@ -103,24 +96,13 @@ RSpec.describe SplitAppealController, type: :controller do
 
       it "creates a split record for SplitCorrelationTable in DB and tasks" do
         post :split_appeal, params: valid_params
+        sct_record = SplitCorrelationTable.find_by(original_appeal_id: appeal.id)
         dup_appeal = Appeal.last
-        appeal_type = dup_appeal.docket_type,
-        appeal_uuid = dup_appeal.uuid,
-        created_at = Time.zone.now.utc,
-        created_by_id = current_user.id,
-        original_appeal_id = appeal.id,
-        original_appeal_uuid = appeal.uuid,
-        original_request_issue_ids = [request_issue.id, request_issue2.id, request_issue3.id],
-        relationship_type = "split_appeal",
-        split_other_reason = split_other_reason,
-        split_reason = split_reason,
-        split_request_issue_ids = [],
-        updated_at = Time.zone.now.utc,
-        updated_by_id = current_user.id,
-        working_split_status = Constants.TASK_STATUSES.in_progress
-        appeal_split_task = appeal.tasks.where(type: "SplitAppealTask").first
-        dup_split_task = dup_appeal.tasks.where(type: "SplitAppealTask").first
-        expect(SCT.split_other_reason).to eq("")
+        expect(SplitCorrelationTable.last.original_appeal_id).to eq(appeal.id)
+        expect(sct_record.appeal_id).to eq(dup_appeal.id)
+        expect(sct_record.split_reason).to eq("Other")
+        expect(sct_record.split_other_reason).to eq("Some Other Reason")
+        expect(sct_record.split_request_issue_ids).to eq([request_issue.id])
       end
     end
 
@@ -130,7 +112,7 @@ RSpec.describe SplitAppealController, type: :controller do
       let(:invalid_params) do
         {
           appeal_id: -5,
-          appeal_split_issues: { request_issue.id.to_s => true },
+          appeal_split_issues: [request_issue.id.to_s],
           split_reason: "Include a motion for CUE with respect to a prior Board decision",
           split_other_reason: ""
         }
@@ -150,7 +132,7 @@ RSpec.describe SplitAppealController, type: :controller do
       let(:invalid_params) do
         {
           appeal_id: "fail",
-          appeal_split_issues: { request_issue.id.to_s => true },
+          appeal_split_issues: [request_issue.id.to_s],
           split_reason: "Include a motion for CUE with respect to a prior Board decision",
           split_other_reason: ""
         }
@@ -165,12 +147,13 @@ RSpec.describe SplitAppealController, type: :controller do
     context "the appeal is split" do
       let(:benefit_type1) { "compensation" }
       let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
+      let(:request_issue2) { create(:request_issue, benefit_type: benefit_type1) }
       let(:root_task) { RootTask.find(create(:root_task).id) }
-      let(:appeal) { create(:appeal, tasks: [root_task]) }
+      let(:appeal) { create(:appeal, tasks: [root_task], request_issues: [request_issue, request_issue2]) }
       let(:valid_params) do
         {
           appeal_id: appeal.id,
-          appeal_split_issues: { request_issue.id => true },
+          appeal_split_issues: [request_issue.id.to_s],
           split_reason: "Include a motion for CUE with respect to a prior Board decision",
           split_other_reason: "",
           user_css_id: ssc_user.css_id
@@ -186,6 +169,7 @@ RSpec.describe SplitAppealController, type: :controller do
     context "with an appeal that has a full hearing day" do
       let(:benefit_type1) { "compensation" }
       let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
+      let(:request_issue2) { create(:request_issue, benefit_type: benefit_type1) }
       let!(:hearing_day) do
         create(
           :hearing_day,
@@ -195,7 +179,7 @@ RSpec.describe SplitAppealController, type: :controller do
         )
       end
       let(:root_task) { RootTask.find(create(:root_task).id) }
-      let(:appeal) { create(:appeal, tasks: [root_task]) }
+      let(:appeal) { create(:appeal, tasks: [root_task], request_issues: [request_issue, request_issue2]) }
       let!(:hearing) do
         create(
           :hearing,
@@ -212,7 +196,7 @@ RSpec.describe SplitAppealController, type: :controller do
       let(:valid_params) do
         {
           appeal_id: appeal.id,
-          appeal_split_issues: { request_issue.id.to_s => true },
+          appeal_split_issues: [request_issue.id.to_s],
           split_reason: "Include a motion for CUE with respect to a prior Board decision",
           split_other_reason: "",
           user_css_id: ssc_user.css_id
