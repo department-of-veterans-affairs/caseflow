@@ -92,7 +92,7 @@ module AppellantNotification
       appeal_state.update!(vso_ihp_pending: true)
       appeal_state.update!(vso_ihp_complete: false)
     when "vso_ihp_complete"
-      if !appeal.tasks.open.where(type.include?("Ihp")) ||
+      if !appeal.tasks.open.where(type.include?("Ihp")) &&
          !appeal.tasks.open.where(type.include?("InformalHearingPresentationTask"))
         appeal_state.update!(vso_ihp_complete: true)
         appeal_state.update!(vso_ihp_pending: false)
@@ -101,7 +101,7 @@ module AppellantNotification
       appeal_state.update!(privacy_act_pending: true)
       appeal_state.update!(privacy_act_complete: false)
     when "privacy_act_complete"
-      if !appeal.tasks.open.where(type.include?("Foia")) || !appeal.tasks.open.where(type.include?("PrivacyAct"))
+      if !appeal.tasks.open.where(type.include?("Foia")) && !appeal.tasks.open.where(type.include?("PrivacyAct"))
         appeal_state.update!(privacy_act_complete: true)
         appeal_state.update!(privacy_act_pending: false)
       end
