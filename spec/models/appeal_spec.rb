@@ -1999,37 +1999,6 @@ describe Appeal, :all_dbs do
       end
     end
 
-    context "when an appeal has with vbms uploaded document" do
-      it "should duplicate the appeals and with vbms uploaded document for the same veteran" do
-        original_appeal = create(
-          :appeal,
-          request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes")
-        )
-        VbmsUploadedDocument.create(
-          appeal_id: original_appeal.id,
-          appeal_type: "Appeal",
-          document_type: "BVA Decision", uploaded_to_vbms_at: Date.new
-        )
-        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
-
-        dup_appeal = original_appeal.amoeba_dup
-        dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
-        original_vbms = original_appeal.vbms_uploaded_documents.first
-        dup_vbms = dup_appeal.vbms_uploaded_documents.first
-        expect(dup_appeal.id).not_to eq(original_appeal.id)
-        expect(dup_appeal.uuid).not_to eq(original_appeal.uuid)
-        expect(dup_appeal.veteran_file_number).to eq(original_appeal.veteran_file_number)
-        expect(dup_appeal.request_issues.count).to eq(original_appeal.request_issues.count)
-        expect(dup_appeal.vbms_uploaded_documents.count).to eq(original_appeal.vbms_uploaded_documents.count)
-        expect(original_vbms.id).not_to eq(dup_vbms.id)
-        expect(original_vbms.appeal_id).not_to eq(dup_vbms.appeal_id)
-        expect(original_vbms.appeal_type).to eq(dup_vbms.appeal_type)
-        expect(original_vbms.document_type).to eq(dup_vbms.document_type)
-        expect(original_vbms.uploaded_to_vbms_at).to eq(dup_vbms.uploaded_to_vbms_at)
-      end
-    end
-
     context "when an appeal has with nod date update" do
       it "should duplicate the appeals and with nod date update for the same veteran" do
         original_appeal = create(
