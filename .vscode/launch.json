@@ -44,8 +44,12 @@
       "url": "http://localhost:3000",
       "request": "launch",
       "preLaunchTask": "Run webpack-dev-server",
-      "postDebugTask": "postdebugKill",
-      "sourceMaps": true
+      "postDebugTask": "Stop webpack-dev-server",
+      "webRoot": "${workspaceFolder}/client",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///*": "${webRoot}/*"
+      }
     },
   ],
   "compounds": [

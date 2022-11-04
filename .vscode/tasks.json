@@ -31,11 +31,12 @@
 			]
 		},
 		{
-			"label": "postdebugKill",
+			"label": "Stop webpack-dev-server",
 			"type": "process",
 			"command": [
-				"${command:workbench.action.tasks.terminate}"
-			],
+				"${command:workbench.action.tasks.terminate}",
+				"${command:workbench.action.acceptSelectedQuickOpenItem}",
+			]
 		}
 	]
 }
