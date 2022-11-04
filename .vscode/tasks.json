@@ -47,7 +47,7 @@
     {
       "label": "Stop maildev server",
       "type": "shell",
-      "command": "(docker stop maildev-server) || true"
+      "command": "(docker stop maildev-server && docker rm /maildev-server) || true"
     }
   ]
 }
