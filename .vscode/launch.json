@@ -40,11 +40,13 @@
     },
     {
       "name": "Caseflow Frontend",
-      "type": "node",
+      "type": "chrome",
+      "url": "http://localhost:3000",
       "request": "launch",
-      "program": "node_modules/webpack-dev-server/bin/webpack-dev-server.js",
-      "cwd": "${workspaceRoot}/client"
-    }
+      "preLaunchTask": "Run webpack-dev-server",
+      "postDebugTask": "postdebugKill",
+      "sourceMaps": true
+    },
   ],
   "compounds": [
     {
