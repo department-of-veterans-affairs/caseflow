@@ -147,7 +147,7 @@ export class CaseTitleDetails extends React.PureComponent {
           </span>
         </TitleDetailsSubheaderSection>
 
-        {!userIsVsoEmployee && this.props.userCanAccessReader && (
+        {!userIsVsoEmployee && this.props.userCanAccessReader && !this.props.hideDocs && (
           <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL}>
             <ReaderLink
               appealId={appealId}
@@ -180,7 +180,7 @@ export class CaseTitleDetails extends React.PureComponent {
           </TitleDetailsSubheaderSection>
         )}
 
-        {!userIsVsoEmployee && appeal && appeal.documentID && (
+        {!userIsVsoEmployee && appeal && appeal.documentID && !this.props.hideDecisionDocument && (
           <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}>
             <div id="document-id">
               <CopyTextButton
@@ -267,7 +267,9 @@ CaseTitleDetails.propTypes = {
   legacyJudgeTasks: PropTypes.array,
   legacyAttorneyTasks: PropTypes.array,
   hideOTSection: PropTypes.bool,
-  hasNotifications: PropTypes.bool
+  hasNotifications: PropTypes.bool,
+  hideDocs: PropTypes.bool,
+  hideDecisionDocument: PropTypes.bool
 };
 
 CaseTitleDetails.defaultProps = {

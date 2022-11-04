@@ -49,16 +49,20 @@ class CaseTitle extends React.PureComponent {
     const { appeal, veteranCaseListIsVisible } = this.props;
 
     return (
-      <CaseTitleScaffolding heading={this.props.titleHeader != "" ? this.props.titleHeader : appeal.veteranFullName}>
+      <CaseTitleScaffolding heading={this.props.titleHeader != '' ? this.props.titleHeader : appeal.veteranFullName}>
         <React.Fragment>
           Veteran ID:&nbsp;
           <CopyTextButton text={appeal.veteranFileNumber} label="Veteran ID" />
         </React.Fragment>
 
-        <span {...viewCasesStyling}>
-          <Link href="#" onClick={this.props.toggleVeteranCaseList}>{veteranCaseListIsVisible ? 'Hide' : 'View'} all cases</Link>
-        </span>
-        <BadgeArea appeal={appeal} isHorizontal />
+        { !this.props.hideCaseView &&
+        <>
+          <span {...viewCasesStyling}>
+            <Link href="#" onClick={this.props.toggleVeteranCaseList}>{veteranCaseListIsVisible ? 'Hide' : 'View'} all cases</Link>
+          </span>
+          <BadgeArea appeal={appeal} isHorizontal />
+        </>
+        }
       </CaseTitleScaffolding>
     );
   };
@@ -70,7 +74,8 @@ CaseTitle.propTypes = {
   analyticsSource: PropTypes.string,
   veteranCaseListIsVisible: PropTypes.bool,
   toggleVeteranCaseList: PropTypes.func,
-  titleHeader: PropTypes.string
+  titleHeader: PropTypes.string,
+  hideCaseView: PropTypes.bool
 };
 
 CaseTitle.defaultProps = {
@@ -96,7 +101,7 @@ const CaseTitleScaffolding = (props) => (
 
 CaseTitleScaffolding.propTypes = {
   heading: PropTypes.string,
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 const mapStateToProps = (state) => ({
