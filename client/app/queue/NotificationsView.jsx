@@ -28,10 +28,10 @@ import NotificationTable from './components/NotificationTable';
 
 export const NotificationsView = (props) => {
   const [modalState, setModalState] = useState(false);
-  const openModal = () =>{
+  const openModal = () => {
     setModalState(true);
   };
-  const closeModal = () =>{
+  const closeModal = () => {
     setModalState(false);
   };
   const { push } = useHistory();
@@ -57,7 +57,7 @@ export const NotificationsView = (props) => {
   return (
     <React.Fragment>
       <AppSegment filledBackground>
-        <CaseTitle titleHeader = {'Case notifications for ' + appeal.veteranFullName} appeal={appeal} />
+        <CaseTitle titleHeader = {'Case notifications for ' + appeal.veteranFullName} appeal={appeal} hideCaseView />
         {supportPendingAppealSubstitution && (
           <div {...sectionGap}>
             <Button
@@ -74,6 +74,8 @@ export const NotificationsView = (props) => {
           redirectUrl={window.location.pathname}
           hideOTSection
           userCanAccessReader={props.userCanAccessReader}
+          hideDocs
+          hideDecisionDocument
         />
         <div {...sectionGap}>
           <p className="notification-text">VA Notify sent these status notifications to the Appellant about their case.</p>
