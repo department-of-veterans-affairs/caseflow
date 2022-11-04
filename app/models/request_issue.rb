@@ -137,7 +137,7 @@ class RequestIssue < CaseflowRecord
     # They show up as contentions in VBMS and issues in Caseflow Queue.
     def active
       eligible.where(closed_at: nil, 
-      split_issue_status: "in_progress") || where(ineligible_reason: nil, split_issue_status: nil)
+      split_issue_status: "in_progress") || eligible.where(closed_at: nil, split_issue_status: nil)
     end
 
     def active_or_ineligible
