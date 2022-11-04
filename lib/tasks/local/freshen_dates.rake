@@ -14,6 +14,10 @@ namespace :db do
   desc "By default adds 60 days to all non-null datetime and date values" \
     "in the main Caseflow DB. Another amount of days can be supplied with rake db:freshen_dates DAYS=123"
   task freshen_dates: :environment do
+    unless Rails.env.development?
+      fail "This task can only be run in a development instance of Caseflow"
+    end
+
     days_increase = DEFAULT_DAYS_INCREASE
 
     if ENV.key?("DAYS")
