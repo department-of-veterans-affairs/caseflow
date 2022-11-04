@@ -65,45 +65,42 @@ module AppellantNotification
   # to keep track of the state of each appeal
   def self.appeal_mapper(appeal_id, appeal_type, event)
     current_user = RequestStore[:current_user] || User.system_user
-    appeal_state = AppealState.find_by(appeal_id: appeal_id, appeal_type: appeal_type)
-    if appeal_state
-      appeal_state.update!(updated_by_id: current_user.id)
-      appeal_state.update!(updated_at: Time.zone.now)
-    else
-      appeal_state = AppealState.create!(appeal_id: appeal_id, appeal_type: appeal_type, created_at: Time.zone.now,
-                                         created_by_id: current_user.id)
-    end
+    appeal_state = AppealState.find_by(appeal_id: appeal_id, appeal_type: appeal_type) ||
+                   AppealState.create!(appeal_id: appeal_id, appeal_type: appeal_type, created_by_id: current_user.id)
     case event
     when "decision_mailed"
-      decision_mailed_update(appeal_state)
+      appeal_state.update!(
+        decision_mailed: true,
+        appeal_docketed: false,
+        hearing_postponed: false,
+        hearing_withdrawn: false,
+        hearing_scheduled: false,
+        vso_ihp_pending: false,
+        vso_ihp_complete: false,
+        privacy_act_pending: false,
+        privacy_act_complete: false,
+        updated_by_id: current_user.id
+      )
     when "appeal_docketed"
-      appeal_state.update!(appeal_docketed: true)
+      appeal_state.update!(appeal_docketed: true, updated_by_id: current_user.id)
     when "hearing_postponed"
-      appeal_state.update!(hearing_postponed: true)
-      appeal_state.update!(hearing_scheduled: false)
+      appeal_state.update!(hearing_postponed: true, hearing_scheduled: false, updated_by_id: current_user.id)
     when "hearing_withdrawn"
-      appeal_state.update!(hearing_withdrawn: true)
-      appeal_state.update!(hearing_postponed: false)
-      appeal_state.update!(hearing_scheduled: false)
+      appeal_state.update!(hearing_withdrawn: true, hearing_postponed: false, hearing_scheduled: false, updated_by_id: current_user.id)
     when "hearing_scheduled"
-      appeal_state.update!(hearing_scheduled: true)
-      appeal_state.update!(hearing_postponed: false)
+      appeal_state.update!(hearing_scheduled: true, hearing_postponed: false, updated_by_id: current_user.id)
     when "vso_ihp_pending"
-      appeal_state.update!(vso_ihp_pending: true)
-      appeal_state.update!(vso_ihp_complete: false)
+      appeal_state.update!(vso_ihp_pending: true, vso_ihp_complete: false, updated_by_id: current_user.id)
     when "vso_ihp_complete"
       if !appeal.tasks.open.where(type.include?("Ihp")) &&
          !appeal.tasks.open.where(type.include?("InformalHearingPresentationTask"))
-        appeal_state.update!(vso_ihp_complete: true)
-        appeal_state.update!(vso_ihp_pending: false)
+        appeal_state.update!(vso_ihp_complete: true, vso_ihp_pending: false, updated_by_id: current_user.id)
       end
     when "privacy_act_pending"
-      appeal_state.update!(privacy_act_pending: true)
-      appeal_state.update!(privacy_act_complete: false)
+      appeal_state.update!(privacy_act_pending: true, privacy_act_complete: false, updated_by_id: current_user.id)
     when "privacy_act_complete"
       if !appeal.tasks.open.where(type.include?("Foia")) && !appeal.tasks.open.where(type.include?("PrivacyAct"))
-        appeal_state.update!(privacy_act_complete: true)
-        appeal_state.update!(privacy_act_pending: false)
+        appeal_state.update!(privacy_act_complete: true, privacy_act_pending: false, updated_by_id: current_user.id)
       end
     end
   end
@@ -145,20 +142,4 @@ module AppellantNotification
     message_attributes = AppellantNotification.handle_errors(appeal)
     VANotifySendMessageTemplate.new(message_attributes, template_name)
   end
-
-  private
-
-  def decision_mailed_update(appeal_state)
-    appeal_state.update!(decision_mailed: true)
-    appeal_state.update!(appeal_docketed: false)
-    appeal_state.update!(hearing_postponed: false)
-    appeal_state.update!(hearing_withdrawn: false)
-    appeal_state.update!(hearing_scheduled: false)
-    appeal_state.update!(vso_ihp_pending: false)
-    appeal_state.update!(vso_ihp_complete: false)
-    appeal_state.update!(privacy_act_pending: false)
-    appeal_state.update!(privacy_act_complete: false)
-  end
-
-
 end
