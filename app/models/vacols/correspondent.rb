@@ -18,16 +18,35 @@ class VACOLS::Correspondent < VACOLS::Record
     end
   end
 
+  def self.find_veteran(ssn)
+    find_veteran_by_ssn(ssn)
+  end
+
   class << self
     private
 
     def update_veteran_nod_in_vacols(veteran)
-      return Rails.logger.info("Veteran deceased indicator is false or null") unless veteran[:deceased_ind]
-      return Rails.logger.info("No deceased time was provided") if veteran[:deceased_time].nil?
+      update_type = missing_deceased_ind(veteran[:deceased_ind], veteran[:deceased_time])
 
-      return unless should_update_veteran?(veteran, find_veteran_by_ssn(veteran[:id]))
+      return update_type unless update_type.nil?
 
-      update_veteran_sfnod(veteran[:id], veteran[:deceased_time])
+      update_type = should_update_veteran?(veteran, find_veteran_by_ssn(veteran[:id]), update_type)
+
+      return update_type if update_type != true
+
+      update_veteran_sfnod(veteran[:id], veteran[:deceased_time], find_veteran_by_ssn(veteran[:id]))
+    end
+
+    def missing_deceased_ind(veteran_deceased_ind, veteran_deceased_time)
+      if veteran_deceased_ind.nil? || veteran_deceased_ind != "true"
+        Rails.logger.info("Veteran deceased indicator is false or null")
+        return :missing_deceased_info
+      end
+      if veteran_deceased_time.nil? || veteran_deceased_time == ""
+        Rails.logger.info("No deceased time was provided")
+        return :missing_deceased_info
+      end
+      nil
     end
 
     def find_veteran_by_ssn(ssn)
@@ -41,21 +60,26 @@ class VACOLS::Correspondent < VACOLS::Record
       connection.exec_query(sanitize_sql_array([query, ssn]))
     end
 
-    def should_update_veteran?(veteran, vet_in_vacols)
+    def should_update_veteran?(veteran, vet_in_vacols, update_type)
       if vet_in_vacols.rows.empty?
         Rails.logger.info("No veteran found with that identifier")
+        update_type = :no_veteran
       elsif vet_in_vacols.rows.count > 1
         Rails.logger.info("Multiple veterans found with that identifier")
+        update_type = :multiple_veterans
       elsif vet_in_vacols.rows.first[1]&.to_date == veteran[:deceased_time].to_date
         Rails.logger.info("Veteran is already recorded with that deceased time in VACOLS")
+        update_type = :already_deceased
       else
         return true
       end
-      false
+
+      update_type
     end
 
-    def update_veteran_sfnod(ssn, deceased_time)
+    def update_veteran_sfnod(ssn, deceased_time, vet_in_vacols)
       Rails.logger.info("Updating veteran's deceased information")
+      current_deceased_time = vet_in_vacols.rows.first[1]
 
       query = <<-SQL
         update CORRES
@@ -65,6 +89,11 @@ class VACOLS::Correspondent < VACOLS::Record
 
       # execute is used here because it directly modifies the rows and exec_query produces a binding error
       connection.execute(sanitize_sql_array([query, deceased_time, ssn]))
+      if current_deceased_time.nil?
+        :successful
+      else
+        :already_deceased_time_changed
+      end
     end
   end
 end
