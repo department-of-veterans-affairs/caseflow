@@ -50,7 +50,7 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
         content: notification_content,
         notification_type: 'Email',
         // eslint-disable-next-line no-negated-condition
-        recipient_information: recipient_email,
+        recipient_information: recipient_email === '' ? null : recipient_email,
         event_type,
         event_date
       };
@@ -60,7 +60,7 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
         content: notification_content,
         notification_type: 'Text',
         // eslint-disable-next-line no-negated-condition
-        recipient_information: recipient_phone_number,
+        recipient_information: recipient_phone_number === '' ? null : recipient_phone_number,
         event_type,
         event_date
       };

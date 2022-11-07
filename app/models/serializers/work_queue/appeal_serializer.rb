@@ -275,6 +275,10 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :has_notifications do |object|
-    Notification.where("appeals_id = ? AND appeals_type = 'Appeal'", object.uuid.to_s).any?
+    @all_notifications = Notification.where(appeals_id: object.uuid.to_s, appeals_type: "Appeal")
+    @allowed_notifications = @all_notifications.where(email_notification_status: nil)
+      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .merge(@all_notifications.where(sms_notification_status: nil)
+      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).any?
   end
 end

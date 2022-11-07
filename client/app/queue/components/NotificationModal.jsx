@@ -18,7 +18,7 @@ const NotificationModal = ({ eventType, notificationContent, closeNotificationMo
       >
         <span>{COPY.NOTIFICATION_CONTENT_MESSAGE}</span>
         <br /><br />
-        <span>"{notificationContent}"</span>
+        <span data-testid="body-content">"{notificationContent}"</span>
       </Modal>
     </div>
   );

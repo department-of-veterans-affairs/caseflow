@@ -8,7 +8,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 // Params: notifications - The list of notifications
 
 // Styling for the event type column values
-const eventTypeStyling = { fontWeight: 'bold' };
+const eventTypeStyling = { fontWeight: 'bold', cursor: 'pointer' };
 
 export const eventTypeColumn = (notifications, modalState, openModal, handleNotification, notificationState) => {
 
