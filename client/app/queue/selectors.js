@@ -229,6 +229,36 @@ export const camoAssignTasksSelector = createSelector(
     })
 );
 
+export const getJudgeDecisionReviewTasks = createSelector(
+  [getAllTasksForAppeal],
+  (tasks) =>
+    filter(tasks, (task) => task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeDecisionReviewTask')
+);
+
+export const getJudgeDecisionReviewTaskDate = createSelector(
+  [getJudgeDecisionReviewTasks],
+  (tasks) =>
+    filter(tasks, (task) => {
+      return (
+        task.id
+      );
+    })
+);
+
+export const getTasksAfterDecision = createSelector(
+  [getAllTasksForAppeal],
+  (tasks) =>
+    filter(tasks, (task) => {
+      if (task.parentId === getJudgeDecisionReviewTaskDate) {
+        return (
+          (task)
+        );
+      }
+
+      return '';
+    })
+);
+
 // ***************** Non-memoized selectors *****************
 
 const getAttorney = (state, attorneyId) => {
