@@ -41,7 +41,7 @@ describe Api::V1::MpiController, type: :controller do
   context "with good request" do
     it "returns 200 and calls update_veteran_nod" do
       expect(VACOLS::Correspondent).to receive(:update_veteran_nod).and_return("successful")
-      expect(VACOLS::Correspondent).to receive(:find_veteran).and_return(updated_vet)
+      expect(VACOLS::Correspondent).to receive(:find_by).and_return(updated_vet)
       request.headers["Authorization"] = "Bearer #{api_key}"
       post :veteran_updates, params: request_params
 
