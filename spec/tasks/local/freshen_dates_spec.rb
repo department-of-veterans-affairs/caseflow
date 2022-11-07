@@ -24,6 +24,42 @@ describe "fresh_dates" do
         )
       end
     end
+
+    shared_examples "task dates are freshened" do
+      it "the dates are incremented as expected" do
+        assigned_ats_before_freshening = tasks.pluck(:assigned_at)
+
+        subject
+
+        updated_assigned_at_dates = tasks.each(&:reload).pluck(:assigned_at).map(&:to_date)
+
+        original_dates_plus_expected_increase = assigned_ats_before_freshening.map do |assigned_at|
+          (assigned_at + days_increased.days).to_date
+        end
+
+        expect(
+          updated_assigned_at_dates - original_dates_plus_expected_increase
+        ).to match_array []
+      end
+    end
+
+    context "valid input is provided" do
+      let!(:tasks) { create_list(:task, 10) }
+
+      context "no explicit input is given" do
+        let!(:days_increased) { 60 }
+
+        it_behaves_like "task dates are freshened"
+      end
+
+      context "explicit number of days is given" do
+        let!(:days_increased) { 45 }
+
+        before { ENV["DAYS"] = "45" }
+
+        it_behaves_like "task dates are freshened"
+      end
+    end
   end
 
   context "whenever the Rails.env is not development" do
