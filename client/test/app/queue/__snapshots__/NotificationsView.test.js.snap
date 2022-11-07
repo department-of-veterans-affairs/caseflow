@@ -4,7 +4,6 @@ exports[`NotificationsTest matches snapshot 1`] = `
 <div>
   <section
     class="cf-app-segment cf-app-segment--alt"
-    role="main"
   >
     <div
       data-css-bui2vg=""
@@ -138,29 +137,6 @@ exports[`NotificationsTest matches snapshot 1`] = `
               Click to copy
             </div>
           </span>
-        </div>
-        <div
-          data-css-p21ib3=""
-        >
-          <span
-            data-css-dw3c54=""
-          >
-            <a
-              href="#"
-            >
-              View
-               all cases
-            </a>
-          </span>
-        </div>
-        <div
-          data-css-p21ib3=""
-        >
-          <div
-            data-css-h0biv2=""
-          >
-            <div />
-          </div>
         </div>
       </div>
     </div>
