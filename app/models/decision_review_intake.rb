@@ -121,7 +121,13 @@ class DecisionReviewIntake < Intake
   end
 
   def claimant_class_name
-    "#{request_params[:claimant_type]&.capitalize}Claimant"
+    "#{constantize_param_string(request_params[:claimant_type])}Claimant"
+  end
+
+  def constantize_param_string(name)
+    if name
+      name.titleize.split(" ").join
+    end
   end
 
   def veteran_is_not_claimant

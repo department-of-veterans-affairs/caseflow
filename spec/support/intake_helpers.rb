@@ -32,6 +32,7 @@ module IntakeHelpers
 
   def start_higher_level_review(
     test_veteran,
+    is_comp: true,
     receipt_date: 1.day.ago,
     claim_participant_id: nil,
     legacy_opt_in_approved: false,
@@ -46,7 +47,7 @@ module IntakeHelpers
       informal_conference: informal_conference,
       filed_by_va_gov: false,
       same_office: false,
-      benefit_type: benefit_type,
+      benefit_type: is_comp ? benefit_type : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: claim_participant_id.present?
     )
@@ -81,13 +82,14 @@ module IntakeHelpers
     legacy_opt_in_approved: false,
     claim_participant_id: nil,
     benefit_type: "compensation",
-    no_claimant: false
+    no_claimant: false,
+    is_comp: true
   )
 
     supplemental_claim = SupplementalClaim.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
-      benefit_type: benefit_type,
+      benefit_type: is_comp ? benefit_type : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: claim_participant_id.present?
     )
