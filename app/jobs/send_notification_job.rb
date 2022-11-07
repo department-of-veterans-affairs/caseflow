@@ -28,6 +28,8 @@ class SendNotificationJob < CaseflowJob
   end
 
   # Must receive JSON string as argument
+
+  # rubocop:disable Layout/LineLength
   def perform(message_json)
     if message_json
       @va_notify_email = FeatureToggle.enabled?(:va_notify_email)
@@ -45,7 +47,10 @@ class SendNotificationJob < CaseflowJob
               to_update[:sms_notification_status] = message.status
             end
             update_notification_audit_record(notification_audit_record, to_update)
-            send_to_va_notify(message, notification_audit_record)
+            if message.template_name == "Appeal docketed" && message.appeal_type == "LegacyAppeal" && !FeatureToggle.enabled?(:appeal_docketed_notification)
+              notification_audit_record.update!(email_enabled: false)
+            else send_to_va_notify(message, notification_audit_record)
+            end
           else
             status = (message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
             to_update = {}
@@ -68,6 +73,7 @@ class SendNotificationJob < CaseflowJob
       log_error("There was no message passed into the SendNotificationListener.perform_later function. Exiting job.")
     end
   end
+  # rubocop:enable Layout/LineLength
 
   private
 
@@ -132,6 +138,8 @@ class SendNotificationJob < CaseflowJob
   # - event_type: Name of the event that has transpired. Event names can be found in the notification_events table
   #
   # Returns: Notification active model or nil
+
+  # rubocop:disable all
   def create_notification_audit_record(appeals_id, appeals_type, event_type, participant_id)
     notification_type =
       if @va_notify_email && @va_notify_sms
@@ -144,14 +152,32 @@ class SendNotificationJob < CaseflowJob
         "None"
       end
 
-    Notification.new(
-      appeals_id: appeals_id,
-      appeals_type: appeals_type,
-      event_type: event_type,
-      notification_type: notification_type,
-      participant_id: participant_id,
-      notified_at: Time.zone.now,
-      event_date: Time.zone.today
-    )
+    if event_type == "Appeal docketed" && appeals_type == "LegacyAppeal" && FeatureToggle.enabled?(:appeal_docketed_event)
+      notification = Notification.where(appeals_id: appeals_id, event_type: event_type, notification_type: notification_type, appeals_type: appeals_type, event_date: Time.zone.today).last
+      if !notification.nil?
+        notification
+      else
+        Notification.new(
+          appeals_id: appeals_id,
+          appeals_type: appeals_type,
+          event_type: event_type,
+          notification_type: notification_type,
+          participant_id: participant_id,
+          notified_at: Time.zone.now,
+          event_date: Time.zone.today
+        )
+      end
+    else
+      Notification.new(
+        appeals_id: appeals_id,
+        appeals_type: appeals_type,
+        event_type: event_type,
+        notification_type: notification_type,
+        participant_id: participant_id,
+        notified_at: Time.zone.now,
+        event_date: Time.zone.today
+      )
+    end
   end
+  # rubocop:enable all
 end
