@@ -45,6 +45,7 @@ class Task < CaseflowRecord
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
   after_update :cancel_task_timers, if: :task_just_closed?
+  after_update :is_task_ihp?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -769,6 +770,11 @@ class Task < CaseflowRecord
   # currently only defined by ScheduleHearingTask and AssignHearingDispositionTask for virtual hearing related updates
   def alerts
     @alerts ||= []
+  end
+
+  def is_task_ihp?
+    ihp_task_types = %w[IhpColocatedTask InformalHearingPresentationTask].freeze
+    ihp_task_types.inlcude?(type)
   end
 
   private
