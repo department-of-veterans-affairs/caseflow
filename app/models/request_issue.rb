@@ -136,7 +136,7 @@ class RequestIssue < CaseflowRecord
     # "Active" issues are issues that need decisions.
     # They show up as contentions in VBMS and issues in Caseflow Queue.
     def active
-      eligible.where(closed_at: nil, split_issue_status: [nil, "in_progress"])
+      eligible.where(closed_at: nil)
     end
 
     def active_or_ineligible
