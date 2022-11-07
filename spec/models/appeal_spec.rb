@@ -2204,6 +2204,35 @@ describe Appeal, :all_dbs do
       end
     end
 
+    context "if a request issue has already been copied (status of 'on_hold')" do
+      it "should throw an error and not duplicate the appeal" do
+        original_appeal = create(
+          :appeal, #:with_decision_issue,
+          request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes"),
+          decision_issues: create_list(:decision_issue, 1)
+        )
+        create(
+          :request_decision_issue,
+          request_issue: original_appeal.request_issues.first,
+          decision_issue: original_appeal.decision_issues.first
+        )
+        all_request_issues = original_appeal.request_issues.ids.map(&:to_s)
+
+        dup_appeal = original_appeal.amoeba_dup
+        dup_appeal.save
+
+        expect do
+          dup_appeal.finalize_split_appeal(
+            original_appeal,
+            "APPEAL_USER",
+            all_request_issues
+          ).to raise_error(Appeal::IssueAlreadyDuplicated)
+        end
+        # the appeal is not duplicated
+        expect(Appeal.where(stream_docket_number: appeal.stream_docket_number).count).to eq(1)
+      end
+    end
+
     context "when an appeal has numerous decision issues" do
       it "should duplicate the appeals and numerous decision issues for the same veteran" do
         original_appeal = create(

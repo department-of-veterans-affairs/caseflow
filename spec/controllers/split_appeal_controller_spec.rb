@@ -41,7 +41,6 @@ RSpec.describe SplitAppealController, type: :controller do
         expect(appeal.stream_docket_number).to eq(dup_appeal.stream_docket_number)
         expect(appeal.veteran_file_number).to eq(dup_appeal.veteran_file_number)
         expect(dup_appeal.request_issues.count).to eq(2)
-
       end
 
       it "it sets the split request_issues on hold and removes them from the original appeal active" do
@@ -154,6 +153,38 @@ RSpec.describe SplitAppealController, type: :controller do
       it "doesn't create the new split appeal and performs a active record rollback" do
         post :split_appeal, params: invalid_params
         expect(SplitCorrelationTable.last).to eq(nil)
+      end
+    end
+
+    context "the issue has already been split (split_issue_status is 'on_hold')" do
+      let(:root_task) { RootTask.find(create(:root_task).id) }
+      let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
+      let(:request_issue2) { create(:request_issue, benefit_type: benefit_type2, split_issue_status: "on_hold") }
+      let(:benefit_type1) { "compensation" }
+      let(:request_issue3) { create(:request_issue, benefit_type: benefit_type2) }
+      let(:benefit_type2) { "pension" }
+      let!(:appeal) do
+        create(
+          :appeal,
+          tasks: [root_task],
+          request_issues: [request_issue, request_issue2, request_issue3]
+        )
+      end
+
+      let(:valid_params) do
+        {
+          appeal_id: appeal.id,
+          appeal_split_issues: [request_issue.id.to_s, request_issue2.id.to_s],
+          split_reason: "Include a motion for CUE with respect to a prior Board decision",
+          split_other_reason: "",
+          user_css_id: ssc_user.css_id
+        }
+      end
+
+      it "throws an error that the issue has already been split" do
+        expect { post :split_appeal, params: valid_params }.to raise_error(Appeal::IssueAlreadyDuplicated)
+        # the appeal is not duplicated
+        expect(Appeal.where(stream_docket_number: appeal.stream_docket_number).count).to eq(1)
       end
     end
 

@@ -87,6 +87,9 @@ class Appeal < DecisionReview
     validates_associated :claimants
   end
 
+  # error for already split issue
+  class IssueAlreadyDuplicated < StandardError; end
+
   scope :active, lambda {
     joins(:tasks)
       .group("appeals.id")
@@ -352,6 +355,9 @@ class Appeal < DecisionReview
     split_request_issues.each do |r_issue_id|
       # find the request issue from the parent appeal
       r_issue = parent_appeal.request_issues.find(r_issue_id.to_i)
+
+      fail IssueAlreadyDuplicated if r_issue.split_issue_status == "on_hold"
+
       dup_r_issue = clone_issue(r_issue)
 
       # set original issue on hold and duplicate issue to in_progress
