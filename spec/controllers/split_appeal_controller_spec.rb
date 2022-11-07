@@ -41,6 +41,19 @@ RSpec.describe SplitAppealController, type: :controller do
         expect(appeal.stream_docket_number).to eq(dup_appeal.stream_docket_number)
         expect(appeal.veteran_file_number).to eq(dup_appeal.veteran_file_number)
         expect(dup_appeal.request_issues.count).to eq(2)
+
+      end
+
+      it "it sets the split request_issues on hold and removes them from the original appeal active" do
+        post :split_appeal, params: valid_params
+        expect(response.status).to eq 201
+        dup_appeal = Appeal.last
+        request_issue.reload
+        request_issue2.reload
+        expect(dup_appeal.request_issues.active.count).to eq(2)
+        expect(appeal.request_issues.active.count).to eq(1)
+        expect(request_issue.split_issue_status).to eq("on_hold")
+        expect(request_issue2.split_issue_status).to eq("on_hold")
       end
 
       it "creates a split record for SplitCorrelationTable in DB and tasks" do
