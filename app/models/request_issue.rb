@@ -144,7 +144,7 @@ class RequestIssue < CaseflowRecord
     end
 
     def withdrawn
-      eligible.where(closed_status: :withdrawn)
+      eligible.where(closed_at: nil, split_issue_status: [nil, "in_progress"])
     end
 
     def active_or_ineligible_or_withdrawn
