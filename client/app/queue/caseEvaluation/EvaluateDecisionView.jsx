@@ -19,7 +19,7 @@ import RadioField from '../../components/RadioField';
 import { deleteAppeal } from '../QueueActions';
 import { requestSave } from '../uiReducer/uiActions';
 import { buildCaseReviewPayload } from '../utils';
-import { taskById } from '../selectors';
+import { taskById, getTasksAfterDecision } from '../selectors';
 
 import COPY from '../../../COPY';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS';
@@ -185,7 +185,14 @@ class EvaluateDecisionView extends React.PureComponent {
   handleCaseQualityChange = (values) => this.setState({ ...values });
 
   render = () => {
-    const { appeal, task, appealId, highlight, error, displayCaseTimelinessQuestion, ...otherProps } = this.props;
+    const { appeal,
+      task,
+      appealId,
+      highlight,
+      error,
+      displayCaseTimelinessQuestion,
+      attorneyChildrenTasks,
+      ...otherProps } = this.props;
 
     const dateAssigned = moment(task.previousTaskAssignedOn);
     const decisionSubmitted = moment(task.assignedOn);
@@ -251,8 +258,12 @@ class EvaluateDecisionView extends React.PureComponent {
         </div>
         <br />
         <span>{dateAssigned.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</span>
-        <AttorneyTaskTimeline title="Attorney Task Timeline" appeal={appeal} />
-        <span>{decisionSubmitted.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}</span>
+        <AttorneyTaskTimeline title="Attorney Task Timeline"
+          appeal={appeal}
+          attorneyChildrenTasks={attorneyChildrenTasks} />
+        <span>
+          {decisionSubmitted.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}
+        </span>
         <br />
         {displayCaseTimelinessQuestion && (
           <>
@@ -312,13 +323,16 @@ EvaluateDecisionView.propTypes = {
   requestSave: PropTypes.func,
   deleteAppeal: PropTypes.func,
   displayCaseTimelinessQuestion: PropTypes.bool,
+  attorneyChildrenTasks: PropTypes.array,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
+  const attorneyChildrenTasks = getTasksAfterDecision(state, { appealId: appeal.externalId });
 
   return {
     appeal,
+    attorneyChildrenTasks,
     highlight: state.ui.highlightFormItems,
     taskOptions: state.queue.stagedChanges.taskDecision.opts,
     task: taskById(state, { taskId: ownProps.taskId }),
