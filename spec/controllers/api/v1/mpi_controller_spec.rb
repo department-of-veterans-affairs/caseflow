@@ -10,6 +10,8 @@ describe Api::V1::MpiController, type: :controller do
     }
   end
 
+  let(:updated_vet) { create(:correspondent, ssn: request_params[:veterans_id], sfnod: request_params[:deceased_time]) }
+
   context "authorization" do
     it "fails if user provides no API key" do
       post :veteran_updates, params: request_params
@@ -23,11 +25,30 @@ describe Api::V1::MpiController, type: :controller do
     end
   end
 
-  context "with good request" do
-    it "returns 200 and calls update_veteran_nod" do
-      expect(VACOLS::Correspondent).to receive(:update_veteran_nod)
+  context "an error occurs" do
+    it "updates the MpiUpdatePersonEvent and raises the error" do
+      allow(VACOLS::Correspondent).to receive(:update_veteran_nod).and_raise(StandardError)
+
       request.headers["Authorization"] = "Bearer #{api_key}"
       post :veteran_updates, params: request_params
+
+      mpi_update_event = MpiUpdatePersonEvent.last
+      expect(mpi_update_event.update_type).to eq("error")
+      expect(response.status).to eq(500)
+    end
+  end
+
+  context "with good request" do
+    it "returns 200 and calls update_veteran_nod" do
+      expect(VACOLS::Correspondent).to receive(:update_veteran_nod).and_return("successful")
+      expect(VACOLS::Correspondent).to receive(:find_by).and_return(updated_vet)
+      request.headers["Authorization"] = "Bearer #{api_key}"
+      post :veteran_updates, params: request_params
+
+      mpi_update_event = MpiUpdatePersonEvent.last
+      expect(mpi_update_event.update_type).to eq("successful")
+      expect(mpi_update_event.info["updated_column"]).to eq("deceased_time")
+      expect(mpi_update_event.info["updated_deceased_time"].to_date).to eq(request_params[:deceased_time].to_date)
       expect(response.status).to eq(200)
     end
   end

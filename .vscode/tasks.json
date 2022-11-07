@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run webpack-dev-server",
+      "type": "shell",
+      "command": "yarn dev:hot",
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceRoot}/client",
+        "env": {
+          "NODE_ENV": "development"
+        }
+      },
+      "problemMatcher": [
+        {
+          "pattern": [
+            {
+              "regexp": ".",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "Webpack dev build for Rails",
+            "endsPattern": "Compiled successfully.",
+          }
+        }
+      ]
+    },
+    {
+      "label": "Stop webpack-dev-server",
+      "type": "process",
+      "command": [
+        "${command:workbench.action.tasks.terminate}",
+        "${command:workbench.action.acceptSelectedQuickOpenItem}",
+      ]
+    },
+    // The below will require docker to be installed.
+    {
+      "label": "Run maildev server",
+      "type": "shell",
+      "command": "docker run -d -p 1080:1080 -p 1025:1025 --name maildev-server maildev/maildev",
+    },
+    {
+      "label": "Stop maildev server",
+      "type": "shell",
+      "command": "(docker stop maildev-server && docker rm /maildev-server) || true"
+    }
+  ]
+}
