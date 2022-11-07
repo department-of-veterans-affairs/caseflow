@@ -2246,7 +2246,7 @@ describe Appeal, :all_dbs do
         expect(original_decision_issue.subject_text).to eq(dup_decision_issue.subject_text)
       end
 
-      it "should only duplicate the request issues selected and set the original issue to 'on hold'" do
+      it "duplicates the request issues selected, sets the original issue to 'on hold' and not active" do
         original_appeal = create(
           :appeal, #:with_decision_issue,
           request_issues: create_list(:request_issue, 4, :nonrating, notes: "test notes"),
@@ -2266,8 +2266,11 @@ describe Appeal, :all_dbs do
         original_appeal.reload
         expect(dup_appeal.request_issues.count).not_to eq(original_appeal.request_issues.count)
         expect(dup_appeal.request_issues.count).to eq(1)
+        expect(dup_appeal.request_issues.active.count).to eq(1)
+        expect(original_appeal.request_issues.active.count).to eq(3)
         expect(dup_appeal.request_issues.first.split_issue_status).to eq("in_progress")
         expect(original_appeal.request_issues.first.split_issue_status).to eq("on_hold")
+
         expect(dup_appeal.veteran_file_number).to eq(original_appeal.veteran_file_number)
         expect(dup_appeal.decision_issues.count).to eq(original_appeal.decision_issues.count)
         expect(original_decision_issue.id).not_to eq(dup_decision_issue.id)
