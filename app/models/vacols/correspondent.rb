@@ -75,7 +75,8 @@ class VACOLS::Correspondent < VACOLS::Record
         input.each do |record|
           csv << record.values
         end
-      end
+    end
+  end
 
   def self.find_veteran(ssn)
     find_veteran_by_ssn(ssn)
