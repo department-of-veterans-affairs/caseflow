@@ -232,6 +232,7 @@
 
   "ADD_CAVC_DATES_TITLE": "Add Court dates",
   "CORRECT_CAVC_REMAND_LINK": "Edit Remand",
+  "VIEW_NOTIFICATION_LINK": "View notifications sent to appellant",
   "EDIT_APPELLANT_INFORMATION_LINK": "Edit Information",
   "UP_DATE_POA_LINK": "Update POA",
 
@@ -1352,5 +1353,11 @@
   "TABLE_DOCKET_NUMBER" : "Docket Number",
   "TABLE_REVIEW_OPTION" : "Review Option",
   "TABLE_ISSUE" : "Issue(s)",
-  "APPELLANT": "Appellant"
+  "APPELLANT": "Appellant",
+  "NOTIFICATION_EVENT_TYPE_COLUMN_NAME": "Event",
+  "NOTIFICATION_DATE_COLUMN_NAME": "Notification Date",
+  "NOTIFICATION_TYPE_COLUMN_NAME": "Notification Type",
+  "NOTIFICATION_RECIPIENT_INFORMATION": "Recipient Information",
+  "NOTIFICATION_STATUS": "Status",
+  "NOTIFICATION_CONTENT_MESSAGE": "The following message was sent to the Appellant: "
 }
