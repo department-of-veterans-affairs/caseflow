@@ -5,7 +5,7 @@
 # which can make regression testing difficult or change the ID values of known cases used in manual testing.
 
 module Seeds
-  class TestCaseData < Base
+  class StaticTestCaseData < Base
     def initialize
       initial_id_values
     end
