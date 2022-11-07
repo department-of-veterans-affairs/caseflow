@@ -27,7 +27,7 @@ class AdminController < ApplicationController
     )
     .last
 
-    last_completed_time = prev_event&.completed_at.utc.to_date || Time.at(0).utc.to_date
+    last_completed_time = prev_event&.completed_at&.utc&.to_date || Time.at(0).utc.to_date
     results = VACOLS::Correspondent.extract(last_completed_time)
   end
 
