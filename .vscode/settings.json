@@ -8,4 +8,16 @@
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
   "git.autofetch": true,
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "DB-Appeals",
+      "database": "caseflow_certification_development",
+      "username": "postgres",
+      "password": "postgres"
+    }
+  ],
 }
