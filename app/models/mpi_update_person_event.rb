@@ -6,10 +6,13 @@ class MpiUpdatePersonEvent < CaseflowRecord
   validates :update_type, presence: true
 
   enum update_type: {
-    no_veteran: "NO_VETERAN",
-    already_deceased: "ALREADY_DECEASED",
-    missing_deceased_info: "MISSING_DECEASED_INFO",
-    successful: "SUCCESSFUL",
-    error: "ERROR"
+    started: "started",
+    no_veteran: "no_veteran",
+    multiple_veterans: "multiple_veterans",
+    already_deceased: "already_deceased",
+    already_deceased_time_changed: "already_deceased",
+    missing_deceased_info: "missing_deceased_info",
+    successful: "successful",
+    error: "error"
   }
 end

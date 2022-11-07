@@ -192,6 +192,15 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(query).to_hash.count
   end
 
+  def self.not_genpop_priority_count
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
+      where VLJ is not null
+    SQL
+
+    connection.exec_query(query).to_hash.count
+  end
+
   def self.nod_count
     where("BFMPRO = 'ADV' and BFD19 is null").count
   end
@@ -334,6 +343,16 @@ class VACOLS::CaseDocket < VACOLS::Record
         1.year.ago.to_date
       )
       .count
+  end
+
+  def self.priority_hearing_cases_for_judge_count(judge)
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
+      where (VLJ = ?)
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id])
+    connection.exec_query(fmtd_query).count
   end
 
   def self.nonpriority_hearing_cases_for_judge_count(judge)

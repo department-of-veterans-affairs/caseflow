@@ -20,6 +20,10 @@ class LegacyDocket < Docket
     LegacyAppeal.repository.genpop_priority_count
   end
 
+  def not_genpop_priority_count
+    LegacyAppeal.repository.not_genpop_priority_count
+  end
+
   def weight
     count(priority: false) + nod_count * Constants.DISTRIBUTION.nod_adjustment
   end
