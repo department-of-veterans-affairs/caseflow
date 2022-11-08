@@ -71,7 +71,10 @@ module Seeds
                       associated_judge: User.find_by_css_id("BVAGSPORER"),
                       issue_count: 1,
                       veteran: create_veteran)
-      create(:colocated_task, :translation, parent: appeal.tasks.of_type(:AttorneyTask).first)
+      create(:colocated_task,
+             :translation,
+             parent: appeal.tasks.of_type(:AttorneyTask).first,
+             assigned_at: Time.zone.now)
       appeal.tasks.of_type(:TranslationTask).first.completed!
       Timecop.return
       appeal.tasks.of_type(:AttorneyTask).first.completed!
