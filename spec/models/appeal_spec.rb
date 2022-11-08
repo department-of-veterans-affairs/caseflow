@@ -1983,7 +1983,7 @@ describe Appeal, :all_dbs do
 
         dup_appeal = original_appeal.amoeba_dup
         dup_appeal.save
-        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues )
+        dup_appeal.finalize_split_appeal(original_appeal, "APPEAL_USER", all_request_issues)
         original_cfs = original_appeal.claims_folder_searches.first
         dup_cfs = dup_appeal.claims_folder_searches.first
         expect(dup_appeal.id).not_to eq(original_appeal.id)
