@@ -9,17 +9,21 @@ import COPY from './../../COPY';
 const attorneyAssignedStyling = css({ width: '30%' });
 
 const calculateDaysWorked = (tasks, daysAssigned) => {
-  let sumOfDays = 0;
-  for (var task in tasks) {
+  var sumOfDays = 0;
+
+  tasks.forEach((task) => {
     let startTaskWork = moment(task.assignedOn);
     let endTaskWork = moment(task.closedAt);
-    sumOfDays += startTaskWork.diff(endTaskWork, 'days');
-    }
-    return daysAssigned - sumOfDays; 
+    sumOfDays += endTaskWork.startOf('day').diff(startTaskWork, 'days');
+  })
+
+  return daysAssigned - sumOfDays;
 }
 
-export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {
+export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {  
+ debugger;
   const daysWorkedUpdated = calculateDaysWorked(attorneyTasks, daysAssigned);
+
   return (
     <React.Fragment>
        <span {...attorneyAssignedStyling}>
