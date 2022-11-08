@@ -26,12 +26,12 @@ export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {
 
   return (
     <React.Fragment>
-       <span {...attorneyAssignedStyling}>
-            <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_TOTAL_DAYS_ATTORNEY_ASSIGNED}</b>: {daysAssigned}
-          </span>
-          <span>
-            <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>: {daysWorkedUpdated}
-          </span>
+      <span {...attorneyAssignedStyling}>
+        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_TOTAL_DAYS_ATTORNEY_ASSIGNED}</b>: {daysAssigned}
+      </span>
+      <span>
+        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>: {daysWorkedUpdated}
+      </span>
     </React.Fragment>
   );
 };

@@ -109,6 +109,7 @@
   "TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL": "Hide task instructions",
   "TASK_SNAPSHOT_VIEW_TIMELINE_LABEL": "View Timeline",
   "TASK_SNAPSHOT_HIDE_TIMELINE_LABEL": "Hide Timeline",
+  "TASK_SNAPSHOT_NO_TASKS_TO_SHOW": "No tasks to show",
   "TASK_SNAPSHOT_ACTION_BOX_TITLE": "Actions",
   "TASK_SNAPSHOT_NO_ACTIVE_LABEL": "There are currently no active tasks",
   "TASK_SNAPSHOT_ACTIVE_TASKS_LABEL": "Currently active tasks",

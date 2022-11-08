@@ -92,6 +92,35 @@ class AttorneyTaskRows extends React.PureComponent {
 
     return ComponentName ? <ComponentName {...componentProps} /> : null;
   };
+
+  hideShowTimelineButton = (appeal, taskList) => {
+    let button = (<span>{COPY.TASK_SNAPSHOT_NO_TASKS_TO_SHOW}</span>);
+
+    if (taskList.length > 0) {
+      button = (<Button
+        linkStyling
+        styling={css({ padding: '0' })}
+        id={appeal.uniqueId}
+        name={
+          this.state.timelineIsVisible[appeal.uniqueId] ?
+            COPY.TASK_SNAPSHOT_HIDE_TIMELINE_LABEL :
+            COPY.TASK_SNAPSHOT_VIEW_TIMELINE_LABEL
+        }
+        onClick={() => this.toggleTimelineVisibility(appeal)}
+      />);
+    }
+
+    return (<tr className="attorneyTaskTimelineContainer" >
+      <td className="attorneyTaskTimelineContainer"></td>
+      <td className="grayLineContainer" >
+        <div className="grayLineStyling" />
+      </td>
+      <td className="attorneyTaskContainer" >
+        {button}
+      </td>
+    </tr>);
+  }
+
   // Certain events are only relevant to full timeline view
   render = () => {
     const { appeal, taskList, timeline } = this.props;
@@ -127,25 +156,7 @@ class AttorneyTaskRows extends React.PureComponent {
 
           return this.taskTemplate(templateConfig);
         })}
-        <tr className="attorneyTaskTimelineContainer" >
-          <td className="attorneyTaskTimelineContainer"></td>
-          <td className="grayLineContainer" >
-            <div className="grayLineStyling" />
-          </td>
-          <td className="attorneyTaskContainer" >
-            <Button
-              linkStyling
-              styling={css({ padding: '0' })}
-              id={appeal.uniqueId}
-              name={
-                this.state.timelineIsVisible[appeal.uniqueId] ?
-                  COPY.TASK_SNAPSHOT_HIDE_TIMELINE_LABEL :
-                  COPY.TASK_SNAPSHOT_VIEW_TIMELINE_LABEL
-              }
-              onClick={() => this.toggleTimelineVisibility(appeal)}
-            />
-          </td>
-        </tr>
+        {this.hideShowTimelineButton(appeal, taskList)}
       </React.Fragment>
     );
   };

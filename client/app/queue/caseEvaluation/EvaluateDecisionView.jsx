@@ -19,7 +19,7 @@ import RadioField from '../../components/RadioField';
 import { deleteAppeal } from '../QueueActions';
 import { requestSave } from '../uiReducer/uiActions';
 import { buildCaseReviewPayload } from '../utils';
-import { taskById, getFullAttorneyTaskTree, getMostRecentAttorneyTask, getAllTasksForAppeal } from '../selectors';
+import { taskById, getFullAttorneyTaskTree, getMostRecentAttorneyTask, getAllTasksForAppeal, getLegacyTaskTree } from '../selectors';
 
 import COPY from '../../../COPY';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS';
@@ -39,7 +39,7 @@ import QueueFlowPage from '../components/QueueFlowPage';
 import { JudgeCaseQuality } from './JudgeCaseQuality';
 import { qualityIsDeficient, errorStylingNoTopMargin } from '.';
 import { AttorneyTaskTimeline } from '../AttorneyTaskTimeline';
-import { AttorneyDaysWorked } from '../AttorneyDaysWorked'
+import { AttorneyDaysWorked } from '../AttorneyDaysWorked';
 
 const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });
@@ -332,7 +332,7 @@ const mapStateToProps = (state, ownProps) => {
   // When canceling out of Evaluate Decision page need to check if appeal exists otherwise failures occur
   if (appeal) {
     if (appeal.docketName === 'legacy') {
-      attorneyChildrenTasks = getAllTasksForAppeal(state, { appealId: appeal.externalId });
+      attorneyChildrenTasks = getLegacyTaskTree(state, { appealId: appeal.externalId, judgeDecisionReviewTaskDate: judgeDecisionReviewTask.previousTaskAssignedOn });
     } else {
       attorneyReviewTask = getMostRecentAttorneyTask(state, {
         appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId });
