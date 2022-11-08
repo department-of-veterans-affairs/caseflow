@@ -202,7 +202,6 @@ class EvaluateDecisionView extends React.PureComponent {
     const aod = task.aod;
     const cavc = caseType === 'Court Remand';
     const daysAssigned = today.startOf('day').diff(dateAssigned, 'days');
-    const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
 
     return (
       <QueueFlowPage
