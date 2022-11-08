@@ -18,8 +18,7 @@ const calculateDaysWorked = (tasks, daysAssigned) => {
     return daysAssigned - sumOfDays; 
   }
 
-export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned, daysWorked }) => {
-  //const tasks = useSelector((state) => getAllTasksForAppeal(state, { appealId: appeal.externalId }));
+export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {
   const daysWorkedUpdated = calculateDaysWorked(attorneyTasks, daysAssigned);
   return (
     <React.Fragment>

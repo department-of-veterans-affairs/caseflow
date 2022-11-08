@@ -251,9 +251,8 @@ class EvaluateDecisionView extends React.PureComponent {
             { !aod && !cavc && <span> {caseType}</span> }
           </span>
           <AttorneyDaysWorked
-          attorneyTasks={attorneyChildrenTasks}
-          daysAssigned={daysAssigned}
-          daysWorked={daysWorked}/>
+            attorneyTasks={attorneyChildrenTasks}
+            daysAssigned={daysAssigned} />
         </div>
         <br />
         <span>{dateAssigned.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</span>
