@@ -1,7 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
-import { getAllTasksForAppeal } from './selectors';
 import moment from 'moment';
 import { css } from 'glamor';
 import COPY from './../../COPY';
@@ -9,19 +7,18 @@ import COPY from './../../COPY';
 const attorneyAssignedStyling = css({ width: '30%' });
 
 const calculateDaysWorked = (tasks, daysAssigned) => {
-  let sumOfDays = 0;
+  var sumOfDays = 0;
 
-  for (const task in tasks) {
-    const startTaskWork = moment(task.assignedOn);
-    const endTaskWork = moment(task.closedAt);
-
-    sumOfDays += startTaskWork.diff(endTaskWork, 'days');
-  }
+  tasks.forEach((task) => {
+    let startTaskWork = moment(task.assignedOn);
+    let endTaskWork = moment(task.closedAt);
+    sumOfDays += endTaskWork.startOf('day').diff(startTaskWork, 'days');
+  })
 
   return daysAssigned - sumOfDays;
-};
+}
 
-export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {
+export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {  
   const daysWorkedUpdated = calculateDaysWorked(attorneyTasks, daysAssigned);
 
   return (
