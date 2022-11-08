@@ -230,12 +230,6 @@ export const camoAssignTasksSelector = createSelector(
     })
 );
 
-export const getJudgeDecisionReviewTasks = createSelector(
-  [getAllTasksForAppeal],
-  (tasks) =>
-    filter(tasks, (task) => task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeDecisionReviewTask')
-);
-
 export const getAllJudgeDecisionReviewTaskChildren = createSelector(
   [getAllTasksForAppeal, getJudgeDecisionReviewTaskId],
   (tasks, parentId) => getAllChildrenTasks(tasks, parentId)
