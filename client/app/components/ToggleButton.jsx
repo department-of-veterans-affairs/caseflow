@@ -18,8 +18,8 @@ export default class ToggleButton extends React.Component {
     const mappedChildren = React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         classNames: active === child.props.name ? ['usa-button'] : ['usa-button-secondary'],
-        onClick: this.handleClick(child.props.name),
-        role: 'tab'
+        onClick: this.handleClick(child.props.name)
+        // role: 'tab'
       }
       );
     });
