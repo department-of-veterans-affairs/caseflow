@@ -724,6 +724,24 @@ export const parentTasks = (childrenTasks, allTasks) => {
   return parentTasks;
 };
 
+export const getAllChildrenTasks = (tasks, parentId) => {
+  // task.uniqueId is a String and task.parentId is an Integer
+  // eslint-disable-next-line eqeqeq
+  const childrenTasks = tasks.filter((task) => task.parentId == parentId);
+
+  let grandchildrenTasks = [];
+
+  if (childrenTasks.length > 0) {
+
+    childrenTasks.forEach((task) => {
+      grandchildrenTasks = grandchildrenTasks.concat(getAllChildrenTasks(tasks, task.uniqueId));
+    });
+
+  }
+
+  return childrenTasks.concat(grandchildrenTasks);
+};
+
 export const nullToFalse = (key, obj) => {
   if (obj[key] === null) {
     obj[key] = false;
