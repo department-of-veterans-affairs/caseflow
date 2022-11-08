@@ -23,6 +23,7 @@ class AssignHearingDispositionTask < Task
   include RunAsyncable
   prepend HearingWithdrawn
   prepend HearingPostponed
+  prepend HearingScheduledInError
 
   validates :parent, presence: true, parentTask: { task_type: HearingTask }, on: :create
   delegate :hearing, to: :hearing_task, allow_nil: true
@@ -309,6 +310,7 @@ class AssignHearingDispositionTask < Task
 
   def update_hearing_disposition_and_notes(payload_values)
     if payload_values[:hearing_notes].nil?
+      byebug
       update_hearing(
         disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
       )

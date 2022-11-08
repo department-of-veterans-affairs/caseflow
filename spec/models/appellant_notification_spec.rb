@@ -201,6 +201,20 @@ describe AppellantNotification do
     end
   end
 
+  describe HearingScheduledInError do
+    describe "#update_hearing_disposition_and_notes" do
+      let(:payload_values) { { disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error } }
+      let(:hearing) { create(:hearing, :with_tasks) }
+      let(:appeal) { hearing.appeal }
+      let(:assign_hearing_disposition_task) { appeal.tasks.find_by(type: "AssignHearingDispositionTask") }
+      it "does stuff" do
+        byebug
+        assign_hearing_disposition_task.update_hearing_disposition_and_notes(payload_values)
+        # expect()
+      end
+    end
+  end
+
   describe HearingPostponed do
     describe "#postpone!" do
       let(:template_name) { "Postponement of hearing" }
