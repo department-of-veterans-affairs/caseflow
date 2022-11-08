@@ -27,7 +27,6 @@ const getTaskUniqueId = (state, props) => props.taskId;
 const getCaseflowVeteranId = (state, props) => props.caseflowVeteranId;
 const getClaimReviews = (state) => state.queue.claimReviews;
 const getJudgeDecisionReviewTaskId = (state, props) => props.judgeDecisionReviewTaskId;
-
 const incompleteTasksSelector = (tasks) => filter(tasks, (task) => taskIsActive(task));
 const completeTasksSelector = (tasks) => filter(tasks, (task) => !taskIsActive(task));
 const taskIsNotOnHoldSelector = (tasks) => filter(tasks, (task) => !taskIsOnHold(task));
@@ -230,9 +229,25 @@ export const camoAssignTasksSelector = createSelector(
     })
 );
 
-export const getAllJudgeDecisionReviewTaskChildren = createSelector(
+export const getMostRecentAttorneyTask = createSelector(
   [getAllTasksForAppeal, getJudgeDecisionReviewTaskId],
-  (tasks, parentId) => getAllChildrenTasks(tasks, parentId)
+  (tasks, parentId) => {
+    // task.uniqueId is a String and task.parentId is an Integer
+    // eslint-disable-next-line eqeqeq
+    const attorneyTasks = filter(tasks, (task) => task.parentId == parentId && task.type === 'AttorneyTask');
+
+    // eslint-disable-next-line id-length
+    attorneyTasks.sort((a, b) => {
+      return new Date(b.closedAt) - new Date(a.closedAt);
+    });
+
+    return attorneyTasks[0];
+  }
+);
+
+export const getFullAttorneyTaskTree = createSelector(
+  [getAllTasksForAppeal, getMostRecentAttorneyTask],
+  (tasks, attorneyTask) => getAllChildrenTasks(tasks, attorneyTask.uniqueId)
 );
 
 // ***************** Non-memoized selectors *****************

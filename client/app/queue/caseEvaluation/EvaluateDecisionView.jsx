@@ -19,7 +19,7 @@ import RadioField from '../../components/RadioField';
 import { deleteAppeal } from '../QueueActions';
 import { requestSave } from '../uiReducer/uiActions';
 import { buildCaseReviewPayload } from '../utils';
-import { taskById, getAllJudgeDecisionReviewTaskChildren } from '../selectors';
+import { taskById, getFullAttorneyTaskTree } from '../selectors';
 
 import COPY from '../../../COPY';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS';
@@ -328,9 +328,15 @@ EvaluateDecisionView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const judgeDecisionReviewTask = taskById(state, { taskId: ownProps.taskId })
-  const attorneyChildrenTasks = appeal ? getAllJudgeDecisionReviewTaskChildren(state, {
+  const judgeDecisionReviewTask = taskById(state, { taskId: ownProps.taskId });
+
+  const attorneyChildrenTasks = appeal ? getFullAttorneyTaskTree(state, {
     appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId }) : [];
+
+  // eslint-disable-next-line id-length
+  attorneyChildrenTasks.sort((a, b) => {
+    return new Date(a.closedAt) - new Date(b.closedAt);
+  });
 
   return {
     appeal,
