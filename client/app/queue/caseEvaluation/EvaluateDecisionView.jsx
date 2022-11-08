@@ -39,6 +39,7 @@ import QueueFlowPage from '../components/QueueFlowPage';
 import { JudgeCaseQuality } from './JudgeCaseQuality';
 import { qualityIsDeficient, errorStylingNoTopMargin } from '.';
 import { AttorneyTaskTimeline } from '../AttorneyTaskTimeline';
+import { AttorneyDaysWorked } from '../AttorneyDaysWorked'
 
 const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });
@@ -249,12 +250,10 @@ class EvaluateDecisionView extends React.PureComponent {
             { cavc && <span {...redText}> CAVC</span> }
             { !aod && !cavc && <span> {caseType}</span> }
           </span>
-          <span {...attorneyAssignedStyling}>
-            <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_TOTAL_DAYS_ATTORNEY_ASSIGNED}</b>: {daysAssigned}
-          </span>
-          <span>
-            <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>: {daysWorked}
-          </span>
+          <AttorneyDaysWorked
+          attorneyTasks={attorneyChildrenTasks}
+          daysAssigned={daysAssigned}
+          daysWorked={daysWorked}/>
         </div>
         <br />
         <span>{dateAssigned.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</span>
