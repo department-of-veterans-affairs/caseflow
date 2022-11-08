@@ -47,7 +47,6 @@ const hrStyling = css(marginTop(2), marginBottom(3));
 const subH2Styling = css(paddingLeft(1), { lineHeight: 2 });
 const caseTimelineStyling = css({ display: 'flex' });
 const caseTypeStyling = css({ width: '15%' });
-const attorneyAssignedStyling = css({ width: '30%' });
 
 const timelinessOpts = Object.entries(JUDGE_CASE_REVIEW_OPTIONS.TIMELINESS).map(([value, displayText]) => ({
   displayText,

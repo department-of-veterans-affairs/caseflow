@@ -16,7 +16,7 @@ const calculateDaysWorked = (tasks, daysAssigned) => {
     sumOfDays += startTaskWork.diff(endTaskWork, 'days');
     }
     return daysAssigned - sumOfDays; 
-  }
+}
 
 export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {
   const daysWorkedUpdated = calculateDaysWorked(attorneyTasks, daysAssigned);
