@@ -324,31 +324,33 @@ EvaluateDecisionView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
+  // previousTaskAssignedOn comes from
+  // eslint-disable-next-line max-len
+  // Legacy: https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/legacy_tasks/judge_legacy_task.rb#L17
+  // AMA: https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/tasks/judge_task.rb#L42
   const judgeDecisionReviewTask = taskById(state, { taskId: ownProps.taskId });
 
-  let attorneyReviewTask = {};
   let attorneyChildrenTasks = [];
 
   // When canceling out of Evaluate Decision page need to check if appeal exists otherwise failures occur
   if (appeal) {
     if (appeal.docketName === 'legacy') {
-      attorneyChildrenTasks = getLegacyTaskTree(state, { appealId: appeal.externalId, judgeDecisionReviewTaskDate: judgeDecisionReviewTask.previousTaskAssignedOn });
+      attorneyChildrenTasks = getLegacyTaskTree(state, {
+        appealId: appeal.externalId, judgeDecisionReviewTaskDate: judgeDecisionReviewTask.previousTaskAssignedOn });
     } else {
-      attorneyReviewTask = getMostRecentAttorneyTask(state, {
-        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId });
       attorneyChildrenTasks = getFullAttorneyTaskTree(state, {
         appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId });
 
-      // eslint-disable-next-line id-length
-      attorneyChildrenTasks.sort((a, b) => {
-        return new Date(a.closedAt) - new Date(b.closedAt);
-      });
+      // Remove any tasks who assignedOn is older than the AttorneyTask's assignedOn date
+      attorneyChildrenTasks.filter((task) =>
+        new Date(task.assignedOn) > new Date(judgeDecisionReviewTask.previousTaskAssignedOn)).
+        // eslint-disable-next-line id-length
+        sort((a, b) => new Date(a.closedAt) - new Date(b.closedAt));
     }
   }
 
   return {
     appeal,
-    attorneyReviewTask,
     attorneyChildrenTasks,
     highlight: state.ui.highlightFormItems,
     taskOptions: state.queue.stagedChanges.taskDecision.opts,
