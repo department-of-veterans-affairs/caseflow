@@ -10,24 +10,28 @@ const attorneyAssignedStyling = css({ width: '30%' });
 
 const calculateDaysWorked = (tasks, daysAssigned) => {
   let sumOfDays = 0;
-  for (var task in tasks) {
-    let startTaskWork = moment(task.assignedOn);
-    let endTaskWork = moment(task.closedAt);
+
+  for (const task in tasks) {
+    const startTaskWork = moment(task.assignedOn);
+    const endTaskWork = moment(task.closedAt);
+
     sumOfDays += startTaskWork.diff(endTaskWork, 'days');
-    }
-    return daysAssigned - sumOfDays; 
-}
+  }
+
+  return daysAssigned - sumOfDays;
+};
 
 export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {
   const daysWorkedUpdated = calculateDaysWorked(attorneyTasks, daysAssigned);
+
   return (
     <React.Fragment>
-       <span {...attorneyAssignedStyling}>
-            <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_TOTAL_DAYS_ATTORNEY_ASSIGNED}</b>: {daysAssigned}
-          </span>
-          <span>
-            <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>: {daysWorkedUpdated}
-          </span>
+      <span {...attorneyAssignedStyling}>
+        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_TOTAL_DAYS_ATTORNEY_ASSIGNED}</b>: {daysAssigned}
+      </span>
+      <span>
+        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>: {daysWorkedUpdated}
+      </span>
     </React.Fragment>
   );
 };
