@@ -94,7 +94,8 @@ module Seeds
       rewrite_task = create(:ama_attorney_rewrite_task,
                             parent: appeal.tasks.of_type(:JudgeDecisionReviewTask).first,
                             assigned_by: judge_team.users.first,
-                            assigned_to: judge_team.users.last)
+                            assigned_to: judge_team.users.last,
+                            assigned_at: Time.zone.now)
       Timecop.return
       rewrite_task.completed!
     end
@@ -121,7 +122,10 @@ module Seeds
                       associated_judge: User.find_by_css_id("BVAGSPORER"),
                       issue_count: 1,
                       veteran: create_veteran)
-      create(:colocated_task, :translation, parent: appeal.tasks.of_type(:AttorneyTask).first)
+      create(:colocated_task,
+             :translation,
+             parent: appeal.tasks.of_type(:AttorneyTask).first,
+             assigned_at: Time.zone.now)
       appeal.tasks.of_type(:TranslationTask).first.completed!
       Timecop.return
       appeal.tasks.of_type(:AttorneyTask).first.completed!
@@ -140,7 +144,8 @@ module Seeds
       rewrite_task = create(:ama_attorney_rewrite_task,
                             parent: appeal.tasks.of_type(:JudgeDecisionReviewTask).first,
                             assigned_by: judge_team.users.first,
-                            assigned_to: judge_team.users.last)
+                            assigned_to: judge_team.users.last,
+                            assigned_at: Time.zone.now)
       Timecop.return
       rewrite_task.completed!
     end
