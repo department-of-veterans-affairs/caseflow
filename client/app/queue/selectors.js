@@ -232,9 +232,10 @@ export const camoAssignTasksSelector = createSelector(
 export const getMostRecentAttorneyTask = createSelector(
   [getAllTasksForAppeal, getJudgeDecisionReviewTaskId],
   (tasks, parentId) => {
+    const types = ['AttorneyRewriteTask', 'AttorneyTask', 'AttorneyLegacyTask'];
     // task.uniqueId is a String and task.parentId is an Integer
     // eslint-disable-next-line eqeqeq
-    const attorneyTasks = filter(tasks, (task) => task.parentId == parentId && task.type === 'AttorneyTask');
+    const attorneyTasks = filter(tasks, (task) => task.parentId == parentId && types.includes(task.type));
 
     // eslint-disable-next-line id-length
     attorneyTasks.sort((a, b) => {
