@@ -7,27 +7,28 @@ class SplitAppealController < ApplicationController
     if FeatureToggle.enabled?(:split_appeal_workflow)
       # create transaction for split appeal validation
       Appeal.transaction do
-        appeal_id = params[:appeal_id]
-        # remove any issues selected that are false (i.e not checked by user)
-        split_issues = params[:appeal_split_issues]
-        split_other_reason = params[:split_other_reason]
-        split_reason = params[:split_reason]
-        user_css_id = params[:user_css_id]
         # Returns a 404 Not Found error if the appeal can not be found to be split
         begin
-          appeal = Appeal.find(appeal_id)
+          Appeal.find(params[:appeal_id])
         rescue StandardError
           return render plain: "404 Not Found", status: :not_found
         end
-        # process the split
-        process_split(appeal, split_issues, split_reason, split_other_reason, user_css_id)
+        # process the split with params from payload
+        process_split(params)
       end
     end
   end
 
   private
 
-  def process_split(appeal, split_issues, split_reason, split_other_reason, user_css_id)
+  def process_split(params)
+    # unpack params
+    appeal = Appeal.find(params[:appeal_id])
+    split_issues = params[:appeal_split_issues]
+    split_other_reason = params[:split_other_reason]
+    split_reason = params[:split_reason]
+    user_css_id = params[:user_css_id]
+
     # set the appeal_split_process to true
     appeal.appeal_split_process = true
     # duplicate appeal
@@ -42,7 +43,7 @@ class SplitAppealController < ApplicationController
     dup_appeal.reload
     appeal.reload
     # create a split correlation record
-    create_split_correlation_record(dup_appeal, appeal, split_issues, split_reason, split_other_reason)
+    create_split_correlation_record(dup_appeal, params)
     render json: { split_appeal: dup_appeal, original_appeal: appeal }, status: :created
   end
 
@@ -66,7 +67,8 @@ class SplitAppealController < ApplicationController
     end
   end
 
-  def create_split_correlation_record(dup_appeal, appeal, split_issues, split_reason, split_other_reason)
+  def create_split_correlation_record(dup_appeal, params)
+    appeal = Appeal.find(params[:appeal_id])
     SplitCorrelationTable.create!(
       appeal_id: dup_appeal.id,
       appeal_type: dup_appeal.docket_type,
@@ -77,9 +79,9 @@ class SplitAppealController < ApplicationController
       original_appeal_uuid: appeal.uuid,
       original_request_issue_ids: appeal.request_issues.ids,
       relationship_type: "split_appeal",
-      split_other_reason: split_other_reason,
-      split_reason: split_reason,
-      split_request_issue_ids: split_issues,
+      split_other_reason: params[:split_other_reason],
+      split_reason: params[:split_reason],
+      split_request_issue_ids: params[:appeal_split_issues],
       updated_at: Time.zone.now.utc,
       updated_by_id: current_user.id,
       working_split_status: Constants.TASK_STATUSES.in_progress
