@@ -404,19 +404,6 @@ class Appeal < DecisionReview
     )
   end
 
-  def clone_aod(parent_appeal)
-    # find the appeal AOD
-    aod = AdvanceOnDocketMotion.find_by(appeal_id: parent_appeal.id)
-    # create a new advance on docket for the duplicate appeal
-    AdvanceOnDocketMotion.create!(
-      user_id: aod.user_id,
-      person_id: claimant.person.id,
-      granted: aod.granted,
-      reason: aod.reason,
-      appeal: self
-    )
-  end
-
   def clone_issue(issue)
     dup_issue = issue.amoeba_dup
     dup_issue.decision_review_id = id
