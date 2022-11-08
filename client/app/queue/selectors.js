@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { createSelector } from 'reselect';
 import { filter, find, keyBy, map, merge, orderBy, reduce } from 'lodash';
 import { taskIsActive, taskIsOnHold, getAllChildrenTasks, taskAttributesFromRawTask } from './utils';
@@ -27,7 +28,7 @@ const getTaskUniqueId = (state, props) => props.taskId;
 const getCaseflowVeteranId = (state, props) => props.caseflowVeteranId;
 const getClaimReviews = (state) => state.queue.claimReviews;
 const getJudgeDecisionReviewTaskId = (state, props) => props.judgeDecisionReviewTaskId;
-const getJudgeDecisionReviewTask = (state, props) => props.judgeDecisionReviewTaskDate;
+const getJudgeDecisionReviewTask = (state, props) => props.judgeDecisionReviewTask;
 const incompleteTasksSelector = (tasks) => filter(tasks, (task) => taskIsActive(task));
 const completeTasksSelector = (tasks) => filter(tasks, (task) => !taskIsActive(task));
 const taskIsNotOnHoldSelector = (tasks) => filter(tasks, (task) => !taskIsOnHold(task));
@@ -254,8 +255,17 @@ export const getFullAttorneyTaskTree = createSelector(
 
 export const getLegacyTaskTree = createSelector(
   [getAllTasksForAppeal, getJudgeDecisionReviewTask],
-  (tasks, judgeDecisionReviewTaskDate) =>
-    filter(tasks, (task) => new Date(task.assignedOn) > new Date(judgeDecisionReviewTaskDate))
+  (tasks, judgeDecisionReviewTask) =>
+    filter(tasks, (task) => {
+      // Remove any tasks whose assignedOn is older than the AttorneyTask's assignedOn date
+      const taskAssignedOn = moment(task.assignedOn);
+      const attorneyTaskAssignedOn = moment(judgeDecisionReviewTask.previousTaskAssignedOn);
+      const judgeDecisionReviewTaskAssignedOn = moment(judgeDecisionReviewTask.assignedOn);
+      const result = taskAssignedOn.diff(attorneyTaskAssignedOn, 'days');
+      const result2 = taskAssignedOn.diff(judgeDecisionReviewTaskAssignedOn, 'days');
+
+      return result >= 0 && result2 <= 0 && task.uniqueId !== judgeDecisionReviewTask.uniqueId;
+    })
 );
 
 // ***************** Non-memoized selectors *****************
