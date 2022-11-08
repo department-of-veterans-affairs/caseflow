@@ -45,7 +45,7 @@ class Task < CaseflowRecord
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
   after_update :cancel_task_timers, if: :task_just_closed?
-  after_update :is_task_ihp?
+  after_update :ihp_task?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -117,6 +117,7 @@ class Task < CaseflowRecord
   attr_accessor :skip_check_for_only_open_task_of_type
 
   prepend IhpTaskComplete
+  prepend IhpTaskCancelled
   prepend PrivacyActComplete
 
   ############################################################################################
@@ -772,9 +773,10 @@ class Task < CaseflowRecord
     @alerts ||= []
   end
 
-  def is_task_ihp?
+  def ihp_task?
     ihp_task_types = %w[IhpColocatedTask InformalHearingPresentationTask].freeze
-    ihp_task_types.inlcude?(type)
+    Rails.logger.debug ActiveSupport::LogSubscriber.new.send(:color, "This task is an IHP type of task", :green)
+    ihp_task_types.include?(type)
   end
 
   private
