@@ -19,7 +19,7 @@ class VACOLS::Correspondent < VACOLS::Record
     end
   end
 
-  def self.extract 
+  def self.extract(last_extract)
     query = <<-SQL
       select          
         snamel as vet_last_name,
@@ -43,9 +43,12 @@ class VACOLS::Correspondent < VACOLS::Record
         stafkey as appellant_vacols_internal_id,
         susrtyp as relationship_to_veteran
       from corres
+      where ( stadtime > ? )
     SQL
 
-    connection.exec_query(query).to_hash
+    fmtd_query = sanitize_sql_array([query, last_extract])
+
+    connection.exec_query(fmtd_query).to_hash
   end
 
   # Take in a collection and return a csv friendly format
