@@ -19,7 +19,7 @@ import RadioField from '../../components/RadioField';
 import { deleteAppeal } from '../QueueActions';
 import { requestSave } from '../uiReducer/uiActions';
 import { buildCaseReviewPayload } from '../utils';
-import { taskById, getFullAttorneyTaskTree, getMostRecentAttorneyTask } from '../selectors';
+import { taskById, getFullAttorneyTaskTree, getMostRecentAttorneyTask, getAllTasksForAppeal } from '../selectors';
 
 import COPY from '../../../COPY';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS';
@@ -329,15 +329,23 @@ EvaluateDecisionView.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
   const judgeDecisionReviewTask = taskById(state, { taskId: ownProps.taskId });
-  const attorneyReviewTask = appeal ? getMostRecentAttorneyTask(state, {
-    appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId }) : {};
-  const attorneyChildrenTasks = appeal ? getFullAttorneyTaskTree(state, {
-    appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId }) : [];
 
-  // eslint-disable-next-line id-length
-  attorneyChildrenTasks.sort((a, b) => {
-    return new Date(a.closedAt) - new Date(b.closedAt);
-  });
+  let attorneyReviewTask = {};
+  let attorneyChildrenTasks = [];
+
+  if (appeal.docketName === 'legacy') {
+    attorneyChildrenTasks = appeal ? getAllTasksForAppeal(state, { appealId: appeal.externalId }) : [];
+  } else {
+    attorneyReviewTask = appeal ? getMostRecentAttorneyTask(state, {
+      appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId }) : {};
+    attorneyChildrenTasks = appeal ? getFullAttorneyTaskTree(state, {
+      appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId }) : [];
+
+    // eslint-disable-next-line id-length
+    attorneyChildrenTasks.sort((a, b) => {
+      return new Date(a.closedAt) - new Date(b.closedAt);
+    });
+  }
 
   return {
     appeal,
