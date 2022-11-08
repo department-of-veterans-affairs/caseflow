@@ -7,18 +7,22 @@ import COPY from './../../COPY';
 const attorneyAssignedStyling = css({ width: '30%' });
 
 const calculateDaysWorked = (tasks, daysAssigned) => {
-  var sumOfDays = 0;
+  let sumOfDays = 0;
 
   tasks.forEach((task) => {
-    let startTaskWork = moment(task.assignedOn);
-    let endTaskWork = moment(task.closedAt);
+    const startTaskWork = moment(task.assignedOn);
+    let endTaskWork = moment();
+
+    if (task.closedAt) {
+      endTaskWork = moment(task.closedAt);
+    }
     sumOfDays += endTaskWork.startOf('day').diff(startTaskWork, 'days');
-  })
+  });
 
   return daysAssigned - sumOfDays;
-}
+};
 
-export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {  
+export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {
   const daysWorkedUpdated = calculateDaysWorked(attorneyTasks, daysAssigned);
 
   return (
@@ -36,5 +40,6 @@ export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {
 AttorneyDaysWorked.propTypes = {
   appeal: PropTypes.object,
   daysAssigned: PropTypes.number,
-  daysWorked: PropTypes.number
+  daysWorked: PropTypes.number,
+  attorneyTasks: PropTypes.array
 };

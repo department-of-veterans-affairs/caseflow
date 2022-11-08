@@ -336,16 +336,22 @@ const mapStateToProps = (state, ownProps) => {
   if (appeal) {
     if (appeal.docketName === 'legacy') {
       attorneyChildrenTasks = getLegacyTaskTree(state, {
-        appealId: appeal.externalId, judgeDecisionReviewTaskDate: judgeDecisionReviewTask.previousTaskAssignedOn });
+        appealId: appeal.externalId, judgeDecisionReviewTask });
     } else {
       attorneyChildrenTasks = getFullAttorneyTaskTree(state, {
-        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId });
+        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId }).
+        filter((task) => {
+          // Remove any tasks whose assignedOn is older than the AttorneyTask's assignedOn date
+          const taskAssignedOn = moment(task.assignedOn);
+          const attorneyTaskAssignedOn = moment(judgeDecisionReviewTask.previousTaskAssignedOn);
+          const result = taskAssignedOn.diff(attorneyTaskAssignedOn, 'days');
 
-      // Remove any tasks who assignedOn is older than the AttorneyTask's assignedOn date
-      attorneyChildrenTasks.filter((task) =>
-        new Date(task.assignedOn) > new Date(judgeDecisionReviewTask.previousTaskAssignedOn)).
-        // eslint-disable-next-line id-length
-        sort((a, b) => new Date(a.closedAt) - new Date(b.closedAt));
+          return result >= 0;
+        }
+        );
+
+      // eslint-disable-next-line id-length
+      attorneyChildrenTasks.sort((a, b) => new Date(a.closedAt) - new Date(b.closedAt));
     }
   }
 
