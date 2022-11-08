@@ -53,6 +53,7 @@ class SeedDB
     call_and_log_seed_step Seeds::MTV
     call_and_log_seed_step Seeds::Education
     call_and_log_seed_step Seeds::PriorityDistributions
+    call_and_log_seed_step Seeds::Notifications
   end
 end
 
