@@ -350,7 +350,6 @@ class Appeal < DecisionReview
   # clone issues clones request_issues the user selected
   # and anydecision_issues/decision_request_issues tied to the request issue
   def clone_issues(parent_appeal, split_request_issues)
-
     # cycle the split_request_issues list from the payload
     split_request_issues.each do |r_issue_id|
       # find the request issue from the parent appeal
@@ -375,18 +374,7 @@ class Appeal < DecisionReview
 
       # copy the request_decision_issues
       r_issue.request_decision_issues.each do |rd_issue|
-        # get the decision issue id
-        decision_issue_id = rd_issue.decision_issue_id
-        # get the decision issue
-        d_issue = DecisionIssue.find(decision_issue_id)
-        # clone decision issue
-        dup_d_issue = clone_issue(d_issue)
-        # clone request_decision_issue
-        dup_rd_issue = rd_issue.amoeba_dup
-        # set the request_issue_id and decision_issue_id
-        dup_rd_issue.request_issue_id = dup_r_issue.id
-        dup_rd_issue.decision_issue_id = dup_d_issue.id
-        dup_rd_issue.save!
+        clone_request_decision_issue(rd_issue, dup_r_issue)
       end
     end
   end
@@ -408,7 +396,22 @@ class Appeal < DecisionReview
     dup_issue = issue.amoeba_dup
     dup_issue.decision_review_id = id
     dup_issue.save
-    return dup_issue
+    dup_issue
+  end
+
+  def clone_request_decision_issue(rd_issue, dup_r_issue)
+    # get the decision issue id
+    decision_issue_id = rd_issue.decision_issue_id
+    # get the decision issue
+    d_issue = DecisionIssue.find(decision_issue_id)
+    # clone decision issue
+    dup_d_issue = clone_issue(d_issue)
+    # clone request_decision_issue
+    dup_rd_issue = rd_issue.amoeba_dup
+    # set the request_issue_id and decision_issue_id
+    dup_rd_issue.request_issue_id = dup_r_issue.id
+    dup_rd_issue.decision_issue_id = dup_d_issue.id
+    dup_rd_issue.save!
   end
 
   def clone_ihp_drafts(parent_appeal)
@@ -499,7 +502,7 @@ class Appeal < DecisionReview
     dup_task.save
 
     # return the task id to be added to the dict
-    return dup_task.id
+    dup_task.id
   end
 
   def clone_task_w_parent(original_task, parent_task_id)
@@ -538,7 +541,7 @@ class Appeal < DecisionReview
     end
 
     # return the task id to be added to the dict
-    return dup_task.id
+    dup_task.id
   end
 
   def docket_name
