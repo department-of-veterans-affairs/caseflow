@@ -1,12 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import AttorneyTaskRows from './components/AttorneyTaskRows';
-import { getAllTasksForAppeal } from './selectors';
 import { css } from 'glamor';
 
-export const AttorneyTaskTimeline = ({ appeal }) => {
-  const tasks = useSelector((state) => getAllTasksForAppeal(state, { appealId: appeal.externalId }));
+export const AttorneyTaskTimeline = ({ appeal, attorneyChildrenTasks }) => {
   const TimelineStyling = css({ margin: '1rem 0' });
 
   return (
@@ -14,7 +11,7 @@ export const AttorneyTaskTimeline = ({ appeal }) => {
       <table {...TimelineStyling} id="attorney-task-timeline-table" summary="attorney timeline table">
         <tbody>
           <AttorneyTaskRows appeal={appeal}
-            taskList={tasks}
+            taskList={attorneyChildrenTasks}
             timeline
           />
         </tbody>
@@ -24,5 +21,6 @@ export const AttorneyTaskTimeline = ({ appeal }) => {
 };
 
 AttorneyTaskTimeline.propTypes = {
-  appeal: PropTypes.object
+  appeal: PropTypes.object,
+  attorneyChildrenTasks: PropTypes.array,
 };

@@ -468,6 +468,7 @@ export const prepareAppealForStore = (appeals) => {
         appeal.attributes.substitutions?.[0]?.source_appeal_uuid,
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
       remandJudgeName: appeal.attributes.remand_judge_name,
+      hasNotifications: appeal.attributes.has_notifications,
     };
 
     return accumulator;
@@ -721,6 +722,24 @@ export const parentTasks = (childrenTasks, allTasks) => {
   });
 
   return parentTasks;
+};
+
+export const getAllChildrenTasks = (tasks, parentId) => {
+  // task.uniqueId is a String and task.parentId is an Integer
+  // eslint-disable-next-line eqeqeq
+  const childrenTasks = tasks.filter((task) => task.parentId == parentId);
+
+  let grandchildrenTasks = [];
+
+  if (childrenTasks.length > 0) {
+
+    childrenTasks.forEach((task) => {
+      grandchildrenTasks = grandchildrenTasks.concat(getAllChildrenTasks(tasks, task.uniqueId));
+    });
+
+  }
+
+  return childrenTasks.concat(grandchildrenTasks);
 };
 
 export const nullToFalse = (key, obj) => {

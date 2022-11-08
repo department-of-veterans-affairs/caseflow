@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { filter, find, keyBy, map, merge, orderBy, reduce } from 'lodash';
-import { taskIsActive, taskIsOnHold } from './utils';
+import { taskIsActive, taskIsOnHold, getAllChildrenTasks } from './utils';
 
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
@@ -26,7 +26,7 @@ const getAppealId = (state, props) => props.appealId;
 const getTaskUniqueId = (state, props) => props.taskId;
 const getCaseflowVeteranId = (state, props) => props.caseflowVeteranId;
 const getClaimReviews = (state) => state.queue.claimReviews;
-
+const getJudgeDecisionReviewTaskId = (state, props) => props.judgeDecisionReviewTaskId;
 const incompleteTasksSelector = (tasks) => filter(tasks, (task) => taskIsActive(task));
 const completeTasksSelector = (tasks) => filter(tasks, (task) => !taskIsActive(task));
 const taskIsNotOnHoldSelector = (tasks) => filter(tasks, (task) => !taskIsOnHold(task));
@@ -227,6 +227,28 @@ export const camoAssignTasksSelector = createSelector(
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned)
       );
     })
+);
+
+export const getMostRecentAttorneyTask = createSelector(
+  [getAllTasksForAppeal, getJudgeDecisionReviewTaskId],
+  (tasks, parentId) => {
+    const types = ['AttorneyRewriteTask', 'AttorneyTask', 'AttorneyLegacyTask'];
+    // task.uniqueId is a String and task.parentId is an Integer
+    // eslint-disable-next-line eqeqeq
+    const attorneyTasks = filter(tasks, (task) => task.parentId == parentId && types.includes(task.type));
+
+    // eslint-disable-next-line id-length
+    attorneyTasks.sort((a, b) => {
+      return new Date(b.closedAt) - new Date(a.closedAt);
+    });
+
+    return attorneyTasks[0];
+  }
+);
+
+export const getFullAttorneyTaskTree = createSelector(
+  [getAllTasksForAppeal, getMostRecentAttorneyTask],
+  (tasks, attorneyTask) => getAllChildrenTasks(tasks, attorneyTask.uniqueId)
 );
 
 // ***************** Non-memoized selectors *****************
