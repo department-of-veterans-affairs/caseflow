@@ -25,8 +25,6 @@ class SplitAppealController < ApplicationController
     # unpack params
     appeal = Appeal.find(params[:appeal_id])
     split_issues = params[:appeal_split_issues]
-    split_other_reason = params[:split_other_reason]
-    split_reason = params[:split_reason]
     user_css_id = params[:user_css_id]
 
     # set the appeal_split_process to true
@@ -35,7 +33,7 @@ class SplitAppealController < ApplicationController
     dup_appeal = appeal.amoeba_dup
     # save the duplicate
     dup_appeal.save!
-    create_split_task(appeal, split_reason, split_other_reason, user_css_id)
+    create_split_task(appeal, params)
     # run extra duplicate methods to finish split
     dup_appeal.finalize_split_appeal(appeal, user_css_id, split_issues)
     # set the appeal split process to false
@@ -47,7 +45,11 @@ class SplitAppealController < ApplicationController
     render json: { split_appeal: dup_appeal, original_appeal: appeal }, status: :created
   end
 
-  def create_split_task(appeal, split_reason, split_other_reason, user_css_id)
+  def create_split_task(appeal, params)
+    split_other_reason = params[:split_other_reason]
+    split_reason = params[:split_reason]
+    user_css_id = params[:user_css_id]
+
     split_user = User.find_by_css_id user_css_id
     instructions = if split_other_reason.strip.empty?
                      split_reason
