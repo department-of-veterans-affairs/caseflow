@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { filter, find, keyBy, map, merge, orderBy, reduce } from 'lodash';
-import { taskIsActive, taskIsOnHold } from './utils';
+import { taskIsActive, taskIsOnHold, getAllChildrenTasks } from './utils';
 
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
@@ -26,6 +26,7 @@ const getAppealId = (state, props) => props.appealId;
 const getTaskUniqueId = (state, props) => props.taskId;
 const getCaseflowVeteranId = (state, props) => props.caseflowVeteranId;
 const getClaimReviews = (state) => state.queue.claimReviews;
+const getJudgeDecisionReviewTaskId = (state, props) => props.judgeDecisionReviewTaskId;
 
 const incompleteTasksSelector = (tasks) => filter(tasks, (task) => taskIsActive(task));
 const completeTasksSelector = (tasks) => filter(tasks, (task) => !taskIsActive(task));
@@ -235,17 +236,9 @@ export const getJudgeDecisionReviewTasks = createSelector(
     filter(tasks, (task) => task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeDecisionReviewTask')
 );
 
-export const getJudgeDecisionReviewTaskId = createSelector(
-  [getJudgeDecisionReviewTasks],
-  (tasks) => map(tasks, (task) => task.uniqueId)[0]
-);
-
-export const getTasksAfterDecision = createSelector(
+export const getAllJudgeDecisionReviewTaskChildren = createSelector(
   [getAllTasksForAppeal, getJudgeDecisionReviewTaskId],
-  (tasks, parentId) =>
-    // task.uniqueId is a String and task.parentId is an Integer
-    // eslint-disable-next-line eqeqeq
-    filter(tasks, (task) => task.parentId == parentId)
+  (tasks, parentId) => getAllChildrenTasks(tasks, parentId)
 );
 
 // ***************** Non-memoized selectors *****************

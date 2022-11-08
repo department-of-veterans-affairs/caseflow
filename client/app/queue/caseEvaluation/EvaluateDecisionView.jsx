@@ -19,7 +19,7 @@ import RadioField from '../../components/RadioField';
 import { deleteAppeal } from '../QueueActions';
 import { requestSave } from '../uiReducer/uiActions';
 import { buildCaseReviewPayload } from '../utils';
-import { taskById, getTasksAfterDecision } from '../selectors';
+import { taskById, getAllJudgeDecisionReviewTaskChildren } from '../selectors';
 
 import COPY from '../../../COPY';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS';
@@ -328,14 +328,16 @@ EvaluateDecisionView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const attorneyChildrenTasks = getTasksAfterDecision(state, { appealId: appeal.externalId });
+  const judgeDecisionReviewTask = taskById(state, { taskId: ownProps.taskId })
+  const attorneyChildrenTasks = appeal ? getAllJudgeDecisionReviewTaskChildren(state, {
+    appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId }) : [];
 
   return {
     appeal,
     attorneyChildrenTasks,
     highlight: state.ui.highlightFormItems,
     taskOptions: state.queue.stagedChanges.taskDecision.opts,
-    task: taskById(state, { taskId: ownProps.taskId }),
+    task: judgeDecisionReviewTask,
     decision: state.queue.stagedChanges.taskDecision,
     error: state.ui.messages.error
   };
