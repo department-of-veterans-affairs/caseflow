@@ -235,28 +235,17 @@ export const getJudgeDecisionReviewTasks = createSelector(
     filter(tasks, (task) => task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeDecisionReviewTask')
 );
 
-export const getJudgeDecisionReviewTaskDate = createSelector(
+export const getJudgeDecisionReviewTaskId = createSelector(
   [getJudgeDecisionReviewTasks],
-  (tasks) =>
-    filter(tasks, (task) => {
-      return (
-        task.id
-      );
-    })
+  (tasks) => map(tasks, (task) => task.uniqueId)[0]
 );
 
 export const getTasksAfterDecision = createSelector(
-  [getAllTasksForAppeal],
-  (tasks) =>
-    filter(tasks, (task) => {
-      if (task.parentId === getJudgeDecisionReviewTaskDate) {
-        return (
-          (task)
-        );
-      }
-
-      return '';
-    })
+  [getAllTasksForAppeal, getJudgeDecisionReviewTaskId],
+  (tasks, parentId) =>
+    // task.uniqueId is a String and task.parentId is an Integer
+    // eslint-disable-next-line eqeqeq
+    filter(tasks, (task) => task.parentId == parentId)
 );
 
 // ***************** Non-memoized selectors *****************
