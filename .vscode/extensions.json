@@ -1,0 +1,26 @@
+{
+  "recommendations": [
+    "castwide.ruby-debug",
+    "castwide.solargraph",
+    "codezombiech.gitignore",
+    "dbaeumer.vscode-eslint",
+    "donjayamanne.git-extension-pack",
+    "donjayamanne.githistory",
+    "eamodio.gitlens",
+    "GitHub.vscode-pull-request-github",
+    "kaiwood.endwise",
+    "mgmcdermott.vscode-language-babel",
+    "misogi.ruby-rubocop",
+    "ms-azuretools.vscode-docker",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg",
+    "Orta.vscode-jest",
+    "rebornix.ruby",
+    "redhat.vscode-yaml",
+    "suming.react-proptypes-generate",
+    "wingrunr21.vscode-ruby",
+    "wmaurer.change-case",
+    "ziyasal.vscode-open-in-github",
+    "oracle.oracledevtools"
+  ]
+}
