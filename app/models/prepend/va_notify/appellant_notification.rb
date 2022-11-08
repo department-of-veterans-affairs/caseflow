@@ -109,7 +109,7 @@ module AppellantNotification
       open_tasks = appeal.tasks.open
       if open_tasks.where(type: FoiaColocatedTask.name).empty? && open_tasks.where(type: PrivacyActTask.name).empty? &&
          open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
-         open_tasks.where(type: FoiaRequestMailTask.name).empty? && open_tasks.where(type: PrivacyMailRequestTask.name).empty?
+         open_tasks.where(type: FoiaRequestMailTask.name).empty? && open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
         appeal_state.update!(privacy_act_complete: true, privacy_act_pending: false, updated_by_id: current_user.id)
       end
     end
