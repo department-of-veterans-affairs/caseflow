@@ -7,23 +7,14 @@ RSpec.feature "Notifications View" do
   before do
     User.authenticate!(roles: user_roles)
     Seeds::NotificationEvents.new.seed!
+    seed_ama_notifications
   end
 
   context "ama appeal" do
     let(:appeal) do
       create(:appeal)
     end
-    let(:ama_notification) do
-      create(:notification,
-             appeals_id: appeal.uuid,
-             appeals_type: "Appeal",
-             event_date: Time.zone.today,
-             event_type: "Appeal docketed",
-             notification_type: "Email",
-             notified_at: Time.zone.today,
-             email_notification_status: "delivered")
-    end
-    let(:multiple_ama_notifications) do
+    let(:seed_ama_notifications) do
       create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: 8.days.ago,
                             event_type: "Appeal docketed", notification_type: "Email and SMS",
                             recipient_email: "example@example.com",recipient_phone_number: "555-555-5555",
@@ -89,13 +80,41 @@ RSpec.feature "Notifications View" do
                             "that will be sent to you and to your representative, if you have one, shortly.")
     end
 
-    scenario "admin visits notifications page for ama appeal" do
-      multiple_ama_notifications
+    scenario "visits notifications page for ama appeal" do
       visit "queue/appeals/#{appeal.uuid}"
       click_link("View notifications sent to appellant")
-      current_path = "/queue/appeals/#{appeal.uuid}/notifications"
       page.switch_to_window(page.windows.last)
-      expect(page).to have_current_path(current_path)
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/notifications")
+    end
+
+    scenario "sees correct event type in first row of table" do
+      visit "queue/appeals/#{appeal.uuid}/notifications"
+      cell = page.find("td", match: :first)
+      expect(cell).to have_content("Appeal docketed")
+    end
+
+    scenario "sees correct notification date in first row of table" do
+      visit "queue/appeals/#{appeal.uuid}/notifications"
+      cell = page.all("td")[1]
+      expect(cell).to have_content("10/31/2022")
+    end
+
+    scenario "sees correct notification type in first row of table" do
+      visit "queue/appeals/#{appeal.uuid}/notifications"
+      cell = page.all("td")[2]
+      expect(cell).to have_content("Email")
+    end
+
+    scenario "sees correct recipient information in first row of table" do
+      visit "queue/appeals/#{appeal.uuid}/notifications"
+      cell = page.all("td")[3]
+      expect(cell).to have_content("example@example.com")
+    end
+
+    scenario "sees correct status in first row of table" do
+      visit "queue/appeals/#{appeal.uuid}/notifications"
+      cell = page.all("td")[4]
+      expect(cell).to have_content("Delivered")
     end
   end
 end
