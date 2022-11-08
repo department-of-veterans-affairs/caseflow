@@ -308,6 +308,7 @@ class Appeal < DecisionReview
   end
 
   # finalize_split_appeal contains all the methods to finish the amoeba split
+  # these methods are below in PRIVATE
   def finalize_split_appeal(parent_appeal, user_css_id, split_issues)
     # update the child task tree with parent, passing CSS ID of user for validation
     self&.clone_task_tree(parent_appeal, user_css_id)
@@ -329,219 +330,6 @@ class Appeal < DecisionReview
     self.duplicate_split_appeal = true
     # set the parent original split appeal flat
     parent_appeal.original_split_appeal = true
-  end
-
-  # clones cavc_remand. Uses user_css_id that did the split to complete the remand split
-  def clone_cavc_remand(parent_appeal, user_css_id)
-    # get cavc remand from the parent appeal
-    original_remand = parent_appeal.cavc_remand
-    # clone w error handling
-    dup_remand = original_remand&.amoeba_dup
-    # set appeal id to remand_appeal_id
-    dup_remand&.remand_appeal_id = id
-    # set source appeal id to parent appeal
-    dup_remand&.source_appeal = parent_appeal
-    # set request store to the user that split the appeal
-    RequestStore[:current_user] = User.find_by_css_id user_css_id
-    # save
-    dup_remand&.save
-  end
-
-  # clone issues clones request_issues the user selected
-  # and anydecision_issues/decision_request_issues tied to the request issue
-  def clone_issues(parent_appeal, split_request_issues)
-    # cycle the split_request_issues list from the payload
-    split_request_issues.each do |r_issue_id|
-      # find the request issue from the parent appeal
-      r_issue = parent_appeal.request_issues.find(r_issue_id.to_i)
-
-      fail IssueAlreadyDuplicated if r_issue.split_issue_status == "on_hold"
-
-      dup_r_issue = clone_issue(r_issue)
-
-      # set original issue on hold and duplicate issue to in_progress
-      r_issue.update!(
-        split_issue_status: Constants.TASK_STATUSES.on_hold
-      )
-      r_issue.save!
-      dup_r_issue.update!(
-        split_issue_status: Constants.TASK_STATUSES.in_progress
-      )
-      dup_r_issue.save!
-
-      # skip copying decision issues if there aren't any
-      next if r_issue.request_decision_issues.empty?
-
-      # copy the request_decision_issues
-      r_issue.request_decision_issues.each do |rd_issue|
-        clone_request_decision_issue(rd_issue, dup_r_issue)
-      end
-    end
-  end
-
-  def clone_aod(parent_appeal)
-    # find the appeal AOD
-    aod = AdvanceOnDocketMotion.find_by(appeal_id: parent_appeal.id)
-    # create a new advance on docket for the duplicate appeal
-    AdvanceOnDocketMotion.create!(
-      user_id: aod.user_id,
-      person_id: claimant.person.id,
-      granted: aod.granted,
-      reason: aod.reason,
-      appeal: self
-    )
-  end
-
-  def clone_issue(issue)
-    dup_issue = issue.amoeba_dup
-    dup_issue.decision_review_id = id
-    dup_issue.save
-    dup_issue
-  end
-
-  def clone_request_decision_issue(rd_issue, dup_r_issue)
-    # get the decision issue id
-    decision_issue_id = rd_issue.decision_issue_id
-    # get the decision issue
-    d_issue = DecisionIssue.find(decision_issue_id)
-    # clone decision issue
-    dup_d_issue = clone_issue(d_issue)
-    # clone request_decision_issue
-    dup_rd_issue = rd_issue.amoeba_dup
-    # set the request_issue_id and decision_issue_id
-    dup_rd_issue.request_issue_id = dup_r_issue.id
-    dup_rd_issue.decision_issue_id = dup_d_issue.id
-    dup_rd_issue.save!
-  end
-
-  def clone_ihp_drafts(parent_appeal)
-    # get the list of ihp_drafts from the appeal
-    original_ihp_drafts = IhpDraft.where(appeal_id: parent_appeal.id)
-    # for each ihp_draft, amoeba clone it
-    original_ihp_drafts.each do |draft|
-      # clone draft
-      dup_draft = draft&.amoeba_dup
-      # set the appeal_id to this appeal
-      dup_draft&.appeal_id = id
-      # save the clone
-      dup_draft&.save
-    end
-  end
-
-  def clone_hearings(parent_appeal)
-    parent_appeal.hearings.each do |hearing|
-      # clone hearing
-      dup_hearing = hearing&.amoeba_dup
-      # assign to current appeal
-      dup_hearing&.appeal_id = id
-
-      # set split process on dup_hearing
-      dup_hearing.appeal.appeal_split_process = true
-      dup_hearing&.save
-    end
-  end
-
-  def clone_task_tree(parent_appeal, user_css_id)
-    # get the task tree from the parent
-    parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
-    # define hash to store parent/child relationship values
-    task_parent_to_child_hash = {}
-
-    while parent_appeal.tasks.count != tasks.count && !parent_appeal.tasks.nil?
-      # cycle each task in the parent
-      parent_ordered_tasks.each do |task|
-        # skip this task if the task has been copied (already in the hash)
-        next if task_parent_to_child_hash.key?(task.id)
-
-        # if the value has a parent and isn't in the dictionary, try to find it in the dictionary or else skip it
-        if !task.parent_id.nil?
-          # if the parent value hasn't been created, skip
-          next if !task_parent_to_child_hash.key?(task.parent_id)
-
-          # otherwise reassign old parent task to new from hash
-          cloned_task_id = clone_task_w_parent(task, task_parent_to_child_hash[task.parent_id])
-
-        else
-          # else create the task that doesn't have a parent
-          cloned_task_id = clone_task(task, user_css_id)
-        end
-        # add the parent/clone id to the hash set
-        task_parent_to_child_hash[task.id] = cloned_task_id
-
-        # break if the tree count is the same
-        break if parent_appeal.tasks.count == tasks.count
-      end
-      # break if the tree count is the same
-      break if parent_appeal.tasks.count == tasks.count
-    end
-  end
-
-  # clone_task is used for splitting an appeal, tie to css_id for split
-  def clone_task(original_task, user_css_id)
-    # clone the task
-    dup_task = original_task.amoeba_dup
-
-    # assign the task to this appeal
-    dup_task.appeal_id = id
-
-    # set the status to assigned as placeholder
-    dup_task.status = "assigned"
-
-    # set the appeal split process to true for the task
-    dup_task.appeal.appeal_split_process = true
-
-    # save the task
-    dup_task.save
-
-    # set the status to the correct status
-    dup_task.status = original_task.status
-
-    # set request store to the user that split the appeal
-    RequestStore[:current_user] = User.find_by_css_id user_css_id
-
-    dup_task.save
-
-    # return the task id to be added to the dict
-    dup_task.id
-  end
-
-  def clone_task_w_parent(original_task, parent_task_id)
-    # clone the task
-    dup_task = original_task.amoeba_dup
-
-    # assign the task to this appeal
-    dup_task.appeal_id = id
-
-    # set the status to assigned as placeholder
-    dup_task.status = "assigned"
-
-    # set the parent to the parent_task_id
-    dup_task.parent_id = parent_task_id
-
-    # set the appeal split process to true for the task
-    dup_task.appeal.appeal_split_process = true
-
-    # save the task
-    dup_task.save(validate: false)
-
-    # set the status to the correct status
-    dup_task.status = original_task.status
-
-    dup_task.save(validate: false)
-
-    # if the status is cancelled, pull the original canceled ID
-    if dup_task.status == "cancelled" && !original_task.cancelled_by_id.nil?
-
-      # set request store to original task canceller to handle verification
-      RequestStore[:current_user] = User.find(original_task.cancelled_by_id)
-
-      # confirm task just in case no prompt
-      dup_task.cancelled_by_id = original_task.cancelled_by_id
-      dup_task.save(validate: false)
-    end
-
-    # return the task id to be added to the dict
-    dup_task.id
   end
 
   def docket_name
@@ -908,6 +696,220 @@ class Appeal < DecisionReview
 
   def default_docket_number_from_receipt_date
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
+  end
+
+  # start of private SPLIT APPEAL methods
+  # clones cavc_remand. Uses user_css_id that did the split to complete the remand split
+  def clone_cavc_remand(parent_appeal, user_css_id)
+    # get cavc remand from the parent appeal
+    original_remand = parent_appeal.cavc_remand
+    # clone w error handling
+    dup_remand = original_remand&.amoeba_dup
+    # set appeal id to remand_appeal_id
+    dup_remand&.remand_appeal_id = id
+    # set source appeal id to parent appeal
+    dup_remand&.source_appeal = parent_appeal
+    # set request store to the user that split the appeal
+    RequestStore[:current_user] = User.find_by_css_id user_css_id
+    # save
+    dup_remand&.save
+  end
+
+  # clone issues clones request_issues the user selected
+  # and anydecision_issues/decision_request_issues tied to the request issue
+  def clone_issues(parent_appeal, split_request_issues)
+    # cycle the split_request_issues list from the payload
+    split_request_issues.each do |r_issue_id|
+      # find the request issue from the parent appeal
+      r_issue = parent_appeal.request_issues.find(r_issue_id.to_i)
+
+      fail IssueAlreadyDuplicated if r_issue.split_issue_status == "on_hold"
+
+      dup_r_issue = clone_issue(r_issue)
+
+      # set original issue on hold and duplicate issue to in_progress
+      r_issue.update!(
+        split_issue_status: Constants.TASK_STATUSES.on_hold
+      )
+      r_issue.save!
+      dup_r_issue.update!(
+        split_issue_status: Constants.TASK_STATUSES.in_progress
+      )
+      dup_r_issue.save!
+
+      # skip copying decision issues if there aren't any
+      next if r_issue.request_decision_issues.empty?
+
+      # copy the request_decision_issues
+      r_issue.request_decision_issues.each do |rd_issue|
+        clone_request_decision_issue(rd_issue, dup_r_issue)
+      end
+    end
+  end
+
+  def clone_aod(parent_appeal)
+    # find the appeal AOD
+    aod = AdvanceOnDocketMotion.find_by(appeal_id: parent_appeal.id)
+    # create a new advance on docket for the duplicate appeal
+    AdvanceOnDocketMotion.create!(
+      user_id: aod.user_id,
+      person_id: claimant.person.id,
+      granted: aod.granted,
+      reason: aod.reason,
+      appeal: self
+    )
+  end
+
+  def clone_issue(issue)
+    dup_issue = issue.amoeba_dup
+    dup_issue.decision_review_id = id
+    dup_issue.save
+    dup_issue
+  end
+
+  def clone_request_decision_issue(rd_issue, dup_r_issue)
+    # get the decision issue id
+    decision_issue_id = rd_issue.decision_issue_id
+    # get the decision issue
+    d_issue = DecisionIssue.find(decision_issue_id)
+    # clone decision issue
+    dup_d_issue = clone_issue(d_issue)
+    # clone request_decision_issue
+    dup_rd_issue = rd_issue.amoeba_dup
+    # set the request_issue_id and decision_issue_id
+    dup_rd_issue.request_issue_id = dup_r_issue.id
+    dup_rd_issue.decision_issue_id = dup_d_issue.id
+    dup_rd_issue.save!
+  end
+
+  def clone_ihp_drafts(parent_appeal)
+    # get the list of ihp_drafts from the appeal
+    original_ihp_drafts = IhpDraft.where(appeal_id: parent_appeal.id)
+    # for each ihp_draft, amoeba clone it
+    original_ihp_drafts.each do |draft|
+      # clone draft
+      dup_draft = draft&.amoeba_dup
+      # set the appeal_id to this appeal
+      dup_draft&.appeal_id = id
+      # save the clone
+      dup_draft&.save
+    end
+  end
+
+  def clone_hearings(parent_appeal)
+    parent_appeal.hearings.each do |hearing|
+      # clone hearing
+      dup_hearing = hearing&.amoeba_dup
+      # assign to current appeal
+      dup_hearing&.appeal_id = id
+
+      # set split process on dup_hearing
+      dup_hearing.appeal.appeal_split_process = true
+      dup_hearing&.save
+    end
+  end
+
+  def clone_task_tree(parent_appeal, user_css_id)
+    # get the task tree from the parent
+    parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
+    # define hash to store parent/child relationship values
+    task_parent_to_child_hash = {}
+
+    while parent_appeal.tasks.count != tasks.count && !parent_appeal.tasks.nil?
+      # cycle each task in the parent
+      parent_ordered_tasks.each do |task|
+        # skip this task if the task has been copied (already in the hash)
+        next if task_parent_to_child_hash.key?(task.id)
+
+        # if the value has a parent and isn't in the dictionary, try to find it in the dictionary or else skip it
+        if !task.parent_id.nil?
+          # if the parent value hasn't been created, skip
+          next if !task_parent_to_child_hash.key?(task.parent_id)
+
+          # otherwise reassign old parent task to new from hash
+          cloned_task_id = clone_task_w_parent(task, task_parent_to_child_hash[task.parent_id])
+
+        else
+          # else create the task that doesn't have a parent
+          cloned_task_id = clone_task(task, user_css_id)
+        end
+        # add the parent/clone id to the hash set
+        task_parent_to_child_hash[task.id] = cloned_task_id
+
+        # break if the tree count is the same
+        break if parent_appeal.tasks.count == tasks.count
+      end
+      # break if the tree count is the same
+      break if parent_appeal.tasks.count == tasks.count
+    end
+  end
+
+  # clone_task is used for splitting an appeal, tie to css_id for split
+  def clone_task(original_task, user_css_id)
+    # clone the task
+    dup_task = original_task.amoeba_dup
+
+    # assign the task to this appeal
+    dup_task.appeal_id = id
+
+    # set the status to assigned as placeholder
+    dup_task.status = "assigned"
+
+    # set the appeal split process to true for the task
+    dup_task.appeal.appeal_split_process = true
+
+    # save the task
+    dup_task.save
+
+    # set the status to the correct status
+    dup_task.status = original_task.status
+
+    # set request store to the user that split the appeal
+    RequestStore[:current_user] = User.find_by_css_id user_css_id
+
+    dup_task.save
+
+    # return the task id to be added to the dict
+    dup_task.id
+  end
+
+  def clone_task_w_parent(original_task, parent_task_id)
+    # clone the task
+    dup_task = original_task.amoeba_dup
+
+    # assign the task to this appeal
+    dup_task.appeal_id = id
+
+    # set the status to assigned as placeholder
+    dup_task.status = "assigned"
+
+    # set the parent to the parent_task_id
+    dup_task.parent_id = parent_task_id
+
+    # set the appeal split process to true for the task
+    dup_task.appeal.appeal_split_process = true
+
+    # save the task
+    dup_task.save(validate: false)
+
+    # set the status to the correct status
+    dup_task.status = original_task.status
+
+    dup_task.save(validate: false)
+
+    # if the status is cancelled, pull the original canceled ID
+    if dup_task.status == "cancelled" && !original_task.cancelled_by_id.nil?
+
+      # set request store to original task canceller to handle verification
+      RequestStore[:current_user] = User.find(original_task.cancelled_by_id)
+
+      # confirm task just in case no prompt
+      dup_task.cancelled_by_id = original_task.cancelled_by_id
+      dup_task.save(validate: false)
+    end
+
+    # return the task id to be added to the dict
+    dup_task.id
   end
 end
 # rubocop:enable Metrics/ClassLength
