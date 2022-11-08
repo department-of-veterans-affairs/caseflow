@@ -21,5 +21,6 @@ export const AttorneyTaskTimeline = ({ appeal, attorneyChildrenTasks }) => {
 };
 
 AttorneyTaskTimeline.propTypes = {
-  appeal: PropTypes.object
+  appeal: PropTypes.object,
+  attorneyChildrenTasks: PropTypes.array,
 };
