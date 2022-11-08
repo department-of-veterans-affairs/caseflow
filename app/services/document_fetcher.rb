@@ -24,6 +24,10 @@ class DocumentFetcher
 
   private
 
+  def current_user
+    RequestStore[:current_user]
+  end
+
   # Expect appeal.manifest_(vva|vbms)_fetched_at to be either nil or a Time objects
   def manifest_vbms_fetched_at=(fetched_at)
     @manifest_vbms_fetched_at = fetched_at.strftime(fetched_at_format) if fetched_at
@@ -68,20 +72,28 @@ class DocumentFetcher
     documents.partition { |doc| vbms_doc_ver_ids.include?(doc.vbms_document_id) }
   end
 
+  # :reek:FeatureEnvy
   def copy_metadata_from_document(created_docs_with_series_id, vbms_doc_ver_ids)
     # Find the most recent saved document with the given series_id that is not in the list of vbms_doc_ver_ids passed
     # since vbms_doc_ver_ids have already been updated
     series_id_hash = Document.includes(:annotations, :tags)
       .where(series_id: created_docs_with_series_id.pluck(:series_id))
       .where.not(vbms_document_id: vbms_doc_ver_ids).group_by(&:series_id)
-
-    document_structs = created_docs_with_series_id.map do |document|
-      previous_documents = series_id_hash[document.series_id]&.sort_by(&:id)
-      document.prepare_metadata_from_document(previous_documents.last) if previous_documents.present?
-      document
+    # Feature toggle for bulk upload enabled
+    if FeatureToggle.enabled?(:bulk_upload_documents, user: current_user)
+      document_structs = created_docs_with_series_id.map do |document|
+        previous_documents = series_id_hash[document.series_id]&.sort_by(&:id)
+        document.prepare_metadata_from_document(previous_documents.last) if previous_documents.present?
+        document
+      end
+      Document.bulk_merge_and_save(document_structs)
+    # Feature toggle for bulk upload disabled
+    else
+      created_docs_with_series_id.map do |document|
+        previous_documents = series_id_hash[document.series_id]&.sort_by(&:id)
+        document.copy_metadata_from_document(previous_documents.last) if previous_documents.present?
+      end
     end
-
-    Document.bulk_merge_and_save(document_structs)
   end
 
   def retrieve_created_docs_including_nondb_attributes(docs_to_create)
@@ -99,7 +111,7 @@ class DocumentFetcher
 
   def fetch_documents_from_service!
     doc_struct = document_service.fetch_documents_for(appeal, RequestStore.store[:current_user])
-    
+
     self.documents = deduplicate(doc_struct[:documents], "fetched_documents")
     self.manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
     self.manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
