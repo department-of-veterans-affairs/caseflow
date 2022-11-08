@@ -1,7 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
-import { getAllTasksForAppeal } from './selectors';
 import moment from 'moment';
 import { css } from 'glamor';
 import COPY from './../../COPY';
@@ -21,7 +19,6 @@ const calculateDaysWorked = (tasks, daysAssigned) => {
 }
 
 export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {  
- debugger;
   const daysWorkedUpdated = calculateDaysWorked(attorneyTasks, daysAssigned);
 
   return (
