@@ -329,18 +329,21 @@ const mapStateToProps = (state, ownProps) => {
   let attorneyReviewTask = {};
   let attorneyChildrenTasks = [];
 
-  if (appeal.docketName === 'legacy') {
-    attorneyChildrenTasks = appeal ? getAllTasksForAppeal(state, { appealId: appeal.externalId }) : [];
-  } else {
-    attorneyReviewTask = appeal ? getMostRecentAttorneyTask(state, {
-      appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId }) : {};
-    attorneyChildrenTasks = appeal ? getFullAttorneyTaskTree(state, {
-      appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId }) : [];
+  // When canceling out of Evaluate Decision page need to check if appeal exists otherwise failures occur
+  if (appeal) {
+    if (appeal.docketName === 'legacy') {
+      attorneyChildrenTasks = getAllTasksForAppeal(state, { appealId: appeal.externalId });
+    } else {
+      attorneyReviewTask = getMostRecentAttorneyTask(state, {
+        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId });
+      attorneyChildrenTasks = getFullAttorneyTaskTree(state, {
+        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId });
 
-    // eslint-disable-next-line id-length
-    attorneyChildrenTasks.sort((a, b) => {
-      return new Date(a.closedAt) - new Date(b.closedAt);
-    });
+      // eslint-disable-next-line id-length
+      attorneyChildrenTasks.sort((a, b) => {
+        return new Date(a.closedAt) - new Date(b.closedAt);
+      });
+    }
   }
 
   return {
