@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { filter, find, keyBy, map, merge, orderBy, reduce } from 'lodash';
-import { taskIsActive, taskIsOnHold, getAllChildrenTasks } from './utils';
+import { taskIsActive, taskIsOnHold, getAllChildrenTasks, taskAttributesFromRawTask } from './utils';
 
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
@@ -27,6 +27,7 @@ const getTaskUniqueId = (state, props) => props.taskId;
 const getCaseflowVeteranId = (state, props) => props.caseflowVeteranId;
 const getClaimReviews = (state) => state.queue.claimReviews;
 const getJudgeDecisionReviewTaskId = (state, props) => props.judgeDecisionReviewTaskId;
+const getJudgeDecisionReviewTask = (state, props) => props.judgeDecisionReviewTaskDate;
 const incompleteTasksSelector = (tasks) => filter(tasks, (task) => taskIsActive(task));
 const completeTasksSelector = (tasks) => filter(tasks, (task) => !taskIsActive(task));
 const taskIsNotOnHoldSelector = (tasks) => filter(tasks, (task) => !taskIsOnHold(task));
@@ -249,6 +250,12 @@ export const getMostRecentAttorneyTask = createSelector(
 export const getFullAttorneyTaskTree = createSelector(
   [getAllTasksForAppeal, getMostRecentAttorneyTask],
   (tasks, attorneyTask) => getAllChildrenTasks(tasks, attorneyTask.uniqueId)
+);
+
+export const getLegacyTaskTree = createSelector(
+  [getAllTasksForAppeal, getJudgeDecisionReviewTask],
+  (tasks, judgeDecisionReviewTaskDate) =>
+    filter(tasks, (task) => new Date(task.assignedOn) > new Date(judgeDecisionReviewTaskDate))
 );
 
 // ***************** Non-memoized selectors *****************
