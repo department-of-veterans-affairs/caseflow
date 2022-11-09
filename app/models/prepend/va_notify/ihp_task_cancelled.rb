@@ -18,9 +18,13 @@ module IhpTaskCancelled
     if IHP_TYPE_TASKS.include?(type) &&
        !IHP_TYPE_TASKS.include?(parent&.type) &&
        status == Constants.TASK_STATUSES.cancelled
-      Rails.logger.debug ActiveSupport::LogSubscriber.new.send(
-        :color, "Appeals_Mapper Method to update Appeal State Goes Here!", :green
-      )
+      MetricsService.record("Update Appeal States column 'vso_ihp_pending' to FALSE for Task ID #{id}",
+                            service: nil,
+                            name: "AppellantNotification.appeal_mapper") do
+        Rails.logger.debug ActiveSupport::LogSubscriber
+          .new.send(:color, "Appeals_Mapper Method to update Appeal State Goes Here!", :green)
+      end
+
     end
   end
 end
