@@ -31,14 +31,4 @@ module HearingWithdrawn
     end
     super_return_value
   end
-
-  # AMA hearing Withdrawn after it is Postponed
-  # original method in app/models/task.rb:498
-  def update_with_instructions(params)
-    super_return_value = super
-    if type == ScheduleHearingTask.name && params[:status] == "cancelled"
-      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_withdrawn")
-    end
-    super_return_value
-  end
 end
