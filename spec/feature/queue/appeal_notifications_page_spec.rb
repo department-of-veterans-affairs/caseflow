@@ -15,7 +15,7 @@ RSpec.feature "Notifications View" do
       create(:appeal)
     end
     let(:seed_ama_notifications) do
-      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: 8.days.ago,
+      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: "2022-11-01",
                             event_type: "Appeal docketed", notification_type: "Email and SMS",
                             recipient_email: "example@example.com",recipient_phone_number: "555-555-5555",
                             email_notification_status: "delivered", sms_notification_status: "delivered",
@@ -24,19 +24,19 @@ RSpec.feature "Notifications View" do
                             "Form 10182 (for AMA) was received. We will update you with any progress. If you have "\
                             "any questions please reach out to your Veterans Service Organization or representative "\
                             "or log onto VA.gov for additional information.")
-      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: 7.days.ago,
+      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: "2022-11-02",
                             event_type: "Hearing scheduled", notification_type: "Email and SMS",
                             recipient_email: "example@example.com", recipient_phone_number: nil,
                             email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
                             notification_content: "Your hearing has been scheduled with a Veterans Law Judge at the "\
                             "Board of Veterans' Appeals. You will be notified of the details in writing shortly.")
-      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: 6.days.ago,
+      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: "2022-11-03",
                             event_type: "Privacy Act request pending", notification_type: "Email and SMS",
                             recipient_email: "example@example.com", recipient_phone_number: nil,
                             email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
                             notification_content: "You or your representative filed a Privacy Act request. The Board "\
                             "placed your appeal on hold until this request is satisfied.")
-      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: 5.days.ago,
+      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: "2022-11-04",
                             event_type: "Privacy Act request complete", notification_type: "Email and SMS",
                             recipient_email: "example@example.com", recipient_phone_number: nil,
                             email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
@@ -45,7 +45,7 @@ RSpec.feature "Notifications View" do
                             "(the order received) If you have any questions please reach out to your Veterans Service "\
                             "Organization or representative, if you have one, or log onto VA.gov for additional "\
                             "information")
-      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: 4.days.ago,
+      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: "2022-11-05",
                             event_type: "Withdrawal of hearing", notification_type: "Email and SMS",
                             recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
                             sms_notification_status: "temporary-failure",
@@ -55,7 +55,7 @@ RSpec.feature "Notifications View" do
                             "Veterans Service Organization or representative, if you have one, or contact the "\
                             "hearing coordinator for your region. For a list of hearing coordinators by region "\
                             "with contact information, please visit https://www.bva.va.gov.")
-      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: 3.days.ago,
+      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: "2022-11-06",
                             event_type: "VSO IHP pending", notification_type: "Email and SMS", recipient_email: nil,
                             recipient_phone_number: nil, email_notification_status: "Success",
                             sms_notification_status: "Success",
@@ -63,7 +63,7 @@ RSpec.feature "Notifications View" do
                             "has been assigned to your Veterans Service Organization to provide written argument. "\
                             "Once the argument has been received, the Board of Veterans' Appeals will resume "\
                             "processing of your appeal.")
-      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: 2.days.ago,
+      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: "2022-11-07",
                             event_type: "VSO IHP complete", notification_type: "Email and SMS",
                             recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
                             sms_notification_status: "Success",
@@ -72,7 +72,7 @@ RSpec.feature "Notifications View" do
                             "it must work cases in docket order (the order received). If you have any questions "\
                             "please reach out to your Veterans Service Organization or log onto VA.gov for additional "\
                             "information.")
-      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: 1.day.ago,
+      create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: "2022-11-08",
                             event_type: "Appeal decision mailed (Non-contested claims)",
                             notification_type: "Email and SMS", recipient_email: nil, recipient_phone_number: nil,
                             email_notification_status: "Success", sms_notification_status: "permanent-failure",
@@ -96,7 +96,7 @@ RSpec.feature "Notifications View" do
     scenario "sees correct notification date in first row of table" do
       visit "queue/appeals/#{appeal.uuid}/notifications"
       cell = page.all("td")[1]
-      expect(cell).to have_content("10/31/2022")
+      expect(cell).to have_content("11/01/2022")
     end
 
     scenario "sees correct notification type in first row of table" do
@@ -187,6 +187,21 @@ RSpec.feature "Notifications View" do
       expect(table).to have_selector("tr", count: 1)
       expect(cells[0]).to have_content("Hearing scheduled")
       expect(cells[2]).to have_content("Text")
+    end
+
+    scenario "can sort by notification date" do
+      visit "queue/appeals/#{appeal.uuid}/notifications"
+      sort = page.all("svg", class: "table-icon")[1]
+      sort.click(x: 5, y: 5)
+      cell = page.all("td")[1]
+      expect(cell).to have_content("11/08/2022")
+    end
+
+    scenario "can move to next page of notifications" do
+      visit "queue/appeals/#{appeal.uuid}/notifications"
+      click_on("Next", match: :first)
+      table = page.find("tbody")
+      expect(table).to have_selector("tr", count: 1)
     end
   end
 end
