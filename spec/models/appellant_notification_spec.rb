@@ -4,7 +4,7 @@ describe AppellantNotification do
   describe "class methods" do
     describe "self.handle_errors" do
       let(:appeal) { create(:appeal, number_of_claimants: 1) }
-
+      let(:current_user) { User.system_user }
       context "if appeal is nil" do
         let(:empty_appeal) {}
         it "reports the error" do
@@ -82,6 +82,10 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
         pre_docket_task.docket_appeal
       end
+      it "will update the appeal state after docketing the Predocketed Appeal" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "appeal_docketed")
+        pre_docket_task.docket_appeal
+      end
     end
 
     describe "create_tasks_on_intake_success!" do
@@ -90,6 +94,10 @@ describe AppellantNotification do
       let(:template_name) { "Appeal docketed" }
       it "will notify appellant that appeal is docketed on successful intake" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
+        appeal.create_tasks_on_intake_success!
+      end
+      it "will update appeal state after appeal is docketed on successful intake" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "appeal_docketed")
         appeal.create_tasks_on_intake_success!
       end
     end
@@ -118,8 +126,20 @@ describe AppellantNotification do
         decision_document = dispatch.send "create_decision_document_and_submit_for_processing!", params
         decision_document.process!
       end
+      it "Will update appeal state after legacy appeal decision has been mailed (Non Contested)" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(legacy_appeal.id, legacy_appeal.class.to_s, "decision_mailed")
+        decision_document = dispatch.send "create_decision_document_and_submit_for_processing!", params
+        decision_document.process!
+      end
       it "Will notify appellant that the legacy appeal decision has been mailed (Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, contested)
+        allow(legacy_appeal).to receive(:contested_claim).and_return(true)
+        legacy_appeal.contested_claim
+        decision_document = dispatch.send "create_decision_document_and_submit_for_processing!", params
+        decision_document.process!
+      end
+      it "Will update appeal state after legacy appeal decision has been mailed (Contested)" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(legacy_appeal.id, legacy_appeal.class.to_s, "decision_mailed")
         allow(legacy_appeal).to receive(:contested_claim).and_return(true)
         legacy_appeal.contested_claim
         decision_document = dispatch.send "create_decision_document_and_submit_for_processing!", params
@@ -174,8 +194,20 @@ describe AppellantNotification do
         decision_document = dispatch.send "create_decision_document_and_submit_for_processing!", params
         decision_document.process!
       end
+      it "Will update appeal state after AMA appeal decision has been mailed (Non Contested)" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "decision_mailed")
+        decision_document = dispatch.send "create_decision_document_and_submit_for_processing!", params
+        decision_document.process!
+      end
       it "Will notify appellant that the AMA appeal decision has been mailed (Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(contested_appeal, contested)
+        allow(contested_appeal).to receive(:contested_claim?).and_return(true)
+        contested_appeal.contested_claim?
+        contested_decision_document = contested_dispatch.send "create_decision_document_and_submit_for_processing!", contested_params
+        contested_decision_document.process!
+      end
+      it "Will update appeal state after AMA appeal decision has been mailed (Contested)" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "decision_mailed")
         allow(contested_appeal).to receive(:contested_claim?).and_return(true)
         contested_appeal.contested_claim?
         contested_decision_document = contested_dispatch.send "create_decision_document_and_submit_for_processing!", contested_params
@@ -203,6 +235,10 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal_hearing, template_name)
         schedule_hearing_task.create_hearing(task_values)
       end
+      it "will uipdate appeal state when a hearing is scheduled" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal_hearing.id, appeal_hearing.class.to_s, "hearing_scheduled")
+        schedule_hearing_task.create_hearing(task_values)
+      end
     end
   end
 
@@ -216,6 +252,12 @@ describe AppellantNotification do
         appeal_hearing = postponed_hearing.appeal
         hearing_disposition_task = appeal_hearing.tasks.find_by(type: "AssignHearingDispositionTask")
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal_hearing, template_name)
+        hearing_disposition_task.update_hearing(hearing_hash)
+      end
+      it "will update appeal state when a hearing is postponed" do
+        appeal_hearing = postponed_hearing.appeal
+        hearing_disposition_task = appeal_hearing.tasks.find_by(type: "AssignHearingDispositionTask")
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal_hearing.id, appeal_hearing.class.to_s, "hearing_postponed")
         hearing_disposition_task.update_hearing(hearing_hash)
       end
     end
@@ -246,6 +288,10 @@ describe AppellantNotification do
           expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
           hearing_update_form.update_hearing
         end
+        it "will update appeal state when hearing has been postponed" do
+          expect(AppellantNotification).to receive(:appeal_mapper).with(hearing.appeal.id, hearing.appeal.class.to_s, "hearing_postponed")
+          hearing_update_form.update_hearing
+        end
       end
     end
   end
@@ -274,6 +320,21 @@ describe AppellantNotification do
         it "the appellant will be notified that their hearing has been withdrawn" do
           expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
           hearing_update_form.update_hearing
+        end
+        it "the appellant will be notified that their hearing has been withdrawn" do
+          expect(AppellantNotification).to receive(:appeal_mapper).with(hearing.appeal.id, hearing.appeal.class.to_s, "hearing_withdrawn")
+          hearing_update_form.update_hearing
+        end
+      end
+      context "when a hearing is cancelled after it's postponed" do
+        let(:params) { { status: "cancelled", instructions: "abc" } }
+        let(:root_task) { create(:root_task, appeal: hearing.appeal) }
+        let(:hearing_task) { create(:hearing_task, appeal: hearing.appeal, parent: root_task) }
+        let(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: hearing.appeal, parent: hearing_task) }
+
+        it "will update the appeal state when the hearing is withdrawn" do
+          expect(AppellantNotification).to receive(:appeal_mapper).with(hearing.appeal.id, hearing.appeal.class.to_s, "hearing_withdrawn")
+          schedule_hearing_task.update_with_instructions(params)
         end
       end
     end
