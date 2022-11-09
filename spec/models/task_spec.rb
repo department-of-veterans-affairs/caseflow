@@ -1997,4 +1997,28 @@ describe Task, :all_dbs do
       end
     end
   end
+
+  describe "#ihp_task?" do
+    let(:ihp_colocated_task) { create(:colocated_task, :ihp) }
+    let(:informal_hearing_presentation_task) { create(:informal_hearing_presentation_task) }
+    let(:non_ihp_task) { create(:hearing_task) }
+
+    context "when task is an 'IhpColocatedTask'" do
+      it "returns true" do
+        expect(ihp_colocated_task.ihp_task?).to eq(true)
+      end
+    end
+
+    context "when task is an 'InformalHearingPresentationTask'" do
+      it "returns true" do
+        expect(informal_hearing_presentation_task.ihp_task?).to eq(true)
+      end
+    end
+
+    context "when task is NOT either 'InformalHearingPresentationTask' or 'IhpColocatedTask'" do
+      it "returns false" do
+        expect(non_ihp_task.ihp_task?).to eq(false)
+      end
+    end
+  end
 end
