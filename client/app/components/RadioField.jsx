@@ -5,6 +5,8 @@ import classNames from 'classnames';
 
 import RequiredIndicator from './RequiredIndicator';
 import StringUtil from '../util/StringUtil';
+import COPY from '../../COPY';
+import Tooltip from './Tooltip';
 
 import { helpText } from './RadioField.module.scss';
 
@@ -43,6 +45,7 @@ export const RadioField = (props) => {
     hideLabel,
     styling,
     vertical,
+    userCanSelectVha
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -65,6 +68,23 @@ export const RadioField = (props) => {
     </span>
   );
 
+  const maybeAddTooltipToVhaOption = (option, radioField) => {
+    if (option.value === 'vha' && !userCanSelectVha) {
+
+      return <Tooltip
+        id={`tooltip-${option.value}`}
+        text={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY}
+        position="right"
+      >
+        {radioField}
+      </Tooltip>;
+    }
+
+    return radioField;
+  };
+
+  const isDisabled = (option) => Boolean(option.disabled) || (option.value === 'vha' && !userCanSelectVha);
+
   const handleChange = (event) => onChange?.(event.target.value);
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);
 
@@ -80,7 +100,7 @@ export const RadioField = (props) => {
 
       <div className="cf-form-radio-options">
         {options.map((option, i) => (
-          <div
+          maybeAddTooltipToVhaOption(option, <div
             className="cf-form-radio-option"
             key={`${idPart}-${option.value}-${i}`}
           >
@@ -92,7 +112,7 @@ export const RadioField = (props) => {
               value={option.value}
               // eslint-disable-next-line no-undefined
               checked={controlled ? value === option.value : undefined}
-              disabled={Boolean(option.disabled)}
+              disabled={isDisabled(option)}
               ref={inputRef}
               {...inputProps}
             />
@@ -104,7 +124,7 @@ export const RadioField = (props) => {
             </label>
             {option.help && <RadioFieldHelpText help={option.help} />}
           </div>
-        ))}
+          )))}
       </div>
     </fieldset>
   );
@@ -188,6 +208,7 @@ RadioField.propTypes = {
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
   styling: PropTypes.object,
+  userCanSelectVha: PropTypes.bool
 };
 
 export default RadioField;

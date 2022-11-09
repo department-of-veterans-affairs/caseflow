@@ -11,7 +11,8 @@ export default class BenefitType extends React.PureComponent {
       value,
       errorMessage,
       onChange,
-      register
+      register,
+      userCanSelectVha
     } = this.props;
 
     return <div className="cf-benefit-type" style={{ marginTop: '10px' }} >
@@ -25,6 +26,7 @@ export default class BenefitType extends React.PureComponent {
         value={value}
         errorMessage={errorMessage}
         inputRef={register}
+        userCanSelectVha={userCanSelectVha} // This is just hard-coded awaiting APPEALS-10818
       />
     </div>;
   }
@@ -68,4 +70,5 @@ BenefitType.propTypes = {
   formName: PropTypes.string.isRequired,
   benefitTypes: PropTypes.object.isRequired,
   featureToggles: PropTypes.object.isRequired,
+  userCanSelectVha: PropTypes.bool
 };
