@@ -64,14 +64,13 @@ module AppellantNotification
   # Updates appeal_state database when notification event is triggered
   # to keep track of the state of each appeal
   def self.appeal_mapper(appeal_id, appeal_type, event)
-    current_user = RequestStore[:current_user] || User.system_user
     if appeal_type == "Appeal"
       appeal = Appeal.find_by(id: appeal_id)
     else
       appeal = LegacyAppeal.find_by(id: appeal_id)
     end
     appeal_state = AppealState.find_by(appeal_id: appeal_id, appeal_type: appeal_type) ||
-                   AppealState.create!(appeal_id: appeal_id, appeal_type: appeal_type, created_by_id: current_user.id)
+                   AppealState.create!(appeal_id: appeal_id, appeal_type: appeal_type)
     case event
     when "decision_mailed"
       appeal_state.update!(
@@ -83,34 +82,33 @@ module AppellantNotification
         vso_ihp_pending: false,
         vso_ihp_complete: false,
         privacy_act_pending: false,
-        privacy_act_complete: false,
-        updated_by_id: current_user.id
+        privacy_act_complete: false
       )
     when "appeal_docketed"
-      appeal_state.update!(appeal_docketed: true, updated_by_id: current_user.id)
+      appeal_state.update!(appeal_docketed: true)
     when "hearing_postponed"
-      appeal_state.update!(hearing_postponed: true, hearing_scheduled: false, updated_by_id: current_user.id)
+      appeal_state.update!(hearing_postponed: true, hearing_scheduled: false)
     when "hearing_withdrawn"
-      appeal_state.update!(hearing_withdrawn: true, hearing_postponed: false, hearing_scheduled: false, updated_by_id: current_user.id)
+      appeal_state.update!(hearing_withdrawn: true, hearing_postponed: false, hearing_scheduled: false)
     when "hearing_scheduled"
-      appeal_state.update!(hearing_scheduled: true, hearing_postponed: false, updated_by_id: current_user.id)
+      appeal_state.update!(hearing_scheduled: true, hearing_postponed: false)
     when "vso_ihp_pending"
-      appeal_state.update!(vso_ihp_pending: true, vso_ihp_complete: false, updated_by_id: current_user.id)
+      appeal_state.update!(vso_ihp_pending: true, vso_ihp_complete: false)
     when "vso_ihp_complete"
       # Only updates appeal state if ALL ihp tasks are completed
       if appeal.tasks.open.where(type: IhpColocatedTask.name).empty? &&
          appeal.tasks.open.where(type: InformalHearingPresentationTask.name).empty?
-        appeal_state.update!(vso_ihp_complete: true, vso_ihp_pending: false, updated_by_id: current_user.id)
+        appeal_state.update!(vso_ihp_complete: true, vso_ihp_pending: false)
       end
     when "privacy_act_pending"
-      appeal_state.update!(privacy_act_pending: true, privacy_act_complete: false, updated_by_id: current_user.id)
+      appeal_state.update!(privacy_act_pending: true, privacy_act_complete: false)
     when "privacy_act_complete"
       # Only updates appeal state if ALL privacy act tasks are completed
       open_tasks = appeal.tasks.open
       if open_tasks.where(type: FoiaColocatedTask.name).empty? && open_tasks.where(type: PrivacyActTask.name).empty? &&
          open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
          open_tasks.where(type: FoiaRequestMailTask.name).empty? && open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
-        appeal_state.update!(privacy_act_complete: true, privacy_act_pending: false, updated_by_id: current_user.id)
+        appeal_state.update!(privacy_act_complete: true, privacy_act_pending: false)
       end
     end
   end

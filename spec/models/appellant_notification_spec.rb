@@ -207,7 +207,7 @@ describe AppellantNotification do
         contested_decision_document.process!
       end
       it "Will update appeal state after AMA appeal decision has been mailed (Contested)" do
-        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "decision_mailed")
+        expect(AppellantNotification).to receive(:appeal_mapper).with(contested_appeal.id, contested_appeal.class.to_s, "decision_mailed")
         allow(contested_appeal).to receive(:contested_claim?).and_return(true)
         contested_appeal.contested_claim?
         contested_decision_document = contested_dispatch.send "create_decision_document_and_submit_for_processing!", contested_params
@@ -321,20 +321,9 @@ describe AppellantNotification do
           expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
           hearing_update_form.update_hearing
         end
-        it "the appellant will be notified that their hearing has been withdrawn" do
+        it "will update appeal state when hearing has been withdrawn" do
           expect(AppellantNotification).to receive(:appeal_mapper).with(hearing.appeal.id, hearing.appeal.class.to_s, "hearing_withdrawn")
           hearing_update_form.update_hearing
-        end
-      end
-      context "when a hearing is cancelled after it's postponed" do
-        let(:params) { { status: "cancelled", instructions: "abc" } }
-        let(:root_task) { create(:root_task, appeal: hearing.appeal) }
-        let(:hearing_task) { create(:hearing_task, appeal: hearing.appeal, parent: root_task) }
-        let(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: hearing.appeal, parent: hearing_task) }
-
-        it "will update the appeal state when the hearing is withdrawn" do
-          expect(AppellantNotification).to receive(:appeal_mapper).with(hearing.appeal.id, hearing.appeal.class.to_s, "hearing_withdrawn")
-          schedule_hearing_task.update_with_instructions(params)
         end
       end
     end
@@ -362,7 +351,7 @@ describe AppellantNotification do
         let!(:appeal) do
           create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: ro_id)
         end
-        let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }
+        let(:hearing) { create(:legacy_hearing, appeal: appeal) }
         let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }
         let(:hearing_info) do
           {
@@ -386,7 +375,12 @@ describe AppellantNotification do
         let(:appeal_state) { create(:appeal_state, appeal_id: appeal_postponed.id, appeal_type: appeal_postponed.class.to_s) }
 
         it "will notify appellant when a hearing is postponed" do
-          expect(AppellantNotification).to receive(:notify_appellant).with(hearing_postponed.appeal, template_name)
+          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
+          hearing.update_caseflow_and_vacols(hearing_info)
+        end
+
+        it "will update appeal state when hearing is postponed" do
+          expect(AppellantNotification).to receive(:appeal_mapper).with(hearing.appeal.id, hearing.appeal.class.to_s, "hearing_postponed")
           hearing.update_caseflow_and_vacols(hearing_info)
         end
 
@@ -445,6 +439,10 @@ describe AppellantNotification do
           expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
           hearing.update_caseflow_and_vacols(hearing_info)
         end
+        it "will update appeal state hearing is withdrawn/cancelled" do
+          expect(AppellantNotification).to receive(:appeal_mapper).with(hearing.appeal.id, hearing.appeal.class.to_s, "hearing_withdrawn")
+          hearing.update_caseflow_and_vacols(hearing_info)
+        end
         it "should not notify appellant if a cancelled hearing updates to cancelled" do
           expect(AppellantNotification).to_not receive(:notify_appellant).with(hearing_cancelled.appeal, template_name)
           hearing_cancelled.update_caseflow_and_vacols(hearing_info)
@@ -492,8 +490,16 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
         HearingAdminActionFoiaPrivacyRequestTask.create_child_task(parent_task, hearings_management_user, task_params_org)
       end
+      it "updates appeal state when task is created" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_pending")
+        HearingAdminActionFoiaPrivacyRequestTask.create_child_task(parent_task, hearings_management_user, task_params_org)
+      end
       it "calls notify_appellant when task is completed" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
+        hafpr_child.update!(status: "completed")
+      end
+      it "updates appeal state when task is completed" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_complete")
         hafpr_child.update!(status: "completed")
       end
     end
@@ -526,8 +532,17 @@ describe AppellantNotification do
           expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
           mail_task.create_twin_of_type(task_params)
         end
+        it "updates appeal state when PrivacyActRequestMailTask is created" do
+          expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_pending")
+          mail_task.create_twin_of_type(task_params)
+        end
         it "sends a notification when PrivacyActRequestMailTask is completed" do
           expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
+          foia_child.update!(status: "completed")
+          foia_task.update_status_if_children_tasks_are_closed(foia_child)
+        end
+        it "updates appeal state when PrivacyActRequestMailTask is completed" do
+          expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_complete")
           foia_child.update!(status: "completed")
           foia_task.update_status_if_children_tasks_are_closed(foia_child)
         end
@@ -564,9 +579,18 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
         ColocatedTask.create_from_params(foia_colocated_task, attorney)
       end
+      it "updates appeal state when creating a FoiaColocatedTask" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_pending")
+        ColocatedTask.create_from_params(foia_colocated_task, attorney)
+      end
       it "sends notification when completing a FoiaColocatedTask" do
         foia_c_task = ColocatedTask.create_from_params(foia_colocated_task, attorney)
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
+        foia_c_task.children.first.update!(status: "completed")
+      end
+      it "updates appeal state when completing a FoiaColocatedTask" do
+        foia_c_task = ColocatedTask.create_from_params(foia_colocated_task, attorney)
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_complete")
         foia_c_task.children.first.update!(status: "completed")
       end
       it "does not send a notification when cancelling a FoiaColocatedTask" do
@@ -605,8 +629,16 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_pending)
         PrivacyActTask.create_child_task(colocated_task, attorney, privacy_params_org)
       end
+      it "updates appeal state when creating a PrivacyActTask" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_pending")
+        PrivacyActTask.create_child_task(colocated_task, attorney, privacy_params_org)
+      end
       it "sends notification when completing a PrivacyActTask assigned to user" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
+        privacy_child.update!(status: "completed")
+      end
+      it "updates appeal state when completing a PrivacyActTask assigned to user" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_complete")
         privacy_child.update!(status: "completed")
       end
       it "sends notification when completing a PrivacyActTask assigned to organization" do
@@ -642,6 +674,10 @@ describe AppellantNotification do
         end
         it "The appellant WILL recieve an 'IhpTaskPending' notification" do
           expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
+          task_factory.create_ihp_tasks!
+        end
+        it "updates appeal state when ihp task is created" do
+          expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
           task_factory.create_ihp_tasks!
         end
       end
@@ -701,6 +737,11 @@ describe AppellantNotification do
           expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
           IhpColocatedTask.create_from_params(params, user)
         end
+        it "updates appeal state when ihp task pending" do
+          allow(ColocatedTask).to receive(:verify_user_can_create!).with(user, colocated_task).and_return(true)
+          expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
+          IhpColocatedTask.create_from_params(params, user)
+        end
       end
     end
   end
@@ -718,6 +759,11 @@ describe AppellantNotification do
           expect(AppellantNotification).to receive(:notify_appellant).with(task.appeal, template_name)
           task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
         end
+        it "will update appeal state the 'IhpTaskComplete' status" do
+          allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
+          expect(AppellantNotification).to receive(:appeal_mapper).with(task.appeal.id, task.appeal.class.to_s, "vso_ihp_complete")
+          task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
+        end
       end
     end
 
@@ -731,6 +777,11 @@ describe AppellantNotification do
         it "will notify the appellant of the 'IhpTaskComplete' status" do
           allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
           expect(AppellantNotification).to receive(:notify_appellant).with(task.appeal, template_name)
+          task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
+        end
+        it "will update appeal state with the 'IhpTaskComplete' status" do
+          allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
+          expect(AppellantNotification).to receive(:appeal_mapper).with(task.appeal.id, task.appeal.class.to_s, "vso_ihp_complete")
           task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
         end
       end
