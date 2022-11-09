@@ -207,8 +207,7 @@ describe AppellantNotification do
       let(:hearing) { create(:hearing, :with_tasks) }
       let(:appeal) { hearing.appeal }
       let(:assign_hearing_disposition_task) { appeal.tasks.find_by(type: "AssignHearingDispositionTask") }
-      it "does stuff" do
-        byebug
+      it "updates or adds entry to appeal_state table" do
         assign_hearing_disposition_task.update_hearing_disposition_and_notes(payload_values)
         # expect()
       end

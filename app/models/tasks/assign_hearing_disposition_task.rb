@@ -310,7 +310,6 @@ class AssignHearingDispositionTask < Task
 
   def update_hearing_disposition_and_notes(payload_values)
     if payload_values[:hearing_notes].nil?
-      byebug
       update_hearing(
         disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
       )
