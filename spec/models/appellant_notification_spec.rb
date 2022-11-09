@@ -628,6 +628,26 @@ describe AppellantNotification do
     end
   end
 
+  describe IhpTaskCancelled do
+    describe "#update_appeal_state" do
+      let(:org) { create(:organization) }
+      context "A cancelled 'IhpColocatedTask'" do
+        let(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
+        it "will update the 'vso_ihp_pending' value to FALSE" do
+          expect(AppellantNotification).to receive(:appeal_mapper)
+          task.update!(status: Constants.TASK_STATUSES.cancelled)
+        end
+      end
+      context "A cancelled InformalHearingPresentationTask'" do
+        let(:task) { create(:informal_hearing_presentation_task, :in_progress, assigned_to: org) }
+        it "will update the 'vso_ihp_pending' value to FALSE" do
+          expect(AppellantNotification).to receive(:appeal_mapper)
+          task.update!(status: Constants.TASK_STATUSES.cancelled)
+        end
+      end
+    end
+  end
+
   describe IhpTaskComplete do
     describe "update_from_params" do
       context "A completed 'IhpColocatedTask'" do
