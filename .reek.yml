@@ -100,7 +100,6 @@ detectors:
       - Fakes::BGSServiceRecordMaker
       - Fakes::BGSService#fetch_poas_by_participant_ids
       - Fakes::PersistentStore#convert_dates_from
-      - FetchDocumentsForReaderJob#fetch_for_appeal
       - FetchHearingLocationsForVeteransJob#sleep_before_retry_on_limit_error
       - HearingSerializerBase
       - HearingSchedule::GenerateHearingDaysSchedule#generate_co_hearing_days_schedule
@@ -160,7 +159,7 @@ detectors:
       - Seeds::MTV#send_mtv_to_judge
       - Seeds::Tasks#create_task_at_colocated
       - VirtualHearings::CreateConferenceJob#perform
-      - Docket#distribute_appeals      
+      - Docket#distribute_appeals
       - LegacyDocket#distribute_priority_appeals
       - LegacyDocket#distribute_nonpriority_appeals
       - ExternalApi::MPIService#search_people_info
