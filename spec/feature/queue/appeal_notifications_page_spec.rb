@@ -116,5 +116,77 @@ RSpec.feature "Notifications View" do
       cell = page.all("td")[4]
       expect(cell).to have_content("Delivered")
     end
+
+    scenario "table is filled with a full page of notifications" do
+      visit "queue/appeals/#{appeal.uuid}/notifications"
+      table = page.find("tbody")
+      expect(table).to have_selector("tr", count: 15)
+    end
+
+    scenario "can filter by event type" do
+      visit "queue/appeals/#{appeal.uuid}/notifications"
+      filter = page.find("rect", class: "unselected-filter-icon-border", match: :first)
+      filter.click(x: 5, y: 5)
+      filter_option = page.find("li", class: "cf-filter-option-row", text: "Appeal docketed")
+      filter_option.click(x: 5, y: 5)
+      table = page.find("tbody")
+      cells = table.all("td")
+      expect(table).to have_selector("tr", count: 2)
+      expect(cells[0]).to have_content("Appeal docketed")
+      expect(cells[5]).to have_content("Appeal docketed")
+    end
+
+    scenario "can filter by notification type" do
+      visit "queue/appeals/#{appeal.uuid}/notifications"
+      filter = page.all("rect", class: "unselected-filter-icon-border")[1]
+      filter.click(x: 5, y: 5)
+      filter_option = page.find("li", class: "cf-filter-option-row", text: "Email")
+      filter_option.click(x: 5, y: 5)
+      table = page.find("tbody")
+      cells = table.all("td")
+      expect(table).to have_selector("tr", count: 8)
+      expect(cells[2]).to have_content("Email")
+      expect(cells[37]).to have_content("Email")
+    end
+
+    scenario "can filter by recipient information" do
+      visit "queue/appeals/#{appeal.uuid}/notifications"
+      filter = page.all("rect", class: "unselected-filter-icon-border")[2]
+      filter.click(x: 5, y: 5)
+      filter_option = page.find("li", class: "cf-filter-option-row", text: "Example@example.com")
+      filter_option.click(x: 5, y: 5)
+      table = page.find("tbody")
+      cells = table.all("td")
+      expect(table).to have_selector("tr", count: 4)
+      expect(cells[3]).to have_content("example@example.com")
+      expect(cells[18]).to have_content("example@example.com")
+    end
+
+    scenario "can filter by status" do
+      visit "queue/appeals/#{appeal.uuid}/notifications"
+      filter = page.all("rect", class: "unselected-filter-icon-border")[3]
+      filter.click(x: 5, y: 5)
+      filter_option = page.find("li", class: "cf-filter-option-row", text: "Delivered")
+      filter_option.click(x: 5, y: 5)
+      table = page.find("tbody")
+      cells = table.all("td")
+      expect(table).to have_selector("tr", count: 5)
+      expect(cells[4]).to have_content("Delivered")
+      expect(cells[24]).to have_content("Delivered")
+    end
+
+    scenario "can filter mutliple columns at once" do
+      visit "queue/appeals/#{appeal.uuid}/notifications"
+      filters = page.all("rect", class: "unselected-filter-icon-border")
+      filters[0].click(x: 5, y: 5)
+      page.find("li", class: "cf-filter-option-row", text: "Hearing scheduled").click(x: 5, y: 5)
+      filters[1].click(x: 5, y: 5)
+      page.find("li", class: "cf-filter-option-row", text: "Text").click(x: 5, y: 5)
+      table = page.find("tbody")
+      cells = table.all("td")
+      expect(table).to have_selector("tr", count: 1)
+      expect(cells[0]).to have_content("Hearing scheduled")
+      expect(cells[2]).to have_content("Text")
+    end
   end
 end
