@@ -24,7 +24,6 @@ module IhpTaskCancelled
         Rails.logger.debug ActiveSupport::LogSubscriber
           .new.send(:color, "Appeals_Mapper Method to update Appeal State Goes Here!", :green)
       end
-
     end
   end
 end
