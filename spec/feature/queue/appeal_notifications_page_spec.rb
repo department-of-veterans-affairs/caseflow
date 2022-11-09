@@ -81,131 +81,194 @@ RSpec.feature "Notifications View" do
     end
 
     before(:example) do
-      seed_ama_notifications
+      appeal
     end
 
-    scenario "visits notifications page for ama appeal" do
-      visit "queue/appeals/#{appeal.uuid}"
-      click_link("View notifications sent to appellant")
-      page.switch_to_window(page.windows.last)
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/notifications")
+    context "without notifications" do
+      scenario "notification page link will not show up" do
+        visit "queue/appeals/#{appeal.uuid}"
+        expect(page).to have_no_link("View notifications sent to appellant")
+      end
     end
 
-    scenario "sees correct event type in first row of table" do
-      visit(ama_notifications_page)
-      cell = page.find("td", match: :first)
-      expect(cell).to have_content("Appeal docketed")
-    end
+    context "with notifications" do
+      before(:example) do
+        seed_ama_notifications
+      end
 
-    scenario "sees correct notification date in first row of table" do
-      visit(ama_notifications_page)
-      cell = page.all("td")[1]
-      expect(cell).to have_content("11/01/2022")
-    end
+      scenario "visits notifications page for ama appeal" do
+        visit "queue/appeals/#{appeal.uuid}"
+        click_link("View notifications sent to appellant")
+        page.switch_to_window(page.windows.last)
+        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/notifications")
+      end
 
-    scenario "sees correct notification type in first row of table" do
-      visit(ama_notifications_page)
-      cell = page.all("td")[2]
-      expect(cell).to have_content("Email")
-    end
+      scenario "sees correct event type in first row of table" do
+        visit(ama_notifications_page)
+        cell = page.find("td", match: :first)
+        expect(cell).to have_content("Appeal docketed")
+      end
 
-    scenario "sees correct recipient information in first row of table" do
-      visit(ama_notifications_page)
-      cell = page.all("td")[3]
-      expect(cell).to have_content("example@example.com")
-    end
+      scenario "sees correct notification date in first row of table" do
+        visit(ama_notifications_page)
+        cell = page.all("td")[1]
+        expect(cell).to have_content("11/01/2022")
+      end
 
-    scenario "sees correct status in first row of table" do
-      visit(ama_notifications_page)
-      cell = page.all("td")[4]
-      expect(cell).to have_content("Delivered")
-    end
+      scenario "sees correct notification type in first row of table" do
+        visit(ama_notifications_page)
+        cell = page.all("td")[2]
+        expect(cell).to have_content("Email")
+      end
 
-    scenario "table is filled with a full page of notifications" do
-      visit(ama_notifications_page)
-      table = page.find("tbody")
-      expect(table).to have_selector("tr", count: 15)
-    end
+      scenario "sees correct recipient information in first row of table" do
+        visit(ama_notifications_page)
+        cell = page.all("td")[3]
+        expect(cell).to have_content("example@example.com")
+      end
 
-    scenario "can filter by event type" do
-      visit(ama_notifications_page)
-      filter = page.find("rect", class: "unselected-filter-icon-border", match: :first)
-      filter.click(x: 5, y: 5)
-      filter_option = page.find("li", class: "cf-filter-option-row", text: "Appeal docketed")
-      filter_option.click(x: 5, y: 5)
-      table = page.find("tbody")
-      cells = table.all("td")
-      expect(table).to have_selector("tr", count: 2)
-      expect(cells[0]).to have_content("Appeal docketed")
-      expect(cells[5]).to have_content("Appeal docketed")
-    end
+      scenario "sees correct status in first row of table" do
+        visit(ama_notifications_page)
+        cell = page.all("td")[4]
+        expect(cell).to have_content("Delivered")
+      end
 
-    scenario "can filter by notification type" do
-      visit(ama_notifications_page)
-      filter = page.all("rect", class: "unselected-filter-icon-border")[1]
-      filter.click(x: 5, y: 5)
-      filter_option = page.find("li", class: "cf-filter-option-row", text: "Email")
-      filter_option.click(x: 5, y: 5)
-      table = page.find("tbody")
-      cells = table.all("td")
-      expect(table).to have_selector("tr", count: 8)
-      expect(cells[2]).to have_content("Email")
-      expect(cells[37]).to have_content("Email")
-    end
+      scenario "table is filled with a full page of notifications" do
+        visit(ama_notifications_page)
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 15)
+      end
 
-    scenario "can filter by recipient information" do
-      visit(ama_notifications_page)
-      filter = page.all("rect", class: "unselected-filter-icon-border")[2]
-      filter.click(x: 5, y: 5)
-      filter_option = page.find("li", class: "cf-filter-option-row", text: "Example@example.com")
-      filter_option.click(x: 5, y: 5)
-      table = page.find("tbody")
-      cells = table.all("td")
-      expect(table).to have_selector("tr", count: 4)
-      expect(cells[3]).to have_content("example@example.com")
-      expect(cells[18]).to have_content("example@example.com")
-    end
+      scenario "can filter by event type" do
+        visit(ama_notifications_page)
+        filter = page.find("rect", class: "unselected-filter-icon-border", match: :first)
+        filter.click(x: 5, y: 5)
+        filter_option = page.find("li", class: "cf-filter-option-row", text: "Appeal docketed")
+        filter_option.click(x: 5, y: 5)
+        table = page.find("tbody")
+        cells = table.all("td")
+        expect(table).to have_selector("tr", count: 2)
+        expect(cells[0]).to have_content("Appeal docketed")
+        expect(cells[5]).to have_content("Appeal docketed")
+      end
 
-    scenario "can filter by status" do
-      visit(ama_notifications_page)
-      filter = page.all("rect", class: "unselected-filter-icon-border")[3]
-      filter.click(x: 5, y: 5)
-      filter_option = page.find("li", class: "cf-filter-option-row", text: "Delivered")
-      filter_option.click(x: 5, y: 5)
-      table = page.find("tbody")
-      cells = table.all("td")
-      expect(table).to have_selector("tr", count: 5)
-      expect(cells[4]).to have_content("Delivered")
-      expect(cells[24]).to have_content("Delivered")
-    end
+      scenario "can filter by notification type" do
+        visit(ama_notifications_page)
+        filter = page.all("rect", class: "unselected-filter-icon-border")[1]
+        filter.click(x: 5, y: 5)
+        filter_option = page.find("li", class: "cf-filter-option-row", text: "Email")
+        filter_option.click(x: 5, y: 5)
+        table = page.find("tbody")
+        cells = table.all("td")
+        expect(table).to have_selector("tr", count: 8)
+        expect(cells[2]).to have_content("Email")
+        expect(cells[37]).to have_content("Email")
+      end
 
-    scenario "can filter mutliple columns at once" do
-      visit(ama_notifications_page)
-      filters = page.all("rect", class: "unselected-filter-icon-border")
-      filters[0].click(x: 5, y: 5)
-      page.find("li", class: "cf-filter-option-row", text: "Hearing scheduled").click(x: 5, y: 5)
-      filters[1].click(x: 5, y: 5)
-      page.find("li", class: "cf-filter-option-row", text: "Text").click(x: 5, y: 5)
-      table = page.find("tbody")
-      cells = table.all("td")
-      expect(table).to have_selector("tr", count: 1)
-      expect(cells[0]).to have_content("Hearing scheduled")
-      expect(cells[2]).to have_content("Text")
-    end
+      scenario "can filter by recipient information" do
+        visit(ama_notifications_page)
+        filter = page.all("rect", class: "unselected-filter-icon-border")[2]
+        filter.click(x: 5, y: 5)
+        filter_option = page.find("li", class: "cf-filter-option-row", text: "Example@example.com")
+        filter_option.click(x: 5, y: 5)
+        table = page.find("tbody")
+        cells = table.all("td")
+        expect(table).to have_selector("tr", count: 4)
+        expect(cells[3]).to have_content("example@example.com")
+        expect(cells[18]).to have_content("example@example.com")
+      end
 
-    scenario "can sort by notification date" do
-      visit(ama_notifications_page)
-      sort = page.all("svg", class: "table-icon")[1]
-      sort.click(x: 5, y: 5)
-      cell = page.all("td")[1]
-      expect(cell).to have_content("11/08/2022")
-    end
+      scenario "can filter by status" do
+        visit(ama_notifications_page)
+        filter = page.all("rect", class: "unselected-filter-icon-border")[3]
+        filter.click(x: 5, y: 5)
+        filter_option = page.find("li", class: "cf-filter-option-row", text: "Delivered")
+        filter_option.click(x: 5, y: 5)
+        table = page.find("tbody")
+        cells = table.all("td")
+        expect(table).to have_selector("tr", count: 5)
+        expect(cells[4]).to have_content("Delivered")
+        expect(cells[24]).to have_content("Delivered")
+      end
 
-    scenario "can move to next page of notifications" do
-      visit(ama_notifications_page)
-      click_on("Next", match: :first)
-      table = page.find("tbody")
-      expect(table).to have_selector("tr", count: 1)
+      scenario "can filter mutliple columns at once" do
+        visit(ama_notifications_page)
+        filters = page.all("rect", class: "unselected-filter-icon-border")
+        filters[0].click(x: 5, y: 5)
+        page.find("li", class: "cf-filter-option-row", text: "Hearing scheduled").click(x: 5, y: 5)
+        filters[1].click(x: 5, y: 5)
+        page.find("li", class: "cf-filter-option-row", text: "Text").click(x: 5, y: 5)
+        table = page.find("tbody")
+        cells = table.all("td")
+        expect(table).to have_selector("tr", count: 1)
+        expect(cells[0]).to have_content("Hearing scheduled")
+        expect(cells[2]).to have_content("Text")
+      end
+
+      scenario "can sort by notification date" do
+        visit(ama_notifications_page)
+        sort = page.all("svg", class: "table-icon")[1]
+        sort.click(x: 5, y: 5)
+        cell = page.all("td")[1]
+        expect(cell).to have_content("11/08/2022")
+      end
+
+      scenario "can move to next page of notifications" do
+        visit(ama_notifications_page)
+        click_on("Next", match: :first)
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
+      end
+
+      scenario "clicking on a numbered page button will render that page" do
+        visit(ama_notifications_page)
+        pagination = page.find(class: "cf-pagination-pages", match: :first)
+        pagination.find("Button", text: "2", match: :first).click
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
+      end
+
+      scenario "next button disabled when on the last page" do
+        visit(ama_notifications_page)
+        click_on("Next", match: :first)
+        expect(page).to have_button("Next", disabled: true)
+      end
+
+      scenario "prev button moves to previous page" do
+        visit(ama_notifications_page)
+        click_on("Next", match: :first)
+        click_on("Prev", match: :first)
+        cell = page.find("td", match: :first)
+        expect(cell).to have_content("Appeal docketed")
+      end
+
+      scenario "prev button disabled on the first page" do
+        visit(ama_notifications_page)
+        expect(page).to have_button("Prev", disabled: true)
+      end
+
+      scenario "modal appears when clicking on an event type" do
+        visit(ama_notifications_page)
+        cell = page.find("td", match: :first)
+        cell.click
+        expect(page).to have_selector("div", class: "cf-modal-body")
+      end
+
+      scenario "background darkened and disables clicking after opening modal" do
+        visit(ama_notifications_page)
+        cell = page.find("td", match: :first)
+        cell.click
+        expect(page).to have_selector("section", id: "modal_id")
+      end
+
+      scenario "closing the modal should remove the dark background and the modal" do
+        visit(ama_notifications_page)
+        cell = page.find("td", match: :first)
+        cell.click
+        click_on("Close")
+        expect(page).not_to have_selector("div", class: "cf-modal-body")
+        expect(page).not_to have_selector("section", id: "modal_id")
+      end
     end
   end
 
@@ -282,131 +345,194 @@ RSpec.feature "Notifications View" do
     end
 
     before(:example) do
-      seed_legacy_notifications
+      legacy_appeal
     end
 
-    scenario "visits notifications page for legacy appeal" do
-      visit "queue/appeals/#{legacy_appeal.vacols_id}"
-      click_link("View notifications sent to appellant")
-      page.switch_to_window(page.windows.last)
-      expect(page).to have_current_path("/queue/appeals/#{legacy_appeal.vacols_id}/notifications")
+    context "without notifications" do
+      scenario "notification page link will not show up" do
+        visit "queue/appeals/#{legacy_appeal.vacols_id}"
+        expect(page).to have_no_link("View notifications sent to appellant")
+      end
     end
 
-    scenario "sees correct event type in first row of table" do
-      visit(legacy_notifications_page)
-      cell = page.find("td", match: :first)
-      expect(cell).to have_content("Appeal docketed")
-    end
+    context "with notifications" do
+      before(:example) do
+        seed_legacy_notifications
+      end
 
-    scenario "sees correct notification date in first row of table" do
-      visit(legacy_notifications_page)
-      cell = page.all("td")[1]
-      expect(cell).to have_content("11/01/2022")
-    end
+      scenario "visits notifications page for legacy appeal" do
+        visit "queue/appeals/#{legacy_appeal.vacols_id}"
+        click_link("View notifications sent to appellant")
+        page.switch_to_window(page.windows.last)
+        expect(page).to have_current_path("/queue/appeals/#{legacy_appeal.vacols_id}/notifications")
+      end
 
-    scenario "sees correct notification type in first row of table" do
-      visit(legacy_notifications_page)
-      cell = page.all("td")[2]
-      expect(cell).to have_content("Email")
-    end
+      scenario "sees correct event type in first row of table" do
+        visit(legacy_notifications_page)
+        cell = page.find("td", match: :first)
+        expect(cell).to have_content("Appeal docketed")
+      end
 
-    scenario "sees correct recipient information in first row of table" do
-      visit(legacy_notifications_page)
-      cell = page.all("td")[3]
-      expect(cell).to have_content("example@example.com")
-    end
+      scenario "sees correct notification date in first row of table" do
+        visit(legacy_notifications_page)
+        cell = page.all("td")[1]
+        expect(cell).to have_content("11/01/2022")
+      end
 
-    scenario "sees correct status in first row of table" do
-      visit(legacy_notifications_page)
-      cell = page.all("td")[4]
-      expect(cell).to have_content("Delivered")
-    end
+      scenario "sees correct notification type in first row of table" do
+        visit(legacy_notifications_page)
+        cell = page.all("td")[2]
+        expect(cell).to have_content("Email")
+      end
 
-    scenario "table is filled with a full page of notifications" do
-      visit(legacy_notifications_page)
-      table = page.find("tbody")
-      expect(table).to have_selector("tr", count: 15)
-    end
+      scenario "sees correct recipient information in first row of table" do
+        visit(legacy_notifications_page)
+        cell = page.all("td")[3]
+        expect(cell).to have_content("example@example.com")
+      end
 
-    scenario "can filter by event type" do
-      visit(legacy_notifications_page)
-      filter = page.find("rect", class: "unselected-filter-icon-border", match: :first)
-      filter.click(x: 5, y: 5)
-      filter_option = page.find("li", class: "cf-filter-option-row", text: "Appeal docketed")
-      filter_option.click(x: 5, y: 5)
-      table = page.find("tbody")
-      cells = table.all("td")
-      expect(table).to have_selector("tr", count: 2)
-      expect(cells[0]).to have_content("Appeal docketed")
-      expect(cells[5]).to have_content("Appeal docketed")
-    end
+      scenario "sees correct status in first row of table" do
+        visit(legacy_notifications_page)
+        cell = page.all("td")[4]
+        expect(cell).to have_content("Delivered")
+      end
 
-    scenario "can filter by notification type" do
-      visit(legacy_notifications_page)
-      filter = page.all("rect", class: "unselected-filter-icon-border")[1]
-      filter.click(x: 5, y: 5)
-      filter_option = page.find("li", class: "cf-filter-option-row", text: "Email")
-      filter_option.click(x: 5, y: 5)
-      table = page.find("tbody")
-      cells = table.all("td")
-      expect(table).to have_selector("tr", count: 8)
-      expect(cells[2]).to have_content("Email")
-      expect(cells[37]).to have_content("Email")
-    end
+      scenario "table is filled with a full page of notifications" do
+        visit(legacy_notifications_page)
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 15)
+      end
 
-    scenario "can filter by recipient information" do
-      visit(legacy_notifications_page)
-      filter = page.all("rect", class: "unselected-filter-icon-border")[2]
-      filter.click(x: 5, y: 5)
-      filter_option = page.find("li", class: "cf-filter-option-row", text: "Example@example.com")
-      filter_option.click(x: 5, y: 5)
-      table = page.find("tbody")
-      cells = table.all("td")
-      expect(table).to have_selector("tr", count: 4)
-      expect(cells[3]).to have_content("example@example.com")
-      expect(cells[18]).to have_content("example@example.com")
-    end
+      scenario "can filter by event type" do
+        visit(legacy_notifications_page)
+        filter = page.find("rect", class: "unselected-filter-icon-border", match: :first)
+        filter.click(x: 5, y: 5)
+        filter_option = page.find("li", class: "cf-filter-option-row", text: "Appeal docketed")
+        filter_option.click(x: 5, y: 5)
+        table = page.find("tbody")
+        cells = table.all("td")
+        expect(table).to have_selector("tr", count: 2)
+        expect(cells[0]).to have_content("Appeal docketed")
+        expect(cells[5]).to have_content("Appeal docketed")
+      end
 
-    scenario "can filter by status" do
-      visit(legacy_notifications_page)
-      filter = page.all("rect", class: "unselected-filter-icon-border")[3]
-      filter.click(x: 5, y: 5)
-      filter_option = page.find("li", class: "cf-filter-option-row", text: "Delivered")
-      filter_option.click(x: 5, y: 5)
-      table = page.find("tbody")
-      cells = table.all("td")
-      expect(table).to have_selector("tr", count: 5)
-      expect(cells[4]).to have_content("Delivered")
-      expect(cells[24]).to have_content("Delivered")
-    end
+      scenario "can filter by notification type" do
+        visit(legacy_notifications_page)
+        filter = page.all("rect", class: "unselected-filter-icon-border")[1]
+        filter.click(x: 5, y: 5)
+        filter_option = page.find("li", class: "cf-filter-option-row", text: "Email")
+        filter_option.click(x: 5, y: 5)
+        table = page.find("tbody")
+        cells = table.all("td")
+        expect(table).to have_selector("tr", count: 8)
+        expect(cells[2]).to have_content("Email")
+        expect(cells[37]).to have_content("Email")
+      end
 
-    scenario "can filter mutliple columns at once" do
-      visit(legacy_notifications_page)
-      filters = page.all("rect", class: "unselected-filter-icon-border")
-      filters[0].click(x: 5, y: 5)
-      page.find("li", class: "cf-filter-option-row", text: "Hearing scheduled").click(x: 5, y: 5)
-      filters[1].click(x: 5, y: 5)
-      page.find("li", class: "cf-filter-option-row", text: "Text").click(x: 5, y: 5)
-      table = page.find("tbody")
-      cells = table.all("td")
-      expect(table).to have_selector("tr", count: 1)
-      expect(cells[0]).to have_content("Hearing scheduled")
-      expect(cells[2]).to have_content("Text")
-    end
+      scenario "can filter by recipient information" do
+        visit(legacy_notifications_page)
+        filter = page.all("rect", class: "unselected-filter-icon-border")[2]
+        filter.click(x: 5, y: 5)
+        filter_option = page.find("li", class: "cf-filter-option-row", text: "Example@example.com")
+        filter_option.click(x: 5, y: 5)
+        table = page.find("tbody")
+        cells = table.all("td")
+        expect(table).to have_selector("tr", count: 4)
+        expect(cells[3]).to have_content("example@example.com")
+        expect(cells[18]).to have_content("example@example.com")
+      end
 
-    scenario "can sort by notification date" do
-      visit(legacy_notifications_page)
-      sort = page.all("svg", class: "table-icon")[1]
-      sort.click(x: 5, y: 5)
-      cell = page.all("td")[1]
-      expect(cell).to have_content("11/08/2022")
-    end
+      scenario "can filter by status" do
+        visit(legacy_notifications_page)
+        filter = page.all("rect", class: "unselected-filter-icon-border")[3]
+        filter.click(x: 5, y: 5)
+        filter_option = page.find("li", class: "cf-filter-option-row", text: "Delivered")
+        filter_option.click(x: 5, y: 5)
+        table = page.find("tbody")
+        cells = table.all("td")
+        expect(table).to have_selector("tr", count: 5)
+        expect(cells[4]).to have_content("Delivered")
+        expect(cells[24]).to have_content("Delivered")
+      end
 
-    scenario "can move to next page of notifications" do
-      visit(legacy_notifications_page)
-      click_on("Next", match: :first)
-      table = page.find("tbody")
-      expect(table).to have_selector("tr", count: 1)
+      scenario "can filter mutliple columns at once" do
+        visit(legacy_notifications_page)
+        filters = page.all("rect", class: "unselected-filter-icon-border")
+        filters[0].click(x: 5, y: 5)
+        page.find("li", class: "cf-filter-option-row", text: "Hearing scheduled").click(x: 5, y: 5)
+        filters[1].click(x: 5, y: 5)
+        page.find("li", class: "cf-filter-option-row", text: "Text").click(x: 5, y: 5)
+        table = page.find("tbody")
+        cells = table.all("td")
+        expect(table).to have_selector("tr", count: 1)
+        expect(cells[0]).to have_content("Hearing scheduled")
+        expect(cells[2]).to have_content("Text")
+      end
+
+      scenario "can sort by notification date" do
+        visit(legacy_notifications_page)
+        sort = page.all("svg", class: "table-icon")[1]
+        sort.click(x: 5, y: 5)
+        cell = page.all("td")[1]
+        expect(cell).to have_content("11/08/2022")
+      end
+
+      scenario "can move to next page of notifications" do
+        visit(legacy_notifications_page)
+        click_on("Next", match: :first)
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
+      end
+
+      scenario "clicking on a numbered page button will render that page" do
+        visit(legacy_notifications_page)
+        pagination = page.find(class: "cf-pagination-pages", match: :first)
+        pagination.find("Button", text: "2", match: :first).click
+        table = page.find("tbody")
+        expect(table).to have_selector("tr", count: 1)
+      end
+
+      scenario "next button disabled when on the last page" do
+        visit(legacy_notifications_page)
+        click_on("Next", match: :first)
+        expect(page).to have_button("Next", disabled: true)
+      end
+
+      scenario "prev button moves to previous page" do
+        visit(legacy_notifications_page)
+        click_on("Next", match: :first)
+        click_on("Prev", match: :first)
+        cell = page.find("td", match: :first)
+        expect(cell).to have_content("Appeal docketed")
+      end
+
+      scenario "prev button disabled on the first page" do
+        visit(legacy_notifications_page)
+        expect(page).to have_button("Prev", disabled: true)
+      end
+
+      scenario "modal appears when clicking on an event type" do
+        visit(legacy_notifications_page)
+        cell = page.find("td", match: :first)
+        cell.click
+        expect(page).to have_selector("div", class: "cf-modal-body")
+      end
+
+      scenario "background darkened and disables clicking after opening modal" do
+        visit(legacy_notifications_page)
+        cell = page.find("td", match: :first)
+        cell.click
+        expect(page).to have_selector("section", id: "modal_id")
+      end
+
+      scenario "closing the modal should remove the dark background and the modal" do
+        visit(legacy_notifications_page)
+        cell = page.find("td", match: :first)
+        cell.click
+        click_on("Close")
+        expect(page).not_to have_selector("div", class: "cf-modal-body")
+        expect(page).not_to have_selector("section", id: "modal_id")
+      end
     end
   end
 end
