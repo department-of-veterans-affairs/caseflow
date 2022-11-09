@@ -19,7 +19,7 @@ import RadioField from '../../components/RadioField';
 import { deleteAppeal } from '../QueueActions';
 import { requestSave } from '../uiReducer/uiActions';
 import { buildCaseReviewPayload } from '../utils';
-import { taskById, getFullAttorneyTaskTree, getMostRecentAttorneyTask, getAllTasksForAppeal, getLegacyTaskTree } from '../selectors';
+import { taskById, getFullAttorneyTaskTree, getLegacyTaskTree } from '../selectors';
 
 import COPY from '../../../COPY';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS';
@@ -196,11 +196,10 @@ class EvaluateDecisionView extends React.PureComponent {
 
     const dateAssigned = moment(task.previousTaskAssignedOn);
     const decisionSubmitted = moment(task.assignedOn);
-    const today = moment();
     const caseType = task.caseType;
     const aod = task.aod;
     const cavc = caseType === 'Court Remand';
-    const daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
+    const daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days') + 1;
 
     return (
       <QueueFlowPage
