@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_28_142416) do
+ActiveRecord::Schema.define(version: 2022_10_25_184724) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1636,9 +1636,11 @@ ActiveRecord::Schema.define(version: 2022_10_28_142416) do
     t.datetime "submitted_at"
     t.datetime "updated_at", null: false
     t.datetime "uploaded_to_vbms_at"
+    t.string "veteran_file_number"
     t.index ["appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_id"
     t.index ["appeal_type", "appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_type_and_appeal_id"
     t.index ["updated_at"], name: "index_vbms_uploaded_documents_on_updated_at"
+    t.index ["veteran_file_number"], name: "index_vbms_uploaded_documents_on_veteran_file_number"
   end
 
   create_table "versions", id: :serial, force: :cascade do |t|
