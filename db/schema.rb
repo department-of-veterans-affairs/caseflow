@@ -91,8 +91,8 @@ ActiveRecord::Schema.define(version: 2022_10_28_142416) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false
-    t.bigint "created_by_id", comment: "User id of the user that inserted the record"
+    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
+    t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
     t.boolean "hearing_scheduled", default: false, null: false, comment: "When true, appeal has at least one hearing scheduled"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2022_10_28_142416) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at"
+    t.datetime "updated_at", comment: "Date and time the record was last updated"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -1622,8 +1622,8 @@ ActiveRecord::Schema.define(version: 2022_10_28_142416) do
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
-    t.bigint "appeal_id", null: false, comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
-    t.string "appeal_type", null: false, comment: "'Appeal' or 'LegacyAppeal'"
+    t.bigint "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
+    t.string "appeal_type", comment: "'Appeal' or 'LegacyAppeal'"
     t.datetime "attempted_at"
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.datetime "created_at", null: false
