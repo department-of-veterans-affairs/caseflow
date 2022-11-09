@@ -45,7 +45,7 @@ class Task < CaseflowRecord
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
   after_update :cancel_task_timers, if: :task_just_closed?
-  after_update :ihp_task?
+  after_update :update_appeal_state
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -773,11 +773,9 @@ class Task < CaseflowRecord
     @alerts ||= []
   end
 
-  def ihp_task?
-    ihp_task_types = %w[IhpColocatedTask InformalHearingPresentationTask].freeze
-    Rails.logger.debug ActiveSupport::LogSubscriber.new.send(:color, "This task is an IHP type of task", :green)
-    ihp_task_types.include?(type)
-  end
+  # Abstract method that updates Appeal States table upon status changes.
+  # Modules used to prepend this method can be found in app/models/prepend/vanotify
+  def update_appeal_state; end
 
   private
 
