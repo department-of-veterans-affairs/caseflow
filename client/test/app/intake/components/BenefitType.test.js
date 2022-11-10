@@ -20,6 +20,13 @@ const renderBenefitType = (props) => {
 
 const getVhaRadioOption = () => screen.getByRole('radio', { name: 'Veterans Health Administration' });
 
+const hoverOverRadioOption = (option) => {
+  act(() => {
+    fireEvent.mouseOver(option);
+    fireEvent.mouseEnter(option);
+  });
+};
+
 describe('BenefitType', () => {
   it('passes a11y', async () => {
     const { container } = renderBenefitType(defaultProps);
@@ -46,10 +53,7 @@ describe('BenefitType', () => {
       it('Tooltip appears whenever VHA option is hovered over', () => {
         const vhaOption = getVhaRadioOption();
 
-        act(() => {
-          fireEvent.mouseOver(vhaOption);
-          fireEvent.mouseEnter(vhaOption);
-        });
+        hoverOverRadioOption(vhaOption);
 
         expect(
           screen.getByText(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY)
@@ -73,15 +77,10 @@ describe('BenefitType', () => {
         expect(vhaOption).not.toBeDisabled();
       });
 
-      it('A tooltip does not appear whenever VHA option is hovered over', () => {
+      it('Tooltip does not appear whenever VHA option is hovered over', () => {
         const vhaOption = getVhaRadioOption();
 
-        act(() => {
-          fireEvent.mouseOver(vhaOption);
-          fireEvent.mouseEnter(vhaOption);
-        });
-
-        screen.debug();
+        hoverOverRadioOption(vhaOption);
 
         expect(
           screen.queryByText(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY)
