@@ -56,15 +56,11 @@ describe('BenefitType', () => {
       });
 
       it('The "Veterans Health Administration" option is disabled', () => {
-        const vhaOption = getVhaRadioOption();
-
-        expect(vhaOption).toBeDisabled();
+        expect(getVhaRadioOption()).toBeDisabled();
       });
 
-      it('Tooltip appears whenever VHA option is hovered over', async () => {
-        const vhaOption = getVhaRadioOption();
-
-        hoverOverRadioOption(vhaOption);
+      it('A tooltip appears whenever VHA option is hovered over', async () => {
+        hoverOverRadioOption(getVhaRadioOption());
 
         await waitFor(() => {
           expect(getVhaOptionTooltip()).toBeVisible();
@@ -83,15 +79,11 @@ describe('BenefitType', () => {
       });
 
       it('The "Veterans Health Administration" option is enabled', () => {
-        const vhaOption = getVhaRadioOption();
-
-        expect(vhaOption).not.toBeDisabled();
+        expect(getVhaRadioOption()).not.toBeDisabled();
       });
 
       it('Tooltip does not appear whenever VHA option is hovered over', () => {
-        const vhaOption = getVhaRadioOption();
-
-        hoverOverRadioOption(vhaOption);
+        hoverOverRadioOption(getVhaRadioOption());
 
         expect(
           screen.queryByText(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY)
@@ -112,15 +104,11 @@ describe('BenefitType', () => {
       });
 
       it('The "Veterans Health Administration" option is disabled', () => {
-        const vhaOption = getVhaRadioOption();
-
-        expect(vhaOption).toBeDisabled();
+        expect(getVhaRadioOption()).toBeDisabled();
       });
 
       it('Tooltip appears whenever VHA option is hovered over', async () => {
-        const vhaOption = getVhaRadioOption();
-
-        hoverOverRadioOption(vhaOption);
+        hoverOverRadioOption(getVhaRadioOption());
 
         await waitFor(() => {
           expect(getVhaOptionTooltip()).toBeVisible();
@@ -140,18 +128,11 @@ describe('BenefitType', () => {
       });
 
       it('The "Veterans Health Administration" option is enabled', () => {
-        const vhaOption = getVhaRadioOption();
-
-        expect(vhaOption).not.toBeDisabled();
+        expect(getVhaRadioOption()).not.toBeDisabled();
       });
 
       it('A tooltip does not appear whenever VHA option is hovered over', () => {
-        const vhaOption = getVhaRadioOption();
-
-        act(() => {
-          fireEvent.mouseOver(vhaOption);
-          fireEvent.mouseEnter(vhaOption);
-        });
+        hoverOverRadioOption(getVhaRadioOption());
 
         expect(
           screen.queryByText(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY)
