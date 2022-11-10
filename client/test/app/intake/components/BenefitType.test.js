@@ -1,7 +1,7 @@
 import React from 'react';
 import { axe } from 'jest-axe';
 import { act } from 'react-dom/test-utils';
-import { screen, render, fireEvent } from '@testing-library/react';
+import { screen, render, waitFor, fireEvent } from '@testing-library/react';
 
 import COPY from '../../../../COPY';
 import BenefitType from '../../../../app/intake/components/BenefitType';
@@ -20,10 +20,21 @@ const renderBenefitType = (props) => {
 
 const getVhaRadioOption = () => screen.getByRole('radio', { name: 'Veterans Health Administration' });
 
+const getVhaOptionTooltip = () => {
+  return screen.getByRole(
+    'tooltip',
+    { hidden: true }
+  );
+};
+
 const hoverOverRadioOption = (option) => {
   act(() => {
-    fireEvent.mouseOver(option);
-    fireEvent.mouseEnter(option);
+    fireEvent(
+      option,
+      new MouseEvent('mouseenter', {
+        bubbles: true
+      })
+    );
   });
 };
 
@@ -50,14 +61,14 @@ describe('BenefitType', () => {
         expect(vhaOption).toBeDisabled();
       });
 
-      it('Tooltip appears whenever VHA option is hovered over', () => {
+      it('Tooltip appears whenever VHA option is hovered over', async () => {
         const vhaOption = getVhaRadioOption();
 
         hoverOverRadioOption(vhaOption);
 
-        expect(
-          screen.getByText(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY)
-        ).toBeTruthy();
+        await waitFor(() => {
+          expect(getVhaOptionTooltip()).toBeVisible();
+        });
       });
     });
 
@@ -106,17 +117,14 @@ describe('BenefitType', () => {
         expect(vhaOption).toBeDisabled();
       });
 
-      it('Tooltip appears whenever VHA option is hovered over', () => {
+      it('Tooltip appears whenever VHA option is hovered over', async () => {
         const vhaOption = getVhaRadioOption();
 
-        act(() => {
-          fireEvent.mouseEnter(vhaOption);
-          fireEvent.mouseOver(vhaOption);
-        });
+        hoverOverRadioOption(vhaOption);
 
-        expect(
-          screen.getByText(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY)
-        ).toBeTruthy();
+        await waitFor(() => {
+          expect(getVhaOptionTooltip()).toBeVisible();
+        });
       });
     });
 
