@@ -121,7 +121,7 @@ export const RadioField = (props) => {
               {...inputProps}
             />
             <label
-              className={option.disabled ? 'disabled' : ''}
+              className={isDisabled(option) ? 'disabled' : ''}
               htmlFor={`${idPart}_${option.value}`}
             >
               {option.displayText || option.displayElem}
