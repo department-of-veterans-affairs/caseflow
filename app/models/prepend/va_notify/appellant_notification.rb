@@ -24,6 +24,8 @@ module AppellantNotification
 
   class NoAppealError < StandardError; end
 
+  class AppealTypeNotImplementedError < StandardError; end
+
   def self.handle_errors(appeal)
     if !appeal.nil?
       message_attributes = {}
@@ -66,8 +68,10 @@ module AppellantNotification
   def self.appeal_mapper(appeal_id, appeal_type, event)
     if appeal_type == "Appeal"
       appeal = Appeal.find_by(id: appeal_id)
-    else
+    elsif appeal_type == "LegacyAppeal"
       appeal = LegacyAppeal.find_by(id: appeal_id)
+    else
+      fail AppealTypeNotImplementedError
     end
     appeal_state = AppealState.find_by(appeal_id: appeal_id, appeal_type: appeal_type) ||
                    AppealState.create!(appeal_id: appeal_id, appeal_type: appeal_type)

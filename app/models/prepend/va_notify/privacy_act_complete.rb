@@ -7,6 +7,11 @@ module PrivacyActComplete
   @@template_name = "Privacy Act request complete"
   # rubocop:enable all
 
+  rescue_from AppealTypeNotImplementedError do |exception|
+    Rails.logger.error(exception)
+    Rails.logger.error("Invalid Appeal Type for PrivacyActComplete")
+  end
+
   def update_status_if_children_tasks_are_closed(child_task)
     # original method defined in app/models/task.rb
     super_return_value = super
@@ -14,8 +19,8 @@ module PrivacyActComplete
        (type.to_s.include?("PrivacyAct") && !parent&.type.to_s.include?("PrivacyAct"))) &&
        status == Constants.TASK_STATUSES.completed
       # appellant notification call
-      AppellantNotification.notify_appellant(appeal, @@template_name)
       AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "privacy_act_complete")
+      AppellantNotification.notify_appellant(appeal, @@template_name)
     end
     super_return_value
   end
@@ -26,8 +31,8 @@ module PrivacyActComplete
     super_return_value = super
     if type.to_s == "PrivacyActTask" && assigned_to_type == "Organization" &&
        status == Constants.TASK_STATUSES.completed
-      AppellantNotification.notify_appellant(appeal, @@template_name)
       AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "privacy_act_complete")
+      AppellantNotification.notify_appellant(appeal, @@template_name)
     end
     super_return_value
   end

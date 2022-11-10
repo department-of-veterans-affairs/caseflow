@@ -7,6 +7,11 @@ module AppealDecisionMailed
   @@template_name = "Appeal decision mailed"
   # rubocop:enable all
 
+  rescue_from AppealTypeNotImplementedError do |exception|
+    Rails.logger.error(exception)
+    Rails.logger.error("Invalid Appeal Type for AppealDecisionMailed")
+  end
+
   # Purpose: Adds VA Notify integration to the original method defined in app/models/decision_document.rb
   #
   # Params: none
@@ -15,6 +20,7 @@ module AppealDecisionMailed
   def process!
     super_return_value = super
     if processed?
+      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "decision_mailed")
       case appeal_type
       when "Appeal"
         template = appeal.contested_claim? ? "#{@@template_name} (Contested claims)" : "#{@@template_name} (Non-contested claims)"
@@ -23,7 +29,6 @@ module AppealDecisionMailed
         template = appeal.contested_claim ? "#{@@template_name} (Contested claims)" : "#{@@template_name} (Non-contested claims)"
         AppellantNotification.notify_appellant(appeal, template)
       end
-      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "decision_mailed")
     end
     super_return_value
   end

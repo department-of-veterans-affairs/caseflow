@@ -7,6 +7,11 @@ module HearingPostponed
   @@template_name = "Postponement of hearing"
   # rubocop:enable all
 
+  rescue_from AppealTypeNotImplementedError do |exception|
+    Rails.logger.error(exception)
+    Rails.logger.error("Invalid Appeal Type for HearingPostponed")
+  end
+
   # Legacy Hearing Postponed from the Daily Docket
   # original method defined in app/models/legacy_hearing.rb
   def update_caseflow_and_vacols(hearing_hash)
@@ -15,8 +20,8 @@ module HearingPostponed
     new_disposition = vacols_record.hearing_disp
     if postponed? && original_disposition != new_disposition
       appeal = LegacyAppeal.find(appeal_id)
-      AppellantNotification.notify_appellant(appeal, @@template_name)
       AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_postponed")
+      AppellantNotification.notify_appellant(appeal, @@template_name)
     end
     super_return_value
   end
@@ -26,8 +31,8 @@ module HearingPostponed
   def update_hearing(hearing_hash)
     super_return_value = super
     if hearing_hash[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed && appeal.class.to_s == "Appeal"
-      AppellantNotification.notify_appellant(appeal, @@template_name)
       AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_postponed")
+      AppellantNotification.notify_appellant(appeal, @@template_name)
     end
     super_return_value
   end

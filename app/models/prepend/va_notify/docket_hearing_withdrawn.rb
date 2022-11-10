@@ -8,13 +8,18 @@ module DocketHearingWithdrawn
   @@template_name = "Withdrawal of hearing"
   # rubocop:enable all
 
+  rescue_from AppealTypeNotImplementedError do |exception|
+    Rails.logger.error(exception)
+    Rails.logger.error("Invalid Appeal Type for DocketHearingWithdrawn")
+  end
+
   # AMA Hearing Withdrawn from the Daily Docket
   # original method defined in app/models/hearings/forms/hearing_update_form.rb
   def update_hearing
     super_return_value = super
     if hearing_updates[:disposition] == Constants.HEARING_DISPOSITION_TYPES.cancelled
-      AppellantNotification.notify_appellant(hearing.appeal, @@template_name)
       AppellantNotification.appeal_mapper(hearing.appeal.id, hearing.appeal.class.to_s, "hearing_withdrawn")
+      AppellantNotification.notify_appellant(hearing.appeal, @@template_name)
     end
     super_return_value
   end
