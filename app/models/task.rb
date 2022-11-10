@@ -774,7 +774,7 @@ class Task < CaseflowRecord
   end
 
   # Abstract method that updates Appeal States table upon specific status changes.
-  # Modules used to prepend this method can be found in app/models/prepend/vanotify.
+  # Modules used to prepend this method can be found in app/models/prepend/va_notify.
   def update_appeal_state; end
 
   private
