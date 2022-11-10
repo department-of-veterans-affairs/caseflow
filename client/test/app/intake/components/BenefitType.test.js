@@ -1,0 +1,164 @@
+import React from 'react';
+import { axe } from 'jest-axe';
+import { act } from 'react-dom/test-utils';
+import { screen, render, fireEvent } from '@testing-library/react';
+
+import COPY from '../../../../COPY';
+import BenefitType from '../../../../app/intake/components/BenefitType';
+
+const defaultProps = {
+  value: null,
+  onChange: jest.fn(),
+  register: jest.fn(),
+  formName: 'higherLevelReview',
+  featureToggles: {
+    useAmaActivationDate: true,
+    correctClaimReviews: false,
+    filedByVaGovHlr: true,
+    updatedIntakeForms: true,
+    eduPreDocketAppeals: true,
+    updatedAppealForm: true,
+    covidTimelinessExemption: true
+  },
+  userCanSelectVha: false
+};
+
+const renderBenefitType = (props) => {
+  return render(<BenefitType {...props} />);
+};
+
+const getVhaRadioOption = () => screen.getByRole('radio', { name: 'Veterans Health Administration' });
+
+describe('BenefitType', () => {
+  it('passes a11y', async () => {
+    const { container } = renderBenefitType(defaultProps);
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
+
+  describe('On a Higher Level Review form', () => {
+    describe('when the user is not a VHA staff member', () => {
+      const props = { ...defaultProps };
+
+      beforeEach(() => {
+        renderBenefitType(props);
+      });
+
+      it('The "Veterans Health Administration" option is disabled', () => {
+        const vhaOption = getVhaRadioOption();
+
+        expect(vhaOption).toBeDisabled();
+      });
+
+      it('Tooltip appears whenever VHA option is hovered over', () => {
+        const vhaOption = getVhaRadioOption();
+
+        act(() => {
+          fireEvent.mouseOver(vhaOption);
+          fireEvent.mouseEnter(vhaOption);
+        });
+
+        expect(
+          screen.getByText(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY)
+        ).toBeTruthy();
+      });
+    });
+
+    describe('when the user is a VHA staff member', () => {
+      const props = {
+        ...defaultProps,
+        userCanSelectVha: true
+      };
+
+      beforeEach(() => {
+        renderBenefitType(props);
+      });
+
+      it('The "Veterans Health Administration" option is enabled', () => {
+        const vhaOption = getVhaRadioOption();
+
+        expect(vhaOption).not.toBeDisabled();
+      });
+
+      it('A tooltip does not appear whenever VHA option is hovered over', () => {
+        const vhaOption = getVhaRadioOption();
+
+        act(() => {
+          fireEvent.mouseOver(vhaOption);
+          fireEvent.mouseEnter(vhaOption);
+        });
+
+        screen.debug();
+
+        expect(
+          screen.queryByText(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY)
+        ).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('On a Supplemental Claim form', () => {
+    describe('when the user is not a VHA staff member', () => {
+      const props = {
+        ...defaultProps,
+        formName: 'supplementalClaim'
+      };
+
+      beforeEach(() => {
+        renderBenefitType(props);
+      });
+
+      it('The "Veterans Health Administration" option is disabled', () => {
+        const vhaOption = getVhaRadioOption();
+
+        expect(vhaOption).toBeDisabled();
+      });
+
+      it('Tooltip appears whenever VHA option is hovered over', () => {
+        const vhaOption = getVhaRadioOption();
+
+        act(() => {
+          fireEvent.mouseOver(vhaOption);
+          fireEvent.mouseEnter(vhaOption);
+        });
+
+        expect(
+          screen.getByText(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY)
+        ).toBeTruthy();
+      });
+    });
+
+    describe('when the user is a VHA staff member', () => {
+      const props = {
+        ...defaultProps,
+        formName: 'supplementalClaim',
+        userCanSelectVha: true
+      };
+
+      beforeEach(() => {
+        renderBenefitType(props);
+      });
+
+      it('The "Veterans Health Administration" option is enabled', () => {
+        const vhaOption = getVhaRadioOption();
+
+        expect(vhaOption).not.toBeDisabled();
+      });
+
+      it('A tooltip does not appear whenever VHA option is hovered over', () => {
+        const vhaOption = getVhaRadioOption();
+
+        act(() => {
+          fireEvent.mouseOver(vhaOption);
+          fireEvent.mouseEnter(vhaOption);
+        });
+
+        expect(
+          screen.queryByText(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY)
+        ).not.toBeInTheDocument();
+      });
+    });
+  });
+});

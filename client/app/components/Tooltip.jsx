@@ -41,7 +41,6 @@ const Tooltip = (props) => {
     <React.Fragment>
       {React.cloneElement(props.children, tooltipProps)}
       <span {...tooltipStyling}>
-        {console.log(`I'm a tooltip with the following position: ${position}`)}
         <ReactTooltip
           effect="solid"
           id={id}
