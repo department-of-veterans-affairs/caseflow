@@ -80,7 +80,8 @@ CaseTitle.propTypes = {
 
 CaseTitle.defaultProps = {
   taskType: 'Draft Decision',
-  analyticsSource: 'queue_task'
+  analyticsSource: 'queue_task',
+  titleHeader: ''
 };
 
 const CaseTitleScaffolding = (props) => (
