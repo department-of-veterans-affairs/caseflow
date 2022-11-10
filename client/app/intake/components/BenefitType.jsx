@@ -68,7 +68,7 @@ BenefitType.propTypes = {
   register: PropTypes.func,
   asDropdown: PropTypes.bool,
   formName: PropTypes.string.isRequired,
-  benefitTypes: PropTypes.object.isRequired,
-  featureToggles: PropTypes.object.isRequired,
+  benefitTypes: PropTypes.object,
+  featureToggles: PropTypes.object,
   userCanSelectVha: PropTypes.bool
 };

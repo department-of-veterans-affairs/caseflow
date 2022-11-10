@@ -70,9 +70,11 @@ export const RadioField = (props) => {
 
   const maybeAddTooltipToVhaOption = (option, radioField) => {
     if (option.value === 'vha' && !userCanSelectVha) {
+      const idKey = `tooltip-${option.value}`;
 
       return <Tooltip
-        id={`tooltip-${option.value}`}
+        key={idKey}
+        id={idKey}
         text={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY}
         position="right"
         className="cf-radio-option-tooltip"
