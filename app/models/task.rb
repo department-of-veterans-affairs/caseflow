@@ -773,9 +773,6 @@ class Task < CaseflowRecord
     @alerts ||= []
   end
 
-  # Abstract method that updates Appeal States table upon specific status changes.
-  # Modules used to prepend this method can be found in app/models/prepend/va_notify.
-
   # Purpose: Abstract method that is triggered by callback 'after_update'.
   # This method will be called whenever a task is updated.
   # Modules used to prepend this method can be found in app/models/prepend/va_notify.
