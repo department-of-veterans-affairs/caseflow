@@ -259,12 +259,19 @@ export const getLegacyTaskTree = createSelector(
     filter(tasks, (task) => {
       // Remove any tasks whose assignedOn is older than the AttorneyTask's assignedOn date
       const taskAssignedOn = moment(task.assignedOn);
+      const taskClosedAt = moment(task.closedAt);
       const attorneyTaskAssignedOn = moment(judgeDecisionReviewTask.previousTaskAssignedOn);
       const judgeDecisionReviewTaskAssignedOn = moment(judgeDecisionReviewTask.assignedOn);
-      const result = taskAssignedOn.diff(attorneyTaskAssignedOn, 'days');
-      const result2 = taskAssignedOn.diff(judgeDecisionReviewTaskAssignedOn, 'days');
 
-      return result >= 0 && result2 <= 0 && task.uniqueId !== judgeDecisionReviewTask.uniqueId;
+      const assignedOnRangeStart = taskAssignedOn.diff(attorneyTaskAssignedOn, 'days');
+      const assignedOnRangeEnd = taskAssignedOn.diff(judgeDecisionReviewTaskAssignedOn, 'days');
+
+      const closedAtRangeStart = taskClosedAt.diff(attorneyTaskAssignedOn, 'days');
+      const closedAtRangeEnd = taskClosedAt.diff(judgeDecisionReviewTaskAssignedOn, 'days');
+
+      return task.uniqueId !== judgeDecisionReviewTask.uniqueId &&
+        assignedOnRangeStart >= 0 && assignedOnRangeEnd <= 0 &&
+        task.closedAt !== null && closedAtRangeStart >= 0 && closedAtRangeEnd <= 0;
     })
 );
 
