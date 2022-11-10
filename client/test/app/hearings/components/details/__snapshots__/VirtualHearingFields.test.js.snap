@@ -981,6 +981,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                         data-css-4jj7wk=""
                       >
                         <ReactTooltip
+                          className="cf-tooltip"
                           clickable={false}
                           effect="solid"
                           id="tooltip-Copy Guest Link"
