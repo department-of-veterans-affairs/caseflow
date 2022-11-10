@@ -22,17 +22,17 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
       options={
         Array [
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "8:30 AM Eastern Time (US & Canada)",
             "value": "08:30",
           },
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "12:30 PM Eastern Time (US & Canada)",
             "value": "12:30",
           },
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "Other",
             "value": "other",
           },
@@ -8972,17 +8972,17 @@ exports[`HearingTime Matches snapshot when other time is not selected 1`] = `
       options={
         Array [
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "8:30 am",
             "value": "08:30",
           },
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "12:30 pm",
             "value": "12:30",
           },
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "Other",
             "value": "other",
           },
@@ -9097,17 +9097,17 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
       options={
         Array [
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "8:30 am",
             "value": "08:30",
           },
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "12:30 pm",
             "value": "12:30",
           },
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "Other",
             "value": "other",
           },
@@ -18046,17 +18046,17 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
       options={
         Array [
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "8:30 am",
             "value": "08:30",
           },
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "12:30 pm",
             "value": "12:30",
           },
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "Other",
             "value": "other",
           },
@@ -26948,17 +26948,17 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
       options={
         Array [
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "8:30 am",
             "value": "08:30",
           },
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "12:30 pm",
             "value": "12:30",
           },
           Object {
-            "disabled": undefined,
+            "disabled": false,
             "displayText": "Other",
             "value": "other",
           },

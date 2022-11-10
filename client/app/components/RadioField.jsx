@@ -68,7 +68,7 @@ export const RadioField = (props) => {
     </span>
   );
 
-  const maybeAddTooltipToVhaOption = (option, radioField) => {
+  const maybeAddTooltip = (option, radioField) => {
     if (option.value === 'vha' && !userCanSelectVha) {
       const idKey = `tooltip-${option.value}`;
 
@@ -103,8 +103,10 @@ export const RadioField = (props) => {
       )}
 
       <div className="cf-form-radio-options">
-        {options.map((option, i) => (
-          maybeAddTooltipToVhaOption(option, <div
+        {options.map((option, i) => {
+          option.disabled = isDisabled(option);
+
+          const radioField = (<div
             className="cf-form-radio-option"
             key={`${idPart}-${option.value}-${i}`}
           >
@@ -116,19 +118,22 @@ export const RadioField = (props) => {
               value={option.value}
               // eslint-disable-next-line no-undefined
               checked={controlled ? value === option.value : undefined}
-              disabled={isDisabled(option)}
+              disabled={option.disabled}
               ref={inputRef}
               {...inputProps}
             />
             <label
-              className={isDisabled(option) ? 'disabled' : ''}
+              className={option.disabled ? 'disabled' : ''}
               htmlFor={`${idPart}_${option.value}`}
             >
               {option.displayText || option.displayElem}
             </label>
             {option.help && <RadioFieldHelpText help={option.help} />}
           </div>
-          )))}
+          );
+
+          return maybeAddTooltip(option, radioField);
+        })}
       </div>
     </fieldset>
   );
