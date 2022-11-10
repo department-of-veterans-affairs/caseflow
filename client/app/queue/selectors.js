@@ -257,7 +257,8 @@ export const getLegacyTaskTree = createSelector(
   [getAllTasksForAppeal, getJudgeDecisionReviewTask],
   (tasks, judgeDecisionReviewTask) =>
     filter(tasks, (task) => {
-      // Remove any tasks whose assignedOn is older than the AttorneyTask's assignedOn date
+      // Remove any tasks whose assignedOn to closedAt values put it outside of the range of
+      // AttorneyTask.assignedOn - JudgeDecisionReviewTask.assignedOn
       const taskAssignedOn = moment(task.assignedOn);
       const taskClosedAt = moment(task.closedAt);
       const attorneyTaskAssignedOn = moment(judgeDecisionReviewTask.previousTaskAssignedOn);
