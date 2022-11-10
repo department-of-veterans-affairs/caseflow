@@ -319,29 +319,80 @@ describe DocumentFetcher, :postgres do
             DocumentsTag.create(document_id: doc.id, tag_id: doc_tag.id)
           end
         end
-        it "efficiently creates and updates documents" do
-          expect(Document.distinct.pluck(:type)).to eq(["Form 9"])
+        context "when feature toggle bulk upload disabled" do
+          before do
+            FeatureToggle.disable!(:bulk_upload_documents, users: [user.css_id])
+            RequestStore.store[:current_user] = nil
+          end
+          it "efficiently creates and updates documents without bulk update" do
+            expect(Document.distinct.pluck(:type)).to eq(["Form 9"])
+            # Uncomment the following to see all SQL queries made
+            # ActiveRecord::Base.logger = Logger.new(STDOUT)
+            query_data = SqlTracker.track do
+              document_fetcher.find_or_create_documents!
+            end
 
-          # Uncomment the following to see all SQL queries made
-          # ActiveRecord::Base.logger = Logger.new(STDOUT)
-          query_data = SqlTracker.track do
-            document_fetcher.find_or_create_documents!
+            # Uncomment the following to see a count of SQL queries
+            # pp query_data.values.pluck(:sql, :count)
+            doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
+            expect(doc_insert_queries.pluck(:count).max).to eq 1
+
+            # When metadata exists for a previous version of a document, queries are inefficient
+            annotns_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"annotations\"") }
+            expect(annotns_insert_queries.pluck(:count).max).to eq older_documents_with_metadata.count
+
+            doctags_insert_queries = query_data.values.select do |o|
+              o[:sql].start_with?("INSERT INTO \"documents_tags")
+            end
+            expect(doctags_insert_queries.pluck(:count).max).to eq older_documents_with_metadata.count
+            doc_update_queries = query_data.values.select do |o|
+              o[:sql].start_with?("UPDATE \"documents\"")
+            end
+            expect(doc_update_queries.pluck(:count).max).to eq older_documents_with_metadata.count
+          end
+        end
+        context "when feature toggle bulk upload enabled" do
+          before do
+            FeatureToggle.enable!(:bulk_upload_documents, users: [user.css_id])
+            RequestStore.store[:current_user] = user
+          end
+          after do
+            FeatureToggle.disable!(:bulk_upload_documents, users: [user.css_id])
+            RequestStore.store[:current_user] = nil
           end
 
-          # Uncomment the following to see a count of SQL queries
-          # pp query_data.values.pluck(:sql, :count)
-          doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
-          expect(doc_insert_queries.pluck(:count).max).to eq 1
+          it "efficiently creates and updates documents" do
+            expect(Document.distinct.pluck(:type)).to eq(["Form 9"])
 
-          # When metadata exists for a previous version of a document, queries remain inefficient
-          annotns_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"annotations\"") }
-          expect(annotns_insert_queries.pluck(:count).max).to eq older_documents_with_metadata.count
+            # Uncomment the following to see all SQL queries made
+            # ActiveRecord::Base.logger = Logger.new(STDOUT)
+            query_data = SqlTracker.track do
+              document_fetcher.find_or_create_documents!
+            end
 
-          doctags_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents_tags") }
-          expect(doctags_insert_queries.pluck(:count).max).to eq older_documents_with_metadata.count
+            # Uncomment the following to see a count of SQL queries
+            # pp query_data.values.pluck(:sql, :count)
+            doc_insert_queries = query_data.values.select do |o|
+              o[:sql].start_with?("INSERT INTO \"documents\"")
+            end
+            expect(doc_insert_queries.pluck(:count).max).to eq 2
 
-          doc_update_queries = query_data.values.select { |o| o[:sql].start_with?("UPDATE \"documents\"") }
-          expect(doc_update_queries.pluck(:count).max).to eq older_documents_with_metadata.count
+            # When metadata exists for a previous version of a document, queries remain efficient
+            annotns_insert_queries = query_data.values.select do |o|
+              o[:sql].start_with?("INSERT INTO \"annotations\"")
+            end
+            expect(annotns_insert_queries.pluck(:count).max).to eq 1
+
+            doctags_insert_queries = query_data.values.select do |o|
+              o[:sql].start_with?("INSERT INTO \"documents_tags")
+            end
+            expect(doctags_insert_queries.pluck(:count).max).to eq 1
+
+            doc_update_queries = query_data.values.select do |o|
+              o[:sql].start_with?("UPDATE \"documents\"")
+            end
+            expect(doc_update_queries.pluck(:count).max).to eq nil
+          end
         end
 
         context "when there are duplicate documents returned from document_service" do
@@ -353,29 +404,68 @@ describe DocumentFetcher, :postgres do
             doc_with_diff_attrib = docs.third.dup.tap { |doc| doc.type = "Diff doc" }
             docs + [docs.first.dup, docs.second.dup, doc_with_diff_attrib]
           end
-          it "deduplicates, sends warning to Sentry, and does not fail bulk upsert" do
-            expect(documents.map(&:vbms_document_id).count).to eq(53)
-            expect(documents.map(&:vbms_document_id).uniq.count).to eq(50)
-            expect(Document.count).to eq(saved_documents.count + older_documents_with_metadata.count)
-            expect(Document.find_by(vbms_document_id: documents.first.vbms_document_id)).not_to be_nil
-            expect(Document.find_by(vbms_document_id: documents.second.vbms_document_id)).to be_nil
-            expect(Document.find_by(vbms_document_id: documents.third.vbms_document_id)).not_to be_nil
-
-            expected_error_message = "Document records with duplicate vbms_document_id: fetched_documents"
-            expect(Raven).to receive(:capture_exception).with(
-              DocumentFetcher::DuplicateVbmsDocumentIdError.new(expected_error_message),
-              hash_including(extra: hash_including(application: "reader", nonexact_dup_docs_count: 1))
-            )
-
-            query_data = SqlTracker.track do
-              document_fetcher.find_or_create_documents!
+          context "when feature toggle bulk upload enabled" do
+            before do
+              FeatureToggle.enable!(:bulk_upload_documents, users: [user.css_id])
+              RequestStore.store[:current_user] = user
             end
+            after do
+              FeatureToggle.disable!(:bulk_upload_documents, users: [user.css_id])
+              RequestStore.store[:current_user] = nil
+            end
+            it "deduplicates, sends warning to Sentry, and does not fail bulk upsert" do
+              expect(documents.map(&:vbms_document_id).count).to eq(53)
+              expect(documents.map(&:vbms_document_id).uniq.count).to eq(50)
+              expect(Document.count).to eq(saved_documents.count + older_documents_with_metadata.count)
+              expect(Document.find_by(vbms_document_id: documents.first.vbms_document_id)).not_to be_nil
+              expect(Document.find_by(vbms_document_id: documents.second.vbms_document_id)).to be_nil
+              expect(Document.find_by(vbms_document_id: documents.third.vbms_document_id)).not_to be_nil
+              expected_error_message = "Document records with duplicate vbms_document_id: fetched_documents"
+              expect(Raven).to receive(:capture_exception).with(
+                DocumentFetcher::DuplicateVbmsDocumentIdError.new(expected_error_message),
+                hash_including(extra: hash_including(application: "reader", nonexact_dup_docs_count: 1))
+              )
 
-            # pp query_data.values.pluck(:sql, :count)
-            doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
-            expect(doc_insert_queries.pluck(:count).max).to eq 1
-            expect(query_data.values.select { |o| o[:sql].start_with?("UPDATE \"documents\"") }.pluck(:count).max)
-              .to eq(older_documents_with_metadata.count)
+              query_data = SqlTracker.track do
+                document_fetcher.find_or_create_documents!
+              end
+
+              # pp query_data.values.pluck(:sql, :count)
+              doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
+              expect(doc_insert_queries.pluck(:count).max).to eq 2
+              expect(query_data.values.select { |o| o[:sql].start_with?("UPDATE \"documents\"") }.pluck(:count).max)
+                .to eq(nil)
+            end
+          end
+          context "when feature toggle bulk upload disabled" do
+            before do
+              FeatureToggle.disable!(:bulk_upload_documents, users: [user.css_id])
+              RequestStore.store[:current_user] = nil
+            end
+            it "deduplicates, sends warning to Sentry, and does not fail bulk upsert" do
+              expect(documents.map(&:vbms_document_id).count).to eq(53)
+              expect(documents.map(&:vbms_document_id).uniq.count).to eq(50)
+              expect(Document.count).to eq(saved_documents.count + older_documents_with_metadata.count)
+              expect(Document.find_by(vbms_document_id: documents.first.vbms_document_id)).not_to be_nil
+              expect(Document.find_by(vbms_document_id: documents.second.vbms_document_id)).to be_nil
+              expect(Document.find_by(vbms_document_id: documents.third.vbms_document_id)).not_to be_nil
+
+              expected_error_message = "Document records with duplicate vbms_document_id: fetched_documents"
+              expect(Raven).to receive(:capture_exception).with(
+                DocumentFetcher::DuplicateVbmsDocumentIdError.new(expected_error_message),
+                hash_including(extra: hash_including(application: "reader", nonexact_dup_docs_count: 1))
+              )
+
+              query_data = SqlTracker.track do
+                document_fetcher.find_or_create_documents!
+              end
+
+              # pp query_data.values.pluck(:sql, :count)
+              doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
+              expect(doc_insert_queries.pluck(:count).max).to eq 1
+              expect(query_data.values.select { |o| o[:sql].start_with?("UPDATE \"documents\"") }.pluck(:count).max)
+                .to eq(older_documents_with_metadata.count)
+            end
           end
         end
       end
