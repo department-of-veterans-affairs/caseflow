@@ -439,6 +439,79 @@ feature "Intake Review Page", :postgres do
       end
     end
   end
+
+  shared_examples "Claim review intake with VHA benefit type" do
+    let(:benefit_type_label) { "Veterans Health Administration" }
+    let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
+
+    context "Current user is a member of the VHA business line" do
+      let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
+      let(:current_user) { create(:user, roles: ["Admin Intake"]) }
+
+      before do
+        vha_business_line.add_user(current_user)
+        User.authenticate!(user: current_user)
+      end
+
+      it "VHA benefit type radio option is enabled" do
+        expect(page).to have_field benefit_type_label, disabled: false, visible: false
+      end
+    end
+
+    context "Current user is not a member of the VHA business line" do
+      let(:current_user) { create(:user, roles: ["Admin Intake"]) }
+
+      before { User.authenticate!(user: current_user) }
+
+      it "VHA benefit type radio option is disabled and tooltip appears whenever it is hovered over" do
+        step "assert that VHA radio option is disabled" do
+          # The <input>s for benefit types are technically off-screen and are displayed
+          # as seen using various CSS styling rules. Thus, we need visible: false for Capybara
+          # to find the radio fields.
+          expect(page).to have_field benefit_type_label, disabled: true, visible: false
+        end
+
+        step "assert that tooltip appears whenenver radio field is hovered over" do
+          find("label", text: benefit_type_label).hover
+
+          # Checks for tooltip text
+          expect(page).to have_content COPY::INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY
+        end
+      end
+    end
+  end
+
+  describe "Intaking a claim review" do
+    let(:test_veteran) { create(:veteran) }
+
+    describe "Higher Level Review" do
+      before do
+        # Start HLR and get to Review Page
+        visit "/intake"
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        safe_click ".cf-submit.usa-button"
+
+        fill_in search_bar_title, with: test_veteran.file_number
+        click_on "Search"
+      end
+
+      include_examples "Claim review intake with VHA benefit type"
+    end
+
+    describe "Supplemental Claim" do
+      before do
+        # Start SC and get to Review Page
+        visit "/intake"
+        select_form(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+        safe_click ".cf-submit.usa-button"
+
+        fill_in search_bar_title, with: test_veteran.file_number
+        click_on "Search"
+      end
+
+      include_examples "Claim review intake with VHA benefit type"
+    end
+  end
 end
 
 def check_no_relationships_behavior
