@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
-# Module to notify appellant if IHP Task is Complete
+# Public: Module used to update the IHP Task Pending column to FALSE
+# This Module prepends the anonymous function 'update_appeal_state' within app/models/task.rb
+# There is a callback within app/models/task.rb that will trigger 'update_appeal_state' to run
+# whenver a task is updated.  This module will check if task is a type of IHP task, if the task
+# is the parent task of all other IHP tasks on the appeal tree, and if the status has been updated
+# to 'cancelled'.  When all of these conditions are met, the record correlated to the current task's
+# appeal will update the column IHP TASK PENDING within the appeal states table to be FALSE.
+
 module IhpTaskCancelled
   extend AppellantNotification
 
