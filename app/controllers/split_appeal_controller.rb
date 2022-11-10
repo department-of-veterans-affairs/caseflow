@@ -83,7 +83,7 @@ class SplitAppealController < ApplicationController
       relationship_type: "split_appeal",
       split_other_reason: params[:split_other_reason],
       split_reason: params[:split_reason],
-      split_request_issue_ids: params[:appeal_split_issues],
+      split_request_issue_ids: dup_appeal.request_issues.ids,
       updated_at: Time.zone.now.utc,
       updated_by_id: current_user.id,
       working_split_status: Constants.TASK_STATUSES.in_progress
