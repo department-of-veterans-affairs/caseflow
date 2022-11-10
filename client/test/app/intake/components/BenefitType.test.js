@@ -11,15 +11,6 @@ const defaultProps = {
   onChange: jest.fn(),
   register: jest.fn(),
   formName: 'higherLevelReview',
-  featureToggles: {
-    useAmaActivationDate: true,
-    correctClaimReviews: false,
-    filedByVaGovHlr: true,
-    updatedIntakeForms: true,
-    eduPreDocketAppeals: true,
-    updatedAppealForm: true,
-    covidTimelinessExemption: true
-  },
   userCanSelectVha: false
 };
 
@@ -120,8 +111,8 @@ describe('BenefitType', () => {
         const vhaOption = getVhaRadioOption();
 
         act(() => {
-          fireEvent.mouseOver(vhaOption);
           fireEvent.mouseEnter(vhaOption);
+          fireEvent.mouseOver(vhaOption);
         });
 
         expect(
