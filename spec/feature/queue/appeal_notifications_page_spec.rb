@@ -111,25 +111,25 @@ RSpec.feature "Notifications View" do
 
       scenario "sees correct notification date in first row of table" do
         visit(ama_notifications_page)
-        cell = page.all("td")[1]
+        cell = page.all("td", minimum: 1)[1]
         expect(cell).to have_content("11/01/2022")
       end
 
       scenario "sees correct notification type in first row of table" do
         visit(ama_notifications_page)
-        cell = page.all("td")[2]
+        cell = page.all("td", minimum: 1)[2]
         expect(cell).to have_content("Email")
       end
 
       scenario "sees correct recipient information in first row of table" do
         visit(ama_notifications_page)
-        cell = page.all("td")[3]
+        cell = page.all("td", minimum: 1)[3]
         expect(cell).to have_content("example@example.com")
       end
 
       scenario "sees correct status in first row of table" do
         visit(ama_notifications_page)
-        cell = page.all("td")[4]
+        cell = page.all("td", minimum: 1)[4]
         expect(cell).to have_content("Delivered")
       end
 
@@ -146,7 +146,7 @@ RSpec.feature "Notifications View" do
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Appeal docketed")
         filter_option.click(x: 5, y: 5)
         table = page.find("tbody")
-        cells = table.all("td")
+        cells = table.all("td", minimum: 1)
         expect(table).to have_selector("tr", count: 2)
         expect(cells[0]).to have_content("Appeal docketed")
         expect(cells[5]).to have_content("Appeal docketed")
@@ -154,12 +154,12 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter by notification type" do
         visit(ama_notifications_page)
-        filter = page.all("rect", class: "unselected-filter-icon-border")[1]
+        filter = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)[1]
         filter.click(x: 5, y: 5)
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Email")
         filter_option.click(x: 5, y: 5)
         table = page.find("tbody")
-        cells = table.all("td")
+        cells = table.all("td", minimum: 1)
         expect(table).to have_selector("tr", count: 8)
         expect(cells[2]).to have_content("Email")
         expect(cells[37]).to have_content("Email")
@@ -167,12 +167,12 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter by recipient information" do
         visit(ama_notifications_page)
-        filter = page.all("rect", class: "unselected-filter-icon-border")[2]
+        filter = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)[2]
         filter.click(x: 5, y: 5)
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Example@example.com")
         filter_option.click(x: 5, y: 5)
         table = page.find("tbody")
-        cells = table.all("td")
+        cells = table.all("td", minimum: 1)
         expect(table).to have_selector("tr", count: 4)
         expect(cells[3]).to have_content("example@example.com")
         expect(cells[18]).to have_content("example@example.com")
@@ -180,12 +180,12 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter by status" do
         visit(ama_notifications_page)
-        filter = page.all("rect", class: "unselected-filter-icon-border")[3]
+        filter = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)[3]
         filter.click(x: 5, y: 5)
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Delivered")
         filter_option.click(x: 5, y: 5)
         table = page.find("tbody")
-        cells = table.all("td")
+        cells = table.all("td", minimum: 1)
         expect(table).to have_selector("tr", count: 5)
         expect(cells[4]).to have_content("Delivered")
         expect(cells[24]).to have_content("Delivered")
@@ -193,13 +193,13 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter mutliple columns at once" do
         visit(ama_notifications_page)
-        filters = page.all("rect", class: "unselected-filter-icon-border")
+        filters = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)
         filters[0].click(x: 5, y: 5)
         page.find("li", class: "cf-filter-option-row", text: "Hearing scheduled").click(x: 5, y: 5)
         filters[1].click(x: 5, y: 5)
         page.find("li", class: "cf-filter-option-row", text: "Text").click(x: 5, y: 5)
         table = page.find("tbody")
-        cells = table.all("td")
+        cells = table.all("td", minimum: 1)
         expect(table).to have_selector("tr", count: 1)
         expect(cells[0]).to have_content("Hearing scheduled")
         expect(cells[2]).to have_content("Text")
@@ -207,9 +207,9 @@ RSpec.feature "Notifications View" do
 
       scenario "can sort by notification date" do
         visit(ama_notifications_page)
-        sort = page.all("svg", class: "table-icon")[1]
+        sort = page.all("svg", class: "table-icon", minimum: 1)[1]
         sort.click(x: 5, y: 5)
-        cell = page.all("td")[1]
+        cell = page.all("td", minimum: 1)[1]
         expect(cell).to have_content("11/08/2022")
       end
 
@@ -375,25 +375,25 @@ RSpec.feature "Notifications View" do
 
       scenario "sees correct notification date in first row of table" do
         visit(legacy_notifications_page)
-        cell = page.all("td")[1]
+        cell = page.all("td", minimum: 1)[1]
         expect(cell).to have_content("11/01/2022")
       end
 
       scenario "sees correct notification type in first row of table" do
         visit(legacy_notifications_page)
-        cell = page.all("td")[2]
+        cell = page.all("td", minimum: 1)[2]
         expect(cell).to have_content("Email")
       end
 
       scenario "sees correct recipient information in first row of table" do
         visit(legacy_notifications_page)
-        cell = page.all("td")[3]
+        cell = page.all("td", minimum: 1)[3]
         expect(cell).to have_content("example@example.com")
       end
 
       scenario "sees correct status in first row of table" do
         visit(legacy_notifications_page)
-        cell = page.all("td")[4]
+        cell = page.all("td", minimum: 1)[4]
         expect(cell).to have_content("Delivered")
       end
 
@@ -410,7 +410,7 @@ RSpec.feature "Notifications View" do
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Appeal docketed")
         filter_option.click(x: 5, y: 5)
         table = page.find("tbody")
-        cells = table.all("td")
+        cells = table.all("td", minimum: 1)
         expect(table).to have_selector("tr", count: 2)
         expect(cells[0]).to have_content("Appeal docketed")
         expect(cells[5]).to have_content("Appeal docketed")
@@ -418,12 +418,12 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter by notification type" do
         visit(legacy_notifications_page)
-        filter = page.all("rect", class: "unselected-filter-icon-border")[1]
+        filter = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)[1]
         filter.click(x: 5, y: 5)
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Email")
         filter_option.click(x: 5, y: 5)
         table = page.find("tbody")
-        cells = table.all("td")
+        cells = table.all("td", minimum: 1)
         expect(table).to have_selector("tr", count: 8)
         expect(cells[2]).to have_content("Email")
         expect(cells[37]).to have_content("Email")
@@ -431,12 +431,12 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter by recipient information" do
         visit(legacy_notifications_page)
-        filter = page.all("rect", class: "unselected-filter-icon-border")[2]
+        filter = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)[2]
         filter.click(x: 5, y: 5)
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Example@example.com")
         filter_option.click(x: 5, y: 5)
         table = page.find("tbody")
-        cells = table.all("td")
+        cells = table.all("td", minimum: 1)
         expect(table).to have_selector("tr", count: 4)
         expect(cells[3]).to have_content("example@example.com")
         expect(cells[18]).to have_content("example@example.com")
@@ -444,12 +444,12 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter by status" do
         visit(legacy_notifications_page)
-        filter = page.all("rect", class: "unselected-filter-icon-border")[3]
+        filter = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)[3]
         filter.click(x: 5, y: 5)
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Delivered")
         filter_option.click(x: 5, y: 5)
         table = page.find("tbody")
-        cells = table.all("td")
+        cells = table.all("td", minimum: 1)
         expect(table).to have_selector("tr", count: 5)
         expect(cells[4]).to have_content("Delivered")
         expect(cells[24]).to have_content("Delivered")
@@ -457,13 +457,13 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter mutliple columns at once" do
         visit(legacy_notifications_page)
-        filters = page.all("rect", class: "unselected-filter-icon-border")
+        filters = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)
         filters[0].click(x: 5, y: 5)
         page.find("li", class: "cf-filter-option-row", text: "Hearing scheduled").click(x: 5, y: 5)
         filters[1].click(x: 5, y: 5)
         page.find("li", class: "cf-filter-option-row", text: "Text").click(x: 5, y: 5)
         table = page.find("tbody")
-        cells = table.all("td")
+        cells = table.all("td", minimum: 1)
         expect(table).to have_selector("tr", count: 1)
         expect(cells[0]).to have_content("Hearing scheduled")
         expect(cells[2]).to have_content("Text")
@@ -471,9 +471,9 @@ RSpec.feature "Notifications View" do
 
       scenario "can sort by notification date" do
         visit(legacy_notifications_page)
-        sort = page.all("svg", class: "table-icon")[1]
+        sort = page.all("svg", class: "table-icon", minimum: 1)[1]
         sort.click(x: 5, y: 5)
-        cell = page.all("td")[1]
+        cell = page.all("td", minimum: 1)[1]
         expect(cell).to have_content("11/08/2022")
       end
 
