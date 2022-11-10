@@ -75,7 +75,8 @@ export const RadioField = (props) => {
         id={`tooltip-${option.value}`}
         text={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY}
         position="right"
-        className="benefitTypeTooltip"
+        className="cf-radio-option-tooltip"
+        offset={{ right: 15 }}
       >
         {radioField}
       </Tooltip>;

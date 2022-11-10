@@ -340,3 +340,15 @@
     margin: .5rem 0;
   }
 }
+
+.cf-benefit-type {
+  .cf-form-radio-option {
+    display: inline;
+  }
+
+  .cf-radio-option-tooltip {
+    max-width: 550px;
+    white-space: normal;
+    text-align: justify !important;
+  }
+}

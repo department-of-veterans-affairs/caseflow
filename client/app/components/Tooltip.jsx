@@ -11,7 +11,8 @@ const Tooltip = (props) => {
     id = 'tooltip-id',
     position = 'top',
     offset = {},
-    tabIndex = 0
+    tabIndex = 0,
+    className = 'cf-tooltip'
   } = props;
 
   const borderToColor = position.charAt(0).toUpperCase() + position.slice(1);
@@ -40,6 +41,7 @@ const Tooltip = (props) => {
     <React.Fragment>
       {React.cloneElement(props.children, tooltipProps)}
       <span {...tooltipStyling}>
+        {console.log(`I'm a tooltip with the following position: ${position}`)}
         <ReactTooltip
           effect="solid"
           id={id}
@@ -47,6 +49,7 @@ const Tooltip = (props) => {
           place={position}
           multiline
           role="tooltip"
+          className={className}
         >
           {text}
         </ReactTooltip>
@@ -61,7 +64,8 @@ Tooltip.propTypes = {
   position: PropTypes.string,
   offset: PropTypes.object,
   children: PropTypes.object,
-  tabIndex: PropTypes.number
+  tabIndex: PropTypes.number,
+  className: PropTypes.string
 };
 
 export default Tooltip;
