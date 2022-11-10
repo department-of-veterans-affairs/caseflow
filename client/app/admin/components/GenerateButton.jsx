@@ -1,31 +1,45 @@
+/* eslint-disable func-style */
 import React, { useState } from 'react';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import Alert from '../../components/Alert';
 import LoadingContainer from '../../components/LoadingContainer';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
+import { sendExtractRequest } from '../actions';
 
 function GenerateButton(...btnProps) {
 
-  // state properties 
+  // state properties
   const [modal, setModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
   const [showErrorBanner, setShowErrorBanner] = useState(false);
+  const [extractedResults, setExtractedResults] = useState('');
 
 
-  const onClickChangeText = () => {
-    setModal(true);
+  const onClickGenerate = async () => {
+    const res = await sendExtractRequest();
+    console.log(res);
+    //setExtractedResults(res);
+
+    //if res is error
+    //show error banner
+
+    //if res is empty
+    //showBanner
+
+    //if res is not empty
+    //show modal
+
+
+
   };
 
   const onClickConfirmation = () => {
     setModal(false);
     setIsLoading(true);
 
-    var request = new XMLHttpRequest();
-    request.responseType = 'blob';
-    request.open('get', '/admin.csv', true);
-    request.send();
+
 
     request.onreadystatechange = () => {
       if (request.readyState === 4 && request.status === 200) {
@@ -68,7 +82,7 @@ function GenerateButton(...btnProps) {
         !isLoading &&
         <Button
           id="generate-extract"
-          onClick={() => onClickChangeText()}
+          onClick={() => onClickGenerate()}
           {...btnProps}
         >
           Generate
