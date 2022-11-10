@@ -8,13 +8,13 @@ export const setFeatureToggles = (featureToggles) => ({
 
 export const sendExtractRequest = () => (dispatch) => {
   dispatch({
-    type: ACTIONS.POST_VETERAN_EXTRACT,
+    type: ACTIONS.STARTED_VETERAN_EXTRACT,
   });
 
-  return ApiUtil.post('admin/veteran_extract').
+  return ApiUtil.get('admin/veteran_extract').
     then((response) => {
       dispatch({
-        type: ACTIONS.STARTED_VETERAN_EXTRACT,
+        type: ACTIONS.POST_VETERAN_EXTRACT,
         payload: {
           success: response.body.success,
           status: response.status,

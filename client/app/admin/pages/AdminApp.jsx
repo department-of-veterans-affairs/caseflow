@@ -2,14 +2,17 @@ import React from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import PageRoute from '../../components/PageRoute';
-import reducers from '../reducers/index';
 import NavigationBar from '../../components/NavigationBar';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import AppFrame from '../../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import GenerateButton from '../components/GenerateButton';
-export default class AdminApp extends React.PureComponent {
+import { sendExtractRequest } from '../actions';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+class AdminApp extends React.PureComponent {
   render = () => <BrowserRouter basename="/admin">
     <NavigationBar
       wideApp
@@ -35,7 +38,7 @@ export default class AdminApp extends React.PureComponent {
                 title="admin"
                 render={this.admin}
               />
-              <GenerateButton />
+              <GenerateButton sendExtractRequest={this.props.sendExtractRequest} />
             </Switch>
           </div>
         </AppSegment>
@@ -50,8 +53,6 @@ export default class AdminApp extends React.PureComponent {
   </BrowserRouter>
 }
 
-export const reducer = reducers;
-
 AdminApp.propTypes = {
   userDisplayName: PropTypes.string.isRequired,
   dropdownUrls: PropTypes.array,
@@ -59,3 +60,13 @@ AdminApp.propTypes = {
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
 };
+
+const mapStateToProps = (state) => {
+  return { ...state };
+};
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  sendExtractRequest
+}, dispatch);
+
+export default connect((mapStateToProps), mapDispatchToProps)(AdminApp);

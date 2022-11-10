@@ -35,7 +35,6 @@ class AdminController < ApplicationController
 
   def extract_veterans_csv(input)
     # Create new event
-    byebug
     event = SystemAdminEvent.create(user: current_user, event_type: "veteran_extract")
     if input.empty?
       render json: { message: 'no veterans found'}

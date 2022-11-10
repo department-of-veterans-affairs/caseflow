@@ -5,9 +5,9 @@ import Modal from '../../components/Modal';
 import Alert from '../../components/Alert';
 import LoadingContainer from '../../components/LoadingContainer';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
-import { sendExtractRequest } from '../actions';
+import PropTypes from 'prop-types';
 
-function GenerateButton(...btnProps) {
+const GenerateButton = (props) => {
 
   // state properties
   const [modal, setModal] = useState(false);
@@ -17,9 +17,9 @@ function GenerateButton(...btnProps) {
   const [extractedResults, setExtractedResults] = useState('');
 
 
-  const onClickGenerate = async () => {
-    const res = await sendExtractRequest();
-    console.log(res);
+  const onClickGenerate = () => {
+    props.sendExtractRequest();
+
     //setExtractedResults(res);
 
     //if res is error
@@ -30,8 +30,6 @@ function GenerateButton(...btnProps) {
 
     //if res is not empty
     //show modal
-
-
 
   };
 
@@ -83,7 +81,6 @@ function GenerateButton(...btnProps) {
         <Button
           id="generate-extract"
           onClick={() => onClickGenerate()}
-          {...btnProps}
         >
           Generate
         </Button>
@@ -112,6 +109,7 @@ function GenerateButton(...btnProps) {
 }
 
 GenerateButton.propTypes = {
+  sendExtractRequest: PropTypes.func,
 };
 
 export default GenerateButton;

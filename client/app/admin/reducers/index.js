@@ -8,9 +8,9 @@ const extractInitialState = {};
 
 export const extractReducer = (state = extractInitialState, action) => {
   switch (action.type) {
-  case ACTIONS.POST_VETERAN_EXTRACT:
-    return { ...state };
   case ACTIONS.STARTED_VETERAN_EXTRACT:
+    return { ...state };
+  case ACTIONS.POST_VETERAN_EXTRACT:
     return {
       ...state,
       manualExtractionStatus: action.payload.status,
