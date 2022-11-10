@@ -117,7 +117,6 @@ class Task < CaseflowRecord
 
   prepend IhpTaskComplete
   prepend PrivacyActComplete
-  prepend HearingWithdrawn
 
   ############################################################################################
   ## class methods
