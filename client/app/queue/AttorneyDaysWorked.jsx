@@ -16,10 +16,10 @@ const calculateDaysWorked = (tasks, daysAssigned) => {
     if (task.closedAt) {
       endTaskWork = moment(task.closedAt);
     }
-    sumOfDays += endTaskWork.startOf('day').diff(startTaskWork, 'days');
+    sumOfDays += Math.max(1, endTaskWork.startOf('day').diff(startTaskWork, 'days'));
   });
 
-  return daysAssigned - sumOfDays;
+  return daysAssigned - sumOfDays - 1;
 };
 
 export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {
