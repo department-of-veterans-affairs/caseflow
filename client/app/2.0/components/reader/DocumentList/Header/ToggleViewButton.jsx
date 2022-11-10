@@ -18,11 +18,11 @@ export const ToggleViewButton = ({ documentsView, changeView }) => (
       active={documentsView}
       onClick={changeView}>
 
-      <Button name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS} aria-label="Documents"
+      <Button name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS}
           role="button">
          Documents
       </Button>
-      <Button name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS} aria-label="Comments"
+      <Button name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS}
           role="button">
          Comments
       </Button>

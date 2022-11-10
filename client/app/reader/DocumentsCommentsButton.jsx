@@ -17,8 +17,6 @@ class DocumentsCommentsButton extends PureComponent {
       >
         <Button
           id="button-documents"
-          aria-label={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS ?? "Documents"}
-          role="button"
           name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS}
           styling={{
             'aria-labelledby': 'toggle-label button-documents',
@@ -31,8 +29,6 @@ class DocumentsCommentsButton extends PureComponent {
         </Button>
         <Button
           id="button-comments"
-          aria-label={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS ?? "Comments"}
-          role="button"
           name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS}
           styling={{
             'aria-labelledby': 'toggle-label button-comments',
