@@ -498,15 +498,6 @@ feature "Intake Review Page", :postgres do
   end
 end
 
-def navigate_to_review_page(form_name, veteran_search_query)
-  visit "/intake"
-  select_form(form_name)
-  safe_click ".cf-submit.usa-button"
-
-  fill_in search_bar_title, with: veteran_search_query
-  click_on "Search"
-end
-
 def check_no_relationships_behavior
   # first start the review
   visit "/intake"
