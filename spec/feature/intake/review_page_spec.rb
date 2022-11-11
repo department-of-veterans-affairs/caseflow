@@ -485,25 +485,25 @@ feature "Intake Review Page", :postgres do
     let(:test_veteran) { create(:veteran) }
 
     describe "Higher Level Review" do
-      before { navigate_to_review_page(Constants.INTAKE_FORM_NAMES.higher_level_review) }
+      before { navigate_to_review_page(Constants.INTAKE_FORM_NAMES.higher_level_review, test_veteran.file_number) }
 
       include_examples "Claim review intake with VHA benefit type"
     end
 
     describe "Supplemental Claim" do
-      before { navigate_to_review_page(Constants.INTAKE_FORM_NAMES.supplemental_claim) }
+      before { navigate_to_review_page(Constants.INTAKE_FORM_NAMES.supplemental_claim, test_veteran.file_number) }
 
       include_examples "Claim review intake with VHA benefit type"
     end
   end
 end
 
-def navigate_to_review_page(form_name)
+def navigate_to_review_page(form_name, veteran_search_query)
   visit "/intake"
   select_form(form_name)
   safe_click ".cf-submit.usa-button"
 
-  fill_in search_bar_title, with: test_veteran.file_number
+  fill_in search_bar_title, with: veteran_search_query
   click_on "Search"
 end
 
