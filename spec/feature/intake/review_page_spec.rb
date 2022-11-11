@@ -442,7 +442,6 @@ feature "Intake Review Page", :postgres do
 
   shared_examples "Claim review intake with VHA benefit type" do
     let(:benefit_type_label) { "Veterans Health Administration" }
-    let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
 
     context "Current user is a member of the VHA business line" do
       let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
