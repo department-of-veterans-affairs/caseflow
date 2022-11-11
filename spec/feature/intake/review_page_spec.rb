@@ -485,33 +485,26 @@ feature "Intake Review Page", :postgres do
     let(:test_veteran) { create(:veteran) }
 
     describe "Higher Level Review" do
-      before do
-        # Start HLR and get to Review Page
-        visit "/intake"
-        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
-        safe_click ".cf-submit.usa-button"
-
-        fill_in search_bar_title, with: test_veteran.file_number
-        click_on "Search"
-      end
+      before { navigate_to_review_page(Constants.INTAKE_FORM_NAMES.higher_level_review) }
 
       include_examples "Claim review intake with VHA benefit type"
     end
 
     describe "Supplemental Claim" do
-      before do
-        # Start SC and get to Review Page
-        visit "/intake"
-        select_form(Constants.INTAKE_FORM_NAMES.supplemental_claim)
-        safe_click ".cf-submit.usa-button"
-
-        fill_in search_bar_title, with: test_veteran.file_number
-        click_on "Search"
-      end
+      before { navigate_to_review_page(Constants.INTAKE_FORM_NAMES.supplemental_claim) }
 
       include_examples "Claim review intake with VHA benefit type"
     end
   end
+end
+
+def navigate_to_review_page(form_name)
+  visit "/intake"
+  select_form(form_name)
+  safe_click ".cf-submit.usa-button"
+
+  fill_in search_bar_title, with: test_veteran.file_number
+  click_on "Search"
 end
 
 def check_no_relationships_behavior
