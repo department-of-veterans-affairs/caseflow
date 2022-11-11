@@ -124,13 +124,11 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
                 options={
                   Array [
                     Object {
-                      "disabled": false,
                       "displayText": "Grant",
                       "help": "Task will go on hold for selected number of days",
                       "value": "grant",
                     },
                     Object {
-                      "disabled": false,
                       "displayText": "Deny",
                       "help": "Marks the extension request as denied",
                       "value": "deny",

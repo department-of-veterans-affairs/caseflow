@@ -104,7 +104,7 @@ export const RadioField = (props) => {
 
       <div className="cf-form-radio-options">
         {options.map((option, i) => {
-          option.disabled = isDisabled(option);
+          const optionDisabled = isDisabled(option);
 
           const radioField = (<div
             className="cf-form-radio-option"
@@ -118,12 +118,12 @@ export const RadioField = (props) => {
               value={option.value}
               // eslint-disable-next-line no-undefined
               checked={controlled ? value === option.value : undefined}
-              disabled={option.disabled}
+              disabled={optionDisabled}
               ref={inputRef}
               {...inputProps}
             />
             <label
-              className={option.disabled ? 'disabled' : ''}
+              className={optionDisabled ? 'disabled' : ''}
               htmlFor={`${idPart}_${option.value}`}
             >
               {option.displayText || option.displayElem}

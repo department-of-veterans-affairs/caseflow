@@ -344,12 +344,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   options={
                     Array [
                       Object {
-                        "disabled": false,
                         "displayText": "Yes",
                         "value": "1",
                       },
                       Object {
-                        "disabled": false,
                         "displayText": "No",
                         "value": "2",
                       },
@@ -3587,7 +3585,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   options={
                     Array [
                       Object {
-                        "disabled": false,
                         "displayText": "Remand",
                         "value": "remand",
                       },
@@ -3655,12 +3652,10 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   options={
                     Array [
                       Object {
-                        "disabled": false,
                         "displayText": "Joint Motion for Remand (JMR)",
                         "value": "jmr",
                       },
                       Object {
-                        "disabled": false,
                         "displayText": "Joint Motion for Partial Remand (JMPR)",
                         "value": "jmpr",
                       },
