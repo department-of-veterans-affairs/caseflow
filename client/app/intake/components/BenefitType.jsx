@@ -21,12 +21,11 @@ export default class BenefitType extends React.PureComponent {
         label="What is the Benefit Type?"
         strongLabel
         vertical
-        options={formatRadioOptions(BENEFIT_TYPES)}
+        options={formatRadioOptions(BENEFIT_TYPES, userCanSelectVha)}
         onChange={onChange}
         value={value}
         errorMessage={errorMessage}
         inputRef={register}
-        userCanSelectVha={userCanSelectVha} // This is just hard-coded awaiting APPEALS-10818
       />
     </div>;
   }

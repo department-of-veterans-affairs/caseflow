@@ -1006,7 +1006,10 @@ module IntakeHelpers
     end
   end
 
-  def navigate_to_review_page(form_name, veteran_search_query)
+  def navigate_to_review_page(
+    form_name,
+    veteran_search_query: create(:veteran).file_number
+  )
     visit "/intake"
     select_form(form_name)
     safe_click ".cf-submit.usa-button"

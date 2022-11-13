@@ -441,7 +441,7 @@ feature "Intake Review Page", :postgres do
   end
 
   shared_examples "Claim review intake with VHA benefit type" do
-    let(:benefit_type_label) { "Veterans Health Administration" }
+    let(:benefit_type_label) { Constants::BENEFIT_TYPES["vha"] }
 
     context "Current user is a member of the VHA business line" do
       let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
@@ -481,16 +481,14 @@ feature "Intake Review Page", :postgres do
   end
 
   describe "Intaking a claim review" do
-    let(:test_veteran) { create(:veteran) }
-
     describe "Higher Level Review" do
-      before { navigate_to_review_page(Constants.INTAKE_FORM_NAMES.higher_level_review, test_veteran.file_number) }
+      before { navigate_to_review_page(Constants.INTAKE_FORM_NAMES.higher_level_review) }
 
       include_examples "Claim review intake with VHA benefit type"
     end
 
     describe "Supplemental Claim" do
-      before { navigate_to_review_page(Constants.INTAKE_FORM_NAMES.supplemental_claim, test_veteran.file_number) }
+      before { navigate_to_review_page(Constants.INTAKE_FORM_NAMES.supplemental_claim) }
 
       include_examples "Claim review intake with VHA benefit type"
     end

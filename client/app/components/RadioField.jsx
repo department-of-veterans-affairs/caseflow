@@ -5,7 +5,6 @@ import classNames from 'classnames';
 
 import RequiredIndicator from './RequiredIndicator';
 import StringUtil from '../util/StringUtil';
-import COPY from '../../COPY';
 import Tooltip from './Tooltip';
 
 import { helpText } from './RadioField.module.scss';
@@ -44,8 +43,7 @@ export const RadioField = (props) => {
     strongLabel,
     hideLabel,
     styling,
-    vertical,
-    userCanSelectVha
+    vertical
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -69,13 +67,13 @@ export const RadioField = (props) => {
   );
 
   const maybeAddTooltip = (option, radioField) => {
-    if (option.value === 'vha' && !userCanSelectVha) {
+    if (option.tooltipText) {
       const idKey = `tooltip-${option.value}`;
 
       return <Tooltip
         key={idKey}
         id={idKey}
-        text={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY}
+        text={option.tooltipText}
         position="right"
         className="cf-radio-option-tooltip"
         offset={{ right: 15 }}
@@ -87,7 +85,7 @@ export const RadioField = (props) => {
     return radioField;
   };
 
-  const isDisabled = (option) => Boolean(option.disabled) || (option.value === 'vha' && !userCanSelectVha);
+  const isDisabled = (option) => Boolean(option.disabled);
 
   const handleChange = (event) => onChange?.(event.target.value);
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);
@@ -216,8 +214,7 @@ RadioField.propTypes = {
   errorMessage: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
-  styling: PropTypes.object,
-  userCanSelectVha: PropTypes.bool
+  styling: PropTypes.object
 };
 
 export default RadioField;

@@ -3,6 +3,7 @@ import { axe } from 'jest-axe';
 import { act } from 'react-dom/test-utils';
 import { screen, render, waitFor, fireEvent } from '@testing-library/react';
 
+import BENEFIT_TYPES from '../../../../constants/BENEFIT_TYPES';
 import COPY from '../../../../COPY';
 import BenefitType from '../../../../app/intake/components/BenefitType';
 
@@ -18,7 +19,7 @@ const renderBenefitType = (props) => {
   return render(<BenefitType {...props} />);
 };
 
-const getVhaRadioOption = () => screen.getByRole('radio', { name: 'Veterans Health Administration' });
+const getVhaRadioOption = () => screen.getByRole('radio', { name: BENEFIT_TYPES.vha });
 
 const getVhaOptionTooltip = () => {
   return screen.getByRole(
