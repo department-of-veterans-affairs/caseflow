@@ -217,6 +217,29 @@ class Document < CaseflowRecord
     end
   end
 
+  COLUMNS_TO_UPDATE = [
+    :type,
+    :received_at,
+    :upload_date,
+    :vbms_document_id,
+    :series_id,
+    :category_medical,
+    :category_other,
+    :category_procedural,
+    :previous_document_version_id,
+  ].freeze
+
+  # efficient version of merge_into that also saves to DB
+  def self.bulk_merge_and_update(document_structs)
+    # Bulk update
+    Document.import(document_structs,
+                    on_duplicate_key_update: {
+                      conflict_target: [:vbms_document_id],
+                      columns: COLUMNS_TO_UPDATE
+                    },
+                    recursive: true)
+  end
+
   # :reek:FeatureEnvy
   def assign_nondatabase_attributes(source_document)
     assign_attributes(
@@ -245,6 +268,18 @@ class Document < CaseflowRecord
     else
       "/document/#{id}/pdf"
     end
+  end
+
+  # :reek:FeatureEnvy
+  def prepare_metadata_from_document(source_document)
+    documents_tags.build(source_document.documents_tags.map { |tag| tag.dup.attributes })
+    annotations.build(source_document.annotations.map { |annotation| annotation.dup.attributes })
+    assign_attributes(
+      category_procedural: source_document.category_procedural,
+      category_medical: source_document.category_medical,
+      category_other: source_document.category_other,
+      previous_document_version_id: source_document.id
+    )
   end
 
   def copy_metadata_from_document(source_document)
