@@ -9,7 +9,6 @@ import { getPageCoordinatesOfMouseEvent } from 'utils/reader';
 import { pdfWrapper } from 'styles/reader/Document/PDF';
 import { fetchDocuments, openDownloadLink } from 'utils/reader/document';
 import { documentScreen } from 'store/reader/selectors';
-import { documentScreenMemoized } from 'store/reader/selectorsMemoized';
 import { DocumentHeader } from 'components/reader/DocumentViewer/Header';
 import { DocumentSidebar } from 'components/reader/DocumentViewer/Sidebar';
 import { DocumentFooter } from 'components/reader/DocumentViewer/Footer';
@@ -59,8 +58,7 @@ import { KeyboardInfo } from 'app/2.0/components/reader/DocumentViewer/modals/Ke
  */
 const DocumentViewer = (props) => {
   // Get the Document List state
-  const state = props.featureToggles.readerSelectorsMemoized ?
-    useSelector(documentScreenMemoized) : useSelector(documentScreen);
+  const state = useSelector(documentScreen);
 
   // Create the Dispatcher
   const dispatch = useDispatch();
@@ -399,7 +397,6 @@ DocumentViewer.propTypes = {
   singleDocumentMode: PropTypes.bool,
   match: PropTypes.object,
   annotations: PropTypes.array,
-  featureToggles: PropTypes.object,
 };
 
 export default DocumentViewer;
