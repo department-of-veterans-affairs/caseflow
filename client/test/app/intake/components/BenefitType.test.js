@@ -16,13 +16,13 @@ const defaultProps = {
   userCanSelectVha: false
 };
 
+const vhaTooltipText = sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY, 'VHABENEFITAPPEALS@va.gov');
+
 const renderBenefitType = (props) => {
   return render(<BenefitType {...props} />);
 };
 
 const getVhaRadioOption = () => screen.getByRole('radio', { name: BENEFIT_TYPES.vha });
-
-const vhaTooltipText = sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY, 'VHABENEFITAPPEALS@va.gov');
 
 const getVhaOptionTooltip = () => {
   return screen.getByRole(
