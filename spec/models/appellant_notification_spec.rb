@@ -15,11 +15,9 @@ describe AppellantNotification do
       end
 
       context "if appeal is not legacy/ama" do
-        let(:higher_level_review) { create(:higher_level_review) }
+        let(:hlr) { create(:higher_level_review) }
         it "reports the error" do
-          expect { AppellantNotification.handle_errors(empty_appeal) }.to raise_error(
-            AppellantNotification::NoAppealError
-          )
+          expect { AppellantNotification.appeal_mapper(hlr.appeal, hlr.class.to_s, "appeal_docketed") }.to return
         end
       end
 

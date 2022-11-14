@@ -80,6 +80,7 @@ module AppellantNotification
       appeal = LegacyAppeal.find_by(id: appeal_id)
     else
       Rails.logger.error("Appeal type not supported for " + event)
+      return
     end
     appeal_state = AppealState.find_by(appeal_id: appeal_id, appeal_type: appeal_type) ||
                    AppealState.create!(appeal_id: appeal_id, appeal_type: appeal_type)
