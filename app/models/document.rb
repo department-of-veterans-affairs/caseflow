@@ -218,24 +218,19 @@ class Document < CaseflowRecord
   end
 
   COLUMNS_TO_UPDATE = [
-    :type,
-    :received_at,
-    :upload_date,
-    :vbms_document_id,
-    :series_id,
     :category_medical,
     :category_other,
     :category_procedural,
     :previous_document_version_id,
   ].freeze
 
-  # efficient version of merge_into that also saves to DB
+  # updates documents with nested resources like tags in bulk
   def self.bulk_merge_and_update(document_structs)
     # Bulk update
     Document.import(document_structs,
                     on_duplicate_key_update: {
                       conflict_target: [:vbms_document_id],
-                      columns: COLUMNS_TO_UPDATE
+                      columns: COLUMNS_TO_UPDATE + COLUMNS_TO_MERGE
                     },
                     recursive: true)
   end
