@@ -1,4 +1,6 @@
 import _ from 'lodash';
+import { sprintf } from 'sprintf-js';
+
 import { REVIEW_OPTIONS, REVIEW_DATA_FIELDS, CLAIMANT_ERRORS } from '../constants';
 import { INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY } from '../../../COPY';
 import DATES from '../../../constants/DATES';
@@ -88,7 +90,7 @@ export const formatRadioOptions = (options, userCanSelectVha) => {
       return {
         ...radioData,
         disabled: true,
-        tooltipText: INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY
+        tooltipText: sprintf(INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY, 'VHABENEFITAPPEALS@va.gov')
       };
     }
 
