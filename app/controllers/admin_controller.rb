@@ -27,7 +27,7 @@ class AdminController < ApplicationController
     )
     .last
 
-    #last_completed_time = prev_event&.completed_at&.utc&.to_date || Time.at(0).utc.to_date
+    # last_completed_time = prev_event&.completed_at&.utc&.to_date || Time.at(0).utc.to_date
     last_completed_time = Time.at(0).utc.to_date
 
     results = VACOLS::Correspondent.extract(last_completed_time)
@@ -40,7 +40,6 @@ class AdminController < ApplicationController
     event = SystemAdminEvent.create(user: current_user, event_type: "veteran_extract")
     if input.empty?
       render json: { message: 'no veterans found', success: true, status: 200 }
-      return true
     else
       formated_data = VACOLS::Correspondent.as_csv(input)
       filename = Time.zone.now.strftime("veteran-extract-%Y%m%d.csv")
@@ -51,9 +50,8 @@ class AdminController < ApplicationController
 
     # error handling
     rescue StandardError => error
-      # render json: { error_code: error }
+      render json: { success: false }
       event.update!(errored_at: Time.zone.now)
-      return false
   end
 
   def veteran_extract

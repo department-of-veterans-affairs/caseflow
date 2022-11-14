@@ -23,16 +23,22 @@ const GenerateButton = (props) => {
 
   useEffect(() => {
     setExtractedResults(props.extractedResults);
-    console.log(props);
-    // if (extractedResults.length > 0) {
-    //   setShowConfirmModal(true);
-    // }
-    // else {
-    //   setShowEmptyResultsBanner(true);
-    // }
+
+    if (props.extractedResults?.length > 0) {
+      setShowEmptyResultsBanner(false);
+      setShowConfirmModal(true);
+    }
   }, [props.extractedResults]);
 
+  useEffect(() => {
+    if (props.emptyResultsMessage?.length > 0) {
+      setShowEmptyResultsBanner(true);
+      setShowConfirmModal(false);
+    }
+  }, [props.emptyResultsMessage]);
+
   const onClickGenerate = () => {
+    console.log(props);
     props.sendExtractRequest();
   };
 
@@ -41,7 +47,7 @@ const GenerateButton = (props) => {
       {
         showEmptyResultsBanner &&
         <div style={{ padding: '10px' }}>
-          <Alert message="No Veterans were found." type="success" />
+          <Alert message="No Veterans were found" type="success" />
         </div>
       }
       {
@@ -62,13 +68,13 @@ const GenerateButton = (props) => {
       {
         showConfirmModal &&
 
-        <Modal title="The file contains PII information, click OK to proceed"
-          confirmButton={<CSVLink data={extractedResults} filename="TestDownload.csv">Download</CSVLink>}
+        <Modal title="This file contains PII"
+          confirmButton={<CSVLink data={extractedResults} filename="veteran_extract.csv">Confirm</CSVLink>}
           closeHandler={() => {
             setShowConfirmModal(false);
           }}
         >
-          Whenever you are click on Okay button then file will start downloading.
+          Are you sure you want to download it?
         </Modal>
       }
       {
@@ -86,8 +92,10 @@ const GenerateButton = (props) => {
 
 GenerateButton.propTypes = {
   extractedResults: PropTypes.string,
+  manualExtractionSuccess: PropTypes.bool,
   isLoading: PropTypes.bool,
   sendExtractRequest: PropTypes.func,
+  emptyResultsMessage: PropTypes.string,
 };
 
 export default GenerateButton;

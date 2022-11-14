@@ -40,8 +40,8 @@ class AdminApp extends React.PureComponent {
               />
               <GenerateButton
                 sendExtractRequest={this.props.sendExtractRequest}
-                extractedResults={this.props.extractedResults}
-                isLoading={this.props.isLoading} />
+                {...this.props.extractReducer}
+              />
             </Switch>
           </div>
         </AppSegment>
@@ -62,14 +62,20 @@ AdminApp.propTypes = {
   applicationUrls: PropTypes.array,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
+  sendExtractRequest: PropTypes.func,
 };
 
 const mapStateToProps = (state) => {
-  return { ...state };
+  return {
+    ...state
+  };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   sendExtractRequest
 }, dispatch);
 
-export default connect((mapStateToProps), mapDispatchToProps)(AdminApp);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AdminApp);

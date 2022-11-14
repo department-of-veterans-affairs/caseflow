@@ -19,6 +19,7 @@ export const sendExtractRequest = () => (dispatch) => {
           success: response.body.success,
           status: response.status,
           contents: response.body.contents,
+          message: response.body.message,
         },
       });
     },
