@@ -7,11 +7,6 @@ module HearingWithdrawn
   @@template_name = "Withdrawal of hearing"
   # rubocop:enable all
 
-  rescue_from AppealTypeNotImplementedError do |exception|
-    Rails.logger.error(exception)
-    Rails.logger.error("Invalid Appeal Type for HearingWithdrawn")
-  end
-
   # Legacy OR AMA Hearing Withdrawn from Queue
   # original method defined in app/models/tasks/assign_hearing_disposition_task.rb
   def update_hearing(hearing_hash)

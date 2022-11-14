@@ -7,11 +7,6 @@ module AppealDocketed
   @@template_name = "Appeal docketed"
   # rubocop:enable all
 
-  rescue_from AppealTypeNotImplementedError do |exception|
-    Rails.logger.error(exception)
-    Rails.logger.error("Invalid Appeal Type for AppealDocketed")
-  end
-
   def create_tasks_on_intake_success!
     # original method defined in app/models/appeal.rb
     super_return_value = super

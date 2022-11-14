@@ -7,11 +7,6 @@ module HearingPostponed
   @@template_name = "Postponement of hearing"
   # rubocop:enable all
 
-  rescue_from AppealTypeNotImplementedError do |exception|
-    Rails.logger.error(exception)
-    Rails.logger.error("Invalid Appeal Type for HearingPostponed")
-  end
-
   # Legacy Hearing Postponed from the Daily Docket
   # original method defined in app/models/legacy_hearing.rb
   def update_caseflow_and_vacols(hearing_hash)

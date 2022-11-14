@@ -7,11 +7,6 @@ module PrivacyActPending
   @@template_name = "Privacy Act request pending"
   # rubocop:enable all
 
-  rescue_from AppealTypeNotImplementedError do |exception|
-    Rails.logger.error(exception)
-    Rails.logger.error("Invalid Appeal Type for PrivacyActPending")
-  end
-
   # for foiacolocatedtasks
   def create_privacy_act_task
     # original method defined in app/models/tasks/foia_colocated_task.rb

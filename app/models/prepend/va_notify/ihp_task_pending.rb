@@ -7,11 +7,6 @@ module IhpTaskPending
   @@template_name = "VSO IHP pending"
   # rubocop:enable all
 
-  rescue_from AppealTypeNotImplementedError do |exception|
-    Rails.logger.error(exception)
-    Rails.logger.error("Invalid Appeal Type for IhpTaskPending")
-  end
-
   # original method defined in app/workflows/ihp_tasks_factory.rb
   def create_ihp_tasks!
     super_return_value = super

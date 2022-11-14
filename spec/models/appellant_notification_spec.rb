@@ -14,6 +14,15 @@ describe AppellantNotification do
         end
       end
 
+      context "if appeal is not legacy/ama" do
+        let(:higher_level_review) { create(:higher_level_review) }
+        it "reports the error" do
+          expect { AppellantNotification.handle_errors(empty_appeal) }.to raise_error(
+            AppellantNotification::NoAppealError
+          )
+        end
+      end
+
       context "with no claimant listed" do
         let(:appeal) { create(:appeal, number_of_claimants: 0) }
         it "returns error message" do

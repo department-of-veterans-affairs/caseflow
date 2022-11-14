@@ -2,6 +2,7 @@
 
 # Module containing Aspect Overrides to Classes used to Track Statuses for Appellant Notification
 module AppellantNotification
+  extend ActiveSupport::Concern
   class NoParticipantIdError < StandardError
     def initialize(appeal_id, message = "There is no participant_id")
       super(message + " for appeal with id #{appeal_id}")
@@ -23,9 +24,6 @@ module AppellantNotification
   end
 
   class NoAppealError < StandardError; end
-
-  class AppealTypeNotImplementedError < StandardError; end
-
   def self.handle_errors(appeal)
     if !appeal.nil?
       message_attributes = {}
@@ -63,15 +61,25 @@ module AppellantNotification
     message_attributes
   end
 
-  # Updates appeal_state database when notification event is triggered
-  # to keep track of the state of each appeal
+# Public: Updates/creates appeal state based on event type
+#
+# appeal_id  - id of appeal
+# appeal_type - string of appeal object's class (e.g. "LegacyAppeal")
+# event - The module that is being triggered to send a notification
+#
+# Examples
+#
+#  AppellantNotification.appeal_mapper(1, "Appeal", "hearing_postponed")
+#   # => A new appeal state is created if it doesn't exist
+#   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
+
   def self.appeal_mapper(appeal_id, appeal_type, event)
     if appeal_type == "Appeal"
       appeal = Appeal.find_by(id: appeal_id)
     elsif appeal_type == "LegacyAppeal"
       appeal = LegacyAppeal.find_by(id: appeal_id)
     else
-      fail AppealTypeNotImplementedError
+      Rails.logger.error("Appeal type not supported for " + event)
     end
     appeal_state = AppealState.find_by(appeal_id: appeal_id, appeal_type: appeal_type) ||
                    AppealState.create!(appeal_id: appeal_id, appeal_type: appeal_type)

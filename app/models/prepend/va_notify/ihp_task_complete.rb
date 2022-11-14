@@ -7,11 +7,6 @@ module IhpTaskComplete
   @@template_name = "VSO IHP complete"
   # rubocop:enable all
 
-  rescue_from AppealTypeNotImplementedError do |exception|
-    Rails.logger.error(exception)
-    Rails.logger.error("Invalid Appeal Type for IhpTaskComplete")
-  end
-
   # original method in app/models/task.rb
   def update_from_params(params, user)
     super_return_value = super

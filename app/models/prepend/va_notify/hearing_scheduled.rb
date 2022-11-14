@@ -7,11 +7,6 @@ module HearingScheduled
   @@template_name = "Hearing scheduled"
   # rubocop:enable all
 
-  rescue_from AppealTypeNotImplementedError do |exception|
-    Rails.logger.error(exception)
-    Rails.logger.error("Invalid Appeal Type for HearingScheduled")
-  end
-
   def create_hearing(task_values)
     # original method defined in app/models/tasks/schedule_hearing_task.rb
     super_return_value = super

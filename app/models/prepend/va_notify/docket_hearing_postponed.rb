@@ -8,11 +8,6 @@ module DocketHearingPostponed
   @@template_name = "Postponement of hearing"
   # rubocop:enable all
 
-  rescue_from AppealTypeNotImplementedError do |exception|
-    Rails.logger.error(exception)
-    Rails.logger.error("Invalid Appeal Type for DocketHearingPostponed")
-  end
-
   # AMA Hearing Postponed from the Daily Docket
   # original method defined in app/models/hearings/forms/hearing_update_form.rb
   def update_hearing

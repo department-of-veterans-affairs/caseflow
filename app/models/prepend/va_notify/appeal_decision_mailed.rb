@@ -7,11 +7,6 @@ module AppealDecisionMailed
   @@template_name = "Appeal decision mailed"
   # rubocop:enable all
 
-  rescue_from AppealTypeNotImplementedError do |exception|
-    Rails.logger.error(exception)
-    Rails.logger.error("Invalid Appeal Type for AppealDecisionMailed")
-  end
-
   # Purpose: Adds VA Notify integration to the original method defined in app/models/decision_document.rb
   #
   # Params: none
