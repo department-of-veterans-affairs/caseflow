@@ -18,10 +18,9 @@ export const sendExtractRequest = () => (dispatch) => {
         payload: {
           success: response.body.success,
           status: response.status,
+          contents: response.body.contents,
         },
       });
-
-      return true;
     },
     (error) => {
       dispatch({
@@ -29,8 +28,7 @@ export const sendExtractRequest = () => (dispatch) => {
         payload: {
           success: error.body.success,
           status: error.status,
+          contents: error,
         } });
-
-      return true;
     });
 };
