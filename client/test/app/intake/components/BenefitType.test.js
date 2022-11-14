@@ -1,6 +1,7 @@
 import React from 'react';
 import { axe } from 'jest-axe';
 import { act } from 'react-dom/test-utils';
+import { sprintf } from 'sprintf-js';
 import { screen, render, waitFor, fireEvent } from '@testing-library/react';
 
 import BENEFIT_TYPES from '../../../../constants/BENEFIT_TYPES';
@@ -20,6 +21,8 @@ const renderBenefitType = (props) => {
 };
 
 const getVhaRadioOption = () => screen.getByRole('radio', { name: BENEFIT_TYPES.vha });
+
+const vhaTooltipText = sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY, 'VHABENEFITAPPEALS@va.gov');
 
 const getVhaOptionTooltip = () => {
   return screen.getByRole(
@@ -87,7 +90,7 @@ describe('BenefitType', () => {
         hoverOverRadioOption(getVhaRadioOption());
 
         expect(
-          screen.queryByText(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY)
+          screen.queryByText(vhaTooltipText)
         ).not.toBeInTheDocument();
       });
     });
@@ -136,7 +139,7 @@ describe('BenefitType', () => {
         hoverOverRadioOption(getVhaRadioOption());
 
         expect(
-          screen.queryByText(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY)
+          screen.queryByText(vhaTooltipText)
         ).not.toBeInTheDocument();
       });
     });
