@@ -63,27 +63,18 @@ module AppellantNotification
 
 # Public: Updates/creates appeal state based on event type
 #
-# appeal_id  - id of appeal
-# appeal_type - string of appeal object's class (e.g. "LegacyAppeal")
+# appeal - appeal that was found in appeal_mapper
 # event - The module that is being triggered to send a notification
 #
 # Examples
 #
-#  AppellantNotification.appeal_mapper(1, "Appeal", "hearing_postponed")
+#  AppellantNotification.update_appeal_state(appeal, "hearing_postponed")
 #   # => A new appeal state is created if it doesn't exist
 #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
-
-  def self.appeal_mapper(appeal_id, appeal_type, event)
-    if appeal_type == "Appeal"
-      appeal = Appeal.find_by(id: appeal_id)
-    elsif appeal_type == "LegacyAppeal"
-      appeal = LegacyAppeal.find_by(id: appeal_id)
-    else
-      Rails.logger.error("Appeal type not supported for " + event)
-      return
-    end
-    appeal_state = AppealState.find_by(appeal_id: appeal_id, appeal_type: appeal_type) ||
-                   AppealState.create!(appeal_id: appeal_id, appeal_type: appeal_type)
+  def self.update_appeal_state(appeal, event)
+    appeal_type = appeal.class.to_s
+    appeal_state = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal_type) ||
+                   AppealState.create!(appeal_id: appeal.id, appeal_type: appeal_type)
     case event
     when "decision_mailed"
       appeal_state.update!(
@@ -123,6 +114,28 @@ module AppellantNotification
          open_tasks.where(type: FoiaRequestMailTask.name).empty? && open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
         appeal_state.update!(privacy_act_complete: true, privacy_act_pending: false)
       end
+    end
+  end
+# Public: Finds the appeal based on the id and type, then calls update_appeal_state to create/update appeal state
+#
+# appeal_id  - id of appeal
+# appeal_type - string of appeal object's class (e.g. "LegacyAppeal")
+# event - The module that is being triggered to send a notification
+#
+# Examples
+#
+#  AppellantNotification.appeal_mapper(1, "Appeal", "hearing_postponed")
+#   # => A new appeal state is created if it doesn't exist
+#   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
+  def self.appeal_mapper(appeal_id, appeal_type, event)
+    if appeal_type == "Appeal"
+      appeal = Appeal.find_by(id: appeal_id)
+      AppellantNotification.update_appeal_state(appeal, event)
+    elsif appeal_type == "LegacyAppeal"
+      appeal = LegacyAppeal.find_by(id: appeal_id)
+      AppellantNotification.update_appeal_state(appeal, event)
+    else
+      Rails.logger.error("Appeal type not supported for " + event)
     end
   end
 
