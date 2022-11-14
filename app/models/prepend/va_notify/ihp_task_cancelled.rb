@@ -21,7 +21,7 @@ module IhpTaskCancelled
   # Params: NONE
   #
   # Response: Updated 'vso_ihp_pending' column to FALSE
-  def update_appeal_state
+  def update_appeal_state_when_ihp_cancelled
     if IHP_TYPE_TASKS.include?(type) &&
        !IHP_TYPE_TASKS.include?(parent&.type) &&
        status == Constants.TASK_STATUSES.cancelled
