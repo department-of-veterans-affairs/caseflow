@@ -82,7 +82,7 @@ export const getDefaultPayeeCode = (state, claimant) => {
   return (claimant ? _.find(state.relationships, { value: claimant }).defaultPayeeCode : null);
 };
 
-export const formatRadioOptions = (options, userCanSelectVha) => {
+export const formatBenefitTypeRadioOptions = (options, userCanSelectVha) => {
   return _.map(options, (value, key) => {
     const radioData = { value: key, displayText: value };
 

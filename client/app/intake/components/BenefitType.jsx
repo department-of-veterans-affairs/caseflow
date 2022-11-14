@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import RadioField from '../../components/RadioField';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
-import { formatRadioOptions, formatSearchableDropdownOptions } from '../util';
+import { formatBenefitTypeRadioOptions, formatSearchableDropdownOptions } from '../util';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 export default class BenefitType extends React.PureComponent {
@@ -21,7 +21,7 @@ export default class BenefitType extends React.PureComponent {
         label="What is the Benefit Type?"
         strongLabel
         vertical
-        options={formatRadioOptions(BENEFIT_TYPES, userCanSelectVha)}
+        options={formatBenefitTypeRadioOptions(BENEFIT_TYPES, userCanSelectVha)}
         onChange={onChange}
         value={value}
         errorMessage={errorMessage}
