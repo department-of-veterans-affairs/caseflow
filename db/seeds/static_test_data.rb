@@ -44,11 +44,17 @@ module Seeds
         nonpriority_case_with_only_attorney_task
         nonpriority_case_with_attorney_task_children
         nonpriority_case_with_attorney_rewrite_task
+        priority_case_with_only_attorney_task(37)
+        priority_case_with_attorney_task_children(32)
+        priority_case_with_attorney_rewrite_task(37)
+        cavc_priority_case_with_only_attorney_task
+        cavc_priority_case_with_attorney_task_children
+        cavc_priority_case_with_attorney_rewrite_task
       end
     end
 
-    def priority_case_with_only_attorney_task
-      Timecop.travel(20.days.ago)
+    def priority_case_with_only_attorney_task(time_travel_days = 20)
+      Timecop.travel(time_travel_days.days.ago)
       appeal = create(:appeal,
                       :direct_review_docket,
                       :with_request_issues,
@@ -61,8 +67,8 @@ module Seeds
       appeal.tasks.of_type(:AttorneyTask).first.completed!
     end
 
-    def priority_case_with_attorney_task_children
-      Timecop.travel(15.days.ago)
+    def priority_case_with_attorney_task_children(time_travel_days = 15)
+      Timecop.travel(time_travel_days.days.ago)
       appeal = create(:appeal,
                       :direct_review_docket,
                       :with_request_issues,
@@ -80,8 +86,8 @@ module Seeds
       appeal.tasks.of_type(:AttorneyTask).first.completed!
     end
 
-    def priority_case_with_attorney_rewrite_task
-      Timecop.travel(20.days.ago)
+    def priority_case_with_attorney_rewrite_task(time_travel_days = 20)
+      Timecop.travel(time_travel_days.days.ago)
       appeal = create(:appeal,
                       :direct_review_docket,
                       :with_request_issues,
@@ -100,8 +106,61 @@ module Seeds
       rewrite_task.completed!
     end
 
+    def cavc_priority_case_with_only_attorney_task
+      Timecop.travel(35.days.ago)
+      appeal = create(:appeal,
+                      :direct_review_docket,
+                      :with_request_issues,
+                      :at_attorney_drafting,
+                      :type_cavc_remand,
+                      associated_judge: User.find_by_css_id("BVAGSPORER"),
+                      issue_count: 1,
+                      veteran: create_veteran)
+      Timecop.return
+      appeal.tasks.of_type(:AttorneyTask).first.completed!
+    end
+
+    def cavc_priority_case_with_attorney_task_children
+      Timecop.travel(32.days.ago)
+      appeal = create(:appeal,
+                      :direct_review_docket,
+                      :with_request_issues,
+                      :at_attorney_drafting,
+                      :type_cavc_remand,
+                      associated_judge: User.find_by_css_id("BVAGSPORER"),
+                      issue_count: 1,
+                      veteran: create_veteran)
+      create(:colocated_task,
+             :translation,
+             parent: appeal.tasks.of_type(:AttorneyTask).first,
+             assigned_at: Time.zone.now)
+      appeal.tasks.of_type(:TranslationTask).first.completed!
+      Timecop.return
+      appeal.tasks.of_type(:AttorneyTask).first.completed!
+    end
+
+    def cavc_priority_case_with_attorney_rewrite_task
+      Timecop.travel(35.days.ago)
+      appeal = create(:appeal,
+                      :direct_review_docket,
+                      :with_request_issues,
+                      :at_judge_review,
+                      :type_cavc_remand,
+                      associated_judge: User.find_by_css_id("BVAGSPORER"),
+                      issue_count: 1,
+                      veteran: create_veteran)
+      judge_team = JudgeTeam.find_by(name: "BVAGSPORER")
+      rewrite_task = create(:ama_attorney_rewrite_task,
+                            parent: appeal.tasks.of_type(:JudgeDecisionReviewTask).first,
+                            assigned_by: judge_team.users.first,
+                            assigned_to: judge_team.users.last,
+                            assigned_at: Time.zone.now)
+      Timecop.return
+      rewrite_task.completed!
+    end
+
     def nonpriority_case_with_only_attorney_task
-      Timecop.travel(20.days.ago)
+      Timecop.travel(65.days.ago)
       appeal = create(:appeal,
                       :direct_review_docket,
                       :with_request_issues,
@@ -114,7 +173,7 @@ module Seeds
     end
 
     def nonpriority_case_with_attorney_task_children
-      Timecop.travel(15.days.ago)
+      Timecop.travel(62.days.ago)
       appeal = create(:appeal,
                       :direct_review_docket,
                       :with_request_issues,
@@ -132,7 +191,7 @@ module Seeds
     end
 
     def nonpriority_case_with_attorney_rewrite_task
-      Timecop.travel(20.days.ago)
+      Timecop.travel(65.days.ago)
       appeal = create(:appeal,
                       :direct_review_docket,
                       :with_request_issues,
