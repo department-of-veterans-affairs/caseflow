@@ -22,11 +22,7 @@ class SplitAppealController < ApplicationController
   private
 
   def process_split(params)
-    # unpack params
     appeal = Appeal.find(params[:appeal_id])
-    split_issues = params[:appeal_split_issues]
-    user_css_id = params[:user_css_id]
-
     # set the appeal_split_process to true
     appeal.appeal_split_process = true
     # duplicate appeal
@@ -35,13 +31,11 @@ class SplitAppealController < ApplicationController
     dup_appeal.save!
     create_split_task(appeal, params)
     # run extra duplicate methods to finish split
-    dup_appeal.finalize_split_appeal(appeal, user_css_id, split_issues)
+    dup_appeal.finalize_split_appeal(appeal, params)
     # set the appeal split process to false
     appeal.appeal_split_process = false
     dup_appeal.reload
     appeal.reload
-    # create a split correlation record
-    create_split_correlation_record(dup_appeal, params)
     render json: { split_appeal: dup_appeal, original_appeal: appeal }, status: :created
   end
 
@@ -67,26 +61,5 @@ class SplitAppealController < ApplicationController
       spt.instructions.push(instructions)
       spt.update!(status: Constants.TASK_STATUSES.completed)
     end
-  end
-
-  def create_split_correlation_record(dup_appeal, params)
-    appeal = Appeal.find(params[:appeal_id])
-    SplitCorrelationTable.create!(
-      appeal_id: dup_appeal.id,
-      appeal_type: dup_appeal.docket_type,
-      appeal_uuid: dup_appeal.uuid,
-      created_at: Time.zone.now.utc,
-      created_by_id: current_user.id,
-      original_appeal_id: appeal.id,
-      original_appeal_uuid: appeal.uuid,
-      original_request_issue_ids: appeal.request_issues.ids,
-      relationship_type: "split_appeal",
-      split_other_reason: params[:split_other_reason],
-      split_reason: params[:split_reason],
-      split_request_issue_ids: dup_appeal.request_issues.ids,
-      updated_at: Time.zone.now.utc,
-      updated_by_id: current_user.id,
-      working_split_status: Constants.TASK_STATUSES.in_progress
-    )
   end
 end

@@ -61,9 +61,21 @@ RSpec.describe SplitAppealController, type: :controller do
         appeal_split_task = appeal.tasks.where(type: "SplitAppealTask").first
         dup_split_task = dup_appeal.tasks.where(type: "SplitAppealTask").first
         SCT = SplitCorrelationTable.last
-        expect(SCT.appeal_id).to eq(dup_appeal.id)
-        expect(SCT.original_request_issue_ids).to include(request_issue3.id, request_issue2.id, request_issue.id)
-        expect(SCT.original_appeal_id).to eq(appeal.id)
+        # creates a record in the split correlation table for each request issue split
+        expect(SplitCorrelationTable.where(original_request_issue_id: request_issue.id).count).to eq(1)
+        expect(SplitCorrelationTable.where(original_request_issue_id: request_issue2.id).count).to eq(1)
+
+        # compare the split records to the original appeal/dup appeal
+        split_entry1 = SplitCorrelationTable.find_by(original_request_issue_id: request_issue.id)
+        split_entry2 = SplitCorrelationTable.find_by(original_request_issue_id: request_issue2.id)
+        expect(split_entry1.appeal_id).to eq(dup_appeal.id)
+        expect(split_entry2.appeal_id).to eq(dup_appeal.id)
+        expect(split_entry1.original_request_issue_id).to eq(request_issue.id)
+        expect(split_entry2.original_request_issue_id).to eq(request_issue2.id)
+        expect(split_entry1.original_appeal_id).to eq(appeal.id)
+        expect(split_entry2.original_appeal_id).to eq(appeal.id)
+
+        # compare expect split task to be completed on appeal
         expect(appeal.tasks.where(type: "SplitAppealTask").count).to eq(1)
         expect(appeal_split_task.parent_id).to eq(appeal.root_task.id)
         expect(appeal_split_task.instructions).to eq([valid_params[:split_reason]])
@@ -114,7 +126,8 @@ RSpec.describe SplitAppealController, type: :controller do
         expect(sct_record.appeal_id).to eq(dup_appeal.id)
         expect(sct_record.split_reason).to eq("Other")
         expect(sct_record.split_other_reason).to eq("Some Other Reason")
-        expect(sct_record.split_request_issue_ids).to eq([request_issue.id])
+        expect(sct_record.original_request_issue_id).to eq(request_issue.id)
+        expect(sct_record.split_request_issue_id).to eq(dup_appeal.request_issues.first.id)
       end
     end
 
