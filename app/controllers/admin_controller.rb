@@ -39,13 +39,13 @@ class AdminController < ApplicationController
     # Create new event
     event = SystemAdminEvent.create(user: current_user, event_type: "veteran_extract")
     if input.empty?
-      render json: { message: 'no veterans found'}
+      render json: { message: 'no veterans found', success: true, status: 200 }
       return true
     else
       formated_data = VACOLS::Correspondent.as_csv(input)
       filename = Time.zone.now.strftime("veteran-extract-%Y%m%d.csv")
       # send_data formated_data, filename: filename, content_type: 'text/csv'
-      render json: { contents: formated_data }
+      render json: { contents: formated_data, success: true, status: 200 }
       event.update!(completed_at: Time.zone.now)
     end
 

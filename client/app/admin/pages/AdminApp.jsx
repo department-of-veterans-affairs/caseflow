@@ -38,7 +38,10 @@ class AdminApp extends React.PureComponent {
                 title="admin"
                 render={this.admin}
               />
-              <GenerateButton sendExtractRequest={this.props.sendExtractRequest} />
+              <GenerateButton
+                sendExtractRequest={this.props.sendExtractRequest}
+                extractedResults={this.props.extractedResults}
+                isLoading={this.props.isLoading} />
             </Switch>
           </div>
         </AppSegment>

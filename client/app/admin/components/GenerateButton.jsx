@@ -13,29 +13,33 @@ const GenerateButton = (props) => {
   // state properties
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showBanner, setShowBanner] = useState(false);
+  const [showEmptyResultsBanner, setShowEmptyResultsBanner] = useState(false);
   const [showErrorBanner, setShowErrorBanner] = useState(false);
   const [extractedResults, setExtractedResults] = useState('');
 
-  const onClickGenerate = async () => {
-    await props.sendExtractRequest().then((res) => {
-      console.log(res);
-      setExtractedResults(res.contents);
-    });
+  useEffect(() => {
+    setIsLoading(props.isLoading);
+  }, [props.isLoading]);
 
-    console.log(extractedResults);
-    if (extractedResults.length > 0) {
-      setShowConfirmModal(true);
-    } else {
-      setShowBanner(true);
-    }
+  useEffect(() => {
+    setExtractedResults(props.extractedResults);
+    console.log(props);
+    // if (extractedResults.length > 0) {
+    //   setShowConfirmModal(true);
+    // }
+    // else {
+    //   setShowEmptyResultsBanner(true);
+    // }
+  }, [props.extractedResults]);
 
+  const onClickGenerate = () => {
+    props.sendExtractRequest();
   };
 
   return (
     <div style={{ height: '75vh' }}>
       {
-        showBanner &&
+        showEmptyResultsBanner &&
         <div style={{ padding: '10px' }}>
           <Alert message="No Veterans were found." type="success" />
         </div>
@@ -81,6 +85,8 @@ const GenerateButton = (props) => {
 };
 
 GenerateButton.propTypes = {
+  extractedResults: PropTypes.string,
+  isLoading: PropTypes.bool,
   sendExtractRequest: PropTypes.func,
 };
 
