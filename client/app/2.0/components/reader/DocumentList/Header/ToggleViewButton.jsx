@@ -19,11 +19,11 @@ export const ToggleViewButton = ({ documentsView, changeView }) => (
       onClick={changeView}>
 
       <Button name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS}
-          role="button">
+        role="button">
          Documents
       </Button>
       <Button name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS}
-          role="button">
+        role="button">
          Comments
       </Button>
     </ToggleButton>
