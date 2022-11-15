@@ -68,7 +68,8 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       fileNumberSearch: REQUEST_STATE.NOT_STARTED,
       cancel: REQUEST_STATE.NOT_STARTED
     },
-    splitAppeal: null
+    splitAppeal: null,
+    userIsVhaEmployee: data.userIsVhaEmployee
   }, data.serverIntake)
 );
 

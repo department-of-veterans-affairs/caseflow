@@ -143,7 +143,7 @@ const formFieldMapping = (props) => {
         register={props.register}
         formName={props.formName}
         featureToggles={props.featureToggles}
-        userCanSelectVha={false} // This is just hard-coded awaiting APPEALS-10818
+        userCanSelectVha={props.userIsVhaEmployee}
       />
     ),
     'informal-conference': (
@@ -338,7 +338,8 @@ FormGenerator.propTypes = {
   homelessness: PropTypes.string,
   setHomelessnessType: PropTypes.func,
   homelessnessError: PropTypes.string,
-  isReviewed: PropTypes.bool
+  isReviewed: PropTypes.bool,
+  userIsVhaEmployee: PropTypes.bool
 };
 export default connect(
   (state, props) => ({
@@ -373,6 +374,7 @@ export default connect(
     homelessnessError: state[props.formName].homelessnessError,
     homelessnessUserInteraction: state[props.formName].homelessnessUserInteraction,
     isReviewed: state[props.formName].isReviewed,
+    userIsVhaEmployee: state.intake.userIsVhaEmployee
   }),
   (dispatch) => bindActionCreators({
     setDocketType,
