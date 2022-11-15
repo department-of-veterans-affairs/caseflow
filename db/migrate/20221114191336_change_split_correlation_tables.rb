@@ -3,8 +3,8 @@ class ChangeSplitCorrelationTables < ActiveRecord::Migration[5.2]
     # change_table "split_correlation_tables" do |t|
     #   t.integer :split_request_issue_id, :original_request_issue_id, null: false, comment: "The original request issue id and the corresponding request issue id created from the split appeal process."
     # end
-    add_column :split_correlation_tables, :split_request_issue_id, :integer, null: false, comment: comment: "The original request issue id and the corresponding request issue id created from the split appeal process."
-    add_column :split_correlation_tables, :original_request_issue_id, :integer, null: false, comment: comment: "The original request issue id and the corresponding request issue id created from the split appeal process."
+    add_column :split_correlation_tables, :split_request_issue_id, :integer, null: false, comment: "The original request issue id and the corresponding request issue id created from the split appeal process."
+    add_column :split_correlation_tables, :original_request_issue_id, :integer, null: false, comment: "The original request issue id and the corresponding request issue id created from the split appeal process."
     safety_assured { remove_column :split_correlation_tables, :split_request_issue_ids }
     safety_assured { remove_column :split_correlation_tables, :original_request_issue_ids }
   end
