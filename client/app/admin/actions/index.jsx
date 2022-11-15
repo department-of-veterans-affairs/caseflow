@@ -29,7 +29,7 @@ export const sendExtractRequest = () => (dispatch) => {
         payload: {
           success: error.body.success,
           status: error.status,
-          contents: error,
+          err: error
         } });
     });
 };
