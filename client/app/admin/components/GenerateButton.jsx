@@ -38,7 +38,11 @@ const GenerateButton = (props) => {
   }, [props.emptyResultsMessage]);
 
   useEffect(() => {
-    setShowErrorBanner(!props.manualExtractionSuccess);
+    if (props.manualExtractionSuccess === false) {
+      setShowErrorBanner(true);
+    } else {
+      setShowErrorBanner(false);
+    }
   }, [props.manualExtractionSuccess]);
 
   const onClickGenerate = () => {
