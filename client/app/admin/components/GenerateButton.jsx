@@ -69,7 +69,7 @@ const GenerateButton = (props) => {
         showConfirmModal &&
 
         <Modal title="This file contains PII"
-          confirmButton={<CSVLink data={extractedResults} filename="veteran_extract.csv">Confirm</CSVLink>}
+          confirmButton={<CSVLink data={extractedResults} filename="veteran_extract.csv" onClick={() => setShowConfirmModal(false)}>Confirm</CSVLink>}
           closeHandler={() => {
             setShowConfirmModal(false);
           }}
