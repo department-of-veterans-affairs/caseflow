@@ -461,7 +461,8 @@ module Seeds
     end
 
     def create_task_at_quality_review(
-      judge_name = "Madhu Judge_CaseAtQR Burnham", attorney_name = "Bailey Attorney_CaseAtQR Eoin"
+      # created Code Climate issue for unused variable.
+      # judge_name = "Madhu Judge_CaseAtQR Burnham", attorney_name = "Bailey Attorney_CaseAtQR Eoin"
     )
       vet = create(
         :veteran,

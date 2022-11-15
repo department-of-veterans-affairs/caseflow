@@ -87,6 +87,9 @@ class Appeal < DecisionReview
     validates_associated :claimants
   end
 
+  # error for already split issue
+  class IssueAlreadyDuplicated < StandardError; end
+
   scope :active, lambda {
     joins(:tasks)
       .group("appeals.id")
@@ -305,17 +308,17 @@ class Appeal < DecisionReview
   end
 
   # finalize_split_appeal contains all the methods to finish the amoeba split
-  def finalize_split_appeal(parent_appeal, user_css_id, split_issues)
+  def finalize_split_appeal(parent_appeal, params)
     # update the child task tree with parent, passing CSS ID of user for validation
-    self&.clone_task_tree(parent_appeal, user_css_id)
+    self&.clone_task_tree(parent_appeal, params[:user_css_id])
     # clone the hearings and hearing relations from parent appeal
     self&.clone_hearings(parent_appeal)
     # if there are ihp drafts, clone them too
     self&.clone_ihp_drafts(parent_appeal)
     # if there are cavc_remand, clone them too (need user css id)
-    self&.clone_cavc_remand(parent_appeal, user_css_id)
+    self&.clone_cavc_remand(parent_appeal, params[:user_css_id])
     # clones request_issues, decision_issues, and request_decision_issues
-    self&.clone_issues(parent_appeal, split_issues)
+    self&.clone_issues(parent_appeal, params)
     # if there is an AOD for the parent appeal, clone
     if !AdvanceOnDocketMotion.find_by(appeal_id: parent_appeal.id).nil?
       self&.clone_aod(parent_appeal)
@@ -346,13 +349,38 @@ class Appeal < DecisionReview
 
   # clone issues clones request_issues the user selected
   # and anydecision_issues/decision_request_issues tied to the request issue
-  def clone_issues(parent_appeal, split_request_issues)
+  def clone_issues(parent_appeal, payload_params)
+    # set request store to the user that split the appeal
+    RequestStore[:current_user] = User.find_by_css_id payload_params[:user_css_id]
 
     # cycle the split_request_issues list from the payload
-    split_request_issues.each do |r_issue_id|
+    payload_params[:appeal_split_issues].each do |r_issue_id|
       # find the request issue from the parent appeal
       r_issue = parent_appeal.request_issues.find(r_issue_id.to_i)
+
+      # fail/revert changes if the issue was already duplicated
+      fail IssueAlreadyDuplicated if r_issue.split_issue_status == "on_hold"
+
       dup_r_issue = clone_issue(r_issue)
+
+      # create Split Correlation table record to document split request issue relations
+      SplitCorrelationTable.create!(
+        appeal_id: id,
+        appeal_type: docket_type,
+        appeal_uuid: uuid,
+        created_at: Time.zone.now.utc,
+        created_by_id: RequestStore[:current_user].id,
+        original_appeal_id: parent_appeal.id,
+        original_appeal_uuid: parent_appeal.uuid,
+        original_request_issue_id: r_issue.id,
+        relationship_type: "split_appeal",
+        split_other_reason: payload_params[:split_other_reason],
+        split_reason: payload_params[:split_reason],
+        split_request_issue_id: dup_r_issue.id,
+        updated_at: Time.zone.now.utc,
+        updated_by_id: RequestStore[:current_user].id,
+        working_split_status: Constants.TASK_STATUSES.in_progress
+      )
 
       # set original issue on hold and duplicate issue to in_progress
       r_issue.update!(
@@ -369,33 +397,9 @@ class Appeal < DecisionReview
 
       # copy the request_decision_issues
       r_issue.request_decision_issues.each do |rd_issue|
-        # get the decision issue id
-        decision_issue_id = rd_issue.decision_issue_id
-        # get the decision issue
-        d_issue = DecisionIssue.find(decision_issue_id)
-        # clone decision issue
-        dup_d_issue = clone_issue(d_issue)
-        # clone request_decision_issue
-        dup_rd_issue = rd_issue.amoeba_dup
-        # set the request_issue_id and decision_issue_id
-        dup_rd_issue.request_issue_id = dup_r_issue.id
-        dup_rd_issue.decision_issue_id = dup_d_issue.id
-        dup_rd_issue.save!
+        clone_request_decision_issue(rd_issue, dup_r_issue)
       end
     end
-  end
-
-  def clone_aod(parent_appeal)
-    # find the appeal AOD
-    aod = AdvanceOnDocketMotion.find_by(appeal_id: parent_appeal.id)
-    # create a new advance on docket for the duplicate appeal
-    AdvanceOnDocketMotion.create!(
-      user_id: aod.user_id,
-      person_id: claimant.person.id,
-      granted: aod.granted,
-      reason: aod.reason,
-      appeal: self
-    )
   end
 
   def clone_aod(parent_appeal)
@@ -415,7 +419,22 @@ class Appeal < DecisionReview
     dup_issue = issue.amoeba_dup
     dup_issue.decision_review_id = id
     dup_issue.save
-    return dup_issue
+    dup_issue
+  end
+
+  def clone_request_decision_issue(rd_issue, dup_r_issue)
+    # get the decision issue id
+    decision_issue_id = rd_issue.decision_issue_id
+    # get the decision issue
+    d_issue = DecisionIssue.find(decision_issue_id)
+    # clone decision issue
+    dup_d_issue = clone_issue(d_issue)
+    # clone request_decision_issue
+    dup_rd_issue = rd_issue.amoeba_dup
+    # set the request_issue_id and decision_issue_id
+    dup_rd_issue.request_issue_id = dup_r_issue.id
+    dup_rd_issue.decision_issue_id = dup_d_issue.id
+    dup_rd_issue.save!
   end
 
   def clone_ihp_drafts(parent_appeal)
@@ -506,7 +525,7 @@ class Appeal < DecisionReview
     dup_task.save
 
     # return the task id to be added to the dict
-    return dup_task.id
+    dup_task.id
   end
 
   def clone_task_w_parent(original_task, parent_task_id)
@@ -545,7 +564,7 @@ class Appeal < DecisionReview
     end
 
     # return the task id to be added to the dict
-    return dup_task.id
+    dup_task.id
   end
 
   def docket_name

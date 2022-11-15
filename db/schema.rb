@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_25_184724) do
+ActiveRecord::Schema.define(version: 2022_11_14_191336) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1446,11 +1446,11 @@ ActiveRecord::Schema.define(version: 2022_10_25_184724) do
     t.integer "created_by_id", null: false, comment: "The user css_id that created the split appeal."
     t.integer "original_appeal_id", null: false, comment: "The original appeal id from where the split appeal appeal_id was created from."
     t.string "original_appeal_uuid", null: false, comment: "The original source appeal uuid from where the split was generated from."
-    t.integer "original_request_issue_ids", null: false, comment: "An array of the original request issue IDs that were transferred to the split appeal.", array: true
+    t.integer "original_request_issue_id", null: false, comment: "The original request issue id and the corresponding request issue id created from the split appeal process."
     t.string "relationship_type", default: "split_appeal", comment: "The new split_appeal relationship type created from the split and maybe used for future correlations."
     t.string "split_other_reason", comment: "The other reason for splitting the appeal from comment section."
     t.string "split_reason", comment: "Reason for splitting the appeal from drop menu."
-    t.integer "split_request_issue_ids", null: false, comment: "An array of the split request issue IDs that were transferred to the split appeal.", array: true
+    t.integer "split_request_issue_id", null: false, comment: "The original request issue id and the corresponding request issue id created from the split appeal process."
     t.datetime "updated_at", comment: "The datetime when the split appeal was updated at."
     t.integer "updated_by_id", comment: "The user css_id who most recently updated the split appeal workflow."
     t.string "working_split_status", default: "in_progress", null: false, comment: "The work flow status of the split appeal (i.e. on_hold, in_progress, cancelled, completed)."
