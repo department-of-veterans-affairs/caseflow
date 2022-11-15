@@ -439,6 +439,80 @@ feature "Intake Review Page", :postgres do
       end
     end
   end
+
+  context "Info banner should display for users that are not members of VHA" do
+    let(:email_href) do
+      "mailto:VHABENEFITAPPEALS@va.gov?subject=Potential%20VHA%20Higher-Level%20Review%20or%20Supplemental%20Claim"
+    end
+
+    context "info banner for SC" do
+      scenario "shows the vha permissions update banner when the intake user is not a member of vha" do
+        start_supplemental_claim(
+          veteran,
+          benefit_type: benefit_type,
+          claim_participant_id: nil
+        )
+
+        visit "/intake"
+        expect(page).to have_current_path("/intake/review_request")
+
+        # Check for the info banner title and email link
+        expect(page).to have_content("HLR And SC Permissions Update")
+        expect(page).to have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
+      end
+
+      scenario "does not show the vha permissions update banner when the intake user is a member of vha" do
+        # Vha user setup
+        # This doesn't even exist yet whelp
+        vha_businessline_user = create(:user)
+        vha_businessline_organization = BusinessLine.find_by(url: "vha")
+        vha_businessline_organization.add_user(vha_businessline_user)
+        User.authenticate!(user: vha_businessline_user)
+
+        start_supplemental_claim(
+          veteran,
+          benefit_type: benefit_type,
+          claim_participant_id: nil
+        )
+
+        visit "/intake"
+        expect(page).to have_current_path("/intake/review_request")
+
+        # Check for the info banner title and email link
+        expect(page).to_not have_content("HLR And SC Permissions Update")
+        expect(page).to_not have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
+      end
+    end
+
+    context "info banner for HLR" do
+      scenario "shows the vha permissions update banner when the intake user is not a member of vha" do
+        start_higher_level_review(
+          veteran,
+          benefit_type: benefit_type,
+          claim_participant_id: nil
+        )
+
+        visit "/intake"
+        expect(page).to have_current_path("/intake/review_request")
+
+        # Check for the info banner title and email link
+        expect(page).to have_content("HLR And SC Permissions Update")
+        expect(page).to have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
+      end
+    end
+
+    context "no info banner for appeal" do
+      scenario "does not show the vha permissions update banner for an appeal intake" do
+        start_appeal(veteran, receipt_date: nil)
+        visit "/intake"
+        expect(page).to have_current_path("/intake/review_request")
+
+        # Check for the absence of the info banner title and email link
+        expect(page).to_not have_content("HLR And SC Permissions Update")
+        expect(page).to_not have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
+      end
+    end
+  end
 end
 
 def check_no_relationships_behavior
