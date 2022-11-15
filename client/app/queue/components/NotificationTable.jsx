@@ -149,7 +149,7 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
       <NotificationModal
         eventType={notificationState.event_type}
         notificationContent={notificationState.content}
-        loseNotificationModal={closeModal}
+        closeNotificationModal={closeModal}
       />}
     </>
   );
