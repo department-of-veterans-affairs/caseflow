@@ -36,6 +36,7 @@ export const getdocsFiltered = createSelector(
  * @returns {Object} -- The Documents
  */
 export const documentState = (state) => {
+  console.log("Feature Flag Enabled - Bulk Upload")
   // Set the filtered documents
   const documents = getFilteredDocuments(state);
 

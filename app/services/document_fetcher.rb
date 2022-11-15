@@ -73,20 +73,26 @@ class DocumentFetcher
     documents.partition { |doc| vbms_doc_ver_ids.include?(doc.vbms_document_id) }
   end
 
-  def copy_metadata_from_document(created_docs_with_series_id, vbms_doc_ver_ids)
+  def copy_metadata_from_document(docs_with_series_id, vbms_doc_ver_ids)
+    # Feature toggle for bulk upload
+    ft_bulk_upload = FeatureToggle.enabled?(:bulk_upload_documents, user: current_user)
+    Rails.logger.info("Feature Flag Enabled: #{ft_bulk_upload} - Bulk Upload - CSS ID: #{current_user.css_id}")
+
     # Find the most recent saved document with the given series_id that is not in the list of vbms_doc_ver_ids passed
     # since vbms_doc_ver_ids have already been updated
     series_id_hash = Document.includes(:annotations, :tags)
-      .where(series_id: created_docs_with_series_id.pluck(:series_id))
+      .where(series_id: docs_with_series_id.pluck(:series_id))
       .where.not(vbms_document_id: vbms_doc_ver_ids).group_by(&:series_id)
+
     # Feature toggle for bulk upload enabled
-    if FeatureToggle.enabled?(:bulk_upload_documents, user: current_user)
-      document_structs = created_docs_with_series_id.map do |document|
+    if ft_bulk_upload == true
+      document_structs = docs_with_series_id.map do |document|
         previous_documents = series_id_hash[document.series_id]&.sort_by(&:id)
         document.prepare_metadata_from_document(previous_documents.last) if previous_documents.present?
         document
       end
       Document.bulk_merge_and_update(document_structs)
+
     # Feature toggle for bulk upload disabled
     else
       created_docs_with_series_id.map do |document|
