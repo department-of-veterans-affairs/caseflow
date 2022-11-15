@@ -55,6 +55,8 @@ class SeedDB
     call_and_log_seed_step Seeds::PriorityDistributions
     call_and_log_seed_step Seeds::TestCaseData
     call_and_log_seed_step Seeds::Notifications
+    # Always run this as last one
+    call_and_log_seed_step Seeds::StaticTestCaseData
   end
 end
 
