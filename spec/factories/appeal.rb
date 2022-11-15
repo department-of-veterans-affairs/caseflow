@@ -237,7 +237,7 @@ FactoryBot.define do
     trait :with_assigned_bva_dispatch_task do
       after(:create) do |appeal, _evaluator|
         bva_dispatch = BvaDispatch.singleton
-        bva_dispatch_non_admin = create(:default_user)
+        bva_dispatch_non_admin = User.system_user
         bva_dispatch.add_user(bva_dispatch_non_admin)
         root_task = RootTask.find_or_create_by!(appeal: appeal)
         BvaDispatchTask.create!(assigned_to: bva_dispatch, parent_id: root_task.id, appeal: root_task.appeal)
