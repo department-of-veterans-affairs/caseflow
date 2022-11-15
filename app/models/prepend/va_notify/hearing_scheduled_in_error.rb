@@ -13,7 +13,11 @@ module HearingScheduledInError
   # Response: Return value of original method defined in app/models/tasks/assign_hearing_disposition_task.rb
   def update_hearing_disposition_and_notes(payload_values)
     super_return_value = super
-    # APPEAL MAPPER METHOD
+    MetricsService.record("Updating VSO_IHP_PENDING column in Appeal States Table to FALSE for #{appeal.class.to_s} ID #{appeal.id}",
+                            service: :queue,
+                            name: "AppellantNotification.appeal_mapper") do
+            # APPEAL MAPPER METHOD
+      end
     super_return_value
   end
 end
