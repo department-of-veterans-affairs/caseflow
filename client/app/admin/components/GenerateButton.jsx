@@ -37,8 +37,11 @@ const GenerateButton = (props) => {
     }
   }, [props.emptyResultsMessage]);
 
+  useEffect(() => {
+    setShowErrorBanner(!props.manualExtractionSuccess);
+  }, [props.manualExtractionSuccess]);
+
   const onClickGenerate = () => {
-    console.log(props);
     props.sendExtractRequest();
   };
 
@@ -53,7 +56,7 @@ const GenerateButton = (props) => {
       {
         showErrorBanner &&
         <div style={{ padding: '10px' }}>
-          <Alert message="download failed" type="error" />
+          <Alert message="Veteran Extract Failed" type="error" />
         </div>
       }
       {

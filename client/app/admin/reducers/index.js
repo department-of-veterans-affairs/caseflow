@@ -29,6 +29,7 @@ export const extractReducer = (state = extractInitialState, action) => {
       manualExtractionStatus: action.payload.status,
       manualExtractionSuccess: false,
       isLoading: false,
+      error: action.payload.err
     };
   default:
     return { ...state, isLoading: false };
