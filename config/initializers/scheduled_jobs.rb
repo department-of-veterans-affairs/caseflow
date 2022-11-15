@@ -34,5 +34,5 @@ SCHEDULED_JOBS = {
     "warm_bgs_caches_job" => WarmBgsCachesJob,
     "va_notify_status_update_job" => VANotifyStatusUpdateJob,
     "poll_docketed_legacy_appeals_job" => PollDocketedLegacyAppealsJob,
-    "retreive_and_cache_reader_documents_job" => RetreiveAndCacheReaderDocumentsJob,
+    "retrieve_and_cache_reader_documents_job" => RetrieveAndCacheReaderDocumentsJob,
 }.freeze
