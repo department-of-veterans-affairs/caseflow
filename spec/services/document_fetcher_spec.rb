@@ -325,7 +325,7 @@ describe DocumentFetcher, :postgres do
         context "when feature toggle bulk upload disabled" do
           before do
             FeatureToggle.disable!(:bulk_upload_documents, users: [user.css_id])
-            RequestStore.store[:current_user] = nil
+            RequestStore[:current_user] = user
           end
           it "efficiently creates and updates documents without bulk update" do
             expect(Document.distinct.pluck(:type)).to eq(["Form 9"])
@@ -357,11 +357,11 @@ describe DocumentFetcher, :postgres do
         context "when feature toggle bulk upload enabled" do
           before do
             FeatureToggle.enable!(:bulk_upload_documents, users: [user.css_id])
-            RequestStore.store[:current_user] = user
+            RequestStore[:current_user] = user
           end
           after do
             FeatureToggle.disable!(:bulk_upload_documents, users: [user.css_id])
-            RequestStore.store[:current_user] = nil
+            RequestStore[:current_user] = user
           end
 
           it "efficiently creates and updates documents" do
@@ -411,11 +411,11 @@ describe DocumentFetcher, :postgres do
           context "when feature toggle bulk upload enabled" do
             before do
               FeatureToggle.enable!(:bulk_upload_documents, users: [user.css_id])
-              RequestStore.store[:current_user] = user
+              RequestStore[:current_user] = user
             end
             after do
               FeatureToggle.disable!(:bulk_upload_documents, users: [user.css_id])
-              RequestStore.store[:current_user] = nil
+              RequestStore[:current_user] = user
             end
             it "deduplicates, sends warning to Sentry, and does not fail bulk upsert" do
               expect(documents.map(&:vbms_document_id).count).to eq(53)
@@ -446,7 +446,7 @@ describe DocumentFetcher, :postgres do
           context "when feature toggle bulk upload disabled" do
             before do
               FeatureToggle.disable!(:bulk_upload_documents, users: [user.css_id])
-              RequestStore.store[:current_user] = nil
+              RequestStore[:current_user] = user
             end
             it "deduplicates, sends warning to Sentry, and does not fail bulk upsert" do
               expect(documents.map(&:vbms_document_id).count).to eq(53)
