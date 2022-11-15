@@ -21,8 +21,12 @@ module AppealCancelled
 
   def update_appeal_state_when_appeal_cancelled
     if ["RootTask"].include?(type) && status == Constants.TASK_STATUSES.cancelled
-      byebug
-      Rails.logger.error("mapper goes here")
+      MetricsService.record("Updating APPEAL_CANCELLED column in Appeal States Table to TRUE"\
+        "for #{appeal.class} ID #{appeal.id}".yellow,
+                            service: :queue,
+                            name: "AppellantNotification.appeal_mapper") do
+        AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "appeal_cancelled")
+      end
     end
   end
 

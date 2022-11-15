@@ -806,7 +806,7 @@ describe AppellantNotification do
       context "A cancelled 'RootTask'" do
         let(:task) { create(:root_task) }
         it "will update the 'appeal_cancelled' value to TRUE" do
-          expect(AppellantNotification).to receive(:appeal_mapper)
+          expect(AppellantNotification).to receive(:appeal_mapper).with(task.appeal.id, task.appeal.class.to_s, "appeal_cancelled")
           task.update!(status: Constants.TASK_STATUSES.cancelled)
         end
       end
