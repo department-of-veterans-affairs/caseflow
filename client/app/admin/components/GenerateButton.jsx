@@ -1,87 +1,87 @@
-import React, { useState } from 'react';
+/* eslint-disable func-style */
+import React, { useEffect, useState } from 'react';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import Alert from '../../components/Alert';
 import LoadingContainer from '../../components/LoadingContainer';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
+import PropTypes from 'prop-types';
+import { CSVLink } from 'react-csv';
 
-function GenerateButton(...btnProps) {
+const GenerateButton = (props) => {
 
-  // state properties 
-  const [modal, setModal] = useState(false);
+  // state properties
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showBanner, setShowBanner] = useState(false);
+  const [showEmptyResultsBanner, setShowEmptyResultsBanner] = useState(false);
   const [showErrorBanner, setShowErrorBanner] = useState(false);
+  const [extractedResults, setExtractedResults] = useState('');
 
+  useEffect(() => {
+    setIsLoading(props.isLoading);
+  }, [props.isLoading]);
 
-  const onClickChangeText = () => {
-    setModal(true);
+  useEffect(() => {
+    setExtractedResults(props.extractedResults);
+
+    if (props.extractedResults?.length > 0) {
+      setShowEmptyResultsBanner(false);
+      setShowConfirmModal(true);
+    }
+  }, [props.extractedResults]);
+
+  useEffect(() => {
+    if (props.emptyResultsMessage?.length > 0) {
+      setShowEmptyResultsBanner(true);
+      setShowConfirmModal(false);
+    }
+  }, [props.emptyResultsMessage]);
+
+  useEffect(() => {
+    if (props.manualExtractionSuccess === false) {
+      setShowErrorBanner(true);
+    } else {
+      setShowErrorBanner(false);
+    }
+  }, [props.manualExtractionSuccess]);
+
+  const onClickGenerate = () => {
+    props.sendExtractRequest();
   };
-
-  const onClickConfirmation = () => {
-    setModal(false);
-    setIsLoading(true);
-
-    var request = new XMLHttpRequest();
-    request.responseType = 'blob';
-    request.open('get', '/admin.csv', true);
-    request.send();
-
-    request.onreadystatechange = () => {
-      if (request.readyState === 4 && request.status === 200) {
-        const downloadLink = document.createElement("a");
-        const blob = new Blob(["\ufeff", request.response]);
-        const url = URL.createObjectURL(blob);
-        downloadLink.href = url;
-        downloadLink.download = "data.csv";
-
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-
-        // stop loading
-        setIsLoading(false);
-        setShowBanner(true);
-      } else if (request.readyState === 4 && (request.status < 200 || request.status >= 300)) {
-        // stop loading
-        setIsLoading(false);
-        setShowErrorBanner(true);
-      }
-    };
-  }
 
   return (
     <div style={{ height: '75vh' }}>
       {
-        showBanner &&
+        showEmptyResultsBanner &&
         <div style={{ padding: '10px' }}>
-          <Alert message="download success" type="success" />
+          <Alert message="No Veterans were found" type="success" />
         </div>
       }
       {
         showErrorBanner &&
         <div style={{ padding: '10px' }}>
-          <Alert message="download failed" type="error" />
+          <Alert message="Veteran Extract Failed" type="error" />
         </div>
       }
       {
         !isLoading &&
         <Button
           id="generate-extract"
-          onClick={() => onClickChangeText()}
-          {...btnProps}
+          onClick={() => onClickGenerate()}
         >
           Generate
         </Button>
       }
       {
-        modal &&
+        showConfirmModal &&
 
-        <Modal title="The file contains PII information, click OK to proceed"
-          confirmButton={<Button onClick={() => { onClickConfirmation() }}>Okay</Button>}
-          closeHandler={() => { setModal(false); }}
+        <Modal title="This file contains PII"
+          confirmButton={<CSVLink data={extractedResults} filename="veteran_extract.csv" onClick={() => setShowConfirmModal(false)}>Confirm</CSVLink>}
+          closeHandler={() => {
+            setShowConfirmModal(false);
+          }}
         >
-          Whenever you are click on Okay button then file will start downloading.
+          Are you sure you want to download it?
         </Modal>
       }
       {
@@ -95,9 +95,14 @@ function GenerateButton(...btnProps) {
       }
     </div>
   );
-}
+};
 
 GenerateButton.propTypes = {
+  extractedResults: PropTypes.string,
+  manualExtractionSuccess: PropTypes.bool,
+  isLoading: PropTypes.bool,
+  sendExtractRequest: PropTypes.func,
+  emptyResultsMessage: PropTypes.string,
 };
 
 export default GenerateButton;
