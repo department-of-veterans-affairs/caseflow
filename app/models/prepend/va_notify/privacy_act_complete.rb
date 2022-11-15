@@ -14,6 +14,7 @@ module PrivacyActComplete
        (type.to_s.include?("PrivacyAct") && !parent&.type.to_s.include?("PrivacyAct"))) &&
        status == Constants.TASK_STATUSES.completed
       # appellant notification call
+      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "privacy_act_complete")
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
     super_return_value
@@ -25,6 +26,7 @@ module PrivacyActComplete
     super_return_value = super
     if type.to_s == "PrivacyActTask" && assigned_to_type == "Organization" &&
        status == Constants.TASK_STATUSES.completed
+      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "privacy_act_complete")
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
     super_return_value
