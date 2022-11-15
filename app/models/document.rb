@@ -221,10 +221,10 @@ class Document < CaseflowRecord
     :category_medical,
     :category_other,
     :category_procedural,
-    :previous_document_version_id,
+    :previous_document_version_id
   ].freeze
 
-  # updates documents with nested resources like tags in bulk
+  # updates documents and nested resources like tags to db in bulk
   def self.bulk_merge_and_update(document_structs)
     # Bulk update
     Document.import(document_structs,
