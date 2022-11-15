@@ -305,13 +305,13 @@ describe Document, :postgres do
 
   context "#bulk_merge_and_update" do
     it "should only the following columnds #{COLUMNS_TO_UPDATE}" do
-      Document.COLUMNS_TO_UPDATE.should match_array(COLUMNS_TO_UPDATE)
+      Document::COLUMNS_TO_UPDATE.should match_array(COLUMNS_TO_UPDATE)
     end
   end
 
   context "#bulk_merge_and_save" do
     it "should save the following columnds #{COLUMNS_TO_MERGE}" do
-      Document.COLUMNS_TO_MERGE.should match_array(COLUMNS_TO_MERGE)
+      Document::COLUMNS_TO_MERGE.should match_array(COLUMNS_TO_MERGE)
     end
   end
 
