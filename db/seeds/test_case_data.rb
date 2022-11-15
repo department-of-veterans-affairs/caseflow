@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-# This seed is intended to create specific test cases without changing the ID values for test data. Adding test
-# cases to other seed files changes the order in which data is created and therefore the ID values of data,
-# which can make regression testing difficult or change the ID values of known cases used in manual testing.
-
 module Seeds
   class TestCaseData < Base
     def initialize
@@ -11,7 +7,7 @@ module Seeds
     end
 
     def seed!
-      create_data_for_nod_update_testing
+      create_limbo_appeals
     end
 
     private
@@ -26,36 +22,53 @@ module Seeds
       end
     end
 
-    # this is commented out because it isn't needed right now, but if you need to create a caseflow veteran
-    #  object use this method to increment ID numbers properly
-    # def create_veteran(options = {})
-    #   @file_number += 1
-    #   @participant_id += 1
-    #   params = {
-    #     file_number: format("%<n>09d", n: @file_number),
-    #     participant_id: format("%<n>09d", n: @participant_id)
-    #   }
-    #   create(:veteran, params.merge(options))
-    # end
+    def create_veteran(options = {})
+      @file_number += 1
+      @participant_id += 1
+      params = {
+        file_number: format("%<n>09d", n: @file_number),
+        participant_id: format("%<n>09d", n: @participant_id)
+      }
+      create(:veteran, params.merge(options))
+    end
 
-    # Create appeals in VACOLS to test veteran NOD updates
-    def create_data_for_nod_update_testing
+    def create_limbo_appeals
       5.times do
-        # file_number is not used here, but incrementing to keep it synced with participant_id
-        @file_number += 1
-        @participant_id += 1
-        create(
-          :case,
-          :type_original,
-          :status_active,
-          correspondent: create(
-            :correspondent,
-            stafkey: format("%<n>09d", n: @participant_id),
-            ssn: format("%<n>09d", n: @participant_id),
-            snamel: "TestUpdateNOD"
-          )
-        )
+        create_priority_appeal_no_person
+        create_nonpriority_appeal_no_person
+        create_appeal_person_null_dob
       end
+    end
+
+    # these appeals do not have a person linked to the claimant on the appeal and would be missed
+    # due to the inner join of claimants:people while selecting appeals
+    def create_priority_appeal_no_person
+      appeal = create(:appeal,
+                      :direct_review_docket,
+                      :ready_for_distribution,
+                      :type_cavc_remand,
+                      veteran: create_veteran(first_name: "TestAppeal", last_name: "NoPerson"))
+      appeal.claimants.first.person.delete
+    end
+
+    def create_nonpriority_appeal_no_person
+      appeal = create(:appeal,
+                      :direct_review_docket,
+                      :ready_for_distribution,
+                      veteran: create_veteran(first_name: "TestAppeal", last_name: "NoPerson"))
+      appeal.claimants.first.person.delete
+    end
+
+    # the person linked to these appeals will have a null date_of_birth, only affects nonpriority appeals
+    # null date of birth was a case not covered when filtering by date to determine AOD status
+    def create_appeal_person_null_dob
+      appeal = create(:appeal,
+                      :direct_review_docket,
+                      :ready_for_distribution,
+                      veteran: create_veteran(first_name: "TestAppeal", last_name: "NullDateOfBirth"))
+      person = appeal.claimants.first.person
+      person.date_of_birth = nil
+      person.save!
     end
   end
 end

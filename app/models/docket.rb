@@ -167,7 +167,7 @@ class Docket
 
     def nonpriority
       include_aod_motions
-        .where("people.date_of_birth > ?", 75.years.ago)
+        .where("people.date_of_birth > ? or people.date_of_birth is null", 75.years.ago)
         .where.not("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand)
         .group("appeals.id")
         .having("count(case when advance_on_docket_motions.granted "\
@@ -175,7 +175,8 @@ class Docket
     end
 
     def include_aod_motions
-      joins(claimants: :person)
+      joins(:claimants)
+        .joins("LEFT OUTER JOIN people on people.participant_id = claimants.participant_id")
         .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
     end
 
