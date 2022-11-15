@@ -367,16 +367,6 @@ export const AMA_SPECIAL_ISSUES = [
     isAmaRelevant: true
   },
   {
-    display: 'US Court of Appeals for Veterans Claims (CAVC)',
-    queueDisplay: 'US Court of Appeals for Veterans Claims (CAVC)',
-    specialIssue: 'usCourtOfAppealsForVeteransClaims',
-    snakeCase: 'us_court_of_appeals_for_veterans_claims',
-    unhandled: null,
-    queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 11,
-    isAmaRelevant: true
-  },
-  {
     node: <b>No Special Issues</b>,
     display: 'No Special Issues',
     queueDisplay: 'No Special Issues',
