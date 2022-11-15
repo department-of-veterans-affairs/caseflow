@@ -79,12 +79,16 @@ module Seeds
                       veteran: create_veteran)
       create(:colocated_task,
              :translation,
-             :aoj,
-             :foia,
+             parent: appeal.tasks.of_type(:AttorneyTask).first,
+             assigned_at: Time.zone.now)
+      create(:privacy_act_task,
+             parent: appeal.tasks.of_type(:AttorneyTask).first,
+             assigned_at: Time.zone.now)
+      create(:foia_task,
              parent: appeal.tasks.of_type(:AttorneyTask).first,
              assigned_at: Time.zone.now)
       appeal.tasks.of_type(:TranslationTask).first.completed!
-      appeal.tasks.of_type(:AojColocatedTask).first.completed!
+      appeal.tasks.of_type(:PrivacyActTask).first.completed!
       appeal.tasks.of_type(:FoiaTask).first.completed!
       Timecop.return
       appeal.tasks.of_type(:AttorneyTask).first.completed!
@@ -136,12 +140,16 @@ module Seeds
                       veteran: create_veteran)
       create(:colocated_task,
              :translation,
-             :aoj,
-             :foia,
+             parent: appeal.tasks.of_type(:AttorneyTask).first,
+             assigned_at: Time.zone.now)
+      create(:privacy_act_task,
+             parent: appeal.tasks.of_type(:AttorneyTask).first,
+             assigned_at: Time.zone.now)
+      create(:foia_task,
              parent: appeal.tasks.of_type(:AttorneyTask).first,
              assigned_at: Time.zone.now)
       appeal.tasks.of_type(:TranslationTask).first.completed!
-      appeal.tasks.of_type(:AojColocatedTask).first.completed!
+      appeal.tasks.of_type(:PrivacyActTask).first.completed!
       appeal.tasks.of_type(:FoiaTask).first.completed!
       Timecop.return
       appeal.tasks.of_type(:AttorneyTask).first.completed!
@@ -191,12 +199,16 @@ module Seeds
                       veteran: create_veteran)
       create(:colocated_task,
              :translation,
-             :aoj,
-             :foia,
+             parent: appeal.tasks.of_type(:AttorneyTask).first,
+             assigned_at: Time.zone.now)
+      create(:privacy_act_task,
+             parent: appeal.tasks.of_type(:AttorneyTask).first,
+             assigned_at: Time.zone.now)
+      create(:foia_task,
              parent: appeal.tasks.of_type(:AttorneyTask).first,
              assigned_at: Time.zone.now)
       appeal.tasks.of_type(:TranslationTask).first.completed!
-      appeal.tasks.of_type(:AojColocatedTask).first.completed!
+      appeal.tasks.of_type(:PrivacyActTask).first.completed!
       appeal.tasks.of_type(:FoiaTask).first.completed!
       Timecop.return
       appeal.tasks.of_type(:AttorneyTask).first.completed!
