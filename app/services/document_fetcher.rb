@@ -81,8 +81,12 @@ class DocumentFetcher
       .where(series_id: docs_with_series_id.pluck(:series_id))
       .where.not(vbms_document_id: vbms_doc_ver_ids).group_by(&:series_id)
 
+    # Feature toggle for bulk upload
+    ft_bulk_upload = FeatureToggle.enabled?(:bulk_upload_documents, user: current_user)
+    Rails.logger.info("Feature Toggle Bulk Upload Enabled? #{ft_bulk_upload} for CSS ID: #{current_user&.css_id}")
+
     # Feature toggle for bulk upload enabled
-    if FeatureToggle.enabled?(:bulk_upload_documents, user: current_user)
+    if ft_bulk_upload
       document_structs = docs_with_series_id.map do |document|
         previous_documents = series_id_hash[document.series_id]&.sort_by(&:id)
         document.prepare_metadata_from_document(previous_documents.last) if previous_documents.present?
