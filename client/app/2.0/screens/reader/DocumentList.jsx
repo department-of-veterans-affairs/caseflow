@@ -36,8 +36,6 @@ import { selectComment } from 'store/reader/annotationLayer';
 
 const DocumentList = (props) => {
   // Get the Document List state
-  // const state = useSelector(documentListScreen);
-
   const state = props.featureToggles.readerSelectorsMemoized ?
   useSelector(documentListScreenMemoized) : useSelector(documentListScreen);
 
