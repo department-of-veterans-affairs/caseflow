@@ -2,21 +2,28 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { css } from 'glamor';
-import COPY from './../../COPY';
+import COPY from '../../../COPY';
 
 const attorneyAssignedStyling = css({ width: '30%' });
 
+const dateString = (date) => moment(date).format('MM/DD/YYYY');
+
 const calculateDaysWorked = (tasks, daysAssigned) => {
+  // Reduce down to all unique date ranges for the case when tasks are worked in parallel
+  const uniqueDateRanges = [
+    ...new Map(tasks.map((task) => [dateString(task.createdAt) + dateString(task.closedAt), task])).values(),
+  ];
+
   let sumOfDays = 0;
 
-  tasks.forEach((task) => {
+  uniqueDateRanges.forEach((task) => {
     const startTaskWork = moment(task.createdAt);
     let endTaskWork = moment();
 
     if (task.closedAt) {
       endTaskWork = moment(task.closedAt);
     }
-    sumOfDays += endTaskWork.startOf('day').diff(startTaskWork, 'days');
+    sumOfDays += Math.max(1, endTaskWork.startOf('day').diff(startTaskWork, 'days'));
   });
 
   return daysAssigned - Math.max(1, sumOfDays) - 1;

@@ -43,7 +43,7 @@ import QueueFlowPage from '../components/QueueFlowPage';
 import { JudgeCaseQuality } from './JudgeCaseQuality';
 import { qualityIsDeficient, errorStylingNoTopMargin } from '.';
 import { AttorneyTaskTimeline } from '../AttorneyTaskTimeline';
-import { AttorneyDaysWorked } from '../AttorneyDaysWorked';
+import { AttorneyDaysWorked } from './AttorneyDaysWorked';
 
 const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });

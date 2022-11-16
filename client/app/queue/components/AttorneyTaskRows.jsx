@@ -33,9 +33,9 @@ class AttorneyTaskRows extends React.PureComponent {
 
   datesTaskWorked = (task) => {
     if (task) {
-      const dateAssigned = moment(task.assignedOn).format('MM/DD/YYYY');
+      const dateCreated = moment(task.createdAt).format('MM/DD/YYYY');
       const dateClosed = task.closedAt ? moment(task.closedAt).format('MM/DD/YYYY') : '';
-      const taskDateFormat = ` (${dateAssigned} - ${dateClosed})`;
+      const taskDateFormat = ` (${dateCreated} - ${dateClosed})`;
 
       return (
         <React.Fragment>
