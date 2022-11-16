@@ -19,7 +19,11 @@ import RadioField from '../../components/RadioField';
 import { deleteAppeal } from '../QueueActions';
 import { requestSave } from '../uiReducer/uiActions';
 import { buildCaseReviewPayload } from '../utils';
-import { taskById, getFullAttorneyTaskTree, getLegacyTaskTree } from '../selectors';
+import { taskById,
+  getFullAttorneyTaskTree,
+  getLegacyTaskTree,
+  getMostRecentAttorneyTask,
+} from '../selectors';
 
 import COPY from '../../../COPY';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS';
@@ -185,20 +189,22 @@ class EvaluateDecisionView extends React.PureComponent {
   renderCaseTimeliness = () => {
     const { appeal,
       task,
+      attorneyTask,
       attorneyChildrenTasks,
       displayCaseTimelinessTimeline,
     } = this.props;
 
-    const dateAssigned = moment(task.previousTaskAssignedOn);
+    const dateAssigned = displayCaseTimelinessTimeline ?
+      moment(attorneyTask.createdAt) : moment(task.previousTaskAssignedOn);
     const decisionSubmitted = moment(task.assignedOn);
     const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
 
-    const caseType = task.caseType;
-    const aod = task.aod;
-    const cavc = caseType === 'Court Remand';
-    const daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days') + 1;
-
     if (displayCaseTimelinessTimeline) {
+      const caseType = task.caseType;
+      const aod = task.aod;
+      const cavc = caseType === 'Court Remand';
+      const daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days') + 1;
+
       return (
         <>
           <div {...caseTimelineStyling} >
@@ -345,6 +351,7 @@ EvaluateDecisionView.propTypes = {
   requestSave: PropTypes.func,
   deleteAppeal: PropTypes.func,
   displayCaseTimelinessQuestion: PropTypes.bool,
+  attorneyTask: PropTypes.object,
   attorneyChildrenTasks: PropTypes.array,
   displayCaseTimelinessTimeline: PropTypes.bool,
 };
@@ -357,6 +364,8 @@ const mapStateToProps = (state, ownProps) => {
   // AMA: https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/tasks/judge_task.rb#L42
   const judgeDecisionReviewTask = taskById(state, { taskId: ownProps.taskId });
 
+  const attorneyTask = getMostRecentAttorneyTask(state, {
+    appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId });
   let attorneyChildrenTasks = [];
 
   // When canceling out of Evaluate Decision page need to check if appeal exists otherwise failures occur
@@ -367,10 +376,11 @@ const mapStateToProps = (state, ownProps) => {
     } else {
       attorneyChildrenTasks = getFullAttorneyTaskTree(state, {
         appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId }).
+        filter((task) => !task.hideFromCaseTimeline).
         filter((task) => {
-          // Remove any tasks whose assignedOn is older than the AttorneyTask's assignedOn date
-          const taskAssignedOn = moment(task.assignedOn);
-          const attorneyTaskAssignedOn = moment(judgeDecisionReviewTask.previousTaskAssignedOn);
+          // Remove any tasks whose createdAt is older than the AttorneyTask's createdAt date
+          const taskAssignedOn = moment(task.createdAt);
+          const attorneyTaskAssignedOn = moment(attorneyTask.createdAt);
           const result = taskAssignedOn.diff(attorneyTaskAssignedOn, 'days');
 
           return result >= 0;
@@ -385,6 +395,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     appeal,
     attorneyChildrenTasks,
+    attorneyTask,
     highlight: state.ui.highlightFormItems,
     taskOptions: state.queue.stagedChanges.taskDecision.opts,
     task: judgeDecisionReviewTask,

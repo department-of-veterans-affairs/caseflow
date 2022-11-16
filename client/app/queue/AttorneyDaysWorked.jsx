@@ -10,7 +10,7 @@ const calculateDaysWorked = (tasks, daysAssigned) => {
   let sumOfDays = 0;
 
   tasks.forEach((task) => {
-    const startTaskWork = moment(task.assignedOn);
+    const startTaskWork = moment(task.createdAt);
     let endTaskWork = moment();
 
     if (task.closedAt) {

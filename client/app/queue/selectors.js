@@ -257,15 +257,15 @@ export const getLegacyTaskTree = createSelector(
   [getAllTasksForAppeal, getJudgeDecisionReviewTask],
   (tasks, judgeDecisionReviewTask) =>
     filter(tasks, (task) => {
-      // Remove any tasks whose assignedOn to closedAt values put it outside of the range of
+      // Remove any tasks whose createdAt to closedAt values put it outside of the range of
       // AttorneyTask.assignedOn - JudgeDecisionReviewTask.assignedOn
-      const taskAssignedOn = moment(task.assignedOn);
+      const taskCreatedAt = moment(task.createdAt);
       const taskClosedAt = moment(task.closedAt);
       const attorneyTaskAssignedOn = moment(judgeDecisionReviewTask.previousTaskAssignedOn);
       const judgeDecisionReviewTaskAssignedOn = moment(judgeDecisionReviewTask.assignedOn);
 
-      const assignedOnRangeStart = taskAssignedOn.diff(attorneyTaskAssignedOn, 'days');
-      const assignedOnRangeEnd = taskAssignedOn.diff(judgeDecisionReviewTaskAssignedOn, 'days');
+      const assignedOnRangeStart = taskCreatedAt.diff(attorneyTaskAssignedOn, 'days');
+      const assignedOnRangeEnd = taskCreatedAt.diff(judgeDecisionReviewTaskAssignedOn, 'days');
 
       const closedAtRangeStart = taskClosedAt.diff(attorneyTaskAssignedOn, 'days');
       const closedAtRangeEnd = taskClosedAt.diff(judgeDecisionReviewTaskAssignedOn, 'days');
