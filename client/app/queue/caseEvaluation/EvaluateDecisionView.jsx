@@ -182,24 +182,69 @@ class EvaluateDecisionView extends React.PureComponent {
     this.setState({ [key]: newOpts });
   };
 
-  handleCaseQualityChange = (values) => this.setState({ ...values });
-
-  render = () => {
+  renderCaseTimeliness = () => {
     const { appeal,
       task,
-      appealId,
-      highlight,
-      error,
-      displayCaseTimelinessQuestion,
       attorneyChildrenTasks,
-      ...otherProps } = this.props;
+      displayCaseTimelinessTimeline,
+    } = this.props;
 
     const dateAssigned = moment(task.previousTaskAssignedOn);
     const decisionSubmitted = moment(task.assignedOn);
+    const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
+
     const caseType = task.caseType;
     const aod = task.aod;
     const cavc = caseType === 'Court Remand';
     const daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days') + 1;
+
+    if (displayCaseTimelinessTimeline) {
+      return (
+        <>
+          <div {...caseTimelineStyling} >
+            <span {...caseTypeStyling}>
+              <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_CASE_TYPE}</b>:
+              { aod && <span {...redText}> AOD</span> }
+              { cavc && <span {...redText}> CAVC</span> }
+              { !aod && !cavc && <span> {caseType}</span> }
+            </span>
+            <AttorneyDaysWorked
+              attorneyTasks={attorneyChildrenTasks}
+              daysAssigned={daysAssigned} />
+          </div>
+          <br />
+          <span>{dateAssigned.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</span>
+          <AttorneyTaskTimeline title="Attorney Task Timeline"
+            appeal={appeal}
+            attorneyChildrenTasks={attorneyChildrenTasks} />
+          <span>
+            {decisionSubmitted.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}
+          </span>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</b>: {dateAssigned.format('M/D/YY')}
+        <br />
+        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}</b>: {decisionSubmitted.format('M/D/YY')}
+        <br />
+        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>&nbsp; (
+        {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM}): {daysWorked}
+      </>
+    );
+  }
+
+  handleCaseQualityChange = (values) => this.setState({ ...values });
+
+  render = () => {
+    const { appeal,
+      appealId,
+      highlight,
+      error,
+      displayCaseTimelinessQuestion,
+      ...otherProps } = this.props;
 
     return (
       <QueueFlowPage
@@ -240,25 +285,7 @@ class EvaluateDecisionView extends React.PureComponent {
           </>
         )}
         <h2 {...headerStyling} ref={this.timelinessLabel}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
-        <div {...caseTimelineStyling} >
-          <span {...caseTypeStyling}>
-            <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_CASE_TYPE}</b>:
-            { aod && <span {...redText}> AOD</span> }
-            { cavc && <span {...redText}> CAVC</span> }
-            { !aod && !cavc && <span> {caseType}</span> }
-          </span>
-          <AttorneyDaysWorked
-            attorneyTasks={attorneyChildrenTasks}
-            daysAssigned={daysAssigned} />
-        </div>
-        <br />
-        <span>{dateAssigned.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</span>
-        <AttorneyTaskTimeline title="Attorney Task Timeline"
-          appeal={appeal}
-          attorneyChildrenTasks={attorneyChildrenTasks} />
-        <span>
-          {decisionSubmitted.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}
-        </span>
+        {this.renderCaseTimeliness()}
         <br />
         {displayCaseTimelinessQuestion && (
           <>
@@ -319,6 +346,7 @@ EvaluateDecisionView.propTypes = {
   deleteAppeal: PropTypes.func,
   displayCaseTimelinessQuestion: PropTypes.bool,
   attorneyChildrenTasks: PropTypes.array,
+  displayCaseTimelinessTimeline: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
