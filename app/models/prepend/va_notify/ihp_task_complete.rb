@@ -36,7 +36,6 @@ module IhpTaskComplete
                             name: "AppellantNotification.notify_appellant") do
         AppellantNotification.notify_appellant(appeal, @@template_name)
       end
-      AppellantNotification.notify_appellant(appeal, @@template_name)
     end
     super_return_value
   end
