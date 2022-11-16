@@ -95,7 +95,9 @@ module AppellantNotification
     when "hearing_withdrawn"
       appeal_state.update!(hearing_withdrawn: true, hearing_postponed: false, hearing_scheduled: false)
     when "hearing_scheduled"
-      appeal_state.update!(hearing_scheduled: true, hearing_postponed: false)
+      appeal_state.update!(hearing_scheduled: true, hearing_postponed: false, scheduled_in_error: false)
+    when "scheduled_in_error"
+      appeal_state.update!(scheduled_in_error: true, hearing_scheduled: false)
     when "vso_ihp_pending"
       appeal_state.update!(vso_ihp_pending: true, vso_ihp_complete: false)
     when "vso_ihp_complete"

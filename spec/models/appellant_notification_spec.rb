@@ -243,14 +243,17 @@ describe AppellantNotification do
   end
 
   describe HearingScheduledInError do
-    describe "#update_hearing_disposition_and_notes" do
+    describe "#update_appeal_states_on_hearing_scheduled_in_error" do
       let(:payload_values) { { disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error } }
-      let(:hearing) { create(:hearing, :with_tasks) }
+      # let(:hearing) { create(:hearing, :with_tasks) }
+      let!(:hearing) { create(:hearing, :virtual) }
       let(:appeal) { hearing.appeal }
-      let(:assign_hearing_disposition_task) { appeal.tasks.find_by(type: "AssignHearingDispositionTask") }
       it "updates or adds entry to appeal_state table" do
-        assign_hearing_disposition_task.update_hearing_disposition_and_notes(payload_values)
-        # expect()
+        old_appeal_state = AppealState.find_by(appeal_id: hearing.appeal.id, appeal_type: hearing.appeal.class.to_s)
+        expect(old_appeal_state.scheduled_in_error).to eq(false)
+        hearing.update(payload_values)
+        new_appeal_state = AppealState.find_by(appeal_id: hearing.appeal.id, appeal_type: hearing.appeal.class.to_s)
+        expect(new_appeal_state.scheduled_in_error).to eq(true)
       end
     end
   end
