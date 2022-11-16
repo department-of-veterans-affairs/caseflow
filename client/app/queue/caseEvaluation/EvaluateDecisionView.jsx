@@ -378,7 +378,7 @@ const mapStateToProps = (state, ownProps) => {
         );
 
       // eslint-disable-next-line id-length
-      attorneyChildrenTasks.sort((a, b) => new Date(a.closedAt) - new Date(b.closedAt));
+      attorneyChildrenTasks.sort((a, b) => new Date(b.closedAt) - new Date(a.closedAt));
     }
   }
 
