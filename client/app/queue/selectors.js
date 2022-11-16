@@ -1,6 +1,7 @@
+import moment from 'moment';
 import { createSelector } from 'reselect';
 import { filter, find, keyBy, map, merge, orderBy, reduce } from 'lodash';
-import { taskIsActive, taskIsOnHold } from './utils';
+import { taskIsActive, taskIsOnHold, getAllChildrenTasks, taskAttributesFromRawTask } from './utils';
 
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
@@ -26,7 +27,8 @@ const getAppealId = (state, props) => props.appealId;
 const getTaskUniqueId = (state, props) => props.taskId;
 const getCaseflowVeteranId = (state, props) => props.caseflowVeteranId;
 const getClaimReviews = (state) => state.queue.claimReviews;
-
+const getJudgeDecisionReviewTaskId = (state, props) => props.judgeDecisionReviewTaskId;
+const getJudgeDecisionReviewTask = (state, props) => props.judgeDecisionReviewTask;
 const incompleteTasksSelector = (tasks) => filter(tasks, (task) => taskIsActive(task));
 const completeTasksSelector = (tasks) => filter(tasks, (task) => !taskIsActive(task));
 const taskIsNotOnHoldSelector = (tasks) => filter(tasks, (task) => !taskIsOnHold(task));
@@ -226,6 +228,51 @@ export const camoAssignTasksSelector = createSelector(
         task.label === COPY.REVIEW_DOCUMENTATION_TASK_LABEL &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned)
       );
+    })
+);
+
+export const getMostRecentAttorneyTask = createSelector(
+  [getAllTasksForAppeal, getJudgeDecisionReviewTaskId],
+  (tasks, parentId) => {
+    const types = ['AttorneyRewriteTask', 'AttorneyTask', 'AttorneyLegacyTask'];
+    // task.uniqueId is a String and task.parentId is an Integer
+    // eslint-disable-next-line eqeqeq
+    const attorneyTasks = filter(tasks, (task) => task.parentId == parentId && types.includes(task.type));
+
+    // eslint-disable-next-line id-length
+    attorneyTasks.sort((a, b) => {
+      return new Date(b.closedAt) - new Date(a.closedAt);
+    });
+
+    return attorneyTasks[0];
+  }
+);
+
+export const getFullAttorneyTaskTree = createSelector(
+  [getAllTasksForAppeal, getMostRecentAttorneyTask],
+  (tasks, attorneyTask) => getAllChildrenTasks(tasks, attorneyTask.uniqueId)
+);
+
+export const getLegacyTaskTree = createSelector(
+  [getAllTasksForAppeal, getJudgeDecisionReviewTask],
+  (tasks, judgeDecisionReviewTask) =>
+    filter(tasks, (task) => {
+      // Remove any tasks whose assignedOn to closedAt values put it outside of the range of
+      // AttorneyTask.assignedOn - JudgeDecisionReviewTask.assignedOn
+      const taskAssignedOn = moment(task.assignedOn);
+      const taskClosedAt = moment(task.closedAt);
+      const attorneyTaskAssignedOn = moment(judgeDecisionReviewTask.previousTaskAssignedOn);
+      const judgeDecisionReviewTaskAssignedOn = moment(judgeDecisionReviewTask.assignedOn);
+
+      const assignedOnRangeStart = taskAssignedOn.diff(attorneyTaskAssignedOn, 'days');
+      const assignedOnRangeEnd = taskAssignedOn.diff(judgeDecisionReviewTaskAssignedOn, 'days');
+
+      const closedAtRangeStart = taskClosedAt.diff(attorneyTaskAssignedOn, 'days');
+      const closedAtRangeEnd = taskClosedAt.diff(judgeDecisionReviewTaskAssignedOn, 'days');
+
+      return task.uniqueId !== judgeDecisionReviewTask.uniqueId &&
+        assignedOnRangeStart >= 0 && assignedOnRangeEnd <= 0 &&
+        task.closedAt !== null && closedAtRangeStart >= 0 && closedAtRangeEnd <= 0;
     })
 );
 
