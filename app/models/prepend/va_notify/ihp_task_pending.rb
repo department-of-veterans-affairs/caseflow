@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Public: This Module is used to notify the appellant when an IHP type task is created and update
-# the IHP TASK PENDING column of the correlated Appeal State record to be TRUE.
+# the VSO IHP COMPLETE column of the correlated Appeal State record to be TRUE.
 # This Module prepends relevant functions to do this.  The method 'create_ihp_tasks!' is defined
 # within app/workflows/ihp_tasks_factory.rb and is called during intake.  When an appellant has an IHP
 # writing POA and selects either Evidence Submission OR Direct Review, the appellant will be notified.
@@ -9,9 +9,9 @@
 # and is called within the queue app.  Whenever IHP is selected as an admin action, the appellant will be notified.
 # The method 'update_appeal_state_when_ihp_created' is an abstract method that is defined in app/models/tasks.rb
 # There is a callback within app/models/task.rb that will trigger 'update_appeal_state_on_task_creation' to run
-# whenver a task is created (which in turn calls 'update_appeal_state_when_ihp_created').  The method
+# whenever a task is created (which in turn calls 'update_appeal_state_when_ihp_created').  The method
 # 'update_appeal_state_when_ihp_created' will check if task being created is an IHP type task.  If the created task
-# is an IHP type task, then the record correlated to the current task's appeal will have the column IHP TASK PENDING
+# is an IHP type task, then the record correlated to the current task's appeal will have the column VSO IHP PENDING
 # within the Appeal States table updated to be TRUE.
 
 module IhpTaskPending

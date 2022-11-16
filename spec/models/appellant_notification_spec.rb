@@ -630,6 +630,7 @@ describe AppellantNotification do
         PrivacyActTask.create_child_task(colocated_task, attorney, privacy_params_org)
       end
       it "updates appeal state when creating a PrivacyActTask" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_pending")
         PrivacyActTask.create_child_task(colocated_task, attorney, privacy_params_org)
       end
@@ -638,6 +639,7 @@ describe AppellantNotification do
         privacy_child.update!(status: "completed")
       end
       it "updates appeal state when completing a PrivacyActTask assigned to user" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_complete")
         privacy_child.update!(status: "completed")
       end
@@ -749,18 +751,41 @@ describe AppellantNotification do
   describe IhpTaskCancelled do
     describe "#update_appeal_state" do
       let(:org) { create(:organization) }
-      context "A cancelled 'IhpColocatedTask'" do
-        let(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
-        it "will update the 'vso_ihp_pending' value to FALSE" do
-          expect(AppellantNotification).to receive(:appeal_mapper)
+      let(:user) { create(:user) }
+      let(:appeal) { create(:appeal) }
+      let(:root_task) { create(:root_task, appeal: appeal) }
+      let!(:appeal_state) { [] }
+
+      context "A cancelled 'IhpColocatedTask' on an AMA Appeal" do
+        let!(:task) { create(:colocated_task, :ihp, :in_progress, parent: root_task, assigned_to: org, appeal: appeal) }
+        it "will update the 'vso_ihp_pending' column in the Appeal State table from TRUE to FALSE" do
+          old_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(old_appeal_state.vso_ihp_pending).to eq(true)
           task.update!(status: Constants.TASK_STATUSES.cancelled)
+          new_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(new_appeal_state.vso_ihp_pending).to eq(false)
         end
       end
-      context "A cancelled InformalHearingPresentationTask'" do
-        let(:task) { create(:informal_hearing_presentation_task, :in_progress, assigned_to: org) }
-        it "will update the 'vso_ihp_pending' value to FALSE" do
-          expect(AppellantNotification).to receive(:appeal_mapper)
+
+      context "A cancelled 'IhpColocatedTask' on a Legacy Appeal" do
+        let!(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
+        it "will update the 'vso_ihp_pending' column in the Appeal State table from TRUE to FALSE" do
+          old_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(old_appeal_state.vso_ihp_pending).to eq(true)
           task.update!(status: Constants.TASK_STATUSES.cancelled)
+          new_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(new_appeal_state.vso_ihp_pending).to eq(false)
+        end
+      end
+
+      context "A cancelled InformalHearingPresentationTask'" do
+        let!(:task) { create(:informal_hearing_presentation_task, :in_progress, assigned_to: org) }
+        it "will update the 'vso_ihp_pending' column in the Appeal State table from TRUE to FALSE" do
+          old_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(old_appeal_state.vso_ihp_pending).to eq(true)
+          task.update!(status: Constants.TASK_STATUSES.cancelled)
+          new_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(new_appeal_state.vso_ihp_pending).to eq(false)
         end
       end
     end
