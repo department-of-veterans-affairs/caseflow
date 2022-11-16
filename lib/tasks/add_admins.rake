@@ -107,6 +107,35 @@ namespace :add_admins do
     SupervisorySeniorCouncil.singleton.add_user(ussccr2)
     CaseReview.singleton.add_user(ussccr2)
     STDOUT.puts("Created user #{ussccr2.css_id}")
+
+    # create COB users
+    atty = create(
+      :user,
+      :with_vacols_attorney_record,
+      station_id: 101,
+      css_id: "COB_USER_CLARK",
+      full_name: "Clark ClerkOfTheBoardUser Kent",
+      roles: ["Hearing Prep"]
+    )
+    ClerkOfTheBoard.singleton.add_user(atty)
+
+    judge = create(
+      :user,
+      full_name: "Judy COTB Judge",
+      css_id: "BVACOTBJUDGEJUDY",
+      roles: ["Hearing Prep"]
+    )
+    create(:staff, :judge_role, sdomainid: judge.css_id)
+    ClerkOfTheBoard.singleton.add_user(judge)
+
+    admin = create(
+      :user,
+      full_name: "Adam ClerkOfTheBoardAdmin West",
+      css_id: "BVATCOBBADMIN",
+      roles: ["Hearing Prep"]
+    )
+    ClerkOfTheBoard.singleton.add_user(admin)
+    OrganizationsUser.make_user_admin(admin, ClerkOfTheBoard.singleton)
   end
 
   desc "create an appellant substitution for a designated appeal"
