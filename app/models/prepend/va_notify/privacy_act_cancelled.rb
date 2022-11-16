@@ -8,7 +8,6 @@ module PrivacyActCancelled
                          HearingAdminFoiaPrivacyRequestTask PrivacyActRequestMailTask FoiaRequestMailTask].freeze
 
   def update_appeal_state_when_privacy_act_cancelled
-    byebug
     if PRIVACY_ACT_TASKS.include?(type) &&
        !PRIVACY_ACT_TASKS.include?(parent&.type) &&
        status == Constants.TASK_STATUSES.cancelled
