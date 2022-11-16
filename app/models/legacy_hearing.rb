@@ -38,6 +38,7 @@ class LegacyHearing < CaseflowRecord
   prepend HearingScheduled
   prepend HearingWithdrawn
   prepend HearingPostponed
+  prepend HearingScheduledInError
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
