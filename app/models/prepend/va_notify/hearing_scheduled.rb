@@ -20,6 +20,9 @@ module HearingScheduled
   #
   # Response: none
   def update_appeal_states_on_hearing_scheduled
-    AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_scheduled")
+    MetricsService.record("Updating SCHEDULED_IN_ERROR in Appeal States Table for #{appeal.class.to_s} ID #{appeal.id}".yellow,
+                          name: "AppellantNotification.appeal_mapper") do
+      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "scheduled_in_error")
+    end
   end
 end
