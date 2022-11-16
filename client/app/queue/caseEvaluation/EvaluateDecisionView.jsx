@@ -188,13 +188,14 @@ class EvaluateDecisionView extends React.PureComponent {
 
   renderCaseTimeliness = () => {
     const { appeal,
+      isLegacy,
       task,
       attorneyTask,
       attorneyChildrenTasks,
       displayCaseTimelinessTimeline,
     } = this.props;
 
-    const dateAssigned = displayCaseTimelinessTimeline ?
+    const dateAssigned = displayCaseTimelinessTimeline && !isLegacy ?
       moment(attorneyTask.createdAt) : moment(task.previousTaskAssignedOn);
     const decisionSubmitted = moment(task.assignedOn);
     const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
@@ -354,10 +355,13 @@ EvaluateDecisionView.propTypes = {
   attorneyTask: PropTypes.object,
   attorneyChildrenTasks: PropTypes.array,
   displayCaseTimelinessTimeline: PropTypes.bool,
+  isLegacy: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
+  const isLegacy = appeal.docketName === 'legacy';
+
   // previousTaskAssignedOn comes from
   // eslint-disable-next-line max-len
   // Legacy: https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/legacy_tasks/judge_legacy_task.rb#L17
@@ -370,7 +374,7 @@ const mapStateToProps = (state, ownProps) => {
 
   // When canceling out of Evaluate Decision page need to check if appeal exists otherwise failures occur
   if (appeal) {
-    if (appeal.docketName === 'legacy') {
+    if (isLegacy) {
       attorneyChildrenTasks = getLegacyTaskTree(state, {
         appealId: appeal.externalId, judgeDecisionReviewTask });
     } else {
@@ -396,6 +400,7 @@ const mapStateToProps = (state, ownProps) => {
     appeal,
     attorneyChildrenTasks,
     attorneyTask,
+    isLegacy,
     highlight: state.ui.highlightFormItems,
     taskOptions: state.queue.stagedChanges.taskDecision.opts,
     task: judgeDecisionReviewTask,
