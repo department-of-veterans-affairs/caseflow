@@ -15,11 +15,6 @@ const RouterDecorator = (Story) => (
 const ReduxDecorator = (Story) => {
   const state = generateInitialState();
 
-  // Setup initial state Values
-  // state.intake.formType = 'appeal';
-  // state.appeal.isStarted = 'STARTED';
-  // state.appeal.relationships = relationships;
-
   return <ReduxBase reducer={reducer} initialState={state}>
     <Story />
   </ReduxBase>;

@@ -159,7 +159,7 @@ export const Appeal = Template.bind({});
 Appeal.parameters = {
   docs: {
     storyDescription:
-      'A FormGenerator for Appeals',
+      'A FormGenerator for Appeal Reviews',
   },
 };
 
@@ -206,13 +206,12 @@ RampRefilingReview.args = rampRefilingArgs;
 RampRefilingReview.decorators = [ReduxDecoratorRampRefiling, RouterDecorator];
 
 // Ramp Election Review
-// Ramp Refiling Review
 export const RampElectionReview = Template.bind({});
 
 RampElectionReview.parameters = {
   docs: {
     storyDescription:
-      'A FormGenerator for Ramp Refiling Reviews',
+      'A FormGenerator for Ramp Election Reviews',
   },
 };
 

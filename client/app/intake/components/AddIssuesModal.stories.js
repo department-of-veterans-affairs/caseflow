@@ -36,5 +36,4 @@ export default {
 
 const Template = (args) => (<AddIssuesModal {...args} />);
 
-// Appeal Review
 export const basic = Template.bind({});
