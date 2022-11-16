@@ -109,9 +109,7 @@ namespace :add_admins do
     STDOUT.puts("Created user #{ussccr2.css_id}")
 
     # create COB users
-    atty = create(
-      :user,
-      :with_vacols_attorney_record,
+    atty = User.create!(
       station_id: 101,
       css_id: "COB_USER_CLARK",
       full_name: "Clark ClerkOfTheBoardUser Kent",
@@ -119,17 +117,17 @@ namespace :add_admins do
     )
     ClerkOfTheBoard.singleton.add_user(atty)
 
-    judge = create(
-      :user,
+    judge = User.create!(
+      station_id: 101,
       full_name: "Judy COTB Judge",
       css_id: "BVACOTBJUDGEJUDY",
       roles: ["Hearing Prep"]
     )
-    create(:staff, :judge_role, sdomainid: judge.css_id)
+    # create!(:staff, :judge_role, sdomainid: judge.css_id)
     ClerkOfTheBoard.singleton.add_user(judge)
 
-    admin = create(
-      :user,
+    admin = User.create!(
+      station_id: 101,
       full_name: "Adam ClerkOfTheBoardAdmin West",
       css_id: "BVATCOBBADMIN",
       roles: ["Hearing Prep"]
