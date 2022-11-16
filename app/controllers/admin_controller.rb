@@ -27,7 +27,11 @@ class AdminController < ApplicationController
     )
     .last
 
-    last_completed_time = prev_event&.completed_at&.utc&.to_date || Time.at(0).utc.to_date
+    if FeatureToggle.enabled?(:vet_extract_timestamp, user: current_user)
+      last_completed_time = prev_event&.completed_at&.utc&.to_date || Time.at(0).utc.to_date
+    else
+      last_completed_time = Time.at(0).utc.to_date
+    end
 
     results = VACOLS::Correspondent.extract(last_completed_time)
 
