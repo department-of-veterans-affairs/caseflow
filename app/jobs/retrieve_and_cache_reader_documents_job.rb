@@ -2,5 +2,7 @@
 
 class RetrieveAndCacheReaderDocumentsJob < ApplicationJob
   queue_with_priority :low_priority
-  def perform; end
+
+  def perform;
+  end
 end
