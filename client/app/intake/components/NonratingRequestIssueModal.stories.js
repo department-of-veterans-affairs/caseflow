@@ -44,8 +44,7 @@ export default {
 
 const Template = (args) => (<NonratingRequestIssueModal {...args} />);
 
-// Appeal Review
 export const basic = Template.bind({});
 
 export const WithSkipButton = Template.bind({});
-WithSkipButton.args = { ...defaultArgs, onSkip: () => true }
+WithSkipButton.args = { ...defaultArgs, onSkip: () => true };
