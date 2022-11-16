@@ -1,8 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
+import Moment from 'moment';
+import { extendMoment } from 'moment-range';
+
 import { css } from 'glamor';
 import COPY from '../../../COPY';
+
+const moment = extendMoment(Moment);
 
 const attorneyAssignedStyling = css({ width: '30%' });
 
