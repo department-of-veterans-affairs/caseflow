@@ -4,8 +4,8 @@
 module PrivacyActCancelled
   extend AppellantNotification
 
-  PRIVACY_ACT_TASKS = %w[FoiaColocatedTask PrivacyActTask
-                         HearingAdminFoiaPrivacyRequestTask PrivacyActRequestMailTask FoiaRequestMailTask].freeze
+  PRIVACY_ACT_TASKS = %w[FoiaColocatedTask PrivacyActTask HearingAdminActionFoiaPrivacyRequestTask
+                         PrivacyActRequestMailTask FoiaRequestMailTask].freeze
 
   def update_appeal_state_when_privacy_act_cancelled
     if PRIVACY_ACT_TASKS.include?(type) &&
