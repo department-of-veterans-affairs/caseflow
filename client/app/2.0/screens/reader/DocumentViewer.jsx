@@ -59,9 +59,9 @@ import { KeyboardInfo } from 'app/2.0/components/reader/DocumentViewer/modals/Ke
  */
 const DocumentViewer = (props) => {
   // Get the Document List state
+  // const state = useSelector(documentScreen);
   const state = props.featureToggles.readerSelectorsMemoized ?
     useSelector(documentScreenMemoized) : useSelector(documentScreen);
-
   // Create the Dispatcher
   const dispatch = useDispatch();
 
