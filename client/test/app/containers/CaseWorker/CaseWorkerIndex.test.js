@@ -10,7 +10,7 @@ const setup = () => {
 };
 
 describe('CaseWorkerIndex', () => {
-  it('renders correctly', () => {
+  it('renders correctly', async () => {
     const { container } = setup();
 
     expect(container).toMatchSnapshot();
