@@ -41,9 +41,11 @@ module Seeds
         priority_case_with_only_attorney_task
         priority_case_with_attorney_task_children
         priority_case_with_attorney_rewrite_task
+        priority_case_with_long_task_tree
         nonpriority_case_with_only_attorney_task
         nonpriority_case_with_attorney_task_children
         nonpriority_case_with_attorney_rewrite_task
+        nonpriority_case_with_long_task_tree
         priority_case_with_only_attorney_task(37)
         priority_case_with_attorney_task_children(32)
         priority_case_with_attorney_rewrite_task(37)
@@ -231,6 +233,81 @@ module Seeds
                             assigned_at: Time.zone.now)
       Timecop.return
       rewrite_task.completed!
+    end
+
+    def priority_case_with_long_task_tree
+      judge_team = JudgeTeam.find_by(name: "BVAGSPORER")
+      Timecop.travel(10.months.ago)
+      appeal = create(:appeal,
+                      :direct_review_docket,
+                      :with_request_issues,
+                      :at_attorney_drafting,
+                      :advanced_on_docket_due_to_age,
+                      associated_judge: User.find_by_css_id("BVAGSPORER"),
+                      associated_attorney: judge_team.users.last,
+                      issue_count: 1,
+                      veteran: create_veteran)
+      Timecop.travel(1.week.from_now)
+      create(:colocated_task,
+             :foia,
+             parent: appeal.tasks.of_type(:AttorneyTask).first,
+             assigned_at: Time.zone.now)
+      Timecop.travel(5.months.from_now)
+      appeal.tasks.of_type(:FoiaTask).first.completed!
+      Timecop.travel(1.week.from_now)
+      create(:colocated_task,
+             :ihp,
+             parent: appeal.tasks.of_type(:AttorneyTask).first,
+             assigned_at: Time.zone.now)
+      Timecop.travel(3.months.from_now)
+      appeal.tasks.of_type(:IhpColocatedTask).first.completed!
+      Timecop.travel(5.days.from_now)
+      appeal.tasks.of_type(:AttorneyTask).first.completed!
+      Timecop.travel(1.week.from_now)
+      create(:ama_attorney_rewrite_task,
+             parent: appeal.tasks.of_type(:JudgeDecisionReviewTask).first,
+             assigned_by: judge_team.users.first,
+             assigned_to: judge_team.users.last,
+             assigned_at: Time.zone.now)
+      Timecop.travel(2.weeks.from_now)
+      appeal.tasks.of_type(:AttorneyRewriteTask).first.completed!
+    end
+
+    def nonpriority_case_with_long_task_tree
+      judge_team = JudgeTeam.find_by(name: "BVAGSPORER")
+      Timecop.travel(10.months.ago)
+      appeal = create(:appeal,
+                      :direct_review_docket,
+                      :with_request_issues,
+                      :at_attorney_drafting,
+                      associated_judge: User.find_by_css_id("BVAGSPORER"),
+                      associated_attorney: judge_team.users.last,
+                      issue_count: 1,
+                      veteran: create_veteran)
+      Timecop.travel(1.week.from_now)
+      create(:colocated_task,
+             :foia,
+             parent: appeal.tasks.of_type(:AttorneyTask).first,
+             assigned_at: Time.zone.now)
+      Timecop.travel(5.months.from_now)
+      appeal.tasks.of_type(:FoiaTask).first.completed!
+      Timecop.travel(1.week.from_now)
+      create(:colocated_task,
+             :ihp,
+             parent: appeal.tasks.of_type(:AttorneyTask).first,
+             assigned_at: Time.zone.now)
+      Timecop.travel(3.months.from_now)
+      appeal.tasks.of_type(:IhpColocatedTask).first.completed!
+      Timecop.travel(5.days.from_now)
+      appeal.tasks.of_type(:AttorneyTask).first.completed!
+      Timecop.travel(1.week.from_now)
+      create(:ama_attorney_rewrite_task,
+             parent: appeal.tasks.of_type(:JudgeDecisionReviewTask).first,
+             assigned_by: judge_team.users.first,
+             assigned_to: judge_team.users.last,
+             assigned_at: Time.zone.now)
+      Timecop.travel(2.weeks.from_now)
+      appeal.tasks.of_type(:AttorneyRewriteTask).first.completed!
     end
   end
 end
