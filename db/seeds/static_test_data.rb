@@ -271,6 +271,7 @@ module Seeds
              assigned_at: Time.zone.now)
       Timecop.travel(2.weeks.from_now)
       appeal.tasks.of_type(:AttorneyRewriteTask).first.completed!
+      Timecop.return
     end
 
     def nonpriority_case_with_long_task_tree
@@ -308,6 +309,7 @@ module Seeds
              assigned_at: Time.zone.now)
       Timecop.travel(2.weeks.from_now)
       appeal.tasks.of_type(:AttorneyRewriteTask).first.completed!
+      Timecop.return
     end
   end
 end
