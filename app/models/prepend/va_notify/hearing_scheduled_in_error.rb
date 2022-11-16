@@ -6,18 +6,17 @@
 module HearingScheduledInError
   extend AppellantNotification
 
-  # Purpose: Inserts or updates a row in the appeal_states table
+  # Purpose: Callback method when a hearing updates to also updates appeal_states table
   #
-  # Params: { disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error, hearing_notes: "OPTIONAL" }
+  # Params: none
   #
-  # Response: Return value of original method defined in app/models/tasks/assign_hearing_disposition_task.rb
-  def update_hearing_disposition_and_notes(payload_values)
-    super_return_value = super
-    MetricsService.record("Updating VSO_IHP_PENDING column in Appeal States Table to FALSE for #{appeal.class.to_s} ID #{appeal.id}".yellow,
-                            service: :queue,
+  # Response: none
+  def update_appeal_states_on_hearing_scheduled_in_error
+    if disposition == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+      MetricsService.record("Updating SCHEDULED_IN_ERROR in Appeal States Table for #{appeal.class.to_s} ID #{appeal.id}".yellow,
                             name: "AppellantNotification.appeal_mapper") do
         AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "scheduled_in_error")
       end
-    super_return_value
+    end
   end
 end
