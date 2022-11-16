@@ -251,6 +251,7 @@ const FormGenerator = (props) => {
     return <Redirect to={PAGE_PATHS.COMPLETED} />;
   default:
   }
+
   const beginNextIntake = () => {
     props.confirmIneligibleForm(props.intakeId);
   };
@@ -258,13 +259,10 @@ const FormGenerator = (props) => {
 
   const userIsVhaEmployee = true;
   const isHlrOrSCForm = [FORM_TYPES.HIGHER_LEVEL_REVIEW.formName, FORM_TYPES.SUPPLEMENTAL_CLAIM.formName].includes(props.formName);
-  const vhaBenefitEmailLink = '<a href="mailto: VHABENEFITAPPEALS@va.gov?subject=Potential%20VHA%20Higher-Level%20Review%20or%20Supplemental%20Claim">VHABENEFITAPPEALS@va.gov</a>';
-  const alertMessage = sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, vhaBenefitEmailLink);
   const mailToLink = <Link href="mailto:VHABENEFITAPPEALS@va.gov?subject=Potential%20VHA%20Higher-Level%20Review%20or%20Supplemental%20Claim" >
-    VHABENEFITAPPEALS@va.gov
+    <span>VHABENEFITAPPEALS@va.gov</span>
   </Link>;
-  console.log(renderToString(mailToLink));
-  const alertMessage2 = sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, renderToString(mailToLink));
+  const alertMessage = sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, renderToString(mailToLink));
 
   return (
     <div>
@@ -273,7 +271,6 @@ const FormGenerator = (props) => {
         <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
             <span dangerouslySetInnerHTML={{ __html: alertMessage }} />
-            <span dangerouslySetInnerHTML={{ __html: alertMessage2 }} />
           </Alert>
         </div>
       )}

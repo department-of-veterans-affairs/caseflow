@@ -1,0 +1,40 @@
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { PAGE_PATHS } from '../constants';
+import ReduxBase from 'app/components/ReduxBase';
+import { reducer, generateInitialState } from 'app/intake';
+
+import AddIssuesModal from './AddIssuesModal';
+
+const RouterDecorator = (Story) => (
+  <MemoryRouter initialEntries={[PAGE_PATHS.ADD_ISSUES]}>
+    <Story />
+  </MemoryRouter>
+);
+
+const ReduxDecorator = (Story) => {
+  const state = generateInitialState();
+
+  return <ReduxBase reducer={reducer} initialState={state}>
+    <Story />
+  </ReduxBase>;
+};
+
+const defaultArgs = {
+  intakeData: {}
+};
+
+export default {
+  title: 'Intake/Review/Add Issues Modal',
+  component: AddIssuesModal,
+  decorators: [ReduxDecorator, RouterDecorator],
+  parameters: {},
+  args: defaultArgs,
+  argTypes: {
+  },
+};
+
+const Template = (args) => (<AddIssuesModal {...args} />);
+
+// Appeal Review
+export const basic = Template.bind({});
