@@ -1,0 +1,13 @@
+{
+    "quarterly_notification": "Quarterly Notification",
+    "appeal_docketed": "Appeal docketed",
+    "appeal_decision_mailed_non_contested_claims": "Appeal decision mailed (Non-contested claims)",
+    "appeal_decision_mailed_contested_claims": "Appeal decision mailed (Contested claims)",
+    "hearing_scheduled": "Hearing scheduled",
+    "withdrawal_of_hearing": "Withdrawal of hearing",
+    "postponement_of_hearing": "Postponement of hearing",
+    "privacy_act_request_pending": "Privacy Act request pending",
+    "privacy_act_request_complete": "Privacy Act request complete",
+    "vso_ihp_pending": "VSO IHP pending",
+    "vso_ihp_complete": "VSO IHP complete"
+  }
