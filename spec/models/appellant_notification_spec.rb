@@ -515,13 +515,10 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_complete")
         hafpr_child.update!(status: "completed")
       end
-<<<<<<< HEAD
-=======
       it "updates appeal state when task is cancelled" do
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_cancelled")
         hafpr_child.update!(status: "cancelled")
       end
->>>>>>> feature/APPEALS-10308
     end
 
     # Note: only privacyactrequestmailtask is tested because the process is the same as foiarequestmailtask
@@ -660,10 +657,7 @@ describe AppellantNotification do
         PrivacyActTask.create_child_task(colocated_task, attorney, privacy_params_org)
       end
       it "updates appeal state when creating a PrivacyActTask" do
-<<<<<<< HEAD
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
-=======
->>>>>>> feature/APPEALS-10308
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_pending")
         PrivacyActTask.create_child_task(colocated_task, attorney, privacy_params_org)
       end
@@ -672,10 +666,7 @@ describe AppellantNotification do
         privacy_child.update!(status: "completed")
       end
       it "updates appeal state when completing a PrivacyActTask assigned to user" do
-<<<<<<< HEAD
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
-=======
->>>>>>> feature/APPEALS-10308
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_complete")
         privacy_child.update!(status: "completed")
       end
@@ -720,14 +711,9 @@ describe AppellantNotification do
           task_factory.create_ihp_tasks!
         end
         it "updates appeal state when ihp task is created" do
-<<<<<<< HEAD
           task_factory.create_ihp_tasks!
           appeal_state_record = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal.class.to_s)
           expect(appeal_state_record.vso_ihp_pending).to eq(true)
-=======
-          expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
-          task_factory.create_ihp_tasks!
->>>>>>> feature/APPEALS-10308
         end
       end
 
@@ -789,7 +775,6 @@ describe AppellantNotification do
         end
         it "updates appeal state when ihp task pending" do
           allow(ColocatedTask).to receive(:verify_user_can_create!).with(user, colocated_task).and_return(true)
-<<<<<<< HEAD
           IhpColocatedTask.create_from_params(params, user)
           appeal_state_record = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal.class.to_s)
           expect(appeal_state_record.vso_ihp_pending).to eq(true)
@@ -835,10 +820,6 @@ describe AppellantNotification do
           task.update!(status: Constants.TASK_STATUSES.cancelled)
           new_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
           expect(new_appeal_state.vso_ihp_pending).to eq(false)
-=======
-          expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
-          IhpColocatedTask.create_from_params(params, user)
->>>>>>> feature/APPEALS-10308
         end
       end
     end
@@ -859,14 +840,9 @@ describe AppellantNotification do
         end
         it "will update appeal state the 'IhpTaskComplete' status" do
           allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
-<<<<<<< HEAD
           task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
           appeal_state_record = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
           expect(appeal_state_record.vso_ihp_complete).to eq(true)
-=======
-          expect(AppellantNotification).to receive(:appeal_mapper).with(task.appeal.id, task.appeal.class.to_s, "vso_ihp_complete")
-          task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
->>>>>>> feature/APPEALS-10308
         end
       end
     end
@@ -885,14 +861,9 @@ describe AppellantNotification do
         end
         it "will update appeal state with the 'IhpTaskComplete' status" do
           allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
-<<<<<<< HEAD
           task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
           appeal_state_record = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
           expect(appeal_state_record.vso_ihp_complete).to eq(true)
-=======
-          expect(AppellantNotification).to receive(:appeal_mapper).with(task.appeal.id, task.appeal.class.to_s, "vso_ihp_complete")
-          task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
->>>>>>> feature/APPEALS-10308
         end
       end
     end
