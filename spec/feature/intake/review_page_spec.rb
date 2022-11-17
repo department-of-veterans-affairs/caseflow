@@ -462,13 +462,16 @@ feature "Intake Review Page", :postgres do
       end
 
       scenario "does not show the vha permissions update banner when the intake user is a member of vha" do
-        # Vha user setup
-        # This doesn't even exist yet whelp
+        # Create VHA BusinessLine User and Authenticate it
         vha_businessline_user = create(:user, roles: ["Admin Intake"])
-        vha_businessline_organization = BusinessLine.find_or_create_by(url: "vha")
+
+        vha_businessline_organization = create(:business_line, url: "vha")
         vha_businessline_organization.add_user(vha_businessline_user)
         User.authenticate!(user: vha_businessline_user)
-        # User.authenticate!(roles: ["Admin Intake"])
+
+        puts "Is new user a vha employee????????"
+        puts vha_businessline_user.vha_employee?
+        # The answer is no
 
         start_supplemental_claim(
           veteran,

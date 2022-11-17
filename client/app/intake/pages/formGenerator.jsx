@@ -257,14 +257,16 @@ const FormGenerator = (props) => {
   };
   const showInvalidVeteranError = !props.veteranValid && VBMS_BENEFIT_TYPES.includes(props.benefitType);
 
-  const userIsVhaEmploye = true;
-  // const userIsVhaEmployee = props.userIsVhaEmployee;
-  const isHlrOrSCForm = [FORM_TYPES.HIGHER_LEVEL_REVIEW.formName, FORM_TYPES.SUPPLEMENTAL_CLAIM.formName].includes(props.formName);
-  const emailAddress = 'VHABENEFITAPPEALS@va.gov';
-  const mailToLink = <Link href={`mailto:${emailAddress}?subject=Potential%20VHA%20Higher-Level%20Review%20or%20Supplemental%20Claim`}>
-    <span>{emailAddress}</span>
-  </Link>;
-  const vhaBannerMessage = sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, renderToString(mailToLink));
+  const buildVHAInfoBannerMessage = () => {
+    const emailAddress = 'VHABENEFITAPPEALS@va.gov';
+    const mailToLink = <Link href={`mailto:${emailAddress}?subject=Potential%20VHA%20Higher-Level%20Review%20or%20Supplemental%20Claim`}>
+      <span>{emailAddress}</span>
+    </Link>;
+
+    return sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, renderToString(mailToLink));
+  };
+
+  const isHlrOrScForm = [FORM_TYPES.HIGHER_LEVEL_REVIEW.formName, FORM_TYPES.SUPPLEMENTAL_CLAIM.formName].includes(props.formName);
 
   return (
     <div>
@@ -289,10 +291,10 @@ const FormGenerator = (props) => {
           errorData={props.veteranInvalidFields}
         />
       )}
-      {userIsVhaEmploye && isHlrOrSCForm && (
-        <div style={{ marginBottom: '3rem' }}>
+      {!props.userIsVhaEmployee && isHlrOrScForm && (
+        <div style={{ marginBottom: '3rem', marginRight: '-10px' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
-            <span dangerouslySetInnerHTML={{ __html: vhaBannerMessage }} />
+            <span style={{ marginRight: '-10px' }} dangerouslySetInnerHTML={{ __html: buildVHAInfoBannerMessage() }} />
           </Alert>
         </div>
       )}
