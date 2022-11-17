@@ -714,6 +714,7 @@ describe AppellantNotification do
           task_factory.create_ihp_tasks!
           appeal_state_record = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal.class.to_s)
           expect(appeal_state_record.vso_ihp_pending).to eq(true)
+          expect(appeal_state_record.vso_ihp_complete).to eq(false)
         end
       end
 
@@ -778,6 +779,7 @@ describe AppellantNotification do
           IhpColocatedTask.create_from_params(params, user)
           appeal_state_record = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal.class.to_s)
           expect(appeal_state_record.vso_ihp_pending).to eq(true)
+          expect(appeal_state_record.vso_ihp_complete).to eq(false)
         end
       end
     end
@@ -798,6 +800,7 @@ describe AppellantNotification do
           task.update!(status: Constants.TASK_STATUSES.cancelled)
           new_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
           expect(new_appeal_state.vso_ihp_pending).to eq(false)
+          expect(new_appeal_state.vso_ihp_complete).to eq(false)
         end
       end
 
@@ -809,6 +812,7 @@ describe AppellantNotification do
           task.update!(status: Constants.TASK_STATUSES.cancelled)
           new_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
           expect(new_appeal_state.vso_ihp_pending).to eq(false)
+          expect(new_appeal_state.vso_ihp_complete).to eq(false)
         end
       end
 
@@ -820,6 +824,7 @@ describe AppellantNotification do
           task.update!(status: Constants.TASK_STATUSES.cancelled)
           new_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
           expect(new_appeal_state.vso_ihp_pending).to eq(false)
+          expect(new_appeal_state.vso_ihp_complete).to eq(false)
         end
       end
     end
