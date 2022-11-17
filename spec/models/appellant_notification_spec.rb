@@ -78,7 +78,6 @@ describe AppellantNotification do
       let(:template_name) { "Appeal docketed" }
       let!(:pre_docket_task) { PreDocketTask.find_by(appeal: appeal) }
       it "will update the appeal state after docketing the Predocketed Appeal" do
-        # expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "appeal_docketed")
         pre_docket_task.docket_appeal
         appeal_state_record = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal.class.to_s)
         expect(appeal_state_record.appeal_docketed).to eq(true)
@@ -560,7 +559,8 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
         privacy_parent.update_with_instructions(status: "completed")
       end
-      it "updates appeal state when completing a PrivacyActTask assigned to organization" do
+      it "updates appeal state when cancelling a PrivacyActTask assigned to organization" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_cancelled")
         privacy_parent.update_with_instructions(status: "cancelled")
       end
@@ -597,6 +597,7 @@ describe AppellantNotification do
           task_factory.create_ihp_tasks!
         end
       end
+
       context "If the appellant does not have a VSO" do
         let(:participant_id_with_nil) { "1234" }
         before do
@@ -725,6 +726,35 @@ describe AppellantNotification do
         end
       end
     end
+
+    describe "update_appeal_state_when_ihp_completed" do
+      context "A completed 'InformalHearingPresentationTask'" do
+        let(:user) { create(:user) }
+        let(:org) { create(:organization) }
+        let(:task) { create(:informal_hearing_presentation_task, :in_progress, assigned_to: org) }
+        it "will update the 'vso_ihp_complete' column in the Appeal State table to TRUE" do
+          allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
+          task.update!(status: "completed")
+          appeal_state_record = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(appeal_state_record.vso_ihp_complete).to eq(true)
+          expect(appeal_state_record.vso_ihp_pending).to eq(false)
+        end
+      end
+
+      context "A completed 'IhpColocatedTask'" do
+        let(:user) { create(:user) }
+        let(:org) { create(:organization) }
+        let(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
+        let(:template_name) { "VSO IHP complete" }
+        it "will update the 'vso_ihp_complete' column in the Appeal State table to TRUE" do
+          allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
+          task.update!(status: "completed")
+          appeal_state_record = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(appeal_state_record.vso_ihp_complete).to eq(true)
+          expect(appeal_state_record.vso_ihp_pending).to eq(false)
+        end
+      end
+    end
   end
 
   describe SendNotificationJob do
@@ -753,5 +783,4 @@ describe AppellantNotification do
       end
     end
   end
-
 end

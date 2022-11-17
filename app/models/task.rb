@@ -789,6 +789,8 @@ class Task < CaseflowRecord
   def update_appeal_state_on_status_change
     update_appeal_state_when_ihp_cancelled
     update_appeal_state_when_ihp_completed
+    update_appeal_state_when_privacy_act_cancelled
+    update_appeal_state_when_appeal_cancelled
   end
 
   # Purpose: This method is triggered by callback 'after_create'.  This method calls a variety of abstract private
@@ -801,8 +803,6 @@ class Task < CaseflowRecord
   def update_appeal_state_on_task_creation
     update_appeal_state_when_appeal_docketed
     update_appeal_state_when_ihp_created
-    update_appeal_state_when_appeal_cancelled
-    update_appeal_state_when_privacy_act_cancelled
   end
 
   private
