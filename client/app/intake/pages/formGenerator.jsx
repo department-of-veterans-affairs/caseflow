@@ -257,23 +257,18 @@ const FormGenerator = (props) => {
   };
   const showInvalidVeteranError = !props.veteranValid && VBMS_BENEFIT_TYPES.includes(props.benefitType);
 
-  const userIsVhaEmployee = true;
+  const userIsVhaEmploye = true;
+  // const userIsVhaEmployee = props.userIsVhaEmployee;
   const isHlrOrSCForm = [FORM_TYPES.HIGHER_LEVEL_REVIEW.formName, FORM_TYPES.SUPPLEMENTAL_CLAIM.formName].includes(props.formName);
-  const mailToLink = <Link href="mailto:VHABENEFITAPPEALS@va.gov?subject=Potential%20VHA%20Higher-Level%20Review%20or%20Supplemental%20Claim" >
-    <span>VHABENEFITAPPEALS@va.gov</span>
+  const emailAddress = 'VHABENEFITAPPEALS@va.gov';
+  const mailToLink = <Link href={`mailto:${emailAddress}?subject=Potential%20VHA%20Higher-Level%20Review%20or%20Supplemental%20Claim`}>
+    <span>{emailAddress}</span>
   </Link>;
-  const alertMessage = sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, renderToString(mailToLink));
+  const vhaBannerMessage = sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, renderToString(mailToLink));
 
   return (
     <div>
       <h1>{props.formHeader(props.veteranName)}</h1>
-      {userIsVhaEmployee && isHlrOrSCForm && (
-        <div style={{ marginBottom: '3rem' }}>
-          <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
-            <span dangerouslySetInnerHTML={{ __html: alertMessage }} />
-          </Alert>
-        </div>
-      )}
       {toggleIneligibleError(props.hasInvalidOption, props.optionSelected) && (
         <Alert title="Ineligible for Higher-Level Review" type="error">
           {COPY.INELIGIBLE_HIGHER_LEVEL_REVIEW_ALERT} <br />
@@ -293,6 +288,13 @@ const FormGenerator = (props) => {
           errorCode="veteran_not_valid"
           errorData={props.veteranInvalidFields}
         />
+      )}
+      {userIsVhaEmploye && isHlrOrSCForm && (
+        <div style={{ marginBottom: '3rem' }}>
+          <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
+            <span dangerouslySetInnerHTML={{ __html: vhaBannerMessage }} />
+          </Alert>
+        </div>
       )}
       {Object.keys(props.schema.fields).map((field) => formFieldMapping(props)[field])}
     </div>
@@ -327,6 +329,7 @@ const SelectClaimantConnected = connect(
 FormGenerator.propTypes = {
   schema: PropTypes.object.isRequired,
   formHeader: PropTypes.func.isRequired,
+  formName: PropTypes.string.isRequired,
   veteranName: PropTypes.string,
   receiptDate: PropTypes.string,
   receiptDateError: PropTypes.string,
@@ -355,7 +358,8 @@ FormGenerator.propTypes = {
   homelessness: PropTypes.string,
   setHomelessnessType: PropTypes.func,
   homelessnessError: PropTypes.string,
-  isReviewed: PropTypes.bool
+  isReviewed: PropTypes.bool,
+  userIsVhaEmployee: PropTypes.bool
 };
 export default connect(
   (state, props) => ({
@@ -390,6 +394,7 @@ export default connect(
     homelessnessError: state[props.formName].homelessnessError,
     homelessnessUserInteraction: state[props.formName].homelessnessUserInteraction,
     isReviewed: state[props.formName].isReviewed,
+    userIsVhaEmployee: state.intake.userIsVhaEmployee
   }),
   (dispatch) => bindActionCreators({
     setDocketType,
