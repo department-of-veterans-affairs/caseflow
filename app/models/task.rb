@@ -787,7 +787,6 @@ class Task < CaseflowRecord
   #
   # Response: The Appeal State record correlated to the current task's appeal will be updated.
   def update_appeal_state_on_status_change
-<<<<<<< HEAD
     update_appeal_state_when_ihp_cancelled
     update_appeal_state_when_ihp_completed
   end
@@ -802,10 +801,8 @@ class Task < CaseflowRecord
   def update_appeal_state_on_task_creation
     update_appeal_state_when_appeal_docketed
     update_appeal_state_when_ihp_created
-=======
     update_appeal_state_when_appeal_cancelled
     update_appeal_state_when_privacy_act_cancelled
->>>>>>> feature/APPEALS-10308
   end
 
   private
@@ -964,49 +961,5 @@ class Task < CaseflowRecord
 
     true
   end
-
-  # Purpose: Abstract method that is called by #update_appeal_state_on_status_change.
-  # This method is prepended in app/models/prepend/va_notify/ihp_task_cancelled.rb.
-  # This method will update the correlated record in the 'Appeal States' table when the parent
-  # IHP type task is cancelled.
-  #
-  # Params: NONE
-  #
-  # Response: The 'vso_ihp_pending' column will be updated to FALSE for the correlated record within
-  # the Appeal States table.
-  def update_appeal_state_when_ihp_cancelled; end
-
-  # Purpose: Abstract method that is called by #update_appeal_state_on_task_creation.
-  # This method is prepended in app/models/prepend/va_notify/ihp_task_pending.rb.
-  # This method will update the correlated record in the 'Appeal States' table when an IHP
-  # type task is created.
-  #
-  # Params: NONE
-  #
-  # Response: The 'vso_ihp_pending' column will be updated to TRUE for the correlated record within
-  # the Appeal States table.
-  def update_appeal_state_when_ihp_created; end
-
-  # Purpose: Abstract method that is called by #update_appeal_state_on_status_change.
-  # This method is prepended in app/models/prepend/va_notify/ihp_task_complete.rb.
-  # This method will update the correlated record in the 'Appeal States' table when the parent
-  # IHP type task is completed.
-  #
-  # Params: NONE
-  #
-  # Response: The 'vso_ihp_complete' column will be updated to TRUE for the correlated record within
-  # the Appeal States table.
-  def update_appeal_state_when_ihp_completed; end
-
-  # Purpose: Abstract method that is called by #update_appeal_state_on_task_creation.
-  # This method is prepended in app/models/prepend/va_notify/appeal_docketed.rb.
-  # This method will update the correlated record in the 'Appeal States' table when a
-  # DistributionTask is created.
-  #
-  # Params: NONE
-  #
-  # Response: The 'appeal_docketed' column will be updated to TRUE for the correlated record within
-  # the Appeal States table.
-  def update_appeal_state_when_appeal_docketed; end
 end
 # rubocop:enable Metrics/ClassLength
