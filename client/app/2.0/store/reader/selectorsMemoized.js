@@ -36,6 +36,7 @@ export const getdocsFiltered = createSelector(
  * @returns {Object} -- The Documents
  */
 export const documentState = (state) => {
+  console.log("Feature Flag Enabled - Bulk Upload")
   // Set the filtered documents
   const documents = getFilteredDocuments(state);
 
@@ -67,7 +68,7 @@ export const documentListScreenMemoized = (state) => {
     });
 
   const docsFiltered = getdocsFiltered(state);
-  
+
   const documentView = getDocumentsView(state);
 
   return {
@@ -113,7 +114,7 @@ export const documentScreenMemoized = (state) => {
       };
     }, {})
   })
-  
+
   const categories = getCategories(state);
   // Filter the comments for the current document
 
@@ -123,7 +124,7 @@ export const documentScreenMemoized = (state) => {
     allComments.filter((comment) =>
     comment.document_id === selectedDoc.id)
     );
-    
+
   const comments = getComments(state);
   // Get the tag options for the current document
   const getTagOptions = createSelector([getAllDocs],

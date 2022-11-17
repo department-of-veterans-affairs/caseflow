@@ -7,7 +7,7 @@
 # within app/models/task.rb.  When an IHP Task is completed, the appellant will be notified.
 # There is a callback within app/models/task.rb that will trigger 'update_appeal_state_on_status_change' to run
 # whenever a task is completed (which in turn calls 'update_appeal_state_when_ihp_completed').  The method
-# 'update_appeal_state_when_ihp_completed' will check if task being completed is an IHP type task.  If the completed task
+# 'update_appeal_state_when_ihp_completed' will check if task being completed is an IHP type task.  If the task
 # is an IHP type task, then the record correlated to the current task's appeal will have the column VSO IHP COMPLETE
 # within the Appeal States table updated to be TRUE.
 module IhpTaskComplete
