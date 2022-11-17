@@ -940,15 +940,5 @@ class Task < CaseflowRecord
 
     true
   end
-
-  # Purpose: Abstract method that is called by #update_appeal_state_when_appeal_cancelled.
-  # This method is prepended in app/models/prepend/va_notify/appeal_cancelled.rb.
-  # This method will update the correlated record in the 'Appeal States' table when the
-  # RootTask is cancelled.
-  #
-  # Params: NONE
-  #
-  # Response: The Appeal State record correlated to the current root task's appeal will be updated.
-  def update_appeal_state_when_appeal_cancelled; end
 end
 # rubocop:enable Metrics/ClassLength
