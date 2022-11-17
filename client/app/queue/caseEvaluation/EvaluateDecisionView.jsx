@@ -20,9 +20,9 @@ import { deleteAppeal } from '../QueueActions';
 import { requestSave } from '../uiReducer/uiActions';
 import { buildCaseReviewPayload } from '../utils';
 import { taskById,
-  getFullAttorneyTaskTree,
+  getTaskTreesForAttorneyTasks,
   getLegacyTaskTree,
-  getMostRecentAttorneyTask,
+  getAttorneyTasksForJudgeTask,
 } from '../selectors';
 
 import COPY from '../../../COPY';
@@ -42,7 +42,7 @@ import DispatchSuccessDetail from '../components/DispatchSuccessDetail';
 import QueueFlowPage from '../components/QueueFlowPage';
 import { JudgeCaseQuality } from './JudgeCaseQuality';
 import { qualityIsDeficient, errorStylingNoTopMargin } from '.';
-import { AttorneyTaskTimeline } from '../AttorneyTaskTimeline';
+import { AttorneyTaskTimeline } from './AttorneyTaskTimeline';
 import { AttorneyDaysWorked } from './AttorneyDaysWorked';
 
 const headerStyling = marginBottom(1.5);
@@ -190,13 +190,13 @@ class EvaluateDecisionView extends React.PureComponent {
     const { appeal,
       isLegacy,
       task,
-      attorneyTask,
+      oldestAttorneyTask,
       attorneyChildrenTasks,
       displayCaseTimelinessTimeline,
     } = this.props;
 
     const dateAssigned = displayCaseTimelinessTimeline && !isLegacy ?
-      moment(attorneyTask.createdAt) : moment(task.previousTaskAssignedOn);
+      moment(oldestAttorneyTask.createdAt) : moment(task.previousTaskAssignedOn);
     const decisionSubmitted = moment(task.assignedOn);
     const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
 
@@ -352,7 +352,7 @@ EvaluateDecisionView.propTypes = {
   requestSave: PropTypes.func,
   deleteAppeal: PropTypes.func,
   displayCaseTimelinessQuestion: PropTypes.bool,
-  attorneyTask: PropTypes.object,
+  oldestAttorneyTask: PropTypes.object,
   attorneyChildrenTasks: PropTypes.array,
   displayCaseTimelinessTimeline: PropTypes.bool,
   isLegacy: PropTypes.bool,
@@ -360,7 +360,9 @@ EvaluateDecisionView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const isLegacy = appeal.docketName === 'legacy';
+  let isLegacy;
+  let oldestAttorneyTask;
+  let attorneyChildrenTasks = [];
 
   // previousTaskAssignedOn comes from
   // eslint-disable-next-line max-len
@@ -368,38 +370,39 @@ const mapStateToProps = (state, ownProps) => {
   // AMA: https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/tasks/judge_task.rb#L42
   const judgeDecisionReviewTask = taskById(state, { taskId: ownProps.taskId });
 
-  const attorneyTask = getMostRecentAttorneyTask(state, {
-    appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId });
-  let attorneyChildrenTasks = [];
-
   // When canceling out of Evaluate Decision page need to check if appeal exists otherwise failures occur
   if (appeal) {
+    isLegacy = appeal.docketName === 'legacy';
+
     if (isLegacy) {
       attorneyChildrenTasks = getLegacyTaskTree(state, {
         appealId: appeal.externalId, judgeDecisionReviewTask });
     } else {
-      attorneyChildrenTasks = getFullAttorneyTaskTree(state, {
+      // We want the oldest AttorneyTask to use its createdAt as the start of the date range to be displayed and for
+      // calculating the total days between JudgeTask and AttorneyTask
+      // These tasks are returned sorted so the oldest is at front
+      oldestAttorneyTask = getAttorneyTasksForJudgeTask(state, {
+        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId })[0];
+
+      // Get all tasks under the JudgeDecisionReviewTask
+      // Filters out those without a closedAt date or that are hideFromCaseTimeline
+      attorneyChildrenTasks = getTaskTreesForAttorneyTasks(state, {
         appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId }).
-        filter((task) => !task.hideFromCaseTimeline).
         filter((task) => {
           // Remove any tasks whose createdAt is older than the AttorneyTask's createdAt date
           const taskAssignedOn = moment(task.createdAt);
-          const attorneyTaskAssignedOn = moment(attorneyTask.createdAt);
+          const attorneyTaskAssignedOn = moment(oldestAttorneyTask.createdAt);
           const result = taskAssignedOn.diff(attorneyTaskAssignedOn, 'days');
 
           return result >= 0;
-        }
-        );
-
-      // eslint-disable-next-line id-length
-      attorneyChildrenTasks.sort((a, b) => new Date(b.closedAt) - new Date(a.closedAt));
+        });
     }
   }
 
   return {
     appeal,
     attorneyChildrenTasks,
-    attorneyTask,
+    oldestAttorneyTask,
     isLegacy,
     highlight: state.ui.highlightFormItems,
     taskOptions: state.queue.stagedChanges.taskDecision.opts,

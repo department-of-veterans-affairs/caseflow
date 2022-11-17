@@ -10,24 +10,44 @@ const moment = extendMoment(Moment);
 
 const attorneyAssignedStyling = css({ width: '30%' });
 
-const dateString = (date) => moment(date).format('MM/DD/YYYY');
+const isSameRange = (rangeA, rangeB) => {
+  return rangeA.start.isSame(rangeB.start, 'day') && rangeA.end.isSame(rangeB.end, 'day');
+};
 
 const calculateDaysWorked = (tasks, daysAssigned) => {
-  // Reduce down to all unique date ranges for the case when tasks are worked in parallel
-  const uniqueDateRanges = [
-    ...new Map(tasks.map((task) => [dateString(task.createdAt) + dateString(task.closedAt), task])).values(),
-  ];
-
   let sumOfDays = 0;
 
-  uniqueDateRanges.forEach((task) => {
-    const startTaskWork = moment(task.createdAt);
-    let endTaskWork = moment();
+  // Map all tasks' createdAt to closedAt to a moment.range object
+  const dateRanges = tasks.map((task) => moment.range(moment(task.createdAt), moment(task.closedAt)));
 
-    if (task.closedAt) {
-      endTaskWork = moment(task.closedAt);
+  const uniqueDateRanges = [];
+  const alreadyAccountedForDateRanges = [];
+
+  // For all tasks' date ranges find overlapping date ranges
+  dateRanges.forEach((dateRange) => {
+
+    // If a date range was already found to be overlapping do not create another combined overlapping date range
+    if (alreadyAccountedForDateRanges.findIndex((range) => isSameRange(dateRange, range)) < 0) {
+
+      // Find all overlapping date ranges
+      const overlappingDateRanges = dateRanges.filter((range) => dateRange.overlaps(range, { adjacent: true }));
+
+      // Track used date ranges so they are not used again
+      alreadyAccountedForDateRanges.push(...overlappingDateRanges);
+
+      // Add all overlapping date ranges together
+      let overlappingDateRange = dateRange.clone();
+
+      overlappingDateRanges.forEach((range) => {
+        overlappingDateRange = overlappingDateRange.add(range, { adjacent: true });
+      });
+
+      uniqueDateRanges.push(overlappingDateRange);
     }
-    sumOfDays += Math.max(1, endTaskWork.startOf('day').diff(startTaskWork, 'days'));
+  });
+
+  uniqueDateRanges.forEach((range) => {
+    sumOfDays += Math.max(1, range.diff('days'));
   });
 
   return daysAssigned - Math.max(1, sumOfDays) - 1;

@@ -236,14 +236,14 @@ module Seeds
     end
 
     def priority_case_with_long_task_tree
-      judge_team = JudgeTeam.find_by(name: "BVAGSPORER")
+      judge_team = JudgeTeam.find_by(name: "BVAEBECKER")
       Timecop.travel(10.months.ago)
       appeal = create(:appeal,
                       :direct_review_docket,
                       :with_request_issues,
                       :at_attorney_drafting,
                       :advanced_on_docket_due_to_age,
-                      associated_judge: User.find_by_css_id("BVAGSPORER"),
+                      associated_judge: User.find_by_css_id("BVAEBECKER"),
                       associated_attorney: judge_team.users.last,
                       issue_count: 1,
                       veteran: create_veteran)
@@ -275,13 +275,13 @@ module Seeds
     end
 
     def nonpriority_case_with_long_task_tree
-      judge_team = JudgeTeam.find_by(name: "BVAGSPORER")
+      judge_team = JudgeTeam.find_by(name: "BVAEBECKER")
       Timecop.travel(10.months.ago)
       appeal = create(:appeal,
                       :direct_review_docket,
                       :with_request_issues,
                       :at_attorney_drafting,
-                      associated_judge: User.find_by_css_id("BVAGSPORER"),
+                      associated_judge: User.find_by_css_id("BVAEBECKER"),
                       associated_attorney: judge_team.users.last,
                       issue_count: 1,
                       veteran: create_veteran)
