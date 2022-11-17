@@ -127,6 +127,14 @@ module AppellantNotification
          open_tasks.where(type: FoiaRequestMailTask.name).empty? && open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
         appeal_state.update!(privacy_act_complete: true, privacy_act_pending: false)
       end
+    when "privacy_act_cancelled"
+      # Only updates appeal state if ALL privacy act tasks are completed
+      open_tasks = appeal.tasks.open
+      if open_tasks.where(type: FoiaColocatedTask.name).empty? && open_tasks.where(type: PrivacyActTask.name).empty? &&
+         open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
+         open_tasks.where(type: FoiaRequestMailTask.name).empty? && open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
+        appeal_state.update!(privacy_act_pending: false)
+      end
     end
   end
 # Public: Finds the appeal based on the id and type, then calls update_appeal_state to create/update appeal state
