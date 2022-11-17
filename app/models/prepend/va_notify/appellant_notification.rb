@@ -2,7 +2,6 @@
 
 # Module containing Aspect Overrides to Classes used to Track Statuses for Appellant Notification
 module AppellantNotification
-  extend ActiveSupport::Concern
   class NoParticipantIdError < StandardError
     def initialize(appeal_id, message = "There is no participant_id")
       super(message + " for appeal with id #{appeal_id}")
