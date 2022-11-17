@@ -2,7 +2,6 @@
 
 # Module containing Aspect Overrides to Classes used to Track Statuses for Appellant Notification
 module AppellantNotification
-  extend ActiveSupport::Concern
   class NoParticipantIdError < StandardError
     def initialize(appeal_id, message = "There is no participant_id")
       super(message + " for appeal with id #{appeal_id}")
@@ -113,6 +112,14 @@ module AppellantNotification
          open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
          open_tasks.where(type: FoiaRequestMailTask.name).empty? && open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
         appeal_state.update!(privacy_act_complete: true, privacy_act_pending: false)
+      end
+    when "privacy_act_cancelled"
+      # Only updates appeal state if ALL privacy act tasks are completed
+      open_tasks = appeal.tasks.open
+      if open_tasks.where(type: FoiaColocatedTask.name).empty? && open_tasks.where(type: PrivacyActTask.name).empty? &&
+         open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
+         open_tasks.where(type: FoiaRequestMailTask.name).empty? && open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
+        appeal_state.update!(privacy_act_pending: false)
       end
     end
   end

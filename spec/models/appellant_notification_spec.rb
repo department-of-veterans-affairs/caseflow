@@ -502,6 +502,10 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_complete")
         hafpr_child.update!(status: "completed")
       end
+      it "updates appeal state when task is cancelled" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_cancelled")
+        hafpr_child.update!(status: "cancelled")
+      end
     end
 
     # Note: only privacyactrequestmailtask is tested because the process is the same as foiarequestmailtask
@@ -548,6 +552,11 @@ describe AppellantNotification do
         end
         it "does not sends a notification when PrivacyActRequestMailTask is cancelled" do
           expect(AppellantNotification).not_to receive(:notify_appellant).with(appeal, template_closed)
+          foia_child.update!(status: "cancelled")
+          foia_task.update_status_if_children_tasks_are_closed(foia_child)
+        end
+        it "does updates appeal state when PrivacyActRequestMailTask is cancelled" do
+          expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_cancelled")
           foia_child.update!(status: "cancelled")
           foia_task.update_status_if_children_tasks_are_closed(foia_child)
         end
@@ -598,6 +607,11 @@ describe AppellantNotification do
         expect(AppellantNotification).not_to receive(:notify_appellant).with(appeal, template_closed)
         foia_c_task.children.first.update!(status: "cancelled")
       end
+      it "updates the appeal state when cancelling a FoiaColocatedTask" do
+        foia_c_task = ColocatedTask.create_from_params(foia_colocated_task, attorney)
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_cancelled")
+        foia_c_task.children.first.update!(status: "cancelled")
+      end
     end
 
     context "Privacy Act Tasks" do
@@ -644,6 +658,10 @@ describe AppellantNotification do
       it "sends notification when completing a PrivacyActTask assigned to organization" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
         privacy_parent.update_with_instructions(status: "completed")
+      end
+      it "updates appeal state when completing a PrivacyActTask assigned to organization" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_cancelled")
+        privacy_parent.update_with_instructions(status: "cancelled")
       end
     end
   end

@@ -45,6 +45,7 @@ class Task < CaseflowRecord
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
   after_update :cancel_task_timers, if: :task_just_closed?
+  after_update :update_appeal_state_on_status_change
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -117,6 +118,7 @@ class Task < CaseflowRecord
 
   prepend IhpTaskComplete
   prepend PrivacyActComplete
+  prepend PrivacyActCancelled
 
   ############################################################################################
   ## class methods
@@ -769,6 +771,18 @@ class Task < CaseflowRecord
   # currently only defined by ScheduleHearingTask and AssignHearingDispositionTask for virtual hearing related updates
   def alerts
     @alerts ||= []
+  end
+
+  # Purpose: This method is triggered by callback 'after_update'.
+  # This method calls a variety of abstract private methods that are prepended in app/models/prepend/va_notifiy.
+  # These private methods will update an appeal's state within the 'Appeal State' table when certain tracked task
+  # types have their statuses updated to either 'cancelled' or 'completed'.
+  #
+  # Params: NONE
+  #
+  # Response: The Appeal State record correlated to the current task's appeal will be updated.
+  def update_appeal_state_on_status_change
+    update_appeal_state_when_privacy_act_cancelled
   end
 
   private
