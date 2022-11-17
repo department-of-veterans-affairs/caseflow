@@ -117,6 +117,7 @@ class Task < CaseflowRecord
 
   attr_accessor :skip_check_for_only_open_task_of_type
 
+  prepend AppealDocketed
   prepend IhpTaskPending
   prepend IhpTaskComplete
   prepend IhpTaskCancelled
@@ -796,6 +797,7 @@ class Task < CaseflowRecord
   #
   # Response: The Appeal State record correlated to the current task's appeal will be updated.
   def update_appeal_state_on_task_creation
+    update_appeal_state_when_appeal_docketed
     update_appeal_state_when_ihp_created
   end
 
@@ -988,5 +990,16 @@ class Task < CaseflowRecord
   # Response: The 'vso_ihp_complete' column will be updated to TRUE for the correlated record within
   # the Appeal States table.
   def update_appeal_state_when_ihp_completed; end
+
+  # Purpose: Abstract method that is called by #update_appeal_state_on_task_creation.
+  # This method is prepended in app/models/prepend/va_notify/appeal_docketed.rb.
+  # This method will update the correlated record in the 'Appeal States' table when a
+  # DistributionTask is created.
+  #
+  # Params: NONE
+  #
+  # Response: The 'appeal_docketed' column will be updated to TRUE for the correlated record within
+  # the Appeal States table.
+  def update_appeal_state_when_appeal_docketed; end
 end
 # rubocop:enable Metrics/ClassLength
