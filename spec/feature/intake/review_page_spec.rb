@@ -520,7 +520,6 @@ feature "Intake Review Page", :postgres do
 
     # Check for the absence of the info banner title and email link
     expect(page).to_not have_content("HLR And SC Permissions Update")
-    expect(page).to_not have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
   end
 end
 
