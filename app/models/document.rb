@@ -224,6 +224,24 @@ class Document < CaseflowRecord
     end
   end
 
+  COLUMNS_TO_UPDATE = [
+    :category_medical,
+    :category_other,
+    :category_procedural,
+    :previous_document_version_id
+  ].freeze
+
+  # updates documents and nested resources like tags to db in bulk
+  def self.bulk_merge_and_update(document_structs)
+    # Bulk update
+    Document.import(document_structs,
+                    on_duplicate_key_update: {
+                      conflict_target: [:vbms_document_id],
+                      columns: COLUMNS_TO_UPDATE + COLUMNS_TO_MERGE
+                    },
+                    recursive: true)
+  end
+
   # :reek:FeatureEnvy
   def assign_nondatabase_attributes(source_document)
     assign_attributes(
