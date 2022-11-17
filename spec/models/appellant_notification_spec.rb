@@ -919,6 +919,16 @@ describe AppellantNotification do
           task.update!(status: Constants.TASK_STATUSES.cancelled)
           new_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
           expect(new_appeal_state.appeal_cancelled).to eq(true)
+          expect(new_appeal_state.appeal_docketed).to eq(false)
+          expect(new_appeal_state.privacy_act_pending).to eq(false)
+          expect(new_appeal_state.privacy_act_complete).to eq(false)
+          expect(new_appeal_state.vso_ihp_pending).to eq(false)
+          expect(new_appeal_state.vso_ihp_complete).to eq(false)
+          expect(new_appeal_state.hearing_scheduled).to eq(false)
+          expect(new_appeal_state.hearing_postponed).to eq(false)
+          expect(new_appeal_state.hearing_withdrawn).to eq(false)
+          expect(new_appeal_state.decision_mailed).to eq(false)
+          expect(new_appeal_state.scheduled_in_error).to eq(false)
         end
       end
     end
