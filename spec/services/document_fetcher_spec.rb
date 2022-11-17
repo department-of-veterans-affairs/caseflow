@@ -194,6 +194,10 @@ describe DocumentFetcher, :postgres do
         expect(Document.third.series_id).to eq(saved_documents.first.series_id)
         expect(Document.third.series_id).to eq(saved_documents.second.series_id)
         expect(Document.third.category_medical).to eq(saved_documents.second.category_medical)
+        expect(Document.third.category_procedural).to eq(saved_documents.second.category_procedural)
+        expect(Document.third.category_other).to eq(saved_documents.second.category_other)
+        expect(Document.third.category_case_summary).to eq(saved_documents.second.category_case_summary)
+        expect(Document.third.previous_document_version_id).to eq(saved_documents.second.id)
       end
 
       context "when existing document has comments, tags, and categories" do
@@ -245,9 +249,8 @@ describe DocumentFetcher, :postgres do
           expect(DocumentsTag.count).to eq(3)
           expect(Document.second.documents_tags.first.tag.text).to eq(tag)
           expect(Document.third.documents_tags.first.tag.text).to eq(tag)
-
-          expect(Document.second.category_medical).to eq(true)
-          expect(Document.third.category_medical).to eq(true)
+          expect(Document.second.category_medical).to eq(saved_documents.second.category_medical)
+          expect(Document.third.category_medical).to eq(saved_documents.second.category_medical)
         end
 
         context "when the API returns two documents with the same series_id" do
@@ -322,7 +325,7 @@ describe DocumentFetcher, :postgres do
         context "when feature toggle bulk upload disabled" do
           before do
             FeatureToggle.disable!(:bulk_upload_documents, users: [user.css_id])
-            RequestStore.store[:current_user] = nil
+            RequestStore[:current_user] = user
           end
           it "efficiently creates and updates documents without bulk update" do
             expect(Document.distinct.pluck(:type)).to eq(["Form 9"])
@@ -354,11 +357,11 @@ describe DocumentFetcher, :postgres do
         context "when feature toggle bulk upload enabled" do
           before do
             FeatureToggle.enable!(:bulk_upload_documents, users: [user.css_id])
-            RequestStore.store[:current_user] = user
+            RequestStore[:current_user] = user
           end
           after do
             FeatureToggle.disable!(:bulk_upload_documents, users: [user.css_id])
-            RequestStore.store[:current_user] = nil
+            RequestStore[:current_user] = user
           end
 
           it "efficiently creates and updates documents" do
@@ -372,10 +375,11 @@ describe DocumentFetcher, :postgres do
 
             # Uncomment the following to see a count of SQL queries
             # pp query_data.values.pluck(:sql, :count)
+
             doc_insert_queries = query_data.values.select do |o|
               o[:sql].start_with?("INSERT INTO \"documents\"")
             end
-            expect(doc_insert_queries.pluck(:count).max).to eq 2
+            expect(doc_insert_queries.length).to eq 3
 
             # When metadata exists for a previous version of a document, queries remain efficient
             annotns_insert_queries = query_data.values.select do |o|
@@ -407,11 +411,11 @@ describe DocumentFetcher, :postgres do
           context "when feature toggle bulk upload enabled" do
             before do
               FeatureToggle.enable!(:bulk_upload_documents, users: [user.css_id])
-              RequestStore.store[:current_user] = user
+              RequestStore[:current_user] = user
             end
             after do
               FeatureToggle.disable!(:bulk_upload_documents, users: [user.css_id])
-              RequestStore.store[:current_user] = nil
+              RequestStore[:current_user] = user
             end
             it "deduplicates, sends warning to Sentry, and does not fail bulk upsert" do
               expect(documents.map(&:vbms_document_id).count).to eq(53)
@@ -430,9 +434,11 @@ describe DocumentFetcher, :postgres do
                 document_fetcher.find_or_create_documents!
               end
 
+              # Uncomment the following to see a count of SQL queries
               # pp query_data.values.pluck(:sql, :count)
+
               doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
-              expect(doc_insert_queries.pluck(:count).max).to eq 2
+              expect(doc_insert_queries.length).to eq 3
               expect(query_data.values.select { |o| o[:sql].start_with?("UPDATE \"documents\"") }.pluck(:count).max)
                 .to eq(nil)
             end
@@ -440,7 +446,7 @@ describe DocumentFetcher, :postgres do
           context "when feature toggle bulk upload disabled" do
             before do
               FeatureToggle.disable!(:bulk_upload_documents, users: [user.css_id])
-              RequestStore.store[:current_user] = nil
+              RequestStore[:current_user] = user
             end
             it "deduplicates, sends warning to Sentry, and does not fail bulk upsert" do
               expect(documents.map(&:vbms_document_id).count).to eq(53)
@@ -460,7 +466,9 @@ describe DocumentFetcher, :postgres do
                 document_fetcher.find_or_create_documents!
               end
 
+              # Uncomment the following to see a count of SQL queries
               # pp query_data.values.pluck(:sql, :count)
+
               doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
               expect(doc_insert_queries.pluck(:count).max).to eq 1
               expect(query_data.values.select { |o| o[:sql].start_with?("UPDATE \"documents\"") }.pluck(:count).max)
