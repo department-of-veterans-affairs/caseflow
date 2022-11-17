@@ -440,82 +440,87 @@ feature "Intake Review Page", :postgres do
     end
   end
 
-  context "Info banner should display for users that are not members of VHA" do
+  shared_examples "Claim review intake with VHA benefit type" do
+    let(:benefit_type_label) { Constants::BENEFIT_TYPES["vha"] }
     let(:email_href) do
       "mailto:VHABENEFITAPPEALS@va.gov?subject=Potential%20VHA%20Higher-Level%20Review%20or%20Supplemental%20Claim"
     end
 
-    context "info banner for SC" do
-      scenario "shows the vha permissions update banner when the intake user is not a member of vha" do
-        start_supplemental_claim(
-          veteran,
-          benefit_type: benefit_type,
-          claim_participant_id: nil
-        )
+    context "Current user is a member of the VHA business line" do
+      let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
+      let(:current_user) { create(:user, roles: ["Admin Intake"]) }
 
-        visit "/intake"
-        expect(page).to have_current_path("/intake/review_request")
+      before do
+        vha_business_line.add_user(current_user)
+        User.authenticate!(user: current_user)
+        navigate_to_review_page(form_type)
+      end
 
-        # Check for the info banner title and email link
+      it "Should not display the VHA HLR SC Permissions Update Information Banner" do
+        expect(page).to_not have_content("HLR And SC Permissions Update")
+        expect(page).to_not have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
+      end
+
+      it "VHA benefit type radio option is enabled" do
+        expect(page).to have_field benefit_type_label, disabled: false, visible: false
+      end
+    end
+
+    context "Current user is not a member of the VHA business line" do
+      let(:current_user) { create(:user, roles: ["Admin Intake"]) }
+
+      before do
+        User.authenticate!(user: current_user)
+        navigate_to_review_page(form_type)
+      end
+
+      it "Should display the VHA HLR SC Permissions Update Information Banner" do
         expect(page).to have_content("HLR And SC Permissions Update")
         expect(page).to have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
       end
 
-      scenario "does not show the vha permissions update banner when the intake user is a member of vha" do
-        # Create VHA BusinessLine User and Authenticate it
-        vha_businessline_user = create(:user, roles: ["Admin Intake"])
+      it "VHA benefit type radio option is disabled and tooltip appears whenever it is hovered over" do
+        step "assert that VHA radio option is disabled" do
+          # The <input>s for benefit types are technically off-screen and are displayed
+          # as seen using various CSS styling rules. Thus, we need visible: false for Capybara
+          # to find the radio fields.
+          expect(page).to have_field benefit_type_label, disabled: true, visible: false
+        end
 
-        vha_businessline_organization = create(:business_line, url: "vha")
-        vha_businessline_organization.add_user(vha_businessline_user)
-        User.authenticate!(user: vha_businessline_user)
+        step "assert that tooltip appears whenenver radio field is hovered over" do
+          find("label", text: benefit_type_label).hover
 
-        puts "Is new user a vha employee????????"
-        puts vha_businessline_user.vha_employee?
-        # The answer is no
-
-        start_supplemental_claim(
-          veteran,
-          benefit_type: benefit_type,
-          claim_participant_id: nil
-        )
-
-        visit "/intake"
-        expect(page).to have_current_path("/intake/review_request")
-
-        # Check for the info banner title and email link
-        expect(page).to_not have_content("HLR And SC Permissions Update")
-        expect(page).to_not have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
+          # Checks for tooltip text
+          expect(page).to have_content(
+            format(COPY::INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_COPY, "VHABENEFITAPPEALS@va.gov")
+          )
+        end
       end
     end
+  end
 
-    context "info banner for HLR" do
-      scenario "shows the vha permissions update banner when the intake user is not a member of vha" do
-        start_higher_level_review(
-          veteran,
-          benefit_type: benefit_type,
-          claim_participant_id: nil
-        )
+  describe "Intaking a claim review" do
+    describe "Higher Level Review" do
+      let(:form_type) { Constants.INTAKE_FORM_NAMES.higher_level_review }
 
-        visit "/intake"
-        expect(page).to have_current_path("/intake/review_request")
-
-        # Check for the info banner title and email link
-        expect(page).to have_content("HLR And SC Permissions Update")
-        expect(page).to have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
-      end
+      include_examples "Claim review intake with VHA benefit type"
     end
 
-    context "no info banner for appeal" do
-      scenario "does not show the vha permissions update banner for an appeal intake" do
-        start_appeal(veteran, receipt_date: nil)
-        visit "/intake"
-        expect(page).to have_current_path("/intake/review_request")
+    describe "Supplemental Claim" do
+      let(:form_type) { Constants.INTAKE_FORM_NAMES.supplemental_claim }
 
-        # Check for the absence of the info banner title and email link
-        expect(page).to_not have_content("HLR And SC Permissions Update")
-        expect(page).to_not have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
-      end
+      include_examples "Claim review intake with VHA benefit type"
     end
+  end
+
+  scenario "It should not show the vha permissions update banner for an appeal intake" do
+    start_appeal(veteran, receipt_date: nil)
+    visit "/intake"
+    expect(page).to have_current_path("/intake/review_request")
+
+    # Check for the absence of the info banner title and email link
+    expect(page).to_not have_content("HLR And SC Permissions Update")
+    expect(page).to_not have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
   end
 end
 

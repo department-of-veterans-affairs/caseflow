@@ -31,14 +31,16 @@ const higherLevelReviewArgs = {
   formName: 'higherLevelReview',
   formHeader: higherLevelReviewFormHeader,
   schema: reviewHigherLevelReviewSchema,
-  featureToggles: {}
+  featureToggles: {},
+  userIsVhaEmployee: false,
 };
 
 const supplementalClaimArgs = {
   formName: 'supplementalClaim',
   formHeader: supplementalClaimHeader,
   schema: reviewSupplementalClaimSchema,
-  featureToggles: {}
+  featureToggles: {},
+  userIsVhaEmployee: false,
 };
 
 const rampRefilingArgs = {
@@ -74,26 +76,36 @@ const ReduxDecoratorAppeal = (Story) => {
   </ReduxBase>;
 };
 
-const ReduxDecoratorHLR = (Story) => {
+const ReduxDecoratorHLR = (Story, options) => {
   const state = generateInitialState();
+  const { args } = options;
 
   // Setup initial state Values
   state.intake.formType = 'higher_level_review';
   state.higherLevelReview.isStarted = 'STARTED';
   state.higherLevelReview.relationships = relationships;
 
+  if (args.userIsVhaEmployee) {
+    state.intake.userIsVhaEmployee = args.userIsVhaEmployee;
+  }
+
   return <ReduxBase reducer={reducer} initialState={state}>
     <Story />
   </ReduxBase>;
 };
 
-const ReduxDecoratorSC = (Story) => {
+const ReduxDecoratorSC = (Story, options) => {
+  const { args } = options;
   const state = generateInitialState();
 
   // Setup initial state Values
   state.intake.formType = 'supplemental_claim';
   state.supplementalClaim.isStarted = 'STARTED';
   state.supplementalClaim.relationships = relationships;
+
+  if (args.userIsVhaEmployee) {
+    state.intake.userIsVhaEmployee = args.userIsVhaEmployee;
+  }
 
   return <ReduxBase reducer={reducer} initialState={state}>
     <Story />
@@ -134,9 +146,14 @@ export default {
   args: appealArgs,
   argTypes: {
     formName: {
+      options: ['appeal', 'higherLevelReview', 'supplementalClaim', 'rampRefiling', 'rampElection'],
+      control: { type: 'select' },
       table: {
         disable: true
       }
+    },
+    userIsVhaEmployee: {
+      control: { type: 'boolean' }
     },
     formHeader: {
       table: {
