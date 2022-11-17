@@ -13,9 +13,7 @@ const RouterDecorator = (Story) => (
 );
 
 const ReduxDecorator = (Story) => {
-  const state = generateInitialState();
-
-  return <ReduxBase reducer={reducer} initialState={state}>
+  return <ReduxBase reducer={reducer} initialState={generateInitialState()}>
     <Story />
   </ReduxBase>;
 };

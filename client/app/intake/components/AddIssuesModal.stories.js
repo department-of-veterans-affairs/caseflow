@@ -12,13 +12,10 @@ const RouterDecorator = (Story) => (
   </MemoryRouter>
 );
 
-const ReduxDecorator = (Story) => {
-  const state = generateInitialState();
-
-  return <ReduxBase reducer={reducer} initialState={state}>
-    <Story />
-  </ReduxBase>;
-};
+const ReduxDecorator = (Story) => (<ReduxBase reducer={reducer} initialState={generateInitialState()}>
+  <Story />
+</ReduxBase>
+);
 
 const defaultArgs = {
   intakeData: {}
