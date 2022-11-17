@@ -450,6 +450,7 @@ feature "Intake Review Page", :postgres do
       before do
         vha_business_line.add_user(current_user)
         User.authenticate!(user: current_user)
+        navigate_to_review_page(form_type)
       end
 
       it "VHA benefit type radio option is enabled" do
@@ -460,7 +461,10 @@ feature "Intake Review Page", :postgres do
     context "Current user is not a member of the VHA business line" do
       let(:current_user) { create(:user, roles: ["Admin Intake"]) }
 
-      before { User.authenticate!(user: current_user) }
+      before do
+        User.authenticate!(user: current_user)
+        navigate_to_review_page(form_type)
+      end
 
       it "VHA benefit type radio option is disabled and tooltip appears whenever it is hovered over" do
         step "assert that VHA radio option is disabled" do
@@ -484,13 +488,13 @@ feature "Intake Review Page", :postgres do
 
   describe "Intaking a claim review" do
     describe "Higher Level Review" do
-      before { navigate_to_review_page(Constants.INTAKE_FORM_NAMES.higher_level_review) }
+      let(:form_type) { Constants.INTAKE_FORM_NAMES.higher_level_review }
 
       include_examples "Claim review intake with VHA benefit type"
     end
 
     describe "Supplemental Claim" do
-      before { navigate_to_review_page(Constants.INTAKE_FORM_NAMES.supplemental_claim) }
+      let(:form_type) { Constants.INTAKE_FORM_NAMES.supplemental_claim }
 
       include_examples "Claim review intake with VHA benefit type"
     end
