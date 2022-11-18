@@ -110,6 +110,12 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
   };
 
   const onSubmit = (formData) => {
+
+    // Database schema will not allow nulls for state, but it's possibly an optional field for individuals now.
+    if (!formData.state) {
+      formData.state = '';
+    }
+
     // Add to Redux store
     dispatch(editPoaInformation({ formData }));
 
