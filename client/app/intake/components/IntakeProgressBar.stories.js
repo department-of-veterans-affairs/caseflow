@@ -1,14 +1,14 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter, useLocation } from 'react-router';
 import { PAGE_PATHS } from '../constants';
 
 import IntakeProgressBar from './IntakeProgressBar';
 
-const RouterDecorator = (Story, { parameters }) => {
-  let pathArray = ['/'];
+const RouterDecorator = (Story, { args }) => {
+  let pathArray = [PAGE_PATHS.BEGIN];
 
-  if (parameters.pagePath) {
-    pathArray = [parameters.pagePath];
+  if (args.pagePath) {
+    pathArray = [args.pagePath];
   }
 
   return <MemoryRouter initialEntries={pathArray}>
@@ -20,23 +20,24 @@ export default {
   title: 'Intake/Review/Intake Progress Bar',
   component: IntakeProgressBar,
   decorators: [RouterDecorator],
-  parameters: {
+  args: {
     pagePath: PAGE_PATHS.BEGIN
   },
   argTypes: {
+    pagePath: {
+      options: [PAGE_PATHS.BEGIN, PAGE_PATHS.SEARCH, PAGE_PATHS.REVIEW, PAGE_PATHS.ADD_ISSUES, PAGE_PATHS.COMPLETED],
+      control: { type: 'select' },
+    }
   },
 };
 
-const Template = (args) => (<IntakeProgressBar {...args} />);
+const Template = (args) => {
+  const location = useLocation();
 
-export const SelectForm = Template.bind({});
+  // Dynamically Adjust the path with the storybook control
+  location.pathname = args.pagePath;
 
-export const Search = Template.bind({});
-export const Review = Template.bind({});
-export const AddIssues = Template.bind({});
-export const Confirmation = Template.bind({});
+  return <IntakeProgressBar {...args} />;
+};
 
-Search.parameters = { pagePath: PAGE_PATHS.SEARCH };
-Review.parameters = { pagePath: PAGE_PATHS.REVIEW };
-AddIssues.parameters = { pagePath: PAGE_PATHS.ADD_ISSUES };
-Confirmation.parameters = { pagePath: PAGE_PATHS.COMPLETED };
+export const basic = Template.bind({});
