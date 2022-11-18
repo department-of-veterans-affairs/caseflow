@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { MemoryRouter } from 'react-router';
 import { appealFormHeader, reviewAppealSchema } from './appeal/review';
 import {
   higherLevelReviewFormHeader,
+  reviewHigherLevelReviewSameOffice,
+  reviewHigherLevelReviewFiledByVaGov,
   reviewHigherLevelReviewSchema,
 } from './higherLevelReview/review';
 import { rampElectionFormHeader, reviewRampElectionSchema } from './rampElection/review';
 import { rampRefilingHeader, reviewRampRefilingSchema } from './rampRefiling/review';
 import { reviewSupplementalClaimSchema, supplementalClaimHeader } from './supplementalClaim/review';
+import { snakeCase } from 'lodash';
 
 import FormGenerator from './formGenerator';
 
@@ -20,41 +23,54 @@ const relationships = [
   { value: '654321', displayText: 'Jen Doe, Child' },
 ];
 
-const appealArgs = {
+// Also taken from review.jsx
+const generateHigherLevelReviewSchema = (featureToggles) => {
+  const formFieldFeatureToggles = {
+    filedByVaGovHlr: reviewHigherLevelReviewFiledByVaGov,
+    updatedIntakeForms: reviewHigherLevelReviewSameOffice
+  };
+
+  return Object.keys(formFieldFeatureToggles).reduce((schema, toggle) => {
+    if ((featureToggles[toggle] && toggle !== 'updatedIntakeForms') ||
+      (!featureToggles[toggle] && toggle === 'updatedIntakeForms')) {
+      return schema.concat(formFieldFeatureToggles[toggle]);
+    }
+
+    return schema;
+  }, reviewHigherLevelReviewSchema);
+};
+
+// Taken from review.jsx
+const headerMappings = {
+  appeal: appealFormHeader,
+  higher_level_review: higherLevelReviewFormHeader,
+  supplemental_claim: supplementalClaimHeader,
+  ramp_election: rampElectionFormHeader,
+  ramp_refiling: rampRefilingHeader
+};
+
+// Also taken from review.jsx
+const schemaMappings = (featureToggles) => ({
+  appeal: reviewAppealSchema,
+  higher_level_review: generateHigherLevelReviewSchema(featureToggles),
+  supplemental_claim: reviewSupplementalClaimSchema,
+  ramp_election: reviewRampElectionSchema,
+  ramp_refiling: reviewRampRefilingSchema
+});
+
+const defaultArgs = {
   formName: 'appeal',
   formHeader: appealFormHeader,
   schema: reviewAppealSchema,
-  featureToggles: {},
-};
-
-const higherLevelReviewArgs = {
-  formName: 'higherLevelReview',
-  formHeader: higherLevelReviewFormHeader,
-  schema: reviewHigherLevelReviewSchema,
-  featureToggles: {},
-  userIsVhaEmployee: false,
-};
-
-const supplementalClaimArgs = {
-  formName: 'supplementalClaim',
-  formHeader: supplementalClaimHeader,
-  schema: reviewSupplementalClaimSchema,
-  featureToggles: {},
-  userIsVhaEmployee: false,
-};
-
-const rampRefilingArgs = {
-  formName: 'rampRefiling',
-  formHeader: rampRefilingHeader,
-  schema: reviewRampRefilingSchema,
-  featureToggles: {}
-};
-
-const rampElectionArgs = {
-  formName: 'rampElection',
-  formHeader: rampElectionFormHeader,
-  schema: reviewRampElectionSchema,
-  featureToggles: {}
+  featureToggles: {
+    correctClaimReviews: false,
+    covidTimelinessExemption: true,
+    eduPreDocketAppeals: true,
+    filedByVaGovHlr: true,
+    updatedAppealForm: true,
+    updatedIntakeForms: true,
+    useAmaActivationDate: true
+  },
 };
 
 const RouterDecorator = (Story) => (
@@ -63,75 +79,30 @@ const RouterDecorator = (Story) => (
   </MemoryRouter>
 );
 
-const ReduxDecoratorAppeal = (Story) => {
+const FullReduxDecorator = (Story, options) => {
   const state = generateInitialState();
+  const { args } = options;
 
-  // Setup initial state Values
   state.intake.formType = 'appeal';
+  if (args.formName) {
+    state.intake.formType = snakeCase(args.formName);
+  }
+
+  // Set up all state variables ahead of time so swapping formName doesn't cause issues
   state.appeal.isStarted = 'STARTED';
   state.appeal.relationships = relationships;
-
-  return <ReduxBase reducer={reducer} initialState={state}>
-    <Story />
-  </ReduxBase>;
-};
-
-const ReduxDecoratorHLR = (Story, options) => {
-  const state = generateInitialState();
-  const { args } = options;
-
-  // Setup initial state Values
-  state.intake.formType = 'higher_level_review';
   state.higherLevelReview.isStarted = 'STARTED';
   state.higherLevelReview.relationships = relationships;
-
-  if (args.userIsVhaEmployee) {
-    state.intake.userIsVhaEmployee = args.userIsVhaEmployee;
-  }
-
-  return <ReduxBase reducer={reducer} initialState={state}>
-    <Story />
-  </ReduxBase>;
-};
-
-const ReduxDecoratorSC = (Story, options) => {
-  const { args } = options;
-  const state = generateInitialState();
-
-  // Setup initial state Values
-  state.intake.formType = 'supplemental_claim';
   state.supplementalClaim.isStarted = 'STARTED';
   state.supplementalClaim.relationships = relationships;
+  state.rampRefiling.isStarted = 'STARTED';
+  state.rampRefiling.relationships = relationships;
+  state.rampElection.isStarted = 'STARTED';
+  state.rampElection.relationships = relationships;
 
   if (args.userIsVhaEmployee) {
     state.intake.userIsVhaEmployee = args.userIsVhaEmployee;
   }
-
-  return <ReduxBase reducer={reducer} initialState={state}>
-    <Story />
-  </ReduxBase>;
-};
-
-const ReduxDecoratorRampRefiling = (Story) => {
-  const state = generateInitialState();
-
-  // Setup initial state Values
-  state.intake.formType = 'ramp_refiling';
-  state.rampRefiling.isStarted = 'STARTED';
-  state.rampRefiling.relationships = relationships;
-
-  return <ReduxBase reducer={reducer} initialState={state}>
-    <Story />
-  </ReduxBase>;
-};
-
-const ReduxDecoratorRampElection = (Story) => {
-  const state = generateInitialState();
-
-  // Setup initial state Values
-  state.intake.formType = 'ramp_election';
-  state.rampElection.isStarted = 'STARTED';
-  state.rampElection.relationships = relationships;
 
   return <ReduxBase reducer={reducer} initialState={state}>
     <Story />
@@ -143,13 +114,13 @@ export default {
   component: FormGenerator,
   decorators: [],
   parameters: {},
-  args: appealArgs,
+  args: defaultArgs,
   argTypes: {
     formName: {
       options: ['appeal', 'higherLevelReview', 'supplementalClaim', 'rampRefiling', 'rampElection'],
       control: { type: 'select' },
       table: {
-        disable: true
+        // disable: true
       }
     },
     userIsVhaEmployee: {
@@ -168,69 +139,19 @@ export default {
   },
 };
 
-const Template = (args) => (<FormGenerator {...args} />);
+const Template = (args) => {
+  useMemo(() => {
+    if (args.formName) {
+      const formKey = snakeCase(args.formName);
 
-// Appeal Review
-export const Appeal = Template.bind({});
+      args.formHeader = headerMappings[formKey];
+      args.schema = schemaMappings(args.featureToggles)[formKey];
+    }
+  }, [args.formName]);
 
-Appeal.parameters = {
-  docs: {
-    storyDescription:
-      'A FormGenerator for Appeal Reviews',
-  },
+  return <FormGenerator {...args} />;
 };
 
-Appeal.args = appealArgs;
-Appeal.decorators = [ReduxDecoratorAppeal, RouterDecorator];
-
-// Higher Level Review
-export const HigherLevelReview = Template.bind({});
-
-HigherLevelReview.parameters = {
-  docs: {
-    storyDescription:
-      'A FormGenerator for Higher Level Reviews',
-  },
-};
-
-HigherLevelReview.args = higherLevelReviewArgs;
-HigherLevelReview.decorators = [ReduxDecoratorHLR, RouterDecorator];
-
-// Supplemental Claim Review
-export const SupplementalClaimReview = Template.bind({});
-
-SupplementalClaimReview.parameters = {
-  docs: {
-    storyDescription:
-      'A FormGenerator for Supplemental Claim Reviews',
-  },
-};
-
-SupplementalClaimReview.args = supplementalClaimArgs;
-SupplementalClaimReview.decorators = [ReduxDecoratorSC, RouterDecorator];
-
-// Ramp Refiling Review
-export const RampRefilingReview = Template.bind({});
-
-RampRefilingReview.parameters = {
-  docs: {
-    storyDescription:
-      'A FormGenerator for Ramp Refiling Reviews',
-  },
-};
-
-RampRefilingReview.args = rampRefilingArgs;
-RampRefilingReview.decorators = [ReduxDecoratorRampRefiling, RouterDecorator];
-
-// Ramp Election Review
-export const RampElectionReview = Template.bind({});
-
-RampElectionReview.parameters = {
-  docs: {
-    storyDescription:
-      'A FormGenerator for Ramp Election Reviews',
-  },
-};
-
-RampElectionReview.args = rampElectionArgs;
-RampElectionReview.decorators = [ReduxDecoratorRampElection, RouterDecorator];
+export const AllIntakes = Template.bind({});
+// AllIntakes.args = defaultArgs;
+AllIntakes.decorators = [FullReduxDecorator, RouterDecorator];

@@ -22,7 +22,7 @@ const defaultArgs = {
 };
 
 export default {
-  title: 'Intake/Review/Add Issues Modal',
+  title: 'Intake/Add Issues/Add Issues Modal',
   component: AddIssuesModal,
   decorators: [ReduxDecorator, RouterDecorator],
   parameters: {},

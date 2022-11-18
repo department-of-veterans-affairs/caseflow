@@ -26,7 +26,7 @@ const defaultArgs = {
 };
 
 export default {
-  title: 'Intake/Review/Non Rating Request Issue Modal',
+  title: 'Intake/Add Issues/Non Rating Request Issue Modal',
   component: NonratingRequestIssueModal,
   decorators: [ReduxDecorator, RouterDecorator],
   parameters: {},
