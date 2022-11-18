@@ -84,7 +84,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
     }
 
     // Database schema will not allow nulls for state, but it's possibly an optional field for individuals now.
-    if (formData.state === null) {
+    if (!formData.state) {
       formData.state = '';
     }
 

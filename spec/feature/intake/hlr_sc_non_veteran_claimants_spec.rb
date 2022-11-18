@@ -64,6 +64,35 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
     }
   end
 
+  let(:new_individual_attorney) do
+    {
+      first_name: "Danny",
+      last_name: "ThaAttorney",
+      address1: "555 Rush Lane",
+      city: "New York City",
+      state: "NY",
+      # Required for the regex matcher to work since the page modal displays the full state namee
+      full_state: "New York",
+      zip: "10001",
+      country: "United States",
+      email: "attorney@example.com"
+    }
+  end
+
+  let(:new_organization_attorney) do
+    {
+      organization_name: "Attorney R Us",
+      address1: "555 Rush Lane",
+      city: "New York City",
+      state: "NY",
+      # Required for the regex matcher to work since the page modal displays the full state name
+      full_state: "New York",
+      zip: "10001",
+      country: "United States",
+      email: "attorney@example.com"
+    }
+  end
+
   let(:other_claimant_type) do
     "Other"
   end
@@ -121,6 +150,27 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
     fill_in "Claimant email", with: new_organization_claimant[:email]
   end
 
+  def add_new_organization_attorney
+    fill_in "Organization name", with: new_organization_attorney[:organization_name]
+    fill_in "Street address 1", with: new_organization_attorney[:address1]
+    fill_in "City", with: new_organization_attorney[:city]
+    fill_in("State", with: new_organization_attorney[:state]).send_keys :enter
+    fill_in("Zip", with: new_organization_attorney[:zip]).send_keys :enter
+    fill_in("Country", with: new_organization_attorney[:country]).send_keys :enter
+    fill_in "Representative email", with: new_organization_attorney[:email]
+  end
+
+  def add_new_individual_attorney
+    fill_in "First name", with: new_individual_attorney[:first_name]
+    fill_in "Last name", with: new_individual_attorney[:last_name]
+    fill_in "Street address 1", with: new_individual_attorney[:address1]
+    fill_in "City", with: new_individual_attorney[:city]
+    fill_in("State", with: new_individual_attorney[:state]).send_keys :enter
+    fill_in("Zip", with: new_individual_attorney[:zip]).send_keys :enter
+    fill_in("Country", with: new_individual_attorney[:country]).send_keys :enter
+    fill_in "Representative email", with: new_individual_attorney[:email]
+  end
+
   def start_intake
     intake_type
   end
@@ -133,12 +183,28 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
     end
   end
 
+  def unlisted_attorney_with_party_type(is_organization = true)
+    expect(page).to have_content("Is the representative an organization or individual?")
+    party_type = is_organization ? "Organization" : "Individual"
+    within_fieldset("Is the representative an organization or individual?") do
+      find("label", text: party_type, match: :prefer_exact).click
+    end
+  end
+
   def select_organization_party_type
     unlisted_claimant_with_party_type true
   end
 
   def select_individual_party_type
     unlisted_claimant_with_party_type false
+  end
+
+  def select_attorney_organization_party_type
+    unlisted_attorney_with_party_type true
+  end
+
+  def select_attorney_individual_party_type
+    unlisted_attorney_with_party_type false
   end
 
   def click_has_va_form(option_text = "Yes")
@@ -151,21 +217,57 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
     click_has_va_form(option_text)
   end
 
-  def verify_individual_add_claimant_modal_information
+  def verify_individual_add_claimant_modal_information(has_poa = false)
     claimant_name = "#{new_individual_claimant[:first_name]} #{new_individual_claimant[:last_name]}"
 
     within("#add_claimant_modal") do
       expect(page).to have_content("Review and confirm claimant information")
       expect(page).to have_content(claimant_name)
-      expect(page).to have_content("Intake does not have a Form 21-22")
+      if !has_poa
+        expect(page).to have_content("Intake does not have a Form 21-22")
+      end
     end
   end
 
-  def verify_organization_add_claimant_modal_information
+  def verify_organization_add_claimant_modal_information(has_poa = false)
     within("#add_claimant_modal") do
       expect(page).to have_content("Review and confirm claimant information")
       expect(page).to have_content(new_organization_claimant[:organization_name])
-      expect(page).to have_content("Intake does not have a Form 21-22")
+      if !has_poa
+        expect(page).to have_content("Intake does not have a Form 21-22")
+      end
+    end
+  end
+
+  def verify_add_claimant_modal_information_with_new_attorney(claimant_is_individual = true)
+    if claimant_is_individual
+      verify_individual_add_claimant_modal_information(has_poa: true)
+    else
+      verify_organization_add_claimant_modal_information(has_poa: true)
+    end
+
+    # Verify Additional PoA information
+    within("#add_claimant_modal") do
+      expect(page).to have_content("Claimant's POA")
+      expect(page).to have_content(new_attorney_name)
+      expect(page.text).to match(%r{#{new_attorney_street_address}}i)
+      expect(page.text).to match(%r{#{new_attorney_city_address_line}}i)
+    end
+  end
+
+  def verify_add_claimant_modal_information_with_existing_attorney(claimant_is_individual = true)
+    if claimant_is_individual
+      verify_individual_add_claimant_modal_information(has_poa: true)
+    else
+      verify_organization_add_claimant_modal_information(has_poa: true)
+    end
+
+    # Verify Additional PoA information
+    within("#add_claimant_modal") do
+      expect(page).to have_content("Claimant's POA")
+      expect(page).to have_content(attorney.name)
+      expect(page.text).to match(%r{#{attorney.address[:address_line_1]}}i)
+      expect(page.text).to match(%r{#{attorney_city_address_line}}i)
     end
   end
 
@@ -198,6 +300,11 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
 
   def add_existing_attorney(attorney)
     fill_in "Claimant's name", with: attorney.name
+    find("div", class: "cf-select__option", text: attorney.name).click
+  end
+
+  def add_existing_attorney_on_poa_page(attorney)
+    fill_in "Representative's name", with: attorney.name
     find("div", class: "cf-select__option", text: attorney.name).click
   end
 
@@ -272,7 +379,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
           click_button "Continue to next step"
           expect(page).to have_content("Review and confirm claimant information")
           match_string = attorney.address[:address_line_1]
-          expect(page.body).to match(%r{#{match_string}}i)
+          expect(page.text).to match(%r{#{match_string}}i)
           expect(page).to have_content("Intake does not have a Form 21-22")
           click_button "Confirm"
           expect(page).to have_content("Add / Remove Issues")
@@ -361,7 +468,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
         click_does_not_have_va_form
         click_button "Continue to next step"
 
-        # Review climant modal
+        # Review claimant modal
         verify_individual_add_claimant_modal_information
         click_button "Confirm"
 
@@ -381,11 +488,125 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
         click_does_not_have_va_form
         click_button "Continue to next step"
 
-        # Review climant modal
+        # Review claimant modal
         expect(page).to have_content("Review and confirm claimant information")
         click_button "Confirm"
 
         verify_individual_claimant_on_add_issues
+      end
+    end
+
+    context("other claimant with a Form 21-22 ") do
+      let(:claimant_type) do
+        other_claimant_type
+      end
+
+      context("existing attorney") do
+        let(:attorneys) do
+          Array.new(15) { create(:bgs_attorney) }
+        end
+
+        let(:attorney) do
+          attorneys.last
+        end
+
+        let(:address) do
+          attorney.address
+        end
+
+        let(:attorney_city_address_line) do
+          "#{address[:city]}, #{address[:state]} #{address[:zip]} #{address[:country]}"
+        end
+
+        scenario "unlisted individual other claimant with form 21-22 add existing attorney" do
+          advance_to_add_unlisted_claimant_page
+          select_individual_party_type
+          add_new_individual_claimant
+          click_has_va_form
+          click_button "Continue to next step"
+          expect(page).to have_content("Add Claimant's POA")
+          expect(current_path).to eq("/intake/add_power_of_attorney")
+          add_existing_attorney_on_poa_page(attorney)
+          # Check if the address was added to page successfully
+          match_string = attorney.address[:address_line_1]
+          expect(page.text).to match(%r{#{match_string}}i)
+
+          # Continue on and verify the modal information for add claimant and add poa pages
+          click_button "Continue to next step"
+          verify_add_claimant_modal_information_with_existing_attorney(claimant_is_individual: true)
+          click_button "Confirm"
+          verify_individual_claimant_on_add_issues
+        end
+      end
+
+      context("name not listed individual attorney") do
+        let(:new_attorney) do
+          new_individual_attorney
+        end
+        let(:new_attorney_name) do
+          "#{new_attorney[:first_name]} #{new_attorney[:last_name]}"
+        end
+        let(:new_attorney_street_address) do
+          new_attorney[:street_address_1]
+        end
+        let(:new_attorney_city_address_line) do
+          "#{new_attorney[:city]}, #{new_attorney[:full_state]} #{new_attorney[:zip]} #{new_attorney[:country]}"
+        end
+
+        scenario "unlisted individual other claimant with form 21-22 add name not listed individual attorney" do
+          advance_to_add_unlisted_claimant_page
+          select_individual_party_type
+          add_new_individual_claimant
+          click_has_va_form
+          click_button "Continue to next step"
+          expect(page).to have_content("Add Claimant's POA")
+          expect(current_path).to eq("/intake/add_power_of_attorney")
+
+          # Enter name not listed and information for the new attorney
+          fill_in("Representative's name", with: "Name not listed")
+          find("div", class: "cf-select__option", text: "Name not listed").click
+          select_attorney_individual_party_type
+          add_new_individual_attorney
+          click_button "Continue to next step"
+          verify_add_claimant_modal_information_with_new_attorney(claimant_is_individual: true)
+          click_button "Confirm"
+          verify_individual_claimant_on_add_issues
+        end
+      end
+
+      context("name not listed organization attorney") do
+        let(:new_attorney) do
+          new_organization_attorney
+        end
+        let(:new_attorney_name) do
+          new_attorney[:organization_name]
+        end
+        let(:new_attorney_street_address) do
+          new_attorney[:street_address_1]
+        end
+        let(:new_attorney_city_address_line) do
+          "#{new_attorney[:city]}, #{new_attorney[:full_state]} #{new_attorney[:zip]} #{new_attorney[:country]}"
+        end
+
+        scenario "unlisted individual other claimant with form 21-22 add name not listed individual attorney" do
+          advance_to_add_unlisted_claimant_page
+          select_individual_party_type
+          add_new_individual_claimant
+          click_has_va_form
+          click_button "Continue to next step"
+          expect(page).to have_content("Add Claimant's POA")
+          expect(current_path).to eq("/intake/add_power_of_attorney")
+
+          # Enter name not listed and information for the new attorney
+          fill_in("Representative's name", with: "Name not listed")
+          find("div", class: "cf-select__option", text: "Name not listed").click
+          select_attorney_organization_party_type
+          add_new_organization_attorney
+          click_button "Continue to next step"
+          verify_add_claimant_modal_information_with_new_attorney(claimant_is_individual: true)
+          click_button "Confirm"
+          verify_individual_claimant_on_add_issues
+        end
       end
     end
 
