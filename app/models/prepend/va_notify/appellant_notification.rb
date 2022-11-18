@@ -89,6 +89,20 @@ module AppellantNotification
       )
     when "appeal_docketed"
       appeal_state.update!(appeal_docketed: true)
+    when "appeal_cancelled"
+      appeal_state.update!(
+        decision_mailed: false,
+        appeal_docketed: false,
+        hearing_postponed: false,
+        hearing_withdrawn: false,
+        hearing_scheduled: false,
+        vso_ihp_pending: false,
+        vso_ihp_complete: false,
+        privacy_act_pending: false,
+        privacy_act_complete: false,
+        scheduled_in_error: false,
+        appeal_cancelled: true
+      )
     when "hearing_postponed"
       appeal_state.update!(hearing_postponed: true, hearing_scheduled: false)
     when "hearing_withdrawn"

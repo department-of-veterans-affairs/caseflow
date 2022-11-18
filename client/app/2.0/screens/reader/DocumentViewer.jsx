@@ -61,7 +61,6 @@ const DocumentViewer = (props) => {
   // Get the Document List state
   const state = props.featureToggles.readerSelectorsMemoized ?
     useSelector(documentScreenMemoized) : useSelector(documentScreen);
-
   // Create the Dispatcher
   const dispatch = useDispatch();
 
