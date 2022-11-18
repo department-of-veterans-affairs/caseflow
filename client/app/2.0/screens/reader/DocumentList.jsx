@@ -106,7 +106,7 @@ DocumentList.propTypes = {
   singleDocumentMode: PropTypes.bool,
   match: PropTypes.object,
   annotations: PropTypes.array,
-  featureToggles: PropTypes.object,
+
   // Required actions
   setCategoryFilter: PropTypes.func,
 };
