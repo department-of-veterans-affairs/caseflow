@@ -65,6 +65,7 @@ class DocumentFetcher
     series_id_docs = Document.where(vbms_document_id: docs_to_create.select(&:series_id).pluck(:vbms_document_id))
     copy_metadata_from_document(series_id_docs, vbms_doc_ver_ids)
     created_docs = retrieve_created_docs_including_nondb_attributes(docs_to_create)
+
     updated_docs + created_docs
   end
 
