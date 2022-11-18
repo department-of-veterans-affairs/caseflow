@@ -76,8 +76,8 @@ module IhpTaskPending
   # Response: Update 'vso_ihp_pending' column to True
   def update_appeal_state_when_ihp_created
     if IHP_TYPE_TASKS.include?(type)
-      MetricsService.record("Updating VSO_IHP_PENDING column in Appeal States Table to TRUE for #{appeal.class} "\
-        "ID #{appeal.id}".yellow,
+      MetricsService.record("Updating VSO_IHP_PENDING column to TRUE & VSO_IHP_COMPLETE column to FALSE in"\
+        " Appeal States Table for #{appeal.class} ID #{appeal.id}".yellow,
                             service: nil,
                             name: "AppellantNotification.appeal_mapper") do
         AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "vso_ihp_pending")
