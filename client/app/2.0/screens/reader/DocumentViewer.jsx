@@ -398,7 +398,6 @@ DocumentViewer.propTypes = {
   singleDocumentMode: PropTypes.bool,
   match: PropTypes.object,
   annotations: PropTypes.array,
-  featureToggles: PropTypes.object,
 };
 
 export default DocumentViewer;
