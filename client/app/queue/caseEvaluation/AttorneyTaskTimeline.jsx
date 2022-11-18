@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AttorneyTaskRows from './components/AttorneyTaskRows';
+import AttorneyTaskRows from './AttorneyTaskRows';
 import { css } from 'glamor';
 
 export const AttorneyTaskTimeline = ({ appeal, attorneyChildrenTasks }) => {
