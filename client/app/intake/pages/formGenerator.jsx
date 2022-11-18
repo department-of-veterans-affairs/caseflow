@@ -1,4 +1,5 @@
 /* eslint-disable max-len */
+/* eslint max-lines: off */
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
