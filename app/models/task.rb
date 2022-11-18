@@ -783,6 +783,18 @@ class Task < CaseflowRecord
   # Response: The Appeal State record correlated to the current task's appeal will be updated.
   def update_appeal_state_on_status_change
     update_appeal_state_when_privacy_act_cancelled
+    update_appeal_state_when_privacy_act_complete
+  end
+
+  # Purpose: This method is triggered by callback 'after_create'.  This method calls a variety of abstract private
+  # methods that are prepended in app/models/prepend/va_notifiy.  These private methods will update an appeal's state
+  # within the 'Appeal State' table when certain tracked tasks are created.
+  #
+  # Params: NONE
+  #
+  # Response: The Appeal State record correlated to the current task's appeal will be updated.
+  def update_appeal_state_on_task_creation
+    update_appeal_state_when_privacy_act_created
   end
 
   private
