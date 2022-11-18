@@ -1,0 +1,56 @@
+<wsdl:definitions name="MPIUpdateVeteran"
+   targetNamespace="https://mpi-api.uat.appeals.va.gov"
+   xmlns="http://schemas.xmlsoap.org/wsdl/"
+   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+   xmlns:tns="https://mpi-api.uat.appeals.va.gov"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+   <wsdl:types xmlns="http://schemas.xmlsoap.org/wsdl/">
+     <xs:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xs:element name="MpiObjectInput">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element name="veteranId" nillable="true" minOccurs="0" type="xs:string"/>
+                    <xs:element name="deceasedInd" nillable="true" minOccurs="0" type="xs:int"/>
+                    <xs:element name="deceasedTime" nillable="true" minOccurs="0" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+    </xs:schema>
+  </wsdl:types>
+
+  <wsdl:message name ="MPIVeteranUpdateRequest">
+    <wsdl:part name = "MpiObjectRequest" element = "MpiObjectInput"/>
+  </wsdl:message>
+  <wsdl:message name = "MPIVeteranUpdateResponse">
+    <wsdl:part name = "status" type = "xsd:string"/>
+  </wsdl:message>
+  <wsdl:portType name = "MPIPort">
+    <wsdl:operation name = "MPIVeteranUpdate">
+      <wsdl:input message = "MPIVeteranUpdateRequest"/>
+      <wsdl:output message = "MPIVeteranUpdateResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  
+  <wsdl:binding name = "MPIVeteranUpdate_Binding" type = "MPIPort">
+    <soap:binding style = "rpc"
+         transport = "http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name = "MPIVeteranUpdate">
+      <soap:operation soapAction = "MPIVeteranUpdate"/>
+      <wsdl:input>
+        <soap:body encodingStyle = "http://schemas.xmlsoap.org/soap/encoding/" namespace = "urn:amazonaws:MPIUpdateVeteran" use = "encoded"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body encodingStyle = "http://schemas.xmlsoap.org/soap/encoding/" namespace = "urn:amazonaws:MPIUpdateVeteran" use = "encoded"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name = "MPIUpdateVeteran">
+    <wsdl:documentation>WSDL File for MPIUpdateVeteran</wsdl:documentation>
+    <wsdl:port binding = "MPIVeteranUpdate_Binding" name = "MPIPort">
+      <soap:address location = "https://mpi-api.uat.appeals.va.gov" />
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>
