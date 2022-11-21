@@ -61,7 +61,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
           value={issue.disposition}
           hideLabel={!label}
           label={label}
-          errorMessage={highlight && !issue.disposition ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
+          errorMessage={highlight && !issue.disposition ? "Disposition field is required" : ''}
           options={this.getDispositions()}
           onChange={(option) =>
             this.props.updateIssue({

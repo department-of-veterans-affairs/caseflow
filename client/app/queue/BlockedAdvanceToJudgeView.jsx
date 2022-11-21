@@ -197,7 +197,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
         <h3>{sprintf(COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_INSTRUCTIONS_HEADER, selectedJudgeName)}</h3>
         <TextareaField
           required
-          errorMessage={highlightFormItems && !this.validInstructions() ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          errorMessage={highlightFormItems && !this.validInstructions() ? 'Judge instructions field is required' : null}
           id="judgeInstructions"
           onChange={(value) => this.setState({ instructions: value })}
           value={this.state.instructions}
@@ -230,7 +230,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
         <h3>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_REASONING_HEADER}</h3>
         <RadioField
           required
-          errorMessage={highlightFormItems && !this.validReason() ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          errorMessage={highlightFormItems && !this.validReason() ? 'Reason field is required' : null}
           options={ADVANCEMENT_REASONS.map((reason) => {
             return { displayText: reason, value: reason };
           })}
@@ -242,7 +242,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
         <TextareaField
           required
           errorMessage={
-            highlightFormItems && !this.validCancellationInstructions() ? COPY.FORM_ERROR_FIELD_REQUIRED : null
+            highlightFormItems && !this.validCancellationInstructions() ? 'Instructions field is required' : null
           }
           id="cancellationInstructions"
           onChange={(value) => this.setState({ cancellationInstructions: value })}

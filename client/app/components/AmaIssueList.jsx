@@ -64,7 +64,7 @@ export default class AmaIssueList extends React.PureComponent {
 
         return <React.Fragment>
           { error &&
-            <span className="usa-input-error-message">
+            <span className="usa-input-error-message" tabIndex={0}>
               {error}
             </span>
           }
