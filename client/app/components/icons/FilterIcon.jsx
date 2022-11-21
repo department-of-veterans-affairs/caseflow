@@ -25,11 +25,8 @@ class FilterIcon extends React.PureComponent {
       tabIndex: '0',
       onKeyDown: handleKeyDown,
       onClick: handleActivate,
+      selected: selected ? true : false
     };
-
-    if (selected) {
-      return <SelectedFilterIcon {...props} />;
-    }
 
     return <UnselectedFilterIcon {...props} />;
   }
