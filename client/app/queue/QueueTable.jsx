@@ -106,6 +106,8 @@ export const HeaderRow = (props) => {
     hover({ cursor: 'pointer' })
   );
 
+  {console.log(JSON.stringify(props))}
+
   return (
     <thead className={props.headerClassName}>
       <tr role="row">
