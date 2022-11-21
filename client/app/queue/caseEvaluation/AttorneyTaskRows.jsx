@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 import COPY from '../../../COPY';
 import { sortCaseTimelineEvents, timelineEventsFromAppeal } from '../utils';
-import { NodDateUpdateTimeline } from './NodDateUpdateTimeline';
+import { NodDateUpdateTimeline } from '../components/NodDateUpdateTimeline';
 import { SubstituteAppellantTimelineEvent } from '../substituteAppellant/timelineEvent/SubstituteAppellantTimelineEvent'; // eslint-disable-line max-len
 import { SubstitutionProcessedTimelineEvent } from '../substituteAppellant/timelineEvent/SubstitutionProcessedTimelineEvent'; // eslint-disable-line max-len
 class AttorneyTaskRows extends React.PureComponent {
@@ -33,9 +33,9 @@ class AttorneyTaskRows extends React.PureComponent {
 
   datesTaskWorked = (task) => {
     if (task) {
-      const dateAssigned = moment(task.assignedOn).format('MM/DD/YYYY');
+      const dateCreated = moment(task.createdAt).format('MM/DD/YYYY');
       const dateClosed = task.closedAt ? moment(task.closedAt).format('MM/DD/YYYY') : '';
-      const taskDateFormat = ` (${dateAssigned} - ${dateClosed})`;
+      const taskDateFormat = ` (${dateCreated} - ${dateClosed})`;
 
       return (
         <React.Fragment>
@@ -128,10 +128,12 @@ class AttorneyTaskRows extends React.PureComponent {
     const eventsFromAppeal = timeline ?
       timelineEventsFromAppeal({ appeal }) :
       [];
+
+    // Reverse the result so oldest tasks show at top of timeline
     const sortedTimelineEvents = sortCaseTimelineEvents(
       taskList,
       eventsFromAppeal
-    );
+    ).reverse();
 
     return (
       <React.Fragment key={appeal.externalId}>
