@@ -74,7 +74,8 @@ export const AddClaimantConfirmationModal = ({
 
   const missingLastName = useMemo(
     () => {
-      // Make an exception for listed attorneys since their name is stored without using the last name field
+      // Make an exception for listed attorneys since their name is pulled from the text label in a non smart way
+      // The user also can not change that information so a warning does not change much
       if (claimantEntity?.listedAttorney?.value && claimantEntity?.listedAttorney?.value !== 'not_listed') {
         return false;
       }
