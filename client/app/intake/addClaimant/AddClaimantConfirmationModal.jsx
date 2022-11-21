@@ -73,7 +73,14 @@ export const AddClaimantConfirmationModal = ({
   const poaEntity = useMemo(() => shapeAddressBlock(poa), [poa]);
 
   const missingLastName = useMemo(
-    () => claimantEntity?.firstName && !claimantEntity?.lastName,
+    () => {
+      // Make an exception for listed attorneys since their name is stored without using the last name field
+      if (claimantEntity?.listedAttorney?.value && claimantEntity?.listedAttorney?.value !== 'not_listed') {
+        return false;
+      }
+
+      return claimantEntity?.firstName && !claimantEntity?.lastName;
+    },
     [claimantEntity]
   );
 
