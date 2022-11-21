@@ -40,8 +40,7 @@ module PrivacyActPending
   end
 
   def update_appeal_state_when_privacy_act_created
-    if PRIVACY_ACT_TASKS.include?(type) &&
-       !PRIVACY_ACT_TASKS.include?(parent&.type)
+    if PRIVACY_ACT_TASKS.include?(type) && !PRIVACY_ACT_TASKS.include?(parent&.type)
       MetricsService.record("Updating PRIVACY_ACT_PENDING column in Appeal States Table to TRUE and
                              PRIVACY_ACT_COMPLETE/PRIVACY_ACT_CANCELLED to FALSE "\
         "for #{appeal.class} ID #{appeal.id}".yellow,

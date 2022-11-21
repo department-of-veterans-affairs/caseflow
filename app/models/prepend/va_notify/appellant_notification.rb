@@ -118,7 +118,7 @@ module AppellantNotification
         appeal_state.update!(vso_ihp_complete: true, vso_ihp_pending: false)
       end
     when "privacy_act_pending"
-      appeal_state.update!(privacy_act_pending: true, privacy_act_complete: false, privacy_act_cancelled: false)
+      appeal_state.update!(privacy_act_pending: true, privacy_act_complete: false)
     when "privacy_act_complete"
       # Only updates appeal state if ALL privacy act tasks are completed
       open_tasks = appeal.tasks.open
