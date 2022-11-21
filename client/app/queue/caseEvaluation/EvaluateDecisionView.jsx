@@ -19,7 +19,11 @@ import RadioField from '../../components/RadioField';
 import { deleteAppeal } from '../QueueActions';
 import { requestSave } from '../uiReducer/uiActions';
 import { buildCaseReviewPayload } from '../utils';
-import { taskById } from '../selectors';
+import { taskById,
+  getTaskTreesForAttorneyTasks,
+  getLegacyTaskTree,
+  getAttorneyTasksForJudgeTask,
+} from '../selectors';
 
 import COPY from '../../../COPY';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS';
@@ -29,6 +33,7 @@ import {
   marginTop,
   paddingLeft,
   fullWidth,
+  redText,
   VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
   JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH
@@ -37,11 +42,15 @@ import DispatchSuccessDetail from '../components/DispatchSuccessDetail';
 import QueueFlowPage from '../components/QueueFlowPage';
 import { JudgeCaseQuality } from './JudgeCaseQuality';
 import { qualityIsDeficient, errorStylingNoTopMargin } from '.';
+import { AttorneyTaskTimeline } from './AttorneyTaskTimeline';
+import { AttorneyDaysWorked } from './AttorneyDaysWorked';
 
 const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });
 const hrStyling = css(marginTop(2), marginBottom(3));
 const subH2Styling = css(paddingLeft(1), { lineHeight: 2 });
+const caseTimelineStyling = css({ display: 'flex' });
+const caseTypeStyling = css({ width: '15%' });
 
 const timelinessOpts = Object.entries(JUDGE_CASE_REVIEW_OPTIONS.TIMELINESS).map(([value, displayText]) => ({
   displayText,
@@ -177,14 +186,72 @@ class EvaluateDecisionView extends React.PureComponent {
     this.setState({ [key]: newOpts });
   };
 
+  renderCaseTimeliness = () => {
+    const { appeal,
+      isLegacy,
+      task,
+      oldestAttorneyTask,
+      attorneyChildrenTasks,
+      displayCaseTimelinessTimeline,
+    } = this.props;
+
+    const dateAssigned = displayCaseTimelinessTimeline && !isLegacy ?
+      moment(oldestAttorneyTask.createdAt) : moment(task.previousTaskAssignedOn);
+    const decisionSubmitted = moment(task.assignedOn);
+    const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
+
+    if (displayCaseTimelinessTimeline) {
+      const caseType = task.caseType;
+      const aod = task.aod;
+      const cavc = caseType === 'Court Remand';
+      const daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days') + 1;
+
+      return (
+        <>
+          <div {...caseTimelineStyling} >
+            <span {...caseTypeStyling}>
+              <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_CASE_TYPE}</b>:
+              { aod && <span {...redText}> AOD</span> }
+              { cavc && <span {...redText}> CAVC</span> }
+              { !aod && !cavc && <span> {caseType}</span> }
+            </span>
+            <AttorneyDaysWorked
+              attorneyTasks={attorneyChildrenTasks}
+              daysAssigned={daysAssigned} />
+          </div>
+          <br />
+          <span>{dateAssigned.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</span>
+          <AttorneyTaskTimeline title="Attorney Task Timeline"
+            appeal={appeal}
+            attorneyChildrenTasks={attorneyChildrenTasks} />
+          <span>
+            {decisionSubmitted.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}
+          </span>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</b>: {dateAssigned.format('M/D/YY')}
+        <br />
+        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}</b>: {decisionSubmitted.format('M/D/YY')}
+        <br />
+        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>&nbsp; (
+        {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM}): {daysWorked}
+      </>
+    );
+  }
+
   handleCaseQualityChange = (values) => this.setState({ ...values });
 
   render = () => {
-    const { appeal, task, appealId, highlight, error, displayCaseTimelinessQuestion, ...otherProps } = this.props;
-
-    const dateAssigned = moment(task.previousTaskAssignedOn);
-    const decisionSubmitted = moment(task.assignedOn);
-    const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
+    const { appeal,
+      appealId,
+      highlight,
+      error,
+      displayCaseTimelinessQuestion,
+      ...otherProps } = this.props;
 
     return (
       <QueueFlowPage
@@ -225,12 +292,7 @@ class EvaluateDecisionView extends React.PureComponent {
           </>
         )}
         <h2 {...headerStyling} ref={this.timelinessLabel}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
-        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</b>: {dateAssigned.format('M/D/YY')}
-        <br />
-        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}</b>: {decisionSubmitted.format('M/D/YY')}
-        <br />
-        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>&nbsp; (
-        {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM}): {daysWorked}
+        {this.renderCaseTimeliness()}
         <br />
         {displayCaseTimelinessQuestion && (
           <>
@@ -290,16 +352,61 @@ EvaluateDecisionView.propTypes = {
   requestSave: PropTypes.func,
   deleteAppeal: PropTypes.func,
   displayCaseTimelinessQuestion: PropTypes.bool,
+  oldestAttorneyTask: PropTypes.object,
+  attorneyChildrenTasks: PropTypes.array,
+  displayCaseTimelinessTimeline: PropTypes.bool,
+  isLegacy: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
+  let isLegacy;
+  let oldestAttorneyTask;
+  let attorneyChildrenTasks = [];
+
+  // previousTaskAssignedOn comes from
+  // eslint-disable-next-line max-len
+  // Legacy: https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/legacy_tasks/judge_legacy_task.rb#L17
+  // AMA: https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/models/tasks/judge_task.rb#L42
+  const judgeDecisionReviewTask = taskById(state, { taskId: ownProps.taskId });
+
+  // When canceling out of Evaluate Decision page need to check if appeal exists otherwise failures occur
+  if (appeal) {
+    isLegacy = appeal.docketName === 'legacy';
+
+    if (isLegacy) {
+      attorneyChildrenTasks = getLegacyTaskTree(state, {
+        appealId: appeal.externalId, judgeDecisionReviewTask });
+    } else {
+      // We want the oldest AttorneyTask to use its createdAt as the start of the date range to be displayed and for
+      // calculating the total days between JudgeTask and AttorneyTask
+      // These tasks are returned sorted so the oldest is at front
+      oldestAttorneyTask = getAttorneyTasksForJudgeTask(state, {
+        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId })[0];
+
+      // Get all tasks under the JudgeDecisionReviewTask
+      // Filters out those without a closedAt date or that are hideFromCaseTimeline
+      attorneyChildrenTasks = getTaskTreesForAttorneyTasks(state, {
+        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId }).
+        filter((task) => {
+          // Remove any tasks whose createdAt is older than the AttorneyTask's createdAt date
+          const taskAssignedOn = moment(task.createdAt);
+          const attorneyTaskAssignedOn = moment(oldestAttorneyTask.createdAt);
+          const result = taskAssignedOn.diff(attorneyTaskAssignedOn, 'days');
+
+          return result >= 0;
+        });
+    }
+  }
 
   return {
     appeal,
+    attorneyChildrenTasks,
+    oldestAttorneyTask,
+    isLegacy,
     highlight: state.ui.highlightFormItems,
     taskOptions: state.queue.stagedChanges.taskDecision.opts,
-    task: taskById(state, { taskId: ownProps.taskId }),
+    task: judgeDecisionReviewTask,
     decision: state.queue.stagedChanges.taskDecision,
     error: state.ui.messages.error
   };
