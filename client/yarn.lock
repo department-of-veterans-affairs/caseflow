@@ -2529,9 +2529,9 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#9a79a1a1aa878315be4077b3ee234daeb25638de":
+"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#1a252ed":
   version "2.6.1"
-  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#9a79a1a1aa878315be4077b3ee234daeb25638de"
+  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#1a252edce388065702d8f6dc2ea896294a2936ed"
   dependencies:
     classnames "^2.2.5"
     glamor "^2.20.40"
