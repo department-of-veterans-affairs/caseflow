@@ -76,6 +76,7 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
                 aria-expanded="false"
                 aria-haspopup="menu"
                 aria-label="Logged in as undefined"
+                aria-pressed="false"
                 class="cf-dropdown-trigger"
                 data-css-1oange6=""
                 href="#undefined"

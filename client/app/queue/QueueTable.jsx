@@ -168,7 +168,7 @@ export const HeaderRow = (props) => {
           }
           const columnTitleContent = <span {...(titleId ? { id: titleId } : {})}>{column.header || ''}</span>;
           const columnContent = (
-            <span {...iconHeaderStyle} aria-label="">
+            <span {...iconHeaderStyle} aria-label={column.header ?? ''}>
               {columnTitleContent}
               {sortIcon}
               {filterIcon}
