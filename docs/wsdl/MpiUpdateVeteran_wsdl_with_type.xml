@@ -387,7 +387,7 @@
 	<wsdl:service name="MpiUpdateVeteran">
 		<wsdl:port binding="mvs:MpiUpdateVeteranSOAP"
 			name="MpiUpdateVeteranSOAP">
-			<soap:address location="https://mpi-api.uat.appeals.va.gov/" />
+			<soap:address location="https://mpi-api.uat.appeals.va.gov/mpi/update" />
 		</wsdl:port>
 	</wsdl:service>
 </wsdl:definitions>
