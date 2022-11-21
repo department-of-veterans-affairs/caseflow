@@ -8,7 +8,7 @@
 	<wsdl:types>
 		<xsd:schema targetNamespace="http://appeals.cf.va.gov/MpiVeteranService/">
 			<xsd:import namespace="urn:hl7-org:v3"
-				schemaLocation="idMHL7v3.xsd" />
+				schemaLocation="https://raw.githubusercontent.com/department-of-veterans-affairs/caseflow/feature/APPEALS-8729/docs/wsdl/IdMHL7v3.xsd" />
 			<xsd:element name="UpdateVeteran">
 				<xsd:complexType>
 					<xsd:sequence>
