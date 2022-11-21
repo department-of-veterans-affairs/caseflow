@@ -18,11 +18,10 @@ import { claimantPropTypes, poaPropTypes } from './utils';
 import { AddressBlock } from './AddressBlock';
 import { isEmpty } from 'lodash';
 
+const isKnownAttorney = (entity) => (entity?.listedAttorney?.value && entity?.listedAttorney?.value !== 'not_listed');
+
 export const shapeAddressBlock = (entity) => {
-  if (
-    entity?.listedAttorney?.value &&
-    entity?.listedAttorney?.value !== 'not_listed'
-  ) {
+  if (isKnownAttorney(entity)) {
     const [title, firstName, middleName, lastName] = entity.listedAttorney?.label.split(' ');
     const addressLine1 = entity.listedAttorney?.address.address_line_1;
     const addressLine2 = entity.listedAttorney?.address.address_line_2;
@@ -76,7 +75,7 @@ export const AddClaimantConfirmationModal = ({
     () => {
       // Make an exception for listed attorneys since their name is pulled from the text label in a non smart way
       // The user also can not change that information so a warning does not change much
-      if (claimantEntity?.listedAttorney?.value && claimantEntity?.listedAttorney?.value !== 'not_listed') {
+      if (isKnownAttorney(claimantEntity)) {
         return false;
       }
 
