@@ -31,7 +31,6 @@
 	<wsdl:portType name="MpiUpdateVeteran">
 		<wsdl:operation name="UpdateVeteran">
 			<wsdl:input message="mvs:UpdateVeteranRequest" />
-			<wsdl:output message="mvs:UpdateVeteranResponse" />
 		</wsdl:operation>
 	</wsdl:portType>
 	<wsdl:binding name="MpiUpdateVeteranSOAP"
