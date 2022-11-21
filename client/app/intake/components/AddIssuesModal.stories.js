@@ -1,6 +1,7 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 import { PAGE_PATHS } from '../constants';
+import { sample1 } from '../../../test/app/intake/testData';
 import ReduxBase from 'app/components/ReduxBase';
 import { reducer, generateInitialState } from 'app/intake';
 
@@ -18,7 +19,7 @@ const ReduxDecorator = (Story) => (<ReduxBase reducer={reducer} initialState={ge
 );
 
 const defaultArgs = {
-  intakeData: {}
+  intakeData: sample1.intakeData
 };
 
 export default {
