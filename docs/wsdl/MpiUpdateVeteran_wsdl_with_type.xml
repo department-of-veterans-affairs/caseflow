@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <wsdl:definitions
-	xmlns:mvs="http://appeals.cf.va.gov/MpiVeteranService/"
+	xmlns:mvs="http://appeals.cf.va.gov/"
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="MpiUpdateVeteran"
-	targetNamespace="http://appeals.cf.va.gov/MpiVeteranService/">
+	targetNamespace="http://appeals.cf.va.gov/">
 	<wsdl:types>
 			<xs:schema
 				xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
