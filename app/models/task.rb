@@ -46,6 +46,7 @@ class Task < CaseflowRecord
   after_update :update_children_status_after_closed, if: :task_just_closed?
   after_update :cancel_task_timers, if: :task_just_closed?
   after_update :update_appeal_state_on_status_change
+  after_update :update_appeal_state_on_task_creation
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -120,6 +121,7 @@ class Task < CaseflowRecord
   prepend PrivacyActComplete
   prepend AppealCancelled
   prepend PrivacyActCancelled
+  prepend PrivacyActPending
 
   ############################################################################################
   ## class methods
@@ -783,6 +785,7 @@ class Task < CaseflowRecord
   #
   # Response: The Appeal State record correlated to the current task's appeal will be updated.
   def update_appeal_state_on_status_change
+    update_appeal_state_when_appeal_cancelled
     update_appeal_state_when_privacy_act_cancelled
     update_appeal_state_when_privacy_act_complete
   end
