@@ -30,7 +30,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     Task.where(
       type: "RootTask",
       appeal_type: "Appeal",
-      status: "in_progress",
+      status: Task.open_statuses,
       closed_at: nil
     ).find_in_batches(batch_size: 1000) do |root_tasks|
       root_tasks.each do |task|
