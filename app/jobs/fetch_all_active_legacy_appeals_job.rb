@@ -28,7 +28,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   def find_and_create_appeal_state_for_active_legacy_appeals
     Task.where(
       type: "RootTask",
-      appeal_type: "Appeal",
+      appeal_type: "LegacyAppeal",
       status: Task.open_statuses,
       closed_at: nil
     ).find_in_batches(batch_size: 1000) do |root_tasks|
