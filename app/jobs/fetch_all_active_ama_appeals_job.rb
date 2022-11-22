@@ -65,14 +65,47 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     end
   end
 
-  # Purpose: Set key value pairs for "vso_ihp_pending" & "vso_ihp_complete"
+  # Purpose: Updates "vso_ihp_pending" to TRUE if most recent parent IHP type task is in an open status.
+  # Updates "vso_ihp_pending" to FALSE if most recent parent IHP type task has a status of 'cancelled'.
+  # Updates "vso_ihp_completed" to TRUE if most recent parent IHP type task has a status of 'completed'.
+  #
+  # Params: Most Recent Parent IHP Task (InformalHearingPresentationTask OR IhpColocatedTask)
+  #
+  # Returns: nil
+  def update_ihp_appeal_state(ihp_task)
+    appeal = ihp_task.appeal
+    if Task.open_statuses.include?(ihp_task.status)
+      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "vso_ihp_pending")
+    elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
+      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "vso_ihp_complete")
+    end
+  end
+
+  # Purpose: Method that creates/updates vso_ihp_pending &
+  # vso_ihp_complete records within appeal_states table
   #
   # Params: Appeal or LegacyAppeal object
   #
   # Returns: Hash of "vso_ihp_pending" & "vso_ihp_complete" key value pairs
   def map_appeal_ihp_state(appeal)
-    # Code goes here ...
-    { vso_ihp_pending: false, vso_ihp_complete: false }
+    appeal_task_types=appeal.tasks.map(&:type)
+    if IHP_TYPE_TASKS.any? { |ihp_task| appeal_task_types.include?(ihp_task) }
+      ihp_tasks = appeal.tasks.where(type: IHP_TYPE_TASKS)
+      parent_ihp_tasks = []
+      ihp_tasks.each do |task|
+        if !IHP_TYPE_TASKS.include?(task&.parent&.type)
+          parent_ihp_tasks.push(task)
+        end
+      end
+      if parent_ihp_tasks.count == 1
+        update_ihp_appeal_state(parent_ihp_tasks.first)
+      elsif parent_ihp_tasks.count > 1
+        parent_ihp_task_ids = parent_ihp_tasks.map(&:id)
+        current_parent_ihp_task_id = parent_ihp_task_ids.max
+        current_parent_ihp_task = Task.find current_parent_ihp_task_id
+        update_ihp_appeal_state(current_parent_ihp_task)
+      end
+    end
   end
 
   def map_appeal_privacy_act_state(appeal)
