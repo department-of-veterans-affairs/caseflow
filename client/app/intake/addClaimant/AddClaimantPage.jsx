@@ -58,7 +58,8 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
   const {
     formState: { isValid },
     handleSubmit,
-    watch
+    watch,
+    reset
   } = methods;
 
   const relationship = watch('relationship');
@@ -120,6 +121,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
       claimant?.relationship !== relationship
     ) {
       dispatch(clearClaimant());
+      reset({ partyType: null, relationship });
     }
   }, [relationship, claimant]);
 
