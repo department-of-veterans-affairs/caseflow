@@ -36,10 +36,19 @@ module HearingWithdrawn
   #
   # Response: none
   def update_appeal_states_on_hearing_withdrawn
-    if disposition == Constants.HEARING_DISPOSITION_TYPES.cancelled
-      MetricsService.record("Updating HEARING_WITHDRAWN column in Appeal States Table to FALSE for #{appeal.class.to_s} ID #{appeal.id}".yellow,
-                            name: "AppellantNotification.appeal_mapper") do
-        AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_withdrawn")
+    if is_a?(LegacyHearing)
+      if VACOLS::CaseHearing.find_by(hearing_pkseq: vacols_id).hearing_disp == "C"
+        MetricsService.record("Updating HEARING_WITHDRAWN in Appeal States Table for #{appeal.class.to_s} ID #{appeal.id}".yellow,
+                              name: "AppellantNotification.appeal_mapper") do
+          AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_withdrawn")
+        end
+      end
+    elsif is_a?(Hearing)
+      if disposition == Constants.HEARING_DISPOSITION_TYPES.cancelled
+        MetricsService.record("Updating HEARING_WITHDRAWN in Appeal States Table for #{appeal.class.to_s} ID #{appeal.id}".yellow,
+                              name: "AppellantNotification.appeal_mapper") do
+          AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_withdrawn")
+        end
       end
     end
   end
