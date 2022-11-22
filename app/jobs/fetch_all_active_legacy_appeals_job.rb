@@ -14,6 +14,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   #
   # Returns: nil
   def perform
+    RequestStore[:current_user]=User.system_user
     find_and_create_appeal_state_for_active_legacy_appeals
   end
 

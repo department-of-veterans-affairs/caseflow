@@ -14,6 +14,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   #
   # Returns: nil
   def perform
+    RequestStore[:current_user]=User.system_user
     find_and_create_appeal_state_for_active_ama_appeals
   end
 
@@ -29,7 +30,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     Task.where(
       type: "RootTask",
       appeal_type: "Appeal",
-      status: Task.open_statuses,
+      status: "in_progress",
       closed_at: nil
     ).find_in_batches(batch_size: 1000) do |root_tasks|
       root_tasks.each do |task|
