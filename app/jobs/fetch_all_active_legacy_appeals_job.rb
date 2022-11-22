@@ -68,7 +68,23 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
     end
   end
 
-  # Purpose: Set key value pairs for "vso_ihp_pending" & "vso_ihp_complete"
+  # Purpose: Updates "vso_ihp_pending" to TRUE if most recent parent IHP type task is in an open status.
+  # Updates "vso_ihp_completed" to TRUE if most recent parent IHP type task has a status of 'completed'.
+  #
+  # Params: Most Recent Parent IHP Task (InformalHearingPresentationTask OR IhpColocatedTask)
+  #
+  # Returns: nil
+  def update_ihp_appeal_state(ihp_task)
+    appeal = ihp_task.appeal
+    if Task.open_statuses.include?(ihp_task.status)
+      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "vso_ihp_pending")
+    elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
+      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "vso_ihp_complete")
+    end
+  end
+
+  # Purpose: Method that creates/updates vso_ihp_pending &
+  # vso_ihp_complete records within appeal_states table
   #
   # Params: Appeal or LegacyAppeal object
   #
