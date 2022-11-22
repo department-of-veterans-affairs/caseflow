@@ -53,7 +53,6 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   end
 
   # Purpose: Updates "vso_ihp_pending" to TRUE if most recent parent IHP type task is in an open status.
-  # Updates "vso_ihp_pending" to FALSE if most recent parent IHP type task has a status of 'cancelled'.
   # Updates "vso_ihp_completed" to TRUE if most recent parent IHP type task has a status of 'completed'.
   #
   # Params: Most Recent Parent IHP Task (InformalHearingPresentationTask OR IhpColocatedTask)
