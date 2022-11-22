@@ -5,8 +5,11 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   queue_with_priority :low_priority
   QUERY_LIMIT = ENV["STATE_MIGRATION_JOB_BATCH_SIZE"]
 
-  # Purpose: Job that finds all active Legacy Appeals &
-  # creates records within the appeal_states table
+  # All Variants of an IHP Task
+  IHP_TYPE_TASKS = %w[IhpColocatedTask InformalHearingPresentationTask].freeze
+
+  # Purpose: Job that finds all active AMA Appeals &
+  # creates/updates records within the appeal_states table
   #
   # Params: None
   #
