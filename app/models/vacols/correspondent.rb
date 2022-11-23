@@ -88,7 +88,7 @@ class VACOLS::Correspondent < VACOLS::Record
     private
 
     def update_veteran_nod_in_vacols(veteran)
-      update_type = missing_deceased_ind(veteran[:deceased_time])
+      update_type = missing_deceased_time(veteran[:deceased_time])
 
       return update_type unless update_type.nil?
 
@@ -99,7 +99,7 @@ class VACOLS::Correspondent < VACOLS::Record
       update_veteran_sfnod(veteran[:id], veteran[:deceased_time], find_veteran_by_ssn(veteran[:id]))
     end
 
-    def missing_deceased_ind(veteran_deceased_time)
+    def missing_deceased_time(veteran_deceased_time)
       if veteran_deceased_time.nil? || veteran_deceased_time == ""
         Rails.logger.info("No deceased time was provided")
         return :missing_deceased_info
