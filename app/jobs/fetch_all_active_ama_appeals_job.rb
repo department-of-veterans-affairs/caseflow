@@ -47,6 +47,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   def add_record_to_appeal_states_table(appeal)
     begin
       map_appeal_ihp_state(appeal)
+      map_appeal_hearing_postponed_state(appeal)
     rescue StandardError => error
       Rails.logger.error("#{appeal.class} #{appeal.id} was unable to create/update appeal_states record because of "\
          "#{error}".red)
@@ -104,7 +105,14 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   end
 
   def map_appeal_hearing_postponed_state(appeal)
+    # Definition of postponed
+    # All AssignHearingDispositionTasks have been cancelled
+    # Another ScheduleHearingTask has been assigned OR on_hold (for admin action)
+    # Will have to check disposition of last hearing to make sure that it is postponed vs scheduled_in_error
+
+
     # Code goes here ...
+    # Get
   end
 
   def map_appeal_hearing_withdrawn_state(appeal)
