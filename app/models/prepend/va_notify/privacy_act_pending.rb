@@ -33,7 +33,6 @@ module PrivacyActPending
     super_return_value = super
     if (params[:type] == "PrivacyActTask" && params[:assigned_to_type].include?("Organization")) ||
        (params[:type] == "HearingAdminActionFoiaPrivacyRequestTask" && parent.type == "ScheduleHearingTask")
-      AppellantNotification.appeal_mapper(parent.appeal.id, parent.appeal.class.to_s, "privacy_act_pending")
       AppellantNotification.notify_appellant(parent.appeal, @@template_name)
     end
     super_return_value
@@ -42,7 +41,7 @@ module PrivacyActPending
   def update_appeal_state_when_privacy_act_created
     if PRIVACY_ACT_TASKS.include?(type) && !PRIVACY_ACT_TASKS.include?(parent&.type)
       MetricsService.record("Updating PRIVACY_ACT_PENDING column in Appeal States Table to TRUE and
-                             PRIVACY_ACT_COMPLETE/PRIVACY_ACT_CANCELLED to FALSE "\
+                             PRIVACY_ACT_COMPLETE to FALSE "\
         "for #{appeal.class} ID #{appeal.id}".yellow,
                             service: nil,
                             name: "AppellantNotification.appeal_mapper") do
