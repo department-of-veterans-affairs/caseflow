@@ -479,7 +479,7 @@ feature "Intake Review Page", :postgres do
 
           # Checks for tooltip text
           expect(page).to have_content(
-            format(COPY::INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, "VHABENEFITAPPEALS@va.gov")
+            format(COPY::INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, COPY::VHA_BENEFIT_EMAIL_ADDRESS)
           )
         end
       end

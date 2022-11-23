@@ -16,7 +16,7 @@ const defaultProps = {
   userCanSelectVha: false
 };
 
-const vhaTooltipText = sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, 'VHABENEFITAPPEALS@va.gov');
+const vhaTooltipText = sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, COPY.VHA_BENEFIT_EMAIL_ADDRESS);
 
 const renderBenefitType = (props) => {
   return render(<BenefitType {...props} />);

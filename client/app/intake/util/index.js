@@ -2,7 +2,10 @@ import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
 
 import { REVIEW_OPTIONS, REVIEW_DATA_FIELDS, CLAIMANT_ERRORS } from '../constants';
-import { INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT } from '../../../COPY';
+import {
+  INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT,
+  VHA_BENEFIT_EMAIL_ADDRESS
+} from '../../../COPY';
 import DATES from '../../../constants/DATES';
 import { formatDateStr } from '../../util/DateUtil';
 
@@ -90,7 +93,7 @@ export const formatBenefitTypeRadioOptions = (options, userCanSelectVha) => {
       return {
         ...radioData,
         disabled: true,
-        tooltipText: sprintf(INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, 'VHABENEFITAPPEALS@va.gov')
+        tooltipText: sprintf(INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, VHA_BENEFIT_EMAIL_ADDRESS)
       };
     }
 
