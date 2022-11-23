@@ -73,12 +73,25 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
   }, data.serverIntake)
 );
 
-const resetIntake = () => mapDataToInitialIntake({ serverIntake: {} });
+const resetIntake = (valuesToRetain) => (
+  mapDataToInitialIntake(
+    {
+      ...valuesToRetain,
+      serverIntake: {}
+    }
+  )
+);
+
+const valuesToRetainAcrossIntakes = (state) => (
+  {
+    userIsVhaEmployee: state.userIsVhaEmployee
+  }
+);
 
 export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
   switch (action.type) {
   case ACTIONS.START_NEW_INTAKE:
-    return resetIntake();
+    return resetIntake(valuesToRetainAcrossIntakes(state));
   case ACTIONS.SET_FILE_NUMBER_SEARCH:
     return update(state, {
       fileNumberSearch: {
@@ -209,7 +222,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
       $toggle: ['cancelModalVisible']
     });
   case ACTIONS.CANCEL_INTAKE_SUCCEED:
-    return update(resetIntake(), {
+    return update(resetIntake(
+      valuesToRetainAcrossIntakes(state)
+    ), {
       requestStatus: {
         cancel: {
           $set: REQUEST_STATE.SUCCEEDED
