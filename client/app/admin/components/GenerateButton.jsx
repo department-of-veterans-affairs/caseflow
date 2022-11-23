@@ -69,7 +69,7 @@ const GenerateButton = (props) => {
           id="generate-extract"
           onClick={() => onClickGenerate()}
         >
-          Generate
+          Generate Veteran Extract
         </Button>
       }
       {
