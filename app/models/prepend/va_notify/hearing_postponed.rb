@@ -30,7 +30,7 @@ module HearingPostponed
     super_return_value
   end
 
-  # Purpose: Callback method when a hearing updates to also updates appeal_states table
+  # Purpose: Callback method when a hearing updates to also update appeal_states table
   #
   # Params: none
   #

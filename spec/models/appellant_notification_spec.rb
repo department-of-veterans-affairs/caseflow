@@ -288,7 +288,7 @@ describe AppellantNotification do
         old_appeal_state = AppealState.find_by(appeal_id: postponed_hearing.appeal.id, appeal_type: postponed_hearing.appeal.class.to_s)
         expect(old_appeal_state.hearing_postponed).to eq(false)
         postponed_hearing.update(hearing_hash)
-        new_appeal_state = AppealState.find_by(appeal_id: postponed_hearing.appeal.id, appeal_type:postponed_hearing.appeal.class.to_s)
+        new_appeal_state = AppealState.find_by(appeal_id: postponed_hearing.appeal.id, appeal_type: postponed_hearing.appeal.class.to_s)
         expect(new_appeal_state.hearing_postponed).to eq(true)
       end
     end

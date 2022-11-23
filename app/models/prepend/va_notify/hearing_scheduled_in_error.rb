@@ -6,7 +6,7 @@
 module HearingScheduledInError
   extend AppellantNotification
 
-  # Purpose: Callback method when a hearing updates to also updates appeal_states table
+  # Purpose: Callback method when a hearing updates to also update appeal_states table
   #
   # Params: none
   #
