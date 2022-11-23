@@ -296,6 +296,12 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :higher_level_review_vha_task, class: DecisionReviewTask do
+        appeal { create(:higher_level_review, :with_vha_issue, benefit_type: "vha") }
+        assigned_by { nil }
+        assigned_to { BusinessLine.where(name: "Veterans Health Administration").first }
+      end
+
       factory :distribution_task, class: DistributionTask do
         parent { appeal.root_task || create(:root_task, appeal: appeal) }
         assigned_by { nil }
