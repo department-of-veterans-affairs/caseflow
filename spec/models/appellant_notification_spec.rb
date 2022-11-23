@@ -461,10 +461,10 @@ describe AppellantNotification do
       let(:bva) { Bva.singleton }
       let!(:hearings_management_user) { create(:hearings_coordinator) }
       let!(:parent_task) { create(:schedule_hearing_task, appeal: appeal) }
-      let(:hafpr_task) do
+      let!(:hafpr_task) do
         HearingAdminActionFoiaPrivacyRequestTask.create!(appeal: appeal, parent_id: parent_task.id, assigned_to: bva)
       end
-      let(:hafpr_child) do
+      let!(:hafpr_child) do
         create(
           :hearing_admin_action_foia_privacy_request_task,
           appeal: appeal,
@@ -516,10 +516,10 @@ describe AppellantNotification do
       let(:priv_org) { PrivacyTeam.singleton }
       let(:root_task) { create(:root_task) }
       let(:mail_task) { AddressChangeMailTask.create!(appeal: appeal, parent_id: root_task.id, assigned_to: priv_org) }
-      let(:foia_task) do
+      let!(:foia_task) do
         PrivacyActRequestMailTask.create!(appeal: appeal, parent_id: root_task.id, assigned_to: priv_org)
       end
-      let(:foia_child) do
+      let!(:foia_child) do
         PrivacyActRequestMailTask.create!(appeal: appeal, parent_id: foia_task.id, assigned_to: current_user)
       end
       before do
@@ -574,7 +574,7 @@ describe AppellantNotification do
         user
       end
 
-      let(:foia_colocated_task) do
+      let!(:foia_colocated_task) do
         {
           instructions: "kjkjk",
           type: "FoiaColocatedTask",
@@ -621,7 +621,7 @@ describe AppellantNotification do
       let(:current_user) { create(:user) }
       let(:priv_org) { PrivacyTeam.singleton }
       let(:root_task) { create(:root_task) }
-      let(:colocated_task) do
+      let!(:colocated_task) do
         IhpColocatedTask.create!(appeal: appeal, parent_id: root_task.id, assigned_by: attorney, assigned_to: priv_org)
       end
       let(:privacy_params_org) do
@@ -652,6 +652,7 @@ describe AppellantNotification do
         privacy_child.update!(status: "completed")
       end
       it "updates appeal state when completing a PrivacyActTask assigned to user" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_pending")
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_complete")
         privacy_child.update!(status: "completed")
       end
@@ -660,6 +661,7 @@ describe AppellantNotification do
         privacy_parent.update_with_instructions(status: "completed")
       end
       it "updates appeal state when completing a PrivacyActTask assigned to organization" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_pending")
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_cancelled")
         privacy_parent.update_with_instructions(status: "cancelled")
       end
