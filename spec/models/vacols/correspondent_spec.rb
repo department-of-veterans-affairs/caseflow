@@ -2,15 +2,14 @@
 
 describe VACOLS::Correspondent do
   describe "updating veteran NOD in VACOLS" do
-    let(:good_veteran) { { id: "123456789", deceased_ind: "true", deceased_time: "20111012" } }
-    let(:good_veteran_different_deceased_time) { { id: "333333333", deceased_ind: "true", deceased_time: "20001111" } }
-    let(:veteran_nil_deceased_ind) { { id: "123456789", deceased_ind: nil, deceased_time: "20111012" } }
-    let(:veteran_nil_deceased_time) { { id: "123456789", deceased_ind: "true", deceased_time: nil } }
-    let(:veteran_not_in_vacols) { { id: "000000000", deceased_ind: "true", deceased_time: "20111012" } }
-    let(:veteran_ssn_multiple_matches) { { id: "111111111", deceased_ind: "true", deceased_time: "20111012" } }
+    let(:good_veteran) { { id: "123456789", deceased_time: "20111012" } }
+    let(:good_veteran_different_deceased_time) { { id: "333333333", deceased_time: "20001111" } }
+    let(:veteran_nil_deceased_time) { { id: "123456789", deceased_time: nil } }
+    let(:veteran_not_in_vacols) { { id: "000000000",  deceased_time: "20111012" } }
+    let(:veteran_ssn_multiple_matches) { { id: "111111111", deceased_time: "20111012" } }
     # deceased_time for this case needs to be 1.day.ago because the factorybot create method
     # in the before block doesn't translate the date format correctly
-    let(:veteran_deceased_time_matches_input) { { id: "222222222", deceased_ind: "true", deceased_time: 1.day.ago } }
+    let(:veteran_deceased_time_matches_input) { { id: "222222222", deceased_time: 1.day.ago } }
 
     before do
       create(:correspondent, ssn: "123456789")
@@ -24,10 +23,6 @@ describe VACOLS::Correspondent do
     end
 
     context "with bad inputs:" do
-      it "nil deceased indicator" do
-        described_class.update_veteran_nod(veteran_nil_deceased_ind)
-        expect(Rails.logger).to have_received(:info).with("Veteran deceased indicator is false or null").once
-      end
 
       it "nil deceased time" do
         described_class.update_veteran_nod(veteran_nil_deceased_time)

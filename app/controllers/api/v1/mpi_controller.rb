@@ -5,7 +5,6 @@ class Api::V1::MpiController < Api::ApplicationController
   def veteran_updates
     veteran = {
       id: allowed_params[:veterans_id],
-      deceased_ind: allowed_params[:deceased_ind],
       deceased_time: allowed_params[:deceased_time]
     }
     response_info_column = { veteran_id: veteran[:id] }
@@ -27,6 +26,6 @@ class Api::V1::MpiController < Api::ApplicationController
   end
 
   def allowed_params
-    params.permit(:veterans_id, :deceased_ind, :deceased_time)
+    params.permit(:veterans_id, :deceased_time)
   end
 end
