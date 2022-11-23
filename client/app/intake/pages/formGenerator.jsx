@@ -293,7 +293,7 @@ const FormGenerator = (props) => {
         />
       )}
       {!props.userIsVhaEmployee && isHlrOrScForm && (
-        <div style={{ marginBottom: '3rem', marginRight: '-10px' }}>
+        <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
             <span dangerouslySetInnerHTML={{ __html: buildVHAInfoBannerMessage() }} />
           </Alert>
