@@ -22,7 +22,8 @@ const defaultArgs = {
   intakeData: {
     activeNonratingRequestIssues: []
   },
-  featureToggles: {}
+  featureToggles: {},
+  onSubmit: () => ''
 };
 
 export default {

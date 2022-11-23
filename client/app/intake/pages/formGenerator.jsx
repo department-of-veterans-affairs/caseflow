@@ -259,9 +259,9 @@ const FormGenerator = (props) => {
   const showInvalidVeteranError = !props.veteranValid && VBMS_BENEFIT_TYPES.includes(props.benefitType);
 
   const buildVHAInfoBannerMessage = () => {
-    const emailAddress = 'VHABENEFITAPPEALS@va.gov';
-    const mailToLink = <Link href={`mailto:${emailAddress}?subject=Potential%20VHA%20Higher-Level%20Review%20or%20Supplemental%20Claim`}>
-      <span>{emailAddress}</span>
+    const emailSubject = 'Potential%20VHA%20Higher-Level%20Review%20or%20Supplemental%20Claim';
+    const mailToLink = <Link href={`mailto:${COPY.VHA_BENEFIT_EMAIL_ADDRESS}?subject=${emailSubject}`}>
+      <span>{COPY.VHA_BENEFIT_EMAIL_ADDRESS}</span>
     </Link>;
 
     return sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, renderToString(mailToLink));
