@@ -74,8 +74,8 @@ export const AddClaimantConfirmationModal = ({
   const missingLastName = useMemo(
     () => {
       // Make an exception for listed attorneys since their name is pulled from the text label in a non smart way
-      // The user also can not change that information so a warning does not change much
-      if (isKnownAttorney(claimantEntity)) {
+      // Also guard against partyType organization since there can be leftover fields from the form submission
+      if (isKnownAttorney(claimantEntity) || claimantEntity.partyType !== 'individual') {
         return false;
       }
 
