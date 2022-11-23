@@ -296,19 +296,8 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
-      factory :supplemental_claim_task, class: DecisionReviewTask do
-        appeal { create(:supplemental_claim, benefit_type: "nca") }
-        assigned_by { nil }
-      end
-
       factory :higher_level_review_vha_task, class: DecisionReviewTask do
         appeal { create(:higher_level_review, :with_vha_issue, benefit_type: "vha") }
-        assigned_by { nil }
-        assigned_to { BusinessLine.where(name: "Veterans Health Administration").first }
-      end
-
-      factory :supplemental_claim_vha_task, class: DecisionReviewTask do
-        appeal { create(:supplemental_claim, :with_vha_issue, benefit_type: "vha") }
         assigned_by { nil }
         assigned_to { BusinessLine.where(name: "Veterans Health Administration").first }
       end
