@@ -233,16 +233,18 @@ Object {
                 <label
                   for="dateOfBirth"
                 >
-                  <span>
-                    <b>
-                      Date of birth
-                    </b>
-                    <span
-                      class="cf-optional"
-                    >
-                      Optional
+                  <strong>
+                    <span>
+                      <b>
+                        Date of birth
+                      </b>
+                      <span
+                        class="cf-optional"
+                      >
+                        Optional
+                      </span>
                     </span>
-                  </span>
+                  </strong>
                 </label>
                 <input
                   class="cf-form-textinput"
@@ -811,16 +813,18 @@ Object {
               <label
                 for="dateOfBirth"
               >
-                <span>
-                  <b>
-                    Date of birth
-                  </b>
-                  <span
-                    class="cf-optional"
-                  >
-                    Optional
+                <strong>
+                  <span>
+                    <b>
+                      Date of birth
+                    </b>
+                    <span
+                      class="cf-optional"
+                    >
+                      Optional
+                    </span>
                   </span>
-                </span>
+                </strong>
               </label>
               <input
                 class="cf-form-textinput"
