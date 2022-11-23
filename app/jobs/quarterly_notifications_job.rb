@@ -37,47 +37,60 @@ class QuarterlyNotificationsJob < CaseflowJob
     Rails.logger.error(error_message)
   end
 
-  # FIXME might need to add checks for tasks for rescheduled hearings since
-  # the appeal state looks the same as first time scheduled hearings
   def hearing_rescheduled(appeal_state, appeal)
+    # when there is a vso ihp pending and a scheduled in error NOT rescheduled
     if !appeal_state.hearing_scheduled && appeal_state.vso_ihp_pending &&
        !appeal_state.privacy_act_pending && appeal_state.scheduled_in_error
       AppellantNotification.notify_appellant(appeal, "Hearing to be Rescheduled")
+    # when there are no pending tasks and a scheduled in error NOT rescheduled
     elsif !appeal_state.hearing_scheduled && !appeal_state.vso_ihp_pending &&
           !appeal_state.privacy_act_pending && appeal_state.scheduled_in_error
       AppellantNotification.notify_appellant(appeal, "Hearing to be Rescheduled")
+    # when there is a vso ihp pending and a hearing postponed NOT rescheduled
     elsif !appeal_state.hearing_scheduled && appeal_state.vso_ihp_pending &&
           !appeal_state.privacy_act_pending && !appeal_state.scheduled_in_error &&
           appeal_state.hearing_postponed
       AppellantNotification.notify_appellant(appeal, "Hearing to be Rescheduled")
+    # when there are no pending tasks and a hearing postponed NOT rescheduled
     elsif !appeal_state.hearing_scheduled && !appeal_state.vso_ihp_pending &&
           !appeal_state.privacy_act_pending && !appeal_state.scheduled_in_error &&
           appeal_state.hearing_postponed
       AppellantNotification.notify_appellant(appeal, "Hearing to be Rescheduled")
+    # when there are no pending tasks and a scheduled in error RESCHEDULED IMMEDIATELY
     elsif appeal_state.hearing_scheduled && !appeal_state.vso_ihp_pending &&
           !appeal_state.privacy_act_pending && !appeal_state.scheduled_in_error &&
-          !appeal_state.hearing_postponed && !appeal_state.hearing_withdrawn
+          !appeal_state.hearing_postponed && !appeal_state.hearing_withdrawn &&
+          !appeal.tasks.open.where(type: "AssignHearingDispositionTask") &&
+          appeal.tasks.open.where(type: "AssignHearingDispositionTask", status: "cancelled")
       AppellantNotification.notify_appellant(appeal, "Hearing to be Rescheduled")
     end
   end
-  # FIXME need to check tasks to find difference between scheduled hearing & rescheduled hearing
+
   def appeal_docketed(appeal_state, appeal)
+    # if there's no pending tasks, no hearing scheduled, no postponed, no withdrawn, no scheduled in error
     if !appeal_state.hearing_scheduled && !appeal_state.vso_ihp_pending &&
        !appeal_state.privacy_act_pending && !appeal_state.scheduled_in_error &&
        !appeal_state.hearing_postponed && !appeal_state.hearing_withdrawn
       AppellantNotification.notify_appellant(appeal, "Appeal Docketed")
-    elsif appeal_state.hearing_scheduled && !appeal_state.vso_ihp_pending &&
+    # if there's no pending tasks, no hearing scheduled, no postponed, but there is a hearing withdrawn
+    elsif !appeal_state.hearing_scheduled && !appeal_state.vso_ihp_pending &&
           !appeal_state.privacy_act_pending && !appeal_state.scheduled_in_error &&
-          !appeal_state.hearing_postponed && !appeal_state.hearing_withdrawn
+          !appeal_state.hearing_postponed && appeal_state.hearing_withdrawn
+      AppellantNotification.notify_appellant(appeal, "Appeal Docketed")
+    # if there's nothing else except a hearing scheduled in error, rescheduled, then withdrawn
+    elsif appeal_state.hearing_scheduled && !appeal_state.vso_ihp_pending &&
+          !appeal_state.privacy_act_pending && appeal_state.scheduled_in_error &&
+          !appeal_state.hearing_postponed && appeal_state.hearing_withdrawn
       AppellantNotification.notify_appellant(appeal, "Appeal Docketed")
     end
   end
 
-  # FIXME need to check tasks to find difference between scheduled hearing & rescheduled hearing
   def hearing_scheduled(appeal_state, appeal)
+    # if there's a pending ihp & privacy act task and there's a scheduled hearing
     if appeal_state.hearing_scheduled && appeal_state.vso_ihp_pending &&
        !appeal_state.privacy_act_pending
       AppellantNotification.notify_appellant(appeal, "Hearing Scheduled")
+    # if there's no pending tasks and there's a scheduled hearing
     elsif appeal_state.hearing_scheduled && appeal_state.vso_ihp_pending &&
           appeal_state.privacy_act_pending
       AppellantNotification.notify_appellant(appeal, "Hearing Scheduled")
@@ -85,6 +98,7 @@ class QuarterlyNotificationsJob < CaseflowJob
   end
 
   def privacy_act_pending(appeal_state, appeal)
+    # if there's no scheduled hearing or ihp task, but there is privacy act tasks
     if !appeal_state.hearing_scheduled && !appeal_state.vso_ihp_pending &&
        appeal_state.privacy_act_pending
       AppellantNotification.notify_appellant(appeal, "Privacy Act Pending")
@@ -92,6 +106,7 @@ class QuarterlyNotificationsJob < CaseflowJob
   end
 
   def vso_ihp_pending(appeal_state, appeal)
+    # if there's no hearing scheduled or privacy act task, but there is ihp task
     if !appeal_state.hearing_scheduled && appeal_state.vso_ihp_pending &&
        !appeal_state.privacy_act_pending
       AppellantNotification.notify_appellant(appeal, "VSO IHP Pending")
@@ -99,9 +114,11 @@ class QuarterlyNotificationsJob < CaseflowJob
   end
 
   def hearing_scheduled_privacy_pending(appeal_state, appeal)
+    # if there's a scheduled hearing, ihp tasks, and privacy act tasks
     if appeal_state.hearing_scheduled && appeal_state.vso_ihp_pending &&
        appeal_state.privacy_act_pending
       AppellantNotification.notify_appellant(appeal, "Hearing Scheduled /  Privacy Act Pending")
+    # if there's a hearing scheduled and privacy act task, but no ihp task
     elsif appeal_state.hearing_scheduled && !appeal_state.vso_ihp_pending &&
           appeal_state.privacy_act_pending
       AppellantNotification.notify_appellant(appeal, "Hearing Scheduled /  Privacy Act Pending")
@@ -109,29 +126,29 @@ class QuarterlyNotificationsJob < CaseflowJob
   end
 
   def vso_ihp_privacy_pending(appeal_state, appeal)
+    # if there's privacy act task and ihp task, but no hearing scheduled
     if !appeal_state.hearing_scheduled && appeal_state.vso_ihp_pending &&
        appeal_state.privacy_act_pending
       AppellantNotification.notify_appellant(appeal, "VSO IHP Pending / Privacy Act Pending")
-    elsif appeal_state.hearing_scheduled && !appeal_state.vso_ihp_pending &&
-          appeal_state.privacy_act_pending
-      AppellantNotification.notify_appellant(appeal, "Hearing Scheduled /  Privacy Act Pending")
     end
   end
 
   def hearing_rescheduled_privacy_pending(appeal_state, appeal)
+    # if there's ihp task, privacy act task, and a hearing scheduled in error but NOT rescheduled
     if !appeal_state.hearing_scheduled && appeal_state.vso_ihp_pending &&
        appeal_state.privacy_act_pending && appeal_state.scheduled_in_error
       AppellantNotification.notify_appellant(appeal, "Hearing to be Rescheduled / Privacy Act Pending")
+    # if there's privacy act task and a hearing scheduled in error but NOT rescheduled
     elsif !appeal_state.hearing_scheduled && appeal_state.vso_ihp_pending &&
           appeal_state.privacy_act_pending && appeal_state.scheduled_in_error
       AppellantNotification.notify_appellant(appeal, "Hearing to be Rescheduled / Privacy Act Pending")
+    # if there's ihp task, privacy act task, and hearing postponed but NOT rescheduled
     elsif !appeal_state.hearing_scheduled && appeal_state.vso_ihp_pending &&
-          appeal_state.privacy_act_pending && !appeal_state.scheduled_in_error &&
-          appeal_state.hearing_postponed
+          appeal_state.privacy_act_pending && appeal_state.hearing_postponed
       AppellantNotification.notify_appellant(appeal, "Hearing to be Rescheduled / Privacy Act Pending")
+    # if there's privacy act task and hearing postponed but NOT rescheduled
     elsif !appeal_state.hearing_scheduled && !appeal_state.vso_ihp_pending &&
-          appeal_state.privacy_act_pending && !appeal_state.scheduled_in_error &&
-          appeal_state.hearing_postponed
+          appeal_state.privacy_act_pending && appeal_state.hearing_postponed
       AppellantNotification.notify_appellant(appeal, "Hearing to be Rescheduled / Privacy Act Pending")
     end
   end
