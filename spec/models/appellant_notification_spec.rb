@@ -218,8 +218,9 @@ describe AppellantNotification do
 
   describe HearingScheduled do
     describe "#create_hearing" do
+      let(:user) { create(:user, id: 99) }
       let!(:appeal_hearing) { create(:appeal, :with_schedule_hearing_tasks) }
-      let!(:appeal_state) { create(:appeal_state, appeal_id: appeal_hearing.id, appeal_type: appeal_hearing.class.to_s, created_by_id: 1, updated_by_id: 1) }
+      let!(:appeal_state) { create(:appeal_state, appeal_id: appeal_hearing.id, appeal_type: appeal_hearing.class.to_s, created_by_id: user.id, updated_by_id: user.id) }
       let(:template_name) { "Hearing scheduled" }
       let(:hearing) { create(:hearing, appeal: appeal) }
       let(:schedule_hearing_task) { ScheduleHearingTask.find_by(appeal: appeal_hearing) }
