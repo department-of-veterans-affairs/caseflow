@@ -5,7 +5,6 @@ describe Api::V1::MpiController, type: :controller do
   let(:request_params) do
     {
       veterans_id: "123456789",
-      deceased_ind: true,
       deceased_time: 1.day.ago
     }
   end

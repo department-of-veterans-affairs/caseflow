@@ -7,11 +7,10 @@ class VACOLS::Correspondent < VACOLS::Record
 
   has_many :cases, foreign_key: :bfcorkey
 
-  # veteran must be hash containing at least values for { id, deceased_ind, deceased_time }
+  # veteran must be hash containing at least values for { id, deceased_time }
   def self.update_veteran_nod(veteran)
     MetricsService.record("VACOLS: Update veteran NOD:
                           ID = #{veteran[:id]},
-                          deceased_ind = #{veteran[:deceased_ind]},
                           deceased_time = #{veteran[:deceased_time]}",
                           name: "VACOLS::Correspondent.update_veteran_nod_in_vacols",
                           service: :vacols) do
@@ -21,7 +20,7 @@ class VACOLS::Correspondent < VACOLS::Record
 
   def self.extract(last_extract)
     query = <<-SQL
-      select          
+      select
         snamel as vet_last_name,
         snamef as vet_first_name,
         snamemi as vet_middle_name,
@@ -55,23 +54,23 @@ class VACOLS::Correspondent < VACOLS::Record
   def self.as_csv(input)
     CSV.generate do |csv|
         csv << %w[
-          VET_LAST_NAME 
+          VET_LAST_NAME
           VET_FIRST_NAME
           VET_MIDDLE_NAME
           VET_DATE_OF_BIRTH
           VET_SSN
-          VET_PARTICIPANT_ID	
+          VET_PARTICIPANT_ID
           VET_FILE_NUMBER
           APPELLANT_LAST_NAME
-          APPELLANT_FIRST_NAME	
-          APPELLANT_MIDDLE_NAME	
-          APPELLANT_DATE_OF_BIRTH	
+          APPELLANT_FIRST_NAME
+          APPELLANT_MIDDLE_NAME
+          APPELLANT_DATE_OF_BIRTH
           APPELLANT_SSN	APPELLANT_GENDER
           APPELLANT_ADDRESS
           APPELLANT_PHONE
           APPELLANT_EMAIL
           APPELLANT_EDI_PI
-          APPELLANT_CORP_PID	
+          APPELLANT_CORP_PID
           APPELLANT_VACOLS_INTERNAL_ID
           RELATIONSHIP_TO_VETERAN
         ]
@@ -89,7 +88,7 @@ class VACOLS::Correspondent < VACOLS::Record
     private
 
     def update_veteran_nod_in_vacols(veteran)
-      update_type = missing_deceased_ind(veteran[:deceased_ind], veteran[:deceased_time])
+      update_type = missing_deceased_time(veteran[:deceased_time])
 
       return update_type unless update_type.nil?
 
@@ -100,11 +99,7 @@ class VACOLS::Correspondent < VACOLS::Record
       update_veteran_sfnod(veteran[:id], veteran[:deceased_time], find_veteran_by_ssn(veteran[:id]))
     end
 
-    def missing_deceased_ind(veteran_deceased_ind, veteran_deceased_time)
-      if veteran_deceased_ind.nil? || veteran_deceased_ind != "true"
-        Rails.logger.info("Veteran deceased indicator is false or null")
-        return :missing_deceased_info
-      end
+    def missing_deceased_time(veteran_deceased_time)
       if veteran_deceased_time.nil? || veteran_deceased_time == ""
         Rails.logger.info("No deceased time was provided")
         return :missing_deceased_info
