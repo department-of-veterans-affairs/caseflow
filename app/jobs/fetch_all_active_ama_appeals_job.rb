@@ -118,6 +118,12 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   end
 
   def map_appeal_hearing_postponed_state(appeal)
+    # Definition of postponed
+    # All AssignHearingDispositionTasks have been cancelled
+    # Another ScheduleHearingTask has been assigned OR on_hold (for admin action)
+    # Will have to check disposition of last hearing to make sure that it is postponed vs scheduled_in_error
+
+
     # Code goes here ...
     { hearing_postponed: false }
   end
