@@ -24,6 +24,10 @@ import {
   featureToggleReducer,
   mapDataToFeatureToggle,
 } from './reducers/featureToggles';
+import {
+  uiReducer,
+  mapDataToInitialUi,
+} from './reducers/ui';
 import addClaimantReducer from './reducers/addClaimantSlice';
 import ReduxBase from '../components/ReduxBase';
 import { BrowserRouter } from 'react-router-dom';
@@ -37,6 +41,7 @@ export const reducer = combineReducers({
   appeal: appealReducer,
   featureToggles: featureToggleReducer,
   addClaimant: addClaimantReducer,
+  ui: uiReducer
 });
 
 export const generateInitialState = (props) => ({
@@ -47,6 +52,7 @@ export const generateInitialState = (props) => ({
   higherLevelReview: mapDataToInitialHigherLevelReview(props),
   appeal: mapDataToInitialAppeal(props),
   featureToggles: mapDataToFeatureToggle(props),
+  ui: mapDataToInitialUi(props)
 });
 
 class Intake extends React.PureComponent {
