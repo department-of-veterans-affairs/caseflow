@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
-import moment from 'moment';
 import scrollToComponent from 'react-scroll-to-component';
 import { sprintf } from 'sprintf-js';
 
@@ -33,7 +32,7 @@ import {
   marginTop,
   paddingLeft,
   fullWidth,
-  redText,
+
   VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
   JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH
@@ -42,15 +41,12 @@ import DispatchSuccessDetail from '../components/DispatchSuccessDetail';
 import QueueFlowPage from '../components/QueueFlowPage';
 import { JudgeCaseQuality } from './JudgeCaseQuality';
 import { qualityIsDeficient, errorStylingNoTopMargin } from '.';
-import { AttorneyTaskTimeline } from './AttorneyTaskTimeline';
-import { AttorneyDaysWorked } from './AttorneyDaysWorked';
+import { CaseTimelinessTimeline } from './CaseTimelinessTimeline';
 
 const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });
 const hrStyling = css(marginTop(2), marginBottom(3));
 const subH2Styling = css(paddingLeft(1), { lineHeight: 2 });
-const caseTimelineStyling = css({ display: 'flex' });
-const caseTypeStyling = css({ width: '15%' });
 
 const timelinessOpts = Object.entries(JUDGE_CASE_REVIEW_OPTIONS.TIMELINESS).map(([value, displayText]) => ({
   displayText,
@@ -186,119 +182,6 @@ class EvaluateDecisionView extends React.PureComponent {
     this.setState({ [key]: newOpts });
   };
 
-  renderAttorneyTasksTreeTimeline = (appeal, attorneyTaskTree, index) => {
-    const { attorneyTask, childrenTasks } = attorneyTaskTree;
-    const dateAssigned = moment(attorneyTask.createdAt);
-    const dateClosed = moment(attorneyTask.closedAt);
-
-    let displayString = COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE;
-
-    if (attorneyTask.type === 'AttorneyRewriteTask') {
-      displayString = COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_REASSIGNED_DATE;
-    }
-
-    return (
-      <div>
-        {index > 0 && (<br />)}
-        <span>{dateAssigned.format('M/D/YY')} - {displayString}</span>
-        <AttorneyTaskTimeline title="Attorney Task Timeline"
-          appeal={appeal}
-          attorneyChildrenTasks={childrenTasks} />
-        <span>
-          {dateClosed.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}
-        </span>
-      </div>
-    );
-  }
-
-  renderCaseTimeliness = () => {
-    const { appeal,
-      isLegacy,
-      task,
-      attorneyChildrenTasks,
-      displayCaseTimelinessTimeline,
-    } = this.props;
-
-    let dateAssigned = moment(task.previousTaskAssignedOn);
-    const decisionSubmitted = moment(task.assignedOn);
-
-    // If DAS Case Timeline is enabled
-    if (displayCaseTimelinessTimeline) {
-      const caseType = task.caseType;
-      const aod = task.aod;
-      const cavc = caseType === 'Court Remand';
-      let daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days') + 1;
-
-      if (isLegacy) {
-        return (
-          <>
-            <div {...caseTimelineStyling} >
-              <span {...caseTypeStyling}>
-                <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_CASE_TYPE}</b>:
-                { aod && <span {...redText}> AOD</span> }
-                { cavc && <span {...redText}> CAVC</span> }
-                { !aod && !cavc && <span> {caseType}</span> }
-              </span>
-              <AttorneyDaysWorked
-                attorneyTasks={attorneyChildrenTasks}
-                daysAssigned={daysAssigned} />
-            </div>
-            <br />
-            <span>{dateAssigned.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</span>
-            <AttorneyTaskTimeline title="Attorney Task Timeline"
-              appeal={appeal}
-              attorneyChildrenTasks={attorneyChildrenTasks} />
-            <span>
-              {decisionSubmitted.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}
-            </span>
-          </>
-        );
-      }
-
-      const oldestAttorneyTask = attorneyChildrenTasks[0].attorneyTask;
-
-      // If not legacy use oldest attorney task and recalculate total days assigned
-      dateAssigned = moment(oldestAttorneyTask.createdAt);
-      daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days') + 1;
-      const allChildrenTasks = [];
-
-      attorneyChildrenTasks.forEach((attorneyTaskTree) => allChildrenTasks.push(...attorneyTaskTree.childrenTasks));
-
-      return (
-        <div>
-          <div {...caseTimelineStyling} >
-            <span {...caseTypeStyling}>
-              <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_CASE_TYPE}</b>:
-              { aod && <span {...redText}> AOD</span> }
-              { cavc && <span {...redText}> CAVC</span> }
-              { !aod && !cavc && <span> {caseType}</span> }
-            </span>
-            <AttorneyDaysWorked
-              attorneyTasks={allChildrenTasks}
-              daysAssigned={daysAssigned} />
-          </div>
-          <br />
-          {attorneyChildrenTasks.map((attorneyTaskTree, index) =>
-            this.renderAttorneyTasksTreeTimeline(appeal, attorneyTaskTree, index))}
-        </div>
-      );
-
-    }
-
-    const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
-
-    return (
-      <>
-        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</b>: {dateAssigned.format('M/D/YY')}
-        <br />
-        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}</b>: {decisionSubmitted.format('M/D/YY')}
-        <br />
-        <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED}</b>&nbsp; (
-        {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM}): {daysWorked}
-      </>
-    );
-  }
-
   handleCaseQualityChange = (values) => this.setState({ ...values });
 
   render = () => {
@@ -348,7 +231,7 @@ class EvaluateDecisionView extends React.PureComponent {
           </>
         )}
         <h2 {...headerStyling} ref={this.timelinessLabel}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
-        {this.renderCaseTimeliness()}
+        <CaseTimelinessTimeline {...this.props} />
         <br />
         {displayCaseTimelinessQuestion && (
           <>
