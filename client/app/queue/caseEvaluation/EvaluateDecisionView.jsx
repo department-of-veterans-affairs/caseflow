@@ -182,6 +182,35 @@ class EvaluateDecisionView extends React.PureComponent {
     this.setState({ [key]: newOpts });
   };
 
+  renderCaseTimeliness = () => {
+    const { highlight, displayCaseTimelinessQuestion } = this.props;
+
+    return (<>
+      <h2 {...headerStyling} ref={this.timelinessLabel}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
+      <CaseTimelinessTimeline {...this.props} />
+      <br />
+      {displayCaseTimelinessQuestion && (
+        <>
+          <br />
+          <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBHEAD}</h3>
+          <RadioField
+            vertical
+            hideLabel
+            name=""
+            required
+            onChange={(value) => {
+              this.setState({ timeliness: value });
+            }}
+            value={this.state.timeliness}
+            styling={css(marginBottom(0), errorStylingNoTopMargin)}
+            errorMessage={highlight && !this.state.timeliness ? 'Choose one' : null}
+            options={timelinessOpts}
+          />
+        </>
+      )}
+    </>);
+  };
+
   handleCaseQualityChange = (values) => this.setState({ ...values });
 
   render = () => {
@@ -189,7 +218,6 @@ class EvaluateDecisionView extends React.PureComponent {
       appealId,
       highlight,
       error,
-      displayCaseTimelinessQuestion,
       ...otherProps } = this.props;
 
     return (
@@ -230,29 +258,7 @@ class EvaluateDecisionView extends React.PureComponent {
             <hr {...hrStyling} />
           </>
         )}
-        <h2 {...headerStyling} ref={this.timelinessLabel}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
-        <CaseTimelinessTimeline {...this.props} />
-        <br />
-        {displayCaseTimelinessQuestion && (
-          <>
-            <br />
-            <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBHEAD}</h3>
-            <RadioField
-              vertical
-              hideLabel
-              name=""
-              required
-              onChange={(value) => {
-                this.setState({ timeliness: value });
-              }}
-              value={this.state.timeliness}
-              styling={css(marginBottom(0), errorStylingNoTopMargin)}
-              errorMessage={highlight && !this.state.timeliness ? 'Choose one' : null}
-              options={timelinessOpts}
-            />
-          </>
-        )}
-
+        {this.renderCaseTimeliness()}
         <hr {...hrStyling} />
         <JudgeCaseQuality
           highlight={highlight}
@@ -291,7 +297,6 @@ EvaluateDecisionView.propTypes = {
   requestSave: PropTypes.func,
   deleteAppeal: PropTypes.func,
   displayCaseTimelinessQuestion: PropTypes.bool,
-  oldestAttorneyTask: PropTypes.object,
   attorneyChildrenTasks: PropTypes.array,
   displayCaseTimelinessTimeline: PropTypes.bool,
   isLegacy: PropTypes.bool,

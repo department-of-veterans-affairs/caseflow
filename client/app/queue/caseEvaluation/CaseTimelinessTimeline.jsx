@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import COPY from '../../../COPY';
 import { redText } from '../constants';
-import { AttorneyTaskTimeline } from './AttorneyTaskTimeline';
 import { AttorneyDaysWorked } from './AttorneyDaysWorked';
 import { AttorneyTasksTreeTimeline } from './AttorneyTasksTreeTimeline';
+import { LegacyCaseTimeline } from './LegacyCaseTimeline';
 
 export const CaseTimelinessTimeline = (props) => {
   const { appeal,
@@ -26,29 +26,16 @@ export const CaseTimelinessTimeline = (props) => {
     let daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days') + 1;
 
     if (isLegacy) {
-      return (
-        <>
-          <div className="case-timeline" >
-            <span className="case-type">
-              <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_CASE_TYPE}</b>:
-              { aod && <span {...redText}> AOD</span> }
-              { cavc && <span {...redText}> CAVC</span> }
-              { !aod && !cavc && <span> {caseType}</span> }
-            </span>
-            <AttorneyDaysWorked
-              attorneyTasks={attorneyChildrenTasks}
-              daysAssigned={daysAssigned} />
-          </div>
-          <br />
-          <span>{dateAssigned.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</span>
-          <AttorneyTaskTimeline title="Attorney Task Timeline"
-            appeal={appeal}
-            attorneyChildrenTasks={attorneyChildrenTasks} />
-          <span>
-            {decisionSubmitted.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}
-          </span>
-        </>
-      );
+      return <LegacyCaseTimeline
+        appeal={appeal}
+        attorneyChildrenTasks={attorneyChildrenTasks}
+        aod={aod}
+        cavc={cavc}
+        caseType={caseType}
+        daysAssigned={daysAssigned}
+        dateAssigned={dateAssigned}
+        decisionSubmitted={decisionSubmitted}
+      />;
     }
 
     const oldestAttorneyTask = attorneyChildrenTasks[0].attorneyTask;
@@ -82,6 +69,8 @@ export const CaseTimelinessTimeline = (props) => {
 
   }
 
+  // When feature toggle das_case_timeline is enabled for all and code cleanup is done remove this variable and this return
+  // statement
   const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
 
   return (
@@ -97,12 +86,9 @@ export const CaseTimelinessTimeline = (props) => {
 };
 
 CaseTimelinessTimeline.propTypes = {
-  appealId: PropTypes.string.isRequired,
   appeal: PropTypes.object,
   task: PropTypes.object,
-  taskId: PropTypes.string,
   displayCaseTimelinessQuestion: PropTypes.bool,
-  oldestAttorneyTask: PropTypes.object,
   attorneyChildrenTasks: PropTypes.array,
   displayCaseTimelinessTimeline: PropTypes.bool,
   isLegacy: PropTypes.bool,
