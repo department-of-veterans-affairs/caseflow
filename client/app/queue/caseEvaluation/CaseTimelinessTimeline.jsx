@@ -42,7 +42,7 @@ export const CaseTimelinessTimeline = (props) => {
 
     // If not legacy use oldest attorney task and recalculate total days assigned
     dateAssigned = moment(oldestAttorneyTask.createdAt);
-    daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days') + 1;
+    daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
     const allChildrenTasks = [];
 
     attorneyChildrenTasks.forEach((attorneyTaskTree) => allChildrenTasks.push(...attorneyTaskTree.childrenTasks));
@@ -69,8 +69,8 @@ export const CaseTimelinessTimeline = (props) => {
 
   }
 
-  // When feature toggle das_case_timeline is enabled for all and code cleanup is done remove this variable and this return
-  // statement
+  // When feature toggle das_case_timeline is enabled for all and code cleanup is done remove this variable
+  // and this return statement
   const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
 
   return (
