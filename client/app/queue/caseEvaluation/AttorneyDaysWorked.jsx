@@ -3,14 +3,18 @@ import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { calculateDaysWorked } from './calculateDaysWorked';
 
-export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {
+export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned, isLegacy }) => {
   const allChildrenTasks = [];
   const justAttorneyTasks = [];
 
-  attorneyTasks.forEach((attorneyTaskTree) => {
-    justAttorneyTasks.push(attorneyTaskTree.attorneyTask);
-    allChildrenTasks.push(...attorneyTaskTree.childrenTasks);
-  });
+  if (isLegacy) {
+    allChildrenTasks.push(...attorneyTasks);
+  } else {
+    attorneyTasks.forEach((attorneyTaskTree) => {
+      justAttorneyTasks.push(attorneyTaskTree.attorneyTask);
+      allChildrenTasks.push(...attorneyTaskTree.childrenTasks);
+    });
+  }
 
   const daysWorkedUpdated = calculateDaysWorked(allChildrenTasks, daysAssigned, justAttorneyTasks);
 
@@ -28,5 +32,6 @@ export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {
 
 AttorneyDaysWorked.propTypes = {
   daysAssigned: PropTypes.number,
-  attorneyTasks: PropTypes.array
+  attorneyTasks: PropTypes.array,
+  isLegacy: PropTypes.bool
 };

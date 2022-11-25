@@ -28,7 +28,8 @@ export const LegacyCaseTimeline = (props) => {
         </span>
         <AttorneyDaysWorked
           attorneyTasks={attorneyChildrenTasks}
-          daysAssigned={daysAssigned} />
+          daysAssigned={daysAssigned}
+          isLegacy />
       </div>
       <br />
       <span>{dateAssigned.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</span>

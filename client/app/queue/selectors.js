@@ -1,4 +1,5 @@
-import moment from 'moment';
+import Moment from 'moment';
+import { extendMoment } from 'moment-range';
 import { createSelector } from 'reselect';
 import { filter, find, keyBy, map, merge, orderBy, reduce } from 'lodash';
 import { taskIsActive, taskIsOnHold, getAllChildrenTasks, taskAttributesFromRawTask } from './utils';
@@ -6,6 +7,8 @@ import { taskIsActive, taskIsOnHold, getAllChildrenTasks, taskAttributesFromRawT
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
 import COPY from '../../COPY';
+
+const moment = extendMoment(Moment);
 
 export const selectedTasksSelector = (state, userId) => {
   return map(state.queue.isTaskAssignedToUserSelected[userId] || {}, (selected, id) => {
@@ -291,18 +294,12 @@ export const getLegacyTaskTree = createSelector(
       // AttorneyTask.assignedOn - JudgeDecisionReviewTask.assignedOn
       const taskCreatedAt = moment(task.createdAt);
       const taskClosedAt = moment(task.closedAt);
-      const attorneyTaskAssignedOn = moment(judgeDecisionReviewTask.previousTaskAssignedOn);
-      const judgeDecisionReviewTaskAssignedOn = moment(judgeDecisionReviewTask.assignedOn);
-
-      const assignedOnRangeStart = taskCreatedAt.diff(attorneyTaskAssignedOn, 'days');
-      const assignedOnRangeEnd = taskCreatedAt.diff(judgeDecisionReviewTaskAssignedOn, 'days');
-
-      const closedAtRangeStart = taskClosedAt.diff(attorneyTaskAssignedOn, 'days');
-      const closedAtRangeEnd = taskClosedAt.diff(judgeDecisionReviewTaskAssignedOn, 'days');
+      const timelineRange = moment.range(moment(judgeDecisionReviewTask.previousTaskAssignedOn),
+        moment(judgeDecisionReviewTask.assignedOn));
 
       return task.uniqueId !== judgeDecisionReviewTask.uniqueId &&
-        assignedOnRangeStart >= 0 && assignedOnRangeEnd <= 0 &&
-        task.closedAt !== null && closedAtRangeStart >= 0 && closedAtRangeEnd <= 0;
+        timelineRange.contains(taskCreatedAt) &&
+        timelineRange.contains(taskClosedAt);
     })
 );
 
