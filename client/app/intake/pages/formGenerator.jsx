@@ -397,7 +397,7 @@ export default connect(
     homelessnessError: state[props.formName].homelessnessError,
     homelessnessUserInteraction: state[props.formName].homelessnessUserInteraction,
     isReviewed: state[props.formName].isReviewed,
-    userIsVhaEmployee: state.intake.userIsVhaEmployee
+    userIsVhaEmployee: state.userInformation.userIsVhaEmployee
   }),
   (dispatch) => bindActionCreators({
     setDocketType,
