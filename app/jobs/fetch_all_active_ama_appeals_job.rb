@@ -14,7 +14,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   #
   # Returns: nil
   def perform
-    RequestStore[:current_user ]= User.system_user
+    RequestStore[:current_user] = User.system_user
     find_and_create_appeal_state_for_active_ama_appeals
   end
 
@@ -76,7 +76,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   #
   # Returns: nil
   def map_appeal_ihp_state(appeal)
-    appeal_task_types=appeal.tasks.map(&:type)
+    appeal_task_types = appeal.tasks.map(&:type)
     if IHP_TYPE_TASKS.any? { |ihp_task| appeal_task_types.include?(ihp_task) }
       ihp_tasks = appeal.tasks.where(type: IHP_TYPE_TASKS)
       parent_ihp_tasks = []
