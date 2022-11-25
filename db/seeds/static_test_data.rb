@@ -237,7 +237,7 @@ module Seeds
 
     def priority_case_with_long_task_tree
       judge_team = JudgeTeam.find_by(name: "BVAEBECKER")
-      Timecop.travel(10.months.ago)
+      Timecop.travel(15.months.ago)
       appeal = create(:appeal,
                       :direct_review_docket,
                       :with_request_issues,
@@ -263,6 +263,25 @@ module Seeds
       appeal.tasks.of_type(:IhpColocatedTask).first.completed!
       Timecop.travel(5.days.from_now)
       appeal.tasks.of_type(:AttorneyTask).first.completed!
+       # Create AttorneyRewriteTask, this indicates appeal was sent back to the judge
+      # and has been returned to attorney
+      Timecop.travel(1.week.from_now)
+      create(:ama_attorney_rewrite_task,
+             parent: appeal.tasks.of_type(:JudgeDecisionReviewTask).first,
+             assigned_by: judge_team.users.first,
+             assigned_to: judge_team.users.last,
+             assigned_at: Time.zone.now)
+      # Create Other task under first AttorneyRewriteTask
+      Timecop.travel(1.week.from_now)
+      create(:colocated_task,
+             :other,
+             parent: appeal.tasks.of_type(:AttorneyRewriteTask).first,
+             assigned_at: Time.zone.now)
+      Timecop.travel(2.weeks.from_now)
+      appeal.tasks.of_type(:OtherColocatedTask).first.completed!
+      Timecop.travel(1.weeks.from_now)
+      appeal.tasks.of_type(:AttorneyRewriteTask).first.completed!
+      # Create Second AttorneyRewriteTask
       Timecop.travel(1.week.from_now)
       create(:ama_attorney_rewrite_task,
              parent: appeal.tasks.of_type(:JudgeDecisionReviewTask).first,
@@ -270,13 +289,13 @@ module Seeds
              assigned_to: judge_team.users.last,
              assigned_at: Time.zone.now)
       Timecop.travel(2.weeks.from_now)
-      appeal.tasks.of_type(:AttorneyRewriteTask).first.completed!
+      appeal.tasks.of_type(:AttorneyRewriteTask).second.completed!
       Timecop.return
     end
 
     def nonpriority_case_with_long_task_tree
       judge_team = JudgeTeam.find_by(name: "BVAEBECKER")
-      Timecop.travel(10.months.ago)
+      Timecop.travel(15.months.ago)
       appeal = create(:appeal,
                       :direct_review_docket,
                       :with_request_issues,
@@ -301,6 +320,25 @@ module Seeds
       appeal.tasks.of_type(:IhpColocatedTask).first.completed!
       Timecop.travel(5.days.from_now)
       appeal.tasks.of_type(:AttorneyTask).first.completed!
+       # Create AttorneyRewriteTask, this indicates appeal was sent back to the judge
+      # and has been returned to attorney
+      Timecop.travel(1.week.from_now)
+      create(:ama_attorney_rewrite_task,
+             parent: appeal.tasks.of_type(:JudgeDecisionReviewTask).first,
+             assigned_by: judge_team.users.first,
+             assigned_to: judge_team.users.last,
+             assigned_at: Time.zone.now)
+      # Create Other task under first AttorneyRewriteTask
+      Timecop.travel(1.week.from_now)
+      create(:colocated_task,
+             :other,
+             parent: appeal.tasks.of_type(:AttorneyRewriteTask).first,
+             assigned_at: Time.zone.now)
+      Timecop.travel(2.weeks.from_now)
+      appeal.tasks.of_type(:OtherColocatedTask).first.completed!
+      Timecop.travel(1.weeks.from_now)
+      appeal.tasks.of_type(:AttorneyRewriteTask).first.completed!
+      # Create Second AttorneyRewriteTask
       Timecop.travel(1.week.from_now)
       create(:ama_attorney_rewrite_task,
              parent: appeal.tasks.of_type(:JudgeDecisionReviewTask).first,
@@ -308,7 +346,7 @@ module Seeds
              assigned_to: judge_team.users.last,
              assigned_at: Time.zone.now)
       Timecop.travel(2.weeks.from_now)
-      appeal.tasks.of_type(:AttorneyRewriteTask).first.completed!
+      appeal.tasks.of_type(:AttorneyRewriteTask).second.completed!
       Timecop.return
     end
   end
