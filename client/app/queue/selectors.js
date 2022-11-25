@@ -252,17 +252,30 @@ export const getAttorneyTasksForJudgeTask = createSelector(
 export const getTaskTreesForAttorneyTasks = createSelector(
   [getAllTasksForAppeal, getAttorneyTasksForJudgeTask],
   (tasks, attorneyTasks) => {
-    const allAttorneyTasks = [];
-
-    attorneyTasks.forEach((attorneyTask) => {
-      allAttorneyTasks.push(...getAllChildrenTasks(tasks, attorneyTask.uniqueId).
+    const allAttorneyTasks = attorneyTasks.map((attorneyTask) => {
+      const childrenTasks = getAllChildrenTasks(tasks, attorneyTask.uniqueId).
         filter((task) => !task.hideFromCaseTimeline).
-        filter((task) => task.closedAt !== null)
-      );
+        filter((task) => task.closedAt !== null).
+        filter((task) => {
+          // Remove any tasks whose createdAt is older than the AttorneyTask's createdAt date
+          const taskAssignedOn = moment(task.createdAt);
+          const attorneyTaskAssignedOn = moment(attorneyTask.createdAt);
+          const result = taskAssignedOn.diff(attorneyTaskAssignedOn, 'days');
+
+          return result >= 0;
+        });
+
+      // eslint-disable-next-line id-length
+      childrenTasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+      return {
+        attorneyTask,
+        childrenTasks
+      };
     });
 
     // eslint-disable-next-line id-length
-    allAttorneyTasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    allAttorneyTasks.sort((a, b) => new Date(a.attorneyTask.createdAt) - new Date(b.attorneyTask.createdAt));
 
     return allAttorneyTasks;
   }

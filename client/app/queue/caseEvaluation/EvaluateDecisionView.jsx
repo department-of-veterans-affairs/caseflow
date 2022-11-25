@@ -186,28 +186,86 @@ class EvaluateDecisionView extends React.PureComponent {
     this.setState({ [key]: newOpts });
   };
 
+  renderAttorneyTasksTreeTimeline = (appeal, attorneyTaskTree, index) => {
+    const { attorneyTask, childrenTasks } = attorneyTaskTree;
+    const dateAssigned = moment(attorneyTask.createdAt);
+    const dateClosed = moment(attorneyTask.closedAt);
+
+    let displayString = COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE;
+
+    if (attorneyTask.type === 'AttorneyRewriteTask') {
+      displayString = COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_REASSIGNED_DATE;
+    }
+
+    return (
+      <div>
+        {index > 0 && (<br />)}
+        <span>{dateAssigned.format('M/D/YY')} - {displayString}</span>
+        <AttorneyTaskTimeline title="Attorney Task Timeline"
+          appeal={appeal}
+          attorneyChildrenTasks={childrenTasks} />
+        <span>
+          {dateClosed.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}
+        </span>
+      </div>
+    );
+  }
+
   renderCaseTimeliness = () => {
     const { appeal,
       isLegacy,
       task,
-      oldestAttorneyTask,
       attorneyChildrenTasks,
       displayCaseTimelinessTimeline,
     } = this.props;
 
-    const dateAssigned = displayCaseTimelinessTimeline && !isLegacy ?
-      moment(oldestAttorneyTask.createdAt) : moment(task.previousTaskAssignedOn);
+    let dateAssigned = moment(task.previousTaskAssignedOn);
     const decisionSubmitted = moment(task.assignedOn);
-    const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
 
+    // If DAS Case Timeline is enabled
     if (displayCaseTimelinessTimeline) {
       const caseType = task.caseType;
       const aod = task.aod;
       const cavc = caseType === 'Court Remand';
-      const daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days') + 1;
+      let daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days') + 1;
+
+      if (isLegacy) {
+        return (
+          <>
+            <div {...caseTimelineStyling} >
+              <span {...caseTypeStyling}>
+                <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_CASE_TYPE}</b>:
+                { aod && <span {...redText}> AOD</span> }
+                { cavc && <span {...redText}> CAVC</span> }
+                { !aod && !cavc && <span> {caseType}</span> }
+              </span>
+              <AttorneyDaysWorked
+                attorneyTasks={attorneyChildrenTasks}
+                daysAssigned={daysAssigned} />
+            </div>
+            <br />
+            <span>{dateAssigned.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</span>
+            <AttorneyTaskTimeline title="Attorney Task Timeline"
+              appeal={appeal}
+              attorneyChildrenTasks={attorneyChildrenTasks} />
+            <span>
+              {decisionSubmitted.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}
+            </span>
+          </>
+        );
+      }
+
+      const oldestAttorneyTask = attorneyChildrenTasks[0].attorneyTask;
+
+      // If not legacy use oldest attorney task and recalculate total days assigned
+      dateAssigned = moment(oldestAttorneyTask.createdAt);
+      daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days') + 1;
+      const allChildrenTasks = [];
+
+      attorneyChildrenTasks.forEach((attorneyTaskTree) => allChildrenTasks.push(...attorneyTaskTree.childrenTasks));
 
       return (
-        <>
+        <div>
           <div {...caseTimelineStyling} >
             <span {...caseTypeStyling}>
               <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_CASE_TYPE}</b>:
@@ -216,20 +274,18 @@ class EvaluateDecisionView extends React.PureComponent {
               { !aod && !cavc && <span> {caseType}</span> }
             </span>
             <AttorneyDaysWorked
-              attorneyTasks={attorneyChildrenTasks}
+              attorneyTasks={allChildrenTasks}
               daysAssigned={daysAssigned} />
           </div>
           <br />
-          <span>{dateAssigned.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</span>
-          <AttorneyTaskTimeline title="Attorney Task Timeline"
-            appeal={appeal}
-            attorneyChildrenTasks={attorneyChildrenTasks} />
-          <span>
-            {decisionSubmitted.format('M/D/YY')} - {COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE}
-          </span>
-        </>
+          {attorneyChildrenTasks.map((attorneyTaskTree, index) =>
+            this.renderAttorneyTasksTreeTimeline(appeal, attorneyTaskTree, index))}
+        </div>
       );
+
     }
+
+    const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
 
     return (
       <>
@@ -387,15 +443,7 @@ const mapStateToProps = (state, ownProps) => {
       // Get all tasks under the JudgeDecisionReviewTask
       // Filters out those without a closedAt date or that are hideFromCaseTimeline
       attorneyChildrenTasks = getTaskTreesForAttorneyTasks(state, {
-        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId }).
-        filter((task) => {
-          // Remove any tasks whose createdAt is older than the AttorneyTask's createdAt date
-          const taskAssignedOn = moment(task.createdAt);
-          const attorneyTaskAssignedOn = moment(oldestAttorneyTask.createdAt);
-          const result = taskAssignedOn.diff(attorneyTaskAssignedOn, 'days');
-
-          return result >= 0;
-        });
+        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId });
     }
   }
 
