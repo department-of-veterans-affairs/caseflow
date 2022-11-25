@@ -106,6 +106,9 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
 
   def map_appeal_hearing_postponed_state(appeal)
     # Code goes here ...
+    if appeal.hearings.max_by(&:id).disposition == "postponed"
+      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_postponed")
+    end
     { hearing_postponed: false }
   end
 
