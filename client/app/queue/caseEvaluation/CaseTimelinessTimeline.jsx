@@ -43,9 +43,6 @@ export const CaseTimelinessTimeline = (props) => {
     // If not legacy use oldest attorney task and recalculate total days assigned
     dateAssigned = moment(oldestAttorneyTask.createdAt);
     daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
-    const allChildrenTasks = [];
-
-    attorneyChildrenTasks.forEach((attorneyTaskTree) => allChildrenTasks.push(...attorneyTaskTree.childrenTasks));
 
     return (
       <div>
@@ -57,7 +54,7 @@ export const CaseTimelinessTimeline = (props) => {
             { !aod && !cavc && <span> {caseType}</span> }
           </span>
           <AttorneyDaysWorked
-            attorneyTasks={allChildrenTasks}
+            attorneyTasks={attorneyChildrenTasks}
             daysAssigned={daysAssigned} />
         </div>
         <br />

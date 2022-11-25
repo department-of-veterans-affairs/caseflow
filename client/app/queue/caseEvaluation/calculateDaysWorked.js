@@ -7,16 +7,13 @@ const isSameRange = (rangeA, rangeB) => {
   return rangeA.start.isSame(rangeB.start, 'day') && rangeA.end.isSame(rangeB.end, 'day');
 };
 
-export const calculateDaysWorked = (tasks, daysAssigned) => {
+const findSumOfUniqueDateRanges = (dateRanges) => {
   let sumOfDays = 0;
-
-  // Map all tasks' createdAt to closedAt to a moment.range object
-  const dateRanges = tasks.map((task) => moment.range(moment(task.createdAt), moment(task.closedAt)));
 
   const uniqueDateRanges = [];
   const alreadyAccountedForDateRanges = [];
 
-  // For all tasks' date ranges find overlapping date ranges
+  // For provided date ranges find overlapping date ranges
   dateRanges.forEach((dateRange) => {
 
     // If a date range was already found to be overlapping do not create another combined overlapping date range
@@ -43,5 +40,33 @@ export const calculateDaysWorked = (tasks, daysAssigned) => {
     sumOfDays += Math.max(1, range.diff('days'));
   });
 
-  return daysAssigned - Math.max(1, sumOfDays) - 1;
+  return sumOfDays;
+};
+
+const findSumOfJudgeDays = (attorneyTasks) => {
+  const judgeGapDateRanges = attorneyTasks.map((task, index) => {
+    if (index + 1 < attorneyTasks.length) {
+      const nextTask = attorneyTasks[index + 1];
+
+      return moment.range(moment(task.closedAt), moment(nextTask.createdAt));
+    }
+
+    return null;
+  }).filter((range) => range !== null);
+
+  const sumOfDays = findSumOfUniqueDateRanges(judgeGapDateRanges);
+
+  return sumOfDays;
+};
+
+export const calculateDaysWorked = (allChildrenTasks, daysAssigned, attorneyTasks) => {
+  // Map all Attorney task children tasks createdAt to closedAt to a moment.range object
+  const allTasksUniqueDateRanges = allChildrenTasks.map((task) =>
+    moment.range(moment(task.createdAt), moment(task.closedAt))
+  );
+
+  const sumOfAllChildrenTasksDays = findSumOfUniqueDateRanges(allTasksUniqueDateRanges);
+  const sumOfJudgeDays = findSumOfJudgeDays(attorneyTasks);
+
+  return daysAssigned - Math.max(1, sumOfAllChildrenTasksDays) - sumOfJudgeDays - 1;
 };

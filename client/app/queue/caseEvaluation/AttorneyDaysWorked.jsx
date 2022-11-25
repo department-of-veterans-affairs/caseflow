@@ -4,7 +4,15 @@ import COPY from '../../../COPY';
 import { calculateDaysWorked } from './calculateDaysWorked';
 
 export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned }) => {
-  const daysWorkedUpdated = calculateDaysWorked(attorneyTasks, daysAssigned);
+  const allChildrenTasks = [];
+  const justAttorneyTasks = [];
+
+  attorneyTasks.forEach((attorneyTaskTree) => {
+    justAttorneyTasks.push(attorneyTaskTree.attorneyTask);
+    allChildrenTasks.push(...attorneyTaskTree.childrenTasks);
+  });
+
+  const daysWorkedUpdated = calculateDaysWorked(allChildrenTasks, daysAssigned, justAttorneyTasks);
 
   return (
     <React.Fragment>

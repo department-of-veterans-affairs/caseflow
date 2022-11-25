@@ -305,7 +305,6 @@ EvaluateDecisionView.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
   let isLegacy;
-  let oldestAttorneyTask;
   let attorneyChildrenTasks = [];
 
   // previousTaskAssignedOn comes from
@@ -322,12 +321,6 @@ const mapStateToProps = (state, ownProps) => {
       attorneyChildrenTasks = getLegacyTaskTree(state, {
         appealId: appeal.externalId, judgeDecisionReviewTask });
     } else {
-      // We want the oldest AttorneyTask to use its createdAt as the start of the date range to be displayed and for
-      // calculating the total days between JudgeTask and AttorneyTask
-      // These tasks are returned sorted so the oldest is at front
-      oldestAttorneyTask = getAttorneyTasksForJudgeTask(state, {
-        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId })[0];
-
       // Get all tasks under the JudgeDecisionReviewTask
       // Filters out those without a closedAt date or that are hideFromCaseTimeline
       attorneyChildrenTasks = getTaskTreesForAttorneyTasks(state, {
@@ -338,7 +331,6 @@ const mapStateToProps = (state, ownProps) => {
   return {
     appeal,
     attorneyChildrenTasks,
-    oldestAttorneyTask,
     isLegacy,
     highlight: state.ui.highlightFormItems,
     taskOptions: state.queue.stagedChanges.taskDecision.opts,
