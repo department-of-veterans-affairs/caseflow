@@ -44,6 +44,10 @@ const findSumOfUniqueDateRanges = (dateRanges) => {
 };
 
 const findSumOfJudgeDays = (attorneyTasks) => {
+  // Build date rangs based on pairs of tasks
+  // This list comes in sorted so oldest task has 0 index
+  // Build a date range like moment.range(attorneyTask[0].closedAt, attorneyTask[1].createdAt)
+  // These date ranges are the gaps when a Case was returned back to the Judge
   const judgeGapDateRanges = attorneyTasks.map((task, index) => {
     if (index + 1 < attorneyTasks.length) {
       const nextTask = attorneyTasks[index + 1];
