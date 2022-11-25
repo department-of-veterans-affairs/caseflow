@@ -23,7 +23,7 @@ export const CaseTimelinessTimeline = (props) => {
     const caseType = task.caseType;
     const aod = task.aod;
     const cavc = caseType === 'Court Remand';
-    let daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days') + 1;
+    let daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
 
     if (isLegacy) {
       return <LegacyCaseTimeline
