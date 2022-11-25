@@ -18,6 +18,9 @@ class RequestIssue < CaseflowRecord
   # don't need to try as frequently as default 3 hours
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
 
+  # list of benefit types not wanting a VRR task created
+  BUSINESS_LINES_NOT_WANTING_VRR_TASKS = ["vha"]
+
   belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment, dependent: :destroy
   has_many :request_decision_issues, dependent: :destroy
@@ -535,7 +538,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def requires_record_request_task?
-    return false if predocket_needed?
+    return false if predocket_needed? || BUSINESS_LINES_NOT_WANTING_VRR_TASKS.include?(benefit_type)
 
     eligible? && !is_unidentified && !benefit_type_requires_payee_code?
   end
