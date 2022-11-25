@@ -17,9 +17,6 @@ const updateFromServerIntake = (state, serverIntake) => {
     editIssuesUrl: {
       $set: serverIntake.editIssuesUrl
     },
-    unreadMessages: {
-      $set: serverIntake.unread_messages
-    },
     veteran: {
       name: {
         $set: serverIntake.veteran_name
@@ -33,7 +30,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       isDeceased: {
         $set: serverIntake.veteran_is_deceased
       }
-    }
+    },
   });
 };
 
@@ -68,8 +65,7 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       fileNumberSearch: REQUEST_STATE.NOT_STARTED,
       cancel: REQUEST_STATE.NOT_STARTED
     },
-    splitAppeal: null,
-    userIsVhaEmployee: data.userIsVhaEmployee
+    splitAppeal: null
   }, data.serverIntake)
 );
 
