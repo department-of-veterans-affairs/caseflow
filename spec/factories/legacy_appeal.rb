@@ -45,6 +45,38 @@ FactoryBot.define do
       end
     end
 
+    trait :with_completed_root_task do
+      after(:create) do |appeal, _evaluator|
+        task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        task.update!(status: "completed")
+      end
+    end
+
+    trait :with_cancelled_root_task do
+      after(:create) do |appeal, _evaluator|
+        task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        task.update!(status: "cancelled")
+      end
+    end
+
+    trait :with_active_ihp_colocated_task do
+      after(:create) do |appeal, _evaluator|
+        org = Organization.find_by(type: "Vso")
+        org ||= create(:vso)
+        create(:colocated_task, :ihp, appeal: appeal, assigned_to: org)
+      end
+    end
+
+    trait :with_completed_ihp_colocated_task do
+      after(:create) do |appeal, _evaluator|
+        org = Organization.find_by(type: "Vso")
+        org ||= create(:vso)
+        create(:colocated_task, :ihp, appeal: appeal, assigned_to: org)
+        ihp_task = appeal.tasks.find_by(type: "IhpColocatedTask")
+        ihp_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
+    end
+
     trait :with_judge_assign_task do
       after(:create) do |appeal, _evaluator|
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)

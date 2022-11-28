@@ -1,76 +1,78 @@
 # frozen_string_literal: true
 
-describe FetchAllActiveLegacyAppealsJob do
+describe FetchAllActiveLegacyAppealsJob, type: :job do
+  include ActiveJob::TestHelper
+
   subject { FetchAllActiveLegacyAppealsJob.new }
-  describe ".perform" do
-    it "returns an array of all active legacy appeals" do
-      expect(subject).to receive(:find_active_legacy_appeals)
+
+  describe "#perform" do
+    it "sets the USER and Perfoms the Job" do
+      expect(RequestStore[:current_user]).to eq(nil)
+      subject.perform
+      expect(RequestStore[:current_user]).to eq(User.system_user)
+    end
+    it "calls #find_and_create_appeal_state_for_active_legacy_appeals" do
+      expect(subject).to receive(:find_and_create_appeal_state_for_active_legacy_appeals)
       subject.perform
     end
   end
-  describe "find_active_legacy_appeals" do
-    let!(:legacy_task) do
-      Array.new(1) { create(:task, type: "RootTask") }
-    end
-    let!(:ama_task) do
-      Array.new(1) { create(:ama_task, type: "RootTask") }
-    end
-    context "when database has a RootTask for a Legacy Appeal with an assigned status" do
-      it "should return an array with the appeal tied to that task" do
-        expect(subject.send(:find_active_legacy_appeals)).to eq(legacy_task.map(&:appeal))
+
+  describe "#find_and_create_appeal_state_for_active_legacy_appeals" do
+    context "when there are only CLOSED Legacy Appeals in the database with a tracked appeal state (IHP)" do
+      let!(:closed_legacy_appeals) do
+        [
+          create(:legacy_appeal, :with_completed_root_task, :with_active_ihp_colocated_task, vacols_id: "1"),
+          create(:legacy_appeal, :with_completed_root_task, :with_active_ihp_colocated_task, vacols_id: "2"),
+          create(:legacy_appeal, :with_completed_root_task, :with_active_ihp_colocated_task, vacols_id: "3"),
+          create(:legacy_appeal, :with_completed_root_task, :with_active_ihp_colocated_task, vacols_id: "4"),
+          create(:legacy_appeal, :with_completed_root_task, :with_active_ihp_colocated_task, vacols_id: "5")
+        ]
+      end
+      it "no records will be added to the Appeal States table" do
+        subject.perform
+        expect(AppealState.all.count).to eq(0)
       end
     end
-    context "when database has a RootTask for a Legacy Appeal with an on_hold status" do
-      before do
-        legacy_task.each { |t| t.update!(status: Constants.TASK_STATUSES.on_hold) }
+
+    context "when there are only OPEN Legacy Appeals in the database with a tracked appeal state (IHP)" do
+      let!(:open_legacy_appeals) do
+        [
+          create(:legacy_appeal, :with_root_task, :with_active_ihp_colocated_task, vacols_id: "10"),
+          create(:legacy_appeal, :with_root_task, :with_active_ihp_colocated_task, vacols_id: "20"),
+          create(:legacy_appeal, :with_root_task, :with_active_ihp_colocated_task, vacols_id: "30"),
+          create(:legacy_appeal, :with_root_task, :with_active_ihp_colocated_task, vacols_id: "40"),
+          create(:legacy_appeal, :with_root_task, :with_active_ihp_colocated_task, vacols_id: "50")
+        ]
       end
-      it "should return an array with the appeal tied to that task" do
-        expect(subject.send(:find_active_legacy_appeals)).to eq(legacy_task.map(&:appeal))
-      end
-    end
-    context "when database has a RootTask for a Legacy Appeal with an in_progress status" do
-      before do
-        legacy_task.each { |t| t.update!(status: Constants.TASK_STATUSES.in_progress) }
-      end
-      it "should return an array with the appeal tied to that task" do
-        expect(subject.send(:find_active_legacy_appeals)).to eq(legacy_task.map(&:appeal))
-      end
-    end
-    context "when database has a RootTask for a Legacy Appeal with a cancelled status" do
-      before do
-        legacy_task.each { |t| t.update!(status: Constants.TASK_STATUSES.cancelled) }
-      end
-      it "should not return the appeal tied to that task" do
-        expect(subject.send(:find_active_legacy_appeals)).not_to include(legacy_task.map(&:appeal))
+      it "5 records will be added to the Appeal States table" do
+        subject.perform
+        expect(AppealState.all.count).to eq(5)
       end
     end
-    context "when database has a RootTask for a Legacy Appeal with a completed status" do
-      before do
-        legacy_task.each { |t| t.update!(status: Constants.TASK_STATUSES.completed) }
+
+    context "when there are both OPEN & CLOSED Legacy Appeals in the database with a tracked appeal state (IHP)" do
+      let!(:open_legacy_appeals) do
+        [
+          create(:legacy_appeal, :with_root_task, :with_active_ihp_colocated_task, vacols_id: "100"),
+          create(:legacy_appeal, :with_root_task, :with_active_ihp_colocated_task, vacols_id: "200"),
+          create(:legacy_appeal, :with_root_task, :with_active_ihp_colocated_task, vacols_id: "300"),
+          create(:legacy_appeal, :with_root_task, :with_active_ihp_colocated_task, vacols_id: "400"),
+          create(:legacy_appeal, :with_root_task, :with_active_ihp_colocated_task, vacols_id: "500")
+        ]
       end
-      it "should not return the appeal tied to that task" do
-        expect(subject.send(:find_active_legacy_appeals)).not_to include(legacy_task.map(&:appeal))
+      let!(:closed_legacy_appeals) do
+        [
+          create(:legacy_appeal, :with_completed_root_task, :with_active_ihp_colocated_task, vacols_id: "1000"),
+          create(:legacy_appeal, :with_completed_root_task, :with_active_ihp_colocated_task, vacols_id: "2000"),
+          create(:legacy_appeal, :with_completed_root_task, :with_active_ihp_colocated_task, vacols_id: "3000"),
+          create(:legacy_appeal, :with_completed_root_task, :with_active_ihp_colocated_task, vacols_id: "4000"),
+          create(:legacy_appeal, :with_completed_root_task, :with_active_ihp_colocated_task, vacols_id: "5000")
+        ]
       end
-    end
-    context "when database has a Non-RootTask for a Legacy Appeal" do
-      before do
-        legacy_task.each { |t| t.update!(type: "NonRootTask") }
-      end
-      it "should not return the appeal tied to that task" do
-        expect(subject.send(:find_active_legacy_appeals)).not_to include(legacy_task.map(&:appeal))
-      end
-    end
-    context "when database has a task for a Legacy Appeal with a non nil closed_at attribute" do
-      before do
-        legacy_task.each { |t| t.update!(closed_at: Time.zone.now) }
-      end
-      it "should not return the appeal tied to that task" do
-        expect(subject.send(:find_active_legacy_appeals)).not_to include(legacy_task.map(&:appeal))
-      end
-    end
-    context "when database has a RootTask for an AMA Appeal" do
-      it "should not return the appeal tied to that task" do
-        expect(subject.send(:find_active_legacy_appeals)).not_to include(ama_task.map(&:appeal))
+      it "only OPEN Legacy Appeal records will be added to the Appeal States table" do
+        subject.perform
+        expect(AppealState.all.map(&:appeal_id)).to eq(open_legacy_appeals.map(&:id))
+        expect(AppealState.all.count).to eq(5)
       end
     end
   end
