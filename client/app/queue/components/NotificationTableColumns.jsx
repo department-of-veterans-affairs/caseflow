@@ -10,7 +10,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 // Styling for the event type column values
 const eventTypeStyling = { fontWeight: 'bold', cursor: 'pointer' };
 
-export const eventTypeColumn = (notifications, modalState, openModal, handleNotification, notificationState) => {
+export const eventTypeColumn = (notifications, modalState, openModal, handleNotification) => {
 
   return {
     header: COPY.NOTIFICATION_EVENT_TYPE_COLUMN_NAME,
