@@ -657,7 +657,6 @@ describe AppellantNotification do
         PrivacyActTask.create_child_task(colocated_task, attorney, privacy_params_org)
       end
       it "updates appeal state when creating a PrivacyActTask" do
-        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_pending")
         PrivacyActTask.create_child_task(colocated_task, attorney, privacy_params_org)
       end
@@ -667,7 +666,6 @@ describe AppellantNotification do
       end
       it "updates appeal state when completing a PrivacyActTask assigned to user" do
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_pending")
-        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_complete")
         privacy_child.update!(status: "completed")
       end
@@ -677,7 +675,6 @@ describe AppellantNotification do
       end
       it "updates appeal state when cancelling a PrivacyActTask assigned to organization" do
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_pending")
-        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_cancelled")
         privacy_parent.update_with_instructions(status: "cancelled")
       end
