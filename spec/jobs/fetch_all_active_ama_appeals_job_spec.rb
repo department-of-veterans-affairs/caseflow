@@ -3,10 +3,6 @@
 describe FetchAllActiveAmaAppealsJob, type: :job do
   include ActiveJob::TestHelper
 
-  after(:each) do
-    AppealState.destroy_all
-  end
-
   subject { FetchAllActiveAmaAppealsJob.new }
 
   describe "#perform" do
@@ -22,9 +18,9 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
   end
 
   describe "#find_and_create_appeal_state_for_active_ama_appeals" do
-    context "when there are only CLOSED AMA Appeals in the database with a tracked appeal state (IHP)" do
+    context "when there are only CLOSED AMA Appeals in the database" do
       let!(:closed_ama_appeals) do
-        Array.new(5) { create(:appeal, :with_completed_root_task, :with_ihp_task) }
+        Array.new(5) { create(:appeal, :with_completed_root_task) }
       end
       it "no records will be added to the Appeal States table" do
         subject.perform
@@ -32,9 +28,9 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
     end
 
-    context "when there are only OPEN AMA Appeals in the database with a tracked appeal state (IHP)" do
+    context "when there are only OPEN AMA Appeals in the database" do
       let!(:open_ama_appeals) do
-        Array.new(5) { create(:appeal, :active, :with_ihp_task) }
+        Array.new(5) { create(:appeal, :active) }
       end
       it "5 records will be added to the Appeal States table" do
         subject.perform
@@ -42,12 +38,12 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
     end
 
-    context "when there are both OPEN & CLOSED AMA Appeals in the database with a tracked appeal state (IHP)" do
+    context "when there are both OPEN & CLOSED AMA Appeals in the database" do
       let!(:open_ama_appeals) do
-        Array.new(5) { create(:appeal, :active, :with_ihp_task) }
+        Array.new(5) { create(:appeal, :active) }
       end
       let!(:closed_ama_appeals) do
-        Array.new(5) { create(:appeal, :with_completed_root_task, :with_ihp_task) }
+        Array.new(5) { create(:appeal, :with_completed_root_task) }
       end
       it "only OPEN Legacy Appeal records will be added to the Appeal States table" do
         subject.perform
@@ -59,14 +55,15 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
 
   describe "#add_record_to_appeal_states_table" do
     let!(:legacy_appeal) { create(:legacy_appeal) }
+    let(:error) { StandardError }
     context "When an error is raised" do
       it "will log error and continue" do
         allow(Rails.logger).to receive(:error)
-        allow(subject).to receive(:map_appeal_ihp_state).with(legacy_appeal).and_raise(StandardError)
+        allow(subject).to receive(:map_appeal_ihp_state).with(legacy_appeal).and_raise(error)
         subject.send(:add_record_to_appeal_states_table, legacy_appeal)
         expect(Rails.logger).to have_received(:error).with(
           "\e[31m#{legacy_appeal&.class} ID #{legacy_appeal&.id} was unable to create an appeal_states record "\
-          "because of #{StandardError}\e[0m"
+          "because of #{error}\e[0m"
         )
       end
     end
