@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Job to fetch all currently active Legacy Appeals and insert records into the appeal states table
+# Job to fetch all currently active and cancelled Legacy Appeals and insert records into the appeal states table
 class FetchAllActiveLegacyAppealsJob < CaseflowJob
   queue_with_priority :low_priority
 
