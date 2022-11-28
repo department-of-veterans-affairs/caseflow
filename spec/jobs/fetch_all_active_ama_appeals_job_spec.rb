@@ -1,79 +1,55 @@
 # frozen_string_literal: true
 
-describe FetchAllActiveAmaAppealsJob, type: :job do
+describe FetchAllActiveLegacyAppealsJob, type: :job do
   include ActiveJob::TestHelper
+
   subject { FetchAllActiveAmaAppealsJob.new }
 
-  after do
-    clear_enqueued_jobs
-    clear_performed_jobs
-  end
-
-  it "is in the correct queue" do
-    queue_name = "caseflow_test_low_priority"
-    expect(subject.queue_name).to eq(queue_name)
-  end
-
-  describe ".perform" do
-    it "returns an array of all active ama appeals" do
-      expect(subject).to receive(:find_active_ama_appeals)
+  describe "#perform" do
+    it "sets the USER and Perfoms the Job" do
+      expect(RequestStore[:current_user]).to eq(nil)
+      subject.perform
+      expect(RequestStore[:current_user]).to eq(User.system_user)
+    end
+    it "calls #find_and_create_appeal_state_for_active_ama_appeals" do
+      expect(subject).to receive(:find_and_create_appeal_state_for_active_ama_appeals)
       subject.perform
     end
   end
-    
-  describe "find_active_ama_appeals" do
-    let!(:ama_task) do
-      Array.new(1) { create(:ama_task) }
-    end
-    context "when database has an appeal" do
-      it "should return an array with the data of the appeal" do
-      expect(subject.send(:find_active_ama_appeals)).to eq(ama_task.map(&:appeal))
-    end
-    
-    context "when database has an appeal in on_hold status" do
-      before do
-        ama_task.each { |t| t.update!(status: Constants.TASK_STATUSES.on_hold) }
+
+  describe "#find_and_create_appeal_state_for_active_ama_appeals" do
+    context "when there are only CLOSED AMA Appeals in the database with a tracked appeal state (IHP)" do
+      let!(:closed_ama_appeals) do
+        Array.new(5) { create(:appeal, :with_completed_root_task, :with_ihp_task) }
       end
-      it "should return an array with the appeal tied to that task" do
-        expect(subject.send(:find_active_ama_appeals)).to eq(ama_task.map(&:appeal))
-      end
-    end
-    
-    context "when database has an appeal in in_progress status" do
-      before do
-        ama_task.each { |t| t.update!(status: Constants.TASK_STATUSES.in_progress) }
-      end
-      it "should return an array with the appeal tied to that task" do
-        expect(subject.send(:find_active_ama_appeals)).to eq(ama_task.map(&:appeal))
+      it "no records will be added to the Appeal States table" do
+        subject.perform
+        expect(AppealState.all.count).to eq(0)
       end
     end
 
-    context "when database has an appeal in cancelled status" do
-      before do
-        ama_task.each { |t| t.update!(status: Constants.TASK_STATUSES.cancelled) }
+    context "when there are only OPEN AMA Appeals in the database with a tracked appeal state (IHP)" do
+      let!(:open_ama_appeals) do
+        Array.new(5) { create(:appeal, :active, :with_ihp_task) }
       end
-      it "should not return the appeal tied to that task" do
-        expect(subject.send(:find_active_ama_appeals)).not_to eq(ama_task.map(&:appeal))
-      end
-    end
-
-    context "when database has an appeal in completed status" do
-      before do
-        ama_task.each { |t| t.update!(status: Constants.TASK_STATUSES.completed) }
-      end
-      it "should not return the appeal tied to that task" do
-        expect(subject.send(:find_active_ama_appeals)).not_to eq(ama_task.map(&:appeal))
+      it "5 records will be added to the Appeal States table" do
+        subject.perform
+        expect(AppealState.all.count).to eq(5)
       end
     end
 
-    context "When database has a task for an appeal with a non nil closed_at attribute" do
-      before do
-        ama_task.each { |t| t.update!(closed_at: Time.zone.now) }
+    context "when there are both OPEN & CLOSED AMA Appeals in the database with a tracked appeal state (IHP)" do
+      let!(:open_ama_appeals) do
+        Array.new(5) { create(:appeal, :active, :with_ihp_task) }
       end
-      it "should not return the appeal tied to that task" do
-        expect(subject.send(:find_active_ama_appeals)).not_to include(ama_task.map(&:appeal))
+      let!(:closed_ama_appeals) do
+        Array.new(5) { create(:appeal, :with_completed_root_task, :with_ihp_task) }
+      end
+      it "only OPEN Legacy Appeal records will be added to the Appeal States table" do
+        subject.perform
+        expect(AppealState.all.map(&:appeal_id)).to eq(open_ama_appeals.map(&:id))
+        expect(AppealState.all.count).to eq(5)
       end
     end
   end
-end
 end
