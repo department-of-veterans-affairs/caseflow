@@ -4,9 +4,6 @@ import { formatDateStr } from '../../util/DateUtil';
 import _ from 'lodash';
 
 const updateFromServerIntake = (state, serverIntake) => {
-  // Used to retain unreadMessages across network requests
-  const unreadMessages = state.unreadMessages || serverIntake.unread_messages;
-
   return update(state, {
     id: {
       $set: serverIntake.id
@@ -21,7 +18,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.editIssuesUrl
     },
     unreadMessages: {
-      $set: unreadMessages
+      $set: serverIntake.unread_messages
     },
     veteran: {
       name: {
@@ -80,15 +77,14 @@ const resetIntake = (valuesToRetain) => (
   mapDataToInitialIntake(
     {
       ...valuesToRetain,
-      serverIntake: { ...valuesToRetain }
+      serverIntake: {}
     }
   )
 );
 
 const valuesToRetainAcrossIntakes = (state) => (
   {
-    userIsVhaEmployee: state.userIsVhaEmployee,
-    unread_messages: state.unreadMessages
+    userIsVhaEmployee: state.userIsVhaEmployee
   }
 );
 
