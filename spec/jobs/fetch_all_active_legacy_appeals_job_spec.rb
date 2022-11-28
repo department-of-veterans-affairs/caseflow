@@ -51,7 +51,7 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
       end
     end
 
-    context "when there are both OPEN & CLOSED Legacy Appeals in the database with a tracked appeal state (IHP)" do
+    context "when there are both OPEN & CLOSED Legacy Appeals in the database" do
       let!(:open_legacy_appeals) do
         [
           create(:legacy_appeal, :with_root_task, vacols_id: "100"),
