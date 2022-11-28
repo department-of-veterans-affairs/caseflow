@@ -231,7 +231,9 @@ export const camoAssignTasksSelector = createSelector(
     })
 );
 
-export const getMostRecentAttorneyTask = createSelector(
+// Get AttorneyRewriteTask, AttorneyTask, and AttorneyLegacyTask tasks with the
+// JudgeDecisionReviewTaskId as their parentId
+export const getAttorneyTasksForJudgeTask = createSelector(
   [getAllTasksForAppeal, getJudgeDecisionReviewTaskId],
   (tasks, parentId) => {
     const types = ['AttorneyRewriteTask', 'AttorneyTask', 'AttorneyLegacyTask'];
@@ -240,32 +242,47 @@ export const getMostRecentAttorneyTask = createSelector(
     const attorneyTasks = filter(tasks, (task) => task.parentId == parentId && types.includes(task.type));
 
     // eslint-disable-next-line id-length
-    attorneyTasks.sort((a, b) => {
-      return new Date(b.closedAt) - new Date(a.closedAt);
-    });
+    attorneyTasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-    return attorneyTasks[0];
+    return attorneyTasks;
   }
 );
 
-export const getFullAttorneyTaskTree = createSelector(
-  [getAllTasksForAppeal, getMostRecentAttorneyTask],
-  (tasks, attorneyTask) => getAllChildrenTasks(tasks, attorneyTask.uniqueId)
+// Get all task trees for all Attorney Type Tasks found with the JudgeDecisionReviewTaskId as their parentId
+export const getTaskTreesForAttorneyTasks = createSelector(
+  [getAllTasksForAppeal, getAttorneyTasksForJudgeTask],
+  (tasks, attorneyTasks) => {
+    const allAttorneyTasks = [];
+
+    attorneyTasks.forEach((attorneyTask) => {
+      allAttorneyTasks.push(...getAllChildrenTasks(tasks, attorneyTask.uniqueId).
+        filter((task) => !task.hideFromCaseTimeline).
+        filter((task) => task.closedAt !== null)
+      );
+    });
+
+    // eslint-disable-next-line id-length
+    allAttorneyTasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+    return allAttorneyTasks;
+  }
 );
 
+// Get any tasks that were started and completed within the range Appeal was assigned to Attorney then sent
+// back to Judge
 export const getLegacyTaskTree = createSelector(
   [getAllTasksForAppeal, getJudgeDecisionReviewTask],
   (tasks, judgeDecisionReviewTask) =>
     filter(tasks, (task) => {
-      // Remove any tasks whose assignedOn to closedAt values put it outside of the range of
+      // Remove any tasks whose createdAt to closedAt values put it outside of the range of
       // AttorneyTask.assignedOn - JudgeDecisionReviewTask.assignedOn
-      const taskAssignedOn = moment(task.assignedOn);
+      const taskCreatedAt = moment(task.createdAt);
       const taskClosedAt = moment(task.closedAt);
       const attorneyTaskAssignedOn = moment(judgeDecisionReviewTask.previousTaskAssignedOn);
       const judgeDecisionReviewTaskAssignedOn = moment(judgeDecisionReviewTask.assignedOn);
 
-      const assignedOnRangeStart = taskAssignedOn.diff(attorneyTaskAssignedOn, 'days');
-      const assignedOnRangeEnd = taskAssignedOn.diff(judgeDecisionReviewTaskAssignedOn, 'days');
+      const assignedOnRangeStart = taskCreatedAt.diff(attorneyTaskAssignedOn, 'days');
+      const assignedOnRangeEnd = taskCreatedAt.diff(judgeDecisionReviewTaskAssignedOn, 'days');
 
       const closedAtRangeStart = taskClosedAt.diff(attorneyTaskAssignedOn, 'days');
       const closedAtRangeEnd = taskClosedAt.diff(judgeDecisionReviewTaskAssignedOn, 'days');
