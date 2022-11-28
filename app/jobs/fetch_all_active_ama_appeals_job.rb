@@ -60,7 +60,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
       all_appeal_states = appeal_states.inject(&:merge)
       AppealState.create(all_appeal_states)
     rescue StandardError => error
-      Rails.logger.error("#{appeal.class} ID #{appeal.id} was unable to create an appeal_states record because of "\
+      Rails.logger.error("#{appeal&.class} ID #{appeal&.id} was unable to create an appeal_states record because of "\
          "#{error}".red)
     end
   end
