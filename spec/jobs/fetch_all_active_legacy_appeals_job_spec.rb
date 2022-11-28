@@ -76,4 +76,19 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
       end
     end
   end
+
+  describe "#add_record_to_appeal_states_table" do
+    let!(:appeal) { create(:appeal, :active) }
+    context "When an error is raised" do
+      it "will log error and continue" do
+        allow(Rails.logger).to receive(:error)
+        allow(subject).to receive(:map_appeal_ihp_state).with(appeal).and_raise(StandardError)
+        subject.send(:add_record_to_appeal_states_table, appeal)
+        expect(Rails.logger).to have_received(:error).with(
+          "\e[31m#{appeal&.class} ID #{appeal&.id} was unable to create an appeal_states record "\
+          "because of #{StandardError}\e[0m"
+        )
+      end
+    end
+  end
 end
