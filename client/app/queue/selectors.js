@@ -289,18 +289,19 @@ export const getTaskTreesForAttorneyTasks = createSelector(
 export const getLegacyTaskTree = createSelector(
   [getAllTasksForAppeal, getJudgeDecisionReviewTask],
   (tasks, judgeDecisionReviewTask) =>
-    filter(tasks, (task) => {
-      // Remove any tasks whose createdAt to closedAt values put it outside of the range of
-      // AttorneyTask.assignedOn - JudgeDecisionReviewTask.assignedOn
-      const taskCreatedAt = moment(task.createdAt);
-      const taskClosedAt = moment(task.closedAt);
-      const timelineRange = moment.range(moment(judgeDecisionReviewTask.previousTaskAssignedOn),
-        moment(judgeDecisionReviewTask.assignedOn));
+    filter(tasks.filter((task) => !task.hideFromCaseTimeline).filter((task) => task.closedAt !== null),
+      (task) => {
+        // Remove any tasks whose createdAt to closedAt values put it outside of the range of
+        // AttorneyTask.assignedOn - JudgeDecisionReviewTask.assignedOn
+        const taskCreatedAt = moment(task.createdAt);
+        const taskClosedAt = moment(task.closedAt);
+        const timelineRange = moment.range(moment(judgeDecisionReviewTask.previousTaskAssignedOn),
+          moment(judgeDecisionReviewTask.assignedOn));
 
-      return task.uniqueId !== judgeDecisionReviewTask.uniqueId &&
+        return task.uniqueId !== judgeDecisionReviewTask.uniqueId &&
         timelineRange.contains(taskCreatedAt) &&
         timelineRange.contains(taskClosedAt);
-    })
+      })
 );
 
 // ***************** Non-memoized selectors *****************
