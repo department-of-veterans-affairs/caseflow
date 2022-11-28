@@ -77,10 +77,17 @@ describe AppellantNotification do
       let(:appeal) { create(:appeal, :with_pre_docket_task) }
       let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }
       let(:template_name) { "Appeal docketed" }
-      let(:pre_docket_task) { PreDocketTask.find_by(appeal: appeal) }
+      let!(:pre_docket_task) { PreDocketTask.find_by(appeal: appeal) }
+      it "will update the appeal state after docketing the Predocketed Appeal" do
+        pre_docket_task.docket_appeal
+        appeal_state_record = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal.class.to_s)
+        expect(appeal_state_record.appeal_docketed).to eq(true)
+      end
       it "will notify appellant that Predocketed Appeal is docketed" do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
         pre_docket_task.docket_appeal
+        appeal_state_record = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal.class.to_s)
+        expect(appeal_state_record.appeal_docketed).to eq(true)
       end
       it "will update the appeal state after docketing the Predocketed Appeal" do
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "appeal_docketed")
@@ -93,8 +100,14 @@ describe AppellantNotification do
       let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }
       let(:template_name) { "Appeal docketed" }
       it "will notify appellant that appeal is docketed on successful intake" do
-        expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_name)
         appeal.create_tasks_on_intake_success!
+        appeal_state_record = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal.class.to_s)
+        expect(appeal_state_record.appeal_docketed).to eq(true)
+      end
+      it "will update appeal state after appeal is docketed on successful intake" do
+        appeal.create_tasks_on_intake_success!
+        appeal_state_record = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal.class.to_s)
+        expect(appeal_state_record.appeal_docketed).to eq(true)
       end
       it "will update appeal state after appeal is docketed on successful intake" do
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "appeal_docketed")
@@ -644,6 +657,7 @@ describe AppellantNotification do
         PrivacyActTask.create_child_task(colocated_task, attorney, privacy_params_org)
       end
       it "updates appeal state when creating a PrivacyActTask" do
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_pending")
         PrivacyActTask.create_child_task(colocated_task, attorney, privacy_params_org)
       end
@@ -653,6 +667,7 @@ describe AppellantNotification do
       end
       it "updates appeal state when completing a PrivacyActTask assigned to user" do
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_pending")
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_complete")
         privacy_child.update!(status: "completed")
       end
@@ -660,8 +675,9 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal, template_closed)
         privacy_parent.update_with_instructions(status: "completed")
       end
-      it "updates appeal state when completing a PrivacyActTask assigned to organization" do
+      it "updates appeal state when cancelling a PrivacyActTask assigned to organization" do
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_pending")
+        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
         expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "privacy_act_cancelled")
         privacy_parent.update_with_instructions(status: "cancelled")
       end
@@ -697,10 +713,13 @@ describe AppellantNotification do
           task_factory.create_ihp_tasks!
         end
         it "updates appeal state when ihp task is created" do
-          expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
           task_factory.create_ihp_tasks!
+          appeal_state_record = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal.class.to_s)
+          expect(appeal_state_record.vso_ihp_pending).to eq(true)
+          expect(appeal_state_record.vso_ihp_complete).to eq(false)
         end
       end
+
       context "If the appellant does not have a VSO" do
         let(:participant_id_with_nil) { "1234" }
         before do
@@ -759,8 +778,55 @@ describe AppellantNotification do
         end
         it "updates appeal state when ihp task pending" do
           allow(ColocatedTask).to receive(:verify_user_can_create!).with(user, colocated_task).and_return(true)
-          expect(AppellantNotification).to receive(:appeal_mapper).with(appeal.id, appeal.class.to_s, "vso_ihp_pending")
           IhpColocatedTask.create_from_params(params, user)
+          appeal_state_record = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal.class.to_s)
+          expect(appeal_state_record.vso_ihp_pending).to eq(true)
+          expect(appeal_state_record.vso_ihp_complete).to eq(false)
+        end
+      end
+    end
+  end
+
+  describe IhpTaskCancelled do
+    describe "#update_appeal_state" do
+      let(:org) { create(:organization) }
+      let(:user) { create(:user) }
+      let(:appeal) { create(:appeal) }
+      let(:root_task) { create(:root_task, appeal: appeal) }
+
+      context "A cancelled 'IhpColocatedTask' on an AMA Appeal" do
+        let!(:task) { create(:colocated_task, :ihp, :in_progress, parent: root_task, assigned_to: org, appeal: appeal) }
+        it "will update the 'vso_ihp_pending' column in the Appeal State table from TRUE to FALSE" do
+          old_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(old_appeal_state.vso_ihp_pending).to eq(true)
+          task.update!(status: Constants.TASK_STATUSES.cancelled)
+          new_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(new_appeal_state.vso_ihp_pending).to eq(false)
+          expect(new_appeal_state.vso_ihp_complete).to eq(false)
+        end
+      end
+
+      context "A cancelled 'IhpColocatedTask' on a Legacy Appeal" do
+        let!(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
+        it "will update the 'vso_ihp_pending' column in the Appeal State table from TRUE to FALSE" do
+          old_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(old_appeal_state.vso_ihp_pending).to eq(true)
+          task.update!(status: Constants.TASK_STATUSES.cancelled)
+          new_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(new_appeal_state.vso_ihp_pending).to eq(false)
+          expect(new_appeal_state.vso_ihp_complete).to eq(false)
+        end
+      end
+
+      context "A cancelled InformalHearingPresentationTask'" do
+        let!(:task) { create(:informal_hearing_presentation_task, :in_progress, assigned_to: org) }
+        it "will update the 'vso_ihp_pending' column in the Appeal State table from TRUE to FALSE" do
+          old_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(old_appeal_state.vso_ihp_pending).to eq(true)
+          task.update!(status: Constants.TASK_STATUSES.cancelled)
+          new_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(new_appeal_state.vso_ihp_pending).to eq(false)
+          expect(new_appeal_state.vso_ihp_complete).to eq(false)
         end
       end
     end
@@ -781,8 +847,9 @@ describe AppellantNotification do
         end
         it "will update appeal state the 'IhpTaskComplete' status" do
           allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
-          expect(AppellantNotification).to receive(:appeal_mapper).with(task.appeal.id, task.appeal.class.to_s, "vso_ihp_complete")
           task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
+          appeal_state_record = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(appeal_state_record.vso_ihp_complete).to eq(true)
         end
       end
     end
@@ -801,8 +868,38 @@ describe AppellantNotification do
         end
         it "will update appeal state with the 'IhpTaskComplete' status" do
           allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
-          expect(AppellantNotification).to receive(:appeal_mapper).with(task.appeal.id, task.appeal.class.to_s, "vso_ihp_complete")
           task.update_from_params({ status: Constants.TASK_STATUSES.completed, instructions: "Test" }, user)
+          appeal_state_record = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(appeal_state_record.vso_ihp_complete).to eq(true)
+        end
+      end
+    end
+
+    describe "update_appeal_state_when_ihp_completed" do
+      context "A completed 'InformalHearingPresentationTask'" do
+        let(:user) { create(:user) }
+        let(:org) { create(:organization) }
+        let(:task) { create(:informal_hearing_presentation_task, :in_progress, assigned_to: org) }
+        it "will update the 'vso_ihp_complete' column in the Appeal State table to TRUE" do
+          allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
+          task.update!(status: "completed")
+          appeal_state_record = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(appeal_state_record.vso_ihp_complete).to eq(true)
+          expect(appeal_state_record.vso_ihp_pending).to eq(false)
+        end
+      end
+
+      context "A completed 'IhpColocatedTask'" do
+        let(:user) { create(:user) }
+        let(:org) { create(:organization) }
+        let(:task) { create(:colocated_task, :ihp, :in_progress, assigned_to: org) }
+        let(:template_name) { "VSO IHP complete" }
+        it "will update the 'vso_ihp_complete' column in the Appeal State table to TRUE" do
+          allow(task).to receive(:verify_user_can_update!).with(user).and_return(true)
+          task.update!(status: "completed")
+          appeal_state_record = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
+          expect(appeal_state_record.vso_ihp_complete).to eq(true)
+          expect(appeal_state_record.vso_ihp_pending).to eq(false)
         end
       end
     end
@@ -825,14 +922,22 @@ describe AppellantNotification do
     describe "#update_appeal_state_when_appeal_cancelled" do
       context "A cancelled 'RootTask'" do
         let(:task) { create(:root_task) }
-        let!(:appeal_state) { [] }
         it "will update the 'appeal_cancelled' value to TRUE" do
           task.update!(status: Constants.TASK_STATUSES.cancelled)
           new_appeal_state = AppealState.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.to_s)
           expect(new_appeal_state.appeal_cancelled).to eq(true)
+          expect(new_appeal_state.appeal_docketed).to eq(false)
+          expect(new_appeal_state.privacy_act_pending).to eq(false)
+          expect(new_appeal_state.privacy_act_complete).to eq(false)
+          expect(new_appeal_state.vso_ihp_pending).to eq(false)
+          expect(new_appeal_state.vso_ihp_complete).to eq(false)
+          expect(new_appeal_state.hearing_scheduled).to eq(false)
+          expect(new_appeal_state.hearing_postponed).to eq(false)
+          expect(new_appeal_state.hearing_withdrawn).to eq(false)
+          expect(new_appeal_state.decision_mailed).to eq(false)
+          expect(new_appeal_state.scheduled_in_error).to eq(false)
         end
       end
     end
   end
-
 end

@@ -2,6 +2,7 @@
 
 # Module containing Aspect Overrides to Classes used to Track Statuses for Appellant Notification
 module AppellantNotification
+  extend ActiveSupport::Concern
   class NoParticipantIdError < StandardError
     def initialize(appeal_id, message = "There is no participant_id")
       super(message + " for appeal with id #{appeal_id}")
@@ -111,6 +112,8 @@ module AppellantNotification
       appeal_state.update!(hearing_scheduled: true, hearing_postponed: false)
     when "vso_ihp_pending"
       appeal_state.update!(vso_ihp_pending: true, vso_ihp_complete: false)
+    when "vso_ihp_cancelled"
+      appeal_state.update!(vso_ihp_pending: false, vso_ihp_complete: false)
     when "vso_ihp_complete"
       # Only updates appeal state if ALL ihp tasks are completed
       if appeal.tasks.open.where(type: IhpColocatedTask.name).empty? &&
