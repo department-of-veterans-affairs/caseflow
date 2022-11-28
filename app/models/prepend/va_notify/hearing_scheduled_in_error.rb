@@ -13,7 +13,7 @@ module HearingScheduledInError
   # Response: none
   def update_appeal_states_on_hearing_scheduled_in_error
     if is_a?(LegacyHearing)
-      if VACOLS::CaseHearing.find_by(hearing_pkseq: vacols_id).hearing_disp == "E"
+      if VACOLS::CaseHearing.find_by(hearing_pkseq: vacols_id)&.hearing_disp == "E"
         MetricsService.record("Updating SCHEDULED_IN_ERROR in Appeal States Table for #{appeal.class.to_s} ID #{appeal.id}".yellow,
                               name: "AppellantNotification.appeal_mapper") do
           AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "scheduled_in_error")
