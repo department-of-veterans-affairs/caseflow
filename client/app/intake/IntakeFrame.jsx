@@ -151,9 +151,9 @@ export const IntakeFrame = (props) => {
 };
 
 export default connect(
-  ({ intake, ui }) => ({
+  ({ intake }) => ({
     intakeId: intake.id,
-    unreadMessages: ui.unreadMessages,
+    unreadMessages: intake.unreadMessages,
     veteran: intake.veteran,
     cancelModalVisible: intake.cancelModalVisible,
     cancelIntakeRequestStatus: intake.requestStatus.cancel,

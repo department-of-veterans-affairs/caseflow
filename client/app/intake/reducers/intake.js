@@ -4,6 +4,9 @@ import { formatDateStr } from '../../util/DateUtil';
 import _ from 'lodash';
 
 const updateFromServerIntake = (state, serverIntake) => {
+  // Used to retain unreadMessages across network requests
+  const unreadMessages = state.unreadMessages || serverIntake.unread_messages;
+
   return update(state, {
     id: {
       $set: serverIntake.id
@@ -16,6 +19,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     editIssuesUrl: {
       $set: serverIntake.editIssuesUrl
+    },
+    unreadMessages: {
+      $set: unreadMessages
     },
     veteran: {
       name: {
@@ -54,6 +60,7 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       pids: null
     },
     cancelModalVisible: false,
+    unreadMessages: false,
     veteran: {
       name: '',
       formName: '',
@@ -65,15 +72,30 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       cancel: REQUEST_STATE.NOT_STARTED
     },
     splitAppeal: null,
+    userIsVhaEmployee: data.userIsVhaEmployee
   }, data.serverIntake)
 );
 
-const resetIntake = () => mapDataToInitialIntake({ serverIntake: {} });
+const resetIntake = (valuesToRetain) => (
+  mapDataToInitialIntake(
+    {
+      ...valuesToRetain,
+      serverIntake: { ...valuesToRetain }
+    }
+  )
+);
+
+const valuesToRetainAcrossIntakes = (state) => (
+  {
+    userIsVhaEmployee: state.userIsVhaEmployee,
+    unread_messages: state.unreadMessages
+  }
+);
 
 export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
   switch (action.type) {
   case ACTIONS.START_NEW_INTAKE:
-    return resetIntake();
+    return resetIntake(valuesToRetainAcrossIntakes(state));
   case ACTIONS.SET_FILE_NUMBER_SEARCH:
     return update(state, {
       fileNumberSearch: {
@@ -204,7 +226,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
       $toggle: ['cancelModalVisible']
     });
   case ACTIONS.CANCEL_INTAKE_SUCCEED:
-    return update(resetIntake(), {
+    return update(resetIntake(
+      valuesToRetainAcrossIntakes(state)
+    ), {
       requestStatus: {
         cancel: {
           $set: REQUEST_STATE.SUCCEEDED
