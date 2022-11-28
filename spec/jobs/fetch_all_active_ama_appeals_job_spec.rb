@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe FetchAllActiveLegacyAppealsJob, type: :job do
+describe FetchAllActiveAmaAppealsJob, type: :job do
   include ActiveJob::TestHelper
 
   subject { FetchAllActiveAmaAppealsJob.new }

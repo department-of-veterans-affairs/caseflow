@@ -3,6 +3,7 @@
 # Job to fetch all currently active and cancelled Legacy Appeals and insert records into the appeal states table
 class FetchAllActiveLegacyAppealsJob < CaseflowJob
   queue_with_priority :low_priority
+  QUERY_LIMIT = ENV["STATE_MIGRATION_JOB_BATCH_SIZE"]
 
   # Purpose: Job that finds all active Legacy Appeals &
   # creates records within the appeal_states table
@@ -28,7 +29,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
       type: "RootTask",
       appeal_type: "LegacyAppeal",
       status: Task.open_statuses.concat([Constants.TASK_STATUSES.cancelled])
-    ).find_in_batches(batch_size: 1_000) do |root_tasks|
+    ).find_in_batches(batch_size: QUERY_LIMIT.to_i) do |root_tasks|
       root_tasks.each do |root_task|
         add_record_to_appeal_states_table(root_task.appeal)
       end
