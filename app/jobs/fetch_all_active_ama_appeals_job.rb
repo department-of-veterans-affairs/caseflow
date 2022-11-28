@@ -5,7 +5,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   queue_with_priority :low_priority
 
   # Purpose: Job that finds all active AMA Appeals &
-  # creates/updates records within the appeal_states table
+  # creates records within the appeal_states table
   #
   # Params: None
   #
@@ -18,7 +18,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   private
 
   # Purpose: Method that queries Database for active AMA Appeals
-  # and creates/updates records within appeal_states table
+  # and creates records within appeal_states table
   #
   # Params: None
   #
@@ -27,8 +27,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     Task.where(
       type: "RootTask",
       appeal_type: "Appeal",
-      status: Task.open_statuses.concat([Constants.TASK_STATUSES.cancelled]),
-      closed_at: nil
+      status: Task.open_statuses.concat([Constants.TASK_STATUSES.cancelled])
     ).find_in_batches(batch_size: 1_000) do |root_tasks|
       root_tasks.each do |root_task|
         add_record_to_appeal_states_table(root_task.appeal)
@@ -38,7 +37,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
 
   # Purpose: Method that creates records within appeal_states table
   #
-  # Params: Appeal or LegacyAppeal object
+  # Params: Appeal object
   #
   # Returns: nil
   def add_record_to_appeal_states_table(appeal)
