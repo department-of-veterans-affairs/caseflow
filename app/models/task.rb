@@ -38,6 +38,7 @@ class Task < CaseflowRecord
 
   after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
   after_create :tell_parent_task_child_task_created
+  after_create :update_appeal_state_on_task_creation
 
   before_save :set_timestamp
 
@@ -116,7 +117,10 @@ class Task < CaseflowRecord
 
   attr_accessor :skip_check_for_only_open_task_of_type
 
+  prepend AppealDocketed
+  prepend IhpTaskPending
   prepend IhpTaskComplete
+  prepend IhpTaskCancelled
   prepend PrivacyActComplete
   prepend AppealCancelled
   prepend PrivacyActCancelled
@@ -783,8 +787,22 @@ class Task < CaseflowRecord
   #
   # Response: The Appeal State record correlated to the current task's appeal will be updated.
   def update_appeal_state_on_status_change
-    update_appeal_state_when_appeal_cancelled
+    update_appeal_state_when_ihp_cancelled
+    update_appeal_state_when_ihp_completed
     update_appeal_state_when_privacy_act_cancelled
+    update_appeal_state_when_appeal_cancelled
+  end
+
+  # Purpose: This method is triggered by callback 'after_create'.  This method calls a variety of abstract private
+  # methods that are prepended in app/models/prepend/va_notifiy.  These private methods will update an appeal's state
+  # within the 'Appeal State' table when certain tracked tasks are created.
+  #
+  # Params: NONE
+  #
+  # Response: The Appeal State record correlated to the current task's appeal will be updated.
+  def update_appeal_state_on_task_creation
+    update_appeal_state_when_appeal_docketed
+    update_appeal_state_when_ihp_created
   end
 
   private
