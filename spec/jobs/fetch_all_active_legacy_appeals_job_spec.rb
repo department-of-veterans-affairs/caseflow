@@ -3,6 +3,10 @@
 describe FetchAllActiveLegacyAppealsJob, type: :job do
   include ActiveJob::TestHelper
 
+  after(:each) do
+    AppealState.destroy_all
+  end
+
   subject { FetchAllActiveLegacyAppealsJob.new }
 
   describe "#perform" do
