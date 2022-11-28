@@ -230,7 +230,7 @@ export const SPECIAL_ISSUES = [
     snakeCase: 'radiation',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 8
+    queueSectionOrder: 9
   },
   {
     display: 'Rice Compliance',
@@ -240,7 +240,7 @@ export const SPECIAL_ISSUES = [
     snakeCase: 'rice_compliance',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 9
+    queueSectionOrder: 10
   },
   {
     display: 'Spina Bifida',
@@ -250,7 +250,7 @@ export const SPECIAL_ISSUES = [
     snakeCase: 'spina_bifida',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 10
+    queueSectionOrder: 11
   },
   {
     display: 'U.S. Territory claim - American Samoa, Guam, Northern ' +
@@ -364,6 +364,16 @@ export const AMA_SPECIAL_ISSUES = [
     unhandled: null,
     queueSection: 'issuesOnAppeal',
     queueSectionOrder: 1,
+    isAmaRelevant: true
+  },
+  {
+    display: 'PACT Act',
+    queueDisplay: 'PACT Act',
+    specialIssue: 'pactAct',
+    snakeCase: 'pact_act',
+    unhandled: null,
+    queueSection: 'issuesOnAppeal',
+    queueSectionOrder: 8,
     isAmaRelevant: true
   },
   {
