@@ -200,28 +200,39 @@ class Document < CaseflowRecord
     :received_at,
     :upload_date,
     :vbms_document_id,
-    :category_medical,
-    :category_other,
-    :category_procedural,
-    :previous_document_version_id
+    :series_id
   ].freeze
 
   # efficient version of merge_into that also saves to DB
   def self.bulk_merge_and_save(document_structs)
     # Bulk update
     Document.import(document_structs,
-                    on_duplicate_key_update: {
-                      conflict_target: [:vbms_document_id],
-                      columns: COLUMNS_TO_MERGE
-                    },
-                    recursive: true)
+                    on_duplicate_key_update: { conflict_target: [:vbms_document_id], columns: COLUMNS_TO_MERGE })
 
     # Use 1 SQL query to get the docs and set non-database attributes on the results
     doc_struct_hash = document_structs.index_by(&:vbms_document_id)
-    Document.where(vbms_document_id: document_structs.pluck(:vbms_document_id)).map do |doc|
-      doc_struct = doc_struct_hash[doc.vbms_document_id]
-      doc.assign_nondatabase_attributes(doc_struct)
+    Document.where(vbms_document_id: document_structs.pluck(:vbms_document_id)).map do |document|
+      doc_struct = doc_struct_hash[document.vbms_document_id]
+      document.assign_nondatabase_attributes(doc_struct)
     end
+  end
+
+  COLUMNS_TO_UPDATE = [
+    :category_medical,
+    :category_other,
+    :category_procedural,
+    :previous_document_version_id
+  ].freeze
+
+  # updates documents and nested resources like tags to db in bulk
+  def self.bulk_merge_and_update(document_structs)
+    # Bulk update
+    Document.import(document_structs,
+                    on_duplicate_key_update: {
+                      conflict_target: [:vbms_document_id],
+                      columns: COLUMNS_TO_UPDATE + COLUMNS_TO_MERGE
+                    },
+                    recursive: true)
   end
 
   # :reek:FeatureEnvy
