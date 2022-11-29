@@ -510,6 +510,14 @@ describe RequestIssue, :all_dbs do
       end
     end
 
+    context "issue is vha" do
+      let(:benefit_type) { "vha" }
+
+      it "does not require a record request task" do
+        expect(nonrating_request_issue.requires_record_request_task?).to eq false
+      end
+    end
+
     context "issue benefit type is education" do
       let(:benefit_type) { "education" }
 
