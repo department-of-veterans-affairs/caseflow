@@ -85,27 +85,17 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     { hearing_scheduled: false }
   end
 
+  # Purpose: Set key value pair for hearing_postponed to help with appeal_states table insertion
+  #
+  # Params: Appeal object
+  #
+  # Return: Hash with a single key (hearing_postponed) with a boolean value
   def map_appeal_hearing_postponed_state(appeal)
-    # Definition of postponed
-    # All AssignHearingDispositionTasks have been cancelled
-    # Another ScheduleHearingTask has been assigned OR on_hold (for admin action)
-    # Will have to check disposition of last hearing to make sure that it is postponed vs scheduled_in_error
-
-    most_recent_disposition = appeal.hearings.max_by(&:id).disposition
-
-    # Code goes here ...
-    # Get last AssignHearingDispositionTask
-
-    # disposition_related_tasks = appeal.tasks.map do |task|
-    #   task if task.type.include?("HearingDispositionTask")
-    # end
-    # filtered = disposition_related_tasks.compact
-    # most_recent = filtered.max # most recent somehow
-
-    if appeal.hearings.max_by(&:id).disposition == "postponed"
-      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_postponed")
+    if appeal.hearings&.max_by(&:id)&.disposition == "postponed"
+      { hearing_postponed: true }
+    else
+      { hearing_postponed: false }
     end
-    { hearing_postponed: false }
   end
 
   def map_appeal_hearing_withdrawn_state(appeal)
