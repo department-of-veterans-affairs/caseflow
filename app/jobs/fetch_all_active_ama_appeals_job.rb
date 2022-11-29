@@ -90,6 +90,23 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     { hearing_postponed: false }
   end
 
+  # def map_appeal_hearing_withdrawn_state(appeal)
+  #   tasks = appeal.tasks.map(&:type)
+  #   if tasks.include?("HearingTask")
+  #     hearing_tasks = appeal.tasks.filter{|task| task.type=="HearingTask"}
+  #     cancelled_hearing_tasks = hearing_tasks.map{|task| task if task.status == "cancelled"}
+  #     if hearing_tasks.count == cancelled_hearing_tasks.count
+  #       AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_withdrawn")
+  #     end
+  #   end
+    # Code goes here ...
+    # Pseudo code:
+    # Does a hearing task exist within an appeal
+    # If so, find all hearing tasks within an appeal
+    # If the status of all hearing tasks are cancelled,
+    # then update appeal state hearing withdrawn to true
+    # AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_withdrawn")
+  # end
   def map_appeal_hearing_withdrawn_state(appeal)
     # Code goes here ...
     { hearing_withdrawn: false }
