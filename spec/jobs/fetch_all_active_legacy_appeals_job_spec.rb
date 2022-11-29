@@ -93,4 +93,68 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
       end
     end
   end
+
+  describe "#map_appeal_ihp_state" do
+    context "when there is an active legacy appeal with an active IhpColocated Task" do
+      let!(:open_legacy_appeal_with_ihp_pending) { create(:legacy_appeal, :with_root_task, :with_active_ihp_colocated_task) }
+      it "a single record will be inserted into the Appeal States table" do
+        subject.perform
+        expect(
+          AppealState.find_by(
+            appeal_id: open_legacy_appeal_with_ihp_pending.id,
+            appeal_type: open_legacy_appeal_with_ihp_pending.class.to_s
+          ).appeal_id
+        ).to eq(open_legacy_appeal_with_ihp_pending.id)
+        expect(AppealState.all.count).to eq(1)
+      end
+
+      it "the #{"vso_ihp_pending"} column will be set to TRUE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_pending.id).vso_ihp_pending).to eq(true)
+      end
+
+      it "the #{"vso_ihp_complete"} column will be set to FALSE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_pending.id).vso_ihp_complete).to eq(false)
+      end
+    end
+
+    context "when there is an active legacy appeal with completed IhpColocatedTask(s)" do
+      let!(:open_legacy_appeal_with_ihp_completed) { create(:legacy_appeal, :with_root_task, :with_completed_ihp_colocated_task) }
+      it "a single record will be created in the Appeal States table" do
+        subject.perform
+        expect(AppealState.first.appeal_id).to eq(open_legacy_appeal_with_ihp_completed.id)
+        expect(AppealState.all.count).to eq(1)
+      end
+
+      it "the #{"vso_ihp_pending"} column will be set to FALSE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_completed.id).vso_ihp_pending).to eq(false)
+      end
+
+      it "the #{"vso_ihp_complete"} column will be set to TRUE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_completed.id).vso_ihp_complete).to eq(true)
+      end
+    end
+
+    context "when there is an active legacy appeal with NO IhpColocatedTask(s)" do
+      let!(:open_legacy_appeal_with_ihp_completed) { create(:legacy_appeal, :with_root_task) }
+      it "a single record will be created in the Appeal States table" do
+        subject.perform
+        expect(AppealState.first.appeal_id).to eq(open_legacy_appeal_with_ihp_completed.id)
+        expect(AppealState.all.count).to eq(1)
+      end
+
+      it "the #{"vso_ihp_pending"} column will be set to FALSE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_completed.id).vso_ihp_pending).to eq(false)
+      end
+
+      it "the #{"vso_ihp_complete"} column will be set to FALSE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_completed.id).vso_ihp_complete).to eq(false)
+      end
+    end
+  end
 end
