@@ -5,11 +5,8 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   queue_with_priority :low_priority
   QUERY_LIMIT = ENV["STATE_MIGRATION_JOB_BATCH_SIZE"]
 
-  # All Variants of an IHP Task
-  IHP_TYPE_TASKS = %w[IhpColocatedTask InformalHearingPresentationTask].freeze
-
-  # Purpose: Job that finds all active AMA Appeals &
-  # creates/updates records within the appeal_states table
+  # Purpose: Job that finds all active Legacy Appeals &
+  # creates records within the appeal_states table
   #
   # Params: None
   #
@@ -27,9 +24,8 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   # Params: None
   #
   # Returns: Array of active Legacy Appeals
-  def find_active_legacy_appeals
-    active_legacy_appeals = []
-    active_legacy_appeals_root_tasks = Task.where(
+  def find_and_create_appeal_state_for_active_legacy_appeals
+    Task.where(
       type: "RootTask",
       appeal_type: "LegacyAppeal",
       status: Task.open_statuses.concat([Constants.TASK_STATUSES.cancelled])
@@ -69,23 +65,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
     end
   end
 
-  # Purpose: Updates "vso_ihp_pending" to TRUE if most recent parent IHP type task is in an open status.
-  # Updates "vso_ihp_completed" to TRUE if most recent parent IHP type task has a status of 'completed'.
-  #
-  # Params: Most Recent Parent IHP Task (InformalHearingPresentationTask OR IhpColocatedTask)
-  #
-  # Returns: nil
-  def update_ihp_appeal_state(ihp_task)
-    appeal = ihp_task.appeal
-    if Task.open_statuses.include?(ihp_task.status)
-      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "vso_ihp_pending")
-    elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
-      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "vso_ihp_complete")
-    end
-  end
-
-  # Purpose: Method that creates/updates vso_ihp_pending &
-  # vso_ihp_complete records within appeal_states table
+  # Purpose: Set key value pairs for "vso_ihp_pending" & "vso_ihp_complete"  # Updates "vso_ihp_completed" to TRUE if most recent parent IHP type task has a status of 'completed'.
   #
   # Params: Appeal or LegacyAppeal object
   #
