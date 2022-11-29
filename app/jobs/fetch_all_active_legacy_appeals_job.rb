@@ -142,7 +142,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
       ihp_state = { vso_ihp_pending: true, vso_ihp_complete: false }
     elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
       ihp_state = { vso_ihp_pending: false, vso_ihp_complete: true }
-    elsif [Constants.TASK_STATUSES.cancelled].include?(ihp_task.status)
+    else [Constants.TASK_STATUSES.cancelled].include?(ihp_task.status)
       ihp_state = { vso_ihp_pending: false, vso_ihp_complete: false }
     end
     ihp_state
