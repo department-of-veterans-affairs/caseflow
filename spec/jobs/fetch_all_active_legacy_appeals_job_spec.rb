@@ -35,6 +35,22 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
       end
     end
 
+    context "when there are only CANCELLED Legacy Appeals in the database" do
+      let!(:cancelled_legacy_appeals) do
+        [
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "11"),
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "21"),
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "31"),
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "41"),
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "51")
+        ]
+      end
+      it "5 records will be added to the Appeal States table" do
+        subject.perform
+        expect(AppealState.all.count).to eq(cancelled_legacy_appeals.count)
+      end
+    end
+
     context "when there are only OPEN Legacy Appeals in the database" do
       let!(:open_legacy_appeals) do
         [

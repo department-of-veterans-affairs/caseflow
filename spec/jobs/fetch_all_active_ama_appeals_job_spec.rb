@@ -28,6 +28,16 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
     end
 
+    context "when there are only CANCELLED AMA Appeals in the database" do
+      let!(:cancelled_ama_appeals) do
+        Array.new(5) { create(:appeal, :with_cancelled_root_task) }
+      end
+      it "5 records will be added to the Appeal States table" do
+        subject.perform
+        expect(AppealState.all.count).to eq(cancelled_ama_appeals.count)
+      end
+    end
+
     context "when there are only OPEN AMA Appeals in the database" do
       let!(:open_ama_appeals) do
         Array.new(5) { create(:appeal, :active) }

@@ -241,6 +241,13 @@ FactoryBot.define do
       end
     end
 
+    trait :with_cancelled_root_task do
+      before(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+      end
+    end
+
     trait :with_assigned_bva_dispatch_task do
       after(:create) do |appeal, _evaluator|
         bva_dispatch = BvaDispatch.singleton
