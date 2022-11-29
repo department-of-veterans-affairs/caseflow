@@ -26,9 +26,10 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   #
   # Params: None
   #
-  # Returns: nil
-  def find_and_create_appeal_state_for_active_legacy_appeals
-    Task.where(
+  # Returns: Array of active Legacy Appeals
+  def find_active_legacy_appeals
+    active_legacy_appeals = []
+    active_legacy_appeals_root_tasks = Task.where(
       type: "RootTask",
       appeal_type: "LegacyAppeal",
       status: Task.open_statuses.concat([Constants.TASK_STATUSES.cancelled])
