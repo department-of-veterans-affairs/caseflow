@@ -231,9 +231,11 @@ describe AppellantNotification do
 
   describe HearingScheduled do
     describe "#create_hearing" do
-      let(:appeal_hearing) { create(:appeal, :with_schedule_hearing_tasks) }
-      let(:appeal_state) { create(:appeal_state, appeal_id: appeal_hearing.id, appeal_type: appeal_hearing.class.to_s) }
+      let(:user) { create(:user, id: 99) }
+      let!(:appeal_hearing) { create(:appeal, :with_schedule_hearing_tasks) }
+      let!(:appeal_state) { create(:appeal_state, appeal_id: appeal_hearing.id, appeal_type: appeal_hearing.class.to_s, created_by_id: user.id, updated_by_id: user.id) }
       let(:template_name) { "Hearing scheduled" }
+      let(:hearing) { create(:hearing, appeal: appeal) }
       let(:schedule_hearing_task) { ScheduleHearingTask.find_by(appeal: appeal_hearing) }
       let(:task_values) do
         {
@@ -248,9 +250,38 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal_hearing, template_name)
         schedule_hearing_task.create_hearing(task_values)
       end
-      it "will uipdate appeal state when a hearing is scheduled" do
-        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal_hearing.id, appeal_hearing.class.to_s, "hearing_scheduled")
+      it "will update appeal state when a hearing is scheduled" do
+        old_appeal_state = AppealState.find_by(appeal_id: appeal_hearing.id, appeal_type: appeal_hearing.class.to_s)
+        expect(old_appeal_state.hearing_scheduled).to eq(false)
         schedule_hearing_task.create_hearing(task_values)
+        new_appeal_state = AppealState.find_by(appeal_id: appeal_hearing.id, appeal_type: appeal_hearing.class.to_s)
+        expect(new_appeal_state.hearing_scheduled).to eq(true)
+      end
+    end
+  end
+
+  describe HearingScheduledInError do
+    describe "#update_appeal_states_on_hearing_scheduled_in_error" do
+      let(:payload_values) { { disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error } }
+      let!(:hearing) { create(:hearing) }
+      let!(:legacy_hearing) { create(:legacy_hearing) }
+      let(:appeal) { hearing.appeal }
+      it "updates entry in appeal_state table for AMA appeals" do
+        old_appeal_state = AppealState.find_by(appeal_id: hearing.appeal.id, appeal_type: hearing.appeal.class.to_s)
+        expect(old_appeal_state.scheduled_in_error).to eq(false)
+        hearing.update(payload_values)
+        new_appeal_state = AppealState.find_by(appeal_id: hearing.appeal.id, appeal_type: hearing.appeal.class.to_s)
+        expect(new_appeal_state.scheduled_in_error).to eq(true)
+      end
+
+      it "updates entry in appeal_state table for legacy appeals" do
+        old_appeal_state = AppealState.find_by(appeal_id: legacy_hearing.appeal.id, appeal_type: legacy_hearing.appeal.class.to_s)
+        expect(old_appeal_state.scheduled_in_error).to eq(false)
+        legacy_hearing.vacols_record.hearing_disp = "E"
+        legacy_hearing.vacols_record.save
+        legacy_hearing.class.repository.load_vacols_data(legacy_hearing)
+        new_appeal_state = AppealState.find_by(appeal_id: legacy_hearing.appeal.id, appeal_type: legacy_hearing.appeal.class.to_s)
+        expect(new_appeal_state.scheduled_in_error).to eq(true)
       end
     end
   end
@@ -267,11 +298,12 @@ describe AppellantNotification do
         expect(AppellantNotification).to receive(:notify_appellant).with(appeal_hearing, template_name)
         hearing_disposition_task.update_hearing(hearing_hash)
       end
-      it "will update appeal state when a hearing is postponed" do
-        appeal_hearing = postponed_hearing.appeal
-        hearing_disposition_task = appeal_hearing.tasks.find_by(type: "AssignHearingDispositionTask")
-        expect(AppellantNotification).to receive(:appeal_mapper).with(appeal_hearing.id, appeal_hearing.class.to_s, "hearing_postponed")
-        hearing_disposition_task.update_hearing(hearing_hash)
+      it "will update appeal state when a hearing is postponed for AMA appeals" do
+        old_appeal_state = AppealState.find_by(appeal_id: postponed_hearing.appeal.id, appeal_type: postponed_hearing.appeal.class.to_s)
+        expect(old_appeal_state.hearing_postponed).to eq(false)
+        postponed_hearing.update(hearing_hash)
+        new_appeal_state = AppealState.find_by(appeal_id: postponed_hearing.appeal.id, appeal_type: postponed_hearing.appeal.class.to_s)
+        expect(new_appeal_state.hearing_postponed).to eq(true)
       end
     end
   end
@@ -298,12 +330,11 @@ describe AppellantNotification do
         end
         let(:hearing_update_form) { HearingUpdateForm.new(params) }
         it "the appellant will be notified that their hearing has been postponed" do
-          expect(AppellantNotification).to receive(:notify_appellant).with(hearing.appeal, template_name)
-          hearing_update_form.update_hearing
-        end
-        it "will update appeal state when hearing has been postponed" do
-          expect(AppellantNotification).to receive(:appeal_mapper).with(hearing.appeal.id, hearing.appeal.class.to_s, "hearing_postponed")
-          hearing_update_form.update_hearing
+          old_appeal_state = AppealState.find_by(appeal_id: hearing.appeal.id, appeal_type: hearing.appeal.class.to_s)
+          expect(old_appeal_state.hearing_postponed).to eq(false)
+          hearing.update(disposition: "postponed")
+          new_appeal_state = AppealState.find_by(appeal_id: hearing.appeal.id, appeal_type: hearing.appeal.class.to_s)
+          expect(new_appeal_state.hearing_postponed).to eq(true)
         end
       end
     end
@@ -335,8 +366,11 @@ describe AppellantNotification do
           hearing_update_form.update_hearing
         end
         it "will update appeal state when hearing has been withdrawn" do
-          expect(AppellantNotification).to receive(:appeal_mapper).with(hearing.appeal.id, hearing.appeal.class.to_s, "hearing_withdrawn")
-          hearing_update_form.update_hearing
+          old_appeal_state = AppealState.find_by(appeal_id: hearing.appeal.id, appeal_type: hearing.appeal.class.to_s)
+          expect(old_appeal_state.hearing_withdrawn).to eq(false)
+          hearing.update(disposition: "cancelled")
+          new_appeal_state = AppealState.find_by(appeal_id: hearing.appeal.id, appeal_type: hearing.appeal.class.to_s)
+          expect(new_appeal_state.hearing_withdrawn).to eq(true)
         end
       end
     end
@@ -392,11 +426,6 @@ describe AppellantNotification do
           hearing.update_caseflow_and_vacols(hearing_info)
         end
 
-        it "will update appeal state when hearing is postponed" do
-          expect(AppellantNotification).to receive(:appeal_mapper).with(hearing.appeal.id, hearing.appeal.class.to_s, "hearing_postponed")
-          hearing.update_caseflow_and_vacols(hearing_info)
-        end
-
         it "should not notify appellant if a postponed hearing updates to postponed" do
           expect(AppellantNotification).to_not receive(:notify_appellant).with(hearing_postponed.appeal, template_name)
           hearing_postponed.update_caseflow_and_vacols(hearing_info)
@@ -428,7 +457,7 @@ describe AppellantNotification do
           create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: ro_id)
         end
         let(:appeal_state) { create(:appeal_state, appeal_id: appeal.id, appeal_type: appeal.class.to_s) }
-        let(:hearing) { create(:legacy_hearing, appeal: appeal) }
+        let!(:hearing) { create(:legacy_hearing, appeal: appeal) }
         let(:hearing_info) do
           {
             disposition: "cancelled"
@@ -453,8 +482,11 @@ describe AppellantNotification do
           hearing.update_caseflow_and_vacols(hearing_info)
         end
         it "will update appeal state hearing is withdrawn/cancelled" do
-          expect(AppellantNotification).to receive(:appeal_mapper).with(hearing.appeal.id, hearing.appeal.class.to_s, "hearing_withdrawn")
+          old_appeal_state = AppealState.find_by(appeal_id: hearing.appeal.id, appeal_type: hearing.appeal.class.to_s)
+          expect(old_appeal_state.hearing_withdrawn).to eq(false)
           hearing.update_caseflow_and_vacols(hearing_info)
+          new_appeal_state = AppealState.find_by(appeal_id: hearing.appeal.id, appeal_type: hearing.appeal.class.to_s)
+          expect(new_appeal_state.hearing_withdrawn).to eq(true)
         end
         it "should not notify appellant if a cancelled hearing updates to cancelled" do
           expect(AppellantNotification).to_not receive(:notify_appellant).with(hearing_cancelled.appeal, template_name)

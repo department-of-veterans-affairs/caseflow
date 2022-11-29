@@ -12,7 +12,6 @@ module HearingWithdrawn
   def update_hearing(hearing_hash)
     super_return_value = super
     if hearing_hash[:disposition] == Constants.HEARING_DISPOSITION_TYPES.cancelled && appeal.class.to_s == "Appeal"
-      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_withdrawn")
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
     super_return_value
@@ -26,9 +25,31 @@ module HearingWithdrawn
     new_disposition = vacols_record.hearing_disp
     if cancelled? && original_disposition != new_disposition
       appeal = LegacyAppeal.find(appeal_id)
-      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_withdrawn")
       AppellantNotification.notify_appellant(appeal, @@template_name)
     end
     super_return_value
+  end
+
+  # Purpose: Callback method when a hearing updates to also update appeal_states table
+  #
+  # Params: none
+  #
+  # Response: none
+  def update_appeal_states_on_hearing_withdrawn
+    if is_a?(LegacyHearing)
+      if VACOLS::CaseHearing.find_by(hearing_pkseq: vacols_id)&.hearing_disp == "C"
+        MetricsService.record("Updating HEARING_WITHDRAWN in Appeal States Table for #{appeal.class.to_s} ID #{appeal.id}".yellow,
+                              name: "AppellantNotification.appeal_mapper") do
+          AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_withdrawn")
+        end
+      end
+    elsif is_a?(Hearing)
+      if disposition == Constants.HEARING_DISPOSITION_TYPES.cancelled
+        MetricsService.record("Updating HEARING_WITHDRAWN in Appeal States Table for #{appeal.class.to_s} ID #{appeal.id}".yellow,
+                              name: "AppellantNotification.appeal_mapper") do
+          AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "hearing_withdrawn")
+        end
+      end
+    end
   end
 end

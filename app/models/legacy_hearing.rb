@@ -35,8 +35,10 @@ class LegacyHearing < CaseflowRecord
   include UpdatedByUserConcern
   include HearingConcern
   include HasHearingEmailRecipientsConcern
+  prepend HearingScheduled
   prepend HearingWithdrawn
   prepend HearingPostponed
+  prepend HearingScheduledInError
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -91,6 +93,9 @@ class LegacyHearing < CaseflowRecord
   delegate :timezone, :name, to: :regional_office, prefix: true
 
   before_create :assign_created_by_user
+
+  after_create :update_appeal_states_on_hearing_create
+  after_update :update_appeal_states_on_hearing_update
 
   CO_HEARING = "Central"
   VIDEO_HEARING = "Video"
@@ -369,6 +374,16 @@ class LegacyHearing < CaseflowRecord
   end
 
   private
+
+  def update_appeal_states_on_hearing_create
+    update_appeal_states_on_hearing_scheduled
+  end
+
+  def update_appeal_states_on_hearing_update
+    update_appeal_states_on_hearing_scheduled_in_error
+    update_appeal_states_on_hearing_postponed
+    update_appeal_states_on_hearing_withdrawn
+  end
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
