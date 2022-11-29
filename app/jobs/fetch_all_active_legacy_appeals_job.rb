@@ -81,7 +81,10 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   end
 
   def map_appeal_hearing_scheduled_state(appeal)
-    # Code goes here ...
+    if appeal.hearings.max_by(&:id).disposition.nil?
+      return { hearing_scheduled: true }
+    end
+
     { hearing_scheduled: false }
   end
 
