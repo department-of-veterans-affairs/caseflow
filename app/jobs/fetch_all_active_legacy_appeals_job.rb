@@ -23,7 +23,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   #
   # Params: None
   #
-  # Returns: Array of active Legacy Appeals
+  # Returns: nil
   def find_and_create_appeal_state_for_active_legacy_appeals
     Task.where(
       type: "RootTask",
@@ -65,7 +65,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
     end
   end
 
-  # Purpose: Set key value pairs for "vso_ihp_pending" & "vso_ihp_complete"  # Updates "vso_ihp_completed" to TRUE if most recent parent IHP type task has a status of 'completed'.
+  # Purpose: Set key value pairs for "vso_ihp_pending" & "vso_ihp_complete"
   #
   # Params: Appeal or LegacyAppeal object
   #
