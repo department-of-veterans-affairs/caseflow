@@ -68,4 +68,25 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
     end
   end
+
+  # RSPECS
+  # Test for multiple hearings, hearing cancelled (true), hearing not cancelled(false)
+  # describe "#map_appeal_hearing_withdrawn_state" do
+  #   context "when there is an active AMA Appeal with a hearing state of withdrawn" do
+  #     let!(:open_ama_appeal_with_hearing_withdrawn) { create(:appeal, :active, :hearings, :disposition) }
+  #     it "a single record will be inserted into the Appeal States table" do
+  #       subject.perform
+  #       expect(
+  #         AppealState.find_by(
+  #           appeal_id: open_ama_appeal_with_hearing_withdrawn.id,
+  #           appeal_type: open_ama_appeal_with_hearing_withdrawn.class.to_s
+  #         ).appeal_id
+  #       ).to eq(open_ama_appeal_with_hearing_withdrawn.id)
+  #       expect(AppealState.all.count).to eq(1)
+  #     end
+  #
+  #   end
+
+  # end
+
 end
