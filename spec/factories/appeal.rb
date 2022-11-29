@@ -328,6 +328,36 @@ FactoryBot.define do
       end
     end
 
+    trait :with_completed_ihp_task do
+      after(:create) do |appeal, _evaluator|
+        org = Organization.find_by(type: "Vso")
+        org ||= create(:vso)
+        ihp_task = create(:informal_hearing_presentation_task, appeal: appeal, assigned_to: org)
+        ihp_task.update!(status: "completed")
+      end
+    end
+
+    trait :with_ihp_colocated_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        parent = root_task
+        org = Organization.find_by(type: "Vso")
+        org ||= create(:vso)
+        create(:colocated_task, :ihp, appeal: appeal, parent: parent, assigned_to: org)
+      end
+    end
+
+    trait :with_completed_ihp_colocated_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        parent = root_task
+        org = Organization.find_by(type: "Vso")
+        org ||= create(:vso)
+        ihp_colocated_task = create(:colocated_task, :ihp, appeal: appeal, parent: parent, assigned_to: org)
+        ihp_colocated_task.update!(status: "completed")
+      end
+    end
+
     trait :with_pre_docket_task do
       after(:create) do |appeal, _evaluator|
         bva = BvaIntake.singleton

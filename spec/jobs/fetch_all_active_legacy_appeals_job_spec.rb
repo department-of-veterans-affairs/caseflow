@@ -139,21 +139,21 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
     end
 
     context "when there is an active legacy appeal with NO IhpColocatedTask(s)" do
-      let!(:open_legacy_appeal_with_ihp_completed) { create(:legacy_appeal, :with_root_task) }
+      let!(:open_legacy_appeal) { create(:legacy_appeal, :with_root_task) }
       it "a single record will be created in the Appeal States table" do
         subject.perform
-        expect(AppealState.first.appeal_id).to eq(open_legacy_appeal_with_ihp_completed.id)
+        expect(AppealState.first.appeal_id).to eq(open_legacy_appeal.id)
         expect(AppealState.all.count).to eq(1)
       end
 
       it "the #{"vso_ihp_pending"} column will be set to FALSE" do
         subject.perform
-        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_completed.id).vso_ihp_pending).to eq(false)
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal.id).vso_ihp_pending).to eq(false)
       end
 
       it "the #{"vso_ihp_complete"} column will be set to FALSE" do
         subject.perform
-        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_completed.id).vso_ihp_complete).to eq(false)
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal.id).vso_ihp_complete).to eq(false)
       end
     end
   end
