@@ -87,7 +87,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
 
   # Purpose: Set key value pair for hearing_postponed to help with appeal_states table insertion
   #
-  # Params: Appeal object
+  # Params: LegacyAppeal object
   #
   # Return: Hash with a single key (hearing_postponed) with a boolean value
   def map_appeal_hearing_postponed_state(appeal)
