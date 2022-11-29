@@ -94,7 +94,7 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: true)
       end
 
-      it "should not map appeal state to true if none of the hearings habe nil dispsotion" do
+      it "should not map appeal state to true if none of the hearings habe nil disposition" do
         old_hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
         new_hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
         expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: false)

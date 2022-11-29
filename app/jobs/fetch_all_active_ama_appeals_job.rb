@@ -80,6 +80,10 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     { privacy_act_pending: false, privacy_act_complete: false }
   end
 
+  # Purpose: Determines if the hearing scheduled attribute within the associated
+  # appeal_state record should be set to true
+  # Params: Appeal object
+  # Returns: Hash of "hearing scheduled" key value pair
   def map_appeal_hearing_scheduled_state(appeal)
     if appeal.hearings.count > 0 && appeal.hearings.max_by(&:id).disposition.nil?
       return { hearing_scheduled: true }
