@@ -101,7 +101,7 @@ const FullReduxDecorator = (Story, options) => {
   state.rampElection.relationships = relationships;
 
   if (args.userIsVhaEmployee) {
-    state.intake.userIsVhaEmployee = args.userIsVhaEmployee;
+    state.userInformation.userIsVhaEmployee = args.userIsVhaEmployee;
   }
 
   return <ReduxBase reducer={reducer} initialState={state}>
