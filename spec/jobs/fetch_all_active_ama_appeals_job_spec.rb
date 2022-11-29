@@ -68,4 +68,37 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
     end
   end
+
+  describe "map appeal state with hearing scheduled" do
+    let(:ama_appeal) { create(:appeal) }
+    context "appeals with hearings scheduled tasks" do
+      let(:hearing) { create(:hearing, appeal: ama_appeal) }
+
+      it "hearings with nil disposition should map the hearing scheduled appeal state to true" do
+        hearing.update(disposition: nil)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: true)
+      end
+
+      it "no hearings with nil disposition should map the hearing scheduled appeal state to false" do
+        hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: false)
+      end
+    end
+
+    context "appeals hearings with multiple hearings scheduled" do
+      let(:old_hearing) { create(:hearing, appeal: ama_appeal) }
+      let(:new_hearing) { create(:hearing, appeal: ama_appeal) }
+      it "should still map appeal state to true if most recent hearing has nil disposition" do
+        old_hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
+        new_hearing.update(disposition: nil)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: true)
+      end
+
+      it "should not map appeal state to true if none of the hearings habe nil dispsotion" do
+        old_hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
+        new_hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: false)
+      end
+    end
+  end
 end
