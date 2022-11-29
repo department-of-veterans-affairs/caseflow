@@ -86,10 +86,10 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
       if parent_ihp_tasks.count == 1
         set_ihp_appeal_state(parent_ihp_tasks.first)
       elsif parent_ihp_tasks.count > 1
-        parent_ihp_task_ids = parent_ihp_tasks.map(&:id)
-        current_parent_ihp_task_id = parent_ihp_task_ids.max
-        current_parent_ihp_task = Task.find current_parent_ihp_task_id
+        current_parent_ihp_task = parent_ihp_tasks.max_by(&:id)
         set_ihp_appeal_state(current_parent_ihp_task)
+      else
+        { vso_ihp_pending: false, vso_ihp_complete: false }
       end
     else
       { vso_ihp_pending: false, vso_ihp_complete: false }
@@ -143,7 +143,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
       ihp_state = { vso_ihp_pending: true, vso_ihp_complete: false }
     elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
       ihp_state = { vso_ihp_pending: false, vso_ihp_complete: true }
-    else [Constants.TASK_STATUSES.cancelled].include?(ihp_task.status)
+    else
       ihp_state = { vso_ihp_pending: false, vso_ihp_complete: false }
     end
     ihp_state
