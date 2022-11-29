@@ -54,7 +54,6 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       pids: null
     },
     cancelModalVisible: false,
-    unreadMessages: false,
     veteran: {
       name: '',
       formName: '',

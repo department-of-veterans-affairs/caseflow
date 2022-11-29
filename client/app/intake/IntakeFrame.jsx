@@ -154,7 +154,6 @@ export default connect(
   ({ intake, userInformation }) => ({
     intakeId: intake.id,
     unreadMessages: userInformation.unreadMessages,
-    userIsVhaEmployee: userInformation.userIsVhaEmployee,
     veteran: intake.veteran,
     cancelModalVisible: intake.cancelModalVisible,
     cancelIntakeRequestStatus: intake.requestStatus.cancel,
