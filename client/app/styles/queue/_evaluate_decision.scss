@@ -1,3 +1,15 @@
+.case-timeline {
+  display: flex;
+
+  .case-type {
+    width: 15%;
+  }
+
+  .attorney-assigned {
+    width: 30%;
+  }
+}
+
 .grayLineStyling {
   width: 5px;
   background: $color-gray-dark;

@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions
+	xmlns:mvs="http://appeals.cf.va.gov/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="MpiUpdateVeteran"
+	targetNamespace="http://appeals.cf.va.gov/">
+	<wsdl:types>
+			<xs:schema
+				xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+				xmlns:xs="http://www.w3.org/2001/XMLSchema"
+				attributeFormDefault="unqualified"
+				elementFormDefault="qualified"
+				jxb:version="2.1"
+				targetNamespace="http://appeals.cf.va.gov/">
+					<xs:element name="code">
+							<xs:complexType>
+									<xs:simpleContent>
+											<xs:extension base="xs:string">
+													<xs:attribute name="codeSystemName" type="xs:string"/>
+													<xs:attribute name="code" type="xs:string"/>
+													<xs:attribute name="displayName" type="xs:string"/>
+											</xs:extension>
+									</xs:simpleContent>
+							</xs:complexType>
+					</xs:element>
+					<xs:element name="text" type="xs:string"/>
+					<xs:element name="PRPA_IN201302UV02">
+							<xs:complexType>
+									<xs:sequence>
+											<xs:element name="id">
+													<xs:complexType>
+															<xs:simpleContent>
+																	<xs:extension base="xs:string">
+																			<xs:attribute name="extension" type="xs:string"/>
+																			<xs:attribute name="root" type="xs:string"/>
+																	</xs:extension>
+															</xs:simpleContent>
+													</xs:complexType>
+											</xs:element>
+											<xs:element name="creationTime">
+													<xs:complexType>
+															<xs:simpleContent>
+																	<xs:extension base="xs:string">
+																			<xs:attribute name="value" type="xs:string">
+																					<xs:annotation>
+																							<xs:appinfo>
+																									<jxb:property name="valueAttribute"/>
+																							</xs:appinfo>
+																					</xs:annotation>
+																			</xs:attribute>
+																	</xs:extension>
+															</xs:simpleContent>
+													</xs:complexType>
+											</xs:element>
+											<xs:element name="interactionId">
+													<xs:complexType>
+															<xs:simpleContent>
+																	<xs:extension base="xs:string">
+																			<xs:attribute name="extension" type="xs:string"/>
+																			<xs:attribute name="root" type="xs:string"/>
+																	</xs:extension>
+															</xs:simpleContent>
+													</xs:complexType>
+											</xs:element>
+											<xs:element name="processingCode">
+													<xs:complexType>
+															<xs:simpleContent>
+																	<xs:extension base="xs:string">
+																			<xs:attribute name="code" type="xs:string"/>
+																	</xs:extension>
+															</xs:simpleContent>
+													</xs:complexType>
+											</xs:element>
+											<xs:element name="processingModeCode">
+													<xs:complexType>
+															<xs:simpleContent>
+																	<xs:extension base="xs:string">
+																			<xs:attribute name="code" type="xs:string"/>
+																	</xs:extension>
+															</xs:simpleContent>
+													</xs:complexType>
+											</xs:element>
+											<xs:element name="acceptAckCode">
+													<xs:complexType>
+															<xs:simpleContent>
+																	<xs:extension base="xs:string">
+																			<xs:attribute name="code" type="xs:string"/>
+																	</xs:extension>
+															</xs:simpleContent>
+													</xs:complexType>
+											</xs:element>
+											<xs:element name="receiver">
+													<xs:complexType>
+															<xs:sequence>
+																	<xs:element name="device">
+																			<xs:complexType>
+																					<xs:sequence>
+																							<xs:element name="id">
+																									<xs:complexType>
+																											<xs:simpleContent>
+																													<xs:extension base="xs:string">
+																															<xs:attribute name="extension" type="xs:string"/>
+																															<xs:attribute name="root" type="xs:string"/>
+																													</xs:extension>
+																											</xs:simpleContent>
+																									</xs:complexType>
+																							</xs:element>
+																					</xs:sequence>
+																					<xs:attribute name="classCode" type="xs:string"/>
+																					<xs:attribute name="determinerCode" type="xs:string"/>
+																			</xs:complexType>
+																	</xs:element>
+															</xs:sequence>
+															<xs:attribute name="typeCode" type="xs:string"/>
+													</xs:complexType>
+											</xs:element>
+											<xs:element name="sender">
+													<xs:complexType>
+															<xs:sequence>
+																	<xs:element name="device">
+																			<xs:complexType>
+																					<xs:sequence>
+																							<xs:element name="id">
+																									<xs:complexType>
+																											<xs:simpleContent>
+																													<xs:extension base="xs:string">
+																															<xs:attribute name="extension" type="xs:string"/>
+																															<xs:attribute name="root" type="xs:string"/>
+																													</xs:extension>
+																											</xs:simpleContent>
+																									</xs:complexType>
+																							</xs:element>
+																					</xs:sequence>
+																					<xs:attribute name="classCode" type="xs:string"/>
+																					<xs:attribute name="determinerCode" type="xs:string"/>
+																			</xs:complexType>
+																	</xs:element>
+															</xs:sequence>
+															<xs:attribute name="typeCode" type="xs:string"/>
+													</xs:complexType>
+											</xs:element>
+											<xs:element name="controlActProcess">
+													<xs:complexType>
+															<xs:sequence>
+																	<xs:element name="subject">
+																			<xs:complexType>
+																					<xs:sequence>
+																							<xs:element name="registrationEvent">
+																									<xs:complexType>
+																											<xs:sequence>
+																													<xs:element name="id">
+																															<xs:complexType>
+																																	<xs:simpleContent>
+																																			<xs:extension base="xs:string">
+																																					<xs:attribute name="nullFlavor" type="xs:string"/>
+																																			</xs:extension>
+																																	</xs:simpleContent>
+																															</xs:complexType>
+																													</xs:element>
+																													<xs:element name="statusCode">
+																															<xs:complexType>
+																																	<xs:simpleContent>
+																																			<xs:extension base="xs:string">
+																																					<xs:attribute name="code" type="xs:string"/>
+																																			</xs:extension>
+																																	</xs:simpleContent>
+																															</xs:complexType>
+																													</xs:element>
+																													<xs:element name="subject1">
+																															<xs:complexType>
+																																	<xs:sequence>
+																																			<xs:element name="patient">
+																																					<xs:complexType>
+																																							<xs:sequence>
+																																									<xs:element name="id">
+																																											<xs:complexType>
+																																													<xs:simpleContent>
+																																															<xs:extension base="xs:string">
+																																																	<xs:attribute name="extension" type="xs:string"/>
+																																																	<xs:attribute name="root" type="xs:string"/>
+																																															</xs:extension>
+																																													</xs:simpleContent>
+																																											</xs:complexType>
+																																									</xs:element>
+																																									<xs:element name="statusCode">
+																																											<xs:complexType>
+																																													<xs:simpleContent>
+																																															<xs:extension base="xs:string">
+																																																	<xs:attribute name="code" type="xs:string"/>
+																																															</xs:extension>
+																																													</xs:simpleContent>
+																																											</xs:complexType>
+																																									</xs:element>
+																																									<xs:element name="patientPerson">
+																																											<xs:complexType>
+																																													<xs:sequence>
+																																															<xs:element maxOccurs="unbounded" minOccurs="0" name="name">
+																																																	<xs:complexType>
+																																																			<xs:sequence>
+																																																					<xs:element name="prefix" type="xs:string"/>
+																																																					<xs:element name="suffix" type="xs:string"/>
+																																																					<xs:element maxOccurs="unbounded" minOccurs="0" name="given" type="xs:string"/>
+																																																					<xs:element name="family" type="xs:string"/>
+																																																			</xs:sequence>
+																																																			<xs:attribute name="use" type="xs:string" use="optional"/>
+																																																	</xs:complexType>
+																																															</xs:element>
+																																															<xs:element name="telecom">
+																																																	<xs:complexType>
+																																																			<xs:simpleContent>
+																																																					<xs:extension base="xs:string">
+																																																							<xs:attribute name="use" type="xs:string"/>
+																																																							<xs:attribute name="value" type="xs:string">
+																																																									<xs:annotation>
+																																																											<xs:appinfo>
+																																																													<jxb:property name="valueAttribute"/>
+																																																											</xs:appinfo>
+																																																									</xs:annotation>
+																																																							</xs:attribute>
+																																																					</xs:extension>
+																																																			</xs:simpleContent>
+																																																	</xs:complexType>
+																																															</xs:element>
+																																															<xs:element name="birthTime">
+																																																	<xs:complexType>
+																																																			<xs:simpleContent>
+																																																					<xs:extension base="xs:string">
+																																																							<xs:attribute name="value" type="xs:int">
+																																																									<xs:annotation>
+																																																											<xs:appinfo>
+																																																													<jxb:property name="valueAttribute"/>
+																																																											</xs:appinfo>
+																																																									</xs:annotation>
+																																																							</xs:attribute>
+																																																					</xs:extension>
+																																																			</xs:simpleContent>
+																																																	</xs:complexType>
+																																															</xs:element>
+																																															<xs:element name="deceasedTime">
+																																																	<xs:complexType>
+																																																			<xs:simpleContent>
+																																																					<xs:extension base="xs:string">
+																																																							<xs:attribute name="value" type="xs:int">
+																																																									<xs:annotation>
+																																																											<xs:appinfo>
+																																																													<jxb:property name="valueAttribute"/>
+																																																											</xs:appinfo>
+																																																									</xs:annotation>
+																																																							</xs:attribute>
+																																																					</xs:extension>
+																																																			</xs:simpleContent>
+																																																	</xs:complexType>
+																																															</xs:element>
+																																															<xs:element name="administrativeGenderCode">
+																																																	<xs:complexType>
+																																																			<xs:simpleContent>
+																																																					<xs:extension base="xs:string">
+																																																							<xs:attribute name="code" type="xs:string"/>
+																																																					</xs:extension>
+																																																			</xs:simpleContent>
+																																																	</xs:complexType>
+																																															</xs:element>
+																																															<xs:element name="birthPlace">
+																																																	<xs:complexType>
+																																																			<xs:sequence>
+																																																					<xs:element name="addr">
+																																																							<xs:complexType>
+																																																									<xs:sequence>
+																																																											<xs:element name="city" type="xs:string"/>
+																																																											<xs:element name="state" type="xs:string"/>
+																																																									</xs:sequence>
+																																																							</xs:complexType>
+																																																					</xs:element>
+																																																			</xs:sequence>
+																																																	</xs:complexType>
+																																															</xs:element>
+																																															<xs:element name="addr">
+																																																	<xs:complexType>
+																																																			<xs:sequence>
+																																																					<xs:element name="streetAddressLine" type="xs:string"/>
+																																																					<xs:element name="city" type="xs:string"/>
+																																																					<xs:element name="state" type="xs:string"/>
+																																																					<xs:element name="country" type="xs:string"/>
+																																																					<xs:element name="postalCode" type="xs:int"/>
+																																																			</xs:sequence>
+																																																			<xs:attribute name="use" type="xs:string"/>
+																																																	</xs:complexType>
+																																															</xs:element>
+																																															<xs:element maxOccurs="unbounded" minOccurs="0" name="asOtherIDs">
+																																																	<xs:complexType>
+																																																			<xs:sequence>
+																																																					<xs:element name="id">
+																																																							<xs:complexType>
+																																																									<xs:simpleContent>
+																																																											<xs:extension base="xs:string">
+																																																													<xs:attribute name="root" type="xs:string" use="optional"/>
+																																																													<xs:attribute name="extension" type="xs:string" use="optional"/>
+																																																											</xs:extension>
+																																																									</xs:simpleContent>
+																																																							</xs:complexType>
+																																																					</xs:element>
+																																																					<xs:element minOccurs="0" name="statusCode">
+																																																							<xs:annotation>
+																																																									<xs:documentation>specify "Proofing value" specify "In Person Proofing value"</xs:documentation>
+																																																							</xs:annotation>
+																																																							<xs:complexType>
+																																																									<xs:simpleContent>
+																																																											<xs:extension base="xs:string">
+																																																													<xs:attribute name="code" type="xs:byte" use="optional"/>
+																																																											</xs:extension>
+																																																									</xs:simpleContent>
+																																																							</xs:complexType>
+																																																					</xs:element>
+																																																					<xs:element minOccurs="0" name="scopingOrganization">
+																																																							<xs:complexType>
+																																																									<xs:sequence>
+																																																											<xs:element name="id">
+																																																													<xs:complexType>
+																																																															<xs:simpleContent>
+																																																																	<xs:extension base="xs:string">
+																																																																			<xs:attribute name="root" type="xs:string" use="optional"/>
+																																																																	</xs:extension>
+																																																															</xs:simpleContent>
+																																																													</xs:complexType>
+																																																											</xs:element>
+																																																									</xs:sequence>
+																																																									<xs:attribute name="classCode" type="xs:string" use="optional"/>
+																																																									<xs:attribute name="determinerCode" type="xs:string" use="optional"/>
+																																																							</xs:complexType>
+																																																					</xs:element>
+																																																			</xs:sequence>
+																																																			<xs:attribute name="classCode" type="xs:string" use="optional"/>
+																																																	</xs:complexType>
+																																															</xs:element>
+																																													</xs:sequence>
+																																											</xs:complexType>
+																																									</xs:element>
+																																							</xs:sequence>
+																																							<xs:attribute name="classCode" type="xs:string"/>
+																																					</xs:complexType>
+																																			</xs:element>
+																																	</xs:sequence>
+																																	<xs:attribute name="typeCode" type="xs:string"/>
+																															</xs:complexType>
+																													</xs:element>
+																											</xs:sequence>
+																											<xs:attribute name="classCode" type="xs:string"/>
+																											<xs:attribute name="moodCode" type="xs:string"/>
+																									</xs:complexType>
+																							</xs:element>
+																					</xs:sequence>
+																					<xs:attribute name="typeCode" type="xs:string"/>
+																			</xs:complexType>
+																	</xs:element>
+															</xs:sequence>
+															<xs:attribute name="classCode" type="xs:string"/>
+															<xs:attribute name="moodCode" type="xs:string"/>
+													</xs:complexType>
+											</xs:element>
+									</xs:sequence>
+									<xs:attribute name="ITSVersion" type="xs:string"/>
+							</xs:complexType>
+					</xs:element>
+			</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="UpdateVeteranRequest">
+		<wsdl:part element="mvs:PRPA_IN201302UV02" name="parameters" />
+	</wsdl:message>
+	<wsdl:portType name="MpiUpdateVeteran">
+		<wsdl:operation name="UpdateVeteran">
+			<wsdl:input message="mvs:UpdateVeteranRequest" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="MpiUpdateVeteranSOAP"
+		type="mvs:MpiUpdateVeteran">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="UpdateVeteran">
+			<soap:operation
+				soapAction="http://appeals.cf.va.gov/MpiVeteranService/UpdateVeteran" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="MpiUpdateVeteran">
+		<wsdl:port binding="mvs:MpiUpdateVeteranSOAP"
+			name="MpiUpdateVeteranSOAP">
+			<soap:address location="https://mpi-api.uat.appeals.va.gov" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

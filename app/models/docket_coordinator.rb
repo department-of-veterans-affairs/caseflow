@@ -120,8 +120,12 @@ class DocketCoordinator
     direct_review_due_count.to_f / docket_margin_net_of_priority
   end
 
-  def legacy_hearing_backlog_count(judge)
+  def legacy_hearing_nonpriority_count(judge)
     VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge)
+  end
+
+  def legacy_hearing_priority_count(judge)
+    VACOLS::CaseDocket.priority_hearing_cases_for_judge_count(judge)
   end
 
   private

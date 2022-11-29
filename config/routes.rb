@@ -25,6 +25,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :appeals, only: :index
       resources :jobs, only: :create
+      post 'mpi', to: 'mpi#veteran_updates'
     end
     namespace :v2 do
       resources :appeals, only: :index
@@ -382,6 +383,8 @@ Rails.application.routes.draw do
 
   get "/route_docs", to: "route_docs#index"
 
+  get "/admin", to: "admin#index"
+  get "admin/veteran_extract", to: "admin#veteran_extract"
   get "/mpi", to: "mpi#index"
   post "/mpi/search", to: "mpi#search"
 end
