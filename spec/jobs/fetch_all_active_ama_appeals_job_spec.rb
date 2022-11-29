@@ -100,5 +100,12 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: false)
       end
     end
+
+    context "appeals without any hearing scheduled tasks" do
+      it "should not map appeal state to true if there arent any hearings" do
+        subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: false)
+      end
+    end
   end
 end

@@ -95,38 +95,51 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
   end
 
   describe "map appeal state with hearing scheduled" do
-    let(:legacy_appeal) do
-      create(:legacy_appeal, :with_veteran,
-             vacols_case: create(:case, :aod))
-    end
+    # rubocop:disable Layout/LineLength
     context "appeals with hearings scheduled tasks" do
-      let(:legacy_hearing) { create(:legacy_hearing, appeal: legacy_appeal) }
-
+      let!(:legacy_hearing) { create(:legacy_hearing) }
+      let!(:legacy_hearing_held) { create(:legacy_hearing, disposition: "H") }
       it "hearings with nil disposition should map the hearing scheduled appeal state to true" do
-        hearing.update(disposition: nil)
-        expect(subject.send(:map_appeal_hearing_scheduled_state, legacy_appeal)).to eq(hearing_scheduled: true)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, legacy_hearing.appeal)).to eq(hearing_scheduled: true)
       end
 
       it "no hearings with nil disposition should map the hearing scheduled appeal state to false" do
-        hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
-        expect(subject.send(:map_appeal_hearing_scheduled_state, legacy_appeal)).to eq(hearing_scheduled: false)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, legacy_hearing_held.appeal)).to eq(hearing_scheduled: false)
       end
     end
 
     context "appeals hearings with multiple hearings scheduled" do
-      let(:old_hearing) { create(:legacy_hearing, appeal: legacy_appeal) }
-      let(:new_hearing) { create(:legacy_hearing, appeal: legacy_appeal) }
+      let!(:legacy_appeal) do
+        create(:legacy_appeal, :with_veteran,
+               vacols_case: create(:case, :aod))
+      end
+      let!(:old_case_hearing) { create(:case_hearing, folder_nr: legacy_appeal.vacols_id) }
+      let!(:new_case_hearing) { create(:case_hearing, folder_nr: legacy_appeal.vacols_id) }
+      let!(:old_hearing) { create(:legacy_hearing, disposition: "C") }
+      let!(:new_hearing) { create(:legacy_hearing) }
       it "should still map appeal state to true if most recent hearing has nil disposition" do
-        old_hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
-        new_hearing.update(disposition: nil)
         expect(subject.send(:map_appeal_hearing_scheduled_state, legacy_appeal)).to eq(hearing_scheduled: true)
       end
 
-      it "should not map appeal state to true if none of the hearings habe nil dispsotion" do
-        old_hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
-        new_hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
+      it "should not map appeal state to true if none of the hearings have nil disposition" do
+        old_case_hearing.update(hearing_disp: "P")
+        new_case_hearing.update(hearing_disp: "H")
+        old_hearing.class.repository.load_vacols_data(old_hearing)
+        new_hearing.class.repository.load_vacols_data(new_hearing)
         expect(subject.send(:map_appeal_hearing_scheduled_state, legacy_appeal)).to eq(hearing_scheduled: false)
       end
     end
+
+    context "appeals without any hearing scheduled tasks" do
+      let!(:legacy_appeal) do
+        create(:legacy_appeal, :with_veteran,
+               vacols_case: create(:case, :aod))
+      end
+      it "should not map appeal state to true if there arent any hearings" do
+        subject.send(:map_appeal_hearing_scheduled_state, legacy_appeal)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, legacy_appeal)).to eq(hearing_scheduled: false)
+      end
+    end
+    # rubocop:enable Layout/LineLength
   end
 end
