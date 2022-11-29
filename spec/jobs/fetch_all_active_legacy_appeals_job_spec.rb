@@ -140,6 +140,6 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
         expect(subject.send(:map_appeal_hearing_scheduled_state, legacy_appeal)).to eq(hearing_scheduled: false)
       end
     end
-    # rubocop:enable Layout/LineLength
   end
 end
+# rubocop:enable Layout/LineLength
