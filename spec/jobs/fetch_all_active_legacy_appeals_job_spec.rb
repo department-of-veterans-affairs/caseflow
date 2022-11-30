@@ -35,6 +35,22 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
       end
     end
 
+    context "when there are only CANCELLED Legacy Appeals in the database" do
+      let!(:cancelled_legacy_appeals) do
+        [
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "11"),
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "21"),
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "31"),
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "41"),
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "51")
+        ]
+      end
+      it "5 records will be added to the Appeal States table" do
+        subject.perform
+        expect(AppealState.all.count).to eq(cancelled_legacy_appeals.count)
+      end
+    end
+
     context "when there are only OPEN Legacy Appeals in the database" do
       let!(:open_legacy_appeals) do
         [
@@ -139,6 +155,70 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
         subject.send(:map_appeal_hearing_scheduled_state, legacy_appeal)
         expect(subject.send(:map_appeal_hearing_scheduled_state, legacy_appeal)).to eq(hearing_scheduled: false)
       end
+    end
+
+  describe "#map_appeal_ihp_state" do
+    context "when there is an active legacy appeal with an active IhpColocated Task" do
+      let!(:open_legacy_appeal_with_ihp_pending) { create(:legacy_appeal, :with_root_task, :with_active_ihp_colocated_task) }
+      it "a single record will be inserted into the Appeal States table" do
+        subject.perform
+        expect(
+          AppealState.find_by(
+            appeal_id: open_legacy_appeal_with_ihp_pending.id,
+            appeal_type: open_legacy_appeal_with_ihp_pending.class.to_s
+          ).appeal_id
+        ).to eq(open_legacy_appeal_with_ihp_pending.id)
+        expect(AppealState.all.count).to eq(1)
+      end
+
+      it "the #{"vso_ihp_pending"} column will be set to TRUE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_pending.id).vso_ihp_pending).to eq(true)
+      end
+
+      it "the #{"vso_ihp_complete"} column will be set to FALSE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_pending.id).vso_ihp_complete).to eq(false)
+      end
+    end
+
+    context "when there is an active legacy appeal with completed IhpColocatedTask(s)" do
+      let!(:open_legacy_appeal_with_ihp_completed) { create(:legacy_appeal, :with_root_task, :with_completed_ihp_colocated_task) }
+      it "a single record will be created in the Appeal States table" do
+        subject.perform
+        expect(AppealState.first.appeal_id).to eq(open_legacy_appeal_with_ihp_completed.id)
+        expect(AppealState.all.count).to eq(1)
+      end
+
+      it "the #{"vso_ihp_pending"} column will be set to FALSE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_completed.id).vso_ihp_pending).to eq(false)
+      end
+
+      it "the #{"vso_ihp_complete"} column will be set to TRUE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_completed.id).vso_ihp_complete).to eq(true)
+      end
+    end
+
+    context "when there is an active legacy appeal with NO IhpColocatedTask(s)" do
+      let!(:open_legacy_appeal) { create(:legacy_appeal, :with_root_task) }
+      it "a single record will be created in the Appeal States table" do
+        subject.perform
+        expect(AppealState.first.appeal_id).to eq(open_legacy_appeal.id)
+        expect(AppealState.all.count).to eq(1)
+      end
+
+      it "the #{"vso_ihp_pending"} column will be set to FALSE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal.id).vso_ihp_pending).to eq(false)
+      end
+
+      it "the #{"vso_ihp_complete"} column will be set to FALSE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal.id).vso_ihp_complete).to eq(false)
+      end
+    end
     end
   end
 end
