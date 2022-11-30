@@ -3,7 +3,6 @@
 describe FetchAllActiveLegacyAppealsJob, type: :job do
   include ActiveJob::TestHelper
 
-
   subject { FetchAllActiveLegacyAppealsJob.new }
 
   describe "#perform" do
@@ -219,7 +218,7 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
         expect(AppealState.find_by(appeal_id: open_legacy_appeal.id).vso_ihp_complete).to eq(false)
       end
     end
-    end
+  end
   end
 end
 # rubocop:enable Layout/LineLength
