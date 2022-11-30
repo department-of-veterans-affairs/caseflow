@@ -316,18 +316,19 @@ module Seeds
     def create_veterans_for_mpi_sfnod_updates
       veteran_data_for_mpi_nod_updates.each do |record|
         corres = create(:correspondent, record)
-        brieff = create(:case, bfcorlid: corres.ssn, correspondent: corres)
-        store_veteran_in_redis_cache(brieff, corres) if Rails.env.development?
+        # bfcorlid must end in S so that caseflow can search for it
+        create(:case, bfcorlid: "#{corres.ssn}S", correspondent: corres)
+        store_veteran_in_redis_cache(corres) if Rails.env.development?
       end
     end
 
-    def store_veteran_in_redis_cache(brieff, corres)
+    def store_veteran_in_redis_cache(corres)
       # map values from CORRES to their keys in BGS Service
       attrs = {
         address_line1: corres.saddrst1,
         city: corres.saddrcty,
         date_of_birth: corres.sdob,
-        file_number: brieff.bfcorlid,
+        file_number: corres.ssn,
         first_name: corres.snamef,
         last_name: corres.snamel,
         middle_name: corres.snamemi,
