@@ -49,20 +49,6 @@ const GenerateButton = (props) => {
     props.sendExtractRequest();
   };
 
-  const csvLink = () => {
-    const separator = props.vetExtractPipeDelimited ? '|' : ',';
-    return (
-      <CSVLink
-        data={extractedResults}
-        filename="veteran_extract.csv"
-        onClick={() => setShowConfirmModal(false)}
-        separator={separator}
-      >
-        Confirm
-      </CSVLink>
-    );
-  }
-
   return (
     <div style={{ height: '75vh' }}>
       {
@@ -90,7 +76,7 @@ const GenerateButton = (props) => {
         showConfirmModal &&
 
         <Modal title="This file contains PII"
-          confirmButton={csvLink()}
+          confirmButton={<CSVLink data={extractedResults} filename="veteran_extract.csv" onClick={() => setShowConfirmModal(false)}>Confirm</CSVLink>}
           closeHandler={() => {
             setShowConfirmModal(false);
           }}
@@ -117,7 +103,6 @@ GenerateButton.propTypes = {
   isLoading: PropTypes.bool,
   sendExtractRequest: PropTypes.func,
   emptyResultsMessage: PropTypes.string,
-  vetExtractPipeDelimited: PropTypes.bool,
 };
 
 export default GenerateButton;

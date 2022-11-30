@@ -9,8 +9,7 @@
     feedbackUrl: feedback_url,
     featureToggles: {
       sys_admin_page: FeatureToggle.enabled?(:sys_admin_page, user: current_user),
-      vet_extract_timestamp: FeatureToggle.enabled?(:vet_extract_timestamp, user: current_user),
-      vet_extract_pipe_delimited: FeatureToggle.enabled?(:vet_extract_pipe_delimited, user: current_user)
+      vet_extract_timestamp: FeatureToggle.enabled?(:vet_extract_timestamp, user: current_user)
     }
   }) %>
 <% end %>
