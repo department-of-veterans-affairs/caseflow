@@ -22,7 +22,8 @@ describe Seeds::StaticTestCaseData do
     # required because the judge team for user BVAGSPORER is used specifically in the described_class
     # and judge team attorneys need to be in VACOLS for creating the attorney tasks
     before do
-      { "BVAGSPORER" => { attorneys: %w[BVAOTRANTOW BVAGBOTSFORD BVAJWEHNER1] } }.each_pair do |judge_css_id, h|
+      { "BVAGSPORER" => { attorneys: %w[BVAOTRANTOW BVAGBOTSFORD BVAJWEHNER1] },
+        "BVAEBECKER" => { attorneys: %w[BVAKBLOCK BVACMERTZ BVAHLUETTGEN] } }.each_pair do |judge_css_id, h|
         judge = User.find_or_create_by(css_id: judge_css_id, station_id: 101)
         create(:staff, :judge_role, sdomainid: judge_css_id)
         judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
@@ -46,16 +47,15 @@ describe Seeds::StaticTestCaseData do
 
     context "for APPEALS-8729, Unsolicited Veteran Updates from MPI" do
       it "creates the veterans and adds them to the redis store" do
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_#{Rails.env}:867895432")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_#{Rails.env}:678849874")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_#{Rails.env}:784456431")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_#{Rails.env}:673489455")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_#{Rails.env}:748997154")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_#{Rails.env}:448167748")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_#{Rails.env}:334568484")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_#{Rails.env}:349628761")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_#{Rails.env}:764889132")).to be true
-        fail('manual')
+        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:867895432")).to be true
+        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:678849874")).to be true
+        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:784456431")).to be true
+        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:673489455")).to be true
+        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:748997154")).to be true
+        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:448167748")).to be true
+        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:334568484")).to be true
+        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:349628761")).to be true
+        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:764889132")).to be true
       end
     end
   end
