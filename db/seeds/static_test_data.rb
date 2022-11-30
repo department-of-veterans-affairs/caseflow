@@ -392,8 +392,8 @@ module Seeds
         { stafkey: "1234567895", susrtyp: "VETERAN", ssalut: "", snamef: "Ryan", snamel: "Thompson", saddrst1: "4156 New York Ave", saddrcty: "St.Cloud", saddrstt: "FL", saddrzip: "34744", stelh: "567-447-8711", sactive: "A", ssn: "748997154", sdob: "1997-04-28", sgender: "M" },
         { stafkey: "1234567896", susrtyp: "VETERAN", ssalut: "", snamef: "Tannis", snamel: "Biggum", saddrst1: "3103 N Fort Valley Rd", saddrcty: "Flagstaff", saddrstt: "AZ", saddrzip: "86001", stelh: "703-376-4734", sactive: "A", ssn: "448167748", sdob: "1998-03-20", sgender: "F" },
         { stafkey: "1234567897", susrtyp: "VETERAN", ssalut: "", snamef: "Patrik", snamel: "Boolay", saddrst1: "824 S Colonial", saddrcty: "Roswell", saddrstt: "GA", saddrzip: "30009", stelh: "867-555-7841", sactive: "A", ssn: "334568484", sdob: "1976-07-07", sgender: "F" },
-        { stafkey: "1234567898", susrtyp: "VETERAN", ssalut: "", snamef: "Francis", snamel: "Stewart", saddrst1: "615 NE 13th AVE", saddrcty: "Ft.Lauderdale", saddrstt: "FL", saddrzip: "33304", stelh: "405-555-8754", sactive: "A", ssn: "349628761", sdob: "1967-03-30", sgender: "M" },
-        { stafkey: "1234567899", susrtyp: "VETERAN", ssalut: "", snamef: "HIENRIK", snamel: "TESTMAN", saddrst1: "1931 S Federal HWY", saddrcty: "Ft. Lauderdale ", saddrstt: "FL", saddrzip: "33316", stelh: "954-555-8671", sactive: "A", ssn: "764889132", sdob: "1978-01-01", sgender: "M" }
+        { stafkey: "1234567899", susrtyp: "VETERAN", ssalut: "", snamef: "HIENRIK", snamel: "TESTMAN", saddrst1: "1931 S Federal HWY", saddrcty: "Ft. Lauderdale ", saddrstt: "FL", saddrzip: "33316", stelh: "954-555-8671", sactive: "A", ssn: "764889132", sdob: "1978-01-01", sgender: "M" },
+        { stafkey: "1234567898", susrtyp: "VETERAN", ssalut: "", snamef: "Johnathan", snamel: "Walker", saddrst1: "8849 Washington St", saddrcty: "Ft.Lauderdale", saddrstt: "FL", saddrzip: "33304", stelh: "745-555-5512", sactive: "A", ssn: "555164875", sdob: "1979-06-06", sgender: "M" }
       ]
     end
   end

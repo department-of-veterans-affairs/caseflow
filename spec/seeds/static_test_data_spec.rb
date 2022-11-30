@@ -47,15 +47,9 @@ describe Seeds::StaticTestCaseData do
 
     context "for APPEALS-8729, Unsolicited Veteran Updates from MPI" do
       it "creates the veterans and adds them to the redis store" do
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:867895432")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:678849874")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:784456431")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:673489455")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:748997154")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:448167748")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:334568484")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:349628761")).to be true
-        expect(Fakes::VeteranStore.all_keys.include?("veterans_test:764889132")).to be true
+        %w[867895432 678849874 784456431 673489455 748997154 448167748 334568484 764889132 555164875].each do |num|
+          expect(Fakes::VeteranStore.all_keys.include?("veterans_test:#{num}")).to be true
+        end
       end
     end
   end
