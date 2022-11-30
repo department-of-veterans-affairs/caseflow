@@ -5,6 +5,9 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   queue_with_priority :low_priority
   QUERY_LIMIT = ENV["STATE_MIGRATION_JOB_BATCH_SIZE"]
 
+  # All Variants of an IHP Task
+  IHP_TYPE_TASKS = %w[IhpColocatedTask InformalHearingPresentationTask].freeze
+
   # Purpose: Job that finds all active AMA Appeals &
   # creates records within the appeal_states table
   #
@@ -71,8 +74,26 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   #
   # Returns: Hash of "vso_ihp_pending" & "vso_ihp_complete" key value pairs
   def map_appeal_ihp_state(appeal)
-    # Code goes here ...
-    { vso_ihp_pending: false, vso_ihp_complete: false }
+    appeal_task_types=appeal.tasks.map(&:type)
+    if IHP_TYPE_TASKS.any? { |ihp_task| appeal_task_types.include?(ihp_task) }
+      ihp_tasks = appeal.tasks.where(type: IHP_TYPE_TASKS)
+      parent_ihp_tasks = []
+      ihp_tasks.each do |task|
+        if !IHP_TYPE_TASKS.include?(task&.parent&.type)
+          parent_ihp_tasks.push(task)
+        end
+      end
+      if parent_ihp_tasks.count == 1
+        set_ihp_appeal_state(parent_ihp_tasks.first)
+      elsif parent_ihp_tasks.count > 1
+        current_parent_ihp_task = parent_ihp_tasks.max_by(&:id)
+        set_ihp_appeal_state(current_parent_ihp_task)
+      else
+        { vso_ihp_pending: false, vso_ihp_complete: false }
+      end
+    else
+      { vso_ihp_pending: false, vso_ihp_complete: false }
+    end
   end
 
   def map_appeal_privacy_act_state(appeal)
@@ -80,8 +101,15 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     { privacy_act_pending: false, privacy_act_complete: false }
   end
 
+  # Purpose: Determines if the hearing scheduled attribute within the associated
+  # appeal_state record should be set to true
+  # Params: Appeal object
+  # Returns: Hash of "hearing scheduled" key value pair
   def map_appeal_hearing_scheduled_state(appeal)
-    # Code goes here ...
+    if appeal&.hearings.count > 0 && appeal.hearings.max_by(&:id).disposition.nil?
+      return { hearing_scheduled: true }
+    end
+
     { hearing_scheduled: false }
   end
 
@@ -117,5 +145,23 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   def map_appeal_docketed_state(appeal)
     # Code goes here ...
     { appeal_docketed: false }
+  end
+
+  # Purpose: Helper method that sets values of "vso_ihp_pending" & "vso_ihp_complete" columns
+  # if an IHP type task is present
+  #
+  # Params: Most Recent Parent IHP Task (InformalHearingPresentationTask OR IhpColocatedTask)
+  #
+  # Returns: Hash of "vso_ihp_pending" & "vso_ihp_complete" key value pairs
+  def set_ihp_appeal_state(ihp_task)
+    appeal = ihp_task.appeal
+    if Task.open_statuses.include?(ihp_task.status)
+      ihp_state = { vso_ihp_pending: true, vso_ihp_complete: false }
+    elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
+      ihp_state = { vso_ihp_pending: false, vso_ihp_complete: true }
+    else
+      ihp_state = { vso_ihp_pending: false, vso_ihp_complete: false }
+    end
+    ihp_state
   end
 end

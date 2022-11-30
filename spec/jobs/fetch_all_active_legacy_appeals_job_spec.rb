@@ -3,7 +3,6 @@
 describe FetchAllActiveLegacyAppealsJob, type: :job do
   include ActiveJob::TestHelper
 
-
   subject { FetchAllActiveLegacyAppealsJob.new }
 
   describe "#perform" do
@@ -32,6 +31,22 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
       it "no records will be added to the Appeal States table" do
         subject.perform
         expect(AppealState.all.count).to eq(0)
+      end
+    end
+
+    context "when there are only CANCELLED Legacy Appeals in the database" do
+      let!(:cancelled_legacy_appeals) do
+        [
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "11"),
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "21"),
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "31"),
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "41"),
+          create(:legacy_appeal, :with_cancelled_root_task, vacols_id: "51")
+        ]
+      end
+      it "5 records will be added to the Appeal States table" do
+        subject.perform
+        expect(AppealState.all.count).to eq(cancelled_legacy_appeals.count)
       end
     end
 
@@ -94,6 +109,118 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
     end
   end
 
+  describe "map appeal state with hearing scheduled" do
+    # rubocop:disable Layout/LineLength
+    context "appeals with hearings scheduled tasks" do
+      let!(:legacy_hearing) { create(:legacy_hearing) }
+      let!(:legacy_hearing_held) { create(:legacy_hearing, disposition: "H") }
+      it "hearings with nil disposition should map the hearing scheduled appeal state to true" do
+        expect(subject.send(:map_appeal_hearing_scheduled_state, legacy_hearing.appeal)).to eq(hearing_scheduled: true)
+      end
+
+      it "no hearings with nil disposition should map the hearing scheduled appeal state to false" do
+        expect(subject.send(:map_appeal_hearing_scheduled_state, legacy_hearing_held.appeal)).to eq(hearing_scheduled: false)
+      end
+    end
+
+    context "appeals hearings with multiple hearings scheduled" do
+      let!(:legacy_appeal) do
+        create(:legacy_appeal, :with_veteran,
+               vacols_case: create(:case, :aod))
+      end
+      let!(:old_case_hearing) { create(:case_hearing, folder_nr: legacy_appeal.vacols_id) }
+      let!(:new_case_hearing) { create(:case_hearing, folder_nr: legacy_appeal.vacols_id) }
+      let!(:old_hearing) { create(:legacy_hearing, disposition: "C") }
+      let!(:new_hearing) { create(:legacy_hearing) }
+      it "should still map appeal state to true if most recent hearing has nil disposition" do
+        expect(subject.send(:map_appeal_hearing_scheduled_state, legacy_appeal)).to eq(hearing_scheduled: true)
+      end
+
+      it "should not map appeal state to true if none of the hearings have nil disposition" do
+        old_case_hearing.update(hearing_disp: "P")
+        new_case_hearing.update(hearing_disp: "H")
+        old_hearing.class.repository.load_vacols_data(old_hearing)
+        new_hearing.class.repository.load_vacols_data(new_hearing)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, legacy_appeal)).to eq(hearing_scheduled: false)
+      end
+    end
+
+    context "appeals without any hearing scheduled tasks" do
+      let!(:legacy_appeal) do
+        create(:legacy_appeal, :with_veteran,
+               vacols_case: create(:case, :aod))
+      end
+      it "should not map appeal state to true if there arent any hearings" do
+        subject.send(:map_appeal_hearing_scheduled_state, legacy_appeal)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, legacy_appeal)).to eq(hearing_scheduled: false)
+      end
+    end
+
+  describe "#map_appeal_ihp_state" do
+    context "when there is an active legacy appeal with an active IhpColocated Task" do
+      let!(:open_legacy_appeal_with_ihp_pending) { create(:legacy_appeal, :with_root_task, :with_active_ihp_colocated_task) }
+      it "a single record will be inserted into the Appeal States table" do
+        subject.perform
+        expect(
+          AppealState.find_by(
+            appeal_id: open_legacy_appeal_with_ihp_pending.id,
+            appeal_type: open_legacy_appeal_with_ihp_pending.class.to_s
+          ).appeal_id
+        ).to eq(open_legacy_appeal_with_ihp_pending.id)
+        expect(AppealState.all.count).to eq(1)
+      end
+
+      it "the #{"vso_ihp_pending"} column will be set to TRUE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_pending.id).vso_ihp_pending).to eq(true)
+      end
+
+      it "the #{"vso_ihp_complete"} column will be set to FALSE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_pending.id).vso_ihp_complete).to eq(false)
+      end
+    end
+
+    context "when there is an active legacy appeal with completed IhpColocatedTask(s)" do
+      let!(:open_legacy_appeal_with_ihp_completed) { create(:legacy_appeal, :with_root_task, :with_completed_ihp_colocated_task) }
+      it "a single record will be created in the Appeal States table" do
+        subject.perform
+        expect(AppealState.first.appeal_id).to eq(open_legacy_appeal_with_ihp_completed.id)
+        expect(AppealState.all.count).to eq(1)
+      end
+
+      it "the #{"vso_ihp_pending"} column will be set to FALSE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_completed.id).vso_ihp_pending).to eq(false)
+      end
+
+      it "the #{"vso_ihp_complete"} column will be set to TRUE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_completed.id).vso_ihp_complete).to eq(true)
+      end
+    end
+
+    context "when there is an active legacy appeal with NO IhpColocatedTask(s)" do
+      let!(:open_legacy_appeal) { create(:legacy_appeal, :with_root_task) }
+      it "a single record will be created in the Appeal States table" do
+        subject.perform
+        expect(AppealState.first.appeal_id).to eq(open_legacy_appeal.id)
+        expect(AppealState.all.count).to eq(1)
+      end
+
+      it "the #{"vso_ihp_pending"} column will be set to FALSE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal.id).vso_ihp_pending).to eq(false)
+      end
+
+      it "the #{"vso_ihp_complete"} column will be set to FALSE" do
+        subject.perform
+        expect(AppealState.find_by(appeal_id: open_legacy_appeal.id).vso_ihp_complete).to eq(false)
+      end
+    end
+  end
+  end
+
   describe "#map_appeal_hearing_withdrawn_state(appeal)" do
     let!(:hearing) { create(:legacy_hearing) }
     let!(:hearing_withdrawn) { create(:legacy_hearing, disposition: "C") }
@@ -113,3 +240,4 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
   end
 
 end
+# rubocop:enable Layout/LineLength
