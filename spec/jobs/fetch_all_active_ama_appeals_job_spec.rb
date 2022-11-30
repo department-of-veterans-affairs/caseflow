@@ -69,24 +69,22 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     end
   end
 
-  # RSPECS
-  # Test for multiple hearings, hearing cancelled (true), hearing not cancelled(false)
-  # describe "#map_appeal_hearing_withdrawn_state" do
-  #   context "when there is an active AMA Appeal with a hearing state of withdrawn" do
-  #     let!(:open_ama_appeal_with_hearing_withdrawn) { create(:appeal, :active, :hearings, :disposition) }
-  #     it "a single record will be inserted into the Appeal States table" do
-  #       subject.perform
-  #       expect(
-  #         AppealState.find_by(
-  #           appeal_id: open_ama_appeal_with_hearing_withdrawn.id,
-  #           appeal_type: open_ama_appeal_with_hearing_withdrawn.class.to_s
-  #         ).appeal_id
-  #       ).to eq(open_ama_appeal_with_hearing_withdrawn.id)
-  #       expect(AppealState.all.count).to eq(1)
-  #     end
-  #
-  #   end
+  describe "#map_appeal_hearing_withdrawn_state(appeal)" do
+      let!(:scheduled_hearing) { create(:hearing) }
+      let!(:cancelled_hearing) { create(:hearing, :cancelled) }
+      let(:cancelled_appeal) { cancelled_hearing.appeal }
+      let(:appeal) { scheduled_hearing.appeal }
+      context "when there is an active AMA Appeal with the most recent hearing dispostion 'cancelled'" do
+        it "returns correct key value hearing_withdrawn: true" do
+          expect(subject.send(:map_appeal_hearing_withdrawn_state, cancelled_appeal)).to eq(hearing_withdrawn: true)
+        end
+      end
 
-  # end
+      context "when there is an active AMA Appeal with the most recent hearing dispostion is not 'cancelled'" do
+        it "returns correct key value hearing_withdrawn: false" do
+          expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: false)
+        end
+      end
+  end
 
 end

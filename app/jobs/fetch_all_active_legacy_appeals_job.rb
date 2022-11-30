@@ -97,7 +97,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   #
   # Returns: key value pair of hearing_withdrawn: true or false
   def map_appeal_hearing_withdrawn_state(appeal)
-    if appeal.hearings&.max_by(&:id)&.disposition == "cancelled"
+    if appeal.hearings&.max_by(&:id)&.disposition == Constants.HEARING_DISPOSITION_TYPES.cancelled
       { hearing_withdrawn: true }
     else
     { hearing_withdrawn: false }
