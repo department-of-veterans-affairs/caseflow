@@ -1324,15 +1324,6 @@
       "zip" : "78550-8736",
       "timezone" : "America/Chicago"
    },
-   "vha_740GB" : {
-      "address_1" : "901 East Hackberry Avenue",
-      "address_2" : null,
-      "address_3" : null,
-      "city" : "McAllen",
-      "state" : "TX",
-      "zip" : "78501-6502",
-      "timezone" : "America/Chicago"
-   },
    "vha_757" : {
       "address_1" : "420 North James Road",
       "address_2" : null,
