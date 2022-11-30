@@ -12,6 +12,7 @@ module Seeds
 
     def seed!
       cases_for_timely_calculations_on_das
+      create_veterans_for_mpi_sfnod_updates
     end
 
     private
@@ -310,6 +311,26 @@ module Seeds
       Timecop.travel(2.weeks.from_now)
       appeal.tasks.of_type(:AttorneyRewriteTask).first.completed!
       Timecop.return
+    end
+
+    def create_veterans_for_mpi_sfnod_updates
+      veteran_data_for_mpi_nod_updates.each do |record|
+        create(:correspondent, record)
+      end
+    end
+
+    def veteran_data_for_mpi_nod_updates
+      [
+        { stafkey: "1234567891", susrtyp: "VETERAN", ssalut: "", snamef: "MIKE", snamel: "CLEMONS", saddrst1: "614 SE 13ST", saddrcty: "FT.Lauderdale", saddrstt: "FL", saddrzip: "33304", stelh: "405-667-9832", sactive: "A", ssn: "867895432", sdob: "12-DEC-70", sgender: "M" },
+        { stafkey: "1234567892", susrtyp: "VETERAN", ssalut: "", snamef: "Gregory", snamel: "Thomas", saddrst1: "521 N Fort Lauderdale Beach Blvd", saddrcty: "FT.Lauderdale", saddrstt: "FL", saddrzip: "33304", stelh: "571-679-5555", sactive: "A", ssn: "678849874", sdob: "06-JUN-55", sgender: "M" },
+        { stafkey: "1234567893", susrtyp: "VETERAN", ssalut: "", snamef: "Franklin", snamel: "Thomas", saddrst1: "1417 SW 41st Ave", saddrcty: "FT.Lauderdale", saddrstt: "FL", saddrzip: "33317", stelh: "954-863-5555", sactive: "A", ssn: "784456431", sdob: "06-JUL-65", sgender: "M" },
+        { stafkey: "1234567894", susrtyp: "VETERAN", ssalut: "", snamef: "George", snamel: "Thomas", saddrst1: "1402 NW 5th St", saddrcty: "FT.Lauderdale", saddrstt: "FL", saddrzip: "33311", stelh: "954-871-5555", sactive: "A", ssn: "673489455", sdob: "06-JUL-68", sgender: "M" },
+        { stafkey: "1234567895", susrtyp: "VETERAN", ssalut: "", snamef: "Ryan", snamel: "Thompson", saddrst1: "4156 New York Ave", saddrcty: "St.Cloud", saddrstt: "FL", saddrzip: "34744", stelh: "567-447-8711", sactive: "A", ssn: "748997154", sdob: "28-APR-97", sgender: "M" },
+        { stafkey: "1234567896", susrtyp: "VETERAN", ssalut: "", snamef: "Tannis", snamel: "Biggum", saddrst1: "3103 N Fort Valley Rd", saddrcty: "Flagstaff", saddrstt: "AZ", saddrzip: "86001", stelh: "703-376-4734", sactive: "A", ssn: "448167748", sdob: "20-MAR-98", sgender: "F" },
+        { stafkey: "1234567897", susrtyp: "VETERAN", ssalut: "", snamef: "Patrik", snamel: "Boolay", saddrst1: "824 S Colonial", saddrcty: "Roswell", saddrstt: "GA", saddrzip: "30009", stelh: "867-555-7841", sactive: "A", ssn: "334568484", sdob: "07-JUL-76", sgender: "F" },
+        { stafkey: "1234567898", susrtyp: "VETERAN", ssalut: "", snamef: "Francis", snamel: "Stewart", saddrst1: "615 NE 13th AVE", saddrcty: "Ft.Lauderdale", saddrstt: "FL", saddrzip: "33304", stelh: "405-555-8754", sactive: "A", ssn: "349628761", sdob: "30-MAR-67", sgender: "M" },
+        { stafkey: "1234567899", susrtyp: "VETERAN", ssalut: "", snamef: "HIENRIK", snamel: "TESTMAN", saddrst1: "1931 S Federal HWY", saddrcty: "Ft. Lauderdale ", saddrstt: "FL", saddrzip: "33316", stelh: "954-555-8671", sactive: "A", ssn: "764889132", sdob: "01-JAN-78", sgender: "M" }
+      ]
     end
   end
 end
