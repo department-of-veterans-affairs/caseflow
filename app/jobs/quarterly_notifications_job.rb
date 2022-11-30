@@ -10,7 +10,7 @@ class QuarterlyNotificationsJob < CaseflowJob
   #
   # Response: None
   def perform
-    notifications = Notification.all
+    notifications = Notification.where.not(event_type: "Quarterly Notification")
     notifications.each do |notif|
       if notif.appeals_type == "Appeal"
         appeal = Appeal.find_by_uuid(notif.appeals_id)
