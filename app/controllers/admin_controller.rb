@@ -41,17 +41,24 @@ class AdminController < ApplicationController
     # Create new event
     event = SystemAdminEvent.create(user: current_user, event_type: "veteran_extract")
     if input.empty?
-      render json: { message: "no veterans found", success: true}
+      render json: { message: "no veterans found", success: true }
     else
-      formated_data = VACOLS::Correspondent.as_csv(input)
-      render json: { contents: formated_data, success: true}
+      col_sep = if FeatureToggle.enabled?(:vet_extract_pipe_delimited, user: current_user)
+                  "|"
+                else
+                  ","
+                end
+
+      formated_data = VACOLS::Correspondent.as_csv(input, col_sep)
       event.update!(completed_at: Time.zone.now)
+      render json: { contents: formated_data, success: true }
     end
 
     # error handling
   rescue StandardError => error
-    render json: { success: false, error: error }
+    puts error
     event.update!(errored_at: Time.zone.now)
+    render json: { success: false, error: error }
   end
 
   def veteran_extract
