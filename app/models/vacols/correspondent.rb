@@ -51,32 +51,32 @@ class VACOLS::Correspondent < VACOLS::Record
   end
 
   # Take in a collection and return a csv friendly format
-  def self.as_csv(input)
-    CSV.generate do |csv|
-        csv << %w[
-          VET_LAST_NAME
-          VET_FIRST_NAME
-          VET_MIDDLE_NAME
-          VET_DATE_OF_BIRTH
-          VET_SSN
-          VET_PARTICIPANT_ID
-          VET_FILE_NUMBER
-          APPELLANT_LAST_NAME
-          APPELLANT_FIRST_NAME
-          APPELLANT_MIDDLE_NAME
-          APPELLANT_DATE_OF_BIRTH
-          APPELLANT_SSN	APPELLANT_GENDER
-          APPELLANT_ADDRESS
-          APPELLANT_PHONE
-          APPELLANT_EMAIL
-          APPELLANT_EDI_PI
-          APPELLANT_CORP_PID
-          APPELLANT_VACOLS_INTERNAL_ID
-          RELATIONSHIP_TO_VETERAN
-        ]
-        input.each do |record|
-          csv << record.values
-        end
+  def self.as_csv(input, col_sep = ",")
+    CSV.generate(col_sep: col_sep) do |csv|
+      csv << %w[
+        VET_LAST_NAME
+        VET_FIRST_NAME
+        VET_MIDDLE_NAME
+        VET_DATE_OF_BIRTH
+        VET_SSN
+        VET_PARTICIPANT_ID
+        VET_FILE_NUMBER
+        APPELLANT_LAST_NAME
+        APPELLANT_FIRST_NAME
+        APPELLANT_MIDDLE_NAME
+        APPELLANT_DATE_OF_BIRTH
+        APPELLANT_SSN	APPELLANT_GENDER
+        APPELLANT_ADDRESS
+        APPELLANT_PHONE
+        APPELLANT_EMAIL
+        APPELLANT_EDI_PI
+        APPELLANT_CORP_PID
+        APPELLANT_VACOLS_INTERNAL_ID
+        RELATIONSHIP_TO_VETERAN
+      ]
+      input.each do |record|
+        csv << record.values
+      end
     end
   end
 
