@@ -362,10 +362,11 @@ module Seeds
 
     def store_veteran_in_redis_cache(corres)
       # map values from CORRES to their keys in BGS Service
+      # DOB format needs to be mm/dd/yyyy to match BGS records
       attrs = {
         address_line1: corres.saddrst1,
         city: corres.saddrcty,
-        date_of_birth: corres.sdob,
+        date_of_birth: corres.sdob.to_date.strftime("%m/%d/%Y"),
         file_number: corres.ssn,
         first_name: corres.snamef,
         last_name: corres.snamel,
