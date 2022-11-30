@@ -79,6 +79,45 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     end
   end
 
+  describe "map appeal state with hearing scheduled" do
+    let(:ama_appeal) { create(:appeal) }
+    context "appeals with hearings scheduled tasks" do
+      let(:hearing) { create(:hearing, appeal: ama_appeal) }
+
+      it "hearings with nil disposition should map the hearing scheduled appeal state to true" do
+        hearing.update(disposition: nil)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: true)
+      end
+
+      it "no hearings with nil disposition should map the hearing scheduled appeal state to false" do
+        hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: false)
+      end
+    end
+
+    context "appeals hearings with multiple hearings scheduled" do
+      let(:old_hearing) { create(:hearing, appeal: ama_appeal) }
+      let(:new_hearing) { create(:hearing, appeal: ama_appeal) }
+      it "should still map appeal state to true if most recent hearing has nil disposition" do
+        old_hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
+        new_hearing.update(disposition: nil)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: true)
+      end
+
+      it "should not map appeal state to true if none of the hearings habe nil disposition" do
+        old_hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
+        new_hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: false)
+      end
+    end
+
+    context "appeals without any hearing scheduled tasks" do
+      it "should not map appeal state to true if there arent any hearings" do
+        subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)
+        expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: false)
+      end
+    end
+
   describe "#map_appeal_ihp_state" do
     context "when there is an active AMA Appeal with an active InformalHearingPresentationTask" do
       let!(:open_ama_appeal_with_ihp_pending) { create(:appeal, :active, :with_ihp_task) }
