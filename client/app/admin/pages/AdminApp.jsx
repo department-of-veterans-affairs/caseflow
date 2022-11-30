@@ -40,6 +40,7 @@ class AdminApp extends React.PureComponent {
               />
               <GenerateButton
                 sendExtractRequest={this.props.sendExtractRequest}
+                vetExtractPipeDelimited={this.props.featureToggles.vet_extract_pipe_delimited}
                 {...this.props.extractReducer}
               />
             </Switch>
