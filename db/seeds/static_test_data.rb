@@ -315,21 +315,45 @@ module Seeds
 
     def create_veterans_for_mpi_sfnod_updates
       veteran_data_for_mpi_nod_updates.each do |record|
-        create(:correspondent, record)
+        corres = create(:correspondent, record)
+        brieff = create(:case, bfcorlid: corres.ssn, correspondent: corres)
+        store_veteran_in_redis_cache(brieff, corres) if Rails.env.development?
       end
+    end
+
+    def store_veteran_in_redis_cache(brieff, corres)
+      # map values from CORRES to their keys in BGS Service
+      attrs = {
+        address_line1: corres.saddrst1,
+        city: corres.saddrcty,
+        date_of_birth: corres.sdob,
+        file_number: brieff.bfcorlid,
+        first_name: corres.snamef,
+        last_name: corres.snamel,
+        middle_name: corres.snamemi,
+        phone_number_one: corres.stelh,
+        salutation_name: corres.ssalut,
+        ssn: corres.ssn,
+        state: corres.saddrstt,
+        zip_code: corres.saddrzip,
+        sex: corres.sgender
+      }
+
+      # build and store veteran in redis
+      Generators::Veteran.build(attrs)
     end
 
     def veteran_data_for_mpi_nod_updates
       [
-        { stafkey: "1234567891", susrtyp: "VETERAN", ssalut: "", snamef: "MIKE", snamel: "CLEMONS", saddrst1: "614 SE 13ST", saddrcty: "FT.Lauderdale", saddrstt: "FL", saddrzip: "33304", stelh: "405-667-9832", sactive: "A", ssn: "867895432", sdob: "12-DEC-70", sgender: "M" },
-        { stafkey: "1234567892", susrtyp: "VETERAN", ssalut: "", snamef: "Gregory", snamel: "Thomas", saddrst1: "521 N Fort Lauderdale Beach Blvd", saddrcty: "FT.Lauderdale", saddrstt: "FL", saddrzip: "33304", stelh: "571-679-5555", sactive: "A", ssn: "678849874", sdob: "06-JUN-55", sgender: "M" },
-        { stafkey: "1234567893", susrtyp: "VETERAN", ssalut: "", snamef: "Franklin", snamel: "Thomas", saddrst1: "1417 SW 41st Ave", saddrcty: "FT.Lauderdale", saddrstt: "FL", saddrzip: "33317", stelh: "954-863-5555", sactive: "A", ssn: "784456431", sdob: "06-JUL-65", sgender: "M" },
-        { stafkey: "1234567894", susrtyp: "VETERAN", ssalut: "", snamef: "George", snamel: "Thomas", saddrst1: "1402 NW 5th St", saddrcty: "FT.Lauderdale", saddrstt: "FL", saddrzip: "33311", stelh: "954-871-5555", sactive: "A", ssn: "673489455", sdob: "06-JUL-68", sgender: "M" },
-        { stafkey: "1234567895", susrtyp: "VETERAN", ssalut: "", snamef: "Ryan", snamel: "Thompson", saddrst1: "4156 New York Ave", saddrcty: "St.Cloud", saddrstt: "FL", saddrzip: "34744", stelh: "567-447-8711", sactive: "A", ssn: "748997154", sdob: "28-APR-97", sgender: "M" },
-        { stafkey: "1234567896", susrtyp: "VETERAN", ssalut: "", snamef: "Tannis", snamel: "Biggum", saddrst1: "3103 N Fort Valley Rd", saddrcty: "Flagstaff", saddrstt: "AZ", saddrzip: "86001", stelh: "703-376-4734", sactive: "A", ssn: "448167748", sdob: "20-MAR-98", sgender: "F" },
-        { stafkey: "1234567897", susrtyp: "VETERAN", ssalut: "", snamef: "Patrik", snamel: "Boolay", saddrst1: "824 S Colonial", saddrcty: "Roswell", saddrstt: "GA", saddrzip: "30009", stelh: "867-555-7841", sactive: "A", ssn: "334568484", sdob: "07-JUL-76", sgender: "F" },
-        { stafkey: "1234567898", susrtyp: "VETERAN", ssalut: "", snamef: "Francis", snamel: "Stewart", saddrst1: "615 NE 13th AVE", saddrcty: "Ft.Lauderdale", saddrstt: "FL", saddrzip: "33304", stelh: "405-555-8754", sactive: "A", ssn: "349628761", sdob: "30-MAR-67", sgender: "M" },
-        { stafkey: "1234567899", susrtyp: "VETERAN", ssalut: "", snamef: "HIENRIK", snamel: "TESTMAN", saddrst1: "1931 S Federal HWY", saddrcty: "Ft. Lauderdale ", saddrstt: "FL", saddrzip: "33316", stelh: "954-555-8671", sactive: "A", ssn: "764889132", sdob: "01-JAN-78", sgender: "M" }
+        { stafkey: "1234567891", susrtyp: "VETERAN", ssalut: "", snamef: "MIKE", snamel: "CLEMONS", saddrst1: "614 SE 13ST", saddrcty: "FT.Lauderdale", saddrstt: "FL", saddrzip: "33304", stelh: "405-667-9832", sactive: "A", ssn: "867895432", sdob: "1970-12-12", sgender: "M" },
+        { stafkey: "1234567892", susrtyp: "VETERAN", ssalut: "", snamef: "Gregory", snamel: "Thomas", saddrst1: "521 N Fort Lauderdale Beach Blvd", saddrcty: "FT.Lauderdale", saddrstt: "FL", saddrzip: "33304", stelh: "571-679-5555", sactive: "A", ssn: "678849874", sdob: "1955-06-06", sgender: "M" },
+        { stafkey: "1234567893", susrtyp: "VETERAN", ssalut: "", snamef: "Franklin", snamel: "Thomas", saddrst1: "1417 SW 41st Ave", saddrcty: "FT.Lauderdale", saddrstt: "FL", saddrzip: "33317", stelh: "954-863-5555", sactive: "A", ssn: "784456431", sdob: "1965-07-06", sgender: "M" },
+        { stafkey: "1234567894", susrtyp: "VETERAN", ssalut: "", snamef: "George", snamel: "Thomas", saddrst1: "1402 NW 5th St", saddrcty: "FT.Lauderdale", saddrstt: "FL", saddrzip: "33311", stelh: "954-871-5555", sactive: "A", ssn: "673489455", sdob: "1968-07-06", sgender: "M" },
+        { stafkey: "1234567895", susrtyp: "VETERAN", ssalut: "", snamef: "Ryan", snamel: "Thompson", saddrst1: "4156 New York Ave", saddrcty: "St.Cloud", saddrstt: "FL", saddrzip: "34744", stelh: "567-447-8711", sactive: "A", ssn: "748997154", sdob: "1997-04-28", sgender: "M" },
+        { stafkey: "1234567896", susrtyp: "VETERAN", ssalut: "", snamef: "Tannis", snamel: "Biggum", saddrst1: "3103 N Fort Valley Rd", saddrcty: "Flagstaff", saddrstt: "AZ", saddrzip: "86001", stelh: "703-376-4734", sactive: "A", ssn: "448167748", sdob: "1998-03-20", sgender: "F" },
+        { stafkey: "1234567897", susrtyp: "VETERAN", ssalut: "", snamef: "Patrik", snamel: "Boolay", saddrst1: "824 S Colonial", saddrcty: "Roswell", saddrstt: "GA", saddrzip: "30009", stelh: "867-555-7841", sactive: "A", ssn: "334568484", sdob: "1976-07-07", sgender: "F" },
+        { stafkey: "1234567898", susrtyp: "VETERAN", ssalut: "", snamef: "Francis", snamel: "Stewart", saddrst1: "615 NE 13th AVE", saddrcty: "Ft.Lauderdale", saddrstt: "FL", saddrzip: "33304", stelh: "405-555-8754", sactive: "A", ssn: "349628761", sdob: "1967-03-30", sgender: "M" },
+        { stafkey: "1234567899", susrtyp: "VETERAN", ssalut: "", snamef: "HIENRIK", snamel: "TESTMAN", saddrst1: "1931 S Federal HWY", saddrcty: "Ft. Lauderdale ", saddrstt: "FL", saddrzip: "33316", stelh: "954-555-8671", sactive: "A", ssn: "764889132", sdob: "1978-01-01", sgender: "M" }
       ]
     end
   end
