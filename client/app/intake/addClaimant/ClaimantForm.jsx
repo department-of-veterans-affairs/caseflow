@@ -225,6 +225,7 @@ export const ClaimantForm = ({
                   label={<b>Date of birth</b>}
                   type="date"
                   validationError={dobValidationError}
+                  strongLabel
                 />
               }
             </SuffixDOB>

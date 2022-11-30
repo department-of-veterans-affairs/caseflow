@@ -13,6 +13,7 @@ import {
   individualClaimant,
   individualPoa,
   organizationClaimant,
+  leftoverSubmissionInformationClaimant,
 } from 'test/data/intake/claimants';
 
 describe('AddClaimantConfirmationModal', () => {
@@ -91,6 +92,34 @@ describe('AddClaimantConfirmationModal', () => {
 
       expect(container).toMatchSnapshot();
     });
+  });
+
+  // A very specific test case in which the user submits an individual party type form without a last name
+  // Then cancels the modal, changes the party type to organization, and submits an organization party type
+  describe('leftover redux claimant information', () => {
+    const claimant = leftoverSubmissionInformationClaimant;
+
+    it('renders without last name info warning', () => {
+      const { container } = setup({ claimant });
+
+      expect(
+        screen.queryByText(COPY.ADD_CLAIMANT_CONFIRM_MODAL_LAST_NAME_ALERT)
+      ).not.toBeInTheDocument();
+
+      expect(container).toMatchSnapshot();
+    });
+
+    it('renders with last name info warning', () => {
+      claimant.partyType = 'individual';
+      const { container } = setup({ claimant });
+
+      expect(
+        screen.getByText(COPY.ADD_CLAIMANT_CONFIRM_MODAL_LAST_NAME_ALERT)
+      ).toBeInTheDocument();
+
+      expect(container).toMatchSnapshot();
+    });
+
   });
 
   it('fires onCancel', async () => {
