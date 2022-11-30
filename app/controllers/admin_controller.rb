@@ -43,12 +43,6 @@ class AdminController < ApplicationController
     if input.empty?
       render json: { message: "no veterans found", success: true }
     else
-      col_sep = if FeatureToggle.enabled?(:vet_extract_pipe_delimited, user: current_user)
-                  "|"
-                else
-                  ","
-                end
-
       formated_data = VACOLS::Correspondent.as_csv(input, col_sep)
       event.update!(completed_at: Time.zone.now)
       render json: { contents: formated_data, success: true }
@@ -56,9 +50,16 @@ class AdminController < ApplicationController
 
     # error handling
   rescue StandardError => error
-    puts error
     event.update!(errored_at: Time.zone.now)
     render json: { success: false, error: error }
+  end
+
+  def col_sep
+    if FeatureToggle.enabled?(:vet_extract_pipe_delimited, user: current_user)
+      "|"
+    else
+      ","
+    end
   end
 
   def veteran_extract
