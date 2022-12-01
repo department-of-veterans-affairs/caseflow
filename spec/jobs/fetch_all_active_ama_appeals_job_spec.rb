@@ -230,7 +230,6 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
     end
   end
-  end
 
   describe "#map_appeal_hearing_withdrawn_state(appeal)" do
     let!(:hearing) { create(:hearing) }
@@ -265,24 +264,4 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
     end
   end
-
-  describe "#map_appeal_hearing_withdrawn_state(appeal)" do
-    let!(:hearing) { create(:hearing) }
-    let!(:hearing_withdrawn) { create(:hearing, :cancelled) }
-    let(:second_hearing) { create(:hearing, appeal: appeal) }
-    let(:withdrawn_appeal) { hearing_withdrawn.appeal }
-    let(:appeal) { hearing.appeal }
-    context "when there is an AMA Appeal and the most recent hearing dispostion status is 'cancelled'" do
-      it "returns correct key value hearing_withdrawn: true" do
-        expect(subject.send(:map_appeal_hearing_withdrawn_state, withdrawn_appeal)).to eq(hearing_withdrawn: true)
-      end
-    end
-
-      context "when there is an active AMA Appeal with the most recent hearing dispostion is not 'cancelled'" do
-        it "returns correct key value hearing_withdrawn: false" do
-          expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: false)
-        end
-      end
-  end
-
 end
