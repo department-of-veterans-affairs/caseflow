@@ -258,6 +258,7 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
 
     context "When there are multiple hearings associated with an appeal and the last one is not postponed" do
       it "returns the correct hash with a boolean value of false" do
+        second_hearing
         expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal)).to eq(hearing_postponed: false)
       end
     end
