@@ -220,7 +220,6 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
       end
     end
   end
-  end
 
   describe "#map_appeal_hearing_withdrawn_state(appeal)" do
     let!(:hearing) { create(:legacy_hearing) }
@@ -256,4 +255,3 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
   end
 end
 # rubocop:enable Layout/LineLength
-
