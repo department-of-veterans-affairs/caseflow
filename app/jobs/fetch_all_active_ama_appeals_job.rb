@@ -136,7 +136,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     if appeal.hearings&.max_by(&:id)&.disposition == "cancelled"
       { hearing_withdrawn: true }
     else
-    { hearing_withdrawn: false }
+      { hearing_withdrawn: false }
     end
   end
 
