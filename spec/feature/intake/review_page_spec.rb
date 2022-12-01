@@ -442,6 +442,9 @@ feature "Intake Review Page", :postgres do
 
   shared_examples "Claim review intake with VHA benefit type" do
     let(:benefit_type_label) { Constants::BENEFIT_TYPES["vha"] }
+    let(:email_href) do
+      "mailto:VHABENEFITAPPEALS@va.gov?subject=Potential%20VHA%20Higher-Level%20Review%20or%20Supplemental%20Claim"
+    end
 
     context "Current user is a member of the VHA business line" do
       let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
@@ -451,6 +454,11 @@ feature "Intake Review Page", :postgres do
         vha_business_line.add_user(current_user)
         User.authenticate!(user: current_user)
         navigate_to_review_page(form_type)
+      end
+
+      it "Should not display the VHA HLR SC Permissions Update Information Banner" do
+        expect(page).to_not have_content("HLR And SC Permissions Update")
+        expect(page).to_not have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
       end
 
       it "VHA benefit type radio option is enabled" do
@@ -464,6 +472,11 @@ feature "Intake Review Page", :postgres do
       before do
         User.authenticate!(user: current_user)
         navigate_to_review_page(form_type)
+      end
+
+      it "Should display the VHA HLR SC Permissions Update Information Banner" do
+        expect(page).to have_content("HLR And SC Permissions Update")
+        expect(page).to have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
       end
 
       it "VHA benefit type radio option is disabled and tooltip appears whenever it is hovered over" do
@@ -498,6 +511,15 @@ feature "Intake Review Page", :postgres do
 
       include_examples "Claim review intake with VHA benefit type"
     end
+  end
+
+  scenario "It should not show the vha permissions update banner for an appeal intake" do
+    start_appeal(veteran, receipt_date: nil)
+    visit "/intake"
+    expect(page).to have_current_path("/intake/review_request")
+
+    # Check for the absence of the info banner title and email link
+    expect(page).to_not have_content("HLR And SC Permissions Update")
   end
 end
 
