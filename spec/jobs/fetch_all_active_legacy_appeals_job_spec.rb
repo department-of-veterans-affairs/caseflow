@@ -247,7 +247,7 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
     end
 
     context "when there is a Legacy Appeal with multiple hearings and the most recent hearing dispostion status is 'cancelled'" do
-      it "returns correct key value hearing_withdrawn: false" do
+      it "returns correct key value hearing_withdrawn: true" do
         new_case_hearing.update(hearing_disp: "C")
         expect(subject.send(:map_appeal_hearing_withdrawn_state, withdrawn_legacy_appeal)).to eq(hearing_withdrawn: true)
       end
