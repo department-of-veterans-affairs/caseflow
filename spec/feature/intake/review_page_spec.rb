@@ -458,7 +458,7 @@ feature "Intake Review Page", :postgres do
 
       it "Should not display the VHA HLR SC Permissions Update Information Banner" do
         expect(page).to_not have_content("HLR And SC Permissions Update")
-        expect(page).to_not have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
+        expect(page).to_not have_link(COPY::VHA_BENEFIT_EMAIL_ADDRESS, href: email_href)
       end
 
       it "VHA benefit type radio option is enabled" do
@@ -476,7 +476,7 @@ feature "Intake Review Page", :postgres do
 
       it "Should display the VHA HLR SC Permissions Update Information Banner" do
         expect(page).to have_content("HLR And SC Permissions Update")
-        expect(page).to have_link("VHABENEFITAPPEALS@va.gov", href: email_href)
+        expect(page).to have_link(COPY::VHA_BENEFIT_EMAIL_ADDRESS, href: email_href)
       end
 
       it "VHA benefit type radio option is disabled and tooltip appears whenever it is hovered over" do
