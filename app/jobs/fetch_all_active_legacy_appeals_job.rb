@@ -113,9 +113,17 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
     { hearing_scheduled: false }
   end
 
+  # Purpose: Set key value pair for hearing_postponed to help with appeal_states table insertion
+  #
+  # Params: LegacyAppeal object
+  #
+  # Return: Hash with a single key (hearing_postponed) with a boolean value
   def map_appeal_hearing_postponed_state(appeal)
-    # Code goes here ...
-    { hearing_postponed: false }
+    if appeal.hearings&.max_by(&:id)&.disposition == Constants.HEARING_DISPOSITION_TYPES.postponed
+      { hearing_postponed: true }
+    else
+      { hearing_postponed: false }
+    end
   end
 
   # Purpose: Method to find legacy appeals with
