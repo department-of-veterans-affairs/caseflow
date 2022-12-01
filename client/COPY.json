@@ -49,6 +49,7 @@
   "CASE_LIST_TABLE_TOTAL_DAYS_COLUMN_TITLE": "Total Days",
   "CASE_LIST_TABLE_BOARD_INTAKE": "Board Intake",
   "CASE_LIST_TABLE_TASK_NO_INSTRUCTIONS_TOOLTIP": "No instructions.",
+  "CASE_LIST_TABLE_10182_RECEIPT_DATE_COLUMN_TITLE": "10182 Receipt Date",
 
   "DOB_INVALID_ERRS": {
     "AGE_MIN_ERR": "Appellant must be at least 14 years of age.",
