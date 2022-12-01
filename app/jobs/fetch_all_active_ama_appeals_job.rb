@@ -126,9 +126,18 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     end
   end
 
+  # Purpose: Method to find appeals with
+  # a hearing state of cancelled
+  #
+  # Params: Appeal object
+  #
+  # Returns: key value pair of hearing_withdrawn: true or false
   def map_appeal_hearing_withdrawn_state(appeal)
-    # Code goes here ...
-    { hearing_withdrawn: false }
+    if appeal.hearings&.max_by(&:id)&.disposition == "cancelled"
+      { hearing_withdrawn: true }
+    else
+      { hearing_withdrawn: false }
+    end
   end
 
   def map_appeal_hearing_scheduled_in_error_state(appeal)
