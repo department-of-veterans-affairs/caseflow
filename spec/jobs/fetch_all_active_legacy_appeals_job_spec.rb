@@ -219,38 +219,6 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
       end
     end
   end
-
-  describe "#map_appeal_hearing_postponed_state(appeal)" do
-    let!(:scheduled_hearing) { create(:legacy_hearing) }
-    let!(:postponed_hearing) { create(:legacy_hearing, disposition: "P") }
-    let(:postponed_appeal) { postponed_hearing.appeal }
-    let(:appeal) { scheduled_hearing.appeal }
-    let(:new_case_hearing) { create(:case_hearing, folder_nr: postponed_appeal.vacols_id) }
-    context "When the last hearing has a disposition of postponed" do
-      it "returns the correct hash with a boolean value of true" do
-        expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal)).to eq(hearing_postponed: true)
-      end
-    end
-
-    context "When the last hearing does not have a disposition of postponed" do
-      it "returns the correct hash with a boolean value of false" do
-        expect(subject.send(:map_appeal_hearing_postponed_state, appeal)).to eq(hearing_postponed: false)
-      end
-    end
-
-    context "When there are multiple hearings associated with an appeal and the last one is postponed" do
-      it "returns the correct hash with a boolean value of true" do
-        new_case_hearing.update(hearing_disp: "P")
-        expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal)).to eq(hearing_postponed: true)
-      end
-    end
-
-    context "When there are multiple hearings associated with an appeal and the last one is not postponed" do
-      it "returns the correct hash with a boolean value of false" do
-        new_case_hearing
-        expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal)).to eq(hearing_postponed: false)
-      end
-    end
   end
 
   describe "#map_appeal_hearing_withdrawn_state(appeal)" do
@@ -258,6 +226,7 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
     let!(:hearing_withdrawn) { create(:legacy_hearing, disposition: "C") }
     let(:withdrawn_legacy_appeal) { hearing_withdrawn.appeal }
     let(:legacy_appeal) { hearing.appeal }
+    let(:new_case_hearing) { create(:case_hearing, folder_nr: withdrawn_legacy_appeal.vacols_id) }
     context "when there is a Legacy Appeal and the most recent hearing dispostion status is 'cancelled'" do
       it "returns correct key value hearing_withdrawn: true" do
         expect(subject.send(:map_appeal_hearing_withdrawn_state, withdrawn_legacy_appeal)).to eq(hearing_withdrawn: true)
@@ -269,7 +238,23 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
         expect(subject.send(:map_appeal_hearing_withdrawn_state, legacy_appeal)).to eq(hearing_withdrawn: false)
       end
     end
+
+    context "when there is a Legacy Appeal with multiple hearings and the most recent hearing dispostion status is not 'cancelled'" do
+      it "returns correct key value hearing_withdrawn: false" do
+        new_case_hearing
+        expect(subject.send(:map_appeal_hearing_withdrawn_state, withdrawn_legacy_appeal)).to eq(hearing_withdrawn: false)
+      end
+    end
+
+    context "when there is a Legacy Appeal with multiple hearings and the most recent hearing dispostion status is 'cancelled'" do
+      it "returns correct key value hearing_withdrawn: false" do
+        new_case_hearing.update(hearing_disp: "C")
+        expect(subject.send(:map_appeal_hearing_withdrawn_state, withdrawn_legacy_appeal)).to eq(hearing_withdrawn: true)
+      end
+    end
+
   end
 
 end
 # rubocop:enable Layout/LineLength
+
