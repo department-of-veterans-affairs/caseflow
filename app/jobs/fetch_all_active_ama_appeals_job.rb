@@ -131,9 +131,17 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     { hearing_withdrawn: false }
   end
 
+  # Purpose: Set key value pair for hearing_postponed to help with appeal_states table insertion
+  #
+  # Params: Appeal object
+  #
+  # Return: Hash with a single key (scheduled_in_error) with a boolean value
   def map_appeal_hearing_scheduled_in_error_state(appeal)
-    # Code goes here ...
-    { scheduled_in_error: false }
+    if appeal.hearings&.max_by(&:id)&.disposition == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+      { scheduled_in_error: true }
+    else
+      { scheduled_in_error: false }
+    end
   end
 
   def map_appeal_cancelled_state(appeal)
