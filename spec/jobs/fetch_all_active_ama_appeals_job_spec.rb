@@ -230,38 +230,6 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
     end
   end
-
-  describe "#map_appeal_hearing_postponed_state(appeal)" do
-    let!(:scheduled_hearing) { create(:hearing) }
-    let!(:postponed_hearing) { create(:hearing, :postponed) }
-    let(:postponed_appeal) { postponed_hearing.appeal }
-    let(:appeal) { scheduled_hearing.appeal }
-    let(:second_hearing) { create(:hearing, appeal: postponed_appeal)}
-    context "When the last hearing has a disposition of postponed" do
-      it "returns the correct hash with a boolean value of true" do
-        expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal)).to eq(hearing_postponed: true)
-      end
-    end
-
-    context "When the last hearing does not have a disposition of postponed" do
-      it "returns the correct hash with a boolean value of false" do
-        expect(subject.send(:map_appeal_hearing_postponed_state, appeal)).to eq(hearing_postponed: false)
-      end
-    end
-
-    context "When there are multiple hearings associated with an appeal and the last one is postponed" do
-      it "returns the correct hash with a boolean value of true" do
-        second_hearing.update(disposition: "postponed")
-        expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal)).to eq(hearing_postponed: true)
-      end
-    end
-
-    context "When there are multiple hearings associated with an appeal and the last one is not postponed" do
-      it "returns the correct hash with a boolean value of false" do
-        second_hearing
-        expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal)).to eq(hearing_postponed: false)
-      end
-    end
   end
 
   describe "#map_appeal_hearing_withdrawn_state(appeal)" do
@@ -270,6 +238,7 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     let(:second_hearing) { create(:hearing, appeal: appeal) }
     let(:withdrawn_appeal) { hearing_withdrawn.appeal }
     let(:appeal) { hearing.appeal }
+
     context "when there is an AMA Appeal and the most recent hearing dispostion status is 'cancelled'" do
       it "returns correct key value hearing_withdrawn: true" do
         expect(subject.send(:map_appeal_hearing_withdrawn_state, withdrawn_appeal)).to eq(hearing_withdrawn: true)
@@ -296,4 +265,24 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
     end
   end
+
+  describe "#map_appeal_hearing_withdrawn_state(appeal)" do
+    let!(:hearing) { create(:hearing) }
+    let!(:hearing_withdrawn) { create(:hearing, :cancelled) }
+    let(:second_hearing) { create(:hearing, appeal: appeal) }
+    let(:withdrawn_appeal) { hearing_withdrawn.appeal }
+    let(:appeal) { hearing.appeal }
+    context "when there is an AMA Appeal and the most recent hearing dispostion status is 'cancelled'" do
+      it "returns correct key value hearing_withdrawn: true" do
+        expect(subject.send(:map_appeal_hearing_withdrawn_state, withdrawn_appeal)).to eq(hearing_withdrawn: true)
+      end
+    end
+
+      context "when there is an active AMA Appeal with the most recent hearing dispostion is not 'cancelled'" do
+        it "returns correct key value hearing_withdrawn: false" do
+          expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: false)
+        end
+      end
+  end
+
 end
