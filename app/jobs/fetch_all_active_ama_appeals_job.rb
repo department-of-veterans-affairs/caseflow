@@ -140,7 +140,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     end
   end
 
-  # Purpose: Set key value pair for hearing_postponed to help with appeal_states table insertion
+  # Purpose: Set key value pair for scheduled_in_error to help with appeal_states table insertion
   #
   # Params: Appeal object
   #
