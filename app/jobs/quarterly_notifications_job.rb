@@ -13,9 +13,9 @@ class QuarterlyNotificationsJob < CaseflowJob
     appeal_states = AppealState.where.not(decision_mailed: true, appeal_cancelled: true)
     appeal_states.each do |state|
       if state.appeal_type == "Appeal"
-        appeal = Appeal.find_by_uuid(notif.appeals_id)
-      elsif notif.appeal_type == "LegacyAppeal"
-        appeal = LegacyAppeal.find_by_vacols_id(notif.appeals_id)
+        appeal = Appeal.find(state.appeal_id)
+      elsif state.appeal_type == "LegacyAppeal"
+        appeal = LegacyAppeal.find(state.appeal_id)
       end
       send_quarterly_notifications(state, appeal)
     end
