@@ -254,6 +254,39 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
     end
   end
 
+  describe "#map_appeal_hearing_withdrawn_state(appeal)" do
+    let!(:hearing) { create(:legacy_hearing) }
+    let!(:hearing_withdrawn) { create(:legacy_hearing, disposition: "C") }
+    let(:withdrawn_legacy_appeal) { hearing_withdrawn.appeal }
+    let(:legacy_appeal) { hearing.appeal }
+    let(:new_case_hearing) { create(:case_hearing, folder_nr: withdrawn_legacy_appeal.vacols_id) }
+    context "when there is a Legacy Appeal and the most recent hearing dispostion status is 'cancelled'" do
+      it "returns correct key value hearing_withdrawn: true" do
+        expect(subject.send(:map_appeal_hearing_withdrawn_state, withdrawn_legacy_appeal)).to eq(hearing_withdrawn: true)
+      end
+    end
+
+    context "when there is a Legacy Appeal and the most recent hearing dispostion status is not 'cancelled'" do
+      it "returns correct key value hearing_withdrawn: false" do
+        expect(subject.send(:map_appeal_hearing_withdrawn_state, legacy_appeal)).to eq(hearing_withdrawn: false)
+      end
+    end
+
+    context "when there is a Legacy Appeal with multiple hearings and the most recent hearing dispostion status is not 'cancelled'" do
+      it "returns correct key value hearing_withdrawn: false" do
+        new_case_hearing
+        expect(subject.send(:map_appeal_hearing_withdrawn_state, withdrawn_legacy_appeal)).to eq(hearing_withdrawn: false)
+      end
+    end
+
+    context "when there is a Legacy Appeal with multiple hearings and the most recent hearing dispostion status is 'cancelled'" do
+      it "returns correct key value hearing_withdrawn: true" do
+        new_case_hearing.update(hearing_disp: "C")
+        expect(subject.send(:map_appeal_hearing_withdrawn_state, withdrawn_legacy_appeal)).to eq(hearing_withdrawn: true)
+      end
+    end
+  end
+
   describe "#map_appeal_hearing_scheduled_in_error_state(appeal)" do
     let!(:scheduled_hearing) { create(:legacy_hearing) }
     let!(:error_hearing) { create(:legacy_hearing, disposition: "E") }

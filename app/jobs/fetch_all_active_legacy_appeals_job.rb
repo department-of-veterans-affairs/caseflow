@@ -126,9 +126,18 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
     end
   end
 
+  # Purpose: Method to find legacy appeals with
+  # a hearing state of cancelled
+  #
+  # Params: Legacy Appeal object
+  #
+  # Returns: key value pair of hearing_withdrawn: true or false
   def map_appeal_hearing_withdrawn_state(appeal)
-    # Code goes here ...
-    { hearing_withdrawn: false }
+    if appeal.hearings&.max_by(&:id)&.disposition == Constants.HEARING_DISPOSITION_TYPES.cancelled
+      { hearing_withdrawn: true }
+    else
+      { hearing_withdrawn: false }
+    end
   end
 
   # Purpose: Set key value pair for hearing_postponed to help with appeal_states table insertion
