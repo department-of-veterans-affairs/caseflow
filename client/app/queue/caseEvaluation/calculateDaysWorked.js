@@ -74,5 +74,5 @@ export const calculateDaysWorked = (allChildrenTasks, daysAssigned, attorneyTask
 
   const daysWorked = daysAssigned - Math.max(1, sumOfAllChildrenTasksDays) - sumOfJudgeDays - 1;
 
-  return Math.max(1, daysWorked);
+  return Math.max(0, daysWorked);
 };
