@@ -134,8 +134,6 @@ class QueueTableBuilder extends React.PureComponent {
         filterOptions
       ),
       [QUEUE_CONFIG.COLUMNS.RECEIPT_DATE.name]: receiptColumn(
-        requireDasRecord,
-        filterOptions
       ),
       [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(
         filterOptions

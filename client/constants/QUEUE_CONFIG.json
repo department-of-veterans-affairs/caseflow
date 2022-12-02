@@ -146,9 +146,7 @@
       "sorting_columns": ["type", "action", "created_at"]
     },
     "RECEIPT_DATE": {
-      "filterable": true,
-      "name": "receiptDateColumn",
-      "sorting_columns": ["created_at"]
+      "name": "receiptDateColumn"
     }
   },
 
