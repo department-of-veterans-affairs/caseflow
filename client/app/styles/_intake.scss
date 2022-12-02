@@ -353,8 +353,7 @@
   }
 
   .cf-radio-option-tooltip {
-    // This needs to be evenly divisible by 8 to prevent the spacing of the text
-    // in the tooltip from being irregular.
     max-width: 600px;
+    word-spacing: -1px;
   }
 }
