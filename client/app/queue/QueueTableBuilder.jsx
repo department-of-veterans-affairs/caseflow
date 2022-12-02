@@ -32,7 +32,8 @@ import {
   taskOwnerColumn,
   taskCompletedDateColumn,
   typeColumn,
-  vamcOwnerColumn
+  vamcOwnerColumn,
+  receiptColumn
 } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
@@ -130,6 +131,10 @@ class QueueTableBuilder extends React.PureComponent {
       ),
       [QUEUE_CONFIG.COLUMNS.LAST_ACTION.name]: lastActionColumn(
         tasks,
+        filterOptions
+      ),
+      [QUEUE_CONFIG.COLUMNS.RECEIPT_DATE.name]: receiptColumn(
+        requireDasRecord,
         filterOptions
       ),
       [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(

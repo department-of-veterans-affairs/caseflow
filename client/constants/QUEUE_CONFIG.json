@@ -147,7 +147,7 @@
     },
     "RECEIPT_DATE": {
       "filterable": true,
-      "name": "10182ReceiptColumn",
+      "name": "receiptDateColumn",
       "sorting_columns": ["created_at"]
     }
   },
