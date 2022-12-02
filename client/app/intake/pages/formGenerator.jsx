@@ -147,6 +147,7 @@ const formFieldMapping = (props) => {
         register={props.register}
         formName={props.formName}
         featureToggles={props.featureToggles}
+        userCanSelectVha={props.userIsVhaEmployee}
       />
     ),
     'informal-conference': (

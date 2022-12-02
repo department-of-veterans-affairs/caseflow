@@ -23,7 +23,7 @@ export const mapDataToUserInformation = (data = { userInformation: {} }) =>
       userDisplayName: null,
       userCanIntakeAppeals: false,
       userIsVhaEmployee: false,
-      unreadMessages: false,
+      unreadMessages: false
     },
     data.userInformation
   );
