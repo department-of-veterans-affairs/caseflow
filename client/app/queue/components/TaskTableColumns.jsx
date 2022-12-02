@@ -411,3 +411,12 @@ export const taskCompletedDateColumn = () => {
     getSortValue: (task) => task.closedAt ? new Date(task.closedAt) : null
   };
 };
+
+export const receiptColumn = () => {
+
+  return {
+    header: COPY.CASE_LIST_TABLE_10182_RECEIPT_DATE_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.RECEIPT_DATE.name,
+    valueFunction: "hello"
+  };
+};

@@ -144,6 +144,9 @@
       "name": "vamcOwnerColumn",
       "sorting_table": "assignees",
       "sorting_columns": ["type", "action", "created_at"]
+    },
+    "RECEIPT_DATE": {
+      "name": "receiptDateColumn"
     }
   },
 
