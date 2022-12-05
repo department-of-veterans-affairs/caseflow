@@ -18,6 +18,7 @@ import {
 import Alert from '../components/Alert';
 
 import COPY from '../../COPY';
+import { css } from 'glamor';
 
 /**
  * Component showing the cases assigned to a specific attorney referenced by `attorneyId`.
@@ -103,7 +104,7 @@ class AssignedCasesPage extends React.Component {
     /* eslint-enable camelcase */
 
     return <React.Fragment>
-      <h2>{attorneyName || attorneyId}'s Cases</h2>
+      <h2 {...css({ display: 'inline-block' })}>{attorneyName || attorneyId}'s Cases</h2>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
       {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
       <AssignToAttorneyWidget
