@@ -7,7 +7,7 @@ class Api::V1::MpiController < Api::ApplicationController
       id: allowed_params[:veterans_id],
       deceased_time: allowed_params[:deceased_time]
     }
-    response_info_column = { veteran_id: veteran[:id] }
+    response_info_column = { veteran_id: veteran[:id], deceased_time: veteran[:deceased_time] }
     mpi_update = MpiUpdatePersonEvent.create!(api_key: api_key, created_at: Time.zone.now, update_type: :started)
     result = VACOLS::Correspondent.update_veteran_nod(veteran).to_sym
     if result == :successful || result == :already_deceased_time_changed
