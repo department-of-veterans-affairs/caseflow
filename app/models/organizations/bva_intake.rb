@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-
 class BvaIntake < Organization
+  include BvaIntakeModule
+
   def self.singleton
     BvaIntake.first || BvaIntake.create(name: "BVA Intake", url: "bva-intake")
   end
