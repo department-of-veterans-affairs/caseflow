@@ -27,7 +27,7 @@ class Badge extends React.PureComponent {
     });
 
     return <div className={`cf-${name}-badge`}>
-      <Tooltip id={`badge-${id}`} text={tooltipText} position="bottom" ariaLabel={ariaLabel ?? ""}>
+      <Tooltip id={`badge-${id}`} text={tooltipText} position="bottom" ariaLabel={ariaLabel ?? ''}>
         <span {...badgeStyling}>{displayName}</span>
       </Tooltip>
     </div>;

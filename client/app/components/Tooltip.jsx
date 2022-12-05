@@ -35,7 +35,7 @@ const Tooltip = (props) => {
     'data-event': 'focus mouseenter',
     'data-event-off': 'mouseleave keydown',
     tabIndex,
-    "aria-label": ariaLabel ?? ""
+    'aria-label': ariaLabel ?? ''
   };
 
   return (

@@ -60,7 +60,8 @@ class HearingBadge extends React.PureComponent {
       </ul>
     </div>;
 
-    return <Badge name="hearing" displayName="H" color={COLORS.GREEN} tooltipText={tooltipText} id={hearing.id} ariaLabel={_.startCase(hearing.disposition) ?? ""} />;
+    return <Badge name="hearing" displayName="H" color={COLORS.GREEN} tooltipText={tooltipText} id={hearing.id}
+      ariaLabel={_.startCase(hearing.disposition) ?? ''} />;
   }
 }
 
