@@ -199,7 +199,7 @@ describe QuarterlyNotificationsJob, type: :job do
         expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
-    context "Privacy Act Pending" do
+    context "VSO IHP Pending" do
       let!(:appeal_state) do
         create(
           :appeal_state,
@@ -216,7 +216,7 @@ describe QuarterlyNotificationsJob, type: :job do
         expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
-    context "Privacy Act Pending" do
+    context "Hearing Scheduled" do
       let!(:appeal_state) do
         create(
           :appeal_state,

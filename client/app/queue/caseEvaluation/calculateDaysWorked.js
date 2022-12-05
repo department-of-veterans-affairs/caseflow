@@ -1,7 +1,7 @@
 import Moment from 'moment';
-import { extendMoment } from 'moment-range';
+// import { extendMoment } from 'moment-range';
 
-const moment = extendMoment(Moment);
+const moment = Moment;
 
 const isSameRange = (rangeA, rangeB) => {
   return rangeA.start.isSame(rangeB.start, 'day') && rangeA.end.isSame(rangeB.end, 'day');
