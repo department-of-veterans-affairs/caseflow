@@ -60,7 +60,7 @@ class QueueFlowPage extends React.PureComponent {
       willNeverBeLoading: true
     },
     {
-      classNames: [`cf-right-side', 'cf-prev-step', 'usa-button-secondary`],
+      classNames: ['cf-prev-step', 'usa-button-secondary', 'button-back-button'],
       callback: this.props.hideCancelButton ? this.cancelFlow : this.goToPrevStep,
       name: 'back-button',
       displayText: this.props.hideCancelButton ? 'Cancel' : 'Back',
