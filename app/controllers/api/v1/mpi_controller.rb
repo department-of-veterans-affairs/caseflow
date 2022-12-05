@@ -18,9 +18,7 @@ class Api::V1::MpiController < Api::ApplicationController
     mpi_update.update!(update_type: result, completed_at: Time.zone.now, info: response_info_column)
     render json: { result: result }, status: :ok
   rescue StandardError => error
-    if !Rails.deploy_env?(:prod) && !Rails.deploy_env?(:preprod)
-      response_info_column[:error] = error
-    end
+    response_info_column[:error] = error
     mpi_update.update!(update_type: :error, completed_at: Time.zone.now, info: response_info_column)
     raise error
   end
