@@ -49,16 +49,24 @@ class CaseTitle extends React.PureComponent {
     const { appeal, veteranCaseListIsVisible } = this.props;
 
     return (
-      <CaseTitleScaffolding heading={appeal.veteranFullName}>
+      <CaseTitleScaffolding heading={this.props.titleHeader === '' ? appeal.veteranFullName : this.props.titleHeader}>
         <React.Fragment>
           Veteran ID:&nbsp;
           <CopyTextButton text={appeal.veteranFileNumber} label="Veteran ID" />
         </React.Fragment>
 
-        <span {...viewCasesStyling}>
-          <Link href="#" onClick={this.props.toggleVeteranCaseList}>{veteranCaseListIsVisible ? 'Hide' : 'View'} all cases</Link>
-        </span>
-        <BadgeArea appeal={appeal} isHorizontal />
+        { !this.props.hideCaseView &&
+        <>
+          <span {...viewCasesStyling}>
+            <Link
+              href="#"
+              onClick={this.props.toggleVeteranCaseList}>{veteranCaseListIsVisible ? 'Hide' : 'View'}
+            all cases
+            </Link>
+          </span>
+          <BadgeArea appeal={appeal} isHorizontal />
+        </>
+        }
       </CaseTitleScaffolding>
     );
   };
@@ -69,12 +77,15 @@ CaseTitle.propTypes = {
   taskType: PropTypes.string,
   analyticsSource: PropTypes.string,
   veteranCaseListIsVisible: PropTypes.bool,
-  toggleVeteranCaseList: PropTypes.func
+  toggleVeteranCaseList: PropTypes.func,
+  titleHeader: PropTypes.string,
+  hideCaseView: PropTypes.bool
 };
 
 CaseTitle.defaultProps = {
   taskType: 'Draft Decision',
-  analyticsSource: 'queue_task'
+  analyticsSource: 'queue_task',
+  titleHeader: ''
 };
 
 const CaseTitleScaffolding = (props) => (
@@ -95,7 +106,7 @@ const CaseTitleScaffolding = (props) => (
 
 CaseTitleScaffolding.propTypes = {
   heading: PropTypes.string,
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 const mapStateToProps = (state) => ({

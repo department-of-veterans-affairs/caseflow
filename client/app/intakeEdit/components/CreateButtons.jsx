@@ -84,10 +84,19 @@ const BackButton = connect(
 
 class SplitButtonUnconnected extends React.PureComponent {
 
-  handleSplitSubmit = (appeal, payloadInfo) => {
+  handleSplitSubmit = (appeal, payloadInfo, userCssId) => {
+    const cleanedIssues = [];
 
-    const response = this.props.splitAppeal(appeal.id, payloadInfo.selectedIssues,
-      payloadInfo.reason, payloadInfo.otherReason, this.props.user);
+    // since selectedIssues come in as a Hash, clean to only have request issue id selected
+    Object.entries(payloadInfo.selectedIssues).forEach((item) => {
+      // if the value is true, push the request issue id
+      if (item[1] === true) {
+        cleanedIssues.push(item[0]);
+      }
+    });
+
+    const response = this.props.splitAppeal(appeal.id, cleanedIssues,
+      payloadInfo.reason, payloadInfo.otherReason, userCssId);
 
     response.then(() => {
       window.location.href = `/queue/appeals/${this.props.claimId}`;
@@ -97,14 +106,14 @@ class SplitButtonUnconnected extends React.PureComponent {
 
     return (
       <IntakeAppealContext.Consumer>
-        {(appeal) => (
+        {(appealInfoUserArray) => (
           <StateContext.Consumer>
             {(payloadInfo) => (
               <Button
                 id="button-submit-update"
                 classNames={['cf-submit usa-button']}
                 // on click button sends claim id for dummy data
-                onClick={() => this.handleSplitSubmit(appeal, payloadInfo)}>
+                onClick={() => this.handleSplitSubmit(appealInfoUserArray[0], payloadInfo, appealInfoUserArray[1])}>
                 { COPY.CORRECT_REQUEST_ISSUES_SPLIT_APPEAL }
               </Button>
 

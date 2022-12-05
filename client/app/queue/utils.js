@@ -120,6 +120,8 @@ const taskAttributesFromRawTask = (task) => {
     documentId: task.attributes.document_id,
     externalHearingId: task.attributes.external_hearing_id,
     workProduct: null,
+    caseType: task.attributes.case_type,
+    aod: task.attributes.aod,
     previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
     placedOnHoldAt: task.attributes.placed_on_hold_at,
     status: task.attributes.status,
@@ -243,6 +245,8 @@ export const prepareLegacyTasksForStore = (tasks) => {
       label: task.attributes.label,
       documentId: task.attributes.document_id,
       workProduct: task.attributes.work_product,
+      caseType: task.attributes.case_type,
+      aod: task.attributes.aod,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
       status: task.attributes.status,
       decisionPreparedBy: null,
@@ -464,6 +468,7 @@ export const prepareAppealForStore = (appeals) => {
         appeal.attributes.substitutions?.[0]?.source_appeal_uuid,
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
       remandJudgeName: appeal.attributes.remand_judge_name,
+      hasNotifications: appeal.attributes.has_notifications,
     };
 
     return accumulator;
@@ -717,6 +722,24 @@ export const parentTasks = (childrenTasks, allTasks) => {
   });
 
   return parentTasks;
+};
+
+export const getAllChildrenTasks = (tasks, parentId) => {
+  // task.uniqueId is a String and task.parentId is an Integer
+  // eslint-disable-next-line eqeqeq
+  const childrenTasks = tasks.filter((task) => task.parentId == parentId);
+
+  let grandchildrenTasks = [];
+
+  if (childrenTasks.length > 0) {
+
+    childrenTasks.forEach((task) => {
+      grandchildrenTasks = grandchildrenTasks.concat(getAllChildrenTasks(tasks, task.uniqueId));
+    });
+
+  }
+
+  return childrenTasks.concat(grandchildrenTasks);
 };
 
 export const nullToFalse = (key, obj) => {

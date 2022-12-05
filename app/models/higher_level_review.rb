@@ -11,6 +11,8 @@ class HigherLevelReview < ClaimReview
 
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
+  attr_accessor :appeal_split_process
+
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 034 035 036 037 038 039].freeze
 
   def self.review_title
