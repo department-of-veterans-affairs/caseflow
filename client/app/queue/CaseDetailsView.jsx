@@ -5,9 +5,8 @@ import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import _ from 'lodash';
-import ApiUtil from '../util/ApiUtil';
 
 import { APPELLANT_TYPES, CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS, ICON_SIZES } from '../constants/AppConstants';
@@ -59,10 +58,7 @@ import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
 import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
-import { NotificationView } from './NotificationsView';
 import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
-
-
 
 // TODO: Pull this horizontal rule styling out somewhere.
 
@@ -413,7 +409,8 @@ export const CaseDetailsView = (props) => {
             additionalHeaderContent={
               true && (
                 <span className="cf-push-right" {...anchorEditLinkStyling}>
-                  { appeal.hasNotifications && <Link id="notification-link" href={`/queue/appeals/${appealId}/notifications`} target="_blank">
+                  { appeal.hasNotifications &&
+                  <Link id="notification-link" href={`/queue/appeals/${appealId}/notifications`} target="_blank">
                     {COPY.VIEW_NOTIFICATION_LINK}
                     &nbsp;
                     <span {...ICON_POSITION_FIX}>
