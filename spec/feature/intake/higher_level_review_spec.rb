@@ -52,12 +52,14 @@ feature "Higher-Level Review", :all_dbs do
   before do
     FeatureToggle.enable!(:filed_by_va_gov_hlr)
     FeatureToggle.enable!(:updated_intake_forms)
+    FeatureToggle.enable!(:use_ama_activation_date)
     FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
   end
   after do
     FeatureToggle.disable!(:filed_by_va_gov_hlr)
     FeatureToggle.disable!(:updated_intake_forms)
-    FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
+    FeatureToggle.enable!(:use_ama_activation_date)
+    FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
   end
 
   it "Creates an end product and contentions for it" do

@@ -20,7 +20,7 @@ const defaultArgs = {
 };
 
 export default {
-  title: 'Intake/Review/SelectClaimant',
+  title: 'Intake/Review/Select Claimant',
   component: SelectClaimant,
   decorators: [],
   parameters: {},

@@ -978,9 +978,10 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                         </button>
                       </CopyToClipboard>
                       <span
-                        data-css-4jj7wk=""
+                        data-css-1qgqh7a=""
                       >
                         <ReactTooltip
+                          className="cf-tooltip"
                           clickable={false}
                           effect="solid"
                           id="tooltip-Copy Guest Link"
