@@ -145,6 +145,17 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     { scheduled_in_error: false }
   end
 
+  # Purpose: Method to find appeals with
+  # a root task of cancelled
+  #
+  # Params: Appeal object
+  #
+  # Returns: key value pair of appeal_cancelled: true or false
+
+  # Psuedo Code:
+  # If appeal.root_task (or however you get to it) status == cancelled
+  # Then appeal_cancelled == true else false
+
   def map_appeal_cancelled_state(appeal)
     # Code goes here ...
     { appeal_cancelled: false }
