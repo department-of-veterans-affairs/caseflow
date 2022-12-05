@@ -217,6 +217,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
             >
               <CopyToClipboard
                 aria-describedby="tooltip-Copy VLJ Link"
+                aria-label=""
                 data-event="focus mouseenter"
                 data-event-off="mouseleave keydown"
                 data-for="tooltip-Copy VLJ Link"
@@ -226,7 +227,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
               >
                 <button
                   aria-describedby="tooltip-Copy VLJ Link"
-                  aria-label="Copy VLJ Link"
+                  aria-label=""
                   className="cf-apppeal-id"
                   data-css-cjlnsd=""
                   data-event="focus mouseenter"
@@ -555,6 +556,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
             >
               <CopyToClipboard
                 aria-describedby="tooltip-Copy Guest Link"
+                aria-label=""
                 data-event="focus mouseenter"
                 data-event-off="mouseleave keydown"
                 data-for="tooltip-Copy Guest Link"
@@ -564,7 +566,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
               >
                 <button
                   aria-describedby="tooltip-Copy Guest Link"
-                  aria-label="Copy Guest Link"
+                  aria-label=""
                   className="cf-apppeal-id"
                   data-css-cjlnsd=""
                   data-event="focus mouseenter"
@@ -1632,6 +1634,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
             >
               <CopyToClipboard
                 aria-describedby="tooltip-Copy Guest Link"
+                aria-label=""
                 data-event="focus mouseenter"
                 data-event-off="mouseleave keydown"
                 data-for="tooltip-Copy Guest Link"
@@ -1641,7 +1644,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
               >
                 <button
                   aria-describedby="tooltip-Copy Guest Link"
-                  aria-label="Copy Guest Link"
+                  aria-label=""
                   className="cf-apppeal-id"
                   data-css-cjlnsd=""
                   data-event="focus mouseenter"

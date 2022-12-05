@@ -4,6 +4,7 @@ exports[`IhpDaysWaitingTooltip renders correctly 1`] = `
 <div>
   <span
     aria-describedby="waiting-undefined"
+    aria-label=""
     currentitem="false"
     data-event="focus mouseenter"
     data-event-off="mouseleave keydown"

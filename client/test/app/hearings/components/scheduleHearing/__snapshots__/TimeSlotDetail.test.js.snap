@@ -19,7 +19,7 @@ Object {
          
         <span
           aria-describedby="badge-200624-614"
-          aria-label="Hearing Request"
+          aria-label=""
           currentitem="false"
           data-css-2moai0=""
           data-event="focus mouseenter"
@@ -129,6 +129,7 @@ Object {
          
         <span
           aria-describedby="tooltip-id"
+          aria-label=""
           currentitem="false"
           data-event="focus mouseenter"
           data-event-off="mouseleave keydown"
@@ -245,7 +246,7 @@ Object {
        
       <span
         aria-describedby="badge-200624-614"
-        aria-label="Hearing Request"
+        aria-label=""
         currentitem="false"
         data-css-2moai0=""
         data-event="focus mouseenter"
@@ -355,6 +356,7 @@ Object {
        
       <span
         aria-describedby="tooltip-id"
+        aria-label=""
         currentitem="false"
         data-event="focus mouseenter"
         data-event-off="mouseleave keydown"
@@ -528,7 +530,7 @@ Object {
          
         <span
           aria-describedby="badge-200624-614"
-          aria-label="Hearing Request"
+          aria-label=""
           currentitem="false"
           data-css-2moai0=""
           data-event="focus mouseenter"
@@ -639,6 +641,7 @@ Object {
          
         <span
           aria-describedby="tooltip-id"
+          aria-label=""
           currentitem="false"
           data-event="focus mouseenter"
           data-event-off="mouseleave keydown"
@@ -785,7 +788,7 @@ Object {
        
       <span
         aria-describedby="badge-200624-614"
-        aria-label="Hearing Request"
+        aria-label=""
         currentitem="false"
         data-css-2moai0=""
         data-event="focus mouseenter"
@@ -896,6 +899,7 @@ Object {
        
       <span
         aria-describedby="tooltip-id"
+        aria-label=""
         currentitem="false"
         data-event="focus mouseenter"
         data-event-off="mouseleave keydown"

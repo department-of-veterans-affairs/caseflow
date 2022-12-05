@@ -7,6 +7,7 @@ exports[`OvertimeBadge renders correctly 1`] = `
   >
     <span
       aria-describedby="badge-undefined"
+      aria-label="overtime"
       currentitem="false"
       data-css-13kydni=""
       data-event="focus mouseenter"

@@ -5,7 +5,8 @@ import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 export const UnselectedFilterIcon = (props) => {
   const { getRef, className, color, strokeColor, size, ...restProps } = props;
 
-  return <svg height={size} viewBox="0 0 21 21" {...restProps} ref={getRef}>
+  return <svg height={size} viewBox="0 0 21 21" {...restProps}
+    ref={getRef} className={`${className} unselected-filter-icon`}>
   <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
     <g>
       <rect stroke={strokeColor} fill={color} fillRule="nonzero" x="0.5" y="0.5" width="20" height="20" rx="2"></rect>

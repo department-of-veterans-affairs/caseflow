@@ -131,6 +131,7 @@ Object {
                  
                 <span
                   aria-describedby="tooltip-id"
+                  aria-label=""
                   currentitem="false"
                   data-event="focus mouseenter"
                   data-event-off="mouseleave keydown"
@@ -271,6 +272,7 @@ Object {
                
               <span
                 aria-describedby="tooltip-id"
+                aria-label=""
                 currentitem="false"
                 data-event="focus mouseenter"
                 data-event-off="mouseleave keydown"
