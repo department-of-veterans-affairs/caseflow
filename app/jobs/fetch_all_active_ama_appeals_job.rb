@@ -152,10 +152,10 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
 
   def map_appeal_docketed_state(appeal)
     if appeal.tasks.exists?(type: "DistributionTask")
-      { appeal_docketed: true }
-    else
-      { appeal_docketed: false }
+      return { appeal_docketed: true }
     end
+
+    { appeal_docketed: false }
   end
 
   # Purpose: Helper method that sets values of "vso_ihp_pending" & "vso_ihp_complete" columns

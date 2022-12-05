@@ -151,7 +151,10 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   end
 
   def map_appeal_docketed_state(appeal)
-    # Code goes here ...
+    if VACOLS::Case.exists?(bfkey: appeal.vacols_id, bfcurloc: "01")
+      return { appeal_docketed: true }
+    end
+
     { appeal_docketed: false }
   end
 
