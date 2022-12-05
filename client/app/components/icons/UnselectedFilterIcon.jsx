@@ -5,8 +5,6 @@ import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 export const UnselectedFilterIcon = (props) => {
   const { getRef, className, color, strokeColor, size, ...restProps } = props;
 
-  console.log("before", props)
-
   return <svg height={size} viewBox="0 0 21 21" {...restProps} ref={getRef}>
   <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
     <g>
@@ -46,7 +44,7 @@ UnselectedFilterIcon.propTypes = {
   /**
   Adds class to the component. Default value is ''.
   */
-  className: PropTypes.string,
+  className: PropTypes.string
 
 };
 

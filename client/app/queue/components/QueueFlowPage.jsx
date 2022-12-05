@@ -58,12 +58,6 @@ class QueueFlowPage extends React.PureComponent {
       name: 'cancel-button',
       displayText: 'Cancel',
       willNeverBeLoading: true
-    },{
-      classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-secondary'],
-      callback: this.props.hideCancelButton ? this.cancelFlow : this.goToPrevStep,
-      name: 'back-button',
-      displayText: this.props.hideCancelButton ? 'Cancel' : 'Back',
-      willNeverBeLoading: true
     }, {
       classNames: ['cf-right-side'],
       callback: this.goToNextStep,
@@ -73,7 +67,14 @@ class QueueFlowPage extends React.PureComponent {
       displayText: this.props.continueBtnText,
       loadingText: 'Submitting...',
       styling: css({ marginLeft: '1rem' })
+    }, {
+      classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-secondary'],
+      callback: this.props.hideCancelButton ? this.cancelFlow : this.goToPrevStep,
+      name: 'back-button',
+      displayText: this.props.hideCancelButton ? 'Cancel' : 'Back',
+      willNeverBeLoading: true
     }];
+
     return this.props.hideCancelButton ? buttons.slice(1) : buttons;
   }
 

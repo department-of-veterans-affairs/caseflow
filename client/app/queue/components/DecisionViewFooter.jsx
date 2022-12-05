@@ -5,7 +5,7 @@ import { fullWidth } from '../constants';
 import { noop } from 'lodash';
 
 const DecisionViewFooter = ({ buttons }) => (
-  <div class="reddy" {...fullWidth}>
+  <div {...fullWidth}>
     {buttons.map((button, idx) => (
       <Button key={idx} onClick={button.callback || noop} {...button}>
         {button.displayText}
