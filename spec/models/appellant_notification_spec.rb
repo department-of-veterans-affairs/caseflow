@@ -934,19 +934,6 @@ describe AppellantNotification do
     end
   end
 
-  describe SendNotificationJob do
-    let(:appeal) { create(:appeal, :active) }
-    let(:template) { "Hearing scheduled" }
-    let(:payload) { AppellantNotification.create_payload(appeal, template_name) }
-    describe "#perform" do
-      it "pushes a new message" do
-        ActiveJob::Base.queue_adapter = :test
-        AppellantNotification.notify_appellant(appeal, template)
-        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
-      end
-    end
-  end
-
   describe AppealCancelled do
     describe "#update_appeal_state_when_appeal_cancelled" do
       context "A cancelled 'RootTask'" do
@@ -965,6 +952,286 @@ describe AppellantNotification do
           expect(new_appeal_state.hearing_withdrawn).to eq(false)
           expect(new_appeal_state.decision_mailed).to eq(false)
           expect(new_appeal_state.scheduled_in_error).to eq(false)
+        end
+      end
+    end
+  end
+
+  describe SendNotificationJob do
+    let(:appeal) { create(:appeal, :active) }
+    let(:template) { "Hearing scheduled" }
+    let(:payload) { AppellantNotification.create_payload(appeal, template_name) }
+    describe "#perform" do
+      it "pushes a new message" do
+        ActiveJob::Base.queue_adapter = :test
+        AppellantNotification.notify_appellant(appeal, template)
+        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+      end
+    end
+  end
+
+  describe QuarterlyNotificationsJob do
+    let(:appeal) { create(:appeal, :active) }
+    let(:user) { create(:user) }
+    subject { QuarterlyNotificationsJob.perform_now }
+    describe "#perform" do
+      context "Appeal Docketed" do
+        let!(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            appeal_docketed: true
+          )
+        end
+        it "pushes a new message" do
+          subject
+          expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+        end
+      end
+      context "Appeal Docketed with withdrawn hearing" do
+        let!(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            appeal_docketed: true,
+            hearing_withdrawn: true
+          )
+        end
+        it "pushes a new message" do
+          subject
+          expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+        end
+      end
+      context "Hearing to be Rescheduled / Privacy Act Pending for hearing postponed" do
+        let!(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            appeal_docketed: true,
+            hearing_postponed: true,
+            privacy_act_pending: true
+          )
+        end
+        it "pushes a new message" do
+          subject
+          expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+        end
+      end
+      context "Hearing to be Rescheduled for hearing postponed" do
+        let!(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            appeal_docketed: true,
+            hearing_postponed: true
+          )
+        end
+        it "pushes a new message" do
+          subject
+          expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+        end
+      end
+      context "Hearing to be Rescheduled / Privacy Act Pending for scheduled in error" do
+        let!(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            appeal_docketed: true,
+            hearing_withdrawn: true,
+            scheduled_in_error: true
+          )
+        end
+        it "pushes a new message" do
+          subject
+          expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+        end
+      end
+      context "Hearing to be Rescheduled for scheduled in error" do
+        let!(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            appeal_docketed: true,
+            scheduled_in_error: true
+          )
+        end
+        it "pushes a new message" do
+          subject
+          expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+        end
+      end
+      context "Hearing Scheduled / Privacy Act Pending with ihp task" do
+        let!(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            appeal_docketed: true,
+            hearing_scheduled: true,
+            privacy_act_pending: true,
+            vso_ihp_pending: true
+          )
+        end
+        it "pushes a new message" do
+          subject
+          expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+        end
+      end
+      context "VSO IHP Pending / Privacy Act Pending" do
+        let!(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            appeal_docketed: true,
+            privacy_act_pending: true,
+            vso_ihp_pending: true
+          )
+        end
+        it "pushes a new message" do
+          subject
+          expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+        end
+      end
+      context "Hearing Scheduled with ihp task pending" do
+        let!(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            appeal_docketed: true,
+            hearing_scheduled: true,
+            vso_ihp_pending: true
+          )
+        end
+        it "pushes a new message" do
+          subject
+          expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+        end
+      end
+      context "Hearing Scheduled / Privacy Act Pending" do
+        let!(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            appeal_docketed: true,
+            hearing_scheduled: true,
+            privacy_act_pending: true
+          )
+        end
+        it "pushes a new message" do
+          subject
+          expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+        end
+      end
+      context "Privacy Act Pending" do
+        let!(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            appeal_docketed: true,
+            privacy_act_pending: true
+          )
+        end
+        it "pushes a new message" do
+          subject
+          expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+        end
+      end
+      context "Privacy Act Pending" do
+        let!(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            appeal_docketed: true,
+            vso_ihp_pending: true
+          )
+        end
+        it "pushes a new message" do
+          subject
+          expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+        end
+      end
+      context "Privacy Act Pending" do
+        let!(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            appeal_docketed: true,
+            hearing_scheduled: true
+          )
+        end
+        it "pushes a new message" do
+          subject
+          expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+        end
+      end
+      context "cancelled appeal" do
+        let!(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            appeal_cancelled: true
+          )
+        end
+        it "does not push a new message" do
+          subject
+          expect { subject }.not_to have_enqueued_job(SendNotificationJob)
+        end
+      end
+      context "decision mailed" do
+        let(:appeal_state) do
+          create(
+            :appeal_state,
+            appeal_id: appeal.id,
+            appeal_type: "Appeal",
+            created_by_id: user.id,
+            updated_by_id: user.id,
+            decision_mailed: true
+          )
+        end
+        it "does not push a new message" do
+          subject
+          expect { subject }.not_to have_enqueued_job(SendNotificationJob)
         end
       end
     end
