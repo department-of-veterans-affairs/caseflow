@@ -39,41 +39,46 @@ class QuarterlyNotificationsJob < CaseflowJob
   #
   # Response: SendNotificationJob queued to send_notification SQS queue
   def send_quarterly_notifications(appeal_state, appeal)
+    # if either there's a hearing postponed or a hearing scheduled in error
+    if appeal_state.hearing_postponed || appeal_state.scheduled_in_error
+      # appeal status is Hearing to be Rescheduled / Privacy Act Pending
+      if appeal_state.privacy_act_pending
+        AppellantNotification.notify_appellant(appeal, "Postponement of hearing")
+      # appeal status is Hearing to be Rescheduled
+      else
+        AppellantNotification.notify_appellant(appeal, "Withdrawal of hearing")
+      end
     # if there's ihp tasks pending, privacy act tasks pending, and at least one hearing scheduled
     # appeal status is Hearing Scheduled /  Privacy Act Pending
-    if appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending && appeal_state.hearing_scheduled
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
+    elsif appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending && appeal_state.hearing_scheduled
+      AppellantNotification.notify_appellant(appeal, "VSO IHP complete")
     # if there's ihp tasks pending and privacy act tasks pending, but no hearings scheduled
     # appeal status is VSO IHP Pending / Privacy Act Pending
     elsif appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending && !appeal_state.hearing_scheduled
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
+      AppellantNotification.notify_appellant(appeal, "Appeal decision mailed")
     # if there's ihp tasks pending and hearings scheduled, but no privacy act tasks pending
     # appeal status is Hearing Scheduled
     elsif appeal_state.vso_ihp_pending && !appeal_state.privacy_act_pending && appeal_state.hearing_scheduled
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
+      AppellantNotification.notify_appellant(appeal, "Hearing scheduled")
     # if there's no ihp tasks pending, and there is a hearing scheduled and privacy act tasks pending
     # appeal status is Hearing Scheduled / Privacy Act Pending
     elsif !appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending && appeal_state.hearing_scheduled
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
+      AppellantNotification.notify_appellant(appeal, "Scheduled in error")
     # if there's no ihp tasks pending or hearing scheduled, and there are privacy act tasks pending
     # appeal status is Privacy Act Pending
     elsif !appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending && !appeal_state.hearing_scheduled
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
+      AppellantNotification.notify_appellant(appeal, "Privacy Act request pending")
     # if there's no privacy acts pending or hearing scheduled, and there are ihp tasks pending
     # appeal status is VSO IHP Pending
     elsif appeal_state.vso_ihp_pending && !appeal_state.privacy_act_pending && !appeal_state.hearing_scheduled
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
+      AppellantNotification.notify_appellant(appeal, "Privacy Act request complete")
     # if there's no privacy acts pending or ihp tasks pending, and there is a hearing scheduled
     # appeal status is Hearing Scheduled
     elsif !appeal_state.vso_ihp_pending && !appeal_state.privacy_act_pending && appeal_state.hearing_scheduled
       AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
-    # if either there's a hearing postponed or a hearing scheduled in error
-    # appeal status is Hearing to be Rescheduled
-    elsif appeal_state.hearing_postponed || appeal_state.scheduled_in_error
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
     # appeal status is Appeal Docketed
     else
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
+      AppellantNotification.notify_appellant(appeal, "Appeal docketed")
     end
   end
 end
