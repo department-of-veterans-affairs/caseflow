@@ -10,7 +10,6 @@ describe BvaIntakePendingTab, :postgres do
   let(:assignee) { BvaIntake.singleton }
 
   describe ".column_names" do
-    binding.pry
     subject { tab.column_names }
 
     context "when only the assignee argument is passed when instantiating a BvaIntakePendingTab" do
