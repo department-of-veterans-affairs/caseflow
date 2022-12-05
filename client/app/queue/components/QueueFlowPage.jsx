@@ -74,8 +74,6 @@ class QueueFlowPage extends React.PureComponent {
       loadingText: 'Submitting...',
       styling: css({ marginLeft: '1rem' })
     }];
-    console.log("*****", this.props.hideCancelButton)
-console.log("&&&&&&&&& buttons", this.props.hideCancelButton ? buttons.slice(1) : buttons)
     return this.props.hideCancelButton ? buttons.slice(1) : buttons;
   }
 
