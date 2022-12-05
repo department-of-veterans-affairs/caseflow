@@ -151,14 +151,12 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   # Params: Appeal object
   #
   # Returns: key value pair of appeal_cancelled: true or false
-
-  # Psuedo Code:
-  # If appeal.root_task (or however you get to it) status == cancelled
-  # Then appeal_cancelled == true else false
-
   def map_appeal_cancelled_state(appeal)
-    # Code goes here ...
-    { appeal_cancelled: false }
+    if appeal.root_task&.status == "cancelled"
+      { appeal_cancelled: true }
+    else
+      { appeal_cancelled: false }
+    end
   end
 
   def map_appeal_docketed_state(appeal)
