@@ -104,7 +104,11 @@ class WorkQueue::LegacyAppealSerializer
       .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).any?
   end
 
-  attribute :location_history
+  attribute :location_history do |object|
+    object.location_history.map do |issue|
+      WorkQueue::LocationHistorySerializer.new(issue).serializable_hash[:data][:attributes]
+    end
+  end
 
   def self.latest_vacols_attorney_case_review(object)
     VACOLS::CaseAssignment.latest_task_for_appeal(object.vacols_id)
