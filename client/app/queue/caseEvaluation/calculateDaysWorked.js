@@ -67,8 +67,17 @@ export const calculateDaysWorked = (allChildrenTasks, daysAssigned, attorneyTask
     moment.range(moment(task.createdAt), moment(task.closedAt))
   );
 
-  const sumOfAllChildrenTasksDays = Math.max(1, findSumOfUniqueDateRanges(allTasksUniqueDateRanges));
-  const sumOfJudgeDays = findSumOfJudgeDays(attorneyTasks);
+  let sumOfAllChildrenTasksDays = 0;
+
+  if (allChildrenTasks.length > 0) {
+    sumOfAllChildrenTasksDays = Math.max(1, findSumOfUniqueDateRanges(allTasksUniqueDateRanges));
+  }
+
+  let sumOfJudgeDays = 0;
+
+  if (attorneyTasks.length > 0) {
+    sumOfJudgeDays = findSumOfJudgeDays(attorneyTasks);
+  }
 
   const daysWorked = daysAssigned - sumOfAllChildrenTasksDays - sumOfJudgeDays - 1;
 
