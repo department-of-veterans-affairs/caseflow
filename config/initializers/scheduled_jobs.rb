@@ -22,6 +22,7 @@ SCHEDULED_JOBS = {
     "push_priority_appeals_to_judges" => PushPriorityAppealsToJudgesJob,
     "quarterly_metrics" => QuarterlyMetricsReportJob,
     "reassign_old_tasks" => ReassignOldTasksJob,
+    "retrieve_documents_for_reader" => RetrieveDocumentsForReaderJob,
     "send_reminder_emails_job" => Hearings::SendReminderEmailsJob,
     "set_appeal_age_aod" => SetAppealAgeAodJob,
     "stats_collector" => StatsCollectorJob,
