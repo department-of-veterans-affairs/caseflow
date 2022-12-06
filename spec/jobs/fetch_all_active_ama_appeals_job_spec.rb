@@ -297,4 +297,20 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
     end
   end
+
+  describe "map appeal docketed state" do
+    context "ama appeals" do
+      let!(:appeal) { create(:appeal) }
+      let!(:appeal_without_task) { create(:appeal) }
+      let!(:distribution_task) { create(:distribution_task, appeal: appeal) }
+
+      it "returns appeal docketed: true" do
+        expect(subject.send(:map_appeal_docketed_state, appeal)).to eq(appeal_docketed: true)
+      end
+
+      it "return appeal docketed: false" do
+        expect(subject.send(:map_appeal_docketed_state, appeal_without_task)).to eq(appeal_docketed: false)
+      end
+    end
+  end
 end

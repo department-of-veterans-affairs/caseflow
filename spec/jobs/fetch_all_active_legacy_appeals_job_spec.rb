@@ -286,5 +286,23 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
       end
     end
   end
+
+  describe "map appeal docketed state" do
+    context "legacy appeals" do
+      let!(:legacy_appeal) do
+        create(:legacy_appeal, :with_veteran,
+               vacols_case: create(:case, :aod))
+      end
+
+      it "returns appeal docketed: true" do
+        legacy_appeal.case_record.update(bfcurloc: "01")
+        expect(subject.send(:map_appeal_docketed_state, legacy_appeal)).to eq(appeal_docketed: true)
+      end
+
+      it "return appeal docketed: false" do
+        expect(subject.send(:map_appeal_docketed_state, legacy_appeal)).to eq(appeal_docketed: false)
+      end
+    end
+  end
 end
 # rubocop:enable Layout/LineLength
