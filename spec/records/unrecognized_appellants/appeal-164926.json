@@ -70,7 +70,7 @@
       }
     ],
     "decision_documents": [
-  
+
     ],
     "claimants": [
       {
@@ -92,7 +92,7 @@
         "status": "on_hold",
         "type": "RootTask",
         "instructions": [
-  
+
         ],
         "assigned_to_id": 2,
         "assigned_by_id": null,
@@ -114,7 +114,7 @@
         "status": "completed",
         "type": "DistributionTask",
         "instructions": [
-  
+
         ],
         "assigned_to_id": 2,
         "assigned_by_id": null,
@@ -158,7 +158,7 @@
         "status": "completed",
         "type": "JudgeDecisionReviewTask",
         "instructions": [
-  
+
         ],
         "assigned_to_id": 851,
         "assigned_by_id": 1188,
@@ -266,16 +266,16 @@
         "location": "bva_dispatch",
         "comment": "Ap re fo DP in co cl ca",
         "factors_not_considered": [
-  
+
         ],
         "areas_for_improvement": [
-  
+
         ],
         "created_at": "2021-08-09 11:53:15 -0400",
         "updated_at": "2021-08-23 16:30:34 -0400",
         "one_touch_initiative": false,
         "positive_feedback": [
-  
+
         ],
         "appeal_id": 164926,
         "appeal_type": "Appeal"
@@ -290,16 +290,16 @@
         "location": "bva_dispatch",
         "comment": "Ap re fo DP in co cl ca",
         "factors_not_considered": [
-  
+
         ],
         "areas_for_improvement": [
-  
+
         ],
         "created_at": "2021-08-09 13:08:46 -0400",
         "updated_at": "2021-08-23 16:30:35 -0400",
         "one_touch_initiative": false,
         "positive_feedback": [
-  
+
         ],
         "appeal_id": 164926,
         "appeal_type": "Appeal"
@@ -406,19 +406,19 @@
       }
     ],
     "cavc_remands": [
-  
+
     ],
     "hearings": [
-  
+
     ],
     "hearing_days": [
-  
+
     ],
     "virtual_hearings": [
-  
+
     ],
     "hearing_task_associations": [
-  
+
     ],
     "users": [
       {
@@ -5900,7 +5900,7 @@
       {
         "id": 220,
         "type": "BusinessLine",
-        "name": "Vocational Rehabilitation and Employment",
+        "name": "Veterans Readiness and Employment",
         "role": null,
         "url": "voc_rehab",
         "participant_id": null,
