@@ -6,7 +6,7 @@ class WorkQueue::PriorlocSerializer
 
   attribute :assigned_by
   attribute :assigned_at
-  attribute :location
+  attribute :location_label
   attribute :sub_location
   attribute :location_staff
   attribute :created_at

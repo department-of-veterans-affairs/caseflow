@@ -34,6 +34,15 @@ class VACOLS::Priorloc < VACOLS::Record
     locstto
   end
 
+  def location_label
+    return location unless /[0-9]+/.match?(location)
+
+    label = VACOLS::Staff.find(location)&.snamel
+    return label if label.present?
+
+    location
+  end
+
   def location_staff
     locstrcv
   end
