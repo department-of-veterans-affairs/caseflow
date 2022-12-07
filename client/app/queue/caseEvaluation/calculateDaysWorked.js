@@ -40,7 +40,7 @@ const findSumOfUniqueDateRanges = (dateRanges) => {
     sumOfDays += Math.max(1, range.diff('days'));
   });
 
-  return sumOfDays;
+  return Math.max(0, sumOfDays);
 };
 
 const findSumOfJudgeDays = (attorneyTasks) => {
@@ -58,9 +58,13 @@ const findSumOfJudgeDays = (attorneyTasks) => {
     return null;
   }).filter((range) => range !== null);
 
+<<<<<<< HEAD
   const sumOfDays = findSumOfUniqueDateRanges(judgeGapDateRanges);
 
   return sumOfDays;
+=======
+  return findSumOfUniqueDateRanges(judgeGapDateRanges);
+>>>>>>> 3da32b6b256fe971eb214ca411202bd8a2250e8c
 };
 
 export const calculateDaysWorked = (allChildrenTasks, daysAssigned, attorneyTasks) => {
@@ -69,8 +73,17 @@ export const calculateDaysWorked = (allChildrenTasks, daysAssigned, attorneyTask
     moment.range(moment(task.createdAt), moment(task.closedAt))
   );
 
+<<<<<<< HEAD
   const sumOfAllChildrenTasksDays = findSumOfUniqueDateRanges(allTasksUniqueDateRanges);
   const sumOfJudgeDays = findSumOfJudgeDays(attorneyTasks);
 
   return daysAssigned - Math.max(1, sumOfAllChildrenTasksDays) - sumOfJudgeDays - 1;
+=======
+  const sumOfAllChildrenTasksDays = Math.max(1, findSumOfUniqueDateRanges(allTasksUniqueDateRanges));
+  const sumOfJudgeDays = findSumOfJudgeDays(attorneyTasks);
+
+  const daysWorked = daysAssigned - sumOfAllChildrenTasksDays - sumOfJudgeDays - 1;
+
+  return Math.max(0, daysWorked);
+>>>>>>> 3da32b6b256fe971eb214ca411202bd8a2250e8c
 };
