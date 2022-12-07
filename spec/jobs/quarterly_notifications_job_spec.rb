@@ -6,6 +6,22 @@ describe QuarterlyNotificationsJob, type: :job do
   let(:user) { create(:user) }
   subject { QuarterlyNotificationsJob.perform_now }
   describe "#perform" do
+    context "appeal is nil" do
+      let!(:appeal_state) do
+        create(
+          :appeal_state,
+          appeal_id: 2,
+          appeal_type: "Appeal",
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          decision_mailed: true
+        )
+      end
+      it "does not push a new message" do
+        subject
+        expect { subject }.not_to have_enqueued_job(SendNotificationJob)
+      end
+    end
     context "Appeal Docketed" do
       let!(:appeal_state) do
         create(

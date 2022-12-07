@@ -17,7 +17,11 @@ class QuarterlyNotificationsJob < CaseflowJob
       elsif state.appeal_type == "LegacyAppeal"
         appeal = LegacyAppeal.find(state.appeal_id)
       end
-      send_quarterly_notifications(state, appeal)
+      if appeal.nil?
+        fail Caseflow::Error::AppealNotFound, "IDT Standard Error ID: " + SecureRandom.uuid + " The appeal was unable to be found."
+      else
+        send_quarterly_notifications(state, appeal)
+      end
     end
   end
 
