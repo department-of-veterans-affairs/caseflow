@@ -57,7 +57,7 @@ feature "Higher-Level Review", :all_dbs do
   after do
     FeatureToggle.disable!(:filed_by_va_gov_hlr)
     FeatureToggle.disable!(:updated_intake_forms)
-    FeatureToggle.enable!(:use_ama_activation_date)
+    FeatureToggle.disable!(:use_ama_activation_date)
   end
 
   it "Creates an end product and contentions for it" do
