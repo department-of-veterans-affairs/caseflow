@@ -58,6 +58,7 @@ feature "Higher-Level Review", :all_dbs do
     FeatureToggle.disable!(:filed_by_va_gov_hlr)
     FeatureToggle.disable!(:updated_intake_forms)
     FeatureToggle.disable!(:use_ama_activation_date)
+  end
 
   it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
