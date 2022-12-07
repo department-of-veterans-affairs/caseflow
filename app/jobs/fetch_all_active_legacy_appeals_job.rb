@@ -158,8 +158,15 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
     { appeal_cancelled: false }
   end
 
+  # Purpose: Determines if the appeal_docketed attribute within the associated
+  # appeal_state record should be set to true
+  # Params: Legacy Appeal object
+  # Returns: Hash of "appeal_docketed" key value pairs
   def map_appeal_docketed_state(appeal)
-    # Code goes here ...
+    if VACOLS::Case.exists?(bfkey: appeal.vacols_id, bfcurloc: "01")
+      return { appeal_docketed: true }
+    end
+
     { appeal_docketed: false }
   end
 

@@ -305,6 +305,28 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     end
   end
 
+  describe "map appeal docketed state" do
+    context "ama appeals" do
+      let!(:appeal) { create(:appeal) }
+      let!(:appeal_with_only_root_task) { create(:appeal) }
+      let!(:appeal_with_no_tasks) { create(:appeal) }
+      let!(:root_task) { create(:root_task, appeal: appeal_with_only_root_task) }
+      let!(:distribution_task) { create(:distribution_task, appeal: appeal) }
+
+      it "returns appeal docketed: true when there is a distribution task" do
+        expect(subject.send(:map_appeal_docketed_state, appeal)).to eq(appeal_docketed: true)
+      end
+
+      it "returns appeal docketed: false when there are no distribution tasks" do
+        expect(subject.send(:map_appeal_docketed_state, appeal_with_only_root_task)).to eq(appeal_docketed: false)
+      end
+
+      it "return appeal docketed: false when there are no tasks at all" do
+        expect(subject.send(:map_appeal_docketed_state, appeal_with_no_tasks)).to eq(appeal_docketed: false)
+      end
+    end
+  end
+
   describe "#map_appeal_hearing_scheduled_in_error_state(appeal)" do
     let!(:scheduled_hearing) { create(:hearing) }
     let!(:error_hearing) { create(:hearing, :scheduled_in_error) }
