@@ -227,6 +227,7 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
     let(:postponed_appeal) { postponed_hearing.appeal }
     let(:appeal) { scheduled_hearing.appeal }
     let(:new_case_hearing) { create(:case_hearing, folder_nr: postponed_appeal.vacols_id) }
+    let(:empty_appeal) { create(:legacy_appeal) }
     context "When the last hearing has a disposition of postponed" do
       it "returns the correct hash with a boolean value of true" do
         expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal)).to eq(hearing_postponed: true)
@@ -250,6 +251,12 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
       it "returns the correct hash with a boolean value of false" do
         new_case_hearing
         expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal)).to eq(hearing_postponed: false)
+      end
+    end
+
+    context "When there are no hearings associated with an appeal" do
+      it "returns the correct hash with a boolean value of false" do
+        expect(subject.send(:map_appeal_hearing_postponed_state, empty_appeal)).to eq(hearing_postponed: false)
       end
     end
   end
@@ -293,6 +300,7 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
     let(:error_appeal) { error_hearing.appeal }
     let(:appeal) { scheduled_hearing.appeal }
     let(:new_case_hearing) { create(:case_hearing, folder_nr: error_appeal.vacols_id) }
+    let(:empty_appeal) { create(:legacy_appeal) }
     context "When the last hearing has a disposition of scheduled in error" do
       it "returns the correct hash with a boolean value of true" do
         expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, error_appeal)).to eq(scheduled_in_error: true)
@@ -316,6 +324,12 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
       it "returns the correct hash with a boolean value of false" do
         new_case_hearing
         expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, error_appeal)).to eq(scheduled_in_error: false)
+      end
+    end
+
+    context "When there are no hearings associated with an appeal" do
+      it "returns the correct hash with a boolean value of false" do
+        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, empty_appeal)).to eq(scheduled_in_error: false)
       end
     end
   end
