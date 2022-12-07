@@ -687,6 +687,31 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context ".active when request issue has been split off a appeal and is nil or 'in_progress' after split" do
+    subject { RequestIssue.active }
+
+    let!(:active_request_issue) { create(:request_issue, split_issue_status: nil) }
+    let!(:split_request_issue) { create(:request_issue, split_issue_status: "in_progress") }
+
+    it "filters by whether the split_issue_status is nil" do
+      expect(active_request_issue.split_issue_status).to be(nil)
+      expect(split_request_issue.split_issue_status).to eq("in_progress")
+      expect(subject.find_by(id: active_request_issue.id)).to eq(active_request_issue)
+      expect(subject.find_by(id: split_request_issue.id)).to eq(split_request_issue)
+    end
+  end
+
+  context "Request issues from original appeal are inactive when they don't go to a split appeal" do
+    subject { RequestIssue.active }
+
+    let!(:on_hold_request_issue) { create(:request_issue, split_issue_status: "on_hold") }
+
+    it "filters by whether the split_issue_status is on_hold" do
+      expect(on_hold_request_issue.split_issue_status).to eq("on_hold")
+      expect(subject.find_by(id: on_hold_request_issue.id)).to eq(nil)
+    end
+  end
+
   context ".active_or_decided_or_withdrawn" do
     subject { RequestIssue.active_or_decided_or_withdrawn }
 
