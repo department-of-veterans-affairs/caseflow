@@ -1,5 +1,5 @@
 import Moment from 'moment';
-// import { extendMoment } from 'moment-range';
+import { extendMoment } from 'moment-range';
 import { createSelector } from 'reselect';
 import { filter, find, keyBy, map, merge, orderBy, reduce } from 'lodash';
 import { taskIsActive, taskIsOnHold, getAllChildrenTasks, taskAttributesFromRawTask } from './utils';
@@ -8,7 +8,7 @@ import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
 import COPY from '../../COPY';
 
-const moment = Moment;
+const moment = extendMoment(Moment);
 
 export const selectedTasksSelector = (state, userId) => {
   return map(state.queue.isTaskAssignedToUserSelected[userId] || {}, (selected, id) => {
