@@ -1,7 +1,6 @@
 import { combineReducers } from 'redux';
 import { timeFunction } from '../../util/PerfDebug';
 import commonComponentsReducer from '../../components/common/reducers';
-import { featureToggleReducer } from './featureToggle';
 import { ACTIONS } from '../constants';
 
 const extractInitialState = { extractedResults: '', isLoading: false };
@@ -37,7 +36,6 @@ export const extractReducer = (state = extractInitialState, action) => {
 };
 
 const combinedReducer = combineReducers({
-  featureToggle: featureToggleReducer,
   components: commonComponentsReducer,
   extractReducer
 });
