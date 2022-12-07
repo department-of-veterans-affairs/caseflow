@@ -13,7 +13,8 @@ const defaultProps = {
   onChange: jest.fn(),
   register: jest.fn(),
   formName: 'higherLevelReview',
-  userCanSelectVha: false
+  userCanSelectVha: false,
+  featureToggles: { vhaClaimReviewEstablishment: true },
 };
 
 const vhaTooltipText = sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, COPY.VHA_BENEFIT_EMAIL_ADDRESS);

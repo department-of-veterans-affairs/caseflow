@@ -85,11 +85,11 @@ export const getDefaultPayeeCode = (state, claimant) => {
   return (claimant ? _.find(state.relationships, { value: claimant }).defaultPayeeCode : null);
 };
 
-export const formatBenefitTypeRadioOptions = (options, userCanSelectVha) => {
+export const formatBenefitTypeRadioOptions = (options, userCanSelectVha, featureToggles) => {
   return _.map(options, (value, key) => {
     const radioData = { value: key, displayText: value };
 
-    if (key === 'vha' && !userCanSelectVha) {
+    if (key === 'vha' && !userCanSelectVha && featureToggles.vhaClaimReviewEstablishment) {
       return {
         ...radioData,
         disabled: true,

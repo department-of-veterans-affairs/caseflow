@@ -470,8 +470,13 @@ feature "Intake Review Page", :postgres do
       let(:current_user) { create(:user, roles: ["Admin Intake"]) }
 
       before do
+        FeatureToggle.enable!(:vha_claim_review_establishment)
         User.authenticate!(user: current_user)
         navigate_to_review_page(form_type)
+      end
+
+      after do
+        FeatureToggle.disable!(:vha_claim_review_establishment)
       end
 
       it "Should display the VHA HLR SC Permissions Update Information Banner" do
