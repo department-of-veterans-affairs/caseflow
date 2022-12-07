@@ -163,7 +163,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   # Params: Appeal object
   # Returns: Hash of "appeal_docketed" key value pair
   def map_appeal_docketed_state(appeal)
-    if appeal.tasks.exists?(type: "DistributionTask")
+    if appeal&.tasks&.exists?(type: "DistributionTask")
       return { appeal_docketed: true }
     end
 
