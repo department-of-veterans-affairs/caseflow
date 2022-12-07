@@ -54,7 +54,6 @@ import AsyncableJobs from 'app/asyncableJobs';
 import Inbox from 'app/inbox';
 import Explain from 'app/explain';
 import MPISearch from 'app/mpi/MPISearch';
-import Admin from 'app/admin';
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
@@ -88,8 +87,7 @@ const COMPONENTS = {
   AsyncableJobs,
   Inbox,
   Explain,
-  MPISearch,
-  Admin
+  MPISearch
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
@@ -142,8 +140,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './nonComp/index',
         './2.0/router',
         './explain/index',
-        './mpi/MPISearch',
-        './admin/index'
+        './mpi/MPISearch'
       ],
       () => renderApp(component)
     );

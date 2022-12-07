@@ -42,7 +42,7 @@ class SpecialIssuesController < ApplicationController
               :dic_death_or_accrued_benefits_united_states, :vocational_rehab,
               :foreign_claim_compensation_claims_dual_claims_appeals, :manlincon_compliance,
               :hearing_including_travel_board_video_conference, :home_loan_guaranty, :insurance,
-              :national_cemetery_administration, :spina_bifida, :radiation, :pact_act, :nonrating_issue,
+              :national_cemetery_administration, :spina_bifida, :radiation, :nonrating_issue,
               :us_territory_claim_philippines, :contaminated_water_at_camp_lejeune, :mustard_gas,
               :education_gi_bill_dependents_educational_assistance_scholars,
               :foreign_pension_dic_all_other_foreign_countries,
@@ -50,7 +50,7 @@ class SpecialIssuesController < ApplicationController
               :us_territory_claim_american_samoa_guam_northern_mariana_isla,
               :us_territory_claim_puerto_rico_and_virgin_islands,
               :burn_pit, :military_sexual_trauma, :blue_water,
-              :no_special_issues)
+              :us_court_of_appeals_for_veterans_claims, :no_special_issues)
   end
 
   def record_not_found
