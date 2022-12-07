@@ -82,8 +82,6 @@ class Docket
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
     appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
-    Rails.logger.info("$$$$$ tasks")
-    Rails.logger.info(tasks)
     tasks.map do |task|
       next if task.nil?
 
@@ -98,6 +96,7 @@ class Docket
                                                priority: priority,
                                                ready_at: task.appeal.ready_for_distribution_at,
                                                task: task)
+        cancel_previous_judge_assign_task(task.appeal, distribution.judge.id)
       elsif !distributed_case
         distribution.distributed_cases.create!(case_id: task.appeal.uuid,
                                                docket: docket_type,
@@ -139,20 +138,16 @@ class Docket
     appeals.map do |appeal|
       next nil unless appeal.tasks.open.of_type(:JudgeAssignTask).count == 0
 
-      distribution_task = appeal.tasks.of_type(:DistributionTask).first
       distribution_task_assignee_id = appeal.tasks.of_type(:DistributionTask).first.assigned_to_id
-      Rails.logger.info("Assigning judge task for appeal #{appeal.id}")
-      judge_task = JudgeAssignTaskCreator.new(appeal: appeal, judge: judge,
-                                              assigned_by_id: distribution_task_assignee_id).call
-      Rails.logger.info("Assigned judge task with task id #{judge_task.id} to #{judge_task.assigned_to.css_id}")
-
-      Rails.logger.info("Closing distribution task for appeal #{appeal.id}")
-      appeal.tasks.of_type(:DistributionTask).update(status: :completed)
-      Rails.logger.info("Closing distribution task with task id #{distribution_task.id} "\
-        "that was assigned to id #{distribution_task_assignee_id}")
-
-      judge_task
+      Rails.logger.info("Calling JudgeAssignTaskCreator for appeal #{appeal.id} with judge #{judge.css_id}")
+      JudgeAssignTaskCreator.new(appeal: appeal,
+                                 judge: judge,
+                                 assigned_by_id: distribution_task_assignee_id).call
     end
+  end
+
+  def cancel_previous_judge_assign_task(appeal, judge_id)
+    appeal.tasks.of_type(:JudgeAssignTask).where.not(assigned_to_id: judge_id).update(status: :cancelled)
   end
 
   def use_by_docket_date?
