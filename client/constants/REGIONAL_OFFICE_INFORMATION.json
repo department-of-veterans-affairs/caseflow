@@ -592,7 +592,7 @@
     "timezone": "America/Chicago",
     "hold_hearings": true,
     "facility_locator_id": "vba_362",
-    "alternate_locations": ["vha_671GS", "vha_740GB"]
+    "alternate_locations": ["vha_671GS", "vha_740GA"]
   },
   "RO63": {
     "label": "Anchorage regional office",
