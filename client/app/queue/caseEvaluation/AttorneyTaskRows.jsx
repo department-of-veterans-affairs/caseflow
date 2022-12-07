@@ -57,8 +57,6 @@ class AttorneyTaskRows extends React.PureComponent {
       timeline,
     } = templateConfig;
 
-    const label = task.location ? `Location: ${task.label}` : task.label;
-
     return (
       <tr key={task.uniqueId}>
         <td className="attorneyTaskTimelineContainer">
@@ -68,7 +66,7 @@ class AttorneyTaskRows extends React.PureComponent {
           <div className="grayLineStyling" />
         </td>
         <td className={timeline ? 'attorneyTaskContainer' : ''} >
-          {label}{this.datesTaskWorked(task)}
+          {task.label}{this.datesTaskWorked(task)}
         </td>
       </tr>
     );
