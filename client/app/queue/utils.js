@@ -365,17 +365,20 @@ const prepareLocationHistoryForStore = (appeal) => {
   let locationHistory = [];
 
   if (appeal.attributes.location_history) {
-    locationHistory = appeal.attributes.location_history.map((location) =>
+    locationHistory = appeal.attributes.location_history.map((location, index) =>
       ({
+        label: location.location,
+        uniqueId: `${location.vacols_id }_${ index}`,
         assignedBy: location.assigned_by,
         assignedAt: location.assigned_at,
         location: location.location,
         subLocation: location.sub_location,
         locationStaff: location.location_staff,
-        createdAt: location.location_date_in,
-        closedAt: location.location_date_out,
+        createdAt: location.created_at,
+        closedAt: location.closed_at,
         vacolsId: location.vacols_id,
-        exception_flag: location.exception_flag
+        exception_flag: location.exception_flag,
+        withAttorney: location['with_attorney?']
       }));
   }
 

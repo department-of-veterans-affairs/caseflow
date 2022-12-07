@@ -13,5 +13,6 @@ class WorkQueue::PriorlocSerializer
   attribute :closed_at
   attribute :vacols_id
   attribute :exception_flag
+  attribute :with_attorney?
 
 end

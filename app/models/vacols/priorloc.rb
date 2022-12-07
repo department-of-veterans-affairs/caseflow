@@ -50,6 +50,10 @@ class VACOLS::Priorloc < VACOLS::Record
     locdto
   end
 
+  def with_attorney?
+    User.where(css_id: location)&.first&.attorney? || false
+  end
+
   def summary
     {
       assigned_by: assigned_by,
@@ -60,7 +64,8 @@ class VACOLS::Priorloc < VACOLS::Record
       date_out: location_date_out,
       date_in: location_date_in,
       vacols_id: vacols_id,
-      exception_flag: exception_flag
+      exception_flag: exception_flag,
+      with_attorney?: with_attorney?
     }
   end
 end
