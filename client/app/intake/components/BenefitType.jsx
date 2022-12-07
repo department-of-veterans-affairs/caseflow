@@ -16,7 +16,7 @@ export default class BenefitType extends React.PureComponent {
       featureToggles,
     } = this.props;
 
-    const canSelectVhaSwitch = userCanSelectVha && featureToggles.vhaClaimReviewEstablishment;
+    const canSelectVhaBenefit = userCanSelectVha && featureToggles.vhaClaimReviewEstablishment;
 
     return <div className="cf-benefit-type" style={{ marginTop: '10px' }} >
       <RadioField
@@ -24,7 +24,7 @@ export default class BenefitType extends React.PureComponent {
         label="What is the Benefit Type?"
         strongLabel
         vertical
-        options={formatBenefitTypeRadioOptions(BENEFIT_TYPES, canSelectVhaSwitch)}
+        options={formatBenefitTypeRadioOptions(BENEFIT_TYPES, canSelectVhaBenefit)}
         onChange={onChange}
         value={value}
         errorMessage={errorMessage}
