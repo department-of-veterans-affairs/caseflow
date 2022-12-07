@@ -40,3 +40,15 @@
   border: none;
   padding-left: '25px';
 }
+
+@media screen and (max-width: 1264px) {
+  .case-timeline {
+    flex-direction: column;
+    gap: 10px;
+
+    .case-type, .attorney-assigned {
+      width: 100%;
+    }
+  }
+
+}
