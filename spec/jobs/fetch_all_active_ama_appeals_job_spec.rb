@@ -322,7 +322,7 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
 
       it "return appeal docketed: false when there are no tasks at all" do
-        expect(subject.send(:map_appeal_docketed_state, appeal_without_task)).to eq(appeal_docketed: false)
+        expect(subject.send(:map_appeal_docketed_state, appeal_with_no_tasks)).to eq(appeal_docketed: false)
       end
     end
   end
