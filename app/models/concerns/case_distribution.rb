@@ -9,7 +9,8 @@ module CaseDistribution
            :nonpriority_count,
            :direct_review_due_count,
            :total_batch_size,
-           :legacy_hearing_backlog_count,
+           :legacy_hearing_priority_count,
+           :legacy_hearing_nonpriority_count,
            to: :docket_coordinator
 
   private

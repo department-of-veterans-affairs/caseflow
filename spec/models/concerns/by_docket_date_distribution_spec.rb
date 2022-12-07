@@ -180,6 +180,7 @@ describe ByDocketDateDistribution, :all_dbs do
 
       expect(statistics).to include(:batch_size)
       expect(statistics).to include(:total_batch_size)
+      expect(statistics).to include(:priority_target)
       expect(statistics).to include(:priority)
       expect(statistics).to include(:nonpriority)
       expect(statistics).to include(:algorithm)
@@ -188,11 +189,9 @@ describe ByDocketDateDistribution, :all_dbs do
       nonpriority_stats = statistics[:nonpriority]
 
       expect(priority_stats).to include(:count)
-      expect(priority_stats).to include(:priority_target)
+      expect(priority_stats).to include(:legacy_hearing_tied_to)
       expect(nonpriority_stats).to include(:count)
-      expect(nonpriority_stats).to include(:priority_target)
-      expect(nonpriority_stats).to include(:direct_review_due_count)
-      expect(nonpriority_stats).to include(:legacy_hearing_backlog_count)
+      expect(nonpriority_stats).to include(:legacy_hearing_tied_to)
       expect(nonpriority_stats).to include(:iterations)
 
       @new_acd.dockets.each_key do |sym|
