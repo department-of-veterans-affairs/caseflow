@@ -82,7 +82,11 @@ class Docket
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
     appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
+    Rails.logger.info("$$$$$ tasks")
+    Rails.logger.info(tasks)
     tasks.map do |task|
+      next if task.nil?
+
       # If a distributed case already exists for this appeal, alter the existing distributed case's case id.
       # This is modeled after the allow! method in the redistributed_case model
       distributed_case = DistributedCase.find_by(case_id: task.appeal.uuid)
@@ -133,6 +137,8 @@ class Docket
 
   def assign_judge_tasks_for_appeals(appeals, judge)
     appeals.map do |appeal|
+      next nil unless appeal.tasks.open.of_type(:JudgeAssignTask).count == 0
+
       distribution_task = appeal.tasks.of_type(:DistributionTask).first
       distribution_task_assignee_id = appeal.tasks.of_type(:DistributionTask).first.assigned_to_id
       Rails.logger.info("Assigning judge task for appeal #{appeal.id}")

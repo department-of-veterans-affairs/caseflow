@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_11_14_191336) do
+ActiveRecord::Schema.define(version: 2022_11_15_202338) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1076,6 +1076,15 @@ ActiveRecord::Schema.define(version: 2022_11_14_191336) do
     t.index ["updated_at"], name: "index_messages_on_updated_at"
   end
 
+  create_table "mpi_update_person_events", force: :cascade do |t|
+    t.bigint "api_key_id", null: false, comment: "API Key used to initiate the event"
+    t.datetime "completed_at", comment: "Timestamp of when update was completed, regardless of success or failure"
+    t.datetime "created_at", comment: "Timestamp of when update was initiated"
+    t.json "info", comment: "Additional information about the update"
+    t.string "update_type", null: false, comment: "Type or Result of update"
+    t.index ["api_key_id"], name: "index_mpi_update_person_events_on_api_key_id"
+  end
+
   create_table "nod_date_updates", comment: "Tracks changes to an AMA appeal's receipt date (aka, NOD date)", force: :cascade do |t|
     t.bigint "appeal_id", null: false, comment: "Appeal for which the NOD date is being edited"
     t.string "change_reason", null: false, comment: "Reason for change: entry_error or new_info"
@@ -1421,6 +1430,7 @@ ActiveRecord::Schema.define(version: 2022_11_14_191336) do
     t.boolean "national_cemetery_administration", default: false
     t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
+    t.boolean "pact_act", default: false, comment: "The Sergeant First Class (SFC) Heath Robinson Honoring our Promise to Address Comprehensive Toxics (PACT) Act"
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
     t.boolean "radiation", default: false
@@ -1478,6 +1488,17 @@ ActiveRecord::Schema.define(version: 2022_11_14_191336) do
     t.index ["updated_at"], name: "index_supplemental_claims_on_updated_at"
     t.index ["uuid"], name: "index_supplemental_claims_on_uuid"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
+  end
+
+  create_table "system_admin_events", force: :cascade do |t|
+    t.datetime "completed_at", comment: "Timestamp of when event was completed without error"
+    t.datetime "created_at", comment: "Timestamp of when event was initiated"
+    t.datetime "errored_at", comment: "Timestamp of when event failed due to error"
+    t.string "event_type", null: false, comment: "Type of event"
+    t.json "info", comment: "Additional information about the event"
+    t.datetime "updated_at", comment: "Timestamp of when event was last updated"
+    t.bigint "user_id", null: false, comment: "User who initiated the event"
+    t.index ["user_id"], name: "index_system_admin_events_on_user_id"
   end
 
   create_table "tags", id: :serial, force: :cascade do |t|
@@ -1832,6 +1853,7 @@ ActiveRecord::Schema.define(version: 2022_11_14_191336) do
   add_foreign_key "legacy_issue_optins", "request_issues"
   add_foreign_key "legacy_issues", "request_issues"
   add_foreign_key "messages", "users"
+  add_foreign_key "mpi_update_person_events", "api_keys"
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
   add_foreign_key "non_availabilities", "schedule_periods"
@@ -1857,6 +1879,7 @@ ActiveRecord::Schema.define(version: 2022_11_14_191336) do
   add_foreign_key "sent_hearing_email_events", "users", column: "sent_by_id"
   add_foreign_key "split_correlation_tables", "users", column: "created_by_id"
   add_foreign_key "split_correlation_tables", "users", column: "updated_by_id"
+  add_foreign_key "system_admin_events", "users"
   add_foreign_key "task_timers", "tasks"
   add_foreign_key "tasks", "tasks", column: "parent_id"
   add_foreign_key "tasks", "users", column: "assigned_by_id"

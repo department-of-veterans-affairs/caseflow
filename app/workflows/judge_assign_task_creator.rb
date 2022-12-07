@@ -36,18 +36,20 @@ class JudgeAssignTaskCreator
       assigning_user = @assigned_by_id.nil? ? nil : User.find(@assigned_by_id)
     rescue ActiveRecord::RecordNotFound
       Rails.logger.error("Could not locate a user with id #{@assigned_by_id} who reassigned a judge assign task.")
-      new_task, _old_task, _new_children = open_judge_assign_task.reassign({
+      new_task, old_task, _new_children = open_judge_assign_task.reassign({
                                                                              assigned_to_type: @judge.class.name,
                                                                              assigned_to_id: @judge.id,
                                                                              appeal: appeal
                                                                            }, nil)
+      old_task.cancelled!
       return new_task
     end
-    new_task, _old_task, _new_children = open_judge_assign_task.reassign({
+    new_task, old_task, _new_children = open_judge_assign_task.reassign({
                                                                            assigned_to_type: @judge.class.name,
                                                                            assigned_to_id: @judge.id,
                                                                            appeal: appeal
                                                                          }, assigning_user)
+    old_task.cancelled!
     new_task
   end
 
