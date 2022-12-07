@@ -322,7 +322,7 @@ export const daysWaitingColumn = (requireDasRecord) => {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
     span: collapseColumn(requireDasRecord),
-    // tooltip: <React.Fragment>Calendar days since this case was assigned</React.Fragment>,
+    // tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
     valueFunction: (task) => {
       const assignedDays = daysSinceAssigned(task);
       const onHoldDays = daysSincePlacedOnHold(task);
