@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WorkQueue::LocationHistorySerializer
+class WorkQueue::PriorlocSerializer
   include FastJsonapi::ObjectSerializer
   extend Helpers::AppealHearingHelper
 
@@ -9,9 +9,9 @@ class WorkQueue::LocationHistorySerializer
   attribute :location
   attribute :sub_location
   attribute :location_staff
-  attribute :location_date_in
-  attribute :location_date_out
-  attribute :folder
+  attribute :created_at
+  attribute :closed_at
+  attribute :vacols_id
   attribute :exception_flag
 
 end

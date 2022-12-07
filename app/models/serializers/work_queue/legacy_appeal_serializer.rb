@@ -105,8 +105,8 @@ class WorkQueue::LegacyAppealSerializer
   end
 
   attribute :location_history do |object|
-    object.location_history.map do |issue|
-      WorkQueue::LocationHistorySerializer.new(issue).serializable_hash[:data][:attributes]
+    object.location_history.map do |location|
+      WorkQueue::PriorlocSerializer.new(location).serializable_hash[:data][:attributes]
     end
   end
 
