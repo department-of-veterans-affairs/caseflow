@@ -661,7 +661,7 @@ export default class QueueTable extends React.PureComponent {
           bodyClassName={bodyClassName ?? ''}
           rowClassNames={rowClassNames}
           bodyStyling={bodyStyling}
-          {...this.state}
+          {...this.props}
         />
         <FooterRow rowObjects={[]} columns={columns} />
       </table>

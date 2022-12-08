@@ -359,6 +359,22 @@ export const daysSinceIntakeColumn = (requireDasRecord) => {
   };
 };
 
+export const receiptDateColumn = (requireDasRecord) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_10182,
+    name: QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name,
+    span: collapseColumn(requireDasRecord),
+    align: 'center',
+    valueFunction: (task) => {
+      // console.log(`maite ${JSON.stringify(task.appeal_receipt_date)}`);
+      return moment(task.appeal_receipt_date).format('MM/DD/YYYY');
+
+    },
+    backendCanSort: true,
+    getSortValue: (task) => task.daysSinceBoardIntake
+  };
+};
+
 export const daysOnHoldColumn = (requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
