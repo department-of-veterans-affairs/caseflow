@@ -109,8 +109,8 @@ class SendNotificationJob < CaseflowJob
         message.participant_id,
         notification_audit_record.id.to_s,
         email_template_id,
-        status,
-        personalisation
+        personalisation,
+        status
       )
       if !response.nil? && response != ""
         to_update = { notification_content: response.body["content"]["body"], email_notification_external_id: response.body["id"] }
