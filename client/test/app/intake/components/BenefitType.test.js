@@ -73,6 +73,30 @@ describe('BenefitType', () => {
       });
     });
 
+    describe('when the user is a VHA staff member with feature toggle disabled', () => {
+      const props = {
+        ...defaultProps,
+        featureToggles: { vhaClaimReviewEstablishment: false }
+
+      };
+
+      beforeEach(() => {
+        renderBenefitType(props);
+      });
+
+      it('The "Veterans Health Administration" option is enabled', () => {
+        expect(getVhaRadioOption()).not.toBeDisabled();
+      });
+
+      it('Tooltip does not appear whenever VHA option is hovered over', () => {
+        hoverOverRadioOption(getVhaRadioOption());
+
+        expect(
+          screen.queryByText(vhaTooltipText)
+        ).not.toBeInTheDocument();
+      });
+    });
+
     describe('when the user is a VHA staff member', () => {
       const props = {
         ...defaultProps,
@@ -118,6 +142,30 @@ describe('BenefitType', () => {
         await waitFor(() => {
           expect(getVhaOptionTooltip()).toBeVisible();
         });
+      });
+    });
+
+    describe('when the user is a VHA staff member with feature toggle disabled', () => {
+      const props = {
+        ...defaultProps,
+        featureToggles: { vhaClaimReviewEstablishment: false }
+
+      };
+
+      beforeEach(() => {
+        renderBenefitType(props);
+      });
+
+      it('The "Veterans Health Administration" option is enabled', () => {
+        expect(getVhaRadioOption()).not.toBeDisabled();
+      });
+
+      it('Tooltip does not appear whenever VHA option is hovered over', () => {
+        hoverOverRadioOption(getVhaRadioOption());
+
+        expect(
+          screen.queryByText(vhaTooltipText)
+        ).not.toBeInTheDocument();
       });
     });
 

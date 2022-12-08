@@ -16,7 +16,8 @@ export default class BenefitType extends React.PureComponent {
       featureToggles,
     } = this.props;
 
-    const canSelectVhaBenefit = userCanSelectVha && featureToggles.vhaClaimReviewEstablishment;
+    // If the feature toggle is off then all users should be able to select vha
+    const canSelectVhaBenefit = featureToggles.vhaClaimReviewEstablishment ? userCanSelectVha : true;
 
     return <div className="cf-benefit-type" style={{ marginTop: '10px' }} >
       <RadioField
