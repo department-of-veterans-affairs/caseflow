@@ -11,7 +11,6 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   # All Variants of a Privacy Act Task
   PRIVACY_ACT_TASKS = %w[FoiaColocatedTask PrivacyActTask HearingAdminActionFoiaPrivacyRequestTask PrivacyActRequestMailTask FoiaRequestMailTask].freeze
 
-
   # Purpose: Job that finds all active Legacy Appeals &
   # creates records within the appeal_states table
   #

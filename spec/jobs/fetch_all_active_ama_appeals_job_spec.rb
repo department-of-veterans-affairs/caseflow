@@ -231,6 +231,75 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     end
   end
 
+  describe "#map_appeal_privacy_act_state(appeal)" do
+    let(:appeal) { create(:appeal) }
+    let(:privacy_act1) { create(:privacy_act_task, appeal: appeal) }
+    let(:privacy_act2) { create(:privacy_act_task, appeal: appeal) }
+    let(:privacy_act3) { create(:privacy_act_task, appeal: appeal) }
+    context "When there are no privacy act tasks" do
+      it "returns the correct hash with two false values" do
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: false, privacy_act_complete: false)
+      end
+    end
+
+    context "When there is only one privacy act task (completed)" do
+      it "returns the correct hash with pending: false and complete: true" do
+        privacy_act1.update(status: Constants.TASK_STATUSES.completed)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: false, privacy_act_complete: true)
+      end
+    end
+
+    context "When there is only one privacy act task (pending)" do
+      it "returns the correct hash with pending: true and complete: false" do
+        privacy_act1
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: true, privacy_act_complete: false)
+      end
+    end
+
+    context "When there is only one privacy act task (cancelled)" do
+      it "returns the correct hash with pending: false and complete: false" do
+        privacy_act1.update(status: Constants.TASK_STATUSES.cancelled)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: false, privacy_act_complete: false)
+      end
+    end
+
+    context "When there are multiple privacy act tasks (all completed)" do
+      it "returns the correct hash with pending: false and complete: true" do
+        privacy_act1.update(status: Constants.TASK_STATUSES.completed)
+        privacy_act2.update(status: Constants.TASK_STATUSES.completed)
+        privacy_act3.update(status: Constants.TASK_STATUSES.completed)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: false, privacy_act_complete: true)
+      end
+    end
+
+    context "When there are multiple privacy act tasks (all cancelled)" do
+      it "returns the correct hash with pending: false and complete: false" do
+        privacy_act1.update(status: Constants.TASK_STATUSES.cancelled)
+        privacy_act2.update(status: Constants.TASK_STATUSES.cancelled)
+        privacy_act3.update(status: Constants.TASK_STATUSES.cancelled)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: false, privacy_act_complete: false)
+      end
+    end
+
+    context "When there are multiple privacy act tasks (at least one pending)" do
+      it "returns the correct hash with pending: true and complete: false" do
+        privacy_act1
+        privacy_act2.update(status: Constants.TASK_STATUSES.completed)
+        privacy_act3.update(status: Constants.TASK_STATUSES.cancelled)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: true, privacy_act_complete: false)
+      end
+    end
+
+    context "When there are mutliple privacy act tasks (mix of completed and cancelled)" do
+      it "returns the correct hash with pending: false and complete: true" do
+        privacy_act1.update(status: Constants.TASK_STATUSES.completed)
+        privacy_act2.update(status: Constants.TASK_STATUSES.cancelled)
+        privacy_act3.update(status: Constants.TASK_STATUSES.completed)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: false, privacy_act_complete: true)
+      end
+    end
+  end
+
   describe "#map_appeal_hearing_postponed_state(appeal)" do
     let!(:scheduled_hearing) { create(:hearing) }
     let!(:postponed_hearing) { create(:hearing, :postponed) }

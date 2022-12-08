@@ -221,6 +221,76 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
     end
   end
 
+  describe "#map_appeal_privacy_act_state(appeal)" do
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+    let(:foia1) { create(:colocated_task, :foia, appeal: appeal, instructions: ["test"]) }
+    let(:foia2) { create(:colocated_task, :foia, appeal: appeal, instructions: ["test2"]) }
+    let(:foia3) { create(:colocated_task, :foia, appeal: appeal, instructions: ["test3"]) }
+    context "When there are no privacy act tasks" do
+      it "returns the correct hash with two false values" do
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: false, privacy_act_complete: false)
+      end
+    end
+
+    context "When there is only one privacy act task (completed)" do
+      it "returns the correct hash with pending: false and complete: true" do
+        foia1.update(status: Constants.TASK_STATUSES.completed)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: false, privacy_act_complete: true)
+      end
+    end
+
+    context "When there is only one privacy act task (pending)" do
+      it "returns the correct hash with pending: true and complete: false" do
+        foia1
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: true, privacy_act_complete: false)
+      end
+    end
+
+    context "When there is only one privacy act task (cancelled)" do
+      it "returns the correct hash with pending: false and complete: false" do
+        foia1.update(status: Constants.TASK_STATUSES.cancelled)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: false, privacy_act_complete: false)
+      end
+    end
+
+    context "When there are multiple privacy act tasks (all completed)" do
+      it "returns the correct hash with pending: false and complete: true" do
+        foia1.update(status: Constants.TASK_STATUSES.completed)
+        foia2.update(status: Constants.TASK_STATUSES.completed)
+        foia3.update(status: Constants.TASK_STATUSES.completed)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: false, privacy_act_complete: true)
+      end
+    end
+
+    context "When there are multiple privacy act tasks (all cancelled)" do
+      it "returns the correct hash with pending: false and complete: false" do
+        foia1.update(status: Constants.TASK_STATUSES.cancelled)
+        foia2.update(status: Constants.TASK_STATUSES.cancelled)
+        foia3.update(status: Constants.TASK_STATUSES.cancelled)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: false, privacy_act_complete: false)
+      end
+    end
+
+    context "When there are multiple privacy act tasks (at least one pending)" do
+      it "returns the correct hash with pending: true and complete: false" do
+        foia1
+        byebug
+        foia2.update(status: Constants.TASK_STATUSES.completed)
+        foia3.update(status: Constants.TASK_STATUSES.cancelled)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: true, privacy_act_complete: false)
+      end
+    end
+
+    context "When there are mutliple privacy act tasks (mix of completed and cancelled)" do
+      it "returns the correct hash with pending: false and complete: true" do
+        foia1.update(status: Constants.TASK_STATUSES.completed)
+        foia2.update(status: Constants.TASK_STATUSES.cancelled)
+        foia3.update(status: Constants.TASK_STATUSES.completed)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: false, privacy_act_complete: true)
+      end
+    end
+  end
+
   describe "#map_appeal_hearing_postponed_state(appeal)" do
     let!(:scheduled_hearing) { create(:legacy_hearing) }
     let!(:postponed_hearing) { create(:legacy_hearing, disposition: "P") }
