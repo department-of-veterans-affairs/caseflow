@@ -6,7 +6,6 @@ import { AttorneyDaysWorked } from './AttorneyDaysWorked';
 import { sortCaseTimelineEvents } from '../utils';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import { compareDesc } from 'date-fns';
 import { determineLocationHistories } from './calculateDaysWorked';
 
 const moment = extendMoment(Moment);

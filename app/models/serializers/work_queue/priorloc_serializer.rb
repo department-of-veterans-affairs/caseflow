@@ -2,7 +2,6 @@
 
 class WorkQueue::PriorlocSerializer
   include FastJsonapi::ObjectSerializer
-  extend Helpers::AppealHearingHelper
 
   attribute :assigned_by
   attribute :assigned_at
