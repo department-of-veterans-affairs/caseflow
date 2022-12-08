@@ -107,17 +107,16 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   # Return: Hash with two keys (privacy_act_pending and privacy_act_complete)
   #         with corresponding boolean values
   def map_appeal_privacy_act_state(appeal)
-    privacy_tasks = appeal.tasks.filter { |task| PRIVACY_ACT_TASKS.include?(task&.type) }
-    privacy_tasks.filter! { |task| Constants.TASK_STATUSES.cancelled != task&.status }
+    privacy_tasks = appeal.tasks.filter { |task| PRIVACY_ACT_TASKS.include?(task&.type) && Constants.TASK_STATUSES.cancelled != task&.status}
     if privacy_tasks.any?
       if privacy_tasks.any? { |task| Task.open_statuses.include?(task.status) } # any pending
-        { privacy_act_pending: true, privacy_act_complete: false }
+        return { privacy_act_pending: true, privacy_act_complete: false }
       elsif privacy_tasks.all? { |task| task.status == Constants.TASK_STATUSES.completed } # all complete
-        { privacy_act_pending: false, privacy_act_complete: true }
+        return { privacy_act_pending: false, privacy_act_complete: true }
       end
-    else
-      { privacy_act_pending: false, privacy_act_complete: false }
     end
+
+    { privacy_act_pending: false, privacy_act_complete: false }
   end
 
   # Purpose: Determines if the hearing scheduled attribute within the associated
