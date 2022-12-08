@@ -167,9 +167,10 @@ module AppellantNotification
 
   def self.notify_appellant(
     appeal,
-    template_name
+    template_name,
+    quarterly_status = nil
   )
-    msg_bdy = create_payload(appeal, template_name)
+    msg_bdy = create_payload(appeal, template_name, quarterly_status)
     notification_type =
       if FeatureToggle.enabled?(:va_notify_email) && FeatureToggle.enabled?(:va_notify_sms)
         "Email and SMS"
@@ -198,8 +199,8 @@ module AppellantNotification
     # rubocop:enable Layout/LineLength
   end
 
-  def self.create_payload(appeal, template_name)
+  def self.create_payload(appeal, template_name, quarterly_status = nil)
     message_attributes = AppellantNotification.handle_errors(appeal)
-    VANotifySendMessageTemplate.new(message_attributes, template_name)
+    VANotifySendMessageTemplate.new(message_attributes, template_name, quarterly_status)
   end
 end
