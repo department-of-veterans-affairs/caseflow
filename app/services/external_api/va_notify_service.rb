@@ -35,7 +35,7 @@ class ExternalApi::VANotifyService
       status = ""
     )
       email_response = send_va_notify_request(
-        email_request(participant_id, notification_id, email_template_id, status, personalisation)
+        email_request(participant_id, notification_id, email_template_id, personalisation, status)
       )
       log_info(email_response)
       email_response
@@ -51,7 +51,7 @@ class ExternalApi::VANotifyService
     # Return: sms_response: JSON response from VA Notify API
     def send_sms_notifications(participant_id, notification_id, sms_template_id, personalisation, status = "")
       sms_response = send_va_notify_request(
-        sms_request(participant_id, notification_id, sms_template_id, status, personalisation)
+        sms_request(participant_id, notification_id, sms_template_id, personalisation, status)
       )
       log_info(sms_response)
       sms_response
@@ -117,22 +117,25 @@ class ExternalApi::VANotifyService
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     #
     # Return: Request hash
-    def email_request(participant_id, notification_id, email_template_id, status, personalisation)
+    def email_request(participant_id, notification_id, email_template_id, personalisation, status)
+      byebug
       request = {
         body: {
           template_id: email_template_id,
           reference: notification_id,
-          recipient_identifier: {
-            id_type: "PID",
-            id_value: participant_id
-          },
+          email_address: "Jeffrey.Willis4@va.gov",
+          # recipient_identifier: {
+          #   id_type: "PID",
+          #   id_value: participant_id
+          # },
           personalisation: {
-            first_name: personalisation[:first_name], status: personalisation[:quarterly_status]
+            first_name: personalisation[:first_name], appeal_status: personalisation[:quarterly_status]
           }
         },
         headers: HEADERS,
         endpoint: SEND_EMAIL_NOTIFICATION_ENDPOINT, method: :post
       }
+      byebug
       if !status.empty?
         # If a status is given then it will be added to the request object
         request[:body][:personalisation][:appeal_status] = status
@@ -149,7 +152,8 @@ class ExternalApi::VANotifyService
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     #
     # Return: Request hash
-    def sms_request(participant_id, notification_id, sms_template_id, status, personalisation)
+    def sms_request(participant_id, notification_id, sms_template_id, personalisation, status)
+      byebug
       request = {
         body: {
           reference: notification_id,
@@ -160,7 +164,7 @@ class ExternalApi::VANotifyService
           },
           sms_sender_id: SENDER_ID || "",
           personalisation: {
-            first_name: personalisation[:first_name], status: personalisation[:quarterly_status]
+            first_name: personalisation[:first_name], appeal_status: personalisation[:quarterly_status]
           }
         },
         headers: HEADERS,
