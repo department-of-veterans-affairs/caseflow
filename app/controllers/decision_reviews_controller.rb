@@ -43,6 +43,19 @@ class DecisionReviewsController < ApplicationController
     end
   end
 
+  def tasks
+    task_list = case allowed_params[:tab]
+                when "in_progress" then in_progress_tasks
+                when "completed" then completed_tasks
+                else
+                  return render json: { error: "Tab name provided could not be found" }, status: :not_found
+                end
+
+    render json: apply_task_serializer(
+      task_list.page(allowed_params[:page] || 1).per(15)
+    )
+  end
+
   def business_line_slug
     allowed_params[:business_line_slug] || allowed_params[:decision_review_business_line_slug]
   end
@@ -57,7 +70,7 @@ class DecisionReviewsController < ApplicationController
 
   # :reek:FeatureEnvy
   def in_progress_tasks
-    apply_task_serializer(
+    Kaminari.paginate_array(
       business_line.tasks.open.includes([:assigned_to, :appeal]).order(assigned_at: :desc).select do |task|
         if FeatureToggle.enabled?(:board_grant_effectuation_task, user: :current_user)
           task.appeal.request_issues.active.any? || task.is_a?(BoardGrantEffectuationTask)
@@ -69,16 +82,14 @@ class DecisionReviewsController < ApplicationController
   end
 
   def completed_tasks
-    apply_task_serializer(
-      business_line.tasks.recently_completed.includes([:assigned_to, :appeal]).order(closed_at: :desc)
-    )
+    business_line.tasks.recently_completed.includes([:assigned_to, :appeal]).order(closed_at: :desc)
   end
 
   def business_line
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
   end
 
-  helper_method :in_progress_tasks, :completed_tasks, :business_line, :task
+  helper_method :in_progress_tasks, :completed_tasks, :apply_task_serializer, :business_line, :task
 
   private
 
@@ -133,7 +144,9 @@ class DecisionReviewsController < ApplicationController
       :decision_date,
       :business_line_slug,
       :task_id,
-      decision_issues: [:description, :disposition, :request_issue_id]
+      :tab,
+      :page,
+      decision_issues: [:description, :disposition, :request_issue_id],
     )
   end
 end

@@ -8,8 +8,8 @@
     serverNonComp: {
       businessLine: business_line.name,
       businessLineUrl: business_line.url,
-      inProgressTasks: in_progress_tasks,
-      completedTasks: completed_tasks
+      inProgressTasks: apply_task_serializer(in_progress_tasks),
+      completedTasks: apply_task_serializer(completed_tasks)
     }
   }) %>
 <% end %>
