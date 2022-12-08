@@ -246,6 +246,9 @@ Rails.application.routes.draw do
   resources :decision_reviews, param: :business_line_slug, only: [] do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
     end
+
+    get 'search'
+    get 'tasks'
   end
   match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
 
