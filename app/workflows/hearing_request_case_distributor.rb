@@ -11,8 +11,13 @@ class HearingRequestCaseDistributor
   end
 
   def call
+    # The DistributedCases model validates genpop and genpop_query for a hearing or legacy case. These methods
+    # will create one array for the appeals and one for their genpop values with matching indexes
     appeals_for_tasks = appeals_to_distribute.flatten.select { |obj| obj.is_a?(Appeal) }
     genpop_values = appeals_to_distribute.flatten.reject { |obj| obj.is_a?(Appeal) }
+
+    # Creates JudgeAssignTasks for the appeals, then zip the genpop_values into the array for creating
+    # the DistributedCases
     tasks = assign_judge_tasks_for_appeals(appeals_for_tasks, @distribution.judge).zip(genpop_values)
 
     tasks.map do |task, genpop_value|
@@ -24,8 +29,12 @@ class HearingRequestCaseDistributor
       if distributed_case && task.appeal.can_redistribute_appeal?
         distributed_case.flag_redistribution(task)
         distributed_case.rename_for_redistribution!
-        create_distribution_case_for_task(task, genpop_value)
+        new_dist_case = create_distribution_case_for_task(task, genpop_value)
+
+        # In a race condition for distributions, two JudgeAssignTasks will be created; this cancels the first one
         cancel_previous_judge_assign_task(task.appeal, @distribution.judge.id)
+        # Returns the new DistributedCase as expected by calling methods; case in elsif is implicitly returned
+        new_dist_case
       elsif !distributed_case
         create_distribution_case_for_task(task, genpop_value)
       end

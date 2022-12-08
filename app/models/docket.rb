@@ -97,7 +97,9 @@ class Docket
                                                                priority: priority,
                                                                ready_at: task.appeal.ready_for_distribution_at,
                                                                task: task)
+        # In a race condition for distributions, two JudgeAssignTasks will be created; this cancels the first one
         cancel_previous_judge_assign_task(task.appeal, distribution.judge.id)
+        # Returns the new DistributedCase as expected by calling methods; case in elsif is implicitly returned
         new_dist_case
       elsif !distributed_case
         distribution.distributed_cases.create!(case_id: task.appeal.uuid,
