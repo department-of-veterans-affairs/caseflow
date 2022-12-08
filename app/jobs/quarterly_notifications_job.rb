@@ -52,34 +52,36 @@ class QuarterlyNotificationsJob < CaseflowJob
       else
         AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
       end
-    # if there's ihp tasks pending, privacy act tasks pending, and at least one hearing scheduled
-    # appeal status is Hearing Scheduled /  Privacy Act Pending
-    elsif appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending && appeal_state.hearing_scheduled
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
-    # if there's ihp tasks pending and privacy act tasks pending, but no hearings scheduled
-    # appeal status is VSO IHP Pending / Privacy Act Pending
-    elsif appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending && !appeal_state.hearing_scheduled
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
-    # if there's ihp tasks pending and hearings scheduled, but no privacy act tasks pending
-    # appeal status is Hearing Scheduled
-    elsif appeal_state.vso_ihp_pending && !appeal_state.privacy_act_pending && appeal_state.hearing_scheduled
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
-    # if there's no ihp tasks pending, and there is a hearing scheduled and privacy act tasks pending
-    # appeal status is Hearing Scheduled / Privacy Act Pending
-    elsif !appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending && appeal_state.hearing_scheduled
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
-    # if there's no ihp tasks pending or hearing scheduled, and there are privacy act tasks pending
-    # appeal status is Privacy Act Pending
-    elsif !appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending && !appeal_state.hearing_scheduled
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
-    # if there's no privacy acts pending or hearing scheduled, and there are ihp tasks pending
-    # appeal status is VSO IHP Pending
-    elsif appeal_state.vso_ihp_pending && !appeal_state.privacy_act_pending && !appeal_state.hearing_scheduled
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
-    # if there's no privacy acts pending or ihp tasks pending, and there is a hearing scheduled
-    # appeal status is Hearing Scheduled
-    elsif !appeal_state.vso_ihp_pending && !appeal_state.privacy_act_pending && appeal_state.hearing_scheduled
-      AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
+    # if there's a hearing scheduled
+    elsif appeal_state.hearing_scheduled
+      # if there's privacy act tasks pending
+      # appeal status is Hearing Scheduled /  Privacy Act Pending
+      if appeal_state.privacy_act_pending
+        AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
+      # if there's no privacy act tasks pending
+      # appeal status is Hearing Scheduled
+      elsif !appeal_state.privacy_act_pending
+        AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
+      end
+    # if there's no hearing scheduled and no hearing withdrawn
+    elsif !appeal_state.hearing_withdrawn
+      # if there's ihp tasks pending and privacy act tasks pending
+      # appeal status is VSO IHP Pending / Privacy Act Pending
+      if appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending
+        AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
+      # if there's no ihp tasks pending and there are privacy act tasks pending
+      # appeal status is Privacy Act Pending
+      elsif !appeal_state.vso_ihp_pending && appeal_state.privacy_act_pending
+        AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
+      # if there's no privacy acts pending and there are ihp tasks pending
+      # appeal status is VSO IHP Pending
+      elsif appeal_state.vso_ihp_pending && !appeal_state.privacy_act_pending
+        AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
+      # if there's no privacy acts pending or ihp tasks pending
+      # appeal status is Appeal Docketed
+      elsif !appeal_state.vso_ihp_pending && !appeal_state.privacy_act_pending
+        AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
+      end
     # appeal status is Appeal Docketed
     else
       AppellantNotification.notify_appellant(appeal, "Quarterly Notification")
