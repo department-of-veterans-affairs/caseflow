@@ -364,6 +364,24 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
     end
   end
 
+  describe "map appeal docketed state" do
+    context "legacy appeals" do
+      let!(:legacy_appeal) do
+        create(:legacy_appeal, :with_veteran,
+               vacols_case: create(:case, :aod))
+      end
+
+      it "returns appeal docketed: true" do
+        legacy_appeal.case_record.update(bfcurloc: "01")
+        expect(subject.send(:map_appeal_docketed_state, legacy_appeal)).to eq(appeal_docketed: true)
+      end
+
+      it "return appeal docketed: false" do
+        expect(subject.send(:map_appeal_docketed_state, legacy_appeal)).to eq(appeal_docketed: false)
+      end
+    end
+  end
+
   describe "#map_appeal_hearing_scheduled_in_error_state(appeal)" do
     let!(:scheduled_hearing) { create(:legacy_hearing) }
     let!(:error_hearing) { create(:legacy_hearing, disposition: "E") }

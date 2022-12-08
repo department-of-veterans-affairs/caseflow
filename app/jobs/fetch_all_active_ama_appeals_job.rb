@@ -177,8 +177,15 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     { appeal_cancelled: false }
   end
 
+  # Purpose: Determines if the appeal_docketed attribute within the associated
+  # appeal_state record should be set to true
+  # Params: Appeal object
+  # Returns: Hash of "appeal_docketed" key value pair
   def map_appeal_docketed_state(appeal)
-    # Code goes here ...
+    if appeal&.tasks&.exists?(type: "DistributionTask")
+      return { appeal_docketed: true }
+    end
+
     { appeal_docketed: false }
   end
 
