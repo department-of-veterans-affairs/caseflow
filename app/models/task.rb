@@ -124,6 +124,7 @@ class Task < CaseflowRecord
   prepend PrivacyActComplete
   prepend AppealCancelled
   prepend PrivacyActCancelled
+  prepend PrivacyActPending
 
   ############################################################################################
   ## class methods
@@ -790,6 +791,7 @@ class Task < CaseflowRecord
     update_appeal_state_when_ihp_cancelled
     update_appeal_state_when_ihp_completed
     update_appeal_state_when_privacy_act_cancelled
+    update_appeal_state_when_privacy_act_complete
     update_appeal_state_when_appeal_cancelled
   end
 
@@ -801,6 +803,7 @@ class Task < CaseflowRecord
   #
   # Response: The Appeal State record correlated to the current task's appeal will be updated.
   def update_appeal_state_on_task_creation
+    update_appeal_state_when_privacy_act_created
     update_appeal_state_when_appeal_docketed
     update_appeal_state_when_ihp_created
   end
