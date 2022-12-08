@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import COPY from '../../../COPY';
-import { redText } from '../constants';
 import { AttorneyDaysWorked } from './AttorneyDaysWorked';
 import { AttorneyTasksTreeTimeline } from './AttorneyTasksTreeTimeline';
 import { LegacyCaseTimeline } from './LegacyCaseTimeline';

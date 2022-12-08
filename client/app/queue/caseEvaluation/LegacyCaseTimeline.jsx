@@ -4,6 +4,12 @@ import COPY from '../../../COPY';
 import { AttorneyTaskTimeline } from './AttorneyTaskTimeline';
 import { AttorneyDaysWorked } from './AttorneyDaysWorked';
 import { sortCaseTimelineEvents } from '../utils';
+import Moment from 'moment';
+import { extendMoment } from 'moment-range';
+import { compareDesc } from 'date-fns';
+import { determineLocationHistories } from './calculateDaysWorked';
+
+const moment = extendMoment(Moment);
 
 export const LegacyCaseTimeline = (props) => {
   const {
@@ -17,8 +23,11 @@ export const LegacyCaseTimeline = (props) => {
     decisionSubmitted,
   } = props;
 
-  const notWithAttorneyLocations = appeal.locationHistory.filter((location) => !location.withAttorney);
-  const tasks = sortCaseTimelineEvents([...attorneyChildrenTasks, ...notWithAttorneyLocations]);
+  const timelinessRange = moment.range(dateAssigned, decisionSubmitted);
+
+  const locationHistories = determineLocationHistories(appeal.locationHistory, timelinessRange);
+
+  const tasks = sortCaseTimelineEvents([...attorneyChildrenTasks, ...locationHistories]);
 
   return (
     <>
