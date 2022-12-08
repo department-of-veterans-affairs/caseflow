@@ -521,7 +521,7 @@ class CompleteTaskModal extends React.Component {
     let reviewNotes;
     const previousInstructions = this.props.tasks.map((task) => {
       // Skip if there are no previous instructions
-      if (task.instructions[1]) {
+      if (task.instructions?.[1]) {
         if (task.assignedTo.type === 'VhaProgramOffice') {
           reviewNotes = 'Program Office';
 

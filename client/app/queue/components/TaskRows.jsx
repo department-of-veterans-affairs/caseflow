@@ -215,6 +215,40 @@ class TaskRows extends React.PureComponent {
       <dd>{reasonLabel}</dd></div> : null;
   }
 
+  splitAtListItem = (task) => {
+    return (
+      <div className="cf-row-wrapper">
+        <dt>{[COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL, <br />, moment(task.closedAt).format('MM/DD/YYYY')]}</dt>
+      </div>
+    );
+  };
+
+  splitByListItem = (task) => {
+    const spliter = task.cancelledBy?.cssId;
+
+    if (spliter) {
+      return (
+        <div className="cf-row-wrapper">
+          <dt>{COPY.TASK_SPLIT_BY}</dt>
+          <dd>{spliter}</dd>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  splitInstruction = () => {
+    return <div className="cf-row-wrapper"><dt>{COPY.TASK_SPLIT_INSTRUCTION}</dt></div>;
+  }
+
+  splitReasonListItem = (task) => {
+    const reason = task.cancelReason;
+
+    return reason ? <div className="cf-row-wrapper"><dt>{COPY.TASK_SPLIT_REASON}</dt>
+      <dd>{reason}</dd></div> : null;
+  }
+
   hearingRequestTypeConvertedBy = (task) => {
     const convertedBy = task.convertedBy?.cssId;
 
@@ -346,6 +380,16 @@ class TaskRows extends React.PureComponent {
       this.closedAtListItem(task);
   };
 
+  showTimelineDescriptionSplitItems = (task) => {
+    return (
+      <React.Fragment>
+        {this.splitByListItem(task)}
+        {this.splitInstruction(task)}
+        {this.splitReasonListItem(task)}
+      </React.Fragment>
+    );
+  };
+
   showTimelineDescriptionItems = (task, timeline) => {
     if (task.type === 'ChangeHearingRequestTypeTask' && timeline) {
       return this.hearingRequestTypeConvertedBy(task);
@@ -387,12 +431,14 @@ class TaskRows extends React.PureComponent {
             {this.closedOrCancelledAtListItem(task)}
             {!task.closedAt && this.daysWaitingListItem(task)}
           </CaseDetailsDescriptionList>
+
         </td>
         <td
           {...taskInfoWithIconContainer}
           className={tdClassNames(timeline, task)}
         >
           {isCancelled(task) ? <CancelIcon /> : closedAtIcon(task, timeline)}
+
           {((index < sortedTimelineEvents.length && timeline) ||
             (index < this.state.activeTasks.length - 1 && !timeline)) && (
             <div
@@ -412,6 +458,7 @@ class TaskRows extends React.PureComponent {
             {timeline && timelineTitle}
             {this.showTimelineDescriptionItems(task, timeline)}
           </CaseDetailsDescriptionList>
+
         </td>
         {!timeline && (
           <td className="taskContainerStyling taskActionsContainerStyling">
@@ -557,7 +604,7 @@ TaskRows.propTypes = {
   editNodDateEnabled: PropTypes.bool,
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
-  timeline: PropTypes.bool
+  timeline: PropTypes.bool,
 };
 
 export default TaskRows;

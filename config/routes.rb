@@ -66,6 +66,7 @@ Rails.application.routes.draw do
         post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
         post 'appeals/:appeal_id/upload_document', to: 'upload_vbms_document#create'
         get 'judges', to: 'judges#index'
+        post 'upload_document', to: 'upload_vbms_document#create'
         get 'user', to: 'users#index'
         get 'veterans', to: 'veterans#details'
       end
@@ -152,7 +153,11 @@ Rails.application.routes.draw do
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
 
+  get '/appeals/:appeals_id/notifications' => 'appeals#fetch_notification_list'
+
   get '/task_tree/:appeal_type/:appeal_id' => 'task_tree#show'
+
+  post '/appeals/:appeal_id/split' => 'split_appeal#split_appeal'
 
   get '/explain/appeals/:appeal_id' => 'explain#show'
 
@@ -252,7 +257,9 @@ Rails.application.routes.draw do
     resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
     post "jobs/:id/note", to: "asyncable_jobs#add_note"
   end
+
   match '/jobs' => 'asyncable_jobs#index', via: [:get]
+  post "/asyncable_jobs/start_job", to: "asyncable_jobs#start_job"
 
   scope path: "/inbox" do
     get "/", to: "inbox#index"
@@ -272,6 +279,7 @@ Rails.application.routes.draw do
   scope path: '/queue' do
     get '/', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
+    get '/appeals/:appealId/notifications', to: 'queue#index'
     get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'

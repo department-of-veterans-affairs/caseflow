@@ -28,13 +28,20 @@ class SendNotificationJob < CaseflowJob
   end
 
   # Must receive JSON string as argument
+
+  # rubocop:disable Layout/LineLength
   def perform(message_json)
     if message_json
       @va_notify_email = FeatureToggle.enabled?(:va_notify_email)
       @va_notify_sms = FeatureToggle.enabled?(:va_notify_sms)
       message = JSON.parse(message_json, object_class: OpenStruct)
       if message.appeal_id && message.appeal_type && message.template_name
-        notification_audit_record = create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name, message.participant_id)
+        notification_audit_record = create_notification_audit_record(
+          message.appeal_id,
+          message.appeal_type,
+          message.template_name,
+          message.participant_id
+        )
         if notification_audit_record
           if message.status != "No participant_id" && message.status != "No claimant"
             to_update = {}
@@ -45,7 +52,10 @@ class SendNotificationJob < CaseflowJob
               to_update[:sms_notification_status] = message.status
             end
             update_notification_audit_record(notification_audit_record, to_update)
-            send_to_va_notify(message, notification_audit_record)
+            if message.template_name == "Appeal docketed" && message.appeal_type == "LegacyAppeal" && !FeatureToggle.enabled?(:appeal_docketed_notification)
+              notification_audit_record.update!(email_enabled: false)
+            else send_to_va_notify(message, notification_audit_record)
+            end
           else
             status = (message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
             to_update = {}
@@ -68,6 +78,7 @@ class SendNotificationJob < CaseflowJob
       log_error("There was no message passed into the SendNotificationListener.perform_later function. Exiting job.")
     end
   end
+  # rubocop:enable Layout/LineLength
 
   private
 
@@ -93,9 +104,11 @@ class SendNotificationJob < CaseflowJob
     event = NotificationEvent.find_by(event_type: message.template_name)
     email_template_id = event.email_template_id
     sms_template_id = event.sms_template_id
-
+    appeal = Appeal.find_by_uuid(message.appeal_id)
+    first_name = appeal&.appellant_first_name || "Appellant"
+    status = message.appeal_status || ""
     if @va_notify_email
-      response = VANotifyService.send_email_notifications(message.participant_id, notification_audit_record.id.to_s, email_template_id, status = "")
+      response = VANotifyService.send_email_notifications(message.participant_id, notification_audit_record.id.to_s, email_template_id, status, first_name)
       if !response.nil? && response != ""
         to_update = { notification_content: response.body["content"]["body"], email_notification_external_id: response.body["id"] }
         update_notification_audit_record(notification_audit_record, to_update)
@@ -103,7 +116,7 @@ class SendNotificationJob < CaseflowJob
     end
 
     if @va_notify_sms
-      response = VANotifyService.send_sms_notifications(message.participant_id, notification_audit_record.id.to_s, sms_template_id, status = "")
+      response = VANotifyService.send_sms_notifications(message.participant_id, notification_audit_record.id.to_s, sms_template_id, status, first_name)
       if !response.nil? && response != ""
         to_update = { notification_content: response.body["content"]["body"], sms_notification_external_id: response.body["id"] }
         update_notification_audit_record(notification_audit_record, to_update)
@@ -130,6 +143,8 @@ class SendNotificationJob < CaseflowJob
   # - event_type: Name of the event that has transpired. Event names can be found in the notification_events table
   #
   # Returns: Notification active model or nil
+
+  # rubocop:disable all
   def create_notification_audit_record(appeals_id, appeals_type, event_type, participant_id)
     notification_type =
       if @va_notify_email && @va_notify_sms
@@ -142,14 +157,32 @@ class SendNotificationJob < CaseflowJob
         "None"
       end
 
-    Notification.new(
-      appeals_id: appeals_id,
-      appeals_type: appeals_type,
-      event_type: event_type,
-      notification_type: notification_type,
-      participant_id: participant_id,
-      notified_at: Time.zone.now,
-      event_date: Time.zone.today
-    )
+    if event_type == "Appeal docketed" && appeals_type == "LegacyAppeal" && FeatureToggle.enabled?(:appeal_docketed_event)
+      notification = Notification.where(appeals_id: appeals_id, event_type: event_type, notification_type: notification_type, appeals_type: appeals_type, event_date: Time.zone.today).last
+      if !notification.nil?
+        notification
+      else
+        Notification.new(
+          appeals_id: appeals_id,
+          appeals_type: appeals_type,
+          event_type: event_type,
+          notification_type: notification_type,
+          participant_id: participant_id,
+          notified_at: Time.zone.now,
+          event_date: Time.zone.today
+        )
+      end
+    else
+      Notification.new(
+        appeals_id: appeals_id,
+        appeals_type: appeals_type,
+        event_type: event_type,
+        notification_type: notification_type,
+        participant_id: participant_id,
+        notified_at: Time.zone.now,
+        event_date: Time.zone.today
+      )
+    end
   end
+  # rubocop:enable all
 end

@@ -13,6 +13,7 @@ module Seeds
   class Tasks < Base
     def initialize
       @ama_appeals = []
+      initial_file_number_and_participant_id
     end
 
     def seed!
@@ -24,6 +25,26 @@ module Seeds
 
     private
 
+    def initial_file_number_and_participant_id
+      @file_number ||= 100_000_000
+      @participant_id ||= 500_000_000
+      # n is (@file_number + 1) because @file_number is incremented before using it in factories in calling methods
+      while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
+        @file_number += 2000
+        @participant_id += 2000
+      end
+    end
+
+    def create_veteran(options = {})
+      @file_number += 1
+      @participant_id += 1
+      params = {
+        file_number: format("%<n>09d", n: @file_number),
+        participant_id: format("%<n>09d", n: @participant_id)
+      }
+      create(:veteran, params.merge(options))
+    end
+
     def create_ama_appeals
       notes = "Pain disorder with 100\% evaluation per examination"
 
@@ -33,7 +54,6 @@ module Seeds
           build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO"),
           build(:claimant, participant_id: "OTHER_CLAIMANT")
         ],
-        veteran_file_number: "701305078",
         docket_type: Constants.AMA_DOCKETS.direct_review,
         request_issues: create_list(:request_issue, 3, :nonrating, notes: notes)
       )
@@ -42,21 +62,20 @@ module Seeds
       dr = Constants.AMA_DOCKETS.direct_review
       # Older style, tasks to be created later
       [
-        { number_of_claimants: nil, veteran_file_number: "783740847", docket_type: es, request_issue_count: 3 },
-        { number_of_claimants: 1, veteran_file_number: "228081153", docket_type: es, request_issue_count: 1 },
-        { number_of_claimants: 1, veteran_file_number: "152003980", docket_type: dr, request_issue_count: 3 },
-        { number_of_claimants: 1, veteran_file_number: "375273128", docket_type: dr, request_issue_count: 1 },
-        { number_of_claimants: 1, veteran_file_number: "682007349", docket_type: dr, request_issue_count: 5 },
-        { number_of_claimants: 1, veteran_file_number: "231439628", docket_type: dr, request_issue_count: 1 },
-        { number_of_claimants: 1, veteran_file_number: "975191063", docket_type: dr, request_issue_count: 8 },
-        { number_of_claimants: 1, veteran_file_number: "662643660", docket_type: dr, request_issue_count: 8 },
-        { number_of_claimants: 1, veteran_file_number: "162726229", docket_type: dr, request_issue_count: 8 },
-        { number_of_claimants: 1, veteran_file_number: "760362568", docket_type: dr, request_issue_count: 8 }
+        { number_of_claimants: nil, docket_type: es, request_issue_count: 3 },
+        { number_of_claimants: 1, docket_type: es, request_issue_count: 1 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 3 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 1 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 5 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 1 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 8 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 8 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 8 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 8 }
       ].each do |params|
         @ama_appeals << create(
           :appeal,
           number_of_claimants: params[:number_of_claimants],
-          veteran_file_number: params[:veteran_file_number],
           docket_type: params[:docket_type],
           request_issues: create_list(
             :request_issue, params[:request_issue_count], :nonrating, notes: notes
@@ -66,15 +85,14 @@ module Seeds
 
       # Newer style, tasks created through the Factory trait
       [
-        { number_of_claimants: nil, veteran_file_number: "963360019", docket_type: dr, request_issue_count: 2 },
-        { number_of_claimants: 1, veteran_file_number: "604969679", docket_type: dr, request_issue_count: 1 }
+        { number_of_claimants: nil, docket_type: dr, request_issue_count: 2 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 1 }
       ].each do |params|
         create(
           :appeal,
           :assigned_to_judge,
           number_of_claimants: params[:number_of_claimants],
           active_task_assigned_at: Time.zone.now,
-          veteran_file_number: params[:veteran_file_number],
           docket_type: params[:docket_type],
           closest_regional_office: "RO17",
           request_issues: create_list(
@@ -83,66 +101,116 @@ module Seeds
         )
       end
 
-      # Create AMA appeals ready for distribution
+      # Create AMA appeals ready for distribution received this month
       (1..30).each do |num|
-        vet_file_number = format("3213213%<num>02d", num: num)
         create(
           :appeal,
           :ready_for_distribution,
+          veteran: create_veteran,
           number_of_claimants: 1,
           active_task_assigned_at: Time.zone.now,
-          veteran_file_number: vet_file_number,
           docket_type: Constants.AMA_DOCKETS.direct_review,
           closest_regional_office: "RO17",
+          receipt_date: num.days.ago,
           request_issues: create_list(
             :request_issue, 2, :nonrating, notes: notes
           )
         )
       end
 
-      # Create AMA appeals blocked for distribution due to Evidence Window
+      # Create AMA appeals ready for distribution received over a year ago
+      (1..5).each do |num|
+        create(
+          :appeal,
+          :ready_for_distribution,
+          veteran: create_veteran,
+          number_of_claimants: 1,
+          active_task_assigned_at: Time.zone.now,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          closest_regional_office: "RO17",
+          receipt_date: (365 + num).days.ago,
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+      end
+
+      # Create AMA appeals ready for distribution received over 65 days ago
+      (1..5).each do |num|
+        create(
+          :appeal,
+          :ready_for_distribution,
+          veteran: create_veteran,
+          number_of_claimants: 1,
+          active_task_assigned_at: Time.zone.now,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          closest_regional_office: "RO17",
+          receipt_date: (65 + num).days.ago,
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+      end
+
+      # Create AMA appeals ready for distribution in the future
+      (1..5).each do |num|
+        create(
+          :appeal,
+          :ready_for_distribution,
+          veteran: create_veteran,
+          number_of_claimants: 1,
+          active_task_assigned_at: Time.zone.now,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          closest_regional_office: "RO17",
+          receipt_date: num.days.from_now,
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+      end
+
+      # Create AMA appeals blocked for distribution due to Evidence Window received this month
       (1..30).each do |num|
-        vet_file_number = format("4324324%<num>02d", num: num)
         create(
           :appeal,
           :with_post_intake_tasks,
           number_of_claimants: 1,
           active_task_assigned_at: Time.zone.now,
-          veteran_file_number: vet_file_number,
           docket_type: Constants.AMA_DOCKETS.evidence_submission,
           closest_regional_office: "RO17",
+          receipt_date: num.days.ago,
           request_issues: create_list(
             :request_issue, 2, :nonrating, notes: notes
           )
         )
       end
 
-      # Create AMA appeals blocked for distribution due to blocking mail
+      # Create AMA appeals blocked for distribution due to blocking mail received this month
       (1..30).each do |num|
-        vet_file_number = format("4324334%<num>02d", num: num)
         create(
           :appeal,
           :mail_blocking_distribution,
           number_of_claimants: 1,
           active_task_assigned_at: Time.zone.now,
-          veteran_file_number: vet_file_number,
           docket_type: Constants.AMA_DOCKETS.direct_review,
           closest_regional_office: "RO17",
+          receipt_date: num.days.ago,
           request_issues: create_list(
             :request_issue, 2, :nonrating, notes: notes
           )
         )
       end
-      LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
-      LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
-      LegacyAppeal.create(vacols_id: "2249056", vbms_id: "608428712S")
-      LegacyAppeal.create(vacols_id: "2306397", vbms_id: "779309925S")
-      LegacyAppeal.create(vacols_id: "2657227", vbms_id: "169397130S")
+      LegacyAppeal.find_or_create_by(vacols_id: "2096907", vbms_id: "228081153S")
+      LegacyAppeal.find_or_create_by(vacols_id: "2226048", vbms_id: "213912991S")
+      LegacyAppeal.find_or_create_by(vacols_id: "2249056", vbms_id: "608428712S")
+      LegacyAppeal.find_or_create_by(vacols_id: "2306397", vbms_id: "779309925S")
+      LegacyAppeal.find_or_create_by(vacols_id: "2657227", vbms_id: "169397130S")
     end
 
     def create_tasks
       create_ama_distribution_tasks
       create_bva_dispatch_user_with_tasks
+      create_bva_dispatch_user_for_split_appeals
       create_qr_tasks
       create_different_hearings_tasks
       create_legacy_hearing_tasks
@@ -153,7 +221,7 @@ module Seeds
     end
 
     def create_ama_distribution_tasks
-      veteran = create(:veteran, first_name: "Julius", last_name: "Hodge")
+      veteran = create_veteran(first_name: "Julius", last_name: "Hodge")
       appeal = create(:appeal, veteran: veteran, docket_type: Constants.AMA_DOCKETS.evidence_submission)
       create(
         :request_issue,
@@ -191,12 +259,7 @@ module Seeds
 
     def create_task_at_bva_dispatch(seed = Faker::Number.number(digits: 3))
       Faker::Config.random = Random.new(seed)
-      vet = create(
-        :veteran,
-        file_number: Faker::Number.number(digits: 9).to_s,
-        first_name: Faker::Name.first_name,
-        last_name: Faker::Name.last_name
-      )
+      vet = create_veteran(first_name: Faker::Name.first_name, last_name: Faker::Name.last_name)
 
       notes = "Pain disorder with 100\% evaluation per examination"
       notes += ". Created with the inital_tasks factory trait and moved thru"
@@ -254,12 +317,7 @@ module Seeds
         notes = "Pain disorder with 100\% evaluation per examination"
         notes += ". Created with the at_bva_dispatch factory trait"
 
-        vet = create(
-          :veteran,
-          file_number: Faker::Number.number(digits: 9).to_s,
-          first_name: Faker::Name.first_name,
-          last_name: Faker::Name.last_name
-        )
+        vet = create_veteran(first_name: Faker::Name.first_name, last_name: Faker::Name.last_name)
 
         attorney = User.find_by_css_id("BVASCASPER1")
         judge = User.find_by_css_id("BVAAABSHIRE")
@@ -296,12 +354,7 @@ module Seeds
         notes = "Pain disorder with 100\% evaluation per examination"
         notes += ". Created with the dispatched factory trait"
 
-        vet = create(
-          :veteran,
-          file_number: Faker::Number.number(digits: 9).to_s,
-          first_name: Faker::Name.first_name,
-          last_name: Faker::Name.last_name
-        )
+        vet = create_veteran(first_name: Faker::Name.first_name, last_name: Faker::Name.last_name)
 
         attorney = User.find_by_css_id("BVASCASPER1")
         judge = User.find_by_css_id("BVAAABSHIRE")
@@ -334,15 +387,148 @@ module Seeds
       end
     end
 
-    def create_task_at_quality_review(
-      judge_name = "Madhu Judge_CaseAtQR Burnham", attorney_name = "Bailey Attorney_CaseAtQR Eoin"
-    )
+    def create_bva_dispatch_user_for_split_appeals
+      BvaDispatch.singleton.add_user(User.find_or_create_by(css_id: "BVAGBLACK", station_id: "101"))
+
+      (1..30).each do |rand_seed|
+        create_task_at_bva_dispatch_for_split_appeals(rand_seed)
+      end
+    end
+
+    def create_task_at_bva_dispatch_for_split_appeals(seed = Faker::Number.number(digits: 3))
+      Faker::Config.random = Random.new(seed)
+
+      vet_file_number = format("1415926%<num>02d", num: seed)
       vet = create(
         :veteran,
-        file_number: Faker::Number.number(digits: 9).to_s,
+        file_number: vet_file_number,
         first_name: Faker::Name.first_name,
         last_name: Faker::Name.last_name
       )
+
+      notes = "Pain disorder with 100\% evaluation per examination"
+      notes += ". Created with the initial_tasks factory trait and moved thru"
+
+      # Create appeal with numerous request
+      appeal = create(
+        :appeal,
+        :with_post_intake_tasks,
+        number_of_claimants: 1,
+        veteran_file_number: vet.file_number,
+        docket_type: Constants.AMA_DOCKETS.hearing,
+        closest_regional_office: "RO17",
+        request_issues: create_list(
+          :request_issue, 4, :nonrating, notes: notes
+        )
+      )
+
+      root_task = appeal.root_task
+      judge = User.find_by_css_id("BVAAWAKEFIELD")
+      judge_task = create(
+        :ama_judge_decision_review_task,
+        assigned_to: judge,
+        appeal: appeal,
+        parent: root_task
+      )
+
+      atty = User.find_by_css_id("BVAABELANGER")
+      atty_task = create(
+        :ama_attorney_task,
+        :in_progress,
+        assigned_to: atty,
+        assigned_by: judge,
+        parent: judge_task,
+        appeal: appeal
+      )
+
+      appeal.request_issues.each do |request_issue|
+        create(
+          :decision_issue,
+          :nonrating,
+          disposition: "allowed",
+          decision_review: appeal,
+          request_issues: [request_issue],
+          rating_promulgation_date: 2.months.ago,
+          benefit_type: request_issue.benefit_type
+        )
+      end
+
+      atty_task.update!(status: Constants.TASK_STATUSES.completed)
+      judge_task.update!(status: Constants.TASK_STATUSES.completed)
+
+      BvaDispatchTask.create_from_root_task(root_task)
+      appeal.tasks.where(type: "BvaDispatchTask").map(&:completed!)
+    end
+
+    def create_task_at_quality_review(
+      # created Code Climate issue for unused variable.
+      # judge_name = "Madhu Judge_CaseAtQR Burnham", attorney_name = "Bailey Attorney_CaseAtQR Eoin"
+    )
+      vet = create(
+        :veteran,
+        file_number: vet_file_number,
+        first_name: Faker::Name.first_name,
+        last_name: Faker::Name.last_name
+      )
+
+      notes = "Pain disorder with 100\% evaluation per examination"
+      notes += ". Created with the initial_tasks factory trait and moved thru"
+
+      # Create appeal with numerous request
+      appeal = create(
+        :appeal,
+        :with_post_intake_tasks,
+        number_of_claimants: 1,
+        veteran_file_number: vet.file_number,
+        docket_type: Constants.AMA_DOCKETS.hearing,
+        closest_regional_office: "RO17",
+        request_issues: create_list(
+          :request_issue, 4, :nonrating, notes: notes
+        )
+      )
+
+      root_task = appeal.root_task
+      judge = User.find_by_css_id("BVAAWAKEFIELD")
+      judge_task = create(
+        :ama_judge_decision_review_task,
+        assigned_to: judge,
+        appeal: appeal,
+        parent: root_task
+      )
+
+      atty = User.find_by_css_id("BVAABELANGER")
+      atty_task = create(
+        :ama_attorney_task,
+        :in_progress,
+        assigned_to: atty,
+        assigned_by: judge,
+        parent: judge_task,
+        appeal: appeal
+      )
+
+      appeal.request_issues.each do |request_issue|
+        create(
+          :decision_issue,
+          :nonrating,
+          disposition: "allowed",
+          decision_review: appeal,
+          request_issues: [request_issue],
+          rating_promulgation_date: 2.months.ago,
+          benefit_type: request_issue.benefit_type
+        )
+      end
+
+      atty_task.update!(status: Constants.TASK_STATUSES.completed)
+      judge_task.update!(status: Constants.TASK_STATUSES.completed)
+
+      BvaDispatchTask.create_from_root_task(root_task)
+      appeal.tasks.where(type: "BvaDispatchTask").map(&:completed!)
+    end
+
+    def create_task_at_quality_review(
+      judge_name = "Madhu Judge_CaseAtQR Burnham", attorney_name = "Bailey Attorney_CaseAtQR Eoin"
+    )
+      vet = create_veteran(first_name: Faker::Name.first_name, last_name: Faker::Name.last_name)
       notes = "Pain disorder with 100\% evaluation per examination"
 
       appeal = create(
@@ -357,20 +543,20 @@ module Seeds
         )
       )
       root_task = appeal.root_task
+      distribution_task = appeal.tasks.find_by(type: "DistributionTask")
 
-      judge = create(:user, station_id: 101)
-      judge.update!(full_name: judge_name) if judge_name
+      judge = User.find_by(full_name: judge_name) || create(:user, station_id: 101, full_name: judge_name)
       create(:staff, :judge_role, user: judge)
       judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
 
-      atty = create(:user, station_id: 101)
-      atty.update!(full_name: attorney_name) if attorney_name
+      atty = User.find_by(full_name: attorney_name) || create(:user, station_id: 101, full_name: attorney_name)
       create(:staff, :attorney_role, user: atty)
       atty_task_params = { appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }
       atty_task = AttorneyTask.create!(atty_task_params)
 
       atty_task.update!(status: Constants.TASK_STATUSES.completed)
       judge_task.update!(status: Constants.TASK_STATUSES.completed)
+      distribution_task.update!(status: Constants.TASK_STATUSES.completed)
 
       qr_org_task = QualityReviewTask.create_from_root_task(root_task)
 
@@ -395,13 +581,14 @@ module Seeds
 
     def create_different_hearings_tasks
       (%w[RO17 RO19 RO31 RO43 RO45] + [nil]).each do |regional_office|
-        30.times do
+        30.times do |num|
           appeal = create(
             :appeal,
             :with_request_issues,
             :hearing_docket,
             veteran_is_not_claimant: Faker::Boolean.boolean,
             stream_type: Constants.AMA_STREAM_TYPES.original,
+            receipt_date: num.days.ago,
             claimants: [
               create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO_#{rand(10**10)}")
             ],
@@ -451,7 +638,7 @@ module Seeds
     def create_change_hearing_disposition_task
       hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
       hearing_day = create(:hearing_day, created_by: hearings_member, updated_by: hearings_member)
-      veteran = create(:veteran, first_name: "Abellona", last_name: "Valtas", file_number: 123_456_789)
+      veteran = create_veteran(first_name: "Abellona", last_name: "Valtas")
       appeal = create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number)
       root_task = create(:root_task, appeal: appeal)
       distribution_task = create(:distribution_task, parent: root_task)
@@ -549,6 +736,9 @@ module Seeds
       ].each do |attrs|
         org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
                           assigned_by: attorney }
+        # do not attempt to create a new colocated task if one already exists for the this LegacyAppeal
+        next if org_task_args[:appeal].tasks.map { |task| task.is_a?(ColocatedTask) }.any? { |bool| bool }
+
         create(:colocated_task, attrs[:trait], org_task_args)
       end
     end
@@ -618,12 +808,14 @@ module Seeds
         )
       end
 
-      create_list(
-        :appeal,
-        8,
-        :with_post_intake_tasks,
-        docket_type: Constants.AMA_DOCKETS.direct_review
-      )
+      8.times do
+        create(
+          :appeal,
+          :with_post_intake_tasks,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          veteran: create_veteran
+        )
+      end
 
       create_tasks_at_acting_judge
     end
@@ -631,11 +823,14 @@ module Seeds
     def create_tasks_at_acting_judge
       attorney = User.find_by_css_id("BVASCASPER1")
       judge = User.find_by_css_id("BVAAABSHIRE")
+      acting_judge = User.find_by_css_id("BVAACTING")
 
-      acting_judge = create(:user, css_id: "BVAACTING", station_id: 101, full_name: "Kris ActingVLJ_AVLJ Merle")
-      create(:staff, :attorney_judge_role, user: acting_judge)
+      if !acting_judge
+        acting_judge = create(:user, css_id: "BVAACTING", station_id: 101, full_name: "Kris ActingVLJ_AVLJ Merle")
+        create(:staff, :attorney_judge_role, user: acting_judge)
+      end
 
-      JudgeTeam.create_for_judge(acting_judge)
+      JudgeTeam.create_for_judge(acting_judge) unless JudgeTeam.for_judge(acting_judge)
       JudgeTeam.for_judge(judge).add_user(acting_judge)
 
       create_appeal_at_judge_assignment(judge: acting_judge)
@@ -654,6 +849,9 @@ module Seeds
       # - Case 3662859 has a valid decision document, so it is assigned to the AVLJ as a judge
       vacols_case_attorney = VACOLS::Case.find_by(bfkey: "3662860")
       vacols_case_judge = VACOLS::Case.find_by(bfkey: "3662859")
+
+      return if LegacyAppeal.find_by(vacols_id: vacols_case_attorney.bfkey) ||
+                LegacyAppeal.find_by(vacols_id: vacols_case_judge.bfkey)
 
       # Initialize the attorney and judge case issue list
       attorney_case_issues = []
@@ -726,10 +924,10 @@ module Seeds
       create(
         :appeal,
         :assigned_to_judge,
+        veteran: create_veteran,
         number_of_claimants: 1,
         associated_judge: judge,
         active_task_assigned_at: assigned_at,
-        veteran_file_number: Generators::Random.unique_ssn,
         docket_type: Constants.AMA_DOCKETS.direct_review,
         closest_regional_office: "RO17",
         request_issues: create_list(
@@ -743,6 +941,8 @@ module Seeds
       # this vet number exists in local/vacols VBMS and BGS setup csv files.
       veteran_file_number_legacy_opt_in = "872958715S"
       legacy_vacols_id = "LEGACYID"
+
+      return if LegacyAppeal.find_by(vacols_id: legacy_vacols_id)
 
       # always delete and start fresh
       VACOLS::Case.where(bfkey: legacy_vacols_id).delete_all
@@ -760,6 +960,7 @@ module Seeds
       folder = VACOLS::Folder.find_or_create_by(ticknum: legacy_vacols_id, tinum: 1)
       vacols_case = create(:case_with_soc,
                            :status_advance,
+                           :type_original,
                            case_issues: case_issues,
                            correspondent: correspondent,
                            folder: folder,
@@ -774,6 +975,7 @@ module Seeds
       create(
         :case,
         :video_hearing_requested,
+        :type_original,
         correspondent: correspondent,
         bfcorlid: vacols_titrnum,
         bfcurloc: "CASEFLOW",
@@ -785,6 +987,7 @@ module Seeds
       create(
         :case,
         :travel_board_hearing_requested,
+        :type_original,
         correspondent: correspondent,
         bfcorlid: vacols_titrnum,
         bfcurloc: "CASEFLOW",
@@ -883,10 +1086,14 @@ module Seeds
       RequestStore[:current_user] = user
 
       offsets.each do |offset|
-        # Embed the ro here so that the titrnums are unique across the
-        # different ros, otherwise collisions cause errors
-        vacols_titrnum = "1#{regional_office}#{offset}E"
         docket_number = "180000#{offset}"
+        next unless VACOLS::Folder.find_by(tinum: docket_number).nil?
+
+        # Create the veteran for this legacy appeal
+        veteran = create_veteran
+
+        vacols_titrnum = veteran.file_number
+
         # Create some video and some travel hearings
         type = offset.even? ? "travel" : "video"
 
@@ -895,8 +1102,6 @@ module Seeds
         legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type)
         # Create the task tree, need to create each task like this to avoid user creation and index conflicts
         create_open_schedule_hearing_task_for_legacy(legacy_appeal, user)
-        # Create the veteran for this legacy appeal
-        create(:veteran, file_number: vacols_titrnum)
       end
 
       # Once everything is created, refresh the cache or they won't appear in the UI

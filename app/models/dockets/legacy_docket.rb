@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class LegacyDocket
-  include ActiveModel::Model
-
+class LegacyDocket < Docket
   def docket_type
     "legacy"
   end
@@ -22,6 +20,10 @@ class LegacyDocket
     LegacyAppeal.repository.genpop_priority_count
   end
 
+  def not_genpop_priority_count
+    LegacyAppeal.repository.not_genpop_priority_count
+  end
+
   def weight
     count(priority: false) + nod_count * Constants.DISTRIBUTION.nod_adjustment
   end
@@ -37,17 +39,29 @@ class LegacyDocket
   end
 
   def age_of_oldest_priority_appeal
-    @age_of_oldest_priority_appeal ||= LegacyAppeal.repository.age_of_oldest_priority_appeal
+    if use_by_docket_date?
+      @age_of_oldest_priority_appeal ||= LegacyAppeal.repository.age_of_oldest_priority_appeal_by_docket_date
+    else
+      @age_of_oldest_priority_appeal ||= LegacyAppeal.repository.age_of_oldest_priority_appeal
+    end
   end
 
   def age_of_n_oldest_genpop_priority_appeals(num)
     LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
+  def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+    LegacyAppeal.repository.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+  end
+
+  def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+    LegacyAppeal.repository.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+  end
+
   def should_distribute?(distribution, style: "push", genpop: "any")
     genpop == "not_genpop" || # always distribute tied cases
-      (style == "push" && !JudgeTeam.for_judge(distribution.judge).ama_only_push) ||
-      (style == "request" && !JudgeTeam.for_judge(distribution.judge).ama_only_request)
+      (style == "push" && !JudgeTeam.for_judge(distribution.judge)&.ama_only_push) ||
+      (style == "request" && !JudgeTeam.for_judge(distribution.judge)&.ama_only_request)
   end
 
   # rubocop:disable Metrics/ParameterLists

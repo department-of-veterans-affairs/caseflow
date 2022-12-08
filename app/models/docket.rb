@@ -15,7 +15,7 @@ class Docket
 
     if ready
       scope = scope.ready_for_distribution
-      scope = adjust_for_genpop(scope, genpop, judge) if judge.present?
+      scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
     end
 
     return scoped_for_priority(scope) if priority == true
@@ -49,8 +49,22 @@ class Docket
     appeals(priority: true, ready: true).limit(num).map(&:ready_for_distribution_at)
   end
 
+  def age_of_n_oldest_priority_appeals_available_to_judge(_judge, num)
+    appeals(priority: true, ready: true).limit(num).map(&:receipt_date)
+  end
+
+  # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
+  # but the judge that is passed in isn't relevant here
+  def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
+    appeals(priority: false, ready: true).limit(num).map(&:receipt_date)
+  end
+
   def age_of_oldest_priority_appeal
-    @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+    if use_by_docket_date?
+      @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.receipt_date
+    else
+      @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+    end
   end
 
   def oldest_priority_appeal_days_waiting
@@ -106,7 +120,11 @@ class Docket
   end
 
   def scoped_for_priority(scope)
-    scope.priority.ordered_by_distribution_ready_date
+    if use_by_docket_date?
+      scope.priority.order("appeals.receipt_date")
+    else
+      scope.priority.ordered_by_distribution_ready_date
+    end
   end
 
   def docket_appeals
@@ -131,6 +149,10 @@ class Docket
     end
   end
 
+  def use_by_docket_date?
+    FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+  end
+
   module Scopes
     include DistributionScopes
 
@@ -145,7 +167,7 @@ class Docket
 
     def nonpriority
       include_aod_motions
-        .where("people.date_of_birth > ?", 75.years.ago)
+        .where("people.date_of_birth > ? or people.date_of_birth is null", 75.years.ago)
         .where.not("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand)
         .group("appeals.id")
         .having("count(case when advance_on_docket_motions.granted "\
@@ -153,7 +175,8 @@ class Docket
     end
 
     def include_aod_motions
-      joins(claimants: :person)
+      joins(:claimants)
+        .joins("LEFT OUTER JOIN people on people.participant_id = claimants.participant_id")
         .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
     end
 

@@ -724,6 +724,14 @@ class AppealRepository
       end
     end
 
+    def not_genpop_priority_count
+      MetricsService.record("VACOLS: not_genpop_priority_count",
+                            name: "not_genpop_priority_count",
+                            service: :vacols) do
+        VACOLS::CaseDocket.not_genpop_priority_count
+      end
+    end
+
     def priority_ready_appeal_vacols_ids
       MetricsService.record("VACOLS: priority_ready_appeal_vacols_ids",
                             name: "priority_ready_appeal_vacols_ids",
@@ -774,11 +782,35 @@ class AppealRepository
       end
     end
 
+    def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+      MetricsService.record("VACOLS: age_of_n_oldest_nonpriority_appeals_available_to_judge",
+                            name: "age_of_n_oldest_nonpriority_appeals_available_to_judge",
+                            service: :vacols) do
+        VACOLS::CaseDocket.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+      end
+    end
+
     def age_of_oldest_priority_appeal
       MetricsService.record("VACOLS: age_of_oldest_priority_appeal",
                             name: "age_of_oldest_priority_appeal",
                             service: :vacols) do
         VACOLS::CaseDocket.age_of_oldest_priority_appeal
+      end
+    end
+
+    def age_of_oldest_priority_appeal_by_docket_date
+      MetricsService.record("VACOLS: age_of_oldest_priority_appeal",
+                            name: "age_of_oldest_priority_appeal",
+                            service: :vacols) do
+        VACOLS::CaseDocket.age_of_oldest_priority_appeal_by_docket_date
+      end
+    end
+
+    def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+      MetricsService.record("VACOLS: age_of_n_oldest_priority_appeals_available_to_judge",
+                            name: "age_of_n_oldest_priority_appeals_available_to_judge",
+                            service: :vacols) do
+        VACOLS::CaseDocket.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
       end
     end
 

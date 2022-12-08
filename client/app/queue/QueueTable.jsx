@@ -168,7 +168,7 @@ export const HeaderRow = (props) => {
           }
           const columnTitleContent = <span {...(titleId ? { id: titleId } : {})}>{column.header || ''}</span>;
           const columnContent = (
-            <span {...iconHeaderStyle} aria-label="">
+            <span {...iconHeaderStyle} aria-label={column.header ?? ''}>
               {columnTitleContent}
               {sortIcon}
               {filterIcon}
@@ -632,7 +632,7 @@ export default class QueueTable extends React.PureComponent {
         aria-label={COPY.CASE_LIST_TABLE_TITLE}
         aria-describedby="case-table-description"
         role="table"
-        id={id}
+        id={id ?? 'case-table-description'}
         className={`usa-table-borderless ${this.props.className}`}
         {...styling}
       >

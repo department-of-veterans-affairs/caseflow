@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { bindActionCreators } from 'redux';
 import { connect, useSelector } from 'react-redux';
 import { css } from 'glamor';
@@ -8,7 +9,7 @@ import React, { useEffect, useMemo } from 'react';
 import _ from 'lodash';
 
 import { APPELLANT_TYPES, CATEGORIES, TASK_ACTIONS } from './constants';
-import { COLORS } from '../constants/AppConstants';
+import { COLORS, ICON_SIZES } from '../constants/AppConstants';
 import {
   appealWithDetailSelector,
   getAllTasksForAppeal,
@@ -57,8 +58,12 @@ import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
 import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
+import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
 
 // TODO: Pull this horizontal rule styling out somewhere.
+
+const ICON_POSITION_FIX = css({ position: 'relative', top: 3 });
+
 const horizontalRuleStyling = css({
   border: 0,
   borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
@@ -212,8 +217,32 @@ export const CaseDetailsView = (props) => {
 
   localStorage.removeItem('VSOSuccessMsg');
 
+  // Retrieve split appeal success and remove from the store
+  const splitStorage = localStorage.getItem('SplitAppealSuccess');
+
+  localStorage.removeItem('SplitAppealSuccess');
+
+  // if null, leave null, if true, check if value is true with reg expression.
+  const splitAppealSuccess = (splitStorage === null ? null : (/true/i).test(splitStorage));
+
   return (
     <React.Fragment>
+      {(splitAppealSuccess && props.featureToggles.split_appeal_workflow) && (
+        <div>
+          <Alert
+            type="success"
+            title={`You have successfully split ${appeal.appellantFullName}'s appeal`}
+            message="This new appeal stream has the same docket number and tasks as the original appeal."
+          />
+        </div>
+      )}
+      {(splitAppealSuccess === false && props.featureToggles.split_appeal_workflow) && (
+        <div {...alertPaddingStyle}>
+          <Alert title="Unable to Process Request" type="error">
+            Something went wrong and the appeal was not split.
+          </Alert>
+        </div>
+      )}
       {!modalIsOpen && error && (
         <div {...alertPaddingStyle}>
           <Alert title={error.title} type="error">
@@ -371,8 +400,23 @@ export const CaseDetailsView = (props) => {
             />
           )}
 
-          <CaseTimeline title="Case Timeline" appeal={appeal} />
-        </StickyNavContentArea>
+          <CaseTimeline title="Case Timeline" appeal={appeal}
+            additionalHeaderContent={
+              true && (
+                <span className="cf-push-right" {...anchorEditLinkStyling}>
+                  { appeal.hasNotifications &&
+                  <Link id="notification-link" href={`/queue/appeals/${appealId}/notifications`} target="_blank">
+                    {COPY.VIEW_NOTIFICATION_LINK}
+                    &nbsp;
+                    <span {...ICON_POSITION_FIX}>
+                      <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
+                    </span>
+                  </Link>}
+                </span>
+              )
+            }
+          />
+        </StickyNavContentArea >
         {props.pollHearing && pollHearing()}
       </AppSegment>
     </React.Fragment>
@@ -400,7 +444,6 @@ CaseDetailsView.propTypes = {
   substituteAppellant: PropTypes.object,
   vsoVirtualOptIn: PropTypes.bool
 };
-
 const mapStateToProps = (state) => ({
   scheduledHearingId: state.components.scheduledHearing.externalId,
   pollHearing: state.components.scheduledHearing.polling,
