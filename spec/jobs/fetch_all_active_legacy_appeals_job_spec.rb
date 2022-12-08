@@ -274,7 +274,6 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
     context "When there are multiple privacy act tasks (at least one pending)" do
       it "returns the correct hash with pending: true and complete: false" do
         foia1
-        byebug
         foia2.update(status: Constants.TASK_STATUSES.completed)
         foia3.update(status: Constants.TASK_STATUSES.cancelled)
         expect(subject.send(:map_appeal_privacy_act_state, appeal)).to eq(privacy_act_pending: true, privacy_act_complete: false)
