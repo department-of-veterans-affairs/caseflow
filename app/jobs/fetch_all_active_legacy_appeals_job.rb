@@ -96,9 +96,25 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
     end
   end
 
+  # Purpose: Set key value pair for privacy_act_pending and privacy_act_complete
+  #          to help with appeal_states table insertion
+  #
+  # Params: LegacyAppeal object
+  #
+  # Return: Hash with two keys (privacy_act_pending and privacy_act_complete)
+  #         with corresponding boolean values
   def map_appeal_privacy_act_state(appeal)
-    # Code goes here ...
-    { privacy_act_pending: false, privacy_act_complete: false }
+    privacy_tasks = appeal.tasks.filter { |task| PRIVACY_ACT_TASKS.include?(task&.type) }
+    privacy_tasks.filter! { |task| Constants.TASK_STATUSES.cancelled != task&.status }
+    if privacy_tasks.any?
+      if privacy_tasks.any? { |task| Task.open_statuses.include?(task.status) } # any pending
+        { privacy_act_pending: true, privacy_act_complete: false }
+      elsif privacy_tasks.all? { |task| task.status == Constants.TASK_STATUSES.completed } # all complete
+        { privacy_act_pending: false, privacy_act_complete: true }
+      end
+    else
+      { privacy_act_pending: false, privacy_act_complete: false }
+    end
   end
 
   # Purpose: Determines if the hearing scheduled attribute within the associated

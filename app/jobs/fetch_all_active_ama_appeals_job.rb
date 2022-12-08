@@ -107,12 +107,8 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   # Return: Hash with two keys (privacy_act_pending and privacy_act_complete)
   #         with corresponding boolean values
   def map_appeal_privacy_act_state(appeal)
-    # Check to see if any privacy tasks exist
-    # If not, F F
-    # If at least one pending T F
-    # If all complete F T
-    # If all cancelled ? ?
-    privacy_tasks = appeal.tasks.filter { |task| PRIVACY_ACT_TASKS.include?(task.type) }
+    privacy_tasks = appeal.tasks.filter { |task| PRIVACY_ACT_TASKS.include?(task&.type) }
+    privacy_tasks.filter! { |task| Constants.TASK_STATUSES.cancelled != task&.status }
     if privacy_tasks.any?
       if privacy_tasks.any? { |task| Task.open_statuses.include?(task.status) } # any pending
         { privacy_act_pending: true, privacy_act_complete: false }
