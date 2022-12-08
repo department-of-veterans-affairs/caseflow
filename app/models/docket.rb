@@ -92,12 +92,13 @@ class Docket
       if distributed_case && task.appeal.can_redistribute_appeal?
         distributed_case.flag_redistribution(task)
         distributed_case.rename_for_redistribution!
-        distribution.distributed_cases.create!(case_id: task.appeal.uuid,
-                                               docket: docket_type,
-                                               priority: priority,
-                                               ready_at: task.appeal.ready_for_distribution_at,
-                                               task: task)
+        new_dist_case = distribution.distributed_cases.create!(case_id: task.appeal.uuid,
+                                                               docket: docket_type,
+                                                               priority: priority,
+                                                               ready_at: task.appeal.ready_for_distribution_at,
+                                                               task: task)
         cancel_previous_judge_assign_task(task.appeal, distribution.judge.id)
+        new_dist_case
       elsif !distributed_case
         distribution.distributed_cases.create!(case_id: task.appeal.uuid,
                                                docket: docket_type,

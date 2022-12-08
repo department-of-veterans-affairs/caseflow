@@ -8,7 +8,7 @@ class JudgeAssignTaskCreator
   end
 
   def call
-    return nil if appeal.tasks.closed.of_type(:DistributionTask).any?
+    return nil unless appeal.tasks.open.of_type(:DistributionTask).any? || appeal.is_a?(LegacyAppeal)
 
     Rails.logger.info("Assigning judge task for appeal #{appeal.id}")
     task = reassign_or_create
@@ -54,6 +54,6 @@ class JudgeAssignTaskCreator
   end
 
   def close_distribution_tasks_for_appeal
-    appeal.tasks.of_type(:DistributionTask).first.update!(status: :completed)
+    appeal.tasks.of_type(:DistributionTask).update(status: :completed)
   end
 end
