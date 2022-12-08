@@ -140,9 +140,17 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     end
   end
 
+  # Purpose: Set key value pair for scheduled_in_error to help with appeal_states table insertion
+  #
+  # Params: Appeal object
+  #
+  # Return: Hash with a single key (scheduled_in_error) with a boolean value
   def map_appeal_hearing_scheduled_in_error_state(appeal)
-    # Code goes here ...
-    { scheduled_in_error: false }
+    if appeal.hearings&.max_by(&:id)&.disposition == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+      { scheduled_in_error: true }
+    else
+      { scheduled_in_error: false }
+    end
   end
 
   # Purpose: Method to find appeals with
@@ -159,8 +167,15 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     end
   end
 
+  # Purpose: Determines if the appeal_docketed attribute within the associated
+  # appeal_state record should be set to true
+  # Params: Appeal object
+  # Returns: Hash of "appeal_docketed" key value pair
   def map_appeal_docketed_state(appeal)
-    # Code goes here ...
+    if appeal&.tasks&.exists?(type: "DistributionTask")
+      return { appeal_docketed: true }
+    end
+
     { appeal_docketed: false }
   end
 

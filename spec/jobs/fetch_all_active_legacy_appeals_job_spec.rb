@@ -227,6 +227,7 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
     let(:postponed_appeal) { postponed_hearing.appeal }
     let(:appeal) { scheduled_hearing.appeal }
     let(:new_case_hearing) { create(:case_hearing, folder_nr: postponed_appeal.vacols_id) }
+    let(:empty_appeal) { create(:legacy_appeal) }
     context "When the last hearing has a disposition of postponed" do
       it "returns the correct hash with a boolean value of true" do
         expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal)).to eq(hearing_postponed: true)
@@ -250,6 +251,12 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
       it "returns the correct hash with a boolean value of false" do
         new_case_hearing
         expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal)).to eq(hearing_postponed: false)
+      end
+    end
+
+    context "When there are no hearings associated with an appeal" do
+      it "returns the correct hash with a boolean value of false" do
+        expect(subject.send(:map_appeal_hearing_postponed_state, empty_appeal)).to eq(hearing_postponed: false)
       end
     end
   end
@@ -306,5 +313,63 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
     end
   end
 
+
+  describe "map appeal docketed state" do
+    context "legacy appeals" do
+      let!(:legacy_appeal) do
+        create(:legacy_appeal, :with_veteran,
+               vacols_case: create(:case, :aod))
+      end
+
+      it "returns appeal docketed: true" do
+        legacy_appeal.case_record.update(bfcurloc: "01")
+        expect(subject.send(:map_appeal_docketed_state, legacy_appeal)).to eq(appeal_docketed: true)
+      end
+
+      it "return appeal docketed: false" do
+        expect(subject.send(:map_appeal_docketed_state, legacy_appeal)).to eq(appeal_docketed: false)
+      end
+    end
+  end
+
+  describe "#map_appeal_hearing_scheduled_in_error_state(appeal)" do
+    let!(:scheduled_hearing) { create(:legacy_hearing) }
+    let!(:error_hearing) { create(:legacy_hearing, disposition: "E") }
+    let(:error_appeal) { error_hearing.appeal }
+    let(:appeal) { scheduled_hearing.appeal }
+    let(:new_case_hearing) { create(:case_hearing, folder_nr: error_appeal.vacols_id) }
+    let(:empty_appeal) { create(:legacy_appeal) }
+    context "When the last hearing has a disposition of scheduled in error" do
+      it "returns the correct hash with a boolean value of true" do
+        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, error_appeal)).to eq(scheduled_in_error: true)
+      end
+    end
+
+    context "When the last hearing does not have a disposition of scheduled in error" do
+      it "returns the correct hash with a boolean value of false" do
+        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, appeal)).to eq(scheduled_in_error: false)
+      end
+    end
+
+    context "When there are multiple hearings associated with an appeal and the last one is scheduled in error" do
+      it "returns the correct hash with a boolean value of true" do
+        new_case_hearing.update(hearing_disp: "E")
+        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, error_appeal)).to eq(scheduled_in_error: true)
+      end
+    end
+
+    context "When there are multiple hearings associated with an appeal and the last one is not postponed" do
+      it "returns the correct hash with a boolean value of false" do
+        new_case_hearing
+        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, error_appeal)).to eq(scheduled_in_error: false)
+      end
+    end
+
+    context "When there are no hearings associated with an appeal" do
+      it "returns the correct hash with a boolean value of false" do
+        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, empty_appeal)).to eq(scheduled_in_error: false)
+      end
+    end
+  end
 end
 # rubocop:enable Layout/LineLength

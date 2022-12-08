@@ -236,7 +236,8 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     let!(:postponed_hearing) { create(:hearing, :postponed) }
     let(:postponed_appeal) { postponed_hearing.appeal }
     let(:appeal) { scheduled_hearing.appeal }
-    let(:second_hearing) { create(:hearing, appeal: postponed_appeal)}
+    let(:second_hearing) { create(:hearing, appeal: postponed_appeal) }
+    let(:empty_appeal) { create(:appeal) }
     context "When the last hearing has a disposition of postponed" do
       it "returns the correct hash with a boolean value of true" do
         expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal)).to eq(hearing_postponed: true)
@@ -260,6 +261,12 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       it "returns the correct hash with a boolean value of false" do
         second_hearing
         expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal)).to eq(hearing_postponed: false)
+      end
+    end
+
+    context "When there are no hearings associated with an appeal" do
+      it "returns the correct hash with a boolean value of false" do
+        expect(subject.send(:map_appeal_hearing_postponed_state, empty_appeal)).to eq(hearing_postponed: false)
       end
     end
   end
@@ -313,6 +320,68 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     context "when there is an AMA Appeal and the root_task has a status that is not 'cancelled'" do
       it "returns correct key value appeal_cancelled: false" do
         expect(subject.send(:map_appeal_cancelled_state, appeal)).to eq(appeal_cancelled: false)
+      end
+    end
+  end
+
+  describe "map appeal docketed state" do
+    context "ama appeals" do
+      let!(:appeal) { create(:appeal) }
+      let!(:appeal_with_only_root_task) { create(:appeal) }
+      let!(:appeal_with_no_tasks) { create(:appeal) }
+      let!(:root_task) { create(:root_task, appeal: appeal_with_only_root_task) }
+      let!(:distribution_task) { create(:distribution_task, appeal: appeal) }
+
+      it "returns appeal docketed: true when there is a distribution task" do
+        expect(subject.send(:map_appeal_docketed_state, appeal)).to eq(appeal_docketed: true)
+      end
+
+      it "returns appeal docketed: false when there are no distribution tasks" do
+        expect(subject.send(:map_appeal_docketed_state, appeal_with_only_root_task)).to eq(appeal_docketed: false)
+      end
+
+      it "return appeal docketed: false when there are no tasks at all" do
+        expect(subject.send(:map_appeal_docketed_state, appeal_with_no_tasks)).to eq(appeal_docketed: false)
+      end
+    end
+  end
+
+  describe "#map_appeal_hearing_scheduled_in_error_state(appeal)" do
+    let!(:scheduled_hearing) { create(:hearing) }
+    let!(:error_hearing) { create(:hearing, :scheduled_in_error) }
+    let(:error_appeal) { error_hearing.appeal }
+    let(:appeal) { scheduled_hearing.appeal }
+    let(:second_hearing) { create(:hearing, appeal: error_appeal)}
+    let(:empty_appeal) { create(:appeal) }
+    context "When the last hearing has a disposition of postponed" do
+      it "returns the correct hash with a boolean value of true" do
+        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, error_appeal)).to eq(scheduled_in_error: true)
+      end
+    end
+
+    context "When the last hearing does not have a disposition of postponed" do
+      it "returns the correct hash with a boolean value of false" do
+        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, appeal)).to eq(scheduled_in_error: false)
+      end
+    end
+
+    context "When there are multiple hearings associated with an appeal and the last one is postponed" do
+      it "returns the correct hash with a boolean value of true" do
+        second_hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error)
+        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, error_appeal)).to eq(scheduled_in_error: true)
+      end
+    end
+
+    context "When there are multiple hearings associated with an appeal and the last one is not postponed" do
+      it "returns the correct hash with a boolean value of false" do
+        second_hearing
+        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, error_appeal)).to eq(scheduled_in_error: false)
+      end
+    end
+
+    context "When there are no hearings associated with an appeal" do
+      it "returns the correct hash with a boolean value of false" do
+        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, empty_appeal)).to eq(scheduled_in_error: false)
       end
     end
   end
