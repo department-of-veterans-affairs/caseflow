@@ -77,7 +77,7 @@ class Docket
     appeals(priority: true, ready: true).pluck(:uuid)
   end
 
-  # rubocop:disable Lint/UnusedMethodArgument
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Lint/UnusedMethodArgument
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
     appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
@@ -106,7 +106,7 @@ class Docket
       end
     end
   end
-  # rubocop:enable Lint/UnusedMethodArgument
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Lint/UnusedMethodArgument
 
   def self.nonpriority_decisions_per_year
     Appeal.extending(Scopes).nonpriority
