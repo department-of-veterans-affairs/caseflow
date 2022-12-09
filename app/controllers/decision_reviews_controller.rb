@@ -4,6 +4,8 @@ class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
 
+  delegate :in_progress_tasks, :completed_tasks, to: :business_line
+
   def index
     if business_line
       respond_to do |format|
@@ -45,7 +47,7 @@ class DecisionReviewsController < ApplicationController
 
   def tasks
     task_list = case allowed_params[:tab]
-                when "in_progress" then in_progress_tasks
+                when "in_progress" then Kaminari.paginate_array(in_progress_tasks)
                 when "completed" then completed_tasks
                 else
                   return render json: { error: "Tab name provided could not be found" }, status: :not_found
@@ -67,8 +69,6 @@ class DecisionReviewsController < ApplicationController
   def task
     @task ||= Task.includes([:appeal, :assigned_to]).find(task_id)
   end
-
-  delegate :in_progress_tasks, :completed_tasks, to: :business_line
 
   def business_line
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
