@@ -16,10 +16,10 @@ class Api::V1::MpiController < Api::ApplicationController
       response_info_column[:updated_deceased_time] = updated_veteran.sfnod
     end
     mpi_update.update!(update_type: result, completed_at: Time.zone.now, info: response_info_column)
-    if result == :no_veteran || result == :missing_deceased_info
-      status = :bad_request
+    status = if result == :no_veteran || result == :missing_deceased_info
+      :bad_request
     else
-      status = :ok
+      :ok
     end
     render json: { result: result }, status: status
   rescue StandardError => error
