@@ -68,22 +68,7 @@ class DecisionReviewsController < ApplicationController
     @task ||= Task.includes([:appeal, :assigned_to]).find(task_id)
   end
 
-  # :reek:FeatureEnvy
-  def in_progress_tasks
-    Kaminari.paginate_array(
-      business_line.tasks.open.includes([:assigned_to, :appeal]).order(assigned_at: :desc).select do |task|
-        if FeatureToggle.enabled?(:board_grant_effectuation_task, user: :current_user)
-          task.appeal.request_issues.active.any? || task.is_a?(BoardGrantEffectuationTask)
-        else
-          task.appeal.request_issues.active.any?
-        end
-      end
-    )
-  end
-
-  def completed_tasks
-    business_line.tasks.recently_completed.includes([:assigned_to, :appeal]).order(closed_at: :desc)
-  end
+  delegate :in_progress_tasks, :completed_tasks, to: :business_line
 
   def business_line
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
