@@ -16,7 +16,7 @@ class DecisionReviewTask < Task
   end
 
   def ui_hash
-    serializer_class.new(self).serializable_hash[:data]
+    serializer_class.new(self).serializable_hash[:data][:attributes]
   end
 
   def complete_with_payload!(decision_issue_params, decision_date)
