@@ -118,7 +118,6 @@ class ExternalApi::VANotifyService
     #
     # Return: Request hash
     def email_request(participant_id, notification_id, email_template_id, personalisation, status)
-      byebug
       request = {
         body: {
           template_id: email_template_id,
@@ -135,7 +134,6 @@ class ExternalApi::VANotifyService
         headers: HEADERS,
         endpoint: SEND_EMAIL_NOTIFICATION_ENDPOINT, method: :post
       }
-      byebug
       if !status.empty?
         # If a status is given then it will be added to the request object
         request[:body][:personalisation][:appeal_status] = status
@@ -153,7 +151,6 @@ class ExternalApi::VANotifyService
     #
     # Return: Request hash
     def sms_request(participant_id, notification_id, sms_template_id, personalisation, status)
-      byebug
       request = {
         body: {
           reference: notification_id,
