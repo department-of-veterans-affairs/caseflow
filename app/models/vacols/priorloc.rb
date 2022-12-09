@@ -8,27 +8,25 @@ class VACOLS::Priorloc < VACOLS::Record
     loclcode
   end
 
-  def vacols_id
+  def folder
     lockey
   end
+
+  alias vacols_id folder
 
   def location_date_in
     locdin
   end
 
   # mapping for frontend so can look similar to tasks
-  def closed_at
-    location_date_in
-  end
+  alias closed_at location_date_in
 
   def location_date_out
     locdout
   end
 
   # mapping for frontend so can look similar to tasks
-  def created_at
-    location_date_out
-  end
+  alias created_at location_date_out
 
   def location
     locstto
