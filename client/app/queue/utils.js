@@ -368,7 +368,7 @@ const prepareLocationHistoryForStore = (appeal) => {
     locationHistory = appeal.attributes.location_history.map((location, index) =>
       ({
         label: location.location_label,
-        uniqueId: `${location.vacols_id }_${ index}`,
+        uniqueId: `${location.vacols_id }_${index}`,
         assignedBy: location.assigned_by,
         assignedAt: location.assigned_at,
         location: location.location_label,
