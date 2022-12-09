@@ -43,7 +43,8 @@ class TaskSorter
   def order_clause
     case column.name
     when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
-      Task.order_by_appeal_priority_clause(order: sort_order)
+      # Controls sort order I changed it from asc to desc, you can click on sort and it sorts to an extent
+      Task.order_by_appeal_priority_clause(order: "desc")
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
       Arel.sql(task_type_order_clause)
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name, Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name

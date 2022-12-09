@@ -248,7 +248,9 @@ class Task < CaseflowRecord
     end
 
     def order_by_appeal_priority_clause(order: "asc")
-      boolean_order_clause = (order == "asc") ? "0 ELSE 1" : "1 ELSE 0"
+      # Changed asc to desc and now if you click sort you can sort in desc etc. 
+      # My thought we need to work with this AREL query and we can do what we need to do.
+      boolean_order_clause = (order == "desc") ? "0 ELSE 1" : "1 ELSE 0"
       Arel.sql(
         "CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN #{boolean_order_clause} END, "\
         "CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN #{boolean_order_clause} END, "\
