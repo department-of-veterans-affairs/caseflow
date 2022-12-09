@@ -145,6 +145,9 @@ class DecisionReviewsController < ApplicationController
       :business_line_slug,
       :task_id,
       :tab,
+      :sort_by,
+      :order,
+      :filter,
       :page,
       decision_issues: [:description, :disposition, :request_issue_id],
     )
