@@ -295,11 +295,9 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
   end
 
   describe "#map_appeal_cancelled_state(appeal)" do
-    let!(:task) { create(:root_task) }
-    let!(:task_cancelled) { create(:root_task, :cancelled) }
-    let!(:la_rt_nil) { create(:appeal) } # legacy appeal w. root task "nil"
-    let(:legacy_appeal_cancelled) { task_cancelled.appeal }
-    let(:legacy_appeal) { task.appeal }
+    let(:legacy_appeal) { create(:legacy_appeal, :with_root_task) }
+    let(:legacy_appeal_cancelled) { create(:legacy_appeal, :with_cancelled_root_task) }
+    let(:la_rt_nil) { create(:legacy_appeal) }
 
     context "when there is a Legacy Appeal and the root_task has a status of 'cancelled'" do
       it "returns correct key value appeal_cancelled: true" do
