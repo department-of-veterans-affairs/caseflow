@@ -6,6 +6,8 @@ class DecisionReviewsController < ApplicationController
 
   delegate :in_progress_tasks, :completed_tasks, to: :business_line
 
+  DEFAULT_TASKS_PER_PAGE = 15
+
   def index
     if business_line
       respond_to do |format|
@@ -47,15 +49,13 @@ class DecisionReviewsController < ApplicationController
 
   def tasks
     task_list = case allowed_params[:tab]
-                when "in_progress" then Kaminari.paginate_array(in_progress_tasks)
+                when "in_progress" then in_progress_tasks
                 when "completed" then completed_tasks
                 else
                   return render json: { error: "Tab name provided could not be found" }, status: :not_found
                 end
 
-    render json: apply_task_serializer(
-      task_list.page(allowed_params[:page] || 1).per(15)
-    )
+    render json: pagination_json(task_list)
   end
 
   def business_line_slug
@@ -72,6 +72,26 @@ class DecisionReviewsController < ApplicationController
 
   def business_line
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
+  end
+
+  def pagination_json(task_list)
+    task_count = task_list.size
+    total_pages = (task_count / DEFAULT_TASKS_PER_PAGE.to_f).ceil
+
+    {
+      tasks: {
+        data: apply_task_serializer(paginate_tasks(task_list))
+      },
+      tasks_per_page: DEFAULT_TASKS_PER_PAGE,
+      task_page_count: total_pages,
+      total_task_count: task_count
+    }
+  end
+
+  def paginate_tasks(task_list)
+    tasks = task_list.is_a?(Array) ? Kaminari.paginate_array(task_list) : task_list
+
+    tasks.page(allowed_params[:page] || 1).per(DEFAULT_TASKS_PER_PAGE)
   end
 
   helper_method :in_progress_tasks, :completed_tasks, :apply_task_serializer, :business_line, :task
