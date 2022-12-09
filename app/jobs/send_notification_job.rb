@@ -99,8 +99,14 @@ class SendNotificationJob < CaseflowJob
     event = NotificationEvent.find_by(event_type: message.template_name)
     email_template_id = event.email_template_id
     sms_template_id = event.sms_template_id
-    appeal = Appeal.find_by_uuid(message.appeal_id)
-    first_name = appeal&.appellant_first_name || "Appellant"
+    appeal = Appeal.find_by_uuid(message.appeal_id) || LegacyAppeal.find_by(vacols_id: message.appeal_id)
+    first_name = (
+      if appeal&.appellant_is_not_veteran
+        appeal&.appellant_first_name || "Appellant"
+      else
+        appeal&.veteran_first_name || "Appellant"
+      end
+    )
     quarterly_status = message.quarterly_status
     personalisation = { first_name: first_name, quarterly_status: quarterly_status }
     status = message.appeal_status || ""
