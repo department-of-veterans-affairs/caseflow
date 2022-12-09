@@ -149,7 +149,7 @@ class DecisionReviewsController < ApplicationController
       :order,
       :filter,
       :page,
-      decision_issues: [:description, :disposition, :request_issue_id],
+      decision_issues: [:description, :disposition, :request_issue_id]
     )
   end
 end
