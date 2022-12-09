@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import COPY from '../../../COPY';
-import { redText } from '../constants';
 import { AttorneyDaysWorked } from './AttorneyDaysWorked';
 import { AttorneyTasksTreeTimeline } from './AttorneyTasksTreeTimeline';
 import { LegacyCaseTimeline } from './LegacyCaseTimeline';
@@ -47,14 +46,11 @@ export const CaseTimelinessTimeline = (props) => {
     return (
       <div>
         <div className="case-timeline" >
-          <span className="case-type">
-            <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_CASE_TYPE}</b>:
-            { aod && <span {...redText}> AOD</span> }
-            { cavc && <span {...redText}> CAVC</span> }
-            { !aod && !cavc && <span> {caseType}</span> }
-          </span>
           <AttorneyDaysWorked
             attorneyTasks={attorneyChildrenTasks}
+            aod={aod}
+            cavc={cavc}
+            caseType={caseType}
             daysAssigned={daysAssigned} />
         </div>
         <br />
