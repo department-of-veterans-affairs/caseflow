@@ -117,7 +117,7 @@ export const boardIntakeColumn = (requireDasRecord) => {
     header: COPY.CASE_LIST_TABLE_APPEAL_BOARD_INTAKE_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name,
     span: collapseColumn(requireDasRecord),
-    QueueTableTooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
+    tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
     align: 'center',
     valueFunction: (task) => {
       const assignedDays = daysSinceAssigned(task);
@@ -144,7 +144,7 @@ export const lastActionColumn = (requireDasRecord) => {
     header: COPY.CASE_LIST_TABLE_APPEAL_LAST_ACTION_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.LAST_ACTION.name,
     span: collapseColumn(requireDasRecord),
-    QueueTableTooltip: <React.Fragment>Calendar days since <br /> this case's status last changed</React.Fragment>,
+    tooltip: <React.Fragment>Calendar days since <br /> this case's status last changed</React.Fragment>,
     align: 'center',
     valueFunction: (task) => `${task.daysSinceLastStatusChange} days ago`,
     backendCanSort: true,
@@ -322,7 +322,7 @@ export const daysWaitingColumn = (requireDasRecord) => {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
     span: collapseColumn(requireDasRecord),
-    QueueTableTooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
+    tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
     valueFunction: (task) => {
       const assignedDays = daysSinceAssigned(task);
       const onHoldDays = daysSincePlacedOnHold(task);
@@ -348,7 +348,7 @@ export const daysSinceIntakeColumn = (requireDasRecord) => {
     header: COPY.CASE_LIST_TABLE_BOARD_INTAKE,
     name: QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name,
     span: collapseColumn(requireDasRecord),
-    QueueTableTooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
+    tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
     align: 'center',
     valueFunction: (task) => {
       return `${task.daysSinceBoardIntake} days ago`;
@@ -363,7 +363,7 @@ export const daysOnHoldColumn = (requireDasRecord) => {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.TASK_HOLD_LENGTH.name,
     span: collapseColumn(requireDasRecord),
-    QueueTableTooltip: <React.Fragment>Calendar days since <br /> this case was placed on hold</React.Fragment>,
+    tooltip: <React.Fragment>Calendar days since <br /> this case was placed on hold</React.Fragment>,
     align: 'center',
     valueFunction: (task) => {
       return <React.Fragment>
@@ -382,7 +382,7 @@ export const daysSinceLastActionColumn = (requireDasRecord) => {
     header: COPY.CASE_LIST_TABLE_APPEAL_LAST_ACTION_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST_ACTION.name,
     span: collapseColumn(requireDasRecord),
-    QueueTableTooltip: <React.Fragment>Calendar days since <br /> this case's status last changed</React.Fragment>,
+    tooltip: <React.Fragment>Calendar days since <br /> this case's status last changed</React.Fragment>,
     align: 'center',
     valueFunction: (task) => `${task.daysSinceLastStatusChange} days ago`,
     backendCanSort: true,
