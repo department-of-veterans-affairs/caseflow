@@ -374,6 +374,32 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     end
   end
 
+  describe "#map_appeal_cancelled_state(appeal)" do
+    let!(:task) { create(:root_task) }
+    let!(:task_cancelled) { create(:root_task, :cancelled) }
+    let!(:appeal_rt_nil) { create(:appeal) }
+    let(:appeal_cancelled) { task_cancelled.appeal }
+    let(:appeal) { task.appeal }
+
+    context "when there is an AMA Appeal and the root_task has a status of 'cancelled'" do
+      it "returns correct key value appeal_cancelled: true" do
+        expect(subject.send(:map_appeal_cancelled_state, appeal_cancelled)).to eq(appeal_cancelled: true)
+      end
+    end
+
+    context "when there is an AMA Appeal and the root_task has a status that is not 'cancelled'" do
+      it "returns correct key value appeal_cancelled: false" do
+        expect(subject.send(:map_appeal_cancelled_state, appeal)).to eq(appeal_cancelled: false)
+      end
+    end
+
+    context "when there is an AMA Appeal and the root_task is 'nil'" do
+      it "returns correct key value appeal_cancelled: false" do
+        expect(subject.send(:map_appeal_cancelled_state, appeal_rt_nil)).to eq(appeal_cancelled: false)
+      end
+    end
+  end
+
   describe "map appeal docketed state" do
     context "ama appeals" do
       let!(:appeal) { create(:appeal) }

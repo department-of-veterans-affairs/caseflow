@@ -171,9 +171,18 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
     end
   end
 
+  # Purpose: Method to find legacy appeals with
+  # a root task of cancelled
+  #
+  # Params: Appeal object
+  #
+  # Returns: key value pair of appeal_cancelled: true or false
   def map_appeal_cancelled_state(appeal)
-    # Code goes here ...
-    { appeal_cancelled: false }
+    if appeal&.root_task&.status == "cancelled"
+      { appeal_cancelled: true }
+    else
+      { appeal_cancelled: false }
+    end
   end
 
   # Purpose: Determines if the appeal_docketed attribute within the associated
