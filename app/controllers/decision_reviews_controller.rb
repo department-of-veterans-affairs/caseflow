@@ -113,7 +113,7 @@ class DecisionReviewsController < ApplicationController
   end
 
   def apply_task_serializer(tasks)
-    tasks.map { |task| task.partial_ui_hash.merge(business_line: business_line_slug) }
+    tasks.map { |task| task.expanded_ui_hash.merge(business_line: business_line_slug) }
   end
 
   def set_application

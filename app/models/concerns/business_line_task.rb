@@ -11,7 +11,7 @@ module BusinessLineTask
     serialize_task[:attributes]
   end
 
-  def partial_ui_hash
+  def expanded_ui_hash
     serialize_task
   end
 
