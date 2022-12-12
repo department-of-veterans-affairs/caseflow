@@ -15,16 +15,14 @@ class NonCompTabsUnconnected extends React.PureComponent {
       page: <TaskTableTab
         key="inprogress"
         predefinedColumns={{ includeDaysWaiting: true,
-          defaultSortIdx: 3 }}
-        tasks={this.props.inProgressTasks} />
+          defaultSortIdx: 3 }} />
     }, {
       label: 'Completed tasks',
       page: <TaskTableTab
         key="completed"
         description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
         predefinedColumns={{ includeCompletedDate: true,
-          defaultSortIdx: 3 }}
-        tasks={this.props.completedTasks} />
+          defaultSortIdx: 3 }} />
     }];
 
     return <TabWindow
@@ -39,7 +37,6 @@ NonCompTabsUnconnected.propTypes = {
   completedTasks: PropTypes.array,
   currentTab: PropTypes.node,
   dispatch: PropTypes.func,
-  inProgressTasks: PropTypes.array,
 };
 
 class TaskTableTab extends React.PureComponent {
@@ -93,6 +90,7 @@ class TaskTableTab extends React.PureComponent {
             decisionReviewTypeColumn(this.state.allTasks)]}
           includeIssueCount
           tasks={this.state.shownTasks}
+          taskPageApiEndpoint={this.state.taskPageApiEndpoint}
         />
       </div>
     </React.Fragment>;
@@ -107,7 +105,6 @@ TaskTableTab.propTypes = {
 
 const NonCompTabs = connect(
   (state) => ({
-    inProgressTasks: state.inProgressTasks,
     completedTasks: state.completedTasks,
     currentTab: state.currentTab
   })
