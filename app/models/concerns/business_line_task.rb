@@ -6,9 +6,7 @@ module BusinessLineTask
   def ui_hash(return_full_hash: false)
     data_hash = serializer_class.new(self).serializable_hash[:data]
 
-    return data_hash if return_full_hash
-
-    data_hash[:attributes]
+    return_full_hash ? data_hash : data_hash[:attributes]
   end
 
   def complete_with_payload!(_decision_issue_params, _decision_date)
