@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ##
-# Task for a business line at BVA (e.g., Vocational Rehab & Employment) to review a decision from a judge relating to
+# Task for a business line at BVA (e.g., Veteran Readiness & Employment) to review a decision from a judge relating to
 # non-compensation benefits like education or loan guarantys.
 
 class DecisionReviewTask < Task
