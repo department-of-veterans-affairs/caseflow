@@ -149,7 +149,10 @@ TaskTableUnconnected.propTypes = {
   includeNewDocsIcon: PropTypes.bool,
   customColumns: PropTypes.array,
   defaultSortIdx: PropTypes.number,
-  getKeyForRow: PropTypes.func
+  getKeyForRow: PropTypes.func,
+  taskPageApiEndpoint: PropTypes.string,
+  useTaskPageApi: PropTypes.bool,
+  tabPaginationOptions: PropTypes.array
 };
 
 const mapStateToProps = (state) => ({
