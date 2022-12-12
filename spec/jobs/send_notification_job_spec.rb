@@ -80,6 +80,7 @@ describe SendNotificationJob, type: :job do
   let(:no_name_message) { VANotifySendMessageTemplate.new(no_name_message_attributes, good_template_name) }
   let(:bad_message) { VANotifySendMessageTemplate.new(error_message_attributes, error_template_name) }
   let(:fail_create_message) { VANotifySendMessageTemplate.new(fail_create_message_attributes, error_template_name) }
+  let(:quarterly_message) { VANotifySendMessageTemplate.new(success_message_attributes, "Quarterly Notification")}
   let(:participant_id) { success_message_attributes[:participant_id] }
   let(:no_name_participant_id) { no_name_message_attributes[:participant_id] }
   let(:bad_participant_id) { "123" }
@@ -354,6 +355,20 @@ describe SendNotificationJob, type: :job do
       job.instance_variable_set(:@notification_audit_record, notification)
       expect(job).not_to receive(:send_to_va_notify)
       job.perform_now
+    end
+  end
+
+  context "feature flag for quarterly notifications" do
+    it "should send an sms for quarterly notifications when the flag is on" do
+      FeatureToggle.enable!(:va_notify_quarterly_sms)
+      expect(VANotifyService).to receive(:send_sms_notifications)
+      SendNotificationJob.new(quarterly_message.to_json).perform_now
+    end
+
+    it "should not send an sms for quarterly notifications when the flag is off" do
+      FeatureToggle.disable!(:va_notify_quarterly_sms)
+      expect(VANotifyService).not_to receive(:send_sms_notifications)
+      SendNotificationJob.new(quarterly_message.to_json).perform_now
     end
   end
 end
