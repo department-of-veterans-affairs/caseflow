@@ -16,7 +16,12 @@ class Api::V1::MpiController < Api::ApplicationController
       response_info_column[:updated_deceased_time] = updated_veteran.sfnod
     end
     mpi_update.update!(update_type: result, completed_at: Time.zone.now, info: response_info_column)
-    render json: { result: result }, status: :ok
+    status = if result == :no_veteran || result == :missing_deceased_info
+      :bad_request
+    else
+      :ok
+    end
+    render json: { result: result }, status: status
   rescue StandardError => error
     if !Rails.deploy_env?(:prod) && !Rails.deploy_env?(:preprod)
       response_info_column[:error] = error
