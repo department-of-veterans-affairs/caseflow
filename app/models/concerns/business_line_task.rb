@@ -3,18 +3,6 @@
 module BusinessLineTask
   extend ActiveSupport::Concern
 
-  def serialize_task
-    serializer_class.new(self).serializable_hash[:data]
-  end
-
-  def ui_hash
-    serialize_task[:attributes]
-  end
-
-  def expanded_ui_hash
-    serialize_task
-  end
-
   def complete_with_payload!(_decision_issue_params, _decision_date)
     return false unless validate_task
 

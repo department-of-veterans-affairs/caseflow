@@ -5,8 +5,6 @@
 # non-compensation benefits like education or loan guarantys.
 
 class DecisionReviewTask < Task
-  include BusinessLineTask
-
   attr_reader :error_code
 
   def label
@@ -15,6 +13,18 @@ class DecisionReviewTask < Task
 
   def serializer_class
     ::WorkQueue::DecisionReviewTaskSerializer
+  end
+
+  def serialize_task
+    serializer_class.new(self).serializable_hash[:data]
+  end
+
+  def ui_hash
+    serialize_task[:attributes]
+  end
+
+  def expanded_ui_hash
+    serialize_task
   end
 
   def complete_with_payload!(decision_issue_params, decision_date)
