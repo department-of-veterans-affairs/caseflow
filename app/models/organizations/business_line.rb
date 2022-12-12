@@ -2,7 +2,7 @@
 
 class BusinessLine < Organization
   def tasks_url
-    "/decision_reviews/#{url}/tasks"
+    "/decision_reviews/#{url}"
   end
 
   # :reek:FeatureEnvy
