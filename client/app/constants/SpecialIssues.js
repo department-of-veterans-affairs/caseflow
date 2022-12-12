@@ -330,7 +330,7 @@ export const SPECIAL_ISSUES = [
     },
     nonCompensation: true,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 12
+    queueSectionOrder: 11
   }
 ];
 
@@ -367,6 +367,7 @@ export const AMA_SPECIAL_ISSUES = [
     isAmaRelevant: true
   },
   {
+<<<<<<< HEAD
     display: 'PACT Act',
     queueDisplay: 'PACT Act',
     specialIssue: 'pactAct',
@@ -377,6 +378,8 @@ export const AMA_SPECIAL_ISSUES = [
     isAmaRelevant: true
   },
   {
+=======
+>>>>>>> 248bdfa6659df80aaddbb6a959c8e2dd3f7d4242
     node: <b>No Special Issues</b>,
     display: 'No Special Issues',
     queueDisplay: 'No Special Issues',
