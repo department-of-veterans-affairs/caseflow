@@ -4,7 +4,7 @@ class WorkQueue::DecisionReviewTaskSerializer
   include FastJsonapi::ObjectSerializer
 
   def self.decision_review(object)
-    @decision_review ||= object.appeal
+    object.appeal
   end
 
   def self.claimant_with_name(object)
@@ -30,15 +30,15 @@ class WorkQueue::DecisionReviewTaskSerializer
   end
 
   def self.request_issues(object)
-    @request_issues ||= decision_review(object).request_issues
+    decision_review(object).request_issues
   end
 
   def self.issue_count(object)
-    @issue_count ||= request_issues(object).active_or_ineligible.size
+    request_issues(object).active_or_ineligible.size
   end
 
   def self.veteran(object)
-    @veteran ||= decision_review(object).veteran
+    decision_review(object).veteran
   end
 
   attribute :claimant do |object|

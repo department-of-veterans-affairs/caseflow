@@ -18,11 +18,13 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
           veteran_participant_id: veteran.participant_id,
           assigned_on: task.assigned_at,
+          assigned_at: task.assigned_at,
           closed_at: task.closed_at,
           started_at: task.started_at,
           tasks_url: "/decision_reviews/nco",
           id: task.id,
           created_at: task.created_at,
+          issue_count: 0,
           type: "Higher-Level Review"
         }
       }
@@ -43,11 +45,13 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
             veteran_participant_id: veteran.participant_id,
             assigned_on: task.assigned_at,
+            assigned_at: task.assigned_at,
             closed_at: task.closed_at,
             started_at: task.started_at,
             tasks_url: "/decision_reviews/nco",
             id: task.id,
             created_at: task.created_at,
+            issue_count: 0,
             type: "Higher-Level Review"
           }
         }
@@ -78,11 +82,13 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
             veteran_participant_id: veteran.participant_id,
             assigned_on: task.assigned_at,
+            assigned_at: task.assigned_at,
             closed_at: task.closed_at,
             started_at: task.started_at,
             tasks_url: "/decision_reviews/nco",
             id: task.id,
             created_at: task.created_at,
+            issue_count: 0,
             type: "Higher-Level Review"
           }
         }
