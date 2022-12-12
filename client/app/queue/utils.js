@@ -107,7 +107,7 @@ const taskAttributesFromRawTask = (task) => {
       pgId: task.attributes.assigned_by.pg_id,
     },
     cancelledBy: {
-      cssId: task.attributes.cancelled_by.css_id,
+      cssId: task.attributes.cancelled_by?.css_id,
     },
     cancelReason: task.attributes.cancellation_reason,
     convertedBy: {
@@ -160,6 +160,8 @@ const taskAttributesFromRawTask = (task) => {
     ownedBy: task.attributes.owned_by,
     daysSinceLastStatusChange: task.attributes.days_since_last_status_change,
     daysSinceBoardIntake: task.attributes.days_since_board_intake,
+    id: task.id,
+    business_line: task.business_line,
   };
 };
 
