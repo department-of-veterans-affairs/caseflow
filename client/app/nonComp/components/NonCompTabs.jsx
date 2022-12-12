@@ -91,6 +91,8 @@ class TaskTableTab extends React.PureComponent {
           includeIssueCount
           tasks={this.state.shownTasks}
           taskPageApiEndpoint={this.state.taskPageApiEndpoint}
+          useTaskPageApi={this.state.useTaskPageApi}
+          tabPaginationOptions={this.state.tabPaginationOptions}
         />
       </div>
     </React.Fragment>;
