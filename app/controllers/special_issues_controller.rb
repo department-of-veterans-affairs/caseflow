@@ -42,7 +42,7 @@ class SpecialIssuesController < ApplicationController
               :dic_death_or_accrued_benefits_united_states, :vocational_rehab,
               :foreign_claim_compensation_claims_dual_claims_appeals, :manlincon_compliance,
               :hearing_including_travel_board_video_conference, :home_loan_guaranty, :insurance,
-              :national_cemetery_administration, :spina_bifida, :radiation, :pact_act, :nonrating_issue,
+              :national_cemetery_administration, :spina_bifida, :radiation, :nonrating_issue,
               :us_territory_claim_philippines, :contaminated_water_at_camp_lejeune, :mustard_gas,
               :education_gi_bill_dependents_educational_assistance_scholars,
               :foreign_pension_dic_all_other_foreign_countries,
