@@ -4,7 +4,7 @@ class WorkQueue::DecisionReviewTaskSerializer
   include FastJsonapi::ObjectSerializer
 
   def self.decision_review(object)
-    object.appeal
+    @decision_review ||= object.appeal
   end
 
   def self.claimant_with_name(object)
