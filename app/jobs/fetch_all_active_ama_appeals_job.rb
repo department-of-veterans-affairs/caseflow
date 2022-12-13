@@ -12,7 +12,10 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   PRIVACY_ACT_TASKS = %w[FoiaColocatedTask PrivacyActTask HearingAdminActionFoiaPrivacyRequestTask PrivacyActRequestMailTask FoiaRequestMailTask].freeze
 
   S3_BUCKET_NAME = "appeals-status-migrations"
-  @errors = []
+
+  def initialize
+    @errors = []
+  end
 
   # Purpose: Job that finds all active AMA Appeals &
   # creates records within the appeal_states table
