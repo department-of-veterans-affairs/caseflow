@@ -159,7 +159,7 @@ class SubmitDecisionView extends React.PureComponent {
     let documentIdErrorMessage = '';
 
     if (!decisionOpts.document_id) {
-      documentIdErrorMessage = "Document id filed is required";
+      documentIdErrorMessage = "Document id field is required";
     } else if (checkoutFlow === DECISION_TYPES.OMO_REQUEST && !validateWorkProductTypeAndId(this.props.decision)) {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_INVALID;
     }
