@@ -119,7 +119,7 @@ class QueueRepository
       transaction do
         unless VACOLS::Case.find(vacols_id).bfcurloc == judge.vacols_uniq_id
           fail(Caseflow::Error::LegacyCaseAlreadyAssignedError,
-               message: "Case already assigned. Please refresh the page to get the latest appeal status.")
+               message: "That case has already been assigned. Please refresh the page to update your queue.")
         end
 
         update_location_to_attorney(vacols_id, attorney)
