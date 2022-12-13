@@ -11,6 +11,9 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   # All Variants of a Privacy Act Task
   PRIVACY_ACT_TASKS = %w[FoiaColocatedTask PrivacyActTask HearingAdminActionFoiaPrivacyRequestTask PrivacyActRequestMailTask FoiaRequestMailTask].freeze
 
+  S3_BUCKET_NAME = "appeals-status-migrations"
+  @errors = []
+
   # Purpose: Job that finds all active AMA Appeals &
   # creates records within the appeal_states table
   #
@@ -20,6 +23,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   def perform
     RequestStore[:current_user] = User.system_user
     find_and_create_appeal_state_for_active_ama_appeals
+    upload_csv_to_s3
   end
 
   private
@@ -68,7 +72,33 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     rescue StandardError => error
       Rails.logger.error("#{appeal&.class} ID #{appeal&.id} was unable to create an appeal_states record because of "\
          "#{error}".red)
+      @errors << OpenStruct.new(appeal_type: appeal&.class, appeal_id: appeal&.id, error: error, message: error.message)
     end
+  end
+
+  def build_errors_csv
+    CSV.generate do |csv|
+      csv << %w[
+        appeal_type
+        appeal_id
+        error
+        error_message
+      ]
+      @errors.each do |error|
+        csv << [
+          error.appeal_type,
+          error.appeal_id,
+          error.error,
+          error.message
+        ].flatten
+      end
+    end
+  end
+
+  def upload_csv_to_s3
+    csv = build_errors_csv
+    filename = Time.zone.now.strftime("ama-migration-%Y-%m-%d--%H-%M.csv")
+    S3Service.store_file(S3_BUCKET_NAME + "/" + filename, csv)
   end
 
   # Purpose: Set key value pairs for "vso_ihp_pending" & "vso_ihp_complete"
