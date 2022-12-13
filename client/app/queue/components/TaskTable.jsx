@@ -152,7 +152,7 @@ TaskTableUnconnected.propTypes = {
   getKeyForRow: PropTypes.func,
   taskPageApiEndpoint: PropTypes.string,
   useTaskPageApi: PropTypes.bool,
-  tabPaginationOptions: PropTypes.array
+  tabPaginationOptions: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
