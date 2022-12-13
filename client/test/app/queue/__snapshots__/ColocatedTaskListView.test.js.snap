@@ -134,7 +134,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     scope="col"
                   >
                     <span
-                      aria-label=""
+                      aria-label="Case Details"
                       data-css-9shxm7=""
                     >
                       <span>
@@ -199,7 +199,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     scope="col"
                   >
                     <span
-                      aria-label=""
+                      aria-label="Tasks"
                       data-css-9shxm7=""
                     >
                       <span
@@ -303,7 +303,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     scope="col"
                   >
                     <span
-                      aria-label=""
+                      aria-label="Types"
                       data-css-9shxm7=""
                     >
                       <span
@@ -407,7 +407,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     scope="col"
                   >
                     <span
-                      aria-label=""
+                      aria-label="Docket"
                       data-css-9shxm7=""
                     >
                       <span
@@ -511,7 +511,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   >
                     <span
                       aria-describedby="tooltip-5"
-                      aria-label=""
+                      aria-label="Days Waiting"
                       currentitem="false"
                       data-css-9shxm7=""
                       data-event="focus mouseenter"
@@ -672,7 +672,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     scope="col"
                   >
                     <span
-                      aria-label=""
+                      aria-label="Veteran Documents"
                       data-css-9shxm7=""
                     >
                       <span>
@@ -1270,7 +1270,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     scope="col"
                   >
                     <span
-                      aria-label=""
+                      aria-label="Case Details"
                       data-css-9shxm7=""
                     >
                       <span>
@@ -1335,7 +1335,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     scope="col"
                   >
                     <span
-                      aria-label=""
+                      aria-label="Tasks"
                       data-css-9shxm7=""
                     >
                       <span
@@ -1439,7 +1439,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     scope="col"
                   >
                     <span
-                      aria-label=""
+                      aria-label="Types"
                       data-css-9shxm7=""
                     >
                       <span
@@ -1543,7 +1543,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     scope="col"
                   >
                     <span
-                      aria-label=""
+                      aria-label="Docket"
                       data-css-9shxm7=""
                     >
                       <span
@@ -1647,7 +1647,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   >
                     <span
                       aria-describedby="tooltip-5"
-                      aria-label=""
+                      aria-label="Days on Hold"
                       currentitem="false"
                       data-css-9shxm7=""
                       data-event="focus mouseenter"
@@ -1808,7 +1808,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     scope="col"
                   >
                     <span
-                      aria-label=""
+                      aria-label="Veteran Documents"
                       data-css-9shxm7=""
                     >
                       <span>

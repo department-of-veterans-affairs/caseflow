@@ -776,7 +776,11 @@ describe LegacyAppeal, :all_dbs do
                                                          assigned_at: oracle_sysdate,
                                                          assigned_by: "DSUSER",
                                                          date_in: nil,
-                                                         date_out: oracle_sysdate)
+                                                         date_out: oracle_sysdate,
+                                                         exception_flag: nil,
+                                                         folder: vacols_case.bfkey,
+                                                         location_staff: nil,
+                                                         sub_location: nil)
     end
   end
 

@@ -35,7 +35,7 @@ exports[`NotificationTable matches snapshot 1`] = `
             scope="col"
           >
             <span
-              aria-label=""
+              aria-label="Event"
               data-css-9shxm7=""
             >
               <span
@@ -90,7 +90,7 @@ exports[`NotificationTable matches snapshot 1`] = `
             scope="col"
           >
             <span
-              aria-label=""
+              aria-label="Notification Date"
               data-css-9shxm7=""
             >
               <span
@@ -157,7 +157,7 @@ exports[`NotificationTable matches snapshot 1`] = `
             scope="col"
           >
             <span
-              aria-label=""
+              aria-label="Notification Type"
               data-css-9shxm7=""
             >
               <span
@@ -211,7 +211,7 @@ exports[`NotificationTable matches snapshot 1`] = `
             scope="col"
           >
             <span
-              aria-label=""
+              aria-label="Recipient Information"
               data-css-9shxm7=""
             >
               <span
@@ -265,7 +265,7 @@ exports[`NotificationTable matches snapshot 1`] = `
             scope="col"
           >
             <span
-              aria-label=""
+              aria-label="Status"
               data-css-9shxm7=""
             >
               <span

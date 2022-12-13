@@ -255,6 +255,7 @@ class QueueApp extends React.PureComponent {
   routedEvaluateDecision = (props) => (
     <EvaluateDecisionView nextStep="/queue"
       displayCaseTimelinessQuestion={this.props.featureToggles.das_case_timeliness}
+      displayCaseTimelinessTimeline={this.props.featureToggles.das_case_timeline}
       {...props.match.params} />
   );
 

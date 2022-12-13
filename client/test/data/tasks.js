@@ -141,4 +141,332 @@ export const generateAmaTask = (overrides = {}) => ({
   ...amaTaskData,
   ...overrides,
 });
+
+export const amaTasksSplit = {
+  8661: {
+    uniqueId: '8661',
+    isLegacy: false,
+    type: 'RootTask',
+    appealType: 'Appeal',
+    addedByCssId: null,
+    appealId: 2016,
+    externalAppealId: 'c482facd-e8d1-4dac-8a2f-7190be5aa282',
+    assignedOn: '2022-10-12T23:45:18.200-04:00',
+    closestRegionalOffice: null,
+    createdAt: '2022-10-12T23:47:12.845-04:00',
+    closedAt: null,
+    startedAt: null,
+    assigneeName: 'Board of Veterans\' Appeals',
+    assignedTo: {
+      cssId: null,
+      name: 'Board of Veterans\' Appeals',
+      id: 5,
+      isOrganization: true,
+      type: 'Bva'
+    },
+    assignedBy: {
+      firstName: '',
+      lastName: '',
+      cssId: null,
+      pgId: null
+    },
+    cancelledBy: {
+      cssId: null
+    },
+    cancelReason: null,
+    convertedBy: {
+      cssId: null
+    },
+    convertedOn: null,
+    taskId: '8661',
+    parentId: null,
+    label: 'Root Task',
+    documentId: null,
+    externalHearingId: null,
+    workProduct: null,
+    previousTaskAssignedOn: null,
+    placedOnHoldAt: '2022-10-12T23:47:12.866-04:00',
+    status: 'on_hold',
+    onHoldDuration: null,
+    instructions: [],
+    decisionPreparedBy: null,
+    availableActions: [
+      {
+        func: 'mail_assign_to_organization_data',
+        label: 'Create mail task',
+        value: 'modal/create_mail_task',
+        data: {
+          options: [
+            {
+              value: 'CavcCorrespondenceMailTask',
+              label: 'CAVC Correspondence'
+            },
+            {
+              value: 'ClearAndUnmistakeableErrorMailTask',
+              label: 'CUE-related'
+            },
+            {
+              value: 'AddressChangeMailTask',
+              label: 'Change of address'
+            },
+            {
+              value: 'CongressionalInterestMailTask',
+              label: 'Congressional interest'
+            },
+            {
+              value: 'ControlledCorrespondenceMailTask',
+              label: 'Controlled correspondence'
+            },
+            {
+              value: 'DeathCertificateMailTask',
+              label: 'Death certificate'
+            },
+            {
+              value: 'EvidenceOrArgumentMailTask',
+              label: 'Evidence or argument'
+            },
+            {
+              value: 'ExtensionRequestMailTask',
+              label: 'Extension request'
+            },
+            {
+              value: 'FoiaRequestMailTask',
+              label: 'FOIA request'
+            },
+            {
+              value: 'HearingRelatedMailTask',
+              label: 'Hearing-related'
+            },
+            {
+              value: 'ReconsiderationMotionMailTask',
+              label: 'Motion for reconsideration'
+            },
+            {
+              value: 'AodMotionMailTask',
+              label: 'Motion to Advance on Docket'
+            },
+            {
+              value: 'OtherMotionMailTask',
+              label: 'Other motion'
+            },
+            {
+              value: 'PowerOfAttorneyRelatedMailTask',
+              label: 'Power of attorney-related'
+            },
+            {
+              value: 'PrivacyActRequestMailTask',
+              label: 'Privacy act request'
+            },
+            {
+              value: 'PrivacyComplaintMailTask',
+              label: 'Privacy complaint'
+            },
+            {
+              value: 'ReturnedUndeliverableCorrespondenceMailTask',
+              label: 'Returned or undeliverable mail'
+            },
+            {
+              value: 'StatusInquiryMailTask',
+              label: 'Status inquiry'
+            },
+            {
+              value: 'AppealWithdrawalMailTask',
+              label: 'Withdrawal of appeal'
+            }
+          ]
+        }
+      }
+    ],
+    timelineTitle: 'RootTask completed',
+    hideFromQueueTableView: false,
+    hideFromTaskSnapshot: true,
+    hideFromCaseTimeline: true,
+    availableHearingLocations: [],
+    latestInformalHearingPresentationTask: {},
+    canMoveOnDocketSwitch: false,
+    timerEndsAt: null,
+    unscheduledHearingNotes: {}
+  },
+  8662: {
+    uniqueId: '8662',
+    isLegacy: false,
+    type: 'DistributionTask',
+    appealType: 'Appeal',
+    addedByCssId: null,
+    appealId: 2016,
+    externalAppealId: 'c482facd-e8d1-4dac-8a2f-7190be5aa282',
+    assignedOn: '2022-10-12T23:45:18.284-04:00',
+    closestRegionalOffice: null,
+    createdAt: '2022-10-12T23:47:12.899-04:00',
+    closedAt: null,
+    startedAt: null,
+    assigneeName: 'Board of Veterans\' Appeals',
+    assignedTo: {
+      cssId: null,
+      name: 'Board of Veterans\' Appeals',
+      id: 5,
+      isOrganization: true,
+      type: 'Bva'
+    },
+    assignedBy: {
+      firstName: '',
+      lastName: '',
+      cssId: null,
+      pgId: null
+    },
+    cancelledBy: {
+      cssId: null
+    },
+    cancelReason: null,
+    convertedBy: {
+      cssId: null
+    },
+    convertedOn: null,
+    taskId: '8662',
+    parentId: 8661,
+    label: 'Distribution Task',
+    documentId: null,
+    externalHearingId: null,
+    workProduct: null,
+    previousTaskAssignedOn: null,
+    placedOnHoldAt: null,
+    status: 'assigned',
+    onHoldDuration: null,
+    instructions: [],
+    decisionPreparedBy: null,
+    availableActions: [],
+    timelineTitle: 'DistributionTask completed',
+    hideFromQueueTableView: false,
+    hideFromTaskSnapshot: false,
+    hideFromCaseTimeline: false,
+    availableHearingLocations: [],
+    latestInformalHearingPresentationTask: {},
+    canMoveOnDocketSwitch: false,
+    timerEndsAt: null,
+    unscheduledHearingNotes: {}
+  },
+  8663: {
+    uniqueId: '8663',
+    isLegacy: false,
+    type: 'SplitAppealTask',
+    appealType: 'Appeal',
+    addedByCssId: null,
+    appealId: 2016,
+    externalAppealId: 'c482facd-e8d1-4dac-8a2f-7190be5aa282',
+    assignedOn: '2022-10-12T23:46:22.005-04:00',
+    closestRegionalOffice: null,
+    createdAt: '2022-10-12T23:47:12.935-04:00',
+    closedAt: '2022-10-12T23:47:12.949-04:00',
+    startedAt: null,
+    assigneeName: 'SPLTAPPLSNOW',
+    assignedTo: {
+      cssId: 'SPLTAPPLSNOW',
+      name: 'SPLTAPPLSNOW',
+      id: 82,
+      isOrganization: false,
+      type: 'User'
+    },
+    assignedBy: {
+      firstName: 'Jon',
+      lastName: 'Snow',
+      cssId: 'SPLTAPPLSNOW',
+      pgId: 82
+    },
+    cancelledBy: {
+      cssId: null
+    },
+    cancelReason: null,
+    convertedBy: {
+      cssId: null
+    },
+    convertedOn: null,
+    taskId: '8663',
+    parentId: 8661,
+    label: 'Split Appeal Task',
+    documentId: null,
+    externalHearingId: null,
+    workProduct: null,
+    previousTaskAssignedOn: null,
+    placedOnHoldAt: null,
+    status: 'completed',
+    onHoldDuration: null,
+    instructions: [
+      'Originate from different Administrations (i.e. VBA and VHA)'
+    ],
+    decisionPreparedBy: null,
+    availableActions: [],
+    timelineTitle: 'SplitAppealTask completed',
+    hideFromQueueTableView: false,
+    hideFromTaskSnapshot: false,
+    hideFromCaseTimeline: false,
+    availableHearingLocations: [],
+    latestInformalHearingPresentationTask: {},
+    canMoveOnDocketSwitch: false,
+    timerEndsAt: null,
+    unscheduledHearingNotes: {}
+  }
+};
+
+export const splitAppealTask = {
+  ...amaTasksSplit,
+  uniqueId: '8663',
+  isLegacy: false,
+  type: 'SplitAppealTask',
+  appealType: 'Appeal',
+  addedByCssId: null,
+  appealId: 2016,
+  externalAppealId: 'c482facd-e8d1-4dac-8a2f-7190be5aa282',
+  assignedOn: '2022-10-12T23:46:22.005-04:00',
+  closestRegionalOffice: null,
+  createdAt: '2022-10-12T23:47:12.935-04:00',
+  closedAt: '2022-10-12T23:47:12.949-04:00',
+  startedAt: null,
+  assigneeName: 'SPLTAPPLSNOW',
+  assignedTo: {
+    cssId: 'SPLTAPPLSNOW',
+    name: 'SPLTAPPLSNOW',
+    id: 82,
+    isOrganization: false,
+    type: 'User'
+  },
+  assignedBy: {
+    firstName: 'Jon',
+    lastName: 'Snow',
+    cssId: 'SPLTAPPLSNOW',
+    pgId: 82
+  },
+  cancelledBy: {
+    cssId: null
+  },
+  cancelReason: null,
+  convertedBy: {
+    cssId: null
+  },
+  convertedOn: null,
+  taskId: '8663',
+  parentId: 8661,
+  label: 'Split Appeal Task',
+  documentId: null,
+  externalHearingId: null,
+  workProduct: null,
+  previousTaskAssignedOn: null,
+  placedOnHoldAt: null,
+  status: 'completed',
+  onHoldDuration: null,
+  instructions: [
+    'Originate from different Administrations (i.e. VBA and VHA)'
+  ],
+  decisionPreparedBy: null,
+  availableActions: [],
+  timelineTitle: 'SplitAppealTask completed',
+  hideFromQueueTableView: false,
+  hideFromTaskSnapshot: false,
+  hideFromCaseTimeline: false,
+  availableHearingLocations: [],
+  latestInformalHearingPresentationTask: {},
+  canMoveOnDocketSwitch: false,
+  timerEndsAt: null,
+  unscheduledHearingNotes: {}
+};
+
 /* eslint-enable camelcase */

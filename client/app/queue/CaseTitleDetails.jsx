@@ -132,6 +132,7 @@ export class CaseTitleDetails extends React.PureComponent {
     // is there a legacy judge task assigned to the user or legacy attorney task assigned by the user
     const relevantLegacyTasks = legacyJudgeTasks.concat(legacyAttorneyTasks);
 
+    // eslint-disable-next-line max-len
     const showOvertimeButton = !hideOTSection && (userRole === 'Judge' && (relevantLegacyTasks.length > 0 || userIsAssignedAmaJudge));
     // for ama appeal, use docket name, for legacy appeal docket name is always legacy so
     // we need to check if the request type is any of threee :central, video, travel or null

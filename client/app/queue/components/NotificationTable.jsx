@@ -108,7 +108,8 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
   // Return: The generated column
   const createColumnObject = (column) => {
     const functionForColumn = {
-      [NOTIFICATION_CONFIG.COLUMNS.EVENT_TYPE.name]: eventTypeColumn(notificationList, modalState, openModal, handleNotification, notificationState),
+      // eslint-disable-next-line max-len
+      [NOTIFICATION_CONFIG.COLUMNS.EVENT_TYPE.name]: eventTypeColumn(notificationList, modalState, openModal, handleNotification),
       [NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_DATE.name]: notificationDateColumn(notificationList),
       [NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_TYPE.name]: notificationTypeColumn(notificationList),
       [NOTIFICATION_CONFIG.COLUMNS.RECIPIENT_INFORMATION.name]: recipientInformationColumn(notificationList),
@@ -144,7 +145,12 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
           sortAscending: true
         }}
       />
-      {modalState && <NotificationModal eventType={notificationState.event_type} notificationContent={notificationState.content} closeNotificationModal={closeModal} />}
+      {modalState &&
+      <NotificationModal
+        eventType={notificationState.event_type}
+        notificationContent={notificationState.content}
+        closeNotificationModal={closeModal}
+      />}
     </>
   );
 };

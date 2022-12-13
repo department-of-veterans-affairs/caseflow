@@ -49,7 +49,7 @@ class CaseTitle extends React.PureComponent {
     const { appeal, veteranCaseListIsVisible } = this.props;
 
     return (
-      <CaseTitleScaffolding heading={this.props.titleHeader != '' ? this.props.titleHeader : appeal.veteranFullName}>
+      <CaseTitleScaffolding heading={this.props.titleHeader === '' ? appeal.veteranFullName : this.props.titleHeader}>
         <React.Fragment>
           Veteran ID:&nbsp;
           <CopyTextButton text={appeal.veteranFileNumber} label="Veteran ID" />
@@ -58,7 +58,11 @@ class CaseTitle extends React.PureComponent {
         { !this.props.hideCaseView &&
         <>
           <span {...viewCasesStyling}>
-            <Link href="#" onClick={this.props.toggleVeteranCaseList}>{veteranCaseListIsVisible ? 'Hide' : 'View'} all cases</Link>
+            <Link
+              href="#"
+              onClick={this.props.toggleVeteranCaseList}>{veteranCaseListIsVisible ? 'Hide' : 'View'}
+            all cases
+            </Link>
           </span>
           <BadgeArea appeal={appeal} isHorizontal />
         </>
@@ -80,7 +84,8 @@ CaseTitle.propTypes = {
 
 CaseTitle.defaultProps = {
   taskType: 'Draft Decision',
-  analyticsSource: 'queue_task'
+  analyticsSource: 'queue_task',
+  titleHeader: ''
 };
 
 const CaseTitleScaffolding = (props) => (
