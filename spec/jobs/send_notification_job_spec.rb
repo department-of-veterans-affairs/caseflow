@@ -314,7 +314,7 @@ describe SendNotificationJob, type: :job do
     describe "email" do
       it "is expected to send a generic saluation instead of a name" do
         FeatureToggle.enable!(:va_notify_email)
-        expect(VANotifyService).to receive(:send_email_notifications).with(no_name_participant_id, "", "ae2f0d17-247f-47ee-8f1a-b83a71e0f050", "", "Appellant" )
+        expect(VANotifyService).to receive(:send_email_notifications).with(no_name_participant_id, "", "ae2f0d17-247f-47ee-8f1a-b83a71e0f050", "Appellant", "" )
         SendNotificationJob.perform_now(no_name_message.to_json)
       end
     end
@@ -322,7 +322,7 @@ describe SendNotificationJob, type: :job do
     describe "sms" do
       it "is expected to send a generic saluation instead of a name" do
         FeatureToggle.enable!(:va_notify_sms)
-        expect(VANotifyService).to receive(:send_sms_notifications).with(no_name_participant_id, "", "9953f7e8-80cb-4fe4-aaef-0309410c84e3", "", "Appellant" )
+        expect(VANotifyService).to receive(:send_sms_notifications).with(no_name_participant_id, "", "9953f7e8-80cb-4fe4-aaef-0309410c84e3", "Appellant", "" )
         SendNotificationJob.perform_now(no_name_message.to_json)
       end
     end
