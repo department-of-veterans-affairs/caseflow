@@ -91,30 +91,12 @@ export const determineLocationHistories = (locationHistories, timelinessRange) =
   // See app/models/vacols/priorloc.rb#with_attorney?
   const notWithAttorneyLocations = locationHistories.
     filter((location) =>
-      !location.withAttorney && timelinessRange.contains(moment(location.createdAt))
+      !location.withAttorney &&
+       timelinessRange.contains(moment(location.createdAt), { excludeStart: true, excludeEnd: true })
     );
 
   // sort by createdAt since that is locdout
   notWithAttorneyLocations.sort((prev, next) => compareDesc(new Date(prev.createdAt), new Date(next.createdAt)));
 
-  // Set location's closedAt based on pairs of locations using locdout values
-  // This is the best way to determine date ranges of when a record was at a location
-  // This is recommended path by VACOLS SME
-  //
-  // Ex: location[0]'s closedAt becomes location[1].createdAt
-  //
-  const remappedLocationHistories = notWithAttorneyLocations.map((location, index) => {
-    if (index + 1 < notWithAttorneyLocations.length) {
-      const nextLocation = notWithAttorneyLocations[index + 1];
-
-      return {
-        ...location,
-        closedAt: nextLocation.createdAt,
-      };
-    }
-
-    return location;
-  }).filter((location) => location.closedAt !== null);
-
-  return remappedLocationHistories;
+  return notWithAttorneyLocations;
 };

@@ -58,7 +58,8 @@ class VACOLS::Priorloc < VACOLS::Record
   end
 
   def with_attorney?
-    User.where(css_id: location)&.first&.attorney? || false
+    sdomainid = VACOLS::Staff.find_by(slogid: location)&.sdomainid
+    User.where(css_id: sdomainid)&.first&.attorney? || false
   end
 
   def summary
