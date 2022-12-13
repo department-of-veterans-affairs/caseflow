@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 class DecisionReviewsController < ApplicationController
+  include DecisionReviewQueuePaginationConcern
+
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
 
   delegate :in_progress_tasks, :completed_tasks, to: :business_line
-
-  DEFAULT_TASKS_PER_PAGE = 15
 
   def index
     if business_line
@@ -77,26 +77,6 @@ class DecisionReviewsController < ApplicationController
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
   end
 
-  def pagination_json(task_list)
-    task_count = task_list.size
-    total_pages = (task_count / DEFAULT_TASKS_PER_PAGE.to_f).ceil
-
-    {
-      tasks: {
-        data: apply_task_serializer(paginate_tasks(task_list))
-      },
-      tasks_per_page: DEFAULT_TASKS_PER_PAGE,
-      task_page_count: total_pages,
-      total_task_count: task_count
-    }
-  end
-
-  def paginate_tasks(task_list)
-    tasks = task_list.is_a?(Array) ? Kaminari.paginate_array(task_list) : task_list
-
-    tasks.page(allowed_params[:page] || 1).per(DEFAULT_TASKS_PER_PAGE)
-  end
-
   helper_method :in_progress_tasks, :completed_tasks, :apply_task_serializer, :business_line, :task
 
   private
@@ -113,10 +93,6 @@ class DecisionReviewsController < ApplicationController
     allowed_params.require("decision_issues").map do |decision_issue_param|
       decision_issue_param.permit(:request_issue_id, :disposition, :description)
     end
-  end
-
-  def apply_task_serializer(tasks)
-    tasks.map { |task| task.ui_hash.merge(business_line: business_line_slug) }
   end
 
   def set_application
