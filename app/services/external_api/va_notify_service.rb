@@ -130,7 +130,7 @@ class ExternalApi::VANotifyService
             id_value: participant_id
           },
           personalisation: {
-            first_name: first_name, appeal_status: status
+            first_name: first_name, status: status
           }
         },
         headers: HEADERS,
@@ -164,7 +164,7 @@ class ExternalApi::VANotifyService
           },
           sms_sender_id: SENDER_ID || "",
           personalisation: {
-            first_name: first_name, appeal_status: status
+            first_name: first_name, status: status
           }
         },
         headers: HEADERS,
