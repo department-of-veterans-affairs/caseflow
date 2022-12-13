@@ -32,7 +32,7 @@ class DecisionReviewsController < ApplicationController
     end
   end
 
-def update
+  def update
     if task
       if task.complete_with_payload!(decision_issue_params, decision_date)
         business_line.tasks.reload
