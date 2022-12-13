@@ -21,7 +21,7 @@ module AppealCancelled
 
   def update_appeal_state_when_appeal_cancelled
     if ["RootTask"].include?(type) && status == Constants.TASK_STATUSES.cancelled
-      MetricsService.record("Updating APPEAL_CANCELLED column in Appeal States Table to TRUE"\
+      MetricsService.record("Updating APPEAL_CANCELLED column in Appeal States Table to TRUE "\
         "for #{appeal.class} ID #{appeal.id}".yellow,
                             service: :queue,
                             name: "AppellantNotification.appeal_mapper") do

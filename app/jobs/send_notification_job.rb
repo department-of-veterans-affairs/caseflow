@@ -107,15 +107,13 @@ class SendNotificationJob < CaseflowJob
         appeal&.veteran_first_name || "Appellant"
       end
     )
-    quarterly_status = message.quarterly_status
-    personalisation = { first_name: first_name, quarterly_status: quarterly_status }
     status = message.appeal_status || ""
     if @va_notify_email
       response = VANotifyService.send_email_notifications(
         message.participant_id,
         notification_audit_record.id.to_s,
         email_template_id,
-        personalisation,
+        first_name,
         status
       )
       if !response.nil? && response != ""
@@ -129,7 +127,7 @@ class SendNotificationJob < CaseflowJob
         message.participant_id,
         notification_audit_record.id.to_s,
         sms_template_id,
-        personalisation,
+        first_name,
         status
       )
       if !response.nil? && response != ""
