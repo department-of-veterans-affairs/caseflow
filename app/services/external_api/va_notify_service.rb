@@ -25,10 +25,19 @@ class ExternalApi::VANotifyService
     #         participant_id (from appeal for which notification is being generated)
     #         notification_id: id of the associated Notification in the db
     #         email_template_id: taken from notification_event table corresponding to correct notification template
+    #         first_name: appellant's first name
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     # Return: email_response: JSON response from VA Notify API
-    def send_email_notifications(participant_id, notification_id, email_template_id, status = "", first_name)
-      email_response = send_va_notify_request(email_request(participant_id, notification_id, email_template_id, status, first_name))
+    def send_email_notifications(
+      participant_id,
+      notification_id,
+      email_template_id,
+      first_name,
+      status = ""
+    )
+      email_response = send_va_notify_request(
+        email_request(participant_id, notification_id, email_template_id, first_name, status)
+      )
       log_info(email_response)
       email_response
     end
@@ -39,10 +48,13 @@ class ExternalApi::VANotifyService
     #         participant_id (from appeal for which notification is being generated)
     #         notification_id: id of the associated Notification in the db
     #         sms_template_id: taken from notification_event table corresponding to correct notification template
+    #         first_name: appellant's first name
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     # Return: sms_response: JSON response from VA Notify API
-    def send_sms_notifications(participant_id, notification_id, sms_template_id, status = "", first_name)
-      sms_response = send_va_notify_request(sms_request(participant_id, notification_id, sms_template_id, status, first_name))
+    def send_sms_notifications(participant_id, notification_id, sms_template_id, first_name, status = "")
+      sms_response = send_va_notify_request(
+        sms_request(participant_id, notification_id, sms_template_id, first_name, status)
+      )
       log_info(sms_response)
       sms_response
     end
@@ -104,10 +116,11 @@ class ExternalApi::VANotifyService
     #         participant_id (from appeal for which notification is being generated)
     #         notification_id: id of the associated Notification in the db
     #         email_template_id: taken from notification_event table corresponding to correct notification template
+    #         first_name: appellant's first name (this will default to 'Appellant' if there is no first name)
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     #
     # Return: Request hash
-    def email_request(participant_id, notification_id, email_template_id, status, first_name)
+    def email_request(participant_id, notification_id, email_template_id, first_name, status)
       request = {
         body: {
           template_id: email_template_id,
@@ -117,7 +130,7 @@ class ExternalApi::VANotifyService
             id_value: participant_id
           },
           personalisation: {
-            first_name: first_name
+            first_name: first_name, appeal_status: status
           }
         },
         headers: HEADERS,
@@ -136,10 +149,11 @@ class ExternalApi::VANotifyService
     #         participant_id (from appeal for which notification is being generated)
     #         notification_id: id of the associated Notification in the db
     #         sms_template_id: taken from notification_event table corresponding to correct notification template
+    #         first_name: appellant's first name (this will default to 'Appellant' if there is no first name)
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     #
     # Return: Request hash
-    def sms_request(participant_id, notification_id, sms_template_id, status, first_name)
+    def sms_request(participant_id, notification_id, sms_template_id, first_name, status)
       request = {
         body: {
           reference: notification_id,
@@ -150,7 +164,7 @@ class ExternalApi::VANotifyService
           },
           sms_sender_id: SENDER_ID || "",
           personalisation: {
-            first_name: first_name
+            first_name: first_name, appeal_status: status
           }
         },
         headers: HEADERS,
