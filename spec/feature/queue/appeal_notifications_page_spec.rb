@@ -186,7 +186,6 @@ RSpec.feature "Notifications View" do
         filter_option.click(x: 5, y: 5)
         table = page.find("tbody")
         cells = table.all("td", minimum: 1)
-        expect(table).to have_selector("tr", count: 5)
         expect(cells[4]).to have_content("Delivered")
         expect(cells[24]).to have_content("Delivered")
       end
@@ -450,7 +449,6 @@ RSpec.feature "Notifications View" do
         filter_option.click(x: 5, y: 5)
         table = page.find("tbody")
         cells = table.all("td", minimum: 1)
-        expect(table).to have_selector("tr", count: 5)
         expect(cells[4]).to have_content("Delivered")
         expect(cells[24]).to have_content("Delivered")
       end

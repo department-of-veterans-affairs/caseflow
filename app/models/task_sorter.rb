@@ -15,7 +15,6 @@ class TaskSorter
 
     # new default to APPEAL RECEIPT DATE
     # old default to sorting by AOD, case type, and docket number.
-    # @column ||= QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name)
     # changed to receipt date
     @column ||= QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name)
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
@@ -62,6 +61,10 @@ class TaskSorter
 
   # creates SQL query using sorted appeal receipt date array
   def receipt_date_order_clause(sorted_array)
+    # if the sort order is desc order, flip the array
+    if sort_order.eql? Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC
+      sorted_array = sorted_array.reverse
+    end
     order_clause = "CASE #{Task.table_name}.id "
     sorted_array.each_with_index do |id, index|
       order_clause += "WHEN #{id} THEN #{index} "
@@ -80,8 +83,7 @@ class TaskSorter
       # load hash with the receipt date and task id
       task_id_to_receipt_date_hash[task.id] = appeal_receipt_date
     end
-    # sort the hash so the dates are in descending order, and return the id of the tasks (keys)
-    # binding.pry
+    # sort the hash so the dates are in ascending order (oldest first), and return the id of the tasks (keys)
     task_id_to_receipt_date_hash.sort_by { |_, v| v }.to_h.keys
   end
 
