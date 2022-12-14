@@ -17,6 +17,7 @@ class DecisionReviewsController < ApplicationController
           filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
           send_data jobs_as_csv, filename: filename
         end
+        format.json { queue_tasks }
       end
     else
       # TODO: make index show error message
@@ -48,17 +49,6 @@ class DecisionReviewsController < ApplicationController
     else
       render json: { error: "Task #{task_id} not found" }, status: :not_found
     end
-  end
-
-  def tasks
-    task_list = case allowed_params[:tab]
-                when "in_progress" then in_progress_tasks
-                when "completed" then completed_tasks
-                else
-                  return render json: { error: "Tab name provided could not be found" }, status: :not_found
-                end
-
-    render json: pagination_json(task_list)
   end
 
   def business_line_slug
@@ -93,6 +83,17 @@ class DecisionReviewsController < ApplicationController
     allowed_params.require("decision_issues").map do |decision_issue_param|
       decision_issue_param.permit(:request_issue_id, :disposition, :description)
     end
+  end
+
+  def queue_tasks
+    task_list = case allowed_params[:tab]
+                when "in_progress" then in_progress_tasks
+                when "completed" then completed_tasks
+                else
+                  return render json: { error: "Tab name provided could not be found" }, status: :not_found
+                end
+
+    render json: pagination_json(task_list)
   end
 
   def set_application

@@ -249,7 +249,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
     end
   end
 
-  describe "#tasks" do
+  describe "Acquiring decision review tasks via #index" do
     let(:veteran) { create(:veteran) }
     let!(:in_progress_tasks) do
       (0...32).map do |task_num|
@@ -282,12 +282,12 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
     before { non_comp_org.add_user(user) }
 
-    subject { get :tasks, params: query_params }
+    subject { get :index, params: query_params, format: :json }
 
     context "in_progress_tasks" do
       let(:query_params) do
         {
-          decision_review_business_line_slug: non_comp_org.url,
+          business_line_slug: non_comp_org.url,
           tab: "in_progress"
         }
       end
@@ -330,7 +330,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
     context "completed_tasks" do
       let(:query_params) do
         {
-          decision_review_business_line_slug: non_comp_org.url,
+          business_line_slug: non_comp_org.url,
           tab: "completed"
         }
       end
@@ -371,17 +371,19 @@ describe DecisionReviewsController, :postgres, type: :controller do
     end
 
     it "throws 400 error if invalid tab name is provided" do
-      get :tasks, params: {
-        decision_review_business_line_slug: non_comp_org.url,
-        tab: "something_not_valid"
-      }
+      get :index,
+          params: {
+            business_line_slug: non_comp_org.url,
+            tab: "something_not_valid"
+          },
+          format: :json
 
       expect(response.status).to eq(404)
     end
   end
 
   def task_ids_from_response_body(response_body)
-    response_body["tasks"]["data"].map { |task| task["id"] }
+    response_body["tasks"]["data"].map { |task| task["id"].to_i }
   end
 
   def task_ids_from_seed(tasks, range, sorted_by)
