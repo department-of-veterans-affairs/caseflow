@@ -4,16 +4,16 @@ class Api::V1::MpiController < Api::ApplicationController
   # {POST Method for Veteran ID, Deceased Indicator, Deceased Time}
   def veteran_updates
     veteran = {
-      id: allowed_params[:veterans_id],
-      deceased_time: allowed_params[:deceased_time],
-      pat: allowed_params[:pat]
+      veterans_ssn: allowed_params[:veterans_ssn],
+      veterans_pat: allowed_params[:veterans_pat],
+      deceased_time: allowed_params[:deceased_time]
     }
     puts veteran
-    response_info_column = { veteran_id: veteran[:id] }
+    response_info_column = { veteran_ssn: veteran[:veterans_ssn] }
     mpi_update = MpiUpdatePersonEvent.create!(api_key: api_key, created_at: Time.zone.now, update_type: :started)
     result = VACOLS::Correspondent.update_veteran_nod(veteran).to_sym
     if result == :successful || result == :already_deceased_time_changed
-      updated_veteran = VACOLS::Correspondent.find_by(ssn:veteran[:id])
+      updated_veteran = VACOLS::Correspondent.find_by(ssn:veteran[:veterans_ssn])
       response_info_column[:updated_column] = "deceased_time"
       response_info_column[:updated_deceased_time] = updated_veteran.sfnod
     end
@@ -33,6 +33,6 @@ class Api::V1::MpiController < Api::ApplicationController
   end
 
   def allowed_params
-    params.permit(:veterans_id, :deceased_time, :pat)
+    params.permit(:veterans_ssn, :veterans_pat, :deceased_time)
   end
 end
