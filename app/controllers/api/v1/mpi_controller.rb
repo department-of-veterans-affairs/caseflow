@@ -5,10 +5,9 @@ class Api::V1::MpiController < Api::ApplicationController
   def veteran_updates
     veteran = {
       veterans_ssn: allowed_params[:veterans_ssn],
-      veterans_pat: allowed_params[:veterans_pat],
+      veterans_pat: allowed_params[:veterans_pat].split("^")[0],
       deceased_time: allowed_params[:deceased_time]
     }
-    puts veteran
     response_info_column = { veteran_ssn: veteran[:veterans_ssn] }
     mpi_update = MpiUpdatePersonEvent.create!(api_key: api_key, created_at: Time.zone.now, update_type: :started)
     result = VACOLS::Correspondent.update_veteran_nod(veteran).to_sym
