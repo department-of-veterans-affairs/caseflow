@@ -781,7 +781,8 @@ describe LegacyAppeal, :all_dbs do
                                                          date_in: nil,
                                                          vacols_id: vacols_case.bfkey,
                                                          exception_flag: nil,
-                                                         with_attorney?: false)
+                                                         with_attorney?: false,
+                                                         with_judge?: false)
     end
   end
 

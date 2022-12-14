@@ -957,6 +957,7 @@ feature "Task queue", :all_dbs do
       end
 
       before do
+        appeal.reload
         visit("/queue/appeals/#{appeal.external_id}")
 
         # Add a user to the Colocated team so the task assignment will suceed.
