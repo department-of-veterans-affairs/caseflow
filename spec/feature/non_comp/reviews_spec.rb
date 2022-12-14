@@ -130,6 +130,7 @@ feature "NonComp Reviews Queue", :postgres do
       find(".unselected-filter-icon").click
       find("label", text: "Higher-level review").click
       expect(page).to have_content("Higher-Level Review")
+      binding.pry
       expect(page).to_not have_content("Board Grant")
       find(".cf-clear-filters-link").click
       expect(page).to have_content("Board Grant")
