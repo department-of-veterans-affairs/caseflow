@@ -76,7 +76,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
       <div>
         <div {...marginTop(4)}>
           <SearchableDropdown
-            errorMessage={highlightFormItems && !typeOption ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+            errorMessage={highlightFormItems && !typeOption ? 'Choose one' : null}
             name={COPY.CHANGE_TASK_TYPE_ACTION_LABEL}
             placeholder="Select an action type"
             options={taskActionData(this.props).options}
@@ -85,7 +85,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
         </div>
         <div {...marginTop(4)}>
           <TextareaField
-            errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+            errorMessage={highlightFormItems && !instructions ? "Instructions field required" : null}
             name={COPY.CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL}
             onChange={(value) => this.setState({ instructions: value })}
             value={instructions} />

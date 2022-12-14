@@ -75,7 +75,7 @@ export const AddAdminTaskForm = ({ baseName, item, onRemove }) => {
       <div className={fieldStyles}>
         <TextareaField
           errorMessage={
-            errors?.[baseName]?.instructions ? FORM_ERROR_FIELD_REQUIRED : null
+            errors?.[baseName]?.instructions ? 'Instructions field is required' : null
           }
           name={`${baseName}.instructions`}
           defaultValue={item.instructions}
