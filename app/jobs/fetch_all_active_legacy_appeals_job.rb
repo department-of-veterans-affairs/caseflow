@@ -85,6 +85,11 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
     end
   end
 
+  # Purpose: Method that builds a CSV file from errors in the job
+  #
+  # Params: none
+  #
+  # Returns: nil
   def build_errors_csv
     CSV.generate do |csv|
       csv << %w[
@@ -106,6 +111,11 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
     end
   end
 
+  # Purpose: Uploads CSV file to S3 bucket
+  #
+  # Params: none
+  #
+  # Returns: nil
   def upload_csv_to_s3
     csv = build_errors_csv
     filename = Time.zone.now.strftime("legacy-migration-%Y-%m-%d--%H-%M.csv")
