@@ -93,8 +93,8 @@ export const determineLocationHistories = (locationHistories, timelinessRange) =
     filter((location) =>
       !location.withAttorney &&
       location.closedAt !== null &&
-      timelinessRange.contains(moment(location.createdAt), { excludeStart: true, excludeEnd: true }) &&
-      timelinessRange.contains(moment(location.closedAt), { excludeStart: true, excludeEnd: true })
+      timelinessRange.contains(moment(location.createdAt), { excludeStart: location.withJudge, excludeEnd: location.withJudge }) &&
+      timelinessRange.contains(moment(location.closedAt), { excludeStart: location.withJudge, excludeEnd: location.withJudge })
     );
 
   // sort by createdAt since that is locdout

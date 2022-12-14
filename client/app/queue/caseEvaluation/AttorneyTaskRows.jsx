@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 import COPY from '../../../COPY';
 import { sortCaseTimelineEvents } from '../utils';
-import { redText } from '../constants';
+
 class AttorneyTaskRows extends React.PureComponent {
   constructor(props) {
     super(props);
