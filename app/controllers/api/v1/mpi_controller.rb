@@ -3,7 +3,7 @@
 class Api::V1::MpiController < Api::ApplicationController
   # {POST Method for Veteran ID, Deceased Indicator, Deceased Time}
   def veteran_updates
-    Rails.logger.info("Queue ART says start. veterans_id: #{allowed_params[:veterans_ssn]} ,veterans_pat: #{allowed_paras[:veterans_pat]} deceased_time: #{allowed_params[:deceased_time]}")
+    Rails.logger.info("Queue ART says start. veterans_id: #{allowed_params[:veterans_ssn]} ,veterans_pat: #{allowed_params[:veterans_pat]} deceased_time: #{allowed_params[:deceased_time]}")
     veteran = {
       veterans_ssn: allowed_params[:veterans_ssn],
       veterans_pat: allowed_params[:veterans_pat].split("^")[0],
