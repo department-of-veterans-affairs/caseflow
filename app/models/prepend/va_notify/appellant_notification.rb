@@ -61,16 +61,16 @@ module AppellantNotification
     message_attributes
   end
 
-# Public: Updates/creates appeal state based on event type
-#
-# appeal - appeal that was found in appeal_mapper
-# event - The module that is being triggered to send a notification
-#
-# Examples
-#
-#  AppellantNotification.update_appeal_state(appeal, "hearing_postponed")
-#   # => A new appeal state is created if it doesn't exist
-#   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
+  # Public: Updates/creates appeal state based on event type
+  #
+  # appeal - appeal that was found in appeal_mapper
+  # event - The module that is being triggered to send a notification
+  #
+  # Examples
+  #
+  #  AppellantNotification.update_appeal_state(appeal, "hearing_postponed")
+  #   # => A new appeal state is created if it doesn't exist
+  #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
   def self.update_appeal_state(appeal, event)
     appeal_type = appeal.class.to_s
     appeal_state = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal_type) ||
@@ -142,17 +142,18 @@ module AppellantNotification
       end
     end
   end
-# Public: Finds the appeal based on the id and type, then calls update_appeal_state to create/update appeal state
-#
-# appeal_id  - id of appeal
-# appeal_type - string of appeal object's class (e.g. "LegacyAppeal")
-# event - The module that is being triggered to send a notification
-#
-# Examples
-#
-#  AppellantNotification.appeal_mapper(1, "Appeal", "hearing_postponed")
-#   # => A new appeal state is created if it doesn't exist
-#   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
+
+  # Public: Finds the appeal based on the id and type, then calls update_appeal_state to create/update appeal state
+  #
+  # appeal_id  - id of appeal
+  # appeal_type - string of appeal object's class (e.g. "LegacyAppeal")
+  # event - The module that is being triggered to send a notification
+  #
+  # Examples
+  #
+  #  AppellantNotification.appeal_mapper(1, "Appeal", "hearing_postponed")
+  #   # => A new appeal state is created if it doesn't exist
+  #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
   def self.appeal_mapper(appeal_id, appeal_type, event)
     if appeal_type == "Appeal"
       appeal = Appeal.find_by(id: appeal_id)
@@ -165,11 +166,20 @@ module AppellantNotification
     end
   end
 
+  # Purpose: Method to check appeal state for statuses and send out a notification based on
+  # which statuses are turned on in the appeal state
+  #
+  # Params: appeal object (AMA of Legacy)
+  #         temaplate_name (ex. quarterly_notification, appeal_docketed, etc.)
+  #         appeal_status (only used for quarterly notifications)
+  #
+  # Response: Create notification and return it to SendNotificationJob
   def self.notify_appellant(
     appeal,
-    template_name
+    template_name,
+    appeal_status = nil
   )
-    msg_bdy = create_payload(appeal, template_name)
+    msg_bdy = create_payload(appeal, template_name, appeal_status)
     notification_type =
       if FeatureToggle.enabled?(:va_notify_email) && FeatureToggle.enabled?(:va_notify_sms)
         "Email and SMS"
@@ -198,8 +208,8 @@ module AppellantNotification
     # rubocop:enable Layout/LineLength
   end
 
-  def self.create_payload(appeal, template_name)
+  def self.create_payload(appeal, template_name, appeal_status = nil)
     message_attributes = AppellantNotification.handle_errors(appeal)
-    VANotifySendMessageTemplate.new(message_attributes, template_name)
+    VANotifySendMessageTemplate.new(message_attributes, template_name, appeal_status)
   end
 end
