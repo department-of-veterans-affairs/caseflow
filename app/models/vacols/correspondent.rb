@@ -10,7 +10,7 @@ class VACOLS::Correspondent < VACOLS::Record
   # veteran must be hash containing at least values for { id, deceased_time }
   def self.update_veteran_nod(veteran)
     MetricsService.record("VACOLS: Update veteran NOD:
-                          ID = #{veteran[:id]},
+                          ID = #{veteran[:veterans_ssn]},
                           deceased_time = #{veteran[:deceased_time]}",
                           name: "VACOLS::Correspondent.update_veteran_nod_in_vacols",
                           service: :vacols) do
@@ -92,11 +92,11 @@ class VACOLS::Correspondent < VACOLS::Record
 
       return update_type unless update_type.nil?
 
-      update_type = should_update_veteran?(veteran, find_veteran_by_ssn(veteran[:id]), update_type)
+      update_type = should_update_veteran?(veteran, find_veteran_by_ssn(veteran[:veterans_ssn]), update_type)
 
       return update_type if update_type != true
 
-      update_veteran_sfnod(veteran[:id], veteran[:deceased_time], find_veteran_by_ssn(veteran[:id]))
+      update_veteran_sfnod(veteran[:veterans_ssn], veteran[:deceased_time], find_veteran_by_ssn(veteran[:veterans_ssn]))
     end
 
     def missing_deceased_time(veteran_deceased_time)
