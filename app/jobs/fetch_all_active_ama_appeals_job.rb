@@ -85,6 +85,11 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     end
   end
 
+  # Purpose: Method that builds a CSV file from errors in the job
+  #
+  # Params: none
+  #
+  # Returns: CSV contents in the form of a string
   def build_errors_csv
     CSV.generate do |csv|
       csv << %w[
@@ -106,6 +111,11 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     end
   end
 
+  # Purpose: Uploads CSV file to S3 bucket
+  #
+  # Params: none
+  #
+  # Returns: nil
   def upload_csv_to_s3
     csv = build_errors_csv
     filename = Time.zone.now.strftime("ama-migration-%Y-%m-%d--%H-%M.csv")
@@ -118,7 +128,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   #
   # Returns: Hash of "vso_ihp_pending" & "vso_ihp_complete" key value pairs
   def map_appeal_ihp_state(appeal)
-    appeal_task_types=appeal.tasks.map(&:type)
+    appeal_task_types = appeal.tasks.map(&:type)
     if IHP_TYPE_TASKS.any? { |ihp_task| appeal_task_types.include?(ihp_task) }
       ihp_tasks = appeal.tasks.where(type: IHP_TYPE_TASKS)
       parent_ihp_tasks = []
