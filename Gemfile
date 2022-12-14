@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/LineLength
+# test
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 # State machine
