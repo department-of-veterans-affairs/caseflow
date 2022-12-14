@@ -145,7 +145,7 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions),
       [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_INTAKE.name]: daysSinceIntakeColumn(requireDasRecord),
-      [QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name]: receiptDateColumn(tasks, filterOptions),
+      [QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name]: receiptDateColumn(),
     };
 
     return functionForColumn[column.name];
