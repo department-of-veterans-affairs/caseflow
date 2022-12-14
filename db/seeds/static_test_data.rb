@@ -53,6 +53,7 @@ module Seeds
         cavc_priority_case_with_only_attorney_task
         cavc_priority_case_with_attorney_task_children
         cavc_priority_case_with_attorney_rewrite_task
+        priority_case_with_only_attorney_task(0)
       end
     end
 

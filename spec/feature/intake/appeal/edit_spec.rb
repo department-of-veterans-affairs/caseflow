@@ -401,6 +401,47 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
     end
 
+    scenario "If no issues are selected on the split appeal page, the Continue button is disabled" do
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal.uuid}/edit/create_split")
+
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Military Retired Pay - nonrating description")
+      find("label", text: "PTSD denied").click
+      expect(page).to have_content("Select...")
+      expect(page).to have_button("Continue", disabled: true)
+    end
+
+    scenario "If no issues are selected after de-selecting an issue, the Continue button is disabled" do
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal.uuid}/edit/create_split")
+
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Military Retired Pay - nonrating description")
+      find("label", text: "PTSD denied").click
+      find("label", text: "PTSD denied").click
+      expect(page).to have_content("Select...")
+      expect(page).to have_button("Continue", disabled: true)
+    end
+
+    scenario "If all issues are selected on the split appeal page, the Continue button is disabled" do
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal.uuid}/edit/create_split")
+
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Military Retired Pay - nonrating description")
+      # click checkboxes
+      find("label", text: "PTSD denied").click
+      find("label", text: "Military Retired Pay - nonrating description").click
+      expect(page).to have_content("Select...")
+      find(:css, ".cf-select").select_option
+      find(:css, ".cf-select__menu").click
+      expect(page).to have_button("Continue", disabled: true)
+    end
+
     def skill_form(appeal)
       # add issues to the appeal
       appeal.request_issues << request_issue_1
@@ -480,7 +521,6 @@ feature "Appeal Edit issues", :all_dbs do
 
     scenario "on the review_split page, testing appellant and vetera" do
       skill_form(appeal2)
-      # binding.pry
       if expect(appeal2.veteran_is_not_claimant).to be(false)
         row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
         row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text

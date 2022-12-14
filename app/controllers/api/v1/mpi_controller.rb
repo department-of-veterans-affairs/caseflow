@@ -3,12 +3,15 @@
 class Api::V1::MpiController < Api::ApplicationController
   # {POST Method for Veteran ID, Deceased Indicator, Deceased Time}
   def veteran_updates
+    Rails.logger.info("Queue ART says start. veterans_id: #{allowed_params[:veterans_id]} , deceased_time: #{allowed_params[:deceased_time]}")
     veteran = {
       veterans_ssn: allowed_params[:veterans_ssn],
       veterans_pat: allowed_params[:veterans_pat].split("^")[0],
       deceased_time: allowed_params[:deceased_time]
     }
-    response_info_column = { veteran_ssn: veteran[:veterans_ssn], veteran_pat: veteran[:veterans_pat] }
+
+    response_info_column = { veteran_id: veteran[:id], deceased_time: veteran[:deceased_time] }
+
     mpi_update = MpiUpdatePersonEvent.create!(api_key: api_key, created_at: Time.zone.now, update_type: :started)
     result = VACOLS::Correspondent.update_veteran_nod(veteran).to_sym
     if result == :successful || result == :already_deceased_time_changed
@@ -24,9 +27,7 @@ class Api::V1::MpiController < Api::ApplicationController
     end
     render json: { result: result }, status: status
   rescue StandardError => error
-    if !Rails.deploy_env?(:prod) && !Rails.deploy_env?(:preprod)
-      response_info_column[:error] = error
-    end
+    response_info_column[:error] = error
     mpi_update.update!(update_type: :error, completed_at: Time.zone.now, info: response_info_column)
     raise error
   end

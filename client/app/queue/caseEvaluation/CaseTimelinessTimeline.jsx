@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import COPY from '../../../COPY';
-import { redText } from '../constants';
 import { AttorneyDaysWorked } from './AttorneyDaysWorked';
 import { AttorneyTasksTreeTimeline } from './AttorneyTasksTreeTimeline';
 import { LegacyCaseTimeline } from './LegacyCaseTimeline';
@@ -23,7 +22,7 @@ export const CaseTimelinessTimeline = (props) => {
     const caseType = task.caseType;
     const aod = task.aod;
     const cavc = caseType === 'Court Remand';
-    let daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
+    let daysAssigned = Math.max(0, decisionSubmitted.startOf('day').diff(dateAssigned, 'days'));
 
     if (isLegacy) {
       return <LegacyCaseTimeline
@@ -42,19 +41,16 @@ export const CaseTimelinessTimeline = (props) => {
 
     // If not legacy use oldest attorney task and recalculate total days assigned
     dateAssigned = moment(oldestAttorneyTask.createdAt);
-    daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
+    daysAssigned = Math.max(0, decisionSubmitted.startOf('day').diff(dateAssigned, 'days'));
 
     return (
       <div>
         <div className="case-timeline" >
-          <span className="case-type">
-            <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_CASE_TYPE}</b>:
-            { aod && <span {...redText}> AOD</span> }
-            { cavc && <span {...redText}> CAVC</span> }
-            { !aod && !cavc && <span> {caseType}</span> }
-          </span>
           <AttorneyDaysWorked
             attorneyTasks={attorneyChildrenTasks}
+            aod={aod}
+            cavc={cavc}
+            caseType={caseType}
             daysAssigned={daysAssigned} />
         </div>
         <br />
@@ -68,7 +64,7 @@ export const CaseTimelinessTimeline = (props) => {
 
   // When feature toggle das_case_timeline is enabled for all and code cleanup is done remove this variable
   // and this return statement
-  const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
+  const daysWorked = Math.max(0, decisionSubmitted.startOf('day').diff(dateAssigned, 'days'));
 
   return (
     <>
