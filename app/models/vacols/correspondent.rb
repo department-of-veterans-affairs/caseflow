@@ -89,14 +89,14 @@ class VACOLS::Correspondent < VACOLS::Record
 
     def update_veteran_nod_in_vacols(veteran)
       update_type = missing_deceased_time(veteran[:deceased_time])
-
       return update_type unless update_type.nil?
 
-      update_type = should_update_veteran?(veteran, find_veteran_by_ssn(veteran[:veterans_ssn]), update_type)
+      vet_in_vacols = find_veteran_by_stafkey(veteran[:veterans_pat]) || find_veteran_by_ssn(veteran[:veterans_ssn])
 
+      update_type = should_update_veteran?(veteran, vet_in_vacols, update_type)
       return update_type if update_type != true
 
-      update_veteran_sfnod(veteran[:veterans_ssn], veteran[:deceased_time], find_veteran_by_ssn(veteran[:veterans_ssn]))
+      update_veteran_sfnod(veteran[:veterans_ssn], veteran[:deceased_time], vet_in_vacols)
     end
 
     def missing_deceased_time(veteran_deceased_time)
@@ -107,9 +107,19 @@ class VACOLS::Correspondent < VACOLS::Record
       nil
     end
 
+    def find_veteran_by_stafkey(stafkey)
+      query = <<-SQL
+        select STAFKEY, SSN, SFNOD
+        from CORRES
+        where STAFKEY = ?
+      SQL
+
+      connection.exec_query(sanitize_sql_array([query, stafkey]))
+    end
+
     def find_veteran_by_ssn(ssn)
       query = <<-SQL
-        select SSN, SFNOD
+        select STAFKEY, SSN, SFNOD
         from CORRES
         where SSN = ?
       SQL
