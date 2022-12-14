@@ -12,7 +12,7 @@ class Api::V1::MpiController < Api::ApplicationController
     mpi_update = MpiUpdatePersonEvent.create!(api_key: api_key, created_at: Time.zone.now, update_type: :started)
     result = VACOLS::Correspondent.update_veteran_nod(veteran).to_sym
     if result == :successful || result == :already_deceased_time_changed
-      updated_veteran = VACOLS::Correspondent.find(veteran[:veterans_pat]) || VACOLS::Correspondent.find_by(ssn: veteran[:veterans_ssn])
+      updated_veteran = VACOLS::Correspondent.find_by(stafkey: veteran[:veterans_pat]) || VACOLS::Correspondent.find_by(ssn: veteran[:veterans_ssn])
       response_info_column[:updated_column] = "deceased_time"
       response_info_column[:updated_deceased_time] = updated_veteran.sfnod
     end
