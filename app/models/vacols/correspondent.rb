@@ -10,7 +10,8 @@ class VACOLS::Correspondent < VACOLS::Record
   # veteran must be hash containing at least values for { id, deceased_time }
   def self.update_veteran_nod(veteran)
     MetricsService.record("VACOLS: Update veteran NOD:
-                          ID = #{veteran[:veterans_ssn]},
+                          SSN = #{veteran[:veterans_ssn]},
+                          PAT = #{veteran[:veterans_pat]}
                           deceased_time = #{veteran[:deceased_time]}",
                           name: "VACOLS::Correspondent.update_veteran_nod_in_vacols",
                           service: :vacols) do
