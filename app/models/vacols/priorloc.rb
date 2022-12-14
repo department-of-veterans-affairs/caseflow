@@ -35,7 +35,7 @@ class VACOLS::Priorloc < VACOLS::Record
   def location_label
     return location unless /[0-9]+/.match?(location)
 
-    label = VACOLS::Staff.find(location)&.snamel
+    label = staff&.snamel
     return label if label.present?
 
     location
@@ -57,20 +57,20 @@ class VACOLS::Priorloc < VACOLS::Record
     locdto
   end
 
-  def sdomainid
-    @sdomainid ||= VACOLS::Staff.find_by(slogid: location)&.sdomainid
+  def staff
+    @staff ||= VACOLS::Staff.find_by(slogid: location)
   end
 
   def location_user
-    @location_user ||= User.where(css_id: @sdomainid)&.first
+    @location_user ||= User.where(css_id: staff&.sdomainid)&.first
   end
 
   def with_attorney?
-    @location_user&.attorney? || false
+    location_user&.attorney? || false
   end
 
   def with_judge?
-    @location_user&.judge? || false
+    location_user&.judge? || false
   end
 
   def summary
