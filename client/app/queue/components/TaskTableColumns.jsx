@@ -359,19 +359,16 @@ export const daysSinceIntakeColumn = (requireDasRecord) => {
   };
 };
 
-export const receiptDateColumn = (requireDasRecord) => {
+export const receiptDateColumn = () => {
   return {
     header: COPY.CASE_LIST_TABLE_10182,
     name: QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name,
-    span: collapseColumn(requireDasRecord),
     align: 'center',
     valueFunction: (task) => {
-      // console.log(`maite ${JSON.stringify(task.appeal_receipt_date)}`);
       return moment(task.appeal_receipt_date).format('MM/DD/YYYY');
-
     },
     backendCanSort: true,
-    getSortValue: (task) => task.daysSinceBoardIntake
+    getSortValue: (task) => task.appeal_receipt_date
   };
 };
 
