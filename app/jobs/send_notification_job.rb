@@ -105,7 +105,7 @@ class SendNotificationJob < CaseflowJob
     quarterly_sms_template_id = NotificationEvent.find_by(event_type: "Quarterly Notification").sms_template_id
     appeal = Appeal.find_by_uuid(message.appeal_id) || LegacyAppeal.find_by(vacols_id: message.appeal_id)
     first_name = (
-      if appeal.class.to_s == "Appeal" || appeal&.appellant_is_not_veteran
+      if appeal&.appellant_is_not_veteran
         appeal&.appellant_first_name || "Appellant"
       else
         appeal&.veteran_first_name || "Appellant"
