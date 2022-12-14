@@ -5,8 +5,10 @@ class Api::V1::MpiController < Api::ApplicationController
   def veteran_updates
     veteran = {
       id: allowed_params[:veterans_id],
-      deceased_time: allowed_params[:deceased_time]
+      deceased_time: allowed_params[:deceased_time],
+      pat: allowed_params[:pat]
     }
+    puts veteran
     response_info_column = { veteran_id: veteran[:id] }
     mpi_update = MpiUpdatePersonEvent.create!(api_key: api_key, created_at: Time.zone.now, update_type: :started)
     result = VACOLS::Correspondent.update_veteran_nod(veteran).to_sym
@@ -31,6 +33,6 @@ class Api::V1::MpiController < Api::ApplicationController
   end
 
   def allowed_params
-    params.permit(:veterans_id, :deceased_time)
+    params.permit(:veterans_id, :deceased_time, :pat)
   end
 end
