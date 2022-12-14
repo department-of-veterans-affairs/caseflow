@@ -179,4 +179,7 @@ class WorkQueue::TaskSerializer
   attribute :appeal_receipt_date do |object|
     object.appeal.try(:receipt_date)
   end
+
+  attribute :days_since_last_status_change, &:calculated_last_change_duration
+  attribute :days_since_board_intake, &:calculated_duration_from_board_intake
 end
