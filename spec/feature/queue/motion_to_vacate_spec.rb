@@ -1101,7 +1101,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     )
     visit "/queue/appeals/#{vacate_stream.uuid}"
     expect(page).to have_content("Vacate")
-    find("span", text: COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK).click
+    find("span", text: "View all cases").click
     expect(find_by_id("table-row-2")).to have_content("Vacate", appeal.docket_number)
   end
 

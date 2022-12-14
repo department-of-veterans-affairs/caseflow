@@ -1526,7 +1526,7 @@ RSpec.feature "Case details", :all_dbs do
       visit("/queue/appeals/#{tracking_task.appeal.uuid}")
       expect(page).to have_selector(".cf-contested-badge")
 
-      page.all("a", text: COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK).first.click
+      page.all("a", text: "View all cases").first.click
       case_table = find(".cf-case-list-table")
       expect(case_table).to have_selector(".cf-contested-badge")
     end

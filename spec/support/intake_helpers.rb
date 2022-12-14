@@ -866,7 +866,7 @@ module IntakeHelpers
     if current_url.include?("/edit")
       click_edit_submit_and_confirm
       # edit page for appeals goes to queue
-      expect(page).to have_content(COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK)
+      expect(page).to have_content("View all cases")
     else
       click_intake_finish
       expect(page).to have_content("#{form_name} has been submitted.")

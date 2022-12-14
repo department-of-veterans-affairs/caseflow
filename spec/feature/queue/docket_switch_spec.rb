@@ -388,7 +388,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_content format(COPY::DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE)
 
       # Queue display updates
-      find("span", text: COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK).click
+      find("span", text: "View all cases").click
 
       expect(find_by_id("table-row-1")).to have_content(COPY::CASE_LIST_TABLE_DOCKET_SWITCH_LABEL, appeal.docket_number)
       expect(page).to have_no_content(COPY::CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL)
