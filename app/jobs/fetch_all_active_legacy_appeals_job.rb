@@ -26,6 +26,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   def perform
     RequestStore[:current_user] = User.system_user
     find_and_create_appeal_state_for_active_legacy_appeals
+    upload_csv_to_s3
   end
 
   private
@@ -74,7 +75,13 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
     rescue StandardError => error
       Rails.logger.error("#{appeal&.class} ID #{appeal&.id} was unable to create an appeal_states record because of "\
          "#{error}".red)
-      @errors << OpenStruct.new(appeal_type: appeal&.class, appeal_id: appeal&.id, error: error, message: error.message)
+      @errors << OpenStruct.new(
+        appeal_type: appeal&.class,
+        appeal_id: appeal&.id,
+        error: error,
+        message: error.message + "\n",
+        callstack: error.backtrace
+      )
     end
   end
 
@@ -85,13 +92,15 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
         appeal_id
         error
         error_message
+        callstack
       ]
       @errors.each do |error|
         csv << [
           error.appeal_type,
           error.appeal_id,
           error.error,
-          error.message
+          error.message,
+          error.callstack
         ].flatten
       end
     end
@@ -109,7 +118,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   #
   # Returns: Hash of "vso_ihp_pending" & "vso_ihp_complete" key value pairs
   def map_appeal_ihp_state(appeal)
-    appeal_task_types=appeal.tasks.map(&:type)
+    appeal_task_types = appeal.tasks.map(&:type)
     if IHP_TYPE_TASKS.any? { |ihp_task| appeal_task_types.include?(ihp_task) }
       ihp_tasks = appeal.tasks.where(type: IHP_TYPE_TASKS)
       parent_ihp_tasks = []

@@ -75,7 +75,13 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
     rescue StandardError => error
       Rails.logger.error("#{appeal&.class} ID #{appeal&.id} was unable to create an appeal_states record because of "\
          "#{error}".red)
-      @errors << OpenStruct.new(appeal_type: appeal&.class, appeal_id: appeal&.id, error: error, message: error.message)
+      @errors << OpenStruct.new(
+        appeal_type: appeal&.class,
+        appeal_id: appeal&.id,
+        error: error,
+        message: error.message + "\n",
+        callstack: error.backtrace
+      )
     end
   end
 
@@ -86,13 +92,15 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
         appeal_id
         error
         error_message
+        callstack
       ]
       @errors.each do |error|
         csv << [
           error.appeal_type,
           error.appeal_id,
           error.error,
-          error.message
+          error.message,
+          error.callstack
         ].flatten
       end
     end
