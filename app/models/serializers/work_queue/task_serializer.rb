@@ -175,4 +175,8 @@ class WorkQueue::TaskSerializer
   attribute :unscheduled_hearing_notes do |object|
     object.try(:unscheduled_hearing_notes)
   end
+
+  attribute :appeal_receipt_date do |object|
+    object.appeal.try(:receipt_date)
+  end
 end
