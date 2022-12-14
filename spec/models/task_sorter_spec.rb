@@ -12,7 +12,7 @@ describe TaskSorter, :all_dbs do
       it "instantiates with default arguments" do
         expect { subject }.to_not raise_error
 
-        expect(subject.column.name).to eq(Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name)
+        expect(subject.column.name).to eq(Constants.QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name)
         expect(subject.sort_order).to eq(Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC)
         expect(subject.tasks).to eq([])
       end
