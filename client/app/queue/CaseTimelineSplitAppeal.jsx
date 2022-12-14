@@ -7,7 +7,6 @@ import { caseTimelineTasksForAppeal } from './selectors';
 
 export const CaseTimeline = ({ appeal }) => {
   const tasks = useSelector((state) => caseTimelineTasksForAppeal(state, { appealId: appeal.externalId }));
-
   const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);
 
   return (
@@ -17,7 +16,7 @@ export const CaseTimeline = ({ appeal }) => {
         <tbody>
           <TaskRows appeal={appeal}
             taskList={tasks}
-            editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate}
+            editNodDateEnabled = {!appeal.isLegacyAppeal && canEditNodDate}
             timeline
             statusSplit
           />

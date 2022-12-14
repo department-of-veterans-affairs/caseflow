@@ -320,6 +320,8 @@ class Task < CaseflowRecord
   # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
   # task active at a time for a single appeal.
   def verify_org_task_unique
+    # do not verify for split appeal process
+    return if appeal.appeal_split_process == true
     return if !open?
 
     if appeal.tasks.open.where(

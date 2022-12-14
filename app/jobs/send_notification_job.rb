@@ -37,7 +37,12 @@ class SendNotificationJob < CaseflowJob
       @va_notify_quarterly_sms = FeatureToggle.enabled?(:va_notify_quarterly_sms)
       message = JSON.parse(message_json, object_class: OpenStruct)
       if message.appeal_id && message.appeal_type && message.template_name
-        notification_audit_record = create_notification_audit_record(message.appeal_id, message.appeal_type, message.template_name, message.participant_id)
+        notification_audit_record = create_notification_audit_record(
+          message.appeal_id,
+          message.appeal_type,
+          message.template_name,
+          message.participant_id
+        )
         if notification_audit_record
           if message.status != "No participant_id" && message.status != "No claimant"
             to_update = {}

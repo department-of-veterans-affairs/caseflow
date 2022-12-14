@@ -78,7 +78,7 @@ class LegacyAppeal < CaseflowRecord
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
   attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by,
-                :created_at, :document_id, :assigned_by, :updated_at, :attorney_id
+                :created_at, :document_id, :assigned_by, :updated_at, :attorney_id, :appeal_split_process
 
   delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at,
            to: :document_fetcher

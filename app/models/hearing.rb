@@ -118,7 +118,7 @@ class Hearing < CaseflowRecord
   end
 
   def check_available_slots
-    fail HearingDayFull if hearing_day_full?
+    fail HearingDayFull if hearing_day_full? && appeal.appeal_split_process != true
   end
 
   def update_fields_from_hearing_day

@@ -23,7 +23,7 @@ export const CaseTimelinessTimeline = (props) => {
     const caseType = task.caseType;
     const aod = task.aod;
     const cavc = caseType === 'Court Remand';
-    let daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
+    let daysAssigned = Math.max(0, decisionSubmitted.startOf('day').diff(dateAssigned, 'days'));
 
     if (isLegacy) {
       return <LegacyCaseTimeline
@@ -42,7 +42,7 @@ export const CaseTimelinessTimeline = (props) => {
 
     // If not legacy use oldest attorney task and recalculate total days assigned
     dateAssigned = moment(oldestAttorneyTask.createdAt);
-    daysAssigned = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
+    daysAssigned = Math.max(0, decisionSubmitted.startOf('day').diff(dateAssigned, 'days'));
 
     return (
       <div>
@@ -68,7 +68,7 @@ export const CaseTimelinessTimeline = (props) => {
 
   // When feature toggle das_case_timeline is enabled for all and code cleanup is done remove this variable
   // and this return statement
-  const daysWorked = decisionSubmitted.startOf('day').diff(dateAssigned, 'days');
+  const daysWorked = Math.max(0, decisionSubmitted.startOf('day').diff(dateAssigned, 'days'));
 
   return (
     <>
