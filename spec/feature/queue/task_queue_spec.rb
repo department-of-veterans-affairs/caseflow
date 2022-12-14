@@ -957,11 +957,12 @@ feature "Task queue", :all_dbs do
       end
 
       before do
-        appeal.reload
-        visit("/queue/appeals/#{appeal.external_id}")
+        # force objects above to reload to ensure the visit doesn't fail to load them
+        judge_task.reload
 
         # Add a user to the Colocated team so the task assignment will suceed.
         Colocated.singleton.add_user(create(:user))
+        visit("/queue/appeals/#{appeal.external_id}")
       end
 
       it "should display an option of Ready for Dispatch" do
