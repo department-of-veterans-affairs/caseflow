@@ -79,7 +79,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page).to have_content("Blue Water")
       expect(page).to have_content("Burn Pit")
       expect(page).to have_content("Military Sexual Trauma (MST)")
-      expect(page).to have_content("US Court of Appeals for Veterans Claims (CAVC)")
       find("label", text: "Blue Water").click
       click_on "Continue"
 
@@ -269,7 +268,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page).to have_content("Blue Water")
       expect(page).to have_content("Burn Pit")
       expect(page).to have_content("Military Sexual Trauma (MST)")
-      expect(page).to have_content("US Court of Appeals for Veterans Claims (CAVC)")
       find("label", text: "Burn Pit").click
       click_on "Continue"
 
