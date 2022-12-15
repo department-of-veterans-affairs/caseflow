@@ -81,4 +81,10 @@ class WorkQueue::DecisionReviewTaskSerializer
   attribute :type do |object|
     decision_review(object).is_a?(Appeal) ? "Board Grant" : decision_review(object).class.review_title
   end
+
+  attribute :business_line do |object|
+    assignee = object.assigned_to
+
+    assignee.is_a?(BusinessLine) ? assignee.url : nil
+  end
 end

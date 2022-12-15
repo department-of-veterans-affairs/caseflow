@@ -25,7 +25,8 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           id: task.id,
           created_at: task.created_at,
           issue_count: 0,
-          type: "Higher-Level Review"
+          type: "Higher-Level Review",
+          business_line: non_comp_org.url
         }
       }
       expect(subject.serializable_hash[:data]).to eq(serializable_hash)
@@ -52,7 +53,8 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             id: task.id,
             created_at: task.created_at,
             issue_count: 0,
-            type: "Higher-Level Review"
+            type: "Higher-Level Review",
+            business_line: non_comp_org.url
           }
         }
         expect(subject.serializable_hash[:data]).to eq(serializable_hash)
@@ -89,7 +91,8 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             id: task.id,
             created_at: task.created_at,
             issue_count: 0,
-            type: "Higher-Level Review"
+            type: "Higher-Level Review",
+            business_line: non_comp_org.url
           }
         }
         expect(subject.serializable_hash[:data]).to eq(serializable_hash)

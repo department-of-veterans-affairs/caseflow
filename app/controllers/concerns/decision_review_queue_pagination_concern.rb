@@ -31,6 +31,6 @@ module DecisionReviewQueuePaginationConcern
   end
 
   def apply_task_serializer(tasks)
-    tasks.map { |task| task.serialize_task.merge(business_line: business_line_slug) }
+    tasks.map(&:serialize_task)
   end
 end

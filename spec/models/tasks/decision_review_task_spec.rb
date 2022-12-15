@@ -128,7 +128,8 @@ describe DecisionReviewTask, :postgres do
         assigned_at: decision_review_task.assigned_at,
         issue_count: 0,
         type: "Higher-Level Review",
-        claimant: { name: hlr.veteran_full_name, relationship: "self" }
+        claimant: { name: hlr.veteran_full_name, relationship: "self" },
+        business_line: business_line.url
       }
 
       expect(subject).to eq serialized_hash
@@ -157,7 +158,8 @@ describe DecisionReviewTask, :postgres do
           id: decision_review_task.id,
           created_at: decision_review_task.created_at,
           issue_count: 0,
-          type: "Higher-Level Review"
+          type: "Higher-Level Review",
+          business_line: business_line.url
         }
       }
 
