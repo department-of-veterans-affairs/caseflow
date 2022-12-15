@@ -12,13 +12,12 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
 
     # Logger to identify what Appeals are being fetched
     # we need appeal, user, docs, efolder_size
-    # Rails.logger.info(
-    #     "ReaderJobCurrent - FetchDocumentForReaderUserJob " \
-    #     "Appeals Fetched: (#{appeals.count})" \
-    #     "User: (#{user})" \
-    #     "Documents: "
-    #   )
+    # Rails.logger.info
+       puts "ReaderJobCurrent - FetchDocumentForReaderUserJob " \
+        "Appeals Fetched: (#{appeals.count})" \
+        "User: (#{user})" \
+        "Documents: #{appeals.map(&:documents)}"
+
     FetchDocumentsForReaderJob.new(user: user, appeals: appeals).process
-    puts "This is the APPEALS HASH #{appeals}"
   end
 end

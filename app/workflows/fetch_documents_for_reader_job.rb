@@ -100,7 +100,7 @@ class FetchDocumentsForReaderJob
   # input user.id, status, appeals_succesful and appeals.count
   # returns string
   def log_message(status = "SUCCESS")
-    "FetchDocumentsForReaderUserJob (user_id: #{user.id}) #{status}. " \
+    "ReaderJobCurrent - FetchDocumentsForReaderJob (user_id: #{user.id}) #{status}. " \
       "Retrieved #{@appeals_successful} / #{appeals.count} appeals"
   end
 end
