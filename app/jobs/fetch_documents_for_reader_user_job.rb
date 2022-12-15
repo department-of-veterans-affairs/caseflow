@@ -9,6 +9,16 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
   def perform(user)
     user.update!(efolder_documents_fetched_at: Time.zone.now)
     appeals = AppealsForReaderJob.new(user).process
+
+    # Logger to identify what Appeals are being fetched
+    # we need appeal, user, docs, efolder_size
+    # Rails.logger.info(
+    #     "ReaderJobCurrent - FetchDocumentForReaderUserJob " \
+    #     "Appeals Fetched: (#{appeals.count})" \
+    #     "User: (#{user})" \
+    #     "Documents: "
+    #   )
     FetchDocumentsForReaderJob.new(user: user, appeals: appeals).process
+    puts "This is the APPEALS HASH #{appeals}"
   end
 end
