@@ -345,6 +345,16 @@ class VACOLS::CaseDocket < VACOLS::Record
       .count
   end
 
+  def self.priority_hearing_cases_for_judge_count(judge)
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
+      where (VLJ = ?)
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id])
+    connection.exec_query(fmtd_query).count
+  end
+
   def self.nonpriority_hearing_cases_for_judge_count(judge)
     query = <<-SQL
       #{SELECT_NONPRIORITY_APPEALS}
