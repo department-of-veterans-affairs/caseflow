@@ -111,7 +111,7 @@ class SendNotificationJob < CaseflowJob
     appeal = Appeal.find_by_uuid(message.appeal_id) || LegacyAppeal.find_by(vacols_id: message.appeal_id)
     first_name = (
       if appeal.class.to_s == "Appeal"
-        appeal.claimant.person.first_name || "Appellant"
+        appeal&.claimant&.first_name || "Appellant"
       else
         appeal.claimant[:first_name] || "Appellant"
       end
