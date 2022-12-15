@@ -1503,9 +1503,7 @@ RSpec.feature "Case details", :all_dbs do
   end
 
   describe "contested claim" do
-    before do
-      FeatureToggle.enable!(:indicator_for_contested_claims)
-    end
+    before { FeatureToggle.enable!(:indicator_for_contested_claims) }
     after { FeatureToggle.disable!(:indicator_for_contested_claims) }
 
 
