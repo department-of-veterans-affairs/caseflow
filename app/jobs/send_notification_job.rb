@@ -164,7 +164,7 @@ class SendNotificationJob < CaseflowJob
   # Purpose: Method to create a new notification table row for the appeal
   #
   # Params:
-  # - appeals_id - UUID or Vacols id of the appeals the event triggered
+  # - appeals_id - UUID or vacols_id of the appeals the event triggered
   # - appeals_type - Polymorphic column to identify the type of appeal
   # - - Appeal
   # - - LegacyAppeal
