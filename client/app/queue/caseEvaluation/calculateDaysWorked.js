@@ -1,6 +1,5 @@
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import { compareDesc } from 'date-fns';
 
 const moment = extendMoment(Moment);
 
@@ -68,53 +67,10 @@ export const calculateDaysWorked = (allChildrenTasks, daysAssigned, attorneyTask
     moment.range(moment(task.createdAt), moment(task.closedAt))
   );
 
-  let sumOfAllChildrenTasksDays = 0;
-
-  if (allChildrenTasks.length > 0) {
-    sumOfAllChildrenTasksDays = Math.max(1, findSumOfUniqueDateRanges(allTasksUniqueDateRanges));
-  }
-
-  let sumOfJudgeDays = 0;
-
-  if (attorneyTasks.length > 0) {
-    sumOfJudgeDays = findSumOfJudgeDays(attorneyTasks);
-  }
+  const sumOfAllChildrenTasksDays = Math.max(1, findSumOfUniqueDateRanges(allTasksUniqueDateRanges));
+  const sumOfJudgeDays = findSumOfJudgeDays(attorneyTasks);
 
   const daysWorked = daysAssigned - sumOfAllChildrenTasksDays - sumOfJudgeDays - 1;
 
   return Math.max(0, daysWorked);
-};
-
-export const determineLocationHistories = (locationHistories, timelinessRange) => {
-
-  // filter out locations outside of the timeliness range and with an attorney
-  // See app/models/vacols/priorloc.rb#with_attorney?
-  const notWithAttorneyLocations = locationHistories.
-    filter((location) =>
-      !location.withAttorney && timelinessRange.contains(moment(location.createdAt))
-    );
-
-  // sort by createdAt since that is locdout
-  notWithAttorneyLocations.sort((prev, next) => compareDesc(new Date(prev.createdAt), new Date(next.createdAt)));
-
-  // Set location's closedAt based on pairs of locations using locdout values
-  // This is the best way to determine date ranges of when a record was at a location
-  // This is recommended path by VACOLS SME
-  //
-  // Ex: location[0]'s closedAt becomes location[1].createdAt
-  //
-  const remappedLocationHistories = notWithAttorneyLocations.map((location, index) => {
-    if (index + 1 < notWithAttorneyLocations.length) {
-      const nextLocation = notWithAttorneyLocations[index + 1];
-
-      return {
-        ...location,
-        closedAt: nextLocation.createdAt,
-      };
-    }
-
-    return location;
-  }).filter((location) => location.closedAt !== null);
-
-  return remappedLocationHistories;
 };

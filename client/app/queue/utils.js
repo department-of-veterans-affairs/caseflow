@@ -366,30 +366,6 @@ const prepareNodDateUpdatesForStore = (appeal) => {
   return nodDateUpdates;
 };
 
-const prepareLocationHistoryForStore = (appeal) => {
-  let locationHistory = [];
-
-  if (appeal.attributes.location_history) {
-    locationHistory = appeal.attributes.location_history.map((location, index) =>
-      ({
-        label: location.location_label,
-        uniqueId: `${location.vacols_id }_${index}`,
-        assignedBy: location.assigned_by,
-        assignedAt: location.assigned_at,
-        location: location.location_label,
-        subLocation: location.sub_location,
-        locationStaff: location.location_staff,
-        createdAt: location.created_at,
-        closedAt: location.closed_at,
-        vacolsId: location.vacols_id,
-        exception_flag: location.exception_flag,
-        withAttorney: location['with_attorney?']
-      }));
-  }
-
-  return locationHistory;
-};
-
 export const prepareAppealForStore = (appeals) => {
   const appealHash = appeals.reduce((accumulator, appeal) => {
     const {
@@ -498,7 +474,6 @@ export const prepareAppealForStore = (appeals) => {
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
       remandJudgeName: appeal.attributes.remand_judge_name,
       hasNotifications: appeal.attributes.has_notifications,
-      locationHistory: prepareLocationHistoryForStore(appeal),
     };
 
     return accumulator;
