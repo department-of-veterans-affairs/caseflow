@@ -26,7 +26,8 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
           id: task.id,
           created_at: task.created_at,
           issue_count: 0,
-          type: "Board Grant"
+          type: "Board Grant",
+          business_line: non_comp_org.url
         }
       }
       expect(subject.serializable_hash[:data]).to eq(serializable_hash)
@@ -58,7 +59,8 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
             id: task.id,
             created_at: task.created_at,
             issue_count: 0,
-            type: "Board Grant"
+            type: "Board Grant",
+            business_line: non_comp_org.url
           }
         }
         expect(subject.serializable_hash[:data]).to eq(serializable_hash)
@@ -95,7 +97,8 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
             id: task.id,
             created_at: task.created_at,
             issue_count: 0,
-            type: "Board Grant"
+            type: "Board Grant",
+            business_line: non_comp_org.url
           }
         }
         expect(subject.serializable_hash[:data]).to eq(serializable_hash)
