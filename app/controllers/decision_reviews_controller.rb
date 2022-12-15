@@ -98,7 +98,7 @@ class DecisionReviewsController < ApplicationController
     render json: pagination_json(tasks)
   end
 
-  def missing_tab_paramater_error
+  def missing_tab_parameter_error
     render json: { error: "'tab' parameter is required." }, status: :bad_request
   end
 
@@ -142,7 +142,7 @@ class DecisionReviewsController < ApplicationController
       :tab,
       :sort_by,
       :order,
-      :filter,
+      { filter: [] },
       :page,
       decision_issues: [:description, :disposition, :request_issue_id]
     )
