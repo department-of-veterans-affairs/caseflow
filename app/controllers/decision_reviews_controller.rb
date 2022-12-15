@@ -86,14 +86,24 @@ class DecisionReviewsController < ApplicationController
   end
 
   def queue_tasks
-    task_list = case allowed_params[:tab]
-                when "in_progress" then in_progress_tasks
-                when "completed" then completed_tasks
-                else
-                  return render json: { error: "Tab name provided could not be found" }, status: :not_found
-                end
+    return missing_tab_paramater_error unless allowed_params[:tab]
 
-    render json: pagination_json(task_list)
+    tasks = case allowed_params[:tab]
+            when "in_progress" then in_progress_tasks
+            when "completed" then completed_tasks
+            else
+              return unrecognized_tab_name_error
+            end
+
+    render json: pagination_json(tasks)
+  end
+
+  def missing_tab_paramater_error
+    render json: { error: "'tab' parameter is required." }, status: :bad_request
+  end
+
+  def unrecognized_tab_name_error
+    render json: { error: "Tab name provided could not be found" }, status: :not_found
   end
 
   def set_application

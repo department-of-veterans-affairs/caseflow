@@ -370,7 +370,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
       end
     end
 
-    it "throws 400 error if invalid tab name is provided" do
+    it "throws 404 error if unrecognized tab name is provided" do
       get :index,
           params: {
             business_line_slug: non_comp_org.url,
@@ -379,6 +379,14 @@ describe DecisionReviewsController, :postgres, type: :controller do
           format: :json
 
       expect(response.status).to eq(404)
+      expect(JSON.parse(response.body)["error"]).to eq "Tab name provided could not be found"
+    end
+
+    it "throws 400 error if tab name is omitted" do
+      get :index, params: { business_line_slug: non_comp_org.url }, format: :json
+
+      expect(response.status).to eq(400)
+      expect(JSON.parse(response.body)["error"]).to eq "'tab' parameter is required."
     end
   end
 
