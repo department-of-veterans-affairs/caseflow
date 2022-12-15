@@ -142,7 +142,7 @@ class DecisionReviewsController < ApplicationController
       :tab,
       :sort_by,
       :order,
-      :filter,
+      { filter: [] },
       :page,
       decision_issues: [:description, :disposition, :request_issue_id]
     )
