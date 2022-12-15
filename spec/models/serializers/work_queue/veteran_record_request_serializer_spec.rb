@@ -25,7 +25,9 @@ describe WorkQueue::VeteranRecordRequestSerializer, :postgres do
           id: task.id,
           created_at: task.created_at,
           issue_count: 0,
-          type: "Record Request"
+          type: "Record Request",
+          business_line: non_comp_org.url
+
         }
       }
       expect(subject.serializable_hash[:data]).to eq(serializable_hash)
