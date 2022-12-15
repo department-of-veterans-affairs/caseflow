@@ -86,7 +86,7 @@ class DecisionReviewsController < ApplicationController
   end
 
   def queue_tasks
-    return missing_tab_paramater_error unless allowed_params[:tab]
+    return missing_tab_parameter_error unless allowed_params[:tab]
 
     tasks = case allowed_params[:tab]
             when "in_progress" then in_progress_tasks
