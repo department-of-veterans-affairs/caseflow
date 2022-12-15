@@ -128,6 +128,7 @@ class SendNotificationJob < CaseflowJob
       )
       if !response.nil? && response != ""
         to_update = { notification_content: response.body["content"]["body"],
+                      email_notification_content: response.body["content"]["body"],
                       email_notification_external_id: response.body["id"] }
         update_notification_audit_record(notification_audit_record, to_update)
       end
@@ -143,7 +144,9 @@ class SendNotificationJob < CaseflowJob
         status
       )
       if !response.nil? && response != ""
-        to_update = { notification_content: response.body["content"]["body"], sms_notification_external_id: response.body["id"] }
+        to_update = {
+          sms_notification_content: response.body["content"]["body"], sms_notification_external_id: response.body["id"]
+        }
         update_notification_audit_record(notification_audit_record, to_update)
       end
     end
