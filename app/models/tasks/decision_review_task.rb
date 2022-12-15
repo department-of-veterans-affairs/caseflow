@@ -15,16 +15,14 @@ class DecisionReviewTask < Task
     ::WorkQueue::DecisionReviewTaskSerializer
   end
 
+  # The output of this method is used in lieu of ui_hash's whenever gathering task
+  # data to populate decision review queues with.
   def serialize_task
     serializer_class.new(self).serializable_hash[:data]
   end
 
   def ui_hash
     serialize_task[:attributes]
-  end
-
-  def expanded_ui_hash
-    serialize_task
   end
 
   def complete_with_payload!(decision_issue_params, decision_date)

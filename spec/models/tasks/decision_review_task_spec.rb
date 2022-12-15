@@ -136,10 +136,10 @@ describe DecisionReviewTask, :postgres do
     end
   end
 
-  describe "#expanded_ui_hash" do
+  describe "#serialize_task" do
     include_context "decision review task assigned to business line"
 
-    subject { decision_review_task.expanded_ui_hash }
+    subject { decision_review_task.serialize_task }
 
     it "includes all key-values within serialize_task[:data]" do
       serialized_hash = {
