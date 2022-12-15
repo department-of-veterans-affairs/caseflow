@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DecisionReviewsController < ApplicationController
-  include DecisionReviewQueuePaginationConcern
+  include GenericTaskPaginationConcern
 
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]

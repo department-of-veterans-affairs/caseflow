@@ -3,9 +3,9 @@
 # Provides methods to the DecisionReviewsController so that it can paginate
 # tasks for business lines' decision review queues.
 #
-# Requires a method named 'business_line' to be implemented that returns the current
-# BusinessLine as an object.
-module DecisionReviewQueuePaginationConcern
+# Tasks to be paginated must implement a 'serialize_task' method that returns
+# a serialized version of itself.
+module GenericTaskPaginationConcern
   extend ActiveSupport::Concern
 
   DEFAULT_TASKS_PER_PAGE = 15
