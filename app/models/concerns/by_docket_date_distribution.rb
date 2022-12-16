@@ -48,36 +48,23 @@ module ByDocketDateDistribution
     end
   end
 
-  def priority_stats
-    {
-      count: priority_count,
-      priority_target: @push_priority_target
-    }
-  end
-
-  def nonpriority_stats
-    {
-      count: nonpriority_count,
-      priority_target: @request_priority_count
-    }
-  end
-
   def ama_statistics
-    priority_counts = priority_stats
-    nonpriority_counts = nonpriority_stats
+    priority_counts = { count: priority_count }
+    nonpriority_counts = { count: nonpriority_count }
 
     dockets.each_pair do |sym, docket|
       priority_counts[sym] = docket.count(priority: true, ready: true)
       nonpriority_counts[sym] = docket.count(priority: false, ready: true)
     end
 
-    nonpriority_counts.merge!(direct_review_due_count: direct_review_due_count,
-                              legacy_hearing_backlog_count: legacy_hearing_backlog_count(judge),
-                              iterations: @nonpriority_iterations)
+    priority_counts[:legacy_hearing_tied_to] = legacy_hearing_priority_count(judge)
+    nonpriority_counts[:legacy_hearing_tied_to] = legacy_hearing_nonpriority_count(judge)
+    nonpriority_counts[:iterations] = @nonpriority_iterations
 
     {
       batch_size: @appeals.count,
       total_batch_size: total_batch_size,
+      priority_target: @push_priority_target || @request_priority_count,
       priority: priority_counts,
       nonpriority: nonpriority_counts,
       algorithm: "by_docket_date"
