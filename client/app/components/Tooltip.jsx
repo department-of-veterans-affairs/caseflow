@@ -11,7 +11,8 @@ const Tooltip = (props) => {
     id = 'tooltip-id',
     position = 'top',
     offset = {},
-    tabIndex = 0
+    tabIndex = 0,
+    ariaLabel
   } = props;
 
   const borderToColor = position.charAt(0).toUpperCase() + position.slice(1);
@@ -34,6 +35,7 @@ const Tooltip = (props) => {
     'data-event': 'focus mouseenter',
     'data-event-off': 'mouseleave keydown',
     tabIndex,
+    'aria-label': ariaLabel ?? ''
   };
 
   return (
@@ -61,7 +63,8 @@ Tooltip.propTypes = {
   position: PropTypes.string,
   offset: PropTypes.object,
   children: PropTypes.object,
-  tabIndex: PropTypes.number
+  tabIndex: PropTypes.number,
+  ariaLabel: PropTypes.string
 };
 
 export default Tooltip;
