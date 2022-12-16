@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class BatchAppealsForReaderQuery
   def self.process
     Task.includes(:assigned_to)

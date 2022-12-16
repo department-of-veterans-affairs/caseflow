@@ -51,7 +51,7 @@ class FetchDocumentsForReaderJob
     # rescue is an exception handler to catch any errors  with a message
     # of the error the class name and  documents for appeal.id
   rescue Caseflow::Error::EfolderError => error
-    Rails.logger.error "FetchDocumentsForReaderJob encountered error #{error.class.name} when fetching documents for appeal #{appeal.id}"
+    Rails.logger.error "FetchDocumentsForReaderJob error #{error.class.name} fetching docs for appeal #{appeal.id}"
   end
 
   # setups the debug context
