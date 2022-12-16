@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
-# Provides methods to the DecisionReviewsController so that it can paginate
-# tasks for business lines' decision review queues.
+# Primarily used to provides method to the DecisionReviewsController
+# so that it can paginate tasks for business lines' decision review queues.
+#
+# However, this concern may be used in any controller where tasks are needing
+# to be paginated, but TaskPager is not desired to be used.
 #
 # Tasks to be paginated must implement a 'serialize_task' method that returns
 # a serialized version of itself.
