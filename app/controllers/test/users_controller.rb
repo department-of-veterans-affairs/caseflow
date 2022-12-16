@@ -61,6 +61,7 @@ class Test::UsersController < ApplicationController
         styleguide: "/styleguide",
         stats: "/stats",
         jobs: "/jobs",
+        admin: "/admin",
         test_veterans: "/test/data"
       }
     }
