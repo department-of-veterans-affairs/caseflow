@@ -12,7 +12,9 @@ const Tooltip = (props) => {
     position = 'top',
     offset = {},
     tabIndex = 0,
-    styling = 'inline-block'
+    styling = 'inline-block',
+    className = 'cf-tooltip',
+    ariaLabel
   } = props;
 
   const borderToColor = position.charAt(0).toUpperCase() + position.slice(1);
@@ -22,7 +24,7 @@ const Tooltip = (props) => {
       backgroundColor: COLORS.GREY_DARK,
       fontWeight: 'normal',
       padding: '0.5rem 1rem',
-      textAlign: 'center'
+      textAlign: 'justify'
     },
     [`& #${id}:after`]: { [`border${borderToColor}Color`]: COLORS.GREY_DARK }
   });
@@ -35,6 +37,7 @@ const Tooltip = (props) => {
     'data-event': 'focus mouseenter',
     'data-event-off': 'mouseleave keydown',
     tabIndex,
+    'aria-label': ariaLabel ?? ''
   };
 
   return (
@@ -48,6 +51,7 @@ const Tooltip = (props) => {
           place={position}
           multiline
           role="tooltip"
+          className={className}
         >
           {text}
         </ReactTooltip>
@@ -63,7 +67,9 @@ Tooltip.propTypes = {
   offset: PropTypes.object,
   children: PropTypes.object,
   tabIndex: PropTypes.number,
-  styling: PropTypes.string
+  styling: PropTypes.string,
+  className: PropTypes.string,
+  ariaLabel: PropTypes.string,
 };
 
 export default Tooltip;

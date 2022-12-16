@@ -19,7 +19,7 @@ class IntakesSchemas
         string :docket_type, optional: true, included_in?: DOCKET_OPTIONS, doc: "Appeals only"
         string :original_hearing_request_type, optional: true, nullable: true
         string :claimant, optional: true, nullable: true
-        string :claimant_type, optional: true, included_in?: %w[veteran dependent attorney other]
+        string :claimant_type, optional: true, included_in?: %w[veteran dependent attorney other healthcare_provider]
         string :payee_code, optional: true, nullable: true
         bool :filed_by_va_gov, optional: true, nullable: true
         bool :informal_conference, optional: true, doc: "HLRs only"

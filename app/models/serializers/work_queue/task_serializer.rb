@@ -175,4 +175,11 @@ class WorkQueue::TaskSerializer
   attribute :unscheduled_hearing_notes do |object|
     object.try(:unscheduled_hearing_notes)
   end
+
+  attribute :appeal_receipt_date do |object|
+    object.appeal.is_a?(LegacyAppeal) ? nil : object.appeal.try(:receipt_date)
+  end
+
+  attribute :days_since_last_status_change, &:calculated_last_change_duration
+  attribute :days_since_board_intake, &:calculated_duration_from_board_intake
 end
