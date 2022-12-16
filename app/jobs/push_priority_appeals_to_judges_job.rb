@@ -62,7 +62,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     report << ""
     report << "*Debugging information*"
     report << "Priority Target: #{priority_target}"
-    report << "Previous monthly distributions: #{priority_distributions_this_month_for_eligible_judges}"
+    report << "Previous monthly distributions {judge_id=>count}: #{priority_distributions_this_month_for_eligible_judges}"
 
     if appeals_not_distributed.values.flatten.any?
       add_stuck_appeals_to_report(report, appeals_not_distributed)
