@@ -379,7 +379,8 @@ const prepareLocationHistoryForStore = (appeal) => {
         closedAt: location.closed_at,
         vacolsId: location.vacols_id,
         exception_flag: location.exception_flag,
-        withAttorney: location['with_attorney?']
+        withAttorney: location['with_attorney?'],
+        withJudge: location['with_judge?']
       }));
   }
 
