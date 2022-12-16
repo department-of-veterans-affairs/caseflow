@@ -38,6 +38,7 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
         email_notification_status,
         sms_notification_status,
         notification_content,
+        sms_notification_content,
         notification_type,
         recipient_email,
         recipient_phone_number,
@@ -57,7 +58,7 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
 
       const sms_notification = {
         status: sms_notification_status === 'Success' ? 'Sent' : sms_notification_status,
-        content: notification_content,
+        content: sms_notification_content,
         notification_type: 'Text',
         // eslint-disable-next-line no-negated-condition
         recipient_information: recipient_phone_number === '' ? null : recipient_phone_number,
@@ -73,6 +74,7 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
         tableNotifications.push(sms_notification);
       }
     }
+    console.log(tableNotifications);
 
     return tableNotifications;
   };
