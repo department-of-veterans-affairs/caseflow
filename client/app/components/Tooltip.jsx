@@ -12,12 +12,13 @@ const Tooltip = (props) => {
     position = 'top',
     offset = {},
     tabIndex = 0,
-    ariaLabel
+    ariaLabel,
+    styling = 'inline-block',
   } = props;
 
   const borderToColor = position.charAt(0).toUpperCase() + position.slice(1);
   const tooltipStyling = css({
-    display: 'inline-block',
+    display: styling,
     [`& #${id}`]: {
       backgroundColor: COLORS.GREY_DARK,
       fontWeight: 'normal',
@@ -64,7 +65,8 @@ Tooltip.propTypes = {
   offset: PropTypes.object,
   children: PropTypes.object,
   tabIndex: PropTypes.number,
-  ariaLabel: PropTypes.string
+  ariaLabel: PropTypes.string,
+  styling: PropTypes.string
 };
 
 export default Tooltip;
