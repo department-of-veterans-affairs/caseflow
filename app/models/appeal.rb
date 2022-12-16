@@ -32,6 +32,9 @@ class Appeal < DecisionReview
   has_one :special_issue_list, as: :appeal
   has_one :post_decision_motion
 
+  # Each appeal has one appeal_state that is used for tracking quarterly notifications
+  has_one :appeal_state, as: :appeal
+
   # The has_one here provides the docket_switch object to the newly created appeal upon completion of the docket switch
   has_one :docket_switch, class_name: "DocketSwitch", foreign_key: :new_docket_stream_id
 
