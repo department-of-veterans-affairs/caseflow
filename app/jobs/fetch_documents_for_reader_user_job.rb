@@ -10,18 +10,21 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
     user.update!(efolder_documents_fetched_at: Time.zone.now)
     appeals = AppealsForReaderJob.new(user).process
 
-    # Logger to identify what Appeals are being fetched
-    # we need appeal, user, docs, efolder_size
+    log_info(user, appeals)
 
     FetchDocumentsForReaderJob.new(user: user, appeals: appeals).process
-    documents = appeals.map(&:documents).flatten
-    Rails.logger.info(
-      "ReaderJobCurrent - FetchDocumentForReaderUserJob " \
-      "Appeals Fetched: (#{appeals.count})" \
-      "User: (#{user})" \
-      "Document ID: #{documents.map(&:id)}" \
-      "Document File Number: #{documents.map(&:file_number)}" \
-      "Document VBMS Document ID: #{documents.map(&:vbms_document_id)}"
-    )
+  end
+
+  private
+
+  def log_info(user, appeals)
+    Rails.logger.info log_message(user, appeals)
+  end
+
+  def log_message(user, appeals)
+    "FetchDocumentsForReaderUserJob - " \
+    "User Inspect: (#{user.inspect}) - " \
+    "Appeals Count: (#{appeals.count}) - " \
+    "Appeals Inspect: (#{appeals.map(&:inspect)})"
   end
 end

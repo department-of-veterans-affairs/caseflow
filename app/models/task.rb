@@ -20,6 +20,9 @@ class Task < CaseflowRecord
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :cancelled_by, class_name: "User"
+  # belongs_to :assigned_to_user, foreign_type: 'User', foreign_key: :assigned_to_id
+  # belongs_to :assigned_to_user, -> { where(tasks: { assigned_to_type: "User" }) }, foreign_key: :assigned_to_id
+  # belongs_to :assigned_to_users, -> { where( tasks: { assigned_to_type: 'User' } ) }, foreign_key: 'assigned_to_id'
 
   include BelongsToPolymorphicAppealConcern
   belongs_to_polymorphic_appeal :appeal, include_decision_review_classes: true
@@ -122,6 +125,15 @@ class Task < CaseflowRecord
   ## class methods
   class << self
     prepend PrivacyActPending
+
+    # Task types used by RetrieveAndCacheReaderDocumentsJob
+    # To cache docoments from VBMS to S3 for appeals
+    # With taks that are likely to need Reader to complete
+    READER_PRIORITY_TASK_TYPES = [JudgeAssignTask.name, JudgeDecisionReviewTask.name].freeze
+
+    def reader_priority_task_types
+      READER_PRIORITY_TASK_TYPES
+    end
 
     def label
       name.titlecase
