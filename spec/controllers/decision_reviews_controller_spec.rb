@@ -345,7 +345,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
         expect(response_body["total_task_count"]).to eq 20
         expect(response_body["tasks_per_page"]).to eq 15
-        expect(response_body["task_page_count"]).to eq 1
+        expect(response_body["task_page_count"]).to eq 2
 
         expect(
           task_ids_from_response_body(response_body)
