@@ -343,9 +343,9 @@ describe DecisionReviewsController, :postgres, type: :controller do
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
 
-        expect(response_body["total_task_count"]).to eq 40
+        expect(response_body["total_task_count"]).to eq 20
         expect(response_body["tasks_per_page"]).to eq 15
-        expect(response_body["task_page_count"]).to eq 3
+        expect(response_body["task_page_count"]).to eq 1
 
         expect(
           task_ids_from_response_body(response_body)
