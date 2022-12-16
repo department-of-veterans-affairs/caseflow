@@ -52,14 +52,12 @@ feature "Higher-Level Review", :all_dbs do
   before do
     FeatureToggle.enable!(:filed_by_va_gov_hlr)
     FeatureToggle.enable!(:updated_intake_forms)
-    FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
     FeatureToggle.enable!(:use_ama_activation_date)
   end
   after do
     FeatureToggle.disable!(:filed_by_va_gov_hlr)
     FeatureToggle.disable!(:updated_intake_forms)
-    FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
-    FeatureToggle.disable!(:use_ama_activation_date)
+    FeatureToggle.enable!(:use_ama_activation_date)
   end
 
   it "Creates an end product and contentions for it" do
@@ -130,19 +128,13 @@ feature "Higher-Level Review", :all_dbs do
       find("label", text: "Yes", match: :prefer_exact).click
     end
 
-    expect(page).to_not have_content(
-      "Please select the claimant listed on the form. If the claimant is not listed, " \
-      "please select \"Claimant not listed\" and add their information in the next step."
-    )
+    expect(page).to_not have_content("Please select the claimant listed on the form.")
     expect(page).to_not have_content("What is the payee code for this claimant?")
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "Yes", match: :prefer_exact).click
     end
 
-    expect(page).to have_content(
-      "Please select the claimant listed on the form. If the claimant is not listed, " \
-      "please select \"Claimant not listed\" and add their information in the next step."
-    )
+    expect(page).to have_content("Please select the claimant listed on the form.")
 
     # We do not need to select payee codes for non-VBMS business lines
     expect(page).to_not have_content("What is the payee code for this claimant?")
@@ -151,8 +143,6 @@ feature "Higher-Level Review", :all_dbs do
     within_fieldset("What is the Benefit Type?") do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
-
-    expect(page).to have_content("Please select the claimant listed on the form.")
 
     expect(page).to have_content("What is the payee code for this claimant?")
     expect(page).to have_content("Bob Vance, Spouse")
@@ -1287,20 +1277,14 @@ feature "Higher-Level Review", :all_dbs do
       expect(page).to_not have_css("#modal_id-title")
       safe_click "#cancel-intake"
 
-      expect(page).to have_button("Cancel intake", disabled: true)
-
-      within_fieldset("Please select the reason you are canceling this intake.") do
-        find("label", text: "System error").click
-      end
-      expect(page).to have_button("Cancel intake", disabled: false)
-
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve selected an option below.")
       within_fieldset("Please select the reason you are canceling this intake.") do
         find("label", text: "Other").click
       end
-      expect(page).to have_button("Cancel intake", disabled: true)
-
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve filled out the comment box below.")
       fill_in "Tell us more about your situation.", with: "blue!"
-      expect(page).to have_button("Cancel intake", disabled: false)
       safe_click ".confirm-cancel"
 
       expect(page).to have_content("Welcome to Caseflow Intake!")

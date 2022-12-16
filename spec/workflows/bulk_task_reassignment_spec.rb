@@ -96,7 +96,9 @@ describe BulkTaskReassignment, :all_dbs do
 
         context "with no children" do
           it "describes what changes will be made and makes them" do
-            expect(Rails.logger).to receive(:info).exactly(9).times
+            judge_assign_message = "Cancelling #{task_count} JudgeAssignTasks with ids #{ids_output} and creating " \
+                                    "#{task_count} DistributionTasks"
+            expect(Rails.logger).to receive(:info).with(judge_assign_message)
 
             subject
             tasks.each do |task|

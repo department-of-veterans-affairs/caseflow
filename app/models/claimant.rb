@@ -63,10 +63,6 @@ class Claimant < CaseflowRecord
     claimant
   end
 
-  def unrecognized_claimant?
-    self.class <= OtherClaimant || false
-  end
-
   def power_of_attorney
     @power_of_attorney ||= find_power_of_attorney
   end

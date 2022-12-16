@@ -20,7 +20,6 @@ import {
   DECEASED_CLAIMANT_MESSAGE,
   NO_RELATIONSHIPS,
   SELECT_CLAIMANT_LABEL,
-  SELECT_NON_LISTED_CLAIMANT_LABEL,
 } from 'app/../COPY';
 import Alert from 'app/components/Alert';
 import Button from 'app/components/Button';
@@ -80,23 +79,14 @@ export const SelectClaimant = (props) => {
     payeeCode,
     payeeCodeError,
     setPayeeCode,
-    featureToggles
   } = props;
 
   const [newClaimant] = useState(null);
   const isAppeal = (formType === 'appeal');
-  const isNotRamp = (formType !== 'ramp_refiling', formType !== 'ramp_election');
-
-  const showClaimantNotListedOption = useMemo(() => {
-    return (
-      ((isNotRamp && featureToggles.hlrScUnrecognizedClaimants) || isAppeal) &&
-       !VBMS_BENEFIT_TYPES.includes(benefitType)
-    );
-  }, [formType, benefitType]);
 
   const enableAddClaimant = useMemo(
-    () => showClaimantNotListedOption && veteranIsNotClaimant,
-    [showClaimantNotListedOption, veteranIsNotClaimant]
+    () => isAppeal && veteranIsNotClaimant,
+    [isAppeal, veteranIsNotClaimant]
   );
 
   const radioOpts = useMemo(() => {
@@ -146,10 +136,10 @@ export const SelectClaimant = (props) => {
   const claimantLabel = () => {
     return (
       <p
-        id={showClaimantNotListedOption ? 'nonListedClaimantLabel' : 'claimantLabel'}
+        id="claimantLabel"
         style={{ marginTop: '8.95px', marginBottom: '-25px' }}
       >
-        {showClaimantNotListedOption ? SELECT_NON_LISTED_CLAIMANT_LABEL : SELECT_CLAIMANT_LABEL}
+        {SELECT_CLAIMANT_LABEL}
 
         <br />
         <br />
@@ -271,10 +261,7 @@ SelectClaimant.propTypes = {
   payeeCodeError: PropTypes.string,
   setPayeeCode: PropTypes.func,
   register: PropTypes.func,
-  errors: PropTypes.array,
-  featureToggles: PropTypes.shape({
-    hlrScUnrecognizedClaimants: PropTypes.bool
-  })
+  errors: PropTypes.array
 };
 
 const selectClaimantValidations = () => ({

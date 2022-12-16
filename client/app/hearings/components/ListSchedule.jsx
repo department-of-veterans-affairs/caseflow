@@ -187,13 +187,11 @@ class ListSchedule extends React.Component {
           <div className="cf-push-right list-schedule-buttons" {...downloadButtonStyling} >
             {this.props.user.userHasHearingPrepRole && <SwitchViewDropdown onSwitchView={this.props.switchListView} />}
             <CSVLink
-              className="csv-link"
               data={this.state.rows}
               headers={this.state.headers}
               target="_blank"
               filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}>
-              <Button classNames={['usa-button-secondary']}
-                ariaLabel="Download current view">
+              <Button classNames={['usa-button-secondary']}>
                 Download current view
               </Button>
             </CSVLink>

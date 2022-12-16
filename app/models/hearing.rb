@@ -32,11 +32,6 @@ class Hearing < CaseflowRecord
   include HearingConcern
   include HasHearingEmailRecipientsConcern
 
-  prepend HearingScheduled
-  prepend HearingPostponed
-  prepend HearingWithdrawn
-  prepend HearingScheduledInError
-
   belongs_to :hearing_day
   belongs_to :appeal
   belongs_to :judge, class_name: "User"
@@ -78,9 +73,6 @@ class Hearing < CaseflowRecord
   after_create :update_fields_from_hearing_day
   before_create :check_available_slots, unless: :override_full_hearing_day_validation
   before_create :assign_created_by_user
-
-  after_create :update_appeal_states_on_hearing_create
-  after_update :update_appeal_states_on_hearing_update
 
   attr_accessor :override_full_hearing_day_validation
 
@@ -280,16 +272,6 @@ class Hearing < CaseflowRecord
   end
 
   private
-
-  def update_appeal_states_on_hearing_create
-    update_appeal_states_on_hearing_scheduled
-  end
-
-  def update_appeal_states_on_hearing_update
-    update_appeal_states_on_hearing_scheduled_in_error
-    update_appeal_states_on_hearing_postponed
-    update_appeal_states_on_hearing_withdrawn
-  end
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]

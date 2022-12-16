@@ -217,7 +217,6 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
             >
               <CopyToClipboard
                 aria-describedby="tooltip-Copy VLJ Link"
-                aria-label=""
                 data-event="focus mouseenter"
                 data-event-off="mouseleave keydown"
                 data-for="tooltip-Copy VLJ Link"
@@ -227,7 +226,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
               >
                 <button
                   aria-describedby="tooltip-Copy VLJ Link"
-                  aria-label=""
+                  aria-label="Copy VLJ Link"
                   className="cf-apppeal-id"
                   data-css-cjlnsd=""
                   data-event="focus mouseenter"
@@ -261,10 +260,9 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 </button>
               </CopyToClipboard>
               <span
-                data-css-as2zk0=""
+                data-css-15opktr=""
               >
                 <ReactTooltip
-                  className="cf-tooltip"
                   clickable={false}
                   effect="solid"
                   id="tooltip-Copy VLJ Link"
@@ -557,7 +555,6 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
             >
               <CopyToClipboard
                 aria-describedby="tooltip-Copy Guest Link"
-                aria-label=""
                 data-event="focus mouseenter"
                 data-event-off="mouseleave keydown"
                 data-for="tooltip-Copy Guest Link"
@@ -567,7 +564,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
               >
                 <button
                   aria-describedby="tooltip-Copy Guest Link"
-                  aria-label=""
+                  aria-label="Copy Guest Link"
                   className="cf-apppeal-id"
                   data-css-cjlnsd=""
                   data-event="focus mouseenter"
@@ -601,10 +598,9 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 </button>
               </CopyToClipboard>
               <span
-                data-css-1qgqh7a=""
+                data-css-4jj7wk=""
               >
                 <ReactTooltip
-                  className="cf-tooltip"
                   clickable={false}
                   effect="solid"
                   id="tooltip-Copy Guest Link"
@@ -1636,7 +1632,6 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
             >
               <CopyToClipboard
                 aria-describedby="tooltip-Copy Guest Link"
-                aria-label=""
                 data-event="focus mouseenter"
                 data-event-off="mouseleave keydown"
                 data-for="tooltip-Copy Guest Link"
@@ -1646,7 +1641,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
               >
                 <button
                   aria-describedby="tooltip-Copy Guest Link"
-                  aria-label=""
+                  aria-label="Copy Guest Link"
                   className="cf-apppeal-id"
                   data-css-cjlnsd=""
                   data-event="focus mouseenter"
@@ -1680,10 +1675,9 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 </button>
               </CopyToClipboard>
               <span
-                data-css-1qgqh7a=""
+                data-css-4jj7wk=""
               >
                 <ReactTooltip
-                  className="cf-tooltip"
                   clickable={false}
                   effect="solid"
                   id="tooltip-Copy Guest Link"

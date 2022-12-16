@@ -49,7 +49,7 @@ class DecisionReviewIntake < Intake
       payee_code: (need_payee_code? ? request_params[:payee_code] : nil)
     )
 
-    if claimant.unrecognized_claimant?
+    if claimant.is_a?(OtherClaimant)
       claimant.save_unrecognized_details!(
         request_params[:unlisted_claimant],
         request_params[:poa]
@@ -121,27 +121,19 @@ class DecisionReviewIntake < Intake
   end
 
   def claimant_class_name
-    "#{constantize_param_string(request_params[:claimant_type])}Claimant"
-  end
-
-  def constantize_param_string(name)
-    if name
-      name.titleize.split(" ").join
-    end
+    "#{request_params[:claimant_type]&.capitalize}Claimant"
   end
 
   def veteran_is_not_claimant
-    claimant_class_name != VeteranClaimant.name
+    claimant_class_name != "VeteranClaimant"
   end
 
   # If user has specified a different claimant, use that
   def participant_id
     case claimant_class_name
-    when VeteranClaimant.name
+    when "VeteranClaimant"
       veteran.participant_id
-    when OtherClaimant.name
-      ""
-    when HealthcareProviderClaimant.name
+    when "OtherClaimant"
       ""
     else
       request_params[:claimant]

@@ -289,8 +289,7 @@ class NonratingRequestIssueModal extends React.Component {
         null;
 
     const showPreDocketBanner = benefitType === 'vha' && formType === 'appeal';
-    const showPreDocketField = (benefitType === 'education' && formType === 'appeal' && eduPreDocketAppeals) ||
-      (benefitType === 'vha' && formType === 'appeal');
+    const showPreDocketField = benefitType === 'education' && formType === 'appeal' && eduPreDocketAppeals;
 
     const compensationCategories = nonratingRequestIssueCategories(
       benefitType === 'compensation' && formType === 'appeal' ? 'compensation_all' : benefitType);
@@ -329,7 +328,7 @@ class NonratingRequestIssueModal extends React.Component {
               {nonratingRequestIssueSelection}
               {additionalDetails}
             </div>
-            {(isPreDocketNeeded === 'true' && showPreDocketBanner) && <Alert message={VHA_PRE_DOCKET_ISSUE_BANNER} type="info" />}
+            {showPreDocketBanner && <Alert message={VHA_PRE_DOCKET_ISSUE_BANNER} type="info" />}
           </div>
         </Modal>
       </div>

@@ -55,13 +55,6 @@ feature "Supplemental Claim Intake", :all_dbs do
   let!(:future_rating) { generate_future_rating(veteran, future_rating_promulgation_date, future_rating_profile_date) }
   let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
 
-  before do
-    FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
-  end
-  after do
-    FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
-  end
-
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -100,37 +93,20 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(page).to have_current_path("/intake/review_request")
 
     within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Education", match: :prefer_exact).click
+      find("label", text: "Compensation", match: :prefer_exact).click
     end
 
-    expect(page).to_not have_content(
-      "Please select the claimant listed on the form. If the claimant is not listed, " \
-      "please select \"Claimant not listed\" and add their information in the next step."
-    )
-    expect(page).to_not have_content("What is the payee code for this claimant?")
+    expect(page).to_not have_content("Please select the claimant listed on the form.")
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "Yes", match: :prefer_exact).click
     end
 
-    expect(page).to have_content(
-      "Please select the claimant listed on the form. If the claimant is not listed, " \
-      "please select \"Claimant not listed\" and add their information in the next step."
-    )
-
-    # Switch the benefit type to compensation to test choosing the payee code.
-    within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Compensation", match: :prefer_exact).click
-    end
-
     expect(page).to have_content("Please select the claimant listed on the form.")
-
-    expect(page).to have_content("What is the payee code for this claimant?")
     expect(page).to have_content("Foo Bar, Spouse")
     expect(page).to have_content("Baz Qux, Child")
 
     find("label", text: "Baz Qux, Child", match: :prefer_exact).click
 
-    expect(page).to have_content("What is the payee code for this claimant?")
     fill_in "What is the payee code for this claimant?", with: "11 - C&P First Child"
     find("#cf-payee-code").send_keys :enter
 
@@ -800,20 +776,14 @@ feature "Supplemental Claim Intake", :all_dbs do
       expect(page).to_not have_css("#modal_id-title")
       safe_click "#cancel-intake"
 
-      expect(page).to have_button("Cancel intake", disabled: true)
-
-      within_fieldset("Please select the reason you are canceling this intake.") do
-        find("label", text: "System error").click
-      end
-      expect(page).to have_button("Cancel intake", disabled: false)
-
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve selected an option below.")
       within_fieldset("Please select the reason you are canceling this intake.") do
         find("label", text: "Other").click
       end
-      expect(page).to have_button("Cancel intake", disabled: true)
-
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve filled out the comment box below.")
       fill_in "Tell us more about your situation.", with: "blue!"
-      expect(page).to have_button("Cancel intake", disabled: false)
       safe_click ".confirm-cancel"
 
       expect(page).to have_content("Welcome to Caseflow Intake!")

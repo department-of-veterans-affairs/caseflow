@@ -17,6 +17,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     editIssuesUrl: {
       $set: serverIntake.editIssuesUrl
     },
+    unreadMessages: {
+      $set: serverIntake.unread_messages
+    },
     veteran: {
       name: {
         $set: serverIntake.veteran_name
@@ -30,7 +33,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       isDeceased: {
         $set: serverIntake.veteran_is_deceased
       }
-    },
+    }
   });
 };
 
@@ -54,6 +57,7 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       pids: null
     },
     cancelModalVisible: false,
+    unreadMessages: false,
     veteran: {
       name: '',
       formName: '',

@@ -18,10 +18,11 @@ import { claimantPropTypes, poaPropTypes } from './utils';
 import { AddressBlock } from './AddressBlock';
 import { isEmpty } from 'lodash';
 
-const isKnownAttorney = (entity) => (entity?.listedAttorney?.value && entity?.listedAttorney?.value !== 'not_listed');
-
 export const shapeAddressBlock = (entity) => {
-  if (isKnownAttorney(entity)) {
+  if (
+    entity?.listedAttorney?.value &&
+    entity?.listedAttorney?.value !== 'not_listed'
+  ) {
     const [title, firstName, middleName, lastName] = entity.listedAttorney?.label.split(' ');
     const addressLine1 = entity.listedAttorney?.address.address_line_1;
     const addressLine2 = entity.listedAttorney?.address.address_line_2;
@@ -72,15 +73,7 @@ export const AddClaimantConfirmationModal = ({
   const poaEntity = useMemo(() => shapeAddressBlock(poa), [poa]);
 
   const missingLastName = useMemo(
-    () => {
-      // Make an exception for listed attorneys since their name is pulled from the text label in a non smart way
-      // Also guard against partyType organization since there can be leftover fields from the form submission
-      if (isKnownAttorney(claimantEntity) || claimantEntity.partyType !== 'individual') {
-        return false;
-      }
-
-      return claimantEntity?.firstName && !claimantEntity?.lastName;
-    },
+    () => claimantEntity?.firstName && !claimantEntity?.lastName,
     [claimantEntity]
   );
 

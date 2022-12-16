@@ -60,7 +60,7 @@ class CaseTitle extends React.PureComponent {
           <span {...viewCasesStyling}>
             <Link
               href="#"
-              onClick={this.props.toggleVeteranCaseList}>{veteranCaseListIsVisible ? 'Hide ' : 'View '}
+              onClick={this.props.toggleVeteranCaseList}>{veteranCaseListIsVisible ? 'Hide' : 'View'}
             all cases
             </Link>
           </span>

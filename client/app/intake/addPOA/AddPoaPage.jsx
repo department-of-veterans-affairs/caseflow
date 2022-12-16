@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FormProvider, Controller } from 'react-hook-form';
 import { Redirect } from 'react-router-dom';
 import { useAddPoaForm } from './utils';
@@ -9,6 +9,7 @@ import { AddClaimantButtons } from '../addClaimant/AddClaimantButtons';
 import styled from 'styled-components';
 import { useHistory } from 'react-router';
 import { camelCase, debounce } from 'lodash';
+import ApiUtil from '../../util/ApiUtil';
 import RadioField from 'app/components/RadioField';
 import Address from 'app/queue/components/Address';
 import AddressForm from 'app/components/AddressForm';
@@ -16,16 +17,23 @@ import TextField from 'app/components/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { editPoaInformation, clearPoa, clearClaimant } from 'app/intake/reducers/addClaimantSlice';
 import { AddClaimantConfirmationModal } from '../addClaimant/AddClaimantConfirmationModal';
-import { fetchAttorneys, formatAddress } from '../addClaimant/utils';
+import { formatAddress } from '../addClaimant/utils';
 import { FORM_TYPES, PAGE_PATHS, INTAKE_STATES } from '../constants';
 import { getIntakeStatus } from '../selectors';
 import { submitReview } from '../actions/decisionReview';
-import PropTypes from 'prop-types';
 
 const partyTypeOpts = [
   { displayText: 'Organization', value: 'organization' },
   { displayText: 'Individual', value: 'individual' },
 ];
+
+const fetchAttorneys = async (search = '') => {
+  const res = await ApiUtil.get('/intake/attorneys', {
+    query: { query: search },
+  });
+
+  return res?.body;
+};
 
 const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
   // Enforce minimum search length (we'll simply return empty array rather than throw error)
@@ -47,12 +55,26 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
 
 const filterOption = () => true;
 
-export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
+export const AddPoaPage = () => {
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
 
   const [confirmModal, setConfirmModal] = useState(false);
   const { claimant, poa } = useSelector((state) => state.addClaimant);
+
+  const methods = useAddPoaForm({ defaultValues: poa });
+  const {
+    control,
+    register,
+    watch,
+    formState: { isValid, errors },
+    handleSubmit
+  } = methods;
+
+  /* eslint-disable no-unused-vars */
+  // This code will likely be needed in submission (see handleConfirm)
+  // Remove eslint-disable once used
+  const emailValidationError = errors.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
 
   const { formType, id: intakeId } = useSelector((state) => state.intake);
 
@@ -72,11 +94,6 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
   }, [intakeForms, formType, selectedForm]);
   const intakeStatus = getIntakeStatus(useSelector((state) => state));
 
-  // Return to homepage of Intake upon cancellation
-  const detectCancellation = useMemo(() => {
-    return formType ? null : <Redirect to={PAGE_PATHS.BEGIN} />;
-  }, [formType]);
-
   // Redirect to page where data needs to be re-populated (e.g. from a page reload)
   if (intakeStatus === INTAKE_STATES.STARTED) {
     if (!intakeData.receiptDate) {
@@ -85,18 +102,6 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
       return <Redirect to={PAGE_PATHS.ADD_CLAIMANT} />;
     }
   }
-
-  const methods = useAddPoaForm({ defaultValues: poa, selectedForm });
-  const {
-    control,
-    register,
-    watch,
-    setValue,
-    formState: { isValid, errors },
-    handleSubmit
-  } = methods;
-
-  const emailValidationError = errors.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
 
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
@@ -110,12 +115,6 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
   };
 
   const onSubmit = (formData) => {
-
-    // Database schema will not allow nulls for state, but it's possibly an optional field for individuals now.
-    if (!formData.state) {
-      formData.state = '';
-    }
-
     // Add to Redux store
     dispatch(editPoaInformation({ formData }));
 
@@ -124,6 +123,7 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const handleBack = () => goBack();
 
   const watchPartyType = watch('partyType');
+  const showIndividualNameFields = watchPartyType === 'individual';
 
   const watchListedAttorney = watch('listedAttorney');
   const attorneyNotListed = watchListedAttorney?.value === 'not_listed';
@@ -131,25 +131,15 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const showAdditionalFields = watchPartyType && showPartyType;
 
   const isOrgPartyType = watchPartyType === 'organization';
-  const isIndividualPartyType = watchPartyType === 'individual';
-  const isHLROrSCForm = formType === FORM_TYPES.HIGHER_LEVEL_REVIEW.key ||
-    formType === FORM_TYPES.SUPPLEMENTAL_CLAIM.key;
 
   const asyncFn = useCallback(
     debounce((search, callback) => {
-      getAttorneyClaimantOpts(search, onAttorneySearch).then((attorneyOptions) =>
-        callback(attorneyOptions)
+      getAttorneyClaimantOpts(search, fetchAttorneys).then((res) =>
+        callback(res)
       );
     }, 250),
-    [onAttorneySearch]
+    [fetchAttorneys]
   );
-
-  // Set the initial value of the country field to USA if it's an hlr/sc form
-  useEffect(() => {
-    if (isHLROrSCForm) {
-      setValue('country', 'USA');
-    }
-  }, [watchPartyType]);
 
   return (
     <FormProvider {...methods}>
@@ -210,7 +200,7 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
           )}
 
           <br />
-          {isIndividualPartyType && (
+          {showIndividualNameFields && (
             <>
               <FieldDiv>
                 <TextField
@@ -234,7 +224,7 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
                   name="lastName"
                   label="Last name"
                   inputRef={register}
-                  optional={!isHLROrSCForm}
+                  optional
                   strongLabel
                 />
               </FieldDiv>
@@ -250,23 +240,19 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
             </>
           )}
 
-          {showPartyType && isOrgPartyType && (
-            <FieldDiv>
-              <TextField
-                name="name"
-                label="Organization name"
-                inputRef={register}
-                strongLabel
-              />
-            </FieldDiv>
+          {showPartyType && watchPartyType === 'organization' && (
+            <TextField
+              name="name"
+              label="Organization name"
+              inputRef={register}
+              strongLabel
+            />
           )}
           {showAdditionalFields && (
             <div>
               <AddressForm
                 {...methods}
                 isOrgPartyType={isOrgPartyType}
-                isIndividualPartyType={isIndividualPartyType}
-                isHLROrSCForm={isHLROrSCForm}
               />
               <FieldDiv>
                 <TextField
@@ -299,13 +285,8 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
           />
         )}
       </IntakeLayout>
-      {detectCancellation}
     </FormProvider>
   );
-};
-
-AddPoaPage.propTypes = {
-  onAttorneySearch: PropTypes.func
 };
 
 const FieldDiv = styled.div`

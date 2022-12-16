@@ -1,1 +1,0 @@
-drop schema IF EXISTS caseflow_audit CASCADE;

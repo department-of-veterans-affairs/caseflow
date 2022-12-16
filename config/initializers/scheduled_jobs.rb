@@ -21,7 +21,6 @@ SCHEDULED_JOBS = {
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
     "push_priority_appeals_to_judges" => PushPriorityAppealsToJudgesJob,
     "quarterly_metrics" => QuarterlyMetricsReportJob,
-    "quarterly_notifications" => QuarterlyNotificationsJob,
     "reassign_old_tasks" => ReassignOldTasksJob,
     "retrieve_documents_for_reader" => RetrieveDocumentsForReaderJob,
     "send_reminder_emails_job" => Hearings::SendReminderEmailsJob,
@@ -35,7 +34,5 @@ SCHEDULED_JOBS = {
     "update_cached_appeals_attributes_job" => UpdateCachedAppealsAttributesJob,
     "warm_bgs_caches_job" => WarmBgsCachesJob,
     "va_notify_status_update_job" => VANotifyStatusUpdateJob,
-    "poll_docketed_legacy_appeals_job" => PollDocketedLegacyAppealsJob,
-    "fetch_all_active_ama_appeals_job" => FetchAllActiveAmaAppealsJob,
-    "fetch_all_active_legacy_appeals_job" => FetchAllActiveLegacyAppealsJob
+    "poll_docketed_legacy_appeals_job" => PollDocketedLegacyAppealsJob
 }.freeze

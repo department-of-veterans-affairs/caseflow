@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
+
 import classNames from 'classnames';
 
 import RequiredIndicator from './RequiredIndicator';
 import StringUtil from '../util/StringUtil';
-import Tooltip from './Tooltip';
 
 import { helpText } from './RadioField.module.scss';
 
@@ -42,7 +42,7 @@ export const RadioField = (props) => {
     strongLabel,
     hideLabel,
     styling,
-    vertical
+    vertical,
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -65,27 +65,6 @@ export const RadioField = (props) => {
     </span>
   );
 
-  const maybeAddTooltip = (option, radioField) => {
-    if (option.tooltipText) {
-      const idKey = `tooltip-${option.value}`;
-
-      return <Tooltip
-        key={idKey}
-        id={idKey}
-        text={option.tooltipText}
-        position="right"
-        className="cf-radio-option-tooltip"
-        offset={{ right: 15 }}
-      >
-        {radioField}
-      </Tooltip>;
-    }
-
-    return radioField;
-  };
-
-  const isDisabled = (option) => Boolean(option.disabled);
-
   const handleChange = (event) => onChange?.(event.target.value);
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);
 
@@ -100,10 +79,8 @@ export const RadioField = (props) => {
       )}
 
       <div className="cf-form-radio-options">
-        {options.map((option, i) => {
-          const optionDisabled = isDisabled(option);
-
-          const radioField = (<div
+        {options.map((option, i) => (
+          <div
             className="cf-form-radio-option"
             key={`${idPart}-${option.value}-${i}`}
           >
@@ -115,22 +92,19 @@ export const RadioField = (props) => {
               value={option.value}
               // eslint-disable-next-line no-undefined
               checked={controlled ? value === option.value : undefined}
-              disabled={optionDisabled}
+              disabled={Boolean(option.disabled)}
               ref={inputRef}
               {...inputProps}
             />
             <label
-              className={optionDisabled ? 'disabled' : ''}
+              className={option.disabled ? 'disabled' : ''}
               htmlFor={`${idPart}_${option.value}`}
             >
               {option.displayText || option.displayElem}
             </label>
             {option.help && <RadioFieldHelpText help={option.help} />}
           </div>
-          );
-
-          return maybeAddTooltip(option, radioField);
-        })}
+        ))}
       </div>
     </fieldset>
   );
@@ -213,7 +187,7 @@ RadioField.propTypes = {
   errorMessage: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
-  styling: PropTypes.object
+  styling: PropTypes.object,
 };
 
 export default RadioField;

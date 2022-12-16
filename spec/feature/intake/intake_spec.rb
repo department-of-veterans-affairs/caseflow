@@ -363,20 +363,14 @@ feature "Intake", :all_dbs do
       expect(page).to_not have_css("#modal_id-title")
       safe_click "#cancel-intake"
 
-      expect(page).to have_button("Cancel intake", disabled: true)
-
-      within_fieldset("Please select the reason you are canceling this intake.") do
-        find("label", text: "System error").click
-      end
-      expect(page).to have_button("Cancel intake", disabled: false)
-
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve selected an option below.")
       within_fieldset("Please select the reason you are canceling this intake.") do
         find("label", text: "Other").click
       end
-      expect(page).to have_button("Cancel intake", disabled: true)
-
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve filled out the comment box below.")
       fill_in "Tell us more about your situation.", with: "blue!"
-      expect(page).to have_button("Cancel intake", disabled: false)
       safe_click ".confirm-cancel"
 
       expect(page).to have_content("Welcome to Caseflow Intake!")

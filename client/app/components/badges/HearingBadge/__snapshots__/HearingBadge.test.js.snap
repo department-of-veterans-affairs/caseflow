@@ -10,7 +10,6 @@ Object {
       >
         <span
           aria-describedby="badge-undefined"
-          aria-label="Example Disposition Text"
           currentitem="false"
           data-css-1ffdp9a=""
           data-event="focus mouseenter"
@@ -22,7 +21,7 @@ Object {
           H
         </span>
         <span
-          data-css-12sli69=""
+          data-css-1urwbxe=""
         >
           <div
             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -151,7 +150,6 @@ Object {
     >
       <span
         aria-describedby="badge-undefined"
-        aria-label="Example Disposition Text"
         currentitem="false"
         data-css-1ffdp9a=""
         data-event="focus mouseenter"
@@ -163,7 +161,7 @@ Object {
         H
       </span>
       <span
-        data-css-12sli69=""
+        data-css-1urwbxe=""
       >
         <div
           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"

@@ -46,11 +46,7 @@ describe ExternalApi::VANotifyService do
 
   context "notifications sent" do
     describe "email" do
-      subject do
-        ExternalApi::VANotifyService.send_email_notifications(
-          participant_id, notification_id, email_template_id, first_name, status
-        )
-      end
+      subject { ExternalApi::VANotifyService.send_email_notifications(participant_id, email_template_id, status, first_name) }
       it "email sent successfully" do
         allow(HTTPI).to receive(:post).and_return(success_response)
         expect(subject.body["template"]["id"]).to eq(email_template_id)
@@ -65,11 +61,7 @@ describe ExternalApi::VANotifyService do
     end
 
     describe "sms" do
-      subject do
-        ExternalApi::VANotifyService.send_sms_notifications(
-          participant_id, notification_id, sms_template_id, first_name, status
-        )
-      end
+      subject { ExternalApi::VANotifyService.send_sms_notifications(participant_id, sms_template_id, status, first_name) }
       it "sms sent successfully" do
         allow(HTTPI).to receive(:post).and_return(sms_success_response)
         expect(subject.body["template"]["id"]).to eq(sms_template_id)

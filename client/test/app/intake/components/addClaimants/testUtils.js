@@ -11,14 +11,6 @@ export const relationshipOpts = [
   { value: 'other', label: 'Other' },
 ];
 
-export const relationshipOptsHlrSc = [
-  { value: 'attorney', label: 'Attorney (previously or currently)' },
-  { value: 'child', label: 'Child' },
-  { value: 'spouse', label: 'Spouse' },
-  { value: 'healthcare_provider', label: 'Healthcare Provider' },
-  { value: 'other', label: 'Other' },
-];
-
 const organization = 'Tista';
 const street1 = '1000 Monticello';
 const city = 'Washington';

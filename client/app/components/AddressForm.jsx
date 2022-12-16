@@ -7,14 +7,12 @@ import TextField from 'app/components/TextField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import { createFilter } from 'react-select';
 
-export const AddressForm = ({ control, register, watch, isOrgPartyType, isIndividualPartyType, isHLROrSCForm }) => {
+export const AddressForm = ({ control, register, watch, isOrgPartyType }) => {
   const watchState = watch('state');
   const defaultState = useMemo(
     () => STATES.find((state) => state.label === watchState),
     [STATES, watchState]
   );
-
-  const optionalIndividualHLROrSCField = Boolean(isIndividualPartyType && isHLROrSCForm);
 
   return (
     <React.Fragment>
@@ -23,7 +21,6 @@ export const AddressForm = ({ control, register, watch, isOrgPartyType, isIndivi
           name="addressLine1"
           label="Street address 1"
           inputRef={register}
-          optional={optionalIndividualHLROrSCField}
           strongLabel
         />
       </FieldDiv>
@@ -48,7 +45,7 @@ export const AddressForm = ({ control, register, watch, isOrgPartyType, isIndivi
         </StreetAddress>
       )}
       <CityState>
-        <TextField name="city" label="City" inputRef={register} strongLabel optional={optionalIndividualHLROrSCField} />
+        <TextField name="city" label="City" inputRef={register} strongLabel />
         <Controller
           control={control}
           name="state"
@@ -57,7 +54,7 @@ export const AddressForm = ({ control, register, watch, isOrgPartyType, isIndivi
               inputRef={ref}
               {...rest}
               label="State"
-              optional={!isHLROrSCForm || optionalIndividualHLROrSCField}
+              optional
               options={STATES}
               filterOption={createFilter({ matchFrom: 'start' })}
               onChange={(valObj) => onChange(valObj?.value)}
@@ -79,7 +76,6 @@ export const AddressForm = ({ control, register, watch, isOrgPartyType, isIndivi
         <TextField
           name="country"
           label="Country"
-          optional={optionalIndividualHLROrSCField}
           inputRef={register}
           strongLabel
         />
@@ -92,9 +88,7 @@ AddressForm.propTypes = {
   control: PropTypes.object,
   register: PropTypes.func,
   watch: PropTypes.func,
-  isOrgPartyType: PropTypes.bool,
-  isIndividualPartyType: PropTypes.bool,
-  isHLROrSCForm: PropTypes.bool
+  isOrgPartyType: PropTypes.bool
 };
 
 const CityState = styled.div`

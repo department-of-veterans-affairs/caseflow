@@ -16,27 +16,6 @@ const expressMiddleWare = router => {
         }
 
         response.status(404).send(`"${userRole}" role does not have have a sample response yet.`);
-    });
-
-    router.get('/appeals/:appealId/power_of_attorney', (request, response) => {
-
-        response.send(
-            {
-                representative_type: 'Attorney',
-                representative_name: 'Clarence Darrow',
-                representative_address: {
-                    address_line_1: '9999 MISSION ST',
-                    address_line_2: 'UBER',
-                    address_line_3: 'APT 2',
-                    city: 'SAN FRANCISCO',
-                    zip: '94103',
-                    country: 'USA',
-                    state: 'CA'
-                },
-                representative_email_address: 'tom.brady@caseflow.gov',
-                poa_last_synced_at: '2022-10-03T09: 10: 51.266-04: 00'
-            }
-        );
-    });
+    })
 };
 module.exports = expressMiddleWare;

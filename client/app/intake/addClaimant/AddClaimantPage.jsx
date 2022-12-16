@@ -44,22 +44,16 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
   }, [intakeForms, formType, selectedForm]);
   const intakeStatus = getIntakeStatus(useSelector((state) => state));
 
-  // Return to homepage of Intake upon cancellation
-  const detectCancellation = useMemo(() => {
-    return formType ? null : <Redirect to={PAGE_PATHS.BEGIN} />;
-  }, [formType]);
-
   // Redirect to Review page if review page data is not present (e.g. from a page reload)
   if (intakeStatus === INTAKE_STATES.STARTED && !intakeData.receiptDate) {
     return <Redirect to={PAGE_PATHS.REVIEW} />;
   }
 
-  const methods = useClaimantForm({ defaultValues: claimant, selectedForm });
+  const methods = useClaimantForm({ defaultValues: claimant });
   const {
     formState: { isValid },
     handleSubmit,
-    watch,
-    reset
+    watch
   } = methods;
 
   const relationship = watch('relationship');
@@ -73,7 +67,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
     } else {
       intakeData.unlistedClaimant = claimant;
     }
-
     dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
     dispatch(clearClaimant());
     push('/add_issues');
@@ -82,21 +75,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
   const onSubmit = (formData) => {
     if (formData.firstName) {
       formData.partyType = 'individual';
-    }
-
-    // Database schema will not allow nulls for state, but it's possibly an optional field for individuals now.
-    if (!formData.state) {
-      formData.state = '';
-    }
-
-    // Remove dashes and spaces from SSN before submitting it to the server
-    if (formData.ssn) {
-      formData.ssn = formData.ssn.replace(/-|\s/g, '');
-    }
-
-    // Adjust the claimant type for Healthcare Providers so it will be constantized properly
-    if (formData.relationship === 'healthcare_provider') {
-      intakeData.claimantType = 'healthcare_provider';
     }
 
     dispatch(editClaimantInformation({ formData }));
@@ -121,7 +99,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
       claimant?.relationship !== relationship
     ) {
       dispatch(clearClaimant());
-      reset({ partyType: null, relationship });
     }
   }, [relationship, claimant]);
 
@@ -141,7 +118,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
           onSubmit={onSubmit}
           onAttorneySearch={onAttorneySearch}
           dateOfBirthFieldToggle={featureToggles?.dateOfBirthField || false}
-          formType={formType}
         />
         {confirmModal && (
           <AddClaimantConfirmationModal
@@ -151,11 +127,9 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
           />
         )}
       </IntakeLayout>
-      {detectCancellation}
     </FormProvider>
   );
 };
-
 AddClaimantPage.propTypes = {
   featureToggles: PropTypes.object,
   onAttorneySearch: PropTypes.func,

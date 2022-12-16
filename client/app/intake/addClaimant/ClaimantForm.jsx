@@ -14,7 +14,13 @@ import DateSelector from 'app/components/DateSelector';
 import RadioField from 'app/components/RadioField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import TextField from 'app/components/TextField';
-import { css } from 'glamor';
+
+const relationshipOpts = [
+  { value: 'attorney', label: 'Attorney (previously or currently)' },
+  { value: 'child', label: 'Child' },
+  { value: 'spouse', label: 'Spouse' },
+  { value: 'other', label: 'Other' },
+];
 
 const partyTypeOpts = [
   { displayText: 'Organization', value: 'organization' },
@@ -39,12 +45,6 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
   return options;
 };
 
-const suffixDivLabelStyle = css({
-  ' .cf-optional:nth-child(1)': {
-    marginLeft: '0.5em',
-  }
-});
-
 // We'll show all items returned from the backend instead of using default substring matching
 const filterOption = () => true;
 
@@ -52,7 +52,6 @@ export const ClaimantForm = ({
   onAttorneySearch = fetchAttorneys,
   onSubmit,
   dateOfBirthFieldToggle = true,
-  formType,
   ...props
 }) => {
   const methods = useFormContext();
@@ -60,32 +59,18 @@ export const ClaimantForm = ({
 
   const emailValidationError = errors?.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
   const dobValidationError = errors?.dateOfBirth && errors.dateOfBirth.message;
-  const ssnValidationError = errors?.ssn && errors.ssn.message;
 
   const watchRelationship = watch('relationship');
   const dependentRelationship = ['spouse', 'child'].includes(watchRelationship);
   const watchPartyType = watch('partyType');
   const watchListedAttorney = watch('listedAttorney');
   const attorneyRelationship = watchRelationship === 'attorney';
-  const healthCareProviderRelationship = watchRelationship === 'healthcare_provider';
   const attorneyNotListed = watchListedAttorney?.value === 'not_listed';
   const listedAttorney = attorneyRelationship && watchListedAttorney?.value && !attorneyNotListed;
-  const showPartyType = watchRelationship === 'other' ||
-    (attorneyRelationship && attorneyNotListed) ||
-    healthCareProviderRelationship;
+  const showPartyType = watchRelationship === 'other' || (watchRelationship === 'attorney' && attorneyNotListed);
   const partyType = (showPartyType && watchPartyType) || (dependentRelationship && 'individual');
-  const isOrgPartyType = watchPartyType === 'organization';
-  const isIndividualPartyType = watchPartyType === 'individual';
-  const isHLROrSCForm = formType === Constants.FORM_TYPES.HIGHER_LEVEL_REVIEW.key ||
-    formType === Constants.FORM_TYPES.SUPPLEMENTAL_CLAIM.key;
 
-  const relationshipOpts = [
-    { value: 'attorney', label: 'Attorney (previously or currently)' },
-    { value: 'child', label: 'Child' },
-    { value: 'spouse', label: 'Spouse' },
-    ...(isHLROrSCForm ? [{ value: 'healthcare_provider', label: 'Healthcare Provider' }] : []),
-    { value: 'other', label: 'Other' },
-  ];
+  const isOrgPartyType = watchPartyType === 'organization';
 
   const asyncFn = useCallback(
     debounce((search, callback) => {
@@ -97,17 +82,10 @@ export const ClaimantForm = ({
   );
 
   useEffect(() => {
-    if (!attorneyRelationship) {
+    if (watchRelationship !== 'attorney') {
       setValue('listedAttorney', null);
     }
   }, [watchRelationship]);
-
-  // Set the initial value of the country field to USA if it's an hlr/sc form
-  useEffect(() => {
-    if (isHLROrSCForm) {
-      setValue('country', 'USA');
-    }
-  }, [watchRelationship, watchPartyType]);
 
   return (
     <>
@@ -131,7 +109,7 @@ export const ClaimantForm = ({
           )}
         />}
         <br />
-        {attorneyRelationship && !props.hideListedAttorney && (
+        {watchRelationship === 'attorney' && !props.hideListedAttorney && (
           <Controller
             control={control}
             name="listedAttorney"
@@ -179,7 +157,7 @@ export const ClaimantForm = ({
           />
         )}
         <br />
-        {(isIndividualPartyType || dependentRelationship) && (
+        {partyType === 'individual' && (
           <>
             <FieldDiv>
               <TextField
@@ -202,12 +180,12 @@ export const ClaimantForm = ({
               <TextField
                 name="lastName"
                 label="Last name"
-                optional={!isHLROrSCForm}
                 inputRef={register}
+                optional
                 strongLabel
               />
             </FieldDiv>
-            <SuffixDOB {...suffixDivLabelStyle}>
+            <SuffixDOB>
               <TextField
                 name="suffix"
                 label="Suffix"
@@ -215,7 +193,7 @@ export const ClaimantForm = ({
                 optional
                 strongLabel
               />
-              {dateOfBirthFieldToggle && !props.POA &&
+              { dateOfBirthFieldToggle && !props.POA &&
                 <DateSelector
                   optional
                   inputRef={register({
@@ -225,41 +203,24 @@ export const ClaimantForm = ({
                   label={<b>Date of birth</b>}
                   type="date"
                   validationError={dobValidationError}
-                  strongLabel
                 />
               }
             </SuffixDOB>
-            {(isIndividualPartyType || dependentRelationship) && isHLROrSCForm &&
-              <SocialSecurityNumber>
-                <TextField
-                  validationError={ssnValidationError}
-                  name="ssn"
-                  label="Social Security Number"
-                  inputRef={register}
-                  optional
-                  strongLabel
-                />
-              </SocialSecurityNumber>
-            }
           </>
         )}
-        {isOrgPartyType && (
-          <FieldDiv>
-            <TextField
-              name="name"
-              label="Organization name"
-              inputRef={register}
-              strongLabel
-            />
-          </FieldDiv>
+        {partyType === 'organization' && (
+          <TextField
+            name="name"
+            label="Organization name"
+            inputRef={register}
+            strongLabel
+          />
         )}
         {partyType && (
           <>
             <AddressForm
               {...methods}
               isOrgPartyType={isOrgPartyType}
-              isIndividualPartyType={isIndividualPartyType || dependentRelationship}
-              isHLROrSCForm={isHLROrSCForm}
             />
             <FieldDiv>
               <TextField
@@ -305,7 +266,6 @@ ClaimantForm.propTypes = {
   editAppellantHeader: PropTypes.string,
   editAppellantDescription: PropTypes.string,
   hidePOAForm: PropTypes.bool,
-  formType: PropTypes.string,
   hideListedAttorney: PropTypes.bool,
   POA: PropTypes.bool
 };
@@ -328,9 +288,3 @@ const PhoneNumber = styled.div`
 const ClaimantAddress = styled.div`
   margin-top: 1.5em;
 `;
-
-const SocialSecurityNumber = styled.div`
-  margin-bottom: 1.5em;
-  margin-top: 0;
-`;
-

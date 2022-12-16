@@ -40,7 +40,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-0"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -51,7 +50,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-xfd9jh=""
+                          data-css-1qcl0zl=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -183,7 +182,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-1"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -194,7 +192,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1di9o2g=""
+                          data-css-adre2i=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -326,7 +324,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-2"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -337,7 +334,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1x9flut=""
+                          data-css-lsn15b=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -469,7 +466,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-3"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -480,7 +476,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-sy7agm=""
+                          data-css-kwf4l4=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -612,7 +608,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-4"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -623,7 +618,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-yoj3wd=""
+                          data-css-hex123=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -774,7 +769,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-0"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -785,7 +779,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-xfd9jh=""
+                          data-css-1qcl0zl=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -917,7 +911,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-1"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -928,7 +921,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1di9o2g=""
+                          data-css-adre2i=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1060,7 +1053,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-2"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -1071,7 +1063,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1x9flut=""
+                          data-css-lsn15b=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1203,7 +1195,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-3"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -1214,7 +1205,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-sy7agm=""
+                          data-css-kwf4l4=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1346,7 +1337,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-4"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -1357,7 +1347,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-yoj3wd=""
+                          data-css-hex123=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1509,7 +1499,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-0"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -1520,7 +1509,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-xfd9jh=""
+                        data-css-1qcl0zl=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1652,7 +1641,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-1"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -1663,7 +1651,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1di9o2g=""
+                        data-css-adre2i=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1795,7 +1783,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-2"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -1806,7 +1793,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1x9flut=""
+                        data-css-lsn15b=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1938,7 +1925,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-3"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -1949,7 +1935,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-sy7agm=""
+                        data-css-kwf4l4=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2081,7 +2067,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-4"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -2092,7 +2077,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-yoj3wd=""
+                        data-css-hex123=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2301,7 +2286,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-0"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -2312,7 +2296,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-xfd9jh=""
+                          data-css-1qcl0zl=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2444,7 +2428,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-1"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -2455,7 +2438,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1di9o2g=""
+                          data-css-adre2i=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2587,7 +2570,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-2"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -2598,7 +2580,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1x9flut=""
+                          data-css-lsn15b=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2730,7 +2712,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-3"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -2741,7 +2722,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-sy7agm=""
+                          data-css-kwf4l4=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2873,7 +2854,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-4"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -2884,7 +2864,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-yoj3wd=""
+                          data-css-hex123=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -3035,7 +3015,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-0"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -3046,7 +3025,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-xfd9jh=""
+                          data-css-1qcl0zl=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -3178,7 +3157,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-1"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -3189,7 +3167,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1di9o2g=""
+                          data-css-adre2i=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -3321,7 +3299,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-2"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -3332,7 +3309,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1x9flut=""
+                          data-css-lsn15b=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -3464,7 +3441,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-3"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -3475,7 +3451,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-sy7agm=""
+                          data-css-kwf4l4=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -3607,7 +3583,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-4"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -3618,7 +3593,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-yoj3wd=""
+                          data-css-hex123=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -3770,7 +3745,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-0"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -3781,7 +3755,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-xfd9jh=""
+                        data-css-1qcl0zl=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -3913,7 +3887,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-1"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -3924,7 +3897,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1di9o2g=""
+                        data-css-adre2i=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -4056,7 +4029,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-2"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -4067,7 +4039,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1x9flut=""
+                        data-css-lsn15b=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -4199,7 +4171,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-3"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -4210,7 +4181,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-sy7agm=""
+                        data-css-kwf4l4=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -4342,7 +4313,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-4"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -4353,7 +4323,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-yoj3wd=""
+                        data-css-hex123=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -4562,7 +4532,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-0"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -4573,7 +4542,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-xfd9jh=""
+                          data-css-1qcl0zl=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -4705,7 +4674,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-1"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -4716,7 +4684,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1di9o2g=""
+                          data-css-adre2i=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -4848,7 +4816,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-2"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -4859,7 +4826,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1x9flut=""
+                          data-css-lsn15b=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -4991,7 +4958,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-3"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -5002,7 +4968,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-sy7agm=""
+                          data-css-kwf4l4=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -5134,7 +5100,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-4"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -5145,7 +5110,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-yoj3wd=""
+                          data-css-hex123=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -5297,7 +5262,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-0"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -5308,7 +5272,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-xfd9jh=""
+                        data-css-1qcl0zl=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -5440,7 +5404,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-1"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -5451,7 +5414,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1di9o2g=""
+                        data-css-adre2i=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -5583,7 +5546,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-2"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -5594,7 +5556,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1x9flut=""
+                        data-css-lsn15b=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -5726,7 +5688,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-3"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -5737,7 +5698,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-sy7agm=""
+                        data-css-kwf4l4=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -5869,7 +5830,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-4"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -5880,7 +5840,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-yoj3wd=""
+                        data-css-hex123=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -6089,7 +6049,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-0"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -6100,7 +6059,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-xfd9jh=""
+                          data-css-1qcl0zl=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -6232,7 +6191,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-1"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -6243,7 +6201,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1di9o2g=""
+                          data-css-adre2i=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -6375,7 +6333,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-2"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -6386,7 +6343,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1x9flut=""
+                          data-css-lsn15b=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -6518,7 +6475,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-3"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -6529,7 +6485,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-sy7agm=""
+                          data-css-kwf4l4=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -6661,7 +6617,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-4"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -6672,7 +6627,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-yoj3wd=""
+                          data-css-hex123=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -6804,7 +6759,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-5"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -6815,7 +6769,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-14r5rw4=""
+                          data-css-17u15k5=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -6947,7 +6901,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-6"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -6958,7 +6911,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1hr2ckm=""
+                          data-css-82cvia=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -7090,7 +7043,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-7"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -7101,7 +7053,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-rkcrp9=""
+                          data-css-xxjfhv=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -7233,7 +7185,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-8"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -7244,7 +7195,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-dl21a4=""
+                          data-css-73visk=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -7376,7 +7327,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-9"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -7387,7 +7337,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1xo7vuu=""
+                          data-css-101u9ep=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -7519,7 +7469,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-10"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -7530,7 +7479,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-2i12n=""
+                          data-css-1poyj18=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -7662,7 +7611,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-11"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -7673,7 +7621,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1javqhd=""
+                          data-css-lokass=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -7805,7 +7753,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-12"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -7816,7 +7763,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1qribjt=""
+                          data-css-teudc1=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -7948,7 +7895,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-13"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -7959,7 +7905,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-47qdoj=""
+                          data-css-1binshn=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -8091,7 +8037,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-14"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -8102,7 +8047,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1y722ld=""
+                          data-css-hrfgwd=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -8234,7 +8179,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-15"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -8245,7 +8189,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1nwzvea=""
+                          data-css-za4e7p=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -8377,7 +8321,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-16"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -8388,7 +8331,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-cfcnen=""
+                          data-css-8peo3a=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -8520,7 +8463,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-17"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -8531,7 +8473,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1bsacvi=""
+                          data-css-z7e1g5=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -8663,7 +8605,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-18"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -8674,7 +8615,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-ou65f3=""
+                          data-css-1oyl9t8=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -8806,7 +8747,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-19"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -8817,7 +8757,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1c6vr2b=""
+                          data-css-lfhely=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -8949,7 +8889,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-20"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -8960,7 +8899,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-7wjwcv=""
+                          data-css-1dgzuso=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -9092,7 +9031,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-21"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -9103,7 +9041,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-mj9276=""
+                          data-css-1elqwb7=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -9235,7 +9173,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-22"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -9246,7 +9183,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-13zktu8=""
+                          data-css-x1a4qw=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -9378,7 +9315,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-23"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -9389,7 +9325,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-16yrfpm=""
+                          data-css-mn1af4=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -9521,7 +9457,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-24"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -9532,7 +9467,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-16cyvo0=""
+                          data-css-1qlk8ye=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -9664,7 +9599,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-25"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -9675,7 +9609,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-169gwmr=""
+                          data-css-1wzyghg=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -9810,7 +9744,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-26"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -9821,7 +9754,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1ej04g2=""
+                          data-css-1rf5s05=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -9953,7 +9886,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-27"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -9964,7 +9896,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-9n8dzk=""
+                          data-css-15lvsr9=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -10096,7 +10028,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-28"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -10107,7 +10038,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-ugi4mz=""
+                          data-css-w3j7q6=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -10239,7 +10170,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-29"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -10250,7 +10180,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1xjc9bc=""
+                          data-css-1rmpxz7=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -10382,7 +10312,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-30"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -10393,7 +10322,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1oztt58=""
+                          data-css-10ku22a=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -10545,7 +10474,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-0"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -10556,7 +10484,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-xfd9jh=""
+                        data-css-1qcl0zl=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -10688,7 +10616,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-1"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -10699,7 +10626,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1di9o2g=""
+                        data-css-adre2i=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -10831,7 +10758,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-2"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -10842,7 +10768,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1x9flut=""
+                        data-css-lsn15b=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -10974,7 +10900,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-3"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -10985,7 +10910,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-sy7agm=""
+                        data-css-kwf4l4=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -11117,7 +11042,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-4"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -11128,7 +11052,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-yoj3wd=""
+                        data-css-hex123=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -11260,7 +11184,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-5"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -11271,7 +11194,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-14r5rw4=""
+                        data-css-17u15k5=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -11403,7 +11326,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-6"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -11414,7 +11336,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1hr2ckm=""
+                        data-css-82cvia=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -11546,7 +11468,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-7"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -11557,7 +11478,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-rkcrp9=""
+                        data-css-xxjfhv=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -11689,7 +11610,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-8"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -11700,7 +11620,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-dl21a4=""
+                        data-css-73visk=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -11832,7 +11752,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-9"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -11843,7 +11762,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1xo7vuu=""
+                        data-css-101u9ep=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -11975,7 +11894,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-10"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -11986,7 +11904,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-2i12n=""
+                        data-css-1poyj18=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -12118,7 +12036,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-11"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -12129,7 +12046,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1javqhd=""
+                        data-css-lokass=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -12261,7 +12178,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-12"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -12272,7 +12188,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1qribjt=""
+                        data-css-teudc1=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -12404,7 +12320,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-13"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -12415,7 +12330,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-47qdoj=""
+                        data-css-1binshn=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -12547,7 +12462,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-14"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -12558,7 +12472,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1y722ld=""
+                        data-css-hrfgwd=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -12690,7 +12604,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-15"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -12701,7 +12614,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1nwzvea=""
+                        data-css-za4e7p=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -12833,7 +12746,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-16"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -12844,7 +12756,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-cfcnen=""
+                        data-css-8peo3a=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -12976,7 +12888,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-17"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -12987,7 +12898,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1bsacvi=""
+                        data-css-z7e1g5=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -13119,7 +13030,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-18"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -13130,7 +13040,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-ou65f3=""
+                        data-css-1oyl9t8=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -13262,7 +13172,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-19"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -13273,7 +13182,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1c6vr2b=""
+                        data-css-lfhely=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -13405,7 +13314,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-20"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -13416,7 +13324,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-7wjwcv=""
+                        data-css-1dgzuso=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -13548,7 +13456,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-21"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -13559,7 +13466,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-mj9276=""
+                        data-css-1elqwb7=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -13691,7 +13598,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-22"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -13702,7 +13608,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-13zktu8=""
+                        data-css-x1a4qw=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -13834,7 +13740,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-23"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -13845,7 +13750,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-16yrfpm=""
+                        data-css-mn1af4=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -13977,7 +13882,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-24"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -13988,7 +13892,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-16cyvo0=""
+                        data-css-1qlk8ye=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -14120,7 +14024,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-25"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -14131,7 +14034,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-169gwmr=""
+                        data-css-1wzyghg=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -14266,7 +14169,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-26"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -14277,7 +14179,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1ej04g2=""
+                        data-css-1rf5s05=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -14409,7 +14311,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-27"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -14420,7 +14321,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-9n8dzk=""
+                        data-css-15lvsr9=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -14552,7 +14453,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-28"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -14563,7 +14463,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-ugi4mz=""
+                        data-css-w3j7q6=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -14695,7 +14595,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-29"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -14706,7 +14605,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1xjc9bc=""
+                        data-css-1rmpxz7=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -14838,7 +14737,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-30"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -14849,7 +14747,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1oztt58=""
+                        data-css-10ku22a=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -15058,7 +14956,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-0"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -15069,7 +14966,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-xfd9jh=""
+                          data-css-1qcl0zl=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -15201,7 +15098,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-1"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -15212,7 +15108,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1di9o2g=""
+                          data-css-adre2i=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -15344,7 +15240,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-2"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -15355,7 +15250,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-1x9flut=""
+                          data-css-lsn15b=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -15487,7 +15382,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-3"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -15498,7 +15392,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-sy7agm=""
+                          data-css-kwf4l4=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -15630,7 +15524,6 @@ Object {
                       >
                         <span
                           aria-describedby="hearing-day-4"
-                          aria-label=""
                           currentitem="false"
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
@@ -15641,7 +15534,7 @@ Object {
                           Video · 1
                         </span>
                         <span
-                          data-css-yoj3wd=""
+                          data-css-hex123=""
                         >
                           <div
                             class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -15793,7 +15686,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-0"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -15804,7 +15696,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-xfd9jh=""
+                        data-css-1qcl0zl=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -15936,7 +15828,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-1"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -15947,7 +15838,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1di9o2g=""
+                        data-css-adre2i=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -16079,7 +15970,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-2"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -16090,7 +15980,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-1x9flut=""
+                        data-css-lsn15b=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -16222,7 +16112,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-3"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -16233,7 +16122,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-sy7agm=""
+                        data-css-kwf4l4=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -16365,7 +16254,6 @@ Object {
                     >
                       <span
                         aria-describedby="hearing-day-4"
-                        aria-label=""
                         currentitem="false"
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
@@ -16376,7 +16264,7 @@ Object {
                         Video · 1
                       </span>
                       <span
-                        data-css-yoj3wd=""
+                        data-css-hex123=""
                       >
                         <div
                           class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
