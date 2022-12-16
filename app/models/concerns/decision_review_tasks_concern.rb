@@ -23,9 +23,9 @@ module DecisionReviewTasksConcern
     [:assigned_to, :appeal]
   end
 
-  def issues_count
+  def issue_count
     # Issue count alias for sorting and serialization
-    "COUNT(request_issues.id) AS issues_count"
+    "COUNT(request_issues.id) AS issue_count"
   end
 
   def higher_level_reviews_on_request_issues
@@ -41,7 +41,7 @@ module DecisionReviewTasksConcern
   end
 
   def decision_reviews_on_request_issues(join_constrant)
-    Task.select(Task.arel_table[Arel.star], issues_count)
+    Task.select(Task.arel_table[Arel.star], issue_count)
       .open
       .joins(join_constrant)
       .where(decision_review_where_predicate)
