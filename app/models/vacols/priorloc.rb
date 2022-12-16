@@ -12,16 +12,33 @@ class VACOLS::Priorloc < VACOLS::Record
     lockey
   end
 
+  alias vacols_id folder
+
   def location_date_in
     locdin
   end
+
+  # mapping for frontend so can look similar to tasks
+  alias closed_at location_date_in
 
   def location_date_out
     locdout
   end
 
+  # mapping for frontend so can look similar to tasks
+  alias created_at location_date_out
+
   def location
     locstto
+  end
+
+  def location_label
+    return location unless /[0-9]+/.match?(location)
+
+    label = staff&.snamel
+    return label if label.present?
+
+    location
   end
 
   def location_staff
@@ -40,6 +57,22 @@ class VACOLS::Priorloc < VACOLS::Record
     locdto
   end
 
+  def staff
+    @staff ||= VACOLS::Staff.find_by(slogid: location)
+  end
+
+  def location_user
+    @location_user ||= User.where(css_id: staff&.sdomainid)&.first
+  end
+
+  def with_attorney?
+    location_user&.attorney? || false
+  end
+
+  def with_judge?
+    location_user&.judge? || false
+  end
+
   def summary
     {
       assigned_by: assigned_by,
@@ -47,10 +80,12 @@ class VACOLS::Priorloc < VACOLS::Record
       location: location,
       sub_location: sub_location,
       location_staff: location_staff,
-      date_in: location_date_in,
       date_out: location_date_out,
-      folder: folder,
-      exception_flag: exception_flag
+      date_in: location_date_in,
+      vacols_id: vacols_id,
+      exception_flag: exception_flag,
+      with_attorney?: with_attorney?,
+      with_judge?: with_judge?
     }
   end
 end

@@ -177,7 +177,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :appeal_receipt_date do |object|
-    object.appeal.try(:receipt_date)
+    object.appeal.is_a?(LegacyAppeal) ? nil : object.appeal.try(:receipt_date)
   end
 
   attribute :days_since_last_status_change, &:calculated_last_change_duration
