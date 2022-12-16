@@ -13,10 +13,7 @@ class TaskSorter
   def initialize(args)
     super
 
-    # new default to APPEAL RECEIPT DATE
-    # old default to sorting by AOD, case type, and docket number.
-    # changed to receipt date
-    # @column ||= QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name)
+    # default to sorting by AOD, case type, and docket number.
     @column ||= QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name)
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
     @tasks ||= Task.none
@@ -67,7 +64,6 @@ class TaskSorter
   def bva_intake_sort
     # auto sort bva intake table by appeal receipt date
     if assignee.type == "BvaIntake"
-      # binding.pry
       @column = QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name)
     end
   end
