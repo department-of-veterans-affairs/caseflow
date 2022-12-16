@@ -256,6 +256,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     member_of_organization?(VhaCamo.singleton) && FeatureToggle.enabled?(:vha_predocket_workflow, user: self)
   end
 
+  def vha_employee?
+    member_of_organization?(BusinessLine.find_by(url: "vha"))
+  end
+
   def organization_queue_user?
     organizations.any?
   end

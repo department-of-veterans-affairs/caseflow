@@ -11,7 +11,8 @@ const Tooltip = (props) => {
     id = 'tooltip-id',
     position = 'top',
     offset = {},
-    tabIndex = 0
+    tabIndex = 0,
+    className = 'cf-tooltip'
   } = props;
 
   const borderToColor = position.charAt(0).toUpperCase() + position.slice(1);
@@ -21,7 +22,7 @@ const Tooltip = (props) => {
       backgroundColor: COLORS.GREY_DARK,
       fontWeight: 'normal',
       padding: '0.5rem 1rem',
-      textAlign: 'center'
+      textAlign: 'justify'
     },
     [`& #${id}:after`]: { [`border${borderToColor}Color`]: COLORS.GREY_DARK }
   });
@@ -47,6 +48,7 @@ const Tooltip = (props) => {
           place={position}
           multiline
           role="tooltip"
+          className={className}
         >
           {text}
         </ReactTooltip>
@@ -61,7 +63,8 @@ Tooltip.propTypes = {
   position: PropTypes.string,
   offset: PropTypes.object,
   children: PropTypes.object,
-  tabIndex: PropTypes.number
+  tabIndex: PropTypes.number,
+  className: PropTypes.string
 };
 
 export default Tooltip;

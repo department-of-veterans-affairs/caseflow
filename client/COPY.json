@@ -54,6 +54,7 @@
     "AGE_MIN_ERR": "Appellant must be at least 14 years of age.",
     "AGE_MAX_ERR": "Appellant cannot be older than 118 years of age."
   },
+  "SSN_INVALID_ERR": "Please enter a valid social security number that follows the format: 123-45-6789 or 123456789",
 
   "NULL_FILTER_LABEL": "<<blank>>",
 
@@ -918,7 +919,8 @@
   "INCIDENT_FLASH_ERROR_END": " with the Veteran's SSN.  Request to temporarily unlock the flash, wait for confirmation, and try again.",
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If the claimant is a Veteran's dependant (spouse, child, or parent) and they are not listed or their information needs to be updated, ",
   "CLAIMANT_NOT_FOUND_END": " for assistance. Note: Remember to encrypt any emails that contain PII (such as a veteran or claimant's name, file number or SSN).",
-  "SELECT_CLAIMANT_LABEL": "Please select the claimant listed on the form. If the claimant is not listed, please select \"Claimant not listed\" and add their information in the next step.",
+  "SELECT_CLAIMANT_LABEL": "Please select the claimant listed on the form.",
+  "SELECT_NON_LISTED_CLAIMANT_LABEL": "Please select the claimant listed on the form. If the claimant is not listed, please select \"Claimant not listed\" and add their information in the next step.",
   "ADD_CLAIMANT_PAGE_DESCRIPTION": "You are adding a claimant who is not listed in Caseflow. Please select the claimant’s relationship to the Veteran and add their information accordingly. If the claimant has indicated a representative, you can add their information in the next step.",
   "ADD_CLAIMANT_CONFIRM_MODAL_TITLE": "Review and confirm claimant information",
   "ADD_CLAIMANT_CONFIRM_MODAL_DESCRIPTION": "Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click \"cancel and edit\" and make the edits accordingly.",
@@ -944,6 +946,9 @@
   "INTAKE_REQUEST_ISSUE_UNTIMELY": "Please note: The issue requested isn't usually eligible because its decision date is older than what's allowed.",
   "INTAKE_LEGACY_ISSUE_UNTIMELY": "Please note: The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
   "INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY": "Please note: The issue isn't usually eligible because its decision date is older than what is allowed, and the legacy issue issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
+  "INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT": "Only VHA team members can establish Higher Level Reviews and Supplemental Claims with VHA issues. If you have a VHA claim, please return the packet to the main “VHA” queue in the Centralized Mail Portal or send downloaded documents to %s.",
+  "VHA_BENEFIT_EMAIL_ADDRESS": "VHABENEFITAPPEALS@va.gov",
+  "INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE": "HLR And SC Permissions Update",
   "UNTIMELY_EXEMPTION_COPY": "Did the applicant request an extension to the date requirements",
   "UNTIMELY_EXEMPTION_COPY_VHA": " OR is this issue related to a VHA Caregiver appeal",
   "VHA_PRE_DOCKET_ADD_ISSUES_NOTICE": "You have added VHA issues. Once you click \"Submit Appeal\", this appeal will be marked for pre-docketing.",

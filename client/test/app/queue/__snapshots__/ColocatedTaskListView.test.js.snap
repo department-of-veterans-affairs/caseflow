@@ -575,7 +575,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       </span>
                     </span>
                     <span
-                      data-css-fs14qy=""
+                      data-css-6e83ks=""
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
@@ -755,7 +755,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       D
                     </span>
                     <span
-                      data-css-19if8q3=""
+                      data-css-1yt9kq0=""
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -956,7 +956,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       D
                     </span>
                     <span
-                      data-css-hd31kg=""
+                      data-css-10zywkz=""
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1711,7 +1711,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       </span>
                     </span>
                     <span
-                      data-css-fs14qy=""
+                      data-css-6e83ks=""
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
@@ -1891,7 +1891,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       D
                     </span>
                     <span
-                      data-css-t9ad6e=""
+                      data-css-1i1fgeu=""
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2086,7 +2086,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       D
                     </span>
                     <span
-                      data-css-ns953s=""
+                      data-css-7nsseu=""
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"

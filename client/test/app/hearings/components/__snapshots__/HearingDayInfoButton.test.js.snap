@@ -32,7 +32,7 @@ exports[`HearingDayInfoButton renders correctly 1`] = `
               Video · VLJ Jerengal, Jonas
             </span>
             <span
-              data-css-ftxb8z=""
+              data-css-10mgax4=""
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -174,7 +174,7 @@ exports[`HearingDayInfoButton renders the Docket readable request type when Dock
               Video · VLJ Jerengal, Jonas
             </span>
             <span
-              data-css-ftxb8z=""
+              data-css-10mgax4=""
             >
               <div
                 class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"

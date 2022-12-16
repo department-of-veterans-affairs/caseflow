@@ -260,9 +260,10 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 </button>
               </CopyToClipboard>
               <span
-                data-css-15opktr=""
+                data-css-as2zk0=""
               >
                 <ReactTooltip
+                  className="cf-tooltip"
                   clickable={false}
                   effect="solid"
                   id="tooltip-Copy VLJ Link"
@@ -598,9 +599,10 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 </button>
               </CopyToClipboard>
               <span
-                data-css-4jj7wk=""
+                data-css-1qgqh7a=""
               >
                 <ReactTooltip
+                  className="cf-tooltip"
                   clickable={false}
                   effect="solid"
                   id="tooltip-Copy Guest Link"
@@ -1675,9 +1677,10 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 </button>
               </CopyToClipboard>
               <span
-                data-css-4jj7wk=""
+                data-css-1qgqh7a=""
               >
                 <ReactTooltip
+                  className="cf-tooltip"
                   clickable={false}
                   effect="solid"
                   id="tooltip-Copy Guest Link"
