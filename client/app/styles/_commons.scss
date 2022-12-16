@@ -1277,3 +1277,15 @@ button {
     }
   }
 }
+
+.csv-link {
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.button-back-button {
+  margin-left: 76%;
+}
+
