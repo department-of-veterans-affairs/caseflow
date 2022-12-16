@@ -69,7 +69,7 @@ Tooltip.propTypes = {
   tabIndex: PropTypes.number,
   styling: PropTypes.string,
   className: PropTypes.string,
-  ariaLabel: PropTypes.string,
+  ariaLabel: PropTypes.string
 };
 
 export default Tooltip;
