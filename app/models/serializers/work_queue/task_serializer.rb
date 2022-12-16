@@ -185,8 +185,8 @@ class WorkQueue::TaskSerializer
 
   attribute :owned_by do |object|
     case object.assigned_to_type
-    when "Organization" then Organization.find(object.assigned_to_id).name
-    when "User" then User.find(object.assigned_to_id).css_id
+    when "Organization" then object.assigned_to&.name
+    when "User" then object.assigned_to&.css_id
     end
   end
 end
