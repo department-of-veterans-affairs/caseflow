@@ -14,14 +14,20 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
     # we need appeal, user, docs, efolder_size
 
     FetchDocumentsForReaderJob.new(user: user, appeals: appeals).process
-    documents = appeals.map(&:documents).flatten
-    Rails.logger.info(
-      "ReaderJobCurrent - FetchDocumentForReaderUserJob " \
-      "Appeals Fetched: (#{appeals.count})" \
-      "User: (#{user})" \
-      "Document ID: #{documents.map(&:id)}" \
-      "Document File Number: #{documents.map(&:file_number)}" \
-      "Document VBMS Document ID: #{documents.map(&:vbms_document_id)}"
-    )
+    # documents = appeals.map(&:documents).flatten
+
+    CaseflowLogger.log('FetchDocumentsForReaderUserJob',
+      user: user.inspect,
+      appeals_count: appeals.count,
+      appeals: appeals.map(&:inspect))
+
+    # Rails.logger.info(
+    #   "ReaderJobCurrent - FetchDocumentForReaderUserJob " \
+    #   "Appeals Fetched: (#{appeals.count})" \
+    #   "User: (#{user})" \
+    #   "Document ID: #{documents.map(&:id)}" \
+    #   "Document File Number: #{documents.map(&:file_number)}" \
+    #   "Document VBMS Document ID: #{documents.map(&:vbms_document_id)}"
+    # )
   end
 end
