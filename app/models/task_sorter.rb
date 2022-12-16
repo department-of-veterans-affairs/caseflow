@@ -13,8 +13,14 @@ class TaskSorter
   def initialize(args)
     super
 
-    # default to sorting by AOD, case type, and docket number.
-    @column ||= QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name)
+    # auto sort bva intake table by appeal receipt date
+    if assignee.is_a?(BvaIntake) && column.nil?
+      @column = QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name)
+    else
+      # default to sorting by AOD, case type, and docket number.
+      @column ||= QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name)
+    end
+
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
     @tasks ||= Task.none
     @assignee ||= Organization.none
@@ -23,11 +29,6 @@ class TaskSorter
 
   def sorted_tasks
     return tasks unless tasks.any?
-
-    # if assignee is organization, check if bva intake
-    if assignee.is_a?(Organization)
-      bva_intake_sort
-    end
 
     # Always join to the CachedAppeal and users tables because we sometimes need it, joining does not slow down the
     # application, and conditional logic to only join sometimes adds unnecessary complexity.
@@ -58,13 +59,6 @@ class TaskSorter
       Arel.sql(assigner_order_clause)
     else
       Arel.sql(default_order_clause)
-    end
-  end
-
-  def bva_intake_sort
-    # auto sort bva intake table by appeal receipt date
-    if assignee.type == "BvaIntake"
-      @column = QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name)
     end
   end
 
