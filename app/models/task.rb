@@ -20,9 +20,6 @@ class Task < CaseflowRecord
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :cancelled_by, class_name: "User"
-  # belongs_to :assigned_to_user, foreign_type: 'User', foreign_key: :assigned_to_id
-  # belongs_to :assigned_to_user, -> { where(tasks: { assigned_to_type: "User" }) }, foreign_key: :assigned_to_id
-  # belongs_to :assigned_to_users, -> { where( tasks: { assigned_to_type: 'User' } ) }, foreign_key: 'assigned_to_id'
 
   include BelongsToPolymorphicAppealConcern
   belongs_to_polymorphic_appeal :appeal, include_decision_review_classes: true

@@ -9,7 +9,7 @@ class RetrieveAndCacheReaderDocumentsJob < ApplicationJob
     appeals_grouped_by_user.each { |user, tasks| start_fetch_job(user, tasks.map(&:appeal).uniq) }
   end
 
-  def start_fetch_job(user)
+  def start_fetch_job(user, appeals)
     user.update!(efolder_documents_fetched_at: Time.zone.now)
     log_info(user, appeals)
     if FeatureToggle.enabled?(:cache_reader_documents_nightly)
@@ -23,7 +23,7 @@ class RetrieveAndCacheReaderDocumentsJob < ApplicationJob
     Rails.logger.info log_message(user, appeals)
   end
 
-  def log_message
+  def log_message(user, appeals)
     "RetrieveAndCacheReaderDocumentsJob - " \
     "User Inspect: (#{user.inspect}) - " \
     "Appeals Count: (#{appeals.count}) - " \
