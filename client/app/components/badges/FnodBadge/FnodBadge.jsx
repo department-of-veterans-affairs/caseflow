@@ -16,8 +16,7 @@ const FnodBadge = (props) => {
     return null;
   }
 
-  return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={`fnod-${uniqueId}`}
-    ariaLabel="fnod status" />;
+  return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={`fnod-${uniqueId}`} />;
 };
 
 FnodBadge.propTypes = {

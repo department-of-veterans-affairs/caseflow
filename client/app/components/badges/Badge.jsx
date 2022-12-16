@@ -19,7 +19,7 @@ const defaultBadgeStyling = {
  */
 class Badge extends React.PureComponent {
   render = () => {
-    const { color, name, displayName, tooltipText, id, ariaLabel } = this.props;
+    const { color, name, displayName, tooltipText, id } = this.props;
 
     const badgeStyling = css({
       ...defaultBadgeStyling,
@@ -27,7 +27,7 @@ class Badge extends React.PureComponent {
     });
 
     return <div className={`cf-${name}-badge`}>
-      <Tooltip id={`badge-${id}`} text={tooltipText} position="bottom" ariaLabel={ariaLabel ?? ''}>
+      <Tooltip id={`badge-${id}`} text={tooltipText} position="bottom">
         <span {...badgeStyling}>{displayName}</span>
       </Tooltip>
     </div>;
@@ -39,8 +39,7 @@ Badge.propTypes = {
   name: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,
   tooltipText: PropTypes.object,
-  id: PropTypes.string,
-  ariaLabel: PropTypes.string
+  id: PropTypes.string
 };
 
 export default Badge;

@@ -22,7 +22,6 @@ exports[`HearingDayInfoButton renders correctly 1`] = `
           >
             <span
               aria-describedby="hearing-day-undefined"
-              aria-label=""
               currentitem="false"
               data-event="focus mouseenter"
               data-event-off="mouseleave keydown"
@@ -165,7 +164,6 @@ exports[`HearingDayInfoButton renders the Docket readable request type when Dock
           >
             <span
               aria-describedby="hearing-day-undefined"
-              aria-label=""
               currentitem="false"
               data-event="focus mouseenter"
               data-event-off="mouseleave keydown"

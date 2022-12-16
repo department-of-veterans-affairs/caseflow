@@ -110,7 +110,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
         <br />
         <span
           aria-describedby="badge-220428-968"
-          aria-label=""
+          aria-label="Hearing Request"
           currentitem="false"
           data-css-2moai0=""
           data-event="focus mouseenter"
@@ -696,7 +696,7 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
         <br />
         <span
           aria-describedby="badge-220428-968"
-          aria-label=""
+          aria-label="Hearing Request"
           currentitem="false"
           data-css-2moai0=""
           data-event="focus mouseenter"
@@ -1279,7 +1279,7 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
         <br />
         <span
           aria-describedby="badge-220428-968"
-          aria-label=""
+          aria-label="Hearing Request"
           currentitem="false"
           data-css-2moai0=""
           data-event="focus mouseenter"
@@ -1835,7 +1835,7 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
         <br />
         <span
           aria-describedby="badge-220428-968"
-          aria-label=""
+          aria-label="Hearing Request"
           currentitem="false"
           data-css-2moai0=""
           data-event="focus mouseenter"
@@ -2421,7 +2421,7 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
         <br />
         <span
           aria-describedby="badge-220428-968"
-          aria-label=""
+          aria-label="Hearing Request"
           currentitem="false"
           data-css-2moai0=""
           data-event="focus mouseenter"
@@ -3035,7 +3035,7 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
         <br />
         <span
           aria-describedby="badge-220428-968"
-          aria-label=""
+          aria-label="Hearing Request"
           currentitem="false"
           data-css-2moai0=""
           data-event="focus mouseenter"
@@ -3621,7 +3621,7 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
         <br />
         <span
           aria-describedby="badge-220428-970"
-          aria-label=""
+          aria-label="Hearing Request"
           currentitem="false"
           data-css-2moai0=""
           data-event="focus mouseenter"

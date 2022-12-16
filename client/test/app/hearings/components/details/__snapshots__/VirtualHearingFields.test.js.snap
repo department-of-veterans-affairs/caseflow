@@ -935,7 +935,6 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                     >
                       <CopyToClipboard
                         aria-describedby="tooltip-Copy Guest Link"
-                        aria-label=""
                         data-event="focus mouseenter"
                         data-event-off="mouseleave keydown"
                         data-for="tooltip-Copy Guest Link"
@@ -945,7 +944,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                       >
                         <button
                           aria-describedby="tooltip-Copy Guest Link"
-                          aria-label=""
+                          aria-label="Copy Guest Link"
                           className="cf-apppeal-id"
                           data-css-cjlnsd=""
                           data-event="focus mouseenter"

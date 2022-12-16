@@ -10,7 +10,6 @@ Object {
       >
         <span
           aria-describedby="badge-undefined"
-          aria-label="Example Disposition Text"
           currentitem="false"
           data-css-1ffdp9a=""
           data-event="focus mouseenter"
@@ -151,7 +150,6 @@ Object {
     >
       <span
         aria-describedby="badge-undefined"
-        aria-label="Example Disposition Text"
         currentitem="false"
         data-css-1ffdp9a=""
         data-event="focus mouseenter"
