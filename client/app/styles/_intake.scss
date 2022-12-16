@@ -364,3 +364,20 @@
     margin: .5rem 0;
   }
 }
+
+.cf-benefit-type {
+  .cf-form-radio-option {
+    display: inline;
+
+    [type=radio]:disabled + label::before {
+      background: $color-gray-lightest;
+      box-shadow: 0 0 0 2px $color-gray-lightest, 0 0 0 3px $color-gray-lighter;
+      cursor: not-allowed;
+    }
+  }
+
+  .cf-radio-option-tooltip {
+    max-width: 600px;
+    word-spacing: -1px;
+  }
+}

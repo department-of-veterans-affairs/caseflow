@@ -17,7 +17,7 @@ RSpec.feature "Notifications View" do
     let(:seed_ama_notifications) do
       create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: "2022-11-01",
                             event_type: "Appeal docketed", notification_type: "Email and SMS",
-                            recipient_email: "example@example.com",recipient_phone_number: "555-555-5555",
+                            recipient_email: "example@example.com", recipient_phone_number: "555-555-5555",
                             email_notification_status: "delivered", sms_notification_status: "delivered",
                             notification_content: "Your appeal at the Board of Veteran's Appeals has been docketed. "\
                             "We must work cases in the order your VA Form 9 substantive appeal (for Legacy) or VA "\
@@ -27,19 +27,19 @@ RSpec.feature "Notifications View" do
       create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: "2022-11-02",
                             event_type: "Hearing scheduled", notification_type: "Email and SMS",
                             recipient_email: "example@example.com", recipient_phone_number: nil,
-                            email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
+                            email_notification_status: "delivered", sms_notification_status: "temporary-failure",
                             notification_content: "Your hearing has been scheduled with a Veterans Law Judge at the "\
                             "Board of Veterans' Appeals. You will be notified of the details in writing shortly.")
       create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: "2022-11-03",
                             event_type: "Privacy Act request pending", notification_type: "Email and SMS",
                             recipient_email: "example@example.com", recipient_phone_number: nil,
-                            email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
+                            email_notification_status: "delivered", sms_notification_status: "temporary-failure",
                             notification_content: "You or your representative filed a Privacy Act request. The Board "\
                             "placed your appeal on hold until this request is satisfied.")
       create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: "2022-11-04",
                             event_type: "Privacy Act request complete", notification_type: "Email and SMS",
                             recipient_email: "example@example.com", recipient_phone_number: nil,
-                            email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
+                            email_notification_status: "delivered", sms_notification_status: "temporary-failure",
                             notification_content: "The Privacy Act request has been satisfied and the Board will "\
                             "continue processing your appeal at this time. The Board must work cases in docket order "\
                             "(the order received) If you have any questions please reach out to your Veterans Service "\
@@ -82,6 +82,8 @@ RSpec.feature "Notifications View" do
 
     before(:example) do
       appeal
+      # ensure backend code runs for visiting queue app before going to notifications pages
+      visit "queue/appeals/#{appeal.uuid}"
     end
 
     context "without notifications" do
@@ -186,6 +188,7 @@ RSpec.feature "Notifications View" do
         filter_option.click(x: 5, y: 5)
         table = page.find("tbody")
         cells = table.all("td", minimum: 1)
+        expect(table).to have_selector("tr", count: 5)
         expect(cells[4]).to have_content("Delivered")
         expect(cells[24]).to have_content("Delivered")
       end
@@ -280,7 +283,7 @@ RSpec.feature "Notifications View" do
     let(:seed_legacy_notifications) do
       create(:notification, appeals_id: legacy_appeal.vacols_id, appeals_type: "LegacyAppeal", event_date: "2022-11-01",
                             event_type: "Appeal docketed", notification_type: "Email and SMS",
-                            recipient_email: "example@example.com",recipient_phone_number: "555-555-5555",
+                            recipient_email: "example@example.com", recipient_phone_number: "555-555-5555",
                             email_notification_status: "delivered", sms_notification_status: "delivered",
                             notification_content: "Your appeal at the Board of Veteran's Appeals has been docketed. "\
                             "We must work cases in the order your VA Form 9 substantive appeal (for Legacy) or VA "\
@@ -290,19 +293,19 @@ RSpec.feature "Notifications View" do
       create(:notification, appeals_id: legacy_appeal.vacols_id, appeals_type: "LegacyAppeal", event_date: "2022-11-02",
                             event_type: "Hearing scheduled", notification_type: "Email and SMS",
                             recipient_email: "example@example.com", recipient_phone_number: nil,
-                            email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
+                            email_notification_status: "delivered", sms_notification_status: "temporary-failure",
                             notification_content: "Your hearing has been scheduled with a Veterans Law Judge at the "\
                             "Board of Veterans' Appeals. You will be notified of the details in writing shortly.")
       create(:notification, appeals_id: legacy_appeal.vacols_id, appeals_type: "LegacyAppeal", event_date: "2022-11-03",
                             event_type: "Privacy Act request pending", notification_type: "Email and SMS",
                             recipient_email: "example@example.com", recipient_phone_number: nil,
-                            email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
+                            email_notification_status: "delivered", sms_notification_status: "temporary-failure",
                             notification_content: "You or your representative filed a Privacy Act request. The Board "\
                             "placed your appeal on hold until this request is satisfied.")
       create(:notification, appeals_id: legacy_appeal.vacols_id, appeals_type: "LegacyAppeal", event_date: "2022-11-04",
                             event_type: "Privacy Act request complete", notification_type: "Email and SMS",
                             recipient_email: "example@example.com", recipient_phone_number: nil,
-                            email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
+                            email_notification_status: "delivered", sms_notification_status: "temporary-failure",
                             notification_content: "The Privacy Act request has been satisfied and the Board will "\
                             "continue processing your appeal at this time. The Board must work cases in docket order "\
                             "(the order received) If you have any questions please reach out to your Veterans Service "\
@@ -449,6 +452,7 @@ RSpec.feature "Notifications View" do
         filter_option.click(x: 5, y: 5)
         table = page.find("tbody")
         cells = table.all("td", minimum: 1)
+        expect(table).to have_selector("tr", count: 5)
         expect(cells[4]).to have_content("Delivered")
         expect(cells[24]).to have_content("Delivered")
       end
