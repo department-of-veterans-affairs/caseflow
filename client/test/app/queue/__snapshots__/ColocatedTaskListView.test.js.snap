@@ -505,7 +505,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                   </th>
                   <th
-                    class="cf-txt-c"
+                    class=""
                     role="columnheader"
                     scope="col"
                   >
@@ -575,7 +575,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       </span>
                     </span>
                     <span
-                      data-css-fs14qy=""
+                      data-css-gsaifc=""
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
@@ -848,7 +848,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                   </td>
                   <td
-                    class="cf-txt-c"
+                    class=""
                     colspan="1"
                     role="cell"
                   >
@@ -1049,7 +1049,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                   </td>
                   <td
-                    class="cf-txt-c"
+                    class=""
                     colspan="1"
                     role="cell"
                   >
@@ -1711,7 +1711,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       </span>
                     </span>
                     <span
-                      data-css-fs14qy=""
+                      data-css-gsaifc=""
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
