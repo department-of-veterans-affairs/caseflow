@@ -266,7 +266,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
     end
 
     let!(:completed_tasks) do
-      (0...20).map do |task_num|
+      (1..20).map do |task_num|
         task = create(
           :higher_level_review_task,
           assigned_to: non_comp_org,
