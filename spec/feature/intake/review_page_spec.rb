@@ -509,8 +509,13 @@ feature "Intake Review Page", :postgres do
       let(:current_user) { create(:user, roles: ["Admin Intake"]) }
 
       before do
+        FeatureToggle.enable!(:vha_claim_review_establishment)
         User.authenticate!(user: current_user)
         navigate_to_review_page(form_type)
+      end
+
+      after do
+        FeatureToggle.disable!(:vha_claim_review_establishment)
       end
 
       it "Should display the VHA HLR SC Permissions Update Information Banner" do
@@ -534,6 +539,26 @@ feature "Intake Review Page", :postgres do
             format(COPY::INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, COPY::VHA_BENEFIT_EMAIL_ADDRESS)
           )
         end
+      end
+    end
+
+    context "Current user is not a member of the VHA business line with feature toggle disabled" do
+      let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
+      let(:current_user) { create(:user, roles: ["Admin Intake"]) }
+
+      before do
+        FeatureToggle.disable!(:vha_claim_review_establishment)
+        User.authenticate!(user: current_user)
+        navigate_to_review_page(form_type)
+      end
+
+      it "Should not display the VHA HLR SC Permissions Update Information Banner" do
+        expect(page).to_not have_content("HLR And SC Permissions Update")
+        expect(page).to_not have_link(COPY::VHA_BENEFIT_EMAIL_ADDRESS, href: email_href)
+      end
+
+      it "VHA benefit type radio option is enabled" do
+        expect(page).to have_field benefit_type_label, disabled: false, visible: false
       end
     end
   end

@@ -69,7 +69,8 @@ const defaultArgs = {
     filedByVaGovHlr: true,
     updatedAppealForm: true,
     updatedIntakeForms: true,
-    useAmaActivationDate: true
+    useAmaActivationDate: true,
+    vhaClaimReviewEstablishment: true,
   },
 };
 
@@ -99,6 +100,10 @@ const FullReduxDecorator = (Story, options) => {
   state.rampRefiling.relationships = relationships;
   state.rampElection.isStarted = 'STARTED';
   state.rampElection.relationships = relationships;
+
+  if (args.featureToggles.vhaClaimReviewEstablishment) {
+    state.featureToggles.vhaClaimReviewEstablishment = args.featureToggles.vhaClaimReviewEstablishment;
+  }
 
   if (args.userIsVhaEmployee) {
     state.userInformation.userIsVhaEmployee = args.userIsVhaEmployee;

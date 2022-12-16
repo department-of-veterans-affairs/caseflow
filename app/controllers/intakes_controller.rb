@@ -150,7 +150,8 @@ class IntakesController < ApplicationController
       updatedIntakeForms: FeatureToggle.enabled?(:updated_intake_forms, user: current_user),
       eduPreDocketAppeals: FeatureToggle.enabled?(:edu_predocket_appeals, user: current_user),
       updatedAppealForm: FeatureToggle.enabled?(:updated_appeal_form, user: current_user),
-      hlrScUnrecognizedClaimants: FeatureToggle.enabled?(:hlr_sc_unrecognized_claimants, user: current_user)
+      hlrScUnrecognizedClaimants: FeatureToggle.enabled?(:hlr_sc_unrecognized_claimants, user: current_user),
+      vhaClaimReviewEstablishment: FeatureToggle.enabled?(:vha_claim_review_establishment, user: current_user)
     }
   end
 

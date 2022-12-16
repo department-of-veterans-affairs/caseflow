@@ -25,6 +25,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     },
     hlrScUnrecognizedClaimants: {
       $set: Boolean(featureToggles.hlrScUnrecognizedClaimants)
+    },
+    vhaClaimReviewEstablishment: {
+      $set: Boolean(featureToggles.vhaClaimReviewEstablishment)
     }
   });
 };
@@ -38,7 +41,8 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       updatedIntakeForms: false,
       eduPreDocketAppeals: false,
       updatedAppealForm: false,
-      hlrScUnrecognizedClaimants: false
+      hlrScUnrecognizedClaimants: false,
+      vhaClaimReviewEstablishment: false
     },
     data.featureToggles
   );

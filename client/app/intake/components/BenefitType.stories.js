@@ -14,7 +14,8 @@ export default {
 const defaultProps = {
   register: () => null,
   formName: 'higherLevelReview',
-  userCanSelectVha: false
+  userCanSelectVha: false,
+  featureToggles: { vhaClaimReviewEstablishment: true }
 };
 
 const Template = (args) => {

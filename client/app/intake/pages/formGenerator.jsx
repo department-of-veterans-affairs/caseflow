@@ -293,7 +293,7 @@ const FormGenerator = (props) => {
           errorData={props.veteranInvalidFields}
         />
       )}
-      {!props.userIsVhaEmployee && isHlrOrScForm && (
+      {!props.userIsVhaEmployee && isHlrOrScForm && props.featureToggles.vhaClaimReviewEstablishment && (
         <div style={{ marginBottom: '3rem' }}>
           <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
             <span dangerouslySetInnerHTML={{ __html: buildVHAInfoBannerMessage() }} />
@@ -363,7 +363,8 @@ FormGenerator.propTypes = {
   setHomelessnessType: PropTypes.func,
   homelessnessError: PropTypes.string,
   isReviewed: PropTypes.bool,
-  userIsVhaEmployee: PropTypes.bool
+  userIsVhaEmployee: PropTypes.bool,
+  featureToggles: PropTypes.object,
 };
 export default connect(
   (state, props) => ({
@@ -398,7 +399,8 @@ export default connect(
     homelessnessError: state[props.formName].homelessnessError,
     homelessnessUserInteraction: state[props.formName].homelessnessUserInteraction,
     isReviewed: state[props.formName].isReviewed,
-    userIsVhaEmployee: state.userInformation.userIsVhaEmployee
+    userIsVhaEmployee: state.userInformation.userIsVhaEmployee,
+    featureToggles: state.featureToggles,
   }),
   (dispatch) => bindActionCreators({
     setDocketType,
