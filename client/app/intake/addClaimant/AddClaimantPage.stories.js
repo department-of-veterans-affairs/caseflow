@@ -20,12 +20,23 @@ const ReduxDecorator = (Story) => (
   </ReduxBase>
 );
 
+const HlrReduxDecorator = (Story) => {
+  let hlrState = generateInitialState();
+
+  hlrState.intake.formType = 'higher_level_review';
+
+  return <ReduxBase reducer={reducer} initialState={hlrState}>
+    <Story />
+  </ReduxBase>;
+};
+
 export default {
   title: 'Intake/Add Claimant/AddClaimantPage',
   component: AddClaimantPage,
   decorators: [ReduxDecorator, RouterDecorator],
   args: {
     onAttorneySearch: performQuery,
+    formType: 'higher_level_review'
   },
   argTypes: {
     onCancel: { action: 'cancel' },
@@ -43,3 +54,15 @@ Basic.parameters = {
       'This is used to add claimants not already associated with the appeal',
   },
 };
+
+export const HlrScClaimant = Template.bind({});
+
+HlrScClaimant.parameters = {
+  docs: {
+    storyDescription:
+      'This is used to add claimants not already associated with the higher level review/supplemental cliaim',
+  }
+};
+
+HlrScClaimant.decorators = [HlrReduxDecorator, RouterDecorator];
+
