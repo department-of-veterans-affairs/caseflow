@@ -86,6 +86,27 @@ ActiveRecord::Schema.define(version: 2022_11_14_191336) do
     t.index ["updated_at"], name: "index_appeal_series_on_updated_at"
   end
 
+  create_table "appeal_states", force: :cascade do |t|
+    t.boolean "appeal_cancelled", default: false, null: false, comment: "When true, appeal's root task is cancelled"
+    t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
+    t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
+    t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
+    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
+    t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
+    t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
+    t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
+    t.boolean "hearing_scheduled", default: false, null: false, comment: "When true, appeal has at least one hearing scheduled"
+    t.boolean "hearing_withdrawn", default: false, null: false, comment: "When true, appeal has hearing withdrawn and no hearings scheduled"
+    t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
+    t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
+    t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
+    t.datetime "updated_at", comment: "Date and time the record was last updated"
+    t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
+    t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
+    t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
+    t.index ["appeal_type", "appeal_id"], name: "index_appeal_states_on_appeal_type_and_appeal_id", unique: true
+  end
+
   create_table "appeal_views", id: :serial, force: :cascade do |t|
     t.integer "appeal_id", null: false
     t.string "appeal_type", null: false
@@ -1076,6 +1097,15 @@ ActiveRecord::Schema.define(version: 2022_11_14_191336) do
     t.index ["updated_at"], name: "index_messages_on_updated_at"
   end
 
+  create_table "mpi_update_person_events", force: :cascade do |t|
+    t.bigint "api_key_id", null: false, comment: "API Key used to initiate the event"
+    t.datetime "completed_at", comment: "Timestamp of when update was completed, regardless of success or failure"
+    t.datetime "created_at", comment: "Timestamp of when update was initiated"
+    t.json "info", comment: "Additional information about the update"
+    t.string "update_type", null: false, comment: "Type or Result of update"
+    t.index ["api_key_id"], name: "index_mpi_update_person_events_on_api_key_id"
+  end
+
   create_table "nod_date_updates", comment: "Tracks changes to an AMA appeal's receipt date (aka, NOD date)", force: :cascade do |t|
     t.bigint "appeal_id", null: false, comment: "Appeal for which the NOD date is being edited"
     t.string "change_reason", null: false, comment: "Reason for change: entry_error or new_info"
@@ -1109,6 +1139,7 @@ ActiveRecord::Schema.define(version: 2022_11_14_191336) do
     t.string "appeals_type", null: false, comment: "Type of Appeal"
     t.datetime "created_at", comment: "Timestamp of when Noticiation was Created"
     t.boolean "email_enabled", default: true, null: false
+    t.text "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
@@ -1119,7 +1150,8 @@ ActiveRecord::Schema.define(version: 2022_11_14_191336) do
     t.string "participant_id", comment: "ID of Participant"
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
-    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
+    t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
+    t.string "sms_notification_external_id"
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
@@ -1480,6 +1512,17 @@ ActiveRecord::Schema.define(version: 2022_11_14_191336) do
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
+  create_table "system_admin_events", force: :cascade do |t|
+    t.datetime "completed_at", comment: "Timestamp of when event was completed without error"
+    t.datetime "created_at", comment: "Timestamp of when event was initiated"
+    t.datetime "errored_at", comment: "Timestamp of when event failed due to error"
+    t.string "event_type", null: false, comment: "Type of event"
+    t.json "info", comment: "Additional information about the event"
+    t.datetime "updated_at", comment: "Timestamp of when event was last updated"
+    t.bigint "user_id", null: false, comment: "User who initiated the event"
+    t.index ["user_id"], name: "index_system_admin_events_on_user_id"
+  end
+
   create_table "tags", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "text"
@@ -1767,6 +1810,8 @@ ActiveRecord::Schema.define(version: 2022_11_14_191336) do
   add_foreign_key "allocations", "schedule_periods"
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
+  add_foreign_key "appeal_states", "users", column: "created_by_id"
+  add_foreign_key "appeal_states", "users", column: "updated_by_id"
   add_foreign_key "appeal_views", "users"
   add_foreign_key "appellant_substitutions", "appeals", column: "source_appeal_id"
   add_foreign_key "appellant_substitutions", "appeals", column: "target_appeal_id"
@@ -1832,6 +1877,7 @@ ActiveRecord::Schema.define(version: 2022_11_14_191336) do
   add_foreign_key "legacy_issue_optins", "request_issues"
   add_foreign_key "legacy_issues", "request_issues"
   add_foreign_key "messages", "users"
+  add_foreign_key "mpi_update_person_events", "api_keys"
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
   add_foreign_key "non_availabilities", "schedule_periods"
@@ -1857,6 +1903,7 @@ ActiveRecord::Schema.define(version: 2022_11_14_191336) do
   add_foreign_key "sent_hearing_email_events", "users", column: "sent_by_id"
   add_foreign_key "split_correlation_tables", "users", column: "created_by_id"
   add_foreign_key "split_correlation_tables", "users", column: "updated_by_id"
+  add_foreign_key "system_admin_events", "users"
   add_foreign_key "task_timers", "tasks"
   add_foreign_key "tasks", "tasks", column: "parent_id"
   add_foreign_key "tasks", "users", column: "assigned_by_id"
