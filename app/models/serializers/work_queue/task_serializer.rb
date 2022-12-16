@@ -182,4 +182,11 @@ class WorkQueue::TaskSerializer
 
   attribute :days_since_last_status_change, &:calculated_last_change_duration
   attribute :days_since_board_intake, &:calculated_duration_from_board_intake
+
+  attribute :owned_by do |object|
+    case object.assigned_to_type
+    when "Organization" then Organization.find(object.assigned_to_id).name
+    when "User" then User.find(object.assigned_to_id).css_id
+    end
+  end
 end
