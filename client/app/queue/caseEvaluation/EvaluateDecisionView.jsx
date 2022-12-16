@@ -21,7 +21,6 @@ import { buildCaseReviewPayload } from '../utils';
 import { taskById,
   getTaskTreesForAttorneyTasks,
   getLegacyTaskTree,
-  getAttorneyTasksForJudgeTask,
 } from '../selectors';
 
 import COPY from '../../../COPY';
