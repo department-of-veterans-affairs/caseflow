@@ -266,12 +266,12 @@ describe DecisionReviewsController, :postgres, type: :controller do
     end
 
     let!(:completed_tasks) do
-      (0...40).map do |task_num|
+      (0...20).map do |task_num|
         task = create(
           :higher_level_review_task,
           assigned_to: non_comp_org,
           assigned_at: task_num.days.ago,
-          closed_at: task_num.minutes.ago
+          closed_at: task_num.hours.ago
         )
         task.completed!
         task.appeal.update!(veteran_file_number: veteran.file_number)
@@ -352,21 +352,21 @@ describe DecisionReviewsController, :postgres, type: :controller do
         ).to match_array task_ids_from_seed(completed_tasks, (0...15), :closed_at)
       end
 
-      it "page 3 displays last 10 tasks" do
-        query_params[:page] = 3
+      it "page 2 displays last 5 tasks" do
+        query_params[:page] = 2
 
         subject
 
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
 
-        expect(response_body["total_task_count"]).to eq 40
+        expect(response_body["total_task_count"]).to eq 20
         expect(response_body["tasks_per_page"]).to eq 15
-        expect(response_body["task_page_count"]).to eq 3
+        expect(response_body["task_page_count"]).to eq 2
 
         expect(
           task_ids_from_response_body(response_body)
-        ).to match_array task_ids_from_seed(completed_tasks, (-10..completed_tasks.size), :closed_at)
+        ).to match_array task_ids_from_seed(completed_tasks, (-5..completed_tasks.size), :closed_at)
       end
     end
 
