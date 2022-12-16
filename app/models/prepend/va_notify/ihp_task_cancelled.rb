@@ -26,7 +26,7 @@ module IhpTaskCancelled
        !IHP_TYPE_TASKS.include?(parent&.type) &&
        status == Constants.TASK_STATUSES.cancelled
       MetricsService.record("Updating VSO_IHP_PENDING column to FALSE & VSO_IHP_COMPLETE column to FALSE in"\
-        " Appeal States Table for #{appeal.class} ID #{appeal.id}".yellow,
+        " Appeal States Table for #{appeal.class} ID #{appeal.id}",
                             service: nil,
                             name: "AppellantNotification.appeal_mapper") do
         AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "vso_ihp_cancelled")

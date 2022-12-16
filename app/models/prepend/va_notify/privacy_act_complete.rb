@@ -38,7 +38,7 @@ module PrivacyActComplete
        status == Constants.TASK_STATUSES.completed
       MetricsService.record("updating PRIVACY_ACT_COMPLETE column to true and
                              PRIVACY_ACT_PENDING column in Appeal States Table to FALSE "\
-        "for #{appeal.class} ID #{appeal.id} if no pending Privacy Acts exist".yellow,
+        "for #{appeal.class} ID #{appeal.id} if no pending Privacy Acts exist",
                             service: nil,
                             name: "AppellantNotification.appeal_mapper") do
         AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "privacy_act_complete")

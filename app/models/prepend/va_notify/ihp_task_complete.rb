@@ -31,7 +31,7 @@ module IhpTaskComplete
     if %w[InformalHearingPresentationTask IhpColocatedTask].include?(type) &&
        params[:status] == Constants.TASK_STATUSES.completed
       MetricsService.record("Sending VSO IHP complete notification to VA Notify for #{appeal.class} "\
-        "ID #{appeal.id}".green,
+        "ID #{appeal.id}",
                             service: nil,
                             name: "AppellantNotification.notify_appellant") do
         AppellantNotification.notify_appellant(appeal, @@template_name)
@@ -52,7 +52,7 @@ module IhpTaskComplete
        !IHP_TYPE_TASKS.include?(parent&.type) &&
        status == Constants.TASK_STATUSES.completed
       MetricsService.record("Updating VSO_IHP_COMPLETED column to TRUE & VSO_IHP_PENDING column to FALSE in Appeal"\
-        " States Table for #{appeal.class} ID #{appeal.id}".yellow,
+        " States Table for #{appeal.class} ID #{appeal.id}",
                             service: nil,
                             name: "AppellantNotification.appeal_mapper") do
         AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "vso_ihp_complete")

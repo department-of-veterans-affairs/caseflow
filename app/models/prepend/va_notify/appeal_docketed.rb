@@ -32,7 +32,7 @@ module AppealDocketed
     distribution_task = tasks.of_type(:DistributionTask).first
     if distribution_task
       MetricsService.record("Sending Appeal docketed notification to VA Notify "\
-        "for #{self.class} ID #{self.id}".green,
+        "for #{self.class} ID #{self.id}",
                             service: nil,
                             name: "AppellantNotification.notify_appellant") do
         AppellantNotification.notify_appellant(self, @@template_name)
@@ -51,7 +51,7 @@ module AppealDocketed
   def docket_appeal
     super_return_value = super
     MetricsService.record("Sending Appeal docketed notification to VA Notify "\
-      "for #{appeal.class} ID #{appeal.id}".green,
+      "for #{appeal.class} ID #{appeal.id}",
                           service: nil,
                           name: "AppellantNotification.notify_appellant") do
       AppellantNotification.notify_appellant(appeal, @@template_name)
@@ -69,7 +69,7 @@ module AppealDocketed
   def update_appeal_state_when_appeal_docketed
     if type == "DistributionTask"
       MetricsService.record("Updating APPEAL_DOCKETED column in Appeal States Table to TRUE for #{appeal.class} "\
-        "ID #{appeal.id}".yellow,
+        "ID #{appeal.id}",
                             service: nil,
                             name: "AppellantNotification.appeal_mapper") do
         AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "appeal_docketed")

@@ -35,7 +35,7 @@ module IhpTaskPending
     appeal_tasks_created = super_return_value.map { |task| task.class.to_s }
     if appeal_tasks_created.any?("InformalHearingPresentationTask")
       MetricsService.record("Sending VSO IHP pending notification to VA Notify "\
-        "for #{@parent.appeal.class} ID #{@parent.appeal.id}".green,
+        "for #{@parent.appeal.class} ID #{@parent.appeal.id}",
                             service: nil,
                             name: "AppellantNotification.notify_appellant") do
         AppellantNotification.notify_appellant(@parent.appeal, @@template_name)
@@ -58,7 +58,7 @@ module IhpTaskPending
     if super_return_value.class.to_s == "IhpColocatedTask" && task_array.include?("IhpColocatedTask")
       appeal = super_return_value.appeal
       MetricsService.record("Sending VSO IHP pending notification to VA Notify for #{appeal.class} "\
-        "ID #{appeal.id}".green,
+        "ID #{appeal.id}",
                             service: nil,
                             name: "AppellantNotification.notify_appellant") do
         AppellantNotification.notify_appellant(appeal, @@template_name)
@@ -77,7 +77,7 @@ module IhpTaskPending
   def update_appeal_state_when_ihp_created
     if IHP_TYPE_TASKS.include?(type)
       MetricsService.record("Updating VSO_IHP_PENDING column to TRUE & VSO_IHP_COMPLETE column to FALSE in"\
-        " Appeal States Table for #{appeal.class} ID #{appeal.id}".yellow,
+        " Appeal States Table for #{appeal.class} ID #{appeal.id}",
                             service: nil,
                             name: "AppellantNotification.appeal_mapper") do
         AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "vso_ihp_pending")
