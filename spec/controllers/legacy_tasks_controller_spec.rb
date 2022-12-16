@@ -198,7 +198,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
           post :create, params: { tasks: params }
           expect(response.status).to eq 400
           body = JSON.parse(response.body)
-          expect(body["errors"].first["detail"]).to match(/Case already assigned/)
+          expect(body["errors"].first["detail"]).to match(/That case has already been assigned. Please refresh the page to update your queue./)
         end
       end
 
