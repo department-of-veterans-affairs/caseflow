@@ -306,9 +306,9 @@ class WorkQueue::TaskColumnSerializer
 
     if serialize_attribute?(params, columns)
       if object.assigned_to_type == "Organization"
-        Organization.find(object.assigned_to_id).name
+        object.assigned_to&.name
       elsif object.assigned_to_type == "User"
-        User.find(object.assigned_to_id).css_id
+        object.assigned_to&.css_id
       end
     end
   end
