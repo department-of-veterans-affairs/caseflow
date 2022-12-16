@@ -74,7 +74,6 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
         tableNotifications.push(sms_notification);
       }
     }
-    console.log(tableNotifications);
 
     return tableNotifications;
   };
