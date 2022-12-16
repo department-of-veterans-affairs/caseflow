@@ -37,5 +37,6 @@ SCHEDULED_JOBS = {
     "va_notify_status_update_job" => VANotifyStatusUpdateJob,
     "poll_docketed_legacy_appeals_job" => PollDocketedLegacyAppealsJob,
     "fetch_all_active_ama_appeals_job" => FetchAllActiveAmaAppealsJob,
-    "fetch_all_active_legacy_appeals_job" => FetchAllActiveLegacyAppealsJob
+    "fetch_all_active_legacy_appeals_job" => FetchAllActiveLegacyAppealsJob,
+    "retrieve_and_cache_reader_documents_job" => RetrieveAndCacheReaderDocumentsJob
 }.freeze
