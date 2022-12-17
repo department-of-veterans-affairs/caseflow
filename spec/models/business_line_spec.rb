@@ -28,7 +28,14 @@ describe BusinessLine do
       tasks = create_list(:board_grant_effectuation_task, 5, assigned_to: business_line)
 
       tasks.each do |task|
-        task.appeal.update!(request_issues: [])
+        create(
+          :request_issue,
+          :nonrating,
+          decision_review: task.appeal,
+          benefit_type: business_line.url,
+          closed_at: Time.zone.now,
+          closed_status: "decided"
+        )
       end
 
       tasks
@@ -57,7 +64,7 @@ describe BusinessLine do
 
       it "All tasks associated with active decision reviews and BoardGrantEffectuationTasks are included" do
         expect(subject.size).to eq 15
-        expect(subject.pluck(:id)).to match_array(
+        expect(subject.map(&:id)).to match_array(
           (veteran_record_request_on_active_appeals +
             board_grant_effectuation_tasks +
             decision_review_tasks_on_active_decision_reviews
@@ -71,7 +78,7 @@ describe BusinessLine do
 
       it "All tasks associated with active decision reviews are included, but not BoardGrantEffectuationTasks" do
         expect(subject.size).to eq 10
-        expect(subject.pluck(:id)).to match_array(
+        expect(subject.map(&:id)).to match_array(
           (veteran_record_request_on_active_appeals +
             decision_review_tasks_on_active_decision_reviews
           ).pluck(:id)
@@ -121,7 +128,6 @@ describe BusinessLine do
 
     it "All completed tasks are included in results" do
       expect(subject.size).to eq 15
-      # Could not use .pluck(:id) due to polymorphic associations
       expect(subject.map(&:id)).to match_array(
         (completed_decision_review_tasks +
           completed_board_grant_effectuation_tasks +
