@@ -5,7 +5,7 @@ module DecisionReviewTasksConcern
 
   def in_progress_tasks
     Task.select(Arel.star)
-      .from(combined_decision_reviews_query)
+      .from(combined_decision_review_tasks_query)
       .includes(*decision_review_task_includes)
       .order(assigned_at: :desc)
   end
@@ -49,7 +49,7 @@ module DecisionReviewTasksConcern
       .arel
   end
 
-  def combined_decision_reviews_query
+  def combined_decision_review_tasks_query
     union_query = Arel::Nodes::Union.new(
       Arel::Nodes::Union.new(
         higher_level_reviews_on_request_issues,
@@ -63,6 +63,9 @@ module DecisionReviewTasksConcern
 
   def decision_review_where_predicate
     if FeatureToggle.enabled?(:board_grant_effectuation_task, user: :current_user)
+      # Disregards the active/eligible request issues requirement on decision reviews
+      # so that BoardGrantEffectuationTasks, which only appear on
+      # appeals with at least one closed request issue, can be included.
       return assigned_to_only_constraint
     end
 
