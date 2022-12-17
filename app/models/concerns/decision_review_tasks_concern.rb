@@ -40,10 +40,10 @@ module DecisionReviewTasksConcern
     decision_reviews_on_request_issues(ama_appeal: :request_issues)
   end
 
-  def decision_reviews_on_request_issues(join_constrant)
+  def decision_reviews_on_request_issues(join_constraint)
     Task.select(Task.arel_table[Arel.star], issue_count)
       .open
-      .joins(join_constrant)
+      .joins(join_constraint)
       .where(decision_review_where_predicate)
       .group("tasks.id")
       .arel
