@@ -4,25 +4,25 @@ module DecisionReviewTasksConcern
   extend ActiveSupport::Concern
 
   def in_progress_tasks(
-    sort_by: "assigned_at",
+    _sort_by: "",
     sort_order: "desc",
     _filters: []
   )
     Task.select(Arel.star)
       .from(combined_decision_review_tasks_query)
       .includes(*decision_review_task_includes)
-      .order(sort_by => sort_order.to_sym)
+      .order(assigned_at: sort_order.to_sym)
   end
 
   def completed_tasks(
-    sort_by: "closed_at",
+    _sort_by: "",
     sort_order: "desc",
     _filters: []
   )
     tasks
       .recently_completed
       .includes(decision_review_task_includes)
-      .order(sort_by => sort_order.to_sym)
+      .order(closed_at: sort_order.to_sym)
   end
 
   private
