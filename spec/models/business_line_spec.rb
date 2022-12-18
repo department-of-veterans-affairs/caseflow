@@ -59,7 +59,7 @@ describe BusinessLine do
     subject { business_line.in_progress_tasks }
 
     it "tasks are acquired with a single query (no N+1 queries)" do
-      sql_track_data = SqlTracker.track { subject }
+      sql_track_data = SqlTracker.track { subject.reload }
 
       # A single query should be performed, opposed to 1 + N queries where N is the
       # number of tasks created for this test section (ex: 25).
