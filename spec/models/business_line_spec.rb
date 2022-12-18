@@ -58,6 +58,16 @@ describe BusinessLine do
 
     subject { business_line.in_progress_tasks }
 
+    it "tasks are acquired with a single query (no N+1 queries)" do
+      sql_track_data = SqlTracker.track { subject }
+
+      # A single query should be performed, opposed to 1 + N queries where N is the
+      # number of tasks created for this test section (ex: 25).
+      expect(
+        sql_track_data.values.sum { |query_data| query_data[:count] }
+      ).to eq 1
+    end
+
     context "With the :board_grant_effectuation_task FeatureToggle enabled" do
       before { FeatureToggle.enable!(:board_grant_effectuation_task) }
       after { FeatureToggle.disable!(:board_grant_effectuation_task) }
