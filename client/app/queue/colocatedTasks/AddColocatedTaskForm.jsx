@@ -38,7 +38,7 @@ export const AddColocatedTaskForm = ({
       </div>
       <div className={styles.field}>
         <TextareaField
-          errorMessage={highlightFormItems && !instructions ? "instructions field is required" : null}
+          errorMessage={highlightFormItems && !instructions ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
           name="instructions"
           label={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           onChange={(val) => setInstructions(val)}

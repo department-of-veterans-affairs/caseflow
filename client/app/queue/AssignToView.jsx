@@ -242,7 +242,7 @@ class AssignToView extends React.Component {
           <TextareaField
             name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
             errorMessage={highlightFormItems && !actionData.body_optional && !this.state.instructions ?
-              'Instructions field is required' : null}
+              COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
             id="taskInstructions"
             onChange={(value) => this.setState({ instructions: value })}
             value={this.state.instructions}

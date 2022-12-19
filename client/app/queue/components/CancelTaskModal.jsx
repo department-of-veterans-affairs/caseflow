@@ -77,7 +77,7 @@ const CancelTaskModal = (props) => {
       {get(taskData, 'show_instructions', true) &&
         <TextareaField
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-          errorMessage={highlightFormItems && instructions.length === 0 ? 'Instructions field is required' : null}
+          errorMessage={highlightFormItems && instructions.length === 0 ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
           id="taskInstructions"
           onChange={setInstructions}
           value={instructions}

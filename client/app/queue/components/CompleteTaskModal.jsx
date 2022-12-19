@@ -124,7 +124,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
               styling={marginTop(4)}
               textAreaStyling={slimHeight}
               errorMessage={props.highlightInvalid &&
-                !validInstructions(state.otherInstructions) ? 'Instructions field is required' : null}
+                !validInstructions(state.otherInstructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
             />}
           <TextareaField
             label={COPY.VHA_COMPLETE_TASK_MODAL_BODY}
@@ -136,7 +136,7 @@ const ReadyForReviewModal = ({ props, state, setState }) => {
             styling={marginTop(4)}
             errorMessage={props.highlightInvalid &&
               !validInstructions(state.instructions) &&
-              !isOptional() ? 'Instructions field is required' :
+              !isOptional() ? COPY.EMPTY_INSTRUCTIONS_ERROR :
               null}
             optional={isOptional()}
           />
@@ -211,7 +211,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
-              !validInstructions(state.instructions) ? 'Instructions field is required' : null}
+              !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
           />
         </div>
       )}
@@ -245,7 +245,7 @@ const ReturnToBoardIntakeModal = ({ props, state, setState }) => {
             value={state.instructions}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             errorMessage={props.highlightInvalid &&
-              !validInstructions(state.instructions) ? 'Instructions field is required' : null}
+              !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
           />
         </div>
       )}
