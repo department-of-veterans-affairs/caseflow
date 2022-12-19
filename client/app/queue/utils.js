@@ -161,10 +161,11 @@ const taskAttributesFromRawTask = (task) => {
     daysSinceLastStatusChange: task.attributes.days_since_last_status_change,
     daysSinceBoardIntake: task.attributes.days_since_board_intake,
     id: task.id,
-    business_line: task.attributes.business_line,
+    businessLine: task.attributes.business_line,
     claimant: {
       name: task.attributes.claimant?.name
-    }
+    },
+    veteranParticipantId: task.attributes.veteran_participant_id
   };
 };
 
