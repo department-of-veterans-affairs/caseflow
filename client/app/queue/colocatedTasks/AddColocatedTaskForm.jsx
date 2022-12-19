@@ -27,7 +27,7 @@ export const AddColocatedTaskForm = ({
     <div className="colocated-task-form">
       <div className={styles.field}>
         <SearchableDropdown
-          errorMessage={highlightFormItems && !type ? "administrative action type field is required" : null}
+          errorMessage={highlightFormItems && !type ? 'administrative action type field is required' : null}
           name="type"
           label={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
           placeholder="Select an action type"

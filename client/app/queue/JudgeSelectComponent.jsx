@@ -97,7 +97,7 @@ class JudgeSelectComponent extends React.PureComponent {
 
     return <div className={fieldClasses}>
       <label>Submit to judge:</label>
-      {shouldDisplayError && <span className="usa-input-error-message" tabIndex={0}>
+      {shouldDisplayError && <span className="usa-input-error-message">
         {COPY.FORM_ERROR_FIELD_REQUIRED}
       </span>}
       {componentContent}
