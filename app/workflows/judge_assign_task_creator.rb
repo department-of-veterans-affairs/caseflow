@@ -8,11 +8,17 @@ class JudgeAssignTaskCreator
   end
 
   def call
+    # If an appeal does not have an open DistributionTask, then it has already been distributed by automatic
+    # case distribution and a new JudgeAssignTask should not be created. This should only occur if two users
+    # request a distribution simultaneously. The check for LegacyAppeal was added for the Legacy DAS
+    # deprecation code in app/workflows/das_deprecation/case_distribution
+    return nil unless appeal.tasks.open.of_type(:DistributionTask).any? || appeal.is_a?(LegacyAppeal)
+
     Rails.logger.info("Assigning judge task for appeal #{appeal.id}")
     task = reassign_or_create
     Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
 
-    Rails.logger.info("Closing distribution task for appeal #{appeal.id}")
+    Rails.logger.info("Closing distribution task for appeal #{appeal.id} with task id #{task.id}")
     close_distribution_tasks_for_appeal if appeal.is_a?(Appeal)
     Rails.logger.info("Closed distribution task for appeal #{appeal.id}")
 

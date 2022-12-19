@@ -1,4 +1,5 @@
-import moment from 'moment';
+import Moment from 'moment';
+import { extendMoment } from 'moment-range';
 import { createSelector } from 'reselect';
 import { filter, find, keyBy, map, merge, orderBy, reduce } from 'lodash';
 import { taskIsActive, taskIsOnHold, getAllChildrenTasks, taskAttributesFromRawTask } from './utils';
@@ -6,6 +7,8 @@ import { taskIsActive, taskIsOnHold, getAllChildrenTasks, taskAttributesFromRawT
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
 import COPY from '../../COPY';
+
+const moment = extendMoment(Moment);
 
 export const selectedTasksSelector = (state, userId) => {
   return map(state.queue.isTaskAssignedToUserSelected[userId] || {}, (selected, id) => {
@@ -252,17 +255,29 @@ export const getAttorneyTasksForJudgeTask = createSelector(
 export const getTaskTreesForAttorneyTasks = createSelector(
   [getAllTasksForAppeal, getAttorneyTasksForJudgeTask],
   (tasks, attorneyTasks) => {
-    const allAttorneyTasks = [];
+    const allAttorneyTasks = attorneyTasks.map((attorneyTask) => {
+      const childrenTasks = getAllChildrenTasks(tasks, attorneyTask.uniqueId).
+        filter((task) => task.closedAt !== null).
+        filter((task) => {
+          // Remove any tasks whose createdAt is older than the AttorneyTask's createdAt date
+          const taskAssignedOn = moment(task.createdAt);
+          const attorneyTaskAssignedOn = moment(attorneyTask.createdAt);
+          const result = taskAssignedOn.diff(attorneyTaskAssignedOn, 'days');
 
-    attorneyTasks.forEach((attorneyTask) => {
-      allAttorneyTasks.push(...getAllChildrenTasks(tasks, attorneyTask.uniqueId).
-        filter((task) => !task.hideFromCaseTimeline).
-        filter((task) => task.closedAt !== null)
-      );
+          return result >= 0;
+        });
+
+      // eslint-disable-next-line id-length
+      childrenTasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+      return {
+        attorneyTask,
+        childrenTasks
+      };
     });
 
     // eslint-disable-next-line id-length
-    allAttorneyTasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    allAttorneyTasks.sort((a, b) => new Date(a.attorneyTask.createdAt) - new Date(b.attorneyTask.createdAt));
 
     return allAttorneyTasks;
   }
@@ -273,24 +288,19 @@ export const getTaskTreesForAttorneyTasks = createSelector(
 export const getLegacyTaskTree = createSelector(
   [getAllTasksForAppeal, getJudgeDecisionReviewTask],
   (tasks, judgeDecisionReviewTask) =>
-    filter(tasks, (task) => {
-      // Remove any tasks whose createdAt to closedAt values put it outside of the range of
-      // AttorneyTask.assignedOn - JudgeDecisionReviewTask.assignedOn
-      const taskCreatedAt = moment(task.createdAt);
-      const taskClosedAt = moment(task.closedAt);
-      const attorneyTaskAssignedOn = moment(judgeDecisionReviewTask.previousTaskAssignedOn);
-      const judgeDecisionReviewTaskAssignedOn = moment(judgeDecisionReviewTask.assignedOn);
+    filter(tasks.filter((task) => !task.hideFromCaseTimeline).filter((task) => task.closedAt !== null),
+      (task) => {
+        // Remove any tasks whose createdAt to closedAt values put it outside of the range of
+        // AttorneyTask.assignedOn - JudgeDecisionReviewTask.assignedOn
+        const taskCreatedAt = moment(task.createdAt);
+        const taskClosedAt = moment(task.closedAt);
+        const timelineRange = moment.range(moment(judgeDecisionReviewTask.previousTaskAssignedOn),
+          moment(judgeDecisionReviewTask.assignedOn));
 
-      const assignedOnRangeStart = taskCreatedAt.diff(attorneyTaskAssignedOn, 'days');
-      const assignedOnRangeEnd = taskCreatedAt.diff(judgeDecisionReviewTaskAssignedOn, 'days');
-
-      const closedAtRangeStart = taskClosedAt.diff(attorneyTaskAssignedOn, 'days');
-      const closedAtRangeEnd = taskClosedAt.diff(judgeDecisionReviewTaskAssignedOn, 'days');
-
-      return task.uniqueId !== judgeDecisionReviewTask.uniqueId &&
-        assignedOnRangeStart >= 0 && assignedOnRangeEnd <= 0 &&
-        task.closedAt !== null && closedAtRangeStart >= 0 && closedAtRangeEnd <= 0;
-    })
+        return task.uniqueId !== judgeDecisionReviewTask.uniqueId &&
+        timelineRange.contains(taskCreatedAt) &&
+        timelineRange.contains(taskClosedAt);
+      })
 );
 
 // ***************** Non-memoized selectors *****************

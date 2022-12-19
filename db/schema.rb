@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_25_184724) do
+ActiveRecord::Schema.define(version: 2022_11_15_202338) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1076,6 +1076,15 @@ ActiveRecord::Schema.define(version: 2022_10_25_184724) do
     t.index ["updated_at"], name: "index_messages_on_updated_at"
   end
 
+  create_table "mpi_update_person_events", force: :cascade do |t|
+    t.bigint "api_key_id", null: false, comment: "API Key used to initiate the event"
+    t.datetime "completed_at", comment: "Timestamp of when update was completed, regardless of success or failure"
+    t.datetime "created_at", comment: "Timestamp of when update was initiated"
+    t.json "info", comment: "Additional information about the update"
+    t.string "update_type", null: false, comment: "Type or Result of update"
+    t.index ["api_key_id"], name: "index_mpi_update_person_events_on_api_key_id"
+  end
+
   create_table "nod_date_updates", comment: "Tracks changes to an AMA appeal's receipt date (aka, NOD date)", force: :cascade do |t|
     t.bigint "appeal_id", null: false, comment: "Appeal for which the NOD date is being edited"
     t.string "change_reason", null: false, comment: "Reason for change: entry_error or new_info"
@@ -1318,6 +1327,7 @@ ActiveRecord::Schema.define(version: 2022_10_25_184724) do
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
     t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
     t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its contested rating issue are associated in VBMS."
+    t.string "split_issue_status", comment: "If a request issue is part of a split, on_hold status applies to the original request issues while active are request issues on splitted appeals"
     t.string "type", default: "RequestIssue", comment: "Determines whether the issue is a rating issue or a nonrating issue"
     t.string "unidentified_issue_text", comment: "User entered description if the request issue is neither a rating or a nonrating issue"
     t.boolean "untimely_exemption", comment: "If the contested issue's decision date was more than a year before the receipt date, it is considered untimely (unless it is a Supplemental Claim). However, an exemption to the timeliness can be requested. If so, it is indicated here."
@@ -1437,6 +1447,24 @@ ActiveRecord::Schema.define(version: 2022_10_25_184724) do
     t.index ["updated_at"], name: "index_special_issue_lists_on_updated_at"
   end
 
+  create_table "split_correlation_tables", comment: "Associates the request issues of the split appeal to the original appeal.", force: :cascade do |t|
+    t.integer "appeal_id", comment: "The new ID of the split appeal associated with this record."
+    t.string "appeal_type", null: false, comment: "The type of appeal that the split appeal was orginally motioned as (i.e. DR,ES,SC)."
+    t.uuid "appeal_uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the appeal, which allows a single ID to determine an appeal for Caseflow splitted appeals."
+    t.datetime "created_at", null: false, comment: "The datetime when the split appeal was created"
+    t.integer "created_by_id", null: false, comment: "The user css_id that created the split appeal."
+    t.integer "original_appeal_id", null: false, comment: "The original appeal id from where the split appeal appeal_id was created from."
+    t.string "original_appeal_uuid", null: false, comment: "The original source appeal uuid from where the split was generated from."
+    t.integer "original_request_issue_id", null: false, comment: "The original request issue id and the corresponding request issue id created from the split appeal process."
+    t.string "relationship_type", default: "split_appeal", comment: "The new split_appeal relationship type created from the split and maybe used for future correlations."
+    t.string "split_other_reason", comment: "The other reason for splitting the appeal from comment section."
+    t.string "split_reason", comment: "Reason for splitting the appeal from drop menu."
+    t.integer "split_request_issue_id", null: false, comment: "The original request issue id and the corresponding request issue id created from the split appeal process."
+    t.datetime "updated_at", comment: "The datetime when the split appeal was updated at."
+    t.integer "updated_by_id", comment: "The user css_id who most recently updated the split appeal workflow."
+    t.string "working_split_status", default: "in_progress", null: false, comment: "The work flow status of the split appeal (i.e. on_hold, in_progress, cancelled, completed)."
+  end
+
   create_table "supplemental_claims", comment: "Intake data for Supplemental Claims.", force: :cascade do |t|
     t.string "benefit_type", comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
     t.datetime "created_at"
@@ -1459,6 +1487,17 @@ ActiveRecord::Schema.define(version: 2022_10_25_184724) do
     t.index ["updated_at"], name: "index_supplemental_claims_on_updated_at"
     t.index ["uuid"], name: "index_supplemental_claims_on_uuid"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
+  end
+
+  create_table "system_admin_events", force: :cascade do |t|
+    t.datetime "completed_at", comment: "Timestamp of when event was completed without error"
+    t.datetime "created_at", comment: "Timestamp of when event was initiated"
+    t.datetime "errored_at", comment: "Timestamp of when event failed due to error"
+    t.string "event_type", null: false, comment: "Type of event"
+    t.json "info", comment: "Additional information about the event"
+    t.datetime "updated_at", comment: "Timestamp of when event was last updated"
+    t.bigint "user_id", null: false, comment: "User who initiated the event"
+    t.index ["user_id"], name: "index_system_admin_events_on_user_id"
   end
 
   create_table "tags", id: :serial, force: :cascade do |t|
@@ -1813,6 +1852,7 @@ ActiveRecord::Schema.define(version: 2022_10_25_184724) do
   add_foreign_key "legacy_issue_optins", "request_issues"
   add_foreign_key "legacy_issues", "request_issues"
   add_foreign_key "messages", "users"
+  add_foreign_key "mpi_update_person_events", "api_keys"
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
   add_foreign_key "non_availabilities", "schedule_periods"
@@ -1836,6 +1876,9 @@ ActiveRecord::Schema.define(version: 2022_10_25_184724) do
   add_foreign_key "sent_hearing_admin_email_events", "sent_hearing_email_events"
   add_foreign_key "sent_hearing_email_events", "hearing_email_recipients", column: "email_recipient_id"
   add_foreign_key "sent_hearing_email_events", "users", column: "sent_by_id"
+  add_foreign_key "split_correlation_tables", "users", column: "created_by_id"
+  add_foreign_key "split_correlation_tables", "users", column: "updated_by_id"
+  add_foreign_key "system_admin_events", "users"
   add_foreign_key "task_timers", "tasks"
   add_foreign_key "tasks", "tasks", column: "parent_id"
   add_foreign_key "tasks", "users", column: "assigned_by_id"

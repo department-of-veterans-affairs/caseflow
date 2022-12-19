@@ -57,7 +57,7 @@ export const NotificationsView = (props) => {
   return (
     <React.Fragment>
       <AppSegment filledBackground>
-        <CaseTitle titleHeader = {'Case notifications for ' + appeal.veteranFullName} appeal={appeal} hideCaseView />
+        <CaseTitle titleHeader = {`Case notifications for ${appeal.veteranFullName}`} appeal={appeal} hideCaseView />
         {supportPendingAppealSubstitution && (
           <div {...sectionGap}>
             <Button
@@ -78,9 +78,16 @@ export const NotificationsView = (props) => {
           hideDecisionDocument
         />
         <div {...sectionGap}>
-          <p className="notification-text">VA Notify sent these status notifications to the Appellant about their case.</p>
+          <p className="notification-text">
+            VA Notify sent these status notifications to the Appellant about their case.
+          </p>
           <div className="notification-table">
-            <NotificationTable appealId={appealId} modalState={modalState} openModal={openModal} closeModal={closeModal} />
+            <NotificationTable
+              appealId={appealId}
+              modalState={modalState}
+              openModal={openModal}
+              closeModal={closeModal}
+            />
           </div>
         </div>
       </AppSegment>

@@ -1,5 +1,5 @@
 
-   
+
 {
    "vba_301" : {
       "address_1" : "15 New Sudbury Street",
@@ -1313,6 +1313,15 @@
       "city" : "Green Bay",
       "state" : "WI",
       "zip" : "54311-5855",
+      "timezone" : "America/Chicago"
+   },
+   "vha_740GA" : {
+      "address_1" : "2106 Treasure Hills Boulevard",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Harlingen",
+      "state" : "TX",
+      "zip" : "78550-8736",
       "timezone" : "America/Chicago"
    },
    "vha_740GB" : {

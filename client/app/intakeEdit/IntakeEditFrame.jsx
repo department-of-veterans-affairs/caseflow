@@ -27,6 +27,8 @@ const textAlignRightStyling = css({
 
 export const StateContext = createContext({});
 
+export const RequestIssueContext = createContext();
+
 export const Provider = ({ children }) => {
   const [reason, setReason] = useState(null);
   const [otherReason, setOtherReason] = useState('');
@@ -237,8 +239,10 @@ export const IntakeEditFrame = (props) => {
               </AppSegment>
               <AppSegment styling={textAlignRightStyling}>
                 <Route exact path={PAGE_PATHS.BEGIN} component={EditButtons} />
-                <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitButtons} />
-                <IntakeAppealContext.Provider value={props.appeal}>
+                <RequestIssueContext.Provider value={props.serverIntake.requestIssues.length}>
+                  <Route exact path={PAGE_PATHS.CREATE_SPLIT} component={SplitButtons} />
+                </RequestIssueContext.Provider>
+                <IntakeAppealContext.Provider value={[props.appeal, props.user]}>
                   <Route exact path={PAGE_PATHS.REVIEW_SPLIT} component={CreateButtons} />
                 </IntakeAppealContext.Provider>
               </AppSegment>
@@ -266,11 +270,13 @@ IntakeEditFrame.propTypes = {
     asyncJobUrl: PropTypes.string,
     hasClearedNonratingEp: PropTypes.bool,
     hasClearedRatingEp: PropTypes.bool,
+    requestIssues: PropTypes.array
   }),
   dropdownUrls: PropTypes.array,
   userDisplayName: PropTypes.string,
   appeal: PropTypes.object,
   claimId: PropTypes.string,
+  user: PropTypes.string,
   routerTestProps: PropTypes.object,
   router: PropTypes.object
 };
