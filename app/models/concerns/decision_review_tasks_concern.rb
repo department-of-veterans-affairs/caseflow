@@ -71,10 +71,11 @@ module DecisionReviewTasksConcern
 
   def decision_review_where_predicate
     if FeatureToggle.enabled?(:board_grant_effectuation_task, user: :current_user)
-      # Disregards the active/eligible request issues requirement on decision reviews
-      # so that BoardGrantEffectuationTasks, which only appear on
-      # appeals with at least one closed request issue, can be included.
-      return assigned_to_only_constraint
+      # Enforces the requirement that all business line tasks in the queue
+      # must be associated with a decision review that has at least one active
+      # request issue except for BoardGreantEffectuationTasks. This is because those
+      # tasks are on appeals that have at least one closed request issue.
+      return board_grant_bypass_constraint
     end
 
     active_request_issue_constraints
@@ -88,7 +89,13 @@ module DecisionReviewTasksConcern
     }
   end
 
-  def assigned_to_only_constraint
-    { assigned_to: id }
+  def board_grant_bypass_constraint
+    Task.arel_table[:assigned_to_id].eq(id)
+      .and(Task.arel_table[:assigned_to_type].eq("Organization"))
+      .and(
+        RequestIssue.arel_table[:closed_at].eq(nil).and(RequestIssue.arel_table[:ineligible_reason].eq(nil)).or(
+          Task.arel_table[:type].eq(BoardGrantEffectuationTask.name)
+        )
+      )
   end
 end
