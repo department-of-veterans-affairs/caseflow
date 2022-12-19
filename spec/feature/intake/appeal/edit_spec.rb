@@ -647,7 +647,7 @@ feature "Appeal Edit issues", :all_dbs do
       radio_choices[1].click
       expect(find("#is-predocket-needed_true", visible: false).checked?).to eq(false)
       expect(find("#is-predocket-needed_false", visible: false).checked?).to eq(true)
-      expect(page).not_to have_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
+      expect(page).to have_no_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
     end
   end
 

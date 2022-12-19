@@ -100,13 +100,13 @@
   color: $color-gray-dark;
   width: 750px;
   max-height: 95%;
-  font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif !important;
+  font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
   font-weight: 400;
 
-  p{
+  p {
     font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
     font-size: 1.8rem;
-    color: black;
+    color: $color-black;
   }
 
   h1 {
@@ -127,15 +127,19 @@
     margin-bottom: 14px;
   }
 
-  .question-label{
+  .question-label {
     font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
   }
 
-  .add-nonrating-request-issue, .add-nonrating-request-issue-description{
+  .add-nonrating-request-issue {
     font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
   }
 
-  .cf-benefit-type{
+  .add-nonrating-request-issue-description {
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+  }
+
+  .cf-benefit-type {
     margin-bottom: 2%;
   }
 
