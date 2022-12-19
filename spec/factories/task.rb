@@ -496,6 +496,7 @@ FactoryBot.define do
       end
 
       factory :board_grant_effectuation_task, class: BoardGrantEffectuationTask do
+        parent { create(:root_task, appeal: appeal) }
         assigned_by { nil }
       end
 
