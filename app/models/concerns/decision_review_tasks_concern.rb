@@ -71,10 +71,6 @@ module DecisionReviewTasksConcern
 
   def decision_review_where_predicate
     if FeatureToggle.enabled?(:board_grant_effectuation_task, user: :current_user)
-      # Enforces the requirement that all business line tasks in the queue
-      # must be associated with a decision review that has at least one active
-      # request issue except for BoardGreantEffectuationTasks. This is because those
-      # tasks are on appeals that have at least one closed request issue.
       return board_grant_bypass_constraint
     end
 
@@ -89,6 +85,10 @@ module DecisionReviewTasksConcern
     }
   end
 
+  # Enforces the requirement that all business line tasks in the queue
+  # must be associated with a decision review that has at least one active
+  # request issue except for BoardGreantEffectuationTasks. This is because those
+  # tasks are on appeals that have at least one closed request issue.
   def board_grant_bypass_constraint
     Task.arel_table[:assigned_to_id].eq(id)
       .and(Task.arel_table[:assigned_to_type].eq("Organization"))
