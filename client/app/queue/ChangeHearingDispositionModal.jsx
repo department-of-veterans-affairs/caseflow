@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { isArray, find } from 'lodash';
 import moment from 'moment';
 
+import COPY from '../../COPY';
 import { DISPOSITION_OPTIONS } from '../hearings/constants';
 import DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
@@ -130,7 +131,7 @@ class ChangeHearingDispositionModal extends React.Component {
         <br />
         <TextareaField
           name="Notes"
-          errorMessage={highlightFormItems && !this.state.instructions ? 'Notes field is required' : null}
+          errorMessage={highlightFormItems && !this.state.instructions ? COPY.NOTES_ERROR_FIELD_REQUIRED : null}
           id="taskInstructions"
           onChange={(value) => this.setState({ instructions: value })}
           value={this.state.instructions}

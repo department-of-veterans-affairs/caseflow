@@ -77,7 +77,7 @@ class CreateChangeHearingDispositionTaskModal extends React.Component {
 
       <TextareaField
         name="Notes"
-        errorMessage={highlightFormItems && !this.state.instructions ? 'Notes field is required' : null}
+        errorMessage={highlightFormItems && !this.state.instructions ? COPY.NOTES_ERROR_FIELD_REQUIRED : null}
         id="taskInstructions"
         onChange={(value) => this.setState({ instructions: value })}
         value={this.state.instructions} />
