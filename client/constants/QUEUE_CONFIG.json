@@ -62,8 +62,10 @@
     },
     "RECEIPT_DATE_INTAKE": {
       "name": "receiptDateColumn",
-      "sorting_table": "tasks",
-      "sorting_columns": ["assigned_at"]
+      "sorting_table": "appeals",
+      "sorting_columns": [
+        "receipt_date"
+      ]
     },
     "DAYS_WAITING": {
       "name": "daysWaitingColumn",
@@ -160,6 +162,9 @@
 
   "COLUMN_SORT_ORDER_ASC": "asc",
   "COLUMN_SORT_ORDER_DESC": "desc",
+
+  "DEFAULT_SORTING_COLUMN_KEY": "sortColName",
+  "DEFAULT_SORTING_DIRECTION_KEY": "sortAscending",
 
   "FILTER_OPTIONS": {
     "IS_AOD": {
