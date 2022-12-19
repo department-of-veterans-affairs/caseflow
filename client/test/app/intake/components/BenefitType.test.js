@@ -73,7 +73,7 @@ describe('BenefitType', () => {
       });
     });
 
-    describe('when the user is a VHA staff member with feature toggle disabled', () => {
+    describe('when the user is a VHA staff member with feature toggle disabled on Higher Level Review Form', () => {
       const props = {
         ...defaultProps,
         featureToggles: { vhaClaimReviewEstablishment: false }
@@ -145,7 +145,7 @@ describe('BenefitType', () => {
       });
     });
 
-    describe('when the user is a VHA staff member with feature toggle disabled', () => {
+    describe('when the user is a VHA staff member with feature toggle disabled on Supplemental Claim Form', () => {
       const props = {
         ...defaultProps,
         featureToggles: { vhaClaimReviewEstablishment: false }
