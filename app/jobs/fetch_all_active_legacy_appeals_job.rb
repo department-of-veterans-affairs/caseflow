@@ -74,7 +74,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
       AppealState.create(all_appeal_states)
     rescue StandardError => error
       Rails.logger.error("#{appeal&.class} ID #{appeal&.id} was unable to create an appeal_states record because of "\
-         "#{error}".red)
+         "#{error}")
       @errors << OpenStruct.new(
         appeal_type: appeal&.class,
         appeal_id: appeal&.id,
