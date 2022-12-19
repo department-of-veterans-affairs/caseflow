@@ -209,7 +209,7 @@ export class CaseTitleDetails extends React.PureComponent {
                 closeHandler={this.handleModalClose}
                 title={COPY.TASK_SNAPSHOT_EDIT_DOCUMENT_ID_MODAL_TITLE}
               >
-                {!this.state.value || this.state.value === appeal.documentID ?
+                {(!this.state.value || this.state.value === appeal.documentID) && !highlightModal ?
                   <span className="usa-input-error-message" style={{ marginBottom: '5px' }} tabIndex={0}>
                     {COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} must be different</span> : ''}
                 <TextField
