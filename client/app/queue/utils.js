@@ -164,7 +164,8 @@ const taskAttributesFromRawTask = (task) => {
     business_line: task.attributes.business_line,
     claimant: {
       name: task.attributes.claimant?.name
-    }
+    },
+    veteranParticipantId: task.attributes.veteran_participant_id
   };
 };
 
