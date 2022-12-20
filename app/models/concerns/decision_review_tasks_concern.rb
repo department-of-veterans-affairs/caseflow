@@ -21,7 +21,7 @@ module DecisionReviewTasksConcern
   )
     tasks
       .recently_completed
-      .includes(decision_review_task_includes)
+      .includes(*decision_review_task_includes)
       .order(closed_at: sort_order.to_sym)
   end
 
