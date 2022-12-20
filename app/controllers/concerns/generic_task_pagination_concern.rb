@@ -30,10 +30,20 @@ module GenericTaskPaginationConcern
   def paginate_tasks(task_list)
     tasks = task_list.is_a?(Array) ? Kaminari.paginate_array(task_list) : task_list
 
-    tasks.page(allowed_params[:page] || 1).per(DEFAULT_TASKS_PER_PAGE)
+    tasks
+      .page(allowed_params[Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM.to_sym] || 1)
+      .per(DEFAULT_TASKS_PER_PAGE)
   end
 
   def apply_task_serializer(tasks)
     tasks.map(&:serialize_task)
+  end
+
+  def pagination_query_params
+    {
+      sort_order: allowed_params[Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM.to_sym],
+      sort_by: allowed_params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym],
+      filters: allowed_params[Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM.to_sym]
+    }
   end
 end

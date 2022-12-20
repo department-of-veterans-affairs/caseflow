@@ -86,11 +86,13 @@ class DecisionReviewsController < ApplicationController
   end
 
   def queue_tasks
-    return missing_tab_parameter_error unless allowed_params[:tab]
+    tab_name = allowed_params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym]
 
-    tasks = case allowed_params[:tab]
-            when "in_progress" then in_progress_tasks
-            when "completed" then completed_tasks
+    return missing_tab_parameter_error unless tab_name
+
+    tasks = case tab_name
+            when "in_progress" then in_progress_tasks(pagination_query_params)
+            when "completed" then completed_tasks(pagination_query_params)
             else
               return unrecognized_tab_name_error
             end
