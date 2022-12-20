@@ -34,7 +34,7 @@ class WorkQueue::DecisionReviewTaskSerializer
   end
 
   def self.issue_count(object)
-    object[:issues_count] || request_issues(object).active_or_ineligible.size
+    object[:issue_count] || request_issues(object).active_or_ineligible.size
   end
 
   def self.veteran(object)
