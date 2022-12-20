@@ -48,11 +48,34 @@ module DecisionReviewTasksConcern
     decision_reviews_on_request_issues(ama_appeal: :request_issues)
   end
 
+  def ama_appeals_query
+    if FeatureToggle.enabled?(:board_grant_effectuation_task, user: :current_user)
+      return Arel::Nodes::Union.new(
+        appeals_on_request_issues,
+        board_grant_effectuation_tasks
+      )
+    end
+
+    appeals_on_request_issues
+  end
+
+  # Specific case for BoardEffectuationGrantTasks to include them in the result set
+  # if the :board_grant_effectuation_task FeatureToggle is enabled for the current user.
+  def board_grant_effectuation_tasks
+    Task.select(Task.arel_table[Arel.star], issue_count)
+      .open
+      .left_joins(ama_appeal: :request_issues)
+      .where(Task.arel_table[:type].eq(BoardGrantEffectuationTask.name))
+      .where(assigned_to: id)
+      .group("tasks.id")
+      .arel
+  end
+
   def decision_reviews_on_request_issues(join_constraint)
     Task.select(Task.arel_table[Arel.star], issue_count)
       .open
       .joins(join_constraint)
-      .where(decision_review_where_predicate)
+      .where(active_request_issue_constraints)
       .group("tasks.id")
       .arel
   end
@@ -63,18 +86,10 @@ module DecisionReviewTasksConcern
         higher_level_reviews_on_request_issues,
         supplemental_claims_on_request_issues
       ),
-      appeals_on_request_issues
+      ama_appeals_query
     )
 
     Arel::Nodes::As.new(union_query, Task.arel_table)
-  end
-
-  def decision_review_where_predicate
-    if FeatureToggle.enabled?(:board_grant_effectuation_task, user: :current_user)
-      return board_grant_bypass_constraint
-    end
-
-    active_request_issue_constraints
   end
 
   def active_request_issue_constraints
@@ -83,19 +98,5 @@ module DecisionReviewTasksConcern
       "request_issues.closed_at": nil,
       "request_issues.ineligible_reason": nil
     }
-  end
-
-  # Enforces the requirement that all business line tasks in the queue
-  # must be associated with a decision review that has at least one active
-  # request issue except for BoardGreantEffectuationTasks. This is because those
-  # tasks are on appeals that have at least one closed request issue.
-  def board_grant_bypass_constraint
-    Task.arel_table[:assigned_to_id].eq(id)
-      .and(Task.arel_table[:assigned_to_type].eq("Organization"))
-      .and(
-        RequestIssue.arel_table[:closed_at].eq(nil).and(RequestIssue.arel_table[:ineligible_reason].eq(nil)).or(
-          Task.arel_table[:type].eq(BoardGrantEffectuationTask.name)
-        )
-      )
   end
 end
