@@ -1506,23 +1506,18 @@ RSpec.feature "Case details", :all_dbs do
     before { FeatureToggle.enable!(:indicator_for_contested_claims) }
     after { FeatureToggle.disable!(:indicator_for_contested_claims) }
 
-    let(:request_issues) do
-      [
-        create(:request_issue, benefit_type: "compensation", nonrating_issue_category: "Contested Claims - Insurance"),
-        create(:request_issue, :rating, benefit_type: "fiduciary")
-      ]
-    end
-    let(:appeal) { create(:appeal, request_issues: request_issues) }
-    let!(:tracking_task) do
-      create(
-        :track_veteran_task,
-        :completed,
-        appeal: appeal,
-        parent: appeal.root_task
-      )
-    end
 
     it "should show the contested claim badge" do
+      request_issues = [create(:request_issue,
+                               benefit_type: "compensation",
+                               nonrating_issue_category: "Contested Claims - Insurance"),
+                        create(:request_issue, :rating, benefit_type: "fiduciary")]
+      appeal = create(:appeal, request_issues: request_issues)
+      tracking_task = create(:track_veteran_task,
+                             :completed,
+                             appeal: appeal,
+                             parent: appeal.root_task)
+
       visit("/queue/appeals/#{tracking_task.appeal.uuid}")
       expect(page).to have_selector(".cf-contested-badge")
 

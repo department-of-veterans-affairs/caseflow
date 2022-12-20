@@ -186,7 +186,7 @@ export const HeaderRow = (props) => {
               className={cellClasses(column)}
             >
               {column.tooltip ? (
-                <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip}>
+                <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip} styling="flex">
                   {columnContent}
                 </Tooltip>
               ) : (
