@@ -106,6 +106,8 @@ module DecisionReviewTasksConcern
 
     task_filter = locate_task_filter(parsed_filters)
 
+    return nil unless task_filter
+
     # ex: "val"=>["SupplementalClaim|HigherLevelReview"]
     task_filter["val"].first.split("|")
   end
