@@ -87,7 +87,7 @@ class TaskSorter
       task_id_to_receipt_date_hash[task.id] = appeal_receipt_date
     end
     # sort the hash so the dates are in ascending order (oldest first), and return the id of the tasks (keys)
-    task_id_to_receipt_date_hash.sort_by { |_, v| v }.to_h.keys
+    task_id_to_receipt_date_hash.sort_by { |_, receipt_date_id| receipt_date_id }.to_h.keys
   end
 
   def default_order_clause
