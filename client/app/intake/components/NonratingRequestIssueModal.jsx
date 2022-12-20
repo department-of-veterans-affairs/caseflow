@@ -329,7 +329,8 @@ class NonratingRequestIssueModal extends React.Component {
               {nonratingRequestIssueSelection}
               {additionalDetails}
             </div>
-            {(isPreDocketNeeded === 'true' && showPreDocketBanner) && <Alert message={VHA_PRE_DOCKET_ISSUE_BANNER} type="info" />}
+            {(isPreDocketNeeded === 'true' && showPreDocketBanner) &&
+              <Alert message={VHA_PRE_DOCKET_ISSUE_BANNER} type="info" />}
           </div>
         </Modal>
       </div>
