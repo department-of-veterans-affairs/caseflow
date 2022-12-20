@@ -41,6 +41,13 @@ FactoryBot.define do
       establishment_processed_at { Time.zone.now }
     end
 
+    transient do
+      veteran do
+        Veteran.find_by(file_number: veteran_file_number) ||
+          create(:veteran, file_number: (generate :veteran_file_number))
+      end
+    end
+
     after(:create) do |sc, evaluator|
       if evaluator.number_of_claimants
         create_list(
