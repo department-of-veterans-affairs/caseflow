@@ -17,7 +17,8 @@ module DecisionReviewTasksConcern
   def completed_tasks(
     _sort_by: "",
     sort_order: "desc",
-    _filters: []
+    # BoardGrantEffectuationTask, SupplementalClaim, HigherLevelReview, VeteranRecordRequest
+    _filters: ["col=taskColumn&val=PreDocketTask|VeteranRecordRequest"]
   )
     tasks
       .recently_completed
@@ -98,5 +99,20 @@ module DecisionReviewTasksConcern
       "request_issues.closed_at": nil,
       "request_issues.ineligible_reason": nil
     }
+  end
+
+  def parse_filtered_tasks(filters)
+    parsed_filters = filters.map { |filter| CGI.parse(filter) }
+
+    task_filter = locate_task_filter(parsed_filters)
+
+    # ex: "val"=>["SupplementalClaim|HigherLevelReview"]
+    task_filter["val"].first.split("|")
+  end
+
+  def locate_task_filter(parsed_filters)
+    parsed_filters.find do |filter|
+      filter["col"].include?(Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name)
+    end
   end
 end
