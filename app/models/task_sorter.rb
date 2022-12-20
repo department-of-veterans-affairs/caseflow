@@ -42,9 +42,6 @@ class TaskSorter
 
   def order_clause
     case column.name
-    # when Constants.QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name
-      # get the array of ids with the tasks sorted and pass to custom order clause
-      # Arel.sql(receipt_date_order_clause(receipt_date_sorted_array))
     when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
       Task.order_by_appeal_priority_clause(order: sort_order)
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
@@ -54,34 +51,6 @@ class TaskSorter
     else
       Arel.sql(default_order_clause)
     end
-  end
-
-  # creates SQL query using sorted appeal receipt date array
-  def receipt_date_order_clause(sorted_array)
-    # if the sort order is desc order, flip the array
-    if sort_order.eql? Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC
-      sorted_array = sorted_array.reverse
-    end
-    order_clause = "CASE #{Task.table_name}.id "
-    sorted_array.each_with_index do |id, index|
-      order_clause += "WHEN #{id} THEN #{index} "
-    end
-    order_clause += "ELSE #{sorted_array.length} END"
-  end
-
-  # sorts the tasks by the appeal receipt date and returns an array of task ids
-  def receipt_date_sorted_array
-    # create hash to hold task id and appeal receipt date
-    task_id_to_receipt_date_hash = {}
-    # cycle the cached tasks
-    tasks.with_assignees.with_assigners.with_cached_appeals.each do |task|
-      # get the appeal assigned to the task
-      appeal_receipt_date = Appeal.find(task.appeal_id).receipt_date
-      # load hash with the receipt date and task id
-      task_id_to_receipt_date_hash[task.id] = appeal_receipt_date
-    end
-    # sort the hash so the dates are in ascending order (oldest first), and return the id of the tasks (keys)
-    task_id_to_receipt_date_hash.sort_by { |_, v| v }.to_h.keys
   end
 
   def default_order_clause

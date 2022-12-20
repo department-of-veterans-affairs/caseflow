@@ -18,11 +18,6 @@ class BvaIntakePendingTab < QueueTab
   end
 
   def tasks
-    # Original
-    # on_hold_task_children.open
-    # With includes added again since it gets eaten by on_hold_task_children
-    # on_hold_task_children.includes(*task_includes).open
-    # with join for sorting without nasty case statement
     on_hold_task_children.open.includes(*task_includes, :cancelled_by).joins(:ama_appeal)
   end
 
