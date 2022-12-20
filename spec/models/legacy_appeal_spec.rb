@@ -783,8 +783,7 @@ describe LegacyAppeal, :all_dbs do
                                                          vacols_id: vacols_case.bfkey,
                                                          exception_flag: nil,
                                                          with_attorney?: false,
-                                                         with_judge?: false
-                                                        )
+                                                         with_judge?: false)
     end
   end
 

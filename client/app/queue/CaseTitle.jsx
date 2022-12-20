@@ -59,7 +59,7 @@ class CaseTitle extends React.PureComponent {
         <>
           <span {...viewCasesStyling}>
             <Link href="#" onClick={this.props.toggleVeteranCaseList}>
-              {veteranCaseListIsVisible ? 'Hide ' : 'View '} all cases
+              {veteranCaseListIsVisible ? 'Hide' : 'View'} all cases
             </Link>
           </span>
           <BadgeArea appeal={appeal} isHorizontal />

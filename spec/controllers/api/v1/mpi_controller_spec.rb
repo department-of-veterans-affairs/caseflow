@@ -4,12 +4,18 @@ describe Api::V1::MpiController, type: :controller do
   let(:api_key) { ApiKey.create!(consumer_name: "API Consumer").key_string }
   let(:request_params) do
     {
-      veterans_id: "123456789",
+      veterans_ssn: "123456789",
+      veterans_pat: "PAT123456^CFL200^A",
       deceased_time: 1.day.ago
     }
   end
 
-  let(:updated_vet) { create(:correspondent, ssn: request_params[:veterans_id], sfnod: request_params[:deceased_time]) }
+  let(:updated_vet) do
+    create(:correspondent,
+           stafkey: request_params[:veterans_pat].split("^")[0],
+           ssn: request_params[:veterans_ssn],
+           sfnod: request_params[:deceased_time])
+  end
 
   context "authorization" do
     it "fails if user provides no API key" do

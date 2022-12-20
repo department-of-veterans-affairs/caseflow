@@ -12,9 +12,9 @@ const Tooltip = (props) => {
     position = 'top',
     offset = {},
     tabIndex = 0,
+    ariaLabel,
     styling = 'inline-block',
-    className = 'cf-tooltip',
-    ariaLabel
+    className = 'cf-tooltip'
   } = props;
 
   const borderToColor = position.charAt(0).toUpperCase() + position.slice(1);
@@ -67,9 +67,9 @@ Tooltip.propTypes = {
   offset: PropTypes.object,
   children: PropTypes.object,
   tabIndex: PropTypes.number,
+  ariaLabel: PropTypes.string,
   styling: PropTypes.string,
-  className: PropTypes.string,
-  ariaLabel: PropTypes.string
+  className: PropTypes.string
 };
 
 export default Tooltip;
