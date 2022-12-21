@@ -373,8 +373,10 @@ class AddIssuesPage extends React.Component {
     let rowObjects = fieldsForFormType;
 
     const issueSectionRow = (sectionIssues, fieldTitle) => {
-      const reviewHasVhaIssues = sectionIssues.some((issue) => issue.benefitType === 'vha');
-      const showPreDocketBanner = !editPage && formType === 'appeal' && reviewHasVhaIssues;
+      const reviewHasPredocketVhaIssues = sectionIssues.some(
+        (issue) => issue.benefitType === 'vha' && issue.isPreDocketNeeded === 'true'
+      );
+      const showPreDocketBanner = !editPage && formType === 'appeal' && reviewHasPredocketVhaIssues;
 
       return {
         field: fieldTitle,
