@@ -296,6 +296,11 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :supplemental_claim_task, class: DecisionReviewTask do
+        appeal { create(:higher_level_review, benefit_type: "education") }
+        assigned_by { nil }
+      end
+
       factory :higher_level_review_vha_task, class: DecisionReviewTask do
         appeal { create(:higher_level_review, :with_vha_issue, benefit_type: "vha") }
         assigned_by { nil }
