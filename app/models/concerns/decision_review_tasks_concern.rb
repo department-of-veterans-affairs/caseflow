@@ -3,26 +3,38 @@
 module DecisionReviewTasksConcern
   extend ActiveSupport::Concern
 
+  TASK_FILTER_PREDICATES = {
+    "VeteranRecordRequest" => Task.arel_table[:type].eq(VeteranRecordRequest.name),
+    "BoardGrantEffectuationTask" => Task.arel_table[:type].eq(BoardGrantEffectuationTask.name),
+    "HigherLevelReview" => Task.arel_table[:appeal_type]
+      .eq("HigherLevelReview")
+      .and(Task.arel_table[:type].eq("DecisionReviewTask")),
+    "SupplementalClaim" => Task.arel_table[:appeal_type]
+      .eq("SupplementalClaim")
+      .and(Task.arel_table[:type].eq("DecisionReviewTask"))
+  }.freeze
+
   def in_progress_tasks(
     _sort_by: "",
     sort_order: "desc",
-    _filters: []
+    filters: []
   )
     Task.select(Arel.star)
       .from(combined_decision_review_tasks_query)
       .includes(*decision_review_task_includes)
+      .where(task_filter_predicate(filters))
       .order(assigned_at: sort_order.to_sym)
   end
 
   def completed_tasks(
     _sort_by: "",
     sort_order: "desc",
-    # BoardGrantEffectuationTask, SupplementalClaim, HigherLevelReview, VeteranRecordRequest
-    _filters: ["col=taskColumn&val=PreDocketTask|VeteranRecordRequest"]
+    filters: []
   )
     tasks
       .recently_completed
       .includes(*decision_review_task_includes)
+      .where(task_filter_predicate(filters))
       .order(closed_at: sort_order.to_sym)
   end
 
@@ -101,18 +113,35 @@ module DecisionReviewTasksConcern
     }
   end
 
-  def parse_filtered_tasks(filters)
-    parsed_filters = filters.map { |filter| CGI.parse(filter) }
+  def task_filter_predicate(filters)
+    task_filter = locate_task_filter(filters)
 
-    task_filter = locate_task_filter(parsed_filters)
-
-    return nil unless task_filter
+    # Returns a tautological predicate if a task filter could not be located.
+    return "1 = 1" unless task_filter
 
     # ex: "val"=>["SupplementalClaim|HigherLevelReview"]
-    task_filter["val"].first.split("|")
+    tasks_to_include = task_filter["val"].first.split("|")
+
+    build_task_predicates(tasks_to_include)
   end
 
-  def locate_task_filter(parsed_filters)
+  def build_task_predicates(tasks_to_include)
+    first_task_name, *remaining_task_names = tasks_to_include
+
+    filter = TASK_FILTER_PREDICATES[first_task_name]
+
+    remaining_task_names.each { |task_name| filter = filter.or(TASK_FILTER_PREDICATES[task_name]) }
+
+    filter
+  end
+
+  def parse_filters(filters)
+    filters.map { |filter| CGI.parse(filter) }
+  end
+
+  def locate_task_filter(filters)
+    parsed_filters = parse_filters(filters)
+
     parsed_filters.find do |filter|
       filter["col"].include?(Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name)
     end
