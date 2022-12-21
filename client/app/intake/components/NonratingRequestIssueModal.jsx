@@ -167,7 +167,7 @@ class NonratingRequestIssueModal extends React.Component {
     const enforcePreDocketRequirement = (
       this.props.featureToggles.eduPreDocketAppeals &&
       formType === 'appeal' &&
-      benefitType === 'education' &&
+      (benefitType === 'education' || benefitType === 'vha') &&
       !isPreDocketNeeded
     );
 
