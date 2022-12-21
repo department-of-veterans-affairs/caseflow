@@ -25,12 +25,11 @@ class QuarterlyNotificationsJob < CaseflowJob
           fail Caseflow::Error::AppealNotFound, "Standard Error ID: " + SecureRandom.uuid + " The appeal was unable to be found."
         else
           begin
-            send_quarterly_notifications(state, appeal)
+            send_quarterly_notifications(appeal_state, appeal)
           rescue StandardError => error
             Rails.logger.error("An Appeal State Record was unable to be created for #{appeal&.class} ID #{appeal&.id} "\
               "because of #{error}")
           end
-          # send_quarterly_notifications(state, appeal)
         end
       end
     end
