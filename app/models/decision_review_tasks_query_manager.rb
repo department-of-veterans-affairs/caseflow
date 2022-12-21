@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-module DecisionReviewTasksConcern
-  extend ActiveSupport::Concern
-
+class DecisionReviewTasksQueryManager
   TASK_FILTER_PREDICATES = {
     "VeteranRecordRequest" => Task.arel_table[:type].eq(VeteranRecordRequest.name),
     "BoardGrantEffectuationTask" => Task.arel_table[:type].eq(BoardGrantEffectuationTask.name),
@@ -13,6 +11,10 @@ module DecisionReviewTasksConcern
       .eq("SupplementalClaim")
       .and(Task.arel_table[:type].eq("DecisionReviewTask"))
   }.freeze
+
+  def initialize(assignee)
+    @assignee = assignee
+  end
 
   def in_progress_tasks(
     _sort_by: "",
@@ -31,7 +33,8 @@ module DecisionReviewTasksConcern
     sort_order: "desc",
     filters: []
   )
-    tasks
+    @assignee
+      .tasks
       .recently_completed
       .includes(*decision_review_task_includes)
       .where(task_filter_predicate(filters))
@@ -79,7 +82,7 @@ module DecisionReviewTasksConcern
       .open
       .left_joins(ama_appeal: :request_issues)
       .where(Task.arel_table[:type].eq(BoardGrantEffectuationTask.name))
-      .where(assigned_to: id)
+      .where(assigned_to: @assignee)
       .group("tasks.id")
       .arel
   end
@@ -107,7 +110,7 @@ module DecisionReviewTasksConcern
 
   def active_request_issue_constraints
     {
-      assigned_to: id,
+      assigned_to: @assignee,
       "request_issues.closed_at": nil,
       "request_issues.ineligible_reason": nil
     }
