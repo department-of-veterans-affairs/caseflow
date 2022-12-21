@@ -147,15 +147,14 @@ namespace :add_admins do
       created_by: RequestStore[:current_user],
       source_appeal: appeal,
       substitution_date: 5.days.ago.to_date,
-      claimant_type: "VeteranClaimant",
-      substitute_participant_id: 5_000_018_91,
-      poa_participant_id: 6_001_538_63
+      claimant_type: 'VeteranClaimant',
+      substitute_participant_id: 500001891,
+      poa_participant_id: 600153863
     )
     appeal.appellant_substitution = as
 
     STDOUT.puts("new appellant substitution: #{as}")
-    STDOUT.puts("New appellant substitution made for appeal #{appeal.id} with vet file number
-      #{appeal.veteran_file_number}")
+    STDOUT.puts("New appellant substitution made for appeal #{appeal.id} with vet file number #{appeal.veteran_file_number}")
   end
 
   desc "create a NOD Date Update for a designated appeal"
