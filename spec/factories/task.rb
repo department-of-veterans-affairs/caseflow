@@ -297,7 +297,7 @@ FactoryBot.define do
       end
 
       factory :supplemental_claim_task, class: DecisionReviewTask do
-        appeal { create(:higher_level_review, benefit_type: "education") }
+        appeal { create(:higher_level_review, benefit_type: "nca") }
         assigned_by { nil }
       end
 
