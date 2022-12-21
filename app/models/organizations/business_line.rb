@@ -30,6 +30,13 @@ class BusinessLine < Organization
       .order(assigned_at: sort_order.to_sym)
   end
 
+  def in_progress_tasks_type_counts
+    Task.select(Task.arel_table[:type])
+      .from(combined_decision_review_tasks_query)
+      .group(Task.arel_table[:type], Task.arel_table[:appeal_type])
+      .count
+  end
+
   def completed_tasks(
     _sort_by: "",
     sort_order: "desc",
@@ -40,6 +47,13 @@ class BusinessLine < Organization
       .includes(*decision_review_task_includes)
       .where(task_filter_predicate(filters))
       .order(closed_at: sort_order.to_sym)
+  end
+
+  def completed_tasks_type_counts
+    tasks
+      .recently_completed
+      .group(Task.arel_table[:type], Task.arel_table[:appeal_type])
+      .count
   end
 
   private
