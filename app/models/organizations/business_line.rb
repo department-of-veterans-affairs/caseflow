@@ -6,10 +6,10 @@ class BusinessLine < Organization
     "BoardGrantEffectuationTask" => Task.arel_table[:type].eq(BoardGrantEffectuationTask.name),
     "HigherLevelReview" => Task.arel_table[:appeal_type]
       .eq("HigherLevelReview")
-      .and(Task.arel_table[:type].eq("DecisionReviewTask")),
+      .and(Task.arel_table[:type].eq(DecisionReviewTask.name)),
     "SupplementalClaim" => Task.arel_table[:appeal_type]
       .eq("SupplementalClaim")
-      .and(Task.arel_table[:type].eq("DecisionReviewTask"))
+      .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
   }.freeze
 
   delegate :in_progress_tasks, :completed_tasks, to: :decision_review_tasks_query_manager
