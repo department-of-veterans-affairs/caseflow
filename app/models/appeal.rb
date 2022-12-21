@@ -668,8 +668,8 @@ class Appeal < DecisionReview
     court_remand?
   end
 
-  def vha_has_issues?
-    request_issues.active.any? { |ri| ri.benefit_type == "vha" }
+  def vha_predocket_needed?
+    request_issues.active.any?(&:vha_predocket?)
   end
 
   def edu_predocket_needed?
@@ -778,7 +778,7 @@ class Appeal < DecisionReview
   end
 
   def create_tasks_on_intake_success!
-    if vha_has_issues?
+    if vha_predocket_needed?
       PreDocketTasksFactory.new(self).call_vha
     elsif edu_predocket_needed?
       PreDocketTasksFactory.new(self).call_edu
