@@ -17,9 +17,9 @@ class QuarterlyNotificationsJob < CaseflowJob
       batched_appeal_states.each do |appeal_state|
         # add_record_to_appeal_states_table(appeal_state.appeal)
         if appeal_state.appeal_type == "Appeal"
-          appeal = Appeal.find_by(id: state.appeal_id)
+          appeal = Appeal.find_by(id: appeal_state.appeal_id)
         elsif appeal_state.appeal_type == "LegacyAppeal"
-          appeal = LegacyAppeal.find_by(id: state.appeal_id)
+          appeal = LegacyAppeal.find_by(id: appeal_state.appeal_id)
         end
         if appeal.nil?
           fail Caseflow::Error::AppealNotFound, "Standard Error ID: " + SecureRandom.uuid + " The appeal was unable to be found."
