@@ -456,7 +456,8 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
       correctionType: issue.correctionType,
       editable: issue.editable,
       examRequested: issue.examRequested,
-      decisionIssueId: issue.decisionIssueId
+      decisionIssueId: issue.decisionIssueId,
+      isPreDocketNeeded: issue.isPreDocketNeeded
     };
   });
 };
