@@ -10,15 +10,7 @@
   }
 }
 
-.grayLineStyling {
-  width: 5px;
-  background: $color-gray-dark;
-  margin: auto;
-  position: absolute;
-  top: 0;
-  left: 45.5%;
-  bottom: 0;
-}
+
 
 .grayLineContainer {
   text-align: center;
@@ -27,6 +19,16 @@
   position: relative;
   vertical-align: top;
   width: 15px;
+
+  .grayLineStyling {
+    width: 5px;
+    background: $color-gray-dark;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 45.5%;
+    bottom: 0;
+  }
 }
 
 .attorneyTaskContainer {
@@ -39,4 +41,15 @@
 .attorneyTaskTimelineContainer {
   border: none;
   padding-left: '25px';
+}
+
+@media screen and (max-width: 1200px) {
+  .case-timeline {
+    flex-direction: column;
+    gap: 10px;
+
+    .case-type, .attorney-assigned {
+      width: 100%;
+    }
+  }
 }
