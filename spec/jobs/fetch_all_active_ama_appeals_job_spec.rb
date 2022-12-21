@@ -72,8 +72,8 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         allow(subject).to receive(:map_appeal_ihp_state).with(legacy_appeal).and_raise(error)
         subject.send(:add_record_to_appeal_states_table, legacy_appeal)
         expect(Rails.logger).to have_received(:error).with(
-          "\e[31m#{legacy_appeal&.class} ID #{legacy_appeal&.id} was unable to create an appeal_states record "\
-          "because of #{error}\e[0m"
+          "#{legacy_appeal&.class} ID #{legacy_appeal&.id} was unable to create an appeal_states record "\
+          "because of #{error}"
         )
       end
     end

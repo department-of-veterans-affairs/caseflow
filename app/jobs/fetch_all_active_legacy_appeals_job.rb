@@ -71,7 +71,18 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
                        appeal_cancelled_state, appeal_docketed_state]
       # all appeal state hash values combined
       all_appeal_states = appeal_states.inject(&:merge)
-      AppealState.create(all_appeal_states)
+      appeal_state = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal.class.to_s)
+      if appeal_state
+        MetricsService.record("Updating Record in Appeal States Table for #{appeal.class} ID #{appeal.id}",
+                              name: "appeal_state.update") do
+          appeal_state.update(all_appeal_states)
+        end
+      else
+        MetricsService.record("Creating Record in Appeal States Table for #{appeal.class} ID #{appeal.id}",
+                              name: "AppealState.create") do
+          AppealState.create(all_appeal_states)
+        end
+      end
     rescue StandardError => error
       Rails.logger.error("#{appeal&.class} ID #{appeal&.id} was unable to create an appeal_states record because of "\
          "#{error}")
