@@ -160,7 +160,7 @@ detectors:
       - Seeds::MTV#send_mtv_to_judge
       - Seeds::Tasks#create_task_at_colocated
       - VirtualHearings::CreateConferenceJob#perform
-      - Docket#distribute_appeals
+      - Docket#distribute_appeals      
       - LegacyDocket#distribute_priority_appeals
       - LegacyDocket#distribute_nonpriority_appeals
       - ExternalApi::MPIService#search_people_info

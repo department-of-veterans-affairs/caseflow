@@ -123,15 +123,6 @@ class Task < CaseflowRecord
   class << self
     prepend PrivacyActPending
 
-    # Task types used by RetrieveAndCacheReaderDocumentsJob
-    # To cache docoments from VBMS to S3 for appeals
-    # With taks that are likely to need Reader to complete
-    READER_PRIORITY_TASK_TYPES = [JudgeAssignTask.name, JudgeDecisionReviewTask.name].freeze
-
-    def reader_priority_task_types
-      READER_PRIORITY_TASK_TYPES
-    end
-
     def label
       name.titlecase
     end
