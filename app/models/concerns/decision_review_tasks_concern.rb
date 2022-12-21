@@ -122,10 +122,10 @@ module DecisionReviewTasksConcern
     # ex: "val"=>["SupplementalClaim|HigherLevelReview"]
     tasks_to_include = task_filter["val"].first.split("|")
 
-    build_task_predicates(tasks_to_include)
+    build_task_filter_predicates(tasks_to_include)
   end
 
-  def build_task_predicates(tasks_to_include)
+  def build_task_filter_predicates(tasks_to_include)
     first_task_name, *remaining_task_names = tasks_to_include
 
     filter = TASK_FILTER_PREDICATES[first_task_name]
