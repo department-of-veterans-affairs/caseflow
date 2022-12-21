@@ -3,6 +3,7 @@
 class QuarterlyNotificationsJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
+  QUERY_LIMIT = ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"]
 
   # Purpose: Loop through all open appeals quarterly and sends statuses for VA Notify
   #
@@ -10,19 +11,41 @@ class QuarterlyNotificationsJob < CaseflowJob
   #
   # Response: None
   def perform
-    appeal_states = AppealState.where.not(decision_mailed: true, appeal_cancelled: true)
-    appeal_states.each do |state|
-      if state.appeal_type == "Appeal"
-        appeal = Appeal.find_by(id: state.appeal_id)
-      elsif state.appeal_type == "LegacyAppeal"
-        appeal = LegacyAppeal.find_by(id: state.appeal_id)
-      end
-      if appeal.nil?
-        fail Caseflow::Error::AppealNotFound, "Standard Error ID: " + SecureRandom.uuid + " The appeal was unable to be found."
-      else
-        send_quarterly_notifications(state, appeal)
+    AppealState.where.not(
+      decision_mailed: true, appeal_cancelled: true
+    ).find_in_batches(batch_size: QUERY_LIMIT.to_i) do |batched_appeal_states|
+      batched_appeal_states.each do |appeal_state|
+        # add_record_to_appeal_states_table(appeal_state.appeal)
+        if appeal_state.appeal_type == "Appeal"
+          appeal = Appeal.find_by(id: state.appeal_id)
+        elsif appeal_state.appeal_type == "LegacyAppeal"
+          appeal = LegacyAppeal.find_by(id: state.appeal_id)
+        end
+        if appeal.nil?
+          fail Caseflow::Error::AppealNotFound, "Standard Error ID: " + SecureRandom.uuid + " The appeal was unable to be found."
+        else
+          begin
+            send_quarterly_notifications(state, appeal)
+          rescue StandardError => error
+            Rails.logger.error("An Appeal State Record was unable to be created for #{appeal&.class} ID #{appeal&.id} "\
+              "because of #{error}")
+          end
+          # send_quarterly_notifications(state, appeal)
+        end
       end
     end
+    # appeal_states.each do |state|
+    #   if state.appeal_type == "Appeal"
+    #     appeal = Appeal.find_by(id: state.appeal_id)
+    #   elsif state.appeal_type == "LegacyAppeal"
+    #     appeal = LegacyAppeal.find_by(id: state.appeal_id)
+    #   end
+    #   if appeal.nil?
+    #     fail Caseflow::Error::AppealNotFound, "Standard Error ID: " + SecureRandom.uuid + " The appeal was unable to be found."
+    #   else
+    #     send_quarterly_notifications(state, appeal)
+    #   end
+    # end
   end
 
   private
