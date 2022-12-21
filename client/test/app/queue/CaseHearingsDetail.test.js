@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
-import { within } from '@testing-library/dom';
+import { within } from '@testing-library/dom'
 
 import { generateAmaTask } from 'test/data/tasks';
 import { openHearingAppeal, amaAppealHearingData } from 'test/data/appeals';
