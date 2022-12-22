@@ -251,7 +251,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
   describe "Acquiring decision review tasks via #index" do
     let(:veteran) { create(:veteran) }
-    let!(:in_progress_tasks) do
+    let!(:in_progress_hlr_tasks) do
       (0...32).map do |task_num|
         task = create(
           :higher_level_review_task,
@@ -265,13 +265,42 @@ describe DecisionReviewsController, :postgres, type: :controller do
       end
     end
 
-    let!(:completed_tasks) do
+    let!(:in_progress_sc_tasks) do
+      (0...32).map do |task_num|
+        task = create(
+          :supplemental_claim_task,
+          assigned_to: non_comp_org,
+          assigned_at: task_num.minutes.ago
+        )
+        task.appeal.update!(veteran_file_number: veteran.file_number)
+        create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: non_comp_org.url)
+
+        task
+      end
+    end
+
+    let!(:completed_hlr_tasks) do
       (1..20).map do |task_num|
         task = create(
           :higher_level_review_task,
           assigned_to: non_comp_org,
           assigned_at: task_num.days.ago,
           closed_at: task_num.hours.ago
+        )
+        task.completed!
+        task.appeal.update!(veteran_file_number: veteran.file_number)
+
+        task
+      end
+    end
+
+    let!(:completed_sc_tasks) do
+      (1..20).map do |task_num|
+        task = create(
+          :supplemental_claim_task,
+          assigned_to: non_comp_org,
+          assigned_at: task_num.days.ago,
+          closed_at: (2 * task_num).hours.ago
         )
         task.completed!
         task.appeal.update!(veteran_file_number: veteran.file_number)
@@ -292,6 +321,8 @@ describe DecisionReviewsController, :postgres, type: :controller do
         }
       end
 
+      let(:in_progress_tasks) { in_progress_hlr_tasks + in_progress_sc_tasks }
+
       it "page 1 displays first 15 tasks" do
         query_params[:page] = 1
 
@@ -300,31 +331,33 @@ describe DecisionReviewsController, :postgres, type: :controller do
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
 
-        expect(response_body["total_task_count"]).to eq 32
+        expect(response_body["total_task_count"]).to eq 64
         expect(response_body["tasks_per_page"]).to eq 15
-        expect(response_body["task_page_count"]).to eq 3
+        expect(response_body["task_page_count"]).to eq 5
 
         expect(
           task_ids_from_response_body(response_body)
         ).to match_array task_ids_from_seed(in_progress_tasks, (0...15), :assigned_at)
       end
 
-      it "page 3 displays last 2 tasks" do
-        query_params[:page] = 3
+      it "page 5 displays last 4s tasks" do
+        query_params[:page] = 5
 
         subject
 
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
 
-        expect(response_body["total_task_count"]).to eq 32
+        expect(response_body["total_task_count"]).to eq 64
         expect(response_body["tasks_per_page"]).to eq 15
-        expect(response_body["task_page_count"]).to eq 3
+        expect(response_body["task_page_count"]).to eq 5
 
         expect(
           task_ids_from_response_body(response_body)
-        ).to match_array task_ids_from_seed(in_progress_tasks, (-2..in_progress_tasks.size), :assigned_at)
+        ).to match_array task_ids_from_seed(in_progress_tasks, (-4..in_progress_tasks.size), :assigned_at)
       end
+
+      context "with"
     end
 
     context "completed_tasks" do
@@ -335,6 +368,8 @@ describe DecisionReviewsController, :postgres, type: :controller do
         }
       end
 
+      let(:completed_tasks) { completed_hlr_tasks + completed_sc_tasks }
+
       it "page 1 displays first 15 tasks" do
         query_params[:page] = 1
 
@@ -343,30 +378,30 @@ describe DecisionReviewsController, :postgres, type: :controller do
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
 
-        expect(response_body["total_task_count"]).to eq 20
+        expect(response_body["total_task_count"]).to eq 40
         expect(response_body["tasks_per_page"]).to eq 15
-        expect(response_body["task_page_count"]).to eq 2
+        expect(response_body["task_page_count"]).to eq 3
 
         expect(
           task_ids_from_response_body(response_body)
         ).to match_array task_ids_from_seed(completed_tasks, (0...15), :closed_at)
       end
 
-      it "page 2 displays last 5 tasks" do
-        query_params[:page] = 2
+      it "page 3 displays last 10 tasks" do
+        query_params[:page] = 3
 
         subject
 
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
 
-        expect(response_body["total_task_count"]).to eq 20
+        expect(response_body["total_task_count"]).to eq 40
         expect(response_body["tasks_per_page"]).to eq 15
-        expect(response_body["task_page_count"]).to eq 2
+        expect(response_body["task_page_count"]).to eq 3
 
         expect(
           task_ids_from_response_body(response_body)
-        ).to match_array task_ids_from_seed(completed_tasks, (-5..completed_tasks.size), :closed_at)
+        ).to match_array task_ids_from_seed(completed_tasks, (-10..completed_tasks.size), :closed_at)
       end
     end
 

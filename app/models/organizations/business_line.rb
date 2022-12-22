@@ -132,9 +132,11 @@ class BusinessLine < Organization
   end
 
   def task_filter_predicate(filters)
+    # Returns a tautological predicate if there are no filters.
+    return "1 = 1" unless filters
+
     task_filter = locate_task_filter(filters)
 
-    # Returns a tautological predicate if a task filter could not be located.
     return "1 = 1" unless task_filter
 
     # ex: "val"=>["SupplementalClaim|HigherLevelReview"]
