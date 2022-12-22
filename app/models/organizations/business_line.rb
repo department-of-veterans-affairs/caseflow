@@ -12,6 +12,8 @@ class BusinessLine < Organization
       .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
   }.freeze
 
+  TAUTOLOGICAL_PREDICATE = "1 = 1".freeze
+
   def tasks_url
     "/decision_reviews/#{url}"
   end
@@ -130,12 +132,11 @@ class BusinessLine < Organization
   end
 
   def task_filter_predicate(filters)
-    # Returns a tautological predicate if there are no filters.
-    return "1 = 1" unless filters
+    return TAUTOLOGICAL_PREDICATE unless filters
 
     task_filter = locate_task_filter(filters)
 
-    return "1 = 1" unless task_filter
+    return TAUTOLOGICAL_PREDICATE unless task_filter
 
     # ex: "val"=>["SupplementalClaim|HigherLevelReview"]
     tasks_to_include = task_filter["val"].first.split("|")
