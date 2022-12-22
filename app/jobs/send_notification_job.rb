@@ -106,13 +106,7 @@ class SendNotificationJob < CaseflowJob
     sms_template_id = event.sms_template_id
     quarterly_sms_template_id = NotificationEvent.find_by(event_type: "Quarterly Notification").sms_template_id
     appeal = Appeal.find_by_uuid(message.appeal_id) || LegacyAppeal.find_by(vacols_id: message.appeal_id)
-    first_name = (
-      if appeal.class.to_s == "Appeal"
-        appeal&.claimant&.first_name || "Appellant"
-      else
-        appeal.claimant[:first_name] || "Appellant"
-      end
-    )
+    first_name = appeal&.appellant_first_name || "Appellant"
     status = message.appeal_status || ""
     if @va_notify_email
       response = VANotifyService.send_email_notifications(message.participant_id, notification_audit_record.id.to_s, email_template_id, status, first_name)
