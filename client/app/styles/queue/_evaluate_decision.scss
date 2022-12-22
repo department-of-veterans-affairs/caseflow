@@ -46,9 +46,10 @@
 @media screen and (max-width: 1200px) {
   .case-timeline {
     flex-direction: column;
-    gap: 10px;
+    grid-gap: 10px;
 
-    .case-type, .attorney-assigned {
+    .case-type,
+    .attorney-assigned {
       width: 100%;
     }
   }
