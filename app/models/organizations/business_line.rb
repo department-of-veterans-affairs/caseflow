@@ -12,7 +12,7 @@ class BusinessLine < Organization
       .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
   }.freeze
 
-  TAUTOLOGICAL_PREDICATE = "1 = 1".freeze
+  TAUTOLOGICAL_PREDICATE = "1 = 1"
 
   def tasks_url
     "/decision_reviews/#{url}"
