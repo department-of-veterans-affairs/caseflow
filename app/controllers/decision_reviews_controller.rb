@@ -4,6 +4,8 @@ class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
 
+  delegate :in_progress_tasks, :completed_tasks, to: :business_line
+
   def index
     if business_line
       respond_to do |format|
@@ -55,30 +57,11 @@ class DecisionReviewsController < ApplicationController
     @task ||= Task.includes([:appeal, :assigned_to]).find(task_id)
   end
 
-  # :reek:FeatureEnvy
-  def in_progress_tasks
-    apply_task_serializer(
-      business_line.tasks.open.includes([:assigned_to, :appeal]).order(assigned_at: :desc).select do |task|
-        if FeatureToggle.enabled?(:board_grant_effectuation_task, user: :current_user)
-          task.appeal.request_issues.active.any? || task.is_a?(BoardGrantEffectuationTask)
-        else
-          task.appeal.request_issues.active.any?
-        end
-      end
-    )
-  end
-
-  def completed_tasks
-    apply_task_serializer(
-      business_line.tasks.recently_completed.includes([:assigned_to, :appeal]).order(closed_at: :desc)
-    )
-  end
-
   def business_line
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
   end
 
-  helper_method :in_progress_tasks, :completed_tasks, :business_line, :task
+  helper_method :in_progress_tasks, :completed_tasks, :apply_task_serializer, :business_line, :task
 
   private
 
