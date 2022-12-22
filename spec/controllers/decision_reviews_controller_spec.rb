@@ -313,6 +313,42 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
     subject { get :index, params: query_params, format: :json }
 
+    shared_examples "task query filtering" do
+      it "Only Supplemental Claim Tasks" do
+        get :index,
+            params: query_params.merge(
+              filter: ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=SupplementalClaim"],
+              page: 3
+            ),
+            format: :json
+
+        response_body = JSON.parse(response.body)
+
+        expect(
+          response_body["tasks"]["data"].all? do |task|
+            task["type"] == "decision_review_task" && task["attributes"]["type"] == "Supplemental Claim"
+          end
+        ).to be true
+      end
+
+      it "Only Higher-Level Review Tasks" do
+        get :index,
+            params: query_params.merge(
+              filter: ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=HigherLevelReview"],
+              page: 3
+            ),
+            format: :json
+
+        response_body = JSON.parse(response.body)
+
+        expect(
+          response_body["tasks"]["data"].all? do |task|
+            task["type"] == "decision_review_task" && task["attributes"]["type"] == "Higher-Level Review"
+          end
+        ).to be true
+      end
+    end
+
     context "in_progress_tasks" do
       let(:query_params) do
         {
@@ -322,6 +358,8 @@ describe DecisionReviewsController, :postgres, type: :controller do
       end
 
       let(:in_progress_tasks) { in_progress_hlr_tasks + in_progress_sc_tasks }
+
+      include_examples "task query filtering"
 
       it "page 1 displays first 15 tasks" do
         query_params[:page] = 1
@@ -356,8 +394,6 @@ describe DecisionReviewsController, :postgres, type: :controller do
           task_ids_from_response_body(response_body)
         ).to match_array task_ids_from_seed(in_progress_tasks, (-4..in_progress_tasks.size), :assigned_at)
       end
-
-      context "with"
     end
 
     context "completed_tasks" do
@@ -369,6 +405,8 @@ describe DecisionReviewsController, :postgres, type: :controller do
       end
 
       let(:completed_tasks) { completed_hlr_tasks + completed_sc_tasks }
+
+      include_examples "task query filtering"
 
       it "page 1 displays first 15 tasks" do
         query_params[:page] = 1
