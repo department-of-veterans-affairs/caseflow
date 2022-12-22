@@ -6,7 +6,11 @@ class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
 
-  delegate :in_progress_tasks, :completed_tasks, to: :business_line
+  delegate :in_progress_tasks,
+           :in_progress_tasks_type_counts,
+           :completed_tasks,
+           :completed_tasks_type_counts,
+           to: :business_line
 
   def index
     if business_line
@@ -67,7 +71,14 @@ class DecisionReviewsController < ApplicationController
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
   end
 
-  helper_method :in_progress_tasks, :completed_tasks, :apply_task_serializer, :business_line, :task
+  def task_filter_details
+    {
+      in_progress_tasks: in_progress_tasks_type_counts,
+      completed_tasks: completed_tasks_type_counts
+    }
+  end
+
+  helper_method :task_filter_details, :business_line, :task
 
   private
 
