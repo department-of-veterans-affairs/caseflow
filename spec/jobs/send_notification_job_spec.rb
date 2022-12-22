@@ -263,10 +263,15 @@ describe SendNotificationJob, type: :job do
         expect(VANotifyService).to receive(:send_email_notifications)
         SendNotificationJob.perform_now(good_message.to_json)
       end
-      it "updates the notification_audit_record with content" do
+      it "updates the notification_content field with content" do
         FeatureToggle.enable!(:va_notify_email)
         SendNotificationJob.perform_now(good_message.to_json)
         expect(Notification.last.notification_content).not_to eq(nil)
+      end
+      it "updates the email_notification_content field with content" do
+        FeatureToggle.enable!(:va_notify_email)
+        SendNotificationJob.perform_now(good_message.to_json)
+        expect(Notification.last.email_notification_content).not_to eq(nil)
       end
       it "updates the notification_audit_record with email_notification_external_id" do
         FeatureToggle.enable!(:va_notify_email)
@@ -286,10 +291,10 @@ describe SendNotificationJob, type: :job do
         expect(VANotifyService).to receive(:send_sms_notifications)
         SendNotificationJob.perform_now(good_message.to_json)
       end
-      it "updates the notification_audit_record with content" do
+      it "updates the sms_notification_content field with content" do
         FeatureToggle.enable!(:va_notify_sms)
         SendNotificationJob.perform_now(good_message.to_json)
-        expect(Notification.last.notification_content).not_to eq(nil)
+        expect(Notification.last.sms_notification_content).not_to eq(nil)
       end
       it "updates the notification_audit_record with sms_notification_external_id" do
         FeatureToggle.enable!(:va_notify_sms)
