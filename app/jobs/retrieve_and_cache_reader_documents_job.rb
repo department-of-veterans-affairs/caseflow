@@ -13,7 +13,8 @@ class RetrieveAndCacheReaderDocumentsJob < ApplicationJob
     user.update!(efolder_documents_fetched_at: Time.zone.now)
     log_info(user, appeals)
     if FeatureToggle.enabled?(:cache_reader_documents_nightly)
-      FetchDocumentsForReaderJob.new(user: user, appeals: appeals).process
+      user_find = FetchDocumentsForReaderJob.new(user: user, appeals: appeals)
+      user_find.process
     end
   end
 

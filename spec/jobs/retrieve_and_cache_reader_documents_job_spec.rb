@@ -39,7 +39,7 @@ describe RetrieveAndCacheReaderDocumentsJob, :postgres do
       subject { RetrieveAndCacheReaderDocumentsJob.perform_now }
 
       before do
-        tasks = [high_priority_task1, high_priority_task2, high_priority_task3, high_priority_task4]
+        [high_priority_task1, high_priority_task2, high_priority_task3, high_priority_task4]
       end
 
       it "should only fetch tasks assigned to user" do
