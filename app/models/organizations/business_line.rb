@@ -12,8 +12,6 @@ class BusinessLine < Organization
       .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
   }.freeze
 
-  delegate :in_progress_tasks, :completed_tasks, to: :decision_review_tasks_query_manager
-
   def tasks_url
     "/decision_reviews/#{url}"
   end
