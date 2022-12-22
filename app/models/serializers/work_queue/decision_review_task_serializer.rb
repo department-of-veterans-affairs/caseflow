@@ -49,11 +49,15 @@ class WorkQueue::DecisionReviewTaskSerializer
   end
 
   attribute :appeal do |object|
+    # If :issue_count is present then we're hitting this serializer from a Decision Review
+    # queue table, and we do not need to gather request issues as they are not used there.
+    skip_acquiring_request_issues = object[:issue_count]
+
     {
       id: decision_review(object).external_id,
       isLegacyAppeal: false,
       issueCount: issue_count(object),
-      activeRequestIssues: request_issues(object).active.map(&:serialize)
+      activeRequestIssues: skip_acquiring_request_issues || request_issues(object).active.map(&:serialize)
     }
   end
 
