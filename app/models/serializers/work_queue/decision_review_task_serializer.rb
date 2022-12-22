@@ -29,6 +29,18 @@ class WorkQueue::DecisionReviewTaskSerializer
     claimant.relationship.presence || claimant.class.name.delete_suffix("Claimant")
   end
 
+  def self.request_issues(object)
+    decision_review(object).request_issues
+  end
+
+  def self.issue_count(object)
+    object[:issue_count] || request_issues(object).active_or_ineligible.size
+  end
+
+  def self.veteran(object)
+    decision_review(object).veteran
+  end
+
   attribute :claimant do |object|
     {
       name: claimant_name(object),
@@ -40,8 +52,8 @@ class WorkQueue::DecisionReviewTaskSerializer
     {
       id: decision_review(object).external_id,
       isLegacyAppeal: false,
-      issueCount: decision_review(object).request_issues.active_or_ineligible.count,
-      activeRequestIssues: decision_review(object).request_issues.active.map(&:serialize)
+      issueCount: issue_count(object),
+      activeRequestIssues: request_issues(object).active.map(&:serialize)
     }
   end
 
@@ -53,10 +65,11 @@ class WorkQueue::DecisionReviewTaskSerializer
   attribute :created_at
 
   attribute :veteran_participant_id do |object|
-    decision_review(object).veteran.participant_id
+    veteran(object).participant_id
   end
 
   attribute :assigned_on, &:assigned_at
+
   attribute :closed_at
   attribute :started_at
 
