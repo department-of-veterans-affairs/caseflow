@@ -314,7 +314,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
     subject { get :index, params: query_params, format: :json }
 
     shared_examples "task query filtering" do
-      it "Only Supplemental Claim Tasks" do
+      it "Only Supplemental Claim Tasks are shown when filtered" do
         get :index,
             params: query_params.merge(
               filter: ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=SupplementalClaim"],
@@ -331,7 +331,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
         ).to be true
       end
 
-      it "Only Higher-Level Review Tasks" do
+      it "Only Higher-Level Review Tasks are shown when filtered" do
         get :index,
             params: query_params.merge(
               filter: ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=HigherLevelReview"],
