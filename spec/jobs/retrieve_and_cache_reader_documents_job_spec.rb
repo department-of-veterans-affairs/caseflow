@@ -42,7 +42,7 @@ describe RetrieveAndCacheReaderDocumentsJob, :postgres do
         tasks = [high_priority_task1, high_priority_task2, high_priority_task3, high_priority_task4]
       end
 
-      it "should only fetch Task assigned to user" do
+      it "should only fetch tasks assigned to user" do
         returned_user1_task1 = subject.to_a[0][1][0]
         returned_user2_task3 = subject.to_a[1][1][0]
 
@@ -51,10 +51,12 @@ describe RetrieveAndCacheReaderDocumentsJob, :postgres do
         expect(returned_user2_task3.assigned_to_id).to eq(user2.id)
         expect(returned_user2_task3.assigned_to_id).to_not eq(user1.id)
       end
-      it "should only fetch appeals with status: assigned associated to user." do
-        returned_user2 = subject.to_a[0][0]
+      it "should only fetch documents assigned to user" do
+        returned_user2 = subject.to_a[1][0]
+        returned_user2_task3 = subject.to_a[1][1][0]
 
         expect(user2.efolder_documents_fetched_at).to be_nil
+        expect(returned_user2_task3.assigned_to_id).to eq(user2.id)
         expect(returned_user2.efolder_documents_fetched_at).to_not be_nil
       end
     end
