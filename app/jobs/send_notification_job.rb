@@ -104,13 +104,16 @@ class SendNotificationJob < CaseflowJob
     event = NotificationEvent.find_by(event_type: message.template_name)
     email_template_id = event.email_template_id
     sms_template_id = event.sms_template_id
-    appeal = Appeal.find_by_uuid(message.appeal_id)
+    quarterly_sms_template_id = NotificationEvent.find_by(event_type: "Quarterly Notification").sms_template_id
+    appeal = Appeal.find_by_uuid(message.appeal_id) || LegacyAppeal.find_by(vacols_id: message.appeal_id)
     first_name = appeal&.appellant_first_name || "Appellant"
     status = message.appeal_status || ""
     if @va_notify_email
       response = VANotifyService.send_email_notifications(message.participant_id, notification_audit_record.id.to_s, email_template_id, status, first_name)
       if !response.nil? && response != ""
-        to_update = { notification_content: response.body["content"]["body"], email_notification_external_id: response.body["id"] }
+        to_update = { notification_content: response.body["content"]["body"],
+                      email_notification_content: response.body["content"]["body"],
+                      email_notification_external_id: response.body["id"] }
         update_notification_audit_record(notification_audit_record, to_update)
       end
     end
@@ -118,7 +121,9 @@ class SendNotificationJob < CaseflowJob
     if @va_notify_sms
       response = VANotifyService.send_sms_notifications(message.participant_id, notification_audit_record.id.to_s, sms_template_id, status, first_name)
       if !response.nil? && response != ""
-        to_update = { notification_content: response.body["content"]["body"], sms_notification_external_id: response.body["id"] }
+        to_update = {
+          sms_notification_content: response.body["content"]["body"], sms_notification_external_id: response.body["id"]
+        }
         update_notification_audit_record(notification_audit_record, to_update)
       end
     end
@@ -136,7 +141,7 @@ class SendNotificationJob < CaseflowJob
   # Purpose: Method to create a new notification table row for the appeal
   #
   # Params:
-  # - appeals_id - UUID or Vacols id of the appeals the event triggered
+  # - appeals_id - UUID or vacols_id of the appeals the event triggered
   # - appeals_type - Polymorphic column to identify the type of appeal
   # - - Appeal
   # - - LegacyAppeal
