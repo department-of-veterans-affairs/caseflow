@@ -10,22 +10,14 @@ class RetrieveAndCacheReaderDocumentsJob < ApplicationJob
   end
 
   def start_fetch_job(user, appeals)
-    user_update(user)
-    log_info(user, appeals)
-    process_reader_job(user, appeals)
-  end
-
-  private
-
-  def user_update(user)
     user.update!(efolder_documents_fetched_at: Time.zone.now)
-  end
-
-  def process_reader_job(user, appeals)
+    log_info(user, appeals)
     if FeatureToggle.enabled?(:cache_reader_documents_nightly)
       FetchDocumentsForReaderJob.new(user: user, appeals: appeals).process
     end
   end
+
+  private
 
   def log_info(user, appeals)
     Rails.logger.info log_message(user, appeals)
