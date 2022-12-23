@@ -669,7 +669,6 @@ exports[`QueueTable HeaderRow Renders tooltip when present on the column 1`] = `
     >
       <Tooltip
         id="tooltip-2"
-        styling="flex"
         text="Some text"
       >
         <span
