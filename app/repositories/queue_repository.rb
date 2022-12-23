@@ -65,7 +65,7 @@ class QueueRepository
         BusinessMetrics.record(service: :queue, name: "reassign_case_to_different_judge")
       end
 
-      update_decass_record(decass_record, decass_attrs)
+      update_decass_record(decass_record, decass_attrs.merge(reassigned_to_judge_date: VacolsHelper.local_time_with_utc_timezone))
 
       # update location with the judge's slogid
       decass_record.update_vacols_location!(judge_vacols_user_id)
@@ -140,7 +140,7 @@ class QueueRepository
         case_id: vacols_id,
         attorney_id: attorney.vacols_attorney_id,
         group_name: attorney.vacols_group_id[0..2],
-        assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
+        assigned_to_attorney_date: VacolsHelper.local_time_with_utc_timezone,
         deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
         complexity_rating: decass_complexity_rating(vacols_id),
         modifying_user: assigned_by.vacols_uniq_id
@@ -163,7 +163,7 @@ class QueueRepository
         update_decass_record(decass_record,
                              attorney_id: attorney.vacols_attorney_id,
                              group_name: attorney.vacols_group_id[0..2],
-                             assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
+                             assigned_to_attorney_date: VacolsHelper.local_time_with_utc_timezone,
                              deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
                              modifying_user: judge.vacols_uniq_id)
       end

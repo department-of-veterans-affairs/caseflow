@@ -288,7 +288,7 @@ export const getTaskTreesForAttorneyTasks = createSelector(
 export const getLegacyTaskTree = createSelector(
   [getAllTasksForAppeal, getJudgeDecisionReviewTask],
   (tasks, judgeDecisionReviewTask) =>
-    filter(tasks.filter((task) => !task.hideFromCaseTimeline).filter((task) => task.closedAt !== null),
+    filter(tasks.filter((task) => task.closedAt !== null),
       (task) => {
         // Remove any tasks whose createdAt to closedAt values put it outside of the range of
         // AttorneyTask.assignedOn - JudgeDecisionReviewTask.assignedOn

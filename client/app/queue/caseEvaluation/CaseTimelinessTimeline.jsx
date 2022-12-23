@@ -22,7 +22,7 @@ export const CaseTimelinessTimeline = (props) => {
   const caseType = task.caseType;
   const aod = task.aod;
   const cavc = caseType === 'Court Remand';
-  let daysAssigned = Math.max(0, decisionSubmitted.startOf('day').diff(dateAssigned, 'days'));
+  let daysAssigned = Math.max(0, decisionSubmitted.diff(dateAssigned, 'days'));
 
   if (isLegacy) {
     if (displayCaseTimelinessTimeline) {
