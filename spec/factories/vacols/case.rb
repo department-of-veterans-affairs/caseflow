@@ -23,7 +23,7 @@ FactoryBot.define do
     folder { association :folder, ticknum: bfkey, tinum: docket_number }
 
     bfregoff { "RO18" }
-    bfdloout { Time.zone.now }
+    bfdloout { Time.zone.now.strftime("%Y-%m-%d %H-%M-%S %:z") }
 
     trait :assigned do
       transient do
