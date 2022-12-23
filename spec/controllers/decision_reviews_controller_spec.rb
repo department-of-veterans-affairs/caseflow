@@ -268,7 +268,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
     let!(:in_progress_sc_tasks) do
       (0...32).map do |task_num|
         task = create(
-          :supplemental_claim_task,
+          :supplemental_claim_review_task,
           assigned_to: non_comp_org,
           assigned_at: task_num.minutes.ago
         )
@@ -297,7 +297,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
     let!(:completed_sc_tasks) do
       (1..20).map do |task_num|
         task = create(
-          :supplemental_claim_task,
+          :supplemental_claim_review_task,
           assigned_to: non_comp_org,
           assigned_at: task_num.days.ago,
           closed_at: (2 * task_num).hours.ago
