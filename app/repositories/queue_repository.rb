@@ -65,8 +65,7 @@ class QueueRepository
         BusinessMetrics.record(service: :queue, name: "reassign_case_to_different_judge")
       end
 
-      update_decass_record(decass_record,
-                           decass_attrs.merge(reassigned_to_judge_date: VacolsHelper.local_time_with_utc_timezone))
+      update_decass_record(decass_record, decass_attrs)
 
       # update location with the judge's slogid
       decass_record.update_vacols_location!(judge_vacols_user_id)

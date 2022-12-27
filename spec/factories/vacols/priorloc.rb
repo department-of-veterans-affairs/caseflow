@@ -5,8 +5,8 @@ FactoryBot.define do
     sequence(:lockey)
 
     before(:create) do |loc, evaluator|
-      loc.locdout = VacolsHelper.normalize_vacols_datetime(evaluator.locdout) if evaluator.locdout
-      loc.locdin = VacolsHelper.normalize_vacols_datetime(evaluator.locdin) if evaluator.locdin
+      loc.locdout = VacolsHelper.format_datetime_with_utc_timezone(evaluator.locdout) if evaluator.locdout
+      loc.locdin = VacolsHelper.format_datetime_with_utc_timezone(evaluator.locdin) if evaluator.locdin
     end
   end
 end

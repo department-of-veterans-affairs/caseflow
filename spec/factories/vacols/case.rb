@@ -27,9 +27,9 @@ FactoryBot.define do
     before(:create) do |vacols_case, evaluator|
       vacols_case.bfdloout =
         if evaluator.bfdloout
-          VacolsHelper.normalize_vacols_datetime(evaluator.bfdloout)
+          VacolsHelper.format_datetime_with_utc_timezone(evaluator.bfdloout)
         else
-          VacolsHelper.normalize_vacols_datetime(Time.zone.now)
+          VacolsHelper.local_time_with_utc_timezone
         end
     end
 
