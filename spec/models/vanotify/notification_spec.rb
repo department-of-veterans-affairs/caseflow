@@ -5,7 +5,7 @@ describe Notification do
     let(:appeals_type) { nil }
     let(:created_at) { DateTime.now }
     let(:email_notification_status) { nil }
-    let(:event_date) { DateTime.today }
+    let(:event_date) { DateTime.now }
     let(:event_type) { nil }
     let(:notification_content) { nil }
     let(:notification_events_id) { nil }

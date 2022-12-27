@@ -174,7 +174,7 @@ class SendNotificationJob < CaseflowJob
           notification_type: notification_type,
           participant_id: participant_id,
           notified_at: Time.zone.now,
-          event_date: Time.zone.today
+          event_date: Time.zone.now
         )
       end
     else
@@ -185,7 +185,7 @@ class SendNotificationJob < CaseflowJob
         notification_type: notification_type,
         participant_id: participant_id,
         notified_at: Time.zone.now,
-        event_date: Time.zone.today
+        event_date: Time.zone.now
       )
     end
   end

@@ -46,11 +46,12 @@ export const notificationDateColumn = (notifications) => {
     tableData: notifications,
     valueName: 'Notification Date',
     valueFunction: (notification) => {
-      const dateArr = notification.event_date.split('-');
+      const date = new Date(notification.event_date);
+      const month = Number(date.getMonth() + 1) < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+      const day = Number(date.getDate()) < 10 ? `0${date.getDate()}` : date.getDate();
+      const formattedDate = `${month}/${day}/${date.getFullYear()}`;
 
-      dateArr.push(dateArr.shift());
-
-      return dateArr.join('/');
+      return formattedDate;
     },
     getSortValue: (notification) => notification.event_date
   };

@@ -17,7 +17,7 @@ describe VANotifyStatusUpdateJob, type: :job do
            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
            appeals_type: "Appeal",
            event_type: "Hearing scheduled",
-           event_date: Time.zone.today,
+           event_date: Time.zone.now,
            notification_type: "Email",
            email_notification_status: "Success")
   end
@@ -26,7 +26,7 @@ describe VANotifyStatusUpdateJob, type: :job do
            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
            appeals_type: "Appeal",
            event_type: "Hearing scheduled",
-           event_date: Time.zone.today,
+           event_date: Time.zone.now,
            notification_type: "SMS",
            sms_notification_status: "Success")
   end
@@ -35,7 +35,7 @@ describe VANotifyStatusUpdateJob, type: :job do
            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
            appeals_type: "Appeal",
            event_type: "Hearing scheduled",
-           event_date: Time.zone.today,
+           event_date: Time.zone.now,
            notification_type: "Email",
            email_notification_status: "Success",
            sms_notification_status: "Success")

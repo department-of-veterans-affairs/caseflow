@@ -143,7 +143,7 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter by event type" do
         visit(ama_notifications_page)
-        filter = page.find("rect", class: "unselected-filter-icon-border", match: :first)
+        filter = page.find("svg", class: "unselected-filter-icon", match: :first)
         filter.click(x: 5, y: 5)
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Appeal docketed")
         filter_option.click(x: 5, y: 5)
@@ -156,7 +156,7 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter by notification type" do
         visit(ama_notifications_page)
-        filter = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)[1]
+        filter = page.all("svg", class: "unselected-filter-icon", minimum: 1)[1]
         filter.click(x: 5, y: 5)
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Email")
         filter_option.click(x: 5, y: 5)
@@ -169,7 +169,7 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter by recipient information" do
         visit(ama_notifications_page)
-        filter = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)[2]
+        filter = page.all("svg", class: "unselected-filter-icon", minimum: 1)[2]
         filter.click(x: 5, y: 5)
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Example@example.com")
         filter_option.click(x: 5, y: 5)
@@ -182,7 +182,7 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter by status" do
         visit(ama_notifications_page)
-        filter = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)[3]
+        filter = page.all("svg", class: "unselected-filter-icon", minimum: 1)[3]
         filter.click(x: 5, y: 5)
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Delivered")
         filter_option.click(x: 5, y: 5)
@@ -195,7 +195,7 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter mutliple columns at once" do
         visit(ama_notifications_page)
-        filters = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)
+        filters = page.all("svg", class: "unselected-filter-icon", minimum: 1)
         filters[0].click(x: 5, y: 5)
         page.find("li", class: "cf-filter-option-row", text: "Hearing scheduled").click(x: 5, y: 5)
         filters[1].click(x: 5, y: 5)
@@ -407,7 +407,7 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter by event type" do
         visit(legacy_notifications_page)
-        filter = page.find("rect", class: "unselected-filter-icon-border", match: :first)
+        filter = page.find("svg", class: "unselected-filter-icon", match: :first)
         filter.click(x: 5, y: 5)
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Appeal docketed")
         filter_option.click(x: 5, y: 5)
@@ -420,7 +420,7 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter by notification type" do
         visit(legacy_notifications_page)
-        filter = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)[1]
+        filter = page.all("svg", class: "unselected-filter-icon", minimum: 1)[1]
         filter.click(x: 5, y: 5)
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Email")
         filter_option.click(x: 5, y: 5)
@@ -433,7 +433,7 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter by recipient information" do
         visit(legacy_notifications_page)
-        filter = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)[2]
+        filter = page.all("svg", class: "unselected-filter-icon", minimum: 1)[2]
         filter.click(x: 5, y: 5)
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Example@example.com")
         filter_option.click(x: 5, y: 5)
@@ -446,7 +446,7 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter by status" do
         visit(legacy_notifications_page)
-        filter = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)[3]
+        filter = page.all("svg", class: "unselected-filter-icon", minimum: 1)[3]
         filter.click(x: 5, y: 5)
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Delivered")
         filter_option.click(x: 5, y: 5)
@@ -459,7 +459,7 @@ RSpec.feature "Notifications View" do
 
       scenario "can filter mutliple columns at once" do
         visit(legacy_notifications_page)
-        filters = page.all("rect", class: "unselected-filter-icon-border", minimum: 1)
+        filters = page.all("svg", class: "unselected-filter-icon", minimum: 1)
         filters[0].click(x: 5, y: 5)
         page.find("li", class: "cf-filter-option-row", text: "Hearing scheduled").click(x: 5, y: 5)
         filters[1].click(x: 5, y: 5)

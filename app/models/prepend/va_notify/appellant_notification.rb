@@ -84,7 +84,7 @@ module AppellantNotification
         event_type: template_name,
         notification_type: notification_type,
         participant_id: msg_bdy.participant_id,
-        event_date: Time.zone.today
+        event_date: Time.zone.now
       )
       SendNotificationJob.perform_later(msg_bdy.to_json)
     elsif template_name == "Appeal docketed" && !FeatureToggle.enabled?(:appeal_docketed_event) && msg_bdy.appeal_type == "LegacyAppeal"

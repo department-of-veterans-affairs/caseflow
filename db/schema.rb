@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_15_202259) do
+ActiveRecord::Schema.define(version: 2022_12_23_211349) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,6 +84,27 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
     t.integer "merged_appeal_count"
     t.datetime "updated_at"
     t.index ["updated_at"], name: "index_appeal_series_on_updated_at"
+  end
+
+  create_table "appeal_states", force: :cascade do |t|
+    t.boolean "appeal_cancelled", default: false, null: false, comment: "When true, appeal's root task is cancelled"
+    t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
+    t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
+    t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
+    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
+    t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
+    t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
+    t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
+    t.boolean "hearing_scheduled", default: false, null: false, comment: "When true, appeal has at least one hearing scheduled"
+    t.boolean "hearing_withdrawn", default: false, null: false, comment: "When true, appeal has hearing withdrawn and no hearings scheduled"
+    t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
+    t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
+    t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
+    t.datetime "updated_at", comment: "Date and time the record was last updated"
+    t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
+    t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
+    t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
+    t.index ["appeal_type", "appeal_id"], name: "index_appeal_states_on_appeal_type_and_appeal_id", unique: true
   end
 
   create_table "appeal_views", id: :serial, force: :cascade do |t|
@@ -394,7 +415,7 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
     t.text "notes", comment: "This is a notes field for adding claimant not listed and any supplementary information outside of unlisted claimant."
     t.string "participant_id", null: false, comment: "The participant ID of the claimant."
     t.string "payee_code", comment: "The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
-    t.string "type", default: "Claimant", comment: "The class name for the single table inheritance type of Claimant, for example VeteranClaimant, DependentClaimant, AttorneyClaimant, or OtherClaimant."
+    t.string "type", default: "Claimant", comment: "The class name for the single table inheritance type of Claimant, for example VeteranClaimant, DependentClaimant, AttorneyClaimant, OtherClaimant, or HealthcareProviderClaimant."
     t.datetime "updated_at"
     t.index ["decision_review_type", "decision_review_id"], name: "index_claimants_on_decision_review_type_and_decision_review_id"
     t.index ["participant_id"], name: "index_claimants_on_participant_id"
@@ -1121,7 +1142,7 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
     t.text "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
-    t.date "event_date", null: false, comment: "Date of Event"
+    t.datetime "event_date", null: false, comment: "Date of Event"
     t.string "event_type", null: false, comment: "Type of Event"
     t.text "notification_content", comment: "Full Text Content of Notification"
     t.string "notification_type", null: false, comment: "Type of Notification that was created"
@@ -1578,12 +1599,12 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
   end
 
   create_table "unrecognized_appellants", comment: "Unrecognized non-veteran appellants", force: :cascade do |t|
-    t.bigint "claimant_id", null: false, comment: "The OtherClaimant record associating this appellant to a DecisionReview"
+    t.bigint "claimant_id", null: false, comment: "The OtherClaimant or HealthcareProviderClaimant record associating this appellant to a DecisionReview."
     t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false, comment: "The user that created this version of the unrecognized appellant"
     t.bigint "current_version_id", comment: "The current version for this unrecognized appellant"
     t.string "poa_participant_id", comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
-    t.string "relationship", null: false, comment: "Relationship to veteran. Allowed values: attorney, child, spouse, other"
+    t.string "relationship", null: false, comment: "Relationship to veteran. Allowed values: attorney, child, spouse, other, or healthcare_provider."
     t.bigint "unrecognized_party_detail_id", comment: "Contact details"
     t.bigint "unrecognized_power_of_attorney_id", comment: "Appellant's POA, if they aren't in CorpDB."
     t.datetime "updated_at", null: false
@@ -1606,6 +1627,7 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
     t.string "name", null: false, comment: "PII. Name of organization, or first name or mononym of person"
     t.string "party_type", null: false, comment: "The type of this party. Allowed values: individual, organization"
     t.string "phone_number", comment: "PII"
+    t.string "ssn", comment: "PII. Social Security Number"
     t.string "state", null: false
     t.string "suffix", comment: "PII"
     t.datetime "updated_at", null: false
@@ -1789,6 +1811,8 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
   add_foreign_key "allocations", "schedule_periods"
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
+  add_foreign_key "appeal_states", "users", column: "created_by_id"
+  add_foreign_key "appeal_states", "users", column: "updated_by_id"
   add_foreign_key "appeal_views", "users"
   add_foreign_key "appellant_substitutions", "appeals", column: "source_appeal_id"
   add_foreign_key "appellant_substitutions", "appeals", column: "target_appeal_id"
