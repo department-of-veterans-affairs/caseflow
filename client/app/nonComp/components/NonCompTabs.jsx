@@ -13,7 +13,7 @@ import COPY from '../../../COPY';
 class NonCompTabsUnconnected extends React.PureComponent {
   render = () => {
     const queryParams = getQueryParams(window.location.search);
-    const pageNum = queryParams['page'];
+    const pageNum = queryParams[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM];
     const currentTabName = queryParams[QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM];
     const tabArray = ['in_progress', 'completed'];
     // If additional tabs need to be added, include them in the array above
