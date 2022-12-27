@@ -25,7 +25,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
       label: 'In progress tasks',
       page: <TaskTableTab
         key="inprogress"
-        baseTasksUrl={`${this.props.baseTasksUrl}?tab=in_progress`}
+        baseTasksUrl={`${this.props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=in_progress`}
         tabPaginationOptions={{ [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: pageNum }}
         predefinedColumns={{ includeDaysWaiting: true,
           defaultSortIdx: 3 }} />
