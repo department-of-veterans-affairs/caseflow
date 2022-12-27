@@ -43,7 +43,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
     return <TabWindow
       name="tasks-organization-queue"
       tabs={tabs}
-      defaultPage={getTabByIndex || this.props.currentTab}
+      defaultPage={this.props.currentTab || getTabByIndex }
     />;
   }
 }
