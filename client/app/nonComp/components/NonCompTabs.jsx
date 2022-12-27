@@ -33,7 +33,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
       label: 'Completed tasks',
       page: <TaskTableTab
         key="completed"
-        baseTasksUrl={`${this.props.baseTasksUrl}?tab=completed`}
+        baseTasksUrl={`${this.props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=completed`}
         tabPaginationOptions={{ [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: pageNum }}
         description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
         predefinedColumns={{ includeCompletedDate: true,
