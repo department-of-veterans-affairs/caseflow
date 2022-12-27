@@ -173,7 +173,6 @@ export const prepareTasksForStore = (tasks) =>
 const appealAttributesFromRawTask = (task) => ({
   id: task.attributes.appeal_id,
   type: task.attributes.appeal_type,
-  businessLine: task.attributes.business_line,
   externalId: task.attributes.external_appeal_id,
   docketName: task.attributes.docket_name,
   docketRangeDate: task.attributes.docket_range_date,
