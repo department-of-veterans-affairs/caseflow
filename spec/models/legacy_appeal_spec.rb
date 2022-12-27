@@ -769,16 +769,16 @@ describe LegacyAppeal, :all_dbs do
     it "returns array of date, to_whom, by_whom" do
       expect(subject.length).to eq(3)
       expect(subject.last.summary).to eq(assigned_by: "DSUSER",
-                                                         assigned_at: oracle_sysdate,
-                                                         location: third_location,
-                                                         sub_location: nil,
-                                                         location_staff: nil,
-                                                         date_out: oracle_sysdate,
-                                                         date_in: nil,
-                                                         vacols_id: vacols_case.bfkey,
-                                                         exception_flag: nil,
-                                                         with_attorney?: false,
-                                                         with_judge?: false)
+                                         assigned_at: oracle_sysdate,
+                                         location: third_location,
+                                         sub_location: nil,
+                                         location_staff: nil,
+                                         date_out: oracle_sysdate,
+                                         date_in: nil,
+                                         vacols_id: vacols_case.bfkey,
+                                         exception_flag: nil,
+                                         with_attorney?: false,
+                                         with_judge?: false)
     end
   end
 
