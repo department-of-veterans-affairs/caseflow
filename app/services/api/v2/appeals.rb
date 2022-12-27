@@ -15,7 +15,7 @@ class Api::V2::Appeals
   attr_reader :veteran_file_number, :vbms_id
 
   def legacy_appeals
-    # Appeals API is currently limited to VBA appeals
+    # Appeals API is currently limited to VBA appeals SFW
     @legacy_appeals ||= AppealHistory.for_api(vbms_id: vbms_id).select do |series|
       series.aoj == :vba
     end
