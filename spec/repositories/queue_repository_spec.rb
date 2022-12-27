@@ -150,7 +150,7 @@ describe QueueRepository, :all_dbs do
         note: "something",
         document_id: "123456789",
         modifying_user: attorney.vacols_uniq_id,
-        reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone
+        reassigned_to_judge_date: VacolsHelper.local_time_with_utc_timezone
       }
     end
 
