@@ -126,8 +126,6 @@ jobs:
 
       # This is our homespun VACOLS container. An oracle db with some special sauce.
       - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
-        environment:
-          TZ: "America/New_York"
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.10
