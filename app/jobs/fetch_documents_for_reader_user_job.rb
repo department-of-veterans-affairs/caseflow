@@ -9,6 +9,22 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
   def perform(user)
     user.update!(efolder_documents_fetched_at: Time.zone.now)
     appeals = AppealsForReaderJob.new(user).process
+
+    log_info(user, appeals)
+
     FetchDocumentsForReaderJob.new(user: user, appeals: appeals).process
+  end
+
+  private
+
+  def log_info(user, appeals)
+    Rails.logger.info log_message(user, appeals)
+  end
+
+  def log_message(user, appeals)
+    "FetchDocumentsForReaderUserJob - " \
+    "User Inspect: (#{user.inspect}) - " \
+    "Appeals Count: (#{appeals.count}) - " \
+    "Appeals Inspect: (#{appeals.map(&:inspect)})"
   end
 end
