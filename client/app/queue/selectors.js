@@ -294,9 +294,10 @@ export const getLegacyTaskTree = createSelector(
         // AttorneyTask.assignedOn - JudgeDecisionReviewTask.assignedOn
         // moment.utc is required because VACOLS dates are timestamped UTC but aren't properly converted to UTC
         // but Caseflow DB are timestamped and correctly converted to UTC; moment().toString() lets moment.utc()
-        // parse the time without the timezone and set it to UTC so that it matches the VACOLS time formats
-        const taskCreatedAt = moment.utc(moment(task.createdAt).toString());
-        const taskClosedAt = moment.utc(moment(task.closedAt).toString());
+        // parse the time ignoring the timezone, then amending GMT+0000 so that it matches the VACOLS time formats
+        // moment.parseZone() is used to not convert to user's local timezone which makes timelineRange incorrect
+        const taskCreatedAt = moment.utc(moment.parseZone(task.createdAt).toString());
+        const taskClosedAt = moment.utc(moment.parseZone(task.closedAt).toString());
         const timelineRange = moment.range(moment(judgeDecisionReviewTask.previousTaskAssignedOn),
           moment(judgeDecisionReviewTask.assignedOn));
 
