@@ -21,14 +21,24 @@ class QuarterlyNotificationsJob < CaseflowJob
         elsif appeal_state.appeal_type == "LegacyAppeal"
           appeal = LegacyAppeal.find_by(id: appeal_state.appeal_id)
         end
-        begin
-          MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
-                                name: "send_quarterly_notifications(appeal_state, appeal)") do
-            send_quarterly_notifications(appeal_state, appeal)
+        if appeal.nil?
+          begin
+            fail Caseflow::Error::AppealNotFound, "Standard Error ID: " + SecureRandom.uuid + " The appeal was unable "\
+            "to be found."
+          rescue Caseflow::Error::AppealNotFound => error
+            Rails.logger.error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
+              "#{appeal_state&.appeal_type} ID #{appeal_state&.appeal_id} because of #{error}")
           end
-        rescue StandardError => error
-          Rails.logger.error("An Appeal State Record was unable to be created for #{appeal&.class} ID #{appeal&.id} "\
-            "because of #{error}")
+        else
+          begin
+            MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
+                                  name: "send_quarterly_notifications(appeal_state, appeal)") do
+              send_quarterly_notifications(appeal_state, appeal)
+            end
+          rescue StandardError => error
+            Rails.logger.error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
+              "#{appeal_state&.appeal_type} ID #{appeal_state&.appeal_id} because of #{error}")
+          end
         end
       end
     end
