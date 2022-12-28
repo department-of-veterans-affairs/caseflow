@@ -44,7 +44,12 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
       status: Task.open_statuses.concat([Constants.TASK_STATUSES.cancelled])
     ).find_in_batches(batch_size: QUERY_LIMIT.to_i) do |root_tasks|
       root_tasks.each do |root_task|
-        add_record_to_appeal_states_table(root_task.appeal)
+        if root_task.appeal.nil?
+          Rails.logger.error("FetchAllActiveAmaAppealsJob::Error - Root Task ID #{root_task&.id} has no "\
+            "appeal associated with it.")
+        else
+          add_record_to_appeal_states_table(root_task.appeal)
+        end
       end
     end
   end
@@ -73,19 +78,19 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
       all_appeal_states = appeal_states.inject(&:merge)
       appeal_state = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal.class.to_s)
       if appeal_state
-        MetricsService.record("Updating Record in Appeal States Table for #{appeal.class} ID #{appeal.id}",
+        MetricsService.record("Updating Record in Appeal States Table for #{appeal&.class} ID #{appeal&.id}",
                               name: "appeal_state.update") do
           appeal_state.update(all_appeal_states)
         end
       else
-        MetricsService.record("Creating Record in Appeal States Table for #{appeal.class} ID #{appeal.id}",
+        MetricsService.record("Creating Record in Appeal States Table for #{appeal&.class} ID #{appeal&.id}",
                               name: "AppealState.create") do
           AppealState.create(all_appeal_states)
         end
       end
     rescue StandardError => error
-      Rails.logger.error("#{appeal&.class} ID #{appeal&.id} was unable to create an appeal_states record because of "\
-         "#{error}")
+      Rails.logger.error("FetchAllActiveAmaAppealsJob::Error - An Appeal State record for #{appeal&.class} ID "\
+        "#{appeal&.id} was unable to be created/updated because of #{error}")
       @errors << OpenStruct.new(
         appeal_type: appeal&.class,
         appeal_id: appeal&.id,

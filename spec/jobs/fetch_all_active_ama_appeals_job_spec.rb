@@ -64,16 +64,16 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
   end
 
   describe "#add_record_to_appeal_states_table" do
-    let!(:legacy_appeal) { create(:legacy_appeal) }
+    let!(:appeal) { create(:appeal, :active) }
     let(:error) { StandardError }
     context "When an error is raised" do
       it "will log error and continue" do
         allow(Rails.logger).to receive(:error)
-        allow(subject).to receive(:map_appeal_ihp_state).with(legacy_appeal).and_raise(error)
-        subject.send(:add_record_to_appeal_states_table, legacy_appeal)
+        allow(subject).to receive(:map_appeal_ihp_state).with(appeal).and_raise(error)
+        subject.send(:add_record_to_appeal_states_table, appeal)
         expect(Rails.logger).to have_received(:error).with(
-          "#{legacy_appeal&.class} ID #{legacy_appeal&.id} was unable to create an appeal_states record "\
-          "because of #{error}"
+          "FetchAllActiveAmaAppealsJob::Error - An Appeal State record for #{appeal&.class} ID "\
+          "#{appeal&.id} was unable to be created/updated because of #{error}"
         )
       end
     end
@@ -104,7 +104,7 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: true)
       end
 
-      it "should not map appeal state to true if none of the hearings habe nil disposition" do
+      it "should not map appeal state to true if none of the hearings have nil disposition" do
         old_hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
         new_hearing.update(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
         expect(subject.send(:map_appeal_hearing_scheduled_state, ama_appeal)).to eq(hearing_scheduled: false)
