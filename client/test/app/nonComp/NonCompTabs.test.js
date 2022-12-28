@@ -37,25 +37,21 @@ const renderNonCompTabs = () => {
   );
 };
 
-beforeEach(() => {
-  renderNonCompTabs();
-});
-
 afterEach(() => {
   jest.clearAllMocks();
 });
 
 describe('NonCompTabs', () => {
-  it('renders a tab titled "In progress tasks"', () => {
-
+  beforeEach(() => {
     renderNonCompTabs(basicProps);
+  });
+
+  it('renders a tab titled "In progress tasks"', () => {
 
     expect(screen.getAllByText('In progress tasks')).toBeTruthy();
   });
 
   it('renders a tab titled "Completed tasks"', () => {
-
-    renderNonCompTabs(basicProps);
 
     expect(screen.getAllByText('Completed tasks')).toBeTruthy();
   });
