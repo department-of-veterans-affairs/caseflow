@@ -705,7 +705,7 @@ When Caseflow Monitor starts working again, switch the banner back to automatic 
 Rails.cache.write(:degraded_service_banner, :auto)
 ```
 
-## Documentation
+## Documenta tion
 We have a lot of technical documentation spread over a lot of different repositories. Here is a non-exhaustive mapping of where to find documentation:
 
 - [Local Caseflow Setup](https://github.com/department-of-veterans-affairs/caseflow/tree/master/docs)
