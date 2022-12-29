@@ -128,7 +128,7 @@ feature "NonComp Reviews Queue", :postgres do
     scenario "filtering reviews" do
       visit "decision_reviews/nco"
       find(".unselected-filter-icon").click
-      find("label", text: "Higher-level review").click
+      find("label", text: "Higher-Level Review").click
       expect(page).to have_content("Higher-Level Review")
       expect(page).to_not have_content("Board Grant")
       find(".cf-clear-filters-link").click

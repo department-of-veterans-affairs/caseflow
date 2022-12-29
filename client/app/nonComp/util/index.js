@@ -60,7 +60,7 @@ const parseDecisionReviewTypeFilterOptions = (taskCounts) =>
     if (key.includes('HigherLevelReview')) {
       taskInfo = {
         value: 'HigherLevelReview',
-        displayText: `Higher Level Review (${taskCount})`
+        displayText: `Higher-Level Review (${taskCount})`
       };
     } else if (key.includes('SupplementalClaim')) {
       taskInfo = {
