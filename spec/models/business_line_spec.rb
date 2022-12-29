@@ -10,7 +10,7 @@ describe BusinessLine do
 
   shared_examples "task filtration" do
     context "Higher-Level Review tasks" do
-      let!(:task_filters) { ["col=taskColumn&val=HigherLevelReview"] }
+      let!(:task_filters) { ["col=decisionReviewType&val=HigherLevelReview"] }
 
       it "Returning only Higher-Level Review tasks" do
         expect(
@@ -22,7 +22,7 @@ describe BusinessLine do
     end
 
     context "Supplemental Claim tasks" do
-      let!(:task_filters) { ["col=taskColumn&val=SupplementalClaim"] }
+      let!(:task_filters) { ["col=decisionReviewType&val=SupplementalClaim"] }
 
       it "Returning only Supplemental Claim tasks" do
         expect(
@@ -34,7 +34,7 @@ describe BusinessLine do
     end
 
     context "Veteran Record Request tasks" do
-      let!(:task_filters) { ["col=taskColumn&val=VeteranRecordRequest"] }
+      let!(:task_filters) { ["col=decisionReviewType&val=VeteranRecordRequest"] }
 
       it "Returning only Veteran Record Request tasks" do
         expect(subject.all? { |task| task.type == VeteranRecordRequest.name }).to eq true
@@ -42,7 +42,7 @@ describe BusinessLine do
     end
 
     context "Board Grant Effecutation tasks" do
-      let!(:task_filters) { ["col=taskColumn&val=BoardGrantEffectuationTask"] }
+      let!(:task_filters) { ["col=decisionReviewType&val=BoardGrantEffectuationTask"] }
 
       context "with :board_grant_effectuation_tasks FeatureToggle enabled" do
         before { FeatureToggle.enable!(:board_grant_effectuation_task) }
@@ -74,7 +74,7 @@ describe BusinessLine do
     end
 
     context "Filtering by nultiple columns" do
-      let!(:task_filters) { ["col=taskColumn&val=HigherLevelReview|SupplementalClaim"] }
+      let!(:task_filters) { ["col=decisionReviewType&val=HigherLevelReview|SupplementalClaim"] }
 
       it "Selected task types are included, but none others" do
         tasks = subject

@@ -317,7 +317,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
       it "Only Supplemental Claim Tasks are shown when filtered" do
         get :index,
             params: query_params.merge(
-              filter: ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=SupplementalClaim"],
+              filter: ["col=decisionReviewType&val=SupplementalClaim"],
               page: 3
             ),
             format: :json
@@ -334,7 +334,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
       it "Only Higher-Level Review Tasks are shown when filtered" do
         get :index,
             params: query_params.merge(
-              filter: ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=HigherLevelReview"],
+              filter: ["col=decisionReviewType&val=HigherLevelReview"],
               page: 3
             ),
             format: :json
