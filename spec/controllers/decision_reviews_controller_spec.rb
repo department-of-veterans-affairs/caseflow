@@ -146,9 +146,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
         put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id }
 
         expect(response.status).to eq(200)
-        response_data = JSON.parse(response.body)
-        expect(response_data["in_progress_tasks"]).to eq([])
-        expect(response_data["completed_tasks"].length).to eq(1)
+
         task.reload
         expect(task.status).to eq("completed")
         expect(task.closed_at).to eq(Time.zone.now)
@@ -192,9 +190,6 @@ describe DecisionReviewsController, :postgres, type: :controller do
         datetime = Date.parse(decision_date).in_time_zone(Time.zone)
 
         expect(response.status).to eq(200)
-        response_data = JSON.parse(response.body)
-        expect(response_data["in_progress_tasks"]).to eq([])
-        expect(response_data["completed_tasks"].length).to eq(1)
 
         task.reload
         expect(task.appeal.decision_issues.length).to eq(2)
