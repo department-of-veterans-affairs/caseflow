@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import '@testing-library/jest-dom';
+
+import { taskFilterDetails } from '../../data/taskFilterDetails';
 import NonCompTabsUnconnected from 'app/nonComp/components/NonCompTabs';
 
 const basicProps = {
@@ -11,6 +13,10 @@ const basicProps = {
   baseTasksUrl: '/decision_reviews/vha',
   selectedTask: null,
   decisionIssuesStatus: { },
+  taskFilterDetails: {
+    in_progress: { },
+    completed: { }
+  }
 };
 
 beforeEach(() => {
