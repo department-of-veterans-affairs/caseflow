@@ -15,7 +15,7 @@ describe('Parsing filter data', () => {
       },
       {
         value: 'HigherLevelReview',
-        displayText: 'Higher Level Review (330)',
+        displayText: 'Higher-Level Review (330)',
         checked: false
       },
       {
@@ -37,7 +37,7 @@ describe('Parsing filter data', () => {
     expect(results.filterOptions).toEqual([
       {
         value: 'HigherLevelReview',
-        displayText: 'Higher Level Review (12)',
+        displayText: 'Higher-Level Review (12)',
         checked: false
       },
       {
