@@ -19,7 +19,7 @@ module GenericTaskPaginationConcern
 
     {
       tasks: {
-        data: apply_task_serializer(paginate_tasks(task_list))
+        data: paginate_tasks(task_list).map(&:serialize_task)
       },
       tasks_per_page: DEFAULT_TASKS_PER_PAGE,
       task_page_count: total_pages,
@@ -33,10 +33,6 @@ module GenericTaskPaginationConcern
     tasks
       .page(allowed_params[Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM.to_sym] || 1)
       .per(DEFAULT_TASKS_PER_PAGE)
-  end
-
-  def apply_task_serializer(tasks)
-    tasks.map(&:serialize_task)
   end
 
   def pagination_query_params
