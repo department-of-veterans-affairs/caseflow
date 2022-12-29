@@ -4,7 +4,7 @@ export const notifications = [
     type: 'notification',
     attributes: {
       notification_type: 'Email and SMS',
-      event_date: '2022-10-29',
+      event_date: '2022-10-29 00:00:00',
       event_type: 'Appeal docketed',
       recipient_email: 'test@caseflow.com',
       recipient_phone_number: '1234567890',
@@ -18,7 +18,7 @@ export const notifications = [
     type: 'notification',
     attributes: {
       notification_type: 'SMS',
-      event_date: '2022-11-01',
+      event_date: '2022-11-01 00:00:00',
       event_type: 'Hearing scheduled',
       recipient_email: 'test@caseflow.com',
       recipient_phone_number: '\t2468012345',
@@ -32,7 +32,7 @@ export const notifications = [
     type: 'notification',
     attributes: {
       notification_type: 'Email and SMS',
-      event_date: '2022-11-01',
+      event_date: '2022-11-01 00:00:00',
       event_type: 'Hearing scheduled',
       recipient_email: 'test@caseflow.com',
       recipient_phone_number: '1234567890',
@@ -46,7 +46,7 @@ export const notifications = [
     type: 'notification',
     attributes: {
       notification_type: 'Email and SMS',
-      event_date: '2022-11-01',
+      event_date: '2022-11-01 00:00:00',
       event_type: 'VSO IHP pending',
       recipient_email: 'test@caseflow.com',
       recipient_phone_number: '\t2468012345',
@@ -60,7 +60,7 @@ export const notifications = [
     type: 'notification',
     attributes: {
       notification_type: 'Email and SMS',
-      event_date: '2022-11-01',
+      event_date: '2022-11-01 00:00:00',
       event_type: 'Appeal decision mailed (Contested claims)',
       recipient_email: 'test3@caseflow.com',
       recipient_phone_number: '\t2468012345',
@@ -74,7 +74,7 @@ export const notifications = [
     type: 'notification',
     attributes: {
       notification_type: 'Email and SMS',
-      event_date: '2022-11-01',
+      event_date: '2022-11-01 00:00:00',
       event_type: 'Appeal docketed',
       recipient_email: 'test2@caseflow.com',
       recipient_phone_number: '1234567890',
@@ -88,7 +88,7 @@ export const notifications = [
     type: 'notification',
     attributes: {
       notification_type: 'Email and SMS',
-      event_date: '2022-11-01',
+      event_date: '2022-11-01 00:00:00',
       event_type: 'VSO IHP complete',
       recipient_email: 'test@caseflow.com',
       recipient_phone_number: '1234567890',
@@ -102,7 +102,7 @@ export const notifications = [
     type: 'notification',
     attributes: {
       notification_type: 'Email',
-      event_date: '2022-10-28',
+      event_date: '2022-10-28 00:00:00',
       event_type: 'Hearing scheduled',
       recipient_email: 'test2@caseflow.com',
       recipient_phone_number: '',
@@ -116,7 +116,7 @@ export const notifications = [
     type: 'notification',
     attributes: {
       notification_type: 'Email and SMS',
-      event_date: '2022-10-27',
+      event_date: '2022-10-27 00:00:00',
       event_type: 'Appeal decision mailed (Non-contested claims)',
       recipient_email: 'test@caseflow.com',
       recipient_phone_number: '2468012345',
