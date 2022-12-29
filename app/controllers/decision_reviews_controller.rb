@@ -40,11 +40,7 @@ class DecisionReviewsController < ApplicationController
   def update
     if task
       if task.complete_with_payload!(decision_issue_params, decision_date)
-        business_line.tasks.reload
-        render json: {
-          in_progress_tasks: apply_task_serializer(in_progress_tasks),
-          completed_tasks: apply_task_serializer(completed_tasks)
-        }, status: :ok
+        head :ok
       else
         error = StandardError.new(task.error_code)
         Raven.capture_exception(error, extra: { error_uuid: error_uuid })
