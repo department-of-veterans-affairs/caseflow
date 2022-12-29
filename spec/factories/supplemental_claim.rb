@@ -21,7 +21,7 @@ FactoryBot.define do
       end
     end
 
-    trait :with_vha_issue do
+        trait :with_vha_issue do
       after(:create) do |supplemental_claim, evaluator|
         create(:request_issue,
                benefit_type: "vha",
@@ -39,6 +39,13 @@ FactoryBot.define do
 
     trait :processed do
       establishment_processed_at { Time.zone.now }
+    end
+
+    transient do
+      veteran do
+        Veteran.find_by(file_number: veteran_file_number) ||
+          create(:veteran, file_number: (generate :veteran_file_number))
+      end
     end
 
     after(:create) do |sc, evaluator|
