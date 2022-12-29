@@ -4,7 +4,7 @@ export const claimantColumn = () => {
   return {
     header: 'Claimant',
     valueFunction: (task) => {
-      return <a href={`/decision_reviews/${task.business_line}/tasks/${task.id}`}>{task.claimant.name}</a>;
+      return <a href={`/decision_reviews/${task.businessLine}/tasks/${task.id}`}>{task.claimant.name}</a>;
     },
     getSortValue: (task) => task.claimant.name
   };
