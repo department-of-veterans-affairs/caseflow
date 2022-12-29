@@ -1,4 +1,3 @@
-import { formatTasks } from '../util';
 import { ACTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import { update } from '../../util/ReducerUtil';
 
@@ -7,8 +6,6 @@ export const mapDataToInitialState = function(props = {}) {
 
   let state = serverNonComp;
 
-  state.inProgressTasks = formatTasks(serverNonComp.inProgressTasks);
-  state.completedTasks = formatTasks(serverNonComp.completedTasks);
   state.selectedTask = null;
   state.decisionIssuesStatus = {};
 
