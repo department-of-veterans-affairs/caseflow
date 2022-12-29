@@ -141,7 +141,7 @@ class BusinessLine < Organization
     # ex: "val"=>["SupplementalClaim|HigherLevelReview"]
     tasks_to_include = task_filter["val"].first.split("|")
 
-    build_task_filter_predicates(tasks_to_include)
+    build_task_filter_predicates(tasks_to_include) || TAUTOLOGICAL_PREDICATE
   end
 
   def build_task_filter_predicates(tasks_to_include)
@@ -162,7 +162,7 @@ class BusinessLine < Organization
     parsed_filters = parse_filters(filters)
 
     parsed_filters.find do |filter|
-      filter["col"].include?(Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name)
+      filter["col"].include?("decisionReviewType")
     end
   end
 end

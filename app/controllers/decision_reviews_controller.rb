@@ -73,8 +73,8 @@ class DecisionReviewsController < ApplicationController
 
   def task_filter_details
     {
-      in_progress_tasks: in_progress_tasks_type_counts,
-      completed_tasks: completed_tasks_type_counts
+      in_progress: in_progress_tasks_type_counts,
+      completed: completed_tasks_type_counts
     }
   end
 

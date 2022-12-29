@@ -7,7 +7,12 @@ import TabWindow from '../../components/TabWindow';
 import { getQueryParams } from 'app/util/QueryParamsUtil';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
-import { claimantColumn, veteranParticipantIdColumn, decisionReviewTypeColumn } from './TaskTableColumns';
+import {
+  claimantColumn,
+  veteranParticipantIdColumn,
+  decisionReviewTypeColumn
+} from './TaskTableColumns';
+import { buildDecisionReviewFilterInformation } from '../util/index';
 import COPY from '../../../COPY';
 
 class NonCompTabsUnconnected extends React.PureComponent {
@@ -27,6 +32,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
         key="inprogress"
         baseTasksUrl={`${this.props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=in_progress`}
         tabPaginationOptions={{ [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: pageNum }}
+        filterableTaskTypes={this.props.taskFilterDetails.in_progress}
         predefinedColumns={{ includeDaysWaiting: true,
           defaultSortIdx: 3 }} />
     }, {
@@ -35,6 +41,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
         key="completed"
         baseTasksUrl={`${this.props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=completed`}
         tabPaginationOptions={{ [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: pageNum }}
+        filterableTaskTypes={this.props.taskFilterDetails.completed}
         description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
         predefinedColumns={{ includeCompletedDate: true,
           defaultSortIdx: 3 }} />
@@ -43,7 +50,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
     return <TabWindow
       name="tasks-organization-queue"
       tabs={tabs}
-      defaultPage={this.props.currentTab || getTabByIndex }
+      defaultPage={this.props.currentTab || getTabByIndex}
     />;
   }
 }
@@ -51,6 +58,10 @@ NonCompTabsUnconnected.propTypes = {
   currentTab: PropTypes.node,
   dispatch: PropTypes.func,
   baseTasksUrl: PropTypes.string,
+  taskFilterDetails: PropTypes.shape({
+    in_progress: PropTypes.object,
+    completed: PropTypes.object
+  })
 };
 
 class TaskTableTab extends React.PureComponent {
@@ -95,8 +106,14 @@ class TaskTableTab extends React.PureComponent {
         <TaskTableUnconnected
           {...this.state.predefinedColumns}
           getKeyForRow={(row, object) => object.id}
-          customColumns={[claimantColumn(), veteranParticipantIdColumn(),
-            decisionReviewTypeColumn(this.state.allTasks)]}
+          customColumns={[
+            claimantColumn(),
+            veteranParticipantIdColumn(),
+            {
+              ...decisionReviewTypeColumn(),
+              ...buildDecisionReviewFilterInformation(this.props.filterableTaskTypes)
+            }
+          ]}
           includeIssueCount
           tasks={[]}
           taskPagesApiEndpoint={this.props.baseTasksUrl}
@@ -118,13 +135,15 @@ TaskTableTab.propTypes = {
     [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: PropTypes.string,
     [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string),
     onPageLoaded: PropTypes.func
-  })
+  }),
+  filterableTaskTypes: PropTypes.object
 };
 
 const NonCompTabs = connect(
   (state) => ({
     currentTab: state.currentTab,
-    baseTasksUrl: state.baseTasksUrl
+    baseTasksUrl: state.baseTasksUrl,
+    taskFilterDetails: state.taskFilterDetails
   })
 )(NonCompTabsUnconnected);
 
