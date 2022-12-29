@@ -3,8 +3,6 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import '@testing-library/jest-dom';
-
-import { taskFilterDetails } from '../../data/taskFilterDetails';
 import NonCompTabsUnconnected from 'app/nonComp/components/NonCompTabs';
 
 const basicProps = {
