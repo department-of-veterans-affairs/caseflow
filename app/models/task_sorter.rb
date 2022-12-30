@@ -89,9 +89,9 @@ class TaskSorter
     end
 
     # sort the hash so the dates are in ascending order (oldest first), and return the id of the tasks (keys)
-    # remove null values
+    # it removes null values
     null_receipt_date_values = task_id_to_receipt_date_hash.select { |_, value| value.nil? }.keys
-    # remove null values
+    # it remove null values
     task_id_to_receipt_date_hash.compact!
     # sort the tasks
     sorted_hash = task_id_to_receipt_date_hash.sort_by { |_, receipt_date_id| receipt_date_id }.to_h.keys
