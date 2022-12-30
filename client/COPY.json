@@ -472,6 +472,8 @@
   "HEARING_SCHEDULE_ASSIGN_HEARINGS_VIEW_SCHEDULE_LINK": "View hearing schedule",
 
   "FORM_ERROR_FIELD_REQUIRED": "This field is required",
+  "NOTES_ERROR_FIELD_REQUIRED": "Notes field is required",
+  "INSTRUCTIONS_ERROR_FIELD_REQUIRED": "Instructions field is required",
   "FORM_ERROR_FIELD_INVALID": "This field is invalid",
 
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_ROCO": "We have assigned your hearings days",
