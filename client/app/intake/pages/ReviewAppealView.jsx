@@ -62,7 +62,7 @@ const styles = {
       fill: '#0071bc !important',
     },
     '& .info': {
-      textDecoration: 'underline;',
+      textDecoration: 'underline',
     },
     '& .text_info': {
       lineHeight: '1.3em !important',

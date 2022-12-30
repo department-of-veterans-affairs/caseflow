@@ -34,6 +34,7 @@ class SendNotificationJob < CaseflowJob
     if message_json
       @va_notify_email = FeatureToggle.enabled?(:va_notify_email)
       @va_notify_sms = FeatureToggle.enabled?(:va_notify_sms)
+      @va_notify_quarterly_sms = FeatureToggle.enabled?(:va_notify_quarterly_sms)
       message = JSON.parse(message_json, object_class: OpenStruct)
       if message.appeal_id && message.appeal_type && message.template_name
         notification_audit_record = create_notification_audit_record(
@@ -48,7 +49,8 @@ class SendNotificationJob < CaseflowJob
             if @va_notify_email
               to_update[:email_notification_status] = message.status
             end
-            if @va_notify_sms
+            if @va_notify_sms && message.template_name != "Quarterly Notification" ||
+               @va_notify_quarterly_sms && message.template_name == "Quarterly Notification"
               to_update[:sms_notification_status] = message.status
             end
             update_notification_audit_record(notification_audit_record, to_update)
@@ -62,7 +64,8 @@ class SendNotificationJob < CaseflowJob
             if @va_notify_email
               to_update[:email_notification_status] = status
             end
-            if @va_notify_sms
+            if @va_notify_sms && message.template_name != "Quarterly Notification" ||
+               @va_notify_quarterly_sms && message.template_name == "Quarterly Notification"
               to_update[:sms_notification_status] = status
             end
             update_notification_audit_record(notification_audit_record, to_update)
@@ -108,8 +111,15 @@ class SendNotificationJob < CaseflowJob
     appeal = Appeal.find_by_uuid(message.appeal_id) || LegacyAppeal.find_by(vacols_id: message.appeal_id)
     first_name = appeal&.appellant_first_name || "Appellant"
     status = message.appeal_status || ""
+
     if @va_notify_email
-      response = VANotifyService.send_email_notifications(message.participant_id, notification_audit_record.id.to_s, email_template_id, status, first_name)
+      response = VANotifyService.send_email_notifications(
+        message.participant_id,
+        notification_audit_record.id.to_s,
+        email_template_id,
+        first_name,
+        status
+      )
       if !response.nil? && response != ""
         to_update = { notification_content: response.body["content"]["body"],
                       email_notification_content: response.body["content"]["body"],
@@ -118,8 +128,15 @@ class SendNotificationJob < CaseflowJob
       end
     end
 
-    if @va_notify_sms
-      response = VANotifyService.send_sms_notifications(message.participant_id, notification_audit_record.id.to_s, sms_template_id, status, first_name)
+    if @va_notify_sms && sms_template_id != quarterly_sms_template_id ||
+       @va_notify_quarterly_sms && sms_template_id == quarterly_sms_template_id
+      response = VANotifyService.send_sms_notifications(
+        message.participant_id,
+        notification_audit_record.id.to_s,
+        sms_template_id,
+        first_name,
+        status
+      )
       if !response.nil? && response != ""
         to_update = {
           sms_notification_content: response.body["content"]["body"], sms_notification_external_id: response.body["id"]
@@ -152,11 +169,13 @@ class SendNotificationJob < CaseflowJob
   # rubocop:disable all
   def create_notification_audit_record(appeals_id, appeals_type, event_type, participant_id)
     notification_type =
-      if @va_notify_email && @va_notify_sms
+      if @va_notify_email && @va_notify_sms && event_type != "Quarterly Notification" ||
+         @va_notify_email && @va_notify_quarterly_sms && event_type == "Quarterly Notification"
         "Email and SMS"
       elsif @va_notify_email
         "Email"
-      elsif @va_notify_sms
+      elsif @va_notify_sms && event_type != "Quarterly Notification" ||
+            @va_notify_quarterly_sms && event_type == "Quarterly Notification"
         "SMS"
       else
         "None"
