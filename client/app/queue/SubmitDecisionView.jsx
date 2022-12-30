@@ -159,7 +159,7 @@ class SubmitDecisionView extends React.PureComponent {
     let documentIdErrorMessage = '';
 
     if (!decisionOpts.document_id) {
-      documentIdErrorMessage = COPY.FORM_ERROR_FIELD_REQUIRED;
+      documentIdErrorMessage = 'Document id field is required';
     } else if (checkoutFlow === DECISION_TYPES.OMO_REQUEST && !validateWorkProductTypeAndId(this.props.decision)) {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_INVALID;
     }
@@ -191,7 +191,7 @@ class SubmitDecisionView extends React.PureComponent {
             value={decisionOpts.work_product}
             vertical
             options={OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES}
-            errorMessage={highlightFormItems && !decisionOpts.work_product ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
+            errorMessage={highlightFormItems && !decisionOpts.work_product ? 'OMO type field is required' : ''}
           />
         )}
         <TextField
