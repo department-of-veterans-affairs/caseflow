@@ -49,7 +49,7 @@ class DecisionReviewIntake < Intake
       payee_code: (need_payee_code? ? request_params[:payee_code] : nil)
     )
 
-    if claimant.unrecognized_claimant?
+    if claimant&.unrecognized_claimant?
       claimant.save_unrecognized_details!(
         request_params[:unlisted_claimant],
         request_params[:poa]
