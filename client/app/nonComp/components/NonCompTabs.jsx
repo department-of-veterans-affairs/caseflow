@@ -130,11 +130,10 @@ TaskTableTab.propTypes = {
   tasks: PropTypes.array,
   baseTasksUrl: PropTypes.string,
   tabPaginationOptions: PropTypes.shape({
-    [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: PropTypes.string,
-    [QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM]: PropTypes.string,
     [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: PropTypes.string,
+    [QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM]: PropTypes.string,
+    [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: PropTypes.string,
     [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string),
-    onPageLoaded: PropTypes.func
   }),
   filterableTaskTypes: PropTypes.object
 };
