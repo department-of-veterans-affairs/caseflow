@@ -772,6 +772,7 @@ describe LegacyAppeal, :all_dbs do
                               [oracle_sysdate, second_location, "DSUSER"],
                               [oracle_sysdate, third_location, "DSUSER"]
                             ])
+
       expect(appeal.location_history.last.summary).to eq(assigned_by: "DSUSER",
                                                          assigned_at: oracle_sysdate,
                                                          location: third_location,
@@ -782,7 +783,8 @@ describe LegacyAppeal, :all_dbs do
                                                          vacols_id: vacols_case.bfkey,
                                                          exception_flag: nil,
                                                          with_attorney?: false,
-                                                         with_judge?: false)
+                                                         with_judge?: false
+                                                        )
     end
   end
 
