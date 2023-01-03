@@ -147,3 +147,5 @@ end
 # rubocop:enable Metrics/LineLength
 
 gem "json_schemer", "~> 0.2.16"
+
+gem "rack-mini-profiler", "~> 3.0"
