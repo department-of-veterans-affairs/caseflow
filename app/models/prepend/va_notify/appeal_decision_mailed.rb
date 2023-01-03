@@ -15,6 +15,7 @@ module AppealDecisionMailed
   def process!
     super_return_value = super
     if processed?
+      AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "decision_mailed")
       case appeal_type
       when "Appeal"
         template = appeal.contested_claim? ? "#{@@template_name} (Contested claims)" : "#{@@template_name} (Non-contested claims)"

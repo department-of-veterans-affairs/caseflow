@@ -1,9 +1,14 @@
 import { Meta, Story, Preview } from '@storybook/addon-docs/blocks';
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
+import { applyMiddleware, createStore, compose } from 'redux';
 
+import { APPELLANT_TYPES } from 'app/queue/constants';
+import { amaAppeal as appeal } from 'test/data/appeals';
 import { PowerOfAttorneyNameUnconnected, PowerOfAttorneyDetailUnconnected } from './PowerOfAttorneyDetail';
 
 <Meta
-  title="Queue/Components/PowerOfAttorneyDetail"
+  title="Queue/Case Details/PowerOfAttorneyDetail/PowerOfAttorneyDetail"
   component={PowerOfAttorneyDetailUnconnected}
 />
 
@@ -22,15 +27,49 @@ export const powerOfAttorney = {
   representative_email_address: "tom.brady@caseflow.gov"
 };
 
+export const defaultValues = {
+    ui: {
+      poaAlert: {
+        powerOfAttorney
+      },
+      featureToggles: {
+        poa_button_refresh: true
+      }
+    },
+    queue: {
+      appeals: {
+        ...appeal,
+        ...powerOfAttorney,
+        hasPOA: true,
+        appellantType: APPELLANT_TYPES.VETERAN_CLAIMANT,
+      }
+    },
+    editPOAInformation: true
+  };
+
+export const reducer = function(state = defaultValues) {
+  return state;
+};
+
+export const generateStore = () => {
+  return createStore(
+    reducer,
+    compose(applyMiddleware(thunk))
+  );
+};
+
 # Power Of Attorney Detail
 
 ### Full Detail
 
 <Preview>
   <Story name="Normal">
-    <PowerOfAttorneyDetailUnconnected
-      powerOfAttorney={powerOfAttorney}
-    />
+    <Provider store={generateStore()}>
+      <PowerOfAttorneyDetailUnconnected
+        powerOfAttorney={powerOfAttorney}
+        poaAlert={powerOfAttorney}
+      />
+    </Provider>
   </Story>
 </Preview>
 
@@ -38,8 +77,11 @@ export const powerOfAttorney = {
 
 <Preview>
   <Story name="Just Name">
-    <PowerOfAttorneyNameUnconnected
-      powerOfAttorney={powerOfAttorney}
-    />
+    <Provider store={generateStore()}>
+      <PowerOfAttorneyNameUnconnected
+        powerOfAttorney={powerOfAttorney}
+        poaAlert={powerOfAttorney}
+      />
+    </Provider>
   </Story>
 </Preview>
