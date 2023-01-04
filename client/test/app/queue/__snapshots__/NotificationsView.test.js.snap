@@ -244,6 +244,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                         >
                           <g>
                             <rect
+                              class="unselected-filter-icon-border"
                               fill="#fff"
                               fill-rule="nonzero"
                               height="20"
@@ -365,6 +366,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                         >
                           <g>
                             <rect
+                              class="unselected-filter-icon-border"
                               fill="#fff"
                               fill-rule="nonzero"
                               height="20"
@@ -418,6 +420,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                         >
                           <g>
                             <rect
+                              class="unselected-filter-icon-border"
                               fill="#fff"
                               fill-rule="nonzero"
                               height="20"
@@ -471,6 +474,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
                         >
                           <g>
                             <rect
+                              class="unselected-filter-icon-border"
                               fill="#fff"
                               fill-rule="nonzero"
                               height="20"

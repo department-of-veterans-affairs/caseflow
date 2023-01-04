@@ -1021,6 +1021,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
                           >
                             <g>
                               <rect
+                                className="unselected-filter-icon-border"
                                 fill="#fff"
                                 fillRule="nonzero"
                                 height="20"

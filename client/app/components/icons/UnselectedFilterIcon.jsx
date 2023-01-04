@@ -9,7 +9,7 @@ export const UnselectedFilterIcon = (props) => {
     ref={getRef} className={`${className} unselected-filter-icon`}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g>
-        <rect stroke={strokeColor} fill={color} fillRule="nonzero" x="0.5" y="0.5" width="20" height="20" rx="2"></rect>
+        <rect className="unselected-filter-icon-border" stroke={strokeColor} fill={color} fillRule="nonzero" x="0.5" y="0.5" width="20" height="20" rx="2"></rect>
         <path d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667
       11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667
       9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2
