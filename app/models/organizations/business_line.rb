@@ -12,8 +12,6 @@ class BusinessLine < Organization
       .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
   }.freeze
 
-  TAUTOLOGICAL_PREDICATE = "1 = 1"
-
   def tasks_url
     "/decision_reviews/#{url}"
   end
@@ -132,16 +130,16 @@ class BusinessLine < Organization
   end
 
   def task_filter_predicate(filters)
-    return TAUTOLOGICAL_PREDICATE unless filters
+    return "" unless filters
 
     task_filter = locate_task_filter(filters)
 
-    return TAUTOLOGICAL_PREDICATE unless task_filter
+    return "" unless task_filter
 
     # ex: "val"=>["SupplementalClaim|HigherLevelReview"]
     tasks_to_include = task_filter["val"].first.split("|")
 
-    build_task_filter_predicates(tasks_to_include) || TAUTOLOGICAL_PREDICATE
+    build_task_filter_predicates(tasks_to_include) || ""
   end
 
   def build_task_filter_predicates(tasks_to_include)
