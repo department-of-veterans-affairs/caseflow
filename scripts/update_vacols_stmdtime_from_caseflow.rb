@@ -19,7 +19,9 @@ all_updates = successful_updates.concat(already_deceased_time_changed)
 
 # map over each object to get hash of { veteran_pat=>completed_at } for each entry
 # VacolsHelper required because VACOLS stores time as eastern time but with UTC as the time zone
-update_mapping = all_updates.map { |obj| [obj.info["veteran_pat"], VacolsHelper.format_datetime_with_utc_timezone(obj.completed_at)] }.to_h
+update_mapping = all_updates.map do |obj|
+  [obj.info["veteran_pat"], VacolsHelper.format_datetime_with_utc_timezone(obj.completed_at)]
+end.to_h
 
 puts "Filtering all MPI person update events that are older than the most recent change to the CORRES VACOLS record"
 # compare current STMDTIME value and do not update if current value is newer than MpiUpdatePersonEvent creation time
