@@ -276,6 +276,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                           >
                             <g>
                               <rect
+                                class="unselected-filter-icon-border"
                                 fill="#fff"
                                 fill-rule="nonzero"
                                 height="20"
@@ -379,6 +380,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                           >
                             <g>
                               <rect
+                                class="unselected-filter-icon-border"
                                 fill="#fff"
                                 fill-rule="nonzero"
                                 height="20"
@@ -482,6 +484,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                           >
                             <g>
                               <rect
+                                class="unselected-filter-icon-border"
                                 fill="#fff"
                                 fill-rule="nonzero"
                                 height="20"
@@ -1409,6 +1412,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                           >
                             <g>
                               <rect
+                                class="unselected-filter-icon-border"
                                 fill="#fff"
                                 fill-rule="nonzero"
                                 height="20"
@@ -1512,6 +1516,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                           >
                             <g>
                               <rect
+                                class="unselected-filter-icon-border"
                                 fill="#fff"
                                 fill-rule="nonzero"
                                 height="20"
@@ -1615,6 +1620,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                           >
                             <g>
                               <rect
+                                class="unselected-filter-icon-border"
                                 fill="#fff"
                                 fill-rule="nonzero"
                                 height="20"
