@@ -4,6 +4,7 @@
 
 # Updates CORRES.STMDTIME for any veterans whose SFNOD was updated in VACOLS via the MPI person update controller
 
+puts "Getting all successful MPI person update events that resulted in a change"
 # get all successful updates
 successful_updates = MpiUpdatePersonEvent.where(update_type: :successful).to_a
 
@@ -20,6 +21,7 @@ all_updates = successful_updates.concat(already_deceased_time_changed)
 # VacolsHelper required because VACOLS stores time as eastern time but with UTC as the time zone
 update_mapping = all_updates.map { |obj| [obj.info["veteran_pat"], VacolsHelper.format_datetime_with_utc_timezone(obj.completed_at)] }.to_h
 
+puts "Filtering all MPI person update events that are older than the most recent change to the CORRES VACOLS record"
 # compare current STMDTIME value and do not update if current value is newer than MpiUpdatePersonEvent creation time
 updates_for_vacols = update_mapping.map do |update|
   corres_record = VACOLS::Correspondent.find(update[0])
@@ -41,8 +43,10 @@ SQL
 # set database connection
 conn = VACOLS::Correspondent.connection
 
+puts "Starting VACOLS record updates"
 # sanitize_sql_array is a private method on ActiveRecord::Base so use .send() to access it
 # execute query to update record
 updates_for_vacols.each do |update|
   conn.execute(VACOLS::Correspondent.send(:sanitize_sql_array, [query, update[1], update[0]]))
 end
+puts "Finished VACOLS record updates"
