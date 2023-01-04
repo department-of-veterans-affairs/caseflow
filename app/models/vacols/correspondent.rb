@@ -161,7 +161,8 @@ class VACOLS::Correspondent < VACOLS::Record
 
       query = <<-SQL
         update CORRES
-        set SFNOD = TO_DATE(?, 'YYYYMMDD')
+        set SFNOD = TO_DATE(?, 'YYYYMMDD'),
+            STMDTIME = SYSDATE
         where STAFKEY = ?
       SQL
 
