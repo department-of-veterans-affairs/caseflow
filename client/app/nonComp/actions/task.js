@@ -11,12 +11,13 @@ export const completeTask = (taskId, businessLine, data, claimant) => (dispatch)
 
   return ApiUtil.put(`/decision_reviews/${businessLine}/tasks/${taskId}`, data, 'decision-issues-update').
     then(
-      () => {
+      (response) => {
         dispatch({
           type: ACTIONS.TASK_UPDATE_DECISION_ISSUES_SUCCEED,
           payload: {
             claimant,
             completedTaskId: taskId,
+            taskFilterDetails: response.body.task_filter_details
           },
           meta: { analytics }
         });

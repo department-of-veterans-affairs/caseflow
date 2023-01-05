@@ -29,7 +29,8 @@ export const nonCompReducer = (state = mapDataToInitialState(), action) => {
           $set: DECISION_ISSUE_UPDATE_STATUS.SUCCEED
         },
         claimantName: { $set: action.payload.claimant },
-        errorCode: { $set: null }
+        errorCode: { $set: null },
+        taskFilterDetails: { $set: action.payload.taskFilterDetails }
       }
     });
   }

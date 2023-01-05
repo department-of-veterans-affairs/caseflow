@@ -40,7 +40,8 @@ class DecisionReviewsController < ApplicationController
   def update
     if task
       if task.complete_with_payload!(decision_issue_params, decision_date)
-        render json: { message: "Task #{task_id} was updated successfully." }, status: :ok
+        business_line.tasks.reload
+        render json: { task_filter_details: task_filter_details }, status: :ok
       else
         error = StandardError.new(task.error_code)
         Raven.capture_exception(error, extra: { error_uuid: error_uuid })
