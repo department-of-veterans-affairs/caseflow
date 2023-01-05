@@ -73,7 +73,7 @@ describe BusinessLine do
       end
     end
 
-    context "Filtering by nultiple columns" do
+    context "Filtering by multiple columns" do
       let!(:task_filters) { ["col=decisionReviewType&val=HigherLevelReview|SupplementalClaim"] }
 
       it "Selected task types are included, but none others" do

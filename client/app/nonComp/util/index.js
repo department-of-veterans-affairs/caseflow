@@ -127,8 +127,8 @@ const parseDecisionReviewTypeFilterOptions = (taskCounts, enabledFilters) =>
  */
 export const buildDecisionReviewFilterInformation = (taskCounts) => {
   return {
-    searchable: true,
-    columnName: 'searchable',
+    type: true,
+    columnName: 'type',
     name: 'decisionReviewType',
     filterOptions: parseDecisionReviewTypeFilterOptions(taskCounts)
   };
