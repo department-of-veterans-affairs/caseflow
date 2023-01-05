@@ -502,7 +502,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                   </th>
                   <th
-                    class="cf-txt-c"
+                    class=""
                     role="columnheader"
                     scope="col"
                   >
@@ -845,7 +845,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                   </td>
                   <td
-                    class="cf-txt-c"
+                    class=""
                     colspan="1"
                     role="cell"
                   >
@@ -1046,7 +1046,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                   </td>
                   <td
-                    class="cf-txt-c"
+                    class=""
                     colspan="1"
                     role="cell"
                   >
