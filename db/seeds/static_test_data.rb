@@ -12,6 +12,7 @@ module Seeds
 
     def seed!
       cases_for_timely_calculations_on_das
+      case_with_bad_decass_for_timeline_range_checks
       create_veterans_for_mpi_sfnod_updates
     end
 
@@ -350,6 +351,23 @@ module Seeds
       Timecop.travel(2.weeks.from_now)
       appeal.tasks.of_type(:AttorneyRewriteTask).second.completed!
       Timecop.return
+    end
+
+    # DECASS values from factorybot have 00:00:00 for timestamp which is desired in this case
+    def case_with_bad_decass_for_timeline_range_checks
+      Time.zone = 'EST'
+      vet = create_veteran
+      judge = VACOLS::Staff.find_by_css_id("BVABDANIEL")
+      atty = VACOLS::Staff.find_by_css_id("BVABBLOCK")
+      vc = create(:case, :assigned, user: User.find_by_css_id("BVABDANIEL"), bfcorlid: "#{vet.file_number}S")
+      create(:legacy_appeal, vacols_case: vc)
+      create(:priorloc, lockey: vc.bfkey, locdin: 5.weeks.ago, locdout: 5.weeks.ago - 1.day, locstout: judge.slogid, locstto: judge.slogid)
+      create(:priorloc, lockey: vc.bfkey, locdin: 4.weeks.ago, locdout: 5.weeks.ago, locstout: judge.slogid, locstto: "CASEFLOW_judge")
+      create(:priorloc, lockey: vc.bfkey, locdin: 3.weeks.ago, locdout: 4.weeks.ago, locstout: "CASEFLOW_judge", locstto: judge.slogid)
+      create(:priorloc, lockey: vc.bfkey, locdin: 2.weeks.ago, locdout: 3.weeks.ago, locstout: judge.slogid, locstto: atty.slogid)
+      create(:priorloc, lockey: vc.bfkey, locdin: 1.week.ago, locdout: 2.weeks.ago, locstout: atty.slogid, locstto: "CASEFLOW_atty")
+      create(:priorloc, lockey: vc.bfkey, locdin: Time.zone.now, locdout: 1.week.ago, locstout: "CASEFLOW_atty", locstto: atty.slogid)
+      create(:priorloc, lockey: vc.bfkey, locdout: Time.zone.now, locstout: atty.slogid, locstto: judge.slogid)
     end
 
     def create_veterans_for_mpi_sfnod_updates
