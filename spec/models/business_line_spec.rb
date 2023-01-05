@@ -87,15 +87,11 @@ describe BusinessLine do
 
   describe ".in_progress_tasks" do
     let!(:hlr_tasks_on_active_decision_reviews) do
-      add_veteran_and_request_issues_to_decision_reviews(
-        create_list(:higher_level_review_task, 5, assigned_to: business_line)
-      )
+      create_list(:higher_level_review_vha_task, 5, assigned_to: business_line)
     end
 
     let!(:sc_tasks_on_active_decision_reviews) do
-      add_veteran_and_request_issues_to_decision_reviews(
-        create_list(:supplemental_claim_review_task, 5, assigned_to: business_line)
-      )
+      create_list(:supplemental_claim_vha_task, 5, assigned_to: business_line)
     end
 
     let!(:decision_review_tasks_on_inactive_decision_reviews) do
