@@ -2,7 +2,7 @@
 
 # bundle exec rails runner scripts/add_corres_for_stmdtime_testing.rb
 
-# creates data in local VACOLS for testing update_vacols_stmdtime_from_caseflow.rb script
+# creates data in local VACOLS and Caseflow DBs for testing update_vacols_stmdtime_from_caseflow.rb script
 # 7000 MpiUpdatePersonEvent records are created
 # 6000 CORRES records are created
 # 3000 of the CORRES records should be updated (STAFKEY ending in 0001-1000, 1001-2000, 3001-4000)
