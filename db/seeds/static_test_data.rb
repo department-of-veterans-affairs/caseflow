@@ -357,8 +357,8 @@ module Seeds
     def case_with_bad_decass_for_timeline_range_checks
       Time.zone = 'EST'
       vet = create_veteran
-      judge = VACOLS::Staff.find_by_css_id("BVABDANIEL")
-      atty = VACOLS::Staff.find_by_css_id("BVABBLOCK")
+      judge = VACOLS::Staff.find_or_create_by(sdomainid: "BVABDANIEL")
+      atty = VACOLS::Staff.find_or_create_by(sdomainid: "BVABBLOCK")
       vc = create(:case, :assigned, user: User.find_by_css_id("BVABDANIEL"), bfcorlid: "#{vet.file_number}S")
       create(:legacy_appeal, vacols_case: vc)
       create(:priorloc, lockey: vc.bfkey, locdin: 5.weeks.ago, locdout: 5.weeks.ago - 1.day, locstout: judge.slogid, locstto: judge.slogid)
