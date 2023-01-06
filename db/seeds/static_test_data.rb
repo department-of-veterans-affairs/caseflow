@@ -365,6 +365,10 @@ module Seeds
       create(:priorloc, lockey: vc.bfkey, locdin: 4.weeks.ago, locdout: 5.weeks.ago, locstout: judge.slogid, locstto: "CASEFLOW_judge")
       create(:priorloc, lockey: vc.bfkey, locdin: 3.weeks.ago, locdout: 4.weeks.ago, locstout: "CASEFLOW_judge", locstto: judge.slogid)
       create(:priorloc, lockey: vc.bfkey, locdin: 2.weeks.ago, locdout: 3.weeks.ago, locstout: judge.slogid, locstto: atty.slogid)
+      # set DECASS value correctly to match the above priorloc
+      decass = VACOLS::Decass.find_by(defolder: vc.bfkey)
+      decass.deassign = 3.weeks.ago.to_date
+      decass.save!
       create(:priorloc, lockey: vc.bfkey, locdin: 1.week.ago, locdout: 2.weeks.ago, locstout: atty.slogid, locstto: "CASEFLOW_atty")
       create(:priorloc, lockey: vc.bfkey, locdin: Time.zone.now, locdout: 1.week.ago, locstout: "CASEFLOW_atty", locstto: atty.slogid)
       create(:priorloc, lockey: vc.bfkey, locdout: Time.zone.now, locstout: atty.slogid, locstto: judge.slogid)
