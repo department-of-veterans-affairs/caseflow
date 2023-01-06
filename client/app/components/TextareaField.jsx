@@ -77,7 +77,7 @@ export const TextareaField = (props) => {
         {strongLabel ? <strong>{labelContents}</strong> : labelContents}
       </label>
       {errorMessage && (
-        <span className="usa-input-error-message">{errorMessage}</span>
+        <span className="usa-input-error-message" tabIndex={0}>{errorMessage}</span>
       )}
       {characterLimitCount !== null && characterLimitTopRight && characterLimitContent}
       <textarea

@@ -96,7 +96,7 @@ export const RadioField = (props) => {
       </legend>
 
       {errorMessage && (
-        <span className="usa-input-error-message">{errorMessage}</span>
+        <span className="usa-input-error-message" tabIndex={0}>{errorMessage}</span>
       )}
 
       <div className="cf-form-radio-options">
