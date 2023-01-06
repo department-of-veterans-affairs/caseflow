@@ -23,7 +23,15 @@ FactoryBot.define do
     folder { association :folder, ticknum: bfkey, tinum: docket_number }
 
     bfregoff { "RO18" }
-    bfdloout { Time.zone.now }
+
+    before(:create) do |vacols_case, evaluator|
+      vacols_case.bfdloout =
+        if evaluator.bfdloout
+          VacolsHelper.format_datetime_with_utc_timezone(evaluator.bfdloout)
+        else
+          VacolsHelper.local_time_with_utc_timezone
+        end
+    end
 
     trait :assigned do
       transient do

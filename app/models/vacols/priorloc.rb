@@ -4,6 +4,10 @@ class VACOLS::Priorloc < VACOLS::Record
   self.table_name = "priorloc"
   self.primary_key = "lockey"
 
+  attribute :locdin, :datetime
+  attribute :locdout, :datetime
+  attribute :locdto, :datetime
+
   def sub_location
     loclcode
   end
