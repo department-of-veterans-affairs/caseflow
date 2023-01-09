@@ -6,6 +6,7 @@ class VACOLS::Correspondent < VACOLS::Record
   self.primary_key = "stafkey"
 
   has_many :cases, foreign_key: :bfcorkey
+  attribute :stmdtime, :datetime
 
   # veteran must be hash containing at least values for { id, deceased_time }
   def self.update_veteran_nod(veteran)
@@ -161,7 +162,9 @@ class VACOLS::Correspondent < VACOLS::Record
 
       query = <<-SQL
         update CORRES
-        set SFNOD = TO_DATE(?, 'YYYYMMDD')
+        set SFNOD = TO_DATE(?, 'YYYYMMDD'),
+            STMDUSER = 'MPIBATCH',
+            STMDTIME = SYSDATE
         where STAFKEY = ?
       SQL
 
