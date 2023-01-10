@@ -316,7 +316,7 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
               styling={marginTop(2)}
               textAreaStyling={setHeight(4.5)}
               errorMessage={props.highlightInvalid &&
-                !validInstructions(state.otherInstructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
+                !validInstructions(state.otherInstructions) ? 'Return reason field is required' : null}
             />}
           <TextareaField
             label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL}

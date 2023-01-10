@@ -38,7 +38,7 @@ describe ETL::Builder, :etl, :all_dbs do
 
         # use .to_s comparison since Rails.cache does not store .milliseconds
         expect(builder.last_built.to_s).to eq(first_build_time.to_s)
-        expect(build.built).to eq(95)
+        expect(build.built).to eq(96)
         expect(build.build_for("appeals").rows_inserted).to eq(14)
 
         last_build_time = builder.last_built
@@ -69,7 +69,7 @@ describe ETL::Builder, :etl, :all_dbs do
     it "updates aod_due_to_dob regardless of whether Appeal has been modified" do
       builder = described_class.new
       build = builder.full
-      expect(build.built).to eq(95)
+      expect(build.built).to eq(96)
       expect(ETL::Appeal.where(aod_due_to_dob: true).count).to eq(1)
 
       # change dob for one active
@@ -105,16 +105,16 @@ describe ETL::Builder, :etl, :all_dbs do
           expect(build).to be_a(ETL::Build)
           expect(build).to be_complete
           expect(build.finished_at).to eq(Time.zone.now)
-          expect(build.built).to eq(95)
+          expect(build.built).to eq(96)
           expect(build.tables).to include("appeals", "people", "tasks", "users", "organizations")
           expect(build.build_for("appeals").rows_inserted).to eq(14)
           expect(build.build_for("appeals").rows_updated).to eq(0)
           expect(build.build_for("users").rows_updated).to eq(0)
-          expect(build.build_for("users").rows_inserted).to eq(25)
+          expect(build.build_for("users").rows_inserted).to eq(26)
 
           expect(ETL::Task.count).to eq(34)
           expect(ETL::Appeal.count).to eq(14)
-          expect(ETL::User.all.count).to eq(25)
+          expect(ETL::User.all.count).to eq(26)
           expect(ETL::Person.all.count).to eq(14)
           expect(ETL::OrganizationsUser.all.count).to eq(3)
           expect(ETL::Organization.all.count).to eq(5)
@@ -151,16 +151,16 @@ describe ETL::Builder, :etl, :all_dbs do
           expect(build).to be_a(ETL::Build)
           expect(build).to be_complete
           expect(build.finished_at).to eq(Time.zone.now)
-          expect(build.built).to eq(92)
+          expect(build.built).to eq(93)
           expect(build.tables).to include("appeals", "people", "tasks", "users", "organizations")
           expect(build.build_for("appeals").rows_inserted).to eq(14)
           expect(build.build_for("appeals").rows_updated).to eq(0)
-          expect(build.build_for("users").rows_inserted).to eq(24)
+          expect(build.build_for("users").rows_inserted).to eq(25)
           expect(build.build_for("users").rows_rejected).to eq(0)
 
           expect(ETL::Task.count).to eq(34)
           expect(ETL::Appeal.count).to eq(14)
-          expect(ETL::User.all.count).to eq(24)
+          expect(ETL::User.all.count).to eq(25)
           expect(ETL::Person.all.count).to eq(14)
           expect(ETL::OrganizationsUser.all.count).to eq(2)
           expect(ETL::Organization.all.count).to eq(4)

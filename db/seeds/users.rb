@@ -32,6 +32,7 @@ module Seeds
     private
 
     def create_users
+      User.create(css_id: "CASEFLOW1", station_id: 317, full_name: "System User")
       User.create(css_id: "BVASCASPER1", station_id: 101, full_name: "Steve Attorney_Cases Casper")
       User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Sharree AttorneyNoCases Ritchie")
       User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Aaron Judge_HearingsAndCases Abshire")
