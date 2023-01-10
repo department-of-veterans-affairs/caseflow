@@ -208,7 +208,7 @@ export const extractAppealsAndAmaTasks = (tasks) => ({
 });
 
 export const tasksWithAppealsFromRawTasks = (tasks) =>
-  tasks.map((task) => ({
+  tasks?.map((task) => ({
     ...taskAttributesFromRawTask(task),
     appeal: appealAttributesFromRawTask(task),
   }));
