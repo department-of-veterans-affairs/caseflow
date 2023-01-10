@@ -53,7 +53,7 @@ export const SPECIAL_ISSUES = [
     display: 'Education - GI Bill, dependents educational assistance, ' +
       'scholarship, transfer of entitlement',
     queueDisplay: 'Education (GI Bill, Dependents\' Educational Assistance, ' +
-    'scholarship or transfer of entitlement)',
+      'scholarship or transfer of entitlement)',
     specialIssue: 'educationGiBillDependentsEducationalAssistanceScholarship' +
       'TransferOfEntitlement',
     stationOfJurisdiction: null,
@@ -96,7 +96,7 @@ export const SPECIAL_ISSUES = [
   {
     display: 'Foreign pension, DIC - all other foreign countries',
     queueDisplay: 'DIC/Pension for appellant in any foreign country outside of Mexico, Central' +
-    ' or South America or the Caribbean',
+      ' or South America or the Caribbean',
     specialIssue: 'foreignPensionDicAllOtherForeignCountries',
     stationOfJurisdiction: null,
     snakeCase: 'foreign_pension_dic_all_other_foreign_countries',
@@ -330,7 +330,7 @@ export const SPECIAL_ISSUES = [
     },
     nonCompensation: true,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 12
+    queueSectionOrder: 11
   }
 ];
 
@@ -364,16 +364,6 @@ export const AMA_SPECIAL_ISSUES = [
     unhandled: null,
     queueSection: 'issuesOnAppeal',
     queueSectionOrder: 1,
-    isAmaRelevant: true
-  },
-  {
-    display: 'US Court of Appeals for Veterans Claims (CAVC)',
-    queueDisplay: 'US Court of Appeals for Veterans Claims (CAVC)',
-    specialIssue: 'usCourtOfAppealsForVeteransClaims',
-    snakeCase: 'us_court_of_appeals_for_veterans_claims',
-    unhandled: null,
-    queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 11,
     isAmaRelevant: true
   },
   {

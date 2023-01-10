@@ -18,7 +18,8 @@ import RadioField from '../../components/RadioField';
 import { deleteAppeal } from '../QueueActions';
 import { requestSave } from '../uiReducer/uiActions';
 import { buildCaseReviewPayload } from '../utils';
-import { taskById,
+import {
+  taskById,
   getTaskTreesForAttorneyTasks,
   getLegacyTaskTree,
 } from '../selectors';
@@ -228,7 +229,7 @@ class EvaluateDecisionView extends React.PureComponent {
         {...otherProps}
       >
         <CaseTitle
-          heading={appeal.veteranFullName}
+          heading={appeal?.veteranFullName}
           appealId={appealId}
           appeal={this.props.appeal}
           analyticsSource="evaluate_decision"
@@ -243,7 +244,7 @@ class EvaluateDecisionView extends React.PureComponent {
         )}
         <TaskSnapshot appealId={appealId} hideDropdown />
         <hr {...hrStyling} />
-        {appeal.isLegacyAppeal && (
+        {appeal?.isLegacyAppeal && (
           <>
             <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_LABEL}</h2>
             <Checkbox
@@ -318,12 +319,14 @@ const mapStateToProps = (state, ownProps) => {
 
     if (isLegacy) {
       attorneyChildrenTasks = getLegacyTaskTree(state, {
-        appealId: appeal.externalId, judgeDecisionReviewTask });
+        appealId: appeal.externalId, judgeDecisionReviewTask
+      });
     } else {
       // Get all tasks under the JudgeDecisionReviewTask
       // Filters out those without a closedAt date or that are hideFromCaseTimeline
       attorneyChildrenTasks = getTaskTreesForAttorneyTasks(state, {
-        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId });
+        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId
+      });
     }
   }
 

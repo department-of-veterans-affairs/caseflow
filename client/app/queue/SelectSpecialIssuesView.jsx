@@ -58,8 +58,10 @@ class SelectSpecialIssuesView extends React.PureComponent {
 
     if (!isValid) {
       this.props.showErrorMessage(
-        { title: COPY.SPECIAL_ISSUES_NONE_CHOSEN_TITLE,
-          detail: COPY.SPECIAL_ISSUES_NONE_CHOSEN_DETAIL });
+        {
+          title: COPY.SPECIAL_ISSUES_NONE_CHOSEN_TITLE,
+          detail: COPY.SPECIAL_ISSUES_NONE_CHOSEN_DETAIL
+        });
     }
 
     return isValid;
@@ -139,7 +141,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
         {this.getPageNote()}
       </p>
       {error && <Alert type="error" title={error.title} message={error.detail} />}
-      <div {...flexContainer} className="special-options">
+      <div {...flexContainer}>
         <div {...flexColumn}>
           {
             sectionsMap.noSpecialIssues && <CheckboxGroup

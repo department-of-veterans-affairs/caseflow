@@ -18,6 +18,7 @@ import { hasDASRecord } from '../utils';
 import COPY from '../../../COPY';
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
+
   isTaskSelected = (uniqueId) => {
     if (!this.props.isTaskAssignedToUserSelected) {
       return false;
@@ -26,13 +27,17 @@ export class TaskTableUnconnected extends React.PureComponent {
 
     return isTaskSelected[uniqueId] || false;
   }
+
   taskHasDASRecord = (task) => {
     return hasDASRecord(task, this.props.requireDasRecord);
   }
+
   collapseColumnIfNoDASRecord = (task) => this.taskHasDASRecord(task) ? 1 : 0
+
   caseBadgesColumn = () => {
     return this.props.includeBadges ? badgesColumn() : null;
   }
+
   caseSelectColumn = () => {
     return this.props.includeSelect ? {
       header: COPY.CASE_LIST_TABLE_SELECT_COLUMN_TITLE,
@@ -47,31 +52,39 @@ export class TaskTableUnconnected extends React.PureComponent {
         })} />
     } : null;
   }
+
   caseDetailsColumn = () => {
     return this.props.includeDetailsLink ?
       detailsColumn(this.props.tasks, this.props.requireDasRecord, this.props.userRole) :
       null;
   }
+
   caseTypeColumn = () => {
     return this.props.includeType ? typeColumn(this.props.tasks, this.props.requireDasRecord) : null;
   }
+
   caseDocketNumberColumn = () => {
     return this.props.includeDocketNumber ? docketNumberColumn(this.props.tasks, this.props.requireDasRecord) : null;
   }
+
   caseIssueCountColumn = () => {
     return this.props.includeIssueCount ? issueCountColumn(this.props.requireDasRecord) : null;
   }
+
   caseDaysWaitingColumn = () => {
     return this.props.includeDaysWaiting ? daysWaitingColumn(this.props.requireDasRecord) : null;
   }
+
   completedDateColumn = () => {
     return this.props.includeCompletedDate ? taskCompletedDateColumn() : null;
   }
+
   caseReaderLinkColumn = () => {
     return !this.props.userIsVsoEmployee && this.props.includeReaderLink ?
       readerLinkColumn(this.props.requireDasRecord, this.props.includeNewDocsIcon) :
       null;
   }
+
   getQueueColumns = () =>
     _.orderBy((this.props.customColumns || []).concat(
       _.compact([
@@ -85,6 +98,7 @@ export class TaskTableUnconnected extends React.PureComponent {
         this.completedDateColumn(),
         this.caseReaderLinkColumn()
       ])), ['order'], ['desc']);
+
   getDefaultSortableColumn = () => {
     if (this.props.defaultSortIdx) {
       return this.props.defaultSortIdx;
@@ -98,6 +112,7 @@ export class TaskTableUnconnected extends React.PureComponent {
 
     return _.findIndex(this.getQueueColumns(), (column) => column.getSortValue);
   }
+
   render = () => <QueueTable
     columns={this.getQueueColumns()}
     rowObjects={this.props.tasks}
@@ -144,6 +159,7 @@ const mapStateToProps = (state) => ({
   userRole: state.ui.userRole,
   organizationId: state.ui.activeOrganization.id
 });
+
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({ setSelectionOfTaskOfUser }, dispatch)
 );

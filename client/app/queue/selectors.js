@@ -263,7 +263,6 @@ export const getTaskTreesForAttorneyTasks = createSelector(
   (tasks, attorneyTasks) => {
     const allAttorneyTasks = attorneyTasks.map((attorneyTask) => {
       const childrenTasks = getAllChildrenTasks(tasks, attorneyTask.uniqueId).
-        filter((task) => !task.hideFromCaseTimeline).
         filter((task) => task.closedAt !== null).
         filter((task) => {
           // Remove any tasks whose createdAt is older than the AttorneyTask's createdAt date
@@ -309,8 +308,8 @@ export const getLegacyTaskTree = createSelector(
           moment(judgeDecisionReviewTask.assignedOn));
 
         return task.uniqueId !== judgeDecisionReviewTask.uniqueId &&
-        timelineRange.contains(taskCreatedAt) &&
-        timelineRange.contains(taskClosedAt);
+          timelineRange.contains(taskCreatedAt) &&
+          timelineRange.contains(taskClosedAt);
       })
 );
 
