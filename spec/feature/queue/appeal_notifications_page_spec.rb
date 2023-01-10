@@ -4,9 +4,12 @@ require "spec_helper"
 
 RSpec.feature "Notifications View" do
   let(:user_roles) { ["System Admin"] }
+  before(:all) do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   before do
     User.authenticate!(roles: user_roles)
-    Seeds::NotificationEvents.new.seed!
   end
 
   context "ama appeal" do
