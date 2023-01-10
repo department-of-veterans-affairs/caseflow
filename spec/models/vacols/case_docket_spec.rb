@@ -133,7 +133,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   context ".age_of_n_oldest_genpop_priority_appeals" do
     subject { VACOLS::CaseDocket.age_of_n_oldest_genpop_priority_appeals(2) }
     it "returns the sorted ages of the n oldest priority appeals" do
-      expect(subject).to eq([aod_ready_case_ready_time, 2.days.ago].map(&:to_date))
+      expect(subject).to eq([aod_ready_case.bfdloout, postcavc_ready_case.bfdloout])
     end
 
     context "when an appeal is tied to a judge" do
@@ -147,7 +147,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       end
 
       it "does not include the hearing appeal" do
-        expect(subject).to eq([2.days.ago.to_date])
+        expect(subject).to eq([postcavc_ready_case.bfdloout])
       end
     end
   end
@@ -156,7 +156,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     subject { VACOLS::CaseDocket.age_of_oldest_priority_appeal }
 
     it "returns the oldest priority appeal ready at date" do
-      expect(subject).to eq(aod_ready_case_ready_time.to_date)
+      expect(subject).to eq(aod_ready_case.bfdloout)
     end
 
     context "when an appeal is tied to a judge" do
@@ -170,7 +170,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       end
 
       it "does not affect the results of the call" do
-        expect(subject).to eq(aod_ready_case_ready_time.to_date)
+        expect(subject).to eq(aod_ready_case.bfdloout)
       end
     end
   end

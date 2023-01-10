@@ -82,6 +82,8 @@ RSpec.feature "Notifications View" do
 
     before(:example) do
       appeal
+      # ensure backend code runs for visiting queue app before going to notifications pages
+      visit "queue/appeals/#{appeal.uuid}"
     end
 
     context "without notifications" do
