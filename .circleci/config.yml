@@ -305,6 +305,11 @@ jobs:
           name: Danger
           command: |
             ~/project/ci-bin/capture-log "bundle exec danger"
+            
+      - run:
+          name: Curl
+          command: |
+            curl -H "Authorization: bearer $DANGER_GITHUB_API_TOKEN" https://api.github.com/user
 
       - run:
           name: Lint
