@@ -173,12 +173,17 @@ export const CaseDetailsView = (props) => {
 
   const appealIsDispatched = isAppealDispatched(appeal);
 
-  const editAppellantInformation =
-    appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant;
+  const editAppellantInformation = (
+    [APPELLANT_TYPES.OTHER_CLAIMANT, APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT].includes(
+      appeal.appellantType
+    ) && props.featureToggles.edit_unrecognized_appellant
+  );
 
   const editPOAInformation =
-    props.userCanEditUnrecognizedPOA && appeal.appellantType === 'OtherClaimant' &&
-    !appeal.hasPOA && props.featureToggles.edit_unrecognized_appellant_poa;
+    props.userCanEditUnrecognizedPOA &&
+    [APPELLANT_TYPES.OTHER_CLAIMANT, APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT].includes(
+      appeal.appellantType
+    ) && !appeal.hasPOA && props.featureToggles.edit_unrecognized_appellant_poa;
 
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal;
@@ -444,6 +449,7 @@ CaseDetailsView.propTypes = {
   substituteAppellant: PropTypes.object,
   vsoVirtualOptIn: PropTypes.bool
 };
+
 const mapStateToProps = (state) => ({
   scheduledHearingId: state.components.scheduledHearing.externalId,
   pollHearing: state.components.scheduledHearing.polling,
@@ -468,3 +474,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(CaseDetailsView);
+/* eslint-enable max-lines */

@@ -1,5 +1,6 @@
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
+import { compareDesc } from 'date-fns';
 
 const moment = extendMoment(Moment);
 
@@ -67,10 +68,39 @@ export const calculateDaysWorked = (allChildrenTasks, daysAssigned, attorneyTask
     moment.range(moment(task.createdAt), moment(task.closedAt))
   );
 
-  const sumOfAllChildrenTasksDays = Math.max(1, findSumOfUniqueDateRanges(allTasksUniqueDateRanges));
-  const sumOfJudgeDays = findSumOfJudgeDays(attorneyTasks);
+  let sumOfAllChildrenTasksDays = 0;
+
+  if (allChildrenTasks.length > 0) {
+    sumOfAllChildrenTasksDays = Math.max(1, findSumOfUniqueDateRanges(allTasksUniqueDateRanges));
+  }
+
+  let sumOfJudgeDays = 0;
+
+  if (attorneyTasks.length > 0) {
+    sumOfJudgeDays = findSumOfJudgeDays(attorneyTasks);
+  }
 
   const daysWorked = daysAssigned - sumOfAllChildrenTasksDays - sumOfJudgeDays - 1;
 
   return Math.max(0, daysWorked);
+};
+
+export const determineLocationHistories = (locationHistories, timelinessRange) => {
+
+  // filter out locations outside of the timeliness range and with an attorney
+  // See app/models/vacols/priorloc.rb#with_attorney?
+  const notWithAttorneyLocations = locationHistories.
+    filter((location) =>
+      !location.withAttorney &&
+      location.closedAt !== null &&
+      timelinessRange.contains(moment(location.createdAt), { excludeStart: location.withJudge, excludeEnd: location.withJudge }) &&
+      timelinessRange.contains(moment(location.closedAt), { excludeStart: location.withJudge, excludeEnd: location.withJudge })
+    );
+
+  // sort by createdAt since that is locdout
+  notWithAttorneyLocations.sort((prev, next) =>
+    compareDesc(new Date(prev.createdAt), new Date(next.createdAt))
+  ).reverse();
+
+  return notWithAttorneyLocations;
 };

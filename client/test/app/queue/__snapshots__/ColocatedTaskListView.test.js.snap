@@ -276,17 +276,16 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                           >
                             <g>
                               <rect
-                                class="unselected-filter-icon-border"
                                 fill="#fff"
                                 fill-rule="nonzero"
                                 height="20"
                                 rx="2"
+                                stroke="#212121"
                                 width="20"
                                 x="0.5"
                                 y="0.5"
                               />
                               <path
-                                class="unselected-filter-icon-inner"
                                 d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
                                 fill="#212121"
                               />
@@ -380,17 +379,16 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                           >
                             <g>
                               <rect
-                                class="unselected-filter-icon-border"
                                 fill="#fff"
                                 fill-rule="nonzero"
                                 height="20"
                                 rx="2"
+                                stroke="#212121"
                                 width="20"
                                 x="0.5"
                                 y="0.5"
                               />
                               <path
-                                class="unselected-filter-icon-inner"
                                 d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
                                 fill="#212121"
                               />
@@ -484,17 +482,16 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                           >
                             <g>
                               <rect
-                                class="unselected-filter-icon-border"
                                 fill="#fff"
                                 fill-rule="nonzero"
                                 height="20"
                                 rx="2"
+                                stroke="#212121"
                                 width="20"
                                 x="0.5"
                                 y="0.5"
                               />
                               <path
-                                class="unselected-filter-icon-inner"
                                 d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
                                 fill="#212121"
                               />
@@ -505,13 +502,13 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                   </th>
                   <th
-                    class="cf-txt-c"
+                    class=""
                     role="columnheader"
                     scope="col"
                   >
                     <span
                       aria-describedby="tooltip-5"
-                      aria-label="Days Waiting"
+                      aria-label=""
                       currentitem="false"
                       data-css-9shxm7=""
                       data-event="focus mouseenter"
@@ -575,7 +572,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       </span>
                     </span>
                     <span
-                      data-css-fs14qy=""
+                      data-css-1cfshsl=""
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
@@ -743,7 +740,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   >
                     <span
                       aria-describedby="badge-200603-71"
-                      aria-label="Direct Review"
+                      aria-label=""
                       currentitem="false"
                       data-css-2moai0=""
                       data-event="focus mouseenter"
@@ -755,7 +752,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       D
                     </span>
                     <span
-                      data-css-19if8q3=""
+                      data-css-1yt9kq0=""
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -848,7 +845,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                   </td>
                   <td
-                    class="cf-txt-c"
+                    class=""
                     colspan="1"
                     role="cell"
                   >
@@ -944,7 +941,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   >
                     <span
                       aria-describedby="badge-200603-72"
-                      aria-label="Direct Review"
+                      aria-label=""
                       currentitem="false"
                       data-css-2moai0=""
                       data-event="focus mouseenter"
@@ -956,7 +953,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                       D
                     </span>
                     <span
-                      data-css-hd31kg=""
+                      data-css-10zywkz=""
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -1049,7 +1046,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     </span>
                   </td>
                   <td
-                    class="cf-txt-c"
+                    class=""
                     colspan="1"
                     role="cell"
                   >
@@ -1412,17 +1409,16 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                           >
                             <g>
                               <rect
-                                class="unselected-filter-icon-border"
                                 fill="#fff"
                                 fill-rule="nonzero"
                                 height="20"
                                 rx="2"
+                                stroke="#212121"
                                 width="20"
                                 x="0.5"
                                 y="0.5"
                               />
                               <path
-                                class="unselected-filter-icon-inner"
                                 d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
                                 fill="#212121"
                               />
@@ -1516,17 +1512,16 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                           >
                             <g>
                               <rect
-                                class="unselected-filter-icon-border"
                                 fill="#fff"
                                 fill-rule="nonzero"
                                 height="20"
                                 rx="2"
+                                stroke="#212121"
                                 width="20"
                                 x="0.5"
                                 y="0.5"
                               />
                               <path
-                                class="unselected-filter-icon-inner"
                                 d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
                                 fill="#212121"
                               />
@@ -1620,17 +1615,16 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                           >
                             <g>
                               <rect
-                                class="unselected-filter-icon-border"
                                 fill="#fff"
                                 fill-rule="nonzero"
                                 height="20"
                                 rx="2"
+                                stroke="#212121"
                                 width="20"
                                 x="0.5"
                                 y="0.5"
                               />
                               <path
-                                class="unselected-filter-icon-inner"
                                 d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
                                 fill="#212121"
                               />
@@ -1647,7 +1641,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   >
                     <span
                       aria-describedby="tooltip-5"
-                      aria-label="Days on Hold"
+                      aria-label=""
                       currentitem="false"
                       data-css-9shxm7=""
                       data-event="focus mouseenter"
@@ -1711,7 +1705,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       </span>
                     </span>
                     <span
-                      data-css-fs14qy=""
+                      data-css-1cfshsl=""
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-top type-dark"
@@ -1879,7 +1873,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   >
                     <span
                       aria-describedby="badge-200603-73"
-                      aria-label="Direct Review"
+                      aria-label=""
                       currentitem="false"
                       data-css-2moai0=""
                       data-event="focus mouseenter"
@@ -1891,7 +1885,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       D
                     </span>
                     <span
-                      data-css-t9ad6e=""
+                      data-css-1i1fgeu=""
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -2074,7 +2068,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   >
                     <span
                       aria-describedby="badge-200603-74"
-                      aria-label="Direct Review"
+                      aria-label=""
                       currentitem="false"
                       data-css-2moai0=""
                       data-event="focus mouseenter"
@@ -2086,7 +2080,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                       D
                     </span>
                     <span
-                      data-css-ns953s=""
+                      data-css-7nsseu=""
                     >
                       <div
                         class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"

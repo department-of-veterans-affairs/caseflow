@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 import SearchBar from '../../components/SearchBar';
 import TabWindow from '../../components/TabWindow';
+import { getQueryParams } from 'app/util/QueryParamsUtil';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import {
@@ -83,7 +84,6 @@ class TaskTableTab extends React.PureComponent {
       searchText: ''
     };
   }
-
   onSearch = (searchText) => {
     const lowercaseSearchText = searchText.toLowerCase();
     const filteredTasks = this.state.allTasks.filter((task) => {
@@ -94,7 +94,6 @@ class TaskTableTab extends React.PureComponent {
     this.setState({ shownTasks: filteredTasks,
       searchText });
   }
-
   onClearSearch = () => {
     this.setState({ shownTasks: this.state.allTasks,
       searchText: '' });

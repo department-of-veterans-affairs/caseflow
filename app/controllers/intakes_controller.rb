@@ -102,16 +102,8 @@ class IntakesController < ApplicationController
       page: "Intake",
       feedbackUrl: feedback_url,
       buildDate: build_date,
-      featureToggles: {
-        useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
-        rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
-        dateOfBirthField: FeatureToggle.enabled?(:date_of_birth_field, user: current_user),
-        covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
-        filedByVaGovHlr: FeatureToggle.enabled?(:filed_by_va_gov_hlr, user: current_user),
-        updatedIntakeForms: FeatureToggle.enabled?(:updated_intake_forms, user: current_user),
-        eduPreDocketAppeals: FeatureToggle.enabled?(:edu_predocket_appeals, user: current_user),
-        updatedAppealForm: FeatureToggle.enabled?(:updated_appeal_form, user: current_user)
-      }
+      featureToggles: feature_toggle_ui_hash,
+      userInformation: user_information_ui_hash
     }
   rescue StandardError => error
     Rails.logger.error "#{error.message}\n#{error.backtrace.join("\n")}"
@@ -146,6 +138,30 @@ class IntakesController < ApplicationController
     return intake_in_progress.ui_hash.merge(unread_messages: unread_messages?) if intake_in_progress
 
     { unread_messages: unread_messages? }
+  end
+
+  def feature_toggle_ui_hash
+    {
+      useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
+      rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
+      dateOfBirthField: FeatureToggle.enabled?(:date_of_birth_field, user: current_user),
+      covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
+      filedByVaGovHlr: FeatureToggle.enabled?(:filed_by_va_gov_hlr, user: current_user),
+      updatedIntakeForms: FeatureToggle.enabled?(:updated_intake_forms, user: current_user),
+      eduPreDocketAppeals: FeatureToggle.enabled?(:edu_predocket_appeals, user: current_user),
+      updatedAppealForm: FeatureToggle.enabled?(:updated_appeal_form, user: current_user),
+      hlrScUnrecognizedClaimants: FeatureToggle.enabled?(:hlr_sc_unrecognized_claimants, user: current_user),
+      vhaClaimReviewEstablishment: FeatureToggle.enabled?(:vha_claim_review_establishment, user: current_user)
+    }
+  end
+
+  def user_information_ui_hash
+    {
+      userIsVhaEmployee: current_user.vha_employee?,
+      userCanIntakeAppeals: current_user.can_intake_appeals?,
+      userDisplayName: current_user.display_name,
+      unreadMessages: unread_messages?
+    }
   end
 
   # TODO: This could be moved to the model.

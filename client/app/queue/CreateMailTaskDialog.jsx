@@ -116,7 +116,7 @@ export class CreateMailTaskDialog extends React.Component {
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           errorMessage={
             highlightFormItems && !this.state.instructions ?
-              COPY.FORM_ERROR_FIELD_REQUIRED :
+              COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED :
               null
           }
           id="taskInstructions"

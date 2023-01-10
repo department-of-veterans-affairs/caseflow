@@ -119,19 +119,6 @@ describe BusinessLine do
       add_veteran_and_request_issues_to_decision_reviews(
         create_list(:veteran_record_request_task, 5, assigned_to: business_line)
       )
-    end
-
-    let!(:veteran_record_request_on_inactive_appeals) do
-      create_list(:veteran_record_request_task, 5, assigned_to: business_line)
-    end
-
-    subject { business_line.in_progress_tasks(filters: task_filters) }
-
-    include_examples "task filtration"
-
-    context "With the :board_grant_effectuation_task FeatureToggle enabled" do
-      let!(:task_filters) { nil }
-
       before { FeatureToggle.enable!(:board_grant_effectuation_task) }
       after { FeatureToggle.disable!(:board_grant_effectuation_task) }
 
