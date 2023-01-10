@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 
 import SearchBar from '../../components/SearchBar';
 import TabWindow from '../../components/TabWindow';
-import { getQueryParams } from 'app/util/QueryParamsUtil';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import {
