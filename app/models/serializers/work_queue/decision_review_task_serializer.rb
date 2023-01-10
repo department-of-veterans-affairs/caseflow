@@ -61,6 +61,10 @@ class WorkQueue::DecisionReviewTaskSerializer
     }
   end
 
+  attribute :issue_count do |object|
+    issue_count(object)
+  end
+
   attribute :tasks_url do |object|
     object.assigned_to.tasks_url
   end
@@ -73,11 +77,18 @@ class WorkQueue::DecisionReviewTaskSerializer
   end
 
   attribute :assigned_on, &:assigned_at
+  attribute :assigned_at
 
   attribute :closed_at
   attribute :started_at
 
   attribute :type do |object|
     decision_review(object).is_a?(Appeal) ? "Board Grant" : decision_review(object).class.review_title
+  end
+
+  attribute :business_line do |object|
+    assignee = object.assigned_to
+
+    assignee.is_a?(BusinessLine) ? assignee.url : nil
   end
 end

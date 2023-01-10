@@ -31,9 +31,9 @@ export const AttorneyDaysWorked = (props) => {
     <React.Fragment>
       <span className="case-type">
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_CASE_TYPE}</b>:
-        { aod && <span {...redText}> AOD</span> }
-        { cavc && <span {...redText}> CAVC</span> }
-        { !aod && !cavc && <span> {caseType}</span> }
+        {aod && <span {...redText}> AOD</span>}
+        {cavc && <span {...redText}> CAVC</span>}
+        {!aod && !cavc && <span> {caseType}</span>}
       </span>
       <span className="attorney-assigned">
         <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_TOTAL_DAYS_ATTORNEY_ASSIGNED}</b>: {daysAssigned}

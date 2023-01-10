@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class DecisionReviewsController < ApplicationController
+  include GenericTaskPaginationConcern
+
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
 
@@ -15,6 +17,7 @@ class DecisionReviewsController < ApplicationController
           filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
           send_data jobs_as_csv, filename: filename
         end
+        format.json { queue_tasks }
       end
     else
       # TODO: make index show error message
@@ -82,8 +85,25 @@ class DecisionReviewsController < ApplicationController
     end
   end
 
-  def apply_task_serializer(tasks)
-    tasks.map { |task| task.ui_hash.merge(business_line: business_line_slug) }
+  def queue_tasks
+    return missing_tab_parameter_error unless allowed_params[:tab]
+
+    tasks = case allowed_params[:tab]
+            when "in_progress" then in_progress_tasks
+            when "completed" then completed_tasks
+            else
+              return unrecognized_tab_name_error
+            end
+
+    render json: pagination_json(tasks)
+  end
+
+  def missing_tab_parameter_error
+    render json: { error: "'tab' parameter is required." }, status: :bad_request
+  end
+
+  def unrecognized_tab_name_error
+    render json: { error: "Tab name provided could not be found" }, status: :not_found
   end
 
   def set_application
@@ -119,6 +139,11 @@ class DecisionReviewsController < ApplicationController
       :decision_date,
       :business_line_slug,
       :task_id,
+      :tab,
+      :sort_by,
+      :order,
+      { filter: [] },
+      :page,
       decision_issues: [:description, :disposition, :request_issue_id]
     )
   end
