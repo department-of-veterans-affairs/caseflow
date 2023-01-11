@@ -1,6 +1,17 @@
 # frozen_string_literal: true
 
 class BusinessLine < Organization
+  TASK_FILTER_PREDICATES = {
+    "VeteranRecordRequest" => Task.arel_table[:type].eq(VeteranRecordRequest.name),
+    "BoardGrantEffectuationTask" => Task.arel_table[:type].eq(BoardGrantEffectuationTask.name),
+    "HigherLevelReview" => Task.arel_table[:appeal_type]
+      .eq("HigherLevelReview")
+      .and(Task.arel_table[:type].eq(DecisionReviewTask.name)),
+    "SupplementalClaim" => Task.arel_table[:appeal_type]
+      .eq("SupplementalClaim")
+      .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
+  }.freeze
+
   def tasks_url
     "/decision_reviews/#{url}"
   end
@@ -8,23 +19,39 @@ class BusinessLine < Organization
   def in_progress_tasks(
     _sort_by: "",
     sort_order: "desc",
-    _filters: []
+    filters: []
   )
     Task.select(Arel.star)
       .from(combined_decision_review_tasks_query)
       .includes(*decision_review_task_includes)
+      .where(task_filter_predicate(filters))
       .order(assigned_at: sort_order.to_sym)
+  end
+
+  def in_progress_tasks_type_counts
+    Task.select(Task.arel_table[:type])
+      .from(combined_decision_review_tasks_query)
+      .group(Task.arel_table[:type], Task.arel_table[:appeal_type])
+      .count
   end
 
   def completed_tasks(
     _sort_by: "",
     sort_order: "desc",
-    _filters: []
+    filters: []
   )
     tasks
       .recently_completed
       .includes(*decision_review_task_includes)
+      .where(task_filter_predicate(filters))
       .order(closed_at: sort_order.to_sym)
+  end
+
+  def completed_tasks_type_counts
+    tasks
+      .recently_completed
+      .group(Task.arel_table[:type], Task.arel_table[:appeal_type])
+      .count
   end
 
   private
@@ -68,7 +95,7 @@ class BusinessLine < Organization
       .open
       .left_joins(ama_appeal: :request_issues)
       .where(Task.arel_table[:type].eq(BoardGrantEffectuationTask.name))
-      .where(assigned_to: id)
+      .where(assigned_to: self)
       .group("tasks.id")
       .arel
   end
@@ -96,9 +123,44 @@ class BusinessLine < Organization
 
   def active_request_issue_constraints
     {
-      assigned_to: id,
+      assigned_to: self,
       "request_issues.closed_at": nil,
       "request_issues.ineligible_reason": nil
     }
+  end
+
+  def task_filter_predicate(filters)
+    return "" unless filters
+
+    task_filter = locate_task_filter(filters)
+
+    return "" unless task_filter
+
+    # ex: "val"=>["SupplementalClaim|HigherLevelReview"]
+    tasks_to_include = task_filter["val"].first.split("|")
+
+    build_task_filter_predicates(tasks_to_include) || ""
+  end
+
+  def build_task_filter_predicates(tasks_to_include)
+    first_task_name, *remaining_task_names = tasks_to_include
+
+    filter = TASK_FILTER_PREDICATES[first_task_name]
+
+    remaining_task_names.each { |task_name| filter = filter.or(TASK_FILTER_PREDICATES[task_name]) }
+
+    filter
+  end
+
+  def parse_filters(filters)
+    filters.map { |filter| CGI.parse(filter) }
+  end
+
+  def locate_task_filter(filters)
+    parsed_filters = parse_filters(filters)
+
+    parsed_filters.find do |filter|
+      filter["col"].include?("decisionReviewType")
+    end
   end
 end
