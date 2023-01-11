@@ -2,8 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { calculateDaysWorked } from './calculateDaysWorked';
+import { redText } from '../constants';
 
-export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned, isLegacy }) => {
+export const AttorneyDaysWorked = (props) => {
+  const {
+    attorneyTasks,
+    daysAssigned,
+    aod,
+    cavc,
+    caseType,
+    isLegacy
+  } = props;
   const allChildrenTasks = [];
   const justAttorneyTasks = [];
 
@@ -39,5 +48,8 @@ export const AttorneyDaysWorked = ({ attorneyTasks, daysAssigned, isLegacy }) =>
 AttorneyDaysWorked.propTypes = {
   daysAssigned: PropTypes.number,
   attorneyTasks: PropTypes.array,
+  aod: PropTypes.bool,
+  cavc: PropTypes.bool,
+  caseType: PropTypes.string,
   isLegacy: PropTypes.bool
 };

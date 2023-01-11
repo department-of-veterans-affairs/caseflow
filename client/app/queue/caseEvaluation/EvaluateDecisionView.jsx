@@ -229,7 +229,7 @@ class EvaluateDecisionView extends React.PureComponent {
         {...otherProps}
       >
         <CaseTitle
-          heading={appeal.veteranFullName}
+          heading={appeal?.veteranFullName}
           appealId={appealId}
           appeal={this.props.appeal}
           analyticsSource="evaluate_decision"
@@ -244,7 +244,7 @@ class EvaluateDecisionView extends React.PureComponent {
         )}
         <TaskSnapshot appealId={appealId} hideDropdown />
         <hr {...hrStyling} />
-        {appeal.isLegacyAppeal && (
+        {appeal?.isLegacyAppeal && (
           <>
             <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_LABEL}</h2>
             <Checkbox

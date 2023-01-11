@@ -2,7 +2,7 @@ import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { createSelector } from 'reselect';
 import { filter, find, keyBy, map, merge, orderBy, reduce } from 'lodash';
-import { taskIsActive, taskIsOnHold, getAllChildrenTasks } from './utils';
+import { taskIsActive, taskIsOnHold, getAllChildrenTasks, taskAttributesFromRawTask } from './utils';
 
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
@@ -124,9 +124,7 @@ const tasksByAssigneeOrgSelector = createSelector(
 
 export const legacyJudgeTasksAssignedToUser = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => filter(
-    tasks, (task) => task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeLegacyAssignTask'
-  )
+  (tasks) => filter(tasks, (task) => task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeLegacyAssignTask')
 );
 
 const workTasksByAssigneeCssIdSelector = createSelector(
@@ -181,16 +179,12 @@ export const distributionTasksForAppeal = createSelector(
 
 export const caseTimelineTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
-  (tasks) => orderBy(
-    filter(completeTasksSelector(tasks), (task) => !task.hideFromCaseTimeline), ['completedAt'], ['desc']
-  )
+  (tasks) => orderBy(filter(completeTasksSelector(tasks), (task) => !task.hideFromCaseTimeline), ['completedAt'], ['desc'])
 );
 
 export const taskSnapshotTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
-  (tasks) => orderBy(
-    filter(incompleteTasksSelector(tasks), (task) => !task.hideFromTaskSnapshot), ['createdAt'], ['desc']
-  )
+  (tasks) => orderBy(filter(incompleteTasksSelector(tasks), (task) => !task.hideFromTaskSnapshot), ['createdAt'], ['desc'])
 );
 
 const taskIsLegacyAttorneyJudgeTask = (task) => {
@@ -263,7 +257,6 @@ export const getTaskTreesForAttorneyTasks = createSelector(
   (tasks, attorneyTasks) => {
     const allAttorneyTasks = attorneyTasks.map((attorneyTask) => {
       const childrenTasks = getAllChildrenTasks(tasks, attorneyTask.uniqueId).
-        filter((task) => !task.hideFromCaseTimeline).
         filter((task) => task.closedAt !== null).
         filter((task) => {
           // Remove any tasks whose createdAt is older than the AttorneyTask's createdAt date
