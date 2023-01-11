@@ -14,9 +14,9 @@ class WorkQueue::DecisionReviewTaskSerializer
   def self.claimant_name(object)
     if decision_review(object).veteran_is_not_claimant
       # TODO: support multiple?
-      claimant_with_name(object).try(:name) || "claimant"
+      object[:claimant_name] || claimant_with_name(object).try(:name) || "claimant"
     else
-      decision_review(object).veteran_full_name
+      object[:claimant_name] || decision_review(object).veteran_full_name
     end
   end
 
@@ -44,7 +44,8 @@ class WorkQueue::DecisionReviewTaskSerializer
   attribute :claimant do |object|
     {
       name: claimant_name(object),
-      relationship: claimant_relationship(object)
+      # Cheat to avoid serializing relationship on the queue page since it isn't used
+      relationship: object[:claimant_name] || claimant_relationship(object)
     }
   end
 
@@ -73,7 +74,7 @@ class WorkQueue::DecisionReviewTaskSerializer
   attribute :created_at
 
   attribute :veteran_participant_id do |object|
-    veteran(object).participant_id
+    object[:veteran_participant_id] || veteran(object).participant_id
   end
 
   attribute :assigned_on, &:assigned_at

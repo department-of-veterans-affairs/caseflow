@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 
 import SearchBar from '../../components/SearchBar';
 import TabWindow from '../../components/TabWindow';
-import { getQueryParams } from 'app/util/QueryParamsUtil';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import { claimantColumn, veteranParticipantIdColumn, decisionReviewTypeColumn } from './TaskTableColumns';
@@ -12,13 +11,16 @@ import COPY from '../../../COPY';
 
 class NonCompTabsUnconnected extends React.PureComponent {
   render = () => {
-    const queryParams = getQueryParams(window.location.search);
-    const pageNum = queryParams[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM];
-    const currentTabName = queryParams[QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM];
+    const queryParams = new URLSearchParams(window.location.search);
+    const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM);
+    const tabPaginationOptions = {
+      [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM),
+      [QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM)
+    };
     const tabArray = ['in_progress', 'completed'];
     // If additional tabs need to be added, include them in the array above
     // to be able to locate them by their index
-    let findTab = tabArray.findIndex((tabName) => tabName === currentTabName);
+    const findTab = tabArray.findIndex((tabName) => tabName === currentTabName);
     const getTabByIndex = findTab === -1 ? 0 : findTab;
 
     const tabs = [{
@@ -26,7 +28,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
       page: <TaskTableTab
         key="inprogress"
         baseTasksUrl={`${this.props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=in_progress`}
-        tabPaginationOptions={{ [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: pageNum }}
+        tabPaginationOptions={tabPaginationOptions}
         predefinedColumns={{ includeDaysWaiting: true,
           defaultSortIdx: 3 }} />
     }, {
@@ -34,7 +36,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
       page: <TaskTableTab
         key="completed"
         baseTasksUrl={`${this.props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=completed`}
-        tabPaginationOptions={{ [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: pageNum }}
+        tabPaginationOptions={tabPaginationOptions}
         description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
         predefinedColumns={{ includeCompletedDate: true,
           defaultSortIdx: 3 }} />
@@ -56,35 +58,47 @@ NonCompTabsUnconnected.propTypes = {
 class TaskTableTab extends React.PureComponent {
   constructor(props) {
     super(props);
+    let searchText = '';
+
+    // Set the search text to the get parameters if it exists
+    if (this.props.tabPaginationOptions[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]) {
+      searchText = this.props.tabPaginationOptions[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM];
+    }
+
     this.state = {
-      allTasks: this.props.tasks,
       predefinedColumns: this.props.predefinedColumns,
-      shownTasks: this.props.tasks,
-      searchText: '',
+      searchText,
+      searchValue: searchText,
     };
   }
-  onSearch = (searchText) => {
-    const lowercaseSearchText = searchText.toLowerCase();
-    const filteredTasks = this.state.allTasks.filter((task) => {
-      return task.claimant.name.toLowerCase().includes(lowercaseSearchText) ||
-        task.veteran_participant_id.includes(searchText);
-    });
 
-    this.setState({ shownTasks: filteredTasks,
-      searchText });
-  }
+  onChange = (value) => {
+    if (!value) {
+      // Edge case to reset the value if the user completely backspaces all of the text in the search input
+      this.setState({ searchText: '', searchValue: '' });
+    }
+
+    this.setState({ searchText: value });
+  };
+
+  // Use a different state variable for debouncing
+  // Pass this new value to queue table so it will resend the search on props/state change.
+  onSearch = (value) => this.setState({ searchValue: value });
+
   onClearSearch = () => {
-    this.setState({ shownTasks: this.state.allTasks,
-      searchText: '' });
+    this.setState({ searchText: '', searchValue: '' });
   }
   render = () => {
+    this.props.tabPaginationOptions[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM] = this.state.searchValue;
+
     return <React.Fragment>
       {this.props.description && <div className="cf-noncomp-queue-completed-task">{this.props.description}</div>}
       <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
         <SearchBar
           id="searchBar"
           size="small"
-          onChange={this.onSearch}
+          onChange={this.onChange}
+          recordSearch={this.onSearch}
           placeholder="Type to search..."
           onClearSearch={this.onClearSearch}
           isSearchAhead
@@ -117,6 +131,7 @@ TaskTableTab.propTypes = {
     [QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM]: PropTypes.string,
     [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: PropTypes.string,
     [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string),
+    [QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]: PropTypes.string,
     onPageLoaded: PropTypes.func
   })
 };

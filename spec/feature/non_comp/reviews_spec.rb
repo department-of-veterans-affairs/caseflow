@@ -135,6 +135,44 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Board Grant")
     end
 
+    scenario "searching reviews by name" do
+      visit "decision_reviews/nco"
+
+      # There should be 2 on the page
+      expect(page).to have_content("Higher-Level Review", count: 2)
+
+      fill_in "search", with: veteran_b.first_name
+
+      # There should be 1 on the page with this information
+      expect(page).to have_content("Higher-Level Review", count: 1)
+      expect(page).to have_content(
+        /#{veteran_b.name} #{veteran_b.participant_id} 1 0 days Higher-Level Review/
+      )
+
+      # Blank out the input and verify that there are once again 2 on the page
+      fill_in "search", with: ""
+      expect(page).to have_content("Higher-Level Review", count: 2)
+    end
+
+    scenario "searching reviews by participant id" do
+      visit "decision_reviews/nco"
+
+      # There should be 2 on the page
+      expect(page).to have_content("Higher-Level Review", count: 2)
+
+      fill_in "search", with: veteran_a.participant_id
+
+      # There should be 1 on the page with this information
+      expect(page).to have_content("Higher-Level Review", count: 1)
+      expect(page).to have_content(
+        /#{veteran_a.name} #{veteran_a.participant_id} 1 6 days Higher-Level Review/
+      )
+
+      # Blank out the input and verify that there are once again 2 on the page
+      fill_in "search", with: ""
+      expect(page).to have_content("Higher-Level Review", count: 2)
+    end
+
     context "with user enabled for intake" do
       scenario "goes back to intake" do
         # allow user to have access to intake
