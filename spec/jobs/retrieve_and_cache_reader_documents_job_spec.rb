@@ -23,7 +23,7 @@ describe RetrieveAndCacheReaderDocumentsJob, :postgres do
       end
       let(:high_priority_task3) do
         create(
-          :ama_task,
+          :task,
           assigned_to: user2, status: Constants.TASK_STATUSES.assigned, assigned_to_type: User.name,
           type: JudgeAssignTask.name, appeal: appeal2
         )
@@ -42,9 +42,11 @@ describe RetrieveAndCacheReaderDocumentsJob, :postgres do
         [high_priority_task1, high_priority_task2, high_priority_task3, high_priority_task4]
       end
 
+      # .sort will convert the hash output of subject to an array and sort by User ID, without
+      # sort the test can fail due to the ActiveRecord in subject returning user2 before user1
       it "should only fetch tasks assigned to user" do
-        returned_user1_task1 = subject.to_a[0][1][0]
-        returned_user2_task3 = subject.to_a[1][1][0]
+        returned_user1_task1 = subject.sort[0][1][0]
+        returned_user2_task3 = subject.sort[1][1][0]
 
         expect(returned_user1_task1.assigned_to_id).to eq(user1.id)
         expect(returned_user1_task1.assigned_to_id).to_not eq(user2.id)
@@ -52,8 +54,8 @@ describe RetrieveAndCacheReaderDocumentsJob, :postgres do
         expect(returned_user2_task3.assigned_to_id).to_not eq(user1.id)
       end
       it "should only fetch documents assigned to user" do
-        returned_user2 = subject.to_a[1][0]
-        returned_user2_task3 = subject.to_a[1][1][0]
+        returned_user2 = subject.sort[1][0]
+        returned_user2_task3 = subject.sort[1][1][0]
 
         expect(user2.efolder_documents_fetched_at).to be_nil
         expect(returned_user2_task3.assigned_to_id).to eq(user2.id)
