@@ -89,8 +89,8 @@ class DecisionReviewsController < ApplicationController
     return missing_tab_parameter_error unless allowed_params[:tab]
 
     tasks = case allowed_params[:tab]
-            when "in_progress" then in_progress_tasks
-            when "completed" then completed_tasks
+            when "in_progress" then in_progress_tasks(search_query: allowed_params[:search_query])
+            when "completed" then completed_tasks(search_query: allowed_params[:search_query])
             else
               return unrecognized_tab_name_error
             end
@@ -141,6 +141,7 @@ class DecisionReviewsController < ApplicationController
       :task_id,
       :tab,
       :sort_by,
+      :search_query,
       :order,
       { filter: [] },
       :page,

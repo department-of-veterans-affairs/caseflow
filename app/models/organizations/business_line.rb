@@ -8,13 +8,13 @@ class BusinessLine < Organization
   def in_progress_tasks(
     _sort_by: "",
     sort_order: "desc",
-    search_string: "",
+    search_query: "",
     _filters: []
   )
 
     QueryBuilder.new(
       query_type: :in_progress,
-      search_text: search_string,
+      search_query: search_query,
       sort_order: sort_order,
       parent: self
     ).build_query
@@ -23,25 +23,25 @@ class BusinessLine < Organization
   def completed_tasks(
     _sort_by: "",
     sort_order: "desc",
-    search_string: "",
+    search_query: "",
     _filters: []
   )
 
     QueryBuilder.new(
       query_type: :completed,
-      search_text: search_string,
+      search_text: search_query,
       sort_order: sort_order,
       parent: self
     ).build_query
   end
 
   class QueryBuilder
-    attr_accessor :search_text, :query_type, :sort_order, :parent
+    attr_accessor :search_query, :query_type, :sort_order, :parent
     NUMBER_OF_SEARCH_FIELDS = 2
 
-    def initialize(query_type: :in_progress, search_text: "", sort_order: :desc, parent: business_line)
+    def initialize(query_type: :in_progress, search_query: "", sort_order: :desc, parent: business_line)
       @query_type = query_type
-      @search_text = search_text
+      @search_query = search_query
       @sort_order = sort_order
       @parent = parent
     end
@@ -121,7 +121,7 @@ class BusinessLine < Organization
 
     # The NUMBER_OF_SEARCH_FIELDS constant reflects the number of searchable fields here for where interpolation later
     def search_all_clause
-      if search_text.present?
+      if search_query.present?
         # "veterans.participant_id LIKE ? "\
         # "OR ((veterans.first_name ILIKE ? OR veterans.last_name ILIKE ?) AND veteran_is_not_claimant IS NOT TRUE) "\
         # "OR ((unrecognized_party_details.name ILIKE ? OR unrecognized_party_details.last_name ILIKE ? "\
@@ -140,7 +140,7 @@ class BusinessLine < Organization
 
     # Uses an array to insert the searched text into all of the searchable fields since it's the same text for all
     def search_values
-      searching_text = "%#{search_text}%"
+      searching_text = "%#{search_query}%"
       Array.new(NUMBER_OF_SEARCH_FIELDS, searching_text)
     end
 
