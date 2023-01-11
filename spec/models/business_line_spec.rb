@@ -73,7 +73,7 @@ describe BusinessLine do
       end
     end
 
-    context "Filtering by multiple columns" do
+    context "Filtering by nultiple columns" do
       let!(:task_filters) { ["col=decisionReviewType&val=HigherLevelReview|SupplementalClaim"] }
 
       it "Selected task types are included, but none others" do
@@ -119,6 +119,19 @@ describe BusinessLine do
       add_veteran_and_request_issues_to_decision_reviews(
         create_list(:veteran_record_request_task, 5, assigned_to: business_line)
       )
+    end
+
+    let!(:veteran_record_request_on_inactive_appeals) do
+      create_list(:veteran_record_request_task, 5, assigned_to: business_line)
+    end
+
+    subject { business_line.in_progress_tasks(filters: task_filters) }
+
+    include_examples "task filtration"
+
+    context "With the :board_grant_effectuation_task FeatureToggle enabled" do
+      let!(:task_filters) { nil }
+
       before { FeatureToggle.enable!(:board_grant_effectuation_task) }
       after { FeatureToggle.disable!(:board_grant_effectuation_task) }
 
@@ -163,12 +176,12 @@ describe BusinessLine do
     end
 
     let!(:open_sc_tasks) do
-      create_list(:supplemental_claim_review_task, 5, assigned_to: business_line)
+      create_list(:supplemental_claim_task, 5, assigned_to: business_line)
     end
 
     let!(:completed_sc_tasks) do
       complete_all_tasks(
-        create_list(:supplemental_claim_review_task, 5, assigned_to: business_line)
+        create_list(:supplemental_claim_task, 5, assigned_to: business_line)
       )
     end
 
