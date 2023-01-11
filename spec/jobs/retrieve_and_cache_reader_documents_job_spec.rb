@@ -44,6 +44,7 @@ describe RetrieveAndCacheReaderDocumentsJob, :postgres do
 
       # .sort will convert the hash output of subject to an array and sort by User ID, without
       # sort the test can fail due to the ActiveRecord in subject returning user2 before user1
+      # rubocop:disable Style/RedundantSort
       it "should only fetch tasks assigned to user" do
         returned_user1_task1 = subject.sort[0][1][0]
         returned_user2_task3 = subject.sort[1][1][0]
@@ -61,6 +62,7 @@ describe RetrieveAndCacheReaderDocumentsJob, :postgres do
         expect(returned_user2_task3.assigned_to_id).to eq(user2.id)
         expect(returned_user2.efolder_documents_fetched_at).to_not be_nil
       end
+      # rubocop:enable Style/RedundantSort
     end
   end
 end
