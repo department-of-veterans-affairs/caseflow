@@ -11,8 +11,9 @@ class BusinessLine < Organization
   # filters: [],
   # search_query: 'Bob'
   def in_progress_tasks(pagination_params)
-    # Set default sort order for in progress tasks to descending
+    # Set default sort order for in progress tasks to assigned_at descending
     pagination_params[:sort_order] ||= "desc"
+    pagination_params[:sort_by] ||= :assigned_at
 
     QueryBuilder.new(
       query_type: :in_progress,
@@ -22,8 +23,9 @@ class BusinessLine < Organization
   end
 
   def completed_tasks(pagination_params)
-    # Set default sort order for completed tasks to descending
+    # Set default sort order for completed tasks to closed_at descending
     pagination_params[:sort_order] ||= "desc"
+    pagination_params[:sort_by] ||= :closed_at
 
     QueryBuilder.new(
       query_type: :completed,
@@ -41,7 +43,7 @@ class BusinessLine < Organization
   end
 
   class QueryBuilder
-    attr_accessor :search_text, :query_type, :sort_order, :parent, :filters
+    attr_accessor :query_type, :parent, :query_params
     NUMBER_OF_SEARCH_FIELDS = 2
     TASK_FILTER_PREDICATES = {
       "VeteranRecordRequest" => Task.arel_table[:type].eq(VeteranRecordRequest.name),
@@ -54,14 +56,20 @@ class BusinessLine < Organization
         .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
     }.freeze
 
+    TASKS_QUERY_TYPE = {
+      in_progress: "open",
+      completed: "recently_completed"
+    }.freeze
+
     def initialize(query_type: :in_progress, parent: business_line, query_params: {})
       @query_type = query_type
       @parent = parent
+      @query_params = query_params
 
       # Pagination and filtering instance attributes
-      @search_text = query_params[:search_query]
-      @sort_order = query_params[:sort_order]
-      @filters = query_params[:filters]
+      # @search_text = query_params[:search_query]
+      # @sort_order = query_params[:sort_order]
+      # @filters = query_params[:filters]
     end
 
     # TODO: Order will need to be changed when it is implemented
@@ -69,12 +77,12 @@ class BusinessLine < Organization
       Task.select(Arel.star)
         .from(combined_decision_review_tasks_query)
         .includes(*decision_review_task_includes)
-        .where(task_filter_predicate(filters))
-        .order(default_order_clause)
+        .where(task_filter_predicate(query_params[:filters]))
+        .order(order_clause)
     end
 
     def task_type_count
-      if in_progress_query?
+      if query_type == :in_progress
         in_progress_tasks_type_counts
       else
         completed_tasks_type_counts
@@ -162,7 +170,7 @@ class BusinessLine < Organization
 
     # The NUMBER_OF_SEARCH_FIELDS constant reflects the number of searchable fields here for where interpolation later
     def search_all_clause
-      if search_text.present?
+      if query_params[:search_query].present?
         # "veterans.participant_id LIKE ? "\
         # "OR ((veterans.first_name ILIKE ? OR veterans.last_name ILIKE ?) AND veteran_is_not_claimant IS NOT TRUE) "\
         # "OR ((unrecognized_party_details.name ILIKE ? OR unrecognized_party_details.last_name ILIKE ? "\
@@ -181,7 +189,7 @@ class BusinessLine < Organization
 
     # Uses an array to insert the searched text into all of the searchable fields since it's the same text for all
     def search_values
-      searching_text = "%#{search_text}%"
+      searching_text = "%#{query_params[:search_query]}%"
       Array.new(NUMBER_OF_SEARCH_FIELDS, searching_text)
     end
 
@@ -211,7 +219,8 @@ class BusinessLine < Organization
     # Specific case for BoardEffectuationGrantTasks to include them in the result set
     # if the :board_grant_effectuation_task FeatureToggle is enabled for the current user.
     def board_grant_effectuation_tasks
-      tasks_query = Task.select(Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id)
+      Task.select(Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id)
+        .send(TASKS_QUERY_TYPE[query_type])
         .joins(board_grant_effectuation_task_appeals_requests_join)
         .joins(veterans_join)
         .joins(claimants_join)
@@ -221,17 +230,12 @@ class BusinessLine < Organization
         .where(board_grant_effectuation_task_constraints)
         .where(search_all_clause, *search_values)
         .group(group_by_columns)
-
-      tasks_query = if @query_type == :in_progress
-                      tasks_query.open
-                    else
-                      tasks_query.recently_completed
-                    end
-      tasks_query.arel
+        .arel
     end
 
     def decision_reviews_on_request_issues(join_constraint)
-      tasks_query = Task.select(Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id)
+      Task.select(Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id)
+        .send(TASKS_QUERY_TYPE[query_type])
         .joins(join_constraint)
         .joins(veterans_join)
         .joins(claimants_join)
@@ -241,13 +245,7 @@ class BusinessLine < Organization
         .where(query_constaints)
         .where(search_all_clause, *search_values)
         .group(group_by_columns)
-
-      tasks_query = if @query_type == :in_progress
-                      tasks_query.open
-                    else
-                      tasks_query.recently_completed
-                    end
-      tasks_query.arel
+        .arel
     end
 
     def combined_decision_review_tasks_query
@@ -263,18 +261,17 @@ class BusinessLine < Organization
     end
 
     def query_constaints
-      if in_progress_query?
-        {
+      {
+        in_progress: {
           # Don't retrieve any tasks with closed issues or issues with ineligible reasons for in progress
           assigned_to: business_line_id,
           "request_issues.closed_at": nil,
           "request_issues.ineligible_reason": nil
-        }
-      else
-        {
+        },
+        completed: {
           assigned_to: business_line_id
         }
-      end
+      }[query_type]
     end
 
     def board_grant_effectuation_task_constraints
@@ -285,20 +282,10 @@ class BusinessLine < Organization
     end
 
     # TODO: Needs to be updated to work with ordering
-    def default_order_clause
-      if in_progress_query?
-        {
-          assigned_at: sort_order.to_sym
-        }
-      else
-        {
-          closed_at: sort_order.to_sym
-        }
-      end
-    end
-
-    def in_progress_query?
-      query_type == :in_progress
+    def order_clause
+      {
+        query_params[:sort_by] => query_params[:sort_order].to_sym
+      }
     end
 
     # Filtering helpers
