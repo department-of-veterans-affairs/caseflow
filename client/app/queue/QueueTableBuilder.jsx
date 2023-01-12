@@ -15,6 +15,7 @@ import {
   assignedByColumn,
   badgesColumn,
   boardIntakeColumn,
+  claimantNameColumn,
   completedToNameColumn,
   daysOnHoldColumn,
   daysSinceLastActionColumn,
@@ -33,7 +34,8 @@ import {
   taskOwnerColumn,
   taskCompletedDateColumn,
   typeColumn,
-  vamcOwnerColumn
+  vamcOwnerColumn,
+  veteranParticipantIdColumn
 } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
@@ -89,6 +91,9 @@ class QueueTableBuilder extends React.PureComponent {
         requireDasRecord
       ),
       [QUEUE_CONFIG.COLUMNS.BADGES.name]: badgesColumn(tasks),
+      [QUEUE_CONFIG.COLUMNS.CLAIMANT_NAME.name]: claimantNameColumn(
+        requireDasRecord
+      ),
       [QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]: detailsColumn(
         tasks,
         requireDasRecord,
@@ -139,6 +144,9 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name]: vamcOwnerColumn(
         tasks,
         filterOptions
+      ),
+      [QUEUE_CONFIG.COLUMNS.VETERAN_PARTICIPANT_ID.name]: veteranParticipantIdColumn(
+        requireDasRecord
       ),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name]: assignedByColumn(),
