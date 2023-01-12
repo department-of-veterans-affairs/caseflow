@@ -403,6 +403,28 @@ export const daysSinceLastActionColumn = (requireDasRecord) => {
   };
 };
 
+export const claimantNameColumn = (requireDasRecord) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_TASK_CLAIMANT_NAME_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.CLAIMANT_NAME.name,
+    valueFunction: (task) => hasDASRecord(task, requireDasRecord) ? task.claimantName : null,
+    span: collapseColumn(requireDasRecord),
+    backendCanSort: true,
+    getSortValue: (task) => hasDASRecord(task, requireDasRecord) ? task.claimantName : null
+  };
+};
+
+export const veteranParticipantIdColumn = (requireDasRecord) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_TASK_VETERAN_PARTICIPANT_ID_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.VETERAN_PARTICIPANT_ID.name,
+    valueFunction: (task) => hasDASRecord(task, requireDasRecord) ? task.veteranParticipantId : null,
+    span: collapseColumn(requireDasRecord),
+    backendCanSort: true,
+    getSortValue: (task) => hasDASRecord(task, requireDasRecord) ? task.veteranParticipantId : null
+  };
+};
+
 export const completedToNameColumn = () => {
   return {
     header: COPY.CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE,

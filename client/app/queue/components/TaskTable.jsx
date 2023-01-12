@@ -11,8 +11,18 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
-import { docketNumberColumn, badgesColumn, detailsColumn, daysWaitingColumn, issueCountColumn, typeColumn,
-  readerLinkColumn, taskCompletedDateColumn } from './TaskTableColumns';
+import {
+  docketNumberColumn,
+  claimantNameColumn,
+  badgesColumn,
+  detailsColumn,
+  daysWaitingColumn,
+  issueCountColumn,
+  typeColumn,
+  readerLinkColumn,
+  taskCompletedDateColumn,
+  veteranParticipantIdColumn
+} from './TaskTableColumns';
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
 import COPY from '../../../COPY';
@@ -79,6 +89,14 @@ export class TaskTableUnconnected extends React.PureComponent {
     return this.props.includeCompletedDate ? taskCompletedDateColumn() : null;
   }
 
+  caseClaimantNameColumn = () => {
+    return this.props.includeClaimantName ? claimantNameColumn(this.props.requireDasRecord) : null;
+  }
+
+  caseVeteranParticipantIdColumn = () => {
+    return this.props.includeVeteranParticipantId ? veteranParticipantIdColumn(this.props.requireDasRecord) : null;
+  }
+
   caseReaderLinkColumn = () => {
     return !this.props.userIsVsoEmployee && this.props.includeReaderLink ?
       readerLinkColumn(this.props.requireDasRecord, this.props.includeNewDocsIcon) :
@@ -134,6 +152,7 @@ TaskTableUnconnected.propTypes = {
   includeBadges: PropTypes.bool,
   includeSelect: PropTypes.bool,
   setSelectionOfTaskOfUser: PropTypes.func,
+  includeClaimantName: PropTypes.bool,
   includeDetailsLink: PropTypes.bool,
   tasks: PropTypes.array,
   userRole: PropTypes.string,
@@ -150,6 +169,7 @@ TaskTableUnconnected.propTypes = {
   getKeyForRow: PropTypes.func,
   taskPagesApiEndpoint: PropTypes.string,
   useTaskPagesApi: PropTypes.bool,
+  includeVeteranParticipantId: PropTypes.bool,
   tabPaginationOptions: PropTypes.object
 };
 
