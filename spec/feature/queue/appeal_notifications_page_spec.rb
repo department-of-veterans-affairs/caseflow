@@ -124,7 +124,11 @@ RSpec.feature "Notifications View" do
     end
 
     it "table can filter by each column, and filter by multiple columns at once" do
-      visit(appeal_notifications_page)
+      visit appeal_case_details_page
+      click_link("View notifications sent to appellant")
+      # notifications page opens in new browser window so go to that window
+      page.switch_to_window(page.windows.last)
+      expect(page).to have_current_path(appeal_notifications_page)
 
       # by event type
       filter = page.find("rect", class: "unselected-filter-icon-border-1", match: :first)
@@ -200,7 +204,11 @@ RSpec.feature "Notifications View" do
     end
 
     it "notification page can properly navigate pages and event modal behaves properly" do
-      visit(appeal_notifications_page)
+      visit appeal_case_details_page
+      click_link("View notifications sent to appellant")
+      # notifications page opens in new browser window so go to that window
+      page.switch_to_window(page.windows.last)
+      expect(page).to have_current_path(appeal_notifications_page)
 
       # next button moves to next page
       click_on("Next", match: :first)
