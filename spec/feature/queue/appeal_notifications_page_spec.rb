@@ -85,7 +85,7 @@ RSpec.feature "Notifications View" do
       seed_notifications
     end
 
-    it "notifications page link appears, page has full table of notifications and correct information in first row" do
+    it "notifications page link appears, page has full table with correct information, and can sort by date" do
       visit appeal_case_details_page
       click_link("View notifications sent to appellant")
       # notifications page opens in new browser window so go to that window
@@ -115,21 +115,16 @@ RSpec.feature "Notifications View" do
       # correct status
       status_cell = page.all("td", minimum: 1)[4]
       expect(status_cell).to have_content("Delivered")
-    end
-
-    it "table can sort by date, filter by each column, and filter by multiple columns at once" do
-      visit(appeal_notifications_page)
 
       # sort by notification date
       sort = page.all("svg", class: "table-icon", minimum: 1)[1]
       sort.click(x: 5, y: 5)
       cell = page.all("td", minimum: 1)[1]
       expect(cell).to have_content("11/08/2022")
+    end
 
-      # revert sort change
-      sort.click(x: 5, y: 5)
-      cell = page.all("td", minimum: 1)[1]
-      expect(cell).to have_content("11/01/2022")
+    it "table can filter by each column, and filter by multiple columns at once" do
+      visit(appeal_notifications_page)
 
       # by event type
       filter = page.find("rect", class: "unselected-filter-icon-border-1", match: :first)
