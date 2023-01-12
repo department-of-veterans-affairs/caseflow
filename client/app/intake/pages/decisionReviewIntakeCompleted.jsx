@@ -15,18 +15,16 @@ import COPY from '../../../COPY';
 import Alert from '../../components/Alert';
 import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 
-const checkIssuesForVha = (requestIssues) => {
-  return requestIssues.some((ri) => ri.benefitType === 'vha');
-};
+const checkIssuesForVhaPredocket = (requestIssues) =>
+  requestIssues.some((ri) => ri.benefitType === 'vha' && ri.isPreDocketNeeded === true);
 
-const checkIfPreDocketed = (requestIssues) => {
-  return requestIssues.some((ri) => ri.isPreDocketNeeded === true);
-};
+const checkIfPreDocketed = (requestIssues) =>
+  requestIssues.some((ri) => ri.isPreDocketNeeded === true);
 
 const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIssuesUrl, completedReview }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
-  const vhaHasIssues = checkIssuesForVha(requestIssues);
+  const vhaHasIssues = checkIssuesForVhaPredocket(requestIssues);
 
   const leadMessageArr = [
     `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been submitted.`
@@ -63,7 +61,7 @@ const getChecklistItems = (featureToggles, formType, requestIssues, isInformalCo
   if (formType === 'appeal') {
     let statusMessage = 'Appeal created:';
 
-    if (checkIssuesForVha(requestIssues)) {
+    if (checkIssuesForVhaPredocket(requestIssues)) {
       statusMessage = 'Appeal created and sent to VHA for document assessment.';
     }
 

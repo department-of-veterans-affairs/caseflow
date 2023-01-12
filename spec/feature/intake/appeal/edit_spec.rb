@@ -199,7 +199,6 @@ feature "Appeal Edit issues", :all_dbs do
 
     scenario "saves diagnostic codes" do
       visit "appeals/#{appeal.uuid}/edit/"
-
       save_and_check_request_issues_with_diagnostic_codes(
         Constants.INTAKE_FORM_NAMES.appeal,
         appeal
@@ -642,6 +641,48 @@ feature "Appeal Edit issues", :all_dbs do
       )
       expect(page).to have_content("Check the Veteran's profile for invalid information")
       expect(page).to have_button("Save", disabled: true)
+    end
+  end
+
+  context "when appeal Type is Veterans Health Administration By default (Predocket option)" do
+    scenario "appeal with benefit type VHA" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      fill_in "Benefit type", with: "Veterans Health Administration"
+      find("#issue-benefit-type").send_keys :enter
+      fill_in "Issue category", with: "Beneficiary Travel | Common Carrier"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "I am a VHA issue"
+      fill_in "Decision date", with: 1.month.ago.mdY
+      radio_choices = page.all(".cf-form-radio-option > label")
+      expect(radio_choices[0]).to have_content("Yes")
+      expect(radio_choices[1]).to have_content("No")
+      expect(find("#is-predocket-needed_true", visible: false).checked?).to eq(true)
+      expect(find("#is-predocket-needed_false", visible: false).checked?).to eq(false)
+      expect(page).to have_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
+    end
+  end
+
+  context "when appeal Type is Veterans Health Administration NO Predocket" do
+    scenario "appeal with benefit type VHA no - predocket" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      fill_in "Benefit type", with: "Veterans Health Administration"
+      find("#issue-benefit-type").send_keys :enter
+      fill_in "Issue category", with: "Beneficiary Travel | Common Carrier"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "I am a VHA issue"
+      fill_in "Decision date", with: 1.month.ago.mdY
+      radio_choices = page.all(".cf-form-radio-option > label")
+      expect(radio_choices[0]).to have_content("Yes")
+      expect(radio_choices[1]).to have_content("No")
+
+      radio_choices[1].click
+      expect(find("#is-predocket-needed_true", visible: false).checked?).to eq(false)
+      expect(find("#is-predocket-needed_false", visible: false).checked?).to eq(true)
+      expect(page).to have_no_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
     end
   end
 

@@ -217,7 +217,7 @@ export class SearchableDropdown extends React.Component {
             {strongLabel ? <strong>{labelContents}</strong> : labelContents}
           </label>
           {errorMessage && (
-            <span className="usa-input-error-message">{errorMessage}</span>
+            <span className="usa-input-error-message" tabIndex={0}>{errorMessage}</span>
           )}
           <div className="cf-select">
             <SelectComponent

@@ -133,7 +133,7 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_phone_number do |object|
-    object.claimant.is_a?(OtherClaimant) ? object.claimant&.phone_number : nil
+    object.claimant&.unrecognized_claimant? ? object.claimant&.phone_number : nil
   end
 
   attribute :appellant_email_address do |object|
@@ -149,11 +149,11 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_party_type do |appeal|
-    appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.party_type : nil
+    appeal.claimant&.unrecognized_claimant? ? appeal.claimant&.party_type : nil
   end
 
   attribute :unrecognized_appellant_id do |appeal|
-    appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.unrecognized_appellant&.id : nil
+    appeal.claimant&.unrecognized_claimant? ? appeal.claimant&.unrecognized_appellant&.id : nil
   end
 
   attribute :has_poa do |appeal|

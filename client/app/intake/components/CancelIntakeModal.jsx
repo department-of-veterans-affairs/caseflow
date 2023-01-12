@@ -100,6 +100,10 @@ class CancelIntakeModal extends BaseForm {
     this.props.submitCancel(data);
   }
 
+  submitDisabled = () => (
+    !((this.state.cancelReasonValue && this.state.cancelReasonValue !== 'other') || this.state.cancelOtherValue)
+  )
+
   render() {
 
     let {
@@ -122,8 +126,10 @@ class CancelIntakeModal extends BaseForm {
             name: 'Close',
             onClick: closeHandler
           },
-          { classNames: ['usa-button', 'usa-button-secondary', 'confirm-cancel'],
+          {
+            classNames: ['usa-button', 'confirm-cancel'],
             name: 'Cancel intake',
+            disabled: this.submitDisabled(),
             onClick: this.handleSubmitCancel
           }
         ]}
