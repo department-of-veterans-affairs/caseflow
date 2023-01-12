@@ -6,7 +6,11 @@ class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
 
-  delegate :in_progress_tasks, :completed_tasks, to: :business_line
+  delegate :in_progress_tasks,
+           :in_progress_tasks_type_counts,
+           :completed_tasks,
+           :completed_tasks_type_counts,
+           to: :business_line
 
   def index
     if business_line
@@ -37,10 +41,7 @@ class DecisionReviewsController < ApplicationController
     if task
       if task.complete_with_payload!(decision_issue_params, decision_date)
         business_line.tasks.reload
-        render json: {
-          in_progress_tasks: apply_task_serializer(in_progress_tasks),
-          completed_tasks: apply_task_serializer(completed_tasks)
-        }, status: :ok
+        render json: { task_filter_details: task_filter_details }, status: :ok
       else
         error = StandardError.new(task.error_code)
         Raven.capture_exception(error, extra: { error_uuid: error_uuid })
@@ -67,7 +68,14 @@ class DecisionReviewsController < ApplicationController
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
   end
 
-  helper_method :in_progress_tasks, :completed_tasks, :apply_task_serializer, :business_line, :task
+  def task_filter_details
+    {
+      in_progress: in_progress_tasks_type_counts,
+      completed: completed_tasks_type_counts
+    }
+  end
+
+  helper_method :task_filter_details, :business_line, :task
 
   private
 
@@ -86,11 +94,13 @@ class DecisionReviewsController < ApplicationController
   end
 
   def queue_tasks
-    return missing_tab_parameter_error unless allowed_params[:tab]
+    tab_name = allowed_params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym]
 
-    tasks = case allowed_params[:tab]
-            when "in_progress" then in_progress_tasks(search_query: allowed_params[:search_query])
-            when "completed" then completed_tasks(search_query: allowed_params[:search_query])
+    return missing_tab_parameter_error unless tab_name
+
+    tasks = case tab_name
+            when "in_progress" then in_progress_tasks(pagination_query_params)
+            when "completed" then completed_tasks(pagination_query_params)
             else
               return unrecognized_tab_name_error
             end
@@ -141,8 +151,8 @@ class DecisionReviewsController < ApplicationController
       :task_id,
       :tab,
       :sort_by,
-      :search_query,
       :order,
+      :search_query,
       { filter: [] },
       :page,
       decision_issues: [:description, :disposition, :request_issue_id]

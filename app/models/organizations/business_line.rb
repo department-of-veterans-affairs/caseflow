@@ -5,59 +5,100 @@ class BusinessLine < Organization
     "/decision_reviews/#{url}"
   end
 
-  def in_progress_tasks(
-    _sort_by: "",
-    sort_order: "desc",
-    search_query: "",
-    _filters: []
-  )
+  # Example Params:
+  # sort_order: 'desc',
+  # sort_by: 'assigned_at',
+  # filters: [],
+  # search_query: 'Bob'
+  def in_progress_tasks(pagination_params)
+    # Set default sort order for in progress tasks to descending
+    pagination_params[:sort_order] ||= "desc"
 
     QueryBuilder.new(
       query_type: :in_progress,
-      search_query: search_query,
-      sort_order: sort_order,
+      query_params: pagination_params,
       parent: self
     ).build_query
   end
 
-  def completed_tasks(
-    _sort_by: "",
-    sort_order: "desc",
-    search_query: "",
-    _filters: []
-  )
+  def completed_tasks(pagination_params)
+    # Set default sort order for completed tasks to descending
+    pagination_params[:sort_order] ||= "desc"
 
     QueryBuilder.new(
       query_type: :completed,
-      search_text: search_query,
-      sort_order: sort_order,
+      query_params: pagination_params,
       parent: self
     ).build_query
   end
 
-  class QueryBuilder
-    attr_accessor :search_query, :query_type, :sort_order, :parent
-    NUMBER_OF_SEARCH_FIELDS = 2
+  def in_progress_tasks_type_counts
+    QueryBuilder.new(query_type: :in_progress, parent: self).task_type_count
+  end
 
-    def initialize(query_type: :in_progress, search_query: "", sort_order: :desc, parent: business_line)
+  def completed_tasks_type_counts
+    QueryBuilder.new(query_type: :completed, parent: self).task_type_count
+  end
+
+  class QueryBuilder
+    attr_accessor :search_text, :query_type, :sort_order, :parent, :filters
+    NUMBER_OF_SEARCH_FIELDS = 2
+    TASK_FILTER_PREDICATES = {
+      "VeteranRecordRequest" => Task.arel_table[:type].eq(VeteranRecordRequest.name),
+      "BoardGrantEffectuationTask" => Task.arel_table[:type].eq(BoardGrantEffectuationTask.name),
+      "HigherLevelReview" => Task.arel_table[:appeal_type]
+        .eq("HigherLevelReview")
+        .and(Task.arel_table[:type].eq(DecisionReviewTask.name)),
+      "SupplementalClaim" => Task.arel_table[:appeal_type]
+        .eq("SupplementalClaim")
+        .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
+    }.freeze
+
+    def initialize(query_type: :in_progress, parent: business_line, query_params: {})
       @query_type = query_type
-      @search_query = search_query
-      @sort_order = sort_order
       @parent = parent
+
+      # Pagination and filtering instance attributes
+      @search_text = query_params[:search_query]
+      @sort_order = query_params[:sort_order]
+      @filters = query_params[:filters]
     end
 
-    # Order will need to be changed when it is implemented
+    # TODO: Order will need to be changed when it is implemented
     def build_query
       Task.select(Arel.star)
         .from(combined_decision_review_tasks_query)
         .includes(*decision_review_task_includes)
+        .where(task_filter_predicate(filters))
         .order(default_order_clause)
+    end
+
+    def task_type_count
+      if in_progress_query?
+        in_progress_tasks_type_counts
+      else
+        completed_tasks_type_counts
+      end
+    end
+
+    def completed_tasks_type_counts
+      parent.tasks
+        .recently_completed
+        .group(Task.arel_table[:type], Task.arel_table[:appeal_type])
+        .count
+    end
+
+    def in_progress_tasks_type_counts
+      Task.select(Task.arel_table[:type])
+        .from(combined_decision_review_tasks_query)
+        .group(Task.arel_table[:type], Task.arel_table[:appeal_type])
+        .count
     end
 
     private
 
     def business_line_id
-      @parent.id
+      parent.id
     end
 
     def decision_review_task_includes
@@ -121,7 +162,7 @@ class BusinessLine < Organization
 
     # The NUMBER_OF_SEARCH_FIELDS constant reflects the number of searchable fields here for where interpolation later
     def search_all_clause
-      if search_query.present?
+      if search_text.present?
         # "veterans.participant_id LIKE ? "\
         # "OR ((veterans.first_name ILIKE ? OR veterans.last_name ILIKE ?) AND veteran_is_not_claimant IS NOT TRUE) "\
         # "OR ((unrecognized_party_details.name ILIKE ? OR unrecognized_party_details.last_name ILIKE ? "\
@@ -140,7 +181,7 @@ class BusinessLine < Organization
 
     # Uses an array to insert the searched text into all of the searchable fields since it's the same text for all
     def search_values
-      searching_text = "%#{search_query}%"
+      searching_text = "%#{search_text}%"
       Array.new(NUMBER_OF_SEARCH_FIELDS, searching_text)
     end
 
@@ -222,7 +263,7 @@ class BusinessLine < Organization
     end
 
     def query_constaints
-      if @query_type == :in_progress
+      if in_progress_query?
         {
           # Don't retrieve any tasks with closed issues or issues with ineligible reasons for in progress
           assigned_to: business_line_id,
@@ -245,7 +286,7 @@ class BusinessLine < Organization
 
     # TODO: Needs to be updated to work with ordering
     def default_order_clause
-      if @query_type == :in_progress
+      if in_progress_query?
         {
           assigned_at: sort_order.to_sym
         }
@@ -253,6 +294,46 @@ class BusinessLine < Organization
         {
           closed_at: sort_order.to_sym
         }
+      end
+    end
+
+    def in_progress_query?
+      query_type == :in_progress
+    end
+
+    # Filtering helpers
+    def task_filter_predicate(filters)
+      return "" unless filters
+
+      task_filter = locate_task_filter(filters)
+
+      return "" unless task_filter
+
+      # ex: "val"=>["SupplementalClaim|HigherLevelReview"]
+      tasks_to_include = task_filter["val"].first.split("|")
+
+      build_task_filter_predicates(tasks_to_include) || ""
+    end
+
+    def build_task_filter_predicates(tasks_to_include)
+      first_task_name, *remaining_task_names = tasks_to_include
+
+      filter = TASK_FILTER_PREDICATES[first_task_name]
+
+      remaining_task_names.each { |task_name| filter = filter.or(TASK_FILTER_PREDICATES[task_name]) }
+
+      filter
+    end
+
+    def parse_filters(filters)
+      filters.map { |filter| CGI.parse(filter) }
+    end
+
+    def locate_task_filter(filters)
+      parsed_filters = parse_filters(filters)
+
+      parsed_filters.find do |filter|
+        filter["col"].include?("decisionReviewType")
       end
     end
   end
