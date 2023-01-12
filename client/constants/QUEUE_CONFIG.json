@@ -91,7 +91,7 @@
     "CLAIMANT_NAME": {
       "name": "claimantNameColumn",
       "sorting_table": "tasks",
-      "sorting_columns": ["claimant_name"]
+      "sorting_columns": ["claimant"]
     },
     "ISSUE_COUNT": {
       "name": "issueCountColumn",

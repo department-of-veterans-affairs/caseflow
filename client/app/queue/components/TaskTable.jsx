@@ -13,7 +13,6 @@ import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
 import {
   docketNumberColumn,
-  claimantNameColumn,
   badgesColumn,
   detailsColumn,
   daysWaitingColumn,
@@ -21,7 +20,6 @@ import {
   typeColumn,
   readerLinkColumn,
   taskCompletedDateColumn,
-  veteranParticipantIdColumn
 } from './TaskTableColumns';
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
@@ -77,14 +75,6 @@ export class TaskTableUnconnected extends React.PureComponent {
     return this.props.includeDocketNumber ? docketNumberColumn(this.props.tasks, this.props.requireDasRecord) : null;
   }
 
-  caseClaimantNameColumn = () => {
-    return this.props.includeClaimantName ? claimantNameColumn(this.props.requireDasRecord) : null;
-  }
-
-  caseVeteranParticipantIdColumn = () => {
-    return this.props.includeVeteranParticipantId ? veteranParticipantIdColumn(this.props.requireDasRecord) : null;
-  }
-
   caseIssueCountColumn = () => {
     return this.props.includeIssueCount ? issueCountColumn(this.props.requireDasRecord) : null;
   }
@@ -111,8 +101,6 @@ export class TaskTableUnconnected extends React.PureComponent {
         this.caseDetailsColumn(),
         this.caseTypeColumn(),
         this.caseDocketNumberColumn(),
-        this.caseClaimantNameColumn(),
-        this.caseVeteranParticipantIdColumn(),
         this.caseIssueCountColumn(),
         this.caseDaysWaitingColumn(),
         this.completedDateColumn(),
@@ -154,7 +142,6 @@ TaskTableUnconnected.propTypes = {
   includeBadges: PropTypes.bool,
   includeSelect: PropTypes.bool,
   setSelectionOfTaskOfUser: PropTypes.func,
-  includeClaimantName: PropTypes.bool,
   includeDetailsLink: PropTypes.bool,
   tasks: PropTypes.array,
   userRole: PropTypes.string,
@@ -171,7 +158,6 @@ TaskTableUnconnected.propTypes = {
   getKeyForRow: PropTypes.func,
   taskPagesApiEndpoint: PropTypes.string,
   useTaskPagesApi: PropTypes.bool,
-  includeVeteranParticipantId: PropTypes.bool,
   tabPaginationOptions: PropTypes.object
 };
 
