@@ -121,8 +121,6 @@ class TaskTableTab extends React.PureComponent {
           {...this.state.predefinedColumns}
           getKeyForRow={(row, object) => object.id}
           customColumns={[
-            claimantColumn(),
-            veteranParticipantIdColumn(),
             {
               ...decisionReviewTypeColumn(),
               ...buildDecisionReviewFilterInformation(
@@ -131,6 +129,8 @@ class TaskTableTab extends React.PureComponent {
               )
             }
           ]}
+          includeClaimantName
+          includeVeteranParticipantId
           includeIssueCount
           tasks={[]}
           taskPagesApiEndpoint={this.props.baseTasksUrl}
