@@ -128,7 +128,12 @@ feature "NonComp Reviews Queue", :postgres do
     scenario "filtering reviews" do
       visit "decision_reviews/nco"
       find(".unselected-filter-icon").click
-      find("label", text: "Higher-level review").click
+
+      # Check that task counts are being transmitted correctly from backend
+      expect(page).to have_content("Board Grant (1)")
+      expect(page).to have_content("Higher-Level Review (2)")
+
+      find("label", text: "Higher-Level Review").click
       expect(page).to have_content("Higher-Level Review")
       expect(page).to_not have_content("Board Grant")
       find(".cf-clear-filters-link").click
