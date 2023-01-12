@@ -242,23 +242,6 @@ RSpec.feature "Notifications View" do
       expect(page).not_to have_selector("div", class: "cf-modal-body")
       expect(page).not_to have_selector("section", id: "modal_id")
     end
-
-    # it "modal behaves properly" do
-    #   visit(appeal_notifications_page)
-
-    #   # modal appears when clicking on an event type
-    #   event_type_cell = page.find("td", match: :first).find("a")
-    #   event_type_cell.click
-    #   expect(page).to have_selector("div", class: "cf-modal-body")
-
-    #   # background darkens and disables clicking when modal is open
-    #   expect(page).to have_selector("section", id: "modal_id")
-
-    #   # clicking close button on modal removes dark background and closes modal
-    #   click_on("Close")
-    #   expect(page).not_to have_selector("div", class: "cf-modal-body")
-    #   expect(page).not_to have_selector("section", id: "modal_id")
-    # end
   end
 
   # rubocop:disable Style/BlockDelimiters
