@@ -77,6 +77,14 @@ export class TaskTableUnconnected extends React.PureComponent {
     return this.props.includeDocketNumber ? docketNumberColumn(this.props.tasks, this.props.requireDasRecord) : null;
   }
 
+  caseClaimantNameColumn = () => {
+    return this.props.includeClaimantName ? claimantNameColumn(this.props.requireDasRecord) : null;
+  }
+
+  caseVeteranParticipantIdColumn = () => {
+    return this.props.includeVeteranParticipantId ? veteranParticipantIdColumn(this.props.requireDasRecord) : null;
+  }
+
   caseIssueCountColumn = () => {
     return this.props.includeIssueCount ? issueCountColumn(this.props.requireDasRecord) : null;
   }
@@ -87,14 +95,6 @@ export class TaskTableUnconnected extends React.PureComponent {
 
   completedDateColumn = () => {
     return this.props.includeCompletedDate ? taskCompletedDateColumn() : null;
-  }
-
-  caseClaimantNameColumn = () => {
-    return this.props.includeClaimantName ? claimantNameColumn(this.props.requireDasRecord) : null;
-  }
-
-  caseVeteranParticipantIdColumn = () => {
-    return this.props.includeVeteranParticipantId ? veteranParticipantIdColumn(this.props.requireDasRecord) : null;
   }
 
   caseReaderLinkColumn = () => {
@@ -111,6 +111,8 @@ export class TaskTableUnconnected extends React.PureComponent {
         this.caseDetailsColumn(),
         this.caseTypeColumn(),
         this.caseDocketNumberColumn(),
+        this.caseClaimantNameColumn(),
+        this.caseVeteranParticipantIdColumn(),
         this.caseIssueCountColumn(),
         this.caseDaysWaitingColumn(),
         this.completedDateColumn(),
