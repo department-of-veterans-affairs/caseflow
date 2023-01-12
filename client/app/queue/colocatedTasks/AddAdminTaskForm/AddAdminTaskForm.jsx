@@ -9,7 +9,7 @@ import StringUtil from 'app/util/StringUtil';
 import TextareaField from 'app/components/TextareaField';
 import {
   ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL,
-  FORM_ERROR_FIELD_REQUIRED,
+  INSTRUCTIONS_ERROR_FIELD_REQUIRED,
 } from 'app/../COPY';
 import { css } from 'glamor';
 import Button from 'app/components/Button';
@@ -75,7 +75,7 @@ export const AddAdminTaskForm = ({ baseName, item, onRemove }) => {
       <div className={fieldStyles}>
         <TextareaField
           errorMessage={
-            errors?.[baseName]?.instructions ? FORM_ERROR_FIELD_REQUIRED : null
+            errors?.[baseName]?.instructions ? INSTRUCTIONS_ERROR_FIELD_REQUIRED : null
           }
           name={`${baseName}.instructions`}
           defaultValue={item.instructions}

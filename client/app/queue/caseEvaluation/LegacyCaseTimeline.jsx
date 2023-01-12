@@ -28,6 +28,8 @@ export const LegacyCaseTimeline = (props) => {
 
   const tasks = sortCaseTimelineEvents([...attorneyChildrenTasks, ...locationHistories]);
 
+  tasks.reverse();
+
   return (
     <>
       <div className="case-timeline" >

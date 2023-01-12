@@ -5,9 +5,10 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { sub } from 'date-fns';
 import { camelCase, reduce, startCase } from 'lodash';
+import { FORM_TYPES } from '../constants';
 
 import ApiUtil from 'app/util/ApiUtil';
-import { DOB_INVALID_ERRS } from 'app/../COPY';
+import { DOB_INVALID_ERRS, SSN_INVALID_ERR } from 'app/../COPY';
 
 const { AGE_MIN_ERR, AGE_MAX_ERR } = DOB_INVALID_ERRS;
 
@@ -19,7 +20,9 @@ const yearsFromToday = (years) => {
   return sub(new Date(), { years });
 };
 
-export const schema = yup.object().shape({
+const ssnRegex = /^(?!000|666)[0-9]{3}([ -]?)(?!00)[0-9]{2}\1(?!0000)[0-9]{4}$/gm;
+
+const sharedValidation = {
   relationship: yup.string().when(['$hideListedAttorney'], {
     is: (hideListedAttorney) => !hideListedAttorney,
     then: yup.string().required(),
@@ -35,7 +38,6 @@ export const schema = yup.object().shape({
     then: yup.string().required(),
   }),
   middleName: yup.string(),
-  lastName: yup.string(),
   suffix: yup.string(),
   dateOfBirth: yup.date().
     nullable().
@@ -45,12 +47,32 @@ export const schema = yup.object().shape({
     is: 'organization',
     then: yup.string().required(),
   }),
+  addressLine2: yup.string(),
+  addressLine3: yup.string(),
+  zip: yup.string().when(['partyType', 'relationship'], {
+    is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
+    then: yup.
+      string().
+      max(25),
+  }),
+  emailAddress: yup.string().email(),
+  phoneNumber: yup.string(),
+  poaForm: yup.string().when(['relationship', '$hidePOAForm'], {
+    is: (relationship, hidePOAForm) => relationship !== 'attorney' && !hidePOAForm,
+    then: yup.string().required(),
+  }),
+  listedAttorney: yup.object().when(['relationship', '$hideListedAttorney'], {
+    is: (relationship, hideListedAttorney) => (relationship === 'attorney' && !hideListedAttorney),
+    then: yup.object().required(),
+  }),
+};
+
+export const schema = yup.object().shape({
+  lastName: yup.string(),
   addressLine1: yup.string().when(['partyType', 'relationship'], {
     is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
     then: yup.string().required(),
   }),
-  addressLine2: yup.string(),
-  addressLine3: yup.string(),
   city: yup.string().when(['partyType', 'relationship'], {
     is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
     then: yup.string().required(),
@@ -59,26 +81,44 @@ export const schema = yup.object().shape({
     is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
     then: yup.string().required(),
   }),
-  zip: yup.string().when(['partyType', 'relationship'], {
-    is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
-    then: yup.
-      string().
-      max(25),
-  }),
   country: yup.string().when(['partyType', 'relationship'], {
     is: (partyType, relationship) => additionalFieldsRequired(partyType, relationship),
     then: yup.string().required(),
   }),
-  emailAddress: yup.string().email(),
-  phoneNumber: yup.string(),
-  poaForm: yup.string().when(['relationship', '$hidePOAForm'], {
-    is: (relationship, hidePOAForm) => relationship !== 'attorney' && !hidePOAForm,
+  ...sharedValidation
+});
+
+export const schemaHLR = yup.object().shape({
+  lastName: yup.string().when(['partyType', 'relationship'], {
+    is: (partyType, relationship) => partyType === 'individual' || ['spouse', 'child'].includes(relationship),
     then: yup.string().required(),
   }),
-  listedAttorney: yup.object().when(['relationship','$hideListedAttorney'], {
-    is: (relationship, hideListedAttorney) => (relationship === 'attorney' && !hideListedAttorney),
-    then: yup.object().required(),
+  addressLine1: yup.string().when('partyType', {
+    is: 'organization',
+    then: yup.string().required(),
   }),
+  city: yup.string().when('partyType', {
+    is: 'organization',
+    then: yup.string().required(),
+  }),
+  state: yup.string().nullable().
+    when('partyType', {
+      is: 'organization',
+      then: yup.string().required(),
+    }),
+  country: yup.string().when('partyType', {
+    is: 'organization',
+    then: yup.string().required(),
+  }),
+  ssn: yup.string().
+    matches(
+      ssnRegex,
+      {
+        message: SSN_INVALID_ERR,
+        excludeEmptyString: true
+      }
+    ),
+  ...sharedValidation,
 });
 
 export const defaultFormValues = {
@@ -89,12 +129,13 @@ export const defaultFormValues = {
   middleName: '',
   lastName: '',
   suffix: '',
+  ssn: '',
   dateOfBirth: null,
   addressLine1: '',
   addressLine2: '',
   addressLine3: '',
   city: '',
-  state: null,
+  state: '',
   zip: '',
   country: '',
   emailAddress: '',
@@ -103,10 +144,18 @@ export const defaultFormValues = {
   listedAttorney: null
 };
 
-export const useClaimantForm = ({ defaultValues = {} } = {}, hidePOAForm = false, hideListedAttorney = false) => {
+export const useClaimantForm = (
+  { defaultValues = {}, selectedForm = {} } = {},
+  hidePOAForm = false,
+  hideListedAttorney = false
+) => {
+  const isHLROrSCForm = [
+    FORM_TYPES.HIGHER_LEVEL_REVIEW.key,
+    FORM_TYPES.SUPPLEMENTAL_CLAIM.key
+  ].includes(selectedForm.key);
 
   const methods = useForm({
-    resolver: yupResolver(schema),
+    resolver: isHLROrSCForm ? yupResolver(schemaHLR) : yupResolver(schema),
     context: { hidePOAForm, hideListedAttorney },
     mode: 'onChange',
     reValidateMode: 'onChange',

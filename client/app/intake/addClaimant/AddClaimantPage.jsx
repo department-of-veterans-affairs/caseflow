@@ -52,11 +52,12 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
     return <Redirect to={PAGE_PATHS.REVIEW} />;
   }
 
-  const methods = useClaimantForm({ defaultValues: claimant });
+  const methods = useClaimantForm({ defaultValues: claimant, selectedForm });
   const {
     formState: { isValid },
     handleSubmit,
-    watch
+    watch,
+    reset
   } = methods;
 
   const relationship = watch('relationship');
@@ -70,6 +71,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
     } else {
       intakeData.unlistedClaimant = claimant;
     }
+
     dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
     dispatch(clearClaimant());
     push('/add_issues');
@@ -78,6 +80,21 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
   const onSubmit = (formData) => {
     if (formData.firstName) {
       formData.partyType = 'individual';
+    }
+
+    // Database schema will not allow nulls for state, but it's possibly an optional field for individuals now.
+    if (!formData.state) {
+      formData.state = '';
+    }
+
+    // Remove dashes and spaces from SSN before submitting it to the server
+    if (formData.ssn) {
+      formData.ssn = formData.ssn.replace(/-|\s/g, '');
+    }
+
+    // Adjust the claimant type for Healthcare Providers so it will be constantized properly
+    if (formData.relationship === 'healthcare_provider') {
+      intakeData.claimantType = 'healthcare_provider';
     }
 
     dispatch(editClaimantInformation({ formData }));
@@ -102,6 +119,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
       claimant?.relationship !== relationship
     ) {
       dispatch(clearClaimant());
+      reset({ partyType: null, relationship });
     }
   }, [relationship, claimant]);
 
@@ -122,6 +140,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
           onSubmit={onSubmit}
           onAttorneySearch={onAttorneySearch}
           dateOfBirthFieldToggle={featureToggles?.dateOfBirthField || false}
+          formType={formType}
         />
         {confirmModal && (
           <AddClaimantConfirmationModal

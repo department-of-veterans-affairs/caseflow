@@ -160,6 +160,7 @@ const taskAttributesFromRawTask = (task) => {
     ownedBy: task.attributes.owned_by,
     daysSinceLastStatusChange: task.attributes.days_since_last_status_change,
     daysSinceBoardIntake: task.attributes.days_since_board_intake,
+    appeal_receipt_date: task.attributes.appeal_receipt_date,
   };
 };
 
@@ -378,7 +379,8 @@ const prepareLocationHistoryForStore = (appeal) => {
         closedAt: location.closed_at,
         vacolsId: location.vacols_id,
         exception_flag: location.exception_flag,
-        withAttorney: location['with_attorney?']
+        withAttorney: location['with_attorney?'],
+        withJudge: location['with_judge?']
       }));
   }
 

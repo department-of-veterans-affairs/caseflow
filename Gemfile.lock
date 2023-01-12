@@ -35,8 +35,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: 049b3c5068fa6c6d1cae0b58654529316b84be57
-  ref: 049b3c5068fa6c6d1cae0b58654529316b84be57
+  revision: ac1ae63ffb04a2ab4d2d5469262981acab162e94
+  ref: ac1ae63ffb04a2ab4d2d5469262981acab162e94
   specs:
     connect_vbms (1.2.0)
       httpclient (~> 2.8.0)
@@ -695,13 +695,13 @@ GEM
     websocket-extensions (0.1.5)
     xmldsig (0.3.2)
       nokogiri
-    xmlenc (0.7.1)
+    xmlenc (0.8.0)
       activemodel (>= 3.0.0)
       activesupport (>= 3.0.0)
       nokogiri (>= 1.6.0, < 2.0.0)
       xmlmapper (>= 0.7.3)
-    xmlmapper (0.7.3)
-      nokogiri (~> 1.5)
+    xmlmapper (0.8.1)
+      nokogiri (~> 1.11)
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.27)

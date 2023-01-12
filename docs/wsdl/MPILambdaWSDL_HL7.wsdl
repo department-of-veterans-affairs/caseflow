@@ -1,0 +1,70 @@
+<wsdl:definitions name="MPIUpdateVeteran"
+   targetNamespace="https://mpi-api.uat.appeals.va.gov"
+   xmlns="http://schemas.xmlsoap.org/wsdl/"
+   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+   xmlns:tns="https://raw.githubusercontent.com/department-of-veterans-affairs/caseflow/feature/APPEALS-8729/docs/wsdl/IdMHL7v3.xsd"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:mhl="https://mpi-api.uat.appeals.va.gov/WSDL/xsd/IdMHL7v3.xsd">
+
+   <wsdl:types xmlns="http://schemas.xmlsoap.org/wsdl/">
+     <xs:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+     <xs:import namespace="https://raw.githubusercontent.com/department-of-veterans-affairs/caseflow/feature/APPEALS-8729/docs/wsdl/IdMHL7v3.xsd"/>
+        <xs:element name="MpiObjectInput">
+				  <xs:complexType>
+					  <xs:sequence>
+						  <xs:element xmlns:q1="https://raw.githubusercontent.com/department-of-veterans-affairs/caseflow/feature/APPEALS-8729/docs/wsdl/IdMHL7v3.xsd"
+						              minOccurs="0"
+						              name="d"
+						              nillable="true"
+						              type="q1:PRPA_IN201302UV02"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+      <xs:element name="MpiObjectResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0"
+						            name="MpiObjectResult"
+						            nillable="true"
+						            type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+    </xs:schema>
+  </wsdl:types>
+
+  <wsdl:message name ="MPIVeteranUpdateRequest">
+    <wsdl:part name = "parameters" element = "MpiObjectInput"/>
+  </wsdl:message>
+  <wsdl:message name = "MPIVeteranUpdateResponse">
+    <wsdl:part name="parameters" element="MpiObjectResponse"/>
+  </wsdl:message>
+  <wsdl:portType name = "MPIPort">
+    <wsdl:operation name = "MPIVeteranUpdate">
+      <wsdl:input message = "MPIVeteranUpdateRequest"/>
+      <wsdl:output message = "MPIVeteranUpdateResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding name = "MPIVeteranUpdate_Binding" type = "MPIPort">
+    <soap:binding style = "rpc"
+         transport = "http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name = "MPIVeteranUpdate">
+      <soap:operation soapAction = "MPIVeteranUpdate"/>
+      <wsdl:input>
+        <soap:body encodingStyle = "http://schemas.xmlsoap.org/soap/encoding/" namespace = "urn:amazonaws:MPIUpdateVeteran" use = "encoded"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body encodingStyle = "http://schemas.xmlsoap.org/soap/encoding/" namespace = "urn:amazonaws:MPIUpdateVeteran" use = "encoded"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name = "MPIUpdateVeteran">
+    <wsdl:documentation>WSDL File for MPIUpdateVeteran</wsdl:documentation>
+    <wsdl:port binding = "MPIVeteranUpdate_Binding" name = "MPIPort">
+      <soap:address location = "https://mpi-api.uat.appeals.va.gov" />
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>
