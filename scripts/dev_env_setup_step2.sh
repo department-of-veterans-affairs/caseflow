@@ -9,7 +9,7 @@ function detectVersion(){
 	echo ${version}
 }
 echo "==> Installing Ruby dependencies"
-RUBY_CONFIGURE_OPTS=--with-openssl-dir=/usr/local/homebrew/Cellar/openssl@1.1/1.1.1q rbenv install $(cat .ruby-version)
+RUBY_CONFIGURE_OPTS=--with-openssl-dir=/usr/local/homebrew/Cellar/openssl@1.1/1.1.1s rbenv install $(cat .ruby-version)
 rbenv rehash
 rbenv local $(cat .ruby-version)
 
