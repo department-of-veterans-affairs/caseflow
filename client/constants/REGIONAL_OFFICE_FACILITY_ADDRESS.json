@@ -676,6 +676,15 @@
       "zip" : "37604",
       "timezone" : "America/Kentucky/Louisville"
    },
+   "vc_0704V" : {
+      "address_1" : "1255 Shreveport Barksdale Highway",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Shreveport",
+      "state" : "LA",
+      "zip" : "71105",
+      "timezone" : "America/Chicago"
+   },
    "vc_0719V" : {
       "address_1" : "2605 Nonconnah Blvd",
       "address_2" : "Suite 160",

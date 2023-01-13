@@ -193,7 +193,7 @@
     "timezone": "America/Chicago",
     "hold_hearings": true,
     "facility_locator_id": "vba_321",
-    "alternate_locations": ["vba_321b", "vha_502GA", "vha_502GB", "vha_502GE"]
+    "alternate_locations": ["vba_321b", "vha_502GA", "vha_502GB", "vha_502GE", "vc_0704V"]
   },
   "RO22": {
     "label": "Montgomery regional office",
