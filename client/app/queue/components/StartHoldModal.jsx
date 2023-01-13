@@ -147,7 +147,7 @@ class StartHoldModal extends React.Component {
         value={this.state.instructions}
         name="instructions"
         label="Notes:"
-        errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+        errorMessage={highlightFormItems && !this.state.instructions ? COPY.NOTES_ERROR_FIELD_REQUIRED : null}
         onChange={(instructions) => this.setState({ instructions })}
         styling={marginTop(2)} />
     </QueueFlowModal>;

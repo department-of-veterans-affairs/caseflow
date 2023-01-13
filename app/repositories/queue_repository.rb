@@ -118,7 +118,8 @@ class QueueRepository
     def assign_case_to_attorney!(assigned_by:, judge:, attorney:, vacols_id:)
       transaction do
         unless VACOLS::Case.find(vacols_id).bfcurloc == judge.vacols_uniq_id
-          fail Caseflow::Error::LegacyCaseAlreadyAssignedError, message: "Case already assigned"
+          fail(Caseflow::Error::LegacyCaseAlreadyAssignedError,
+               message: "That case has already been assigned. Please refresh the page to update your queue.")
         end
 
         update_location_to_attorney(vacols_id, attorney)
@@ -139,7 +140,7 @@ class QueueRepository
         case_id: vacols_id,
         attorney_id: attorney.vacols_attorney_id,
         group_name: attorney.vacols_group_id[0..2],
-        assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
+        assigned_to_attorney_date: VacolsHelper.local_time_with_utc_timezone,
         deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
         complexity_rating: decass_complexity_rating(vacols_id),
         modifying_user: assigned_by.vacols_uniq_id
@@ -162,7 +163,7 @@ class QueueRepository
         update_decass_record(decass_record,
                              attorney_id: attorney.vacols_attorney_id,
                              group_name: attorney.vacols_group_id[0..2],
-                             assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
+                             assigned_to_attorney_date: VacolsHelper.local_time_with_utc_timezone,
                              deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
                              modifying_user: judge.vacols_uniq_id)
       end

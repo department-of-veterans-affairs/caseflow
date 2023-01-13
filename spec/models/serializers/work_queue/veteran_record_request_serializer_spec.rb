@@ -18,6 +18,7 @@ describe WorkQueue::VeteranRecordRequestSerializer, :postgres do
           appeal: { id: appeal.uuid.to_s, isLegacyAppeal: false, issueCount: 0 },
           veteran_participant_id: veteran.participant_id,
           assigned_on: task.assigned_at,
+          assigned_at: task.assigned_at,
           closed_at: task.closed_at,
           started_at: task.started_at,
           tasks_url: "/decision_reviews/nco",
