@@ -12,8 +12,6 @@ class BusinessLine < Organization
   # search_query: 'Bob'
   def in_progress_tasks(pagination_params)
     # Set default sort order for in progress tasks to assigned_at descending
-    pagination_params[:sort_order] ||= "desc"
-    pagination_params[:sort_by] ||= :assigned_at
 
     QueryBuilder.new(
       query_type: :in_progress,
@@ -24,8 +22,6 @@ class BusinessLine < Organization
 
   def completed_tasks(pagination_params)
     # Set default sort order for completed tasks to closed_at descending
-    pagination_params[:sort_order] ||= "desc"
-    pagination_params[:sort_by] ||= :closed_at
 
     QueryBuilder.new(
       query_type: :completed,
@@ -61,10 +57,27 @@ class BusinessLine < Organization
       completed: "recently_completed"
     }.freeze
 
+    DEFAULT_SORT_ORDER = "desc"
+    DEFAULT_IN_PROGRESS_SORT_BY = :assigned_at
+    DEFAULT_COMPLETED_SORT_BY = :closed_at
+
+    DEFAULT_ORDERING_HASH = {
+      in_progress: {
+        sort_by: DEFAULT_IN_PROGRESS_SORT_BY
+      },
+      completed: {
+        sort_by: DEFAULT_COMPLETED_SORT_BY
+      }
+    }.freeze
+
     def initialize(query_type: :in_progress, parent: business_line, query_params: {})
       @query_type = query_type
       @parent = parent
       @query_params = query_params
+
+      # Initialize default sorting
+      query_params[:sort_by] ||= DEFAULT_ORDERING_HASH[query_type][:sort_by]
+      query_params[:sort_order] ||= DEFAULT_SORT_ORDER
     end
 
     # TODO: Order will need to be changed when it is implemented

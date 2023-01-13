@@ -9,6 +9,15 @@ const ReduxDecorator = (Story) => {
     serverNonComp: {
       businessLineUrl: 'vha',
       baseTasksUrl: '/decision_reviews/vha',
+      taskFilterDetails: {
+        in_progress: {
+          '["BoardGrantEffectuationTask", "Appeal"]': 1,
+          '["DecisionReviewTask", "HigherLevelReview"]': 10,
+          '["DecisionReviewTask", "SupplementalClaim"]': 3,
+          '["VeteranRecordRequest", "Appeal"]': 1
+        },
+        completed: {}
+      }
     }
   };
 
