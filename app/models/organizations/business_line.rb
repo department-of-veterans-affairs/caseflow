@@ -11,8 +11,6 @@ class BusinessLine < Organization
   # filters: [],
   # search_query: 'Bob'
   def in_progress_tasks(pagination_params)
-    # Set default sort order for in progress tasks to assigned_at descending
-
     QueryBuilder.new(
       query_type: :in_progress,
       query_params: pagination_params,
@@ -21,8 +19,6 @@ class BusinessLine < Organization
   end
 
   def completed_tasks(pagination_params)
-    # Set default sort order for completed tasks to closed_at descending
-
     QueryBuilder.new(
       query_type: :completed,
       query_params: pagination_params,
