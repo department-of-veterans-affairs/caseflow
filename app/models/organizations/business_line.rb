@@ -65,11 +65,6 @@ class BusinessLine < Organization
       @query_type = query_type
       @parent = parent
       @query_params = query_params
-
-      # Pagination and filtering instance attributes
-      # @search_text = query_params[:search_query]
-      # @sort_order = query_params[:sort_order]
-      # @filters = query_params[:filters]
     end
 
     # TODO: Order will need to be changed when it is implemented
@@ -171,10 +166,6 @@ class BusinessLine < Organization
     # The NUMBER_OF_SEARCH_FIELDS constant reflects the number of searchable fields here for where interpolation later
     def search_all_clause
       if query_params[:search_query].present?
-        # "veterans.participant_id LIKE ? "\
-        # "OR ((veterans.first_name ILIKE ? OR veterans.last_name ILIKE ?) AND veteran_is_not_claimant IS NOT TRUE) "\
-        # "OR ((unrecognized_party_details.name ILIKE ? OR unrecognized_party_details.last_name ILIKE ? "\
-        # "OR people.first_name ILIKE ? OR people.last_name ILIKE ?) AND veteran_is_not_claimant IS TRUE)"
         "veterans.participant_id LIKE ? "\
         "OR #{claimant_name} ILIKE ? "
       else
