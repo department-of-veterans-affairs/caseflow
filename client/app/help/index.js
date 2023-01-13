@@ -12,64 +12,78 @@ import ReaderHelp from './components/ReaderHelp';
 import DispatchHelp from './components/DispatchHelp';
 import IntakeHelp from './components/IntakeHelp';
 import QueueHelp from './components/QueueHelp';
+import ReduxBase from '../components/ReduxBase';
+import helpReducer, { initialState } from './reducers';
+import PropTypes from 'prop-types';
 
 class Help extends React.PureComponent {
 
   render() {
 
-    return <BrowserRouter>
-      <div>
-        <NavigationBar
-          userDisplayName={this.props.userDisplayName}
-          dropdownUrls={this.props.dropdownUrls}
-          appName="Help"
-          defaultUrl="/"
-          logoProps={{
-            accentColor: COLORS.GREY_DARK,
-            overlapColor: COLORS.GREY_DARK
-          }} />
-        <AppFrame>
-          <div className="cf-app-width cf-app-segment cf-app-segment--alt">
-            <PageRoute exact
-              path="/help"
-              title="Caseflow Help"
-              component={HelpRootView} />
-            <PageRoute exact
-              path="/"
-              title="Caseflow Help"
-              component={HelpRootView} />
-            <PageRoute exact
-              path="/certification/help"
-              title="Certification Help"
-              component={CertificationHelp} />
-            <PageRoute exact
-              path="/reader/help"
-              title="Reader Help"
-              component={ReaderHelp} />
-            <PageRoute exact
-              path="/hearing_prep/help"
-              title="Hearings Help"
-              component={HearingsHelp} />
-            <PageRoute exact
-              path="/dispatch/help"
-              title="Dispatch Help"
-              component={DispatchHelp} />
-            <PageRoute exact
-              path="/intake/help"
-              title="Intake Help"
-              component={IntakeHelp} />
-            <PageRoute exact
-              path="/queue/help"
-              title="Queue Help"
-              component={QueueHelp} />
-          </div>
-        </AppFrame>
-        <Footer
-          appName="Help"
-          feedbackUrl={this.props.feedbackUrl}
-          buildDate={this.props.buildDate} />
-      </div>
-    </BrowserRouter>;
+    return <ReduxBase
+      reducer={helpReducer}
+      initialState={{ help: { ...initialState } }}
+    >
+      <BrowserRouter>
+        <div>
+          <NavigationBar
+            userDisplayName={this.props.userDisplayName}
+            dropdownUrls={this.props.dropdownUrls}
+            appName="Help"
+            defaultUrl="/"
+            logoProps={{
+              accentColor: COLORS.GREY_DARK,
+              overlapColor: COLORS.GREY_DARK
+            }} />
+          <AppFrame>
+            <div className="cf-app-width cf-app-segment cf-app-segment--alt">
+              <PageRoute exact
+                path="/help"
+                title="Caseflow Help"
+                component={HelpRootView} />
+              <PageRoute exact
+                path="/"
+                title="Caseflow Help"
+                component={HelpRootView} />
+              <PageRoute exact
+                path="/certification/help"
+                title="Certification Help"
+                component={CertificationHelp} />
+              <PageRoute exact
+                path="/reader/help"
+                title="Reader Help"
+                component={ReaderHelp} />
+              <PageRoute exact
+                path="/hearing_prep/help"
+                title="Hearings Help"
+                component={HearingsHelp} />
+              <PageRoute exact
+                path="/dispatch/help"
+                title="Dispatch Help"
+                component={DispatchHelp} />
+              <PageRoute exact
+                path="/intake/help"
+                title="Intake Help"
+                component={IntakeHelp} />
+              <PageRoute exact
+                path="/queue/help"
+                title="Queue Help"
+                component={QueueHelp} />
+            </div>
+          </AppFrame>
+          <Footer
+            appName="Help"
+            feedbackUrl={this.props.feedbackUrl}
+            buildDate={this.props.buildDate} />
+        </div>
+      </BrowserRouter></ReduxBase>;
   }
 }
+
+Help.propTypes = {
+  dropdownUrls: PropTypes.object,
+  userDisplayName: PropTypes.string,
+  buildDate: PropTypes.string,
+  feedbackUrl: PropTypes.string.isRequired,
+};
 export default Help;
