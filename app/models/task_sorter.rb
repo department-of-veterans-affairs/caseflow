@@ -54,43 +54,6 @@ class TaskSorter
     end
   end
 
-  # creates SQL query using sorted appeal receipt date array
-  def receipt_date_order_clause(sorted_array)
-    # if the sort order is desc order, flip the array
-    if sort_order.eql? Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC
-      sorted_array = sorted_array.reverse
-    end
-    order_clause = "CASE #{Task.table_name}.id "
-    sorted_array.each_with_index do |id, index|
-      order_clause += "WHEN #{id} THEN #{index} "
-    end
-    order_clause += "ELSE #{sorted_array.length} END"
-  end
-
-  # sorts the tasks by the appeal receipt date and returns an array of task ids
-  # sorts the tasks by the appeal receipt date and returns an array of task ids
-  def receipt_date_sorted_array
-    # create hash to hold task id and appeal receipt date
-    task_id_to_receipt_date_hash = {}
-    # cycle the cached tasks
-    tasks.with_assignees.with_assigners.with_cached_appeals.each do |task|
-      # get the appeal assigned to the task
-      appeal_receipt_date = Appeal.find(task.appeal_id).receipt_date
-      # load hash with the receipt date and task id
-      task_id_to_receipt_date_hash[task.id] = appeal_receipt_date
-    end
-
-    # sort the hash so the dates are in ascending order (oldest first), and return the id of the tasks (keys)
-    # it removes null values
-    null_receipt_date_values = task_id_to_receipt_date_hash.select { |_, value| value.nil? }.keys
-    # it remove null values
-    task_id_to_receipt_date_hash.compact!
-    # sort the tasks
-    sorted_hash = task_id_to_receipt_date_hash.sort_by { |_, receipt_date_id| receipt_date_id }.to_h.keys
-    # add the null values back into set
-    sorted_hash.concat(null_receipt_date_values)
-  end
-
   def default_order_clause
     clauses = column.sorting_columns.map do |col|
       tbl_clause = if sort_requires_case_norm?(col)
