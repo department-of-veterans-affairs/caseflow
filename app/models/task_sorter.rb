@@ -13,14 +13,8 @@ class TaskSorter
   def initialize(args)
     super
 
-    # auto sort bva intake table by appeal receipt date
-    if assignee.is_a?(BvaIntake) && column.nil?
-      @column = QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name)
-    else
-      # default to sorting by AOD, case type, and docket number.
-      @column ||= QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name)
-    end
-
+    # default to sorting by AOD, case type, and docket number.
+    @column ||= QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name)
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
     @tasks ||= Task.none
     @assignee ||= Organization.none
@@ -42,15 +36,13 @@ class TaskSorter
     return false if col.match?(/_at$/) # no timestamps
     return false if col.match?(/^is_/) # no booleans
     return false if col.match?(/_count$/) # no integers
+    return false if col.match?(/date$/) # no dates
 
     true
   end
 
   def order_clause
     case column.name
-    when Constants.QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name
-      # get the array of ids with the tasks sorted and pass to custom order clause
-      Arel.sql(receipt_date_order_clause(receipt_date_sorted_array))
     when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
       Task.order_by_appeal_priority_clause(order: sort_order)
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
