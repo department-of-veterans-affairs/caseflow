@@ -86,21 +86,6 @@ class BusinessLine < Organization
     end
 
     def task_type_count
-      if query_type == :in_progress
-        in_progress_tasks_type_counts
-      else
-        completed_tasks_type_counts
-      end
-    end
-
-    def completed_tasks_type_counts
-      parent.tasks
-        .recently_completed
-        .group(Task.arel_table[:type], Task.arel_table[:appeal_type])
-        .count
-    end
-
-    def in_progress_tasks_type_counts
       Task.select(Task.arel_table[:type])
         .from(combined_decision_review_tasks_query)
         .group(Task.arel_table[:type], Task.arel_table[:appeal_type])
