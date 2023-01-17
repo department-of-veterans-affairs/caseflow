@@ -299,7 +299,7 @@ export default class QueueTable extends React.PureComponent {
     const currentPage = pageNumber + 1 > numberOfPages || pageNumber < 0 ? 0 : pageNumber;
     const sortColName = columns.map((column) => column.name).includes(sortColumn) ? sortColumn : null;
 
-    const querySearchText = tabPaginationOptions[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM] || '';
+    const querySearchText = tabPaginationOptions[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM];
 
     // Only request tasks from the back end if no pages have been fetches, we want another page,
     // to sort on a column, or if filters are provided
