@@ -68,8 +68,8 @@ class WorkQueue::DecisionReviewTaskSerializer
   attribute :id
   attribute :created_at
 
-  attribute :veteran_participant_id do |object|
-    veteran(object).participant_id
+  attribute :veteran_ssn do |object|
+    veteran(object).ssn
   end
 
   attribute :assigned_on, &:assigned_at
