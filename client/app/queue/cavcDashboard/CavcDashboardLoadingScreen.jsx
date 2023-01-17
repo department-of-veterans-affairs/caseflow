@@ -41,7 +41,7 @@ class CavcDashboardLoadingScreen extends React.PureComponent {
 
   render = () => {
     const failStatusMessageChildren = <div>
-      It looks like Caseflow was unable to load this dashboard.<br />
+      It looks like Caseflow was unable to load this CAVC dashboard.<br />
       Please <a onClick={WindowUtil.reloadWithPOST}>refresh the page</a> and try again.
     </div>;
 
@@ -53,10 +53,10 @@ class CavcDashboardLoadingScreen extends React.PureComponent {
       key={this.props.appealId}
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
-        message: 'Loading this case...'
+        message: COPY.CAVC_DASHBOARD_LOADING_SCREEN_TEXT
       }}
       failStatusMessageProps={{
-        title: COPY.CASE_DETAILS_LOADING_FAILURE_TITLE
+        title: COPY.CAVC_DASHBOARD_LOADING_FAILURE_TITLE
       }}
       failStatusMessageChildren={failStatusMessageChildren}>
       {this.props.children}
