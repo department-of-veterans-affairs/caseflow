@@ -13,7 +13,7 @@ import DispatchHelp from './components/DispatchHelp';
 import IntakeHelp from './components/IntakeHelp';
 import QueueHelp from './components/QueueHelp';
 import ReduxBase from '../components/ReduxBase';
-import helpReducer, { initialState } from './reducers';
+import helpReducer, { initialState } from './helpReducers';
 import PropTypes from 'prop-types';
 
 class Help extends React.PureComponent {
