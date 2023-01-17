@@ -8,13 +8,17 @@ import { Redirect } from 'react-router-dom';
 export const CavcDashboard = (props) => {
   const { appealId } = props;
 
-  // cavcRemand is loaded as part of appealDetails in the CavcDashboardLoadingScreen and selected here to
-  // redirect back to the CaseDetails page if a remand doesn't exist for the provided appealId
-  const cavcRemand = useSelector(
-    (state) => state.queue.appealDetails[appealId].cavcRemand
+  // cavcRemand is part of appealDetails loaded by the CavcDashboardLoadingScreen. Redirect back
+  // to the CaseDetails page if a remand doesn't exist for the provided appealId or if legacy appeal
+  const appealDetails = useSelector(
+    (state) => state.queue.appealDetails[appealId]
   );
 
-  if (cavcRemand === null) {
+  const isLegacy = useSelector(
+    (state) => state.queue.appeals[appealId].isLegacyAppeal
+  );
+
+  if (appealDetails.cavcRemand === null || isLegacy) {
     return <Redirect to={`/queue/appeals/${appealId}`} />;
   }
 
@@ -22,7 +26,7 @@ export const CavcDashboard = (props) => {
     <React.Fragment>
       <AppSegment filledBackground>
         {/* add future components for display within the AppSegment component */}
-        <h3>Cavc Dashboard Placeholder for appeal {appealId}</h3>
+        <h1>Cavc Dashboard Placeholder for {appealDetails.appellantFullName}</h1>
       </AppSegment>
     </React.Fragment>
   );
