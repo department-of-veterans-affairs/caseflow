@@ -46,6 +46,7 @@ gem "paranoia", "~> 2.2"
 # PDF Tools
 gem "pdf-forms"
 gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
+gem "pdfkit"
 gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
@@ -59,6 +60,7 @@ gem "rainbow"
 gem "react_on_rails", "11.3.0"
 gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
+gem "render_anywhere"
 gem "request_store"
 gem "roo", "~> 2.7"
 # Use SCSS for stylesheets
@@ -77,6 +79,7 @@ gem "tzinfo"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
+gem "wkhtmltopdf-binary-edge"
 gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do

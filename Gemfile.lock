@@ -452,6 +452,7 @@ GEM
     pdf-forms (1.2.0)
       cliver (~> 0.3.2)
       safe_shell (>= 1.0.3, < 2.0)
+    pdfkit (0.8.7.2)
     pg (1.1.4)
     pluck_to_hash (1.0.2)
       activerecord (>= 4.0.2)
@@ -534,6 +535,8 @@ GEM
       redis (>= 2.2, < 5)
     ref (2.0.0)
     regexp_parser (1.6.0)
+    render_anywhere (0.0.12)
+      rails (>= 3.0.7)
     request_store (1.4.1)
       rack (>= 1.4)
     reverse_markdown (1.4.0)
@@ -693,6 +696,7 @@ GEM
     websocket-driver (0.7.3)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
+    wkhtmltopdf-binary-edge (0.12.6.0)
     xmldsig (0.3.2)
       nokogiri
     xmlenc (0.8.0)
@@ -767,6 +771,7 @@ DEPENDENCIES
   paranoia (~> 2.2)
   pdf-forms
   pdfjs_viewer-rails!
+  pdfkit
   pg
   pluck_to_hash
   pry (~> 0.13.0)
@@ -780,6 +785,7 @@ DEPENDENCIES
   react_on_rails (= 11.3.0)
   redis-namespace
   redis-rails (~> 5.0.2)
+  render_anywhere
   request_store
   roo (~> 2.7)
   rspec
@@ -812,6 +818,7 @@ DEPENDENCIES
   validates_email_format_of
   webdrivers
   webmock
+  wkhtmltopdf-binary-edge
   ziptz
 
 BUNDLED WITH
