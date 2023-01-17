@@ -20,7 +20,7 @@ export const CavcDashboard = (props) => {
 
   return (
     <React.Fragment>
-      <AppSegment>
+      <AppSegment filledBackground>
         {/* add future components for display within the AppSegment component */}
         <h3>Cavc Dashboard Placeholder for appeal {appealId}</h3>
       </AppSegment>

@@ -64,7 +64,7 @@ class CavcDashboardLoadingScreen extends React.PureComponent {
 
     return (
       // class names can be added to this div as required for layout/styling
-      <div>
+      <div className="usa-grid">
         {loadingDataDisplay}
       </div>
     );
