@@ -78,7 +78,7 @@ class TaskTableTab extends React.PureComponent {
         <SearchBar
           id="searchBar"
           size="small"
-          title="Search by Claimant Name, Veteran Participant ID, File number or SSN"
+          title="Search by Claimant Name, Veteran Participant ID, File Number or SSN"
           onChange={this.onSearch}
           placeholder="Type to search..."
           onClearSearch={this.onClearSearch}
