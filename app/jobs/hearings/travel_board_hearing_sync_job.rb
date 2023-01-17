@@ -3,18 +3,30 @@
 class TravelBoardHearingSyncJob < CaseflowJob
   queue_with_priority :low_priority
 
+  BATCH_LIMIT = ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"]
+
   # Active Job that syncs all travel board hearing from vacols onto Caseflow
   def perform
-    fetch_vacols_travel_board_appeals(fetch_all_vacols_ids)
+    sync_travel_board_appeals
   end
 
   private
 
+  # Purpose: Logging info messages to the console
+  def log_info(message)
+    Rails.logger.info(message)
+  end
+
+  # Purpose: Fetches a list of all vacols ids from the database
+  # Return: The list of vacols ids
   def fetch_all_vacols_ids
     LegacyAppeal.all.pluck(:vacols_id)
   end
 
-  def fetch_vacols_travel_board_appeals(exclude_ids)
+  # Purpose: Fetches all travel board appeals from VACOLS that aren't already in Caseflow
+  # and creates a legacy appeal for each
+  # Params: exclude_ids - A list of vacols ids that already exist in Caseflow
+  def fetch_vacols_travel_board_appeals(exclude_ids, limit)
     VACOLS::Case
       .where(
         # Travel Board Hearing Request
@@ -28,8 +40,19 @@ class TravelBoardHearingSyncJob < CaseflowJob
       )
       .where.not(bfkey: exclude_ids)
       .includes(:correspondent, :folder, :case_issues)
+      .first(limit)
       .map do |vacols_case|
         AppealRepository.build_appeal(vacols_case, true)
       end
+  end
+
+  def sync_travel_board_appeals
+    log_info("Fetching travel board appeals from vacols for syncing...")
+    if BATCH_LIMIT.is_a?(String) || BATCH_LIMIT.is_a?(Integer)
+      fetch_vacols_travel_board_appeals(fetch_all_vacols_ids, BATCH_LIMIT.to_i)
+    else
+      log_info("No BATCH LIMIT environment variable provided. Defaulting to 250")
+      fetch_vacols_travel_board_appeals(fetch_all_vacols_ids, 250)
+    end
   end
 end
