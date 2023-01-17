@@ -16,7 +16,7 @@ class WorkQueue::DecisionReviewTaskSerializer
       # TODO: support multiple?
       object[:claimant_name] || claimant_with_name(object).try(:name) || "claimant"
     else
-      object[:claimant_name] || decision_review(object).veteran_full_name
+      object[:veteran_name] || decision_review(object).veteran_full_name
     end
   end
 

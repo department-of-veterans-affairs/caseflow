@@ -102,6 +102,10 @@ class BusinessLine < Organization
       [:assigned_to, :appeal]
     end
 
+    def union_select_statements
+      [Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id_alias, veteran_name_alias]
+    end
+
     def issue_count
       # Issue count alias for sorting and serialization
       "COUNT(request_issues.id) AS issue_count"
@@ -121,8 +125,13 @@ class BusinessLine < Organization
     end
 
     # Alias of veteran participant id for serialization and sorting
-    def participant_id
+    def participant_id_alias
       "veterans.participant_id as veteran_participant_id"
+    end
+
+    # Alias of veteran name for a potential edge case where there is a claimant and veteran_is_not_claimant is unset
+    def veteran_name_alias
+      "CONCAT(veterans.first_name, ' ', veterans.last_name) as veteran_name"
     end
 
     # All join clauses
@@ -204,7 +213,7 @@ class BusinessLine < Organization
     # Specific case for BoardEffectuationGrantTasks to include them in the result set
     # if the :board_grant_effectuation_task FeatureToggle is enabled for the current user.
     def board_grant_effectuation_tasks
-      Task.select(Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id)
+      Task.select(union_select_statements)
         .send(TASKS_QUERY_TYPE[query_type])
         .joins(board_grant_effectuation_task_appeals_requests_join)
         .joins(veterans_join)
@@ -219,7 +228,7 @@ class BusinessLine < Organization
     end
 
     def decision_reviews_on_request_issues(join_constraint)
-      Task.select(Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id)
+      Task.select(union_select_statements)
         .send(TASKS_QUERY_TYPE[query_type])
         .joins(join_constraint)
         .joins(veterans_join)
