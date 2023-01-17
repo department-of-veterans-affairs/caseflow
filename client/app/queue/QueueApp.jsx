@@ -102,6 +102,8 @@ import { EditCavcRemandView } from './cavc/EditCavcRemandView';
 import EditAppellantInformation from './editAppellantInformation/EditAppellantInformation';
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
+import { CavcDashboard } from './cavcDashboard/CavcDashboard';
+import CavcDashboardLoadingScreen from './cavcDashboard/CavcDashboardLoadingScreen';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -272,6 +274,21 @@ class QueueApp extends React.PureComponent {
   );
 
   routedEditCavcRemand = () => <EditCavcRemandView />;
+
+  routedCavcDashboard = (props) => (
+    <CavcDashboard
+      appealId={props.match.params.appealId}
+    />
+  );
+
+  routedCavcDashboardWithLoadingScreen = (props) => (
+    <CavcDashboardLoadingScreen
+      {...this.propsForQueueLoadingScreen()}
+      appealId={props.match.params.appealId}
+    >
+      {this.routedCavcDashboard(props)}
+    </CavcDashboardLoadingScreen>
+  );
 
   routedAdvancedOnDocketMotion = (props) => (
     <AdvancedOnDocketMotionView {...props.match.params} />
@@ -801,6 +818,12 @@ class QueueApp extends React.PureComponent {
               path="/queue/appeals/:appealId/edit_cavc_remand"
               title="Edit Cavc Remand | Caseflow"
               render={this.routedEditCavcRemand}
+            />
+            <PageRoute
+              exact
+              path="/queue/appeals/:appealId/cavc_dashboard"
+              title="CAVC Dashboard | Caseflow"
+              render={this.routedCavcDashboardWithLoadingScreen}
             />
             <PageRoute
               exact
