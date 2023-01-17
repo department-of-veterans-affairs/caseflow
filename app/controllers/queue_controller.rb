@@ -12,6 +12,10 @@ class QueueController < ApplicationController
     render "queue/index"
   end
 
+  def test
+    render "templates/notification_report_pdf_template"
+  end
+
   def check_queue_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("queue_out_of_service")
   end
