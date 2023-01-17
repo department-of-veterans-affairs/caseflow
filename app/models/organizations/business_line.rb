@@ -10,7 +10,7 @@ class BusinessLine < Organization
   # sort_by: 'assigned_at',
   # filters: [],
   # search_query: 'Bob'
-  def in_progress_tasks(pagination_params)
+  def in_progress_tasks(pagination_params = {})
     QueryBuilder.new(
       query_type: :in_progress,
       query_params: pagination_params,
@@ -18,7 +18,7 @@ class BusinessLine < Organization
     ).build_query
   end
 
-  def completed_tasks(pagination_params)
+  def completed_tasks(pagination_params = {})
     QueryBuilder.new(
       query_type: :completed,
       query_params: pagination_params,
