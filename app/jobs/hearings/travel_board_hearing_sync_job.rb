@@ -3,6 +3,10 @@
 class TravelBoardHearingSyncJob < CaseflowJob
   queue_with_priority :low_priority
 
+  before_perform do |job|
+    JOB_ATTR = job
+  end
+
   BATCH_LIMIT = ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"]
 
   # Active Job that syncs all travel board hearing from vacols onto Caseflow
@@ -13,7 +17,11 @@ class TravelBoardHearingSyncJob < CaseflowJob
 
   private
 
+  # Purpose: Create hearing task tree for appeals
+  # Params:  legacy_appeals - The list of appeals to create task trees for
+  # Return:  The vacols appeals that just got had their location codes updated to caseflow
   def create_schedule_hearing_tasks(legacy_appeals)
+    log_info("Constructing task tree for new travel board legacy appeals...")
     legacy_appeals.each do |appeal|
       root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
       ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
@@ -33,10 +41,14 @@ class TravelBoardHearingSyncJob < CaseflowJob
     LegacyAppeal.all.pluck(:vacols_id)
   end
 
+  # rubocop:disable Lint/RescueException
+  # rubocop:disable Layout/LineLength
+
   # Purpose: Fetches all travel board appeals from VACOLS that aren't already in Caseflow
   # and creates a legacy appeal for each
   # Params: exclude_ids - A list of vacols ids that already exist in Caseflow
   #         limit - The max number of appeals to process
+  # Return: All the newly created legacy appeals
   def fetch_vacols_travel_board_appeals(exclude_ids, limit)
     VACOLS::Case
       .where(
@@ -53,10 +65,19 @@ class TravelBoardHearingSyncJob < CaseflowJob
       .includes(:correspondent, :folder, :case_issues)
       .first(limit)
       .map do |vacols_case|
-        AppealRepository.build_appeal(vacols_case, true)
+        begin
+          AppealRepository.build_appeal(vacols_case, true)
+        rescue Exception => error
+          Rails.logger.error("#{error.class}: #{error.message} for vacols id:#{vacols_case.bfkey} on #{JOB_ATTR.class} of ID:#{JOB_ATTR.job_id}\n #{error.backtrace.join("\n")}")
+          next
+        end
       end
   end
+  # rubocop:enable Lint/RescueException
+  # rubocop:enable Layout/LineLength
 
+  # Purpose: Wrapper method to determine batch size of travel board appeals to sync
+  # Return: All the newly created legacy appeals
   def sync_travel_board_appeals
     log_info("Fetching travel board appeals from vacols for syncing...")
     if BATCH_LIMIT.is_a?(String) || BATCH_LIMIT.is_a?(Integer)
