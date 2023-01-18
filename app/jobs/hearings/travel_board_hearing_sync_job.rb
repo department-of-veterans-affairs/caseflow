@@ -7,10 +7,20 @@ class TravelBoardHearingSyncJob < CaseflowJob
 
   # Active Job that syncs all travel board hearing from vacols onto Caseflow
   def perform
-    sync_travel_board_appeals
+    RequestStore[:current_user] = User.system_user
+    create_schedule_hearing_tasks(sync_travel_board_appeals)
   end
 
   private
+
+  def create_schedule_hearing_tasks(legacy_appeals)
+    legacy_appeals.each do |appeal|
+      root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+      ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
+
+      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+    end
+  end
 
   # Purpose: Logging info messages to the console
   def log_info(message)
@@ -26,6 +36,7 @@ class TravelBoardHearingSyncJob < CaseflowJob
   # Purpose: Fetches all travel board appeals from VACOLS that aren't already in Caseflow
   # and creates a legacy appeal for each
   # Params: exclude_ids - A list of vacols ids that already exist in Caseflow
+  #         limit - The max number of appeals to process
   def fetch_vacols_travel_board_appeals(exclude_ids, limit)
     VACOLS::Case
       .where(
