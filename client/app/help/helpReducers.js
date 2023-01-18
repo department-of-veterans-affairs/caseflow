@@ -40,3 +40,5 @@ const helpReducer = (state = initialState, action = {}) => {
     return state;
   }
 };
+
+export default helpReducer;
