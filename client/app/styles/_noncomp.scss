@@ -71,6 +71,14 @@
 .cf-noncomp-search {
   min-width: 500px;
   margin-right: 0;
+
+  .cf-search-ahead {
+    .cf-search-input-with-close {
+      width: 100%;
+      max-width: 55rem;
+      margin-top: 1rem;
+    }
+  }
 }
 
 .cf-noncomp-queue-completed-task {
@@ -110,13 +118,6 @@
 .usa-search-small {
   max-width: none;
 }
-
-input#searchBar.cf-search-input-with-close {
-  width: 100%;
-  max-width: 55rem;
-  margin-top: 1rem;
-}
-
 
 .cf-pagination-pages {
   margin-top: 20px;
