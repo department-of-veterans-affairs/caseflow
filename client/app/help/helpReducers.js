@@ -36,6 +36,12 @@ const helpReducer = (state = initialState, action = {}) => {
         $set: action.payload.organizationMembershipRequests
       }
     });
+  case ACTIONS.SET_FEATURE_TOGGLES:
+    return update(state, {
+      featureToggles: {
+        $set: action.payload.featureToggles
+      }
+    });
   default:
     return state;
   }

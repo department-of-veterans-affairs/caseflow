@@ -15,10 +15,24 @@ class HelpController < ApplicationController
   end
   helper_method :user_organizations_ui_hash
 
+  # TODO: Delete this when it is done
+  def temp_org_request_data
+    [
+      {
+        id: 12,
+        org_name: "Vha",
+        status: "Pending"
+      },
+      {
+        id: 13,
+        org_name: "Random Vha program office",
+        status: "Pending"
+      }
+    ]
+  end
+
   def organization_membership_requests_ui_hash(_user = current_user)
-    {
-      "does not exist": "yet"
-    }
+    temp_org_request_data
   end
   helper_method :organization_membership_requests_ui_hash
 end
