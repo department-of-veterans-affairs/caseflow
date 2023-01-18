@@ -82,9 +82,9 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content(veteran_a.name)
       expect(page).to have_content(veteran_b.name)
       expect(page).to have_content(veteran_c.name)
-      expect(page).to have_content(veteran_a.participant_id)
-      expect(page).to have_content(veteran_b.participant_id)
-      expect(page).to have_content(veteran_c.participant_id)
+      expect(page).to have_content(veteran_a.ssn)
+      expect(page).to have_content(veteran_b.ssn)
+      expect(page).to have_content(veteran_c.ssn)
 
       # ordered by assigned_at descending
 
@@ -98,7 +98,7 @@ feature "NonComp Reviews Queue", :postgres do
 
       # ordered by closed_at descending
       expect(page).to have_content(
-        /#{veteran_b.name} #{veteran_b.participant_id} 1 #{request_issue_b.decision_date.strftime("%m\/%d\/%y")} Higher-Level Review/
+        /#{veteran_b.name} #{veteran_b.ssn} 1 #{request_issue_b.decision_date.strftime("%m\/%d\/%y")} Higher-Level Review/
       )
     end
 
@@ -116,9 +116,9 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content(veteran_a.name)
         expect(page).to have_content(veteran_b.name)
         expect(page).to have_content(veteran_c.name)
-        expect(page).to have_content(veteran_a.participant_id)
-        expect(page).to have_content(veteran_b.participant_id)
-        expect(page).to have_content(veteran_c.participant_id)
+        expect(page).to have_content(veteran_a.ssn)
+        expect(page).to have_content(veteran_b.ssn)
+        expect(page).to have_content(veteran_c.ssn)
 
         click_on veteran_a.name
         expect(page).to have_content("Form created by")

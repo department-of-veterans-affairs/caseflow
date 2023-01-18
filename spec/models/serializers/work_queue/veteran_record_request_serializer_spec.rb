@@ -16,7 +16,7 @@ describe WorkQueue::VeteranRecordRequestSerializer, :postgres do
         attributes: {
           claimant: { name: appeal.veteran_full_name, relationship: "self" },
           appeal: { id: appeal.uuid.to_s, isLegacyAppeal: false, issueCount: 0 },
-          veteran_participant_id: veteran.participant_id,
+          veteran_ssn: veteran.ssn,
           assigned_on: task.assigned_at,
           assigned_at: task.assigned_at,
           closed_at: task.closed_at,
