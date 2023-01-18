@@ -98,7 +98,10 @@ feature "NonComp Reviews Queue", :postgres do
 
       # ordered by closed_at descending
       expect(page).to have_content(
-        /#{veteran_b.name} #{veteran_b.ssn} 1 #{request_issue_b.decision_date.strftime("%m\/%d\/%y")} Higher-Level Review/
+        Regexp.new(
+          /#{veteran_b.name} #{veteran_b.ssn} 1/,
+          /#{request_issue_b.decision_date.strftime("%m\/%d\/%y")} Higher-Level Review/
+        )
       )
     end
 
