@@ -154,7 +154,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_content("Decision Completed")
       # should redirect to business line's completed tab
       expect(page.current_path).to eq "/#{business_line_url}"
-      expect(page).to have_content(veteran.participant_id)
+      expect(page).to have_content(veteran.ssn)
 
       # verify database updated
       dissues = decision_review.reload.decision_issues
