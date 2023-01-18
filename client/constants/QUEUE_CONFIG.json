@@ -89,13 +89,13 @@
       "name": "badgesColumn"
     },
     "CLAIMANT_NAME": {
-      "name": "claimantNameColumn",
+      "name": "claimantColumn",
       "sorting_table": "tasks",
       "sorting_columns": ["claimant"]
     },
     "ISSUE_COUNT": {
       "name": "issueCountColumn",
-      "sorting_table": "cached_appeal_attributes",
+      "sorting_table": "tasks",
       "sorting_columns": ["issue_count"]
     },
     "VETERAN_PARTICIPANT_ID": {

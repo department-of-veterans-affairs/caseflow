@@ -9,13 +9,25 @@ import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import {
   claimantColumn,
   veteranParticipantIdColumn,
-  decisionReviewTypeColumn
+  decisionReviewTypeColumn,
 } from './TaskTableColumns';
 import {
   buildDecisionReviewFilterInformation,
   extractEnabledTaskFilters
 } from '../util/index';
 import COPY from '../../../COPY';
+
+// caseIssueCountColumn = () => {
+//   return this.props.includeIssueCount ? issueCountColumn(this.props.requireDasRecord) : null;
+// };
+
+// caseDaysWaitingColumn = () => {
+//   return this.props.includeDaysWaiting ? daysWaitingColumn(this.props.requireDasRecord) : null;
+// };
+
+// completedDateColumn = () => {
+//   return this.props.includeCompletedDate ? taskCompletedDateColumn() : null;
+// };
 
 class NonCompTabsUnconnected extends React.PureComponent {
   render = () => {

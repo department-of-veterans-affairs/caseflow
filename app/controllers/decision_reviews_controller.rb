@@ -29,6 +29,18 @@ class DecisionReviewsController < ApplicationController
     end
   end
 
+  def sort_table
+    case column.name
+      # when claimant column is selected order alphabetically from A-Z
+    # when Constants.QUEUE_CONFIG.COLUMNS.CLAIMANT_NAME.name
+    #   (order: Constants.QUEUE_CONFIG.COLUMNS.CLAIMANT_NAME.sort_order)
+    # when Constants.QUEUE_CONFIG.COLUMNS.CLAIMANT_NAME.name
+    #   Task.sort_claimant_name_column(order: sort_order)
+    when Constants.QUEUE_CONFIG.COLUMNS.CLAIMANT_NAME.name
+      Arel.sql(claimant_name_sort_table(claimant_name_sorted_array))
+    end
+  end
+
   def show
     if task
       render "show"
@@ -154,7 +166,7 @@ class DecisionReviewsController < ApplicationController
       :order,
       { filter: [] },
       :page,
-      decision_issues: [:description, :disposition, :request_issue_id]
+      decision_issues: [:description, :disposition, :request_issue_id],
     )
   end
 end
