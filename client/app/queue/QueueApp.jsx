@@ -102,7 +102,7 @@ import { EditCavcRemandView } from './cavc/EditCavcRemandView';
 import EditAppellantInformation from './editAppellantInformation/EditAppellantInformation';
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
-import { CavcDashboard } from './cavcDashboard/CavcDashboard';
+import CavcDashboard from './cavcDashboard/CavcDashboard';
 import CavcDashboardLoadingScreen from './cavcDashboard/CavcDashboardLoadingScreen';
 
 class QueueApp extends React.PureComponent {
