@@ -7,37 +7,18 @@ import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import WindowUtil from '../../util/WindowUtil';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
-import ApiUtil from '../../util/ApiUtil';
-import { prepareAppealForStore } from '../utils';
-import { onReceiveAppealDetails } from '../QueueActions';
+import { fetchAppealDetails } from '../QueueActions';
 
 // Contains the loading screen component and fetches data for the CAVC Dashboard
 // The CavcDashboard component is passed through this as a child component for rendering
 class CavcDashboardLoadingScreen extends React.PureComponent {
-  // placeholder for loading the CavcDashboard object(s) when implemented
-  loadDashboard = () => {
-    // const { appealId } = this.props;
-
-    // placeholder promise; replace with ApiUtil to get data from cavc_dashboard_controller
-    return Promise.resolve(true);
-  };
-
-  // loads ONLY the Appeal and AppealDetails that are normally loaded by QueueApp and stores with redux
   // loading the appeal instead of the CavcRemand is done because certain parameters from the appeal (ex. veteran
   // name) are not included on the CavcRemand object, but the appealDetails object always includes the remand object
-  loadAppealWithCavcRemand = () => {
-    const { appealId } = this.props;
-
-    return (
-      ApiUtil.get(`/appeals/${appealId}`).then((response) => {
-        this.props.onReceiveAppealDetails(prepareAppealForStore([response.body.appeal]));
-      })
-    );
-  };
-
   // LoadingDataDisplay requires a promise; any pre-render loading should be included in createLoadPromise,
   // passed in as an array of promises (or 'thenable' objects)
-  createLoadPromise = () => Promise.all([this.loadDashboard(), this.loadAppealWithCavcRemand()]);
+  createLoadPromise = () => Promise.all([
+    this.props.fetchAppealDetails(this.props.appealId)
+  ]);
 
   render = () => {
     const failStatusMessageChildren = <div>
@@ -74,7 +55,7 @@ class CavcDashboardLoadingScreen extends React.PureComponent {
 CavcDashboardLoadingScreen.propTypes = {
   children: PropTypes.object,
   appealId: PropTypes.string,
-  onReceiveAppealDetails: PropTypes.func,
+  fetchAppealDetails: PropTypes.func,
   appealDetails: PropTypes.object
 };
 
@@ -83,7 +64,7 @@ CavcDashboardLoadingScreen.propTypes = {
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveAppealDetails
+  fetchAppealDetails
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(CavcDashboardLoadingScreen));
