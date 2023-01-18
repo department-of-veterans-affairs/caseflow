@@ -103,7 +103,6 @@ import EditAppellantInformation from './editAppellantInformation/EditAppellantIn
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
 import CavcDashboard from './cavcDashboard/CavcDashboard';
-import CavcDashboardLoadingScreen from './cavcDashboard/CavcDashboardLoadingScreen';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -279,15 +278,6 @@ class QueueApp extends React.PureComponent {
     <CavcDashboard
       appealId={props.match.params.appealId}
     />
-  );
-
-  routedCavcDashboardWithLoadingScreen = (props) => (
-    <CavcDashboardLoadingScreen
-      {...this.propsForQueueLoadingScreen()}
-      appealId={props.match.params.appealId}
-    >
-      {this.routedCavcDashboard(props)}
-    </CavcDashboardLoadingScreen>
   );
 
   routedAdvancedOnDocketMotion = (props) => (
@@ -823,7 +813,7 @@ class QueueApp extends React.PureComponent {
               exact
               path="/queue/appeals/:appealId/cavc_dashboard"
               title="CAVC Dashboard | Caseflow"
-              render={this.routedCavcDashboardWithLoadingScreen}
+              render={this.routedCavcDashboard}
             />
             <PageRoute
               exact

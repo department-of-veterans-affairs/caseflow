@@ -1,24 +1,55 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
+import { fetchAppealDetails } from '../QueueActions';
+import LoadingScreen from '../../components/LoadingScreen';
+import { LOGO_COLORS } from '../../constants/AppConstants';
+import COPY from '../../../COPY';
+import StatusMessage from '../../components/StatusMessage';
 
 export const CavcDashboard = (props) => {
   const { appealId, appeal, appealDetails } = props;
 
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState();
+
+  useEffect(() => {
+    props.fetchAppealDetails(appealId).
+      catch((response) => {
+        if (response.response && response.response.type === 'application/json') {
+          setError(response.response.body.errors);
+        }
+      }).
+      finally(() => {
+        setLoaded(true);
+      });
+  }, []);
+
   // cavcRemand is part of appealDetails loaded by the CavcDashboardLoadingScreen. Redirect back
   // to the CaseDetails page if a remand doesn't exist for the provided appealId or if legacy appeal
-  if (appealDetails.cavcRemand === null || appeal.isLegacy) {
+  if (loaded && (appealDetails.cavcRemand === null || appeal.isLegacy)) {
     return <Redirect to={`/queue/appeals/${appealId}`} />;
   }
 
   return (
     <React.Fragment>
       <AppSegment filledBackground>
+        {!loaded &&
+          <LoadingScreen
+            spinnerColor={LOGO_COLORS.QUEUE.ACCENT}
+            message={COPY.CAVC_DASHBOARD_LOADING_SCREEN_TEXT}
+          />}
+        {loaded && !error &&
+          <h1>CAVC appeals for {appealDetails?.appellantFullName}</h1>}
+        {loaded && error &&
+          <StatusMessage
+            title={COPY.CAVC_DASHBOARD_LOADING_FAILURE_TITLE}
+            messageText={COPY.CAVC_DASHBOARD_LOADING_FAILURE_TEXT}
+          />}
         {/* add future components for display within the AppSegment component */}
-        <h1>CAVC appeals for {appealDetails.appellantFullName}</h1>
       </AppSegment>
     </React.Fragment>
   );
@@ -27,7 +58,8 @@ export const CavcDashboard = (props) => {
 CavcDashboard.propTypes = {
   appealId: PropTypes.string.isRequired,
   appeal: PropTypes.object,
-  appealDetails: PropTypes.object
+  appealDetails: PropTypes.object,
+  fetchAppealDetails: PropTypes.func
 };
 
 // mappings and connect are boilerplate for connecting to redux and will be added to in the future
@@ -42,10 +74,9 @@ const mapStateToProps = (state, ownProps) => {
 // any actions being used in the component that use/affect the redux store should be mapped here, see
 // CaseDetailsLoadingScreen.jsx for example
 const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {},
-    dispatch
-  );
+  bindActionCreators({
+    fetchAppealDetails
+  }, dispatch);
 
 export default connect(
   mapStateToProps,
