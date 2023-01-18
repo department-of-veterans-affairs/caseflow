@@ -70,7 +70,7 @@
 
 .cf-noncomp-search {
   min-width: 500px;
-  margin-right: 0px;
+  margin-right: 0;
 }
 
 .cf-noncomp-queue-completed-task {
@@ -107,7 +107,7 @@
   margin-right: 2rem;
 }
 
-label.usa-search-small {
+.usa-search-small {
   max-width: none;
 }
 
@@ -120,4 +120,5 @@ input#searchBar.cf-search-input-with-close {
 
 .cf-pagination-pages {
   margin-top: 20px;
+  clear: right;
 }
