@@ -18,10 +18,12 @@ export const ToggleViewButton = ({ documentsView, changeView }) => (
       active={documentsView}
       onClick={changeView}>
 
-      <Button name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS}>
+      <Button name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS}
+        role="button">
          Documents
       </Button>
-      <Button name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS}>
+      <Button name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS}
+        role="button">
          Comments
       </Button>
     </ToggleButton>

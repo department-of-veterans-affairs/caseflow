@@ -6,6 +6,10 @@ import RadioField from '../../components/RadioField';
 import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import { submitCancel } from '../actions/intake';
+import {
+  clearClaimant,
+  clearPoa
+} from '../reducers/addClaimantSlice';
 import { CANCELLATION_REASONS } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { Redirect } from 'react-router-dom';
@@ -97,8 +101,16 @@ class CancelIntakeModal extends BaseForm {
 
     let data = this.prepareData();
 
-    this.props.submitCancel(data);
+    this.props.submitCancel(data).then(() => {
+      // Clear any unrecognized claimant info upon cancellation
+      this.props.clearClaimant();
+      this.props.clearPoa();
+    });
   }
+
+  submitDisabled = () => (
+    !((this.state.cancelReasonValue && this.state.cancelReasonValue !== 'other') || this.state.cancelOtherValue)
+  )
 
   render() {
 
@@ -122,8 +134,10 @@ class CancelIntakeModal extends BaseForm {
             name: 'Close',
             onClick: closeHandler
           },
-          { classNames: ['usa-button', 'usa-button-secondary', 'confirm-cancel'],
+          {
+            classNames: ['usa-button', 'confirm-cancel'],
             name: 'Cancel intake',
+            disabled: this.submitDisabled(),
             onClick: this.handleSubmitCancel
           }
         ]}
@@ -155,7 +169,9 @@ class CancelIntakeModal extends BaseForm {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  submitCancel
+  submitCancel,
+  clearClaimant,
+  clearPoa
 }, dispatch);
 
 const ConnectedCancelIntakeModal = connect(

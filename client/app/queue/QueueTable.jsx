@@ -168,7 +168,7 @@ export const HeaderRow = (props) => {
           }
           const columnTitleContent = <span {...(titleId ? { id: titleId } : {})}>{column.header || ''}</span>;
           const columnContent = (
-            <span {...iconHeaderStyle} aria-label="">
+            <span {...iconHeaderStyle} aria-label={column.header ?? ''}>
               {columnTitleContent}
               {sortIcon}
               {filterIcon}
@@ -186,7 +186,7 @@ export const HeaderRow = (props) => {
               className={cellClasses(column)}
             >
               {column.tooltip ? (
-                <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip}>
+                <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip} styling="flex">
                   {columnContent}
                 </Tooltip>
               ) : (

@@ -29,7 +29,8 @@ class UploadDocumentToVbmsJob < CaseflowJob
     end
     Raven.extra_context(
       vbms_uploaded_document_id: document.id,
-      case_details_path: "/queue/appeals/#{document.appeal.external_id}"
+      upload_document_path: "/upload_document",
+      veteran_file_number: document.veteran_file_number
     )
   end
 end

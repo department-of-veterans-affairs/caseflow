@@ -61,7 +61,6 @@ class TeamAssignTaskListView extends React.PureComponent {
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
           <h1>Assign {unassignedTasksCount} Cases{(userCssId === targetUserCssId) ? '' : ` for ${targetUserCssId}`}</h1>
-          <QueueOrganizationDropdown organizations={organizations} />
         </div>
         {!userIsCamoEmployee &&
           <div className="usa-width-one-fourth">
@@ -83,6 +82,7 @@ class TeamAssignTaskListView extends React.PureComponent {
           </div>
         }
         <div className={`usa-width-${userIsCamoEmployee ? 'one-whole' : 'three-fourths'}`}>
+          <QueueOrganizationDropdown organizations={organizations} />
           <PageRoute
             exact
             path={match.url}

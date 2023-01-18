@@ -236,13 +236,6 @@ export default function TestUsers(props) {
                   onChange={featureToggleOnChange}
                   creatableOptions={{ promptTextCreator: (tagName) => `Enable feature toggle "${trim(tagName)}"` }}
                 />
-                <div>
-                  <h3>Local Veteran Records</h3>
-                  <p>
-                    Local veteran records are now available on a <a href="/test/data">separate page</a>.
-                    Note that this page may take a while to load.
-                  </p>
-                </div>
               </div> }
           { props.isGlobalAdmin &&
             <div>

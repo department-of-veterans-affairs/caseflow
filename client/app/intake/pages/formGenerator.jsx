@@ -1,4 +1,5 @@
 /* eslint-disable max-len */
+/* eslint max-lines: off */
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -27,6 +28,9 @@ import COPY from '../../../COPY';
 import Alert from '../../components/Alert';
 import Button from '../../components/Button';
 import SearchableDropdown from 'app/components/SearchableDropdown';
+import { sprintf } from 'sprintf-js';
+import Link from 'app/components/Link';
+import { renderToString } from 'react-dom/server';
 const docketTypeRadioOptions = [
   { value: 'direct_review', displayText: 'Direct Review' },
   { value: 'evidence_submission', displayText: 'Evidence Submission' },
@@ -143,6 +147,7 @@ const formFieldMapping = (props) => {
         register={props.register}
         formName={props.formName}
         featureToggles={props.featureToggles}
+        userCanSelectVha={props.userIsVhaEmployee}
       />
     ),
     'informal-conference': (
@@ -248,10 +253,22 @@ const FormGenerator = (props) => {
     return <Redirect to={PAGE_PATHS.COMPLETED} />;
   default:
   }
+
   const beginNextIntake = () => {
     props.confirmIneligibleForm(props.intakeId);
   };
   const showInvalidVeteranError = !props.veteranValid && VBMS_BENEFIT_TYPES.includes(props.benefitType);
+
+  const buildVHAInfoBannerMessage = () => {
+    const emailSubject = 'Potential%20VHA%20Higher-Level%20Review%20or%20Supplemental%20Claim';
+    const mailToLink = <Link href={`mailto:${COPY.VHA_BENEFIT_EMAIL_ADDRESS}?subject=${emailSubject}`}>
+      <span>{COPY.VHA_BENEFIT_EMAIL_ADDRESS}</span>
+    </Link>;
+
+    return sprintf(COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, renderToString(mailToLink));
+  };
+
+  const isHlrOrScForm = [FORM_TYPES.HIGHER_LEVEL_REVIEW.formName, FORM_TYPES.SUPPLEMENTAL_CLAIM.formName].includes(props.formName);
 
   return (
     <div>
@@ -275,6 +292,13 @@ const FormGenerator = (props) => {
           errorCode="veteran_not_valid"
           errorData={props.veteranInvalidFields}
         />
+      )}
+      {!props.userIsVhaEmployee && isHlrOrScForm && props.featureToggles.vhaClaimReviewEstablishment && (
+        <div style={{ marginBottom: '3rem' }}>
+          <Alert title={COPY.INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE} type="info">
+            <span dangerouslySetInnerHTML={{ __html: buildVHAInfoBannerMessage() }} />
+          </Alert>
+        </div>
       )}
       {Object.keys(props.schema.fields).map((field) => formFieldMapping(props)[field])}
     </div>
@@ -309,6 +333,7 @@ const SelectClaimantConnected = connect(
 FormGenerator.propTypes = {
   schema: PropTypes.object.isRequired,
   formHeader: PropTypes.func.isRequired,
+  formName: PropTypes.string.isRequired,
   veteranName: PropTypes.string,
   receiptDate: PropTypes.string,
   receiptDateError: PropTypes.string,
@@ -337,7 +362,9 @@ FormGenerator.propTypes = {
   homelessness: PropTypes.string,
   setHomelessnessType: PropTypes.func,
   homelessnessError: PropTypes.string,
-  isReviewed: PropTypes.bool
+  isReviewed: PropTypes.bool,
+  userIsVhaEmployee: PropTypes.bool,
+  featureToggles: PropTypes.object,
 };
 export default connect(
   (state, props) => ({
@@ -372,6 +399,8 @@ export default connect(
     homelessnessError: state[props.formName].homelessnessError,
     homelessnessUserInteraction: state[props.formName].homelessnessUserInteraction,
     isReviewed: state[props.formName].isReviewed,
+    userIsVhaEmployee: state.userInformation.userIsVhaEmployee,
+    featureToggles: state.featureToggles,
   }),
   (dispatch) => bindActionCreators({
     setDocketType,

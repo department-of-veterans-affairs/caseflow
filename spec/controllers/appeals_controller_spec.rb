@@ -642,7 +642,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
       it "returns a successful response" do
         subject
-
         assert_response(:success)
         expect(JSON.parse(subject.body)["representative_type"]).to eq "Attorney"
         expect(JSON.parse(subject.body)["representative_name"]).to eq "Clarence Darrow"
@@ -699,6 +698,195 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         expected_email = "jamie.fakerton@caseflowdemo.com"
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_email_address"]).to eq expected_email
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_tz"]).to eq "America/Los_Angeles"
+      end
+    end
+  end
+
+  describe "GET an appeal's notifications using 'appeals/:appeals_id/notifications' endpoint" do
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_id: 122) }
+    let(:legacy_appeal_without_claimant) { create(:legacy_appeal, vacols_id: 123) }
+    let(:legacy_appeal_without_participant_id) { create(:legacy_appeal, vacols_id: 124) }
+    let(:ama_appeal) do
+      create(
+        :appeal,
+        veteran_file_number: "500000102",
+        receipt_date: 6.months.ago.to_date.mdY
+      )
+    end
+    let(:ama_appeal_without_claimant) do
+      create(
+        :appeal,
+        veteran_file_number: "500000103",
+        receipt_date: 5.months.ago.to_date.mdY
+      )
+    end
+    let(:ama_appeal_without_participant_id) do
+      create(
+        :appeal,
+        veteran_file_number: "500000104",
+        receipt_date: 4.months.ago.to_date.mdY
+      )
+    end
+    let(:ama_appeals_type) { "Appeal" }
+    let(:legacy_appeals_type) { "LegacyAppeal" }
+    let(:bad_appeals_id) { "bad appeals_id" }
+
+    before do
+      Seeds::NotificationEvents.new.seed!
+      User.authenticate!(roles: ["System Admin"])
+    end
+
+    let!(:notifications) do
+      [
+        create(:notification, appeals_id: legacy_appeal.vacols_id, appeals_type: legacy_appeals_type,
+                              event_date: 6.days.ago, event_type: "Appeal docketed", notification_type: "SMS",
+                              email_notification_status: nil, sms_notification_status: "Success"),
+        create(:notification, appeals_id: ama_appeal.uuid, appeals_type: ama_appeals_type,
+                              event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "Email",
+                              email_notification_status: "Success", sms_notification_status: nil),
+        create(:notification, appeals_id: legacy_appeal_without_claimant.vacols_id, appeals_type: legacy_appeals_type,
+                              event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS",
+                              email_notification_status: nil, sms_notification_status: "No Claimant Found"),
+        create(:notification, appeals_id: legacy_appeal_without_participant_id.vacols_id, appeals_type: legacy_appeals_type,
+                              event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS",
+                              email_notification_status: nil, sms_notification_status: "No Participant Id Found"),
+        create(:notification, appeals_id: ama_appeal_without_claimant.uuid, appeals_type: ama_appeals_type,
+                              event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "Email",
+                              email_notification_status: "No Claimant Found", sms_notification_status: nil),
+        create(:notification, appeals_id: ama_appeal_without_participant_id.uuid, appeals_type: ama_appeals_type,
+                              event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS", 
+                              email_notification_status: nil, sms_notification_status: "No Participant Id Found")
+      ]
+    end
+
+    context "when controller action #fetch_notification_list is made with a vacols_id" do
+      subject do
+        get :fetch_notification_list, params: { appeals_id: legacy_appeal.vacols_id }
+      end
+      it "should return one notification" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body.count).to eq 1
+      end
+      it "should have the event type of 'Appeal docketed'" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body.first["attributes"]["event_type"]).to eq "Appeal docketed"
+      end
+      it "should return a successful response" do
+        subject
+        assert_response(:success)
+      end
+    end
+
+    context "when controller action #fetch_notification_list is made with a vacols_id that has no claimant" do
+      subject do
+        get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_claimant.vacols_id }
+      end
+      it "should return zero notifications" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body.count).to eq 0
+      end
+      it "should return an empty array" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body).to eq []
+      end
+      it "should return a successful response" do
+        subject
+        assert_response(:success)
+      end
+    end
+
+    context "when controller action #fetch_notification_list is made with a vacols_id that has no participant id" do
+      subject do
+        get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_participant_id.vacols_id }
+      end
+      it "should return zero notifications" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body.count).to eq 0
+      end
+      it "should return an empty array" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body).to eq []
+      end
+      it "should return a successful response" do
+        subject
+        assert_response(:success)
+      end
+    end
+
+    context "when controller action #fetch_notification_list is made with a uuid" do
+      subject do
+        get :fetch_notification_list, params: { appeals_id: ama_appeal.uuid }
+      end
+      it "should return one notification" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body.count).to eq 1
+      end
+      it "should have the event type of 'Hearing scheduled'" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body.first["attributes"]["event_type"]).to eq "Hearing scheduled"
+      end
+      it "should return a succesful response" do
+        subject
+        assert_response(:success)
+      end
+    end
+
+    context "when controller action #fetch_notification_list is made with a uuid that has no claimant" do
+      subject do
+        get :fetch_notification_list, params: { appeals_id: ama_appeal_without_claimant.uuid }
+      end
+      it "should return zero notifications" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body.count).to eq 0
+      end
+      it "should return an empty array" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body).to eq []
+      end
+      it "should return a succesful response" do
+        subject
+        assert_response(:success)
+      end
+    end
+
+    context "when controller action #fetch_notification_list is made with a uuid that has no participant id" do
+      subject do
+        get :fetch_notification_list, params: { appeals_id: ama_appeal_without_participant_id.uuid }
+      end
+      it "should return zero notifications" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body.count).to eq 0
+      end
+      it "should return an empty array" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body).to eq []
+      end
+      it "should return a succesful response" do
+        subject
+        assert_response(:success)
+      end
+    end
+
+    context "when controller action #fetch_notification_list is called with an appeals_id not in Notification Table" do
+      subject do
+        get :fetch_notification_list, params: { appeals_id: bad_appeals_id }
+      end
+      it "should return an empty array" do
+        subject
+        response_body = JSON.parse(subject.body)
+        expect(response_body).to eq []
       end
     end
   end

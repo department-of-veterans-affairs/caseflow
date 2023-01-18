@@ -347,6 +347,8 @@ module Caseflow::Error
   class InvalidFileNumber < StandardError; end
   class MustImplementInSubclass < StandardError; end
   class AttributeNotLoaded < StandardError; end
+  class VeteranNotFound < StandardError; end
+  class AppealNotFound < StandardError; end
 
   class EstablishClaimFailedInVBMS < StandardError
     attr_reader :error_code

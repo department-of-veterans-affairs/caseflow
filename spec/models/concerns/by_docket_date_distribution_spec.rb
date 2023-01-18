@@ -169,4 +169,35 @@ describe ByDocketDateDistribution, :all_dbs do
       expect(return_array).to eq(nonpriority_count_hash)
     end
   end
+
+  context "#ama_statistics" do
+    before do
+      @new_acd.instance_variable_set(:@appeals, [])
+    end
+
+    it "returns a hash with keys" do
+      statistics = @new_acd.send(:ama_statistics)
+
+      expect(statistics).to include(:batch_size)
+      expect(statistics).to include(:total_batch_size)
+      expect(statistics).to include(:priority_target)
+      expect(statistics).to include(:priority)
+      expect(statistics).to include(:nonpriority)
+      expect(statistics).to include(:algorithm)
+
+      priority_stats = statistics[:priority]
+      nonpriority_stats = statistics[:nonpriority]
+
+      expect(priority_stats).to include(:count)
+      expect(priority_stats).to include(:legacy_hearing_tied_to)
+      expect(nonpriority_stats).to include(:count)
+      expect(nonpriority_stats).to include(:legacy_hearing_tied_to)
+      expect(nonpriority_stats).to include(:iterations)
+
+      @new_acd.dockets.each_key do |sym|
+        expect(priority_stats).to include(sym)
+        expect(nonpriority_stats).to include(sym)
+      end
+    end
+  end
 end

@@ -133,7 +133,7 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_phone_number do |object|
-    object.claimant.is_a?(OtherClaimant) ? object.claimant&.phone_number : nil
+    object.claimant&.unrecognized_claimant? ? object.claimant&.phone_number : nil
   end
 
   attribute :appellant_email_address do |object|
@@ -149,11 +149,11 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :appellant_party_type do |appeal|
-    appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.party_type : nil
+    appeal.claimant&.unrecognized_claimant? ? appeal.claimant&.party_type : nil
   end
 
   attribute :unrecognized_appellant_id do |appeal|
-    appeal.claimant.is_a?(OtherClaimant) ? appeal.claimant&.unrecognized_appellant&.id : nil
+    appeal.claimant&.unrecognized_claimant? ? appeal.claimant&.unrecognized_appellant&.id : nil
   end
 
   attribute :has_poa do |appeal|
@@ -272,5 +272,13 @@ class WorkQueue::AppealSerializer
     object.switched_dockets.map do |docket_switch|
       WorkQueue::DocketSwitchSerializer.new(docket_switch).serializable_hash[:data][:attributes]
     end
+  end
+
+  attribute :has_notifications do |object|
+    @all_notifications = Notification.where(appeals_id: object.uuid.to_s, appeals_type: "Appeal")
+    @allowed_notifications = @all_notifications.where(email_notification_status: nil)
+      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .merge(@all_notifications.where(sms_notification_status: nil)
+      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).any?
   end
 end

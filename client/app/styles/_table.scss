@@ -116,3 +116,20 @@
   flex-wrap: wrap;
   align-items: baseline;
 }
+
+// ===========================*
+// Wrapped tables
+// ===========================*
+.test-data-table {
+  display: flex;
+  flex-wrap: wrap;
+
+  tr {
+    padding-right: 10px;
+    padding-bottom: 10px;
+
+    td {
+      width: 100%;
+    }
+  }
+}

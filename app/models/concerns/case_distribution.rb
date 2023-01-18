@@ -6,8 +6,11 @@ module CaseDistribution
   delegate :dockets,
            :docket_proportions,
            :priority_count,
+           :nonpriority_count,
            :direct_review_due_count,
            :total_batch_size,
+           :legacy_hearing_priority_count,
+           :legacy_hearing_nonpriority_count,
            to: :docket_coordinator
 
   private
@@ -16,23 +19,11 @@ module CaseDistribution
     @docket_coordinator ||= DocketCoordinator.new
   end
 
-  def priority_push_distribution(limit = nil)
-    fail Caseflow::Error::MustImplementInSubclass
-  end
-
-  def requested_distribution
-    fail Caseflow::Error::MustImplementInSubclass
-  end
-
   def collect_appeals
     appeals = yield
     @rem -= appeals.count
     @appeals += appeals
     appeals
-  end
-
-  def ama_statistics
-    fail Caseflow::Error::MustImplementInSubclass
   end
 
   def priority_target

@@ -25,7 +25,6 @@ class LegacyAppeal < CaseflowRecord
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_many :decision_documents, as: :appeal
-  has_many :vbms_uploaded_documents, as: :appeal
   has_one :special_issue_list, as: :appeal
   has_many :record_synced_by_job, as: :record
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
@@ -39,6 +38,7 @@ class LegacyAppeal < CaseflowRecord
   }, class_name: "Task", foreign_key: :appeal_id
   has_many :email_recipients, class_name: "HearingEmailRecipient", foreign_key: :appeal_id
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
+  has_one :appeal_state, as: :appeal
 
   class UnknownLocationError < StandardError; end
 
@@ -78,7 +78,7 @@ class LegacyAppeal < CaseflowRecord
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
   attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by,
-                :created_at, :document_id, :assigned_by, :updated_at, :attorney_id
+                :created_at, :document_id, :assigned_by, :updated_at, :attorney_id, :appeal_split_process
 
   delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at,
            to: :document_fetcher

@@ -22,6 +22,12 @@ const updateFromServerFeatures = (state, featureToggles) => {
     },
     updatedAppealForm: {
       $set: Boolean(featureToggles.updatedAppealForm)
+    },
+    hlrScUnrecognizedClaimants: {
+      $set: Boolean(featureToggles.hlrScUnrecognizedClaimants)
+    },
+    vhaClaimReviewEstablishment: {
+      $set: Boolean(featureToggles.vhaClaimReviewEstablishment)
     }
   });
 };
@@ -34,7 +40,9 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       filedByVaGovHlr: false,
       updatedIntakeForms: false,
       eduPreDocketAppeals: false,
-      updatedAppealForm: false
+      updatedAppealForm: false,
+      hlrScUnrecognizedClaimants: false,
+      vhaClaimReviewEstablishment: false
     },
     data.featureToggles
   );
