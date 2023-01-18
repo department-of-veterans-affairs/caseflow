@@ -39,11 +39,6 @@ FactoryBot.define do
       roles { ["Admin Intake"] }
     end
 
-    # Office of Assessment and Improvement; one role that has CAVC Dashboard access
-    trait :oai_user do
-      roles { ["OAI"] }
-    end
-
     trait :inactive do
       status { "inactive" }
     end

@@ -3,9 +3,9 @@
 RSpec.feature "CAVC Dashboard", :all_dbs do
   let(:non_cavc_appeal) { create(:appeal, :direct_review_docket) }
   let(:cavc_appeal) { create(:appeal, :direct_review_docket, :type_cavc_remand) }
-  let(:authorized_user) { create(:user, :oai_user) }
+  let(:authorized_user) { create(:user) }
 
-  context "user has OAI role" do
+  context "user is a member of OAI or OCC organizations" do
     before do
       User.authenticate!(user: authorized_user)
     end
