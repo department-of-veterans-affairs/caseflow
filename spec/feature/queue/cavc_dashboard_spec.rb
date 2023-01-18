@@ -19,7 +19,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
     # this test will need to be updated once CavcDashboard component is built
     it "dashboard loads if the appeal has an associated cavcRemand" do
       visit "/queue/appeals/#{cavc_appeal.uuid}/cavc_dashboard"
-      expect(page).to have_text cavc_appeal.uuid.to_s
+      expect(page).to have_text "CAVC appeals for #{cavc_appeal.veteran.name}"
     end
   end
 end
