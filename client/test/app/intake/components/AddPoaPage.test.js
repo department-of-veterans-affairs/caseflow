@@ -1,15 +1,18 @@
 import React from 'react';
-import { screen, render, waitFor, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import selectEvent from 'react-select-event';
-import { AddPoaPage } from 'app/intake/addPOA/AddPoaPage';
-import { IntakeProviders } from '../testUtils';
 import faker from 'faker';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { createStore } from 'redux';
+import { screen, render, waitFor, fireEvent } from '@testing-library/react';
+import { createMemoryHistory } from 'history';
+import userEvent from '@testing-library/user-event';
+import selectEvent from 'react-select-event';
+import PropTypes from 'prop-types';
 
+import { AddPoaPage } from 'app/intake/addPOA/AddPoaPage';
+import { renderIntakePage } from '../testUtils';
 import { reducer, generateInitialState } from 'app/intake/index';
+import { PAGE_PATHS } from 'app/intake/constants';
 
 const HLRIntakeProviders = ({ children }) => {
   const hlrState = generateInitialState();
@@ -22,6 +25,10 @@ const HLRIntakeProviders = ({ children }) => {
       <MemoryRouter>{children}</MemoryRouter>
     </Provider>
   );
+};
+
+HLRIntakeProviders.propTypes = {
+  children: PropTypes.node
 };
 
 describe('AddPoaPage', () => {
@@ -70,8 +77,13 @@ describe('AddPoaPage', () => {
 
   // Thee problem is that asyncFn is not being passed search params maybe?
   const defaults = { onSubmit, onBack, onAttorneySearch: asyncFn };
-  const setup = () => {
-    return render(<AddPoaPage {...defaults} />, { wrapper: IntakeProviders });
+  const setup = (
+    storeValues,
+    history = createMemoryHistory({ initialEntries: [PAGE_PATHS.ADD_POWER_OF_ATTORNEY] }),
+  ) => {
+    const page = <AddPoaPage {...defaults} />;
+
+    return renderIntakePage(page, storeValues, history);
   };
 
   const setupHLR = () => {
@@ -220,4 +232,33 @@ describe('AddPoaPage', () => {
 
   });
 
+  describe('Redirection to Intake home page', () => {
+    let storeValues;
+
+    beforeEach(() => {
+      storeValues = generateInitialState();
+    });
+
+    it('takes place whenever intake has been cancelled (formType === null)', async () => {
+      storeValues.intake = {
+        ...storeValues.intake,
+        formType: null
+      };
+
+      const { history } = setup(storeValues);
+
+      expect(await history.location.pathname).toBe(PAGE_PATHS.BEGIN);
+    });
+
+    it('does not take place is there is a formType, indicating no cancellation', async () => {
+      storeValues.intake = {
+        ...storeValues.intake,
+        formType: 'appeal'
+      };
+
+      const { history } = setup(storeValues);
+
+      expect(await history.location.pathname).toBe(PAGE_PATHS.ADD_POWER_OF_ATTORNEY);
+    });
+  });
 });
