@@ -35,10 +35,30 @@ module GenericTaskPaginationConcern
       .per(DEFAULT_TASKS_PER_PAGE)
   end
 
+  def sorting_column(column_name)
+    column_name = allowed_params[Constants.QUEUE_CONFIG.COLUMNS]
+
+    return column_name
+
+    columns = case column_name
+              when "claimantColumn" then claimant_name(pagination_query_params)
+              when "issueCountColumn" then issue_count(pagination_query_params)
+              when "veteranParticipantIdColumn" then veteran_participant_id(pagination_query_params)
+              else
+                return unrecognized_column_name_error
+              end
+
+    render json: pagination_json(columns)
+  end
+
+  def unrecognized_column_name_error
+    render json: { error: "Column name provided could not be found" }, status: :not_found
+  end
+
   def pagination_query_params
     {
       sort_order: allowed_params[Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM.to_sym],
-      sort_by: allowed_params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym],
+      sort_by: sorting_column( allowed_params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym]),
       filters: allowed_params[Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM.to_sym]
     }.compact
   end

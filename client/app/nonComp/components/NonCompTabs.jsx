@@ -17,18 +17,6 @@ import {
 } from '../util/index';
 import COPY from '../../../COPY';
 
-// caseIssueCountColumn = () => {
-//   return this.props.includeIssueCount ? issueCountColumn(this.props.requireDasRecord) : null;
-// };
-
-// caseDaysWaitingColumn = () => {
-//   return this.props.includeDaysWaiting ? daysWaitingColumn(this.props.requireDasRecord) : null;
-// };
-
-// completedDateColumn = () => {
-//   return this.props.includeCompletedDate ? taskCompletedDateColumn() : null;
-// };
-
 class NonCompTabsUnconnected extends React.PureComponent {
   render = () => {
     const queryParams = new URLSearchParams(window.location.search);
