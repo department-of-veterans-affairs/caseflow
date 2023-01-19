@@ -6,6 +6,7 @@ describe Hearings::TravelBoardHearingSyncJob do
   let(:new_caseflow_vacols_ids) { %w[123450 123451 123452 123453 123455 123458 123459] }
   let(:legacy_appeal) { create(:legacy_appeal) }
   let(:existing_caseflow_vacols_ids) { LegacyAppeal.all.pluck(:vacols_id) }
+  # rubocop:disable Style/BlockDelimiters
   let(:cases) {
     create_list(:case, 10) do |vacols_case, i|
       bfhr = (i == 4 || i == 7) ? "1" : VACOLS::Case::HEARING_PREFERENCE_TYPES_V2[:TRAVEL_BOARD][:vacols_value]
@@ -16,6 +17,7 @@ describe Hearings::TravelBoardHearingSyncJob do
       )
     end
   }
+  # rubocop:enable Style/BlockDelimiters
 
   describe "#perform" do
     subject { Hearings::TravelBoardHearingSyncJob.new }
@@ -38,6 +40,11 @@ describe Hearings::TravelBoardHearingSyncJob do
           .pluck(:vacols_id)).to eq(new_caseflow_vacols_ids)
         subject.perform
       end
+
+      it "creates task trees for the newly created legacy appeals" do
+        subject.perform
+        expect(ScheduleHearingTask.all.count).to eq(new_caseflow_vacols_ids.length)
+      end
     end
 
     context "Exceptions raised during processes" do
@@ -46,6 +53,12 @@ describe Hearings::TravelBoardHearingSyncJob do
       end
       it "logs out error when exception occurs when creating new legacy appeals" do
         allow(AppealRepository).to receive(:build_appeal).and_raise(Exception)
+        expect(Rails.logger).to receive(:error).at_least(:once)
+        subject.perform
+      end
+
+      it "logs out error when exception occurs when creating new task trees" do
+        allow(ScheduleHearingTask).to receive(:create!).and_raise(Exception)
         expect(Rails.logger).to receive(:error).at_least(:once)
         subject.perform
       end
