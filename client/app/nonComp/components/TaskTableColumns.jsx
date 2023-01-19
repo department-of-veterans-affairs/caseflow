@@ -10,6 +10,14 @@ export const claimantColumn = () => {
   };
 };
 
+export const veteranParticipantIdColumn = () => {
+  return {
+    header: 'Veteran Participant Id',
+    valueFunction: (task) => task.veteranParticipantId,
+    getSortValue: (task) => task.veteranParticipantId
+  };
+};
+
 export const veteranSsnColumn = () => {
   return {
     header: 'Veteran SSN',

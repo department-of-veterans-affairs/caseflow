@@ -8,6 +8,7 @@ export const formatTasks = (serverTasks) => {
       ...task,
       assignedOn: task.assigned_on,
       closedAt: task.closed_at,
+      veteranParticipantId: task.veteranParticipantId,
       veteranSSN: task.veteran_ssn
     };
   });
