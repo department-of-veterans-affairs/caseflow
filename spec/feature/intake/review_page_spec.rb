@@ -447,14 +447,10 @@ feature "Intake Review Page", :postgres do
     end
 
     context "when the user cancels the intake on the Add Claimant page" do
-      before do
-        FeatureToggle.enable!(:non_veteran_claimants)
-        FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
-      end
-      after do
-        FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
-        FeatureToggle.disable!(:non_veteran_claimants)
-      end
+      before { FeatureToggle.enable!(:non_veteran_claimants) }
+      before { FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) }
+      after { FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) }
+      after { FeatureToggle.disable!(:non_veteran_claimants) }
 
       it "redirects back to the Intake start page" do
         start_appeal(veteran, receipt_date: "01/01/2022")

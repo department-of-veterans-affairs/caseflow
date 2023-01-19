@@ -6,10 +6,6 @@ import RadioField from '../../components/RadioField';
 import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import { submitCancel } from '../actions/intake';
-import {
-  clearClaimant,
-  clearPoa
-} from '../reducers/addClaimantSlice';
 import { CANCELLATION_REASONS } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { Redirect } from 'react-router-dom';
@@ -101,11 +97,7 @@ class CancelIntakeModal extends BaseForm {
 
     let data = this.prepareData();
 
-    this.props.submitCancel(data).then(() => {
-      // Clear any unrecognized claimant info upon cancellation
-      this.props.clearClaimant();
-      this.props.clearPoa();
-    });
+    this.props.submitCancel(data);
   }
 
   submitDisabled = () => (
@@ -169,9 +161,7 @@ class CancelIntakeModal extends BaseForm {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  submitCancel,
-  clearClaimant,
-  clearPoa
+  submitCancel
 }, dispatch);
 
 const ConnectedCancelIntakeModal = connect(

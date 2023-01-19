@@ -72,8 +72,10 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
   }, [intakeForms, formType, selectedForm]);
   const intakeStatus = getIntakeStatus(useSelector((state) => state));
 
-  // Redirect to Intake homepage if formType is null
-  const intakeIsCancelled = useMemo(() => !formType, [formType]);
+  // Return to homepage of Intake upon cancellation
+  const detectCancellation = useMemo(() => {
+    return formType ? null : <Redirect to={PAGE_PATHS.BEGIN} />;
+  }, [formType]);
 
   // Redirect to page where data needs to be re-populated (e.g. from a page reload)
   if (intakeStatus === INTAKE_STATES.STARTED) {
@@ -151,7 +153,6 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
 
   return (
     <FormProvider {...methods}>
-      {intakeIsCancelled && <Redirect to={PAGE_PATHS.BEGIN} />}
       <IntakeLayout
         buttons={
           <AddClaimantButtons
@@ -298,6 +299,7 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
           />
         )}
       </IntakeLayout>
+      {detectCancellation}
     </FormProvider>
   );
 };
