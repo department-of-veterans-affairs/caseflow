@@ -239,6 +239,10 @@
   "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_TITLE": "You have denied extension",
   "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_DETAIL": "This task can be completed to distribute to a judge for further processing",
 
+  "CAVC_DASHBOARD_LOADING_SCREEN_TEXT": "Loading CAVC Dashboard...",
+  "CAVC_DASHBOARD_LOADING_FAILURE_TITLE": "Unable to load CAVC Dashboard",
+  "CAVC_DASHBOARD_LOADING_FAILURE_TEXT": "Caseflow was unable to load this CAVC Dashboard. Refresh the page to try again.",
+
   "ADD_CAVC_DATES_TITLE": "Add Court dates",
   "CORRECT_CAVC_REMAND_LINK": "Edit Remand",
   "VIEW_NOTIFICATION_LINK": "View notifications sent to appellant",
