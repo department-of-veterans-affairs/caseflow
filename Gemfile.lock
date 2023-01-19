@@ -452,6 +452,7 @@ GEM
     pdf-forms (1.2.0)
       cliver (~> 0.3.2)
       safe_shell (>= 1.0.3, < 2.0)
+    pdfkit (0.8.7.2)
     pg (1.1.4)
     pluck_to_hash (1.0.2)
       activerecord (>= 4.0.2)
@@ -693,6 +694,7 @@ GEM
     websocket-driver (0.7.3)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
+    wkhtmltopdf-binary-edge (0.12.6.0)
     xmldsig (0.3.2)
       nokogiri
     xmlenc (0.8.0)
@@ -767,6 +769,7 @@ DEPENDENCIES
   paranoia (~> 2.2)
   pdf-forms
   pdfjs_viewer-rails!
+  pdfkit
   pg
   pluck_to_hash
   pry (~> 0.13.0)
@@ -812,6 +815,7 @@ DEPENDENCIES
   validates_email_format_of
   webdrivers
   webmock
+  wkhtmltopdf-binary-edge
   ziptz
 
 BUNDLED WITH
