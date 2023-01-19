@@ -1,19 +1,10 @@
-<%# <html>
-
-<div>
-  <h1> Case Notifications for Veteran Name </h1>
-  <div>Veteran ID:
-    <button>123456789 <svg></svg></button>
-  </div>
-</div>
-
-</html> %>
-
+<%= render "layouts/head" %>
+<%= veteran_name= "Shawn Davis"%>
 
 <div class="usa-grid">
-  <section class="cf-app-segment cf-app-segment--alt">
+  <%# <section class="cf-app-segment cf-app-segment--alt"> %>
     <div data-css-bui2vg="">
-      <h1 data-css-10hc4to="">Case notifications for Jadyn N Daugherty</h1>
+      <h1 data-css-10hc4to="">Case notifications for <%=veteran_name%></h1>
       <div data-css-7o0e0w="">
         <div data-css-p21ib3="">Veteran ID:&nbsp;
           <button type="submit" class="cf-apppeal-id" data-css-cjlnsd="">213912991&nbsp;
@@ -50,10 +41,13 @@
     </div>
 
     <div data-css-48ja="">
-      <p class="notification-text">VA Notify sent these status notifications to the Appellant about their case.</p>
+      <span style="display: flex; justify-content: space-between;">
+        <p class="notification-text">VA Notify sent these status notifications to the Appellant about their case.</p>
+        <p>Page X of Y</p>
+      </span>
       <div class="notification-table">
         <div class="cf-table-wrapper">
-          <table aria-label="Appeals" aria-describedby="case-table-description" role="table" id="case-table-description" class="usa-table-borderless undefined">
+          <table id="case-table-description" class="usa-table-borderless undefined">
             <thead>
               <tr role="row">
                 <th aria-labelledby="header-eventType" role="columnheader" scope="col" class="">
@@ -84,7 +78,7 @@
               </tr>
             </thead>
             <tbody class="">
-              <tr id="table-row-0" class="" role="row">
+              <tr id="table-row-0" class="row-even top" role="row">
                 <td role="cell" class="" colspan="1">
                   <span>
                     <span style="font-weight: bold; cursor: pointer;">
@@ -97,7 +91,12 @@
                 <td role="cell" class="" colspan="1">example@example.com</td>
                 <td role="cell" class="" colspan="1">Delivered</td>
               </tr>
-              <tr id="table-row-1" class="" role="row">
+              <tr id="table-row-0a" class="row-even" role="row">
+                <td role="cell" class="" colspan="5">
+                  <span>This is the content of the email that was sent to the veteran for their Appeal Docketed notification.</span>
+                </td>
+              </tr>
+              <tr id="table-row-1" class="top" role="row">
                 <td role="cell" class="" colspan="1">
                   <span>
                     <span style="font-weight: bold; cursor: pointer;">
@@ -110,7 +109,12 @@
                 <td role="cell" class="" colspan="1">555-555-5555</td>
                 <td role="cell" class="" colspan="1">Delivered</td>
               </tr>
-              <tr id="table-row-2" class="" role="row">
+              <tr id="table-row-1a" class="" role="row">
+                <td role="cell" class="" colspan="5">
+                  <span>This is the content of the text message that was sent to the veteran for their Appeal Docketed notification. This is the content of the text message that was sent to the veteran for their Appeal Docketed notification. This is the content of the text message that was sent to the veteran for their Appeal Docketed notification.</span>
+                </td>
+              </tr>
+              <tr id="table-row-2" class="row-even" role="row">
                 <td role="cell" class="" colspan="1">
                   <span>
                     <span style="font-weight: bold; cursor: pointer;">
@@ -136,7 +140,7 @@
                 <td role="cell" class="" colspan="1">—</td>
                 <td role="cell" class="" colspan="1">Temporary-failure</td>
               </tr>
-              <tr id="table-row-4" class="" role="row">
+              <tr id="table-row-4" class="row-even" role="row">
                 <td role="cell" class="" colspan="1">
                   <span>
                     <span style="font-weight: bold; cursor: pointer;">
@@ -162,7 +166,7 @@
                 <td role="cell" class="" colspan="1">—</td>
                 <td role="cell" class="" colspan="1">Temporary-failure</td>
               </tr>
-              <tr id="table-row-6" class="" role="row">
+              <tr id="table-row-6" class="row-even" role="row">
                 <td role="cell" class="" colspan="1">
                   <span>
                     <span style="font-weight: bold; cursor: pointer;">
@@ -188,7 +192,7 @@
                 <td role="cell" class="" colspan="1">—</td>
                 <td role="cell" class="" colspan="1">Temporary-failure</td>
               </tr>
-              <tr id="table-row-8" class="" role="row">
+              <tr id="table-row-8" class="row-even" role="row">
                 <td role="cell" class="" colspan="1">
                   <span>
                     <span style="font-weight: bold; cursor: pointer;">
@@ -214,7 +218,7 @@
                 <td role="cell" class="" colspan="1">—</td>
                 <td role="cell" class="" colspan="1">Temporary-failure</td>
               </tr>
-              <tr id="table-row-10" class="" role="row">
+              <tr id="table-row-10" class="row-even" role="row">
                 <td role="cell" class="" colspan="1">
                   <span>
                     <span style="font-weight: bold; cursor: pointer;">
@@ -240,7 +244,7 @@
                 <td role="cell" class="" colspan="1">—</td>
                 <td role="cell" class="" colspan="1">Sent</td>
               </tr>
-              <tr id="table-row-12" class="" role="row">
+              <tr id="table-row-12" class="row-even" role="row">
                 <td role="cell" class="" colspan="1">
                   <span>
                     <span style="font-weight: bold; cursor: pointer;">
@@ -266,11 +270,11 @@
                 <td role="cell" class="" colspan="1">—</td>
                 <td role="cell" class="" colspan="1">Sent</td>
               </tr>
-              <tr id="table-row-14" class="" role="row">
+              <tr id="table-row-14" class="row-even" role="row">
                 <td role="cell" class="" colspan="1">
                   <span>
                     <span style="font-weight: bold; cursor: pointer;">
-                      <a>Appeal decision mailed (Non-contested claims)</a>
+                      <a>Appeal decision mailed</a>
                     </span>
                   </span>
                 </td>
@@ -283,16 +287,36 @@
             <tfoot></tfoot>
           </table>
           <div class="cf-pagination">
-            <div class="cf-pagination-summary">Viewing 1-15 of 16 total</div>
+            <div class="cf-pagination-summary"style="border-bottom: #d6d7d9 2px solid; width: 100%; padding-bottom: 20px;">Viewing 1-15 of 16 total</div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  <%# </section> %>
 </div>
 
 
 <style>
+  .row-even {
+    background-color: #f9f9f9;
+  }
+
+  td {
+    background-color: inherit;
+  }
+
+  td a {
+    color: inherit;
+  }
+
+  .top {
+    border-bottom: hidden;
+  }
+
+  .css-cjlnsd,[data-css-cjlnsd]{border-color:#d6d7d9;border-width:1px;color:#323a45;padding:0.75rem;margin:-0.75rem 0;overflow-wrap:break-word;}
+</style>
+
+<%# <style>
   .t56dd3665-8273-4a02-bd1f-e03707df4a2c {
     color: #fff;
     background: #222;
@@ -366,7 +390,7 @@
       border-right-style: solid;
       border-right-width: 6px;
   }
-</style>
+</style> %>
 
 
 <%# <style>

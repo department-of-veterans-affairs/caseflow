@@ -13,7 +13,7 @@ class QueueController < ApplicationController
   end
 
   def test
-    render "templates/notification_report_pdf_template"
+    render template: "templates/notification_report_pdf_template", layout: false
   end
 
   def check_queue_out_of_service
