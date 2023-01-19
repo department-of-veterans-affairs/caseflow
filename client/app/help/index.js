@@ -41,6 +41,7 @@ const HelpApp = (props) => {
   const dispatch = useDispatch();
 
   console.log(props);
+  console.log(props.userOrganizations);
 
   useEffect(() => {
     dispatch(setOrganizations(props.userOrganizations));

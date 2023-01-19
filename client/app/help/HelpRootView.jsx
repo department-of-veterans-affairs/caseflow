@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const HelpRootView = (props) => {
 
-  console.log('HelpRootView state and then props');
+  console.log('HelpRootView props and then organizations through selector');
   console.log(props);
   // console.log(this.state);
 
