@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TravelBoardHearingSyncJob < CaseflowJob
+class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   queue_with_priority :low_priority
 
   before_perform do |job|
@@ -33,6 +33,10 @@ class TravelBoardHearingSyncJob < CaseflowJob
   # Purpose: Logging info messages to the console
   def log_info(message)
     Rails.logger.info(message)
+  end
+
+  def log_error(message)
+    Rails.logger.error(message)
   end
 
   # Purpose: Fetches a list of all vacols ids from the database
@@ -68,7 +72,7 @@ class TravelBoardHearingSyncJob < CaseflowJob
         begin
           AppealRepository.build_appeal(vacols_case, true)
         rescue Exception => error
-          Rails.logger.error("#{error.class}: #{error.message} for vacols id:#{vacols_case.bfkey} on #{JOB_ATTR.class} of ID:#{JOB_ATTR.job_id}\n #{error.backtrace.join("\n")}")
+          log_error("#{error.class}: #{error.message} for vacols id:#{vacols_case.bfkey} on #{JOB_ATTR.class} of ID:#{JOB_ATTR.job_id}\n #{error.backtrace.join("\n")}")
           next
         end
       end
@@ -80,7 +84,7 @@ class TravelBoardHearingSyncJob < CaseflowJob
   # Return: All the newly created legacy appeals
   def sync_travel_board_appeals
     log_info("Fetching travel board appeals from vacols for syncing...")
-    if BATCH_LIMIT.is_a?(String) || BATCH_LIMIT.is_a?(Integer)
+    if BATCH_LIMIT.is_a?(String)
       fetch_vacols_travel_board_appeals(fetch_all_vacols_ids, BATCH_LIMIT.to_i)
     else
       log_info("No BATCH LIMIT environment variable provided. Defaulting to 250")
