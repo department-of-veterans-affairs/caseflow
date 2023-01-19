@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Lint/RescueException
+# rubocop:disable Layout/LineLength
 class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   queue_with_priority :low_priority
 
@@ -22,12 +24,18 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   # Return:  The vacols appeals that just got had their location codes updated to caseflow
   def create_schedule_hearing_tasks(legacy_appeals)
     log_info("Constructing task tree for new travel board legacy appeals...")
-    legacy_appeals.each do |appeal|
-      root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
-      ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
+    (legacy_appeals || []).each do |appeal|
+      begin
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
 
-      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+        AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+      rescue Exception => error
+        log_error("#{error.class}: #{error.message} for vacols id:#{appeal.vacols_id} on #{JOB_ATTR&.class} of ID:#{JOB_ATTR&.job_id}\n #{error.backtrace.join("\n")}")
+        next
+      end
     end
+      .compact
   end
 
   # Purpose: Logging info messages to the console
@@ -35,6 +43,7 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
     Rails.logger.info(message)
   end
 
+  # Purpose: Logging error messages to the console
   def log_error(message)
     Rails.logger.error(message)
   end
@@ -44,9 +53,6 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   def fetch_all_vacols_ids
     LegacyAppeal.all.pluck(:vacols_id)
   end
-
-  # rubocop:disable Lint/RescueException
-  # rubocop:disable Layout/LineLength
 
   # Purpose: Fetches all travel board appeals from VACOLS that aren't already in Caseflow
   # and creates a legacy appeal for each
@@ -72,10 +78,11 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
         begin
           AppealRepository.build_appeal(vacols_case, true)
         rescue Exception => error
-          log_error("#{error.class}: #{error.message} for vacols id:#{vacols_case.bfkey} on #{JOB_ATTR.class} of ID:#{JOB_ATTR.job_id}\n #{error.backtrace.join("\n")}")
+          log_error("#{error.class}: #{error.message} for vacols id:#{vacols_case.bfkey} on #{JOB_ATTR&.class} of ID:#{JOB_ATTR&.job_id}\n #{error.backtrace.join("\n")}")
           next
         end
       end
+      .compact
   end
   # rubocop:enable Lint/RescueException
   # rubocop:enable Layout/LineLength
