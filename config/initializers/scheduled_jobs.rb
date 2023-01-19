@@ -38,6 +38,6 @@ SCHEDULED_JOBS = {
     "poll_docketed_legacy_appeals_job" => PollDocketedLegacyAppealsJob,
     "fetch_all_active_ama_appeals_job" => FetchAllActiveAmaAppealsJob,
     "fetch_all_active_legacy_appeals_job" => FetchAllActiveLegacyAppealsJob,
-    "retrieve_and_cache_reader_documents_job" => RetrieveAndCacheReaderDocumentsJob
+    "retrieve_and_cache_reader_documents_job" => RetrieveAndCacheReaderDocumentsJob,
     "travel_board_hearing_sync_job" => Hearings::TravelBoardHearingSyncJob
 }.freeze
