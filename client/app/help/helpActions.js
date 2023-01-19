@@ -1,8 +1,8 @@
 import { ACTIONS } from './helpConstants';
 
-export const setOrganizations = (organizations) => ({
-  type: ACTIONS.SET_ORGANIZATIONS,
-  payload: { organizations }
+export const setUserOrganizations = (userOrganizations) => ({
+  type: ACTIONS.SET_USER_ORGANIZATIONS,
+  payload: { userOrganizations }
 });
 
 export const setOrganizationMembershipRequests = (organizationMembershipRequests) => ({

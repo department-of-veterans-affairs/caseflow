@@ -5,17 +5,18 @@ class HelpController < ApplicationController
 
   def feature_toggle_ui_hash
     {
-      otherOrgFeatureThingy: FeatureToggle.enabled?(:otherOrgFeatureThingy, user: current_user)
+      vhaProgramOfficeRequests: FeatureToggle.enabled?(:vhaProgramOfficeRequests, user: current_user)
     }
   end
   helper_method :feature_toggle_ui_hash
 
-  def user_organizations_ui_hash(user = current_user)
-    user.organizations.map(&:name)
+  # TODO: Add more fields if they are needed?
+  def user_organizations(user = current_user)
+    user.selectable_organizations.map { |org| org.slice(:name, :url) }
   end
-  helper_method :user_organizations_ui_hash
+  helper_method :user_organizations
 
-  # TODO: Delete this when it is done
+  # TODO: Delete this when the OrganizationMembershipRequest model is implemented
   def temp_org_request_data
     [
       {

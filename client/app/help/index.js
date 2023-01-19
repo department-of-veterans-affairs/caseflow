@@ -15,8 +15,8 @@ import QueueHelp from './components/QueueHelp';
 import ReduxBase from '../components/ReduxBase';
 import helpReducer, { initialState } from './helpReducers';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
-import { setOrganizations } from './helpActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { setFeatureToggles, setOrganizationMembershipRequests, setUserOrganizations } from './helpActions';
 
 class Help extends React.PureComponent {
 
@@ -27,7 +27,7 @@ class Help extends React.PureComponent {
 
     return <ReduxBase
       reducer={helpReducer}
-      initialState={{ help: { ...initialState } }}
+      initialState={{ ...initialState }}
     >
       <BrowserRouter>
         <HelpApp {...this.props} />
@@ -40,12 +40,32 @@ const HelpApp = (props) => {
 
   const dispatch = useDispatch();
 
-  console.log(props);
-  console.log(props.userOrganizations);
+  // console.log(props);
+  // console.log(props.userOrganizations);
+
+  // Initialize the redux store with props from the server
+  useEffect(() => {
+    dispatch(setUserOrganizations(props.userOrganizations));
+  }, [dispatch, props.userOrganizations]);
 
   useEffect(() => {
-    dispatch(setOrganizations(props.userOrganizations));
-  }, [dispatch, props.userOrganizations]);
+    dispatch(setFeatureToggles(props.featureToggles));
+  }, [dispatch, props.featureToggles]);
+
+  useEffect(() => {
+    dispatch(setOrganizationMembershipRequests(props.organizationMembershipRequests));
+  }, [dispatch, props.organizationMembershipRequests]);
+
+  // dispatch(setUserOrganizations(props.userOrganizations));
+  // dispatch(setFeatureToggles(props.featureToggles));
+
+  // const organizations = useSelector((state) => state.userOrganizations);
+  // const featureToggles = useSelector((state) => state.featureToggles);
+  // const organizationMembershipRequests = useSelector((state) => state.organizationMembershipRequests);
+
+  // console.log(organizations);
+  // console.log(featureToggles);
+  // console.log(organizationMembershipRequests);
 
   return (
     <div>
@@ -102,15 +122,14 @@ const HelpApp = (props) => {
   );
 };
 
-Help.propTypes = {
-
-};
-
 HelpApp.propTypes = {
   dropdownUrls: PropTypes.object,
   userDisplayName: PropTypes.string,
   buildDate: PropTypes.string,
   feedbackUrl: PropTypes.string.isRequired,
+  userOrganizations: PropTypes.array,
+  organizationMembershipRequests: PropTypes.array,
+  featureToggles: PropTypes.object,
 };
 
 export default Help;

@@ -2,32 +2,21 @@ import { update } from '../util/ReducerUtil';
 import { ACTIONS } from './helpConstants';
 
 export const initialState = {
-  messages: {
-    success: null,
-    error: null
-  },
   featureToggles: {},
   userRole: '',
   userCssId: '',
   userInfo: null,
-  organizations: [],
-  activeOrganization: {
-    id: null,
-    name: null,
-    isVso: false
-  },
-  userIsVsoEmployee: false,
-  userIsCamoEmployee: false,
+  userOrganizations: [],
   feedbackUrl: '#',
   loadedUserId: null,
 };
 
 const helpReducer = (state = initialState, action = {}) => {
-  switch (action) {
-  case ACTIONS.SET_ORGANIZATIONS:
+  switch (action.type) {
+  case ACTIONS.SET_USER_ORGANIZATIONS:
     return update(state, {
-      organizations: {
-        $set: action.payload.organizations
+      userOrganizations: {
+        $set: action.payload.userOrganizations
       }
     });
   case ACTIONS.SET_ORGANIZATION_MEMBERSHIP_REQUESTS:
