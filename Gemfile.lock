@@ -198,7 +198,7 @@ GEM
     coderay (1.1.3)
     colored2 (3.1.2)
     colorize (0.8.1)
-    concurrent-ruby (1.1.8)
+    concurrent-ruby (1.1.10)
     connection_pool (2.2.3)
     cork (0.3.0)
       colored2 (~> 3.1)
@@ -307,8 +307,8 @@ GEM
       ffi (~> 1.0)
     git (1.7.0)
       rchardet (~> 1.8)
-    globalid (0.4.2)
-      activesupport (>= 4.2.0)
+    globalid (1.0.1)
+      activesupport (>= 5.0)
     govdelivery-tms (2.8.4)
       activesupport
       faraday
@@ -338,7 +338,7 @@ GEM
     httpi (2.4.4)
       rack
       socksify
-    i18n (1.8.10)
+    i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     i18n_data (0.10.0)
     icalendar (2.6.1)
@@ -412,7 +412,7 @@ GEM
       rake
     mini_mime (1.1.0)
     mini_portile2 (2.7.1)
-    minitest (5.14.4)
+    minitest (5.17.0)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.20.1)
       railties (>= 3.1)
