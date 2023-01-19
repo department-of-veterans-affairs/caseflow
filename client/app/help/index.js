@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import AppFrame from '../components/AppFrame';
 import PageRoute from '../components/PageRoute';
@@ -15,7 +15,8 @@ import QueueHelp from './components/QueueHelp';
 import ReduxBase from '../components/ReduxBase';
 import helpReducer, { initialState } from './helpReducers';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { setOrganizations } from './helpActions';
 
 class Help extends React.PureComponent {
 
@@ -29,66 +30,86 @@ class Help extends React.PureComponent {
       initialState={{ help: { ...initialState } }}
     >
       <BrowserRouter>
-        <div>
-          <NavigationBar
-            userDisplayName={this.props.userDisplayName}
-            dropdownUrls={this.props.dropdownUrls}
-            appName="Help"
-            defaultUrl="/"
-            logoProps={{
-              accentColor: COLORS.GREY_DARK,
-              overlapColor: COLORS.GREY_DARK
-            }} />
-          <AppFrame>
-            <div className="cf-app-width cf-app-segment cf-app-segment--alt">
-              <PageRoute exact
-                path="/help"
-                title="Caseflow Help"
-                component={HelpRootView} />
-              <PageRoute exact
-                path="/"
-                title="Caseflow Help"
-                component={HelpRootView} />
-              <PageRoute exact
-                path="/certification/help"
-                title="Certification Help"
-                component={CertificationHelp} />
-              <PageRoute exact
-                path="/reader/help"
-                title="Reader Help"
-                component={ReaderHelp} />
-              <PageRoute exact
-                path="/hearing_prep/help"
-                title="Hearings Help"
-                component={HearingsHelp} />
-              <PageRoute exact
-                path="/dispatch/help"
-                title="Dispatch Help"
-                component={DispatchHelp} />
-              <PageRoute exact
-                path="/intake/help"
-                title="Intake Help"
-                component={IntakeHelp} />
-              <PageRoute exact
-                path="/queue/help"
-                title="Queue Help"
-                component={QueueHelp} />
-            </div>
-          </AppFrame>
-          <Footer
-            appName="Help"
-            feedbackUrl={this.props.feedbackUrl}
-            buildDate={this.props.buildDate} />
-        </div>
+        <HelpApp {...this.props} />
       </BrowserRouter>
     </ReduxBase>;
   }
 }
 
+const HelpApp = (props) => {
+
+  const dispatch = useDispatch();
+
+  console.log(props);
+
+  useEffect(() => {
+    dispatch(setOrganizations(props.userOrganizations));
+  }, [dispatch, props.userOrganizations]);
+
+  return (
+    <div>
+      <NavigationBar
+        userDisplayName={props.userDisplayName}
+        dropdownUrls={props.dropdownUrls}
+        appName="Help"
+        defaultUrl="/"
+        logoProps={{
+          accentColor: COLORS.GREY_DARK,
+          overlapColor: COLORS.GREY_DARK
+        }} />
+      <AppFrame>
+        <div className="cf-app-width cf-app-segment cf-app-segment--alt">
+          <PageRoute exact
+            path="/help"
+            title="Caseflow Help"
+            component={HelpRootView} />
+          <PageRoute exact
+            path="/"
+            title="Caseflow Help"
+            component={HelpRootView} />
+          <PageRoute exact
+            path="/certification/help"
+            title="Certification Help"
+            component={CertificationHelp} />
+          <PageRoute exact
+            path="/reader/help"
+            title="Reader Help"
+            component={ReaderHelp} />
+          <PageRoute exact
+            path="/hearing_prep/help"
+            title="Hearings Help"
+            component={HearingsHelp} />
+          <PageRoute exact
+            path="/dispatch/help"
+            title="Dispatch Help"
+            component={DispatchHelp} />
+          <PageRoute exact
+            path="/intake/help"
+            title="Intake Help"
+            component={IntakeHelp} />
+          <PageRoute exact
+            path="/queue/help"
+            title="Queue Help"
+            component={QueueHelp} />
+        </div>
+      </AppFrame>
+      <Footer
+        appName="Help"
+        feedbackUrl={props.feedbackUrl}
+        buildDate={props.buildDate} />
+    </div>
+  );
+};
+
 Help.propTypes = {
+
+};
+
+HelpApp.propTypes = {
   dropdownUrls: PropTypes.object,
   userDisplayName: PropTypes.string,
   buildDate: PropTypes.string,
   feedbackUrl: PropTypes.string.isRequired,
 };
+
 export default Help;

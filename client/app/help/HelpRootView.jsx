@@ -6,8 +6,9 @@ const HelpRootView = (props) => {
 
   console.log('HelpRootView state and then props');
   console.log(props);
+  // console.log(this.state);
 
-  const organizations = useSelector((state) => state.organizations);
+  const organizations = useSelector((state) => state.userOrganizations);
 
   console.log(organizations);
 
