@@ -3652,12 +3652,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   options={
                     Array [
                       Object {
-                        "displayText": "Joint Motion for Remand (JMR)",
+                        "displayText": "Joint Motion for Remand (JMR) / Joint Motion for Partial Remand (JMPR)",
                         "value": "jmr",
-                      },
-                      Object {
-                        "displayText": "Joint Motion for Partial Remand (JMPR)",
-                        "value": "jmpr",
                       },
                     ]
                   }
@@ -3705,27 +3701,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           className=""
                           htmlFor="sub-type-options_jmr"
                         >
-                          Joint Motion for Remand (JMR)
-                        </label>
-                      </div>
-                      <div
-                        className="cf-form-radio-option"
-                        key="sub-type-options-jmpr-1"
-                      >
-                        <input
-                          checked={false}
-                          disabled={false}
-                          id="sub-type-options_jmpr"
-                          name="sub-type-options"
-                          onChange={[Function]}
-                          type="radio"
-                          value="jmpr"
-                        />
-                        <label
-                          className=""
-                          htmlFor="sub-type-options_jmpr"
-                        >
-                          Joint Motion for Partial Remand (JMPR)
+                          Joint Motion for Remand (JMR) / Joint Motion for Partial Remand (JMPR)
                         </label>
                       </div>
                     </div>
