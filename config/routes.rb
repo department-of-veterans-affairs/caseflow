@@ -281,10 +281,19 @@ Rails.application.routes.draw do
     get '/', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
-    get '/appeals/:appealId/cavc_dashboard', to: 'queue#index'
+    get '/appeals/:appeal_id/cavc_dashboard', to: 'queue#index'
     get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
+  end
+
+  scope path: "/cavc_dashboard" do
+    get "/cavc_decision_reasons", to: "cavc_dashboard#cavc_decision_reasons"
+  end
+
+  resources :cavc_dashboard, param: :appeal_id do
+    member do
+    end
   end
 
   resources :team_management, only: [:index, :update]
