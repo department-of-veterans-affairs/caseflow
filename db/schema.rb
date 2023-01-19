@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_15_202259) do
+ActiveRecord::Schema.define(version: 2023_01_19_184147) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -314,6 +314,14 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
+  end
+
+  create_table "cavc_decision_reasons", force: :cascade do |t|
+    t.string "basis_for_selection_category"
+    t.datetime "created_at"
+    t.string "decision_reason"
+    t.integer "order"
+    t.integer "parent_decision_reason_id"
   end
 
   create_table "cavc_remands", force: :cascade do |t|
@@ -1139,7 +1147,7 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
     t.string "appeals_type", null: false, comment: "Type of Appeal"
     t.datetime "created_at", comment: "Timestamp of when Noticiation was Created"
     t.boolean "email_enabled", default: true, null: false
-    t.text "email_notification_content", comment: "Full Email Text Content of Notification"
+    t.string "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
@@ -1150,7 +1158,7 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
     t.string "participant_id", comment: "ID of Participant"
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
-    t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
+    t.string "sms_notification_content", comment: "Full SMS Text Content of Notification"
     t.string "sms_notification_external_id"
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
@@ -1823,6 +1831,7 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
   add_foreign_key "board_grant_effectuations", "decision_documents"
   add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
   add_foreign_key "board_grant_effectuations", "end_product_establishments"
+  add_foreign_key "cavc_decision_reasons", "cavc_decision_reasons", column: "parent_decision_reason_id"
   add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
   add_foreign_key "cavc_remands", "users", column: "created_by_id"
