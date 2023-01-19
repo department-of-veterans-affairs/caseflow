@@ -15,10 +15,14 @@ import QueueHelp from './components/QueueHelp';
 import ReduxBase from '../components/ReduxBase';
 import helpReducer, { initialState } from './helpReducers';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 class Help extends React.PureComponent {
 
   render() {
+    console.log('help props and state');
+    console.log(this.props);
+    console.log(this.state);
 
     return <ReduxBase
       reducer={helpReducer}
@@ -76,7 +80,8 @@ class Help extends React.PureComponent {
             feedbackUrl={this.props.feedbackUrl}
             buildDate={this.props.buildDate} />
         </div>
-      </BrowserRouter></ReduxBase>;
+      </BrowserRouter>
+    </ReduxBase>;
   }
 }
 
