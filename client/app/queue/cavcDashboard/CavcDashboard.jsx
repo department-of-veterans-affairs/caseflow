@@ -18,14 +18,8 @@ export const CavcDashboard = (props) => {
 
   useEffect(() => {
     props.fetchAppealDetails(appealId).
-      catch((response) => {
-        if (response.response && response.response.type === 'application/json') {
-          setError(response.response.body.errors);
-        }
-      }).
-      finally(() => {
-        setLoaded(true);
-      });
+      catch(() => setError(true)).
+      finally(() => setLoaded(true));
   }, []);
 
   // cavcRemand is part of appealDetails loaded by the CavcDashboardLoadingScreen. Redirect back
@@ -43,13 +37,15 @@ export const CavcDashboard = (props) => {
             message={COPY.CAVC_DASHBOARD_LOADING_SCREEN_TEXT}
           />}
         {loaded && !error &&
-          <h1>CAVC appeals for {appealDetails?.appellantFullName}</h1>}
+          <h1>CAVC appeals for {appealDetails?.appellantFullName}</h1>
+
+          /* add future components for dashboard display within this conditional render */
+        }
         {loaded && error &&
           <StatusMessage
             title={COPY.CAVC_DASHBOARD_LOADING_FAILURE_TITLE}
             messageText={COPY.CAVC_DASHBOARD_LOADING_FAILURE_TEXT}
           />}
-        {/* add future components for display within the AppSegment component */}
       </AppSegment>
     </React.Fragment>
   );
