@@ -24,7 +24,8 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   # Return:  The vacols appeals that just got had their location codes updated to caseflow
   def create_schedule_hearing_tasks(legacy_appeals)
     log_info("Constructing task tree for new travel board legacy appeals...")
-    (legacy_appeals || []).each do |appeal|
+    appeals = legacy_appeals || []
+    appeals.each do |appeal|
       begin
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
