@@ -1125,7 +1125,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                 }
                                 onKeyDown={[Function]}
                               >
-                                <Noop />
                                 <div
                                   className=" css-2b097c-container"
                                   onKeyDown={[Function]}
@@ -1454,7 +1453,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                       onMouseDown={[Function]}
                                       onTouchEnd={[Function]}
                                     >
-                                      <Noop />
                                       <div
                                         className="cf-select__control css-yk16xz-control"
                                         onMouseDown={[Function]}
@@ -1762,7 +1760,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               }
                                             }
                                           >
-                                            <Noop />
                                             <div
                                               className="cf-select__value-container css-g1d714-ValueContainer"
                                             >
@@ -2069,7 +2066,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     }
                                                   }
                                                 >
-                                                  <Noop />
                                                   <div
                                                     className="cf-select__placeholder css-1wa3eu0-placeholder"
                                                   >
@@ -2489,7 +2485,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                       }
                                                     }
                                                   >
-                                                    <Noop />
                                                     <div
                                                       className="css-81nyic-Input"
                                                     >
@@ -2891,7 +2886,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               }
                                             }
                                           >
-                                            <Noop />
                                             <div
                                               className="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
                                             >
@@ -3196,7 +3190,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     }
                                                   }
                                                 >
-                                                  <Noop />
                                                   <span
                                                     className="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
                                                   />
@@ -3515,7 +3508,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                   onMouseDown={[Function]}
                                                   onTouchEnd={[Function]}
                                                 >
-                                                  <Noop />
                                                   <div
                                                     aria-hidden="true"
                                                     className="cf-select__indicator cf-select__dropdown-indicator css-tlfecz-indicatorContainer"
@@ -3543,7 +3535,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                           viewBox="0 0 20 20"
                                                           width={20}
                                                         >
-                                                          <Noop />
                                                           <svg
                                                             aria-hidden="true"
                                                             className="css-6q0nyr-Svg"
