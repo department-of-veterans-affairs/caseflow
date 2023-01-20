@@ -90,9 +90,12 @@ const AddCavcRemandView = (props) => {
     [CAVC_DECISION_TYPES.remand]: true,
     [CAVC_DECISION_TYPES.straight_reversal]: featureToggles.reversal_cavc_remand,
     [CAVC_DECISION_TYPES.death_dismissal]: featureToggles.dismissal_cavc_remand,
-    [CAVC_DECISION_TYPES.other_dismissal]: !featureToggles.cavc_dashboard_workflow,
-    [CAVC_DECISION_TYPES.affirmed]: !featureToggles.cavc_dashboard_workflow,
-    [CAVC_DECISION_TYPES.settlement]: !featureToggles.cavc_dashboard_workflow
+    // [CAVC_DECISION_TYPES.other_dismissal]: !featureToggles.cavc_dashboard_workflow,
+    // [CAVC_DECISION_TYPES.affirmed]: !featureToggles.cavc_dashboard_workflow,
+    // [CAVC_DECISION_TYPES.settlement]: !featureToggles.cavc_dashboard_workflow
+    [CAVC_DECISION_TYPES.other_dismissal]: true,
+    [CAVC_DECISION_TYPES.affirmed]: true,
+    [CAVC_DECISION_TYPES.settlement]: true
   };
   const supportedRemandTypes = {
     [CAVC_REMAND_SUBTYPES.jmr]: true,
