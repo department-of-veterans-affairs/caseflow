@@ -141,6 +141,41 @@ feature "Appeal Edit issues", :all_dbs do
     expect(page).to have_button("Save", disabled: false)
   end
 
+  scenario "when selecting a new benefit type the issue category dropdown should return to a default state" do
+    new_vet = create(:veteran, first_name: "Ed", last_name: "Merica")
+    new_appeal = create(:appeal,
+                        veteran_file_number: new_vet.file_number,
+                        receipt_date: receipt_date,
+                        docket_type: Constants.AMA_DOCKETS.evidence_submission,
+                        veteran_is_not_claimant: false,
+                        legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+
+    visit "appeals/#{new_appeal.uuid}/edit/"
+
+    click_intake_add_issue
+
+    dropdown_select_string = "Select or enter..."
+    benefit_text = "Compensation"
+
+    # Select the first benefit type
+    all(".cf-select__control", text: dropdown_select_string).first.click
+    find("div", class: "cf-select__option", text: benefit_text).click
+
+    # Select the first issue category
+    find(".cf-select__control", text: dropdown_select_string).click
+    find("div", class: "cf-select__option", text: "Unknown Issue Category").click
+
+    # Verify that the default dropdown text is missing from the page
+    expect(page).to_not have_content(dropdown_select_string)
+
+    # Select a different benefit type
+    find(".cf-select__control", text: benefit_text).click
+    find("div", class: "cf-select__option", text: "Education").click
+
+    # Verify that the default dropdown text once again present on the page
+    expect(page).to have_content(dropdown_select_string)
+  end
+
   context "with remove decision review enabled" do
     scenario "allows all request issues to be removed and saved" do
       visit "appeals/#{appeal.uuid}/edit/"
