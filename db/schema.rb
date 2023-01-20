@@ -317,11 +317,11 @@ ActiveRecord::Schema.define(version: 2023_01_19_184147) do
   end
 
   create_table "cavc_decision_reasons", force: :cascade do |t|
-    t.string "basis_for_selection_category"
+    t.string "basis_for_selection_category", comment: "The category that the decision reason belongs to. Optional."
     t.datetime "created_at"
-    t.string "decision_reason"
-    t.integer "order"
-    t.integer "parent_decision_reason_id"
+    t.string "decision_reason", comment: "The reason for the CAVC decision"
+    t.integer "order", comment: "The order that the reasons should display in the UI. Child reasons will be ordered under their parent."
+    t.integer "parent_decision_reason_id", comment: "Associates a child decision reason to its parent in this table"
   end
 
   create_table "cavc_remands", force: :cascade do |t|
