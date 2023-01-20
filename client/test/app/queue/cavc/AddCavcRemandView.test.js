@@ -5,7 +5,7 @@ import moment from 'moment';
 import { queueWrapper } from 'test/data/stores/queueStore';
 import { amaAppeal } from 'test/data/appeals';
 
-import AddCavcRemandView from 'app/queue/AddCavcRemandView';
+import AddCavcRemandView from 'app/queue/cavc/AddCavcRemandView';
 import { SearchableDropdown } from 'app/components/SearchableDropdown';
 import CheckboxGroup from 'app/components/CheckboxGroup';
 

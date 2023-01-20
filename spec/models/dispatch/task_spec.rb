@@ -78,7 +78,8 @@ describe Dispatch::Task, :postgres do
       FakeTask.create(aasm_state: :reviewed, completed_at: Time.zone.now)
     end
 
-    it { is_expected.to eq([task_completed_this_morning, task_completed_tonight]) }
+    # .sort added in case ActiveRecord returns tasks out of order in subject
+    it { is_expected.to eq([task_completed_this_morning, task_completed_tonight].sort) }
   end
 
   context ".completed_success" do
