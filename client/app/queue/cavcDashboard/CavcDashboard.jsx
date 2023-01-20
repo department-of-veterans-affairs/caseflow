@@ -28,7 +28,7 @@ export const CavcDashboard = (props) => {
 
   // cavcRemand is part of appealDetails loaded by the CavcDashboardLoadingScreen. Redirect back
   // to the CaseDetails page if a remand doesn't exist for the provided appealId or if legacy appeal
-  if (loaded && (appealDetails.cavcRemand === null || appeal.isLegacyAppeal)) {
+  if (loaded && (appealDetails.cavcRemand === null)) {
     return <Redirect to={`/queue/appeals/${appealId}`} />;
   }
 

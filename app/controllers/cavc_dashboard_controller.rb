@@ -7,12 +7,12 @@ class CavcDashboardController < ApplicationController
     RequestStore.store[:application] = "queue"
   end
 
-  # def index
-  #   respond_to do |format|
-  #     format.html { render template: "queue/index" }
-  #     # add format.json later to allow GET requests from ApiUtil to get information
-  #   end
-  # end
+  def index
+    respond_to do |format|
+      format.html { render template: "queue/index" }
+      # add format.json later to allow GET requests from ApiUtil to get information
+    end
+  end
 
   def cavc_decision_reasons
     render json: CavcDecisionReason.all
