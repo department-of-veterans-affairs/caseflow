@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_15_202259) do
+ActiveRecord::Schema.define(version: 2023_01_12_214407) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1082,6 +1082,18 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
     t.string "vacols_id", null: false, comment: "The VACOLS ID of the legacy appeal that the legacy issue is part of."
     t.integer "vacols_sequence_id", null: false, comment: "The sequence ID of the legacy issue on the legacy appeal. The vacols_id and vacols_sequence_id form a composite key to identify a specific legacy issue."
     t.index ["request_issue_id"], name: "index_legacy_issues_on_request_issue_id"
+  end
+
+  create_table "membership_requests", force: :cascade do |t|
+    t.datetime "closed_at_datetime"
+    t.string "closed_by_user_id"
+    t.datetime "created_at", null: false
+    t.bigint "organization_id"
+    t.string "status", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["organization_id"], name: "index_membership_requests_on_organization_id"
+    t.index ["user_id"], name: "index_membership_requests_on_user_id"
   end
 
   create_table "messages", force: :cascade do |t|
