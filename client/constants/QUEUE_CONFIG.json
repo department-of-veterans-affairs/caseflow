@@ -90,7 +90,6 @@
     },
     "CLAIMANT_NAME": {
       "name": "claimantColumn",
-     
     },
     "ISSUE_COUNT": {
       "name": "issueCountColumn",
@@ -99,8 +98,6 @@
     },
     "VETERAN_PARTICIPANT_ID": {
       "name": "veteranParticipantIdColumn",
-      
-   
     },
     "READER_LINK_WITH_NEW_DOCS_ICON": {
       "name": "readerLinkWithNewDocIconColumn"
