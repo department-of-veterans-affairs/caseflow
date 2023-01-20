@@ -280,12 +280,17 @@ describe DecisionReviewsController, :postgres, type: :controller do
           :higher_level_review_task,
           assigned_to: non_comp_org,
           assigned_at: task_num.days.ago,
-          closed_at: task_num.hours.ago
+          closed_at: (2 * task_num).hours.ago
         )
         task.completed!
+        # Explicitly set the closed_at time again to try to avoid test flakiness
+        task.closed_at = Time.zone.now - (2 * task_num).hours
         task.appeal.update!(veteran_file_number: veteran.file_number)
+        create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: non_comp_org.url)
+        task.save
 
-        task
+        # Attempt to reload after save to avoid potential test flakiness
+        task.reload
       end
     end
 
@@ -298,9 +303,14 @@ describe DecisionReviewsController, :postgres, type: :controller do
           closed_at: (2 * task_num).hours.ago
         )
         task.completed!
+        # Explicitly set the closed_at time again to try to avoid test flakiness
+        task.closed_at = Time.zone.now - (2 * task_num).hours
         task.appeal.update!(veteran_file_number: veteran.file_number)
+        create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: non_comp_org.url)
 
-        task
+        task.save
+        # Attempt to reload after save to avoid potential test flakiness
+        task.reload
       end
     end
 
@@ -399,7 +409,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
         }
       end
 
-      let(:completed_tasks) { completed_hlr_tasks + completed_sc_tasks }
+      let(:completed_tasks) { completed_sc_tasks + completed_hlr_tasks }
 
       include_examples "task query filtering"
 

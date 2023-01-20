@@ -73,7 +73,7 @@ describe BusinessLine do
       end
     end
 
-    context "Filtering by nultiple columns" do
+    context "Filtering by multiple columns" do
       let!(:task_filters) { ["col=decisionReviewType&val=HigherLevelReview|SupplementalClaim"] }
 
       it "Selected task types are included, but none others" do
@@ -166,42 +166,58 @@ describe BusinessLine do
 
   describe ".completed_tasks" do
     let!(:open_hlr_tasks) do
-      create_list(:higher_level_review_task, 5, assigned_to: business_line)
-    end
-
-    let!(:completed_hlr_tasks) do
-      complete_all_tasks(
+      add_veteran_and_request_issues_to_decision_reviews(
         create_list(:higher_level_review_task, 5, assigned_to: business_line)
       )
     end
 
-    let!(:open_sc_tasks) do
-      create_list(:supplemental_claim_task, 5, assigned_to: business_line)
+    let!(:completed_hlr_tasks) do
+      add_veteran_and_request_issues_to_decision_reviews(
+        complete_all_tasks(
+          create_list(:higher_level_review_task, 5, assigned_to: business_line)
+        )
+      )
     end
 
-    let!(:completed_sc_tasks) do
-      complete_all_tasks(
+    let!(:open_sc_tasks) do
+      add_veteran_and_request_issues_to_decision_reviews(
         create_list(:supplemental_claim_task, 5, assigned_to: business_line)
       )
     end
 
-    let!(:open_board_grant_effectuation_tasks) do
-      create_list(:board_grant_effectuation_task, 5, assigned_to: business_line)
+    let!(:completed_sc_tasks) do
+      add_veteran_and_request_issues_to_decision_reviews(
+        complete_all_tasks(
+          create_list(:supplemental_claim_task, 5, assigned_to: business_line)
+        )
+      )
     end
 
-    let!(:completed_board_grant_effectuation_tasks) do
-      complete_all_tasks(
+    let!(:open_board_grant_effectuation_tasks) do
+      add_veteran_and_request_issues_to_decision_reviews(
         create_list(:board_grant_effectuation_task, 5, assigned_to: business_line)
       )
     end
 
+    let!(:completed_board_grant_effectuation_tasks) do
+      add_veteran_and_request_issues_to_decision_reviews(
+        complete_all_tasks(
+          create_list(:board_grant_effectuation_task, 5, assigned_to: business_line)
+        )
+      )
+    end
+
     let!(:open_veteran_record_requests) do
-      create_list(:veteran_record_request_task, 5, assigned_to: business_line)
+      add_veteran_and_request_issues_to_decision_reviews(
+        create_list(:veteran_record_request_task, 5, assigned_to: business_line)
+      )
     end
 
     let!(:completed_veteran_record_requests) do
-      complete_all_tasks(
-        create_list(:veteran_record_request_task, 5, assigned_to: business_line)
+      add_veteran_and_request_issues_to_decision_reviews(
+        complete_all_tasks(
+          create_list(:veteran_record_request_task, 5, assigned_to: business_line)
+        )
       )
     end
 
