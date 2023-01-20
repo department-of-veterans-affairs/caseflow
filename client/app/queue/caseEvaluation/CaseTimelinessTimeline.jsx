@@ -55,10 +55,10 @@ export const CaseTimelinessTimeline = (props) => {
 
   }
 
-  const oldestAttorneyTask = attorneyChildrenTasks[0].attorneyTask;
+  const oldestAttorneyTask = attorneyChildrenTasks[0]?.attorneyTask;
 
   // If AMA use oldest attorney task and recalculate total days assigned
-  dateAssigned = moment(oldestAttorneyTask.createdAt);
+  dateAssigned = moment(oldestAttorneyTask?.createdAt);
   daysAssigned = Math.max(0, decisionSubmitted.startOf('day').diff(dateAssigned, 'days'));
 
   return (
