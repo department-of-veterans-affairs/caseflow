@@ -145,9 +145,9 @@ const AddCavcRemandView = (props) => {
   const remandType = () => type === CAVC_DECISION_TYPES.remand;
   const straightReversalType = () => type === CAVC_DECISION_TYPES.straight_reversal;
   const deathDismissalType = () => type === CAVC_DECISION_TYPES.death_dismissal;
-  const otherDismissalType = () => type === CAVC_DECISION_TYPES.death_dismissal;
-  const affirmedType = () => type === CAVC_DECISION_TYPES.death_dismissal;
-  const settlementType = () => type === CAVC_DECISION_TYPES.death_dismissal;
+  const otherDismissalType = () => type === CAVC_DECISION_TYPES.other_dismissal;
+  const affirmedType = () => type === CAVC_DECISION_TYPES.affirmed;
+  const settlementType = () => type === CAVC_DECISION_TYPES.settlement;
 
 
   const jmrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmr;
