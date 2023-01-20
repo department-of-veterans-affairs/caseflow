@@ -458,5 +458,16 @@
     "label": "Return to Board Intake",
     "value": "modal/vha_caregiver_support_return_to_board_intake",
     "func": "vha_caregiver_support_return_to_board_intake"
+  },
+  "RESEND_INITIAL_NOTIFICATION_LETTER":{
+    "label": "Resend initial notification letter"
+  },
+  "RESEND_FINAL_NOTIFICATION_LETTER":{
+    "label": "Resend final notification letter"
+  },
+  "MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE": {
+    "label": "Mark task complete",
+    "value": "modal/send_final_notification_task_complete",
+    "func": "send_final_notification_complete_data"
   }
 }
