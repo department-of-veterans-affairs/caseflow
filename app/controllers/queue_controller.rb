@@ -14,14 +14,18 @@ class QueueController < ApplicationController
   end
 
   def test
-    # html = render template: "templates/notification_report_pdf_template", layout: false
+    begin
+      html = render_to_string template: "templates/notification_report_pdf_template", layout: false
 
-    # kit = PDFKit.new(html)
-    # file_name = "test.pdf"
-    # file_path = "#{Rails.root}/#{file_name}"
-    # kit.to_pdf(file_path)
-
-    render template: "templates/notification_report_pdf_template", layout: false
+      kit = PDFKit.new(html)
+      file_name = "test.pdf"
+      file_path = "#{Rails.root}/app/views/templates/#{file_name}"
+      # kit.stylesheets << "app/assets/stylesheets/notification_pdf_style.css"
+      # kit.stylesheets << "client/app/styles/app.scss"
+      kit.to_pdf(file_path)
+    rescue StandardError => error
+      render template: "templates/test", format: :pdf
+    end
   end
 
   def check_queue_out_of_service
