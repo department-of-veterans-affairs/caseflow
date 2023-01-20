@@ -12,6 +12,14 @@ class DecisionReviewsController < ApplicationController
            :completed_tasks_type_counts,
            to: :business_line
 
+  SORT_COLUMN_MAPPINGS = {
+    "claimantColumn" => "claimant_name",
+    "veteranParticipantIdColumn" => "veteran_participant_id",
+    "issueCountColumn" => "issue_count",
+    "daysWaitingColumn" => "tasks.assigned_at",
+    "completedDateColumn" => "tasks.closed_at"
+  }.freeze
+
   def index
     if business_line
       respond_to do |format|
@@ -98,9 +106,11 @@ class DecisionReviewsController < ApplicationController
 
     return missing_tab_parameter_error unless tab_name
 
+    sort_by_column = SORT_COLUMN_MAPPINGS[allowed_params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym]]
+
     tasks = case tab_name
-            when "in_progress" then in_progress_tasks(pagination_query_params)
-            when "completed" then completed_tasks(pagination_query_params)
+            when "in_progress" then in_progress_tasks(pagination_query_params(sort_by_column))
+            when "completed" then completed_tasks(pagination_query_params(sort_by_column))
             else
               return unrecognized_tab_name_error
             end

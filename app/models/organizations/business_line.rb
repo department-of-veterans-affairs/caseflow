@@ -36,6 +36,7 @@ class BusinessLine < Organization
 
   class QueryBuilder
     attr_accessor :query_type, :parent, :query_params
+
     NUMBER_OF_SEARCH_FIELDS = 2
     TASK_FILTER_PREDICATES = {
       "VeteranRecordRequest" => Task.arel_table[:type].eq(VeteranRecordRequest.name),
