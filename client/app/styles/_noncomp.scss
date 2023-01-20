@@ -90,6 +90,11 @@
 
     .cf-disposition {
       margin-top: 1.7rem;
+      max-width: 45rem;
+
+      .cf-optional {
+        font-weight: bold;
+      }
     }
 
     textarea:disabled {
