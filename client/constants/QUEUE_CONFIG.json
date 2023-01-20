@@ -89,7 +89,7 @@
       "name": "badgesColumn"
     },
     "CLAIMANT_NAME": {
-      "name": "claimantColumn",
+      "name": "claimantColumn"
     },
     "ISSUE_COUNT": {
       "name": "issueCountColumn",
@@ -97,7 +97,7 @@
       "sorting_columns": ["issue_count"]
     },
     "VETERAN_PARTICIPANT_ID": {
-      "name": "veteranParticipantIdColumn",
+      "name": "veteranParticipantIdColumn"
     },
     "READER_LINK_WITH_NEW_DOCS_ICON": {
       "name": "readerLinkWithNewDocIconColumn"

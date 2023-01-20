@@ -35,8 +35,7 @@ module GenericTaskPaginationConcern
       .per(DEFAULT_TASKS_PER_PAGE)
   end
 
-
-  def pagination_query_params(sort_by_column: allowed_params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym])
+  def pagination_query_params(sort_by_column = allowed_params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym])
     {
       sort_order: allowed_params[Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM.to_sym],
       sort_by: sort_by_column,
