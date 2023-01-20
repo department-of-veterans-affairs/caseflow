@@ -35,11 +35,8 @@ module GenericTaskPaginationConcern
       .per(DEFAULT_TASKS_PER_PAGE)
   end
 
-  def unrecognized_column_name_error
-    render json: { error: "Column name provided could not be found" }, status: :not_found
-  end
 
-  def pagination_query_params(sort_by_column)
+  def pagination_query_params(sort_by_column: allowed_params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym])
     {
       sort_order: allowed_params[Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM.to_sym],
       sort_by: sort_by_column,
