@@ -1,10 +1,24 @@
 # frozen_string_literal: true
 
 class DecisionReviewsController < ApplicationController
+  include GenericTaskPaginationConcern
+
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
 
-  delegate :in_progress_tasks, :completed_tasks, to: :business_line
+  delegate :in_progress_tasks,
+           :in_progress_tasks_type_counts,
+           :completed_tasks,
+           :completed_tasks_type_counts,
+           to: :business_line
+
+  SORT_COLUMN_MAPPINGS = {
+    "claimantColumn" => "claimant_name",
+    "veteranParticipantIdColumn" => "veteran_participant_id",
+    "issueCountColumn" => "issue_count",
+    "daysWaitingColumn" => "tasks.assigned_at",
+    "completedDateColumn" => "tasks.closed_at"
+  }.freeze
 
   def index
     if business_line
@@ -15,6 +29,7 @@ class DecisionReviewsController < ApplicationController
           filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
           send_data jobs_as_csv, filename: filename
         end
+        format.json { queue_tasks }
       end
     else
       # TODO: make index show error message
@@ -34,10 +49,7 @@ class DecisionReviewsController < ApplicationController
     if task
       if task.complete_with_payload!(decision_issue_params, decision_date)
         business_line.tasks.reload
-        render json: {
-          in_progress_tasks: apply_task_serializer(in_progress_tasks),
-          completed_tasks: apply_task_serializer(completed_tasks)
-        }, status: :ok
+        render json: { task_filter_details: task_filter_details }, status: :ok
       else
         error = StandardError.new(task.error_code)
         Raven.capture_exception(error, extra: { error_uuid: error_uuid })
@@ -64,7 +76,14 @@ class DecisionReviewsController < ApplicationController
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
   end
 
-  helper_method :in_progress_tasks, :completed_tasks, :apply_task_serializer, :business_line, :task
+  def task_filter_details
+    {
+      in_progress: in_progress_tasks_type_counts,
+      completed: completed_tasks_type_counts
+    }
+  end
+
+  helper_method :task_filter_details, :business_line, :task
 
   private
 
@@ -82,8 +101,29 @@ class DecisionReviewsController < ApplicationController
     end
   end
 
-  def apply_task_serializer(tasks)
-    tasks.map { |task| task.ui_hash.merge(business_line: business_line_slug) }
+  def queue_tasks
+    tab_name = allowed_params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym]
+
+    return missing_tab_parameter_error unless tab_name
+
+    sort_by_column = SORT_COLUMN_MAPPINGS[allowed_params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym]]
+
+    tasks = case tab_name
+            when "in_progress" then in_progress_tasks(pagination_query_params(sort_by_column))
+            when "completed" then completed_tasks(pagination_query_params(sort_by_column))
+            else
+              return unrecognized_tab_name_error
+            end
+
+    render json: pagination_json(tasks)
+  end
+
+  def missing_tab_parameter_error
+    render json: { error: "'tab' parameter is required." }, status: :bad_request
+  end
+
+  def unrecognized_tab_name_error
+    render json: { error: "Tab name provided could not be found" }, status: :not_found
   end
 
   def set_application
@@ -119,7 +159,13 @@ class DecisionReviewsController < ApplicationController
       :decision_date,
       :business_line_slug,
       :task_id,
-      decision_issues: [:description, :disposition, :request_issue_id]
+      :tab,
+      :sort_by,
+      :order,
+      :search_query,
+      { filter: [] },
+      :page,
+      decision_issues: [:description, :disposition, :request_issue_id],
     )
   end
 end
