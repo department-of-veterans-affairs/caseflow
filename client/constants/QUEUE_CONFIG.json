@@ -93,7 +93,7 @@
     },
     "ISSUE_COUNT": {
       "name": "issueCountColumn",
-     "sorting_table": "cached_appeal_attributes",
+      "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["issue_count"]
     },
     "VETERAN_PARTICIPANT_ID": {

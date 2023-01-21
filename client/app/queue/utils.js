@@ -501,7 +501,7 @@ export const prepareAppealForStore = (appeals) => {
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
       remandJudgeName: appeal.attributes.remand_judge_name,
       hasNotifications: appeal.attributes.has_notifications,
-      locationHistory: prepareLocationHistoryForStore(appeal)
+      locationHistory: prepareLocationHistoryForStore(appeal),
     };
 
     return accumulator;

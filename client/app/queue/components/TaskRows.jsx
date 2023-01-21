@@ -515,8 +515,8 @@ class TaskRows extends React.PureComponent {
         {sortedTimelineEvents.map((timelineEvent, index) => {
           if (timeline && this.timelineOnly(timelineEvent.type)) {
             return this.timelineComponent({
-              appeal,
               timelineEvent,
+              appeal,
               timeline,
               taskList,
               index,

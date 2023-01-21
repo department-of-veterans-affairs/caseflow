@@ -18,8 +18,7 @@ import RadioField from '../../components/RadioField';
 import { deleteAppeal } from '../QueueActions';
 import { requestSave } from '../uiReducer/uiActions';
 import { buildCaseReviewPayload } from '../utils';
-import {
-  taskById,
+import { taskById,
   getTaskTreesForAttorneyTasks,
   getLegacyTaskTree,
 } from '../selectors';
@@ -319,8 +318,7 @@ const mapStateToProps = (state, ownProps) => {
 
     if (isLegacy) {
       attorneyChildrenTasks = getLegacyTaskTree(state, {
-        appealId: appeal.externalId, judgeDecisionReviewTask
-      });
+        appealId: appeal.externalId, judgeDecisionReviewTask });
     } else {
       // Get all tasks under the JudgeDecisionReviewTask
       // Filters out those without a closedAt date or that are hideFromCaseTimeline

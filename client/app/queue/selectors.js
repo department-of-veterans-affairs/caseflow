@@ -302,8 +302,8 @@ export const getLegacyTaskTree = createSelector(
           moment(judgeDecisionReviewTask.assignedOn));
 
         return task.uniqueId !== judgeDecisionReviewTask.uniqueId &&
-          timelineRange.contains(taskCreatedAt) &&
-          timelineRange.contains(taskClosedAt);
+        timelineRange.contains(taskCreatedAt) &&
+        timelineRange.contains(taskClosedAt);
       })
 );
 
