@@ -281,13 +281,13 @@ feature "NonComp Reviews Queue", :postgres do
       fill_in "search", with: veteran_b.first_name
 
       # There should be 1 on the page with this information
-      expect(page).to have_content("Higher-Level Review", count: 2)
+      expect(page).to have_content("Higher-Level Review", count: 1)
       expect(page).to have_content(
         /#{veteran_b.name} #{veteran_b.participant_id} 1 0 days Higher-Level Review/
       )
 
       # Blank out the input and verify that there are once again 2 on the page
-      fill_in "search", with: ""
+      fill_in("search", with: nil, fill_options: { clear: :backspace })
       expect(page).to have_content("Higher-Level Review", count: 2)
     end
 
@@ -300,13 +300,13 @@ feature "NonComp Reviews Queue", :postgres do
       fill_in "search", with: veteran_a.participant_id
 
       # There should be 1 on the page with this information
-      expect(page).to have_content("Higher-Level Review", count: 2)
+      expect(page).to have_content("Higher-Level Review", count: 1)
       expect(page).to have_content(
         /#{veteran_a.name} #{veteran_a.participant_id} 2 6 days Higher-Level Review/
       )
 
       # Blank out the input and verify that there are once again 2 on the page
-      fill_in "search", with: ""
+      fill_in("search", with: nil, fill_options: { clear: :backspace })
       expect(page).to have_content("Higher-Level Review", count: 2)
     end
 
