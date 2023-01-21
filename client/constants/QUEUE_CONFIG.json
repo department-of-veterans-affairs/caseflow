@@ -88,10 +88,16 @@
     "BADGES": {
       "name": "badgesColumn"
     },
+    "CLAIMANT_NAME": {
+      "name": "claimantColumn"
+    },
     "ISSUE_COUNT": {
       "name": "issueCountColumn",
-      "sorting_table": "cached_appeal_attributes",
+     "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["issue_count"]
+    },
+    "VETERAN_PARTICIPANT_ID": {
+      "name": "veteranParticipantIdColumn"
     },
     "READER_LINK_WITH_NEW_DOCS_ICON": {
       "name": "readerLinkWithNewDocIconColumn"

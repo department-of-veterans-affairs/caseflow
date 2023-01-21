@@ -12,7 +12,7 @@ const basicProps = {
   businessLineUrl: 'vha',
   baseTasksUrl: '/decision_reviews/vha',
   selectedTask: null,
-  decisionIssuesStatus: { },
+  decisionIssuesStatus: {},
   taskFilterDetails
 };
 

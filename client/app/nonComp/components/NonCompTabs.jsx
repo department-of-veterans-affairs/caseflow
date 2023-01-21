@@ -9,7 +9,7 @@ import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import {
   claimantColumn,
   veteranParticipantIdColumn,
-  decisionReviewTypeColumn
+  decisionReviewTypeColumn,
 } from './TaskTableColumns';
 import {
   buildDecisionReviewFilterInformation,

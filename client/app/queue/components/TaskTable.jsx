@@ -11,8 +11,16 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
-import { docketNumberColumn, badgesColumn, detailsColumn, daysWaitingColumn, issueCountColumn, typeColumn,
-  readerLinkColumn, taskCompletedDateColumn } from './TaskTableColumns';
+import {
+  docketNumberColumn,
+  badgesColumn,
+  detailsColumn,
+  daysWaitingColumn,
+  issueCountColumn,
+  typeColumn,
+  readerLinkColumn,
+  taskCompletedDateColumn,
+} from './TaskTableColumns';
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
 import COPY from '../../../COPY';
