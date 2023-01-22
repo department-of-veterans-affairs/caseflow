@@ -277,7 +277,12 @@ class BusinessLine < Organization
 
     def order_clause
       if query_params[:sort_by] == "veteran_participant_id"
-        return Arel.sql("#{query_params[:sort_by]}::int #{query_params[:sort_order]}")
+        return Arel.sql(
+          ActiveRecord::Base.send(
+            :sanitize_sql_array,
+            ["#{query_params[:sort_by]}::int #{query_params[:sort_order]}"]
+          )
+        )
       end
 
       {
