@@ -5,9 +5,9 @@ feature "NonComp Reviews Queue", :postgres do
     let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
     let(:user) { create(:default_user) }
 
-    let(:veteran_a) { create(:veteran, first_name: "Aaa") }
-    let(:veteran_b) { create(:veteran, first_name: "Bbb") }
-    let(:veteran_c) { create(:veteran, first_name: "Ccc") }
+    let(:veteran_a) { create(:veteran, first_name: "Aaa", participant_id: "12345") }
+    let(:veteran_b) { create(:veteran, first_name: "Bbb", participant_id: "601111772") }
+    let(:veteran_c) { create(:veteran, first_name: "Ccc", participant_id: "1002345") }
     let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
     let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
     let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
@@ -172,8 +172,8 @@ feature "NonComp Reviews Queue", :postgres do
       )
       table_rows = current_table_rows
 
-      expect(table_rows.first.include?(hlr_c.veteran.participant_id.to_s)).to eq true
-      expect(table_rows.last.include?(hlr_a.veteran.participant_id.to_s)).to eq true
+      expect(table_rows.first.include?(hlr_b.veteran.participant_id)).to eq true
+      expect(table_rows.last.include?(hlr_a.veteran.participant_id)).to eq true
 
       # Participant ID asc
       order_buttons[:participant_id].click
@@ -184,7 +184,7 @@ feature "NonComp Reviews Queue", :postgres do
       table_rows = current_table_rows
 
       expect(table_rows.first.include?(hlr_a.veteran.participant_id)).to eq true
-      expect(table_rows.last.include?(hlr_c.veteran.participant_id)).to eq true
+      expect(table_rows.last.include?(hlr_b.veteran.participant_id)).to eq true
 
       # Issue count desc
       order_buttons[:issues_count].click
@@ -287,8 +287,7 @@ feature "NonComp Reviews Queue", :postgres do
       )
 
       # Blank out the input and verify that there are once again 2 on the page
-      sleep(2)
-      fill_in "search", with: ""
+      fill_in("search", with: nil, fill_options: { clear: :backspace })
       expect(page).to have_content("Higher-Level Review", count: 2)
     end
 
@@ -307,8 +306,7 @@ feature "NonComp Reviews Queue", :postgres do
       )
 
       # Blank out the input and verify that there are once again 2 on the page
-      sleep(2)
-      fill_in "search", with: ""
+      fill_in("search", with: nil, fill_options: { clear: :backspace })
       expect(page).to have_content("Higher-Level Review", count: 2)
     end
 
