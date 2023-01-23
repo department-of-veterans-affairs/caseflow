@@ -81,7 +81,6 @@ export const NotificationsView = (props) => {
           <p className="notification-text">
             VA Notify sent these status notifications to the Appellant about their case.
           </p>
-          <a href="/test"> TEST PDF LINK</a>
           <div className="notification-table">
             <NotificationTable
               appealId={appealId}
