@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_19_184147) do
+ActiveRecord::Schema.define(version: 2023_01_23_181303) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -314,6 +314,17 @@ ActiveRecord::Schema.define(version: 2023_01_19_184147) do
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
+  end
+
+  create_table "cavc_dashboard_dispositions", force: :cascade do |t|
+    t.bigint "cavc_dashboard_issue_id"
+    t.bigint "cavc_remand_id", comment: "ID of the associated CAVC remand"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "The ID for the user that created the record"
+    t.string "disposition", default: "n_a", null: false, comment: "The disposition of the issue"
+    t.bigint "request_issue_id", comment: "ID for a request issue that was filed with the CAVC Remand"
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id", comment: "The ID for the user that most recently changed the record"
   end
 
   create_table "cavc_decision_reasons", force: :cascade do |t|
@@ -1831,6 +1842,7 @@ ActiveRecord::Schema.define(version: 2023_01_19_184147) do
   add_foreign_key "board_grant_effectuations", "decision_documents"
   add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
   add_foreign_key "board_grant_effectuations", "end_product_establishments"
+  add_foreign_key "cavc_dashboard_dispositions", "cavc_remands"
   add_foreign_key "cavc_decision_reasons", "cavc_decision_reasons", column: "parent_decision_reason_id"
   add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
