@@ -15,7 +15,18 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
     end
 
     def get_status(notification_id)
-      fake_status_response(notification_id)
+      if notification_id == "000000"
+        HTTPI::Response.new(
+          404,
+          {},
+          OpenStruct.new(
+            "error": "NotFoundError",
+            "message": "notification id not found"
+          )
+        )
+      else
+        fake_status_response(notification_id)
+      end
     end
 
     private

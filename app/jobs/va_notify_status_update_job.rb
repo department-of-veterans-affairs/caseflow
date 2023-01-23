@@ -57,7 +57,7 @@ class VANotifyStatusUpdateJob < CaseflowJob
 
   private
 
-  # Description: Method that applies a query limit to the list of notification records that will get the status checked for 
+  # Description: Method that applies a query limit to the list of notification records that will get the status checked for
   # them from VA Notiufy
   #
   # Params: None
@@ -73,8 +73,8 @@ class VANotifyStatusUpdateJob < CaseflowJob
     end
   end
 
-  # Description: Method to query the Notification database for Notififcation records that have not been updated with a VA Notify Status 
-  # 
+  # Description: Method to query the Notification database for Notififcation records that have not been updated with a VA Notify Status
+  #
   # Params: None
   #
   # Retuns: Lits of Notification Active Record associations meeting the where condition
@@ -103,10 +103,10 @@ class VANotifyStatusUpdateJob < CaseflowJob
     Rails.logger.info(message)
   end
 
-  # Description: Method that will get the VA Notify Status for the notification based on notification type 
-  # 
+  # Description: Method that will get the VA Notify Status for the notification based on notification type
   #
-  # Params: 
+  #
+  # Params:
   # notification_id - The external id that VA Notify assigned to each notification. Can be for Email or SMS
   # type - Type of notification to get status for
   #   values - Email, SMS or Email and SMS
@@ -121,14 +121,17 @@ class VANotifyStatusUpdateJob < CaseflowJob
         { "sms_notification_status" => response.body["status"], "recipient_phone_number" => response.body["phone_number"] }
       end
     else
-      log_error("VA Notify API returned error for notification " + notification_id)
-      nil
+      begin
+      rescue StandardError
+        log_error("VA Notify API returned error for notification " + notification_id)
+        Raven.capture_exception(error, extra: { notification_id: notification_id, type: type })
+      end
     end
   end
 
   # Description: Method that will update the notification record values
   #
-  # Params: 
+  # Params:
   # notification_audit_record - Notification Record to be updated
   # to_update - Hash containing the column names and values to be updated
   #
