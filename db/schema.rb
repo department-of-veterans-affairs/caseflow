@@ -1158,7 +1158,7 @@ ActiveRecord::Schema.define(version: 2023_01_23_181303) do
     t.string "appeals_type", null: false, comment: "Type of Appeal"
     t.datetime "created_at", comment: "Timestamp of when Noticiation was Created"
     t.boolean "email_enabled", default: true, null: false
-    t.string "email_notification_content", comment: "Full Email Text Content of Notification"
+    t.text "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
@@ -1169,7 +1169,7 @@ ActiveRecord::Schema.define(version: 2023_01_23_181303) do
     t.string "participant_id", comment: "ID of Participant"
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
-    t.string "sms_notification_content", comment: "Full SMS Text Content of Notification"
+    t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
     t.string "sms_notification_external_id"
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"

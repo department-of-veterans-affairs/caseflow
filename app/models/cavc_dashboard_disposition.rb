@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 class CavcDashboardDisposition < CaseflowRecord
-  include UpdatedByUserConcern
+  include CreatedAndUpdatedByUserConcern
 
   belongs_to :cavc_remand
-  belongs_to :created_by, class_name: "User"
 
   validates :cavc_remand, :disposition, presence: true
 
