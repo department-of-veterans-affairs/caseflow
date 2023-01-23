@@ -5,14 +5,14 @@ import { connect, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 
-import QueueFlowModal from './components/QueueFlowModal';
-import { requestPatch, showErrorMessage } from './uiReducer/uiActions';
-import { validateDateNotInFuture } from '../intake/util/issues';
-import DateSelector from '../components/DateSelector';
-import TextareaField from '../components/TextareaField';
-import Alert from '../components/Alert';
-import CAVC_DECISION_TYPES from '../../constants/CAVC_DECISION_TYPES';
-import COPY from '../../COPY';
+import QueueFlowModal from '../components/QueueFlowModal';
+import { requestPatch, showErrorMessage } from '../uiReducer/uiActions';
+import { validateDateNotInFuture } from '../../intake/util/issues';
+import DateSelector from '../../components/DateSelector';
+import TextareaField from '../../components/TextareaField';
+import Alert from '../../components/Alert';
+import CAVC_DECISION_TYPES from '../../../constants/CAVC_DECISION_TYPES';
+import COPY from '../../../COPY';
 
 /**
  * @param {Object} props
