@@ -25,20 +25,22 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   def create_schedule_hearing_tasks(legacy_appeals)
     log_info("Constructing task tree for new travel board legacy appeals...")
     appeals = legacy_appeals || []
-    appeals_with_trees = appeals.each do |appeal|
+    generated_tree_count = 0
+    appeals.each do |appeal|
       begin
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
 
         AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+        generated_tree_count += 1
       rescue StandardError => error
         log_error("#{error.class}: #{error.message} for vacols id:#{appeal.vacols_id} on #{JOB_ATTR&.class} of ID:#{JOB_ATTR&.job_id}\n #{error.backtrace.join("\n")}")
         next
       end
     end
       .compact
-    log_info("Created #{appeals_with_trees.length} task trees out of #{appeals.length} legacy appeals")
-    appeals_with_trees
+    log_info("Created #{generated_tree_count} task trees out of #{appeals.length} legacy appeals")
+    appeals
   end
 
   # Purpose: Logging info messages to the console
