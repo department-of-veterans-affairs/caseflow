@@ -11,7 +11,7 @@
       inProgressTasks: apply_task_serializer(in_progress_tasks),
       completedTasks: apply_task_serializer(completed_tasks),
       featureToggles: {
-        decision_review_queue_ssn_column: FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user)
+        decisionReviewQueueSsnColumn: FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user)
       }
     }
   }) %>
