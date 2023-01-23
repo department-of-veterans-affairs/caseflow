@@ -27,7 +27,10 @@ class CavcRemand < CaseflowRecord
   enum cavc_decision_type: {
     Constants.CAVC_DECISION_TYPES.remand.to_sym => Constants.CAVC_DECISION_TYPES.remand,
     Constants.CAVC_DECISION_TYPES.straight_reversal.to_sym => Constants.CAVC_DECISION_TYPES.straight_reversal,
-    Constants.CAVC_DECISION_TYPES.death_dismissal.to_sym => Constants.CAVC_DECISION_TYPES.death_dismissal
+    Constants.CAVC_DECISION_TYPES.death_dismissal.to_sym => Constants.CAVC_DECISION_TYPES.death_dismissal,
+    Constants.CAVC_DECISION_TYPES.other_dismissal.to_sym => Constants.CAVC_DECISION_TYPES.other_dismissal,
+    Constants.CAVC_DECISION_TYPES.affirmed.to_sym => Constants.CAVC_DECISION_TYPES.affirmed,
+    Constants.CAVC_DECISION_TYPES.settlement.to_sym => Constants.CAVC_DECISION_TYPES.settlement
   }
 
   # Joint Motion Remand, Joint Motion Partial Remand, and Memorandum Decision on Remand
