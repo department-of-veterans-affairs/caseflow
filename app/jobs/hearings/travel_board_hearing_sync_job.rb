@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable Layout/LineLength
+# rubocop:disable Metrics/MethodLength
 class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   queue_with_priority :low_priority
 
@@ -24,7 +25,7 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   def create_schedule_hearing_tasks(legacy_appeals)
     log_info("Constructing task tree for new travel board legacy appeals...")
     appeals = legacy_appeals || []
-    appeals.each do |appeal|
+    appeals_with_trees = appeals.each do |appeal|
       begin
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
@@ -36,6 +37,8 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
       end
     end
       .compact
+    log_info("Created #{appeals_with_trees.length} task trees out of #{appeals.length} legacy appeals")
+    appeals_with_trees
   end
 
   # Purpose: Logging info messages to the console
@@ -60,7 +63,7 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   #         limit - The max number of appeals to process
   # Return: All the newly created legacy appeals
   def fetch_vacols_travel_board_appeals(exclude_ids, limit)
-    VACOLS::Case
+    cases = VACOLS::Case
       .where(
         # Travel Board Hearing Request
         bfhr: VACOLS::Case::HEARING_PREFERENCE_TYPES_V2[:TRAVEL_BOARD][:vacols_value],
@@ -83,8 +86,9 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
         end
       end
       .compact
+    log_info("Fetched #{cases.length} travel board appeals from VACOLS")
+    cases
   end
-  # rubocop:enable Layout/LineLength
 
   # Purpose: Wrapper method to determine batch size of travel board appeals to sync
   # Return: All the newly created legacy appeals
@@ -98,3 +102,5 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
     end
   end
 end
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Layout/LineLength
