@@ -18,6 +18,14 @@ export const veteranParticipantIdColumn = () => {
   };
 };
 
+export const veteranSsnColumn = () => {
+  return {
+    header: 'Veteran SSN',
+    valueFunction: (task) => task.veteranSSN,
+    getSortValue: (task) => task.veteranSSN
+  };
+};
+
 export const decisionReviewTypeColumn = (tasks) => {
   return {
     header: 'Type',

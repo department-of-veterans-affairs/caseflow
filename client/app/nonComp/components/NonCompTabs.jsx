@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import SearchBar from '../../components/SearchBar';
 import TabWindow from '../../components/TabWindow';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
-import { claimantColumn, veteranParticipantIdColumn, decisionReviewTypeColumn } from './TaskTableColumns';
+import { claimantColumn, veteranSsnColumn, decisionReviewTypeColumn } from './TaskTableColumns';
 import COPY from '../../../COPY';
 
 class NonCompTabsUnconnected extends React.PureComponent {
@@ -89,7 +89,7 @@ class TaskTableTab extends React.PureComponent {
         <TaskTableUnconnected
           {...this.state.predefinedColumns}
           getKeyForRow={(row, object) => object.id}
-          customColumns={[claimantColumn(), veteranParticipantIdColumn(),
+          customColumns={[claimantColumn(), veteranSsnColumn(),
             decisionReviewTypeColumn(this.state.allTasks)]}
           includeIssueCount
           tasks={this.state.shownTasks}

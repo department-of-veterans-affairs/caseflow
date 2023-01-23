@@ -72,6 +72,10 @@ class WorkQueue::DecisionReviewTaskSerializer
     veteran(object).participant_id
   end
 
+  attribute :veteran_ssn do |object|
+    veteran(object).ssn
+  end
+
   attribute :assigned_on, &:assigned_at
 
   attribute :closed_at

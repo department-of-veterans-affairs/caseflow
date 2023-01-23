@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Select, { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
-import _, { isPlainObject, isNull, kebabCase } from 'lodash';
+import _, { isPlainObject, isNull, kebabCase, isEmpty, isString } from 'lodash';
 import classNames from 'classnames';
 import { css } from 'glamor';
 import { FormLabel } from './FormLabel';
@@ -179,6 +179,7 @@ export class SearchableDropdown extends React.Component {
     const value =
       Array.isArray(this.state.value) ||
       isPlainObject(this.state.value) ||
+      (isString(this.state.value) && isEmpty(this.state.value)) ||
       isNull(this.state.value) ?
         this.state.value :
         (options || []).find(({ value: val }) => val === this.state.value);

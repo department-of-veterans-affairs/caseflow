@@ -16,6 +16,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
         attributes: {
           claimant: { name: hlr.veteran_full_name, relationship: "self" },
           appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+          veteran_ssn: veteran.ssn,
           veteran_participant_id: veteran.participant_id,
           assigned_on: task.assigned_at,
           closed_at: task.closed_at,
@@ -41,6 +42,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           attributes: {
             claimant: { name: "claimant", relationship: "Unknown" },
             appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+            veteran_ssn: veteran.ssn,
             veteran_participant_id: veteran.participant_id,
             assigned_on: task.assigned_at,
             closed_at: task.closed_at,
@@ -76,6 +78,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           attributes: {
             claimant: { name: claimant.name, relationship: "Veteran" },
             appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+            veteran_ssn: veteran.ssn,
             veteran_participant_id: veteran.participant_id,
             assigned_on: task.assigned_at,
             closed_at: task.closed_at,
