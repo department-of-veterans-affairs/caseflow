@@ -960,7 +960,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
 
         find("button", text: COPY::MODAL_RETURN_BUTTON).click
-        expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
+        expect(page).to have_content(COPY::INSTRUCTIONS_ERROR_FIELD_REQUIRED)
 
         instructions_textarea = find("textarea", id: "taskInstructions")
         instructions_textarea.send_keys("Incorrect RPO. Please review.")
