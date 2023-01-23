@@ -5,7 +5,9 @@ import PropTypes from 'prop-types';
 import SearchBar from '../../components/SearchBar';
 import TabWindow from '../../components/TabWindow';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
-import { claimantColumn, veteranParticipantIdColumn, veteranSsnColumn, decisionReviewTypeColumn } from './TaskTableColumns';
+import {
+  claimantColumn, veteranParticipantIdColumn, veteranSsnColumn, decisionReviewTypeColumn
+} from './TaskTableColumns';
 import COPY from '../../../COPY';
 
 class NonCompTabsUnconnected extends React.PureComponent {
@@ -72,8 +74,15 @@ class TaskTableTab extends React.PureComponent {
   }
 
   getCustomColumns = () => {
+    let arrToReturn = [claimantColumn(), decisionReviewTypeColumn(this.state.allTasks)];
+
+    arrToReturn.push(this.props.featureToggles.decisionReviewQueueSsnColumn ?
+      veteranSsnColumn() :
+      veteranParticipantIdColumn());
+
     return (
-      this.props.featureToggles.decisionReviewQueueSsnColumn ? [claimantColumn(), veteranSsnColumn(), decisionReviewTypeColumn(this.state.allTasks)] : [claimantColumn(), veteranParticipantIdColumn(), decisionReviewTypeColumn(this.state.allTasks)]
+
+      arrToReturn
     );
   }
 
@@ -109,6 +118,7 @@ TaskTableTab.propTypes = {
   description: PropTypes.node,
   predefinedColumns: PropTypes.object,
   tasks: PropTypes.array,
+  featureToggles: PropTypes.bool,
 };
 
 const NonCompTabs = connect(
