@@ -47,7 +47,8 @@
       vso_virtual_opt_in: FeatureToggle.enabled?(:vso_virtual_opt_in, user: current_user),
       das_case_timeliness: FeatureToggle.enabled?(:das_case_timeliness, user: current_user),
       split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
-      das_case_timeline: FeatureToggle.enabled?(:das_case_timeline, user: current_user)
+      das_case_timeline: FeatureToggle.enabled?(:das_case_timeline, user: current_user),
+      cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user)
     }
   }) %>
 <% end %>
