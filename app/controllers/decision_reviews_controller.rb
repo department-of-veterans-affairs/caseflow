@@ -165,7 +165,7 @@ class DecisionReviewsController < ApplicationController
       :search_query,
       { filter: [] },
       :page,
-      decision_issues: [:description, :disposition, :request_issue_id],
+      decision_issues: [:description, :disposition, :request_issue_id]
     )
   end
 end

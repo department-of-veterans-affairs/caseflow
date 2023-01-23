@@ -36,6 +36,7 @@ class BusinessLine < Organization
 
   class QueryBuilder
     attr_accessor :query_type, :parent, :query_params
+
     NUMBER_OF_SEARCH_FIELDS = 2
     TASK_FILTER_PREDICATES = {
       "VeteranRecordRequest" => Task.arel_table[:type].eq(VeteranRecordRequest.name),
@@ -76,7 +77,6 @@ class BusinessLine < Organization
       query_params[:sort_order] ||= DEFAULT_SORT_ORDER
     end
 
-    # TODO: Order will need to be changed when it is implemented
     def build_query
       Task.select(Arel.star)
         .from(combined_decision_review_tasks_query)
@@ -136,7 +136,7 @@ class BusinessLine < Organization
 
     # All join clauses
 
-    # Note: .left_joins(ama_appeal: :request_issues)
+    # NOTE: .left_joins(ama_appeal: :request_issues)
     # No longer works in the same way as the other joins because left outer join is forced to the end of the query by AR
     def board_grant_effectuation_task_appeals_requests_join
       "LEFT OUTER JOIN appeals ON appeals.id = tasks.appeal_id AND tasks.appeal_type = 'Appeal' "\
@@ -275,8 +275,16 @@ class BusinessLine < Organization
       }
     end
 
-    # TODO: Needs to be updated to work with ordering
     def order_clause
+      if query_params[:sort_by] == "veteran_participant_id"
+        return Arel.sql(
+          ActiveRecord::Base.send(
+            :sanitize_sql_array,
+            ["#{query_params[:sort_by]}::int #{query_params[:sort_order]}"]
+          )
+        )
+      end
+
       {
         query_params[:sort_by] => query_params[:sort_order].to_sym
       }
