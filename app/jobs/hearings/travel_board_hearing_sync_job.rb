@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Lint/RescueException
 # rubocop:disable Layout/LineLength
 class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   queue_with_priority :low_priority
@@ -31,7 +30,7 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
         ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
 
         AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
-      rescue Exception => error
+      rescue StandardError => error
         log_error("#{error.class}: #{error.message} for vacols id:#{appeal.vacols_id} on #{JOB_ATTR&.class} of ID:#{JOB_ATTR&.job_id}\n #{error.backtrace.join("\n")}")
         next
       end
@@ -78,14 +77,13 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
       .map do |vacols_case|
         begin
           AppealRepository.build_appeal(vacols_case, true)
-        rescue Exception => error
+        rescue StandardError => error
           log_error("#{error.class}: #{error.message} for vacols id:#{vacols_case.bfkey} on #{JOB_ATTR&.class} of ID:#{JOB_ATTR&.job_id}\n #{error.backtrace.join("\n")}")
           next
         end
       end
       .compact
   end
-  # rubocop:enable Lint/RescueException
   # rubocop:enable Layout/LineLength
 
   # Purpose: Wrapper method to determine batch size of travel board appeals to sync

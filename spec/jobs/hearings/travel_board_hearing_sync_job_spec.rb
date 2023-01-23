@@ -52,13 +52,13 @@ describe Hearings::TravelBoardHearingSyncJob do
         Hearings::TravelBoardHearingSyncJob::JOB_ATTR = nil
       end
       it "logs out error when exception occurs when creating new legacy appeals" do
-        allow(AppealRepository).to receive(:build_appeal).and_raise(Exception)
+        allow(AppealRepository).to receive(:build_appeal).and_raise(StandardError)
         expect(Rails.logger).to receive(:error).at_least(:once)
         subject.perform
       end
 
       it "logs out error when exception occurs when creating new task trees" do
-        allow(ScheduleHearingTask).to receive(:create!).and_raise(Exception)
+        allow(ScheduleHearingTask).to receive(:create!).and_raise(StandardError)
         expect(Rails.logger).to receive(:error).at_least(:once)
         subject.perform
       end
