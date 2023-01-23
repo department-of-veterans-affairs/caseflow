@@ -5,21 +5,21 @@ import PropTypes from 'prop-types';
 import SearchBar from '../../components/SearchBar';
 import TabWindow from '../../components/TabWindow';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
-import { claimantColumn, veteranSsnColumn, decisionReviewTypeColumn } from './TaskTableColumns';
+import { claimantColumn, veteranParticipantIdColumn, veteranSsnColumn, decisionReviewTypeColumn } from './TaskTableColumns';
 import COPY from '../../../COPY';
 
 class NonCompTabsUnconnected extends React.PureComponent {
   render = () => {
     const tabs = [{
       label: 'In progress tasks',
-      page: <TaskTableTab
+      page: <TaskTableTabConnected
         key="inprogress"
         predefinedColumns={{ includeDaysWaiting: true,
           defaultSortIdx: 3 }}
         tasks={this.props.inProgressTasks} />
     }, {
       label: 'Completed tasks',
-      page: <TaskTableTab
+      page: <TaskTableTabConnected
         key="completed"
         description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
         predefinedColumns={{ includeCompletedDate: true,
@@ -71,8 +71,18 @@ class TaskTableTab extends React.PureComponent {
       searchText: '' });
   }
 
+  getCustomColumns = () => {
+    console.log(`Feature Toggle: ${this.props.featureToggles.decisionReviewQueueSsnColumn}`);
+    if (this.props.featureToggles.decisionReviewQueueSsnColumn) {
+      return [claimantColumn(), veteranSsnColumn(),decisionReviewTypeColumn(this.state.allTasks)];
+    } else {
+      return [claimantColumn(), veteranParticipantIdColumn(),decisionReviewTypeColumn(this.state.allTasks)];
+    }
+  }
+
   render = () => {
     return <React.Fragment>
+      {/* {this.getCustomColumns()} */}
       {this.props.description && <div className="cf-noncomp-queue-completed-task">{this.props.description}</div>}
       <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
         <SearchBar
@@ -89,8 +99,7 @@ class TaskTableTab extends React.PureComponent {
         <TaskTableUnconnected
           {...this.state.predefinedColumns}
           getKeyForRow={(row, object) => object.id}
-          customColumns={[claimantColumn(), veteranSsnColumn(),
-            decisionReviewTypeColumn(this.state.allTasks)]}
+          customColumns={this.getCustomColumns()}
           includeIssueCount
           tasks={this.state.shownTasks}
         />
@@ -109,8 +118,14 @@ const NonCompTabs = connect(
   (state) => ({
     inProgressTasks: state.inProgressTasks,
     completedTasks: state.completedTasks,
-    currentTab: state.currentTab
+    currentTab: state.currentTab,
   })
 )(NonCompTabsUnconnected);
+
+const TaskTableTabConnected = connect(
+  (state) => ({
+    featureToggles: state.featureToggles
+  })
+)(TaskTableTab);
 
 export default NonCompTabs;
