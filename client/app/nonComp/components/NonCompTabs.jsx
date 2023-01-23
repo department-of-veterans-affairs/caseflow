@@ -72,12 +72,9 @@ class TaskTableTab extends React.PureComponent {
   }
 
   getCustomColumns = () => {
-    console.log(`Feature Toggle: ${this.props.featureToggles.decisionReviewQueueSsnColumn}`);
-    if (this.props.featureToggles.decisionReviewQueueSsnColumn) {
-      return [claimantColumn(), veteranSsnColumn(),decisionReviewTypeColumn(this.state.allTasks)];
-    } else {
-      return [claimantColumn(), veteranParticipantIdColumn(),decisionReviewTypeColumn(this.state.allTasks)];
-    }
+    return (
+      this.props.featureToggles.decisionReviewQueueSsnColumn ? [claimantColumn(), veteranSsnColumn(), decisionReviewTypeColumn(this.state.allTasks)] : [claimantColumn(), veteranParticipantIdColumn(), decisionReviewTypeColumn(this.state.allTasks)]
+    );
   }
 
   render = () => {
