@@ -93,6 +93,9 @@ const AddCavcRemandView = (props) => {
     // [CAVC_DECISION_TYPES.other_dismissal]: !featureToggles.cavc_dashboard_workflow,
     // [CAVC_DECISION_TYPES.affirmed]: !featureToggles.cavc_dashboard_workflow,
     // [CAVC_DECISION_TYPES.settlement]: !featureToggles.cavc_dashboard_workflow
+
+    // above options should be uncommented and below options removed once feature toggle is added.
+    // feature toggle AC requests that options are HIDDEN if toggle is enabled; hence the NOT operator (!)
     [CAVC_DECISION_TYPES.other_dismissal]: true,
     [CAVC_DECISION_TYPES.affirmed]: true,
     [CAVC_DECISION_TYPES.settlement]: true
@@ -410,7 +413,7 @@ const AddCavcRemandView = (props) => {
       {mandateAvailable() && !isMandateSame && judgementField }
       {mandateAvailable() && !isMandateSame && mandateField }
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
-      {!deathDismissalType() && issuesField}
+      {!deathDismissalType() && !otherDismissalType() && !affirmedType() && !settlementType() && issuesField}
       {jmrSubtype() && !allIssuesSelected && jmrIssuesBanner}
       {jmprSubtype() && allIssuesUnselected && jmprIssuesBanner}
       {mdrSubtype() && allIssuesUnselected && mdrIssuesBanner}
