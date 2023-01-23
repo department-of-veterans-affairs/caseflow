@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CavcDashboardController < ApplicationController
-  before_action :react_routed, :verify_access, except: :cavc_decision_reasons
+  before_action :react_routed, :verify_access, except: [:cavc_decision_reasons, :cavc_selection_basis]
 
   def set_application
     RequestStore.store[:application] = "queue"
@@ -16,6 +16,10 @@ class CavcDashboardController < ApplicationController
 
   def cavc_decision_reasons
     render json: CavcDecisionReason.all
+  end
+
+  def cavc_selection_basis
+    render json: CavcSelectionBasis.all
   end
 
   def verify_access
