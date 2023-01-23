@@ -432,6 +432,7 @@ AddCavcRemandView.propTypes = {
   featureToggles: PropTypes.shape({
     mdr_cavc_remand: PropTypes.bool,
     reversal_cavc_remand: PropTypes.bool,
+    // cavc_dashboard_workflow: PropTypes.bool,
     dismissal_cavc_remand: PropTypes.bool
   }),
   highlightInvalid: PropTypes.bool,
