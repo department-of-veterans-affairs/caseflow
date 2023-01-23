@@ -1,5 +1,7 @@
 import { update } from '../util/ReducerUtil';
 import { ACTIONS } from './helpConstants';
+import helpFormSlice from './helpApiSlice';
+import { combineReducers } from 'redux';
 
 export const initialState = {
   featureToggles: {},
@@ -36,4 +38,7 @@ const helpReducer = (state = initialState, action = {}) => {
   }
 };
 
-export default helpReducer;
+const helpReducers = combineReducers({ help: helpReducer, form: helpFormSlice });
+
+// export default helpReducer;
+export default helpReducers;

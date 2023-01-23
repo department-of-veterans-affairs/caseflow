@@ -6,9 +6,9 @@ const HelpRootView = () => {
 
   console.log('HelpRootView with useSelector');
 
-  const organizations = useSelector((state) => state.userOrganizations);
-  const featureToggles = useSelector((state) => state.featureToggles);
-  const organizationMembershipRequests = useSelector((state) => state.organizationMembershipRequests);
+  const organizations = useSelector((state) => state.help.userOrganizations);
+  const featureToggles = useSelector((state) => state.help.featureToggles);
+  const organizationMembershipRequests = useSelector((state) => state.help.organizationMembershipRequests);
 
   console.log(organizations);
   console.log(featureToggles);
