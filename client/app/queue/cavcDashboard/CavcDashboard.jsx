@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { fetchAppealDetails } from '../QueueActions';
+import { fetchCavcDecisionReasons } from './cavcDashboardActions';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
@@ -14,17 +15,20 @@ export const CavcDashboard = (props) => {
   const { appealId, appeal, appealDetails } = props;
 
   const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState();
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    props.fetchAppealDetails(appealId).
+    // define the promise inside useEffect so that the component doesn't infinitely rerender
+    const loadPromise = Promise.all([props.fetchAppealDetails(appealId), props.fetchCavcDecisionReasons()]);
+
+    loadPromise.
       catch(() => setError(true)).
       finally(() => setLoaded(true));
-  }, []);
+  }, [loaded]);
 
   // cavcRemand is part of appealDetails loaded by the CavcDashboardLoadingScreen. Redirect back
   // to the CaseDetails page if a remand doesn't exist for the provided appealId or if legacy appeal
-  if (loaded && (appealDetails.cavcRemand === null || appeal.isLegacyAppeal)) {
+  if (loaded && (appealDetails.cavcRemand === null)) {
     return <Redirect to={`/queue/appeals/${appealId}`} />;
   }
 
@@ -55,7 +59,8 @@ CavcDashboard.propTypes = {
   appealId: PropTypes.string.isRequired,
   appeal: PropTypes.object,
   appealDetails: PropTypes.object,
-  fetchAppealDetails: PropTypes.func
+  fetchAppealDetails: PropTypes.func,
+  fetchCavcDecisionReasons: PropTypes.func
 };
 
 // mappings and connect are boilerplate for connecting to redux and will be added to in the future
@@ -71,7 +76,8 @@ const mapStateToProps = (state, ownProps) => {
 // CaseDetailsLoadingScreen.jsx for example
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators({
-    fetchAppealDetails
+    fetchAppealDetails,
+    fetchCavcDecisionReasons
   }, dispatch);
 
 export default connect(

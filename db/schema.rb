@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_15_202259) do
+ActiveRecord::Schema.define(version: 2023_01_19_184147) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -314,6 +314,14 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
+  end
+
+  create_table "cavc_decision_reasons", force: :cascade do |t|
+    t.string "basis_for_selection_category", comment: "The category that the decision reason belongs to. Optional."
+    t.datetime "created_at"
+    t.string "decision_reason", comment: "The reason for the CAVC decision"
+    t.integer "order", comment: "The order that the reasons should display in the UI. Child reasons will be ordered under their parent."
+    t.integer "parent_decision_reason_id", comment: "Associates a child decision reason to its parent in this table"
   end
 
   create_table "cavc_remands", force: :cascade do |t|
@@ -1823,6 +1831,7 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
   add_foreign_key "board_grant_effectuations", "decision_documents"
   add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
   add_foreign_key "board_grant_effectuations", "end_product_establishments"
+  add_foreign_key "cavc_decision_reasons", "cavc_decision_reasons", column: "parent_decision_reason_id"
   add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
   add_foreign_key "cavc_remands", "users", column: "created_by_id"
