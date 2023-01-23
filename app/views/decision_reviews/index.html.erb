@@ -9,7 +9,10 @@
       businessLine: business_line.name,
       businessLineUrl: business_line.url,
       inProgressTasks: apply_task_serializer(in_progress_tasks),
-      completedTasks: apply_task_serializer(completed_tasks)
+      completedTasks: apply_task_serializer(completed_tasks),
+      featureToggles: {
+        vet_ssn_instead_of_participant_id: FeatureToggle.enabled?(:vet_ssn_instead_of_participant_id, user: current_user)
+      }
     }
   }) %>
 <% end %>
