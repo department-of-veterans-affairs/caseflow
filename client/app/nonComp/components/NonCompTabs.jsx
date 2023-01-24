@@ -73,22 +73,16 @@ class TaskTableTab extends React.PureComponent {
       searchText: '' });
   }
 
-  getCustomColumns = () => {
-    let arrToReturn = [claimantColumn(), decisionReviewTypeColumn(this.state.allTasks)];
-
-    arrToReturn.push(this.props.featureToggles.decisionReviewQueueSsnColumn ?
+  getCustomColumns = () => [
+    claimantColumn(),
+    decisionReviewTypeColumn(this.state.allTasks),
+    this.props.featureToggles.decisionReviewQueueSsnColumn ?
       veteranSsnColumn() :
-      veteranParticipantIdColumn());
-
-    return (
-
-      arrToReturn
-    );
-  }
+      veteranParticipantIdColumn()
+  ];
 
   render = () => {
     return <React.Fragment>
-      {/* {this.getCustomColumns()} */}
       {this.props.description && <div className="cf-noncomp-queue-completed-task">{this.props.description}</div>}
       <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
         <SearchBar
