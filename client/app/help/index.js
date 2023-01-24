@@ -27,7 +27,7 @@ class Help extends React.PureComponent {
 
     return <ReduxBase
       reducer={helpReducer}
-      initialState={{ ...initialState }}
+      initialState={{ help: { ...initialState } }}
     >
       <BrowserRouter>
         <HelpApp {...this.props} />

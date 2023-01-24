@@ -32,8 +32,16 @@ class HelpController < ApplicationController
     ]
   end
 
-  def organization_membership_requests_ui_hash(_user = current_user)
+  def open_organization_membership_requests(_user = current_user)
+    # user.organization_membership_requests.assigned.includes(:organizations).map do |org_request|
+    #   {
+    #     name: org_request.organization.name,
+    #     url: org_request.organization.url,
+    #     orgType: org_request.organization.type,
+    #     orgId: org_request.organization.id
+    #   }
+    # end
     temp_org_request_data
   end
-  helper_method :organization_membership_requests_ui_hash
+  helper_method :open_organization_membership_requests
 end
