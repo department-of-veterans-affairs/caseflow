@@ -11,6 +11,6 @@ export const fetchCavcDecisionReasons = () => (dispatch) => {
 export const fetchCavcSelectionBases = () => (dispatch) => {
   ApiUtil.get('/cavc_dashboard/cavc_selection_bases').then((response) => dispatch({
     type: ACTIONS.FETCH_CAVC_SELECTION_BASES,
-    payload: { selection_basis: response.body }
+    payload: { selection_bases: response.body }
   }));
 };
