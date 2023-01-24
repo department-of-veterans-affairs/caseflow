@@ -116,7 +116,7 @@ class BusinessLine < Organization
     def claimant_name
       "COALESCE(NULLIF(CASE "\
       "WHEN veteran_is_not_claimant THEN COALESCE(NULLIF("\
-        "CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name, ' party name'), ' '), "\
+        "CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '), "\
         "NULLIF(CONCAT(people.first_name, ' ', people.last_name, ' people_name'), ' ')) "\
       "ELSE CONCAT(veterans.first_name, ' ', veterans.last_name) "\
       "END, ' '), 'claimant')"
