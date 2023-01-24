@@ -292,9 +292,10 @@ Rails.application.routes.draw do
     get "/cavc_decision_reasons", to: "cavc_dashboard#cavc_decision_reasons"
   end
 
-  # allow requests from CAVC Dashboard to go to /cavc_dashboard/:appeal_id to declutter the queue path above
+  # allow requests for CAVC Dashboard to go through /cavc_dashboard/:appeal_id/* to declutter the queue path above
   resources :cavc_dashboard, param: :appeal_id do
     member do
+      get "/", to: "cavc_dashboard#index"
     end
   end
 
