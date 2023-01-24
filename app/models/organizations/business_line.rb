@@ -103,7 +103,7 @@ class BusinessLine < Organization
     end
 
     def union_select_statements
-      [Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id_alias, veteran_name_alias]
+      [Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id_alias]
     end
 
     def issue_count
@@ -129,11 +129,6 @@ class BusinessLine < Organization
     # Alias of veteran participant id for serialization and sorting
     def participant_id_alias
       "veterans.participant_id as veteran_participant_id"
-    end
-
-    # Alias of veteran name for a potential edge case where there is a claimant and veteran_is_not_claimant is unset
-    def veteran_name_alias
-      "CONCAT(veterans.first_name, ' ', veterans.last_name) as veteran_name"
     end
 
     # All join clauses
