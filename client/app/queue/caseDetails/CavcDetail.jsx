@@ -3,12 +3,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-import { detailListStyling, getDetailField } from './Detail';
-import { DateString } from '../util/DateUtil';
-import BareList from '../components/BareList';
-import COPY from '../../COPY';
-import CAVC_REMAND_SUBTYPE_NAMES from '../../constants/CAVC_REMAND_SUBTYPE_NAMES';
-import CAVC_DECISION_TYPES from '../../constants/CAVC_DECISION_TYPES';
+import { detailListStyling, getDetailField } from '../Detail';
+import { DateString } from '../../util/DateUtil';
+import BareList from '../../components/BareList';
+import COPY from '../../../COPY';
+import CAVC_REMAND_SUBTYPE_NAMES from '../../../constants/CAVC_REMAND_SUBTYPE_NAMES';
+import CAVC_DECISION_TYPES from '../../../constants/CAVC_DECISION_TYPES';
 
 const CavcDetail = (props) => {
   const {
