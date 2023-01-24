@@ -4,7 +4,8 @@ class SendFinalNotificationLetterTask < LetterTask
   validates :parent, presence: true
 
   def available_actions(user)
-    if assigned_to.user_has_access?(user) # feature toggle will go here
+    if assigned_to.user_has_access?(user) &&
+       FeatureToggle.enabled?(:cc_appeal_workflow, user: RequestStore.store[:current_user])
       SEND_FINAL_NOTIFICATION_LETTER_TASK_ACTIONS
     else
       []
