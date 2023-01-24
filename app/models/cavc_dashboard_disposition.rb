@@ -15,6 +15,6 @@ class CavcDashboardDisposition < CaseflowRecord
     Constants.CAVC_DASHBOARD_DISPOSITIONS.reversed.to_sym => Constants.CAVC_DASHBOARD_DISPOSITIONS.reversed,
     Constants.CAVC_DASHBOARD_DISPOSITIONS.vacated_and_remanded.to_sym =>
       Constants.CAVC_DASHBOARD_DISPOSITIONS.vacated_and_remanded,
-    Constants.CAVC_DASHBOARD_DISPOSITIONS.n_a => Constants.CAVC_DASHBOARD_DISPOSITIONS.n_a
+    Constants.CAVC_DASHBOARD_DISPOSITIONS.not_applicable.to_sym => Constants.CAVC_DASHBOARD_DISPOSITIONS.not_applicable
   }
 end

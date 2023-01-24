@@ -325,6 +325,7 @@ ActiveRecord::Schema.define(version: 2023_01_23_181303) do
     t.bigint "request_issue_id", comment: "ID for a request issue that was filed with the CAVC Remand"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "The ID for the user that most recently changed the record"
+    t.index ["cavc_remand_id"], name: "index_cavc_dashboard_dispositions_on_cavc_remand_id"
   end
 
   create_table "cavc_decision_reasons", force: :cascade do |t|
