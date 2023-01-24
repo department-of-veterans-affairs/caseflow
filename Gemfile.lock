@@ -802,7 +802,7 @@ DEPENDENCIES
   rubocop (= 0.79)
   rubocop-performance
   rubocop-rails
-  ruby-debug-ide (= 0.7.3)
+  ruby-debug-ide
   ruby-oci8 (~> 2.2)
   ruby-prof (~> 1.4)
   sass-rails (~> 5.0)
