@@ -22,7 +22,7 @@ gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/conne
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "ac1ae63ffb04a2ab4d2d5469262981acab162e94"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "countries"
-gem "ddtrace"
+gem "ddtrace", "0.34.1"
 gem "dogstatsd-ruby"
 gem "dry-schema", "~> 1.4"
 gem "fast_jsonapi"
@@ -52,11 +52,12 @@ gem "pg", platforms: :ruby
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "~> 5"
 gem "rack", "~> 2.2.3"
-gem "rails", "5.2.4.6"
+gem "rails", "~> 5.2", ">= 5.2.8"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
 gem "react_on_rails", "11.3.0"
+gem "redis", "4.0.1"
 gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
@@ -94,7 +95,7 @@ group :test, :development, :demo do
   gem "capybara"
   gem "capybara-screenshot"
   gem "danger", "~> 6.0"
-  gem "database_cleaner"
+  gem "database_cleaner", "1.7.0"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
