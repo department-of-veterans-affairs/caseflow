@@ -15,16 +15,12 @@ import QueueHelp from './components/QueueHelp';
 import ReduxBase from '../components/ReduxBase';
 import helpReducer, { initialState } from './helpReducers';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setFeatureToggles, setOrganizationMembershipRequests, setUserOrganizations } from './helpActions';
 
 class Help extends React.PureComponent {
 
   render() {
-    console.log('help props and state');
-    console.log(this.props);
-    console.log(this.state);
-
     return <ReduxBase
       reducer={helpReducer}
       initialState={{ help: { ...initialState } }}

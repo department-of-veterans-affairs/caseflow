@@ -1,18 +1,7 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const HelpRootView = () => {
-
-  console.log('HelpRootView with useSelector');
-
-  const organizations = useSelector((state) => state.help.userOrganizations);
-  const featureToggles = useSelector((state) => state.help.featureToggles);
-  const organizationMembershipRequests = useSelector((state) => state.help.organizationMembershipRequests);
-
-  console.log(organizations);
-  console.log(featureToggles);
-  console.log(organizationMembershipRequests);
 
   const pages = [
     { name: 'Certification Help',
