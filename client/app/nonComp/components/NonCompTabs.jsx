@@ -73,7 +73,7 @@ class TaskTableTab extends React.PureComponent {
       searchText: '' });
   }
 
-  getCustomColumns = () => [
+  getTableColumns = () => [
     claimantColumn(),
     decisionReviewTypeColumn(this.state.allTasks),
     this.props.featureToggles.decisionReviewQueueSsnColumn ?
@@ -85,33 +85,26 @@ class TaskTableTab extends React.PureComponent {
     return <React.Fragment>
       {this.props.description && <div className="cf-noncomp-queue-completed-task">{this.props.description}</div>}
       <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
-        {this.props.featureToggles.decisionReviewQueueSsnColumn ?
-          <SearchBar
-            id="searchBar"
-            size="small"
-            title="Search by Claimant Name, Veteran Participant ID, File Number or SSN"
-            onChange={this.onSearch}
-            placeholder="Type to search..."
-            onClearSearch={this.onClearSearch}
-            isSearchAhead
-            value={this.state.searchText}
-          /> :
-          <SearchBar
-            id="searchBar"
-            size="small"
-            onChange={this.onSearch}
-            placeholder="Type to search..."
-            onClearSearch={this.onClearSearch}
-            isSearchAhead
-            value={this.state.searchText}
-          />
-        }
+        <SearchBar
+          id="searchBar"
+          size="small"
+          title={
+            this.props.featureToggles.decisionReviewQueueSsnColumn ?
+              'Search by Claimant Name, Veteran Participant ID, File Number or SSN' :
+              ''
+          }
+          onChange={this.onSearch}
+          placeholder="Type to search..."
+          onClearSearch={this.onClearSearch}
+          isSearchAhead
+          value={this.state.searchText}
+        />
       </div>
       <div className="section-hearings-list">
         <TaskTableUnconnected
           {...this.state.predefinedColumns}
           getKeyForRow={(row, object) => object.id}
-          customColumns={this.getCustomColumns()}
+          customColumns={this.getTableColumns()}
           includeIssueCount
           tasks={this.state.shownTasks}
         />
