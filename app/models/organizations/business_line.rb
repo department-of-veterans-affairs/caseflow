@@ -114,10 +114,12 @@ class BusinessLine < Organization
     # Alias for claimant_name for sorting and serialization
     # This is Postgres specific since it uses CONCAT vs ||
     def claimant_name
-      "COALESCE("\
-      "NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '), "\
-      "NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '), "\
-      "CONCAT(veterans.first_name, ' ', veterans.last_name))"
+      "COALESCE(NULLIF(CASE "\
+      "WHEN veteran_is_not_claimant THEN COALESCE(NULLIF("\
+        "CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name, ' party name'), ' '), "\
+        "NULLIF(CONCAT(people.first_name, ' ', people.last_name, ' people_name'), ' ')) "\
+      "ELSE CONCAT(veterans.first_name, ' ', veterans.last_name) "\
+      "END, ' '), 'claimant')"
     end
 
     def claimant_name_alias
@@ -178,7 +180,8 @@ class BusinessLine < Organization
 
     def group_by_columns
       "tasks.id, veterans.participant_id, veterans.first_name, veterans.last_name, "\
-      "unrecognized_party_details.name, unrecognized_party_details.last_name, people.first_name, people.last_name"
+      "unrecognized_party_details.name, unrecognized_party_details.last_name, people.first_name, people.last_name, "\
+      "veteran_is_not_claimant"
     end
 
     # Uses an array to insert the searched text into all of the searchable fields since it's the same text for all
