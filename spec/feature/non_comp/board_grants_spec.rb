@@ -76,7 +76,7 @@ feature "NonComp Board Grant Task Page", :postgres do
     expect(page).to have_content("Decision Completed")
     # should redirect to business line's completed tab
     expect(page.current_path).to eq "/#{business_line_url}"
-    expect(page).to have_content(appeal.claimant.participant_id)
+    expect(page).to have_content(appeal.veteran.ssn)
     in_progress_task.reload
     expect(in_progress_task.status).to eq("completed")
     expect(in_progress_task.closed_at).to eq(Time.zone.now)
