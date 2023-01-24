@@ -134,7 +134,7 @@ group :development do
   gem "fasterer", require: false
   gem "foreman"
   gem "meta_request"
-  gem "ruby-debug-ide"
+  gem "ruby-debug-ide", "0.7.3"
   gem "ruby-prof", "~> 1.4"
   gem "solargraph"
 end
