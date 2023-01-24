@@ -52,14 +52,14 @@ gem "pg", platforms: :ruby
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "~> 5"
 gem "rack", "~> 2.2.3"
-gem "rails", "~> 5.2", ">= 5.2.8"
+gem "rails", "5.2.8"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
 gem "react_on_rails", "11.3.0"
 gem "redis", "4.0.1"
 gem "redis-namespace"
-gem "redis-rails", "~> 5.0.2"
+gem "redis-rails", "5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
 # Use SCSS for stylesheets
