@@ -140,20 +140,20 @@ feature "NonComp Dispositions Task Page", :postgres do
       end
 
       scenario "neither disposition nor date is set" do
-        expect(page).to have_button("Complete", disabled: true)  
+        expect(page).to have_button("Complete", disabled: true)
       end
 
       scenario "only date is set" do
         fill_in "decision-date", with: arbitrary_decision_date
-        expect(page).to have_button("Complete", disabled: true)  
+        expect(page).to have_button("Complete", disabled: true)
       end
 
       scenario "only disposition is set" do
         fill_in_disposition(0, "Granted")
         fill_in_disposition(1, "DTA Error", "test description")
         fill_in_disposition(2, "Denied", "denied")
-  
-        expect(page).to have_button("Complete", disabled: true)  
+
+        expect(page).to have_button("Complete", disabled: true)
       end
 
       scenario "both disposition and date are set" do
@@ -162,7 +162,7 @@ feature "NonComp Dispositions Task Page", :postgres do
         fill_in_disposition(1, "DTA Error", "test description")
         fill_in_disposition(2, "Denied", "denied")
 
-        expect(page).to have_button("Complete", disabled: false)  
+        expect(page).to have_button("Complete", disabled: false)
       end
     end
 
@@ -222,7 +222,6 @@ feature "NonComp Dispositions Task Page", :postgres do
         fill_in_disposition(1, "Granted", "test description")
         fill_in_disposition(2, "Denied", "denied")
         fill_in "decision-date", with: arbitrary_decision_date
-
 
         click_on "Complete"
         expect(page).to have_content("Something went wrong")
