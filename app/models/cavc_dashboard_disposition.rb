@@ -5,7 +5,9 @@ class CavcDashboardDisposition < CaseflowRecord
 
   belongs_to :cavc_remand
 
-  validates :cavc_remand, :disposition, presence: true
+  validates :cavc_remand, presence: true
+  # disposition can be nil on create, so only validate on update
+  validates :disposition, presence: true, on: :update
 
   enum disposition: {
     Constants.CAVC_DASHBOARD_DISPOSITIONS.abandoned.to_sym => Constants.CAVC_DASHBOARD_DISPOSITIONS.abandoned,
