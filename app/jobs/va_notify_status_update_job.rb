@@ -113,19 +113,21 @@ class VANotifyStatusUpdateJob < CaseflowJob
   #
   # Retuns: Return a hash of attributes that need to be updated on the notification record
   def get_current_status(notification_id, type)
-    response = VANotifyService.get_status(notification_id)
-    if response.code == 200
-      if type == "Email"
-        { "email_notification_status" => response.body["status"], "recipient_email" => response.body["email_address"] }
-      elsif type == "SMS"
-        { "sms_notification_status" => response.body["status"], "recipient_phone_number" => response.body["phone_number"] }
+    begin
+      response = VANotifyService.get_status(notification_id)
+      if response.code == 200
+        if type == "Email"
+          { "email_notification_status" => response.body["status"], "recipient_email" => response.body["email_address"] }
+        elsif type == "SMS"
+          { "sms_notification_status" => response.body["status"], "recipient_phone_number" => response.body["phone_number"] }
+        end
+      else
+        fail StandardError
       end
-    else
-      begin
-      rescue StandardError
-        log_error("VA Notify API returned error for notification " + notification_id)
-        Raven.capture_exception(error, extra: { notification_id: notification_id, type: type })
-      end
+    rescue StandardError => error
+      log_error("VA Notify API returned error for notification " + notification_id)
+      Raven.capture_exception(error, extra: { error_uuid: SecureRandom.uuid })
+      nil
     end
   end
 
