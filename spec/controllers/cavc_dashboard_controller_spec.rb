@@ -13,4 +13,20 @@ RSpec.describe CavcDashboardController, type: :controller do
     expect(response.status).to eq 200
     expect(JSON.parse(response.body).count).to eq CavcDecisionReason.count
   end
+
+  context "#index" do
+    before { Seeds::CavcDashboardData.new.seed! }
+
+    it "returns index data from format.json" do
+      remand = CavcRemand.last
+      appeal_uuid = Appeal.find(remand.remand_appeal_id).uuid
+
+      get :index, params: { format: :json, appeal_id: appeal_uuid }
+      response_body = JSON.parse(response.body)
+
+      expect(response_body.key?("dashboard_dispositions")).to be true
+      expect(response_body["dashboard_dispositions"].count)
+        .to eq CavcDashboardDisposition.where(cavc_remand: remand).count
+    end
+  end
 end
