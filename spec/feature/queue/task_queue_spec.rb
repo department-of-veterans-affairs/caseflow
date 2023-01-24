@@ -674,7 +674,7 @@ feature "Task queue", :all_dbs do
         expect(page).to have_content(
           format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
         )
-        page.find_all("path.unselected-filter-icon-inner").first.click
+        page.find_all("path.unselected-filter-icon-inner-1").first.click
         expect(page).to have_content("#{Task.label} (#{unassigned_count / 2})")
         expect(page).to have_content("#{FoiaTask.label} (#{foia_task_count})")
       end
@@ -682,7 +682,7 @@ feature "Task queue", :all_dbs do
       it "filters tasks correctly and updates the url" do
         visit(organization.path)
         expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
-        page.find_all("path.unselected-filter-icon-inner").first.click
+        page.find_all("path.unselected-filter-icon-inner-1").first.click
         page.find("label", text: "#{FoiaTask.label} (#{foia_task_count})").click
         expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
         expect(URI.parse(current_url).query).to eq "#{default_query_string}&#{query_string}"
