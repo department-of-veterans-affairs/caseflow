@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_20_171623) do
+ActiveRecord::Schema.define(version: 2023_01_24_154656) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -346,7 +346,7 @@ ActiveRecord::Schema.define(version: 2023_01_20_171623) do
     t.index ["source_appeal_id"], name: "index_cavc_remands_on_source_appeal_id"
   end
 
-  create_table "cavc_selection_basis", force: :cascade do |t|
+  create_table "cavc_selection_bases", force: :cascade do |t|
     t.string "basis_for_selection"
     t.string "category"
     t.datetime "created_at"

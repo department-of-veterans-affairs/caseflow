@@ -39,7 +39,7 @@ prior_opinion_inadequate = [
   "Rice", "Chotta", "McLendon", "Barr", "Robinson", "Swain", "Mitchell", "Bankhead", "Jones (2012)", "Quinn",
   "Buchanan", "Deluca", "El-Amin", "Saunders", "Floore", "Nieves-Rodriguez", "Smith", "Withers", "Stefl", "Delrio",
   "Fountain", "DeLisio", "Mauerhan", "Monzingo", "Tucker", "Caluza", "Buie", "Bradley", "Thun", "Harper", "Tatum",
-  "Hart", "Walsh", "Buczynski", "Wise", "Cook", "Hensley", "Snider","Stegall", "Overton", "Atencio", "Stewart",
+  "Hart", "Walsh", "Buczynski", "Wise", "Cook", "Hensley", "Snider", "Stegall", "Overton", "Atencio", "Stewart",
   "DelaCruz", "AB", "Dalton", "Wagner", "McGrath", "Garner", "King", "Pierce", "Cullen", "Cantrell", "Bryant", "O'Hare",
   "McCray", "Vazquez-Claudio", "Allday", "Geib", "Kahana", "Burton", "Stankevich", "Smiddy", "Horn", "Svehla",
   "Jandreau", "Schafrath", "Combee", "Esteban", "McKinney", "Euzebio", "Washington", "Frost", "Pernorio", "Ward",

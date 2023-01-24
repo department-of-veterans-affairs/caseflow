@@ -1,6 +1,6 @@
-class CreateCavcSelectionBasis < Caseflow::Migration
+class CreateCavcSelectionBases < Caseflow::Migration
   def change
-    create_table :cavc_selection_basis do |t|
+    create_table :cavc_selection_bases do |t|
       t.string :basis_for_selection
       t.string :category
       t.datetime :created_at

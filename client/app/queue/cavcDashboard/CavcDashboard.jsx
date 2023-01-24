@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { fetchAppealDetails } from '../QueueActions';
-import { fetchCavcDecisionReasons, fetchCavcSelectionBasis } from './cavcDashboardActions';
+import { fetchCavcDecisionReasons, fetchCavcSelectionBases } from './cavcDashboardActions';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
@@ -19,7 +19,7 @@ export const CavcDashboard = (props) => {
 
   useEffect(() => {
     // define the promise inside useEffect so that the component doesn't infinitely rerender
-    const loadPromise = Promise.all([props.fetchAppealDetails(appealId), props.fetchCavcDecisionReasons(), props.fetchCavcSelectionBasis()]);
+    const loadPromise = Promise.all([props.fetchAppealDetails(appealId), props.fetchCavcDecisionReasons(), props.fetchCavcSelectionBases()]);
 
     loadPromise.
       catch(() => setError(true)).
@@ -61,7 +61,7 @@ CavcDashboard.propTypes = {
   appealDetails: PropTypes.object,
   fetchAppealDetails: PropTypes.func,
   fetchCavcDecisionReasons: PropTypes.func,
-  fetchCavcSelectionBasis: PropTypes.func
+  fetchCavcSelectionBases: PropTypes.func
 };
 
 // mappings and connect are boilerplate for connecting to redux and will be added to in the future
@@ -79,7 +79,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators({
     fetchAppealDetails,
     fetchCavcDecisionReasons,
-    fetchCavcSelectionBasis
+    fetchCavcSelectionBases
   }, dispatch);
 
 export default connect(
