@@ -54,16 +54,12 @@ class BusinessLine < Organization
       completed: "recently_completed"
     }.freeze
 
-    DEFAULT_SORT_ORDER = "desc"
-    DEFAULT_IN_PROGRESS_SORT_BY = :assigned_at
-    DEFAULT_COMPLETED_SORT_BY = :closed_at
-
     DEFAULT_ORDERING_HASH = {
       in_progress: {
-        sort_by: DEFAULT_IN_PROGRESS_SORT_BY
+        sort_by: :assigned_at
       },
       completed: {
-        sort_by: DEFAULT_COMPLETED_SORT_BY
+        sort_by: :closed_at
       }
     }.freeze
 
@@ -74,7 +70,7 @@ class BusinessLine < Organization
 
       # Initialize default sorting
       query_params[:sort_by] ||= DEFAULT_ORDERING_HASH[query_type][:sort_by]
-      query_params[:sort_order] ||= DEFAULT_SORT_ORDER
+      query_params[:sort_order] ||= "desc"
     end
 
     def build_query
