@@ -13,4 +13,13 @@ RSpec.describe CavcDashboardController, type: :controller do
     expect(response.status).to eq 200
     expect(JSON.parse(response.body).count).to eq CavcDecisionReason.count
   end
+
+  it "#cavc_selection_bases returns all CavcSelectionBases in DB" do
+    Seeds::CavcSelectionBasisData.new.seed!
+
+    get :cavc_selection_bases
+
+    expect(response.status).to eq 200
+    expect(JSON.parse(response.body).count).to eq CavcSelectionBasis.count
+  end
 end
