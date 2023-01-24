@@ -257,6 +257,51 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.last.include?(later_date)).to eq true
     end
 
+    context("veteran with null first and last name") do
+      let(:veteran_b) do
+        create(:veteran, first_name: "", last_name: "", participant_id: "601111772")
+      end
+
+      scenario "sorting and displaying a veteran with a null first and last name" do
+        base_url = "/decision_reviews/nco"
+
+        visit base_url
+
+        order_buttons = {
+          claimant_name: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[1]/span/span[2]'),
+          participant_id: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[2]/span/span[2]'),
+          issues_count: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[3]/span/span[2]'),
+          days_waiting: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span[1]/span[2]'),
+          date_completed: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
+        }
+
+        # Claimant name desc
+        order_buttons[:claimant_name].click
+        expect(page).to have_current_path(
+          "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=desc"
+        )
+
+        table_rows = current_table_rows
+
+        expect(table_rows.first.include?("claimant")).to eq true
+        expect(table_rows.last.include?("Aaa")).to eq true
+
+        # Claimant name asc
+        order_buttons[:claimant_name].click
+        expect(page).to have_current_path(
+          "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=asc"
+        )
+        table_rows = current_table_rows
+
+        expect(table_rows.first.include?("Aaa")).to eq true
+        expect(table_rows.last.include?("claimant")).to eq true
+
+        # Has a clickable name "claimant"
+        click_link "claimant"
+        expect(page).to have_content("Review each issue and assign the appropriate dispositions")
+      end
+    end
+
     scenario "filtering reviews" do
       visit "decision_reviews/nco"
       find(".unselected-filter-icon").click
