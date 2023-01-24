@@ -18,10 +18,14 @@ class BvaIntakeCompletedTab < QueueTab
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).completed
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).completed.joins(:ama_appeal)
   end
 
   def column_names
     BvaIntake::COLUMN_NAMES
+  end
+
+  def default_sorting_column
+    QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name)
   end
 end
