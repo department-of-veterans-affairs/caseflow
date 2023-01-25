@@ -60,10 +60,7 @@ feature "NonComp Reviews Queue", :postgres do
     ]
   end
 
-  let(:vet_id_column_header) { "Veteran Participant Id" }
-  let(:vet_a_vet_id_column_value) { veteran_a.participant_id }
-  let(:vet_b_vet_id_column_value) { veteran_b.participant_id }
-  let(:vet_c_vet_id_column_value) { veteran_c.participant_id }
+  let(:search_box_label) { "Search by Claimant Name, Veteran Participant ID, File Number or SSN" }
 
   before do
     User.stub = user
@@ -72,6 +69,11 @@ feature "NonComp Reviews Queue", :postgres do
   end
 
   context "with an existing organization" do
+    let(:vet_id_column_header) { "Veteran Participant Id" }
+    let(:vet_a_vet_id_column_value) { veteran_a.participant_id }
+    let(:vet_b_vet_id_column_value) { veteran_b.participant_id }
+    let(:vet_c_vet_id_column_value) { veteran_c.participant_id }
+
     after { FeatureToggle.disable!(:board_grant_effectuation_task) }
 
     scenario "displays tasks page with decision_review_queue_ssn_column feature toggle disabled" do
@@ -91,6 +93,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content(vet_a_vet_id_column_value)
       expect(page).to have_content(vet_b_vet_id_column_value)
       expect(page).to have_content(vet_c_vet_id_column_value)
+      expect(page).not_to have_content(search_box_label)
 
       # ordered by assigned_at descending
 
@@ -125,9 +128,11 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content(veteran_a.name)
         expect(page).to have_content(veteran_b.name)
         expect(page).to have_content(veteran_c.name)
+        expect(page).to have_content(vet_id_column_header)
         expect(page).to have_content(vet_a_vet_id_column_value)
         expect(page).to have_content(vet_b_vet_id_column_value)
         expect(page).to have_content(vet_c_vet_id_column_value)
+        expect(page).not_to have_content(search_box_label)
 
         click_on veteran_a.name
         expect(page).to have_content("Form created by")
@@ -168,39 +173,11 @@ feature "NonComp Reviews Queue", :postgres do
 
     scenario "displays tasks page" do
       visit "decision_reviews/nco"
-      expect(page).to have_content("Non-Comp Org")
-      expect(page).to have_content("In progress tasks")
-      expect(page).to have_content("Completed tasks")
-
-      # default is the in progress page
-      expect(page).to have_content("Days Waiting")
-      expect(page).to have_content("Higher-Level Review", count: 2)
-      expect(page).to have_content("Board Grant")
-      expect(page).to have_content(veteran_a.name)
-      expect(page).to have_content(veteran_b.name)
-      expect(page).to have_content(veteran_c.name)
       expect(page).to have_content(vet_id_column_header)
       expect(page).to have_content(vet_a_vet_id_column_value)
       expect(page).to have_content(vet_b_vet_id_column_value)
       expect(page).to have_content(vet_c_vet_id_column_value)
-
-      # ordered by assigned_at descending
-
-      expect(page).to have_content(
-        /#{veteran_b.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
-      )
-
-      click_on "Completed tasks"
-      expect(page).to have_content("Higher-Level Review", count: 1)
-      expect(page).to have_content("Date Completed")
-
-      # ordered by closed_at descending
-      expect(page).to have_content(
-        Regexp.new(
-          /#{veteran_b.name} #{veteran_b.ssn} 1/,
-          /#{request_issue_b.decision_date.strftime("%m\/%d\/%y")} Higher-Level Review/
-        )
-      )
+      expect(page).to have_content(search_box_label)
     end
   end
 end
