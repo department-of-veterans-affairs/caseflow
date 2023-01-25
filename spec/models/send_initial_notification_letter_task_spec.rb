@@ -32,7 +32,7 @@ describe SendInitialNotificationLetterTask do
       [
         Constants.TASK_ACTIONS.MARK_TASK_AS_COMPLETE_CC.to_h,
         Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_CC.to_h,
-        Constants.TASK_ACTIONS.CANCEL_FINAL_NOTIFICATION_LETTER_TASK.to_h
+        Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_TASK.to_h
       ]
     end
 
