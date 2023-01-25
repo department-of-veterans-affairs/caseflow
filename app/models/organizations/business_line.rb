@@ -111,9 +111,10 @@ class BusinessLine < Organization
     # This is Postgres specific since it uses CONCAT vs ||
     def claimant_name
       "COALESCE(NULLIF(CASE "\
-      "WHEN veteran_is_not_claimant THEN COALESCE(NULLIF("\
-        "CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '), "\
-        "NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' ')) "\
+      "WHEN veteran_is_not_claimant THEN COALESCE("\
+        "NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '), "\
+        "NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '), "\
+        "bgs_attorneys.name) "\
       "ELSE CONCAT(veterans.first_name, ' ', veterans.last_name) "\
       "END, ' '), 'claimant')"
     end
@@ -159,6 +160,10 @@ class BusinessLine < Organization
       "LEFT JOIN people ON claimants.participant_id = people.participant_id"
     end
 
+    def bgs_attorneys_join
+      "LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id"
+    end
+
     # The NUMBER_OF_SEARCH_FIELDS constant reflects the number of searchable fields here for where interpolation later
     def search_all_clause
       if query_params[:search_query].present?
@@ -172,7 +177,7 @@ class BusinessLine < Organization
     def group_by_columns
       "tasks.id, veterans.participant_id, veterans.first_name, veterans.last_name, "\
       "unrecognized_party_details.name, unrecognized_party_details.last_name, people.first_name, people.last_name, "\
-      "veteran_is_not_claimant"
+      "veteran_is_not_claimant, bgs_attorneys.name"
     end
 
     # Uses an array to insert the searched text into all of the searchable fields since it's the same text for all
@@ -215,6 +220,7 @@ class BusinessLine < Organization
         .joins(people_join)
         .joins(unrecognized_appellants_join)
         .joins(party_details_join)
+        .joins(bgs_attorneys_join)
         .where(board_grant_effectuation_task_constraints)
         .where(search_all_clause, *search_values)
         .group(group_by_columns)
@@ -230,6 +236,7 @@ class BusinessLine < Organization
         .joins(people_join)
         .joins(unrecognized_appellants_join)
         .joins(party_details_join)
+        .joins(bgs_attorneys_join)
         .where(query_constaints)
         .where(search_all_clause, *search_values)
         .group(group_by_columns)
