@@ -129,7 +129,7 @@ group :development do
   gem "anbt-sql-formatter"
   gem "bummr", require: false
   gem "debase"
-  gem 'debase-ruby_core_source', '~> 0.10.14'
+  gem "debase-ruby_core_source", "~> 0.10.14"
   gem "derailed_benchmarks"
   gem "dotenv-rails"
   gem "fasterer", require: false
@@ -141,7 +141,7 @@ group :development do
 end
 
 group :test do
-  gem "knapsack_pro"
+  gem "knapsack_pro", "2.8.0"
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
   gem "webmock"

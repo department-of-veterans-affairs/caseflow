@@ -374,7 +374,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
-    knapsack_pro (3.7.0)
+    knapsack_pro (2.8.0)
       rake
     kramdown (2.4.0)
       rexml
@@ -768,7 +768,7 @@ DEPENDENCIES
   jshint
   json_schemer (~> 0.2.16)
   kaminari
-  knapsack_pro
+  knapsack_pro (= 2.8.0)
   logstasher
   meta_request
   moment_timezone-rails
