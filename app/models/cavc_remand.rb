@@ -21,7 +21,7 @@ class CavcRemand < CaseflowRecord
   validates :federal_circuit, inclusion: { in: [true, false] }, if: -> { remand? && mdr? }
 
   before_create :normalize_cavc_docket_number
-  before_create :establish_appeal_stream, if: :cavc_remand_form_complete? && !CAVC_DECISION_TYPES.other_dismissal && !CAVC_DECISION_TYPES.affirmed && !CAVC_DECISION_TYPES.settlement
+  before_create :establish_appeal_stream, if: :cavc_remand_form_complete? && !Constants.CAVC_DECISION_TYPES.other_dismissal && !Constants.CAVC_DECISION_TYPES.affirmed && !Constants.CAVC_DECISION_TYPES.settlement
   after_create :initialize_tasks
 
   enum cavc_decision_type: {
