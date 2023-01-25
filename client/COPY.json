@@ -193,6 +193,7 @@
   "CC_BADGE_TOOLTIP": "This is a Contested Claim and needs to be\nprocessed by the Specialty Case team. Please\n include all parties and POA in correspondence.",
   "JMR_SELECTION_ISSUE_INFO_BANNER": "For a JMR you must select all issues to proceed",
   "JMPR_SELECTION_ISSUE_INFO_BANNER": "For a JMPR you must select at least one issue to proceed",
+  "JMR_JMPR_SELECTION_ISSUE_INFO_BANNER": "For a JMR/JMPR you must select at least one issue to proceed",
   "MDR_SELECTION_ISSUE_INFO_BANNER": "For a MDR you must select at least one issue to proceed",
   "MDR_SELECTION_ALERT_BANNER": "Choosing MDR will set a 90-day hold on this case starting from the Court's decision date listed above. The hold is to wait for the Court's judgement and mandate dates. This remand case will be accessible in your organization's Assigned tab and will return to the team's Unassigned tab when the 90 days are over or the hold is manually ended, at which point the judgement and mandate dates can be entered.",
   "CAVC_REMAND_NO_MANDATE_TEXT": "This task will be put on hold for 90 days to wait for the Court's judgement and mandate dates. This case will be accessible in the Assigned tab and will return to the team's Unassigned tab when the 90 days has passed.",

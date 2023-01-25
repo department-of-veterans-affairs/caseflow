@@ -11,6 +11,11 @@ export const JmrIssuesBanner = React.memo(() => (
     {COPY.JMR_SELECTION_ISSUE_INFO_BANNER}
   </Alert>
 ));
+export const JmrJmprIssuesBanner = React.memo(() => (
+  <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
+    {COPY.JMR_JMPR_SELECTION_ISSUE_INFO_BANNER}
+  </Alert>
+));
 export const JmprIssuesBanner = React.memo(() => (
   <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
     {COPY.JMPR_SELECTION_ISSUE_INFO_BANNER}
