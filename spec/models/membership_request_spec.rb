@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 describe MembershipRequest do
-
   describe "#save" do
-
     let(:requestor) { create(:user) }
     let(:decisioner) { create(:user) }
     let(:organization) { create(:organization) }
@@ -14,7 +12,6 @@ describe MembershipRequest do
         requested_by: requestor.id
       }
     end
-
 
     context "when closed_by and closed_at is not present" do
       let(:membership_request) { MembershipRequest.new(valid_params) }
@@ -28,7 +25,6 @@ describe MembershipRequest do
     end
 
     context "when closed_by and closed_at is present" do
-
       let(:decisioner_params) do
         {
           closed_by: decisioner.id,

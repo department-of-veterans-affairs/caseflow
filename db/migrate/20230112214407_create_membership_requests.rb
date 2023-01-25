@@ -5,7 +5,7 @@ class CreateMembershipRequests < ActiveRecord::Migration[5.2]
     create_table :membership_requests do |t|
       t.integer :requested_by, index: true
       t.references :organization
-      t.string :status, null: false, default: 'assigned'
+      t.string :status, null: false, default: "assigned"
       t.integer :closed_by, null: true
       t.datetime :closed_at
 
