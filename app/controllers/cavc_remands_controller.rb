@@ -100,6 +100,10 @@ class CavcRemandsController < ApplicationController
       end
     when Constants.CAVC_DECISION_TYPES.straight_reversal, Constants.CAVC_DECISION_TYPES.death_dismissal
       REMAND_REQUIRED_PARAMS
+    when Constants.CAVC_DECISION_TYPES.other_dismissal, Constants.CAVC_DECISION_TYPES.affirmed, Constants.CAVC_DECISION_TYPES.settlement
+      REMAND_REQUIRED_PARAMS
+    else
+      REMAND_REQUIRED_PARAMS
     end
   end
 end
