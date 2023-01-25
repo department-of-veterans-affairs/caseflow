@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_23_181303) do
+ActiveRecord::Schema.define(version: 2023_01_24_154656) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -356,6 +356,15 @@ ActiveRecord::Schema.define(version: 2023_01_23_181303) do
     t.bigint "updated_by_id", comment: "User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
     t.index ["remand_appeal_id"], name: "index_cavc_remands_on_remand_appeal_id"
     t.index ["source_appeal_id"], name: "index_cavc_remands_on_source_appeal_id"
+  end
+
+  create_table "cavc_selection_bases", force: :cascade do |t|
+    t.string "basis_for_selection"
+    t.string "category"
+    t.datetime "created_at"
+    t.bigint "created_by"
+    t.datetime "updated_at"
+    t.bigint "updated_by"
   end
 
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
@@ -1159,7 +1168,7 @@ ActiveRecord::Schema.define(version: 2023_01_23_181303) do
     t.string "appeals_type", null: false, comment: "Type of Appeal"
     t.datetime "created_at", comment: "Timestamp of when Noticiation was Created"
     t.boolean "email_enabled", default: true, null: false
-    t.string "email_notification_content", comment: "Full Email Text Content of Notification"
+    t.text "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
@@ -1170,7 +1179,7 @@ ActiveRecord::Schema.define(version: 2023_01_23_181303) do
     t.string "participant_id", comment: "ID of Participant"
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
-    t.string "sms_notification_content", comment: "Full SMS Text Content of Notification"
+    t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
     t.string "sms_notification_external_id"
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"

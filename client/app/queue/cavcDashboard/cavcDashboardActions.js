@@ -8,6 +8,13 @@ export const fetchCavcDecisionReasons = () => (dispatch) => {
   }));
 };
 
+export const fetchCavcSelectionBases = () => (dispatch) => {
+  ApiUtil.get('/cavc_dashboard/cavc_selection_bases').then((response) => dispatch({
+    type: ACTIONS.FETCH_CAVC_SELECTION_BASES,
+    payload: { selection_bases: response.body }
+  }));
+};
+
 export const fetchInitialDashboardData = (appealId) => (dispatch) => {
   ApiUtil.
     get(`/cavc_dashboard/${appealId}`, { headers: { accept: 'application/json' } }).

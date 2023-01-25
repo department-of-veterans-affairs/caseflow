@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { fetchAppealDetails } from '../QueueActions';
-import { fetchCavcDecisionReasons, fetchInitialDashboardData } from './cavcDashboardActions';
+import { fetchCavcDecisionReasons, fetchInitialDashboardData, fetchCavcSelectionBases } from './cavcDashboardActions';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
@@ -22,6 +22,7 @@ export const CavcDashboard = (props) => {
     const loadPromise = Promise.all([
       props.fetchAppealDetails(appealId),
       props.fetchCavcDecisionReasons(),
+      props.fetchCavcSelectionBases(),
       props.fetchInitialDashboardData(appealId)
     ]);
 
@@ -65,6 +66,7 @@ CavcDashboard.propTypes = {
   appealDetails: PropTypes.object,
   fetchAppealDetails: PropTypes.func,
   fetchCavcDecisionReasons: PropTypes.func,
+  fetchCavcSelectionBases: PropTypes.func,
   fetchInitialDashboardData: PropTypes.func
 };
 
@@ -83,6 +85,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators({
     fetchAppealDetails,
     fetchCavcDecisionReasons,
+    fetchCavcSelectionBases,
     fetchInitialDashboardData
   }, dispatch);
 

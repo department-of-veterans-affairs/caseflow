@@ -290,6 +290,7 @@ Rails.application.routes.draw do
   # requests to CAVC Dashboard that don't require an appeal_id should go here
   scope path: "/cavc_dashboard" do
     get "/cavc_decision_reasons", to: "cavc_dashboard#cavc_decision_reasons"
+    get "/cavc_selection_bases", to: "cavc_dashboard#cavc_selection_bases"
   end
 
   # allow requests for CAVC Dashboard to go through /cavc_dashboard/:appeal_id/* to declutter the queue path above
