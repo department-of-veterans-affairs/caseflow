@@ -1086,14 +1086,14 @@ ActiveRecord::Schema.define(version: 2023_01_12_214407) do
 
   create_table "membership_requests", force: :cascade do |t|
     t.datetime "closed_at"
-    t.integer "closed_by_user_id"
+    t.integer "closed_by"
     t.datetime "created_at", null: false
     t.bigint "organization_id"
-    t.string "status", null: false
+    t.integer "requested_by"
+    t.string "status", default: "assigned", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id"
     t.index ["organization_id"], name: "index_membership_requests_on_organization_id"
-    t.index ["user_id"], name: "index_membership_requests_on_user_id"
+    t.index ["requested_by"], name: "index_membership_requests_on_requested_by"
   end
 
   create_table "messages", force: :cascade do |t|
