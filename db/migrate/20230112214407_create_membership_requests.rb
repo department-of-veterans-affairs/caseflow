@@ -6,8 +6,8 @@ class CreateMembershipRequests < ActiveRecord::Migration[5.2]
       t.references :user
       t.references :organization
       t.string :status, null: false
-      t.string :closed_by_user_id, null: true
-      t.datetime :closed_at_datetime
+      t.integer :closed_by_user_id, null: true
+      t.datetime :closed_at
 
       t.timestamps
     end
