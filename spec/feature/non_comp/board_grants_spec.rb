@@ -2,7 +2,10 @@
 
 feature "NonComp Board Grant Task Page", :postgres do
   before do
+    User.stub = user
+    nca_org.add_user(user)
     Timecop.freeze(post_ama_start_date)
+    FeatureToggle.enable!(:decision_review_queue_ssn_column)
   end
 
   def submit_form
@@ -44,10 +47,12 @@ feature "NonComp Board Grant Task Page", :postgres do
 
   let(:business_line_url) { "decision_reviews/nca" }
   let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
-
-  before do
-    User.stub = user
-    nca_org.add_user(user)
+  let(:vet_id_column_value) do
+    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
+      appeal.veteran.ssn
+    else
+      appeal.veteran.participant_id
+    end
   end
 
   scenario "cancel returns back to business line" do
@@ -76,7 +81,7 @@ feature "NonComp Board Grant Task Page", :postgres do
     expect(page).to have_content("Decision Completed")
     # should redirect to business line's completed tab
     expect(page.current_path).to eq "/#{business_line_url}"
-    expect(page).to have_content(appeal.veteran.ssn)
+    expect(page).to have_content(vet_id_column_value)
     in_progress_task.reload
     expect(in_progress_task.status).to eq("completed")
     expect(in_progress_task.closed_at).to eq(Time.zone.now)
@@ -88,6 +93,8 @@ feature "NonComp Board Grant Task Page", :postgres do
     expect(page).not_to have_css("[id='isEffectuated'][disabled]")
     expect(page).not_to have_button("Complete")
   end
+
+
 
   context "when there is an error saving" do
     scenario "Shows an error when something goes wrong" do
