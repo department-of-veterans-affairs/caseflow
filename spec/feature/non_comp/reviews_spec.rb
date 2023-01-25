@@ -161,10 +161,10 @@ feature "NonComp Reviews Queue", :postgres do
     before { FeatureToggle.enable!(:decision_review_queue_ssn_column) }
     after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
 
-    # let(:vet_id_column_header) { "Veteran SSN" }
-    # let(:vet_a_vet_id_column_value_ssn) { veteran_a.ssn }
-    # let(:vet_b_vet_id_column_value_ssn) { veteran_b.ssn }
-    # let(:vet_c_vet_id_column_value_ssn) { veteran_c.ssn }
+    let(:vet_id_column_header) { "Veteran SSN" }
+    let(:vet_a_vet_id_column_value) { veteran_a.ssn }
+    let(:vet_b_vet_id_column_value) { veteran_b.ssn }
+    let(:vet_c_vet_id_column_value) { veteran_c.ssn }
 
     scenario "displays tasks page" do
       visit "decision_reviews/nco"
@@ -179,9 +179,10 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content(veteran_a.name)
       expect(page).to have_content(veteran_b.name)
       expect(page).to have_content(veteran_c.name)
-      expect(page).to have_content(veteran_a.ssn)
-      expect(page).to have_content(veteran_b.ssn)
-      expect(page).to have_content(veteran_c.ssn)
+      expect(page).to have_content(vet_id_column_header)
+      expect(page).to have_content(vet_a_vet_id_column_value)
+      expect(page).to have_content(vet_b_vet_id_column_value)
+      expect(page).to have_content(vet_c_vet_id_column_value)
 
       # ordered by assigned_at descending
 
