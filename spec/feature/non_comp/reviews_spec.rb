@@ -62,6 +62,38 @@ feature "NonComp Reviews Queue", :postgres do
 
   let(:search_box_label) { "Search by Claimant Name, Veteran Participant ID, File Number or SSN" }
 
+  let(:vet_id_column_header) do
+    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
+      "Veteran SSN"
+    else
+      "Veteran Participant Id"
+    end
+  end
+
+  let(:vet_a_id_column_value) do
+    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
+      veteran_a.ssn
+    else
+      veteran_a.participant_id
+    end
+  end
+
+  let(:vet_b_id_column_value) do
+    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
+      veteran_b.ssn
+    else
+      veteran_b.participant_id
+    end
+  end
+
+  let(:vet_c_id_column_value) do
+    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
+      veteran_c.ssn
+    else
+      veteran_c.participant_id
+    end
+  end
+
   before do
     User.stub = user
     non_comp_org.add_user(user)
@@ -69,11 +101,6 @@ feature "NonComp Reviews Queue", :postgres do
   end
 
   context "with an existing organization" do
-    let(:vet_id_column_header) { "Veteran Participant Id" }
-    let(:vet_a_vet_id_column_value) { veteran_a.participant_id }
-    let(:vet_b_vet_id_column_value) { veteran_b.participant_id }
-    let(:vet_c_vet_id_column_value) { veteran_c.participant_id }
-
     after { FeatureToggle.disable!(:board_grant_effectuation_task) }
 
     scenario "displays tasks page with decision_review_queue_ssn_column feature toggle disabled" do
@@ -90,9 +117,9 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content(veteran_b.name)
       expect(page).to have_content(veteran_c.name)
       expect(page).to have_content(vet_id_column_header)
-      expect(page).to have_content(vet_a_vet_id_column_value)
-      expect(page).to have_content(vet_b_vet_id_column_value)
-      expect(page).to have_content(vet_c_vet_id_column_value)
+      expect(page).to have_content(vet_a_id_column_value)
+      expect(page).to have_content(vet_b_id_column_value)
+      expect(page).to have_content(vet_c_id_column_value)
       expect(page).not_to have_content(search_box_label)
 
       # ordered by assigned_at descending
@@ -108,7 +135,7 @@ feature "NonComp Reviews Queue", :postgres do
       # ordered by closed_at descending
       expect(page).to have_content(
         Regexp.new(
-          /#{veteran_b.name} #{vet_b_vet_id_column_value} 1/,
+          /#{veteran_b.name} #{vet_b_id_column_value} 1/,
           /#{request_issue_b.decision_date.strftime("%m\/%d\/%y")} Higher-Level Review/
         )
       )
@@ -129,9 +156,9 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content(veteran_b.name)
         expect(page).to have_content(veteran_c.name)
         expect(page).to have_content(vet_id_column_header)
-        expect(page).to have_content(vet_a_vet_id_column_value)
-        expect(page).to have_content(vet_b_vet_id_column_value)
-        expect(page).to have_content(vet_c_vet_id_column_value)
+        expect(page).to have_content(vet_a_id_column_value)
+        expect(page).to have_content(vet_b_id_column_value)
+        expect(page).to have_content(vet_c_id_column_value)
         expect(page).not_to have_content(search_box_label)
 
         click_on veteran_a.name
@@ -166,17 +193,12 @@ feature "NonComp Reviews Queue", :postgres do
     before { FeatureToggle.enable!(:decision_review_queue_ssn_column) }
     after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
 
-    let(:vet_id_column_header) { "Veteran SSN" }
-    let(:vet_a_vet_id_column_value) { veteran_a.ssn }
-    let(:vet_b_vet_id_column_value) { veteran_b.ssn }
-    let(:vet_c_vet_id_column_value) { veteran_c.ssn }
-
     scenario "displays tasks page" do
       visit "decision_reviews/nco"
       expect(page).to have_content(vet_id_column_header)
-      expect(page).to have_content(vet_a_vet_id_column_value)
-      expect(page).to have_content(vet_b_vet_id_column_value)
-      expect(page).to have_content(vet_c_vet_id_column_value)
+      expect(page).to have_content(vet_a_id_column_value)
+      expect(page).to have_content(vet_b_id_column_value)
+      expect(page).to have_content(vet_c_id_column_value)
       expect(page).to have_content(search_box_label)
     end
   end
