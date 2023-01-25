@@ -12,6 +12,7 @@ import ReaderHelp from './components/ReaderHelp';
 import DispatchHelp from './components/DispatchHelp';
 import IntakeHelp from './components/IntakeHelp';
 import QueueHelp from './components/QueueHelp';
+import VhaHelp from './components/VhaHelp';
 
 class Help extends React.PureComponent {
 
@@ -62,6 +63,10 @@ class Help extends React.PureComponent {
               path="/queue/help"
               title="Queue Help"
               component={QueueHelp} />
+            <PageRoute exact
+              path="/vha/help"
+              title="Vha Help"
+              component={VhaHelp} />
           </div>
         </AppFrame>
         <Footer
