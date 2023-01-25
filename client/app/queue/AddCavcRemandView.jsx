@@ -152,11 +152,19 @@ const AddCavcRemandView = (props) => {
   const affirmedType = () => type === CAVC_DECISION_TYPES.affirmed;
   const settlementType = () => type === CAVC_DECISION_TYPES.settlement;
 
-
   const jmrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmr;
   const jmprSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmpr;
   const mdrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.mdr;
   const mandateAvailable = () => !mdrSubtype() && (isMandateProvided === 'true');
+
+  // update isMandateSame when new decision types are chosen. Previous functionality remains if old types are checked
+  useEffect(() => {
+    if (otherDismissalType() || affirmedType() || settlementType()) {
+      setMandateSame(false);
+    } else {
+      setMandateSame(true);
+    }
+  }, [type]);
 
   // We accept ‐ HYPHEN, - Hyphen-minus, − MINUS SIGN, – EN DASH, — EM DASH
   const validDocketNumber = () => (/^\d{2}[-‐−–—]\d{1,5}$/).exec(docketNumber);
