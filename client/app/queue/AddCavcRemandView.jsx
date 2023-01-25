@@ -9,6 +9,7 @@ import CAVC_JUDGE_FULL_NAMES from '../../constants/CAVC_JUDGE_FULL_NAMES';
 import CAVC_REMAND_SUBTYPES from '../../constants/CAVC_REMAND_SUBTYPES';
 import CAVC_REMAND_SUBTYPE_NAMES from '../../constants/CAVC_REMAND_SUBTYPE_NAMES';
 import CAVC_DECISION_TYPES from '../../constants/CAVC_DECISION_TYPES';
+import CAVC_DECISION_TYPE_NAMES from '../../constants/CAVC_DECISION_TYPE_NAMES';
 
 import QueueFlowPage from './components/QueueFlowPage';
 import { requestSave, showErrorMessage } from './uiReducer/uiActions';
@@ -21,7 +22,7 @@ import CheckboxGroup from '../components/CheckboxGroup';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
 import SearchableDropdown from '../components/SearchableDropdown';
-import StringUtil from '../util/StringUtil';
+// import StringUtil from '../util/StringUtil';
 import Alert from '../components/Alert';
 import { withRouter } from 'react-router';
 
@@ -42,8 +43,8 @@ const attorneyOptions = [
     value: '2' },
 ];
 
-const typeOptions = _.map(_.keys(CAVC_DECISION_TYPES), (key) => ({
-  displayText: StringUtil.snakeCaseToCapitalized(key),
+const typeOptions = _.map(_.keys(CAVC_DECISION_TYPE_NAMES), (key) => ({
+  displayText: CAVC_DECISION_TYPE_NAMES[key],
   value: key
 }));
 
