@@ -127,7 +127,7 @@ describe VANotifyStatusUpdateJob, type: :job do
       email_and_sms.sms_notification_external_id = SecureRandom.uuid
       email_and_sms.email_notification_external_id = SecureRandom.uuid
       allow(job).to receive(:notifications_not_processed).and_return([email_and_sms])
-      allow(VANotifyService).to receive(:get_status).and_return(HTTPI::Response.new(404, [], ""))
+      allow(VANotifyService).to receive(:get_status).and_return(HTTPI::Response.new(404, {}, OpenStruct.new()))
       expect(job).to receive(:log_error).with(/VA Notify API returned error/)
       job.perform_now
     end

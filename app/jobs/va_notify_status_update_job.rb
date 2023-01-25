@@ -1,13 +1,4 @@
 # frozen_string_literal: true
-class VANotifyStandardError < StandardError
-  def initialize(notification_id, message = "Notification ID: ")
-    super(message + notification_id + " not found")
-  end
-
-  def status
-    "No notification id"
-  end
-end
 class VANotifyStatusUpdateJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
@@ -121,23 +112,22 @@ class VANotifyStatusUpdateJob < CaseflowJob
   #
   # Retuns: Return a hash of attributes that need to be updated on the notification record
   def get_current_status(notification_id, type)
-    begin
       response = VANotifyService.get_status(notification_id)
       if response.code == 200
         if type == "Email"
           { "email_notification_status" => response.body["status"], "recipient_email" => response.body["email_address"] }
         elsif type == "SMS"
           { "sms_notification_status" => response.body["status"], "recipient_phone_number" => response.body["phone_number"] }
+        else
+          message = "Type neither email nor sms"
+          log_error("VA Notify API returned error for notificiation " + notification_id + " with type " + type)
+          Raven.capture_exception(type, extra: { error_uuid: error_uuid, message: message })
         end
-      else
-        fail VANotifyStandardError
+      elsif response.code != 200
+        log_error("VA Notify API returned error for notification " + notification_id + " with response code #{response.code}: #{response.body.message}")
+        Raven.capture_exception(response.body.error, extra: { error_uuid: error_uuid })
+        nil
       end
-    rescue VANotifyStandardError => error
-      error_uuid = SecureRandom.uuid
-      log_error("VA Notify API returned error for notification " + notification_id + " with response " + response.code + " " + response.message)
-      Raven.capture_exception(error, extra: { error_uuid: error_uuid })
-      nil
-    end
   end
 
   # Description: Method that will update the notification record values
@@ -152,4 +142,8 @@ class VANotifyStatusUpdateJob < CaseflowJob
       notification_audit_record[key] = value
     end
   end
+end
+
+def error_uuid
+  @error_uuid ||= SecureRandom.uuid
 end
