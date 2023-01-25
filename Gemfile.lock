@@ -230,7 +230,7 @@ GEM
     dead_end (4.0.0)
     debase (0.2.4.1)
       debase-ruby_core_source (>= 0.10.2)
-    debase-ruby_core_source (3.2.0)
+    debase-ruby_core_source (0.10.18)
     derailed_benchmarks (2.1.2)
       benchmark-ips (~> 2)
       dead_end
@@ -749,6 +749,7 @@ DEPENDENCIES
   database_cleaner (= 1.7.0)
   ddtrace (= 0.34.1)
   debase
+  debase-ruby_core_source (~> 0.10.14)
   derailed_benchmarks
   dogstatsd-ruby
   dotenv-rails

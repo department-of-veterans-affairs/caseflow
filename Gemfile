@@ -129,6 +129,7 @@ group :development do
   gem "anbt-sql-formatter"
   gem "bummr", require: false
   gem "debase"
+  gem 'debase-ruby_core_source', '~> 0.10.14'
   gem "derailed_benchmarks"
   gem "dotenv-rails"
   gem "fasterer", require: false
