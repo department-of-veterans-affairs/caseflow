@@ -1,75 +1,80 @@
 # frozen_string_literal: true
 
 feature "NonComp Reviews Queue", :postgres do
+  let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+  let(:user) { create(:default_user) }
+
+  let(:veteran_a) { create(:veteran, first_name: "Aaa") }
+  let(:veteran_b) { create(:veteran, first_name: "Bbb") }
+  let(:veteran_c) { create(:veteran, first_name: "Ccc") }
+  let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
+  let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
+  let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
+  let(:appeal) { create(:appeal, veteran: veteran_c) }
+
+  let!(:request_issue_a) { create(:request_issue, :rating, decision_review: hlr_a) }
+  let!(:request_issue_b) { create(:request_issue, :rating, decision_review: hlr_b) }
+  let!(:request_issue_c) { create(:request_issue, :rating, :removed, decision_review: hlr_c) }
+  let!(:request_issue_d) { create(:request_issue, :rating, decision_review: appeal, closed_at: 1.day.ago) }
+
+  let(:today) { Time.zone.now }
+  let(:last_week) { Time.zone.now - 7.days }
+
+  let!(:completed_tasks) do
+    [
+      create(:higher_level_review_task,
+             :completed,
+             appeal: hlr_a,
+             assigned_to: non_comp_org,
+             closed_at: last_week),
+      create(:higher_level_review_task,
+             :completed,
+             appeal: hlr_b,
+             assigned_to: non_comp_org,
+             closed_at: today)
+    ]
+  end
+
+  let!(:in_progress_tasks) do
+    [
+      create(:higher_level_review_task,
+             :in_progress,
+             appeal: hlr_a,
+             assigned_to: non_comp_org,
+             assigned_at: last_week),
+      create(:higher_level_review_task,
+             :in_progress,
+             appeal: hlr_b,
+             assigned_to: non_comp_org,
+             assigned_at: today),
+      create(:higher_level_review_task,
+             :in_progress,
+             appeal: hlr_c,
+             assigned_to: non_comp_org,
+             assigned_at: today),
+      create(:board_grant_effectuation_task,
+             :in_progress,
+             appeal: appeal,
+             assigned_to: non_comp_org,
+             assigned_at: 1.day.ago)
+    ]
+  end
+
+  let(:vet_id_column_header) { "Veteran Participant Id" }
+  let(:vet_a_vet_id_column_value) { veteran_a.participant_id }
+  let(:vet_b_vet_id_column_value) { veteran_b.participant_id }
+  let(:vet_c_vet_id_column_value) { veteran_c.participant_id }
+
+  before do
+    User.stub = user
+    non_comp_org.add_user(user)
+    FeatureToggle.enable!(:board_grant_effectuation_task)
+  end
+
   context "with an existing organization" do
-    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
-    let(:user) { create(:default_user) }
-
-    let(:veteran_a) { create(:veteran, first_name: "Aaa") }
-    let(:veteran_b) { create(:veteran, first_name: "Bbb") }
-    let(:veteran_c) { create(:veteran, first_name: "Ccc") }
-    let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
-    let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
-    let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
-    let(:appeal) { create(:appeal, veteran: veteran_c) }
-
-    let!(:request_issue_a) { create(:request_issue, :rating, decision_review: hlr_a) }
-    let!(:request_issue_b) { create(:request_issue, :rating, decision_review: hlr_b) }
-    let!(:request_issue_c) { create(:request_issue, :rating, :removed, decision_review: hlr_c) }
-    let!(:request_issue_d) { create(:request_issue, :rating, decision_review: appeal, closed_at: 1.day.ago) }
-
-    let(:today) { Time.zone.now }
-    let(:last_week) { Time.zone.now - 7.days }
-
-    let!(:completed_tasks) do
-      [
-        create(:higher_level_review_task,
-               :completed,
-               appeal: hlr_a,
-               assigned_to: non_comp_org,
-               closed_at: last_week),
-        create(:higher_level_review_task,
-               :completed,
-               appeal: hlr_b,
-               assigned_to: non_comp_org,
-               closed_at: today)
-      ]
-    end
-
-    let!(:in_progress_tasks) do
-      [
-        create(:higher_level_review_task,
-               :in_progress,
-               appeal: hlr_a,
-               assigned_to: non_comp_org,
-               assigned_at: last_week),
-        create(:higher_level_review_task,
-               :in_progress,
-               appeal: hlr_b,
-               assigned_to: non_comp_org,
-               assigned_at: today),
-        create(:higher_level_review_task,
-               :in_progress,
-               appeal: hlr_c,
-               assigned_to: non_comp_org,
-               assigned_at: today),
-        create(:board_grant_effectuation_task,
-               :in_progress,
-               appeal: appeal,
-               assigned_to: non_comp_org,
-               assigned_at: 1.day.ago)
-      ]
-    end
-
-    before do
-      User.stub = user
-      non_comp_org.add_user(user)
-      FeatureToggle.enable!(:board_grant_effectuation_task)
-    end
-
     after { FeatureToggle.disable!(:board_grant_effectuation_task) }
 
-    scenario "displays tasks page" do
+    scenario "displays tasks page with decision_review_queue_ssn_column feature toggle disabled" do
       visit "decision_reviews/nco"
       expect(page).to have_content("Non-Comp Org")
       expect(page).to have_content("In progress tasks")
@@ -82,9 +87,10 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content(veteran_a.name)
       expect(page).to have_content(veteran_b.name)
       expect(page).to have_content(veteran_c.name)
-      expect(page).to have_content(veteran_a.participant_id)
-      expect(page).to have_content(veteran_b.participant_id)
-      expect(page).to have_content(veteran_c.participant_id)
+      expect(page).to have_content(vet_id_column_header)
+      expect(page).to have_content(vet_a_vet_id_column_value)
+      expect(page).to have_content(vet_b_vet_id_column_value)
+      expect(page).to have_content(vet_c_vet_id_column_value)
 
       # ordered by assigned_at descending
 
@@ -99,7 +105,7 @@ feature "NonComp Reviews Queue", :postgres do
       # ordered by closed_at descending
       expect(page).to have_content(
         Regexp.new(
-          /#{veteran_b.name} #{veteran_b.participant_id} 1/,
+          /#{veteran_b.name} #{vet_b_vet_id_column_value} 1/,
           /#{request_issue_b.decision_date.strftime("%m\/%d\/%y")} Higher-Level Review/
         )
       )
@@ -119,9 +125,9 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content(veteran_a.name)
         expect(page).to have_content(veteran_b.name)
         expect(page).to have_content(veteran_c.name)
-        expect(page).to have_content(veteran_a.participant_id)
-        expect(page).to have_content(veteran_b.participant_id)
-        expect(page).to have_content(veteran_c.participant_id)
+        expect(page).to have_content(vet_a_vet_id_column_value)
+        expect(page).to have_content(vet_b_vet_id_column_value)
+        expect(page).to have_content(vet_c_vet_id_column_value)
 
         click_on veteran_a.name
         expect(page).to have_content("Form created by")
@@ -152,57 +158,13 @@ feature "NonComp Reviews Queue", :postgres do
   end
 
   context "with decision_review_queue_ssn_column feature toggle enabled" do
-    before FeatureToggle.enable!(:decision_review_queue_ssn_column)
-    after FeatureToggle.disable!(:decision_review_queue_ssn_column)
+    before { FeatureToggle.enable!(:decision_review_queue_ssn_column) }
+    after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
 
-    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
-    let(:user) { create(:default_user) }
-
-    let(:veteran_a) { create(:veteran, first_name: "Aaa") }
-    let(:veteran_b) { create(:veteran, first_name: "Bbb") }
-    let(:veteran_c) { create(:veteran, first_name: "Ccc") }
-    let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
-    let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
-    let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
-    let(:appeal) { create(:appeal, veteran: veteran_c) }
-
-    let!(:request_issue_a) { create(:request_issue, :rating, decision_review: hlr_a) }
-    let!(:request_issue_b) { create(:request_issue, :rating, decision_review: hlr_b) }
-    let!(:request_issue_c) { create(:request_issue, :rating, :removed, decision_review: hlr_c) }
-    let!(:request_issue_d) { create(:request_issue, :rating, decision_review: appeal, closed_at: 1.day.ago) }
-
-    let(:today) { Time.zone.now }
-    let(:last_week) { Time.zone.now - 7.days }
-
-    let!(:completed_tasks) do
-      [
-        create(:higher_level_review_task,
-               :completed,
-               appeal: hlr_a,
-               assigned_to: non_comp_org,
-               closed_at: last_week),
-        create(:higher_level_review_task,
-               :completed,
-               appeal: hlr_b,
-               assigned_to: non_comp_org,
-               closed_at: today)
-      ]
-    end
-
-    let!(:in_progress_tasks) do
-      [
-        create(:higher_level_review_task,
-               :completed,
-               appeal: hlr_a,
-               assigned_to: non_comp_org,
-               closed_at: last_week),
-        create(:higher_level_review_task,
-               :completed,
-               appeal: hlr_b,
-               assigned_to: non_comp_org,
-               closed_at: today)
-      ]
-    end
+    # let(:vet_id_column_header) { "Veteran SSN" }
+    # let(:vet_a_vet_id_column_value_ssn) { veteran_a.ssn }
+    # let(:vet_b_vet_id_column_value_ssn) { veteran_b.ssn }
+    # let(:vet_c_vet_id_column_value_ssn) { veteran_c.ssn }
 
     scenario "displays tasks page" do
       visit "decision_reviews/nco"
