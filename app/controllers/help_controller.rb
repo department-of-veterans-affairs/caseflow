@@ -5,7 +5,7 @@ class HelpController < ApplicationController
 
   def feature_toggle_ui_hash
     {
-      vhaProgramOfficeRequests: FeatureToggle.enabled?(:vhaProgramOfficeRequests, user: current_user)
+      programOfficeTeamManagement: FeatureToggle.enabled?(:program_office_team_management, user: current_user)
     }
   end
   helper_method :feature_toggle_ui_hash
