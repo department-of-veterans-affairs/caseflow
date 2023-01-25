@@ -5,12 +5,8 @@ import { combineReducers } from 'redux';
 
 export const initialState = {
   featureToggles: {},
-  userRole: '',
-  userCssId: '',
-  userInfo: null,
   userOrganizations: [],
-  feedbackUrl: '#',
-  loadedUserId: null,
+  organizationMembershipRequests: [],
 };
 
 const helpReducer = (state = initialState, action = {}) => {
