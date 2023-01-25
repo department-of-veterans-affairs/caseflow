@@ -94,8 +94,6 @@ feature "NonComp Board Grant Task Page", :postgres do
     expect(page).not_to have_button("Complete")
   end
 
-
-
   context "when there is an error saving" do
     scenario "Shows an error when something goes wrong" do
       visit dispositions_url
