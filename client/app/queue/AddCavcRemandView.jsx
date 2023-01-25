@@ -22,7 +22,6 @@ import CheckboxGroup from '../components/CheckboxGroup';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
 import SearchableDropdown from '../components/SearchableDropdown';
-// import StringUtil from '../util/StringUtil';
 import Alert from '../components/Alert';
 import { withRouter } from 'react-router';
 
