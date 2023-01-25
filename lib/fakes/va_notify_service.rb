@@ -110,57 +110,45 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
 
     # rubocop:disable Metrics/MethodLength
     def fake_status_response(notification_id)
-      # puts notification_id == "000000"
-      if notification_id != "000000"
-        HTTPI::Response.new(
-          200,
-          {},
-          OpenStruct.new(
-            "id": notification_id,
-            "body": "string",
-            "completed_at": "2022-08-08T16:20:50.090Z",
-            "created_at": "2022-08-08T16:20:50.090Z",
-            "created_by_name": "string",
-            "email_address": "user@example.com",
-            "line_1": "string",
-            "line_2": "string",
-            "line_3": "string",
-            "line_4": "string",
-            "line_5": "string",
-            "line_6": "string",
-            "phone_number": "+16502532222",
-            "postage": "string",
-            "postcode": "string",
-            "recipient_identifiers": [
-              {
-                "id_type" => "VAPROFILEID",
-                "id_value" => "string"
-              }
-            ],
-            "reference": "string",
-            "scheduled_for": "2022-08-08T16:20:50.090Z",
-            "sent_at": "2022-08-08T16:20:50.090Z",
-            "sent_by": "string",
-            "status": "created",
-            "subject": "string",
-            "template": {
-              "id" => "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-              "uri" => "string",
-              "version" => 0
-            },
-            "type" => "email"
-          )
+      HTTPI::Response.new(
+        200,
+        {},
+        OpenStruct.new(
+          "id": notification_id,
+          "body": "string",
+          "completed_at": "2022-08-08T16:20:50.090Z",
+          "created_at": "2022-08-08T16:20:50.090Z",
+          "created_by_name": "string",
+          "email_address": "user@example.com",
+          "line_1": "string",
+          "line_2": "string",
+          "line_3": "string",
+          "line_4": "string",
+          "line_5": "string",
+          "line_6": "string",
+          "phone_number": "+16502532222",
+          "postage": "string",
+          "postcode": "string",
+          "recipient_identifiers": [
+            {
+              "id_type" => "VAPROFILEID",
+              "id_value" => "string"
+            }
+          ],
+          "reference": "string",
+          "scheduled_for": "2022-08-08T16:20:50.090Z",
+          "sent_at": "2022-08-08T16:20:50.090Z",
+          "sent_by": "string",
+          "status": "created",
+          "subject": "string",
+          "template": {
+            "id" => "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "uri" => "string",
+            "version" => 0
+          },
+          "type" => "email"
         )
-      else
-        HTTPI::Response.new(
-          404,
-          {},
-          OpenStruct.new(
-            "error": "NotFoundError",
-            "message": "notification id not found"
-          )
-        )
-      end
+      )
     end
     # rubocop:enable Metrics/MethodLength
   end

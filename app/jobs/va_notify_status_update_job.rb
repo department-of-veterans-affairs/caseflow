@@ -1,5 +1,13 @@
 # frozen_string_literal: true
+class VANotifyStandardError < StandardError
+  def initialize(notification_id, message = "Notification ID: ")
+    super(message + notification_id + " not found")
+  end
 
+  def status
+    "No notification id"
+  end
+end
 class VANotifyStatusUpdateJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
@@ -122,11 +130,12 @@ class VANotifyStatusUpdateJob < CaseflowJob
           { "sms_notification_status" => response.body["status"], "recipient_phone_number" => response.body["phone_number"] }
         end
       else
-        fail StandardError
+        fail VANotifyStandardError
       end
-    rescue StandardError => error
-      log_error("VA Notify API returned error for notification " + notification_id)
-      Raven.capture_exception(error, extra: { error_uuid: SecureRandom.uuid })
+    rescue VANotifyStandardError => error
+      error_uuid = SecureRandom.uuid
+      log_error("VA Notify API returned error for notification " + notification_id + " with response " + response.code + " " + response.message)
+      Raven.capture_exception(error, extra: { error_uuid: error_uuid })
       nil
     end
   end
