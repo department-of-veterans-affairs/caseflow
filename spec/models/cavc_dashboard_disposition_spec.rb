@@ -15,7 +15,8 @@ describe CavcDashboardDisposition, :postgres do
 
     it "disposition presence on update only" do
       # nil disposition on initial save is allowed
-      dashboard_disposition = described_class.create!(cavc_remand: cavc_remand)
+      dashboard_disposition = described_class.new(cavc_remand: cavc_remand)
+      expect { dashboard_disposition.save! }.not_to raise_error
 
       # since the record already exists in the DB, this save! is considered an update by ActiveRecord
       expect { dashboard_disposition.save! }.to raise_error(ActiveRecord::RecordInvalid)
@@ -36,7 +37,7 @@ describe CavcDashboardDisposition, :postgres do
 
     it "only a single issue can be linked to disposition" do
       expect { described_class.create!(cavc_remand: cavc_remand, request_issue_id: 1, cavc_dashboard_issue_id: 1) }
-        .to raise_error(ActiveRecord::StatementInvalid)
+        .to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 end

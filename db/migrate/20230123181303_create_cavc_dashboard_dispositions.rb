@@ -9,26 +9,5 @@ class CreateCavcDashboardDispositions < Caseflow::Migration
       t.bigint     :updated_by_id, comment: "The ID for the user that most recently changed the record"
       t.timestamps
     end
-
-    reversible do |dir|
-      dir.up do
-        safety_assured do
-          execute <<-SQL
-            ALTER TABLE cavc_dashboard_dispositions
-              ADD CONSTRAINT single_issue_id
-                CHECK (request_issue_id IS NULL OR cavc_dashboard_issue_id IS NULL)
-          SQL
-        end
-      end
-
-      dir.down do
-        safety_assured do
-          execute <<-SQL
-            ALTER TABLE cavc_dashboard_dispositions
-              DROP CONSTRAINT single_issue_id
-          SQL
-        end
-      end
-    end
   end
 end
