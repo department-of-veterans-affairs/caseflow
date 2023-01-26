@@ -239,7 +239,13 @@ const AddCavcRemandView = (props) => {
     };
 
     props.requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
-      then((resp) => history.replace(`/queue/appeals/${resp.body.cavc_appeal.uuid}`)).
+      // then((resp) => history.replace(`/queue/appeals/${resp.body.cavc_appeal.uuid}`)).
+      then((resp) => {
+        const pushHistoryUrl = resp.body.cavc_appeal ?
+          `/queue/appeals/${resp.body.cavc_appeal.uuid}` : `/queue/appeals/${appealId}`;
+
+        history.replace(pushHistoryUrl);
+      }).
       catch((err) => props.showErrorMessage({ title: 'Error', detail: JSON.parse(err.message).errors[0].detail }));
   };
 

@@ -30,11 +30,10 @@ class CavcRemand < CaseflowRecord
   # after_create :initialize_tasks, if: :orig_cavc_decision_type?
 
   def check_to_establish_appeal_stream
-    if cavc_remand_form_complete? &&
-      !(cavc_decision_type.include?(Constants.CAVC_DECISION_TYPES.other_dismissal) ||
-      cavc_decision_type.include?(Constants.CAVC_DECISION_TYPES.affirmed) ||
-      cavc_decision_type.include?(Constants.CAVC_DECISION_TYPES.settlement))
-    return true
+    if cavc_remand_form_complete? && !(cavc_decision_type.include?(Constants.CAVC_DECISION_TYPES.other_dismissal) ||
+                                      cavc_decision_type.include?(Constants.CAVC_DECISION_TYPES.affirmed) ||
+                                      cavc_decision_type.include?(Constants.CAVC_DECISION_TYPES.settlement))
+      return true
     end
 
     false
