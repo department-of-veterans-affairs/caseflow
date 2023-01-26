@@ -26,24 +26,21 @@ export default class DropdownButton extends React.Component {
   }
 
   componentDidMount = () => {
-    // commented out, 508 is expecting the dropdow, that's the requirement
-    // document.addEventListener('focusin', this.onClickOutside);
-    // document.addEventListener('keydown', this.onClickOutside);
+    document.addEventListener('keydown', this.onClickOutside);
     document.addEventListener('mousedown', this.onClickOutside);
   }
 
   componentWillUnmount = () => {
-    // commented out, 508 is expecting the dropdow, that's the requirement
-    // document.removeEventListener('focusin', this.onClickOutside);
-    // document.removeEventListener('keydown', this.onClickOutside);
+    document.removeEventListener('keydown', this.onClickOutside);
     document.removeEventListener('mousedown', this.onClickOutside);
   }
   setWrapperRef = (node) => this.wrapperRef = node
 
   onClickOutside = (event) => {
-    // event.path is [html, document, Window] when clicking the scroll bar and always more when clicking content
+    // event.composedPath() is [html, document, Window] when clicking the scroll bar and more when clicking content
     // this stops the menu from closing if a user clicks to use the scroll bar with the menu open
-    if (this.wrapperRef && !this.wrapperRef.contains(event.target) && event.path[2] !== window && this.state.menu) {
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target) &&
+     event.composedPath()[2] !== window && this.state.menu) {
       this.setState({
         menu: false
       });
