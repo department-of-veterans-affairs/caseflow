@@ -62,5 +62,16 @@ describe MembershipRequest do
         expect(membership_request.errors.full_messages).to be_present
       end
     end
+
+    context "when status is not present" do
+      let(:membership_request) { MembershipRequest.new(valid_params) }
+
+      it "should not save to database" do
+        membership_request.status = nil
+        membership_request.valid?
+
+        expect(membership_request.errors.full_messages).to be_present
+      end
+    end
   end
 end
