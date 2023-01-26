@@ -3,6 +3,8 @@ import Checkbox from 'app/components/Checkbox';
 import CheckboxGroup from 'app/components/CheckboxGroup';
 import Button from 'app/components/Button';
 import TextareaField from 'app/components/TextareaField';
+import Alert from '../../components/Alert';
+import { find } from 'lodash';
 
 const VhaMembershipRequestForm = (props) => {
 
@@ -40,49 +42,25 @@ const VhaMembershipRequestForm = (props) => {
     ];
   };
 
-  const junk = vhaProgramOfficeOptions().reduce((acc, obj) => {
-    // acc[obj.id] = obj;
-    acc[obj.id] = false;
+  // TODO: Figure out if Memo matters here or not
+  const parsedIssues = useMemo(() => {
+    vhaProgramOfficeOptions().reduce((acc, obj) => {
+      acc[obj.id] = false;
 
-    return acc;
-  }, {});
-
-  // console.log(junk);
+      return acc;
+    }, {});
+  }, [vhaProgramOfficeOptions()]);
 
   // TODO: create state variables
   const [vhaAccess, setVhaAccess] = useState(false);
-  const [programOfficesAccess, setProgramOfficesAccess] = useState(junk);
+  const [programOfficesAccess, setProgramOfficesAccess] = useState(parsedIssues);
+  const [requestReason, setRequestReason] = useState('');
 
   const onVhaProgramOfficeAccessChange = (evt) => {
-    console.log(evt.target);
-    console.log(evt.target.checked);
-    // console.log(!evt.target.checked);
-    // evt.target.checked = true;
     // console.log(evt.target);
-    // evt.target.checked = true;
-    // console.log(programOfficesAccess);
+    // console.log(evt.target.checked);
     setProgramOfficesAccess({ ...programOfficesAccess, [evt.target.id]: evt.target.checked });
-    // console.log(programOfficesAccess);
   };
-
-  // const onVhaProgramOfficeAccessChange = (evt) => {
-  //   setProgramOfficesAccess(evt);
-  // };
-
-  // TODO: create redux selectors
-
-  let testValues = vhaProgramOfficeOptions().map((obj) => ({ [obj.id]: obj }));
-
-  let newValues = {};
-
-  // console.log(testValues);
-
-  // vhaProgramOfficeOptions().forEach((item) => newValues[item.id] = true);
-
-  // console.log(newValues);
-
-  // console.log(Object.entries(newValues).filter((item) => item[1]).
-  //   flatMap((item) => item[0]));
 
   // TODO: useMemo/useEffect hooks based on redux and state
 
@@ -133,14 +111,29 @@ const VhaMembershipRequestForm = (props) => {
   // If VHA was already selected then require one additional checkbox? based on redux store org/requests
   // If the user is already a member of vha check the box and disable the button
 
-  // TODO: Could also use redux actions to set the membership requests depending on the checkboxe clicks
-  const submitDisabled = true;
+  // TODO: make this update based on redux or on the clicked boxes assuming redux populates those
+  // Memo this or figure it out in ruby and give it to redux instead of figuring it out in javascript
+  const memberOrRequestToVha = true;
 
-  console.log(programOfficesAccess);
+  // TODO: Could also use redux actions to set the membership requests depending on the checkbox clicks
+  const submitDisabled = (!vhaAccess && !memberOrRequestToVha) ||
+   (!find(programOfficesAccess, (value) => value === true) && memberOrRequestToVha);
+
+  // console.log(programOfficesAccess);
   // console.log(vhaAccess);
+  // console.log(requestReason);
+  // console.log(memberOrRequestToVha);
 
   return (
     <>
+      <h1> 1. How do I access the VHA team?</h1>
+      <p> If you need access to a VHA team, please fill out the form below. </p>
+      <h2> Select which VHA groups you need access to </h2>
+      {memberOrRequestToVha &&
+        <div style={{ marginBottom: '3rem' }}>
+          <Alert type="info" title="" message="Options are disabled if you have a pending request or are already a member of the group." />
+        </div>
+      }
       <form>
         <GeneralVHAAccess />
         <SpecializedAccess />
@@ -148,10 +141,8 @@ const VhaMembershipRequestForm = (props) => {
           label="Reason for access"
           name="membership-request-instructions-textBox"
           optional
-        // value={instructions}
-        // onChange={(val) => setInstructions(val)}
-        // errorMessage={highlightInvalid && !validInstructions() ? COPY.CAVC_INSTRUCTIONS_ERROR : null}
-        // strongLabel
+          value={requestReason}
+          onChange={(val) => setRequestReason(val)}
         />
         <SubmitButton disabled={submitDisabled} />
       </form>
