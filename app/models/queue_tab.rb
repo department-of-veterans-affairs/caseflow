@@ -31,7 +31,8 @@ class QueueTab
       description: description,
       columns: columns.map { |column| column.to_hash(tasks) },
       allow_bulk_assign: allow_bulk_assign?,
-      contains_legacy_tasks: contains_legacy_tasks?
+      contains_legacy_tasks: contains_legacy_tasks?,
+      defaultSort: default_sorting_hash
     }
   end
 
@@ -47,6 +48,22 @@ class QueueTab
 
   def columns
     column_names.map { |column_name| QueueColumn.from_name(column_name) }
+  end
+
+  def default_sorting_hash
+    is_ascending = (default_sorting_direction == Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC) ? true : false
+    {
+      Constants.QUEUE_CONFIG.DEFAULT_SORTING_COLUMN_KEY => default_sorting_column.name,
+      Constants.QUEUE_CONFIG.DEFAULT_SORTING_DIRECTION_KEY => is_ascending
+    }
+  end
+
+  def default_sorting_column
+    QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name)
+  end
+
+  def default_sorting_direction
+    Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
   end
 
   def name
