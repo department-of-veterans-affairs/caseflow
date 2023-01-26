@@ -134,6 +134,38 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_current_path("/#{business_line_url}")
     end
 
+    context "the complete button enables only after a decision date and disposition are set" do
+      before do
+        visit dispositions_url
+      end
+
+      scenario "neither disposition nor date is set" do
+        expect(page).to have_button("Complete", disabled: true)
+      end
+
+      scenario "only date is set" do
+        fill_in "decision-date", with: arbitrary_decision_date
+        expect(page).to have_button("Complete", disabled: true)
+      end
+
+      scenario "only disposition is set" do
+        fill_in_disposition(0, "Granted")
+        fill_in_disposition(1, "DTA Error", "test description")
+        fill_in_disposition(2, "Denied", "denied")
+
+        expect(page).to have_button("Complete", disabled: true)
+      end
+
+      scenario "both disposition and date are set" do
+        fill_in "decision-date", with: arbitrary_decision_date
+        fill_in_disposition(0, "Granted")
+        fill_in_disposition(1, "DTA Error", "test description")
+        fill_in_disposition(2, "Denied", "denied")
+
+        expect(page).to have_button("Complete", disabled: false)
+      end
+    end
+
     scenario "saves decision issues for eligible request issues" do
       visit dispositions_url
       expect(page).to have_button("Complete", disabled: true)
@@ -189,6 +221,7 @@ feature "NonComp Dispositions Task Page", :postgres do
         fill_in_disposition(0, "Granted")
         fill_in_disposition(1, "Granted", "test description")
         fill_in_disposition(2, "Denied", "denied")
+        fill_in "decision-date", with: arbitrary_decision_date
 
         click_on "Complete"
         expect(page).to have_content("Something went wrong")

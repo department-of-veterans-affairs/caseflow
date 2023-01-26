@@ -52,7 +52,7 @@
   }
 
   .row-two {
-    margin: 1rem 0;
+    margin: 1rem auto 0 auto;
   }
 }
 
@@ -97,6 +97,11 @@
 
     .cf-disposition {
       margin-top: 1.7rem;
+      max-width: 45rem;
+
+      .cf-optional {
+        font-weight: bold;
+      }
     }
 
     textarea:disabled {
