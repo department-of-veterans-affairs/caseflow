@@ -6,17 +6,6 @@ import TextareaField from 'app/components/TextareaField';
 
 const VhaMembershipRequestForm = (props) => {
 
-  // TODO: create state variables
-  const [vhaAccess, setVhaAccess] = useState(false);
-  const [programOfficesAccess, setProgramOfficesAccess] = useState({});
-
-  const onVhaProgramOfficeAccessChange = (evt) => {
-    console.log(evt.target);
-    setProgramOfficesAccess({ ...programOfficesAccess, [evt.target.name]: evt.target.checked });
-  };
-
-  // TODO: create redux selectors
-
   // TODO: Import these options from a constants/json file.
   const vhaProgramOfficeOptions = () => {
     return [
@@ -51,28 +40,51 @@ const VhaMembershipRequestForm = (props) => {
     ];
   };
 
-  // TODO: useMemo/useEffect hooks based on redux and state
+  const junk = vhaProgramOfficeOptions().reduce((acc, obj) => {
+    // acc[obj.id] = obj;
+    acc[obj.id] = false;
 
-  // Checkbox groups are pretty dumb you need a bunch of setup garbage for it to even work.
-  // I might just do a bunch of checkboxes
+    return acc;
+  }, {});
 
-  // returns ids of issues that are currently selected
-  const selectedProgramOfficeIds = useMemo(() => {
-    return Object.entries(programOfficesAccess).filter((item) => item[1]).
-      flatMap((item) => item[0]);
-  }, [programOfficesAccess]);
+  // console.log(junk);
 
-  // populates all checkboxes
-  const selectAllProgramOffices = () => {
-    const checked = selectedProgramOfficeIds.length === 0;
-    const newValues = {};
+  // TODO: create state variables
+  const [vhaAccess, setVhaAccess] = useState(false);
+  const [programOfficesAccess, setProgramOfficesAccess] = useState(junk);
 
-    vhaProgramOfficeOptions().forEach((item) => newValues[item.id] = checked);
-    setProgramOfficesAccess(newValues);
+  const onVhaProgramOfficeAccessChange = (evt) => {
+    console.log(evt.target);
+    console.log(evt.target.checked);
+    // console.log(!evt.target.checked);
+    // evt.target.checked = true;
+    // console.log(evt.target);
+    // evt.target.checked = true;
+    // console.log(programOfficesAccess);
+    setProgramOfficesAccess({ ...programOfficesAccess, [evt.target.id]: evt.target.checked });
+    // console.log(programOfficesAccess);
   };
 
-  // populate all issues checkboxes on initial render
-  useEffect(() => selectAllProgramOffices(), []);
+  // const onVhaProgramOfficeAccessChange = (evt) => {
+  //   setProgramOfficesAccess(evt);
+  // };
+
+  // TODO: create redux selectors
+
+  let testValues = vhaProgramOfficeOptions().map((obj) => ({ [obj.id]: obj }));
+
+  let newValues = {};
+
+  // console.log(testValues);
+
+  // vhaProgramOfficeOptions().forEach((item) => newValues[item.id] = true);
+
+  // console.log(newValues);
+
+  // console.log(Object.entries(newValues).filter((item) => item[1]).
+  //   flatMap((item) => item[0]));
+
+  // TODO: useMemo/useEffect hooks based on redux and state
 
   // TODO: decide if this correct based on the redux selector for feature toggles.
   const programOfficeFeatureToggle = () => true;
@@ -99,7 +111,7 @@ const VhaMembershipRequestForm = (props) => {
             hideLabel
             options={vhaProgramOfficeOptions()}
             onChange={(val) => onVhaProgramOfficeAccessChange(val)}
-            value={programOfficesAccess}
+            values={programOfficesAccess}
           />
         </>
         }
@@ -120,13 +132,14 @@ const VhaMembershipRequestForm = (props) => {
   // If VHA is selected allow it through
   // If VHA was already selected then require one additional checkbox? based on redux store org/requests
   // If the user is already a member of vha check the box and disable the button
+
+  // TODO: Could also use redux actions to set the membership requests depending on the checkboxe clicks
   const submitDisabled = true;
 
   console.log(programOfficesAccess);
-  console.log(vhaAccess);
+  // console.log(vhaAccess);
 
   return (
-    // console.log(programOfficesAccess);
     <>
       <form>
         <GeneralVHAAccess />
