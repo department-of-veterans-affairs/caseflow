@@ -21,13 +21,25 @@ class CavcRemand < CaseflowRecord
   validates :federal_circuit, inclusion: { in: [true, false] }, if: -> { remand? && mdr? }
 
   before_create :normalize_cavc_docket_number
-  before_create :establish_appeal_stream, if: :cavc_remand_form_complete? && !Constants.CAVC_DECISION_TYPES.other_dismissal && !Constants.CAVC_DECISION_TYPES.affirmed && !Constants.CAVC_DECISION_TYPES.settlement
+
+  # establishing appeal stream only if the new decision types from APPEALS-13220 are not selected
+  def new_cavc_decision_type?
+    other_dismissal || affirmed || settlement
+  end
+
+  before_create :establish_appeal_stream, if: :cavc_remand_form_complete? && !new_cavc_decision_type
   after_create :initialize_tasks
 
   enum cavc_decision_type: {
     Constants.CAVC_DECISION_TYPES.remand.to_sym => Constants.CAVC_DECISION_TYPES.remand,
     Constants.CAVC_DECISION_TYPES.straight_reversal.to_sym => Constants.CAVC_DECISION_TYPES.straight_reversal,
     Constants.CAVC_DECISION_TYPES.death_dismissal.to_sym => Constants.CAVC_DECISION_TYPES.death_dismissal,
+    Constants.CAVC_DECISION_TYPES.other_dismissal.to_sym => Constants.CAVC_DECISION_TYPES.other_dismissal,
+    Constants.CAVC_DECISION_TYPES.affirmed.to_sym => Constants.CAVC_DECISION_TYPES.affirmed,
+    Constants.CAVC_DECISION_TYPES.settlement.to_sym => Constants.CAVC_DECISION_TYPES.settlement
+  }
+
+  enum cavc_decision_type_no_appeal_stream: {
     Constants.CAVC_DECISION_TYPES.other_dismissal.to_sym => Constants.CAVC_DECISION_TYPES.other_dismissal,
     Constants.CAVC_DECISION_TYPES.affirmed.to_sym => Constants.CAVC_DECISION_TYPES.affirmed,
     Constants.CAVC_DECISION_TYPES.settlement.to_sym => Constants.CAVC_DECISION_TYPES.settlement
