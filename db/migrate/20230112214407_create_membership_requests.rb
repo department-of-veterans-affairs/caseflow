@@ -6,8 +6,8 @@ class CreateMembershipRequests < Caseflow::Migration
       t.integer :requested_by, index: true
       t.references :organization
       t.string :status, null: false, default: "assigned"
-      t.integer :closed_by, null: true
-      t.datetime :closed_at
+      t.integer :decided_by, null: true
+      t.datetime :decided_at
 
       t.timestamps
     end

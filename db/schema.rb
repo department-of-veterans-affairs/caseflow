@@ -1085,9 +1085,9 @@ ActiveRecord::Schema.define(version: 2023_01_12_214407) do
   end
 
   create_table "membership_requests", force: :cascade do |t|
-    t.datetime "closed_at"
-    t.integer "closed_by"
     t.datetime "created_at", null: false
+    t.datetime "decided_at"
+    t.integer "decided_by"
     t.bigint "organization_id"
     t.integer "requested_by"
     t.string "status", default: "assigned", null: false
