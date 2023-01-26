@@ -2,10 +2,10 @@
 
 class MembershipRequest < ApplicationRecord
   belongs_to :organization
-  belongs_to :requestor, class_name: "User", foreign_key: :requested_by_id
-  belongs_to :decider, class_name: "User", foreign_key: :decided_by_id, optional: true
+  belongs_to :requestor, class_name: "User"
+  belongs_to :decider, class_name: "User", optional: true
 
-  validates :status, :organization, :requested_by_id, presence: true
+  validates :status, :organization, :requestor, presence: true
 
   enum status: {
     assigned: "assigned",

@@ -9,17 +9,17 @@ describe MembershipRequest do
     let(:valid_params) do
       {
         organization_id: organization.id,
-        requested_by_id: requestor.id
+        requestor: requestor
       }
     end
 
-    context "when decided_by_id and decided_at is not present" do
+    context "when decider and decided_at is not present" do
       let(:membership_request) { MembershipRequest.new(valid_params) }
       it "saves to database" do
         expect { membership_request.save }.to change { MembershipRequest.count }.by(1)
         membership_request.reload
 
-        expect(membership_request.decided_by_id).to be_nil
+        expect(membership_request.decider).to be_nil
         expect(membership_request.decided_at).to be_nil
       end
     end
@@ -27,7 +27,7 @@ describe MembershipRequest do
     context "when decided_by_id and decided_at is present" do
       let(:decider_params) do
         {
-          decided_by_id: decider.id,
+          decider: decider,
           decided_at: 1.minute.ago
         }
       end
@@ -38,13 +38,13 @@ describe MembershipRequest do
         expect { membership_request.save }.to change { MembershipRequest.count }.by(1)
         membership_request.reload
 
-        expect(membership_request.decided_by_id).to be_present
+        expect(membership_request.decider).to be_present
         expect(membership_request.decided_at).to be_present
       end
     end
 
     context "when organization id is not present" do
-      let(:membership_request) { MembershipRequest.new(requested_by_id: requestor.id) }
+      let(:membership_request) { MembershipRequest.new(requestor: requestor) }
 
       it "should not save to database" do
         membership_request.valid?

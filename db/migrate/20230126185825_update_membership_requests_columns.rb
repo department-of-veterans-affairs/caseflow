@@ -1,4 +1,4 @@
-class UpdateMembershipRequestsColumns < ActiveRecord::Migration[5.2]
+class UpdateMembershipRequestsColumns < Caseflow::Migration
   def change
     safety_assured { remove_column :membership_requests, :requested_by, :integer }
     safety_assured { remove_column :membership_requests, :decided_by, :integer }
