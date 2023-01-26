@@ -97,7 +97,7 @@ class NonCompDispositions extends React.PureComponent {
     this.state = {
       requestIssues: formatRequestIssuesWithDecisionIssues(
         this.props.task.appeal.activeRequestIssues, this.props.appeal.decisionIssues),
-      decisionDate: "",
+      decisionDate: '',
       isFilledOut: false
     };
   }
