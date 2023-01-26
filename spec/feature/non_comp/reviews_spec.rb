@@ -130,7 +130,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content(vet_a_id_column_value)
       expect(page).to have_content(vet_b_id_column_value)
       expect(page).to have_content(vet_c_id_column_value)
-      expect(page).not_to have_content(search_box_label)
+      expect(page).to have_no_content(search_box_label)
 
       # ordered by assigned_at descending
 
@@ -169,7 +169,7 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content(vet_a_id_column_value)
         expect(page).to have_content(vet_b_id_column_value)
         expect(page).to have_content(vet_c_id_column_value)
-        expect(page).not_to have_content(search_box_label)
+        expect(page).to have_no_content(search_box_label)
 
         click_on veteran_a.name
         expect(page).to have_content("Form created by")
