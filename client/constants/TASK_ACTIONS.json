@@ -468,7 +468,19 @@
   "MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE": {
     "label": "Mark task complete"
   },
-  "CANCEL_FINAL_NOTIFICATION_LETTER_TASK": {
-    "label": "Cancel task"
+  "CANCEL_CONTESTED_CLAIM_TASK": {
+    "label": "Cancel task",
+    "value": "modal/cancel_task",
+    "func": "cancel_task_data"
+  },
+  "MARK_TASK_AS_COMPLETE_CC": {
+    "label": "Mark task complete",
+    "value": "modal/mark_task_complete",
+    "func": "cancel_task_data"
+  },
+  "PROCEED_FINAL_NOTIFICATION_LETTER_CC": {
+    "label": "Proceed to final notification letter",
+    "value": "modal/final_notification_letter",
+    "func": "cancel_task_data"
   }
 }

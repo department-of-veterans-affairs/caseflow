@@ -25,6 +25,9 @@ class InitialTasksFactory
     create_vso_tracking_tasks
     ActiveRecord::Base.transaction do
       create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
+      if @appeal.contested_claim?
+        send_initial_notification_letter
+      end
     end
     maybe_create_translation_task
   end
@@ -68,6 +71,15 @@ class InitialTasksFactory
   def distribution_task
     @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
                            DistributionTask.create!(appeal: @appeal, parent: @root_task)
+  end
+
+  def send_initial_notification_letter
+    @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
+                                          SendInitialNotificationLetterTask.create!(
+                                            appeal: @appeal,
+                                            parent: @appeal.tasks.find_by(status: "assigned"),
+                                            assigned_to: Organization.find_by_url("clerk-of-the-board")
+                                          )
   end
 
   def create_ihp_task
