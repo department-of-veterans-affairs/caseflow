@@ -131,7 +131,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       visit dispositions_url
 
       click_on "Cancel"
-      expect(page).to have_current_path("/#{business_line_url}")
+      expect(page).to have_current_path("/#{business_line_url}", ignore_query: true)
     end
 
     context "the complete button enables only after a decision date and disposition are set" do

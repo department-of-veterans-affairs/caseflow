@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
-  let(:veteran) { create(:veteran) }
-  let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
   let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
-  let(:task) { create(:higher_level_review_task, appeal: hlr, assigned_to: non_comp_org) }
+  let(:veteran) { create(:veteran) }
+  let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
+
+  let(:task) { create(:board_grant_effectuation_task, appeal: appeal, assigned_to: non_comp_org) }
 
   subject { described_class.new(task) }
 
@@ -12,11 +13,10 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
     it "renders ready for client consumption" do
       serializable_hash = {
         id: task.id.to_s,
-        type: :decision_review_task,
+        type: :board_grant_effectuation_task,
         attributes: {
-          claimant: { name: hlr.veteran_full_name, relationship: "self" },
-          appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
-          veteran_ssn: veteran.ssn,
+          claimant: { name: appeal.veteran_full_name, relationship: "self" },
+          appeal: { id: appeal.external_id, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
           veteran_participant_id: veteran.participant_id,
           assigned_on: task.assigned_at,
           assigned_at: task.assigned_at,
@@ -26,7 +26,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           id: task.id,
           created_at: task.created_at,
           issue_count: 0,
-          type: "Higher-Level Review",
+          type: "Board Grant",
           business_line: non_comp_org.url
         }
       }
@@ -34,18 +34,22 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
     end
 
     context "decision review has no claimants with names" do
-      let(:hlr) do
-        create(:higher_level_review, veteran_file_number: veteran.file_number, veteran_is_not_claimant: true)
+      let(:appeal) do
+        create(
+          :appeal,
+          veteran_file_number: veteran.file_number,
+          veteran_is_not_claimant: true,
+          claimants: []
+        )
       end
 
       it "returns placeholder 'Unknown'" do
         serializable_hash = {
           id: task.id.to_s,
-          type: :decision_review_task,
+          type: :board_grant_effectuation_task,
           attributes: {
             claimant: { name: "claimant", relationship: "Unknown" },
-            appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
-            veteran_ssn: veteran.ssn,
+            appeal: { id: appeal.external_id, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
             veteran_participant_id: veteran.participant_id,
             assigned_on: task.assigned_at,
             assigned_at: task.assigned_at,
@@ -55,7 +59,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             id: task.id,
             created_at: task.created_at,
             issue_count: 0,
-            type: "Higher-Level Review",
+            type: "Board Grant",
             business_line: non_comp_org.url
           }
         }
@@ -70,8 +74,8 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
         claimant
       end
 
-      let(:hlr) do
-        build(:higher_level_review,
+      let(:appeal) do
+        build(:appeal,
               veteran_file_number: veteran.file_number,
               claimants: [claimant],
               veteran_is_not_claimant: true)
@@ -80,11 +84,10 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
       it "returns relationship based on claimant class" do
         serializable_hash = {
           id: task.id.to_s,
-          type: :decision_review_task,
+          type: :board_grant_effectuation_task,
           attributes: {
             claimant: { name: claimant.name, relationship: "Veteran" },
-            appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
-            veteran_ssn: veteran.ssn,
+            appeal: { id: appeal.external_id, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
             veteran_participant_id: veteran.participant_id,
             assigned_on: task.assigned_at,
             assigned_at: task.assigned_at,
@@ -94,7 +97,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             id: task.id,
             created_at: task.created_at,
             issue_count: 0,
-            type: "Higher-Level Review",
+            type: "Board Grant",
             business_line: non_comp_org.url
           }
         }
