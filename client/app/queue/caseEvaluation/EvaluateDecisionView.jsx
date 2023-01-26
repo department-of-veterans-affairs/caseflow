@@ -323,7 +323,8 @@ const mapStateToProps = (state, ownProps) => {
       // Get all tasks under the JudgeDecisionReviewTask
       // Filters out those without a closedAt date or that are hideFromCaseTimeline
       attorneyChildrenTasks = getTaskTreesForAttorneyTasks(state, {
-        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId });
+        appealId: appeal.externalId, judgeDecisionReviewTaskId: judgeDecisionReviewTask.uniqueId
+      });
     }
   }
 
