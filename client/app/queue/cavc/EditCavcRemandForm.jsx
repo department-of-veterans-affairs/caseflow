@@ -374,9 +374,9 @@ export const EditCavcRemandForm = ({
           </React.Fragment>
         }
 
+        {isRemandType('jmr_jmpr') && !watchIssueIds?.length && <JmrJmprIssuesBanner />}
         {isRemandType('jmr') && !allIssuesSelected && <JmrIssuesBanner />}
         {isRemandType('jmpr') && !watchIssueIds?.length && <JmprIssuesBanner />}
-        {isRemandType('jmr_jmpr') && !watchIssueIds?.length && <JmrJmprIssuesBanner />}
         {isRemandType('mdr') && !watchIssueIds?.length && <MdrIssuesBanner />}
         {isRemandType('mdr') && (
           <React.Fragment>

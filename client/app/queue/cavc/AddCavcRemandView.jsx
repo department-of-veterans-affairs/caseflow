@@ -141,9 +141,9 @@ const AddCavcRemandView = (props) => {
   const straightReversalType = () => type === CAVC_DECISION_TYPES.straight_reversal;
   const deathDismissalType = () => type === CAVC_DECISION_TYPES.death_dismissal;
 
+  const jmrjmprSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmr_jmpr;
   const jmrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmr;
   const jmprSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmpr;
-  const jmrjmprSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmr_jmpr;
   const mdrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.mdr;
   const mandateAvailable = () => !mdrSubtype() && (isMandateProvided === 'true');
 
@@ -406,9 +406,9 @@ const AddCavcRemandView = (props) => {
       {mandateAvailable() && !isMandateSame && mandateField }
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
       {!deathDismissalType() && issuesField}
+      {jmrjmprSubtype() && allIssuesUnselected && jmrjmprIssuesBanner}
       {jmrSubtype() && !allIssuesSelected && jmrIssuesBanner}
       {jmprSubtype() && allIssuesUnselected && jmprIssuesBanner}
-      {jmrjmprSubtype() && allIssuesUnselected && jmrjmprIssuesBanner}
       {mdrSubtype() && allIssuesUnselected && mdrIssuesBanner}
       {mdrSubtype() && federalCircuitField }
       {instructionsField}

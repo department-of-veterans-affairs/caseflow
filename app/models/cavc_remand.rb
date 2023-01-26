@@ -17,7 +17,7 @@ class CavcRemand < CaseflowRecord
   validates :cavc_judge_full_name, inclusion: { in: Constants::CAVC_JUDGE_FULL_NAMES }
   validates :remand_subtype, presence: true, if: :remand?
   validates :judgement_date, :mandate_date, presence: true, unless: :mandate_not_required?
-  validate :decision_issue_ids_match_appeal_decision_issues, if: -> { remand? && jmr? }
+  validate :decision_issue_ids_match_appeal_decision_issues, if: -> { remand? && jmr_jmpr? }
   validates :federal_circuit, inclusion: { in: [true, false] }, if: -> { remand? && mdr? }
 
   before_create :normalize_cavc_docket_number
@@ -33,6 +33,7 @@ class CavcRemand < CaseflowRecord
   # Joint Motion Remand, Joint Motion Partial Remand, and Memorandum Decision on Remand
   # The Board uses the initialisms more than the full words, so we are following that norm
   enum remand_subtype: {
+    Constants.CAVC_REMAND_SUBTYPES.jmr_jmpr.to_sym => Constants.CAVC_REMAND_SUBTYPES.jmr_jmpr,
     Constants.CAVC_REMAND_SUBTYPES.jmr.to_sym => Constants.CAVC_REMAND_SUBTYPES.jmr,
     Constants.CAVC_REMAND_SUBTYPES.jmpr.to_sym => Constants.CAVC_REMAND_SUBTYPES.jmpr,
     Constants.CAVC_REMAND_SUBTYPES.mdr.to_sym => Constants.CAVC_REMAND_SUBTYPES.mdr
