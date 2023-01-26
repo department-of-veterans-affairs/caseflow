@@ -5,7 +5,8 @@ FactoryBot.define do
     association :requestor, factory: :user
     association :organization, factory: :organization
 
-    decided_by { Faker::Name.first_name }
+    requested_by_id { Faker::Number.number(digits: 4) }
+    decided_by_id { Faker::Number.number(digits: 4) }
     decided_at { Faker::Date.backward }
   end
 end
