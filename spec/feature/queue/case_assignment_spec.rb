@@ -129,7 +129,7 @@ RSpec.feature "Case Assignment flows", :all_dbs do
       # step "tries to submit incomplete actions, corrects error"
       click_on COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL
 
-      expect(page).to have_content COPY::FORM_ERROR_FIELD_REQUIRED
+      expect(page).to have_content COPY::INSTRUCTIONS_ERROR_FIELD_REQUIRED
 
       within all('div[id^="action_"]')[1] do
         fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(4)

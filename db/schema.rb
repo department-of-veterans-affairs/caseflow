@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_15_202259) do
+ActiveRecord::Schema.define(version: 2023_01_24_154656) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -316,6 +316,26 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
   end
 
+  create_table "cavc_dashboard_dispositions", force: :cascade do |t|
+    t.bigint "cavc_dashboard_issue_id"
+    t.bigint "cavc_remand_id", comment: "ID of the associated CAVC remand"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "The ID for the user that created the record"
+    t.string "disposition", comment: "The disposition of the issue"
+    t.bigint "request_issue_id", comment: "ID for a request issue that was filed with the CAVC Remand"
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id", comment: "The ID for the user that most recently changed the record"
+    t.index ["cavc_remand_id"], name: "index_cavc_dashboard_dispositions_on_cavc_remand_id"
+  end
+
+  create_table "cavc_decision_reasons", force: :cascade do |t|
+    t.string "basis_for_selection_category", comment: "The category that the decision reason belongs to. Optional."
+    t.datetime "created_at"
+    t.string "decision_reason", comment: "The reason for the CAVC decision"
+    t.integer "order", comment: "The order that the reasons should display in the UI. Child reasons will be ordered under their parent."
+    t.integer "parent_decision_reason_id", comment: "Associates a child decision reason to its parent in this table"
+  end
+
   create_table "cavc_remands", force: :cascade do |t|
     t.string "cavc_decision_type", null: false, comment: "CAVC decision type. Expecting 'remand', 'straight_reversal', or 'death_dismissal'"
     t.string "cavc_docket_number", null: false, comment: "Docket number of the CAVC judgement"
@@ -336,6 +356,15 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
     t.bigint "updated_by_id", comment: "User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
     t.index ["remand_appeal_id"], name: "index_cavc_remands_on_remand_appeal_id"
     t.index ["source_appeal_id"], name: "index_cavc_remands_on_source_appeal_id"
+  end
+
+  create_table "cavc_selection_bases", force: :cascade do |t|
+    t.string "basis_for_selection"
+    t.string "category"
+    t.datetime "created_at"
+    t.bigint "created_by"
+    t.datetime "updated_at"
+    t.bigint "updated_by"
   end
 
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
@@ -1823,6 +1852,8 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
   add_foreign_key "board_grant_effectuations", "decision_documents"
   add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
   add_foreign_key "board_grant_effectuations", "end_product_establishments"
+  add_foreign_key "cavc_dashboard_dispositions", "cavc_remands"
+  add_foreign_key "cavc_decision_reasons", "cavc_decision_reasons", column: "parent_decision_reason_id"
   add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
   add_foreign_key "cavc_remands", "users", column: "created_by_id"
