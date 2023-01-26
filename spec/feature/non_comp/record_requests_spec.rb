@@ -21,7 +21,9 @@ feature "NonComp Record Request Page", :postgres do
   end
 
   let!(:in_progress_task) do
-    create(:veteran_record_request_task, :in_progress, appeal: appeal, assigned_to: non_comp_org)
+    task = create(:veteran_record_request_task, :in_progress, appeal: appeal, assigned_to: non_comp_org)
+    create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: non_comp_org.url)
+    task
   end
 
   let(:business_line_url) { "decision_reviews/nco" }
@@ -44,7 +46,7 @@ feature "NonComp Record Request Page", :postgres do
     visit task_url
 
     click_on "Cancel"
-    expect(page).to have_current_path("/#{business_line_url}")
+    expect(page).to have_current_path("/#{business_line_url}", ignore_query: true)
   end
 
   scenario "completes task" do
