@@ -123,11 +123,11 @@ describe VANotifyStatusUpdateJob, type: :job do
 
   context "#get_current_status" do
     subject(:job) { VANotifyStatusUpdateJob.perform_later }
-    it "logs error when response is not 200" do
+    it "handles VA Notify errors" do
       email_and_sms.sms_notification_external_id = SecureRandom.uuid
       email_and_sms.email_notification_external_id = SecureRandom.uuid
       allow(job).to receive(:notifications_not_processed).and_return([email_and_sms])
-      allow(VANotifyService).to receive(:get_status).and_return(HTTPI::Response.new(404, {}, OpenStruct.new()))
+      allow(VANotifyService).to receive(:get_status).and_raise(Caseflow::Error::VANotifyNotFoundError)
       expect(job).to receive(:log_error).with(/VA Notify API returned error/)
       job.perform_now
     end

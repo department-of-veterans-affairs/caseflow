@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 class VANotifyStatusUpdateJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
@@ -113,8 +112,8 @@ class VANotifyStatusUpdateJob < CaseflowJob
   #
   # Retuns: Return a hash of attributes that need to be updated on the notification record
   def get_current_status(notification_id, type)
-    response = VANotifyService.get_status(notification_id)
-    if response.code == 200
+    begin
+      response = VANotifyService.get_status(notification_id)
       if type == "Email"
         { "email_notification_status" => response.body["status"], "recipient_email" => response.body["email_address"] }
       elsif type == "SMS"
@@ -124,11 +123,11 @@ class VANotifyStatusUpdateJob < CaseflowJob
         log_error("VA Notify API returned error for notificiation " + notification_id + " with type " + type)
         Raven.capture_exception(type, extra: { error_uuid: error_uuid, message: message })
       end
-    elsif response.code != 200
+    rescue Caseflow::Error::VANotifyApiError => error
       log_error(
-        "VA Notify API returned error for notification " + notification_id + " with response code #{response.code}: #{response.body.message}"
+        "VA Notify API returned error for notification " + notification_id + " with error #{error}"
       )
-      Raven.capture_exception(response.body.error, extra: { error_uuid: error_uuid })
+      Raven.capture_exception(error, extra: { error_uuid: error_uuid })
       nil
     end
   end
