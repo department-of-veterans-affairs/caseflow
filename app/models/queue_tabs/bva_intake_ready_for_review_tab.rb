@@ -18,10 +18,14 @@ class BvaIntakeReadyForReviewTab < QueueTab
   end
 
   def tasks
-    active_tasks
+    active_tasks.joins(:ama_appeal)
   end
 
   def column_names
     BvaIntake::COLUMN_NAMES
+  end
+
+  def default_sorting_column
+    QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name)
   end
 end
