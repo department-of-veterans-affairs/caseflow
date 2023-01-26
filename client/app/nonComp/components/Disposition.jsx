@@ -64,7 +64,7 @@ class NonCompDecisionIssue extends React.PureComponent {
           <div className="date"><strong>Prior decision date:</strong> {issueDate}.</div>
         </div>
         <div className="cf-disposition">
-          <strong>Disposition</strong><span className="cf-optional">Required</span>
+          <strong>Disposition</strong>
           <SearchableDropdown
             readOnly={disabled}
             name={`disposition-issue-${index}`}
