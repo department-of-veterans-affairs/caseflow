@@ -27,6 +27,14 @@ feature "NonComp Record Request Page", :postgres do
   let(:business_line_url) { "decision_reviews/nco" }
   let(:task_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
 
+  let(:vet_id_column_value) do
+    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
+      appeal.veteran.ssn
+    else
+      appeal.veteran.participant_id
+    end
+  end
+
   before do
     User.stub = user
     non_comp_org.add_user(user)
@@ -54,7 +62,7 @@ feature "NonComp Record Request Page", :postgres do
 
     # should redirect to business line's completed tab
     expect(page.current_path).to eq "/#{business_line_url}"
-    expect(page).to have_content(appeal.veteran.ssn)
+    expect(page).to have_content(vet_id_column_value)
 
     in_progress_task.reload
     expect(in_progress_task.status).to eq("completed")
