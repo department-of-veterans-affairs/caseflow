@@ -76,7 +76,7 @@ const AddCavcRemandView = (props) => {
   const [attorney, setAttorney] = useState('1');
   const [judge, setJudge] = useState(null);
   const [type, setType] = useState(CAVC_DECISION_TYPES.remand);
-  const [subType, setSubType] = useState(CAVC_REMAND_SUBTYPES.jmr);
+  const [subType, setSubType] = useState(CAVC_REMAND_SUBTYPES.jmr_jmpr);
   const [decisionDate, setDecisionDate] = useState(null);
   const [judgementDate, setJudgementDate] = useState(null);
   const [mandateDate, setMandateDate] = useState(null);
