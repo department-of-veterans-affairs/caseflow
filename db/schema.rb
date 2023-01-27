@@ -1086,10 +1086,10 @@ ActiveRecord::Schema.define(version: 2023_01_26_230602) do
 
   create_table "membership_requests", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "decided_at", comment: "The time when the membership request was decided at"
-    t.bigint "decider_id", comment: "The user who decides the membership_request"
+    t.datetime "decided_at", comment: "The date and time when the deider user made a decision about the membership request"
+    t.bigint "decider_id", comment: "The user who decides the status of the membership request"
     t.bigint "organization_id", comment: "The organization that the membership request is asking to join"
-    t.bigint "requestor_id", comment: "The requestor for this membership"
+    t.bigint "requestor_id", comment: "The User that is requesting access to the organization"
     t.string "status", default: "assigned", null: false, comment: "The status of the membership request at any given point of time"
     t.datetime "updated_at", null: false
     t.index ["organization_id"], name: "index_membership_requests_on_organization_id"
