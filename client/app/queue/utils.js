@@ -74,8 +74,8 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
 const taskAttributesFromRawTask = (task) => {
   const decisionPreparedBy = task.attributes.decision_prepared_by?.first_name ?
     {
-      firstName: task.attributes.decision_prepared_by.first_name,
-      lastName: task.attributes.decision_prepared_by.last_name,
+      firstName: task.attributes.decision_prepared_by?.first_name,
+      lastName: task.attributes.decision_prepared_by?.last_name,
     } :
     null;
 
@@ -94,24 +94,24 @@ const taskAttributesFromRawTask = (task) => {
     startedAt: task.attributes.started_at,
     assigneeName: task.attributes.assignee_name,
     assignedTo: {
-      cssId: task.attributes.assigned_to.css_id,
-      name: task.attributes.assigned_to.name,
-      id: task.attributes.assigned_to.id,
-      isOrganization: task.attributes.assigned_to.is_organization,
-      type: task.attributes.assigned_to.type,
+      cssId: task.attributes.assigned_to?.css_id,
+      name: task.attributes.assigned_to?.name,
+      id: task.attributes.assigned_to?.id,
+      isOrganization: task.attributes.assigned_to?.is_organization,
+      type: task.attributes.assigned_to?.type,
     },
     assignedBy: {
-      firstName: task.attributes.assigned_by.first_name,
-      lastName: task.attributes.assigned_by.last_name,
-      cssId: task.attributes.assigned_by.css_id,
-      pgId: task.attributes.assigned_by.pg_id,
+      firstName: task.attributes.assigned_by?.first_name,
+      lastName: task.attributes.assigned_by?.last_name,
+      cssId: task.attributes.assigned_by?.css_id,
+      pgId: task.attributes.assigned_by?.pg_id,
     },
     cancelledBy: {
-      cssId: task.attributes.cancelled_by.css_id,
+      cssId: task.attributes.cancelled_by?.css_id,
     },
     cancelReason: task.attributes.cancellation_reason,
     convertedBy: {
-      cssId: task.attributes.converted_by.css_id,
+      cssId: task.attributes.converted_by?.css_id,
     },
     convertedOn: task.attributes.converted_on,
     taskId: task.id,
@@ -122,7 +122,7 @@ const taskAttributesFromRawTask = (task) => {
     workProduct: null,
     caseType: task.attributes.case_type,
     aod: task.attributes.aod,
-    previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
+    previousTaskAssignedOn: task.attributes.previous_task?.assigned_at,
     placedOnHoldAt: task.attributes.placed_on_hold_at,
     status: task.attributes.status,
     onHoldDuration: task.attributes.on_hold_duration,
@@ -160,7 +160,13 @@ const taskAttributesFromRawTask = (task) => {
     ownedBy: task.attributes.owned_by,
     daysSinceLastStatusChange: task.attributes.days_since_last_status_change,
     daysSinceBoardIntake: task.attributes.days_since_board_intake,
-    appeal_receipt_date: task.attributes.appeal_receipt_date,
+    id: task.id,
+    businessLine: task.attributes.business_line,
+    claimant: {
+      name: task.attributes.claimant?.name
+    },
+    veteranParticipantId: task.attributes.veteran_participant_id,
+    appeal_receipt_date: task.attributes.appeal_receipt_date
   };
 };
 
@@ -209,7 +215,7 @@ export const extractAppealsAndAmaTasks = (tasks) => ({
 });
 
 export const tasksWithAppealsFromRawTasks = (tasks) =>
-  tasks.map((task) => ({
+  tasks?.map((task) => ({
     ...taskAttributesFromRawTask(task),
     appeal: appealAttributesFromRawTask(task),
   }));
