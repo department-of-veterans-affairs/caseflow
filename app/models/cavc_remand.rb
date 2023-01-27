@@ -21,14 +21,7 @@ class CavcRemand < CaseflowRecord
   validates :federal_circuit, inclusion: { in: [true, false] }, if: -> { remand? && mdr? }
 
   before_create :normalize_cavc_docket_number
-
-  # establishing appeal stream only if the new decision types from APPEALS-13220 are not selected
-  # def orig_cavc_decision_type
-  #   !other_dismissal || !affirmed || !settlement
-  # end
-  # before_create :establish_appeal_stream, if: :cavc_remand_form_complete? && orig_cavc_decision_type?
-  # after_create :initialize_tasks, if: :orig_cavc_decision_type?
-
+  # Check for if the decision types are of the three options from APPEALS-13220
   def check_to_establish_appeal_stream
     if cavc_remand_form_complete? && !(cavc_decision_type.include?(Constants.CAVC_DECISION_TYPES.other_dismissal) ||
                                       cavc_decision_type.include?(Constants.CAVC_DECISION_TYPES.affirmed) ||
@@ -38,6 +31,7 @@ class CavcRemand < CaseflowRecord
 
     false
   end
+
   before_create :establish_appeal_stream, if: :check_to_establish_appeal_stream
   after_create :initialize_tasks, if: :check_to_establish_appeal_stream
 
@@ -49,12 +43,6 @@ class CavcRemand < CaseflowRecord
     Constants.CAVC_DECISION_TYPES.affirmed.to_sym => Constants.CAVC_DECISION_TYPES.affirmed,
     Constants.CAVC_DECISION_TYPES.settlement.to_sym => Constants.CAVC_DECISION_TYPES.settlement
   }
-
-  # enum cavc_decision_type_no_appeal_stream: {
-  #   Constants.CAVC_DECISION_TYPES.other_dismissal.to_sym => Constants.CAVC_DECISION_TYPES.other_dismissal,
-  #   Constants.CAVC_DECISION_TYPES.affirmed.to_sym => Constants.CAVC_DECISION_TYPES.affirmed,
-  #   Constants.CAVC_DECISION_TYPES.settlement.to_sym => Constants.CAVC_DECISION_TYPES.settlement
-  # }
 
   # Joint Motion Remand, Joint Motion Partial Remand, and Memorandum Decision on Remand
   # The Board uses the initialisms more than the full words, so we are following that norm

@@ -94,11 +94,6 @@ const AddCavcRemandView = (props) => {
     [CAVC_DECISION_TYPES.other_dismissal]: !featureToggles.cavc_dashboard_workflow,
     [CAVC_DECISION_TYPES.affirmed]: !featureToggles.cavc_dashboard_workflow,
     [CAVC_DECISION_TYPES.settlement]: !featureToggles.cavc_dashboard_workflow
-
-    // above options should be uncommented and below options removed once feature toggle is added.
-    // [CAVC_DECISION_TYPES.other_dismissal]: true,
-    // [CAVC_DECISION_TYPES.affirmed]: true,
-    // [CAVC_DECISION_TYPES.settlement]: true
   };
   const supportedRemandTypes = {
     [CAVC_REMAND_SUBTYPES.jmr]: true,
