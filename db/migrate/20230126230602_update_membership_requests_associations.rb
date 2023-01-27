@@ -1,7 +1,5 @@
 class UpdateMembershipRequestsAssociations < Caseflow::Migration
   def change
-    # drop_table :membership_requests
-
     create_table :membership_requests do |t|
       t.references :organization, comment: "The organization that the membership request is asking to join"
 
