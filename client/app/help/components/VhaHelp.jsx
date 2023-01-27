@@ -3,8 +3,6 @@ import VhaMembershipRequestForm from './VhaMembershipRequestForm';
 
 const VhaHelp = () => {
 
-  // TODO: Decide this based on
-
   const Header = () => {
   /* eslint-disable max-len */
     return <div>

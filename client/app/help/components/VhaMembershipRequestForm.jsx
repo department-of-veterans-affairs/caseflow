@@ -5,51 +5,18 @@ import Button from 'app/components/Button';
 import TextareaField from 'app/components/TextareaField';
 import Alert from '../../components/Alert';
 import { find } from 'lodash';
+import { vhaProgramOfficeOptions } from '../constants';
 
 const VhaMembershipRequestForm = (props) => {
 
-  // TODO: Import these options from a constants/json file.
-  const vhaProgramOfficeOptions = () => {
-    return [
-      {
-        id: 'vhaCAMO',
-        label: 'VHA CAMO',
-      },
-      {
-        id: 'vhaCaregiverSupportProgram',
-        label: 'VHA Caregiver Support Program',
-      },
-      {
-        id: 'paymentOperationsManagement',
-        label: 'Payment Operations Managment',
-      },
-      {
-        id: 'veteranAndFamilyMembersProgram',
-        label: 'Veteran and Family Members Program',
-      },
-      {
-        id: 'memberServicesHealthEligibilityCenter',
-        label: 'Member Services - Health Eligibility Center',
-      },
-      {
-        id: 'memberServicesBeneficiaryTravel',
-        label: 'Member Services - Beneficiary Travel',
-      },
-      {
-        id: 'prosthetics',
-        label: 'Prosthetics',
-      }
-    ];
-  };
-
   // TODO: Figure out if Memo matters here or not
   const parsedIssues = useMemo(() => {
-    vhaProgramOfficeOptions().reduce((acc, obj) => {
+    vhaProgramOfficeOptions.reduce((acc, obj) => {
       acc[obj.id] = false;
 
       return acc;
     }, {});
-  }, [vhaProgramOfficeOptions()]);
+  }, [vhaProgramOfficeOptions]);
 
   // TODO: create state variables
   const [vhaAccess, setVhaAccess] = useState(false);
@@ -57,8 +24,6 @@ const VhaMembershipRequestForm = (props) => {
   const [requestReason, setRequestReason] = useState('');
 
   const onVhaProgramOfficeAccessChange = (evt) => {
-    // console.log(evt.target);
-    // console.log(evt.target.checked);
     setProgramOfficesAccess({ ...programOfficesAccess, [evt.target.id]: evt.target.checked });
   };
 
@@ -87,7 +52,7 @@ const VhaMembershipRequestForm = (props) => {
           <CheckboxGroup
             name="programOfficesAccess"
             hideLabel
-            options={vhaProgramOfficeOptions()}
+            options={vhaProgramOfficeOptions}
             onChange={(val) => onVhaProgramOfficeAccessChange(val)}
             values={programOfficesAccess}
           />
@@ -131,7 +96,10 @@ const VhaMembershipRequestForm = (props) => {
       <h2> Select which VHA groups you need access to </h2>
       {memberOrRequestToVha &&
         <div style={{ marginBottom: '3rem' }}>
-          <Alert type="info" title="" message="Options are disabled if you have a pending request or are already a member of the group." />
+          <Alert
+            type="info"
+            message="Options are disabled if you have a pending request or are already a member of the group."
+          />
         </div>
       }
       <form>
