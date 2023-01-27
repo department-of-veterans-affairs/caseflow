@@ -9,7 +9,7 @@ export const VHA_PROGRAM_OFFICE_OPTIONS = [
   },
   {
     id: 'paymentOperationsManagement',
-    label: 'Payment Operations Managment',
+    label: 'Payment Operations Management',
   },
   {
     id: 'veteranAndFamilyMembersProgram',
@@ -31,3 +31,6 @@ export const VHA_PROGRAM_OFFICE_OPTIONS = [
 
 export const VHA_NOTICE_TEXT = `Note: If you are requesting specialized access and are not a member of the
   general VHA group, you will automatically be given access to the general VHA group if your request is approved.`;
+
+export const VHA_RADIO_DISABLED_INFO_TEXT = `Options are disabled if you have a pending request or are already
+  a member of the group.`;

@@ -5,7 +5,7 @@ import Button from 'app/components/Button';
 import TextareaField from 'app/components/TextareaField';
 import Alert from '../../components/Alert';
 import { find } from 'lodash';
-import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_NOTICE_TEXT } from '../constants';
+import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_NOTICE_TEXT, VHA_RADIO_DISABLED_INFO_TEXT } from '../constants';
 
 const VhaMembershipRequestForm = (props) => {
 
@@ -78,7 +78,7 @@ const VhaMembershipRequestForm = (props) => {
 
   // TODO: make this update based on redux or on the clicked boxes assuming redux populates those
   // Memo this or figure it out in ruby and give it to redux instead of figuring it out in javascript
-  const memberOrOpenRequestToVha = true;
+  const memberOrOpenRequestToVha = false;
 
   const anyProgramOfficeSelected = useMemo(() => (
     find(programOfficesAccess, (value) => value === true)),
@@ -88,7 +88,7 @@ const VhaMembershipRequestForm = (props) => {
   const submitDisabled = (!vhaAccess && !memberOrOpenRequestToVha) ||
    (!anyProgramOfficeSelected && memberOrOpenRequestToVha);
 
-  const automaticVhaAccessNotice = anyProgramOfficeSelected && !vhaAccess;
+  const automaticVhaAccessNotice = anyProgramOfficeSelected && (!vhaAccess && !memberOrOpenRequestToVha);
   // console.log(programOfficesAccess);
   // console.log(vhaAccess);
   // console.log(requestReason);
@@ -103,7 +103,7 @@ const VhaMembershipRequestForm = (props) => {
         <div style={{ marginBottom: '3rem' }}>
           <Alert
             type="info"
-            message="Options are disabled if you have a pending request or are already a member of the group."
+            message={VHA_RADIO_DISABLED_INFO_TEXT}
           />
         </div>
       }
