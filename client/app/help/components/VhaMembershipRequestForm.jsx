@@ -5,18 +5,18 @@ import Button from 'app/components/Button';
 import TextareaField from 'app/components/TextareaField';
 import Alert from '../../components/Alert';
 import { find } from 'lodash';
-import { vhaProgramOfficeOptions } from '../constants';
+import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_NOTICE_TEXT } from '../constants';
 
 const VhaMembershipRequestForm = (props) => {
 
   // TODO: Figure out if Memo matters here or not
   const parsedIssues = useMemo(() => {
-    vhaProgramOfficeOptions.reduce((acc, obj) => {
+    VHA_PROGRAM_OFFICE_OPTIONS.reduce((acc, obj) => {
       acc[obj.id] = false;
 
       return acc;
     }, {});
-  }, [vhaProgramOfficeOptions]);
+  }, [VHA_PROGRAM_OFFICE_OPTIONS]);
 
   // TODO: create state variables
   const [vhaAccess, setVhaAccess] = useState(false);
@@ -52,7 +52,7 @@ const VhaMembershipRequestForm = (props) => {
           <CheckboxGroup
             name="programOfficesAccess"
             hideLabel
-            options={vhaProgramOfficeOptions}
+            options={VHA_PROGRAM_OFFICE_OPTIONS}
             onChange={(val) => onVhaProgramOfficeAccessChange(val)}
             values={programOfficesAccess}
           />
@@ -80,10 +80,15 @@ const VhaMembershipRequestForm = (props) => {
   // Memo this or figure it out in ruby and give it to redux instead of figuring it out in javascript
   const memberOrOpenRequestToVha = true;
 
+  const anyProgramOfficeSelected = useMemo(() => (
+    find(programOfficesAccess, (value) => value === true)),
+  [programOfficesAccess]);
+
   // TODO: Could also use redux actions to set the membership requests depending on the checkbox clicks
   const submitDisabled = (!vhaAccess && !memberOrOpenRequestToVha) ||
-   (!find(programOfficesAccess, (value) => value === true) && memberOrOpenRequestToVha);
+   (!anyProgramOfficeSelected && memberOrOpenRequestToVha);
 
+  const automaticVhaAccessNotice = anyProgramOfficeSelected && !vhaAccess;
   // console.log(programOfficesAccess);
   // console.log(vhaAccess);
   // console.log(requestReason);
@@ -105,6 +110,7 @@ const VhaMembershipRequestForm = (props) => {
       <form>
         <GeneralVHAAccess />
         <SpecializedAccess />
+        {automaticVhaAccessNotice && <p> {VHA_NOTICE_TEXT} </p>}
         <TextareaField
           label="Reason for access"
           name="membership-request-instructions-textBox"

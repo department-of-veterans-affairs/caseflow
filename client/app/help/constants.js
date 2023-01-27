@@ -1,4 +1,4 @@
-export const vhaProgramOfficeOptions = [
+export const VHA_PROGRAM_OFFICE_OPTIONS = [
   {
     id: 'vhaCAMO',
     label: 'VHA CAMO',
@@ -28,3 +28,6 @@ export const vhaProgramOfficeOptions = [
     label: 'Prosthetics',
   }
 ];
+
+export const VHA_NOTICE_TEXT = `Note: If you are requesting specialized access and are not a member of the
+  general VHA group, you will automatically be given access to the general VHA group if your request is approved.`;
