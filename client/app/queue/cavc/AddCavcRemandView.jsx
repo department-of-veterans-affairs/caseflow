@@ -90,15 +90,15 @@ const AddCavcRemandView = (props) => {
     [CAVC_DECISION_TYPES.remand]: true,
     [CAVC_DECISION_TYPES.straight_reversal]: featureToggles.reversal_cavc_remand,
     [CAVC_DECISION_TYPES.death_dismissal]: featureToggles.dismissal_cavc_remand,
-    // [CAVC_DECISION_TYPES.other_dismissal]: !featureToggles.cavc_dashboard_workflow,
-    // [CAVC_DECISION_TYPES.affirmed]: !featureToggles.cavc_dashboard_workflow,
-    // [CAVC_DECISION_TYPES.settlement]: !featureToggles.cavc_dashboard_workflow
+    // feature toggle AC requests that options are HIDDEN if toggle is enabled; hence the NOT operator (!)
+    [CAVC_DECISION_TYPES.other_dismissal]: !featureToggles.cavc_dashboard_workflow,
+    [CAVC_DECISION_TYPES.affirmed]: !featureToggles.cavc_dashboard_workflow,
+    [CAVC_DECISION_TYPES.settlement]: !featureToggles.cavc_dashboard_workflow
 
     // above options should be uncommented and below options removed once feature toggle is added.
-    // feature toggle AC requests that options are HIDDEN if toggle is enabled; hence the NOT operator (!)
-    [CAVC_DECISION_TYPES.other_dismissal]: true,
-    [CAVC_DECISION_TYPES.affirmed]: true,
-    [CAVC_DECISION_TYPES.settlement]: true
+    // [CAVC_DECISION_TYPES.other_dismissal]: true,
+    // [CAVC_DECISION_TYPES.affirmed]: true,
+    // [CAVC_DECISION_TYPES.settlement]: true
   };
   const supportedRemandTypes = {
     [CAVC_REMAND_SUBTYPES.jmr]: true,
@@ -446,7 +446,7 @@ AddCavcRemandView.propTypes = {
   featureToggles: PropTypes.shape({
     mdr_cavc_remand: PropTypes.bool,
     reversal_cavc_remand: PropTypes.bool,
-    // cavc_dashboard_workflow: PropTypes.bool,
+    cavc_dashboard_workflow: PropTypes.bool,
     dismissal_cavc_remand: PropTypes.bool
   }),
   highlightInvalid: PropTypes.bool,
