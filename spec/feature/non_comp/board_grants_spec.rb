@@ -8,6 +8,8 @@ feature "NonComp Board Grant Task Page", :postgres do
     FeatureToggle.enable!(:decision_review_queue_ssn_column)
   end
 
+  after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
+
   def submit_form
     find("label[for=isEffectuated]").click
     click_on "Complete"
@@ -47,13 +49,7 @@ feature "NonComp Board Grant Task Page", :postgres do
 
   let(:business_line_url) { "decision_reviews/nca" }
   let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
-  let(:vet_id_column_value) do
-    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
-      appeal.veteran.ssn
-    else
-      appeal.veteran.participant_id
-    end
-  end
+  let(:vet_id_column_value) { appeal.veteran.ssn }
 
   scenario "cancel returns back to business line" do
     visit dispositions_url
