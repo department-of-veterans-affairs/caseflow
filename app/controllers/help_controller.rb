@@ -16,32 +16,17 @@ class HelpController < ApplicationController
   end
   helper_method :user_organizations
 
-  # TODO: Delete this when the OrganizationMembershipRequest model is implemented
-  def temp_org_request_data
-    [
+  def pending_membership_requests(user = current_user)
+    # TODO: Might also narrow it down by organization?
+    # Could also do this based on user.membership_requests if I make the association. Probably the better way
+    MembershipRequest.includes(:user, :organization).where(decider: user).all.map do |membership_request|
       {
-        id: 12,
-        org_name: "Vha",
-        status: "Pending"
-      },
-      {
-        id: 13,
-        org_name: "Random Vha program office",
-        status: "Pending"
+        name: membership_request.organization.name,
+        url: membership_request.organization.url,
+        orgType: membership_request.organization.type,
+        orgId: membership_request.organization.id
       }
-    ]
+    end
   end
-
-  def open_organization_membership_requests(_user = current_user)
-    # user.organization_membership_requests.assigned.includes(:organizations).map do |org_request|
-    #   {
-    #     name: org_request.organization.name,
-    #     url: org_request.organization.url,
-    #     orgType: org_request.organization.type,
-    #     orgId: org_request.organization.id
-    #   }
-    # end
-    temp_org_request_data
-  end
-  helper_method :open_organization_membership_requests
+  helper_method :pending_membership_requests
 end
