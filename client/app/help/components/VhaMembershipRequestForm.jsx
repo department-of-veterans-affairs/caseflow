@@ -78,11 +78,11 @@ const VhaMembershipRequestForm = (props) => {
 
   // TODO: make this update based on redux or on the clicked boxes assuming redux populates those
   // Memo this or figure it out in ruby and give it to redux instead of figuring it out in javascript
-  const memberOrRequestToVha = true;
+  const memberOrOpenRequestToVha = true;
 
   // TODO: Could also use redux actions to set the membership requests depending on the checkbox clicks
-  const submitDisabled = (!vhaAccess && !memberOrRequestToVha) ||
-   (!find(programOfficesAccess, (value) => value === true) && memberOrRequestToVha);
+  const submitDisabled = (!vhaAccess && !memberOrOpenRequestToVha) ||
+   (!find(programOfficesAccess, (value) => value === true) && memberOrOpenRequestToVha);
 
   // console.log(programOfficesAccess);
   // console.log(vhaAccess);
@@ -94,7 +94,7 @@ const VhaMembershipRequestForm = (props) => {
       <h1> 1. How do I access the VHA team?</h1>
       <p> If you need access to a VHA team, please fill out the form below. </p>
       <h2> Select which VHA groups you need access to </h2>
-      {memberOrRequestToVha &&
+      {memberOrOpenRequestToVha &&
         <div style={{ marginBottom: '3rem' }}>
           <Alert
             type="info"
