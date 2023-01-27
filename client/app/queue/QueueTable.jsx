@@ -299,15 +299,19 @@ export default class QueueTable extends React.PureComponent {
     const currentPage = pageNumber + 1 > numberOfPages || pageNumber < 0 ? 0 : pageNumber;
     const sortColName = columns.map((column) => column.name).includes(sortColumn) ? sortColumn : null;
 
+    const querySearchText = tabPaginationOptions[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM];
+
     // Only request tasks from the back end if no pages have been fetches, we want another page,
     // to sort on a column, or if filters are provided
-    const needsTaskRequest = _.isUndefined(numberOfPages) || currentPage || sortColName || !_.isEmpty(filteredByList);
+    const needsTaskRequest = _.isUndefined(numberOfPages) || currentPage || sortColName ||
+      !_.isEmpty(filteredByList) || querySearchText;
 
     return {
       sortAscending,
       sortColName,
       filteredByList,
       currentPage,
+      querySearchText,
       needsTaskRequest
     };
   };
@@ -324,6 +328,21 @@ export default class QueueTable extends React.PureComponent {
       this.setState({ cachedResponses: { ...this.state.cachedResponses, [this.requestUrl()]: firstResponse } });
     }
   };
+
+  componentDidUpdate = (previousProps, previousState) => {
+    // Only refetch if the search query text changes
+    if (this.props.tabPaginationOptions &&
+      previousState.querySearchText !== this.props.tabPaginationOptions[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]) {
+      this.setState(
+        { querySearchText: this.props.tabPaginationOptions[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM] },
+        this.requestTasks
+      );
+
+      // When the search value is changed, default back to the first page of data
+      // because the number of pages could have changed as data is filtered out.
+      this.updateCurrentPage(0);
+    }
+  }
 
   getFilters = (filterParams) => {
     const filters = {};
@@ -455,6 +474,7 @@ export default class QueueTable extends React.PureComponent {
   // &sort_by=detailsColumn
   // &order=desc
   // &filter[]=col=docketNumberColumn&val=legacy|evidence_submission&filters[]=col=taskColumn&val=Unaccredited rep
+  // &search_query=Bob%20Smith
   requestUrl = () => {
     return `${this.props.taskPagesApiEndpoint}${this.requestQueryString()}`;
   };
@@ -472,6 +492,11 @@ export default class QueueTable extends React.PureComponent {
       params[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] = this.state.sortAscending ?
         QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC :
         QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
+    }
+
+    // Add the search query parameters to the query string if any free text search has been defined
+    if (this.state.querySearchText) {
+      params[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM] = this.state.querySearchText;
     }
 
     if (!_.isEmpty(filteredByList)) {
@@ -721,6 +746,7 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
     [QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM]: PropTypes.string,
     [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: PropTypes.string,
     [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string),
+    [QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]: PropTypes.string,
     onPageLoaded: PropTypes.func
   })
 };
