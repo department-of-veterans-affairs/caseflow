@@ -366,6 +366,10 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />
   );
 
+  routedCompleteTaskContestedClaimModal = (props) => (
+    <CompleteTaskModal modalType="task_complete_contested_claim" {...props.match.params} />
+  );
+
   routedVhaCompleteTaskModal = (props) => (
     <CompleteTaskModal modalType="ready_for_review" {...props.match.params} />
   );
@@ -1102,6 +1106,14 @@ class QueueApp extends React.PureComponent {
               path="/queue/appeals/:appealId/tasks/:taskId/place_hold"
               title="Place Hold | Caseflow"
               render={this.routedColocatedPlaceHold}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.MARK_TASK_AS_COMPLETE_CONTESTED_CLAIM.value
+                }`}
+              title="Mark Task Complete | Caseflow"
+              render={this.routedCompleteTaskContestedClaimModal}
             />
             <PageRoute
               exact

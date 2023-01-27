@@ -63,6 +63,38 @@ MarkTaskCompleteModal.propTypes = {
   state: PropTypes.object
 };
 
+const MarkTaskCompleteContestedClaimModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+  const instructionsLabel = taskConfiguration && taskConfiguration.instructions_label;
+
+  return (
+    <React.Fragment>
+      {taskConfiguration && taskConfiguration.modal_body}
+      {taskConfiguration && taskConfiguration.modal_alert && (
+        <Alert message={taskConfiguration.modal_alert} type="info" />
+      )}
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        <TextareaField
+          label={instructionsLabel || 'Instructions:'}
+          name="instructions"
+          id="completeTaskInstructions"
+          onChange={(value) => setState({ instructions: value })}
+          value={state.instructions}
+          styling={marginTop(4)}
+          maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+          optional
+        />
+      )}
+    </React.Fragment>
+  );
+};
+
+MarkTaskCompleteContestedClaimModal.propTypes = {
+  props: PropTypes.object,
+  setState: PropTypes.func,
+  state: PropTypes.object
+};
+
 const locationTypeOpts = [
   { displayText: 'VBMS', value: 'vbms' },
   { displayText: 'Centralized Mail Portal', value: 'centralized mail portal' },
@@ -349,6 +381,11 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE,
     getContent: MarkTaskCompleteModal,
+    buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
+  },
+  task_complete_contested_claim: {
+    title: () => COPY.MARK_TASK_COMPLETE_TITLE_CONTESTED_CLAIM,
+    getContent: MarkTaskCompleteContestedClaimModal,
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
   },
   ready_for_review: {
