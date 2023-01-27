@@ -3653,7 +3653,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     Array [
                       Object {
                         "displayText": "Joint Motion for Remand (JMR) / Joint Motion for Partial Remand (JMPR)",
-                        "value": "jmr",
+                        "value": "jmr_jmpr",
                       },
                     ]
                   }
@@ -3664,7 +3664,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       "data-css-1m3edv2": "",
                     }
                   }
-                  value="jmr"
+                  value="jmr_jmpr"
                   vertical={true}
                 >
                   <fieldset
@@ -3686,20 +3686,20 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     >
                       <div
                         className="cf-form-radio-option"
-                        key="sub-type-options-jmr-0"
+                        key="sub-type-options-jmr_jmpr-0"
                       >
                         <input
                           checked={true}
                           disabled={false}
-                          id="sub-type-options_jmr"
+                          id="sub-type-options_jmr_jmpr"
                           name="sub-type-options"
                           onChange={[Function]}
                           type="radio"
-                          value="jmr"
+                          value="jmr_jmpr"
                         />
                         <label
                           className=""
-                          htmlFor="sub-type-options_jmr"
+                          htmlFor="sub-type-options_jmr_jmpr"
                         >
                           Joint Motion for Remand (JMR) / Joint Motion for Partial Remand (JMPR)
                         </label>

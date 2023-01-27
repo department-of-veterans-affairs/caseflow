@@ -76,7 +76,7 @@ const AddCavcRemandView = (props) => {
   const [attorney, setAttorney] = useState('1');
   const [judge, setJudge] = useState(null);
   const [type, setType] = useState(CAVC_DECISION_TYPES.remand);
-  const [subType, setSubType] = useState(CAVC_REMAND_SUBTYPES.jmr);
+  const [subType, setSubType] = useState(CAVC_REMAND_SUBTYPES.jmr_jmpr);
   const [decisionDate, setDecisionDate] = useState(null);
   const [judgementDate, setJudgementDate] = useState(null);
   const [mandateDate, setMandateDate] = useState(null);
@@ -92,8 +92,9 @@ const AddCavcRemandView = (props) => {
     [CAVC_DECISION_TYPES.death_dismissal]: featureToggles.dismissal_cavc_remand
   };
   const supportedRemandTypes = {
-    [CAVC_REMAND_SUBTYPES.jmr]: true,
-    [CAVC_REMAND_SUBTYPES.jmpr]: true,
+    [CAVC_REMAND_SUBTYPES.jmr]: false,
+    [CAVC_REMAND_SUBTYPES.jmpr]: false,
+    [CAVC_REMAND_SUBTYPES.jmr_jmpr]: true,
     [CAVC_REMAND_SUBTYPES.mdr]: featureToggles.mdr_cavc_remand
   };
   const filteredDecisionTypes = typeOptions.filter((typeOption) => supportedDecisionTypes[typeOption.value]);
@@ -140,6 +141,7 @@ const AddCavcRemandView = (props) => {
   const straightReversalType = () => type === CAVC_DECISION_TYPES.straight_reversal;
   const deathDismissalType = () => type === CAVC_DECISION_TYPES.death_dismissal;
 
+  const jmrjmprSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmr_jmpr;
   const jmrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmr;
   const jmprSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmpr;
   const mdrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.mdr;
@@ -309,6 +311,9 @@ const AddCavcRemandView = (props) => {
   const jmprIssuesBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
     {COPY.JMPR_SELECTION_ISSUE_INFO_BANNER}
   </Alert>;
+  const jmrjmprIssuesBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
+    {COPY.JMR_JMPR_SELECTION_ISSUE_INFO_BANNER}
+  </Alert>;
   const mdrIssuesBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
     {COPY.MDR_SELECTION_ISSUE_INFO_BANNER}
   </Alert>;
@@ -401,6 +406,7 @@ const AddCavcRemandView = (props) => {
       {mandateAvailable() && !isMandateSame && mandateField }
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
       {!deathDismissalType() && issuesField}
+      {jmrjmprSubtype() && allIssuesUnselected && jmrjmprIssuesBanner}
       {jmrSubtype() && !allIssuesSelected && jmrIssuesBanner}
       {jmprSubtype() && allIssuesUnselected && jmprIssuesBanner}
       {mdrSubtype() && allIssuesUnselected && mdrIssuesBanner}

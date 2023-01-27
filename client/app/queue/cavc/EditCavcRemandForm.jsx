@@ -30,6 +30,7 @@ import CAVC_DECISION_TYPE_NAMES from 'constants/CAVC_DECISION_TYPE_NAMES';
 import {
   JmprIssuesBanner,
   JmrIssuesBanner,
+  JmrJmprIssuesBanner,
   MdrBanner,
   MdrIssuesBanner,
   NoMandateBanner,
@@ -373,8 +374,9 @@ export const EditCavcRemandForm = ({
           </React.Fragment>
         }
 
-        {isRemandType('jmr') && !allIssuesSelected && <JmrIssuesBanner />}
-        {isRemandType('jmpr') && !watchIssueIds?.length && <JmprIssuesBanner />}
+        {isRemandType('jmr_jmpr') && !watchIssueIds?.length && <JmrJmprIssuesBanner />}
+        {!isRemandType('jmr_jmpr') && isRemandType('jmr') && !allIssuesSelected && <JmrIssuesBanner />}
+        {!isRemandType('jmr_jmpr') && isRemandType('jmpr') && !watchIssueIds?.length && <JmprIssuesBanner />}
         {isRemandType('mdr') && !watchIssueIds?.length && <MdrIssuesBanner />}
         {isRemandType('mdr') && (
           <React.Fragment>
