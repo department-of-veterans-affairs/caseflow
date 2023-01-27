@@ -1,0 +1,30 @@
+{
+  "name": "stephanward",
+  "version": "1.0.0",
+  "description": "stephan ward found no .npmrc file",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/department-of-veterans-affairs/caseflow.git"
+  },
+  "keywords": [
+    "Testing",
+    "initial",
+    "config"
+  ],
+  "author": "Stepah Ward",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "bugs": {
+    "url": "https://github.com/department-of-veterans-affairs/caseflow/issues"
+  },
+  "homepage": "https://github.com/department-of-veterans-affairs/caseflow#readme"
+}
