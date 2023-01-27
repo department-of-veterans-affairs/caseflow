@@ -32,7 +32,7 @@ describe PostSendInitialNotificationLetterHoldingTask do
         [
           Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_TASK.to_h,
           Constants.TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER.to_h,
-          Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER.to_h
+          Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_CC.to_h
         ]
       end
 
