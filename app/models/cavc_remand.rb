@@ -33,6 +33,7 @@ class CavcRemand < CaseflowRecord
   # Joint Motion Remand, Joint Motion Partial Remand, and Memorandum Decision on Remand
   # The Board uses the initialisms more than the full words, so we are following that norm
   enum remand_subtype: {
+    Constants.CAVC_REMAND_SUBTYPES.jmr_jmpr.to_sym => Constants.CAVC_REMAND_SUBTYPES.jmr_jmpr,
     Constants.CAVC_REMAND_SUBTYPES.jmr.to_sym => Constants.CAVC_REMAND_SUBTYPES.jmr,
     Constants.CAVC_REMAND_SUBTYPES.jmpr.to_sym => Constants.CAVC_REMAND_SUBTYPES.jmpr,
     Constants.CAVC_REMAND_SUBTYPES.mdr.to_sym => Constants.CAVC_REMAND_SUBTYPES.mdr
