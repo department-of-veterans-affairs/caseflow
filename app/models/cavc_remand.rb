@@ -17,7 +17,7 @@ class CavcRemand < CaseflowRecord
   validates :cavc_judge_full_name, inclusion: { in: Constants::CAVC_JUDGE_FULL_NAMES }
   validates :remand_subtype, presence: true, if: :remand?
   validates :judgement_date, :mandate_date, presence: true, unless: :mandate_not_required?
-  validate :decision_issue_ids_match_appeal_decision_issues, if: -> { remand? && jmr_jmpr? }
+  validate :decision_issue_ids_match_appeal_decision_issues, if: -> { remand? && jmr? }
   validates :federal_circuit, inclusion: { in: [true, false] }, if: -> { remand? && mdr? }
 
   before_create :normalize_cavc_docket_number
