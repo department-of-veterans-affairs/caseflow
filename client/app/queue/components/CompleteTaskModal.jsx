@@ -69,7 +69,7 @@ const MarkTaskCompleteContestedClaimModal = ({ props, state, setState }) => {
 
   return (
     <React.Fragment>
-      {taskConfiguration && taskConfiguration.modal_body}
+      {taskConfiguration && StringUtil.nl2br(taskConfiguration.modal_body)}
       {taskConfiguration && taskConfiguration.modal_alert && (
         <Alert message={taskConfiguration.modal_alert} type="info" />
       )}

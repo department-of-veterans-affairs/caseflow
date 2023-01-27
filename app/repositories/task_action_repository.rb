@@ -33,14 +33,10 @@ class TaskActionRepository
       }
     end
 
-    def task_conteted_claim(task, _user = nil)
-      # return_to_name = task.is_a?(AttorneyTask) ? task.parent.assigned_to.full_name : task_assigner_name(task)
-      # {
-      #   modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
-      #   modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
-      #   message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
-      #   message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name)
-      # }
+    def task_conteted_claim(*)
+      {
+        modal_body: COPY::MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL
+      }
     end
 
     def cancel_address_verify_task_and_assign_regional_office_data(_task, _user = nil)
