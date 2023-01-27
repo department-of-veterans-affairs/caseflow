@@ -1,4 +1,4 @@
-class UpdateMembershipRequestsAssociations < Caseflow::Migration
+class CreateMembershipRequests < Caseflow::Migration
   def change
     create_table :membership_requests do |t|
       t.references :organization, foreign_key: true, comment: "The organization that the membership request is asking to join"
