@@ -54,7 +54,8 @@ end
 #   - they make significantly drastic changes in Dev/Demo compared to Production
 #   - the work around the feature has been paused
 vexing_flags = [
-  "legacy_das_deprecation"
+  "legacy_das_deprecation",
+  "cavc_dashboard_workflow"
 ]
 
 all_features = AllFeatureToggles.new.call.flatten.uniq
