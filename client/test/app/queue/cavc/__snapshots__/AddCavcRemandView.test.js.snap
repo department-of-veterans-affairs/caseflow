@@ -3588,6 +3588,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                         "displayText": "Remand",
                         "value": "remand",
                       },
+                      Object {
+                        "displayText": "Dismissal, other than Death",
+                        "value": "other_dismissal",
+                      },
+                      Object {
+                        "displayText": "Affirmed",
+                        "value": "affirmed",
+                      },
+                      Object {
+                        "displayText": "Settlement",
+                        "value": "settlement",
+                      },
                     ]
                   }
                   required={false}
@@ -3635,6 +3647,66 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           htmlFor="type-options_remand"
                         >
                           Remand
+                        </label>
+                      </div>
+                      <div
+                        className="cf-form-radio-option"
+                        key="type-options-other_dismissal-1"
+                      >
+                        <input
+                          checked={false}
+                          disabled={false}
+                          id="type-options_other_dismissal"
+                          name="type-options"
+                          onChange={[Function]}
+                          type="radio"
+                          value="other_dismissal"
+                        />
+                        <label
+                          className=""
+                          htmlFor="type-options_other_dismissal"
+                        >
+                          Dismissal, other than Death
+                        </label>
+                      </div>
+                      <div
+                        className="cf-form-radio-option"
+                        key="type-options-affirmed-2"
+                      >
+                        <input
+                          checked={false}
+                          disabled={false}
+                          id="type-options_affirmed"
+                          name="type-options"
+                          onChange={[Function]}
+                          type="radio"
+                          value="affirmed"
+                        />
+                        <label
+                          className=""
+                          htmlFor="type-options_affirmed"
+                        >
+                          Affirmed
+                        </label>
+                      </div>
+                      <div
+                        className="cf-form-radio-option"
+                        key="type-options-settlement-3"
+                      >
+                        <input
+                          checked={false}
+                          disabled={false}
+                          id="type-options_settlement"
+                          name="type-options"
+                          onChange={[Function]}
+                          type="radio"
+                          value="settlement"
+                        />
+                        <label
+                          className=""
+                          htmlFor="type-options_settlement"
+                        >
+                          Settlement
                         </label>
                       </div>
                     </div>
