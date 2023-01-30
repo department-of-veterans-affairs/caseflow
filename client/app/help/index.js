@@ -36,9 +36,6 @@ const HelpApp = (props) => {
 
   const dispatch = useDispatch();
 
-  // console.log(props);
-  // console.log(props.userOrganizations);
-
   // Initialize the redux store with props from the server
   useEffect(() => {
     dispatch(setUserOrganizations(props.userOrganizations));
@@ -51,17 +48,6 @@ const HelpApp = (props) => {
   useEffect(() => {
     dispatch(setOrganizationMembershipRequests(props.organizationMembershipRequests));
   }, [dispatch, props.organizationMembershipRequests]);
-
-  // dispatch(setUserOrganizations(props.userOrganizations));
-  // dispatch(setFeatureToggles(props.featureToggles));
-
-  // const organizations = useSelector((state) => state.userOrganizations);
-  // const featureToggles = useSelector((state) => state.featureToggles);
-  // const organizationMembershipRequests = useSelector((state) => state.organizationMembershipRequests);
-
-  // console.log(organizations);
-  // console.log(featureToggles);
-  // console.log(organizationMembershipRequests);
 
   return (
     <div>
