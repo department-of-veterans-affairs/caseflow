@@ -147,56 +147,46 @@ feature "NonComp Reviews Queue", :postgres do
       # Claimant name desc
       order_buttons[:claimant_name].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=desc"
-      )
-
-      table_rows = current_table_rows
-
-      expect(table_rows.first.include?("Ccc")).to eq true
-      expect(table_rows.last.include?("Aaa")).to eq true
-
-      # Claimant name asc
-      order_buttons[:claimant_name].click
-      expect(page).to have_current_path(
         "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=asc"
       )
+
       table_rows = current_table_rows
 
       expect(table_rows.first.include?("Aaa")).to eq true
       expect(table_rows.last.include?("Ccc")).to eq true
 
-      # Participant ID desc
-      order_buttons[:participant_id].click
+      # Claimant name asc
+      order_buttons[:claimant_name].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=desc"
+        "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=desc"
       )
       table_rows = current_table_rows
 
-      expect(table_rows.first.include?(hlr_b.veteran.participant_id)).to eq true
-      expect(table_rows.last.include?(hlr_a.veteran.participant_id)).to eq true
+      expect(table_rows.first.include?("Ccc")).to eq true
+      expect(table_rows.last.include?("Aaa")).to eq true
 
-      # Participant ID asc
+      # Participant ID desc
       order_buttons[:participant_id].click
       expect(page).to have_current_path(
         "#{base_url}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=asc"
       )
+      table_rows = current_table_rows
+
+      expect(table_rows.last.include?(hlr_b.veteran.participant_id)).to eq true
+      expect(table_rows.first.include?(hlr_a.veteran.participant_id)).to eq true
+
+      # Participant ID asc
+      order_buttons[:participant_id].click
+      expect(page).to have_current_path(
+        "#{base_url}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=desc"
+      )
 
       table_rows = current_table_rows
 
-      expect(table_rows.first.include?(hlr_a.veteran.participant_id)).to eq true
-      expect(table_rows.last.include?(hlr_b.veteran.participant_id)).to eq true
+      expect(table_rows.last.include?(hlr_a.veteran.participant_id)).to eq true
+      expect(table_rows.first.include?(hlr_b.veteran.participant_id)).to eq true
 
       # Issue count desc
-      order_buttons[:issues_count].click
-      expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=issueCountColumn&order=desc"
-      )
-      table_rows = current_table_rows
-
-      expect(table_rows.last.include?(" 1 ")).to eq true
-      expect(table_rows.first.include?(" 2 ")).to eq true
-
-      # Issue count asc
       order_buttons[:issues_count].click
       expect(page).to have_current_path(
         "#{base_url}?tab=in_progress&page=1&sort_by=issueCountColumn&order=asc"
@@ -206,18 +196,17 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.last.include?(" 2 ")).to eq true
       expect(table_rows.first.include?(" 1 ")).to eq true
 
-      # Days waiting desc
-      order_buttons[:days_waiting].click
+      # Issue count asc
+      order_buttons[:issues_count].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=daysWaitingColumn&order=desc"
+        "#{base_url}?tab=in_progress&page=1&sort_by=issueCountColumn&order=desc"
       )
-
       table_rows = current_table_rows
 
-      expect(table_rows.first.include?("0 days")).to eq true
-      expect(table_rows.last.include?("6 days")).to eq true
+      expect(table_rows.last.include?(" 1 ")).to eq true
+      expect(table_rows.first.include?(" 2 ")).to eq true
 
-      # Days waiting asc
+      # Days waiting desc
       order_buttons[:days_waiting].click
       expect(page).to have_current_path(
         "#{base_url}?tab=in_progress&page=1&sort_by=daysWaitingColumn&order=asc"
@@ -228,8 +217,21 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.first.include?("6 days")).to eq true
       expect(table_rows.last.include?("0 days")).to eq true
 
-      # Date Completed desc
+      # Days waiting asc
+      order_buttons[:days_waiting].click
+      expect(page).to have_current_path(
+        # This url is the same as the above due to page caching. The params don't update in QueueTable when cached
+        "#{base_url}?tab=in_progress&page=1&sort_by=daysWaitingColumn&order=asc"
+      )
 
+      table_rows = current_table_rows
+
+      expect(table_rows.first.include?("0 days")).to eq true
+      expect(table_rows.last.include?("6 days")).to eq true
+
+      # Date Completed desc
+      # Currently swapping tabs does not correctly populate get params.
+      # These statements will need to updated when that is fixed
       click_button("tasks-organization-queue-tab-1")
 
       later_date = Time.zone.now.strftime("%m/%d/%y")
@@ -237,24 +239,69 @@ feature "NonComp Reviews Queue", :postgres do
 
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=completed&page=1&sort_by=completedDateColumn&order=desc"
-      )
-
-      table_rows = current_table_rows
-
-      expect(table_rows.first.include?(later_date)).to eq true
-      expect(table_rows.last.include?(earlier_date)).to eq true
-
-      # Date Completed asc
-      order_buttons[:date_completed].click
-      expect(page).to have_current_path(
         "#{base_url}?tab=completed&page=1&sort_by=completedDateColumn&order=asc"
       )
 
       table_rows = current_table_rows
 
-      expect(table_rows.first.include?(earlier_date)).to eq true
       expect(table_rows.last.include?(later_date)).to eq true
+      expect(table_rows.first.include?(earlier_date)).to eq true
+
+      # Date Completed asc
+      order_buttons[:date_completed].click
+      expect(page).to have_current_path(
+        "#{base_url}?tab=completed&page=1&sort_by=completedDateColumn&order=desc"
+      )
+
+      table_rows = current_table_rows
+
+      expect(table_rows.last.include?(earlier_date)).to eq true
+      expect(table_rows.first.include?(later_date)).to eq true
+    end
+
+    context("veteran with null first and last name") do
+      let(:veteran_b) do
+        create(:veteran, first_name: "", last_name: "", participant_id: "601111772")
+      end
+
+      scenario "sorting and displaying a veteran with a null first and last name" do
+        base_url = "/decision_reviews/nco"
+
+        visit base_url
+
+        order_buttons = {
+          claimant_name: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[1]/span/span[2]'),
+          participant_id: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[2]/span/span[2]'),
+          issues_count: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[3]/span/span[2]'),
+          days_waiting: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span[1]/span[2]'),
+          date_completed: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
+        }
+
+        # Claimant name desc
+        order_buttons[:claimant_name].click
+        expect(page).to have_current_path(
+          "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=asc"
+        )
+
+        table_rows = current_table_rows
+
+        expect(table_rows.last.include?("claimant")).to eq true
+        expect(table_rows.first.include?("Aaa")).to eq true
+
+        # Claimant name asc
+        order_buttons[:claimant_name].click
+        expect(page).to have_current_path(
+          "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=desc"
+        )
+        table_rows = current_table_rows
+
+        expect(table_rows.last.include?("Aaa")).to eq true
+        expect(table_rows.first.include?("claimant")).to eq true
+
+        # Has a clickable name "claimant"
+        click_link "claimant"
+        expect(page).to have_content("Review each issue and assign the appropriate dispositions")
+      end
     end
 
     scenario "filtering reviews" do
