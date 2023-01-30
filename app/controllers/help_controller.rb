@@ -10,16 +10,14 @@ class HelpController < ApplicationController
   end
   helper_method :feature_toggle_ui_hash
 
-  # TODO: Add more fields if they are needed?
   def user_organizations(user = current_user)
     user.selectable_organizations.map { |org| org.slice(:name, :url) }
   end
   helper_method :user_organizations
 
   def pending_membership_requests(user = current_user)
-    # TODO: Might also narrow it down by organization?
-    # Could also do this based on user.membership_requests if I make the association. Probably the better way
-    MembershipRequest.includes(:user, :organization).where(decider: user).all.map do |membership_request|
+    # TODO: Might also narrow it down by organization? Not sure how that would work yet.
+    user.membership_requests.includes(:organization).assigned.map do |membership_request|
       {
         name: membership_request.organization.name,
         url: membership_request.organization.url,
