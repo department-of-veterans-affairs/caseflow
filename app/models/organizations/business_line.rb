@@ -174,7 +174,6 @@ class BusinessLine < Organization
       end
     end
 
-    # The NUMBER_OF_SEARCH_FIELDS constant reflects the number of searchable fields here for where interpolation later
     def search_all_clause
       return "" unless query_params[:search_query].present?
       if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user)
