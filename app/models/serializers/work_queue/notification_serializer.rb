@@ -10,4 +10,6 @@ class WorkQueue::NotificationSerializer
   attribute :email_notification_status
   attribute :sms_notification_status
   attribute :notification_content
+  attribute :email_notification_content
+  attribute :sms_notification_content
 end

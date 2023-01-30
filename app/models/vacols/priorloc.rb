@@ -4,6 +4,10 @@ class VACOLS::Priorloc < VACOLS::Record
   self.table_name = "priorloc"
   self.primary_key = "lockey"
 
+  attribute :locdin, :datetime
+  attribute :locdout, :datetime
+  attribute :locdto, :datetime
+
   def sub_location
     loclcode
   end
@@ -35,7 +39,7 @@ class VACOLS::Priorloc < VACOLS::Record
   def location_label
     return location unless /[0-9]+/.match?(location)
 
-    label = VACOLS::Staff.find(location)&.snamel
+    label = staff&.snamel
     return label if label.present?
 
     location
@@ -57,8 +61,20 @@ class VACOLS::Priorloc < VACOLS::Record
     locdto
   end
 
+  def staff
+    @staff ||= VACOLS::Staff.find_by(slogid: location)
+  end
+
+  def location_user
+    @location_user ||= User.where(css_id: staff&.sdomainid)&.first
+  end
+
   def with_attorney?
-    User.where(css_id: location)&.first&.attorney? || false
+    location_user&.attorney? || false
+  end
+
+  def with_judge?
+    location_user&.judge? || false
   end
 
   def summary
@@ -72,7 +88,8 @@ class VACOLS::Priorloc < VACOLS::Record
       date_in: location_date_in,
       vacols_id: vacols_id,
       exception_flag: exception_flag,
-      with_attorney?: with_attorney?
+      with_attorney?: with_attorney?,
+      with_judge?: with_judge?
     }
   end
 end

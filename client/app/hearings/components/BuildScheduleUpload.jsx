@@ -61,7 +61,8 @@ export default class BuildScheduleUpload extends React.Component {
       { this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value &&
       <div>
         {this.props.uploadRoCoFormErrors &&
-          <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadRoCoFormErrors)}</span>}
+          <span className="usa-input-error-message" tabIndex={0}>
+            {this.getErrorMessage(this.props.uploadRoCoFormErrors)}</span>}
         <InlineForm>
           <div {...inlineFormStyling} >
             <BasicDateRangeSelector
@@ -95,7 +96,8 @@ export default class BuildScheduleUpload extends React.Component {
       { this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value &&
       <div>
         {this.props.uploadJudgeFormErrors &&
-          <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadJudgeFormErrors)}</span>}
+          <span className="usa-input-error-message" tabIndex={0}>
+            {this.getErrorMessage(this.props.uploadJudgeFormErrors)}</span>}
         <InlineForm>
           <div {...judgeUploadStyle}>
             <FileUpload

@@ -1,0 +1,15 @@
+<% content_for :full_page_content do %>
+  <%= react_component("Admin", props: {
+    userDisplayName: current_user.display_name,
+    userId: current_user.id,
+    userRole: (current_user.vacols_roles.first || "").capitalize,
+    userCssId: current_user.css_id,
+    dropdownUrls: dropdown_urls,
+    applicationUrls: application_urls,
+    feedbackUrl: feedback_url,
+    featureToggles: {
+      sys_admin_page: FeatureToggle.enabled?(:sys_admin_page, user: current_user),
+      vet_extract_timestamp: FeatureToggle.enabled?(:vet_extract_timestamp, user: current_user)
+    }
+  }) %>
+<% end %>

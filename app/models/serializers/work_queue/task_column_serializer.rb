@@ -16,6 +16,10 @@ class WorkQueue::TaskColumnSerializer
     object.appeal.try(:docket_name)
   end
 
+  attribute :appeal_receipt_date do |object|
+    object.appeal.is_a?(LegacyAppeal) ? nil : object.appeal.try(:receipt_date)
+  end
+
   attribute :docket_number do |object, params|
     columns = [
       Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
@@ -302,9 +306,9 @@ class WorkQueue::TaskColumnSerializer
 
     if serialize_attribute?(params, columns)
       if object.assigned_to_type == "Organization"
-        Organization.find(object.assigned_to_id).name
+        object.assigned_to&.name
       elsif object.assigned_to_type == "User"
-        User.find(object.assigned_to_id).css_id
+        object.assigned_to&.css_id
       end
     end
   end
