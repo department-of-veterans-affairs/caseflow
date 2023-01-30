@@ -21,13 +21,27 @@ class CavcRemand < CaseflowRecord
   validates :federal_circuit, inclusion: { in: [true, false] }, if: -> { remand? && mdr? }
 
   before_create :normalize_cavc_docket_number
-  before_create :establish_appeal_stream, if: :cavc_remand_form_complete?
-  after_create :initialize_tasks
+  # Check for if the decision types are of the three options from APPEALS-13220
+  def check_to_establish_appeal_stream
+    if cavc_remand_form_complete? && !(cavc_decision_type.include?(Constants.CAVC_DECISION_TYPES.other_dismissal) ||
+                                      cavc_decision_type.include?(Constants.CAVC_DECISION_TYPES.affirmed) ||
+                                      cavc_decision_type.include?(Constants.CAVC_DECISION_TYPES.settlement))
+      return true
+    end
+
+    false
+  end
+
+  before_create :establish_appeal_stream, if: :check_to_establish_appeal_stream
+  after_create :initialize_tasks, if: :check_to_establish_appeal_stream
 
   enum cavc_decision_type: {
     Constants.CAVC_DECISION_TYPES.remand.to_sym => Constants.CAVC_DECISION_TYPES.remand,
     Constants.CAVC_DECISION_TYPES.straight_reversal.to_sym => Constants.CAVC_DECISION_TYPES.straight_reversal,
-    Constants.CAVC_DECISION_TYPES.death_dismissal.to_sym => Constants.CAVC_DECISION_TYPES.death_dismissal
+    Constants.CAVC_DECISION_TYPES.death_dismissal.to_sym => Constants.CAVC_DECISION_TYPES.death_dismissal,
+    Constants.CAVC_DECISION_TYPES.other_dismissal.to_sym => Constants.CAVC_DECISION_TYPES.other_dismissal,
+    Constants.CAVC_DECISION_TYPES.affirmed.to_sym => Constants.CAVC_DECISION_TYPES.affirmed,
+    Constants.CAVC_DECISION_TYPES.settlement.to_sym => Constants.CAVC_DECISION_TYPES.settlement
   }
 
   # Joint Motion Remand, Joint Motion Partial Remand, and Memorandum Decision on Remand
