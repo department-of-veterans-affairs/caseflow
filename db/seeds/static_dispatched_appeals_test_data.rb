@@ -7,7 +7,7 @@
 module Seeds
   class StaticDispatchedAppealsTestData < Base
     def initialize
-      initial_id_values
+      initial_id_values(600_000_000, 900_000_000)
     end
 
     def seed!
@@ -15,26 +15,6 @@ module Seeds
     end
 
     private
-
-    def initial_id_values
-      @file_number ||= 600_000_000
-      @participant_id ||= 900_000_000
-      while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1)) ||
-            VACOLS::Correspondent.find_by(ssn: format("%<n>09d", n: @file_number + 1))
-        @file_number += 2000
-        @participant_id += 2000
-      end
-    end
-
-    def create_veteran(options = {})
-      @file_number += 1
-      @participant_id += 1
-      params = {
-        file_number: format("%<n>09d", n: @file_number),
-        participant_id: format("%<n>09d", n: @participant_id)
-      }
-      create(:veteran, params.merge(options))
-    end
 
     def cases_for_dispatched_appeals_to_add_cavc_remand
       10.times do
@@ -45,6 +25,7 @@ module Seeds
     def nonpriority_case_with_dispatch_task_to_add_cavc_remand
       Timecop.travel(62.days.ago)
       appeal = create(:appeal,
+                      :with_decision_issue,
                       :direct_review_docket,
                       :with_request_issues,
                       :at_attorney_drafting,
