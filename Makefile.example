@@ -69,9 +69,6 @@ down:	## Stop the docker containers
 down-m1:  ## Stop the docker containers on a M1 Mac
 	docker-compose -f docker-compose-m1.yml down
 
-down-m1:  ## Stop the docker containers on a M1 Mac
-	docker-compose -f docker-compose-m1.yml down
-
 run: up ready  ## Start rails server and frontend server
 	foreman start
 
