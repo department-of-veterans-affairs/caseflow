@@ -169,12 +169,6 @@ class BusinessLine < Organization
     def number_of_search_fields
       FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user) ? 4 : 2
     end
-      if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user)
-        4
-      else
-        2
-      end
-    end
 
     def search_all_clause
       return "" if query_params[:search_query].blank?
