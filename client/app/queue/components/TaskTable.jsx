@@ -4,22 +4,26 @@
  *   - be filtered by column
  *   - be placed inside tabs
  */
-
 import * as React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
-import { docketNumberColumn, badgesColumn, detailsColumn, daysWaitingColumn, issueCountColumn, typeColumn,
-  readerLinkColumn, taskCompletedDateColumn } from './TaskTableColumns';
-
+import {
+  docketNumberColumn,
+  badgesColumn,
+  detailsColumn,
+  daysWaitingColumn,
+  issueCountColumn,
+  typeColumn,
+  readerLinkColumn,
+  taskCompletedDateColumn,
+} from './TaskTableColumns';
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
 import COPY from '../../../COPY';
-
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
 
@@ -27,7 +31,6 @@ export class TaskTableUnconnected extends React.PureComponent {
     if (!this.props.isTaskAssignedToUserSelected) {
       return false;
     }
-
     const isTaskSelected = this.props.isTaskAssignedToUserSelected[this.props.userId] || {};
 
     return isTaskSelected[uniqueId] || false;
@@ -108,7 +111,6 @@ export class TaskTableUnconnected extends React.PureComponent {
     if (this.props.defaultSortIdx) {
       return this.props.defaultSortIdx;
     }
-
     const index = _.findIndex(this.getQueueColumns(),
       (column) => column.header === COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE);
 
@@ -126,7 +128,11 @@ export class TaskTableUnconnected extends React.PureComponent {
     defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
     enablePagination
     rowClassNames={(task) =>
-      this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;
+      this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'}
+    taskPagesApiEndpoint={this.props.taskPagesApiEndpoint}
+    useTaskPagesApi={this.props.useTaskPagesApi}
+    tabPaginationOptions={this.props.tabPaginationOptions}
+  />;
 }
 
 TaskTableUnconnected.propTypes = {
@@ -149,7 +155,10 @@ TaskTableUnconnected.propTypes = {
   includeNewDocsIcon: PropTypes.bool,
   customColumns: PropTypes.array,
   defaultSortIdx: PropTypes.number,
-  getKeyForRow: PropTypes.func
+  getKeyForRow: PropTypes.func,
+  taskPagesApiEndpoint: PropTypes.string,
+  useTaskPagesApi: PropTypes.bool,
+  tabPaginationOptions: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
