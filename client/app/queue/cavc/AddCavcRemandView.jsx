@@ -125,7 +125,6 @@ const AddCavcRemandView = (props) => {
     setIssues(newValues);
   };
 
-  const allIssuesSelected = useMemo(() => Object.values(issues).every((isChecked) => isChecked), [issues]);
   const allIssuesUnselected = useMemo(() => Object.values(issues).every((isChecked) => !isChecked), [issues]);
 
   // populate all issues checkboxes on initial render
@@ -149,8 +148,6 @@ const AddCavcRemandView = (props) => {
   const settlementType = () => type === CAVC_DECISION_TYPES.settlement;
 
   const jmrjmprSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmr_jmpr;
-  const jmrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmr;
-  const jmprSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmpr;
   const mdrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.mdr;
   const mandateAvailable = () => !mdrSubtype() && (isMandateProvided === 'true');
 
@@ -168,9 +165,8 @@ const AddCavcRemandView = (props) => {
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate) && validateDateNotInFuture(decisionDate);
 
-  const validDecisionIssues = () => jmrSubtype() ? allIssuesSelected : selectedIssueIds?.length > 0;
-  const issueSelectionError = () =>
-    (jmrSubtype() && !allIssuesSelected) ? COPY.CAVC_ALL_ISSUES_ERROR : COPY.CAVC_NO_ISSUES_ERROR;
+  const validDecisionIssues = () => selectedIssueIds?.length > 0;
+  const issueSelectionError = () => COPY.CAVC_NO_ISSUES_ERROR;
 
   const validJudgementDate = () =>
     (Boolean(judgementDate) && validateDateNotInFuture(judgementDate)) || !mandateAvailable();
@@ -327,12 +323,6 @@ const AddCavcRemandView = (props) => {
     strongLabel
   />;
 
-  const jmrIssuesBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
-    {COPY.JMR_SELECTION_ISSUE_INFO_BANNER}
-  </Alert>;
-  const jmprIssuesBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
-    {COPY.JMPR_SELECTION_ISSUE_INFO_BANNER}
-  </Alert>;
   const jmrjmprIssuesBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
     {COPY.JMR_JMPR_SELECTION_ISSUE_INFO_BANNER}
   </Alert>;
@@ -429,8 +419,6 @@ const AddCavcRemandView = (props) => {
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
       {!deathDismissalType() && !otherDismissalType() && !affirmedType() && !settlementType() && issuesField}
       {jmrjmprSubtype() && allIssuesUnselected && jmrjmprIssuesBanner}
-      {jmrSubtype() && !allIssuesSelected && jmrIssuesBanner}
-      {jmprSubtype() && allIssuesUnselected && jmprIssuesBanner}
       {mdrSubtype() && allIssuesUnselected && mdrIssuesBanner}
       {mdrSubtype() && federalCircuitField }
       {instructionsField}
