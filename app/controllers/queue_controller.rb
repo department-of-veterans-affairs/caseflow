@@ -16,14 +16,16 @@ class QueueController < ApplicationController
 
   def test
     # html = render_to_string template: "templates/notification_report_pdf_template", layout: false
+    html = render_to_string template: "templates/sandbox", layout: false
 
-    # kit = PDFKit.new(html)
-    # kit.stylesheets << "app/assets/stylesheets/notification_pdf_style.css"
-    # file_name = "test.pdf"
-    # file_path = "#{Rails.root}/#{file_name}"
-    # kit.to_pdf(file_path)
+    kit = PDFKit.new(html, margin_top: "0.25in", margin_bottom: "0.25in", margin_left: "0.25in", margin_right: "0.25in")
+    # kit.stylesheets << "app/assets/stylesheets/copied_from_browser.css"
+    kit.stylesheets << "client/node_modules/uswds/dist/css/uswds.css"
+    file_name = "test.pdf"
+    file_path = "#{Rails.root}/#{file_name}"
+    kit.to_pdf(file_path)
 
-    render template: "templates/notification_report_pdf_template", layout: false
+    # render template: "templates/sandbox", layout: false
   end
 
   def check_queue_out_of_service

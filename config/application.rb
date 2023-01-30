@@ -57,6 +57,9 @@ module CaseflowCertification
     config.sqs_create_queues = false
     config.sqs_endpoint = nil
 
+    # options will be passed to PDFKit.new
+    config.middleware.use PDFKit::Middleware, :print_media_type => true
+
     # sqs details
     config.active_job.queue_name_prefix = "caseflow_" + ENV['DEPLOY_ENV']
 
