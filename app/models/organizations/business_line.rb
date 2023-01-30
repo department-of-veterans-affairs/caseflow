@@ -167,6 +167,8 @@ class BusinessLine < Organization
 
     # These values reflect the number of searchable fields in search_all_clause for where interpolation later
     def number_of_search_fields
+      FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user) ? 4 : 2
+    end
       if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user)
         4
       else
