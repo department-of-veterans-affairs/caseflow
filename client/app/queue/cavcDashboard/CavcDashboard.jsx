@@ -43,7 +43,7 @@ const CavcDashboard = (props) => {
   useEffect(() => {
     if (loaded && cavcRemands) {
       setTabs(cavcRemands.map((remand) => {
-        const label = remand.cavc_docket_number;
+        const label = `CAVC appeal ${remand.cavc_docket_number}`;
         const page = <CavcDashboardTab remand={remand} />;
 
         return { label, page };
@@ -63,7 +63,7 @@ const CavcDashboard = (props) => {
           <>
             <h1>CAVC appeals for {appealDetails?.appellantFullName}</h1>
 
-            <TabWindow tabs={tabs} tabPanelTabIndex={-1} />
+            <TabWindow tabs={tabs} tabPanelTabIndex={-1} alwaysShowTabs />
           </>
         }
         {loaded && error &&

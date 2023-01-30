@@ -19,8 +19,11 @@ class CavcDashboardController < ApplicationController
           CavcRemand.where(remand_appeal_id: cavc_remand.remand_appeal.id)
             .or(CavcRemand.where(source_appeal_id: cavc_remand.source_appeal.id))
             .order(:cavc_docket_number)
+        serialized_remands = cavc_remands.map do |remand|
+          WorkQueue::CavcRemandSerializer.new(remand).serializable_hash[:data][:attributes]
+        end
 
-        render_index_data_as_json(cavc_remands)
+        render_index_data_as_json(serialized_remands)
       end
     end
   end

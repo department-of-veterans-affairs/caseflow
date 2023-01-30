@@ -6,6 +6,7 @@ class WorkQueue::CavcRemandSerializer
   attribute :cavc_decision_type
   attribute :cavc_docket_number
   attribute :cavc_judge_full_name
+  attribute :cavc_dashboard_dispositions
   attribute :decision_date
   attribute :decision_issue_ids
   attribute :federal_circuit
@@ -25,10 +26,6 @@ class WorkQueue::CavcRemandSerializer
 
   attribute :source_decision_issues do |object|
     object.source_appeal&.decision_issues
-  end
-
-  attribute :cavc_dashboard_dispositions do |object|
-    CavcDashboardDisposition.where(cavc_remand_id: object.id)
   end
 
   attribute :created_by do |object|
