@@ -319,37 +319,37 @@ feature "NonComp Reviews Queue", :postgres do
 
       scenario "searching reviews by ssn" do
         visit "decision_reviews/nco"
-  
+
         # There should be 2 on the page
         expect(page).to have_content("Higher-Level Review", count: 2)
-  
+
         fill_in "search", with: veteran_a.ssn
-  
+
         # There should be 1 on the page with this information
         expect(page).to have_content("Higher-Level Review", count: 1)
         expect(page).to have_content(
           /#{veteran_a.name} #{veteran_a.ssn} 2 6 days Higher-Level Review/
         )
-  
+
         # Blank out the input and verify that there are once again 2 on the page
         fill_in("search", with: nil, fill_options: { clear: :backspace })
         expect(page).to have_content("Higher-Level Review", count: 2)
       end
-  
+
       scenario "searching reviews by file number" do
         visit "decision_reviews/nco"
-  
+
         # There should be 2 on the page
         expect(page).to have_content("Higher-Level Review", count: 2)
-  
+
         fill_in "search", with: veteran_a.file_number
-  
+
         # There should be 1 on the page with this information
         expect(page).to have_content("Higher-Level Review", count: 1)
         expect(page).to have_content(
           /#{veteran_a.name} #{veteran_a.ssn} 2 6 days Higher-Level Review/
         )
-  
+
         # Blank out the input and verify that there are once again 2 on the page
         fill_in("search", with: nil, fill_options: { clear: :backspace })
         expect(page).to have_content("Higher-Level Review", count: 2)

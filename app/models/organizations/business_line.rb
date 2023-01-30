@@ -175,7 +175,8 @@ class BusinessLine < Organization
     end
 
     def search_all_clause
-      return "" unless query_params[:search_query].present?
+      return "" if query_params[:search_query].blank?
+
       if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user)
         "veterans.participant_id LIKE ? "\
         "OR #{claimant_name} ILIKE ? "\
