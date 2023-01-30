@@ -27,6 +27,10 @@ class WorkQueue::CavcRemandSerializer
     object.source_appeal&.decision_issues
   end
 
+  attribute :cavc_dashboard_dispositions do |object|
+    CavcDashboardDisposition.where(cavc_remand_id: object.id)
+  end
+
   attribute :created_by do |object|
     object.created_by&.full_name
   end

@@ -10,12 +10,15 @@ import LoadingScreen from '../../components/LoadingScreen';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
 import StatusMessage from '../../components/StatusMessage';
+import TabWindow from '../../components/TabWindow';
+import CavcDashboardTab from './CavcDashboardTab';
 
-export const CavcDashboard = (props) => {
-  const { appealId, appeal, appealDetails } = props;
+const CavcDashboard = (props) => {
+  const { appealId, appeal, appealDetails, cavcRemands } = props;
 
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
+  const [tabs, setTabs] = useState();
 
   useEffect(() => {
     // define the promise inside useEffect so that the component doesn't infinitely rerender
@@ -29,13 +32,24 @@ export const CavcDashboard = (props) => {
     loadPromise.
       catch(() => setError(true)).
       finally(() => setLoaded(true));
-  }, [loaded]);
+  }, []);
 
   // cavcRemand is part of appealDetails loaded by the CavcDashboardLoadingScreen. Redirect back
   // to the CaseDetails page if a remand doesn't exist for the provided appealId or if legacy appeal
-  if (loaded && (appealDetails.cavcRemand === null)) {
+  if (loaded && !cavcRemands) {
     return <Redirect to={`/queue/appeals/${appealId}`} />;
   }
+
+  useEffect(() => {
+    if (loaded && cavcRemands) {
+      setTabs(cavcRemands.map((remand) => {
+        const label = remand.cavc_docket_number;
+        const page = <CavcDashboardTab remand={remand} />;
+
+        return { label, page };
+      }));
+    }
+  }, [loaded]);
 
   return (
     <React.Fragment>
@@ -46,9 +60,11 @@ export const CavcDashboard = (props) => {
             message={COPY.CAVC_DASHBOARD_LOADING_SCREEN_TEXT}
           />}
         {loaded && !error &&
-          <h1>CAVC appeals for {appealDetails?.appellantFullName}</h1>
+          <>
+            <h1>CAVC appeals for {appealDetails?.appellantFullName}</h1>
 
-          /* add future components for dashboard display within this conditional render */
+            <TabWindow tabs={tabs} tabPanelTabIndex={-1} />
+          </>
         }
         {loaded && error &&
           <StatusMessage
@@ -64,6 +80,7 @@ CavcDashboard.propTypes = {
   appealId: PropTypes.string.isRequired,
   appeal: PropTypes.object,
   appealDetails: PropTypes.object,
+  cavcRemands: PropTypes.array,
   fetchAppealDetails: PropTypes.func,
   fetchCavcDecisionReasons: PropTypes.func,
   fetchCavcSelectionBases: PropTypes.func,
@@ -75,7 +92,8 @@ CavcDashboard.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   return {
     appeal: state.queue.appeals[ownProps.appealId],
-    appealDetails: state.queue.appealDetails[ownProps.appealId]
+    appealDetails: state.queue.appealDetails[ownProps.appealId],
+    cavcRemands: state.cavcDashboard.cavc_remands
   };
 };
 

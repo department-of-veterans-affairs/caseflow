@@ -12,18 +12,23 @@ class CavcDashboardController < ApplicationController
       format.html { render template: "queue/index" }
       # dashboard specific data required on load should be loaded through this method
       format.json do
-        cavc_remand = CavcRemand.find_by(remand_appeal_id: Appeal.find_by(uuid: params[:appeal_id]).id)
-        dashboard_dispositions = CavcDashboardDisposition.where(cavc_remand_id: cavc_remand.id)
+        cavc_remand =
+          CavcRemand.find_by(remand_appeal_id: Appeal.find_by(uuid: params[:appeal_id]).id) ||
+          CavcRemand.find_by(source_appeal_id: Appeal.find_by(uuid: params[:appeal_id]).id)
+        cavc_remands =
+          CavcRemand.where(remand_appeal_id: cavc_remand.remand_appeal.id)
+            .or(CavcRemand.where(source_appeal_id: cavc_remand.source_appeal.id))
+            .order(:cavc_docket_number)
 
-        render_index_data_as_json(dashboard_dispositions)
+        render_index_data_as_json(cavc_remands)
       end
     end
   end
 
   # add data to render: json as a key-value pair that matchecs the front-end state key
-  def render_index_data_as_json(dashboard_dispositions)
+  def render_index_data_as_json(cavc_remands)
     render json: {
-      dashboard_dispositions: dashboard_dispositions
+      cavc_remands: cavc_remands
     }
   end
 
