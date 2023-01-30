@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 const CavcDashboardTab = (props) => {
+  // remand is the serialized CAVC remand for the tab, see cavc_remand_serializer.rb for attrs
   const { remand } = props;
 
   return (
@@ -27,5 +28,5 @@ CavcDashboardTab.propTypes = {
 
 export default connect(
   // mapStateToProps,
-  null
+  // mapDispatchToProps
 )(CavcDashboardTab);

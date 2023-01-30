@@ -34,12 +34,6 @@ const CavcDashboard = (props) => {
       finally(() => setLoaded(true));
   }, []);
 
-  // cavcRemand is part of appealDetails loaded by the CavcDashboardLoadingScreen. Redirect back
-  // to the CaseDetails page if a remand doesn't exist for the provided appealId or if legacy appeal
-  if (loaded && !cavcRemands) {
-    return <Redirect to={`/queue/appeals/${appealId}`} />;
-  }
-
   useEffect(() => {
     if (loaded && cavcRemands) {
       setTabs(cavcRemands.map((remand) => {
@@ -50,6 +44,11 @@ const CavcDashboard = (props) => {
       }));
     }
   }, [loaded]);
+
+  // Redirect to the CaseDetails page if no remand exists for the provided appealId or if a legacy appeal
+  if (loaded && !cavcRemands) {
+    return <Redirect to={`/queue/appeals/${appealId}`} />;
+  }
 
   return (
     <React.Fragment>
