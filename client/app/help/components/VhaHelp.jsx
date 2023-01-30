@@ -1,5 +1,7 @@
 import React from 'react';
 import VhaMembershipRequestForm from './VhaMembershipRequestForm';
+import Alert from '../../components/Alert';
+import { VHA_FORM_SUBMIT_SUCCESS_MESSAGE, VHA_FORM_SUBMIT_SUCCESS_TITLE } from '../constants';
 
 const VhaHelp = () => {
 
@@ -28,7 +30,21 @@ const VhaHelp = () => {
     return <div className="cf-help-divider"></div>;
   };
 
+  const SuccesssBanner = () => {
+    // Not sure where to grab this from. Either message props or FormRedux
+    const vhaFormSuccess = false;
+
+    return vhaFormSuccess && <div style={{ marginBottom: '3rem' }}>
+      <Alert
+        type="success"
+        title={VHA_FORM_SUBMIT_SUCCESS_TITLE}
+        message={VHA_FORM_SUBMIT_SUCCESS_MESSAGE}
+      />
+    </div>;
+  };
+
   return <div className="cf-help-content">
+    <SuccesssBanner />
     <Header />
     <HelpDivider />
     <TrainingVideos />

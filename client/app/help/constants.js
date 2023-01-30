@@ -34,3 +34,8 @@ export const VHA_NOTICE_TEXT = `Note: If you are requesting specialized access a
 
 export const VHA_RADIO_DISABLED_INFO_TEXT = `Options are disabled if you have a pending request or are already
   a member of the group.`;
+
+export const VHA_FORM_SUBMIT_SUCCESS_MESSAGE = `Your request to access the VHA group has been submitted.
+ Please check your VA email for updates concerning your request.`.trim();
+
+export const VHA_FORM_SUBMIT_SUCCESS_TITLE = 'Your request was successfully submitted!';

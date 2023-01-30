@@ -6,6 +6,7 @@ import TextareaField from 'app/components/TextareaField';
 import Alert from '../../components/Alert';
 import { find } from 'lodash';
 import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_NOTICE_TEXT, VHA_RADIO_DISABLED_INFO_TEXT } from '../constants';
+import { bool } from 'prop-types';
 
 const VhaMembershipRequestForm = (props) => {
 
@@ -32,16 +33,21 @@ const VhaMembershipRequestForm = (props) => {
   // TODO: decide if this correct based on the redux selector for feature toggles.
   const programOfficeFeatureToggle = () => true;
 
-  const GeneralVHAAccess = () => {
+  const GeneralVHAAccess = ({ vhaMember }) => {
     return <>
       <legend><strong>General Access</strong></legend>
       <Checkbox
         name="vhaAccess"
         label="VHA"
+        disabled={vhaMember}
         onChange={(val) => setVhaAccess(val)}
         value={vhaAccess}
       />
     </>;
+  };
+
+  GeneralVHAAccess.propTypes = {
+    vhaMember: bool
   };
 
   const SpecializedAccess = () => {
@@ -78,7 +84,7 @@ const VhaMembershipRequestForm = (props) => {
 
   // TODO: make this update based on redux or on the clicked boxes assuming redux populates those
   // Memo this or figure it out in ruby and give it to redux instead of figuring it out in javascript
-  const memberOrOpenRequestToVha = false;
+  const memberOrOpenRequestToVha = true;
 
   const anyProgramOfficeSelected = useMemo(() => (
     find(programOfficesAccess, (value) => value === true)),
@@ -86,7 +92,7 @@ const VhaMembershipRequestForm = (props) => {
 
   // TODO: Could also use redux actions to set the membership requests depending on the checkbox clicks
   const submitDisabled = (!vhaAccess && !memberOrOpenRequestToVha) ||
-   (!anyProgramOfficeSelected && memberOrOpenRequestToVha);
+   (!anyProgramOfficeSelected);
 
   const automaticVhaAccessNotice = anyProgramOfficeSelected && (!vhaAccess && !memberOrOpenRequestToVha);
   // console.log(programOfficesAccess);
@@ -108,7 +114,7 @@ const VhaMembershipRequestForm = (props) => {
         </div>
       }
       <form>
-        <GeneralVHAAccess />
+        <GeneralVHAAccess vhaMember={memberOrOpenRequestToVha} />
         <SpecializedAccess />
         {automaticVhaAccessNotice && <p> {VHA_NOTICE_TEXT} </p>}
         <TextareaField

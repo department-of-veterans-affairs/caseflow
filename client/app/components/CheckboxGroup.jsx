@@ -89,7 +89,7 @@ CheckboxGroup.propTypes = {
   onChange: PropTypes.func.isRequired,
   required: PropTypes.bool,
   vertical: PropTypes.bool,
-  values: PropTypes.object.isRequired,
+  values: PropTypes.object,
   errorMessage: PropTypes.string,
   errorState: PropTypes.bool,
   getCheckbox: PropTypes.func,
