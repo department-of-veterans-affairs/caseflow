@@ -9,6 +9,7 @@ import CAVC_JUDGE_FULL_NAMES from '../../../constants/CAVC_JUDGE_FULL_NAMES';
 import CAVC_REMAND_SUBTYPES from '../../../constants/CAVC_REMAND_SUBTYPES';
 import CAVC_REMAND_SUBTYPE_NAMES from '../../../constants/CAVC_REMAND_SUBTYPE_NAMES';
 import CAVC_DECISION_TYPES from '../../../constants/CAVC_DECISION_TYPES';
+import CAVC_DECISION_TYPE_NAMES from '../../../constants/CAVC_DECISION_TYPE_NAMES';
 
 import QueueFlowPage from '../components/QueueFlowPage';
 import { requestSave, showErrorMessage } from '../uiReducer/uiActions';
@@ -21,7 +22,6 @@ import CheckboxGroup from '../../components/CheckboxGroup';
 import TextareaField from '../../components/TextareaField';
 import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
-import StringUtil from '../../util/StringUtil';
 import Alert from '../../components/Alert';
 import { withRouter } from 'react-router';
 
@@ -42,8 +42,8 @@ const attorneyOptions = [
     value: '2' },
 ];
 
-const typeOptions = _.map(_.keys(CAVC_DECISION_TYPES), (key) => ({
-  displayText: StringUtil.snakeCaseToCapitalized(key),
+const typeOptions = _.map(_.keys(CAVC_DECISION_TYPE_NAMES), (key) => ({
+  displayText: CAVC_DECISION_TYPE_NAMES[key],
   value: key
 }));
 
@@ -89,7 +89,11 @@ const AddCavcRemandView = (props) => {
   const supportedDecisionTypes = {
     [CAVC_DECISION_TYPES.remand]: true,
     [CAVC_DECISION_TYPES.straight_reversal]: featureToggles.reversal_cavc_remand,
-    [CAVC_DECISION_TYPES.death_dismissal]: featureToggles.dismissal_cavc_remand
+    [CAVC_DECISION_TYPES.death_dismissal]: featureToggles.dismissal_cavc_remand,
+    // feature toggle AC requests that options are HIDDEN if toggle is enabled; hence the NOT operator (!)
+    [CAVC_DECISION_TYPES.other_dismissal]: !featureToggles.cavc_dashboard_workflow,
+    [CAVC_DECISION_TYPES.affirmed]: !featureToggles.cavc_dashboard_workflow,
+    [CAVC_DECISION_TYPES.settlement]: !featureToggles.cavc_dashboard_workflow
   };
   const supportedRemandTypes = {
     [CAVC_REMAND_SUBTYPES.jmr]: false,
@@ -140,12 +144,24 @@ const AddCavcRemandView = (props) => {
   const remandType = () => type === CAVC_DECISION_TYPES.remand;
   const straightReversalType = () => type === CAVC_DECISION_TYPES.straight_reversal;
   const deathDismissalType = () => type === CAVC_DECISION_TYPES.death_dismissal;
+  const otherDismissalType = () => type === CAVC_DECISION_TYPES.other_dismissal;
+  const affirmedType = () => type === CAVC_DECISION_TYPES.affirmed;
+  const settlementType = () => type === CAVC_DECISION_TYPES.settlement;
 
   const jmrjmprSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmr_jmpr;
   const jmrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmr;
   const jmprSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmpr;
   const mdrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.mdr;
   const mandateAvailable = () => !mdrSubtype() && (isMandateProvided === 'true');
+
+  // update isMandateSame when new decision types are chosen. Previous functionality remains if old types are checked
+  useEffect(() => {
+    if (otherDismissalType() || affirmedType() || settlementType()) {
+      setMandateSame(false);
+    } else {
+      setMandateSame(true);
+    }
+  }, [type]);
 
   // We accept ‐ HYPHEN, - Hyphen-minus, − MINUS SIGN, – EN DASH, — EM DASH
   const validDocketNumber = () => (/^\d{2}[-‐−–—]\d{1,5}$/).exec(docketNumber);
@@ -220,7 +236,13 @@ const AddCavcRemandView = (props) => {
     };
 
     props.requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
-      then((resp) => history.replace(`/queue/appeals/${resp.body.cavc_appeal.uuid}`)).
+      // then((resp) => history.replace(`/queue/appeals/${resp.body.cavc_appeal.uuid}`)).
+      then((resp) => {
+        const pushHistoryUrl = resp.body.cavc_appeal ?
+          `/queue/appeals/${resp.body.cavc_appeal.uuid}` : `/queue/appeals/${appealId}`;
+
+        history.replace(pushHistoryUrl);
+      }).
       catch((err) => props.showErrorMessage({ title: 'Error', detail: JSON.parse(err.message).errors[0].detail }));
   };
 
@@ -405,7 +427,7 @@ const AddCavcRemandView = (props) => {
       {mandateAvailable() && !isMandateSame && judgementField }
       {mandateAvailable() && !isMandateSame && mandateField }
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
-      {!deathDismissalType() && issuesField}
+      {!deathDismissalType() && !otherDismissalType() && !affirmedType() && !settlementType() && issuesField}
       {jmrjmprSubtype() && allIssuesUnselected && jmrjmprIssuesBanner}
       {jmrSubtype() && !allIssuesSelected && jmrIssuesBanner}
       {jmprSubtype() && allIssuesUnselected && jmprIssuesBanner}
@@ -425,6 +447,7 @@ AddCavcRemandView.propTypes = {
   featureToggles: PropTypes.shape({
     mdr_cavc_remand: PropTypes.bool,
     reversal_cavc_remand: PropTypes.bool,
+    cavc_dashboard_workflow: PropTypes.bool,
     dismissal_cavc_remand: PropTypes.bool
   }),
   highlightInvalid: PropTypes.bool,

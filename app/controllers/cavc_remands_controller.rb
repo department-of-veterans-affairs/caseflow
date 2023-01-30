@@ -44,7 +44,7 @@ class CavcRemandsController < ApplicationController
 
   def create
     new_cavc_remand = CavcRemand.create!(creation_params)
-    cavc_appeal = new_cavc_remand.remand_appeal.reload
+    cavc_appeal = new_cavc_remand.remand_appeal&.reload
     render json: { cavc_remand: new_cavc_remand, cavc_appeal: cavc_appeal }, status: :created
   end
 
@@ -99,6 +99,10 @@ class CavcRemandsController < ApplicationController
         REMAND_REQUIRED_PARAMS + JMR_REQUIRED_PARAMS
       end
     when Constants.CAVC_DECISION_TYPES.straight_reversal, Constants.CAVC_DECISION_TYPES.death_dismissal
+      REMAND_REQUIRED_PARAMS
+    when Constants.CAVC_DECISION_TYPES.other_dismissal, Constants.CAVC_DECISION_TYPES.affirmed, Constants.CAVC_DECISION_TYPES.settlement
+      REMAND_REQUIRED_PARAMS
+    else
       REMAND_REQUIRED_PARAMS
     end
   end
