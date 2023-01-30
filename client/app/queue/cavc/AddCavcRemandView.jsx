@@ -11,7 +11,7 @@ import CAVC_REMAND_SUBTYPE_NAMES from '../../../constants/CAVC_REMAND_SUBTYPE_NA
 import CAVC_DECISION_TYPES from '../../../constants/CAVC_DECISION_TYPES';
 import CAVC_DECISION_TYPE_NAMES from '../../../constants/CAVC_DECISION_TYPE_NAMES';
 
-import QueueFlowPage from './../components/QueueFlowPage';
+import QueueFlowPage from '../components/QueueFlowPage';
 import { requestSave, showErrorMessage } from '../uiReducer/uiActions';
 import { validateDateNotInFuture } from '../../intake/util/issues';
 import TextField from '../../components/TextField';
