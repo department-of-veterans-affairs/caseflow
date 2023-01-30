@@ -5,7 +5,7 @@ import moment from 'moment';
 import { queueWrapper } from 'test/data/stores/queueStore';
 import { amaAppeal } from 'test/data/appeals';
 
-import AddCavcDatesModal from 'app/queue/AddCavcDatesModal';
+import AddCavcDatesModal from 'app/queue/cavc/AddCavcDatesModal';
 import COPY from 'COPY';
 
 import * as uiActions from 'app/queue/uiReducer/uiActions';
