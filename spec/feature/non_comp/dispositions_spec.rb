@@ -82,11 +82,17 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:business_line_url) { "decision_reviews/nca" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
     let(:arbitrary_decision_date) { "01/01/2019" }
+
+    let(:vet_id_column_value) { veteran.ssn }
+
     before do
       User.stub = user
       non_comp_org.add_user(user)
       setup_prior_claim_with_payee_code(decision_review, veteran, "00")
+      FeatureToggle.enable!(:decision_review_queue_ssn_column)
     end
+
+    after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
 
     context "decision_review is a Supplemental Claim" do
       let(:decision_review) do
@@ -186,7 +192,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_content("Decision Completed")
       # should redirect to business line's completed tab
       expect(page.current_path).to eq "/#{business_line_url}"
-      expect(page).to have_content(veteran.ssn)
+      expect(page).to have_content(vet_id_column_value)
 
       # verify database updated
       dissues = decision_review.reload.decision_issues

@@ -1,81 +1,119 @@
 # frozen_string_literal: true
 
 feature "NonComp Reviews Queue", :postgres do
+  let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+  let(:user) { create(:default_user) }
+
+  let(:veteran_a) { create(:veteran, first_name: "Aaa", participant_id: "12345") }
+  let(:veteran_b) { create(:veteran, first_name: "Bbb", participant_id: "601111772") }
+  let(:veteran_c) { create(:veteran, first_name: "Ccc", participant_id: "1002345") }
+  let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
+  let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
+  let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
+  let(:appeal) { create(:appeal, veteran: veteran_c) }
+
+  let!(:request_issue_a) { create(:request_issue, :rating, decision_review: hlr_a) }
+  let!(:request_issue_aa) { create(:request_issue, :rating, decision_review: hlr_a) }
+  let!(:request_issue_b) { create(:request_issue, :rating, decision_review: hlr_b) }
+  let!(:request_issue_c) { create(:request_issue, :rating, :removed, decision_review: hlr_c) }
+  let!(:request_issue_d) { create(:request_issue, :rating, decision_review: appeal, closed_at: 1.day.ago) }
+
+  let(:today) { Time.zone.now }
+  let(:last_week) { Time.zone.now - 7.days }
+
+  let!(:completed_tasks) do
+    [
+      create(:higher_level_review_task,
+             :completed,
+             appeal: hlr_a,
+             assigned_to: non_comp_org,
+             closed_at: last_week),
+      create(:higher_level_review_task,
+             :completed,
+             appeal: hlr_b,
+             assigned_to: non_comp_org,
+             closed_at: today),
+      create(:higher_level_review_task,
+             :completed,
+             appeal: hlr_c,
+             assigned_to: non_comp_org,
+             closed_at: 2.days.ago)
+    ]
+  end
+
+  let!(:in_progress_tasks) do
+    [
+      create(:higher_level_review_task,
+             :in_progress,
+             appeal: hlr_a,
+             assigned_to: non_comp_org,
+             assigned_at: last_week),
+      create(:higher_level_review_task,
+             :in_progress,
+             appeal: hlr_b,
+             assigned_to: non_comp_org,
+             assigned_at: today),
+      create(:higher_level_review_task,
+             :in_progress,
+             appeal: hlr_c,
+             assigned_to: non_comp_org,
+             assigned_at: today),
+      create(:board_grant_effectuation_task,
+             :in_progress,
+             appeal: appeal,
+             assigned_to: non_comp_org,
+             assigned_at: 1.day.ago)
+    ]
+  end
+
+  let(:search_box_label) { "Search by Claimant Name, Veteran Participant ID, File Number or SSN" }
+
+  let(:vet_id_column_header) do
+    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
+      "Veteran SSN"
+    else
+      "Veteran Participant Id"
+    end
+  end
+
+  let(:vet_a_id_column_value) do
+    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
+      veteran_a.ssn
+    else
+      veteran_a.participant_id
+    end
+  end
+
+  let(:vet_b_id_column_value) do
+    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
+      veteran_b.ssn
+    else
+      veteran_b.participant_id
+    end
+  end
+
+  let(:vet_c_id_column_value) do
+    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
+      veteran_c.ssn
+    else
+      veteran_c.participant_id
+    end
+  end
+
+  def current_table_rows
+    find_all("#case-table-description > tbody > tr").map(&:text)
+  end
+
+  before do
+    User.stub = user
+    non_comp_org.add_user(user)
+    FeatureToggle.enable!(:board_grant_effectuation_task)
+  end
+
   context "with an existing organization" do
-    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
-    let(:user) { create(:default_user) }
-
-    let(:veteran_a) { create(:veteran, first_name: "Aaa", participant_id: "12345") }
-    let(:veteran_b) { create(:veteran, first_name: "Bbb", participant_id: "601111772") }
-    let(:veteran_c) { create(:veteran, first_name: "Ccc", participant_id: "1002345") }
-    let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
-    let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
-    let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
-    let(:appeal) { create(:appeal, veteran: veteran_c) }
-
-    let!(:request_issue_a) { create(:request_issue, :rating, decision_review: hlr_a) }
-    let!(:request_issue_aa) { create(:request_issue, :rating, decision_review: hlr_a) }
-    let!(:request_issue_b) { create(:request_issue, :rating, decision_review: hlr_b) }
-    let!(:request_issue_c) { create(:request_issue, :rating, :removed, decision_review: hlr_c) }
-    let!(:request_issue_d) { create(:request_issue, :rating, decision_review: appeal, closed_at: 1.day.ago) }
-
-    let(:today) { Time.zone.now }
-    let(:last_week) { Time.zone.now - 7.days }
-
-    let!(:completed_tasks) do
-      [
-        create(:higher_level_review_task,
-               :completed,
-               appeal: hlr_a,
-               assigned_to: non_comp_org,
-               closed_at: last_week),
-        create(:higher_level_review_task,
-               :completed,
-               appeal: hlr_b,
-               assigned_to: non_comp_org,
-               closed_at: today),
-        create(:higher_level_review_task,
-               :completed,
-               appeal: hlr_c,
-               assigned_to: non_comp_org,
-               closed_at: 2.days.ago)
-      ]
-    end
-
-    let!(:in_progress_tasks) do
-      [
-        create(:higher_level_review_task,
-               :in_progress,
-               appeal: hlr_a,
-               assigned_to: non_comp_org,
-               assigned_at: last_week),
-        create(:higher_level_review_task,
-               :in_progress,
-               appeal: hlr_b,
-               assigned_to: non_comp_org,
-               assigned_at: today),
-        create(:higher_level_review_task,
-               :in_progress,
-               appeal: hlr_c,
-               assigned_to: non_comp_org,
-               assigned_at: today),
-        create(:board_grant_effectuation_task,
-               :in_progress,
-               appeal: appeal,
-               assigned_to: non_comp_org,
-               assigned_at: 1.day.ago)
-      ]
-    end
-
-    before do
-      User.stub = user
-      non_comp_org.add_user(user)
-    end
-
-    before { FeatureToggle.enable!(:board_grant_effectuation_task) }
     after { FeatureToggle.disable!(:board_grant_effectuation_task) }
 
-    scenario "displays tasks page" do
+    scenario "displays tasks page with decision_review_queue_ssn_column feature toggle disabled" do
       visit "decision_reviews/nco"
       expect(page).to have_content("Non-Comp Org")
       expect(page).to have_content("In progress tasks")
@@ -88,9 +126,11 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content(veteran_a.name)
       expect(page).to have_content(veteran_b.name)
       expect(page).to have_content(veteran_c.name)
-      expect(page).to have_content(veteran_a.ssn)
-      expect(page).to have_content(veteran_b.ssn)
-      expect(page).to have_content(veteran_c.ssn)
+      expect(page).to have_content(vet_id_column_header)
+      expect(page).to have_content(vet_a_id_column_value)
+      expect(page).to have_content(vet_b_id_column_value)
+      expect(page).to have_content(vet_c_id_column_value)
+      expect(page).to have_no_content(search_box_label)
 
       # ordered by assigned_at descending
 
@@ -105,7 +145,7 @@ feature "NonComp Reviews Queue", :postgres do
       # ordered by closed_at descending
       expect(page).to have_content(
         Regexp.new(
-          /#{veteran_b.name} #{veteran_b.ssn} 1/,
+          /#{veteran_b.name} #{vet_b_id_column_value} 1/,
           /#{request_issue_b.decision_date.strftime("%m\/%d\/%y")} Higher-Level Review/
         )
       )
@@ -125,9 +165,11 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content(veteran_a.name)
         expect(page).to have_content(veteran_b.name)
         expect(page).to have_content(veteran_c.name)
-        expect(page).to have_content(veteran_a.ssn)
-        expect(page).to have_content(veteran_b.ssn)
-        expect(page).to have_content(veteran_c.ssn)
+        expect(page).to have_content(vet_id_column_header)
+        expect(page).to have_content(vet_a_id_column_value)
+        expect(page).to have_content(vet_b_id_column_value)
+        expect(page).to have_content(vet_c_id_column_value)
+        expect(page).to have_no_content(search_box_label)
 
         click_on veteran_a.name
         expect(page).to have_content("Form created by")
@@ -150,56 +192,46 @@ feature "NonComp Reviews Queue", :postgres do
       # Claimant name desc
       order_buttons[:claimant_name].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=desc"
-      )
-
-      table_rows = current_table_rows
-
-      expect(table_rows.first.include?("Ccc")).to eq true
-      expect(table_rows.last.include?("Aaa")).to eq true
-
-      # Claimant name asc
-      order_buttons[:claimant_name].click
-      expect(page).to have_current_path(
         "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=asc"
       )
+
       table_rows = current_table_rows
 
       expect(table_rows.first.include?("Aaa")).to eq true
       expect(table_rows.last.include?("Ccc")).to eq true
 
-      # Participant ID desc
-      order_buttons[:participant_id].click
+      # Claimant name asc
+      order_buttons[:claimant_name].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=desc"
+        "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=desc"
       )
       table_rows = current_table_rows
 
-      expect(table_rows.first.include?(hlr_b.veteran.participant_id)).to eq true
-      expect(table_rows.last.include?(hlr_a.veteran.participant_id)).to eq true
+      expect(table_rows.first.include?("Ccc")).to eq true
+      expect(table_rows.last.include?("Aaa")).to eq true
 
-      # Participant ID asc
+      # Participant ID desc
       order_buttons[:participant_id].click
       expect(page).to have_current_path(
         "#{base_url}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=asc"
       )
+      table_rows = current_table_rows
+
+      expect(table_rows.last.include?(hlr_b.veteran.participant_id)).to eq true
+      expect(table_rows.first.include?(hlr_a.veteran.participant_id)).to eq true
+
+      # Participant ID asc
+      order_buttons[:participant_id].click
+      expect(page).to have_current_path(
+        "#{base_url}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=desc"
+      )
 
       table_rows = current_table_rows
 
-      expect(table_rows.first.include?(hlr_a.veteran.participant_id)).to eq true
-      expect(table_rows.last.include?(hlr_b.veteran.participant_id)).to eq true
+      expect(table_rows.last.include?(hlr_a.veteran.participant_id)).to eq true
+      expect(table_rows.first.include?(hlr_b.veteran.participant_id)).to eq true
 
       # Issue count desc
-      order_buttons[:issues_count].click
-      expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=issueCountColumn&order=desc"
-      )
-      table_rows = current_table_rows
-
-      expect(table_rows.last.include?(" 1 ")).to eq true
-      expect(table_rows.first.include?(" 2 ")).to eq true
-
-      # Issue count asc
       order_buttons[:issues_count].click
       expect(page).to have_current_path(
         "#{base_url}?tab=in_progress&page=1&sort_by=issueCountColumn&order=asc"
@@ -209,18 +241,17 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.last.include?(" 2 ")).to eq true
       expect(table_rows.first.include?(" 1 ")).to eq true
 
-      # Days waiting desc
-      order_buttons[:days_waiting].click
+      # Issue count asc
+      order_buttons[:issues_count].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=daysWaitingColumn&order=desc"
+        "#{base_url}?tab=in_progress&page=1&sort_by=issueCountColumn&order=desc"
       )
-
       table_rows = current_table_rows
 
-      expect(table_rows.first.include?("0 days")).to eq true
-      expect(table_rows.last.include?("6 days")).to eq true
+      expect(table_rows.last.include?(" 1 ")).to eq true
+      expect(table_rows.first.include?(" 2 ")).to eq true
 
-      # Days waiting asc
+      # Days waiting desc
       order_buttons[:days_waiting].click
       expect(page).to have_current_path(
         "#{base_url}?tab=in_progress&page=1&sort_by=daysWaitingColumn&order=asc"
@@ -231,8 +262,21 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.first.include?("6 days")).to eq true
       expect(table_rows.last.include?("0 days")).to eq true
 
-      # Date Completed desc
+      # Days waiting asc
+      order_buttons[:days_waiting].click
+      expect(page).to have_current_path(
+        # This url is the same as the above due to page caching. The params don't update in QueueTable when cached
+        "#{base_url}?tab=in_progress&page=1&sort_by=daysWaitingColumn&order=asc"
+      )
 
+      table_rows = current_table_rows
+
+      expect(table_rows.first.include?("0 days")).to eq true
+      expect(table_rows.last.include?("6 days")).to eq true
+
+      # Date Completed desc
+      # Currently swapping tabs does not correctly populate get params.
+      # These statements will need to updated when that is fixed
       click_button("tasks-organization-queue-tab-1")
 
       later_date = Time.zone.now.strftime("%m/%d/%y")
@@ -240,24 +284,69 @@ feature "NonComp Reviews Queue", :postgres do
 
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=completed&page=1&sort_by=completedDateColumn&order=desc"
-      )
-
-      table_rows = current_table_rows
-
-      expect(table_rows.first.include?(later_date)).to eq true
-      expect(table_rows.last.include?(earlier_date)).to eq true
-
-      # Date Completed asc
-      order_buttons[:date_completed].click
-      expect(page).to have_current_path(
         "#{base_url}?tab=completed&page=1&sort_by=completedDateColumn&order=asc"
       )
 
       table_rows = current_table_rows
 
-      expect(table_rows.first.include?(earlier_date)).to eq true
       expect(table_rows.last.include?(later_date)).to eq true
+      expect(table_rows.first.include?(earlier_date)).to eq true
+
+      # Date Completed asc
+      order_buttons[:date_completed].click
+      expect(page).to have_current_path(
+        "#{base_url}?tab=completed&page=1&sort_by=completedDateColumn&order=desc"
+      )
+
+      table_rows = current_table_rows
+
+      expect(table_rows.last.include?(earlier_date)).to eq true
+      expect(table_rows.first.include?(later_date)).to eq true
+    end
+
+    context("veteran with null first and last name") do
+      let(:veteran_b) do
+        create(:veteran, first_name: "", last_name: "", participant_id: "601111772")
+      end
+
+      scenario "sorting and displaying a veteran with a null first and last name" do
+        base_url = "/decision_reviews/nco"
+
+        visit base_url
+
+        order_buttons = {
+          claimant_name: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[1]/span/span[2]'),
+          participant_id: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[2]/span/span[2]'),
+          issues_count: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[3]/span/span[2]'),
+          days_waiting: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span[1]/span[2]'),
+          date_completed: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
+        }
+
+        # Claimant name desc
+        order_buttons[:claimant_name].click
+        expect(page).to have_current_path(
+          "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=asc"
+        )
+
+        table_rows = current_table_rows
+
+        expect(table_rows.last.include?("claimant")).to eq true
+        expect(table_rows.first.include?("Aaa")).to eq true
+
+        # Claimant name asc
+        order_buttons[:claimant_name].click
+        expect(page).to have_current_path(
+          "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=desc"
+        )
+        table_rows = current_table_rows
+
+        expect(table_rows.last.include?("Aaa")).to eq true
+        expect(table_rows.first.include?("claimant")).to eq true
+
+        # Has a clickable name "claimant"
+        click_link "claimant"
+        expect(page).to have_content("Review each issue and assign the appropriate dispositions")
+      end
     end
 
     scenario "filtering reviews" do
@@ -369,7 +458,17 @@ feature "NonComp Reviews Queue", :postgres do
     end
   end
 
-  def current_table_rows
-    find_all("#case-table-description > tbody > tr").map(&:text)
+  context "with decision_review_queue_ssn_column feature toggle enabled" do
+    before { FeatureToggle.enable!(:decision_review_queue_ssn_column) }
+    after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
+
+    scenario "displays tasks page" do
+      visit "decision_reviews/nco"
+      expect(page).to have_content(vet_id_column_header)
+      expect(page).to have_content(vet_a_id_column_value)
+      expect(page).to have_content(vet_b_id_column_value)
+      expect(page).to have_content(vet_c_id_column_value)
+      expect(page).to have_content(search_box_label)
+    end
   end
 end
