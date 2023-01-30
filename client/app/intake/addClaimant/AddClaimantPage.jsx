@@ -44,10 +44,8 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
   }, [intakeForms, formType, selectedForm]);
   const intakeStatus = getIntakeStatus(useSelector((state) => state));
 
-  // Return to homepage of Intake upon cancellation
-  const detectCancellation = useMemo(() => {
-    return formType ? null : <Redirect to={PAGE_PATHS.BEGIN} />;
-  }, [formType]);
+  // Redirect to Intake homepage if formType is null
+  const intakeIsCancelled = useMemo(() => !formType, [formType]);
 
   // Redirect to Review page if review page data is not present (e.g. from a page reload)
   if (intakeStatus === INTAKE_STATES.STARTED && !intakeData.receiptDate) {
@@ -127,6 +125,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
 
   return (
     <FormProvider {...methods}>
+      {intakeIsCancelled && <Redirect to={PAGE_PATHS.BEGIN} />}
       <IntakeLayout
         buttons={
           <AddClaimantButtons
@@ -151,7 +150,6 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
           />
         )}
       </IntakeLayout>
-      {detectCancellation}
     </FormProvider>
   );
 };
