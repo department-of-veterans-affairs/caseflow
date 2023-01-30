@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_26_155840) do
+ActiveRecord::Schema.define(version: 2023_01_30_151429) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -349,6 +349,10 @@ ActiveRecord::Schema.define(version: 2023_01_26_155840) do
     t.date "substitution_date", comment: "Timestamp of substitution"
     t.datetime "updated_at", comment: "Timestamp when substitution was changed"
     t.bigint "updated_by_id", comment: "Current user who updated substitution"
+    t.index ["appellant_substitutions_id"], name: "index_on_appellant_substitutions_id"
+    t.index ["cavc_remands_id"], name: "index_on_cavc_remands_id"
+    t.index ["participant_id"], name: "index_on_participant_id"
+    t.index ["substitute_participant_id"], name: "index_on_substitute_participant_id"
   end
 
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
