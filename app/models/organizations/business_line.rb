@@ -170,18 +170,18 @@ class BusinessLine < Organization
       FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user) ? 4 : 2
     end
 
+    def search_ssn_and_file_number_clause
+      +"OR veterans.ssn LIKE ? "\
+      "OR veterans.file_number LIKE ? "
+    end
+
     def search_all_clause
       return "" if query_params[:search_query].blank?
 
-      if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user)
-        "veterans.participant_id LIKE ? "\
-        "OR #{claimant_name} ILIKE ? "\
-        "OR veterans.ssn LIKE ? "\
-        "OR veterans.file_number LIKE ?"
-      else
-        "veterans.participant_id LIKE ? "\
-        "OR #{claimant_name} ILIKE ? "
-      end
+      clause = +"veterans.participant_id LIKE ? "\
+               "OR #{claimant_name} ILIKE ? "
+
+      clause << search_ssn_and_file_number_clause if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user) 
     end
 
     def group_by_columns
