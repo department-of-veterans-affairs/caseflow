@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "pdfkit"
-
 class QueueController < ApplicationController
   before_action :react_routed, :check_queue_out_of_service, :verify_access
   skip_before_action :deny_vso_access
@@ -12,20 +10,6 @@ class QueueController < ApplicationController
 
   def index
     render "queue/index"
-  end
-
-  def test
-    # html = render_to_string template: "templates/notification_report_pdf_template", layout: false
-    html = render_to_string template: "templates/sandbox", layout: false
-
-    kit = PDFKit.new(html, margin_top: "0.25in", margin_bottom: "0.25in", margin_left: "0.25in", margin_right: "0.25in")
-    # kit.stylesheets << "app/assets/stylesheets/copied_from_browser.css"
-    kit.stylesheets << "client/node_modules/uswds/dist/css/uswds.css"
-    file_name = "test.pdf"
-    file_path = "#{Rails.root}/#{file_name}"
-    kit.to_pdf(file_path)
-
-    # render template: "templates/sandbox", layout: false
   end
 
   def check_queue_out_of_service
