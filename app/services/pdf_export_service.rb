@@ -36,11 +36,11 @@ class PdfExportService
   # Returns: pdf file created
   def create_store_pdf_from_template(template_name, object = nil)
     # render template
-    template = render_to_string :template => 'app/views/templates/' + template_name
+    template = render_to_string :template => "app/views/templates/" + template_name
     # create new pdfkit object from template
-    kit = PDFKit.new(template, :page_size => 'Letter')
+    kit = PDFKit.new(template, :page_size => "Letter")
     # add CSS styling
-    kit.stylesheets << '/app/assets/stylesheets/notification_pdf_style.css'
+    kit.stylesheets << "/app/assets/stylesheets/notification_pdf_style.css"
     # create file name and file path
     file_name = "test.pdf"
     file_path = "#{Rails.root}/#{file_name}"
