@@ -1,22 +1,23 @@
 # frozen_string_literal: true
 
 class PdfExportService
-  def call
-    suspect_tasks = open_tasks_with_closed_at_defined
-    return if suspect_tasks.empty?
-
-    add_to_report "#{suspect_tasks.count} open " + "Task".pluralize(suspect_tasks.count) + " with a closed_at value"
-    add_to_report "Verify data error with `Task.open.where.not(closed_at: nil)`"
-    add_to_report "These tasks likely were manually re-opened and should have closed_at set to NULL"
+  S3_BUCKET_NAME = "appeals-status-migrations"
+  def call(template_name, object = nil)
+    upload_pdf_to_s3(template_name, object)
+    S3_BUCKET_NAME
   end
 
-  def slack_channel
-    "#appeals-echo"
+  def create_pdf_from_template(template_name, object = nil)
+    kit = PDFKit.new(template_name, :page_size => 'Letter')
+    kit.stylesheets << '/app/assets/stylesheets/notification_pdf_style.css'
+    pdf = kit.to_pdf
+    # INSERT RENDERING STUFF HERE
+    pdf
   end
 
-  private
-
-  def open_tasks_with_closed_at_defined
-    Task.open.where.not(closed_at: nil)
+  def upload_pdf_to_s3(template_name, object = nil)
+    pdf = create_pdf_from_template(template_name, object)
+    filename = Time.zone.now.strftime("ama-migration-%Y-%m-%d--%H-%M.pdf")
+    S3Service.store_file(S3_BUCKET_NAME + "/" + filename, pdf)
   end
 end
