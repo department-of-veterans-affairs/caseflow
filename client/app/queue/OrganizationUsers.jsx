@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable max-len */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
@@ -15,6 +15,10 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
+import Table from '../components/Table';
+import DropdownButton from '../components/DropdownButton';
+import { Accordion } from '../components/Accordion';
+import AccordionSection from '../components/AccordionSection';
 
 const userStyle = css({
   margin: '.5rem 0 .5rem',
@@ -41,6 +45,12 @@ const buttonContainerStyle = css({
 });
 const listStyle = css({
   listStyle: 'none'
+});
+
+const rowDisplay = css({
+  display: 'flex',
+  display: 'table-row',
+  justifyContent: 'space-between'
 });
 
 export default class OrganizationUsers extends React.PureComponent {
@@ -289,6 +299,82 @@ export default class OrganizationUsers extends React.PureComponent {
     </React.Fragment>;
   }
 
+  // TODO: Probably make this into a stateful component?
+  pendingMembershipRequestsContent = () => {
+
+    // TODO: Build this out for each request since the target will be based on the id for the MembershipRequest
+    // At least, I think that's how it might work later.
+    const dropdownOptions = [
+      {
+        title: 'Approve',
+        target: '/approve' },
+      {
+        title: 'Deny',
+        target: '/deny' }
+    ];
+
+    const secondAttempt = {
+      header: '',
+      valueFunction: (task) => {
+        return <CrappyAccordion>{task.note}</CrappyAccordion>;
+      }
+    };
+
+    const firstAttempt = {
+      header: '',
+      valueFunction: (task) => {
+        if (task.note) {
+          return <Accordion accordion={false}>
+            <AccordionSection title="">
+              <tr>
+                <div {...rowDisplay}>
+                  <strong>Request Note:</strong>
+                  <p>{task.note}</p>
+                </div>
+              </tr>
+            </AccordionSection>
+          </Accordion>;
+        }
+
+        return '';
+
+      }
+    };
+
+    // TODO: Ask if this is supposed to be ordered by created at? I assume it is, but make sure and then order it somehow. Probably server side.
+    const workHistoryColumns = [
+      {
+        header: 'User name',
+        valueFunction: (task) => task.name
+      },
+      {
+        header: 'Date requested',
+        valueFunction: (task) => task.createdAt
+      },
+      {
+        header: 'Actions',
+        valueFunction: () => {
+          return <DropdownButton
+            lists={dropdownOptions}
+            onClick={this.handleMenuClick}
+            label="Select action"
+          />;
+        }
+      },
+      firstAttempt,
+    ];
+
+    // TODO: Retrieve these from the backend MembershipRequests for the current org
+    const testTime = new Date().toLocaleDateString();
+    const rowObjects = [{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
+      { name: 'test 2', createdAt: testTime, note: null }];
+
+    return <>
+      <h2>{`View ${rowObjects.length} pending requests`}</h2>
+      <Table columns={workHistoryColumns} rowObjects={rowObjects} />
+    </>;
+  };
+
   render = () => <LoadingDataDisplay
     createLoadPromise={this.loadingPromise}
     loadingComponentProps={{
@@ -306,6 +392,10 @@ export default class OrganizationUsers extends React.PureComponent {
         <h1>{ this.state.judgeTeam ? sprintf(COPY.USER_MANAGEMENT_JUDGE_TEAM_PAGE_TITLE, this.state.organizationName) :
           this.state.dvcTeam ? sprintf(COPY.USER_MANAGEMENT_DVC_TEAM_PAGE_TITLE, this.state.organizationName) :
             sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName) }</h1>
+        {this.pendingMembershipRequestsContent()}
+        <div style={{ paddingBottom: '7rem' }}></div>
+        <MyTable />
+        <div style={{ paddingBottom: '7rem' }}></div>
         {this.mainContent()}
       </div>
     </AppSegment>
@@ -314,4 +404,83 @@ export default class OrganizationUsers extends React.PureComponent {
 
 OrganizationUsers.propTypes = {
   organization: PropTypes.string
+};
+
+const CrappyAccordion = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <td onClick={() => setIsOpen(!isOpen)} style={{ position: 'relative' }}>
+      Click to toggle
+      </td>
+      {isOpen && (
+        <tr>
+          <td colSpan={3}> {children}</td>
+        </tr>
+      )}
+    </>
+  );
+};
+
+const CollapsableTableRow = (props) => {
+  const [expanded, setExpanded] = useState(false);
+
+  const { request } = props;
+
+  // TODO: Build this out for each request since the target will be based on the id for the MembershipRequest
+  // At least, I think that's how it might work later.
+  const dropdownOptions = [
+    {
+      title: 'Approve',
+      target: '/approve' },
+    {
+      title: 'Deny',
+      target: '/deny' }
+  ];
+
+  return [
+    <tr>
+      <td>{request.name}</td>
+      <td>{request.createdAt}</td>
+      <td>
+        <DropdownButton
+          lists={dropdownOptions}
+          // onClick={this.handleMenuClick}
+          label="Select action"
+        />
+      </td>
+      <td>
+        {request.note ? <button onClick={() => setExpanded(!expanded)}> Click me! </button> : ''}
+      </td>
+    </tr>,
+    expanded && (
+      <tr>
+        <td colSpan={4}>
+          <strong>Request note:</strong>
+          <p>{request.note}</p>
+        </td>
+      </tr>
+    )
+  ];
+};
+
+const MyTable = (props) => {
+
+  // TODO: Retrieve these from the backend MembershipRequests for the current org
+  const testTime = new Date().toLocaleDateString();
+  const rowObjects = [{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
+    { name: 'test 2', createdAt: testTime, note: null }];
+
+  return <table>
+    <thead>
+      <th>User name</th>
+      <th>Date requested</th>
+      <th>Actions</th>
+      <th></th>
+    </thead>
+    <tbody>
+      {rowObjects.map((rowObject, index) => <CollapsableTableRow key={index} request={rowObject} />)}
+    </tbody>
+  </table>;
 };
