@@ -106,6 +106,20 @@ describe('NotificationTable', () => {
     expect(row[19].textContent).toBe('Failed Delivery');
   });
 
+  it('Technical Failure status row should show failed delivery', async () => {
+    setup();
+    const row = await screen.findAllByRole('cell');
+
+    expect(row[24].textContent).toBe('Failed Delivery');
+  });
+
+  it('Preferences Declined status row should show opted out', async () => {
+    setup();
+    const row = await screen.findAllByRole('cell');
+
+    expect(row[34].textContent).toBe('Opted-out');
+  });
+
   it('matches snapshot', () => {
     const { container } = setup();
 

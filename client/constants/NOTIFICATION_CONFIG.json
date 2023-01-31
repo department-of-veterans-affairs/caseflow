@@ -31,7 +31,7 @@
       "TEMPORARY-FAILURE": "Pending Delivery",
       "PERMANENT-FAILURE": "Failed Delivery",
       "TECHNICAL-FAILURE": "Failed Delivery",
-      "PREFERENCES-DECLINED": "Opted-Out"
+      "PREFERENCES-DECLINED": "Opted-out"
     }
 }
 

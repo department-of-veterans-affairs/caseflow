@@ -8,8 +8,8 @@ export const notifications = [
       event_type: 'Appeal docketed',
       recipient_email: 'test@caseflow.com',
       recipient_phone_number: '1234567890',
-      email_notification_status: 'delivered',
-      sms_notification_status: 'delivered',
+      email_notification_status: 'permanent-failure',
+      sms_notification_status: 'technical-failure',
       notification_content: 'string'
     }
   },
@@ -36,7 +36,7 @@ export const notifications = [
       event_type: 'Hearing scheduled',
       recipient_email: 'test@caseflow.com',
       recipient_phone_number: '1234567890',
-      email_notification_status: 'failed',
+      email_notification_status: 'preferences-declined',
       sms_notification_status: 'sent',
       notification_content: 'string'
     }
