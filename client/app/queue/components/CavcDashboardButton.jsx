@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
+import CAVC_DASHBOARD_BUTTON_TEXT from '../../../COPY';
 
 export const CavcDashboardButton = ({ appealId }) => {
-  const [buttonText] = useState('CAVC Dashboard');
   const { push } = useHistory();
 
 
@@ -16,7 +16,7 @@ export const CavcDashboardButton = ({ appealId }) => {
         classNames="usa-button-secondary"
         onClick={() => push(`/queue/appeals/${appealId}/cavc_dashboard`)}
       >
-        {buttonText}
+        {CAVC_DASHBOARD_BUTTON_TEXT}
       </Button>
     </div>
     )
