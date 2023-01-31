@@ -1,0 +1,14 @@
+name: Run RSpec Tests & Linters
+
+on:
+  push:
+    branches:
+      - f-gh-migration
+
+jobs:
+  example-1:
+    uses: ./.github/workflows/resuable1.yml
+  install-node:
+    uses: ./.github/workflows/reusable2.yml
+    with:
+      node-version: 12.3
