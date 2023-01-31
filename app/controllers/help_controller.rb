@@ -8,16 +8,17 @@ class HelpController < ApplicationController
       programOfficeTeamManagement: FeatureToggle.enabled?(:program_office_team_management, user: user)
     }
   end
-  helper_method :feature_toggle_ui_hash
 
   def user_organizations(user = current_user)
-    user.selectable_organizations.map { |org| org.slice(:name, :url) }
+    return [] unless user
+
+    user&.selectable_organizations&.map { |org| org.slice(:name, :url) }
   end
-  helper_method :user_organizations
 
   def pending_membership_requests(user = current_user)
-    # TODO: Might also narrow it down by organization? Not sure how that would work yet.
-    user.membership_requests.includes(:organization).assigned.map do |membership_request|
+    return [] unless user
+
+    user&.membership_requests&.includes(:organization)&.assigned&.map do |membership_request|
       {
         name: membership_request.organization.name,
         url: membership_request.organization.url,
@@ -26,5 +27,6 @@ class HelpController < ApplicationController
       }
     end
   end
-  helper_method :pending_membership_requests
+
+  helper_method :feature_toggle_ui_hash, :user_organizations, :pending_membership_requests
 end
