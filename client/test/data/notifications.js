@@ -106,8 +106,8 @@ export const notifications = [
       event_type: 'Hearing scheduled',
       recipient_email: 'test2@caseflow.com',
       recipient_phone_number: '',
-      email_notification_status: 'delivered',
-      sms_notification_status: 'sent',
+      email_notification_status: 'temporary-failure',
+      sms_notification_status: 'permanent-failure',
       notification_content: 'string'
     }
   },

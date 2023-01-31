@@ -98,6 +98,7 @@ export const statusColumn = (notifications) => {
     valueFunction: (notification) => {
       const { status } = notification;
 
+      console.log(NOTIFICATION_CONFIG.STATUSES[status.toUpperCase()] || status.charAt(0).toUpperCase() + status.slice(1));
       return NOTIFICATION_CONFIG.STATUSES[status.toUpperCase()] || status.charAt(0).toUpperCase() + status.slice(1);
     }
   };
