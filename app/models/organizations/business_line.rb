@@ -184,6 +184,8 @@ class BusinessLine < Organization
                "OR #{claimant_name} ILIKE ? "
 
       clause << search_ssn_and_file_number_clause if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user) 
+
+      clause
     end
 
     def group_by_columns
