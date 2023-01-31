@@ -7,10 +7,11 @@ describe MembershipMailer do
   let(:subject) { "Membership request submitted." }
 
   context "with recipient_info" do
-    subject { MembershipMailer.membership_request_submitted(email_recipient_info: email_recipient_info) }
 
     describe "membership_request_submitted" do
-      it "has the correct from" do
+      subject { MembershipMailer.membership_request_submitted(email_recipient_info: email_recipient_info) }
+
+      it "has the correct From email address" do
         expect(subject.from).to include("BoardofVeteransAppealsHearings@messages.va.gov")
       end
 
@@ -18,63 +19,46 @@ describe MembershipMailer do
         expect(subject).to eq(subject)
       end
 
-      # it "sends an email" do
-      #   expect(subject.deliver_now!).to change {
-      #     ActionMailer::Base.deliveries.count }.by 1
+      # it "sends an email confirming membership request submitted successfully" do
+      #   subject_to = subject.to(email)
+      #   expect(subject_to.deliver_now).to change {
+      #   ActionMailer::Base.deliveries.count }.by 1
       # end
     end
 
-    subject { MembershipMailer.update_membership_request_status(email_recipient_info: email_recipient_info) }
-
-    describe "update_membership_request_status" do
-      let(:subject) { "Membership request status had been updated" }
-
-      it "has the correct from" do
-        expect(subject.from).to include("BoardofVeteransAppealsHearings@messages.va.gov")
+    describe "updated_membership_request_status" do
+      subject { MembershipMailer.updated_membership_request_status(email_recipient_info: email_recipient_info) }
+      it "has the correct From address" do
+        expect(subject.from).to include('BoardofVeteransAppealsHearings@messages.va.gov')
       end
 
       it "has the correct subject line" do
         expect(subject).to eq(subject)
       end
 
-      # it "sends an email" do
+      # it "sends a status update email to requestor" do
       #   expect(subject.deliver_now!).to change {
-      #     ActionMailer::Base.deliveries.count }.by 1
+      #   ActionMailer::Base.deliveries.count }.by 1
       # end
     end
-
-    subject { MembershipMailer.membership_request_submission(email_recipient_info: email_recipient_info) }
 
     describe "membership_request_submission" do
-      let(:subject) { "New Membership Request Submission" }
+      subject { MembershipMailer.membership_request_submission(email_recipient_info: email_recipient_info) }
 
-      it "has the correct from" do
+      it "has the correct From email address" do
         expect(subject.from).to include("BoardofVeteransAppealsHearings@messages.va.gov")
       end
 
+      # it "sends an email to admins" do
+      #   expect(subject.deliver_now!).to change {
+      #   ActionMailer::Base.deliveries.count }.by 1
+      # end
+
       it "has the correct subject line" do
+
         expect(subject).to eq(subject)
       end
 
-         # it "sends an email" do
-      #   expect(subject.deliver_now!).to change {
-      #     ActionMailer::Base.deliveries.count }.by 1
-      # end
-    end
-  end
-
-
-  shared_context "membership_request_submitted" do
-    subject { MembershipMailer.membership_request_submitted(email_recipient_info: email_recipient_info, custom_subject: custom_subject) }
-  end
-
-  shared_context "updated_membership_request_status" do
-    subject { MembershipMailer.updated_membership_request_status(email_recipient_info: email_recipient_info, custom_subject: custom_subject) }
-  end
-
-  shared_context "membership_requested_submission" do
-    subject do
-      MembershipMailer.membership_requested_submission(email_recipient_info: recipient_info, custom_subject: custom_subject)
     end
   end
 end
