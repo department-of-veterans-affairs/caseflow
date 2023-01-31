@@ -3,9 +3,9 @@
 class HelpController < ApplicationController
   skip_before_action :verify_authentication
 
-  def feature_toggle_ui_hash
+  def feature_toggle_ui_hash(user = current_user)
     {
-      programOfficeTeamManagement: FeatureToggle.enabled?(:program_office_team_management, user: current_user)
+      programOfficeTeamManagement: FeatureToggle.enabled?(:program_office_team_management, user: user)
     }
   end
   helper_method :feature_toggle_ui_hash
