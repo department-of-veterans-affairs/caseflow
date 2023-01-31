@@ -100,7 +100,6 @@ group :test, :development, :demo do
   gem "faker"
   gem "guard-rspec"
   gem "immigrant"
-  gem "octokit", "4.18.0"
   # Linters
   gem "jshint", platforms: :ruby
   gem "pluck_to_hash"
