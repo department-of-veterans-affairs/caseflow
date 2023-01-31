@@ -94,10 +94,11 @@ group :test, :development, :demo do
   # Testing tools
   gem "capybara"
   gem "capybara-screenshot"
-  gem "danger", "6.3.2"
+  gem "danger", "~> 6.0"
   gem "database_cleaner", "1.7.0"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
+  gem "faraday", "0.15.4"
   gem "guard-rspec"
   gem "immigrant"
   # Linters

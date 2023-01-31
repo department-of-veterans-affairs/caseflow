@@ -287,7 +287,7 @@ GEM
       railties (>= 4.2.0)
     faker (3.1.0)
       i18n (>= 1.8.11, < 2)
-    faraday (0.17.6)
+    faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (2.4.1)
       faraday (>= 0.8)
@@ -745,7 +745,7 @@ DEPENDENCIES
   connect_vbms!
   console_tree_renderer!
   countries
-  danger (= 6.3.2)
+  danger (~> 6.0)
   database_cleaner (= 1.7.0)
   ddtrace (= 0.34.1)
   debase
@@ -756,6 +756,7 @@ DEPENDENCIES
   dry-schema (~> 1.4)
   factory_bot_rails (~> 5.2)
   faker
+  faraday (= 0.15.4)
   fast_jsonapi
   fasterer
   foreman
