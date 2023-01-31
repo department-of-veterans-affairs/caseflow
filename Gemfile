@@ -100,8 +100,9 @@ group :test, :development, :demo do
   gem "faker"
   gem "guard-rspec"
   gem "immigrant"
-  # Linters
   gem "jshint", platforms: :ruby
+  gem "octokit", "4.18.0"
+  # Linters
   gem "pluck_to_hash"
   gem "pry", "~> 0.13.0"
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
