@@ -40,6 +40,11 @@ RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
       prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
       text = Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK.label
       click_dropdown(prompt: prompt, text: text)
+
+      # check cancel modal content
+      expect(page).to have_content(format(COPY::CANCEL_INITIAL_NOTIFICATION_LETTER_TASK_DETAIL))
+
+      # fill out instructions
       fill_in("taskInstructions", with: "instructions")
       click_button("Submit")
 
