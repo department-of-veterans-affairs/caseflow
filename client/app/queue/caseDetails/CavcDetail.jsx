@@ -11,6 +11,7 @@ import CAVC_REMAND_SUBTYPE_NAMES from '../../../constants/CAVC_REMAND_SUBTYPE_NA
 import CAVC_DECISION_TYPES from '../../../constants/CAVC_DECISION_TYPES';
 import { css } from 'glamor';
 import { boldText } from '../constants';
+import { CavcDashboardButton } from '../components/CavcDashboardButton';
 
 export const textStyling = css({
   display: 'flex',
@@ -37,7 +38,10 @@ const CavcDetail = (props) => {
     judgement_date: judgementDate,
     mandate_date: mandateDate,
     federal_circuit: federalCircuit,
-    instructions: instructionText
+    instructions: instructionText,
+    appealId
+    // currentUserIsOAI: currentUserIsOAI,
+    // currentUserIsOCC: currentUserIsOCC
   } = props;
 
   const details = [];
@@ -117,14 +121,6 @@ const CavcDetail = (props) => {
     });
   }
 
-  // return (
-  //   <span>
-  //     <div>Testing This</div>
-  //     <ul {...detailListStyling}>
-  //       <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
-  //     </ul>
-  //   </span>
-  // );
   return <React.Fragment>
     <div {...textStyling}>
       <div>
@@ -134,8 +130,10 @@ const CavcDetail = (props) => {
       </div>
       <div {...gutterStyling}></div>
       <div {...boldText}{...syncStyling}>
-        { COPY.CAVC_DASHBOARD_BUTTON_TEXT }
-        {/* <PoaRefreshButton appealId={appealId} /> */}
+        {/* {(currentUserIsOAI || currentUserIsOCC) &&
+          <CavcDashboardButton />
+        } */}
+        <CavcDashboardButton appealId={appealId} />
       </div>
     </div>
   </React.Fragment>;
@@ -151,7 +149,8 @@ CavcDetail.propTypes = {
   judgement_date: PropTypes.string,
   mandate_date: PropTypes.string,
   federal_circuit: PropTypes.bool,
-  instructions: PropTypes.string.isRequired
+  instructions: PropTypes.string.isRequired,
+  appealId: PropTypes.string
 };
 
 export default CavcDetail;
