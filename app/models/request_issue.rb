@@ -32,7 +32,7 @@ class RequestIssue < CaseflowRecord
   belongs_to :contested_decision_issue, class_name: "DecisionIssue"
 
   # enum is symbol, but validates requires a string
-  validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
+  validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc(&:untimely_exemption)
 
   enum ineligible_reason: {
     duplicate_of_nonrating_issue_in_active_review: "duplicate_of_nonrating_issue_in_active_review",
