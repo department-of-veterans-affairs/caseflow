@@ -2,11 +2,10 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
-import CAVC_DASHBOARD_BUTTON_TEXT from '../../../COPY';
+import COPY from '../../../COPY';
 
 export const CavcDashboardButton = ({ appealId }) => {
   const { push } = useHistory();
-
 
   return <React.Fragment>
     (<div>
@@ -16,7 +15,7 @@ export const CavcDashboardButton = ({ appealId }) => {
         classNames="usa-button-secondary"
         onClick={() => push(`/queue/appeals/${appealId}/cavc_dashboard`)}
       >
-        {CAVC_DASHBOARD_BUTTON_TEXT}
+        {COPY.CAVC_DASHBOARD_BUTTON_TEXT}
       </Button>
     </div>
     )
