@@ -26,6 +26,7 @@ class ExternalApi::VANotifyService
     #         notification_id: id of the associated Notification in the db
     #         email_template_id: taken from notification_event table corresponding to correct notification template
     #         first_name: appellant's first name
+    #         docket_number: appeals docket number
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     # Return: email_response: JSON response from VA Notify API
     def send_email_notifications(
@@ -50,6 +51,7 @@ class ExternalApi::VANotifyService
     #         notification_id: id of the associated Notification in the db
     #         sms_template_id: taken from notification_event table corresponding to correct notification template
     #         first_name: appellant's first name
+    #         docket_number: appeals docket number
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     # Return: sms_response: JSON response from VA Notify API
     def send_sms_notifications(participant_id, notification_id, sms_template_id, first_name, docket_number, status = "")
@@ -118,6 +120,7 @@ class ExternalApi::VANotifyService
     #         notification_id: id of the associated Notification in the db
     #         email_template_id: taken from notification_event table corresponding to correct notification template
     #         first_name: appellant's first name (this will default to 'Appellant' if there is no first name)
+    #         docket_number: appeals docket number
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     #
     # Return: Request hash
@@ -151,6 +154,7 @@ class ExternalApi::VANotifyService
     #         notification_id: id of the associated Notification in the db
     #         sms_template_id: taken from notification_event table corresponding to correct notification template
     #         first_name: appellant's first name (this will default to 'Appellant' if there is no first name)
+    #         docket_number: appeals docket number
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     #
     # Return: Request hash
