@@ -128,6 +128,18 @@ export const CaseDetailsView = (props) => {
       ['Clerk of the Board'].includes(organization.name)
     )
   );
+  const currentUserIsOAI = useSelector((state) =>
+    state.ui.organizations.some(
+      (organization) => organization.name === 'Office of Assessment and Improvement'
+    )
+  );
+
+  const currentUserIsOCC = useSelector((state) =>
+    state.ui.organizations.some(
+      (organization) => organization.name === 'Office of Chief Counsel'
+    )
+  );
+
   const modalIsOpen = window.location.pathname.includes('modal');
 
   const resetState = () => {
@@ -267,6 +279,8 @@ export const CaseDetailsView = (props) => {
           appealId={appealId}
           includeCavcRemand={supportCavcRemand}
           includeSubstitute={supportPostDispatchSubstitution}
+          currentUserIsOAI={currentUserIsOAI}
+          currentUserIsOCC={currentUserIsOCC}
         />
       )}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
@@ -401,6 +415,9 @@ export const CaseDetailsView = (props) => {
                   </span>
                 )
               }
+              appealId = {appealId}
+              currentUserIsOAI = {currentUserIsOAI}
+              currentUserIsOCC = {currentUserIsOCC}
               {...appeal.cavcRemand}
             />
           )}
