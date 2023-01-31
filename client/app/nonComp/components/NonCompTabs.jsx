@@ -20,12 +20,14 @@ import COPY from '../../../COPY';
 class NonCompTabsUnconnected extends React.PureComponent {
   render = () => {
     const queryParams = new URLSearchParams(window.location.search);
-    const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM);
+    const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
+    const defaultSortColumn = currentTabName === 'in_progress' ? 'daysWaitingColumn' : 'completedDateColumn';
     const tabPaginationOptions = {
       [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM),
       [QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM),
-      [QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM),
-      [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM),
+      [QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM) || 'desc',
+      [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM) ||
+        defaultSortColumn,
       [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: queryParams.getAll(
         `${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`
       ),

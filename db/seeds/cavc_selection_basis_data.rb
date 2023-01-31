@@ -178,34 +178,34 @@ module Seeds
         "Karnas", "Other"
       ]
 
-      for value in other_due_process_protection do
+      other_due_process_protection.each do |value|
         CavcSelectionBasis.create(basis_for_selection: value, category: "other_due_process_protection")
       end
 
-      for value in prior_examination_inadequate do
+      prior_examination_inadequate.each do |value|
         CavcSelectionBasis.create(basis_for_selection: value, category: "prior_examination_inadequate")
       end
 
-      for value in prior_opinion_inadequate do
+      prior_opinion_inadequate.each do |value|
         CavcSelectionBasis.create(basis_for_selection: value, category: "prior_opinion_inadequate")
       end
 
-      for value in statute do
+      statute.each do |value|
         CavcSelectionBasis.create(basis_for_selection: value, category: "consider_statute")
         CavcSelectionBasis.create(basis_for_selection: value, category: "misapplication_statute")
       end
 
-      for value in regulation do
+      regulation.each do |value|
         CavcSelectionBasis.create(basis_for_selection: value, category: "consider_regulation")
         CavcSelectionBasis.create(basis_for_selection: value, category: "misapplication_regulation")
       end
 
-      for value in diagnostic_code do
+      diagnostic_code.each do |value|
         CavcSelectionBasis.create(basis_for_selection: value, category: "consider_diagnostic_code")
         CavcSelectionBasis.create(basis_for_selection: value, category: "misapplication_diagnostic_code")
       end
 
-      for value in caselaw do
+      caselaw.each do |value|
         CavcSelectionBasis.create(basis_for_selection: value, category: "consider_caselaw")
         CavcSelectionBasis.create(basis_for_selection: value, category: "misapplication_caselaw")
       end
