@@ -9,6 +9,22 @@ import BareList from '../../components/BareList';
 import COPY from '../../../COPY';
 import CAVC_REMAND_SUBTYPE_NAMES from '../../../constants/CAVC_REMAND_SUBTYPE_NAMES';
 import CAVC_DECISION_TYPES from '../../../constants/CAVC_DECISION_TYPES';
+import { css } from 'glamor';
+import { boldText } from '../constants';
+
+export const textStyling = css({
+  display: 'flex',
+  justifyContent: 'space-between'
+});
+
+export const syncStyling = css({
+  textAlign: 'right',
+  width: '33%'
+});
+
+export const gutterStyling = css({
+  width: '5%'
+});
 
 const CavcDetail = (props) => {
   const {
@@ -101,13 +117,28 @@ const CavcDetail = (props) => {
     });
   }
 
-  return (
-    <>
-      <ul {...detailListStyling}>
-        <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
-      </ul>
-    </>
-  );
+  // return (
+  //   <span>
+  //     <div>Testing This</div>
+  //     <ul {...detailListStyling}>
+  //       <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
+  //     </ul>
+  //   </span>
+  // );
+  return <React.Fragment>
+    <div {...textStyling}>
+      <div>
+        <ul {...detailListStyling}>
+          <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
+        </ul>
+      </div>
+      <div {...gutterStyling}></div>
+      <div {...boldText}{...syncStyling}>
+        { COPY.CAVC_DASHBOARD_BUTTON_TEXT }
+        {/* <PoaRefreshButton appealId={appealId} /> */}
+      </div>
+    </div>
+  </React.Fragment>;
 };
 
 CavcDetail.propTypes = {
