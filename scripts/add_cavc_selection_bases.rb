@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# bundle exec rails runner scripts/add_cavc_selection_bases_records.rb
+
 other_due_process_protection = [
   "Pending Privacy Act Request", "AMA Opt-in", "Extension request", "20.104(c)",
   "20.1304(c)", "20.604", "20.712(c)", "AMA Opt-In Post SSOC", "Credibility Finding in Prior Remand",

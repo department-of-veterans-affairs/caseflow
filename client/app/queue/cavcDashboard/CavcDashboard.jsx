@@ -12,7 +12,7 @@ import COPY from '../../../COPY';
 import StatusMessage from '../../components/StatusMessage';
 
 export const CavcDashboard = (props) => {
-  const { appealId, appeal, appealDetails } = props;
+  const { appealId, appealDetails } = props;
 
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
