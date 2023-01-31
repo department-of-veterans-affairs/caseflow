@@ -33,10 +33,11 @@ class ExternalApi::VANotifyService
       notification_id,
       email_template_id,
       first_name,
+      docket_number,
       status = ""
     )
       email_response = send_va_notify_request(
-        email_request(participant_id, notification_id, email_template_id, first_name, status)
+        email_request(participant_id, notification_id, email_template_id, first_name, docket_number, status)
       )
       log_info(email_response)
       email_response
@@ -51,9 +52,9 @@ class ExternalApi::VANotifyService
     #         first_name: appellant's first name
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     # Return: sms_response: JSON response from VA Notify API
-    def send_sms_notifications(participant_id, notification_id, sms_template_id, first_name, status = "")
+    def send_sms_notifications(participant_id, notification_id, sms_template_id, first_name, docket_number, status = "")
       sms_response = send_va_notify_request(
-        sms_request(participant_id, notification_id, sms_template_id, first_name, status)
+        sms_request(participant_id, notification_id, sms_template_id, first_name, docket_number, status)
       )
       log_info(sms_response)
       sms_response
@@ -120,7 +121,7 @@ class ExternalApi::VANotifyService
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     #
     # Return: Request hash
-    def email_request(participant_id, notification_id, email_template_id, first_name, status)
+    def email_request(participant_id, notification_id, email_template_id, first_name, docket_number, status)
       request = {
         body: {
           template_id: email_template_id,
@@ -130,7 +131,7 @@ class ExternalApi::VANotifyService
             id_value: participant_id
           },
           personalisation: {
-            first_name: first_name, status: status
+            first_name: first_name, docket_number: docket_number, status: status
           }
         },
         headers: HEADERS,
@@ -153,7 +154,7 @@ class ExternalApi::VANotifyService
     #         status: appeal status for quarterly notification (not necessary for other notifications)
     #
     # Return: Request hash
-    def sms_request(participant_id, notification_id, sms_template_id, first_name, status)
+    def sms_request(participant_id, notification_id, sms_template_id, first_name, docket_number, status)
       request = {
         body: {
           reference: notification_id,
@@ -164,7 +165,7 @@ class ExternalApi::VANotifyService
           },
           sms_sender_id: SENDER_ID || "",
           personalisation: {
-            first_name: first_name, status: status
+            first_name: first_name, status: status, docket_number: docket_number
           }
         },
         headers: HEADERS,
