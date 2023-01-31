@@ -183,7 +183,9 @@ class BusinessLine < Organization
       clause = +"veterans.participant_id LIKE ? "\
                "OR #{claimant_name} ILIKE ? "
 
-      clause << search_ssn_and_file_number_clause if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user) 
+      if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user)
+        clause << search_ssn_and_file_number_clause
+      end
 
       clause
     end
