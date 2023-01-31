@@ -98,9 +98,9 @@ group :test, :development, :demo do
   gem "database_cleaner", "1.7.0"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
-  gem "faraday", "0.15.4"
   gem "guard-rspec"
   gem "immigrant"
+  gem "octokit", "4.18.0"
   # Linters
   gem "jshint", platforms: :ruby
   gem "pluck_to_hash"
