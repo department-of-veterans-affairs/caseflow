@@ -34,7 +34,6 @@ import {
 
 const radioLabelStyling = css({ marginTop: '2.5rem' });
 const buttonStyling = css({ paddingLeft: '0' });
-const bottomInfoStyling = css({ marginBottom: '4rem' });
 const issueListStyling = css({ marginTop: '0rem' });
 
 const judgeOptions = _.map(CAVC_JUDGE_FULL_NAMES, (value) => ({
