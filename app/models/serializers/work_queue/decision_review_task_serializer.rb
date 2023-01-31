@@ -80,7 +80,7 @@ class WorkQueue::DecisionReviewTaskSerializer
   end
 
   attribute :veteran_ssn do |object|
-    veteran(object).ssn
+    object[:veteran_ssn] || veteran(object).ssn
   end
 
   attribute :assigned_on, &:assigned_at

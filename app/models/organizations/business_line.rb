@@ -98,7 +98,7 @@ class BusinessLine < Organization
     end
 
     def union_select_statements
-      [Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id_alias]
+      [Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id_alias, veteran_ssn_alias]
     end
 
     def issue_count
@@ -120,6 +120,10 @@ class BusinessLine < Organization
 
     def claimant_name_alias
       "#{claimant_name} AS claimant_name"
+    end
+
+    def veteran_ssn_alias
+      "veterans.ssn as veteran_ssn"
     end
 
     # Alias of veteran participant id for serialization and sorting
@@ -183,7 +187,7 @@ class BusinessLine < Organization
     end
 
     def group_by_columns
-      "tasks.id, veterans.participant_id, veterans.first_name, veterans.last_name, "\
+      "tasks.id, veterans.participant_id, veterans.first_name, veterans.last_name, veterans.ssn, "\
       "unrecognized_party_details.name, unrecognized_party_details.last_name, people.first_name, people.last_name, "\
       "veteran_is_not_claimant, bgs_attorneys.name"
     end
