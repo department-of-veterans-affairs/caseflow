@@ -8,7 +8,7 @@ export const CavcDashboardButton = ({ appealId }) => {
   const { push } = useHistory();
 
   return <React.Fragment>
-    (<div>
+    <div>
       <Button
         type="button"
         name="Cavc Dashboard"
@@ -18,7 +18,6 @@ export const CavcDashboardButton = ({ appealId }) => {
         {COPY.CAVC_DASHBOARD_BUTTON_TEXT}
       </Button>
     </div>
-    )
   </React.Fragment>;
 };
 
