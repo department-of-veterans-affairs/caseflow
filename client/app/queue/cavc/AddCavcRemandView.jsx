@@ -25,9 +25,15 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import Alert from '../../components/Alert';
 import { withRouter } from 'react-router';
 
+import {
+  JmrJmprIssuesBanner,
+  MdrBanner,
+  MdrIssuesBanner,
+  NoMandateBanner,
+} from './Alerts';
+
 const radioLabelStyling = css({ marginTop: '2.5rem' });
 const buttonStyling = css({ paddingLeft: '0' });
-const bottomInfoStyling = css({ marginBottom: '4rem' });
 const issueListStyling = css({ marginTop: '0rem' });
 
 const judgeOptions = _.map(CAVC_JUDGE_FULL_NAMES, (value) => ({
@@ -125,7 +131,6 @@ const AddCavcRemandView = (props) => {
     setIssues(newValues);
   };
 
-  const allIssuesSelected = useMemo(() => Object.values(issues).every((isChecked) => isChecked), [issues]);
   const allIssuesUnselected = useMemo(() => Object.values(issues).every((isChecked) => !isChecked), [issues]);
 
   // populate all issues checkboxes on initial render
@@ -149,8 +154,6 @@ const AddCavcRemandView = (props) => {
   const settlementType = () => type === CAVC_DECISION_TYPES.settlement;
 
   const jmrjmprSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmr_jmpr;
-  const jmrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmr;
-  const jmprSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmpr;
   const mdrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.mdr;
   const mandateAvailable = () => !mdrSubtype() && (isMandateProvided === 'true');
 
@@ -168,9 +171,8 @@ const AddCavcRemandView = (props) => {
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate) && validateDateNotInFuture(decisionDate);
 
-  const validDecisionIssues = () => jmrSubtype() ? allIssuesSelected : selectedIssueIds?.length > 0;
-  const issueSelectionError = () =>
-    (jmrSubtype() && !allIssuesSelected) ? COPY.CAVC_ALL_ISSUES_ERROR : COPY.CAVC_NO_ISSUES_ERROR;
+  const validDecisionIssues = () => selectedIssueIds?.length > 0;
+  const issueSelectionError = () => COPY.CAVC_NO_ISSUES_ERROR;
 
   const validJudgementDate = () =>
     (Boolean(judgementDate) && validateDateNotInFuture(judgementDate)) || !mandateAvailable();
@@ -327,26 +329,6 @@ const AddCavcRemandView = (props) => {
     strongLabel
   />;
 
-  const jmrIssuesBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
-    {COPY.JMR_SELECTION_ISSUE_INFO_BANNER}
-  </Alert>;
-  const jmprIssuesBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
-    {COPY.JMPR_SELECTION_ISSUE_INFO_BANNER}
-  </Alert>;
-  const jmrjmprIssuesBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
-    {COPY.JMR_JMPR_SELECTION_ISSUE_INFO_BANNER}
-  </Alert>;
-  const mdrIssuesBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
-    {COPY.MDR_SELECTION_ISSUE_INFO_BANNER}
-  </Alert>;
-
-  const mdrBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
-    {COPY.MDR_SELECTION_ALERT_BANNER}
-  </Alert>;
-  const noMandateBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>
-    {COPY.CAVC_REMAND_NO_MANDATE_TEXT}
-  </Alert>;
-
   const judgementField = <DateSelector
     label={COPY.CAVC_JUDGEMENT_DATE}
     type="date"
@@ -422,16 +404,14 @@ const AddCavcRemandView = (props) => {
       {remandType() && remandTypeField }
       {type !== CAVC_DECISION_TYPES.remand && mandateProvidedField }
       {decisionField}
-      {mdrSubtype() && mdrBanner }
+      {mdrSubtype() && <MdrBanner /> }
       {mandateAvailable() && mandateDatesSameField }
       {mandateAvailable() && !isMandateSame && judgementField }
       {mandateAvailable() && !isMandateSame && mandateField }
-      {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
+      {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && <NoMandateBanner /> }
       {!deathDismissalType() && !otherDismissalType() && !affirmedType() && !settlementType() && issuesField}
-      {jmrjmprSubtype() && allIssuesUnselected && jmrjmprIssuesBanner}
-      {jmrSubtype() && !allIssuesSelected && jmrIssuesBanner}
-      {jmprSubtype() && allIssuesUnselected && jmprIssuesBanner}
-      {mdrSubtype() && allIssuesUnselected && mdrIssuesBanner}
+      {jmrjmprSubtype() && allIssuesUnselected && <JmrJmprIssuesBanner />}
+      {mdrSubtype() && allIssuesUnselected && <MdrIssuesBanner />}
       {mdrSubtype() && federalCircuitField }
       {instructionsField}
     </QueueFlowPage>
