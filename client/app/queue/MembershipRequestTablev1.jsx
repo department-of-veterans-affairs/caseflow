@@ -8,17 +8,20 @@ const MembershipRequestTableV1 = (props) => {
   const rowObjects = [{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
     { name: 'test 2', createdAt: testTime, note: null }];
 
-  return <table className="usa-table-borderless">
-    <thead>
-      <th>User name</th>
-      <th>Date requested</th>
-      <th>Actions</th>
-      <th></th>
-    </thead>
-    <tbody>
-      {rowObjects.map((rowObject, index) => <CollapsableTableRow key={index} request={rowObject} />)}
-    </tbody>
-  </table>;
+  return <>
+    <h2> Completely new custom one-off component</h2>
+    <table className="usa-table-borderless">
+      <thead>
+        <th>User name</th>
+        <th>Date requested</th>
+        <th>Actions</th>
+        <th></th>
+      </thead>
+      <tbody>
+        {rowObjects.map((rowObject, index) => <CollapsableTableRow key={index} request={rowObject} />)}
+      </tbody>
+    </table>
+  </>;
 };
 
 const CollapsableTableRow = (props) => {

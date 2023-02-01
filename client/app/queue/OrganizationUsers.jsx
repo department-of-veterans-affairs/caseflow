@@ -21,6 +21,7 @@ import { Accordion } from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
 import { constant } from 'lodash';
 import MembershipRequestTableV1 from './MembershipRequestTablev1';
+import MembershipRequestTableV2 from './MembershipRequestTablev2';
 
 const userStyle = css({
   margin: '.5rem 0 .5rem',
@@ -316,13 +317,6 @@ export default class OrganizationUsers extends React.PureComponent {
         target: '/deny' }
     ];
 
-    const secondAttempt = {
-      header: '',
-      valueFunction: (task) => {
-        return <CrappyAccordion>{task.note}</CrappyAccordion>;
-      }
-    };
-
     const firstAttempt = {
       header: '',
       valueFunction: (task) => {
@@ -373,6 +367,7 @@ export default class OrganizationUsers extends React.PureComponent {
 
     return <>
       <h2>{`View ${rowObjects.length} pending requests`}</h2>
+      <h2>Original Version with Table component and Accordion</h2>
       <Table columns={workHistoryColumns} rowObjects={rowObjects} />
     </>;
   };
@@ -395,9 +390,10 @@ export default class OrganizationUsers extends React.PureComponent {
           this.state.dvcTeam ? sprintf(COPY.USER_MANAGEMENT_DVC_TEAM_PAGE_TITLE, this.state.organizationName) :
             sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName) }</h1>
         {this.pendingMembershipRequestsContent()}
+        <div style={{ paddingBottom: '7rem' }}></div>
         <MembershipRequestTableV1 />
         <div style={{ paddingBottom: '7rem' }}></div>
-        {/* <MembershipRequestTableV2 /> */}
+        <MembershipRequestTableV2 />
         <div style={{ paddingBottom: '7rem' }}></div>
         {this.mainContent()}
       </div>
@@ -407,23 +403,6 @@ export default class OrganizationUsers extends React.PureComponent {
 
 OrganizationUsers.propTypes = {
   organization: PropTypes.string
-};
-
-const CrappyAccordion = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <>
-      <td onClick={() => setIsOpen(!isOpen)} style={{ position: 'relative' }}>
-      Click to toggle
-      </td>
-      {isOpen && (
-        <tr>
-          <td colSpan={3}> {children}</td>
-        </tr>
-      )}
-    </>
-  );
 };
 
 const CollapsableTableRow = (props) => {
