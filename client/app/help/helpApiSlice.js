@@ -15,7 +15,7 @@ export const submitForm = createAsyncThunk('form/submit', async (formData) => {
   return data;
 });
 
-export const initialHelpState = {
+export const initialState = {
   featureToggles: {},
   userOrganizations: [],
   organizationMembershipRequests: [],
@@ -43,22 +43,16 @@ const formSlice = createSlice({
 
 const helpSlice = createSlice({
   name: 'help',
-  initialState: initialHelpState,
+  initialState,
   reducers: {
-    setFeatureToggles: {
-      reducer: (state, action) => {
-        state.featureToggles = action.payload;
-      }
+    setFeatureToggles: (state, action) => {
+      state.featureToggles = action.payload;
     },
-    setUserOrganizations: {
-      reducer: (state, action) => {
-        state.userOrganizations = action.payload;
-      }
+    setUserOrganizations: (state, action) => {
+      state.userOrganizations = action.payload;
     },
-    setOrganizationMembershipRequests: {
-      reducer: (state, action) => {
-        state.organizationMembershipRequests = action.payload;
-      }
+    setOrganizationMembershipRequests: (state, action) => {
+      state.organizationMembershipRequests = action.payload;
     },
   },
 });
@@ -66,9 +60,5 @@ const helpSlice = createSlice({
 const helpReducers = combineReducers({ help: helpSlice.reducer, form: formSlice.reducer });
 
 export const { setFeatureToggles, setUserOrganizations, setOrganizationMembershipRequests } = helpSlice.actions;
-
-// export const helpSlice.reducer;
-
-// export default formSlice.reducer;
 
 export default helpReducers;
