@@ -97,7 +97,8 @@ TaskPageUnconnected.propTypes = {
     formType: PropTypes.string,
     sameOffice: PropTypes.bool,
     informalConference: PropTypes.bool,
-    veteranIsNotClaimant: PropTypes.bool
+    veteranIsNotClaimant: PropTypes.bool,
+    receiptDate: PropTypes.string
   }),
   task: PropTypes.shape({
     id: PropTypes.number,
@@ -106,8 +107,14 @@ TaskPageUnconnected.propTypes = {
     created_at: PropTypes.string
   }),
   businessLine: PropTypes.string,
-  decisionIssuesStatus: PropTypes.object
-}
+  decisionIssuesStatus: PropTypes.object,
+  taskUpdateDefaultPage: PropTypes.func,
+  completeTask: PropTypes.func,
+  history: PropTypes.shape({
+    push: PropTypes.func
+  }),
+  businessLineUrl: PropTypes.string
+};
 
 const TaskPage = connect(
   (state) => ({

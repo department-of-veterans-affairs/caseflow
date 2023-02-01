@@ -86,10 +86,15 @@ class RecordRequestUnconnected extends React.PureComponent {
 
 RecordRequestUnconnected.propTypes = {
   task: PropTypes.shape({
-    closed_at: PropTypes.string
+    closed_at: PropTypes.string,
+    tasks_url: PropTypes.string
   }),
+  decisionIssuesStatus: PropTypes.shape({
+    update: PropTypes.string
+  }),
+  businessLine: PropTypes.string,
   handleSave: PropTypes.func
-}
+};
 
 const RecordRequest = connect(
   (state) => ({
