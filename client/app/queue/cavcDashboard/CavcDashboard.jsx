@@ -14,7 +14,7 @@ import TabWindow from '../../components/TabWindow';
 import CavcDashboardTab from './CavcDashboardTab';
 
 const CavcDashboard = (props) => {
-  const { appealId, appeal, appealDetails, cavcRemands } = props;
+  const { appealId, appealDetails, cavcRemands } = props;
 
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -90,7 +90,6 @@ CavcDashboard.propTypes = {
 // pass state and ownProps into the function when needed to access them as props
 const mapStateToProps = (state, ownProps) => {
   return {
-    appeal: state.queue.appeals[ownProps.appealId],
     appealDetails: state.queue.appealDetails[ownProps.appealId],
     cavcRemands: state.cavcDashboard.cavc_remands
   };
