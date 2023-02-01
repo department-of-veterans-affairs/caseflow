@@ -19,6 +19,8 @@ import Table from '../components/Table';
 import DropdownButton from '../components/DropdownButton';
 import { Accordion } from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
+import { constant } from 'lodash';
+import MembershipRequestTableV1 from './MembershipRequestTablev1';
 
 const userStyle = css({
   margin: '.5rem 0 .5rem',
@@ -300,6 +302,7 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   // TODO: Probably make this into a stateful component?
+  // Original attempt inside this jsx file.
   pendingMembershipRequestsContent = () => {
 
     // TODO: Build this out for each request since the target will be based on the id for the MembershipRequest
@@ -326,19 +329,18 @@ export default class OrganizationUsers extends React.PureComponent {
         if (task.note) {
           return <Accordion accordion={false}>
             <AccordionSection title="">
-              <tr>
-                <div {...rowDisplay}>
-                  <strong>Request Note:</strong>
-                  <p>{task.note}</p>
-                </div>
-              </tr>
+              <div {...rowDisplay}>
+                <strong>Request Note:</strong>
+                <p>{task.note}</p>
+              </div>
             </AccordionSection>
           </Accordion>;
         }
 
         return '';
 
-      }
+      },
+      span: constant(4),
     };
 
     // TODO: Ask if this is supposed to be ordered by created at? I assume it is, but make sure and then order it somehow. Probably server side.
@@ -393,8 +395,9 @@ export default class OrganizationUsers extends React.PureComponent {
           this.state.dvcTeam ? sprintf(COPY.USER_MANAGEMENT_DVC_TEAM_PAGE_TITLE, this.state.organizationName) :
             sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName) }</h1>
         {this.pendingMembershipRequestsContent()}
+        <MembershipRequestTableV1 />
         <div style={{ paddingBottom: '7rem' }}></div>
-        <MyTable />
+        {/* <MembershipRequestTableV2 /> */}
         <div style={{ paddingBottom: '7rem' }}></div>
         {this.mainContent()}
       </div>
@@ -451,11 +454,17 @@ const CollapsableTableRow = (props) => {
         />
       </td>
       <td>
-        {request.note ? <button onClick={() => setExpanded(!expanded)}> Click me! </button> : ''}
+        {request.note ?
+          <button style={{ backgroundColor: 'inherit' }}
+            className="usa-accordion-button"
+            aria-expanded={expanded}
+            onClick={() => setExpanded(!expanded)}>
+          </button> :
+          ''}
       </td>
     </tr>,
     expanded && (
-      <tr>
+      <tr aria-expanded={expanded}>
         <td colSpan={4}>
           <strong>Request note:</strong>
           <p>{request.note}</p>
@@ -465,14 +474,14 @@ const CollapsableTableRow = (props) => {
   ];
 };
 
-const MyTable = (props) => {
+const CustomTable = (props) => {
 
   // TODO: Retrieve these from the backend MembershipRequests for the current org
   const testTime = new Date().toLocaleDateString();
   const rowObjects = [{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
     { name: 'test 2', createdAt: testTime, note: null }];
 
-  return <table>
+  return <table className="usa-table-borderless">
     <thead>
       <th>User name</th>
       <th>Date requested</th>
