@@ -21,6 +21,8 @@ feature "NonComp Reviews Queue", :postgres do
   let(:today) { Time.zone.now }
   let(:last_week) { Time.zone.now - 7.days }
 
+  base_url = "/decision_reviews/nco"
+
   let!(:completed_tasks) do
     [
       create(:higher_level_review_task,
@@ -114,7 +116,7 @@ feature "NonComp Reviews Queue", :postgres do
     after { FeatureToggle.disable!(:board_grant_effectuation_task) }
 
     scenario "displays tasks page with decision_review_queue_ssn_column feature toggle disabled" do
-      visit "decision_reviews/nco"
+      visit base_url
       expect(page).to have_content("Non-Comp Org")
       expect(page).to have_content("In progress tasks")
       expect(page).to have_content("Completed tasks")
@@ -153,7 +155,7 @@ feature "NonComp Reviews Queue", :postgres do
 
     context "with user enabled for intake" do
       scenario "displays tasks page" do
-        visit "decision_reviews/nco"
+        visit base_url
         expect(page).to have_content("Non-Comp Org")
         expect(page).to have_content("In progress tasks")
         expect(page).to have_content("Completed tasks")
@@ -175,8 +177,6 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content("Form created by")
       end
     end
-
-    base_url = "/decision_reviews/nco"
 
     scenario "ordering reviews with participate id visable" do
       visit base_url
@@ -304,33 +304,28 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.first.include?(later_date)).to eq true
     end
 
-    context("with veteran ssn visable") do
+    context "with veteran ssn visable" do
       before { FeatureToggle.enable!(:decision_review_queue_ssn_column) }
       after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
 
       scenario "ordering reviews" do
         visit base_url
 
-        order_buttons = {
-          claimant_name: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[1]/span/span[2]'),
-          ssn: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[2]/span/span[2]'),
-          issues_count: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[3]/span/span[2]'),
-          days_waiting: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span[1]/span[2]'),
-          date_completed: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
-        }
+        ssn = find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[2]/span/span[2]')
 
         # Veteran SSN ascending
-        order_buttons[:ssn].click
+        ssn.click
         expect(page).to have_current_path(
           "#{base_url}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=asc"
         )
+
         table_rows = current_table_rows
 
         expect(table_rows.last.include?(hlr_b.veteran.ssn)).to be == true
         expect(table_rows.first.include?(hlr_c.veteran.ssn)).to be == true
 
         # Veteran SSN descending
-        order_buttons[:ssn].click
+        ssn.click
         expect(page).to have_current_path(
           "#{base_url}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=desc"
         )
@@ -386,7 +381,7 @@ feature "NonComp Reviews Queue", :postgres do
     end
 
     scenario "filtering reviews" do
-      visit "decision_reviews/nco"
+      visit base_url
       find(".unselected-filter-icon").click
 
       # Check that task counts are being transmitted correctly from backend
@@ -401,7 +396,7 @@ feature "NonComp Reviews Queue", :postgres do
     end
 
     scenario "searching reviews by name" do
-      visit "decision_reviews/nco"
+      visit base_url
 
       # There should be 2 on the page
       expect(page).to have_content("Higher-Level Review", count: 2)
@@ -420,7 +415,7 @@ feature "NonComp Reviews Queue", :postgres do
     end
 
     scenario "searching reviews by participant id" do
-      visit "decision_reviews/nco"
+      visit base_url
 
       # There should be 2 on the page
       expect(page).to have_content("Higher-Level Review", count: 2)
@@ -444,7 +439,7 @@ feature "NonComp Reviews Queue", :postgres do
         user.update(roles: user.roles << "Mail Intake")
         Functions.grant!("Mail Intake", users: [user.css_id])
 
-        visit "decision_reviews/nco"
+        visit base_url
         click_on "Intake new form"
         expect(page).to have_current_path("/intake")
       end
@@ -456,7 +451,7 @@ feature "NonComp Reviews Queue", :postgres do
     after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
 
     scenario "displays tasks page" do
-      visit "decision_reviews/nco"
+      visit base_url
       expect(page).to have_content(vet_id_column_header)
       expect(page).to have_content(vet_a_id_column_value)
       expect(page).to have_content(vet_b_id_column_value)
