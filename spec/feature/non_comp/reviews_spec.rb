@@ -4,9 +4,9 @@ feature "NonComp Reviews Queue", :postgres do
   let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
   let(:user) { create(:default_user) }
 
-  let(:veteran_a) { create(:veteran, first_name: "Aaa", participant_id: "12345") }
-  let(:veteran_b) { create(:veteran, first_name: "Bbb", participant_id: "601111772") }
-  let(:veteran_c) { create(:veteran, first_name: "Ccc", participant_id: "1002345") }
+  let(:veteran_a) { create(:veteran, first_name: "Aaa", participant_id: "12345", ssn: "140261454") }
+  let(:veteran_b) { create(:veteran, first_name: "Bbb", participant_id: "601111772", ssn: "191097395") }
+  let(:veteran_c) { create(:veteran, first_name: "Ccc", participant_id: "1002345", ssn: "128455943") }
   let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
   let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
   let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
@@ -176,9 +176,9 @@ feature "NonComp Reviews Queue", :postgres do
       end
     end
 
-    scenario "ordering reviews" do
-      base_url = "/decision_reviews/nco"
+    base_url = "/decision_reviews/nco"
 
+    scenario "ordering reviews with participate id visable" do
       visit base_url
 
       order_buttons = {
@@ -304,14 +304,45 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.first.include?(later_date)).to eq true
     end
 
+    context("with veteran ssn visable") do
+      before { FeatureToggle.enable!(:decision_review_queue_ssn_column) }
+      after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
+
+      scenario "ordering reviews" do
+        visit base_url
+
+        order_buttons = {
+          claimant_name: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[1]/span/span[2]'),
+          ssn: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[2]/span/span[2]'),
+          issues_count: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[3]/span/span[2]'),
+          days_waiting: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span[1]/span[2]'),
+          date_completed: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
+        }
+
+        # Participant ID desc
+        order_buttons[:ssn].click
+        expect(page).to have_current_path(
+          "#{base_url}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=asc"
+        )
+        table_rows = current_table_rows
+
+        expect(table_rows.last.include?(hlr_b.veteran.ssn)).to be == true
+        expect(table_rows.first.include?(hlr_c.veteran.ssn)).to be == true
+
+        # Participant ID asc
+        # order_buttons[:ssn].click
+        # expect(page).to have_current_path(
+        #   "#{base_url}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=asc"
+        # )
+      end
+    end
+
     context("veteran with null first and last name") do
       let(:veteran_b) do
         create(:veteran, first_name: "", last_name: "", participant_id: "601111772")
       end
 
       scenario "sorting and displaying a veteran with a null first and last name" do
-        base_url = "/decision_reviews/nco"
-
         visit base_url
 
         order_buttons = {
