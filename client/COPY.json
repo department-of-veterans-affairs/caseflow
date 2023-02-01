@@ -492,6 +492,7 @@
   "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you have made a mistake, please email %s to manage any changes.",
 
   "MARK_TASK_COMPLETE_TITLE_CONTESTED_CLAIM": "Mark task as complete",
+  "MARK_TASK_COMPLETE_BUTTON_CONTESTED_CLAIM": "Mark as complete",
 
   "MODAL_SUBMIT_BUTTON": "Submit",
   "MODAL_CANCEL_BUTTON": "Cancel",

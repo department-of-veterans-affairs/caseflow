@@ -384,6 +384,10 @@ const MODAL_TYPE_ATTRS = {
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
   },
   task_complete_contested_claim: {
+    buildSuccessMsg: (appeal, { contact }) => ({
+      title: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteranFullName),
+      detail: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, contact)
+    }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE_CONTESTED_CLAIM,
     getContent: MarkTaskCompleteContestedClaimModal,
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
@@ -649,8 +653,9 @@ class CompleteTaskModal extends React.Component {
       data: {
         task: {
           status: 'completed',
-          instructions: this.formatInstructions()
-        }
+          instructions: this.formatInstructions(),
+        },
+        select_opc: this.props.modalType
       }
     };
     const successMsg = MODAL_TYPE_ATTRS[this.props.modalType].buildSuccessMsg(

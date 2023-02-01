@@ -112,6 +112,16 @@ class TasksController < ApplicationController
 
     tasks_hash = json_tasks(tasks.uniq)
 
+    appeal = Appeal.find(task.appeal.id)
+    if appeal.contested_claim?
+      if (task.type === "SendInitialNotificationLetterTask")
+        case params['select_opc']
+        when "task_complete_contested_claim"
+          post_send_initial_notification_letter_holding_task (update_params["instructions"], 15)
+        end
+      end
+    end
+
     # currently alerts are only returned by ScheduleHearingTask
     # and AssignHearingDispositionTask for virtual hearing related updates
     # Start with any alerts on the current task, then find alerts on the tasks
@@ -179,6 +189,23 @@ class TasksController < ApplicationController
   end
 
   private
+
+  def post_send_initial_notification_letter_holding_task (instructions, days_on_hold)
+    # PostSendInitialNotificationLetterHoldingTask.create_from_parent(
+    #   task.appeal.tasks.find_by(status: "assigned"),
+    #   days_on_hold,
+    #   '',
+    #   instructions)
+
+    @post_send_initial_notification_letter_holding ||= task.appeal.tasks.open.find_by(type: :PostSendInitialNotificationLetterHoldingTask) ||
+                                          PostSendInitialNotificationLetterHoldingTask.create!(
+                                            appeal: task.appeal,
+                                            parent: task.appeal.tasks.find_by(status: "assigned"),
+                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                            days_on_hold: days_on_hold,
+                                            instructions: instructions
+                                          )
+  end
 
   def render_update_errors(errors)
     render json: { "errors": errors }, status: :bad_request

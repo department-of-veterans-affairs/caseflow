@@ -18,4 +18,16 @@ class PostSendInitialNotificationLetterHoldingTask  < TimedHoldTask
     Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_CC.to_h,
   ].freeze
 
+  def self.hide_from_queue_table_view
+    false
+  end
+
+  def hide_from_case_timeline
+    false
+  end
+
+  def hide_from_task_snapshot
+    false
+  end
+
 end
