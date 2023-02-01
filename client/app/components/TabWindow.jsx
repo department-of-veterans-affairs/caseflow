@@ -21,7 +21,8 @@ const TabWindow = ({
   name = 'main',
   onChange,
   tabs = [],
-  tabPanelTabIndex = null
+  tabPanelTabIndex = null,
+  alwaysShowTabs
 }) => {
   const tabContent = (tab) => (
     <span>
@@ -33,7 +34,7 @@ const TabWindow = ({
 
   // If there's only one tab, avoid rendering out tabs and just display the content.
   // This avoids any weird accessibility issues of having a tabpanel w/o corresponding tab
-  if (tabs.length === 1) {
+  if (tabs.length === 1 && !alwaysShowTabs) {
     return tabs[0].page;
   }
 
@@ -75,12 +76,14 @@ TabWindow.propTypes = {
     })
   ),
   defaultPage: PropTypes.number,
-  tabPanelTabIndex: PropTypes.number
+  tabPanelTabIndex: PropTypes.number,
+  alwaysShowTabs: PropTypes.bool
 };
 
 TabWindow.defaultProps = {
   defaultPage: 0,
   fullPage: false,
+  alwaysShowTabs: false
 };
 
 export default TabWindow;

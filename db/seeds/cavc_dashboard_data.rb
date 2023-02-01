@@ -10,6 +10,7 @@ module Seeds
     def seed!
       Seeds::CavcDecisionReasonData.new.seed!
       create_cavc_dashboard_dispositions
+      create_appeals_with_multiple_cavc_remands
     end
 
     private
@@ -48,6 +49,37 @@ module Seeds
           CavcDashboardDisposition.create(cavc_remand: remand, request_issue_id: issue.id)
         end
 
+        @cavc_docket_number_last_four += 1
+      end
+    end
+
+    def create_appeals_with_multiple_cavc_remands
+      source_appeal = create(:appeal,
+                             :dispatched,
+                             :with_request_issues,
+                             :with_decision_issue,
+                             issue_count: 1,
+                             veteran: create_veteran)
+      user = create(:user)
+
+      4.times do
+        creation_params = {
+          source_appeal_id: source_appeal.id,
+          cavc_decision_type: "remand",
+          cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
+          cavc_judge_full_name: "Clerk",
+          created_by_id: user.id,
+          decision_date: 1.week.ago,
+          decision_issue_ids: source_appeal.decision_issue_ids,
+          instructions: "Seed remand for testing",
+          represented_by_attorney: true,
+          updated_by_id: user.id,
+          remand_subtype: "jmr",
+          judgement_date: 1.week.ago,
+          mandate_date: 1.week.ago
+        }
+
+        CavcRemand.create!(creation_params)
         @cavc_docket_number_last_four += 1
       end
     end
