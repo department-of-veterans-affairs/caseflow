@@ -6,6 +6,8 @@ describe PostSendInitialNotificationLetterHoldingTask do
     let(:task_class) { PostSendInitialNotificationLetterHoldingTask }
     before do
       cob_team.add_user(user)
+      User.authenticate!(user: user)
+      FeatureToggle.enable!(:cc_appeal_workflow)
     end
 
     describe ".verify_user_can_create" do
@@ -25,21 +27,25 @@ describe PostSendInitialNotificationLetterHoldingTask do
 
     describe ".available_actions" do
       let(:post_send_initial_notification_letter_holding_task) {
-        task_class.create!(appeal: distribution_task.appeal, parent_id: distribution_task.id, assigned_to: cob_team)
+        task_class.create!(
+          appeal: distribution_task.appeal,
+          parent_id: distribution_task.id,
+          assigned_to: cob_team,
+          days_on_hold: 45)
       }
 
       let(:available_task_actions) do
         [
-          Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_TASK.to_h,
+          Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_POST_INITIAL_LETTER_TASK.to_h,
           Constants.TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER.to_h,
-          Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER.to_h
+          Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_CC.to_h
         ]
       end
 
       context "the user is not a member of COB" do
         let(:non_cob_user) { create(:user) }
 
-        subject { final_notification_letter_task.available_actions(non_cob_user) }
+        subject { post_send_initial_notification_letter_holding_task.available_actions(non_cob_user) }
 
         it "returns no actions" do
           expect(subject).to_not eql(available_task_actions)
@@ -48,7 +54,7 @@ describe PostSendInitialNotificationLetterHoldingTask do
       end
 
       context "the user is a member of COB" do
-        subject { final_notification_letter_task.available_actions(user) }
+        subject { post_send_initial_notification_letter_holding_task.available_actions(user) }
 
         it "returns the task actions" do
           expect(subject).to eql(available_task_actions)
