@@ -319,7 +319,7 @@ feature "NonComp Reviews Queue", :postgres do
           date_completed: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
         }
 
-        # Participant ID desc
+        # Veteran SSN ascending
         order_buttons[:ssn].click
         expect(page).to have_current_path(
           "#{base_url}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=asc"
@@ -329,11 +329,16 @@ feature "NonComp Reviews Queue", :postgres do
         expect(table_rows.last.include?(hlr_b.veteran.ssn)).to be == true
         expect(table_rows.first.include?(hlr_c.veteran.ssn)).to be == true
 
-        # Participant ID asc
-        # order_buttons[:ssn].click
-        # expect(page).to have_current_path(
-        #   "#{base_url}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=asc"
-        # )
+        # Veteran SSN descending
+        order_buttons[:ssn].click
+        expect(page).to have_current_path(
+          "#{base_url}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=desc"
+        )
+
+        table_rows = current_table_rows
+
+        expect(table_rows.last.include?(hlr_c.veteran.ssn)).to be == true
+        expect(table_rows.first.include?(hlr_b.veteran.ssn)).to be == true
       end
     end
 
