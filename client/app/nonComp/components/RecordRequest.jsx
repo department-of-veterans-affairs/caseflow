@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import Button from '../../components/Button';
@@ -81,6 +82,13 @@ class RecordRequestUnconnected extends React.PureComponent {
       { completeDiv }
     </div>;
   }
+}
+
+RecordRequestUnconnected.propTypes = {
+  task: PropTypes.shape({
+    closed_at: PropTypes.string
+  }),
+  handleSave: PropTypes.func
 }
 
 const RecordRequest = connect(
