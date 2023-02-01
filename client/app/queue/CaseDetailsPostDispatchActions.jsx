@@ -33,7 +33,12 @@ const buttonContainer = css({
  *  - @param {Object} history  Provided with react router to be able to route to another page
  */
 export const CaseDetailsPostDispatchActions = (props) => {
-  const { appealId, includeCavcRemand, includeSubstitute, currentUserIsOAI, currentUserIsOCC } = props;
+  const { appealId,
+    includeCavcRemand,
+    includeSubstitute,
+    // currentUserIsOAI,
+    // currentUserIsOCC,
+    appealHasNewCavcDecisionType } = props;
   const { push } = useHistory();
 
   return (
@@ -56,11 +61,13 @@ export const CaseDetailsPostDispatchActions = (props) => {
             {COPY.SUBSTITUTE_APPELLANT_BUTTON}
           </Button>
         )}
-        {/* {(currentUserIsOAI || currentUserIsOCC) && (
+        {/* {appealHasNewCavcDecisionType && (currentUserIsOAI || currentUserIsOCC) && (
           <CavcDashboardButton appealId={appealId} />
         )} */}
-        {/*delete line below after organizations OCC and OAI are added and uncomment above */}
-        <CavcDashboardButton appealId={appealId} />
+        {/* delete line below after organizations OCC and OAI are added and uncomment above */}
+        { appealHasNewCavcDecisionType && (
+          <CavcDashboardButton appealId={appealId} />
+        )}
       </div>
     </div>
   );
@@ -70,8 +77,9 @@ CaseDetailsPostDispatchActions.propTypes = {
   appealId: PropTypes.string.isRequired,
   includeCavcRemand: PropTypes.bool,
   includeSubstitute: PropTypes.bool,
-  currentUserIsOAI: PropTypes.bool,
-  currentUserIsOCC: PropTypes.bool
+  // currentUserIsOAI: PropTypes.bool,
+  // currentUserIsOCC: PropTypes.bool,
+  appealHasNewCavcDecisionType: PropTypes.bool
 };
 
 export default CaseDetailsPostDispatchActions;
