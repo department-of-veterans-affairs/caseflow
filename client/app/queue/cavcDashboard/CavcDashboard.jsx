@@ -13,7 +13,7 @@ import StatusMessage from '../../components/StatusMessage';
 import TabWindow from '../../components/TabWindow';
 import CavcDashboardTab from './CavcDashboardTab';
 
-const CavcDashboard = (props) => {
+export const CavcDashboard = (props) => {
   const { appealId, appealDetails, cavcRemands } = props;
 
   const [loaded, setLoaded] = useState(false);
