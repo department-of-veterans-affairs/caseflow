@@ -33,7 +33,7 @@ class PdfExportService
   #
   # Params: template_name (string), object (json)
   #
-  # Returns: pdf file created
+  # Returns: nil
   def create_store_pdf_from_template(template_name, object = nil)
     # render template
     template = render_to_string :template => "app/views/templates/" + template_name
