@@ -38,7 +38,7 @@ export const CavcDashboard = (props) => {
     if (loaded && cavcRemands) {
       setTabs(cavcRemands.map((remand) => {
         const label = `CAVC appeal ${remand.cavc_docket_number}`;
-        const page = <CavcDashboardTab remand={remand} />;
+        const page = <CavcDashboardTab remandId={remand.id} />;
 
         return { label, page };
       }));
