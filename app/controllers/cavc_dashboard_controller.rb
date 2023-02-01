@@ -42,6 +42,10 @@ class CavcDashboardController < ApplicationController
     }
   end
 
+  def cavc_dashboard_issues
+      render json: CavcDashboardIssues.all
+  end
+
   def cavc_decision_reasons
     render json: CavcDecisionReason.all
   end
