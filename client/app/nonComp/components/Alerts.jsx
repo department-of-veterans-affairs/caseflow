@@ -21,7 +21,8 @@ export class ErrorAlert extends React.PureComponent {
 
 ErrorAlert.propTypes = {
   errorCode: PropTypes.string,
-}
+};
+
 export class SuccessAlert extends React.PureComponent {
   render() {
     const successObject = {
@@ -40,7 +41,7 @@ export class SuccessAlert extends React.PureComponent {
 SuccessAlert.propTypes = {
   claimantName: PropTypes.string,
   successCode: PropTypes.string
-}
+};
 
 export class FlashAlerts extends React.PureComponent {
   render() {
@@ -67,4 +68,4 @@ export class FlashAlerts extends React.PureComponent {
 
 FlashAlerts.propTypes = {
   flash: PropTypes.array
-}
+};
