@@ -12,7 +12,7 @@ class HelpController < ApplicationController
   def user_organizations(user = current_user)
     return [] unless user
 
-    user&.selectable_organizations&.map { |org| org.slice(:name, :url) }
+    user&.selectable_organizations&.map { |org| org.slice(:name, :type, :url) }
   end
 
   def pending_membership_requests(user = current_user)

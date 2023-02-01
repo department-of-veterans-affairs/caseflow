@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import ApiUtil from 'app/util/ApiUtil';
+import { combineReducers } from 'redux';
 
-export const submitForm = createAsyncThunk('form/sbumit', async (formData) => {
+export const submitForm = createAsyncThunk('form/submit', async (formData) => {
   // TODO: Update this url to work with the form submission implementation
   const response = await ApiUtil.post('/help/submitOrganizationMembershipRequest', formData);
   const data = await response.json;
@@ -13,6 +14,12 @@ export const submitForm = createAsyncThunk('form/sbumit', async (formData) => {
 
   return data;
 });
+
+export const initialHelpState = {
+  featureToggles: {},
+  userOrganizations: [],
+  organizationMembershipRequests: [],
+};
 
 const formSlice = createSlice({
   name: 'form',
@@ -34,4 +41,34 @@ const formSlice = createSlice({
   },
 });
 
-export default formSlice.reducer;
+const helpSlice = createSlice({
+  name: 'help',
+  initialState: initialHelpState,
+  reducers: {
+    setFeatureToggles: {
+      reducer: (state, action) => {
+        state.featureToggles = action.payload;
+      }
+    },
+    setUserOrganizations: {
+      reducer: (state, action) => {
+        state.userOrganizations = action.payload;
+      }
+    },
+    setOrganizationMembershipRequests: {
+      reducer: (state, action) => {
+        state.organizationMembershipRequests = action.payload;
+      }
+    },
+  },
+});
+
+const helpReducers = combineReducers({ help: helpSlice.reducer, form: formSlice.reducer });
+
+export const { setFeatureToggles, setUserOrganizations, setOrganizationMembershipRequests } = helpSlice.actions;
+
+// export const helpSlice.reducer;
+
+// export default formSlice.reducer;
+
+export default helpReducers;

@@ -14,16 +14,16 @@ import IntakeHelp from './components/IntakeHelp';
 import QueueHelp from './components/QueueHelp';
 import ReduxBase from '../components/ReduxBase';
 import helpReducer, { initialState } from './helpReducers';
+import helpReducers, { initialHelpState, setFeatureToggles, setOrganizationMembershipRequests, setUserOrganizations } from './helpApiSlice';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { setFeatureToggles, setOrganizationMembershipRequests, setUserOrganizations } from './helpActions';
+// import { setFeatureToggles, setOrganizationMembershipRequests, setUserOrganizations } from './helpActions';
 
 class Help extends React.PureComponent {
 
   render() {
     return <ReduxBase
-      reducer={helpReducer}
-      initialState={{ help: { ...initialState } }}
+      reducer={helpReducers}
     >
       <BrowserRouter>
         <HelpApp {...this.props} />
