@@ -24,7 +24,7 @@ CavcDashboardDetailsContainer.propTypes = {
   children: PropTypes.node
 };
 
-export const CavcDashboardDetailsSection = ({ title, value }) => {
+const CavcDashboardDetailsSection = ({ title, value }) => {
   const sectionStyling = css({
     padding: '0 0.5rem 0 0.5rem',
     '& > p': {
@@ -46,10 +46,10 @@ CavcDashboardDetailsSection.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 };
 
-export const CavcDashboardDetails = (props) => {
+const CavcDashboardDetails = (props) => {
   const { remand } = props;
 
-  // TODO: fix this date, remove eslint disable when the set methods are used for editing
+  // remove eslint disable when the set methods are used for editing
   /* eslint-disable no-unused-vars */
   const [boardDecisionDate, setBoardDecisionDate] = useState(remand.source_appeal_decision_date);
   const [boardDocketNumber, setBoardDocketNumber] = useState(remand.source_appeal_docket_number);
@@ -108,3 +108,5 @@ CavcDashboardDetails.propTypes = {
   remandId: PropTypes.number,
   remand: PropTypes.object
 };
+
+export default CavcDashboardDetails;
