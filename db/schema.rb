@@ -331,7 +331,6 @@ ActiveRecord::Schema.define(version: 2023_02_01_172549) do
   create_table "cavc_dashboard_issues", force: :cascade do |t|
     t.string "benefit_type"
     t.bigint "cavc_remand_id", comment: "ID of the associated CAVC remand"
-    t.bigint "cavc_remands_id"
     t.datetime "created_at"
     t.bigint "created_by"
     t.string "issue_category"

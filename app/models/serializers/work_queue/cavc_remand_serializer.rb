@@ -7,6 +7,7 @@ class WorkQueue::CavcRemandSerializer
   attribute :cavc_docket_number
   attribute :cavc_judge_full_name
   attribute :cavc_dashboard_dispositions
+  attribute :cavc_dashboard_issues
   attribute :decision_date
   attribute :decision_issue_ids
   attribute :federal_circuit
