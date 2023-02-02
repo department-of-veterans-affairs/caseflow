@@ -297,7 +297,6 @@ Rails.application.routes.draw do
   resources :cavc_dashboard, param: :appeal_id do
     member do
       get "/", to: "cavc_dashboard#index"
-      get "/", to: "cavc_dashboard#cavc_dashboard_issues"
     end
   end
 

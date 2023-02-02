@@ -330,12 +330,14 @@ ActiveRecord::Schema.define(version: 2023_02_01_172549) do
 
   create_table "cavc_dashboard_issues", force: :cascade do |t|
     t.string "benefit_type"
+    t.bigint "cavc_remand_id", comment: "ID of the associated CAVC remand"
     t.bigint "cavc_remands_id"
     t.datetime "created_at"
     t.bigint "created_by"
     t.string "issue_category"
     t.datetime "updated_at"
     t.bigint "updated_by"
+    t.index ["cavc_remand_id"], name: "index_cavc_dashboard_issues_on_cavc_remand_id"
   end
 
   create_table "cavc_decision_reasons", force: :cascade do |t|
@@ -1863,6 +1865,7 @@ ActiveRecord::Schema.define(version: 2023_02_01_172549) do
   add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
   add_foreign_key "board_grant_effectuations", "end_product_establishments"
   add_foreign_key "cavc_dashboard_dispositions", "cavc_remands"
+  add_foreign_key "cavc_dashboard_issues", "cavc_remands"
   add_foreign_key "cavc_decision_reasons", "cavc_decision_reasons", column: "parent_decision_reason_id"
   add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
