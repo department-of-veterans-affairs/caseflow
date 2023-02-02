@@ -69,15 +69,14 @@ const CavcDashboardDetails = (props) => {
     }
   };
 
-  // modify this to return apporpriate boolean based on organization
+  // determines button visibility while maintaining spacing, disables button while hidden
   const userCanEdit = true;
 
-  // top position bypasses the fixed margin on the TabWindow component
+  // position/top bypasses the fixed margin on the TabWindow component
   const buttonStyling = css({
     position: 'relative',
     top: '-30px',
     margin: '0',
-    // visibility used to maintain the spacing whether button is visible or not
     visibility: (userCanEdit ? 'visible' : 'hidden')
   });
 
