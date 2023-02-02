@@ -36,7 +36,7 @@ describe VANotifyStatusUpdateJob, type: :job do
            appeals_type: "Appeal",
            event_type: "Hearing scheduled",
            event_date: Time.zone.today,
-           notification_type: "Email",
+           notification_type: "Email and SMS",
            email_notification_status: "Success",
            sms_notification_status: "Success")
   end
@@ -128,7 +128,7 @@ describe VANotifyStatusUpdateJob, type: :job do
       email_and_sms.email_notification_external_id = SecureRandom.uuid
       allow(job).to receive(:notifications_not_processed).and_return([email_and_sms])
       allow(VANotifyService).to receive(:get_status).and_raise(Caseflow::Error::VANotifyNotFoundError)
-      expect(job).to receive(:log_error).with(/VA Notify API returned error/)
+      expect(job).to receive(:log_error).with(/VA Notify API returned error/).twice
       job.perform_now
     end
   end
