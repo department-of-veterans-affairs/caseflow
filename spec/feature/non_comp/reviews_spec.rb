@@ -21,7 +21,7 @@ feature "NonComp Reviews Queue", :postgres do
   let(:today) { Time.zone.now }
   let(:last_week) { Time.zone.now - 7.days }
 
-  base_url = "/decision_reviews/nco"
+  BASE_URL = "/decision_reviews/nco"
 
   let!(:completed_tasks) do
     [
@@ -116,7 +116,7 @@ feature "NonComp Reviews Queue", :postgres do
     after { FeatureToggle.disable!(:board_grant_effectuation_task) }
 
     scenario "displays tasks page with decision_review_queue_ssn_column feature toggle disabled" do
-      visit base_url
+      visit BASE_URL
       expect(page).to have_content("Non-Comp Org")
       expect(page).to have_content("In progress tasks")
       expect(page).to have_content("Completed tasks")
@@ -155,7 +155,7 @@ feature "NonComp Reviews Queue", :postgres do
 
     context "with user enabled for intake" do
       scenario "displays tasks page" do
-        visit base_url
+        visit BASE_URL
         expect(page).to have_content("Non-Comp Org")
         expect(page).to have_content("In progress tasks")
         expect(page).to have_content("Completed tasks")
@@ -179,7 +179,7 @@ feature "NonComp Reviews Queue", :postgres do
     end
 
     scenario "ordering reviews with participate id visable" do
-      visit base_url
+      visit BASE_URL
 
       order_buttons = {
         claimant_name: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[1]/span/span[2]'),
@@ -192,7 +192,7 @@ feature "NonComp Reviews Queue", :postgres do
       # Claimant name desc
       order_buttons[:claimant_name].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=asc"
+        "#{BASE_URL}?tab=in_progress&page=1&sort_by=claimantColumn&order=asc"
       )
 
       table_rows = current_table_rows
@@ -203,7 +203,7 @@ feature "NonComp Reviews Queue", :postgres do
       # Claimant name asc
       order_buttons[:claimant_name].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=desc"
+        "#{BASE_URL}?tab=in_progress&page=1&sort_by=claimantColumn&order=desc"
       )
       table_rows = current_table_rows
 
@@ -213,7 +213,7 @@ feature "NonComp Reviews Queue", :postgres do
       # Participant ID desc
       order_buttons[:participant_id].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=asc"
+        "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=asc"
       )
       table_rows = current_table_rows
 
@@ -223,7 +223,7 @@ feature "NonComp Reviews Queue", :postgres do
       # Participant ID asc
       order_buttons[:participant_id].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=desc"
+        "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=desc"
       )
 
       table_rows = current_table_rows
@@ -234,7 +234,7 @@ feature "NonComp Reviews Queue", :postgres do
       # Issue count desc
       order_buttons[:issues_count].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=issueCountColumn&order=asc"
+        "#{BASE_URL}?tab=in_progress&page=1&sort_by=issueCountColumn&order=asc"
       )
       table_rows = current_table_rows
 
@@ -244,7 +244,7 @@ feature "NonComp Reviews Queue", :postgres do
       # Issue count asc
       order_buttons[:issues_count].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=issueCountColumn&order=desc"
+        "#{BASE_URL}?tab=in_progress&page=1&sort_by=issueCountColumn&order=desc"
       )
       table_rows = current_table_rows
 
@@ -254,7 +254,7 @@ feature "NonComp Reviews Queue", :postgres do
       # Days waiting desc
       order_buttons[:days_waiting].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=in_progress&page=1&sort_by=daysWaitingColumn&order=asc"
+        "#{BASE_URL}?tab=in_progress&page=1&sort_by=daysWaitingColumn&order=asc"
       )
 
       table_rows = current_table_rows
@@ -266,7 +266,7 @@ feature "NonComp Reviews Queue", :postgres do
       order_buttons[:days_waiting].click
       expect(page).to have_current_path(
         # This url is the same as the above due to page caching. The params don't update in QueueTable when cached
-        "#{base_url}?tab=in_progress&page=1&sort_by=daysWaitingColumn&order=asc"
+        "#{BASE_URL}?tab=in_progress&page=1&sort_by=daysWaitingColumn&order=asc"
       )
 
       table_rows = current_table_rows
@@ -284,7 +284,7 @@ feature "NonComp Reviews Queue", :postgres do
 
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=completed&page=1&sort_by=completedDateColumn&order=asc"
+        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=asc"
       )
 
       table_rows = current_table_rows
@@ -295,7 +295,7 @@ feature "NonComp Reviews Queue", :postgres do
       # Date Completed asc
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
-        "#{base_url}?tab=completed&page=1&sort_by=completedDateColumn&order=desc"
+        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=desc"
       )
 
       table_rows = current_table_rows
@@ -309,14 +309,14 @@ feature "NonComp Reviews Queue", :postgres do
       after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
 
       scenario "ordering reviews" do
-        visit base_url
+        visit BASE_URL
 
         ssn = find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[2]/span/span[2]')
 
         # Veteran SSN ascending
         ssn.click
         expect(page).to have_current_path(
-          "#{base_url}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=asc"
+          "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=asc"
         )
 
         table_rows = current_table_rows
@@ -327,7 +327,7 @@ feature "NonComp Reviews Queue", :postgres do
         # Veteran SSN descending
         ssn.click
         expect(page).to have_current_path(
-          "#{base_url}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=desc"
+          "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=desc"
         )
 
         table_rows = current_table_rows
@@ -343,7 +343,7 @@ feature "NonComp Reviews Queue", :postgres do
       end
 
       scenario "sorting and displaying a veteran with a null first and last name" do
-        visit base_url
+        visit BASE_URL
 
         order_buttons = {
           claimant_name: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[1]/span/span[2]'),
@@ -356,7 +356,7 @@ feature "NonComp Reviews Queue", :postgres do
         # Claimant name desc
         order_buttons[:claimant_name].click
         expect(page).to have_current_path(
-          "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=asc"
+          "#{BASE_URL}?tab=in_progress&page=1&sort_by=claimantColumn&order=asc"
         )
 
         table_rows = current_table_rows
@@ -367,7 +367,7 @@ feature "NonComp Reviews Queue", :postgres do
         # Claimant name asc
         order_buttons[:claimant_name].click
         expect(page).to have_current_path(
-          "#{base_url}?tab=in_progress&page=1&sort_by=claimantColumn&order=desc"
+          "#{BASE_URL}?tab=in_progress&page=1&sort_by=claimantColumn&order=desc"
         )
         table_rows = current_table_rows
 
@@ -381,7 +381,7 @@ feature "NonComp Reviews Queue", :postgres do
     end
 
     scenario "filtering reviews" do
-      visit base_url
+      visit BASE_URL
       find(".unselected-filter-icon").click
 
       # Check that task counts are being transmitted correctly from backend
@@ -396,7 +396,7 @@ feature "NonComp Reviews Queue", :postgres do
     end
 
     scenario "searching reviews by name" do
-      visit base_url
+      visit BASE_URL
 
       # There should be 2 on the page
       expect(page).to have_content("Higher-Level Review", count: 2)
@@ -415,7 +415,7 @@ feature "NonComp Reviews Queue", :postgres do
     end
 
     scenario "searching reviews by participant id" do
-      visit base_url
+      visit BASE_URL
 
       # There should be 2 on the page
       expect(page).to have_content("Higher-Level Review", count: 2)
@@ -482,7 +482,7 @@ feature "NonComp Reviews Queue", :postgres do
         user.update(roles: user.roles << "Mail Intake")
         Functions.grant!("Mail Intake", users: [user.css_id])
 
-        visit base_url
+        visit BASE_URL
         click_on "Intake new form"
         expect(page).to have_current_path("/intake")
       end
@@ -494,7 +494,7 @@ feature "NonComp Reviews Queue", :postgres do
     after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
 
     scenario "displays tasks page" do
-      visit base_url
+      visit BASE_URL
       expect(page).to have_content(vet_id_column_header)
       expect(page).to have_content(vet_a_id_column_value)
       expect(page).to have_content(vet_b_id_column_value)
