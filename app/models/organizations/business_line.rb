@@ -131,10 +131,6 @@ class BusinessLine < Organization
       "veterans.participant_id as veteran_participant_id"
     end
 
-    def veteran_ssn_alias
-      "veterans.ssn as veteran_ssn"
-    end
-
     # All join clauses
 
     # NOTE: .left_joins(ama_appeal: :request_issues)
