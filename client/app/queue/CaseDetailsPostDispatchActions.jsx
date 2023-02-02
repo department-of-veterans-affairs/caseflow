@@ -37,8 +37,8 @@ export const CaseDetailsPostDispatchActions = (props) => {
     includeCavcRemand,
     includeSubstitute,
     // currentUserIsOAI,
-    // currentUserIsOCC,
-    appealHasNewCavcDecisionType } = props;
+    // currentUserIsOCC
+  } = props;
   const { push } = useHistory();
 
   return (
@@ -61,13 +61,11 @@ export const CaseDetailsPostDispatchActions = (props) => {
             {COPY.SUBSTITUTE_APPELLANT_BUTTON}
           </Button>
         )}
-        {/* {appealHasNewCavcDecisionType && (currentUserIsOAI || currentUserIsOCC) && (
+        {/* {(currentUserIsOAI || currentUserIsOCC) && (
           <CavcDashboardButton appealId={appealId} />
         )} */}
         {/* delete line below after organizations OCC and OAI are added and uncomment above */}
-        { appealHasNewCavcDecisionType && (
-          <CavcDashboardButton appealId={appealId} />
-        )}
+        <CavcDashboardButton appealId={appealId} />
       </div>
     </div>
   );

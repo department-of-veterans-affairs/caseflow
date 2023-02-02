@@ -237,6 +237,8 @@ const AddCavcRemandView = (props) => {
       detail: successMsgDetail()
     };
 
+    console.log(decisionIssues);
+
     props.requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
       // then((resp) => history.replace(`/queue/appeals/${resp.body.cavc_appeal.uuid}`)).
       then((resp) => {

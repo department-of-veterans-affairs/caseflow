@@ -55,10 +55,7 @@ import {
   supportsSubstitutionPreDispatch,
 } from './substituteAppellant/caseDetails/utils';
 import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
-import {
-  shouldShowVsoVisibilityAlert,
-  isAppealNewCavcDecisionType,
-} from './caseDetails/utils';
+import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
 import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
@@ -187,7 +184,6 @@ export const CaseDetailsView = (props) => {
   );
 
   const appealIsDispatched = isAppealDispatched(appeal);
-  const appealHasNewCavcDecisionType = isAppealNewCavcDecisionType(appeal);
 
   const editAppellantInformation = (
     [APPELLANT_TYPES.OTHER_CLAIMANT, APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT].includes(
@@ -278,14 +274,13 @@ export const CaseDetailsView = (props) => {
           </Alert>
         </div>
       )}
-      {!modalIsOpen && (showPostDispatch || appealHasNewCavcDecisionType) && (
+      {!modalIsOpen && showPostDispatch && (
         <CaseDetailsPostDispatchActions
           appealId={appealId}
           includeCavcRemand={supportCavcRemand}
           includeSubstitute={supportPostDispatchSubstitution}
           currentUserIsOAI={currentUserIsOAI}
           currentUserIsOCC={currentUserIsOCC}
-          appealHasNewCavcDecisionType={appealHasNewCavcDecisionType}
         />
       )}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
