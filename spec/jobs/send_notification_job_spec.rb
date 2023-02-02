@@ -150,6 +150,14 @@ describe SendNotificationJob, type: :job do
         end
       end
 
+      it "processes message when no claimant or participant_id" do
+        appeal
+        perform_enqueued_jobs do
+          result = SendNotificationJob.perform_later(bad_message.to_json)
+          expect(result.arguments[0]).to eq(bad_message.to_json)
+        end
+      end
+
       it "logs error when message is nil" do
         expect(Rails.logger).to receive(:error).with(/There was no message passed/)
         perform_enqueued_jobs do
