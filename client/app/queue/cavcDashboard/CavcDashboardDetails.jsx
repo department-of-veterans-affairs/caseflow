@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css, right } from 'glamor';
+import { css } from 'glamor';
 import { LABELS } from './cavcDashboardConstants';
 import CAVC_REMAND_SUBTYPES from '../../../constants/CAVC_REMAND_SUBTYPES';
 import Button from '../../components/Button';
@@ -15,11 +15,7 @@ const CavcDashboardDetailsContainer = ({ children }) => {
     }
   });
 
-  return (
-    <div {...containerStyling}>
-      {children}
-    </div>
-  );
+  return <div {...containerStyling}>{children}</div>;
 };
 
 CavcDashboardDetailsContainer.propTypes = {
@@ -62,22 +58,26 @@ export const CavcDashboardDetails = (props) => {
     }
   };
 
+  // modify this to return apporpriate boolean based on organization
+  const userCanEdit = true;
+
   // top position bypasses the fixed margin on the TabWindow component
   const buttonStyling = css({
     position: 'relative',
     top: '-30px',
-    margin: '0'
+    margin: '0',
+    // visibility used to maintain the spacing whether button is visible or not
+    visibility: (userCanEdit ? 'visible' : 'hidden')
   });
 
   return (
-    <>
-      {/* change true to a check for user's orgs to display edit button */}
-      {true && (
-        <Button linkStyling willNeverBeLoading onClick={null} classNames={['cf-push-right', 'cf-modal-link']} styling={buttonStyling}>
-          <span {...css({ position: 'absolute' })}><PencilIcon /></span>
-          <span {...css({ marginRight: '5px', marginLeft: '20px' })}>Edit</span>
-        </Button>
-      )}
+    <div id={`dashboard-details-${remand.id}`}>
+      <Button linkStyling willNeverBeLoading classNames={['cf-push-right', 'cf-modal-link']}
+        styling={buttonStyling} disabled={!userCanEdit} onClick={null}
+      >
+        <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+        <span {...css({ marginLeft: '20px' })}>Edit</span>
+      </Button>
       <CavcDashboardDetailsContainer>
         <CavcDashboardDetailsSection title={LABELS.BOARD_DECISION_DATE} value={remand.decision_date} />
         <CavcDashboardDetailsSection title={LABELS.BOARD_DOCKET_NUMBER} value={remand.source_appeal_docket_number} />
@@ -85,7 +85,7 @@ export const CavcDashboardDetails = (props) => {
         <CavcDashboardDetailsSection title={LABELS.CAVC_DOCKET_NUMBER} value={remand.cavc_docket_number} />
         <CavcDashboardDetailsSection title={LABELS.IS_JMR} value={checkIfJmrJmpr() ? 'Yes' : 'No'} />
       </CavcDashboardDetailsContainer>
-    </>
+    </div>
   );
 };
 
