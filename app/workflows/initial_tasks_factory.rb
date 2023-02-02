@@ -74,10 +74,19 @@ class InitialTasksFactory
   end
 
   def send_initial_notification_letter
+    # depending on the docket type, create cooresponding task as parent task
+    case @appeal.docket_type
+    when "evidence_submission"
+      parent_task = @appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
+    when "hearing"
+      parent_task = @appeal.tasks.find_by(type: "ScheduleHearingTask")
+    when "direct_review"
+      parent_task = distribution_task
+    end
     @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
                                           SendInitialNotificationLetterTask.create!(
                                             appeal: @appeal,
-                                            parent: @appeal.tasks.find_by(status: "assigned"),
+                                            parent: parent_task,
                                             assigned_to: Organization.find_by_url("clerk-of-the-board")
                                           )
   end
