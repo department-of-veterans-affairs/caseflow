@@ -5,6 +5,7 @@ import { LABELS } from './cavcDashboardConstants';
 import CAVC_REMAND_SUBTYPES from '../../../constants/CAVC_REMAND_SUBTYPES';
 import Button from '../../components/Button';
 import { PencilIcon } from '../../components/icons/PencilIcon';
+import { DateString } from '../../util/DateUtil';
 
 const CavcDashboardDetailsContainer = ({ children }) => {
   const containerStyling = css({
@@ -79,9 +80,13 @@ export const CavcDashboardDetails = (props) => {
         <span {...css({ marginLeft: '20px' })}>Edit</span>
       </Button>
       <CavcDashboardDetailsContainer>
-        <CavcDashboardDetailsSection title={LABELS.BOARD_DECISION_DATE} value={remand.decision_date} />
+        <CavcDashboardDetailsSection
+          title={LABELS.BOARD_DECISION_DATE} value={<DateString date={remand.decision_date} />}
+        />
         <CavcDashboardDetailsSection title={LABELS.BOARD_DOCKET_NUMBER} value={remand.source_appeal_docket_number} />
-        <CavcDashboardDetailsSection title={LABELS.CAVC_DECISION_DATE} value={remand.decision_date} />
+        <CavcDashboardDetailsSection
+          title={LABELS.CAVC_DECISION_DATE} value={<DateString date={remand.decision_date} />}
+        />
         <CavcDashboardDetailsSection title={LABELS.CAVC_DOCKET_NUMBER} value={remand.cavc_docket_number} />
         <CavcDashboardDetailsSection title={LABELS.IS_JMR} value={checkIfJmrJmpr() ? 'Yes' : 'No'} />
       </CavcDashboardDetailsContainer>

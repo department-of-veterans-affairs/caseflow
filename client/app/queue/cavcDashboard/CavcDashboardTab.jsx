@@ -11,8 +11,6 @@ export const CavcDashboardTab = (props) => {
   return (
     <>
       <CavcDashboardDetails {...props} />
-      <br />
-      <div>placeholder for issues section</div>
     </>
   );
 };
