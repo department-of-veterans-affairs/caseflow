@@ -27,6 +27,9 @@ class WorkQueue::CavcRemandSerializer
   attribute :source_appeal_docket_number do |object|
     object.source_appeal.stream_docket_number
   end
+  attribute :source_appeal_decision_date do |object|
+    object.source_appeal.decision_date
+  end
 
   attribute :source_decision_issues do |object|
     object.source_appeal&.decision_issues

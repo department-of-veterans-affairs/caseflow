@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { LABELS } from './cavcDashboardConstants';
@@ -42,14 +43,23 @@ export const CavcDashboardDetailsSection = ({ title, value }) => {
 
 CavcDashboardDetailsSection.propTypes = {
   title: PropTypes.string,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 };
 
 export const CavcDashboardDetails = (props) => {
   const { remand } = props;
 
+  // TODO: fix this date, remove eslint disable when the set methods are used for editing
+  /* eslint-disable no-unused-vars */
+  const [boardDecisionDate, setBoardDecisionDate] = useState(remand.source_appeal_decision_date);
+  const [boardDocketNumber, setBoardDocketNumber] = useState(remand.source_appeal_docket_number);
+  const [cavcDecisionDate, setCavcDecisionDate] = useState(remand.decision_date);
+  const [cavcDocketNumber, setCavcDocketNumber] = useState(remand.cavc_docket_number);
+  const [remandSubtype, setRemandSubtype] = useState(remand.remand_subtype);
+  /* eslint-enable no-unused-vars */
+
   const checkIfJmrJmpr = () => {
-    switch (remand.remand_subtype) {
+    switch (remandSubtype) {
     case CAVC_REMAND_SUBTYPES.jmr:
     case CAVC_REMAND_SUBTYPES.jmpr:
     case CAVC_REMAND_SUBTYPES.jmr_jmpr:
@@ -81,13 +91,13 @@ export const CavcDashboardDetails = (props) => {
       </Button>
       <CavcDashboardDetailsContainer>
         <CavcDashboardDetailsSection
-          title={LABELS.BOARD_DECISION_DATE} value={<DateString date={remand.decision_date} />}
+          title={LABELS.BOARD_DECISION_DATE} value={<DateString date={boardDecisionDate} />}
         />
-        <CavcDashboardDetailsSection title={LABELS.BOARD_DOCKET_NUMBER} value={remand.source_appeal_docket_number} />
+        <CavcDashboardDetailsSection title={LABELS.BOARD_DOCKET_NUMBER} value={boardDocketNumber} />
         <CavcDashboardDetailsSection
-          title={LABELS.CAVC_DECISION_DATE} value={<DateString date={remand.decision_date} />}
+          title={LABELS.CAVC_DECISION_DATE} value={<DateString date={cavcDecisionDate} />}
         />
-        <CavcDashboardDetailsSection title={LABELS.CAVC_DOCKET_NUMBER} value={remand.cavc_docket_number} />
+        <CavcDashboardDetailsSection title={LABELS.CAVC_DOCKET_NUMBER} value={cavcDocketNumber} />
         <CavcDashboardDetailsSection title={LABELS.IS_JMR} value={checkIfJmrJmpr() ? 'Yes' : 'No'} />
       </CavcDashboardDetailsContainer>
     </div>
