@@ -3,6 +3,8 @@
 describe QuarterlyNotificationsJob, type: :job do
   include ActiveJob::TestHelper
   let(:appeal) { create(:appeal, :active) }
+  let(:ssn) { Generators::Random.unique_ssn }
+  let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
   let(:user) { create(:user) }
   subject { QuarterlyNotificationsJob.perform_now }
   describe "#perform" do
@@ -22,6 +24,7 @@ describe QuarterlyNotificationsJob, type: :job do
         expect { subject }.not_to have_enqueued_job(SendNotificationJob)
       end
     end
+
     context "Appeal Docketed" do
       let!(:appeal_state) do
         create(
@@ -38,6 +41,24 @@ describe QuarterlyNotificationsJob, type: :job do
         expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
       end
     end
+
+    context "Legacy Appeal Docketed" do
+      let!(:appeal_state) do
+        create(
+          :appeal_state,
+          appeal_id: legacy_appeal.id,
+          appeal_type: "LegacyAppeal",
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          appeal_docketed: true
+        )
+      end
+      it "pushes a new message" do
+        subject
+        expect(SendNotificationJob).to have_been_enqueued.exactly(:once)
+      end
+    end
+
     context "Appeal Docketed with withdrawn hearing" do
       let!(:appeal_state) do
         create(
@@ -265,6 +286,7 @@ describe QuarterlyNotificationsJob, type: :job do
         expect { subject }.not_to have_enqueued_job(SendNotificationJob)
       end
     end
+
     context "decision mailed" do
       let!(:appeal_state) do
         create(
@@ -277,6 +299,24 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "does not push a new message" do
+        subject
+        expect { subject }.not_to have_enqueued_job(SendNotificationJob)
+      end
+    end
+
+    context "Appeal Docketed failure" do
+      let!(:appeal_state) do
+        create(
+          :appeal_state,
+          appeal_id: appeal.id,
+          appeal_type: "Appeal",
+          created_by_id: user.id,
+          updated_by_id: user.id,
+          appeal_docketed: true
+        )
+      end
+      it "does not push a new message" do
+        allow_any_instance_of(QuarterlyNotificationsJob).to receive(:send_quarterly_notifications).and_raise(StandardError)
         subject
         expect { subject }.not_to have_enqueued_job(SendNotificationJob)
       end
