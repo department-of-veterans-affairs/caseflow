@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
+import { css, right } from 'glamor';
 import { LABELS } from './cavcDashboardConstants';
 import CAVC_REMAND_SUBTYPES from '../../../constants/CAVC_REMAND_SUBTYPES';
 import Button from '../../components/Button';
@@ -9,7 +9,10 @@ import { PencilIcon } from '../../components/icons/PencilIcon';
 const CavcDashboardDetailsContainer = ({ children }) => {
   const containerStyling = css({
     display: 'flex',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    '@media(max-width: 829px)': {
+      flexDirection: 'column'
+    }
   });
 
   return (
@@ -24,9 +27,17 @@ CavcDashboardDetailsContainer.propTypes = {
 };
 
 export const CavcDashboardDetailsSection = ({ title, value }) => {
+  const sectionStyling = css({
+    padding: '0 0.5rem 0 0.5rem',
+    '& > p': {
+      fontWeight: 'bold',
+      margin: '0'
+    }
+  });
+
   return (
-    <div>
-      <h4>{title}</h4>
+    <div {...sectionStyling}>
+      <p>{title}</p>
       <span>{value}</span>
     </div>
   );
@@ -51,16 +62,21 @@ export const CavcDashboardDetails = (props) => {
     }
   };
 
+  // top position bypasses the fixed margin on the TabWindow component
+  const buttonStyling = css({
+    position: 'relative',
+    top: '-30px',
+    margin: '0'
+  });
+
   return (
     <>
       {/* change true to a check for user's orgs to display edit button */}
       {true && (
-        <div {...css({ display: 'inline-block', width: '100%' })}>
-          <Button linkStyling willNeverBeLoading onClick={null} classNames={['cf-push-right', 'cf-modal-link']}>
-            <span {...css({ position: 'absolute' })}><PencilIcon /></span>
-            <span {...css({ marginRight: '5px', marginLeft: '20px' })}>Edit</span>
-          </Button>
-        </div>
+        <Button linkStyling willNeverBeLoading onClick={null} classNames={['cf-push-right', 'cf-modal-link']} styling={buttonStyling}>
+          <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+          <span {...css({ marginRight: '5px', marginLeft: '20px' })}>Edit</span>
+        </Button>
       )}
       <CavcDashboardDetailsContainer>
         <CavcDashboardDetailsSection title={LABELS.BOARD_DECISION_DATE} value={remand.decision_date} />
