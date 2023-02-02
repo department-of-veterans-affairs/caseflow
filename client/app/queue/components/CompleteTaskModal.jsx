@@ -27,6 +27,10 @@ const validInstructions = (instructions) => {
   return instructions?.length > 0;
 };
 
+const validInstructionsForNumber = (instructions) => {
+  return (instructions > 45) && (instructions <= 364);
+};
+
 const validDropdown = (dropdown) => {
   return dropdown?.length > 0;
 };
@@ -49,13 +53,17 @@ const MarkTaskCompleteModal = ({ props, state, setState }) => {
           onChange={(value) => setState({ instructions: value })}
           value={state.instructions}
           styling={marginTop(4)}
-          maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
           optional
         />
       )}
     </React.Fragment>
   );
 };
+
+const daysTypeOpts = [
+  { displayText: COPY.DAYS_CONTESTED_CLAIM, value: '45' },
+  { displayText: COPY.CUSTOM_CONTESTED_CLAIM, value: 'custom' }
+];
 
 MarkTaskCompleteModal.propTypes = {
   props: PropTypes.object,
@@ -67,24 +75,42 @@ const MarkTaskCompleteContestedClaimModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
   const instructionsLabel = taskConfiguration && taskConfiguration.instructions_label;
 
+
+
   return (
     <React.Fragment>
-      {taskConfiguration && StringUtil.nl2br(taskConfiguration.modal_body)}
-      {taskConfiguration && taskConfiguration.modal_alert && (
-        <Alert message={taskConfiguration.modal_alert} type="info" />
-      )}
-      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
-        <TextareaField
-          label={instructionsLabel || 'Instructions:'}
-          name="instructions"
-          id="completeTaskInstructions"
-          onChange={(value) => setState({ instructions: value })}
-          value={state.instructions}
-          styling={marginTop(4)}
-          maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-          optional
-        />
-      )}
+      <div className="cc_mark_complete">
+        {taskConfiguration && StringUtil.nl2br(taskConfiguration.modal_body)}
+        {taskConfiguration && taskConfiguration.modal_alert && (
+          <Alert message={taskConfiguration.modal_alert} type="info" />
+        )}
+        {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+          <div>
+            <RadioField
+              id="45_days"
+              inputRef={props.register}
+              vertical
+              onChange={(value) => setState({ radio: value })}
+              value={state.radio}
+              options={daysTypeOpts}
+              errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.SELECT_RADIO_ERROR : null}
+              styling={marginTop(1)}
+            />
+            {state.radio === 'custom' &&
+              <TextareaField
+                label={instructionsLabel || COPY.TEXTAREA_CONTESTED_CLAIM}
+                name="instructions"
+                id="completeTaskInstructions"
+                onChange={(value) => setState({ instructions: value })}
+                value={state.value}
+                styling={marginTop(2)}
+                textAreaStyling={slimHeight}
+                pattern="[0-9]{2,3}"
+                maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+              />}
+          </div>
+        )}
+      </div>
     </React.Fragment>
   );
 };
@@ -92,7 +118,9 @@ const MarkTaskCompleteContestedClaimModal = ({ props, state, setState }) => {
 MarkTaskCompleteContestedClaimModal.propTypes = {
   props: PropTypes.object,
   setState: PropTypes.func,
-  state: PropTypes.object
+  state: PropTypes.object,
+  register: PropTypes.func,
+  highlightInvalid: PropTypes.bool
 };
 
 const locationTypeOpts = [
@@ -356,7 +384,7 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
             id="caregiverSupportReturnToBoardIntakeInstructions"
             onChange={(value) => setState({ instructions: value })}
             value={state.instructions}
-            styling={marginTop(2)}
+            styling={marginTop(1)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             optional
           />
@@ -390,7 +418,22 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE_CONTESTED_CLAIM,
     getContent: MarkTaskCompleteContestedClaimModal,
-    buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
+    buttonText: COPY.MARK_TASK_COMPLETE_BUTTON_CONTESTED_CLAIM,
+    submitButtonClassNames: ['usa-button'],
+
+    submitDisabled: ({ state }) => {
+      const { instructions, radio } = state;
+
+      let isValid = true;
+
+      if (radio === 'custom') {
+        isValid = validInstructionsForNumber(instructions) && validRadio(radio);
+      } else {
+        isValid = validRadio(radio);
+      }
+
+      return !isValid;
+    }
   },
   ready_for_review: {
     buildSuccessMsg: (appeal, { assignedToType }) => ({
@@ -556,6 +599,20 @@ class CompleteTaskModal extends React.Component {
     setState: this.setState.bind(this)
   });
 
+  formatRadio = () => {
+    const { instructions, radio } = this.state;
+
+    if (this.props.modalType === 'task_complete_contested_claim') {
+      const radioValue = daysTypeOpts.find((option) => radio === option.value).value;
+
+      if (radioValue === 'custom') {
+        return instructions;
+      }
+
+      return radioValue;
+    }
+  }
+
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
     const formattedInstructions = [];
@@ -655,7 +712,8 @@ class CompleteTaskModal extends React.Component {
           status: 'completed',
           instructions: this.formatInstructions(),
         },
-        select_opc: this.props.modalType
+        select_opc: this.props.modalType,
+        hold_days: this.formatRadio(),
       }
     };
     const successMsg = MODAL_TYPE_ATTRS[this.props.modalType].buildSuccessMsg(

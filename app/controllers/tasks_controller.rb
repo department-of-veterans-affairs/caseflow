@@ -115,9 +115,22 @@ class TasksController < ApplicationController
     appeal = Appeal.find(task.appeal.id)
     if appeal.contested_claim?
       if (task.type === "SendInitialNotificationLetterTask")
-        case params['select_opc']
+        opc = params['select_opc']
+        case opc
         when "task_complete_contested_claim"
-          post_send_initial_notification_letter_holding_task (update_params["instructions"], 15)
+          days = params['hold_days'].to_i
+          instructions= '';
+          # postSendInitialNotificationLetter (instructions, days_on_hold = params['hold_days'])
+          @post_send_initial_notification_letter_holding ||= task.appeal.tasks.open.find_by(type: :PostSendInitialNotificationLetterHoldingTask) ||
+                                          PostSendInitialNotificationLetterHoldingTask.create!(
+                                            appeal: task.appeal,
+                                            parent: task.appeal.tasks.find_by(status: "assigned"),
+                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                            days_on_hold: days,
+                                            instructions: instructions
+                                          )
+        else
+          puts "no"
         end
       end
     end
@@ -190,19 +203,14 @@ class TasksController < ApplicationController
 
   private
 
-  def post_send_initial_notification_letter_holding_task (instructions, days_on_hold)
-    # PostSendInitialNotificationLetterHoldingTask.create_from_parent(
-    #   task.appeal.tasks.find_by(status: "assigned"),
-    #   days_on_hold,
-    #   '',
-    #   instructions)
-
+  def postSendInitialNotificationLetter (instructions, days_on_hold)
+    binding.pry
     @post_send_initial_notification_letter_holding ||= task.appeal.tasks.open.find_by(type: :PostSendInitialNotificationLetterHoldingTask) ||
                                           PostSendInitialNotificationLetterHoldingTask.create!(
                                             appeal: task.appeal,
                                             parent: task.appeal.tasks.find_by(status: "assigned"),
                                             assigned_to: Organization.find_by_url("clerk-of-the-board"),
-                                            days_on_hold: days_on_hold,
+                                            days_on_hold: days_on_hold.to_i,
                                             instructions: instructions
                                           )
   end
@@ -297,6 +305,8 @@ class TasksController < ApplicationController
       :assigned_to_id,
       :instructions,
       :ihp_path,
+      :select_opc,
+      :hold_days,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],
       business_payloads: [:description, values: {}]
     )

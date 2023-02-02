@@ -493,6 +493,9 @@
 
   "MARK_TASK_COMPLETE_TITLE_CONTESTED_CLAIM": "Mark task as complete",
   "MARK_TASK_COMPLETE_BUTTON_CONTESTED_CLAIM": "Mark as complete",
+  "DAYS_CONTESTED_CLAIM": "45 days",
+  "CUSTOM_CONTESTED_CLAIM": "Custom",
+  "TEXTAREA_CONTESTED_CLAIM": "Number of days (Value must be between 45 and 364)",
 
   "MODAL_SUBMIT_BUTTON": "Submit",
   "MODAL_CANCEL_BUTTON": "Cancel",
