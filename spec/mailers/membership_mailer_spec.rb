@@ -2,8 +2,8 @@
 
 describe MembershipMailer do
   let(:email_recipient_info) { create(:user) }
-  let(:email) {"lianna.newman@va.gov"}
-  let(:name) {'Lianna'}
+  let(:email) {"bob.schmidt@va.gov"}
+  let(:name) {'Bob'}
   let(:subject) { "Membership request submitted." }
 
   context "with recipient_info" do
