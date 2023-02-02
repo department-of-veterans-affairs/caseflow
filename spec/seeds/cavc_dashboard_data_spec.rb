@@ -38,24 +38,34 @@ describe Seeds::CavcDashboardData do
       ).children.count).to eq 4
       expect(CavcDecisionReason.find_by(decision_reason: "AMA specific remand?").children.count).to eq 7
 
-      expect(CavcRemand.count).to eq 10
+      # 10 from create_cavc_dashboard_dispositions, 4 from create_appeals_with_multiple_cavc_remands
+      expect(CavcRemand.count).to eq 14
       expect(CavcDashboardDisposition.count).to eq 30
     end
-  end
 
-  it "#seed! creates all selection_bases for dispositions per APPEALS-13250" do
-    Seeds::CavcSelectionBasisData.new.seed!
+    it "creates all selection_bases for dispositions per APPEALS-13250" do
+      Seeds::CavcSelectionBasisData.new.seed!
 
-    expect(CavcSelectionBasis.where(category: "other_due_process_protection").count).to eq 18
-    expect(CavcSelectionBasis.where(category: "prior_examination_inadequate").count).to eq 200
-    expect(CavcSelectionBasis.where(category: "prior_opinion_inadequate").count).to eq 205
-    expect(CavcSelectionBasis.where(category: "consider_statute").count).to eq 19
-    expect(CavcSelectionBasis.where(category: "consider_regulation").count).to eq 81
-    expect(CavcSelectionBasis.where(category: "consider_diagnostic_code").count).to eq 1066
-    expect(CavcSelectionBasis.where(category: "consider_caselaw").count).to eq 196
-    expect(CavcSelectionBasis.where(category: "misapplication_statute").count).to eq 19
-    expect(CavcSelectionBasis.where(category: "misapplication_regulation").count).to eq 81
-    expect(CavcSelectionBasis.where(category: "misapplication_diagnostic_code").count).to eq 1066
-    expect(CavcSelectionBasis.where(category: "misapplication_caselaw").count).to eq 196
+      expect(CavcSelectionBasis.where(category: "other_due_process_protection").count).to eq 18
+      expect(CavcSelectionBasis.where(category: "prior_examination_inadequate").count).to eq 200
+      expect(CavcSelectionBasis.where(category: "prior_opinion_inadequate").count).to eq 205
+      expect(CavcSelectionBasis.where(category: "consider_statute").count).to eq 19
+      expect(CavcSelectionBasis.where(category: "consider_regulation").count).to eq 81
+      expect(CavcSelectionBasis.where(category: "consider_diagnostic_code").count).to eq 1066
+      expect(CavcSelectionBasis.where(category: "consider_caselaw").count).to eq 196
+      expect(CavcSelectionBasis.where(category: "misapplication_statute").count).to eq 19
+      expect(CavcSelectionBasis.where(category: "misapplication_regulation").count).to eq 81
+      expect(CavcSelectionBasis.where(category: "misapplication_diagnostic_code").count).to eq 1066
+      expect(CavcSelectionBasis.where(category: "misapplication_caselaw").count).to eq 196
+    end
+
+    it "creates four remands with the same source appeal for testing dashboard tabs" do
+      seed.seed!
+
+      last_four_remands = CavcRemand.last(4)
+      expect(last_four_remands.map(&:source_appeal_id).count).to eq 4
+      expect(last_four_remands.map(&:source_appeal_id).uniq.count).to eq 1
+      expect(last_four_remands.map(&:remand_appeal_id).uniq.count).to eq 4
+    end
   end
 end

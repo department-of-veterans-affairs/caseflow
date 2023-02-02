@@ -11,13 +11,14 @@ class CavcRemand < CaseflowRecord
   belongs_to :source_appeal, class_name: "Appeal"
   belongs_to :remand_appeal, class_name: "Appeal"
 
+  has_many :cavc_dashboard_dispositions
+
   validates :created_by, :source_appeal, :cavc_docket_number, :cavc_judge_full_name, :cavc_decision_type,
             :decision_date, :decision_issue_ids, :instructions, presence: true
   validates :represented_by_attorney, inclusion: { in: [true, false] }
   validates :cavc_judge_full_name, inclusion: { in: Constants::CAVC_JUDGE_FULL_NAMES }
   validates :remand_subtype, presence: true, if: :remand?
   validates :judgement_date, :mandate_date, presence: true, unless: :mandate_not_required?
-  validate :decision_issue_ids_match_appeal_decision_issues, if: -> { remand? && jmr? }
   validates :federal_circuit, inclusion: { in: [true, false] }, if: -> { remand? && mdr? }
 
   before_create :normalize_cavc_docket_number
@@ -105,12 +106,6 @@ class CavcRemand < CaseflowRecord
 
   def flattened_instructions(params)
     instructions + " - " + params.dig(:instructions).presence
-  end
-
-  def decision_issue_ids_match_appeal_decision_issues
-    unless (source_appeal.decision_issues.map(&:id) - decision_issue_ids).empty?
-      fail Caseflow::Error::JmrAppealDecisionIssueMismatch, message: "JMR remands must address all decision issues"
-    end
   end
 
   def cavc_remand_form_complete?

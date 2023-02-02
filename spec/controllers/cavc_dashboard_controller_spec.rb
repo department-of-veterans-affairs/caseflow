@@ -26,17 +26,27 @@ RSpec.describe CavcDashboardController, type: :controller do
   end
 
   context "for routes specific to an appeal" do
-    before { Seeds::CavcDashboardData.new.seed! }
+    it "#index returns nil for cavc_remands if appeal_id doesn't match any remands" do
+      appeal = create(:appeal)
+
+      get :index, params: { format: :json, appeal_id: appeal.uuid }
+      response_body = JSON.parse(response.body)
+
+      expect(response_body.key?("cavc_remands")).to be true
+      expect(response_body["cavc_remands"]).to be nil
+    end
 
     it "#index returns index data from format.json" do
+      Seeds::CavcDashboardData.new.seed!
+
       remand = CavcRemand.last
       appeal_uuid = Appeal.find(remand.remand_appeal_id).uuid
 
       get :index, params: { format: :json, appeal_id: appeal_uuid }
       response_body = JSON.parse(response.body)
 
-      expect(response_body.key?("dashboard_dispositions")).to be true
-      expect(response_body["dashboard_dispositions"].count)
+      expect(response_body.key?("cavc_remands")).to be true
+      expect(response_body["cavc_remands"][0]["cavc_dashboard_dispositions"].count)
         .to eq CavcDashboardDisposition.where(cavc_remand: remand).count
     end
   end
