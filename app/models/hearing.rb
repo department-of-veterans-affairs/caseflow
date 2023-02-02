@@ -50,10 +50,11 @@ class Hearing < CaseflowRecord
 
   class HearingDayFull < StandardError; end
 
+  blank_attributes = proc(&:blank?)
   accepts_nested_attributes_for :hearing_issue_notes
-  accepts_nested_attributes_for :transcription, reject_if: proc { |attributes| attributes.blank? }
-  accepts_nested_attributes_for :hearing_location, reject_if: proc { |attributes| attributes.blank? }
-  accepts_nested_attributes_for :email_recipients, reject_if: proc { |attributes| attributes.blank? }
+  accepts_nested_attributes_for :transcription, reject_if: blank_attributes
+  accepts_nested_attributes_for :hearing_location, reject_if:  blank_attributes
+  accepts_nested_attributes_for :email_recipients, reject_if:  blank_attributes
 
   alias_attribute :location, :hearing_location
 
