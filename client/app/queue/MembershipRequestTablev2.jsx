@@ -5,17 +5,24 @@ import { constant } from 'lodash';
 
 const MembershipRequestTableV2 = (props) => {
 
-  const rowObjects = () => {
-    // TODO: Retrieve these from the backend MembershipRequests for the current org
-    // const testTime = new Date().toLocaleDateString();
-    // const requests = [{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
-    //   { name: 'test 2', createdAt: testTime, note: null }];
+  // This is going to taket the requests and reduce them into a row object
+  // Additionally it will add a row if the request has a note
+  // Got to do some hacking in the column definitions to make this work now.
+  const rowObjects = (requests) => {
 
-    const { requests } = props;
+    const updatedRequests = requests.reduce((acc, request) => {
+      acc.push(request);
+      if (request.note) {
+        acc.push({ ...request, hasNote: true });
+      }
 
-    return requests;
+      return acc;
+    }, []);
+
+    return updatedRequests;
   };
 
+  // Have to do some serious crap here to make this work with the duplicated row objects
   const columnDefinitions = (row) => {
     console.log(row);
     // TODO: Build this out for each request since the target will be based on the id for the MembershipRequest
@@ -66,9 +73,11 @@ const MembershipRequestTableV2 = (props) => {
     return columns;
   };
 
+  const { requests } = props;
+
   return <>
     <h2>Attemped reuse of Table component</h2>
-    <Table columns={columnDefinitions} rowObjects={rowObjects()} />
+    <Table columns={columnDefinitions} rowObjects={rowObjects(requests)} />
   </>;
 };
 
