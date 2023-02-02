@@ -1,0 +1,21 @@
+<!-- 12.6.3.1 -->
+<%= render "header" %>
+
+<%= content_for :content do %>
+  <p>
+    At this time, we have denied your request for access to "VHA pre-docket organization denying access" pages in Caseflow.
+
+    This does not impact access you had prior to this decision, or your pending requests for other VHA Pre-Docket offices listed below.
+
+    Your pending requests:
+    "First Group"
+    "Any other groups"
+
+    Each Pre-docket office will send a separate decision email with their decision.
+    You currently have access to the following groups’ pages, if any:
+    "Any other groups"
+  </p>
+<% end %>
+
+<%= render "help" %>
+<%= render "footer" %>
