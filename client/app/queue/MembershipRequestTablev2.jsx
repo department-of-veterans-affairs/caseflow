@@ -3,13 +3,15 @@ import DropdownButton from '../components/DropdownButton';
 import Table from '../components/Table';
 import { constant } from 'lodash';
 
-const MembershipRequestTableV2 = () => {
+const MembershipRequestTableV2 = (props) => {
 
   const rowObjects = () => {
     // TODO: Retrieve these from the backend MembershipRequests for the current org
-    const testTime = new Date().toLocaleDateString();
-    const requests = [{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
-      { name: 'test 2', createdAt: testTime, note: null }];
+    // const testTime = new Date().toLocaleDateString();
+    // const requests = [{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
+    //   { name: 'test 2', createdAt: testTime, note: null }];
+
+    const { requests } = props;
 
     return requests;
   };
@@ -35,7 +37,7 @@ const MembershipRequestTableV2 = () => {
       },
       {
         header: 'Date requested',
-        valueFunction: (task) => task.createdAt
+        valueFunction: (task) => task.requestedDate
       },
       {
         header: 'Actions',

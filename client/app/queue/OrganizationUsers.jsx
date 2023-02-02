@@ -52,7 +52,6 @@ const listStyle = css({
 
 const rowDisplay = css({
   display: 'flex',
-  display: 'table-row',
   justifyContent: 'space-between'
 });
 
@@ -65,6 +64,7 @@ export default class OrganizationUsers extends React.PureComponent {
       judgeTeam: null,
       organizationUsers: [],
       remainingUsers: [],
+      membershipRequests: [],
       loading: true,
       error: null,
       addingUser: null,
@@ -80,6 +80,7 @@ export default class OrganizationUsers extends React.PureComponent {
         judgeTeam: response.body.judge_team,
         dvcTeam: response.body.dvc_team,
         organizationUsers: response.body.organization_users.data,
+        membershipRequests: response.body.membership_requests,
         remainingUsers: [],
         loading: false
       });
@@ -317,6 +318,9 @@ export default class OrganizationUsers extends React.PureComponent {
         target: '/deny' }
     ];
 
+    console.log('in pending membership requests content for memberhsip requests');
+    console.log(this.state.membershipRequests);
+
     const firstAttempt = {
       header: '',
       valueFunction: (task) => {
@@ -345,7 +349,7 @@ export default class OrganizationUsers extends React.PureComponent {
       },
       {
         header: 'Date requested',
-        valueFunction: (task) => task.createdAt
+        valueFunction: (task) => task.requestedDate
       },
       {
         header: 'Actions',
@@ -361,9 +365,11 @@ export default class OrganizationUsers extends React.PureComponent {
     ];
 
     // TODO: Retrieve these from the backend MembershipRequests for the current org
-    const testTime = new Date().toLocaleDateString();
-    const rowObjects = [{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
-      { name: 'test 2', createdAt: testTime, note: null }];
+    // const testTime = new Date().toLocaleDateString();
+    // const rowObjects = [{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
+    //   { name: 'test 2', createdAt: testTime, note: null }];
+
+    const rowObjects = this.state.membershipRequests;
 
     return <>
       <h2>{`View ${rowObjects.length} pending requests`}</h2>
@@ -391,9 +397,9 @@ export default class OrganizationUsers extends React.PureComponent {
             sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName) }</h1>
         {this.pendingMembershipRequestsContent()}
         <div style={{ paddingBottom: '7rem' }}></div>
-        <MembershipRequestTableV1 />
+        <MembershipRequestTableV1 requests={this.state.membershipRequests} />
         <div style={{ paddingBottom: '7rem' }}></div>
-        <MembershipRequestTableV2 />
+        <MembershipRequestTableV2 requests={this.state.membershipRequests} />
         <div style={{ paddingBottom: '7rem' }}></div>
         {this.mainContent()}
       </div>
@@ -403,72 +409,4 @@ export default class OrganizationUsers extends React.PureComponent {
 
 OrganizationUsers.propTypes = {
   organization: PropTypes.string
-};
-
-const CollapsableTableRow = (props) => {
-  const [expanded, setExpanded] = useState(false);
-
-  const { request } = props;
-
-  // TODO: Build this out for each request since the target will be based on the id for the MembershipRequest
-  // At least, I think that's how it might work later.
-  const dropdownOptions = [
-    {
-      title: 'Approve',
-      target: '/approve' },
-    {
-      title: 'Deny',
-      target: '/deny' }
-  ];
-
-  return [
-    <tr>
-      <td>{request.name}</td>
-      <td>{request.createdAt}</td>
-      <td>
-        <DropdownButton
-          lists={dropdownOptions}
-          // onClick={this.handleMenuClick}
-          label="Select action"
-        />
-      </td>
-      <td>
-        {request.note ?
-          <button style={{ backgroundColor: 'inherit' }}
-            className="usa-accordion-button"
-            aria-expanded={expanded}
-            onClick={() => setExpanded(!expanded)}>
-          </button> :
-          ''}
-      </td>
-    </tr>,
-    expanded && (
-      <tr aria-expanded={expanded}>
-        <td colSpan={4}>
-          <strong>Request note:</strong>
-          <p>{request.note}</p>
-        </td>
-      </tr>
-    )
-  ];
-};
-
-const CustomTable = (props) => {
-
-  // TODO: Retrieve these from the backend MembershipRequests for the current org
-  const testTime = new Date().toLocaleDateString();
-  const rowObjects = [{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
-    { name: 'test 2', createdAt: testTime, note: null }];
-
-  return <table className="usa-table-borderless">
-    <thead>
-      <th>User name</th>
-      <th>Date requested</th>
-      <th>Actions</th>
-      <th></th>
-    </thead>
-    <tbody>
-      {rowObjects.map((rowObject, index) => <CollapsableTableRow key={index} request={rowObject} />)}
-    </tbody>
-  </table>;
 };

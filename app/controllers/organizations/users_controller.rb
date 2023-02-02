@@ -11,7 +11,8 @@ class Organizations::UsersController < OrganizationsController
           organization_name: organization.name,
           judge_team: organization.type == JudgeTeam.name,
           dvc_team: organization.type == DvcTeam.name,
-          organization_users: json_administered_users(organization_users)
+          organization_users: json_administered_users(organization_users),
+          membership_requests: membership_requests
         }
       end
     end
@@ -67,6 +68,17 @@ class Organizations::UsersController < OrganizationsController
 
   def organization_url
     params[:organization_url]
+  end
+
+  def membership_requests
+    # TODO: Maybe create a serializer for these?
+    MembershipRequest.includes(:requestor, :organization).where(organization: organization).map do |membership_request|
+      {
+        name: membership_request.requestor.full_name,
+        requestedDate: membership_request.created_at,
+        note: membership_request.note
+      }
+    end
   end
 
   def json_users(users)

@@ -4,21 +4,25 @@ import DropdownButton from '../components/DropdownButton';
 // This is a one off component that doesn't reuse any existing components
 const MembershipRequestTableV1 = (props) => {
   // TODO: Retrieve these from the backend MembershipRequests for the current org
-  const testTime = new Date().toLocaleDateString();
-  const rowObjects = [{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
-    { name: 'test 2', createdAt: testTime, note: null }];
+  // const testTime = new Date().toLocaleDateString();
+  // const rowObjects = [{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
+  // { name: 'test 2', createdAt: testTime, note: null }];
+
+  const { requests } = props;
 
   return <>
     <h2> Completely new custom one-off component</h2>
     <table className="usa-table-borderless">
       <thead>
-        <th>User name</th>
-        <th>Date requested</th>
-        <th>Actions</th>
-        <th></th>
+        <tr>
+          <th>User name</th>
+          <th>Date requested</th>
+          <th>Actions</th>
+          <th></th>
+        </tr>
       </thead>
       <tbody>
-        {rowObjects.map((rowObject, index) => <CollapsableTableRow key={index} request={rowObject} />)}
+        {requests.map((request, index) => <CollapsableTableRow key={index} request={request} />)}
       </tbody>
     </table>
   </>;
@@ -43,7 +47,7 @@ const CollapsableTableRow = (props) => {
   return [
     <tr>
       <td>{request.name}</td>
-      <td>{request.createdAt}</td>
+      <td>{request.requestedDate}</td>
       <td>
         <DropdownButton
           lists={dropdownOptions}
