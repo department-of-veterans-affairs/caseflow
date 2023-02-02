@@ -21,7 +21,6 @@ describe SendNotificationJob, type: :job do
   let(:no_name_appeal) do
     create(:appeal,
            docket_type: "Appeal",
-           uuid: "5d70058f-8641-4155-bae8-5af4b61b1576",
            homelessness: false,
            veteran_file_number: "246813579")
   end
@@ -55,7 +54,7 @@ describe SendNotificationJob, type: :job do
     {
       participant_id: "246813579",
       status: success_status,
-      appeal_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+      appeal_id: no_name_appeal.uuid,
       appeal_type: "Appeal"
     }
   }
@@ -320,7 +319,7 @@ describe SendNotificationJob, type: :job do
       it "is expected to send a generic saluation instead of a name" do
         FeatureToggle.enable!(:va_notify_email)
         expect(VANotifyService).to receive(:send_email_notifications).with(
-          no_name_participant_id, "", "ae2f0d17-247f-47ee-8f1a-b83a71e0f050", "Appellant", ""
+          no_name_participant_id, "", "ae2f0d17-247f-47ee-8f1a-b83a71e0f050", "Appellant", no_name_appeal.docket_number, ""
         )
         SendNotificationJob.perform_now(no_name_message.to_json)
       end
@@ -330,7 +329,7 @@ describe SendNotificationJob, type: :job do
       it "is expected to send a generic saluation instead of a name" do
         FeatureToggle.enable!(:va_notify_sms)
         expect(VANotifyService).to receive(:send_sms_notifications).with(
-          no_name_participant_id, "", "9953f7e8-80cb-4fe4-aaef-0309410c84e3", "Appellant", ""
+          no_name_participant_id, "", "9953f7e8-80cb-4fe4-aaef-0309410c84e3", "Appellant", no_name_appeal.docket_number, ""
         )
         SendNotificationJob.perform_now(no_name_message.to_json)
       end
