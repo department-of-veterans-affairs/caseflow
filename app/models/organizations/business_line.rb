@@ -37,7 +37,6 @@ class BusinessLine < Organization
   class QueryBuilder
     attr_accessor :query_type, :parent, :query_params
 
-    NUMBER_OF_SEARCH_FIELDS = 2
     TASK_FILTER_PREDICATES = {
       "VeteranRecordRequest" => Task.arel_table[:type].eq(VeteranRecordRequest.name),
       "BoardGrantEffectuationTask" => Task.arel_table[:type].eq(BoardGrantEffectuationTask.name),
@@ -123,6 +122,10 @@ class BusinessLine < Organization
       "#{claimant_name} AS claimant_name"
     end
 
+    def veteran_ssn_alias
+      "veterans.ssn as veteran_ssn"
+    end
+
     # Alias of veteran participant id for serialization and sorting
     def participant_id_alias
       "veterans.participant_id as veteran_participant_id"
@@ -168,14 +171,27 @@ class BusinessLine < Organization
       "LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id"
     end
 
-    # The NUMBER_OF_SEARCH_FIELDS constant reflects the number of searchable fields here for where interpolation later
+    # These values reflect the number of searchable fields in search_all_clause for where interpolation later
+    def number_of_search_fields
+      FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user) ? 4 : 2
+    end
+
+    def search_ssn_and_file_number_clause
+      +"OR veterans.ssn LIKE ? "\
+      "OR veterans.file_number LIKE ? "
+    end
+
     def search_all_clause
-      if query_params[:search_query].present?
-        "veterans.participant_id LIKE ? "\
-        "OR #{claimant_name} ILIKE ? "
-      else
-        ""
+      return "" if query_params[:search_query].blank?
+
+      clause = +"veterans.participant_id LIKE ? "\
+               "OR #{claimant_name} ILIKE ? "
+
+      if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user)
+        clause << search_ssn_and_file_number_clause
       end
+
+      clause
     end
 
     def group_by_columns
@@ -187,7 +203,7 @@ class BusinessLine < Organization
     # Uses an array to insert the searched text into all of the searchable fields since it's the same text for all
     def search_values
       searching_text = "%#{query_params[:search_query]}%"
-      Array.new(NUMBER_OF_SEARCH_FIELDS, searching_text)
+      Array.new(number_of_search_fields, searching_text)
     end
 
     def higher_level_reviews_on_request_issues
