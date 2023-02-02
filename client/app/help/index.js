@@ -20,18 +20,16 @@ import helpReducers, {
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 
-class Help extends React.PureComponent {
+const Help = (props) => {
 
-  render() {
-    return <ReduxBase
-      reducer={helpReducers}
-    >
-      <BrowserRouter>
-        <HelpApp {...this.props} />
-      </BrowserRouter>
-    </ReduxBase>;
-  }
-}
+  return <ReduxBase
+    reducer={helpReducers}
+  >
+    <BrowserRouter>
+      <HelpApp {...props} />
+    </BrowserRouter>
+  </ReduxBase>;
+};
 
 const HelpApp = (props) => {
 
