@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Button from '../../components/Button';
 import { BOA_ADDRESS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import Checkbox from '../../components/Checkbox';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 class RecordRequestUnconnected extends React.PureComponent {
   constructor(props) {
