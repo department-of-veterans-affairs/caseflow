@@ -31,4 +31,14 @@ class PostSendInitialNotificationLetterHoldingTask  < TimedHoldTask
     false
   end
 
+  def create_from_parent(task, days_on_hold:, assigned_by: nil, instructions: nil)
+    @post_send_initial_notification_letter_holding ||= task.appeal.tasks.open.find_by(type: :PostSendInitialNotificationLetterHoldingTask) ||
+    PostSendInitialNotificationLetterHoldingTask.create!(
+      appeal: task.appeal,
+      parent: task.parent,
+      assigned_to: Organization.find_by_url("clerk-of-the-board"),
+      days_on_hold: days_on_hold,
+      instructions: instructions
+    )
+  end
 end

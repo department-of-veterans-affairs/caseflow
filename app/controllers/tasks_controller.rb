@@ -120,7 +120,7 @@ class TasksController < ApplicationController
         when "task_complete_contested_claim"
           days = params['hold_days'].to_i
           instructions= "";
-          # postSendInitialNotificationLetter (instructions, days_on_hold = params['hold_days'])
+
           @post_send_initial_notification_letter_holding ||= task.appeal.tasks.open.find_by(type: :PostSendInitialNotificationLetterHoldingTask) ||
                                           PostSendInitialNotificationLetterHoldingTask.create!(
                                             appeal: task.appeal,
@@ -129,6 +129,7 @@ class TasksController < ApplicationController
                                             days_on_hold: days,
                                             instructions: instructions
                                           )
+          # PostSendInitialNotificationLetterHoldingTask.create_from_parent(task.parent, days_on_hold: days)
         else
           puts "no"
         end
