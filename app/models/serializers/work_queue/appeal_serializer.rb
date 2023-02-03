@@ -281,4 +281,13 @@ class WorkQueue::AppealSerializer
       .merge(@all_notifications.where(sms_notification_status: nil)
       .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).any?
   end
+
+  attribute :cavc_remands_with_dashboard do |appeal|
+    @remands_with_dashboard = CavcRemand.where(source_appeal_id: appeal.id, cavc_decision_type:
+    [
+      Constants.CAVC_DECISION_TYPES.other_dismissal,
+      Constants.CAVC_DECISION_TYPES.affirmed,
+      Constants.CAVC_DECISION_TYPES.settlement
+    ])
+  end
 end

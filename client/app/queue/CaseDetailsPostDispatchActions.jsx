@@ -36,6 +36,7 @@ export const CaseDetailsPostDispatchActions = (props) => {
   const { appealId,
     includeCavcRemand,
     includeSubstitute,
+    showCavcDashboardButton,
     // currentUserIsOAI,
     // currentUserIsOCC
   } = props;
@@ -61,11 +62,13 @@ export const CaseDetailsPostDispatchActions = (props) => {
             {COPY.SUBSTITUTE_APPELLANT_BUTTON}
           </Button>
         )}
-        {/* {(currentUserIsOAI || currentUserIsOCC) && (
+        {/* {showCavcDashboardButton && (currentUserIsOAI || currentUserIsOCC) && (
           <CavcDashboardButton appealId={appealId} />
         )} */}
         {/* delete line below after organizations OCC and OAI are added and uncomment above */}
-        <CavcDashboardButton appealId={appealId} />
+        {showCavcDashboardButton && (
+          <CavcDashboardButton appealId={appealId} />
+        )}
       </div>
     </div>
   );
@@ -75,9 +78,9 @@ CaseDetailsPostDispatchActions.propTypes = {
   appealId: PropTypes.string.isRequired,
   includeCavcRemand: PropTypes.bool,
   includeSubstitute: PropTypes.bool,
+  showCavcDashboardButton: PropTypes.bool,
   // currentUserIsOAI: PropTypes.bool,
   // currentUserIsOCC: PropTypes.bool,
-  appealHasNewCavcDecisionType: PropTypes.bool
 };
 
 export default CaseDetailsPostDispatchActions;

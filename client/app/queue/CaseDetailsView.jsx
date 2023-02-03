@@ -140,6 +140,21 @@ export const CaseDetailsView = (props) => {
     )
   );
 
+  const checkDecisionTypeOnSubmit = useSelector((state) =>
+    state.queue.requireCavcDashboard === 'affirmed' ||
+    state.queue.requireCavcDashboard === 'settlement' ||
+    state.queue.requireCavcDashboard === 'other_dismissal'
+  );
+
+  const appealHasRemandWithDashboard = useSelector((state) =>
+    state.queue.appeals[appealId].cavcRemandsWithDashboard
+  );
+
+  const showCavcDashboardButton = appealHasRemandWithDashboard.length > 0 || checkDecisionTypeOnSubmit;
+  // delete above line and uncomment below line once OCC and OAI are in
+  // const showCavcDashboardButton = (appealHasRemandWithDashboard.length > 0 || checkDecisionTypeOnSubmit) &&
+  //   (currentUserIsOAI || currentUserIsOCC);
+
   const modalIsOpen = window.location.pathname.includes('modal');
 
   const resetState = () => {
@@ -279,8 +294,7 @@ export const CaseDetailsView = (props) => {
           appealId={appealId}
           includeCavcRemand={supportCavcRemand}
           includeSubstitute={supportPostDispatchSubstitution}
-          currentUserIsOAI={currentUserIsOAI}
-          currentUserIsOCC={currentUserIsOCC}
+          showCavcDashboardButton={showCavcDashboardButton}
         />
       )}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}

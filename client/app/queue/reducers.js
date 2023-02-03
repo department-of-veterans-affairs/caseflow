@@ -57,7 +57,8 @@ export const initialState = {
   organizationId: null,
   organizations: [],
   loadingAppealDetail: {},
-  queueConfig: {}
+  queueConfig: {},
+  requireCavcDashboard: null,
 };
 
 const receiveQueueDetails = (state, action) => {
@@ -730,6 +731,12 @@ const errorOnReceiveAppealValue = (state, action) => {
 
 const setQueueConfig = (state, action) => update(state, { queueConfig: { $set: action.payload.config } });
 
+const setRequireCavcDashboard = (state, action) => {
+  return update(state, {
+    requireCavcDashboard: { $set: action.payload.decisionType }
+  });
+};
+
 const createReducer = (handlers) => {
   return (state = initialState, action) => {
     return Object.prototype.hasOwnProperty.call(handlers, action.type) ? handlers[action.type](state, action) : state;
@@ -789,7 +796,8 @@ export const workQueueReducer = createReducer({
   [ACTIONS.STARTED_LOADING_APPEAL_VALUE]: startedLoadingAppealValue,
   [ACTIONS.RECEIVE_APPEAL_VALUE]: receiveAppealValue,
   [ACTIONS.ERROR_ON_RECEIVE_APPEAL_VALUE]: errorOnReceiveAppealValue,
-  [ACTIONS.SET_QUEUE_CONFIG]: setQueueConfig
+  [ACTIONS.SET_QUEUE_CONFIG]: setQueueConfig,
+  [ACTIONS.SET_REQUIRE_CAVC_DASHBOARD]: setRequireCavcDashboard,
 });
 
 const rootReducer = combineReducers({

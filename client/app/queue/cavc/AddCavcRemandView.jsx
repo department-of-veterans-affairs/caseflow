@@ -24,6 +24,7 @@ import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Alert from '../../components/Alert';
 import { withRouter } from 'react-router';
+import { setRequireCavcDashboard } from '../QueueActions';
 
 import {
   JmrJmprIssuesBanner,
@@ -237,14 +238,13 @@ const AddCavcRemandView = (props) => {
       detail: successMsgDetail()
     };
 
-    console.log(decisionIssues);
-
     props.requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
       // then((resp) => history.replace(`/queue/appeals/${resp.body.cavc_appeal.uuid}`)).
       then((resp) => {
         const pushHistoryUrl = resp.body.cavc_appeal ?
           `/queue/appeals/${resp.body.cavc_appeal.uuid}` : `/queue/appeals/${appealId}`;
 
+        props.setRequireCavcDashboard(type);
         history.replace(pushHistoryUrl);
       }).
       catch((err) => props.showErrorMessage({ title: 'Error', detail: JSON.parse(err.message).errors[0].detail }));
@@ -433,18 +433,21 @@ AddCavcRemandView.propTypes = {
     dismissal_cavc_remand: PropTypes.bool
   }),
   highlightInvalid: PropTypes.bool,
-  history: PropTypes.object
+  history: PropTypes.object,
+  setRequireCavcDashboard: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   decisionIssues: state.queue.appealDetails[ownProps.appealId].decisionIssues,
   highlightInvalid: state.ui.highlightFormItems,
   error: state.ui.messages.error,
-  featureToggles: state.ui.featureToggles
+  featureToggles: state.ui.featureToggles,
+  requireCavcDashboard: state.queue.requireCavcDashboard,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
+  setRequireCavcDashboard,
   showErrorMessage
 }, dispatch);
 
