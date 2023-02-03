@@ -60,10 +60,6 @@ export const CaseDetailsPostDispatchActions = (props) => {
             {COPY.SUBSTITUTE_APPELLANT_BUTTON}
           </Button>
         )}
-        {/* {showCavcDashboardButton && (currentUserIsOAI || currentUserIsOCC) && (
-          <CavcDashboardButton appealId={appealId} />
-        )} */}
-        {/* delete line below after organizations OCC and OAI are added and uncomment above */}
         {showCavcDashboardButton && (
           <CavcDashboardButton appealId={appealId} />
         )}
