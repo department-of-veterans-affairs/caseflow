@@ -4,7 +4,7 @@ import { ACTIONS } from './cavcDashboardConstants';
 export const initialState = {
   decision_reasons: {},
   selection_bases: {},
-  dashboard_dispositions: {}
+  cavc_remands: []
 };
 
 export const cavcDashboardReducer = (state = initialState, action) => {
@@ -23,8 +23,8 @@ export const cavcDashboardReducer = (state = initialState, action) => {
     });
   case ACTIONS.FETCH_INITIAL_DASHBOARD_DATA:
     return update(state, {
-      dashboard_dispositions: {
-        $set: action.payload.dashboard_dispositions
+      cavc_remands: {
+        $set: action.payload.cavc_remands
       }
     });
   default:

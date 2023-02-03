@@ -178,37 +178,39 @@ module Seeds
         "Karnas", "Other"
       ]
 
-      for value in other_due_process_protection do
-        CavcSelectionBasis.create(basis_for_selection: value, category: "other_due_process_protection")
-      end
 
-      for value in prior_examination_inadequate do
-        CavcSelectionBasis.create(basis_for_selection: value, category: "prior_examination_inadequate")
-      end
+      odpp = other_due_process_protection.map{ |value| {basis_for_selection: value, category: "other_due_process_protection"} }
+      CavcSelectionBasis.import(odpp, validate: false)
 
-      for value in prior_opinion_inadequate do
-        CavcSelectionBasis.create(basis_for_selection: value, category: "prior_opinion_inadequate")
-      end
+      pei = prior_examination_inadequate.map{ |value| {basis_for_selection: value, category: "prior_examination_inadequate"} }
+      CavcSelectionBasis.import(pei, validate: false)
 
-      for value in statute do
-        CavcSelectionBasis.create(basis_for_selection: value, category: "consider_statute")
-        CavcSelectionBasis.create(basis_for_selection: value, category: "misapplication_statute")
-      end
+      poi = prior_opinion_inadequate.map { |value| {basis_for_selection: value, category: "prior_opinion_inadequate"} }
+      CavcSelectionBasis.import(poi, validate: false)
 
-      for value in regulation do
-        CavcSelectionBasis.create(basis_for_selection: value, category: "consider_regulation")
-        CavcSelectionBasis.create(basis_for_selection: value, category: "misapplication_regulation")
-      end
+      consider_statue = statute.map { |value| { basis_for_selection: value, category: "consider_statute" } }
+      CavcSelectionBasis.import(consider_statue, validate: false)
 
-      for value in diagnostic_code do
-        CavcSelectionBasis.create(basis_for_selection: value, category: "consider_diagnostic_code")
-        CavcSelectionBasis.create(basis_for_selection: value, category: "misapplication_diagnostic_code")
-      end
+      misapplication_statute = statute.map { |value| { basis_for_selection: value, category: "misapplication_statute" } }
+      CavcSelectionBasis.import(misapplication_statute, validate: false)
 
-      for value in caselaw do
-        CavcSelectionBasis.create(basis_for_selection: value, category: "consider_caselaw")
-        CavcSelectionBasis.create(basis_for_selection: value, category: "misapplication_caselaw")
-      end
+      consider_regulation = regulation.map { |value| { basis_for_selection: value, category: "consider_regulation" } }
+      CavcSelectionBasis.import(consider_regulation, validate: false)
+
+      misapplication_regulation = regulation.map { |value| { basis_for_selection: value, category: "misapplication_regulation" } }
+      CavcSelectionBasis.import(misapplication_regulation, validate: false)
+
+      consider_diagnostic_code = diagnostic_code.map { |value| { basis_for_selection: value, category: "consider_diagnostic_code" } }
+      CavcSelectionBasis.import(consider_diagnostic_code, validate: false)
+
+      misapplication_diagnostic_code = diagnostic_code.map { |value| { basis_for_selection: value, category: "misapplication_diagnostic_code" } }
+      CavcSelectionBasis.import(misapplication_diagnostic_code, validate: false)
+
+      consider_caselaw = caselaw.map { |value| { basis_for_selection: value, category: "consider_caselaw" } }
+      CavcSelectionBasis.import(consider_caselaw, validate: false)
+
+      misapplication_caselaw = caselaw.map { |value| { basis_for_selection: value, category: "misapplication_caselaw" } }
+      CavcSelectionBasis.import(misapplication_caselaw, validate: false)
     end
   end
 end
