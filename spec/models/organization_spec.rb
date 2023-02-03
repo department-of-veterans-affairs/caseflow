@@ -250,6 +250,31 @@ describe Organization, :postgres do
     end
   end
 
+  describe ".membership_requests" do
+    let(:org) { create(:organization) }
+
+    subject { org.membership_requests }
+
+    it "should return an empty list" do
+      expect(subject).to eq([])
+    end
+
+    context "When the organization has membership requests" do
+      let(:membership_requests) { create_list(:membership_request, 5) }
+
+      before do
+        membership_requests.each do |request|
+          request.organization = org
+          request.save
+        end
+      end
+
+      it "should include those membership requests" do
+        expect(subject).to include(*membership_requests)
+      end
+    end
+  end
+
   describe ".destroy" do
     context "when organization has members and is destroyed" do
       let(:org) { create(:organization) }
