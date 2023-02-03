@@ -638,6 +638,21 @@ class CompleteTaskModal extends React.Component {
       return reviewNotes = null;
     });
 
+    if (this.props.modalType === 'task_complete_contested_claim') {
+      const radioValue = daysTypeOpts.find((option) => radio === option.value).value;
+      let days;
+
+      if (radioValue === 'custom') {
+        days = instructions;
+      } else {
+        days = radioValue;
+      }
+
+      formattedInstructions.push(`Hold time: ${days} days`);
+
+      return formattedInstructions.join('');
+    }
+
     if (this.props.modalType === 'vha_send_to_board_intake') {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
 
