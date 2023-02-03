@@ -328,11 +328,13 @@ module Seeds
     def create_oai_team_user
       u = User.create!(station_id: 101, css_id: "OAI_TEAM_USER", full_name: "Tywin OaiTeam Lannister")
       OaiTeam.singleton.add_user(u)
+      OrganizationsUser.make_user_admin(u, OaiTeam.singleton)
     end
 
     def create_occ_team_user
       u = User.create!(station_id: 101, css_id: "OCC_TEAM_USER", full_name: "Jon OccTeam Snow")
       OccTeam.singleton.add_user(u)
+      OrganizationsUser.make_user_admin(u, OccTeam.singleton)
       u = User.create!(station_id: 101, css_id: "OCC_OAI_TEAM_USER", full_name: "Ned OccOaiTeam Stark")
       OccTeam.singleton.add_user(u)
       OaiTeam.singleton.add_user(u)
