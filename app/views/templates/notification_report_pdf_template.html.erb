@@ -1,5 +1,73 @@
 <%= render "layouts/head" %>
-<% veteran_name= "Veteran Name" %>
+
+<% appeal = Appeal.first %>
+<% appeal_type = get_appeal_type(appeal) %>
+<% veteran_first_name = appeal.veteran_first_name %>
+<% veteran_last_name = appeal.veteran_last_name %>
+<% file_number = appeal.veteran_file_number %>
+<% docket_number = appeal.docket_number %>
+<% docket_type = appeal.docket_name %>
+<% docket_label = docket_type.first.upcase%>
+<% appeal_stream_type = appeal.type %>
+<% hearing_type = get_hearing_type(appeal) %>
+
+<%
+def get_appeal_type(appeal)
+  if appeal.uuid.exists?
+    appeal_type = "AMA Appeal"
+  else
+    appeal_type = "Legacy Appeal"
+  end
+end
+%>
+
+<%
+def get_hearing_type(appeal)
+  if appeal.current_hearing_request_type == nil
+    hearing_type = nil
+  else
+    hearing_type = readable_current_hearing_request_type
+  end
+end
+%>
+
+<%
+def get_notifications(appeal, appeal_type)
+  if appeal_type = "AMA Appeal"
+    notifications = appeal.fetch_notification_list
+  else
+    notifications = Notification.where(appeals_id: appeal.vacols_id)
+  end
+end
+%>
+
+<%# NOTIFICATIONS
+if appeal = AMA appeal > notifications = appeal.fetch_notification_list
+if appeal = legacy appeal > notifications = Notification.where(appeals_id: appeal.vacols_id)
+map through array of notifications %>
+event type = notification.event_type
+notification date = notification.event_date
+
+notification type = notification.notification_type
+IF NOTIFICATION EVENT TYPE = Email and SMS
+
+create two lines in the table one for sms and one for email
+
+IF NOTIFICATION EVENT TYPE = EMAIL
+---------------------------
+EMAIL
+notification type email = Email
+recipient information email = notification.recipient_email
+status = notification.email_notification.status
+notification content email = notification.email_notification_content
+
+IF NOTIFICATION EVENT TYPE = SMS
+----------------------------
+SMS
+notification type SMS = Text
+recipient information SMS = notification.recipient_phone_number
+status = notification.sms_notification_status
+notification content = notification.sms_notification_content
 
 <html>
   <body class="cf-app-queue">
@@ -14,10 +82,10 @@
             <div class="usa-grid">
               <section class="cf-app-segment cf-app-segment--alt">
                 <div data-css-bui2vg="">
-                  <h1 data-css-10hc4to="">Case notifications for <%=veteran_name%></h1>
+                  <h1 data-css-10hc4to="">Case notifications for <%=appeal.veteran_first_name%> <%=appeal.veteran_last_name%></h1>
                   <div data-css-7o0e0w="">
                     <div data-css-p21ib3="">Veteran ID:&nbsp;
-                      <button type="submit" class="cf-apppeal-id" data-css-cjlnsd="" style="width: auto; white-space: nowrap;">213912991</button>
+                      <button type="submit" class="cf-apppeal-id" data-css-cjlnsd="" style="width: auto; white-space: nowrap;"><%=appeal.veteran_file_number%></button>
                     </div>
                   </div>
                 </div>
@@ -28,20 +96,20 @@
                       <p>Docket Number</p>
                       <div>
                         <span data-css-1iid9v3="">
-                          <span data-css-2moai0="">L</span>
-                          4113666
+                          <span data-css-2moai0=""><%=docket_type.first.upcase%></span>
+                          <%=appeal.docket_number%>
                         </span>
                       </div>
                     </div>
                     <div data-css-1yy2eo1="">
                       <p>Appeal Stream Type</p>
                       <div>
-                        <span>Original</span>
+                        <span><%=appeal.type%></span>
                       </div>
                     </div>
                     <div data-css-1yy2eo1="">
                       <p>Hearing Type</p>
-                      <div>Video</div>
+                      <div><%=hearing_type%></div>
                     </div>
                   </div>
                 </div>
