@@ -411,6 +411,10 @@ class QueueApp extends React.PureComponent {
     <CancelTaskModal {...props.match.params} />
   );
 
+  routedCancelLetterTaskModal = (props) => (
+    <CancelTaskModal {...props.match.params} />
+  );
+
   routedMarkTaskInProgressModal = (props) => (
     <InProgressTaskModal {...props.match.params} />
   );
@@ -1208,6 +1212,33 @@ class QueueApp extends React.PureComponent {
               }
               title="Cancel Task | Caseflow"
               render={this.routedCancelTaskModal}
+            />
+            <PageRoute
+              exact
+              path={
+                `/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_FINAL_LETTER_TASK.value
+                }`}
+              title="Cancel Task"
+              render={this.routedCancelLetterTaskModal}
+            />
+            <PageRoute
+              exact
+              path={
+                `/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK.value
+                }`}
+              title="Cancel Task"
+              render={this.routedCancelLetterTaskModal}
+            />
+            <PageRoute
+              exact
+              path={
+                `/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_POST_INITIAL_LETTER_TASK.value
+                }`}
+              title="Cancel Task"
+              render={this.routedCancelLetterTaskModal}
             />
             <PageRoute
               exact

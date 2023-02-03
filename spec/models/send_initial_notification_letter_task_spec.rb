@@ -8,6 +8,8 @@ describe SendInitialNotificationLetterTask do
   let(:task_class) { SendInitialNotificationLetterTask }
   before do
     cob_team.add_user(user)
+    User.authenticate!(user: user)
+    FeatureToggle.enable!(:cc_appeal_workflow)
   end
 
   describe ".verify_user_can_create" do
@@ -32,7 +34,7 @@ describe SendInitialNotificationLetterTask do
       [
         Constants.TASK_ACTIONS.MARK_TASK_AS_COMPLETE_CONTESTED_CLAIM.to_h,
         Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_CC.to_h,
-        Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_TASK.to_h
+        Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK.to_h
       ]
     end
 

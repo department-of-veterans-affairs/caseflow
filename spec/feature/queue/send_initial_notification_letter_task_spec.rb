@@ -1,0 +1,65 @@
+# frozen_string_literal: true
+
+RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
+  let(:user) { create(:user) }
+  let(:cob_team) { ClerkOfTheBoard.singleton }
+
+  before do
+    cob_team.add_user(user)
+    User.authenticate!(user: user)
+    FeatureToggle.enable!(:cc_appeal_workflow)
+  end
+
+  describe "Accessing task actions" do
+    let(:root_task) { create(:root_task) }
+    let(:distribution_task) { create(:distribution_task, parent: root_task) }
+    let(:initial_letter_task) do
+      SendInitialNotificationLetterTask.create!(
+        appeal: root_task.appeal,
+        parent: distribution_task,
+        assigned_to: cob_team
+      )
+    end
+
+    it "displays the proper task actions for the intial task" do
+      visit("/queue")
+      visit("/queue/appeals/#{initial_letter_task.appeal.external_id}")
+
+      # find and click action dropdown
+      dropdown = find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
+      dropdown.click
+      expect(page).to have_content(Constants.TASK_ACTIONS.MARK_TASK_AS_COMPLETE_CC.label)
+      expect(page).to have_content(Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_CC.label)
+      expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK.label)
+    end
+
+    it "cancel action cancels the task and displays it on the case timeline" do
+      visit("/queue")
+      visit("/queue/appeals/#{initial_letter_task.appeal.external_id}")
+
+      prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+      text = Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK.label
+      click_dropdown(prompt: prompt, text: text)
+
+      # check cancel modal content
+      expect(page).to have_content(format(COPY::CANCEL_INITIAL_NOTIFICATION_LETTER_TASK_DETAIL))
+
+      # fill out instructions
+      fill_in("taskInstructions", with: "instructions")
+      click_button("Submit")
+
+      # expect success
+      expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, root_task.appeal.veteran.person.name))
+      expect(page.current_path).to eq("/queue")
+
+      # navigate to queue to check case timeline
+      visit("/queue/appeals/#{initial_letter_task.appeal.external_id}")
+
+      # check the screen output and model status
+      appeal_initial_letter_task = root_task.appeal.tasks.find_by(type: "SendInitialNotificationLetterTask")
+      expect(page).to have_content(`#{appeal_initial_letter_task.type} cancelled`)
+      expect(appeal_initial_letter_task.status).to eq("cancelled")
+    end
+
+  end
+end
