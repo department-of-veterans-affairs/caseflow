@@ -81,6 +81,8 @@ module Seeds
       create_aod_user_and_tasks
       create_privacy_user
       create_lit_support_user
+      create_oai_team_user
+      create_occ_team_user
       create_cavc_lit_support_user
       create_pulac_cerullo_user
       create_mail_team_user
@@ -321,6 +323,19 @@ module Seeds
     def create_lit_support_user
       u = User.create!(station_id: 101, css_id: "LIT_SUPPORT_USER", full_name: "Kiran LitigationSupportUser Rider")
       LitigationSupport.singleton.add_user(u)
+    end
+
+    def create_oai_team_user
+      u = User.create!(station_id: 101, css_id: "OAI_TEAM_USER", full_name: "Tywin OaiTeam Lannister")
+      OaiTeam.singleton.add_user(u)
+    end
+
+    def create_occ_team_user
+      u = User.create!(station_id: 101, css_id: "OCC_TEAM_USER", full_name: "Jon OccTeam Snow")
+      OccTeam.singleton.add_user(u)
+      u = User.create!(station_id: 101, css_id: "OCC_OAI_TEAM_USER", full_name: "Ned OccOaiTeam Stark")
+      OccTeam.singleton.add_user(u)
+      OaiTeam.singleton.add_user(u)
     end
 
     def create_cavc_lit_support_user
