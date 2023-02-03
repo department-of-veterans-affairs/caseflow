@@ -191,7 +191,7 @@ class BusinessLine < Organization
     end
 
     def group_by_columns
-      "tasks.id, veterans.participant_id, veterans.first_name, veterans.last_name, veterans.ssn, "\
+      "tasks.id, veterans.participant_id, veterans.ssn, veterans.first_name, veterans.last_name, "\
       "unrecognized_party_details.name, unrecognized_party_details.last_name, people.first_name, people.last_name, "\
       "veteran_is_not_claimant, bgs_attorneys.name"
     end
@@ -301,7 +301,6 @@ class BusinessLine < Organization
           )
         )
       end
-
       {
         query_params[:sort_by] => query_params[:sort_order].to_sym
       }
