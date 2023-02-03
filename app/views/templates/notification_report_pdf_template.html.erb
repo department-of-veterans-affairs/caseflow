@@ -9,6 +9,7 @@
 <% docket_type = appeal.docket_name %>
 <% docket_label = docket_type.first.upcase%>
 <% appeal_stream_type = appeal.type %>
+<% hearing_type = get_hearing_type(appeal) %>
 
 <%
 def get_appeal_type(appeal)
@@ -20,50 +21,31 @@ def get_appeal_type(appeal)
 end
 %>
 
-<%# docket types:
-AMA >>
-direct_review
-evidence_submission
-hearing
-LEGACY>>
-legacy
-docket_type.to_s.first.upcase %>
+<%
+def get_hearing_type(appeal)
+  if appeal.current_hearing_request_type == nil
+    hearing_type = nil
+  else
+    hearing_type = readable_current_hearing_request_type
+  end
+end
+%>
 
-<%# Pseudo code for logic:
-the appeal object will be given to me? or appeal id?
-get the uuid/vacols_id from appeals_controller.rb %>
-<%# legacy appeals don't have veteran name, where is it
-from the appeal object find the notifications %>
-
-<%# if the appeal.uuid exists appeal = ama appeal
-if the appeal.uuid DNE appeal = legacy appeal %>
-
-<%# if appeal = legacy appeal > appeal = Appeal.find_by(vacols_id: appeal.vacols_id)
-if appeal = AMA appeal > appeal = Appeal.find_by(uuid: appeal.uuid) %>
-
-<%# name = appeal.veteran.first_name + " " + appeal.veteran.last_name %>
-<%# file number = appeal.veteran_file_number %>
-<%# docket number = appeal.docket_number %>
-<%# if appeal = legacy appeal > docket type = appeal.docket_name
-if appeal = AMA appeal > docket type = appeal.docket_type %>
-<%# appeal stream type = appeal.type %>
-
-Legacy Appeals:
-hearing type = appeal.hearing_request_type
-
-AMA Appeals:
-
-hearing request types:
-virtual
-central
-Video
-travel
+<%
+def get_notifications(appeal, appeal_type)
+  if appeal_type = "AMA Appeal"
+    notifications = appeal.fetch_notification_list
+  else
+    notifications = Notification.where(appeals_id: appeal.vacols_id)
+  end
+end
+%>
 
 
-NOTIFICATIONS
+<%# NOTIFICATIONS
 if appeal = AMA appeal > notifications = appeal.fetch_notification_list
 if appeal = legacy appeal > notifications = Notification.where(appeals_id: appeal.vacols_id)
-map through array of notifications
+map through array of notifications %>
 event type = notification.event_type
 notification date = notification.event_date
 
@@ -125,7 +107,7 @@ notification content = notification.sms_notification_content
         </div>
         <div data-css-1yy2eo1="">
           <p>Hearing Type</p>
-          <div>Video</div>
+          <div><%=hearing_type%></div>
         </div>
       </div>
     </div>
