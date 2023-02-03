@@ -1,11 +1,24 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import DropdownButton from '../components/DropdownButton';
+import moment from 'moment';
+import { css } from 'glamor';
+
+const rowHasExpandedNote = css({
+  '> td': { border: 'none' },
+});
+
+const expandedNote = css({
+  '> td': { borderTop: 'none' },
+});
+
+// const rowHasExpandedNote2 = $('& td', { border: 'none' });
 
 // This is a one off component that doesn't reuse any existing components
 const MembershipRequestTableV1 = (props) => {
   // TODO: Retrieve these from the backend MembershipRequests for the current org
   // const testTime = new Date().toLocaleDateString();
-  // const rowObjects = [{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
+  // const rowObjects=[{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
   // { name: 'test 2', createdAt: testTime, note: null }];
 
   const { requests } = props;
@@ -45,9 +58,9 @@ const CollapsableTableRow = (props) => {
   ];
 
   return [
-    <tr>
+    <tr className={expanded ? `${rowHasExpandedNote}` : ''}>
       <td>{request.name}</td>
-      <td>{request.requestedDate}</td>
+      <td>{moment(request.requestedDate).format('MM/DD/YYYY')}</td>
       <td>
         <DropdownButton
           lists={dropdownOptions}
@@ -66,14 +79,18 @@ const CollapsableTableRow = (props) => {
       </td>
     </tr>,
     expanded && (
-      <tr aria-expanded={expanded}>
+      <tr className={expanded ? expandedNote : ''} aria-expanded={expanded}>
         <td colSpan={4}>
-          <strong>Request note:</strong>
+          <strong>REQUEST NOTE:</strong>
           <p>{request.note}</p>
         </td>
       </tr>
     )
   ];
+};
+
+MembershipRequestTableV1.propTypes = {
+  requests: PropTypes.array,
 };
 
 export default MembershipRequestTableV1;

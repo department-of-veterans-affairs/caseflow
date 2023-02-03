@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
+import moment from 'moment';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -328,7 +329,7 @@ export default class OrganizationUsers extends React.PureComponent {
           return <Accordion accordion={false}>
             <AccordionSection title="">
               <div {...rowDisplay}>
-                <strong>Request Note:</strong>
+                <strong>REQUEST NOTE:</strong>
                 <p>{task.note}</p>
               </div>
             </AccordionSection>
@@ -338,7 +339,7 @@ export default class OrganizationUsers extends React.PureComponent {
         return '';
 
       },
-      span: constant(4),
+      // span: constant(4),
     };
 
     // TODO: Ask if this is supposed to be ordered by created at? I assume it is, but make sure and then order it somehow. Probably server side.
@@ -349,7 +350,7 @@ export default class OrganizationUsers extends React.PureComponent {
       },
       {
         header: 'Date requested',
-        valueFunction: (task) => task.requestedDate
+        valueFunction: (task) => moment(task.requestedDate).format('MM/DD/YYYY')
       },
       {
         header: 'Actions',
