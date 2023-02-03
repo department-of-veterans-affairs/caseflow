@@ -70,7 +70,7 @@ const CavcDashboardDetails = (props) => {
   };
 
   // determines button visibility while maintaining spacing, disables button while hidden
-  const userCanEdit = userOrgs.filter((org) => org.name === 'CAVC Litigation Support').length > 0;
+  const userCanEdit = userOrgs.filter((org) => org.name === 'Office of Assessment and Improvement').length > 0;
 
   // position/top bypasses the fixed margin on the TabWindow component
   const buttonStyling = css({

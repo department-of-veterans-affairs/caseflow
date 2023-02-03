@@ -25,7 +25,7 @@ describe('CavcDashboardDetails', () => {
   // provide two orgs to ensure filter works when given multiple orgs on userCanEdit
   const validUserOrgs = [
     { name: 'Case Review' },
-    { name: 'CAVC Litigation Support' }
+    { name: 'Office of Assessment and Improvement' }
   ];
   const invalidUserOrgs = [
     { name: 'Case Review' }
