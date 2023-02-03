@@ -1,7 +1,7 @@
 #frozen_string_literal: true
 
 class SendMembershipMailerJob < CaseflowJob
-  queue_with_priority :high_priority
+  queue_with_priority :low_priority
 
   def initialize(email_type, recipient_info)
     @email_type = email_type
