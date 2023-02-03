@@ -47,7 +47,7 @@ CavcDashboardDetailsSection.propTypes = {
 };
 
 const CavcDashboardDetails = (props) => {
-  const { remand } = props;
+  const { remand, userOrgs } = props;
 
   // remove eslint disable when the set methods are used for editing
   /* eslint-disable no-unused-vars */
@@ -70,7 +70,7 @@ const CavcDashboardDetails = (props) => {
   };
 
   // determines button visibility while maintaining spacing, disables button while hidden
-  const userCanEdit = true;
+  const userCanEdit = userOrgs.filter((org) => org.name === 'CAVC Litigation Support').length > 0;
 
   // position/top bypasses the fixed margin on the TabWindow component
   const buttonStyling = css({
@@ -105,7 +105,8 @@ const CavcDashboardDetails = (props) => {
 
 CavcDashboardDetails.propTypes = {
   remandId: PropTypes.number,
-  remand: PropTypes.object
+  remand: PropTypes.object,
+  userOrgs: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default CavcDashboardDetails;

@@ -14,12 +14,14 @@ export const CavcDashboardTab = (props) => {
 
 CavcDashboardTab.propTypes = {
   remandId: PropTypes.number,
-  remand: PropTypes.object
+  remand: PropTypes.object,
+  userOrgs: PropTypes.arrayOf(PropTypes.object)
 };
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    remand: getCavcRemandById(state, { remandId: ownProps.remandId })
+    remand: getCavcRemandById(state, { remandId: ownProps.remandId }),
+    userOrgs: state.ui.organizations
   };
 };
 
