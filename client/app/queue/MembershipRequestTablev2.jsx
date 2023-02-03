@@ -14,77 +14,22 @@ const expandedNote = css({
   '> td': { borderTop: 'none' },
 });
 
-const MembershipRequestColumnDefinitions = (row) => {
-  const [expanded, setExpanded] = useState(false);
-
-  // TODO: Build this out for each request since the target will be based on the id for the MembershipRequest
-  // At least, I think that's how it might work later.
-  const dropdownOptions = [
-    {
-      title: 'Approve',
-      target: '/approve' },
-    {
-      title: 'Deny',
-      target: '/deny' }
-  ];
-
-  // TODO: Ask if this is supposed to be ordered by created at? I assume it is, but make sure and then order it.
-  const normalColumnsDefinitions = [
-    {
-      header: 'User name',
-      valueFunction: (request) => request.name
-    },
-    {
-      header: 'Date requested',
-      valueFunction: (request) => moment(request.requestedDate).format('MM/DD/YYYY')
-    },
-    {
-      header: 'Actions',
-      valueFunction: () => {
-        return <DropdownButton
-          lists={dropdownOptions}
-          // onClick={this.handleMenuClick}
-          label="Select action"
-        />;
-      }
-    },
-    {
-      header: '',
-      valueFunction: (request) => {
-        if (request.note) {
-          return <button onClick={() => setExpanded(!expanded)}>Click me!</button>;
-        }
-
-        return '';
-
-      },
-    },
-  ];
-
-  const noteColumnDefinition = [
-    {
-      header: '',
-      valueFunction: (request) => {
-        return <>
-          <strong>REQUEST NOTE:</strong>
-          <p>{request.note}</p>
-        </>;
-      },
-      span: constant(4),
-    },
-  ];
-
-  if (row && row.hasNote) {
-    return noteColumnDefinition;
-  }
-
-  return normalColumnsDefinitions;
-};
-
 const MembershipRequestTableV2 = (props) => {
 
   const { requests } = props;
 
+  // What if I created an object hash that stores the expanded state based on the request id?
+  const [expanded, setExpanded] = useState({});
+
+  console.log(expanded);
+
+  const toggleExpanded = (id) => {
+    setExpanded({
+      ...expanded,
+      [id]: !expanded[id],
+    });
+  };
+
   // TODO: Build this out for each request since the target will be based on the id for the MembershipRequest
   // At least, I think that's how it might work later.
   const dropdownOptions = [
@@ -93,7 +38,7 @@ const MembershipRequestTableV2 = (props) => {
       target: '/approve' },
     {
       title: 'Deny',
-      target: '/deny' }
+      target: '/deny' },
   ];
 
   // TODO: Ask if this is supposed to be ordered by created at? I assume it is, but make sure and then order it.
@@ -120,7 +65,7 @@ const MembershipRequestTableV2 = (props) => {
       header: '',
       valueFunction: (request) => {
         if (request.note) {
-          return <button>Click me!</button>;
+          return <button onClick={() => toggleExpanded(request.id)}>{expanded[request.id].toString()}</button>;
         }
 
         return '';
@@ -144,11 +89,11 @@ const MembershipRequestTableV2 = (props) => {
 
   // This is going to take the requests and add an additional row if the request has a note
   // Got to do some hacking in the column definitions to make this work now.
-  const rowObjects = () => {
+  const getRowObjects = (rows) => {
 
-    const updatedRequests = requests.reduce((acc, request) => {
+    const updatedRequests = rows.reduce((acc, request) => {
       acc.push(request);
-      if (request.note) {
+      if (request.note && expanded[request.id]) {
         acc.push({ ...request, hasNote: true });
       }
 
@@ -160,7 +105,7 @@ const MembershipRequestTableV2 = (props) => {
 
   // Have to do some serious crap here to make this work with the duplicated row objects
   const columnDefinitions = (row) => {
-    console.log(row);
+    // console.log(row);
 
     if (row && row.hasNote) {
       return noteColumnDefinition;
@@ -173,8 +118,7 @@ const MembershipRequestTableV2 = (props) => {
     <h2>Attemped reuse of Table component</h2>
     <Table
       columns={columnDefinitions}
-      // rowObjects={rowObjects(requests)}
-      rowObjects={MembershipRequestColumnDefinitions(requests)}
+      rowObjects={getRowObjects(requests)}
     />
   </>;
 };
