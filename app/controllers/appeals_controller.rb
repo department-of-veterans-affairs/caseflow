@@ -153,7 +153,7 @@ class AppealsController < ApplicationController
     existing_contested_claim = appeal.contested_claim?
     if request_issues_update.perform!
       # if the appeal wasn't contested and now is after adding issue, create initial notif. letter task
-      if !existing_contested_claim && appeal.contested_claim?
+      if !existing_contested_claim && appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
         send_initial_notification_letter
       end
 
