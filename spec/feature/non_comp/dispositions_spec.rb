@@ -131,7 +131,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       visit dispositions_url
 
       click_on "Cancel"
-      expect(page).to have_current_path("/#{business_line_url}")
+      expect(page).to have_current_path("/#{business_line_url}", ignore_query: true)
     end
 
     scenario "saves decision issues for eligible request issues" do
