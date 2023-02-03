@@ -764,6 +764,56 @@ describe User, :all_dbs do
     end
   end
 
+  describe ".membership_requests" do
+    let(:user) { create(:user) }
+
+    subject { user.membership_requests }
+
+    it "should return an empty list" do
+      expect(subject).to eq([])
+    end
+
+    context "When the user has membership requests" do
+      let(:membership_requests) { create_list(:membership_request, 5) }
+
+      before do
+        membership_requests.each do |request|
+          request.requestor = user
+          request.save
+        end
+      end
+
+      it "should include those membership requests" do
+        expect(subject).to include(*membership_requests)
+      end
+    end
+  end
+
+  describe ".decided_membership_requests" do
+    let(:user) { create(:user) }
+
+    subject { user.decided_membership_requests }
+
+    it "should return an empty list" do
+      expect(subject).to eq([])
+    end
+
+    context "When the user has membership requests" do
+      let(:membership_requests) { create_list(:membership_request, 5) }
+
+      before do
+        membership_requests.each do |request|
+          request.decider = user
+          request.save
+        end
+      end
+
+      it "should include those membership requests" do
+        expect(subject).to include(*membership_requests)
+      end
+    end
+  end
+
   describe "can_edit_unrecognized_poa?" do
     let(:user) { create(:user) }
     subject { user.can_edit_unrecognized_poa? }
