@@ -11,6 +11,9 @@ class CavcRemand < CaseflowRecord
   belongs_to :source_appeal, class_name: "Appeal"
   belongs_to :remand_appeal, class_name: "Appeal"
 
+  has_many :cavc_dashboard_dispositions
+  has_many :cavc_dashboard_issues
+
   validates :created_by, :source_appeal, :cavc_docket_number, :cavc_judge_full_name, :cavc_decision_type,
             :decision_date, :decision_issue_ids, :instructions, presence: true
   validates :represented_by_attorney, inclusion: { in: [true, false] }
