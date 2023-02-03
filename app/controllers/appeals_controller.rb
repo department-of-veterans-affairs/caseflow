@@ -150,7 +150,13 @@ class AppealsController < ApplicationController
   end
 
   def update
+    existing_contested_claim = appeal.contested_claim?
     if request_issues_update.perform!
+      # if the appeal wasn't contested and now is after adding issue, create initial notif. letter task
+      if !existing_contested_claim && appeal.contested_claim?
+        send_initial_notification_letter
+      end
+
       set_flash_success_message
 
       render json: {
@@ -269,6 +275,24 @@ class AppealsController < ApplicationController
       poa.save_with_updated_bgs_record!
       ["POA Updated Successfully", "success", "updated"]
     end
+  end
+
+  def send_initial_notification_letter
+    # depending on the docket type, create cooresponding task as parent task
+    case appeal.docket_type
+    when "evidence_submission"
+      parent_task = @appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
+    when "hearing"
+      parent_task = @appeal.tasks.find_by(type: "ScheduleHearingTask")
+    when "direct_review"
+      parent_task = @appeal.tasks.find_by(type: "DistributionTask")
+    end
+    @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
+                                          SendInitialNotificationLetterTask.create!(
+                                            appeal: @appeal,
+                                            parent: parent_task,
+                                            assigned_to: Organization.find_by_url("clerk-of-the-board")
+                                          )
   end
 
   def power_of_attorney_data
