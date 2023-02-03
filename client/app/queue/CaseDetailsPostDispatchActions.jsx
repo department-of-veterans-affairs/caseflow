@@ -37,8 +37,6 @@ export const CaseDetailsPostDispatchActions = (props) => {
     includeCavcRemand,
     includeSubstitute,
     showCavcDashboardButton,
-    // currentUserIsOAI,
-    // currentUserIsOCC
   } = props;
   const { push } = useHistory();
 
@@ -79,8 +77,6 @@ CaseDetailsPostDispatchActions.propTypes = {
   includeCavcRemand: PropTypes.bool,
   includeSubstitute: PropTypes.bool,
   showCavcDashboardButton: PropTypes.bool,
-  // currentUserIsOAI: PropTypes.bool,
-  // currentUserIsOCC: PropTypes.bool,
 };
 
 export default CaseDetailsPostDispatchActions;
