@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import Checkbox from 'app/components/Checkbox';
 import CheckboxGroup from 'app/components/CheckboxGroup';
 import Button from 'app/components/Button';
@@ -8,9 +9,14 @@ import { find } from 'lodash';
 import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_NOTICE_TEXT, VHA_RADIO_DISABLED_INFO_TEXT } from '../constants';
 import { bool } from 'prop-types';
 
+// TODO: Make this MembershipRequestForm generic instead of VHA only?
 const VhaMembershipRequestForm = (props) => {
 
+  // TODO: preparse VHA_PROGRAM_OFFICE_OPTIONS
+  // Add disabled to the objects based on the organizations and membership requests
+
   // TODO: Figure out if Memo matters here or not
+  // I dont think it does since useState won't be initialized more than once.
   const parsedIssues = useMemo(() => {
     VHA_PROGRAM_OFFICE_OPTIONS.reduce((acc, obj) => {
       acc[obj.id] = false;
@@ -30,8 +36,43 @@ const VhaMembershipRequestForm = (props) => {
 
   // TODO: useMemo/useEffect hooks based on redux and state
 
-  // TODO: decide if this correct based on the redux selector for feature toggles.
-  const programOfficeFeatureToggle = () => true;
+  // TODO: Might move these into a selectors file
+  // Redux Selector for the program_office_team_management feature toggle
+  const programOfficeTeamManagementFeatureToggle = useSelector(
+    (state) => state.help.featureToggles.programOfficeTeamManagement
+  );
+
+  const userOrganizations = useSelector(
+    (state) => state.help.userOrganizations
+  );
+
+  const organizationMembershipRequests = useSelector(
+    (state) => state.help.organizationMembershipRequests
+  );
+
+  const memberOrOpenRequestToVha = useMemo(() => {
+    Boolean(find(userOrganizations, { name: 'Veterans Health Administration' }));
+  }, [userOrganizations]);
+
+  // TODO: This needs to correspond to the state of the checkboxes in some way
+  // Parse the options themselves and make a new options
+  // Based on the redux values for organizations and membership requests
+  // With the objects having the disabled: true if they exist in those redux stores
+  // Not sure how to match them up yet. Maybe id
+  const memberOfProgramOffices = false;
+
+  // TODO: Need to get the ProgramOffices for Vha from the backend instead of hard coding it here.
+  // Not sure what the best way to group these is. Maybe based on database id? Idk
+  const vhaCamoName = 'VHA CAMO';
+  const vhaCaregiverName = 'VHA Caregiver Support Program';
+
+  const programOfficeNames = ['Community Care - Payment Operations Management',
+    'Community Care - Veteran and Family Members Program',
+    'Member Services - Health Eligibility Center',
+    'Member Services - Beneficiary Travel',
+    'Prosthetics'];
+
+  const allOfficeNames = [vhaCamoName, vhaCaregiverName] + programOfficeNames;
 
   const GeneralVHAAccess = ({ vhaMember }) => {
     return <>
@@ -53,7 +94,7 @@ const VhaMembershipRequestForm = (props) => {
   const SpecializedAccess = () => {
     return (
       <>
-        { programOfficeFeatureToggle() && <>
+        { programOfficeTeamManagementFeatureToggle && <>
           <legend><strong>Specialized Access</strong></legend>
           <CheckboxGroup
             name="programOfficesAccess"
@@ -68,7 +109,7 @@ const VhaMembershipRequestForm = (props) => {
     );
   };
 
-  // TODO: add a onsubmit to this button and potentially one to the form
+  // TODO: add a onsubmit to this button and potentially one to the form?
   const SubmitButton = ({ ...btnProps }) => {
     return (
       <Button name="submit-request" {...btnProps}>
@@ -77,29 +118,30 @@ const VhaMembershipRequestForm = (props) => {
     );
   };
 
-  // TODO: derive this logic based on radio field options
-  // If VHA is selected allow it through
-  // If VHA was already selected then require one additional checkbox? based on redux store org/requests
-  // If the user is already a member of vha check the box and disable the button
-
-  // TODO: make this update based on redux or on the clicked boxes assuming redux populates those
-  // Memo this or figure it out in ruby and give it to redux instead of figuring it out in javascript
-  const memberOrOpenRequestToVha = true;
-
+  // TODO: Need to change this based on the feature toggle
+  // Maybe not though. It might be fine since they won't be visable and will be set to false anyhow?
   const anyProgramOfficeSelected = useMemo(() => (
     find(programOfficesAccess, (value) => value === true)),
   [programOfficesAccess]);
 
-  // TODO: Could also use redux actions to set the membership requests depending on the checkbox clicks
-  const submitDisabled = (!vhaAccess && !memberOrOpenRequestToVha) ||
-   (!anyProgramOfficeSelected);
+  const vhaSelectedOrExistingMember = Boolean(memberOrOpenRequestToVha || vhaAccess);
 
-  const automaticVhaAccessNotice = anyProgramOfficeSelected && (!vhaAccess && !memberOrOpenRequestToVha);
+  const submitDisabled = Boolean(memberOrOpenRequestToVha ?
+    (!anyProgramOfficeSelected) :
+    (!vhaAccess && !anyProgramOfficeSelected));
+
+  const automaticVhaAccessNotice = anyProgramOfficeSelected && vhaSelectedOrExistingMember;
+
   // console.log(programOfficesAccess);
-  // console.log(vhaAccess);
+  console.log(`VhaAccess aka checkbox is checked: ${vhaAccess}`);
+  console.log(`anyProgramOfficeSelected: ${Boolean(anyProgramOfficeSelected)}`);
   // console.log(requestReason);
-  // console.log(memberOrRequestToVha);
+  console.log(`Member or open request to Vha: ${Boolean(memberOrOpenRequestToVha)}`);
+  console.log(`Submit disabled: ${submitDisabled}`);
+  console.log(`vhaSelectedOrExistingMember: ${vhaSelectedOrExistingMember}`);
 
+  // TODO: Maybe move these strings to the constants file
+  // TODO: Fix the page moving for the paragraph notice if I can. It's a bit jarring.
   return (
     <>
       <h1> 1. How do I access the VHA team?</h1>
@@ -116,7 +158,7 @@ const VhaMembershipRequestForm = (props) => {
       <form>
         <GeneralVHAAccess vhaMember={memberOrOpenRequestToVha} />
         <SpecializedAccess />
-        {automaticVhaAccessNotice && <p> {VHA_NOTICE_TEXT} </p>}
+        <p style={{ display: automaticVhaAccessNotice ? 'block' : 'none' }}> {VHA_NOTICE_TEXT} </p>
         <TextareaField
           label="Reason for access"
           name="membership-request-instructions-textBox"
