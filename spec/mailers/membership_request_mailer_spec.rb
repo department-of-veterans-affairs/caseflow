@@ -27,7 +27,7 @@ describe MembershipRequestMailer do
     end
 
     describe "updated_membership_request_status" do
-      subject { MembershipRequestailer.updated_membership_request_status(email_recipient_info: email_recipient_info) }
+      subject { MembershipRequestMailer.updated_membership_request_status(email_recipient_info: email_recipient_info) }
       it "has the correct From address" do
         expect(subject.from).to include('BoardofVeteransAppealsHearings@messages.va.gov')
       end
@@ -43,7 +43,7 @@ describe MembershipRequestMailer do
     end
 
     describe "membership_request_submission" do
-      subject { MembershipRequestMailer.request_submission(email_recipient_info: email_recipient_info) }
+      subject { MembershipRequestMailer.membership_request_submission(email_recipient_info: email_recipient_info) }
 
       it "has the correct From email address" do
         expect(subject.from).to include("BoardofVeteransAppealsHearings@messages.va.gov")
