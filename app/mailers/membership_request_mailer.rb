@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 ##
-# MembershipMailer will:
+# MembershipRequestMailer will:
 # - Handle the selection of email templates
 # - Creation of job(s) to handle respective email notification scenarios including:
 # - Notify requestor upon successful membership request submission
 # - Notify requestor upon change of status of membership request
 # - Notify admins upon successful membership request submission
 
-class MembershipMailer < ActionMailer::Base
+class MembershipRequestMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   layout "dispatch_mailer"
 

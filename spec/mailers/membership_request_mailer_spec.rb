@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe MembershipMailer do
+describe MembershipRequestMailer do
   let(:email_recipient_info) { create(:user) }
   let(:email) {"bob.schmidt@va.gov"}
   let(:name) {'Bob'}
@@ -9,7 +9,7 @@ describe MembershipMailer do
   context "with recipient_info" do
 
     describe "membership_request_submitted" do
-      subject { MembershipMailer.membership_request_submitted(email_recipient_info: email_recipient_info) }
+      subject { MembershipRequestMailer.membership_request_submitted(email_recipient_info: email_recipient_info) }
 
       it "has the correct From email address" do
         expect(subject.from).to include("BoardofVeteransAppealsHearings@messages.va.gov")
@@ -27,7 +27,7 @@ describe MembershipMailer do
     end
 
     describe "updated_membership_request_status" do
-      subject { MembershipMailer.updated_membership_request_status(email_recipient_info: email_recipient_info) }
+      subject { MembershipRequestailer.updated_membership_request_status(email_recipient_info: email_recipient_info) }
       it "has the correct From address" do
         expect(subject.from).to include('BoardofVeteransAppealsHearings@messages.va.gov')
       end
@@ -43,7 +43,7 @@ describe MembershipMailer do
     end
 
     describe "membership_request_submission" do
-      subject { MembershipMailer.membership_request_submission(email_recipient_info: email_recipient_info) }
+      subject { MembershipRequestMailer.request_submission(email_recipient_info: email_recipient_info) }
 
       it "has the correct From email address" do
         expect(subject.from).to include("BoardofVeteransAppealsHearings@messages.va.gov")
