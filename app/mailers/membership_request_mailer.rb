@@ -13,23 +13,20 @@ class MembershipRequestMailer < ActionMailer::Base
   layout "dispatch_mailer"
 
   # Send requestor a confirmation email that membership request was recieved.
-  def membership_request_submitted(email_recipient_info:, custom_subject: nil)
-
+  def membership_request_submitted(email_recipient_info:, custom_subject: "Membership request submitted ")
     @recipient_info = email_recipient_info
-    custom_subject = "Membership request submitted."
-
-    mail(to: @recipient_info[:email], subject: custom_subject)
+    mail(to: email_recipient_info[:email], subject: custom_subject)
   end
 
   # Send requestor an email with updated status of membership request.
   def updated_membership_request_status(email_recipient_info:, custom_subject: nil)
     @recipient_info = email_recipient_info
-    mail(to: @recipient_info[:email], subject: custom_subject)
+    mail(to: email_recipient_info[:email], subject: custom_subject)
   end
 
   # Send admins an email when a membership request is successfully submitted
   def membership_request_submission(email_recipient_info:, custom_subject: nil)
     @recipient_info = email_recipient_info
-    mail(to: @recipient_info[:email], subject: custom_subject)
+    mail(to: email_recipient_info[:email], subject: custom_subject)
   end
 end
