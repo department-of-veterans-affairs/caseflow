@@ -3588,6 +3588,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                         "displayText": "Remand",
                         "value": "remand",
                       },
+                      Object {
+                        "displayText": "Dismissal, other than Death",
+                        "value": "other_dismissal",
+                      },
+                      Object {
+                        "displayText": "Affirmed",
+                        "value": "affirmed",
+                      },
+                      Object {
+                        "displayText": "Settlement",
+                        "value": "settlement",
+                      },
                     ]
                   }
                   required={false}
@@ -3637,6 +3649,66 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           Remand
                         </label>
                       </div>
+                      <div
+                        className="cf-form-radio-option"
+                        key="type-options-other_dismissal-1"
+                      >
+                        <input
+                          checked={false}
+                          disabled={false}
+                          id="type-options_other_dismissal"
+                          name="type-options"
+                          onChange={[Function]}
+                          type="radio"
+                          value="other_dismissal"
+                        />
+                        <label
+                          className=""
+                          htmlFor="type-options_other_dismissal"
+                        >
+                          Dismissal, other than Death
+                        </label>
+                      </div>
+                      <div
+                        className="cf-form-radio-option"
+                        key="type-options-affirmed-2"
+                      >
+                        <input
+                          checked={false}
+                          disabled={false}
+                          id="type-options_affirmed"
+                          name="type-options"
+                          onChange={[Function]}
+                          type="radio"
+                          value="affirmed"
+                        />
+                        <label
+                          className=""
+                          htmlFor="type-options_affirmed"
+                        >
+                          Affirmed
+                        </label>
+                      </div>
+                      <div
+                        className="cf-form-radio-option"
+                        key="type-options-settlement-3"
+                      >
+                        <input
+                          checked={false}
+                          disabled={false}
+                          id="type-options_settlement"
+                          name="type-options"
+                          onChange={[Function]}
+                          type="radio"
+                          value="settlement"
+                        />
+                        <label
+                          className=""
+                          htmlFor="type-options_settlement"
+                        >
+                          Settlement
+                        </label>
+                      </div>
                     </div>
                   </fieldset>
                 </RadioField>
@@ -3653,7 +3725,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     Array [
                       Object {
                         "displayText": "Joint Motion for Remand (JMR) / Joint Motion for Partial Remand (JMPR)",
-                        "value": "jmr",
+                        "value": "jmr_jmpr",
                       },
                     ]
                   }
@@ -3664,7 +3736,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       "data-css-1m3edv2": "",
                     }
                   }
-                  value="jmr"
+                  value="jmr_jmpr"
                   vertical={true}
                 >
                   <fieldset
@@ -3686,20 +3758,20 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     >
                       <div
                         className="cf-form-radio-option"
-                        key="sub-type-options-jmr-0"
+                        key="sub-type-options-jmr_jmpr-0"
                       >
                         <input
                           checked={true}
                           disabled={false}
-                          id="sub-type-options_jmr"
+                          id="sub-type-options_jmr_jmpr"
                           name="sub-type-options"
                           onChange={[Function]}
                           type="radio"
-                          value="jmr"
+                          value="jmr_jmpr"
                         />
                         <label
                           className=""
-                          htmlFor="sub-type-options_jmr"
+                          htmlFor="sub-type-options_jmr_jmpr"
                         >
                           Joint Motion for Remand (JMR) / Joint Motion for Partial Remand (JMPR)
                         </label>
