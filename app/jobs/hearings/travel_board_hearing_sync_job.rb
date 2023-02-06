@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # rubocop:disable Layout/LineLength
-# rubocop:disable Metrics/MethodLength
 class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   queue_with_priority :low_priority
 
@@ -56,7 +55,27 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   # Purpose: Fetches a list of all vacols ids from the database
   # Return: The list of vacols ids
   def fetch_all_vacols_ids
-    LegacyAppeal.all.pluck(:vacols_id)
+    LegacyAppeal.pluck(:vacols_id)
+  end
+
+  # Purpose: Gets the list of cases that are not found in Caseflow
+  # Params:
+  #        cases - All cases in VACOLS
+  #        vacols_ids - All the VACOLS IDs from Caseflow
+  #        limit - The amount of ids to query for at a time
+  # Return: The list of cases not found in Caseflow
+  def get_new_cases(cases, vacols_ids, limit = 1000)
+    all_old_cases = []
+    # Querys for cases that are already in Caseflow per the limit at a time and adds that on to the list
+    until vacols_ids.empty?
+      some_cases = cases.where(bfkey: vacols_ids.first(limit))
+      vacols_ids.shift(limit)
+      all_old_cases.concat(some_cases)
+    end
+    # Removes all values matching the list from the cases array and returns what is left
+    case_arr = cases.includes(:correspondent, :folder, :case_issues).to_a
+    all_old_cases.each { |old_case| case_arr.delete(old_case) }
+    case_arr
   end
 
   # Purpose: Fetches all travel board appeals from VACOLS that aren't already in Caseflow
@@ -64,7 +83,7 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   # Params: exclude_ids - A list of vacols ids that already exist in Caseflow
   #         limit - The max number of appeals to process
   # Return: All the newly created legacy appeals
-  def fetch_vacols_travel_board_appeals(exclude_ids, limit)
+  def fetch_vacols_travel_board_appeals(ids, limit)
     cases = VACOLS::Case
       .where(
         # Travel Board Hearing Request
@@ -76,8 +95,7 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
         # Datetime of Decision
         bfddec: nil
       )
-      .where.not(bfkey: exclude_ids)
-      .includes(:correspondent, :folder, :case_issues)
+    legacy_appeals = get_new_cases(cases, ids)
       .first(limit)
       .map do |vacols_case|
         begin
@@ -89,7 +107,7 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
       end
       .compact
     log_info("Fetched #{cases.length} travel board appeals from VACOLS")
-    cases
+    legacy_appeals
   end
 
   # Purpose: Wrapper method to determine batch size of travel board appeals to sync
@@ -104,5 +122,4 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
     end
   end
 end
-# rubocop:enable Metrics/MethodLength
 # rubocop:enable Layout/LineLength
