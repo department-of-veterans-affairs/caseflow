@@ -150,15 +150,16 @@ class AppealsController < ApplicationController
   end
 
   def update
-    # if the SendInitialNotificationLetterTask has been cancelled/completed, create a new one
-    existing_letter_task_completed = appeal.tasks.any? do
-      |task| task.class == SendInitialNotificationLetterTask && task.status != "assigned"
-    end
 
     if request_issues_update.perform!
-      # if cc appeal with SendInitialNotificationLetterTask cancelled/completed, create new one
-      if existing_letter_task_completed && appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
-        send_initial_notification_letter
+      # if cc appeal, create SendInitialNotificationLetterTask
+      if appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
+        # check if an existing letter task is open
+        existing_letter_task_open = appeal.tasks.any? do
+          |task| task.class == SendInitialNotificationLetterTask && task.status == "assigned"
+        end
+        # create SendInitialNotificationLetterTask unless one is open
+        send_initial_notification_letter unless existing_letter_task_open
       end
 
       set_flash_success_message
