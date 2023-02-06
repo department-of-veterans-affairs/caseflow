@@ -2141,7 +2141,7 @@ RSpec.feature "Case details", :all_dbs do
                remand_subtype: nil,
                judgement_date: nil,
                mandate_date: nil)
-      end
+
       let(:cavc_appeal) { cavc_remand.remand_appeal }
       let(:appeal) do
         create(
