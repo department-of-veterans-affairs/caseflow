@@ -332,10 +332,10 @@ ActiveRecord::Schema.define(version: 2023_02_01_172549) do
     t.string "benefit_type"
     t.bigint "cavc_remand_id", comment: "ID of the associated CAVC remand"
     t.datetime "created_at"
-    t.bigint "created_by"
+    t.bigint "created_by_id"
     t.string "issue_category"
     t.datetime "updated_at"
-    t.bigint "updated_by"
+    t.bigint "updated_by_id"
     t.index ["cavc_remand_id"], name: "index_cavc_dashboard_issues_on_cavc_remand_id"
   end
 
