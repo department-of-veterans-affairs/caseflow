@@ -75,9 +75,8 @@ class LegacyHearing < CaseflowRecord
 
   alias_attribute :location, :hearing_location
 
-  blank_attributes = proc(&:blank?)
-  accepts_nested_attributes_for :hearing_location, reject_if: blank_attributes
-  accepts_nested_attributes_for :email_recipients, reject_if: blank_attributes
+  accepts_nested_attributes_for :hearing_location, reject_if: :blank?
+  accepts_nested_attributes_for :email_recipients, reject_if: :blank?
 
   # this is used to cache appeal stream for hearings
   # when fetched intially.

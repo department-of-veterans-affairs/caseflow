@@ -897,8 +897,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
           )
 
           expect(vacate_stream.decision_issues.size).to eq(6)
-          remanded_boolean = proc(&:remanded?)
-          remanded = vacate_stream.decision_issues.select remanded_boolean
+          remanded = vacate_stream.decision_issues.select :remanded?
           remanded1 = remanded.find { |di| di.description.eql? "remanded test" }
           remanded2 = remanded.find { |di| di.description.eql? "remanded test 2" }
 
