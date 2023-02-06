@@ -2137,7 +2137,7 @@ RSpec.feature "Case details", :all_dbs do
 
       let(:appeal) do
         create(
-          :appeal, status, :with_decision_issue,
+          :appeal, status,
           docket_type: docket_type,
           stream_type: case_type,
           disposition: disposition
@@ -2152,6 +2152,7 @@ RSpec.feature "Case details", :all_dbs do
       end
 
       context "the button is shown for cavc lit support" do
+        let(:status) { :post_dispatch }
         it "the 'CAVC Dashboard' button is visible on the page" do
           visit "/queue/appeals/#{appeal.external_id}"
           wait_for_page_render
@@ -2165,7 +2166,6 @@ RSpec.feature "Case details", :all_dbs do
       end
 
       context "the button is not shown for non cavc user" do
-        let(:user) { non_cavc_user }
         let(:status) { :post_dispatch }
         it "the 'CAVC Dashboard' button is not visible on the page" do
           visit "/queue/appeals/#{appeal.external_id}"
