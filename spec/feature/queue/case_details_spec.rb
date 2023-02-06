@@ -2135,12 +2135,21 @@ RSpec.feature "Case details", :all_dbs do
       let(:case_type) { "court_remand" }
       # let(:disposition) { "allowed" }
 
+      let!(:cavc_remand) do
+        create(:cavc_remand,
+               cavc_decision_type: cavc_decision_type,
+               remand_subtype: nil,
+               judgement_date: nil,
+               mandate_date: nil)
+      end
+      let(:cavc_appeal) { cavc_remand.remand_appeal }
       let(:appeal) do
         create(
           :appeal,
           # status,
           docket_type: docket_type,
-          stream_type: case_type
+          stream_type: case_type,
+
           # disposition: disposition
         )
       end
@@ -2150,12 +2159,13 @@ RSpec.feature "Case details", :all_dbs do
       before do
         CavcLitigationSupport.singleton.add_user(user)
         User.authenticate!(user: user)
+        CavcTask.
       end
 
       context "the button is shown for cavc lit support" do
         # let(:status) { :post_dispatch }
         it "the 'CAVC Dashboard' button is visible on the page" do
-          visit "/queue/appeals/#{appeal.external_id}"
+          visit "/queue/appeals/#{cavc_appeal.external_id}"
           wait_for_page_render
           expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
         end
