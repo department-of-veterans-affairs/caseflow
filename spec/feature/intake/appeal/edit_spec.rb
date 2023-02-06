@@ -415,6 +415,9 @@ feature "Appeal Edit issues", :all_dbs do
       expect(
         cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
       ).to eql(ClerkOfTheBoard.singleton)
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_by
+      ).to eql(current_user)
     end
   end
 
@@ -450,41 +453,9 @@ feature "Appeal Edit issues", :all_dbs do
       expect(
         cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
       ).to eql(ClerkOfTheBoard.singleton)
-    end
-  end
-
-  context "A contested claim is added to an hearing appeal" do
-    let!(:cc_appeal) do
-      create(:appeal,
-             veteran_file_number: veteran.file_number,
-             receipt_date: receipt_date,
-             docket_type: Constants.AMA_DOCKETS.hearing,
-             veteran_is_not_claimant: false,
-             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
-    end
-
-    before do
-      User.authenticate!(user: current_user)
-      FeatureToggle.enable!(:cc_appeal_workflow)
-      FeatureToggle.enable!(:indicator_for_contested_claims)
-      FeatureToggle.enable!(:indicator_for_contested_claims)
-      ClerkOfTheBoard.singleton
-    end
-
-    scenario "a cc issue is assigned to a hearing appeal" do
-      visit("/appeals/#{cc_appeal.uuid}/edit")
-      add_contested_claim_issue
-
-      # wait for page to load
-      sleep(4)
-      expect(page).to have_content("You have successfully added 1 issue")
-      expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
       expect(
-        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
-      ).to eql(cc_appeal.tasks.find_by(type: "ScheduleHearingTask"))
-      expect(
-        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
-      ).to eql(ClerkOfTheBoard.singleton)
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_by
+      ).to eql(current_user)
     end
   end
 
@@ -506,7 +477,7 @@ feature "Appeal Edit issues", :all_dbs do
       ClerkOfTheBoard.singleton
     end
 
-    scenario "a cc issue is assigned to a hearing appeal" do
+    scenario "a cc issue is assigned to a direct review appeal" do
       visit("/appeals/#{cc_appeal.uuid}/edit")
       add_contested_claim_issue
 
@@ -520,6 +491,78 @@ feature "Appeal Edit issues", :all_dbs do
       expect(
         cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
       ).to eql(ClerkOfTheBoard.singleton)
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_by
+      ).to eql(current_user)
+    end
+  end
+
+  context "A cc issue is added to a cc appeal with the initial letter task" do
+    let!(:cc_appeal) do
+      create(:appeal,
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             veteran_is_not_claimant: false,
+             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+    end
+
+    let(:initial_letter_task) do
+      SendInitialNotificationLetterTask.create!(
+        appeal: cc_appeal,
+        parent: appeal.tasks.find_by(type: "DistributionTask"),
+        assigned_to: ClerkOfTheBoard.singleton,
+        assigned_by: current_user
+      )
+    end
+
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:cc_appeal_workflow)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      ClerkOfTheBoard.singleton
+    end
+
+    scenario "if the first task is open, a 2nd SendInitialNotificationLetterTask is not created" do
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      # wait for page to load
+      sleep(4)
+      expect(page).to have_content("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 1
+      # expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask")).to be initial_letter_task
+    end
+
+    scenario "if the first task is completed, a new SendInitialNotificationLetterTask is created" do
+      initial_letter_task.completed!
+
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      # wait for page to load
+      sleep(4)
+      expect(page).to have_content("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 2
+      expect(cc_appeal.reload.tasks.where(
+        type: "SendInitialNotificationLetterTask"
+      ).where(status: "assigned").count).to eq 1
+    end
+
+    scenario "if the first task is cancelled, a new SendInitialNotificationLetterTask is created" do
+      initial_letter_task.cancelled!
+
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      # wait for page to load
+      sleep(4)
+      expect(page).to have_content("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 2
+      expect(cc_appeal.reload.tasks.where(
+        type: "SendInitialNotificationLetterTask"
+      ).where(status: "assigned").count).to eq 1
     end
   end
 
