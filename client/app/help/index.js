@@ -36,8 +36,6 @@ const HelpApp = (props) => {
 
   const dispatch = useDispatch();
 
-  console.log(props);
-
   // Initialize the redux store with props from the server
   useEffect(() => {
     dispatch(setUserOrganizations(props.userOrganizations));
