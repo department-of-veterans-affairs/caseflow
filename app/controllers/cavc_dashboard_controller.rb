@@ -36,10 +36,12 @@ class CavcDashboardController < ApplicationController
   end
 
   def verify_access
-    if !current_user.organizations.include?(Organization.find_by_name_or_url("Office of Assessment and Improvement") ||
-       Organization.find_by_name_or_url("Office of Chief Counsel"))
-       session["return_to"] = request.original_url
-       redirect_to "/queue/appeals/#{params[:appeal_id]}" unless Appeal::UUID_REGEX.match?(params[:appeal_id])
-     end
+    if !(OicTeam.singleton.users.include?(user) ||
+      Occ.singleton.users.include?(user))
+      session["return_to"] = request.original_url
+    end
+    else
+    redirect_to "/queue/appeals/#{params[:appeal_id]}" unless Appeal::UUID_REGEX.match?(params[:appeal_id])
+    end
   end
 end
