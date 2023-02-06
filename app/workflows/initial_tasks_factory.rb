@@ -87,7 +87,8 @@ class InitialTasksFactory
                                           SendInitialNotificationLetterTask.create!(
                                             appeal: @appeal,
                                             parent: parent_task,
-                                            assigned_to: Organization.find_by_url("clerk-of-the-board")
+                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                            assigned_by: RequestStore[:current_user]
                                           )
   end
 
