@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import Checkbox from 'app/components/Checkbox';
 import CheckboxGroup from 'app/components/CheckboxGroup';
@@ -7,7 +8,6 @@ import TextareaField from 'app/components/TextareaField';
 import Alert from '../../components/Alert';
 import { find, some } from 'lodash';
 import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_NOTICE_TEXT, VHA_RADIO_DISABLED_INFO_TEXT } from '../constants';
-import { bool } from 'prop-types';
 
 // TODO: Make this MembershipRequestForm generic instead of VHA only?
 const VhaMembershipRequestForm = (props) => {
@@ -50,6 +50,7 @@ const VhaMembershipRequestForm = (props) => {
     (state) => state.help.organizationMembershipRequests
   );
 
+  // TODO: Figure out why this works but memo on program offices doesn't work
   const memberOrOpenRequestToVha = useMemo(() => {
     Boolean(find(userOrganizations, { name: 'Veterans Health Administration' }));
   }, [userOrganizations]);
@@ -103,16 +104,16 @@ const VhaMembershipRequestForm = (props) => {
 
   // TODO: Need to get the ProgramOffices for Vha from the backend instead of hard coding it here.
   // Not sure what the best way to group these is. Maybe based on database id? Idk
-  const vhaCamoName = 'VHA CAMO';
-  const vhaCaregiverName = 'VHA Caregiver Support Program';
+  // const vhaCamoName = 'VHA CAMO';
+  // const vhaCaregiverName = 'VHA Caregiver Support Program';
 
-  const programOfficeNames = ['Community Care - Payment Operations Management',
-    'Community Care - Veteran and Family Members Program',
-    'Member Services - Health Eligibility Center',
-    'Member Services - Beneficiary Travel',
-    'Prosthetics'];
+  // const programOfficeNames = ['Community Care - Payment Operations Management',
+  //   'Community Care - Veteran and Family Members Program',
+  //   'Member Services - Health Eligibility Center',
+  //   'Member Services - Beneficiary Travel',
+  //   'Prosthetics'];
 
-  const allOfficeNames = [vhaCamoName, vhaCaregiverName] + programOfficeNames;
+  // const allOfficeNames = [vhaCamoName, vhaCaregiverName] + programOfficeNames;
 
   const GeneralVHAAccess = ({ vhaMember }) => {
     return <>
@@ -128,10 +129,10 @@ const VhaMembershipRequestForm = (props) => {
   };
 
   GeneralVHAAccess.propTypes = {
-    vhaMember: bool
+    vhaMember: PropTypes.bool
   };
 
-  const SpecializedAccess = () => {
+  const SpecializedAccess = ({ checkboxOptions }) => {
     return (
       <>
         { programOfficeTeamManagementFeatureToggle && <>
@@ -140,7 +141,7 @@ const VhaMembershipRequestForm = (props) => {
             name="programOfficesAccess"
             hideLabel
             // options={VHA_PROGRAM_OFFICE_OPTIONS}
-            options={alteredOptions}
+            options={checkboxOptions}
             onChange={(val) => onVhaProgramOfficeAccessChange(val)}
             values={programOfficesAccess}
           />
@@ -148,6 +149,12 @@ const VhaMembershipRequestForm = (props) => {
         }
       </>
     );
+  };
+
+  SpecializedAccess.propTypes = {
+    checkboxOptions: PropTypes.arrayOf(
+      PropTypes.object
+    ).isRequired
   };
 
   // TODO: add a onsubmit to this button and potentially one to the form?
@@ -198,7 +205,7 @@ const VhaMembershipRequestForm = (props) => {
       }
       <form>
         <GeneralVHAAccess vhaMember={memberOrOpenRequestToVha} />
-        <SpecializedAccess />
+        <SpecializedAccess checkboxOptions={alteredOptions} />
         <p style={{ display: automaticVhaAccessNotice ? 'block' : 'none' }}> {VHA_NOTICE_TEXT} </p>
         <TextareaField
           label="Reason for access"
