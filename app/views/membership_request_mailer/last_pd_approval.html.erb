@@ -1,5 +1,5 @@
-<!-- 12.5.1 -->
-<%= render "header" %>
+<!-- 12.5.2 -->
+<%= render "intro" %>
 
 <%= content_for :content do %>
   <p>
@@ -10,12 +10,8 @@
     "VHA General"
     "Any other groups"
 
-    You still have pending requests for other Pre-docket offices. You'll get a separate decision email from each Pre-docket office listed below.
-    Your pending requests:
-    "First Group"
-    "Any other groups"
+    <%= render "help" %>
   </p>
 <% end %>
 
-<%= render "help" %>
-<%= render "footer" %>
+<%= render "signature" %>

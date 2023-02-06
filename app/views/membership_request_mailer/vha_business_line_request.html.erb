@@ -1,11 +1,12 @@
 <!-- 7.2 -->
-<%= render "header" %>
+<%= render "intro" %>
 
 <%= content_for :content do %>
   <p>
     You have received a new request for access to "VHA Organization". Please log in and navigate to the "VHA organization" team management page in order to review and process this request.
   </p>
+
+  <%= render "help" %>
 <% end %>
 
-<%= render "help" %>
-<%= render "footer" %>
+<%= render "signature" %>

@@ -1,5 +1,5 @@
 <!-- 12.6.3.2.2 -->
-<%= render "header" %>
+<%= render "intro" %>
 
 <%= content_for :content do %>
   <p>
@@ -10,7 +10,8 @@
     You currently have access the following groups' pages in Caseflow, if any:
     "Any other groups"
   </p>
+
+  <%= render "help" %>
 <% end %>
 
-<%= render "help" %>
-<%= render "footer" %>
+<%= render "signature" %>

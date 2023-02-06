@@ -1,5 +1,5 @@
 <!-- 12.6.3.2.1 -->
-<%= render "header" %>
+<%= render "intro" %>
 
 <%= content_for :content do %>
   <p>
@@ -9,7 +9,8 @@
     "VHA"
     "Any other groups"
   </p>
+
+  <%= render "help" %>
 <% end %>
 
-<%= render "help" %>
-<%= render "footer" %>
+<%= render "signature" %>

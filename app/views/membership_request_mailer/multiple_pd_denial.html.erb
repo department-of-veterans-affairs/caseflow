@@ -1,5 +1,5 @@
 <!-- 12.6.3.1 -->
-<%= render "header" %>
+<%= render "intro" %>
 
 <%= content_for :content do %>
   <p>
@@ -15,7 +15,8 @@
     You currently have access to the following groups’ pages, if any:
     "Any other groups"
   </p>
+
+  <%= render "help" %>
 <% end %>
 
-<%= render "help" %>
-<%= render "footer" %>
+<%= render "signature" %>
