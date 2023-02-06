@@ -131,7 +131,7 @@ class SendNotificationJob < CaseflowJob
     end
 
     if @va_notify_sms && sms_template_id != quarterly_sms_template_id ||
-      @va_notify_quarterly_sms && sms_template_id == quarterly_sms_template_id
+       @va_notify_quarterly_sms && sms_template_id == quarterly_sms_template_id
       response = VANotifyService.send_sms_notifications(
         message.participant_id,
         notification_audit_record.id.to_s,
