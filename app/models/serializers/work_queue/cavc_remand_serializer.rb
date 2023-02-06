@@ -28,6 +28,10 @@ class WorkQueue::CavcRemandSerializer
     object.source_appeal&.decision_issues
   end
 
+  attribute :source_request_issues do |object|
+    object.source_appeal&.request_issues
+  end
+
   attribute :created_by do |object|
     object.created_by&.full_name
   end

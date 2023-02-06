@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { CavcDashboardIssuesSection } from './CavcDashboardIssuesSection';
 
 export const CavcDashboardTab = (props) => {
   // remand is the serialized CAVC remand for the tab, see cavc_remand_serializer.rb for attrs
@@ -9,7 +10,7 @@ export const CavcDashboardTab = (props) => {
   return (
     <>
       <div>placeholder for cavc remand details for remand {remand.cavc_docket_number}</div>
-      <div>placeholder for issues section</div>
+      <div><CavcDashboardIssuesSection requestIssues={remand} /></div>
     </>
   );
 };
