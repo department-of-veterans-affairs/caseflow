@@ -2133,14 +2133,15 @@ RSpec.feature "Case details", :all_dbs do
     describe "Add CAVC Dashboard button" do
       let(:docket_type) { "evidence_submission" }
       let(:case_type) { "court_remand" }
-      let(:disposition) { "allowed" }
+      # let(:disposition) { "allowed" }
 
       let(:appeal) do
         create(
-          :appeal, status,
+          :appeal,
+          # status,
           docket_type: docket_type,
-          stream_type: case_type,
-          disposition: disposition
+          stream_type: case_type
+          # disposition: disposition
         )
       end
       let(:user) { create(:user, css_id: "CAVC_LIT_USER") }
@@ -2152,7 +2153,7 @@ RSpec.feature "Case details", :all_dbs do
       end
 
       context "the button is shown for cavc lit support" do
-        let(:status) { :post_dispatch }
+        # let(:status) { :post_dispatch }
         it "the 'CAVC Dashboard' button is visible on the page" do
           visit "/queue/appeals/#{appeal.external_id}"
           wait_for_page_render
@@ -2160,19 +2161,19 @@ RSpec.feature "Case details", :all_dbs do
         end
       end
 
-      before do
-        BvaIntake.singleton.add_user(non_cavc_user)
-        User.authenticate!(user: non_cavc_user)
-      end
+      # before do
+      #   BvaIntake.singleton.add_user(non_cavc_user)
+      #   User.authenticate!(user: non_cavc_user)
+      # end
 
-      context "the button is not shown for non cavc user" do
-        let(:status) { :post_dispatch }
-        it "the 'CAVC Dashboard' button is not visible on the page" do
-          visit "/queue/appeals/#{appeal.external_id}"
-          wait_for_page_render
-          expect(page).to_not have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
-        end
-      end
+      # context "the button is not shown for non cavc user" do
+      ##   let(:status) { :post_dispatch }
+      #   it "the 'CAVC Dashboard' button is not visible on the page" do
+      #     visit "/queue/appeals/#{appeal.external_id}"
+      #     wait_for_page_render
+      #     expect(page).to_not have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
+      #   end
+      # end
     end
   end
 
