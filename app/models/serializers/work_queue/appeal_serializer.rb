@@ -288,6 +288,6 @@ class WorkQueue::AppealSerializer
       Constants.CAVC_DECISION_TYPES.other_dismissal,
       Constants.CAVC_DECISION_TYPES.affirmed,
       Constants.CAVC_DECISION_TYPES.settlement
-    ])
+    ]).length
   end
 end

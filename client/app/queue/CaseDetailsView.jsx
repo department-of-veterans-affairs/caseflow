@@ -147,9 +147,9 @@ export const CaseDetailsView = (props) => {
   );
 
   const appealHasRemandWithDashboard = useSelector((state) =>
-    state.queue.appeals[appealId].cavcRemandsWithDashboard
+    state.queue.appeals[appealId].cavcRemandsWithDashboard > 0
   );
-  const showCavcDashboardButton = (appealHasRemandWithDashboard.length > 0 || checkDecisionTypeOnSubmit) &&
+  const showCavcDashboardButton = (appealHasRemandWithDashboard || checkDecisionTypeOnSubmit) &&
     (currentUserIsOAI || currentUserIsOCC);
 
   const modalIsOpen = window.location.pathname.includes('modal');

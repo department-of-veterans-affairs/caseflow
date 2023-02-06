@@ -366,5 +366,5 @@ export const splitAppeal1 = {
 
 export const appealWithDashboard = {
   ...amaAppeal,
-  cavcRemandsWithDashboard: [1, 2, 3]
+  cavcRemandsWithDashboard: 5
 };
