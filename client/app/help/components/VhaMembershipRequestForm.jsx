@@ -5,7 +5,7 @@ import CheckboxGroup from 'app/components/CheckboxGroup';
 import Button from 'app/components/Button';
 import TextareaField from 'app/components/TextareaField';
 import Alert from '../../components/Alert';
-import { find } from 'lodash';
+import { find, some } from 'lodash';
 import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_NOTICE_TEXT, VHA_RADIO_DISABLED_INFO_TEXT } from '../constants';
 import { bool } from 'prop-types';
 
@@ -59,7 +59,47 @@ const VhaMembershipRequestForm = (props) => {
   // Based on the redux values for organizations and membership requests
   // With the objects having the disabled: true if they exist in those redux stores
   // Not sure how to match them up yet. Maybe id
-  const memberOfProgramOffices = false;
+  let memberOrRequestToProgramOffices = false;
+
+  // const alteredOptions = VHA_PROGRAM_OFFICE_OPTIONS.map((obj) => {
+  //   const found = find(VHA_PROGRAM_OFFICE_OPTIONS, { label: 'VHA CAMO' });
+
+  //   if (found && obj.label === found.label) {
+  //     return { ...obj, disabled: true };
+  //   }
+
+  //   return obj;
+  // });
+
+  // Maybe place name into the options but that's not much different than just hardcoding the id?
+  // Definitely going to need the name I think?
+  // const alteredOptions = useMemo(() => {
+  //   VHA_PROGRAM_OFFICE_OPTIONS.map((obj) => {
+  //     const foundOrganization = some(userOrganizations, (match) => match.name === obj.name);
+
+  //     const foundMembershipRequest = some(organizationMembershipRequests, (match) => match.name === obj.name);
+
+  //     if (foundOrganization || foundMembershipRequest) {
+  //       return { ...obj, disabled: true };
+  //     }
+
+  //     return obj;
+  //   });
+  // }, [userOrganizations, organizationMembershipRequests, VHA_PROGRAM_OFFICE_OPTIONS]);
+
+  const alteredOptions = VHA_PROGRAM_OFFICE_OPTIONS.map((obj) => {
+    const foundOrganization = some(userOrganizations, (match) => match.name === obj.name);
+
+    const foundMembershipRequest = some(organizationMembershipRequests, (match) => match.name === obj.name);
+
+    if (foundOrganization || foundMembershipRequest) {
+      memberOrRequestToProgramOffices = true;
+
+      return { ...obj, disabled: true };
+    }
+
+    return obj;
+  });
 
   // TODO: Need to get the ProgramOffices for Vha from the backend instead of hard coding it here.
   // Not sure what the best way to group these is. Maybe based on database id? Idk
@@ -99,7 +139,8 @@ const VhaMembershipRequestForm = (props) => {
           <CheckboxGroup
             name="programOfficesAccess"
             hideLabel
-            options={VHA_PROGRAM_OFFICE_OPTIONS}
+            // options={VHA_PROGRAM_OFFICE_OPTIONS}
+            options={alteredOptions}
             onChange={(val) => onVhaProgramOfficeAccessChange(val)}
             values={programOfficesAccess}
           />
@@ -130,7 +171,7 @@ const VhaMembershipRequestForm = (props) => {
     (!anyProgramOfficeSelected) :
     (!vhaAccess && !anyProgramOfficeSelected));
 
-  const automaticVhaAccessNotice = anyProgramOfficeSelected && vhaSelectedOrExistingMember;
+  const automaticVhaAccessNotice = anyProgramOfficeSelected && !vhaSelectedOrExistingMember;
 
   // console.log(programOfficesAccess);
   console.log(`VhaAccess aka checkbox is checked: ${vhaAccess}`);
@@ -147,7 +188,7 @@ const VhaMembershipRequestForm = (props) => {
       <h1> 1. How do I access the VHA team?</h1>
       <p> If you need access to a VHA team, please fill out the form below. </p>
       <h2> Select which VHA groups you need access to </h2>
-      {memberOrOpenRequestToVha &&
+      {(memberOrOpenRequestToVha || memberOrRequestToProgramOffices) &&
         <div style={{ marginBottom: '3rem' }}>
           <Alert
             type="info"
