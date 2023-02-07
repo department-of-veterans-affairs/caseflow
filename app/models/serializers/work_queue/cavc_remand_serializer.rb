@@ -3,6 +3,7 @@
 class WorkQueue::CavcRemandSerializer
   include FastJsonapi::ObjectSerializer
 
+  attribute :id
   attribute :cavc_decision_type
   attribute :cavc_docket_number
   attribute :cavc_judge_full_name
@@ -23,6 +24,12 @@ class WorkQueue::CavcRemandSerializer
   end
   attribute :remand_appeal_uuid do |object|
     object.remand_appeal&.uuid
+  end
+  attribute :source_appeal_docket_number do |object|
+    object.source_appeal.stream_docket_number
+  end
+  attribute :source_appeal_decision_date do |object|
+    object.source_appeal.decision_date
   end
 
   attribute :source_decision_issues do |object|
