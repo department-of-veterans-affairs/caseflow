@@ -6,8 +6,8 @@ class CreateCavcDashboardIssues < Caseflow::Migration
       t.string :issue_category
       t.datetime :created_at
       t.datetime :updated_at
-      t.bigint :created_by
-      t.bigint :updated_by
+      t.bigint :created_by_id
+      t.bigint :updated_by_id
     end
   end
 end
