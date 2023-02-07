@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PdfExportService
-  S3_BUCKET_NAME = "appeals-status-migrations"
+  S3_BUCKET_NAME = "appeals-notifications-reports"
   class << self
     # Purpose: Creates pdf from template using pdfkit
     # Finds and renders the template based on template_name
@@ -9,20 +9,8 @@ class PdfExportService
     #
     #
     # Params: template_name (string), object (json)
-    # the object is data that contains
-    # Veteran Name (First and Last)
-    # Veteran file number
-    # Docket Number
-    # Docket Type
-    # Appeal Stream Type
-    # Hearing type
-    # Rows of notifications
-    # Event type
-    # Notification Date
-    # Notification Type
-    # Recipient Information
-    # Status
-    # Notification Content
+    # the object is data that contains the appeal
+    #
     #
     # Returns: s3 file upload location
     def create_and_save_pdf(template_name, object = nil)
@@ -44,7 +32,7 @@ class PdfExportService
       # add CSS styling
       kit.stylesheets << "app/assets/stylesheets/notification_pdf_style.css"
       # create file name and file path
-      file_name = "test.pdf"
+      file_name = "notifications_report.pdf"
       file_path = "#{Rails.root}/#{file_name}"
       kit.to_pdf(file_path)
       # create pdf file from pdfkit object
