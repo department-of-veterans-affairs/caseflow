@@ -1,4 +1,4 @@
-#frozen_string_literal: true
+# frozen_string_literal: true
 
 class SendMembershipRequestMailerJob < CaseflowJob
   queue_with_priority :low_priority
@@ -15,7 +15,7 @@ class SendMembershipRequestMailerJob < CaseflowJob
       MembershipRequestMailer.membership_request_submitted(email_recipient_info: recipient_info)
     when
       "SendAdminsMembershipRequestSubmissionEmail"
-       MembershipRequestMailer.membership_request_submission(email_recipient_info: recipient_info)
+      MembershipRequestMailer.membership_request_submission(email_recipient_info: recipient_info)
     when
       "SendUpdatedMembershipRequestStatusEmail"
       MembershipRequestMailer.updated_membership_request_status(email_recipient_info: recipient_info)
