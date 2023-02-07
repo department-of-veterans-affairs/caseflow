@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import { css } from 'glamor';
 
 import { LABELS } from './cavcDashboardConstants';
-import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import PropTypes from 'prop-types';
 import Dropdown from '../../components/Dropdown';
 
 const singleIssueStyling = css({
-  width: '75%',
   marginBottom: '1.5em !important',
   display: 'flex',
-  justifyContent: 'space-between',
+  justifyContent: 'space-around',
   '@media(max-width: 1200px)': { width: '100%' },
   '@media(max-width: 829px)': {
     flexDirection: 'column'
@@ -23,7 +21,7 @@ const issueContentStyling = css({
 
 const headerStyling = css({
   display: 'flex',
-  justifyContent: 'space-around',
+  justifyContent: 'space-between',
   marginBottom: '0'
 });
 
@@ -36,7 +34,7 @@ export const CavcDashboardIssue = (props) => {
       <div {...singleIssueStyling}>
         <div >
           <div {...issueContentStyling}>
-            <strong> Benefit type: </strong> {BENEFIT_TYPES[issue.benefit_type]}
+            <strong> Benefit type: </strong> {[issue.benefit_type]}
           </div>
           <div {...issueContentStyling}>
             <strong>Issue: </strong> {issue.decision_review_type} - {issue.contested_issue_description}
@@ -61,9 +59,10 @@ export const CavcDashboardIssue = (props) => {
 export const CavcDashboardIssuesSection = (props) => {
   const { requestIssues } = props;
   const Issues = requestIssues.source_request_issues;
+  const Dispositions = requestIssues.cavc_dashboard_dispositions;
 
   return (
-    <div>
+    <div >
       <strong {...headerStyling}>
         <span>{LABELS.CAVC_DASHBOARD_ISSUES}</span>
         <span>{LABELS.CAVC_DASHBOARD_DISPOSITIONS}</span>
@@ -74,7 +73,7 @@ export const CavcDashboardIssuesSection = (props) => {
 
           return (
             <React.Fragment key={i}>
-              <CavcDashboardIssue issue={issue} index={i} dispositions={requestIssues.cavc_dashboard_dispositions} />
+              <CavcDashboardIssue issue={issue} index={i} dispositions={Dispositions} />
             </React.Fragment>
           );
         })}
