@@ -3,50 +3,64 @@
 class PdfExportService
   S3_BUCKET_NAME = "appeals-status-migrations"
 
-  # Purpose: Service that creates pdf file from html template
+  # Purpose: Method to be called with an error need to be logged to the rails logger
   #
-  # Params: template_name (string), object (json)
-  # the object is data that contains
-  # Veteran Name (First and Last)
-  # Veteran file number
-  # Docket Number
-  # Docket Type
-  # Appeal Stream Type
-  # Hearing type
-  # Rows of notifications
-  # Event type
-  # Notification Date
-  # Notification Type
-  # Recipient Information
-  # Status
-  # Notification Content
+  # Params: error_message (Expecting a string) - Message to be logged to the logger
   #
-  # Returns: s2 file upload location
-  def call(template_name, object = nil)
-    upload_pdf_to_s3(template_name, object)
-    S3_BUCKET_NAME
+  # Response: None
+  def log_error(error_message)
+    Rails.logger.error(error_message)
   end
 
-  # Purpose: Creates pdf from template using pdfkit
-  # Finds and renders the template based on template_name
-  # stores created pdf file in s3 bucket
-  #
-  # Params: template_name (string), object (json)
-  #
-  # Returns: nil
-  def create_store_pdf_from_template(template_name, object = nil)
-    # render template
-    template = render_to_string :template => "app/views/templates/" + template_name
-    # create new pdfkit object from template
-    kit = PDFKit.new(template, :page_size => "Letter")
-    # add CSS styling
-    kit.stylesheets << "/app/assets/stylesheets/notification_pdf_style.css"
-    # create file name and file path
-    file_name = "test.pdf"
-    file_path = "#{Rails.root}/#{file_name}"
-    # create pdf file from pdfkit object
-    pdf = kit.to_pdf(file_path)
-    # store file in s3 bucket
-    S3Service.store_file(SchedulePeriod::S3_BUCKET_NAME + "/" + file_name, pdf, :file_path)
+  class << self
+    # Purpose: Creates pdf from template using pdfkit
+    # Finds and renders the template based on template_name
+    # stores created pdf file in s3 bucket
+    #
+    #
+    # Params: template_name (string), object (json)
+    # the object is data that contains
+    # Veteran Name (First and Last)
+    # Veteran file number
+    # Docket Number
+    # Docket Type
+    # Appeal Stream Type
+    # Hearing type
+    # Rows of notifications
+    # Event type
+    # Notification Date
+    # Notification Type
+    # Recipient Information
+    # Status
+    # Notification Content
+    #
+    # Returns: s3 file upload location
+    def create_and_save_pdf(template_name, object = nil)
+      begin
+        # render template
+        ac = ActionController::Base.new
+        template = ac.render_to_string template: "templates/" + template_name, object: object, layout: false
+      # error handling if template doesn't exist
+      rescue ActionView::MissingTemplate => error
+        log_error("PdfExportService::Error - Template does not exist for name "\
+          "#{template_name} - Error message: #{error}")
+      # error handling if template fails to render
+      rescue ActionView::Template::Error => error
+        log_error("PdfExportService::Error - Template failed to render for name "\
+          "#{template_name} - Error message: #{error}")
+      end
+      # create new pdfkit object from template
+      kit = PDFKit.new(template, page_size: "Letter")
+      # add CSS styling
+      kit.stylesheets << "/app/assets/stylesheets/notification_pdf_style.css"
+      # create file name and file path
+      file_name = "test.pdf"
+      # create pdf file from pdfkit object
+      pdf = kit.to_pdf
+      # store file in s3 bucket
+      file_location = S3_BUCKET_NAME + "/" + file_name, pdf
+      S3Service.store_file(file_location)
+      file_location
+    end
   end
 end
