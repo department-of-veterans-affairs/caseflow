@@ -39,7 +39,7 @@ class PdfExportService
       begin
         # render template
         ac = ActionController::Base.new
-        template = ac.render_to_string template: "templates/" + template_name, object: object, layout: false
+        template = ac.render_to_string template: "templates/" + template_name, layout: false, locals: { object: object }
       # error handling if template doesn't exist
       rescue ActionView::MissingTemplate => error
         log_error("PdfExportService::Error - Template does not exist for name "\
@@ -55,12 +55,14 @@ class PdfExportService
       kit.stylesheets << "/app/assets/stylesheets/notification_pdf_style.css"
       # create file name and file path
       file_name = "test.pdf"
+      file_path = "#{Rails.root}/#{file_name}"
+      kit.to_pdf(file_path)
       # create pdf file from pdfkit object
-      pdf = kit.to_pdf
-      # store file in s3 bucket
-      file_location = S3_BUCKET_NAME + "/" + file_name, pdf
-      S3Service.store_file(file_location)
-      file_location
+      # pdf = kit.to_pdf
+      # # store file in s3 bucket
+      # file_location = S3_BUCKET_NAME + "/" + file_name
+      # S3Service.store_file(file_location, pdf)
+      # file_location
     end
   end
 end
