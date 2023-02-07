@@ -3,7 +3,12 @@
 RSpec.describe CavcDashboardController, type: :controller do
   # add organization to this user once they are implemented
   let(:authorized_user) { create(:user) }
-  before { User.authenticate!(user: authorized_user) }
+  let(:occteam_organization) {OccTeam.singleton}
+  let(:oicteam_organization) {OaiTeam.singleton}
+  before { User.authenticate!(user: authorized_user)
+    occteam_organization.add_user(authorized_user)
+    oicteam_organization.add_user(authorized_user)}
+
 
   context "for routes not specific to an appeal" do
     it "#cavc_decision_reasons returns all CavcDecisionReasons" do
