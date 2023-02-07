@@ -5,10 +5,14 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
   let(:non_cavc_appeal) { create(:appeal, :direct_review_docket) }
   let(:cavc_appeal) { create(:appeal, :direct_review_docket, :type_cavc_remand) }
   let(:authorized_user) { create(:user) }
+  let(:occteam_organization) {OccTeam.singleton}
+  let(:oicteam_organization) {OaiTeam.singleton}
 
   context "user is a member of OAI or OCC organizations" do
     before do
       User.authenticate!(user: authorized_user)
+      occteam_organization.add_user(authorized_user)
+      oicteam_organization.add_user(authorized_user)
     end
 
     it "dashboard redirects if the appeal is a Legacy Appeal" do
