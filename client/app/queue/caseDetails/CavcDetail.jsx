@@ -40,10 +40,8 @@ const CavcDetail = (props) => {
     federal_circuit: federalCircuit,
     instructions: instructionText,
     appealId,
-    // replace the cavc lit support line with the occ oai lines
-    currentUserIsOnCavcLitSupport
-    // currentUserIsOAI: currentUserIsOAI,
-    // currentUserIsOCC: currentUserIsOCC
+    currentUserIsOAI,
+    currentUserIsOCC
   } = props;
 
   const details = [];
@@ -132,14 +130,7 @@ const CavcDetail = (props) => {
       </div>
       <div {...gutterStyling}></div>
       <div {...boldText}{...syncStyling}>
-        {
-        /* to be implemented after OCC and OAI orgs are added
         {(currentUserIsOAI || currentUserIsOCC) &&
-          <CavcDashboardButton />
-        } */}
-        {
-          // test code to be removed with OCC OAI updates
-          currentUserIsOnCavcLitSupport &&
           <CavcDashboardButton appealId={appealId} />
         }
       </div>
@@ -159,8 +150,8 @@ CavcDetail.propTypes = {
   federal_circuit: PropTypes.bool,
   instructions: PropTypes.string.isRequired,
   appealId: PropTypes.string,
-  // for testing. remove after implementing occ oai
-  currentUserIsOnCavcLitSupport: PropTypes.bool
+  currentUserIsOAI: PropTypes.bool,
+  currentUserIsOCC: PropTypes.bool
 };
 
 export default CavcDetail;

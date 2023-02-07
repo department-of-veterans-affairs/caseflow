@@ -2146,16 +2146,13 @@ RSpec.feature "Case details", :all_dbs do
       end
       let(:cavc_appeal) { cavc_remand.remand_appeal }
 
-      let(:user) { create(:user, css_id: "CAVC_LIT_USER") } # "user" is a test cavc user to be removed after occ oai orgs
       let(:oai_user) { create(:user, css_id: "OAI_USER") }
       let(:occ_user) { create(:user, css_id: "OCC_USER") }
-      let(:non_cavc_user) { create(:user, css_id: "BVA_INTAKE_USER") }
+      let(:non_occoai_user) { create(:user, css_id: "BVA_INTAKE_USER") }
 
       before do
-        # OccTeam.singleton.add_user(occ_user)
-        # User.authenticate!(user: occ_user)
-        CavcLitigationSupport.singleton.add_user(user)
-        User.authenticate!(user: user)
+        OccTeam.singleton.add_user(occ_user)
+        User.authenticate!(user: occ_user)
       end
 
       context "the button is shown for OCC user" do
@@ -2166,25 +2163,25 @@ RSpec.feature "Case details", :all_dbs do
         end
       end
 
-      # before do
-      #   OaiTeam.singleton.add_user(oai_user)
-      #   User.authenticate!(user: oai_user)
-      # end
-
-      # context "the button is shown for OAI user" do
-      #   it "the 'CAVC Dashboard' button is visible on the page" do
-      #     visit "/queue/appeals/#{cavc_appeal.external_id}"
-      #     wait_for_page_render
-      #     expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
-      #   end
-      # end
-
       before do
-        BvaIntake.singleton.add_user(non_cavc_user)
-        User.authenticate!(user: non_cavc_user)
+        OaiTeam.singleton.add_user(oai_user)
+        User.authenticate!(user: oai_user)
       end
 
-      context "the button is not shown for non cavc user" do
+      context "the button is shown for OAI user" do
+        it "the 'CAVC Dashboard' button is visible on the page" do
+          visit "/queue/appeals/#{cavc_appeal.external_id}"
+          wait_for_page_render
+          expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
+        end
+      end
+
+      before do
+        BvaIntake.singleton.add_user(non_occoai_user)
+        User.authenticate!(user: non_occoai_user)
+      end
+
+      context "the button is not shown for non occ/oai user" do
         it "the 'CAVC Dashboard' button is not visible on the page" do
           visit "/queue/appeals/#{cavc_appeal.external_id}"
           wait_for_page_render
