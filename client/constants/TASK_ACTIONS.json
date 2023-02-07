@@ -478,9 +478,9 @@
     "value": "modal/mark_task_complete",
     "func": "cancel_task_data"
   },
-  "PROCEED_FINAL_NOTIFICATION_LETTER_CC": {
+  "PROCEED_FINAL_NOTIFICATION_LETTER": {
     "label": "Proceed to final notification letter",
-    "value": "modal/final_notification_letter",
-    "func": "cancel_task_data"
+    "value": "modal/proceed_final_notification_letter",
+    "func": "proceed_final_notification_letter_data"
   }
 }

@@ -491,6 +491,10 @@
   "MARK_TASK_COMPLETE_CONFIRMATION": "The task for %s's case has been marked complete",
   "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you have made a mistake, please email %s to manage any changes.",
 
+  "PROCEED_FINAL_NOTIFICATION_LETTER_TITLE": "Proceed to final notification letter",
+  "PROCEED_FINAL_NOTIFICATION_LETTER_COPY": "The \"Post-Send Initial Notification Letter Holding Period\" task will be marked as complete and a new \"Send Final Notification Letter\" task will be created.",
+  "PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON": "Proceed to final letter",
+
   "MODAL_SUBMIT_BUTTON": "Submit",
   "MODAL_CANCEL_BUTTON": "Cancel",
   "MODAL_CLOSE_BUTTON": "Close",
