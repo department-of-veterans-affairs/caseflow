@@ -63,8 +63,20 @@ class NonCompDecisionIssue extends React.PureComponent {
           <div className="desc">{issue.description}</div>
           <div className="date"><strong>Prior decision date:</strong> {issueDate}.</div>
         </div>
-        <div className="usa-width-two-thirds">
-          <div><strong>Decision description</strong> <span className="cf-optional">Optional</span></div>
+        <div className="cf-disposition">
+          <strong>Disposition</strong>
+          <SearchableDropdown
+            readOnly={disabled}
+            name={`disposition-issue-${index}`}
+            label={`disposition-issue-${index}`}
+            hideLabel
+            placeholder="Select or enter..."
+            options={this.dispositionOptions()}
+            value={this.props.decisionDisposition}
+            onChange={this.handleDispositionChange} />
+        </div>
+        <div className="cf-disposition">
+          <div><strong>Decision description</strong><span className="cf-optional">Optional</span></div>
           <TextareaField name={`description-issue-${index}`}
             label={`description-issue-${index}`}
             hideLabel
@@ -72,17 +84,7 @@ class NonCompDecisionIssue extends React.PureComponent {
             disabled={disabled}
             onChange={this.handleDescriptionChange} />
         </div>
-        <div className="usa-width-one-third cf-disposition">
-          <SearchableDropdown
-            readOnly={disabled}
-            name={`disposition-issue-${index}`}
-            label={`disposition-issue-${index}`}
-            hideLabel
-            placeholder="Select Disposition"
-            options={this.dispositionOptions()}
-            value={this.props.decisionDisposition}
-            onChange={this.handleDispositionChange} />
-        </div>
+
       </div>
     </div>;
   }
@@ -92,12 +94,10 @@ class NonCompDispositions extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    let today = formatDateStr(new Date());
-
     this.state = {
       requestIssues: formatRequestIssuesWithDecisionIssues(
         this.props.task.appeal.activeRequestIssues, this.props.appeal.decisionIssues),
-      decisionDate: today,
+      decisionDate: '',
       isFilledOut: false
     };
   }
