@@ -16,18 +16,6 @@ const singleIssueStyling = css({
   }
 });
 
-const IssueDescription = css({
-  width: '100%',
-});
-
-const DispositionDropdown = css({
-  width: '100%',
-});
-
-const issueContentStyling = css({
-  marginBottom: '0.3em'
-});
-
 const headerStyling = css({
   display: 'grid',
   gridTemplateColumns: '60% 40%',
@@ -42,15 +30,15 @@ export const CavcDashboardIssue = (props) => {
   return (
     <li key={index}>
       <div {...singleIssueStyling}>
-        <div {...IssueDescription}>
-          <div {...issueContentStyling}>
+        <div>
+          <div>
             <strong> Benefit type: </strong> {[issue.benefit_type]}
           </div>
-          <div {...issueContentStyling}>
+          <div>
             <strong>Issue: </strong> {issue.decision_review_type} - {issue.contested_issue_description}
           </div>
         </div>
-        <div {...DispositionDropdown}>
+        <div>
           <SearchableDropdown
             name={`issue-dispositions-${index}`}
             label="Dispositions"
