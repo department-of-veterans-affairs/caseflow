@@ -51,11 +51,9 @@ class CavcDashboardController < ApplicationController
   end
 
   def verify_access
-    if !(OaiTeam.singleton.users.include?(current_user) ||
-      OccTeam.singleton.users.include?(current_user))
-      session["return_to"] = request.original_url
-    else
-      redirect_to "/queue/appeals/#{params[:appeal_id]}" unless Appeal::UUID_REGEX.match?(params[:appeal_id])
+    if !(OaiTeam.singleton.users.include?(current_user) || OccTeam.singleton.users.include?(current_user)) ||
+       !Appeal::UUID_REGEX.match?(params[:appeal_id])
+      redirect_to "/queue/appeals/#{params[:appeal_id]}"
     end
   end
 end
