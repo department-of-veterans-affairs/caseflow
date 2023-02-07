@@ -31,7 +31,7 @@ def delete_matched(namespace:)
   redis = Redis.new(url: "redis://localhost:6379/1")
   redis.scan_each(match: "#{namespace}:*") { |key| redis.del(key) }
 end
-=begin
+  =begin
 rescue => exception
 
 end# frozen_string_literal: true

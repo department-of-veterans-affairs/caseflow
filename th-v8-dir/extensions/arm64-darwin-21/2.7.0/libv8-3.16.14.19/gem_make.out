@@ -1,9 +1,0 @@
-current directory: /Users/anushapalliyil/caseflow/th-v8-dir/gems/libv8-3.16.14.19/ext/libv8
-/Users/anushapalliyil/.rvm/rubies/ruby-2.7.3/bin/ruby -I /Users/anushapalliyil/.rvm/rubies/ruby-2.7.3/lib/ruby/2.7.0 -r ./siteconf20220805-35201-16d7mf.rb extconf.rb
-creating Makefile
-/Users/anushapalliyil/caseflow/th-v8-dir/gems/libv8-3.16.14.19/ext/libv8/builder.rb:86:in `setup_python!': libv8 requires python 2 to be installed in order to build, but it is currently not available (RuntimeError)
-	from /Users/anushapalliyil/caseflow/th-v8-dir/gems/libv8-3.16.14.19/ext/libv8/builder.rb:53:in `build_libv8!'
-	from /Users/anushapalliyil/caseflow/th-v8-dir/gems/libv8-3.16.14.19/ext/libv8/location.rb:24:in `install!'
-	from extconf.rb:7:in `<main>'
-
-extconf failed, exit code 1
