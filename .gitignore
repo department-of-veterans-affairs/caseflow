@@ -82,4 +82,3 @@ docs/schema/*
 !.vscode/settings.json
 !.vscode/launch.json
 !.vscode/tasks.json
-db/schema.rb
