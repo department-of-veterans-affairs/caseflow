@@ -10,10 +10,10 @@
 
 class MembershipRequestMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
-  layout "dispatch_mailer"
+  layout "membership_request_mailer"
 
-  # Send requestor a confirmation email that membership request was recieved.
-  def membership_request_submitted(email_recipient_info:, custom_subject: "Membership request submitted ")
+  # Send requestor a confirmation email that membership request was received.
+  def membership_request_submitted(email_recipient_info:, custom_subject: "Membership request submitted.")
     @recipient_info = email_recipient_info
     mail(to: email_recipient_info[:email], subject: custom_subject)
   end
