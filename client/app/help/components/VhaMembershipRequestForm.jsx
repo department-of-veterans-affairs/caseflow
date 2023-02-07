@@ -12,7 +12,7 @@ import { VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE,
   VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE } from '../../../COPY';
 
 // TODO: Make this MembershipRequestForm generic instead of VHA only?
-const VhaMembershipRequestForm = (props) => {
+const VhaMembershipRequestForm = () => {
 
   // Redux selectors
   const programOfficeTeamManagementFeatureToggle = useSelector(
@@ -51,25 +51,8 @@ const VhaMembershipRequestForm = (props) => {
     setProgramOfficesAccess({ ...programOfficesAccess, [evt.target.id]: evt.target.checked });
   };
 
-  // TODO: Figure out why this works but memo on program offices doesn't work
-  const memberOrOpenRequestToVha = useMemo(() => {
-    Boolean(find(userOrganizations, { name: 'Veterans Health Administration' }));
-  }, [userOrganizations]);
-
-  // TODO: Figure out why I can't memo this. Probably related to initialization/first render
-  // const alteredOptions = useMemo(() => {
-  //   VHA_PROGRAM_OFFICE_OPTIONS.map((obj) => {
-  //     const foundOrganization = some(userOrganizations, (match) => match.name === obj.name);
-
-  //     const foundMembershipRequest = some(organizationMembershipRequests, (match) => match.name === obj.name);
-
-  //     if (foundOrganization || foundMembershipRequest) {
-  //       return { ...obj, disabled: true };
-  //     }
-
-  //     return obj;
-  //   });
-  // }, [userOrganizations, organizationMembershipRequests, VHA_PROGRAM_OFFICE_OPTIONS]);
+  const memberOrOpenRequestToVha = Boolean(find(userOrganizations, { name: 'Veterans Health Administration' }) ||
+   find(organizationMembershipRequests, { name: 'Veterans Health Administration' }));
 
   let memberOrRequestToProgramOffices = false;
 
@@ -166,7 +149,7 @@ const VhaMembershipRequestForm = (props) => {
       <form>
         <GeneralVHAAccess vhaMember={memberOrOpenRequestToVha} />
         <SpecializedAccess checkboxOptions={alteredOptions} />
-        <p style={{ display: automaticVhaAccessNotice ? 'block' : 'none' }}> {VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE} </p>
+        { automaticVhaAccessNotice && (<p> {VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE} </p>)}
         <TextareaField
           label="Reason for access"
           name="membership-request-instructions-textBox"

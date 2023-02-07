@@ -85,13 +85,6 @@ exports[`VhaMembershipRequestForm renders the default state with the feature tog
         </label>
       </div>
     </fieldset>
-    <p
-      style="display: none;"
-    >
-       
-      Note: If you are requesting specialized access and are not a member of the general VHA group, you will automatically be given access to the general VHA group if your request is approved.
-       
-    </p>
     <div
       class="cf-form-textarea"
     >
@@ -282,13 +275,6 @@ exports[`VhaMembershipRequestForm renders the default state with the feature tog
         </label>
       </div>
     </fieldset>
-    <p
-      style="display: none;"
-    >
-       
-      Note: If you are requesting specialized access and are not a member of the general VHA group, you will automatically be given access to the general VHA group if your request is approved.
-       
-    </p>
     <div
       class="cf-form-textarea"
     >

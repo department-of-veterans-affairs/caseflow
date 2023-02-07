@@ -29,7 +29,9 @@ RSpec.feature "VhaMembershipRequest" do
   end
 
   let(:prosthetics_membership_request) do
-    request = create(:membership_request, organization: prosthetics_org.reload, requestor: user_with_membership_requests)
+    request = create(:membership_request,
+                     organization: prosthetics_org.reload,
+                     requestor: user_with_membership_requests)
     request.save
     request
   end

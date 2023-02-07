@@ -12,20 +12,17 @@ class HelpController < ApplicationController
   def user_organizations(user = current_user)
     return [] unless user
 
-    user&.selectable_organizations&.map { |org| org.slice(:name, :type, :url) }
+    user.selectable_organizations&.map { |org| org.slice(:name, :type, :url) }
   end
 
   def pending_membership_requests(user = current_user)
     return [] unless user
 
-    user&.membership_requests&.includes(:organization)&.assigned&.map do |membership_request|
-      {
-        name: membership_request.organization.name,
-        url: membership_request.organization.url,
-        orgType: membership_request.organization.type,
-        orgId: membership_request.organization.id
-      }
-    end
+    # Serialize the Membership Requests and extract the attributes
+    MembershipRequestSerializer.new(user.membership_requests.includes(:organization).assigned,
+                                    is_collection: true)
+      .serializable_hash[:data]
+      .map { |hash| hash[:attributes] }
   end
 
   helper_method :feature_toggle_ui_hash, :user_organizations, :pending_membership_requests
