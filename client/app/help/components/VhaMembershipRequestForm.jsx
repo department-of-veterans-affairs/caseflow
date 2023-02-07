@@ -7,14 +7,21 @@ import Button from 'app/components/Button';
 import TextareaField from 'app/components/TextareaField';
 import Alert from '../../components/Alert';
 import { find, some } from 'lodash';
+import { css } from 'glamor';
 import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_CAMO_AND_CAREGIVER_OPTIONS } from '../constants';
 import { VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE,
   VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE } from '../../../COPY';
+
+const checkboxDivStyling = css({
+  '& .cf-form-checkboxes': { marginTop: '10px' },
+  '& .checkbox': { marginTop: '0px' },
+});
 
 // TODO: Make this MembershipRequestForm generic instead of VHA only?
 const VhaMembershipRequestForm = () => {
 
   // Redux selectors
+  // TODO: Might move these to a selectors file?
   const programOfficeTeamManagementFeatureToggle = useSelector(
     (state) => state.help.featureToggles.programOfficeTeamManagement
   );
@@ -71,7 +78,7 @@ const VhaMembershipRequestForm = () => {
   });
 
   const GeneralVHAAccess = ({ vhaMember }) => {
-    return <>
+    return <fieldset>
       <legend><strong>General Access</strong></legend>
       <Checkbox
         name="vhaAccess"
@@ -80,7 +87,7 @@ const VhaMembershipRequestForm = () => {
         onChange={(val) => setVhaAccess(val)}
         value={vhaAccess}
       />
-    </>;
+    </fieldset>;
   };
 
   GeneralVHAAccess.propTypes = {
@@ -89,18 +96,16 @@ const VhaMembershipRequestForm = () => {
 
   const SpecializedAccess = ({ checkboxOptions }) => {
     return (
-      <>
-        <>
-          <legend><strong>Specialized Access</strong></legend>
-          <CheckboxGroup
-            name="programOfficesAccess"
-            hideLabel
-            options={checkboxOptions}
-            onChange={(val) => onVhaProgramOfficeAccessChange(val)}
-            values={programOfficesAccess}
-          />
-        </>
-      </>
+      <fieldset>
+        <legend><strong>Specialized Access</strong></legend>
+        <CheckboxGroup
+          name="programOfficesAccess"
+          hideLabel
+          options={checkboxOptions}
+          onChange={(val) => onVhaProgramOfficeAccessChange(val)}
+          values={programOfficesAccess}
+        />
+      </fieldset>
     );
   };
 
@@ -146,10 +151,12 @@ const VhaMembershipRequestForm = () => {
           />
         </div>
       }
-      <form>
+      <form className={checkboxDivStyling}>
         <GeneralVHAAccess vhaMember={memberOrOpenRequestToVha} />
         <SpecializedAccess checkboxOptions={alteredOptions} />
-        { automaticVhaAccessNotice && (<p> {VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE} </p>)}
+        <div style={{ minHeight: '51px' }}>
+          { automaticVhaAccessNotice && (<p> {VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE} </p>)}
+        </div>
         <TextareaField
           label="Reason for access"
           name="membership-request-instructions-textBox"
