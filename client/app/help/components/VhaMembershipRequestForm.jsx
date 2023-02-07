@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import Checkbox from 'app/components/Checkbox';
@@ -7,37 +7,14 @@ import Button from 'app/components/Button';
 import TextareaField from 'app/components/TextareaField';
 import Alert from '../../components/Alert';
 import { find, some } from 'lodash';
-import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_NOTICE_TEXT, VHA_RADIO_DISABLED_INFO_TEXT } from '../constants';
+import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_CAMO_AND_CAREGIVER_OPTIONS } from '../constants';
+import { VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE,
+  VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE } from '../../../COPY';
 
 // TODO: Make this MembershipRequestForm generic instead of VHA only?
 const VhaMembershipRequestForm = (props) => {
 
-  // TODO: preparse VHA_PROGRAM_OFFICE_OPTIONS
-  // Add disabled to the objects based on the organizations and membership requests
-
-  // TODO: Figure out if Memo matters here or not
-  // I dont think it does since useState won't be initialized more than once.
-  const parsedIssues = useMemo(() => {
-    VHA_PROGRAM_OFFICE_OPTIONS.reduce((acc, obj) => {
-      acc[obj.id] = false;
-
-      return acc;
-    }, {});
-  }, [VHA_PROGRAM_OFFICE_OPTIONS]);
-
-  // TODO: create state variables
-  const [vhaAccess, setVhaAccess] = useState(false);
-  const [programOfficesAccess, setProgramOfficesAccess] = useState(parsedIssues);
-  const [requestReason, setRequestReason] = useState('');
-
-  const onVhaProgramOfficeAccessChange = (evt) => {
-    setProgramOfficesAccess({ ...programOfficesAccess, [evt.target.id]: evt.target.checked });
-  };
-
-  // TODO: useMemo/useEffect hooks based on redux and state
-
-  // TODO: Might move these into a selectors file
-  // Redux Selector for the program_office_team_management feature toggle
+  // Redux selectors
   const programOfficeTeamManagementFeatureToggle = useSelector(
     (state) => state.help.featureToggles.programOfficeTeamManagement
   );
@@ -50,30 +27,36 @@ const VhaMembershipRequestForm = (props) => {
     (state) => state.help.organizationMembershipRequests
   );
 
+  // Decide what special access checkbox options are available based on the feature toggle.
+  // If it is enabled show all program offices, otherwise only show camo and caregiver.
+  const specializedAccessOptions = programOfficeTeamManagementFeatureToggle ?
+    [...VHA_CAMO_AND_CAREGIVER_OPTIONS, ...VHA_PROGRAM_OFFICE_OPTIONS] :
+    VHA_CAMO_AND_CAREGIVER_OPTIONS;
+
+  // TODO: Figure out if Memo matters here or not
+  // I dont think it does since useState won't be initialized more than once.
+  const parsedIssues = useMemo(() => {
+    specializedAccessOptions.reduce((acc, obj) => {
+      acc[obj.id] = false;
+
+      return acc;
+    }, {});
+  }, [specializedAccessOptions]);
+
+  const [vhaAccess, setVhaAccess] = useState(false);
+  const [programOfficesAccess, setProgramOfficesAccess] = useState(parsedIssues);
+  const [requestReason, setRequestReason] = useState('');
+
+  const onVhaProgramOfficeAccessChange = (evt) => {
+    setProgramOfficesAccess({ ...programOfficesAccess, [evt.target.id]: evt.target.checked });
+  };
+
   // TODO: Figure out why this works but memo on program offices doesn't work
   const memberOrOpenRequestToVha = useMemo(() => {
     Boolean(find(userOrganizations, { name: 'Veterans Health Administration' }));
   }, [userOrganizations]);
 
-  // TODO: This needs to correspond to the state of the checkboxes in some way
-  // Parse the options themselves and make a new options
-  // Based on the redux values for organizations and membership requests
-  // With the objects having the disabled: true if they exist in those redux stores
-  // Not sure how to match them up yet. Maybe id
-  let memberOrRequestToProgramOffices = false;
-
-  // const alteredOptions = VHA_PROGRAM_OFFICE_OPTIONS.map((obj) => {
-  //   const found = find(VHA_PROGRAM_OFFICE_OPTIONS, { label: 'VHA CAMO' });
-
-  //   if (found && obj.label === found.label) {
-  //     return { ...obj, disabled: true };
-  //   }
-
-  //   return obj;
-  // });
-
-  // Maybe place name into the options but that's not much different than just hardcoding the id?
-  // Definitely going to need the name I think?
+  // TODO: Figure out why I can't memo this. Probably related to initialization/first render
   // const alteredOptions = useMemo(() => {
   //   VHA_PROGRAM_OFFICE_OPTIONS.map((obj) => {
   //     const foundOrganization = some(userOrganizations, (match) => match.name === obj.name);
@@ -88,7 +71,9 @@ const VhaMembershipRequestForm = (props) => {
   //   });
   // }, [userOrganizations, organizationMembershipRequests, VHA_PROGRAM_OFFICE_OPTIONS]);
 
-  const alteredOptions = VHA_PROGRAM_OFFICE_OPTIONS.map((obj) => {
+  let memberOrRequestToProgramOffices = false;
+
+  const alteredOptions = specializedAccessOptions.map((obj) => {
     const foundOrganization = some(userOrganizations, (match) => match.name === obj.name);
 
     const foundMembershipRequest = some(organizationMembershipRequests, (match) => match.name === obj.name);
@@ -101,19 +86,6 @@ const VhaMembershipRequestForm = (props) => {
 
     return obj;
   });
-
-  // TODO: Need to get the ProgramOffices for Vha from the backend instead of hard coding it here.
-  // Not sure what the best way to group these is. Maybe based on database id? Idk
-  // const vhaCamoName = 'VHA CAMO';
-  // const vhaCaregiverName = 'VHA Caregiver Support Program';
-
-  // const programOfficeNames = ['Community Care - Payment Operations Management',
-  //   'Community Care - Veteran and Family Members Program',
-  //   'Member Services - Health Eligibility Center',
-  //   'Member Services - Beneficiary Travel',
-  //   'Prosthetics'];
-
-  // const allOfficeNames = [vhaCamoName, vhaCaregiverName] + programOfficeNames;
 
   const GeneralVHAAccess = ({ vhaMember }) => {
     return <>
@@ -135,18 +107,16 @@ const VhaMembershipRequestForm = (props) => {
   const SpecializedAccess = ({ checkboxOptions }) => {
     return (
       <>
-        { programOfficeTeamManagementFeatureToggle && <>
+        <>
           <legend><strong>Specialized Access</strong></legend>
           <CheckboxGroup
             name="programOfficesAccess"
             hideLabel
-            // options={VHA_PROGRAM_OFFICE_OPTIONS}
             options={checkboxOptions}
             onChange={(val) => onVhaProgramOfficeAccessChange(val)}
             values={programOfficesAccess}
           />
         </>
-        }
       </>
     );
   };
@@ -166,8 +136,6 @@ const VhaMembershipRequestForm = (props) => {
     );
   };
 
-  // TODO: Need to change this based on the feature toggle
-  // Maybe not though. It might be fine since they won't be visable and will be set to false anyhow?
   const anyProgramOfficeSelected = useMemo(() => (
     find(programOfficesAccess, (value) => value === true)),
   [programOfficesAccess]);
@@ -180,14 +148,6 @@ const VhaMembershipRequestForm = (props) => {
 
   const automaticVhaAccessNotice = anyProgramOfficeSelected && !vhaSelectedOrExistingMember;
 
-  // console.log(programOfficesAccess);
-  console.log(`VhaAccess aka checkbox is checked: ${vhaAccess}`);
-  console.log(`anyProgramOfficeSelected: ${Boolean(anyProgramOfficeSelected)}`);
-  // console.log(requestReason);
-  console.log(`Member or open request to Vha: ${Boolean(memberOrOpenRequestToVha)}`);
-  console.log(`Submit disabled: ${submitDisabled}`);
-  console.log(`vhaSelectedOrExistingMember: ${vhaSelectedOrExistingMember}`);
-
   // TODO: Maybe move these strings to the constants file
   // TODO: Fix the page moving for the paragraph notice if I can. It's a bit jarring.
   return (
@@ -199,14 +159,14 @@ const VhaMembershipRequestForm = (props) => {
         <div style={{ marginBottom: '3rem' }}>
           <Alert
             type="info"
-            message={VHA_RADIO_DISABLED_INFO_TEXT}
+            message={VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE}
           />
         </div>
       }
       <form>
         <GeneralVHAAccess vhaMember={memberOrOpenRequestToVha} />
         <SpecializedAccess checkboxOptions={alteredOptions} />
-        <p style={{ display: automaticVhaAccessNotice ? 'block' : 'none' }}> {VHA_NOTICE_TEXT} </p>
+        <p style={{ display: automaticVhaAccessNotice ? 'block' : 'none' }}> {VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE} </p>
         <TextareaField
           label="Reason for access"
           name="membership-request-instructions-textBox"

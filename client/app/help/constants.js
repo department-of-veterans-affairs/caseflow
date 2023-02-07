@@ -1,15 +1,5 @@
 export const VHA_PROGRAM_OFFICE_OPTIONS = [
   {
-    id: 'vhaCAMO',
-    label: 'VHA CAMO',
-    name: 'VHA CAMO',
-  },
-  {
-    id: 'vhaCaregiverSupportProgram',
-    label: 'VHA Caregiver Support Program',
-    name: 'VHA Caregiver Support Program',
-  },
-  {
     id: 'paymentOperationsManagement',
     label: 'Payment Operations Management',
     name: 'Community Care - Payment Operations Management',
@@ -36,11 +26,18 @@ export const VHA_PROGRAM_OFFICE_OPTIONS = [
   }
 ];
 
-export const VHA_NOTICE_TEXT = `Note: If you are requesting specialized access and are not a member of the
-  general VHA group, you will automatically be given access to the general VHA group if your request is approved.`;
-
-export const VHA_RADIO_DISABLED_INFO_TEXT = `Options are disabled if you have a pending request or are already
-  a member of the group.`;
+export const VHA_CAMO_AND_CAREGIVER_OPTIONS = [
+  {
+    id: 'vhaCAMO',
+    label: 'VHA CAMO',
+    name: 'VHA CAMO',
+  },
+  {
+    id: 'vhaCaregiverSupportProgram',
+    label: 'VHA Caregiver Support Program',
+    name: 'VHA Caregiver Support Program',
+  },
+];
 
 export const VHA_FORM_SUBMIT_SUCCESS_MESSAGE = `Your request to access the VHA group has been submitted.
  Please check your VA email for updates concerning your request.`.trim();

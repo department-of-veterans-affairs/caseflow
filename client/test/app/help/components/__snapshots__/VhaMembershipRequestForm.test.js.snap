@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`VhaMembershipRequestForm renders the default state correctly 1`] = `
+exports[`VhaMembershipRequestForm renders the default state with the feature toggle disabled correctly 1`] = `
 <div>
   <h1>
      1. How do I access the VHA team?
@@ -41,12 +41,252 @@ exports[`VhaMembershipRequestForm renders the default state correctly 1`] = `
         </label>
       </div>
     </div>
+    <legend>
+      <strong>
+        Specialized Access
+      </strong>
+    </legend>
+    <fieldset
+      class="checkbox-wrapper-programOfficesAccess cf-form-checkboxes cf-checkbox-group-inline"
+    >
+      <legend
+        class="hidden-field"
+      >
+        <span>
+          programOfficesAccess
+        </span>
+      </legend>
+      <div
+        class="checkbox"
+      >
+        <input
+          id="vhaCAMO"
+          name="vhaCAMO"
+          type="checkbox"
+        />
+        <label
+          for="vhaCAMO"
+        >
+          VHA CAMO
+        </label>
+      </div>
+      <div
+        class="checkbox"
+      >
+        <input
+          id="vhaCaregiverSupportProgram"
+          name="vhaCaregiverSupportProgram"
+          type="checkbox"
+        />
+        <label
+          for="vhaCaregiverSupportProgram"
+        >
+          VHA Caregiver Support Program
+        </label>
+      </div>
+    </fieldset>
     <p
       style="display: none;"
     >
        
-      Note: If you are requesting specialized access and are not a member of the
-  general VHA group, you will automatically be given access to the general VHA group if your request is approved.
+      Note: If you are requesting specialized access and are not a member of the general VHA group, you will automatically be given access to the general VHA group if your request is approved.
+       
+    </p>
+    <div
+      class="cf-form-textarea"
+    >
+      <label
+        class="question-label"
+        for="membership-request-instructions-textBox"
+      >
+        <span>
+          Reason for access
+          <span
+            class="cf-optional"
+          >
+            Optional
+          </span>
+        </span>
+      </label>
+      <textarea
+        id="membership-request-instructions-textBox"
+        name="membership-request-instructions-textBox"
+      />
+    </div>
+    <span>
+      <button
+        class="cf-submit usa-button-disabled usa-button"
+        disabled=""
+        id="button-submit-request"
+        type="button"
+      >
+        Submit
+      </button>
+    </span>
+  </form>
+</div>
+`;
+
+exports[`VhaMembershipRequestForm renders the default state with the feature toggle enabled correctly 1`] = `
+<div>
+  <h1>
+     1. How do I access the VHA team?
+  </h1>
+  <p>
+     If you need access to a VHA team, please fill out the form below. 
+  </p>
+  <h2>
+     Select which VHA groups you need access to 
+  </h2>
+  <form>
+    <legend>
+      <strong>
+        General Access
+      </strong>
+    </legend>
+    <div
+      class="checkbox-wrapper-vhaAccess cf-form-checkboxes"
+    >
+      <div
+        class="cf-form-checkbox"
+      >
+        <input
+          aria-label="vhaAccess"
+          id="vhaAccess"
+          name="vhaAccess"
+          type="checkbox"
+        />
+        <label
+          for="vhaAccess"
+        >
+          <span
+            class=""
+          >
+            VHA
+          </span>
+           
+        </label>
+      </div>
+    </div>
+    <legend>
+      <strong>
+        Specialized Access
+      </strong>
+    </legend>
+    <fieldset
+      class="checkbox-wrapper-programOfficesAccess cf-form-checkboxes cf-checkbox-group"
+    >
+      <legend
+        class="hidden-field"
+      >
+        <span>
+          programOfficesAccess
+        </span>
+      </legend>
+      <div
+        class="checkbox"
+      >
+        <input
+          id="vhaCAMO"
+          name="vhaCAMO"
+          type="checkbox"
+        />
+        <label
+          for="vhaCAMO"
+        >
+          VHA CAMO
+        </label>
+      </div>
+      <div
+        class="checkbox"
+      >
+        <input
+          id="vhaCaregiverSupportProgram"
+          name="vhaCaregiverSupportProgram"
+          type="checkbox"
+        />
+        <label
+          for="vhaCaregiverSupportProgram"
+        >
+          VHA Caregiver Support Program
+        </label>
+      </div>
+      <div
+        class="checkbox"
+      >
+        <input
+          id="paymentOperationsManagement"
+          name="paymentOperationsManagement"
+          type="checkbox"
+        />
+        <label
+          for="paymentOperationsManagement"
+        >
+          Payment Operations Management
+        </label>
+      </div>
+      <div
+        class="checkbox"
+      >
+        <input
+          id="veteranAndFamilyMembersProgram"
+          name="veteranAndFamilyMembersProgram"
+          type="checkbox"
+        />
+        <label
+          for="veteranAndFamilyMembersProgram"
+        >
+          Veteran and Family Members Program
+        </label>
+      </div>
+      <div
+        class="checkbox"
+      >
+        <input
+          id="memberServicesHealthEligibilityCenter"
+          name="memberServicesHealthEligibilityCenter"
+          type="checkbox"
+        />
+        <label
+          for="memberServicesHealthEligibilityCenter"
+        >
+          Member Services - Health Eligibility Center
+        </label>
+      </div>
+      <div
+        class="checkbox"
+      >
+        <input
+          id="memberServicesBeneficiaryTravel"
+          name="memberServicesBeneficiaryTravel"
+          type="checkbox"
+        />
+        <label
+          for="memberServicesBeneficiaryTravel"
+        >
+          Member Services - Beneficiary Travel
+        </label>
+      </div>
+      <div
+        class="checkbox"
+      >
+        <input
+          id="prosthetics"
+          name="prosthetics"
+          type="checkbox"
+        />
+        <label
+          for="prosthetics"
+        >
+          Prosthetics
+        </label>
+      </div>
+    </fieldset>
+    <p
+      style="display: none;"
+    >
+       
+      Note: If you are requesting specialized access and are not a member of the general VHA group, you will automatically be given access to the general VHA group if your request is approved.
        
     </p>
     <div

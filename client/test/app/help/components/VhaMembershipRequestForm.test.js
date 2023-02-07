@@ -1,66 +1,68 @@
 import React from 'react';
-import { fireEvent, getByLabelText, getByText, render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import VhaMembershipRequestForm from '../../../../app/help/components/VhaMembershipRequestForm';
 import helpReducers, { initialState } from '../../../../app/help/helpApiSlice';
-import { Simulate } from 'react-dom/test-utils';
+import COPY from '../../../../COPY';
 
 describe('VhaMembershipRequestForm', () => {
   beforeEach(() => {
-    // Nothing yet.
+    jest.clearAllMocks();
   });
 
-  const setup = () => {
-    const store = createStore(helpReducers, { ...initialState });
+  const setup = (state = {}) => {
+    const helpState = { ...initialState, ...state };
+    const store = createStore(helpReducers, { help: { ...helpState } });
 
     return render(<Provider store={store}>
       <VhaMembershipRequestForm />
     </Provider>);
   };
 
-  it('renders the default state correctly', () => {
+  it('renders the default state with the feature toggle disabled correctly', () => {
     const { container } = setup();
 
     expect(container).toMatchSnapshot();
   });
 
-  // it('should enable the submit button when a checkbox is selected', async () => {
-  //   const { container } = setup();
+  it('renders the default state with the feature toggle enabled correctly', () => {
+    const { container } = setup({ featureToggles: { programOfficeTeamManagement: true } });
 
-  //   // const vhaCheckbox = screen.getByLabelText('VHA');
-  //   // const vhaCheckbox = container.querySelector('input[name="vhaAccess"]');
-  //   // const checkboxLabel = screen.getByText(/checkbox/i, { selector: 'VHA' });
-  //   const submitButton = screen.getByText('Submit');
-  //   const vhaCheckbox = getByLabelText(container, 'VHA');
+    expect(container).toMatchSnapshot();
+  });
 
-  //   const label = screen.getByLabelText('VHA', { selector: 'input' });
+  it('should enable the submit button when the VHA checkbox is checked', () => {
+    setup();
 
-  //   // const vhaCheckbox = screen.getByRole('checkbox', { name: 'VHA' });
-  //   // const vhaCheckbox = screen.getByRole('checkbox');
+    expect(screen.getByLabelText('VHA')).not.toBeChecked();
+    expect(screen.getByText('Submit').disabled).toBe(true);
 
-  //   expect(submitButton.disabled).toBe(true);
-  //   // vhaCheckbox.checked = true;
-  //   // fireEvent.click(vhaCheckbox);
-  //   // fireEvent.click(label);
-  //   // fireEvent.click(vhaCheckbox);
-  //   fireEvent(vhaCheckbox, new MouseEvent('click', {
-  //     bubbles: true,
-  //     cancelable: true,
-  //   }));
-  //   // await waitFor();
-  //   // userEvent.click(vhaCheckbox);
+    userEvent.click(screen.getByLabelText('VHA'));
 
-  //   // const vhaCheckbox =
-  //   // fireEvent.click(vhaCheckbox);
-  //   // fireEvent(vhaCheckbox, 'onValueChange', { nativeEvent: {} });
+    expect(screen.getByLabelText('VHA')).toBeChecked();
 
-  //   // vhaCheckbox.click;
+    expect(screen.getByText('Submit').disabled).toBe(false);
 
-  //   // expect(vhaCheckbox.checked).toBe(true);
-  //   await waitFor(() => expect(submitButton.disabled).toBe(false));
+  });
 
-  // });
+  it('should enable the submit and display the vha access note when VHA CAMO is checked', () => {
+    setup();
+
+    expect(screen.getByText('Submit').disabled).toBe(true);
+    userEvent.click(screen.getByLabelText('VHA CAMO'));
+    expect(screen.getByText('Submit').disabled).toBe(false);
+    expect(screen.getByText(COPY.VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE)).toBeVisible();
+  });
+
+  it('should enable the submit and display the vha access note when a program office checkbox is checked', () => {
+    setup({ featureToggles: { programOfficeTeamManagement: true } });
+
+    expect(screen.getByText('Submit').disabled).toBe(true);
+    userEvent.click(screen.getByLabelText('Veteran and Family Members Program'));
+    expect(screen.getByText('Submit').disabled).toBe(false);
+    expect(screen.getByText(COPY.VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE)).toBeVisible();
+  });
 
 });

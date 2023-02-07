@@ -71,7 +71,11 @@ RSpec.feature "VhaMembershipRequest" do
         visit "/vha/help"
         # Expect the user to be able to not see any of the program office checkboxes
         checkbox_labels = all(:css, ".checkbox > label").map(&:text)
-        expect(checkbox_labels).to eq([])
+        checkbox_option_labels = [
+          "VHA CAMO",
+          "VHA Caregiver Support Program"
+        ]
+        expect(checkbox_labels).to eq(checkbox_option_labels)
       end
     end
 
