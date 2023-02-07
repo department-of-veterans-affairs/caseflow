@@ -536,6 +536,10 @@
 
   "CANCEL_TASK_CONTACT_LIT_SUPPORT": "the Litigation Support team",
 
+  "CANCEL_INITIAL_NOTIFICATION_LETTER_TASK_DETAIL": "The case will be released from the Clerk of the Board queue for reactivation of any pending mail or hearing tasks and distribution.",
+  "CANCEL_POST_INITIAL_NOTIFICATION_LETTER_TASK_DETAIL": "The 'Send Initial Notification Letter Holding Period' task will be cancelled and this case will be released for distribution.",
+  "CANCEL_FINAL_NOTIFICATION_LETTER_TASK_DETAIL": "The 'Send Final Notification Letter' task will be cancelled and this case will be released for distribution.",
+
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_TITLE": "Assign Regional Office",
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_DETAIL": "Assigning a Regional Office will place this case in the list of Veterans to be scheduled for the RO you choose. You will need to choose a location for the hearing when you schedule the Veteran.",
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE": "Updated Task Successfully",

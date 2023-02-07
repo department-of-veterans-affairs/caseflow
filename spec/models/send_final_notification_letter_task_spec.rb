@@ -8,6 +8,8 @@ describe SendFinalNotificationLetterTask do
   let(:task_class) { SendFinalNotificationLetterTask }
   before do
     cob_team.add_user(user)
+    User.authenticate!(user: user)
+    FeatureToggle.enable!(:cc_appeal_workflow)
   end
 
   describe ".verify_user_can_create" do
@@ -35,7 +37,7 @@ describe SendFinalNotificationLetterTask do
         Constants.TASK_ACTIONS.MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE.to_h,
         Constants.TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER.to_h,
         Constants.TASK_ACTIONS.RESEND_FINAL_NOTIFICATION_LETTER.to_h,
-        Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_TASK.to_h
+        Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_FINAL_LETTER_TASK.to_h
       ]
     end
 
