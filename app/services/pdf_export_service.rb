@@ -2,16 +2,6 @@
 
 class PdfExportService
   S3_BUCKET_NAME = "appeals-status-migrations"
-
-  # Purpose: Method to be called with an error need to be logged to the rails logger
-  #
-  # Params: error_message (Expecting a string) - Message to be logged to the logger
-  #
-  # Response: None
-  def log_error(error_message)
-    Rails.logger.error(error_message)
-  end
-
   class << self
     # Purpose: Creates pdf from template using pdfkit
     # Finds and renders the template based on template_name
@@ -39,20 +29,20 @@ class PdfExportService
       begin
         # render template
         ac = ActionController::Base.new
-        template = ac.render_to_string template: "templates/" + template_name, layout: false, locals: { object: object }
+        template = ac.render_to_string template: "templates/" + template_name, layout: false, locals: { appeal: object }
       # error handling if template doesn't exist
       rescue ActionView::MissingTemplate => error
-        log_error("PdfExportService::Error - Template does not exist for name "\
+        Rails.logger.error("PdfExportService::Error - Template does not exist for "\
           "#{template_name} - Error message: #{error}")
       # error handling if template fails to render
       rescue ActionView::Template::Error => error
-        log_error("PdfExportService::Error - Template failed to render for name "\
+        Rails.logger.error("PdfExportService::Error - Template failed to render for "\
           "#{template_name} - Error message: #{error}")
       end
       # create new pdfkit object from template
       kit = PDFKit.new(template, page_size: "Letter")
       # add CSS styling
-      kit.stylesheets << "/app/assets/stylesheets/notification_pdf_style.css"
+      kit.stylesheets << "app/assets/stylesheets/notification_pdf_style.css"
       # create file name and file path
       file_name = "test.pdf"
       file_path = "#{Rails.root}/#{file_name}"
