@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class PdfExportService
-  S3_BUCKET_NAME = "appeals-notifications-reports"
   class << self
     # Purpose: Creates pdf from template using pdfkit
     # Finds and renders the template based on template_name
