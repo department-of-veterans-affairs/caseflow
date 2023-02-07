@@ -395,9 +395,8 @@ feature "Appeal Edit issues", :all_dbs do
       FeatureToggle.disable!(:cc_appeal_workflow)
       visit("/appeals/#{cc_appeal.uuid}/edit")
       add_contested_claim_issue
-      # wait for page to load
-      sleep(4)
-      expect(page).to have_content("You have successfully added 1 issue")
+
+      assert page.has_content?("You have successfully added 1 issue")
       expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be true
     end
 
@@ -405,9 +404,7 @@ feature "Appeal Edit issues", :all_dbs do
       visit("/appeals/#{cc_appeal.uuid}/edit")
       add_contested_claim_issue
 
-      # wait for page to load
-      sleep(4)
-      expect(page).to have_content("You have successfully added 1 issue")
+      assert page.has_content?("You have successfully added 1 issue")
       expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
       expect(
         cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
@@ -443,9 +440,7 @@ feature "Appeal Edit issues", :all_dbs do
       visit("/appeals/#{cc_appeal.uuid}/edit")
       add_contested_claim_issue
 
-      # wait for page to load
-      sleep(4)
-      expect(page).to have_content("You have successfully added 1 issue")
+      assert page.has_content?("You have successfully added 1 issue")
       expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
       expect(
         cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
@@ -481,9 +476,7 @@ feature "Appeal Edit issues", :all_dbs do
       visit("/appeals/#{cc_appeal.uuid}/edit")
       add_contested_claim_issue
 
-      # wait for page to load
-      sleep(4)
-      expect(page).to have_content("You have successfully added 1 issue")
+      assert page.has_content?("You have successfully added 1 issue")
       expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
       expect(
         cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
@@ -528,9 +521,7 @@ feature "Appeal Edit issues", :all_dbs do
       visit("/appeals/#{cc_appeal.uuid}/edit")
       add_contested_claim_issue
 
-      # wait for page to load
-      sleep(4)
-      expect(page).to have_content("You have successfully added 1 issue")
+      assert page.has_content?("You have successfully added 1 issue")
       expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 1
       # expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask")).to be initial_letter_task
     end
@@ -541,9 +532,7 @@ feature "Appeal Edit issues", :all_dbs do
       visit("/appeals/#{cc_appeal.uuid}/edit")
       add_contested_claim_issue
 
-      # wait for page to load
-      sleep(4)
-      expect(page).to have_content("You have successfully added 1 issue")
+      assert page.has_content?("You have successfully added 1 issue")
       expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 2
       expect(cc_appeal.reload.tasks.where(
         type: "SendInitialNotificationLetterTask"
@@ -556,9 +545,7 @@ feature "Appeal Edit issues", :all_dbs do
       visit("/appeals/#{cc_appeal.uuid}/edit")
       add_contested_claim_issue
 
-      # wait for page to load
-      sleep(4)
-      expect(page).to have_content("You have successfully added 1 issue")
+      assert page.has_content?("You have successfully added 1 issue")
       expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 2
       expect(cc_appeal.reload.tasks.where(
         type: "SendInitialNotificationLetterTask"
