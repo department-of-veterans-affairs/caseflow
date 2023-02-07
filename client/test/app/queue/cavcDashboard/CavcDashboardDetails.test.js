@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import CavcDashboardDetails from '../../../../app/queue/cavcDashboard/CavcDashboardDetails';
+import { CavcDashboardDetails } from '../../../../app/queue/cavcDashboard/CavcDashboardDetails';
 import CAVC_REMAND_SUBTYPES from '../../../../constants/CAVC_REMAND_SUBTYPES';
 
 const createRemandProp = (subtype) => {
@@ -13,29 +13,20 @@ const createRemandProp = (subtype) => {
   };
 };
 
-const renderCavcDashboardDetails = async (remand, userOrgs) => {
-  const props = { remand, userOrgs };
+const renderCavcDashboardDetails = async (remand, userCanEdit) => {
+  const props = { remand, userCanEdit };
 
   return render(<CavcDashboardDetails {...props} />);
 };
 
 describe('CavcDashboardDetails', () => {
   const jmrSubtypes = Object.values(CAVC_REMAND_SUBTYPES).filter((val) => val !== 'mdr');
-  // change one org name to OAI's org name when it is added
-  // provide two orgs to ensure filter works when given multiple orgs on userCanEdit
-  const validUserOrgs = [
-    { name: 'Case Review' },
-    { name: 'Office of Assessment and Improvement' }
-  ];
-  const invalidUserOrgs = [
-    { name: 'Case Review' }
-  ];
 
   it('displays correct values with jmr remand subtypes', async () => {
     jmrSubtypes.forEach((subtype) => async () => {
       const remand = createRemandProp(subtype);
 
-      await renderCavcDashboardDetails(remand, validUserOrgs);
+      await renderCavcDashboardDetails(remand, false);
       const jmrSpan = [...document.querySelectorAll('span')].filter((el) => el.textContent.includes('Yes'));
 
       expect(screen.getByText('02/01/22')).toBeTruthy();
@@ -50,7 +41,7 @@ describe('CavcDashboardDetails', () => {
   it('displays correct values with no remand subtype provided', async () => {
     const remand = createRemandProp();
 
-    await renderCavcDashboardDetails(remand, validUserOrgs);
+    await renderCavcDashboardDetails(remand, false);
     const jmrSpan = [...document.querySelectorAll('span')].filter((el) => el.textContent.includes('No'));
 
     expect(screen.getByText('02/01/22')).toBeTruthy();
@@ -64,7 +55,7 @@ describe('CavcDashboardDetails', () => {
   it('edit button is disabled/hidden if not a member of OAI', async () => {
     const remand = createRemandProp();
 
-    await renderCavcDashboardDetails(remand, invalidUserOrgs);
+    await renderCavcDashboardDetails(remand, false);
 
     const editButton = screen.getByRole('button', { description: 'Edit', hidden: true });
 
@@ -75,7 +66,7 @@ describe('CavcDashboardDetails', () => {
   it('edit button is enabled/visible if member of OAI', async () => {
     const remand = createRemandProp();
 
-    await renderCavcDashboardDetails(remand, validUserOrgs);
+    await renderCavcDashboardDetails(remand, true);
 
     const editButton = screen.getByRole('button', { description: 'Edit' });
 

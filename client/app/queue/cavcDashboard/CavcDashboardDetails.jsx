@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { LABELS } from './cavcDashboardConstants';
@@ -46,8 +47,8 @@ CavcDashboardDetailsSection.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 };
 
-const CavcDashboardDetails = (props) => {
-  const { remand, userOrgs } = props;
+export const CavcDashboardDetails = (props) => {
+  const { remand, userCanEdit } = props;
 
   // remove eslint disable when the set methods are used for editing
   /* eslint-disable no-unused-vars */
@@ -68,9 +69,6 @@ const CavcDashboardDetails = (props) => {
       return false;
     }
   };
-
-  // determines button visibility while maintaining spacing, disables button while hidden
-  const userCanEdit = userOrgs.filter((org) => org.name === 'Office of Assessment and Improvement').length > 0;
 
   // position/top bypasses the fixed margin on the TabWindow component
   const buttonStyling = css({
@@ -106,7 +104,13 @@ const CavcDashboardDetails = (props) => {
 CavcDashboardDetails.propTypes = {
   remandId: PropTypes.number,
   remand: PropTypes.object,
-  userOrgs: PropTypes.arrayOf(PropTypes.object)
+  userCanEdit: PropTypes.bool
 };
 
-export default CavcDashboardDetails;
+const mapStateToProps = (state) => ({
+  userCanEdit: state.ui.canEditCavcDashboards
+});
+
+export default connect(
+  mapStateToProps
+)(CavcDashboardDetails);
