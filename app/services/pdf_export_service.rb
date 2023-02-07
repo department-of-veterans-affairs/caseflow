@@ -17,7 +17,8 @@ class PdfExportService
       begin
         # render template
         ac = ActionController::Base.new
-        template = ac.render_to_string template: "templates/" + template_name, layout: false, locals: { appeal: object }
+        template = ac.render_to_string template: "templates/" + template_name + ".html.erb", layout: false,
+                                       locals: { appeal: object }
       # error handling if template doesn't exist
       rescue ActionView::MissingTemplate => error
         Rails.logger.error("PdfExportService::Error - Template does not exist for "\
@@ -26,21 +27,25 @@ class PdfExportService
       rescue ActionView::Template::Error => error
         Rails.logger.error("PdfExportService::Error - Template failed to render for "\
           "#{template_name} - Error message: #{error}")
+      # error handling if appeal is null for notification_report_pdf_template
+      rescue NoAppealError => error
+        Rails.logger.error("PdfExportService::Error - Template requires appeal for "\
+          "#{template_name} - Error message: #{error}")
       end
       # create new pdfkit object from template
       kit = PDFKit.new(template, page_size: "Letter")
       # add CSS styling
-      kit.stylesheets << "app/assets/stylesheets/notification_pdf_style.css"
+      kit.stylesheets << "app/assets/stylesheets/" + template_name + ".css"
       # create file name and file path
-      file_name = "notifications_report.pdf"
-      file_path = "#{Rails.root}/#{file_name}"
-      kit.to_pdf(file_path)
+      file_name = template_name + ".pdf"
+      # file_path = "#{Rails.root}/#{file_name}"
+      # kit.to_pdf(file_path)
       # create pdf file from pdfkit object
-      # pdf = kit.to_pdf
-      # # store file in s3 bucket
-      # file_location = S3_BUCKET_NAME + "/" + file_name
-      # S3Service.store_file(file_location, pdf)
-      # file_location
+      pdf = kit.to_pdf
+      # store file in s3 bucket
+      file_location = template_name + "/" + file_name
+      S3Service.store_file(file_location, pdf)
+      file_location
     end
   end
 end
