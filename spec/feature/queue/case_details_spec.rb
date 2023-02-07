@@ -2134,22 +2134,27 @@ RSpec.feature "Case details", :all_dbs do
       let(:docket_type) { "evidence_submission" }
       let(:case_type) { "court_remand" }
       # let(:disposition) { "allowed" }
-
+      let(:cavc_decision_type) do
+        [
+          Constants.CAVC_DECISION_TYPES.straight_reversal,
+          Constants.CAVC_DECISION_TYPES.death_dismissal
+        ].sample
+      end
       let!(:cavc_remand) do
         create(:cavc_remand,
                cavc_decision_type: cavc_decision_type,
                remand_subtype: nil,
                judgement_date: nil,
                mandate_date: nil)
-
+      end
       let(:cavc_appeal) { cavc_remand.remand_appeal }
+
       let(:appeal) do
         create(
           :appeal,
           # status,
           docket_type: docket_type,
-          stream_type: case_type,
-
+          stream_type: case_type
           # disposition: disposition
         )
       end
@@ -2159,7 +2164,6 @@ RSpec.feature "Case details", :all_dbs do
       before do
         CavcLitigationSupport.singleton.add_user(user)
         User.authenticate!(user: user)
-        CavcTask.
       end
 
       context "the button is shown for cavc lit support" do
