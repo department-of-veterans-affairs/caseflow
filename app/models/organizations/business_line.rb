@@ -169,7 +169,7 @@ class BusinessLine < Organization
 
     # These values reflect the number of searchable fields in search_all_clause for where interpolation later
     def number_of_search_fields
-      FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user) ? 4 : 2
+      FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user) ? 4 : 2
     end
 
     def search_ssn_and_file_number_clause
@@ -183,7 +183,7 @@ class BusinessLine < Organization
       clause = +"veterans.participant_id LIKE ? "\
                "OR #{claimant_name} ILIKE ? "
 
-      if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: :current_user)
+      if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user)
         clause << search_ssn_and_file_number_clause
       end
 
@@ -215,7 +215,7 @@ class BusinessLine < Organization
     end
 
     def ama_appeals_query
-      if FeatureToggle.enabled?(:board_grant_effectuation_task, user: :current_user)
+      if FeatureToggle.enabled?(:board_grant_effectuation_task, user: current_user)
         return Arel::Nodes::UnionAll.new(
           appeals_on_request_issues,
           board_grant_effectuation_tasks
