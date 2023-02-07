@@ -14,16 +14,6 @@ class QueueController < ApplicationController
     render "queue/index"
   end
 
-  # delete method
-  def test
-    html = render_to_string template: "templates/notification_report_pdf_template", layout: false
-    kit = PDFKit.new(html, margin_top: "0.25in", margin_bottom: "0.25in", margin_left: "0.25in", margin_right: "0.25in")
-    kit.stylesheets << "#{Rails.root}/app/assets/stylesheets/notification_pdf_style.css"
-    file_name = "test.pdf"
-    file_path = "#{Rails.root}/#{file_name}"
-    kit.to_pdf(file_path)
-  end
-
   def check_queue_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("queue_out_of_service")
   end

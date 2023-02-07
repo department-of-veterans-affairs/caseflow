@@ -25,8 +25,7 @@ def generate_table_notifications(notifications)
 
     email_notification = {
       status: notification.email_notification_status == 'Success' ? 'Sent' : notification.email_notification_status,
-      # change back
-      content: notification.notification_content,
+      content: notification.email_notification_content,
       notification_type: 'Email',
       recipient_information: notification.recipient_email == nil ? '—' : notification.recipient_email,
       event_type: notification.event_type,
@@ -35,8 +34,7 @@ def generate_table_notifications(notifications)
 
     sms_notification = {
       status: notification.sms_notification_status == 'Success' ? 'Sent' : notification.sms_notification_status,
-      # change back
-      content: notification.notification_content,
+      content: notification.sms_notification_content,
       notification_type: 'Text',
       recipient_information: notification.recipient_phone_number == nil ? '—' : notification.recipient_phone_number,
       event_type: notification.event_type,
@@ -55,13 +53,9 @@ def generate_table_notifications(notifications)
 end
 %>
 
-<%# <% appeal =  Appeal.find_by(uuid: "25c4857b-3cc5-4497-a066-25be73aa4b6b") %>
-<% appeal =  LegacyAppeal.find_by(vacols_id: "2226048") %>
 <% hearing_type = get_hearing_type(appeal) %>
 <% notifications = get_notifications(appeal) %>
 <% table_notifications = generate_table_notifications(notifications)%>
-
-<%= render "layouts/head" %>
 
 <html>
   <body class="cf-app-queue">

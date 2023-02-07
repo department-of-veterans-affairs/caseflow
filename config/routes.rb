@@ -11,8 +11,6 @@ Rails.application.routes.draw do
     post 'certify_v2', on: :member
   end
 
-  get '/test', to: 'queue#test'
-
   # These routes are here so Certification v2 SPA can be launched if the
   # user reloads the page.
   get 'certifications(/:vacols_id)/check_documents' => 'certifications#new'
