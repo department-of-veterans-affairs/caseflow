@@ -1,14 +1,9 @@
-<% appeal = Appeal.find_by(uuid: "25c4857b-3cc5-4497-a066-25be73aa4b6b") %>
-<% hearing_type = get_hearing_type(appeal) %>
-<% notifications = get_notifications(appeal) %>
-<% table_notifications = generate_table_notifications(notifications)%>
-
 <%
 def get_hearing_type(appeal)
   if appeal.current_hearing_request_type == nil
-    hearing_type = "-"
+    "-"
   else
-    hearing_type = appeal.readable_current_hearing_request_type
+    appeal.readable_current_hearing_request_type
   end
 end
 %>
@@ -16,9 +11,9 @@ end
 <%
 def get_notifications(appeal)
   if appeal.is_a?(Appeal)
-    notifications = Notification.where(appeals_id: appeal.uuid)
+    Notification.where(appeals_id: appeal.uuid)
   elsif appeal.is_a?(LegacyAppeal)
-    notifications = Notification.where(appeals_id: appeal.vacols_id)
+    Notification.where(appeals_id: appeal.vacols_id)
   end
 end
 %>
@@ -59,6 +54,12 @@ def generate_table_notifications(notifications)
   table_notifications
 end
 %>
+
+<%# <% appeal =  Appeal.find_by(uuid: "25c4857b-3cc5-4497-a066-25be73aa4b6b") %>
+<% appeal =  LegacyAppeal.find_by(vacols_id: "2226048") %>
+<% hearing_type = get_hearing_type(appeal) %>
+<% notifications = get_notifications(appeal) %>
+<% table_notifications = generate_table_notifications(notifications)%>
 
 <%= render "layouts/head" %>
 
@@ -178,7 +179,7 @@ end
     </div>
   </body>
 
-  <%# <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'> %>
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
 
   <style>
     .row-even {
