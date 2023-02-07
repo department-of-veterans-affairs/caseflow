@@ -1,0 +1,11 @@
+name: install_dockerize_dependencies
+
+on:
+  workflow_call:
+
+
+jobs:
+  install_dockerize:
+      description: "Install dockerize"
+      runs-on: ubuntu-latest
+      steps:

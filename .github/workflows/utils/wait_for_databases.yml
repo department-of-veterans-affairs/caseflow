@@ -1,0 +1,11 @@
+name: Wait For Databases
+
+on:
+  workflow_call:
+
+
+jobs:
+  wait_for_databases:
+      description: "Wait for FALCOLS and PostgreSQL"
+      runs-on: ubuntu-latest
+      steps:

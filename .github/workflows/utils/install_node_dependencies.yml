@@ -1,0 +1,11 @@
+name: install_node_dependencies
+
+on:
+  workflow_call:
+
+
+jobs:
+  install_node_dependencies:
+      description: "Install NodeJS Dependencies"
+      runs-on: ubuntu-latest
+      steps:

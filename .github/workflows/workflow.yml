@@ -1,14 +1,18 @@
-name: Run RSpec Tests & Linters
+name: Caller workflow for Caseflow Repo
 
 on:
-  push:
+  workflow_dispatch:
     branches:
       - f-gh-migration
 
 jobs:
-  example-1:
-    uses: ./.github/workflows/resuable1.yml
-  install-node:
-    uses: ./.github/workflows/reusable2.yml
-    with:
-      node-version: 12.3
+  build_workspace:
+    uses: ./.github/workflows/build_workspace.yml
+  validate_demo:
+    uses: ./.github/workflows/validate_demo.yml
+  rspec:
+    uses: ./github/workflows/rspec.yml
+  js_tests:
+    uses: ./github/workflows/js_tests.yml
+  lint:
+    uses: ./github/workflows/lint.yml
