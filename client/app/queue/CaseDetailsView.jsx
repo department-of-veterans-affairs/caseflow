@@ -228,7 +228,8 @@ export const CaseDetailsView = (props) => {
   });
 
   const showPostDispatch =
-    appealIsDispatched && (supportCavcRemand || supportPostDispatchSubstitution);
+    appealIsDispatched && (supportCavcRemand || supportPostDispatchSubstitution ||
+      currentUserIsOAI || currentUserIsOCC);
 
   const actionableScheduledHearingTasks = useSelector(
     (state) => openScheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
