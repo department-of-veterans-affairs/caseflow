@@ -3,16 +3,25 @@ import { css } from 'glamor';
 
 import { LABELS } from './cavcDashboardConstants';
 import PropTypes from 'prop-types';
-import Dropdown from '../../components/Dropdown';
+import SearchableDropdown from '../../components/SearchableDropdown';
 
 const singleIssueStyling = css({
   marginBottom: '1.5em !important',
-  display: 'flex',
-  justifyContent: 'space-around',
+  display: 'grid',
+  gridTemplateColumns: '60% 40%',
   '@media(max-width: 1200px)': { width: '100%' },
   '@media(max-width: 829px)': {
+    display: 'flex',
     flexDirection: 'column'
   }
+});
+
+const IssueDescription = css({
+  width: '100%',
+});
+
+const DispositionDropdown = css({
+  width: '100%',
 });
 
 const issueContentStyling = css({
@@ -20,9 +29,10 @@ const issueContentStyling = css({
 });
 
 const headerStyling = css({
-  display: 'flex',
-  justifyContent: 'space-between',
-  marginBottom: '0'
+  display: 'grid',
+  gridTemplateColumns: '60% 40%',
+  marginBottom: '0',
+  paddingLeft: '21px'
 });
 
 export const CavcDashboardIssue = (props) => {
@@ -32,7 +42,7 @@ export const CavcDashboardIssue = (props) => {
   return (
     <li key={index}>
       <div {...singleIssueStyling}>
-        <div >
+        <div {...IssueDescription}>
           <div {...issueContentStyling}>
             <strong> Benefit type: </strong> {[issue.benefit_type]}
           </div>
@@ -40,11 +50,12 @@ export const CavcDashboardIssue = (props) => {
             <strong>Issue: </strong> {issue.decision_review_type} - {issue.contested_issue_description}
           </div>
         </div>
-        <div>
-          <Dropdown
+        <div {...DispositionDropdown}>
+          <SearchableDropdown
             name={`issue-dispositions-${index}`}
             label="Dispositions"
             value={disposition}
+            searchable
             hideLabel
             options={dispositions}
             defaultText="Select"
@@ -63,11 +74,13 @@ export const CavcDashboardIssuesSection = (props) => {
 
   return (
     <div >
-      <strong {...headerStyling}>
-        <span>{LABELS.CAVC_DASHBOARD_ISSUES}</span>
-        <span>{LABELS.CAVC_DASHBOARD_DISPOSITIONS}</span>
-      </strong>
-      <hr />
+      <div>
+        <strong {...headerStyling}>
+          <span>{LABELS.CAVC_DASHBOARD_ISSUES}</span>
+          <span>{LABELS.CAVC_DASHBOARD_DISPOSITIONS}</span>
+        </strong>
+        <hr />
+      </div>
       <ol>
         {Issues.map((issue, i) => {
 
