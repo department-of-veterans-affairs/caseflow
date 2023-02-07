@@ -1,4 +1,14 @@
 GIT
+  remote: https://github.com/anusha-palliyil/pdfjs_viewer-rails.git
+  revision: bdad66eba82aedd6317b180ac7aaf959b7de214e
+  ref: bdad66eba82aedd6317b180ac7aaf959b7de214e
+  specs:
+    pdfjs_viewer-rails (0.3.2)
+      json (> 1.8.4)
+      rails (> 4.2.0)
+      sassc-rails (>= 2.1)
+
+GIT
   remote: https://github.com/colszowka/simplecov.git
   revision: 783c9d7e9995f3ea9baf9fbb517c1d0ceb12acdb
   specs:
@@ -72,15 +82,6 @@ GIT
     sniffybara (1.1.0)
       rainbow
       selenium-webdriver
-
-GIT
-  remote: https://github.com/senny/pdfjs_viewer-rails.git
-  revision: a4249eacbf70175db63b57e9f364d0a9a79e2b43
-  ref: a4249eacbf70175db63b57e9f364d0a9a79e2b43
-  specs:
-    pdfjs_viewer-rails (0.0.9)
-      rails (> 4.2.0)
-      sass-rails (~> 5.0)
 
 GEM
   remote: https://rubygems.org/
@@ -604,6 +605,14 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
+    sassc (2.4.0)
+      ffi (~> 1.9)
+    sassc-rails (2.1.2)
+      railties (>= 4.0.0)
+      sassc (>= 2.0)
+      sprockets (> 3.0)
+      sprockets-rails
+      tilt
     savon (2.12.1)
       akami (~> 1.2)
       builder (>= 2.1.2)
@@ -778,7 +787,7 @@ DEPENDENCIES
   rainbow
   rb-readline
   react_on_rails (= 11.3.0)
-  redis-namespace
+  redis-namespace (= 1.6.0)
   redis-rails (~> 5.0.2)
   request_store
   roo (~> 2.7)

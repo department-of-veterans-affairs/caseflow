@@ -58,7 +58,7 @@ gem "rails", "5.2.4.6"
 gem "rainbow"
 # React
 gem "react_on_rails", "11.3.0"
-gem "redis-namespace"
+gem "redis-namespace", "1.6.0"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
