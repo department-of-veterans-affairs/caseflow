@@ -416,6 +416,8 @@ export const CaseDetailsView = (props) => {
               appealId = {appealId}
               currentUserIsOAI = {currentUserIsOAI}
               currentUserIsOCC = {currentUserIsOCC}
+              // remove after occ oai org is implemented
+              currentUserIsOnCavcLitSupport = {currentUserIsOnCavcLitSupport}
               {...appeal.cavcRemand}
             />
           )}
