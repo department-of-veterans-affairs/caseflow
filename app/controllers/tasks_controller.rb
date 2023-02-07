@@ -118,18 +118,9 @@ class TasksController < ApplicationController
         opc = params['select_opc']
         case opc
         when "task_complete_contested_claim"
-          days = params['hold_days'].to_i
+          days_on_hold = params['hold_days'].to_i
           instructions= "";
-
-          @post_send_initial_notification_letter_holding ||= task.appeal.tasks.open.find_by(type: :PostSendInitialNotificationLetterHoldingTask) ||
-                                          PostSendInitialNotificationLetterHoldingTask.create!(
-                                            appeal: task.appeal,
-                                            parent: task.parent,
-                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
-                                            days_on_hold: days,
-                                            instructions: instructions
-                                          )
-          # PostSendInitialNotificationLetterHoldingTask.create_from_parent(task.parent, days_on_hold: days)
+          PostSendInitialNotificationLetterHoldingTask.create_from_parent(task.parent, days_on_hold: days_on_hold, instructions: instructions)
         else
           puts "no"
         end
@@ -203,18 +194,6 @@ class TasksController < ApplicationController
   end
 
   private
-
-  def postSendInitialNotificationLetter (instructions, days_on_hold)
-    binding.pry
-    @post_send_initial_notification_letter_holding ||= task.appeal.tasks.open.find_by(type: :PostSendInitialNotificationLetterHoldingTask) ||
-                                          PostSendInitialNotificationLetterHoldingTask.create!(
-                                            appeal: task.appeal,
-                                            parent: task.appeal.tasks.find_by(status: "assigned"),
-                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
-                                            days_on_hold: days_on_hold.to_i,
-                                            instructions: instructions
-                                          )
-  end
 
   def render_update_errors(errors)
     render json: { "errors": errors }, status: :bad_request

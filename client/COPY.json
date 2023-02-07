@@ -534,7 +534,7 @@
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
   "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to %s",
   "MARK_AS_COMPLETE_CONTESTED_CLAIM_TITLE": "Complete task",
-  "MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL": "By marking this task as complete, tou are confirming that initialnotification letter(s) have been sent.\n\nPlease select the number of days to put this task on hold to allow time for the letter(s) to be delivered.",
+  "MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL": "By marking this task as complete, you are confirming that initialnotification letter(s) have been sent.\n\nPlease select the number of days to put this task on hold to allow time for the letter(s) to be delivered.",
   "CANCEL_TASK_CONFIRMATION": "Task for %s's case has been cancelled",
   "CANCEL_TASK_CONFIRMATION_DETAIL": "Task for %s's case has been cancelled",
 

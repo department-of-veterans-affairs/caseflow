@@ -29,7 +29,7 @@ class OnHoldTasksTab < QueueTab
   end
 
   def ama_task_ids
-    Task.visible_in_queue_table_view.on_hold.where(assigned_to: assignee).pluck(:id)
+      Task.visible_in_queue_table_view.on_hold.where(assigned_to: assignee).pluck(:id)
   end
 
   # Because attorneys and judges can be assigned transient legacy tasks through vacols/das, if "child" colocated tasks
