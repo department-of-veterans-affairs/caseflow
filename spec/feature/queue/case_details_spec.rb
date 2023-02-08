@@ -2147,9 +2147,9 @@ RSpec.feature "Case details", :all_dbs do
       end
       let(:cavc_appeal) { cavc_remand.remand_appeal }
 
-      let(:non_occoai_user) { create(:user, css_id: "BVA_INTAKE_USER") }
-      let(:occ_user) { create(:user, css_id: "TEST_OCC_OAI_USER") }
-      let(:oai_user) { create(:user, css_id: "TEST_OAI_USER") }
+      let(:non_occoai_user) { create(:user, css_id: "BVA_INTAKE_USER", station_id: "101") }
+      let(:occ_user) { create(:user, css_id: "TEST_OCC_USER", station_id: "101") }
+      let(:oai_user) { create(:user, css_id: "TEST_OAI_USER", station_id: "101") }
 
       before do
         BvaIntake.singleton.add_user(non_occoai_user)
