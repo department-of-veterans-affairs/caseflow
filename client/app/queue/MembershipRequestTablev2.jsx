@@ -4,15 +4,6 @@ import moment from 'moment';
 import DropdownButton from '../components/DropdownButton';
 import Table from '../components/Table';
 import { constant } from 'lodash';
-import { css } from 'glamor';
-
-const rowHasExpandedNote = css({
-  '> td': { border: 'none' },
-});
-
-const expandedNote = css({
-  '> td': { borderTop: 'none' },
-});
 
 const MembershipRequestTableV2 = (props) => {
 
@@ -21,7 +12,7 @@ const MembershipRequestTableV2 = (props) => {
   // What if I created an object hash that stores the expanded state based on the request id?
   const [expanded, setExpanded] = useState({});
 
-  console.log(expanded);
+  // console.log(expanded);
 
   const toggleExpanded = (id) => {
     setExpanded({
@@ -65,7 +56,12 @@ const MembershipRequestTableV2 = (props) => {
       header: '',
       valueFunction: (request) => {
         if (request.note) {
-          return <button onClick={() => toggleExpanded(request.id)}>{expanded[request.id].toString()}</button>;
+          return <button style={{ backgroundColor: 'inherit' }}
+            onClick={() => toggleExpanded(request.id)}
+            className="usa-accordion-button"
+            aria-expanded={Boolean(expanded[request.id])}>
+          </button>;
+
         }
 
         return '';
@@ -105,7 +101,6 @@ const MembershipRequestTableV2 = (props) => {
 
   // Have to do some serious crap here to make this work with the duplicated row objects
   const columnDefinitions = (row) => {
-    // console.log(row);
 
     if (row && row.hasNote) {
       return noteColumnDefinition;
@@ -114,11 +109,18 @@ const MembershipRequestTableV2 = (props) => {
     return normalColumnsDefinitions;
   };
 
+  const setRowClassNames = (rowObject) => {
+    return rowObject.hasNote ? 'membership-request-expanded-note' : 'membership-request-row';
+  };
+
   return <>
     <h2>Attemped reuse of Table component</h2>
+    <h2>{`View ${requests.length} pending requests`}</h2>
     <Table
+      className="membership-request-table"
       columns={columnDefinitions}
       rowObjects={getRowObjects(requests)}
+      rowClassNames={setRowClassNames}
     />
   </>;
 };

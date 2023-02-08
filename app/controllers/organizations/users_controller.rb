@@ -75,7 +75,7 @@ class Organizations::UsersController < OrganizationsController
     MembershipRequest.includes(:requestor, :organization).where(organization: organization).map do |membership_request|
       {
         id: membership_request.id,
-        name: membership_request.requestor.full_name,
+        name: "#{membership_request.requestor.full_name} (#{membership_request.requestor.css_id})",
         requestedDate: membership_request.created_at,
         note: membership_request.note
       }
