@@ -22,19 +22,20 @@ class PdfExportService
       rescue ActionView::MissingTemplate => error
         Rails.logger.error("PdfExportService::Error - Template does not exist for "\
           "#{template_name} - Error message: #{error}")
+        return
       # error handling if template fails to render
       rescue ActionView::Template::Error => error
         Rails.logger.error("PdfExportService::Error - Template failed to render for "\
           "#{template_name} - Error message: #{error}")
-      # error handling if appeal is null for notification_report_pdf_template
-      rescue NoAppealError => error
-        Rails.logger.error("PdfExportService::Error - Template requires appeal for "\
-          "#{template_name} - Error message: #{error}")
+        return
       end
       # create new pdfkit object from template
       kit = PDFKit.new(template, page_size: "Letter")
       # add CSS styling
-      kit.stylesheets << "app/assets/stylesheets/" + template_name + ".css"
+      stylesheet_name = "app/assets/stylesheets/" + template_name + ".css"
+      if File.exist?(stylesheet_name)
+        kit.stylesheets << stylesheet_name
+      end
       # create file name and file path
       file_name = template_name + ".pdf"
       # file_path = "#{Rails.root}/#{file_name}"
