@@ -2158,7 +2158,6 @@ RSpec.feature "Case details", :all_dbs do
       context "the button is not shown for non occ/oai user" do
         it "the 'CAVC Dashboard' button is not visible on the page" do
           visit "/queue/appeals/#{cavc_appeal.external_id}"
-          wait_for_page_render
           page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
           expect(page).to_not have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
         end
@@ -2172,7 +2171,6 @@ RSpec.feature "Case details", :all_dbs do
       context "the button is shown for OCC user" do
         it "the 'CAVC Dashboard' button is visible on the page" do
           visit "/queue/appeals/#{cavc_appeal.external_id}"
-          wait_for_page_render
           page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
           expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
         end
@@ -2186,7 +2184,6 @@ RSpec.feature "Case details", :all_dbs do
       context "the button is shown for OAI user" do
         it "the 'CAVC Dashboard' button is visible on the page" do
           visit "/queue/appeals/#{cavc_appeal.external_id}"
-          wait_for_page_render
           page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
           expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
         end
