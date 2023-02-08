@@ -128,17 +128,17 @@ export const CaseDetailsView = (props) => {
       ['Clerk of the Board'].includes(organization.name)
     )
   );
-  const currentUserIsOAI = useSelector((state) =>
-    state.ui.organizations.some(
-      (organization) => organization.name === 'Office of Assessment and Improvement'
-    )
-  );
+  // const currentUserIsOAI = useSelector((state) =>
+  //   state.ui.organizations.some(
+  //     (organization) => organization.name === 'Office of Assessment and Improvement'
+  //   )
+  // );
 
-  const currentUserIsOCC = useSelector((state) =>
-    state.ui.organizations.some(
-      (organization) => organization.name === 'Office of Chief Counsel'
-    )
-  );
+  // const currentUserIsOCC = useSelector((state) =>
+  //   state.ui.organizations.some(
+  //     (organization) => organization.name === 'Office of Chief Counsel'
+  //   )
+  // );
 
   const modalIsOpen = window.location.pathname.includes('modal');
 
@@ -414,8 +414,9 @@ export const CaseDetailsView = (props) => {
                 )
               }
               appealId = {appealId}
-              currentUserIsOAI = {currentUserIsOAI}
-              currentUserIsOCC = {currentUserIsOCC}
+              canViewCavcDashboards
+              // currentUserIsOAI = {currentUserIsOAI}
+              // currentUserIsOCC = {currentUserIsOCC}
               {...appeal.cavcRemand}
             />
           )}
@@ -470,6 +471,7 @@ const mapStateToProps = (state) => ({
   pollHearing: state.components.scheduledHearing.polling,
   featureToggles: state.ui.featureToggles,
   substituteAppellant: state.substituteAppellant,
+  canViewCavcDashboards: state.ui.canViewCavcDashboards
 });
 
 const mapDispatchToProps = (dispatch) =>
