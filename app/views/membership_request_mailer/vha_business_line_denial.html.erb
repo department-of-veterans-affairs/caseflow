@@ -4,12 +4,15 @@
 <%= content_for :content do %>
   <p>
     At this time, we have denied your request for access to general VHA pages in Caseflow. Your existing group memberships did not change.
-
-    You currently have access to the following groups pages in Caseflow, if any:
-    "Any other groups"
   </p>
+
+  <p>You currently have access to the following groups pages' in Caseflow, if any: </p>
+
+  <% ["Any other groups"].each do |group_name| %>
+    <p> <%= group_name %> </p>
+  <% end %>
 
   <%= render "help" %>
 <% end %>
 
-<%= render "signature" %>
+<%= render "vha_signature" %>

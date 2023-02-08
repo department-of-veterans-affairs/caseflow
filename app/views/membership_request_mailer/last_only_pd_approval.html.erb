@@ -1,20 +1,21 @@
-<!-- 10.6 -->
+<!-- 12.5.2 -->
 <%= render "intro" %>
 
 <%= content_for :content do %>
   <p>
-    We have approved your request for access to VHA pages within Caseflow.
+    <%= 'We approved your request for Caseflow <VHA pre-docket organization granting access> pages, which also includes access to the VHA pages.' %>
   </p>
 
   <p>
-    <b> You now have access to the following groups' pages: </b>
+    <b>You now have access to the following groups' pages: </b>
   </p>
 
   <% ["VHA pre-docket organization granting access", "VHA General", "Any other groups"].each do |group_name| %>
     <p> <%= group_name %> </p>
   <% end %>
 
-  <%= render "help" %>
+    <%= render "help" %>
+  </p>
 <% end %>
 
 <%= render "vha_signature" %>

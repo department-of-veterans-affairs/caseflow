@@ -3,20 +3,30 @@
 
 <%= content_for :content do %>
   <p>
-    We approved your request for Caseflow "VHA pre-docket organization granting access" pages, which also includes access to the VHA pages.
-
-    You now have access to the following groups' pages:
-    "VHA pre-docket organization granting access"
-    "VHA General"
-    "Any other groups"
-
-    You still have pending requests for other Pre-docket offices. You'll get a separate decision email from each Pre-docket office listed below.
-    Your pending requests:
-    "First Group"
-    "Any other groups"
+    <%= 'We approved your request for Caseflow <VHA pre-docket organization granting access> pages, which also includes access to the VHA pages.' %>
   </p>
+
+  <p>
+    <b> You now have access to the following groups' pages: </b>
+  </p>
+
+  <% ["VHA pre-docket organization granting access", "VHA General", "Any other groups"].each do |group_name| %>
+    <p> <%= group_name %> </p>
+  <% end %>
+
+  <p>
+    You still have pending requests for other Pre-docket offices. You'll get a separate decision email from each Pre-docket office listed below.
+  </p>
+
+  <p>
+    <b> Your pending requests: </b>
+  </p>
+
+  <% ["First Group", "Any other groups"].each do |pending_request_group| %>
+    <p> <%= pending_request_group %> </p>
+  <% end %>
 
   <%= render "help" %>
 <% end %>
 
-<%= render "signature" %>
+<%= render "vha_signature" %>

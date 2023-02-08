@@ -1,0 +1,29 @@
+<!-- 12.6.3.2.2 -->
+<%= render "intro" %>
+
+<%= content_for :content do %>
+  <p>
+    <%= 'At this time, we have denied your request for access to <VHA pre-docket organization denying access> pages in Caseflow and the VHA pages in general.' %>
+  </p>
+
+  <p>
+    If you are in need of access to VHA pages without org's specific pages, please make a new request for VHA access by going to <a href="http://www.appeals.cf.ds.va.gov/vha=help"/> and selecting only the VHA checkbox when re-submitting the form.
+  </p>
+
+  <p>
+    <b> You currently have access to the following groups’ pages, if any: </b>
+  </p>
+
+  <% ["Any other groups"].each do |group| %>
+    <p> <%= group %> </p>
+  <% end %>
+
+  <%= render "help" %>
+<% end %>
+
+<%= content_for :signature do %>
+  <p>
+    Sincerely,<br/>
+    VHA PD Organization denying request
+  </p>
+<% end %>
