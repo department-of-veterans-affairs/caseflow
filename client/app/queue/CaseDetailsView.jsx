@@ -93,7 +93,7 @@ const topAlertStyles = css({ marginBottom: '2.4rem' });
 
 export const CaseDetailsView = (props) => {
   const { push } = useHistory();
-  const { appealId, featureToggles } = props;
+  const { appealId, featureToggles, canViewCavcDashboards } = props;
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
@@ -128,6 +128,7 @@ export const CaseDetailsView = (props) => {
       ['Clerk of the Board'].includes(organization.name)
     )
   );
+
   const modalIsOpen = window.location.pathname.includes('modal');
 
   const resetState = () => {
@@ -401,6 +402,8 @@ export const CaseDetailsView = (props) => {
                   </span>
                 )
               }
+              appealId = {appealId}
+              canViewCavcDashboards = {canViewCavcDashboards}
               {...appeal.cavcRemand}
             />
           )}
@@ -447,7 +450,8 @@ CaseDetailsView.propTypes = {
   pollHearing: PropTypes.bool,
   stopPollingHearing: PropTypes.func,
   substituteAppellant: PropTypes.object,
-  vsoVirtualOptIn: PropTypes.bool
+  vsoVirtualOptIn: PropTypes.bool,
+  canViewCavcDashboards: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
@@ -455,6 +459,7 @@ const mapStateToProps = (state) => ({
   pollHearing: state.components.scheduledHearing.polling,
   featureToggles: state.ui.featureToggles,
   substituteAppellant: state.substituteAppellant,
+  canViewCavcDashboards: state.ui.canViewCavcDashboards
 });
 
 const mapDispatchToProps = (dispatch) =>

@@ -27,6 +27,13 @@ export const setCanEditCavcDashboards = (canEditCavcDashboards) => ({
   }
 });
 
+export const setCanViewCavcDashboards = (canViewCavcDashboards) => ({
+  type: ACTIONS.SET_CAN_VIEW_CAVC_DASHBOARDS,
+  payload: {
+    canViewCavcDashboards
+  }
+});
+
 export const setCanEditNodDate = (canEditNodDate) => ({
   type: ACTIONS.SET_CAN_EDIT_NOD_DATE,
   payload: {

@@ -37,6 +37,7 @@ export const initialState = {
   userIsCobAdmin: false,
   canEditCavcRemands: false,
   canEditCavcDashboards: false,
+  canViewCavcDashboards: false,
   hearingDay: {
     hearingDate: null,
     regionalOffice: null
@@ -105,6 +106,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_CAN_EDIT_CAVC_DASHBOARDS:
     return update(state, {
       canEditCavcDashboards: { $set: action.payload.canEditCavcDashboards }
+    });
+  case ACTIONS.SET_CAN_VIEW_CAVC_DASHBOARDS:
+    return update(state, {
+      canViewCavcDashboards: { $set: action.payload.canViewCavcDashboards }
     });
   case ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS:
     return update(state, {
