@@ -8,8 +8,9 @@ module Seeds
     end
 
     def seed!
-      Seeds::CavcDecisionReasonData.new.seed!
+      Seeds::CavcDecisionReasonData.new.seed! unless CavcDecisionReason.count > 0
       create_cavc_dashboard_dispositions
+      create_cavc_dashboard_issues
       create_appeals_with_multiple_cavc_remands
     end
 
@@ -53,7 +54,19 @@ module Seeds
       end
     end
 
+    def create_cavc_dashboard_issues
+      10.times do
+        remand = create(:cavc_remand,
+                        cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
+                        veteran: create_veteran)
+          CavcDashboardIssue.create(cavc_remand: remand)
+
+        @cavc_docket_number_last_four += 1
+      end
+    end
+
     def create_appeals_with_multiple_cavc_remands
+      Timecop.travel 1.month.ago
       source_appeal = create(:appeal,
                              :dispatched,
                              :with_request_issues,
@@ -61,6 +74,7 @@ module Seeds
                              issue_count: 1,
                              veteran: create_veteran)
       user = create(:user)
+      Timecop.return
 
       4.times do
         creation_params = {

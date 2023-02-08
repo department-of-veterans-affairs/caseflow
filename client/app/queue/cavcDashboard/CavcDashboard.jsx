@@ -38,14 +38,14 @@ export const CavcDashboard = (props) => {
     if (loaded && cavcRemands) {
       setTabs(cavcRemands.map((remand) => {
         const label = `CAVC appeal ${remand.cavc_docket_number}`;
-        const page = <CavcDashboardTab remand={remand} />;
+        const page = <CavcDashboardTab remandId={remand.id} />;
 
         return { label, page };
       }));
     }
   }, [loaded]);
 
-  // Redirect to the CaseDetails page if no remand exists for the provided appealId or if a legacy appeal
+  // Redirect to the CaseDetails page if no remand exists for the provided appealId
   if (loaded && !cavcRemands) {
     return <Redirect to={`/queue/appeals/${appealId}`} />;
   }
@@ -86,8 +86,6 @@ CavcDashboard.propTypes = {
   fetchInitialDashboardData: PropTypes.func
 };
 
-// mappings and connect are boilerplate for connecting to redux and will be added to in the future
-// pass state and ownProps into the function when needed to access them as props
 const mapStateToProps = (state, ownProps) => {
   return {
     appealDetails: state.queue.appealDetails[ownProps.appealId],
@@ -95,8 +93,6 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-// any actions being used in the component that use/affect the redux store should be mapped here, see
-// CaseDetailsLoadingScreen.jsx for example
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators({
     fetchAppealDetails,
