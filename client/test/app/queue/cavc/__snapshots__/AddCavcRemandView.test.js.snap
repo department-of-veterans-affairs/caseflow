@@ -122,7 +122,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
         }
       }
       requestSave={[Function]}
-      setRequireCavcDashboard={[Function]}
       showErrorMessage={[Function]}
     >
       <withRouter(Connect(QueueFlowPage))
@@ -147,7 +146,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
           }
         }
         requestSave={[Function]}
-        setRequireCavcDashboard={[Function]}
         showErrorMessage={[Function]}
         validateForm={[Function]}
       >
@@ -203,7 +201,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
             }
           }
           requestSave={[Function]}
-          setRequireCavcDashboard={[Function]}
           showErrorMessage={[Function]}
           validateForm={[Function]}
         >
@@ -267,7 +264,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
             }
             requestSave={[Function]}
             resetDecisionOptions={[Function]}
-            setRequireCavcDashboard={[Function]}
             showErrorMessage={[Function]}
             showModal={[Function]}
             stagedAppeals={Array []}
