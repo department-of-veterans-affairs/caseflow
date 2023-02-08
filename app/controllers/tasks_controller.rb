@@ -112,6 +112,10 @@ class TasksController < ApplicationController
 
     tasks_hash = json_tasks(tasks.uniq)
 
+    if task.type == "SendInitialNotificationLetterTask"
+      send_final_notification_letter
+    end
+
     # currently alerts are only returned by ScheduleHearingTask
     # and AssignHearingDispositionTask for virtual hearing related updates
     # Start with any alerts on the current task, then find alerts on the tasks
@@ -179,6 +183,17 @@ class TasksController < ApplicationController
   end
 
   private
+
+  def send_final_notification_letter
+    @send_final_notification_letter ||= task.appeal.tasks.open.find_by(type: :SendFinalNotificationLetterTask) ||
+                                          SendFinalNotificationLetterTask.create!(
+                                            appeal: task.appeal,
+                                            parent: task.appeal.tasks.find_by(status: "assigned"),
+                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                            assigned_by: current_user
+                                          )
+
+  end
 
   def render_update_errors(errors)
     render json: { "errors": errors }, status: :bad_request

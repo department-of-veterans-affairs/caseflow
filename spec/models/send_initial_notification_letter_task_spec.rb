@@ -33,7 +33,7 @@ describe SendInitialNotificationLetterTask do
     let(:available_task_actions) do
       [
         Constants.TASK_ACTIONS.MARK_TASK_AS_COMPLETE_CC.to_h,
-        Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_CC.to_h,
+        Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER.to_h,
         Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK.to_h
       ]
     end

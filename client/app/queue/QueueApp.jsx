@@ -366,6 +366,10 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />
   );
 
+  routedProceedFinalNotificationLetterModal = (props) => (
+    <CompleteTaskModal modalType="proceed_final_notification_letter" {...props.match.params} />
+  );
+
   routedVhaCompleteTaskModal = (props) => (
     <CompleteTaskModal modalType="ready_for_review" {...props.match.params} />
   );
@@ -1114,6 +1118,14 @@ class QueueApp extends React.PureComponent {
                 }`}
               title="Mark Task Complete | Caseflow"
               render={this.routedCompleteTaskModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER.value
+                }`}
+              title="Letter Task | Caseflow"
+              render={this.routedProceedFinalNotificationLetterModal}
             />
             <PageRoute
               exact
