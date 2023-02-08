@@ -2133,9 +2133,8 @@ RSpec.feature "Case details", :all_dbs do
     describe "Add CAVC Dashboard button" do
       let(:cavc_decision_type) do
         [
-          Constants.CAVC_DECISION_TYPES.affirmed,
-          Constants.CAVC_DECISION_TYPES.settlement,
-          Constants.CAVC_DECISION_TYPES.other_dismissal
+          Constants.CAVC_DECISION_TYPES.straight_reversal,
+          Constants.CAVC_DECISION_TYPES.death_dismissal
         ].sample
       end
       let!(:cavc_remand) do
