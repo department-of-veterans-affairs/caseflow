@@ -7,7 +7,7 @@ import { constant } from 'lodash';
 
 const MembershipRequestTable = (props) => {
 
-  const { requests } = props;
+  const { requests = [] } = props;
 
   // const tbodyRef = useRef(null);
   // const animationTimeout = useTimeout();

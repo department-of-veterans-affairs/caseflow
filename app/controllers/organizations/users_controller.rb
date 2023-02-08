@@ -72,7 +72,8 @@ class Organizations::UsersController < OrganizationsController
 
   def membership_requests
     # TODO: Maybe create a serializer for these?
-    MembershipRequest.includes(:requestor, :organization).where(organization: organization).map do |membership_request|
+    membership_requests = MembershipRequest.includes(:requestor, :organization).where(organization: organization).assigned
+    membership_requests.map do |membership_request|
       {
         id: membership_request.id,
         name: "#{membership_request.requestor.full_name} (#{membership_request.requestor.css_id})",
