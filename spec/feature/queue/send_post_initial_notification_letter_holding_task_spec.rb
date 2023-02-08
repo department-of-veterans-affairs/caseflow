@@ -42,7 +42,7 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       dropdown.click
       expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_POST_INITIAL_LETTER_TASK.label)
       expect(page).to have_content(Constants.TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER.label)
-      expect(page).to have_content(Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_CC.label)
+      expect(page).to have_content(Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER.label)
     end
 
     it "cancel action cancels the task and displays it on the case timeline" do

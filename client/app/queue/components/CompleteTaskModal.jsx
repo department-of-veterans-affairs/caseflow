@@ -75,8 +75,6 @@ const MarkTaskCompleteContestedClaimModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
   const instructionsLabel = taskConfiguration && taskConfiguration.instructions_label;
 
-
-
   return (
     <React.Fragment>
       <div className="cc_mark_complete">
@@ -115,12 +113,43 @@ const MarkTaskCompleteContestedClaimModal = ({ props, state, setState }) => {
   );
 };
 
+const ProceedFinalNotificationLetterTaskModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+
+  return (
+    <React.Fragment>
+      {taskConfiguration && taskConfiguration.modal_body}
+      {taskConfiguration && taskConfiguration.modal_alert && (
+        <Alert message={taskConfiguration.modal_alert} type="info" />
+      )}
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        <TextareaField
+          label= "Provide instuctions and context for this action"
+          name= "instructions"
+          id= "completeTaskInstructions"
+          onChange={(value) => setState({ instructions: value })}
+          value={state.instructions}
+          styling={marginTop(4)}
+          maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+          placeholder="This is a description of instuctions and context for this action."
+        />
+      )}
+    </React.Fragment>
+  );
+};
+
 MarkTaskCompleteContestedClaimModal.propTypes = {
   props: PropTypes.object,
   setState: PropTypes.func,
   state: PropTypes.object,
   register: PropTypes.func,
   highlightInvalid: PropTypes.bool
+};
+
+ProceedFinalNotificationLetterTaskModal.propTypes = {
+  props: PropTypes.object,
+  setState: PropTypes.func,
+  state: PropTypes.object
 };
 
 const locationTypeOpts = [
@@ -411,6 +440,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: MarkTaskCompleteModal,
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
   },
+
   task_complete_contested_claim: {
     buildSuccessMsg: (appeal, { contact }) => ({
       title: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteranFullName),
@@ -435,6 +465,16 @@ const MODAL_TYPE_ATTRS = {
       return !isValid;
     }
   },
+
+  proceed_final_notification_letter: {
+    buildSuccessMsg: () => ({
+      title: sprintf(COPY.PROCEED_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS),
+    }),
+    title: () => COPY.PROCEED_FINAL_NOTIFICATION_LETTER_TITLE,
+    getContent: ProceedFinalNotificationLetterTaskModal,
+    buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON
+  },
+
   ready_for_review: {
     buildSuccessMsg: (appeal, { assignedToType }) => ({
       title: assignedToType === 'VhaProgramOffice' ?
@@ -547,7 +587,7 @@ const MODAL_TYPE_ATTRS = {
 
       return !isValid;
     }
-  },
+  }
 };
 
 class CompleteTaskModal extends React.Component {
@@ -689,35 +729,35 @@ class CompleteTaskModal extends React.Component {
     return formattedInstructions.join('');
   };
 
-   validateForm = () => {
-     const { instructions, otherInstructions, radio } = this.state;
-     const modalType = this.props.modalType;
+  validateForm = () => {
+    const { instructions, otherInstructions, radio } = this.state;
+    const modalType = this.props.modalType;
 
-     let isValid = true;
+    let isValid = true;
 
-     if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
-       isValid = validInstructions(instructions) && validRadio(radio);
-     }
+    if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
+      isValid = validInstructions(instructions) && validRadio(radio);
+    }
 
-     if (modalType === 'emo_return_to_board_intake') {
-       isValid = validInstructions(instructions);
-     }
+    if (modalType === 'emo_return_to_board_intake') {
+      isValid = validInstructions(instructions);
+    }
 
-     if (modalType === 'emo_send_to_board_intake_for_review' || modalType === 'rpo_send_to_board_intake_for_review') {
-       if (radio === 'other') {
-         isValid = validInstructions(otherInstructions) && validRadio(radio);
-       } else {
-         isValid = validRadio(radio);
-       }
-     }
+    if (modalType === 'emo_send_to_board_intake_for_review' || modalType === 'rpo_send_to_board_intake_for_review') {
+      if (radio === 'other') {
+        isValid = validInstructions(otherInstructions) && validRadio(radio);
+      } else {
+        isValid = validRadio(radio);
+      }
+    }
 
-     // Checks validity using the customValidation function defined in the modal constants if it is present
-     if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customValidation === 'function') {
-       isValid = MODAL_TYPE_ATTRS[this.props.modalType].customValidation(this.getContentArgs());
-     }
+    // Checks validity using the customValidation function defined in the modal constants if it is present
+    if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customValidation === 'function') {
+      isValid = MODAL_TYPE_ATTRS[this.props.modalType].customValidation(this.getContentArgs());
+    }
 
-     return isValid;
-   }
+    return isValid;
+  }
 
   submit = () => {
     const { task, appeal } = this.props;
@@ -743,6 +783,11 @@ class CompleteTaskModal extends React.Component {
 
   render = () => {
     const modalAttributes = MODAL_TYPE_ATTRS[this.props.modalType];
+    const path = (
+      MODAL_TYPE_ATTRS[this.props.modalType].buttonText === 'Proceed to final letter'
+    ) ? ('/organizations/clerk-of-the-board?tab=unassignedTab&page=1') : (
+        this.getTaskConfiguration().redirect_after || '/queue'
+      );
 
     return (
       <QueueFlowModal
@@ -751,7 +796,7 @@ class CompleteTaskModal extends React.Component {
         submitDisabled={modalAttributes.submitDisabled?.(this.getContentArgs())}
         validateForm={this.validateForm}
         submit={this.submit}
-        pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
+        pathAfterSubmit={path}
         submitButtonClassNames={modalAttributes.submitButtonClassNames || ['usa-button']}
       >
         {this.props.task ?

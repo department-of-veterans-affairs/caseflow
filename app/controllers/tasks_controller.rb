@@ -112,6 +112,7 @@ class TasksController < ApplicationController
 
     tasks_hash = json_tasks(tasks.uniq)
 
+
     appeal = Appeal.find(task.appeal.id)
     if appeal.contested_claim?
       if (task.type === "SendInitialNotificationLetterTask")
@@ -125,7 +126,11 @@ class TasksController < ApplicationController
           puts "no"
         end
       end
-    end
+
+      if task.type == "SendInitialNotificationLetterTask"
+        send_final_notification_letter
+
+      end
 
     # currently alerts are only returned by ScheduleHearingTask
     # and AssignHearingDispositionTask for virtual hearing related updates
@@ -194,6 +199,17 @@ class TasksController < ApplicationController
   end
 
   private
+
+  def send_final_notification_letter
+    @send_final_notification_letter ||= task.appeal.tasks.open.find_by(type: :SendFinalNotificationLetterTask) ||
+                                          SendFinalNotificationLetterTask.create!(
+                                            appeal: task.appeal,
+                                            parent: task.appeal.tasks.find_by(status: "assigned"),
+                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                            assigned_by: current_user
+                                          )
+
+  end
 
   def render_update_errors(errors)
     render json: { "errors": errors }, status: :bad_request

@@ -17,7 +17,7 @@ class PostSendInitialNotificationLetterHoldingTask  < TimedHoldTask
   POST_SEND_INITIAL_NOTIFICATION_LETTER_HOLDING_TASK_ACTIONS = [
     Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_POST_INITIAL_LETTER_TASK.to_h,
     Constants.TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER.to_h,
-    Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_CC.to_h,
+    Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER.to_h,
   ].freeze
 
   # overrides for timed_hold_task methods
