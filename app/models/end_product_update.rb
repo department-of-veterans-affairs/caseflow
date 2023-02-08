@@ -41,7 +41,7 @@ class EndProductUpdate < CaseflowRecord
       new_code: new_code
     )
 
-    unless Constants::BGS_STATUS_CODES.include?(response[:return_code])
+    unless Constants::BGS_SUCCESS_STATUS_CODES.include?(response[:return_code])
       fail UpdateClaimFailedInVBMS, response[:return_message]
     end
   end
