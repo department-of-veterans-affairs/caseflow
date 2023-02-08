@@ -1,27 +1,28 @@
 .membership-request-table {
   th {
-    border-bottom-color: black
+    border-bottom-color: black;
   }
 
   .membership-request-expanded-note {
     // animation: slideDown .5s;
     // animation-fill-mode: forwards;
     td {
-      border: none
+      border: none;
     }
   }
 
 
   .membership-request-row {
     td {
-      border-bottom: none
+      border-bottom: none;
     }
+
     td:nth-child(3) {
       width: 20%;
     }
 
     td:nth-child(4) {
-      width: 5%
+      width: 5%;
     }
   }
 }
