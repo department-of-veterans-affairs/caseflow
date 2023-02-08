@@ -138,6 +138,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     OaiTeam.singleton.users.include?(self)
   end
 
+  def can_view_cavc_dashboards?
+    OaiTeam.singleton.users.include?(self) || OccTeam.singleton.users.include?(self)
+  end
+
   def can_intake_appeals?
     BvaIntake.singleton.users.include?(self)
   end
