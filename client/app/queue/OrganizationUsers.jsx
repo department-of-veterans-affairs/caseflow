@@ -59,6 +59,7 @@ export default class OrganizationUsers extends React.PureComponent {
       addingUser: null,
       changingAdminRights: {},
       removingUser: {},
+      isVhaOrg: false
     };
   }
 
@@ -71,6 +72,7 @@ export default class OrganizationUsers extends React.PureComponent {
         organizationUsers: response.body.organization_users.data,
         membershipRequests: response.body.membership_requests,
         remainingUsers: [],
+        isVhaOrg: response.body.isVhaOrg,
         loading: false
       });
     }, (error) => {
@@ -309,8 +311,11 @@ export default class OrganizationUsers extends React.PureComponent {
         <h1>{ this.state.judgeTeam ? sprintf(COPY.USER_MANAGEMENT_JUDGE_TEAM_PAGE_TITLE, this.state.organizationName) :
           this.state.dvcTeam ? sprintf(COPY.USER_MANAGEMENT_DVC_TEAM_PAGE_TITLE, this.state.organizationName) :
             sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName) }</h1>
-        <MembershipRequestTable requests={this.state.membershipRequests} />
-        <div style={{ paddingBottom: '7rem' }}></div>
+        {this.state.isVhaOrg && (<>
+          <MembershipRequestTable requests={this.state.membershipRequests} />
+          <div style={{ paddingBottom: '7rem' }}></div>
+        </>
+        )}
         {this.mainContent()}
       </div>
     </AppSegment>
