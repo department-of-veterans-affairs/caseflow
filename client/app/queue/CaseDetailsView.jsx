@@ -93,7 +93,7 @@ const topAlertStyles = css({ marginBottom: '2.4rem' });
 
 export const CaseDetailsView = (props) => {
   const { push } = useHistory();
-  const { appealId, featureToggles } = props;
+  const { appealId, featureToggles, canViewCavcDashboards } = props;
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
@@ -128,29 +128,6 @@ export const CaseDetailsView = (props) => {
       ['Clerk of the Board'].includes(organization.name)
     )
   );
-  const currentUserIsOAI = useSelector((state) =>
-    state.ui.organizations.some(
-      (organization) => organization.name === 'Office of Assessment and Improvement'
-    )
-  );
-
-  const currentUserIsOCC = useSelector((state) =>
-    state.ui.organizations.some(
-      (organization) => organization.name === 'Office of Chief Counsel'
-    )
-  );
-
-  const checkDecisionTypeOnSubmit = useSelector((state) =>
-    state.queue.requireCavcDashboard === 'affirmed' ||
-    state.queue.requireCavcDashboard === 'settlement' ||
-    state.queue.requireCavcDashboard === 'other_dismissal'
-  );
-
-  const appealHasRemandWithDashboard = useSelector((state) =>
-    state.queue.appeals[appealId].cavcRemandsWithDashboard > 0
-  );
-  const showCavcDashboardButton = (appealHasRemandWithDashboard || checkDecisionTypeOnSubmit) &&
-    (currentUserIsOAI || currentUserIsOCC);
 
   const modalIsOpen = window.location.pathname.includes('modal');
 
@@ -228,8 +205,7 @@ export const CaseDetailsView = (props) => {
   });
 
   const showPostDispatch =
-    appealIsDispatched && (supportCavcRemand || supportPostDispatchSubstitution ||
-      currentUserIsOAI || currentUserIsOCC);
+    appealIsDispatched && (supportCavcRemand || supportPostDispatchSubstitution || canViewCavcDashboards);
 
   const actionableScheduledHearingTasks = useSelector(
     (state) => openScheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
@@ -292,7 +268,7 @@ export const CaseDetailsView = (props) => {
           appealId={appealId}
           includeCavcRemand={supportCavcRemand}
           includeSubstitute={supportPostDispatchSubstitution}
-          showCavcDashboardButton={showCavcDashboardButton}
+          canViewCavcDashboards={canViewCavcDashboards}
         />
       )}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
@@ -428,8 +404,7 @@ export const CaseDetailsView = (props) => {
                 )
               }
               appealId = {appealId}
-              currentUserIsOAI = {currentUserIsOAI}
-              currentUserIsOCC = {currentUserIsOCC}
+              canViewCavcDashboards = {canViewCavcDashboards}
               {...appeal.cavcRemand}
             />
           )}
@@ -476,7 +451,8 @@ CaseDetailsView.propTypes = {
   pollHearing: PropTypes.bool,
   stopPollingHearing: PropTypes.func,
   substituteAppellant: PropTypes.object,
-  vsoVirtualOptIn: PropTypes.bool
+  vsoVirtualOptIn: PropTypes.bool,
+  canViewCavcDashboards: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
@@ -484,6 +460,7 @@ const mapStateToProps = (state) => ({
   pollHearing: state.components.scheduledHearing.polling,
   featureToggles: state.ui.featureToggles,
   substituteAppellant: state.substituteAppellant,
+  canViewCavcDashboards: state.ui.canViewCavcDashboards
 });
 
 const mapDispatchToProps = (dispatch) =>
