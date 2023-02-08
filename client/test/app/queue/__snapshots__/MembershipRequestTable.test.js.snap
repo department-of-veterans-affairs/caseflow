@@ -1,0 +1,335 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MembershipRequestTable renders the default state with mocked membership requests correctly 1`] = `
+<div>
+  <h2>
+    View 5 pending requests
+  </h2>
+  <table
+    class="usa-table-borderless membership-request-table"
+  >
+    <thead
+      class=""
+    >
+      <tr>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            User name
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            Date requested
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            Actions
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      class=""
+    >
+      <tr
+        class="membership-request-row"
+        id="table-row-0"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          John Doe
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          12/05/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-label="Select action"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              id="dropdown-button"
+              role="dropdown-button"
+            >
+              Select action
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <button
+            aria-expanded="false"
+            aria-label="Show note"
+            class="usa-accordion-button"
+            style="background-color: inherit;"
+          />
+        </td>
+      </tr>
+      <tr
+        class="membership-request-row"
+        id="table-row-1"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          Jane Smith
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          11/27/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-label="Select action"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              id="dropdown-button"
+              role="dropdown-button"
+            >
+              Select action
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <button
+            aria-expanded="false"
+            aria-label="Show note"
+            class="usa-accordion-button"
+            style="background-color: inherit;"
+          />
+        </td>
+      </tr>
+      <tr
+        class="membership-request-row"
+        id="table-row-2"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          William Brown
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          12/01/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-label="Select action"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              id="dropdown-button"
+              role="dropdown-button"
+            >
+              Select action
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        />
+      </tr>
+      <tr
+        class="membership-request-row"
+        id="table-row-3"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          Emma Wilson
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          11/20/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-label="Select action"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              id="dropdown-button"
+              role="dropdown-button"
+            >
+              Select action
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        />
+      </tr>
+      <tr
+        class="membership-request-row"
+        id="table-row-4"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          Micheal Johnson
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          11/30/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-label="Select action"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              id="dropdown-button"
+              role="dropdown-button"
+            >
+              Select action
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        />
+      </tr>
+    </tbody>
+    <tfoot />
+  </table>
+</div>
+`;
+
+exports[`MembershipRequestTable renders the default state with no requests correctly 1`] = `
+<div>
+  <h2>
+    View 0 pending requests
+  </h2>
+  <table
+    class="usa-table-borderless membership-request-table"
+  >
+    <thead
+      class=""
+    >
+      <tr>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            User name
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            Date requested
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            Actions
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      class=""
+    />
+    <tfoot />
+  </table>
+</div>
+`;

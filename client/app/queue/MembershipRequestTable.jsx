@@ -1,18 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState, useTimeout } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import DropdownButton from '../components/DropdownButton';
 import Table from '../components/Table';
 import { constant } from 'lodash';
 
-const MembershipRequestTableV2 = (props) => {
+const MembershipRequestTable = (props) => {
 
   const { requests } = props;
+
+  // const tbodyRef = useRef(null);
+  // const animationTimeout = useTimeout();
 
   // What if I created an object hash that stores the expanded state based on the request id?
   const [expanded, setExpanded] = useState({});
 
   // console.log(expanded);
+
+  // useEffect(() => {
+  //   // console.log(expanded);
+  //   // console.log(expanded.values());
+  //   // console.log(values(expanded));
+  //   // console.log(some(expanded, (value) => value === true));
+  //   // anyExpanded =
+
+  //   if (some(expanded, (value) => value === true)) {
+  //     tbodyRef.current.classList.add('testing');
+  //   } else {
+  //     tbodyRef.current.classList.remove('testing');
+  //   }
+  // }, [expanded]);
 
   const toggleExpanded = (id) => {
     setExpanded({
@@ -22,7 +39,6 @@ const MembershipRequestTableV2 = (props) => {
   };
 
   // TODO: Build this out for each request since the target will be based on the id for the MembershipRequest
-  // At least, I think that's how it might work later.
   const dropdownOptions = [
     {
       title: 'Approve',
@@ -32,7 +48,11 @@ const MembershipRequestTableV2 = (props) => {
       target: '/deny' },
   ];
 
-  // TODO: Ask if this is supposed to be ordered by created at? I assume it is, but make sure and then order it.
+  // TODO: Ask if the requests are supposed to be ordered by created at?
+  // Right now it will be in order based on the id of the membership request
+  // It just happens to also be sorted created date as well in most cases since it is set on object creation.
+
+  // The normal column definitions for the request table row that is not the additional request note row.
   const normalColumnsDefinitions = [
     {
       header: 'User name',
@@ -47,7 +67,6 @@ const MembershipRequestTableV2 = (props) => {
       valueFunction: () => {
         return <DropdownButton
           lists={dropdownOptions}
-          // onClick={this.handleMenuClick}
           label="Select action"
         />;
       }
@@ -59,7 +78,8 @@ const MembershipRequestTableV2 = (props) => {
           return <button style={{ backgroundColor: 'inherit' }}
             onClick={() => toggleExpanded(request.id)}
             className="usa-accordion-button"
-            aria-expanded={Boolean(expanded[request.id])}>
+            aria-expanded={Boolean(expanded[request.id])}
+            aria-label="Show note">
           </button>;
 
         }
@@ -70,6 +90,7 @@ const MembershipRequestTableV2 = (props) => {
     },
   ];
 
+  // If it is a note row return the request's note text and set the colspan to 4.
   const noteColumnDefinition = [
     {
       header: '',
@@ -83,8 +104,9 @@ const MembershipRequestTableV2 = (props) => {
     },
   ];
 
-  // This is going to take the requests and add an additional row if the request has a note
-  // Got to do some hacking in the column definitions to make this work now.
+  // Set the row objects for the table based on if the request has a note or not.
+  // If it has a note and is expanded, add an additional row in the table.
+  // The expanded is set based on the expanded react state hook and the button click
   const getRowObjects = (rows) => {
 
     const updatedRequests = rows.reduce((acc, request) => {
@@ -99,7 +121,8 @@ const MembershipRequestTableV2 = (props) => {
     return updatedRequests;
   };
 
-  // Have to do some serious crap here to make this work with the duplicated row objects
+  // The column defintion will change for the table cell for each row depending on whether the row/request
+  // has the attribute hasNote which is set in the row objects based on the expanded state.
   const columnDefinitions = (row) => {
 
     if (row && row.hasNote) {
@@ -109,24 +132,25 @@ const MembershipRequestTableV2 = (props) => {
     return normalColumnsDefinitions;
   };
 
+  // Conditionally set the row class name for css for note rows.
   const setRowClassNames = (rowObject) => {
     return rowObject.hasNote ? 'membership-request-expanded-note' : 'membership-request-row';
   };
 
   return <>
-    <h2>Attemped reuse of Table component</h2>
     <h2>{`View ${requests.length} pending requests`}</h2>
     <Table
       className="membership-request-table"
       columns={columnDefinitions}
       rowObjects={getRowObjects(requests)}
       rowClassNames={setRowClassNames}
+      // tbodyRef={tbodyRef}
     />
   </>;
 };
 
-MembershipRequestTableV2.propTypes = {
+MembershipRequestTable.propTypes = {
   requests: PropTypes.array,
 };
 
-export default MembershipRequestTableV2;
+export default MembershipRequestTable;

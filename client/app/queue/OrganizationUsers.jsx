@@ -1,10 +1,9 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable max-len */
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
-import moment from 'moment';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -16,13 +15,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
-import Table from '../components/Table';
-import DropdownButton from '../components/DropdownButton';
-import { Accordion } from '../components/Accordion';
-import AccordionSection from '../components/AccordionSection';
-import { constant } from 'lodash';
-import MembershipRequestTableV1 from './MembershipRequestTablev1';
-import MembershipRequestTableV2 from './MembershipRequestTablev2';
+import MembershipRequestTable from './MembershipRequestTable';
 
 const userStyle = css({
   margin: '.5rem 0 .5rem',
@@ -49,11 +42,6 @@ const buttonContainerStyle = css({
 });
 const listStyle = css({
   listStyle: 'none'
-});
-
-const rowDisplay = css({
-  display: 'flex',
-  justifyContent: 'space-between'
 });
 
 export default class OrganizationUsers extends React.PureComponent {
@@ -304,81 +292,6 @@ export default class OrganizationUsers extends React.PureComponent {
     </React.Fragment>;
   }
 
-  // TODO: Probably make this into a stateful component?
-  // Original attempt inside this jsx file.
-  pendingMembershipRequestsContent = () => {
-
-    // TODO: Build this out for each request since the target will be based on the id for the MembershipRequest
-    // At least, I think that's how it might work later.
-    const dropdownOptions = [
-      {
-        title: 'Approve',
-        target: '/approve' },
-      {
-        title: 'Deny',
-        target: '/deny' }
-    ];
-
-    console.log('in pending membership requests content for memberhsip requests');
-    console.log(this.state.membershipRequests);
-
-    const firstAttempt = {
-      header: '',
-      valueFunction: (task) => {
-        if (task.note) {
-          return <Accordion accordion={false}>
-            <AccordionSection title="">
-              <div {...rowDisplay}>
-                <strong>REQUEST NOTE:</strong>
-                <p>{task.note}</p>
-              </div>
-            </AccordionSection>
-          </Accordion>;
-        }
-
-        return '';
-
-      },
-      // span: constant(4),
-    };
-
-    // TODO: Ask if this is supposed to be ordered by created at? I assume it is, but make sure and then order it somehow. Probably server side.
-    const workHistoryColumns = [
-      {
-        header: 'User name',
-        valueFunction: (task) => task.name
-      },
-      {
-        header: 'Date requested',
-        valueFunction: (task) => moment(task.requestedDate).format('MM/DD/YYYY')
-      },
-      {
-        header: 'Actions',
-        valueFunction: () => {
-          return <DropdownButton
-            lists={dropdownOptions}
-            onClick={this.handleMenuClick}
-            label="Select action"
-          />;
-        }
-      },
-      firstAttempt,
-    ];
-
-    // TODO: Retrieve these from the backend MembershipRequests for the current org
-    // const testTime = new Date().toLocaleDateString();
-    // const rowObjects = [{ name: 'test 1', createdAt: testTime, note: 'This is an example reason of things and stuff.' },
-    //   { name: 'test 2', createdAt: testTime, note: null }];
-
-    const rowObjects = this.state.membershipRequests;
-
-    return <>
-      <h2>{`View ${rowObjects.length} pending requests`}</h2>
-      <h2>Original Version with Table component and Accordion</h2>
-      <Table columns={workHistoryColumns} rowObjects={rowObjects} />
-    </>;
-  };
-
   render = () => <LoadingDataDisplay
     createLoadPromise={this.loadingPromise}
     loadingComponentProps={{
@@ -396,11 +309,7 @@ export default class OrganizationUsers extends React.PureComponent {
         <h1>{ this.state.judgeTeam ? sprintf(COPY.USER_MANAGEMENT_JUDGE_TEAM_PAGE_TITLE, this.state.organizationName) :
           this.state.dvcTeam ? sprintf(COPY.USER_MANAGEMENT_DVC_TEAM_PAGE_TITLE, this.state.organizationName) :
             sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName) }</h1>
-        {this.pendingMembershipRequestsContent()}
-        <div style={{ paddingBottom: '7rem' }}></div>
-        <MembershipRequestTableV1 requests={this.state.membershipRequests} />
-        <div style={{ paddingBottom: '7rem' }}></div>
-        <MembershipRequestTableV2 requests={this.state.membershipRequests} />
+        <MembershipRequestTable requests={this.state.membershipRequests} />
         <div style={{ paddingBottom: '7rem' }}></div>
         {this.mainContent()}
       </div>
