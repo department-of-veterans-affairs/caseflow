@@ -14,6 +14,7 @@ import {
   setUserIsCobAdmin,
   setCanViewOvertimeStatus,
   setCanEditCavcRemands,
+  setCanEditCavcDashboards,
   setFeatureToggles,
   setUserId,
   setUserRole,
@@ -110,6 +111,7 @@ class QueueApp extends React.PureComponent {
     this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
     this.props.setUserIsCobAdmin(this.props.userIsCobAdmin);
     this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
+    this.props.setCanEditCavcDashboards(this.props.canEditCavcDashboards);
     this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserId(this.props.userId);
@@ -1342,6 +1344,7 @@ QueueApp.propTypes = {
   setCanEditNodDate: PropTypes.func,
   setUserIsCobAdmin: PropTypes.func,
   setCanEditCavcRemands: PropTypes.func,
+  setCanEditCavcDashboards: PropTypes.func,
   canEditAod: PropTypes.bool,
   setFeatureToggles: PropTypes.func,
   featureToggles: PropTypes.object,
@@ -1366,6 +1369,7 @@ QueueApp.propTypes = {
   userCanViewEditNodDate: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
   canEditCavcRemands: PropTypes.bool,
+  canEditCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
 };
 
@@ -1380,6 +1384,7 @@ const mapDispatchToProps = (dispatch) =>
       setCanEditNodDate,
       setUserIsCobAdmin,
       setCanEditCavcRemands,
+      setCanEditCavcDashboards,
       setCanViewOvertimeStatus,
       setFeatureToggles,
       setUserId,

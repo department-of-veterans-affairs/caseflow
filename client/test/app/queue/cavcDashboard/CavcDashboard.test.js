@@ -6,11 +6,11 @@ import COPY from '../../../../COPY';
 
 jest.mock('../../../../app/queue/cavcDashboard/CavcDashboardTab');
 
-const renderCavcDashboard = async (appealData, shouldResolvePromise) => {
-  const cavcRemands = [
-    { cavc_docket_number: '12-3456' }
-  ];
+const cavcRemands = [
+  { cavc_docket_number: '12-3456' }
+];
 
+const renderCavcDashboard = async (appealData, shouldResolvePromise) => {
   // rejecting the redux action creator promises to cause setError(true) on the dashboard
   const promiseResult = shouldResolvePromise ?
     jest.fn(() => Promise.resolve(true)) :
@@ -42,6 +42,13 @@ describe('cavcDashboard', () => {
     await waitForElementToBeRemoved(document.querySelector('svg'));
 
     expect(screen.getByText(`CAVC appeals for ${amaAppeal.appellantFullName}`)).toBeTruthy();
+  });
+
+  it('TabWindow renders and shows correct label on the tab', async () => {
+    await renderCavcDashboard(amaAppeal, true);
+    await waitForElementToBeRemoved(document.querySelector('svg'));
+
+    expect(screen.getByText(`CAVC appeal ${cavcRemands[0].cavc_docket_number}`, { exact: false })).toBeTruthy();
   });
 
   it('Displays error status message when error occurs', async () => {
