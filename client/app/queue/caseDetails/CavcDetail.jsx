@@ -41,8 +41,6 @@ const CavcDetail = (props) => {
     instructions: instructionText,
     appealId,
     canViewCavcDashboards
-    // currentUserIsOAI,
-    // currentUserIsOCC
   } = props;
 
   const details = [];
@@ -131,10 +129,7 @@ const CavcDetail = (props) => {
       </div>
       <div {...gutterStyling}></div>
       <div {...boldText}{...syncStyling}>
-        {/* {(currentUserIsOAI || currentUserIsOCC) &&
-          <CavcDashboardButton appealId={appealId} />
-        } */}
-        {canViewCavcDashboards && <CavcDashboardButton appealId={appealId} />}
+        {(canViewCavcDashboards) && <CavcDashboardButton appealId={appealId} />}
       </div>
     </div>
   </React.Fragment>;
@@ -153,8 +148,6 @@ CavcDetail.propTypes = {
   instructions: PropTypes.string.isRequired,
   appealId: PropTypes.string,
   canViewCavcDashboards: PropTypes.bool
-  // currentUserIsOAI: PropTypes.bool,
-  // currentUserIsOCC: PropTypes.bool
 };
 
 export default CavcDetail;

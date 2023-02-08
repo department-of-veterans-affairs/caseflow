@@ -93,7 +93,7 @@ const topAlertStyles = css({ marginBottom: '2.4rem' });
 
 export const CaseDetailsView = (props) => {
   const { push } = useHistory();
-  const { appealId, featureToggles } = props;
+  const { appealId, featureToggles, canViewCavcDashboards } = props;
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
@@ -128,17 +128,6 @@ export const CaseDetailsView = (props) => {
       ['Clerk of the Board'].includes(organization.name)
     )
   );
-  // const currentUserIsOAI = useSelector((state) =>
-  //   state.ui.organizations.some(
-  //     (organization) => organization.name === 'Office of Assessment and Improvement'
-  //   )
-  // );
-
-  // const currentUserIsOCC = useSelector((state) =>
-  //   state.ui.organizations.some(
-  //     (organization) => organization.name === 'Office of Chief Counsel'
-  //   )
-  // );
 
   const modalIsOpen = window.location.pathname.includes('modal');
 
@@ -414,9 +403,7 @@ export const CaseDetailsView = (props) => {
                 )
               }
               appealId = {appealId}
-              canViewCavcDashboards
-              // currentUserIsOAI = {currentUserIsOAI}
-              // currentUserIsOCC = {currentUserIsOCC}
+              canViewCavcDashboards = {canViewCavcDashboards}
               {...appeal.cavcRemand}
             />
           )}
@@ -463,7 +450,8 @@ CaseDetailsView.propTypes = {
   pollHearing: PropTypes.bool,
   stopPollingHearing: PropTypes.func,
   substituteAppellant: PropTypes.object,
-  vsoVirtualOptIn: PropTypes.bool
+  vsoVirtualOptIn: PropTypes.bool,
+  canViewCavcDashboards: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
