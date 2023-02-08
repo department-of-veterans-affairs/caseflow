@@ -14,11 +14,11 @@ jest.mock('react-router-dom', () => ({
 }));
 
 const propToShowCavcDashboard = {
-  showCavcDashboardButton: true,
+  supportCavcDashboard: true,
 };
 
 const propToHideCavcDashboard = {
-  showCavcDashboardButton: false,
+  supportCavcDashboard: false,
 };
 
 const renderCaseDetailsPostDispatchActions = (appeal, props) => {
