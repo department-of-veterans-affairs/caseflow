@@ -384,7 +384,7 @@ const MODAL_TYPE_ATTRS = {
   },
   proceed_final_notification_letter: {
     buildSuccessMsg: () => ({
-      title: sprintf(COPY.PROCEED_FINAL_NOTIFICATION_LETTER_SUCCESS),
+      title: sprintf(COPY.PROCEED_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS),
     }),
     title: () => COPY.PROCEED_FINAL_NOTIFICATION_LETTER_TITLE,
     getContent: ProceedFinalNotificationLetterTaskModal,
