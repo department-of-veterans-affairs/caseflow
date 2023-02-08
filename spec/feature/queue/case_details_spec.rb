@@ -2142,13 +2142,13 @@ RSpec.feature "Case details", :all_dbs do
         create(:cavc_remand,
                cavc_decision_type: cavc_decision_type,
                remand_subtype: nil,
-               judgement_date: nil,
-               mandate_date: nil)
+               judgement_date: 2.months.ago.to_date.mdY,
+               mandate_date: 2.months.ago.to_date.mdY)
       end
       let(:cavc_appeal) { cavc_remand.remand_appeal }
 
       let(:non_occoai_user) { create(:user, css_id: "BVA_INTAKE_USER") }
-      let(:occ_user) { create(:user, css_id: "TEST_OCC_USER") }
+      let(:occ_user) { create(:user, css_id: "TEST_OCC_OAI_USER") }
       let(:oai_user) { create(:user, css_id: "TEST_OAI_USER") }
 
       before do
