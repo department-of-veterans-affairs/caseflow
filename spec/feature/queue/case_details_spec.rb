@@ -2133,8 +2133,9 @@ RSpec.feature "Case details", :all_dbs do
     describe "Add CAVC Dashboard button" do
       let(:cavc_decision_type) do
         [
-          Constants.CAVC_DECISION_TYPES.straight_reversal,
-          Constants.CAVC_DECISION_TYPES.death_dismissal
+          Constants.CAVC_DECISION_TYPES.affirmed,
+          Constants.CAVC_DECISION_TYPES.settlement,
+          Constants.CAVC_DECISION_TYPES.other_dismissal
         ].sample
       end
       let!(:cavc_remand) do
@@ -2146,9 +2147,22 @@ RSpec.feature "Case details", :all_dbs do
       end
       let(:cavc_appeal) { cavc_remand.remand_appeal }
 
-      let(:oai_user) { create(:user, css_id: "TEST_OAI_USER") }
-      let(:occ_user) { create(:user, css_id: "TEST_OCC_USER") }
       let(:non_occoai_user) { create(:user, css_id: "BVA_INTAKE_USER") }
+      let(:occ_user) { create(:user, css_id: "TEST_OCC_USER") }
+      let(:oai_user) { create(:user, css_id: "TEST_OAI_USER") }
+
+      before do
+        BvaIntake.singleton.add_user(non_occoai_user)
+        User.authenticate!(user: non_occoai_user)
+      end
+
+      context "the button is not shown for non occ/oai user" do
+        it "the 'CAVC Dashboard' button is not visible on the page" do
+          visit "/queue/appeals/#{cavc_appeal.external_id}"
+          wait_for_page_render
+          expect(page).to_not have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
+        end
+      end
 
       before do
         OccTeam.singleton.add_user(occ_user)
@@ -2173,19 +2187,6 @@ RSpec.feature "Case details", :all_dbs do
           visit "/queue/appeals/#{cavc_appeal.external_id}"
           wait_for_page_render
           expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
-        end
-      end
-
-      before do
-        BvaIntake.singleton.add_user(non_occoai_user)
-        User.authenticate!(user: non_occoai_user)
-      end
-
-      context "the button is not shown for non occ/oai user" do
-        it "the 'CAVC Dashboard' button is not visible on the page" do
-          visit "/queue/appeals/#{cavc_appeal.external_id}"
-          wait_for_page_render
-          expect(page).to_not have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
         end
       end
     end
