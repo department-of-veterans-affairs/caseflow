@@ -1,11 +1,16 @@
 name: Wait For Databases
 
-on:
-  workflow_call:
+inputs:
+  DISABLE_FACTORY_BOT_INITIALIZERS:
+    default: 1
+    required: true
 
-
-jobs:
-  wait_for_databases:
-      description: "Wait for FALCOLS and PostgreSQL"
-      runs-on: ubuntu-latest
-      steps:
+runs:
+  using: composite
+  steps:
+    - name: "Wait for database"
+      run: dockerize -wait tcp://localhost:5432 -timeout 1m
+      shell: bash
+    - name: "Wait for FACOLS"
+      run: ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+      shell: bash

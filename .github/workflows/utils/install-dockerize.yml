@@ -1,11 +1,13 @@
 name: install_dockerize_dependencies
 
-on:
-  workflow_call:
+inputs:
+  DOCKERIZE_VERSION:
+    default: v0.6.1
+    required: true
 
-
-jobs:
-  install_dockerize:
-      description: "Install dockerize"
-      runs-on: ubuntu-latest
-      steps:
+runs:
+  using: composite
+  steps:
+    - name: Install Dockerize
+      run: wget https://github.com/jwilder/dockerize/releases/download/${{ env.DOCKERIZE_VERSION }}/dockerize-linux-amd64-${{ env.DOCKERIZE_VERSION }}.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${{ env.DOCKERIZE_VERSION }}.tar.gz && rm dockerize-linux-amd64-${{ env.DOCKERIZE_VERSION }}.tar.gz
+      shell: bash
