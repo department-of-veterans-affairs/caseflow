@@ -19,17 +19,19 @@ class OnHoldTasksTab < QueueTab
   end
 
   def tasks
-    task_ids = ama_task_ids
+      task_ids = ama_task_ids
 
-    if assignee.can_be_assigned_legacy_tasks?
-      task_ids.concat(legacy_colocated_task_ids_assigned_by_assignee)
-    end
+      if assignee.can_be_assigned_legacy_tasks?
+        task_ids.concat(legacy_colocated_task_ids_assigned_by_assignee)
+      end
 
-    Task.includes(*task_includes).where(id: task_ids)
+      Task.includes(*task_includes).where(id: task_ids)
   end
 
+
+
   def ama_task_ids
-      Task.visible_in_queue_table_view.on_hold.where(assigned_to: assignee).pluck(:id)
+    Task.visible_in_queue_table_view.on_hold.where(assigned_to: assignee).pluck(:id)
   end
 
   # Because attorneys and judges can be assigned transient legacy tasks through vacols/das, if "child" colocated tasks

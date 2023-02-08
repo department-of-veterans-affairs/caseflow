@@ -108,7 +108,14 @@ class QueueTab
   end
 
   def active_tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
+    if (FeatureToggle.enabled?(:cc_appeal_workflow))
+      Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
+      .where.not(type: :PostSendInitialNotificationLetterHoldingTask).active
+      # Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee,
+      #   type: :PostSendInitialNotificationLetterHoldingTask).assigned
+    else
+      Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).active
+    end
   end
 
   def in_progress_tasks
@@ -147,10 +154,19 @@ class QueueTab
     on_hold_task_children.where(type: TimedHoldTask.name).pluck(:parent_id)
   end
 
+  def on_hold_task_children_and_timed_hold_parents_On_contested_claim
+    on_hold_task_contested_claim
+  end
+
   def on_hold_task_children_and_timed_hold_parents
     Task.includes(*task_includes).visible_in_queue_table_view.where(
       id: [visible_child_task_ids, parents_with_child_timed_hold_task_ids].flatten
     )
+  end
+
+  def on_hold_task_contested_claim
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee,
+      type: :PostSendInitialNotificationLetterHoldingTask).active
   end
 
   def task_includes

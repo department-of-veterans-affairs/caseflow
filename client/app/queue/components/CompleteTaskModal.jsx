@@ -784,7 +784,8 @@ class CompleteTaskModal extends React.Component {
   render = () => {
     const modalAttributes = MODAL_TYPE_ATTRS[this.props.modalType];
     const path = (
-      MODAL_TYPE_ATTRS[this.props.modalType].buttonText === 'Proceed to final letter'
+      (MODAL_TYPE_ATTRS[this.props.modalType].buttonText === 'Proceed to final letter') ||
+      (this.props.modalType === 'task_complete_contested_claim')
     ) ? ('/organizations/clerk-of-the-board?tab=unassignedTab&page=1') : (
         this.getTaskConfiguration().redirect_after || '/queue'
       );

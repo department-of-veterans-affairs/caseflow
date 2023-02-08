@@ -16,7 +16,12 @@ class OrganizationOnHoldTasksTab < QueueTab
   end
 
   def tasks
-    on_hold_task_children_and_timed_hold_parents
+    if (FeatureToggle.enabled?(:cc_appeal_workflow))
+      on_hold_task_children_and_timed_hold_parents_On_contested_claim
+    else
+      on_hold_task_children_and_timed_hold_parents
+    end
+
   end
 
   # rubocop:disable Metrics/AbcSize

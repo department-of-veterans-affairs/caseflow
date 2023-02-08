@@ -122,16 +122,14 @@ class TasksController < ApplicationController
           days_on_hold = params['hold_days'].to_i
           instructions= "";
           PostSendInitialNotificationLetterHoldingTask.create_from_parent(task.parent, days_on_hold: days_on_hold, instructions: instructions)
+        when "proceed_final_notification_letter"
+          send_final_notification_letter
         else
           puts "no"
         end
       end
 
-      if task.type == "SendInitialNotificationLetterTask"
-        send_final_notification_letter
-
-      end
-
+    end
     # currently alerts are only returned by ScheduleHearingTask
     # and AssignHearingDispositionTask for virtual hearing related updates
     # Start with any alerts on the current task, then find alerts on the tasks
