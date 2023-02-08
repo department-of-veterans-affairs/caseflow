@@ -2150,12 +2150,11 @@ RSpec.feature "Case details", :all_dbs do
       let(:occ_user) { create(:user, css_id: "TEST_OCC_USER", station_id: "101") }
       let(:oai_user) { create(:user, css_id: "TEST_OAI_USER", station_id: "101") }
 
-      before do
-        BvaIntake.singleton.add_user(non_occoai_user)
-        User.authenticate!(user: non_occoai_user)
-      end
-
       context "the button is not shown for non occ/oai user" do
+        before do
+          BvaIntake.singleton.add_user(non_occoai_user)
+          User.authenticate!(user: non_occoai_user)
+        end
         it "the 'CAVC Dashboard' button is not visible on the page" do
           visit "/queue/appeals/#{cavc_appeal.external_id}"
           page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
@@ -2163,12 +2162,11 @@ RSpec.feature "Case details", :all_dbs do
         end
       end
 
-      before do
-        OccTeam.singleton.add_user(occ_user)
-        User.authenticate!(user: occ_user)
-      end
-
       context "the button is shown for OCC user" do
+        before do
+          OccTeam.singleton.add_user(occ_user)
+          User.authenticate!(user: occ_user)
+        end
         it "the 'CAVC Dashboard' button is visible on the page" do
           visit "/queue/appeals/#{cavc_appeal.external_id}"
           page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
@@ -2176,12 +2174,11 @@ RSpec.feature "Case details", :all_dbs do
         end
       end
 
-      before do
-        OaiTeam.singleton.add_user(oai_user)
-        User.authenticate!(user: oai_user)
-      end
-
       context "the button is shown for OAI user" do
+        before do
+          OaiTeam.singleton.add_user(oai_user)
+          User.authenticate!(user: oai_user)
+        end
         it "the 'CAVC Dashboard' button is visible on the page" do
           visit "/queue/appeals/#{cavc_appeal.external_id}"
           page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
