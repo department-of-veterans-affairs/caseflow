@@ -1,14 +1,21 @@
 <%
-def get_hearing_type(appeal)
-  if appeal.current_hearing_request_type == nil
-    "-"
+
+def handle_appeal(appeal)
+  if appeal.is_a?(Appeal) || appeal.is_a?(LegacyAppeal)
+    appeal
   else
-    appeal.readable_current_hearing_request_type
+    raise Caseflow::Error::AppealNotFound
   end
 end
-%>
 
-<%
+def get_hearing_type(appeal)
+  if appeal&.current_hearing_request_type == nil
+    "-"
+  else
+    appeal&.readable_current_hearing_request_type
+  end
+end
+
 def get_notifications(appeal)
   if appeal.is_a?(Appeal)
     Notification.where(appeals_id: appeal.uuid)
@@ -16,9 +23,7 @@ def get_notifications(appeal)
     Notification.where(appeals_id: appeal.vacols_id)
   end
 end
-%>
 
-<%
 def generate_table_notifications(notifications)
   table_notifications = Array.new
   notifications.each do |notification|
@@ -51,11 +56,13 @@ def generate_table_notifications(notifications)
   end
   table_notifications
 end
-%>
 
-<% hearing_type = get_hearing_type(appeal) %>
-<% notifications = get_notifications(appeal) %>
-<% table_notifications = generate_table_notifications(notifications)%>
+ appeal = handle_appeal(appeal)
+ hearing_type = get_hearing_type(appeal)
+ notifications = get_notifications(appeal)
+ table_notifications = generate_table_notifications(notifications)
+
+ %>
 
 <html>
   <body class="cf-app-queue">
@@ -70,10 +77,10 @@ end
             <div class="usa-grid">
               <section class="cf-app-segment cf-app-segment--alt">
                 <div data-css-bui2vg="">
-                  <h1 data-css-10hc4to="">Case notifications for <%=appeal.veteran_first_name%> <%=appeal.veteran_last_name%></h1>
+                  <h1 data-css-10hc4to="">Case notifications for <%=appeal&.veteran_first_name%> <%=appeal&.veteran_last_name%></h1>
                   <div data-css-7o0e0w="">
                     <div data-css-p21ib3="">Veteran ID:&nbsp;
-                      <button type="submit" class="cf-apppeal-id" data-css-cjlnsd="" style="width: auto; white-space: nowrap;"><%=appeal.veteran_file_number%></button>
+                      <button type="submit" class="cf-apppeal-id" data-css-cjlnsd="" style="width: auto; white-space: nowrap;"><%=appeal&.veteran_file_number%></button>
                     </div>
                   </div>
                 </div>
@@ -84,15 +91,15 @@ end
                       <p>Docket Number</p>
                       <div>
                         <span data-css-1iid9v3="">
-                          <span data-css-2moai0=""><%=appeal.docket_name.first.upcase%></span>
-                          <%=appeal.docket_number%>
+                          <span data-css-2moai0=""><%=appeal&.docket_name.first.upcase%></span>
+                          <%=appeal&.docket_number%>
                         </span>
                       </div>
                     </div>
                     <div data-css-1yy2eo1="">
                       <p>Appeal Stream Type</p>
                       <div>
-                        <span><%=appeal.type%></span>
+                        <span><%=appeal&.type%></span>
                       </div>
                     </div>
                     <div data-css-1yy2eo1="">
