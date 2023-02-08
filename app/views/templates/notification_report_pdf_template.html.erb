@@ -57,9 +57,10 @@ def generate_table_notifications(notifications)
   table_notifications
 end
 
- appeal = handle_appeal(appeal)
+ appeal = Appeal.first
  hearing_type = get_hearing_type(appeal)
- notifications = get_notifications(appeal)
+#  notifications = get_notifications(appeal)
+ notifications = []
  table_notifications = generate_table_notifications(notifications)
 
  %>
@@ -91,7 +92,7 @@ end
                       <p>Docket Number</p>
                       <div>
                         <span data-css-1iid9v3="">
-                          <span data-css-2moai0=""><%=appeal&.docket_name.first.upcase%></span>
+                          <span data-css-2moai0=""><%=appeal.docket_name&.first&.upcase%></span>
                           <%=appeal&.docket_number%>
                         </span>
                       </div>
