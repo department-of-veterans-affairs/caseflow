@@ -8,9 +8,8 @@ import CavcDashboardDetails from './CavcDashboardDetails';
 export const CavcDashboardTab = (props) => {
   return (
     <>
-      <div>placeholder for cavc remand details for remand {remand.cavc_docket_number}</div>
-      <div><CavcDashboardIssuesSection requestIssues={remand} /></div>
       <CavcDashboardDetails {...props} />
+      <div><CavcDashboardIssuesSection {...props} /></div>
     </>
   );
 };
