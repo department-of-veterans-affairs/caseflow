@@ -24,7 +24,6 @@ import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Alert from '../../components/Alert';
 import { withRouter } from 'react-router';
-import { setRequireCavcDashboard } from '../QueueActions';
 
 import {
   JmrJmprIssuesBanner,
@@ -244,7 +243,6 @@ const AddCavcRemandView = (props) => {
         const pushHistoryUrl = resp.body.cavc_appeal ?
           `/queue/appeals/${resp.body.cavc_appeal.uuid}` : `/queue/appeals/${appealId}`;
 
-        props.setRequireCavcDashboard(type);
         history.replace(pushHistoryUrl);
       }).
       catch((err) => props.showErrorMessage({ title: 'Error', detail: JSON.parse(err.message).errors[0].detail }));
@@ -434,7 +432,6 @@ AddCavcRemandView.propTypes = {
   }),
   highlightInvalid: PropTypes.bool,
   history: PropTypes.object,
-  setRequireCavcDashboard: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -442,12 +439,10 @@ const mapStateToProps = (state, ownProps) => ({
   highlightInvalid: state.ui.highlightFormItems,
   error: state.ui.messages.error,
   featureToggles: state.ui.featureToggles,
-  requireCavcDashboard: state.queue.requireCavcDashboard,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
-  setRequireCavcDashboard,
   showErrorMessage
 }, dispatch);
 

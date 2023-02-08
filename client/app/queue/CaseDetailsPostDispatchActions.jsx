@@ -36,7 +36,7 @@ export const CaseDetailsPostDispatchActions = (props) => {
   const { appealId,
     includeCavcRemand,
     includeSubstitute,
-    canViewCavcDashboards,
+    supportCavcDashboard,
   } = props;
   const { push } = useHistory();
 
@@ -60,7 +60,7 @@ export const CaseDetailsPostDispatchActions = (props) => {
             {COPY.SUBSTITUTE_APPELLANT_BUTTON}
           </Button>
         )}
-        {canViewCavcDashboards && (
+        {supportCavcDashboard && (
           <CavcDashboardButton appealId={appealId} />
         )}
       </div>
@@ -72,7 +72,7 @@ CaseDetailsPostDispatchActions.propTypes = {
   appealId: PropTypes.string.isRequired,
   includeCavcRemand: PropTypes.bool,
   includeSubstitute: PropTypes.bool,
-  canViewCavcDashboards: PropTypes.bool,
+  supportCavcDashboard: PropTypes.bool,
 };
 
 export default CaseDetailsPostDispatchActions;

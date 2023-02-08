@@ -174,6 +174,10 @@ export const CaseDetailsView = (props) => {
 
   const appealIsDispatched = isAppealDispatched(appeal);
 
+  const appealHasRemandWithDashboard = useSelector((state) =>
+    state.queue.appeals[appealId].cavcRemandsWithDashboard > 0
+  );
+
   const editAppellantInformation = (
     [APPELLANT_TYPES.OTHER_CLAIMANT, APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT].includes(
       appeal.appellantType
@@ -188,6 +192,8 @@ export const CaseDetailsView = (props) => {
 
   const supportCavcRemand =
     currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal;
+
+  const supportCavcDashboard = canViewCavcDashboards && appealHasRemandWithDashboard;
 
   const hasSubstitution = appealHasSubstitution(appeal);
   const supportPostDispatchSubstitution = supportsSubstitutionPostDispatch({
@@ -205,7 +211,7 @@ export const CaseDetailsView = (props) => {
   });
 
   const showPostDispatch =
-    appealIsDispatched && (supportCavcRemand || supportPostDispatchSubstitution || canViewCavcDashboards);
+    appealIsDispatched && (supportCavcRemand || supportPostDispatchSubstitution || supportCavcDashboard);
 
   const actionableScheduledHearingTasks = useSelector(
     (state) => openScheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
@@ -268,7 +274,7 @@ export const CaseDetailsView = (props) => {
           appealId={appealId}
           includeCavcRemand={supportCavcRemand}
           includeSubstitute={supportPostDispatchSubstitution}
-          canViewCavcDashboards={canViewCavcDashboards}
+          supportCavcDashboard={supportCavcDashboard}
         />
       )}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}

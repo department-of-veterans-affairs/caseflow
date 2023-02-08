@@ -792,7 +792,3 @@ export const setAppealAod = (externalAppealId, granted) => ({
 
 export const setQueueConfig = (config) => ({ type: ACTIONS.SET_QUEUE_CONFIG,
   payload: { config } });
-
-export const setRequireCavcDashboard = (decisionType) => ({ type: ACTIONS.SET_REQUIRE_CAVC_DASHBOARD,
-  payload: { decisionType }
-});
