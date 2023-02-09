@@ -431,14 +431,14 @@ AddCavcRemandView.propTypes = {
     dismissal_cavc_remand: PropTypes.bool
   }),
   highlightInvalid: PropTypes.bool,
-  history: PropTypes.object
+  history: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   decisionIssues: state.queue.appealDetails[ownProps.appealId].decisionIssues,
   highlightInvalid: state.ui.highlightFormItems,
   error: state.ui.messages.error,
-  featureToggles: state.ui.featureToggles
+  featureToggles: state.ui.featureToggles,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
