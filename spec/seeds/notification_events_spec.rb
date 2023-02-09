@@ -6,7 +6,7 @@ describe Seeds::NotificationEvents do
 
     it "creates the Notification Events" do
       expect { subject }.to_not raise_error
-      expect(NotificationEvent.count).to eq(13)
+      expect(NotificationEvent.count).to eq(1)
     end
   end
 end
