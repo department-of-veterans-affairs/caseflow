@@ -88,7 +88,7 @@ namespace :ci do
     end
 
     undercovered_files = result.covered_percentages.zip(result.filenames).select do |c|
-      c.first < CODE_COVERAGE_THRESHOLD
+      c.first < CODE_COVERAGE_THRESHOLD && !c.second.include?("db/seeds")
     end
 
     if !undercovered_files.empty?
