@@ -9,10 +9,10 @@ RSpec.describe AdminController, :all_dbs, type: :controller do
 
         2.times do
           create(:correspondent,
-            snamef: "Bobby",
-            snamemi: "F",
-            snamel: "Veteran",
-            stadtime: Time.zone.now)
+                 snamef: "Bobby",
+                 snamemi: "F",
+                 snamel: "Veteran",
+                 stadtime: Time.zone.now)
         end
       end
 
@@ -85,7 +85,7 @@ RSpec.describe AdminController, :all_dbs, type: :controller do
           allow(controller).to receive(:verify_authentication).and_return(true)
           allow_any_instance_of(SystemAdminEvent).to receive(:update!).and_raise(StandardError)
 
-          expect{ post :veteran_extract }.to raise_error(StandardError)
+          expect { post :veteran_extract }.to raise_error(StandardError)
         end
       end
     end

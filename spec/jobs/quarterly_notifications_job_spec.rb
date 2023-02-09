@@ -316,7 +316,8 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "does not push a new message" do
-        allow_any_instance_of(QuarterlyNotificationsJob).to receive(:send_quarterly_notifications).and_raise(StandardError)
+        allow_any_instance_of(QuarterlyNotificationsJob)
+          .to receive(:send_quarterly_notifications).and_raise(StandardError)
         subject
         expect { subject }.not_to have_enqueued_job(SendNotificationJob)
       end
