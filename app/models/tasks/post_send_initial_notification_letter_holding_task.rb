@@ -47,6 +47,7 @@ class PostSendInitialNotificationLetterHoldingTask  < TimedHoldTask
         instructions: instructions
       )
       task.update!(status: Constants.TASK_STATUSES.on_hold)
+      psi.update!(status: Constants.TASK_STATUSES.on_hold)
     end
   end
 

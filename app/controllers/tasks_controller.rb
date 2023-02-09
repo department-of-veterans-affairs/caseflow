@@ -113,7 +113,7 @@ class TasksController < ApplicationController
     tasks_hash = json_tasks(tasks.uniq)
 
 
-    appeal = Appeal.find(task.appeal.id)
+    appeal = Appeal.find(task&.appeal.id)
     if appeal.contested_claim?
       if (task.type === "SendInitialNotificationLetterTask")
         opc = params['select_opc']
