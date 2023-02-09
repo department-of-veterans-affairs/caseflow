@@ -49,6 +49,11 @@ const MembershipRequestTable = (props) => {
       target: '/deny' },
   ];
 
+  const MembershipRequestDropDownLabel = () => <div>
+    <span> Select action </span>
+    <DoubleArrowIcon />
+  </div>;
+
   // TODO: Ask if the requests are supposed to be ordered by created at?
   // Right now it will be in order based on the id of the membership request
   // It just happens to also be sorted created date as well in most cases since it is set on object creation.
@@ -68,8 +73,7 @@ const MembershipRequestTable = (props) => {
       valueFunction: () => {
         return <DropdownButton
           lists={dropdownOptions}
-          // label=<div style={{ display: 'inline-block', textAlign: 'center' }}><span style={{ display: 'inline-block' }}>Select Action</span><DoubleArrowIcon /></div>
-          label=<div>Select action <span style={{ transform: "translate('0px', '3px')" }}><DoubleArrowIcon /></span></div>
+          label=<MembershipRequestDropDownLabel />
         />;
       }
     },
@@ -97,10 +101,10 @@ const MembershipRequestTable = (props) => {
     {
       header: '',
       valueFunction: (request) => {
-        return <>
+        return <div className="expanded-note">
           <strong>REQUEST NOTE:</strong>
           <p>{request.note}</p>
-        </>;
+        </div>;
       },
       span: constant(4),
     },
@@ -136,7 +140,7 @@ const MembershipRequestTable = (props) => {
 
   // Conditionally set the row class name for css for note rows.
   const setRowClassNames = (rowObject) => {
-    return rowObject.hasNote ? 'membership-request-expanded-note' : 'membership-request-row';
+    return rowObject.hasNote ? 'membership-request-expanded-note-row' : 'membership-request-row';
   };
 
   return <>
