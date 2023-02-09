@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useTimeout } from 'react';
 import PropTypes from 'prop-types';
+import { DoubleArrowIcon } from '../components/icons/DoubleArrowIcon';
 import moment from 'moment';
 import DropdownButton from '../components/DropdownButton';
 import Table from '../components/Table';
@@ -67,7 +68,8 @@ const MembershipRequestTable = (props) => {
       valueFunction: () => {
         return <DropdownButton
           lists={dropdownOptions}
-          label="Select action"
+          // label=<div style={{ display: 'inline-block', textAlign: 'center' }}><span style={{ display: 'inline-block' }}>Select Action</span><DoubleArrowIcon /></div>
+          label=<div>Select action <span style={{ transform: "translate('0px', '3px')" }}><DoubleArrowIcon /></span></div>
         />;
       }
     },

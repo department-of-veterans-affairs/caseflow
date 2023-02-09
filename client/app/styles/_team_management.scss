@@ -3,9 +3,32 @@
     border-bottom-color: black;
   }
 
+  .cf-dropdown-trigger {
+    color: black;
+
+    &::after {
+      content: none;
+    }
+  }
+
+  .cf-dropdown {
+    box-shadow: inset 0 0 0 2px #000000;
+
+    button {
+      box-shadow: inset 0 0 0 2px #000000;
+    }
+
+    .table-icon {
+      transform: translate(0px, 3px);
+    }
+
+  }
+
   .membership-request-expanded-note {
     // animation: slideDown .5s;
     // animation-fill-mode: forwards;
+    font-size: 13px;
+
     td {
       border: none;
     }
