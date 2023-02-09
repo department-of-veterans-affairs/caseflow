@@ -73,13 +73,17 @@ export const CavcDashboardIssue = (props) => {
 
 export const CavcDashboardIssuesSection = (props) => {
   const { remand } = props;
-  const Issues = remand.source_request_issues;
+  let Issues = remand.source_request_issues;
   const CavcIssues = remand.cavc_dashboard_issues;
   const Dispositions = remand.cavc_dashboard_dispositions;
 
-  CavcIssues.map((CavcIssue) => {
-    return Issues.push(CavcIssue);
-  });
+  if (CavcIssues.length !== 0 && Issues.length !== 0) {
+    CavcIssues.map((CavcIssue) => {
+      return Issues.push(CavcIssue);
+    });
+  } else if (CavcIssues.length !== 0) {
+    Issues = CavcIssues;
+  }
 
   return (
     <div {...issueSectionStyling}>
