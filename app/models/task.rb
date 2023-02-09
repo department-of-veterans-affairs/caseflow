@@ -423,7 +423,7 @@ class Task < CaseflowRecord
   end
 
   def on_timed_hold?
-    !active_child_timed_hold_task.nil? || self.type ==PostSendInitialNotificationLetterHoldingTask.name
+    !active_child_timed_hold_task.nil? || self.type == PostSendInitialNotificationLetterHoldingTask.name
   end
 
   def active_child_timed_hold_task
