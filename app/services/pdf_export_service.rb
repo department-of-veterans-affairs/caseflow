@@ -38,7 +38,12 @@ class PdfExportService
         kit.stylesheets << stylesheet_name
       end
       # create file name and file path
-      file_name = template_name + ".pdf"
+      if template_name == "notification_report_pdf_template"
+        appeal_id = object&.vacols_id || object&.uuid
+        file_name = template_name + "_" + appeal_id + ".pdf"
+      else
+        file_name = template_name + ".pdf"
+      end
       # file_path = "#{Rails.root}/#{file_name}"
       # kit.to_pdf(file_path)
       # create pdf file from pdfkit object
