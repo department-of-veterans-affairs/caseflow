@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { CavcDashboardIssuesSection } from '../../../../app/queue/cavcDashboard/CavcDashboardIssuesSection';
+import CavcDashboardIssuesSection from '../../../../app/queue/cavcDashboard/CavcDashboardIssuesSection';
 
 const createRemandProp = () => {
   return {

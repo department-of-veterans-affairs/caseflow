@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { CavcDashboardIssuesSection } from './CavcDashboardIssuesSection';
 import { getCavcRemandById } from './cavcDashboardSelectors';
 import CavcDashboardDetails from './CavcDashboardDetails';
+import CavcDashboardIssuesSection from './CavcDashboardIssuesSection';
 
 export const CavcDashboardTab = (props) => {
   return (

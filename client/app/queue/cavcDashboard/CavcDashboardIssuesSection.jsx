@@ -32,7 +32,7 @@ const olStyling = css({
   fontWeight: 'bold',
 });
 
-export const CavcDashboardIssue = (props) => {
+const CavcDashboardIssue = (props) => {
   const [disposition, setDisposition] = useState('Select');
   const { issue, index, dispositions } = props;
   let IssueType = {};
@@ -71,7 +71,7 @@ export const CavcDashboardIssue = (props) => {
   );
 };
 
-export const CavcDashboardIssuesSection = (props) => {
+const CavcDashboardIssuesSection = (props) => {
   const { remand } = props;
   let Issues = remand.source_request_issues;
   const CavcIssues = remand.cavc_dashboard_issues;
@@ -123,3 +123,4 @@ CavcDashboardIssuesSection.propTypes = {
   remand: PropTypes.object,
 };
 
+export default CavcDashboardIssuesSection;
