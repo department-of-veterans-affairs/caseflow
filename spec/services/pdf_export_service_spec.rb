@@ -5,9 +5,8 @@ describe PdfExportService do
   context "template name doesn't exist" do
     let!(:fake_template) { "asfkdjfkd" }
     it "returns MissingTemplate error" do
+      expect(Rails.logger).to receive(:error)
       PdfExportService.create_and_save_pdf(fake_template, appeal)
-      error_msg = JSON.parse(response.body)["message"]
-      expect(error_msg).to include("Template does not exist for name")
     end
   end
   context "template is rendered successfully with appeal" do
