@@ -104,4 +104,7 @@ Rails.application.configure do
 
   # Quarterly Notifications Batch Sizes
   ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"] ||= "1000"
+
+  # Travel Board Sync Batch Size
+  ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
 end
