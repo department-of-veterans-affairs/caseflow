@@ -24,6 +24,12 @@ def get_notifications(appeal)
   end
 end
 
+def handle_notifications(notifications)
+  if notifications.empty?
+    raise ActiveRecord::RecordNotFound
+  end
+end
+
 def generate_table_notifications(notifications)
   table_notifications = Array.new
   notifications.each do |notification|
@@ -57,8 +63,10 @@ def generate_table_notifications(notifications)
   table_notifications
 end
 
+ appeal = handle_appeal(appeal)
  hearing_type = get_hearing_type(appeal)
  notifications = get_notifications(appeal)
+ handle_notifications(notifications)
  table_notifications = generate_table_notifications(notifications)
 
  %>
