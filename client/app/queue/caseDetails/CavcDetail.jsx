@@ -9,6 +9,23 @@ import BareList from '../../components/BareList';
 import COPY from '../../../COPY';
 import CAVC_REMAND_SUBTYPE_NAMES from '../../../constants/CAVC_REMAND_SUBTYPE_NAMES';
 import CAVC_DECISION_TYPES from '../../../constants/CAVC_DECISION_TYPES';
+import { css } from 'glamor';
+import { boldText } from '../constants';
+import { CavcDashboardButton } from '../components/CavcDashboardButton';
+
+export const textStyling = css({
+  display: 'flex',
+  justifyContent: 'space-between'
+});
+
+export const syncStyling = css({
+  textAlign: 'right',
+  width: '33%'
+});
+
+export const gutterStyling = css({
+  width: '5%'
+});
 
 const CavcDetail = (props) => {
   const {
@@ -21,7 +38,9 @@ const CavcDetail = (props) => {
     judgement_date: judgementDate,
     mandate_date: mandateDate,
     federal_circuit: federalCircuit,
-    instructions: instructionText
+    instructions: instructionText,
+    appealId,
+    canViewCavcDashboards
   } = props;
 
   const details = [];
@@ -101,13 +120,19 @@ const CavcDetail = (props) => {
     });
   }
 
-  return (
-    <>
-      <ul {...detailListStyling}>
-        <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
-      </ul>
-    </>
-  );
+  return <React.Fragment>
+    <div {...textStyling}>
+      <div>
+        <ul {...detailListStyling}>
+          <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
+        </ul>
+      </div>
+      <div {...gutterStyling}></div>
+      <div {...boldText}{...syncStyling}>
+        {(canViewCavcDashboards) && <CavcDashboardButton appealId={appealId} />}
+      </div>
+    </div>
+  </React.Fragment>;
 };
 
 CavcDetail.propTypes = {
@@ -120,7 +145,9 @@ CavcDetail.propTypes = {
   judgement_date: PropTypes.string,
   mandate_date: PropTypes.string,
   federal_circuit: PropTypes.bool,
-  instructions: PropTypes.string.isRequired
+  instructions: PropTypes.string.isRequired,
+  appealId: PropTypes.string,
+  canViewCavcDashboards: PropTypes.bool
 };
 
 export default CavcDetail;
