@@ -35,6 +35,13 @@ const olStyling = css({
 export const CavcDashboardIssue = (props) => {
   const [disposition, setDisposition] = useState('Select');
   const { issue, index, dispositions } = props;
+  let IssueType = {};
+
+  if (issue.decision_review_type) {
+    IssueType = `${issue.decision_review_type} - ${issue.contested_issue_description}`;
+  } else {
+    IssueType = issue.issue_category;
+  }
 
   return (
     <li key={index}>
@@ -44,39 +51,7 @@ export const CavcDashboardIssue = (props) => {
             <strong> Benefit type: </strong> {[issue.benefit_type]}
           </div>
           <div>
-            <strong>Issue: </strong> {issue.issue_category}
-          </div>
-        </div>
-        <div>
-          <SearchableDropdown
-            name={`issue-dispositions-${index}`}
-            label="Dispositions"
-            value={disposition}
-            searchable
-            hideLabel
-            options={dispositions}
-            defaultText="Select"
-            onChange={(option) => setDisposition(option)}
-          />
-        </div>
-      </div>
-    </li>
-  );
-};
-
-export const CavcDashboardRequestIssue = (props) => {
-  const [disposition, setDisposition] = useState('Select');
-  const { issue, index, dispositions } = props;
-
-  return (
-    <li key={index}>
-      <div {...singleIssueStyling}>
-        <div>
-          <div>
-            <strong> Benefit type: </strong> {[issue.benefit_type]}
-          </div>
-          <div>
-            <strong>Issue: </strong> {issue.decision_review_type} - {issue.contested_issue_description}
+            <strong>Issue: </strong> {IssueType}
           </div>
         </div>
         <div>
@@ -102,6 +77,10 @@ export const CavcDashboardIssuesSection = (props) => {
   const CavcIssues = remand.cavc_dashboard_issues;
   const Dispositions = remand.cavc_dashboard_dispositions;
 
+  CavcIssues.map((CavcIssue) => {
+    return Issues.push(CavcIssue);
+  });
+
   return (
     <div {...issueSectionStyling}>
       <div>
@@ -116,15 +95,7 @@ export const CavcDashboardIssuesSection = (props) => {
 
           return (
             <React.Fragment key={i}>
-              <CavcDashboardRequestIssue issue={issue} index={i} dispositions={Dispositions} />
-            </React.Fragment>
-          );
-        })}
-        {CavcIssues.map((CavcIssue, i) => {
-
-          return (
-            <React.Fragment key={i}>
-              <CavcDashboardIssue issue={CavcIssue} index={i} dispositions={Dispositions} />
+              <CavcDashboardIssue issue={issue} index={i} dispositions={Dispositions} />
             </React.Fragment>
           );
         })}
@@ -133,20 +104,12 @@ export const CavcDashboardIssuesSection = (props) => {
   );
 };
 
-CavcDashboardRequestIssue.propTypes = {
+CavcDashboardIssue.propTypes = {
   index: PropTypes.number,
   issue: PropTypes.shape({
     benefit_type: PropTypes.string,
     decision_review_type: PropTypes.string,
     contested_issue_description: PropTypes.string,
-  }),
-  dispositions: PropTypes.array,
-};
-
-CavcDashboardIssue.propTypes = {
-  index: PropTypes.number,
-  issue: PropTypes.shape({
-    benefit_type: PropTypes.string,
     issue_category: PropTypes.string,
   }),
   dispositions: PropTypes.array,
