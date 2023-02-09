@@ -11,6 +11,14 @@ describe SendNotificationJob, type: :job do
            event_date: Time.zone.today,
            notification_type: "Email")
   end
+  let(:legacy_appeal_notification) do
+    create(:notification,
+           appeals_id: "123456",
+           appeals_type: "LegacyAppeal",
+           event_type: "Appeal docketed",
+           event_date: Time.zone.today,
+           notification_type: "SMS")
+  end
   let(:appeal) do
     create(:appeal,
            docket_type: "Appeal",
@@ -348,6 +356,42 @@ describe SendNotificationJob, type: :job do
     end
   end
 
+  context "feature flags for setting notification type" do
+    it "notification type should be email if only email flag is on" do
+      job = SendNotificationJob.new(good_message.to_json)
+      job.instance_variable_set(:@va_notify_email, true)
+      record = job.send(:create_notification_audit_record,
+                        notification.appeals_id,
+                        notification.appeals_type,
+                        notification.event_type,
+                        "123456789")
+      expect(record.notification_type).to eq("Email")
+    end
+
+    it "notification type should be sms if only sms flag is on" do
+      job = SendNotificationJob.new(good_message.to_json)
+      job.instance_variable_set(:@va_notify_sms, true)
+      record = job.send(:create_notification_audit_record,
+                        notification.appeals_id,
+                        notification.appeals_type,
+                        notification.event_type,
+                        "123456789")
+      expect(record.notification_type).to eq("SMS")
+    end
+
+    it "notification type should be email and sms if both of those flags are on" do
+      job = SendNotificationJob.new(good_message.to_json)
+      job.instance_variable_set(:@va_notify_email, true)
+      job.instance_variable_set(:@va_notify_sms, true)
+      record = job.send(:create_notification_audit_record,
+                        notification.appeals_id,
+                        notification.appeals_type,
+                        notification.event_type,
+                        "123456789")
+      expect(record.notification_type).to eq("Email and SMS")
+    end
+  end
+
   context "feature flags for sending legacy notifications" do
     it "should only send notifications when feature flag is turned on" do
       FeatureToggle.enable!(:appeal_docketed_notification)
@@ -366,6 +410,25 @@ describe SendNotificationJob, type: :job do
     end
   end
 
+  context "feature flag testing for creating legacy appeal notification records" do
+    it "should only create an instance of a notification before saving if a notification was found" do
+      FeatureToggle.enable!(:appeal_docketed_event)
+      job = SendNotificationJob.new(legacy_message.to_json)
+      expect(Notification).to receive(:new)
+      job.perform_now
+    end
+
+    it "should return the notification record if one is found and not try to create one" do
+      legacy_appeal_notification
+      FeatureToggle.enable!(:appeal_docketed_event)
+      FeatureToggle.enable!(:va_notify_sms)
+      job = SendNotificationJob.new(legacy_message.to_json)
+      job.instance_variable_set(:@va_notify_sms, true)
+      expect(Notification).not_to receive(:new)
+      job.perform_now
+    end
+  end
+
   context "feature flag for quarterly notifications" do
     it "should send an sms for quarterly notifications when the flag is on" do
       FeatureToggle.enable!(:va_notify_quarterly_sms)
@@ -377,6 +440,20 @@ describe SendNotificationJob, type: :job do
       FeatureToggle.disable!(:va_notify_quarterly_sms)
       expect(VANotifyService).not_to receive(:send_sms_notifications)
       SendNotificationJob.new(quarterly_message.to_json).perform_now
+    end
+  end
+
+  context "no participant or claimant found" do
+    it "the email status should be updated to say no participant id if that is the message" do
+      FeatureToggle.enable!(:va_notify_email)
+      SendNotificationJob.new(bad_message.to_json).perform_now
+      expect(Notification.first.email_notification_status).to eq("No Participant Id Found")
+    end
+
+    it "the sms status should be updated to say no participant id if that is the message" do
+      FeatureToggle.enable!(:va_notify_sms)
+      SendNotificationJob.new(bad_message.to_json).perform_now
+      expect(Notification.first.sms_notification_status).to eq("No Participant Id Found")
     end
   end
 end
