@@ -1,25 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { DoubleArrowIcon } from '../components/icons/DoubleArrowIcon';
 import moment from 'moment';
 import DropdownButton from '../components/DropdownButton';
 import Table from '../components/Table';
-import { constant, countBy, values, cloneDeep } from 'lodash';
+import { constant, cloneDeep } from 'lodash';
 import Pagination from '../components/Pagination/Pagination';
 
 const MembershipRequestTable = (props) => {
 
-  const { requests = [], enablePagination = true } = props;
+  const { requests = [] } = props;
 
   const REQUESTS_PER_PAGE = 10;
-  // const tbodyRef = useRef(null);
-  // const animationTimeout = useTimeout();
 
   const initializePaginatedData = (membershipRequests) => {
-    // Add the count based on page number instead of expanded
     const paginatedData = [];
-
-    // console.log('this should only be called once');
 
     for (let i = 0; i < membershipRequests.length; i += REQUESTS_PER_PAGE) {
       paginatedData.push(membershipRequests.slice(i, i + REQUESTS_PER_PAGE));
@@ -27,11 +22,10 @@ const MembershipRequestTable = (props) => {
 
     return paginatedData;
   };
-  // What if I created an object hash that stores the expanded state based on the request id?
+
+  // State variable to store the expanded state. It is an object of the form { [request.id]: boolean }
   const [expanded, setExpanded] = useState({});
   const [currentPage, setCurrentPage] = useState(0);
-
-  // const [pageExpandedCount, setPageExpandedCount] = useState({ 0: 0 });
 
   // Set the row objects for the table based on if the request has a note or not.
   // If it has a note and is expanded, add an additional row in the table.
@@ -55,10 +49,8 @@ const MembershipRequestTable = (props) => {
   const getPaginatedRowObjects = (rows) => {
 
     const updatedRequests = rows.reduce((acc, request) => {
-      // Need to remove the existing notes everytime?
-      if (request.hasNote) {
-        // Ignore it
-      } else {
+      // If it does not have a note add it to the list. If it has a note skip it to avoid duplicates.
+      if (!request.hasNote) {
         acc.push(request);
       }
 
@@ -72,11 +64,10 @@ const MembershipRequestTable = (props) => {
     return updatedRequests;
   };
 
-  // Next idea try to save the paged tasks to the state based on the current page so no need to recalculate it.
+  // Create a state variable to hold the paginated requests.
   const [paginatedRequests, setPaginatedRequests] = useState(initializePaginatedData(getRowObjects(requests)));
 
   const updatePaginatedData = () => {
-    // TODO: Might not need this clone
     const tempArray = cloneDeep(paginatedRequests);
 
     tempArray[currentPage] = getPaginatedRowObjects(tempArray[currentPage]);
@@ -85,8 +76,6 @@ const MembershipRequestTable = (props) => {
 
   // Updates the current page pagination data
   useEffect(() => {
-    // This needs to be changed to only update the current page index rather than the full thing
-    // setPaginatedRequests(initializePaginatedData(getRowObjects(requests)));
     updatePaginatedData();
   }, [expanded]);
 
@@ -146,7 +135,6 @@ const MembershipRequestTable = (props) => {
             aria-expanded={Boolean(expanded[request.id])}
             aria-label="Show note">
           </button>;
-
         }
 
         return '';
@@ -185,20 +173,19 @@ const MembershipRequestTable = (props) => {
     return rowObject.hasNote ? 'membership-request-expanded-note-row' : 'membership-request-row';
   };
 
-  // Some pretty stupid pagination math because of the way the way the row notes are conditionally added to the table.
+  // Weird current page pagination math because of the way the way the row notes are conditionally added as table rows.
   let currentRequestsCount = 0;
 
   if (paginatedRequests[currentPage]) {
     currentRequestsCount = paginatedRequests[currentPage].length || 0;
-    currentRequestsCount = currentRequestsCount > 10 ? 10 : currentRequestsCount;
+    currentRequestsCount = currentRequestsCount > REQUESTS_PER_PAGE ? REQUESTS_PER_PAGE : currentRequestsCount;
   }
 
+  // Create a function for the pagination so it can be easily added above and below the table.
   const MembershipRequestPagination = () => {
     return <Pagination
       pageSize={REQUESTS_PER_PAGE}
       currentPage={currentPage + 1}
-      // currentCases={requests ? paginatedRows[currentPage].length : 0}
-      // currentCases={paginatedRows[currentPage] ? paginatedRows[currentPage].length : 0}
       currentCases={currentRequestsCount}
       totalPages={paginatedRequests.length}
       totalCases={requests.length}
@@ -212,12 +199,9 @@ const MembershipRequestTable = (props) => {
     <Table
       className="membership-request-table"
       columns={columnDefinitions}
-      // rowObjects={paginatedRows[currentPage]}
       rowObjects={paginatedRequests[currentPage]}
-      // rowObjects={getRowObjects(requests)}
       rowClassNames={setRowClassNames}
       getKeyForRow={(_, { hasNote, id }) => hasNote ? `${id}-note` : `${id}`}
-      // tbodyRef={tbodyRef}
     />
     <MembershipRequestPagination />
   </>;
