@@ -19,13 +19,13 @@ class OnHoldTasksTab < QueueTab
   end
 
   def tasks
-      task_ids = ama_task_ids
+    task_ids = ama_task_ids
 
-      if assignee.can_be_assigned_legacy_tasks?
-        task_ids.concat(legacy_colocated_task_ids_assigned_by_assignee)
-      end
+    if assignee.can_be_assigned_legacy_tasks?
+      task_ids.concat(legacy_colocated_task_ids_assigned_by_assignee)
+    end
 
-      Task.includes(*task_includes).where(id: task_ids)
+    Task.includes(*task_includes).where(id: task_ids)
   end
 
 
