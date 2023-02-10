@@ -39,13 +39,17 @@ class PdfExportService
       end
       # create file name and file path
       if template_name == "notification_report_pdf_template"
-        appeal_id = object&.vacols_id || object&.uuid
+        if object.class.name == "Appeal"
+          appeal_id = object.uuid
+        elsif object.class.name == "LegacyAppeal"
+          appeal_id = object.vacols_id
+        end
         file_name = template_name + "_" + appeal_id + ".pdf"
       else
         file_name = template_name + ".pdf"
       end
-      # file_path = "#{Rails.root}/#{file_name}"
-      # kit.to_pdf(file_path)
+      # file_location = "#{Rails.root}/#{file_name}"
+      # kit.to_pdf(file_location)
       # create pdf file from pdfkit object
       pdf = kit.to_pdf
       # store file in s3 bucket
