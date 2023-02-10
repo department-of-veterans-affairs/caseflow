@@ -117,18 +117,24 @@ class TasksController < ApplicationController
     if appeal.contested_claim?
       if (task.type === "SendInitialNotificationLetterTask")
         opc = params['select_opc']
-        case opc
-        when "task_complete_contested_claim"
+        if (opc === "task_complete_contested_claim")
           days_on_hold = params['hold_days'].to_i
           instructions= "";
           PostSendInitialNotificationLetterHoldingTask.create_from_parent(task.parent, days_on_hold: days_on_hold, instructions: instructions)
-        when "proceed_final_notification_letter"
+        elseif (opc === "proceed_final_notification_letter")
           send_final_notification_letter
-        else
-          puts "no"
         end
+        # case opc
+        # when "task_complete_contested_claim"
+        #   days_on_hold = params['hold_days'].to_i
+        #   instructions= "";
+        #   PostSendInitialNotificationLetterHoldingTask.create_from_parent(task.parent, days_on_hold: days_on_hold, instructions: instructions)
+        # when "proceed_final_notification_letter"
+        #   send_final_notification_letter
+        # else
+        #   puts "no"
+        # end
       end
-
     end
     # currently alerts are only returned by ScheduleHearingTask
     # and AssignHearingDispositionTask for virtual hearing related updates
