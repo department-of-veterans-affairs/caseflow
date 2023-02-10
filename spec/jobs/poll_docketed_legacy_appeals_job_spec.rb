@@ -1,75 +1,108 @@
 # frozen_string_literal: true
 
-describe PollDocketedLegacyAppealsJob, type: :job do
-  include ActiveJob::TestHelper
-  let(:current_user) { create(:user, roles: ["System Admin"]) }
+class FetchHearingLocationsForVeteransJob < ApplicationJob
+  queue_with_priority :low_priority
+  application_attr :hearing_schedule
 
-  describe "polling for docketed appeals" do
-    before do
-      Seeds::NotificationEvents.new.seed!
-    end
+  QUERY_LIMIT = 650
+  QUERY_TRAVEL_BOARD_LIMIT = 100
+  JOB_DURATION = 1.hour
 
-    let(:vacols_ids) { %w[12340 12341 12342 12343 12344 12345 12346 12347 12348 12349] }
-    let(:bfac_codes) { %w[1 3 7] }
+  def create_schedule_hearing_tasks
+    HearingTaskTreeInitializer.create_schedule_hearing_tasks
+  end
 
-    # rubocop:disable Style/BlockDelimiters
-    let(:cases) {
-      create_list(:case, 10) do |vacols_case, i|
-        bfac = (i == 4) ? "4" : bfac_codes.sample
-        vacols_case.update!(bfkey: vacols_ids[i], bfac: bfac)
+  def find_appeals_ready_for_geomatching(appeal_type, select_fields: [])
+    appeal_ids = ScheduleHearingTask.open.where(
+      appeal_type: appeal_type.name
+    ).pluck(:appeal_id)
+
+    appeal_type.left_outer_joins(:available_hearing_locations)
+      .select(:id, *select_fields)
+      .select("MIN(available_hearing_locations.updated_at) as ahl_updated_at")
+      .where(id: appeal_ids)
+      .group(:id)
+      .order("ahl_updated_at nulls first")
+  end
+
+  # Gets appeals that are ready for geomatching.
+  #
+  # @return     [Array<Appeal, LegacyAppeal>]
+  #   An array of appeals that are ready for geomatching, bounded by the `QUERY_LIMIT`
+  #   and `QUERY_TRAVEL_BOARD_LIMIT`.
+  def appeals
+    @appeals ||= begin
+                   legacy_appeals = find_appeals_ready_for_geomatching(
+                     LegacyAppeal,
+                     select_fields: [:vacols_id]
+                   ).first(QUERY_LIMIT / 2)
+
+                   ama_appeals = find_appeals_ready_for_geomatching(Appeal).first(QUERY_LIMIT / 2)
+                   legacy_appeals + ama_appeals
+                 end
+  end
+
+  NONACTIONABLE_ERRORS = [Caseflow::Error::VaDotGovMissingFacilityError].freeze
+
+  # rubocop:disable Metrics/MethodLength
+  def perform
+    setup_job
+    current_appeal = 0
+
+    loop do
+      remaining_appeals = appeals[current_appeal..-1]
+
+      break if remaining_appeals.empty? || job_running_past_expected_end_time?
+
+      remaining_appeals.each do |appeal|
+        break if job_running_past_expected_end_time?
+
+        begin
+          # we only selected id and ahl_update_at, reload all columns
+          GeomatchService.new(appeal: appeal.reload).geomatch
+
+          current_appeal += 1
+        rescue Caseflow::Error::VaDotGovLimitError
+          Rails.logger.error("VA.gov returned a rate limit error")
+
+          sleep_before_retry_on_limit_error
+
+          break
+        rescue StandardError => error
+          actionable = !NONACTIONABLE_ERRORS.include?(error.class)
+          capture_exception(error: error, extra: { appeal_external_id: appeal.external_id, actionable: actionable })
+
+          # For unknown errors, we capture the exeception in Sentry. This error could represent
+          # a broad range of things, so we just skip geomatching for the appeal, and expect
+          # that a developer looks into it.
+          current_appeal += 1
+        end
       end
-    }
-    let(:legacy_appeals) {
-      create_list(:legacy_appeal, 10) do |appeal, i|
-        appeal.update!(vacols_id: vacols_ids[i])
-      end
-    }
-    let(:claim_histories) {
-      create_list(:priorloc, 10) do |claim_history, i|
-        locstto = (i == 3) ? "02" : "01"
-        locdout = i.even? ? Time.zone.today : Time.zone.yesterday
-        claim_history.update!(lockey: vacols_ids[i], locstto: locstto, locdout: locdout)
-      end
-    }
-    let(:notification) {
-      create(:notification,
-             appeals_id: "12342",
-             appeals_type: "LegacyAppeal",
-             event_date: Time.zone.today,
-             event_type: "Appeal docketed",
-             notification_type: "Email",
-             notified_at: Time.zone.today)
-    }
-    let(:filtered_claim_histories) {
-      claim_histories_copy = claim_histories.dup
-      claim_histories_copy.slice!(2, 4)
-      claim_histories_copy
-    }
-
-    let(:recent_docketed_appeal_ids) { %w[12340 12342 12346 12348] }
-
-    let(:filtered_docketed_appeal_ids) { %w[12340 12346 12348] }
-
-    let(:query) {
-      "INNER JOIN priorloc
-      ON brieff.bfkey = priorloc.lockey WHERE brieff.bfac IN ('1','3','7')
-      AND locstto = '01' AND trunc(locdout) = trunc(sysdate)"
-    }
-    # rubocop:enable Style/BlockDelimiters
-
-    before(:each) do
-      cases
-      legacy_appeals
-      claim_histories
-      notification
     end
+  end
+  # rubocop:enable Metrics/MethodLength
 
-    it "should filter for all cases that have been recently docketed" do
-      expect(PollDocketedLegacyAppealsJob.new.most_recent_docketed_appeals(query)).to eq(recent_docketed_appeal_ids)
-    end
+  private
 
-    it "should filter for all legacy appeals that havent already gotten a notification yet" do
-      expect(PollDocketedLegacyAppealsJob.perform_now).to eq(filtered_docketed_appeal_ids)
-    end
+  attr_accessor :job_expected_end_time
+
+  def setup_job
+    RequestStore.store[:current_user] = User.system_user
+
+    @job_expected_end_time = Time.zone.now + JOB_DURATION
+
+    create_schedule_hearing_tasks
+  end
+
+  # Returns whether or not the job is running beyond the expected end time.
+  def job_running_past_expected_end_time?
+    Time.zone.now > job_expected_end_time
+  end
+
+  # Pauses execution based on an error received from VA.gov.
+  #
+  # @note This is its own method so that it can be stubbed by the test suite.
+  def sleep_before_retry_on_limit_error
+    sleep 15
   end
 end
