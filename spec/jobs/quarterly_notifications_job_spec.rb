@@ -3,10 +3,30 @@
 describe QuarterlyNotificationsJob, type: :job do
   include ActiveJob::TestHelper
   let(:appeal) { create(:appeal, :active) }
+  let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+  let(:vacols_case) { create(:case)}
   let(:user) { create(:user) }
   subject { QuarterlyNotificationsJob.perform_now }
   describe "#perform" do
     context "appeal is nil" do
+      let!(:appeal_state) do
+        create(
+          :appeal_state,
+          appeal_id: 2,
+          appeal_type: "Appeal",
+          created_by_id: user.id,
+          updated_by_id: user.id
+        )
+      end
+      it "does not push a new message" do
+        expect { subject }.not_to have_enqueued_job(SendNotificationJob)
+      end
+      it "rescues and logs error" do
+        expect(Rails.logger).to receive(:error)
+        subject
+      end
+    end
+    context "Appeal Decision Mailed" do
       let!(:appeal_state) do
         create(
           :appeal_state,
@@ -18,7 +38,6 @@ describe QuarterlyNotificationsJob, type: :job do
         )
       end
       it "does not push a new message" do
-        subject
         expect { subject }.not_to have_enqueued_job(SendNotificationJob)
       end
     end
@@ -236,8 +255,8 @@ describe QuarterlyNotificationsJob, type: :job do
       let!(:appeal_state) do
         create(
           :appeal_state,
-          appeal_id: appeal.id,
-          appeal_type: "Appeal",
+          appeal_id: legacy_appeal.id,
+          appeal_type: "LegacyAppeal",
           created_by_id: user.id,
           updated_by_id: user.id,
           appeal_docketed: true,
