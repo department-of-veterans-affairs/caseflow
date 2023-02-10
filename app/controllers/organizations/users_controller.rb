@@ -71,6 +71,7 @@ class Organizations::UsersController < OrganizationsController
     params[:organization_url]
   end
 
+  # TODO: don't do this method if they aren't a vha_organization since it's a waste of a database call for nothing
   def membership_requests
     # TODO: Maybe create a serializer for these?
     MembershipRequest.includes(:requestor, :organization).where(organization: organization)
