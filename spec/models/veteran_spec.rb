@@ -537,7 +537,7 @@ describe Veteran, :all_dbs do
 
       before { allow_any_instance_of(Veteran).to receive(:bgs_record).and_return(ssn: bgs_ssn) }
 
-      it "return the SSN value from BGS, and updates the Caseflow Veteran record" do
+      it "returns the SSN value from BGS, and updates the Caseflow Veteran record" do
         # Avoiding calling .ssn as to not trigger the BGS fallback
         expect(veteran[:ssn]).to be_nil
 
