@@ -202,7 +202,7 @@ class TasksController < ApplicationController
     @send_final_notification_letter ||= task.appeal.tasks.open.find_by(type: :SendFinalNotificationLetterTask) ||
                                           SendFinalNotificationLetterTask.create!(
                                             appeal: task.appeal,
-                                            parent: task.appeal.tasks.find_by(status: "assigned"),
+                                            parent: task.parent,
                                             assigned_to: Organization.find_by_url("clerk-of-the-board"),
                                             assigned_by: current_user
                                           )
