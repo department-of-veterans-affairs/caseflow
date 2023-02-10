@@ -35,12 +35,12 @@ const olStyling = css({
 const CavcDashboardIssue = (props) => {
   const [disposition, setDisposition] = useState('Select');
   const { issue, index, dispositions } = props;
-  let IssueType = {};
+  let issueType = {};
 
   if (issue.decision_review_type) {
-    IssueType = `${issue.decision_review_type} - ${issue.contested_issue_description}`;
+    issueType = `${issue.decision_review_type} - ${issue.contested_issue_description}`;
   } else {
-    IssueType = issue.issue_category;
+    issueType = issue.issue_category;
   }
 
   return (
@@ -51,7 +51,7 @@ const CavcDashboardIssue = (props) => {
             <strong> Benefit type: </strong> {[issue.benefit_type]}
           </div>
           <div>
-            <strong>Issue: </strong> {IssueType}
+            <strong>Issue: </strong> {issueType}
           </div>
         </div>
         <div>
@@ -73,17 +73,9 @@ const CavcDashboardIssue = (props) => {
 
 const CavcDashboardIssuesSection = (props) => {
   const { remand } = props;
-  let Issues = remand.source_request_issues;
-  const CavcIssues = remand.cavc_dashboard_issues;
-  const Dispositions = remand.cavc_dashboard_dispositions;
-
-  if (CavcIssues.length !== 0 && Issues.length !== 0) {
-    CavcIssues.map((CavcIssue) => {
-      return Issues.push(CavcIssue);
-    });
-  } else if (CavcIssues.length !== 0) {
-    Issues = CavcIssues;
-  }
+  const issues = remand.source_request_issues;
+  const cavcIssues = remand.cavc_dashboard_issues;
+  const dashboardDispositions = remand.cavc_dashboard_dispositions;
 
   return (
     <div {...issueSectionStyling}>
@@ -95,11 +87,19 @@ const CavcDashboardIssuesSection = (props) => {
         <hr />
       </div>
       <ol {...olStyling}>
-        {Issues.map((issue, i) => {
+        {issues.map((issue, i) => {
 
           return (
             <React.Fragment key={i}>
-              <CavcDashboardIssue issue={issue} index={i} dispositions={Dispositions} />
+              <CavcDashboardIssue issue={issue} index={i} dispositions={dashboardDispositions} />
+            </React.Fragment>
+          );
+        })}
+        {cavcIssues.map((cavcIssue, i) => {
+
+          return (
+            <React.Fragment key={i}>
+              <CavcDashboardIssue issue={cavcIssue} index={i} dispositions={dashboardDispositions} />
             </React.Fragment>
           );
         })}
