@@ -6,11 +6,16 @@ class VBMSCaseflowLogger
     case event
     when :request
       status = data[:response_code]
-      message = status != 200 ? "Error" : "Success"
 
-      Rails.logger.error(
-        "VBMS HTTP #{message} #{status} (#{data.pretty_inspect})"
-      )
+      if status != 200
+        Rails.logger.error(
+          "VBMS HTTP Error #{status} (#{data.pretty_inspect})"
+        )
+      else
+        Rails.logger.info(
+          "VBMS HTTP Success #{status} (#{data.pretty_inspect})"
+        )
+      end
     end
   end
 end
