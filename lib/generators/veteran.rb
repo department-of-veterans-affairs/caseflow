@@ -100,16 +100,12 @@ class Generators::Veteran
         record[:date_of_death] = record[:date_of_death].strftime("%m/%d/%Y")
       end
       Fakes::BGSService.store_veteran_record(attrs[:file_number], record)
-      vet = Veteran.new(file_number: attrs[:file_number],
-                        first_name: attrs[:first_name],
-                        last_name: attrs[:last_name],
-                        middle_name: attrs[:middle_name],
-                        date_of_death: attrs[:date_of_death],
-                        name_suffix: attrs[:suffix_name])
-
-      vet.save!
-
-      vet
+      Veteran.new(file_number: attrs[:file_number],
+                  first_name: attrs[:first_name],
+                  last_name: attrs[:last_name],
+                  middle_name: attrs[:middle_name],
+                  date_of_death: attrs[:date_of_death],
+                  name_suffix: attrs[:suffix_name])
     end
   end
 end
