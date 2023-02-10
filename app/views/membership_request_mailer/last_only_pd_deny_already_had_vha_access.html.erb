@@ -1,25 +1,18 @@
-<!-- 12.6.3.2.1 -->
 <%= render "intro" %>
 
 <%= content_for :content do %>
   <p>
-    <%= 'At this time, we have denied your request for access to <VHA pre-docket organization denying access> pages in Caseflow. Your existing group membership did not change.' %>
+    At this time, we have denied your request for access to <%= @requesting_org_name %> pages in Caseflow. Your existing group membership did not change.
   </p>
 
   <p>
     <b> You currently have access to the following groups' pages: </b>
   </p>
 
-  <% ["Any other groups"].each do |group| %>
+  <% @accessible_groups.each do |group| %>
     <p> <%= group %> </p>
   <% end %>
-
-  <%= render "help" %>
 <% end %>
 
-<%= content_for :signature do %>
-  <p>
-    Sincerely,<br/>
-    VHA PD Organization denying request
-  </p>
-<% end %>
+<%= render "help" %>
+<%= render "vha_signature" %>

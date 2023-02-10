@@ -6,5 +6,12 @@
   </p>
 <% end %>
 
-<%= render "help" %>
-<%= render "vha_signature" %>
+<%= content_for :content do %>
+  <p>
+    <b> Help </b>
+  </p>
+
+  <p>
+    Please call the Enterprise Service Desk at 855-673-4357 if you experience technical difficulties.
+  </p>
+<% end %>

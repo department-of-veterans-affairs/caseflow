@@ -1,9 +1,8 @@
-<!-- 12.6.3.1 -->
 <%= render "intro" %>
 
 <%= content_for :content do %>
   <p>
-    <%= 'At this time, we have denied your request for access to <VHA pre-docket organization denying access> pages in Caseflow.' %>
+    At this time, we have denied your request for access to <%= @requesting_org_name %> pages in Caseflow.
   </p>
 
   <p>
@@ -14,7 +13,7 @@
     <b> Your pending requests: </b>
   </p>
 
-  <% ["First Group", "Any other groups"].each do |pending_request_group| %>
+  <% @requested_groups.each do |pending_request_group| %>
     <p> <%= pending_request_group %> </p>
   <% end %>
 
@@ -22,21 +21,15 @@
     Each Pre-docket office will send a separate decision email with their decision.
   </p>
 
-
   <p>
     <b> You currently have access to the following groups’ pages, if any: </b>
   </p>
 
-  <% ["Any other groups"].each do |group| %>
+  <% @accessible_groups.each do |group| %>
     <p> <%= group %> </p>
   <% end %>
 
-  <%= render "help" %>
 <% end %>
 
-<%= content_for :signature do %>
-  <p>
-    Sincerely,<br/>
-    VHA PD Organization denying request
-  </p>
-<% end %>
+<%= render "help" %>
+<%= render "vha_signature" %>

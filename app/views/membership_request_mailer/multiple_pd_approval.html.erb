@@ -1,4 +1,3 @@
-<!-- 12.5.1 -->
 <%= render "intro" %>
 
 <%= content_for :content do %>
@@ -10,7 +9,7 @@
     <b> You now have access to the following groups' pages: </b>
   </p>
 
-  <% ["VHA pre-docket organization granting access", "VHA General", "Any other groups"].each do |group_name| %>
+  <% @accessible_groups.each do |group_name| %>
     <p> <%= group_name %> </p>
   <% end %>
 
@@ -22,11 +21,10 @@
     <b> Your pending requests: </b>
   </p>
 
-  <% ["First Group", "Any other groups"].each do |pending_request_group| %>
+  <% @pending_request_groups.each do |pending_request_group| %>
     <p> <%= pending_request_group %> </p>
   <% end %>
-
-  <%= render "help" %>
 <% end %>
 
+<%= render "help" %>
 <%= render "vha_signature" %>
