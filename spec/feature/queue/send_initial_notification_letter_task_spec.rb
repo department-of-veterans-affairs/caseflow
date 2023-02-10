@@ -24,7 +24,6 @@ RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
     it "displays the proper task actions for the intial task" do
       visit("/queue")
       visit("/queue/appeals/#{initial_letter_task.appeal.external_id}")
-
       # find and click action dropdown
       dropdown = find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
       dropdown.click
@@ -36,7 +35,6 @@ RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
     it "proceed to final notification action creates final notification task and completes the initial notification task" do
       visit("/queue")
       visit("/queue/appeals/#{initial_letter_task.appeal.external_id}")
-
       prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
       text = Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER.label
       click_dropdown(prompt: prompt, text: text)
