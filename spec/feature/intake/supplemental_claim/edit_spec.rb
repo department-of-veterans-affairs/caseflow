@@ -32,6 +32,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
   let(:decision_review_remanded) { nil }
   let(:benefit_type) { "compensation" }
+  let(:is_predocket_needed) { false }
 
   let!(:supplemental_claim) do
     SupplementalClaim.create!(
@@ -86,7 +87,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         contested_rating_issue_profile_date: rating.profile_date,
         decision_review: supplemental_claim,
         benefit_type: benefit_type,
-        contested_issue_description: "PTSD denied"
+        contested_issue_description: "PTSD denied",
+        is_predocket_needed: is_predocket_needed
       )
     end
 
@@ -116,7 +118,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         contested_rating_issue_profile_date: rating.profile_date,
         decision_review: decision_review,
         benefit_type: benefit_type,
-        contested_issue_description: "PTSD denied"
+        contested_issue_description: "PTSD denied",
+        is_predocket_needed: is_predocket_needed
       )
     end
 
@@ -668,26 +671,25 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
   describe "Establishment credits" do
     let(:url_path) { "supplemental_claims" }
-    let(:decision_review) { supplemental_claim }
+    let(:supp_claim) { supplemental_claim }
     let(:request_issues) { [request_issue] }
     let(:request_issue) do
       create(
         :request_issue,
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
-        decision_review: decision_review,
+        decision_review: supp_claim,
         benefit_type: benefit_type,
-        contested_issue_description: "PTSD denied"
+        contested_issue_description: "PTSD denied",
+        is_predocket_needed: is_predocket_needed
       )
     end
 
     context "when the EP has not yet been established" do
-      before do
-        decision_review.reload.create_issues!(request_issues)
-      end
+      before { supp_claim.reload.create_issues!(request_issues) }
 
       it "disallows editing" do
-        visit "#{url_path}/#{decision_review.uuid}/edit"
+        visit "#{url_path}/#{supp_claim.uuid}/edit"
 
         expect(page).to have_content("Review not editable")
         expect(page).to have_content("Review not yet established in VBMS. Check the job page for details.")
@@ -695,21 +697,21 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
         click_link "the job page"
 
-        expect(current_path).to eq decision_review.async_job_url
+        expect(current_path).to eq supp_claim.async_job_url
       end
     end
 
     context "when the EP has been established" do
       before do
-        decision_review.reload.create_issues!(request_issues)
-        decision_review.establish!
+        supp_claim.reload.create_issues!(request_issues)
+        supp_claim.establish!
       end
 
       it "shows when and by whom the Intake was performed" do
-        visit "#{url_path}/#{decision_review.uuid}/edit"
+        visit "#{url_path}/#{supp_claim.uuid}/edit"
 
         expect(page).to have_content(
-          "Established #{decision_review.establishment_processed_at.friendly_full_format} by #{intake.user.css_id}"
+          "Established #{supp_claim.establishment_processed_at.friendly_full_format} by #{intake.user.css_id}"
         )
       end
     end
@@ -811,7 +813,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
           fill_in "withdraw-date", with: withdraw_date
           click_edit_submit
 
-          expect(page).to have_current_path("/decision_reviews/education")
+          expect(page).to have_current_path("/decision_reviews/education", ignore_query: true)
           expect(page).to have_content("You have successfully withdrawn a review.")
         end
 
@@ -821,7 +823,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
           fill_in "withdraw-date", with: withdraw_date
           click_edit_submit
 
-          expect(page).to have_current_path("/decision_reviews/education")
+          expect(page).to have_current_path("/decision_reviews/education", ignore_query: true)
           expect(page).to have_content("You have successfully withdrawn 1 issue.")
         end
 
@@ -830,7 +832,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
           click_remove_intake_issue_dropdown("1")
           click_edit_submit_and_confirm
 
-          expect(page).to have_current_path("/decision_reviews/education")
+          expect(page).to have_current_path("/decision_reviews/education", ignore_query: true)
           expect(page).to have_content("You have successfully removed 1 issue.")
         end
 
@@ -848,7 +850,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
           fill_in "withdraw-date", with: withdraw_date
           click_edit_submit
 
-          expect(page).to have_current_path("/decision_reviews/education")
+          expect(page).to have_current_path("/decision_reviews/education", ignore_query: true)
           expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
         end
       end

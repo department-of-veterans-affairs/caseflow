@@ -20,7 +20,8 @@ import {
   compact,
   sortBy,
   get,
-  map
+  map,
+  isUndefined
 } from 'lodash';
 
 import HEARING_ROOMS_LIST from 'constants/HEARING_ROOMS_LIST';
@@ -202,6 +203,9 @@ export const handleEdit = (init, current, fields) => {
   }, {});
 };
 
+export const userJudgeOrCoordinator = (user) =>
+  user.userIsJudge || user.userIsDvc || user.userIsHearingManagement || user.userIsBoardAttorney;
+
 export const virtualHearingRoleForUser = (user, hearing) =>
   user.userCanAssignHearingSchedule || user.userId === hearing?.judgeId ?
     VIRTUAL_HEARING_HOST :
@@ -269,6 +273,25 @@ export const getChanges = (first, second) => {
   const { init, current } = toggleCancelled(first, second, 'virtualHearing');
 
   return deepDiff(init, current);
+};
+
+/**
+ * Method to calculate hearing details changes accounting for hearings being converted to virtual
+ * @param {Object} init -- The initial form details
+ * @param {Object} current -- The current form details
+ */
+export const getConvertToVirtualChanges = (first, second) => {
+  const diff = getChanges(first, second);
+
+  // Always return emails and timezones whenever converting to virtual due to
+  // field pre-population. Leave out emails if they're blank to prevent validation issues.
+  return omitBy({
+    ...diff,
+    appellantTz: second.appellantTz,
+    ...(second.appellantEmailAddress && { appellantEmailAddress: second.appellantEmailAddress }),
+    representativeTz: second.representativeTz,
+    ...(second.representativeEmailAddress && { representativeEmailAddress: second.representativeEmailAddress })
+  }, isUndefined);
 };
 
 /**
@@ -1072,7 +1095,7 @@ export const scheduleData = ({ hearingSchedule, user }) => {
       align: 'left',
       valueName: 'scheduledFor',
       columnName: 'date',
-      valueFunction: (row) => <Link to={`/schedule/docket/${row.id}`}>
+      valueFunction: (row) => <Link ariaLabel={`schedule docket ${row.id}`} to={`/schedule/docket/${row.id}`}>
         {moment(row.scheduledFor).format('ddd M/DD/YYYY')}
       </Link>,
       getSortValue: (row) => {

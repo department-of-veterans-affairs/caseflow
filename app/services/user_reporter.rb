@@ -51,7 +51,9 @@ class UserReporter
       { model: AppealView, column: :user, unique: [:appeal_type, :appeal_id] },
       { model: HearingView, column: :user, unique: [:hearing_type, :hearing_id] },
       { model: DocumentView, column: :user, unique: [:document_id] },
-      { model: UserQuota, column: :user, unique: [:team_quota_id] }
+      { model: UserQuota, column: :user, unique: [:team_quota_id] },
+      { model: ConferenceLink, column: :created_by_id },
+      { model: ConferenceLink, column: :updated_by_id }
     ]
   end
   # rubocop:enable Metrics/MethodLength

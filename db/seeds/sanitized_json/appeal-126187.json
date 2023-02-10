@@ -6237,7 +6237,7 @@
       "updated_at": null,
       "status": "active",
       "status_updated_at": null,
-      "accepts_priority_pushed_cases": true,
+      "accepts_priority_pushed_cases": false,
       "ama_only_push": false,
       "ama_only_request": false
     },
@@ -6252,7 +6252,7 @@
       "updated_at": null,
       "status": "active",
       "status_updated_at": null,
-      "accepts_priority_pushed_cases": true,
+      "accepts_priority_pushed_cases": false,
       "ama_only_push": false,
       "ama_only_request": false
     },
@@ -6267,7 +6267,7 @@
       "updated_at": null,
       "status": "active",
       "status_updated_at": null,
-      "accepts_priority_pushed_cases": true,
+      "accepts_priority_pushed_cases": false,
       "ama_only_push": false,
       "ama_only_request": false
     },
@@ -6297,7 +6297,7 @@
       "updated_at": null,
       "status": "active",
       "status_updated_at": null,
-      "accepts_priority_pushed_cases": true,
+      "accepts_priority_pushed_cases": false,
       "ama_only_push": false,
       "ama_only_request": false
     },
@@ -6379,7 +6379,7 @@
     {
       "id": 220,
       "type": "BusinessLine",
-      "name": "Vocational Rehabilitation and Employment",
+      "name": "Veterans Readiness and Employment",
       "role": null,
       "url": "voc_rehab",
       "participant_id": null,

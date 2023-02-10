@@ -19,6 +19,10 @@ import { requestPatch, requestSave, resetSuccessMessages } from './uiReducer/uiA
 
 import { taskActionData } from './utils';
 
+const validInstructions = (instructions) => {
+  return instructions?.length > 0;
+};
+
 const selectedAction = (props) => {
   const actionData = taskActionData(props);
 
@@ -54,6 +58,16 @@ class AssignToView extends React.Component {
   componentDidMount = () => this.props.resetSuccessMessages();
 
   validateForm = () => {
+    if (this.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
+      return validInstructions(this.state.instructions);
+    }
+
+    const actionData = taskActionData(this.props);
+
+    if (actionData.body_optional) {
+      return this.state.selectedValue !== null;
+    }
+
     return this.state.selectedValue !== null && this.state.instructions !== '';
   };
 
@@ -187,6 +201,7 @@ class AssignToView extends React.Component {
     const modalProps = {
       title: this.determineTitle(this.props, action, isPulacCerullo, actionData),
       pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
+
       submit: this.submit,
       validateForm: isPulacCerullo ?
         () => {
@@ -197,6 +212,12 @@ class AssignToView extends React.Component {
 
     if (isPulacCerullo) {
       modalProps.button = 'Notify';
+    }
+
+    if (modalProps.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
+      modalProps.submitButtonClassNames = ['usa-button', 'usa-button-warning'];
+      modalProps.button = 'Return';
+      modalProps.submitDisabled = !this.validateForm();
     }
 
     return (
@@ -220,10 +241,12 @@ class AssignToView extends React.Component {
         {!isPulacCerullo && (
           <TextareaField
             name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-            errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+            errorMessage={highlightFormItems && !actionData.body_optional && !this.state.instructions ?
+              COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
             id="taskInstructions"
             onChange={(value) => this.setState({ instructions: value })}
             value={this.state.instructions}
+            optional={actionData.body_optional}
           />
         )}
         {isPulacCerullo && (

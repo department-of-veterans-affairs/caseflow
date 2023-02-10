@@ -12,6 +12,117 @@
 
 .cf-asyncable-jobs-table {
   font-size: 90%;
+
+  .job-tabs-header {
+    display: flex;
+
+    span {
+      width: 100%;
+    }
+
+    button {
+      background: none;
+      display: block;
+      color: $color-black;
+      padding: 10px 20px;
+      text-decoration: none;
+      width: 100%;
+      text-align: left;
+      border-radius: 0;
+      font-size: 2.5rem;
+
+      &:hover {
+        background-color: $color-blue;
+        color: $color-white;
+        text-decoration: none;
+      }
+
+      &:focus {
+        outline: none;
+        box-shadow: none;
+      }
+    }
+
+    .no-tab-button {
+      // scss-lint:disable ImportantRule
+      border-right: 2px solid $color-gray-light !important;
+      // scss-lint:enable ImportantRule
+    }
+
+    .jobs-tab-button {
+      border-left: 2px solid $color-gray-light;
+      border-right: 1px solid $color-gray-light;
+    }
+
+    .scheduled-jobs-tab-button {
+      border-left: 1px solid $color-gray-light;
+      border-right: 2px solid $color-gray-light;
+    }
+
+    .inactive-tab {
+      background-color: $color-gray-lightest;
+      color: $color-gray-dark;
+      border-top: 2px solid $color-gray-light;
+      border-bottom: 2px solid $color-gray-light;
+    }
+
+    .active-tab {
+      background-color: $color-white;
+      color: $color-black;
+      border-top: 4px solid $color-blue;
+      cursor: default;
+
+      &:hover {
+        background-color: $color-white;
+        color: $color-black;
+        text-decoration: none;
+      }
+    }
+  }
+
+  .tab-border {
+    border-bottom: 2px solid $color-gray-light;
+    border-left: 2px solid $color-gray-light;
+    border-right: 2px solid $color-gray-light;
+    padding: 0 24px 24px;
+  }
+
+  .scheduled-jobs-tab {
+
+    .loading-div {
+      min-height: 200px;
+      text-align: center;
+    }
+
+    .manual-job-banner {
+      text-align: center;
+      padding: 10px;
+      margin-right: 10px;
+
+      &.success {
+        background-color: $color-green-lighter;
+      }
+
+      &.fail {
+        background-color: $color-red-light;
+      }
+    }
+
+    .manual-job-table {
+      display: flex;
+      flex-wrap: wrap;
+
+      tr {
+        width: 50%;
+        padding-right: 10px;
+        padding-bottom: 10px;
+
+        td {
+          width: 100%;
+        }
+      }
+    }
+  }
 }
 
 .job-notes {
@@ -42,4 +153,9 @@
     display: inline-block;
     margin-right: 1rem;
   }
+}
+
+.loading-div {
+  min-height: 200px;
+  text-align: center;
 }

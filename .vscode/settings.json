@@ -1,0 +1,11 @@
+{
+  "editor.tabSize": 2,
+  "editor.trimAutoWhitespace": true,
+  "eslint.packageManager": "yarn",
+  "eslint.workingDirectories": [
+    "./client"
+  ],
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "git.autofetch": true,
+}

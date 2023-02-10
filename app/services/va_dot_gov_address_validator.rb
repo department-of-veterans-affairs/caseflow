@@ -67,9 +67,10 @@ class VaDotGovAddressValidator
     @closest_regional_office ||= begin
       return unless closest_ro_response.success?
 
-      # Note: In `ro_facility_ids_to_geomatch`, the San Antonio facility ID is passed
+      # Note: In `ro_facility_ids_to_geomatch`, the San Antonio facility ID and Elpaso facility Id is passed
       # as a valid RO for any veteran living in Texas.
       return "RO62" if closest_regional_office_facility_id_is_san_antonio?
+      return "RO49" if closest_regional_office_facility_id_is_el_paso?
 
       RegionalOffice
         .cities
@@ -132,7 +133,10 @@ class VaDotGovAddressValidator
     #
     # Note: In the logic to determine the closest RO, there is logic that maps this
     # facility ID to the Houston RO.
-    facility_ids << "vha_671BY" if veteran_lives_in_texas? # include San Antonio facility id
+    if veteran_lives_in_texas?
+      facility_ids << "vha_671GS" # include San Antonio facility id
+      facility_ids << "vba_349i" # include el paso
+    end
 
     facility_ids
   end

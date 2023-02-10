@@ -60,13 +60,25 @@ ready:  ## Helper command that watches the docker containers to finish start up
 up:  ## Start the docker containers
 	docker-compose up -d
 
+up-m1:  ## Start the docker containers on a M1 Mac
+	docker-compose -f docker-compose-m1.yml up -d
+
 down:	## Stop the docker containers
 	docker-compose down
+
+down-m1:  ## Stop the docker containers on a M1 Mac
+	docker-compose -f docker-compose-m1.yml down
 
 run: up ready  ## Start rails server and frontend server
 	foreman start
 
+run-m1: up-m1 ready  ## Start rails server and frontend server on a M1 Mac
+	foreman start
+
 run-backend: up ready  ## Start rails server without the frontend
+	REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000
+
+run-backend-m1: up-m1 ready  ## Start the rails server without the frontend on a M1 Mac
 	REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000
 
 run-frontend: ## Start just the frontend server
@@ -104,6 +116,8 @@ sqs-conf-dir:	## Create local required dir
 
 build: clean sqs-conf-dir download-facols up ready reset	## First time local dev setup
 
+build-m1: clean sqs-conf-dir download-facols up-m1 ready reset	## First time local dev setup on a M1 Mac
+
 destroy: clean
 	bundle exec rake local:destroy
 
@@ -123,6 +137,15 @@ logs:  ## Follow the docker logs
 
 db:  ## Connect to your dev postgres (caseflow) db
 	bundle exec rails dbconsole
+
+audit: ## Create caseflow_audit schema, tables, and triggers in postgres
+	bundle exec rails r db/scripts/audit/create_caseflow_audit_schema.rb
+	bundle exec rails r db/scripts/audit/create_appeal_states_audit.rb
+	bundle exec rails r db/scripts/audit/add_row_to_appeal_states_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/create_appeal_states_audit_trigger.rb
+
+audit-remove: ## Remove caseflow_audit schema, tables and triggers in postgres
+	bundle exec rails r db/scripts/audit/remove_caseflow_audit_schema.rb
 
 c:  ## Start rails console
 	bundle exec rails console
@@ -152,8 +175,10 @@ fresh:  ## https://github.com/imsky/git-fresh - updates local master to match or
 reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable feature flags
 
 reset-dbs: ## Resets Caseflow and ETL database schemas
+	make audit-remove
 	DB=etl bundle exec rake db:drop db:create db:schema:load
 	bundle exec rake db:drop db:create db:schema:load
+	make audit
 
 seed-dbs:	## Seed all databases
 	bundle exec rake local:vacols:seed
@@ -184,6 +209,18 @@ client-build-all client-all: client-test client-demo ## Builds webpack for both 
 
 one-test:  ## run the rspec test passed in
 	bundle exec rspec $(RUN_ARGS)
+
+run-all-queues: ## start shoryuken with all queues
+	bundle exec shoryuken -q caseflow_development_send_notifications caseflow_development_high_priority caseflow_development_low_priority  -R
+
+run-low-priority: ## start shoryuken with just the low priority queue
+	bundle exec shoryuken -q caseflow_development_low_priority  -R
+
+run-high-priority: ## start shoryuken with just the high priority queue
+	bundle exec shoryuken -q caseflow_development_high_priority  -R
+
+run-send-notifications: ## start shoryuken with just the send_notification queue
+	bundle exec shoryuken -q caseflow_development_send_notifications  -R
 
 jest: ## Run jest tests
 	cd client && yarn jest

@@ -28,6 +28,13 @@ class DecisionReview < CaseflowRecord
   # establishment_processed_at - when our db successfully pushed to external services
   # establishment_error        - capture exception messages on failures
 
+  # amoeba gem for splitting appeal request issues
+  amoeba do
+    enable
+    exclude_association :decision_review_id
+    exclude_association :request_decision_issues
+  end
+
   class << self
     def submitted_at_column
       :establishment_submitted_at

@@ -8,7 +8,6 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 
 import { COLORS, VACOLS_DISPOSITIONS } from '../constants';
-import COPY from '../../../COPY';
 import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID';
 import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID';
 
@@ -61,7 +60,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
           value={issue.disposition}
           hideLabel={!label}
           label={label}
-          errorMessage={highlight && !issue.disposition ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
+          errorMessage={highlight && !issue.disposition ? 'Disposition field is required' : ''}
           options={this.getDispositions()}
           onChange={(option) =>
             this.props.updateIssue({

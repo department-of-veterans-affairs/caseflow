@@ -88,6 +88,28 @@ class WorkQueue::LegacyAppealSerializer
     latest_vacols_attorney_case_review(object)&.vacols_id
   end
 
+  attribute :current_user_email do |_, params|
+    params[:user]&.email
+  end
+
+  attribute :current_user_timezone do |_, params|
+    params[:user]&.timezone
+  end
+
+  attribute :has_notifications do |object|
+    @all_notifications = Notification.where(appeals_id: object.vacols_id.to_s, appeals_type: "LegacyAppeal")
+    @allowed_notifications = @all_notifications.where(email_notification_status: nil)
+      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .merge(@all_notifications.where(sms_notification_status: nil)
+      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).any?
+  end
+
+  attribute :location_history do |object|
+    object.location_history.map do |location|
+      WorkQueue::PriorlocSerializer.new(location).serializable_hash[:data][:attributes]
+    end
+  end
+
   def self.latest_vacols_attorney_case_review(object)
     VACOLS::CaseAssignment.latest_task_for_appeal(object.vacols_id)
   end

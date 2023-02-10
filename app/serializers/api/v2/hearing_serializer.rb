@@ -4,7 +4,11 @@ class Api::V2::HearingSerializer
   include FastJsonapi::ObjectSerializer
 
   attribute :address do |hearing|
-    hearing.hearing_location_or_regional_office.street_address
+    if FeatureToggle.enabled?(:extended_hearing_api_address, user: RequestStore[:current_user])
+      hearing.hearing_location_or_regional_office.full_street_address
+    else
+      hearing.hearing_location_or_regional_office.street_address
+    end
   end
   attribute :city do |hearing|
     hearing.hearing_location_or_regional_office.city

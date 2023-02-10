@@ -1093,6 +1093,60 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
+  context "When a current user is a member of Supervisory Senior Council organization" do
+    let(:appeal) { create(:appeal) }
+    let(:current_user) { create(:user) }
+    let!(:organization) { SupervisorySeniorCouncil.singleton }
+    let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
+    let(:receipt_date) { Time.zone.today - 20.days }
+    let(:profile_date) { (receipt_date - 30.days).to_datetime }
+    let(:rating_request_issue_attributes) do
+      {
+        decision_review: appeal,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: profile_date,
+        contested_issue_description: "PTSD denied",
+        contention_reference_id: "4567"
+      }
+    end
+    let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
+    let!(:appeal_serializer) { WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash }
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:split_appeal_workflow)
+      visit("/queue/appeals/#{appeal.uuid}")
+    end
+    it "should display the 'Correct issues' link" do
+      expect(page).to have_content("Correct issues")
+    end
+  end
+
+  context "When a user isn't a member of the Supervisory Senior Council" do
+    let(:appeal) { create(:appeal) }
+    let(:current_user) { create(:user) }
+    let(:receipt_date) { Time.zone.today - 20.days }
+    let(:profile_date) { (receipt_date - 30.days).to_datetime }
+    let(:rating_request_issue_attributes) do
+      {
+        decision_review: appeal,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: profile_date,
+        contested_issue_description: "PTSD denied",
+        contention_reference_id: "4567"
+      }
+    end
+    let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
+    let!(:appeal_serializer) { WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash }
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:split_appeal_workflow)
+      visit("/queue/appeals/#{appeal.uuid}")
+    end
+    it "should not display the 'Correct issues' link" do
+      expect(page).to_not have_content("Correct issues")
+    end
+  end
+
   describe "Appeal has requested to switch dockets" do
     let!(:full_grant_docket_switch) { create(:docket_switch) }
     let!(:partial_grant_docket_switch) { create(:docket_switch, :partially_granted) }
@@ -1452,23 +1506,18 @@ RSpec.feature "Case details", :all_dbs do
     before { FeatureToggle.enable!(:indicator_for_contested_claims) }
     after { FeatureToggle.disable!(:indicator_for_contested_claims) }
 
-    let(:request_issues) do
-      [
-        create(:request_issue, benefit_type: "compensation", nonrating_issue_category: "Contested Claims - Insurance"),
-        create(:request_issue, :rating, benefit_type: "fiduciary")
-      ]
-    end
-    let(:appeal) { create(:appeal, request_issues: request_issues) }
-    let!(:tracking_task) do
-      create(
-        :track_veteran_task,
-        :completed,
-        appeal: appeal,
-        parent: appeal.root_task
-      )
-    end
 
     it "should show the contested claim badge" do
+      request_issues = [create(:request_issue,
+                               benefit_type: "compensation",
+                               nonrating_issue_category: "Contested Claims - Insurance"),
+                        create(:request_issue, :rating, benefit_type: "fiduciary")]
+      appeal = create(:appeal, request_issues: request_issues)
+      tracking_task = create(:track_veteran_task,
+                             :completed,
+                             appeal: appeal,
+                             parent: appeal.root_task)
+
       visit("/queue/appeals/#{tracking_task.appeal.uuid}")
       expect(page).to have_selector(".cf-contested-badge")
 
@@ -1754,6 +1803,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters an NOD Date after original NOD Date" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: nod_date
           find(".cf-form-dropdown", text: "Reason for edit").click
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
@@ -1763,6 +1813,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters a future NOD Date" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: later_nod_date
           find(".cf-form-dropdown", text: "Reason for edit").click
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
@@ -1774,6 +1825,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters an NOD Date before 01/01/2018" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: before_earliest_date
           find(".cf-form-dropdown", text: "Reason for edit").click
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
@@ -1785,6 +1837,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters a reason with invalid Date" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: nod_date
           find(:css, "input[id$='nodDate']").click.send_keys(:delete)
           find(".cf-form-dropdown", text: "Reason for edit").click
@@ -1797,6 +1850,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters a valid NOD Date and reason" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: nod_date
           find(".cf-form-dropdown", text: "Reason for edit").click
           find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
@@ -1811,6 +1865,7 @@ RSpec.feature "Case details", :all_dbs do
         it "user enters a valid NOD Date but no reason" do
           visit "queue/appeals/#{appeal.uuid}"
           page.find("button", text: "Edit NOD Date").click
+          find_field "nodDate"
           fill_in "nodDate", with: nod_date
           click_on "Submit"
           expect(page).to have_content "Required."
@@ -2327,6 +2382,212 @@ RSpec.feature "Case details", :all_dbs do
 
       context "without feature toggle" do
         it_should_behave_like "vso unrestricted"
+      end
+    end
+  end
+
+  shared_examples "when vso_virtual_opt_in FeatureToggle is disabled" do
+    before { FeatureToggle.disable!(:vso_virtual_opt_in) }
+    after { FeatureToggle.enable!(:vso_virtual_opt_in) }
+
+    it "the Hearings section does not appear despite
+      there being an unscheduled hearing associated with the appeal" do
+      visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+
+      expect(page.has_no_content?("Hearings")).to eq(true)
+      expect(page.has_no_content?("Unscheduled hearing")).to eq(true)
+      expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
+    end
+
+    context "whenever there is a scheduled hearing" do
+      let!(:hearing_day_close) do
+        create(:hearing_day, :video, scheduled_for: 7.days.from_now, regional_office: "RO70")
+      end
+
+      let!(:hearing_day_far) do
+        create(:hearing_day, :video, scheduled_for: 30.days.from_now, regional_office: "RO70")
+      end
+
+      let!(:hearing_day_past) do
+        create(:hearing_day, :video, scheduled_for: 30.days.before, regional_office: "RO70")
+      end
+
+      let!(:hearing_within_10_days) { create(:hearing, hearing_day: hearing_day_close) }
+      let!(:hearing_beyond_10_days) { create(:hearing, hearing_day: hearing_day_far) }
+      let!(:hearing_in_past) { create(:hearing, hearing_day: hearing_day_past) }
+
+      it "when the hearing 10+ days out the hearings details link is omitted" do
+        visit "/queue/appeals/#{hearing_beyond_10_days.appeal.uuid}"
+
+        expect(page.has_content?("Hearings")).to eq(true)
+        expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
+        expect(page.has_no_content?(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)).to eq(true)
+      end
+
+      it "when the hearing is <10 days out the hearings details link and notification banner are omitted" do
+        visit "/queue/appeals/#{hearing_within_10_days.appeal.uuid}"
+
+        expect(page.has_content?("Hearings")).to eq(true)
+        expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
+        expect(page.has_no_content?(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)).to eq(true)
+        expect(page.has_no_content?(COPY::VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
+      end
+
+      it "when the hearing is in the past link and notification banner are omitted" do
+        visit "/queue/appeals/#{hearing_in_past.appeal.uuid}"
+
+        expect(page.has_content?("Hearings")).to eq(true)
+        expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
+        expect(page.has_no_content?(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)).to eq(true)
+        expect(page.has_no_content?(COPY::VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT)).to eq(true)
+      end
+    end
+  end
+
+  # National VSO Test
+  context "when updating a hearing as a VSO user to virtual hearing" do
+    let!(:vso) { create(:vso) }
+    let!(:vso_user) { create(:user, :vso_role) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: vso) }
+
+    before do
+      vso.add_user(vso_user)
+      User.authenticate!(user: vso_user)
+    end
+
+    it "should not display a dropdown menu for VSO user" do
+      step "go to the correct screen" do
+        visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+        expect(page.has_no_content?("Select an action")).to eq(true)
+      end
+    end
+
+    it_behaves_like "when vso_virtual_opt_in FeatureToggle is disabled"
+  end
+
+  # Field VSO Test
+  context "when updating a hearing as a VSO user to virtual hearing" do
+    let!(:field_vso) { create(:field_vso) }
+    let!(:field_vso_user) { create(:user, :vso_role) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: field_vso) }
+
+    before do
+      field_vso.add_user(field_vso_user)
+      User.authenticate!(user: field_vso_user)
+    end
+
+    it "should not display a dropdown menu for VSO user" do
+      step "go to the correct screen" do
+        visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+        expect(page.has_no_content?("Select an action")).to eq(true)
+      end
+    end
+
+    it_behaves_like "when vso_virtual_opt_in FeatureToggle is disabled"
+  end
+
+  # Private Bar Test
+  context "when updating a hearing as a Private_Bar user to virtual hearing" do
+    let!(:private_bar) { create(:private_bar) }
+    let!(:private_bar_user) { create(:user, :vso_role) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: private_bar) }
+
+    before do
+      private_bar.add_user(private_bar_user)
+      User.authenticate!(user: private_bar_user)
+    end
+
+    it "should not display a dropdown menu for Private_Bar user" do
+      step "go to the correct screen" do
+        visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+        expect(page.has_no_content?("Select an action")).to eq(true)
+      end
+    end
+
+    it_behaves_like "when vso_virtual_opt_in FeatureToggle is disabled"
+  end
+
+  context "when accessing the case details page as a VSO user without an email" do
+    before do
+      Timecop.return
+      FeatureToggle.enable!(:vso_virtual_opt_in)
+      vso_org.add_user(vso_user_no_email)
+      User.authenticate!(user: vso_user_no_email)
+    end
+
+    after do
+      Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
+      FeatureToggle.disable!(:vso_virtual_opt_in)
+    end
+
+    let!(:vso_org) { create(:vso) }
+    let!(:vso_user_no_email) { create(:user, :vso_role, email: nil) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, assigned_to: vso_org) }
+
+    subject do
+      page.has_content?("Contact the Hearing Coordinator") && page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)
+    end
+
+    context "whenever there is an unscheduled hearing" do
+      it "the conversion link is absent and a notification is displayed" do
+        visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
+
+        is_expected.to be true
+      end
+    end
+
+    context "whenever there is a scheduled hearing within 10 days" do
+      let!(:hearing) do
+        create(:hearing,
+               hearing_day:
+                create(:hearing_day,
+                       :video,
+                       scheduled_for: 5.days.from_now,
+                       regional_office: "RO11"))
+      end
+
+      it "the conversion link is absent and a notification is displayed" do
+        visit "/queue/appeals/#{hearing.appeal.uuid}"
+
+        expect(page.has_content?("Contact the Hearing Coordinator")).to eq true
+        expect(page.has_content?(COPY::VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT)).to eq true
+        expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq true
+      end
+    end
+
+    context "whenever there is a scheduled hearing more than 10 days away" do
+      let!(:hearing) do
+        create(:hearing,
+               hearing_day: create(
+                 :hearing_day,
+                 :video,
+                 scheduled_for: 30.days.from_now,
+                 regional_office: "RO13"
+               ))
+      end
+
+      it "the conversion link is absent and a notification is displayed" do
+        visit "/queue/appeals/#{hearing.appeal.uuid}"
+
+        is_expected.to be true
+      end
+    end
+
+    context "whenever there is a hearing scheduled in the past" do
+      let!(:hearing) do
+        create(:hearing,
+               hearing_day: create(
+                 :hearing_day,
+                 :video,
+                 scheduled_for: 30.days.before,
+                 regional_office: "RO14"
+               ))
+      end
+
+      it "no notifcation banner appears" do
+        expect(page.has_no_content?(COPY::VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT)).to eq true
+        expect(page.has_no_content?("Contact the Hearing Coordinator")).to eq true
+        expect(page.has_no_content?(COPY::VSO_CONVERT_TO_VIRTUAL_TEXT)).to eq true
       end
     end
   end

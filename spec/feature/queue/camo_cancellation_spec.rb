@@ -18,7 +18,6 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
   let!(:appeal) { Appeal.find(task.appeal_id) }
 
   before do
-    FeatureToggle.enable!(:vha_predocket_appeals)
     FeatureToggle.enable!(:vha_predocket_workflow)
     FeatureToggle.enable!(:vha_irregular_appeals)
     camo_org.add_user(camo_user)
@@ -26,7 +25,6 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
   end
 
   after do
-    FeatureToggle.disable!(:vha_predocket_appeals)
     FeatureToggle.disable!(:vha_predocket_workflow)
     FeatureToggle.disable!(:vha_irregular_appeals)
   end
@@ -51,8 +49,8 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
       end
       step "trigger error state" do
         find("button", class: "usa-button", text: "Submit").click
-        expect(page).to have_content(COPY::VHA_SELECT_RADIO_ERROR)
-        expect(page).to have_content(COPY::VHA_EMPTY_INSTRUCTIONS_ERROR)
+        expect(page).to have_content(COPY::SELECT_RADIO_ERROR)
+        expect(page).to have_content(COPY::EMPTY_INSTRUCTIONS_ERROR)
       end
       step "submit valid form" do
         find("label", text: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_APPEALABLE).click

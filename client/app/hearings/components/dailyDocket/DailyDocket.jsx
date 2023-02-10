@@ -15,7 +15,7 @@ import Button from '../../../components/Button';
 import StatusMessage from '../../../components/StatusMessage';
 import DailyDocketRows from './DailyDocketRows';
 import DailyDocketEditLinks from './DailyDocketEditLinks';
-import { isPreviouslyScheduledHearing } from '../../utils';
+import { isPreviouslyScheduledHearing, userJudgeOrCoordinator } from '../../utils';
 import { navigateToPrintPage } from '../../../util/PrintUtil';
 import { encodeQueryParams } from '../../../util/QueryParamsUtil';
 import COPY from '../../../../COPY';
@@ -32,6 +32,7 @@ const Alerts = ({
   onErrorHearingDayLock,
   dailyDocket,
   dailyDocketServerError,
+  conferenceLinkError
 }) => (
   <React.Fragment>
     <UserAlerts />
@@ -61,6 +62,15 @@ const Alerts = ({
       />
     )}
 
+    {conferenceLinkError && userJudgeOrCoordinator && (
+      <Alert
+        type="error"
+        styling={alertStyling}
+        title="Unable to create a hearing link"
+        message="Please use the judge's dedicated link or contact the Hearing Coordinator for assistance."
+      />
+    )}
+
     {onErrorHearingDayLock && (
       <Alert
         type="error"
@@ -81,6 +91,7 @@ Alerts.propTypes = {
     scheduledFor: PropTypes.string,
   }),
   dailyDocketServerError: PropTypes.bool,
+  conferenceLinkError: PropTypes.bool,
   displayLockSuccessMessage: PropTypes.bool,
   onErrorHearingDayLock: PropTypes.bool,
   saveSuccessful: PropTypes.object,
@@ -241,6 +252,7 @@ export default class DailyDocket extends React.Component {
           displayLockSuccessMessage={this.props.displayLockSuccessMessage}
           dailyDocketServerError={this.props.dailyDocketServerError}
           onErrorHearingDayLock={this.props.onErrorHearingDayLock}
+          conferenceLinkError={this.props.conferenceLinkError}
         />
 
         <div className="cf-app-segment">
@@ -255,7 +267,7 @@ export default class DailyDocket extends React.Component {
               onClickRemoveHearingDay={this.props.onClickRemoveHearingDay}
             />
           </div>
-          <div className="cf-push-right">
+          <div className="cf-push-right" tabIndex={0}>
             {!user.userVsoEmployee && (
               <React.Fragment>
                 VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName}
@@ -349,6 +361,7 @@ DailyDocket.propTypes = {
   displayLockSuccessMessage: PropTypes.bool,
   dailyDocketServerError: PropTypes.bool,
   onErrorHearingDayLock: PropTypes.bool,
+  conferenceLinkError: PropTypes.bool,
   history: PropTypes.shape({
     push: PropTypes.func,
   }),

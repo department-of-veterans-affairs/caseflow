@@ -28,20 +28,26 @@
   <% content_for :location do %>
     <%= render "hearing_mailer/sections/location" %>
   <% end %>
+  <% content_for :additional_reminder_details do %>
+  <h3>What should I expect on the day of my hearing?</h3>
+  <p>
+    Bring a photo ID and check in with security 30 minutes prior to the scheduled hearing. You will be subject to security screening, including the inspection of personal belongings.  It is against the law to bring firearms or other weapons into a federal facility.  Further, mask-wearing and public health  screenings may be required.  
+  </p>
+  <%= render "hearing_mailer/sections/additional_reminder_details" %>
+  <% end %>
+
 <% else %>
   <%= content_for :how_to_join do %>
     <%= render "hearing_mailer/sections/how_to_join" %>
   <% end %>
-
   <%= content_for :test_your_connection do %>
     <%= render partial: "hearing_mailer/sections/test_your_connection", locals: { kind: :reminder } %>
   <% end %>
-
   <% content_for :help_desk do %>
     <%= render "hearing_mailer/sections/help_desk" %>
   <% end %>
 <% end %>
-
+  
 <%= content_for :signature do %>
   <p>
     Sincerely,<br/>

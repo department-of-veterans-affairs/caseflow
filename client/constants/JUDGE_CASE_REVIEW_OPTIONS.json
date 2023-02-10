@@ -42,5 +42,10 @@
     "well_proofed": "Well proofed (no to minimal typos/grammar errors)",
     "well_annotated_file": "Well-annotated file for VLJ review to include appropriate use of tags and comments",
     "concise_detailed_remand": "Remand is concise and provides detailed, understandable directives"
+  },
+
+  "TIMELINESS": {
+    "timely" : "Timely",
+    "untimely" : "Untimely"
   }
 }

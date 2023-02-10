@@ -1,0 +1,340 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NotificationTable matches snapshot 1`] = `
+<div>
+  <div
+    class="cf-table-wrapper"
+  >
+    <div
+      class="cf-pagination"
+    >
+      <div
+        class="cf-pagination-summary"
+      >
+        Viewing 0-0 of 0 total
+      </div>
+      <div
+        class="cf-pagination-pages"
+      />
+    </div>
+    <table
+      aria-describedby="case-table-description"
+      aria-label="Appeals"
+      class="usa-table-borderless undefined"
+      id="case-table-description"
+      role="table"
+    >
+      <thead>
+        <tr
+          role="row"
+        >
+          <th
+            aria-labelledby="header-eventType"
+            class=""
+            role="columnheader"
+            scope="col"
+          >
+            <span
+              aria-label="Event"
+              data-css-9shxm7=""
+            >
+              <span
+                id="header-eventType"
+              >
+                Event
+              </span>
+              <span
+                data-css-ilmt4b=""
+              >
+                <svg
+                  aria-label="Filter by event type"
+                  class="table-icon unselected-filter-icon"
+                  height="20"
+                  role="button"
+                  tabindex="0"
+                  viewBox="0 0 21 21"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g>
+                      <rect
+                        class="unselected-filter-icon-border-1"
+                        fill="#fff"
+                        fill-rule="nonzero"
+                        height="20"
+                        rx="2"
+                        stroke="#212121"
+                        width="20"
+                        x="0.5"
+                        y="0.5"
+                      />
+                      <path
+                        class="unselected-filter-icon-inner-1"
+                        d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                        fill="#212121"
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </span>
+            </span>
+          </th>
+          <th
+            aria-labelledby="header-eventDate"
+            aria-sort="ascending"
+            class=""
+            role="columnheader"
+            scope="col"
+          >
+            <span
+              aria-label="Notification Date"
+              data-css-9shxm7=""
+            >
+              <span
+                id="header-eventDate"
+              >
+                Notification Date
+              </span>
+              <span
+                aria-label="Sort by Notification Date"
+                data-css-ilmt4b=""
+                role="button"
+                tabindex="0"
+              >
+                <svg
+                  class="table-icon"
+                  height="17"
+                  version="1.1"
+                  viewBox="0 0 13 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill-rule="nonzero"
+                    >
+                      <g
+                        fill="#d6d7d9"
+                        transform="translate(2.000000, 1.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                      <g
+                        fill="#0071bc"
+                        transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+            </span>
+          </th>
+          <th
+            aria-labelledby="header-notificationType"
+            class=""
+            role="columnheader"
+            scope="col"
+          >
+            <span
+              aria-label="Notification Type"
+              data-css-9shxm7=""
+            >
+              <span
+                id="header-notificationType"
+              >
+                Notification Type
+              </span>
+              <span
+                data-css-ilmt4b=""
+              >
+                <svg
+                  aria-label="Filter by notification type"
+                  class="table-icon unselected-filter-icon"
+                  height="20"
+                  role="button"
+                  tabindex="0"
+                  viewBox="0 0 21 21"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g>
+                      <rect
+                        class="unselected-filter-icon-border-1"
+                        fill="#fff"
+                        fill-rule="nonzero"
+                        height="20"
+                        rx="2"
+                        stroke="#212121"
+                        width="20"
+                        x="0.5"
+                        y="0.5"
+                      />
+                      <path
+                        class="unselected-filter-icon-inner-1"
+                        d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                        fill="#212121"
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </span>
+            </span>
+          </th>
+          <th
+            aria-labelledby="header-recipientInformation"
+            class=""
+            role="columnheader"
+            scope="col"
+          >
+            <span
+              aria-label="Recipient Information"
+              data-css-9shxm7=""
+            >
+              <span
+                id="header-recipientInformation"
+              >
+                Recipient Information
+              </span>
+              <span
+                data-css-ilmt4b=""
+              >
+                <svg
+                  aria-label="Filter by recipient information column"
+                  class="table-icon unselected-filter-icon"
+                  height="20"
+                  role="button"
+                  tabindex="0"
+                  viewBox="0 0 21 21"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g>
+                      <rect
+                        class="unselected-filter-icon-border-1"
+                        fill="#fff"
+                        fill-rule="nonzero"
+                        height="20"
+                        rx="2"
+                        stroke="#212121"
+                        width="20"
+                        x="0.5"
+                        y="0.5"
+                      />
+                      <path
+                        class="unselected-filter-icon-inner-1"
+                        d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                        fill="#212121"
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </span>
+            </span>
+          </th>
+          <th
+            aria-labelledby="header-status"
+            class=""
+            role="columnheader"
+            scope="col"
+          >
+            <span
+              aria-label="Status"
+              data-css-9shxm7=""
+            >
+              <span
+                id="header-status"
+              >
+                Status
+              </span>
+              <span
+                data-css-ilmt4b=""
+              >
+                <svg
+                  aria-label="Filter by status column"
+                  class="table-icon unselected-filter-icon"
+                  height="20"
+                  role="button"
+                  tabindex="0"
+                  viewBox="0 0 21 21"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g>
+                      <rect
+                        class="unselected-filter-icon-border-1"
+                        fill="#fff"
+                        fill-rule="nonzero"
+                        height="20"
+                        rx="2"
+                        stroke="#212121"
+                        width="20"
+                        x="0.5"
+                        y="0.5"
+                      />
+                      <path
+                        class="unselected-filter-icon-inner-1"
+                        d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                        fill="#212121"
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </span>
+            </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody
+        class=""
+      />
+      <tfoot />
+    </table>
+    <div
+      class="cf-pagination"
+    >
+      <div
+        class="cf-pagination-summary"
+      >
+        Viewing 0-0 of 0 total
+      </div>
+      <div
+        class="cf-pagination-pages"
+      />
+    </div>
+  </div>
+</div>
+`;

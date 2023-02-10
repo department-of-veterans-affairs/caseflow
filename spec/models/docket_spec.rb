@@ -22,6 +22,11 @@ describe Docket, :all_dbs do
              :with_post_intake_tasks,
              docket_type: Constants.AMA_DOCKETS.direct_review)
     end
+    let!(:evidence_docket_appeal) do
+      create(:appeal,
+             :evidence_submission_docket,
+             :with_post_intake_tasks)
+    end
 
     # priority
     let!(:aod_age_appeal) do
@@ -271,6 +276,30 @@ describe Docket, :all_dbs do
       it "returns the 'ready at' field of the oldest priority appeals that are ready for distribution" do
         expect(subject.length).to eq(1)
         expect(subject.first).to eq(aod_age_appeal.ready_for_distribution_at)
+      end
+    end
+
+    context "age_of_n_oldest_priority_appeals_available_to_judge" do
+      let(:judge) { create(:user, :with_vacols_judge_record) }
+
+      subject { DirectReviewDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(judge, 5) }
+
+      it "returns the receipt_date field of the oldest direct review priority appeals ready for distribution" do
+        expect(subject.length).to eq(3)
+        expect(subject).to eq([aod_age_appeal.receipt_date, aod_motion_appeal.receipt_date, cavc_appeal.receipt_date])
+      end
+    end
+
+    context "age_of_n_oldest_nonpriority_appeals_available_to_judge" do
+      let(:judge) { create(:user, :with_vacols_judge_record) }
+
+      subject { DirectReviewDocket.new.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, 5) }
+
+      it "returns the receipt_date field of the oldest direct review priority appeals ready for distribution" do
+        expect(subject.length).to eq(3)
+        expect(subject).to eq(
+          [appeal.receipt_date, denied_aod_motion_appeal.receipt_date, inapplicable_aod_motion_appeal.receipt_date]
+        )
       end
     end
 

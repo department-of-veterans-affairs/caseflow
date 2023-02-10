@@ -144,7 +144,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       approxDecisionDate: issue.approx_decision_date,
       titleOfActiveReview: issue.title_of_active_review,
       rampClaimId: issue.ramp_claim_id,
-      verifiedUnidentifiedIssue: issue.verified_unidentified_issue
+      verifiedUnidentifiedIssue: issue.verified_unidentified_issue,
+      isPreDocketNeeded: issue.is_predocket_needed
     };
   }
   );
@@ -247,7 +248,8 @@ const formatNonratingRequestIssues = (state) => {
         ineligible_reason: issue.ineligibleReason,
         edited_description: issue.editedDescription,
         withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null,
-        correction_type: issue.correctionType
+        correction_type: issue.correctionType,
+        is_predocket_needed: issue.isPreDocketNeeded
       };
     });
 };
@@ -266,6 +268,8 @@ export const formatIssues = (state) => {
 
 export const getAddIssuesFields = (formType, veteran, intakeData) => {
   let fields;
+  // Display 'Hearing type' field on addIssuesPage based on review form selections.
+  let displayHearingType = (intakeData.docketType === 'hearing' && intakeData.originalHearingRequestType);
   const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
   const selectedForm = _.find(FORM_TYPES, { key: formType });
 
@@ -310,6 +314,8 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
         content: formatDateStr(intakeData.receiptDate) },
       { field: 'Review option',
         content: _.startCase(intakeData?.docketType?.split('_').join(' ')) },
+      displayHearingType ? { field: 'Hearing type',
+        content: _.startCase(intakeData.originalHearingRequestType.split('_').join(' ')) } : null,
       { field: 'SOC/SSOC Opt-in',
         content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
@@ -317,6 +323,9 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   default:
     fields = [];
   }
+
+  // If a field is to be conditionally rendered, set field = null to have it not show.
+  fields = fields.filter((field) => field !== null);
 
   let claimantField = getClaimantField(veteran, intakeData);
 
@@ -447,7 +456,8 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
       correctionType: issue.correctionType,
       editable: issue.editable,
       examRequested: issue.examRequested,
-      decisionIssueId: issue.decisionIssueId
+      decisionIssueId: issue.decisionIssueId,
+      isPreDocketNeeded: issue.isPreDocketNeeded
     };
   });
 };

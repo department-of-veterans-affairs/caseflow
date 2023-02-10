@@ -14,7 +14,7 @@ import { rowStyles, issueStyles } from 'styles/reader/DocumentList/ClaimsFolderD
  */
 export const AppealDetails = ({ appeal }) => (
   <div>
-    <div {...rowStyles}>
+    <div tabIndex={0} {...rowStyles}>
       <div>
         <b>Veteran ID</b><br />
         <span>{appeal.vbms_id}</span>
@@ -35,7 +35,7 @@ export const AppealDetails = ({ appeal }) => (
         </div>
       )}
     </div>
-    <div id="claims-folder-issues" {...issueStyles}>
+    <div tabIndex={0} id="claims-folder-issues" {...issueStyles}>
       <b>Issues</b><br />
       <IssueList
         issuesOnly

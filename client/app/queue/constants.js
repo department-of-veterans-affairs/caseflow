@@ -97,7 +97,8 @@ export const marginRight = (margin) => css({ marginRight: `${margin}rem` });
 
 export const paddingLeft = (padding) => css({ paddingLeft: `${padding}rem` });
 
-export const slimHeight = css({ height: '4rem' });
+export const slimHeight = css({ height: '4.5rem' });
+export const setHeight = (height) => css({ height: `${height}rem` });
 
 export const CATEGORIES = {
   CASE_DETAIL: 'Appeal Details',
@@ -123,6 +124,7 @@ export const APPELLANT_TYPES = {
   OTHER_CLAIMANT: 'OtherClaimant',
   ATTORNEY_CLAIMANT: 'AttorneyClaimant',
   VETERAN_CLAIMANT: 'VeteranClaimant',
+  HEALTHCARE_PROVIDER_CLAIMANT: 'HealthcareProviderClaimant'
 };
 
 export const SEARCH_ERROR_FOR = {

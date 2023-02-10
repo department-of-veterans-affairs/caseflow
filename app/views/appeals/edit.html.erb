@@ -2,6 +2,11 @@
   <%= react_component("IntakeEdit", props: {
     userDisplayName: current_user.display_name,
     userCanWithdrawIssues: current_user.can_withdraw_issues?,
+    userCanSplitAppeal: current_user.can_split_appeal?(appeal),
+    appeal: appeal,
+    hearings: appeal.hearings,
+    hearingDayDate: appeal.hearing_day_if_schedueled,
+    user: current_user.css_id,
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,
@@ -11,6 +16,7 @@
       useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
       correctClaimReviews: FeatureToggle.enabled?(:correct_claim_reviews, user: current_user),
       covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
+      split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
       vhaPreDocketAppeals: false
     }
   }) %>

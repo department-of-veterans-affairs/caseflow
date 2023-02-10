@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class HearingUpdateForm < BaseHearingUpdateForm
+  prepend DocketHearingPostponed
+  prepend DocketHearingWithdrawn
   attr_accessor :advance_on_docket_motion_attributes,
                 :evidence_window_waived, :hearing_issue_notes_attributes,
                 :transcript_sent_date, :transcription_attributes
@@ -25,6 +27,18 @@ class HearingUpdateForm < BaseHearingUpdateForm
       hearing.appeal,
       advance_on_docket_motion_attributes.merge(user: RequestStore[:current_user])
     )
+  end
+
+  def after_update_hearing
+    if virtual_hearing_created?
+      hearing.appeal.update!(
+        changed_hearing_request_type: Constants.HEARING_REQUEST_TYPES.virtual
+      )
+    elsif virtual_hearing_cancelled?
+      hearing.appeal.update!(
+        changed_hearing_request_type: hearing.original_request_type
+      )
+    end
   end
 
   # rubocop:disable Metrics/MethodLength

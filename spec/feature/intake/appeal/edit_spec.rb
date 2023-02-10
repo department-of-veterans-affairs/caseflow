@@ -46,6 +46,15 @@ feature "Appeal Edit issues", :all_dbs do
            legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
   end
 
+  let!(:appeal2) do
+    create(:appeal,
+           veteran_file_number: veteran.file_number,
+           receipt_date: receipt_date,
+           docket_type: Constants.AMA_DOCKETS.evidence_submission,
+           veteran_is_not_claimant: false,
+           legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+  end
+
   let!(:appeal_intake) do
     create(:intake, user: current_user, detail: appeal, veteran_file_number: veteran.file_number)
   end
@@ -132,6 +141,41 @@ feature "Appeal Edit issues", :all_dbs do
     expect(page).to have_button("Save", disabled: false)
   end
 
+  scenario "when selecting a new benefit type the issue category dropdown should return to a default state" do
+    new_vet = create(:veteran, first_name: "Ed", last_name: "Merica")
+    new_appeal = create(:appeal,
+                        veteran_file_number: new_vet.file_number,
+                        receipt_date: receipt_date,
+                        docket_type: Constants.AMA_DOCKETS.evidence_submission,
+                        veteran_is_not_claimant: false,
+                        legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+
+    visit "appeals/#{new_appeal.uuid}/edit/"
+
+    click_intake_add_issue
+
+    dropdown_select_string = "Select or enter..."
+    benefit_text = "Compensation"
+
+    # Select the first benefit type
+    all(".cf-select__control", text: dropdown_select_string).first.click
+    find("div", class: "cf-select__option", text: benefit_text).click
+
+    # Select the first issue category
+    find(".cf-select__control", text: dropdown_select_string).click
+    find("div", class: "cf-select__option", text: "Unknown Issue Category").click
+
+    # Verify that the default dropdown text is missing from the page
+    expect(page).to_not have_content(dropdown_select_string)
+
+    # Select a different benefit type
+    find(".cf-select__control", text: benefit_text).click
+    find("div", class: "cf-select__option", text: "Education").click
+
+    # Verify that the default dropdown text once again present on the page
+    expect(page).to have_content(dropdown_select_string)
+  end
+
   context "with remove decision review enabled" do
     scenario "allows all request issues to be removed and saved" do
       visit "appeals/#{appeal.uuid}/edit/"
@@ -155,7 +199,6 @@ feature "Appeal Edit issues", :all_dbs do
 
     scenario "saves diagnostic codes" do
       visit "appeals/#{appeal.uuid}/edit/"
-
       save_and_check_request_issues_with_diagnostic_codes(
         Constants.INTAKE_FORM_NAMES.appeal,
         appeal
@@ -184,7 +227,6 @@ feature "Appeal Edit issues", :all_dbs do
         description: "A description!",
         date: profile_date.mdY
       )
-
       click_edit_submit_and_confirm
 
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
@@ -305,6 +347,243 @@ feature "Appeal Edit issues", :all_dbs do
     end
   end
 
+  context "User is a member of the Supervisory Senior Council" do
+    let!(:organization) { SupervisorySeniorCouncil.singleton }
+    let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
+    let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
+    scenario "less than 2 request issues on the appeal, the split appeal button doesn't show" do
+      User.authenticate!(user: current_user)
+      visit "appeals/#{appeal2.uuid}/edit/"
+      expect(appeal2.decision_issues.length + appeal2.request_issues.length).to be < 2
+      expect(page).to_not have_button("Split appeal")
+    end
+  end
+
+  context "The user is a member of Supervisory Senior Council and the appeal has 2 or more tasks" do
+    let!(:organization) { SupervisorySeniorCouncil.singleton }
+    let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
+    let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
+    let(:request_issue_1) do
+      create(:request_issue,
+             id: 22,
+             decision_review: appeal2,
+             decision_date: profile_date,
+             contested_rating_issue_reference_id: "def456",
+             contested_rating_issue_profile_date: profile_date,
+             contested_issue_description: "PTSD denied",
+             contention_reference_id: "3897",
+             benefit_type: "Education")
+    end
+
+    let(:request_issue_2) do
+      create(:request_issue,
+             id: 25,
+             decision_review: appeal2,
+             decision_date: profile_date,
+             contested_rating_issue_reference_id: "blah1234",
+             contested_rating_issue_profile_date: profile_date,
+             contested_issue_description: "Other Issue Description",
+             contention_reference_id: "78910",
+             benefit_type: "Education")
+    end
+
+    scenario "the split appeal button shows and leads to create_split page" do
+      # add issues to the appeal
+      appeal2.request_issues << request_issue_1
+      appeal2.request_issues << request_issue_2
+
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:split_appeal_workflow)
+      visit "appeals/#{appeal2.uuid}/edit/"
+
+      expect(page).to have_button("Split appeal")
+      # clicking the button takes the user to the next page
+      click_button("Split appeal")
+
+      expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
+
+      FeatureToggle.disable!(:split_appeal_workflow)
+    end
+
+    scenario "The SSC user navigates to the split appeal page" do
+      # add issues to the appeal
+      appeal2.request_issues << request_issue_1
+      appeal2.request_issues << request_issue_2
+
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal2.uuid}/edit/create_split")
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Other Issue Description")
+      # expect the select bar, cancel button, and continue button to show
+      expect(page).to have_content("Select...")
+      expect(page).to have_content("Cancel")
+      # expect the continue button to be disabled
+      expect(page).to have_button("Continue", disabled: true)
+    end
+
+    scenario "The cancel button goes back to the edit page when clicked" do
+      # add issues to the appeal
+      appeal2.request_issues << request_issue_1
+      appeal2.request_issues << request_issue_2
+
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal2.uuid}/edit/create_split")
+
+      # click the cancel link and go to queue page
+      click_button("Cancel")
+      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
+    end
+
+    scenario "If no issues are selected on the split appeal page, the Continue button is disabled" do
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal.uuid}/edit/create_split")
+
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Military Retired Pay - nonrating description")
+      find("label", text: "PTSD denied").click
+      expect(page).to have_content("Select...")
+      expect(page).to have_button("Continue", disabled: true)
+    end
+
+    scenario "If no issues are selected after de-selecting an issue, the Continue button is disabled" do
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal.uuid}/edit/create_split")
+
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Military Retired Pay - nonrating description")
+      find("label", text: "PTSD denied").click
+      find("label", text: "PTSD denied").click
+      expect(page).to have_content("Select...")
+      expect(page).to have_button("Continue", disabled: true)
+    end
+
+    scenario "If all issues are selected on the split appeal page, the Continue button is disabled" do
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal.uuid}/edit/create_split")
+
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Military Retired Pay - nonrating description")
+      # click checkboxes
+      find("label", text: "PTSD denied").click
+      find("label", text: "Military Retired Pay - nonrating description").click
+      expect(page).to have_content("Select...")
+      find(:css, ".cf-select").select_option
+      find(:css, ".cf-select__menu").click
+      expect(page).to have_button("Continue", disabled: true)
+    end
+
+    def skill_form(appeal)
+      # add issues to the appeal
+      appeal.request_issues << request_issue_1
+      appeal.request_issues << request_issue_2
+
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal.uuid}/edit/create_split")
+
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Other Issue Description")
+      find("label", text: "PTSD denied").click
+      expect(page).to have_content("Select...")
+
+      find(:css, ".cf-select").select_option
+      find(:css, ".cf-select__menu").click
+
+      click_button("Continue")
+      expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/review_split")
+    end
+
+    def wait_for_ajax
+      max_time = Capybara::Helpers.monotonic_time + Capybara.default_max_wait_time
+      while Capybara::Helpers.monotonic_time < max_time
+        finished = finished_all_ajax_requests?
+        if finished
+          break
+        else
+          sleep 0.1
+        end
+      end
+      raise "wait_for_ajax timeout" unless finished
+    end
+
+    def finished_all_ajax_requests?
+      page.evaluate_script(<<~EOS
+        ((typeof window.jQuery === 'undefined')
+        || (typeof window.jQuery.active === 'undefined')
+        || (window.jQuery.active === 0))
+        && ((typeof window.injectedJQueryFromNode === 'undefined')
+        || (typeof window.injectedJQueryFromNode.active === 'undefined')
+        || (window.injectedJQueryFromNode.active === 0))
+        && ((typeof window.httpClients === 'undefined')
+        || (window.httpClients.every(function (client) { return (client.activeRequestCount === 0); })))
+      EOS
+                          )
+    end
+
+    scenario "The SSC user navigates to the split appeal page to review page" do
+      skill_form(appeal2)
+    end
+
+    scenario "When the user accesses the review_split page, the page renders as expected" do
+      # add issues to the appeal
+      skill_form(appeal2)
+
+      expect(page).to have_table("review_table")
+      expect(page).to have_content("Cancel")
+      expect(page).to have_button("Back")
+      expect(page).to have_button("Split appeal")
+      expect(page).to have_content("Reason for new appeal stream:")
+    end
+
+    scenario "on the review_split page, the back button takes the user back" do
+      skill_form(appeal2)
+
+      click_button("Back")
+      expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
+    end
+
+    scenario "on the review_split page, the cancel button takes the user to queue" do
+      skill_form(appeal2)
+
+      click_button("Cancel")
+      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
+    end
+
+    scenario "on the review_split page, testing appellant and vetera" do
+      skill_form(appeal2)
+      if expect(appeal2.veteran_is_not_claimant).to be(false)
+        row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
+        row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
+        expect(row2_1).to eq("Veteran")
+        expect(row3_1).to eq("Docket Number")
+      else
+        row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
+        row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
+        expect(row2_1).to eq("Veteran")
+        expect(row3_1).to eq("Appellant")
+      end
+    end
+
+    scenario "on the review_split page, appeal type is no hearing" do
+      skill_form(appeal2)
+      expect(appeal2.docket_type).not_to have_content("hearing")
+    end
+
+    scenario "on the review_split page, the Split appeal button takes the user to queue" do
+      skill_form(appeal2)
+
+      click_button("Split appeal")
+      # wait_for_ajax
+      # page.find(:xpath, '/queue/appeals/#{appeal2.uuid}')
+      # assert_current_path("/queue/appeals/#{appeal2.uuid}")
+      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
+    end
+  end
+
   context "Veteran is invalid" do
     let!(:veteran) do
       create(:veteran,
@@ -362,6 +641,48 @@ feature "Appeal Edit issues", :all_dbs do
       )
       expect(page).to have_content("Check the Veteran's profile for invalid information")
       expect(page).to have_button("Save", disabled: true)
+    end
+  end
+
+  context "when appeal Type is Veterans Health Administration By default (Predocket option)" do
+    scenario "appeal with benefit type VHA" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      fill_in "Benefit type", with: "Veterans Health Administration"
+      find("#issue-benefit-type").send_keys :enter
+      fill_in "Issue category", with: "Beneficiary Travel | Common Carrier"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "I am a VHA issue"
+      fill_in "Decision date", with: 1.month.ago.mdY
+      radio_choices = page.all(".cf-form-radio-option > label")
+      expect(radio_choices[0]).to have_content("Yes")
+      expect(radio_choices[1]).to have_content("No")
+      expect(find("#is-predocket-needed_true", visible: false).checked?).to eq(true)
+      expect(find("#is-predocket-needed_false", visible: false).checked?).to eq(false)
+      expect(page).to have_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
+    end
+  end
+
+  context "when appeal Type is Veterans Health Administration NO Predocket" do
+    scenario "appeal with benefit type VHA no - predocket" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      fill_in "Benefit type", with: "Veterans Health Administration"
+      find("#issue-benefit-type").send_keys :enter
+      fill_in "Issue category", with: "Beneficiary Travel | Common Carrier"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "I am a VHA issue"
+      fill_in "Decision date", with: 1.month.ago.mdY
+      radio_choices = page.all(".cf-form-radio-option > label")
+      expect(radio_choices[0]).to have_content("Yes")
+      expect(radio_choices[1]).to have_content("No")
+
+      radio_choices[1].click
+      expect(find("#is-predocket-needed_true", visible: false).checked?).to eq(false)
+      expect(find("#is-predocket-needed_false", visible: false).checked?).to eq(true)
+      expect(page).to have_no_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
     end
   end
 

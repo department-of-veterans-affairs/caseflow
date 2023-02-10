@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { bindActionCreators } from 'redux';
 import { connect, useSelector } from 'react-redux';
 import { css } from 'glamor';
@@ -8,12 +9,13 @@ import React, { useEffect, useMemo } from 'react';
 import _ from 'lodash';
 
 import { APPELLANT_TYPES, CATEGORIES, TASK_ACTIONS } from './constants';
-import { COLORS } from '../constants/AppConstants';
+import { COLORS, ICON_SIZES } from '../constants/AppConstants';
 import {
   appealWithDetailSelector,
   getAllTasksForAppeal,
   openScheduleHearingTasksForAppeal,
-  allHearingTasksForAppeal
+  allHearingTasksForAppeal,
+  scheduleHearingTasksForAppeal
 } from './selectors';
 import {
   stopPollingHearing,
@@ -36,7 +38,7 @@ import CaseHearingsDetail from './CaseHearingsDetail';
 import { CaseTimeline } from './CaseTimeline';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
-import CavcDetail from './CavcDetail';
+import CavcDetail from './caseDetails/CavcDetail';
 import CaseDetailsPostDispatchActions from './CaseDetailsPostDispatchActions';
 import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import StickyNavContentArea from './StickyNavContentArea';
@@ -56,8 +58,12 @@ import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
 import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
+import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
 
 // TODO: Pull this horizontal rule styling out somewhere.
+
+const ICON_POSITION_FIX = css({ position: 'relative', top: 3 });
+
 const horizontalRuleStyling = css({
   border: 0,
   borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
@@ -93,7 +99,7 @@ export const CaseDetailsView = (props) => {
   );
 
   const updatePOALink =
-        appeal.hasPOA ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
+    appeal.hasPOA ? COPY.EDIT_APPELLANT_INFORMATION_LINK : COPY.UP_DATE_POA_LINK;
 
   const tasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
@@ -167,15 +173,20 @@ export const CaseDetailsView = (props) => {
 
   const appealIsDispatched = isAppealDispatched(appeal);
 
-  const editAppellantInformation =
-    appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant;
+  const editAppellantInformation = (
+    [APPELLANT_TYPES.OTHER_CLAIMANT, APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT].includes(
+      appeal.appellantType
+    ) && props.featureToggles.edit_unrecognized_appellant
+  );
 
   const editPOAInformation =
-  props.userCanEditUnrecognizedPOA && appeal.appellantType === 'OtherClaimant' &&
-  !appeal.hasPOA && props.featureToggles.edit_unrecognized_appellant_poa;
+    props.userCanEditUnrecognizedPOA &&
+    [APPELLANT_TYPES.OTHER_CLAIMANT, APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT].includes(
+      appeal.appellantType
+    ) && !appeal.hasPOA && props.featureToggles.edit_unrecognized_appellant_poa;
 
   const supportCavcRemand =
-  currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal;
+    currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal;
 
   const hasSubstitution = appealHasSubstitution(appeal);
   const supportPostDispatchSubstitution = supportsSubstitutionPostDispatch({
@@ -195,16 +206,48 @@ export const CaseDetailsView = (props) => {
   const showPostDispatch =
     appealIsDispatched && (supportCavcRemand || supportPostDispatchSubstitution);
 
-  const openScheduledHearingTasks = useSelector(
+  const actionableScheduledHearingTasks = useSelector(
     (state) => openScheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
+  );
+  const allScheduleHearingTasks = useSelector(
+    (state) => scheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
   );
   const allHearingTasks = useSelector(
     (state) => allHearingTasksForAppeal(state, { appealId: appeal.externalId })
   );
-  const parentHearingTasks = parentTasks(openScheduledHearingTasks, allHearingTasks);
+  const parentHearingTasks = parentTasks(actionableScheduledHearingTasks, allHearingTasks);
+
+  // Retrieve VSO convert to virtual success message after getting redirected from Hearings app
+  const displayVSOAlert = JSON.parse(localStorage.getItem('VSOSuccessMsg'));
+
+  localStorage.removeItem('VSOSuccessMsg');
+
+  // Retrieve split appeal success and remove from the store
+  const splitStorage = localStorage.getItem('SplitAppealSuccess');
+
+  localStorage.removeItem('SplitAppealSuccess');
+
+  // if null, leave null, if true, check if value is true with reg expression.
+  const splitAppealSuccess = (splitStorage === null ? null : (/true/i).test(splitStorage));
 
   return (
     <React.Fragment>
+      {(splitAppealSuccess && props.featureToggles.split_appeal_workflow) && (
+        <div>
+          <Alert
+            type="success"
+            title={`You have successfully split ${appeal.appellantFullName}'s appeal`}
+            message="This new appeal stream has the same docket number and tasks as the original appeal."
+          />
+        </div>
+      )}
+      {(splitAppealSuccess === false && props.featureToggles.split_appeal_workflow) && (
+        <div {...alertPaddingStyle}>
+          <Alert title="Unable to Process Request" type="error">
+            Something went wrong and the appeal was not split.
+          </Alert>
+        </div>
+      )}
       {!modalIsOpen && error && (
         <div {...alertPaddingStyle}>
           <Alert title={error.title} type="error">
@@ -227,6 +270,15 @@ export const CaseDetailsView = (props) => {
         />
       )}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
+      {displayVSOAlert && (
+        <div>
+          <Alert
+            type="success"
+            title={displayVSOAlert.title}
+            message={displayVSOAlert.detail}
+          />
+        </div>
+      )}
       <AppSegment filledBackground>
         <CaseTitle appeal={appeal} />
         {supportPendingAppealSubstitution && (
@@ -301,11 +353,17 @@ export const CaseDetailsView = (props) => {
           />
           {(appeal.hearings.length ||
             appeal.completedHearingOnPreviousAppeal ||
-            openScheduledHearingTasks.length) && (
+            actionableScheduledHearingTasks.length ||
+            // VSO users will not have any available task actions on the ScheduleHearingTask(s),
+            // but prior to a hearing being scheduled they will need the Hearings section rendered anyways.
+            (props.vsoVirtualOptIn && userIsVsoEmployee && allScheduleHearingTasks.length)
+          ) && (
             <CaseHearingsDetail
               title="Hearings"
               appeal={appeal}
-              hearingTasks={parentHearingTasks}
+              hearingTasks={userIsVsoEmployee ? allScheduleHearingTasks : parentHearingTasks}
+              vsoVirtualOptIn={props.vsoVirtualOptIn}
+              currentUserEmailPresent={Boolean(appeal.currentUserEmail)}
             />
           )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
@@ -347,8 +405,23 @@ export const CaseDetailsView = (props) => {
             />
           )}
 
-          <CaseTimeline title="Case Timeline" appeal={appeal} />
-        </StickyNavContentArea>
+          <CaseTimeline title="Case Timeline" appeal={appeal}
+            additionalHeaderContent={
+              true && (
+                <span className="cf-push-right" {...anchorEditLinkStyling}>
+                  { appeal.hasNotifications &&
+                  <Link id="notification-link" href={`/queue/appeals/${appealId}/notifications`} target="_blank">
+                    {COPY.VIEW_NOTIFICATION_LINK}
+                    &nbsp;
+                    <span {...ICON_POSITION_FIX}>
+                      <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
+                    </span>
+                  </Link>}
+                </span>
+              )
+            }
+          />
+        </StickyNavContentArea >
         {props.pollHearing && pollHearing()}
       </AppSegment>
     </React.Fragment>
@@ -374,6 +447,7 @@ CaseDetailsView.propTypes = {
   pollHearing: PropTypes.bool,
   stopPollingHearing: PropTypes.func,
   substituteAppellant: PropTypes.object,
+  vsoVirtualOptIn: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
@@ -400,3 +474,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(CaseDetailsView);
+/* eslint-enable max-lines */

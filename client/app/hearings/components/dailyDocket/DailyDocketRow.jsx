@@ -26,7 +26,13 @@ import {
   HoldOpenDropdown
 } from './DailyDocketRowInputs';
 import { HearingTime } from '../modalForms/HearingTime';
-import { deepDiff, isPreviouslyScheduledHearing, pollVirtualHearingData, handleEdit } from '../../utils';
+import {
+  deepDiff,
+  isPreviouslyScheduledHearing,
+  pollVirtualHearingData,
+  handleEdit,
+  userJudgeOrCoordinator
+} from '../../utils';
 import { docketRowStyle, inputSpacing } from './style';
 import { onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert } from '../../../components/common/actions';
 import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
@@ -266,6 +272,13 @@ class DailyDocketRow extends React.Component {
 
   isLegacyHearing = () => this.props.hearing?.docketName === 'legacy';
 
+  conferenceLinkOnClick = () => {
+    const { conferenceLink } = this.props;
+
+    window.open(conferenceLink?.hostLink, 'Recording Session').focus();
+
+  }
+
   getInputProps = () => {
     const { hearing, readOnly } = this.props;
 
@@ -362,6 +375,11 @@ class DailyDocketRow extends React.Component {
     return (
       <div {...inputSpacing}>
         {hearing?.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />}
+        {hearing?.isVirtual !== true && userJudgeOrCoordinator(user, hearing) && <Button
+          classNames={['usa-button-secondary']}
+          type="button"
+          disabled={this.props.conferenceLinkError}
+          onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button> }
         <DispositionDropdown
           {...inputProps}
           cancelUpdate={this.cancelUpdate}
@@ -491,11 +509,15 @@ DailyDocketRow.propTypes = {
   }),
   onReceiveAlerts: PropTypes.func,
   onReceiveTransitioningAlert: PropTypes.func,
-  transitionAlert: PropTypes.func
+  transitionAlert: PropTypes.func,
+  conferenceLink: PropTypes.object,
+  conferenceLinkError: PropTypes.bool
 };
 
 const mapStateToProps = (state, props) => ({
-  hearing: { ...props.hearing, ...state.dailyDocket.hearings[props.hearingId] }
+  hearing: { ...props.hearing, ...state.dailyDocket.hearings[props.hearingId] },
+  conferenceLink: state.dailyDocket.hearingDay.conferenceLink,
+  conferenceLinkError: state.dailyDocket.conferenceLinkError
 });
 
 const mapDispatchToProps = (dispatch, props) =>

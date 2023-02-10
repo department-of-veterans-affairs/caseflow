@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# When using this factory, passing in a VACOLS::Case object as vacols_case is the preferred method. The
+# :case factory in the factories/vacols is used to generate VACOLS cases. This ensures that the correct
+# associations exist between VACOLS and Caseflow, and that the BFKEY of the case is unique.
+
 FactoryBot.define do
   factory :legacy_appeal do
     transient do
@@ -32,6 +36,44 @@ FactoryBot.define do
       after(:create) do |appeal, _evaluator|
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
+      end
+    end
+
+    trait :with_root_task do
+      after(:create) do |appeal, _evaluator|
+        RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+      end
+    end
+
+    trait :with_completed_root_task do
+      after(:create) do |appeal, _evaluator|
+        task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        task.update!(status: "completed")
+      end
+    end
+
+    trait :with_cancelled_root_task do
+      after(:create) do |appeal, _evaluator|
+        task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        task.update!(status: "cancelled")
+      end
+    end
+
+    trait :with_active_ihp_colocated_task do
+      after(:create) do |appeal, _evaluator|
+        org = Organization.find_by(type: "Vso")
+        org ||= create(:vso)
+        create(:colocated_task, :ihp, appeal: appeal, assigned_to: org)
+      end
+    end
+
+    trait :with_completed_ihp_colocated_task do
+      after(:create) do |appeal, _evaluator|
+        org = Organization.find_by(type: "Vso")
+        org ||= create(:vso)
+        create(:colocated_task, :ihp, appeal: appeal, assigned_to: org)
+        ihp_task = appeal.tasks.find_by(type: "IhpColocatedTask")
+        ihp_task.update!(status: Constants.TASK_STATUSES.completed)
       end
     end
 

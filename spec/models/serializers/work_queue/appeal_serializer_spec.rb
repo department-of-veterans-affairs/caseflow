@@ -63,4 +63,22 @@ describe WorkQueue::AppealSerializer, :all_dbs do
       end
     end
   end
+
+  context "when an appeal has a user that is part of the Supervisory Senior Council" do
+    let!(:appeal) { create(:appeal) }
+    let!(:current_user) { create(:user) }
+    let!(:organization) { SupervisorySeniorCouncil.singleton }
+    let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
+
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:split_appeal_workflow)
+    end
+
+    subject { described_class.new(appeal, params: { user: current_user }) }
+
+    it "can_edit_request_issues returns true" do
+      expect(subject.serializable_hash[:data][:attributes][:can_edit_request_issues]).to eq(true)
+    end
+  end
 end

@@ -370,6 +370,16 @@
     "value": "modal/bva_intake_return_to_camo",
     "func": "bva_intake_return_to_camo"
   },
+  "BVA_INTAKE_RETURN_TO_CAREGIVER": {
+    "label": "Return appeal to VHA Caregiver Support Program",
+    "value": "modal/bva_intake_return_to_caregiver",
+    "func": "bva_intake_return_to_caregiver"
+  },
+  "BVA_INTAKE_RETURN_TO_EMO": {
+    "label": "Return appeal to Education Service",
+    "value": "modal/bva_intake_return_to_emo",
+    "func": "bva_intake_return_to_emo"
+  },
   "READY_TO_DOCKET": {
     "label": "Ready to Docket",
     "value": "modal/ready_to_docket"
@@ -403,5 +413,50 @@
     "label": "Mark task in progress",
     "value": "modal/mark_task_in_progress",
     "func": "vha_mark_task_in_progress"
+  },
+  "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS": {
+    "label": "Mark task as in progress",
+    "value": "modal/mark_task_in_progress",
+    "func": "vha_caregiver_support_mark_task_in_progress"
+  },
+  "EMO_RETURN_TO_BOARD_INTAKE": {
+    "label": "Return to Board Intake",
+    "value": "modal/emo_return_to_board_intake",
+    "func": "emo_return_to_board_intake"
+  },
+  "VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW": {
+    "label": "Documents ready for Board Intake review",
+    "value": "modal/vha_caregiver_support_send_to_board_intake_for_review",
+    "func": "vha_caregiver_support_send_to_board_intake_for_review"
+  },
+  "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW": {
+    "label": "Ready for Review",
+    "value": "modal/emo_send_to_board_intake_for_review",
+    "func": "emo_send_to_board_intake_for_review"
+  },
+  "EMO_ASSIGN_TO_RPO": {
+    "label": "Assign to Regional Processing Office",
+    "value": "modal/emo_assign_to_education_rpo",
+    "func": "emo_assign_to_education_rpo_data"
+  },
+  "EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW": {
+    "label": "Ready for Review",
+    "value": "modal/rpo_send_to_board_intake_for_review",
+    "func": "education_rpo_send_to_board_intake_for_review"
+  },
+  "EDUCATION_RPO_RETURN_TO_EMO": {
+    "label": "Return to Executive Management Office",
+    "value": "modal/rpo_return_to_emo",
+    "func": "education_rpo_return_to_emo"
+  },
+  "EDUCATION_RPO_MARK_TASK_IN_PROGRESS": {
+    "label": "Mark task in progress",
+    "value": "modal/mark_task_in_progress",
+    "func": "education_rpo_mark_task_in_progress"
+  },
+  "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE": {
+    "label": "Return to Board Intake",
+    "value": "modal/vha_caregiver_support_return_to_board_intake",
+    "func": "vha_caregiver_support_return_to_board_intake"
   }
 }

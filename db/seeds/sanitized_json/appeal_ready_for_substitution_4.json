@@ -907,7 +907,7 @@
       "updated_at": null,
       "status": "active",
       "status_updated_at": null,
-      "accepts_priority_pushed_cases": true
+      "accepts_priority_pushed_cases": false
     },
     {
       "id": 228,
@@ -920,7 +920,7 @@
       "updated_at": null,
       "status": "active",
       "status_updated_at": null,
-      "accepts_priority_pushed_cases": true
+      "accepts_priority_pushed_cases": false
     },
     {
       "id": 229,

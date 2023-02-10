@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :ramp_election do
-    sequence(:veteran_file_number, &:to_s)
+    veteran_file_number { generate :veteran_file_number }
     receipt_date { 1.month.ago }
 
     trait :established do

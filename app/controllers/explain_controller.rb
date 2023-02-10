@@ -22,6 +22,7 @@ class ExplainController < ApplicationController
         format.json { render json: sanitized_json }
       end
     rescue StandardError => error
+      Rails.logger.error(error.full_message)
       raise error.full_message
     end
   end

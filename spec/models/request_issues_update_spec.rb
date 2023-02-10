@@ -22,7 +22,7 @@ describe RequestIssuesUpdate, :all_dbs do
   # and contention data stubbed out properly
   let(:review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
 
-  let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
+  let!(:veteran) { create(:veteran) }
 
   let!(:intake_user) { create(:user) }
   let(:edit_user) { create(:user) }

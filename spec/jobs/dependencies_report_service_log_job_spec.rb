@@ -18,21 +18,11 @@ describe DependenciesReportServiceLogJob do
 
   context "when outage is present" do
     before do
-      Rails.cache.write(:dependencies_report, DEPENDENCIES_REPORT_WITH_OUTAGES)
+      Rails.cache.write(:degraded_service_banner_bgs, :display)
     end
 
     it "should log the correct error message" do
-      expect(Rails.logger).to receive(:error).with("Caseflow Monitor shows possible VACOLS and VBMS outages")
-      DependenciesReportServiceLogJob.perform_now
-    end
-  end
-
-  context "when report is invalid" do
-    before do
-      Rails.cache.write(:dependencies_report, DEPENDENCIES_REPORT_WITH_INVALID_DATA)
-    end
-    it "should log the correct error message" do
-      expect(Rails.logger).to receive(:error).with("Invalid report from Caseflow Monitor")
+      expect(Rails.logger).to receive(:error).with("Caseflow Monitor shows possible outages")
       DependenciesReportServiceLogJob.perform_now
     end
   end

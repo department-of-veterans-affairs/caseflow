@@ -13,6 +13,12 @@ class IhpDraft < CaseflowRecord
   AMA_PATH_MATCHER = /AMA IHPs\\.+\.pdf$/.freeze
   LEGACY_PATH_MATCHER = /902\\.+\.pdf$/.freeze
 
+  # amoeba gem for split appeal
+  amoeba do
+    enable
+    exclude_association :appeal_id
+  end
+
   PATH_MATCHERS = {
     LegacyAppeal.name => LEGACY_PATH_MATCHER,
     Appeal.name => AMA_PATH_MATCHER

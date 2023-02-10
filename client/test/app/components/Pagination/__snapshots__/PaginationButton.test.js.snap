@@ -3,6 +3,7 @@
 exports[`PaginationButton button for page other than current renders correctly 1`] = `
 <div>
   <button
+    aria-label="Page 1"
     class=""
     name="page-button-0"
   >
@@ -14,6 +15,8 @@ exports[`PaginationButton button for page other than current renders correctly 1
 exports[`PaginationButton button for the current page renders correctly 1`] = `
 <div>
   <button
+    aria-current="page"
+    aria-label="Page 1"
     class="cf-current-page"
     name="page-button-0"
   >

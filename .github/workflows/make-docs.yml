@@ -154,25 +154,3 @@ jobs:
             git commit -m "$WIKI_COMMIT_MESSAGE"
             echo "::endgroup::"
           fi
-
-      - name: Create/Update PR to merge into main-gh-pages
-        id: create_pr
-        if: steps.compare_docs.outputs.changes_docs == 'true'
-        uses: peter-evans/create-pull-request@v3
-        with:
-          path: "main-gh-pages_checkout/"
-          base: "main-gh-pages"
-          branch: "gh-actions/make_docs-update_docs"
-          delete-branch: true # when closing PR
-          commit-message: '`make docs` GH Action: automatically update DB schema documentation files'
-          title: "GH Action: update DB documentation"
-          body: "This PR was created by GitHub Action `make_docs` to automatically update DB documentation."
-          labels: "Type: Documentation"
-          reviewers: samantha-quillman
-          assignees: ${{ github.event.commits[0].committer.username }}
-      - name: PR info
-        if: steps.create_pr.outcome == 'success'
-        run: |
-          echo "PR ${{ steps.create_pr.outputs.pull-request-operation }}"
-          echo "Pull Request Number - ${{ steps.create_pr.outputs.pull-request-number }}"
-          echo "Pull Request URL - ${{ steps.create_pr.outputs.pull-request-url }}"

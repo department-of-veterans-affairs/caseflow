@@ -4,14 +4,27 @@
 
 module Seeds
   class MTV < Base
+    def initialize
+      file_number_initial_value
+    end
+
     def seed!
       setup_motion_to_vacate_appeals
     end
 
     private
 
-    def create_decided_appeal(file_number, mtv_judge, drafting_attorney)
-      veteran = create(:veteran, file_number: file_number)
+    # maintains previous file number values while allowing for reseeding
+    def file_number_initial_value
+      @file_number ||= 100_000
+      # this seed file creates 40 new veterans on each run, 100 is sufficient margin to add more data
+      @file_number += 100 while Veteran.find_by(file_number: format("%<n>09d", n: @file_number))
+      @file_number
+    end
+
+    def create_decided_appeal(mtv_judge, drafting_attorney)
+      veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
+      @file_number += 1
       appeal = create(
         :appeal,
         :dispatched,
@@ -91,13 +104,13 @@ module Seeds
     def original_fully_dispatched(mtv_judge, drafting_attorney)
       # MTV file numbers with a decided appeal
       # From here a MailTeam user or LitigationSupport team member would create a motion to vacate task
-      ("000100000".."000100009").each { |file_number| create_decided_appeal(file_number, mtv_judge, drafting_attorney) }
+      10.times { create_decided_appeal(mtv_judge, drafting_attorney) }
     end
 
     def original_at_lit_support(mtv_judge, drafting_attorney)
       # These are ready for the Lit Support user to send_to_judge
-      ("000100010".."000100012").each do |file_number|
-        create_decided_appeal(file_number, mtv_judge, drafting_attorney).tap do |appeal|
+      3.times do
+        create_decided_appeal(mtv_judge, drafting_attorney).tap do |appeal|
           create_motion_to_vacate_mail_task(appeal)
         end
       end
@@ -105,22 +118,22 @@ module Seeds
 
     def original_at_judge_to_address_motion(mtv_judge, drafting_attorney, lit_support_user)
       # These are ready to be addressed by the Judge
-      ("000100013".."000100015").each do |file_number|
-        original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      3.times do
+        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
         mtv_task = create_motion_to_vacate_mail_task(original_stream)
         mtv_task.update!(status: "on_hold")
         send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "denied")
       end
 
-      ("000100016".."000100018").each do |file_number|
-        original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      3.times do
+        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
         mtv_task = create_motion_to_vacate_mail_task(original_stream)
         mtv_task.update!(status: "on_hold")
         send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "dismissed")
       end
 
-      ("000100019".."000100021").each do |file_number|
-        original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      3.times do
+        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
         mtv_task = create_motion_to_vacate_mail_task(original_stream)
         mtv_task.update!(status: "on_hold")
         send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
@@ -131,40 +144,40 @@ module Seeds
     # rubocop:disable Metrics/AbcSize
     def vacate_at_attorney_review(mtv_judge, drafting_attorney, lit_support_user)
       # These are ready to be reviewed by the decision drafting attorney on the vacate stream
-      ("000100022".."000100024").each do |file_number|
-        original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      3.times do
+        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
         mtv_task = create_motion_to_vacate_mail_task(original_stream)
         mtv_task.update!(status: "on_hold")
         jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "denied")
         judge_addresses_mtv(jam_task, "denied", nil, lit_support_user)
       end
 
-      ("000100025".."000100027").each do |file_number|
-        original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      3.times do
+        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
         mtv_task = create_motion_to_vacate_mail_task(original_stream)
         mtv_task.update!(status: "on_hold")
         jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "dismissed")
         judge_addresses_mtv(jam_task, "dismissed", nil, lit_support_user)
       end
 
-      ("000100028".."000100030").each do |file_number|
-        original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      3.times do
+        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
         mtv_task = create_motion_to_vacate_mail_task(original_stream)
         mtv_task.update!(status: "on_hold")
         jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
         judge_addresses_mtv(jam_task, "granted", "straight_vacate", drafting_attorney)
       end
 
-      ("000100031".."000100033").each do |file_number|
-        original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      3.times do
+        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
         mtv_task = create_motion_to_vacate_mail_task(original_stream)
         mtv_task.update!(status: "on_hold")
         jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
         judge_addresses_mtv(jam_task, "granted", "vacate_and_readjudication", drafting_attorney)
       end
 
-      ("000100034".."000100036").each do |file_number|
-        original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      3.times do
+        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
         mtv_task = create_motion_to_vacate_mail_task(original_stream)
         mtv_task.update!(status: "on_hold")
         jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
@@ -176,8 +189,8 @@ module Seeds
 
     # rubocop:disable Metrics/MethodLength
     def fully_processed_vacate_appeal(mtv_judge, drafting_attorney, lit_support_user)
-      ("000100037".."000100039").each do |file_number|
-        original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      3.times do
+        original_stream = create_decided_appeal(mtv_judge, drafting_attorney)
         mtv_task = create_motion_to_vacate_mail_task(original_stream)
         mtv_task.update!(status: "on_hold")
         jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
@@ -190,7 +203,7 @@ module Seeds
         BvaDispatchTask.create_from_root_task(root_task)
         dispatch_user = vacate_stream.tasks
           .reload.assigned_to_any_user.find_by(type: "BvaDispatchTask").assigned_to
-        last_six = file_number[-6..-1]
+        last_six = original_stream.veteran.file_number[-6..-1]
         citation_number = "A19#{last_six}"
         outcode_params = {
           citation_number: citation_number,

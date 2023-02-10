@@ -1,10 +1,18 @@
 # frozen_string_literal: true
 
+# When using this factory, pass in a pre-created veteran's file_number as the bfcorlid: arg
+# This ensures that the case is created with the correct veteran_file_number association, and ensures that
+# no unique index constraints are violated between VACOLS and Caseflow.
+#
+# Additionally, this factory should be used in conjuction with the :legacy_appeal factory when a caseflow
+# legacy appeal object is needed. Pass a case created by this factory into :legacy_appeal as vacols_case:
+# to ensure the correct associations are made between a veteran, case, and legacy appeal.
+
 FactoryBot.define do
   factory :case, class: VACOLS::Case do
-    sequence(:bfkey) # a.k.a. VACOLS_ID
-    sequence(:bfcorkey)
-    sequence(:bfcorlid, 300_000_000) { |n| "#{n}S" }
+    bfkey { generate :vacols_case_key } # a.k.a. VACOLS_ID
+    bfcorkey { generate :vacols_correspondent_key }
+    bfcorlid { "#{generate :veteran_file_number}S" }
 
     association :correspondent, factory: :correspondent
 
@@ -15,7 +23,15 @@ FactoryBot.define do
     folder { association :folder, ticknum: bfkey, tinum: docket_number }
 
     bfregoff { "RO18" }
-    bfdloout { Time.zone.now }
+
+    before(:create) do |vacols_case, evaluator|
+      vacols_case.bfdloout =
+        if evaluator.bfdloout
+          VacolsHelper.format_datetime_with_utc_timezone(evaluator.bfdloout)
+        else
+          VacolsHelper.local_time_with_utc_timezone
+        end
+    end
 
     trait :assigned do
       transient do
@@ -227,6 +243,7 @@ FactoryBot.define do
     trait :ready_for_distribution do
       status_active
       bfcurloc { "81" }
+      bfdnod { 13.months.ago.to_date }
       bfd19 { 1.year.ago.to_date }
     end
 

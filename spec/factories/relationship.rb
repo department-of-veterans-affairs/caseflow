@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :relationship do
-    sequence(:participant_id, 600_000_000)
+    participant_id { generate :participant_id }
     veteran_file_number { create(:veteran).file_number }
     first_name { Faker::Name.first_name.upcase.tr("\'", "") }
     last_name { Faker::Name.last_name.downcase.tr("\'", "") }

@@ -16,9 +16,9 @@
 # get the `create(attrs)` method for free by extending Generators::Base
 module Generators::Base
   def generate_external_id(seed = nil)
-    return (seed % 1_000_000).to_s if seed
+    return (seed % 10_000_000).to_s if seed
 
-    RANDOM.rand(1_000_000).to_s
+    RANDOM.rand(10_000_000).to_s
   end
 
   def generate_first_name(seed = nil)

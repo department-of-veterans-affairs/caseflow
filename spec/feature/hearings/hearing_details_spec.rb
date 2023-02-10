@@ -1,10 +1,23 @@
 # frozen_string_literal: true
 
 RSpec.feature "Hearing Details", :all_dbs do
+  before do
+    # VSO users require this task to be active on an appeal for them to access its hearings.
+    TrackVeteranTask.create!(appeal: hearing.appeal, parent: hearing.appeal.root_task, assigned_to: vso_org)
+    allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+      [{ participant_id: vso_participant_id }]
+    )
+
+    vso_org.add_user(vso_user)
+  end
+
   let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
+  let!(:vso_participant_id) { "54321" }
+  let!(:vso_org) { create(:vso, name: "VSO", role: "VSO", participant_id: vso_participant_id) }
+  let!(:vso_user) { create(:user, css_id: "BILLIE_VSO", roles: ["VSO"], email: "BILLIE@test.com") }
   let!(:coordinator) { create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG") }
   let!(:vlj) { create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO") }
-  let(:hearing) { create(:hearing, :with_tasks, regional_office: "C", scheduled_time: "12:00AM") }
+  let!(:hearing) { create(:hearing, :with_tasks, regional_office: "C", scheduled_time: "12:00AM") }
   let(:expected_alert) { COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name }
   let(:virtual_hearing_alert) do
     COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
@@ -15,7 +28,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
   let(:pre_loaded_veteran_email) { hearing.appeal.veteran.email_address }
   let(:pre_loaded_rep_email) { hearing.appeal.representative_email_address }
-  let(:fill_in_veteran_email) { "new@email.com" }
+  let(:fill_in_veteran_email) { "veteran@example.com" }
   let(:fill_in_veteran_tz) { "Eastern Time (US & Canada) (12:00 AM)" }
   let(:fill_in_rep_email) { "rep@testingEmail.com" }
   let(:fill_in_rep_tz) { "Mountain Time (US & Canada) (10:00 PM)" }
@@ -135,10 +148,14 @@ RSpec.feature "Hearing Details", :all_dbs do
       click_dropdown(name: "appellantTz", text: fill_in_veteran_tz)
       click_dropdown(name: "judgeDropdown", index: 0, wait: 30)
 
-      click_button("button-Save")
+      click_button("Save")
 
       expect(page).to have_no_content(expected_alert)
       expect(page).to have_content(virtual_hearing_alert)
+
+      # expect VSO checkboxes to not be present for non-VSO users
+      expect(page).to_not have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS)
+      expect(page).to_not have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION)
 
       # Test the links are not present
       within "#vlj-hearings-link" do
@@ -186,11 +203,61 @@ RSpec.feature "Hearing Details", :all_dbs do
       expect(page).to have_content(fill_in_veteran_tz)
       expect(page).to have_content(fill_in_rep_tz)
     end
+
+    scenario "vso users are taken to case details page instead of the hearing details
+       if they click cancel" do
+      User.authenticate!(user: vso_user)
+
+      # Ensure user was on Case Details page first so goBack() takes user back to the correct page.
+      visit "/queue/appeals/#{hearing.appeal_external_id}"
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
+
+      click_button("Cancel")
+
+      expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
+    end
+
+    scenario "vso user can convert hearing type to virtual" do
+      User.authenticate!(user: vso_user)
+
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
+
+      fill_in "Veteran Email", with: fill_in_veteran_email
+      fill_in "Confirm Veteran Email", with: fill_in_veteran_email
+
+      # Update the POA and Appellant Timezones
+      click_dropdown(name: "representativeTz", index: 5)
+      click_dropdown(name: "appellantTz", index: 2)
+
+      click_label "affirmPermission"
+      click_label "affirmAccess"
+
+      click_button("Save")
+
+      appeal_id = hearing.appeal.is_a?(Appeal) ? hearing.appeal.uuid : hearing.appeal.external_id
+      expect(page).to have_current_path("/queue/appeals/#{appeal_id}")
+
+      appellant_name = if hearing.appeal.appellant_is_not_veteran
+                         "#{hearing.appellant_first_name} #{hearing.appellant_last_name}"
+                       else
+                         "#{hearing.veteran_first_name} #{hearing.veteran_last_name}"
+                       end
+
+      success_title = format(COPY::CONVERT_HEARING_TYPE_SUCCESS, appellant_name, "virtual")
+
+      expect(page).to have_content(success_title)
+      expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
+    end
   end
 
   shared_examples "all hearing types" do
     context "when type is Video" do
       before do
+        User.authenticate!(user: user)
         hearing.hearing_day.update!(regional_office: "RO06", request_type: "V")
       end
 
@@ -415,8 +482,8 @@ RSpec.feature "Hearing Details", :all_dbs do
             hearing: hearing
           )
         end
-        let(:fill_in_veteran_email) { "new@email.com" }
-        let(:fill_in_rep_email) { "rep@testingEmail.com" }
+        let(:fill_in_veteran_email) { "veteran@example.com" }
+        let(:fill_in_rep_email) { "rep@example.com" }
 
         scenario "user can update emails" do
           visit "hearings/" + hearing.external_id.to_s + "/details"
@@ -834,6 +901,114 @@ RSpec.feature "Hearing Details", :all_dbs do
         expect(page).to have_no_field("requestedRemedy")
         expect(page).to have_no_field("copySentDate")
         expect(page).to have_no_field("copyRequested")
+      end
+    end
+  end
+
+  context "with VSO user role" do
+    let(:expected_veteran_email) { hearing.appeal.appellant_email_address }
+
+    scenario "user is immediately redirected to the Convert to Virtual form" do
+      step "hearing is not virtual on hearing itself and appeal" do
+        expect(hearing.virtual?).to eq false
+        expect(hearing.appeal.changed_hearing_request_type).to_not eq Constants.HEARING_REQUEST_TYPES.virtual
+      end
+
+      User.authenticate!(user: vso_user)
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+      expect(page).to have_content(format(COPY::CONVERT_HEARING_TITLE, "Virtual"))
+      expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS)
+      expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION)
+      expect(page).to have_content(COPY::CONVERT_HEARING_TYPE_SUBTITLE_3)
+      expect(page).to_not have_content(COPY::CENTRAL_OFFICE_CHANGE_TO_VIRTUAL)
+
+      step "the submit button is disabled at first" do
+        # Veteran email field should be pre-populated.
+        expect(page).to have_field("Veteran Email", with: expected_veteran_email)
+        fill_in "Confirm Veteran Email", with: expected_veteran_email
+
+        # Update the POA and Appellant Timezones
+        click_dropdown(name: "representativeTz", index: 1)
+        click_dropdown(name: "appellantTz", index: 5)
+
+        expect(page).to have_button("Save", disabled: true)
+        expect(page).to have_current_path("/hearings/" + hearing.external_id.to_s + "/details")
+      end
+
+      step "the submit button is disabled after one checkbox is selected" do
+        click_label "affirmPermission"
+        expect(page).to have_button("Save", disabled: true)
+        expect(page).to have_current_path("/hearings/" + hearing.external_id.to_s + "/details")
+      end
+
+      step "the submit button goes through after both checkboxes are selected" do
+        click_label "affirmAccess"
+        expect(page).to have_button("Save", disabled: false)
+        click_button("Save")
+        # expect success
+        expect(page).to have_current_path("/queue/appeals/#{hearing.appeal_external_id}")
+
+        # might not need all of this
+        appellant_name = if hearing.appeal.appellant_is_not_veteran
+                           "#{hearing.appellant_first_name} #{hearing.appellant_last_name}"
+                         else
+                           "#{hearing.veteran_first_name} #{hearing.veteran_last_name}"
+                         end
+
+        success_title = format(COPY::CONVERT_HEARING_TYPE_SUCCESS, appellant_name, "virtual")
+
+        expect(page).to have_content(success_title)
+        expect(page).to have_content(COPY::VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL)
+      end
+
+      step "hearing is now virtual on both hearing itself and its appeal" do
+        hearing.reload
+
+        expect(hearing.virtual?).to eq true
+        expect(hearing.appeal.changed_hearing_request_type).to eq Constants.HEARING_REQUEST_TYPES.virtual
+      end
+
+      step "hearing email recipients have been recorded and emails notifications have been sent" do
+        expect(hearing.appellant_recipient.email_address).to eq expected_veteran_email
+        expect(hearing.representative_recipient.email_address).to eq current_user.email
+
+        expect(hearing.email_events.count).to eq 2
+      end
+    end
+
+    scenario "convert to virtual form hides sensitive data for vso user" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+      ["Hearing Time", "Hearing Date"].each do |label|
+        expect(page).to_not have_content(label)
+      end
+    end
+  end
+
+  context "with hearings scheduler user role" do
+    before do
+      User.authenticate!(user: user)
+    end
+
+    scenario "user is not immediately redirected to the convert to virtual hearing form" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+      expect(page).to_not have_content(format(COPY::CONVERT_HEARING_TITLE, "Virtual"))
+    end
+
+    scenario "user can visit convert to virtual hearing form" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      click_dropdown(name: "hearingType", index: 0)
+      expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
+
+      click_button("Cancel")
+    end
+
+    scenario "convert to virtual hearing form does not hide data for hearings user" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+      click_dropdown(name: "hearingType", index: 0)
+      expect(page).to have_content(COPY::CONVERT_HEARING_TITLE % "Virtual")
+      ["Hearing Time", "Hearing Date"].each do |label|
+        expect(page).to have_content(label)
       end
     end
   end

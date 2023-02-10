@@ -121,7 +121,8 @@ export class CaseTitleDetails extends React.PureComponent {
       legacyJudgeTasks,
       legacyAttorneyTasks,
       userCssId,
-      userRole
+      userRole,
+      hideOTSection
     } = this.props;
 
     const { highlightModal, documentIdError } = this.state;
@@ -131,8 +132,8 @@ export class CaseTitleDetails extends React.PureComponent {
     // is there a legacy judge task assigned to the user or legacy attorney task assigned by the user
     const relevantLegacyTasks = legacyJudgeTasks.concat(legacyAttorneyTasks);
 
-    const showOvertimeButton = userRole === 'Judge' && (relevantLegacyTasks.length > 0 || userIsAssignedAmaJudge);
-
+    // eslint-disable-next-line max-len
+    const showOvertimeButton = !hideOTSection && (userRole === 'Judge' && (relevantLegacyTasks.length > 0 || userIsAssignedAmaJudge));
     // for ama appeal, use docket name, for legacy appeal docket name is always legacy so
     // we need to check if the request type is any of threee :central, video, travel or null
     const showHearingRequestType = appeal?.docketName === 'hearing' ||
@@ -147,7 +148,7 @@ export class CaseTitleDetails extends React.PureComponent {
           </span>
         </TitleDetailsSubheaderSection>
 
-        {!userIsVsoEmployee && this.props.userCanAccessReader && (
+        {!userIsVsoEmployee && this.props.userCanAccessReader && !this.props.hideDocs && (
           <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL}>
             <ReaderLink
               appealId={appealId}
@@ -180,7 +181,7 @@ export class CaseTitleDetails extends React.PureComponent {
           </TitleDetailsSubheaderSection>
         )}
 
-        {!userIsVsoEmployee && appeal && appeal.documentID && (
+        {!userIsVsoEmployee && appeal && appeal.documentID && !this.props.hideDecisionDocument && (
           <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}>
             <div id="document-id">
               <CopyTextButton
@@ -208,6 +209,9 @@ export class CaseTitleDetails extends React.PureComponent {
                 closeHandler={this.handleModalClose}
                 title={COPY.TASK_SNAPSHOT_EDIT_DOCUMENT_ID_MODAL_TITLE}
               >
+                {(!this.state.value || this.state.value === appeal.documentID) && !highlightModal ?
+                  <span className="usa-input-error-message" style={{ marginBottom: '5px' }} tabIndex={0}>
+                    {COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} must be different</span> : ''}
                 <TextField
                   errorMessage={highlightModal ? documentIdError : null}
                   name={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}
@@ -265,7 +269,15 @@ CaseTitleDetails.propTypes = {
   resetDecisionOptions: PropTypes.func,
   stageAppeal: PropTypes.func,
   legacyJudgeTasks: PropTypes.array,
-  legacyAttorneyTasks: PropTypes.array
+  legacyAttorneyTasks: PropTypes.array,
+  hideOTSection: PropTypes.bool,
+  hasNotifications: PropTypes.bool,
+  hideDocs: PropTypes.bool,
+  hideDecisionDocument: PropTypes.bool
+};
+
+CaseTitleDetails.defaultProps = {
+  hideOTSection: false
 };
 
 const mapStateToProps = (state, ownProps) => {

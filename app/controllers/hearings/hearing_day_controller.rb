@@ -32,12 +32,32 @@ class Hearings::HearingDayController < HearingsApplicationController
     end
   end
 
+  def log_error(error)
+    Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
+    Raven.capture_exception(error)
+  end
+
   def show
-    render json: {
-      hearing_day: hearing_day.to_hash.merge(
-        hearings: hearing_day.hearings_for_user(current_user).map { |hearing| hearing.quick_to_hash(current_user.id) }
-      )
-    }
+    begin
+      render json: {
+        hearing_day: hearing_day.to_hash(include_conference_link: true).merge(
+          hearings: hearing_day.hearings_for_user(current_user).map { |hearing| hearing.quick_to_hash(current_user.id) }
+        )
+      }
+    rescue VirtualHearings::LinkService::PINKeyMissingError, 
+    VirtualHearings::LinkService::URLHostMissingError, 
+    VirtualHearings::LinkService::URLPathMissingError => error
+      log_error(error)
+      render json: {
+        hearing_day: hearing_day.to_hash(include_conference_link: false).merge(
+          hearings: hearing_day.hearings_for_user(current_user).map do |hearing|
+                      hearing.quick_to_hash(current_user.id)
+                    end
+        ),
+        conference_link_generate_error: true,
+        conference_link_generate_error_message: error.message
+      }
+    end
   end
 
   def index_with_hearings

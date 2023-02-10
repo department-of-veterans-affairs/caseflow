@@ -11,17 +11,19 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :queue
 
-  include AutomaticCaseDistribution
-
   def perform
-    @tied_distributions = distribute_non_genpop_priority_appeals
+    unless use_by_docket_date?
+      @tied_distributions = distribute_non_genpop_priority_appeals
+    end
+
     @genpop_distributions = distribute_genpop_priority_appeals
+
     send_job_report
   rescue StandardError => error
     start_time ||= Time.zone.now # temporary fix to get this job to succeed
     duration = time_ago_in_words(start_time)
-    slack_msg = "[ERROR] after running for #{duration}: #{error.message}"
-    slack_service.send_notification(slack_msg, self.class.name, "#appeals-echo")
+    slack_msg = "<!here>\n [ERROR] after running for #{duration}: #{error.message}"
+    slack_service.send_notification(slack_msg, self.class.name, "#appeals-job-alerts")
     log_error(error)
   ensure
     datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
@@ -33,22 +35,34 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def slack_report
     report = []
-    report << "*Number of cases tied to judges distributed*: " \
-              "#{@tied_distributions.map { |distribution| distribution.statistics['batch_size'] }.sum}"
-    report << "*Number of general population cases distributed*: " \
-              "#{@genpop_distributions.map { |distribution| distribution.statistics['batch_size'] }.sum}"
+    if use_by_docket_date?
+      total_cases = @genpop_distributions.map(&:distributed_batch_size).sum
+      report << "*Number of cases distributed*: " \
+                "#{total_cases}"
+    else
+      tied_distributions_sum = @tied_distributions.map(&:distributed_batch_size).sum
+      genpop_distributions_sum = @genpop_distributions.map(&:distributed_batch_size).sum
+      report << "*Number of cases tied to judges distributed*: " \
+                "#{tied_distributions_sum}"
+      report << "*Number of general population cases distributed*: " \
+                "#{genpop_distributions_sum}"
+    end
 
     appeals_not_distributed = docket_coordinator.dockets.map do |docket_type, docket|
       report << "*Age of oldest #{docket_type} case*: #{docket.oldest_priority_appeal_days_waiting} days"
       [docket_type, docket.ready_priority_appeal_ids]
     end.to_h
 
-    report << "*Number of appeals _not_ distributed*: #{appeals_not_distributed.values.flatten.count}"
+    report << "*Total Number of appeals _not_ distributed*: #{appeals_not_distributed.values.flatten.count}"
+    docket_coordinator.dockets.each_pair do |sym, docket|
+      report << "*Number of #{sym} appeals _not_ distributed*: #{docket.count(priority: true, ready: true)}"
+    end
+    report << "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: #{legacy_not_genpop_count}"
 
     report << ""
     report << "*Debugging information*"
     report << "Priority Target: #{priority_target}"
-    report << "Previous monthly distributions: #{priority_distributions_this_month_for_eligible_judges}"
+    report << "Previous monthly distributions {judge_id=>count}: #{priority_distributions_this_month_for_eligible_judges}"
 
     if appeals_not_distributed.values.flatten.any?
       add_stuck_appeals_to_report(report, appeals_not_distributed)
@@ -59,9 +73,9 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def add_stuck_appeals_to_report(report, appeals)
     report.unshift("[WARN]")
-    report << "Legacy appeals not distributed: `LegacyAppeal.where(vacols_id: #{appeals[:legacy]})`"
-    report << "AMA appeals not distributed: `Appeal.where(uuid: #{appeals.values.drop(1).flatten})`"
     report << COPY::PRIORITY_PUSH_WARNING_MESSAGE
+    report << "AMA appeals not distributed: `Appeal.where(uuid: #{appeals.values.drop(1).flatten})`"
+    report << "Legacy appeals not distributed: `LegacyAppeal.where(vacols_id: #{appeals[:legacy]})`"
   end
 
   # Distribute all priority cases tied to a judge without limit
@@ -115,7 +129,10 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   def priority_target
     @priority_target ||= begin
       distribution_counts = priority_distributions_this_month_for_eligible_judges.values
-      target = (distribution_counts.sum + ready_genpop_priority_appeals_count) / distribution_counts.count
+      target = 0
+      if distribution_counts.count > 0
+        target = (distribution_counts.sum + ready_genpop_priority_appeals_count) / distribution_counts.count
+      end
 
       # If there are any judges that have previous distributions that are MORE than the currently calculated priority
       # target, no target will be large enough to get all other judges up to their number of cases. Remove them from
@@ -156,5 +173,13 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def priority_distributions_this_month
     Distribution.priority_pushed.completed.where(completed_at: 30.days.ago..Time.zone.now)
+  end
+
+  def use_by_docket_date?
+    FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+  end
+
+  def legacy_not_genpop_count
+    docket_coordinator.dockets[:legacy].not_genpop_priority_count
   end
 end

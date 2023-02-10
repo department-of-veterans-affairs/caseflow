@@ -26,6 +26,7 @@ describe TeamManagementController, :postgres, type: :controller do
       let!(:judge_team_count) { 3.times { JudgeTeam.create_for_judge(create(:user)) } }
       let!(:private_bars) { create_list(:private_bar, 4) }
       let!(:other_orgs) { create_list(:organization, 7) }
+      let!(:rpos) { create_list(:education_rpo, 3) }
 
       # Increase the count of other orgs to account for the Bva organization the current user is a member of.
       let!(:other_org_count) { other_orgs.count + 1 }
@@ -45,6 +46,7 @@ describe TeamManagementController, :postgres, type: :controller do
           expect(response_body["private_bars"].length).to eq(private_bars.count)
           expect(response_body["private_bars"].first["accepts_priority_pushed_cases"]).to be nil
           expect(response_body["other_orgs"].length).to eq(other_org_count)
+          expect(response_body["education_rpos"].length).to eq(rpos.count)
         end
       end
 

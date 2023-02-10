@@ -14,9 +14,11 @@ import {
   updateHearingDispatcher,
   RESET_HEARING
 } from '../contexts/HearingsFormContext';
+import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import {
   deepDiff,
   getChanges,
+  getConvertToVirtualChanges,
   getAppellantTitle,
   processAlerts,
   startPolling,
@@ -49,6 +51,7 @@ import { VIRTUAL_HEARING_LABEL } from '../constants';
 const HearingDetails = (props) => {
   // Map the state and dispatch to relevant names
   const { state: { initialHearing, hearing, formsUpdated }, dispatch } = useContext(HearingsFormContext);
+  const { userVsoEmployee } = useContext(HearingsUserContext);
 
   // Create the update hearing dispatcher
   const updateHearing = updateHearingDispatcher(hearing, dispatch);
@@ -67,6 +70,27 @@ const HearingDetails = (props) => {
   const [emailConfirmationModalOpen, setEmailConfirmationModalOpen] = useState(false);
   const [emailConfirmationModalType, setEmailConfirmationModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
+  const [VSOConvertSuccessful, setVSOConvertSuccessful] = useState(false);
+  const [isValidEmail, setIsValidEmail] = useState(hearing?.appellantEmailAddress);
+  const [formSubmittable, setFormSubmittable] = useState(false);
+  const [hearingConversionCheckboxes, setHearingConversionCheckboxes] = useState(false);
+
+  const canSubmit = () => {
+    let emailFieldsValid = (
+      isValidEmail &&
+      hearing?.appellantEmailAddress &&
+      hearing?.appellantTz &&
+      hearing?.representativeTz &&
+      hearing?.appellantEmailAddress === hearing?.appellantConfirmEmailAddress &&
+      hearingConversionCheckboxes
+    );
+
+    setFormSubmittable(emailFieldsValid);
+  };
+
+  useEffect(() => {
+    canSubmit();
+  }, [hearing, isValidEmail, hearingConversionCheckboxes]);
 
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const convertingToVirtual = converting === 'change_to_virtual';
@@ -90,6 +114,15 @@ const HearingDetails = (props) => {
   // Create an effect to remove stale alerts on unmount
   useEffect(() => () => props.clearAlerts(), []);
 
+  // Set hearing attrs to that of a virtual one if the user is a VSO employee
+  // since they will skip interacting with the hearing type dropdown.
+  useEffect(() => {
+    if (userVsoEmployee) {
+      convertHearing('change_to_virtual');
+      updateHearing('virtualHearing', { requestCancelled: false });
+    }
+  }, []);
+
   const openEmailConfirmationModal = ({ type }) => {
     setEmailConfirmationModalOpen(true);
     setEmailConfirmationModalType(type);
@@ -109,6 +142,38 @@ const HearingDetails = (props) => {
       representativeTzEdited: !isUndefined(changes.representativeTz),
       appellantTzEdited: !isUndefined(changes.appellantTz)
     };
+  };
+
+  const filterEmailAttribute = (email) => {
+    if (convertingToVirtual) {
+      return Object.keys(email).includes('email_address') && email.email_address;
+    }
+
+    return Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone');
+  };
+
+  const handleCancelButton = () => {
+    if (userVsoEmployee) {
+      goBack();
+    } else if (converting) {
+      resetState(initialHearing);
+    } else {
+      goBack();
+    }
+  };
+
+  // VSO convert success banner
+  const getSuccessMsg = () => {
+    const appellantFullName = `${hearing?.appellantFirstName} ${hearing?.appellantLastName}`;
+    const veteranFullName = `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`;
+    const title = sprintf(
+      COPY.CONVERT_HEARING_TYPE_SUCCESS,
+      hearing?.appellantIsNotVeteran ? appellantFullName : veteranFullName,
+      'virtual'
+    );
+    const detail = COPY.VSO_CONVERT_HEARING_TYPE_SUCCESS_DETAIL;
+
+    return { title, detail };
   };
 
   const submit = async (editedEmailsAndTz) => {
@@ -145,11 +210,16 @@ const HearingDetails = (props) => {
         return openEmailConfirmationModal({ type: 'change_email_or_timezone' });
       }
 
-      // Only send updated properties
-      const { virtualHearing, transcription, ...hearingChanges } = getChanges(
-        initialHearing,
-        hearing
-      );
+      // Only send updated properties unless converting to virtual, then send everything.
+      const { virtualHearing, transcription, ...hearingChanges } = convertingToVirtual ?
+        getConvertToVirtualChanges(
+          initialHearing,
+          hearing
+        ) :
+        getChanges(
+          initialHearing,
+          hearing
+        );
 
       const emailRecipientAttributes = [
         omitBy(
@@ -168,7 +238,7 @@ const HearingDetails = (props) => {
             type: 'RepresentativeHearingEmailRecipient'
           }, isUndefined
         )
-      ].filter((email) => Object.keys(email).includes('email_address') || Object.keys(email).includes('timezone'));
+      ].filter((email) => filterEmailAttribute(email));
 
       // Put the UI into a loading state
       setLoading(true);
@@ -187,12 +257,18 @@ const HearingDetails = (props) => {
 
       const alerts = response.body?.alerts;
 
-      if (alerts) {
+      if (alerts && !userVsoEmployee) {
         processAlerts(alerts, props, setShouldStartPolling);
       }
 
-      // Reset the state
-      resetState(hearingResp);
+      if (userVsoEmployee && convertingToVirtual) {
+        // Store success message and Redirect back to the Case Details Page
+        localStorage.setItem('VSOSuccessMsg', JSON.stringify(getSuccessMsg()));
+        setVSOConvertSuccessful(true);
+      } else {
+        // Reset the state
+        resetState(hearingResp);
+      }
     } catch (respError) {
       const code = get(respError, 'response.body.errors[0].code') || '';
 
@@ -250,6 +326,13 @@ const HearingDetails = (props) => {
   const convertLabel = convertingToVirtual ?
     sprintf(COPY.CONVERT_HEARING_TITLE, 'Virtual') : sprintf(COPY.CONVERT_HEARING_TITLE, hearing.readableRequestType);
 
+  if (VSOConvertSuccessful && userVsoEmployee) {
+    // Construct the URL to redirect
+    const baseUrl = `${window.location.origin}/queue/appeals`;
+
+    window.location.href = `${baseUrl}/${hearing.appealExternalId}`;
+  }
+
   return (
     <React.Fragment>
       <UserAlerts />
@@ -269,6 +352,9 @@ const HearingDetails = (props) => {
           hearing={hearing}
           scheduledFor={hearing?.scheduledFor}
           errors={virtualHearingErrors}
+          userVsoEmployee={userVsoEmployee}
+          setIsValidEmail={setIsValidEmail}
+          updateCheckboxes={setHearingConversionCheckboxes}
         />
       ) : (
         <AppSegment filledBackground>
@@ -305,17 +391,22 @@ const HearingDetails = (props) => {
       )}
       <div {...css({ overflow: 'hidden' })}>
         <Button
+          id="Cancel"
           name="Cancel"
           linkStyling
-          onClick={converting ? () => resetState(initialHearing) : goBack}
+          onClick={handleCancelButton}
           styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
         >
           Cancel
         </Button>
         <span {...css({ float: 'right' })}>
           <Button
+            id="Save"
             name="Save"
-            disabled={!formsUpdated || disabled}
+            disabled={!formsUpdated ||
+              (disabled && !userVsoEmployee) ||
+              (!formSubmittable && userVsoEmployee)
+            }
             loading={loading}
             className="usa-button"
             onClick={async () => await submit(editedEmailsAndTz)}
@@ -347,11 +438,16 @@ HearingDetails.propTypes = {
   onReceiveAlerts: PropTypes.func,
   onReceiveTransitioningAlert: PropTypes.func,
   transitionAlert: PropTypes.func,
-  clearAlerts: PropTypes.func,
+  clearAlerts: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>
-  bindActionCreators({ clearAlerts, onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert }, dispatch);
+  bindActionCreators({
+    clearAlerts,
+    onReceiveAlerts,
+    onReceiveTransitioningAlert,
+    transitionAlert },
+  dispatch);
 
 export default connect(
   null,

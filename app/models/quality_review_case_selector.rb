@@ -2,8 +2,8 @@
 
 class QualityReviewCaseSelector
   # AMA Limit and Probability. See Legacy numbers at app/models/judge_case_review.rb:28
-  # This probability was selected by Josh Freeman, QR Director at BVA
-  MONTHLY_LIMIT_OF_QUALITY_REVIEWS = 133
+  # This probability was selected by Derek Brown, QR Director at BVA
+  MONTHLY_LIMIT_OF_QUALITY_REVIEWS = 164
   QUALITY_REVIEW_SELECTION_PROBABILITY = 0.188
 
   class << self

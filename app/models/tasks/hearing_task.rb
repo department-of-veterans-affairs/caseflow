@@ -38,16 +38,17 @@ class HearingTask < Task
   end
 
   def when_child_task_completed(child_task)
-    super
-
     # do not move forward to change location or create ihp if there are
     # other open hearing tasks
-    return unless appeal.tasks.open.where(type: HearingTask.name).empty?
-
-    if appeal.is_a?(LegacyAppeal)
-      update_legacy_appeal_location
-    elsif appeal.is_a?(Appeal)
+    if appeal.tasks.open.where(type: HearingTask.name).where.not(id: id).empty? && appeal.is_a?(Appeal)
       create_evidence_or_ihp_task
+    end
+    # super call must happen after AMA check to hold distribution,
+    # but before the Legacy check to prevent premature location update.
+    super
+
+    if appeal.tasks.open.where(type: HearingTask.name).empty? && appeal.is_a?(LegacyAppeal)
+      update_legacy_appeal_location
     end
   end
 

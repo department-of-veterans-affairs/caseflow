@@ -27,6 +27,7 @@
       enable_hearing_time_slots: FeatureToggle.enabled?(:enable_hearing_time_slots, user: current_user),
       schedule_veteran_virtual_hearing: FeatureToggle.enabled?(:schedule_veteran_virtual_hearing, user: current_user),
       overtime_revamp: FeatureToggle.enabled?(:overtime_revamp, user: current_user),
+      overtime_persistence: FeatureToggle.enabled?(:overtime_persistence, user: current_user),
       mdr_cavc_remand: FeatureToggle.enabled?(:mdr_cavc_remand, user: current_user),
       reversal_cavc_remand: FeatureToggle.enabled?(:reversal_cavc_remand, user: current_user),
       dismissal_cavc_remand: FeatureToggle.enabled?(:dismissal_cavc_remand, user: current_user),
@@ -42,7 +43,11 @@
       listed_granted_substitution_before_dismissal: FeatureToggle.enabled?(:listed_granted_substitution_before_dismissal, user: current_user),
       restrict_poa_visibility: FeatureToggle.enabled?(:restrict_poa_visibility, user: current_user),
       vha_predocket_workflow: FeatureToggle.enabled?(:vha_predocket_workflow, user: current_user),
-      vha_irregular_appeals: FeatureToggle.enabled?(:vha_irregular_appeals, user: current_user)
+      vha_irregular_appeals: FeatureToggle.enabled?(:vha_irregular_appeals, user: current_user),
+      vso_virtual_opt_in: FeatureToggle.enabled?(:vso_virtual_opt_in, user: current_user),
+      das_case_timeliness: FeatureToggle.enabled?(:das_case_timeliness, user: current_user),
+      split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
+      das_case_timeline: FeatureToggle.enabled?(:das_case_timeline, user: current_user)
     }
   }) %>
 <% end %>

@@ -1,3 +1,5 @@
+
+
 {
    "vba_301" : {
       "address_1" : "15 New Sudbury Street",
@@ -188,7 +190,7 @@
       "zip" : "36109",
       "timezone" : "America/Chicago"
    },
-   "vha_586" : {
+   "vba_323" : {
       "address_1" : "1600 E. Woodrow Wilson Ave.",
       "address_2" : null,
       "address_3" : null,
@@ -406,15 +408,15 @@
    },
    "vba_350" : {
       "address_1" : "2200 Fort Roots Drive",
-      "address_2" : "Bldg. 65",
+      "address_2" : "Building 111",
       "address_3" : null,
       "city" : "North Little Rock",
       "state" : "AR",
-      "zip" : "72114",
+      "zip" : "72114-1756",
       "timezone" : "America/Chicago"
    },
    "vba_351" : {
-      "address_1" : "125 South Main Street",
+      "address_1" : "122 Eastside Blvd.",
       "address_2" : null,
       "address_3" : null,
       "city" : "Muskogee",
@@ -674,13 +676,22 @@
       "zip" : "37604",
       "timezone" : "America/Kentucky/Louisville"
    },
+   "vc_0704V" : {
+      "address_1" : "1255 Shreveport Barksdale Highway",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Shreveport",
+      "state" : "LA",
+      "zip" : "71105",
+      "timezone" : "America/Chicago"
+   },
    "vc_0719V" : {
-      "address_1" : "1407 Union Avenue",
-      "address_2" : "Suite 410",
+      "address_1" : "2605 Nonconnah Blvd",
+      "address_2" : "Suite 160",
       "address_3" : null,
       "city" : "Memphis",
       "state" : "TN",
-      "zip" : "38104",
+      "zip" : "38132",
       "timezone" : "America/Kentucky/Louisville"
    },
    "vc_0720V" : {
@@ -690,6 +701,15 @@
       "city" : "Knoxville",
       "state" : "TN",
       "zip" : "37919",
+      "timezone" : "America/Chicago"
+   },
+   "vc_0737V" : {
+      "address_1" : "400 Veterans Ave",
+      "address_2" : "Bldg. 3",
+      "address_3" : "Rm. A145",
+      "city" : "Biloxi",
+      "state" : "MS",
+      "zip" : "39531",
       "timezone" : "America/Chicago"
    },
    "vha_402GA" : {
@@ -917,6 +937,15 @@
       "zip" : "53916-3124",
       "timezone" : "America/Chicago"
    },
+   "vha_614GN" : {
+      "address_1" : "125 Quarles Lane",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "West Helena",
+      "state" : "AR",
+      "zip" : "72390",
+      "timezone" : "America/Chicago"
+   },
    "vha_618BY" : {
       "address_1" : "3520 Tower Avenue",
       "address_2" : null,
@@ -1043,6 +1072,24 @@
       "zip" : "97701-7639",
       "timezone" : "America/Los_Angeles"
    },
+   "vha_653" : {
+      "address_1" : "913 Northwest Garden Valley Boulevard",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Rosenburg",
+      "state" : "OR",
+      "zip" : "97471-6523",
+      "timezone" : "America/Los_Angeles"
+   },
+   "vha_653BY" : {
+      "address_1" : "3355 Chad Drive",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Eugene",
+      "state" : "OR",
+      "zip" : "97408-7426",
+      "timezone" : "America/Los_Angeles"
+   },
    "vha_653GA" : {
       "address_1" : "2191 Marion Street",
       "address_2" : "",
@@ -1151,13 +1198,13 @@
       "zip" : "83814-2531",
       "timezone" : "America/Boise"
    },
-   "vha_671BY" : {
-      "address_1" : "5788 Eckert Road",
+   "vha_671GS" : {
+      "address_1" : "9939 State Hwy 151",
       "address_2" : null,
       "address_3" : null,
       "city" : "San Antonio",
       "state" : "TX",
-      "zip" : "78240-3900",
+      "zip" : "78251-1900",
       "timezone" : "America/Chicago"
    },
    "vha_676" : {
@@ -1275,6 +1322,15 @@
       "city" : "Green Bay",
       "state" : "WI",
       "zip" : "54311-5855",
+      "timezone" : "America/Chicago"
+   },
+   "vha_740GA" : {
+      "address_1" : "2106 Treasure Hills Boulevard",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Harlingen",
+      "state" : "TX",
+      "zip" : "78550-8736",
       "timezone" : "America/Chicago"
    },
    "vha_740GB" : {

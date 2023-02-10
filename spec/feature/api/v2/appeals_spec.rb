@@ -294,6 +294,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
     let(:legacy_opt_in_approved) { false }
     let(:veteran_is_not_claimant) { false }
     let(:profile_date) { receipt_date - 1 }
+    let(:veteran) { create(:veteran, file_number: veteran_file_number) }
 
     let!(:hlr) do
       create(:higher_level_review,
@@ -359,7 +360,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
 
     let!(:appeal) do
       create(:appeal,
-             veteran_file_number: veteran_file_number,
+             veteran: veteran,
              receipt_date: receipt_date,
              request_issues: [request_issue1, request_issue2],
              docket_type: Constants.AMA_DOCKETS.evidence_submission)

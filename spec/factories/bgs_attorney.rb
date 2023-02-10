@@ -11,7 +11,7 @@ types = [
 FactoryBot.define do
   factory :bgs_attorney do
     last_synced_at { 12.hours.ago }
-    sequence(:participant_id, 600_000_000)
+    participant_id { generate :participant_id }
     name { Faker::Name.name }
     record_type { types.sample }
   end

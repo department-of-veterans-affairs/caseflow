@@ -1,12 +1,10 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers, commonStateFromServerIntake } from './common';
 import {
-  convertStringToBoolean,
   getReceiptDateError,
   getBlankOptionError,
   getClaimantError,
   getPageError,
-  formatRelationships
 } from '../util';
 import { update } from '../../util/ReducerUtil';
 
@@ -21,6 +19,14 @@ const updateFromServerIntake = (state, serverIntake) => {
     ...commonState,
     docketType: {
       $set: serverIntake.docketType
+    },
+
+    homelessness: {
+      $set: serverIntake.homelessness
+    },
+
+    originalHearingRequestType: {
+      $set: serverIntake.originalHearingRequestType
     }
   });
 };
@@ -37,6 +43,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     filedByVaGovError: null,
     docketType: null,
     docketTypeError: null,
+    originalHearingRequestType: null,
     veteranIsNotClaimant: null,
     veteranIsNotClaimantError: null,
     claimant: null,
@@ -62,6 +69,9 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
     veteranValid: null,
+    homelessness: null,
+    homelessnessError: null,
+    homelessnessUserInteraction: false,
     veteranInvalidFields: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
@@ -122,6 +132,12 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: action.payload.receiptDateError
       }
     });
+  case ACTIONS.SET_ORIGINAL_HEARING_REQUEST_TYPE:
+    return update(state, {
+      originalHearingRequestType: {
+        $set: action.payload.originalHearingRequestType
+      }
+    });
   case ACTIONS.SET_VETERAN_IS_NOT_CLAIMANT:
     return update(state, {
       veteranIsNotClaimant: {
@@ -155,6 +171,15 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: action.payload.legacyOptInApproved
       }
     });
+  case ACTIONS.SET_HOMELESSNESS_TYPE:
+    return update(state, {
+      homelessness: {
+        $set: action.payload.homelessness
+      },
+      homelessnessUserInteraction: {
+        $set: true
+      }
+    });
   case ACTIONS.SUBMIT_REVIEW_START:
     return update(state, {
       requestStatus: {
@@ -183,6 +208,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       isReviewed: {
         $set: true
       },
+      homelessnessError: {
+        $set: null
+      },
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.SUCCEEDED
@@ -205,6 +233,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       },
       legacyOptInApprovedError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
+      },
+      homelessnessError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'homelessness')
       },
       requestStatus: {
         submitReview: {

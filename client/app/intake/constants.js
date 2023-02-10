@@ -13,6 +13,7 @@ export const FORM_TYPES = {
     key: 'higher_level_review',
     name: INTAKE_FORM_NAMES.higher_level_review,
     shortName: INTAKE_FORM_NAMES_SHORT.higher_level_review,
+    unlisted_claimant: { key: 'unlistedClaimant' },
     category: 'decisionReview',
     formName: 'higherLevelReview'
   },
@@ -20,6 +21,7 @@ export const FORM_TYPES = {
     key: 'supplemental_claim',
     name: INTAKE_FORM_NAMES.supplemental_claim,
     shortName: INTAKE_FORM_NAMES_SHORT.supplemental_claim,
+    unlisted_claimant: { key: 'unlistedClaimant' },
     category: 'decisionReview',
     formName: 'supplementalClaim'
   },
@@ -51,7 +53,9 @@ export const PAGE_PATHS = {
   CONFIRMATION: '/confirmation',
   CLEARED_EPS: '/cleared_eps',
   OUTCODED: '/outcoded',
-  REQUEST_ISSUE_MISSING_DECISION_DATE: '/missing_decision_date'
+  REQUEST_ISSUE_MISSING_DECISION_DATE: '/missing_decision_date',
+  CREATE_SPLIT: '/create_split',
+  REVIEW_SPLIT: '/review_split'
 };
 
 export const INTAKE_STATES = {
@@ -114,6 +118,7 @@ export const ACTIONS = {
   SET_LEGACY_OPT_IN_APPROVED: 'SET_LEGACY_OPT_IN_APPROVED',
   SET_APPEAL_DOCKET: 'SET_APPEAL_DOCKET',
   SET_DOCKET_TYPE: 'SET_DOCKET_TYPE',
+  SET_ORIGINAL_HEARING_REQUEST_TYPE: 'SET_ORIGINAL_HEARING_REQUEST_TYPE',
   TOGGLE_CANCEL_MODAL: 'TOGGLE_CANCEL_MODAL',
   TOGGLE_ADDING_ISSUE: 'TOGGLE_ADDING_ISSUE',
   TOGGLE_ADD_ISSUES_MODAL: 'TOGGLE_ADD_ISSUES_MODAL',
@@ -154,7 +159,11 @@ export const ACTIONS = {
   COMPLETE_INTAKE_STEPS_NOT_CONFIRMED: 'COMPLETE_INTAKE_STEPS_NOT_CONFIRMED',
   PROCESS_FINISH_ERROR: 'PROCESS_FINISH_ERROR',
   NO_ISSUES_SELECTED_ERROR: 'NO_ISSUES_SELECTED_ERROR',
-  SET_EDIT_CONTENTION_TEXT: 'SET_EDIT_CONTENTION_TEXT'
+  SET_EDIT_CONTENTION_TEXT: 'SET_EDIT_CONTENTION_TEXT',
+  SET_HOMELESSNESS_TYPE: 'SET_HOMELESSNESS_TYPE',
+  SET_SPLIT_APPEAL: 'SET_SPLIT_APPEAL',
+  SPLIT_APPEAL_SUCCESS: 'SPLIT_APPEAL_SUCCESS',
+  SPLIT_APPEAL_FAILURE: 'SPLIT_APPEAL_FAILURE'
 };
 
 export const REVIEW_OPTIONS = {
@@ -179,6 +188,7 @@ export const REVIEW_OPTIONS = {
 export const REVIEW_DATA_FIELDS = {
   appeal: {
     docket_type: { key: 'docketType', required: true },
+    original_hearing_request_type: { key: 'originalHearingRequestType', required: false },
     receipt_date: { key: 'receiptDate', required: true },
     filed_by_va_gov: { key: 'filedByVaGov', required: false },
     claimant: { key: 'claimant' },
@@ -187,11 +197,14 @@ export const REVIEW_DATA_FIELDS = {
     claimant_type: { key: 'claimantType', required: true },
     payee_code: { key: 'payeeCode' },
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
+    homelessness: { key: 'homelessness', required: false }
   },
   supplementalClaim: {
     benefit_type: { key: 'benefitType', required: true },
     receipt_date: { key: 'receiptDate', required: true },
     claimant: { key: 'claimant' },
+    unlisted_claimant: { key: 'unlistedClaimant' },
+    poa: { key: 'poa' },
     claimant_type: { key: 'claimantType', required: true },
     payee_code: { key: 'payeeCode' },
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
@@ -203,6 +216,8 @@ export const REVIEW_DATA_FIELDS = {
     receipt_date: { key: 'receiptDate', required: true },
     filed_by_va_gov: { key: 'filedByVaGov', required: false },
     claimant: { key: 'claimant' },
+    unlisted_claimant: { key: 'unlistedClaimant' },
+    poa: { key: 'poa' },
     claimant_type: { key: 'claimantType', required: true },
     payee_code: { key: 'payeeCode' },
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
@@ -230,7 +245,8 @@ export const ENDPOINT_NAMES = {
   REVIEW_INTAKE: 'review-intake',
   CANCEL_INTAKE: 'cancel-intake',
   COMPLETE_INTAKE: 'complete-intake',
-  ERROR_INTAKE: 'error-intake'
+  ERROR_INTAKE: 'error-intake',
+  SPLIT_APPEAL: 'split'
 };
 
 export const CANCELLATION_REASONS = {

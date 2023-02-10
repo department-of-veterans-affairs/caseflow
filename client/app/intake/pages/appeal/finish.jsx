@@ -35,8 +35,8 @@ class FinishNextButton extends React.PureComponent {
 
   render() {
     const disableSubmit = (!this.props.issueCount && !this.props.addedIssues) || invalidVeteran(this.props.appeal);
-    const hasVhaIssues = _.some(this.props.appeal.addedIssues, (issue) => issue.benefitType === 'vha');
-    const buttonAction = hasVhaIssues ? 'Submit' : 'Establish';
+    const hasPreDocketIssues = _.some(this.props.appeal.addedIssues, (issue) => issue.isPreDocketNeeded === 'true');
+    const buttonAction = hasPreDocketIssues ? 'Submit' : 'Establish';
 
     return <Button
       name="finish-intake"

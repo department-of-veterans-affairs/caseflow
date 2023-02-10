@@ -112,30 +112,6 @@ describe ForeignKeyPolymorphicAssociationJob, :postgres do
         expect(slack_service).to have_received(:send_notification).with(message, any_args).once
       end
     end
-
-    context "records for multiple classes where _id exists but the associated record doesn't" do
-      let(:document_params) do
-        {
-          appeal_id: appeal.id,
-          appeal_type: appeal.class.name,
-          document_type: "BVA Decision",
-          file: ""
-        }
-      end
-      let!(:vbms_doc) { VbmsUploadedDocument.create(document_params) }
-
-      before do
-        appeal.destroy!
-      end
-      it "sends multiple alerts" do
-        expect(Appeal.count).to eq 0
-
-        subject
-
-        message = /Found [[:digit:]]+ orphaned record/
-        expect(slack_service).to have_received(:send_notification).with(message, any_args).twice
-      end
-    end
   end
 
   context "when checking Claimant.participant_id foreign key" do

@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :decision_issue do
-    sequence(:participant_id, 500_000_000)
+    participant_id { generate :participant_id }
     disposition { "allowed" }
     benefit_type { "compensation" }
     diagnostic_code { "9999" }

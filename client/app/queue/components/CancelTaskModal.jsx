@@ -48,7 +48,7 @@ const CancelTaskModal = (props) => {
         </Link>
       </p> : null;
     const successMsg = {
-      title: taskData.message_title,
+      title: taskData?.message_title ?? 'Task was cancelled successfully.',
       detail: (
         <span>
           <span dangerouslySetInnerHTML={{ __html: taskData.message_detail }} />
@@ -63,6 +63,7 @@ const CancelTaskModal = (props) => {
   return (
     <QueueFlowModal
       title={taskData?.modal_title ?? ''}
+      button={taskData?.modal_button_text ?? COPY.MODAL_SUBMIT_BUTTON}
       pathAfterSubmit={taskData?.redirect_after ?? '/queue'}
       submit={submit}
       validateForm={validateForm}
@@ -76,7 +77,7 @@ const CancelTaskModal = (props) => {
       {get(taskData, 'show_instructions', true) &&
         <TextareaField
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-          errorMessage={highlightFormItems && instructions.length === 0 ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          errorMessage={highlightFormItems && instructions.length === 0 ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
           id="taskInstructions"
           onChange={setInstructions}
           value={instructions}

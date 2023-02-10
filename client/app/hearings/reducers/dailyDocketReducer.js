@@ -118,6 +118,10 @@ export const dailyDocketReducer = function(state = {}, action = {}) {
         $set: action.payload.notes
       }
     });
+  case ACTIONS.HANDLE_CONFERENCE_LINK_ERROR:
+    return update(state, {
+      conferenceLinkError: { $set: true }
+    });
   default:
     return state;
   }

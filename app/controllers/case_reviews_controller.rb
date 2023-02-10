@@ -60,6 +60,7 @@ class CaseReviewsController < ApplicationController
   def judge_case_review_params
     params.require("tasks").permit(:location,
                                    :attorney_id,
+                                   :timeliness,
                                    :complexity,
                                    :quality,
                                    :comment,

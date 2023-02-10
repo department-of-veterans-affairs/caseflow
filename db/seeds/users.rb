@@ -12,7 +12,13 @@ module Seeds
       "BVAEBECKER" => { attorneys: %w[BVAKBLOCK BVACMERTZ BVAHLUETTGEN] },
       "BVARERDMAN" => { attorneys: %w[BVASRITCHIE BVAJSCHIMMEL BVAKROHAN1] },
       "BVAOSCHOWALT" => { attorneys: %w[BVASCASPER1 BVAOWEHNER BVASFUNK1] },
-      "BVAAWAKEFIELD" => { attorneys: %w[BVAABELANGER] }
+      "BVAAWAKEFIELD" => { attorneys: %w[BVAABELANGER] },
+      # below teams were added for automatic case distribution testing
+      "BVAABODE" => { attorneys: %w[BVAABARTELL BVAABERGE BVAABERNIER] },
+      "BVABDANIEL" => { attorneys: %w[BVABBLOCK BVABCASPER BVABCHAMPLIN] },
+      "BVACGISLASON1" => { attorneys: %w[BVACABERNATH BVACABSHIRE BVACBALISTRE] },
+      "BVADCREMIN" => { attorneys: %w[BVADABBOTT BVADABERNATH BVADBEAHAN] },
+      "BVAEEMARD" => { attorneys: %w[BVAEBLANDA BVAEBUCKRIDG BVAECUMMERAT] }
     }.freeze
 
     DEVELOPMENT_DVC_TEAMS = {
@@ -26,6 +32,7 @@ module Seeds
     private
 
     def create_users
+      User.create(css_id: "CASEFLOW1", station_id: 317, full_name: "System User")
       User.create(css_id: "BVASCASPER1", station_id: 101, full_name: "Steve Attorney_Cases Casper")
       User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Sharree AttorneyNoCases Ritchie")
       User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Aaron Judge_HearingsAndCases Abshire")
@@ -79,6 +86,7 @@ module Seeds
       create_mail_team_user
       create_clerk_of_the_board_users
       create_case_search_only_user
+      create_split_appeals_test_users
       create_judge_teams
       create_dvc_teams
       create_hearings_user
@@ -124,12 +132,13 @@ module Seeds
         participant_id: "2452415"
       )
 
-      %w[BILLIE MICHAEL].each do |name|
+      %w[BILLIE MICHAEL JIMMY].each do |name|
         u = User.create(
           css_id: "#{name}_VSO",
           station_id: 101,
           full_name: "#{name} VSOUser Jones",
-          roles: %w[VSO]
+          roles: %w[VSO],
+          email: "#{name}@test.com"
         )
         vso.add_user(u)
 
@@ -355,21 +364,47 @@ module Seeds
         :with_vacols_attorney_record,
         station_id: 101,
         css_id: "COB_USER",
-        full_name: "Clark ClerkOfTheBoardUser Bard"
+        full_name: "Clark ClerkOfTheBoardUser Bard",
+        roles: ["Hearing Prep"]
       )
       ClerkOfTheBoard.singleton.add_user(atty)
 
-      judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE")
+      judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE", roles: ["Hearing Prep"])
       create(:staff, :judge_role, sdomainid: judge.css_id)
       ClerkOfTheBoard.singleton.add_user(judge)
 
-      admin = create(:user, full_name: "Ty ClerkOfTheBoardAdmin Cobb", css_id: "BVATCOBB")
+      admin = create(:user, full_name: "Ty ClerkOfTheBoardAdmin Cobb", css_id: "BVATCOBB", roles: ["Hearing Prep"])
       ClerkOfTheBoard.singleton.add_user(admin)
       OrganizationsUser.make_user_admin(admin, ClerkOfTheBoard.singleton)
     end
 
     def create_case_search_only_user
       User.create!(station_id: 101, css_id: "CASE_SEARCHER_ONLY", full_name: "Blair CaseSearchAccessNoQueueAccess Lyon")
+    end
+
+    def create_split_appeals_test_users
+      ussc = User.create!(station_id: 101,
+                          css_id: "SPLTAPPLSNOW",
+                          full_name: "Jon SupervisorySeniorCouncilUser Snow",
+                          roles: ["Hearing Prep"])
+      SupervisorySeniorCouncil.singleton.add_user(ussc)
+      ussc2 = User.create!(station_id: 101,
+                           css_id: "SPLTAPPLTARGARYEN",
+                           full_name: "Daenerys SupervisorySeniorCouncilUser Targaryen",
+                           roles: ["Hearing Prep"])
+      SupervisorySeniorCouncil.singleton.add_user(ussc2)
+      ussccr = User.create!(station_id: 101,
+                            css_id: "SPLTAPPLLANNISTER",
+                            full_name: "Jaime SupervisorySeniorCouncilCaseReviewUser Lannister",
+                            roles: ["Hearing Prep"])
+      SupervisorySeniorCouncil.singleton.add_user(ussccr)
+      CaseReview.singleton.add_user(ussccr)
+      ussccr2 = User.create!(station_id: 101,
+                             css_id: "SPLTAPPLSTARK",
+                             full_name: "Ned SupervisorySeniorCouncilCaseReviewUser Stark",
+                             roles: ["Hearing Prep"])
+      SupervisorySeniorCouncil.singleton.add_user(ussccr2)
+      CaseReview.singleton.add_user(ussccr2)
     end
   end
   # rubocop:enable Metrics/AbcSize

@@ -9,12 +9,12 @@ module Seeds
       "Community Care - Veteran and Family Members Program",
       "Member Services - Health Eligibility Center",
       "Member Services - Beneficiary Travel",
-      "Prosthetics",
-      "Caregiver Appeals"
+      "Prosthetics"
     ].freeze
 
     def seed!
       setup_camo_org
+      setup_caregiver_org
       setup_program_offices!
       create_visn_org_teams!
     end
@@ -27,6 +27,14 @@ module Seeds
       camo = VhaCamo.singleton
       camo.add_user(regular_user)
       OrganizationsUser.make_user_admin(admin_user, camo)
+    end
+
+    def setup_caregiver_org
+      regular_user = create(:user, full_name: "Edward CSPUser Caregiver", css_id: "CAREGIVERUSER")
+      admin_user = create(:user, full_name: "Alvin CSPAdmin Caregiver", css_id: "CAREGIVERADMIN")
+      vha_csp = VhaCaregiverSupport.singleton
+      vha_csp.add_user(regular_user)
+      OrganizationsUser.make_user_admin(admin_user, vha_csp)
     end
 
     def setup_program_offices!

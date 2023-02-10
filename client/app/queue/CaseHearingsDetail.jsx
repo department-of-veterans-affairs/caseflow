@@ -4,24 +4,20 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
-
 import BareList from '../components/BareList';
-import {
-  boldText,
-  LEGACY_APPEAL_TYPES
-} from './constants';
+import { boldText, LEGACY_APPEAL_TYPES } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Tooltip from '../components/Tooltip';
 import { PencilIcon } from '../components/icons/PencilIcon';
 import Button from '../components/Button';
-
+import Alert from '../components/Alert';
 import EditUnscheduledNotesModal from '../hearings/components/EditUnscheduledNotesModal';
 import { UnscheduledNotes } from '../hearings/components/UnscheduledNotes';
-
 import COPY from '../../COPY';
 import { DateString } from '../util/DateUtil';
 import { showVeteranCaseList } from './uiReducer/uiActions';
 import { dispositionLabel } from '../hearings/utils';
+import TASK_ACTIONS from '../../constants/TASK_ACTIONS';
 
 const appealSummaryUlStyling = css({
   paddingLeft: 0,
@@ -49,6 +45,20 @@ const hearingElementsStyle = css({
   }
 });
 
+const missingEmailNotification = () => {
+  return (<React.Fragment>
+    <div className="cf-sg-alert-slim">
+      <Alert type="info">
+        <Link href="https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf" target="_blank">
+          Contact the Hearing Coordinator
+        </Link>&nbsp;
+        to convert this hearing to virtual
+      </Alert>
+    </div>
+  </React.Fragment >
+  );
+};
+
 class CaseHearingsDetail extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -59,10 +69,26 @@ class CaseHearingsDetail extends React.PureComponent {
     };
   }
 
-  getHearingAttrs = (hearing, userIsVsoEmployee) => {
+  getHearingAttrs = (hearing, userIsVsoEmployee, vsoVirtualOptIn, currentUserEmailPresent) => {
+    const today = new Date();
+    const deadline = new Date(today);
+    const hearingDay = new Date(hearing.date);
+
+    deadline.setDate(deadline.getDate() + 10);
+    // show convert to virtual link if user is vso, hearing isn't virtual, and scheduled date is not within deadline
     const hearingAttrs = [{
       label: 'Type',
-      value: hearing.isVirtual ? 'Virtual' : hearing.type
+      value:
+        <React.Fragment>
+          {hearing.isVirtual ? 'Virtual' : hearing.type}&nbsp;&nbsp;
+          {(userIsVsoEmployee &&
+            !hearing.isVirtual &&
+            hearingDay > deadline &&
+            currentUserEmailPresent &&
+            vsoVirtualOptIn
+          ) &&
+            <Link href={`/hearings/${hearing.externalId}/details`}>{COPY.VSO_CONVERT_TO_VIRTUAL_TEXT}</Link>}
+        </React.Fragment>
     },
     {
       label: 'Disposition',
@@ -97,8 +123,36 @@ class CaseHearingsDetail extends React.PureComponent {
         value: <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
       }
     );
-
-    if (!userIsVsoEmployee) {
+    // info alert for hearings within 11 days of scheduled date
+    if (userIsVsoEmployee &&
+        vsoVirtualOptIn &&
+        !hearing.isVirtual &&
+        hearingDay > today
+    ) {
+      if (hearingDay <= deadline) {
+        hearingAttrs.push(
+          {
+            label: '',
+            value:
+              <div className="cf-sg-alert-slim">
+                <Alert type="info">
+                  {COPY.VSO_UNABLE_TO_CONVERT_TO_VIRTUAL_TEXT}
+                  <Link href="https://www.bva.va.gov/docs/RO_Coordinator_Assignments.pdf" target="_blank">
+                    Contact the Hearing Coordinator to convert to virtual
+                  </Link>
+                </Alert>
+              </div>
+          }
+        );
+      } else if (!currentUserEmailPresent) {
+        hearingAttrs.push(
+          {
+            label: '',
+            value: missingEmailNotification()
+          }
+        );
+      }
+    } else if (!userIsVsoEmployee) {
       hearingAttrs.push(
         {
           label: '',
@@ -114,8 +168,7 @@ class CaseHearingsDetail extends React.PureComponent {
 
   getHearingInfo = () => {
     const {
-      appeal: { hearings },
-      userIsVsoEmployee
+      appeal: { hearings }, userIsVsoEmployee, vsoVirtualOptIn, currentUserEmailPresent
     } = this.props;
     const orderedHearings = _.orderBy(hearings, 'createdAt', 'desc');
     const uniqueOrderedHearings = _.uniqWith(orderedHearings, _.isEqual);
@@ -133,7 +186,12 @@ class CaseHearingsDetail extends React.PureComponent {
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
-        items={this.getHearingAttrs(hearing, userIsVsoEmployee).map(this.getDetailField)} />
+        items={this.getHearingAttrs(
+          hearing,
+          userIsVsoEmployee,
+          vsoVirtualOptIn,
+          currentUserEmailPresent
+        ).map(this.getDetailField)} />
     </div>);
 
     return <React.Fragment>
@@ -161,11 +219,48 @@ class CaseHearingsDetail extends React.PureComponent {
 
   closeModal = () => this.setState({ modalOpen: false, selectedTask: null })
 
-  getUnscheduledHearingAttrs = (task, appeal) => {
+  getUnscheduledHearingAttrs = (task, appeal, userIsVsoEmployee, vsoVirtualOptIn, currentUserEmailPresent) => {
+    if (userIsVsoEmployee && !vsoVirtualOptIn) {
+      return [];
+    }
+
+    if (userIsVsoEmployee) {
+      if (currentUserEmailPresent) {
+        return [
+          {
+            label: 'Type',
+            value:
+              <React.Fragment>
+                {appeal?.readableHearingRequestType}&nbsp;&nbsp;
+                {appeal?.readableHearingRequestType !== 'Virtual' &&
+                  <Link to={`/queue/appeals/${appeal.externalId}/tasks/` +
+                    `${task.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`}>
+                    {COPY.VSO_CONVERT_TO_VIRTUAL_TEXT}
+                  </Link>
+                }
+              </React.Fragment>
+          },
+        ];
+      }
+
+      return [
+        {
+          label: 'Type',
+          value:
+            appeal?.readableHearingRequestType
+        },
+        {
+          label: '',
+          value: missingEmailNotification()
+        }
+      ];
+    }
+
     return [
       {
         label: 'Type',
-        value: appeal?.readableHearingRequestType
+        value:
+          appeal?.readableHearingRequestType
       },
       {
         label: 'Notes',
@@ -186,12 +281,15 @@ class CaseHearingsDetail extends React.PureComponent {
         </React.Fragment>
       },
     ];
-  }
+  };
 
   getUnscheduledHearingElements = () => {
     const {
       appeal,
-      hearingTasks
+      hearingTasks,
+      userIsVsoEmployee,
+      vsoVirtualOptIn,
+      currentUserEmailPresent
     } = this.props;
 
     return hearingTasks.map((task, index) => <div
@@ -202,7 +300,15 @@ class CaseHearingsDetail extends React.PureComponent {
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
-        items={this.getUnscheduledHearingAttrs(task, appeal).map(this.getDetailField)} />
+        items={
+          this.getUnscheduledHearingAttrs(
+            task,
+            appeal,
+            userIsVsoEmployee,
+            vsoVirtualOptIn,
+            currentUserEmailPresent
+          ).map(this.getDetailField)
+        } />
     </div>);
   }
 
@@ -258,7 +364,6 @@ CaseHearingsDetail.propTypes = {
       PropTypes.shape({
         externalId: PropTypes.string,
         type: PropTypes.string
-
       })
     ),
     caseType: PropTypes.string,
@@ -266,7 +371,9 @@ CaseHearingsDetail.propTypes = {
   }),
   showVeteranCaseList: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
-  hearingTasks: PropTypes.array
+  hearingTasks: PropTypes.array,
+  vsoVirtualOptIn: PropTypes.bool,
+  currentUserEmailPresent: PropTypes.bool
 };
 
 const mapStateToProps = (state) => {

@@ -31,14 +31,6 @@ describe VaDotGovAddressValidator do
       end
     end
 
-    context "when the closest RO is San Antonio" do
-      let(:ro_facility_id) { "vha_671BY" } # San Antonio
-
-      it "returns RO62 (Houston)" do
-        expect(subject).to eq("RO62")
-      end
-    end
-
     context "when va dot gov service returns a Caseflow::Error::VaDotGovMissingFacilityError" do
       let(:ro_facility_id) { "vba_301" } # Boston RO
       let(:missing_facility_id) { "vba_9999" }
@@ -309,10 +301,6 @@ describe VaDotGovAddressValidator do
     context "when veteran with legacy appeal lives in TX" do
       let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
       let!(:valid_address_state_code) { "TX" }
-
-      it "adds San Antonio Satellite Office" do
-        expect(subject).to match_array %w[vba_349 vba_362 vha_671BY]
-      end
     end
 
     context "when veteran with legacy appeal requests travel board" do

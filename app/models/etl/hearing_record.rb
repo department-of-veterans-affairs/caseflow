@@ -69,6 +69,9 @@ class ETL::HearingRecord < ETL::Record
     def merge_original_attributes_to_target(original, target)
       # memoize
       hearing_day = original.hearing_day
+      if hearing_day.nil?
+        hearing_day = HearingDay.with_deleted.find(original.hearing_day_id)
+      end
       hearing_location = original.hearing_location
       judge = original.judge
       created_by = user_cache(original.created_by_id)
@@ -127,6 +130,9 @@ class ETL::HearingRecord < ETL::Record
       # do these last as they may raise exceptions in legacy hearings
       target.bva_poc = original.bva_poc
       target.hearing_request_type = original.hearing_request_type
+      if original.hearing_request_type.nil?
+        target.hearing_request_type = Hearing::HEARING_TYPES[hearing_day.request_type&.to_sym]
+      end
 
       target
     end

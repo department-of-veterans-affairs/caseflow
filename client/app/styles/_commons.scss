@@ -429,6 +429,22 @@ $rems: (
     background-color: $color-gray-lighter;
     margin: 5px 20px;
   }
+
+  button {
+    display: block;
+    color: $color-gray;
+    padding: 10px 20px;
+    text-decoration: none;
+    width: 100%;
+    text-align: left;
+    border-radius: 0;
+
+    &:hover {
+      background-color: $color-gray;
+      color: $color-white;
+      text-decoration: none;
+    }
+  }
 }
 
 @media screen and (max-width: 1264px) {
@@ -938,7 +954,6 @@ fieldset {
 
   .disabled {
     color: $color-gray-light;
-    font-style: italic;
   }
 }
 
@@ -1262,3 +1277,15 @@ button {
     }
   }
 }
+
+.csv-link {
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.button-back-button {
+  margin-left: 76%;
+}
+

@@ -118,6 +118,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     CaseReview.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
   end
 
+  def can_split_appeal?(appeal)
+    member_of_cob_or_ssc? && !appeal.tasks.completed.find_by(type: [BvaDispatchTask.name])
+  end
+
+  def member_of_cob_or_ssc?
+    member_of_organization?(ClerkOfTheBoard.singleton) || member_of_organization?(SupervisorySeniorCouncil.singleton)
+  end
+
   def can_edit_issues?
     CaseReview.singleton.users.include?(self) || can_intake_appeals?
   end
@@ -139,7 +147,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_change_hearing_request_type?
-    can?("Build HearSched") || can?("Edit HearSched")
+    can?("Build HearSched") || can?("Edit HearSched") || can?("VSO")
   end
 
   def vacols_uniq_id
@@ -246,6 +254,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def camo_employee?
     member_of_organization?(VhaCamo.singleton) && FeatureToggle.enabled?(:vha_predocket_workflow, user: self)
+  end
+
+  def vha_employee?
+    member_of_organization?(BusinessLine.find_by(url: "vha"))
   end
 
   def organization_queue_user?
@@ -415,6 +427,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     member_of_organization?(Bva.singleton)
   end
 
+  def in_hearing_management_team?
+    member_of_organization?(HearingsManagement.singleton)
+  end
+
   def can_view_judge_team_management?
     DvcTeam.for_dvc(self).present?
   end
@@ -488,6 +504,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     end
     # :nocov:
 
+    ### Desciption: Retrieves the system user based on the current raisl environment
+    ### Environments are listed here config/environments
+    ### The Rails.current_env name comes from the environment file name
+    ### Example: if development.rb is the current environment then Rails.current_env == development
+    ###
+    ### Params: N/A
+    ### Return: User object for the system user. This object will either be pulled from
+    ### the database if it exists or will be created if it does not exist in the database
     def system_user
       @system_user ||= begin
         private_method_name = "#{Rails.current_env}_system_user".to_sym
@@ -591,7 +615,17 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       find_or_initialize_by(station_id: "317", css_id: "CASEFLOW1")
     end
 
-    alias test_system_user uat_system_user
-    alias development_system_user uat_system_user
+    ### Description: System use for the Development and test environments
+    ### Local and demo uses development environment
+    ### Rspec uses TEST environment
+    ###
+    ### Params: N/A
+    ### Return: User object for the system user. This object will eitehr be pulled from
+    ### the database if it exists or will be created if it does not exist in the database
+    def development_system_user
+      find_or_create_by(station_id: "317", css_id: "CASEFLOW1")
+    end
+
+    alias test_system_user development_system_user
   end
 end

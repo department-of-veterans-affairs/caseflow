@@ -10,6 +10,7 @@ RSpec.describe HearingsController, type: :controller do
   let(:baltimore_ro_eastern) { "RO13" }
   let(:timezone) { "America/New_York" }
   let(:disposition) { nil }
+  let!(:vso_participant_id) { "12345" }
 
   describe "PATCH update" do
     it "should be successful", :aggregate_failures do
@@ -104,13 +105,15 @@ RSpec.describe HearingsController, type: :controller do
     context "when updating an existing hearing to a virtual hearing" do
       let(:judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
       let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain, judge: judge) }
+      let(:additional_hearing_params) { {} }
       let(:virtual_hearing_params) { {} }
 
       subject do
         hearing_params = {
           notes: "Notes",
           virtual_hearing_attributes: virtual_hearing_params
-        }
+        }.merge(additional_hearing_params)
+
         patch_params = {
           id: hearing.external_id,
           hearing: hearing_params
@@ -317,9 +320,77 @@ RSpec.describe HearingsController, type: :controller do
           expect(hearing.reload.virtual_hearing.representative_tz).to eq(timezone)
         end
       end
+
+      context "as a VSO user" do
+        before do
+          TrackVeteranTask.create!(appeal: hearing.appeal, parent: hearing.appeal.root_task, assigned_to: vso_org)
+          vso_org.add_user(vso_user)
+          User.authenticate!(user: vso_user)
+        end
+
+        let(:appellant_email) { "caseflow-veteran2@test.com" }
+
+        let!(:virtual_hearing_params) do
+          {
+            request_cancelled: false,
+            job_completed: false
+          }
+        end
+
+        let!(:additional_hearing_params) do
+          {
+            appellant_email_address: appellant_email,
+            appellant_tz: "America/Denver",
+            transcription_attributes: {},
+            email_recipients_attributes: {
+              "0": {
+                timezone: "America/Denver",
+                email_address: appellant_email,
+                type: "AppellantHearingEmailRecipient"
+              }
+            }
+          }
+        end
+        let!(:vso_org) do
+          create(:vso, name: "VSO Org", role: "VSO", url: "vso-url", participant_id: vso_participant_id)
+        end
+        let!(:vso_user) { create(:user, :vso_role, email: "test@email.com") }
+
+        context "who is representing the case" do
+          before do
+            allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+              [{ participant_id: vso_participant_id }]
+            )
+          end
+
+          it "the hearing can be updated" do
+            expect(hearing.virtual?).to be false
+            expect(hearing.appellant_recipient&.email_address).to_not eq appellant_email
+
+            expect(subject.status).to eq(200)
+
+            hearing.reload
+            expect(hearing.appellant_recipient&.email_address).to eq appellant_email
+            expect(hearing.virtual?).to be true
+          end
+        end
+
+        context "who is not representing the case" do
+          before do
+            allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+              [{ participant_id: "something-else" }]
+            )
+          end
+
+          it "the hearing cannot be updated" do
+            expect(subject.status).to eq(302)
+          end
+        end
+      end
     end
 
     context "when updating the judge of an existing virtual hearing" do
+      let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
       let(:new_judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
       let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain) }
       let!(:virtual_hearing) do
@@ -436,9 +507,7 @@ RSpec.describe HearingsController, type: :controller do
       "#{hour_string}:#{format('%<minutes>02i', minutes: minutes)}"
     end
 
-    subject do
-      get :show, as: :json, params: { id: hearing.external_id }
-    end
+    subject { get :show, as: :json, params: { id: hearing.external_id } }
 
     it "returns hearing details" do
       expect(subject.status).to eq 200
@@ -466,6 +535,67 @@ RSpec.describe HearingsController, type: :controller do
       end
 
       it_should_behave_like "returns the correct hearing time in EST", "05:30"
+    end
+
+    def check_for_current_user_info_in_response(user)
+      User.authenticate!(user: user)
+
+      hearing_json = JSON.parse(subject.body)["data"]
+
+      assert_response :success
+      expect(hearing_json["current_user_email"]).to eq user.email
+      expect(hearing_json["current_user_timezone"]).to eq user.timezone
+    end
+
+    context "current user's email and timezone are included in response" do
+      before do
+        allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+          [{ participant_id: vso_participant_id }]
+        )
+        vso_org.add_user(vso_user)
+      end
+
+      let!(:vso_org) do
+        create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: vso_participant_id)
+      end
+      let!(:vso_user) { create(:user, :vso_role, email: "vso@vso.org") }
+      let!(:hearings_coordinator_user) do
+        create(:user, roles: ["Edit HearSched", "Build HearSched"], email: "coordinator@va.gov")
+      end
+
+      context "with an ama hearing" do
+        before do
+          TrackVeteranTask.create!(appeal: hearing.appeal,
+                                   parent: hearing.appeal.root_task,
+                                   assigned_to: vso_org)
+        end
+
+        it "as a vso user" do
+          check_for_current_user_info_in_response(vso_user)
+        end
+
+        it "as a hearings coordinator user" do
+          check_for_current_user_info_in_response(hearings_coordinator_user)
+        end
+      end
+
+      context "with a legacy hearing" do
+        before do
+          TrackVeteranTask.create!(appeal: legacy_hearing.appeal,
+                                   parent: legacy_hearing.appeal.root_task,
+                                   assigned_to: vso_org)
+        end
+
+        subject { get :show, as: :json, params: { id: legacy_hearing.external_id } }
+
+        it "as a vso user" do
+          check_for_current_user_info_in_response(vso_user)
+        end
+
+        it "as a hearings coordinator user" do
+          check_for_current_user_info_in_response(hearings_coordinator_user)
+        end
+      end
     end
   end
 

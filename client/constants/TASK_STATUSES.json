@@ -3,5 +3,6 @@
   "in_progress": "in_progress",
   "on_hold": "on_hold",
   "completed": "completed",
-  "cancelled": "cancelled"
+  "cancelled": "cancelled",
+  "splited": "splited"
 }

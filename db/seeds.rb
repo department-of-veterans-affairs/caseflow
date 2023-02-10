@@ -32,11 +32,15 @@ class SeedDB
   end
 
   def seed
+    RequestStore[:current_user]=User.system_user
     call_and_log_seed_step :clean_db
 
     call_and_log_seed_step Seeds::Annotations
     call_and_log_seed_step Seeds::Tags
-    call_and_log_seed_step Seeds::Users # TODO must run this before others
+    # These must be ran before others
+    call_and_log_seed_step Seeds::Users
+    call_and_log_seed_step Seeds::NotificationEvents
+    # End of required to exist dependencies
     call_and_log_seed_step Seeds::Tasks
     call_and_log_seed_step Seeds::Hearings
     call_and_log_seed_step Seeds::Intake
@@ -48,6 +52,12 @@ class SeedDB
     call_and_log_seed_step Seeds::SanitizedJsonSeeds
     call_and_log_seed_step Seeds::VeteransHealthAdministration
     call_and_log_seed_step Seeds::MTV
+    call_and_log_seed_step Seeds::Education
+    call_and_log_seed_step Seeds::PriorityDistributions
+    call_and_log_seed_step Seeds::TestCaseData
+    call_and_log_seed_step Seeds::Notifications
+    # Always run this as last one
+    call_and_log_seed_step Seeds::StaticTestCaseData
   end
 end
 

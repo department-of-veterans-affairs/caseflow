@@ -2,10 +2,11 @@
   "alternative_batch_size": 15,
   "batch_size_per_attorney": 3,
   "cavc_affinity_days": 21,
-  "days_before_goal_due_for_distribution": 65,
+  "days_before_goal_due_for_distribution": null,
   "direct_docket_time_goal": 365,
-  "hearing_case_affinity_days": 30,
+  "hearing_case_affinity_days": 0,
   "maximum_direct_review_proportion": 0.07,
   "minimum_legacy_proportion": 0.9,
-  "nod_adjustment": 0.4
+  "nod_adjustment": 0.4,
+  "request_more_cases_minimum": 8
 }

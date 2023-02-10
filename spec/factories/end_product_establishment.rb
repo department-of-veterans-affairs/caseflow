@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :end_product_establishment do
-    sequence(:veteran_file_number, &:to_s)
+    veteran_file_number { generate :veteran_file_number }
     sequence(:reference_id, &:to_s)
     source { create(:ramp_election, veteran_file_number: veteran_file_number) }
     code { "030HLRR" }

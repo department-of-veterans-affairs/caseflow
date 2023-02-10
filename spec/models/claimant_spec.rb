@@ -184,7 +184,7 @@ describe Claimant, :postgres do
       let(:claimant) do
         create(:claimant,
                participant_id: "no-such-pid",
-               decision_review: build(:appeal, veteran_file_number: "no-such-file-number"))
+               decision_review: build(:appeal, veteran: build(:veteran, file_number: "no-such-file-number")))
       end
 
       let!(:bgs_service) { BGSService.new }
@@ -326,6 +326,34 @@ describe Claimant, :postgres do
     end
     it "returns the correct name for an attorney claimant" do
       expect(attorney_claimant.name).to eq("William Jennings Bryan")
+    end
+  end
+
+  context "#unrecognized_claimant?" do
+    subject { claimant.unrecognized_claimant? }
+
+    context "Claimant" do
+      let(:claimant) { create(:claimant, type: "Claimant") }
+
+      it { is_expected.to be false }
+    end
+
+    context "AttorneyClaimant" do
+      let(:claimant) { create(:claimant, type: "AttorneyClaimant") }
+
+      it { is_expected.to be false }
+    end
+
+    context "DependentClaimant" do
+      let(:claimant) { create(:claimant, type: "DependentClaimant") }
+
+      it { is_expected.to be false }
+    end
+
+    context "VeteranClaimant" do
+      let(:claimant) { create(:claimant, type: "VeteranClaimant") }
+
+      it { is_expected.to be false }
     end
   end
 end

@@ -10,6 +10,8 @@ describe Distribution, :all_dbs do
   before do
     Timecop.freeze(Time.zone.now)
   end
+  before { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
+  after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
 
   context "#distributed_cases_count" do
     subject { new_distribution }
@@ -36,7 +38,8 @@ describe Distribution, :all_dbs do
       {
         batch_size: 0, direct_review_due_count: 0, direct_review_proportion: 0,
         evidence_submission_proportion: 0, hearing_proportion: 0, legacy_hearing_backlog_count: 0,
-        legacy_proportion: 0.0, nonpriority_iterations: 0, priority_count: 0, total_batch_size: 0
+        legacy_proportion: 0.0, nonpriority_iterations: 0, priority_count: 0, total_batch_size: 0,
+        algorithm: "proportions"
       }
     end
 

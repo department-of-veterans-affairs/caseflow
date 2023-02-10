@@ -2387,6 +2387,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
       </label>
       <span
         className="usa-input-error-message"
+        tabIndex={0}
       >
         Something went wrong...
       </span>
@@ -2398,6 +2399,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
         }
         id="appellant-email"
         name="appellant-email"
+        onBlur={[Function]}
         onChange={[Function]}
         type="text"
         value="Bob.Smith@test.com"
@@ -2447,6 +2449,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
         }
         id="representative-email"
         name="representative-email"
+        onBlur={[Function]}
         onChange={[Function]}
         type="text"
         value="tom.brady@caseflow.gov"
@@ -2797,6 +2800,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
         }
         id="appellant-email"
         name="appellant-email"
+        onBlur={[Function]}
         onChange={[Function]}
         type="text"
         value="Bob.Smith@test.com"
@@ -2846,6 +2850,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
         }
         id="representative-email"
         name="representative-email"
+        onBlur={[Function]}
         onChange={[Function]}
         type="text"
         value="tom.brady@caseflow.gov"
@@ -3238,6 +3243,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
         }
         id="appellant-email"
         name="appellant-email"
+        onBlur={[Function]}
         onChange={[Function]}
         type="text"
         value="Bob.Smith@test.com"
@@ -3282,6 +3288,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
       </label>
       <span
         className="usa-input-error-message"
+        tabIndex={0}
       >
         Something went wrong...
       </span>
@@ -3293,6 +3300,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
         }
         id="representative-email"
         name="representative-email"
+        onBlur={[Function]}
         onChange={[Function]}
         type="text"
         value="tom.brady@caseflow.gov"
@@ -6497,6 +6505,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
                         }
                         id="appellant-email"
                         name="appellant-email"
+                        onBlur={[Function]}
                         onChange={[Function]}
                         readOnly={false}
                         type="text"
@@ -6549,6 +6558,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
                         }
                         id="representative-email"
                         name="representative-email"
+                        onBlur={[Function]}
                         onChange={[Function]}
                         readOnly={false}
                         type="text"

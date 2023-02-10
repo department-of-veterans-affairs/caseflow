@@ -1,12 +1,17 @@
 # frozen_string_literal: true
 
+# When using this factory, passing in a created Veteran object is the preferred way of creating an appeal
+# if the veteran object needs to be used in the seed file calling the factory. Otherwise, the factory
+# will create and save a new veteran object when it creates the appeal.
+# The required veteran can be created in-line or before the appeal and passed in as the veteran: arg
+
 FactoryBot.define do
   factory :appeal do
     docket_type { Constants.AMA_DOCKETS.evidence_submission }
     established_at { Time.zone.now }
     receipt_date { Time.zone.yesterday }
     filed_by_va_gov { false }
-    sequence(:veteran_file_number, 500_000_000)
+    veteran_file_number { generate :veteran_file_number }
     uuid { SecureRandom.uuid }
 
     after(:build) do |appeal, evaluator|
@@ -51,6 +56,14 @@ FactoryBot.define do
           participant_id: appeal.veteran.participant_id,
           decision_review: appeal,
           type: "OtherClaimant"
+        )
+      elsif evaluator.has_healthcare_provider_claimant
+        create(
+          :claimant,
+          :with_unrecognized_appellant_detail,
+          participant_id: appeal.veteran.participant_id,
+          decision_review: appeal,
+          type: "HealthcareProviderClaimant"
         )
       elsif !Claimant.exists?(participant_id: appeal.veteran.participant_id, decision_review: appeal)
         create(
@@ -109,8 +122,13 @@ FactoryBot.define do
     end
 
     transient do
+      has_healthcare_provider_claimant { false }
+    end
+
+    transient do
       veteran do
-        Veteran.find_by(file_number: veteran_file_number) || create(:veteran, file_number: veteran_file_number)
+        Veteran.find_by(file_number: veteran_file_number) ||
+          create(:veteran, file_number: (generate :veteran_file_number))
       end
     end
 
@@ -146,13 +164,45 @@ FactoryBot.define do
       docket_type { Constants.AMA_DOCKETS.direct_review }
     end
 
+    # passing a created_at date into any held hearing traits will set all initial task tree tasks to
+    # be created at that date as well
     trait :held_hearing do
       transient do
         adding_user { nil }
       end
 
       after(:create) do |appeal, evaluator|
-        create(:hearing, judge: nil, disposition: "held", appeal: appeal, adding_user: evaluator.adding_user)
+        create(:hearing, :held, judge: nil, appeal: appeal, adding_user: evaluator.adding_user)
+      end
+    end
+
+    # this method should not be used for seeding data but is required for some tests
+    trait :held_hearing_no_tasks do
+      transient do
+        adding_user { nil }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:hearing, disposition: "held", judge: nil, appeal: appeal, adding_user: evaluator.adding_user)
+      end
+    end
+
+    # this trait should be run with :with_post_intake_tasks so that it creates a correct task tree
+    trait :held_hearing_and_ready_to_distribute do
+      transient do
+        adding_user { nil }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:hearing,
+               :held,
+               judge: nil,
+               appeal: appeal,
+               created_at: appeal.created_at,
+               adding_user: evaluator.adding_user)
+        appeal.tasks.find_by(type: :TranscriptionTask).update!(status: :completed)
+        appeal.tasks.find_by(type: :EvidenceSubmissionWindowTask).update!(status: :completed)
+        appeal.tasks.find_by(type: :DistributionTask).update!(status: :assigned)
       end
     end
 
@@ -164,6 +214,7 @@ FactoryBot.define do
       after(:create) do |appeal, evaluator|
         hearing_day = create(
           :hearing_day,
+          judge: evaluator.tied_judge,
           scheduled_for: 1.day.ago,
           created_by: evaluator.tied_judge,
           updated_by: evaluator.tied_judge
@@ -192,6 +243,30 @@ FactoryBot.define do
     trait :active do
       before(:create) do |appeal, _evaluator|
         RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+      end
+    end
+
+    trait :with_completed_root_task do
+      before(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        root_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
+    end
+
+    trait :with_cancelled_root_task do
+      before(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+      end
+    end
+
+    trait :with_assigned_bva_dispatch_task do
+      after(:create) do |appeal, _evaluator|
+        bva_dispatch = BvaDispatch.singleton
+        bva_dispatch_non_admin = User.system_user
+        bva_dispatch.add_user(bva_dispatch_non_admin)
+        root_task = RootTask.find_or_create_by!(appeal: appeal)
+        BvaDispatchTask.create!(assigned_to: bva_dispatch, parent_id: root_task.id, appeal: root_task.appeal)
       end
     end
 
@@ -269,6 +344,36 @@ FactoryBot.define do
         org = Organization.find_by(type: "Vso")
         org ||= create(:vso)
         create(:informal_hearing_presentation_task, appeal: appeal, assigned_to: org)
+      end
+    end
+
+    trait :with_completed_ihp_task do
+      after(:create) do |appeal, _evaluator|
+        org = Organization.find_by(type: "Vso")
+        org ||= create(:vso)
+        ihp_task = create(:informal_hearing_presentation_task, appeal: appeal, assigned_to: org)
+        ihp_task.update!(status: "completed")
+      end
+    end
+
+    trait :with_ihp_colocated_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        parent = root_task
+        org = Organization.find_by(type: "Vso")
+        org ||= create(:vso)
+        create(:colocated_task, :ihp, appeal: appeal, parent: parent, assigned_to: org)
+      end
+    end
+
+    trait :with_completed_ihp_colocated_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        parent = root_task
+        org = Organization.find_by(type: "Vso")
+        org ||= create(:vso)
+        ihp_colocated_task = create(:colocated_task, :ihp, appeal: appeal, parent: parent, assigned_to: org)
+        ihp_colocated_task.update!(status: "completed")
       end
     end
 
@@ -483,7 +588,7 @@ FactoryBot.define do
       after(:create) do |appeal|
         create(:request_issue,
                benefit_type: "vha",
-               nonrating_issue_category: "Caregiver",
+               nonrating_issue_category: "Caregiver | Other",
                nonrating_issue_description: "VHA - Caregiver ",
                decision_review: appeal,
                decision_date: 1.month.ago)

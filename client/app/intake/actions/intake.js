@@ -16,6 +16,61 @@ export const setFileNumberSearch = (fileNumber) => ({
   }
 });
 
+export const splitAppeal = (appealId, selectedIssues, reason, otherReason, userCssId) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SPLIT_APPEAL,
+    meta: { analytics }
+  });
+
+  const data = {
+    appeal_id: appealId,
+    appeal_split_issues: selectedIssues,
+    split_reason: reason,
+    split_other_reason: otherReason,
+    user_css_id: userCssId
+  };
+
+  return ApiUtil.post(`/appeals/${data.appeal_id}/${ENDPOINT_NAMES.SPLIT_APPEAL}`, { data }).
+    then(
+      (response) => {
+        // send success
+        // before dispatch, use localStorage to send success to queue banner
+        localStorage.setItem('SplitAppealSuccess', 'true');
+        dispatch({
+          type: ACTIONS.SPLIT_APPEAL_SUCCESS,
+          splitAppeal: response.body,
+          meta: { analytics }
+        });
+      },
+      (error) => {
+        // send error
+        const responseObject = error.response.body || {};
+        const errorCode = responseObject.error_code || 'default';
+
+        // before dispatch, use localStorage to send fail to queue banner
+        localStorage.setItem('SplitAppealSuccess', 'false');
+
+        dispatch({
+          type: ACTIONS.SPLIT_APPEAL_FAILURE,
+          payload: {
+            errorCode,
+            errorData: responseObject.error_data || {}
+          },
+          meta: {
+            analytics: {
+              label: errorCode
+            }
+          }
+        });
+
+        throw error;
+      }
+    ).
+    // catch failure
+    // add failure action
+    catch((error) => console.error(error));
+};
+
 export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => {
   dispatch({
     type: ACTIONS.FILE_NUMBER_SEARCH_START,

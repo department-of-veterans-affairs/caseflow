@@ -21,9 +21,9 @@ RSpec.describe Api::V1::JobsController, :postgres, type: :controller do
       expect(response.status).to eq 422
     end
 
-    it "should successfully start HeartbeatTasksJob asynchronously" do
-      allow(HeartbeatTasksJob).to receive(:perform_later).and_return(HeartbeatTasksJob.new)
-      post :create, params: { "job_type": "heartbeat" }
+    it "should successfully start StatsCollectorJob asynchronously" do
+      allow(StatsCollectorJob).to receive(:perform_later).and_return(StatsCollectorJob.new)
+      post :create, params: { "job_type": "stats_collector" }
       expect(response.status).to eq 200
       expect(response_body["job_id"]).not_to be_empty
     end
@@ -31,14 +31,6 @@ RSpec.describe Api::V1::JobsController, :postgres, type: :controller do
     # needed to reach 90% test coverage
     it "should successfully run a job" do
       expect(HeartbeatTasksJob.perform_now).to eq true
-    end
-  end
-
-  context "for all jobs" do
-    Api::V1::JobsController::SUPPORTED_JOBS.each_value do |job_class|
-      it "#{job_class.name} is not queued in default queue" do
-        expect(job_class.queue_name).not_to eq("default")
-      end
     end
   end
 

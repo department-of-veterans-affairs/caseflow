@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { css } from 'glamor';
+import Button from './Button';
 
 const dropdownList = css({
   top: '3.55rem',
@@ -25,18 +26,21 @@ export default class DropdownButton extends React.Component {
   }
 
   componentDidMount = () => {
-    document.addEventListener('mousedown', this.onClickOutside);
     document.addEventListener('keydown', this.onClickOutside);
+    document.addEventListener('mousedown', this.onClickOutside);
   }
 
   componentWillUnmount = () => {
-    document.removeEventListener('mousedown', this.onClickOutside);
     document.removeEventListener('keydown', this.onClickOutside);
+    document.removeEventListener('mousedown', this.onClickOutside);
   }
   setWrapperRef = (node) => this.wrapperRef = node
 
   onClickOutside = (event) => {
-    if (this.wrapperRef && !this.wrapperRef.contains(event.target) && this.state.menu) {
+    // event.composedPath() is [html, document, Window] when clicking the scroll bar and more when clicking content
+    // this stops the menu from closing if a user clicks to use the scroll bar with the menu open
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target) &&
+     event.composedPath()[2] !== window && this.state.menu) {
       this.setState({
         menu: false
       });
@@ -59,6 +63,11 @@ export default class DropdownButton extends React.Component {
       href={list.target}>{list.title}</Link>;
   }
 
+  /**
+   * TODO This should be merged with or replaced by dropdownLink
+   * @param list
+   * @return {JSX.Element}
+   */
   dropdownAction = (list) => {
     return <a href={`#${list.value}`} onClick={() => {
       if (this.props.onClick) {
@@ -68,11 +77,30 @@ export default class DropdownButton extends React.Component {
     }}>{list.title}</a>;
   }
 
+  dropdownButton = (list) => {
+    return <Button classNames={['cf-btn-link']}
+      onClick={() => {
+        if (this.props.onClick) {
+          this.props.onClick(list.value);
+        }
+        this.onMenuClick();
+      }}>
+      {list.title}
+    </Button>;
+  }
+
+  renderLiBody = (list) => {
+    if (list.button) {
+      return this.dropdownButton(list);
+    }
+
+    return list.target ? this.dropdownLink(list) : this.dropdownAction(list);
+  }
   dropdownButtonList = () => {
     return <ul className="cf-dropdown-menu active" {...dropdownList}>
       {this.props.lists.map((list, index) =>
         <li key={index}>
-          {list.target ? this.dropdownLink(list) : this.dropdownAction(list)}
+          {this.renderLiBody(list)}
         </li>)}
     </ul>;
   };
@@ -82,8 +110,12 @@ export default class DropdownButton extends React.Component {
 
     return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer} >
       <button {...dropdownBtn}
+        role="dropdown-button"
+        id="dropdown-button"
+        aria-label={label || 'dropdown-button'}
         aria-haspopup="true"
-        aria-expanded="true"
+        aria-expanded={this.state.menu}
+        aria-pressed={this.state.menu}
         onClick={this.onMenuClick}
         className="cf-dropdown-trigger usa-button usa-button-secondary">
         {label}

@@ -15,7 +15,13 @@ describe Seeds::Substitutions do
     it "creates appeals ready for substitution" do
       expect { subject }.to_not raise_error
 
-      expect(Appeal.where(veteran_file_number: 54_545_454).count).to eq(6)
+      expect(
+        Appeal.where(
+          veteran_file_number: Veteran.where(
+            first_name: "JaneDeceased", last_name: "SubstitutionsSeed"
+          ).map(&:file_number)
+        ).count
+      ).to eq(6)
     end
   end
 end

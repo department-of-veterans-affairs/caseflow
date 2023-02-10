@@ -173,7 +173,7 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
       @controller = Hearings::HearingDayController.new
       get :index, params: { start_date: "2018-01-01", end_date: "2018-06-01" }, as: :json
       expect(response).to be_successful
-      expect(JSON.parse(response.body)["hearings"].size).to eq(970)
+      expect(JSON.parse(response.body)["hearings"].size).to eq(978)
     end
 
     it "persist twice and second request should return an error" do
