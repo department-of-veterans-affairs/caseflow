@@ -11,7 +11,6 @@ class QuarterlyNotificationsJob < CaseflowJob
   #
   # Response: None
   def perform
-    RequestStore.store[:current_user] = User.system_user
     AppealState.where.not(
       decision_mailed: true, appeal_cancelled: true
     ).find_in_batches(batch_size: QUERY_LIMIT.to_i) do |batched_appeal_states|
