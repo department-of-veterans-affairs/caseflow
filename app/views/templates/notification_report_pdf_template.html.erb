@@ -1,5 +1,75 @@
-<%= render "layouts/head" %>
-<% veteran_name= "Veteran Name" %>
+<%
+
+def handle_appeal(appeal)
+  if appeal.is_a?(Appeal) || appeal.is_a?(LegacyAppeal)
+    appeal
+  else
+    raise Caseflow::Error::AppealNotFound
+  end
+end
+
+def get_hearing_type(appeal)
+  if appeal&.current_hearing_request_type == nil
+    "-"
+  else
+    appeal&.readable_current_hearing_request_type
+  end
+end
+
+def get_notifications(appeal)
+  if appeal.is_a?(Appeal)
+    Notification.where(appeals_id: appeal.uuid)
+  elsif appeal.is_a?(LegacyAppeal)
+    Notification.where(appeals_id: appeal.vacols_id)
+  end
+end
+
+def handle_notifications(notifications)
+  if notifications.empty?
+    raise ActiveRecord::RecordNotFound
+  end
+end
+
+def generate_table_notifications(notifications)
+  table_notifications = Array.new
+  notifications.each do |notification|
+
+    email_notification = {
+      status: notification.email_notification_status == 'Success' ? 'Sent' : notification.email_notification_status,
+      content: notification.email_notification_content,
+      notification_type: 'Email',
+      recipient_information: notification.recipient_email == nil ? '—' : notification.recipient_email,
+      event_type: notification.event_type,
+      event_date: notification.event_date
+    }
+
+    sms_notification = {
+      status: notification.sms_notification_status == 'Success' ? 'Sent' : notification.sms_notification_status,
+      content: notification.sms_notification_content,
+      notification_type: 'Text',
+      recipient_information: notification.recipient_phone_number == nil ? '—' : notification.recipient_phone_number,
+      event_type: notification.event_type,
+      event_date: notification.event_date
+    }
+
+    if notification.notification_type == 'Email and SMS'
+      table_notifications.push(email_notification, sms_notification)
+    elsif notification.notification_type == 'Email'
+      table_notifications.push(email_notification)
+    else
+      table_notifications.push(sms_notification)
+    end
+  end
+  table_notifications
+end
+
+ appeal = handle_appeal(appeal)
+ hearing_type = get_hearing_type(appeal)
+ notifications = get_notifications(appeal)
+ handle_notifications(notifications)
+ table_notifications = generate_table_notifications(notifications)
+
+ %>
 
 <html>
   <body class="cf-app-queue">
@@ -14,10 +84,10 @@
             <div class="usa-grid">
               <section class="cf-app-segment cf-app-segment--alt">
                 <div data-css-bui2vg="">
-                  <h1 data-css-10hc4to="">Case notifications for <%=veteran_name%></h1>
+                  <h1 data-css-10hc4to="">Case notifications for <%=appeal&.veteran_first_name%> <%=appeal&.veteran_last_name%></h1>
                   <div data-css-7o0e0w="">
                     <div data-css-p21ib3="">Veteran ID:&nbsp;
-                      <button type="submit" class="cf-apppeal-id" data-css-cjlnsd="" style="width: auto; white-space: nowrap;">213912991</button>
+                      <button type="submit" class="cf-apppeal-id" data-css-cjlnsd="" style="width: auto; white-space: nowrap;"><%=appeal&.veteran_file_number%></button>
                     </div>
                   </div>
                 </div>
@@ -28,20 +98,20 @@
                       <p>Docket Number</p>
                       <div>
                         <span data-css-1iid9v3="">
-                          <span data-css-2moai0="">L</span>
-                          4113666
+                          <span data-css-2moai0=""><%=appeal.docket_name&.first&.upcase%></span>
+                          <%=appeal&.docket_number%>
                         </span>
                       </div>
                     </div>
                     <div data-css-1yy2eo1="">
                       <p>Appeal Stream Type</p>
                       <div>
-                        <span>Original</span>
+                        <span><%=appeal&.type%></span>
                       </div>
                     </div>
                     <div data-css-1yy2eo1="">
                       <p>Hearing Type</p>
-                      <div>Video</div>
+                      <div><%=hearing_type%></div>
                     </div>
                   </div>
                 </div>
@@ -83,418 +153,26 @@
                           </tr>
                         </thead>
                         <tbody >
-                          <tr id="table-row-0" class="row-even top" role="row">
+                        <% table_notifications.each_with_index do |notification, i|%>
+                          <tr id=<%="table-row-"+ i.to_s%> class='top<%=i.even? == true ? " row-even" : ""%>' role="row">
                             <td role="cell" colspan="1">
                               <span>
                                 <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Appeal docketed</a>
+                                  <a><%=notification[:event_type]%></a>
                                 </span>
                               </span>
                             </td>
-                            <td role="cell" colspan="1">11/27/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">example@example.com</td>
-                            <td role="cell" colspan="1">Delivered</td>
+                            <td role="cell" colspan="1"><%=notification[:event_date].strftime('%m/%d/%Y')%></td>
+                            <td role="cell" colspan="1"><%=notification[:notification_type]%></td>
+                            <td role="cell" colspan="1"><%=notification[:recipient_information]%></td>
+                            <td role="cell" colspan="1"><%=notification[:status].titleize%></td>
                           </tr>
-                          <tr id="table-row-0a" class="row-even" role="row">
+                          <tr id=<%="table-row-"+ i.to_s + "a"%> class=<%=i.even? == true ? "row-even" : ""%> role="row">
                             <td role="cell" colspan="5">
-                              <span>This is the content of the email that was sent to the veteran for their Appeal Docketed notification.</span>
+                              <span><%=notification[:content]%></span>
                             </td>
                           </tr>
-                          <tr id="table-row-1" class="top" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Appeal docketed</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/27/2022</td>
-                            <td role="cell" colspan="1">Text</td>
-                            <td role="cell" colspan="1">555-555-5555</td>
-                            <td role="cell" colspan="1">Delivered</td>
-                          </tr>
-                          <tr id="table-row-1a" role="row">
-                            <td role="cell" colspan="5">
-                              <span>This is the content of the text message that was sent to the veteran for their Appeal Docketed notification. This is the content of the text message that was sent to the veteran for their Appeal Docketed notification. This is the content of the text message that was sent to the veteran for their Appeal Docketed notification.</span>
-                            </td>
-                          </tr>
-                          <tr id="table-row-2" class="row-even" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Hearing scheduled</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/28/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">example@example.com</td>
-                            <td role="cell" colspan="1">Delivered</td>
-                          </tr>
-                          <tr id="table-row-3" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Hearing scheduled</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/28/2022</td>
-                            <td role="cell" colspan="1">Text</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Temporary-failure</td>
-                          </tr>
-                          <tr id="table-row-4" class="row-even" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Privacy Act request pending</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/29/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">example@example.com</td>
-                            <td role="cell" colspan="1">Delivered</td>
-                          </tr>
-                          <tr id="table-row-5" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Privacy Act request pending</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/29/2022</td>
-                            <td role="cell" colspan="1">Text</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Temporary-failure</td>
-                          </tr>
-                          <tr id="table-row-6" class="row-even" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Privacy Act request complete</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/30/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">example@example.com</td>
-                            <td role="cell" colspan="1">Delivered</td>
-                          </tr>
-                          <tr id="table-row-7" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Privacy Act request complete</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/30/2022</td>
-                            <td role="cell" colspan="1">Text</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Temporary-failure</td>
-                          </tr>
-                          <tr id="table-row-8" class="row-even" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Withdrawal of hearing</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">12/01/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Sent</td>
-                          </tr>
-                          <tr id="table-row-9" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Withdrawal of hearing</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">12/01/2022</td>
-                            <td role="cell" colspan="1">Text</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Temporary-failure</td>
-                          </tr>
-                          <tr id="table-row-10" class="row-even" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>VSO IHP pending</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">12/02/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Sent</td>
-                          </tr>
-                          <tr id="table-row-11" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>VSO IHP pending</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">12/02/2022</td>
-                            <td role="cell" colspan="1">Text</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Sent</td>
-                          </tr>
-                          <tr id="table-row-12" class="row-even" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>VSO IHP complete</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">12/03/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Sent</td>
-                          </tr>
-                          <tr id="table-row-13" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>VSO IHP complete</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">12/03/2022</td>
-                            <td role="cell" colspan="1">Text</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Sent</td>
-                          </tr>
-                          <tr id="table-row-14" class="row-even" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Appeal decision mailed</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">12/04/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Sent</td>
-                          </tr>
-
-                          <tr id="table-row-0" class="row-even top" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Appeal docketed</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/27/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">example@example.com</td>
-                            <td role="cell" colspan="1">Delivered</td>
-                          </tr>
-                          <tr id="table-row-0a" class="row-even" role="row">
-                            <td role="cell" colspan="5">
-                              <span>This is the content of the email that was sent to the veteran for their Appeal Docketed notification.</span>
-                            </td>
-                          </tr>
-                          <tr id="table-row-1" class="top" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Appeal docketed</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/27/2022</td>
-                            <td role="cell" colspan="1">Text</td>
-                            <td role="cell" colspan="1">555-555-5555</td>
-                            <td role="cell" colspan="1">Delivered</td>
-                          </tr>
-                          <tr id="table-row-1a" role="row">
-                            <td role="cell" colspan="5">
-                              <span>This is the content of the text message that was sent to the veteran for their Appeal Docketed notification. This is the content of the text message that was sent to the veteran for their Appeal Docketed notification. This is the content of the text message that was sent to the veteran for their Appeal Docketed notification.</span>
-                            </td>
-                          </tr>
-                          <tr id="table-row-2" class="row-even" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Hearing scheduled</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/28/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">example@example.com</td>
-                            <td role="cell" colspan="1">Delivered</td>
-                          </tr>
-                          <tr id="table-row-3" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Hearing scheduled</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/28/2022</td>
-                            <td role="cell" colspan="1">Text</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Temporary-failure</td>
-                          </tr>
-                          <tr id="table-row-4" class="row-even" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Privacy Act request pending</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/29/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">example@example.com</td>
-                            <td role="cell" colspan="1">Delivered</td>
-                          </tr>
-                          <tr id="table-row-5" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Privacy Act request pending</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/29/2022</td>
-                            <td role="cell" colspan="1">Text</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Temporary-failure</td>
-                          </tr>
-                          <tr id="table-row-6" class="row-even" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Privacy Act request complete</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/30/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">example@example.com</td>
-                            <td role="cell" colspan="1">Delivered</td>
-                          </tr>
-                          <tr id="table-row-7" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Privacy Act request complete</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">11/30/2022</td>
-                            <td role="cell" colspan="1">Text</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Temporary-failure</td>
-                          </tr>
-                          <tr id="table-row-8" class="row-even" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Withdrawal of hearing</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">12/01/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Sent</td>
-                          </tr>
-                          <tr id="table-row-9" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Withdrawal of hearing</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">12/01/2022</td>
-                            <td role="cell" colspan="1">Text</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Temporary-failure</td>
-                          </tr>
-                          <tr id="table-row-10" class="row-even" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>VSO IHP pending</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">12/02/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Sent</td>
-                          </tr>
-                          <tr id="table-row-11" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>VSO IHP pending</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">12/02/2022</td>
-                            <td role="cell" colspan="1">Text</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Sent</td>
-                          </tr>
-                          <tr id="table-row-12" class="row-even" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>VSO IHP complete</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">12/03/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Sent</td>
-                          </tr>
-                          <tr id="table-row-13" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>VSO IHP complete</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">12/03/2022</td>
-                            <td role="cell" colspan="1">Text</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Sent</td>
-                          </tr>
-                          <tr id="table-row-14" class="row-even" role="row">
-                            <td role="cell" colspan="1">
-                              <span>
-                                <span style="font-weight: bold; cursor: pointer;">
-                                  <a>Appeal decision mailed</a>
-                                </span>
-                              </span>
-                            </td>
-                            <td role="cell" colspan="1">12/04/2022</td>
-                            <td role="cell" colspan="1">Email</td>
-                            <td role="cell" colspan="1">—</td>
-                            <td role="cell" colspan="1">Sent</td>
-                          </tr>
-
+                        <%end%>
                         </tbody>
                         <tfoot></tfoot>
                       </table>
