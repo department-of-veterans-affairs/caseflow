@@ -4,6 +4,7 @@ import { formatDate } from '../util/DateUtil';
 import { COLORS } from '../constants/AppConstants';
 import { css } from 'glamor';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 
 const colorStyling = css({
   color: COLORS.GREY_DARK
@@ -32,6 +33,9 @@ const UNASSIGNED_TASKS_COLUMNS = [
 ];
 
 export default class StuckTasks extends Component {
+  static propTypes = {
+    tasks: PropTypes.array.isRequired,
+  };
 
   getKeyForRow = (index, task) => task.id
 
