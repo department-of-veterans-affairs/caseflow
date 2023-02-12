@@ -807,7 +807,7 @@ DEPENDENCIES
   therubyracer
   timecop
   tty-tree
-  tzinfo
+  tzinfo (= 1.2.10)
   uglifier (>= 1.3.0)
   validates_email_format_of
   webdrivers
