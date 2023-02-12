@@ -771,7 +771,7 @@ DEPENDENCIES
   pluck_to_hash
   pry (~> 0.13.0)
   pry-byebug (~> 3.9)
-  puma (~> 5)
+  puma (= 5.6.4)
   rack (~> 2.2.3)
   rails (= 5.2.4.6)
   rails-erd
