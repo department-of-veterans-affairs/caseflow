@@ -47,7 +47,10 @@ const MembershipRequestTable = (props) => {
   // Testing a new version of this to remove exisiting notes because it keeps adding them for paginated rows
   // Since we are modifying the current page paginated rows instead of all of them now
   const getPaginatedRowObjects = (rows) => {
-
+    // Guard clause for empty rows.
+    if (!rows) {
+      return [];
+    }
     const updatedRequests = rows.reduce((acc, request) => {
       // If it does not have a note add it to the list. If it has a note skip it to avoid duplicates.
       if (!request.hasNote) {
@@ -96,8 +99,7 @@ const MembershipRequestTable = (props) => {
       target: '/deny' },
   ];
 
-  // TODO: Proptypes doesn't like this since label is "supposed" to be a string although it works.
-  const MembershipRequestDropDownLabel = () => <div>
+  const MembershipRequestDropDown = () => <div>
     <span> Select action </span>
     <DoubleArrowIcon />
   </div>;
@@ -121,8 +123,9 @@ const MembershipRequestTable = (props) => {
       valueFunction: () => {
         return <DropdownButton
           lists={dropdownOptions}
-          label=<MembershipRequestDropDownLabel />
-        />;
+          label="Request actions">
+          <MembershipRequestDropDown />
+        </DropdownButton>;
       }
     },
     {
@@ -173,15 +176,15 @@ const MembershipRequestTable = (props) => {
     return rowObject.hasNote ? 'membership-request-expanded-note-row' : 'membership-request-row';
   };
 
-  // Weird current page pagination math because of the way the way the row notes are conditionally added as table rows.
+  // Only count the rows without the hasNote property key since those aren't membership requests, but notes.
   let currentRequestsCount = 0;
 
   if (paginatedRequests[currentPage]) {
-    currentRequestsCount = paginatedRequests[currentPage].length || 0;
-    currentRequestsCount = currentRequestsCount > REQUESTS_PER_PAGE ? REQUESTS_PER_PAGE : currentRequestsCount;
+    currentRequestsCount = paginatedRequests[currentPage].filter((obj) => !obj.hasNote).length;
   }
 
   // Create a function for the pagination so it can be easily added above and below the table.
+  // TODO: See if it's worth memoing this
   const MembershipRequestPagination = () => {
     return <Pagination
       pageSize={REQUESTS_PER_PAGE}
@@ -199,7 +202,7 @@ const MembershipRequestTable = (props) => {
     <Table
       className="membership-request-table"
       columns={columnDefinitions}
-      rowObjects={paginatedRequests[currentPage]}
+      rowObjects={paginatedRequests[currentPage] || []}
       rowClassNames={setRowClassNames}
       getKeyForRow={(_, { hasNote, id }) => hasNote ? `${id}-note` : `${id}`}
     />

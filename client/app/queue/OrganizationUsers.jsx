@@ -16,6 +16,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
+import { mockedMembershipRequests } from '../../test/data/membershipRequests';
 
 const userStyle = css({
   margin: '.5rem 0 .5rem',
@@ -245,7 +246,7 @@ export default class OrganizationUsers extends React.PureComponent {
       const { dvc, admin } = user.attributes;
       const style = i === 0 ? topUserStyle : userStyle;
 
-      return <React.Fragment>
+      return <React.Fragment key={user.id}>
         <li key={user.id} {...style}>{this.formatName(user)}
           { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
           { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
@@ -313,6 +314,7 @@ export default class OrganizationUsers extends React.PureComponent {
             sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName) }</h1>
         {this.state.isVhaOrg && (<>
           <MembershipRequestTable requests={this.state.membershipRequests} />
+          {/* <MembershipRequestTable requests={mockedMembershipRequests} /> */}
           <div style={{ paddingBottom: '7rem' }}></div>
         </>
         )}

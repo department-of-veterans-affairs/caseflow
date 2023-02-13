@@ -1,4 +1,6 @@
-// Example Membership Request data used for testing
+import faker from 'faker';
+
+// Example Membership Request data used for testing with no randomization
 export const mockedMembershipRequests = [
   {
     id: 1,
@@ -28,3 +30,19 @@ export const mockedMembershipRequests = [
     requestedDate: '2022-11-30'
   }
 ];
+
+// Randomized membership request data
+export const createMockedMembershipRequests = (number) => {
+  const mockedRequests = [];
+
+  for (let i = 0; i <= number; i++) {
+    mockedRequests.push({
+      id: i + 5,
+      name: faker.name.findName(),
+      requestedDate: faker.date.recent(10),
+      ...(Math.random() <= 0.3 && { note: faker.lorem.lines(1) }),
+    });
+  }
+
+  return mockedRequests;
+};

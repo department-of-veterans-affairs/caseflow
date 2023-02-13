@@ -71,9 +71,9 @@ class Organizations::UsersController < OrganizationsController
     params[:organization_url]
   end
 
-  # TODO: don't do this method if they aren't a vha_organization since it's a waste of a database call for nothing
+  # TODO: Don't use this method if they aren't a vha_organization for now since it's a waste of a database call
   def membership_requests
-    # TODO: Maybe create a serializer for these?
+    # TODO: Use the serializer from Appeals-13115 and update it to include these fields
     MembershipRequest.includes(:requestor, :organization).where(organization: organization)
       .assigned
       .map do |membership_request|
@@ -90,7 +90,8 @@ class Organizations::UsersController < OrganizationsController
     # TODO: This might cause an error if the constants are somehow not defined? Investigate if that is possible
     # Is it because the organization is an active model class and these orgs are just regular classes?
     # But they inherit from org so they should be subtyped correctly and it works in irb?
-    # This apparently happens but I don't know why. Might have to hard code strings for now
+    # This apparently happens in develeopment environment but I don't know why.
+    # Hardcoding strings to avoid for now
     # vha_org_types = [VhaCaregiverSupport, VhaCamo, VhaProgramOffice, VhaRegionalOffice]
     # vha_org = vha_org_types.any? { |org_type| organization.is_a?(org_type) } || organization.url == "vha"
 
@@ -102,27 +103,6 @@ class Organizations::UsersController < OrganizationsController
       "Prosthetics"
     ]
 
-    vha_regional_office_names = [
-      "VA New England Healthcare System",
-      "New York/New Jersey VA Health Care Network",
-      "VA Healthcare",
-      "VA Capitol Health Care Network",
-      "VA Mid-Atlantic Health Care Network",
-      "VA Southeast Network",
-      "VA Sunshine Healthcare Network",
-      "VA MidSouth Healthcare Network",
-      "VA Healthcare System",
-      "VA Great Lakes Health Care System",
-      "VA Heartland Network",
-      "South Central VA Health Care Network",
-      "VA Heart of Texas Health Care Network",
-      "Rocky Mountain Network",
-      "Northwest Network",
-      "Sierra Pacific Network",
-      "Desert Pacific Healthcare Network",
-      "VA Midwest Health Care Network"
-    ]
-
     # All VHA Organization names. This is not as nice as the contants but that errors for now.
     # TODO: Verify that it isn't just my development environment because this is nicer
     all_vha_org_names = [
@@ -130,13 +110,8 @@ class Organizations::UsersController < OrganizationsController
       "VHA Caregiver Support Program",
       "VHA CAMO",
       vha_program_office_names,
-      vha_regional_office_names
     ].flatten
 
-    # puts all_vha_org_names.inspect
-
-    # Also check if the org is the Vha BusinessLine by checking if the url is vha
-    # vha_org
     # vha_org_types.any? { |org_type| organization.is_a?(org_type) }
     all_vha_org_names.any? { |vha_org_name| organization.name == vha_org_name }
   end
