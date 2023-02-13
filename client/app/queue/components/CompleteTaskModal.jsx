@@ -161,6 +161,16 @@ const sendToBoardOpts = [
   { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_VHA_RELATED, value: 'not vha related' }
 ];
 
+const returnToBoardOptions = [
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_DUPLICATE, value: 'duplicate',},
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_HLR_PENDING, value: 'HLR Pending'},
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_SC_PENDING, value: 'SC Pending'},
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_NOT_VHA_RELATED, value: 'not vha related'},
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_CLARIFICATION_NEEDED, value: 'clarification needed'},
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_NO_VHA_DECISION, value: 'no vha decision'},
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_OTHER, value: 'other'}
+];
+
 const SendToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
   // if the VhaProgramOffice has completed a task, show the task instructions in the modal
@@ -220,6 +230,86 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
 };
 
 SendToBoardIntakeModal.propTypes = {
+  props: PropTypes.object,
+  tasks: PropTypes.array,
+  setState: PropTypes.func,
+  state: PropTypes.object,
+  register: PropTypes.func,
+  featureToggles: PropTypes.array,
+  highlightInvalid: PropTypes.bool
+};
+
+const VhaCamoReturnToBoardIntakeModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+  // if the VhaProgramOffice has completed a task, show the task instructions in the modal
+  const programOfficeInstructions = props.tasks.map((task) => {
+    return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1];
+  });
+
+
+  const handleDropdownChange = ({ value }) => {
+    setState({ dropdown: value });
+    if (value === 'other') {
+      setState({ otherInstructions: '' });
+    }
+  };
+
+  return (
+    <React.Fragment>
+      {programOfficeInstructions.some((i) => i) &&
+        <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
+      {programOfficeInstructions.map((text) => (
+        <React.Fragment>
+          <div>
+            <ReactMarkdown>{text}</ReactMarkdown>
+          </div>
+        </React.Fragment>
+      ))}
+      {taskConfiguration && taskConfiguration.modal_body}
+      <div style= {{ marginBottom: '1.5em' }}>{COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY}</div>
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        <div>
+          <SearchableDropdown
+            name="returnToBoardOptions"
+            id="returnToBoardOptions"
+            label={COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL}
+            defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
+            onChange={handleDropdownChange}
+            value={state.dropdown}
+            options={returnToBoardOptions}
+            errorMessage={props.highlightInvalid &&
+              !validDropdown(state.dropdown) ? 'You must select a reason for returning to intake' : null}
+            />
+          {state.dropdown === 'other' &&
+            <TextareaField
+              label={COPY.VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL}
+              name="otherRejectReason"
+              id="completeTaskOtherInstructions"
+              onChange={(value) => setState({ otherInstructions: value })}
+              value={state.otherInstructions}
+              styling={marginTop(2)}
+              textAreaStyling={setHeight(4.5)}
+              errorMessage={props.highlightInvalid &&
+                !validInstructions(state.otherInstructions) ? 'Return reason field is required' : null}
+            />}
+          <TextareaField
+            label={COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_INSTRUCTIONS_LABEL}
+            name="instructions"
+            id="vhaReturnToBoardIntakeInstructions"
+            onChange={(value) => setState({ instructions: value })}
+            value={state.instructions}
+            styling={marginTop(4)}
+            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+            errorMessage={props.highlightInvalid &&
+              !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
+          />
+        </div>
+      )}
+    </React.Fragment>
+  );
+};
+
+VhaCamoReturnToBoardIntakeModal.propTypes = {
   props: PropTypes.object,
   tasks: PropTypes.array,
   setState: PropTypes.func,
@@ -377,6 +467,17 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.DOCKET_APPEAL_MODAL_TITLE,
     getContent: MarkTaskCompleteModal,
     buttonText: COPY.MODAL_CONFIRM_BUTTON
+  },
+  vha_return_to_board_intake: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
+    }),
+    title: () => COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+    getContent: VhaCamoReturnToBoardIntakeModal,
+    buttonText: COPY.MODAL_RETURN_BUTTON,
+    submitDisabled: ({ state }) => (
+      !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
+    ),
   },
   vha_send_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
