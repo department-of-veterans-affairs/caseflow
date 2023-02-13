@@ -2,7 +2,7 @@
 
 describe CavcDashboardDisposition, :postgres do
   let(:cavc_remand) { create(:cavc_remand) }
-  let(:cavc_dashboard) { CavcDashboard.create(cavc_remand: cavc_remand)}
+  let(:cavc_dashboard) { CavcDashboard.create(cavc_remand: cavc_remand) }
 
   before do
     RequestStore.store[:current_user] = User.system_user

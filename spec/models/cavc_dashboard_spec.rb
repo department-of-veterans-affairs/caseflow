@@ -41,7 +41,9 @@ describe CavcDashboard, :postgres do
       dashboard_2 = described_class.create(cavc_remand: create(:cavc_remand, remand_subtype: "jmr"))
       dashboard_3 = described_class.create(cavc_remand: create(:cavc_remand, remand_subtype: "jmpr"))
       dashboard_4 = described_class.create(cavc_remand: create(:cavc_remand, remand_subtype: "mdr"))
-      dashboard_5 = described_class.create(cavc_remand: create(:cavc_remand, cavc_decision_type: "straight_reversal", remand_subtype: nil))
+      dashboard_5 = described_class.create(cavc_remand: create(:cavc_remand,
+                                                               cavc_decision_type: "straight_reversal",
+                                                               remand_subtype: nil))
 
       expect(dashboard_1.joint_motion_for_remand).to eq true
       expect(dashboard_2.joint_motion_for_remand).to eq true
