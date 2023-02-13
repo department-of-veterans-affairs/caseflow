@@ -273,7 +273,8 @@ CaseTitleDetails.propTypes = {
   hideOTSection: PropTypes.bool,
   hasNotifications: PropTypes.bool,
   hideDocs: PropTypes.bool,
-  hideDecisionDocument: PropTypes.bool
+  hideDecisionDocument: PropTypes.bool,
+  showEfolderLink: PropTypes.bool
 };
 
 CaseTitleDetails.defaultProps = {

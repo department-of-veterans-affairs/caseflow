@@ -76,6 +76,7 @@ export const NotificationsView = (props) => {
           userCanAccessReader={props.userCanAccessReader}
           hideDocs
           hideDecisionDocument
+          showEfolderLink
         />
         <div {...sectionGap}>
           <p className="notification-text">
