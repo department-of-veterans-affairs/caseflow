@@ -86,9 +86,9 @@ class InitialTasksFactory
     @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
                                           SendInitialNotificationLetterTask.create!(
                                             appeal: @appeal,
-                                            parent: @appeal.tasks.find_by(status: "assigned"),
+                                            parent: parent_task,
                                             assigned_to: Organization.find_by_url("clerk-of-the-board"),
-                                            assigned_by: @appeal.intake.user
+                                            assigned_by: RequestStore[:current_user]
                                           )
   end
 
