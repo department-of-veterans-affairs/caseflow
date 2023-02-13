@@ -16,7 +16,6 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
-import { mockedMembershipRequests } from '../../test/data/membershipRequests';
 
 const userStyle = css({
   margin: '.5rem 0 .5rem',
@@ -314,7 +313,6 @@ export default class OrganizationUsers extends React.PureComponent {
             sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName) }</h1>
         {this.state.isVhaOrg && (<>
           <MembershipRequestTable requests={this.state.membershipRequests} />
-          {/* <MembershipRequestTable requests={mockedMembershipRequests} /> */}
           <div style={{ paddingBottom: '7rem' }}></div>
         </>
         )}

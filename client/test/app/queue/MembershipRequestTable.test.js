@@ -1,5 +1,5 @@
 import React from 'react';
-import { getByAltText, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { createMockedMembershipRequests, mockedMembershipRequests } from '../../data/membershipRequests';
 import MembershipRequestTable from '../../../app/queue/MembershipRequestTable';
 import { axe } from 'jest-axe';
