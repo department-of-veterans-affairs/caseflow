@@ -4,11 +4,23 @@ describe CavcDashboard, :postgres do
   let(:cavc_remand) { create(:cavc_remand) }
   let(:cavc_dashboard) { CavcDashboard.create(cavc_remand: cavc_remand) }
 
-  it "validates CAVC remand presence" do
-    expect { described_class.create! }.to raise_error(ActiveRecord::RecordInvalid)
+  context "validates" do
+    it "validates CAVC remand presence on create and update" do
+      expect { described_class.create! }.to raise_error(ActiveRecord::RecordInvalid)
 
-    cavc_dashboard.cavc_remand = nil
-    expect { cavc_dashboard.save! }.to raise_error(ActiveRecord::RecordInvalid)
+      cavc_dashboard.cavc_remand = nil
+      expect { cavc_dashboard.save! }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+
+    it "validates dates and docket numbers on update" do
+      cavc_dashboard.board_decision_date = nil
+      cavc_dashboard.board_docket_number = nil
+      cavc_dashboard.cavc_decision_date = nil
+      cavc_dashboard.cavc_docket_number = nil
+
+      expect(cavc_dashboard.valid?).to eq false
+      expect(cavc_dashboard.errors.details.count).to eq 4
+    end
   end
 
   context "when created" do

@@ -8,6 +8,8 @@ class CavcDashboard < CaseflowRecord
   belongs_to :cavc_remand
 
   validates :cavc_remand, presence: true
+  validates :board_decision_date, :board_docket_number, :cavc_decision_date, :cavc_docket_number,
+            presence: true, on: :update
 
   before_create :set_attributes_from_cavc_remand
 
