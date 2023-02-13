@@ -1,4 +1,4 @@
-class AddCavcDashboardTable < ActiveRecord::Migration[5.2]
+class AddCavcDashboardTable < Caseflow::Migration
   def change
     create_table :cavc_dashboards do |t|
       t.references :cavc_remand, foreign_key: true, comment: "ID of the associated CAVC Remand"
