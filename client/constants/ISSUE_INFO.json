@@ -663,12 +663,23 @@
     "plain_description": "Medical benefits",
     "levels": {
       "01": {
-        "description": "Eligibility for Dental Treatment"
+        "description": "Eligibility for treatment",
+        "levels": {
+          "01": {
+            "description": "Dental"
+          },
+          "02": {
+            "description": "Other"
+          }
+        }
       },
       "02": {
         "description": "Medical expense reimbursement"
       },
       "03": {
+        "description": "Eligibility for fee basis care"
+      },
+      "04": {
         "description": "Debt",
         "levels": {
           "01": {
@@ -679,11 +690,14 @@
           }
         }
       },
-      "04": {
+      "05": {
+        "description": "Level of priority for treatment"
+      },
+      "06": {
         "description": "Other"
       },
-      "05": {
-        "description": "Clothing allowance"
+      "07": {
+        "description": "Clothing allowance § 3.810(b) certification"
       }
     }
   },
