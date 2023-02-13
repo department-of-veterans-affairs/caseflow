@@ -113,27 +113,29 @@ class TasksController < ApplicationController
     tasks_hash = json_tasks(tasks.uniq)
 
 
-    appeal = Appeal.find(task&.appeal.id)
-    if appeal.contested_claim?
-      if (task.type === "SendInitialNotificationLetterTask")
-        opc = params['select_opc']
-        if (opc === "task_complete_contested_claim")
-          days_on_hold = params['hold_days'].to_i
-          instructions= "";
-          PostSendInitialNotificationLetterHoldingTask.create_from_parent(task.parent, days_on_hold: days_on_hold, instructions: instructions)
-        elseif (opc === "proceed_final_notification_letter")
-          send_final_notification_letter
+    unless tasks.appeal.class == LegacyAppeal
+      appeal = Appeal.find(task&.appeal.id)
+      if appeal.contested_claim?
+        if (task.type === "SendInitialNotificationLetterTask")
+          opc = params['select_opc']
+          if (opc === "task_complete_contested_claim")
+            days_on_hold = params['hold_days'].to_i
+            instructions= "";
+            PostSendInitialNotificationLetterHoldingTask.create_from_parent(task.parent, days_on_hold: days_on_hold, instructions: instructions)
+          elseif (opc === "proceed_final_notification_letter")
+            send_final_notification_letter
+          end
+          # case opc
+          # when "task_complete_contested_claim"
+          #   days_on_hold = params['hold_days'].to_i
+          #   instructions= "";
+          #   PostSendInitialNotificationLetterHoldingTask.create_from_parent(task.parent, days_on_hold: days_on_hold, instructions: instructions)
+          # when "proceed_final_notification_letter"
+          #   send_final_notification_letter
+          # else
+          #   puts "no"
+          # end
         end
-        # case opc
-        # when "task_complete_contested_claim"
-        #   days_on_hold = params['hold_days'].to_i
-        #   instructions= "";
-        #   PostSendInitialNotificationLetterHoldingTask.create_from_parent(task.parent, days_on_hold: days_on_hold, instructions: instructions)
-        # when "proceed_final_notification_letter"
-        #   send_final_notification_letter
-        # else
-        #   puts "no"
-        # end
       end
     end
     # currently alerts are only returned by ScheduleHearingTask
@@ -208,7 +210,7 @@ class TasksController < ApplicationController
     @send_final_notification_letter ||= task.appeal.tasks.open.find_by(type: :SendFinalNotificationLetterTask) ||
                                           SendFinalNotificationLetterTask.create!(
                                             appeal: task.appeal,
-                                            parent: task.appeal.tasks.find_by(status: "assigned"),
+                                            parent: task.parent,
                                             assigned_to: Organization.find_by_url("clerk-of-the-board"),
                                             assigned_by: current_user
                                           )
