@@ -56,7 +56,10 @@ class AppealsController < ApplicationController
         render json: results
       end
       format.pdf do
-        content_type = request.headers["PDF"]
+        request.headers["HTTP_PDF"]
+        appeals_id = params[:appeals_id]
+        send data pdf: PdfExportService.create_and_save_pdf(appeals_id), filename: PdfExportService.file_name, type: "application/pdf"
+        render pdf: PdfExportService.file_name
       end
     end
   end
