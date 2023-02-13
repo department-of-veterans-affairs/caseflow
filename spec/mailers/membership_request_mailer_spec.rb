@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 describe MembershipRequestMailer do
-  let(:email_recipient_info) {{ email: email }}
+  let(:email_recipient_info) { { email: email } }
   let(:email) { "bob.schmidt@va.gov" }
   let(:name) { "Bob" }
-  let(:subject) {{ custom_subject: custom_subject }}
+  let(:subject) { { custom_subject: custom_subject } }
 
   context "with recipient_info" do
     describe "membership_request_submitted" do
@@ -20,9 +20,7 @@ describe MembershipRequestMailer do
     end
 
     describe "updated_membership_request_status" do
-      let(:mailer) {
-        MembershipRequestMailer.updated_membership_request_status(email_recipient_info: email_recipient_info)
-      }
+      let(:mailer) { MembershipRequestMailer.updated_membership_request_status(email_recipient_info: email_recipient_info) }
 
       it "has the correct From address" do
         expect(mailer.from).to include("BoardofVeteransAppealsHearings@messages.va.gov")

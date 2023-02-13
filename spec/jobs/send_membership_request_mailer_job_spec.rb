@@ -3,8 +3,8 @@
 require "./app/jobs/memberships/send_membership_request_mailer_job.rb"
 
 describe SendMembershipRequestMailerJob do
-  let(:type) {{ email_type: email_type }}
-  let(:recipient_info) {{ email: email }}
+  let(:type) { { email_type: email_type } }
+  let(:recipient_info) { { email: email } }
   let(:email_type) { " " }
   let(:email) { "bob.schmidt@va.gov" }
   let(:name) { "Bob" }
@@ -18,8 +18,8 @@ describe SendMembershipRequestMailerJob do
       type = "SendMembershipRequestSubmittedEmail"
       it "sends an email confirming membership request submitted successfully" do
         expect { perform_job.perform(type, recipient_info) }.to change {
-        ActionMailer::Base.deliveries.count
-      }.by 1
+          ActionMailer::Base.deliveries.count
+        }.by 1
       end
     end
 
@@ -27,8 +27,8 @@ describe SendMembershipRequestMailerJob do
       type = "SendAdminsMembershipRequestSubmissionEmail"
       it "sends an email to admins" do
         expect { perform_job.perform(type, recipient_info) }.to change {
-        ActionMailer::Base.deliveries.count
-       }.by 1
+          ActionMailer::Base.deliveries.count
+        }.by 1
       end
     end
 
@@ -36,8 +36,8 @@ describe SendMembershipRequestMailerJob do
       type = "SendUpdatedMembershipRequestStatusEmail"
       it "sends a status update email to requestor" do
         expect { perform_job.perform(type, recipient_info) }.to change {
-        ActionMailer::Base.deliveries.count
-       }.by 1
+          ActionMailer::Base.deliveries.count
+        }.by 1
       end
     end
 
