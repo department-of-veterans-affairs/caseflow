@@ -1,11 +1,12 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
-import { withRouter } from 'react-router-dom';
+import { Route, withRouter } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Tooltip from 'app/components/Tooltip';
 import { COLORS } from '../constants/AppConstants';
 import { TitleDetailsSubheader } from '../components/TitleDetailsSubheader';
 import { TitleDetailsSubheaderSection } from '../components/TitleDetailsSubheaderSection';
@@ -122,7 +123,8 @@ export class CaseTitleDetails extends React.PureComponent {
       legacyAttorneyTasks,
       userCssId,
       userRole,
-      hideOTSection
+      hideOTSection,
+      showEfolderLink
     } = this.props;
 
     const { highlightModal, documentIdError } = this.state;
@@ -246,6 +248,16 @@ export class CaseTitleDetails extends React.PureComponent {
             </Button>
           </TitleDetailsSubheaderSection>
         )}
+        { showEfolderLink && (
+          <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_EFOLDER_LINK}>
+            <Route path= "https://<base url>.bip.va.gov">
+              Open eFolder
+            </Route>
+            <Tooltip>
+              This link will direct you to the veteran eFolder. If the participant Id can not be found for the appeal you will be directed to the eFolder veteran lookup page.
+            </Tooltip>
+          </TitleDetailsSubheaderSection>
+        )}
       </TitleDetailsSubheader>
     );
   };
@@ -278,11 +290,12 @@ CaseTitleDetails.propTypes = {
 };
 
 CaseTitleDetails.defaultProps = {
-  hideOTSection: false
+  hideOTSection: false,
+  showEfolderLink: false
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { userRole, userCssId, canEditAod, featureToggles, userIsVsoEmployee } = state.ui;
+  const { userRole, userCssId, canEditAod, featureToggles, userIsVsoEmployee, showEfolderLink } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
@@ -292,7 +305,8 @@ const mapStateToProps = (state, ownProps) => {
     userCssId,
     canEditAod,
     featureToggles,
-    userIsVsoEmployee
+    userIsVsoEmployee,
+    showEfolderLink
   };
 };
 

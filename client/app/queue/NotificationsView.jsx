@@ -122,7 +122,8 @@ NotificationsView.propTypes = {
 };
 
 NotificationsView.defaultProps = {
-  hideOTSection: true
+  hideOTSection: true,
+  showEfolderLink: true
 };
 
 const mapStateToProps = (state) => ({
