@@ -750,6 +750,7 @@ DEPENDENCIES
   govdelivery-tms
   guard-rspec
   holidays (~> 6.4)
+  i18n
   icalendar
   immigrant
   jshint
