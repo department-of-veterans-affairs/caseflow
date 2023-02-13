@@ -28,8 +28,17 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
     appeals.each do |appeal|
       begin
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        appeal.reload
+        # Check if there is already a Open hearing tasks cancell them
+        if !appeal.tasks.open.where(type: HearingTask.name).empty?
+          appeal.tasks.open.where(type: HearingTask.name).to_a.each do |hearing_task|
+            hearing_task.cancel_descendants
+            hearing_task.cancelled!
+          end
+        end
+        # Create new Schedule Hearing task which will create a new Hearing Task parent
         ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
-
+        # Move the appeal from location 57 to caseflow
         AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
         generated_tree_count += 1
       rescue StandardError => error
@@ -58,27 +67,6 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
     LegacyAppeal.pluck(:vacols_id)
   end
 
-  # Purpose: Gets the list of cases that are not found in Caseflow
-  # Params:
-  #        cases - All cases in VACOLS
-  #        vacols_ids - All the VACOLS IDs from Caseflow
-  #        limit - The amount of ids to query for at a time
-  # Return: The list of cases not found in Caseflow
-  def get_new_cases(cases, vacols_ids)
-    cases_in_caseflow = []
-    shift_limit = 1000
-    # Querys for cases that are already in Caseflow per the limit at a time and adds that on to the list
-    until vacols_ids.empty?
-      some_cases = cases.where(bfkey: vacols_ids.first(shift_limit))
-      vacols_ids.shift(shift_limit)
-      cases_in_caseflow.concat(some_cases)
-    end
-    # Removes all values matching the list from the cases array and returns what is left
-    cases_not_in_caseflow = cases.to_a
-    cases_in_caseflow.each { |old_case| cases_not_in_caseflow.delete(old_case) }
-    cases.where(bfkey: cases_not_in_caseflow.pluck(:bfkey)).includes(:folder, :correspondent, :case_issues).to_a
-  end
-
   # Purpose: Fetches all travel board appeals from VACOLS that aren't already in Caseflow
   # and creates a legacy appeal for each
   # Params: exclude_ids - A list of vacols ids that already exist in Caseflow
@@ -95,14 +83,16 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
         bfdocind: nil,
         # Datetime of Decision
         bfddec: nil
-      ).limit(BATCH_LIMIT)
-    legacy_appeals = get_new_cases(cases, ids)
+      ).limit(BATCH_LIMIT).to_a
       .map do |vacols_case|
-        begin
-          AppealRepository.build_appeal(vacols_case, true)
-        rescue StandardError => error
-          log_error("#{error.class}: #{error.message} for vacols id:#{vacols_case.bfkey} on #{JOB_ATTR&.class} of ID:#{JOB_ATTR&.job_id}\n #{error.backtrace.join("\n")}")
-          next
+        # If there is not already a Legacy Appeal record tied to this case. Create one.
+        if!LegacyAppeal.where(vacols_id: vacols_case.bfkey).exists?
+          begin
+              AppealRepository.build_appeal(vacols_case, true)
+          rescue StandardError => error
+            log_error("#{error.class}: #{error.message} for vacols id:#{vacols_case.bfkey} on #{JOB_ATTR&.class} of ID:#{JOB_ATTR&.job_id}\n #{error.backtrace.join("\n")}")
+            next
+          end
         end
       end
       .compact
