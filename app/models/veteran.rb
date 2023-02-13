@@ -274,13 +274,7 @@ class Veteran < CaseflowRecord
   end
 
   def ssn
-    return super if super
-
-    ssn_from_bgs = (bgs_record_found? ? bgs_record[:ssn] : nil)
-
-    update_cached_attributes! if ssn_from_bgs
-
-    ssn_from_bgs
+    super || (bgs_record_found? ? bgs_record[:ssn] : nil)
   end
 
   def date_of_death
