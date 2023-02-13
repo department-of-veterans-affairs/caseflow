@@ -11,6 +11,7 @@ import { css } from 'glamor';
 import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_CAMO_AND_CAREGIVER_OPTIONS } from '../constants';
 import { VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE,
   VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE } from '../../../COPY';
+import ApiUtil from '../../util/ApiUtil';
 
 const checkboxDivStyling = css({
   '& .cf-form-checkboxes': { marginTop: '10px' },
@@ -118,10 +119,32 @@ const VhaMembershipRequestForm = () => {
   // TODO: add a onsubmit to this button and potentially one to the form?
   const SubmitButton = ({ ...btnProps }) => {
     return (
-      <Button name="submit-request" {...btnProps}>
+      <Button type="submit" name="submit-request" {...btnProps}>
       Submit
       </Button>
     );
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    // dispatchEvent(submitFormAction(formData));
+    console.log('me submit form real good like');
+    const { body } = ApiUtil.post(
+      '/membership_requests',
+      { data: { vhaAccess, programOfficesAccess, requestReason } },
+    ).then((response) => {
+      const { message } = response.body.data;
+
+      console.log(response.body.data);
+      alert(message);
+      // can dispatch or can just do a normal form submit.
+      // I think it doesn't matter which but would change the reload/loading of data.
+      // If it's a normal form submit then we probably need an erb file.
+    }).
+      catch((error) => {
+        console.log(error);
+        alert(error);
+      });
   };
 
   const anyProgramOfficeSelected = useMemo(() => (
@@ -151,7 +174,7 @@ const VhaMembershipRequestForm = () => {
           />
         </div>
       }
-      <form className={checkboxDivStyling}>
+      <form onSubmit={handleSubmit} className={checkboxDivStyling}>
         <GeneralVHAAccess vhaMember={memberOrOpenRequestToVha} />
         <SpecializedAccess checkboxOptions={alteredOptions} />
         <div style={{ minHeight: '51px' }}>
