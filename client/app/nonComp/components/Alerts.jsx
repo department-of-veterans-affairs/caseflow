@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Alert from '../../components/Alert';
 
 export class ErrorAlert extends React.PureComponent {
@@ -19,10 +18,6 @@ export class ErrorAlert extends React.PureComponent {
   }
 }
 
-ErrorAlert.propTypes = {
-  errorCode: PropTypes.string,
-};
-
 export class SuccessAlert extends React.PureComponent {
   render() {
     const successObject = {
@@ -37,11 +32,6 @@ export class SuccessAlert extends React.PureComponent {
     </Alert>;
   }
 }
-
-SuccessAlert.propTypes = {
-  claimantName: PropTypes.string,
-  successCode: PropTypes.string
-};
 
 export class FlashAlerts extends React.PureComponent {
   render() {
@@ -65,7 +55,3 @@ export class FlashAlerts extends React.PureComponent {
     return <div className="cf-flash-messages">{alerts}</div>;
   }
 }
-
-FlashAlerts.propTypes = {
-  flash: PropTypes.array
-};

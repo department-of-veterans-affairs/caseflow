@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import Button from '../../components/Button';
@@ -112,29 +111,6 @@ class BoardGrantUnconnected extends React.PureComponent {
     </div>;
   }
 }
-
-BoardGrantIssue.propTypes = {
-  issue: PropTypes.shape({
-    decisionIssue: PropTypes.object,
-    description: PropTypes.string
-  }),
-  index: PropTypes.number
-};
-
-BoardGrantUnconnected.propTypes = {
-  task: PropTypes.shape({
-    closed_at: PropTypes.string,
-    tasks_url: PropTypes.string
-  }),
-  appeal: PropTypes.shape({
-    requestIssues: PropTypes.array,
-    decisionIssues: PropTypes.array
-  }),
-  decisionIssuesStatus: PropTypes.shape({
-    update: PropTypes.string
-  }),
-  handleSave: PropTypes.func
-};
 
 const BoardGrant = connect(
   (state) => ({
