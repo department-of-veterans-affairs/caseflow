@@ -12,7 +12,7 @@ describe CavcDashboard, :postgres do
       expect { cavc_dashboard.save! }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
-    it "validates dates and docket numbers on update" do
+    it "validates dates and docket numbers on update only" do
       cavc_dashboard.board_decision_date = nil
       cavc_dashboard.board_docket_number = nil
       cavc_dashboard.cavc_decision_date = nil
@@ -20,6 +20,10 @@ describe CavcDashboard, :postgres do
 
       expect(cavc_dashboard.valid?).to eq false
       expect(cavc_dashboard.errors.details.count).to eq 4
+
+      new_dashboard = CavcDashboard.new
+      new_dashboard.cavc_remand = create(:cavc_remand)
+      expect(new_dashboard.valid?).to be true
     end
   end
 
