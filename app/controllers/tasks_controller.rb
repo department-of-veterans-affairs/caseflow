@@ -113,7 +113,7 @@ class TasksController < ApplicationController
     tasks_hash = json_tasks(tasks.uniq)
 
 
-    unless tasks.appeal.class == LegacyAppeal
+    if task.appeal.class != LegacyAppeal
       appeal = Appeal.find(task&.appeal.id)
       if appeal.contested_claim?
         if (task.type === "SendInitialNotificationLetterTask")
