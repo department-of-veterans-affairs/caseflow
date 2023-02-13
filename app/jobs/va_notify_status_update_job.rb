@@ -81,7 +81,11 @@ class VANotifyStatusUpdateJob < CaseflowJob
     Notification.where("(notification_type = 'Email' AND email_notification_status = 'Success') \
       OR (notification_type = 'SMS' AND sms_notification_status = 'Success') \
       OR (notification_type = 'Email and SMS' AND \
-         (sms_notification_status = 'Success' OR email_notification_status = 'Success'))")
+         (sms_notification_status = 'Success' OR email_notification_status = 'Success')) \
+      OR (notification_type = 'Email' AND email_notification_status = 'Temporary-failure') \
+      OR (notification_type = 'SMS' AND sms_notification_status = 'Temporary-faiure') \
+      OR (notification_type = 'Email and SMS' AND \
+         (sms_notification_status = 'Success' OR email_notification_status = 'Temporary-failure'))")
   end
 
   # Description: Method to be called when an error message need to be logged
