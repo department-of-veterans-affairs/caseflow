@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require './app/jobs/memberships/send_membership_request_mailer_job.rb'
+
+require "./app/jobs/memberships/send_membership_request_mailer_job.rb"
 
 describe SendMembershipRequestMailerJob do
   let(:type) {{ email_type: email_type }}
@@ -17,7 +18,8 @@ describe SendMembershipRequestMailerJob do
       type = "SendMembershipRequestSubmittedEmail"
       it "sends an email confirming membership request submitted successfully" do
         expect { perform_job.perform(type, recipient_info) }.to change {
-        ActionMailer::Base.deliveries.count }.by 1
+        ActionMailer::Base.deliveries.count
+      }.by 1
       end
     end
 
@@ -25,7 +27,8 @@ describe SendMembershipRequestMailerJob do
       type = "SendAdminsMembershipRequestSubmissionEmail"
       it "sends an email to admins" do
         expect { perform_job.perform(type, recipient_info) }.to change {
-        ActionMailer::Base.deliveries.count }.by 1
+        ActionMailer::Base.deliveries.count
+       }.by 1
       end
     end
 
@@ -33,7 +36,8 @@ describe SendMembershipRequestMailerJob do
       type = "SendUpdatedMembershipRequestStatusEmail"
       it "sends a status update email to requestor" do
         expect { perform_job.perform(type, recipient_info) }.to change {
-        ActionMailer::Base.deliveries.count }.by 1
+        ActionMailer::Base.deliveries.count
+       }.by 1
       end
     end
 
@@ -43,11 +47,11 @@ describe SendMembershipRequestMailerJob do
       end
 
       subject do
-         perform_job.perform(:recipient_info)
+        perform_job.perform(:recipient_info)
       end
 
       it "throws an error" do
-        expect {subject}.to raise_error do |error|
+        expect { subject }.to raise_error do |error|
           expect(error).to be_a(ArgumentError)
         end
       end

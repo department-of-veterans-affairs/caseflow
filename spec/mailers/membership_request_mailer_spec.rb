@@ -20,7 +20,9 @@ describe MembershipRequestMailer do
     end
 
     describe "updated_membership_request_status" do
-      let(:mailer) { MembershipRequestMailer.updated_membership_request_status(email_recipient_info: email_recipient_info) }
+      let(:mailer) {
+        MembershipRequestMailer.updated_membership_request_status(email_recipient_info: email_recipient_info)
+      }
 
       it "has the correct From address" do
         expect(mailer.from).to include("BoardofVeteransAppealsHearings@messages.va.gov")
