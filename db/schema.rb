@@ -340,9 +340,9 @@ ActiveRecord::Schema.define(version: 2023_02_13_132547) do
   end
 
   create_table "cavc_dashboards", force: :cascade do |t|
-    t.datetime "board_decision_date", comment: "The decision date of the source appeal"
+    t.date "board_decision_date", comment: "The decision date of the source appeal"
     t.string "board_docket_number", comment: "The docket number of the source appeal"
-    t.datetime "cavc_decision_date", comment: "The decision date from the CAVC board"
+    t.date "cavc_decision_date", comment: "The decision date from the CAVC board"
     t.string "cavc_docket_number", comment: "The docket number assigned by the CAVC board"
     t.bigint "cavc_remand_id", comment: "ID of the associated CAVC Remand"
     t.datetime "created_at", null: false

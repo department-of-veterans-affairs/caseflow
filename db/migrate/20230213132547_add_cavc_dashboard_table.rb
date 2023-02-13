@@ -2,9 +2,9 @@ class AddCavcDashboardTable < ActiveRecord::Migration[5.2]
   def change
     create_table :cavc_dashboards do |t|
       t.references :cavc_remand, foreign_key: true, comment: "ID of the associated CAVC Remand"
-      t.datetime   :board_decision_date, comment: "The decision date of the source appeal"
+      t.date       :board_decision_date, comment: "The decision date of the source appeal"
       t.string     :board_docket_number, comment: "The docket number of the source appeal"
-      t.datetime   :cavc_decision_date, comment: "The decision date from the CAVC board"
+      t.date       :cavc_decision_date, comment: "The decision date from the CAVC board"
       t.string     :cavc_docket_number, comment: "The docket number assigned by the CAVC board"
       t.boolean    :joint_motion_for_remand, comment: "Whether the CAVC appeal is JMR/JMPR or not"
       t.bigint     :created_by_id, comment: "The ID for the user that created the record"
