@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_01_172549) do
+ActiveRecord::Schema.define(version: 2023_02_13_132547) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -317,26 +317,40 @@ ActiveRecord::Schema.define(version: 2023_02_01_172549) do
   end
 
   create_table "cavc_dashboard_dispositions", force: :cascade do |t|
+    t.bigint "cavc_dashboard_id", comment: "ID of the associated CAVC Dashboard"
     t.bigint "cavc_dashboard_issue_id"
-    t.bigint "cavc_remand_id", comment: "ID of the associated CAVC remand"
     t.datetime "created_at", null: false
     t.bigint "created_by_id", comment: "The ID for the user that created the record"
     t.string "disposition", comment: "The disposition of the issue"
     t.bigint "request_issue_id", comment: "ID for a request issue that was filed with the CAVC Remand"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "The ID for the user that most recently changed the record"
-    t.index ["cavc_remand_id"], name: "index_cavc_dashboard_dispositions_on_cavc_remand_id"
+    t.index ["cavc_dashboard_id"], name: "index_cavc_dashboard_dispositions_on_cavc_dashboard_id"
   end
 
   create_table "cavc_dashboard_issues", force: :cascade do |t|
     t.string "benefit_type"
-    t.bigint "cavc_remand_id", comment: "ID of the associated CAVC remand"
+    t.bigint "cavc_dashboard_id", comment: "ID of the associated CAVC Dashboard"
     t.datetime "created_at"
     t.bigint "created_by_id"
     t.string "issue_category"
     t.datetime "updated_at"
     t.bigint "updated_by_id"
-    t.index ["cavc_remand_id"], name: "index_cavc_dashboard_issues_on_cavc_remand_id"
+    t.index ["cavc_dashboard_id"], name: "index_cavc_dashboard_issues_on_cavc_dashboard_id"
+  end
+
+  create_table "cavc_dashboards", force: :cascade do |t|
+    t.datetime "board_decision_date", comment: "The decision date of the source appeal"
+    t.string "board_docket_number", comment: "The docket number of the source appeal"
+    t.datetime "cavc_decision_date", comment: "The decision date from the CAVC board"
+    t.string "cavc_docket_number", comment: "The docket number assigned by the CAVC board"
+    t.bigint "cavc_remand_id", comment: "ID of the associated CAVC Remand"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "The ID for the user that created the record"
+    t.boolean "joint_motion_for_remand", comment: "Whether the CAVC appeal is JMR/JMPR or not"
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id", comment: "The ID for the user that most recently changed the record"
+    t.index ["cavc_remand_id"], name: "index_cavc_dashboards_on_cavc_remand_id"
   end
 
   create_table "cavc_decision_reasons", force: :cascade do |t|
@@ -1863,8 +1877,9 @@ ActiveRecord::Schema.define(version: 2023_02_01_172549) do
   add_foreign_key "board_grant_effectuations", "decision_documents"
   add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
   add_foreign_key "board_grant_effectuations", "end_product_establishments"
-  add_foreign_key "cavc_dashboard_dispositions", "cavc_remands"
-  add_foreign_key "cavc_dashboard_issues", "cavc_remands"
+  add_foreign_key "cavc_dashboard_dispositions", "cavc_dashboards"
+  add_foreign_key "cavc_dashboard_issues", "cavc_dashboards"
+  add_foreign_key "cavc_dashboards", "cavc_remands"
   add_foreign_key "cavc_decision_reasons", "cavc_decision_reasons", column: "parent_decision_reason_id"
   add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
