@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_13_132547) do
+ActiveRecord::Schema.define(version: 2023_02_13_205524) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1878,8 +1878,14 @@ ActiveRecord::Schema.define(version: 2023_02_13_132547) do
   add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
   add_foreign_key "board_grant_effectuations", "end_product_establishments"
   add_foreign_key "cavc_dashboard_dispositions", "cavc_dashboards"
+  add_foreign_key "cavc_dashboard_dispositions", "users", column: "created_by_id", name: "cavc_dashboard_dispositions_created_by_id_fk"
+  add_foreign_key "cavc_dashboard_dispositions", "users", column: "updated_by_id", name: "cavc_dashboard_dispositions_updated_by_id_fk"
   add_foreign_key "cavc_dashboard_issues", "cavc_dashboards"
+  add_foreign_key "cavc_dashboard_issues", "users", column: "created_by_id", name: "cavc_dashboard_issues_created_by_id_fk"
+  add_foreign_key "cavc_dashboard_issues", "users", column: "updated_by_id", name: "cavc_dashboard_issues_updated_by_id_fk"
   add_foreign_key "cavc_dashboards", "cavc_remands"
+  add_foreign_key "cavc_dashboards", "users", column: "created_by_id", name: "cavc_dashboards_created_by_id_fk"
+  add_foreign_key "cavc_dashboards", "users", column: "updated_by_id", name: "cavc_dashboards_updated_by_id_fk"
   add_foreign_key "cavc_decision_reasons", "cavc_decision_reasons", column: "parent_decision_reason_id"
   add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
