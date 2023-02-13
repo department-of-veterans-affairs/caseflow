@@ -5,9 +5,9 @@ class UploadDocumentToVbms
 
   delegate :document_type, :document_subject, :document_name, to: :document
 
-  def initialize(document:, s3_sub_bucket: "idt-uploaded-documents")
+  def initialize(document:, document_source: "idt-uploaded-documents")
     @document = document
-    @s3_sub_bucket = s3_sub_bucket
+    @document_source = document_source
   end
 
   def call
@@ -72,7 +72,7 @@ class UploadDocumentToVbms
 
   def s3_location
     # UploadDocumentToVbms::S3_SUB_BUCKET + "/" + pdf_name
-    s3_sub_bucket + "/" + pdf_name
+    document_source + "/" + pdf_name
   end
 
   def output_location

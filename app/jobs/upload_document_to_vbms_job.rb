@@ -2,10 +2,11 @@
 
 class UploadDocumentToVbmsJob < CaseflowJob
   queue_with_priority :low_priority
-  application_attr :idt
+  # application_attr application.to_sym
+  # application_attr :idt
 
-  def perform(document_id:, initiator_css_id:)
-    RequestStore.store[:application] = "idt"
+  def perform(document_id:, initiator_css_id:, application: "idt")
+    RequestStore.store[:application] = application
     RequestStore.store[:current_user] = User.system_user
 
     @document = VbmsUploadedDocument.find_by(id: document_id)
