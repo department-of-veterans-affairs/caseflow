@@ -49,9 +49,16 @@ class AppealsController < ApplicationController
   end
 
   def fetch_notification_list
-    appeals_id = params[:appeals_id]
-    results = find_notifications_by_appeals_id(appeals_id)
-    render json: results
+    respond_to do |format|
+      format.json do
+        appeals_id = params[:appeals_id]
+        results = find_notifications_by_appeals_id(appeals_id)
+        render json: results
+      end
+      format.pdf do
+        content_type = request.headers["PDF"]
+      end
+    end
   end
 
   def document_count
