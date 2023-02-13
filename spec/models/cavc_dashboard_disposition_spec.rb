@@ -2,6 +2,7 @@
 
 describe CavcDashboardDisposition, :postgres do
   let(:cavc_remand) { create(:cavc_remand) }
+  let(:cavc_dashboard) { CavcDashboard.create(cavc_remand: cavc_remand)}
 
   before do
     RequestStore.store[:current_user] = User.system_user
@@ -10,12 +11,12 @@ describe CavcDashboardDisposition, :postgres do
   context "validates" do
     it "CAVC remand presence" do
       expect { described_class.create! }.to raise_error(ActiveRecord::RecordInvalid)
-      expect { described_class.create!(cavc_remand: cavc_remand, disposition: "N/A") }.not_to raise_error
+      expect { described_class.create!(cavc_dashboard: cavc_dashboard, disposition: "N/A") }.not_to raise_error
     end
 
     it "disposition presence on update only" do
       # nil disposition on initial save is allowed
-      dashboard_disposition = described_class.new(cavc_remand: cavc_remand)
+      dashboard_disposition = described_class.new(cavc_dashboard: cavc_dashboard)
       expect { dashboard_disposition.save! }.not_to raise_error
 
       # since the record already exists in the DB, this save! is considered an update by ActiveRecord
@@ -36,8 +37,9 @@ describe CavcDashboardDisposition, :postgres do
     end
 
     it "only a single issue can be linked to disposition" do
-      expect { described_class.create!(cavc_remand: cavc_remand, request_issue_id: 1, cavc_dashboard_issue_id: 1) }
-        .to raise_error(ActiveRecord::RecordInvalid)
+      expect do
+        described_class.create!(cavc_dashboard: cavc_dashboard, request_issue_id: 1, cavc_dashboard_issue_id: 1)
+      end.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 end
