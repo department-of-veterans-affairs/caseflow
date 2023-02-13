@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 class UploadDocumentToVbms
-  S3_SUB_BUCKET = "idt-uploaded-documents"
+  # S3_SUB_BUCKET = "idt-uploaded-documents"
 
   delegate :document_type, :document_subject, :document_name, to: :document
 
-  def initialize(document:)
+  def initialize(document:, s3_sub_bucket: "idt-uploaded-documents")
     @document = document
+    @s3_sub_bucket = s3_sub_bucket
   end
 
   def call
@@ -70,7 +71,8 @@ class UploadDocumentToVbms
   end
 
   def s3_location
-    UploadDocumentToVbms::S3_SUB_BUCKET + "/" + pdf_name
+    # UploadDocumentToVbms::S3_SUB_BUCKET + "/" + pdf_name
+    s3_sub_bucket + "/" + pdf_name
   end
 
   def output_location
