@@ -107,46 +107,25 @@ class TasksController < ApplicationController
   #   assigned_to_id: 23
   # }
   def update
-    tasks = task.update_from_params(update_params, current_user)
-    tasks.each { |t| return invalid_record_error(t) unless t.valid? }
+    Task.transaction do
+      tasks = task.update_from_params(update_params, current_user)
+      tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    tasks_hash = json_tasks(tasks.uniq)
+      tasks_hash = json_tasks(tasks.uniq)
 
-
-    if task.appeal.class != LegacyAppeal
-      appeal = Appeal.find(task&.appeal.id)
-      if appeal.contested_claim?
-        if (task.type === "SendInitialNotificationLetterTask")
-          opc = params['select_opc']
-          if (opc === "task_complete_contested_claim")
-            days_on_hold = params['hold_days'].to_i
-            instructions= "";
-            PostSendInitialNotificationLetterHoldingTask.create_from_parent(task.parent, days_on_hold: days_on_hold, instructions: instructions)
-          elseif (opc === "proceed_final_notification_letter")
-            send_final_notification_letter
-          end
-          # case opc
-          # when "task_complete_contested_claim"
-          #   days_on_hold = params['hold_days'].to_i
-          #   instructions= "";
-          #   PostSendInitialNotificationLetterHoldingTask.create_from_parent(task.parent, days_on_hold: days_on_hold, instructions: instructions)
-          # when "proceed_final_notification_letter"
-          #   send_final_notification_letter
-          # else
-          #   puts "no"
-          # end
-        end
+      if task.appeal.class != LegacyAppeal
+          modified_task_contested_claim
       end
+      # currently alerts are only returned by ScheduleHearingTask
+      # and AssignHearingDispositionTask for virtual hearing related updates
+      # Start with any alerts on the current task, then find alerts on the tasks
+      # that resulted from the update
+      alerts = tasks.reduce(task.alerts) { |acc, t| acc + t.alerts }
+
+      tasks_hash[:alerts] = alerts if alerts # does not add to hash if alerts == []
+
+      render json: { tasks: tasks_hash }
     end
-    # currently alerts are only returned by ScheduleHearingTask
-    # and AssignHearingDispositionTask for virtual hearing related updates
-    # Start with any alerts on the current task, then find alerts on the tasks
-    # that resulted from the update
-    alerts = tasks.reduce(task.alerts) { |acc, t| acc + t.alerts }
-
-    tasks_hash[:alerts] = alerts if alerts # does not add to hash if alerts == []
-
-    render json: { tasks: tasks_hash }
   rescue Caseflow::Error::InvalidEmailError => error
     Raven.capture_exception(error, extra: { application: "hearings" })
 
@@ -216,6 +195,26 @@ class TasksController < ApplicationController
                                           )
 
   end
+
+  def modified_task_contested_claim
+    appeal = Appeal.find(task&.appeal.id)
+    if appeal.contested_claim?
+      if (task.type === "SendInitialNotificationLetterTask")
+        opc = params['select_opc']
+        case opc
+        when "task_complete_contested_claim"
+          days_on_hold = params['hold_days'].to_i
+          instructions= "";
+          PostSendInitialNotificationLetterHoldingTask.create_from_parent(task.parent, days_on_hold: days_on_hold, instructions: instructions)
+        when "proceed_final_notification_letter"
+          send_final_notification_letter
+        else
+          put "nothing yet"
+        end
+      end
+    end
+  end
+
 
   def render_update_errors(errors)
     render json: { "errors": errors }, status: :bad_request
