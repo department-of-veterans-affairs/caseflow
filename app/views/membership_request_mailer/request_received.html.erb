@@ -2,7 +2,7 @@
 
 <%= content_for :content do %>
   <p>
-    We received your request for Caseflow access to <%= @requesting_org_name %>. Each organization reviews requests independently; they’ll notify you via email with the decision for their organization.
+    We received your request for Caseflow access to <%= @requesting_org_names&.join(", ") %>. Each organization reviews requests independently; they’ll notify you via email with the decision for their organization.
   </p>
 
   <p>
