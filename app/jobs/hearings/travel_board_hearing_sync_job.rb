@@ -86,7 +86,7 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
       ).limit(BATCH_LIMIT).to_a
       .map do |vacols_case|
         # If there is not already a Legacy Appeal record tied to this case. Create one.
-        if!LegacyAppeal.where(vacols_id: vacols_case.bfkey).exists?
+        if !LegacyAppeal.where(vacols_id: vacols_case.bfkey).exists?
           begin
               AppealRepository.build_appeal(vacols_case, true)
           rescue StandardError => error
