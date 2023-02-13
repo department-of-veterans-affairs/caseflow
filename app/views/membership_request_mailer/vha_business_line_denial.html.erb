@@ -7,8 +7,8 @@
 
   <p>You currently have access to the following groups pages' in Caseflow, if any: </p>
 
-  <% @accessible_groups.each do |group_name| %>
-    <p> <%= group_name %> </p>
+  <% @accessible_groups.each do |accessible_group| %>
+    <p> <%= accessible_group %> </p>
   <% end %>
 <% end %>
 

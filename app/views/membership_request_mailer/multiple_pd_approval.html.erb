@@ -9,8 +9,8 @@
     <b> You now have access to the following groups' pages: </b>
   </p>
 
-  <% @accessible_groups.each do |group_name| %>
-    <p> <%= group_name %> </p>
+  <% @accessible_groups.each do |accessible_group| %>
+    <p> <%= accessible_group %> </p>
   <% end %>
 
   <p>
@@ -21,8 +21,8 @@
     <b> Your pending requests: </b>
   </p>
 
-  <% @requested_groups.each do |pending_request_group| %>
-    <p> <%= pending_request_group %> </p>
+  <% @requested_groups.each do |requested_group| %>
+    <p> <%= requested_group %> </p>
   <% end %>
 <% end %>
 

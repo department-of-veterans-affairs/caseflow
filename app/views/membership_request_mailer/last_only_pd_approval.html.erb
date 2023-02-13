@@ -9,8 +9,8 @@
     <b>You now have access to the following groups' pages: </b>
   </p>
 
-  <% @accessible_groups.each do |group_name| %>
-    <p> <%= group_name %> </p>
+  <% @accessible_groups.each do |accessible_group| %>
+    <p> <%= accessible_group %> </p>
   <% end %>
 <% end %>
 
