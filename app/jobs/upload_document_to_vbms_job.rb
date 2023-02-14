@@ -2,9 +2,15 @@
 
 class UploadDocumentToVbmsJob < CaseflowJob
   queue_with_priority :low_priority
-  # application_attr application.to_sym
   # application_attr :idt
 
+  # Purpose: Calls the UploadDocumentToVbms workflow to upload the given document to VBMS
+  #
+  # Params: document_id - integer to search for VbmsUploadedDocument
+  #         initiator_css_id - string to find a user by css_id
+  #         application - string with a default value of "idt" but can be overwritten
+  #
+  # Return: nil
   def perform(document_id:, initiator_css_id:, application: "idt")
     RequestStore.store[:application] = application
     RequestStore.store[:current_user] = User.system_user

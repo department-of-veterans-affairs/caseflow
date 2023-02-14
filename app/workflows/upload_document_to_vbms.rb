@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 class UploadDocumentToVbms
-  # S3_SUB_BUCKET = "idt-uploaded-documents"
-
   delegate :document_type, :document_subject, :document_name, to: :document
   attr_reader :s3_sub_bucket
 
+  # s3_sub_bucket was previously a constant defined for this class.
+  # It was added to a variable in the initialize method to allow for different sub buckets
+  # to be passed in, while maintaining the original constant as the default.
   def initialize(document:, s3_sub_bucket: "idt-uploaded-documents")
     @document = document
     @s3_sub_bucket = s3_sub_bucket
@@ -72,7 +73,6 @@ class UploadDocumentToVbms
   end
 
   def s3_location
-    # UploadDocumentToVbms::S3_SUB_BUCKET + "/" + pdf_name
     s3_sub_bucket + "/" + pdf_name
   end
 
