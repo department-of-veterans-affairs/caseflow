@@ -11,9 +11,7 @@ class WorkQueue::CavcDashboardSerializer
   attribute :cavc_decision_date
   attribute :cavc_docket_number
   attribute :cavc_remand
-  attribute :joint_motion_for_remand do |object|
-    object.joint_motion_for_remand.to_s
-  end
+  attribute :joint_motion_for_remand
 
   attribute :source_request_issues
 end
