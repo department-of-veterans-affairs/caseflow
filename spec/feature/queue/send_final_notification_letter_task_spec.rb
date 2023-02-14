@@ -8,6 +8,13 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
     cob_team.add_user(user)
     User.authenticate!(user: user)
     FeatureToggle.enable!(:cc_appeal_workflow)
+
+    PostSendInitialNotificationLetterHoldingTask.create_from_parent(
+      distribution_task,
+      days_on_hold: days_on_hold,
+      assigned_by: user,
+      instructions: "instructions"
+    )
   end
 
   describe "Accessing task actions" do
@@ -21,13 +28,10 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       )
     end
 
+    let(:days_on_hold) { 45 }
+
     let(:post_letter_task) do
-      PostSendInitialNotificationLetterHoldingTask.create!(
-        appeal: root_task.appeal,
-        parent: distribution_task,
-        assigned_to: cob_team,
-        days_on_hold: 1
-      )
+      PostSendInitialNotificationLetterHoldingTask.last
     end
 
     let(:final_letter_task) do
@@ -42,10 +46,8 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       initial_letter_task.completed!
       post_letter_task.completed!
 
-
       visit("/queue")
       visit("/queue/appeals/#{final_letter_task.appeal.external_id}")
-
 
       # find and click action dropdown
       dropdown = find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
@@ -86,6 +88,5 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       expect(page).to have_content(`#{appeal_initial_letter_task.type} cancelled`)
       expect(appeal_initial_letter_task.status).to eq("cancelled")
     end
-
   end
 end
