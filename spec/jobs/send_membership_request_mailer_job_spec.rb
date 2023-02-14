@@ -13,7 +13,7 @@ describe Memberships::SendMembershipRequestMailerJob do
 
   describe "#perform" do
     context "the type is SendMembershipRequestSubmittedEmail" do
-      type = "SendMembershipRequestSubmittedEmail"
+      let(:type) { "SendMembershipRequestSubmittedEmail" }
       it "sends an email confirming membership request submitted successfully" do
         expect { perform_job.perform(type, recipient_info) }.to change {
           ActionMailer::Base.deliveries.count
