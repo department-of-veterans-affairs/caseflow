@@ -40,19 +40,16 @@ describe Memberships::SendMembershipRequestMailerJob do
     end
 
     context "no type provided" do
-      let(:perform_job) do
-        SendMembershipRequestMailerJob.new(type: nil, recipient_info: recipient_info)
-      end
-
-      subject do
-        perform_job.perform(:recipient_info)
-      end
+      let(:type) { nil }
+      
+      subject { perform_job.perform }
 
       it "throws an error" do
-        expect { subject }.to raise_error do |error|
+        is_expected.to raise_error do |error|
           expect(error).to be_a(ArgumentError)
         end
       end
+    end
     end
   end
 end
