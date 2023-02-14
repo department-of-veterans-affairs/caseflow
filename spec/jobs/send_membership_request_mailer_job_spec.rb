@@ -8,7 +8,7 @@ describe Memberships::SendMembershipRequestMailerJob do
   let(:name) { "Bob" }
 
   let(:perform_job) do
-    SendMembershipRequestMailerJob.new(type: type, recipient_info: recipient_info)
+    Memberships::SendMembershipRequestMailerJob.new(type, recipient_info)
   end
 
   describe "#perform" do
