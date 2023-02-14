@@ -755,6 +755,26 @@ describe User, :all_dbs do
     end
   end
 
+  describe "vha_employee?" do
+    let(:user) { create(:user) }
+    let(:org) { BusinessLine.create!(name: "Veterans Health Administration", url: "vha") }
+
+    subject { user.vha_employee? }
+
+    context "when current user is a member of VHA org" do
+      before { org.add_user(user) }
+      it "returns true" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when current user is NOT a member of VHA org" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
   describe "can_edit_unrecognized_poa?" do
     let(:user) { create(:user) }
     subject { user.can_edit_unrecognized_poa? }

@@ -96,6 +96,8 @@ describe('QueueLoadingScreen', () => {
           pgId: 10
         },
         workProduct: 'OTD',
+        caseType: 'Post Remand',
+        aod: false,
         previousTaskAssignedOn: '2018-08-02T17:37:03.000Z',
         startedAt: '2018-08-02T17:37:03.000Z',
         status: 'Assigned',

@@ -25,6 +25,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :appeals, only: :index
       resources :jobs, only: :create
+      post 'mpi', to: 'mpi#veteran_updates'
     end
     namespace :v2 do
       resources :appeals, only: :index
@@ -153,6 +154,8 @@ Rails.application.routes.draw do
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
 
+  get '/appeals/:appeals_id/notifications' => 'appeals#fetch_notification_list'
+
   get '/task_tree/:appeal_type/:appeal_id' => 'task_tree#show'
 
   post '/appeals/:appeal_id/split' => 'split_appeal#split_appeal'
@@ -277,6 +280,7 @@ Rails.application.routes.draw do
   scope path: '/queue' do
     get '/', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
+    get '/appeals/:appealId/notifications', to: 'queue#index'
     get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
@@ -379,6 +383,8 @@ Rails.application.routes.draw do
 
   get "/route_docs", to: "route_docs#index"
 
+  get "/admin", to: "admin#index"
+  get "admin/veteran_extract", to: "admin#veteran_extract"
   get "/mpi", to: "mpi#index"
   post "/mpi/search", to: "mpi#search"
 end

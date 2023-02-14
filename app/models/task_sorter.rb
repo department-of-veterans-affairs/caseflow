@@ -8,16 +8,16 @@ class TaskSorter
   validate :sort_order_is_valid
   validate :tasks_type_is_valid
 
-  attr_accessor :column, :sort_order, :tasks
+  attr_accessor :column, :sort_order, :tasks, :assignee
 
   def initialize(args)
     super
 
-    # Default to sorting by AOD, case type, and docket number.
+    # default to sorting by AOD, case type, and docket number.
     @column ||= QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name)
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
     @tasks ||= Task.none
-
+    @assignee ||= Organization.none
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
 
@@ -36,6 +36,7 @@ class TaskSorter
     return false if col.match?(/_at$/) # no timestamps
     return false if col.match?(/^is_/) # no booleans
     return false if col.match?(/_count$/) # no integers
+    return false if col.match?(/date$/) # no dates
 
     true
   end

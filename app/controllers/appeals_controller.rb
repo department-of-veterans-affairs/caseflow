@@ -8,6 +8,7 @@ class AppealsController < ApplicationController
     :index,
     :power_of_attorney,
     :show_case_list,
+    :fetch_notification_list,
     :show,
     :veteran,
     :most_recent_hearing
@@ -45,6 +46,12 @@ class AppealsController < ApplicationController
         render_search_results_as_json(result)
       end
     end
+  end
+
+  def fetch_notification_list
+    appeals_id = params[:appeals_id]
+    results = find_notifications_by_appeals_id(appeals_id)
+    render json: results
   end
 
   def document_count
@@ -296,5 +303,25 @@ class AppealsController < ApplicationController
       alert_type: "error",
       message: "Something went wrong"
     }, status: :unprocessable_entity
+  end
+
+  # Purpose: Fetches all notifications for an appeal
+  #
+  # Params: appeals_id (vacols_id OR uuid)
+  #
+  # Response: Returns an array of all retrieved notifications
+  def find_notifications_by_appeals_id(appeals_id)
+    # Retrieve notifications based on appeals_id, excluding statuses of 'No participant_id' & 'No claimant'
+    @all_notifications = Notification.where(appeals_id: appeals_id)
+    @allowed_notifications = @all_notifications.where(email_notification_status: nil)
+      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .merge(@all_notifications.where(sms_notification_status: nil)
+      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"])))
+    # If no notifications were found, return an empty array, else return serialized notifications
+    if @allowed_notifications == []
+      []
+    else
+      WorkQueue::NotificationSerializer.new(@allowed_notifications).serializable_hash[:data]
+    end
   end
 end
