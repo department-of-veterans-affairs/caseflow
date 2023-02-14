@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Checkbox from 'app/components/Checkbox';
 import CheckboxGroup from 'app/components/CheckboxGroup';
 import Button from 'app/components/Button';
@@ -12,6 +12,7 @@ import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_CAMO_AND_CAREGIVER_OPTIONS } from '../c
 import { VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE,
   VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE } from '../../../COPY';
 import ApiUtil from '../../util/ApiUtil';
+import { setSuccessMessage } from '../helpApiSlice';
 
 const checkboxDivStyling = css({
   '& .cf-form-checkboxes': { marginTop: '10px' },
@@ -34,6 +35,8 @@ const VhaMembershipRequestForm = () => {
   const organizationMembershipRequests = useSelector(
     (state) => state.help.organizationMembershipRequests
   );
+
+  const dispatch = useDispatch();
 
   // Decide what special access checkbox options are available based on the feature toggle.
   // If it is enabled show all program offices, otherwise only show camo and caregiver.
@@ -125,20 +128,35 @@ const VhaMembershipRequestForm = () => {
     );
   };
 
+  const resetMembershipRequestForm = () => {
+    setVhaAccess(false);
+    setProgramOfficesAccess(parsedIssues);
+    setRequestReason('');
+  };
+
   const handleSubmit = (event) => {
     // TODO: handle all of this in a dispatch to the form reducer/thunk/actions
     // dispatchEvent(submitFormAction(formData));
     // Do not need prevent default if I don't use button type=submit, but would need click handler or something.
     event.preventDefault();
     console.log('me submit form real good like');
+    const membershipRequests = { vhaAccess, ...programOfficesAccess };
     const { body } = ApiUtil.post(
       '/membership_requests',
-      { data: { vhaAccess, programOfficesAccess, requestReason } },
+      // { data: { vhaAccess, programOfficesAccess, requestReason } },
+      { data: { membershipRequests, requestReason } },
     ).then((response) => {
       const { message } = response.body.data;
 
       console.log(response.body.data);
       alert(message);
+
+      // dispatch(setUserOrganizations(props.userOrganizations));
+      dispatch(setSuccessMessage(message));
+
+      // TODO: renable this. It's just annoying for testing though.
+      // resetMembershipRequestForm();
+
       // can dispatch or can just do a normal form submit.
       // I think it doesn't matter which but would change the reload/loading of data.
       // If it's a normal form submit then we probably need an erb file.

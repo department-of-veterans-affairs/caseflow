@@ -783,6 +783,7 @@
 
   "VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE": "Note: If you are requesting specialized access and are not a member of the general VHA group, you will automatically be given access to the general VHA group if your request is approved.",
   "VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE": "Options are disabled if you have a pending request or are already a member of the group.",
+  "VHA_MEMBERSHIP_REQUEST_FORM_SUBMIT_SUCCESS_MESSAGE": "Your request to access %s has been submitted. Please check your VA email for updates concerning your request.",
 
   "ACCESS_DENIED_TITLE": "Additional access needed",
   "INFORMATION_CANNOT_BE_FOUND": "Information cannot be found",

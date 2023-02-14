@@ -19,6 +19,10 @@ export const initialState = {
   featureToggles: {},
   userOrganizations: [],
   organizationMembershipRequests: [],
+  messages: {
+    success: null,
+    error: null
+  },
 };
 
 const formSlice = createSlice({
@@ -54,11 +58,27 @@ const helpSlice = createSlice({
     setOrganizationMembershipRequests: (state, action) => {
       state.organizationMembershipRequests = action.payload;
     },
+    // TODO: Might rename these two setMessages to showMessages to more line up with how the queue ui redux store works.
+    setSuccessMessage: (state, action) => {
+      state.messages.success = action.payload;
+    },
+    setErrorMessage: (state, action) => {
+      state.messsages.error = action.payload;
+    },
+    resetSuccessMessage: (state) => {
+      state.messages.success = null;
+    },
+    resetErrorMessage: (state) => {
+      state.messages.error = null;
+    }
   },
 });
 
 const helpReducers = combineReducers({ help: helpSlice.reducer, form: formSlice.reducer });
 
-export const { setFeatureToggles, setUserOrganizations, setOrganizationMembershipRequests } = helpSlice.actions;
+export const { setFeatureToggles,
+  setUserOrganizations,
+  setOrganizationMembershipRequests,
+  setSuccessMessage } = helpSlice.actions;
 
 export default helpReducers;
