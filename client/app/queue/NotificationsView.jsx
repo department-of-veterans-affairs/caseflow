@@ -78,11 +78,13 @@ export const NotificationsView = (props) => {
           hideDecisionDocument
         />
         <div {...sectionGap} >
-          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <p className="notification-text">
               VA Notify sent these status notifications to the Appellant about their case.
             </p>
-            <Button>Download</Button>
+            <Button onClick={() => {
+              fetch({ headers: { 'Content-Type': 'HTTP_PDF' } });
+            }} >Download</Button>
           </div>
           <div className="notification-table">
             <NotificationTable

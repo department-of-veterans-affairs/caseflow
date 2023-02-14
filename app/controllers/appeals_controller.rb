@@ -49,17 +49,16 @@ class AppealsController < ApplicationController
   end
 
   def fetch_notification_list
+    appeals_id = params[:appeals_id]
     respond_to do |format|
       format.json do
-        appeals_id = params[:appeals_id]
         results = find_notifications_by_appeals_id(appeals_id)
         render json: results
       end
       format.pdf do
+        appeal = get_appeal_object(appeals_id)
         request.headers["HTTP_PDF"]
-        appeals_id = params[:appeals_id]
-        send data pdf: PdfExportService.create_and_save_pdf(appeals_id), filename: PdfExportService.file_name, type: "application/pdf"
-        render pdf: PdfExportService.file_name
+        send data pdf: PdfExportService.call("notification_report_pdf_template", appeal).render, filename: PdfExportService.file_name, type: "application/pdf", disposition: :attachment
       end
     end
   end
@@ -332,6 +331,15 @@ class AppealsController < ApplicationController
       []
     else
       WorkQueue::NotificationSerializer.new(@allowed_notifications).serializable_hash[:data]
+    end
+  end
+
+  def get_appeal_object(appeals_id)
+    type = Notification.find_by(appeals_id: appeals_id).appeals_type
+    if type == "LegacyAppeal"
+      LegacyAppeal.find_by(vacols_id: appeals_id)
+    elsif type == "Appeal"
+      Appeal.find_by(uuid: appeals_id)
     end
   end
 end

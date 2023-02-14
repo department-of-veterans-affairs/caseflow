@@ -50,11 +50,13 @@ class PdfExportService
       end
       # file_location = "#{Rails.root}/#{file_name}"
       # kit.to_pdf(file_location)
-      # create pdf file from pdfkit object
-      pdf = kit.to_pdf
-      # store file in s3 bucket
-      file_location = template_name + "/" + file_name
-      S3Service.store_file(file_location, pdf)
+      # # create pdf file from pdfkit object
+      # pdf = kit.to_pdf
+      # # store file in s3 bucket
+      # file_location = template_name + "/" + file_name
+      # S3Service.store_file(file_location, pdf)
+      file_path = "#{Rails.root}/#{file_name}"
+      kit.to_pdf(file_path)
       file_location
     end
   end
