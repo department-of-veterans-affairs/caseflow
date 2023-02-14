@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "./app/jobs/memberships/send_membership_request_mailer_job.rb"
-
-describe SendMembershipRequestMailerJob do
+describe Memberships::SendMembershipRequestMailerJob do
   let(:type) { { email_type: email_type } }
   let(:recipient_info) { { email: email } }
   let(:email_type) { " " }
