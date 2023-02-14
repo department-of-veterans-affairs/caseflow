@@ -15,7 +15,7 @@ describe Memberships::SendMembershipRequestMailerJob do
     context "the type is SendMembershipRequestSubmittedEmail" do
       let(:type) { "SendMembershipRequestSubmittedEmail" }
       it "sends an email confirming membership request submitted successfully" do
-        expect { perform_job.perform(type, recipient_info) }.to change {
+        expect { perform_job.perform }.to change {
           ActionMailer::Base.deliveries.count
         }.by 1
       end
@@ -24,16 +24,16 @@ describe Memberships::SendMembershipRequestMailerJob do
     context "the type is SendAdminsMembershipRequestSubmissionEmail" do
       let(:type) { "SendAdminsMembershipRequestSubmissionEmail" }
       it "sends an email to admins" do
-        expect { perform_job.perform(type, recipient_info) }.to change {
+        expect { perform_job.perform }.to change {
           ActionMailer::Base.deliveries.count
         }.by 1
       end
     end
 
-    context "SendUpdatedMembershipRequestStatusEmail" do
+    context "the type is SendUpdatedMembershipRequestStatusEmail" do
       let(:type) { "SendUpdatedMembershipRequestStatusEmail" }
       it "sends a status update email to requestor" do
-        expect { perform_job.perform(type, recipient_info) }.to change {
+        expect { perform_job.perform }.to change {
           ActionMailer::Base.deliveries.count
         }.by 1
       end
@@ -41,15 +41,14 @@ describe Memberships::SendMembershipRequestMailerJob do
 
     context "no type provided" do
       let(:type) { nil }
-      
+
       subject { perform_job.perform }
 
       it "throws an error" do
-        is_expected.to raise_error do |error|
+        expect { subject }.to raise_error do |error|
           expect(error).to be_a(ArgumentError)
         end
       end
-    end
     end
   end
 end
