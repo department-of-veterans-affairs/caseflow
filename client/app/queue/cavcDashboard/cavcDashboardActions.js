@@ -21,7 +21,7 @@ export const fetchInitialDashboardData = (appealId) => (dispatch) => {
     then((response) => dispatch({
       type: ACTIONS.FETCH_INITIAL_DASHBOARD_DATA,
       payload: {
-        cavc_remands: response.body.cavc_remands
+        cavc_dashboards: response.body.cavc_dashboards
       }
     }));
 };

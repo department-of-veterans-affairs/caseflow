@@ -46,8 +46,9 @@ module Seeds
         remand = create(:cavc_remand,
                         cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
                         veteran: create_veteran)
-        remand.source_appeal.request_issues.map do |issue|
-          CavcDashboardDisposition.create(cavc_remand: remand, request_issue_id: issue.id)
+        dashboard = CavcDashboard.create!(cavc_remand: remand)
+        dashboard.source_request_issues.map do |issue|
+          CavcDashboardDisposition.create(cavc_dashboard: dashboard, request_issue_id: issue.id)
         end
 
         @cavc_docket_number_last_four += 1
@@ -59,7 +60,8 @@ module Seeds
         remand = create(:cavc_remand,
                         cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
                         veteran: create_veteran)
-          CavcDashboardIssue.create(cavc_remand: remand)
+        dashboard = CavcDashboard.create!(cavc_remand: remand)
+        CavcDashboardIssue.create(cavc_dashboard: dashboard)
 
         @cavc_docket_number_last_four += 1
       end

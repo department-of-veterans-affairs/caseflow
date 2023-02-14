@@ -14,7 +14,7 @@ import TabWindow from '../../components/TabWindow';
 import CavcDashboardTab from './CavcDashboardTab';
 
 export const CavcDashboard = (props) => {
-  const { appealId, appealDetails, cavcRemands } = props;
+  const { appealId, appealDetails, cavcDashboards } = props;
 
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -35,10 +35,10 @@ export const CavcDashboard = (props) => {
   }, []);
 
   useEffect(() => {
-    if (loaded && cavcRemands) {
-      setTabs(cavcRemands.map((remand) => {
-        const label = `CAVC appeal ${remand.cavc_docket_number}`;
-        const page = <CavcDashboardTab remandId={remand.id} />;
+    if (loaded && cavcDashboards) {
+      setTabs(cavcDashboards.map((dashboard) => {
+        const label = `CAVC appeal ${dashboard.cavc_docket_number}`;
+        const page = <CavcDashboardTab dashboardId={dashboard.id} />;
 
         return { label, page };
       }));
@@ -46,7 +46,7 @@ export const CavcDashboard = (props) => {
   }, [loaded]);
 
   // Redirect to the CaseDetails page if no remand exists for the provided appealId
-  if (loaded && !cavcRemands) {
+  if (loaded && !cavcDashboards) {
     return <Redirect to={`/queue/appeals/${appealId}`} />;
   }
 
@@ -79,7 +79,7 @@ CavcDashboard.propTypes = {
   appealId: PropTypes.string.isRequired,
   appeal: PropTypes.object,
   appealDetails: PropTypes.object,
-  cavcRemands: PropTypes.array,
+  cavcDashboards: PropTypes.array,
   fetchAppealDetails: PropTypes.func,
   fetchCavcDecisionReasons: PropTypes.func,
   fetchCavcSelectionBases: PropTypes.func,
@@ -89,7 +89,7 @@ CavcDashboard.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   return {
     appealDetails: state.queue.appealDetails[ownProps.appealId],
-    cavcRemands: state.cavcDashboard.cavc_remands
+    cavcDashboards: state.cavcDashboard.cavc_dashboards
   };
 };
 
