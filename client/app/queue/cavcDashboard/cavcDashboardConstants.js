@@ -11,5 +11,6 @@ export const LABELS = {
   BOARD_DOCKET_NUMBER: 'Board Docket Number',
   CAVC_DECISION_DATE: 'CAVC Decision Date',
   CAVC_DOCKET_NUMBER: 'CAVC Docket Number',
-  IS_JMR: 'Joint Motion for Remand?'
+  IS_JMR: 'Joint Motion for Remand?',
+  CAVC_DECISION_REASONS: 'Decision Reasons',
 };

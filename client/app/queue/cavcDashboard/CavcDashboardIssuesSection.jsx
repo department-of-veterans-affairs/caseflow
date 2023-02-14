@@ -4,6 +4,7 @@ import { css } from 'glamor';
 import { LABELS } from './cavcDashboardConstants';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import CavcDecisionReasons from './CavcDecisionReasons';
 
 const singleIssueStyling = css({
   marginBottom: '1.5em !important',
@@ -66,6 +67,7 @@ const CavcDashboardIssue = (props) => {
             onChange={(option) => setDisposition(option)}
           />
         </div>
+        <CavcDecisionReasons />
       </div>
     </li>
   );
