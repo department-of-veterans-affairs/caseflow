@@ -8,6 +8,7 @@ import CAVC_REMAND_SUBTYPES from '../../../constants/CAVC_REMAND_SUBTYPES';
 import Button from '../../components/Button';
 import { PencilIcon } from '../../components/icons/PencilIcon';
 import { DateString } from '../../util/DateUtil';
+import { useHistory } from 'react-router-dom';
 
 const CavcDashboardDetailsContainer = ({ children }) => {
   const containerStyling = css({
@@ -49,6 +50,7 @@ CavcDashboardDetailsSection.propTypes = {
 
 export const CavcDashboardDetails = (props) => {
   const { remand, userCanEdit } = props;
+  const { push } = useHistory();
 
   // remove eslint disable when the set methods are used for editing
   /* eslint-disable no-unused-vars */
@@ -81,7 +83,7 @@ export const CavcDashboardDetails = (props) => {
   return (
     <div id={`dashboard-details-${remand.id}`}>
       <Button linkStyling willNeverBeLoading classNames={['cf-push-right', 'cf-modal-link']}
-        styling={buttonStyling} disabled={!userCanEdit} onClick={null}
+        styling={buttonStyling} disabled={!userCanEdit} onClick={() => push(`/queue/appeals/${remand.remand_appeal_uuid}/cavc_dashboard/modal/CavcDashboardDetailsModal`)}
       >
         <span {...css({ position: 'absolute' })}><PencilIcon /></span>
         <span {...css({ marginLeft: '20px' })}>Edit</span>
@@ -96,6 +98,7 @@ export const CavcDashboardDetails = (props) => {
         />
         <CavcDashboardDetailsSection title={LABELS.CAVC_DOCKET_NUMBER} value={cavcDocketNumber} />
         <CavcDashboardDetailsSection title={LABELS.IS_JMR} value={checkIfJmrJmpr() ? 'Yes' : 'No'} />
+
       </CavcDashboardDetailsContainer>
     </div>
   );
