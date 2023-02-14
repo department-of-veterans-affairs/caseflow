@@ -734,7 +734,7 @@ class Fakes::BGSService
           legacy_poa_cd: "3QQ",
           nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
           org_type_nm: "POA Attorney",
-          poa_participant_id: poa_participant_id
+          ptcpnt_id: poa_participant_id
         },
       ptcpnt_id: "600085544"
     }
