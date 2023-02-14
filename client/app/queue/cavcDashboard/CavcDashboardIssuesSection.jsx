@@ -67,8 +67,8 @@ const CavcDashboardIssue = (props) => {
             onChange={(option) => setDisposition(option)}
           />
         </div>
-        <CavcDecisionReasons />
       </div>
+      <CavcDecisionReasons />
     </li>
   );
 };

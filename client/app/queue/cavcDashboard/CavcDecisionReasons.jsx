@@ -75,7 +75,7 @@ const CavcDecisionReasons = ({ index }) => {
   return (
     <>
       <Accordion style="bordered" id={index}>
-        <AccordionSection title={`${LABELS.CAVC_DASHBOARD_DECISION_REASONS}`} id={index}>
+        <AccordionSection title={`${LABELS.CAVC_DECISION_REASONS}`} id={index}>
           <p style={{ fontWeight: 'normal' }}>Select reasons why this issue's decision was changed</p>
           {reasons}
         </AccordionSection>
