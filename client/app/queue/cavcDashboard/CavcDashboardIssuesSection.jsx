@@ -72,10 +72,10 @@ const CavcDashboardIssue = (props) => {
 };
 
 const CavcDashboardIssuesSection = (props) => {
-  const { remand } = props;
-  const issues = remand.source_request_issues;
-  const cavcIssues = remand.cavc_dashboard_issues;
-  const dashboardDispositions = remand.cavc_dashboard_dispositions;
+  const { dashboard } = props;
+  const issues = dashboard.source_request_issues;
+  const cavcIssues = dashboard.cavc_dashboard_issues;
+  const dashboardDispositions = dashboard.cavc_dashboard_dispositions;
 
   return (
     <div {...issueSectionStyling}>
@@ -120,7 +120,7 @@ CavcDashboardIssue.propTypes = {
 };
 
 CavcDashboardIssuesSection.propTypes = {
-  remand: PropTypes.object,
+  dashboard: PropTypes.object,
 };
 
 export default CavcDashboardIssuesSection;

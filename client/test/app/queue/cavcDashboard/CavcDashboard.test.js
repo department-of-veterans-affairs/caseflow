@@ -6,7 +6,7 @@ import COPY from '../../../../COPY';
 
 jest.mock('../../../../app/queue/cavcDashboard/CavcDashboardTab');
 
-const cavcRemands = [
+const cavcDashboards = [
   { cavc_docket_number: '12-3456' }
 ];
 
@@ -20,7 +20,7 @@ const renderCavcDashboard = async (appealData, shouldResolvePromise) => {
   const props = {
     appealId: appealData.id,
     appealDetails: appealData,
-    cavcRemands,
+    cavcDashboards,
     fetchAppealDetails: promiseResult,
     fetchCavcDecisionReasons: promiseResult,
     fetchCavcSelectionBases: promiseResult,
@@ -48,7 +48,7 @@ describe('cavcDashboard', () => {
     await renderCavcDashboard(amaAppeal, true);
     await waitForElementToBeRemoved(document.querySelector('svg'));
 
-    expect(screen.getByText(`CAVC appeal ${cavcRemands[0].cavc_docket_number}`, { exact: false })).toBeTruthy();
+    expect(screen.getByText(`CAVC appeal ${cavcDashboards[0].cavc_docket_number}`, { exact: false })).toBeTruthy();
   });
 
   it('Displays error status message when error occurs', async () => {

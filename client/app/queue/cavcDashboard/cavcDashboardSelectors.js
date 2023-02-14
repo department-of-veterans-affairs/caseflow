@@ -1,10 +1,10 @@
 import { find } from 'lodash';
 import { createSelector } from 'reselect';
 
-const getAllCavcRemands = (state) => state.cavcDashboard.cavc_remands;
-const getCavcRemandId = (state, props) => props.remandId;
+const getAllCavcDashboards = (state) => state.cavcDashboard.cavc_dashboards;
+const getCavcDashboardId = (state, props) => props.dashboardId;
 
-export const getCavcRemandById = createSelector(
-  [getAllCavcRemands, getCavcRemandId],
-  (cavcRemands, cavcRemandId) => find(cavcRemands, (cavcRemand) => cavcRemand.id === cavcRemandId)
+export const getCavcDashboardById = createSelector(
+  [getAllCavcDashboards, getCavcDashboardId],
+  (cavcDashboards, cavcDashboardId) => find(cavcDashboards, (cavcDashboard) => cavcDashboard.id === cavcDashboardId)
 );

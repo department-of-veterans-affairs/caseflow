@@ -6,7 +6,6 @@
 
 class OccTeam < Organization
   def self.singleton
-    OccTeam.first ||
-    OccTeam.create(name: "Office of Chief Counsel", url: "occ-team")
+    OccTeam.first || OccTeam.create(name: "Office of Chief Counsel", url: "occ-team")
   end
 end

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getCavcRemandById } from './cavcDashboardSelectors';
+import { getCavcDashboardById } from './cavcDashboardSelectors';
 import CavcDashboardDetails from './CavcDashboardDetails';
 import CavcDashboardIssuesSection from './CavcDashboardIssuesSection';
 
@@ -15,13 +15,13 @@ export const CavcDashboardTab = (props) => {
 };
 
 CavcDashboardTab.propTypes = {
-  remandId: PropTypes.number,
-  remand: PropTypes.object
+  dashboardId: PropTypes.number,
+  dashboard: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    remand: getCavcRemandById(state, { remandId: ownProps.remandId })
+    dashboard: getCavcDashboardById(state, { dashboardId: ownProps.dashboardId })
   };
 };
 
