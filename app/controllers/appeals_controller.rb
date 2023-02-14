@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+#Add small change, do not merge.
+
 class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count, :power_of_attorney, :update_power_of_attorney]
