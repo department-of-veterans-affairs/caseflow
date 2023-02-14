@@ -22,7 +22,7 @@ describe Memberships::SendMembershipRequestMailerJob do
     end
 
     context "the type is SendAdminsMembershipRequestSubmissionEmail" do
-      type = "SendAdminsMembershipRequestSubmissionEmail"
+      let(:type) { "SendAdminsMembershipRequestSubmissionEmail" }
       it "sends an email to admins" do
         expect { perform_job.perform(type, recipient_info) }.to change {
           ActionMailer::Base.deliveries.count
