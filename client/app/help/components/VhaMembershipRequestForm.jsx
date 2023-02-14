@@ -17,11 +17,8 @@ const checkboxDivStyling = css({
   '& .checkbox': { marginTop: '0px' },
 });
 
-// TODO: Make this MembershipRequestForm generic instead of VHA only?
 const VhaMembershipRequestForm = () => {
-
   // Redux selectors
-  // TODO: Might move these to a selectors file?
   const programOfficeTeamManagementFeatureToggle = useSelector(
     (state) => state.help.featureToggles.programOfficeTeamManagement
   );
@@ -34,14 +31,11 @@ const VhaMembershipRequestForm = () => {
     (state) => state.help.organizationMembershipRequests
   );
 
-  // Decide what special access checkbox options are available based on the feature toggle.
-  // If it is enabled show all program offices, otherwise only show camo and caregiver.
+  // Setup for all the program office options based on the feature toggle
   const specializedAccessOptions = programOfficeTeamManagementFeatureToggle ?
     [...VHA_CAMO_AND_CAREGIVER_OPTIONS, ...VHA_PROGRAM_OFFICE_OPTIONS] :
     VHA_CAMO_AND_CAREGIVER_OPTIONS;
 
-  // TODO: Figure out if Memo matters here or not
-  // I dont think it does since useState won't be initialized more than once.
   const parsedIssues = useMemo(() => {
     specializedAccessOptions.reduce((acc, obj) => {
       acc[obj.id] = false;
@@ -63,7 +57,8 @@ const VhaMembershipRequestForm = () => {
 
   let memberOrRequestToProgramOffices = false;
 
-  const alteredOptions = specializedAccessOptions.map((obj) => {
+  // Disables options based on the user organizations and pending membership requests
+  const parsedOptions = specializedAccessOptions.map((obj) => {
     const foundOrganization = some(userOrganizations, (match) => match.name === obj.name);
 
     const foundMembershipRequest = some(organizationMembershipRequests, (match) => match.name === obj.name);
@@ -115,7 +110,7 @@ const VhaMembershipRequestForm = () => {
     ).isRequired
   };
 
-  // TODO: add a onsubmit to this button and potentially one to the form?
+  // TODO: add a onsubmit to this button and potentially one to the form
   const SubmitButton = ({ ...btnProps }) => {
     return (
       <Button name="submit-request" {...btnProps}>
@@ -137,7 +132,6 @@ const VhaMembershipRequestForm = () => {
   const automaticVhaAccessNotice = anyProgramOfficeSelected && !vhaSelectedOrExistingMember;
 
   // TODO: Maybe move these strings to the constants file
-  // TODO: Fix the page moving for the paragraph notice if I can. It's a bit jarring.
   return (
     <>
       <h1> 1. How do I access the VHA team?</h1>
@@ -153,7 +147,7 @@ const VhaMembershipRequestForm = () => {
       }
       <form className={checkboxDivStyling}>
         <GeneralVHAAccess vhaMember={memberOrOpenRequestToVha} />
-        <SpecializedAccess checkboxOptions={alteredOptions} />
+        <SpecializedAccess checkboxOptions={parsedOptions} />
         <div style={{ minHeight: '51px' }}>
           { automaticVhaAccessNotice && (<p> {VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE} </p>)}
         </div>
