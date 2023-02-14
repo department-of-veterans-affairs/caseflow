@@ -31,7 +31,7 @@ describe Memberships::SendMembershipRequestMailerJob do
     end
 
     context "SendUpdatedMembershipRequestStatusEmail" do
-      type = "SendUpdatedMembershipRequestStatusEmail"
+      let(:type) { "SendUpdatedMembershipRequestStatusEmail" }
       it "sends a status update email to requestor" do
         expect { perform_job.perform(type, recipient_info) }.to change {
           ActionMailer::Base.deliveries.count
