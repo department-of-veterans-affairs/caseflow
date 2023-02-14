@@ -8,7 +8,7 @@ describe MembershipRequestMailer do
 
   context "with recipient_info" do
     describe "membership_request_submitted" do
-      let(:mailer) { MembershipRequestMailer.membership_request_submitted(email_recipient_info: email_recipient_info) }
+      let(:mailer) { MembershipRequestMailer.with(recipient_info: email_recipient_info).membership_request_submitted }
 
       it "has the correct From email address" do
         expect(mailer.from).to include("BoardofVeteransAppealsHearings@messages.va.gov")
@@ -21,7 +21,7 @@ describe MembershipRequestMailer do
 
     describe "updated_membership_request_status" do
       let(:mailer) do
-        MembershipRequestMailer.updated_membership_request_status(email_recipient_info: email_recipient_info)
+        MembershipRequestMailer.with(recipient_info: email_recipient_info).updated_membership_request_status
       end
 
       it "has the correct From address" do
@@ -34,8 +34,7 @@ describe MembershipRequestMailer do
     end
 
     describe "membership_request_submission" do
-      let(:mailer) { MembershipRequestMailer.membership_request_submission(email_recipient_info: email_recipient_info) }
-
+      let(:mailer) { MembershipRequestMailer.with(recipient_info: email_recipient_info).membership_request_submission }
       it "has the correct From email address" do
         expect(mailer.from).to include("BoardofVeteransAppealsHearings@messages.va.gov")
       end

@@ -10,15 +10,18 @@ class SendMembershipRequestMailerJob < CaseflowJob
   private
 
   def email_to_send(email_type, recipient_info)
+    mailer = MembershipRequestMailer.with(recipient_info: recipient_info)
+
     case email_type
-    when "SendMembershipRequestSubmittedEmail"
-      MembershipRequestMailer.membership_request_submitted(email_recipient_info: recipient_info)
+    when
+      "SendMembershipRequestSubmittedEmail"
+      mailer.membership_request_submitted
     when
       "SendAdminsMembershipRequestSubmissionEmail"
-      MembershipRequestMailer.membership_request_submission(email_recipient_info: recipient_info)
+      mailer.membership_request_submission
     when
       "SendUpdatedMembershipRequestStatusEmail"
-      MembershipRequestMailer.updated_membership_request_status(email_recipient_info: recipient_info)
+      mailer.updated_membership_request_status
     else
       fail ArgumentError, "Unable to send email `#{email_type}`"
     end
