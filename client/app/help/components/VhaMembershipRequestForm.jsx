@@ -126,8 +126,10 @@ const VhaMembershipRequestForm = () => {
   };
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    // TODO: handle all of this in a dispatch to the form reducer/thunk/actions
     // dispatchEvent(submitFormAction(formData));
+    // Do not need prevent default if I don't use button type=submit, but would need click handler or something.
+    event.preventDefault();
     console.log('me submit form real good like');
     const { body } = ApiUtil.post(
       '/membership_requests',
