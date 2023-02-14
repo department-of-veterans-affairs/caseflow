@@ -25,20 +25,21 @@ class CavcDashboardController < ApplicationController
               .or(CavcRemand.where(source_appeal: cavc_remand.source_appeal))
               .order(:cavc_docket_number)
 
-          serialized_remands = cavc_remands&.map do |remand|
-            WorkQueue::CavcRemandSerializer.new(remand).serializable_hash[:data][:attributes]
+          serialized_dashboards = cavc_remands&.map do |remand|
+            dashboard = CavcDashboard.find_or_create_by(cavc_remand: remand)
+            WorkQueue::CavcDashboardSerializer.new(dashboard).serializable_hash[:data][:attributes]
           end
         end
 
-        render_index_data_as_json(serialized_remands)
+        render_index_data_as_json(serialized_dashboards)
       end
     end
   end
 
   # add data to render: json as a key-value pair that matchecs the front-end state key
-  def render_index_data_as_json(cavc_remands)
+  def render_index_data_as_json(cavc_dashboards)
     render json: {
-      cavc_remands: cavc_remands
+      cavc_dashboards: cavc_dashboards
     }
   end
 
