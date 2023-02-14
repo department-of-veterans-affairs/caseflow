@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SendMembershipRequestMailerJob < CaseflowJob
+class Memberships::SendMembershipRequestMailerJob < CaseflowJob
   queue_with_priority :low_priority
 
   def perform(email_type, recipient_info)
