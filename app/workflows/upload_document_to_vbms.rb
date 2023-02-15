@@ -2,14 +2,9 @@
 
 class UploadDocumentToVbms
   delegate :document_type, :document_subject, :document_name, to: :document
-  attr_reader :s3_sub_bucket
 
-  # s3_sub_bucket was previously a constant defined for this class.
-  # It was added to a variable in the initialize method to allow for different sub buckets
-  # to be passed in, while maintaining the original constant as the default.
-  def initialize(document:, s3_sub_bucket: "idt-uploaded-documents")
+  def initialize(document:)
     @document = document
-    @s3_sub_bucket = s3_sub_bucket
   end
 
   def call
@@ -73,7 +68,7 @@ class UploadDocumentToVbms
   end
 
   def s3_location
-    s3_sub_bucket + "/" + pdf_name
+    s3_bucket_by_doc_type + "/" + pdf_name
   end
 
   def output_location
@@ -86,5 +81,19 @@ class UploadDocumentToVbms
 
   def file_number
     document.veteran_file_number
+  end
+
+  # Purpose: Get the s3_sub_bucket based on the document type
+  # S3_SUB_BUCKET was previously a constant defined for this class.
+  #
+  # Params: None
+  #
+  # Return: string for the sub-bucket
+  def s3_bucket_by_doc_type
+    if document_type == "BVA Case Notifications"
+      "notification-reports"
+    else
+      "idt-uploaded-documents"
+    end
   end
 end

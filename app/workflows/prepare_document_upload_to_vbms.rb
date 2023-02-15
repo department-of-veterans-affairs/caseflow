@@ -16,7 +16,7 @@ class PrepareDocumentUploadToVbms
     @appeal = appeal
   end
 
-  # Purpose: Starts the chain to upload a document to vbms
+  # Purpose: Queues a job to upload a document to vbms
   #
   # Params: See initialize
   #
