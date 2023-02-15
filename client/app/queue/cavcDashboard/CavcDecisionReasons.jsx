@@ -3,9 +3,10 @@ import { Accordion } from '../../components/Accordion';
 import Checkbox from '../../components/Checkbox';
 import AccordionSection from 'app/components/AccordionSection';
 import { LABELS } from './cavcDashboardConstants';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
+import { setCheckedDecisionReasons } from './cavcDashboardActions';
 
 const CavcDecisionReasons = ({ uniqueId }) => {
 
@@ -22,6 +23,7 @@ const CavcDecisionReasons = ({ uniqueId }) => {
   const decisionReasons = useSelector((state) => state.cavcDashboard.decision_reasons);
   const parentReasons = decisionReasons.filter((parentReason) => !parentReason.parent_decision_reason_id);
   const childReasons = decisionReasons.filter((childReason) => childReason.parent_decision_reason_id !== null);
+  const dispatch = useDispatch();
 
   // get all children where parent.id === child.parent_decision_reason_id
   // then create an object for each child, stored into array
@@ -46,15 +48,16 @@ const CavcDecisionReasons = ({ uniqueId }) => {
       issueId: uniqueId
     };
   }));
+  // console.log(checkedReasons);
   const handleCheckboxChange = (value, checkboxId, issueId) => {
-    setCheckedReasons(checkedReasons.map((reason) => {
+    const newCheckedReasons = checkedReasons.map((reason) => {
       if (reason.id === checkboxId) {
         return {
           ...reason,
           checked: value,
           issueId
         };
-      } else if (checkboxId >= checkedReasons.length) {
+      } else if (checkboxId >= parentReasons.length) {
         return {
           ...reason,
           children: reason.children.map((child) => {
@@ -65,12 +68,17 @@ const CavcDecisionReasons = ({ uniqueId }) => {
                 issueId
               };
             }
+
+            return child;
           })
         };
       }
 
       return reason;
-    }));
+    });
+
+    dispatch(setCheckedDecisionReasons(newCheckedReasons));
+    setCheckedReasons(newCheckedReasons);
   };
 
   const reasons = parentReasons.map((parent) => {
@@ -82,7 +90,7 @@ const CavcDecisionReasons = ({ uniqueId }) => {
           name={`checkbox-${parent.id}-${uniqueId}`}
           label={parent.decision_reason}
           onChange={(value) => handleCheckboxChange(value, parent.id, uniqueId)}
-          value={checkedReasons.find((reason) => reason.id === parent.id)?.checked}
+          value={checkedReasons?.find((reason) => reason.id === parent.id)?.checked}
           styling={checkboxStyling}
         />
         {checkedReasons[parent.id - 1].checked && (
@@ -93,7 +101,7 @@ const CavcDecisionReasons = ({ uniqueId }) => {
                 name={`checkbox-${child.id}-${uniqueId}`}
                 label={child.decision_reason}
                 onChange={(value) => handleCheckboxChange(value, child.id, uniqueId)}
-                value={checkedReasons.find((reason) => reason.id === child.id)?.checked}
+                value={checkedReasons?.find((reason) => reason.id === child.id)?.checked}
                 styling={childCheckboxStyling}
               />
             ))}

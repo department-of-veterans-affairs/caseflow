@@ -25,3 +25,10 @@ export const fetchInitialDashboardData = (appealId) => (dispatch) => {
       }
     }));
 };
+
+export const setCheckedDecisionReasons = (checkedReasons) => ({
+  type: ACTIONS.SET_CHECKED_DECISION_REASONS,
+  payload: {
+    checked_decision_reasons: checkedReasons
+  }
+});
