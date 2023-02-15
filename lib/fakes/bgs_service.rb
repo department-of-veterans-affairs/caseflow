@@ -728,13 +728,13 @@ class Fakes::BGSService
     poa_participant_id = generate_random_file_number
 
     {
-      file_number: file_number,
+      file_number: "633792224",
       power_of_attorney:
         {
           legacy_poa_cd: "3QQ",
           nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
           org_type_nm: "POA Attorney",
-          ptcpnt_id: poa_participant_id
+          ptcpnt_id: "600153863"
         },
       ptcpnt_id: "600085544"
     }
