@@ -40,6 +40,7 @@ class MembershipRequestsController < ApplicationController
     # Now build a request object for each org and return an array of org_names to be used in the success message
     # TODO: Although this shouldn't be possible through the form make sure they can't submit two requests
     # To the same org if there is one pending
+    errors = []
     org_names = requested_org_access_list.map do |org|
       org_name = org.name
       # Build a request object for each org
@@ -49,7 +50,9 @@ class MembershipRequestsController < ApplicationController
       #   requestor: current_user,
       #   note: request_reason
       # )
-      # new_request.save
+      # unless new_request.save
+      #   errors < new_request.errors.full_messages
+      # end
       org_name
     end
     # org_name_strings = build
@@ -59,14 +62,13 @@ class MembershipRequestsController < ApplicationController
     # Return the success message if the saves were successful
     # TODO: make this work with all of the saves somehow probably with a catch or an array of booleans
     # TODO: can also do a prevalidation or valid check on all of them?
-    if true
-    # if new_request.save
+    if errors.empty?
       # TODO: created a mapping of the successful requests back to the message.
       # Example: Vha -> VHA group
       # Might do it client side instead? but probably do it here and build the message.
       render json: { data: { message: build_success_message(org_names) } }, status: :created
     else
-      render json: { data: { message: "errors" } }, status: :unprocessable_entity
+      render json: { data: { message: errors.flatten } }, status: :unprocessable_entity
     end
   end
 

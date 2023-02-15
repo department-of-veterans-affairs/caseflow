@@ -149,7 +149,7 @@ const VhaMembershipRequestForm = () => {
       const { message } = response.body.data;
 
       console.log(response.body.data);
-      alert(message);
+      // alert(message);
 
       // dispatch(setUserOrganizations(props.userOrganizations));
       dispatch(setSuccessMessage(message));
