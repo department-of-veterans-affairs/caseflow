@@ -28,8 +28,6 @@ class OnHoldTasksTab < QueueTab
     Task.includes(*task_includes).where(id: task_ids)
   end
 
-
-
   def ama_task_ids
     Task.visible_in_queue_table_view.on_hold.where(assigned_to: assignee).pluck(:id)
   end
