@@ -155,7 +155,7 @@ const VhaMembershipRequestForm = () => {
       dispatch(setSuccessMessage(message));
 
       // TODO: renable this. It's just annoying for testing though.
-      // resetMembershipRequestForm();
+      resetMembershipRequestForm();
 
       // can dispatch or can just do a normal form submit.
       // I think it doesn't matter which but would change the reload/loading of data.

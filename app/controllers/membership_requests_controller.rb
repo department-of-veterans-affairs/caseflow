@@ -45,6 +45,8 @@ class MembershipRequestsController < ApplicationController
       org_name = org.name
       # Build a request object for each org
       # TODO: Turn this back on after testing the string
+      # TODO: Probably push this logic down to the model class.
+      # TODO: Decide if the controller or model class should be the one to send an email or not
       # new_request = MembershipRequest.new(
       #   organization: org,
       #   requestor: current_user,
@@ -79,22 +81,15 @@ class MembershipRequestsController < ApplicationController
   end
 
   def build_success_message(requested_org_names)
-    # TODO: Probably need to do some more text mapping somehow. Also add program office to the strings?
     formatted_requested_org_names = org_names_to_message_string_names(requested_org_names)
-    formatted_org_text = if formatted_requested_org_names.count == 1
-                           "the #{formatted_requested_org_names.first}"
-                         else
-                           formatted_requested_org_names.to_sentence
-                         end
-    format(COPY::VHA_MEMBERSHIP_REQUEST_FORM_SUBMIT_SUCCESS_MESSAGE, formatted_org_text)
+    format(COPY::VHA_MEMBERSHIP_REQUEST_FORM_SUBMIT_SUCCESS_MESSAGE, formatted_requested_org_names.to_sentence)
   end
 
   # TODO: should this be somewhere else?
   # TODO: pass in the comparison hash for mapping keys to orgs to make it generic
   def build_vha_org_list(org_options)
-    # Maybe get only the keys with the value true? But that's probably impossible/unnecessary
-    key_names = org_options.keys
-    # TODO: Ask about formatting the strings. Add program office to most of them?
+    # Get all of the keys from the options that are true
+    key_names = org_options.select { |_, value| value }.keys
     keys_to_org_hash =
       {
         "vhaAccess" => "Veterans Health Administration",
@@ -125,12 +120,11 @@ class MembershipRequestsController < ApplicationController
       "VHA CAMO" => "VHA CAMO",
       "VHA Caregiver Support Program" => "VHA Caregiver Support Program",
       "Community Care - Veteran and Family Members Program" => "Veteran and Family Members program office",
-      "Community Care - Payment Operations Management" => "Payment Operations Management",
-      "Member Services - Health Eligibility Center" => "Member Services - Health Eligibility Center",
-      "Member Services - Beneficiary Travel" => "Member Services - Beneficiary Travel",
-      "Prosthetics" => "Prosthetics"
+      "Community Care - Payment Operations Management" => "Payment Operations Management program office",
+      "Member Services - Health Eligibility Center" => "Member Services - Health Eligibility Center program office",
+      "Member Services - Beneficiary Travel" => "Member Services - Beneficiary Travel program office",
+      "Prosthetics" => "Prosthetics program office"
     }
     org_name_to_string_hash.values_at(*org_names)
-    # org_strings
   end
 end
