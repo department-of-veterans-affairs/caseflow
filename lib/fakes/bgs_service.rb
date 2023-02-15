@@ -724,19 +724,20 @@ class Fakes::BGSService
   def default_power_of_attorney_record
     # generate random file number and participant id to prevent unique id collisions
     # with test data
+
     file_number = generate_random_file_number
     poa_participant_id = generate_random_file_number
 
     {
-      file_number: "633792224",
+      file_number: "file_number",
       power_of_attorney:
         {
           legacy_poa_cd: "3QQ",
           nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
           org_type_nm: "POA Attorney",
-          ptcpnt_id: "600153863"
+          ptcpnt_id: ptcpnt_id
         },
-      ptcpnt_id: "600085544"
+      ptcpnt_id: ptcpnt_id
     }
   end
 
