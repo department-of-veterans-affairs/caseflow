@@ -21,6 +21,7 @@ import {
   setHearingDay,
 } from './uiReducer/uiActions';
 import CaseTitleDetails from './CaseTitleDetails';
+import ApiUtil from '../util/ApiUtil';
 
 const sectionGap = css({ marginTop: '3.5rem' });
 
@@ -83,7 +84,12 @@ export const NotificationsView = (props) => {
               VA Notify sent these status notifications to the Appellant about their case.
             </p>
             <Button onClick={() => {
-              fetch({ headers: { 'Content-Type': 'HTTP_PDF' } });
+              ApiUtil.get('/appeals/:appeals_id/notifications', { headers: { 'Content-Type': 'HTTP_PDF' } }).
+                then((response) => {
+                  const pdf = response.body;
+                  {console.log('this is the body', pdf)}
+                  return pdf;
+                });
             }} >Download</Button>
           </div>
           <div className="notification-table">
