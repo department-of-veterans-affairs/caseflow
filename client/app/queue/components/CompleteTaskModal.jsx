@@ -27,6 +27,10 @@ const validInstructions = (instructions) => {
   return instructions?.length > 0;
 };
 
+const validInstructionsForNumber = (instructions) => {
+  return (instructions > 45) && (instructions <= 364);
+};
+
 const validDropdown = (dropdown) => {
   return dropdown?.length > 0;
 };
@@ -49,7 +53,6 @@ const MarkTaskCompleteModal = ({ props, state, setState }) => {
           onChange={(value) => setState({ instructions: value })}
           value={state.instructions}
           styling={marginTop(4)}
-          maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
           optional
         />
       )}
@@ -57,10 +60,57 @@ const MarkTaskCompleteModal = ({ props, state, setState }) => {
   );
 };
 
+const daysTypeOpts = [
+  { displayText: COPY.DAYS_CONTESTED_CLAIM, value: '45' },
+  { displayText: COPY.CUSTOM_CONTESTED_CLAIM, value: 'custom' }
+];
+
 MarkTaskCompleteModal.propTypes = {
   props: PropTypes.object,
   setState: PropTypes.func,
   state: PropTypes.object
+};
+
+const MarkTaskCompleteContestedClaimModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+  const instructionsLabel = taskConfiguration && taskConfiguration.instructions_label;
+
+  return (
+    <React.Fragment>
+      <div className="cc_mark_complete">
+        {taskConfiguration && StringUtil.nl2br(taskConfiguration.modal_body)}
+        {taskConfiguration && taskConfiguration.modal_alert && (
+          <Alert message={taskConfiguration.modal_alert} type="info" />
+        )}
+        {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+          <div>
+            <RadioField
+              id="45_days"
+              inputRef={props.register}
+              vertical
+              onChange={(value) => setState({ radio: value })}
+              value={state.radio}
+              options={daysTypeOpts}
+              errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.SELECT_RADIO_ERROR : null}
+              styling={marginTop(1)}
+            />
+            {state.radio === 'custom' &&
+              <TextareaField
+                label={instructionsLabel || COPY.TEXTAREA_CONTESTED_CLAIM}
+                name="instructions"
+                id="completeTaskInstructions"
+                onChange={(value) => setState({ instructions: value })}
+                value={state.value}
+                styling={marginTop(2)}
+                textAreaStyling={slimHeight}
+                pattern="[0-9]{2,3}"
+                maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+              />}
+          </div>
+        )}
+      </div>
+    </React.Fragment>
+  );
 };
 
 const ProceedFinalNotificationLetterTaskModal = ({ props, state, setState }) => {
@@ -74,9 +124,9 @@ const ProceedFinalNotificationLetterTaskModal = ({ props, state, setState }) => 
       )}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <TextareaField
-          label={'Provide instuctions and context for this action'}
-          name="instructions"
-          id="completeTaskInstructions"
+          label= "Provide instuctions and context for this action"
+          name= "instructions"
+          id= "completeTaskInstructions"
           onChange={(value) => setState({ instructions: value })}
           value={state.instructions}
           styling={marginTop(4)}
@@ -86,6 +136,14 @@ const ProceedFinalNotificationLetterTaskModal = ({ props, state, setState }) => 
       )}
     </React.Fragment>
   );
+};
+
+MarkTaskCompleteContestedClaimModal.propTypes = {
+  props: PropTypes.object,
+  setState: PropTypes.func,
+  state: PropTypes.object,
+  register: PropTypes.func,
+  highlightInvalid: PropTypes.bool
 };
 
 ProceedFinalNotificationLetterTaskModal.propTypes = {
@@ -355,7 +413,7 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
             id="caregiverSupportReturnToBoardIntakeInstructions"
             onChange={(value) => setState({ instructions: value })}
             value={state.instructions}
-            styling={marginTop(2)}
+            styling={marginTop(1)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
             optional
           />
@@ -382,6 +440,32 @@ const MODAL_TYPE_ATTRS = {
     getContent: MarkTaskCompleteModal,
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
   },
+
+  task_complete_contested_claim: {
+    buildSuccessMsg: (appeal, { contact }) => ({
+      title: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteranFullName),
+      detail: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, contact)
+    }),
+    title: () => COPY.MARK_TASK_COMPLETE_TITLE_CONTESTED_CLAIM,
+    getContent: MarkTaskCompleteContestedClaimModal,
+    buttonText: COPY.MARK_TASK_COMPLETE_BUTTON_CONTESTED_CLAIM,
+    submitButtonClassNames: ['usa-button'],
+
+    submitDisabled: ({ state }) => {
+      const { instructions, radio } = state;
+
+      let isValid = true;
+
+      if (radio === 'custom') {
+        isValid = validInstructionsForNumber(instructions) && validRadio(radio);
+      } else {
+        isValid = validRadio(radio);
+      }
+
+      return !isValid;
+    }
+  },
+
   proceed_final_notification_letter: {
     buildSuccessMsg: () => ({
       title: sprintf(COPY.PROCEED_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS),
@@ -390,6 +474,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ProceedFinalNotificationLetterTaskModal,
     buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON
   },
+
   ready_for_review: {
     buildSuccessMsg: (appeal, { assignedToType }) => ({
       title: assignedToType === 'VhaProgramOffice' ?
@@ -502,7 +587,7 @@ const MODAL_TYPE_ATTRS = {
 
       return !isValid;
     }
-  },
+  }
 };
 
 class CompleteTaskModal extends React.Component {
@@ -554,6 +639,20 @@ class CompleteTaskModal extends React.Component {
     setState: this.setState.bind(this)
   });
 
+  formatRadio = () => {
+    const { instructions, radio } = this.state;
+
+    if (this.props.modalType === 'task_complete_contested_claim') {
+      const radioValue = daysTypeOpts.find((option) => radio === option.value).value;
+
+      if (radioValue === 'custom') {
+        return instructions;
+      }
+
+      return radioValue;
+    }
+  }
+
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
     const formattedInstructions = [];
@@ -578,6 +677,21 @@ class CompleteTaskModal extends React.Component {
 
       return reviewNotes = null;
     });
+
+    if (this.props.modalType === 'task_complete_contested_claim') {
+      const radioValue = daysTypeOpts.find((option) => radio === option.value).value;
+      let days;
+
+      if (radioValue === 'custom') {
+        days = instructions;
+      } else {
+        days = radioValue;
+      }
+
+      formattedInstructions.push(`Hold time: ${days} days`);
+
+      return formattedInstructions.join('');
+    }
 
     if (this.props.modalType === 'vha_send_to_board_intake') {
       const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
@@ -651,8 +765,10 @@ class CompleteTaskModal extends React.Component {
       data: {
         task: {
           status: 'completed',
-          instructions: this.formatInstructions()
-        }
+          instructions: this.formatInstructions(),
+        },
+        select_opc: this.props.modalType,
+        hold_days: this.formatRadio(),
       }
     };
     const successMsg = MODAL_TYPE_ATTRS[this.props.modalType].buildSuccessMsg(
@@ -668,10 +784,11 @@ class CompleteTaskModal extends React.Component {
   render = () => {
     const modalAttributes = MODAL_TYPE_ATTRS[this.props.modalType];
     const path = (
-      MODAL_TYPE_ATTRS[this.props.modalType].buttonText === 'Proceed to final letter'
+      (MODAL_TYPE_ATTRS[this.props.modalType].buttonText === 'Proceed to final letter') ||
+      (this.props.modalType === 'task_complete_contested_claim')
     ) ? ('/organizations/clerk-of-the-board?tab=unassignedTab&page=1') : (
-      this.getTaskConfiguration().redirect_after || '/queue'
-    );
+        this.getTaskConfiguration().redirect_after || '/queue'
+      );
 
     return (
       <QueueFlowModal

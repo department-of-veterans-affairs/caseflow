@@ -147,10 +147,23 @@ class QueueTab
     on_hold_task_children.where(type: TimedHoldTask.name).pluck(:parent_id)
   end
 
-  def on_hold_task_children_and_timed_hold_parents
+  def on_hold_task_children_and_timed_hold_parents_on_hold_tab
     Task.includes(*task_includes).visible_in_queue_table_view.where(
-      id: [visible_child_task_ids, parents_with_child_timed_hold_task_ids].flatten
+      id: [visible_child_task_ids,
+        parents_with_child_timed_hold_task_ids,
+        post_initial_letter_task_on_hold_ids].flatten
     )
+  end
+
+  def on_hold_task_children_and_timed_hold_parents_assigned_tab
+    Task.includes(*task_includes).visible_in_queue_table_view.where(
+      id: [visible_child_task_ids,
+        parents_with_child_timed_hold_task_ids].flatten
+    )
+  end
+
+  def post_initial_letter_task_on_hold_ids
+    on_hold_tasks.where(type: PostSendInitialNotificationLetterHoldingTask.name)
   end
 
   def task_includes

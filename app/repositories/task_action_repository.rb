@@ -23,6 +23,12 @@ class TaskActionRepository
       { options: valid_options }
     end
 
+    def task_conteted_claim(task, _user = nil)
+      {
+        modal_body: COPY::MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL
+      }
+    end
+
     def cancel_task_data(task, _user = nil)
       return_to_name = task.is_a?(AttorneyTask) ? task.parent.assigned_to.full_name : task_assigner_name(task)
       {

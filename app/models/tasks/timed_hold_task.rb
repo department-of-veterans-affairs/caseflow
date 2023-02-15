@@ -8,7 +8,8 @@ class TimedHoldTask < Task
   include TimeableTask
 
   validates :parent, presence: true, on: :create
-  validates :days_on_hold, presence: true, inclusion: { in: 1..120 }, on: :create
+
+  validates :days_on_hold, presence: true, inclusion: { in: 1..120 }, on: :create, unless: proc { |postSend| postSend.is_a? PostSendInitialNotificationLetterHoldingTask}
 
   after_create :cancel_active_siblings
 

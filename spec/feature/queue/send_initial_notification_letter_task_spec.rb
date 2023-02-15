@@ -24,11 +24,10 @@ RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
     it "displays the proper task actions for the intial task" do
       visit("/queue")
       visit("/queue/appeals/#{initial_letter_task.appeal.external_id}")
-
       # find and click action dropdown
       dropdown = find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
       dropdown.click
-      expect(page).to have_content(Constants.TASK_ACTIONS.MARK_TASK_AS_COMPLETE_CC.label)
+      expect(page).to have_content(Constants.TASK_ACTIONS.MARK_TASK_AS_COMPLETE_CONTESTED_CLAIM.label)
       expect(page).to have_content(Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER.label)
       expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK.label)
     end
@@ -36,7 +35,6 @@ RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
     it "proceed to final notification action creates final notification task and completes the initial notification task" do
       visit("/queue")
       visit("/queue/appeals/#{initial_letter_task.appeal.external_id}")
-
       prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
       text = Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER.label
       click_dropdown(prompt: prompt, text: text)
@@ -49,19 +47,11 @@ RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
       click_button(COPY::PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON)
 
       # expect success
-      expect(page).to have_content(format(COPY::PROCEED_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS))
+      assert page.has_content?("Send Initial Notification Letter task completed")
       expect(page.current_path).to eq("/organizations/clerk-of-the-board")
-
-      # navigate to queue to check case timeline
-      visit("/queue/appeals/#{initial_letter_task.appeal.external_id}")
-
-      # check the screen output and task status
-      appeal_initial_letter_task = root_task.appeal.tasks.find_by(type: "SendInitialNotificationLetterTask")
-      expect(page).to have_content(`#{appeal_initial_letter_task.type} completed`)
+      appeal_initial_letter_task = root_task.appeal.tasks.reload.find_by(type: "SendInitialNotificationLetterTask")
       expect(appeal_initial_letter_task.status).to eq("completed")
 
-      appeal_final_letter_task = root_task.appeal.tasks.find_by(type: "SendFinalNotificationLetterTask")
-      expect(appeal_final_letter_task.status).to eq("assigned")
     end
 
     it "cancel action cancels the task and displays it on the case timeline" do

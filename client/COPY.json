@@ -491,6 +491,12 @@
   "MARK_TASK_COMPLETE_CONFIRMATION": "The task for %s's case has been marked complete",
   "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you have made a mistake, please email %s to manage any changes.",
 
+  "MARK_TASK_COMPLETE_TITLE_CONTESTED_CLAIM": "Mark task as complete",
+  "MARK_TASK_COMPLETE_BUTTON_CONTESTED_CLAIM": "Mark as complete",
+  "DAYS_CONTESTED_CLAIM": "45 days",
+  "CUSTOM_CONTESTED_CLAIM": "Custom",
+  "TEXTAREA_CONTESTED_CLAIM": "Number of days (Value must be between 45 and 364)",
+
   "PROCEED_FINAL_NOTIFICATION_LETTER_TITLE": "Proceed to final notification letter",
   "PROCEED_FINAL_NOTIFICATION_LETTER_COPY": "The \"Post-Send Initial Notification Letter Holding Period\" task will be marked as complete and a new \"Send Final Notification Letter\" task will be created.",
   "PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON": "Proceed to final letter",
@@ -532,6 +538,8 @@
 
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
   "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to %s",
+  "MARK_AS_COMPLETE_CONTESTED_CLAIM_TITLE": "Complete task",
+  "MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL": "By marking this task as complete, you are confirming that initialnotification letter(s) have been sent.\n\nPlease select the number of days to put this task on hold to allow time for the letter(s) to be delivered.",
   "CANCEL_TASK_CONFIRMATION": "Task for %s's case has been cancelled",
   "CANCEL_TASK_CONFIRMATION_DETAIL": "Task for %s's case has been cancelled",
 

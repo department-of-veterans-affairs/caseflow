@@ -89,7 +89,7 @@ class InitialTasksFactory
                                             parent: parent_task,
                                             assigned_to: Organization.find_by_url("clerk-of-the-board"),
                                             assigned_by: RequestStore[:current_user]
-                                          )
+                                          ) unless parent_task.nil?
   end
 
   def create_ihp_task
