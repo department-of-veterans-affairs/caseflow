@@ -54,7 +54,8 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
         find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON).click
       end
       step "redirect and confirmation" do
-        expect(page).to have_content(COPY::VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION.gsub("%s", appeal.veteran.person.name))
+        expect(page).to have_content(COPY::VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION
+          .gsub("%s", appeal.veteran.person.name))
       end
     end
   end

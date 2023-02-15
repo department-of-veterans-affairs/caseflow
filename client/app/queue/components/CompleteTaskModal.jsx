@@ -31,7 +31,7 @@ const validDropdown = (dropdown) => {
   return dropdown?.length > 0;
 };
 
-function formatOtherInstructions(state) {
+const formatOtherInstructions = (state) => {
   let formattedInstructions = '';
 
   if (state.dropdown === 'other') {
