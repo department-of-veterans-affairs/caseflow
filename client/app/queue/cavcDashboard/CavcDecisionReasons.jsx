@@ -54,16 +54,19 @@ const CavcDecisionReasons = ({ uniqueId }) => {
           checked: value,
           issueId
         };
-      }
-      else if (reason.id >= 18) {
+      } else if (checkboxId >= checkedReasons.length) {
         return {
           ...reason,
-          children: {
-            ...reason.children,
-            checked: value,
-            issueId
-          }
-        }
+          children: reason.children.map((child) => {
+            if (child?.id === checkboxId) {
+              return {
+                ...child,
+                checked: value,
+                issueId
+              };
+            }
+          })
+        };
       }
 
       return reason;
@@ -82,7 +85,7 @@ const CavcDecisionReasons = ({ uniqueId }) => {
           value={checkedReasons.find((reason) => reason.id === parent.id)?.checked}
           styling={checkboxStyling}
         />
-        {checkedReasons[parent.id] && (
+        {checkedReasons[parent.id - 1].checked && (
           <div>
             {childrenOfParent.map((child) => (
               <Checkbox
