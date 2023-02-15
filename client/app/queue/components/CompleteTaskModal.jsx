@@ -31,6 +31,22 @@ const validDropdown = (dropdown) => {
   return dropdown?.length > 0;
 };
 
+function formatOtherInstructions(state) {
+  let formattedInstructions = '';
+
+  if (state.dropdown === 'other') {
+    formattedInstructions += `\n**Reason for return:**\nOther - ${state.otherInstructions}`;
+  } else {
+    formattedInstructions += `\n**Reason for return:**\n${state.dropdown}`;
+  }
+
+  if (state.instructions) {
+    formattedInstructions += `\n\n**Detail:**\n${state.instructions}`;
+  }
+
+  return formattedInstructions;
+}
+
 const MarkTaskCompleteModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
   const instructionsLabel = taskConfiguration && taskConfiguration.instructions_label;
@@ -166,7 +182,7 @@ const returnToBoardOptions = [
   { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_HLR_PENDING, value: 'HLR Pending'},
   { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_SC_PENDING, value: 'SC Pending'},
   { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_NOT_VHA_RELATED, value: 'not vha related'},
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_CLARIFICATION_NEEDED, value: 'clarification needed'},
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_CLARIFICATION_NEEDED, value: 'clarification needed from appellant'},
   { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_NO_VHA_DECISION, value: 'no vha decision'},
   { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_OTHER, value: 'other'}
 ];
@@ -465,6 +481,9 @@ const MODAL_TYPE_ATTRS = {
     submitDisabled: ({ state }) => (
       !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
     ),
+    customFormatInstructions: ({ state }) => {
+      return formatOtherInstructions(state);
+    }
   },
   vha_send_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
@@ -514,19 +533,7 @@ const MODAL_TYPE_ATTRS = {
         validDropdown(state.dropdown)
     ),
     customFormatInstructions: ({ state }) => {
-      let formattedInstructions = '';
-
-      if (state.dropdown === 'other') {
-        formattedInstructions += `\n**Reason for return:**\nOther - ${state.otherInstructions}`;
-      } else {
-        formattedInstructions += `\n**Reason for return:**\n${state.dropdown}`;
-      }
-
-      if (state.instructions) {
-        formattedInstructions += `\n\n**Detail:**\n${state.instructions}`;
-      }
-
-      return formattedInstructions;
+      return formatOtherInstructions(state);
     }
   },
 

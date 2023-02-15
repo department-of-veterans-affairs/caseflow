@@ -179,6 +179,56 @@ describe('CompleteTaskModal', () => {
     });
   });
 
+  describe('vha_return_to_board_intake', () => {
+    const taskType = 'VhaDocumentSearchTask';
+    const buttonText = COPY.MODAL_RETURN_BUTTON;
+    const modalType = 'vha_return_to_board_intake';
+
+    test('modal title is Return to Board Intake', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      expect(screen.getByText('Return to Board Intake')).toBeTruthy();
+    });
+
+    test('Other text area appears when other is selected in the dropdown', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      selectFromDropdown('Why is this appeal being returned?', 'Other')
+
+      expect(screen.getByRole(
+        'textbox', { name: 'Please provide the reason for return' }
+      )).toBeTruthy();
+    });
+
+    test('Return button is disabled until a task is selected', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      expect(screen.findByRole('button', { name: buttonText, disabled: true })).toBeTruthy();
+
+      selectFromDropdown('Why is this appeal being returned?', 'Duplicate')
+
+      expect(screen.findByRole('button', { name: buttonText, disabled: false })).toBeTruthy();
+    });
+
+    test('if other is selected, Return button is disabled until a reason is entered', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      expect(screen.findByRole('button', { name: buttonText, disabled: true })).toBeTruthy();
+
+      selectFromDropdown('Why is this appeal being returned?', 'Other')
+
+      expect(screen.findByRole('button', { name: buttonText, disabled: true })).toBeTruthy();
+
+      const otherTextArea = screen.getByRole(
+        'textbox', { name: 'Please provide the reason for return' }
+      );
+
+      userEvent.type(otherTextArea, 'Reasoning for the return');
+
+      expect(screen.findByRole('button', { name: buttonText, disabled: false })).toBeTruthy();
+
+    });
+  });
   describe('vha_caregiver_support_send_to_board_intake_for_review', () => {
     const taskType = 'VhaDocumentSearchTask';
     const buttonText = COPY.MODAL_SEND_BUTTON;
