@@ -61,8 +61,12 @@ class AppealsController < ApplicationController
         # byebug
         appeal = get_appeal_object(appeals_id)
         # byebug
-
-        send_data pdf: PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal), filename: PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal).split('/').last, type: "application/pdf", disposition: :attachment
+        # pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
+        # file_name = pdf.split("/").last
+        # file_name = pdf.dup << ".zip"
+        # file_name = pdf.gsub("pdf", "zip")
+        # send_data pdf, filename: file_name, type: "application/pdf", disposition: :attachment
+        send_file PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal), type: "application/pdf", disposition: :attachment
         # byebug
       end
     end
