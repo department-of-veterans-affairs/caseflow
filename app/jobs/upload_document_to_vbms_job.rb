@@ -2,7 +2,6 @@
 
 class UploadDocumentToVbmsJob < CaseflowJob
   queue_with_priority :low_priority
-  # application_attr :idt
 
   # Purpose: Calls the UploadDocumentToVbms workflow to upload the given document to VBMS
   #
