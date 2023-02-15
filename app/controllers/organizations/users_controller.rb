@@ -104,12 +104,11 @@ class Organizations::UsersController < OrganizationsController
     ]
 
     # All VHA Organization names. This is not as nice as the contants but that errors for now.
-    # TODO: Verify that it isn't just my development environment because this is nicer
     all_vha_org_names = [
       "Veterans Health Administration",
       "VHA Caregiver Support Program",
       "VHA CAMO",
-      vha_program_office_names,
+      vha_program_office_names
     ].flatten
 
     # vha_org_types.any? { |org_type| organization.is_a?(org_type) }
