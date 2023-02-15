@@ -30,7 +30,7 @@ const VhaHelp = () => {
     return <div className="cf-help-divider"></div>;
   };
 
-  const SuccesssBanner = () => {
+  const SuccessBanner = () => {
     // Not sure where to grab this from. Either message props or FormRedux
     const vhaFormSuccess = false;
 
@@ -44,7 +44,7 @@ const VhaHelp = () => {
   };
 
   return <div className="cf-help-content">
-    <SuccesssBanner />
+    <SuccessBanner />
     <Header />
     <HelpDivider />
     <TrainingVideos />

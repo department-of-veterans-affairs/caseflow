@@ -16,7 +16,7 @@ const HelpRootView = () => {
       url: '/intake/help' },
     { name: 'Queue Help',
       url: '/queue/help' },
-    { name: 'Vha Help',
+    { name: 'VHA Help',
       url: '/vha/help' },
   ];
 
