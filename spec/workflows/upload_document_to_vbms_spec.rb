@@ -21,7 +21,6 @@ describe UploadDocumentToVbms, :postgres do
   let(:uploaded_to_vbms_at) { nil }
   let(:processed_at) { nil }
   let!(:doc_to_upload) { UploadDocumentToVbms.new(document: document) }
-  let(:doc_with_s3) { UploadDocumentToVbms.new(document: document, s3_sub_bucket: "test") }
 
   describe "#pdf_location" do
     it "fetches file from s3 and returns temporary location" do
@@ -51,15 +50,13 @@ describe UploadDocumentToVbms, :postgres do
   end
 
   describe "#s3_location" do
-    context "with default argument" do
-      it "defaults to idt-uploaded-documents" do
-        expect(doc_to_upload.s3_sub_bucket).to eq "idt-uploaded-documents"
+    context "fetches a bucket name based on document type" do
+      it "changes based on specific document types" do
+        document.document_type = "BVA Case Notifications"
+        expect(doc_to_upload.send(:s3_location)).to include("notification-reports")
       end
-    end
-
-    context "with passed in argument" do
-      it "uses what was passed in" do
-        expect(doc_with_s3.send(:s3_location)).to include(doc_with_s3.s3_sub_bucket)
+      it "defaults to idt-uploaded-documents" do
+        expect(doc_to_upload.send(:s3_location)).to include("idt-uploaded-documents")
       end
     end
   end
