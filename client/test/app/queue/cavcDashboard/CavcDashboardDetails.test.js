@@ -1,59 +1,54 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { CavcDashboardDetails } from '../../../../app/queue/cavcDashboard/CavcDashboardDetails';
-import CAVC_REMAND_SUBTYPES from '../../../../constants/CAVC_REMAND_SUBTYPES';
 
-const createRemandProp = (subtype) => {
+const createDashboardProp = (jmr) => {
   return {
-    source_appeal_decision_date: '2022-02-01',
-    source_appeal_docket_number: '210501-1',
-    decision_date: '2022-04-01',
+    board_decision_date: '2022-02-01',
+    board_docket_number: '210501-1',
+    cavc_decision_date: '2022-04-01',
     cavc_docket_number: '22-0010',
-    remand_subtype: subtype
+    joint_motion_for_remand: jmr || false
   };
 };
 
-const renderCavcDashboardDetails = async (remand, userCanEdit) => {
-  const props = { remand, userCanEdit };
+const renderCavcDashboardDetails = async (dashboard, userCanEdit) => {
+  const props = { dashboard, userCanEdit };
 
   return render(<CavcDashboardDetails {...props} />);
 };
 
 describe('CavcDashboardDetails', () => {
-  const jmrSubtypes = Object.values(CAVC_REMAND_SUBTYPES).filter((val) => val !== 'mdr');
+  it('displays Joint Motion For Remand correctly when true', async () => {
+    const dashboard = createDashboardProp(true);
 
-  it('displays correct values with jmr remand subtypes', async () => {
-    jmrSubtypes.forEach((subtype) => async () => {
-      const remand = createRemandProp(subtype);
+    await renderCavcDashboardDetails(dashboard, false);
+    const jmrSpan = [...document.querySelectorAll('span')].filter((el) => el.textContent.includes('Yes'));
 
-      await renderCavcDashboardDetails(remand, false);
-      const jmrSpan = [...document.querySelectorAll('span')].filter((el) => el.textContent.includes('Yes'));
-
-      expect(screen.getByText('02/01/22')).toBeTruthy();
-      expect(screen.getByText(remand.source_appeal_docket_number)).toBeTruthy();
-      expect(screen.getByText('04/01/22')).toBeTruthy();
-      expect(screen.getByText(remand.cavc_docket_number)).toBeTruthy();
-      expect(jmrSpan.length).toBe(1);
-      expect(jmrSpan[0].textContent).toBe('Yes');
-    });
+    expect(screen.getByText('02/01/22')).toBeTruthy();
+    expect(screen.getByText(dashboard.board_docket_number)).toBeTruthy();
+    expect(screen.getByText('04/01/22')).toBeTruthy();
+    expect(screen.getByText(dashboard.cavc_docket_number)).toBeTruthy();
+    expect(jmrSpan.length).toBe(1);
+    expect(jmrSpan[0].textContent).toBe('Yes');
   });
 
-  it('displays correct values with no remand subtype provided', async () => {
-    const remand = createRemandProp();
+  it('displays Joint Motion For Remand correctly when false', async () => {
+    const dashboard = createDashboardProp(false);
 
-    await renderCavcDashboardDetails(remand, false);
+    await renderCavcDashboardDetails(dashboard, false);
     const jmrSpan = [...document.querySelectorAll('span')].filter((el) => el.textContent.includes('No'));
 
     expect(screen.getByText('02/01/22')).toBeTruthy();
-    expect(screen.getByText(remand.source_appeal_docket_number)).toBeTruthy();
+    expect(screen.getByText(dashboard.board_docket_number)).toBeTruthy();
     expect(screen.getByText('04/01/22')).toBeTruthy();
-    expect(screen.getByText(remand.cavc_docket_number)).toBeTruthy();
+    expect(screen.getByText(dashboard.cavc_docket_number)).toBeTruthy();
     expect(jmrSpan.length).toBe(1);
     expect(jmrSpan[0].textContent).toBe('No');
   });
 
   it('edit button is disabled/hidden if not a member of OAI', async () => {
-    const remand = createRemandProp();
+    const remand = createDashboardProp();
 
     await renderCavcDashboardDetails(remand, false);
 
@@ -64,7 +59,7 @@ describe('CavcDashboardDetails', () => {
   });
 
   it('edit button is enabled/visible if member of OAI', async () => {
-    const remand = createRemandProp();
+    const remand = createDashboardProp();
 
     await renderCavcDashboardDetails(remand, true);
 

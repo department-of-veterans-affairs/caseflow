@@ -7,8 +7,6 @@ class WorkQueue::CavcRemandSerializer
   attribute :cavc_decision_type
   attribute :cavc_docket_number
   attribute :cavc_judge_full_name
-  attribute :cavc_dashboard_dispositions
-  attribute :cavc_dashboard_issues
   attribute :decision_date
   attribute :decision_issue_ids
   attribute :federal_circuit
@@ -25,19 +23,9 @@ class WorkQueue::CavcRemandSerializer
   attribute :remand_appeal_uuid do |object|
     object.remand_appeal&.uuid
   end
-  attribute :source_appeal_docket_number do |object|
-    object.source_appeal.stream_docket_number
-  end
-  attribute :source_appeal_decision_date do |object|
-    object.source_appeal.decision_date
-  end
 
   attribute :source_decision_issues do |object|
     object.source_appeal&.decision_issues
-  end
-
-  attribute :source_request_issues do |object|
-    object.source_appeal&.request_issues
   end
 
   attribute :created_by do |object|

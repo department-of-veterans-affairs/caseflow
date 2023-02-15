@@ -38,7 +38,8 @@ describe Seeds::CavcDashboardData do
       ).children.count).to eq 4
       expect(CavcDecisionReason.find_by(decision_reason: "AMA specific remand?").children.count).to eq 7
 
-      # 10 from create_cavc_dashboard_dispositions, 4 from create_appeals_with_multiple_cavc_remands, 10 from create_cavc_dashboard_issues
+      # 10 from create_cavc_dashboard_dispositions, 4 from create_appeals_with_multiple_cavc_remands,
+      # 10 from create_cavc_dashboard_issues
       expect(CavcRemand.count).to eq 24
       expect(CavcDashboardDisposition.count).to eq 30
     end

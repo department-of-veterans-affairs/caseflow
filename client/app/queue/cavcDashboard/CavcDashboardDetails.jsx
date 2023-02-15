@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { LABELS } from './cavcDashboardConstants';
-import CAVC_REMAND_SUBTYPES from '../../../constants/CAVC_REMAND_SUBTYPES';
 import Button from '../../components/Button';
 import { PencilIcon } from '../../components/icons/PencilIcon';
 import { DateString } from '../../util/DateUtil';
@@ -53,15 +52,16 @@ CavcDashboardDetailsSection.propTypes = {
 };
 
 export const CavcDashboardDetails = (props) => {
-  const { remand, userCanEdit } = props;
+  const { dashboard, userCanEdit } = props;
 
   // remove eslint disable when the set methods are used for editing
   /* eslint-disable no-unused-vars */
-  const [boardDecisionDate, setBoardDecisionDate] = useState(remand.source_appeal_decision_date);
-  const [boardDocketNumber, setBoardDocketNumber] = useState(remand.source_appeal_docket_number);
-  const [cavcDecisionDate, setCavcDecisionDate] = useState(remand.decision_date);
-  const [cavcDocketNumber, setCavcDocketNumber] = useState(remand.cavc_docket_number);
-  const [remandSubtype, setRemandSubtype] = useState(remand.remand_subtype);
+
+  const [boardDecisionDate, setBoardDecisionDate] = useState(dashboard.board_decision_date);
+  const [boardDocketNumber, setBoardDocketNumber] = useState(dashboard.board_docket_number);
+  const [cavcDecisionDate, setCavcDecisionDate] = useState(dashboard.cavc_decision_date);
+  const [cavcDocketNumber, setCavcDocketNumber] = useState(dashboard.cavc_docket_number);
+  const [jointMotionForRemand, setJointMotionForRemand] = useState(dashboard.joint_motion_for_remand);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   /* eslint-enable no-unused-vars */
 
@@ -113,7 +113,7 @@ export const CavcDashboardDetails = (props) => {
   });
 
   return (
-    <div id={`dashboard-details-${remand.id}`}>
+    <div id={`dashboard-details-${dashboard.id}`}>
       <Button linkStyling willNeverBeLoading classNames={['cf-push-right', 'cf-modal-link']}
         styling={buttonStyling} disabled={!userCanEdit} onClick={clickHandler}
       >
@@ -129,7 +129,7 @@ export const CavcDashboardDetails = (props) => {
           title={LABELS.CAVC_DECISION_DATE} value={<DateString date={cavcDecisionDate} />}
         />
         <CavcDashboardDetailsSection title={LABELS.CAVC_DOCKET_NUMBER} value={cavcDocketNumber} />
-        <CavcDashboardDetailsSection title={LABELS.IS_JMR} value={checkIfJmrJmpr() ? 'Yes' : 'No'} />
+        <CavcDashboardDetailsSection title={LABELS.IS_JMR} value={jointMotionForRemand ? 'Yes' : 'No'} />
       </CavcDashboardDetailsContainer>
       {openDetailsModal &&
       <Modal title={COPY.CAVC_DASHBOARD_EDIT_DETAILS_MODAL_TITLE}
@@ -186,8 +186,8 @@ export const CavcDashboardDetails = (props) => {
 };
 
 CavcDashboardDetails.propTypes = {
-  remandId: PropTypes.number,
-  remand: PropTypes.object,
+  dashboardId: PropTypes.number,
+  dashboard: PropTypes.object,
   userCanEdit: PropTypes.bool
 };
 
