@@ -29,6 +29,36 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
     FeatureToggle.disable!(:vha_irregular_appeals)
   end
 
+  context "CAMO user can return a case to BVA intake" do
+    before do
+      User.authenticate!(user: camo_user)
+    end
+    scenario "assign to BVA intake" do
+      step "navigate from CAMO team queue to case details" do
+        visit camo_org.path
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+        expect(page).to have_content(appeal.veteran_full_name.to_s)
+      end
+      step "trigger return to board intake modal" do
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_RETURN_TO_BOARD_INTAKE.label).click
+        expect(page).to have_content(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
+        expect(page).to have_content(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL)
+        expect(page).to have_content(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY)
+      end
+      step "submit valid form" do
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT).click
+        find("div", class: "cf-select__option", text: COPY::VHA_RETURN_TO_BOARD_INTAKE_DUPLICATE).click
+        fill_in("Provide additional context and/or documents:", with: "This is a duplicate of 1234567.")
+        find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON).click
+      end
+      step "redirect and confirmation" do
+        expect(page).to have_content(COPY::VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION.gsub("%s", appeal.veteran.person.name))
+      end
+    end
+  end
+
   context "CAMO user can assign a case to BVA intake, recommending cancellation" do
     before do
       User.authenticate!(user: camo_user)

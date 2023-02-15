@@ -470,7 +470,7 @@ const MODAL_TYPE_ATTRS = {
   },
   vha_return_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
-      title: sprintf(COPY.VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
+      title: sprintf(COPY.VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
     }),
     title: () => COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: VhaCamoReturnToBoardIntakeModal,

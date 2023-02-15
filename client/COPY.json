@@ -1279,6 +1279,7 @@
   "VHA_RETURN_TO_BOARD_INTAKE_OTHER": "Other",
   "VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL": "Please provide the reason for return",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_INSTRUCTIONS_LABEL": "Provide additional context and/or documents:",
+  "VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION": "You have successfully returned %s's case to Board Intake",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL": "What is the status of this appeal?",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS": "Correct documents have been successfully added",
