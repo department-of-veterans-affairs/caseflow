@@ -55,10 +55,15 @@ class AppealsController < ApplicationController
         results = find_notifications_by_appeals_id(appeals_id)
         render json: results
       end
+
       format.pdf do
-        appeal = get_appeal_object(appeals_id)
         request.headers["HTTP_PDF"]
-        send data pdf: PdfExportService.call("notification_report_pdf_template", appeal).render, filename: PdfExportService.file_name, type: "application/pdf", disposition: :attachment
+        # byebug
+        appeal = get_appeal_object(appeals_id)
+        # byebug
+
+        send_data pdf: PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal), filename: PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal).split('/').last, type: "application/pdf", disposition: :attachment
+        # byebug
       end
     end
   end

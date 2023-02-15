@@ -48,7 +48,7 @@ class PdfExportService
       else
         file_name = template_name + ".pdf"
       end
-      # file_location = "#{Rails.root}/#{file_name}"
+      file_location = "#{Rails.root}/#{file_name}"
       # kit.to_pdf(file_location)
       # # create pdf file from pdfkit object
       # pdf = kit.to_pdf

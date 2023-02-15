@@ -84,7 +84,7 @@ export const NotificationsView = (props) => {
               VA Notify sent these status notifications to the Appellant about their case.
             </p>
             <Button onClick={() => {
-              ApiUtil.get('/appeals/:appeals_id/notifications', { headers: { 'Content-Type': 'HTTP_PDF' } }).
+              ApiUtil.get(`/appeals/${appealId}/notifications.pdf`, { headers: { 'Content-Type': 'HTTP_PDF' } }).
                 then((response) => {
                   const pdf = response.body;
                   {console.log('this is the body', pdf)}
