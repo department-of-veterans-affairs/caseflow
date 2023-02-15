@@ -102,7 +102,7 @@ class MembershipRequestsController < ApplicationController
         "prosthetics" => "Prosthetics"
       }
     # keys_to_org_hash.values_at(*keys.map(&:to_sym))
-    org_names = keys_to_org_hash.values_at(*key_names)
+    org_names = keys_to_org_hash.values_at(*key_names).compact
 
     org_list = org_names.map do |org_name|
       # This is a bit gross

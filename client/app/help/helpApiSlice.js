@@ -4,7 +4,8 @@ import { combineReducers } from 'redux';
 
 export const submitForm = createAsyncThunk('form/submit', async (formData) => {
   // TODO: Update this url to work with the form submission implementation
-  const response = await ApiUtil.post('/help/submitOrganizationMembershipRequest', formData);
+  // const response = await ApiUtil.post('/help/submitOrganizationMembershipRequest', formData);
+  const response = await ApiUtil.post('/membership_requests', formData);
   const data = await response.json;
 
   if (response.status < 200 || response.status >= 300) {

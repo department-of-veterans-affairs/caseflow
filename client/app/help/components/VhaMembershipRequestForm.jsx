@@ -140,7 +140,9 @@ const VhaMembershipRequestForm = () => {
     // Do not need prevent default if I don't use button type=submit, but would need click handler or something.
     event.preventDefault();
     console.log('me submit form real good like');
-    const membershipRequests = { vhaAccess, ...programOfficesAccess };
+    const membershipRequests = { vhaAccess, ...programOfficesAccess, requestReason };
+    // Setup the form data in a typical json data format.
+    // const formData = { data: membershipRequests };
     const { body } = ApiUtil.post(
       '/membership_requests',
       // { data: { vhaAccess, programOfficesAccess, requestReason } },
@@ -154,15 +156,13 @@ const VhaMembershipRequestForm = () => {
       // dispatch(setUserOrganizations(props.userOrganizations));
       dispatch(setSuccessMessage(message));
 
-      // TODO: renable this. It's just annoying for testing though.
       resetMembershipRequestForm();
-
       // can dispatch or can just do a normal form submit.
       // I think it doesn't matter which but would change the reload/loading of data.
       // If it's a normal form submit then we probably need an erb file.
     }).
       catch((error) => {
-        console.log(error);
+        // console.log(error);
         alert(error);
       });
   };
