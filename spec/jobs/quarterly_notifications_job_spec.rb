@@ -24,7 +24,14 @@ describe QuarterlyNotificationsJob, type: :job do
         expect { subject }.not_to have_enqueued_job(SendNotificationJob)
       end
     end
-
+    
+    context "job setup" do
+      it "sets the current user for BGS calls" do
+        subject
+        expect(RequestStore[:current_user]).to eq(User.system_user)
+      end
+    end
+    
     context "Appeal Docketed" do
       let!(:appeal_state) do
         create(
