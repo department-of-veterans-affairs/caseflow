@@ -39,7 +39,4 @@ export const VHA_CAMO_AND_CAREGIVER_OPTIONS = [
   },
 ];
 
-export const VHA_FORM_SUBMIT_SUCCESS_MESSAGE = `Your request to access the VHA group has been submitted.
- Please check your VA email for updates concerning your request.`.trim();
-
 export const VHA_FORM_SUBMIT_SUCCESS_TITLE = 'Your request was successfully submitted!';

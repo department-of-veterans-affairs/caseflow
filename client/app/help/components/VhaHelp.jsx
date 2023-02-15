@@ -1,7 +1,7 @@
 import React from 'react';
 import VhaMembershipRequestForm from './VhaMembershipRequestForm';
 import Alert from '../../components/Alert';
-import { VHA_FORM_SUBMIT_SUCCESS_MESSAGE, VHA_FORM_SUBMIT_SUCCESS_TITLE } from '../constants';
+import { VHA_FORM_SUBMIT_SUCCESS_TITLE } from '../constants';
 import { useSelector } from 'react-redux';
 
 const VhaHelp = () => {
@@ -38,10 +38,6 @@ const VhaHelp = () => {
   };
 
   const SuccesssBanner = () => {
-    // TODO: Not sure where to grab this from. Either message props or FormRedux
-    // const vhaFormSuccess = false;
-
-    // TODO: This message needs to be built on the server and passed up I think.
     return successMessage && <div style={{ marginBottom: '3rem' }}>
       <Alert
         type="success"
