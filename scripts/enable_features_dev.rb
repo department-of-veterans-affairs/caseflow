@@ -56,7 +56,8 @@ end
 #   - the flag is only being used to disable functionality
 disabled_flags = [
   "legacy_das_deprecation",
-  "cavc_dashboard_workflow"
+  "cavc_dashboard_workflow",
+  "poa_auto_refresh"
 ]
 
 all_features = AllFeatureToggles.new.call.flatten.uniq
