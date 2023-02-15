@@ -226,9 +226,23 @@ describe('CompleteTaskModal', () => {
       userEvent.type(otherTextArea, 'Reasoning for the return');
 
       expect(screen.findByRole('button', { name: buttonText, disabled: false })).toBeTruthy();
+    });
 
+    test('other instructions are formatted', async () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+      selectFromDropdown('Why is this appeal being returned?', 'Other')
+      const otherTextArea = screen.getByRole(
+        'textbox', { name: 'Please provide the reason for return' }
+      );
+      userEvent.type(otherTextArea, 'very good reason');
+
+      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
+      expect(getReceivedInstructions()).toBe(
+        '\n**Reason for return:**\nOther - very good reason'
+      );
     });
   });
+
   describe('vha_caregiver_support_send_to_board_intake_for_review', () => {
     const taskType = 'VhaDocumentSearchTask';
     const buttonText = COPY.MODAL_SEND_BUTTON;
