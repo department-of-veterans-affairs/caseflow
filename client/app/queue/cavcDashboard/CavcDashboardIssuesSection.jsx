@@ -68,7 +68,6 @@ const CavcDashboardIssue = (props) => {
           />
         </div>
       </div>
-      <CavcDecisionReasons />
     </li>
   );
 };
@@ -90,10 +89,10 @@ const CavcDashboardIssuesSection = (props) => {
       </div>
       <ol {...olStyling}>
         {issues.map((issue, i) => {
-
           return (
             <React.Fragment key={i}>
               <CavcDashboardIssue issue={issue} index={i} dispositions={dashboardDispositions} />
+              <CavcDecisionReasons uniqueId={issue.id} />
             </React.Fragment>
           );
         })}

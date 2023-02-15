@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
-const CavcDecisionReasons = ({ index }) => {
+const CavcDecisionReasons = ({ uniqueId }) => {
 
   const checkboxStyling = css({
     paddingLeft: '2.5%',
@@ -19,74 +19,102 @@ const CavcDecisionReasons = ({ index }) => {
     marginBlock: 'auto'
   });
 
-  const [checkedParentReasons, setCheckedParentReasons] = useState([]);
-  const [checkedChildReasons, setCheckedChildReasons] = useState([]);
-  // const [parentCheckedCount, setParentCheckedCount] = useState();
   const decisionReasons = useSelector((state) => state.cavcDashboard.decision_reasons);
-
-  const handleParentCheckboxChange = (value, id) => {
-    setCheckedParentReasons({
-      ...checkedParentReasons,
-      [id]: value
-    });
-    // setParentCheckedCount(checkedParentReasons.length);
-  };
-
-  const handleChildCheckboxChange = (value, id) => {
-    setCheckedChildReasons({
-      ...checkedChildReasons,
-      [id]: value
-    });
-  };
-
   const parentReasons = decisionReasons.filter((parentReason) => !parentReason.parent_decision_reason_id);
   const childReasons = decisionReasons.filter((childReason) => childReason.parent_decision_reason_id !== null);
 
+  // get all children where parent.id === child.parent_decision_reason_id
+  // then create an object for each child, stored into array
+  const [checkedReasons, setCheckedReasons] = useState(parentReasons.map((reason) => {
+    const children = childReasons.filter(
+      (child) => child.parent_decision_reason_id === reason.id).map(
+      (childReason) => {
+
+        return {
+          id: childReason.id,
+          decisionReason: childReason.decision_reason,
+          checked: false,
+          issueId: uniqueId
+        };
+      });
+
+    return {
+      id: reason.id,
+      decisionReason: reason.decision_reason,
+      checked: false,
+      children,
+      issueId: uniqueId
+    };
+  }));
+  const handleCheckboxChange = (value, checkboxId, issueId) => {
+    setCheckedReasons(checkedReasons.map((reason) => {
+      if (reason.id === checkboxId) {
+        return {
+          ...reason,
+          checked: value,
+          issueId
+        };
+      }
+      else if (reason.id >= 18) {
+        return {
+          ...reason,
+          children: {
+            ...reason.children,
+            checked: value,
+            issueId
+          }
+        }
+      }
+
+      return reason;
+    }));
+  };
+
   const reasons = parentReasons.map((parent) => {
+    const childrenOfParent = childReasons.filter((child) => child.parent_decision_reason_id === parent.id);
+
     return (
-      <div>
+      <div key={parent.id}>
         <Checkbox
-          key={parent.id}
-          name={`checkbox-${parent.id}`}
+          name={`checkbox-${parent.id}-${uniqueId}`}
           label={parent.decision_reason}
-          onChange={(value) => handleParentCheckboxChange(value, parent.id)}
-          value={checkedParentReasons[parent.id]}
+          onChange={(value) => {handleCheckboxChange(value, parent.id, uniqueId);}}
+          value={checkedReasons.find((reason) => reason.id === parent.id)?.checked}
           styling={checkboxStyling}
         />
-        {childReasons.filter((childReason) =>
-          childReason.parent_decision_reason_id === parent.id).map((child) => {
-          if (checkedParentReasons[child.parent_decision_reason_id]) {
-            return (
+        {checkedReasons[parent.id] && (
+          <div>
+            {childrenOfParent.map((child) => (
               <Checkbox
                 key={child.id}
-                name={`checkbox-${child.id}`}
+                name={`checkbox-${child.id}-${uniqueId}`}
                 label={child.decision_reason}
-                onChange={(value) => handleChildCheckboxChange(value, child.id)}
-                value={checkedChildReasons[child.id]}
+                onChange={(value) => {handleCheckboxChange(value, child.id, uniqueId)}}
+                value={checkedReasons.find((reason) => reason.id === child.id)?.checked}
                 styling={childCheckboxStyling}
               />
-            );
-          }
-        })}
+            ))}
+          </div>
+        )}
       </div>
-    );
+    )
   });
 
   return (
     <>
-      <Accordion style="bordered" id={index}>
-        <AccordionSection title={`${LABELS.CAVC_DECISION_REASONS}`} id={index}>
+      <Accordion style="bordered" accordion id={`accordion-${uniqueId}`}>
+        <AccordionSection title={`${LABELS.CAVC_DECISION_REASONS}`} id={`accordion-${uniqueId}`} >
           <p style={{ fontWeight: 'normal' }}>Select reasons why this issue's decision was changed</p>
           {reasons}
         </AccordionSection>
       </Accordion>
     </>
-  )
+  );
 };
 
 CavcDecisionReasons.propTypes = {
-  index: PropTypes.number,
-}
+  uniqueId: PropTypes.number,
+};
 
 export default CavcDecisionReasons;
 
