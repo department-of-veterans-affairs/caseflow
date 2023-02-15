@@ -81,11 +81,23 @@ class VANotifyStatusUpdateJob < CaseflowJob
     Notification.where("(notification_type = 'Email' AND email_notification_status = 'Success') \
       OR (notification_type = 'SMS' AND sms_notification_status = 'Success') \
       OR (notification_type = 'Email and SMS' AND \
-         (sms_notification_status = 'Success' OR email_notification_status = 'Success')) \
-      OR (notification_type = 'Email' AND email_notification_status = 'Temporary-failure') \
-      OR (notification_type = 'SMS' AND sms_notification_status = 'Temporary-faiure') \
+          (sms_notification_status = 'Success' OR email_notification_status = 'Success')) \
+      OR (notification_type = 'Email' AND email_notification_status = 'temporary-failure') \
+      OR (notification_type = 'SMS' AND sms_notification_status = 'temporary-failure') \
       OR (notification_type = 'Email and SMS' AND \
-         (sms_notification_status = 'Success' OR email_notification_status = 'Temporary-failure'))")
+          (sms_notification_status = 'temporary-failure' OR email_notification_status = 'temporary-failure')) \
+      OR (notification_type = 'Email' AND email_notification_status = 'technical-failure') \
+      OR (notification_type = 'SMS' AND sms_notification_status = 'technical-failure') \
+      OR (notification_type = 'Email and SMS' AND \
+          (sms_notification_status = 'technical-failure' OR email_notification_status = 'technical-failure')) \
+      OR (notification_type = 'Email' AND email_notification_status = 'sending') \
+      OR (notification_type = 'SMS' AND sms_notification_status = 'sending') \
+      OR (notification_type = 'Email and SMS' AND \
+          (sms_notification_status = 'sending' OR email_notification_status = 'sending')) \
+      OR (notification_type = 'Email' AND email_notification_status = 'created') \
+      OR (notification_type = 'SMS' AND sms_notification_status = 'created') \
+      OR (notification_type = 'Email and SMS' AND \
+          (sms_notification_status = 'created' OR email_notification_status = 'created'))")
   end
 
   # Description: Method to be called when an error message need to be logged
