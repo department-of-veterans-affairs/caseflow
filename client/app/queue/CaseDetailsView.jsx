@@ -38,7 +38,7 @@ import CaseHearingsDetail from './CaseHearingsDetail';
 import { CaseTimeline } from './CaseTimeline';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
-import CavcDetail from './CavcDetail';
+import CavcDetail from './caseDetails/CavcDetail';
 import CaseDetailsPostDispatchActions from './CaseDetailsPostDispatchActions';
 import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import StickyNavContentArea from './StickyNavContentArea';
