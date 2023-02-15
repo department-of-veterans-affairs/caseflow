@@ -90,7 +90,8 @@ class UploadDocumentToVbms
   #
   # Return: string for the sub-bucket
   def s3_bucket_by_doc_type
-    if document_type == "BVA Case Notifications"
+    case document_type
+    when "BVA Case Notifications"
       "notification-reports"
     else
       "idt-uploaded-documents"
