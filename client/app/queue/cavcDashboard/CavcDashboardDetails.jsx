@@ -8,7 +8,11 @@ import CAVC_REMAND_SUBTYPES from '../../../constants/CAVC_REMAND_SUBTYPES';
 import Button from '../../components/Button';
 import { PencilIcon } from '../../components/icons/PencilIcon';
 import { DateString } from '../../util/DateUtil';
-import { useHistory } from 'react-router-dom';
+import Modal from '../../components/Modal';
+import COPY from '../../../COPY';
+import DateSelector from '../../components/DateSelector';
+import TextField from '../../components/TextField';
+import RadioField from '../../components/RadioField';
 
 const CavcDashboardDetailsContainer = ({ children }) => {
   const containerStyling = css({
@@ -50,7 +54,6 @@ CavcDashboardDetailsSection.propTypes = {
 
 export const CavcDashboardDetails = (props) => {
   const { remand, userCanEdit } = props;
-  const { push } = useHistory();
 
   // remove eslint disable when the set methods are used for editing
   /* eslint-disable no-unused-vars */
@@ -59,6 +62,7 @@ export const CavcDashboardDetails = (props) => {
   const [cavcDecisionDate, setCavcDecisionDate] = useState(remand.decision_date);
   const [cavcDocketNumber, setCavcDocketNumber] = useState(remand.cavc_docket_number);
   const [remandSubtype, setRemandSubtype] = useState(remand.remand_subtype);
+  const [openDetailsModal, setOpenDetailsModal] = useState(false);
   /* eslint-enable no-unused-vars */
 
   const checkIfJmrJmpr = () => {
@@ -72,6 +76,34 @@ export const CavcDashboardDetails = (props) => {
     }
   };
 
+  const clickHandler = () => {
+    setOpenDetailsModal((current) => (!current));
+    console.log(openDetailsModal);
+  };
+
+  const submitHandler = () => {
+    setOpenDetailsModal(false);
+    console.log(openDetailsModal);
+  };
+
+  const validateForm = () => {
+    return (
+      boardDecisionDate !== null &&
+      boardDocketNumber !== null &&
+       cavcDecisionDate !== null &&
+        cavcDocketNumber !== null);
+  };
+
+  const radioOptions = [
+    {
+      displayText: 'Yes',
+      value: true,
+    },
+    {
+      displayText: 'No',
+      value: false,
+    }];
+
   // position/top bypasses the fixed margin on the TabWindow component
   const buttonStyling = css({
     position: 'relative',
@@ -83,7 +115,7 @@ export const CavcDashboardDetails = (props) => {
   return (
     <div id={`dashboard-details-${remand.id}`}>
       <Button linkStyling willNeverBeLoading classNames={['cf-push-right', 'cf-modal-link']}
-        styling={buttonStyling} disabled={!userCanEdit} onClick={() => push(`/queue/appeals/${remand.remand_appeal_uuid}/cavc_dashboard/modal/CavcDashboardDetailsModal`)}
+        styling={buttonStyling} disabled={!userCanEdit} onClick={clickHandler}
       >
         <span {...css({ position: 'absolute' })}><PencilIcon /></span>
         <span {...css({ marginLeft: '20px' })}>Edit</span>
@@ -98,8 +130,57 @@ export const CavcDashboardDetails = (props) => {
         />
         <CavcDashboardDetailsSection title={LABELS.CAVC_DOCKET_NUMBER} value={cavcDocketNumber} />
         <CavcDashboardDetailsSection title={LABELS.IS_JMR} value={checkIfJmrJmpr() ? 'Yes' : 'No'} />
-
       </CavcDashboardDetailsContainer>
+      {openDetailsModal &&
+      <Modal title={COPY.CAVC_DASHBOARD_EDIT_DETAILS_MODAL_TITLE}
+        buttons={[
+          {
+            classNames: ['usa-button', 'cf-btn-link'],
+            name: COPY.MODAL_CANCEL_BUTTON,
+            onClick: clickHandler,
+          },
+          {
+            classNames: ['usa-button'],
+            name: COPY.MODAL_SAVE_BUTTON,
+            disabled: !userCanEdit,
+            onClick: submitHandler,
+          }
+        ]}
+        closeHandler={clickHandler}>
+        <DateSelector
+          name={LABELS.BOARD_DECISION_DATE}
+          type="date"
+          onChange={(date) => (setBoardDecisionDate(date))}
+          value={boardDecisionDate}
+          label={LABELS.BOARD_DECISION_DATE}
+        />
+        <TextField
+          name={LABELS.BOARD_DOCKET_NUMBER}
+          type="string"
+          onChange={(docket) => (setBoardDocketNumber(docket))}
+          value={boardDocketNumber}
+          label={LABELS.BOARD_DOCKET_NUMBER}
+        />
+        <DateSelector
+          name={LABELS.CAVC_DECISION_DATE}
+          type="date"
+          onChange={(date) => setCavcDecisionDate(date)}
+          value={cavcDecisionDate}
+          label={LABELS.CAVC_DECISION_DATE}
+        />
+        <TextField
+          name={LABELS.CAVC_DOCKET_NUMBER}
+          type="string"
+          onChange={(docket) => (setCavcDocketNumber(docket))}
+          value={cavcDocketNumber}
+
+          label={LABELS.CAVC_DOCKET_NUMBER} />
+        <RadioField
+          name={LABELS.IS_JMR}
+          value={checkIfJmrJmpr()}
+          options={radioOptions}
+        />
+      </Modal>}
     </div>
   );
 };

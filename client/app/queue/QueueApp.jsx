@@ -67,7 +67,6 @@ import SetOvertimeStatusModal from './SetOvertimeStatusModal';
 import StartHoldModal from './components/StartHoldModal';
 import EndHoldModal from './components/EndHoldModal';
 import BulkAssignModal from './components/BulkAssignModal';
-import CavcDashboardDetailsModal from './cavcDashboard/CavcDashboardDetailsModal';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -541,15 +540,6 @@ class QueueApp extends React.PureComponent {
         {...props}
         onCancel={() => props.history.push(pageRoute)}
       />
-    );
-  };
-
-  routedCavcDashboardDetailsModal = (props) => {
-    const { match } = props;
-    const pageRoute = match.url.replace('modal/CavcDashboardDetailsModal', '');
-
-    return (
-      <CavcDashboardDetailsModal {...props} onCancel={() => props.history.push(pageRoute)} />
     );
   };
 
@@ -1306,11 +1296,6 @@ class QueueApp extends React.PureComponent {
             <Route
               path="/organizations/:organization/modal/bulk_assign_tasks"
               render={this.routedBulkAssignTaskModal}
-            />
-
-            <Route
-              path="/queue/appeals/:appealId/cavc_dashboard/modal/CavcDashboardDetailsModal"
-              render={this.routedCavcDashboardDetailsModal}
             />
 
             <Route
