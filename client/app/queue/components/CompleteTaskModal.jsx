@@ -241,10 +241,6 @@ SendToBoardIntakeModal.propTypes = {
 
 const VhaCamoReturnToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
-  // if the VhaProgramOffice has completed a task, show the task instructions in the modal
-  const programOfficeInstructions = props.tasks.map((task) => {
-    return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1];
-  });
 
 
   const handleDropdownChange = ({ value }) => {
@@ -256,15 +252,6 @@ const VhaCamoReturnToBoardIntakeModal = ({ props, state, setState }) => {
 
   return (
     <React.Fragment>
-      {programOfficeInstructions.some((i) => i) &&
-        <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
-      {programOfficeInstructions.map((text) => (
-        <React.Fragment>
-          <div>
-            <ReactMarkdown>{text}</ReactMarkdown>
-          </div>
-        </React.Fragment>
-      ))}
       {taskConfiguration && taskConfiguration.modal_body}
       <div style= {{ marginBottom: '1.5em' }}>{COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY}</div>
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
