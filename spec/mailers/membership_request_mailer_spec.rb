@@ -9,7 +9,6 @@ describe MembershipRequestMailer do
   context "with recipient_info" do
     describe "membership_request_submitted" do
       let(:mailer) { MembershipRequestMailer.with(recipient_info: email_recipient_info).membership_request_submitted }
-
       it "has the correct From email address" do
         expect(mailer.from).to include("BoardofVeteransAppealsHearings@messages.va.gov")
       end
