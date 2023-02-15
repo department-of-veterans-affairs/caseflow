@@ -76,7 +76,6 @@
     .cf-search-input-with-close {
       width: 100%;
       max-width: 55rem;
-      margin-top: 1rem;
     }
   }
 }
@@ -122,6 +121,9 @@
 
 .usa-search-small {
   max-width: none;
+  label {
+    margin-bottom: 1rem;
+  }
 }
 
 .cf-pagination-pages {
