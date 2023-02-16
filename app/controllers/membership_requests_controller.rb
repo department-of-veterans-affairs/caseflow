@@ -101,7 +101,8 @@ class MembershipRequestsController < ApplicationController
         "memberServicesBeneficiaryTravel" => "Member Services - Beneficiary Travel",
         "prosthetics" => "Prosthetics"
       }
-    # keys_to_org_hash.values_at(*keys.map(&:to_sym))
+
+    # Remove any bad nils from unmatched keys
     org_names = keys_to_org_hash.values_at(*key_names).compact
 
     org_list = org_names.map do |org_name|

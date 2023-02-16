@@ -1,16 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import VhaMembershipRequestForm from './VhaMembershipRequestForm';
 import Alert from '../../components/Alert';
 import { VHA_FORM_SUBMIT_SUCCESS_TITLE } from '../constants';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { resetFormSuccessMessage } from '../helpApiSlice';
 
 const VhaHelp = () => {
+
+  const dispatch = useDispatch();
 
   // Success message selector for displaying the banner after object creation
   // TODO: look into createSelector for some of these and see if it is worth it.
   const successMessage = useSelector(
     (state) => state.help.messages.success
   );
+
+  const formMessage = useSelector(
+    (state) => state.form.message
+  );
+
+  useEffect(() => {
+    // Clear the form success message on first component render
+    dispatch(resetFormSuccessMessage());
+  }, [dispatch]);
 
   const Header = () => {
   /* eslint-disable max-len */
@@ -38,14 +50,16 @@ const VhaHelp = () => {
   };
 
   const SuccesssBanner = () => {
-    return successMessage && <div style={{ marginBottom: '3rem' }}>
+    return formMessage && <div style={{ marginBottom: '3rem' }}>
       <Alert
         type="success"
         title={VHA_FORM_SUBMIT_SUCCESS_TITLE}
-        message={successMessage}
+        message={formMessage}
       />
     </div>;
   };
+
+  // TODO: Probably create an error banner as well? In case something does happen.
 
   return <div className="cf-help-content">
     <SuccesssBanner />

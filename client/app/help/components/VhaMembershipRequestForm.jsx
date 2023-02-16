@@ -12,7 +12,7 @@ import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_CAMO_AND_CAREGIVER_OPTIONS } from '../c
 import { VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE,
   VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE } from '../../../COPY';
 import ApiUtil from '../../util/ApiUtil';
-import { setSuccessMessage } from '../helpApiSlice';
+import { setSuccessMessage, submitMembershipRequestForm } from '../helpApiSlice';
 
 const checkboxDivStyling = css({
   '& .cf-form-checkboxes': { marginTop: '10px' },
@@ -122,7 +122,7 @@ const VhaMembershipRequestForm = () => {
   // TODO: add a onsubmit to this button and potentially one to the form?
   const SubmitButton = ({ ...btnProps }) => {
     return (
-      <Button type="submit" name="submit-request" {...btnProps}>
+      <Button name="submit-request" {...btnProps}>
       Submit
       </Button>
     );
@@ -140,9 +140,11 @@ const VhaMembershipRequestForm = () => {
     // Do not need prevent default if I don't use button type=submit, but would need click handler or something.
     event.preventDefault();
     console.log('me submit form real good like');
-    const membershipRequests = { vhaAccess, ...programOfficesAccess, requestReason };
+    const membershipRequests = { vhaAccess, ...programOfficesAccess };
     // Setup the form data in a typical json data format.
-    // const formData = { data: membershipRequests };
+    const formData = { data: { membershipRequests, requestReason } };
+
+    // dispatch(submitMembershipRequestForm(formData));
     const { body } = ApiUtil.post(
       '/membership_requests',
       // { data: { vhaAccess, programOfficesAccess, requestReason } },
@@ -165,6 +167,18 @@ const VhaMembershipRequestForm = () => {
         // console.log(error);
         alert(error);
       });
+  };
+
+  const handleSubmit2 = (event) => {
+    // Build the form data from the state
+    event.preventDefault();
+    const membershipRequests = { vhaAccess, ...programOfficesAccess };
+    // Setup the form data in a typical json data format.
+    // TODO: Move this json data format to the thunk I think.
+    const formData = { data: { membershipRequests, requestReason } };
+
+    // TODO: take the form data returned form the server and update the organizations and vhaAccess radio buttons
+    dispatch(submitMembershipRequestForm(formData)).then(resetMembershipRequestForm());
   };
 
   const anyProgramOfficeSelected = useMemo(() => (
@@ -194,7 +208,7 @@ const VhaMembershipRequestForm = () => {
           />
         </div>
       }
-      <form onSubmit={handleSubmit} className={checkboxDivStyling}>
+      <form onSubmit={handleSubmit2} className={checkboxDivStyling}>
         <GeneralVHAAccess vhaMember={memberOrOpenRequestToVha} />
         <SpecializedAccess checkboxOptions={alteredOptions} />
         <div style={{ minHeight: '51px' }}>
@@ -207,7 +221,7 @@ const VhaMembershipRequestForm = () => {
           value={requestReason}
           onChange={(val) => setRequestReason(val)}
         />
-        <SubmitButton disabled={submitDisabled} />
+        <SubmitButton disabled={submitDisabled} type="submit" />
       </form>
     </>
   );

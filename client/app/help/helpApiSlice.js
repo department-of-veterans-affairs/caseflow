@@ -2,18 +2,30 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import ApiUtil from 'app/util/ApiUtil';
 import { combineReducers } from 'redux';
 
-export const submitForm = createAsyncThunk('form/submit', async (formData) => {
-  // TODO: Update this url to work with the form submission implementation
-  // const response = await ApiUtil.post('/help/submitOrganizationMembershipRequest', formData);
+export const submitMembershipRequestForm = createAsyncThunk('form/submit', async (formData) => {
+  // TODO: Format the formData into a data object for json here instead of over in VhaMembershipRequestForm
   const response = await ApiUtil.post('/membership_requests', formData);
-  const data = await response.json;
+  // const data = await response.body;
+  const { message } = await response.body.data;
+
+  // JSON.parse(response)
+  // console.log(response.body.data);
+
+  // console.log(response);
+  // console.log(response.status);
+
+  // console.log(data);
+  // alert(message);
+  // dispatch();
 
   if (response.status < 200 || response.status >= 300) {
-    // TODO: Figure out how to handle errors for this.
+    // TODO: Figure out how to handle server errors?
+    // Those might not be caught by the normal thunk reject error handling.
     return 'It died do something';
   }
 
-  return data;
+  return message;
+  // return 'duh';
 });
 
 export const initialState = {
@@ -28,18 +40,22 @@ export const initialState = {
 
 const formSlice = createSlice({
   name: 'form',
-  initialState: { formData: {}, status: 'idle', error: null },
-  reducers: {},
+  initialState: { message: null, status: 'idle', error: null },
+  reducers: {
+    resetFormSuccessMessage: (state) => {
+      state.message = null;
+    },
+  },
   extraReducers: (builder) => {
     builder.
-      addCase(submitForm.pending, (state) => {
+      addCase(submitMembershipRequestForm.pending, (state) => {
         state.status = 'loading';
       }).
-      addCase(submitForm.fulfilled, (state, action) => {
+      addCase(submitMembershipRequestForm.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.formData = action.payload;
+        state.message = action.payload;
       }).
-      addCase(submitForm.rejected, (state, action) => {
+      addCase(submitMembershipRequestForm.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
@@ -81,5 +97,7 @@ export const { setFeatureToggles,
   setUserOrganizations,
   setOrganizationMembershipRequests,
   setSuccessMessage } = helpSlice.actions;
+
+export const { resetFormSuccessMessage } = formSlice.actions;
 
 export default helpReducers;
