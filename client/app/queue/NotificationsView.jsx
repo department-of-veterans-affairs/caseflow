@@ -118,7 +118,8 @@ NotificationsView.propTypes = {
   stopPollingHearing: PropTypes.func,
   substituteAppellant: PropTypes.object,
   vsoVirtualOptIn: PropTypes.bool,
-  hideOTSection: PropTypes.bool
+  hideOTSection: PropTypes.bool,
+  showEfolderLink: PropTypes.bool
 };
 
 NotificationsView.defaultProps = {

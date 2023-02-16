@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
-import { Route, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -128,7 +128,6 @@ export class CaseTitleDetails extends React.PureComponent {
     } = this.props;
 
     const { highlightModal, documentIdError } = this.state;
-
     // eslint-disable-next-line camelcase
     const userIsAssignedAmaJudge = appeal?.assignedJudge?.css_id === userCssId;
     // is there a legacy judge task assigned to the user or legacy attorney task assigned by the user
@@ -140,6 +139,10 @@ export class CaseTitleDetails extends React.PureComponent {
     // we need to check if the request type is any of threee :central, video, travel or null
     const showHearingRequestType = appeal?.docketName === 'hearing' ||
       (appeal?.docketName === 'legacy' && appeal?.readableHearingRequestType);
+
+    // const link = this.props.appeal.veteran.participant_id ? 'https://<base url>.bip.va.gov/veteran/<veteran_participant_id>' : 'https://<base url>.bip.va.gov';
+    const link = 'https://www.google.com';
+    const part_id = appeal;
 
     return (
       <TitleDetailsSubheader id="caseTitleDetailsSubheader">
@@ -248,13 +251,13 @@ export class CaseTitleDetails extends React.PureComponent {
             </Button>
           </TitleDetailsSubheaderSection>
         )}
-        { showEfolderLink && (
+        {showEfolderLink && (
           <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_EFOLDER_LINK}>
-            <Route path= "https://<base url>.bip.va.gov">
-              Open eFolder
-            </Route>
-            <Tooltip>
-              This link will direct you to the veteran eFolder. If the participant Id can not be found for the appeal you will be directed to the eFolder veteran lookup page.
+            <a href={link} target="_blank" rel="noopener noreferrer">
+                Open eFolder
+            </a>
+            <Tooltip text={COPY.NOTIFICATION_EFOLDER_LINK_TOOLTIP} position="right">
+              <span>?</span>
             </Tooltip>
           </TitleDetailsSubheaderSection>
         )}
@@ -295,7 +298,7 @@ CaseTitleDetails.defaultProps = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { userRole, userCssId, canEditAod, featureToggles, userIsVsoEmployee, showEfolderLink } = state.ui;
+  const { userRole, userCssId, canEditAod, featureToggles, userIsVsoEmployee } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
@@ -305,8 +308,7 @@ const mapStateToProps = (state, ownProps) => {
     userCssId,
     canEditAod,
     featureToggles,
-    userIsVsoEmployee,
-    showEfolderLink
+    userIsVsoEmployee
   };
 };
 

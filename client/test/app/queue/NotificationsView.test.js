@@ -75,6 +75,13 @@ describe('NotificationsTest', () => {
     expect(header).toBe('Case notifications for Bob Smithschumm');
   });
 
+  it('renders efolder link', () => {
+    const { container } = setup(state);
+    const efolder = container.querySelector('h1').innerHTML;
+
+    expect(efolder).toBe('Open eFolder link');
+  });
+
   it('renders description correctly', () => {
     const { container } = setup(state);
     const description = container.querySelector('.notification-text').innerHTML;
