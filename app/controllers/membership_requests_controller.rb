@@ -14,27 +14,15 @@ class MembershipRequestsController < ApplicationController
     # vha_access = allowed_params[:vhaAccess]
     # requested_program_office_access_hash = allowed_params[:programOfficesAccess]
     membership_requests_hash = allowed_params[:membershipRequests]
+    organization_group = allowed_params[:organizationGroup]
     # TODO: merge vhaccess into program offices access and require at least one of them to be set on the server side.
     # puts "Requesting VHA: #{vha_access}"
     puts "Program Office access: #{membership_requests_hash}"
     puts "Request reason: #{request_reason}"
+    puts "Requesting Organization Group: #{organization_group}"
     # respond
 
-    # TODO: Build a mapping of options to the respective orgs
-    # TODO: Probably merge the VHA request with this options hash to make processing easier?
-    # test_hash =
-    #   {
-    #     "vhaCAMO" => true,
-    #     "veteranAndFamilyMembersProgram" => true,
-    #     "vhaCaregiverSupportProgram" => true,
-    #     "paymentOperationsManagement" => true,
-    #     "memberServicesHealthEligibilityCenter" => true,
-    #     "memberServicesBeneficiaryTravel" => true,
-    #     "prosthetics" => true
-    #   }
-
-    # TODO: Merge VHA access into this hash and rename it to make processing easier
-    requested_org_access_list = build_vha_org_list(membership_requests_hash)
+    requested_org_access_list = build_org_list(membership_requests_hash, org_name_mapping(organization_group))
     # MembershipRequest.new(organization: VhaCamo.singleton, requestor: current_user, note: request_reason)
 
     # Now build a request object for each org and return an array of org_names to be used in the success message
@@ -86,9 +74,11 @@ class MembershipRequestsController < ApplicationController
   private
 
   def safe_params
-    params.permit(:requestReason, membershipRequests: {})
+    params.permit(:requestReason, :organizationGroup, membershipRequests: {})
   end
 
+  # TODO: This should be client side so it's easier to jest test
+  # It's also easier to make it more generic based on the component instead of the membership requests controller.
   def build_success_message(requested_org_names)
     formatted_requested_org_names = org_names_to_message_string_names(requested_org_names)
     format(COPY::VHA_MEMBERSHIP_REQUEST_FORM_SUBMIT_SUCCESS_MESSAGE, formatted_requested_org_names.to_sentence)
@@ -96,23 +86,13 @@ class MembershipRequestsController < ApplicationController
 
   # TODO: should this be somewhere else?
   # TODO: pass in the comparison hash for mapping keys to orgs to make it generic
-  def build_vha_org_list(org_options)
-    # Get all of the keys from the options that are true
+  def build_org_list(org_options, keys_to_org_name_hash)
+    # Get all of the keys from the options that have values that are truthy
     key_names = org_options.select { |_, value| value }.keys
-    keys_to_org_hash =
-      {
-        "vhaAccess" => "Veterans Health Administration",
-        "vhaCAMO" => "VHA CAMO",
-        "vhaCaregiverSupportProgram" => "VHA Caregiver Support Program",
-        "veteranAndFamilyMembersProgram" => "Community Care - Veteran and Family Members Program",
-        "paymentOperationsManagement" => "Community Care - Payment Operations Management",
-        "memberServicesHealthEligibilityCenter" => "Member Services - Health Eligibility Center",
-        "memberServicesBeneficiaryTravel" => "Member Services - Beneficiary Travel",
-        "prosthetics" => "Prosthetics"
-      }
 
     # Remove any bad nils from unmatched keys
-    org_names = keys_to_org_hash.values_at(*key_names).compact
+    # org_names = keys_to_org_hash.values_at(*key_names).compact
+    org_names = keys_to_org_name_hash.values_at(*key_names).compact
 
     org_list = org_names.map do |org_name|
       # This is a bit gross
@@ -122,6 +102,19 @@ class MembershipRequestsController < ApplicationController
     org_list
   end
 
+  # Generic mapping of options keys to the respective organization names
+  # This method will need to be expanded as more organizations want to use this controller
+  def org_name_mapping(org_group)
+    org_hash = case org_group
+               when "VHA"
+                 vha_org_mapping
+               else
+                 {}
+               end
+    org_hash
+  end
+
+  # TODO: Yeah this should be client side so it's not specific to vha mappings.
   def org_names_to_message_string_names(org_names)
     # TODO: This is getting ridiculous. Please fix this somehow.
     # Maybe by using the vha help constants file in a lot of places
@@ -136,5 +129,20 @@ class MembershipRequestsController < ApplicationController
       "Prosthetics" => "Prosthetics program office"
     }
     org_name_to_string_hash.values_at(*org_names)
+  end
+
+  # This is a mapping of option values to the organization names
+  # Could also just pass down the Names from the client to avoid this.
+  def vha_org_mapping
+    {
+      "vhaAccess" => "Veterans Health Administration",
+      "vhaCAMO" => "VHA CAMO",
+      "vhaCaregiverSupportProgram" => "VHA Caregiver Support Program",
+      "veteranAndFamilyMembersProgram" => "Community Care - Veteran and Family Members Program",
+      "paymentOperationsManagement" => "Community Care - Payment Operations Management",
+      "memberServicesHealthEligibilityCenter" => "Member Services - Health Eligibility Center",
+      "memberServicesBeneficiaryTravel" => "Member Services - Beneficiary Travel",
+      "prosthetics" => "Prosthetics"
+    }
   end
 end

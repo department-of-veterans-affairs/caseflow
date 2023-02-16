@@ -70,28 +70,21 @@ const VhaMembershipRequestForm = () => {
   const memberOrOpenRequestToVha = Boolean(find(userOrganizations, { name: 'Veterans Health Administration' }) ||
    find(organizationMembershipRequests, { name: 'Veterans Health Administration' }));
 
-  // TODO: Could potentially derive this in a different way that wouldn't involve the memo'd function
-  let memberOrRequestToProgramOffices = false;
-
-  // TODO: make sure that memberOrRequestToProgramOffices still works.
   const possibleOptions = useMemo(() => specializedAccessOptions.map((obj) => {
     const foundOrganization = some(userOrganizations, (match) => match.name === obj.name);
 
     const foundMembershipRequest = some(organizationMembershipRequests, (match) => match.name === obj.name);
 
-    // console.log('foundMembershiprequest');
-    // console.log(obj.name);
-    // console.log(foundMembershipRequest);
-    // console.log('this should never repeat');
-
     if (foundOrganization || foundMembershipRequest) {
-      memberOrRequestToProgramOffices = true;
-
       return { ...obj, disabled: true };
     }
 
     return obj;
   }), [userOrganizations, organizationMembershipRequests]);
+
+  const memberOrRequestToProgramOffices = useMemo(() => {
+    return Boolean(some(possibleOptions, (option) => option.disabled === true));
+  }, [possibleOptions]);
 
   // TODO: see if I can memoize this somehow. Maybe with createSelector
   // const alteredOptions = specializedAccessOptions.map((obj) => {
@@ -211,7 +204,7 @@ const VhaMembershipRequestForm = () => {
     const membershipRequests = { vhaAccess, ...programOfficesAccess };
     // Setup the form data in a typical json data format.
     // TODO: Move this json data format to the thunk I think.
-    const formData = { data: { membershipRequests, requestReason } };
+    const formData = { data: { membershipRequests, requestReason, organizationGroup: 'VHA' } };
 
     // TODO: take the form data returned form the server and update the organizations and vhaAccess radio buttons
     // TODO: Update unwrapResult to .unwrap() if we update the RTK version.
