@@ -479,11 +479,11 @@ class TaskActionRepository
       }
     end
 
-    def vha_send_to_board_intake(*)
+    def vha_documents_ready_for_bva_intake_review(*)
       {
-        modal_title: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
+        modal_title: COPY::VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW,
         type: VhaDocumentSearchTask.name,
-        redirect_after: "/organizations/#{VhaCamo.singleton.url}"
+        redirect_after: /organizations/#{VhaCamo.singleton.url}"
       }
     end
 
