@@ -4,6 +4,7 @@ import { css } from 'glamor';
 import { LABELS } from './cavcDashboardConstants';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS.json';
 
 const singleIssueStyling = css({
   marginBottom: '1.5em !important',
@@ -75,7 +76,8 @@ const CavcDashboardIssuesSection = (props) => {
   const { dashboard } = props;
   const issues = dashboard.source_request_issues;
   const cavcIssues = dashboard.cavc_dashboard_issues;
-  const dashboardDispositions = dashboard.cavc_dashboard_dispositions;
+  const dashboardDispositions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS)
+    .map((value) => ({ value, "label": CAVC_DASHBOARD_DISPOSITIONS[value] }));
 
   return (
     <div {...issueSectionStyling}>
