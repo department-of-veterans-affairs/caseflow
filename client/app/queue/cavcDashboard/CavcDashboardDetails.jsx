@@ -12,6 +12,7 @@ import COPY from '../../../COPY';
 import DateSelector from '../../components/DateSelector';
 import TextField from '../../components/TextField';
 import RadioField from '../../components/RadioField';
+import ValidatorsUtil from '../../util/ValidatorsUtil';
 
 const CavcDashboardDetailsContainer = ({ children }) => {
   const containerStyling = css({
@@ -53,6 +54,7 @@ CavcDashboardDetailsSection.propTypes = {
 
 export const CavcDashboardDetails = (props) => {
   const { dashboard, userCanEdit } = props;
+  const { validDocketNum, dateValidator } = ValidatorsUtil;
 
   // remove eslint disable when the set methods are used for editing
   /* eslint-disable no-unused-vars */
@@ -65,43 +67,37 @@ export const CavcDashboardDetails = (props) => {
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
   /* eslint-enable no-unused-vars */
 
-  const checkIfJmrJmpr = () => {
-    switch (remandSubtype) {
-    case CAVC_REMAND_SUBTYPES.jmr:
-    case CAVC_REMAND_SUBTYPES.jmpr:
-    case CAVC_REMAND_SUBTYPES.jmr_jmpr:
-      return true;
-    default:
-      return false;
-    }
-  };
-
   const clickHandler = () => {
+    setBoardDecisionDate(dashboard.board_decision_date);
+    setBoardDocketNumber(dashboard.board_docket_number);
+    setCavcDecisionDate(dashboard.cavc_decision_date);
+    setCavcDocketNumber(dashboard.cavc_docket_number);
+    setJointMotionForRemand(dashboard.joint_motion_for_remand);
     setOpenDetailsModal((current) => (!current));
-    console.log(openDetailsModal);
   };
 
   const submitHandler = () => {
     setOpenDetailsModal(false);
-    console.log(openDetailsModal);
   };
+
+  const validCavcDocketNumber = () => (/^\d{2}[-‐−–—]\d{1,5}$/).exec(cavcDocketNumber);
 
   const validateForm = () => {
     return (
-      boardDecisionDate !== null &&
-      boardDocketNumber !== null &&
-       cavcDecisionDate !== null &&
-        cavcDocketNumber !== null);
+      dateValidator(boardDecisionDate) &&
+      validDocketNum(boardDocketNumber) &&
+       dateValidator(cavcDecisionDate) &&
+        validCavcDocketNumber());
   };
 
   const radioOptions = [
     {
       displayText: 'Yes',
-      value: true,
+      value: jointMotionForRemand,
     },
     {
       displayText: 'No',
-      value: false,
+      value: !jointMotionForRemand,
     }];
 
   // position/top bypasses the fixed margin on the TabWindow component
@@ -122,14 +118,14 @@ export const CavcDashboardDetails = (props) => {
       </Button>
       <CavcDashboardDetailsContainer>
         <CavcDashboardDetailsSection
-          title={LABELS.BOARD_DECISION_DATE} value={<DateString date={boardDecisionDate} />}
+          title={LABELS.BOARD_DECISION_DATE} value={<DateString date={dashboard.board_decision_date} />}
         />
-        <CavcDashboardDetailsSection title={LABELS.BOARD_DOCKET_NUMBER} value={boardDocketNumber} />
+        <CavcDashboardDetailsSection title={LABELS.BOARD_DOCKET_NUMBER} value={dashboard.board_docket_number} />
         <CavcDashboardDetailsSection
-          title={LABELS.CAVC_DECISION_DATE} value={<DateString date={cavcDecisionDate} />}
+          title={LABELS.CAVC_DECISION_DATE} value={<DateString date={dashboard.cavc_decision_date} />}
         />
-        <CavcDashboardDetailsSection title={LABELS.CAVC_DOCKET_NUMBER} value={cavcDocketNumber} />
-        <CavcDashboardDetailsSection title={LABELS.IS_JMR} value={jointMotionForRemand ? 'Yes' : 'No'} />
+        <CavcDashboardDetailsSection title={LABELS.CAVC_DOCKET_NUMBER} value={dashboard.cavc_docket_number} />
+        <CavcDashboardDetailsSection title={LABELS.IS_JMR} value={dashboard.joint_motion_for_remand ? 'Yes' : 'No'} />
       </CavcDashboardDetailsContainer>
       {openDetailsModal &&
       <Modal title={COPY.CAVC_DASHBOARD_EDIT_DETAILS_MODAL_TITLE}
@@ -142,7 +138,7 @@ export const CavcDashboardDetails = (props) => {
           {
             classNames: ['usa-button'],
             name: COPY.MODAL_SAVE_BUTTON,
-            disabled: !userCanEdit,
+            disabled: !validateForm(),
             onClick: submitHandler,
           }
         ]}
@@ -152,6 +148,7 @@ export const CavcDashboardDetails = (props) => {
           type="date"
           onChange={(date) => (setBoardDecisionDate(date))}
           value={boardDecisionDate}
+          errorMessage={!dateValidator(boardDecisionDate) ? COPY.CAVC_DECISION_DATE_ERROR : null}
           label={LABELS.BOARD_DECISION_DATE}
         />
         <TextField
@@ -159,6 +156,7 @@ export const CavcDashboardDetails = (props) => {
           type="string"
           onChange={(docket) => (setBoardDocketNumber(docket))}
           value={boardDocketNumber}
+          errorMessage={!validDocketNum(boardDocketNumber) ? COPY.BOARD_DOCKET_NUMBER_ERROR : null}
           label={LABELS.BOARD_DOCKET_NUMBER}
         />
         <DateSelector
@@ -166,6 +164,7 @@ export const CavcDashboardDetails = (props) => {
           type="date"
           onChange={(date) => setCavcDecisionDate(date)}
           value={cavcDecisionDate}
+          errorMessage={!dateValidator(cavcDecisionDate) ? COPY.CAVC_DECISION_DATE_ERROR : null}
           label={LABELS.CAVC_DECISION_DATE}
         />
         <TextField
@@ -173,11 +172,12 @@ export const CavcDashboardDetails = (props) => {
           type="string"
           onChange={(docket) => (setCavcDocketNumber(docket))}
           value={cavcDocketNumber}
-
-          label={LABELS.CAVC_DOCKET_NUMBER} />
+          errorMessage={!validCavcDocketNumber() ? COPY.CAVC_DOCKET_NUMBER_ERROR : null}
+          label={LABELS.CAVC_DOCKET_NUMBER}
+        />
         <RadioField
           name={LABELS.IS_JMR}
-          value={checkIfJmrJmpr()}
+          value={jointMotionForRemand}
           options={radioOptions}
         />
       </Modal>}
