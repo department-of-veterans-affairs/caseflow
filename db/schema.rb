@@ -339,8 +339,8 @@ ActiveRecord::Schema.define(version: 2023_01_30_151429) do
   end
 
   create_table "cavc_remands_appellant_substitutions", force: :cascade do |t|
-    t.bigint "appellant_substitutions_id", comment: "Appellant Substitution this is tied to"
-    t.bigint "cavc_remands_id", comment: "Cavc Remand this is tied to"
+    t.bigint "appellant_substitution_id", comment: "Appellant Substitution this is tied to"
+    t.bigint "cavc_remand_id", comment: "Cavc Remand this is tied to"
     t.datetime "created_at", null: false
     t.bigint "created_by_id", comment: "Current user who created substitution"
     t.boolean "is_appellant_substituted", comment: "Y/N Boolean for active substitution"
@@ -350,8 +350,8 @@ ActiveRecord::Schema.define(version: 2023_01_30_151429) do
     t.date "substitution_date", comment: "Timestamp of substitution"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "Current user who updated substitution"
-    t.index ["appellant_substitutions_id"], name: "index_on_appellant_substitutions_id"
-    t.index ["cavc_remands_id"], name: "index_on_cavc_remands_id"
+    t.index ["appellant_substitution_id"], name: "index_on_appellant_substitution_id"
+    t.index ["cavc_remand_id"], name: "index_on_cavc_remand_id"
     t.index ["participant_id"], name: "index_on_participant_id"
     t.index ["substitute_participant_id"], name: "index_on_substitute_participant_id"
   end
@@ -1845,8 +1845,8 @@ ActiveRecord::Schema.define(version: 2023_01_30_151429) do
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
   add_foreign_key "cavc_remands", "users", column: "created_by_id"
   add_foreign_key "cavc_remands", "users", column: "updated_by_id"
-  add_foreign_key "cavc_remands_appellant_substitutions", "appellant_substitutions", column: "appellant_substitutions_id"
-  add_foreign_key "cavc_remands_appellant_substitutions", "cavc_remands", column: "cavc_remands_id"
+  add_foreign_key "cavc_remands_appellant_substitutions", "appellant_substitutions"
+  add_foreign_key "cavc_remands_appellant_substitutions", "cavc_remands"
   add_foreign_key "cavc_remands_appellant_substitutions", "users", column: "created_by_id"
   add_foreign_key "cavc_remands_appellant_substitutions", "users", column: "updated_by_id"
   add_foreign_key "certification_cancellations", "certifications"
