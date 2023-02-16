@@ -58,16 +58,10 @@ class AppealsController < ApplicationController
 
       format.pdf do
         request.headers["HTTP_PDF"]
-        # byebug
         appeal = get_appeal_object(appeals_id)
-        # byebug
-        # pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
-        # file_name = pdf.split("/").last
-        # file_name = pdf.dup << ".zip"
-        # file_name = pdf.gsub("pdf", "zip")
-        # send_data pdf, filename: file_name, type: "application/pdf", disposition: :attachment
-        send_file PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal), type: "application/pdf", disposition: :attachment
-        # byebug
+        date = DateTime.now.to_s
+        pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
+        send_data pdf, filename: "Notification Report " + appeals_id + DateTime.now.to_s, type: "application/pdf", disposition: :attachment
       end
     end
   end
