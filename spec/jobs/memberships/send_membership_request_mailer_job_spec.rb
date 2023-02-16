@@ -1,21 +1,16 @@
 # frozen_string_literal: true
 
 describe Memberships::SendMembershipRequestMailerJob do
-  let(:type) { { email_type: email_type } }
   let(:recipient_info) { { email: email } }
-  let(:email_type) { " " }
   let(:email) { "bob.schmidt@va.gov" }
-  let(:name) { "Bob" }
 
-  let(:perform_job) do
-    Memberships::SendMembershipRequestMailerJob.new(type, recipient_info)
-  end
+  subject { described_class.perform_now(type, recipient_info) }
 
   describe "#perform" do
     context "the type is SendMembershipRequestSubmittedEmail" do
       let(:type) { "SendMembershipRequestSubmittedEmail" }
       it "sends an email confirming membership request submitted successfully" do
-        expect { perform_job.perform }.to change {
+        expect { subject }.to change {
           ActionMailer::Base.deliveries.count
         }.by 1
       end
@@ -24,7 +19,7 @@ describe Memberships::SendMembershipRequestMailerJob do
     context "the type is SendAdminsMembershipRequestSubmissionEmail" do
       let(:type) { "SendAdminsMembershipRequestSubmissionEmail" }
       it "sends an email to admins" do
-        expect { perform_job.perform }.to change {
+        expect { subject }.to change {
           ActionMailer::Base.deliveries.count
         }.by 1
       end
@@ -33,7 +28,7 @@ describe Memberships::SendMembershipRequestMailerJob do
     context "the type is SendUpdatedMembershipRequestStatusEmail" do
       let(:type) { "SendUpdatedMembershipRequestStatusEmail" }
       it "sends a status update email to requestor" do
-        expect { perform_job.perform }.to change {
+        expect { subject }.to change {
           ActionMailer::Base.deliveries.count
         }.by 1
       end
@@ -41,8 +36,6 @@ describe Memberships::SendMembershipRequestMailerJob do
 
     context "no type provided" do
       let(:type) { nil }
-
-      subject { perform_job.perform }
 
       it "throws an error" do
         expect { subject }.to raise_error do |error|
