@@ -603,6 +603,10 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="vha_send_to_board_intake" {...props.match.params} />
   );
 
+  routedCamoDocumentsReadyForBvaIntake = (props) => (
+    <CompleteTaskModal modalType="vha_documents_ready_for_bva_intake_review" {...props.match.params} />
+  );
+
   routedEMOReturnToBoardIntake = (props) => (
     <CompleteTaskModal modalType="emo_return_to_board_intake" {...props.match.params} />
   );
@@ -1089,6 +1093,13 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.value
                 }`}
               render={this.routedCamoSendToBoardIntake}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+                {
+                  TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.value
+                }`}
+              render={this.routedCamoDocumentsReadyForBvaIntake}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
