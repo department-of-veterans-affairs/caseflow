@@ -6,10 +6,13 @@ export const submitMembershipRequestForm = createAsyncThunk('form/submit', async
   // TODO: Format the formData into a data object for json here instead of over in VhaMembershipRequestForm
   const response = await ApiUtil.post('/membership_requests', formData);
   // const data = await response.body;
-  const { message } = await response.body.data;
+  const { message, newMembershipRequests } = await response.body.data;
 
   // JSON.parse(response)
   // console.log(response.body.data);
+
+  console.log(message)
+  console.log(newMembershipRequests);
 
   // console.log(response);
   // console.log(response.status);
@@ -24,7 +27,7 @@ export const submitMembershipRequestForm = createAsyncThunk('form/submit', async
     return 'It died do something';
   }
 
-  return message;
+  return { message, newMembershipRequests };
   // return 'duh';
 });
 
@@ -40,7 +43,7 @@ export const initialState = {
 
 const formSlice = createSlice({
   name: 'form',
-  initialState: { message: null, status: 'idle', error: null },
+  initialState: { message: null, status: 'idle', error: null, requestedOrgNames: [] },
   reducers: {
     resetFormSuccessMessage: (state) => {
       state.message = null;
@@ -53,7 +56,8 @@ const formSlice = createSlice({
       }).
       addCase(submitMembershipRequestForm.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.message = action.payload;
+        state.message = action.payload.message;
+        // state.requestedOrgNames = action.payload.requestedOrgNames;
       }).
       addCase(submitMembershipRequestForm.rejected, (state, action) => {
         state.status = 'failed';

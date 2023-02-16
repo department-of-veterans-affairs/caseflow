@@ -57,18 +57,16 @@ class MembershipRequestsController < ApplicationController
       # end
       org_name
     end
-    # org_name_strings = build
-    # org_name_strings = org_names_to_message_string_names(org_names)
-    # org_name_strings = ["VHA CAMO", "Veterans and Family Members program office"]
 
-    # Return the success message if the saves were successful
-    # TODO: make this work with all of the saves somehow probably with a catch or an array of booleans
-    # TODO: can also do a prevalidation or valid check on all of them?
+    # TODO: This needs to be the serialized membership requests that were saved successfully instead of this hash
+    test_hash = org_names.map { |org_name| { name: org_name } }
+
     if errors.empty?
       # TODO: created a mapping of the successful requests back to the message.
       # Example: Vha -> VHA group
       # Might do it client side instead? but probably do it here and build the message.
-      render json: { data: { message: build_success_message(org_names) } }, status: :created
+      render json: { data: { newMembershipRequests: test_hash, message: build_success_message(org_names) } },
+             status: :created
     else
       render json: { data: { message: errors.flatten } }, status: :unprocessable_entity
     end

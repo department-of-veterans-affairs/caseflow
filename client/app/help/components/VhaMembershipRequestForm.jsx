@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import Checkbox from 'app/components/Checkbox';
@@ -12,7 +12,8 @@ import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_CAMO_AND_CAREGIVER_OPTIONS } from '../c
 import { VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE,
   VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE } from '../../../COPY';
 import ApiUtil from '../../util/ApiUtil';
-import { setSuccessMessage, submitMembershipRequestForm } from '../helpApiSlice';
+import { setOrganizationMembershipRequests, setSuccessMessage, submitMembershipRequestForm } from '../helpApiSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 const checkboxDivStyling = css({
   '& .cf-form-checkboxes': { marginTop: '10px' },
@@ -37,6 +38,10 @@ const VhaMembershipRequestForm = () => {
   );
 
   const dispatch = useDispatch();
+
+  // useEffect(() => {
+
+  // }, [dispatch, organizationMembershipRequests]);
 
   // Decide what special access checkbox options are available based on the feature toggle.
   // If it is enabled show all program offices, otherwise only show camo and caregiver.
@@ -72,6 +77,10 @@ const VhaMembershipRequestForm = () => {
 
     const foundMembershipRequest = some(organizationMembershipRequests, (match) => match.name === obj.name);
 
+    console.log('foundMembershiprequest');
+    console.log(obj.name);
+    console.log(foundMembershipRequest);
+
     if (foundOrganization || foundMembershipRequest) {
       memberOrRequestToProgramOffices = true;
 
@@ -80,6 +89,11 @@ const VhaMembershipRequestForm = () => {
 
     return obj;
   });
+
+  console.log('when is altered options built again?');
+
+  console.log(organizationMembershipRequests);
+  console.log(alteredOptions);
 
   const GeneralVHAAccess = ({ vhaMember }) => {
     return <fieldset>
@@ -178,7 +192,26 @@ const VhaMembershipRequestForm = () => {
     const formData = { data: { membershipRequests, requestReason } };
 
     // TODO: take the form data returned form the server and update the organizations and vhaAccess radio buttons
-    dispatch(submitMembershipRequestForm(formData)).then(resetMembershipRequestForm());
+    // TODO: Update unwrapResult to .unwrap() if we update the RTK version.
+    dispatch(submitMembershipRequestForm(formData)).then(unwrapResult).
+      then((values) => {
+        // console.log(values);
+        // console.log(organizationMembershipRequests);
+        // console.log(values.newMembershipRequests);
+        const newOrgs = [...organizationMembershipRequests, ...values.newMembershipRequests];
+        // console.log(newOrgs);
+
+        dispatch(setOrganizationMembershipRequests(newOrgs));
+        resetMembershipRequestForm();
+      }).
+      catch((error) => {
+        // alert(error);
+        alert('how do I make this happen');
+        console.log(error);
+        // error stuff
+      });
+    // dispatch()
+
   };
 
   const anyProgramOfficeSelected = useMemo(() => (
