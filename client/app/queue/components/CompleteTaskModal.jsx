@@ -31,6 +31,13 @@ const validDropdown = (dropdown) => {
   return dropdown?.length > 0;
 };
 
+const handleDropdownStateChange = (value, setState) => {
+  setState({ dropdown: value });
+  if (value === 'other') {
+    setState({ otherInstructions: '' });
+  }
+};
+
 const formatOtherInstructions = (state) => {
   let formattedInstructions = '';
 
@@ -260,10 +267,7 @@ const VhaCamoReturnToBoardIntakeModal = ({ props, state, setState }) => {
 
 
   const handleDropdownChange = ({ value }) => {
-    setState({ dropdown: value });
-    if (value === 'other') {
-      setState({ otherInstructions: '' });
-    }
+    handleDropdownStateChange(value, setState);
   };
 
   return (
@@ -377,10 +381,7 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
   const dropdownOptions = taskConfiguration.options;
 
   const handleDropdownChange = ({ value }) => {
-    setState({ dropdown: value });
-    if (value === 'other') {
-      setState({ otherInstructions: '' });
-    }
+    handleDropdownStateChange(value, setState);
   };
 
   return (
