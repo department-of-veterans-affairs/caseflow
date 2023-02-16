@@ -3,8 +3,6 @@
 describe MembershipRequestMailer do
   let(:email_recipient_info) { { email: email } }
   let(:email) { "bob.schmidt@va.gov" }
-  let(:name) { "Bob" }
-  let(:subject) { { custom_subject: custom_subject } }
 
   context "with recipient_info" do
     describe "membership_request_submitted" do
