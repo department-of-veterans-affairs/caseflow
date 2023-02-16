@@ -1,9 +1,12 @@
+# circle ci version
 version: 2.1
 
 browser_tools_versions: &browser_versions
   chrome-version: 106.0.5249.119
   firefox-version: 106.0.1
 
+# A command defines a sequence of steps as a map to be executed in a job, enabling you to reuse a single command definition across multiple jobs.
+# 4 total commands
 commands:
   install_ruby_dependencies:
     description: "Install Ruby Dependencies"
@@ -66,6 +69,7 @@ commands:
           name: Wait for database
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
+      # see config/environments/test.rb:65
       - run:
           name: Wait for FACOLS to be ready
           command: |
@@ -73,8 +77,17 @@ commands:
           environment:
             DISABLE_FACTORY_BOT_INITIALIZERS: 1
 
+# CircleCI orbs are shareable packages of configuration elements, including jobs, commands, and executors. Orbs make writing and customizing CircleCI config simple.
+# The reusable configuration elements used in orbs are explained fully in the Reusable Configuration Reference.
+
+
+# https://docs.github.com/en/actions/migrating-to-github-actions/migrating-from-circleci-to-github-actions#migrating-orbs-to-actions
+# called 'actions' in GH actions
 orbs:
   browser-tools: circleci/browser-tools@1.4.0
+
+# A Workflow is comprised of one or more uniquely named jobs. Jobs are specified in the jobs map, see Sample config.yml for two examples of a job map.
+# The name of the job is the key in the map, and the value is a map describing the job.
 jobs:
   # build workspace
   build_workspace:
@@ -96,6 +109,8 @@ jobs:
           name: Build webpack
           command: ~/project/ci-bin/capture-log "cd client && yarn build:test"
 
+      # creates a temporary file for other jobs to use later on
+      # check GHA to see if there's anything similar
       - persist_to_workspace:
           root: .
           paths:
@@ -118,6 +133,8 @@ jobs:
           - POSTGRES_USER: root
       # This is the circleci provided Postgres container. We can
       # configure it via environment variables.
+
+      # need to change to GHA/non circleCI container
       - image: circleci/postgres:11.7
         environment:
           - POSTGRES_USER: root
@@ -128,6 +145,7 @@ jobs:
       - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
 
       # This is the circleci provided Redis container.
+      # need to change to GHA/non circleCI container
       - image: circleci/redis:4.0.10
     resource_class: large
     steps:
@@ -227,6 +245,7 @@ jobs:
             ~/project/ci-bin/capture-log "bundle exec rake spec:setup_vacols"
 
       - run:
+          # https://docs.knapsackpro.com/2019/how-to-run-rspec-on-github-actions-for-ruby-on-rails-app-using-parallel-jobs
           name: RSpec via knapsack_pro Queue Mode
           command: |
             mkdir -p ~/test-results/rspec
@@ -345,6 +364,9 @@ jobs:
           <<: *browser_versions
       - checkout
       - run:
+          # we will still need python going forward as a node-gyp@3.8.0 dependency
+          # node-gyp is a cross-platform command-line tool written in Node.js for compiling native addon modules for Node.js.
+          # It bundles the gyp project used by the Chromium team and takes away the pain of dealing with the various differences in build platforms.
           name: Install python-2 as a node-gyp@3.8.0 dependency
           command: |
             sudo apt-get update
@@ -376,7 +398,7 @@ jobs:
       - store_artifacts:
           name: Store concatenated logs
           path: ~/all_logs.log
-
+# Used for orchestrating all jobs. Each workflow consists of the workflow name as a key and a map as a value. A name should be unique within the current config.yml.
 workflows:
   version: 2
   build:
