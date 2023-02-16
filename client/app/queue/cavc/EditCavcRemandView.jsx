@@ -1,14 +1,24 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 
 import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
+import { format } from 'date-fns';
 
 import COPY from 'app/../COPY';
 import { appealWithDetailSelector } from 'app/queue/selectors';
 import { getSupportedDecisionTypes, getSupportedRemandTypes } from './utils';
 import { EditCavcRemandForm } from './EditCavcRemandForm';
+import { SubstituteAppellantBasicsForm } from '../substituteAppellant/basics/SubstituteAppellantBasicsForm';
 import { requestPatch, showErrorMessage } from 'app/queue/uiReducer/uiActions';
 import { editAppeal } from '../QueueActions';
+
+import {
+  updateData,
+  stepForward,
+  fetchRelationships,
+  cancel,
+  refreshAppellantPoa,
+} from '../substituteAppellant/substituteAppellant.slice';
 
 export const EditCavcRemandView = () => {
   /* eslint-disable camelcase */
@@ -18,6 +28,12 @@ export const EditCavcRemandView = () => {
   const cavcAppeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
+
+  const {
+    formData: existingVals,
+    relationships,
+    loadingRelationships,
+  } = useSelector((state) => state.substituteAppellant);
   const { cavcRemand } = cavcAppeal;
 
   const featureToggles = useSelector((state) => state.ui.featureToggles);
@@ -43,8 +59,11 @@ export const EditCavcRemandView = () => {
     };
   }, [cavcRemand]);
 
-  const handleCancel = () => history.push(`/queue/appeals/${appealId}`);
-
+  const handleCancel = () => {
+    // Reset Redux store
+    dispatch(cancel());
+    history.push(`/queue/appeals/${appealId}`);
+  };
   const handleSubmit = async (formData) => {
     const payload = {
       data: {
@@ -61,8 +80,15 @@ export const EditCavcRemandView = () => {
         decision_issue_ids: formData.issueIds,
         federal_circuit: formData.federalCircuit,
         instructions: formData.instructions,
+        substitutionDate: format(formData.substitutionDate, 'yyyy-MM-dd'),
       },
     };
+
+    const { participantId } = formData;
+
+    dispatch(
+      refreshAppellantPoa({ participantId })
+    );
 
     const successMsg = {
       title: COPY.CAVC_REMAND_EDIT_SUCCESS_TITLE,
@@ -91,6 +117,11 @@ export const EditCavcRemandView = () => {
     }
   };
 
+  // Load veteran relationships for this appeal
+  useEffect(() => {
+    dispatch(fetchRelationships({ appealId }));
+  }, []);
+
   return (
     <EditCavcRemandForm
       decisionIssues={cavcRemand?.source_decision_issues}
@@ -99,6 +130,8 @@ export const EditCavcRemandView = () => {
       supportedRemandTypes={supportedRemandTypes}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
+      relationships={relationships}
+      loadingRelationships={loadingRelationships}
     />
   );
 };

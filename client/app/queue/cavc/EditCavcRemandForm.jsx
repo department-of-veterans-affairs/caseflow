@@ -13,7 +13,7 @@ import { ADD_CAVC_PAGE_TITLE, CAVC_ATTORNEY_LABEL, CAVC_COURT_DECISION_DATE,
   CAVC_JUDGEMENT_DATE, CAVC_INSTRUCTIONS_ERROR, CAVC_INSTRUCTIONS_LABEL, CAVC_ISSUES_LABEL,
   CAVC_MANDATE_DATE, CAVC_REMAND_MANDATE_DATES_LABEL, CAVC_REMAND_MANDATE_QUESTION,
   CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION, CAVC_SUB_TYPE_LABEL, CAVC_TYPE_LABEL,
-  EDIT_CAVC_PAGE_TITLE } from 'app/../COPY';
+  CAVC_SUBSTITUTE_LABEL, EDIT_CAVC_PAGE_TITLE } from 'app/../COPY';
 import TextField from 'app/components/TextField';
 import TextareaField from 'app/components/TextareaField';
 import RadioField from 'app/components/RadioField';
@@ -22,6 +22,14 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import DateSelector from 'app/components/DateSelector';
 import Checkbox from 'app/components/Checkbox';
 import CheckboxGroup from 'app/components/CheckboxGroup';
+
+import {
+  updateData,
+  stepForward,
+  fetchRelationships,
+  cancel,
+  refreshAppellantPoa,
+} from '../substituteAppellant/substituteAppellant.slice';
 
 import CAVC_JUDGE_FULL_NAMES from 'constants/CAVC_JUDGE_FULL_NAMES';
 import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
@@ -89,6 +97,7 @@ export const EditCavcRemandForm = ({
       // EditCavcTodo: remove the following if not needed; see remandDatesProvided
       mandateSame: !existingValues.judgementDate,
       ...existingValues,
+
     },
   });
 
@@ -146,6 +155,8 @@ export const EditCavcRemandForm = ({
     setValue('issueIds', [...allIssueIds]);
   };
 
+  const [defaultSub, setDefaultSub] = useState(YesNoOpts[1].value);
+
   // Handle prepopulating issue checkboxes if defaultValues are present
   useEffect(() => {
     if (existingValues?.issueIds?.length) {
@@ -194,6 +205,34 @@ export const EditCavcRemandForm = ({
           name="docketNumber"
           errorMessage={errors?.docketNumber && CAVC_DOCKET_NUMBER_ERROR}
           strongLabel
+        />
+
+        <RadioField
+          errorMessage={errors?.attorney?.message}
+          inputRef={register}
+          label={CAVC_SUBSTITUTE_LABEL}
+          name="substitute"
+          options={YesNoOpts}
+          onChange={(e)=>setDefaultSub(e.target.value)}
+          value= {defaultSub}
+          strongLabel
+        />
+
+        <DateSelector
+          inputRef={register}
+          label={CAVC_COURT_DECISION_DATE}
+          type="date"
+          name="decisionDate"
+          errorMessage={errors?.decisionDate?.message}
+          strongLabel
+        />
+
+        <RadioField
+          label="Please select the substitute from the following claimants."
+          name="participantId"
+          options={YesNoOpts}
+          strongLabel
+          vertical
         />
 
         <RadioField
