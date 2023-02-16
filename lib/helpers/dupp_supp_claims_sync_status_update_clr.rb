@@ -1,19 +1,32 @@
 =begin
 End Products in VBMS get established (through the processing of End Product Establishments in Caseflow)
 and if a duplicateEP error is caught it gets logged and prevents syncing with our external services when there
-statuses were cancelled or cleared.
+statuses were cancelled or cleared; we must perform a manual remediation script to handle these failed requests.
 
-Currently, there is no process to handle these request.
+This is the solution we've decided to impliment.
 
 This code essentially creates a new end product establishment (EPE) to replace
-the one that had the duplicate error, sets its synced status to "CAN" for cancelled,
+the one that had the duplicate error, sets its synced status to "CAN" for cancelled, or "CLR" for "CLR"
 establishes the new EPE, and cancels the old one. It also logs a message for the user.
 This process is done for each supplemental claim that has the "duplicateep" error and
 has an end product with a cleared status.
 
-# This gets hit by when we run the WarRoom::DuppSuppClaimsSyncStatusUpdateCan job in the Caseflow Rails console.
-# Usage: ./dupp-supp-claims-sync-status-update-can.sh <arg1> <arg2>
-# where <arg1> is the first argument to pass to the job and <arg2> is the second argument.
+This gets hit by when we run the WarRoom::DuppSuppClaimsSyncStatusUpdateCan job in the Caseflow Rails console.
+
+Usage: ./dupp-supp-claims-sync-status-update-can.sh <arg1> <arg2>
+where <arg1> is the first argument to pass to the job and <arg2> is the second argument.
+
+It is suspected that a expired BGS Attorney could cause this script to fail in which we would reach out to OAR and rerun the script.
+
+# Separation of concerns: The code is broken down into smaller,
+more focused methods to improve readability and maintainability.
+
+# Error handling: The code includes error handling for scenarios where the necessary data cannot be found,
+such as when an End Product Establishment or a Source object cannot be located.
+
+# Logging: The code logs messages to help with debugging and audit trails.
+
+# Encapsulation: The code utilizes encapsulation to control access to the various methods and properties of the objects being used.
 =end
 
 # frozen_string_literal: true
@@ -29,7 +42,7 @@ module WarRoom
 
         problem_scs = scs.select { |sc|
           sc.veteran.end_products.select { |ep|
-            ep.claim_type_code.include?("040") && ["CLR"].include?(ep.status_type_code) &&
+            ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
             [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
           }.empty?
         }
@@ -94,7 +107,7 @@ module WarRoom
           claimant_participant_id: !claimant.nil? ? claimant.participant_id : epe.claimant_participant_id,
           payee_code: correct_payee_code,
           doc_reference_id: epe.doc_reference_id,
-          synced_status: "CLR",
+          synced_status: ["CAN", "CLR"],
           last_synced_at: Time.zone.now
         ).tap do |epe2|
           # Set the new end product establishment as established
@@ -106,5 +119,6 @@ module WarRoom
           # Log a message for the user
           Rails.logger.info("Updated EPE for Supplemental Claim #{epe.source_id}")
         end
+      end
     end
 end
