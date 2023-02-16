@@ -15,6 +15,7 @@ import { VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE,
 const checkboxDivStyling = css({
   '& .cf-form-checkboxes': { marginTop: '10px' },
   '& .checkbox': { marginTop: '0px' },
+  '& .cf-form-checkbox label::before': { left: '0px' },
 });
 
 const VhaMembershipRequestForm = () => {
@@ -36,20 +37,12 @@ const VhaMembershipRequestForm = () => {
     [...VHA_CAMO_AND_CAREGIVER_OPTIONS, ...VHA_PROGRAM_OFFICE_OPTIONS] :
     VHA_CAMO_AND_CAREGIVER_OPTIONS;
 
-  const parsedIssues = useMemo(() => {
-    specializedAccessOptions.reduce((acc, obj) => {
-      acc[obj.id] = false;
-
-      return acc;
-    }, {});
-  }, [specializedAccessOptions]);
-
   const [vhaAccess, setVhaAccess] = useState(false);
-  const [programOfficesAccess, setProgramOfficesAccess] = useState(parsedIssues);
+  const [preDocketOrgsAccess, setPreDocketOrgsAccess] = useState({});
   const [requestReason, setRequestReason] = useState('');
 
-  const onVhaProgramOfficeAccessChange = (evt) => {
-    setProgramOfficesAccess({ ...programOfficesAccess, [evt.target.id]: evt.target.checked });
+  const onVhaPredocketOrgsAccessChange = (evt) => {
+    setPreDocketOrgsAccess({ ...preDocketOrgsAccess, [evt.target.id]: evt.target.checked });
   };
 
   const memberOrOpenRequestToVha = Boolean(find(userOrganizations, { name: 'Veterans Health Administration' }) ||
@@ -97,8 +90,8 @@ const VhaMembershipRequestForm = () => {
           name="programOfficesAccess"
           hideLabel
           options={checkboxOptions}
-          onChange={(val) => onVhaProgramOfficeAccessChange(val)}
-          values={programOfficesAccess}
+          onChange={(val) => onVhaPredocketOrgsAccessChange(val)}
+          values={preDocketOrgsAccess}
         />
       </fieldset>
     );
@@ -120,8 +113,8 @@ const VhaMembershipRequestForm = () => {
   };
 
   const anyProgramOfficeSelected = useMemo(() => (
-    find(programOfficesAccess, (value) => value === true)),
-  [programOfficesAccess]);
+    find(preDocketOrgsAccess, (value) => value === true)),
+  [preDocketOrgsAccess]);
 
   const vhaSelectedOrExistingMember = Boolean(memberOrOpenRequestToVha || vhaAccess);
 
@@ -131,7 +124,6 @@ const VhaMembershipRequestForm = () => {
 
   const automaticVhaAccessNotice = anyProgramOfficeSelected && !vhaSelectedOrExistingMember;
 
-  // TODO: Maybe move these strings to the constants file
   return (
     <>
       <h1> 1. How do I access the VHA team?</h1>
