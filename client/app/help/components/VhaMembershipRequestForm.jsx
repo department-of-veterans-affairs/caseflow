@@ -70,16 +70,19 @@ const VhaMembershipRequestForm = () => {
   const memberOrOpenRequestToVha = Boolean(find(userOrganizations, { name: 'Veterans Health Administration' }) ||
    find(organizationMembershipRequests, { name: 'Veterans Health Administration' }));
 
+  // TODO: Could potentially derive this in a different way that wouldn't involve the memo'd function
   let memberOrRequestToProgramOffices = false;
 
-  const alteredOptions = specializedAccessOptions.map((obj) => {
+  // TODO: make sure that memberOrRequestToProgramOffices still works.
+  const possibleOptions = useMemo(() => specializedAccessOptions.map((obj) => {
     const foundOrganization = some(userOrganizations, (match) => match.name === obj.name);
 
     const foundMembershipRequest = some(organizationMembershipRequests, (match) => match.name === obj.name);
 
-    console.log('foundMembershiprequest');
-    console.log(obj.name);
-    console.log(foundMembershipRequest);
+    // console.log('foundMembershiprequest');
+    // console.log(obj.name);
+    // console.log(foundMembershipRequest);
+    // console.log('this should never repeat');
 
     if (foundOrganization || foundMembershipRequest) {
       memberOrRequestToProgramOffices = true;
@@ -88,12 +91,31 @@ const VhaMembershipRequestForm = () => {
     }
 
     return obj;
-  });
+  }), [userOrganizations, organizationMembershipRequests]);
 
-  console.log('when is altered options built again?');
+  // TODO: see if I can memoize this somehow. Maybe with createSelector
+  // const alteredOptions = specializedAccessOptions.map((obj) => {
+  //   const foundOrganization = some(userOrganizations, (match) => match.name === obj.name);
 
-  console.log(organizationMembershipRequests);
-  console.log(alteredOptions);
+  //   const foundMembershipRequest = some(organizationMembershipRequests, (match) => match.name === obj.name);
+
+  //   console.log('foundMembershiprequest');
+  //   console.log(obj.name);
+  //   console.log(foundMembershipRequest);
+
+  //   if (foundOrganization || foundMembershipRequest) {
+  //     memberOrRequestToProgramOffices = true;
+
+  //     return { ...obj, disabled: true };
+  //   }
+
+  //   return obj;
+  // });
+
+  // console.log('when is altered options built again?');
+
+  // console.log(organizationMembershipRequests);
+  // console.log(alteredOptions);
 
   const GeneralVHAAccess = ({ vhaMember }) => {
     return <fieldset>
@@ -243,7 +265,7 @@ const VhaMembershipRequestForm = () => {
       }
       <form onSubmit={handleSubmit2} className={checkboxDivStyling}>
         <GeneralVHAAccess vhaMember={memberOrOpenRequestToVha} />
-        <SpecializedAccess checkboxOptions={alteredOptions} />
+        <SpecializedAccess checkboxOptions={possibleOptions} />
         <div style={{ minHeight: '51px' }}>
           { automaticVhaAccessNotice && (<p> {VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE} </p>)}
         </div>

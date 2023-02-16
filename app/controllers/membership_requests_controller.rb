@@ -41,31 +41,42 @@ class MembershipRequestsController < ApplicationController
     # TODO: Although this shouldn't be possible through the form make sure they can't submit two requests
     # To the same org if there is one pending
     errors = []
+    created_membership_requests = []
     org_names = requested_org_access_list.map do |org|
       org_name = org.name
       # Build a request object for each org
       # TODO: Turn this back on after testing the string
       # TODO: Probably push this logic down to the model class.
       # TODO: Decide if the controller or model class should be the one to send an email or not
-      # new_request = MembershipRequest.new(
-      #   organization: org,
-      #   requestor: current_user,
-      #   note: request_reason
-      # )
-      # unless new_request.save
-      #   errors < new_request.errors.full_messages
-      # end
+      new_request = MembershipRequest.new(
+        organization: org,
+        requestor: current_user,
+        note: request_reason
+      )
+
+      if new_request.save
+        created_membership_requests << new_request
+      else
+        errors << new_request.errors.full_messages
+      end
+
       org_name
     end
 
     # TODO: This needs to be the serialized membership requests that were saved successfully instead of this hash
-    test_hash = org_names.map { |org_name| { name: org_name } }
+    # test_hash = org_names.map { |org_name| { name: org_name } }
+
+    # Serialize the Membership Requests and extract the attributes
+    serialized_requests = MembershipRequestSerializer.new(created_membership_requests, is_collection: true)
+      .serializable_hash[:data]
+      .map { |hash| hash[:attributes] }
 
     if errors.empty?
       # TODO: created a mapping of the successful requests back to the message.
       # Example: Vha -> VHA group
       # Might do it client side instead? but probably do it here and build the message.
-      render json: { data: { newMembershipRequests: test_hash, message: build_success_message(org_names) } },
+      # It's easier to jest test if I do it client side.
+      render json: { data: { newMembershipRequests: serialized_requests, message: build_success_message(org_names) } },
              status: :created
     else
       render json: { data: { message: errors.flatten } }, status: :unprocessable_entity

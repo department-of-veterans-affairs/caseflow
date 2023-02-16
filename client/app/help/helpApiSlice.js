@@ -11,7 +11,7 @@ export const submitMembershipRequestForm = createAsyncThunk('form/submit', async
   // JSON.parse(response)
   // console.log(response.body.data);
 
-  console.log(message)
+  console.log(message);
   console.log(newMembershipRequests);
 
   // console.log(response);
