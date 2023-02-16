@@ -1,42 +1,37 @@
 # frozen_string_literal: true
 
+=begin
+Summary: This is the SupplementalClaim class that inherits from the ClaimReview class.
+
+It defines methods that are specific to SupplementalClaims, including `create_remand_issues!`,
+`available_review_options`, and `start_processing_job!`.
+
+It also defines a `scope` for updated SupplementalClaims and overrides some of the inherited methods.
+
+Error handling: There is no explicit error handling in this file, but some of the methods have conditional statements that handle edge cases.
+
+Inline code comments: There are inline code comments throughout the file to explain the functionality of each method and what it is doing.
+=end
+
 class SupplementalClaim < ClaimReview
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
 
   belongs_to :decision_review_remanded, polymorphic: true
 
-  scope :updated_since_for_appeals, lambda { |since|
+  scope :updated_since_for_appeals, ->(since) {
     select(:decision_review_remanded_id)
       .where("#{table_name}.updated_at >= ?", since)
-      .where("#{table_name}.decision_review_remanded_type='Appeal'")
+      .where(decision_review_remanded_type: "Appeal")
   }
 
-  attr_accessor :appeal_split_process
+  delegate :station_key, to: :veteran, allow_nil: true
 
   def ui_hash
     Intake::SupplementalClaimSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
-  def start_processing_job!
-    if run_async?
-      DecisionReviewProcessJob.perform_later(self)
-    else
-      DecisionReviewProcessJob.perform_now(self)
-    end
-  end
-
   def create_remand_issues!
     create_issues!(build_request_issues_from_remand)
-  end
-
-  def decision_review_remanded?
-    !!decision_review_remanded
-  end
-
-  # needed for appeal status api
-
-  def review_status_id
-    "SC#{id}"
   end
 
   def linked_review_ids
@@ -48,9 +43,7 @@ class SupplementalClaim < ClaimReview
   end
 
   def other_close_event_date
-    return if active?
-    return unless decision_issues.empty?
-    return unless end_product_establishments.any?
+    return if active? || decision_issues.any? || !end_product_establishments.any?
 
     end_product_establishments.first.last_synced_at&.to_date
   end
@@ -107,9 +100,9 @@ class SupplementalClaim < ClaimReview
       payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
       code: issue.end_product_code,
       claimant_participant_id: claimant_participant_id,
-      station: request_issues_update ? request_issues_update.user.station_id : end_product_station,
+      station: request_issues_update&.user&.station_id || end_product_station,
       benefit_type_code: veteran.benefit_type_code,
-      user: request_issues_update ? request_issues_update.user : end_product_created_by,
+      user: request_issues_update&.user || end_product_created_by,
       limited_poa_code: issue.limited_poa_code,
       limited_poa_access: issue.limited_poa_access
     )
@@ -145,5 +138,39 @@ class SupplementalClaim < ClaimReview
         disposition: issue.api_status_disposition
       }
     end
+  end
+
+  def serialized_ratings_by_label
+    # TODO: Remove this method when we change the way that ratings are serialized for API response
+    Hash[
+      request_issues
+        .flat_map(&:ratings)
+        .compact
+        .map { |rating| [rating.promulgation_date.to_i, rating] }
+    ]
+  end
+
+  def ui_hash_rating_issues
+    RatingIssueSerializer.new(request_issues, params: { supplemental_claim_id: id }).serializable_hash[:data]
+  end
+
+  def ui_hash_request_issues
+    RequestIssueSerializer.new(request_issues, params: { supplemental_claim_id: id }).serializable_hash[:data]
+  end
+
+  def ui_hash_decision_issues
+    Intake::DecisionIssueSerializer.new(decision_issues).serializable_hash[:data]
+  end
+
+  def decision_issue_params(issue_attrs)
+    issue_attrs.merge(
+      benefit_type: benefit_type,
+      decision_review: self,
+      decision_date: receipt_date
+    )
+  end
+
+  def end_product_station_invalid?
+    decision_review_remanded? && !decision_review_remanded.is_a?(Appeal)
   end
 end

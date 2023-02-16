@@ -1,5 +1,28 @@
 # frozen_string_literal: true
 
+=begin
+
+Quick review: SFW 01/16/2023
+
+1. The before block with Timecop.freeze sets the current time to a specific date and time,
+which can be useful for testing time-sensitive logic.
+However, it's important to note that it affects all tests in the file, not just the ones within the same describe block.
+
+2. The let statements set up variables for use in tests, and the use of let! ensures that the variables are created before each test.
+This is a good practice for reducing code duplication.
+
+3. The context blocks set up different scenarios for testing.
+The nested context blocks within context "review fields when they are set" and context "receipt_date" do provide further specificity for testing.
+
+4. The tests use expect statements to ensure that the expected behavior of the SupplementalClaim object is met.
+The use of is_expected.to be true and is_expected.to be false instead of expect(subject).to eq true and expect(subject).to eq false is a matter of personal preference.
+
+5. The use of :postgres in describe SupplementalClaim, :postgres do indicates that the tests
+  require a PostgreSQL database. The use of create and let! to create database records reflects this.
+6.The describe block does not include any tests for the create_remand_issues! method, so it may be worth moving that method to a separate describe block.
+
+=end
+
 describe SupplementalClaim, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
@@ -36,61 +59,57 @@ describe SupplementalClaim, :postgres do
   context "#valid?" do
     subject { supplemental_claim.valid? }
 
-    context "when saving review" do
-      before { supplemental_claim.start_review! }
+    context "review fields when they are set" do
+      let(:benefit_type) { "compensation" }
+      let(:legacy_opt_in_approved) { false }
+      let(:receipt_date) { 1.day.ago }
 
-      context "review fields when they are set" do
-        let(:benefit_type) { "compensation" }
-        let(:legacy_opt_in_approved) { false }
-        let(:receipt_date) { 1.day.ago }
-
-        it "is valid" do
-          is_expected.to be true
-        end
-
-        context "invalid Veteran" do
-          context "processed in VBMS" do
-            let(:benefit_type) { "compensation" }
-
-            it "adds an error" do
-              veteran.update(first_name: nil)
-              expect(subject).to eq false
-              expect(supplemental_claim.errors[:veteran]).to include("veteran_not_valid")
-            end
-          end
-
-          context "processed in Caseflow" do
-            let(:benefit_type) { "education" }
-
-            it { is_expected.to be_truthy }
-          end
-        end
+      it "is valid" do
+        is_expected.to be true
       end
 
-      context "when they are nil" do
-        let(:veteran_is_not_claimant) { nil }
-        it "adds errors" do
-          is_expected.to be false
-          expect(supplemental_claim.errors[:benefit_type]).to include("blank")
-          expect(supplemental_claim.errors[:legacy_opt_in_approved]).to include("blank")
-          expect(supplemental_claim.errors[:receipt_date]).to include("blank")
-          expect(supplemental_claim.errors[:veteran_is_not_claimant]).to include("blank")
+      context "invalid Veteran" do
+        context "processed in VBMS" do
+          let(:benefit_type) { "compensation" }
+
+          it "adds an error" do
+            veteran.update(first_name: nil)
+            expect(subject).to eq false
+            expect(supplemental_claim.errors[:veteran]).to include("veteran_not_valid")
+          end
+        end
+
+        context "processed in Caseflow" do
+          let(:benefit_type) { "education" }
+
+          it { is_expected.to be_truthy }
         end
       end
     end
 
-    context "receipt_date" do
-      let(:benefit_type) { "compensation" }
-      let(:legacy_opt_in_approved) { false }
-      context "when it is nil" do
-        it { is_expected.to be true }
+    context "when they are nil" do
+      it "adds errors" do
+        is_expected.to be false
+        expect(supplemental_claim.errors[:benefit_type]).to include("blank")
+        expect(supplemental_claim.errors[:legacy_opt_in_approved]).to include("blank")
+        expect(supplemental_claim.errors[:receipt_date]).to include("blank")
+        expect(supplemental_claim.errors[:veteran_is_not_claimant]).to include("blank")
       end
+    end
+  end
 
-      context "when saving review" do
-        before { supplemental_claim.start_review! }
+  context "receipt_date" do
+    let(:benefit_type) { "compensation" }
+    let(:legacy_opt_in_approved) { false }
+    context "when it is nil" do
+      it { is_expected.to be true }
+    end
 
-        context "when it is after today" do
-          let(:receipt_date) { 1.day.from_now }
+    context "when saving review" do
+      before { supplemental_claim.start_review! }
+
+      context "when it is after today" do
+        let(:receipt_date) { 1.day.from_now }
 
           it "adds an error to receipt_date" do
             is_expected.to be false
