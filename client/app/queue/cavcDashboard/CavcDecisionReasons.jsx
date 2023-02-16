@@ -81,6 +81,9 @@ const CavcDecisionReasons = ({ uniqueId }) => {
     setCheckedReasons(newCheckedReasons);
   };
 
+  const checkedParentReasonsCount = checkedReasons.filter((reason) =>
+    reason.id <= parentReasons.length && reason.checked).length;
+
   const reasons = parentReasons.map((parent) => {
     const childrenOfParent = childReasons.filter((child) => child.parent_decision_reason_id === parent.id);
 
@@ -113,8 +116,12 @@ const CavcDecisionReasons = ({ uniqueId }) => {
 
   return (
     <>
-      <Accordion style="bordered" accordion id={`accordion-${uniqueId}`}>
-        <AccordionSection title={`${LABELS.CAVC_DECISION_REASONS}`} id={`accordion-${uniqueId}`} >
+      <Accordion
+        style="bordered"
+        id={`accordion-${uniqueId}`}
+        header={`${LABELS.CAVC_DECISION_REASONS}${checkedParentReasonsCount ? `(${checkedParentReasonsCount})` : ''}`}
+      >
+        <AccordionSection id={`accordion-${uniqueId}`} >
           <p style={{ fontWeight: 'normal' }}>Select reasons why this issue's decision was changed</p>
           {reasons}
         </AccordionSection>
