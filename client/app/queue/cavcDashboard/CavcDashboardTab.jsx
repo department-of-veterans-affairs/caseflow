@@ -4,12 +4,21 @@ import { connect } from 'react-redux';
 import { getCavcDashboardById } from './cavcDashboardSelectors';
 import CavcDashboardDetails from './CavcDashboardDetails';
 import CavcDashboardIssuesSection from './CavcDashboardIssuesSection';
+import Button from '../../components/Button';
 
 export const CavcDashboardTab = (props) => {
   return (
     <>
       <CavcDashboardDetails {...props} />
       <div><CavcDashboardIssuesSection {...props} /></div>
+      <Button
+        type="button"
+        name="Add Issue Button"
+        classNames="usa-button-secondary"
+        onClick={() => null}
+      >
+        Add Issue
+      </Button>
     </>
   );
 };
