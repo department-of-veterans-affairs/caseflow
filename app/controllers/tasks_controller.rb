@@ -205,7 +205,14 @@ class TasksController < ApplicationController
         when "task_complete_contested_claim"
           days_on_hold = params['hold_days'].to_i
           instructions= "";
-          PostSendInitialNotificationLetterHoldingTask.create_from_parent(task.parent, days_on_hold: days_on_hold, instructions: instructions)
+          psi = PostSendInitialNotificationLetterHoldingTask.create!(
+            appeal: task.appeal,
+            parent: task.parent,
+            assigned_to: Organization.find_by_url("clerk-of-the-board"),
+            assigned_by: current_user,
+            end_date: Time.zone.now + days_on_hold.days
+          )
+          TimedHoldTask.create_from_parent(psi, days_on_hold: days_on_hold, instructions: instructions)
         when "proceed_final_notification_letter"
           send_final_notification_letter
         else
