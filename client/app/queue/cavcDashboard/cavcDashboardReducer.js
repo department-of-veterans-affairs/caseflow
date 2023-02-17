@@ -5,7 +5,7 @@ export const initialState = {
   decision_reasons: {},
   selection_bases: {},
   cavc_dashboards: [],
-  checked_decision_reasons: [],
+  checked_decision_reasons: {},
 };
 
 export const cavcDashboardReducer = (state = initialState, action) => {
@@ -31,9 +31,12 @@ export const cavcDashboardReducer = (state = initialState, action) => {
   case ACTIONS.SET_CHECKED_DECISION_REASONS:
     return update(state, {
       checked_decision_reasons: {
-        $set: action.payload.checked_decision_reasons
+        [action.payload.accordionId]: {
+          $set: action.payload.checkedReasons
+        }
       }
     });
+
   default:
     return state;
   }

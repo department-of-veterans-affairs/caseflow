@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Accordion } from '../../components/Accordion';
 import Checkbox from '../../components/Checkbox';
 import AccordionSection from 'app/components/AccordionSection';
@@ -26,63 +26,72 @@ const CavcDecisionReasons = ({ uniqueId }) => {
   const dispatch = useDispatch();
 
   // get all children where parent.id === child.parent_decision_reason_id
-  // then create an object for each child, stored into array
-  const [checkedReasons, setCheckedReasons] = useState(parentReasons.map((reason) => {
-    const children = childReasons.filter(
-      (child) => child.parent_decision_reason_id === reason.id).map(
-      (childReason) => {
+  // then create an object for each child, stored into parent's children property as array
 
-        return {
-          id: childReason.id,
-          decisionReason: childReason.decision_reason,
-          checked: false,
-          issueId: uniqueId
-        };
-      });
+  const [checkedReasons, setCheckedReasons] = useState(parentReasons.reduce((obj, parent) => {
+    const children = childReasons.filter((child) => child.parent_decision_reason_id === parent.id);
 
-    return {
-      id: reason.id,
-      decisionReason: reason.decision_reason,
+    obj[parent.id] = {
+      ...parent,
       checked: false,
-      children,
-      issueId: uniqueId
-    };
-  }));
-  // console.log(checkedReasons);
-  const handleCheckboxChange = (value, checkboxId, issueId) => {
-    const newCheckedReasons = checkedReasons.map((reason) => {
-      if (reason.id === checkboxId) {
+      children: children.map((child) => {
+
         return {
-          ...reason,
-          checked: value,
-          issueId
+          ...child,
+          checked: false,
         };
-      } else if (checkboxId >= parentReasons.length) {
-        return {
-          ...reason,
-          children: reason.children.map((child) => {
-            if (child?.id === checkboxId) {
+      })
+    };
+
+    return obj;
+  }, {}));
+
+  // update state of checkboxes everytime checkbox is updated
+  useEffect(() => {
+    dispatch(setCheckedDecisionReasons(checkedReasons, uniqueId));
+  }, [checkedReasons]);
+
+  const handleCheckboxChange = (value, checkboxId) => {
+    // if checkboxId < parentReasons.length then it is a parent checkbox therefore update parent checked value
+    if (checkboxId <= parentReasons.length) {
+      setCheckedReasons((prevState) => ({
+        ...prevState,
+        [checkboxId]: {
+          ...prevState[checkboxId],
+          checked: value
+        }
+      }));
+    } else {
+      // if checkboxId > parentReasons.length then it is a child checkbox therefore update child checkbox
+      // must obtain parent id to update correct child property
+      const parent = parentReasons.find(
+        (parentToFind) => parentToFind.id === childReasons.find(
+          (child) => child.id === checkboxId).parent_decision_reason_id);
+
+      setCheckedReasons((prevState) => {
+        const updatedParent = {
+          ...prevState[parent.id],
+          children: prevState[parent.id].children.map((child) => {
+            if (child.id === checkboxId) {
               return {
                 ...child,
-                checked: value,
-                issueId
+                checked: value
               };
             }
 
             return child;
           })
         };
-      }
 
-      return reason;
-    });
-
-    dispatch(setCheckedDecisionReasons(newCheckedReasons));
-    setCheckedReasons(newCheckedReasons);
+        return {
+          ...prevState,
+          [parent.id]: updatedParent
+        };
+      });
+    }
   };
-
-  const checkedParentReasonsCount = checkedReasons.filter((reason) =>
-    reason.id <= parentReasons.length && reason.checked).length;
+  // const checkedParentReasonsCount = checkedReasons.filter((reason) =>
+  //   reason.id <= parentReasons.length && reason.checked).length;
 
   const reasons = parentReasons.map((parent) => {
     const childrenOfParent = childReasons.filter((child) => child.parent_decision_reason_id === parent.id);
@@ -92,19 +101,19 @@ const CavcDecisionReasons = ({ uniqueId }) => {
         <Checkbox
           name={`checkbox-${parent.id}-${uniqueId}`}
           label={parent.decision_reason}
-          onChange={(value) => handleCheckboxChange(value, parent.id, uniqueId)}
-          value={checkedReasons?.find((reason) => reason.id === parent.id)?.checked}
+          onChange={(value) => handleCheckboxChange(value, parent.id)}
+          value={checkedReasons[parent.id]?.checked}
           styling={checkboxStyling}
         />
-        {checkedReasons[parent.id - 1].checked && (
+        {checkedReasons[parent.id]?.checked && (
           <div>
             {childrenOfParent.map((child) => (
               <Checkbox
                 key={child.id}
                 name={`checkbox-${child.id}-${uniqueId}`}
                 label={child.decision_reason}
-                onChange={(value) => handleCheckboxChange(value, child.id, uniqueId)}
-                value={checkedReasons?.find((reason) => reason.id === child.id)?.checked}
+                onChange={(value) => handleCheckboxChange(value, child.id)}
+                value={checkedReasons[child.id]?.checked}
                 styling={childCheckboxStyling}
               />
             ))}
@@ -113,13 +122,14 @@ const CavcDecisionReasons = ({ uniqueId }) => {
       </div>
     )
   });
+  // ${checkedParentReasonsCount ? `(${checkedParentReasonsCount})` : ''}
 
   return (
     <>
       <Accordion
         style="bordered"
         id={`accordion-${uniqueId}`}
-        header={`${LABELS.CAVC_DECISION_REASONS}${checkedParentReasonsCount ? `(${checkedParentReasonsCount})` : ''}`}
+        header={`${LABELS.CAVC_DECISION_REASONS}`}
       >
         <AccordionSection id={`accordion-${uniqueId}`} >
           <p style={{ fontWeight: 'normal' }}>Select reasons why this issue's decision was changed</p>
@@ -135,4 +145,3 @@ CavcDecisionReasons.propTypes = {
 };
 
 export default CavcDecisionReasons;
-
