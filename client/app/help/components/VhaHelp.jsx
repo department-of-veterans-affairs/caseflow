@@ -19,14 +19,16 @@ const VhaHelp = () => {
     (state) => state.help.messages.error
   );
 
-  const formMessage = useSelector(
-    (state) => state.form.message
-  );
+  // const formMessage = useSelector(
+  //   (state) => state.form.message
+  // );
 
   useEffect(() => {
     // Clear the form success message on first component render
-    dispatch(resetFormSuccessMessage());
+    // dispatch(resetFormSuccessMessage());
     dispatch(resetSuccessMessage());
+    // TODO: might need to do this too?
+    // dispatch(resetErrorMessage());
   }, [dispatch]);
 
   const Header = () => {
