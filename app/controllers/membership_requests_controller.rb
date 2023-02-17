@@ -28,28 +28,34 @@ class MembershipRequestsController < ApplicationController
     # Now build a request object for each org and return an array of org_names to be used in the success message
     # TODO: Although this shouldn't be possible through the form make sure they can't submit two requests
     # To the same org if there is one pending
-    errors = []
-    created_membership_requests = []
-    org_names = requested_org_access_list.map do |org|
-      org_name = org.name
-      # Build a request object for each org
-      # TODO: Turn this back on after testing the string
-      # TODO: Probably push this logic down to the model class.
-      # TODO: Decide if the controller or model class should be the one to send an email or not
-      new_request = MembershipRequest.new(
-        organization: org,
-        requestor: current_user,
-        note: request_reason
-      )
+    # errors = []
+    # created_membership_requests = []
+    # org_names = requested_org_access_list.map do |org|
+    #   org_name = org.name
+    #   # Build a request object for each org
+    #   # TODO: Turn this back on after testing the string
+    #   # TODO: Probably push this logic down to the model class.
+    #   # TODO: Decide if the controller or model class should be the one to send an email or not
+    #   new_request = MembershipRequest.new(
+    #     organization: org,
+    #     requestor: current_user,
+    #     note: request_reason
+    #   )
 
-      if new_request.save
-        created_membership_requests << new_request
-      else
-        errors << new_request.errors.full_messages
-      end
+    #   if new_request.save
+    #     created_membership_requests << new_request
+    #   else
+    #     errors << new_request.errors.full_messages
+    #   end
 
-      org_name
-    end
+    #   org_name
+    # end
+
+    created_membership_requests = MembershipRequest.create_many_from_params_and_send_creation_emails(
+      requested_org_access_list,
+      safe_params,
+      current_user
+    )
 
     # TODO: This needs to be the serialized membership requests that were saved successfully instead of this hash
     # test_hash = org_names.map { |org_name| { name: org_name } }
@@ -59,29 +65,24 @@ class MembershipRequestsController < ApplicationController
       .serializable_hash[:data]
       .map { |hash| hash[:attributes] }
 
-    if errors.empty?
-      # TODO: created a mapping of the successful requests back to the message.
-      # Example: Vha -> VHA group
-      # Might do it client side instead? but probably do it here and build the message.
-      # It's easier to jest test if I do it client side.
-      render json: { data: { newMembershipRequests: serialized_requests, message: build_success_message(org_names) } },
-             status: :created
-    else
-      render json: { data: { message: errors.flatten } }, status: :unprocessable_entity
-    end
+    # if errors.empty?
+    #   # TODO: created a mapping of the successful requests back to the message.
+    #   # Example: Vha -> VHA group
+    #   # Might do it client side instead? but probably do it here and build the message.
+    #   # It's easier to jest test if I do it client side.
+    #   render json: { data: { newMembershipRequests: serialized_requests, message: build_success_message(org_names) } },
+    #          status: :created
+    # else
+    #   render json: { data: { message: errors.flatten } }, status: :unprocessable_entity
+    # end
+
+    render json: { data: { newMembershipRequests: serialized_requests } }, status: :created
   end
 
   private
 
   def safe_params
     params.permit(:requestReason, :organizationGroup, membershipRequests: {})
-  end
-
-  # TODO: This should be client side so it's easier to jest test
-  # It's also easier to make it more generic based on the component instead of the membership requests controller.
-  def build_success_message(requested_org_names)
-    formatted_requested_org_names = org_names_to_message_string_names(requested_org_names)
-    format(COPY::VHA_MEMBERSHIP_REQUEST_FORM_SUBMIT_SUCCESS_MESSAGE, formatted_requested_org_names.to_sentence)
   end
 
   # TODO: should this be somewhere else?
@@ -113,25 +114,9 @@ class MembershipRequestsController < ApplicationController
     org_hash
   end
 
-  # TODO: Yeah this should be client side so it's not specific to vha mappings.
-  def org_names_to_message_string_names(org_names)
-    # TODO: This is getting ridiculous. Please fix this somehow.
-    # Maybe by using the vha help constants file in a lot of places
-    org_name_to_string_hash = {
-      "Veterans Health Administration" => "VHA group",
-      "VHA CAMO" => "VHA CAMO",
-      "VHA Caregiver Support Program" => "VHA Caregiver Support Program",
-      "Community Care - Veteran and Family Members Program" => "Veteran and Family Members program office",
-      "Community Care - Payment Operations Management" => "Payment Operations Management program office",
-      "Member Services - Health Eligibility Center" => "Member Services - Health Eligibility Center program office",
-      "Member Services - Beneficiary Travel" => "Member Services - Beneficiary Travel program office",
-      "Prosthetics" => "Prosthetics program office"
-    }
-    org_name_to_string_hash.values_at(*org_names)
-  end
-
   # This is a mapping of option values to the organization names
   # Could also just pass down the Names from the client to avoid this.
+  # TODO: Probably should just send names everywhere
   def vha_org_mapping
     {
       "vhaAccess" => "Veterans Health Administration",
