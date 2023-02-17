@@ -12,6 +12,8 @@ import Modal from '../../components/Modal';
 import COPY from '../../../COPY';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS';
+import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
+import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
 
 /**
  * @param {Object} props
@@ -69,8 +71,13 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
   // });
   const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS).map(
     (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
+  const benefitTypeOptions = Object.keys(BENEFIT_TYPES).map(
+    (value) => ({ value, label: BENEFIT_TYPES[value] }));
+  const issueCategoryOptions = Object.keys(ISSUE_CATEGORIES).map(
+    (value) => ({ value, label: ISSUE_CATEGORIES[BENEFIT_TYPES.value]?.map() }));
 
   const benefitTypeField = <SearchableDropdown
+    options={benefitTypeOptions}
     label={COPY.CAVC_DASHBOARD_BENEFIT_TYPE_TEXT}
     name="judgement-date"
     value={benefitType}
@@ -78,7 +85,13 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
     strongLabel
   />;
 
+  // const outerIssueCategoryOptions = Object.keys(ISSUE_CATEGORIES).map(
+  //   (value) => ({ value, label: ISSUE_CATEGORIES[value] }));
+  // const issueCategoryOptions = Object.keys(outerIssueCategoryOptions).map(
+  //   (value) => ({ value, label: outerIssueCategoryOptions[benefitTypeField.value] }));
+
   const issueCategoryField = <SearchableDropdown
+    options={issueCategoryOptions}
     label={COPY.CAVC_DASHBOARD_ISSUE_CATEGORY_TEXT}
     name="mandate-date"
     value={issueCategory}
@@ -145,5 +158,5 @@ AddCavcDashboardIssueModal.propTypes = {
 //   showErrorMessage
 // }, dispatch);
 
-// export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddCavcDashboardIssueModal));
+// export default withRouter(connect(mapStateToProps)(AddCavcDashboardIssueModal));
 export default AddCavcDashboardIssueModal;
