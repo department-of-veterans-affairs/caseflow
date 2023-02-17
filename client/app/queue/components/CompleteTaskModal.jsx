@@ -161,6 +161,20 @@ const sendToBoardOpts = [
   { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_VHA_RELATED, value: 'not vha related' }
 ];
 
+const documentsReadyForBvaIntakeReviewOptions = [
+  {
+    displayText: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DROPDOWN_OPTIONS.VBMS,
+    value: 'vbms' },
+  {
+    displayText: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DROPDOWN_OPTIONS.CENTRALIZED_MAIL_PORTAL,
+    value: 'centralized mail portal'
+  },
+  {
+    displayText: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DROPDOWN_OPTIONS.OTHER,
+    value: 'other'
+  }
+];
+
 const SendToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
   // if the VhaProgramOffice has completed a task, show the task instructions in the modal
@@ -227,6 +241,83 @@ SendToBoardIntakeModal.propTypes = {
   register: PropTypes.func,
   featureToggles: PropTypes.array,
   highlightInvalid: PropTypes.bool
+};
+
+const VhaCamoDocumentsReadyForBvaIntakeReviewModal = (props, state, setState) => {
+  const taskConfiguration = taskActionData(props);
+  // if the VhaProgramOffice has completed a task, show the task instructions in the modal
+  const programOfficeInstructions = props.tasks.map((task) => {
+    return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1];
+  });
+
+  const handleDropdownChange = ({ value }) => {
+    setState({ dropdown: value });
+    if (value === 'other') {
+      setState({ otherInstructions: '' });
+    }
+  };
+
+  return (
+    <>
+      {programOfficeInstructions.some((i) => i) &&
+        <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
+      {programOfficeInstructions.map((text) => (
+        <div>
+          <ReactMarkdown>{text}</ReactMarkdown>
+        </div>
+      ))}
+      {taskConfiguration && taskConfiguration.modal_body}
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        <div>
+          <SearchableDropdown
+            name="documentsReadyForBvaIntakeReviewOptions"
+            id="documentsReadyForBvaIntakeReviewOptions"
+            label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DETAIL}
+            defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
+            onChange={handleDropdownChange}
+            value={state.dropdown}
+            options={documentsReadyForBvaIntakeReviewOptions}
+            errorMessage={props.highlightInvalid &&
+              !validInstructions(state.dropdown) ? 'You must select a reason for returning to intake' : null}
+          />
+          {state.dropdown === 'other' &&
+              <TextareaField
+                label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DROPDOWN_OPTIONS.OTHER_INSTRUCTION_LABEL}
+                name="otherRejectReason"
+                id="completeTaskOtherInstructions"
+                onChange={(value) => setState({ otherInstructions: value })}
+                value={state.otherInstructions}
+                styling={marginTop(2)}
+                textAreaStyling={setHeight(4.5)}
+                errorMessage={props.highlightInvalid &&
+                !validInstructions(state.otherInstructions) ? 'Return reason field is required' : null}
+              />
+          }
+          <TextareaField
+            label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.INSTRUCTION_LABEL}
+            name="instructions"
+            id="vhaDocumentsReadyForBvaIntakeReviewInstructions"
+            onChange={(value) => setState({ instructions: value })}
+            value={state.instructions}
+            styling={marginTop(4)}
+            textAreaStyling={setHeight(4.5)}
+            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+            errorMessage={props.highlightInvalid &&
+              !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
+          />
+        </div>
+      )}
+    </>
+  );
+};
+
+VhaCamoDocumentsReadyForBvaIntakeReviewModal.propTypes = {
+  props: PropTypes.object,
+  tasks: PropTypes.array,
+  setState: PropTypes.func,
+  state: PropTypes.object,
+  register: PropTypes.func,
+  highlightInvalid: PropTypes.bool,
 };
 
 const ReturnToBoardIntakeModal = ({ props, state, setState }) => {
@@ -377,6 +468,17 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.DOCKET_APPEAL_MODAL_TITLE,
     getContent: MarkTaskCompleteModal,
     buttonText: COPY.MODAL_CONFIRM_BUTTON
+  },
+  vha_documents_ready_for_bva_intake_review: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
+    }),
+    title: () => COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.TITLE,
+    getContent: VhaCamoDocumentsReadyForBvaIntakeReviewModal,
+    buttonText: COPY.MODAL_RETURN_BUTTON,
+    submitDisabled: ({ state }) => (
+      !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
+    ),
   },
   vha_send_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
