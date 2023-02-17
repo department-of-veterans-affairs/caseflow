@@ -3,7 +3,7 @@ import VhaMembershipRequestForm from './VhaMembershipRequestForm';
 import Alert from '../../components/Alert';
 import { VHA_FORM_SUBMIT_SUCCESS_TITLE } from '../constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { resetFormSuccessMessage, resetSuccessMessage } from '../helpApiSlice';
+import { resetSuccessMessage, resetErrorMessage } from '../helpApiSlice';
 
 const VhaHelp = () => {
 
@@ -19,17 +19,14 @@ const VhaHelp = () => {
     (state) => state.help.messages.error
   );
 
-  // const formMessage = useSelector(
-  //   (state) => state.form.message
-  // );
-
-  useEffect(() => {
-    // Clear the form success message on first component render
-    // dispatch(resetFormSuccessMessage());
-    dispatch(resetSuccessMessage());
-    // TODO: might need to do this too?
-    // dispatch(resetErrorMessage());
-  }, [dispatch]);
+  // TODO: While, I think this should be done. This makes testing difficult
+  // useEffect(() => {
+  //   // Clear the form success message on first component render
+  //   // dispatch(resetFormSuccessMessage());
+  //   // dispatch(resetSuccessMessage());
+  //   // TODO: might need to do this too?
+  //   // dispatch(resetErrorMessage());
+  // }, [dispatch]);
 
   const Header = () => {
   /* eslint-disable max-len */
@@ -57,26 +54,24 @@ const VhaHelp = () => {
   };
 
   const SuccesssBanner = () => {
-    return successMessage && <div style={{ marginBottom: '3rem' }}>
+    return successMessage ? <div style={{ marginBottom: '3rem' }}>
       <Alert
         type="success"
         title={VHA_FORM_SUBMIT_SUCCESS_TITLE}
         message={successMessage}
       />
-    </div>;
+    </div> : null;
   };
 
   const ErrorBanner = () => {
-    return errorMessage && <>
+    return errorMessage ? <div style={{ marginBottom: '3rem' }}>
       <Alert
         type="error"
         title="Something went wrong"
         message={errorMessage}
       />
-    </>;
+    </div> : null;
   };
-
-  // TODO: Probably create an error banner as well? In case something does happen.
 
   return <div className="cf-help-content">
     <SuccesssBanner />

@@ -11,80 +11,89 @@ exports[`VhaMembershipRequestForm renders the default state with the feature tog
   <h2>
      Select which VHA groups you need access to 
   </h2>
-  <form>
-    <legend>
-      <strong>
-        General Access
-      </strong>
-    </legend>
-    <div
-      class="checkbox-wrapper-vhaAccess cf-form-checkboxes"
-    >
-      <div
-        class="cf-form-checkbox"
-      >
-        <input
-          aria-label="vhaAccess"
-          id="vhaAccess"
-          name="vhaAccess"
-          type="checkbox"
-        />
-        <label
-          for="vhaAccess"
-        >
-          <span
-            class=""
-          >
-            VHA
-          </span>
-           
-        </label>
-      </div>
-    </div>
-    <legend>
-      <strong>
-        Specialized Access
-      </strong>
-    </legend>
-    <fieldset
-      class="checkbox-wrapper-programOfficesAccess cf-form-checkboxes cf-checkbox-group-inline"
-    >
-      <legend
-        class="hidden-field"
-      >
-        <span>
-          programOfficesAccess
-        </span>
+  <form
+    class="css-q9b1n2"
+  >
+    <fieldset>
+      <legend>
+        <strong>
+          General Access
+        </strong>
       </legend>
       <div
-        class="checkbox"
+        class="checkbox-wrapper-vhaAccess cf-form-checkboxes"
       >
-        <input
-          id="vhaCAMO"
-          name="vhaCAMO"
-          type="checkbox"
-        />
-        <label
-          for="vhaCAMO"
+        <div
+          class="cf-form-checkbox"
         >
-          VHA CAMO
-        </label>
-      </div>
-      <div
-        class="checkbox"
-      >
-        <input
-          id="vhaCaregiverSupportProgram"
-          name="vhaCaregiverSupportProgram"
-          type="checkbox"
-        />
-        <label
-          for="vhaCaregiverSupportProgram"
-        >
-          VHA Caregiver Support Program
-        </label>
+          <input
+            aria-label="vhaAccess"
+            id="vhaAccess"
+            name="vhaAccess"
+            type="checkbox"
+          />
+          <label
+            for="vhaAccess"
+          >
+            <span
+              class=""
+            >
+              VHA
+            </span>
+             
+          </label>
+        </div>
       </div>
     </fieldset>
+    <fieldset>
+      <legend>
+        <strong>
+          Specialized Access
+        </strong>
+      </legend>
+      <fieldset
+        class="checkbox-wrapper-programOfficesAccess cf-form-checkboxes cf-checkbox-group-inline"
+      >
+        <legend
+          class="hidden-field"
+        >
+          <span>
+            programOfficesAccess
+          </span>
+        </legend>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="vhaCAMO"
+            name="vhaCAMO"
+            type="checkbox"
+          />
+          <label
+            for="vhaCAMO"
+          >
+            VHA CAMO
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="vhaCaregiverSupportProgram"
+            name="vhaCaregiverSupportProgram"
+            type="checkbox"
+          />
+          <label
+            for="vhaCaregiverSupportProgram"
+          >
+            VHA Caregiver Support Program
+          </label>
+        </div>
+      </fieldset>
+    </fieldset>
+    <div
+      style="min-height: 51px;"
+    />
     <div
       class="cf-form-textarea"
     >
@@ -110,8 +119,8 @@ exports[`VhaMembershipRequestForm renders the default state with the feature tog
       <button
         class="cf-submit usa-button-disabled usa-button"
         disabled=""
-        id="button-submit-request"
-        type="button"
+        id="submit-submit-request"
+        type="submit"
       >
         Submit
       </button>
@@ -131,150 +140,159 @@ exports[`VhaMembershipRequestForm renders the default state with the feature tog
   <h2>
      Select which VHA groups you need access to 
   </h2>
-  <form>
-    <legend>
-      <strong>
-        General Access
-      </strong>
-    </legend>
-    <div
-      class="checkbox-wrapper-vhaAccess cf-form-checkboxes"
-    >
-      <div
-        class="cf-form-checkbox"
-      >
-        <input
-          aria-label="vhaAccess"
-          id="vhaAccess"
-          name="vhaAccess"
-          type="checkbox"
-        />
-        <label
-          for="vhaAccess"
-        >
-          <span
-            class=""
-          >
-            VHA
-          </span>
-           
-        </label>
-      </div>
-    </div>
-    <legend>
-      <strong>
-        Specialized Access
-      </strong>
-    </legend>
-    <fieldset
-      class="checkbox-wrapper-programOfficesAccess cf-form-checkboxes cf-checkbox-group"
-    >
-      <legend
-        class="hidden-field"
-      >
-        <span>
-          programOfficesAccess
-        </span>
+  <form
+    class="css-q9b1n2"
+  >
+    <fieldset>
+      <legend>
+        <strong>
+          General Access
+        </strong>
       </legend>
       <div
-        class="checkbox"
+        class="checkbox-wrapper-vhaAccess cf-form-checkboxes"
       >
-        <input
-          id="vhaCAMO"
-          name="vhaCAMO"
-          type="checkbox"
-        />
-        <label
-          for="vhaCAMO"
+        <div
+          class="cf-form-checkbox"
         >
-          VHA CAMO
-        </label>
-      </div>
-      <div
-        class="checkbox"
-      >
-        <input
-          id="vhaCaregiverSupportProgram"
-          name="vhaCaregiverSupportProgram"
-          type="checkbox"
-        />
-        <label
-          for="vhaCaregiverSupportProgram"
-        >
-          VHA Caregiver Support Program
-        </label>
-      </div>
-      <div
-        class="checkbox"
-      >
-        <input
-          id="paymentOperationsManagement"
-          name="paymentOperationsManagement"
-          type="checkbox"
-        />
-        <label
-          for="paymentOperationsManagement"
-        >
-          Payment Operations Management
-        </label>
-      </div>
-      <div
-        class="checkbox"
-      >
-        <input
-          id="veteranAndFamilyMembersProgram"
-          name="veteranAndFamilyMembersProgram"
-          type="checkbox"
-        />
-        <label
-          for="veteranAndFamilyMembersProgram"
-        >
-          Veteran and Family Members Program
-        </label>
-      </div>
-      <div
-        class="checkbox"
-      >
-        <input
-          id="memberServicesHealthEligibilityCenter"
-          name="memberServicesHealthEligibilityCenter"
-          type="checkbox"
-        />
-        <label
-          for="memberServicesHealthEligibilityCenter"
-        >
-          Member Services - Health Eligibility Center
-        </label>
-      </div>
-      <div
-        class="checkbox"
-      >
-        <input
-          id="memberServicesBeneficiaryTravel"
-          name="memberServicesBeneficiaryTravel"
-          type="checkbox"
-        />
-        <label
-          for="memberServicesBeneficiaryTravel"
-        >
-          Member Services - Beneficiary Travel
-        </label>
-      </div>
-      <div
-        class="checkbox"
-      >
-        <input
-          id="prosthetics"
-          name="prosthetics"
-          type="checkbox"
-        />
-        <label
-          for="prosthetics"
-        >
-          Prosthetics
-        </label>
+          <input
+            aria-label="vhaAccess"
+            id="vhaAccess"
+            name="vhaAccess"
+            type="checkbox"
+          />
+          <label
+            for="vhaAccess"
+          >
+            <span
+              class=""
+            >
+              VHA
+            </span>
+             
+          </label>
+        </div>
       </div>
     </fieldset>
+    <fieldset>
+      <legend>
+        <strong>
+          Specialized Access
+        </strong>
+      </legend>
+      <fieldset
+        class="checkbox-wrapper-programOfficesAccess cf-form-checkboxes cf-checkbox-group"
+      >
+        <legend
+          class="hidden-field"
+        >
+          <span>
+            programOfficesAccess
+          </span>
+        </legend>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="vhaCAMO"
+            name="vhaCAMO"
+            type="checkbox"
+          />
+          <label
+            for="vhaCAMO"
+          >
+            VHA CAMO
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="vhaCaregiverSupportProgram"
+            name="vhaCaregiverSupportProgram"
+            type="checkbox"
+          />
+          <label
+            for="vhaCaregiverSupportProgram"
+          >
+            VHA Caregiver Support Program
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="paymentOperationsManagement"
+            name="paymentOperationsManagement"
+            type="checkbox"
+          />
+          <label
+            for="paymentOperationsManagement"
+          >
+            Payment Operations Management
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="veteranAndFamilyMembersProgram"
+            name="veteranAndFamilyMembersProgram"
+            type="checkbox"
+          />
+          <label
+            for="veteranAndFamilyMembersProgram"
+          >
+            Veteran and Family Members Program
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="memberServicesHealthEligibilityCenter"
+            name="memberServicesHealthEligibilityCenter"
+            type="checkbox"
+          />
+          <label
+            for="memberServicesHealthEligibilityCenter"
+          >
+            Member Services - Health Eligibility Center
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="memberServicesBeneficiaryTravel"
+            name="memberServicesBeneficiaryTravel"
+            type="checkbox"
+          />
+          <label
+            for="memberServicesBeneficiaryTravel"
+          >
+            Member Services - Beneficiary Travel
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="prosthetics"
+            name="prosthetics"
+            type="checkbox"
+          />
+          <label
+            for="prosthetics"
+          >
+            Prosthetics
+          </label>
+        </div>
+      </fieldset>
+    </fieldset>
+    <div
+      style="min-height: 51px;"
+    />
     <div
       class="cf-form-textarea"
     >
@@ -300,8 +318,8 @@ exports[`VhaMembershipRequestForm renders the default state with the feature tog
       <button
         class="cf-submit usa-button-disabled usa-button"
         disabled=""
-        id="button-submit-request"
-        type="button"
+        id="submit-submit-request"
+        type="submit"
       >
         Submit
       </button>

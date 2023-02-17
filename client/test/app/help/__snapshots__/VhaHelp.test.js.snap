@@ -53,19 +53,19 @@ exports[`VhaHelp renders the help page 1`] = `
     <div
       class="cf-help-divider"
     />
-    <div
-      style="position: relative;"
+    <h1>
+       1. How do I access the VHA team?
+    </h1>
+    <p>
+       If you need access to a VHA team, please fill out the form below. 
+    </p>
+    <h2>
+       Select which VHA groups you need access to 
+    </h2>
+    <form
+      class="css-q9b1n2"
     >
-      <h1>
-         1. How do I access the VHA team?
-      </h1>
-      <p>
-         If you need access to a VHA team, please fill out the form below. 
-      </p>
-      <h2>
-         Select which VHA groups you need access to 
-      </h2>
-      <form>
+      <fieldset>
         <legend>
           <strong>
             General Access
@@ -95,6 +95,8 @@ exports[`VhaHelp renders the help page 1`] = `
             </label>
           </div>
         </div>
+      </fieldset>
+      <fieldset>
         <legend>
           <strong>
             Specialized Access
@@ -139,42 +141,42 @@ exports[`VhaHelp renders the help page 1`] = `
             </label>
           </div>
         </fieldset>
-        <div
-          style="min-height: 51px;"
-        />
-        <div
-          class="cf-form-textarea"
+      </fieldset>
+      <div
+        style="min-height: 51px;"
+      />
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="membership-request-instructions-textBox"
         >
-          <label
-            class="question-label"
-            for="membership-request-instructions-textBox"
-          >
-            <span>
-              Reason for access
-              <span
-                class="cf-optional"
-              >
-                Optional
-              </span>
+          <span>
+            Reason for access
+            <span
+              class="cf-optional"
+            >
+              Optional
             </span>
-          </label>
-          <textarea
-            id="membership-request-instructions-textBox"
-            name="membership-request-instructions-textBox"
-          />
-        </div>
-        <span>
-          <button
-            class="cf-submit usa-button-disabled usa-button"
-            disabled=""
-            id="button-submit-request"
-            type="button"
-          >
-            Submit
-          </button>
-        </span>
-      </form>
-    </div>
+          </span>
+        </label>
+        <textarea
+          id="membership-request-instructions-textBox"
+          name="membership-request-instructions-textBox"
+        />
+      </div>
+      <span>
+        <button
+          class="cf-submit usa-button-disabled usa-button"
+          disabled=""
+          id="submit-submit-request"
+          type="submit"
+        >
+          Submit
+        </button>
+      </span>
+    </form>
   </div>
 </div>
 `;

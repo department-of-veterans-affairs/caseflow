@@ -102,7 +102,8 @@ export const { setFeatureToggles,
   setOrganizationMembershipRequests,
   setSuccessMessage,
   resetSuccessMessage,
-  setErrorMessage } = helpSlice.actions;
+  setErrorMessage,
+  resetErrorMessage } = helpSlice.actions;
 
 export const { resetFormSuccessMessage } = formSlice.actions;
 
