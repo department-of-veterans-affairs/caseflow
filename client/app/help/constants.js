@@ -40,3 +40,14 @@ export const VHA_CAMO_AND_CAREGIVER_OPTIONS = [
 ];
 
 export const VHA_FORM_SUBMIT_SUCCESS_TITLE = 'Your request was successfully submitted!';
+
+export const VHA_ORG_NAMES_TO_READABLE_NAMES = {
+  'Veterans Health Administration': 'VHA group',
+  'VHA CAMO': 'VHA CAMO',
+  'VHA Caregiver Support Program': 'VHA Caregiver Support Program',
+  'Community Care - Veteran and Family Members Program': 'Veteran and Family Members program office',
+  'Community Care - Payment Operations Management': 'Payment Operations Management program office',
+  'Member Services - Health Eligibility Center': 'Member Services - Health Eligibility Center program office',
+  'Member Services - Beneficiary Travel': 'Member Services - Beneficiary Travel program office',
+  Prosthetics: 'Prosthetics program office'
+};

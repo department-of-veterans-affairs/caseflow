@@ -85,7 +85,6 @@ class MembershipRequestsController < ApplicationController
   end
 
   # TODO: should this be somewhere else?
-  # TODO: pass in the comparison hash for mapping keys to orgs to make it generic
   def build_org_list(org_options, keys_to_org_name_hash)
     # Get all of the keys from the options that have values that are truthy
     key_names = org_options.select { |_, value| value }.keys

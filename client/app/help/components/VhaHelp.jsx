@@ -3,7 +3,7 @@ import VhaMembershipRequestForm from './VhaMembershipRequestForm';
 import Alert from '../../components/Alert';
 import { VHA_FORM_SUBMIT_SUCCESS_TITLE } from '../constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { resetFormSuccessMessage } from '../helpApiSlice';
+import { resetFormSuccessMessage, resetSuccessMessage } from '../helpApiSlice';
 
 const VhaHelp = () => {
 
@@ -15,6 +15,10 @@ const VhaHelp = () => {
     (state) => state.help.messages.success
   );
 
+  const errorMessage = useSelector(
+    (state) => state.help.messages.error
+  );
+
   const formMessage = useSelector(
     (state) => state.form.message
   );
@@ -22,6 +26,7 @@ const VhaHelp = () => {
   useEffect(() => {
     // Clear the form success message on first component render
     dispatch(resetFormSuccessMessage());
+    dispatch(resetSuccessMessage());
   }, [dispatch]);
 
   const Header = () => {
@@ -50,19 +55,30 @@ const VhaHelp = () => {
   };
 
   const SuccesssBanner = () => {
-    return formMessage && <div style={{ marginBottom: '3rem' }}>
+    return successMessage && <div style={{ marginBottom: '3rem' }}>
       <Alert
         type="success"
         title={VHA_FORM_SUBMIT_SUCCESS_TITLE}
-        message={formMessage}
+        message={successMessage}
       />
     </div>;
+  };
+
+  const ErrorBanner = () => {
+    return errorMessage && <>
+      <Alert
+        type="error"
+        title="Something went wrong"
+        message={errorMessage}
+      />
+    </>;
   };
 
   // TODO: Probably create an error banner as well? In case something does happen.
 
   return <div className="cf-help-content">
     <SuccesssBanner />
+    <ErrorBanner />
     <Header />
     <HelpDivider />
     <TrainingVideos />

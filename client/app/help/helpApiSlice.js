@@ -84,7 +84,7 @@ const helpSlice = createSlice({
       state.messages.success = action.payload;
     },
     setErrorMessage: (state, action) => {
-      state.messsages.error = action.payload;
+      state.messages.error = action.payload;
     },
     resetSuccessMessage: (state) => {
       state.messages.success = null;
@@ -100,7 +100,9 @@ const helpReducers = combineReducers({ help: helpSlice.reducer, form: formSlice.
 export const { setFeatureToggles,
   setUserOrganizations,
   setOrganizationMembershipRequests,
-  setSuccessMessage } = helpSlice.actions;
+  setSuccessMessage,
+  resetSuccessMessage,
+  setErrorMessage } = helpSlice.actions;
 
 export const { resetFormSuccessMessage } = formSlice.actions;
 

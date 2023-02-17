@@ -8,12 +8,18 @@ import TextareaField from 'app/components/TextareaField';
 import Alert from '../../components/Alert';
 import { find, some } from 'lodash';
 import { css } from 'glamor';
-import { VHA_PROGRAM_OFFICE_OPTIONS, VHA_CAMO_AND_CAREGIVER_OPTIONS } from '../constants';
+import { VHA_PROGRAM_OFFICE_OPTIONS,
+  VHA_CAMO_AND_CAREGIVER_OPTIONS,
+  VHA_ORG_NAMES_TO_READABLE_NAMES } from '../constants';
 import { VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE,
-  VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE } from '../../../COPY';
-import ApiUtil from '../../util/ApiUtil';
-import { setOrganizationMembershipRequests, setSuccessMessage, submitMembershipRequestForm } from '../helpApiSlice';
+  VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE,
+  VHA_MEMBERSHIP_REQUEST_FORM_SUBMIT_SUCCESS_MESSAGE } from '../../../COPY';
+import { setOrganizationMembershipRequests,
+  setSuccessMessage,
+  submitMembershipRequestForm,
+  setErrorMessage } from '../helpApiSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
+import { sprintf } from 'sprintf-js';
 
 const checkboxDivStyling = css({
   '& .cf-form-checkboxes': { marginTop: '10px' },
@@ -86,30 +92,6 @@ const VhaMembershipRequestForm = () => {
     return Boolean(some(possibleOptions, (option) => option.disabled === true));
   }, [possibleOptions]);
 
-  // TODO: see if I can memoize this somehow. Maybe with createSelector
-  // const alteredOptions = specializedAccessOptions.map((obj) => {
-  //   const foundOrganization = some(userOrganizations, (match) => match.name === obj.name);
-
-  //   const foundMembershipRequest = some(organizationMembershipRequests, (match) => match.name === obj.name);
-
-  //   console.log('foundMembershiprequest');
-  //   console.log(obj.name);
-  //   console.log(foundMembershipRequest);
-
-  //   if (foundOrganization || foundMembershipRequest) {
-  //     memberOrRequestToProgramOffices = true;
-
-  //     return { ...obj, disabled: true };
-  //   }
-
-  //   return obj;
-  // });
-
-  // console.log('when is altered options built again?');
-
-  // console.log(organizationMembershipRequests);
-  // console.log(alteredOptions);
-
   const GeneralVHAAccess = ({ vhaMember }) => {
     return <fieldset>
       <legend><strong>General Access</strong></legend>
@@ -159,46 +141,18 @@ const VhaMembershipRequestForm = () => {
 
   const resetMembershipRequestForm = () => {
     setVhaAccess(false);
-    setProgramOfficesAccess(parsedIssues);
+    setProgramOfficesAccess({});
     setRequestReason('');
   };
 
-  const handleSubmit = (event) => {
-    // TODO: handle all of this in a dispatch to the form reducer/thunk/actions
-    // dispatchEvent(submitFormAction(formData));
-    // Do not need prevent default if I don't use button type=submit, but would need click handler or something.
-    event.preventDefault();
-    console.log('me submit form real good like');
-    const membershipRequests = { vhaAccess, ...programOfficesAccess };
-    // Setup the form data in a typical json data format.
-    const formData = { data: { membershipRequests, requestReason } };
+  const formatSuccessMessage = (orgList) => {
+    const formatter = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' });
+    const formattedOrgList = formatter.format(orgList.map((org) => VHA_ORG_NAMES_TO_READABLE_NAMES[org.name]));
 
-    // dispatch(submitMembershipRequestForm(formData));
-    const { body } = ApiUtil.post(
-      '/membership_requests',
-      // { data: { vhaAccess, programOfficesAccess, requestReason } },
-      { data: { membershipRequests, requestReason } },
-    ).then((response) => {
-      const { message } = response.body.data;
-
-      console.log(response.body.data);
-      // alert(message);
-
-      // dispatch(setUserOrganizations(props.userOrganizations));
-      dispatch(setSuccessMessage(message));
-
-      resetMembershipRequestForm();
-      // can dispatch or can just do a normal form submit.
-      // I think it doesn't matter which but would change the reload/loading of data.
-      // If it's a normal form submit then we probably need an erb file.
-    }).
-      catch((error) => {
-        // console.log(error);
-        alert(error);
-      });
+    return sprintf(VHA_MEMBERSHIP_REQUEST_FORM_SUBMIT_SUCCESS_MESSAGE, formattedOrgList);
   };
 
-  const handleSubmit2 = (event) => {
+  const handleSubmit = (event) => {
     // Build the form data from the state
     event.preventDefault();
     const membershipRequests = { vhaAccess, ...programOfficesAccess };
@@ -207,25 +161,21 @@ const VhaMembershipRequestForm = () => {
     const formData = { data: { membershipRequests, requestReason, organizationGroup: 'VHA' } };
 
     // TODO: take the form data returned form the server and update the organizations and vhaAccess radio buttons
-    // TODO: Update unwrapResult to .unwrap() if we update the RTK version.
+    // TODO: Update unwrapResult to .unwrap() if the Redux Toolkit version is updated.
     dispatch(submitMembershipRequestForm(formData)).then(unwrapResult).
       then((values) => {
-        // console.log(values);
-        // console.log(organizationMembershipRequests);
-        // console.log(values.newMembershipRequests);
-        const newOrgs = [...organizationMembershipRequests, ...values.newMembershipRequests];
-        // console.log(newOrgs);
+        const requestedOrgs = values.newMembershipRequests;
+        const newOrgs = [...organizationMembershipRequests, ...requestedOrgs];
 
+        dispatch(setSuccessMessage(formatSuccessMessage(requestedOrgs)));
         dispatch(setOrganizationMembershipRequests(newOrgs));
         resetMembershipRequestForm();
       }).
       catch((error) => {
-        // alert(error);
-        alert('how do I make this happen');
-        console.log(error);
-        // error stuff
+        // console.log(error);
+        // TODO: improve this message somehow. It also won't display success if there is an error at all
+        dispatch(setErrorMessage(error.message));
       });
-    // dispatch()
 
   };
 
@@ -256,7 +206,7 @@ const VhaMembershipRequestForm = () => {
           />
         </div>
       }
-      <form onSubmit={handleSubmit2} className={checkboxDivStyling}>
+      <form onSubmit={handleSubmit} className={checkboxDivStyling}>
         <GeneralVHAAccess vhaMember={memberOrOpenRequestToVha} />
         <SpecializedAccess checkboxOptions={possibleOptions} />
         <div style={{ minHeight: '51px' }}>
