@@ -13,7 +13,7 @@ export const CavcDashboardTab = (props) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const closeHandler = () => {
-    setModalIsOpen(false);
+    setModalIsOpen(!modalIsOpen);
   };
 
   return (

@@ -20,12 +20,12 @@ import SearchableDropdown from '../../components/SearchableDropdown';
  *  - @param {Object}   history          Provided with react router to be able to route to another page upon success
  */
 
-const AddCavcDashboardIssueModal = ({ onCancel }) => {
+const AddCavcDashboardIssueModal = ({ closeHandler }) => {
 
   const [benefitType, setBenefitType] = useState(null);
   const [issueCategory, setIssueCategory] = useState(null);
   const [dispositionByCourt, setDispositionByCourt] = useState(null);
-  const handleCancel = () => onCancel();
+  // const handleCancel = () => onCancel();
 
   // const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -95,7 +95,7 @@ const AddCavcDashboardIssueModal = ({ onCancel }) => {
     // modalIsOpen &&
     <Modal
       title={COPY.ADD_CAVC_DASHBOARD_ISSUE_TEXT}
-      onCancel={handleCancel}
+      // onCancel={handleCancel}
       // onSubmit={handleSubmit}
 
       // validateForm={validateForm}
@@ -104,8 +104,7 @@ const AddCavcDashboardIssueModal = ({ onCancel }) => {
         {
           classNames: ['usa-button', 'cf-btn-link'],
           name: COPY.MODAL_CANCEL_BUTTON,
-          onClick: handleCancel,
-          // onClick: closeHandler(false),
+          onClick: closeHandler,
         },
         {
           // classNames: ['usa-button'],
@@ -114,6 +113,7 @@ const AddCavcDashboardIssueModal = ({ onCancel }) => {
           // onClick: submitHandler,
         }
       ]}
+      closeHandler = {closeHandler}
     >
       {benefitTypeField}
       {issueCategoryField}
