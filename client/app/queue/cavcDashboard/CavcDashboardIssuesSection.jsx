@@ -34,8 +34,12 @@ const olStyling = css({
 });
 
 const CavcDashboardIssue = (props) => {
-  const [disposition, setDisposition] = useState('Select');
-  const { issue, index, dispositions } = props;
+  const { dispositions, issue, index } = props;
+  const [disposition, setDisposition] = useState(dispositions.disposition || 'Select');
+
+  const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS)
+  .map((value) => ({ value, "label": CAVC_DASHBOARD_DISPOSITIONS[value] }));
+
   let issueType = {};
 
   if (issue.decision_review_type) {
@@ -62,7 +66,7 @@ const CavcDashboardIssue = (props) => {
             value={disposition}
             searchable
             hideLabel
-            options={dispositions}
+            options={dispositionsOptions}
             defaultText="Select"
             onChange={(option) => setDisposition(option)}
           />
@@ -76,8 +80,7 @@ const CavcDashboardIssuesSection = (props) => {
   const { dashboard } = props;
   const issues = dashboard.source_request_issues;
   const cavcIssues = dashboard.cavc_dashboard_issues;
-  const dashboardDispositions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS)
-    .map((value) => ({ value, "label": CAVC_DASHBOARD_DISPOSITIONS[value] }));
+  const dashboardDispositions = dashboard.cavc_dashboard_dispositions;
 
   return (
     <div {...issueSectionStyling}>
