@@ -5,7 +5,8 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
 
   def perform(email_type, recipient_info)
     MembershipRequestMailer.with(recipient_info: recipient_info).send(
-      email_to_send(email_type)).deliver_now!
+      email_to_send(email_type)
+    ).deliver_now!
   end
 
   private
