@@ -187,41 +187,64 @@ class TasksController < ApplicationController
 
   def send_final_notification_letter
     @send_final_notification_letter ||= task.appeal.tasks.open.find_by(type: :SendFinalNotificationLetterTask) ||
-                                          SendFinalNotificationLetterTask.create!(
-                                            appeal: task.appeal,
-                                            parent: task.parent,
-                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
-                                            assigned_by: current_user
-                                          )
-
+                                        SendFinalNotificationLetterTask.create!(
+                                          appeal: task.appeal,
+                                          parent: task.parent,
+                                          assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                          assigned_by: current_user
+                                        )
   end
 
   def modified_task_contested_claim
-    appeal = Appeal.find(task&.appeal.id)
-    if appeal.contested_claim?
-      if (task.type === "SendInitialNotificationLetterTask")
-        opc = params['select_opc']
-        case opc
-        when "task_complete_contested_claim"
-          days_on_hold = params['hold_days'].to_i
-          instructions= "";
-          psi = PostSendInitialNotificationLetterHoldingTask.create!(
-            appeal: task.appeal,
-            parent: task.parent,
-            assigned_to: Organization.find_by_url("clerk-of-the-board"),
-            assigned_by: current_user,
-            end_date: Time.zone.now + days_on_hold.days
-          )
-          TimedHoldTask.create_from_parent(psi, days_on_hold: days_on_hold, instructions: instructions)
-        when "proceed_final_notification_letter"
-          send_final_notification_letter
-        else
-          put "nothing yet"
-        end
+    appeal = Appeal.find(task&.appeal&.id)
+    if appeal&.contested_claim?
+      case task.type
+      when "SendInitialNotificationLetterTask"
+        process_contested_claim_initial_task
+      when "PostSendInitialNotificationLetterHoldingTask"
+        process_contested_claim_post_task
+      when "SendFinalNotificationLetterTask"
+        process_contested_claim_final_task
+      else
+        "No Task currently available."
       end
     end
   end
 
+  def process_contested_claim_initial_task
+    opc = params["select_opc"]
+    case opc
+    when "task_complete_contested_claim"
+      days_on_hold = params["hold_days"].to_i
+      instructions = "";
+      psi = PostSendInitialNotificationLetterHoldingTask.create!(
+        appeal: task.appeal,
+        parent: task.parent,
+        assigned_to: Organization.find_by_url("clerk-of-the-board"),
+        assigned_by: current_user,
+        end_date: Time.zone.now + days_on_hold.days
+      )
+      TimedHoldTask.create_from_parent(psi, days_on_hold: days_on_hold, instructions: instructions)
+    when "proceed_final_notification_letter"
+      send_final_notification_letter
+    else
+      put "nothing yet"
+    end
+  end
+
+  def process_contested_claim_post_task
+    case task.status
+    when "cancelled"
+      binding.pry
+      # concat days on hold with instructions
+      task.instructions[0].concat("\nHold time: #{task.days_on_hold}/#{task.max_hold_day_period} days")
+      task.save!
+    end
+  end
+
+  def process_contested_claim_final_task
+    # final task logic here
+  end
 
   def render_update_errors(errors)
     render json: { "errors": errors }, status: :bad_request

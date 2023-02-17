@@ -39,4 +39,8 @@ class PostSendInitialNotificationLetterHoldingTask < LetterTask
   def days_on_hold
     (Time.zone.now - created_at).to_i / 1.day
   end
+
+  def max_hold_day_period
+    (timer_ends_at - created_at).to_i / 1.day
+  end
 end
