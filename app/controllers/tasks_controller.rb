@@ -235,7 +235,6 @@ class TasksController < ApplicationController
   def process_contested_claim_post_task
     case task.status
     when "cancelled"
-      binding.pry
       # concat days on hold with instructions
       task.instructions[0].concat("\nHold time: #{task.days_on_hold}/#{task.max_hold_day_period} days")
       task.save!

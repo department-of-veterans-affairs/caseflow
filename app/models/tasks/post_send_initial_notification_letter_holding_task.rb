@@ -40,7 +40,8 @@ class PostSendInitialNotificationLetterHoldingTask < LetterTask
     (Time.zone.now - created_at).to_i / 1.day
   end
 
+  # created_at offset by 1 day to compensate for day difference rounding down.
   def max_hold_day_period
-    (timer_ends_at - created_at).to_i / 1.day
+    (timer_ends_at - created_at.prev_day).to_i / 1.day
   end
 end
