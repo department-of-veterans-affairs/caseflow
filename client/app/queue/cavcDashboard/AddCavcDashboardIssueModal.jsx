@@ -20,7 +20,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
  *  - @param {Object}   history          Provided with react router to be able to route to another page upon success
  */
 
-const AddCavcDashboardIssueModal = ({ closeHandler }) => {
+const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
 
   const [benefitType, setBenefitType] = useState(null);
   const [issueCategory, setIssueCategory] = useState(null);
@@ -107,10 +107,9 @@ const AddCavcDashboardIssueModal = ({ closeHandler }) => {
           onClick: closeHandler,
         },
         {
-          // classNames: ['usa-button'],
-          // name: COPY.MODAL_SAVE_BUTTON,
-          // disabled: !validateForm(),
-          // onClick: submitHandler,
+          classNames: ['usa-button'],
+          name: COPY.MODAL_SUBMIT_BUTTON,
+          onClick: submitHandler,
         }
       ]}
       closeHandler = {closeHandler}
@@ -126,8 +125,8 @@ const AddCavcDashboardIssueModal = ({ closeHandler }) => {
 AddCavcDashboardIssueModal.propTypes = {
   // showErrorMessage: PropTypes.func,
   // error: PropTypes.object,
-  // closeHandler: PropTypes.func
-  onCancel: PropTypes.func
+  closeHandler: PropTypes.func,
+  submitHandler: PropTypes.func
 };
 
 // const mapStateToProps = (state, ownProps) => ({

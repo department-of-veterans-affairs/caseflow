@@ -6,6 +6,7 @@ import CavcDashboardDetails from './CavcDashboardDetails';
 import CavcDashboardIssuesSection from './CavcDashboardIssuesSection';
 import Button from '../../components/Button';
 import AddCavcDashboardIssueModal from './AddCavcDashboardIssueModal';
+import COPY from '../../../COPY';
 
 export const CavcDashboardTab = (props) => {
   // const { userCanEdit } = props;
@@ -13,6 +14,10 @@ export const CavcDashboardTab = (props) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const closeHandler = () => {
+    setModalIsOpen(!modalIsOpen);
+  };
+  // TODO Change submit button
+  const submitHandler = () => {
     setModalIsOpen(!modalIsOpen);
   };
 
@@ -28,12 +33,12 @@ export const CavcDashboardTab = (props) => {
           classNames="usa-button-secondary"
           onClick={() => setModalIsOpen(true)}
         >
-            Add Issue
+          { COPY.ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT }
         </Button>
       }
       {
         (modalIsOpen) &&
-        <AddCavcDashboardIssueModal closeHandler={closeHandler} />
+        <AddCavcDashboardIssueModal closeHandler={closeHandler} submitHandler={submitHandler}/>
       }
     </>
   );
