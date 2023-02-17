@@ -228,7 +228,7 @@ class TasksController < ApplicationController
     when "proceed_final_notification_letter"
       send_final_notification_letter
     else
-      put "nothing yet"
+      puts "nothing yet"
     end
   end
 
