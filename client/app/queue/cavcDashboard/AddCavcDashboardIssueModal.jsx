@@ -11,6 +11,7 @@ import Modal from '../../components/Modal';
 // import CAVC_DECISION_TYPES from '../../../constants/CAVC_DECISION_TYPES';
 import COPY from '../../../COPY';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS';
 
 /**
  * @param {Object} props
@@ -66,6 +67,8 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
   //     }).
   //     catch((err) => showErrorMessage({ title: 'Error', detail: JSON.parse(err.message).errors[0].detail }));
   // });
+  const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS).map(
+    (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
 
   const benefitTypeField = <SearchableDropdown
     label={COPY.CAVC_DASHBOARD_BENEFIT_TYPE_TEXT}
@@ -84,6 +87,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
   />;
 
   const dispositionByCourtField = <SearchableDropdown
+    options={dispositionsOptions}
     label={COPY.CAVC_DASHBOARD_DISPOSITION_BY_COURT_TEXT}
     name="context-and-instructions-textBox"
     value={dispositionByCourt}
