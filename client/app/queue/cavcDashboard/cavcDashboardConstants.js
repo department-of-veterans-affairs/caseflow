@@ -13,5 +13,7 @@ export const LABELS = {
   CAVC_DECISION_DATE: 'CAVC Decision Date',
   CAVC_DOCKET_NUMBER: 'CAVC Docket Number',
   IS_JMR: 'Joint Motion for Remand?',
-  CAVC_DECISION_REASONS: 'Decision Reasons',
 };
+
+export const DECISION_REASON_TITLE = 'Decision Reasons';
+export const DECISION_REASON_TEXT = 'Select reasons why this issues decision was changed';

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Accordion } from '../../components/Accordion';
 import Checkbox from '../../components/Checkbox';
 import AccordionSection from 'app/components/AccordionSection';
-import { LABELS } from './cavcDashboardConstants';
+import { DECISION_REASON_TEXT, DECISION_REASON_TITLE } from './cavcDashboardConstants';
 import { useDispatch, useSelector } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
@@ -129,10 +129,10 @@ const CavcDecisionReasons = ({ uniqueId }) => {
       <Accordion
         style="bordered"
         id={`accordion-${uniqueId}`}
-        header={`${LABELS.CAVC_DECISION_REASONS}`}
+        header={`${DECISION_REASON_TITLE}`}
       >
         <AccordionSection id={`accordion-${uniqueId}`} >
-          <p style={{ fontWeight: 'normal' }}>Select reasons why this issue's decision was changed</p>
+          <p style={{ fontWeight: 'normal' }}>{DECISION_REASON_TEXT}</p>
           {reasons}
         </AccordionSection>
       </Accordion>
