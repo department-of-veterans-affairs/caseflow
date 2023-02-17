@@ -34,6 +34,7 @@ const CavcDecisionReasons = ({ uniqueId }) => {
     obj[parent.id] = {
       ...parent,
       checked: false,
+      issueId: uniqueId,
       children: children.map((child) => {
 
         return {
@@ -90,8 +91,6 @@ const CavcDecisionReasons = ({ uniqueId }) => {
       });
     }
   };
-  // const checkedParentReasonsCount = checkedReasons.filter((reason) =>
-  //   reason.id <= parentReasons.length && reason.checked).length;
 
   const reasons = parentReasons.map((parent) => {
     const childrenOfParent = childReasons.filter((child) => child.parent_decision_reason_id === parent.id);
@@ -122,14 +121,15 @@ const CavcDecisionReasons = ({ uniqueId }) => {
       </div>
     )
   });
-  // ${checkedParentReasonsCount ? `(${checkedParentReasonsCount})` : ''}
+
+  const decisionReasonCount = Object.keys(checkedReasons).filter((key) => checkedReasons[key].checked).length;
 
   return (
     <>
       <Accordion
         style="bordered"
         id={`accordion-${uniqueId}`}
-        header={`${DECISION_REASON_TITLE}`}
+        header={`${DECISION_REASON_TITLE}${decisionReasonCount > 0 ? `(${decisionReasonCount})` : ''}`}
       >
         <AccordionSection id={`accordion-${uniqueId}`} >
           <p style={{ fontWeight: 'normal' }}>{DECISION_REASON_TEXT}</p>
