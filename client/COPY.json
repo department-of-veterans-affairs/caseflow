@@ -1267,13 +1267,17 @@
   "VHA_COMPLETE_TASK_MODAL_BODY": "Provide details such as file structure or file path",
   "VHA_COMPLETE_TASK_CONFIRMATION_PO": "Appeal has been marked as ready for review and sent to the CAMO team for review.",
   "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review.",
-  "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_TITLE": "Ready for Review",
-  "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_BODY": "This appeal will be sent to Board intake for reveiw.",
-  "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_DETAIL": "Please select where the documents for this appeal are stored.",
-  "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_VBMS": "VBMS",
-  "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_CENTRALIZED_MAIL_PORTAL": "Centralized Mail Portal",
-  "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_OTHER": "Other",
-  "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_OTHER_INSTRUCTION_LABEL": "Please provide the source for the documents",
+  "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL": {
+    "TITLE": "Ready for Review",
+    "BODY": "This appeal will be sent to Board intake for reveiw.",
+    "DETAIL": "Please select where the documents for this appeal are stored.",
+    "DROPDOWN_OPTIONS": {
+      "VBMS": "VBMS",
+      "CENTRALIZED_MAIL_PORTAL": "Centralized Mail Portal",
+      "OTHER": "Other",
+      "OTHER_INSTRUCTION_LABEL": "Please provide the source for the documents"
+    }
+  },
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL": "What is the status of this appeal?",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS": "Correct documents have been successfully added",
