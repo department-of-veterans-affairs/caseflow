@@ -32,7 +32,7 @@ const VhaMembershipRequestForm = () => {
     (state) => state.help.organizationMembershipRequests
   );
 
-  // Setup for all the program office options based on the feature toggle
+  // Setup for all the predocket organizations checkbox options based on the feature toggle
   const specializedAccessOptions = programOfficeTeamManagementFeatureToggle ?
     [...VHA_CAMO_AND_CAREGIVER_OPTIONS, ...VHA_PROGRAM_OFFICE_OPTIONS] :
     VHA_CAMO_AND_CAREGIVER_OPTIONS;
@@ -48,7 +48,7 @@ const VhaMembershipRequestForm = () => {
   const memberOrOpenRequestToVha = Boolean(find(userOrganizations, { name: 'Veterans Health Administration' }) ||
    find(organizationMembershipRequests, { name: 'Veterans Health Administration' }));
 
-  let memberOrRequestToProgramOffices = false;
+  let memberOrRequestToPreDocketOrg = false;
 
   // Disables options based on the user organizations and pending membership requests
   const parsedOptions = specializedAccessOptions.map((obj) => {
@@ -57,7 +57,7 @@ const VhaMembershipRequestForm = () => {
     const foundMembershipRequest = some(organizationMembershipRequests, (match) => match.name === obj.name);
 
     if (foundOrganization || foundMembershipRequest) {
-      memberOrRequestToProgramOffices = true;
+      memberOrRequestToPreDocketOrg = true;
 
       return { ...obj, disabled: true };
     }
@@ -87,7 +87,7 @@ const VhaMembershipRequestForm = () => {
       <fieldset>
         <legend><strong>Specialized Access</strong></legend>
         <CheckboxGroup
-          name="programOfficesAccess"
+          name="preDocketOrgsAccess"
           hideLabel
           options={checkboxOptions}
           onChange={(val) => onVhaPredocketOrgsAccessChange(val)}
@@ -112,24 +112,24 @@ const VhaMembershipRequestForm = () => {
     );
   };
 
-  const anyProgramOfficeSelected = useMemo(() => (
+  const anyPredocketOrgSelected = useMemo(() => (
     find(preDocketOrgsAccess, (value) => value === true)),
   [preDocketOrgsAccess]);
 
   const vhaSelectedOrExistingMember = Boolean(memberOrOpenRequestToVha || vhaAccess);
 
   const submitDisabled = Boolean(memberOrOpenRequestToVha ?
-    (!anyProgramOfficeSelected) :
-    (!vhaAccess && !anyProgramOfficeSelected));
+    (!anyPredocketOrgSelected) :
+    (!vhaAccess && !anyPredocketOrgSelected));
 
-  const automaticVhaAccessNotice = anyProgramOfficeSelected && !vhaSelectedOrExistingMember;
+  const automaticVhaAccessNotice = anyPredocketOrgSelected && !vhaSelectedOrExistingMember;
 
   return (
     <>
       <h1> 1. How do I access the VHA team?</h1>
       <p> If you need access to a VHA team, please fill out the form below. </p>
       <h2> Select which VHA groups you need access to </h2>
-      {(memberOrOpenRequestToVha || memberOrRequestToProgramOffices) &&
+      {(memberOrOpenRequestToVha || memberOrRequestToPreDocketOrg) &&
         <div style={{ marginBottom: '3rem' }}>
           <Alert
             type="info"
