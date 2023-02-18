@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Accordion } from '../../components/Accordion';
 import Checkbox from '../../components/Checkbox';
 import AccordionSection from 'app/components/AccordionSection';
+import TextField from '../../components/TextField';
 import { DECISION_REASON_TEXT, DECISION_REASON_TITLE } from './cavcDashboardConstants';
 import { useDispatch, useSelector } from 'react-redux';
 import { css } from 'glamor';
@@ -22,13 +23,13 @@ const CavcDecisionReasons = ({ uniqueId }) => {
   });
 
   const basisForSelectionStylingNoChild = css({
-    paddingLeft: '5%',
+    paddingLeft: '7.5rem',
     fontWeight: 'normal'
   });
 
   const basisForSelectionStylingWithChild = css({
-    paddingLeft: '7.5%',
-    fontWeight: 'normal'
+    paddingLeft: '10rem',
+    fontWeight: 'normal',
   });
 
   const decisionReasons = useSelector((state) => state.cavcDashboard.decision_reasons);
@@ -135,19 +136,28 @@ const CavcDecisionReasons = ({ uniqueId }) => {
                   value={checkedReasons[parent.id].children.find((x) => x.id === child.id).checked}
                   styling={childCheckboxStyling}
                 />
-                {/* check if child checkbox is checked and basis category exists if so render component */}
+                {/* check if child checkbox is checked and basis category exists if so render dropdown */}
                 {checkedReasons[parent.id]?.children.find(
-                  (x) => x.id === child.id && x.basis_for_selection_category)?.checked && (
-                    <SearchableDropdown
-                      name={`decision-reason-basis-${child.id}`}
-                      label="Basis for this selection"
-                      placeholder="Type to search..."
-                      styling={basisForSelectionStylingWithChild}
-                    />
+                  (x) => x.id === child.id && x.basis_for_selection_category && x.checked) && (
+                    <div>
+                      <SearchableDropdown
+                        name={`decision-reason-basis-${child.id}`}
+                        label="Basis for this selection"
+                        placeholder="Type to search..."
+                        styling={basisForSelectionStylingWithChild}
+                      />
+                      {/* if basis for selection category is ama_other display text field for custom reasoning */}
+                      {/* eslint-disable-next-line */}
+                      {checkedReasons[parent.id]?.children.find((x) => x.basis_for_selection_category === 'ama_other') && (
+                        <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
+                          <TextField type="string" label="New basis reason" />
+                        </div>
+                      )}
+                    </div>
                   )}
               </div>
             ))}
-            {/* check if parent checkbox has basis category but no child, if so render component  */}
+            {/* check if parent checkbox has basis category but no child, if so render dropdown */}
             {/* eslint-disable-next-line */}
             {checkedReasons[parent.id]?.basis_for_selection_category && (
               <SearchableDropdown
