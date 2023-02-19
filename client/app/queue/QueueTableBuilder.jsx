@@ -177,6 +177,15 @@ class QueueTableBuilder extends React.PureComponent {
       );
     }
 
+    // Setup default sorting.
+    const defaultSort = {};
+
+    // If there is no sort by column in the pagination options, then use the tab config default sort
+    // eslint-disable-next-line camelcase
+    if (!paginationOptions?.sort_by) {
+      Object.assign(defaultSort, tabConfig.defaultSort);
+    }
+
     return {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
@@ -199,6 +208,7 @@ class QueueTableBuilder extends React.PureComponent {
             tabPaginationOptions={
               paginationOptions.tab === tabConfig.name && paginationOptions
             }
+            defaultSort={defaultSort}
             useTaskPagesApi={
               config.use_task_pages_api && !tabConfig.contains_legacy_tasks
             }
