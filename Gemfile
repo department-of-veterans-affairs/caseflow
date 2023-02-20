@@ -52,7 +52,7 @@ gem "pg", platforms: :ruby
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "~> 5"
 gem "rack", "~> 2.2.3"
-gem "rails", "5.2.8"
+gem "rails", "~> 5.2.8"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
