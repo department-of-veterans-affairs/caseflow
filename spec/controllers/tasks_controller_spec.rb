@@ -936,12 +936,14 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     let(:cob_team) { ClerkOfTheBoard.singleton }
     let(:cc_appeal) { create(:appeal) }
     let(:cc_issue) do
-      create(:request_issue,
+      create(
+        :request_issue,
         benefit_type: "insurance",
         nonrating_issue_category: "Contested Death Claim | Other",
         nonrating_issue_description: "contested death claim",
         decision_review: cc_appeal,
-        decision_date: 1.month.ago)
+        decision_date: 1.month.ago
+      )
     end
     let(:distribution_task) { create(:distribution_task, parent: cc_appeal.root_task) }
     let(:send_initial_task) do
@@ -1017,7 +1019,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             status: Constants.TASK_STATUSES.cancelled,
             instructions: instructions
           },
-          id: send_initial_task.id.to_s,
+          id: send_initial_task.id.to_s
         }
       end
 
@@ -1038,7 +1040,56 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     end
 
     context "a contested claim's post initial task is marked to be cancelled" do
+      let(:days_on_hold) { 45 }
+      let(:post_initial_task) do
+        PostSendInitialNotificationLetterHoldingTask.create!(
+          appeal: cc_appeal,
+          parent: distribution_task,
+          assigned_to: cob_team,
+          assigned_by: cob_user,
+          end_date: Time.zone.now + days_on_hold.days
+        )
+      end
 
+      let(:post_task_timer) do
+        TimedHoldTask.create_from_parent(
+          post_initial_task,
+          days_on_hold: days_on_hold,
+          instructions: "45 Days Hold Period"
+        )
+      end
+
+      let(:instructions) { "Cancel instructions go here" }
+      let(:params) do
+        {
+          task: {
+            status: Constants.TASK_STATUSES.cancelled,
+            instructions: instructions
+          },
+          id: post_initial_task.id.to_s
+        }
+      end
+
+      # expected instructions are payload instructions plus the hold time
+      let(:expected_instructions) do
+        "#{instructions}\nHold time: #{post_initial_task.days_on_hold}/#{post_initial_task.max_hold_day_period} days"
+      end
+
+      subject { patch :update, params: params }
+
+      it "cancels the task" do
+        # load the data properly
+        cc_issue
+        cc_appeal.reload.request_issues
+
+        # call subject
+        subject
+
+        expect(response.status).to eq 200
+        expect(post_initial_task.reload.status).to eq("cancelled")
+        # post task instructions should be concat with days on hold
+        expect(post_initial_task.reload.instructions[0]).to eq(expected_instructions)
+      end
     end
   end
 

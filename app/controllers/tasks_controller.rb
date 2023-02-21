@@ -114,7 +114,7 @@ class TasksController < ApplicationController
       tasks_hash = json_tasks(tasks.uniq)
 
       if task.appeal.class != LegacyAppeal
-          modified_task_contested_claim
+        modified_task_contested_claim
       end
       # currently alerts are only returned by ScheduleHearingTask
       # and AssignHearingDispositionTask for virtual hearing related updates
@@ -227,8 +227,6 @@ class TasksController < ApplicationController
       TimedHoldTask.create_from_parent(psi, days_on_hold: days_on_hold, instructions: instructions)
     when "proceed_final_notification_letter"
       send_final_notification_letter
-    else
-      puts "nothing yet"
     end
   end
 
