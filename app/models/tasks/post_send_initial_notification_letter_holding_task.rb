@@ -37,7 +37,13 @@ class PostSendInitialNotificationLetterHoldingTask < LetterTask
   end
 
   def days_on_hold
-    (Time.zone.now - created_at).to_i / 1.day
+    # if closed out, set the time to be the difference between created_at and closed_at
+    # otherwise, calculate from now if the timer is still going
+    if !closed_at.nil?
+      (closed_at - created_at).to_i / 1.day
+    else
+      (Time.zone.now - created_at).to_i / 1.day
+    end
   end
 
   # created_at offset by 1 day to compensate for day difference rounding down.
