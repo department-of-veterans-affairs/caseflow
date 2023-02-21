@@ -4,7 +4,8 @@ import { ACTIONS } from './cavcDashboardConstants';
 export const initialState = {
   decision_reasons: {},
   selection_bases: {},
-  cavc_dashboards: []
+  cavc_dashboards: [],
+  dashboard_issues: []
 };
 
 export const cavcDashboardReducer = (state = initialState, action) => {
@@ -25,6 +26,19 @@ export const cavcDashboardReducer = (state = initialState, action) => {
     return update(state, {
       cavc_dashboards: {
         $set: action.payload.cavc_dashboards
+      }
+    });
+  case ACTIONS.UPDATE_DASHBOARD_ISSUES:
+    // return update(state, {
+    //   cavc_dashboards: {
+    //     $merge: action.payload.dashboard_issues
+    //   }
+    // });
+    return update(state, {
+      cavc_dashboards: {
+        [action.payload.issueIndex]: {
+          $merge: action.payload.issue
+        }
       }
     });
   default:
