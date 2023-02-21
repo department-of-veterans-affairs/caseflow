@@ -138,7 +138,9 @@ const CavcDecisionReasons = ({ uniqueId }) => {
                 />
                 {/* check if child checkbox is checked and basis category exists if so render dropdown */}
                 {checkedReasons[parent.id]?.children.find(
-                  (childToFind) => childToFind.id === child.id && childToFind.basis_for_selection_category && childToFind.checked) && (
+                  (childToFind) => childToFind.id === child.id &&
+                    childToFind.basis_for_selection_category &&
+                      childToFind.checked) && (
                     <div>
                       <SearchableDropdown
                         name={`decision-reason-basis-${child.id}`}
