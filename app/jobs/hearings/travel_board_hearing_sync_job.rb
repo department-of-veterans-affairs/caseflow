@@ -28,8 +28,13 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
     appeals.each do |appeal|
       begin
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        # Close any Open Hearing Tasks and their children
+        appeal.reload.tasks.open.where(type: HearingTask.name).to_a.each do |hearing_task|
+          hearing_task.cancel_task_and_child_subtasks
+        end
+        # Create new Schedule Hearing task which will create a new Hearing Task parent
         ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
-
+        # Move the appeal from location 57 to caseflow
         AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
         generated_tree_count += 1
       rescue StandardError => error
@@ -52,39 +57,12 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
     Rails.logger.error(message)
   end
 
-  # Purpose: Fetches a list of all vacols ids from the database
-  # Return: The list of vacols ids
-  def fetch_all_vacols_ids
-    LegacyAppeal.pluck(:vacols_id)
-  end
-
-  # Purpose: Gets the list of cases that are not found in Caseflow
-  # Params:
-  #        cases - All cases in VACOLS
-  #        vacols_ids - All the VACOLS IDs from Caseflow
-  #        limit - The amount of ids to query for at a time
-  # Return: The list of cases not found in Caseflow
-  def get_new_cases(cases, vacols_ids)
-    cases_in_caseflow = []
-    shift_limit = 1000
-    # Querys for cases that are already in Caseflow per the limit at a time and adds that on to the list
-    until vacols_ids.empty?
-      some_cases = cases.where(bfkey: vacols_ids.first(shift_limit))
-      vacols_ids.shift(shift_limit)
-      cases_in_caseflow.concat(some_cases)
-    end
-    # Removes all values matching the list from the cases array and returns what is left
-    cases_not_in_caseflow = cases.to_a
-    cases_in_caseflow.each { |old_case| cases_not_in_caseflow.delete(old_case) }
-    cases.where(bfkey: cases_not_in_caseflow.pluck(:bfkey)).includes(:folder, :correspondent, :case_issues).to_a
-  end
-
   # Purpose: Fetches all travel board appeals from VACOLS that aren't already in Caseflow
   # and creates a legacy appeal for each
   # Params: exclude_ids - A list of vacols ids that already exist in Caseflow
   #         limit - The max number of appeals to process
   # Return: All the newly created legacy appeals
-  def fetch_vacols_travel_board_appeals(ids, limit)
+  def fetch_vacols_travel_board_appeals(limit)
     cases = VACOLS::Case
       .where(
         # Travel Board Hearing Request
@@ -95,19 +73,28 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
         bfdocind: nil,
         # Datetime of Decision
         bfddec: nil
-      ).limit(BATCH_LIMIT)
-    legacy_appeals = get_new_cases(cases, ids)
+      ).limit(limit).to_a
       .map do |vacols_case|
-        begin
-          AppealRepository.build_appeal(vacols_case, true)
-        rescue StandardError => error
-          log_error("#{error.class}: #{error.message} for vacols id:#{vacols_case.bfkey} on #{JOB_ATTR&.class} of ID:#{JOB_ATTR&.job_id}\n #{error.backtrace.join("\n")}")
-          next
+        # If there is not already a Legacy Appeal record tied to this case. Create one.
+        if !LegacyAppeal.where(vacols_id: vacols_case.bfkey).exists?
+          begin
+              missing_case = VACOLS::Case.where(bfkey: vacols_case.bfkey).includes(:folder, :correspondent, :case_issues).first
+              AppealRepository.build_appeal(missing_case, true)
+          rescue StandardError => error
+            log_error("#{error.class}: #{error.message} for vacols id:#{vacols_case.bfkey} on #{JOB_ATTR&.class} of ID:#{JOB_ATTR&.job_id}\n #{error.backtrace.join("\n")}")
+            next
+          end
+        else
+          begin
+            LegacyAppeal.find_by_vacols_id(vacols_case.bfkey.to_s)
+          rescue StandardError => error
+            log_error("#{error.class}: #{error.message} for vacols id:#{vacols_case.bfkey} on #{JOB_ATTR&.class} of ID:#{JOB_ATTR&.job_id}\n #{error.backtrace.join("\n")}")
+          end
         end
       end
       .compact
     log_info("Fetched #{cases.length} travel board appeals from VACOLS")
-    legacy_appeals
+    cases
   end
 
   # Purpose: Wrapper method to determine batch size of travel board appeals to sync
@@ -115,10 +102,10 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   def sync_travel_board_appeals
     log_info("Fetching travel board appeals from vacols for syncing...")
     if BATCH_LIMIT.is_a?(String)
-      fetch_vacols_travel_board_appeals(fetch_all_vacols_ids, BATCH_LIMIT.to_i)
+      fetch_vacols_travel_board_appeals(BATCH_LIMIT.to_i)
     else
       log_info("No BATCH LIMIT environment variable provided. Defaulting to 250")
-      fetch_vacols_travel_board_appeals(fetch_all_vacols_ids, 250)
+      fetch_vacols_travel_board_appeals(250)
     end
   end
 end
