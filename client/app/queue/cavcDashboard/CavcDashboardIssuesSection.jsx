@@ -10,7 +10,7 @@ const singleIssueStyling = css({
   marginBottom: '1.5em !important',
   display: 'grid',
   fontWeight: 'normal',
-  gridTemplateColumns: '60% 40%',
+  gridTemplateColumns: '70% 30%',
   '@media(max-width: 1200px)': { width: '100%' },
   '@media(max-width: 829px)': {
     display: 'flex',
@@ -20,7 +20,7 @@ const singleIssueStyling = css({
 
 const headerStyling = css({
   display: 'grid',
-  gridTemplateColumns: '60% 40%',
+  gridTemplateColumns: '70% 30%',
   marginBottom: '0',
   paddingLeft: '21px'
 });
