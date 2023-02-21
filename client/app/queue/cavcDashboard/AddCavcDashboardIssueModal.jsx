@@ -73,8 +73,24 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
     (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
   const benefitTypeOptions = Object.keys(BENEFIT_TYPES).map(
     (value) => ({ value, label: BENEFIT_TYPES[value] }));
-  const issueCategoryOptions = Object.keys(ISSUE_CATEGORIES).map(
-    (value) => ({ value, label: ISSUE_CATEGORIES[BENEFIT_TYPES.value]?.map() }));
+  // const issueCategoryOptions = Object.keys(ISSUE_CATEGORIES.compensation).map(
+  //   (value) => ({ value, label: ISSUE_CATEGORIES.compensation[value] }));
+  // THIS option was working, but only when cardcoding in the benefittypeoption
+
+  // const selectedBenefitType = benefitTypeOptions.value;
+  // const issueCategoryOptions = Object.keys(ISSUE_CATEGORIES.filter(
+  //   (category) => category.key === selectedBenefitType)).map(
+  //   (value) => ({ value, label: value }));
+
+  const issueCategoryOptions = Array.keys(ISSUE_CATEGORIES.filter(
+    (category) => category.key === benefitType)).map(
+    (value) => ({ value, label: value }));
+
+  // const issueCategoryOptions = Object.keys(ISSUE_CATEGORIES.benefitTypeOptions.value).map(
+  //   (value) => ({ value, label: ISSUE_CATEGORIES.benefitTypeOptions.value }));
+
+  // const issueCategoryOptions = Object.keys(ISSUE_CATEGORIES[benefitTypeOptions.value])?.map(
+  // (value) => ({ value, label: ISSUE_CATEGORIES[benefitTypeOptions.value] }));
 
   const benefitTypeField = <SearchableDropdown
     options={benefitTypeOptions}
@@ -151,6 +167,7 @@ AddCavcDashboardIssueModal.propTypes = {
 //   // error: state.ui.messages.error,
 //   // // eslint-disable-next-line camelcase
 //   // decisionType: state.queue.appealDetails[ownProps.appealId].cavcRemand?.cavc_decision_type
+//   benefitType: state.queue[ownProps].cavcRemand?.cavc_decision_type
 // });
 
 // const mapDispatchToProps = (dispatch) => bindActionCreators({
