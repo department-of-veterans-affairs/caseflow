@@ -38,6 +38,13 @@ const CavcDashboardIssue = (props) => {
   const { issue, index, dispositions } = props;
   let issueType = {};
 
+  const requireDecisionReason = (id) => {
+    return (dispositions?.find(
+      (dis) => dis.request_issue_id === id &&
+      (dis.disposition === 'Reversed' || dis.disposition === 'Vacated and Remanded')) ||
+      (disposition === 'Reversed' || disposition === 'Vacated and Remanded'));
+  };
+
   if (issue.decision_review_type) {
     issueType = `${issue.decision_review_type} - ${issue.contested_issue_description}`;
   } else {
@@ -68,6 +75,9 @@ const CavcDashboardIssue = (props) => {
           />
         </div>
       </div>
+      {requireDecisionReason(issue.id) && (
+        <CavcDecisionReasons uniqueId={issue.id} />
+      )}
     </li>
   );
 };
@@ -77,12 +87,6 @@ const CavcDashboardIssuesSection = (props) => {
   const issues = dashboard.source_request_issues;
   const cavcIssues = dashboard.cavc_dashboard_issues;
   const dashboardDispositions = dashboard.cavc_dashboard_dispositions;
-
-  const requireDecisionReason = (id) => {
-    return (dashboardDispositions?.find(
-      (dis) => dis.request_issue_id === id &&
-      (dis.disposition === 'Reversed' || dis.disposition === 'Vacated and Remanded')));
-  };
 
   return (
     <div {...issueSectionStyling}>
@@ -98,9 +102,6 @@ const CavcDashboardIssuesSection = (props) => {
           return (
             <React.Fragment key={i}>
               <CavcDashboardIssue issue={issue} index={i} dispositions={dashboardDispositions} />
-              {requireDecisionReason(issue.id) && (
-                <CavcDecisionReasons uniqueId={issue.id} />
-              )}
             </React.Fragment>
           );
         })}
@@ -124,6 +125,7 @@ CavcDashboardIssue.propTypes = {
     decision_review_type: PropTypes.string,
     contested_issue_description: PropTypes.string,
     issue_category: PropTypes.string,
+    id: PropTypes.number
   }),
   dispositions: PropTypes.array,
 };
