@@ -163,14 +163,14 @@ const sendToBoardOpts = [
 
 const documentsReadyForBvaIntakeReviewOptions = [
   {
-    displayText: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_VBMS,
+    label: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_VBMS,
     value: 'vbms' },
   {
-    displayText: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_CENTRALIZED_MAIL_PORTAL,
+    label: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_CENTRALIZED_MAIL_PORTAL,
     value: 'centralized mail portal'
   },
   {
-    displayText: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_OTHER,
+    label: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_OTHER,
     value: 'other'
   }
 ];
@@ -294,7 +294,7 @@ const VhaCamoDocumentsReadyForBvaIntakeReviewModal = ({ props, state, setState }
               />
           }
           <TextareaField
-            label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_INSTRUCTION_LABEL}
+            label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_INSTRUCTIONS_LABEL}
             name="instructions"
             id="vhaDocumentsReadyForBvaIntakeReviewInstructions"
             onChange={(value) => setState({ instructions: value })}
