@@ -30,21 +30,17 @@ module AppealNotificationReportConcern
   # Purpose: Generate the PDF and then prepares the document for uploading to S3 or VBMS
   # Returns: nil
   def upload_notification_report!
-    begin
-      document_params =
-        {
-          veteran_file_number: veteran_file_number,
-          document_type: "BVA Case Notifications",
-          document_subject: "notifications",
-          document_name: notification_document_name,
-          application: "notification-report",
-          file: notification_report
-        }
-      PrepareDocumentUploadToVbms.new(document_params, User.system_user, self).call
-      nil
-    rescue StandardError
-      raise PDFUploadError
-    end
+    document_params =
+      {
+        veteran_file_number: veteran_file_number,
+        document_type: "BVA Letter",
+        document_subject: "notifications",
+        document_name: notification_document_name,
+        application: "notification-report",
+        file: notification_report
+      }
+    upload_document(document_params)
+    nil
   end
 
   private
@@ -64,9 +60,18 @@ module AppealNotificationReportConcern
   def notification_report
     begin
       file = PdfExportService.create_and_save_pdf("notification_report_pdf_template", self)
+      Base64.encode64(file)
     rescue StandardError
       raise PDFGenerationError
     end
-    Base64.encode64(file)
+  end
+
+  # Purpose: Uploads the PDF
+  # Returns: The job being queued
+  def upload_document(document_params)
+    response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, self).call
+    if !response.success?
+      fail PDFUploadError
+    end
   end
 end
