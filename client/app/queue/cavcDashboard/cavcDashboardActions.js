@@ -32,3 +32,10 @@ export const updateDashboardIssues = (dashboardIndex, issue) => (dispatch) => {
     payload: { dashboardIndex, issue }
   });
 };
+
+export const removeDashboardIssue = (dashboardIndex, issue) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.REMOVE_DASHBOARD_ISSUE,
+    payload: { dashboardIndex, issue }
+  });
+};

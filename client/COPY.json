@@ -243,6 +243,7 @@
   "CAVC_DASHBOARD_LOADING_FAILURE_TEXT": "Caseflow was unable to load this CAVC Dashboard. Refresh the page to try again.",
   "CAVC_DASHBOARD_BUTTON_TEXT": "CAVC Dashboard",
   "ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT": "Add Issue",
+  "REMOVE_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT": "Remove Issue",
   "ADD_CAVC_DASHBOARD_ISSUE_TEXT": "Add CAVC Issue",
   "CAVC_DASHBOARD_BENEFIT_TYPE_TEXT": "Benefit Type",
   "CAVC_DASHBOARD_ISSUE_CATEGORY_TEXT": "Issue Category",

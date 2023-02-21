@@ -7,7 +7,7 @@ import CavcDashboardIssuesSection from './CavcDashboardIssuesSection';
 import Button from '../../components/Button';
 import AddCavcDashboardIssueModal from './AddCavcDashboardIssueModal';
 import COPY from '../../../COPY';
-import { updateDashboardIssues } from './cavcDashboardActions';
+import { updateDashboardIssues, removeDashboardIssue } from './cavcDashboardActions';
 import { bindActionCreators } from 'redux';
 
 export const CavcDashboardTab = (props) => {
@@ -21,6 +21,14 @@ export const CavcDashboardTab = (props) => {
   const submitHandler = (issue) => {
     props.updateDashboardIssues(dashboardIndex, issue);
     setModalIsOpen(!modalIsOpen);
+  };
+
+  const removeIssueHandler = (issue) => {
+    props.removeDashboardIssue(dashboardIndex, issue);
+  };
+
+  const removeIssue = () => {
+    removeIssueHandler();
   };
 
   return (
@@ -39,6 +47,18 @@ export const CavcDashboardTab = (props) => {
         </Button>
       }
       {
+        // Button will need to be moved elsewhere
+        (userCanEdit) &&
+        <Button
+          type="button"
+          name="Add Issue Button"
+          classNames={['cf-btn-link']}
+          onClick={() => removeIssue}
+        >
+          { COPY.REMOVE_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT }
+        </Button>
+      }
+      {
         (modalIsOpen) &&
         <AddCavcDashboardIssueModal closeHandler={closeHandler} submitHandler={submitHandler} />
       }
@@ -52,7 +72,8 @@ CavcDashboardTab.propTypes = {
   dashboard: PropTypes.object,
   canEditCavcDashboards: PropTypes.bool,
   userCanEdit: PropTypes.bool,
-  updateDashboardIssues: PropTypes.func
+  updateDashboardIssues: PropTypes.func,
+  removeDashboardIssue: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -65,7 +86,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators({
-    updateDashboardIssues
+    updateDashboardIssues,
+    removeDashboardIssue
   }, dispatch);
 
 export default connect(
