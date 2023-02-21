@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_13_205524) do
+ActiveRecord::Schema.define(version: 2023_02_17_013023) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2023_02_13_205524) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
+    t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2023_02_13_205524) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at", comment: "Date and time the record was last updated"
+    t.datetime "updated_at"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -359,6 +359,19 @@ ActiveRecord::Schema.define(version: 2023_02_13_205524) do
     t.string "decision_reason", comment: "The reason for the CAVC decision"
     t.integer "order", comment: "The order that the reasons should display in the UI. Child reasons will be ordered under their parent."
     t.integer "parent_decision_reason_id", comment: "Associates a child decision reason to its parent in this table"
+  end
+
+  create_table "cavc_dispositions_to_reasons", force: :cascade do |t|
+    t.bigint "cavc_dashboard_dispositions_id", comment: "ID of the associated CAVC Dashboard Disposition"
+    t.bigint "cavc_decision_reasons_id", comment: "ID of the associated CAVC Decision Reason"
+    t.bigint "cavc_selection_bases_id", comment: "ID of the associated CAVC Basis for Selection"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "The ID for the user that created the record"
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id", comment: "The ID for the user that most recently changed the record"
+    t.index ["cavc_dashboard_dispositions_id"], name: "cavc_disp_to_reason_cavc_dash_disp_id"
+    t.index ["cavc_decision_reasons_id"], name: "index_cavc_dispositions_to_reasons_on_cavc_decision_reasons_id"
+    t.index ["cavc_selection_bases_id"], name: "index_cavc_dispositions_to_reasons_on_cavc_selection_bases_id"
   end
 
   create_table "cavc_remands", force: :cascade do |t|
@@ -1205,7 +1218,7 @@ ActiveRecord::Schema.define(version: 2023_02_13_205524) do
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
     t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
-    t.string "sms_notification_external_id"
+    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
@@ -1507,6 +1520,7 @@ ActiveRecord::Schema.define(version: 2023_02_13_205524) do
     t.boolean "national_cemetery_administration", default: false
     t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
+    t.boolean "pact_act", default: false, comment: "The Sergeant First Class (SFC) Heath Robinson Honoring our Promise to Address Comprehensive Toxics (PACT) Act"
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
     t.boolean "radiation", default: false
@@ -1887,6 +1901,11 @@ ActiveRecord::Schema.define(version: 2023_02_13_205524) do
   add_foreign_key "cavc_dashboards", "users", column: "created_by_id", name: "cavc_dashboards_created_by_id_fk"
   add_foreign_key "cavc_dashboards", "users", column: "updated_by_id", name: "cavc_dashboards_updated_by_id_fk"
   add_foreign_key "cavc_decision_reasons", "cavc_decision_reasons", column: "parent_decision_reason_id"
+  add_foreign_key "cavc_dispositions_to_reasons", "cavc_dashboard_dispositions", column: "cavc_dashboard_dispositions_id"
+  add_foreign_key "cavc_dispositions_to_reasons", "cavc_decision_reasons", column: "cavc_decision_reasons_id"
+  add_foreign_key "cavc_dispositions_to_reasons", "cavc_selection_bases", column: "cavc_selection_bases_id"
+  add_foreign_key "cavc_dispositions_to_reasons", "users", column: "created_by_id", name: "cavc_dispositions_to_reasons_created_by_id_fk"
+  add_foreign_key "cavc_dispositions_to_reasons", "users", column: "updated_by_id", name: "cavc_dispositions_to_reasons_updated_by_id_fk"
   add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
   add_foreign_key "cavc_remands", "users", column: "created_by_id"
