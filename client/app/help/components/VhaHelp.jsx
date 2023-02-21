@@ -32,9 +32,9 @@ const VhaHelp = () => {
     return <div>
       <h1 id="#top"> Welcome to the VHA Help page! </h1>
       <p>Here you will find
-        <a href="#training-videos"> Training Videos</a>
+        <a href="#training-videos"> Training Videos </a>
         and
-        <a href="#faq"> Frequently Asked Questions (FAQs)</a>
+        <a href="#faq"> Frequently Asked Questions (FAQs) </a>
        for VHA, as well as links to the Training Guide and the Quick Reference Guide </p>
     </div>;
   };
