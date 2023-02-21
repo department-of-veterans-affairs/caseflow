@@ -78,6 +78,12 @@ const CavcDashboardIssuesSection = (props) => {
   const cavcIssues = dashboard.cavc_dashboard_issues;
   const dashboardDispositions = dashboard.cavc_dashboard_dispositions;
 
+  const requireDecisionReason = (id) => {
+    return (dashboardDispositions.find(
+      (dis) => dis.request_issue_id === id &&
+      (dis.disposition === 'Reversed' || dis.disposition === 'Vacated and Remanded')));
+  };
+
   return (
     <div {...issueSectionStyling}>
       <div>
@@ -92,7 +98,9 @@ const CavcDashboardIssuesSection = (props) => {
           return (
             <React.Fragment key={i}>
               <CavcDashboardIssue issue={issue} index={i} dispositions={dashboardDispositions} />
-              <CavcDecisionReasons uniqueId={issue.id} />
+              {requireDecisionReason(issue.id) && (
+                <CavcDecisionReasons uniqueId={issue.id} />
+              )}
             </React.Fragment>
           );
         })}

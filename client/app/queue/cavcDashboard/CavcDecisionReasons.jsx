@@ -113,7 +113,7 @@ const CavcDecisionReasons = ({ uniqueId }) => {
     const childrenOfParent = childReasons.filter((child) => child.parent_decision_reason_id === parent.id);
 
     return (
-      <div>
+      <div key={parent.id}>
         {/* render parent checkboxes */}
         <Checkbox
           key={parent.id}
@@ -138,7 +138,7 @@ const CavcDecisionReasons = ({ uniqueId }) => {
                 />
                 {/* check if child checkbox is checked and basis category exists if so render dropdown */}
                 {checkedReasons[parent.id]?.children.find(
-                  (x) => x.id === child.id && x.basis_for_selection_category && x.checked) && (
+                  (childToFind) => childToFind.id === child.id && childToFind.basis_for_selection_category && childToFind.checked) && (
                     <div>
                       <SearchableDropdown
                         name={`decision-reason-basis-${child.id}`}
