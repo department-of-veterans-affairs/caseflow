@@ -67,6 +67,41 @@ describe PostSendInitialNotificationLetterHoldingTask do
     end
   end
 
+  describe ".timer_ends_at" do
+    let(:hold_days) { 45 }
+    let(:end_date) { Time.zone.now + hold_days.days }
+    let(:post_task) do
+      task_class.create!(
+        appeal: distribution_task.appeal,
+        parent_id: distribution_task.id,
+        assigned_to: cob_team,
+        end_date: end_date
+      )
+    end
+
+    context "the post task was created before the timer" do
+      it "returns the end date" do
+        expect(post_task.timer_ends_at).to eq(end_date)
+      end
+    end
+
+    context "the post task has a related TaskTimer" do
+      let(:post_task_timer) do
+        TimedHoldTask.create_from_parent(
+          post_task,
+          days_on_hold: hold_days,
+          instructions: "45 Days Hold Period"
+        )
+      end
+
+      it "returns TaskTimer submitted_at date" do
+        tt = TaskTimer.find_by(task_id: post_task.id)
+        expect(tt.task_id).to eq(post_task.id)
+        expect(post_task.timer_ends_at).to be_within(1.second).of(tt.submitted_at)
+      end
+    end
+  end
+
   describe ".days_on_hold" do
     let(:post_task) do
       task_class.create!(
@@ -150,6 +185,46 @@ describe PostSendInitialNotificationLetterHoldingTask do
         # expect the same days on hold as before
         expect(post_task.reload.days_on_hold).to eq(12)
       end
+    end
+  end
+
+  describe ".max_hold_day_period" do
+    let(:hold_days) { 45 }
+    let(:end_date) { Time.zone.now + hold_days.days }
+    let(:post_task) do
+      task_class.create!(
+        appeal: distribution_task.appeal,
+        parent_id: distribution_task.id,
+        assigned_to: cob_team,
+        end_date: end_date
+      )
+    end
+
+    context "The TaskTimer for the hold period was not created yet" do
+      it "returns the end date period" do
+        expect(post_task.max_hold_day_period).to eq(hold_days)
+      end
+    end
+
+    context "The TaskTimer for the hold period was created" do
+      let(:post_task_timer) do
+        TimedHoldTask.create_from_parent(
+          post_task,
+          days_on_hold: hold_days,
+          instructions: "45 Days Hold Period"
+        )
+      end
+
+      it "returns the same max hold period using the TaskTimer dates" do
+        tt = TaskTimer.find_by(task_id: post_task.id)
+        expect(tt.task_id).to eq(post_task.id)
+        expect(post_task.max_hold_day_period).to eq(hold_days)
+
+        # confirm the values are being pulled from the TaskTimer
+        calculate_max_hold = (tt.submitted_at - post_task.created_at.prev_day).to_i / 1.day
+        expect(post_task.max_hold_day_period).to eq(calculate_max_hold)
+      end
+
     end
   end
 end
