@@ -40,7 +40,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
   //   return validJudgementDate() && validMandateDate() && validInstructions();
   // };
 
-  // const submit = () => new Promise((resolve) => {
+  // const submit = () => updateDashboardIssues => {
   //   const payload = {
   //     data: {
   //       benefit_type: benefitType,
@@ -48,6 +48,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
   //       disposition_by_court: dispositionByCourt,
   //     }
   //   };
+  // };
 
   // const successMsgDetail = () => {
   //   if (straightReversalType() || deathDismissalType()) {
@@ -62,20 +63,11 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
   //   detail: successMsgDetail()
   // };
 
-  //   dispatch(requestPatch(`/appeals/${appealId}/cavc_remand`, payload, successMsg)).
-  //     then(() => {
-  //       history.replace('/queue');
-  //       resolve();
-  //     }).
-  //     catch((err) => showErrorMessage({ title: 'Error', detail: JSON.parse(err.message).errors[0].detail }));
-  // });
   const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS).map(
     (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
   const benefitTypeOptions = Object.keys(BENEFIT_TYPES).map(
     (value) => ({ value, label: BENEFIT_TYPES[value] }));
-  // const issueCategoryOptions = Object.keys(ISSUE_CATEGORIES.compensation).map(
-  //   (value) => ({ value, label: ISSUE_CATEGORIES.compensation[value] }));
-  // THIS option was working, but only when cardcoding in the benefittypeoption
+
   let issueCategoryOptions = [];
 
   if (benefitType) {
@@ -83,35 +75,14 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
       (value) => ({ value, label: ISSUE_CATEGORIES[benefitType.value][value] }));
   }
 
-  // const selectedBenefitType = benefitTypeOptions.value;
-  // const issueCategoryOptions = Object.keys(ISSUE_CATEGORIES.filter(
-  //   (category) => category.key === selectedBenefitType)).map(
-  //   (value) => ({ value, label: value }));
-
-  // const issueCategoryOptions = Array.keys(ISSUE_CATEGORIES.filter(
-  //   (category) => category.key === benefitType)).map(
-  //   (value) => ({ value, label: value }));
-
-  // const issueCategoryOptions = Object.keys(ISSUE_CATEGORIES.benefitTypeOptions.value).map(
-  //   (value) => ({ value, label: ISSUE_CATEGORIES.benefitTypeOptions.value }));
-
-  // const issueCategoryOptions = Object.keys(ISSUE_CATEGORIES[benefitTypeOptions.value])?.map(
-  // (value) => ({ value, label: ISSUE_CATEGORIES[benefitTypeOptions.value] }));
-
   const benefitTypeField = <SearchableDropdown
     options={benefitTypeOptions}
     label={COPY.CAVC_DASHBOARD_BENEFIT_TYPE_TEXT}
     name="judgement-date"
     value={benefitType}
     onChange={(val) => setBenefitType(val)}
-    // onChange={(val) => console.log(val)}
     strongLabel
   />;
-
-  // const outerIssueCategoryOptions = Object.keys(ISSUE_CATEGORIES).map(
-  //   (value) => ({ value, label: ISSUE_CATEGORIES[value] }));
-  // const issueCategoryOptions = Object.keys(outerIssueCategoryOptions).map(
-  //   (value) => ({ value, label: outerIssueCategoryOptions[benefitTypeField.value] }));
 
   const issueCategoryField = <SearchableDropdown
     options={issueCategoryOptions}
@@ -132,7 +103,6 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
   />;
 
   return (
-    // modalIsOpen &&
     <Modal
       title={COPY.ADD_CAVC_DASHBOARD_ISSUE_TEXT}
       // onCancel={handleCancel}
