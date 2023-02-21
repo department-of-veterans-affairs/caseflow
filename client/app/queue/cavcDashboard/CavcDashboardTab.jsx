@@ -30,7 +30,7 @@ export const CavcDashboardTab = (props) => {
         <Button
           type="button"
           name="Add Issue Button"
-          classNames="usa-button-secondary"
+          classNames={['usa-button-secondary']}
           onClick={() => setModalIsOpen(true)}
         >
           { COPY.ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT }
