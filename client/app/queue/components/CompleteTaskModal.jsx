@@ -52,7 +52,7 @@ const formatOtherInstructions = (state) => {
   }
 
   return formattedInstructions;
-}
+};
 
 const MarkTaskCompleteModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
@@ -185,13 +185,13 @@ const sendToBoardOpts = [
 ];
 
 const returnToBoardOptions = [
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_DUPLICATE, value: 'duplicate',},
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_HLR_PENDING, value: 'HLR Pending'},
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_SC_PENDING, value: 'SC Pending'},
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_NOT_VHA_RELATED, value: 'not vha related'},
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_CLARIFICATION_NEEDED, value: 'clarification needed from appellant'},
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_NO_VHA_DECISION, value: 'no vha decision'},
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_OTHER, value: 'other'}
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_DUPLICATE, value: 'duplicate' },
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_HLR_PENDING, value: 'HLR Pending' },
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_SC_PENDING, value: 'SC Pending' },
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_NOT_VHA_RELATED, value: 'not vha related' },
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_CLARIFICATION_NEEDED, value: 'clarification needed from appellant' },
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_NO_VHA_DECISION, value: 'no vha decision' },
+  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_OTHER, value: 'other' }
 ];
 
 const SendToBoardIntakeModal = ({ props, state, setState }) => {
@@ -265,7 +265,6 @@ SendToBoardIntakeModal.propTypes = {
 const VhaCamoReturnToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
 
-
   const handleDropdownChange = ({ value }) => {
     handleDropdownStateChange(value, setState);
   };
@@ -286,7 +285,7 @@ const VhaCamoReturnToBoardIntakeModal = ({ props, state, setState }) => {
             options={returnToBoardOptions}
             errorMessage={props.highlightInvalid &&
               !validDropdown(state.dropdown) ? 'You must select a reason for returning to intake' : null}
-            />
+          />
           {state.dropdown === 'other' &&
             <TextareaField
               label={COPY.VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL}
