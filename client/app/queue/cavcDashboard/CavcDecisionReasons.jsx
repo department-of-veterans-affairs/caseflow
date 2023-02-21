@@ -72,6 +72,21 @@ const CavcDecisionReasons = ({ uniqueId }) => {
           checked: value
         }
       }));
+      // set all children of parent to false if parent is unchecked
+      if (value === false) {
+        setCheckedReasons((prevState) => ({
+          ...prevState,
+          [checkboxId]: {
+            ...prevState[checkboxId],
+            children: prevState[checkboxId].children.map((child) => {
+              return {
+                ...child,
+                checked: false
+              };
+            })
+          }
+        }));
+      }
     } else {
       // if checkboxId > parentReasons.length then it is a child checkbox therefore update child checked state
       // obtain parent id to update correct child property
@@ -90,7 +105,7 @@ const CavcDecisionReasons = ({ uniqueId }) => {
               };
             }
 
-            // keep child object the same if checkboxId does not match to child.id
+            // while iterating, keep child object the same if checkboxId does not match to child.id
             return child;
           })
         };
