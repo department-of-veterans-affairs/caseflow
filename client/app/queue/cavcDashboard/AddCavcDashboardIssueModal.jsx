@@ -76,15 +76,21 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
   // const issueCategoryOptions = Object.keys(ISSUE_CATEGORIES.compensation).map(
   //   (value) => ({ value, label: ISSUE_CATEGORIES.compensation[value] }));
   // THIS option was working, but only when cardcoding in the benefittypeoption
+  let issueCategoryOptions = [];
+
+  if (benefitType) {
+    issueCategoryOptions = Object.keys(ISSUE_CATEGORIES[benefitType.value]).map(
+      (value) => ({ value, label: ISSUE_CATEGORIES[benefitType.value][value] }));
+  }
 
   // const selectedBenefitType = benefitTypeOptions.value;
   // const issueCategoryOptions = Object.keys(ISSUE_CATEGORIES.filter(
   //   (category) => category.key === selectedBenefitType)).map(
   //   (value) => ({ value, label: value }));
 
-  const issueCategoryOptions = Array.keys(ISSUE_CATEGORIES.filter(
-    (category) => category.key === benefitType)).map(
-    (value) => ({ value, label: value }));
+  // const issueCategoryOptions = Array.keys(ISSUE_CATEGORIES.filter(
+  //   (category) => category.key === benefitType)).map(
+  //   (value) => ({ value, label: value }));
 
   // const issueCategoryOptions = Object.keys(ISSUE_CATEGORIES.benefitTypeOptions.value).map(
   //   (value) => ({ value, label: ISSUE_CATEGORIES.benefitTypeOptions.value }));
@@ -98,6 +104,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
     name="judgement-date"
     value={benefitType}
     onChange={(val) => setBenefitType(val)}
+    // onChange={(val) => console.log(val)}
     strongLabel
   />;
 
