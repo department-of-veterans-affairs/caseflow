@@ -23,12 +23,16 @@ import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
  *  - @param {Object}   history          Provided with react router to be able to route to another page upon success
  */
 
-const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
+const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler }) => {
 
   const [benefitType, setBenefitType] = useState(null);
   const [issueCategory, setIssueCategory] = useState(null);
   const [dispositionByCourt, setDispositionByCourt] = useState(null);
-  const issue = [benefitType, issueCategory, dispositionByCourt];
+  const issue = { benefitType, issueCategory, dispositionByCourt };
+
+  const submitIssue = () => {
+    submitHandler(issue);
+  };
   // const handleCancel = () => onCancel();
 
   // const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -120,7 +124,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
         {
           classNames: ['usa-button'],
           name: COPY.MODAL_SUBMIT_BUTTON,
-          onClick: submitHandler(issue),
+          onClick: submitIssue,
         }
       ]}
       closeHandler = {closeHandler}
