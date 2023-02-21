@@ -79,7 +79,7 @@ const CavcDashboardIssuesSection = (props) => {
   const dashboardDispositions = dashboard.cavc_dashboard_dispositions;
 
   const requireDecisionReason = (id) => {
-    return (dashboardDispositions.find(
+    return (dashboardDispositions?.find(
       (dis) => dis.request_issue_id === id &&
       (dis.disposition === 'Reversed' || dis.disposition === 'Vacated and Remanded')));
   };
