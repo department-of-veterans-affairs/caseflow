@@ -4,7 +4,7 @@ import { css } from 'glamor';
 import { LABELS } from './cavcDashboardConstants';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../../components/SearchableDropdown';
-import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS.json';
+import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS';
 
 const singleIssueStyling = css({
   marginBottom: '1.5em !important',
@@ -35,10 +35,14 @@ const olStyling = css({
 
 const CavcDashboardIssue = (props) => {
   const { dispositions, issue, index } = props;
-  const [disposition, setDisposition] = useState(dispositions.disposition || 'Select');
+  const [disposition, setDisposition] = useState(issueDisposition || 'Select');
 
-  const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS)
-  .map((value) => ({ value, "label": CAVC_DASHBOARD_DISPOSITIONS[value] }));
+  const issueDisposition = dispositions.filter((dis) => {
+    return dis.request_issue_id === issue.id;
+  });
+
+  const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS).map(
+    (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
 
   let issueType = {};
 
@@ -120,6 +124,7 @@ CavcDashboardIssue.propTypes = {
     decision_review_type: PropTypes.string,
     contested_issue_description: PropTypes.string,
     issue_category: PropTypes.string,
+    id: PropTypes.number,
   }),
   dispositions: PropTypes.array,
 };
