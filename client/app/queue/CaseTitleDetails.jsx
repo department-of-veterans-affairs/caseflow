@@ -6,7 +6,6 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Tooltip from 'app/components/Tooltip';
 import { COLORS } from '../constants/AppConstants';
 import { TitleDetailsSubheader } from '../components/TitleDetailsSubheader';
 import { TitleDetailsSubheaderSection } from '../components/TitleDetailsSubheaderSection';
@@ -17,6 +16,7 @@ import {
 } from './selectors';
 import { PencilIcon } from '../components/icons/PencilIcon';
 import { ClockIcon } from '../components/icons/ClockIcon';
+import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { renderLegacyAppealType } from './utils';
 import { requestPatch } from './uiReducer/uiActions';
 import Button from '../components/Button';
@@ -140,8 +140,7 @@ export class CaseTitleDetails extends React.PureComponent {
     const showHearingRequestType = appeal?.docketName === 'hearing' ||
       (appeal?.docketName === 'legacy' && appeal?.readableHearingRequestType);
 
-    // const link = this.props.appeal.veteran.participant_id ? 'https://<base url>.bip.va.gov/veteran/<veteran_participant_id>' : 'https://<base url>.bip.va.gov';
-    const link = 'https://www.google.com';
+    const link = appeal.veteranParticipantId ? 'https://<base url>.bip.va.gov/veteran/' + appeal.veteranParticipantId : 'https://<base url>.bip.va.gov';
 
     return (
       <TitleDetailsSubheader id="caseTitleDetailsSubheader">
@@ -252,12 +251,11 @@ export class CaseTitleDetails extends React.PureComponent {
         )}
         {showEfolderLink && (
           <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_EFOLDER_LINK}>
+
             <a href={link} target="_blank" rel="noopener noreferrer">
-                Open eFolder
+              {this.props.appeal.veteranParticipantId ? 'Open eFolder ' : 'Go to eFolder Search '}
+              <span {...css({ position: 'relative', top: '3px' })}><ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} /></span>
             </a>
-            <Tooltip text={COPY.NOTIFICATION_EFOLDER_LINK_TOOLTIP} position="right">
-              <span>?</span>
-            </Tooltip>
           </TitleDetailsSubheaderSection>
         )}
       </TitleDetailsSubheader>
