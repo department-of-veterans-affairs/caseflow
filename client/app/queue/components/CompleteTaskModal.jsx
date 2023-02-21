@@ -163,14 +163,14 @@ const sendToBoardOpts = [
 
 const documentsReadyForBvaIntakeReviewOptions = [
   {
-    displayText: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DROPDOWN_OPTIONS.VBMS,
+    displayText: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_VBMS,
     value: 'vbms' },
   {
-    displayText: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DROPDOWN_OPTIONS.CENTRALIZED_MAIL_PORTAL,
+    displayText: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_CENTRALIZED_MAIL_PORTAL,
     value: 'centralized mail portal'
   },
   {
-    displayText: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DROPDOWN_OPTIONS.OTHER,
+    displayText: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_OTHER,
     value: 'other'
   }
 ];
@@ -243,7 +243,7 @@ SendToBoardIntakeModal.propTypes = {
   highlightInvalid: PropTypes.bool
 };
 
-const VhaCamoDocumentsReadyForBvaIntakeReviewModal = (props, state, setState) => {
+const VhaCamoDocumentsReadyForBvaIntakeReviewModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
   // if the VhaProgramOffice has completed a task, show the task instructions in the modal
   const programOfficeInstructions = props.tasks.map((task) => {
@@ -272,7 +272,7 @@ const VhaCamoDocumentsReadyForBvaIntakeReviewModal = (props, state, setState) =>
           <SearchableDropdown
             name="documentsReadyForBvaIntakeReviewOptions"
             id="documentsReadyForBvaIntakeReviewOptions"
-            label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DETAIL}
+            label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_DETAIL}
             defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
             onChange={handleDropdownChange}
             value={state.dropdown}
@@ -282,7 +282,7 @@ const VhaCamoDocumentsReadyForBvaIntakeReviewModal = (props, state, setState) =>
           />
           {state.dropdown === 'other' &&
               <TextareaField
-                label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DROPDOWN_OPTIONS.OTHER_INSTRUCTION_LABEL}
+                label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_OTHER_INSTRUCTION_LABEL}
                 name="otherRejectReason"
                 id="completeTaskOtherInstructions"
                 onChange={(value) => setState({ otherInstructions: value })}
@@ -294,7 +294,7 @@ const VhaCamoDocumentsReadyForBvaIntakeReviewModal = (props, state, setState) =>
               />
           }
           <TextareaField
-            label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.INSTRUCTION_LABEL}
+            label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_INSTRUCTION_LABEL}
             name="instructions"
             id="vhaDocumentsReadyForBvaIntakeReviewInstructions"
             onChange={(value) => setState({ instructions: value })}
@@ -473,7 +473,7 @@ const MODAL_TYPE_ATTRS = {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
     }),
-    title: () => COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.TITLE,
+    title: () => COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_TITLE,
     getContent: VhaCamoDocumentsReadyForBvaIntakeReviewModal,
     buttonText: COPY.MODAL_RETURN_BUTTON,
     submitDisabled: ({ state }) => (

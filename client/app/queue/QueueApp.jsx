@@ -1095,8 +1095,7 @@ class QueueApp extends React.PureComponent {
               render={this.routedCamoSendToBoardIntake}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/$
-                {
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.value
                 }`}
               render={this.routedCamoDocumentsReadyForBvaIntake}

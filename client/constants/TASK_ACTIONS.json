@@ -410,7 +410,7 @@
     "func": "vha_send_to_board_intake"
   },
   "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW":{
-    "label": "Return to Board",
+    "label": "Documents ready for Board Intake review",
     "value": "modal/vha_documents_ready_for_bva_intake_review",
     "func": "vha_documents_ready_for_bva_intake_review"
   },
