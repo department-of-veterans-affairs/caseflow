@@ -26,8 +26,5 @@ end
 
 def delete_matched(namespace:)
   redis = Redis.current
-#  redis = RedisClient.current.ping
-#  redis = Redis.new(url: "redis://appeals-redis:6379/0")
-#  redis = Redis.new(url: "redis://localhost:6379/1")
   redis.scan_each(match: "#{namespace}:*") { |key| redis.del(key) }
 end

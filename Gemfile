@@ -45,7 +45,6 @@ gem "parallel"
 gem "paranoia", "~> 2.2"
 # PDF Tools
 gem "pdf-forms"
-# gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
 gem "pdfjs_viewer-rails", git: "https://github.com/department-of-veterans-affairs/pdfjs_viewer-rails-va.git", branch: "anusha/APPEALS-14211"
 gem "pg", platforms: :ruby
 # Application server: Puma
@@ -58,7 +57,7 @@ gem "rails", "5.2.4.6"
 gem "rainbow"
 # React
 gem "react_on_rails", "11.3.0"
-gem "redis-namespace", "1.6.0"
+gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
