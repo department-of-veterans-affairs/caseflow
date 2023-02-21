@@ -19,10 +19,10 @@ gem "browser"
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fb6fa9658825c143eb8d202b87128f34ca7e210b"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "ac1ae63ffb04a2ab4d2d5469262981acab162e94"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "43654a058d5a1d3f83f9bfdb832a19b4a9adea8b"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "countries"
-gem "ddtrace", "0.34.1"
+gem "ddtrace"
 gem "dogstatsd-ruby"
 gem "dry-schema", "~> 1.4"
 gem "fast_jsonapi"
@@ -57,9 +57,8 @@ gem "rails", "~> 5.2.8"
 gem "rainbow"
 # React
 gem "react_on_rails", "11.3.0"
-gem "redis", "4.0.1"
 gem "redis-namespace"
-gem "redis-rails", "5.0.2"
+gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
 # Use SCSS for stylesheets
@@ -95,14 +94,13 @@ group :test, :development, :demo do
   gem "capybara"
   gem "capybara-screenshot"
   gem "danger", "~> 6.0"
-  gem "database_cleaner", "1.7.0"
+  gem "database_cleaner"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
   gem "immigrant"
-  gem "jshint", platforms: :ruby
-  gem "octokit", "4.18.0"
   # Linters
+  gem "jshint", platforms: :ruby
   gem "pluck_to_hash"
   gem "pry", "~> 0.13.0"
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -130,7 +128,6 @@ group :development do
   gem "anbt-sql-formatter"
   gem "bummr", require: false
   gem "debase"
-  gem "debase-ruby_core_source", "~> 0.10.14"
   gem "derailed_benchmarks"
   gem "dotenv-rails"
   gem "fasterer", require: false
@@ -142,7 +139,7 @@ group :development do
 end
 
 group :test do
-  gem "knapsack_pro", "2.8.0"
+  gem "knapsack_pro"
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
   gem "webmock"
