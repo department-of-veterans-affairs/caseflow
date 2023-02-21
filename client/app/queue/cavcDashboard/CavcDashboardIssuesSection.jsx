@@ -35,11 +35,10 @@ const olStyling = css({
 
 const CavcDashboardIssue = (props) => {
   const { dispositions, issue, index } = props;
-  const [disposition, setDisposition] = useState(issueDisposition || 'Select');
-
-  const issueDisposition = dispositions.filter((dis) => {
+  const issueDisposition = dispositions?.filter((dis) => {
     return dis.request_issue_id === issue.id;
   });
+  const [disposition, setDisposition] = useState(issueDisposition || 'Select');
 
   const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS).map(
     (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
