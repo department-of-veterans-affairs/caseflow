@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Accordion } from '../../components/Accordion';
 import Checkbox from '../../components/Checkbox';
 import AccordionSection from 'app/components/AccordionSection';
 import TextField from '../../components/TextField';
 import { DECISION_REASON_TEXT, DECISION_REASON_TITLE } from './cavcDashboardConstants';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import { setCheckedDecisionReasons } from './cavcDashboardActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 const CavcDecisionReasons = ({ uniqueId }) => {
@@ -35,7 +34,6 @@ const CavcDecisionReasons = ({ uniqueId }) => {
   const decisionReasons = useSelector((state) => state.cavcDashboard.decision_reasons);
   const parentReasons = decisionReasons.filter((parentReason) => !parentReason.parent_decision_reason_id);
   const childReasons = decisionReasons.filter((childReason) => childReason.parent_decision_reason_id !== null);
-  const dispatch = useDispatch();
 
   // for tracking state of each checkbox
   const [checkedReasons, setCheckedReasons] = useState(parentReasons.reduce((obj, parent) => {
@@ -62,10 +60,6 @@ const CavcDecisionReasons = ({ uniqueId }) => {
 
   // counter for parent checkboxes that are checked to display next to the header
   const decisionReasonCount = Object.keys(checkedReasons).filter((key) => checkedReasons[key].checked).length;
-
-  useEffect(() => {
-    dispatch(setCheckedDecisionReasons(checkedReasons, uniqueId));
-  }, [checkedReasons]);
 
   // toggling state of checkbox when checkbox is clicked
   const handleCheckboxChange = (value, checkboxId) => {

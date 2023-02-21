@@ -25,11 +25,3 @@ export const fetchInitialDashboardData = (appealId) => (dispatch) => {
       }
     }));
 };
-
-export const setCheckedDecisionReasons = (checkedReasons, accordionId) => ({
-  type: ACTIONS.SET_CHECKED_DECISION_REASONS,
-  payload: {
-    accordionId,
-    checkedReasons
-  }
-});
