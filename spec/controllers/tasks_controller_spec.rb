@@ -1011,6 +1011,44 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       end
     end
 
+    context "a contested calim's send initial task is marked to go to final task" do
+      let(:instructions) { "Proceed to final instructions here" }
+      let(:params) do
+        {
+          task: {
+            status: Constants.TASK_STATUSES.completed,
+            instructions: instructions
+          },
+          id: send_initial_task.id.to_s,
+          select_opc: "proceed_final_notification_letter"
+        }
+      end
+
+      subject { patch :update, params: params }
+
+      it "completed the initial task and creates a final notification task" do
+        # load the data properly
+        cc_issue
+        cc_appeal.reload.request_issues
+
+        # call subject
+        subject
+
+        expect(response.status).to eq 200
+        expect(send_initial_task.reload.status).to eq("completed")
+        expect(send_initial_task.reload.instructions[0]).to eq(instructions)
+
+        # expect final notification letter task created
+        final_letter_task = cc_appeal.tasks.find_by(type: "SendFinalNotificationLetterTask")
+
+        expect(final_letter_task.status).to eq("assigned")
+        expect(final_letter_task.parent).to eq(distribution_task)
+        expect(distribution_task.status).to eq("on_hold")
+        expect(final_letter_task.assigned_to).to eq(cob_team)
+        expect(final_letter_task.assigned_by).to eq(cob_user)
+      end
+    end
+
     context "a contested claim's send initial notification letter task is marked to be cancelled" do
       let(:instructions) { "Cancel instructions go here" }
       let(:params) do
