@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getCavcDashboardById } from './cavcDashboardSelectors';
+import { getCavcDashboardById, getCavcDashboardIndex } from './cavcDashboardSelectors';
 import CavcDashboardDetails from './CavcDashboardDetails';
 import CavcDashboardIssuesSection from './CavcDashboardIssuesSection';
 import Button from '../../components/Button';
 import AddCavcDashboardIssueModal from './AddCavcDashboardIssueModal';
 import COPY from '../../../COPY';
+import { updateDashboardIssues } from './cavcDashboardActions';
 
 export const CavcDashboardTab = (props) => {
-  const { userCanEdit } = props;
+  const { userCanEdit, dashboardIndex } = props;
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const closeHandler = () => {
     setModalIsOpen(!modalIsOpen);
   };
   // TODO Change submit button
-  const submitHandler = () => {
-    // updateDashboardIssues ()
+  const submitHandler = (issue) => {
+    updateDashboardIssues(dashboardIndex, issue);
     setModalIsOpen(!modalIsOpen);
   };
 
@@ -46,6 +47,7 @@ export const CavcDashboardTab = (props) => {
 
 CavcDashboardTab.propTypes = {
   dashboardId: PropTypes.number,
+  dashboardIndex: PropTypes.number,
   dashboard: PropTypes.object,
   canEditCavcDashboards: PropTypes.bool,
   userCanEdit: PropTypes.bool
@@ -54,7 +56,8 @@ CavcDashboardTab.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   return {
     dashboard: getCavcDashboardById(state, { dashboardId: ownProps.dashboardId }),
-    userCanEdit: state.ui.canEditCavcDashboards
+    userCanEdit: state.ui.canEditCavcDashboards,
+    dashboardIndex: getCavcDashboardIndex(state, { dashboardId: ownProps.dashboardId })
   };
 };
 

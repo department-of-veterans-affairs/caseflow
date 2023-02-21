@@ -28,6 +28,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
   const [benefitType, setBenefitType] = useState(null);
   const [issueCategory, setIssueCategory] = useState(null);
   const [dispositionByCourt, setDispositionByCourt] = useState(null);
+  const issue = [benefitType, issueCategory, dispositionByCourt];
   // const handleCancel = () => onCancel();
 
   // const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -119,7 +120,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler}) => {
         {
           classNames: ['usa-button'],
           name: COPY.MODAL_SUBMIT_BUTTON,
-          onClick: submitHandler,
+          onClick: submitHandler(issue),
         }
       ]}
       closeHandler = {closeHandler}

@@ -26,9 +26,9 @@ export const fetchInitialDashboardData = (appealId) => (dispatch) => {
     }));
 };
 
-export const updateDashboardIssues = (issue) => (dispatch) => {
+export const updateDashboardIssues = (dashboardIndex, issue) => (dispatch) => {
   dispatch({
     type: ACTIONS.UPDATE_DASHBOARD_ISSUES,
-    payload: { dashboard_issues: issue.body }
+    payload: { dashboardIndex, issue }
   });
 };

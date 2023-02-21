@@ -36,8 +36,10 @@ export const cavcDashboardReducer = (state = initialState, action) => {
     // });
     return update(state, {
       cavc_dashboards: {
-        [action.payload.issueIndex]: {
-          $merge: action.payload.issue
+        [action.payload.dashboardIndex]: {
+          cavc_dashboard_issues: {
+            $merge: action.payload.issue
+          }
         }
       }
     });
