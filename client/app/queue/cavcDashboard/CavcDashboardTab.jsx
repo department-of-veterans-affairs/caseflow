@@ -9,7 +9,6 @@ import AddCavcDashboardIssueModal from './AddCavcDashboardIssueModal';
 import COPY from '../../../COPY';
 
 export const CavcDashboardTab = (props) => {
-  // const { userCanEdit } = props;
   const { userCanEdit } = props;
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -18,6 +17,7 @@ export const CavcDashboardTab = (props) => {
   };
   // TODO Change submit button
   const submitHandler = () => {
+    // updateDashboardIssues ()
     setModalIsOpen(!modalIsOpen);
   };
 
