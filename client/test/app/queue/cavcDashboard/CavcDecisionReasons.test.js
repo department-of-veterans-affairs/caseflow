@@ -6,7 +6,6 @@ import CavcDecisionReasons from '../../../../app/queue/cavcDashboard/CavcDecisio
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useSelector: jest.fn(),
-  useDispatch: () => jest.fn().mockImplementation(() => Promise.resolve(true))
 }));
 
 const checkboxes = [

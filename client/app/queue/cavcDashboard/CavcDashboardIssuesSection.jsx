@@ -5,6 +5,7 @@ import { LABELS } from './cavcDashboardConstants';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import CavcDecisionReasons from './CavcDecisionReasons';
+import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS';
 
 const singleIssueStyling = css({
   marginBottom: '1.5em !important',
@@ -41,8 +42,10 @@ const CavcDashboardIssue = (props) => {
   const requireDecisionReason = (id) => {
     return (dispositions?.find(
       (dis) => dis.request_issue_id === id &&
-      (dis.disposition === 'Reversed' || dis.disposition === 'Vacated and Remanded')) ||
-      (disposition === 'Reversed' || disposition === 'Vacated and Remanded'));
+      (dis.disposition === CAVC_DASHBOARD_DISPOSITIONS.reversed ||
+        dis.disposition === CAVC_DASHBOARD_DISPOSITIONS.vacated_and_remanded)) ||
+      (disposition === CAVC_DASHBOARD_DISPOSITIONS.reversed ||
+        disposition === CAVC_DASHBOARD_DISPOSITIONS.vacated_and_remanded));
   };
 
   if (issue.decision_review_type) {
