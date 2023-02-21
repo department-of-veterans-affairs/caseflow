@@ -22,6 +22,9 @@ class MembershipRequest < CaseflowRecord
     # TODO: Need to put a guard on this to make sure that they aren't a member of the organization already
     # TODO: Also need to put a guard on it to make sure they don't already have a pending request to that org.
     def create_many_from_orgs(organizations, params, user)
+      # puts "in create many from orgs"
+      # puts "user: #{user.inspect}"
+      # puts "organizations: #{organizations}"
       created_requests = organizations.map do |org|
         create!(
           organization: org,

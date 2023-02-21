@@ -4,6 +4,7 @@ RSpec.feature "VhaMembershipRequest" do
   before do
     vha_org.add_user(vha_user)
     camo_org.add_user(camo_user)
+    caregiver_org
     FeatureToggle.enable!(:program_office_team_management)
   end
 
@@ -17,6 +18,7 @@ RSpec.feature "VhaMembershipRequest" do
   let(:camo_user) { create(:user) }
 
   let(:camo_org) { VhaCamo.singleton }
+  let(:caregiver_org) { VhaCaregiverSupport.singleton }
   let(:vha_org) do
     org = BusinessLine.find_or_create_by(name: "Veterans Health Administration", url: "vha")
     org.save
@@ -83,6 +85,7 @@ RSpec.feature "VhaMembershipRequest" do
 
     context("form submit and information behavior for a new user") do
       before do
+        User.authenticate!(user: new_user)
         visit "/vha/help"
       end
 
@@ -97,12 +100,40 @@ RSpec.feature "VhaMembershipRequest" do
         find("label[for='vhaAccess']").click
         expect(page).to have_button("Submit", disabled: true)
 
-        # Click a program office checkbox and submit should be enabled
+        # Click a the caregiver checkbox and submit should be enabled
         find("label[for='vhaCaregiverSupportProgram']").click
         expect(page).to have_button("Submit", disabled: false)
 
-        # Check for the automatic vha access will be granted note
+        # Check for the automatic vha access will be granted information message
         expect(page).to have_content(COPY::VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE)
+
+        request_reason = "Does this work?"
+
+        # Add a request reason
+        fill_in "Reason for access", with: request_reason
+
+        # Submit the form with the caregiver checkbox selected
+        click_button "Submit"
+
+        # Verify that the form is updated and reset with all of the following:
+        # The form has been reset after submission so the button should be disabled again
+        # The request reason text box should be reset
+        # The VHA Caregiver checkbox should be disabled
+        # The disabled options info message is present
+        # The success banner message is present
+        message_text = format(COPY::VHA_MEMBERSHIP_REQUEST_FORM_SUBMIT_SUCCESS_MESSAGE, "VHA Caregiver Support Program")
+        caregiver_checkbox = find("#vhaCaregiverSupportProgram", visible: false)
+        expect(page).to have_button("Submit", disabled: true)
+        expect(page).to_not have_content(request_reason)
+        expect(caregiver_checkbox.disabled?).to eq(true)
+        expect(page).to have_content(message_text)
+        expect(page).to have_content(COPY::VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE)
+
+        # Verify that the request object was saved with the new user, VhaCaregiverSupport, and the request reason
+        request = MembershipRequest.last
+        expect(request.note).to eq(request_reason)
+        expect(request.organization).to eq(VhaCaregiverSupport.singleton)
+        expect(request.requestor).to eq(new_user)
       end
     end
   end
