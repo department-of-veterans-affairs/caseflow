@@ -162,7 +162,7 @@ export const CavcDashboardDetails = (props) => {
           }
         ]}
         closeHandler={clickHandler}>
-        <DateSelector
+        <div {...modalStyling}><DateSelector
           name={LABELS.BOARD_DECISION_DATE}
           type="date"
           onChange={(date) => (setBoardDecisionDate(date))}
@@ -170,7 +170,8 @@ export const CavcDashboardDetails = (props) => {
           dateErrorMessage={dateValidator(boardDecisionDate) ? null : COPY.CAVC_DECISION_DATE_ERROR}
           label={LABELS.BOARD_DECISION_DATE}
         />
-        <TextField
+        </div>
+        <div {...modalStyling}><TextField
           name={LABELS.BOARD_DOCKET_NUMBER}
           type="string"
           onChange={(docket) => (setBoardDocketNumber(docket))}
@@ -178,7 +179,8 @@ export const CavcDashboardDetails = (props) => {
           errorMessage={validDocketNum(boardDocketNumber) ? null : COPY.BOARD_DOCKET_NUMBER_ERROR}
           label={LABELS.BOARD_DOCKET_NUMBER}
         />
-        <DateSelector
+        </div>
+        <div {...modalStyling}><DateSelector
           name={LABELS.CAVC_DECISION_DATE}
           type="date"
           onChange={(date) => setCavcDecisionDate(date)}
@@ -186,7 +188,8 @@ export const CavcDashboardDetails = (props) => {
           dateErrorMessage={dateValidator(cavcDecisionDate) ? null : COPY.CAVC_DECISION_DATE_ERROR}
           label={LABELS.CAVC_DECISION_DATE}
         />
-        <TextField
+        </div>
+        <div {...modalStyling}><TextField
           name={LABELS.CAVC_DOCKET_NUMBER}
           type="string"
           onChange={(docket) => (setCavcDocketNumber(docket))}
@@ -194,6 +197,7 @@ export const CavcDashboardDetails = (props) => {
           errorMessage={validCavcDocketNumber() ? null : COPY.CAVC_DOCKET_NUMBER_ERROR}
           label={LABELS.CAVC_DOCKET_NUMBER}
         />
+        </div>
         <RadioField
           name={LABELS.IS_JMR}
           value={Boolean(jointMotionForRemand)}
