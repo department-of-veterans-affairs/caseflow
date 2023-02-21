@@ -8,6 +8,7 @@ import Button from '../../components/Button';
 import AddCavcDashboardIssueModal from './AddCavcDashboardIssueModal';
 import COPY from '../../../COPY';
 import { updateDashboardIssues } from './cavcDashboardActions';
+import { bindActionCreators } from 'redux';
 
 export const CavcDashboardTab = (props) => {
   const { userCanEdit, dashboardIndex } = props;
@@ -18,7 +19,7 @@ export const CavcDashboardTab = (props) => {
   };
   // TODO Change submit button
   const submitHandler = (issue) => {
-    updateDashboardIssues(dashboardIndex, issue);
+    props.updateDashboardIssues(dashboardIndex, issue);
     setModalIsOpen(!modalIsOpen);
   };
 
@@ -50,7 +51,8 @@ CavcDashboardTab.propTypes = {
   dashboardIndex: PropTypes.number,
   dashboard: PropTypes.object,
   canEditCavcDashboards: PropTypes.bool,
-  userCanEdit: PropTypes.bool
+  userCanEdit: PropTypes.bool,
+  updateDashboardIssues: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -61,11 +63,12 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-// const mapDispatchToProps = (dispatch) => {
-
-// };
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators({
+    updateDashboardIssues
+  }, dispatch);
 
 export default connect(
   mapStateToProps,
-  // mapDispatchToProps
+  mapDispatchToProps
 )(CavcDashboardTab);

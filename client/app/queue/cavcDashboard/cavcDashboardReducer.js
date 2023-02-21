@@ -38,7 +38,7 @@ export const cavcDashboardReducer = (state = initialState, action) => {
       cavc_dashboards: {
         [action.payload.dashboardIndex]: {
           cavc_dashboard_issues: {
-            $merge: action.payload.issue
+            $push: [action.payload.issue]
           }
         }
       }
