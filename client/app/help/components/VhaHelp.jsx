@@ -7,7 +7,7 @@ import { resetSuccessMessage, resetErrorMessage } from '../helpApiSlice';
 
 const VhaHelp = () => {
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   // Success message selector for displaying the banner after object creation
   // TODO: look into createSelector for some of these and see if it is worth it.
