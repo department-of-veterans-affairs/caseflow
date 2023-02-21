@@ -170,8 +170,13 @@ exports[`VhaHelp renders the help page 1`] = `
         <button
           class="cf-submit usa-button-disabled usa-button"
           disabled=""
+<<<<<<< HEAD
           id="submit-submit-request"
           type="submit"
+=======
+          id="button-submit-request"
+          type="button"
+>>>>>>> TYLERB/APPEALS-13115
         >
           Submit
         </button>

@@ -24,13 +24,11 @@ import { sprintf } from 'sprintf-js';
 const checkboxDivStyling = css({
   '& .cf-form-checkboxes': { marginTop: '10px' },
   '& .checkbox': { marginTop: '0px' },
+  '& .cf-form-checkbox label::before': { left: '0px' },
 });
 
-// TODO: Make this MembershipRequestForm generic instead of VHA only?
 const VhaMembershipRequestForm = () => {
-
   // Redux selectors
-  // TODO: Might move these to a selectors file?
   const programOfficeTeamManagementFeatureToggle = useSelector(
     (state) => state.help.featureToggles.programOfficeTeamManagement
   );
@@ -45,32 +43,17 @@ const VhaMembershipRequestForm = () => {
 
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-
-  // }, [dispatch, organizationMembershipRequests]);
-
-  // Decide what special access checkbox options are available based on the feature toggle.
-  // If it is enabled show all program offices, otherwise only show camo and caregiver.
+  // Setup for all the predocket organizations checkbox options based on the feature toggle
   const specializedAccessOptions = programOfficeTeamManagementFeatureToggle ?
     [...VHA_CAMO_AND_CAREGIVER_OPTIONS, ...VHA_PROGRAM_OFFICE_OPTIONS] :
     VHA_CAMO_AND_CAREGIVER_OPTIONS;
 
-  // TODO: Figure out if Memo matters here or not
-  // I dont think it does since useState won't be initialized more than once.
-  const parsedIssues = useMemo(() => {
-    specializedAccessOptions.reduce((acc, obj) => {
-      acc[obj.id] = false;
-
-      return acc;
-    }, {});
-  }, [specializedAccessOptions]);
-
   const [vhaAccess, setVhaAccess] = useState(false);
-  const [programOfficesAccess, setProgramOfficesAccess] = useState(parsedIssues);
+  const [preDocketOrgsAccess, setPreDocketOrgsAccess] = useState({});
   const [requestReason, setRequestReason] = useState('');
 
-  const onVhaProgramOfficeAccessChange = (evt) => {
-    setProgramOfficesAccess({ ...programOfficesAccess, [evt.target.id]: evt.target.checked });
+  const onVhaPredocketOrgsAccessChange = (evt) => {
+    setPreDocketOrgsAccess({ ...preDocketOrgsAccess, [evt.target.id]: evt.target.checked });
   };
 
   const memberOrOpenRequestToVha = Boolean(find(userOrganizations, { name: 'Veterans Health Administration' }) ||
@@ -88,7 +71,7 @@ const VhaMembershipRequestForm = () => {
     return obj;
   }), [userOrganizations, organizationMembershipRequests]);
 
-  const memberOrRequestToProgramOffices = useMemo(() => {
+  const memberOrRequestToPreDocketOrg = useMemo(() => {
     return Boolean(some(possibleOptions, (option) => option.disabled === true));
   }, [possibleOptions]);
 
@@ -114,11 +97,11 @@ const VhaMembershipRequestForm = () => {
       <fieldset>
         <legend><strong>Specialized Access</strong></legend>
         <CheckboxGroup
-          name="programOfficesAccess"
+          name="preDocketOrgsAccess"
           hideLabel
           options={checkboxOptions}
-          onChange={(val) => onVhaProgramOfficeAccessChange(val)}
-          values={programOfficesAccess}
+          onChange={(val) => onVhaPredocketOrgsAccessChange(val)}
+          values={preDocketOrgsAccess}
         />
       </fieldset>
     );
@@ -130,10 +113,9 @@ const VhaMembershipRequestForm = () => {
     ).isRequired
   };
 
-  // TODO: add a onsubmit to this button and potentially one to the form?
   const SubmitButton = ({ ...btnProps }) => {
     return (
-      <Button name="submit-request" {...btnProps}>
+      <Button name="submit-request" type="submit" {...btnProps}>
       Submit
       </Button>
     );
@@ -141,7 +123,7 @@ const VhaMembershipRequestForm = () => {
 
   const resetMembershipRequestForm = () => {
     setVhaAccess(false);
-    setProgramOfficesAccess({});
+    setPreDocketOrgsAccess({});
     setRequestReason('');
   };
 
@@ -155,7 +137,7 @@ const VhaMembershipRequestForm = () => {
   const handleSubmit = (event) => {
     // Build the form data from the state
     event.preventDefault();
-    const membershipRequests = { vhaAccess, ...programOfficesAccess };
+    const membershipRequests = { vhaAccess, ...preDocketOrgsAccess };
     // Setup the form data in a typical json data format.
     // TODO: Move this json data format to the thunk I think.
     const formData = { data: { membershipRequests, requestReason, organizationGroup: 'VHA' } };
@@ -179,26 +161,24 @@ const VhaMembershipRequestForm = () => {
 
   };
 
-  const anyProgramOfficeSelected = useMemo(() => (
-    find(programOfficesAccess, (value) => value === true)),
-  [programOfficesAccess]);
+  const anyPredocketOrgSelected = useMemo(() => (
+    find(preDocketOrgsAccess, (value) => value === true)),
+  [preDocketOrgsAccess]);
 
   const vhaSelectedOrExistingMember = Boolean(memberOrOpenRequestToVha || vhaAccess);
 
   const submitDisabled = Boolean(memberOrOpenRequestToVha ?
-    (!anyProgramOfficeSelected) :
-    (!vhaAccess && !anyProgramOfficeSelected));
+    (!anyPredocketOrgSelected) :
+    (!vhaAccess && !anyPredocketOrgSelected));
 
-  const automaticVhaAccessNotice = anyProgramOfficeSelected && !vhaSelectedOrExistingMember;
+  const automaticVhaAccessNotice = anyPredocketOrgSelected && !vhaSelectedOrExistingMember;
 
-  // TODO: Maybe move these strings to the constants file
-  // TODO: Fix the page moving for the paragraph notice if I can. It's a bit jarring.
   return (
     <>
       <h1> 1. How do I access the VHA team?</h1>
       <p> If you need access to a VHA team, please fill out the form below. </p>
       <h2> Select which VHA groups you need access to </h2>
-      {(memberOrOpenRequestToVha || memberOrRequestToProgramOffices) &&
+      {(memberOrOpenRequestToVha || memberOrRequestToPreDocketOrg) &&
         <div style={{ marginBottom: '3rem' }}>
           <Alert
             type="info"
@@ -219,7 +199,7 @@ const VhaMembershipRequestForm = () => {
           value={requestReason}
           onChange={(val) => setRequestReason(val)}
         />
-        <SubmitButton disabled={submitDisabled} type="submit" />
+        <SubmitButton disabled={submitDisabled} />
       </form>
     </>
   );
