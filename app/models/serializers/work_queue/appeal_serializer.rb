@@ -72,9 +72,12 @@ class WorkQueue::AppealSerializer
     object.appellant_substitution&.substitution_participant_id
   end
 
-  attribute :claimant_options do |object|
-    object.claimants.map do |claimant|
-      ["#{claimant.first_name} #{claimant.last_name}", claimant.participant_id]
+  attribute :substitute_appellant_claimant_options do |object|
+    object.veteran&.relationships.map do |relation|
+      {
+        displayText: "#{relation.first_name} #{relation.last_name}, #{relation.relationship_type}",
+        value: relation.participant_id
+      }
     end
   end
 

@@ -70,10 +70,13 @@ const subTypeOptions = _.map(_.keys(CAVC_REMAND_SUBTYPE_NAMES), (key) => ({
  *  - @param {Object}   featureToggles   Which cavc decision types and remand subtypes are supported
  */
 const AddCavcRemandView = (props) => {
-  const { appealId, decisionIssues, error, highlightInvalid, history, featureToggles, ...otherProps } = props;
-
+  const { appealId, decisionIssues, substituteAppellantClaimantOptions, appellantSubstitutionId, substituteParticipantId, error, highlightInvalid, history, featureToggles, ...otherProps } = props;
+  console.log("!!!!!!!!!!!!!!!!!!!!", substituteAppellantClaimantOptions);
   const [docketNumber, setDocketNumber] = useState(null);
   const [attorney, setAttorney] = useState('1');
+  const [isAppellantSubstituted, setIsAppellantSubstituted] = useState('false')
+  const [appellantSubstitutionGrantedDate, setAppellantSubstitutionGrantedDate] = useState(null);
+  const [participantId, setParticipantId] = useState(null);
   const [judge, setJudge] = useState(null);
   const [type, setType] = useState(CAVC_DECISION_TYPES.remand);
   const [subType, setSubType] = useState(CAVC_REMAND_SUBTYPES.jmr);
@@ -104,6 +107,15 @@ const AddCavcRemandView = (props) => {
     id: decisionIssue.id.toString(),
     label: decisionIssue.description
   }));
+
+  const isAppellantSubstitutedOptions = [
+    { displayText: 'Yes',
+      value: 'true',
+      disabled: !substituteAppellantClaimantOptions
+     },
+    { displayText: 'No',
+      value: 'false' }
+  ];
 
   // returns ids of issues that are currently selected
   const selectedIssueIds = useMemo(() => {
@@ -159,11 +171,17 @@ const AddCavcRemandView = (props) => {
   const validMandateDate = () =>
     (Boolean(mandateDate) && validateDateNotInFuture(mandateDate)) || !mandateAvailable();
 
+  const validAppellantSubstitutionGrantedDateDate = () =>
+    (Boolean(isAppellantSubstituted) && Boolean(appellantSubstitutionGrantedDate) && validateDateNotInFuture(appellantSubstitutionGrantedDate));
+
+  const validSubstituteAppellantClaimant = () =>
+  (Boolean(isAppellantSubstituted) && Boolean(participantId));
+
   const validInstructions = () => instructions && instructions.length > 0;
 
   const validateForm = () => {
     return validDocketNumber() && validJudge() && validDecisionDate() && validJudgementDate() && validMandateDate() &&
-      validInstructions() && validDecisionIssues();
+      validInstructions() && validDecisionIssues() && validAppellantSubstitutionGrantedDateDate() && validSubstituteAppellantClaimant();
   };
 
   const mandateDatesPopulated = () => mandateAvailable() && Boolean(judgementDate) && Boolean(mandateDate);
@@ -206,6 +224,12 @@ const AddCavcRemandView = (props) => {
         decision_date: decisionDate,
         remand_subtype: remandType() ? subType : null,
         represented_by_attorney: attorney === '1',
+        is_appellant_substituted: isAppellantSubstituted,
+        appellant_substitution_id: appellantSubstitutionId,
+        substitute_participant_id: substituteParticipantId,
+        participant_id: participantId,
+        substitution_date: appellantSubstitutionGrantedDate,
+        remand_source: "Add",
         decision_issue_ids: selectedIssueIds,
         federal_circuit: mdrSubtype() ? federalCircuit : null,
         instructions
@@ -228,6 +252,35 @@ const AddCavcRemandView = (props) => {
     value={docketNumber}
     onChange={setDocketNumber}
     errorMessage={highlightInvalid && !validDocketNumber() ? COPY.CAVC_DOCKET_NUMBER_ERROR : null}
+    strongLabel
+  />;
+
+  const isAppellantSubstitutedField = <RadioField
+    label={COPY.CAVC_SUBSTITUTE_APPELLANT_LABEL}
+    name="is-appellant-substituted"
+    options={isAppellantSubstitutedOptions}
+    value={isAppellantSubstituted}
+    onChange={(val) => setIsAppellantSubstituted(val)}
+    strongLabel
+  />;
+
+  const appellantSubstitutionGrantedField = <DateSelector
+    label={COPY.CAVC_SUBSTITUTE_APPELLANT_DATE_LABEL}
+    type="date"
+    name="appellant-substitution-granted-date"
+    value={appellantSubstitutionGrantedDate}
+    onChange={(val) => setAppellantSubstitutionGrantedDate(val)}
+    errorMessage={(highlightInvalid && !validAppellantSubstitutionGrantedDateDate()) ? COPY.CAVC_APPELLANT_SUBSTITUTION_GRANTED_DATE_ERROR : null}
+    strongLabel
+  />;
+
+  const substituteAppellantClaimantField = <RadioField
+    label={COPY.CAVC_SUBSTITUTE_APPELLANT_CLAIMANTS_LABEL}
+    name="substitute-appellant-claimant-options"
+    options={substituteAppellantClaimantOptions}
+    value={participantId}
+    onChange={(val) => setParticipantId(val)}
+    errorMessage={highlightInvalid && !validSubstituteAppellantClaimant() ? COPY.CAVC_SUBSTITUTE_APPELLANT_CLAIMANTS_ERROR : null}
     strongLabel
   />;
 
@@ -389,6 +442,9 @@ const AddCavcRemandView = (props) => {
       <p>{COPY.ADD_CAVC_DESCRIPTION}</p>
       {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
       {docketNumberField}
+      {isAppellantSubstitutedField}
+      {isAppellantSubstituted === 'true' && appellantSubstitutionGrantedField}
+      {isAppellantSubstituted === 'true' && substituteAppellantClaimantField}
       {representedField}
       {judgeField}
       {typeField}
@@ -413,6 +469,9 @@ const AddCavcRemandView = (props) => {
 AddCavcRemandView.propTypes = {
   appealId: PropTypes.string,
   decisionIssues: PropTypes.array,
+  substitutionParticipantId: PropTypes.string,
+  appellantSubstitutionId: PropTypes.string,
+  substituteAppellantClaimantOptions: PropTypes.array,
   requestSave: PropTypes.func,
   showErrorMessage: PropTypes.func,
   error: PropTypes.object,
@@ -427,6 +486,9 @@ AddCavcRemandView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   decisionIssues: state.queue.appealDetails[ownProps.appealId].decisionIssues,
+  substituteAppellantClaimantOptions: state.queue.appealDetails[ownProps.appealId].substituteAppellantClaimantOptions,
+  substitutionParticipantId: state.queue.appealDetails[ownProps.appealId].substitutionParticipantId,
+  appellantSubstitutionId: state.queue.appealDetails[ownProps.appealId].appellantSubstitutionId,
   highlightInvalid: state.ui.highlightFormItems,
   error: state.ui.messages.error,
   featureToggles: state.ui.featureToggles
