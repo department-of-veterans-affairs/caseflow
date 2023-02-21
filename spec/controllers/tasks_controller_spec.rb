@@ -1128,6 +1128,29 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         # post task instructions should be concat with days on hold
         expect(post_initial_task.reload.instructions[0]).to eq(expected_instructions)
       end
+
+      it "properly displays how many days the task has been on hold" do
+        # load the data properly
+        cc_issue
+        cc_appeal.reload.request_issues
+
+        # set the task timer and post_task to 12 days in the past
+        tt = TaskTimer.find_by(task_id: post_initial_task.id)
+
+        tt.created_at = Time.zone.now - 12.days
+        tt.save!
+        post_initial_task.created_at = Time.zone.now - 12.days
+        post_initial_task.save!
+
+        # call subject
+        subject
+
+        expect(response.status).to eq 200
+        expect(post_initial_task.reload.status).to eq("cancelled")
+        # post task instructions should be concat with days on hold
+        expect(post_initial_task.reload.instructions[0]).to eq(expected_instructions)
+        expect(post_initial_task.reload.days_on_hold).to eq(12)
+      end
     end
   end
 
