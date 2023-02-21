@@ -224,7 +224,6 @@ describe PostSendInitialNotificationLetterHoldingTask do
         calculate_max_hold = (tt.submitted_at - post_task.created_at.prev_day).to_i / 1.day
         expect(post_task.max_hold_day_period).to eq(calculate_max_hold)
       end
-
     end
   end
 end
