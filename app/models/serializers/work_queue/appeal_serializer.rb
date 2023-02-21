@@ -64,14 +64,6 @@ class WorkQueue::AppealSerializer
     end
   end
 
-  attribute :appellant_substitution_id do |object|
-    object.appellant_substitution&.id
-  end
-
-  attribute :substitution_participant_id do |object|
-    object.appellant_substitution&.substitution_participant_id
-  end
-
   attribute :substitute_appellant_claimant_options do |object|
     object.veteran&.relationships.map do |relation|
       {

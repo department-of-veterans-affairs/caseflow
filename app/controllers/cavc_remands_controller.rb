@@ -28,9 +28,7 @@ class CavcRemandsController < ApplicationController
   APPELLANT_SUBSTITUTION_PARAMS = [
     :substitution_date,
     :participant_id,
-    :substitute_participant_id,
     :remand_source,
-    :appellant_substitution_id,
     :is_appellant_substituted,
     :created_by_id,
     :updated_by_id
@@ -56,9 +54,22 @@ class CavcRemandsController < ApplicationController
   def create
     new_cavc_remand = CavcRemand.create!(creation_params)
     cavc_appeal = new_cavc_remand.remand_appeal.reload
-    CavcRemandsAppellantSubstitution.create(
-      cavc_remand_appellant_substitution_params.merge!(cavc_remand_id: new_cavc_remand.id)
-    )
+    if FeatureToggle.enabled?(:cavc_remand_granted_substitute_appellant)
+      if params[:participant_id].present?
+        appellant_substitution = AppellantSubstitution.create(created_by_id: current_user.id,
+                                                              source_appeal_id: source_appeal.id,
+                                                              substitution_date: params[:substitution_date],
+                                                              claimant_type: "DependentClaimant",
+                                                              substitute_participant_id: params[:participant_id])
+      end
+      CavcRemandsAppellantSubstitution.create(
+        cavc_remand_appellant_substitution_params.merge!(
+          cavc_remand_id: new_cavc_remand.id,
+          substitute_participant_id: params[:participant_id],
+          appellant_substitution_id: appellant_substitution&.id
+        )
+      )
+    end
     render json: { cavc_remand: new_cavc_remand, cavc_appeal: cavc_appeal }, status: :created
   end
 
