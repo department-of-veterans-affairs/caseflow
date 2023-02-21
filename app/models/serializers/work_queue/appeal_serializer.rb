@@ -191,6 +191,10 @@ class WorkQueue::AppealSerializer
 
   attribute :veteran_file_number
 
+  attribute :veteran_participant_id do |object|
+    object.veteran ? object.veteran.participant_id : nil
+  end
+
   attribute :veteran_full_name do |object|
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end

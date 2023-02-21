@@ -142,7 +142,6 @@ export class CaseTitleDetails extends React.PureComponent {
 
     // const link = this.props.appeal.veteran.participant_id ? 'https://<base url>.bip.va.gov/veteran/<veteran_participant_id>' : 'https://<base url>.bip.va.gov';
     const link = 'https://www.google.com';
-    const part_id = appeal;
 
     return (
       <TitleDetailsSubheader id="caseTitleDetailsSubheader">
