@@ -2,6 +2,10 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import CavcDashboardIssuesSection from '../../../../app/queue/cavcDashboard/CavcDashboardIssuesSection';
 
+jest.mock('../../../../app/queue/cavcDashboard/CavcDecisionReasons',
+  () => () => <mock-details data-testid="testDecisionReasons" />
+);
+
 const createDashboardProp = () => {
   return {
     source_request_issues: [{
