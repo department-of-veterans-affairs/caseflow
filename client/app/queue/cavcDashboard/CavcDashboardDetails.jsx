@@ -147,7 +147,6 @@ export const CavcDashboardDetails = (props) => {
       </CavcDashboardDetailsContainer>
       {openDetailsModal &&
       <Modal title={COPY.CAVC_DASHBOARD_EDIT_DETAILS_MODAL_TITLE}
-        {...modalStyling}
         buttons={[
           {
             classNames: ['usa-button', 'cf-btn-link'],

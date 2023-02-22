@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { CavcDashboardDetails } from '../../../../app/queue/cavcDashboard/CavcDashboardDetails';
 
 const createDashboardProp = (jmr) => {
@@ -68,4 +68,87 @@ describe('CavcDashboardDetails', () => {
     expect(editButton).toBeEnabled();
     expect(editButton).toBeVisible();
   });
+
+  it('edit CAVC Details Modal is visible when edit button is clicked', async () => {
+    const dashboard = createDashboardProp(true);
+
+    await renderCavcDashboardDetails(dashboard, true);
+
+    const edit = screen.getByRole('button', { description: 'Edit' });
+
+    fireEvent.click(edit);
+
+    const modal = document.getElementById('modal_id');
+    const modalSave = document.getElementById('Edit-CAVC-Details-button-id-1');
+
+    expect(screen.getByText('Edit CAVC Details')).toBeTruthy();
+    expect(screen.getByLabelText('Board Decision Date')).toBeTruthy();
+    expect(screen.getByText('02/01/22')).toBeTruthy();
+    expect(screen.getByLabelText('Board Docket Number')).toBeTruthy();
+    expect(screen.getByText(dashboard.board_docket_number)).toBeTruthy();
+    expect(screen.getByLabelText('CAVC Decision Date')).toBeTruthy();
+    expect(screen.getByText('04/01/22')).toBeTruthy();
+    expect(screen.getByLabelText('CAVC Docket Number')).toBeTruthy();
+    expect(screen.getByText(dashboard.cavc_docket_number)).toBeTruthy();
+    expect(modal).toBeVisible();
+    expect(modalSave).toBeEnabled();
+  });
+
+  it('edit CAVC Details Modal is closed when cancel/close button is clicked', async () => {
+    const dashboard = createDashboardProp(true);
+
+    await renderCavcDashboardDetails(dashboard, true);
+
+    const edit = screen.getByRole('button', { description: 'Edit' });
+
+    fireEvent.click(edit);
+    const cancelModal = document.getElementById('Edit-CAVC-Details-button-id-0');
+
+    fireEvent.click(cancelModal);
+    const modal = document.getElementById('modal_id');
+
+    expect(modal).toBeNull();
+  });
+
+  it('save button is disabled when not validated', async () => {
+    const dashboard = { board_decision_date: '2022-02-01',
+      board_docket_number: '210501',
+      cavc_decision_date: '2022-04-01',
+      cavc_docket_number: '22',
+      joint_motion_for_remand: true };
+
+    await renderCavcDashboardDetails(dashboard, true);
+
+    const edit = screen.getByRole('button', { description: 'Edit' });
+
+    fireEvent.click(edit);
+
+    const modalSave = document.getElementById('Edit-CAVC-Details-button-id-1');
+
+    expect(screen.getByText('Please enter a valid docket number provided by the Board (123456-7).')).toBeTruthy();
+    expect(screen.getByText('Please enter a valid docket number provided by CAVC (12-3456).')).toBeTruthy();
+    expect(modalSave).toBeDisabled();
+  });
+
+  it('save button is saves changed info', async () => {
+    const dashboard = createDashboardProp(true);
+
+    await renderCavcDashboardDetails(dashboard, true);
+
+    const edit = screen.getByRole('button', { description: 'Edit' });
+
+    fireEvent.click(edit);
+
+    const modalSave = document.getElementById('Edit-CAVC-Details-button-id-1');
+    const modalCavcDocketNum = document.getElementById('CAVC Docket Number');
+
+    fireEvent.change(modalCavcDocketNum, {
+      target: { value: '22-0011' }
+    });
+
+    fireEvent.click(modalSave);
+
+    expect(screen.getByText('22-0011')).toBeTruthy();
+  });
+
 });
