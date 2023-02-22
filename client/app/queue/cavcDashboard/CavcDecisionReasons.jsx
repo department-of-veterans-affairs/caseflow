@@ -151,11 +151,11 @@ const CavcDecisionReasons = ({ uniqueId }) => {
                   name={`checkbox-${child.id}-${uniqueId}`}
                   label={child.decision_reason}
                   onChange={(value) => handleCheckboxChange(value, child.id)}
-                  value={checkedReasons[parent.id].children.find((x) => x.id === child.id).checked}
+                  value={checkedReasons[parent.id]?.children?.find((x) => x.id === child.id).checked}
                   styling={childCheckboxStyling}
                 />
                 {/* check if child checkbox is checked and basis category exists if so render dropdown */}
-                {checkedReasons[parent.id]?.children.find(
+                {checkedReasons[parent.id]?.children?.find(
                   (childToFind) => childToFind.id === child.id &&
                     childToFind.basis_for_selection_category &&
                       childToFind.checked) && (
