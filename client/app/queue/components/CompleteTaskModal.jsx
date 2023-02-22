@@ -15,7 +15,7 @@ import COPY from '../../../COPY';
 import { taskById, appealWithDetailSelector, getAllTasksForAppeal } from '../selectors';
 import { onReceiveAmaTasks } from '../QueueActions';
 import { requestPatch } from '../uiReducer/uiActions';
-import { taskActionData } from '../utils';
+import { taskActionData, currentDaysOnHold} from '../utils';
 import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
 
@@ -689,8 +689,19 @@ class CompleteTaskModal extends React.Component {
       }
 
       formattedInstructions.push(`Hold time: ${days} days`);
+    }
 
-      return formattedInstructions.join('');
+    if (this.props.modalType === 'proceed_final_notification_letter') {
+      const currentTaskID = this.props.task.taskId;
+
+      this.props.tasks.forEach((data, index) => {
+        if (data.taskId === currentTaskID) {
+          const onHolddays = currentDaysOnHold(data);
+          const totalDays = data.onHoldDuration;
+
+          return formattedInstructions.push(`\n Hold time: ${onHolddays} / ${totalDays} days\n\n`);
+        }
+      });
     }
 
     if (this.props.modalType === 'vha_send_to_board_intake') {

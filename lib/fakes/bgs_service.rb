@@ -713,7 +713,7 @@ class Fakes::BGSService
 
     # make sure the value is unique for both file number and participant id
     while BgsPowerOfAttorney.find_by(file_number: value).nil? == false &&
-          BgsPowerOfAttorney.find_by(participant_id: value).nil? == false
+          BgsPowerOfAttorney.find_by(poa_participant_id: value).nil? == false
 
       value = rand(700_000_000...733_792_224).to_s
     end

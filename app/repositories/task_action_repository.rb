@@ -337,7 +337,8 @@ class TaskActionRepository
       HearingAdminActionTask: COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL,
       SendCavcRemandProcessedLetterTask: COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_COMPLETE_MODAL_BODY,
       CavcRemandProcessedLetterResponseWindowTask: COPY::CAVC_REMAND_LETTER_RESPONSE_TASK_COMPLETE_MODAL_BODY,
-      SendInitialNotificationLetterTask: COPY::PROCEED_FINAL_NOTIFICATION_LETTER_COPY
+      PostSendInitialNotificationLetterHoldingTask: COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_COPY,
+      SendInitialNotificationLetterTask: COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
     }.freeze
 
     def complete_data(task, _user = nil)
@@ -357,7 +358,12 @@ class TaskActionRepository
       params = {
         modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym]
       }
-      params[:modal_body] = COPY::PROCEED_FINAL_NOTIFICATION_LETTER_COPY
+      if task.type === "PostSendInitialNotificationLetterHoldingTask"
+        params[:modal_body] = COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_COPY
+      else
+        params[:modal_body] = COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
+      end
+
 
       if defined? task.completion_contact
         params[:contact] = task.completion_contact
