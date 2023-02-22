@@ -9,6 +9,7 @@ jest.mock('../../../../app/queue/cavcDashboard/CavcDecisionReasons',
 const createDashboardProp = () => {
   return {
     source_request_issues: [{
+      id: 1000,
       benefit_type: 'compensation',
       decision_review_type: 'Appeal',
       contested_issue_description: 'A description of issue',
@@ -17,6 +18,10 @@ const createDashboardProp = () => {
       benefit_type: 'Review',
       issue_category: 'Service Connection',
     }],
+    cavc_dashboard_dispositions: [{
+      request_issue_id: 1000,
+      disposition: 'Reversed',
+    }]
   };
 };
 

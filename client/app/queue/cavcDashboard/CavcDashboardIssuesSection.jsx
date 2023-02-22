@@ -44,13 +44,12 @@ const CavcDashboardIssue = (props) => {
 
   let issueType = {};
 
-  const requireDecisionReason = (id) => {
+  const requireDecisionReason = () => {
     return (dispositions?.find(
-      (dis) => dis.request_issue_id === id &&
-      (dis.disposition === CAVC_DASHBOARD_DISPOSITIONS.reversed ||
-        dis.disposition === CAVC_DASHBOARD_DISPOSITIONS.vacated_and_remanded)) ||
+      (x) => x.request_issue_id === issue.id &&
       (disposition === CAVC_DASHBOARD_DISPOSITIONS.reversed ||
-        disposition === CAVC_DASHBOARD_DISPOSITIONS.vacated_and_remanded));
+        disposition === CAVC_DASHBOARD_DISPOSITIONS.vacated_and_remanded))
+    );
   };
 
   if (issue.decision_review_type) {
@@ -74,15 +73,17 @@ const CavcDashboardIssue = (props) => {
           <SearchableDropdown
             name={`issue-dispositions-${index}`}
             label="Dispositions"
-            placeholder = {disposition}
+            placeholder={disposition}
+            defaultValue={disposition}
+            value={disposition}
             searchable
             hideLabel
             options={dispositionsOptions}
-            onChange={(option) => setDisposition(option)}
+            onChange={(option) => setDisposition(option.label)}
           />
         </div>
       </div>
-      {requireDecisionReason(issue.id) && (
+      {requireDecisionReason() && (
         <CavcDecisionReasons uniqueId={issue.id} />
       )}
     </li>
