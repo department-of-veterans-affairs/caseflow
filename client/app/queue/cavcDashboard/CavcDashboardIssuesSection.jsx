@@ -35,7 +35,7 @@ const olStyling = css({
 });
 
 const CavcDashboardIssue = (props) => {
-  const { dispositions, issue, index, dashboardId } = props;
+  const { dispositions, issue, index } = props;
   const [disposition, setDisposition] = useState(dispositions?.find(
     (dis) => dis.request_issue_id === issue.id)?.disposition);
 
@@ -80,7 +80,7 @@ const CavcDashboardIssue = (props) => {
         </div>
       </div>
       {requireDecisionReason() && (
-        <CavcDecisionReasons uniqueId={issue.id} dashboardId={dashboardId} />
+        <CavcDecisionReasons uniqueId={issue.id} />
       )}
     </li>
   );
