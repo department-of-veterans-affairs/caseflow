@@ -7,6 +7,7 @@ export const ACTIONS = {
 };
 
 export const LABELS = {
+  CAVC_DASHBOARD_ADDED_ISSUES: 'Added Issues',
   CAVC_DASHBOARD_ISSUES: 'Issues',
   CAVC_DASHBOARD_DISPOSITIONS: 'Dispositions',
   BOARD_DECISION_DATE: 'Board Decision Date',

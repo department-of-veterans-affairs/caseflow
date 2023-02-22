@@ -43,7 +43,7 @@ export const cavcDashboardReducer = (state = initialState, action) => {
       cavc_dashboards: {
         [action.payload.dashboardIndex]: {
           cavc_dashboard_issues: {
-            $unset: [action.payload.issue]
+            $splice: [[action.payload.issueIndex, 1]]
           }
         }
       }

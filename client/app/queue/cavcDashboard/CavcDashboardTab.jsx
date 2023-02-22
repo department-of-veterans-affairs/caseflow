@@ -23,14 +23,6 @@ export const CavcDashboardTab = (props) => {
     setModalIsOpen(!modalIsOpen);
   };
 
-  const removeIssueHandler = (issue) => {
-    props.removeDashboardIssue(dashboardIndex, issue);
-  };
-
-  const removeIssue = () => {
-    removeIssueHandler();
-  };
-
   return (
     <>
       <CavcDashboardDetails {...props} />
@@ -44,18 +36,6 @@ export const CavcDashboardTab = (props) => {
           onClick={() => setModalIsOpen(true)}
         >
           { COPY.ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT }
-        </Button>
-      }
-      {
-        // Button will need to be moved elsewhere
-        (userCanEdit) &&
-        <Button
-          type="button"
-          name="Add Issue Button"
-          classNames={['cf-btn-link']}
-          onClick={() => removeIssue}
-        >
-          { COPY.REMOVE_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT }
         </Button>
       }
       {
