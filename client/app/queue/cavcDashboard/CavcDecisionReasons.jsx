@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { setCheckedDecisionReasons } from './cavcDashboardActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
-const CavcDecisionReasons = ({ uniqueId }) => {
+const CavcDecisionReasons = ({ uniqueId, dashboardId }) => {
 
   const checkboxStyling = css({
     paddingLeft: '2.5%',
@@ -37,8 +37,7 @@ const CavcDecisionReasons = ({ uniqueId }) => {
   const childReasons = decisionReasons.filter((childReason) => childReason.parent_decision_reason_id !== null);
   const dispatch = useDispatch();
 
-  // for tracking state of each checkbox
-  const [checkedReasons, setCheckedReasons] = useState(parentReasons.reduce((obj, parent) => {
+  const initialCheckboxes = parentReasons.reduce((obj, parent) => {
 
     // get all children where parent.id === child.parent_decision_reason_id
     // then create an object for each child, stored into parent's children property as array
@@ -48,20 +47,29 @@ const CavcDecisionReasons = ({ uniqueId }) => {
       ...parent,
       checked: false,
       issueId: uniqueId,
+      dashboardId,
       children: children.map((child) => {
 
         return {
           ...child,
-          checked: false,
+          checked: false
         };
       })
     };
 
     return obj;
-  }, {}));
+  }, {});
+
+  //useSelector((state) => state.cavcDashboard.checked_boxes?.[uniqueId]?.[parent.id]?.checked),
+
+  //useSelector((state) => state.cavcDashboard.checked_boxes?.[uniqueId]?.[parent.id].children.find(
+    //(childToFind) => childToFind.id === child.id)?.checked),
+
+  // for tracking state of each checkbox
+  const [checkedReasons, setCheckedReasons] = useState(initialCheckboxes);
 
   useEffect(() => {
-    dispatch(setCheckedDecisionReasons(checkedReasons, uniqueId));
+    dispatch(setCheckedDecisionReasons(checkedReasons, uniqueId, dashboardId));
   }, [checkedReasons]);
 
   // counter for parent checkboxes that are checked to display next to the header
@@ -208,6 +216,7 @@ const CavcDecisionReasons = ({ uniqueId }) => {
 
 CavcDecisionReasons.propTypes = {
   uniqueId: PropTypes.number,
+  dashboardId: PropTypes.number
 };
 
 export default CavcDecisionReasons;

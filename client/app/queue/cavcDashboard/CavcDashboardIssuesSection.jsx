@@ -35,7 +35,7 @@ const olStyling = css({
 });
 
 const CavcDashboardIssue = (props) => {
-  const { dispositions, issue, index } = props;
+  const { dispositions, issue, index, dashboardId } = props;
   const [disposition, setDisposition] = useState(dispositions?.find(
     (dis) => dis.request_issue_id === issue.id)?.disposition);
 
@@ -80,7 +80,7 @@ const CavcDashboardIssue = (props) => {
         </div>
       </div>
       {requireDecisionReason() && (
-        <CavcDecisionReasons uniqueId={issue.id} />
+        <CavcDecisionReasons uniqueId={issue.id} dashboardId={dashboardId} />
       )}
     </li>
   );
@@ -91,6 +91,7 @@ const CavcDashboardIssuesSection = (props) => {
   const issues = dashboard.source_request_issues;
   const cavcIssues = dashboard.cavc_dashboard_issues;
   const dashboardDispositions = dashboard.cavc_dashboard_dispositions;
+  const dashboardId = dashboard.id;
 
   return (
     <div {...issueSectionStyling}>
@@ -109,7 +110,7 @@ const CavcDashboardIssuesSection = (props) => {
 
           return (
             <React.Fragment key={i}>
-              <CavcDashboardIssue issue={issue} index={i} dispositions={issueDisposition} />
+              <CavcDashboardIssue issue={issue} index={i} dispositions={issueDisposition} dashboardId={dashboardId} />
             </React.Fragment>
           );
         })}

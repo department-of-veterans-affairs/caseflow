@@ -31,8 +31,10 @@ export const cavcDashboardReducer = (state = initialState, action) => {
   case ACTIONS.SET_CHECKED_DECISION_REASONS:
     return update(state, {
       checked_boxes: {
-        [action.payload.issueId]: {
-          $set: action.payload.checkedReasons
+        [action.payload.dashboardId]: {
+          [action.payload.issueId]: {
+            $set: action.payload.checkedReasons
+          }
         }
       }
     });
