@@ -229,8 +229,8 @@ describe VANotifyStatusUpdateJob, type: :job do
 
     subject(:job) { VANotifyStatusUpdateJob.perform_later }
     it "defaults to 650" do
-      expect(Rails.logger).to receive(:info).with("VANotifyStatusJob can not read the
-        VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable.\ Defaulting to 650.")
+      expect(Rails.logger).to receive(:info).with("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable.\
+        Defaulting to 650.")
       job.perform
     end
   end
