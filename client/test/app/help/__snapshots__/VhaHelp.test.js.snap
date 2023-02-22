@@ -12,19 +12,19 @@ exports[`VhaHelp renders the help page 1`] = `
          Welcome to the VHA Help page! 
       </h1>
       <p>
-        Here you will find 
+        Here you will find
         <a
           href="#training-videos"
         >
-           Training Videos
+           Training Videos 
         </a>
-         and 
+        and
         <a
           href="#faq"
         >
-           Frequently Asked Questions (FAQs)
+           Frequently Asked Questions (FAQs) 
         </a>
-         for Intake, as well as links to the Training Guide and the Quick Reference Guide 
+        for VHA, as well as links to the Training Guide and the Quick Reference Guide 
       </p>
     </div>
     <div
@@ -63,7 +63,7 @@ exports[`VhaHelp renders the help page 1`] = `
        Select which VHA groups you need access to 
     </h2>
     <form
-      class="css-q9b1n2"
+      class="css-1mi17b"
     >
       <fieldset>
         <legend>
@@ -103,13 +103,13 @@ exports[`VhaHelp renders the help page 1`] = `
           </strong>
         </legend>
         <fieldset
-          class="checkbox-wrapper-programOfficesAccess cf-form-checkboxes cf-checkbox-group-inline"
+          class="checkbox-wrapper-preDocketOrgsAccess cf-form-checkboxes cf-checkbox-group-inline"
         >
           <legend
             class="hidden-field"
           >
             <span>
-              programOfficesAccess
+              preDocketOrgsAccess
             </span>
           </legend>
           <div

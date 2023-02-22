@@ -12,7 +12,7 @@ exports[`VhaMembershipRequestForm renders the default state with the feature tog
      Select which VHA groups you need access to 
   </h2>
   <form
-    class="css-q9b1n2"
+    class="css-1mi17b"
   >
     <fieldset>
       <legend>
@@ -52,13 +52,13 @@ exports[`VhaMembershipRequestForm renders the default state with the feature tog
         </strong>
       </legend>
       <fieldset
-        class="checkbox-wrapper-programOfficesAccess cf-form-checkboxes cf-checkbox-group-inline"
+        class="checkbox-wrapper-preDocketOrgsAccess cf-form-checkboxes cf-checkbox-group-inline"
       >
         <legend
           class="hidden-field"
         >
           <span>
-            programOfficesAccess
+            preDocketOrgsAccess
           </span>
         </legend>
         <div
@@ -141,7 +141,7 @@ exports[`VhaMembershipRequestForm renders the default state with the feature tog
      Select which VHA groups you need access to 
   </h2>
   <form
-    class="css-q9b1n2"
+    class="css-1mi17b"
   >
     <fieldset>
       <legend>
@@ -181,13 +181,13 @@ exports[`VhaMembershipRequestForm renders the default state with the feature tog
         </strong>
       </legend>
       <fieldset
-        class="checkbox-wrapper-programOfficesAccess cf-form-checkboxes cf-checkbox-group"
+        class="checkbox-wrapper-preDocketOrgsAccess cf-form-checkboxes cf-checkbox-group"
       >
         <legend
           class="hidden-field"
         >
           <span>
-            programOfficesAccess
+            preDocketOrgsAccess
           </span>
         </legend>
         <div
