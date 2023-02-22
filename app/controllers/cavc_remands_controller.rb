@@ -57,7 +57,7 @@ class CavcRemandsController < ApplicationController
     if FeatureToggle.enabled?(:cavc_remand_granted_substitute_appellant)
       if params[:participant_id].present?
         appellant_substitution = AppellantSubstitution.create(created_by_id: current_user.id,
-                                                              source_appeal_id: source_appeal.id,
+                                                              source_appeal_id: cavc_appeal.id,
                                                               substitution_date: params[:substitution_date],
                                                               claimant_type: "DependentClaimant",
                                                               substitute_participant_id: params[:participant_id])
