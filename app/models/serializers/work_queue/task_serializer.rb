@@ -34,6 +34,13 @@ class WorkQueue::TaskSerializer
     }
   end
 
+  attribute :completed_by do |object|
+    {
+      full_name: object.try(:completed_by).try(:full_name),
+      css_id: object.try(:completed_by).try(:css_id)
+    }
+  end
+
   attribute :assigned_to do |object|
     assignee = object.try(:unscoped_assigned_to)
 

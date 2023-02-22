@@ -517,6 +517,11 @@ class Task < CaseflowRecord
   def update_with_instructions(params)
     params[:instructions] = flattened_instructions(params)
     update!(params)
+
+    # if completing a letter task, update completed_by to current user.
+    if completed? && is_a?(LetterTask) && completed_by.nil?
+      update!(completed_by: RequestStore[:current_user])
+    end
   end
 
   def flattened_instructions(params)
