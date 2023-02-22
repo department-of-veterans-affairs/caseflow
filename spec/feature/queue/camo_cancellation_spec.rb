@@ -44,7 +44,11 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
       end
       step "submit valid form" do
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT).click
-        find("div", class: "cf-select__option", text: COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS['DUPLICATE']['LABEL']).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS["DUPLICATE"]["LABEL"]
+        ).click
         fill_in("Provide additional context and/or documents:", with: "This is a duplicate of 1234567.")
         find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON).click
       end
