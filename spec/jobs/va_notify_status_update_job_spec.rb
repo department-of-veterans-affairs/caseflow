@@ -32,88 +32,81 @@ describe VANotifyStatusUpdateJob, type: :job do
   end
   let(:email_and_sms) do
     create(:notification,
-            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
-            appeals_type: "Appeal",
-            event_type: "Hearing scheduled",
-            event_date: Time.zone.today,
-            notification_type: "Email",
-            email_notification_status: "Success",
-            sms_notification_status: "Success")
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "Email",
+           email_notification_status: "Success",
+           sms_notification_status: "Success")
   end
   let(:notification_collection) do
-    create( :notification,
-            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
-            appeals_type: "Appeal",
-            event_type: "Hearing scheduled",
-            event_date: Time.zone.today,
-            notification_type: "Email",
-            email_notification_external_id: "0",
-            sms_notification_external_id: nil,
-            email_notification_status: "Success"
-          )
-    create( :notification,
-            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
-            appeals_type: "Appeal",
-            event_type: "Hearing scheduled",
-            event_date: Time.zone.today,
-            notification_type: "SMS",
-            email_notification_external_id: nil,
-            sms_notification_external_id: "0",
-            sms_notification_status: "temporary-failure"
-          )
-    create( :notification,
-            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
-            appeals_type: "Appeal",
-            event_type: "Hearing scheduled",
-            event_date: Time.zone.today,
-            notification_type: "SMS",
-            email_notification_external_id: nil,
-            sms_notification_external_id: "1",
-            sms_notification_status: "created"
-          )
-    create( :notification,
-            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
-            appeals_type: "Appeal",
-            event_type: "Hearing scheduled",
-            event_date: Time.zone.today,
-            notification_type: "Email",
-            email_notification_external_id: "1",
-            sms_notification_external_id: nil,
-            email_notification_status: "technical-failure"
-          )
-    create( :notification,
-            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
-            appeals_type: "Appeal",
-            event_type: "Hearing scheduled",
-            event_date: Time.zone.today,
-            notification_type: "Email and SMS",
-            email_notification_external_id: "2",
-            sms_notification_external_id: "2",
-            email_notification_status: "temporary-failure",
-            sms_notification_status: "temporary-failure"
-          )
-    create( :notification,
-            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
-            appeals_type: "Appeal",
-            event_type: "Hearing scheduled",
-            event_date: Time.zone.today,
-            notification_type: "Email and SMS",
-            email_notification_external_id: "3",
-            sms_notification_external_id: "3",
-            email_notification_status: "delivered",
-            sms_notification_status: "delivered"
-          )
-    create( :notification,
-            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1577",
-            appeals_type: "Appeal",
-            event_type: "Hearing scheduled",
-            event_date: Time.zone.today,
-            notification_type: "Email and SMS",
-            email_notification_external_id: "4",
-            sms_notification_external_id: "4",
-            email_notification_status: "delivered",
-            sms_notification_status: "delivered"
-          )
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "Email",
+           email_notification_external_id: "0",
+           sms_notification_external_id: nil,
+           email_notification_status: "Success")
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "SMS",
+           email_notification_external_id: nil,
+           sms_notification_external_id: "0",
+           sms_notification_status: "temporary-failure")
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "SMS",
+           email_notification_external_id: nil,
+           sms_notification_external_id: "1",
+           sms_notification_status: "created")
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "Email",
+           email_notification_external_id: "1",
+           sms_notification_external_id: nil,
+           email_notification_status: "technical-failure")
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "Email and SMS",
+           email_notification_external_id: "2",
+           sms_notification_external_id: "2",
+           email_notification_status: "temporary-failure",
+           sms_notification_status: "temporary-failure")
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "Email and SMS",
+           email_notification_external_id: "3",
+           sms_notification_external_id: "3",
+           email_notification_status: "delivered",
+           sms_notification_status: "delivered")
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1577",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "Email and SMS",
+           email_notification_external_id: "4",
+           sms_notification_external_id: "4",
+           email_notification_status: "delivered",
+           sms_notification_status: "delivered")
   end
 
   let(:collect) { Notification.where(id: [1, 2, 3, 4, 5]) }
@@ -193,7 +186,8 @@ describe VANotifyStatusUpdateJob, type: :job do
         it "logs when external id is not present" do
           allow(job).to receive(:notifications_not_processed).and_return([email_and_sms])
           job.perform_now
-          expect(email_and_sms.sms_notification_status && email_and_sms.email_notification_status).to eq("No External Id")
+          expect(email_and_sms.sms_notification_status &&
+            email_and_sms.email_notification_status).to eq("No External Id")
         end
       end
     end
@@ -224,7 +218,7 @@ describe VANotifyStatusUpdateJob, type: :job do
     subject(:job) { VANotifyStatusUpdateJob.perform_later }
     it "returns a collection of notifications from the DB that hold the qualifying statuses" do
       notification_collection
-      expect(job.send(:find_notifications_not_processed)).not_to include(Notification.where(id:[6, 7]))
+      expect(job.send(:find_notifications_not_processed)).not_to include(Notification.where(id: [6, 7]))
     end
   end
 end

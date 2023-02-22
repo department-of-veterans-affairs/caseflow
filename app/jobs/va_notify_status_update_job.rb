@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class VANotifyStatusUpdateJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
@@ -56,7 +57,8 @@ class VANotifyStatusUpdateJob < CaseflowJob
 
   private
 
-  # Description: Method that applies a query limit to the list of notification records that will get the status checked for
+  # Description: Method that applies a query limit to the list of notification records that
+  # will get the status checked for.
   # them from VA Notiufy
   #
   # Params: None
@@ -72,7 +74,8 @@ class VANotifyStatusUpdateJob < CaseflowJob
     end
   end
 
-  # Description: Method to query the Notification database for Notififcation records that have not been updated with a VA Notify Status
+  # Description: Method to query the Notification database for Notififcation
+  # records that have not been updated with a VA Notify Status
   #
   # Params: None
   #
