@@ -54,18 +54,6 @@ export const NotificationsView = (props) => {
     userIsCobAdmin
   });
 
-  // const getPdf = () => {
-  //   ApiUtil.get(`/appeals/${appealId}/notifications.pdf`, { headers: { 'Content-Type': 'HTTP_PDF' } });
-  //   // // {console.log(getPdf)}
-  //   //   then((response) => {
-  //   //     const pdf = response;
-  //   //     {console.log('this is the response', pdf)}
-
-  //   //     return pdf;
-  //   //   });
-  // };
-  //   // if this sends the file then maybe href to this method? but it comes back nil....
-
   return (
     <React.Fragment>
       <AppSegment filledBackground>
@@ -94,7 +82,7 @@ export const NotificationsView = (props) => {
             <p className="notification-text">
               VA Notify sent these status notifications to the Appellant about their case.
             </p>
-            <a href={`/appeals/${appealId}/notifications.pdf`} target="_blank" rel="noopener noreferrer">Download</a>
+            <a href={`/appeals/${appealId}/notifications.pdf`}>Download</a>
 
           </div>
           <div className="notification-table">

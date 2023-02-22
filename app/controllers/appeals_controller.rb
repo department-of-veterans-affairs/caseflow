@@ -55,13 +55,22 @@ class AppealsController < ApplicationController
         results = find_notifications_by_appeals_id(appeals_id)
         render json: results
       end
-
       format.pdf do
         request.headers["HTTP_PDF"]
         appeal = get_appeal_object(appeals_id)
-        date = DateTime.now.to_s
-        pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
-        send_data pdf, filename: "Notification Report " + appeals_id + DateTime.now.to_s, type: "application/pdf", disposition: :attachment
+        date = Time.zone.now.strftime("%Y-%m-%d %H.%M")
+        if !appeal.nil?
+          pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
+          send_data pdf, filename: "Notification Report " + appeals_id + " " + date, type: "application/pdf", disposition: :attachment
+        else
+          redirect_to not_found, format: :html
+        end
+      end
+      format.csv do
+        raise ActionController::RoutingError.new('Bad Formatting')
+      end
+      format.html do
+        raise ActionController::RoutingError.new('Bad Formatting')
       end
     end
   end
@@ -338,11 +347,13 @@ class AppealsController < ApplicationController
   end
 
   def get_appeal_object(appeals_id)
-    type = Notification.find_by(appeals_id: appeals_id).appeals_type
+    type = Notification.find_by(appeals_id: appeals_id)&.appeals_type
     if type == "LegacyAppeal"
       LegacyAppeal.find_by(vacols_id: appeals_id)
     elsif type == "Appeal"
       Appeal.find_by(uuid: appeals_id)
+    elsif !type.nil?
+      nil
     end
   end
 end
