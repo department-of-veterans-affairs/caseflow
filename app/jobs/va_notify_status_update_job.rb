@@ -132,7 +132,8 @@ class VANotifyStatusUpdateJob < CaseflowJob
       if type == "Email"
         { "email_notification_status" => response.body["status"], "recipient_email" => response.body["email_address"] }
       elsif type == "SMS"
-        { "sms_notification_status" => response.body["status"], "recipient_phone_number" => response.body["phone_number"] }
+        { "sms_notification_status" => response.body["status"], "recipient_phone_number" =>
+          response.body["phone_number"] }
       else
         message = "Type neither email nor sms"
         log_error("VA Notify API returned error for notificiation " + notification_id + " with type " + type)
