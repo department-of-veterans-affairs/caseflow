@@ -19,12 +19,10 @@ class RequestIssueContention
 
     # if Vbms_contention is nil, then it will give the ContentionNotFound error message
     unless vbms_contention
-      Raven.capture_exception("ContentionNotFound: Contention reference id #{contention_reference_id}
-        not found while updating request issue.")
-      self.error_id = Raven.last_event_id || "000000000000000001234567890abcdefg"
-      Rails.logger.error("ContentionNotFound(#{contention_reference_id}):
-        Intake error (Sentry event #{error_id}): #{error}\n" + error.backtrace.join("\n"))
-
+      Raven.capture_exception(
+        "ContentionNotFound: Contention reference id #{contention_reference_id}"
+      )
+      Rails.logger.error("ContentionNotFound: Contention reference id #{contention_reference_id}")
       fail EndProductEstablishment::ContentionNotFound, contention_reference_id
     end
 
