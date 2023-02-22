@@ -46,9 +46,9 @@ class MembershipRequest < CaseflowRecord
 
     # TODO: Need a method to decide which emails to send and it needs a mapper class/object somehow to avoid being
     # Specific to VHA. This is actually going to be a bit tricky
-    def send_creation_emails(requests)
+    def send_creation_emails(requests, org_type = "VHA")
       # TODO: should this be a method on the Org class? that defines the mailer class to use?
-      NewMailer.create_emails(requests)
+      MembershipRequestMailerFactory.get_mailer(org_type).new(requests).membership_request_submission
     end
   end
   ############################################################################################
