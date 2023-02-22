@@ -17,7 +17,7 @@ export const CavcDashboardTab = (props) => {
   const closeHandler = () => {
     setModalIsOpen(!modalIsOpen);
   };
-  // TODO Change submit button
+
   const submitHandler = (issue) => {
     props.updateDashboardIssues(dashboardIndex, issue);
     setModalIsOpen(!modalIsOpen);

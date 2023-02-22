@@ -79,14 +79,15 @@ const CavcDashboardIssue = (props) => {
             onChange={(option) => setDisposition(option)}
           />
         </div>
+        <div />
         {addedIssueSection &&
           <Button
             type="button"
             name="Remove Issue Button"
-            classNames={['cf-btn-link']}
+            classNames={['cf-push-right', 'cf-btn-link']}
             onClick={removeIssue}
           >
-            { COPY.REMOVE_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT }
+            <i className="fa fa-trash-o" aria-hidden="true"></i>  { COPY.REMOVE_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT }
           </Button>
         }
       </div>
