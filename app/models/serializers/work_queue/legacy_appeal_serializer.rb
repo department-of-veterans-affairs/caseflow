@@ -40,7 +40,7 @@ class WorkQueue::LegacyAppealSerializer
   # Aliasing the vbms_id to make it clear what we're returning.
   attribute :veteran_file_number, &:sanitized_vbms_id
   attribute :veteran_participant_id do |object|
-    object.veteran ? object.veteran.participant_id : nil
+    object&.veteran&.participant_id
   end
   attribute :external_id, &:vacols_id
   attribute :type

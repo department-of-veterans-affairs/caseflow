@@ -192,7 +192,7 @@ class WorkQueue::AppealSerializer
   attribute :veteran_file_number
 
   attribute :veteran_participant_id do |object|
-    object.veteran ? object.veteran.participant_id : nil
+    object&.veteran&.participant_id
   end
 
   attribute :veteran_full_name do |object|
