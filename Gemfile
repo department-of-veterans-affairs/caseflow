@@ -27,6 +27,7 @@ gem "dogstatsd-ruby"
 gem "dry-schema", "~> 1.4"
 gem "fast_jsonapi"
 gem "fuzzy_match"
+gem "git", "1.13"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
@@ -50,8 +51,8 @@ gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
-gem "puma", "~> 5"
-gem "rack", "~> 2.2.3"
+gem "puma", "~> 5.6.4"
+gem "rack", "~> 2.2.6.2"
 gem "rails", "~> 5.2.8"
 # Used to colorize output for rake tasks
 gem "rainbow"
@@ -73,7 +74,7 @@ gem "strong_migrations"
 gem "therubyracer", platforms: :ruby
 # print trees
 gem "tty-tree"
-gem "tzinfo"
+gem "tzinfo", "1.2.10"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
