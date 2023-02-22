@@ -36,7 +36,6 @@ class WorkQueue::TaskSerializer
 
   attribute :completed_by do |object|
     {
-      full_name: object.try(:completed_by).try(:full_name),
       css_id: object.try(:completed_by).try(:css_id)
     }
   end
