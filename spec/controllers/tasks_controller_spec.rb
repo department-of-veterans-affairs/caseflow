@@ -1154,7 +1154,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     end
   end
 
-
   describe "GET appeals/:id/tasks" do
     let(:assigning_user) { create(:default_user) }
     let(:attorney_user) { create(:user) }

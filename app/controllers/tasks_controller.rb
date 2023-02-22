@@ -216,7 +216,7 @@ class TasksController < ApplicationController
     case opc
     when "task_complete_contested_claim"
       days_on_hold = params["hold_days"].to_i
-      instructions = "";
+      instructions = ""
       psi = PostSendInitialNotificationLetterHoldingTask.create!(
         appeal: task.appeal,
         parent: task.parent,
