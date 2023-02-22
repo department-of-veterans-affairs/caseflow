@@ -33,8 +33,8 @@ class VhaMembershipRequestMailer < MembershipRequestMailer
     # mail(to: @recipient_info[:email], subject: "Membership request submitted.")
 
     # TODO: enable these when the email templates are added?
-    send_requestor_email(requestor)
-    send_org_emails(organizations)
+    # requestor_subission_email(requestor)
+    # send_org_emails(organizations)
   end
 
   # Send requestor an email with updated status of membership request.
@@ -51,13 +51,13 @@ class VhaMembershipRequestMailer < MembershipRequestMailer
 
   private
 
-  def send_requestor_email(requestor)
+  def requestor_subission_email(requestor)
     mail(to: requestor.email, subject: SUBJECT_LINE_REQUESTOR_SUBMITTED)
   end
 
   def send_org_emails(organizations)
     organizations.each do |org|
-      send_org_email(org)
+      organization_email(org)
     end
   end
 
@@ -65,61 +65,62 @@ class VhaMembershipRequestMailer < MembershipRequestMailer
   # it's own mail method but whatever. Could also create mini mailers for each org and call them here
   # TODO: also figure out which template gets used?
   # TODO: could also make it a hash. It's probably faster and reduces CC but might be less readable?
-  def send_org_email(org)
+  # Might also have to make this all the same method name with the case statement again.
+  def organization_email(org)
     case org.name
     when "Veterans Health Administration"
-      send_vha_business_line_email
+      vha_business_line_email
     when "VHA CAMO"
-      send_vha_camo_email
+      vha_camo_email
     when "VHA Caregiver Support Program"
-      send_vha_caregiver_email
+      vha_caregiver_email
     when "Community Care - Veteran and Family Members Program"
-      send_community_care_veteran_and_family_members_email
+      community_care_veteran_and_family_members_email
     when "Community Care - Payment Operations Management"
-      send_community_care_payment_operations_management_email
+      community_care_payment_operations_management_email
     when "Member Services - Health Eligibility Center"
-      send_member_services_health_eligibility_center_emails
+      member_services_health_eligibility_center_emails
     when "Member Services - Beneficiary Travel"
-      send_member_services_beneficiary_travel_email
+      member_services_beneficiary_travel_email
     when "Prosthetics"
-      send_prosthetics_email
+      prosthetics_email
     else
       fail Caseflow::Error::InvalidEmailError, message: "#{org.name} is not a valid VHA Predocket organization."
     end
   end
 
-  def send_vha_business_line_email
+  def vha_business_line_email
     mail(to: VHA_BUSINESSLINE_ADMIN_EMAIL, subject: SUBJECT_LINE_VHA_ADMIN_REQUEST_SUBMITTED)
   end
 
-  def send_vha_camo_email
+  def vha_camo_email
     mail(to: VHA_CAMO_ADMIN_EMAIL, subject: SUBJECT_LINE_VHA_ADMIN_REQUEST_SUBMITTED)
   end
 
-  def send_vha_caregiver_email
+  def vha_caregiver_email
     mail(to: VHA_CAREGIVER_SUPPORT_ADMIN_EMAIL, subject: SUBJECT_LINE_VHA_ADMIN_REQUEST_SUBMITTED)
   end
 
-  def send_community_care_veteran_and_family_members_email
+  def community_care_veteran_and_family_members_email
     mail(to: VHA_VETERAN_AND_FAMILY_MEMBERS_ADMIN_EMAIL, subject: SUBJECT_LINE_VHA_ADMIN_REQUEST_SUBMITTED)
   end
 
-  def send_community_care_payment_operations_management_email
+  def community_care_payment_operations_management_email
     mail(to: VHA_PAYMENT_OPERATIONS_ADMIN_EMAIL, subject: SUBJECT_LINE_VHA_ADMIN_REQUEST_SUBMITTED)
   end
 
-  def send_member_services_health_eligibility_center_emails
+  def member_services_health_eligibility_center_emails
     mail(to: VHA_MEMBER_SERVICES_HEALTH_ELIGIBILITY_CENTER_ADMIN_EMAIL_1,
          subject: SUBJECT_LINE_VHA_ADMIN_REQUEST_SUBMITTED)
     mail(to: VHA_MEMBER_SERVICES_HEALTH_ELIGIBILITY_CENTER_ADMIN_EMAIL_2,
          subject: SUBJECT_LINE_VHA_ADMIN_REQUEST_SUBMITTED)
   end
 
-  def send_member_services_beneficiary_travel_email
+  def member_services_beneficiary_travel_email
     mail(to: VHA_MEMBER_SERVICES_BENEFICIARY_TRAVEL_ADMIN_EMAIL, subject: SUBJECT_LINE_VHA_ADMIN_REQUEST_SUBMITTED)
   end
 
-  def send_prosthetics_email
+  def prosthetics_email
     mail(to: VHA_PROSTHETICS_ADMIN_EMAIL, subject: SUBJECT_LINE_VHA_ADMIN_REQUEST_SUBMITTED)
   end
 end
