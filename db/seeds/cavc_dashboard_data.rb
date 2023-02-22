@@ -48,7 +48,7 @@ module Seeds
                         veteran: create_veteran)
         dashboard = CavcDashboard.create!(cavc_remand: remand)
         dashboard.source_request_issues.map do |issue|
-          CavcDashboardDisposition.create(cavc_dashboard: dashboard, request_issue_id: issue.id)
+          CavcDashboardDisposition.create(cavc_dashboard: dashboard, disposition: 'abandoned', request_issue_id: issue.id)
         end
 
         @cavc_docket_number_last_four += 1
