@@ -17,7 +17,7 @@ describe QueueTab do
 
     it "returns a hash with the correct keys" do
       expect(subject.keys).to match_array(
-        [:label, :name, :description, :columns, :allow_bulk_assign, :contains_legacy_tasks]
+        [:label, :name, :defaultSort, :description, :columns, :allow_bulk_assign, :contains_legacy_tasks]
       )
     end
 
