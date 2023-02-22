@@ -1273,31 +1273,31 @@
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS": {
     "DUPLICATE": {
       "LABEL": "Duplicate",
-      "VALUE": "Duplicate"
+      "VALUE": "duplicate"
     },
     "HLR_PENDING": {
       "LABEL": "HLR Pending",
-      "VALUE": "HLR Pending"
+      "VALUE": "hlr pending"
     },
     "SC_PENDING": {
       "LABEL": "SC Pending",
-      "VALUE": "SC Pending"
+      "VALUE": "sc pending"
     },
     "NOT_VHA_RELATED": {
       "LABEL": "Not VHA related",
-      "VALUE": "Not VHA related"
+      "VALUE": "not vha related"
     },
       "CLARIFICATION_NEEDED": {
       "LABEL": "Clarification needed from appellant",
-      "VALUE": "Clarification needed from appellant"
+      "VALUE": "clarification needed from appellant"
     },
     "NO_VHA_DECISION": {
       "LABEL": "No VHA decision",
-      "VALUE": "No VHA decision"
+      "VALUE": "no vha decision"
     },
     "OTHER": {
       "LABEL": "Other",
-      "VALUE": "Other"
+      "VALUE": "other"
     }
   },
   "VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL": "Please provide the reason for return",
