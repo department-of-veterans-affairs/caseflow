@@ -36,7 +36,7 @@ describe VANotifyStatusUpdateJob, type: :job do
            appeals_type: "Appeal",
            event_type: "Hearing scheduled",
            event_date: Time.zone.today,
-           notification_type: "Email",
+           notification_type: "Email and SMS",
            email_notification_status: "Success",
            sms_notification_status: "Success")
   end
@@ -200,7 +200,7 @@ describe VANotifyStatusUpdateJob, type: :job do
       email_and_sms.email_notification_external_id = SecureRandom.uuid
       allow(job).to receive(:notifications_not_processed).and_return([email_and_sms])
       allow(VANotifyService).to receive(:get_status).and_raise(Caseflow::Error::VANotifyNotFoundError)
-      expect(job).to receive(:log_error).with(/VA Notify API returned error/)
+      expect(job).to receive(:log_error).with(/VA Notify API returned error/).twice
       job.perform_now
     end
   end
@@ -219,6 +219,19 @@ describe VANotifyStatusUpdateJob, type: :job do
     it "returns a collection of notifications from the DB that hold the qualifying statuses" do
       notification_collection
       expect(job.send(:find_notifications_not_processed)).not_to include(Notification.where(id: [6, 7]))
+    end
+  end
+
+  context "#default_to_650" do
+    before do
+      VANotifyStatusUpdateJob::QUERY_LIMIT = nil
+    end
+
+    subject(:job) { VANotifyStatusUpdateJob.perform_later }
+    it "defaults to 650" do
+      expect(Rails.logger).to receive(:info).with("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable.\
+        Defaulting to 650.")
+      job.perform
     end
   end
 end

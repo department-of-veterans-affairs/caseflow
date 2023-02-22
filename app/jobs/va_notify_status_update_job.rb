@@ -68,8 +68,8 @@ class VANotifyStatusUpdateJob < CaseflowJob
     if !QUERY_LIMIT.nil? && QUERY_LIMIT.is_a?(String)
       find_notifications_not_processed.first(QUERY_LIMIT.to_i)
     else
-      log_info("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable. \
-         Defaulting to 650.")
+      log_info("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable.\
+        Defaulting to 650.")
       find_notifications_not_processed.first(650)
     end
   end
