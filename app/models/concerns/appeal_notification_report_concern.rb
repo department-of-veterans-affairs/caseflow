@@ -33,7 +33,7 @@ module AppealNotificationReportConcern
     document_params =
       {
         veteran_file_number: veteran_file_number,
-        document_type: "BVA Letter",
+        document_type: "BVA Case Notifications",
         document_subject: "notifications",
         document_name: notification_document_name,
         application: "notification-report",
