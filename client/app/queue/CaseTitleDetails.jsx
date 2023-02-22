@@ -142,7 +142,7 @@ export class CaseTitleDetails extends React.PureComponent {
     const claim_evidence_efolder_base_url = 'vefs-claimevidence-ui.local';
     const link = appeal.veteranParticipantId ?
       'https://' + claim_evidence_efolder_base_url + '.bip.va.gov/veteran/' + appeal.veteranParticipantId :
-      'https://'+ claim_evidence_efolder_base_url +'.bip.va.gov';
+      'https://' + claim_evidence_efolder_base_url + '.bip.va.gov';
 
     return (
       <TitleDetailsSubheader id="caseTitleDetailsSubheader">
@@ -256,7 +256,9 @@ export class CaseTitleDetails extends React.PureComponent {
 
             <a href={link} target="_blank" rel="noopener noreferrer">
               {this.props.appeal.veteranParticipantId ? 'Open eFolder ' : 'Go to eFolder Search '}
-              <span {...css({ position: 'relative', top: '3px' })}><ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} /></span>
+              <span {...css({ position: 'relative', top: '3px' })}>
+                <ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} />
+              </span>
             </a>
           </TitleDetailsSubheaderSection>
         )}
