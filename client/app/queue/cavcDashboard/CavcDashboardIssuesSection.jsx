@@ -35,7 +35,8 @@ const olStyling = css({
 
 const CavcDashboardIssue = (props) => {
   const { dispositions, issue, index } = props;
-  const [disposition, setDisposition] = useState(dispositions[0].disposition);
+  const [disposition, setDisposition] = useState(dispositions?.find(
+    (dis) => dis.request_issue_id === issue.id)?.disposition);
 
   const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS).map(
     (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
@@ -95,6 +96,7 @@ const CavcDashboardIssuesSection = (props) => {
           const issueDisposition = dashboardDispositions ? (dashboardDispositions.filter((dis) => {
             return dis.request_issue_id === issue.id;
           })) : 'Select';
+
           return (
             <React.Fragment key={i}>
               <CavcDashboardIssue issue={issue} index={i} dispositions={issueDisposition} />
