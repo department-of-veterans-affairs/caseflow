@@ -163,7 +163,7 @@ CavcDashboardIssue.propTypes = {
     benefit_type: PropTypes.string,
     decision_review_type: PropTypes.string,
     contested_issue_description: PropTypes.string,
-    issue_category: PropTypes.oneOf([PropTypes.string, PropTypes.object]),
+    issue_category: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   }),
   dispositions: PropTypes.array,
   removeIssueHandler: PropTypes.func,
