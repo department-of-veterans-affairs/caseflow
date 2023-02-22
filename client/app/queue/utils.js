@@ -477,6 +477,7 @@ export const prepareAppealForStore = (appeals) => {
         appeal
       ),
       externalId: appeal.attributes.external_id,
+      efolderLink: appeal.attributes.efolder_link,
       status: appeal.attributes.status,
       decisionDate: appeal.attributes.decision_date,
       form9Date: appeal.attributes.form9_date,

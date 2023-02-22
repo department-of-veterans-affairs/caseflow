@@ -42,6 +42,9 @@ class WorkQueue::LegacyAppealSerializer
   attribute :veteran_participant_id do |object|
     object&.veteran&.participant_id
   end
+  attribute :efolder_link do
+    ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"]
+  end
   attribute :external_id, &:vacols_id
   attribute :type
   attribute :aod
