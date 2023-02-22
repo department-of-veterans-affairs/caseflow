@@ -1271,31 +1271,31 @@
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL": "Why is this appeal being returned?",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "This appeal will be sent to Board Intake.",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS": {
-    "VHA_RETURN_TO_BOARD_INTAKE_DUPLICATE": {
+    "DUPLICATE": {
       "LABEL": "Duplicate",
       "VALUE": "Duplicate"
     },
-    "VHA_RETURN_TO_BOARD_INTAKE_HLR_PENDING": {
+    "HLR_PENDING": {
       "LABEL": "HLR Pending",
       "VALUE": "HLR Pending"
     },
-    "VHA_RETURN_TO_BOARD_INTAKE_SC_PENDING": {
+    "SC_PENDING": {
       "LABEL": "SC Pending",
       "VALUE": "SC Pending"
     },
-    "VHA_RETURN_TO_BOARD_INTAKE_NOT_VHA_RELATED": {
+    "NOT_VHA_RELATED": {
       "LABEL": "Not VHA related",
       "VALUE": "Not VHA related"
     },
-      "VHA_RETURN_TO_BOARD_INTAKE_CLARIFICATION_NEEDED": {
+      "CLARIFICATION_NEEDED": {
       "LABEL": "Clarification needed from appellant",
       "VALUE": "Clarification needed from appellant"
     },
-    "VHA_RETURN_TO_BOARD_INTAKE_NO_VHA_DECISION": {
+    "NO_VHA_DECISION": {
       "LABEL": "No VHA decision",
       "VALUE": "No VHA decision"
     },
-    "VHA_RETURN_TO_BOARD_INTAKE_OTHER": {
+    "OTHER": {
       "LABEL": "Other",
       "VALUE": "Other"
     }

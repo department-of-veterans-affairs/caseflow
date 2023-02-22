@@ -35,10 +35,7 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
     end
     scenario "assign to BVA intake" do
       step "navigate from CAMO team queue to case details" do
-        visit camo_org.path
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-        expect(page).to have_content(appeal.veteran_full_name.to_s)
+        navigate_from_camo_queue_to_case_deatils
       end
       step "trigger return to board intake modal" do
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
@@ -49,7 +46,7 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
       end
       step "submit valid form" do
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT).click
-        find("div", class: "cf-select__option", text: COPY::VHA_RETURN_TO_BOARD_INTAKE_DUPLICATE).click
+        find("div", class: "cf-select__option", text: COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS['DUPLICATE']['LABEL']).click
         fill_in("Provide additional context and/or documents:", with: "This is a duplicate of 1234567.")
         find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON).click
       end
@@ -66,10 +63,7 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
     end
     scenario "assign to BVA intake" do
       step "navigate from CAMO team queue to case details" do
-        visit camo_org.path
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-        expect(page).to have_content(appeal.veteran_full_name.to_s)
+        navigate_from_camo_queue_to_case_deatils
       end
       step "trigger send to board intake modal" do
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
@@ -102,5 +96,14 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
       visit bva_intake_org.path
       expect(page).to have_content("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
     end
+  end
+
+  private
+
+  def navigate_from_camo_queue_to_case_deatils
+    visit camo_org.path
+    click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+    expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+    expect(page).to have_content(appeal.veteran_full_name.to_s)
   end
 end
