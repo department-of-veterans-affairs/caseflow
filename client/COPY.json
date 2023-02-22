@@ -1270,13 +1270,36 @@
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL": "Why is this appeal being returned?",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "This appeal will be sent to Board Intake.",
-  "VHA_RETURN_TO_BOARD_INTAKE_DUPLICATE": "Duplicate",
-  "VHA_RETURN_TO_BOARD_INTAKE_HLR_PENDING": "HLR Pending",
-  "VHA_RETURN_TO_BOARD_INTAKE_SC_PENDING": "SC Pending",
-  "VHA_RETURN_TO_BOARD_INTAKE_NOT_VHA_RELATED": "Not VHA related",
-  "VHA_RETURN_TO_BOARD_INTAKE_CLARIFICATION_NEEDED": "Clarification needed from appellant",
-  "VHA_RETURN_TO_BOARD_INTAKE_NO_VHA_DECISION": "No VHA decision",
-  "VHA_RETURN_TO_BOARD_INTAKE_OTHER": "Other",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS": {
+    "VHA_RETURN_TO_BOARD_INTAKE_DUPLICATE": {
+      "LABEL": "Duplicate",
+      "VALUE": "Duplicate"
+    },
+    "VHA_RETURN_TO_BOARD_INTAKE_HLR_PENDING": {
+      "LABEL": "HLR Pending",
+      "VALUE": "HLR Pending"
+    },
+    "VHA_RETURN_TO_BOARD_INTAKE_SC_PENDING": {
+      "LABEL": "SC Pending",
+      "VALUE": "SC Pending"
+    },
+    "VHA_RETURN_TO_BOARD_INTAKE_NOT_VHA_RELATED": {
+      "LABEL": "Not VHA related",
+      "VALUE": "Not VHA related"
+    },
+      "VHA_RETURN_TO_BOARD_INTAKE_CLARIFICATION_NEEDED": {
+      "LABEL": "Clarification needed from appellant",
+      "VALUE": "Clarification needed from appellant"
+    },
+    "VHA_RETURN_TO_BOARD_INTAKE_NO_VHA_DECISION": {
+      "LABEL": "No VHA decision",
+      "VALUE": "No VHA decision"
+    },
+    "VHA_RETURN_TO_BOARD_INTAKE_OTHER": {
+      "LABEL": "Other",
+      "VALUE": "Other"
+    }
+  },
   "VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL": "Please provide the reason for return",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_INSTRUCTIONS_LABEL": "Provide additional context and/or documents:",
   "VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION": "You have successfully returned %s's case to Board Intake",

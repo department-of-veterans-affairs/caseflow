@@ -184,16 +184,6 @@ const sendToBoardOpts = [
   { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_VHA_RELATED, value: 'not vha related' }
 ];
 
-const returnToBoardOptions = [
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_DUPLICATE, value: 'duplicate' },
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_HLR_PENDING, value: 'HLR Pending' },
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_SC_PENDING, value: 'SC Pending' },
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_NOT_VHA_RELATED, value: 'not vha related' },
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_CLARIFICATION_NEEDED, value: 'clarification needed from appellant' },
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_NO_VHA_DECISION, value: 'no vha decision' },
-  { label: COPY.VHA_RETURN_TO_BOARD_INTAKE_OTHER, value: 'other' }
-];
-
 const SendToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
   // if the VhaProgramOffice has completed a task, show the task instructions in the modal
@@ -264,6 +254,7 @@ SendToBoardIntakeModal.propTypes = {
 
 const VhaCamoReturnToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
+  const dropdownOptions = taskConfiguration.options;
 
   const handleDropdownChange = ({ value }) => {
     handleDropdownStateChange(value, setState);
@@ -282,7 +273,7 @@ const VhaCamoReturnToBoardIntakeModal = ({ props, state, setState }) => {
             defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
             onChange={handleDropdownChange}
             value={state.dropdown}
-            options={returnToBoardOptions}
+            options={dropdownOptions}
             errorMessage={props.highlightInvalid &&
               !validDropdown(state.dropdown) ? 'You must select a reason for returning to intake' : null}
           />
