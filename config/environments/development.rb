@@ -110,6 +110,7 @@ Rails.application.configure do
   # eFolder API URL to retrieve appeal documents
   config.efolder_url = "http://localhost:4000"
   config.efolder_key = "token"
+  ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] = "https://vefs-claimevidence-ui-uat.stage8.bip.va.gov"
 
   config.google_analytics_account = "UA-74789258-5"
 end
