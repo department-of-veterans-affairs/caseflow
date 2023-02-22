@@ -272,7 +272,7 @@ const VhaCamoDocumentsReadyForBvaIntakeReviewModal = ({ props, state, setState }
           <SearchableDropdown
             name="documentsReadyForBvaIntakeReviewOptions"
             id="documentsReadyForBvaIntakeReviewOptions"
-            label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_DETAIL}
+            label={StringUtil.nl2br(COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_BODY)}
             defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
             onChange={handleDropdownChange}
             value={state.dropdown}
