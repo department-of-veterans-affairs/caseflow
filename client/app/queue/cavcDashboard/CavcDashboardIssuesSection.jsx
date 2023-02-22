@@ -35,10 +35,7 @@ const olStyling = css({
 
 const CavcDashboardIssue = (props) => {
   const { dispositions, issue, index } = props;
-  const issueDisposition = dispositions?.filter((dis) => {
-    return dis.request_issue_id === issue.id;
-  });
-  const [disposition, setDisposition] = useState(issueDisposition || 'Select');
+  const [disposition, setDisposition] = useState(dispositions[0].disposition);
 
   const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS).map(
     (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
@@ -66,11 +63,10 @@ const CavcDashboardIssue = (props) => {
           <SearchableDropdown
             name={`issue-dispositions-${index}`}
             label="Dispositions"
-            value={disposition}
+            placeholder = {disposition}
             searchable
             hideLabel
             options={dispositionsOptions}
-            defaultText="Select"
             onChange={(option) => setDisposition(option)}
           />
         </div>
@@ -96,10 +92,12 @@ const CavcDashboardIssuesSection = (props) => {
       </div>
       <ol {...olStyling}>
         {issues.map((issue, i) => {
-
+          const issueDisposition = dashboardDispositions ? (dashboardDispositions.filter((dis) => {
+            return dis.request_issue_id === issue.id;
+          })) : 'Select';
           return (
             <React.Fragment key={i}>
-              <CavcDashboardIssue issue={issue} index={i} dispositions={dashboardDispositions} />
+              <CavcDashboardIssue issue={issue} index={i} dispositions={issueDisposition} />
             </React.Fragment>
           );
         })}
