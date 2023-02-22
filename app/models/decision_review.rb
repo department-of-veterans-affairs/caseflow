@@ -103,9 +103,8 @@ class DecisionReview < CaseflowRecord
     @concrete_descendants ||= descendants.reject(&:abstract_class)
   end
 
-  def asyncable_user(intake: str) -> Optional[str]:
-    match = re.search(r"\b@[a-zA-Z0-9_]+\b", intake)
-    return match.group(0)[1:] if match else None
+  def asyncable_user
+    intake&.user
   end
 
   def ama_activation_date

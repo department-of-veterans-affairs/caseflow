@@ -60,18 +60,6 @@ class ClaimReview < DecisionReview
     in: [true, false], message: "blank"
   }, if: [:saving_review]
 
-  # Validate that the `reviewer_name` attribute is present
-  validates :reviewer_name, presence: true
-
-  # Validate that the `rating` attribute is present and is one of the allowed values
-  validates :rating, presence: true, inclusion: { in: ['False', 'Misleading', 'Unproven', 'Partly False', 'True'] }
-
-  # alidate that the `url` attribute is a valid URL
-  validates :url, url: true
-
-  # Validate that the `date_published` attribute is present and is a valid date
-  validates :date_published, presence: true, date: true
-
   self.abstract_class = true
 
   class NoEndProductsRequired < StandardError; end
