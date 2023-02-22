@@ -139,8 +139,10 @@ export class CaseTitleDetails extends React.PureComponent {
     // we need to check if the request type is any of threee :central, video, travel or null
     const showHearingRequestType = appeal?.docketName === 'hearing' ||
       (appeal?.docketName === 'legacy' && appeal?.readableHearingRequestType);
-
-    const link = appeal.veteranParticipantId ? 'https://<base url>.bip.va.gov/veteran/' + appeal.veteranParticipantId : 'https://<base url>.bip.va.gov';
+    const claim_evidence_efolder_base_url = 'vefs-claimevidence-ui.local';
+    const link = appeal.veteranParticipantId ?
+      'https://' + claim_evidence_efolder_base_url + '.bip.va.gov/veteran/' + appeal.veteranParticipantId :
+      'https://'+ claim_evidence_efolder_base_url +'.bip.va.gov';
 
     return (
       <TitleDetailsSubheader id="caseTitleDetailsSubheader">
