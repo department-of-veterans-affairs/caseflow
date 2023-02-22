@@ -688,7 +688,9 @@ class CompleteTaskModal extends React.Component {
         days = radioValue;
       }
 
-      formattedInstructions.push(`Hold time: ${days} days`);
+      formattedInstructions.push(`\n Hold time: ${days} days\n\n`);
+
+      return formattedInstructions[0];
     }
 
     if (this.props.modalType === 'proceed_final_notification_letter') {
