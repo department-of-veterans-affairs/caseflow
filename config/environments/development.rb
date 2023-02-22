@@ -92,6 +92,8 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+  # Notifications page eFolder link
+  ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] ||= "https://vefs-claimevidence-ui-uat.stage8.bip.va.gov"
 
   if ENV["WITH_TEST_EMAIL_SERVER"]
     config.action_mailer.delivery_method = :smtp
@@ -110,7 +112,6 @@ Rails.application.configure do
   # eFolder API URL to retrieve appeal documents
   config.efolder_url = "http://localhost:4000"
   config.efolder_key = "token"
-  ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] = "https://vefs-claimevidence-ui-uat.stage8.bip.va.gov"
 
   config.google_analytics_account = "UA-74789258-5"
 end
