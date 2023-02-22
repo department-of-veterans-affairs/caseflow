@@ -1,8 +1,37 @@
 # frozen_string_literal: true
 
-RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
+RSpec.feature "Send Post Initial Notification Letter Tasks", :all_dbs do
   let(:user) { create(:user) }
   let(:cob_team) { ClerkOfTheBoard.singleton }
+
+  let(:root_task) { create(:root_task) }
+  let(:distribution_task) { create(:distribution_task, parent: root_task) }
+  let(:days_on_hold) { 45 }
+  let(:initial_letter_task) do
+    SendInitialNotificationLetterTask.create!(
+      appeal: root_task.appeal,
+      parent: distribution_task,
+      assigned_to: cob_team
+    )
+  end
+
+  let(:post_letter_task) do
+    PostSendInitialNotificationLetterHoldingTask.create!(
+      appeal: root_task.appeal,
+      parent: distribution_task,
+      assigned_to: cob_team,
+      assigned_by: user,
+      end_date: Time.zone.now + days_on_hold.days
+    )
+  end
+
+  let(:post_task_timer) do
+    TimedHoldTask.create_from_parent(
+      post_letter_task,
+      days_on_hold: days_on_hold,
+      instructions: "45 Days Hold Period"
+    )
+  end
 
   before do
     cob_team.add_user(user)
@@ -11,31 +40,11 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
   end
 
   describe "Accessing task actions" do
-    let(:root_task) { create(:root_task) }
-    let(:distribution_task) { create(:distribution_task, parent: root_task) }
-    let(:initial_letter_task) do
-      SendInitialNotificationLetterTask.create!(
-        appeal: root_task.appeal,
-        parent: distribution_task,
-        assigned_to: cob_team
-      )
-    end
-
-    let(:post_letter_task) do
-      PostSendInitialNotificationLetterHoldingTask.create!(
-        appeal: root_task.appeal,
-        parent: distribution_task,
-        assigned_to: cob_team,
-        days_on_hold: 45
-      )
-    end
-
     it "displays the proper task actions for the final letter task" do
       initial_letter_task.completed!
 
       visit("/queue")
       visit("/queue/appeals/#{post_letter_task.appeal.external_id}")
-
 
       # find and click action dropdown
       dropdown = find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
@@ -74,6 +83,5 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       expect(page).to have_content(`#{appeal_initial_letter_task.type} cancelled`)
       expect(appeal_initial_letter_task.status).to eq("cancelled")
     end
-
   end
 end

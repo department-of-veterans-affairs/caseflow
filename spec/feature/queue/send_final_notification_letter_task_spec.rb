@@ -3,37 +3,43 @@
 RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
   let(:user) { create(:user) }
   let(:cob_team) { ClerkOfTheBoard.singleton }
+  let(:root_task) { create(:root_task) }
+  let(:distribution_task) { create(:distribution_task, parent: root_task) }
+  let(:days_on_hold) { 45 }
+
+  let(:initial_letter_task) do
+    SendInitialNotificationLetterTask.create!(
+      appeal: root_task.appeal,
+      parent: distribution_task,
+      assigned_to: cob_team
+    )
+  end
+
+  let(:post_initial_task) do
+    PostSendInitialNotificationLetterHoldingTask.create!(
+      appeal: distribution_task.appeal,
+      parent: distribution_task,
+      end_date: Time.zone.now + days_on_hold.days,
+      assigned_by: user,
+      assigned_to: cob_team,
+      instructions: "45 Day Hold Period"
+    )
+  end
+  let(:post_task_timer) do
+    TimedHoldTask.create_from_parent(
+      post_initial_task,
+      days_on_hold: days_on_hold,
+      instructions: "45 Days Hold Period"
+    )
+  end
 
   before do
     cob_team.add_user(user)
     User.authenticate!(user: user)
     FeatureToggle.enable!(:cc_appeal_workflow)
-
-    PostSendInitialNotificationLetterHoldingTask.create_from_parent(
-      distribution_task,
-      days_on_hold: days_on_hold,
-      assigned_by: user,
-      instructions: "instructions"
-    )
   end
 
   describe "Accessing task actions" do
-    let(:root_task) { create(:root_task) }
-    let(:distribution_task) { create(:distribution_task, parent: root_task) }
-    let(:initial_letter_task) do
-      SendInitialNotificationLetterTask.create!(
-        appeal: root_task.appeal,
-        parent: distribution_task,
-        assigned_to: cob_team
-      )
-    end
-
-    let(:days_on_hold) { 45 }
-
-    let(:post_letter_task) do
-      PostSendInitialNotificationLetterHoldingTask.last
-    end
-
     let(:final_letter_task) do
       SendFinalNotificationLetterTask.create!(
         appeal: root_task.appeal,
@@ -44,7 +50,7 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
 
     it "displays the proper task actions for the final letter task" do
       initial_letter_task.completed!
-      post_letter_task.completed!
+      post_initial_task.completed!
 
       visit("/queue")
       visit("/queue/appeals/#{final_letter_task.appeal.external_id}")
@@ -60,7 +66,7 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
 
     it "cancel action cancels the task and displays it on the case timeline" do
       initial_letter_task.completed!
-      post_letter_task.completed!
+      post_initial_task.completed!
 
       visit("/queue")
       visit("/queue/appeals/#{final_letter_task.appeal.external_id}")
