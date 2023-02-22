@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script runs the WarRoom::DuppSuppClaimsSyncStatusUpdateCan job in the Caseflow Rails console.
+# This script runs the WarRoom::DuppSuppClaimsSyncStatusUpdate job in the Caseflow Rails console.
 # Usage: ./dupp-supp-claims-sync-status-update-can.sh <arg1> <arg2>
 # This will check if the first and second arguments are either
 # "Yes" or "No". If they are not, it will print an error message
@@ -15,12 +15,12 @@ if [[ "$1" == "No" && "$2" == "No" ]]; then
   echo "There is no remediation to be performed."
 elif [[ "$1" == "Yes" && "$2" == "No" ]]; then
   echo "You chosed the manual duplicateEP resolution for HLR or SC to be performed."
-  bin/rails runner 'ActiveRecord::Base.transaction do; WarRoom::DuppSuppClaimsSyncStatusUpdateCan.new.run("manual", "sc_hlr"); end'
+  bin/rails runner 'ActiveRecord::Base.transaction do; WarRoom::DuppSuppClaimsSyncStatusUpdate.new.run("manual", "sc_hlr"); end'
   bin/rails c <<EOF
 EOF
 elif [[ "$1" == "No" && "$2" == "Yes" ]]; then
   echo "You chosed the automated duplicateEP remediation for HLR and SC."
-  bin/rails runner 'ActiveRecord::Base.transaction do; WarRoom::DuppSuppClaimsSyncStatusUpdateCan.new.run("auto", "sc_hlr"); end'
+  bin/rails runner 'ActiveRecord::Base.transaction do; WarRoom::DuppSuppClaimsSyncStatusUpdate.new.run("auto", "sc_hlr"); end'
   bin/rails c <<EOF
 EOF
 elif [[ "$1" == "Yes" && "$2" == "Yes" ]]; then
