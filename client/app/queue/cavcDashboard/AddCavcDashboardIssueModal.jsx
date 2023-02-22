@@ -1,27 +1,13 @@
 /* eslint-disable no-undefined */
 import React, { useState } from 'react';
-// import { bindActionCreators } from 'redux';
-// import { connect, useDispatch } from 'react-redux';
-// import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 
 import Modal from '../../components/Modal';
-// import { requestPatch, showErrorMessage } from '../uiReducer/uiActions';
-// import Alert from '../../components/Alert';
-// import CAVC_DECISION_TYPES from '../../../constants/CAVC_DECISION_TYPES';
 import COPY from '../../../COPY';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
-
-/**
- * @param {Object} props
- *  - @param {string}   appealId         The id of the appeal we are updating this cavc remand for.
- *  - @param {Object}   error            Error sent from the back end upon submit to be displayed rather than submitting
- *  - @param {boolean}  highlightInvalid Whether or not to show field validation, set to true upon submit
- *  - @param {Object}   history          Provided with react router to be able to route to another page upon success
- */
 
 const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler }) => {
 
@@ -37,40 +23,6 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler }) => {
   const submitIssue = () => {
     submitHandler(issue);
   };
-  // const handleCancel = () => onCancel();
-
-  // const [modalIsOpen, setModalIsOpen] = useState(false);
-
-  // const validJudgementDate = () => Boolean(judgementDate) && validateDateNotInFuture(judgementDate);
-  // const validMandateDate = () => Boolean(mandateDate) && validateDateNotInFuture(mandateDate);
-  // const validInstructions = () => instructions?.length > 0;
-
-  // const validateForm = () => {
-  //   return validJudgementDate() && validMandateDate() && validInstructions();
-  // };
-
-  // const submit = () => updateDashboardIssues => {
-  //   const payload = {
-  //     data: {
-  //       benefit_type: benefitType,
-  //       issue_category: issueCategory,
-  //       disposition_by_court: dispositionByCourt,
-  //     }
-  //   };
-  // };
-
-  // const successMsgDetail = () => {
-  //   if (straightReversalType() || deathDismissalType()) {
-  //     return COPY.CAVC_REMAND_READY_FOR_DISTRIBUTION_DETAIL;
-  //   }
-
-  //   return COPY.CAVC_REMAND_CREATED_DETAIL;
-  // };
-
-  // const successMsg = {
-  //   title: COPY.CAVC_REMAND_CREATED_TITLE,
-  //   detail: successMsgDetail()
-  // };
 
   const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS).map(
     (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
@@ -114,11 +66,6 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler }) => {
   return (
     <Modal
       title={COPY.ADD_CAVC_DASHBOARD_ISSUE_TEXT}
-      // onCancel={handleCancel}
-      // onSubmit={handleSubmit}
-
-      // validateForm={validateForm}
-      // submit={submit}
       buttons={[
         {
           classNames: ['usa-button', 'cf-btn-link'],
@@ -136,30 +83,13 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler }) => {
       {benefitTypeField}
       {issueCategoryField}
       {dispositionByCourtField}
-      {/* {error && <Alert title={error.title} type="error">{error.detail}</Alert>} */}
     </Modal>
   );
 };
 
 AddCavcDashboardIssueModal.propTypes = {
-  // showErrorMessage: PropTypes.func,
-  // error: PropTypes.object,
   closeHandler: PropTypes.func,
   submitHandler: PropTypes.func
 };
 
-// const mapStateToProps = (state, ownProps) => ({
-//   // highlightInvalid: state.ui.highlightFormItems,
-//   // error: state.ui.messages.error,
-//   // // eslint-disable-next-line camelcase
-//   // decisionType: state.queue.appealDetails[ownProps.appealId].cavcRemand?.cavc_decision_type
-//   benefitType: state.queue[ownProps].cavcRemand?.cavc_decision_type
-// });
-
-// const mapDispatchToProps = (dispatch) => bindActionCreators({
-//   requestPatch,
-//   showErrorMessage
-// }, dispatch);
-
-// export default withRouter(connect(mapStateToProps)(AddCavcDashboardIssueModal));
 export default AddCavcDashboardIssueModal;
