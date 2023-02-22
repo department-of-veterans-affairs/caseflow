@@ -45,11 +45,8 @@ const CavcDashboardIssue = (props) => {
   let issueType = {};
 
   const requireDecisionReason = () => {
-    return (dispositions?.find(
-      (x) => x.request_issue_id === issue.id &&
-      (disposition === CAVC_DASHBOARD_DISPOSITIONS.reversed ||
-        disposition === CAVC_DASHBOARD_DISPOSITIONS.vacated_and_remanded))
-    );
+    return disposition === CAVC_DASHBOARD_DISPOSITIONS.reversed ||
+      disposition === CAVC_DASHBOARD_DISPOSITIONS.vacated_and_remanded;
   };
 
   if (issue.decision_review_type) {
@@ -74,7 +71,6 @@ const CavcDashboardIssue = (props) => {
             name={`issue-dispositions-${index}`}
             label="Dispositions"
             placeholder={disposition}
-            defaultValue={disposition}
             value={disposition}
             searchable
             hideLabel
