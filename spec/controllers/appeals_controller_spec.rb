@@ -931,7 +931,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         end
         it "should raise an error" do
           expect { subject }.to raise_error do |error|
-            byebug
             expect(error).to be_a(ActionController::RoutingError)
             expect(error.to_s).to include("Appeal Not Found")
           end
