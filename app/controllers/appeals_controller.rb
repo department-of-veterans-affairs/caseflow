@@ -61,7 +61,7 @@ class AppealsController < ApplicationController
         date = Time.zone.now.strftime("%Y-%m-%d %H.%M")
         if !appeal.nil?
           pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
-          send_data pdf, filename: "Notification Report " + appeals_id + " " + date, type: "application/pdf", disposition: :attachment
+          send_data pdf, filename: "Notification Report " + appeals_id + " " + date + ".pdf", type: "application/pdf", disposition: :attachment
         else
           raise ActionController::RoutingError.new('Appeal Not Found')
         end
