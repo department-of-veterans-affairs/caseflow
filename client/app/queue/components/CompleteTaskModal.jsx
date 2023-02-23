@@ -18,6 +18,7 @@ import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
+import { VhaReturnToBoardIntakeModal } from './VhaReturnToBoardIntakeModal';
 
 const validRadio = (radio) => {
   return radio?.length > 0;
@@ -254,54 +255,19 @@ SendToBoardIntakeModal.propTypes = {
 
 const VhaCamoReturnToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
-  const dropdownOptions = taskConfiguration.options;
-
-  const handleDropdownChange = ({ value }) => {
-    handleDropdownStateChange(value, setState);
-  };
 
   return (
     <React.Fragment>
-      {taskConfiguration && taskConfiguration.modal_body}
-      <div style= {{ marginBottom: '1.5em' }}>{COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY}</div>
-      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
-        <div>
-          <SearchableDropdown
-            name="returnToBoardOptions"
-            id="returnToBoardOptions"
-            label={COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL}
-            defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
-            onChange={handleDropdownChange}
-            value={state.dropdown}
-            options={dropdownOptions}
-            errorMessage={props.highlightInvalid &&
-              !validDropdown(state.dropdown) ? 'You must select a reason for returning to intake' : null}
-          />
-          {state.dropdown === 'other' &&
-            <TextareaField
-              label={COPY.VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL}
-              name="otherRejectReason"
-              id="completeTaskOtherInstructions"
-              onChange={(value) => setState({ otherInstructions: value })}
-              value={state.otherInstructions}
-              styling={marginTop(2)}
-              textAreaStyling={setHeight(4.5)}
-              errorMessage={props.highlightInvalid &&
-                !validInstructions(state.otherInstructions) ? 'Return reason field is required' : null}
-            />}
-          <TextareaField
-            label={COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_INSTRUCTIONS_LABEL}
-            name="instructions"
-            id="vhaReturnToBoardIntakeInstructions"
-            onChange={(value) => setState({ instructions: value })}
-            value={state.instructions}
-            styling={marginTop(4)}
-            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-            errorMessage={props.highlightInvalid &&
-              !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
-          />
-        </div>
-      )}
+      <VhaReturnToBoardIntakeModal
+        modalBody = {COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY}
+        dropdownLabel = {COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL}
+        dropdownDefaultText = {COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
+        otherLabel={COPY.VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL}
+        highlightInvalid = {props.highlightInvalid}
+        taskConfiguration={taskConfiguration}
+        state={state}
+        setState={setState}
+      />
     </React.Fragment>
   );
 };
@@ -368,52 +334,20 @@ SendColocatedTaskModal.propTypes = {
 const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
 
-  const dropdownOptions = taskConfiguration.options;
-
-  const handleDropdownChange = ({ value }) => {
-    handleDropdownStateChange(value, setState);
-  };
-
   return (
     <React.Fragment>
-      {taskConfiguration && taskConfiguration.modal_body}
-      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
-        <div style= {{ marginTop: '1.5rem' }}>
-          <SearchableDropdown
-            label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL}
-            defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
-            name="rejectReason"
-            id="caregiverSupportReturnToBoardIntakeReasonSelection"
-            options={dropdownOptions}
-            onChange={handleDropdownChange}
-            value={state.dropdown}
-            errorMessage={props.highlightInvalid &&
-              !validDropdown(state.dropdown) ? 'You must select a reason for returning to intake' : null}
-          />
-          {state.dropdown === 'other' &&
-            <TextareaField
-              label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL}
-              name="otherRejectReason"
-              id="completeTaskOtherInstructions"
-              onChange={(value) => setState({ otherInstructions: value })}
-              value={state.otherInstructions}
-              styling={marginTop(2)}
-              textAreaStyling={setHeight(4.5)}
-              errorMessage={props.highlightInvalid &&
-                !validInstructions(state.otherInstructions) ? 'Return reason field is required' : null}
-            />}
-          <TextareaField
-            label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL}
-            name="instructions"
-            id="caregiverSupportReturnToBoardIntakeInstructions"
-            onChange={(value) => setState({ instructions: value })}
-            value={state.instructions}
-            styling={marginTop(2)}
-            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-            optional
-          />
-        </div>
-      )}
+      <VhaReturnToBoardIntakeModal
+        modalBody = {COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY}
+        dropdownLabel = {COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL}
+        dropdownDefaultText = {COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
+        otherLabel={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL}
+        highlightInvalid = {props.highlightInvalid}
+        instructionsLabel={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL}
+        taskConfiguration={taskConfiguration}
+        state={state}
+        setState={setState}
+        instructionsOptional={true}
+      />
     </React.Fragment>
   );
 };
