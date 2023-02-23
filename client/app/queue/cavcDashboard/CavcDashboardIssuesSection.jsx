@@ -49,7 +49,7 @@ const CavcDashboardIssue = (props) => {
   const [removeModalIsOpen, setRemoveModalIsOpen] = useState(false);
 
   const [disposition, setDisposition] = useState(dispositions?.find(
-    (dis) => dis.request_issue_id === issue.id)?.disposition);
+    (dis) => dis.request_issue_id === issue.id)?.disposition || dispositions[0]);
 
   const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS).map(
     (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
@@ -165,7 +165,7 @@ const CavcDashboardIssuesSection = (props) => {
                   <CavcDashboardIssue
                     issue={cavcIssue}
                     index={i}
-                    dispositions={dashboardDispositions}
+                    dispositions={[cavcIssue.disposition]}
                     removeIssueHandler={removeIssueHandler}
                     addedIssueSection
                   />

@@ -17,7 +17,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler }) => {
   const issue = {
     benefit_type: benefitType?.value,
     issue_category: issueCategory,
-    dispositionByCourt
+    disposition: dispositionByCourt?.label
   };
 
   const submitIssue = () => {
