@@ -8,6 +8,7 @@ import COPY from '../../../COPY';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS';
+import RemoveCavcDashboardIssueModal from './RemoveCavcDashboardIssueModal';
 
 const singleIssueStyling = css({
   marginBottom: '1.5em !important',
@@ -44,6 +45,9 @@ const CavcDashboardIssue = (props) => {
     removeIssueHandler,
     addedIssueSection
   } = props;
+
+  const [removeModalIsOpen, setRemoveModalIsOpen] = useState(false);
+
   const [disposition, setDisposition] = useState(dispositions?.find(
     (dis) => dis.request_issue_id === issue.id)?.disposition);
 
@@ -58,8 +62,13 @@ const CavcDashboardIssue = (props) => {
     issueType = addedIssueSection ? issue.issue_category.label : issue.issue_category;
   }
 
+  const toggleRemoveIssueModal = () => {
+    setRemoveModalIsOpen(!removeModalIsOpen);
+  };
+
   const removeIssue = () => {
     removeIssueHandler(index);
+    toggleRemoveIssueModal();
   };
 
   return (
@@ -86,14 +95,19 @@ const CavcDashboardIssue = (props) => {
         </div>
         <div />
         {addedIssueSection &&
-          <Button
-            type="button"
-            name="Remove Issue Button"
-            classNames={['cf-push-right', 'cf-btn-link']}
-            onClick={removeIssue}
-          >
-            <i className="fa fa-trash-o" aria-hidden="true"></i>  { COPY.REMOVE_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT }
-          </Button>
+          <>
+            <Button
+              type="button"
+              name="Remove Issue Button"
+              classNames={['cf-push-right', 'cf-btn-link']}
+              onClick={toggleRemoveIssueModal}
+            >
+              <i className="fa fa-trash-o" aria-hidden="true"></i>  { COPY.REMOVE_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT }
+            </Button>
+            {removeModalIsOpen &&
+              <RemoveCavcDashboardIssueModal closeHandler={toggleRemoveIssueModal} submitHandler={removeIssue} />
+            }
+          </>
         }
       </div>
     </li>
