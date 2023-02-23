@@ -12,6 +12,7 @@ import COPY from '../../../COPY';
 import StatusMessage from '../../components/StatusMessage';
 import TabWindow from '../../components/TabWindow';
 import CavcDashboardTab from './CavcDashboardTab';
+import { CavcDashboardFooter } from './CavcDashboardFooter';
 
 export const CavcDashboard = (props) => {
   const { appealId, appealDetails, cavcDashboards } = props;
@@ -38,7 +39,10 @@ export const CavcDashboard = (props) => {
     if (loaded && cavcDashboards) {
       setTabs(cavcDashboards.map((dashboard) => {
         const label = `CAVC appeal ${dashboard.cavc_docket_number}`;
-        const page = <CavcDashboardTab dashboardId={dashboard.id} />;
+        const page = <CavcDashboardTab
+          dashboardId={dashboard.id}
+          userCanEdit={props.userCanEdit}
+        />;
 
         return { label, page };
       }));
@@ -63,6 +67,8 @@ export const CavcDashboard = (props) => {
             <h1>CAVC appeals for {appealDetails?.appellantFullName}</h1>
 
             <TabWindow tabs={tabs} tabPanelTabIndex={-1} alwaysShowTabs />
+            <hr />
+            <CavcDashboardFooter {...props} />
           </>
         }
         {loaded && error &&
@@ -83,13 +89,17 @@ CavcDashboard.propTypes = {
   fetchAppealDetails: PropTypes.func,
   fetchCavcDecisionReasons: PropTypes.func,
   fetchCavcSelectionBases: PropTypes.func,
-  fetchInitialDashboardData: PropTypes.func
+  fetchInitialDashboardData: PropTypes.func,
+  userCanEdit: PropTypes.bool,
+  // Router inherited props
+  history: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => {
   return {
     appealDetails: state.queue.appealDetails[ownProps.appealId],
-    cavcDashboards: state.cavcDashboard.cavc_dashboards
+    cavcDashboards: state.cavcDashboard.cavc_dashboards,
+    userCanEdit: state.ui.canEditCavcDashboards
   };
 };
 

@@ -57,7 +57,11 @@ const CavcDashboardIssue = (props) => {
   let issueType = {};
 
   if (issue.decision_review_type) {
-    issueType = `${issue.decision_review_type} - ${issue.contested_issue_description}`;
+    if (issue.contested_issue_description) {
+      issueType = `${issue.decision_review_type} - ${issue.contested_issue_description}`;
+    } else {
+      issueType = `${issue.decision_review_type}`;
+    }
   } else {
     issueType = addedIssueSection ? issue.issue_category.label : issue.issue_category;
   }
