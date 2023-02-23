@@ -9,7 +9,7 @@ export const CavcDashboardTab = (props) => {
   return (
     <>
       <CavcDashboardDetails {...props} />
-      <div><CavcDashboardIssuesSection {...props} /></div>
+      <CavcDashboardIssuesSection {...props} />
     </>
   );
 };

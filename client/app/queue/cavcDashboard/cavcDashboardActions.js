@@ -25,3 +25,10 @@ export const fetchInitialDashboardData = (appealId) => (dispatch) => {
       }
     }));
 };
+
+export const updateDashboardData = (dashboardIndex, updatedData) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.UPDATE_DASHBOARD_DATA,
+    payload: { dashboardIndex, updatedData }
+  });
+};
