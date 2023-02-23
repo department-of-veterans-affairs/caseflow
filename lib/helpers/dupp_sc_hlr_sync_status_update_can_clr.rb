@@ -29,7 +29,7 @@ more focused methods to improve readability and maintainability.
 # frozen_string_literal: true
 
 module WarRoom
-  class DuppSuppClaimsSyncStatusUpdateClr
+  class DuppScHlrSyncStatusUpdateCanClr
     if
       def run(auto, sc_hlr)
         # set current user
@@ -90,6 +90,7 @@ module WarRoom
             # Log a message for the user
             Rails.logger.info("Updated EPE for Supplemental Claim #{sc.id}")
           end
+
           hlr.each do |hlr|
             # Set the review to the first epe source appeal
             epe = hlr.end_product_establishment
@@ -159,6 +160,7 @@ module WarRoom
             unless uuid.match?(UUID_REGEX)
               raise "Invalid UUID format. Please enter a valid UUID. This does not match our required pattern"
             end
+            check_by_ama_appeal_uuid(uuid)
           rescue => e
             puts e.message
             retry
@@ -199,45 +201,11 @@ module WarRoom
             run_remediation(a.veteran.file_number)
           end
 
-          def check_by_legacy_appeal_vacols_id(legacy_appeal_vacols_id)
-            la = LegacyAppeal.find_by_vacols_id(legacy_appeal_vacols_id)
-
-            if la.nil?
-              puts("Legacy Appeal was not found for that vacols id. Aborting..")
-              fail Interrupt
-            elsif la.veteran.nil?
-              puts("veteran is not associated with this legacy appeal. Aborting..")
-              fail Interrupt
-            elsif la.veteran.file_number.empty?
-              puts("veteran tied to legacy appeal does not have a file_number. Aborting..")
-              fail Interrupt
-            end
-
-            check_by_duplicate_veteran_file_number(la.veteran.file_number)
-          end
-
-          def run_remediation_by_vacols_id(vacols_id)
-            la = LegacyAppeal.find_by_vacols_id(legacy_appeal_vacols_id)
-
-            if la.nil?
-              puts("Legacy Appeal was not found for that vacols id. Aborting..")
-              fail Interrupt
-            elsif la.veteran.nil?
-              puts("veteran is not associated with this legacy appeal. Aborting..")
-              fail Interrupt
-            elsif la.veteran.file_number.empty?
-              puts("veteran tied to legacy appeal does not have a file_number. Aborting..")
-              fail Interrupt
-            end
-
-            run_remediation(la.veteran.file_number)
-          end
-
           def check_by_duplicate_veteran_file_number(duplicate_veteran_file_number)
             # check if only one vet has the old file number
             vets = Veteran.where(file_number: duplicate_veteran_file_number)
 
-            # Check that only oen vet has the bad file number
+            # Check that only one vet has the bad file number
             if vets.nil? || vets.count > 1
               puts("More than on vet with the duplicate veteran file number exists. Aborting..")
               fail Interrupt
@@ -262,7 +230,7 @@ module WarRoom
             v2 = nil
 
             vet_ssn = v.ssn
-            # checks if we get no vets or les sthan 2 vets}
+            # checks if we get no vets or less than 2 vets}
             if dupe_vets.nil? || dupe_vets.count < 2
               puts("No duplicate veteran found")
               fail Interrupt
@@ -302,7 +270,7 @@ module WarRoom
             end
 
             # The following code runs through all possible relations
-            # to the duplicat evetran by file number or veteran id
+            # to the duplicat veteran by file number or veteran id
             # collects all counts and displays all relations
             as = Appeal.where(veteran_file_number: old_file_number)
 
@@ -917,21 +885,106 @@ module WarRoom
             end
           end
 
+          # This code finds the Veteran associated with the given UUID, then finds the SupplementalClaims and HigherLevelReviews associated with the Veteran.
+          # It then filters these to only include the claims with establishment errors containing "duplicateep",
+          # and joins them based on their associated EndProduct records.
+          # The resulting ActiveRecord::Relation object is stored in problem_claims, which can be used for further processing as needed.
+
+          puts("We have checked for duplicate file records based upon your appeal and made necessary adjustments. It is now recommended to
+            cancel the sink job of the appeal with the duplicateEP error. Please enter uuid of appeal to cancel the sink job for: \n")
+
+          begin
+            UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/i
+            uuid2 = gets.chomp.strip
+
+            unless uuid2.match?(UUID_REGEX)
+              raise "Invalid UUID format. Please enter a valid UUID."
+            end
+
+            # Get SupplementalClaim or HigherLevelReview with a specific uuid
+            sc = SupplementalClaim.find_by_uuid(uuid2)
+            hlr = HigherLevelReview.find_by_uuid(uuid2)
+
+            # Check if the uuid exists in either table
+            unless sc || hlr
+              puts "No SupplementalClaim or HigherLevelReview found with uuid: #{uuid}"
+              return
+            end
+
+            puts "Running match query for SC or HLRs that contain duplicateEP Errors"
+
+            # set current user
+            RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+
+            # Sets the variable End Product Establishment by the reference_id/Claim ID
+            scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
+            hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
+
+            # Grabs the problem suppliment claims with the status of Cancelled or Cleared
+            problem_scs = scs.select { |sc|
+            sc.veteran.end_products.select { |ep|
+            ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+            [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)}.empty?}
+
+            # Grabs the problem suppliment claims with the status of Cancelled or Cleared
+            problem_hlr = hlr.select { |hlr|
+            hlr.end_products.select { |ep|
+            ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+            [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)}.empty?}
+
+            # Count the total problem claims and keep track
+            count = problem_scs.count + problem_hlr.count
+
+            # Check if the uuid is part of the problem claims
+            if
+            (problem_scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
+              .where(id: sc&.id)) ||
+            (problem_hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
+              .where(id: hlr&.id)) === true;
+              then
+              puts "uuid is part of the problem claims, total problem claims count to be displayed below"
+            else
+              puts "The uuid provided does not match a problem claim with duplicateEP error"
+              fail Interrupt
+            end
+
+            # Join the problem SupplementalClaims and HigherLevelReviews
+            problem_claims = problem_scs.joins(:end_products)
+            .where(end_products: { claim_type_code: "040", status_type_code: ["CAN", "CLR"], last_action_date: [Date.today, 1.day.ago.to_date] })
+            .merge(problem_hlr.joins(:end_products)
+            .where(end_products: { claim_type_code: "030", status_type_code: ["CAN", "CLR"], last_action_date: [Date.today, 1.day.ago.to_date] }))
+
+            # Count the total problem claims and keep track
+            count = problem_claims.count
+
+            if count > 0
+            Rails.logger.info("Found #{count} problem Supplemental Claims and/or Higher Level Reviews we are tracking and if you run remediation steps successfully,
+              this cound should reduce by one, please review the claim data, and select yes or no next if you would like to cancel or clear the sync status")
+            else
+            Rails.logger.info("No problem claims found. You can end your terminal session now.")
+            end
+
+            unless
+          rescue => e
+            puts e.message
+            retry
+          end
+
+          # If it shows up. We want to pp all data.
+
+          # Prompt user to enter yes or no to fix the data manually by manually updating the caseflow sync status.
+
+          # If no appeal is found in the table. Prompt the user that the appeal UUID is invalid as no duplicate EP error exists for that appeal.
+
+          # PP Appeal Data
+
+          # Prompt user if he recogonizes change to the Appeal and if he would like to manually up update the sync status by performing.
+
           private
 
           def convert_file_number_to_legacy(file_number)
             return LegacyAppeal.convert_file_number_to_vacols(file_number)
           end
-
-          # After checking and correcting for any duplicate file numbers we will then, update Appeal sync status.
-
-          # Next for lines of code in the commands; we will want to query the Dupplicate EP Dashboard to see if that UUID shows up
-          # If it shows up. We want to pp all data.
-          # Prompt user to enter yes or no to fix the data manually by manually updating the caseflow sync status.
-          # If no appeal is found in the table. Prompt the user that the appeal UUID is invalid as no duplicate EP error exists for that appeal.
-          # Perform the validation check on Appeal
-          # PP Appeal Data
-          # Prompt user if he recogonizes change to the Appeal and if he would like to manually up update the sync status by performing.
         end
       end
     end
