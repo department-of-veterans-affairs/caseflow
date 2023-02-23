@@ -1272,9 +1272,18 @@
     "BODY": "This appeal will be sent to Board intake for reveiw.\n\nPlease select where the documents for this appeal are stored.",
     "INSTRUCTIONS_LABEL": "Provide additional context and/or documents:",
     "DROPDOWN_OPTIONS": {
-      "VBMS": "VBMS",
-      "CENTRALIZED_MAIL_PORTAL": "Centralized Mail Portal",
-      "OTHER": "Other"
+      "VBMS": {
+        "LABEL": "VBMS",
+        "VALUE": "vbms"
+      },
+      "CENTRALIZED_MAIL_PORTAL": {
+        "LABEL": "Centralized Mail Portal",
+        "VALUE": "centralized mail portal"
+      },
+      "OTHER": {
+        "LABEL": "Other",
+        "VALUE": "other"
+      }
     },
     "OTHER_INSTRUCTION_LABEL": "Please provide the source for the documents",
     "CONFIRMATION_TITLE": "You have successfully sent %s's case to Board Intake for review"

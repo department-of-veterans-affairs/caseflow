@@ -488,9 +488,11 @@ class TaskActionRepository
     end
 
     def vha_documents_ready_for_bva_intake_review(*)
+      dropdown_options = downcase_keys(COPY::VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL['DROPDOWN_OPTIONS'])
       {
         modal_title: COPY::VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL['TITLE'],
         type: VhaDocumentSearchTask.name,
+        options: dropdown_options,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
       }
     end
@@ -769,6 +771,12 @@ class TaskActionRepository
         task.parent.assigned_to.users.active.reject { |check_user| check_user == task.assigned_to }
       else
         []
+      end
+    end
+
+    def downcase_keys(options)
+      options.map do |_, value|
+        value.transform_keys(&:downcase)
       end
     end
   end

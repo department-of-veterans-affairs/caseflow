@@ -229,22 +229,10 @@ SendToBoardIntakeModal.propTypes = {
   highlightInvalid: PropTypes.bool
 };
 
-const documentsReadyForBvaIntakeReviewOptions = [
-  {
-    label: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DROPDOWN_OPTIONS.VBMS,
-    value: 'vbms' },
-  {
-    label: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DROPDOWN_OPTIONS.CENTRALIZED_MAIL_PORTAL,
-    value: 'centralized mail portal'
-  },
-  {
-    label: COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DROPDOWN_OPTIONS.OTHER,
-    value: 'other'
-  }
-];
-
 const VhaCamoDocumentsReadyForBvaIntakeReviewModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
+  const dropdownOptions = taskConfiguration.options;
+
   // if the VhaProgramOffice has completed a task, show the task instructions in the modal
   const programOfficeInstructions = props.tasks.map((task) => {
     return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1];
@@ -276,7 +264,7 @@ const VhaCamoDocumentsReadyForBvaIntakeReviewModal = ({ props, state, setState }
             defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
             onChange={handleDropdownChange}
             value={state.dropdown}
-            options={documentsReadyForBvaIntakeReviewOptions}
+            options={dropdownOptions}
             errorMessage={props.highlightInvalid &&
               !validInstructions(state.dropdown) ? 'You must select a reason for returning to intake' : null}
           />
