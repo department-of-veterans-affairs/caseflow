@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { LABELS } from './cavcDashboardConstants';
@@ -95,10 +94,4 @@ CavcDashboardDetails.propTypes = {
   userCanEdit: PropTypes.bool
 };
 
-const mapStateToProps = (state) => ({
-  userCanEdit: state.ui.canEditCavcDashboards
-});
-
-export default connect(
-  mapStateToProps
-)(CavcDashboardDetails);
+export default CavcDashboardDetails;

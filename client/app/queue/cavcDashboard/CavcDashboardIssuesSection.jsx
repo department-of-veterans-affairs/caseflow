@@ -34,7 +34,7 @@ const olStyling = css({
 });
 
 const CavcDashboardIssue = (props) => {
-  const { dispositions, issue, index } = props;
+  const { dispositions, issue, index, userCanEdit } = props;
   const [disposition, setDisposition] = useState(dispositions?.find(
     (dis) => dis.request_issue_id === issue.id)?.disposition);
 
@@ -69,6 +69,7 @@ const CavcDashboardIssue = (props) => {
             hideLabel
             options={dispositionsOptions}
             onChange={(option) => setDisposition(option)}
+            readOnly={!userCanEdit}
           />
         </div>
       </div>
@@ -77,7 +78,7 @@ const CavcDashboardIssue = (props) => {
 };
 
 const CavcDashboardIssuesSection = (props) => {
-  const { dashboard } = props;
+  const { dashboard, userCanEdit } = props;
   const issues = dashboard.source_request_issues;
   const cavcIssues = dashboard.cavc_dashboard_issues;
   const dashboardDispositions = dashboard.cavc_dashboard_dispositions;
@@ -99,7 +100,12 @@ const CavcDashboardIssuesSection = (props) => {
 
           return (
             <React.Fragment key={i}>
-              <CavcDashboardIssue issue={issue} index={i} dispositions={issueDisposition} />
+              <CavcDashboardIssue
+                issue={issue}
+                index={i}
+                dispositions={issueDisposition}
+                userCanEdit={userCanEdit}
+              />
             </React.Fragment>
           );
         })}
@@ -107,7 +113,12 @@ const CavcDashboardIssuesSection = (props) => {
 
           return (
             <React.Fragment key={i}>
-              <CavcDashboardIssue issue={cavcIssue} index={i} dispositions={dashboardDispositions} />
+              <CavcDashboardIssue
+                issue={cavcIssue}
+                index={i}
+                dispositions={[cavcIssue.disposition]}
+                userCanEdit={userCanEdit}
+              />
             </React.Fragment>
           );
         })}
@@ -126,10 +137,12 @@ CavcDashboardIssue.propTypes = {
     id: PropTypes.number,
   }),
   dispositions: PropTypes.array,
+  userCanEdit: PropTypes.bool
 };
 
 CavcDashboardIssuesSection.propTypes = {
   dashboard: PropTypes.object,
+  userCanEdit: PropTypes.bool
 };
 
 export default CavcDashboardIssuesSection;

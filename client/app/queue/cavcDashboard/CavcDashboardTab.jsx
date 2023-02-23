@@ -21,7 +21,8 @@ CavcDashboardTab.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    dashboard: getCavcDashboardById(state, { dashboardId: ownProps.dashboardId })
+    dashboard: getCavcDashboardById(state, { dashboardId: ownProps.dashboardId }),
+    userCanEdit: state.ui.canEditCavcDashboards
   };
 };
 
