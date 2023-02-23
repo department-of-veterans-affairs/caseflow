@@ -281,6 +281,7 @@ class QueueApp extends React.PureComponent {
   routedCavcDashboard = (props) => (
     <CavcDashboard
       appealId={props.match.params.appealId}
+      history={props.history}
     />
   );
 
