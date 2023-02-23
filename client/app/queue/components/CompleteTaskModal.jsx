@@ -7,9 +7,8 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import RadioField from '../../components/RadioField';
-import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, setHeight, slimHeight } from '../constants';
+import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, slimHeight } from '../constants';
 import TextareaField from 'app/components/TextareaField';
-import SearchableDropdown from '../../components/SearchableDropdown';
 import Alert from 'app/components/Alert';
 import COPY from '../../../COPY';
 import { taskById, appealWithDetailSelector, getAllTasksForAppeal } from '../selectors';
@@ -30,13 +29,6 @@ const validInstructions = (instructions) => {
 
 const validDropdown = (dropdown) => {
   return dropdown?.length > 0;
-};
-
-const handleDropdownStateChange = (value, setState) => {
-  setState({ dropdown: value });
-  if (value === 'other') {
-    setState({ otherInstructions: '' });
-  }
 };
 
 const formatOtherInstructions = (state) => {
@@ -346,7 +338,7 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
         taskConfiguration={taskConfiguration}
         state={state}
         setState={setState}
-        instructionsOptional={true}
+        instructionsOptional
       />
     </React.Fragment>
   );

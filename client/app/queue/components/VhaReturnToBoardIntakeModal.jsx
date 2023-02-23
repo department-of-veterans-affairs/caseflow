@@ -18,6 +18,13 @@ export const VhaReturnToBoardIntakeModal = (props) => {
     }
   };
 
+  const validInstructions = (instructions) => {
+    return instructions?.length > 0;
+  };
+
+  const validDropdown = (dropdown) => {
+    return dropdown?.length > 0;
+  };
 
   return (
     <React.Fragment>
@@ -70,9 +77,12 @@ VhaReturnToBoardIntakeModal.propTypes = {
   tasks: PropTypes.array,
   setState: PropTypes.func,
   state: PropTypes.object,
-  register: PropTypes.func,
-  featureToggles: PropTypes.array,
   highlightInvalid: PropTypes.bool,
   taskConfiguration: PropTypes.object,
-  instructionsOptional: PropTypes.bool
+  instructionsOptional: PropTypes.bool,
+  modalBody: PropTypes.string,
+  dropdownLabel: PropTypes.string,
+  dropdownDefaultText: PropTypes.string,
+  instructionsLabel: PropTypes.string,
+  otherLabel: PropTypes.string
 };
