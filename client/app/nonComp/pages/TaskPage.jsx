@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -89,6 +90,31 @@ class TaskPageUnconnected extends React.PureComponent {
     </div>;
   }
 }
+
+TaskPageUnconnected.propTypes = {
+  appeal: PropTypes.shape({
+    veteran: PropTypes.object,
+    formType: PropTypes.string,
+    sameOffice: PropTypes.bool,
+    informalConference: PropTypes.bool,
+    veteranIsNotClaimant: PropTypes.bool,
+    receiptDate: PropTypes.string
+  }),
+  task: PropTypes.shape({
+    id: PropTypes.number,
+    claimant: PropTypes.object,
+    type: PropTypes.string,
+    created_at: PropTypes.string
+  }),
+  businessLine: PropTypes.string,
+  decisionIssuesStatus: PropTypes.object,
+  taskUpdateDefaultPage: PropTypes.func,
+  completeTask: PropTypes.func,
+  history: PropTypes.shape({
+    push: PropTypes.func
+  }),
+  businessLineUrl: PropTypes.string
+};
 
 const TaskPage = connect(
   (state) => ({
