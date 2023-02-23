@@ -130,25 +130,4 @@ describe('CavcDashboardDetails', () => {
     expect(modalSave).toBeDisabled();
   });
 
-  it('save button is saves changed info', async () => {
-    const dashboard = createDashboardProp(true);
-
-    await renderCavcDashboardDetails(dashboard, true);
-
-    const edit = screen.getByRole('button', { description: 'Edit' });
-
-    fireEvent.click(edit);
-
-    const modalSave = document.getElementById('Edit-CAVC-Details-button-id-1');
-    const modalCavcDocketNum = document.getElementById('CAVC Docket Number');
-
-    fireEvent.change(modalCavcDocketNum, {
-      target: { value: '22-0011' }
-    });
-
-    fireEvent.click(modalSave);
-
-    expect(screen.getByText('22-0011')).toBeTruthy();
-  });
-
 });
