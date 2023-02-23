@@ -27,6 +27,28 @@ export const cavcDashboardReducer = (state = initialState, action) => {
         $set: action.payload.cavc_dashboards
       }
     });
+  case ACTIONS.UPDATE_DASHBOARD_DATA:
+    return update(state, {
+      cavc_dashboards: {
+        [action.payload.dashboardIndex]: {
+          board_decision_date: {
+            $set: [action.payload.updatedData.boardDecisionDateUpdate]
+          },
+          board_docket_number: {
+            $set: [action.payload.updatedData.boardDocketNumberUpdate]
+          },
+          cavc_decision_date: {
+            $set: [action.payload.updatedData.cavcDecisionDateUpdate]
+          },
+          cavc_docket_number: {
+            $set: [action.payload.updatedData.cavcDocketNumberUpdate]
+          },
+          joint_motion_for_remand: {
+            $set: [action.payload.updatedData.jointMotionForRemandUpdate]
+          }
+        }
+      }
+    });
   default:
     return state;
   }
