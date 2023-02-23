@@ -12,4 +12,4 @@ ADD instantclient_12_1 /opt/oracle/instantclient_12_1
 ENV LD_LIBRARY_PATH=/opt/oracle/instantclient_12_1
 RUN ln -s /opt/oracle/instantclient_12_1/libclntsh.so.12.1 /opt/oracle/instantclient_12_1/libclntsh.so
 
-USER circleci
+USER root
