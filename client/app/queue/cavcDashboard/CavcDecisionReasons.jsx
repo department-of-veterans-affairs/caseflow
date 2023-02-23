@@ -34,8 +34,10 @@ const CavcDecisionReasons = ({ uniqueId }) => {
 
   const decisionReasons = useSelector((state) => state.cavcDashboard.decision_reasons);
   const checkedBoxesInStore = useSelector((state) => state.cavcDashboard.checked_boxes[uniqueId]);
-  const parentReasons = decisionReasons.filter((parentReason) => !parentReason.parent_decision_reason_id);
-  const childReasons = decisionReasons.filter((childReason) => childReason.parent_decision_reason_id !== null);
+  const parentReasons = decisionReasons.filter((parentReason) => !parentReason.parent_decision_reason_id).sort(
+    (obj) => obj.order);
+  const childReasons = decisionReasons.filter((childReason) => childReason.parent_decision_reason_id !== null).sort(
+    (obj) => obj.order);
   const dispatch = useDispatch();
 
   const initialCheckboxes = parentReasons.reduce((obj, parent) => {
