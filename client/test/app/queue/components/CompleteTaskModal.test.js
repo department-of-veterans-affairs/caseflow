@@ -193,7 +193,7 @@ describe('CompleteTaskModal', () => {
     test('Other text area appears when other is selected in the dropdown', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
-      selectFromDropdown('Why is this appeal being returned?', 'Other')
+      selectFromDropdown('Why is this appeal being returned?', 'Other');
 
       expect(screen.getByRole(
         'textbox', { name: 'Please provide the reason for return' }
@@ -205,7 +205,7 @@ describe('CompleteTaskModal', () => {
 
       expect(screen.findByRole('button', { name: buttonText, disabled: true })).toBeTruthy();
 
-      selectFromDropdown('Why is this appeal being returned?', 'Duplicate')
+      selectFromDropdown('Why is this appeal being returned?', 'Duplicate');
 
       expect(screen.findByRole('button', { name: buttonText, disabled: false })).toBeTruthy();
     });
@@ -215,7 +215,7 @@ describe('CompleteTaskModal', () => {
 
       expect(screen.findByRole('button', { name: buttonText, disabled: true })).toBeTruthy();
 
-      selectFromDropdown('Why is this appeal being returned?', 'Other')
+      selectFromDropdown('Why is this appeal being returned?', 'Other');
 
       expect(screen.findByRole('button', { name: buttonText, disabled: true })).toBeTruthy();
 
@@ -230,10 +230,11 @@ describe('CompleteTaskModal', () => {
 
     test('other instructions are formatted', async () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
-      selectFromDropdown('Why is this appeal being returned?', 'Other')
+      selectFromDropdown('Why is this appeal being returned?', 'Other');
       const otherTextArea = screen.getByRole(
         'textbox', { name: 'Please provide the reason for return' }
       );
+
       userEvent.type(otherTextArea, 'very good reason');
 
       userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
