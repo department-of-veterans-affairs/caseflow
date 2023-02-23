@@ -18,6 +18,10 @@ const checkboxDivStyling = css({
   '& .cf-form-checkbox label::before': { left: '0px' },
 });
 
+const alertBoxStyling = css({
+  '& .usa-alert': { 'background-position-y': 'center' },
+});
+
 const VhaMembershipRequestForm = () => {
   // Redux selectors
   const programOfficeTeamManagementFeatureToggle = useSelector(
@@ -130,7 +134,7 @@ const VhaMembershipRequestForm = () => {
       <p> If you need access to a VHA team, please fill out the form below. </p>
       <h2> Select which VHA groups you need access to </h2>
       {(memberOrOpenRequestToVha || memberOrRequestToPreDocketOrg) &&
-        <div style={{ marginBottom: '3rem' }}>
+        <div className={alertBoxStyling} style={{ marginBottom: '3rem' }}>
           <Alert
             type="info"
             message={VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE}
