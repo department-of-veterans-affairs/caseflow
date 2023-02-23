@@ -1,0 +1,22 @@
+<%= render "intro" %>
+
+<%= content_for :content do %>
+  <p>
+    At this time, we have denied your request for access to <%= @requesting_org_name %> pages in Caseflow and the VHA pages in general.
+  </p>
+
+  <p>
+    If you are in need of access to VHA pages without <%= @requesting_org_name %> specific pages, please make a new request for VHA access by going to <%= link_to 'http://www.appeals.cf.ds.va.gov/vha=help', 'http://www.appeals.cf.ds.va.gov/vha=help' %> and selecting only the VHA checkbox when re-submitting the form.
+  </p>
+
+  <p style="padding-top:20px">
+    <b> You currently have access to the following groups’ pages, if any: </b>
+  </p>
+
+  <% @accessible_groups.each do |accessible_group| %>
+    <p> <%= accessible_group %> </p>
+  <% end %>
+<% end %>
+
+<%= render "help" %>
+<%= render "requesting_org_signature" %>
