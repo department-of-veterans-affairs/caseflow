@@ -75,6 +75,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler }) => {
         {
           classNames: ['usa-button'],
           name: COPY.MODAL_SUBMIT_BUTTON,
+          disabled: (!benefitType || !issueCategory || !dispositionByCourt),
           onClick: submitIssue,
         }
       ]}
