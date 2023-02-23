@@ -5,7 +5,8 @@ export const initialState = {
   decision_reasons: {},
   selection_bases: {},
   cavc_dashboards: [],
-  checked_boxes: {}
+  checked_boxes: {},
+  dashboard_issues: []
 };
 
 export const cavcDashboardReducer = (state = initialState, action) => {
@@ -33,6 +34,49 @@ export const cavcDashboardReducer = (state = initialState, action) => {
       checked_boxes: {
         [action.payload.issueId]: {
           $set: action.payload.checkedReasons
+        }
+      }
+    });
+
+  case ACTIONS.UPDATE_DASHBOARD_ISSUES:
+    return update(state, {
+      cavc_dashboards: {
+        [action.payload.dashboardIndex]: {
+          cavc_dashboard_issues: {
+            $push: [action.payload.issue]
+          }
+        }
+      }
+    });
+  case ACTIONS.REMOVE_DASHBOARD_ISSUE:
+    return update(state, {
+      cavc_dashboards: {
+        [action.payload.dashboardIndex]: {
+          cavc_dashboard_issues: {
+            $splice: [[action.payload.issueIndex, 1]]
+          }
+        }
+      }
+    });
+  case ACTIONS.UPDATE_DASHBOARD_DATA:
+    return update(state, {
+      cavc_dashboards: {
+        [action.payload.dashboardIndex]: {
+          board_decision_date: {
+            $set: action.payload.updatedData.boardDecisionDateUpdate
+          },
+          board_docket_number: {
+            $set: action.payload.updatedData.boardDocketNumberUpdate
+          },
+          cavc_decision_date: {
+            $set: action.payload.updatedData.cavcDecisionDateUpdate
+          },
+          cavc_docket_number: {
+            $set: action.payload.updatedData.cavcDocketNumberUpdate
+          },
+          joint_motion_for_remand: {
+            $set: action.payload.updatedData.jointMotionForRemandUpdate
+          }
         }
       }
     });

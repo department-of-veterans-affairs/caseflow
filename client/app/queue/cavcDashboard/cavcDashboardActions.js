@@ -33,3 +33,23 @@ export const setCheckedDecisionReasons = (checkedReasons, issueId) => ({
     issueId,
   }
 });
+export const updateDashboardIssues = (dashboardIndex, issue) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.UPDATE_DASHBOARD_ISSUES,
+    payload: { dashboardIndex, issue }
+  });
+};
+
+export const removeDashboardIssue = (dashboardIndex, issueIndex) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.REMOVE_DASHBOARD_ISSUE,
+    payload: { dashboardIndex, issueIndex }
+  });
+};
+
+export const updateDashboardData = (dashboardIndex, updatedData) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.UPDATE_DASHBOARD_DATA,
+    payload: { dashboardIndex, updatedData }
+  });
+};

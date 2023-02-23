@@ -3,9 +3,13 @@ import { css } from 'glamor';
 
 import { LABELS } from './cavcDashboardConstants';
 import PropTypes from 'prop-types';
+import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
+import COPY from '../../../COPY';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import CavcDecisionReasons from './CavcDecisionReasons';
+import Button from '../../components/Button';
 import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS';
+import RemoveCavcDashboardIssueModal from './RemoveCavcDashboardIssueModal';
 
 const singleIssueStyling = css({
   marginBottom: '1.5em !important',
@@ -23,7 +27,6 @@ const headerStyling = css({
   display: 'grid',
   gridTemplateColumns: '70% 30%',
   marginBottom: '0',
-  paddingLeft: '21px'
 });
 
 const issueSectionStyling = css({
@@ -32,12 +35,22 @@ const issueSectionStyling = css({
 
 const olStyling = css({
   fontWeight: 'bold',
+  paddingLeft: '1em'
 });
 
 const CavcDashboardIssue = (props) => {
-  const { dispositions, issue, index } = props;
+  const {
+    issue,
+    index,
+    dispositions,
+    removeIssueHandler,
+    addedIssueSection
+  } = props;
+
+  const [removeModalIsOpen, setRemoveModalIsOpen] = useState(false);
+
   const [disposition, setDisposition] = useState(dispositions?.find(
-    (dis) => dis.request_issue_id === issue.id)?.disposition);
+    (dis) => dis.request_issue_id === issue.id)?.disposition || dispositions[0]);
 
   const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS).map(
     (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
@@ -50,17 +63,30 @@ const CavcDashboardIssue = (props) => {
   };
 
   if (issue.decision_review_type) {
-    issueType = `${issue.decision_review_type} - ${issue.contested_issue_description}`;
+    if (issue.contested_issue_description) {
+      issueType = `${issue.decision_review_type} - ${issue.contested_issue_description}`;
+    } else {
+      issueType = `${issue.decision_review_type}`;
+    }
   } else {
-    issueType = issue.issue_category;
+    issueType = addedIssueSection ? issue.issue_category.label : issue.issue_category;
   }
+
+  const toggleRemoveIssueModal = () => {
+    setRemoveModalIsOpen(!removeModalIsOpen);
+  };
+
+  const removeIssue = () => {
+    removeIssueHandler(index);
+    toggleRemoveIssueModal();
+  };
 
   return (
     <li key={index}>
       <div {...singleIssueStyling}>
         <div>
           <div>
-            <strong> Benefit type: </strong> {[issue.benefit_type]}
+            <strong> Benefit type: </strong> {BENEFIT_TYPES[issue.benefit_type]}
           </div>
           <div>
             <strong>Issue: </strong> {issueType}
@@ -78,6 +104,22 @@ const CavcDashboardIssue = (props) => {
             onChange={(option) => setDisposition(option.label)}
           />
         </div>
+        <div />
+        {addedIssueSection &&
+          <>
+            <Button
+              type="button"
+              name="Remove Issue Button"
+              classNames={['cf-push-right', 'cf-btn-link']}
+              onClick={toggleRemoveIssueModal}
+            >
+              <i className="fa fa-trash-o" aria-hidden="true"></i>  { COPY.REMOVE_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT }
+            </Button>
+            {removeModalIsOpen &&
+              <RemoveCavcDashboardIssueModal closeHandler={toggleRemoveIssueModal} submitHandler={removeIssue} />
+            }
+          </>
+        }
       </div>
       {requireDecisionReason() && (
         <CavcDecisionReasons uniqueId={issue.id} />
@@ -87,11 +129,16 @@ const CavcDashboardIssue = (props) => {
 };
 
 const CavcDashboardIssuesSection = (props) => {
-  const { dashboard } = props;
+  const { dashboard, dashboardIndex, removeDashboardIssue } = props;
   const issues = dashboard.source_request_issues;
   const cavcIssues = dashboard.cavc_dashboard_issues;
   const dashboardDispositions = dashboard.cavc_dashboard_dispositions;
   const dashboardId = dashboard.id;
+
+  // the handler is in this component because it needs the dashboardIndex prop that isn't passed down
+  const removeIssueHandler = (issueIndex) => {
+    removeDashboardIssue(dashboardIndex, issueIndex);
+  };
 
   return (
     <div {...issueSectionStyling}>
@@ -114,15 +161,35 @@ const CavcDashboardIssuesSection = (props) => {
             </React.Fragment>
           );
         })}
-        {cavcIssues.map((cavcIssue, i) => {
-
-          return (
-            <React.Fragment key={i}>
-              <CavcDashboardIssue issue={cavcIssue} index={i} dispositions={dashboardDispositions} />
-            </React.Fragment>
-          );
-        })}
       </ol>
+      <br />
+      {cavcIssues.length > 0 &&
+        <>
+          <div>
+            <strong {...headerStyling}>
+              <span>{LABELS.CAVC_DASHBOARD_ADDED_ISSUES}</span>
+              <span>{LABELS.CAVC_DASHBOARD_DISPOSITIONS}</span>
+            </strong>
+            <hr />
+          </div>
+          <ol {...olStyling}>
+            {cavcIssues.map((cavcIssue, i) => {
+
+              return (
+                <React.Fragment key={i}>
+                  <CavcDashboardIssue
+                    issue={cavcIssue}
+                    index={i}
+                    dispositions={[cavcIssue.disposition]}
+                    removeIssueHandler={removeIssueHandler}
+                    addedIssueSection
+                  />
+                </React.Fragment>
+              );
+            })}
+          </ol>
+        </>
+      }
     </div>
   );
 };
@@ -133,14 +200,18 @@ CavcDashboardIssue.propTypes = {
     benefit_type: PropTypes.string,
     decision_review_type: PropTypes.string,
     contested_issue_description: PropTypes.string,
-    issue_category: PropTypes.string,
+    issue_category: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
     id: PropTypes.number,
   }),
   dispositions: PropTypes.array,
+  removeIssueHandler: PropTypes.func,
+  addedIssueSection: PropTypes.bool
 };
 
 CavcDashboardIssuesSection.propTypes = {
   dashboard: PropTypes.object,
+  dashboardIndex: PropTypes.number,
+  removeDashboardIssue: PropTypes.func,
 };
 
 export default CavcDashboardIssuesSection;

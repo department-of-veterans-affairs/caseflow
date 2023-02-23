@@ -15,8 +15,11 @@ const createDashboardProp = () => {
       contested_issue_description: 'A description of issue',
     }],
     cavc_dashboard_issues: [{
-      benefit_type: 'Review',
-      issue_category: 'Service Connection',
+      benefit_type: 'education',
+      issue_category: {
+        label: 'Service Connection'
+      },
+      disposition: 'Reversed'
     }],
     cavc_dashboard_dispositions: [{
       request_issue_id: 1000,
@@ -39,7 +42,7 @@ describe('CavcDashboardIssuesSection', () => {
     await renderCavcDashboardIssuesSection(dashboard);
     const Issues = [...document.querySelectorAll('li')];
 
-    expect(screen.getByText(dashboard.source_request_issues[0].benefit_type)).toBeTruthy();
+    expect(screen.getByText(dashboard.source_request_issues[0].benefit_type, { exact: false })).toBeTruthy();
     expect(screen.getByText(
       // eslint-disable-next-line max-len
       `${dashboard.source_request_issues[0].decision_review_type } - ${ dashboard.source_request_issues[0].contested_issue_description}`
@@ -54,8 +57,8 @@ describe('CavcDashboardIssuesSection', () => {
     await renderCavcDashboardIssuesSection(dashboard);
     const Issues = [...document.querySelectorAll('li')];
 
-    expect(screen.getByText(dashboard.cavc_dashboard_issues[0].benefit_type)).toBeTruthy();
-    expect(screen.getByText(dashboard.cavc_dashboard_issues[0].issue_category)).toBeTruthy();
+    expect(screen.getByText(dashboard.cavc_dashboard_issues[0].benefit_type, { exact: false })).toBeTruthy();
+    expect(screen.getByText(dashboard.cavc_dashboard_issues[0].issue_category.label)).toBeTruthy();
     expect(Issues.length).toBe(2);
   });
 });
