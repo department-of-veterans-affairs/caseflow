@@ -372,6 +372,15 @@ class TaskActionRepository
       params
     end
 
+    def resend_initial_notification_letter_task_data(task, _user = nil)
+      params = {
+        modal_title: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
+        modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_COPY
+      }
+
+      params
+    end
+
     def vha_complete_data(task, _user)
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url

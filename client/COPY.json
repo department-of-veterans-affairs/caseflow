@@ -503,6 +503,11 @@
   "PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON": "Proceed to final letter",
   "PROCEED_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS": "Send Initial Notification Letter task completed",
 
+  "RESEND_INITIAL_NOTIFICATION_LETTER_TITLE": "Resend initial notification letter",
+  "RESEND_INITIAL_NOTIFICATION_LETTER_COPY": "The \"Post-Send Initial Notification Letter Holding Period\" task will be marked as complete and a new \"Send Initial Notification Letter\" task will be created.",
+  "RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON": "Resend notification letter",
+  "RESEND_INITIAL_NOTIFICATION_LETTER_TASK_SUCCESS": "Post Send Initial Notification Letter Holding task completed",
+
   "MODAL_SUBMIT_BUTTON": "Submit",
   "MODAL_CANCEL_BUTTON": "Cancel",
   "MODAL_CLOSE_BUTTON": "Close",
