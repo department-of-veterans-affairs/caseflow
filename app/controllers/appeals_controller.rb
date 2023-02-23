@@ -346,6 +346,8 @@ class AppealsController < ApplicationController
     end
   end
 
+  # Notification report pdf template only accepts the Appeal or Legacy Appeal object
+  # Finds appeal object using appeals id passed through url params
   def get_appeal_object(appeals_id)
     type = Notification.find_by(appeals_id: appeals_id)&.appeals_type
     if type == "LegacyAppeal"
