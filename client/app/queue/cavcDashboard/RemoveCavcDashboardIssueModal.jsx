@@ -25,9 +25,8 @@ const RemoveCavcDashboardIssueModal = (props) => {
       ]}
       closeHandler={closeHandler}
     >
-      <span>{COPY.CAVC_DASHBOARD_REMOVE_ISSUE_UPPER_TEXT}</span>
-      <br /><br />
-      <span>{COPY.CAVC_DASHBOARD_REMOVE_ISSUE_LOWER_TEXT}</span>
+      <p>{COPY.CAVC_DASHBOARD_REMOVE_ISSUE_UPPER_TEXT}</p>
+      <p>{COPY.CAVC_DASHBOARD_REMOVE_ISSUE_LOWER_TEXT}</p>
     </Modal>
   );
 };
