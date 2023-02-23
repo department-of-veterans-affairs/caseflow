@@ -26,6 +26,17 @@ CavcDashboardDetailsContainer.propTypes = {
 const CavcDashboardDetailsSection = ({ title, value }) => {
   const sectionStyling = css({
     padding: '0 0.5rem 0 0.5rem',
+    '@media(min-width: 830px)': {
+      ':first-child': {
+        paddingLeft: '0'
+      },
+      ':last-child': {
+        paddingRight: '0'
+      }
+    },
+    '@media(max-width: 829px)': {
+      padding: '0'
+    },
     '& > p': {
       fontWeight: 'bold',
       margin: '0'
