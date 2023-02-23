@@ -4,6 +4,10 @@ class CavcDashboardDisposition < CaseflowRecord
   include CreatedAndUpdatedByUserConcern
 
   belongs_to :cavc_dashboard
+  belongs_to :cavc_dashboard_issue
+  belongs_to :request_issue
+
+  has_many :cavc_dispositions_to_reasons
 
   validates :cavc_dashboard, presence: true
   # disposition can be nil on create, so only validate on update
