@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 import { css } from 'glamor';
 
-const closeButtonStyling = css({
+const buttonStyling = css({
   float: 'right'
 });
 
@@ -20,24 +20,17 @@ export const CavcDashboardFooter = (props) => {
 
   if (userCanEdit) {
     return (
-      <>
-        <Button
-          linkStyling
-          onClick={cancel}
-        >Cancel</Button>
+      <div {...buttonStyling}>
+        <Button linkStyling onClick={cancel}>Cancel</Button>
         <Button onClick={save}>Save Changes</Button>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      <Button
-        {...closeButtonStyling}
-        onClick={() => history.goBack()
-        }
-      >Close</Button>
-    </>
+    <div {...buttonStyling}>
+      <Button onClick={() => history.goBack()}>Close</Button>
+    </div>
   );
 };
 
