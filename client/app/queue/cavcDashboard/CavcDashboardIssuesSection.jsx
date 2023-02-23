@@ -178,6 +178,7 @@ const CavcDashboardIssuesSection = (props) => {
                     index={i}
                     dispositions={[cavcIssue.disposition]}
                     removeIssueHandler={removeIssueHandler}
+                    userCanEdit={userCanEdit}
                     addedIssueSection
                   />
                 </React.Fragment>
