@@ -9,13 +9,13 @@
 # - Notify admins upon successful membership request submission
 
 class MembershipRequestMailer < ActionMailer::Base
-  default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
+  default from: "VHABENEFITAPPEALS@va.gov"
   layout "membership_request_mailer"
 
   # Send requestor a confirmation email that membership request was received.
   def membership_request_submitted
-    @recipient_info = params[:recipient_info]
-    mail(to: @recipient_info[:email], subject: "Membership request submitted.")
+    @requestor = params[:requestor]
+    mail(to: @requestor.email, subject: "Membership request submitted.")
   end
 
   # Send requestor an email with updated status of membership request.
@@ -28,5 +28,26 @@ class MembershipRequestMailer < ActionMailer::Base
   def membership_request_submission
     @recipient_info = params[:recipient_info]
     mail(to: @recipient_info[:email], subject: "New membership request recieved.")
+  end
+
+  # New methods with the email templates
+  # TODO: rename this to be more descriptive of the email being sent to the requestor
+  def request_received
+    @recipient_info = params[:recipient_info]
+    @requests = params[:requests]
+    @requesting_org_names = @requests&.map { |request| request.organization.name }
+    @subject = params[:subject]
+    mail(to: @recipient_info&.email, subject: @subject)
+  end
+
+  def admin_request
+    # TODO: how the heck do you get the admin name?
+    # Could potentially do organization.admins.first but idk if that's the best way
+    @recipient_info = params[:recipient_info]
+    @subject = params[:subject]
+    @to = params[:to]
+    puts "to address is: #{@to}"
+    @organization_name = params[:organization_name]
+    mail(to: @to, subject: @subject)
   end
 end
