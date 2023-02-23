@@ -54,16 +54,12 @@ class BusinessLine < Organization
       completed: "recently_completed"
     }.freeze
 
-    DEFAULT_SORT_ORDER = "desc"
-    DEFAULT_IN_PROGRESS_SORT_BY = :assigned_at
-    DEFAULT_COMPLETED_SORT_BY = :closed_at
-
     DEFAULT_ORDERING_HASH = {
       in_progress: {
-        sort_by: DEFAULT_IN_PROGRESS_SORT_BY
+        sort_by: :assigned_at
       },
       completed: {
-        sort_by: DEFAULT_COMPLETED_SORT_BY
+        sort_by: :closed_at
       }
     }.freeze
 
@@ -74,7 +70,7 @@ class BusinessLine < Organization
 
       # Initialize default sorting
       query_params[:sort_by] ||= DEFAULT_ORDERING_HASH[query_type][:sort_by]
-      query_params[:sort_order] ||= DEFAULT_SORT_ORDER
+      query_params[:sort_order] ||= "desc"
     end
 
     def build_query
@@ -103,7 +99,7 @@ class BusinessLine < Organization
     end
 
     def union_select_statements
-      [Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id_alias, veteran_name_alias]
+      [Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id_alias]
     end
 
     def issue_count
@@ -114,10 +110,13 @@ class BusinessLine < Organization
     # Alias for claimant_name for sorting and serialization
     # This is Postgres specific since it uses CONCAT vs ||
     def claimant_name
-      "COALESCE("\
-      "NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '), "\
-      "NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '), "\
-      "CONCAT(veterans.first_name, ' ', veterans.last_name))"
+      "COALESCE(NULLIF(CASE "\
+      "WHEN veteran_is_not_claimant THEN COALESCE("\
+        "NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '), "\
+        "NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '), "\
+        "bgs_attorneys.name) "\
+      "ELSE CONCAT(veterans.first_name, ' ', veterans.last_name) "\
+      "END, ' '), 'claimant')"
     end
 
     def claimant_name_alias
@@ -127,11 +126,6 @@ class BusinessLine < Organization
     # Alias of veteran participant id for serialization and sorting
     def participant_id_alias
       "veterans.participant_id as veteran_participant_id"
-    end
-
-    # Alias of veteran name for a potential edge case where there is a claimant and veteran_is_not_claimant is unset
-    def veteran_name_alias
-      "CONCAT(veterans.first_name, ' ', veterans.last_name) as veteran_name"
     end
 
     # All join clauses
@@ -166,6 +160,10 @@ class BusinessLine < Organization
       "LEFT JOIN people ON claimants.participant_id = people.participant_id"
     end
 
+    def bgs_attorneys_join
+      "LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id"
+    end
+
     # The NUMBER_OF_SEARCH_FIELDS constant reflects the number of searchable fields here for where interpolation later
     def search_all_clause
       if query_params[:search_query].present?
@@ -178,7 +176,8 @@ class BusinessLine < Organization
 
     def group_by_columns
       "tasks.id, veterans.participant_id, veterans.first_name, veterans.last_name, "\
-      "unrecognized_party_details.name, unrecognized_party_details.last_name, people.first_name, people.last_name"
+      "unrecognized_party_details.name, unrecognized_party_details.last_name, people.first_name, people.last_name, "\
+      "veteran_is_not_claimant, bgs_attorneys.name"
     end
 
     # Uses an array to insert the searched text into all of the searchable fields since it's the same text for all
@@ -221,6 +220,7 @@ class BusinessLine < Organization
         .joins(people_join)
         .joins(unrecognized_appellants_join)
         .joins(party_details_join)
+        .joins(bgs_attorneys_join)
         .where(board_grant_effectuation_task_constraints)
         .where(search_all_clause, *search_values)
         .group(group_by_columns)
@@ -236,6 +236,7 @@ class BusinessLine < Organization
         .joins(people_join)
         .joins(unrecognized_appellants_join)
         .joins(party_details_join)
+        .joins(bgs_attorneys_join)
         .where(query_constaints)
         .where(search_all_clause, *search_values)
         .group(group_by_columns)

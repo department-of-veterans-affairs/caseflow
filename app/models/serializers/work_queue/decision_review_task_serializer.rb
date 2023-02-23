@@ -16,7 +16,8 @@ class WorkQueue::DecisionReviewTaskSerializer
       # TODO: support multiple?
       object[:claimant_name] || claimant_with_name(object).try(:name) || "claimant"
     else
-      object[:veteran_name] || decision_review(object).veteran_full_name
+      veteran_name = object[:claimant_name] || decision_review(object).veteran_full_name
+      veteran_name.presence ? veteran_name : "claimant"
     end
   end
 
@@ -44,7 +45,8 @@ class WorkQueue::DecisionReviewTaskSerializer
   attribute :claimant do |object|
     {
       name: claimant_name(object),
-      # Cheat to avoid serializing relationship on the queue page since it isn't used
+      # Cheat using an sql alias from the decision_review_queue query page to avoid
+      # serializing the relationship on the queue page since it isn't used in the table display
       relationship: object[:claimant_name] || claimant_relationship(object)
     }
   end
