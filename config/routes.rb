@@ -214,7 +214,7 @@ Rails.application.routes.draw do
   get 'hearing_prep/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
   get 'queue/help' => 'help#queue'
-
+  get 'vha/help' => 'help#vha'
 
   root 'home#index'
 
