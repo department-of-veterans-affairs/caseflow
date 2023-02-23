@@ -1139,7 +1139,7 @@ ActiveRecord::Schema.define(version: 2023_02_22_133918) do
     t.string "appeals_type", null: false, comment: "Type of Appeal"
     t.datetime "created_at", comment: "Timestamp of when Noticiation was Created"
     t.boolean "email_enabled", default: true, null: false
-    t.text "email_notification_content", comment: "Full Email Text Content of Notification"
+    t.string "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
@@ -1555,7 +1555,7 @@ ActiveRecord::Schema.define(version: 2023_02_22_133918) do
     t.string "cancellation_reason", comment: "Reason for latest cancellation status"
     t.integer "cancelled_by_id", comment: "ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled"
     t.datetime "closed_at"
-    t.bigint "completed_by_id"
+    t.integer "completed_by_id"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true
     t.integer "parent_id"
@@ -1567,7 +1567,6 @@ ActiveRecord::Schema.define(version: 2023_02_22_133918) do
     t.index ["appeal_type", "appeal_id"], name: "index_tasks_on_appeal_type_and_appeal_id"
     t.index ["assigned_to_type", "assigned_to_id"], name: "index_tasks_on_assigned_to_type_and_assigned_to_id"
     t.index ["cancellation_reason"], name: "index_tasks_on_cancellation_reason"
-    t.index ["completed_by_id"], name: "index_tasks_on_completed_by_id"
     t.index ["parent_id"], name: "index_tasks_on_parent_id"
     t.index ["status"], name: "index_tasks_on_status"
     t.index ["type"], name: "index_tasks_on_type"
@@ -1911,7 +1910,6 @@ ActiveRecord::Schema.define(version: 2023_02_22_133918) do
   add_foreign_key "tasks", "tasks", column: "parent_id"
   add_foreign_key "tasks", "users", column: "assigned_by_id"
   add_foreign_key "tasks", "users", column: "cancelled_by_id"
-  add_foreign_key "tasks", "users", column: "completed_by_id"
   add_foreign_key "transcriptions", "hearings"
   add_foreign_key "unrecognized_appellants", "claimants"
   add_foreign_key "unrecognized_appellants", "unrecognized_appellants", column: "current_version_id"
