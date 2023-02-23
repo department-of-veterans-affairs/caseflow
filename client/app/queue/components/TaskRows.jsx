@@ -216,7 +216,7 @@ class TaskRows extends React.PureComponent {
   }
 
   completedByListItem = (task) => {
-    const completedBy = task?.completedBy.cssId;
+    const completedBy = task?.completedBy?.cssId;
 
     return completedBy ? (
       <div className="cf-row-wrapper">
