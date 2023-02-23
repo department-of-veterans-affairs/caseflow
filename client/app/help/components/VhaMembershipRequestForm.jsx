@@ -19,6 +19,7 @@ const checkboxDivStyling = css({
 });
 
 const alertBoxStyling = css({
+  marginBottom: '3rem',
   '& .usa-alert': { 'background-position-y': 'center' },
 });
 
@@ -134,7 +135,7 @@ const VhaMembershipRequestForm = () => {
       <p> If you need access to a VHA team, please fill out the form below. </p>
       <h2> Select which VHA groups you need access to </h2>
       {(memberOrOpenRequestToVha || memberOrRequestToPreDocketOrg) &&
-        <div className={alertBoxStyling} style={{ marginBottom: '3rem' }}>
+        <div className={alertBoxStyling}>
           <Alert
             type="info"
             message={VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE}
