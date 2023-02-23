@@ -16,7 +16,8 @@ export const CavcDashboardTab = (props) => {
 
 CavcDashboardTab.propTypes = {
   dashboardId: PropTypes.number,
-  dashboard: PropTypes.object
+  dashboard: PropTypes.object,
+  userCanEdit: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {

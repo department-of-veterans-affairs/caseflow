@@ -1,16 +1,11 @@
 
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { LABELS } from './cavcDashboardConstants';
 import Button from '../../components/Button';
 import { PencilIcon } from '../../components/icons/PencilIcon';
 import { DateString } from '../../util/DateUtil';
-import CavcDashboardEditDetailsModal from './CavcDashboardEditDetailsModal';
-import { getCavcDashboardIndex } from './cavcDashboardSelectors';
-import { updateDashboardData } from './cavcDashboardActions';
-import { bindActionCreators } from 'redux';
 
 const CavcDashboardDetailsContainer = ({ children }) => {
   const containerStyling = css({
@@ -34,7 +29,7 @@ const CavcDashboardDetailsSection = ({ title, value }) => {
     '& > p': {
       fontWeight: 'bold',
       margin: '0'
-    },
+    }
   });
 
   return (
@@ -51,29 +46,16 @@ CavcDashboardDetailsSection.propTypes = {
 };
 
 export const CavcDashboardDetails = (props) => {
-  const { dashboard, userCanEdit, dashboardIndex } = props;
-  const [openDetailsModal, setOpenDetailsModal] = useState(false);
+  const { dashboard, userCanEdit } = props;
 
-  const Details = {
-    boardDecisionDate: dashboard.board_decision_date,
-    boardDocketNumber: dashboard.board_docket_number,
-    cavcDecisionDate: dashboard.cavc_decision_date,
-    cavcDocketNumber: dashboard.cavc_docket_number,
-    jointMotionForRemand: dashboard.joint_motion_for_remand
-  };
-
-  const openHandler = () => {
-    setOpenDetailsModal((current) => (!current));
-  };
-
-  const closeHandler = () => {
-    setOpenDetailsModal((current) => (!current));
-  };
-
-  const saveHandler = (updatedData) => {
-    props.updateDashboardData(dashboardIndex, updatedData);
-    setOpenDetailsModal((current) => (!current));
-  };
+  // remove eslint disable when the set methods are used for editing
+  /* eslint-disable no-unused-vars */
+  const [boardDecisionDate, setBoardDecisionDate] = useState(dashboard.board_decision_date);
+  const [boardDocketNumber, setBoardDocketNumber] = useState(dashboard.board_docket_number);
+  const [cavcDecisionDate, setCavcDecisionDate] = useState(dashboard.cavc_decision_date);
+  const [cavcDocketNumber, setCavcDocketNumber] = useState(dashboard.cavc_docket_number);
+  const [jointMotionForRemand, setJointMotionForRemand] = useState(dashboard.joint_motion_for_remand);
+  /* eslint-enable no-unused-vars */
 
   // position/top bypasses the fixed margin on the TabWindow component
   const buttonStyling = css({
@@ -86,26 +68,22 @@ export const CavcDashboardDetails = (props) => {
   return (
     <div id={`dashboard-details-${dashboard.id}`}>
       <Button linkStyling willNeverBeLoading classNames={['cf-push-right', 'cf-modal-link']}
-        styling={buttonStyling} disabled={!userCanEdit} onClick={openHandler}
+        styling={buttonStyling} disabled={!userCanEdit} onClick={null}
       >
         <span {...css({ position: 'absolute' })}><PencilIcon /></span>
         <span {...css({ marginLeft: '20px' })}>Edit</span>
       </Button>
       <CavcDashboardDetailsContainer>
         <CavcDashboardDetailsSection
-          title={LABELS.BOARD_DECISION_DATE} value={<DateString date={dashboard.board_decision_date} />}
+          title={LABELS.BOARD_DECISION_DATE} value={<DateString date={boardDecisionDate} />}
         />
-        <CavcDashboardDetailsSection title={LABELS.BOARD_DOCKET_NUMBER} value={dashboard.board_docket_number} />
+        <CavcDashboardDetailsSection title={LABELS.BOARD_DOCKET_NUMBER} value={boardDocketNumber} />
         <CavcDashboardDetailsSection
-          title={LABELS.CAVC_DECISION_DATE} value={<DateString date={dashboard.cavc_decision_date} />}
+          title={LABELS.CAVC_DECISION_DATE} value={<DateString date={cavcDecisionDate} />}
         />
-        <CavcDashboardDetailsSection title={LABELS.CAVC_DOCKET_NUMBER} value={dashboard.cavc_docket_number} />
-        <CavcDashboardDetailsSection title={LABELS.IS_JMR} value={dashboard.joint_motion_for_remand ? 'Yes' : 'No'} />
+        <CavcDashboardDetailsSection title={LABELS.CAVC_DOCKET_NUMBER} value={cavcDocketNumber} />
+        <CavcDashboardDetailsSection title={LABELS.IS_JMR} value={jointMotionForRemand ? 'Yes' : 'No'} />
       </CavcDashboardDetailsContainer>
-      {
-        openDetailsModal &&
-      <CavcDashboardEditDetailsModal closeHandler={closeHandler} saveHandler={saveHandler} Details={Details} />
-      }
     </div>
   );
 };
@@ -113,22 +91,7 @@ export const CavcDashboardDetails = (props) => {
 CavcDashboardDetails.propTypes = {
   dashboardId: PropTypes.number,
   dashboard: PropTypes.object,
-  userCanEdit: PropTypes.bool,
-  updateDashboardData: PropTypes.func,
-  dashboardIndex: PropTypes.number,
+  userCanEdit: PropTypes.bool
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  userCanEdit: state.ui.canEditCavcDashboards,
-  dashboardIndex: getCavcDashboardIndex(state, { dashboardId: ownProps.dashboardId })
-});
-
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators({
-    updateDashboardData
-  }, dispatch);
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CavcDashboardDetails);
+export default CavcDashboardDetails;
