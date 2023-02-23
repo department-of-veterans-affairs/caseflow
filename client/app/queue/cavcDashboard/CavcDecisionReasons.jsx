@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { setCheckedDecisionReasons } from './cavcDashboardActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
-const CavcDecisionReasons = ({ uniqueId }) => {
+const CavcDecisionReasons = ({ uniqueId, loadCheckedBoxes }) => {
 
   const checkboxStyling = css({
     paddingLeft: '2.5%',
@@ -32,6 +32,7 @@ const CavcDecisionReasons = ({ uniqueId }) => {
     fontWeight: 'normal',
   });
 
+  const loadCheckedBoxesId = loadCheckedBoxes?.map((box) => box.cavc_decision_reason_id);
   const decisionReasons = useSelector((state) => state.cavcDashboard.decision_reasons);
   const checkedBoxesInStore = useSelector((state) => state.cavcDashboard.checked_boxes[uniqueId]);
   const parentReasons = decisionReasons.filter((parentReason) => !parentReason.parent_decision_reason_id).sort(
@@ -48,13 +49,13 @@ const CavcDecisionReasons = ({ uniqueId }) => {
 
     obj[parent.id] = {
       ...parent,
-      checked: false,
+      checked: loadCheckedBoxesId?.includes(parent.id),
       issueId: uniqueId,
       children: children.map((child) => {
 
         return {
           ...child,
-          checked: false
+          checked: loadCheckedBoxesId?.includes(child.id),
         };
       })
     };
@@ -213,6 +214,12 @@ const CavcDecisionReasons = ({ uniqueId }) => {
 
 CavcDecisionReasons.propTypes = {
   uniqueId: PropTypes.number,
+  loadCheckedBoxes: PropTypes.shape({
+    cavc_dashboard_disposition_id: PropTypes.number,
+    cavc_decision_reason_id: PropTypes.number,
+    cavc_selection_basis_id: PropTypes.number,
+    id: PropTypes.number
+  })
 };
 
 export default CavcDecisionReasons;

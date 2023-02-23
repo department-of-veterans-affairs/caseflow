@@ -52,6 +52,8 @@ const CavcDashboardIssue = (props) => {
   const [disposition, setDisposition] = useState(dispositions?.find(
     (dis) => dis.request_issue_id === issue.id)?.disposition || dispositions[0]);
 
+  const loadCheckedBoxes = dispositions.find((dis) => dis.request_issue_id === issue.id).cavc_dispositions_to_reasons;
+
   const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS).map(
     (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
 
@@ -122,7 +124,7 @@ const CavcDashboardIssue = (props) => {
         }
       </div>
       {requireDecisionReason() && (
-        <CavcDecisionReasons uniqueId={issue.id} />
+        <CavcDecisionReasons uniqueId={issue.id} loadCheckedBoxes={loadCheckedBoxes} />
       )}
     </li>
   );
