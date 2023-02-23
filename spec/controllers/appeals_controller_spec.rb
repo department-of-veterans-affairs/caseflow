@@ -925,20 +925,48 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         end
       end
 
-      # context "when controller action #fetch_notification_list is called with an appeals_id not in Notification Table" do
-      #   subject do
-      #     get :fetch_notification_list, params: { appeals_id: bad_appeals_id, format: request_format }
-      #   end
-      #   it "should raise an error" do
-      #     subject
-      #     byebug
-      #     response = JSON.parse(subject.body)
-      #     byebug
-      #     expect(response).to
-      #   end
-      # end
-
+      context "when controller action #fetch_notification_list is called with an appeals_id not in Notification Table" do
+        subject do
+          get :fetch_notification_list, params: { appeals_id: bad_appeals_id, format: request_format }
+        end
+        it "should raise an error" do
+          expect { subject }.to raise_error do |error|
+            byebug
+            expect(error).to be_a(ActionController::RoutingError)
+            expect(error.to_s).to include("Appeal Not Found")
+          end
+        end
+      end
     end
 
+    context "when requesting CSV response" do
+      let(:request_format) { :csv }
+
+      context "when controller action #fetch_notification_list is called with csv format"
+      subject do
+        get :fetch_notification_list, params: { appeals_id: ama_appeal.uuid, format: request_format }
+      end
+      it "should raise an error" do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(ActionController::ParameterMissing)
+          expect(error.to_s).to include("Bad Format")
+        end
+      end
+    end
+
+    context "when requesting html response" do
+      let(:request_format) { :html }
+
+      context "when controller action #fetch_notification_list is called with html format"
+      subject do
+        get :fetch_notification_list, params: { appeals_id: ama_appeal.uuid, format: request_format }
+      end
+      it "should raise an error" do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(ActionController::ParameterMissing)
+          expect(error.to_s).to include("Bad Format")
+        end
+      end
+    end
   end
 end

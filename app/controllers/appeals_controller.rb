@@ -63,14 +63,14 @@ class AppealsController < ApplicationController
           pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
           send_data pdf, filename: "Notification Report " + appeals_id + " " + date, type: "application/pdf", disposition: :attachment
         else
-          redirect_to not_found, format: :html
+          raise ActionController::RoutingError.new('Appeal Not Found')
         end
       end
       format.csv do
-        raise ActionController::RoutingError.new('Bad Formatting')
+        raise ActionController::ParameterMissing.new('Bad Format')
       end
       format.html do
-        raise ActionController::RoutingError.new('Bad Formatting')
+        raise ActionController::ParameterMissing.new('Bad Format')
       end
     end
   end
