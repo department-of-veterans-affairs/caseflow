@@ -251,6 +251,7 @@
   "CAVC_DASHBOARD_DISPOSITION_BY_COURT_TEXT": "Disposition by Court",
   "CAVC_DASHBOARD_REMOVE_ISSUE_UPPER_TEXT": "The issue you selected will be removed from the list of issues on the dashboard.",
   "CAVC_DASHBOARD_REMOVE_ISSUE_LOWER_TEXT": "Are you sure that you want to remove this issue?",
+  "CAVC_DASHBOARD_EDIT_DETAILS_MODAL_TITLE": "Edit CAVC Details",
 
   "ADD_CAVC_DATES_TITLE": "Add Court dates",
   "CORRECT_CAVC_REMAND_LINK": "Edit Remand",
@@ -517,6 +518,7 @@
   "MODAL_MARK_TASK_IN_PROGRESS_BUTTON": "Mark in progress",
   "MODAL_SEND_BUTTON": "Send",
   "MODAL_REMOVE_BUTTON": "Remove",
+  "MODAL_SAVE_BUTTON": "Save",
 
   "BULK_ASSIGN_BUTTON_TEXT": "Assign Tasks",
   "BULK_ASSIGN_MODAL_TITLE": "Bulk Assign Tasks",
@@ -543,6 +545,7 @@
   "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_ERROR_TITLE": "Could not cancel tasks and reassign to %s",
 
   "MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE": "Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930. Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding of clear and unmistakable error, which would result in a brand new docket number being assigned. An updated docket number format will need to be in place for legacy appeals by 2030 in order to ensure that docket numbers are sorted correctly.",
+  "BOARD_DOCKET_NUMBER_ERROR": "Please enter a valid docket number provided by the Board (123456-7).",
 
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
   "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to %s",
