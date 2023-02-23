@@ -37,25 +37,7 @@ class PdfExportService
       if File.exist?(stylesheet_name)
         kit.stylesheets << stylesheet_name
       end
-      # create file name and file path
-      if template_name == "notification_report_pdf_template"
-        if object.class.name == "Appeal"
-          appeal_id = object.uuid
-        elsif object.class.name == "LegacyAppeal"
-          appeal_id = object.vacols_id
-        end
-        file_name = template_name + "_" + appeal_id + ".pdf"
-      else
-        file_name = template_name + ".pdf"
-      end
-      # file_location = "#{Rails.root}/#{file_name}"
-      # kit.to_pdf(file_location)
-      # create pdf file from pdfkit object
-      pdf = kit.to_pdf
-      # store file in s3 bucket
-      file_location = template_name + "/" + file_name
-      S3Service.store_file(file_location, pdf)
-      file_location
+      kit.to_pdf
     end
   end
 end
