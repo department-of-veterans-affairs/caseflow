@@ -125,7 +125,7 @@ module WarRoom
           end
         end
       end
-
+    else
       if
         def run(manual, type)
           # set current user
@@ -150,10 +150,10 @@ module WarRoom
           # Count the total problem claims and keep track
           count = problem_scs.count + problem_hlr.count
           if count.zero?
-            puts "No problem Supplemental Claims or Higher Level Reviews found. Exiting."
+            puts "No problem Supplemental Claims or Higher Level Reviews found. Exiting.\n"
             exit
           end
-          puts "Found #{count} problem Supplemental Claims and Higher Level Reviews. Please enter the UUID of the first claim:"
+          puts "Found #{count} problem Supplemental Claims and Higher Level Reviews. Please enter the UUID of the first claim:\n"
           # Prompt the user to enter a UUID and catch any errors
           begin
             uuid = gets.chomp.strip
@@ -162,7 +162,7 @@ module WarRoom
             end
             check_by_ama_appeal_uuid(uuid)
           rescue => e
-            puts e.message
+            puts "#{e.message}\n"
             retry
           end
 
@@ -171,13 +171,13 @@ module WarRoom
             a = Appeal.find_by_uuid(uuid)
 
             if a.nil?
-              puts("Appeal was not found. Aborting")
+              puts("Appeal was not found. Aborting\n")
               fail Interrupt
             elsif a.veteran.nil?
-              puts("veteran is not assiciated to this appeal. Aborting...")
+              puts("veteran is not assiciated to this appeal. Aborting...\n")
               fail Interrupt
             elsif a.veteran.file_number.empty?
-              puts("Veteran tied to appeal does not have a file_number. Aborting..")
+              puts("Veteran tied to appeal does not have a file_number. Aborting..\n")
               fail Interrupt
             end
 
@@ -188,13 +188,13 @@ module WarRoom
             a = Appeal.find_by_uuid(appeal_uuid)
 
             if a.nil?
-              puts("Appeal was not found. Aborting")
+              puts("Appeal was not found. Aborting\n")
               fail Interrupt
             elsif a.veteran.nil?
-              puts("veteran is not assiciated to this appeal. Aborting...")
+              puts("veteran is not assiciated to this appeal. Aborting...\n")
               fail Interrupt
             elsif a.veteran.file_number.empty?
-              puts("Veteran tied to appeal does not have a file_number. Aborting..")
+              puts("Veteran tied to appeal does not have a file_number. Aborting..\n")
               fail Interrupt
             end
 
@@ -207,7 +207,7 @@ module WarRoom
 
             # Check that only one vet has the bad file number
             if vets.nil? || vets.count > 1
-              puts("More than on vet with the duplicate veteran file number exists. Aborting..")
+              puts("More than on vet with the duplicate veteran file number exists. Aborting..\n")
               fail Interrupt
             end
 
@@ -219,7 +219,7 @@ module WarRoom
 
             # Check if veteran is not found
             if v.nil?
-              puts("No veteran found. Aborting.")
+              puts("No veteran found. Aborting.\n")
               fail Interrupt
             end
 
@@ -232,10 +232,10 @@ module WarRoom
             vet_ssn = v.ssn
             # checks if we get no vets or less than 2 vets}
             if dupe_vets.nil? || dupe_vets.count < 2
-              puts("No duplicate veteran found")
+              puts("No duplicate veteran found\n")
               fail Interrupt
             elsif dupe_vets.count > 2 # check if we get more than 2 vets back
-              puts("More than two veterans found. Aborting")
+              puts("More than two veterans found. Aborting\n")
               fail Interrupt
             else
               other_v = dupe_vets.first # grab first of the dupilicates and check if the duplicate veteran}
@@ -243,15 +243,15 @@ module WarRoom
                 other_v = dupe_vets.last # First is duplicate veteran so get 2nd
               end
               if other_v.file_number.empty? || other_v.file_number == old_file_number #if correct veteran has wrong file number
-                puts("Both veterans have the same file_number or No file_number on the correct veteran. Aborting...")
+                puts("Both veterans have the same file_number or No file_number on the correct veteran. Aborting...\n")
                 fail Interrupt
               elsif v.ssn.empty? && !other_v.ssn.empty?
                 vet_ssn = other_v.ssn
               elsif v.ssn.empty? && other_v.ssn.empty?
-                puts("Neither veteran has a ssn and a ssn is needed to check the BGS file number. Aborting")
+                puts("Neither veteran has a ssn and a ssn is needed to check the BGS file number. Aborting\n")
                 fail Interrupt
               elsif !other_v.ssn.empty? && v.ssn != other_v.ssn
-                puts("Veterans do not have the same ssn and a correct ssn needs to be chosen. Aborting.")
+                puts("Veterans do not have the same ssn and a correct ssn needs to be chosen. Aborting.\n")
                 fail Interrupt
               else
                 vet_ssn = v.ssn
@@ -265,7 +265,7 @@ module WarRoom
             file_number = BGSService.new.fetch_file_number_by_ssn(vet_ssn)
 
             if file_number != v2.file_number
-              puts("File number from BGS does not match correct veteran record. Aborting...")
+              puts("File number from BGS does not match correct veteran record. Aborting...\n")
               fail Interrupt
             end
 
@@ -443,7 +443,7 @@ module WarRoom
 
             # Check that only oen vet has the bad file number
             if vets.nil? || vets.count > 1
-              puts("More than on vet with the duplicate veteran file number exists. Aborting..")
+              puts("More than on vet with the duplicate veteran file number exists. Aborting..\n")
               fail Interrupt
             end
 
@@ -455,7 +455,7 @@ module WarRoom
 
             # Check if veteran is not found
             if v.nil?
-              puts("No veteran found. Aborting.")
+              puts("No veteran found. Aborting.\n")
               fail Interrupt
             end
 
@@ -468,10 +468,10 @@ module WarRoom
             vet_ssn = v.ssn
             # checks if we get no vets or les sthan 2 vets}
             if dupe_vets.nil? || dupe_vets.count < 2
-              puts("No duplicate veteran found")
+              puts("No duplicate veteran found\n")
               fail Interrupt
             elsif dupe_vets.count > 2 # check if we get more than 2 vets back
-              puts("More than two veterans found. Aborting")
+              puts("More than two veterans found. Aborting\n")
               fail Interrupt
             else
               other_v = dupe_vets.first # grab first of the dupilicates and check if the duplicate veteran}
@@ -479,15 +479,15 @@ module WarRoom
                 other_v = dupe_vets.last # First is duplicate veteran so get 2nd
               end
               if other_v.file_number.empty? || other_v.file_number == old_file_number #if correct veteran has wrong file number
-                puts("Both veterans have the same file_number or No file_number on the correct veteran. Aborting...")
+                puts("Both veterans have the same file_number or No file_number on the correct veteran. Aborting...\n")
                 fail Interrupt
               elsif v.ssn.empty? && !other_v.ssn.empty?
                 vet_ssn = other_v.ssn
               elsif v.ssn.empty? && other_v.ssn.empty?
-                puts("Neither veteran has a ssn and a ssn is needed to check the BGS file number. Aborting")
+                puts("Neither veteran has a ssn and a ssn is needed to check the BGS file number. Aborting\n")
                 fail Interrupt
               elsif !other_v.ssn.empty? && v.ssn != other_v.ssn
-                puts("Veterans do not have the same ssn and a correct ssn needs to be chosen. Aborting.")
+                puts("Veterans do not have the same ssn and a correct ssn needs to be chosen. Aborting.\n")
                 fail Interrupt
               else
                 vet_ssn = v.ssn
@@ -501,7 +501,7 @@ module WarRoom
             file_number = BGSService.new.fetch_file_number_by_ssn(vet_ssn)
 
             if file_number != v2.file_number
-              puts("File number from BGS does not match correct veteran record. Aborting...")
+              puts("File number from BGS does not match correct veteran record. Aborting...\n")
               fail Interrupt
             end
 
@@ -763,9 +763,9 @@ module WarRoom
             end
 
             if !error_relations.empty?
-              puts("There were differences in duplicate relations and update relations.")
+              puts("There were differences in duplicate relations and update relations.\n")
               puts(error_relations)
-              puts("Stoping script here. Need manual intervention")
+              puts("Stoping script here. Need manual intervention\n")
               fail Interrupt
             end
 
@@ -885,20 +885,20 @@ module WarRoom
             end
           end
 
-          # This code finds the Veteran associated with the given UUID, then finds the SupplementalClaims and HigherLevelReviews associated with the Veteran.
-          # It then filters these to only include the claims with establishment errors containing "duplicateep",
-          # and joins them based on their associated EndProduct records.
-          # The resulting ActiveRecord::Relation object is stored in problem_claims, which can be used for further processing as needed.
+          # This code finds the HigherLevelReviews or SupplementalClaims associated with the given UUID, then finds the SupplementalClaims and HigherLevelReviews
+          # that contain the duplicateEP error.
+          # It then filters these to only include the claims with establishment errors containing "duplicateep" for the individual SupplementalClaims or HigherLevelReviews ID
+          # and joins them based on their associated EndProduct records. It then goes through and promts the user how he wants to manually handle the
+          # problem duplicate ep claim.
 
           puts("We have checked for duplicate file records based upon your appeal and made necessary adjustments. It is now recommended to
             cancel the sink job of the appeal with the duplicateEP error. Please enter uuid of appeal to cancel the sink job for: \n")
 
-          begin
-            UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/i
+          ActiveRecord::Base.transaction do
             uuid2 = gets.chomp.strip
 
             unless uuid2.match?(UUID_REGEX)
-              raise "Invalid UUID format. Please enter a valid UUID."
+              raise "Invalid UUID format. Please enter a valid UUID.\n"
             end
 
             # Get SupplementalClaim or HigherLevelReview with a specific uuid
@@ -907,84 +907,179 @@ module WarRoom
 
             # Check if the uuid exists in either table
             unless sc || hlr
-              puts "No SupplementalClaim or HigherLevelReview found with uuid: #{uuid}"
+              puts "No SupplementalClaim or HigherLevelReview found with uuid: #{uuid2}\n"
               return
             end
 
-            puts "Running match query for SC or HLRs that contain duplicateEP Errors"
+            puts "Running match query for SC or HLRs that contain duplicateEP Errors\n"
 
             # set current user
             RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
 
-            # Sets the variable End Product Establishment by the reference_id/Claim ID
-            scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
-            hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
+            # This will check if both scs and hlr are nil, which means the provided UUID doesn't match any records
+            # in the SupplementalClaim and HigherLevelReview tables with the establishment_error containing the "duplicateep" string.
+            # If both are nil, it will print the "No uuid found for both SupplementalClaims and HigherLevelReviews"
+            # message and return (or exit) the program.
 
-            # Grabs the problem suppliment claims with the status of Cancelled or Cleared
-            problem_scs = scs.select { |sc|
-            sc.veteran.end_products.select { |ep|
-            ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-            [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)}.empty?}
+            scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'").find_by(uuid: uuid2)
+            hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'").find_by(uuid: uuid2)
 
-            # Grabs the problem suppliment claims with the status of Cancelled or Cleared
-            problem_hlr = hlr.select { |hlr|
-            hlr.end_products.select { |ep|
-            ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-            [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)}.empty?}
+            if scs.nil? && hlr.nil?
+              puts "No uuid found for both SupplementalClaims and HigherLevelReviews\n"
+              return # or exit the program here, depending on your use case
+            end
+
+            duplicate_ep_problem_claim = nil
+
+            # Query the SupplementalClaim table for a record with the specified uuid
+            sc = SupplementalClaim.find_by(uuid: uuid2)
+            if sc && sc.establishment_error.include?('duplicateep')
+              # If a matching record was found and it has the establishment_error containing 'duplicateep',
+              # then assign the result to the variable `problem_scs`
+              problem_scs = sc
+              puts "Putting data to be reviewed for SupplementalClaim ID #{sc.id}.\n"
+
+              # Assign the `sc` object to `duplicate_ep_problem_claim`
+              duplicate_ep_problem_claim = sc
+            end
+
+            # Query the HigherLevelReview table for a record with the specified uuid
+            hlr = HigherLevelReview.find_by(uuid: uuid2)
+            if hlr && hlr.establishment_error.include?('duplicateep')
+              # If a matching record was found and it has the establishment_error containing 'duplicateep',
+              # then assign the result to the variable `problem_hlr`
+              problem_hlr = hlr
+              puts "Putting data to be reviewed for HigherLevelReview ID #{hlr.id}.\n"
+
+              # Assign the `hlr` object to `duplicate_ep_problem_claim`
+              duplicate_ep_problem_claim = hlr
+            end
 
             # Count the total problem claims and keep track
-            count = problem_scs.count + problem_hlr.count
+            count = duplicate_ep_problem_claim.count
 
-            # Check if the uuid is part of the problem claims
-            if
-            (problem_scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
-              .where(id: sc&.id)) ||
-            (problem_hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
-              .where(id: hlr&.id)) === true;
-              then
-              puts "uuid is part of the problem claims, total problem claims count to be displayed below"
+            # If count is not 1, raise an error
+            if count != 1
+              raise "Duplicate EP problem claim count is off and manual remediation must be stopped\n"
+            end
+
+            # This code checks if duplicate_ep_problem_claim is not nil and if there are any matching
+            # records in either the SupplementalClaim or HigherLevelReview table that have the same id as duplicate_ep_problem_claim.
+            # If there are any matching records, it prints the message "Putting data to be reviewed for this hlr or sc id:"
+            # followed by the id of the first matching record (if any), and if there are no matching records, it prints an error message and raises an interrupt.
+            if (problem_scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
+              .where(id: duplicate_ep_problem_claim&.id)).present? ||
+             (problem_hlrs = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
+              .where(id: duplicate_ep_problem_claim&.id)).present?
+              puts "Putting data to be reviewed for this hlr or sc id: #{problem_scs&.id || problem_hlrs&.id}"
             else
-              puts "The uuid provided does not match a problem claim with duplicateEP error"
+              puts "The uuid provided does not match a problem claim with duplicateEP error\n"
               fail Interrupt
             end
 
-            # Join the problem SupplementalClaims and HigherLevelReviews
-            problem_claims = problem_scs.joins(:end_products)
-            .where(end_products: { claim_type_code: "040", status_type_code: ["CAN", "CLR"], last_action_date: [Date.today, 1.day.ago.to_date] })
-            .merge(problem_hlr.joins(:end_products)
-            .where(end_products: { claim_type_code: "030", status_type_code: ["CAN", "CLR"], last_action_date: [Date.today, 1.day.ago.to_date] }))
+            # Join the problem SupplementalClaims and HigherLevelReviews where duplicate_ep_problem_claim&.id.present? is true. Then displays data for user to decide upon.
+            if duplicate_ep_problem_claim&.id.present?
+              problem_claims = SupplementalClaim.joins(:end_products)
+                .where(end_products: { claim_type_code: "040", status_type_code: ["CAN", "CLR"], last_action_date: [Date.today, 1.day.ago.to_date] })
+                .where(id: duplicate_ep_problem_claim.id)
+                .merge(HigherLevelReview.joins(:end_products)
+                  .where(end_products: { claim_type_code: "030", status_type_code: ["CAN", "CLR"], last_action_date: [Date.today, 1.day.ago.to_date] })
+                  .where(id: duplicate_ep_problem_claim.id))
+              puts "Found #{problem_claims.count} problem claim(s) for this duplicate EP problem. Here is the claim data"
+              puts "The problem claim identified is listed here. #{problem_claims.first}.\n"
 
-            # Count the total problem claims and keep track
-            count = problem_claims.count
+              # Set the review to the first epe source appeal
+              epe = problem_claims.end_product_establishment
+              if epe.nil?
+                Rails.logger.error("Unable to find EPE for Problem Claim #{epe.id}.")
+              end
 
-            if count > 0
-            Rails.logger.info("Found #{count} problem Supplemental Claims and/or Higher Level Reviews we are tracking and if you run remediation steps successfully,
-              this cound should reduce by one, please review the claim data, and select yes or no next if you would like to cancel or clear the sync status")
+              puts "Providing end product establishment data, epe.id, for the epe in question or to be found #{epe.id}\n"
+
+              # stores the source of the of the EPE if HLR, Supplemental or AMA/Legacy Appeal.
+              # If decision document set to the appeal of the source.
+              source = (epe.source_type != "DecisionDocument") ? epe.source : epe.source.appeal
+
+              if source.nil?
+                Rails.logger.error("Could not find a source for the original EPE. #{epe.id}...\n")
+              end
+
+              puts "Source has been found here: #{source}\n"
+
+              claimant = source.claimant
+
+              if claimant.nil?
+                Rails.logger.error("Could not find a claimant for the source. #{source.id}...\n")
+              end
+
+              puts "Source Claimant has been found here: #{claimant}\n"
+
+              # Reaches out to BGS services to create a new service for a claim
+              bgs=BGSService.new.client.claims
+
+              if bgs.nil?
+                Rails.logger.error("Could not perform BGSService.new.client.claims to display data")
+              end
+
+              puts "BGS service can be found: #{bgs}\n"
+
+              # Gather the claim details from bgs with it's async status.
+              claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
+
+              if claim_detail.nil?
+                Rails.logger.error("Could not find the claim details from bgs with it's async status")
+              end
+
+              puts "Providing claim details for review, that should have sync status of cleared or cancel #{claim_detail}\n"
+
+              count = duplicate_ep_problem_claim.count
+
+              puts "duplicate_ep_problem_claim count: #{count}\n"
             else
-            Rails.logger.info("No problem claims found. You can end your terminal session now.")
+              puts "No problem claims found for this duplicate EP problem\n"
             end
-
-            unless
-          rescue => e
-            puts e.message
-            retry
           end
 
-          # If it shows up. We want to pp all data.
-
+          # Here we will use a begin get chomp method to perform the transaction on the SC or HLR data
+          # Prompt user if he recogonizes change to the Appeal
+          # and if he would like to manually up update the sync status by performing can or clr.
           # Prompt user to enter yes or no to fix the data manually by manually updating the caseflow sync status.
-
-          # If no appeal is found in the table. Prompt the user that the appeal UUID is invalid as no duplicate EP error exists for that appeal.
-
-          # PP Appeal Data
-
-          # Prompt user if he recogonizes change to the Appeal and if he would like to manually up update the sync status by performing.
-
-          private
-
-          def convert_file_number_to_legacy(file_number)
-            return LegacyAppeal.convert_file_number_to_vacols(file_number)
+          # This will prompt the user yes or no to process the claim or recommended to save and close terminal to resart. Update the epe with the sync status as cancelled or cleared.
+          if epe.claim_type_code == "040" && ["CAN", "CLR"].include?(epe.status_type_code) && [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
+            puts "Please review the provided data. If you would like this claim data to be updated, enter 'yes' else enter 'no'.\n"
+            input = gets.chomp.downcase
+            while input != "yes" && input != "no"
+              puts "Invalid input. Please enter 'yes' to update the claim data or 'no' to cancel.\n"
+              input = gets.chomp.downcase
+            end
+            if input == "yes"
+              if epe.status_type_code == "CAN"
+                epe.update!(synced_status: "CAN", last_synced_at: Time.zone.now)
+              else
+                epe.update!(synced_status: "CLR", last_synced_at: Time.zone.now)
+              end
+            else
+              puts "No updates were performed. Please close terminal and restart.\n"
+            end
+            puts "Updated epe synced status for #{epe.id}"
           end
+          # Cancel the original end product establishment
+          epe.send(:cancel!)
+          puts "Canceled the original epe: #{epe.id}"
+          # Log a message for the user
+          puts "Claim data has been updated and the original end product establishment has been cancelled with a updated sync status.\n"
+          # Reloads the epe
+          epe.reload
+          # Gather the claim details from bgs with it's new sync status.
+          claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
+          puts "Providing query results of new sync status here: #{claim_detail}\n"
+          puts "You may now save data and exit the terminal\n"
+        end
+
+        private
+
+        def convert_file_number_to_legacy(file_number)
+          return LegacyAppeal.convert_file_number_to_vacols(file_number)
         end
       end
     end
