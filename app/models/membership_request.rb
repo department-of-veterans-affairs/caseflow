@@ -48,7 +48,11 @@ class MembershipRequest < CaseflowRecord
     # Specific to VHA. This is actually going to be a bit tricky
     def send_creation_emails(requests, org_type = "VHA")
       # TODO: should this be a method on the Org class? that defines the mailer class to use?
-      MembershipRequestMailerFactory.get_mailer(org_type).new(requests).membership_request_submission
+      hmm = MembershipRequestMailerFactory.get_mailer(org_type)
+        .with(requestor: user, requests: requests)
+        .membership_request_submission
+
+      puts hmm
     end
   end
   ############################################################################################

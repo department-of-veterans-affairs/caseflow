@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# TODO: Might might an abstract MembershipMailer class? Not sure
+# TODO: Might make an abstract MembershipMailer class? Not sure
 class VhaMembershipRequestMailer < MembershipRequestMailer
   default from: "<VHABENEFITAPPEALS@va.gov>"
   # layout :unknown
@@ -33,8 +33,8 @@ class VhaMembershipRequestMailer < MembershipRequestMailer
     # mail(to: @recipient_info[:email], subject: "Membership request submitted.")
 
     # TODO: enable these when the email templates are added?
-    # requestor_subission_email(requestor)
-    # send_org_emails(organizations)
+    requestor_subission_email(requestor)
+    send_org_emails(organizations)
   end
 
   # Send requestor an email with updated status of membership request.
