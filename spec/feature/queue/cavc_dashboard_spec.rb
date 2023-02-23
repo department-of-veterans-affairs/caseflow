@@ -47,6 +47,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
   context "unauthorized user cannot add issues to the cavc dashboard" do
     before do
+      occteam_organization.add_user(unauthorized_user)
       User.authenticate!(user: unauthorized_user)
       occteam_organization.add_user(unauthorized_user)
     end
@@ -59,6 +60,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
   context "authorized user can add issues to the cavc dashboard" do
     before do
+      oaiteam_organization.add_user(authorized_user)
       User.authenticate!(user: authorized_user)
       oaiteam_organization.add_user(authorized_user)
     end
