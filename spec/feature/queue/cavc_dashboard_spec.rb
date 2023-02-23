@@ -53,7 +53,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
     it "dashboard loads as read-only if the appeal has an associated cavcRemand" do
       visit "/queue/appeals/#{cavc_appeal.uuid}/cavc_dashboard"
-      expect(page).to_not have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_TEXT)
+      expect(page).to_not have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT)
     end
   end
 
@@ -65,7 +65,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
     it "dashboard loads as editable if the appeal has an associated cavcRemand" do
       visit "/queue/appeals/#{cavc_appeal.uuid}/cavc_dashboard"
-      expect(page).to have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_TEXT)
+      expect(page).to have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT)
     end
   end
 end
