@@ -77,14 +77,10 @@ export const NotificationsView = (props) => {
           hideDocs
           hideDecisionDocument
         />
-        <div {...sectionGap} >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <p className="notification-text">
-              VA Notify sent these status notifications to the Appellant about their case.
-            </p>
-            <a href={`/appeals/${appealId}/notifications.pdf`}>Download</a>
-
-          </div>
+        <div {...sectionGap}>
+          <p className="notification-text">
+            VA Notify sent these status notifications to the Appellant about their case.
+          </p>
           <div className="notification-table">
             <NotificationTable
               appealId={appealId}
