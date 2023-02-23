@@ -166,6 +166,7 @@ const taskAttributesFromRawTask = (task) => {
       name: task.attributes.claimant?.name
     },
     veteranParticipantId: task.attributes.veteran_participant_id,
+    veteranSSN: task.attributes.veteran_ssn,
     appeal_receipt_date: task.attributes.appeal_receipt_date
   };
 };
