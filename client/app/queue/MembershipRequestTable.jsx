@@ -107,12 +107,11 @@ const MembershipRequestTable = (props) => {
   // TODO: Ask if the requests are supposed to be ordered by created at?
   // Right now it will be in order based on the id of the membership request
   // It just happens to also be sorted created date as well in most cases since it is set on object creation.
-
   // The normal column definitions for the request table row that is not the additional request note row.
   const normalColumnsDefinitions = [
     {
       header: 'User name',
-      valueFunction: (request) => request.name
+      valueFunction: (request) => request.userNameWithCssId
     },
     {
       header: 'Date requested',

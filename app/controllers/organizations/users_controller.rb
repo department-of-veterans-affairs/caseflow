@@ -71,19 +71,16 @@ class Organizations::UsersController < OrganizationsController
     params[:organization_url]
   end
 
-  # TODO: Don't use this method if they aren't a vha_organization for now since it's a waste of a database call
   def membership_requests
-    # TODO: Use the serializer from Appeals-13115 and update it to include these fields
-    MembershipRequest.includes(:requestor, :organization).where(organization: organization)
-      .assigned
-      .map do |membership_request|
-        {
-          id: membership_request.id,
-          name: "#{membership_request.requestor.full_name} (#{membership_request.requestor.css_id})",
-          requestedDate: membership_request.created_at,
-          note: membership_request.note
-        }
-      end
+    # Serialize the Membership Requests and extract the attributes
+    if vha_organization?
+      MembershipRequestSerializer.new(organization.membership_requests.includes(:requestor).assigned,
+                                      is_collection: true)
+        .serializable_hash[:data]
+        .map { |hash| hash[:attributes] }
+    else
+      []
+    end
   end
 
   def vha_organization?
