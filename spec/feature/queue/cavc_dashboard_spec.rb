@@ -7,7 +7,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
   let(:authorized_user) { create(:user) }
   let(:unauthorized_user) { create(:user) }
   let(:occteam_organization) { OccTeam.singleton }
-  let(:oicteam_organization) { OaiTeam.singleton }
+  let(:oaiteam_organization) { OaiTeam.singleton }
 
   context "user is not a member of OAI or OCC organization" do
     before { User.authenticate!(user: unauthorized_user) }
@@ -23,7 +23,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
     before do
       User.authenticate!(user: authorized_user)
       occteam_organization.add_user(authorized_user)
-      oicteam_organization.add_user(authorized_user)
+      oaiteam_organization.add_user(authorized_user)
     end
 
     it "dashboard redirects if the appeal is a Legacy Appeal" do
@@ -42,6 +42,30 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
     it "dashboard loads if the appeal has an associated cavcRemand" do
       visit "/queue/appeals/#{cavc_appeal.uuid}/cavc_dashboard"
       expect(page).to have_text "CAVC appeals for #{cavc_appeal.veteran.name}"
+    end
+  end
+
+  context "unauthorized user cannot add issues to the cavc dashboard" do
+    before do
+      User.authenticate!(user: unauthorized_user)
+      occteam_organization.add_user(unauthorized_user)
+    end
+
+    it "dashboard loads as read-only if the appeal has an associated cavcRemand" do
+      visit "/queue/appeals/#{cavc_appeal.uuid}/cavc_dashboard"
+      expect(page).to_not have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_TEXT)
+    end
+  end
+
+  context "authorized user can add issues to the cavc dashboard" do
+    before do
+      User.authenticate!(user: authorized_user)
+      oaiteam_organization.add_user(authorized_user)
+    end
+
+    it "dashboard loads as editable if the appeal has an associated cavcRemand" do
+      visit "/queue/appeals/#{cavc_appeal.uuid}/cavc_dashboard"
+      expect(page).to have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_TEXT)
     end
   end
 end
