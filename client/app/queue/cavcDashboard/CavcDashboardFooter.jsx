@@ -29,7 +29,7 @@ export const CavcDashboardFooter = (props) => {
 
   return (
     <div {...buttonStyling}>
-      <Button onClick={() => history.goBack()}>Close</Button>
+      <Button onClick={() => history.goBack()}>Return to Case Details</Button>
     </div>
   );
 };
