@@ -1,0 +1,10 @@
+#! /bin/bash
+# capture-log
+# Usage: capture-log "cmd"
+
+log_location="${HOME}/logs/"
+mkdir -p "${log_location}"
+
+run_cmd="$@"
+logfile="${log_location}$(date +%s%N).log"
+set -o pipefail && eval ${run_cmd} 2>&1 | tee ${logfile}
