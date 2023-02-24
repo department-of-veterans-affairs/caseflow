@@ -174,41 +174,41 @@ const vhaDocumentSearchTaskData = {
         }
       },
       {
-        label: "Return to Board Intake",
-        func: "vha_return_to_board_intake",
-        value: "modal/vha_return_to_board_intake",
+        label: 'Return to Board Intake',
+        func: 'vha_return_to_board_intake',
+        value: 'modal/vha_return_to_board_intake',
         data: {
-          modal_title: "Return to Board Intake",
-          type: "VhaDocumentSearchTask",
-          redirect_after: "/organizations/vha-camo",
+          modal_title: 'Return to Board Intake',
+          type: 'VhaDocumentSearchTask',
+          redirect_after: '/organizations/vha-camo',
           options: [
             {
-              label: "Duplicate",
-              value: "duplicate"
+              label: 'Duplicate',
+              value: 'duplicate'
             },
             {
-              label: "HLR Pending",
-              value: "hlr pending"
+              label: 'HLR Pending',
+              value: 'hlr pending'
             },
             {
-              label: "SC Pending",
-              value: "sc pending"
+              label: 'SC Pending',
+              value: 'sc pending'
             },
             {
-              label: "Not VHA related",
-              value: "not vha related"
+              label: 'Not VHA related',
+              value: 'not vha related'
             },
             {
-              label: "Clarification needed from appellant",
-              value: "clarification needed from appellant"
+              label: 'Clarification needed from appellant',
+              value: 'clarification needed from appellant'
             },
             {
-              label: "No VHA decision",
-              value: "no vha decision"
+              label: 'No VHA decision',
+              value: 'no vha decision'
             },
             {
-              label: "Other",
-              value: "other"
+              label: 'Other',
+              value: 'other'
             }
           ]
         }
