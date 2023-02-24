@@ -44,7 +44,7 @@ class VhaMembershipRequestMailBuilder
     MembershipRequestMailer.with(recipient_info: requestor,
                                  requests: membership_requests,
                                  subject: SUBJECT_LINE_REQUESTOR_SUBMITTED)
-      .request_received.deliver
+      .request_received.deliver_now!
   end
 
   def send_organization_emails
@@ -66,7 +66,7 @@ class VhaMembershipRequestMailBuilder
                                    organization_name: organization.name,
                                    to: admin_email,
                                    subject: SUBJECT_LINE_VHA_ADMIN_REQUEST_SUBMITTED)
-        .admin_request.deliver
+        .admin_request.deliver_now!
     end
   end
 

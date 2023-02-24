@@ -41,7 +41,7 @@ class MembershipRequest < CaseflowRecord
     # TODO: Maybe only send params? or maybe
     def create_many_from_params_and_send_creation_emails(organizations, params, user)
       created_requests = create_many_from_orgs(organizations, params, user)
-      # send_creation_emails(created_requests)
+      send_creation_emails(created_requests)
       created_requests
     end
 
@@ -55,7 +55,7 @@ class MembershipRequest < CaseflowRecord
       #   .with(requestor: user, requests: requests)
       #   .membership_request_submission
 
-      MembershipRequestMailBuilderFactory.get_builder(org_type).new(membership_requests).send_email_after_creation
+      MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(membership_requests).send_email_after_creation
     end
   end
   ############################################################################################
