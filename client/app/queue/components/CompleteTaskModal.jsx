@@ -154,81 +154,6 @@ ReadyForReviewModal.propTypes = {
   highlightInvalid: PropTypes.bool
 };
 
-const sendToBoardOpts = [
-  { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS, value: 'correct documents' },
-  { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_APPEALABLE, value: 'not appealable' },
-  { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_NO_VHA_DECISION, value: 'no vha decision' },
-  { displayText: COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_VHA_RELATED, value: 'not vha related' }
-];
-
-const SendToBoardIntakeModal = ({ props, state, setState }) => {
-  const taskConfiguration = taskActionData(props);
-  // if the VhaProgramOffice has completed a task, show the task instructions in the modal
-  const programOfficeInstructions = props.tasks.map((task) => {
-    return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1];
-  });
-
-  let filteredSendToBoardOpts = sendToBoardOpts;
-
-  if (!props.featureToggles.vha_irregular_appeals) {
-    filteredSendToBoardOpts = sendToBoardOpts.filter((opt) => {
-      return opt.displayText === COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS;
-    });
-  }
-
-  return (
-    <React.Fragment>
-      {programOfficeInstructions.some((i) => i) &&
-        <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
-      {programOfficeInstructions.map((text) => (
-        <React.Fragment>
-          <div>
-            <ReactMarkdown>{text}</ReactMarkdown>
-          </div>
-        </React.Fragment>
-      ))}
-      {taskConfiguration && taskConfiguration.modal_body}
-      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
-        <div>
-          <hr style= {{ marginBottom: '1.5em' }} />
-          <RadioField
-            name="sendToBoardIntakeOptions"
-            id="sendToBoardIntakeOptions"
-            label={COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL}
-            inputRef={props.register}
-            vertical
-            onChange={(value) => setState({ radio: value })}
-            value={state.radio}
-            options={filteredSendToBoardOpts}
-            errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.SELECT_RADIO_ERROR : null}
-          />
-          <TextareaField
-            label={COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY}
-            name="instructions"
-            id="vhaSendToBoardIntakeInstructions"
-            onChange={(value) => setState({ instructions: value })}
-            value={state.instructions}
-            styling={marginTop(4)}
-            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-            errorMessage={props.highlightInvalid &&
-              !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
-          />
-        </div>
-      )}
-    </React.Fragment>
-  );
-};
-
-SendToBoardIntakeModal.propTypes = {
-  props: PropTypes.object,
-  tasks: PropTypes.array,
-  setState: PropTypes.func,
-  state: PropTypes.object,
-  register: PropTypes.func,
-  featureToggles: PropTypes.array,
-  highlightInvalid: PropTypes.bool
-};
-
 const ReturnToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
 
@@ -377,14 +302,6 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.DOCKET_APPEAL_MODAL_TITLE,
     getContent: MarkTaskCompleteModal,
     buttonText: COPY.MODAL_CONFIRM_BUTTON
-  },
-  vha_send_to_board_intake: {
-    buildSuccessMsg: (appeal) => ({
-      title: sprintf(COPY.VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
-    }),
-    title: () => COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
-    getContent: SendToBoardIntakeModal,
-    buttonText: COPY.MODAL_SUBMIT_BUTTON
   },
   emo_return_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
@@ -540,21 +457,7 @@ class CompleteTaskModal extends React.Component {
       return reviewNotes = null;
     });
 
-    if (this.props.modalType === 'vha_send_to_board_intake') {
-      const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
-
-      formattedInstructions.push(`\n**Status:** ${locationLabel}\n`);
-
-      if (reviewNotes) {
-        formattedInstructions.push(`\n\n**${reviewNotes} Notes:** ${previousInstructions.join('')}\n`);
-      }
-
-      if (instructions) {
-        const instructionsDetail = `\n**CAMO Notes:** ${instructions}`;
-
-        formattedInstructions.splice(1, 0, instructionsDetail);
-      }
-    } else if (this.props.modalType.includes('for_review')) {
+    if (this.props.modalType.includes('for_review')) {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
       const docLocationText = `Documents for this appeal are stored in ${radio === 'other' ? otherInstructions :
         locationLabel}.`;
@@ -582,7 +485,7 @@ class CompleteTaskModal extends React.Component {
 
      let isValid = true;
 
-     if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
+     if (modalType === 'ready_for_review') {
        isValid = validInstructions(instructions) && validRadio(radio);
      }
 

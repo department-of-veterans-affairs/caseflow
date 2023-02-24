@@ -599,10 +599,6 @@ class QueueApp extends React.PureComponent {
     />
   )
 
-  routedCamoSendToBoardIntake = (props) => (
-    <CompleteTaskModal modalType="vha_send_to_board_intake" {...props.match.params} />
-  );
-
   routedEMOReturnToBoardIntake = (props) => (
     <CompleteTaskModal modalType="emo_return_to_board_intake" {...props.match.params} />
   );
@@ -1083,12 +1079,6 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.CAVC_REMAND_RECEIVED_VLJ.value
                 }`}
               render={this.routedCavcRemandReceived}
-            />
-            <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.value
-                }`}
-              render={this.routedCamoSendToBoardIntake}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${

@@ -163,16 +163,6 @@ const vhaDocumentSearchTaskData = {
           redirect_after: '/organizations/vha-camo'
         }
       },
-      {
-        func: 'vha_send_to_board_intake',
-        label: 'Send to Board Intake',
-        value: 'modal/vha_send_to_board_intake',
-        data: {
-          modal_title: 'Send to Board Intake',
-          type: 'VhaDocumentSearchTask',
-          redirect_after: '/organizations/vha-camo'
-        }
-      }
     ],
     timelineTitle: 'VhaDocumentSearchTask completed'
   }

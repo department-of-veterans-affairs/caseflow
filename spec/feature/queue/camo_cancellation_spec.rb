@@ -29,40 +29,6 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
     FeatureToggle.disable!(:vha_irregular_appeals)
   end
 
-  context "CAMO user can assign a case to BVA intake, recommending cancellation" do
-    before do
-      User.authenticate!(user: camo_user)
-    end
-    scenario "assign to BVA intake" do
-      step "navigate from CAMO team queue to case details" do
-        visit camo_org.path
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-        expect(page).to have_content(appeal.veteran_full_name.to_s)
-      end
-      step "trigger send to board intake modal" do
-        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.label).click
-        expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE)
-        expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL)
-        expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY)
-      end
-      step "trigger error state" do
-        find("button", class: "usa-button", text: "Submit").click
-        expect(page).to have_content(COPY::SELECT_RADIO_ERROR)
-        expect(page).to have_content(COPY::EMPTY_INSTRUCTIONS_ERROR)
-      end
-      step "submit valid form" do
-        find("label", text: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_APPEALABLE).click
-        fill_in("Provide additional context and/or documents:", with: "This should be cancelled.")
-        find("button", class: "usa-button", text: "Submit").click
-      end
-      step "redirect and confirmation" do
-        expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION.gsub("%s", appeal.veteran.person.name))
-      end
-    end
-  end
-
   context "BVA Intake user has appeal in queue" do
     before do
       User.authenticate!(user: bva_intake_user)
