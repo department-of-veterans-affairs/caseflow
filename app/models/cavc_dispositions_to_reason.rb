@@ -3,7 +3,6 @@
 class CavcDispositionsToReason < CaseflowRecord
   include CreatedAndUpdatedByUserConcern
 
-  belongs_to :cavc_dashboard_dispositions
-  validates :cavc_dashboard_dispositions, presence: true
-
+  belongs_to :cavc_dashboard_disposition
+  validates :cavc_dashboard_disposition, presence: true
 end
