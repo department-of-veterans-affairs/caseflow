@@ -1,4 +1,4 @@
-class AlterColumnNamesCavcDispositionsToReasons < ActiveRecord::Migration[5.2]
+class AlterColumnNamesCavcDispositionsToReasons < Caseflow::Migration
   def change
     safety_assured do
       change_table :cavc_dispositions_to_reasons do |t|
