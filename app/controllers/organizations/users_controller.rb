@@ -84,32 +84,9 @@ class Organizations::UsersController < OrganizationsController
   end
 
   def vha_organization?
-    # TODO: This might cause an error if the constants are somehow not defined? Investigate if that is possible
-    # Is it because the organization is an active model class and these orgs are just regular classes?
-    # But they inherit from org so they should be subtyped correctly and it works in irb?
-    # This apparently happens in develeopment environment but I don't know why.
-    # Hardcoding strings to avoid for now
-    # vha_org_types = [VhaCaregiverSupport, VhaCamo, VhaProgramOffice, VhaRegionalOffice]
-    # vha_org = vha_org_types.any? { |org_type| organization.is_a?(org_type) } || organization.url == "vha"
-
-    vha_program_office_names = [
-      "Community Care - Payment Operations Management",
-      "Community Care - Veteran and Family Members Program",
-      "Member Services - Health Eligibility Center",
-      "Member Services - Beneficiary Travel",
-      "Prosthetics"
-    ]
-
-    # All VHA Organization names. This is not as nice as the contants but that errors for now.
-    all_vha_org_names = [
-      "Veterans Health Administration",
-      "VHA Caregiver Support Program",
-      "VHA CAMO",
-      vha_program_office_names
-    ].flatten
-
-    # vha_org_types.any? { |org_type| organization.is_a?(org_type) }
-    all_vha_org_names.any? { |vha_org_name| organization.name == vha_org_name }
+    vha_predocket_org_types = [::VhaCaregiverSupport, ::VhaCamo, ::VhaProgramOffice]
+    # Check if the org is any of the types above or has the url vha for the general VHA BusinessLine object
+    organization.url == "vha" || vha_predocket_org_types.any? { |org_type| organization.is_a?(org_type) }
   end
 
   def json_users(users)
