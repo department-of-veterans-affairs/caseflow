@@ -5,7 +5,7 @@
 class VhaMembershipRequestMailBuilder
   attr_accessor :membership_requests, :requestor
 
-  # TODO: Move these into a constants file somewhere
+  # TODO: Move these subjects into a constants file somewhere
   SUBJECT_LINE_REQUESTOR_SUBMITTED = "Request recieved - Do Not Reply"
   SUBJECT_LINE_REQUESTOR_APPROVED = "Request approved - Do Not Reply"
   SUBJECT_LINE_REQUESTOR_DENIED = "Request denied - Do Not Reply"
@@ -24,23 +24,17 @@ class VhaMembershipRequestMailBuilder
 
   def initialize(requests)
     @membership_requests = requests
-    # puts "new_requests: #{new_requests}"
     @requestor = membership_requests.first.requestor
   end
 
-  # TODO: I Don't know if these should be class methods or not
-  # It should probably be instance methods if there is logic that needs to be done on the requests array
   def send_email_after_creation
     send_requstor_email
-    # MembershipRequestMailer.with(requestor: user, requests: user.membership_requests).request_received.deliver
     send_organization_emails
-    # MembershipRequestMailer.admin_request.deliver
   end
 
   private
 
   def send_requstor_email
-    # @recipient_info = params[:recipient_info]
     MembershipRequestMailer.with(recipient_info: requestor,
                                  requests: membership_requests,
                                  subject: SUBJECT_LINE_REQUESTOR_SUBMITTED)

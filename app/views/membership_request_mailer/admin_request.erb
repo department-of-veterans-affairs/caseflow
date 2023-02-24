@@ -1,4 +1,8 @@
-<%= render "intro" %>
+<%= content_for :intro do %>
+  <p>
+    Dear <%= @organization_name %> admin,
+  </p>
+<% end %>
 
 <%= content_for :content do %>
   <p>
