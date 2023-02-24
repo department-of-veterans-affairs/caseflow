@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2023_02_02_214308) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2023_02_02_214308) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at"
+    t.datetime "updated_at", comment: "Date and time the record was last updated"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -1088,7 +1088,7 @@ ActiveRecord::Schema.define(version: 2023_02_02_214308) do
     t.datetime "created_at", null: false
     t.datetime "decided_at", comment: "The date and time when the deider user made a decision about the membership request"
     t.bigint "decider_id", comment: "The user who decides the status of the membership request"
-    t.string "note"
+    t.string "note", comment: "A note that provides additional context from the requestor about their request for access to the organization"
     t.bigint "organization_id", comment: "The organization that the membership request is asking to join"
     t.bigint "requestor_id", comment: "The User that is requesting access to the organization"
     t.string "status", default: "assigned", null: false, comment: "The status of the membership request at any given point of time"
@@ -1559,8 +1559,8 @@ ActiveRecord::Schema.define(version: 2023_02_02_214308) do
   end
 
   create_table "tasks", force: :cascade do |t|
-    t.integer "appeal_id"
-    t.string "appeal_type"
+    t.integer "appeal_id", null: false
+    t.string "appeal_type", null: false
     t.datetime "assigned_at"
     t.integer "assigned_by_id"
     t.integer "assigned_to_id", null: false
