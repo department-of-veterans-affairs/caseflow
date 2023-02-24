@@ -179,6 +179,18 @@ describe('CompleteTaskModal', () => {
     });
   });
 
+  describe('vha_documents_ready_for_ready_for_bva_intake_review', () => {
+    const taskType = 'VhaDocumentSearchTask';
+    // const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const modalType = 'vha_documents_ready_for_bva_intake_review';
+
+    test('modal title is Ready for Review', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      expect(screen.getByText('Ready for Review')).toBeTruthy();
+    });
+  });
+
   describe('vha_caregiver_support_send_to_board_intake_for_review', () => {
     const taskType = 'VhaDocumentSearchTask';
     const buttonText = COPY.MODAL_SEND_BUTTON;
