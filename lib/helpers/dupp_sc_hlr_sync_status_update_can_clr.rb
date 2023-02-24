@@ -6,15 +6,19 @@ statuses were cancelled or cleared; we must perform a manual remediation script 
 This is the solution we've decided to impliment.
 
 These remediation steps will upate the sync status manually or automatically for
- "CAN" for cancelled, or "CLR" for "Cleared"
+"CAN" for cancelled, or "CLR" for "Cleared"
 It also logs messages for the user.
 
-This gets hit by when we run the WarRoom::DuppSuppClaimsSyncStatusUpdateCan job in the Caseflow Rails console.
+This gets hit by when we run the WarRoom::DuppSuppClaimsSyncStatusUpdateCanClr script in the Caseflow Rails console.
 
 Usage: ./dupp-supp-claims-sync-status-update-can.sh <arg1> <arg2>
-where <arg1> is the first argument to pass to the job and <arg2> is the second argument.
+# "yes no" runs manual remediation
+# "no yes" runs auto remediation
 
-It is suspected that a expired BGS Attorney could cause this script to fail in which we would reach out to OAR and rerun the script.
+It is suspected that a expired BGS Attorney could cause this script to fail in which we would reach out to OAR for that correction and rerun the script if required.
+
+In the manual script we check for proper vet file number first for data integrity (not included in the auto-script), in attempt to prevent any future issues,
+we then cancel the sync status to clr or canceled. Cancel the intake of the clr or canceled appeal.
 
 # Separation of concerns: The code is broken down into smaller,
 more focused methods to improve readability and maintainability.
@@ -127,7 +131,7 @@ module WarRoom
       end
     else
       if
-        def run(manual, type)
+        def run(manual, sc_hlr)
           # set current user
           RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
           # Log a message for the user

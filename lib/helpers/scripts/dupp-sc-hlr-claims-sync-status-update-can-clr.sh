@@ -3,9 +3,14 @@
 # This script runs the WarRoom::DuppSuppClaimsSyncStatusUpdate job in the Caseflow Rails console.
 # Usage: ./dupp-supp-claims-sync-status-update-can.sh <arg1> <arg2>
 # This will check if the first and second arguments are either
-# "Yes" or "No". If they are not, it will print an error message
+# "Yes" or "No".
+# "Yes No" runs manual remediation
+# "No Yes" runs auto remediation
+# If they are not, it will print an error message
 # and exit with a non-zero status.
 # The first arguement is for manual remediation for HLR or Supplimental claim. The second argumentment is for auto-remediation for dupplicateEP error for HLR or SC.
+# The manual script will prompt you to enter the UUID of problem claim
+# The auto script will update all problem HLR AND/OR SC found in the dupplicateEP table.
 
 set -e # Exit script immediately if any command exits with a non-zero status.
 
