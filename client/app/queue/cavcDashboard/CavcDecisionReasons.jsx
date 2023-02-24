@@ -201,7 +201,7 @@ const CavcDecisionReasons = ({ uniqueId, loadCheckedBoxes }) => {
       <Accordion
         style="bordered"
         id={`accordion-${uniqueId}`}
-        header={`${DECISION_REASON_TITLE}${decisionReasonCount > 0 ? `(${decisionReasonCount})` : ''}`}
+        header={`${DECISION_REASON_TITLE}${decisionReasonCount > 0 ? ` (${decisionReasonCount})` : ''}`}
       >
         <AccordionSection id={`accordion-${uniqueId}`} >
           <p style={{ fontWeight: 'normal' }}>{DECISION_REASON_TEXT}</p>
