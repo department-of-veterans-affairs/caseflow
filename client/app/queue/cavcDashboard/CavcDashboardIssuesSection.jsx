@@ -50,7 +50,8 @@ const CavcDashboardIssue = (props) => {
   const [removeModalIsOpen, setRemoveModalIsOpen] = useState(false);
 
   const [disposition, setDisposition] = useState(dispositions?.find(
-    (dis) => dis.request_issue_id === issue.id)?.disposition || dispositions[0]);
+    (dis) => dis.request_issue_id === issue.id ||
+      dis.cavc_dashboard_issue_id === issue.id)?.disposition || issue?.disposition);
 
   /* eslint-disable-next-line */
   const loadCheckedBoxes = dispositions.find((dis) => dis.request_issue_id === issue.id)?.cavc_dispositions_to_reasons;
@@ -183,7 +184,7 @@ const CavcDashboardIssuesSection = (props) => {
                   <CavcDashboardIssue
                     issue={cavcIssue}
                     index={i}
-                    dispositions={[cavcIssue.disposition]}
+                    dispositions={dashboardDispositions.filter((dis) => dis.cavc_dashboard_issue_id === cavcIssue.id)}
                     removeIssueHandler={removeIssueHandler}
                     addedIssueSection
                   />
