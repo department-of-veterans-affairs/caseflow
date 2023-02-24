@@ -441,10 +441,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     member_of_organization?(Bva.singleton)
   end
 
-  def can_view_membership_requests?
-    true
-  end
-
   def show_regional_office_in_queue?
     HearingsManagement.singleton.user_has_access?(self)
   end

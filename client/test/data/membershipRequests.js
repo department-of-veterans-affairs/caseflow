@@ -38,7 +38,7 @@ export const createMockedMembershipRequests = (number) => {
   for (let i = 0; i <= number; i++) {
     mockedRequests.push({
       id: i + 5,
-      name: faker.name.findName(),
+      userNameWithCssId: faker.name.findName(),
       requestedDate: faker.date.recent(10),
       ...(Math.random() <= 0.3 && { note: faker.lorem.lines(1) }),
     });

@@ -23,8 +23,6 @@ class MembershipRequestSerializer
   end
 
   attribute :userNameWithCssId do |object|
-    requestor = object.requestor
-    # TODO: Should this need nullsafe? Requestor shouldn't be able to be nil in the database.
-    "#{requestor&.full_name} (#{requestor&.css_id})"
+    "#{object.requestor.full_name} (#{object.requestor.css_id})"
   end
 end

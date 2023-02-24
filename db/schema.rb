@@ -1171,16 +1171,6 @@ ActiveRecord::Schema.define(version: 2023_02_02_214308) do
     t.index ["participant_id"], name: "index_participant_id"
   end
 
-  create_table "organization_membership_requests", comment: "User requests to join organizations", force: :cascade do |t|
-    t.datetime "created_at", comment: "The date and time that the user's request to join the organization was made at."
-    t.bigint "created_by_id", comment: "ID of user that requested admittance to an organization"
-    t.bigint "decision_by_id", comment: "ID of admin of organization that approved or denied user's admittance."
-    t.integer "organization_id", comment: "ID of organization that the user has requested to join."
-    t.boolean "permitted_admittance", comment: "True/False/null - Whether or not user was allowed to join organization. Null if decision is pending."
-    t.index ["created_by_id", "organization_id"], name: "index_org_membership_on_created_by_id_and_organization_id", unique: true
-    t.index ["created_by_id"], name: "index_organization_membership_requests_on_created_by_id"
-  end
-
   create_table "organizations", force: :cascade do |t|
     t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases"
     t.boolean "ama_only_push", default: false, comment: "whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob"
@@ -1909,9 +1899,6 @@ ActiveRecord::Schema.define(version: 2023_02_02_214308) do
   add_foreign_key "nod_date_updates", "users"
   add_foreign_key "non_availabilities", "schedule_periods"
   add_foreign_key "notifications", "notification_events", column: "event_type", primary_key: "event_type"
-  add_foreign_key "organization_membership_requests", "organizations"
-  add_foreign_key "organization_membership_requests", "users", column: "created_by_id"
-  add_foreign_key "organization_membership_requests", "users", column: "decision_by_id"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"
