@@ -20,5 +20,9 @@ export const LABELS = {
   IS_JMR: 'Joint Motion for Remand?',
 };
 
-export const DECISION_REASON_TITLE = 'Decision Reasons';
-export const DECISION_REASON_TEXT = 'Select reasons why this issues decision was changed';
+export const DECISION_REASON_LABELS = {
+  DECISION_REASON_TITLE: 'Decision Reasons',
+  DECISION_REASON_PROMPT: 'Select reasons why this issues decision was changed',
+  DECISION_REASON_BASIS_LABEL: 'Basis for this selection'
+};
+

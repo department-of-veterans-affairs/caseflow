@@ -3,7 +3,7 @@ import { Accordion } from '../../components/Accordion';
 import Checkbox from '../../components/Checkbox';
 import AccordionSection from 'app/components/AccordionSection';
 import TextField from '../../components/TextField';
-import { DECISION_REASON_TEXT, DECISION_REASON_TITLE } from './cavcDashboardConstants';
+import { DECISION_REASON_LABELS } from './cavcDashboardConstants';
 import { useDispatch, useSelector } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
@@ -165,7 +165,7 @@ const CavcDecisionReasons = ({ uniqueId, loadCheckedBoxes }) => {
                     <div>
                       <SearchableDropdown
                         name={`decision-reason-basis-${child.id}`}
-                        label="Basis for this selection"
+                        label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
                         placeholder="Type to search..."
                         styling={basisForSelectionStylingWithChild}
                       />
@@ -185,7 +185,7 @@ const CavcDecisionReasons = ({ uniqueId, loadCheckedBoxes }) => {
             {checkedReasons[parent.id]?.basis_for_selection_category && (
               <SearchableDropdown
                 name={`decision-reason-basis-${parent.id}`}
-                label="Basis for this selection"
+                label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
                 placeholder="Type to search..."
                 styling={basisForSelectionStylingNoChild}
               />
@@ -201,10 +201,12 @@ const CavcDecisionReasons = ({ uniqueId, loadCheckedBoxes }) => {
       <Accordion
         style="bordered"
         id={`accordion-${uniqueId}`}
-        header={`${DECISION_REASON_TITLE}${decisionReasonCount > 0 ? ` (${decisionReasonCount})` : ''}`}
+        header={`${DECISION_REASON_LABELS.DECISION_REASON_TITLE}
+          ${decisionReasonCount > 0 ? ` (${decisionReasonCount})` : ''}`
+        }
       >
         <AccordionSection id={`accordion-${uniqueId}`} >
-          <p style={{ fontWeight: 'normal' }}>{DECISION_REASON_TEXT}</p>
+          <p style={{ fontWeight: 'normal' }}>{DECISION_REASON_LABELS.DECISION_REASON_PROMPT}</p>
           {reasons}
         </AccordionSection>
       </Accordion>
