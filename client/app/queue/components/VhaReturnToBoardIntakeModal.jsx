@@ -1,5 +1,7 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+
 import { taskActionData } from '../utils';
 import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, setHeight } from '../constants';
 import TextareaField from 'app/components/TextareaField';
@@ -51,7 +53,8 @@ const VhaReturnToBoardIntakeModal = (props) => {
               value={state.otherInstructions}
               styling={marginTop(2)}
               textAreaStyling={setHeight(4.5)}
-              errorMessage={validInstructions(state.otherInstructions) ? null : 'Return reason field is required'}
+              errorMessage={props.highlightInvalid &&
+                !validInstructions(state.otherInstructions) ? 'Return reason field is required' : null}
             />}
           <TextareaField
             label={props.instructionsLabel || COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL}
@@ -61,7 +64,8 @@ const VhaReturnToBoardIntakeModal = (props) => {
             value={state.instructions}
             styling={marginTop(4)}
             maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-            errorMessage={validInstructions(state.instructions) ? null : COPY.EMPTY_INSTRUCTIONS_ERROR}
+            errorMessage={props.highlightInvalid &&
+              !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
             optional={props.instructionsOptional}
           />
         </div>
@@ -75,6 +79,7 @@ VhaReturnToBoardIntakeModal.propTypes = {
   tasks: PropTypes.array,
   setState: PropTypes.func,
   state: PropTypes.object,
+  highlightInvalid: PropTypes.bool,
   taskConfiguration: PropTypes.object,
   instructionsOptional: PropTypes.bool,
   modalBody: PropTypes.string,
@@ -84,4 +89,8 @@ VhaReturnToBoardIntakeModal.propTypes = {
   otherLabel: PropTypes.string
 };
 
-export default VhaReturnToBoardIntakeModal;
+export default connect(
+  (state) => ({
+    highlightInvalid: state.ui.highlightFormItems
+  })
+)(VhaReturnToBoardIntakeModal);
