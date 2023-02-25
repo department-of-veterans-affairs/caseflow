@@ -195,7 +195,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
   return (
     <React.Fragment>
       {programOfficeInstructions.some((i) => i) &&
-        <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
+        <strong style={{ color: '#323a45' }}>Notes from Program Office:</strong>}
       {programOfficeInstructions.map((text) => (
         <React.Fragment>
           <div>
@@ -206,7 +206,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
       {taskConfiguration && taskConfiguration.modal_body}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <div>
-          <hr style= {{ marginBottom: '1.5em' }} />
+          <hr style={{ marginBottom: '1.5em' }} />
           <RadioField
             name="sendToBoardIntakeOptions"
             id="sendToBoardIntakeOptions"
@@ -470,6 +470,17 @@ class CompleteTaskModal extends React.Component {
     setState: this.setState.bind(this)
   });
 
+  getModalContent = (modalAttributes, bodyProps) => {
+
+    if (typeof modalAttributes.getContent === 'function') {
+      return modalAttributes.getContent(bodyProps);
+    }
+
+    const Element = modalAttributes.getContent;
+
+    return <Element {...bodyProps} highlightInvalid={this.props.highlightInvalid} />;
+  };
+
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
     const formattedInstructions = [];
@@ -531,35 +542,35 @@ class CompleteTaskModal extends React.Component {
     return formattedInstructions.join('');
   };
 
-   validateForm = () => {
-     const { instructions, otherInstructions, radio } = this.state;
-     const modalType = this.props.modalType;
+  validateForm = () => {
+    const { instructions, otherInstructions, radio } = this.state;
+    const modalType = this.props.modalType;
 
-     let isValid = true;
+    let isValid = true;
 
-     if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
-       isValid = validInstructions(instructions) && validRadio(radio);
-     }
+    if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
+      isValid = validInstructions(instructions) && validRadio(radio);
+    }
 
-     if (modalType === 'emo_return_to_board_intake') {
-       isValid = validInstructions(instructions);
-     }
+    if (modalType === 'emo_return_to_board_intake') {
+      isValid = validInstructions(instructions);
+    }
 
-     if (modalType === 'emo_send_to_board_intake_for_review' || modalType === 'rpo_send_to_board_intake_for_review') {
-       if (radio === 'other') {
-         isValid = validInstructions(otherInstructions) && validRadio(radio);
-       } else {
-         isValid = validRadio(radio);
-       }
-     }
+    if (modalType === 'emo_send_to_board_intake_for_review' || modalType === 'rpo_send_to_board_intake_for_review') {
+      if (radio === 'other') {
+        isValid = validInstructions(otherInstructions) && validRadio(radio);
+      } else {
+        isValid = validRadio(radio);
+      }
+    }
 
-     // Checks validity using the customValidation function defined in the modal constants if it is present
-     if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customValidation === 'function') {
-       isValid = MODAL_TYPE_ATTRS[this.props.modalType].customValidation(this.getContentArgs());
-     }
+    // Checks validity using the customValidation function defined in the modal constants if it is present
+    if (typeof MODAL_TYPE_ATTRS[this.props.modalType].customValidation === 'function') {
+      isValid = MODAL_TYPE_ATTRS[this.props.modalType].customValidation(this.getContentArgs());
+    }
 
-     return isValid;
-   }
+    return isValid;
+  }
 
   submit = () => {
     const { task, appeal } = this.props;
@@ -595,7 +606,7 @@ class CompleteTaskModal extends React.Component {
         submitButtonClassNames={modalAttributes.submitButtonClassNames || ['usa-button']}
       >
         {this.props.task ?
-          modalAttributes.getContent(this.getContentArgs()) :
+          this.getModalContent(modalAttributes, this.getContentArgs()) :
           null}
       </QueueFlowModal>
     );
