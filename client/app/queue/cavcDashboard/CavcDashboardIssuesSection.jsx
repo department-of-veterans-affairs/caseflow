@@ -73,7 +73,7 @@ const CavcDashboardIssue = (props) => {
       issueType = `${issue.decision_review_type}`;
     }
   } else {
-    issueType = addedIssueSection ? issue.issue_category.label : issue.issue_category;
+    issueType = addedIssueSection ? issue.issue_category?.label : issue.issue_category;
   }
 
   const toggleRemoveIssueModal = () => {
