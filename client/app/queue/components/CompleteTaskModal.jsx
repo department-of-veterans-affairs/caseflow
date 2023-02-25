@@ -17,7 +17,7 @@ import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
-import { VhaReturnToBoardIntakeModal } from './VhaReturnToBoardIntakeModal';
+import VhaReturnToBoardIntakeModal from './VhaReturnToBoardIntakeModal';
 
 const validRadio = (radio) => {
   return radio?.length > 0;
@@ -245,35 +245,6 @@ SendToBoardIntakeModal.propTypes = {
   highlightInvalid: PropTypes.bool
 };
 
-const VhaCamoReturnToBoardIntakeModal = ({ props, state, setState }) => {
-  const taskConfiguration = taskActionData(props);
-
-  return (
-    <React.Fragment>
-      <VhaReturnToBoardIntakeModal
-        modalBody = {COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY}
-        dropdownLabel = {COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL}
-        dropdownDefaultText = {COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
-        otherLabel={COPY.VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL}
-        highlightInvalid = {props.highlightInvalid}
-        taskConfiguration={taskConfiguration}
-        state={state}
-        setState={setState}
-      />
-    </React.Fragment>
-  );
-};
-
-VhaCamoReturnToBoardIntakeModal.propTypes = {
-  props: PropTypes.object,
-  tasks: PropTypes.array,
-  setState: PropTypes.func,
-  state: PropTypes.object,
-  register: PropTypes.func,
-  featureToggles: PropTypes.array,
-  highlightInvalid: PropTypes.bool
-};
-
 const ReturnToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
 
@@ -323,34 +294,6 @@ SendColocatedTaskModal.propTypes = {
   teamName: PropTypes.string
 };
 
-const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState }) => {
-  const taskConfiguration = taskActionData(props);
-
-  return (
-    <React.Fragment>
-      <VhaReturnToBoardIntakeModal
-        modalBody = {COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY}
-        dropdownLabel = {COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL}
-        dropdownDefaultText = {COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
-        otherLabel={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL}
-        highlightInvalid = {props.highlightInvalid}
-        instructionsLabel={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL}
-        taskConfiguration={taskConfiguration}
-        state={state}
-        setState={setState}
-        instructionsOptional
-      />
-    </React.Fragment>
-  );
-};
-
-VhaCaregiverSupportReturnToBoardIntakeModal.propTypes = {
-  props: PropTypes.object,
-  setState: PropTypes.func,
-  state: PropTypes.object,
-  highlightInvalid: PropTypes.bool,
-};
-
 const MODAL_TYPE_ATTRS = {
   mark_task_complete: {
     buildSuccessMsg: (appeal, { contact }) => ({
@@ -393,7 +336,7 @@ const MODAL_TYPE_ATTRS = {
       title: sprintf(COPY.VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
     }),
     title: () => COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
-    getContent: VhaCamoReturnToBoardIntakeModal,
+    getContent: VhaReturnToBoardIntakeModal,
     buttonText: COPY.MODAL_RETURN_BUTTON,
     submitDisabled: ({ state }) => (
       !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
@@ -436,10 +379,10 @@ const MODAL_TYPE_ATTRS = {
   },
   vha_caregiver_support_return_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
-      title: sprintf(COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_SUCCESS_CONFIRMATION, appeal.veteranFullName)
+      title: sprintf(COPY.VHA_RETURN_TO_BOARD_INTAKE_SUCCESS_CONFIRMATION, appeal.veteranFullName)
     }),
-    title: () => COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
-    getContent: VhaCaregiverSupportReturnToBoardIntakeModal,
+    title: () => COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+    getContent: VhaReturnToBoardIntakeModal,
     buttonText: COPY.MODAL_RETURN_BUTTON,
     submitButtonClassNames: ['usa-button'],
     submitDisabled: ({ state }) => (
