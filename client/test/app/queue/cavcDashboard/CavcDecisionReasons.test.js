@@ -9,11 +9,10 @@ jest.mock('react-redux', () => ({
   useDispatch: () => jest.fn().mockImplementation(() => Promise.resolve(true))
 }));
 
-
 const checkboxes = [
   {
     id: 1,
-    basis_for_selection_category: 'null',
+    basis_for_selection_category: null,
     decision_reason: 'Duty to notify',
     order: 1,
     parent_decision_reason_id: null
