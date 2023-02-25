@@ -10,6 +10,8 @@ import CavcDecisionReasons from './CavcDecisionReasons';
 import Button from '../../components/Button';
 import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS';
 import RemoveCavcDashboardIssueModal from './RemoveCavcDashboardIssueModal';
+import { useDispatch } from 'react-redux';
+import { removeCheckedDecisionReason } from './cavcDashboardActions';
 
 const singleIssueStyling = css({
   marginBottom: '1.5em !important',
@@ -60,10 +62,16 @@ const CavcDashboardIssue = (props) => {
     (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
 
   let issueType = {};
+  const dispatch = useDispatch();
 
   const requireDecisionReason = () => {
-    return disposition === CAVC_DASHBOARD_DISPOSITIONS.reversed ||
-      disposition === CAVC_DASHBOARD_DISPOSITIONS.vacated_and_remanded;
+    /* eslint-disable-next-line */
+    if (disposition === CAVC_DASHBOARD_DISPOSITIONS.reversed || disposition === CAVC_DASHBOARD_DISPOSITIONS.vacated_and_remanded) {
+      return true;
+    }
+    dispatch(removeCheckedDecisionReason(issue.id));
+
+    return false;
   };
 
   if (issue.decision_review_type) {

@@ -37,7 +37,12 @@ export const cavcDashboardReducer = (state = initialState, action) => {
         }
       }
     });
-
+  case ACTIONS.REMOVE_CHECKED_DECISION_REASON:
+    return update(state, {
+      checked_boxes: {
+        $unset: action.payload.issueId
+      }
+    });
   case ACTIONS.UPDATE_DASHBOARD_ISSUES:
     return update(state, {
       cavc_dashboards: {
