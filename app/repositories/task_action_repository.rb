@@ -692,8 +692,8 @@ class TaskActionRepository
       queue_url = "/organizations/#{VhaCaregiverSupport.singleton.url}?tab=#{completed_tab_name}"
       dropdown_options = downcase_keys(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS)
       {
-        modal_title: COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
-        modal_body: COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY,
+        modal_title: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+        modal_body: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY,
         type: VhaDocumentSearchTask.name,
         options: dropdown_options,
         redirect_after: queue_url

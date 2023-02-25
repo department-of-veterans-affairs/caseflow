@@ -130,8 +130,8 @@ describe TaskActionRepository, :all_dbs do
       subject { TaskActionRepository.vha_caregiver_support_return_to_board_intake(task, user) }
 
       it "includes modal title, modal body text, and the redirect to the organization page" do
-        expect(subject[:modal_title]).to eq(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
-        expect(subject[:modal_body]).to eq(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY)
+        expect(subject[:modal_title]).to eq(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
+        expect(subject[:modal_body]).to eq(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY)
         expect(subject[:redirect_after]).to eq(redirect_url)
       end
     end

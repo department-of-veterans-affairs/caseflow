@@ -1267,6 +1267,9 @@
   "VHA_COMPLETE_TASK_MODAL_BODY": "Provide details such as file structure or file path",
   "VHA_COMPLETE_TASK_CONFIRMATION_PO": "Appeal has been marked as ready for review and sent to the CAMO team for review.",
   "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review.",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL": "Why is this appeal being returned?",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "This appeal will be sent to Board Intake.",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS": {
     "DUPLICATE": {
       "LABEL": "Duplicate",
@@ -1345,12 +1348,12 @@
   "EDUCATION_RPO_SELECTOR_PLACEHOLDER": "Select RPO",
   "EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE": "Return to Executive Management Office",
   "EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION": "You have successfully returned %s's case to the Executive Management Office",
-  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
-  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "This appeal will be returned to Board intake.",
-  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL": "Provide additional context for this action",
-  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL": "Why is this appeal being returned?",
-  "VHA_RETURN_TO_BOARD_INTAKE_SUCCESS_CONFIRMATION": "You have successfully returned %s's case to Board Intake",
-  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL": "Please provide the reason for return",
+  "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
+  "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "This appeal will be returned to Board intake.",
+  "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL": "Provide additional context for this action",
+  "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL": "Why is this appeal being returned?",
+  "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_SUCCESS_CONFIRMATION": "You have successfully returned %s's case to Board Intake",
+  "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL": "Please provide the reason for return",
   "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS": {
     "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DUPLICATE": {
       "LABEL": "Duplicate",

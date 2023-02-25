@@ -137,7 +137,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           visit "/queue/appeals/#{appeal.external_id}"
 
-          task_name = Constants.TASK_ACTIONS.VHA_RETURN_TO_BOARD_INTAKE.label
+          task_name = Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.label
 
           other_text_field_text = "Wrong type of documents"
           optional_text_field_text = "The documents included in the appeal are incorrect"
@@ -149,12 +149,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             text: task_name
           ).click
 
-          expect(page).to have_content(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
-          byebug
-          expect(page).to have_content(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY)
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY)
 
-          expect(page).to have_content(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL)
-          expect(page).to have_content(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL)
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL)
+          expect(page).to have_content(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL)
 
           # Fill in info and check for disabled submit button and warning text before submitting
           submit_button = find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON)
@@ -166,7 +165,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           page_options = all("div.cf-select__option")
           page_options_text = page_options.map(&:text)
-          controller_options = COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS
+          controller_options = COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS
           controller_options = controller_options.values.pluck("LABEL")
 
           # Verify that all of the options are in the dropdown
@@ -189,18 +188,18 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           # Verify the submit button is disabled again and check for the other reason text field
           expect(submit_button[:disabled]).to eq "true"
           expect(page).to have_content(
-            COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL
+            COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL
           )
 
           # Enter info into the optional text field and verify the submit button is still disabled
-          fill_in(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL,
+          fill_in(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL,
                   with: optional_text_field_text)
 
           expect(submit_button[:disabled]).to eq "true"
 
           # Enter info into the other reason text field
           # Then verify that the submit button is no longer disabled before submitting
-          fill_in(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL,
+          fill_in(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL,
                   with: other_text_field_text)
 
           expect(submit_button[:disabled]).to eq "false"
@@ -209,7 +208,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           expect(page).to have_content(
             format(
-              COPY::VHA_RETURN_TO_BOARD_INTAKE_SUCCESS_CONFIRMATION,
+              COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_SUCCESS_CONFIRMATION,
               appeal.veteran_full_name
             )
           )
