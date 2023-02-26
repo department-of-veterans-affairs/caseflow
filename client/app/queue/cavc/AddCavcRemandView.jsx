@@ -171,10 +171,10 @@ const AddCavcRemandView = (props) => {
     (Boolean(mandateDate) && validateDateNotInFuture(mandateDate)) || !mandateAvailable();
 
   const validAppellantSubstitutionGrantedDateDate = () =>
-    (!featureToggles.cavc_remand_granted_substitute_appellant || (Boolean(isAppellantSubstituted) && Boolean(appellantSubstitutionGrantedDate) && validateDateNotInFuture(appellantSubstitutionGrantedDate)));
+    (!featureToggles.cavc_remand_granted_substitute_appellant || isAppellantSubstituted === 'false' || (isAppellantSubstituted === 'true' && Boolean(appellantSubstitutionGrantedDate) && validateDateNotInFuture(appellantSubstitutionGrantedDate)));
 
   const validSubstituteAppellantClaimant = () =>
-  (!featureToggles.cavc_remand_granted_substitute_appellant || (Boolean(isAppellantSubstituted) && Boolean(participantId)));
+    (!featureToggles.cavc_remand_granted_substitute_appellant || isAppellantSubstituted === 'false' || (isAppellantSubstituted === 'true' && Boolean(participantId)));
 
   const validInstructions = () => instructions && instructions.length > 0;
 
@@ -243,6 +243,12 @@ const AddCavcRemandView = (props) => {
       catch((err) => props.showErrorMessage({ title: 'Error', detail: JSON.parse(err.message).errors[0].detail }));
   };
 
+  const handleChangeIsAppellantSubstituted = (value) => {
+    setIsAppellantSubstituted(value);
+    setAppellantSubstitutionGrantedDate(null);
+    setParticipantId(null);
+  }
+
   const docketNumberField = <TextField
     label={COPY.CAVC_DOCKET_NUMBER_LABEL}
     name="docket-number"
@@ -257,7 +263,7 @@ const AddCavcRemandView = (props) => {
     name="is-appellant-substituted"
     options={isAppellantSubstitutedOptions}
     value={isAppellantSubstituted}
-    onChange={(val) => setIsAppellantSubstituted(val)}
+    onChange={(val) => handleChangeIsAppellantSubstituted(val) }
     strongLabel
   />;
 
