@@ -95,7 +95,41 @@ module Seeds
           mandate_date: 1.week.ago
         }
 
-        CavcRemand.create!(creation_params)
+        cavc_remand = CavcRemand.create!(creation_params)
+        dashboard = CavcDashboard.create!(cavc_remand: cavc_remand)
+        cavc_issue = CavcDashboardIssue.create(
+          cavc_dashboard: dashboard,
+          benefit_type: 'compensation',
+          issue_category: 'Unknown Issue Category'
+        )
+        disposition = CavcDashboardDisposition.create(
+          cavc_dashboard_issue: cavc_issue,
+          disposition: 'reversed',
+          cavc_dashboard: dashboard,
+        )
+
+        other_due_process_protection = CavcDecisionReason.where(decision_reason: 'Other due process protection').first
+        other_due_basis = CavcSelectionBasis.where(category: other_due_process_protection.basis_for_selection_category).first
+        CavcDispositionsToReason.create(
+          cavc_decision_reason: other_due_process_protection,
+          cavc_dashboard_disposition: disposition,
+          cavc_selection_basis: other_due_basis
+        )
+
+        misapplication = CavcDecisionReason.where(decision_reason: 'Misapplication of statute/regulation/diagnostic code/caselaw').first
+        CavcDispositionsToReason.create(
+          cavc_decision_reason: misapplication,
+          cavc_dashboard_disposition: disposition,
+        )
+
+        misapplication_regulation = CavcDecisionReason.where(decision_reason: 'Regulation', basis_for_selection_category: "misapplication_regulation").first
+        mis_reg_basis = CavcSelectionBasis.where(category: misapplication_regulation.basis_for_selection_category).first
+        CavcDispositionsToReason.create(
+          cavc_decision_reason: misapplication_regulation,
+          cavc_dashboard_disposition: disposition,
+          cavc_selection_basis: mis_reg_basis
+        )
+
         @cavc_docket_number_last_four += 1
       end
     end
