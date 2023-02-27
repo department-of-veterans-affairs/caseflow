@@ -5,7 +5,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { fetchAppealDetails } from '../QueueActions';
-import { fetchCavcDecisionReasons, fetchInitialDashboardData, fetchCavcSelectionBases } from './cavcDashboardActions';
+import {
+  fetchCavcDecisionReasons,
+  fetchInitialDashboardData,
+  fetchCavcSelectionBases,
+  saveDashboardData
+} from './cavcDashboardActions';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
@@ -90,6 +95,7 @@ CavcDashboard.propTypes = {
   fetchCavcDecisionReasons: PropTypes.func,
   fetchCavcSelectionBases: PropTypes.func,
   fetchInitialDashboardData: PropTypes.func,
+  saveDashboardData: PropTypes.func,
   userCanEdit: PropTypes.bool,
   // Router inherited props
   history: PropTypes.object
@@ -99,6 +105,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     appealDetails: state.queue.appealDetails[ownProps.appealId],
     cavcDashboards: state.cavcDashboard.cavc_dashboards,
+    checkedBoxes: state.cavcDashboard.checked_boxes,
     userCanEdit: state.ui.canEditCavcDashboards
   };
 };
@@ -108,7 +115,8 @@ const mapDispatchToProps = (dispatch) =>
     fetchAppealDetails,
     fetchCavcDecisionReasons,
     fetchCavcSelectionBases,
-    fetchInitialDashboardData
+    fetchInitialDashboardData,
+    saveDashboardData
   }, dispatch);
 
 export default connect(

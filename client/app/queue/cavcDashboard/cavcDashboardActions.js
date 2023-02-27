@@ -59,3 +59,35 @@ export const updateDashboardData = (dashboardIndex, updatedData) => (dispatch) =
     payload: { dashboardIndex, updatedData }
   });
 };
+
+export const saveDashboardData = (allCavcDashboards, checkedBoxes) => (dispatch) => {
+  const cavcDashboardDispositions = allCavcDashboards.map((dashboard) => dashboard.cavc_dashboard_dispositions);
+  const dispositionsToReasonsByIssueId = [];
+
+  for (const [issueId, value] of Object.entries(checkedBoxes)) {
+    const parentBoxes = Object.values(value);
+    const childBoxes = parentBoxes.map((box) => box.children).flat();
+    const allBoxes = parentBoxes.concat(childBoxes);
+    const selectedBoxes = allBoxes.filter((box) => box.checked);
+    const ids = selectedBoxes.map((box) => box.id);
+
+    dispositionsToReasonsByIssueId.push({ issueId, ids });
+}
+
+  ApiUtil.post('/cavc_dashboard/save',
+    { data: {
+      cavc_dashboard_dispositions: cavcDashboardDispositions,
+      cavc_dispositions_to_reasons: dispositionsToReasonsByIssueId
+    } }).
+    then(() => {
+      return true;
+    }).
+    catch((error) => {
+      const responseError = error.message;
+
+      dispatch({
+        type: ACTIONS.SAVE_DASHBOARD_DATA_FAILURE,
+        payload: { responseError }
+      });
+    });
+};

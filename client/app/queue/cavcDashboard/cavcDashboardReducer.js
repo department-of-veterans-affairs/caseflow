@@ -6,7 +6,8 @@ export const initialState = {
   selection_bases: {},
   cavc_dashboards: [],
   checked_boxes: {},
-  dashboard_issues: []
+  dashboard_issues: [],
+  error: {}
 };
 
 export const cavcDashboardReducer = (state = initialState, action) => {
@@ -82,6 +83,14 @@ export const cavcDashboardReducer = (state = initialState, action) => {
           joint_motion_for_remand: {
             $set: action.payload.updatedData.jointMotionForRemandUpdate
           }
+        }
+      }
+    });
+  case ACTIONS.SAVE_DASHBOARD_DATA_FAILURE:
+    return update(state, {
+      error: {
+        message: {
+          $set: action.payload.responseError
         }
       }
     });

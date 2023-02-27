@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CavcDashboardController < ApplicationController
-  before_action :react_routed, :verify_access, except: [:cavc_decision_reasons, :cavc_selection_bases]
+  before_action :react_routed, :verify_access, except: [:cavc_decision_reasons, :cavc_selection_bases, :save]
 
   def set_application
     RequestStore.store[:application] = "queue"
@@ -41,6 +41,21 @@ class CavcDashboardController < ApplicationController
     render json: {
       cavc_dashboards: cavc_dashboards
     }
+  end
+
+  def save
+    # save issues
+    # save dispositions and reasons selections
+    dispositions = params[:cavc_dashboard_dispositions]
+    dispositions.as_json.flatten.map do |disposition|
+      cdd = CavcDashboardDisposition.find_or_create_by(id: disposition["id"])
+      cdd.update!(disposition: disposition["disposition"]) unless disposition["disposition"] == cdd.disposition
+    end
+    dispositions_to_reasons = params[:cavc_dispositions_to_reasons]
+    #dispositions_to_reasons.as_json.map {|dtr| dtr.values }.flat_map{|values| CavcDashboardDisposition.find_by(request_issue_id: values[0]).cavc_dispositions_to_reasons }
+    byebug
+
+    render json: { successful: true }
   end
 
   def cavc_decision_reasons

@@ -61,7 +61,7 @@ module Seeds
         dashboard = CavcDashboard.create!(cavc_remand: remand)
 
         dashboard.cavc_dashboard_dispositions.map do |disp|
-          disp.disposition = "abandoned"
+          disp.disposition = "reversed"
           disp.save!
           CavcDispositionsToReason.create!(cavc_dashboard_disposition: disp,
                                            cavc_decision_reason_id: 6,
