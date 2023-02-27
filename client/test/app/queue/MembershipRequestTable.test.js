@@ -68,7 +68,7 @@ describe('MembershipRequestTable', () => {
 
   });
 
-  it('displays the pagination controls when there are more than 10 membership requests correctly', () => {
+  it('displays the pagination controls when there are more than 10 membership requests correctly', async () => {
     const extraMembershipRequests = createMockedMembershipRequests(10);
     const userName = 'Testy McGee';
     const lastRequest = {

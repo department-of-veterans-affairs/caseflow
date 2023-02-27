@@ -104,9 +104,6 @@ const MembershipRequestTable = (props) => {
     <DoubleArrowIcon />
   </div>;
 
-  // TODO: Ask if the requests are supposed to be ordered by created at?
-  // Right now it will be in order based on the id of the membership request
-  // It just happens to also be sorted created date as well in most cases since it is set on object creation.
   // The normal column definitions for the request table row that is not the additional request note row.
   const normalColumnsDefinitions = [
     {
@@ -145,7 +142,7 @@ const MembershipRequestTable = (props) => {
     },
   ];
 
-  // If it is a note row return the request's note text and set the colspan to 4.
+  // If it is a note row, return the request's note text and set the colspan to 4.
   const noteColumnDefinition = [
     {
       header: '',
@@ -183,7 +180,6 @@ const MembershipRequestTable = (props) => {
   }
 
   // Create a function for the pagination so it can be easily added above and below the table.
-  // TODO: See if it's worth memoing this
   const MembershipRequestPagination = () => {
     return <Pagination
       pageSize={REQUESTS_PER_PAGE}
