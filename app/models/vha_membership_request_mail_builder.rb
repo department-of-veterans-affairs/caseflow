@@ -5,23 +5,6 @@
 class VhaMembershipRequestMailBuilder
   attr_accessor :membership_requests, :requestor
 
-  # TODO: Move these subjects into a constants file somewhere
-  SUBJECT_LINE_REQUESTOR_SUBMITTED = "Request recieved - Do Not Reply"
-  SUBJECT_LINE_REQUESTOR_APPROVED = "Request approved - Do Not Reply"
-  SUBJECT_LINE_REQUESTOR_DENIED = "Request denied - Do Not Reply"
-  SUBJECT_LINE_VHA_ADMIN_REQUEST_SUBMITTED = "You have a new request for access - Do Not Reply"
-
-  # TODO: Move admin emails into a constants file somewhere
-  VHA_BUSINESSLINE_ADMIN_EMAIL = "VHABENEFITAPPEALS@va.gov"
-  VHA_CAMO_ADMIN_EMAIL = "VHABENEFITAPPEALS@va.gov"
-  VHA_CAREGIVER_SUPPORT_ADMIN_EMAIL = "VHA.CSPAppeals@va.gov"
-  VHA_PAYMENT_OPERATIONS_ADMIN_EMAIL = "VHA10D1B3R2Appeals@va.gov"
-  VHA_VETERAN_AND_FAMILY_MEMBERS_ADMIN_EMAIL = "VHA16IVCAppealsHighLevelCorrespondence@va.gov"
-  VHA_MEMBER_SERVICES_HEALTH_ELIGIBILITY_CENTER_ADMIN_EMAIL_1 = "HECIVDMgt@va.gov"
-  VHA_MEMBER_SERVICES_HEALTH_ELIGIBILITY_CENTER_ADMIN_EMAIL_2 = "VHAHECMSEEDApealsTeam@va.gov"
-  VHA_MEMBER_SERVICES_BENEFICIARY_TRAVEL_ADMIN_EMAIL = "VHAMSBTAppeals@va.gov"
-  VHA_PROSTHETICS_ADMIN_EMAIL = "VHAPSASBenefits@va.gov"
-
   def initialize(requests)
     @membership_requests = requests
     @requestor = membership_requests.first.requestor
@@ -37,8 +20,8 @@ class VhaMembershipRequestMailBuilder
   def send_requstor_email
     MembershipRequestMailer.with(recipient_info: requestor,
                                  requests: membership_requests,
-                                 subject: SUBJECT_LINE_REQUESTOR_SUBMITTED)
-      .request_received.deliver_now!
+                                 subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED)
+      .user_request_sent.deliver_now!
   end
 
   def send_organization_emails
@@ -59,8 +42,8 @@ class VhaMembershipRequestMailBuilder
       MembershipRequestMailer.with(recipient_info: recipient_info,
                                    organization_name: organization.name,
                                    to: admin_email,
-                                   subject: SUBJECT_LINE_VHA_ADMIN_REQUEST_SUBMITTED)
-        .admin_request.deliver_now!
+                                   subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_VHA_ADMIN_REQUEST_RECEIVED)
+        .admin_request_made.deliver_now!
     end
   end
 
@@ -70,15 +53,17 @@ class VhaMembershipRequestMailBuilder
 
   def get_organization_admin_emails(organization_name)
     {
-      "Veterans Health Administration": VHA_BUSINESSLINE_ADMIN_EMAIL,
-      "VHA CAMO": VHA_CAMO_ADMIN_EMAIL,
-      "VHA Caregiver Support Program": VHA_CAREGIVER_SUPPORT_ADMIN_EMAIL,
-      "Community Care - Veteran and Family Members Program": VHA_VETERAN_AND_FAMILY_MEMBERS_ADMIN_EMAIL,
-      "Community Care - Payment Operations Management": VHA_PAYMENT_OPERATIONS_ADMIN_EMAIL,
-      "Member Services - Health Eligibility Center": [VHA_MEMBER_SERVICES_HEALTH_ELIGIBILITY_CENTER_ADMIN_EMAIL_1,
-                                                      VHA_MEMBER_SERVICES_HEALTH_ELIGIBILITY_CENTER_ADMIN_EMAIL_2],
-      "Member Services - Beneficiary Travel": VHA_MEMBER_SERVICES_BENEFICIARY_TRAVEL_ADMIN_EMAIL,
-      "Prosthetics": VHA_PROSTHETICS_ADMIN_EMAIL
+      "Veterans Health Administration": COPY::VHA_BENEFIT_EMAIL_ADDRESS,
+      "VHA CAMO": COPY::VHA_BENEFIT_EMAIL_ADDRESS,
+      "VHA Caregiver Support Program": COPY::VHA_CAREGIVER_SUPPORT_EMAIL_ADDRESS,
+      "Community Care - Veteran and Family Members Program": COPY::VHA_VETERAN_AND_FAMILY_MEMBERS_EMAIL_ADDRESS,
+      "Community Care - Payment Operations Management": COPY::VHA_PAYMENT_OPERATIONS_EMAIL_ADDRESS,
+      "Member Services - Health Eligibility Center": [
+        COPY::VHA_MEMBER_SERVICES_HEALTH_ELIGIBILITY_CENTER_EMAIL_ADDRESS_1,
+        COPY::VHA_MEMBER_SERVICES_HEALTH_ELIGIBILITY_CENTER_EMAIL_ADDRESS_2
+      ],
+      "Member Services - Beneficiary Travel": COPY::VHA_MEMBER_SERVICES_BENEFICIARY_TRAVEL_EMAIL_ADDRESS,
+      "Prosthetics": COPY::VHA_PROSTHETICS_EMAIL_ADDRESS
     }[organization_name.to_sym]
   end
 end

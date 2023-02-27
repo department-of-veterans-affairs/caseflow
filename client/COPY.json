@@ -959,6 +959,13 @@
   "INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY": "Please note: The issue isn't usually eligible because its decision date is older than what is allowed, and the legacy issue issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
   "INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT": "Only VHA team members can establish Higher Level Reviews and Supplemental Claims with VHA issues. If you have a VHA claim, please return the packet to the main “VHA” queue in the Centralized Mail Portal or send downloaded documents to %s.",
   "VHA_BENEFIT_EMAIL_ADDRESS": "VHABENEFITAPPEALS@va.gov",
+  "VHA_CAREGIVER_SUPPORT_EMAIL_ADDRESS": "VHA.CSPAppeals@va.gov",
+  "VHA_PAYMENT_OPERATIONS_EMAIL_ADDRESS": "VHA10D1B3R2Appeals@va.gov",
+  "VHA_VETERAN_AND_FAMILY_MEMBERS_EMAIL_ADDRESS": "VHA16IVCAppealsHighLevelCorrespondence@va.gov",
+  "VHA_MEMBER_SERVICES_HEALTH_ELIGIBILITY_CENTER_EMAIL_ADDRESS_1": "HECIVDMgt@va.gov",
+  "VHA_MEMBER_SERVICES_HEALTH_ELIGIBILITY_CENTER_EMAIL_ADDRESS_2": "VHAHECMSEEDApealsTeam@va.gov",
+  "VHA_MEMBER_SERVICES_BENEFICIARY_TRAVEL_EMAIL_ADDRESS": "VHAMSBTAppeals@va.gov",
+  "VHA_PROSTHETICS_EMAIL_ADDRESS": "VHAPSASBenefits@va.gov",
   "INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT_TITLE": "HLR And SC Permissions Update",
   "UNTIMELY_EXEMPTION_COPY": "Did the applicant request an extension to the date requirements",
   "UNTIMELY_EXEMPTION_COPY_VHA": " OR is this issue related to a VHA Caregiver appeal",
@@ -1381,5 +1388,9 @@
   "NOTIFICATION_TYPE_COLUMN_NAME": "Notification Type",
   "NOTIFICATION_RECIPIENT_INFORMATION": "Recipient Information",
   "NOTIFICATION_STATUS": "Status",
-  "NOTIFICATION_CONTENT_MESSAGE": "The following message was sent to the Appellant: "
+  "NOTIFICATION_CONTENT_MESSAGE": "The following message was sent to the Appellant: ",
+  "VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED": "Request recieved - Do Not Reply",
+  "VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_APPROVED": "Request approved - Do Not Reply",
+  "VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_DENIED": "Request denied - Do Not Reply",
+  "VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_VHA_ADMIN_REQUEST_RECEIVED": "You have a new request for access - Do Not Reply"
 }

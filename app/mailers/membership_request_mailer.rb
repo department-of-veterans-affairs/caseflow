@@ -32,7 +32,7 @@ class MembershipRequestMailer < ActionMailer::Base
 
   # New methods with the email templates
   # TODO: rename this to be more descriptive of the email being sent to the requestor
-  def request_received
+  def user_request_sent
     @recipient_info = params[:recipient_info]
     @requests = params[:requests]
     @requesting_org_names = @requests&.map { |request| request.organization.name }
@@ -40,13 +40,13 @@ class MembershipRequestMailer < ActionMailer::Base
     mail(to: @recipient_info&.email, subject: @subject)
   end
 
-  def admin_request
+  def admin_request_made
     # TODO: how the heck do you get the admin name?
     # Could potentially do organization.admins.first but idk if that's the best way
     @recipient_info = params[:recipient_info]
     @subject = params[:subject]
     @to = params[:to]
-    puts "to address is: #{@to}"
+    # puts "to address is: #{@to}"
     @organization_name = params[:organization_name]
     mail(to: @to, subject: @subject)
   end
