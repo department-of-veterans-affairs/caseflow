@@ -43,7 +43,7 @@ const checkboxes = [
 describe('CavcDecisionReasons', () => {
   it('renders parent checkboxes correctly', () => {
     useSelector.mockReturnValue(checkboxes);
-    const { getByLabelText, getByText } = render(<CavcDecisionReasons uniqueId="1234" />);
+    const { getByLabelText, getByText } = render(<CavcDecisionReasons uniqueId="1234" userCanEdit="true" />);
     const accordion = getByText('Decision Reasons');
 
     fireEvent.click(accordion);
@@ -55,7 +55,7 @@ describe('CavcDecisionReasons', () => {
 
   it('renders child checkboxes when parent is clicked', () => {
     useSelector.mockReturnValue(checkboxes);
-    const { getByLabelText, getByText } = render(<CavcDecisionReasons uniqueId="1234" />);
+    const { getByLabelText, getByText } = render(<CavcDecisionReasons uniqueId="1234" userCanEdit="true" />);
     const accordion = getByText('Decision Reasons');
 
     fireEvent.click(accordion);
@@ -67,7 +67,7 @@ describe('CavcDecisionReasons', () => {
 
   it('renders dropdown component when checkbox is checked and selection basis exists', () => {
     useSelector.mockReturnValue(checkboxes);
-    const { getByLabelText, getByText } = render(<CavcDecisionReasons uniqueId="1234" />);
+    const { getByLabelText, getByText } = render(<CavcDecisionReasons uniqueId="1234" userCanEdit="true" />);
     const accordion = getByText('Decision Reasons');
 
     fireEvent.click(accordion);
