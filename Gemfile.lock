@@ -9,11 +9,12 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 49292b5351042637bcd1f159bc30d7a30ab6c660
+  revision: 2882082e854598cac72fb8c2bcc5ef5e10a85171
   branch: AlecK/APPEALS-13664
   specs:
     caseflow (0.4.8)
       aws-sdk-s3 (~> 1)
+      aws-sdk-sqs (~> 1)
       bourbon (= 4.2.7)
       d3-rails
       jquery-rails
@@ -145,7 +146,7 @@ GEM
     arel (9.0.0)
     ast (2.4.0)
     aws-eventstream (1.2.0)
-    aws-partitions (1.715.0)
+    aws-partitions (1.716.0)
     aws-sdk-core (3.170.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.651.0)
@@ -158,6 +159,9 @@ GEM
       aws-sdk-core (~> 3, >= 3.165.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.4)
+    aws-sdk-sqs (1.53.0)
+      aws-sdk-core (~> 3, >= 3.165.0)
+      aws-sigv4 (~> 1.1)
     aws-sigv4 (1.5.2)
       aws-eventstream (~> 1, >= 1.0.2)
     backport (1.2.0)
@@ -206,8 +210,8 @@ GEM
     coderay (1.1.3)
     colored2 (3.1.2)
     colorize (0.8.1)
-    concurrent-ruby (1.2.0)
-    connection_pool (2.2.3)
+    concurrent-ruby (1.2.2)
+    connection_pool (2.3.0)
     cork (0.3.0)
       colored2 (~> 3.1)
     countries (3.0.1)
@@ -554,8 +558,8 @@ GEM
       redis-actionpack (>= 5.0, < 6)
       redis-activesupport (>= 5.0, < 6)
       redis-store (>= 1.2, < 2)
-    redis-store (1.3.0)
-      redis (>= 2.2)
+    redis-store (1.9.2)
+      redis (>= 4, < 6)
     ref (2.0.0)
     regexp_parser (1.6.0)
     request_store (1.4.1)
@@ -743,6 +747,7 @@ DEPENDENCIES
   acts_as_tree
   amoeba
   anbt-sql-formatter
+  aws-sdk-sqs
   bgs!
   bootsnap
   brakeman

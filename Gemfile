@@ -10,8 +10,11 @@ gem "acts_as_tree"
 
 # amoeba gem for cloning appeals
 gem "amoeba"
-# BGS
 
+# aws-sdk-s3 (see caseflow gem) requires aws-sdk-sqs to be installed seperatly
+gem "aws-sdk-sqs"
+
+# BGS
 gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
