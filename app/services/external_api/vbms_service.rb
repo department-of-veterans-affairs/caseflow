@@ -11,6 +11,10 @@ class VBMSCaseflowLogger
         Rails.logger.error(
           "VBMS HTTP Error #{status} (#{data.pretty_inspect})"
         )
+      else
+        Rails.logger.info(
+          "VBMS HTTP Success #{status} (#{data.pretty_inspect})"
+        )
       end
     end
   end
