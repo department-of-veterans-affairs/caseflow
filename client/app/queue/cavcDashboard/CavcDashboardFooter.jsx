@@ -25,14 +25,14 @@ export const CavcDashboardFooter = (props) => {
 
   if (userCanEdit) {
     return (
-      <>
+      <div>
         <Button onClick={closeHandler}>Cancel</Button>
         <Button onClick={save}>Save Changes</Button>
         {
           (cancelModalIsOpen) &&
           <CancelCavcDashboardChangeModal closeHandler={closeHandler} {...props} />
         }
-      </>
+      </div>
     );
   }
 
