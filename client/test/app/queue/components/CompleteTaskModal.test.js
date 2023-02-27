@@ -413,7 +413,7 @@ describe('CompleteTaskModal', () => {
       );
 
       const optionalTextArea = screen.getByRole(
-        'textbox', { name: 'Provide additional context for this action Optional' }
+        'textbox', { name: 'Provide additional context for this action' }
       );
 
       userEvent.type(optionalTextArea, 'Additional context');
@@ -462,7 +462,7 @@ describe('CompleteTaskModal', () => {
       userEvent.type(otherTextArea, 'Reasoning for the return');
 
       const optionalTextArea = screen.getByRole(
-        'textbox', { name: 'Provide additional context for this action Optional' }
+        'textbox', { name: 'Provide additional context for this action' }
       );
 
       userEvent.type(optionalTextArea, 'Additional context');
