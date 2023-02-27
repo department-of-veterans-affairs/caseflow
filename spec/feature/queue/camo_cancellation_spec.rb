@@ -35,15 +35,15 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
     end
     scenario "assign to BVA intake" do
       navigate_from_camo_queue_to_case_deatils
+      step "submit valid form" do
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      end
       step "trigger send to board intake modal" do
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.label).click
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE)
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL)
         expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY)
-      end
-      step "submit valid form" do
-        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       end
       step "trigger error state" do
         find("button", class: "usa-button", text: "Submit").click
