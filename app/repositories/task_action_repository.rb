@@ -487,7 +487,7 @@ class TaskActionRepository
       }
     end
 
-    def vha_documents_ready_for_bva_intake_review(*)
+    def vha_documents_ready_for_bva_intake_for_review(*)
       dropdown_options = downcase_keys(COPY::VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL['DROPDOWN_OPTIONS'])
       {
         modal_title: COPY::VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL['TITLE'],

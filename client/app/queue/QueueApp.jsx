@@ -604,7 +604,7 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCamoDocumentsReadyForBvaIntake = (props) => (
-    <CompleteTaskModal modalType="vha_documents_ready_for_bva_intake_review" {...props.match.params} />
+    <CompleteTaskModal modalType="vha_documents_ready_for_bva_intake_for_review" {...props.match.params} />
   );
 
   routedEMOReturnToBoardIntake = (props) => (

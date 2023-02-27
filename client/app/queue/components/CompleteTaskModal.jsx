@@ -231,7 +231,6 @@ SendToBoardIntakeModal.propTypes = {
 
 const VhaCamoDocumentsReadyForBvaIntakeReviewModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
-  const dropdownOptions = taskConfiguration.options;
 
   // if the VhaProgramOffice has completed a task, show the task instructions in the modal
   const programOfficeInstructions = props.tasks.map((task) => {
@@ -265,7 +264,7 @@ const VhaCamoDocumentsReadyForBvaIntakeReviewModal = ({ props, state, setState }
             defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
             onChange={handleDropdownChange}
             value={state.dropdown}
-            options={dropdownOptions}
+            options={locationTypeOpts}
             errorMessage={props.highlightInvalid &&
               !validInstructions(state.dropdown) ? 'You must select a reason for returning to intake' : null}
           />
@@ -458,16 +457,26 @@ const MODAL_TYPE_ATTRS = {
     getContent: MarkTaskCompleteModal,
     buttonText: COPY.MODAL_CONFIRM_BUTTON
   },
-  vha_documents_ready_for_bva_intake_review: {
+  vha_documents_ready_for_bva_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.CONFIRMATION_TITLE, appeal.veteranFullName)
     }),
     title: () => COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.TITLE,
-    getContent: VhaCamoDocumentsReadyForBvaIntakeReviewModal,
+    getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SEND_BUTTON,
-    submitDisabled: ({ state }) => (
-      !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
-    ),
+    submitDisabled: ({ state }) => {
+      const { otherInstructions, radio } = state;
+
+      let isValid = true;
+
+      if (radio === 'other') {
+        isValid = validInstructions(otherInstructions) && validRadio(radio);
+      } else {
+        isValid = validRadio(radio);
+      }
+
+      return !isValid;
+    }
   },
   vha_send_to_board_intake: {
     buildSuccessMsg: (appeal) => ({

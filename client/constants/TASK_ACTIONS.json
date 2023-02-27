@@ -411,8 +411,8 @@
   },
   "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW":{
     "label": "Documents ready for Board Intake review",
-    "value": "modal/vha_documents_ready_for_bva_intake_review",
-    "func": "vha_documents_ready_for_bva_intake_review"
+    "value": "modal/vha_documents_ready_for_bva_intake_for_review",
+    "func": "vha_documents_ready_for_bva_intake_for_review"
   },
   "VHA_MARK_TASK_IN_PROGRESS": {
     "label": "Mark task in progress",
