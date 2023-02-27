@@ -254,13 +254,14 @@ const VhaCamoDocumentsReadyForBvaIntakeReviewModal = ({ props, state, setState }
           <ReactMarkdown>{text}</ReactMarkdown>
         </div>
       ))}
+      <div style= {{ marginBottom: '1.5em' }}>{COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.BODY}</div>
       {taskConfiguration && taskConfiguration.modal_body}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <div>
           <SearchableDropdown
             name="documentsReadyForBvaIntakeReviewOptions"
             id="documentsReadyForBvaIntakeReviewOptions"
-            label={StringUtil.nl2br(COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.BODY)}
+            label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DETAIL}
             defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
             onChange={handleDropdownChange}
             value={state.dropdown}

@@ -1269,7 +1269,8 @@
   "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review.",
   "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL": {
     "TITLE": "Ready for Review",
-    "BODY": "This appeal will be sent to Board intake for reveiw.\n\nPlease select where the documents for this appeal are stored.",
+    "BODY": "This appeal will be sent to Board intake for reveiw.",
+    "DETAIL": "Please select where the documents for this appeal are stored.",
     "INSTRUCTIONS_LABEL": "Provide additional context and/or documents:",
     "DROPDOWN_OPTIONS": {
       "VBMS": {
