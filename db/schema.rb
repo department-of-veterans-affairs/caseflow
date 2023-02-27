@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_15_202259) do
+ActiveRecord::Schema.define(version: 2023_02_22_133918) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1555,6 +1555,7 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
     t.string "cancellation_reason", comment: "Reason for latest cancellation status"
     t.integer "cancelled_by_id", comment: "ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled"
     t.datetime "closed_at"
+    t.integer "completed_by_id", comment: "ID of user that marked task complete"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true
     t.integer "parent_id"

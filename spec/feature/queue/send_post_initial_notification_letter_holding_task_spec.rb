@@ -40,7 +40,6 @@ RSpec.feature "Send Post Initial Notification Letter Holding Tasks", :all_dbs do
   end
 
   describe "Accessing task actions" do
-
     it "displays the proper task actions for the final letter task" do
       initial_letter_task.completed!
 

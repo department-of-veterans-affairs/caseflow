@@ -15,7 +15,7 @@ describe PostSendInitialNotificationLetterHoldingTask do
   end
 
   describe ".verify_user_can_create" do
-    let(:params) { { appeal: root_task.appeal, parent_id: distribution_task_id, type: task_class.name} }
+    let(:params) { { appeal: root_task.appeal, parent_id: distribution_task_id, type: task_class.name } }
     let(:distribution_task_id) { distribution_task.id }
 
     context "when no distribution_task exists for appeal" do
