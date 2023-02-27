@@ -189,6 +189,20 @@ describe('CompleteTaskModal', () => {
 
       expect(screen.getByText('Ready for Review')).toBeTruthy();
     });
+
+    test('Submit button is disabled when a option from the drop down has not been selected', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
+    });
+
+    // test('When VBMS is chosen from the dropdown options the addition text box does not appear', () => {
+    //   renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+    //   selectFromDropdown('Please select where the documents for this appeal are stored.', 'VBMS')
+
+    //   expect(screen.get)
+    // })
   });
 
   describe('vha_caregiver_support_send_to_board_intake_for_review', () => {
