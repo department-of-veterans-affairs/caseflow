@@ -21,9 +21,7 @@ const createDashboardProp = () => {
     }],
     cavc_dashboard_issues: [{
       benefit_type: 'education',
-      issue_category: {
-        label: 'Service Connection'
-      },
+      issue_category: 'Service Connection',
       disposition: 'Reversed'
     }],
     cavc_dashboard_dispositions: [{

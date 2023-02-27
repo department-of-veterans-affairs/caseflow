@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
+import { css } from 'glamor';
+
+const buttonDivStyling = css({
+  float: 'right'
+});
 
 export const CavcDashboardFooter = (props) => {
   const { userCanEdit, history } = props;
-
-  //      history.push(`/queue/appeals/${appeal.externalId}`);
-  //  const cancel = () => history.goBack();
 
   const cancel = () => {
     history.goBack();
@@ -18,17 +20,17 @@ export const CavcDashboardFooter = (props) => {
 
   if (userCanEdit) {
     return (
-      <>
-        <Button onClick={cancel}>Cancel</Button>
+      <div {...buttonDivStyling}>
+        <Button linkStyling onClick={cancel}>Cancel</Button>
         <Button onClick={save}>Save Changes</Button>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      <Button onClick={() => history.goBack()}>Close</Button>
-    </>
+    <div {...buttonDivStyling}>
+      <Button onClick={() => history.goBack()}>Return to Case Details</Button>
+    </div>
   );
 };
 
