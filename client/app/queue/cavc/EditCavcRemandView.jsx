@@ -18,7 +18,7 @@ export const EditCavcRemandView = () => {
   const cavcAppeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
-  const { cavcRemand } = cavcAppeal;
+  const { cavcRemand, substituteAppellantClaimantOptions } = cavcAppeal;
 
   const featureToggles = useSelector((state) => state.ui.featureToggles);
 
@@ -39,7 +39,10 @@ export const EditCavcRemandView = () => {
       remandType: cavcRemand.remand_subtype,
       attorney: cavcRemand.represented_by_attorney ? 'yes' : 'no',
       remandDatesProvided: (cavcRemand.judgement_date || cavcRemand.mandate_date) ? 'yes' : 'no',
-      remand_appeal_id: cavcRemand.remand_appeal_uuid,
+      remandAppealId: cavcRemand.remand_appeal_uuid,
+      substitutionDate: cavcRemand.cavc_remands_appellant_substitution?.substitution_date,
+      participantId: cavcRemand.cavc_remands_appellant_substitution?.participant_id,
+      isAppellantSubstituted: cavcRemand.cavc_remands_appellant_substitution?.is_appellant_substituted ? 'true' : 'false'
     };
   }, [cavcRemand]);
 
@@ -61,33 +64,41 @@ export const EditCavcRemandView = () => {
         decision_issue_ids: formData.issueIds,
         federal_circuit: formData.federalCircuit,
         instructions: formData.instructions,
+        substitution_date: formData.substitutionDate,
+        participant_id: formData.participantId,
+        is_appellant_substituted: formData.isAppellantSubstituted
       },
     };
 
-    const successMsg = {
-      title: COPY.CAVC_REMAND_EDIT_SUCCESS_TITLE,
-      detail: COPY.CAVC_REMAND_EDIT_SUCCESS_DETAIL,
-    };
+    if (!featureToggles.cavc_remand_granted_substitute_appellant) {
+      const successMsg = {
+        title: COPY.CAVC_REMAND_EDIT_SUCCESS_TITLE,
+        detail: COPY.CAVC_REMAND_EDIT_SUCCESS_DETAIL,
+      };
 
-    try {
-      const res = await dispatch(
-        requestPatch(`/appeals/${appealId}/cavc_remand`, payload, successMsg)
-      );
-      const updatedCavcRemand = res.body.cavc_remand;
+      try {
+        const res = await dispatch(
+          requestPatch(`/appeals/${appealId}/cavc_remand`, payload, successMsg)
+        );
+        const updatedCavcRemand = res.body.cavc_remand;
 
-      // Update Redux
-      dispatch(editAppeal(appealId, { cavcRemand: updatedCavcRemand }));
+        // Update Redux
+        dispatch(editAppeal(appealId, { cavcRemand: updatedCavcRemand }));
 
-      // Redirect back to case details for remand appeal
-      // EditCavcTodo: Force a refresh in case issue selection changed
-      history.push(`/queue/appeals/${appealId}`);
-    } catch (error) {
-      dispatch(
-        showErrorMessage({
-          title: 'Error',
-          detail: JSON.parse(error.message).errors[0].detail,
-        })
-      );
+        // Redirect back to case details for remand appeal
+        // EditCavcTodo: Force a refresh in case issue selection changed
+        history.push(`/queue/appeals/${appealId}`);
+
+      } catch (error) {
+        dispatch(
+          showErrorMessage({
+            title: 'Error',
+            detail: JSON.parse(error.message).errors[0].detail,
+          })
+        );
+      }
+    } else {
+      // TODO connect with new modify task page for new edit court remand workflow
     }
   };
 
@@ -97,6 +108,7 @@ export const EditCavcRemandView = () => {
       existingValues={existingValues}
       supportedDecisionTypes={supportedDecisionTypes}
       supportedRemandTypes={supportedRemandTypes}
+      substituteAppellantClaimantOptions={substituteAppellantClaimantOptions}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
     />
