@@ -94,6 +94,29 @@ const CavcDashboardIssue = (props) => {
     toggleRemoveIssueModal();
   };
 
+  const renderDispositionDropdown = () => {
+    if (userCanEdit) {
+      return (
+        <SearchableDropdown
+          name={`issue-dispositions-${index}`}
+          label="Dispositions"
+          placeholder={disposition}
+          value={disposition}
+          searchable
+          hideLabel
+          options={dispositionsOptions}
+          onChange={(option) => setDisposition(option.label)}
+        />
+      );
+    }
+
+    return (
+      <div>
+        <label>{disposition}</label>
+      </div>
+    );
+  };
+
   return (
     <li key={index}>
       <div {...singleIssueStyling}>
@@ -106,17 +129,7 @@ const CavcDashboardIssue = (props) => {
           </div>
         </div>
         <div>
-          <SearchableDropdown
-            name={`issue-dispositions-${index}`}
-            label="Dispositions"
-            placeholder={disposition}
-            value={disposition}
-            searchable
-            hideLabel
-            options={dispositionsOptions}
-            onChange={(option) => setDisposition(option.label)}
-            readOnly={!userCanEdit}
-          />
+          {renderDispositionDropdown()}
         </div>
         <div />
         {addedIssueSection &&
@@ -136,7 +149,7 @@ const CavcDashboardIssue = (props) => {
         }
       </div>
       {requireDecisionReason() && (
-        <CavcDecisionReasons uniqueId={issue.id} loadCheckedBoxes={loadCheckedBoxes} />
+        <CavcDecisionReasons uniqueId={issue.id} loadCheckedBoxes={loadCheckedBoxes} userCanEdit={userCanEdit} />
       )}
     </li>
   );
