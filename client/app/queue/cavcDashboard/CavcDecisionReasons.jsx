@@ -225,7 +225,10 @@ const CavcDecisionReasons = ({ uniqueId, loadCheckedBoxes, userCanEdit }) => {
 
     return (
       <div {...basisForSelectionStylingWithChildReadOnly}>
-        <label><strong>{DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}:</strong> TEST with Child</label>
+        <label>
+          <strong>{DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}:</strong>{' '}
+          Should be replaced with actual selection or no value
+        </label>
       </div>
     );
   };
@@ -245,7 +248,10 @@ const CavcDecisionReasons = ({ uniqueId, loadCheckedBoxes, userCanEdit }) => {
 
     return (
       <div {...basisForSelectionStylingNoChildReadOnly}>
-        <label><strong>{DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}:</strong> TEST with no Child</label>
+        <label>
+          <strong>{DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}:</strong>{' '}
+          Should be replaced with actual selection or no value
+        </label>
       </div>
     );
   };
