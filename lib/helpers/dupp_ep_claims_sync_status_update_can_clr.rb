@@ -150,13 +150,12 @@ module WarRoom
                 [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
               }.empty?
             }
-            # Define the UUID regex pattern
-            uuid_regex = /^\\h{8}-\\h{4}-\\h{4}-\\h{4}-\\h{12}$/
+
             # Count the total problem claims and keep track
             count = problem_scs.count + problem_hlr.count
             if count.zero?
               puts "No problem Supplemental Claims or Higher Level Reviews found. Exiting.\n"
-              exit
+              fail interrupt
             end
             puts "Found #{count} problem Supplemental Claims and Higher Level Reviews. Please enter the UUID of the first claim:\n"
 
