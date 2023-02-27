@@ -9,8 +9,9 @@ module Seeds
 
     def seed!
       Seeds::CavcDecisionReasonData.new.seed! unless CavcDecisionReason.count > 0
-      create_cavc_dashboard_dispositions
-      create_cavc_dashboard_issues
+      create_cavc_dashboards_with_blank_dispositions
+      create_cavc_dashboards_with_selected_dispositions
+      create_cavc_dashboards_with_issues
       create_appeals_with_multiple_cavc_remands
     end
 
@@ -41,21 +42,37 @@ module Seeds
       create(:veteran, params.merge(options))
     end
 
-    def create_cavc_dashboard_dispositions
-      10.times do
+    def create_cavc_dashboards_with_blank_dispositions
+      5.times do
+        remand = create(:cavc_remand,
+                        cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
+                        veteran: create_veteran)
+        CavcDashboard.create!(cavc_remand: remand)
+
+        @cavc_docket_number_last_four += 1
+      end
+    end
+
+    def create_cavc_dashboards_with_selected_dispositions
+      5.times do
         remand = create(:cavc_remand,
                         cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
                         veteran: create_veteran)
         dashboard = CavcDashboard.create!(cavc_remand: remand)
-        dashboard.source_request_issues.map do |issue|
-          CavcDashboardDisposition.create(cavc_dashboard: dashboard, disposition: 'abandoned', request_issue_id: issue.id)
+
+        dashboard.cavc_dashboard_dispositions.map do |disp|
+          disp.disposition = "abandoned"
+          disp.save!
+          CavcDispositionsToReason.create!(cavc_dashboard_disposition: disp,
+                                           cavc_decision_reason_id: 6,
+                                           cavc_selection_basis_id: 2)
         end
 
         @cavc_docket_number_last_four += 1
       end
     end
 
-    def create_cavc_dashboard_issues
+    def create_cavc_dashboards_with_issues
       10.times do
         remand = create(:cavc_remand,
                         cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
