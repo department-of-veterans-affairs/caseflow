@@ -6,6 +6,11 @@ jest.mock('../../../../app/queue/cavcDashboard/CavcDecisionReasons',
   () => () => <mock-details data-testid="testDecisionReasons" />
 );
 
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => jest.fn().mockImplementation(() => Promise.resolve(true))
+}));
+
 const createDashboardProp = () => {
   return {
     source_request_issues: [{
