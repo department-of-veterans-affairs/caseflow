@@ -11,8 +11,7 @@ import Button from '../../components/Button';
 import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS';
 import RemoveCavcDashboardIssueModal from './RemoveCavcDashboardIssueModal';
 import { useDispatch } from 'react-redux';
-import { removeCheckedDecisionReason } from './cavcDashboardActions';
-import { setDispositionValue } from './cavcDashboardActions';
+import { removeCheckedDecisionReason, setDispositionValue } from './cavcDashboardActions';
 
 const singleIssueStyling = css({
   marginBottom: '1.5em !important',
@@ -97,8 +96,8 @@ const CavcDashboardIssue = (props) => {
 
   const setDispositionOption = (option, issueIndex) => {
     setDisposition(option);
-    dispatch(setDispositionValue(dashboardIndex, issueIndex, option))
-  }
+    dispatch(setDispositionValue(dashboardIndex, issueIndex, option));
+  };
 
   return (
     <li key={index}>
@@ -176,7 +175,8 @@ const CavcDashboardIssuesSection = (props) => {
 
           return (
             <React.Fragment key={i}>
-              <CavcDashboardIssue dashboardIndex={dashboardIndex} issue={issue} index={i} dispositions={issueDisposition} dashboardId={dashboardId} />
+              <CavcDashboardIssue dashboardIndex={dashboardIndex} issue={issue} index={i}
+                dispositions={issueDisposition} dashboardId={dashboardId} />
             </React.Fragment>
           );
         })}
@@ -224,7 +224,8 @@ CavcDashboardIssue.propTypes = {
   }),
   dispositions: PropTypes.array,
   removeIssueHandler: PropTypes.func,
-  addedIssueSection: PropTypes.bool
+  addedIssueSection: PropTypes.bool,
+  dashboardIndex: PropTypes.number,
 };
 
 CavcDashboardIssuesSection.propTypes = {
