@@ -75,14 +75,14 @@ const CavcDashboardIssue = (props) => {
     return false;
   };
 
-  if (issue.decision_review_type) {
+  if (issue.decision_review_type && !addedIssueSection) {
     if (issue.contested_issue_description) {
       issueType = `${issue.decision_review_type} - ${issue.contested_issue_description}`;
     } else {
       issueType = `${issue.decision_review_type}`;
     }
   } else {
-    issueType = addedIssueSection ? issue.issue_category?.label : issue.issue_category;
+    issueType = issue.issue_category;
   }
 
   const toggleRemoveIssueModal = () => {
@@ -207,13 +207,15 @@ const CavcDashboardIssuesSection = (props) => {
           </div>
           <ol {...olStyling}>
             {cavcIssues.map((cavcIssue, i) => {
+              const issueDisposition = dashboardDispositions ? (dashboardDispositions.filter((dis) =>
+                dis.cavc_dashboard_issue_id === cavcIssue.id)) : 'Select';
 
               return (
                 <React.Fragment key={i}>
                   <CavcDashboardIssue
                     issue={cavcIssue}
                     index={i}
-                    dispositions={dashboardDispositions.filter((dis) => dis.cavc_dashboard_issue_id === cavcIssue.id)}
+                    dispositions={issueDisposition}
                     removeIssueHandler={removeIssueHandler}
                     userCanEdit={userCanEdit}
                     addedIssueSection
