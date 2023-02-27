@@ -12,6 +12,7 @@ import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPO
 import RemoveCavcDashboardIssueModal from './RemoveCavcDashboardIssueModal';
 import { useDispatch } from 'react-redux';
 import { removeCheckedDecisionReason } from './cavcDashboardActions';
+import { setDispositionValue } from './cavcDashboardActions';
 
 const singleIssueStyling = css({
   marginBottom: '1.5em !important',
@@ -46,7 +47,8 @@ const CavcDashboardIssue = (props) => {
     index,
     dispositions,
     removeIssueHandler,
-    addedIssueSection
+    addedIssueSection,
+    dashboardIndex
   } = props;
 
   const [removeModalIsOpen, setRemoveModalIsOpen] = useState(false);
@@ -93,6 +95,11 @@ const CavcDashboardIssue = (props) => {
     toggleRemoveIssueModal();
   };
 
+  const setDispositionOption = (option, issueIndex) => {
+    setDisposition(option);
+    dispatch(setDispositionValue(dashboardIndex, issueIndex, option))
+  }
+
   return (
     <li key={index}>
       <div {...singleIssueStyling}>
@@ -113,7 +120,7 @@ const CavcDashboardIssue = (props) => {
             searchable
             hideLabel
             options={dispositionsOptions}
-            onChange={(option) => setDisposition(option.label)}
+            onChange={(option) => setDispositionOption(option.label, index)}
           />
         </div>
         <div />
@@ -169,7 +176,7 @@ const CavcDashboardIssuesSection = (props) => {
 
           return (
             <React.Fragment key={i}>
-              <CavcDashboardIssue issue={issue} index={i} dispositions={issueDisposition} dashboardId={dashboardId} />
+              <CavcDashboardIssue dashboardIndex={dashboardIndex} issue={issue} index={i} dispositions={issueDisposition} dashboardId={dashboardId} />
             </React.Fragment>
           );
         })}
