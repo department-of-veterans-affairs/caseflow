@@ -187,7 +187,7 @@ describe('CompleteTaskModal', () => {
     const modalDropdownName = 'Please select where the documents for this appeal are stored.';
     const modalDropdownOptionVBMS = 'VBMS';
     const modalDropdownOptionOther = 'Other';
-    const modalOtherInstructions = 'This appeal will be sent to Board intake for reveiw.\n\nPlease provide the source for the documents';
+    const modalOtherInstructions = 'Please provide the source for the documents';
     const modalTextboxInstructions = 'Provide additional context and/or documents:';
 
     test('modal title: "Ready for Review"', () => {
@@ -220,13 +220,13 @@ describe('CompleteTaskModal', () => {
         expect(screen.getByRole('button', { name: confirmationButtonText })).toBeDisabled();
       });
 
-    // test('When "VBMS" is chosen from the dropdown options the addition text box does not appear', () => {
-    //   renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+    test('When "VBMS" is chosen from the dropdown options the addition text box does not appear', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
-    //   selectFromDropdown(modalDropdownName, modalDropdownOptionVBMS);
+      selectFromDropdown(modalDropdownName, modalDropdownOptionVBMS);
 
-    //   expect(screen.getByRole('button', { name: confirmationButtonText })).toBeEnabled();
-    // });
+      expect(screen.getByRole('button', { name: confirmationButtonText })).toBeEnabled();
+    });
   });
 
   describe('vha_caregiver_support_send_to_board_intake_for_review', () => {
