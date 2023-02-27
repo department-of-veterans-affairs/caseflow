@@ -8,11 +8,11 @@ browser_tools_versions: &browser_versions
 # A command defines a sequence of steps as a map to be executed in a job, enabling you to reuse a single command definition across multiple jobs.
 # 4 total commands
 commands:
-  install_ruby_dependencies:
-    description: "Install Ruby Dependencies"
-    steps:
+  install_ruby_dependencies: #Command Name
+    description: "Install Ruby Dependencies" 
+    steps: #The sequence of operations run over the course of the Command
       - run:
-          name: Ruby version
+          name: Ruby version #Displayed in the CircleCI interface. Can be expanded to show details
           command: ruby -v
 
       - run:
@@ -22,8 +22,8 @@ commands:
             source $BASH_ENV
             gem install bundler
 
-      - restore_cache:
-          keys:
+      - restore_cache: 
+          keys: # The unique identifier for the cache. Arch is the cpu and os being run. 
             - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
       - run:
@@ -32,7 +32,7 @@ commands:
 
       - save_cache:
           key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-          paths:
+          paths: #The paths: tag directly relates to the file(s) being affected
             - ~/project/vendor/bundle
 
   install_node_dependencies:
@@ -102,8 +102,8 @@ jobs:
           - NODE_ENV: test
     resource_class: large
     steps:
-      - checkout
-      - install_node_dependencies
+      - checkout #Aquires the code necessary for the tests
+      - install_node_dependencies #A call to the command we made ealrier 
 
       - run:
           name: Build webpack
@@ -147,7 +147,7 @@ jobs:
       # This is the circleci provided Redis container.
       # need to change to GHA/non circleCI container
       - image: circleci/redis:4.0.10
-    resource_class: large
+    resource_class: large #Specifies the amount of ram and number of cpu's used
     steps:
       - checkout
 
