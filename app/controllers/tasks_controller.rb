@@ -216,7 +216,7 @@ class TasksController < ApplicationController
     case opc
     when "task_complete_contested_claim"
       days_on_hold = params["hold_days"].to_i
-      instructions = "";
+      instructions = ""
       psi = PostSendInitialNotificationLetterHoldingTask.create!(
         appeal: task.appeal,
         parent: task.parent,
@@ -236,10 +236,13 @@ class TasksController < ApplicationController
       # concat days on hold with instructions
       task.instructions[0].concat("\nHold time: #{task.days_on_hold}/#{task.max_hold_day_period} days")
       task.save!
+<<<<<<< HEAD
     when "completed"
       if (params["select_opc"] === "proceed_final_notification_letter")
         send_final_notification_letter
       end
+=======
+>>>>>>> feature/APPEALS-3761
     end
   end
 
