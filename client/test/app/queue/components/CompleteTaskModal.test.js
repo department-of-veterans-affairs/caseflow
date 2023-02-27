@@ -190,6 +190,15 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText('Return to Board Intake')).toBeTruthy();
     });
 
+    test('instructions textbox is present with the correct label', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+
+      expect(screen.getByRole(
+        'textbox', { name: 'Provide additional context and/or documents:' }
+      )).toBeTruthy();
+    });
+
     test('Other text area appears when other is selected in the dropdown', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 

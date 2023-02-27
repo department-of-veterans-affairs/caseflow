@@ -255,6 +255,7 @@ const VhaCamoReturnToBoardIntakeModal = ({ props, state, setState }) => {
         dropdownLabel = {COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL}
         dropdownDefaultText = {COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
         otherLabel={COPY.VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL}
+        instructionsLabel={COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_INSTRUCTIONS_LABEL}
         highlightInvalid = {props.highlightInvalid}
         taskConfiguration={taskConfiguration}
         state={state}
