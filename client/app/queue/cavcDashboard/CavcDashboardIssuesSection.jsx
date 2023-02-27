@@ -178,9 +178,9 @@ const CavcDashboardIssuesSection = (props) => {
       </div>
       <ol {...olStyling}>
         {issues.map((issue, i) => {
-          const issueDisposition = dashboardDispositions ? (dashboardDispositions.filter((dis) => {
+          const issueDisposition = dashboardDispositions.filter((dis) => {
             return dis.request_issue_id === issue.id;
-          })) : 'Select';
+          });
 
           return (
             <React.Fragment key={i}>
@@ -207,8 +207,8 @@ const CavcDashboardIssuesSection = (props) => {
           </div>
           <ol {...olStyling}>
             {cavcIssues.map((cavcIssue, i) => {
-              const issueDisposition = dashboardDispositions ? (dashboardDispositions.filter((dis) =>
-                dis.cavc_dashboard_issue_id === cavcIssue.id)) : 'Select';
+              const issueDisposition = dashboardDispositions.filter((dis) =>
+                dis.cavc_dashboard_issue_id === cavcIssue.id);
 
               return (
                 <React.Fragment key={i}>
