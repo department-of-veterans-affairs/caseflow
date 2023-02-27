@@ -138,7 +138,9 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
           end
 
           it "queues the document for upload to VBMS" do
-            expect(VbmsUploadedDocument).to receive(:create).and_return(uploaded_document)
+            expect(VbmsUploadedDocument).to receive(:create)
+              .with(hash_including(:veteran_file_number, :document_type, :file, :document_name, :document_subject))
+              .and_return(uploaded_document)
             expect(UploadDocumentToVbmsJob).to receive(:perform_later).with(
               document_id: uploaded_document.id,
               initiator_css_id: user.css_id,
