@@ -95,8 +95,8 @@ module Seeds
           mandate_date: 1.week.ago
         }
 
-        CavcRemand.create!(creation_params)
-        dashboard = CavcDashboard.create!(cavc_remand: remand)
+        cavc_remand = CavcRemand.create!(creation_params)
+        dashboard = CavcDashboard.create!(cavc_remand: cavc_remand)
         cavc_issue = CavcDashboardIssue.create(
           cavc_dashboard: dashboard,
           benefit_type: 'compensation',
