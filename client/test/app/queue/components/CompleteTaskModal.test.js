@@ -181,28 +181,52 @@ describe('CompleteTaskModal', () => {
 
   describe('vha_documents_ready_for_ready_for_bva_intake_review', () => {
     const taskType = 'VhaDocumentSearchTask';
-    // const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const confirmationButtonText = COPY.MODAL_SEND_BUTTON;
     const modalType = 'vha_documents_ready_for_bva_intake_review';
+    const modalTitle = 'Ready for Review';
+    const modalDropdownName = 'Please select where the documents for this appeal are stored.';
+    const modalDropdownOptionVBMS = 'VBMS';
+    const modalDropdownOptionOther = 'Other';
+    const modalOtherInstructions = 'This appeal will be sent to Board intake for reveiw.\n\nPlease provide the source for the documents';
+    const modalTextboxInstructions = 'Provide additional context and/or documents:';
 
-    test('modal title is Ready for Review', () => {
+    test('modal title: "Ready for Review"', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
-      expect(screen.getByText('Ready for Review')).toBeTruthy();
+      expect(screen.getByText(modalTitle)).toBeTruthy();
+    });
+
+    test('modal has textbox with the instructions: "Provide additional context and/or documents:"', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      expect(screen.getByRole('textbox', { name: modalTextboxInstructions })).toBeTruthy();
     });
 
     test('Submit button is disabled when a option from the drop down has not been selected', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
-      expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
+      expect(screen.getByRole('button', { name: confirmationButtonText })).toBeDisabled();
     });
 
-    // test('When VBMS is chosen from the dropdown options the addition text box does not appear', () => {
+    test(
+      'When "Other" is chosen from the dropdown options an additional text box appears and the button is still disabled'
+      , () => {
+        renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+        selectFromDropdown(modalDropdownName, modalDropdownOptionOther);
+
+        expect(screen.getByRole('textbox', { name: modalOtherInstructions })).toBeTruthy();
+
+        expect(screen.getByRole('button', { name: confirmationButtonText })).toBeDisabled();
+      });
+
+    // test('When "VBMS" is chosen from the dropdown options the addition text box does not appear', () => {
     //   renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
-    //   selectFromDropdown('Please select where the documents for this appeal are stored.', 'VBMS')
+    //   selectFromDropdown(modalDropdownName, modalDropdownOptionVBMS);
 
-    //   expect(screen.get)
-    // })
+    //   expect(screen.getByRole('button', { name: confirmationButtonText })).toBeEnabled();
+    // });
   });
 
   describe('vha_caregiver_support_send_to_board_intake_for_review', () => {
