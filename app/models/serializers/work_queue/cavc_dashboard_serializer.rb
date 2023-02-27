@@ -6,7 +6,11 @@ class WorkQueue::CavcDashboardSerializer
   attribute :id
   attribute :board_decision_date
   attribute :board_docket_number
-  attribute :cavc_dashboard_dispositions
+  attribute :cavc_dashboard_dispositions do |object|
+    object.cavc_dashboard_dispositions.map do |cdd|
+      WorkQueue::CavcDashboardDispositionSerializer.new(cdd).serializable_hash[:data][:attributes]
+    end
+  end
   attribute :cavc_dashboard_issues
   attribute :cavc_decision_date
   attribute :cavc_docket_number
