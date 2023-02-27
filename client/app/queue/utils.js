@@ -446,6 +446,7 @@ export const prepareAppealForStore = (appeals) => {
         appeal.attributes['completed_hearing_on_previous_appeal?'],
       issues: prepareAppealIssuesForStore(appeal),
       decisionIssues: appeal.attributes.decision_issues,
+      substituteAppellantClaimantOptions: appeal.attributes.substitute_appellant_claimant_options,
       canEditRequestIssues: appeal.attributes.can_edit_request_issues,
       canEditCavcRemands: appeal.attributes.can_edit_cavc_remands,
       unrecognizedAppellantId: appeal.attributes.unrecognized_appellant_id,
