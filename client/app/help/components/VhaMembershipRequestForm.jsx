@@ -140,14 +140,12 @@ const VhaMembershipRequestForm = () => {
   };
 
   const handleSubmit = (event) => {
-    // Build the form data from the state
     event.preventDefault();
+    // Build the form data from the state
     const membershipRequests = { vhaAccess, ...preDocketOrgsAccess };
     // Setup the form data in a typical json data format.
-    // TODO: Move this json data format to the thunk I think.
     const formData = { data: { membershipRequests, requestReason, organizationGroup: 'VHA' } };
 
-    // TODO: take the form data returned form the server and update the organizations and vhaAccess radio buttons
     // TODO: Update unwrapResult to .unwrap() if the Redux Toolkit version is updated.
     dispatch(submitMembershipRequestForm(formData)).then(unwrapResult).
       then((values) => {
@@ -159,7 +157,6 @@ const VhaMembershipRequestForm = () => {
         resetMembershipRequestForm();
       }).
       catch((error) => {
-        // console.log(error);
         // TODO: improve this message somehow. It also won't display success if there is an error at all
         dispatch(setErrorMessage(error.message));
       });
