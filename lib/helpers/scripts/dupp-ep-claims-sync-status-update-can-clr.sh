@@ -10,30 +10,22 @@
 
 set -e # Exit script immediately if any command exits with a non-zero status.
 
-set sudo su
+cd /opt/caseflow-certification/src/lib/helpers
 
-cd /opt/caseflow-certification
-
-cd src/
-
-cd lib
-
-cd helpers
+bin/rails c <<DONETOKEN
 
 if [[ "$1" == "No" && "$2" == "No" ]]; then
   echo "There is no remediation to be performed."
 elif [[ "$1" == "Yes" && "$2" == "No" ]]; then
   echo "You chose the manual duplicateEP resolution for HLR or SC to be performed."
   bin/rails runner ActiveRecord::Base.transaction do; WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new.run("manual", "sc_hlr"); end
-  bin/rails c <<EOF
-EOF
 elif [[ "$1" == "No" && "$2" == "Yes" ]]; then
   echo "You chose the automated duplicateEP remediation for HLR and SC."
   bin/rails runner ActiveRecord::Base.transaction do; WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new.run("auto", "sc_hlr"); end
-  bin/rails c <<EOF
-EOF
 elif [[ "$1" == "Yes" && "$2" == "Yes" ]]; then
   echo "You cannot run both manual and auto remediations at the same time."
 else
   echo "Invalid arguments. Please enter (Yes, No) for Manual Remediation or (No, Yes) for Auto Remediation."
 fi
+
+DONETOKEN
