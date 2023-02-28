@@ -47,7 +47,7 @@ const CavcDashboardIssue = (props) => {
     dispositions,
     removeIssueHandler,
     addedIssueSection,
-    dashboardIndex
+    dashboardIndex,
     userCanEdit
   } = props;
 
@@ -98,6 +98,7 @@ const CavcDashboardIssue = (props) => {
   const setDispositionOption = (option, issueIndex) => {
     setDisposition(option);
     dispatch(setDispositionValue(dashboardIndex, issueIndex, option));
+  };
   const renderDispositionDropdown = () => {
     if (userCanEdit) {
       return (
