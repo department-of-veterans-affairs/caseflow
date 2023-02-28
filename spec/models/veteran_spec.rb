@@ -532,6 +532,22 @@ describe Veteran, :all_dbs do
       it { is_expected.to eq(nil) }
     end
 
+    context "SSN in Caseflow Veteran record is nil, and BGS is used as a fallback" do
+      let(:bgs_ssn) { "138872125" }
+
+      before { allow_any_instance_of(Veteran).to receive(:bgs_record).and_return(ssn: bgs_ssn) }
+
+      it "returns the SSN value from BGS, and updates the Caseflow Veteran record" do
+        # Avoiding calling .ssn as to not trigger the BGS fallback
+        expect(veteran[:ssn]).to be_nil
+
+        is_expected.to eq(bgs_ssn)
+
+        # SSN should now be in our Veteran record
+        expect(veteran.reload[:ssn]).to eq(bgs_ssn)
+      end
+    end
+
     context "when there is no veteran record returns nil" do
       let(:veteran_record) { nil }
       it { is_expected.to eq(nil) }
