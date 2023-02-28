@@ -259,9 +259,9 @@ class TasksController < ApplicationController
       task.instructions[0].concat("\nHold time: #{task.days_on_hold}/#{task.max_hold_day_period} days")
       task.save!
     when "completed"
-      if (params["select_opc"] === "proceed_final_notification_letter")
+      if (params["select_opc"] == "proceed_final_notification_letter")
         send_final_notification_letter
-      elsif (params["select_opc"] === "resend_initial_notification_letter")
+      elsif (params["select_opc"] == "resend_initial_notification_letter")
         send_initial_notification_letter
       end
     end

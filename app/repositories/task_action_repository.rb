@@ -358,7 +358,7 @@ class TaskActionRepository
       params = {
         modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym]
       }
-      if task.type === "PostSendInitialNotificationLetterHoldingTask"
+      if task.type == "PostSendInitialNotificationLetterHoldingTask"
         params[:modal_body] = COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_COPY
       else
         params[:modal_body] = COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
