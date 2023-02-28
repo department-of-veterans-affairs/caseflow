@@ -4,9 +4,12 @@ import { nonCompReducer, mapDataToInitialState } from '../reducers';
 
 import NonCompTabsUnconnected from './NonCompTabs';
 
-const ReduxDecorator = (Story) => {
+const ReduxDecorator = (Story, options) => {
   const props = {
     serverNonComp: {
+      featureToggles: {
+        decisionReviewQueueSsnColumn: options.args.decisionReviewQueueSsnColumn
+      },
       businessLineUrl: 'vha',
       baseTasksUrl: '/decision_reviews/vha',
       taskFilterDetails: {
@@ -27,7 +30,7 @@ const ReduxDecorator = (Story) => {
 };
 
 const defaultArgs = {
-
+  decisionReviewQueueSsnColumn: true,
 };
 
 export default {
@@ -37,6 +40,7 @@ export default {
   parameters: {},
   args: defaultArgs,
   argTypes: {
+    decisionReviewQueueSsnColumn: { control: 'boolean' }
   },
 };
 

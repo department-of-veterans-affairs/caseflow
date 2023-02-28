@@ -73,6 +73,8 @@ class PrepareDocumentUploadToVbms
 
   def document_params
     {
+      appeal_id: @appeal&.id,
+      appeal_type: @appeal&.class&.name,
       veteran_file_number: veteran_file_number,
       document_name: document_name,
       document_subject: document_subject,
