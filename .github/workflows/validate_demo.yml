@@ -1,0 +1,44 @@
+name: Reusable workflow example
+
+on:
+  workflow_dispatch:
+  push:
+    branches: f-gh-migration
+
+jobs:
+  validate-demo:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:11.7
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: caseflow_certification_test
+        ports:
+        - 5432:5432
+      redis:
+        image: redis:4.0.10
+        ports:
+        - 6379:6389
+      facols:
+        image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
+    container:
+      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      environment:
+          - DBUS_SESSION_BUS_ADDRESS: /dev/null
+          - RAILS_ENV: test
+          - NODE_ENV: test
+          - BUNDLE_PATH: vendor/bundle
+          - COVERAGE_DIR: /home/circleci/coverage
+          - POSTGRES_HOST: localhost
+          - POSTGRES_USER: root
+    steps:
+      - uses: actions/checkout@v3
+      - name: install node dependencies
+        uses: ./utils/install_node_dependencies.yml
+      - name: build webpack
+        run: ~/project/ci-bin/capture-log "cd client && yarn build:test"
+
+
+

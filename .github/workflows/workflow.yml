@@ -6,13 +6,11 @@ on:
       - f-gh-migration
 
 jobs:
-  build_workspace:
-    uses: ./.github/workflows/build_workspace.yml
   validate_demo:
     uses: ./.github/workflows/validate_demo.yml
-  rspec:
-    uses: ./github/workflows/rspec.yml
-  js_tests:
-    uses: ./github/workflows/js_tests.yml
-  lint:
-    uses: ./github/workflows/lint.yml
+  # rspec:
+  #   uses: ./github/workflows/rspec.yml
+  # js_tests:
+  #   uses: ./github/workflows/js_tests.yml
+  # lint:
+  #   uses: ./github/workflows/lint.yml
