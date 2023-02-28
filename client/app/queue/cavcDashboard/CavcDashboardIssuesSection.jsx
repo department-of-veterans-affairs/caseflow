@@ -56,8 +56,10 @@ const CavcDashboardIssue = (props) => {
     (dis) => dis.request_issue_id === issue.id ||
       dis.cavc_dashboard_issue_id === issue.id)?.disposition || issue?.disposition);
 
-  /* eslint-disable-next-line */
-  const loadCheckedBoxes = dispositions.find((dis) => dis.request_issue_id === issue.id)?.cavc_dispositions_to_reasons;
+  const loadCheckedBoxes = dispositions.find(
+    (dis) => dis.request_issue_id === issue.id ||
+    /* eslint-disable-next-line camelcase */
+    dis.cavc_dashboard_issue_id === issue.id)?.cavc_dispositions_to_reasons;
 
   const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS).map(
     (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
