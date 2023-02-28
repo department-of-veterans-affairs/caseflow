@@ -36,6 +36,10 @@ class CavcDashboardController < ApplicationController
     end
   end
 
+  def update_data(updatedData)
+
+  end
+
   # add data to render: json as a key-value pair that matchecs the front-end state key
   def render_index_data_as_json(cavc_dashboards)
     render json: {
