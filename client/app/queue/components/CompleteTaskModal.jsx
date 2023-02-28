@@ -138,6 +138,36 @@ const ProceedFinalNotificationLetterTaskModal = ({ props, state, setState }) => 
   );
 };
 
+const ResendInitialNotificationLetterTaskModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+
+  return (
+    <React.Fragment>
+      {taskConfiguration && taskConfiguration.modal_body}
+      {taskConfiguration && taskConfiguration.modal_alert && (
+        <Alert message={taskConfiguration.modal_alert} type="info" />
+      )}
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        <TextareaField
+          label= "Provide instuctions and context for this action"
+          name= "instructions"
+          id= "completeTaskInstructions"
+          onChange={(value) => setState({ instructions: value })}
+          value={state.instructions}
+          styling={marginTop(4)}
+          maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+          placeholder="This is a description of instuctions and context for this action."
+        />
+      )}
+    </React.Fragment>
+  );
+};
+
+ResendInitialNotificationLetterTaskModal.propTypes = {
+  props: PropTypes.object,
+  setState: PropTypes.func,
+  state: PropTypes.object
+};
 MarkTaskCompleteContestedClaimModal.propTypes = {
   props: PropTypes.object,
   setState: PropTypes.func,
@@ -475,6 +505,15 @@ const MODAL_TYPE_ATTRS = {
     buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON
   },
 
+  resend_initial_notification_letter: {
+    buildSuccessMsg: () => ({
+      title: sprintf(COPY.RESEND_INITIAL_NOTIFICATION_LETTER_TASK_SUCCESS),
+    }),
+    title: () => COPY.RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
+    getContent: ResendInitialNotificationLetterTaskModal,
+    buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON
+  },
+
   ready_for_review: {
     buildSuccessMsg: (appeal, { assignedToType }) => ({
       title: assignedToType === 'VhaProgramOffice' ?
@@ -692,8 +731,10 @@ class CompleteTaskModal extends React.Component {
 
       return formattedInstructions[0];
     }
+
     if (this.props.task.type !== 'SendInitialNotificationLetterTask') {
-      if (this.props.modalType === 'proceed_final_notification_letter') {
+      if ((this.props.modalType === 'proceed_final_notification_letter') ||
+        (this.props.modalType === 'resend_initial_notification_letter')) {
         const currentTaskID = this.props.task.taskId;
 
         this.props.tasks.forEach((data) => {
@@ -799,6 +840,7 @@ class CompleteTaskModal extends React.Component {
     const modalAttributes = MODAL_TYPE_ATTRS[this.props.modalType];
     const path = (
       (MODAL_TYPE_ATTRS[this.props.modalType].buttonText === 'Proceed to final letter') ||
+      (MODAL_TYPE_ATTRS[this.props.modalType].buttonText === 'Resend notification letter') ||
       (this.props.modalType === 'task_complete_contested_claim')
     ) ? ('/organizations/clerk-of-the-board?tab=unassignedTab&page=1') : (
         this.getTaskConfiguration().redirect_after || '/queue'

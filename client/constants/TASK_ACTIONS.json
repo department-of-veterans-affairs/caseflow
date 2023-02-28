@@ -459,12 +459,12 @@
     "value": "modal/vha_caregiver_support_return_to_board_intake",
     "func": "vha_caregiver_support_return_to_board_intake"
   },
-  "RESEND_INITIAL_NOTIFICATION_LETTER":{
+  "RESEND_INITIAL_NOTIFICATION_LETTER": {
     "label": "Resend initial notification letter",
-    "value": "modal/cancel_task",
-    "func": "cancel_task_data"
+    "value": "modal/resend_initial_notification_letter",
+    "func": "resend_initial_notification_letter_task_data"
   },
-  "RESEND_FINAL_NOTIFICATION_LETTER":{
+  "RESEND_FINAL_NOTIFICATION_LETTER": {
     "label": "Resend final notification letter",
     "value": "modal/cancel_task",
     "func": "cancel_task_data"

@@ -185,6 +185,28 @@ class TasksController < ApplicationController
 
   private
 
+  def send_initial_notification_letter
+    # depending on the docket type, create cooresponding task as parent task
+    @appeal = task.appeal
+    case @appeal.docket_type
+    when "evidence_submission"
+      parent_task = @appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
+    when "hearing"
+      parent_task = @appeal.tasks.find_by(type: "ScheduleHearingTask")
+    when "direct_review"
+      parent_task = @appeal.tasks.find_by(type: "DistributionTask")
+    end
+    unless parent_task.nil?
+      @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
+                                            SendInitialNotificationLetterTask.create!(
+                                              appeal: @appeal,
+                                              parent: parent_task,
+                                              assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                              assigned_by: RequestStore[:current_user]
+                                            )
+    end
+  end
+
   def send_final_notification_letter
     @send_final_notification_letter ||= task.appeal.tasks.open.find_by(type: :SendFinalNotificationLetterTask) ||
                                         SendFinalNotificationLetterTask.create!(
@@ -237,8 +259,10 @@ class TasksController < ApplicationController
       task.instructions[0].concat("\nHold time: #{task.days_on_hold}/#{task.max_hold_day_period} days")
       task.save!
     when "completed"
-      if (params["select_opc"] === "proceed_final_notification_letter")
+      if (params["select_opc"] == "proceed_final_notification_letter")
         send_final_notification_letter
+      elsif (params["select_opc"] == "resend_initial_notification_letter")
+        send_initial_notification_letter
       end
     end
   end
