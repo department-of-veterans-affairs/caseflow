@@ -49,7 +49,7 @@ module WarRoom
           }.empty?
         }
         problem_hlr = hlr.select { |hlr|
-          hlr.end_products.select { |ep|
+          hlr.veteran.end_products.select { |ep|
             ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
             [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
           }.empty?
