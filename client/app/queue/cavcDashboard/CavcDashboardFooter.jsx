@@ -42,7 +42,7 @@ CavcDashboardFooter.propTypes = {
   userCanEdit: PropTypes.bool.isRequired,
   saveDashboardData: PropTypes.func,
   cavcDashboards: PropTypes.arrayOf(PropTypes.object),
-  checkedBoxes: PropTypes.arrayOf(PropTypes.object),
+  checkedBoxes: PropTypes.oneOfType([PropTypes.object, PropTypes.arrayOf(PropTypes.object)]),
   // Router inherited props
   history: PropTypes.object
 };

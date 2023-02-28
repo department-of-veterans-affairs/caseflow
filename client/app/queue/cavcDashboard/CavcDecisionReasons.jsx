@@ -11,7 +11,7 @@ import { setCheckedDecisionReasons } from './cavcDashboardActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
 
-const CavcDecisionReasons = ({ uniqueId, loadCheckedBoxes, userCanEdit }) => {
+const CavcDecisionReasons = ({ uniqueId, dispositionIssueType, loadCheckedBoxes, userCanEdit }) => {
 
   const checkboxStyling = css({
     paddingLeft: '2.5%',
@@ -62,10 +62,12 @@ const CavcDecisionReasons = ({ uniqueId, loadCheckedBoxes, userCanEdit }) => {
       ...parent,
       checked: loadCheckedBoxesId?.includes(parent.id),
       issueId: uniqueId,
+      issueType: dispositionIssueType,
       children: children.map((child) => {
 
         return {
           ...child,
+          issueType: dispositionIssueType,
           checked: loadCheckedBoxesId?.includes(child.id),
         };
       })

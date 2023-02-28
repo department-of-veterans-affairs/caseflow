@@ -43,23 +43,10 @@ class CavcDashboardController < ApplicationController
     }
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
   def save
     dashboards = params[:cavc_dashboards].as_json
     checked_boxes = params[:checked_boxes]
-
-    # dispositions = params[:cavc_dashboard_dispositions]
-    # dispositions.as_json.flatten.map do |disposition|
-    #   cdd = CavcDashboardDisposition.find_or_create_by(id: disposition["id"])
-    #   cdd.update!(disposition: disposition["disposition"]) unless disposition["disposition"] == cdd.disposition
-    # end
-    # dispositions_to_reasons_update = params[:checked_boxes]
-    # dispositions_to_reasons_update.map do |dtr|
-    #   existing_reason = CavcDispositionsToReason.find_by(
-    #     cavc_dashboard_disposition: CavcDashboardDisposition.find_by(request_issue_id: dtr[0]),
-    #     cavc_decision_reason_id: dtr[1]
-    #   )
-    # end
 
     dashboards.each do |dash|
       submitted_dispositions = dash["cavc_dashboard_dispositions"]
@@ -98,6 +85,17 @@ class CavcDashboardController < ApplicationController
               end
         cdd.update!(disposition: disp["disposition"]) unless disp["disposition"] == cdd.disposition
       end
+    end
+
+    # checked_box format from cavcDashboardActions.js: [issue_id, issue_type, decision_reason_id]
+    checked_boxes.each do |box|
+      cdd = if box[1] == "request_issue"
+              CavcDashboardDisposition.find_by(request_issue_id: box[0])
+            else
+              CavcDashboardDisposition.find_by(cavc_dashboard_issue_id: box[0])
+            end
+
+      CavcDispositionsToReason.find_or_create_by(cavc_dashboard_disposition: cdd, cavc_decision_reason_id: box[2])
     end
 
     render json: { successful: true }

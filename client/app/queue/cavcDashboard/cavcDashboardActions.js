@@ -78,10 +78,10 @@ export const saveDashboardData = (allCavcDashboards, checkedBoxes) => (dispatch)
     const childBoxes = parentBoxes.map((box) => box.children).flat();
     const allBoxes = parentBoxes.concat(childBoxes);
     const selectedBoxes = allBoxes.filter((box) => box.checked);
-    const ids = selectedBoxes.map((box) => box.id);
+    const idsAndTypes = selectedBoxes.map((box) => [box.issueType, box.id]);
 
-    ids.map((id) => checkedBoxesByIssueId.push([issueId, id]));
-    // dispositionsToReasonsByIssueId.push({ issueId, ids });
+    idsAndTypes.map((idsAndType) => checkedBoxesByIssueId.push([issueId, ...idsAndType]));
+    //idsAndTypes.map((idsAndType) => checkedBoxesByIssueId.push({ issueId, idsAndType }));
   }
 
   ApiUtil.post('/cavc_dashboard/save',
