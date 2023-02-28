@@ -106,7 +106,8 @@ const mapStateToProps = (state, ownProps) => {
     appealDetails: state.queue.appealDetails[ownProps.appealId],
     cavcDashboards: state.cavcDashboard.cavc_dashboards,
     checkedBoxes: state.cavcDashboard.checked_boxes,
-    userCanEdit: state.ui.canEditCavcDashboards
+    userCanEdit: state.ui.canEditCavcDashboards,
+    initialState: state.cavcDashboard.initial_state
   };
 };
 

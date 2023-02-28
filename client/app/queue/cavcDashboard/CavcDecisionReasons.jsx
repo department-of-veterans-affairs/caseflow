@@ -309,6 +309,7 @@ const CavcDecisionReasons = ({ uniqueId, dispositionIssueType, loadCheckedBoxes,
 
 CavcDecisionReasons.propTypes = {
   uniqueId: PropTypes.number,
+  dispositionIssueType: PropTypes.string,
   loadCheckedBoxes: PropTypes.shape({
     cavc_dashboard_disposition_id: PropTypes.number,
     cavc_decision_reason_id: PropTypes.number,

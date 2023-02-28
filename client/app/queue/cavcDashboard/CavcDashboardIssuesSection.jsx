@@ -96,7 +96,7 @@ const CavcDashboardIssue = (props) => {
   };
 
   const removeIssue = () => {
-    removeIssueHandler(index);
+    removeIssueHandler(index, issue);
     toggleRemoveIssueModal();
   };
 
@@ -174,8 +174,10 @@ const CavcDashboardIssuesSection = (props) => {
   const dashboardId = dashboard.id;
 
   // the handler is in this component because it needs the dashboardIndex prop that isn't passed down
-  const removeIssueHandler = (issueIndex) => {
-    removeDashboardIssue(dashboardIndex, issueIndex);
+  const removeIssueHandler = (issueIndex, issue) => {
+    const dispositionIndex = dashboardDispositions.findIndex((disp) => disp.cavc_dashboard_issue_id === issue.id);
+
+    removeDashboardIssue(dashboardIndex, issueIndex, dispositionIndex);
   };
 
   return (
