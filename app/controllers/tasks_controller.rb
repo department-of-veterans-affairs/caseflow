@@ -236,13 +236,10 @@ class TasksController < ApplicationController
       # concat days on hold with instructions
       task.instructions[0].concat("\nHold time: #{task.days_on_hold}/#{task.max_hold_day_period} days")
       task.save!
-<<<<<<< HEAD
     when "completed"
       if (params["select_opc"] === "proceed_final_notification_letter")
         send_final_notification_letter
       end
-=======
->>>>>>> feature/APPEALS-3761
     end
   end
 
