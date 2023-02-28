@@ -249,7 +249,7 @@ describe PostSendInitialNotificationLetterHoldingTask do
 
       it "Complete task" do
         Timecop.travel(now + 45.days) do
-          sleep(30)
+
           TaskTimerJob.perform_now
 
           task = Task.find_by(type: "SendFinalNotificationLetterTask")
@@ -275,21 +275,3 @@ describe PostSendInitialNotificationLetterHoldingTask do
     end
   end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
