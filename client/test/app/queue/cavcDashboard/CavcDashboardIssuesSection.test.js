@@ -31,8 +31,8 @@ const createDashboardProp = () => {
   };
 };
 
-const renderCavcDashboardIssuesSection = async (dashboard) => {
-  const props = { dashboard };
+const renderCavcDashboardIssuesSection = async (dashboard, userCanEdit = true) => {
+  const props = { dashboard, userCanEdit };
 
   return render(<CavcDashboardIssuesSection {...props} />);
 };
