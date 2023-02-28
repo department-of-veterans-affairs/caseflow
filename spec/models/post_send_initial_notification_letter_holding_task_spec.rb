@@ -253,7 +253,6 @@ describe PostSendInitialNotificationLetterHoldingTask do
           TaskTimerJob.perform_now
 
           task = Task.find_by(type: "SendFinalNotificationLetterTask")
-          binding.pry
           expect(task.appeal_id).to eq(post_task.appeal_id)
           expect(task.status).to eq("assigned")
 
