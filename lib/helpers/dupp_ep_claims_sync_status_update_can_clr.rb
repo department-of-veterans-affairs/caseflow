@@ -11,9 +11,9 @@ It also logs messages for the user.
 
 This gets hit by when we run the WarRoom::DuppEpClaimsSyncStatusUpdateCanClr script in the Caseflow Rails console.
 
-Usage: ./dupp-supp-claims-sync-status-update-can.sh <arg1> <arg2>
-# ("Yes", "No") runs manual remediation
-# ("No", "Yes") runs auto remediation
+Usage: ./dupp-ep-claims-sync-status-update-can-clr.sh <arg1> <arg2>
+# Yes No runs manual remediation
+# No Yes runs auto remediation
 
 It is suspected that a expired BGS Attorney could cause this script to fail in which we would reach out to OAR for that correction and rerun the script if required.
 
