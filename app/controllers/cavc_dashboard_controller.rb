@@ -43,17 +43,62 @@ class CavcDashboardController < ApplicationController
     }
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
   def save
-    # save issues
-    # save dispositions and reasons selections
-    dispositions = params[:cavc_dashboard_dispositions]
-    dispositions.as_json.flatten.map do |disposition|
-      cdd = CavcDashboardDisposition.find_or_create_by(id: disposition["id"])
-      cdd.update!(disposition: disposition["disposition"]) unless disposition["disposition"] == cdd.disposition
+    dashboards = params[:cavc_dashboards].as_json
+    checked_boxes = params[:checked_boxes]
+
+    # dispositions = params[:cavc_dashboard_dispositions]
+    # dispositions.as_json.flatten.map do |disposition|
+    #   cdd = CavcDashboardDisposition.find_or_create_by(id: disposition["id"])
+    #   cdd.update!(disposition: disposition["disposition"]) unless disposition["disposition"] == cdd.disposition
+    # end
+    # dispositions_to_reasons_update = params[:checked_boxes]
+    # dispositions_to_reasons_update.map do |dtr|
+    #   existing_reason = CavcDispositionsToReason.find_by(
+    #     cavc_dashboard_disposition: CavcDashboardDisposition.find_by(request_issue_id: dtr[0]),
+    #     cavc_decision_reason_id: dtr[1]
+    #   )
+    # end
+
+    dashboards.each do |dash|
+      submitted_dispositions = dash["cavc_dashboard_dispositions"]
+      submitted_issues = dash["cavc_dashboard_issues"]
+      # cavc_dashboard = CavcDashboard.find_by(id: dash["id"])
+
+      submitted_issues.each do |issue|
+        # this regex is how the front-end assigns a temporary ID value to a new issue
+        if issue["id"].to_s.match?(/\d-\d/)
+          new_issue = CavcDashboardIssue.create!(benefit_type: issue["benefit_type"],
+                                                 cavc_dashboard_id: issue["cavc_dashboard_id"],
+                                                 issue_category: issue["issue_category"])
+          CavcDashboardDisposition.create!(cavc_dashboard_id: issue["cavc_dashboard_id"],
+                                           cavc_dashboard_issue_id: new_issue.id)
+
+          # set relevant ID values in the submitted data to the new issue's ID value
+          submitted_dispositions
+            .filter { |disp| disp["cavc_dashboard_issue_id"] == issue["id"] }
+            .first["cavc_dashboard_issue_id"] = new_issue.id
+          issue["id"] = new_issue.id
+        else
+          existing_issue = CavcDashboardIssue.find_by(id: issue["id"])
+          unless existing_issue.benefit_type == issue["benefit_type"] &&
+                 existing_issue.issue_category == issue["issue_category"]
+            existing_issue.update!(benefit_type: issue["benefit_type"],
+                                   issue_category: issue["issue_category"])
+          end
+        end
+      end
+
+      submitted_dispositions.each do |disp|
+        cdd = if disp["request_issue_id"]
+                CavcDashboardDisposition.find_by(request_issue_id: disp["request_issue_id"])
+              else
+                CavcDashboardDisposition.find_or_create_by(cavc_dashboard_issue_id: disp["cavc_dashboard_issue_id"])
+              end
+        cdd.update!(disposition: disp["disposition"]) unless disp["disposition"] == cdd.disposition
+      end
     end
-    dispositions_to_reasons = params[:cavc_dispositions_to_reasons]
-    #dispositions_to_reasons.as_json.map {|dtr| dtr.values }.flat_map{|values| CavcDashboardDisposition.find_by(request_issue_id: values[0]).cavc_dispositions_to_reasons }
-    byebug
 
     render json: { successful: true }
   end

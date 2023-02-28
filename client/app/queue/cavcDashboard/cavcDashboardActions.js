@@ -39,10 +39,10 @@ export const removeCheckedDecisionReason = (issueId) => ({
   payload: { issueId }
 });
 
-export const updateDashboardIssues = (dashboardIndex, issue) => (dispatch) => {
+export const updateDashboardIssues = (dashboardIndex, issue, dashboardDisposition) => (dispatch) => {
   dispatch({
     type: ACTIONS.UPDATE_DASHBOARD_ISSUES,
-    payload: { dashboardIndex, issue }
+    payload: { dashboardIndex, issue, dashboardDisposition }
   });
 };
 
@@ -61,8 +61,17 @@ export const updateDashboardData = (dashboardIndex, updatedData) => (dispatch) =
 };
 
 export const saveDashboardData = (allCavcDashboards, checkedBoxes) => (dispatch) => {
-  const cavcDashboardDispositions = allCavcDashboards.map((dashboard) => dashboard.cavc_dashboard_dispositions);
-  const dispositionsToReasonsByIssueId = [];
+  const usableCavcDashboards = allCavcDashboards.map((dashboard) => {
+    const formattedDash = {
+      id: dashboard.id,
+      cavc_dashboard_dispositions: dashboard.cavc_dashboard_dispositions,
+      cavc_dashboard_issues: dashboard.cavc_dashboard_issues,
+    };
+
+    return formattedDash;
+  });
+
+  const checkedBoxesByIssueId = [];
 
   for (const [issueId, value] of Object.entries(checkedBoxes)) {
     const parentBoxes = Object.values(value);
@@ -71,13 +80,14 @@ export const saveDashboardData = (allCavcDashboards, checkedBoxes) => (dispatch)
     const selectedBoxes = allBoxes.filter((box) => box.checked);
     const ids = selectedBoxes.map((box) => box.id);
 
-    dispositionsToReasonsByIssueId.push({ issueId, ids });
-}
+    ids.map((id) => checkedBoxesByIssueId.push([issueId, id]));
+    // dispositionsToReasonsByIssueId.push({ issueId, ids });
+  }
 
   ApiUtil.post('/cavc_dashboard/save',
     { data: {
-      cavc_dashboard_dispositions: cavcDashboardDispositions,
-      cavc_dispositions_to_reasons: dispositionsToReasonsByIssueId
+      cavc_dashboards: usableCavcDashboards,
+      checked_boxes: checkedBoxesByIssueId
     } }).
     then(() => {
       return true;

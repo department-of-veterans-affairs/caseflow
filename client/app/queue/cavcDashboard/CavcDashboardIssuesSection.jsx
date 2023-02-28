@@ -54,7 +54,7 @@ const CavcDashboardIssue = (props) => {
 
   const [disposition, setDisposition] = useState(dispositions?.find(
     (dis) => dis.request_issue_id === issue.id ||
-      dis.cavc_dashboard_issue_id === issue.id)?.disposition || issue?.disposition);
+      dis.cavc_dashboard_issue_id === issue.id)?.disposition);
 
   const loadCheckedBoxes = dispositions.find(
     (dis) => dis.request_issue_id === issue.id ||
