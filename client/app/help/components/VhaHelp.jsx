@@ -1,16 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import VhaMembershipRequestForm from './VhaMembershipRequestForm';
 import Alert from '../../components/Alert';
 import { VHA_FORM_SUBMIT_SUCCESS_TITLE } from '../constants';
-import { useDispatch, useSelector } from 'react-redux';
-import { resetSuccessMessage, resetErrorMessage } from '../helpApiSlice';
+import { useSelector } from 'react-redux';
 
 const VhaHelp = () => {
 
-  // const dispatch = useDispatch();
-
   // Success message selector for displaying the banner after object creation
-  // TODO: look into createSelector for some of these and see if it is worth it.
   const successMessage = useSelector(
     (state) => state.help.messages.success
   );
@@ -18,15 +14,6 @@ const VhaHelp = () => {
   const errorMessage = useSelector(
     (state) => state.help.messages.error
   );
-
-  // TODO: While, I think this should be done. This makes testing difficult
-  // useEffect(() => {
-  //   // Clear the form success message on first component render
-  //   // dispatch(resetFormSuccessMessage());
-  //   // dispatch(resetSuccessMessage());
-  //   // TODO: might need to do this too?
-  //   // dispatch(resetErrorMessage());
-  // }, [dispatch]);
 
   const Header = () => {
     return <div>

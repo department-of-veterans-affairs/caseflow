@@ -1,7 +1,15 @@
 # frozen_string_literal: true
 
 class MembershipRequestsController < ApplicationController
+  # To create Membership Request
+  # e.g, for VHA Businessline request => POST /tasks,
+  # {
+  #   organizationGroup: "VHA",
+  #   membershipRequests: { "vhaAccess" => true },
+  #   requestReason: "High Priority request"
+  # }
   def create
+    allowed_params = safe_params
     membership_requests_hash = allowed_params[:membershipRequests]
     organization_group = allowed_params[:organizationGroup]
 
@@ -9,7 +17,7 @@ class MembershipRequestsController < ApplicationController
 
     created_membership_requests = MembershipRequest.create_many_from_params_and_send_creation_emails(
       requested_org_access_list,
-      safe_params,
+      allowed_params,
       current_user
     )
 
