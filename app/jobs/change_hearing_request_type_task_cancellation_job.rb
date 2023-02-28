@@ -16,7 +16,7 @@ class ChangeHearingRequestTypeTaskJobCancellationJob < CaseflowJob
   def perform
     RequestStore[:current_user] = User.system_user
     begin
-      close_open_change_hearing_request_type_tasks!
+      close_open_change_hearing_request_type_tasks(open_change_hearing_request_type_tasks)
     rescue StandardError => error
       log_error(error)
     end
@@ -29,30 +29,29 @@ class ChangeHearingRequestTypeTaskJobCancellationJob < CaseflowJob
   # Params: None
   # Returns: ActiveRecord::Relation of ChangeHearingRequestTypeTasks
   def open_change_hearing_request_type_tasks
-    @open_change_hearing_request_type_tasks ||= ChangeHearingRequestTypeTask.open.includes(:legacy_appeal)
+    ChangeHearingRequestTypeTask.open.includes(:legacy_appeal)
   end
 
-  # Description: Loops through teh open ChangeHearingRequestTypeTaks from open_change_hearing_request_type_tasks
-  # if the appeal is active will check if there is an on hold ScheduleHearingTask sibling ith the same HearingTask parent
-  #    and activate the ScheduleHearingTask and cancell the ChangeHearingRequestTypeTask
-  # if the appeal is closed will envoke the ChnageHearingRequestTypeTask update_by_params method
+  # Description: Loops through the open ChangeHearingRequestTypeTaks from open_change_hearing_request_type_tasks
+  # and will envoke the ChnageHearingRequestTypeTask update_by_params method
   #    which will not only cancel the ChangeHearingRequestTypeTaks but also the paranet HearingTask
   #
   # Params: none
   # Returns: nil
-  def close_open_change_hearing_request_type_tasks!
-    return if open_change_hearing_request_type_tasks.empty?
+  def close_open_change_hearing_request_type_tasks(tasks)
+    Rails.logger.info("Attempting to remediate " +
+                  open_change_hearing_request_type_tasks.count.to_s +
+                  " Change Hearing Request Type Tasks")
 
-    open_change_hearing_request_type_tasks.each do |task|
-      if task&.appeal&.active?
-        if task&.ancestor_task_of_type(ScheduleHearingTask)&.on_hold?
-          on_hold_sibling_schedule_hearing_task = task&.ancestor_task_of_type(ScheduleHearingTask)
-          on_hold_sibling_schedule_hearing_task&.assigned!
-          task.cancelled!
-        end
-      else
-        task&.update_from_params({ "status": "cancelled", "instructions": "" }, User.system_user)
-      end
+    tasks.each do |task|
+      location = task&.appeal&.location_code.to_s
+      vacols_id = task&.appeal&.vacols_id.to_s
+      Rails.logger.info("Closing CHRT on Legacy Appeal: " +
+                    vacols_id.to_s +
+                    " at location " +
+                    location.to_s)
+      task&.update_from_params({ "status": "cancelled", "instructions": "" }, User.system_user)
+      Rails.logger.info("Appeal:" + vacols_id + "CHRT closed")
     end
   end
 end
