@@ -34,6 +34,10 @@ export const setCheckedDecisionReasons = (checkedReasons, issueId) => ({
   }
 });
 
+export const setInitialCheckedDecisionReasons = () => ({
+  type: ACTIONS.SET_INITIAL_CHECKED_DECISION_REASONS
+});
+
 export const removeCheckedDecisionReason = (issueId) => ({
   type: ACTIONS.REMOVE_CHECKED_DECISION_REASON,
   payload: { issueId }

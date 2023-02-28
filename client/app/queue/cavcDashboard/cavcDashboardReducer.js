@@ -44,6 +44,14 @@ export const cavcDashboardReducer = (state = initialState, action) => {
         }
       }
     });
+  case ACTIONS.SET_INITIAL_CHECKED_DECISION_REASONS:
+    return update(state, {
+      initial_state: {
+        checked_boxes: {
+          $set: state.checked_boxes
+        }
+      }
+    });
   case ACTIONS.REMOVE_CHECKED_DECISION_REASON:
     return update(state, {
       checked_boxes: {

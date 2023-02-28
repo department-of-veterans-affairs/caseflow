@@ -7,7 +7,7 @@ import { DECISION_REASON_LABELS } from './cavcDashboardConstants';
 import { useDispatch, useSelector } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import { setCheckedDecisionReasons } from './cavcDashboardActions';
+import { setCheckedDecisionReasons, setInitialCheckedDecisionReasons } from './cavcDashboardActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
 
@@ -46,6 +46,8 @@ const CavcDecisionReasons = ({ uniqueId, dispositionIssueType, loadCheckedBoxes,
   const loadCheckedBoxesId = loadCheckedBoxes?.map((box) => box.cavc_decision_reason_id);
   const decisionReasons = useSelector((state) => state.cavcDashboard.decision_reasons);
   const checkedBoxesInStore = useSelector((state) => state.cavcDashboard.checked_boxes[uniqueId]);
+  const initialCheckBoxesInStore = useSelector((state) => state.cavcDashboard.initial_state.checked_boxes);
+
   const parentReasons = decisionReasons.filter((parentReason) => !parentReason.parent_decision_reason_id).sort(
     (obj) => obj.order);
   const childReasons = decisionReasons.filter((childReason) => childReason.parent_decision_reason_id !== null).sort(
@@ -81,6 +83,9 @@ const CavcDecisionReasons = ({ uniqueId, dispositionIssueType, loadCheckedBoxes,
 
   useEffect(() => {
     dispatch(setCheckedDecisionReasons(checkedReasons, uniqueId));
+    if (!initialCheckBoxesInStore) {
+      dispatch(setInitialCheckedDecisionReasons());
+    }
   }, [checkedReasons]);
 
   // counter for parent checkboxes that are checked to display next to the header

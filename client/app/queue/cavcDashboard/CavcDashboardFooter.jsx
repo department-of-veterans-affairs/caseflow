@@ -18,7 +18,8 @@ export const CavcDashboardFooter = (props) => {
     checkedBoxes
   } = props;
 
-  const saveDisabled = _.isEqual(initialState.cavc_dashboards, cavcDashboards);
+  const saveDisabled = _.isEqual(initialState.cavc_dashboards, cavcDashboards) &&
+                       _.isEqual(initialState.checked_boxes, checkedBoxes);
 
   const cancel = () => {
     history.goBack();
