@@ -64,7 +64,7 @@ module WarRoom
         ActiveRecord::Base.transaction do
           scs.each do |sc|
             # Set the review to the first epe source appeal
-            epe = sc.end_product_establishment
+            epe = sc.veteran.end_product_establishment
             if epe.nil?
               Rails.logger.error("Unable to find EPE for Supplemental Claim #{sc.id}. Skipping...")
               next
@@ -96,7 +96,7 @@ module WarRoom
           end
           hlr.each do |hlr|
             # Set the review to the first epe source appeal
-            epe = hlr.end_product_establishment
+            epe = hlr.veteran.end_product_establishment
             if epe.nil?
               Rails.logger.error("Unable to find EPE for Supplemental Claim #{hlr.id}. Skipping...")
               next
@@ -145,7 +145,7 @@ module WarRoom
               }.empty?
             }
             problem_hlr = hlr.select { |hlr|
-              hlr.end_products.select { |ep|
+              hlr.veteran.end_products.select { |ep|
                 ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
                 [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
               }.empty?
@@ -260,7 +260,7 @@ module WarRoom
                 puts "The problem claim identified is listed here. #{problem_claims.first}.\n"
 
                 # Set the review to the first epe source appeal
-                epe = problem_claims.end_product_establishment
+                epe = problem_claims.veteran.end_product_establishment
                 if epe.nil?
                   Rails.logger.error("Unable to find EPE for Problem Claim #{epe.id}.")
                 end
