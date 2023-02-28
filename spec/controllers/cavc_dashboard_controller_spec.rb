@@ -29,6 +29,41 @@ RSpec.describe CavcDashboardController, type: :controller do
       expect(response.status).to eq 200
       expect(JSON.parse(response.body).count).to eq CavcSelectionBasis.count
     end
+
+    it "#save" do
+      remand = create(:cavc_remand)
+      dashboard = CavcDashboard.create!(cavc_remand: remand)
+      save_params = {
+        cavc_dashboards: [
+          {
+            cavc_dashboard_issues: [
+              {
+                "id" => "33-0",
+                "benefit_type" => "insurance",
+                "cavc_dashboard_id" => dashboard.id,
+                "issue_category" => "Contested Death Claim | Other"
+              }
+            ],
+            cavc_dashboard_dispositions: [
+              {
+                # "id" => nil,
+                "cavc_dashboard_id" => dashboard.id,
+                "cavc_dashboard_issue_id" => "33-0",
+                # "request_issue_id" => nil,
+                "disposition" => "Settled",
+                "cavc_dispositions_to_reasons" => []
+              }
+            ]
+          }
+        ],
+        checked_boxes: [
+          ["100", "request_issue", 1]
+        ]
+      }
+
+      post :save, params: save_params
+      expect(JSON.parse(@response.body)["successful"]).to eq true
+    end
   end
 
   context "for routes specific to an appeal" do
