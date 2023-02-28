@@ -55,13 +55,11 @@ class MembershipRequestsController < ApplicationController
   # Generic mapping of options keys to the respective organization names
   # This method will need to be expanded as more organizations want to use this controller
   def org_name_mapping(org_group)
-    org_hash = case org_group
-               when "VHA"
-                 vha_org_mapping
-               else
-                 {}
-               end
-    org_hash
+    org_hash = {
+      VHA: vha_org_mapping
+    }
+
+    org_hash[org_group.to_sym]
   end
 
   # This is a mapping of option values to the organization names
