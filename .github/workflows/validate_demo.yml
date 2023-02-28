@@ -25,7 +25,7 @@ jobs:
         image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
-      environment:
+      env:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
           - NODE_ENV: test
