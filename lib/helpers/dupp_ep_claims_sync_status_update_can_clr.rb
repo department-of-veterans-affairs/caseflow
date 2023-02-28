@@ -79,6 +79,7 @@ module WarRoom
             return
           end
           puts "Running match query for SC or HLRs that contain duplicateEP Errors\n"
+
           # This will check if both scs and hlr are nil, which means the provided UUID doesn't match any records
           # in the SupplementalClaim and HigherLevelReview tables with the establishment_error containing the "duplicateep" string.
           # If both are nil, it will print the "No uuid found for both SupplementalClaims and HigherLevelReviews"
@@ -87,12 +88,12 @@ module WarRoom
           hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'").find_by(uuid: uuid2)
           if scs.nil? && hlr.nil?
             puts "No uuid found for both SupplementalClaims and HigherLevelReviews\n"
-            return # or exit the program here, depending on your use case
+            return duplicate_ep_problem_claim = nil
           end
-          duplicate_ep_problem_claim = nil
+
           # Query the SupplementalClaim table for a record with the specified uuid
           sc = SupplementalClaim.find_by(uuid: uuid2)
-          if sc && sc.establishment_error.include?('duplicateep')
+          if sc && sc.establishment_error.include?('duplicateep') == true;
             # If a matching record was found and it has the establishment_error containing 'duplicateep',
             # then assign the result to the variable `problem_scs`
             problem_scs = sc
@@ -100,9 +101,10 @@ module WarRoom
             # Assign the `sc` object to `duplicate_ep_problem_claim`
             duplicate_ep_problem_claim = sc
           end
+
           # Query the HigherLevelReview table for a record with the specified uuid
           hlr = HigherLevelReview.find_by(uuid: uuid2)
-          if hlr && hlr.establishment_error.include?('duplicateep')
+          if hlr && hlr.establishment_error.include?('duplicateep') == true;
             # If a matching record was found and it has the establishment_error containing 'duplicateep',
             # then assign the result to the variable `problem_hlr`
             problem_hlr = hlr
@@ -110,12 +112,13 @@ module WarRoom
             # Assign the `hlr` object to `duplicate_ep_problem_claim`
             duplicate_ep_problem_claim = hlr
           end
-          # Count the total problem claims and keep track
-          count = duplicate_ep_problem_claim.count
-          # If count is not 1, raise an error
-          if count != 1
+
+          # If count is not 1 or duplicate_ep_problem_claim is nil, raise an error
+          if count != 1 || duplicate_ep_problem_claim.nil?
             raise "Duplicate EP problem claim count is off and manual remediation must be stopped\n"
+            raise fail interrupt
           end
+
           # This code checks if duplicate_ep_problem_claim is not nil and if there are any matching
           # records in either the SupplementalClaim or HigherLevelReview table that have the same id as duplicate_ep_problem_claim.
           # If there are any matching records, it prints the message "Putting data to be reviewed for this hlr or sc id:"
