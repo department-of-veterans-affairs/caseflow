@@ -21,10 +21,12 @@ import {
   setHearingDay,
 } from './uiReducer/uiActions';
 import CaseTitleDetails from './CaseTitleDetails';
+import Alert from '../components/Alert';
 
 const sectionGap = css({ marginTop: '3.5rem' });
 
 import NotificationTable from './components/NotificationTable';
+
 
 export const NotificationsView = (props) => {
   const [modalState, setModalState] = useState(false);
@@ -54,10 +56,19 @@ export const NotificationsView = (props) => {
     userIsCobAdmin
   });
 
+  const styling = css({
+    marginBottom: '30px',
+    marginTop: '0px'
+  });
+
+  const errorMsg = 'There was an error generating the PDF for download. Please try again later.';
+  const errorCode = 'Error Code: ';
+
   return (
     <React.Fragment>
       <AppSegment filledBackground>
         <CaseTitle titleHeader = {`Case notifications for ${appeal.veteranFullName}`} appeal={appeal} hideCaseView />
+        <Alert type="error" title="Unable to generate PDF" styling={styling}>{errorMsg}<br />{errorCode}{appealId}</Alert>
         {supportPendingAppealSubstitution && (
           <div {...sectionGap}>
             <Button
@@ -82,9 +93,9 @@ export const NotificationsView = (props) => {
             <p className="notification-text">
               VA Notify sent these status notifications to the Appellant about their case.
             </p>
-            <a href={`/appeals/${appealId}/notifications.pdf`}>Download</a>
-
+            <Button id = "download-button" onClick={() => window.location.href = `/appeals/${appealId}/notifications.pdf`}>Download</Button>
           </div>
+
           <div className="notification-table">
             <NotificationTable
               appealId={appealId}
