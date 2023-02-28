@@ -62,18 +62,14 @@ module WarRoom
           fail interrupt
         end
         puts "Found #{count} problem Supplemental Claims and Higher Level Reviews. Please enter the UUID of the first claim:\n"
+
         # This code finds the HigherLevelReviews or SupplementalClaims associated with the given UUID, then finds the SupplementalClaims and HigherLevelReviews
         # that contain the duplicateEP error.
         # It then filters these to only include the claims with establishment errors containing "duplicateep" for the individual SupplementalClaims or HigherLevelReviews ID
         # and joins them based on their associated EndProduct records. It then goes through and promts the user how he wants to manually handle the
         # problem duplicate ep claim.
-        puts("We have checked for duplicate file records based upon your appeal and made necessary adjustments. It is now recommended to
-          cancel the sink job of the appeal with the duplicateEP error. Please enter uuid of appeal to cancel the sink job for: \n")
         ActiveRecord::Base.transaction do
           uuid2 = gets.chomp.strip
-          unless uuid2.match?(UUID_REGEX)
-            raise "Invalid UUID format. Please enter a valid UUID.\n"
-          end
           # Get SupplementalClaim or HigherLevelReview with a specific uuid
           sc = SupplementalClaim.find_by_uuid(uuid2)
           hlr = HigherLevelReview.find_by_uuid(uuid2)
