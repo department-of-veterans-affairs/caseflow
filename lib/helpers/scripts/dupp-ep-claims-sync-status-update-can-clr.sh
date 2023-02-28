@@ -10,9 +10,7 @@
 
 set -e # Exit script immediately if any command exits with a non-zero status.
 
-cd /opt/caseflow-certification/src/lib/helpers
-
-bin/rails c <<DONETOKEN
+cd /opt/caseflow-certification/src; bin/rails c << DONETOKEN
 
 x = WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new
 x.run("$1", "$2")
