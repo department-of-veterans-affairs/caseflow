@@ -64,6 +64,15 @@ class WorkQueue::AppealSerializer
     end
   end
 
+  attribute :substitute_appellant_claimant_options do |object|
+    object.veteran&.relationships.map do |relation|
+      {
+        displayText: "#{relation.first_name} #{relation.last_name}, #{relation.relationship_type}",
+        value: relation.participant_id
+      }
+    end
+  end
+
   attribute :nod_date_updates do |object|
     object.nod_date_updates.map do |nod_date_update|
       WorkQueue::NodDateUpdateSerializer.new(nod_date_update).serializable_hash[:data][:attributes]

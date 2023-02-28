@@ -37,7 +37,7 @@ module Seeds
     end
 
     def cases_for_dispatched_appeals_to_add_cavc_remand
-      10.times do
+      25.times do
         nonpriority_case_with_dispatch_task_to_add_cavc_remand
       end
     end
@@ -51,7 +51,7 @@ module Seeds
                       :at_attorney_drafting,
                       associated_judge: User.find_by_css_id("BVAGSPORER"),
                       issue_count: 1,
-                      veteran: create_veteran)
+                      veteran: create_veteran({date_of_death: 30.days.ago}))
       create(:colocated_task,
              :translation,
              parent: appeal.tasks.of_type(:AttorneyTask).first,
