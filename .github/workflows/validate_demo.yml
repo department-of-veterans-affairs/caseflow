@@ -26,13 +26,13 @@ jobs:
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       env:
-          - DBUS_SESSION_BUS_ADDRESS: /dev/null
-          - RAILS_ENV: test
-          - NODE_ENV: test
-          - BUNDLE_PATH: vendor/bundle
-          - COVERAGE_DIR: /home/circleci/coverage
-          - POSTGRES_HOST: localhost
-          - POSTGRES_USER: root
+          DBUS_SESSION_BUS_ADDRESS: /dev/null
+          RAILS_ENV: test
+          NODE_ENV: test
+          BUNDLE_PATH: vendor/bundle
+          COVERAGE_DIR: /home/circleci/coverage
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: root
     steps:
       - uses: actions/checkout@v3
       - name: install node dependencies
