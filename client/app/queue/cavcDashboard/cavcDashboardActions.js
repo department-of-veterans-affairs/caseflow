@@ -84,13 +84,13 @@ export const saveDashboardData = (allCavcDashboards, checkedBoxes) => (dispatch)
     //idsAndTypes.map((idsAndType) => checkedBoxesByIssueId.push({ issueId, idsAndType }));
   }
 
-  ApiUtil.post('/cavc_dashboard/save',
+  return ApiUtil.post('/cavc_dashboard/save',
     { data: {
       cavc_dashboards: usableCavcDashboards,
       checked_boxes: checkedBoxesByIssueId
     } }).
-    then(() => {
-      return true;
+    then((response) => {
+      return response.body.successful;
     }).
     catch((error) => {
       const responseError = error.message;

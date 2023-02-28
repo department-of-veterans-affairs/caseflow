@@ -14,8 +14,8 @@ export const CavcDashboardFooter = (props) => {
     history.goBack();
   };
 
-  const save = () => {
-    const result = saveDashboardData(cavcDashboards, checkedBoxes);
+  const save = async () => {
+    const result = await saveDashboardData(cavcDashboards, checkedBoxes);
 
     if (result === true) {
       history.goBack();
