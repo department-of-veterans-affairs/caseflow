@@ -29,4 +29,10 @@ class MembershipRequestMailer < ActionMailer::Base
     @recipient_info = params[:recipient_info]
     mail(to: @recipient_info[:email], subject: "New membership request recieved.")
   end
+
+  def vha_business_line_approval
+    @recipient = params[:requestor]
+    @accessible_groups = params[:accessible_groups]
+    mail(to: @recipient&.email, subject: "Request approved - Do Not Reply")
+  end
 end

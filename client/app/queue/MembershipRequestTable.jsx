@@ -6,6 +6,7 @@ import DropdownButton from '../components/DropdownButton';
 import Table from '../components/Table';
 import { constant, cloneDeep } from 'lodash';
 import Pagination from '../components/Pagination/Pagination';
+import ApiUtil from '../util/ApiUtil';
 
 const MembershipRequestTable = (props) => {
 
@@ -93,11 +94,36 @@ const MembershipRequestTable = (props) => {
   const dropdownOptions = [
     {
       title: 'Approve',
-      target: '/approve' },
+    },
     {
       title: 'Deny',
-      target: '/deny' },
+    },
   ];
+
+  const buildDropdownActions = (request) => {
+    return dropdownOptions.map((obj) => {
+      return { ...obj, value: request.id };
+    });
+  };
+
+  // TODO: Move this outside of this component into OrganizationUsers
+  // TODO: Change this to a prop value
+  const requestActionHandler = (value) => {
+    console.log('idk');
+    console.log(value);
+    const requestAction = 'approved';
+
+    const data = { id: value, requestAction };
+
+    // const payload = { data: { requestAction } };
+
+    ApiUtil.patch(`/membership_requests/${value}`, { data }).then((response) => {
+      console.log('idk I guess it worked?');
+      console.log(response.body);
+    }, (error) => {
+      console.log('idk something blew up');
+    });
+  };
 
   const MembershipRequestDropDown = () => <div>
     <span> Select action </span>
@@ -116,10 +142,12 @@ const MembershipRequestTable = (props) => {
     },
     {
       header: 'Actions',
-      valueFunction: () => {
+      valueFunction: (request) => {
         return <DropdownButton
-          lists={dropdownOptions}
-          label="Request actions">
+          lists={buildDropdownActions(request)}
+          label="Request actions"
+          onClick={requestActionHandler}
+        >
           <MembershipRequestDropDown />
         </DropdownButton>;
       }
