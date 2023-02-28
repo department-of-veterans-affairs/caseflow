@@ -25,12 +25,17 @@ class PostSendInitialNotificationLetterHoldingTask < LetterTask
 
   def when_timer_ends
     update!(status: :completed) if open?
+    SendFinalNotificationLetterTask.create!(
+      appeal: task.appeal,
+      parent: task.parent,
+      assigned_to: Organization.find_by_url("clerk-of-the-board"),
+      assigned_by: current_user
+    )
   end
 
   # Function to set the end time for the related TaskTimer when this class is instantiated.
   def timer_ends_at
     return @end_date if @end_date
-
     # Check for last existing associated TaskTimer
     task_timer = TaskTimer.find_by(task: self)
     return task_timer.submitted_at if task_timer
