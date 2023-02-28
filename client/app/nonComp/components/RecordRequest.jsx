@@ -1,10 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import Button from '../../components/Button';
 import { BOA_ADDRESS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import Checkbox from '../../components/Checkbox';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 class RecordRequestUnconnected extends React.PureComponent {
   constructor(props) {
@@ -82,6 +83,18 @@ class RecordRequestUnconnected extends React.PureComponent {
     </div>;
   }
 }
+
+RecordRequestUnconnected.propTypes = {
+  task: PropTypes.shape({
+    closed_at: PropTypes.string,
+    tasks_url: PropTypes.string
+  }),
+  decisionIssuesStatus: PropTypes.shape({
+    update: PropTypes.string
+  }),
+  businessLine: PropTypes.string,
+  handleSave: PropTypes.func
+};
 
 const RecordRequest = connect(
   (state) => ({
