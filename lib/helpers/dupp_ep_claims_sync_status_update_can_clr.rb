@@ -62,9 +62,11 @@ module WarRoom
           Rails.logger.info("No problem claims found. You can end your terminal session now.")
         end
 
-        scs.each do |sc|
+        Rails.logger.info("Beginning to Auto Cancel Problem Claims.")
+
+        problem_scs.each do |sc|
           # Set the review to the first epe source appeal
-          epe = sc.veteran.end_product_establishment
+          epe = problem_scs.first.veteran.end_product_establishment
           if epe.nil?
             Rails.logger.error("Unable to find EPE for Supplemental Claim #{sc.id}. Skipping...")
             next
@@ -95,9 +97,9 @@ module WarRoom
           Rails.logger.info("Updated EPE for Supplemental Claim #{sc.id}")
         end
 
-        hlr.each do |hlr|
+        problem_hlr.each do |hlr|
           # Set the review to the first epe source appeal
-          epe = hlr.veteran.end_product_establishment
+          epe = problem_hlr.first.veteran.end_product_establishment
           if epe.nil?
             Rails.logger.error("Unable to find EPE for Supplemental Claim #{hlr.id}. Skipping...")
             next
