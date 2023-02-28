@@ -50,7 +50,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler }) => {
     label={COPY.CAVC_DASHBOARD_ISSUE_CATEGORY_TEXT}
     name="mandate-date"
     value={issueCategory}
-    onChange={(val) => setIssueCategory(val)}
+    onChange={(val) => setIssueCategory(val.label)}
     strongLabel
   />;
 
