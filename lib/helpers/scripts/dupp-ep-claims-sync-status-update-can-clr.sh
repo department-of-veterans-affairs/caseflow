@@ -35,5 +35,5 @@ EOF
 elif [[ "$1" == "Yes" && "$2" == "Yes" ]]; then
   echo "You cannot run both manual and auto remediations at the same time."
 else
-  echo "Invalid arguments. Please enter (Yes, No) or (No, Yes)."
+  echo "Invalid arguments. Please enter (Yes, No) for Manual Remediation or (No, Yes) for Auto Remediation."
 fi
