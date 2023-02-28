@@ -182,13 +182,12 @@ describe('CompleteTaskModal', () => {
   describe('vha_documents_ready_for_ready_for_bva_intake_review', () => {
     const taskType = 'VhaDocumentSearchTask';
     const confirmationButtonText = COPY.MODAL_SEND_BUTTON;
-    const modalType = 'vha_documents_ready_for_bva_intake_review';
+    const modalType = 'vha_documents_ready_for_bva_intake_for_review';
     const modalTitle = 'Ready for Review';
-    const modalDropdownName = 'Please select where the documents for this appeal are stored.';
-    const modalDropdownOptionVBMS = 'VBMS';
-    const modalDropdownOptionOther = 'Other';
-    const modalOtherInstructions = 'Please provide the source for the documents';
-    const modalTextboxInstructions = 'Provide additional context and/or documents:';
+    const modalRadioOptionVBMS = 'VBMS';
+    const modalRadioOptionOther = 'Other';
+    const modalOtherInstructions = 'Please indicate the source';
+    const modalTextboxInstructions = 'Provide details such as file structure or file path';
 
     test('modal title: "Ready for Review"', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
@@ -196,34 +195,70 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText(modalTitle)).toBeTruthy();
     });
 
-    test('modal has textbox with the instructions: "Provide additional context and/or documents:"', () => {
+    test('modal has textbox with the instructions: "Provide details such as file structure or file path"', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
       expect(screen.getByRole('textbox', { name: modalTextboxInstructions })).toBeTruthy();
     });
 
-    test('Submit button is disabled when a option from the drop down has not been selected', () => {
+    test('Submit button is disabled when an option has not been selected', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
       expect(screen.getByRole('button', { name: confirmationButtonText })).toBeDisabled();
     });
 
-    test(
-      'When "Other" is chosen from the dropdown options an additional text box appears and the button is still disabled'
-      , () => {
-        renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
-
-        selectFromDropdown(modalDropdownName, modalDropdownOptionOther);
-
-        expect(screen.getByRole('textbox', { name: modalOtherInstructions })).toBeTruthy();
-
-        expect(screen.getByRole('button', { name: confirmationButtonText })).toBeDisabled();
-      });
-
-    test('When "VBMS" is chosen from the dropdown options the addition text box does not appear', () => {
+    test('When "Other" is chosen from the radio options an additional text box appears', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
-      selectFromDropdown(modalDropdownName, modalDropdownOptionVBMS);
+      const radioFieldToSelect = screen.getByLabelText(modalRadioOptionOther);
+
+      userEvent.click(radioFieldToSelect);
+
+      expect(screen.getByRole('textbox', { name: modalOtherInstructions })).toBeTruthy();
+    });
+
+    test('When "Other" is chosen from the radio options, the button is still disabled', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      const radioFieldToSelect = screen.getByLabelText(modalRadioOptionOther);
+
+      userEvent.click(radioFieldToSelect);
+
+      expect(screen.getByRole('button', { name: confirmationButtonText })).toBeDisabled();
+    });
+
+    test('When something is typed into the "Other" textbox the button is enabled', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      const radioFieldToSelect = screen.getByLabelText(modalRadioOptionOther);
+
+      userEvent.click(radioFieldToSelect);
+
+      const otherTextbox = screen.getByRole(
+        'textbox', { name: modalOtherInstructions }
+      );
+
+      userEvent.type(otherTextbox, 'Additional context');
+
+      expect(screen.getByRole('button', { name: confirmationButtonText })).toBeEnabled();
+    });
+
+    test('When "VBMS" is chosen from the radio options, the addition text box does not appear', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      const radioFieldToSelect = screen.getByLabelText(modalRadioOptionVBMS);
+
+      userEvent.click(radioFieldToSelect);
+
+      expect(screen.queryByRole('textbox', { name: modalOtherInstructions })).toBeFalsy();
+    });
+
+    test('When "VBMS" is chosen from the radio options, the "Send" button is enabled', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      const radioFieldToSelect = screen.getByLabelText(modalRadioOptionVBMS);
+
+      userEvent.click(radioFieldToSelect);
 
       expect(screen.getByRole('button', { name: confirmationButtonText })).toBeEnabled();
     });
