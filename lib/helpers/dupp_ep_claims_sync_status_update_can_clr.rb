@@ -36,6 +36,8 @@ module WarRoom
   class DuppEpClaimsSyncStatusUpdateCanClr
     if
       def run(manual, sc_hlr)
+        scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'").find_by(uuid: uuid2)
+        hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
         # set current user
         RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
         # Log a message for the user
