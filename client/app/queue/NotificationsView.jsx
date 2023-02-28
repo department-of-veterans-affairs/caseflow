@@ -22,11 +22,11 @@ import {
 } from './uiReducer/uiActions';
 import CaseTitleDetails from './CaseTitleDetails';
 import Alert from '../components/Alert';
+import ApiUtil from '../util/ApiUtil';
 
 const sectionGap = css({ marginTop: '3.5rem' });
 
 import NotificationTable from './components/NotificationTable';
-
 
 export const NotificationsView = (props) => {
   const [modalState, setModalState] = useState(false);
@@ -36,6 +36,9 @@ export const NotificationsView = (props) => {
   const closeModal = () => {
     setModalState(false);
   };
+
+  const [alert, setAlert] = useState(false);
+
   const { push } = useHistory();
   const { appealId, featureToggles } = props;
   const appeal = useSelector((state) =>
@@ -56,19 +59,33 @@ export const NotificationsView = (props) => {
     userIsCobAdmin
   });
 
-  const styling = css({
+  const alertStyle = css({
     marginBottom: '30px',
     marginTop: '0px'
   });
 
   const errorMsg = 'There was an error generating the PDF for download. Please try again later.';
   const errorCode = 'Error Code: ';
+  const pdfURL = `/appeals/${appealId}/notifications.pdf`;
+
+  const generatePDF = () => {
+    const status = ApiUtil.get(pdfURL).then(() => {
+      window.location.href = pdfURL;
+    }).
+      catch((error) => {
+        if (error.status === 404) {
+          setAlert(true);
+        }
+      });
+
+    return status;
+  };
 
   return (
     <React.Fragment>
       <AppSegment filledBackground>
         <CaseTitle titleHeader = {`Case notifications for ${appeal.veteranFullName}`} appeal={appeal} hideCaseView />
-        <Alert type="error" title="Unable to generate PDF" styling={styling}>{errorMsg}<br />{errorCode}{appealId}</Alert>
+        {alert && <Alert type="error" title="Unable to generate PDF" styling={alertStyle}>{errorMsg}<br />{errorCode}{appealId}</Alert>}
         {supportPendingAppealSubstitution && (
           <div {...sectionGap}>
             <Button
@@ -93,7 +110,7 @@ export const NotificationsView = (props) => {
             <p className="notification-text">
               VA Notify sent these status notifications to the Appellant about their case.
             </p>
-            <Button id = "download-button" onClick={() => window.location.href = `/appeals/${appealId}/notifications.pdf`}>Download</Button>
+            <Button id = "download-button" classNames={['usa-button-secondary']} onClick={() => generatePDF()}>Download</Button>
           </div>
 
           <div className="notification-table">
