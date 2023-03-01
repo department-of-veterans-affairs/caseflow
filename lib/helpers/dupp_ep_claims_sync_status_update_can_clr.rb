@@ -26,7 +26,7 @@
 
 # Logging: The code logs messages to help with debugging and audit trails.
 
-# Encapsulation: The code utilizes encapsulation to control access to the various methods and properties of the objects being used.
+# Encapsulation: The code utilizes encapsulation to control access to the various methods and properties of the objects being used. Small Test change.
 
 # frozen_string_literal: true
 
