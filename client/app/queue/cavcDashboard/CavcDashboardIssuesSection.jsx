@@ -13,17 +13,57 @@ import RemoveCavcDashboardIssueModal from './RemoveCavcDashboardIssueModal';
 import { useDispatch } from 'react-redux';
 import { removeCheckedDecisionReason, setDispositionValue } from './cavcDashboardActions';
 
-const singleIssueStyling = css({
-  marginBottom: '1.5em !important',
-  display: 'grid',
-  fontWeight: 'normal',
-  gridTemplateColumns: '70% 30%',
-  '@media(max-width: 1200px)': { width: '100%' },
-  '@media(max-width: 829px)': {
-    display: 'flex',
-    flexDirection: 'column'
+const singleIssueStyling = (userCanEdit) => {
+  if (userCanEdit) {
+    return css({
+      marginBottom: '1.5em !important',
+      display: 'grid',
+      fontWeight: 'normal',
+      gridTemplateColumns: '70% 30%',
+      '@media(max-width: 1200px)': { width: '100%' },
+      '@media(max-width: 829px)': {
+        display: 'flex',
+        flexDirection: 'column',
+      }
+    });
   }
-});
+
+  return css({
+    marginBottom: '1.5em !important',
+    display: 'grid',
+    fontWeight: 'normal',
+    gridTemplateColumns: '70% 30%',
+    '@media(max-width: 1200px)': { width: '100%' },
+    '@media(max-width: 829px)': {
+      display: 'flex',
+      flexDirection: 'row',
+    }
+  });
+};
+
+const issueColumnStyling = (userCanEdit) => {
+  if (userCanEdit) {
+    return css({});
+  }
+
+  return css({
+    '@media(max-width: 829px)': {
+      width: '70%'
+    }
+  });
+};
+
+const dispositionColumnStyling = (userCanEdit) => {
+  if (userCanEdit) {
+    return css({});
+  }
+
+  return css({
+    '@media(max-width: 829px)': {
+      width: '30%'
+    }
+  });
+};
 
 const headerStyling = css({
   display: 'grid',
@@ -127,8 +167,8 @@ const CavcDashboardIssue = (props) => {
 
   return (
     <li key={index}>
-      <div {...singleIssueStyling}>
-        <div>
+      <div {...singleIssueStyling(userCanEdit)}>
+        <div {...issueColumnStyling(userCanEdit)}>
           <div>
             <strong> Benefit type: </strong> {BENEFIT_TYPES[issue.benefit_type]}
           </div>
@@ -136,7 +176,7 @@ const CavcDashboardIssue = (props) => {
             <strong>Issue: </strong> {issueType}
           </div>
         </div>
-        <div>
+        <div {...dispositionColumnStyling(userCanEdit)}>
           {renderDispositionDropdown()}
         </div>
         <div />
