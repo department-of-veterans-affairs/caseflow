@@ -74,7 +74,7 @@ class Organizations::UsersController < OrganizationsController
   def membership_requests
     # Serialize the Membership Requests and extract the attributes
     if vha_organization?
-      MembershipRequestSerializer.new(organization.membership_requests.includes(:requestor).assigned,
+      MembershipRequestSerializer.new(organization.membership_requests.includes(:requestor).assigned.order(:created_at),
                                       is_collection: true)
         .serializable_hash[:data]
         .map { |hash| hash[:attributes] }

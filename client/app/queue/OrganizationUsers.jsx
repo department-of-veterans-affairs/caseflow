@@ -56,6 +56,7 @@ export default class OrganizationUsers extends React.PureComponent {
       membershipRequests: [],
       loading: true,
       error: null,
+      success: null,
       addingUser: null,
       changingAdminRights: {},
       removingUser: {},
@@ -294,6 +295,40 @@ export default class OrganizationUsers extends React.PureComponent {
     </React.Fragment>;
   }
 
+  membershipRequestHandler = (value) => {
+    console.log('idk');
+    console.log(value);
+    const requestAction = 'approved';
+
+    const data = { id: value, requestAction };
+
+    // const payload = { data: { requestAction } };
+
+    ApiUtil.patch(`/membership_requests/${value}`, { data }).then((response) => {
+      console.log('idk I guess it worked?');
+      console.log(response.body);
+
+      const { success } = response.body;
+
+      const titleMessage = sprintf(COPY.MEMBERSHIP_REQUEST_ACTION_SUCCESS_TITLE, success.type, success.userName);
+      const bodyMessage = sprintf(COPY.MEMBERSHIP_REQUEST_ACTION_SUCCESS_MESSAGE, success.type === 'approved' ? 'granted' : 'denied', success.organizationName);
+
+
+      console.log(titleMessage);
+      console.log(bodyMessage);
+
+      this.setState({
+        success: {
+          title: titleMessage,
+          body: bodyMessage,
+        }
+      });
+
+    }, (error) => {
+      console.log('idk something blew up');
+    });
+  };
+
   render = () => <LoadingDataDisplay
     createLoadPromise={this.loadingPromise}
     loadingComponentProps={{
@@ -303,6 +338,9 @@ export default class OrganizationUsers extends React.PureComponent {
     failStatusMessageProps={{
       title: COPY.USER_MANAGEMENT_INITIAL_LOAD_ERROR_TITLE
     }}>
+    { this.state.success && <Alert title={this.state.success.title} type="success">
+      {this.state.success.body}
+    </Alert>}
     <AppSegment filledBackground>
       { this.state.error && <Alert title={this.state.error.title} type="error">
         {this.state.error.body}
@@ -312,7 +350,7 @@ export default class OrganizationUsers extends React.PureComponent {
           this.state.dvcTeam ? sprintf(COPY.USER_MANAGEMENT_DVC_TEAM_PAGE_TITLE, this.state.organizationName) :
             sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName) }</h1>
         {this.state.isVhaOrg && (<>
-          <MembershipRequestTable requests={this.state.membershipRequests} />
+          <MembershipRequestTable requests={this.state.membershipRequests} membershipRequestActionHandler={this.membershipRequestHandler} />
           <div style={{ paddingBottom: '7rem' }}></div>
         </>
         )}

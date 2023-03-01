@@ -17,21 +17,25 @@ class MembershipRequest < ApplicationRecord
   def update_status_and_send_email(new_status)
     # TODO: Might need to wrap this in a transaction and if adding the user to the org fails roll it back?
     # TODO: Enable this again after testing email
-    # update(status: new_status)
+    update(status: new_status)
     # TODO: If the status is approved then add the user to the org
     # TODO: Should this be a callback hook like after_update or should it just be done here
+    # membership_request_mailer_params = {}
     if approved?
       # Add the user to the org
       # TODO: If the request is to a predocket and the user is not already a member of VHA add them to VHA
       # TODO: Also this will change the email as well
-      MembershipRequestMailer.with().vha_businessline_approval.deliver_now!
+      # MembershipRequestMailer.with().vha_businessline_approval.deliver_now!
+      organization.add_user(requestor)
+      accessible_orgs = requestor.organizations.map(&:name)
+      MembershipRequestMailer.with(requestor: requestor, accessible_groups: accessible_orgs)
+        .vha_business_line_approval.deliver_now!
+
     elsif denied?
-      MembershipRequestMailer.with().vha_businessline_denial.deliver_now!
+      MembershipRequestMailer.with().vha_business_line_denial.deliver_now!
     end
     # Send the email either way
     # MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(membership_requests).send_email_after_creation
-    accessible_orgs = requestor.organizations
-    MembershipRequestMailer.with(requestor: requestor, accessible_groups: accessible_orgs)
-      .vha_business_line_approval.deliver_now!
+
   end
 end

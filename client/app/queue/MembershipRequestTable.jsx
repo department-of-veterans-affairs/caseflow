@@ -6,7 +6,6 @@ import DropdownButton from '../components/DropdownButton';
 import Table from '../components/Table';
 import { constant, cloneDeep } from 'lodash';
 import Pagination from '../components/Pagination/Pagination';
-import ApiUtil from '../util/ApiUtil';
 
 const MembershipRequestTable = (props) => {
 
@@ -106,25 +105,6 @@ const MembershipRequestTable = (props) => {
     });
   };
 
-  // TODO: Move this outside of this component into OrganizationUsers
-  // TODO: Change this to a prop value
-  const requestActionHandler = (value) => {
-    console.log('idk');
-    console.log(value);
-    const requestAction = 'approved';
-
-    const data = { id: value, requestAction };
-
-    // const payload = { data: { requestAction } };
-
-    ApiUtil.patch(`/membership_requests/${value}`, { data }).then((response) => {
-      console.log('idk I guess it worked?');
-      console.log(response.body);
-    }, (error) => {
-      console.log('idk something blew up');
-    });
-  };
-
   const MembershipRequestDropDown = () => <div>
     <span> Select action </span>
     <DoubleArrowIcon />
@@ -146,7 +126,7 @@ const MembershipRequestTable = (props) => {
         return <DropdownButton
           lists={buildDropdownActions(request)}
           label="Request actions"
-          onClick={requestActionHandler}
+          onClick={props.membershipRequestActionHandler}
         >
           <MembershipRequestDropDown />
         </DropdownButton>;
@@ -236,6 +216,7 @@ const MembershipRequestTable = (props) => {
 MembershipRequestTable.propTypes = {
   requests: PropTypes.array,
   enablePagination: PropTypes.bool,
+  membershipRequestActionHandler: PropTypes.func.isRequired,
 };
 
 export default MembershipRequestTable;

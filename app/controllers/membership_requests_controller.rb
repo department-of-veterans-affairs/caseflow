@@ -46,7 +46,13 @@ class MembershipRequestsController < ApplicationController
     # It needs to update the requests for either decision/status.
 
     # render json: { users: json_users([user_to_modify]) }, status: :ok
-    render json: { success: { type: "approved", user: membership_request.requestor.full_name } }, status: :ok
+    success_messsage_hash = {
+      type: membership_request.status,
+      userName: membership_request.requestor.full_name,
+      organizationName: membership_request.organization.name
+    }
+
+    render json: { success: success_messsage_hash }, status: :ok
   end
 
   private
