@@ -8,6 +8,7 @@ module Seeds
     end
 
     def seed!
+      Seeds::CavcSelectionBasisData.new.seed! unless CavcSelectionBasis.count > 0
       Seeds::CavcDecisionReasonData.new.seed! unless CavcDecisionReason.count > 0
       create_cavc_dashboards_with_blank_dispositions
       create_cavc_dashboards_with_selected_dispositions
@@ -63,9 +64,11 @@ module Seeds
         dashboard.cavc_dashboard_dispositions.map do |disp|
           disp.disposition = "reversed"
           disp.save!
-          CavcDispositionsToReason.create!(cavc_dashboard_disposition: disp,
-                                           cavc_decision_reason_id: 6,
-                                           cavc_selection_basis_id: 2)
+          CavcDispositionsToReason.create!(
+            cavc_dashboard_disposition: disp,
+            cavc_decision_reason: CavcDecisionReason.find_by(decision_reason: "Other due process protection"),
+            cavc_selection_basis: CavcSelectionBasis.find_by(basis_for_selection: "AMA Opt-in")
+          )
         end
 
         @cavc_docket_number_last_four += 1

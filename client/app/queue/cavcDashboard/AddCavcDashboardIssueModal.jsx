@@ -19,6 +19,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId }
   const [issueCategory, setIssueCategory] = useState(null);
   const [dispositionByCourt, setDispositionByCourt] = useState(null);
   const issue = {
+    /* eslint-disable camelcase */
     id: `${dashboardId}-${cavcDashboard[0]?.cavc_dashboard_issues.length}`,
     benefit_type: benefitType?.value,
     cavc_dashboard_id: dashboardId,
@@ -31,6 +32,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId }
     request_issue_id: null,
     disposition: dispositionByCourt?.label,
     cavc_dispositions_to_reasons: []
+    /* eslint-enable camelcase */
   };
 
   const submitIssue = () => {

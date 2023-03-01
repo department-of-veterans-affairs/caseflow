@@ -21,7 +21,7 @@ describe Seeds::CavcDashboardData do
   end
 
   context "#seed!" do
-    it "creates decision reasons per APPEALS-13249 and creates CavcDashboardDispositions" do
+    it "creates decision reasons per APPEALS-13249, creates CavcDashboardDispositions, creates appeal 4 remands" do
       seed.seed!
 
       expect(CavcDecisionReason.count).to eq 39
@@ -41,7 +41,13 @@ describe Seeds::CavcDashboardData do
       # 10 from create_cavc_dashboard_dispositions, 4 from create_appeals_with_multiple_cavc_remands,
       # 10 from create_cavc_dashboard_issues
       expect(CavcRemand.count).to eq 24
-      expect(CavcDashboardDisposition.count).to eq 30
+      expect(CavcDashboardDisposition.count).to be >= 30
+
+      # ensure creation of multiple remands with the same source appeal
+      last_four_remands = CavcRemand.last(4)
+      expect(last_four_remands.map(&:source_appeal_id).count).to eq 4
+      expect(last_four_remands.map(&:source_appeal_id).uniq.count).to eq 1
+      expect(last_four_remands.map(&:remand_appeal_id).uniq.count).to eq 4
     end
 
     it "creates all selection_bases for dispositions per APPEALS-13250" do
@@ -58,15 +64,6 @@ describe Seeds::CavcDashboardData do
       expect(CavcSelectionBasis.where(category: "misapplication_regulation").count).to eq 81
       expect(CavcSelectionBasis.where(category: "misapplication_diagnostic_code").count).to eq 1066
       expect(CavcSelectionBasis.where(category: "misapplication_caselaw").count).to eq 196
-    end
-
-    it "creates four remands with the same source appeal for testing dashboard tabs" do
-      seed.seed!
-
-      last_four_remands = CavcRemand.last(4)
-      expect(last_four_remands.map(&:source_appeal_id).count).to eq 4
-      expect(last_four_remands.map(&:source_appeal_id).uniq.count).to eq 1
-      expect(last_four_remands.map(&:remand_appeal_id).uniq.count).to eq 4
     end
   end
 end

@@ -40,7 +40,11 @@ export const CavcDashboardTab = (props) => {
       }
       {
         (modalIsOpen) &&
-        <AddCavcDashboardIssueModal dashboardId={dashboardId} closeHandler={closeHandler} submitHandler={submitHandler} />
+        <AddCavcDashboardIssueModal
+          dashboardId={dashboardId}
+          closeHandler={closeHandler}
+          submitHandler={submitHandler}
+        />
       }
     </>
   );

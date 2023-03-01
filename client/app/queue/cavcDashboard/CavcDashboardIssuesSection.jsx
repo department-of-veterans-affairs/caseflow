@@ -58,6 +58,7 @@ const CavcDashboardIssue = (props) => {
 
   const dispositionIssueType = dispositions?.find(
     (dis) => dis.request_issue_id === issue.id ||
+      /* eslint-disable-next-line camelcase */
       dis.cavc_dashboard_issue_id === issue.id)?.request_issue_id ? 'request_issue' : 'cavc_dashboard_issue';
 
   const loadCheckedBoxes = dispositions.find(
