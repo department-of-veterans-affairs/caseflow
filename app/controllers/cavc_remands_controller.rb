@@ -25,6 +25,15 @@ class CavcRemandsController < ApplicationController
     :updated_by_id
   ].freeze
 
+  APPELLANT_SUBSTITUTION_PARAMS = [
+    :substitution_date,
+    :participant_id,
+    :remand_source,
+    :is_appellant_substituted,
+    :created_by_id,
+    :updated_by_id
+  ].freeze
+
   MDR_REQUIRED_PARAMS = [
     :federal_circuit
   ].freeze
@@ -45,6 +54,22 @@ class CavcRemandsController < ApplicationController
   def create
     new_cavc_remand = CavcRemand.create!(creation_params)
     cavc_appeal = new_cavc_remand.remand_appeal.reload
+    if FeatureToggle.enabled?(:cavc_remand_granted_substitute_appellant)
+      if params[:participant_id].present?
+        appellant_substitution = AppellantSubstitution.create(created_by_id: current_user.id,
+                                                              source_appeal_id: cavc_appeal.id,
+                                                              substitution_date: params[:substitution_date],
+                                                              claimant_type: "DependentClaimant",
+                                                              substitute_participant_id: params[:participant_id])
+      end
+      CavcRemandsAppellantSubstitution.create(
+        cavc_remand_appellant_substitution_params.merge!(
+          cavc_remand_id: new_cavc_remand.id,
+          substitute_participant_id: params[:participant_id],
+          appellant_substitution_id: appellant_substitution&.id
+        )
+      )
+    end
     render json: { cavc_remand: new_cavc_remand, cavc_appeal: cavc_appeal }, status: :created
   end
 
@@ -87,6 +112,11 @@ class CavcRemandsController < ApplicationController
     params.merge!(created_by_id: current_user.id, updated_by_id: current_user.id, source_appeal_id: source_appeal.id)
     params.require(required_params_by_decisiontype_and_subtype)
     params.permit(PERMITTED_PARAMS).merge(params.permit(decision_issue_ids: []))
+  end
+
+  def cavc_remand_appellant_substitution_params
+    params.merge!(created_by_id: current_user.id, updated_by_id: current_user.id)
+    params.permit(APPELLANT_SUBSTITUTION_PARAMS)
   end
 
   def required_params_by_decisiontype_and_subtype

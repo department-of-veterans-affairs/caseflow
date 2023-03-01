@@ -39,7 +39,8 @@ const styles = {
 };
 
 export const SubstituteAppellantReview = ({
-  selectedTasks,
+  tasksToCancel,
+  taskstoReactivate,
   existingValues,
   evidenceSubmissionEndDate,
   relationship,
@@ -82,10 +83,10 @@ export const SubstituteAppellantReview = ({
         </section>
         <section className={styles.tableSection}>
           <h2>{CAVC_REMAND_REVIEW_TASKS_CANCEL_LABEL}</h2>
-          {selectedTasks.length > 0 && (
+          {tasksToCancel.length > 0 && (
             <table className={`usa-table-borderless ${styles.mainTable}`}>
               <tbody>
-                {selectedTasks.map((task) => {
+                {tasksToCancel.map((task) => {
                   return (
                     <tr className="task-detail" key={`${task.taskId}`}>
                       <td>
@@ -107,10 +108,10 @@ export const SubstituteAppellantReview = ({
         </section>
         <section className={styles.tableSection}>
           <h2>{CAVC_REMAND_REVIEW_TASKS_REACTIVATE_LABEL}</h2>
-          {selectedTasks.length > 0 && (
+          {taskstoReactivate.length > 0 && (
             <table className={`usa-table-borderless ${styles.mainTable}`}>
               <tbody>
-                {selectedTasks.map((task) => {
+                {taskstoReactivate.map((task) => {
                   return (
                     <tr className="task-detail" key={`${task.taskId}`}>
                       <td>
@@ -143,7 +144,19 @@ export const SubstituteAppellantReview = ({
   );
 };
 SubstituteAppellantReview.propTypes = {
-  selectedTasks: PropTypes.arrayOf(
+  tasksToMaintain: PropTypes.arrayOf(
+    PropTypes.shape({
+      taskId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      label: PropTypes.string,
+    })
+  ),
+  tasksToCancel: PropTypes.arrayOf(
+    PropTypes.shape({
+      taskId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      label: PropTypes.string,
+    })
+  ),
+  taskstoReactivate: PropTypes.arrayOf(
     PropTypes.shape({
       taskId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       label: PropTypes.string,

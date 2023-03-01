@@ -27,7 +27,7 @@ export default {
     existingValues: { substitutionDate: '2022-02-15',
       participantId: 'CLAIMANT_WITH_PVA_AS_VSO',
     },
-    selectedTasks: filteredEvidenceSubmissionTasks.slice(0, 3),
+    tasksToCancel: filteredEvidenceSubmissionTasks.slice(0, 3),
     evidenceSubmissionEndDate: new Date('12/12/2022'),
   },
   argTypes: {
