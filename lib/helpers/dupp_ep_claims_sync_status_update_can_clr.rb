@@ -233,7 +233,6 @@ module WarRoom
         end
         puts "Found #{count} problem Supplemental Claims and Higher Level Reviews. Please enter the UUID of the first claim:\n"
       end
-
     else
       if
         def run(auto, sc_hlr)
@@ -353,8 +352,6 @@ module WarRoom
           Rails.logger.info("Found #{count} problem Supplemental Claims and/or Higher Level Reviews")
         end
       end
-    else
-    fail interrupt
     end
   end
 end
