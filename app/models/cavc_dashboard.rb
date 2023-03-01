@@ -12,6 +12,7 @@ class CavcDashboard < CaseflowRecord
             presence: true, on: :update
 
   before_create :set_attributes_from_cavc_remand
+  after_create :create_dispositions_for_source_request_issues
 
   def set_attributes_from_cavc_remand
     self.board_decision_date = cavc_remand.source_appeal.decision_date
@@ -26,5 +27,11 @@ class CavcDashboard < CaseflowRecord
 
   def source_request_issues
     cavc_remand.source_appeal.request_issues
+  end
+
+  def create_dispositions_for_source_request_issues
+    cavc_remand.source_appeal.request_issues.map do |issue|
+      CavcDashboardDisposition.create(cavc_dashboard: self, request_issue: issue)
+    end
   end
 end
