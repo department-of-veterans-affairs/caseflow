@@ -52,7 +52,7 @@ export const CavcDashboard = (props) => {
         return { label, page };
       }));
     }
-  }, [loaded]);
+  }, [loaded, cavcDashboards]);
 
   // Redirect to the CaseDetails page if no remand exists for the provided appealId
   if (loaded && !cavcDashboards) {
