@@ -41,7 +41,7 @@ export const CavcDashboard = (props) => {
   }, []);
 
   useEffect(() => {
-    if (loaded) {
+    if (loaded && cavcDashboards) {
       setTabs(cavcDashboards.map((dashboard) => {
         const label = `CAVC appeal ${dashboard.cavc_docket_number}`;
         const page = <CavcDashboardTab
