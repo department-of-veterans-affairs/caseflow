@@ -12,7 +12,7 @@ class VhaProgramOfficeCompletedTasksTab < QueueTab
   end
 
   def description
-    COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION
+    COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION
   end
 
   def parent_ids_with_cancelled_assess_documentation_task
