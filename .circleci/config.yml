@@ -227,11 +227,6 @@ jobs:
             ~/project/ci-bin/capture-log "bundle exec rake spec:setup_vacols"
 
       - run:
-          name: Assets Precompile
-          command: |
-            ~/project/ci-bin/capture-log "bundle exec rake assets:precompile"
-
-      - run:
           name: RSpec via knapsack_pro Queue Mode
           command: |
             mkdir -p ~/test-results/rspec
@@ -423,5 +418,3 @@ workflows:
                 - gh-pages
                 - main-gh-pages
                 - gh-actions/make_docs-update_docs
-
-# VS Code Extension Version: 1.5.1
