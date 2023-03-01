@@ -30,7 +30,8 @@ const CavcDecisionReasons = ({ uniqueId, dispositionIssueType, loadCheckedBoxes,
 
   const basisForSelectionStylingNoChildReadOnly = css({
     paddingLeft: '6.5rem',
-    fontWeight: 'normal'
+    fontWeight: 'normal',
+    '@media(min-width: 1200px)': { paddingLeft: '8.5rem' },
   });
 
   const basisForSelectionStylingWithChild = css({
@@ -41,6 +42,7 @@ const CavcDecisionReasons = ({ uniqueId, dispositionIssueType, loadCheckedBoxes,
   const basisForSelectionStylingWithChildReadOnly = css({
     paddingLeft: '9rem',
     fontWeight: 'normal',
+    '@media(min-width: 1200px)': { paddingLeft: '14rem' },
   });
 
   const loadCheckedBoxesId = loadCheckedBoxes?.map((box) => box.cavc_decision_reason_id);
