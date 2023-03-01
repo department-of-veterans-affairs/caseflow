@@ -92,7 +92,6 @@ export const saveDashboardData = (allCavcDashboards, checkedBoxes) => (dispatch)
     const idsAndTypes = selectedBoxes.map((box) => [box.issueType, box.id]);
 
     idsAndTypes.map((idsAndType) => checkedBoxesByIssueId.push([issueId, ...idsAndType]));
-    //idsAndTypes.map((idsAndType) => checkedBoxesByIssueId.push({ issueId, idsAndType }));
   }
 
   return ApiUtil.post('/cavc_dashboard/save',
