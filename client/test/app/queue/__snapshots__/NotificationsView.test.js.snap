@@ -35,7 +35,6 @@ exports[`NotificationsTest matches snapshot 1`] = `
             type="submit"
           >
             200000161
-
             <svg
               class=""
               height="17"
@@ -59,13 +58,11 @@ exports[`NotificationsTest matches snapshot 1`] = `
               role="tooltip"
             >
               <style>
-
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
   	}
-
   	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
