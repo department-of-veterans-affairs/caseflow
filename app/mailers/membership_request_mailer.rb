@@ -31,7 +31,7 @@ class MembershipRequestMailer < ActionMailer::Base
   end
 
   # New methods with the email templates
-  def user_request_sent
+  def user_request_created
     @recipient_info = params[:recipient_info]
     @requests = params[:requests]
     @requesting_org_names = @requests&.map { |request| request.organization.name }

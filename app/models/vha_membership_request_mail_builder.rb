@@ -11,17 +11,26 @@ class VhaMembershipRequestMailBuilder
   end
 
   def send_email_after_creation
-    send_requstor_email
+    send_requestor_email
     send_organization_emails
   end
 
   private
 
-  def send_requstor_email
-    MembershipRequestMailer.with(recipient_info: requestor,
-                                 requests: membership_requests,
-                                 subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED)
-      .user_request_sent.deliver_now!
+  # def send_requestor_email
+  #   MembershipRequestMailer.with(recipient_info: requestor,
+  #                                requests: membership_requests,
+  #                                subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED)
+  #     .user_request_sent.deliver_now!
+  # end
+
+  def send_requestor_email
+    mailer_parameters = {
+      recipient_info: requestor,
+      requests: membership_requests,
+      subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED
+    }
+    Memberships::SendMembershipRequestMailerJob.perform_later("UserRequestCreated", mailer_parameters)
   end
 
   def send_organization_emails
@@ -32,18 +41,38 @@ class VhaMembershipRequestMailBuilder
     end
   end
 
+  # def send_organization_email(organization)
+  #   recipient_info = guess_admin(organization)
+  #   # Create an array from the hash and flatten it since some organizations can have two emails
+  #   admin_emails = [get_organization_admin_emails(organization.name)].flatten
+
+  #   # Send one email to each admin email address
+  #   admin_emails.each do |admin_email|
+  #     MembershipRequestMailer.with(recipient_info: recipient_info,
+  #                                  organization_name: organization.name,
+  #                                  to: admin_email,
+  #                                  subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_VHA_ADMIN_REQUEST_RECEIVED)
+  #       .admin_request_made.deliver_now!
+  #   end
+  # end
+
   def send_organization_email(organization)
     recipient_info = guess_admin(organization)
     # Create an array from the hash and flatten it since some organizations can have two emails
     admin_emails = [get_organization_admin_emails(organization.name)].flatten
 
+    mailer_parameters = {
+      recipient_info: recipient_info,
+      organization_name: organization.name,
+      subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_VHA_ADMIN_REQUEST_RECEIVED
+    }
+
     # Send one email to each admin email address
     admin_emails.each do |admin_email|
-      MembershipRequestMailer.with(recipient_info: recipient_info,
-                                   organization_name: organization.name,
-                                   to: admin_email,
-                                   subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_VHA_ADMIN_REQUEST_RECEIVED)
-        .admin_request_made.deliver_now!
+      # MembershipRequestMailer.with(mailer_parameters.merge(to: admin_email))
+      #   .admin_request_made.deliver_now!
+      Memberships::SendMembershipRequestMailerJob.perform_later("AdminRequestMade",
+                                                                mailer_parameters.merge(to: admin_email))
     end
   end
 
