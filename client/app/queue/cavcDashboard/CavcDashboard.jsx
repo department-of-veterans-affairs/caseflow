@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 import { fetchAppealDetails } from '../QueueActions';
 import {
   fetchCavcDecisionReasons,
@@ -41,23 +40,16 @@ export const CavcDashboard = (props) => {
   }, []);
 
   useEffect(() => {
-    if (loaded && cavcDashboards) {
-      setTabs(cavcDashboards.map((dashboard) => {
-        const label = `CAVC appeal ${dashboard.cavc_docket_number}`;
-        const page = <CavcDashboardTab
-          dashboardId={dashboard.id}
-          userCanEdit={props.userCanEdit}
-        />;
+    setTabs(cavcDashboards.map((dashboard) => {
+      const label = `CAVC appeal ${dashboard.cavc_docket_number}`;
+      const page = <CavcDashboardTab
+        dashboardId={dashboard.id}
+        userCanEdit={props.userCanEdit}
+      />;
 
-        return { label, page };
-      }));
-    }
-  }, [loaded]);
-
-  // Redirect to the CaseDetails page if no remand exists for the provided appealId
-  if (loaded && !cavcDashboards) {
-    return <Redirect to={`/queue/appeals/${appealId}`} />;
-  }
+      return { label, page };
+    }));
+  }, [cavcDashboards]);
 
   return (
     <React.Fragment>
