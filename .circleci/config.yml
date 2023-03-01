@@ -74,7 +74,7 @@ commands:
             DISABLE_FACTORY_BOT_INITIALIZERS: 1
 
 orbs:
-  browser-tools: circleci/browser-tools@1.4.0
+  browser-tools: circleci/browser-tools@1.4.1
 jobs:
   # build workspace
   build_workspace:
@@ -418,3 +418,5 @@ workflows:
                 - gh-pages
                 - main-gh-pages
                 - gh-actions/make_docs-update_docs
+
+# VS Code Extension Version: 1.5.1
