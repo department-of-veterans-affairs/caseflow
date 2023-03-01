@@ -13,7 +13,7 @@ RSpec.describe CavcDashboardController, type: :controller do
 
   context "for routes not specific to an appeal" do
     it "#cavc_decision_reasons returns all CavcDecisionReasons" do
-      Seeds::CavcDashboardData.new.seed!
+      Seeds::CavcDecisionReasonData.new.seed!
 
       get :cavc_decision_reasons
 
@@ -28,6 +28,133 @@ RSpec.describe CavcDashboardController, type: :controller do
 
       expect(response.status).to eq 200
       expect(JSON.parse(response.body).count).to eq CavcSelectionBasis.count
+    end
+
+    context "#save" do
+      it "saves new issues and dispositions" do
+        remand = create(:cavc_remand)
+        dashboard = CavcDashboard.create!(cavc_remand: remand)
+        save_params = {
+          cavc_dashboards: [
+            {
+              id: dashboard.id,
+              cavc_dashboard_issues: [
+                {
+                  "id" => "33-0",
+                  "benefit_type" => "insurance",
+                  "cavc_dashboard_id" => dashboard.id,
+                  "issue_category" => "Contested Death Claim | Other"
+                }
+              ],
+              cavc_dashboard_dispositions: [
+                {
+                  # "id" => nil,
+                  "cavc_dashboard_id" => dashboard.id,
+                  "cavc_dashboard_issue_id" => "33-0",
+                  # "request_issue_id" => nil,
+                  "disposition" => "Settled",
+                  "cavc_dispositions_to_reasons" => []
+                }
+              ]
+            }
+          ],
+          checked_boxes: [
+            ["100", "request_issue", 1]
+          ]
+        }
+
+        post :save, params: save_params
+        expect(JSON.parse(@response.body)["successful"]).to eq true
+        expect(CavcDashboardIssue.count).to eq 1
+        # 3 for source request issues, 1 for cavc dashboard issue
+        expect(CavcDashboardDisposition.count).to eq 4
+        # ID value should be set by DB if matching regex for #-#
+        expect(dashboard.cavc_dashboard_issues.first.id).not_to eq "33-0"
+      end
+
+      it "deletes removed issues and their dispositions" do
+        remand = create(:cavc_remand)
+        dashboard = CavcDashboard.create!(cavc_remand: remand)
+
+        save_params = {
+          cavc_dashboards: [
+            {
+              id: dashboard.id,
+              cavc_dashboard_issues: [
+                {
+                  "id" => "33-0",
+                  "benefit_type" => "insurance",
+                  "cavc_dashboard_id" => dashboard.id,
+                  "issue_category" => "Contested Death Claim | Other"
+                },
+                {
+                  "id" => "33-1",
+                  "benefit_type" => "pension",
+                  "cavc_dashboard_id" => dashboard.id,
+                  "issue_category" => "Accrued Benefits"
+                }
+              ],
+              cavc_dashboard_dispositions: [
+                {
+                  # "id" => nil,
+                  "cavc_dashboard_id" => dashboard.id,
+                  "cavc_dashboard_issue_id" => "33-0",
+                  # "request_issue_id" => nil,
+                  "disposition" => "Settled",
+                  "cavc_dispositions_to_reasons" => []
+                },
+                {
+                  # "id" => nil,
+                  "cavc_dashboard_id" => dashboard.id,
+                  "cavc_dashboard_issue_id" => "33-1",
+                  # "request_issue_id" => nil,
+                  "disposition" => "Settled",
+                  "cavc_dispositions_to_reasons" => []
+                }
+              ]
+            }
+          ],
+          checked_boxes: [
+            ["100", "request_issue", 1]
+          ]
+        }
+        post :save, params: save_params
+        dashboard.reload
+
+        update_params = {
+          cavc_dashboards: [
+            {
+              id: dashboard.id,
+              cavc_dashboard_issues: [{
+                "id" => CavcDashboardIssue.last.id,
+                "benefit_type" => "pension",
+                "cavc_dashboard_id" => 51,
+                "issue_category" => "Accrued Benefits"
+              }],
+              cavc_dashboard_dispositions: [
+                {
+                  # "id" => nil,
+                  "cavc_dashboard_id" => dashboard.id,
+                  "cavc_dashboard_issue_id" => CavcDashboardIssue.last.id,
+                  # "request_issue_id" => nil,
+                  "disposition" => "Settled",
+                  "cavc_dispositions_to_reasons" => []
+                }
+              ]
+            }
+          ],
+          checked_boxes: [
+            ["100", "request_issue", 1]
+          ]
+        }
+        post :save, params: update_params
+        dashboard.reload
+
+        expect(JSON.parse(@response.body)["successful"]).to eq true
+        expect(dashboard.cavc_dashboard_issues.count).to eq 1
+        expect(CavcDashboardIssue.count).to eq 1
+        expect(CavcDashboardDisposition.count).to eq 4
+      end
     end
   end
 

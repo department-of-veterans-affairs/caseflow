@@ -7,7 +7,7 @@ class CavcDashboardDisposition < CaseflowRecord
   belongs_to :cavc_dashboard_issue
   belongs_to :request_issue
 
-  has_many :cavc_dispositions_to_reasons
+  has_many :cavc_dispositions_to_reasons, dependent: :destroy
 
   validates :cavc_dashboard, presence: true
   # disposition can be nil on create, so only validate on update
