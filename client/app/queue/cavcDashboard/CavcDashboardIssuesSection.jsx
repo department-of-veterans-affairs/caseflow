@@ -134,9 +134,9 @@ const CavcDashboardIssue = (props) => {
     toggleRemoveIssueModal();
   };
 
-  const setDispositionOption = (option, issueIndex) => {
+  const setDispositionOption = (option) => {
     setDisposition(option);
-    dispatch(setDispositionValue(dashboardIndex, issueIndex, option));
+    dispatch(setDispositionValue(dashboardIndex, dispositions[0].id, option));
   };
 
   const renderDispositionDropdown = () => {
@@ -150,7 +150,7 @@ const CavcDashboardIssue = (props) => {
           searchable
           hideLabel
           options={dispositionsOptions}
-          onChange={(option) => setDispositionOption(option.label, index)}
+          onChange={(option) => setDispositionOption(option.label)}
         />
       );
     }
@@ -271,6 +271,7 @@ const CavcDashboardIssuesSection = (props) => {
                     dispositions={issueDisposition}
                     removeIssueHandler={removeIssueHandler}
                     userCanEdit={userCanEdit}
+                    dashboardIndex={dashboardIndex}
                     addedIssueSection
                   />
                 </React.Fragment>

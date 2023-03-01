@@ -71,20 +71,27 @@ export const cavcDashboardReducer = (state = initialState, action) => {
         }
       }
     });
-  case ACTIONS.SET_DISPOSITION_VALUE:
+  case ACTIONS.SET_DISPOSITION_VALUE: {
+    // case block is wrapped in brackets to contain this constant in local scope
+    const dispositionIndex = state.
+      cavc_dashboards[action.payload.dashboardIndex].
+      cavc_dashboard_dispositions.
+      findIndex((dis) => dis.id === action.payload.dispositionId);
+
     return update(state, {
       cavc_dashboards: {
         [action.payload.dashboardIndex]: {
           cavc_dashboard_dispositions: {
-            [action.payload.issueIndex]: {
+            [dispositionIndex]: {
               $merge: {
-                disposition: action.payload.disposition
+                disposition: action.payload.dispositionOption
               }
             }
           }
         }
       }
     });
+  }
   case ACTIONS.REMOVE_DASHBOARD_ISSUE:
     return update(state, {
       cavc_dashboards: {
