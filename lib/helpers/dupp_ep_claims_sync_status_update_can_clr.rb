@@ -203,102 +203,107 @@ module WarRoom
 
         puts "You may now save data and exit the terminal\n"
       end
+
     else
-      def run(auto, sc_hlr)
-        # set current user
-        RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
-        # Sets the variable End Product Establishment by the reference_id/Claim ID
-        scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
-        hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
-        # Grabs the problem scs with the status of Cancelled or Cleared
-        problem_scs = scs.select { |sc|
-          sc.veteran.end_products.select { |ep|
-            ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-            [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
-          }.empty?
-        }
-        problem_hlr = hlr.select { |hlr|
-          hlr.veteran.end_products.select { |ep|
-            ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-            [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
-          }.empty?
-        }
-        # Count the total problem claims and keep track
-        count = problem_scs.count + problem_hlr.count
-        if count > 0
-          Rails.logger.info("Found #{count} problem Supplemental Claims and/or Higher Level Reviews")
-        else
-          Rails.logger.info("No problem claims found. You can end your terminal session now.")
-        end
-
-        Rails.logger.info("Beginning to Auto Cancel Problem Claims.")
-
-        problem_scs.each do |sc|
-          # Set the review to the first epe source appeal
-          epe = problem_scs.first.veteran.end_products
-          if epe.nil?
-            Rails.logger.error("Unable to find EPE for Supplemental Claim #{sc.id}. Skipping...")
-            next
+      if
+        def run(auto, sc_hlr)
+          # set current user
+          RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+          # Sets the variable End Product Establishment by the reference_id/Claim ID
+          scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
+          hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
+          # Grabs the problem scs with the status of Cancelled or Cleared
+          problem_scs = scs.select { |sc|
+            sc.veteran.end_products.select { |ep|
+              ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+              [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+            }.empty?
+          }
+          problem_hlr = hlr.select { |hlr|
+            hlr.veteran.end_products.select { |ep|
+              ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+              [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+            }.empty?
+          }
+          # Count the total problem claims and keep track
+          count = problem_scs.count + problem_hlr.count
+          if count > 0
+            Rails.logger.info("Found #{count} problem Supplemental Claims and/or Higher Level Reviews")
+          else
+            Rails.logger.info("No problem claims found. You can end your terminal session now.")
           end
-          # stores the source of the of the EPE if HLR, Supplemental or AMA/Legacy Appeal.
-          # If decision document set to the appeal of the source.
-          source = (epe.source_type != "DecisionDocument") ? epe.source : epe.source.appeal
-          if source.nil?
-            Rails.logger.error("Could not find a source for the original EPE. Skipping Supplemental Claim #{sc.id}...")
-            next
-          end
-          claimant = source.claimant
-          # Reaches out to BGS services to create a new service for a claim
-          bgs=BGSService.new.client.claims
-          # Gather the claim details from bgs with it's async status.
-          claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
-          # Update the epe with the sync status as cancelled or cleared.
-          if epe.claim_type_code == "040" && ["CAN", "CLR"].include?(epe.status_type_code) && [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
-            if epe.status_type_code == "CAN"
-              epe.update!(synced_status: "CAN", last_synced_at: Time.zone.now)
-            else
-              epe.update!(synced_status: "CLR", last_synced_at: Time.zone.now)
+
+          Rails.logger.info("Beginning to Auto Cancel Problem Claims.")
+
+          problem_scs.each do |sc|
+            # Set the review to the first epe source appeal
+            epe = problem_scs.first.veteran.end_products
+            if epe.nil?
+              Rails.logger.error("Unable to find EPE for Supplemental Claim #{sc.id}. Skipping...")
+              next
             end
-          end
-          # Cancel the original end product establishment
-          epe.send(:cancel!)
-          # Log a message for the user
-          Rails.logger.info("Updated EPE for Supplemental Claim #{sc.id}")
-        end
-
-        problem_hlr.each do |hlr|
-          # Set the review to the first epe source appeal
-          epe = problem_hlr.first.veteran.end_products
-          if epe.nil?
-            Rails.logger.error("Unable to find EPE for Supplemental Claim #{hlr.id}. Skipping...")
-            next
-          end
-          # stores the source of the of the EPE if HLR, Supplemental or AMA/Legacy Appeal.
-          # If decision document set to the appeal of the source.
-          source = (epe.source_type != "DecisionDocument") ? epe.source : epe.source.appeal
-          if source.nil?
-            Rails.logger.error("Could not find a source for the original EPE. Skipping Higher Level Review Claim #{hlr.id}...")
-            next
-          end
-          claimant = source.claimant
-          # Reaches out to BGS services to create a new service for a claim
-          bgs=BGSService.new.client.claims
-          # Gather the claim details from bgs with it's since status. This will show the sync status
-          claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
-          # Update the epe with the sync status as cancelled or cleared.
-          if epe.claim_type_code == "030" && ["CAN", "CLR"].include?(epe.status_type_code) && [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
-            if epe.status_type_code == "CAN"
-              epe.update!(synced_status: "CAN", last_synced_at: Time.zone.now)
-            else
-              epe.update!(synced_status: "CLR", last_synced_at: Time.zone.now)
+            # stores the source of the of the EPE if HLR, Supplemental or AMA/Legacy Appeal.
+            # If decision document set to the appeal of the source.
+            source = (epe.source_type != "DecisionDocument") ? epe.source : epe.source.appeal
+            if source.nil?
+              Rails.logger.error("Could not find a source for the original EPE. Skipping Supplemental Claim #{sc.id}...")
+              next
             end
+            claimant = source.claimant
+            # Reaches out to BGS services to create a new service for a claim
+            bgs=BGSService.new.client.claims
+            # Gather the claim details from bgs with it's async status.
+            claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
+            # Update the epe with the sync status as cancelled or cleared.
+            if epe.claim_type_code == "040" && ["CAN", "CLR"].include?(epe.status_type_code) && [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
+              if epe.status_type_code == "CAN"
+                epe.update!(synced_status: "CAN", last_synced_at: Time.zone.now)
+              else
+                epe.update!(synced_status: "CLR", last_synced_at: Time.zone.now)
+              end
+            end
+            # Cancel the original end product establishment
+            epe.send(:cancel!)
+            # Log a message for the user
+            Rails.logger.info("Updated EPE for Supplemental Claim #{sc.id}")
           end
-          # Cancel the original end product establishment
-          epe.send(:cancel!)
-          # Log a message for the user
-          Rails.logger.info("Updated EPE for Higher Level Review Claim #{hlr.id}")
+
+          problem_hlr.each do |hlr|
+            # Set the review to the first epe source appeal
+            epe = problem_hlr.first.veteran.end_products
+            if epe.nil?
+              Rails.logger.error("Unable to find EPE for Supplemental Claim #{hlr.id}. Skipping...")
+              next
+            end
+            # stores the source of the of the EPE if HLR, Supplemental or AMA/Legacy Appeal.
+            # If decision document set to the appeal of the source.
+            source = (epe.source_type != "DecisionDocument") ? epe.source : epe.source.appeal
+            if source.nil?
+              Rails.logger.error("Could not find a source for the original EPE. Skipping Higher Level Review Claim #{hlr.id}...")
+              next
+            end
+            claimant = source.claimant
+            # Reaches out to BGS services to create a new service for a claim
+            bgs=BGSService.new.client.claims
+            # Gather the claim details from bgs with it's since status. This will show the sync status
+            claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
+            # Update the epe with the sync status as cancelled or cleared.
+            if epe.claim_type_code == "030" && ["CAN", "CLR"].include?(epe.status_type_code) && [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
+              if epe.status_type_code == "CAN"
+                epe.update!(synced_status: "CAN", last_synced_at: Time.zone.now)
+              else
+                epe.update!(synced_status: "CLR", last_synced_at: Time.zone.now)
+              end
+            end
+            # Cancel the original end product establishment
+            epe.send(:cancel!)
+            # Log a message for the user
+            Rails.logger.info("Updated EPE for Higher Level Review Claim #{hlr.id}")
+          end
         end
       end
+    else
+    fail interrupt
     end
   end
 end
