@@ -202,6 +202,36 @@ module WarRoom
         puts "Providing query results of new sync status here: #{claim_detail}\n"
 
         puts "You may now save data and exit the terminal\n"
+
+        # Until end, the next few lines of code reruns the query count and displays the total problem count; which should've been reduced by one
+        # If Remediation was successful
+
+        scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
+        hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
+        # set current user
+        RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+        # Log a message for the user
+        Rails.logger.info("You current user has been set to #{RequestStore[:current_user].css_id}")
+        # Grabs the problem scs with the status of Cancelled or Cleared
+        problem_scs = scs.select { |sc|
+          sc.veteran.end_products.select { |ep|
+            ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+            [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+          }.empty?
+        }
+        problem_hlr = hlr.select { |hlr|
+          hlr.veteran.end_products.select { |ep|
+            ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+            [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+          }.empty?
+        }
+        # Count the total problem claims and keep track
+        count = problem_scs.count + problem_hlr.count
+        if count.zero?
+          puts "No problem Supplemental Claims or Higher Level Reviews found. Exiting.\n"
+          fail interrupt
+        end
+        puts "Found #{count} problem Supplemental Claims and Higher Level Reviews. Please enter the UUID of the first claim:\n"
       end
 
     else
@@ -300,6 +330,27 @@ module WarRoom
             # Log a message for the user
             Rails.logger.info("Updated EPE for Higher Level Review Claim #{hlr.id}")
           end
+
+          # Until End, next few lines perform the count and display the count completion.
+          scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
+          hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
+          # Grabs the problem scs with the status of Cancelled or Cleared
+          problem_scs = scs.select { |sc|
+            sc.veteran.end_products.select { |ep|
+              ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+              [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+            }.empty?
+          }
+          problem_hlr = hlr.select { |hlr|
+            hlr.veteran.end_products.select { |ep|
+              ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+              [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+            }.empty?
+          }
+          # Count the total problem claims and keep track
+          count = problem_scs.count + problem_hlr.count
+
+          Rails.logger.info("Found #{count} problem Supplemental Claims and/or Higher Level Reviews")
         end
       end
     else
