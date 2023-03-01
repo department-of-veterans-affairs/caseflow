@@ -82,7 +82,7 @@ describe('NotificationsTest', () => {
     expect(description).toBe('VA Notify sent these status notifications to the Appellant about their case.');
   });
 
-  it('renders download button, downloads pdf', async() => {
+  it('renders download button', async() => {
     const { container } = setup(state);
     const downloadButton = container.querySelector('#download-button');
     const downloadButtonText = container.querySelector('#download-button').innerHTML;
