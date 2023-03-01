@@ -50,7 +50,7 @@ describe('CavcDashboardIssuesSection', () => {
       // eslint-disable-next-line max-len
       `${dashboard.source_request_issues[0].decision_review_type } - ${ dashboard.source_request_issues[0].contested_issue_description}`
     )).toBeTruthy();
-    expect(Issues.length).toBe(3);
+    expect(Issues.length).toBe(2);
 
   });
 
@@ -62,6 +62,6 @@ describe('CavcDashboardIssuesSection', () => {
 
     expect(screen.getByText(dashboard.cavc_dashboard_issues[0].benefit_type, { exact: false })).toBeTruthy();
     expect(screen.getByText(dashboard.cavc_dashboard_issues[0].issue_category)).toBeTruthy();
-    expect(Issues.length).toBe(3);
+    expect(Issues.length).toBe(2);
   });
 });
