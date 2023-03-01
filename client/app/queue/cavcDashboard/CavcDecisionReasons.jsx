@@ -9,8 +9,9 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import { setCheckedDecisionReasons } from './cavcDashboardActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
 
-const CavcDecisionReasons = ({ uniqueId, loadCheckedBoxes }) => {
+const CavcDecisionReasons = ({ uniqueId, loadCheckedBoxes, userCanEdit }) => {
 
   const checkboxStyling = css({
     paddingLeft: '2.5%',
@@ -27,8 +28,18 @@ const CavcDecisionReasons = ({ uniqueId, loadCheckedBoxes }) => {
     fontWeight: 'normal'
   });
 
+  const basisForSelectionStylingNoChildReadOnly = css({
+    paddingLeft: '6.5rem',
+    fontWeight: 'normal'
+  });
+
   const basisForSelectionStylingWithChild = css({
     paddingLeft: '10rem',
+    fontWeight: 'normal',
+  });
+
+  const basisForSelectionStylingWithChildReadOnly = css({
+    paddingLeft: '9rem',
     fontWeight: 'normal',
   });
 
@@ -130,12 +141,31 @@ const CavcDecisionReasons = ({ uniqueId, loadCheckedBoxes }) => {
     }
   };
 
-  const reasons = parentReasons.map((parent) => {
-    const childrenOfParent = childReasons.filter((child) => child.parent_decision_reason_id === parent.id);
+  const readOnlyDecisionReason = (label, styling, checked) => {
+    const uncheckedStyle = css(
+      {
+        marginLeft: '2rem'
+      }
+    );
+
+    if (checked) {
+      return (
+        <div {...styling}>
+          <label><CheckIcon /> {label}</label>
+        </div>
+      );
+    }
 
     return (
-      <div key={parent.id}>
-        {/* render parent checkboxes */}
+      <div {...styling} {...uncheckedStyle} >
+        <label> {label}</label>
+      </div>
+    );
+  };
+
+  const renderParentDecisionReason = (parent) => {
+    if (userCanEdit) {
+      return (
         <Checkbox
           key={parent.id}
           name={`checkbox-${parent.id}-${uniqueId}`}
@@ -144,52 +174,113 @@ const CavcDecisionReasons = ({ uniqueId, loadCheckedBoxes }) => {
           value={checkedReasons[parent.id]?.checked}
           styling={checkboxStyling}
         />
+      );
+    }
+
+    return readOnlyDecisionReason(parent.decision_reason, checkboxStyling, checkedReasons[parent.id]?.checked);
+  };
+
+  const renderChildDecisionReason = (parent, child) => {
+    if (userCanEdit) {
+      return (
+        <Checkbox
+          key={child.id}
+          name={`checkbox-${child.id}-${uniqueId}`}
+          label={child.decision_reason}
+          onChange={(value) => handleCheckboxChange(value, child.id)}
+          value={checkedReasons[parent.id]?.children?.find((x) => x.id === child.id).checked}
+          styling={childCheckboxStyling}
+          disabled={!userCanEdit}
+        />
+      );
+    }
+
+    return readOnlyDecisionReason(
+      child.decision_reason,
+      childCheckboxStyling,
+      checkedReasons[parent.id]?.children?.find((x) => x.id === child.id).checked
+    );
+  };
+
+  const renderBasisForSelectionsWithChild = (parent, child) => {
+    if (userCanEdit) {
+      return (
+        <div>
+          <SearchableDropdown
+            name={`decision-reason-basis-${child.id}`}
+            label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
+            placeholder="Type to search..."
+            styling={basisForSelectionStylingWithChild}
+          />
+          {/* if basis for selection category is ama_other display text field for custom reasoning */}
+          {/* eslint-disable-next-line */}
+          {checkedReasons[parent.id]?.children.find((x) => x.basis_for_selection_category === 'ama_other') && (
+            <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
+              <TextField type="string" label="New basis reason" />
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div {...basisForSelectionStylingWithChildReadOnly}>
+        <label>
+          <strong>{DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}:</strong>{' '}
+          Should be replaced with actual selection or no value
+        </label>
+      </div>
+    );
+  };
+
+  const renderBasisForSelectionsForParent = (parent) => {
+    if (userCanEdit) {
+      return (
+        <SearchableDropdown
+          name={`decision-reason-basis-${parent.id}`}
+          label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
+          placeholder="Type to search..."
+          styling={basisForSelectionStylingNoChild}
+          readOnly={!userCanEdit}
+        />
+      );
+    }
+
+    return (
+      <div {...basisForSelectionStylingNoChildReadOnly}>
+        <label>
+          <strong>{DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}:</strong>{' '}
+          Should be replaced with actual selection or no value
+        </label>
+      </div>
+    );
+  };
+
+  const reasons = parentReasons.map((parent) => {
+    const childrenOfParent = childReasons.filter((child) => child.parent_decision_reason_id === parent.id);
+
+    return (
+      <div key={parent.id}>
+        {/* render parent checkboxes */}
+        {renderParentDecisionReason(parent)}
         {/* render child checkbox if parent is checked */}
         {checkedReasons[parent.id]?.checked && (
           <div>
             {childrenOfParent.map((child) => (
               <div>
-                <Checkbox
-                  key={child.id}
-                  name={`checkbox-${child.id}-${uniqueId}`}
-                  label={child.decision_reason}
-                  onChange={(value) => handleCheckboxChange(value, child.id)}
-                  value={checkedReasons[parent.id]?.children?.find((x) => x.id === child.id).checked}
-                  styling={childCheckboxStyling}
-                />
+                {renderChildDecisionReason(parent, child)}
                 {/* check if child checkbox is checked and basis category exists if so render dropdown */}
                 {checkedReasons[parent.id]?.children?.find(
                   (childToFind) => childToFind.id === child.id &&
                     childToFind.basis_for_selection_category &&
-                      childToFind.checked) && (
-                    <div>
-                      <SearchableDropdown
-                        name={`decision-reason-basis-${child.id}`}
-                        label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
-                        placeholder="Type to search..."
-                        styling={basisForSelectionStylingWithChild}
-                      />
-                      {/* if basis for selection category is ama_other display text field for custom reasoning */}
-                      {/* eslint-disable-next-line */}
-                      {checkedReasons[parent.id]?.children.find((x) => x.basis_for_selection_category === 'ama_other') && (
-                        <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
-                          <TextField type="string" label="New basis reason" />
-                        </div>
-                      )}
-                    </div>
-                  )}
+                      childToFind.checked) &&
+                      renderBasisForSelectionsWithChild(parent, child)
+                }
               </div>
             ))}
             {/* check if parent checkbox has basis category but no child, if so render dropdown */}
             {/* eslint-disable-next-line */}
-            {checkedReasons[parent.id]?.basis_for_selection_category && (
-              <SearchableDropdown
-                name={`decision-reason-basis-${parent.id}`}
-                label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
-                placeholder="Type to search..."
-                styling={basisForSelectionStylingNoChild}
-              />
-            )}
+            {checkedReasons[parent.id]?.basis_for_selection_category && renderBasisForSelectionsForParent(parent)}
           </div>
         )}
       </div>
@@ -221,7 +312,8 @@ CavcDecisionReasons.propTypes = {
     cavc_decision_reason_id: PropTypes.number,
     cavc_selection_basis_id: PropTypes.number,
     id: PropTypes.number
-  })
+  }),
+  userCanEdit: PropTypes.bool
 };
 
 export default CavcDecisionReasons;

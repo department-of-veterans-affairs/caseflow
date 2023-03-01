@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 import CancelCavcDashboardChangeModal from './CancelCavcDashboardChangeModal';
+import { css } from 'glamor';
+
+const buttonDivStyling = css({
+  float: 'right'
+});
 
 export const CavcDashboardFooter = (props) => {
   const { userCanEdit, history } = props;
@@ -12,12 +17,9 @@ export const CavcDashboardFooter = (props) => {
     setCancelModalIsOpen(!cancelModalIsOpen);
   };
 
-  //      history.push(`/queue/appeals/${appeal.externalId}`);
-  //  const cancel = () => history.goBack();
-
-  const cancel = () => {
-    history.goBack();
-  };
+  // const cancel = () => {
+  //   history.goBack();
+  // };
 
   const save = () => {
     history.goBack();
@@ -25,8 +27,15 @@ export const CavcDashboardFooter = (props) => {
 
   if (userCanEdit) {
     return (
-      <div>
-        <Button onClick={closeHandler}>Cancel</Button>
+      // <div>
+      //   <Button onClick={closeHandler}>Cancel</Button>
+      //   <Button onClick={save}>Save Changes</Button>
+      //   {
+      //     (cancelModalIsOpen) &&
+      //     <CancelCavcDashboardChangeModal closeHandler={closeHandler} {...props} />
+      //   }
+      <div {...buttonDivStyling}>
+        <Button linkStyling onClick={closeHandler}>Cancel</Button>
         <Button onClick={save}>Save Changes</Button>
         {
           (cancelModalIsOpen) &&
@@ -37,9 +46,13 @@ export const CavcDashboardFooter = (props) => {
   }
 
   return (
-    <>
-      <Button onClick={cancel}>Close</Button>
-    </>
+    // todo check if the history.goback causes issues
+    // <div {...buttonDivStyling}>
+    //   <Button onClick={cancel}>Return to Case Details</Button>
+    // </div>
+    <div {...buttonDivStyling}>
+      <Button onClick={() => history.goBack()}>Return to Case Details</Button>
+    </div>
   );
 };
 

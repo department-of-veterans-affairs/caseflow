@@ -21,9 +21,7 @@ const createDashboardProp = () => {
     }],
     cavc_dashboard_issues: [{
       benefit_type: 'education',
-      issue_category: {
-        label: 'Service Connection'
-      },
+      issue_category: 'Service Connection',
       disposition: 'Reversed'
     }],
     cavc_dashboard_dispositions: [{
@@ -63,7 +61,7 @@ describe('CavcDashboardIssuesSection', () => {
     const Issues = [...document.querySelectorAll('li')];
 
     expect(screen.getByText(dashboard.cavc_dashboard_issues[0].benefit_type, { exact: false })).toBeTruthy();
-    expect(screen.getByText(dashboard.cavc_dashboard_issues[0].issue_category.label)).toBeTruthy();
+    expect(screen.getByText(dashboard.cavc_dashboard_issues[0].issue_category)).toBeTruthy();
     expect(Issues.length).toBe(2);
   });
 });
