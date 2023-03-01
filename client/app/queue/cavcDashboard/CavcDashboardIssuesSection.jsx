@@ -140,7 +140,7 @@ const CavcDashboardIssue = (props) => {
           {renderDispositionDropdown()}
         </div>
         <div />
-        {addedIssueSection &&
+        {addedIssueSection && userCanEdit &&
           <>
             <Button
               type="button"
