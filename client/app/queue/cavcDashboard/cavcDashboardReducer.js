@@ -71,6 +71,20 @@ export const cavcDashboardReducer = (state = initialState, action) => {
         }
       }
     });
+  case ACTIONS.SET_DISPOSITION_VALUE:
+    return update(state, {
+      cavc_dashboards: {
+        [action.payload.dashboardIndex]: {
+          cavc_dashboard_dispositions: {
+            [action.payload.issueIndex]: {
+              $merge: {
+                disposition: action.payload.disposition
+              }
+            }
+          }
+        }
+      }
+    });
   case ACTIONS.REMOVE_DASHBOARD_ISSUE:
     return update(state, {
       cavc_dashboards: {

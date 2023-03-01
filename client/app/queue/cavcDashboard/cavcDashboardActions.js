@@ -50,6 +50,13 @@ export const updateDashboardIssues = (dashboardIndex, issue, dashboardDispositio
   });
 };
 
+export const setDispositionValue = (dashboardIndex, issueIndex, disposition) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_DISPOSITION_VALUE,
+    payload: { dashboardIndex, issueIndex, disposition }
+  });
+};
+
 export const removeDashboardIssue = (dashboardIndex, issueIndex, dispositionIndex) => (dispatch) => {
   dispatch({
     type: ACTIONS.REMOVE_DASHBOARD_ISSUE,

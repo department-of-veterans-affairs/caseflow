@@ -11,19 +11,51 @@ import Button from '../../components/Button';
 import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS';
 import RemoveCavcDashboardIssueModal from './RemoveCavcDashboardIssueModal';
 import { useDispatch } from 'react-redux';
-import { removeCheckedDecisionReason } from './cavcDashboardActions';
+import { removeCheckedDecisionReason, setDispositionValue } from './cavcDashboardActions';
 
-const singleIssueStyling = css({
-  marginBottom: '1.5em !important',
-  display: 'grid',
-  fontWeight: 'normal',
-  gridTemplateColumns: '70% 30%',
-  '@media(max-width: 1200px)': { width: '100%' },
-  '@media(max-width: 829px)': {
-    display: 'flex',
-    flexDirection: 'column'
+const singleIssueStyling = (userCanEdit) => {
+  const style = {
+    marginBottom: '1.5em !important',
+    display: 'grid',
+    fontWeight: 'normal',
+    gridTemplateColumns: '70% 30%',
+    '@media(max-width: 1200px)': { width: '100%' },
+    '@media(max-width: 829px)': {
+      display: 'flex',
+      flexDirection: 'column',
+    }
+  };
+
+  if (!userCanEdit) {
+    style['@media(max-width: 829px)'].flexDirection = 'row';
   }
-});
+
+  return css(style);
+};
+
+const issueColumnStyling = (userCanEdit) => {
+  if (userCanEdit) {
+    return css({});
+  }
+
+  return css({
+    '@media(max-width: 829px)': {
+      width: '70%'
+    }
+  });
+};
+
+const dispositionColumnStyling = (userCanEdit) => {
+  if (userCanEdit) {
+    return css({});
+  }
+
+  return css({
+    '@media(max-width: 829px)': {
+      width: '30%'
+    }
+  });
+};
 
 const headerStyling = css({
   display: 'grid',
@@ -47,6 +79,7 @@ const CavcDashboardIssue = (props) => {
     dispositions,
     removeIssueHandler,
     addedIssueSection,
+    dashboardIndex,
     userCanEdit
   } = props;
 
@@ -101,6 +134,11 @@ const CavcDashboardIssue = (props) => {
     toggleRemoveIssueModal();
   };
 
+  const setDispositionOption = (option, issueIndex) => {
+    setDisposition(option);
+    dispatch(setDispositionValue(dashboardIndex, issueIndex, option));
+  };
+
   const renderDispositionDropdown = () => {
     if (userCanEdit) {
       return (
@@ -112,7 +150,7 @@ const CavcDashboardIssue = (props) => {
           searchable
           hideLabel
           options={dispositionsOptions}
-          onChange={(option) => setDisposition(option.label)}
+          onChange={(option) => setDispositionOption(option.label, index)}
         />
       );
     }
@@ -126,8 +164,8 @@ const CavcDashboardIssue = (props) => {
 
   return (
     <li key={index}>
-      <div {...singleIssueStyling}>
-        <div>
+      <div {...singleIssueStyling(userCanEdit)}>
+        <div {...issueColumnStyling(userCanEdit)}>
           <div>
             <strong> Benefit type: </strong> {BENEFIT_TYPES[issue.benefit_type]}
           </div>
@@ -135,11 +173,11 @@ const CavcDashboardIssue = (props) => {
             <strong>Issue: </strong> {issueType}
           </div>
         </div>
-        <div>
+        <div {...dispositionColumnStyling(userCanEdit)}>
           {renderDispositionDropdown()}
         </div>
         <div />
-        {addedIssueSection &&
+        {addedIssueSection && userCanEdit &&
           <>
             <Button
               type="button"
@@ -204,6 +242,7 @@ const CavcDashboardIssuesSection = (props) => {
                 dispositions={issueDisposition}
                 dashboardId={dashboardId}
                 userCanEdit={userCanEdit}
+                dashboardIndex={dashboardIndex}
               />
             </React.Fragment>
           );
@@ -256,6 +295,7 @@ CavcDashboardIssue.propTypes = {
   dispositions: PropTypes.array,
   removeIssueHandler: PropTypes.func,
   addedIssueSection: PropTypes.bool,
+  dashboardIndex: PropTypes.number,
   userCanEdit: PropTypes.bool
 };
 
