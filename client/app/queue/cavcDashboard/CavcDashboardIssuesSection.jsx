@@ -14,21 +14,7 @@ import { useDispatch } from 'react-redux';
 import { removeCheckedDecisionReason, setDispositionValue } from './cavcDashboardActions';
 
 const singleIssueStyling = (userCanEdit) => {
-  if (userCanEdit) {
-    return css({
-      marginBottom: '1.5em !important',
-      display: 'grid',
-      fontWeight: 'normal',
-      gridTemplateColumns: '70% 30%',
-      '@media(max-width: 1200px)': { width: '100%' },
-      '@media(max-width: 829px)': {
-        display: 'flex',
-        flexDirection: 'column',
-      }
-    });
-  }
-
-  return css({
+  const style = {
     marginBottom: '1.5em !important',
     display: 'grid',
     fontWeight: 'normal',
@@ -36,9 +22,15 @@ const singleIssueStyling = (userCanEdit) => {
     '@media(max-width: 1200px)': { width: '100%' },
     '@media(max-width: 829px)': {
       display: 'flex',
-      flexDirection: 'row',
+      flexDirection: 'column',
     }
-  });
+  };
+
+  if (!userCanEdit) {
+    style['@media(max-width: 829px)'].flexDirection = 'row';
+  }
+
+  return css(style);
 };
 
 const issueColumnStyling = (userCanEdit) => {
