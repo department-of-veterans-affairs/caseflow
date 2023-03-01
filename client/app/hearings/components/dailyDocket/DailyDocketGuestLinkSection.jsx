@@ -2,36 +2,40 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CopyTextButton from '../../../components/CopyTextButton';
 
-export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
+export const DailyDocketGuestLinkSection = ({ linkInfo, hasAccess }) => {
 
-  const { alias, hostLink, hostPin } = linkInfo;
+  const { alias, guestLink, guestPin } = linkInfo;
 
   const containerStyle = {
     display: 'grid',
-    gridTemplateColumns: '1fr 3fr',
+    gridTemplateColumns: '1fr 1.8fr',
     backgroundColor: '#f1f1f1',
-    padding: '0.7em 0 0 1em',
+    padding: '1em 0 0 1em',
+    marginLeft: '-40px',
+    marginRight: '-40px'
   };
 
   const roomInfoContainerStyle = {
     display: 'flex',
+    flexWrap: 'wrap',
     fontSize: '12px',
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-around'
   };
 
   const CopyTextButtonProps = {
     text: 'Copy Guest Link',
     label: 'Copy Guest Link',
-    textToCopy: hostLink
-  }
+    textToCopy: guestLink
+  };
 
   return (
     <div style={containerStyle}>
       <h3>Guest links for non-virtual hearings</h3>
       <div style={roomInfoContainerStyle}>
         <h3>Conference Room:<span style={{ fontWeight: 'normal' }}>{alias}</span></h3>
-        <h3>PIN:<span style={{ fontWeight: 'normal' }}>{hostPin}#</span></h3>
-        <h3><CopyTextButton {...CopyTextButtonProps} /></h3>
+        <h3>PIN:<span style={{ fontWeight: 'normal' }}>{guestPin}#</span></h3>
+        {hasAccess && <h3><CopyTextButton {...CopyTextButtonProps} /></h3>}
+
       </div>
     </div>
   );
@@ -39,10 +43,9 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
 
 DailyDocketGuestLinkSection.propTypes = {
   linkInfo: PropTypes.shape({
-    alias: PropTypes.string,
     guestLink: PropTypes.string,
     guestPin: PropTypes.string,
-    hostLink: PropTypes.string,
-    hostPin: PropTypes.string,
-  })
+    alias: PropTypes.string,
+  }),
+  hasAccess: PropTypes.bool
 };
