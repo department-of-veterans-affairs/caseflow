@@ -39,13 +39,13 @@ class CavcDashboardController < ApplicationController
   def update_data
     updated_data = params[:updatedData].as_json
 
-    dashboard = CavcDashboard.find_by(id: updated_data.id)
+    dashboard = CavcDashboard.find_by(id: updated_data["id"])
     dashboard.update!(
-      board_decision_date: updated_data.boardDecisionDateUpdate,
-      board_docket_number: updated_data.boardDocketNumberUpdate,
-      cavc_decision_date: updated_data.cavcDecisionDateUpdate,
-      cavc_docket_number: updated_data.cavcDocketNumberUpdate,
-      joint_motion_for_remand: updated_data.jointMotionForRemandUpdate
+      board_decision_date: updated_data["boardDecisionDateUpdate"],
+      board_docket_number: updated_data["boardDocketNumberUpdate"],
+      cavc_decision_date: updated_data["cavcDecisionDateUpdate"],
+      cavc_docket_number: updated_data["cavcDocketNumberUpdate"],
+      joint_motion_for_remand: updated_data["jointMotionForRemandUpdate"]
     )
   end
 

@@ -28,7 +28,9 @@ export const fetchInitialDashboardData = (appealId) => (dispatch) => {
 
 export const updateDashboardData = (dashboardIndex, updatedData) => (dispatch) => {
   ApiUtil.
-    patch('/cavc_dashboard/update', { dashboardIndex, updatedData }).
+    patch('/cavc_dashboard/update', { data: {
+      dashboardIndex, updatedData }
+    }).
     then(dispatch({
       type: ACTIONS.UPDATE_DASHBOARD_DATA,
       payload: { dashboardIndex, updatedData }
