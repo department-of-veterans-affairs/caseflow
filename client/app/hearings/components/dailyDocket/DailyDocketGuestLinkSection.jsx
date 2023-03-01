@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { COLORS } from '../../../constants/AppConstants';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { right } from 'glamor';
+import CopyTextButton from '../../../components/CopyTextButton';
 
-export const DailyDocketGuestLinkSection = () => {
-  const [linkInfo, setLinkInfo] = useState({});
+export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
+
+  const { alias, hostLink, hostPin } = linkInfo;
 
   const containerStyle = {
     display: 'grid',
@@ -15,17 +15,34 @@ export const DailyDocketGuestLinkSection = () => {
 
   const roomInfoContainerStyle = {
     display: 'flex',
-    justifyContent: 'space-around'
+    fontSize: '12px',
+    justifyContent: 'space-evenly'
   };
+
+  const CopyTextButtonProps = {
+    text: 'Copy Guest Link',
+    label: 'Copy Guest Link',
+    textToCopy: hostLink
+  }
 
   return (
     <div style={containerStyle}>
-      <h3>Guest links for</h3>
+      <h3>Guest links for non-virtual hearings</h3>
       <div style={roomInfoContainerStyle}>
-        <h3>Conference Room:</h3>
-        <h3>PIN:</h3>
-        <h3>Guest Link</h3>
+        <h3>Conference Room:<span style={{ fontWeight: 'normal' }}>{alias}</span></h3>
+        <h3>PIN:<span style={{ fontWeight: 'normal' }}>{hostPin}#</span></h3>
+        <h3><CopyTextButton {...CopyTextButtonProps} /></h3>
       </div>
     </div>
   );
+};
+
+DailyDocketGuestLinkSection.propTypes = {
+  linkInfo: PropTypes.shape({
+    alias: PropTypes.string,
+    guestLink: PropTypes.string,
+    guestPin: PropTypes.string,
+    hostLink: PropTypes.string,
+    hostPin: PropTypes.string,
+  })
 };

@@ -302,7 +302,7 @@ export default class DailyDocket extends React.Component {
           </div>
         </div>
 
-        <DailyDocketGuestLinkSection />
+        <DailyDocketGuestLinkSection linkInfo={this.props.dailyDocket?.conferenceLink} />
         <DailyDocketRows
           hearings={this.props.hearings}
           hidePreviouslyScheduled
