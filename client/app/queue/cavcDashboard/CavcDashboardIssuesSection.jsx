@@ -101,6 +101,7 @@ const CavcDashboardIssue = (props) => {
     setDisposition(option);
     dispatch(setDispositionValue(dashboardIndex, issueIndex, option));
   };
+
   const renderDispositionDropdown = () => {
     if (userCanEdit) {
       return (
@@ -112,7 +113,7 @@ const CavcDashboardIssue = (props) => {
           searchable
           hideLabel
           options={dispositionsOptions}
-          onChange={(option) => setDisposition(option.label)}
+          onChange={(option) => setDispositionOption(option.label, index)}
         />
       );
     }
@@ -136,16 +137,6 @@ const CavcDashboardIssue = (props) => {
           </div>
         </div>
         <div>
-          <SearchableDropdown
-            name={`issue-dispositions-${index}`}
-            label="Dispositions"
-            placeholder={disposition}
-            value={disposition}
-            searchable
-            hideLabel
-            options={dispositionsOptions}
-            onChange={(option) => setDispositionOption(option.label, index)}
-          />
           {renderDispositionDropdown()}
         </div>
         <div />
@@ -201,14 +192,13 @@ const CavcDashboardIssuesSection = (props) => {
 
           return (
             <React.Fragment key={i}>
-              <CavcDashboardIssue dashboardIndex={dashboardIndex} issue={issue} index={i}
-                dispositions={issueDisposition} dashboardId={dashboardId} />
               <CavcDashboardIssue
                 issue={issue}
                 index={i}
                 dispositions={issueDisposition}
                 dashboardId={dashboardId}
                 userCanEdit={userCanEdit}
+                dashboardIndex={dashboardIndex}
               />
             </React.Fragment>
           );
