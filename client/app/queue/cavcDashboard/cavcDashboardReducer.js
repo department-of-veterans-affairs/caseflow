@@ -4,9 +4,11 @@ import { ACTIONS } from './cavcDashboardConstants';
 export const initialState = {
   decision_reasons: {},
   selection_bases: {},
+  initial_state: {},
   cavc_dashboards: [],
   checked_boxes: {},
-  dashboard_issues: []
+  dashboard_issues: [],
+  error: {}
 };
 
 export const cavcDashboardReducer = (state = initialState, action) => {
@@ -25,6 +27,11 @@ export const cavcDashboardReducer = (state = initialState, action) => {
     });
   case ACTIONS.FETCH_INITIAL_DASHBOARD_DATA:
     return update(state, {
+      initial_state: {
+        cavc_dashboards: {
+          $set: action.payload.cavc_dashboards
+        }
+      },
       cavc_dashboards: {
         $set: action.payload.cavc_dashboards
       }
@@ -34,6 +41,14 @@ export const cavcDashboardReducer = (state = initialState, action) => {
       checked_boxes: {
         [action.payload.issueId]: {
           $set: action.payload.checkedReasons
+        }
+      }
+    });
+  case ACTIONS.SET_INITIAL_CHECKED_DECISION_REASONS:
+    return update(state, {
+      initial_state: {
+        checked_boxes: {
+          $set: state.checked_boxes
         }
       }
     });
@@ -49,16 +64,43 @@ export const cavcDashboardReducer = (state = initialState, action) => {
         [action.payload.dashboardIndex]: {
           cavc_dashboard_issues: {
             $push: [action.payload.issue]
+          },
+          cavc_dashboard_dispositions: {
+            $push: [action.payload.dashboardDisposition]
           }
         }
       }
     });
+  case ACTIONS.SET_DISPOSITION_VALUE: {
+    // case block is wrapped in brackets to contain this constant in local scope
+    const dispositionIndex = state.
+      cavc_dashboards[action.payload.dashboardIndex].
+      cavc_dashboard_dispositions.
+      findIndex((dis) => dis.id === action.payload.dispositionId);
+
+    return update(state, {
+      cavc_dashboards: {
+        [action.payload.dashboardIndex]: {
+          cavc_dashboard_dispositions: {
+            [dispositionIndex]: {
+              $merge: {
+                disposition: action.payload.dispositionOption
+              }
+            }
+          }
+        }
+      }
+    });
+  }
   case ACTIONS.REMOVE_DASHBOARD_ISSUE:
     return update(state, {
       cavc_dashboards: {
         [action.payload.dashboardIndex]: {
           cavc_dashboard_issues: {
             $splice: [[action.payload.issueIndex, 1]]
+          },
+          cavc_dashboard_dispositions: {
+            $splice: [[action.payload.dispositionIndex, 1]]
           }
         }
       }
@@ -82,6 +124,14 @@ export const cavcDashboardReducer = (state = initialState, action) => {
           joint_motion_for_remand: {
             $set: action.payload.updatedData.jointMotionForRemandUpdate
           }
+        }
+      }
+    });
+  case ACTIONS.SAVE_DASHBOARD_DATA_FAILURE:
+    return update(state, {
+      error: {
+        message: {
+          $set: action.payload.responseError
         }
       }
     });

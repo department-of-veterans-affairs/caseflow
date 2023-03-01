@@ -11,15 +11,15 @@ import { updateDashboardIssues, removeDashboardIssue } from './cavcDashboardActi
 import { bindActionCreators } from 'redux';
 
 export const CavcDashboardTab = (props) => {
-  const { userCanEdit, dashboardIndex } = props;
+  const { userCanEdit, dashboardIndex, dashboardId } = props;
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const closeHandler = () => {
     setModalIsOpen(!modalIsOpen);
   };
 
-  const submitHandler = (issue) => {
-    props.updateDashboardIssues(dashboardIndex, issue);
+  const submitHandler = (issue, dashboardDisposition) => {
+    props.updateDashboardIssues(dashboardIndex, issue, dashboardDisposition);
     setModalIsOpen(!modalIsOpen);
   };
 
@@ -40,7 +40,11 @@ export const CavcDashboardTab = (props) => {
       }
       {
         (modalIsOpen) &&
-        <AddCavcDashboardIssueModal closeHandler={closeHandler} submitHandler={submitHandler} />
+        <AddCavcDashboardIssueModal
+          dashboardId={dashboardId}
+          closeHandler={closeHandler}
+          submitHandler={submitHandler}
+        />
       }
     </>
   );

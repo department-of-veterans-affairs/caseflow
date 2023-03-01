@@ -7,8 +7,19 @@ import COPY from '../../../../COPY';
 jest.mock('../../../../app/queue/cavcDashboard/CavcDashboardTab');
 
 const cavcDashboards = [
-  { cavc_docket_number: '12-3456' }
+  { cavc_docket_number: '12-3456', modified: false }
 ];
+
+// used for selecitng decision reasons on CavcDecisionReasons component
+const checkedBoxes = [];
+
+// the initialState object required for the CavcDashboardFooter to conditionally enable save
+const initialState = {
+  cavc_dashboards: [
+    { cavc_docket_number: '12-3456', modified: false }
+  ],
+  checked_boxes: []
+};
 
 const renderCavcDashboard = async (appealData, shouldResolvePromise) => {
   // rejecting the redux action creator promises to cause setError(true) on the dashboard
@@ -21,10 +32,12 @@ const renderCavcDashboard = async (appealData, shouldResolvePromise) => {
     appealId: appealData.id,
     appealDetails: appealData,
     cavcDashboards,
+    checkedBoxes,
     fetchAppealDetails: promiseResult,
     fetchCavcDecisionReasons: promiseResult,
     fetchCavcSelectionBases: promiseResult,
-    fetchInitialDashboardData: promiseResult
+    fetchInitialDashboardData: promiseResult,
+    initialState
   };
 
   return render(<CavcDashboard {...props} />);

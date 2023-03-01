@@ -11,19 +11,51 @@ import Button from '../../components/Button';
 import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS';
 import RemoveCavcDashboardIssueModal from './RemoveCavcDashboardIssueModal';
 import { useDispatch } from 'react-redux';
-import { removeCheckedDecisionReason } from './cavcDashboardActions';
+import { removeCheckedDecisionReason, setDispositionValue } from './cavcDashboardActions';
 
-const singleIssueStyling = css({
-  marginBottom: '1.5em !important',
-  display: 'grid',
-  fontWeight: 'normal',
-  gridTemplateColumns: '70% 30%',
-  '@media(max-width: 1200px)': { width: '100%' },
-  '@media(max-width: 829px)': {
-    display: 'flex',
-    flexDirection: 'column'
+const singleIssueStyling = (userCanEdit) => {
+  const style = {
+    marginBottom: '1.5em !important',
+    display: 'grid',
+    fontWeight: 'normal',
+    gridTemplateColumns: '70% 30%',
+    '@media(max-width: 1200px)': { width: '100%' },
+    '@media(max-width: 829px)': {
+      display: 'flex',
+      flexDirection: 'column',
+    }
+  };
+
+  if (!userCanEdit) {
+    style['@media(max-width: 829px)'].flexDirection = 'row';
   }
-});
+
+  return css(style);
+};
+
+const issueColumnStyling = (userCanEdit) => {
+  if (userCanEdit) {
+    return css({});
+  }
+
+  return css({
+    '@media(max-width: 829px)': {
+      width: '70%'
+    }
+  });
+};
+
+const dispositionColumnStyling = (userCanEdit) => {
+  if (userCanEdit) {
+    return css({});
+  }
+
+  return css({
+    '@media(max-width: 829px)': {
+      width: '30%'
+    }
+  });
+};
 
 const headerStyling = css({
   display: 'grid',
@@ -47,6 +79,7 @@ const CavcDashboardIssue = (props) => {
     dispositions,
     removeIssueHandler,
     addedIssueSection,
+    dashboardIndex,
     userCanEdit
   } = props;
 
@@ -54,7 +87,12 @@ const CavcDashboardIssue = (props) => {
 
   const [disposition, setDisposition] = useState(dispositions?.find(
     (dis) => dis.request_issue_id === issue.id ||
-      dis.cavc_dashboard_issue_id === issue.id)?.disposition || issue?.disposition);
+      dis.cavc_dashboard_issue_id === issue.id)?.disposition);
+
+  const dispositionIssueType = dispositions?.find(
+    (dis) => dis.request_issue_id === issue.id ||
+      /* eslint-disable-next-line camelcase */
+      dis.cavc_dashboard_issue_id === issue.id)?.request_issue_id ? 'request_issue' : 'cavc_dashboard_issue';
 
   const loadCheckedBoxes = dispositions.find(
     (dis) => dis.request_issue_id === issue.id ||
@@ -92,8 +130,13 @@ const CavcDashboardIssue = (props) => {
   };
 
   const removeIssue = () => {
-    removeIssueHandler(index);
+    removeIssueHandler(index, issue);
     toggleRemoveIssueModal();
+  };
+
+  const setDispositionOption = (option) => {
+    setDisposition(option);
+    dispatch(setDispositionValue(dashboardIndex, dispositions[0].id, option));
   };
 
   const renderDispositionDropdown = () => {
@@ -107,7 +150,7 @@ const CavcDashboardIssue = (props) => {
           searchable
           hideLabel
           options={dispositionsOptions}
-          onChange={(option) => setDisposition(option.label)}
+          onChange={(option) => setDispositionOption(option.label)}
         />
       );
     }
@@ -121,8 +164,8 @@ const CavcDashboardIssue = (props) => {
 
   return (
     <li key={index}>
-      <div {...singleIssueStyling}>
-        <div>
+      <div {...singleIssueStyling(userCanEdit)}>
+        <div {...issueColumnStyling(userCanEdit)}>
           <div>
             <strong> Benefit type: </strong> {BENEFIT_TYPES[issue.benefit_type]}
           </div>
@@ -130,11 +173,11 @@ const CavcDashboardIssue = (props) => {
             <strong>Issue: </strong> {issueType}
           </div>
         </div>
-        <div>
+        <div {...dispositionColumnStyling(userCanEdit)}>
           {renderDispositionDropdown()}
         </div>
         <div />
-        {addedIssueSection &&
+        {addedIssueSection && userCanEdit &&
           <>
             <Button
               type="button"
@@ -151,7 +194,12 @@ const CavcDashboardIssue = (props) => {
         }
       </div>
       {requireDecisionReason() && (
-        <CavcDecisionReasons uniqueId={issue.id} loadCheckedBoxes={loadCheckedBoxes} userCanEdit={userCanEdit} />
+        <CavcDecisionReasons
+          uniqueId={issue.id}
+          dispositionIssueType={dispositionIssueType}
+          loadCheckedBoxes={loadCheckedBoxes}
+          userCanEdit={userCanEdit}
+        />
       )}
     </li>
   );
@@ -165,8 +213,10 @@ const CavcDashboardIssuesSection = (props) => {
   const dashboardId = dashboard.id;
 
   // the handler is in this component because it needs the dashboardIndex prop that isn't passed down
-  const removeIssueHandler = (issueIndex) => {
-    removeDashboardIssue(dashboardIndex, issueIndex);
+  const removeIssueHandler = (issueIndex, issue) => {
+    const dispositionIndex = dashboardDispositions.findIndex((disp) => disp.cavc_dashboard_issue_id === issue.id);
+
+    removeDashboardIssue(dashboardIndex, issueIndex, dispositionIndex);
   };
 
   return (
@@ -192,6 +242,7 @@ const CavcDashboardIssuesSection = (props) => {
                 dispositions={issueDisposition}
                 dashboardId={dashboardId}
                 userCanEdit={userCanEdit}
+                dashboardIndex={dashboardIndex}
               />
             </React.Fragment>
           );
@@ -220,6 +271,7 @@ const CavcDashboardIssuesSection = (props) => {
                     dispositions={issueDisposition}
                     removeIssueHandler={removeIssueHandler}
                     userCanEdit={userCanEdit}
+                    dashboardIndex={dashboardIndex}
                     addedIssueSection
                   />
                 </React.Fragment>
@@ -244,6 +296,7 @@ CavcDashboardIssue.propTypes = {
   dispositions: PropTypes.array,
   removeIssueHandler: PropTypes.func,
   addedIssueSection: PropTypes.bool,
+  dashboardIndex: PropTypes.number,
   userCanEdit: PropTypes.bool
 };
 
