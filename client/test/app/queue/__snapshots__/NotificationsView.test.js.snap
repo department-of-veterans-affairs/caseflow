@@ -35,6 +35,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
             type="submit"
           >
             200000161
+             
             <svg
               class=""
               height="17"
@@ -58,11 +59,13 @@ exports[`NotificationsTest matches snapshot 1`] = `
               role="tooltip"
             >
               <style>
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
 	    border: 1px solid transparent;
   	}
+
   	.t00000000-0000-0000-0000-000000000000.place-top {
         margin-top: -10px;
     }
@@ -130,7 +133,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Click to copy
             </div>
@@ -177,10 +180,11 @@ exports[`NotificationsTest matches snapshot 1`] = `
           </p>
           <div>
             <a
+              href="undefined/veteran/826209"
               rel="noopener noreferrer"
               target="_blank"
             >
-              Go to eFolder Search
+              Open eFolder 
               <span
                 data-css-wevxet=""
               >
