@@ -78,13 +78,8 @@ export class SearchableDropdown extends React.Component {
   onClickOutside = (event) => {
     // event.composedPath() is [html, document, Window] when clicking the scroll bar and more when clicking content
     // this stops the menu from closing if a user clicks to use the scroll bar with the menu open
-    if (this.wrapperRef && !this.wrapperRef.contains(event.target) &&
-     event.composedPath()[2] !== window && this.state.isExpanded) {
-      this.setState({
-        isExpanded: true
-      });
-      event.preventDefault();
-    } else if (event.key === 'Escape') {
+    if ((this.wrapperRef && !this.wrapperRef.contains(event.target) &&
+     event.composedPath()[2] !== window && this.state.isExpanded) || event.key === 'Escape') {
       this.setState({
         isExpanded: true
       });
