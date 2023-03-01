@@ -31,6 +31,20 @@ const validDropdown = (dropdown) => {
   return dropdown?.length > 0;
 };
 
+const submitDisabled = ({ state }) => {
+  const { otherInstructions, radio } = state;
+
+  let isValid = true;
+
+  if (radio === 'other') {
+    isValid = validInstructions(otherInstructions) && validRadio(radio);
+  } else {
+    isValid = validRadio(radio);
+  }
+
+  return !isValid;
+};
+
 const MarkTaskCompleteModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
   const instructionsLabel = taskConfiguration && taskConfiguration.instructions_label;
@@ -229,85 +243,6 @@ SendToBoardIntakeModal.propTypes = {
   highlightInvalid: PropTypes.bool
 };
 
-const VhaCamoDocumentsReadyForBvaIntakeReviewModal = ({ props, state, setState }) => {
-  const taskConfiguration = taskActionData(props);
-
-  // if the VhaProgramOffice has completed a task, show the task instructions in the modal
-  const programOfficeInstructions = props.tasks.map((task) => {
-    return task && task.assignedTo.type === 'VhaProgramOffice' && task.instructions[1];
-  });
-
-  const handleDropdownChange = ({ value }) => {
-    setState({ dropdown: value });
-    if (value === 'other') {
-      setState({ otherInstructions: '' });
-    }
-  };
-
-  return (
-    <>
-      {programOfficeInstructions.some((i) => i) &&
-        <strong style= {{ color: '#323a45' }}>Notes from Program Office:</strong>}
-      {programOfficeInstructions.map((text) => (
-        <div>
-          <ReactMarkdown>{text}</ReactMarkdown>
-        </div>
-      ))}
-      <div style= {{ marginBottom: '1.5em' }}>{COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.BODY}</div>
-      {taskConfiguration && taskConfiguration.modal_body}
-      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
-        <div>
-          <SearchableDropdown
-            name="documentsReadyForBvaIntakeReviewOptions"
-            id="documentsReadyForBvaIntakeReviewOptions"
-            label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.DETAIL}
-            defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
-            onChange={handleDropdownChange}
-            value={state.dropdown}
-            options={locationTypeOpts}
-            errorMessage={props.highlightInvalid &&
-              !validInstructions(state.dropdown) ? 'You must select a reason for returning to intake' : null}
-          />
-          {state.dropdown === 'other' &&
-              <TextareaField
-                label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.OTHER_INSTRUCTION_LABEL}
-                name="otherRejectReason"
-                id="completeTaskOtherInstructions"
-                onChange={(value) => setState({ otherInstructions: value })}
-                value={state.otherInstructions}
-                styling={marginTop(2)}
-                textAreaStyling={setHeight(4.5)}
-                errorMessage={props.highlightInvalid &&
-                !validInstructions(state.otherInstructions) ? 'Return reason field is required' : null}
-              />
-          }
-          <TextareaField
-            label={COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.INSTRUCTIONS_LABEL}
-            name="instructions"
-            id="vhaDocumentsReadyForBvaIntakeReviewInstructions"
-            onChange={(value) => setState({ instructions: value })}
-            value={state.instructions}
-            styling={marginTop(4)}
-            textAreaStyling={setHeight(4.5)}
-            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-            errorMessage={props.highlightInvalid &&
-              !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
-          />
-        </div>
-      )}
-    </>
-  );
-};
-
-VhaCamoDocumentsReadyForBvaIntakeReviewModal.propTypes = {
-  props: PropTypes.object,
-  tasks: PropTypes.array,
-  setState: PropTypes.func,
-  state: PropTypes.object,
-  register: PropTypes.func,
-  highlightInvalid: PropTypes.bool,
-};
-
 const ReturnToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
 
@@ -464,19 +399,7 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SEND_BUTTON,
-    submitDisabled: ({ state }) => {
-      const { otherInstructions, radio } = state;
-
-      let isValid = true;
-
-      if (radio === 'other') {
-        isValid = validInstructions(otherInstructions) && validRadio(radio);
-      } else {
-        isValid = validRadio(radio);
-      }
-
-      return !isValid;
-    }
+    submitDisabled
   },
   vha_send_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
@@ -550,19 +473,7 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SEND_BUTTON,
-    submitDisabled: ({ state }) => {
-      const { otherInstructions, radio } = state;
-
-      let isValid = true;
-
-      if (radio === 'other') {
-        isValid = validInstructions(otherInstructions) && validRadio(radio);
-      } else {
-        isValid = validRadio(radio);
-      }
-
-      return !isValid;
-    }
+    submitDisabled
   },
 };
 
