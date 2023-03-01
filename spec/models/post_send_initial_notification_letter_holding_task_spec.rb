@@ -245,12 +245,27 @@ describe PostSendInitialNotificationLetterHoldingTask do
         instructions: "45 Days Hold Period"
       )
     end
+
+    let(:timer_for_task) do
+      task_timer = TaskTimer.last
+      task_timer.update(last_submitted_at: 1.day.ago)
+      task_timer.reload
+    end
+
+
+
     context "Hold time expire" do
       let(:now) { Time.zone.now }
 
       it "Complete task" do
         Timecop.travel(now + 45.days) do
-          TaskTimerJob.perform_now
+          timer_for_task.update(processed_at: 1.day.ago)
+
+          processed_at = timer_for_task.reload.processed_at
+
+          post_task.when_timer_ends
+
+          expect(timer_for_task.reload.processed_at).to eq processed_at
 
           task = Task.find_by(type: "SendFinalNotificationLetterTask")
           expect(task.appeal_id).to eq(post_task.appeal_id)
