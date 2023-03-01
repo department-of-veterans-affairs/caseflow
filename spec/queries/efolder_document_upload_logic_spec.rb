@@ -1,3 +1,7 @@
+# * Run specs "bundle exec rspec spec/queries/efolder_document_upload_logic_spec.rb"
+
+# * Get code coverage "open coverage/index.html"
+
 describe EfolderDocumentUploadLogic do
 
   before do
@@ -10,7 +14,7 @@ describe EfolderDocumentUploadLogic do
   let(:vacols_id) {legacy_appeal_one.vacols_id}
 
   # * Appeals, vbms_docs and notifications
-  # *appeal_one, vbms_docs and notifications ** has notification is after vbms_doc ** Will be in list
+  # *appeal_one, vbms_docs and notifications ** has notification is after vbms_doc ** Will be in list **
   let(:appeal_one) {create(:appeal)}
   let(:notification_one_appeal_one) { create(:notification, appeals_id:appeal_one.uuid, appeals_type:"Appeal", event_date:"2023-02-27 13:11:51.91467", event_type:"Appeal docketed", notification_type:"Email", notified_at:"2023-02-28 14:11:51.91467")}
   let(:notification_two_appeal_one) { create(:notification, appeals_id:appeal_one.uuid, appeals_type:"Appeal", event_date:"2023-02-28 13:11:51.91467", event_type:"Hearing scheduled", notification_type:"Email" , notified_at:"2023-02-28 14:11:51.91467")}
@@ -23,15 +27,15 @@ describe EfolderDocumentUploadLogic do
 
 
 
-  # # * Legacy Appeals, vbms_docs, and notifications
-  # # *appeal_one, vbms_docs and notifications ** has notification is after vbms_doc ** Will be in list
+  # * Legacy Appeals, vbms_docs, and notifications
+  # *appeal_one, vbms_docs and notifications ** has notification is after vbms_doc ** Will be in list **
   let(:legacy_appeal_one) {create(:legacy_appeal)}
   let(:notification_one_legacy_appeal_one) { create(:notification, appeals_id:legacy_appeal_one.vacols_id, appeals_type:"LegacyAppeal",event_date:"2023-02-28 07:11:51.91467", event_type:"Appeal docketed", notification_type:"Email", notified_at:"2023-02-28 07:11:51.91467")}
   let(:notification_two_legacy_appeal_one) { create(:notification, appeals_id:legacy_appeal_one.vacols_id, appeals_type:"LegacyAppeal",event_date:"2023-02-28 09:11:51.91467", event_type:"Appeal docketed", notification_type:"Email", notified_at:"2023-02-28 09:11:51.91467")}
   let(:document_one_legacy_appeal_one) {create(:vbms_uploaded_document, document_type: "BVA Case Notifications", appeal_id: legacy_appeal_one.id, appeal_type: "LegacyAppeal", created_at: "2023-02-27 13:11:51.91467", uploaded_to_vbms_at:"2023-02-27 13:11:51.91467")}
   let(:document_two_legacy_appeal_one) {create(:vbms_uploaded_document, document_type: "BVA Case Notifications", appeal_id: legacy_appeal_one.id, appeal_type: "LegacyAppeal", created_at: "2023-02-28 13:11:51.91467", uploaded_to_vbms_at:"2023-02-27 13:11:51.91467")}
 
-  # # *appeal_two will not have notification ** Will be in list **
+  # *appeal_two will not have notification ** Will be in list **
   let(:legacy_appeal_two) { create(:legacy_appeal, vacols_case: create(:case)) }
 
   context "Tests check_if_record_exist_in_vbms_upload_doc?(appeal) method" do
@@ -71,12 +75,14 @@ describe EfolderDocumentUploadLogic do
 
     it "If it is an AMA Appeal will return UUID" do
 
+      appeal_one
       expect(subject.unique_identifier(appeal_one)).to eq(uuid)
 
     end
 
     it "If it is an Legacy Appeal will return Vacols Id" do
 
+      legacy_appeal_one
       expect(subject.unique_identifier(legacy_appeal_one)).to eq(vacols_id)
 
     end
@@ -121,7 +127,7 @@ describe EfolderDocumentUploadLogic do
     end
 
     it "Expects to get legacy_appeal_one and legacy_appeal_two" do
-      
+
       legacy_appeal_one
       legacy_appeal_two
       notification_two_legacy_appeal_one
