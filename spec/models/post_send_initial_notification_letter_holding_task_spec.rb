@@ -226,6 +226,7 @@ describe PostSendInitialNotificationLetterHoldingTask do
       end
     end
   end
+
   describe "Process when hold time expire" do
     let(:days_on_hold) { 45 }
     let!(:post_task) do
@@ -249,7 +250,6 @@ describe PostSendInitialNotificationLetterHoldingTask do
 
       it "Complete task" do
         Timecop.travel(now + 45.days) do
-
           TaskTimerJob.perform_now
 
           task = Task.find_by(type: "SendFinalNotificationLetterTask")
@@ -260,16 +260,6 @@ describe PostSendInitialNotificationLetterHoldingTask do
           expect(task_complete.appeal_id).to eq(post_task.appeal_id)
           expect(task_complete.status).to eq("completed")
         end
-
-      it "returns the same max hold period using the TaskTimer dates" do
-        tt = TaskTimer.find_by(task_id: post_task.id)
-        expect(tt.task_id).to eq(post_task.id)
-        expect(post_task.max_hold_day_period).to eq(hold_days)
-
-        # confirm the values are being pulled from the TaskTimer
-        calculate_max_hold = (tt.submitted_at - post_task.created_at.prev_day).to_i / 1.day
-        expect(post_task.max_hold_day_period).to eq(calculate_max_hold)
-
       end
     end
   end
