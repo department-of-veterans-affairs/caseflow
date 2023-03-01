@@ -54,6 +54,7 @@ export const CavcDashboard = (props) => {
     }
   }, [loaded, cavcDashboards]);
 
+  // Redirect to the CaseDetails page if no remand exists for the provided appealId
   if (loaded && !cavcDashboards) {
     return <Redirect to={`/queue/appeals/${appealId}`} />;
   }
