@@ -64,7 +64,6 @@ export const NotificationsView = (props) => {
     marginTop: '0px'
   });
 
-  const errorMsg = 'There was an error generating the PDF for download. Please try again later.';
   const errorCode = 'Error Code: ';
   const pdfURL = `/appeals/${appealId}/notifications.pdf`;
 
@@ -85,7 +84,7 @@ export const NotificationsView = (props) => {
     <React.Fragment>
       <AppSegment filledBackground>
         <CaseTitle titleHeader = {`Case notifications for ${appeal.veteranFullName}`} appeal={appeal} hideCaseView />
-        {alert && <Alert type="error" title="Unable to generate PDF" styling={alertStyle}>{errorMsg}<br />{errorCode}{appealId}</Alert>}
+        {alert && <Alert type="error" title={COPY.PDF_GENERATION_ERROR_TITLE} styling={alertStyle}>{COPY.PDF_GENERATION_ERROR_MESSAGE}<br />{errorCode}{appealId}</Alert>}
         {supportPendingAppealSubstitution && (
           <div {...sectionGap}>
             <Button
