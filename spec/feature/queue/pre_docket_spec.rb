@@ -527,7 +527,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           User.authenticate!(user: camo_user)
           visit "/queue/appeals/#{appeal.uuid}"
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-          find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.label).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.label
+          ).click
 
           expect(page).to have_content(COPY::VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL["TITLE"])
           expect(page).to have_content(COPY::VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL["DETAIL"])
