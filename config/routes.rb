@@ -291,13 +291,13 @@ Rails.application.routes.draw do
   scope path: "/cavc_dashboard" do
     get "/cavc_decision_reasons", to: "cavc_dashboard#cavc_decision_reasons"
     get "/cavc_selection_bases", to: "cavc_dashboard#cavc_selection_bases"
+    patch "/update", to: "cavc_dashboard#update_data"
   end
 
   # allow requests for CAVC Dashboard to go through /cavc_dashboard/:appeal_id/* to declutter the queue path above
   resources :cavc_dashboard, param: :appeal_id do
     member do
       get "/", to: "cavc_dashboard#index"
-      patch "/", to: "cavc_dashboard#update_data"
     end
   end
 

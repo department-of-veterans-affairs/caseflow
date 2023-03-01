@@ -26,14 +26,12 @@ export const fetchInitialDashboardData = (appealId) => (dispatch) => {
     }));
 };
 
-export const updateDashboardData = (appealId, dashboardIndex, updatedData) => (dispatch) => {
+export const updateDashboardData = (dashboardIndex, updatedData) => (dispatch) => {
   ApiUtil.
-    patch(`/cavc_dashboard/${appealId}`, {appealId, dashboardIndex, updatedData }).
-    then((response) => dispatch({
+    patch('/cavc_dashboard/update', { dashboardIndex, updatedData }).
+    then(dispatch({
       type: ACTIONS.UPDATE_DASHBOARD_DATA,
-      payload: {
-        cavc_dashboards: response.body.cavc_dashboards
-      }
+      payload: { dashboardIndex, updatedData }
     }));
 };
 
