@@ -69,6 +69,7 @@ module WarRoom
         # This will check if both scs and hlr are nil, which means the provided UUID doesn't match any records
         # in the SupplementalClaim and HigherLevelReview tables with the establishment_error containing the "duplicateep" string.
         puts "Running match query for SC or HLR that contain duplicateEP Errors for uuid: #{uuid2}\n"
+
         def problem_claim(uuid2)
           # Query the SupplementalClaim table for a record with the specified uuid and establishment_error containing 'duplicateep'
           sc = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'").find_by(uuid: uuid2)
@@ -103,39 +104,40 @@ module WarRoom
           if epe.nil?
             Rails.logger.error("Unable to find EPE for Problem Claim #{epe.id}.")
           end
-        puts "Providing end product establishment data, epe.id, for the epe in question or to be found #{epe.id}\n"
-        # stores the source of the of the EPE if HLR, Supplemental or AMA/Legacy Appeal.
-        # If decision document set to the appeal of the source.
-        source = (epe.source_type != "DecisionDocument") ? epe.source : epe.source.appeal
-        if source.nil?
-          Rails.logger.error("Could not find a source for the original EPE. #{epe.id}...\n")
-        end
-        puts "Source has been found here: #{source}\n"
-        claimant = source.claimant
-        if claimant.nil?
-          Rails.logger.error("Could not find a claimant for the source. #{source.id}...\n")
-        end
-        puts "Source Claimant has been found here: #{claimant}\n"
-        # Reaches out to BGS services to create a new service for a claim
-        bgs=BGSService.new.client.claims
-        if bgs.nil?
-          Rails.logger.error("Could not perform BGSService.new.client.claims to display data")
-        end
-        puts "BGS service can be found: #{bgs}\n"
-        # Gather the claim details from bgs with it's async status.
-        claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
-        if claim_detail.nil?
-          Rails.logger.error("Could not find the claim details from bgs with it's async status")
-        end
-        puts "Providing claim details for review, that should have sync status of cleared or cancel #{claim_detail}\n"
-        count = duplicate_ep_problem_claim.count
-        puts "duplicate_ep_problem_claim count: #{count}\n"
-        puts "Please review the provided data. If you would like this claim data to be updated, enter 'yes' else enter 'no'.\n"
-        # Here we will use a begin get chomp method to perform the transaction on the SC or HLR data
-        # Prompt user if he recogonizes change to the Appeal
-        # and if he would like to manually, update the sync status by performing can or clr.
-        # Prompt user to enter yes or no to fix the data manually by updating the caseflow sync status.
-        # This will prompt the user yes or no to process the claim or recommended to save and close terminal to resart. Update the epe with the sync status as cancelled or cleared.
+          puts "Providing end product establishment data, epe.id, for the epe in question or to be found #{epe.id}\n"
+          # stores the source of the of the EPE if HLR, Supplemental or AMA/Legacy Appeal.
+          # If decision document set to the appeal of the source.
+          source = (epe.source_type != "DecisionDocument") ? epe.source : epe.source.appeal
+          if source.nil?
+            Rails.logger.error("Could not find a source for the original EPE. #{epe.id}...\n")
+          end
+          puts "Source has been found here: #{source}\n"
+          claimant = source.claimant
+          if claimant.nil?
+            Rails.logger.error("Could not find a claimant for the source. #{source.id}...\n")
+          end
+          puts "Source Claimant has been found here: #{claimant}\n"
+          # Reaches out to BGS services to create a new service for a claim
+          bgs=BGSService.new.client.claims
+          if bgs.nil?
+            Rails.logger.error("Could not perform BGSService.new.client.claims to display data")
+          end
+          puts "BGS service can be found: #{bgs}\n"
+          # Gather the claim details from bgs with it's async status.
+          claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
+          if claim_detail.nil?
+            Rails.logger.error("Could not find the claim details from bgs with it's async status")
+          end
+          puts "Providing claim details for review, that should have sync status of cleared or cancel #{claim_detail}\n"
+          count = duplicate_ep_problem_claim.count
+          puts "duplicate_ep_problem_claim count: #{count}\n"
+          puts "Please review the provided data. If you would like this claim data to be updated, enter 'yes' else enter 'no'.\n"
+          # Here we will use a begin get chomp method to perform the transaction on the SC or HLR data
+          # Prompt user if he recogonizes change to the Appeal
+          # and if he would like to manually, update the sync status by performing can or clr.
+          # Prompt user to enter yes or no to fix the data manually by updating the caseflow sync status.
+          # This will prompt the user yes or no to process the claim or recommended to save and close terminal to resart. Update the epe with the sync status as cancelled or cleared.
+
         ActiveRecord::Base.transaction do
           if epe.claim_type_code == "040" && ["CAN", "CLR"].include?(epe.status_type_code) && [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
             input = gets.chomp.downcase
@@ -195,6 +197,7 @@ module WarRoom
             puts "You may now save data and exit the terminal\n"
           end
         end
+        problem_claim(uuid2)
       end
     end
 
