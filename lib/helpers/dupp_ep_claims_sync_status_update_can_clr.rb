@@ -231,7 +231,7 @@ module WarRoom
           end
         end
       end
-    else
+
       if
         def run(auto, sc_hlr)
           # set current user
