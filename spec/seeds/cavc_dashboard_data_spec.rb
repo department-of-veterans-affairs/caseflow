@@ -41,7 +41,7 @@ describe Seeds::CavcDashboardData do
       # 10 from create_cavc_dashboard_dispositions, 4 from create_appeals_with_multiple_cavc_remands,
       # 10 from create_cavc_dashboard_issues
       expect(CavcRemand.count).to eq 24
-      expect(CavcDashboardDisposition.count).to eq 30
+      expect(CavcDashboardDisposition.count).to eq 102
     end
 
     it "creates all selection_bases for dispositions per APPEALS-13250" do

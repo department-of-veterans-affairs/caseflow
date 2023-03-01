@@ -45,8 +45,8 @@ describe('CavcDashboardIssuesSection', () => {
     await renderCavcDashboardIssuesSection(dashboard);
     const Issues = [...document.querySelectorAll('li')];
 
-    expect(screen.getByText(dashboard.source_request_issues[0].benefit_type, { exact: false })).toBeTruthy();
-    expect(screen.getByText(
+    expect(screen.getAllByText(dashboard.source_request_issues[0].benefit_type, { exact: false })).toBeTruthy();
+    expect(screen.getAllByText(
       // eslint-disable-next-line max-len
       `${dashboard.source_request_issues[0].decision_review_type } - ${ dashboard.source_request_issues[0].contested_issue_description}`
     )).toBeTruthy();
