@@ -16,7 +16,7 @@ describe Memberships::SendMembershipRequestMailerJob do
   subject { described_class.perform_now(type, mailer_parameters) }
 
   describe "#perform" do
-    context "the type is UserRequestCreated with a request to camo" do
+    context "the type is UserRequestCreated" do
       let(:type) { "UserRequestCreated" }
 
       it "sends a status update email to the requestor" do

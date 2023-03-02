@@ -157,7 +157,6 @@ const VhaMembershipRequestForm = () => {
         resetMembershipRequestForm();
       }).
       catch((error) => {
-        // TODO: improve this message somehow. It also won't display success if there is an error at all
         dispatch(setErrorMessage(error.message));
       });
 
