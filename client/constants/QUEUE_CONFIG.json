@@ -101,6 +101,9 @@
     "VETERAN_PARTICIPANT_ID": {
       "name": "veteranParticipantIdColumn"
     },
+    "VETERAN_SSN": {
+      "name": "veteranSsnColumn"
+    },
     "READER_LINK_WITH_NEW_DOCS_ICON": {
       "name": "readerLinkWithNewDocIconColumn"
     },
