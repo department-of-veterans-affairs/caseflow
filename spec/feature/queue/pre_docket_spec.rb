@@ -535,11 +535,12 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           expect(page).to have_content(COPY::VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL["TITLE"])
           expect(page).to have_content(COPY::VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL["DETAIL"])
-          find("input", id: "completeTaskDocLocation_vbms", text: "VBMS").click
+          page.all(".cf-form-radio-option > label")[0].click
           find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
 
           expect(page).to have_content(
-            COPY::VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION.gsub("%s", appeal.veteran.person.name)
+            COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE
+            .gsub("%s", appeal.veteran.person.name)
           )
           expect(camo_task.reload.status).to eq Constants.TASK_STATUSES.completed
           expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned
