@@ -60,8 +60,20 @@ const CancelTaskModal = (props) => {
     return props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg);
   };
 
+  // Additional properties - should be removed later once generic submit buttons are styled the same across all modals
+  const modalProps = {};
+  const getModalTitle = get(taskData, 'modal_title');
+
+  if (
+    getModalTitle === COPY.EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE ||
+    getModalTitle === COPY.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE
+  ) {
+    modalProps.submitButtonClassNames = ['usa-button'];
+  }
+
   return (
     <QueueFlowModal
+      {...modalProps}
       title={taskData?.modal_title ?? ''}
       button={taskData?.modal_button_text ?? COPY.MODAL_SUBMIT_BUTTON}
       pathAfterSubmit={taskData?.redirect_after ?? '/queue'}
@@ -74,7 +86,7 @@ const CancelTaskModal = (props) => {
           <br />
         </React.Fragment>
       }
-      {get(taskData, 'show_instructions', true) &&
+      {shouldShowTaskInstructions &&
         <TextareaField
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           errorMessage={highlightFormItems && instructions.length === 0 ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}

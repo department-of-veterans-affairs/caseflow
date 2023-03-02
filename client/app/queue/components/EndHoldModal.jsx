@@ -27,6 +27,7 @@ class EndHoldModal extends React.Component {
     title={COPY.END_HOLD_MODAL_TITLE}
     button={COPY.MODAL_END_HOLD_BUTTON}
     pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
+    submitButtonClassNames={['usa-button']}
     submit={this.submit}
   >
     <p>{COPY.END_HOLD_MODAL_BODY}</p>

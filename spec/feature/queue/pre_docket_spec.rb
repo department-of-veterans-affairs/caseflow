@@ -972,7 +972,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         instructions_textarea = find("textarea", id: "taskInstructions")
         instructions_textarea.send_keys("Incorrect RPO. Please review.")
-        find("button", class: "usa-button-secondary", text: COPY::MODAL_RETURN_BUTTON).click
+        find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON).click
 
         expect(page).to have_current_path(
           "/organizations/#{education_rpo.url}?tab=education_rpo_assigned&#{default_query_params}"
