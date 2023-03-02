@@ -41,15 +41,15 @@ module WarRoom
       Rails.logger.info("You current user has been set to #{RequestStore[:current_user].css_id}")
       # Grabs the problem scs with the status of Cancelled or Cleared
       problem_scs = scs.select { |sc|
-        sc.veteran.end_products.select { |ep|
-          ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-          [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+        sc.veteran.end_product_establishments&.first { |epe|
+          epe.claim_type_code.include?("040") && ["CAN", "CLR"].include?(epe.status_type_code) &&
+          [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
         }.empty?
       }
       problem_hlr = hlr.select { |hlr|
-        hlr.veteran.end_products.select { |ep|
-          ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-          [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+        hlr.veteran.end_product_establishments&.first { |epe|
+          epe.claim_type_code.include?("030") && ["CAN", "CLR"].include?(epe.status_type_code) &&
+          [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
         }.empty?
       }
       # Count the total problem claims and keep track
@@ -69,12 +69,12 @@ module WarRoom
         puts "Running match query for SC or HLR that contain duplicateEP Errors for uuid: #{uuid2}\n"
 
         # Query the SupplementalClaim table for a record with the specified uuid and establishment_error containing 'duplicateep'
-        puts "Looking for sc"
+        puts "Query the SupplementalClaim table for a record with the specified uuid and establishment_error containing 'duplicateep'\n"
         sc = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'").find_by(uuid: "#{uuid2}")
         puts "Looking for hlr"
         # Query the HigherLevelReview table for a record with the specified uuid and establishment_error containing 'duplicateep'
         hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'").find_by(uuid: "#{uuid2}")
-        puts "Looking for the hlr or sc and returning the problem claim as duplicate_ep_problem_claim"
+        puts "Query the HigherLevelReview table for a record with the specified uuid and establishment_error containing 'duplicateep'\n"
         if sc.nil? && hlr.nil?
           puts "No SupplementalClaim or HigherLevelReview found with uuid: #{uuid2}\n"
           return duplicate_ep_problem_claim = nil
@@ -169,15 +169,15 @@ module WarRoom
                 Rails.logger.info("You current user has been set to #{RequestStore[:current_user].css_id}")
                 # Grabs the problem scs with the status of Cancelled or Cleared
                 problem_scs = scs.select { |sc|
-                  sc.veteran.end_products.select { |ep|
-                    ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  sc.veteran.end_product_establishments&.first { |epe|
+                    epe.claim_type_code.include?("040") && ["CAN", "CLR"].include?(epe.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
                   }.empty?
                 }
                 problem_hlr = hlr.select { |hlr|
-                  hlr.veteran.end_products.select { |ep|
-                    ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  hlr.veteran.end_product_establishments&.first { |epe|
+                    epe.claim_type_code.include?("030") && ["CAN", "CLR"].include?(epe.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
                   }.empty?
                 }
                 # Count the total problem claims and keep track
@@ -212,15 +212,15 @@ module WarRoom
                 Rails.logger.info("You current user has been set to #{RequestStore[:current_user].css_id}")
                 # Grabs the problem scs with the status of Cancelled or Cleared
                 problem_scs = scs.select { |sc|
-                  sc.veteran.end_products.select { |ep|
-                    ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  sc.veteran.end_product_establishments&.first { |epe|
+                    epe.claim_type_code.include?("040") && ["CAN", "CLR"].include?(epe.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
                   }.empty?
                 }
                 problem_hlr = hlr.select { |hlr|
-                  hlr.veteran.end_products.select { |ep|
-                    ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  hlr.veteran.end_product_establishments&.first { |epe|
+                    epe.claim_type_code.include?("030") && ["CAN", "CLR"].include?(epe.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
                   }.empty?
                 }
                 # Count the total problem claims and keep track
@@ -232,7 +232,7 @@ module WarRoom
                 puts "You may now save data and exit the terminal\n"
               end
             else
-              puts "No updates were performed. Please close terminal and restart.\n"
+              puts "No updates were performed. Please close terminal and restart or debug for error.\n"
               fail interupt
             end
 
@@ -270,15 +270,15 @@ module WarRoom
                 Rails.logger.info("You current user has been set to #{RequestStore[:current_user].css_id}")
                 # Grabs the problem scs with the status of Cancelled or Cleared
                 problem_scs = scs.select { |sc|
-                  sc.veteran.end_products.select { |ep|
-                    ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  sc.veteran.end_product_establishments&.first { |epe|
+                    epe.claim_type_code.include?("040") && ["CAN", "CLR"].include?(epe.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
                   }.empty?
                 }
                 problem_hlr = hlr.select { |hlr|
-                  hlr.veteran.end_products.select { |ep|
-                    ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  hlr.veteran.end_product_establishments&.first { |epe|
+                    epe.claim_type_code.include?("030") && ["CAN", "CLR"].include?(epe.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
                   }.empty?
                 }
                 # Count the total problem claims and keep track
@@ -313,15 +313,15 @@ module WarRoom
                 Rails.logger.info("You current user has been set to #{RequestStore[:current_user].css_id}")
                 # Grabs the problem scs with the status of Cancelled or Cleared
                 problem_scs = scs.select { |sc|
-                  sc.veteran.end_products.select { |ep|
-                    ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  sc.veteran.end_product_establishments&.first { |epe|
+                    epe.claim_type_code.include?("040") && ["CAN", "CLR"].include?(epe.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
                   }.empty?
                 }
                 problem_hlr = hlr.select { |hlr|
-                  hlr.veteran.end_products.select { |ep|
-                    ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  hlr.veteran.end_products.select { |epe|
+                    epe.claim_type_code.include?("030") && ["CAN", "CLR"].include?(epe.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
                   }.empty?
                 }
                 # Count the total problem claims and keep track
@@ -340,7 +340,7 @@ module WarRoom
           end
         end
       end
-      puts "No updates were performed. Please close terminal and restart.\n"
+      puts "No updates were performed. Please close terminal and restart or debug for error.\n"
     end
 
     #ActiveRecord::Base.transaction do
@@ -352,15 +352,15 @@ module WarRoom
     #    hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
     #    # Grabs the problem scs with the status of Cancelled or Cleared
     #    problem_scs = scs.select { |sc|
-    #      sc.veteran.end_products.select { |ep|
-    #        ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-    #        [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+    #      sc.veteran.end_product_establishments&.first { |epe|
+    #        epe.claim_type_code.include?("040") && ["CAN", "CLR"].include?(epe.status_type_code) &&
+    #        [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
     #      }.empty?
     #    }
     #    problem_hlr = hlr.select { |hlr|
-    #      hlr.veteran.end_products.select { |ep|
-    #        ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-    #        [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+    #      hlr.veteran.end_products.select { |epe|
+    #        epe.claim_type_code.include?("030") && ["CAN", "CLR"].include?(epe.status_type_code) &&
+    #        [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
     #      }.empty?
     #    }
     #    # Count the total problem claims and keep track
@@ -440,15 +440,15 @@ module WarRoom
     #    hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
     #    # Grabs the problem scs with the status of Cancelled or Cleared
     #    problem_scs = scs.select { |sc|
-    #      sc.veteran.end_products.select { |ep|
-    #        ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-    #        [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+    #      sc.veteran.end_product_establishments&.first { |epe|
+    #        epe.claim_type_code.include?("040") && ["CAN", "CLR"].include?(epe.status_type_code) &&
+    #        [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
     #      }.empty?
     #    }
     #    problem_hlr = hlr.select { |hlr|
-    #      hlr.veteran.end_products.select { |ep|
-    #        ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-    #        [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+    #      hlr.veteran.end_products.select { |epe|
+    #        epe.claim_type_code.include?("030") && ["CAN", "CLR"].include?(epe.status_type_code) &&
+    #        [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
     #      }.empty?
     #    }
     #    # Count the total problem claims and keep track
