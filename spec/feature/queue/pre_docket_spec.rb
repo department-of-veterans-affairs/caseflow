@@ -93,7 +93,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           end
         end
 
-        step "enacting the 'Mark task as in progress' task action updates
+        step "enacting the 'Mark task in progress' task action updates
           the VhaDocumentSearchTask's status to in_progress" do
           User.authenticate!(user: vha_caregiver_user)
 
@@ -868,6 +868,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
       step "RPO user can find the appeal in the org's Completed Tab" do
         visit "/organizations/#{education_rpo.url}?tab=education_rpo_completed&page=1"
+        expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
         expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end

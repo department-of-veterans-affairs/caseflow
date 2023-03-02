@@ -418,7 +418,7 @@
     "func": "vha_mark_task_in_progress"
   },
   "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS": {
-    "label": "Mark task as in progress",
+    "label": "Mark task in progress",
     "value": "modal/mark_task_in_progress",
     "func": "vha_caregiver_support_mark_task_in_progress"
   },
