@@ -15,7 +15,7 @@ import COPY from '../../../COPY';
 import { taskById, appealWithDetailSelector, getAllTasksForAppeal } from '../selectors';
 import { onReceiveAmaTasks } from '../QueueActions';
 import { requestPatch } from '../uiReducer/uiActions';
-import { taskActionData, currentDaysOnHold} from '../utils';
+import { taskActionData, currentDaysOnHold } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
 
@@ -772,30 +772,20 @@ class CompleteTaskModal extends React.Component {
       return formattedInstructions[0];
     }
 
-    if (this.props.modalType === 'proceed_final_notification_letter') {
-      const currentTaskID = this.props.task.taskId;
+    if (this.props.task.type !== 'SendInitialNotificationLetterTask') {
+      if ((this.props.modalType === 'proceed_final_notification_letter') ||
+        (this.props.modalType === 'resend_initial_notification_letter')) {
+        const currentTaskID = this.props.task.taskId;
 
-      this.props.tasks.forEach((data, index) => {
-        if (data.taskId === currentTaskID) {
-          const onHolddays = currentDaysOnHold(data);
-          const totalDays = data.onHoldDuration;
+        this.props.tasks.forEach((data) => {
+          if (data.taskId === currentTaskID) {
+            const onHolddays = currentDaysOnHold(data);
+            const totalDays = data.onHoldDuration;
 
-          return formattedInstructions.push(`\n Hold time: ${onHolddays} / ${totalDays} days\n\n`);
-        }
-      });
-    }
-
-    if (this.props.modalType === 'resend_initial_notification_letter') {
-      const currentTaskID = this.props.task.taskId;
-
-      this.props.tasks.forEach((data, index) => {
-        if (data.taskId === currentTaskID) {
-          const onHolddays = currentDaysOnHold(data);
-          const totalDays = data.onHoldDuration;
-
-          return formattedInstructions.push(`\n Hold time: ${onHolddays} / ${totalDays} days\n\n`);
-        }
-      });
+            return formattedInstructions.push(`\n Hold time: ${onHolddays} / ${totalDays} days\n\n`);
+          }
+        });
+      }
     }
 
     if (this.props.modalType === 'vha_send_to_board_intake') {
@@ -932,7 +922,8 @@ CompleteTaskModal.propTypes = {
       type: PropTypes.string
     }),
     label: PropTypes.string,
-    taskId: PropTypes.string
+    taskId: PropTypes.string,
+    type: PropTypes.string
   }),
   featureToggles: PropTypes.object,
   highlightInvalid: PropTypes.bool

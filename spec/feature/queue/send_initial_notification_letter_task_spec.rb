@@ -40,7 +40,7 @@ RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
       click_dropdown(prompt: prompt, text: text)
 
       # check modal content
-      expect(page).to have_content(format(COPY::PROCEED_FINAL_NOTIFICATION_LETTER_COPY))
+      expect(page).to have_content(format(COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY))
 
       # fill out instructions
       fill_in("instructions", with: "instructions")

@@ -226,4 +226,56 @@ describe PostSendInitialNotificationLetterHoldingTask do
       end
     end
   end
+
+  describe "Process when hold time expire" do
+    let(:days_on_hold) { 45 }
+    let!(:post_task) do
+      task_class.create!(
+        appeal: distribution_task.appeal,
+        parent_id: distribution_task.id,
+        assigned_to: cob_team,
+        end_date: Time.zone.now + 45.days
+      )
+    end
+
+    let!(:post_task_timer) do
+      TimedHoldTask.create_from_parent(
+        post_task,
+        days_on_hold: days_on_hold,
+        instructions: "45 Days Hold Period"
+      )
+    end
+
+    let(:timer_for_task) do
+      task_timer = TaskTimer.last
+      task_timer.update(last_submitted_at: 1.day.ago)
+      task_timer.reload
+    end
+
+
+
+    context "Hold time expire" do
+      let(:now) { Time.zone.now }
+
+      it "Complete task" do
+        Timecop.travel(now + 45.days) do
+          timer_for_task.update(processed_at: 1.day.ago)
+
+          processed_at = timer_for_task.reload.processed_at
+
+          post_task.when_timer_ends
+
+          expect(timer_for_task.reload.processed_at).to eq processed_at
+
+          task = Task.find_by(type: "SendFinalNotificationLetterTask")
+          expect(task.appeal_id).to eq(post_task.appeal_id)
+          expect(task.status).to eq("assigned")
+
+          task_complete = Task.find_by(type: "PostSendInitialNotificationLetterHoldingTask")
+          expect(task_complete.appeal_id).to eq(post_task.appeal_id)
+          expect(task_complete.status).to eq("completed")
+        end
+      end
+    end
+  end
 end
