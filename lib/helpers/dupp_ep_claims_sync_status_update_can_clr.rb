@@ -141,8 +141,7 @@ module WarRoom
           # and if he would like to manually, update the sync status by performing can or clr.
           # Prompt user to enter yes or no to fix the data manually by updating the caseflow sync status.
           # This will prompt the user yes or no to process the claim or recommended to save and close terminal to resart. Update the epe with the sync status as cancelled or cleared.
-
-          # Need to fix conditional logic. Put input = gets.chomp.downcase first. Then "if" "epe hlr" "Then nested CAN/CLR method" elseif "epe sc" "Then nested CAN/CLR method" else "raise error" end
+          # Todo: Fix if Statement
         ActiveRecord::Base.transaction do
           if
             epe.claim_type_code == "040" && ["CAN", "CLR"].include?(epe.status_type_code) && [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
