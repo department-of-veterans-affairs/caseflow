@@ -38,6 +38,7 @@ export const NotificationsView = (props) => {
   };
 
   const [alert, setAlert] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { push } = useHistory();
   const { appealId, featureToggles } = props;
@@ -69,13 +70,16 @@ export const NotificationsView = (props) => {
 
   //  Error handling to add alert message for PDF generation
   const generatePDF = () => {
+    setLoading(true);
     const status = ApiUtil.get(pdfURL).then(() => {
       window.location.href = pdfURL;
+      setLoading(false);
     }).
       catch((error) => {
         if (error.status === 404) {
           setAlert(true);
         }
+        setLoading(false);
       });
 
     return status;
@@ -110,7 +114,7 @@ export const NotificationsView = (props) => {
             <p className="notification-text">
               VA Notify sent these status notifications to the Appellant about their case.
             </p>
-            <Button id = "download-button" classNames={['usa-button-secondary']} onClick={() => generatePDF()}>Download</Button>
+            <Button id = "download-button" classNames={['usa-button-secondary']} onClick={() => generatePDF()} loading={loading} >Download</Button>
           </div>
 
           <div className="notification-table">
