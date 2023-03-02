@@ -4,7 +4,10 @@ import { ACTIONS } from './cavcDashboardConstants';
 export const initialState = {
   decision_reasons: {},
   selection_bases: {},
-  initial_state: {},
+  initial_state: {
+    cavc_dashboards: [],
+    checked_boxes: {}
+  },
   cavc_dashboards: [],
   checked_boxes: {},
   dashboard_issues: [],
@@ -30,7 +33,8 @@ export const cavcDashboardReducer = (state = initialState, action) => {
       initial_state: {
         cavc_dashboards: {
           $set: action.payload.cavc_dashboards
-        }
+        },
+        checked_boxes: {}
       },
       cavc_dashboards: {
         $set: action.payload.cavc_dashboards
@@ -48,7 +52,9 @@ export const cavcDashboardReducer = (state = initialState, action) => {
     return update(state, {
       initial_state: {
         checked_boxes: {
-          $set: state.checked_boxes
+          [action.payload.uniqueId]: {
+            $set: state.checked_boxes[action.payload.uniqueId]
+          }
         }
       }
     });
