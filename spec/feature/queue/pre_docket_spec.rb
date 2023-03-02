@@ -93,7 +93,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           end
         end
 
-        step "enacting the 'Mark task as in progress' task action updates
+        step "enacting the 'Mark task in progress' task action updates
           the VhaDocumentSearchTask's status to in_progress" do
           User.authenticate!(user: vha_caregiver_user)
 
