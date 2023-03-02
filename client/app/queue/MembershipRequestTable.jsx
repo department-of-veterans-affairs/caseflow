@@ -13,8 +13,12 @@ const MembershipRequestTable = (props) => {
 
   const REQUESTS_PER_PAGE = 10;
 
+  console.log(requests);
+
   const initializePaginatedData = (membershipRequests) => {
     const paginatedData = [];
+
+    console.log('how many times is this called?');
 
     for (let i = 0; i < membershipRequests.length; i += REQUESTS_PER_PAGE) {
       paginatedData.push(membershipRequests.slice(i, i + REQUESTS_PER_PAGE));
@@ -44,7 +48,6 @@ const MembershipRequestTable = (props) => {
     return updatedRequests;
   };
 
-  // Testing a new version of this to remove exisiting notes because it keeps adding them for paginated rows
   // Since we are modifying the current page paginated rows instead of all of them now
   const getPaginatedRowObjects = (rows) => {
     // Guard clause for empty rows.
@@ -82,6 +85,11 @@ const MembershipRequestTable = (props) => {
     updatePaginatedData();
   }, [expanded]);
 
+  // Update the state if the requests prop changes.
+  useEffect(() => {
+    setPaginatedRequests(initializePaginatedData(getRowObjects(requests)));
+  }, [requests]);
+
   const toggleExpanded = (id) => {
     setExpanded({
       ...expanded,
@@ -93,15 +101,17 @@ const MembershipRequestTable = (props) => {
   const dropdownOptions = [
     {
       title: 'Approve',
+      action: 'approved',
     },
     {
       title: 'Deny',
+      action: 'denied',
     },
   ];
 
   const buildDropdownActions = (request) => {
     return dropdownOptions.map((obj) => {
-      return { ...obj, value: request.id };
+      return { ...obj, value: `${request.id}-${obj.action}` };
     });
   };
 

@@ -30,9 +30,16 @@ class MembershipRequestMailer < ActionMailer::Base
     mail(to: @recipient_info[:email], subject: "New membership request recieved.")
   end
 
+  # TODO: Replace these subject lines with the constants in copy.json
   def vha_business_line_approval
     @recipient = params[:requestor]
     @accessible_groups = params[:accessible_groups]
     mail(to: @recipient&.email, subject: "Request approved - Do Not Reply")
+  end
+
+  def vha_business_line_denial
+    @recipient = params[:requestor]
+    @accessible_groups = params[:accessible_groups]
+    mail(to: @recipient&.email, subject: "Request denied - Do Not Reply")
   end
 end

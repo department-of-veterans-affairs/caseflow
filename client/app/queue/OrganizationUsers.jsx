@@ -298,31 +298,64 @@ export default class OrganizationUsers extends React.PureComponent {
   membershipRequestHandler = (value) => {
     console.log('idk');
     console.log(value);
-    const requestAction = 'approved';
+    // const requestAction = 'approved';
 
-    const data = { id: value, requestAction };
+    const [requestId, requestAction] = value.split('-');
+
+    console.log(requestId);
+    console.log(requestAction);
+
+    const data = { id: requestId, requestAction };
 
     // const payload = { data: { requestAction } };
 
-    ApiUtil.patch(`/membership_requests/${value}`, { data }).then((response) => {
+    // TODO: Only do this if you are adding?
+    // Might be fine for both
+    // TODO: There's not enough data attached to the membership requests to do this
+    // this.setState({
+    //   addingUser: value
+    // });
+
+    ApiUtil.patch(`/membership_requests/${requestId}`, { data }).then((response) => {
       console.log('idk I guess it worked?');
       console.log(response.body);
 
-      const { success } = response.body;
+      const { success, updatedUser, updatedRequestId } = response.body;
 
       const titleMessage = sprintf(COPY.MEMBERSHIP_REQUEST_ACTION_SUCCESS_TITLE, success.type, success.userName);
       const bodyMessage = sprintf(COPY.MEMBERSHIP_REQUEST_ACTION_SUCCESS_MESSAGE, success.type === 'approved' ? 'granted' : 'denied', success.organizationName);
 
+      // console.log(titleMessage);
+      // console.log(bodyMessage);
 
-      console.log(titleMessage);
-      console.log(bodyMessage);
+      // TODO: copy what is done in create user here?
+      // TODO: Update requests somehow
+      // TODO: Updating remainingUsers is a pain. We would have to filter the id based on the returned user id?
+
+      console.log(updatedUser);
+      console.log(updatedUser.data);
+      console.log([...this.state.organizationUsers, updatedUser]);
+
+      // this.setState({
+      //   organizationUsers: [...this.state.organizationUsers, response.body.users.data[0]],
+      //   remainingUsers: this.state.remainingUsers.filter((user) => user.id !== updatedUser.id),
+      //   addingUser: null
+      // });
+
+      // console.log(this.state.remainingUsers);
+      console.log(this.state.membershipRequests);
 
       this.setState({
+        organizationUsers: [...this.state.organizationUsers, updatedUser],
+        remainingUsers: this.state.remainingUsers.filter((user) => user.id !== updatedUser.id),
+        membershipRequests: this.state.membershipRequests.filter((request) => request.id !== updatedRequestId),
         success: {
           title: titleMessage,
           body: bodyMessage,
-        }
+        },
       });
+
+      console.log(this.state.membershipRequests);
 
     }, (error) => {
       console.log('idk something blew up');

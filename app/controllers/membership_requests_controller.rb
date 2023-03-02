@@ -26,6 +26,8 @@ class MembershipRequestsController < ApplicationController
       .serializable_hash[:data]
       .map { |hash| hash[:attributes] }
 
+
+
     render json: { data: { newMembershipRequests: serialized_requests } }, status: :created
 
     # TODO: send back appropriate errors?
@@ -45,6 +47,9 @@ class MembershipRequestsController < ApplicationController
     # If it is a approve it needs to update the organization users current users
     # It needs to update the requests for either decision/status.
 
+    # TODO: Should it return all of the requests for that Org here?
+    # Or just the one request and remove that one specifically from the requests on the page
+
     # render json: { users: json_users([user_to_modify]) }, status: :ok
     success_messsage_hash = {
       type: membership_request.status,
@@ -52,7 +57,14 @@ class MembershipRequestsController < ApplicationController
       organizationName: membership_request.organization.name
     }
 
-    render json: { success: success_messsage_hash }, status: :ok
+    json_user = ::WorkQueue::AdministeredUserSerializer.new(
+      membership_request.requestor,
+      params: { organization: membership_request.organization }
+    ).serializable_hash[:data]
+
+    json_hash = { success: success_messsage_hash, updatedUser: json_user, updatedRequestId: membership_request.id }
+
+    render json: json_hash, status: :ok
   end
 
   private

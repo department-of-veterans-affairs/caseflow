@@ -27,15 +27,19 @@ class MembershipRequest < ApplicationRecord
       # TODO: Also this will change the email as well
       # MembershipRequestMailer.with().vha_businessline_approval.deliver_now!
       organization.add_user(requestor)
+      # TODO: Ask if this should be any orgs or just VHA orgs?
       accessible_orgs = requestor.organizations.map(&:name)
       MembershipRequestMailer.with(requestor: requestor, accessible_groups: accessible_orgs)
         .vha_business_line_approval.deliver_now!
 
     elsif denied?
-      MembershipRequestMailer.with().vha_business_line_denial.deliver_now!
+      accessible_orgs = requestor.organizations.map(&:name)
+      MembershipRequestMailer.with(requestor: requestor, accessible_groups: accessible_orgs)
+        .vha_business_line_denial.deliver_now!
     end
+    # accessible_orgs = requestor.organizations.map(&:name)
+    # MembershipRequestMailer.with(requestor: requestor, accessible_groups: accessible_orgs).vha_business_line_denial.deliver_now!
     # Send the email either way
     # MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(membership_requests).send_email_after_creation
-
   end
 end
