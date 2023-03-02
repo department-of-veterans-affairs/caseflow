@@ -32,6 +32,30 @@ RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
       expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK.label)
     end
 
+    it "mark task complete action completes the task" do
+      visit("/queue")
+      visit("/queue/appeals/#{initial_letter_task.appeal.external_id}")
+      prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+      text = Constants.TASK_ACTIONS.MARK_TASK_AS_COMPLETE_CONTESTED_CLAIM.label
+      click_dropdown(prompt: prompt, text: text)
+
+      # check modal content
+      expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_TITLE_CONTESTED_CLAIM))
+      expect(page).to have_content(format(COPY::MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL))
+
+      # click 45 days from the options
+      find("label", text: "45 days").click
+
+      # submit form
+      click_button(COPY::MARK_TASK_COMPLETE_BUTTON_CONTESTED_CLAIM)
+
+      # expect success
+      expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, root_task.appeal.veteran.person.name))
+      expect(page.current_path).to eq("/organizations/clerk-of-the-board")
+      appeal_initial_letter_task = root_task.appeal.tasks.reload.find_by(type: "SendInitialNotificationLetterTask")
+      expect(appeal_initial_letter_task.status).to eq("completed")
+    end
+
     it "proceed to final notification action creates final notification task and completes the initial notification task" do
       visit("/queue")
       visit("/queue/appeals/#{initial_letter_task.appeal.external_id}")
