@@ -57,7 +57,11 @@ class CavcDashboardController < ApplicationController
       create_or_update_dashboard_dispositions(submitted_dispositions)
     end
 
-    create_new_dispositions_to_reasons(checked_boxes)
+    new_disp_to_reason_set = checked_boxes.map do |checkbox|
+      create_new_dispositions_to_reasons(checkbox)
+    end
+
+    delete_removed_dispositions_to_reasons(new_disp_to_reason_set)
 
     render json: { successful: true }
   end
@@ -127,16 +131,24 @@ class CavcDashboardController < ApplicationController
     end
   end
 
-  def create_new_dispositions_to_reasons(checked_boxes)
+  def create_new_dispositions_to_reasons(checkbox)
     # checked_box format from cavcDashboardActions.js: [issue_id, issue_type, decision_reason_id]
-    checked_boxes.each do |box|
-      cdd = if box[1] == "request_issue"
-              CavcDashboardDisposition.find_by(request_issue_id: box[0])
-            else
-              CavcDashboardDisposition.find_by(cavc_dashboard_issue_id: box[0])
-            end
+    cdd = if checkbox[1] == "request_issue"
+            CavcDashboardDisposition.find_by(request_issue_id: checkbox[0])
+          else
+            CavcDashboardDisposition.find_by(cavc_dashboard_issue_id: checkbox[0])
+          end
 
-      CavcDispositionsToReason.find_or_create_by(cavc_dashboard_disposition: cdd, cavc_decision_reason_id: box[2])
-    end
+    CavcDispositionsToReason.find_or_create_by(cavc_dashboard_disposition: cdd, cavc_decision_reason_id: checkbox[2])
+  end
+
+  def delete_removed_dispositions_to_reasons(new_disp_to_reason_set)
+    cdd_ids = new_disp_to_reason_set.map(&:cavc_dashboard_disposition_id).uniq
+    all_dispositions_to_reasons = cdd_ids
+      .map { |id| CavcDashboardDisposition.find_by(id: id) }
+      .flat_map(&:cavc_dispositions_to_reasons)
+
+    reasons_to_delete = all_dispositions_to_reasons - new_disp_to_reason_set
+    reasons_to_delete.map(&:destroy)
   end
 end
