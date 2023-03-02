@@ -26,6 +26,12 @@ export const fetchInitialDashboardData = (appealId) => (dispatch) => {
     }));
 };
 
+export const resetDashboardData = () => (dispatch) => {
+  dispatch({
+    type: ACTIONS.RESET_DASHBOARD_DATA
+  });
+};
+
 export const setCheckedDecisionReasons = (checkedReasons, issueId) => ({
   type: ACTIONS.SET_CHECKED_DECISION_REASONS,
   payload: {
@@ -34,8 +40,11 @@ export const setCheckedDecisionReasons = (checkedReasons, issueId) => ({
   }
 });
 
-export const setInitialCheckedDecisionReasons = () => ({
-  type: ACTIONS.SET_INITIAL_CHECKED_DECISION_REASONS
+export const setInitialCheckedDecisionReasons = (uniqueId) => ({
+  type: ACTIONS.SET_INITIAL_CHECKED_DECISION_REASONS,
+  payload: {
+    uniqueId
+  }
 });
 
 export const removeCheckedDecisionReason = (issueId) => ({
