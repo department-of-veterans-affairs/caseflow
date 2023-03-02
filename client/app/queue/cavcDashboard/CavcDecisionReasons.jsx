@@ -11,7 +11,14 @@ import { setCheckedDecisionReasons, setInitialCheckedDecisionReasons } from './c
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
 
-const CavcDecisionReasons = ({ uniqueId, dispositionIssueType, loadCheckedBoxes, userCanEdit }) => {
+const CavcDecisionReasons = (props) => {
+  const {
+    uniqueId,
+    initialDispositionRequiresReasons,
+    dispositionIssueType,
+    loadCheckedBoxes,
+    userCanEdit
+  } = props;
 
   const checkboxStyling = css({
     paddingLeft: '2.5%',
@@ -48,7 +55,7 @@ const CavcDecisionReasons = ({ uniqueId, dispositionIssueType, loadCheckedBoxes,
   const loadCheckedBoxesId = loadCheckedBoxes?.map((box) => box.cavc_decision_reason_id);
   const decisionReasons = useSelector((state) => state.cavcDashboard.decision_reasons);
   const checkedBoxesInStore = useSelector((state) => state.cavcDashboard.checked_boxes[uniqueId]);
-  const initialCheckBoxesInStore = useSelector((state) => state.cavcDashboard.initial_state.checked_boxes);
+  const initialCheckBoxesInStore = useSelector((state) => state.cavcDashboard.initial_state.checked_boxes[uniqueId]);
 
   const parentReasons = decisionReasons.filter((parentReason) => !parentReason.parent_decision_reason_id).sort(
     (obj) => obj.order);
@@ -85,8 +92,8 @@ const CavcDecisionReasons = ({ uniqueId, dispositionIssueType, loadCheckedBoxes,
 
   useEffect(() => {
     dispatch(setCheckedDecisionReasons(checkedReasons, uniqueId));
-    if (!initialCheckBoxesInStore) {
-      dispatch(setInitialCheckedDecisionReasons());
+    if (!initialCheckBoxesInStore && initialDispositionRequiresReasons) {
+      dispatch(setInitialCheckedDecisionReasons(uniqueId));
     }
   }, [checkedReasons]);
 
@@ -177,7 +184,7 @@ const CavcDecisionReasons = ({ uniqueId, dispositionIssueType, loadCheckedBoxes,
       return (
         <Checkbox
           key={parent.id}
-          name={`checkbox-${parent.id}-${uniqueId}`}
+          name={parent.decision_reason}
           label={parent.decision_reason}
           onChange={(value) => handleCheckboxChange(value, parent.id)}
           value={checkedReasons[parent.id]?.checked}
@@ -194,7 +201,7 @@ const CavcDecisionReasons = ({ uniqueId, dispositionIssueType, loadCheckedBoxes,
       return (
         <Checkbox
           key={child.id}
-          name={`checkbox-${child.id}-${uniqueId}`}
+          name={child.decision_reason}
           label={child.decision_reason}
           onChange={(value) => handleCheckboxChange(value, child.id)}
           value={checkedReasons[parent.id]?.children?.find((x) => x.id === child.id).checked}
@@ -316,6 +323,7 @@ const CavcDecisionReasons = ({ uniqueId, dispositionIssueType, loadCheckedBoxes,
 
 CavcDecisionReasons.propTypes = {
   uniqueId: PropTypes.number,
+  initialDispositionRequiresReasons: PropTypes.bool,
   dispositionIssueType: PropTypes.string,
   loadCheckedBoxes: PropTypes.shape({
     cavc_dashboard_disposition_id: PropTypes.number,

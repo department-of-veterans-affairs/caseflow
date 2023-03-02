@@ -37,6 +37,7 @@ const renderCavcDashboard = async (appealData, shouldResolvePromise) => {
     fetchCavcDecisionReasons: promiseResult,
     fetchCavcSelectionBases: promiseResult,
     fetchInitialDashboardData: promiseResult,
+    resetDashboardData: jest.fn(),
     initialState
   };
 
