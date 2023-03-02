@@ -195,7 +195,7 @@ describe('CompleteTaskModal', () => {
 
 
       expect(screen.getByRole(
-        'textbox', { name: 'Provide additional context and/or documents:' }
+        'textbox', { name: 'Provide additional context for this action Optional' }
       )).toBeTruthy();
     });
 
@@ -413,7 +413,7 @@ describe('CompleteTaskModal', () => {
       );
 
       const optionalTextArea = screen.getByRole(
-        'textbox', { name: 'Provide additional context for this action' }
+        'textbox', { name: 'Provide additional context for this action Optional' }
       );
 
       userEvent.type(optionalTextArea, 'Additional context');
@@ -462,7 +462,7 @@ describe('CompleteTaskModal', () => {
       userEvent.type(otherTextArea, 'Reasoning for the return');
 
       const optionalTextArea = screen.getByRole(
-        'textbox', { name: 'Provide additional context for this action' }
+        'textbox', { name: 'Provide additional context for this action Optional' }
       );
 
       userEvent.type(optionalTextArea, 'Additional context');

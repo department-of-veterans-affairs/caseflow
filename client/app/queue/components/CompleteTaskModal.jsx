@@ -260,6 +260,7 @@ const VhaCamoReturnToBoardIntakeModal = ({ props, state, setState }) => {
         taskConfiguration={taskConfiguration}
         state={state}
         setState={setState}
+        instructionsOptional
       />
     </React.Fragment>
   );
@@ -339,6 +340,7 @@ const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState })
         taskConfiguration={taskConfiguration}
         state={state}
         setState={setState}
+        instructionsOptional
       />
     </React.Fragment>
   );

@@ -1269,7 +1269,7 @@
   "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review.",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL": "Why is this appeal being returned?",
-  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "This appeal will be sent to Board Intake.",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "This appeal will be returned to Board Intake.",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS": {
     "DUPLICATE": {
       "LABEL": "Duplicate",
@@ -1301,7 +1301,7 @@
     }
   },
   "VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL": "Please provide the reason for return",
-  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_INSTRUCTIONS_LABEL": "Provide additional context and/or documents:",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_INSTRUCTIONS_LABEL": "Provide additional context for this action",
   "VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION": "You have successfully returned %s's case to Board Intake",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL": "What is the status of this appeal?",
