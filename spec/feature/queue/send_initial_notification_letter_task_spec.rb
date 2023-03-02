@@ -51,7 +51,6 @@ RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
       expect(page.current_path).to eq("/organizations/clerk-of-the-board")
       appeal_initial_letter_task = root_task.appeal.tasks.reload.find_by(type: "SendInitialNotificationLetterTask")
       expect(appeal_initial_letter_task.status).to eq("completed")
-
     end
 
     it "cancel action cancels the task and displays it on the case timeline" do
