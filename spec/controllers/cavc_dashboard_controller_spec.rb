@@ -159,6 +159,16 @@ RSpec.describe CavcDashboardController, type: :controller do
   end
 
   context "for routes specific to an appeal" do
+    it "#index redirects user if trying to access the dashboard for a legacy appeal" do
+      vacols_formatted_id = "1234567"
+      get :index, params: { appeal_id: vacols_formatted_id }
+
+      # expecting redirect_to was not working, so check status and location which are set when redirecting
+      expect(response.status).to eq 302
+      expect(response.headers["Location"].include?("1234567")).to be true
+      expect(response.headers["Location"].include?("cavc_dashboard")).to be false
+    end
+
     it "#index returns nil for cavc_dashboards if appeal_id doesn't match any remands" do
       appeal = create(:appeal)
 
