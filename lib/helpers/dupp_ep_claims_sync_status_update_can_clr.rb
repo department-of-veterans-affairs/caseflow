@@ -142,8 +142,11 @@ module WarRoom
           # Prompt user to enter yes or no to fix the data manually by updating the caseflow sync status.
           # This will prompt the user yes or no to process the claim or recommended to save and close terminal to resart. Update the epe with the sync status as cancelled or cleared.
 
+          # Need to fix conditional logic. Put input = gets.chomp.downcase first. Then "if" "epe hlr" "Then nested CAN/CLR method" elseif "epe sc" "Then nested CAN/CLR method" else "raise error" end
         ActiveRecord::Base.transaction do
-          if epe.claim_type_code == "040" && ["CAN", "CLR"].include?(epe.status_type_code) && [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
+          if
+            epe.claim_type_code == "040" && ["CAN", "CLR"].include?(epe.status_type_code) && [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
+            puts "WARNING!!! Please review the provided data. If you would like this Supplimental Claim data to be updated, enter 'yes' else enter 'no'.\n"
             input = gets.chomp.downcase
             while input != "yes" && input != "no"
               puts "Invalid input. Please enter 'yes' to update the claim data or 'no' to cancel.\n"
@@ -151,54 +154,197 @@ module WarRoom
             end
             if input == "yes"
               if epe.status_type_code == "CAN"
+                puts "Updating Sync code to CAN for cancel"
                 epe.update!(synced_status: "CAN", last_synced_at: Time.zone.now)
+                puts "Updated epe synced status for #{epe.id}"
+                # Cancel the syncing process of the original end product establishment
+                epe.send(:cancel!)
+                puts "Canceled the original epe: #{epe.id}"
+                # Log a message for the user
+                puts "Claim data has been updated and the original end product establishment has been cancelled with a updated sync status.\n"
+                # Reloads the epe
+                epe.reload
+                # Gather the claim details from bgs with it's new sync status.
+                claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
+                puts "Providing query results of new sync status here: #{claim_detail}\n"
+                puts "You may now save data and exit the terminal\n"
+                # Until end, the next few lines of code reruns the query count and displays the total problem count; which should've been reduced by one
+                # If Remediation was successful
+                scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
+                hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
+                # set current user
+                RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+                # Log a message for the user
+                Rails.logger.info("You current user has been set to #{RequestStore[:current_user].css_id}")
+                # Grabs the problem scs with the status of Cancelled or Cleared
+                problem_scs = scs.select { |sc|
+                  sc.veteran.end_products.select { |ep|
+                    ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  }.empty?
+                }
+                problem_hlr = hlr.select { |hlr|
+                  hlr.veteran.end_products.select { |ep|
+                    ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  }.empty?
+                }
+                # Count the total problem claims and keep track
+                count = problem_scs.count + problem_hlr.count
+                if count.zero?
+                  puts "No problem Supplemental Claims or Higher Level Reviews found. Exiting.\n"
+                end
+                puts "Found #{count} problem Supplemental Claims and Higher Level Reviews. This should be one less from your original count"
+                puts "You may now save data and exit the terminal\n"
               else
+                puts "Updating Sync code to CLR for clear"
                 epe.update!(synced_status: "CLR", last_synced_at: Time.zone.now)
+                puts "Updated epe synced status for #{epe.id}"
+                # Cancel the syncing process of the original end product establishment
+                epe.send(:cancel!)
+                puts "Canceled the original epe: #{epe.id}"
+                # Log a message for the user
+                puts "Claim data has been updated and the original end product establishment has been cancelled with a updated sync status.\n"
+                # Reloads the epe
+                epe.reload
+                # Gather the claim details from bgs with it's new sync status.
+                claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
+                puts "Providing query results of new sync status here: #{claim_detail}\n"
+                puts "You may now save data and exit the terminal\n"
+                # Until end, the next few lines of code reruns the query count and displays the total problem count; which should've been reduced by one
+                # If Remediation was successful
+                scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
+                hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
+                # set current user
+                RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+                # Log a message for the user
+                Rails.logger.info("You current user has been set to #{RequestStore[:current_user].css_id}")
+                # Grabs the problem scs with the status of Cancelled or Cleared
+                problem_scs = scs.select { |sc|
+                  sc.veteran.end_products.select { |ep|
+                    ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  }.empty?
+                }
+                problem_hlr = hlr.select { |hlr|
+                  hlr.veteran.end_products.select { |ep|
+                    ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  }.empty?
+                }
+                # Count the total problem claims and keep track
+                count = problem_scs.count + problem_hlr.count
+                if count.zero?
+                  puts "No problem Supplemental Claims or Higher Level Reviews found. Exiting.\n"
+                end
+                puts "Found #{count} problem Supplemental Claims and Higher Level Reviews. This should be one less from your original count"
+                puts "You may now save data and exit the terminal\n"
               end
             else
               puts "No updates were performed. Please close terminal and restart.\n"
               fail interupt
             end
-            puts "Updated epe synced status for #{epe.id}"
-            # Cancel the original end product establishment
-            epe.send(:cancel!)
-            puts "Canceled the original epe: #{epe.id}"
-            # Log a message for the user
-            puts "Claim data has been updated and the original end product establishment has been cancelled with a updated sync status.\n"
-            # Reloads the epe
-            epe.reload
-            # Gather the claim details from bgs with it's new sync status.
-            claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
-            puts "Providing query results of new sync status here: #{claim_detail}\n"
-            puts "You may now save data and exit the terminal\n"
-            # Until end, the next few lines of code reruns the query count and displays the total problem count; which should've been reduced by one
-            # If Remediation was successful
-            scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
-            hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
-            # set current user
-            RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
-            # Log a message for the user
-            Rails.logger.info("You current user has been set to #{RequestStore[:current_user].css_id}")
-            # Grabs the problem scs with the status of Cancelled or Cleared
-            problem_scs = scs.select { |sc|
-              sc.veteran.end_products.select { |ep|
-                ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-                [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
-              }.empty?
-            }
-            problem_hlr = hlr.select { |hlr|
-              hlr.veteran.end_products.select { |ep|
-                ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-                [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
-              }.empty?
-            }
-            # Count the total problem claims and keep track
-            count = problem_scs.count + problem_hlr.count
-            if count.zero?
-              puts "No problem Supplemental Claims or Higher Level Reviews found. Exiting.\n"
+
+          else
+            epe.claim_type_code == "030" && ["CAN", "CLR"].include?(epe.status_type_code) && [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
+            puts "WARNING!!! Please review the provided data. If you would like this Supplimental Claim data to be updated, enter 'yes' else enter 'no'.\n"
+            input = gets.chomp.downcase
+            while input != "yes" && input != "no"
+              puts "Invalid input. Please enter 'yes' to update the claim data or 'no' to cancel.\n"
+              input = gets.chomp.downcase
             end
-            puts "Found #{count} problem Supplemental Claims and Higher Level Reviews. This should be one less from your original count"
-            puts "You may now save data and exit the terminal\n"
+            if input == "yes"
+              if epe.status_type_code == "CAN"
+                puts "Updating Sync code to CAN for cancel"
+                epe.update!(synced_status: "CAN", last_synced_at: Time.zone.now)
+                puts "Updated epe synced status for #{epe.id}"
+                # Cancel the syncing process of the original end product establishment
+                epe.send(:cancel!)
+                puts "Canceled the original epe: #{epe.id}"
+                # Log a message for the user
+                puts "Claim data has been updated and the original end product establishment has been cancelled with a updated sync status.\n"
+                # Reloads the epe
+                epe.reload
+                # Gather the claim details from bgs with it's new sync status.
+                claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
+                puts "Providing query results of new sync status here: #{claim_detail}\n"
+                puts "You may now save data and exit the terminal\n"
+                # Until end, the next few lines of code reruns the query count and displays the total problem count; which should've been reduced by one
+                # If Remediation was successful
+                scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
+                hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
+                # set current user
+                RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+                # Log a message for the user
+                Rails.logger.info("You current user has been set to #{RequestStore[:current_user].css_id}")
+                # Grabs the problem scs with the status of Cancelled or Cleared
+                problem_scs = scs.select { |sc|
+                  sc.veteran.end_products.select { |ep|
+                    ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  }.empty?
+                }
+                problem_hlr = hlr.select { |hlr|
+                  hlr.veteran.end_products.select { |ep|
+                    ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  }.empty?
+                }
+                # Count the total problem claims and keep track
+                count = problem_scs.count + problem_hlr.count
+                if count.zero?
+                  puts "No problem Supplemental Claims or Higher Level Reviews found. Exiting.\n"
+                end
+                puts "Found #{count} problem Supplemental Claims and Higher Level Reviews. This should be one less from your original count"
+                puts "You may now save data and exit the terminal\n"
+              else
+                puts "Updating Sync code to CLR for clear"
+                epe.update!(synced_status: "CLR", last_synced_at: Time.zone.now)
+                puts "Updated epe synced status for #{epe.id}"
+                # Cancel the syncing process of the original end product establishment
+                epe.send(:cancel!)
+                puts "Canceled the original epe: #{epe.id}"
+                # Log a message for the user
+                puts "Claim data has been updated and the original end product establishment has been cancelled with a updated sync status.\n"
+                # Reloads the epe
+                epe.reload
+                # Gather the claim details from bgs with it's new sync status.
+                claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
+                puts "Providing query results of new sync status here: #{claim_detail}\n"
+                puts "You may now save data and exit the terminal\n"
+                # Until end, the next few lines of code reruns the query count and displays the total problem count; which should've been reduced by one
+                # If Remediation was successful
+                scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
+                hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
+                # set current user
+                RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+                # Log a message for the user
+                Rails.logger.info("You current user has been set to #{RequestStore[:current_user].css_id}")
+                # Grabs the problem scs with the status of Cancelled or Cleared
+                problem_scs = scs.select { |sc|
+                  sc.veteran.end_products.select { |ep|
+                    ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  }.empty?
+                }
+                problem_hlr = hlr.select { |hlr|
+                  hlr.veteran.end_products.select { |ep|
+                    ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+                    [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+                  }.empty?
+                }
+                # Count the total problem claims and keep track
+                count = problem_scs.count + problem_hlr.count
+                if count.zero?
+                  puts "No problem Supplemental Claims or Higher Level Reviews found. Exiting.\n"
+                end
+                puts "Found #{count} problem Supplemental Claims and Higher Level Reviews. This should be one less from your original count"
+                puts "You may now save data and exit the terminal\n"
+              end
+            else
+              puts "No updates were performed. Please close terminal and restart.\n"
+              fail interupt
+            end
           end
         end
       end
