@@ -60,91 +60,83 @@ module WarRoom
       end
       puts "Found #{count} problem Supplemental Claims and Higher Level Reviews. Please enter the UUID of the first claim:\n"
       # This code finds the SupplementalClaims and HigherLevelReviews
-      # that contain the duplicateEP error with the provided UUID.
-      # It then filters these to only include the claims with establishment errors containing "duplicateep" for the individual SupplementalClaims or HigherLevelReviews ID
-      # and joins them based on their associated EndProduct records. It then goes through and promts the user how he wants to manually handle the
-      # problem duplicate ep claim.
+      # The next few lines identify the problem claim.
+
       ActiveRecord::Base.transaction do
         uuid2 = gets.chomp.strip
         # This will check if both scs and hlr are nil, which means the provided UUID doesn't match any records
         # in the SupplementalClaim and HigherLevelReview tables with the establishment_error containing the "duplicateep" string.
         puts "Running match query for SC or HLR that contain duplicateEP Errors for uuid: #{uuid2}\n"
 
-        #We hit the above line code
-        def problem_claim(uuid2)
-          # Query the SupplementalClaim table for a record with the specified uuid and establishment_error containing 'duplicateep'
-          puts "Looking for sc"
-          sc = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'").find_by(uuid: "#{uuid2}")
-          puts "Looking for hlr"
-          # Query the HigherLevelReview table for a record with the specified uuid and establishment_error containing 'duplicateep'
-          hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'").find_by(uuid: "#{uuid2}")
+        # Query the SupplementalClaim table for a record with the specified uuid and establishment_error containing 'duplicateep'
+        puts "Looking for sc"
+        sc = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'").find_by(uuid: "#{uuid2}")
+        puts "Looking for hlr"
+        # Query the HigherLevelReview table for a record with the specified uuid and establishment_error containing 'duplicateep'
+        hlr = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'").find_by(uuid: "#{uuid2}")
+        puts "Looking for the hlr or sc and returning the problem claim as duplicate_ep_problem_claim"
+        if sc.nil? && hlr.nil?
+          puts "No SupplementalClaim or HigherLevelReview found with uuid: #{uuid2}\n"
+          return duplicate_ep_problem_claim = nil
+          raise ActiveRecord::Rollback
+        elsif !sc.nil? && hlr.nil?
+          return problem_claim = sc
+          puts "Putting data to be reviewed for SupplementalClaim ID #{sc.id}.\n"
+        elsif sc.nil? && !hlr.nil?
+          return problem_claim = hlr
+          puts "Putting data to be reviewed for HigherLevelReview ID #{hlr.id}.\n"
+        else
+          puts "Error: Multiple records found with the same UUID and establishment_error containing 'duplicateep'\n"
+          return duplicate_ep_problem_claim = nil
+          raise ActiveRecord::Rollback
+        end
+        # Assign the `problem_claim` object to `duplicate_ep_problem_claim`
+        duplicate_ep_problem_claim = problem_claim
+        # If duplicate_ep_problem_claim is nil, raise an error
+        if duplicate_ep_problem_claim.nil?
+          raise "Duplicate EP problem claim count is off and manual remediation must be stopped\n"
+          raise ActiveRecord::Rollback
+        end
+        puts "#{duplicate_ep_problem_claim} : the duplicate_ep_problem_claim has been identified, displaying the claim data"
+        # Set the review to the first epe source appeal
+        epe = duplicate_ep_problem_claim.veteran.end_product_establishments&.first
+        if epe.nil?
+          Rails.logger.error("Unable to find EPE for Problem Claim #{epe.id}.")
+        end
+        puts "Providing end product establishment data, epe.id, for the epe in question or to be found #{epe.id}\n"
+        # stores the source of the of the EPE if HLR, Supplemental or AMA/Legacy Appeal.
+        # If decision document set to the appeal of the source.
+        source = (epe.source_type != "DecisionDocument") ? epe.source : epe.source.appeal
+        if source.nil?
+          Rails.logger.error("Could not find a source for the original EPE. #{epe.id}...\n")
+        else
+          puts "Source has been found here: #{source}\n"
+          claimant = source.claimant
+          puts "Source Claimant has been found here: #{claimant}\n"
+        end
+        # Reaches out to BGS services to create a new service for a claim
+        bgs=BGSService.new.client.claims
+        if bgs.nil?
+          Rails.logger.error("Could not perform BGSService.new.client.claims to display data")
+        end
+        puts "BGS service can be found: #{bgs}\n"
+        # Gather the claim details from bgs with it's async status.
+        claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
+        if claim_detail.nil?
+          Rails.logger.error("Could not find the claim details from bgs with it's async status")
+        end
+        puts "Providing claim details for review, that should have sync status of cleared or cancel #{claim_detail}\n"
+        puts "Please review the provided data. If you would like this claim data to be updated, enter 'yes' else enter 'no'.\n"
+        # Here we will use a begin get chomp method to perform the transaction on the SC or HLR data
+        # Prompt user if he recogonizes change to the Appeal
+        # and if he would like to manually, update the sync status by performing can or clr.
+        # Prompt user to enter yes or no to fix the data manually by updating the caseflow sync status.
+        # This will prompt the user yes or no to process the claim and recommended to save and close terminal to resart.
+        # The script will update the epe with the sync status as cancelled or cleared based off of the polling logic and User input.
+        # Todo: Fix if Statement
 
-          puts "Looking for the hlr or sc and returning the problem claim as duplicate_ep_problem_claim"
-          if sc.nil? && hlr.nil?
-            puts "No SupplementalClaim or HigherLevelReview found with uuid: #{uuid2}\n"
-            return duplicate_ep_problem_claim = nil
-            raise ActiveRecord::Rollback
-          elsif !sc.nil? && hlr.nil?
-            return problem_claim = sc
-            puts "Putting data to be reviewed for SupplementalClaim ID #{sc.id}.\n"
-          elsif sc.nil? && !hlr.nil?
-            return problem_claim = hlr
-            puts "Putting data to be reviewed for HigherLevelReview ID #{hlr.id}.\n"
-          else
-            puts "Error: Multiple records found with the same UUID and establishment_error containing 'duplicateep'\n"
-            return duplicate_ep_problem_claim = nil
-            raise ActiveRecord::Rollback
-          end
-
-          # Assign the `problem_claim` object to `duplicate_ep_problem_claim`
-          duplicate_ep_problem_claim = problem_claim
-          # If duplicate_ep_problem_claim is nil, raise an error
-          if duplicate_ep_problem_claim.nil?
-            raise "Duplicate EP problem claim count is off and manual remediation must be stopped\n"
-            raise ActiveRecord::Rollback
-          end
-          puts "#{duplicate_ep_problem_claim} : the duplicate_ep_problem_claim has been identified, displaying the claim data"
-          # Set the review to the first epe source appeal
-          epe = duplicate_ep_problem_claim.veteran.end_product_establishments&.first
-          if epe.nil?
-            Rails.logger.error("Unable to find EPE for Problem Claim #{epe.id}.")
-          end
-          puts "Providing end product establishment data, epe.id, for the epe in question or to be found #{epe.id}\n"
-          # stores the source of the of the EPE if HLR, Supplemental or AMA/Legacy Appeal.
-          # If decision document set to the appeal of the source.
-          source = (epe.source_type != "DecisionDocument") ? epe.source : epe.source.appeal
-          if source.nil?
-            Rails.logger.error("Could not find a source for the original EPE. #{epe.id}...\n")
-          else
-            puts "Source has been found here: #{source}\n"
-            claimant = source.claimant
-            puts "Source Claimant has been found here: #{claimant}\n"
-          end
-
-          # Reaches out to BGS services to create a new service for a claim
-          bgs=BGSService.new.client.claims
-          if bgs.nil?
-            Rails.logger.error("Could not perform BGSService.new.client.claims to display data")
-          end
-          puts "BGS service can be found: #{bgs}\n"
-          # Gather the claim details from bgs with it's async status.
-          claim_detail = bgs.find_claim_detail_by_id(epe.reference_id)
-
-          if claim_detail.nil?
-            Rails.logger.error("Could not find the claim details from bgs with it's async status")
-          end
-          puts "Providing claim details for review, that should have sync status of cleared or cancel #{claim_detail}\n"
-
-          puts "Please review the provided data. If you would like this claim data to be updated, enter 'yes' else enter 'no'.\n"
-          # Here we will use a begin get chomp method to perform the transaction on the SC or HLR data
-          # Prompt user if he recogonizes change to the Appeal
-          # and if he would like to manually, update the sync status by performing can or clr.
-          # Prompt user to enter yes or no to fix the data manually by updating the caseflow sync status.
-          # This will prompt the user yes or no to process the claim or recommended to save and close terminal to resart. Update the epe with the sync status as cancelled or cleared.
-          # Todo: Fix if Statement
         ActiveRecord::Base.transaction do
-          if
-            epe.claim_type_code == "040" && ["CAN", "CLR"].include?(epe.status_type_code) && [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
+          if epe.present? && epe.claim_type_code.present? && epe.claim_type_code == "040" && ["CAN", "CLR"].include?(epe.status_type_code) && [Date.today, 1.day.ago.to_date].include?(epe.last_action_date)
             puts "WARNING!!! Please review the provided data. If you would like this Supplimental Claim data to be updated, enter 'yes' else enter 'no'.\n"
             input = gets.chomp.downcase
             while input != "yes" && input != "no"
@@ -465,5 +457,4 @@ module WarRoom
     #  end
     #end
   end
-end
 end
