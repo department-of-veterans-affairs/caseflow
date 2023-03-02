@@ -317,12 +317,14 @@ const CavcDecisionReasons = ({ uniqueId, dispositionIssueType, loadCheckedBoxes,
 CavcDecisionReasons.propTypes = {
   uniqueId: PropTypes.number,
   dispositionIssueType: PropTypes.string,
-  loadCheckedBoxes: PropTypes.shape({
-    cavc_dashboard_disposition_id: PropTypes.number,
-    cavc_decision_reason_id: PropTypes.number,
-    cavc_selection_basis_id: PropTypes.number,
-    id: PropTypes.number
-  }),
+  loadCheckedBoxes: PropTypes.arrayOf(
+    PropTypes.shape({
+      cavc_dashboard_disposition_id: PropTypes.number,
+      cavc_decision_reason_id: PropTypes.number,
+      cavc_selection_basis_id: PropTypes.number,
+      id: PropTypes.number
+    })
+  ),
   userCanEdit: PropTypes.bool
 };
 
