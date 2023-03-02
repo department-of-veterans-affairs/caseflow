@@ -105,7 +105,7 @@ afterEach(() => {
 describe('CompleteTaskModal', () => {
   describe('vha_send_to_board_intake', () => {
     const taskType = 'VhaDocumentSearchTask';
-    const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const buttonText = COPY.MODAL_SEND_BUTTON;
     const modalType = 'vha_send_to_board_intake';
 
     test('modal title is Send to Board Intake', () => {
@@ -223,7 +223,7 @@ describe('CompleteTaskModal', () => {
 
   describe('emo_send_to_board_intake_for_review', () => {
     const taskType = 'EducationDocumentSearchTask';
-    const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const buttonText = COPY.MODAL_SEND_BUTTON;
     const modalType = 'emo_send_to_board_intake_for_review';
 
     test('modal title is Ready for Review', () => {
@@ -265,7 +265,7 @@ describe('CompleteTaskModal', () => {
 
   describe('rpo_send_to_board_intake_for_review', () => {
     const taskType = 'EducationAssessDocumentationTask';
-    const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+    const buttonText = COPY.MODAL_SEND_BUTTON;
     const modalType = 'rpo_send_to_board_intake_for_review';
 
     test('modal title is Ready for Review', () => {

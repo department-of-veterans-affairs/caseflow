@@ -108,6 +108,7 @@ class StartHoldModal extends React.Component {
 
     return <QueueFlowModal
       title={TASK_ACTIONS.PLACE_TIMED_HOLD.label}
+      button={COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON}
       pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
       validateForm={this.validateForm}
       submitButtonClassNames={['usa-button']}
