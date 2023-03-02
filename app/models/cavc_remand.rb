@@ -57,6 +57,7 @@ class CavcRemand < CaseflowRecord
   end
 
   # called from the Edit Remand Form
+  # TODO: validate here for same appeal substitution
   def update(params)
     # Identify changes
     decision_issue_ids_as_ints = params[:decision_issue_ids].map(&:to_i)
