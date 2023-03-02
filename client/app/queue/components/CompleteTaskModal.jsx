@@ -394,7 +394,10 @@ const MODAL_TYPE_ATTRS = {
   },
   vha_documents_ready_for_bva_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
-      title: sprintf(COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.CONFIRMATION_TITLE, appeal.veteranFullName)
+      title: sprintf(
+        COPY.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE,
+        appeal.veteranFullName
+      )
     }),
     title: () => COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL.TITLE,
     getContent: ReadyForReviewModal,
