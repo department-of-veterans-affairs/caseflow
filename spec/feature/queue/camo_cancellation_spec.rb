@@ -34,9 +34,11 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
       User.authenticate!(user: camo_user)
     end
     scenario "assign to BVA intake" do
-      navigate_from_camo_queue_to_case_deatils
-      step "submit valid form" do
-        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      step "navigate from CAMO team queue to case details" do
+        visit camo_org.path
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+        expect(page).to have_content(appeal.veteran_full_name.to_s)
       end
       step "trigger send to board intake modal" do
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
@@ -68,15 +70,6 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
     scenario "navigate to queue and confirm appeal is there" do
       visit bva_intake_org.path
       expect(page).to have_content("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
-    end
-  end
-
-  def navigate_from_camo_queue_to_case_deatils
-    step "navigate from CAMO team queue to case details" do
-      visit camo_org.path
-      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-      expect(page).to have_content(appeal.veteran_full_name.to_s)
     end
   end
 end
