@@ -17,5 +17,5 @@ class WorkQueue::CavcDashboardSerializer
   attribute :cavc_remand
   attribute :joint_motion_for_remand
 
-  attribute :source_request_issues
+  attribute :remand_request_issues
 end
