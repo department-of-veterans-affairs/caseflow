@@ -24,7 +24,7 @@ class PrepareDocumentUploadToVbms
   def call
     success = valid?
     if success
-      #@params[:veteran_file_number] = throw_error_if_file_number_not_match_bgs
+      @params[:veteran_file_number] = throw_error_if_file_number_not_match_bgs
       VbmsUploadedDocument.create(document_params).tap do |document|
         document.cache_file
         UploadDocumentToVbmsJob.perform_later(
