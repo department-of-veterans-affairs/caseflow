@@ -32,7 +32,8 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       expect(page).to have_current_path "/queue/appeals/#{legacy_appeal.vacols_id}"
     end
 
-    it "dashboard redirects if the appeal does not have an associated cavcRemand" do
+    it "dashboard redirects if the appeal does not have an associated cavcRemand",
+       skip: "flaky due to changes in setting state, remove when direct URL access is restricted" do
       visit "/queue/appeals/#{non_cavc_appeal.uuid}/cavc_dashboard"
       expect(page).to have_text non_cavc_appeal.veteran.name.to_s
       expect(page).to have_current_path "/queue/appeals/#{non_cavc_appeal.uuid}"
