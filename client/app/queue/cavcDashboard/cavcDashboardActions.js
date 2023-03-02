@@ -26,6 +26,12 @@ export const fetchInitialDashboardData = (appealId) => (dispatch) => {
     }));
 };
 
+export const resetDashboardData = () => (dispatch) => {
+  dispatch({
+    type: ACTIONS.RESET_DASHBOARD_DATA
+  });
+};
+
 export const setCheckedDecisionReasons = (checkedReasons, issueId) => ({
   type: ACTIONS.SET_CHECKED_DECISION_REASONS,
   payload: {

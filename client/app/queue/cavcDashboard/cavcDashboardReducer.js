@@ -40,6 +40,10 @@ export const cavcDashboardReducer = (state = initialState, action) => {
         $set: action.payload.cavc_dashboards
       }
     });
+  case ACTIONS.RESET_DASHBOARD_DATA:
+    return update(state, {
+      $set: initialState
+    });
   case ACTIONS.SET_CHECKED_DECISION_REASONS:
     return update(state, {
       checked_boxes: {
