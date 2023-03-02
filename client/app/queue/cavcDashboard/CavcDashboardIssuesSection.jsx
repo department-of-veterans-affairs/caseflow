@@ -213,7 +213,7 @@ const CavcDashboardIssue = (props) => {
 
 const CavcDashboardIssuesSection = (props) => {
   const { dashboard, dashboardIndex, removeDashboardIssue, userCanEdit } = props;
-  const issues = dashboard.source_request_issues;
+  const issues = dashboard.remand_request_issues;
   const cavcIssues = dashboard.cavc_dashboard_issues;
   const dashboardDispositions = dashboard.cavc_dashboard_dispositions;
   const dashboardId = dashboard.id;
