@@ -25,6 +25,16 @@ export const veteranParticipantIdColumn = () => {
   };
 };
 
+export const veteranSsnColumn = () => {
+  return {
+    header: COPY.CASE_LIST_TABLE_TASK_VETERAN_SSN_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.VETERAN_SSN.name,
+    backendCanSort: true,
+    valueFunction: (task) => task.veteranSSN,
+    getSortValue: (task) => task.veteranSSN
+  };
+};
+
 export const decisionReviewTypeColumn = (tasks) => {
   return {
     header: 'Type',
