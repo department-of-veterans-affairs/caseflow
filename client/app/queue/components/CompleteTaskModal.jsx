@@ -7,9 +7,8 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import RadioField from '../../components/RadioField';
-import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, setHeight, slimHeight } from '../constants';
+import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop, slimHeight } from '../constants';
 import TextareaField from 'app/components/TextareaField';
-import SearchableDropdown from '../../components/SearchableDropdown';
 import Alert from 'app/components/Alert';
 import COPY from '../../../COPY';
 import { taskById, appealWithDetailSelector, getAllTasksForAppeal } from '../selectors';
@@ -18,6 +17,7 @@ import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import QueueFlowModal from './QueueFlowModal';
+import { VhaReturnToBoardIntakeModal } from './VhaReturnToBoardIntakeModal';
 
 const validRadio = (radio) => {
   return radio?.length > 0;
@@ -29,6 +29,22 @@ const validInstructions = (instructions) => {
 
 const validDropdown = (dropdown) => {
   return dropdown?.length > 0;
+};
+
+const formatOtherInstructions = (state) => {
+  let formattedInstructions = '';
+
+  if (state.dropdown === 'other') {
+    formattedInstructions += `\n**Reason for return:**\nOther - ${state.otherInstructions}`;
+  } else {
+    formattedInstructions += `\n**Reason for return:**\n${state.dropdown}`;
+  }
+
+  if (state.instructions) {
+    formattedInstructions += `\n\n**Detail:**\n${state.instructions}`;
+  }
+
+  return formattedInstructions;
 };
 
 const submitDisabled = ({ state }) => {
@@ -243,6 +259,37 @@ SendToBoardIntakeModal.propTypes = {
   highlightInvalid: PropTypes.bool
 };
 
+const VhaCamoReturnToBoardIntakeModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+
+  return (
+    <React.Fragment>
+      <VhaReturnToBoardIntakeModal
+        modalBody = {COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY}
+        dropdownLabel = {COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL}
+        dropdownDefaultText = {COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
+        otherLabel={COPY.VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL}
+        instructionsLabel={COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_INSTRUCTIONS_LABEL}
+        highlightInvalid = {props.highlightInvalid}
+        taskConfiguration={taskConfiguration}
+        state={state}
+        setState={setState}
+        instructionsOptional
+      />
+    </React.Fragment>
+  );
+};
+
+VhaCamoReturnToBoardIntakeModal.propTypes = {
+  props: PropTypes.object,
+  tasks: PropTypes.array,
+  setState: PropTypes.func,
+  state: PropTypes.object,
+  register: PropTypes.func,
+  featureToggles: PropTypes.array,
+  highlightInvalid: PropTypes.bool
+};
+
 const ReturnToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
 
@@ -295,55 +342,20 @@ SendColocatedTaskModal.propTypes = {
 const VhaCaregiverSupportReturnToBoardIntakeModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
 
-  const dropdownOptions = taskConfiguration.options;
-
-  const handleDropdownChange = ({ value }) => {
-    setState({ dropdown: value });
-    if (value === 'other') {
-      setState({ otherInstructions: '' });
-    }
-  };
-
   return (
     <React.Fragment>
-      {taskConfiguration && taskConfiguration.modal_body}
-      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
-        <div style= {{ marginTop: '1.5rem' }}>
-          <SearchableDropdown
-            label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL}
-            defaultText={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
-            name="rejectReason"
-            id="caregiverSupportReturnToBoardIntakeReasonSelection"
-            options={dropdownOptions}
-            onChange={handleDropdownChange}
-            value={state.dropdown}
-            errorMessage={props.highlightInvalid &&
-              !validDropdown(state.dropdown) ? 'You must select a reason for returning to intake' : null}
-          />
-          {state.dropdown === 'other' &&
-            <TextareaField
-              label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL}
-              name="otherRejectReason"
-              id="completeTaskOtherInstructions"
-              onChange={(value) => setState({ otherInstructions: value })}
-              value={state.otherInstructions}
-              styling={marginTop(2)}
-              textAreaStyling={setHeight(4.5)}
-              errorMessage={props.highlightInvalid &&
-                !validInstructions(state.otherInstructions) ? 'Return reason field is required' : null}
-            />}
-          <TextareaField
-            label={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL}
-            name="instructions"
-            id="caregiverSupportReturnToBoardIntakeInstructions"
-            onChange={(value) => setState({ instructions: value })}
-            value={state.instructions}
-            styling={marginTop(2)}
-            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-            optional
-          />
-        </div>
-      )}
+      <VhaReturnToBoardIntakeModal
+        modalBody = {COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY}
+        dropdownLabel = {COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_LABEL}
+        dropdownDefaultText = {COPY.TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT}
+        otherLabel={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_OTHER_REASON_TEXT_FIELD_LABEL}
+        highlightInvalid = {props.highlightInvalid}
+        instructionsLabel={COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TEXT_FIELD_LABEL}
+        taskConfiguration={taskConfiguration}
+        state={state}
+        setState={setState}
+        instructionsOptional
+      />
     </React.Fragment>
   );
 };
@@ -404,6 +416,20 @@ const MODAL_TYPE_ATTRS = {
     buttonText: COPY.MODAL_SEND_BUTTON,
     submitDisabled
   },
+  vha_return_to_board_intake: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(COPY.VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
+    }),
+    title: () => COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
+    getContent: VhaCamoReturnToBoardIntakeModal,
+    buttonText: COPY.MODAL_RETURN_BUTTON,
+    submitDisabled: ({ state }) => (
+      !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
+    ),
+    customFormatInstructions: ({ state }) => {
+      return formatOtherInstructions(state);
+    }
+  },
   vha_send_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
@@ -452,19 +478,7 @@ const MODAL_TYPE_ATTRS = {
         validDropdown(state.dropdown)
     ),
     customFormatInstructions: ({ state }) => {
-      let formattedInstructions = '';
-
-      if (state.dropdown === 'other') {
-        formattedInstructions += `\n**Reason for return:**\nOther - ${state.otherInstructions}`;
-      } else {
-        formattedInstructions += `\n**Reason for return:**\n${state.dropdown}`;
-      }
-
-      if (state.instructions) {
-        formattedInstructions += `\n\n**Detail:**\n${state.instructions}`;
-      }
-
-      return formattedInstructions;
+      return formatOtherInstructions(state);
     }
   },
 

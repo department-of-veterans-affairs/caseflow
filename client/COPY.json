@@ -1269,6 +1269,42 @@
   "VHA_COMPLETE_TASK_CONFIRMATION_PO": "Appeal has been marked as ready for review and sent to the CAMO team for review.",
   "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review.",
   "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_TITLE": "Ready for Review",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL": "Why is this appeal being returned?",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "This appeal will be returned to Board Intake.",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS": {
+    "DUPLICATE": {
+      "LABEL": "Duplicate",
+      "VALUE": "duplicate"
+    },
+    "HLR_PENDING": {
+      "LABEL": "HLR Pending",
+      "VALUE": "hlr pending"
+    },
+    "SC_PENDING": {
+      "LABEL": "SC Pending",
+      "VALUE": "sc pending"
+    },
+    "NOT_VHA_RELATED": {
+      "LABEL": "Not VHA related",
+      "VALUE": "not vha related"
+    },
+      "CLARIFICATION_NEEDED": {
+      "LABEL": "Clarification needed from appellant",
+      "VALUE": "clarification needed from appellant"
+    },
+    "NO_VHA_DECISION": {
+      "LABEL": "No VHA decision",
+      "VALUE": "no vha decision"
+    },
+    "OTHER": {
+      "LABEL": "Other",
+      "VALUE": "other"
+    }
+  },
+  "VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL": "Please provide the reason for return",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_INSTRUCTIONS_LABEL": "Provide additional context for this action",
+  "VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION": "You have successfully returned %s's case to Board Intake",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL": "What is the status of this appeal?",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS": "Correct documents have been successfully added",
