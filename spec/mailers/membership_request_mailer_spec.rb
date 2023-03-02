@@ -18,7 +18,7 @@ describe MembershipRequestMailer do
       MembershipRequestMailer.with(recipient_info: requestor,
                                    requests: membership_requests,
                                    subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED)
-        .user_request_sent
+        .user_request_created
     end
 
     it "has the correct from email address" do

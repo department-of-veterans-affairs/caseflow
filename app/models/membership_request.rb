@@ -40,7 +40,6 @@ class MembershipRequest < CaseflowRecord
     end
 
     def send_creation_emails(membership_requests, org_type = "VHA")
-      # TODO: Make this call the job?
       MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(membership_requests).send_email_after_creation
     end
   end
