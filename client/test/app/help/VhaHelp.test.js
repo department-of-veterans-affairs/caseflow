@@ -1,9 +1,9 @@
-import React, { useDebugValue } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import React from 'react';
+import { render, screen } from '@testing-library/react';
 import VhaHelp from '../../../app/help/components/VhaHelp';
-import { Provider, useDispatch } from 'react-redux';
+import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import helpReducers, { initialState, setSuccessMessage } from '../../../app/help/helpApiSlice';
+import helpReducers, { initialState } from '../../../app/help/helpApiSlice';
 import { VHA_MEMBERSHIP_REQUEST_FORM_SUBMIT_SUCCESS_MESSAGE } from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 
