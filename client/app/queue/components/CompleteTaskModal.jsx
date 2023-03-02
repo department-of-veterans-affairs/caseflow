@@ -411,7 +411,7 @@ const MODAL_TYPE_ATTRS = {
         appeal.veteranFullName
       )
     }),
-    title: () => COPY.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL_TITLE,
+    title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SEND_BUTTON,
     submitDisabled
