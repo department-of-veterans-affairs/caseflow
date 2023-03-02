@@ -509,6 +509,11 @@
   "RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON": "Resend notification letter",
   "RESEND_INITIAL_NOTIFICATION_LETTER_TASK_SUCCESS": "Post Send Initial Notification Letter Holding task completed",
 
+  "RESEND_FINAL_NOTIFICATION_LETTER_TITLE": "Resend final notification letter",
+  "RESEND_FINAL_NOTIFICATION_LETTER_COPY": "The \"Send Final Notification Letter\" task will be marked as complete and a new \"Send Final Notification Letter\" task will be created.",
+  "RESEND_FINAL_NOTIFICATION_LETTER_BUTTON": "Resend notification letter",
+  "RESEND_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS": "Send Final Notification Letter task completed",
+
   "MODAL_SUBMIT_BUTTON": "Submit",
   "MODAL_CANCEL_BUTTON": "Cancel",
   "MODAL_CLOSE_BUTTON": "Close",

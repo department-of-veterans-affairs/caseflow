@@ -466,8 +466,8 @@
   },
   "RESEND_FINAL_NOTIFICATION_LETTER": {
     "label": "Resend final notification letter",
-    "value": "modal/cancel_task",
-    "func": "cancel_task_data"
+    "value": "modal/resend_final_notification_letter",
+    "func": "resend_final_notification_letter_task_data"
   },
   "MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE": {
     "label": "Mark task complete",
