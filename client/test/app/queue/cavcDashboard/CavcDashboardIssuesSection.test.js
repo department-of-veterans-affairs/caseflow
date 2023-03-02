@@ -13,7 +13,7 @@ jest.mock('react-redux', () => ({
 
 const createDashboardProp = () => {
   return {
-    source_request_issues: [{
+    remand_request_issues: [{
       id: 1000,
       benefit_type: 'compensation',
       decision_review_type: 'Appeal',
@@ -39,16 +39,16 @@ const renderCavcDashboardIssuesSection = async (dashboard, userCanEdit = true) =
 
 describe('CavcDashboardIssuesSection', () => {
 
-  it('displays correct values with source_request_issues', async () => {
+  it('displays correct values with remand_request_issues', async () => {
     const dashboard = createDashboardProp();
 
     await renderCavcDashboardIssuesSection(dashboard);
     const Issues = [...document.querySelectorAll('li')];
 
-    expect(screen.getAllByText(dashboard.source_request_issues[0].benefit_type, { exact: false })).toBeTruthy();
+    expect(screen.getAllByText(dashboard.remand_request_issues[0].benefit_type, { exact: false })).toBeTruthy();
     expect(screen.getAllByText(
       // eslint-disable-next-line max-len
-      `${dashboard.source_request_issues[0].decision_review_type } - ${ dashboard.source_request_issues[0].contested_issue_description}`
+      `${dashboard.remand_request_issues[0].decision_review_type } - ${ dashboard.remand_request_issues[0].contested_issue_description}`
     )).toBeTruthy();
     expect(Issues.length).toBe(2);
 

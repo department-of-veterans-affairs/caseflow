@@ -53,7 +53,7 @@ describe CavcDashboard, :postgres do
     end
   end
 
-  it "#source_request_issues returns array of source appeal's issues" do
-    expect(cavc_dashboard.source_request_issues.count).to eq 3
+  it "#remand_request_issues returns array of remand appeal's issues" do
+    expect(cavc_dashboard.remand_request_issues.count).to eq cavc_remand.remand_appeal.request_issues.count
   end
 end
