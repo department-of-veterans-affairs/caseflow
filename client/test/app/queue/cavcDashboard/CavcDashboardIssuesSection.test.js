@@ -21,9 +21,7 @@ const createDashboardProp = () => {
     }],
     cavc_dashboard_issues: [{
       benefit_type: 'education',
-      issue_category: {
-        label: 'Service Connection'
-      },
+      issue_category: 'Service Connection',
       disposition: 'Reversed'
     }],
     cavc_dashboard_dispositions: [{
@@ -33,8 +31,8 @@ const createDashboardProp = () => {
   };
 };
 
-const renderCavcDashboardIssuesSection = async (dashboard) => {
-  const props = { dashboard };
+const renderCavcDashboardIssuesSection = async (dashboard, userCanEdit = true) => {
+  const props = { dashboard, userCanEdit };
 
   return render(<CavcDashboardIssuesSection {...props} />);
 };
@@ -47,8 +45,8 @@ describe('CavcDashboardIssuesSection', () => {
     await renderCavcDashboardIssuesSection(dashboard);
     const Issues = [...document.querySelectorAll('li')];
 
-    expect(screen.getByText(dashboard.source_request_issues[0].benefit_type, { exact: false })).toBeTruthy();
-    expect(screen.getByText(
+    expect(screen.getAllByText(dashboard.source_request_issues[0].benefit_type, { exact: false })).toBeTruthy();
+    expect(screen.getAllByText(
       // eslint-disable-next-line max-len
       `${dashboard.source_request_issues[0].decision_review_type } - ${ dashboard.source_request_issues[0].contested_issue_description}`
     )).toBeTruthy();
@@ -63,7 +61,7 @@ describe('CavcDashboardIssuesSection', () => {
     const Issues = [...document.querySelectorAll('li')];
 
     expect(screen.getByText(dashboard.cavc_dashboard_issues[0].benefit_type, { exact: false })).toBeTruthy();
-    expect(screen.getByText(dashboard.cavc_dashboard_issues[0].issue_category.label)).toBeTruthy();
+    expect(screen.getByText(dashboard.cavc_dashboard_issues[0].issue_category)).toBeTruthy();
     expect(Issues.length).toBe(2);
   });
 });

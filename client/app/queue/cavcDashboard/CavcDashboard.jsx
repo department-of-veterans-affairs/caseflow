@@ -5,7 +5,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { fetchAppealDetails } from '../QueueActions';
-import { fetchCavcDecisionReasons, fetchInitialDashboardData, fetchCavcSelectionBases } from './cavcDashboardActions';
+import {
+  fetchCavcDecisionReasons,
+  fetchInitialDashboardData,
+  fetchCavcSelectionBases,
+  saveDashboardData
+} from './cavcDashboardActions';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
@@ -47,7 +52,7 @@ export const CavcDashboard = (props) => {
         return { label, page };
       }));
     }
-  }, [loaded]);
+  }, [loaded, cavcDashboards]);
 
   // Redirect to the CaseDetails page if no remand exists for the provided appealId
   if (loaded && !cavcDashboards) {
@@ -90,6 +95,7 @@ CavcDashboard.propTypes = {
   fetchCavcDecisionReasons: PropTypes.func,
   fetchCavcSelectionBases: PropTypes.func,
   fetchInitialDashboardData: PropTypes.func,
+  saveDashboardData: PropTypes.func,
   userCanEdit: PropTypes.bool,
   // Router inherited props
   history: PropTypes.object
@@ -99,7 +105,9 @@ const mapStateToProps = (state, ownProps) => {
   return {
     appealDetails: state.queue.appealDetails[ownProps.appealId],
     cavcDashboards: state.cavcDashboard.cavc_dashboards,
-    userCanEdit: state.ui.canEditCavcDashboards
+    checkedBoxes: state.cavcDashboard.checked_boxes,
+    userCanEdit: state.ui.canEditCavcDashboards,
+    initialState: state.cavcDashboard.initial_state
   };
 };
 
@@ -108,7 +116,8 @@ const mapDispatchToProps = (dispatch) =>
     fetchAppealDetails,
     fetchCavcDecisionReasons,
     fetchCavcSelectionBases,
-    fetchInitialDashboardData
+    fetchInitialDashboardData,
+    saveDashboardData
   }, dispatch);
 
 export default connect(

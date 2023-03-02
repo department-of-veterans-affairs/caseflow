@@ -8,9 +8,11 @@ module Seeds
     end
 
     def seed!
+      Seeds::CavcSelectionBasisData.new.seed! unless CavcSelectionBasis.count > 0
       Seeds::CavcDecisionReasonData.new.seed! unless CavcDecisionReason.count > 0
-      create_cavc_dashboard_dispositions
-      create_cavc_dashboard_issues
+      create_cavc_dashboards_with_blank_dispositions
+      create_cavc_dashboards_with_selected_dispositions
+      create_cavc_dashboards_with_issues
       create_appeals_with_multiple_cavc_remands
     end
 
@@ -41,21 +43,39 @@ module Seeds
       create(:veteran, params.merge(options))
     end
 
-    def create_cavc_dashboard_dispositions
-      10.times do
+    def create_cavc_dashboards_with_blank_dispositions
+      5.times do
+        remand = create(:cavc_remand,
+                        cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
+                        veteran: create_veteran)
+        CavcDashboard.create!(cavc_remand: remand)
+
+        @cavc_docket_number_last_four += 1
+      end
+    end
+
+    def create_cavc_dashboards_with_selected_dispositions
+      5.times do
         remand = create(:cavc_remand,
                         cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
                         veteran: create_veteran)
         dashboard = CavcDashboard.create!(cavc_remand: remand)
-        dashboard.source_request_issues.map do |issue|
-          CavcDashboardDisposition.create(cavc_dashboard: dashboard, disposition: 'abandoned', request_issue_id: issue.id)
+
+        dashboard.cavc_dashboard_dispositions.map do |disp|
+          disp.disposition = "reversed"
+          disp.save!
+          CavcDispositionsToReason.create!(
+            cavc_dashboard_disposition: disp,
+            cavc_decision_reason: CavcDecisionReason.find_by(decision_reason: "Other due process protection"),
+            cavc_selection_basis: CavcSelectionBasis.find_by(basis_for_selection: "AMA Opt-in")
+          )
         end
 
         @cavc_docket_number_last_four += 1
       end
     end
 
-    def create_cavc_dashboard_issues
+    def create_cavc_dashboards_with_issues
       10.times do
         remand = create(:cavc_remand,
                         cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
@@ -95,7 +115,41 @@ module Seeds
           mandate_date: 1.week.ago
         }
 
-        CavcRemand.create!(creation_params)
+        cavc_remand = CavcRemand.create!(creation_params)
+        dashboard = CavcDashboard.create!(cavc_remand: cavc_remand)
+        cavc_issue = CavcDashboardIssue.create(
+          cavc_dashboard: dashboard,
+          benefit_type: 'compensation',
+          issue_category: 'Unknown Issue Category'
+        )
+        disposition = CavcDashboardDisposition.create(
+          cavc_dashboard_issue: cavc_issue,
+          disposition: 'reversed',
+          cavc_dashboard: dashboard,
+        )
+
+        other_due_process_protection = CavcDecisionReason.where(decision_reason: 'Other due process protection').first
+        other_due_basis = CavcSelectionBasis.where(category: other_due_process_protection.basis_for_selection_category).first
+        CavcDispositionsToReason.create(
+          cavc_decision_reason: other_due_process_protection,
+          cavc_dashboard_disposition: disposition,
+          cavc_selection_basis: other_due_basis
+        )
+
+        misapplication = CavcDecisionReason.where(decision_reason: 'Misapplication of statute/regulation/diagnostic code/caselaw').first
+        CavcDispositionsToReason.create(
+          cavc_decision_reason: misapplication,
+          cavc_dashboard_disposition: disposition,
+        )
+
+        misapplication_regulation = CavcDecisionReason.where(decision_reason: 'Regulation', basis_for_selection_category: "misapplication_regulation").first
+        mis_reg_basis = CavcSelectionBasis.where(category: misapplication_regulation.basis_for_selection_category).first
+        CavcDispositionsToReason.create(
+          cavc_decision_reason: misapplication_regulation,
+          cavc_dashboard_disposition: disposition,
+          cavc_selection_basis: mis_reg_basis
+        )
+
         @cavc_docket_number_last_four += 1
       end
     end
