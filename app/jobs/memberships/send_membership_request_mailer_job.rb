@@ -17,6 +17,10 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
       "AdminRequestMade": :admin_request_made
     }
 
-    email_method_mapping_hash[email_type.to_sym]
+    method_name = email_method_mapping_hash[email_type&.to_sym]
+
+    fail(ArgumentError, "Unable to send email `#{email_type}`") unless method_name
+
+    method_name
   end
 end
