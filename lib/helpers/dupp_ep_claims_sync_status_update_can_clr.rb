@@ -343,11 +343,13 @@ module WarRoom
               end
             else
               puts "No updates were performed. Please close terminal and restart.\n"
+              raise ActiveRecord::Rollback
               fail interupt
             end
           end
         end
       end
+      puts "No updates were performed. Please close terminal and restart.\n"
     end
 
     #ActiveRecord::Base.transaction do
