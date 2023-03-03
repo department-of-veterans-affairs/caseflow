@@ -50,7 +50,7 @@ class NotificationEfolderSyncJob < ApplicationJob
   #* and will return false if one does not.
   def check_if_record_exists_in_vbms_uploaded_doc?(appeal)
 
-    docs = VbmsUploadedDocument.where(appeal_id:appeal.id, appeal_type:appeal.class.name, document_type:"BVA Letter")
+    docs = VbmsUploadedDocument.where(appeal_id:appeal.id, appeal_type:appeal.class.name, document_type:"BVA Case Notifications")
     !docs.empty?
 
   end
@@ -68,7 +68,7 @@ class NotificationEfolderSyncJob < ApplicationJob
   # * the document_type = "BVA Case Notifications"
   def latest_vbms_uploaded_document(appeal_id)
 
-    VbmsUploadedDocument.where(appeal_id:appeal_id, document_type:"BVA Letter").last
+    VbmsUploadedDocument.where(appeal_id:appeal_id, document_type:"BVA Case Notifications").last
 
   end
 
