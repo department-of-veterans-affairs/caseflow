@@ -14,6 +14,7 @@ module Seeds
       create_cavc_dashboards_with_selected_dispositions
       create_cavc_dashboards_with_issues
       create_appeals_with_multiple_cavc_remands
+      create_appeal_with_cavc_remand_affirmed_type
     end
 
     private
@@ -152,6 +153,49 @@ module Seeds
 
         @cavc_docket_number_last_four += 1
       end
+    end
+
+    def create_appeal_with_cavc_remand_affirmed_type
+
+      Timecop.travel 1.month.ago
+      source_appeal = create(:appeal,
+                             :dispatched,
+                             :with_request_issues,
+                             :with_decision_issue,
+                             issue_count: 1,
+                             veteran: create_veteran)
+      user = create(:user)
+      Timecop.return
+
+      creation_params = {
+        source_appeal_id: source_appeal.id,
+        cavc_decision_type: "affirmed",
+        cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
+        cavc_judge_full_name: "Clerk",
+        created_by_id: user.id,
+        decision_date: 1.week.ago,
+        decision_issue_ids: source_appeal.decision_issue_ids,
+        instructions: "Seed remand for testing",
+        represented_by_attorney: true,
+        updated_by_id: user.id,
+        judgement_date: 1.week.ago,
+        mandate_date: 1.week.ago
+      }
+
+      cavc_remand = CavcRemand.create!(creation_params)
+      dashboard = CavcDashboard.create!(cavc_remand: cavc_remand)
+      cavc_issue = CavcDashboardIssue.create(
+        cavc_dashboard: dashboard,
+        benefit_type: 'compensation',
+        issue_category: 'Unknown Issue Category'
+      )
+      disposition = CavcDashboardDisposition.create(
+        cavc_dashboard_issue: cavc_issue,
+        disposition: 'reversed',
+        cavc_dashboard: dashboard,
+      )
+
+      @cavc_docket_number_last_four += 1
     end
   end
 end
