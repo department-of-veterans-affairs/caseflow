@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "erb"
-
 class QueueColumn
   include ActiveModel::Model
 
