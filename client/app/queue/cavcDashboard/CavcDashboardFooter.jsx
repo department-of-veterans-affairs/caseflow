@@ -24,6 +24,9 @@ export const CavcDashboardFooter = (props) => {
 
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
 
+  const cancelModalDisabled = _.isEqual(initialState.cavc_dashboards, cavcDashboards) &&
+                              _.isEqual(initialState.checked_boxes, checkedBoxes);
+
   const closeHandler = () => {
     setCancelModalIsOpen(!cancelModalIsOpen);
   };
@@ -38,15 +41,9 @@ export const CavcDashboardFooter = (props) => {
 
   if (userCanEdit) {
     return (
-      // <div>
-      //   <Button onClick={closeHandler}>Cancel</Button>
-      //   <Button onClick={save}>Save Changes</Button>
-      //   {
-      //     (cancelModalIsOpen) &&
-      //     <CancelCavcDashboardChangeModal closeHandler={closeHandler} {...props} />
-      //   }
       <div {...buttonDivStyling}>
-        <Button linkStyling onClick={closeHandler}>Cancel</Button>
+        { !cancelModalDisabled && <Button linkStyling onClick={closeHandler} >Cancel</Button> }
+        { cancelModalDisabled && <Button linkStyling onClick={() => history.goBack()} >Cancel</Button> }
         <Button onClick={save} disabled={saveDisabled} >Save Changes</Button>
         {
           (cancelModalIsOpen) &&
@@ -57,10 +54,6 @@ export const CavcDashboardFooter = (props) => {
   }
 
   return (
-    // todo check if the history.goback causes issues
-    // <div {...buttonDivStyling}>
-    //   <Button onClick={cancel}>Return to Case Details</Button>
-    // </div>
     <div {...buttonDivStyling}>
       <Button onClick={() => history.goBack()}>Return to Case Details</Button>
     </div>
@@ -68,12 +61,10 @@ export const CavcDashboardFooter = (props) => {
 };
 
 CavcDashboardFooter.propTypes = {
-  // appealId: PropTypes.string,
   userCanEdit: PropTypes.bool.isRequired,
   saveDashboardData: PropTypes.func,
   initialState: PropTypes.object,
   cavcDashboards: PropTypes.arrayOf(PropTypes.object),
   checkedBoxes: PropTypes.oneOfType([PropTypes.object, PropTypes.arrayOf(PropTypes.object)]),
-  // Router inherited props
   history: PropTypes.object
 };

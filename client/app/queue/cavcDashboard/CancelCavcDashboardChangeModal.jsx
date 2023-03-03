@@ -7,7 +7,6 @@ import COPY from '../../../COPY';
 
 const CancelCavcDashboardChangeModal = (props) => {
   const { history, closeHandler } = props;
-  // const { appealId, history, cancelHandler } = props;
 
   const confirm = () => {
     history.goBack();
@@ -20,7 +19,7 @@ const CancelCavcDashboardChangeModal = (props) => {
         {
           classNames: ['usa-button', 'cf-btn-link'],
           name: COPY.MODAL_CANCEL_BUTTON,
-          onClick: confirm,
+          onClick: closeHandler,
         },
         {
           classNames: ['usa-button'],
@@ -37,7 +36,6 @@ const CancelCavcDashboardChangeModal = (props) => {
 
 CancelCavcDashboardChangeModal.propTypes = {
   closeHandler: PropTypes.func,
-  // appealId: PropTypes.string,
   history: PropTypes.object
 };
 
