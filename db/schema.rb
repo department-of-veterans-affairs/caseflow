@@ -1088,6 +1088,7 @@ ActiveRecord::Schema.define(version: 2023_01_26_230602) do
     t.datetime "created_at", null: false
     t.datetime "decided_at", comment: "The date and time when the deider user made a decision about the membership request"
     t.bigint "decider_id", comment: "The user who decides the status of the membership request"
+    t.string "note", comment: "A note that provides additional context from the requestor about their request for access to the organization"
     t.bigint "organization_id", comment: "The organization that the membership request is asking to join"
     t.bigint "requestor_id", comment: "The User that is requesting access to the organization"
     t.string "status", default: "assigned", null: false, comment: "The status of the membership request at any given point of time"
@@ -1163,7 +1164,7 @@ ActiveRecord::Schema.define(version: 2023_01_26_230602) do
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
     t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
-    t.string "sms_notification_external_id"
+    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"

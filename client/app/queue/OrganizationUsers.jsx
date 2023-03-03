@@ -15,6 +15,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
+import MembershipRequestTable from './MembershipRequestTable';
 
 const userStyle = css({
   margin: '.5rem 0 .5rem',
@@ -52,11 +53,13 @@ export default class OrganizationUsers extends React.PureComponent {
       judgeTeam: null,
       organizationUsers: [],
       remainingUsers: [],
+      membershipRequests: [],
       loading: true,
       error: null,
       addingUser: null,
       changingAdminRights: {},
       removingUser: {},
+      isVhaOrg: false
     };
   }
 
@@ -67,7 +70,9 @@ export default class OrganizationUsers extends React.PureComponent {
         judgeTeam: response.body.judge_team,
         dvcTeam: response.body.dvc_team,
         organizationUsers: response.body.organization_users.data,
+        membershipRequests: response.body.membership_requests,
         remainingUsers: [],
+        isVhaOrg: response.body.isVhaOrg,
         loading: false
       });
     }, (error) => {
@@ -240,7 +245,7 @@ export default class OrganizationUsers extends React.PureComponent {
       const { dvc, admin } = user.attributes;
       const style = i === 0 ? topUserStyle : userStyle;
 
-      return <React.Fragment>
+      return <React.Fragment key={user.id}>
         <li key={user.id} {...style}>{this.formatName(user)}
           { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
           { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
@@ -306,6 +311,11 @@ export default class OrganizationUsers extends React.PureComponent {
         <h1>{ this.state.judgeTeam ? sprintf(COPY.USER_MANAGEMENT_JUDGE_TEAM_PAGE_TITLE, this.state.organizationName) :
           this.state.dvcTeam ? sprintf(COPY.USER_MANAGEMENT_DVC_TEAM_PAGE_TITLE, this.state.organizationName) :
             sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName) }</h1>
+        {this.state.isVhaOrg && (<>
+          <MembershipRequestTable requests={this.state.membershipRequests} />
+          <div style={{ paddingBottom: '7rem' }}></div>
+        </>
+        )}
         {this.mainContent()}
       </div>
     </AppSegment>

@@ -3,7 +3,8 @@
 class MembershipRequestSerializer
   include FastJsonapi::ObjectSerializer
   attribute :id
-  # attribute :note
+  attribute :note
+  attribute :requestedDate, &:created_at
 
   attribute :name do |object|
     object.organization.try(:name)
@@ -19,5 +20,9 @@ class MembershipRequestSerializer
 
   attribute :orgId do |object|
     object.organization.try(:id)
+  end
+
+  attribute :userNameWithCssId do |object|
+    "#{object.requestor.full_name} (#{object.requestor.css_id})"
   end
 end
