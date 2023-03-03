@@ -348,8 +348,7 @@ const MODAL_TYPE_ATTRS = {
       detail: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, contact)
     }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE,
-    getContent: MarkTaskCompleteModal,
-    buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
+    getContent: MarkTaskCompleteModal
   },
   ready_for_review: {
     buildSuccessMsg: (appeal, { assignedToType }) => ({
@@ -365,8 +364,7 @@ const MODAL_TYPE_ATTRS = {
       title: sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION, appeal.veteranFullName, teamName)
     }),
     title: ({ teamName }) => sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, teamName),
-    getContent: SendColocatedTaskModal,
-    buttonText: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
+    getContent: SendColocatedTaskModal
   },
   docket_appeal: {
     buildSuccessMsg: () => ({
@@ -410,7 +408,6 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: VhaCaregiverSupportReturnToBoardIntakeModal,
-    submitButtonClassNames: ['usa-button'],
     submitDisabled: ({ state }) => (
       !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
     ),
@@ -620,11 +617,13 @@ class CompleteTaskModal extends React.Component {
 
   render = () => {
     const modalAttributes = MODAL_TYPE_ATTRS[this.props.modalType];
+    const taskData = taskActionData(this.props);
 
     return (
       <QueueFlowModal
         title={modalAttributes.title(this.getContentArgs())}
-        button={modalAttributes.buttonText || this.getTaskConfiguration().modal_button_text}
+        /* eslint-disable-next-line camelcase */
+        button={taskData?.modal_button_text}
         submitDisabled={modalAttributes.submitDisabled?.(this.getContentArgs())}
         validateForm={this.validateForm}
         submit={this.submit}
