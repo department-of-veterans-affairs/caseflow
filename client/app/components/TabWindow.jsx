@@ -15,15 +15,19 @@ import { Tab } from './tabs/Tab';
  * - @name {string} used in each tab ID to differentiate multiple sets of tabs
  * on a page. This is for accessibility purposes.
  */
-const TabWindow = ({
-  fullPage = false,
-  defaultPage = 0,
-  name = 'main',
-  onChange,
-  tabs = [],
-  tabPanelTabIndex = null,
-  alwaysShowTabs
-}) => {
+const TabWindow = (props) => {
+  const {
+    fullPage = false,
+    defaultPage = 0,
+    name = 'main',
+    onChange,
+    tabs = [],
+    tabPanelTabIndex = null,
+    alwaysShowTabs,
+    mountOnEnter = true,
+    unmountOnExit = true,
+  } = props;
+
   const tabContent = (tab) => (
     <span>
       {tab.icon ?? ''}
@@ -44,8 +48,8 @@ const TabWindow = ({
       idPrefix={name}
       active={defaultPage.toString()}
       onChange={onChange}
-      mountOnEnter
-      unmountOnExit
+      mountOnEnter={mountOnEnter}
+      unmountOnExit={unmountOnExit}
       tabPanelTabIndex={tabPanelTabIndex}
     >
       {tabs.map((item, idx) => (
@@ -77,13 +81,17 @@ TabWindow.propTypes = {
   ),
   defaultPage: PropTypes.number,
   tabPanelTabIndex: PropTypes.number,
-  alwaysShowTabs: PropTypes.bool
+  alwaysShowTabs: PropTypes.bool,
+  mountOnEnter: PropTypes.bool,
+  unmountOnExit: PropTypes.bool,
 };
 
 TabWindow.defaultProps = {
   defaultPage: 0,
   fullPage: false,
-  alwaysShowTabs: false
+  alwaysShowTabs: false,
+  mountOnEnter: true,
+  unmountOnExit: true,
 };
 
 export default TabWindow;

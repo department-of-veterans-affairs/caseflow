@@ -85,9 +85,11 @@ const CavcDashboardIssue = (props) => {
 
   const [removeModalIsOpen, setRemoveModalIsOpen] = useState(false);
 
-  const [disposition, setDisposition] = useState(dispositions?.find(
+  const initialDisposition = dispositions?.find(
     (dis) => dis.request_issue_id === issue.id ||
-      dis.cavc_dashboard_issue_id === issue.id)?.disposition);
+    dis.cavc_dashboard_issue_id === issue.id)?.disposition;
+
+  const [disposition, setDisposition] = useState(initialDisposition);
 
   const dispositionIssueType = dispositions?.find(
     (dis) => dis.request_issue_id === issue.id ||
@@ -102,12 +104,15 @@ const CavcDashboardIssue = (props) => {
   const dispositionsOptions = Object.keys(CAVC_DASHBOARD_DISPOSITIONS).map(
     (value) => ({ value, label: CAVC_DASHBOARD_DISPOSITIONS[value] }));
 
+  const dispositionsRequiringReasons =
+    [CAVC_DASHBOARD_DISPOSITIONS.reversed, CAVC_DASHBOARD_DISPOSITIONS.vacated_and_remanded];
+
   let issueType = {};
   const dispatch = useDispatch();
 
   const requireDecisionReason = () => {
     /* eslint-disable-next-line */
-    if (disposition === CAVC_DASHBOARD_DISPOSITIONS.reversed || disposition === CAVC_DASHBOARD_DISPOSITIONS.vacated_and_remanded) {
+    if (dispositionsRequiringReasons.includes(disposition)) {
       return true;
     }
     dispatch(removeCheckedDecisionReason(issue.id));
@@ -196,6 +201,7 @@ const CavcDashboardIssue = (props) => {
       {requireDecisionReason() && (
         <CavcDecisionReasons
           uniqueId={issue.id}
+          initialDispositionRequiresReasons={dispositionsRequiringReasons.includes(initialDisposition)}
           dispositionIssueType={dispositionIssueType}
           loadCheckedBoxes={loadCheckedBoxes}
           userCanEdit={userCanEdit}
@@ -207,7 +213,7 @@ const CavcDashboardIssue = (props) => {
 
 const CavcDashboardIssuesSection = (props) => {
   const { dashboard, dashboardIndex, removeDashboardIssue, userCanEdit } = props;
-  const issues = dashboard.source_request_issues;
+  const issues = dashboard.remand_request_issues;
   const cavcIssues = dashboard.cavc_dashboard_issues;
   const dashboardDispositions = dashboard.cavc_dashboard_dispositions;
   const dashboardId = dashboard.id;
@@ -229,7 +235,7 @@ const CavcDashboardIssuesSection = (props) => {
         <hr />
       </div>
       <ol {...olStyling}>
-        {issues.map((issue, i) => {
+        {issues?.map((issue, i) => {
           const issueDisposition = dashboardDispositions.filter((dis) => {
             return dis.request_issue_id === issue.id;
           });

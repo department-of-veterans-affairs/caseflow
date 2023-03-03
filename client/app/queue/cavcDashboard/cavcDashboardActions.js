@@ -35,6 +35,12 @@ export const updateDashboardData = (dashboardIndex, updatedData) => (dispatch) =
       type: ACTIONS.UPDATE_DASHBOARD_DATA,
       payload: { dashboardIndex, updatedData }
     }));
+
+export const resetDashboardData = () => (dispatch) => {
+  dispatch({
+    type: ACTIONS.RESET_DASHBOARD_DATA
+  });
+
 };
 
 export const setCheckedDecisionReasons = (checkedReasons, issueId) => ({
@@ -45,8 +51,11 @@ export const setCheckedDecisionReasons = (checkedReasons, issueId) => ({
   }
 });
 
-export const setInitialCheckedDecisionReasons = () => ({
-  type: ACTIONS.SET_INITIAL_CHECKED_DECISION_REASONS
+export const setInitialCheckedDecisionReasons = (uniqueId) => ({
+  type: ACTIONS.SET_INITIAL_CHECKED_DECISION_REASONS,
+  payload: {
+    uniqueId
+  }
 });
 
 export const removeCheckedDecisionReason = (issueId) => ({

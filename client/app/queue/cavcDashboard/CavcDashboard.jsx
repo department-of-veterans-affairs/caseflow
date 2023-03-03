@@ -8,6 +8,7 @@ import { fetchAppealDetails } from '../QueueActions';
 import {
   fetchCavcDecisionReasons,
   fetchInitialDashboardData,
+  resetDashboardData,
   fetchCavcSelectionBases,
   saveDashboardData
 } from './cavcDashboardActions';
@@ -27,6 +28,8 @@ export const CavcDashboard = (props) => {
   const [tabs, setTabs] = useState();
 
   useEffect(() => {
+    // need to reset data on page load or else returning to the dashboard after saving will always enable save button
+    props.resetDashboardData();
     // define the promise inside useEffect so that the component doesn't infinitely rerender
     const loadPromise = Promise.all([
       props.fetchAppealDetails(appealId),
@@ -71,7 +74,11 @@ export const CavcDashboard = (props) => {
           <>
             <h1>CAVC appeals for {appealDetails?.appellantFullName}</h1>
 
-            <TabWindow tabs={tabs} tabPanelTabIndex={-1} alwaysShowTabs />
+            <TabWindow tabs={tabs}
+              tabPanelTabIndex={-1}
+              alwaysShowTabs
+              mountOnEnter={false}
+              unmountOnExit={false} />
             <hr />
             <CavcDashboardFooter {...props} />
           </>
@@ -95,6 +102,7 @@ CavcDashboard.propTypes = {
   fetchCavcDecisionReasons: PropTypes.func,
   fetchCavcSelectionBases: PropTypes.func,
   fetchInitialDashboardData: PropTypes.func,
+  resetDashboardData: PropTypes.func,
   saveDashboardData: PropTypes.func,
   userCanEdit: PropTypes.bool,
   // Router inherited props
@@ -117,6 +125,7 @@ const mapDispatchToProps = (dispatch) =>
     fetchCavcDecisionReasons,
     fetchCavcSelectionBases,
     fetchInitialDashboardData,
+    resetDashboardData,
     saveDashboardData
   }, dispatch);
 
