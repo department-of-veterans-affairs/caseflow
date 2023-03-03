@@ -60,7 +60,7 @@ const setProps = (modified, userCanEdit) => {
     cavcDashboards,
     checkedBoxes
   };
-};
+}
 
 describe('cavcDashboardFooter', () => {
   it('Has no save button if user cannot edit', () => {
