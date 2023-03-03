@@ -501,6 +501,7 @@ class TaskActionRepository
       {
         modal_title: COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
         type: VhaDocumentSearchTask.name,
+        body_optional: true,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
       }
     end

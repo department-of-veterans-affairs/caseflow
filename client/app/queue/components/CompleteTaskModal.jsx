@@ -473,7 +473,6 @@ const MODAL_TYPE_ATTRS = {
       return formatOtherInstructions(state);
     }
   },
-
   vha_caregiver_support_send_to_board_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(
