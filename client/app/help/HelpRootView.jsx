@@ -21,18 +21,17 @@ const HelpRootView = () => {
       url: '/vha/help' },
   ];
 
-    return <div className="cf-help-content">
+  return <div className="cf-help-content">
 
-      <p><CaseFlowLink href="/search">Go Back</CaseFlowLink></p>
+    <p><CaseFlowLink href="/search">Go Back</CaseFlowLink></p>
 
-      <h1>Caseflow Help</h1>
-      <ul id="toc" className="usa-unstyled-list">
-        {pages.map(({ name, url }) =>
-          <li key={name}><Link to={url}>{name}</Link></li>
-        )}
-      </ul>
-    </div>;
-  }
-}
+    <h1>Caseflow Help</h1>
+    <ul id="toc" className="usa-unstyled-list">
+      {pages.map(({ name, url }) =>
+        <li key={name}><Link to={url}>{name}</Link></li>
+      )}
+    </ul>
+  </div>;
+};
 
 export default HelpRootView;
