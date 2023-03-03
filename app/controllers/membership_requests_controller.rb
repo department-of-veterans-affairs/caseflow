@@ -41,7 +41,7 @@ class MembershipRequestsController < ApplicationController
     puts params.inspect
     puts request_action_params.inspect
     membership_request = MembershipRequest.find(request_action_params[:id])
-    membership_request.update_status_and_send_email(request_action_params[:requestAction])
+    membership_request.update_status_and_send_email(request_action_params[:requestAction], current_user)
     # TODO: Should it return all of the requests for that Org here?
     # Or just the one request and remove that one specifically from the requests on the page
 

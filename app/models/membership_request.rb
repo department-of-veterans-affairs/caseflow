@@ -7,6 +7,8 @@ class MembershipRequest < ApplicationRecord
 
   validates :status, :organization, :requestor, presence: true
 
+  before_save :set_decided_at, if: :decider_id_changed?
+
   enum status: {
     assigned: "assigned",
     approved: "approved",
@@ -14,10 +16,10 @@ class MembershipRequest < ApplicationRecord
     cancelled: "cancelled"
   }
 
-  def update_status_and_send_email(new_status)
+  def update_status_and_send_email(new_status, user, org_type = "VHA")
     # TODO: Might need to wrap this in a transaction and if adding the user to the org fails roll it back?
     # TODO: Enable this again after testing email
-    update(status: new_status)
+    update(status: new_status, decider: user)
     # TODO: If the status is approved then add the user to the org
     # TODO: Should this be a callback hook like after_update or should it just be done here
     # membership_request_mailer_params = {}
@@ -43,7 +45,6 @@ class MembershipRequest < ApplicationRecord
         # mail_params = {}
       end
 
-      org_type = "VHA"
       MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(self).send_email_request_approved
 
       # TODO: Ask if this should be any orgs or just VHA orgs?
@@ -79,7 +80,6 @@ class MembershipRequest < ApplicationRecord
       #   MembershipRequestMailer.with(requestor: requestor, accessible_groups: accessible_orgs)
       #     .vha_business_line_denied.deliver_now!
       # end
-      org_type = "VHA"
       MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(self).send_email_request_denied
 
     end
@@ -98,9 +98,7 @@ class MembershipRequest < ApplicationRecord
 
   private
 
-  def pending_organization_request_names
-    pending_names = requestor.membership_requests.assigned.includes(:organization).map { |request| request.organization.name }
-    puts pending_names.inspect
-    pending_names
+  def set_decided_at
+    self.decided_at = Time.zone.now
   end
 end
