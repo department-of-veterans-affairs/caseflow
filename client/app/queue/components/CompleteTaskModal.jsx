@@ -1,6 +1,5 @@
 /* eslint-disable max-lines */
 import * as React from 'react';
-import ReactMarkdown from 'react-markdown';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -449,27 +448,6 @@ class CompleteTaskModal extends React.Component {
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
     const formattedInstructions = [];
-    let reviewNotes;
-    const previousInstructions = this.props.tasks.map((task) => {
-      // Skip if there are no previous instructions
-      if (task.instructions?.[1]) {
-        if (task.assignedTo.type === 'VhaProgramOffice') {
-          reviewNotes = 'Program Office';
-
-          return task && task.instructions[1];
-        } else if (task.assignedTo.type === 'VhaRegionalOffice') {
-          reviewNotes = 'VISN';
-
-          return task && task.instructions[1];
-        } else if (task.assignedTo.type === 'VhaCamo' && task.instructions.length > 0) {
-          reviewNotes = 'CAMO';
-
-          return task && task.instructions[1];
-        }
-      }
-
-      return reviewNotes = null;
-    });
 
     if (this.props.modalType.includes('for_review')) {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
