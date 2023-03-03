@@ -235,7 +235,7 @@ const CavcDashboardIssuesSection = (props) => {
         <hr />
       </div>
       <ol {...olStyling}>
-        {issues.map((issue, i) => {
+        {issues?.map((issue, i) => {
           const issueDisposition = dashboardDispositions.filter((dis) => {
             return dis.request_issue_id === issue.id;
           });
