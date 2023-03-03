@@ -365,7 +365,6 @@ class TaskActionRepository
         params[:modal_body] = COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
       end
 
-
       if defined? task.completion_contact
         params[:contact] = task.completion_contact
       end
@@ -379,6 +378,14 @@ class TaskActionRepository
         modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_COPY
       }
 
+      params
+    end
+
+    def resend_final_notification_letter_task_data(task, _user = nil)
+      params = {
+        modal_title: COPY::RESEND_FINAL_NOTIFICATION_LETTER_TITLE,
+        modal_body: COPY::RESEND_FINAL_NOTIFICATION_LETTER_COPY
+      }
       params
     end
 

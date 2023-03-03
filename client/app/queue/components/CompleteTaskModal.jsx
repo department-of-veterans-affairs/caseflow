@@ -138,6 +138,31 @@ const ProceedFinalNotificationLetterTaskModal = ({ props, state, setState }) => 
   );
 };
 
+const ResendFinalNotificationLetterTaskModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+
+  return (
+    <React.Fragment>
+      {taskConfiguration && taskConfiguration.modal_body}
+      {taskConfiguration && taskConfiguration.modal_alert && (
+        <Alert message={taskConfiguration.modal_alert} type="info" />
+      )}
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        <TextareaField
+          label= "Provide instuctions and context for this action"
+          name= "instructions"
+          id= "completeTaskInstructions"
+          onChange={(value) => setState({ instructions: value })}
+          value={state.instructions}
+          styling={marginTop(4)}
+          maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+          placeholder="This is a description of instuctions and context for this action."
+        />
+      )}
+    </React.Fragment>
+  );
+};
+
 const ResendInitialNotificationLetterTaskModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
 
@@ -177,6 +202,12 @@ MarkTaskCompleteContestedClaimModal.propTypes = {
 };
 
 ProceedFinalNotificationLetterTaskModal.propTypes = {
+  props: PropTypes.object,
+  setState: PropTypes.func,
+  state: PropTypes.object
+};
+
+ResendFinalNotificationLetterTaskModal.propTypes = {
   props: PropTypes.object,
   setState: PropTypes.func,
   state: PropTypes.object
@@ -512,6 +543,15 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
     getContent: ResendInitialNotificationLetterTaskModal,
     buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON
+  },
+
+  resend_final_notification_letter: {
+    buildSuccessMsg: () => ({
+      title: sprintf(COPY.RESEND_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS),
+    }),
+    title: () => COPY.RESEND_FINAL_NOTIFICATION_LETTER_TITLE,
+    getContent: ResendFinalNotificationLetterTaskModal,
+    buttonText: COPY.RESEND_FINAL_NOTIFICATION_LETTER_BUTTON
   },
 
   ready_for_review: {

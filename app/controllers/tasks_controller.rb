@@ -268,7 +268,12 @@ class TasksController < ApplicationController
   end
 
   def process_contested_claim_final_task
-    # final task logic here
+    case task.status
+    when "completed"
+      if params["select_opc"] == "resend_final_notification_letter"
+        send_final_notification_letter
+      end
+    end
   end
 
   def render_update_errors(errors)
