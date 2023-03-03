@@ -3,6 +3,7 @@ import VhaMembershipRequestForm from './VhaMembershipRequestForm';
 import Alert from '../../components/Alert';
 import { VHA_FORM_SUBMIT_SUCCESS_TITLE } from '../constants';
 import { useSelector } from 'react-redux';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 const VhaHelp = () => {
 
@@ -14,6 +15,10 @@ const VhaHelp = () => {
   const errorMessage = useSelector(
     (state) => state.help.messages.error
   );
+
+  const BackToHelpLink = () => {
+    return <p><Link href="/help">Go Back</Link></p>;
+  };
 
   const Header = () => {
     return <div>
@@ -66,6 +71,7 @@ const VhaHelp = () => {
   return <div className="cf-help-content">
     <SuccesssBanner />
     <ErrorBanner />
+    <BackToHelpLink />
     <Header />
     <HelpDivider />
     <TrainingVideos />
