@@ -215,7 +215,7 @@ RSpec.describe CavcDashboardController, type: :controller do
       get :index, params: { format: :json, appeal_id: cavc_remand.source_appeal.uuid }
       response_body = JSON.parse(response.body)
       expect(response_body.key?("cavc_dashboards")).to be true
-      expect(response_body["cavc_dashboards"][0]["remand_request_issues"]&.count).to be nil
+      expect(response_body["cavc_dashboards"][0]["remand_request_issues"]&.count).to be 1
     end
   end
 end

@@ -26,7 +26,9 @@ class CavcDashboard < CaseflowRecord
   end
 
   def remand_request_issues
-    cavc_remand.remand_appeal&.request_issues
+    return cavc_remand.remand_appeal&.request_issues.active.order(:id) if cavc_remand.remand_appeal
+
+    cavc_remand.source_appeal&.request_issues.active.order(:id)
   end
 
   def create_dispositions_for_remand_request_issues
