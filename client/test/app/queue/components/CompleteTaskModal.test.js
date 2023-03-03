@@ -207,6 +207,16 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByRole('button', { name: confirmationButtonText })).toBeDisabled();
     });
 
+    test('When "VBMS" is chosen from the radio options, the "Send" button is enabled', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      const radioFieldToSelect = screen.getByLabelText(modalRadioOptionVBMS);
+
+      userEvent.click(radioFieldToSelect);
+
+      expect(screen.getByRole('button', { name: confirmationButtonText })).toBeEnabled();
+    });
+
     test('When "Other" is chosen from the radio options an additional text box appears', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
@@ -251,16 +261,6 @@ describe('CompleteTaskModal', () => {
       userEvent.click(radioFieldToSelect);
 
       expect(screen.queryByRole('textbox', { name: modalOtherInstructions })).toBeFalsy();
-    });
-
-    test('When "VBMS" is chosen from the radio options, the "Send" button is enabled', () => {
-      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
-
-      const radioFieldToSelect = screen.getByLabelText(modalRadioOptionVBMS);
-
-      userEvent.click(radioFieldToSelect);
-
-      expect(screen.getByRole('button', { name: confirmationButtonText })).toBeEnabled();
     });
   });
 
