@@ -31,6 +31,7 @@ class PostSendInitialNotificationLetterHoldingTask < LetterTask
   # Function to set the end time for the related TaskTimer when this class is instantiated.
   def timer_ends_at
     return @end_date if @end_date
+
     # Check for last existing associated TaskTimer
     task_timer = TaskTimer.find_by(task: self)
     return task_timer.submitted_at if task_timer
