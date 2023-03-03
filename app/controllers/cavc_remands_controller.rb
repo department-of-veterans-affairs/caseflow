@@ -91,7 +91,7 @@ class CavcRemandsController < ApplicationController
                                     substitute_participant_id: params[:participant_id])
     else
       appellant_substitution.update(updated_by_id: current_user.id,
-                                    substitution_datez: Date.current,
+                                    substitution_date: Date.current,
                                     substitute_participant_id: cavc_remand.veteran.participant_id)
       cavc_appeal.update(veteran_is_not_claimant: nil)
     end
