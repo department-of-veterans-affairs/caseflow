@@ -50,15 +50,7 @@ const formatOtherInstructions = (state) => {
 const submitDisabled = ({ state }) => {
   const { otherInstructions, radio } = state;
 
-  let isValid = true;
-
-  if (radio === 'other') {
-    isValid = validInstructions(otherInstructions) && validRadio(radio);
-  } else {
-    isValid = validRadio(radio);
-  }
-
-  return !isValid;
+  return !(radio === 'other' ? validRadio(otherInstructions) : validRadio(radio));
 };
 
 const MarkTaskCompleteModal = ({ props, state, setState }) => {
