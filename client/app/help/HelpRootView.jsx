@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import CaseFlowLink from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class HelpRootView extends React.Component {
 
@@ -21,6 +22,9 @@ class HelpRootView extends React.Component {
     ];
 
     return <div className="cf-help-content">
+
+      <p><CaseFlowLink href="/search">Go Back</CaseFlowLink></p>
+
       <h1>Caseflow Help</h1>
       <ul id="toc" className="usa-unstyled-list">
         {pages.map(({ name, url }) =>
