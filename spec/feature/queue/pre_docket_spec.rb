@@ -533,8 +533,10 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             text: Constants.TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.label
           ).click
 
-          expect(page).to have_content(COPY::VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL["TITLE"])
-          expect(page).to have_content(COPY::VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW_MODAL["DETAIL"])
+          byebug
+
+          expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
+          expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
           page.all(".cf-form-radio-option > label")[0].click
           find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
 
