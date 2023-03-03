@@ -138,7 +138,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
     it "edit page loads and does not show VACOLS issue" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
-      expect(page).to have_content("PTSD denied")
+      expect(page).to have_text("PTSD denied")
       expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED_EDIT)
 
       # Add another issue in order to also check the confirmation page
