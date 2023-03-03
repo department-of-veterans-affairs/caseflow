@@ -11,23 +11,31 @@ jest.mock('react-redux', () => ({
   useDispatch: () => jest.fn().mockImplementation(() => Promise.resolve(true))
 }));
 
-const createDashboardProp = () => {
+const createDashboardProp = (hasIssues) => {
+  if (hasIssues) {
+    return {
+      remand_request_issues: [{
+        id: 1000,
+        benefit_type: 'compensation',
+        decision_review_type: 'Appeal',
+        contested_issue_description: 'A description of issue',
+      }],
+      cavc_dashboard_issues: [{
+        benefit_type: 'education',
+        issue_category: 'Service Connection',
+        disposition: 'Reversed'
+      }],
+      cavc_dashboard_dispositions: [{
+        request_issue_id: 1000,
+        disposition: 'Reversed',
+      }]
+    };
+  }
+
   return {
-    remand_request_issues: [{
-      id: 1000,
-      benefit_type: 'compensation',
-      decision_review_type: 'Appeal',
-      contested_issue_description: 'A description of issue',
-    }],
-    cavc_dashboard_issues: [{
-      benefit_type: 'education',
-      issue_category: 'Service Connection',
-      disposition: 'Reversed'
-    }],
-    cavc_dashboard_dispositions: [{
-      request_issue_id: 1000,
-      disposition: 'Reversed',
-    }]
+    remand_request_issues: [],
+    cavc_dashboard_issues: [],
+    cavc_dashboard_dispositions: []
   };
 };
 
@@ -40,7 +48,7 @@ const renderCavcDashboardIssuesSection = async (dashboard, userCanEdit = true) =
 describe('CavcDashboardIssuesSection', () => {
 
   it('displays correct values with remand_request_issues', async () => {
-    const dashboard = createDashboardProp();
+    const dashboard = createDashboardProp(true);
 
     await renderCavcDashboardIssuesSection(dashboard);
     const Issues = [...document.querySelectorAll('li')];
@@ -55,7 +63,7 @@ describe('CavcDashboardIssuesSection', () => {
   });
 
   it('displays correct values with cavc_dashboard_issues', async () => {
-    const dashboard = createDashboardProp();
+    const dashboard = createDashboardProp(true);
 
     await renderCavcDashboardIssuesSection(dashboard);
     const Issues = [...document.querySelectorAll('li')];
@@ -63,5 +71,15 @@ describe('CavcDashboardIssuesSection', () => {
     expect(screen.getByText(dashboard.cavc_dashboard_issues[0].benefit_type, { exact: false })).toBeTruthy();
     expect(screen.getByText(dashboard.cavc_dashboard_issues[0].issue_category)).toBeTruthy();
     expect(Issues.length).toBe(2);
+  });
+
+  it('renders with no remand_request_issues present', async () => {
+    const dashboard = createDashboardProp(false);
+
+    await renderCavcDashboardIssuesSection(dashboard);
+
+    expect(screen.getByText('Issues')).toBeTruthy();
+    expect(screen.getByText('Dispositions')).toBeTruthy();
+    expect(document.querySelector('ol').childElementCount).toBe(0);
   });
 });
