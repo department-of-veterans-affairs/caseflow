@@ -22,24 +22,78 @@ class MembershipRequest < ApplicationRecord
     # TODO: Should this be a callback hook like after_update or should it just be done here
     # membership_request_mailer_params = {}
     if approved?
-      # Add the user to the org
       # TODO: If the request is to a predocket and the user is not already a member of VHA add them to VHA
       # TODO: Also this will change the email as well
       # MembershipRequestMailer.with().vha_businessline_approval.deliver_now!
+
+      # Add user will automatically find the record or create it so there is no need for
+      # An additional check if they are already a member of the org
       organization.add_user(requestor)
+
+      mail_type = ""
+      mail_params = { requestor: requestor }
+      # If the organization is a VHA predocket organization also add the user to the Vha BusinessLine
+      if requesting_vha_predocket_access?
+        vha_business_line = BusinessLine.find_by(url: "vha")
+
+        vha_business_line.add_user(requestor)
+        mail_type = ""
+        mail_params = {}
+      end
+
       # TODO: Ask if this should be any orgs or just VHA orgs?
+      # TODO: Move this stuff into the builder
       accessible_orgs = requestor.organizations.map(&:name)
-      MembershipRequestMailer.with(requestor: requestor, accessible_groups: accessible_orgs)
-        .vha_business_line_approval.deliver_now!
+      if requesting_vha_predocket_access?
+        mailer_params = {
+          requestor: requestor,
+          accessible_groups: accessible_orgs,
+          organization_name: organization.name,
+          pending_organization_request_names: pending_organization_request_names
+        }
+        # puts mailer_params.inspect
+        MembershipRequestMailer.with(mailer_params)
+          .vha_predocket_organization_approved.deliver_now!
+      else
+        MembershipRequestMailer.with(requestor: requestor, accessible_groups: accessible_orgs)
+          .vha_business_line_approved.deliver_now!
+      end
 
     elsif denied?
       accessible_orgs = requestor.organizations.map(&:name)
-      MembershipRequestMailer.with(requestor: requestor, accessible_groups: accessible_orgs)
-        .vha_business_line_denial.deliver_now!
+      if requesting_vha_predocket_access?
+        mailer_params = {
+          requestor: requestor,
+          accessible_groups: accessible_orgs,
+          organization_name: organization.name,
+          pending_organization_request_names: pending_organization_request_names
+        }
+        MembershipRequestMailer.with(mailer_params)
+          .vha_predocket_organization_denied.deliver_now!
+      else
+        MembershipRequestMailer.with(requestor: requestor, accessible_groups: accessible_orgs)
+          .vha_business_line_denied.deliver_now!
+      end
+
     end
     # accessible_orgs = requestor.organizations.map(&:name)
     # MembershipRequestMailer.with(requestor: requestor, accessible_groups: accessible_orgs).vha_business_line_denial.deliver_now!
     # Send the email either way
     # MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(membership_requests).send_email_after_creation
+  end
+
+  private
+
+  # TODO: This might not need to be private since the builder might also want to use this method
+  def requesting_vha_predocket_access?
+    # TODO: Does this need VhaRegionalOffice?
+    vha_organization_types = [VhaCamo, VhaCaregiverSupport, VhaProgramOffice, VhaRegionalOffice]
+    vha_organization_types.any? { |vha_org| organization.is_a?(vha_org) }
+  end
+
+  def pending_organization_request_names
+    pending_names = requestor.membership_requests.assigned.includes(:organization).map { |request| request.organization.name }
+    puts pending_names.inspect
+    pending_names
   end
 end

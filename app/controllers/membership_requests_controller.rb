@@ -42,15 +42,9 @@ class MembershipRequestsController < ApplicationController
     puts request_action_params.inspect
     membership_request = MembershipRequest.find(request_action_params[:id])
     membership_request.update_status_and_send_email(request_action_params[:requestAction])
-    # TODO: This is going to be a bit weird.
-    # Set a success message for this request either approve or deny
-    # If it is a approve it needs to update the organization users current users
-    # It needs to update the requests for either decision/status.
-
     # TODO: Should it return all of the requests for that Org here?
     # Or just the one request and remove that one specifically from the requests on the page
 
-    # render json: { users: json_users([user_to_modify]) }, status: :ok
     success_messsage_hash = {
       type: membership_request.status,
       userName: membership_request.requestor.full_name,
