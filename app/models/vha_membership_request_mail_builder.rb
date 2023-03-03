@@ -92,6 +92,28 @@ class VhaMembershipRequestMailBuilder
                                                             mailer_parameters)
   end
 
+  def send_rejected_vha_business_line_email
+    mailer_parameters = {
+      requestor: requestor,
+      accessible_groups: requestor_accessible_org_names,
+      organization_name: single_request.organization.name,
+      pending_organization_request_names: requestor_pending_organization_request_names
+    }
+    Memberships::SendMembershipRequestMailerJob.perform_now("VhaBusinessLineDenied",
+                                                            mailer_parameters)
+  end
+
+  def send_rejected_predocket_organization_email
+    mailer_parameters = {
+      requestor: requestor,
+      accessible_groups: requestor_accessible_org_names,
+      organization_name: single_request.organization.name,
+      pending_organization_request_names: requestor_pending_organization_request_names
+    }
+    Memberships::SendMembershipRequestMailerJob.perform_now("VhaPredocketDenied",
+                                                            mailer_parameters)
+  end
+
   def requestor_accessible_org_names
     @requestor_accessible_org_names ||= requestor.organizations.map(&:name)
   end

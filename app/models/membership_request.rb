@@ -43,6 +43,7 @@ class MembershipRequest < ApplicationRecord
         # mail_params = {}
       end
 
+      org_type = "VHA"
       MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(self).send_email_request_approved
 
       # TODO: Ask if this should be any orgs or just VHA orgs?
@@ -64,20 +65,22 @@ class MembershipRequest < ApplicationRecord
       # end
 
     elsif denied?
-      accessible_orgs = requestor.organizations.map(&:name)
-      if requesting_vha_predocket_access?
-        mailer_params = {
-          requestor: requestor,
-          accessible_groups: accessible_orgs,
-          organization_name: organization.name,
-          pending_organization_request_names: pending_organization_request_names
-        }
-        MembershipRequestMailer.with(mailer_params)
-          .vha_predocket_organization_denied.deliver_now!
-      else
-        MembershipRequestMailer.with(requestor: requestor, accessible_groups: accessible_orgs)
-          .vha_business_line_denied.deliver_now!
-      end
+      # accessible_orgs = requestor.organizations.map(&:name)
+      # if requesting_vha_predocket_access?
+      #   mailer_params = {
+      #     requestor: requestor,
+      #     accessible_groups: accessible_orgs,
+      #     organization_name: organization.name,
+      #     pending_organization_request_names: pending_organization_request_names
+      #   }
+      #   MembershipRequestMailer.with(mailer_params)
+      #     .vha_predocket_organization_denied.deliver_now!
+      # else
+      #   MembershipRequestMailer.with(requestor: requestor, accessible_groups: accessible_orgs)
+      #     .vha_business_line_denied.deliver_now!
+      # end
+      org_type = "VHA"
+      MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(self).send_email_request_denied
 
     end
     # accessible_orgs = requestor.organizations.map(&:name)
