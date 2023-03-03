@@ -137,11 +137,13 @@
   },
   "COLOCATED_RETURN_TO_ATTORNEY": {
     "label": "Send back to attorney",
-    "value": "modal/mark_task_complete"
+    "value": "modal/mark_task_complete",
+    "func": "mark_task_complete_data"
   },
   "COLOCATED_RETURN_TO_JUDGE": {
     "label": "Send back to judge",
-    "value": "modal/mark_task_complete"
+    "value": "modal/mark_task_complete",
+    "func": "mark_task_complete_data"
   },
   "COMPLETE_TRANSCRIPTION": {
     "label": "Mark as complete: Transcribed",
@@ -201,8 +203,8 @@
     "value": "modal/mark_task_complete",
     "func": "complete_data"
   },
-  "READY_FOR_REVIEW": {
-    "label": "Ready for Review",
+  "VHA_PO_SEND_TO_CAMO_FOR_REVIEW": {
+    "label": "Documents ready for VHA CAMO team review",
     "value": "modal/ready_for_review",
     "func": "vha_complete_data"
   },
@@ -295,7 +297,8 @@
   },
   "SCHEDULE_HEARING_SEND_TO_TEAM": {
     "label": "Hearing does need to be scheduled, create schedule hearing task",
-    "value": "modal/send_colocated_task"
+    "value": "modal/send_colocated_task",
+    "func": "send_colocated_task"
   },
   "SCHEDULE_VETERAN": {
     "label": "Schedule Veteran",
@@ -395,7 +398,7 @@
     "func": "vha_assign_to_regional_office_data"
   },
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO": {
-    "label": "Return to CAMO team",
+    "label": "Return to VHA CAMO team",
     "value": "modal/return_to_camo",
     "func": "vha_program_office_return_to_camo"
   },
@@ -430,7 +433,7 @@
     "func": "vha_caregiver_support_send_to_board_intake_for_review"
   },
   "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW": {
-    "label": "Ready for Review",
+    "label": "Documents ready for Board Intake review",
     "value": "modal/emo_send_to_board_intake_for_review",
     "func": "emo_send_to_board_intake_for_review"
   },
@@ -440,7 +443,7 @@
     "func": "emo_assign_to_education_rpo_data"
   },
   "EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW": {
-    "label": "Ready for Review",
+    "label": "Documents ready for Board Intake review",
     "value": "modal/rpo_send_to_board_intake_for_review",
     "func": "education_rpo_send_to_board_intake_for_review"
   },
