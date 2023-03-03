@@ -6,7 +6,7 @@ export const submitMembershipRequestForm = createAsyncThunk('form/submit', async
   const response = await ApiUtil.
     post('/membership_requests', formData).
     catch((error) => {
-      const errorMessage = error.response?.body?.errors?.at(0)?.message || error.message;
+      const errorMessage = error.response?.body?.errors?.at(0)?.detail || error.message;
       const customError = new Error(errorMessage);
 
       throw customError;

@@ -57,7 +57,7 @@ const VhaHelp = () => {
     return errorMessage ? <div style={{ marginBottom: '3rem' }}>
       <Alert
         type="error"
-        title="Something went wrong"
+        title="An error occured. Please try again later."
         message={errorMessage}
       />
     </div> : null;
