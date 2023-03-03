@@ -30,6 +30,26 @@ RSpec.describe CavcDashboardController, type: :controller do
       expect(JSON.parse(response.body).count).to eq CavcSelectionBasis.count
     end
 
+    context "#update_data" do
+      it "updates dashboard details with data" do
+        remand = create(:cavc_remand)
+        dashboard = CavcDashboard.create!(cavc_remand: remand)
+        update_params = {
+          updatedData:
+            {
+              "id" => dashboard.id,
+              "boardDecisionDateUpdate" => "2022-06-08",
+              "boardDocketNumberUpdate" => "230207-2186",
+              "cavcDecisionDateUpdate" => "2023-02-24",
+              "cavcDocketNumberUpdate" => "12-2444",
+              "jointMotionForRemandUpdate" => "true"
+            }
+        }
+        patch :update_data, params: update_params
+        expect(JSON.parse(@response.body)["successful"]).to eq true
+      end
+    end
+
     context "#save" do
       it "saves new issues and dispositions" do
         remand = create(:cavc_remand)
