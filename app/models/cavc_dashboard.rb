@@ -27,6 +27,7 @@ class CavcDashboard < CaseflowRecord
 
   def remand_request_issues
     return cavc_remand.remand_appeal&.request_issues.active.order(:id) if cavc_remand.remand_appeal
+
     cavc_remand.source_appeal&.request_issues.active.order(:id)
   end
 
