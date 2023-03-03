@@ -23,11 +23,11 @@ class VhaMembershipRequestMailBuilder
     end
   end
 
-  def send_email_request_rejected
+  def send_email_request_denied
     if single_request.requesting_vha_predocket_access?
-      send_rejected_predocket_organization_email
+      send_denied_predocket_organization_email
     else
-      send_rejected_vha_business_line_email
+      send_denied_vha_business_line_email
     end
   end
 
@@ -92,7 +92,7 @@ class VhaMembershipRequestMailBuilder
                                                             mailer_parameters)
   end
 
-  def send_rejected_vha_business_line_email
+  def send_denied_vha_business_line_email
     mailer_parameters = {
       requestor: requestor,
       accessible_groups: requestor_accessible_org_names,
@@ -103,7 +103,7 @@ class VhaMembershipRequestMailBuilder
                                                             mailer_parameters)
   end
 
-  def send_rejected_predocket_organization_email
+  def send_denied_predocket_organization_email
     mailer_parameters = {
       requestor: requestor,
       accessible_groups: requestor_accessible_org_names,
@@ -119,11 +119,9 @@ class VhaMembershipRequestMailBuilder
   end
 
   def requestor_pending_organization_request_names
-    # requestor.
     pending_names = requestor.membership_requests.assigned.includes(:organization).map do |request|
       request.organization.name
     end
-    puts pending_names.inspect
     pending_names
   end
 
