@@ -74,7 +74,11 @@ export const CavcDashboard = (props) => {
           <>
             <h1>CAVC appeals for {appealDetails?.appellantFullName}</h1>
 
-            <TabWindow tabs={tabs} tabPanelTabIndex={-1} alwaysShowTabs />
+            <TabWindow tabs={tabs}
+              tabPanelTabIndex={-1}
+              alwaysShowTabs
+              mountOnEnter={false}
+              unmountOnExit={false} />
             <hr />
             <CavcDashboardFooter {...props} />
           </>
