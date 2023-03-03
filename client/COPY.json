@@ -552,6 +552,8 @@
 
   "CANCEL_TASK_CONTACT_LIT_SUPPORT": "the Litigation Support team",
 
+  "MARK_AS_COMPLETE_FROM_SEND_FINAL_NOTIFICATION_LETTER_CONTESTED_CLAIM": "The case will be released from the Clerk of the Board queue for reactivation of any pending email or hearing tasks and distribution.\n\nDoes the contesting claimant request a different type of review option than the one selected by the appellant?",
+
   "CANCEL_INITIAL_NOTIFICATION_LETTER_TASK_DETAIL": "The case will be released from the Clerk of the Board queue for reactivation of any pending mail or hearing tasks and distribution.",
   "CANCEL_POST_INITIAL_NOTIFICATION_LETTER_TASK_DETAIL": "The 'Send Initial Notification Letter Holding Period' task will be cancelled and this case will be released for distribution.",
   "CANCEL_FINAL_NOTIFICATION_LETTER_TASK_DETAIL": "The 'Send Final Notification Letter' task will be cancelled and this case will be released for distribution.",

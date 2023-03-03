@@ -237,7 +237,7 @@ class TasksController < ApplicationController
     opc = params["select_opc"]
     case opc
     when "task_complete_contested_claim"
-      days_on_hold = params["hold_days"].to_i
+      days_on_hold = params["radio_value"].to_i
       instructions = ""
       psi = PostSendInitialNotificationLetterHoldingTask.create!(
         appeal: task.appeal,
@@ -268,7 +268,9 @@ class TasksController < ApplicationController
   end
 
   def process_contested_claim_final_task
-    # final task logic here
+    intruction = params["task"]["instructions"];
+    radio_opc = params["radio_value"].to_i
+    binding.pry
   end
 
   def render_update_errors(errors)
@@ -362,7 +364,7 @@ class TasksController < ApplicationController
       :instructions,
       :ihp_path,
       :select_opc,
-      :hold_days,
+      :radio_value,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],
       business_payloads: [:description, values: {}]
     )

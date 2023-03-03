@@ -1130,6 +1130,14 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE.value
+                }`}
+              title="Mark Task Complete | Caseflow"
+              render={this.routedCompleteTaskContestedClaimModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.MARK_COMPLETE.value
                 }`}
               title="Mark Task Complete | Caseflow"

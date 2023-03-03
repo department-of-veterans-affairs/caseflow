@@ -24,9 +24,9 @@ class TaskActionRepository
     end
 
     def task_conteted_claim(task, _user = nil)
-      {
-        modal_body: COPY::MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL
-      }
+      task.type == "SendFinalNotificationLetterTask" ?
+      { modal_body: COPY::MARK_AS_COMPLETE_FROM_SEND_FINAL_NOTIFICATION_LETTER_CONTESTED_CLAIM } :
+      { modal_body: COPY::MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL }
     end
 
     def cancel_task_data(task, _user = nil)

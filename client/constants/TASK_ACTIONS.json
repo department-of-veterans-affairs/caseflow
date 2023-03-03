@@ -471,8 +471,8 @@
   },
   "MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE": {
     "label": "Mark task complete",
-    "value": "modal/cancel_task",
-    "func": "cancel_task_data"
+    "value": "modal/mark_task_complete_contested_claim",
+    "func": "task_conteted_claim"
   },
 
   "CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK": {
