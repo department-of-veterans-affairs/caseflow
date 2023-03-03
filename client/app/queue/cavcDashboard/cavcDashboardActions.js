@@ -35,12 +35,12 @@ export const updateDashboardData = (dashboardIndex, updatedData) => (dispatch) =
       type: ACTIONS.UPDATE_DASHBOARD_DATA,
       payload: { dashboardIndex, updatedData }
     }));
+};
 
 export const resetDashboardData = () => (dispatch) => {
   dispatch({
     type: ACTIONS.RESET_DASHBOARD_DATA
   });
-
 };
 
 export const setCheckedDecisionReasons = (checkedReasons, issueId) => ({
