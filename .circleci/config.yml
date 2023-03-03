@@ -231,7 +231,6 @@ jobs:
           command: |
             mkdir -p ~/test-results/rspec
             export RAILS_ENV=test
-            export REACT_ON_RAILS_ENV=HOT
             bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
           environment:
             KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
