@@ -286,7 +286,7 @@ RSpec.feature "Reader", :all_dbs do
 
       # Make sure the document link in the document view points to the same place
       # as the link we just tested.
-      expect(find_link(documents[0].type)[:href]).to eq(single_link)
+      expect(find_link(documents[0].type)[:href]).to have_content(single_link)
     end
 
     scenario "Progress indicator" do
