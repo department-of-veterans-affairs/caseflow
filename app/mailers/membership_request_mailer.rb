@@ -48,7 +48,6 @@ class MembershipRequestMailer < ActionMailer::Base
     @accessible_groups = params[:accessible_groups]
     @requesting_org_name = params[:organization_name]
     @pending_organization_request_names = params[:pending_organization_request_names]
-
     mail(to: @recipient&.email, subject: "Request approved - Do Not Reply")
   end
 
@@ -57,7 +56,6 @@ class MembershipRequestMailer < ActionMailer::Base
     @accessible_groups = params[:accessible_groups]
     @requesting_org_name = params[:organization_name]
     @pending_organization_request_names = params[:pending_organization_request_names]
-
     mail(to: @recipient&.email, subject: "Request denied - Do Not Reply")
   end
 end
