@@ -184,7 +184,7 @@ const CavcDecisionReasons = (props) => {
       return (
         <Checkbox
           key={parent.id}
-          name={`${uniqueId}-${parent.decision_reason}`}
+          name={`${uniqueId}-${parent.id}-${parent.decision_reason}`}
           label={parent.decision_reason}
           onChange={(value) => handleCheckboxChange(value, parent.id)}
           value={checkedReasons[parent.id]?.checked}
@@ -202,7 +202,7 @@ const CavcDecisionReasons = (props) => {
       return (
         <Checkbox
           key={child.id}
-          name={`${uniqueId}-${child.decision_reason}`}
+          name={`${uniqueId}-${child.id}-${child.decision_reason}`}
           label={child.decision_reason}
           onChange={(value) => handleCheckboxChange(value, child.id)}
           value={checkedReasons[parent.id]?.children?.find((x) => x.id === child.id).checked}
