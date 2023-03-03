@@ -179,17 +179,17 @@ describe('CompleteTaskModal', () => {
     });
   });
 
-  describe('vha_documents_ready_for_ready_for_bva_intake_review', () => {
+  describe('vha_documents_ready_for_bva_intake_review', () => {
     const taskType = 'VhaDocumentSearchTask';
     const confirmationButtonText = COPY.MODAL_SEND_BUTTON;
     const modalType = 'vha_documents_ready_for_bva_intake_for_review';
-    const modalTitle = 'Ready for Review';
+    const modalTitle = 'Ready for review';
     const modalRadioOptionVBMS = 'VBMS';
     const modalRadioOptionOther = 'Other';
     const modalOtherInstructions = 'Please indicate the source';
     const modalTextboxInstructions = 'Provide details such as file structure or file path';
 
-    test('modal title: "Ready for Review"', () => {
+    test('modal title: "Ready for review"', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
       expect(screen.getByText(modalTitle)).toBeTruthy();
@@ -201,7 +201,7 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByRole('textbox', { name: modalTextboxInstructions })).toBeTruthy();
     });
 
-    test('Submit button is disabled when an option has not been selected', () => {
+    test('Send button is disabled when an option has not been selected', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
       expect(screen.getByRole('button', { name: confirmationButtonText })).toBeDisabled();
@@ -277,7 +277,6 @@ describe('CompleteTaskModal', () => {
 
     test('instructions textbox is present with the correct label', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
-
 
       expect(screen.getByRole(
         'textbox', { name: 'Provide additional context for this action Optional' }
