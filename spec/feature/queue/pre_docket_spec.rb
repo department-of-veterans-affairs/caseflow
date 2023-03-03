@@ -504,7 +504,11 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           visit "/queue/appeals/#{appeal.external_id}"
 
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-          find("div", class: "cf-select__option", text: COPY::VHA_COMPLETE_TASK_LABEL).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.label
+          ).click
           expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
           expect(page).to have_content(COPY::VHA_COMPLETE_TASK_MODAL_BODY)
           find("label", text: "VBMS").click
