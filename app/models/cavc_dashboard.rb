@@ -26,11 +26,11 @@ class CavcDashboard < CaseflowRecord
   end
 
   def remand_request_issues
-    cavc_remand.remand_appeal.request_issues
+    cavc_remand.remand_appeal&.request_issues
   end
 
   def create_dispositions_for_remand_request_issues
-    remand_request_issues.map do |issue|
+    remand_request_issues&.map do |issue|
       CavcDashboardDisposition.create(cavc_dashboard: self, request_issue: issue)
     end
   end

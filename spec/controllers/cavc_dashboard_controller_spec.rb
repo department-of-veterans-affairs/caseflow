@@ -180,10 +180,8 @@ RSpec.describe CavcDashboardController, type: :controller do
     end
 
     it "#index creates new dashboard and returns index data from format.json" do
-      Seeds::CavcDashboardData.new.seed!
-
-      remand = CavcRemand.last
-      appeal_uuid = Appeal.find(remand.remand_appeal_id).uuid
+      remand = create(:cavc_remand)
+      appeal_uuid = remand.remand_appeal.uuid
 
       get :index, params: { format: :json, appeal_id: appeal_uuid }
       response_body = JSON.parse(response.body)
@@ -192,6 +190,32 @@ RSpec.describe CavcDashboardController, type: :controller do
       expect(response_body.key?("cavc_dashboards")).to be true
       expect(response_body["cavc_dashboards"][0]["cavc_dashboard_dispositions"].count)
         .to eq CavcDashboardDisposition.where(cavc_dashboard: dashboard).count
+    end
+
+    it "#index creates a new dashboard for a decision that doesn't create a remand appeal stream" do
+      appeal = create(:appeal, :dispatched, :with_decision_issue)
+
+      creation_params = {
+        source_appeal_id: appeal.id,
+        cavc_decision_type: Constants::CAVC_DECISION_TYPES["affirmed"],
+        cavc_docket_number: "12-3456",
+        cavc_judge_full_name: "Clerk",
+        created_by_id: authorized_user.id,
+        decision_date: 1.week.ago,
+        decision_issue_ids: appeal.decision_issue_ids,
+        instructions: "Seed remand for testing",
+        represented_by_attorney: true,
+        updated_by_id: authorized_user.id,
+        remand_subtype: nil,
+        judgement_date: 1.week.ago,
+        mandate_date: 1.week.ago
+      }
+      cavc_remand = CavcRemand.create!(creation_params)
+
+      get :index, params: { format: :json, appeal_id: cavc_remand.source_appeal.uuid }
+      response_body = JSON.parse(response.body)
+      expect(response_body.key?("cavc_dashboards")).to be true
+      expect(response_body["cavc_dashboards"][0]["remand_request_issues"]&.count).to be nil
     end
   end
 end
