@@ -1,4 +1,4 @@
-# * Run specs "bundle exec rspec spec/queries/efolder_document_upload_logic_spec.rb"
+# * Run specs "bundle exec rspec spec/jobs/notification_efolder_sync_job_spec.rb"
 
 # * Get code coverage "open coverage/index.html"
 
