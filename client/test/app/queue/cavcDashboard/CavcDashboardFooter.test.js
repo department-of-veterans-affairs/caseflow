@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 // import { render, screen, fireEvent } from '@testing-library/react';
-import CavcDashboardFooter from '../../../../app/queue/cavcDashboard/CavcDashboardFooter';
+import { CavcDashboardFooter } from '../../../../app/queue/cavcDashboard/CavcDashboardFooter';
 // import CancelCavcDashboardChangeModal from '../../../../app/queue/cavcDashboard/CancelCavcDashboardChangeModal';
 
 const unmodifiedInitialState = {
@@ -87,4 +87,15 @@ describe('cavcDashboardFooter', () => {
 
     expect(screen.getByText('Save Changes')).toBeEnabled();
   });
+
+  // it('cancel returns to ', () => {
+  //   // const { queryByTestId } = render(<CavcDashboardFooter {...setProps('reason', true)} />);
+  //   render(<CavcDashboardFooter {...setProps('reason', true)} />);
+  //   const cancelButton = screen.getByText('Cancel');
+
+  //   fireEvent.click(cancelButton);
+  //   // expect(screen).have_content
+  //   expect(screen).have_content('CAVC appeals for');
+  //   // expect(page).to have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT)
+  // });
 });
