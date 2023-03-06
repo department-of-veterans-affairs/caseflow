@@ -301,7 +301,10 @@ export default class DailyDocket extends React.Component {
             )}
           </div>
         </div>
-        <DailyDocketGuestLinkSection hasAccess={user.userIsHearingManagement} linkInfo={dailyDocket.conferenceLink} />
+        <DailyDocketGuestLinkSection
+          hasAccess={user.userIsHearingManagement || user.userIsHearingAdmin}
+          hearingType={dailyDocket.requestType}
+          linkInfo={dailyDocket.conferenceLink} />
         <DailyDocketRows
           hearings={this.props.hearings}
           hidePreviouslyScheduled

@@ -1,10 +1,17 @@
+/* eslint-disable id-length */
 import React from 'react';
 import PropTypes from 'prop-types';
 import CopyTextButton from '../../../components/CopyTextButton';
 
-export const DailyDocketGuestLinkSection = ({ linkInfo, hasAccess }) => {
+export const DailyDocketGuestLinkSection = ({ linkInfo, requestType, hasAccess }) => {
 
   const { alias, guestLink, guestPin } = linkInfo;
+
+  const hearingType = {
+    C: 'central hearings',
+    V: 'non-virtual hearings',
+    T: 'travel hearings',
+  };
 
   const containerStyle = {
     display: 'grid',
@@ -30,7 +37,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo, hasAccess }) => {
 
   return (
     <div style={containerStyle}>
-      <h3>Guest links for non-virtual hearings</h3>
+      <h3>Guest links for {hearingType[requestType]}</h3>
       <div style={roomInfoContainerStyle}>
         <h3>Conference Room:<span style={{ fontWeight: 'normal' }}>{alias}</span></h3>
         <h3>PIN:<span style={{ fontWeight: 'normal' }}>{guestPin}#</span></h3>
@@ -47,5 +54,6 @@ DailyDocketGuestLinkSection.propTypes = {
     guestPin: PropTypes.string,
     alias: PropTypes.string,
   }),
-  hasAccess: PropTypes.bool
+  hasAccess: PropTypes.bool.isRequired,
+  hearingType: PropTypes.string
 };
