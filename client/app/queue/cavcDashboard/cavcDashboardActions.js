@@ -26,6 +26,17 @@ export const fetchInitialDashboardData = (appealId) => (dispatch) => {
     }));
 };
 
+export const updateDashboardData = (dashboardIndex, updatedData) => (dispatch) => {
+  ApiUtil.
+    patch('/cavc_dashboard/update', { data: {
+      dashboardIndex, updatedData }
+    }).
+    then(dispatch({
+      type: ACTIONS.UPDATE_DASHBOARD_DATA,
+      payload: { dashboardIndex, updatedData }
+    }));
+};
+
 export const resetDashboardData = () => (dispatch) => {
   dispatch({
     type: ACTIONS.RESET_DASHBOARD_DATA
@@ -70,13 +81,6 @@ export const removeDashboardIssue = (dashboardIndex, issueIndex, dispositionInde
   dispatch({
     type: ACTIONS.REMOVE_DASHBOARD_ISSUE,
     payload: { dashboardIndex, issueIndex, dispositionIndex }
-  });
-};
-
-export const updateDashboardData = (dashboardIndex, updatedData) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.UPDATE_DASHBOARD_DATA,
-    payload: { dashboardIndex, updatedData }
   });
 };
 
