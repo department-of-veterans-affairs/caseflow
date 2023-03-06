@@ -20,7 +20,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
     end
   end
 
-  context "OCC user cannot add issues to the cavc dashboard" do
+  context "as an OCC user cannot add issues to the cavc dashboard" do
     before do
       occteam_organization.add_user(unauthorized_user)
       User.authenticate!(user: unauthorized_user)
@@ -28,25 +28,141 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
     end
 
     it "dashboard loads as read-only if the appeal has an associated cavcRemand" do
-      visit "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
-      click_button "CAVC Dashboard"
+      go_to_dashboard(cavc_remand.remand_appeal.uuid)
       expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
       expect(page).to_not have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT)
+      expect(page).to_not have_content("Edit")
     end
   end
 
-  context "OAI user can add issues to the cavc dashboard" do
+  context "as an OAI user" do
     before do
       oaiteam_organization.add_user(authorized_user)
       User.authenticate!(user: authorized_user)
       oaiteam_organization.add_user(authorized_user)
     end
 
-    it "dashboard loads as editable if the appeal has an associated cavcRemand" do
-      visit "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
-      click_button "CAVC Dashboard"
+    it "dashboard save button is disabled until changes made, cancel button returns to case details without saving" do
+      go_to_dashboard(cavc_remand.remand_appeal.uuid)
       expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
       expect(page).to have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT)
+      expect(page).to have_content("Edit")
+
+      expect(page).to have_button("Save Changes", disabled: true)
+      page.all("div.cf-select__placeholder", exact_text: "Select option").first.click
+      page.find("div.cf-select__menu").find("div", exact_text: "Abandoned").click
+      expect(page).to have_button("Save Changes", disabled: false)
+      click_button "Cancel"
+
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
+      click_button "CAVC Dashboard"
+      expect(page).not_to have_content("Abandoned")
+    end
+
+    it "user can edit CAVC remand details" do
+      go_to_dashboard(cavc_remand.remand_appeal.uuid)
+
+      page.find("button", text: "Edit").click
+
+      modal = page.find("div.cf-modal-body")
+      within(modal) do
+        fill_in(name: "Board Decision Date", with: "01/01/2021")
+        fill_in(name: "Board Docket Number", with: "210101-1000")
+        fill_in(name: "CAVC Decision Date", with: "01/01/2021")
+        fill_in(name: "CAVC Docket Number", with: "21-1234")
+        find("label", text: "No").click
+      end
+
+      click_button "Save"
+
+      expect(page).to have_content `CAVC appeal 21-1234`
+      # date format for input is MM/DD/YYYY but for display is MM/DD/YY
+      expect(page).to have_content "01/01/21"
+      expect(page).to have_content "210101-1000"
+      expect(page).to have_content "01/01/21"
+      expect(page).to have_content "21-1234"
+      expect(page).to have_content "No"
+    end
+
+    it "user can add issues, edit dispsositions, and save changes" do
+      Seeds::CavcDecisionReasonData.new.seed!
+
+      go_to_dashboard(cavc_remand.remand_appeal.uuid)
+
+      dropdowns = page.all("div.cf-select__placeholder", exact_text: "Select option")
+
+      dropdowns.each do |dropdown|
+        dropdown.click
+        page.find("div.cf-select__menu").find("div", exact_text: "Abandoned").click
+      end
+
+      click_button "Add issue"
+      modal = page.find("div.cf-modal-body")
+      within(modal) do
+        benefit_type_dropdown = page.find("div.cf-form-dropdown", text: "Benefit Type")
+        benefit_type_dropdown.find("div.cf-select").click
+        benefit_type_dropdown.find("div.cf-select__menu").find("div", exact_text: "Compensation").click
+
+        issue_cat_dropdown = page.find("div.cf-form-dropdown", text: "Issue Category")
+        issue_cat_dropdown.find("div.cf-select").click
+        issue_cat_dropdown.find("div.cf-select__menu").find("div", exact_text: "Other Non-Rated").click
+
+        disp_dropdown = page.find("div.cf-form-dropdown", text: "Disposition by Court")
+        disp_dropdown.find("div.cf-select").click
+        disp_dropdown.find("div.cf-select__menu").find("div", exact_text: "Affirmed").click
+      end
+
+      click_button "Submit"
+      click_button "Save Changes"
+
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
+      click_button "CAVC Dashboard"
+
+      abandoned = page.all("div.cf-select__value-container", exact_text: "Abandoned")
+      affirmed = page.all("div.cf-select__value-container", exact_text: "Affirmed")
+      expect(abandoned.count).to eq 3
+      expect(affirmed.count).to eq 1
+    end
+
+    it "user can set decision reasons for Vacated and Remanded or Reversed decision types and save" do
+      Seeds::CavcDecisionReasonData.new.seed!
+
+      go_to_dashboard(cavc_remand.remand_appeal.uuid)
+
+      dropdowns = page.all("div.cf-select__placeholder", exact_text: "Select option")
+      dropdowns.first.click
+      page.find("div.cf-select__menu").find("div", exact_text: "Reversed").click
+
+      reversed_section = page.all("div.usa-accordion-bordered").first
+      reversed_section.click
+      reversed_section.find("span", exact_text: "Duty to notify").click
+      reversed_section.find("span", exact_text: "Duty to assist").click
+      reversed_section.find("span", exact_text: "Treatment records").click
+      expect(page).to have_content "Decision Reasons (2)"
+      reversed_section.find("div", exact_text: "Decision Reasons (2)").click
+
+      dropdowns.last.click
+      page.find("div.cf-select__menu").find("div", exact_text: "Vacated and Remanded").click
+
+      v_and_r_section = page.all("div.usa-accordion-bordered").last
+      v_and_r_section.click
+      v_and_r_section.find("span", exact_text: "AMA specific remand?").click
+      v_and_r_section.find("span", exact_text: "Issuing a decision before 90-day window closed").click
+      v_and_r_section.find("span", exact_text: "Failure to adopt favorable findings").click
+      expect(page).to have_content "Decision Reasons (1)"
+      v_and_r_section.find("div", exact_text: "Decision Reasons (1)").click
+
+      click_button "Save Changes"
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
+      click_button "CAVC Dashboard"
+
+      expect(page).to have_content "Decision Reasons (2)"
+      expect(page).to have_content "Decision Reasons (1)"
     end
   end
+end
+
+def go_to_dashboard(appeal_uuid)
+  visit "/queue/appeals/#{appeal_uuid}/"
+  click_button "CAVC Dashboard"
 end
