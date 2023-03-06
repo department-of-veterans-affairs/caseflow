@@ -4,10 +4,20 @@ module WarRoom
     # finding reviews that potentially need resolution
     def retrieve_problem_reviews
       hlrs = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
-      problem_hlrs = hlrs.select{ |hlr| hlr.veteran.end_products.select{ |ep| ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) && [Date.today, 1.day.ago.to_date].include?(ep.last_action_date) }.empty? }
+      problem_hlrs = hlrs.select{ |hlr|
+        hlr.veteran.end_products.select { |ep|
+          ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+          [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+        }.empty?
+      }
 
       scs = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
-      problem_scs = scs.select{ |sc| sc.veteran.end_products.select{ |ep| ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) && [Date.today, 1.day.ago.to_date].include?(ep.last_action_date) }.empty? }
+      problem_scs = scs.select{ |sc|
+        sc.veteran.end_products.select { |ep|
+          ep.claim_type_code.include?("040") && ["CAN", "CLR"].include?(ep.status_type_code) &&
+          [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+        }.empty?
+      }
 
       problem_reviews = problem_scs + problem_hlrs
     end
@@ -34,12 +44,55 @@ module WarRoom
 
     # go through each problem_review's EPEs and resolve the status
     # that's causing a stuck EP
+    # def resolve_duplicate_eps(reviews)
+    #   reviews.each do |r|
+    #     r.end_product_establishments.each do |epe|
+    #       process_claim(epe)
+    #     end
+    #   end
+    # end
+
     def resolve_duplicate_eps(reviews)
+      output = ""
+
       reviews.each do |r|
+        v = r.veteran
+        verb = "cleared"
         r.end_product_establishments.each do |epe|
-          process_claim(epe)
+          next if epe.reference_id.present?
+
+          # Check if active duplicate exists
+          # dupes = eps.select{ |ep| ep.claim_type_code == epe.code && ep.claim_date.to_date == epe.claim_date && EndProductEstablishment.where(reference_id: ep.claim_id).none? }
+          # next if dupes.any?
+
+          verb = "established"
+          ep2e = epe.send(:end_product_to_establish)
+          epmf = EndProductModifierFinder.new(epe, v)
+          taken = epmf.send(:taken_modifiers).compact
+
+          # Mark place to start retrying
+          epmf.instance_variable_set(:@taken_modifiers, taken.push(ep2e.modifier))
+          ep2e.modifier = epmf.find
+
+          epe.instance_variable_set(:@end_product_to_establish, ep2e)
+          epe.establish!
+          epe.reload
+        end
+
+        output_line = "| #{v.participant_id} | #{r.class.name} | #{r.id}"
+
+        begin
+          DecisionReviewProcessJob.new.perform(r)
+        rescue Caseflow::Error::DuplicateEp => error
+          output_line = "| DuplicateEp error #{output_line}"
+        else
+          output_line = "| #{verb} #{output_line}"
+        ensure
+          output = "#{output_line}\n#{output}"
         end
       end
+
+      puts output
     end
 
     def run()
@@ -53,7 +106,7 @@ module WarRoom
       problem_reviews = retrieve_problem_reviews
 
       if problem_reviews.count.zero?
-        put 'No problem Supplemental Claims or Higher Level Reviews found. Exiting.\n'
+        puts 'No problem Supplemental Claims or Higher Level Reviews found.'
         return false
       end
 
