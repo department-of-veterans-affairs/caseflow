@@ -1,4 +1,8 @@
 .cf-cavc-dashboard {
+  .cf-tab-navigation {
+    display: flex;
+    flex-wrap: wrap-reverse;
+  }
   .cf-tab {
     width: 250px;
     border-bottom: 1px solid #aeb0b5;
@@ -13,6 +17,7 @@
     z-index: 1;
   }
   .cf-tab-navigation button {
+    flex: 0 0 250px;
     margin-bottom: -1px;
   }
   .cf-active + .cf-tab {
