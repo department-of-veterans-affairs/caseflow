@@ -7,7 +7,7 @@ describe QueueFilterParameter do
     subject { QueueFilterParameter.from_string(filter_string) }
 
     def encode_values(values)
-      URI.escape(
+      ERB::Util.url_encode(
         values.map(&URI.method(:escape)).join("|")
       )
     end

@@ -54,7 +54,7 @@ describe QueueColumn, :all_dbs do
     let(:label) { Generators::Random.word_characters(rand(1..20)) }
 
     def match_encoding(str)
-      URI.escape(URI.escape(str))
+      ERB::Util.url_encode(ERB::Util.url_encode(str))
     end
 
     context "when input value is null" do
