@@ -64,8 +64,8 @@ export const EditCavcRemandView = () => {
         decision_issue_ids: formData.issueIds,
         federal_circuit: formData.federalCircuit,
         instructions: formData.instructions,
-        substitution_date: formData.substitutionDate,
-        participant_id: formData.participantId,
+        substitution_date: formData.isAppellantSubstituted === 'true' ? formData.substitutionDate : null,
+        participant_id: formData.isAppellantSubstituted === 'true' ? formData.participantId : null,
         is_appellant_substituted: formData.isAppellantSubstituted
       },
     };

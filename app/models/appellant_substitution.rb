@@ -19,13 +19,15 @@ class AppellantSubstitution < CaseflowRecord
             :task_params,
             presence: true, allow_blank: true
 
-  attr_accessor :cancelled_task_ids
+  attr_accessor :cancelled_task_ids, :cavc_remand_appeal_substitution
 
   before_create :establish_substitution_on_same_appeal, if: :same_appeal_substitution_allowed?
   before_create :establish_separate_appeal_stream, unless: :same_appeal_substitution_allowed?
+  before_create :establish_sustitution_on_cavc_remand_appeal, if: :cavc_remand_appeal_substitution
+  before_update :establish_substitution_on_same_appeal_on_update, if: :cavc_remand_appeal_substitution
   after_commit :initialize_tasks
   after_commit :initialize_tasks, unless: :same_appeal_substitution_allowed?
-  after_commit :create_substitute_tasks, if: :same_appeal_substitution_allowed?
+  after_commit :create_substitute_tasks, if: :can_create_substitute_tasks?
 
   def substitute_claimant
     target_appeal.claimant
@@ -47,6 +49,8 @@ class AppellantSubstitution < CaseflowRecord
   private
 
   def establish_substitution_on_same_appeal
+    return if cavc_remand_appeal_substitution
+
     # Need to update source appeal veteran_is_not_claimant before creating the substitute claimant.
     # This ensures that substitute claimant is the correct type.
     source_appeal.update!(veteran_is_not_claimant: true)
@@ -60,7 +64,25 @@ class AppellantSubstitution < CaseflowRecord
     self.target_appeal = source_appeal.reload
   end
 
+  def establish_sustitution_on_cavc_remand_appeal
+    target_appeal.update!(veteran_is_not_claimant: true)
+
+    Claimant.create!(
+      participant_id: substitute_participant_id,
+      payee_code: nil,
+      type: claimant_type,
+      decision_review_id: target_appeal.id,
+      decision_review_type: "Appeal"
+    )
+  end
+
+  def establish_substitution_on_same_appeal_on_update
+    target_appeal.claimant&.update(participant_id: substitute_participant_id)
+  end
+
   def establish_separate_appeal_stream
+    return if cavc_remand_appeal_substitution
+
     unassociated_claimant = Claimant.create!(
       participant_id: substitute_participant_id,
       payee_code: nil,
@@ -123,5 +145,9 @@ class AppellantSubstitution < CaseflowRecord
         request_issue_copy.save!
       end
     end
+  end
+
+  def can_create_substitute_tasks?
+    same_appeal_substitution_allowed? || cavc_remand_appeal_substitution
   end
 end

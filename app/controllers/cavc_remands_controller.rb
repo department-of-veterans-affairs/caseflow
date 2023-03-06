@@ -25,7 +25,7 @@ class CavcRemandsController < ApplicationController
     :updated_by_id
   ].freeze
 
-  APPELLANT_SUBSTITUTION_PARAMS = [
+  CAVC_APPELLANT_SUBSTITUTION_PARAMS = [
     :substitution_date,
     :participant_id,
     :remand_source,
@@ -33,6 +33,12 @@ class CavcRemandsController < ApplicationController
     :created_by_id,
     :updated_by_id
   ].freeze
+
+  EDIT_CAVC_APPELLANT_SUBSTITUTION_PARAMS = [
+    selected_task_ids: [],
+    cancelled_task_ids: [],
+    task_params: {}
+  ]
 
   MDR_REQUIRED_PARAMS = [
     :federal_circuit
@@ -67,11 +73,12 @@ class CavcRemandsController < ApplicationController
     else
       cavc_remand.update(creation_params.except(:source_form))
       if FeatureToggle.enabled?(:cavc_remand_granted_substitute_appellant)
-        appellant_substitution = appeal.appellant_substitution
+        appellant_substitution = cavc_appeal.appellant_substitution
         if appellant_substitution.blank?
           create_appeal_and_cavc_remand_appellant_substitutions(cavc_appeal, cavc_remand)
         else
-          update_appeal_and_cavc_remand_appellant_substitutions(cavc_appeal, cavc_remand)
+          appellant_substitution.cavc_remand_appeal_substitution = true
+          update_appeal_and_cavc_remand_appellant_substitutions(cavc_appeal, cavc_remand, appellant_substitution)
         end
       end
     end
@@ -84,15 +91,12 @@ class CavcRemandsController < ApplicationController
 
   private
 
-  def update_appeal_and_cavc_remand_appellant_substitutions(cavc_appeal, new_cavc_remand)
-    if params[:is_appellant_substituted].present?
-      appellant_substitution.update(updated_by_id: current_user.id,
-                                    substitution_date: params[:substitution_date],
-                                    substitute_participant_id: params[:participant_id])
+  def update_appeal_and_cavc_remand_appellant_substitutions(cavc_appeal, new_cavc_remand, appellant_substitution)
+    # binding.pry
+    if params[:is_appellant_substituted] == "true"
+      appellant_substitution.update(appellant_substitution_params)
     else
-      appellant_substitution.update(updated_by_id: current_user.id,
-                                    substitution_date: Date.current,
-                                    substitute_participant_id: cavc_remand.veteran.participant_id)
+      appellant_substitution.update(appellant_substitution_params(Date.current, cavc_appeal.veteran.participant_id))
       cavc_appeal.update(veteran_is_not_claimant: nil)
     end
     cavc_remands_appellant_substitution = new_cavc_remand.cavc_remands_appellant_substitution
@@ -102,13 +106,21 @@ class CavcRemandsController < ApplicationController
     )
   end
 
+  def appellant_substitution_params(substitution_date = params[:substitution_date],
+                                    substitute_participant_id = params[:participant_id])
+    params.permit(EDIT_CAVC_APPELLANT_SUBSTITUTION_PARAMS).merge!(
+      substitution_date: substitution_date, substitute_participant_id: substitute_participant_id)
+  end
+
   def create_appeal_and_cavc_remand_appellant_substitutions(cavc_appeal, new_cavc_remand)
     if params[:participant_id].present?
-      appellant_substitution = AppellantSubstitution.create(created_by_id: current_user.id,
-                                                            source_appeal_id: cavc_appeal.id,
-                                                            substitution_date: params[:substitution_date],
-                                                            claimant_type: "DependentClaimant",
-                                                            substitute_participant_id: params[:participant_id])
+      appellant_substitution = AppellantSubstitution.create(
+        appellant_substitution_params.merge!(created_by_id: current_user.id,
+                                             source_appeal_id: source_appeal.id,
+                                             target_appeal_id: cavc_appeal.id,
+                                             claimant_type: "DependentClaimant",
+                                             cavc_remand_appeal_substitution: true)
+      )
     end
     CavcRemandsAppellantSubstitution.create(
       cavc_remand_appellant_substitution_params.merge!(
@@ -147,7 +159,7 @@ class CavcRemandsController < ApplicationController
 
   def cavc_remand_appellant_substitution_params
     params.merge!(created_by_id: current_user.id, updated_by_id: current_user.id)
-    params.permit(APPELLANT_SUBSTITUTION_PARAMS)
+    params.permit(CAVC_APPELLANT_SUBSTITUTION_PARAMS)
   end
 
   def required_params_by_decisiontype_and_subtype
