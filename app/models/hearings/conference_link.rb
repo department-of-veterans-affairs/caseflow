@@ -38,6 +38,15 @@ class ConferenceLink < CaseflowRecord
     "pin=#{host_pin}&role=host"
   end
 
+  def guest_pin
+    if guest_pin_long.nil?
+      link_service = VirtualHearings::LinkService.new
+      update!(guest_pin_long: link_service.guest_pin)
+    else
+      guest_pin_long
+    end
+  end
+
   private
 
   def generate_links_and_pins
