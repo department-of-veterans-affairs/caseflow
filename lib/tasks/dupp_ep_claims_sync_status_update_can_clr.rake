@@ -2,7 +2,7 @@
 # when the task is run using 'rake war_room:dupp_ep_claims_sync_status_update_can_clr'.
 # It's a logger to provide visibility into what the rake task is doing.
 # The logger is set to write to standard output (STDOUT).
-# Initializing an instance of WarRoom::DuppEpClaimsSyncStatusUpdateCanClr and using it to retrieve the problem reviews and resolve any duplicate end products.
+# Initializing an instance of WarRoom::DuppEpClaimsSyncStatusUpdateCanClr and using it to retrieve the problem reviews.
 # Adding logging messages at the start and end of the rake task to indicate when it begins and completes.
 # This implementation assumes that the RequestStore and ActiveRecord::Base configurations are properly set up in the Rails application's environment.
 
@@ -27,10 +27,6 @@ namespace :war_room do
     if problem_reviews.count.zero?
       logger.info("No problem Supplemental Claims or Higher Level Reviews found. Exiting.")
       return false
-    end
-
-    ActiveRecord::Base.transaction do
-      war_room.resolve_duplicate_eps(problem_reviews)
     end
 
     logger.info("Completed DuppEpClaimsSyncStatusUpdateCanClr rake task")
