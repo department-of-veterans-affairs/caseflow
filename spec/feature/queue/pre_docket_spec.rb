@@ -516,7 +516,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(ro_review_instructions)
         end
 
-        xstep "CAMO can return the appeal to BVA Intake" do
+        step "CAMO can return the appeal to BVA Intake" do
           appeal = Appeal.last
           camo_task = VhaDocumentSearchTask.last
           bva_intake_task = PreDocketTask.last
