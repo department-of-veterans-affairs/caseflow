@@ -1,0 +1,15 @@
+.cf-cavc-dashboard {
+  .cf-tab {
+    width: 250px;
+    border-bottom: 1px solid #aeb0b5;
+    div {
+      width: 100%;
+    }
+  }
+  .cf-active {
+    border-bottom: 0;
+  }
+  .cf-tab-navigation button {
+    margin-bottom: -1px;
+  }
+}

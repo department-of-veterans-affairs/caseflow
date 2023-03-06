@@ -71,7 +71,7 @@ export const CavcDashboard = (props) => {
             message={COPY.CAVC_DASHBOARD_LOADING_SCREEN_TEXT}
           />}
         {loaded && !error &&
-          <>
+          <div className="cf-cavc-dashboard">
             <h1>CAVC appeals for {appealDetails?.appellantFullName}</h1>
 
             <TabWindow tabs={tabs}
@@ -81,7 +81,7 @@ export const CavcDashboard = (props) => {
               unmountOnExit={false} />
             <hr />
             <CavcDashboardFooter {...props} />
-          </>
+          </div>
         }
         {loaded && error &&
           <StatusMessage
