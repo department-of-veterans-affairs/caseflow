@@ -291,6 +291,7 @@ Rails.application.routes.draw do
   scope path: "/cavc_dashboard" do
     get "/cavc_decision_reasons", to: "cavc_dashboard#cavc_decision_reasons"
     get "/cavc_selection_bases", to: "cavc_dashboard#cavc_selection_bases"
+    patch "/update", to: "cavc_dashboard#update_data"
     post "/save", to: "cavc_dashboard#save"
   end
 

@@ -66,11 +66,12 @@ export const CavcDashboardDetails = (props) => {
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
 
   const Details = {
+    id: dashboard.id,
     boardDecisionDate: dashboard.board_decision_date,
     boardDocketNumber: dashboard.board_docket_number,
     cavcDecisionDate: dashboard.cavc_decision_date,
     cavcDocketNumber: dashboard.cavc_docket_number,
-    jointMotionForRemand: dashboard.joint_motion_for_remand
+    jointMotionForRemand: dashboard.joint_motion_for_remand,
   };
 
   const openHandler = () => {
