@@ -29,18 +29,22 @@ export const CavcDashboard = (props) => {
 
   useEffect(() => {
     // need to reset data on page load or else returning to the dashboard after saving will always enable save button
-    props.resetDashboardData();
-    // define the promise inside useEffect so that the component doesn't infinitely rerender
-    const loadPromise = Promise.all([
-      props.fetchAppealDetails(appealId),
-      props.fetchCavcDecisionReasons(),
-      props.fetchCavcSelectionBases(),
-      props.fetchInitialDashboardData(appealId)
-    ]);
+    if (props.history.location.state && props.history.location.state.redirectFromButton) {
+      props.resetDashboardData();
+      // define the promise inside useEffect so that the component doesn't infinitely rerender
+      const loadPromise = Promise.all([
+        props.fetchAppealDetails(appealId),
+        props.fetchCavcDecisionReasons(),
+        props.fetchCavcSelectionBases(),
+        props.fetchInitialDashboardData(appealId)
+      ]);
 
-    loadPromise.
-      catch(() => setError(true)).
-      finally(() => setLoaded(true));
+      loadPromise.
+        catch(() => setError(true)).
+        finally(() => setLoaded(true));
+    } else {
+      props.history.goBack();
+    }
   }, []);
 
   useEffect(() => {
