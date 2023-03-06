@@ -1,22 +1,38 @@
-# This task now creates a log file with a name that includes the date and time that the task was run in the local time zone,
-# and it appends the log output to the end of the file using the File.open block.
-# The FileUtils.mkdir_p method is used to create the log directory if it doesn't already exist.
-
-require 'fileutils'
+# This will allow the output of the log information to be printed to the console screen
+# when the task is run using 'rake war_room:dupp_ep_claims_sync_status_update_can_clr'.
+# It's a logger to provide visibility into what the rake task is doing.
+# The logger is set to write to standard output (STDOUT).
+# Initializing an instance of WarRoom::DuppEpClaimsSyncStatusUpdateCanClr and using it to retrieve the problem reviews and resolve any duplicate end products.
+# Adding logging messages at the start and end of the rake task to indicate when it begins and completes.
+# This implementation assumes that the RequestStore and ActiveRecord::Base configurations are properly set up in the Rails application's environment.
 
 namespace :war_room do
-  desc "Sync duplicate end product claims and log output to file"
+  desc "Process DuppEpClaimsSyncStatusUpdateCanClr"
   task dupp_ep_claims_sync_status_update_can_clr: :environment do
-    log_dir = File.join(Rails.root, 'log')
-    FileUtils.mkdir_p(log_dir) unless File.directory?(log_dir)
+    logger = Logger.new(STDOUT)
 
-    log_file = File.join(log_dir, "duplicateeptask_#{Time.zone.now.strftime('%Y-%m-%d_%H%M%S')}.log")
-    File.open(log_file, 'a') do |f|
-      f.puts "Duplicate End Product Claims Sync Status Update CAN CLR Task Log"
-      f.puts "Timestamp: #{Time.zone.now}"
-      f.puts "-" * 50
+    logger.info("Starting DuppEpClaimsSyncStatusUpdateCanClr rake task")
 
-      WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.run(output: f)
+    RequestStore[:current_user] = OpenStruct.new(
+      ip_address: '127.0.0.1',
+      station_id: '283',
+      css_id: 'CSFLOW',
+      regional_office: 'DSUSER'
+    )
+
+    war_room = WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new
+
+    problem_reviews = war_room.retrieve_problem_reviews
+
+    if problem_reviews.count.zero?
+      logger.info("No problem Supplemental Claims or Higher Level Reviews found. Exiting.")
+      return false
     end
+
+    ActiveRecord::Base.transaction do
+      war_room.resolve_duplicate_eps(problem_reviews)
+    end
+
+    logger.info("Completed DuppEpClaimsSyncStatusUpdateCanClr rake task")
   end
 end
