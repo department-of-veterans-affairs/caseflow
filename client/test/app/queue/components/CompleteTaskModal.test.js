@@ -10,7 +10,6 @@ import COPY from '../../../../COPY';
 import {
   postData,
   camoToBvaIntakeData,
-  camoToProgramOfficeToCamoData,
   caregiverToIntakeData,
   emoToBvaIntakeData,
   rpoToBvaIntakeData
@@ -103,82 +102,6 @@ afterEach(() => {
 });
 
 describe('CompleteTaskModal', () => {
-  describe('vha_send_to_board_intake', () => {
-    const taskType = 'VhaDocumentSearchTask';
-    const buttonText = COPY.MODAL_SUBMIT_BUTTON;
-    const modalType = 'vha_send_to_board_intake';
-
-    test('modal title is Send to Board Intake', () => {
-      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
-
-      expect(screen.getByText('Send to Board Intake')).toBeTruthy();
-    });
-
-    test('CAMO Notes section only appears once whenever CAMO sends appeal back to BVA Intake', () => {
-      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
-
-      enterModalRadioOptions(
-        'Correct documents have been successfully added',
-        'Provide additional context and/or documents:',
-        'CAMO -> BVA Intake',
-        buttonText
-      );
-
-      expect(getReceivedInstructions()).toBe(
-        '\n**Status:** Correct documents have been successfully added\n\n' +
-        '**CAMO Notes:** CAMO -> BVA Intake'
-      );
-    });
-
-    test('PO Details appear next to Program Office Notes section', () => {
-      renderCompleteTaskModal(modalType, camoToProgramOfficeToCamoData, taskType);
-
-      enterModalRadioOptions(
-        'Correct documents have been successfully added',
-        'Provide additional context and/or documents:',
-        'CAMO -> BVA Intake',
-        buttonText
-      );
-
-      expect(getReceivedInstructions()).toBe(
-        '\n**Status:** Correct documents have been successfully added\n\n' +
-        '**CAMO Notes:** CAMO -> BVA Intake\n\n' +
-        '**Program Office Notes:** Documents for this appeal are stored in VBMS.\n\n' +
-        '**Detail:**\n\n PO back to CAMO!\n\n'
-      );
-    });
-
-    test('No errors are thrown if any task in tree has null instructions', () => {
-
-      const taskIDs = Object.keys(camoToProgramOfficeToCamoData.queue.amaTasks);
-
-      const taskDataWithNullInstructions = camoToProgramOfficeToCamoData;
-
-      taskIDs.forEach((id) => {
-        if (taskDataWithNullInstructions.queue.amaTasks[id].assignedTo.type !== 'VhaProgramOffice') {
-          taskDataWithNullInstructions.queue.amaTasks[id].instructions = null;
-        }
-      });
-
-      renderCompleteTaskModal(modalType, taskDataWithNullInstructions, taskType);
-
-      enterModalRadioOptions(
-        'Correct documents have been successfully added',
-        'Provide additional context and/or documents:',
-        'Null test',
-        buttonText
-      );
-
-      expect(getReceivedInstructions()).toBe(
-        '\n**Status:** Correct documents have been successfully added' +
-        '\n\n**CAMO Notes:** Null test\n' +
-        '\n**Program Office Notes:** Documents for this appeal are stored in VBMS.' +
-        '\n\n**Detail:**' +
-        '\n\n PO back to CAMO!\n\n'
-      );
-    });
-  });
-
   describe('vha_documents_ready_for_bva_intake_review', () => {
     const taskType = 'VhaDocumentSearchTask';
     const confirmationButtonText = COPY.MODAL_SEND_BUTTON;
