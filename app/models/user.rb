@@ -514,6 +514,16 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     ### Params: N/A
     ### Return: User object for the system user. This object will either be pulled from
     ### the database if it exists or will be created if it does not exist in the database
+
+    def first_time_logging_in?(session)
+      return false unless session["user"]
+
+      user = User.find_by_css_id(session["user"]["css_id"])
+
+      return true unless user&.last_login_at
+      false
+    end
+
     def system_user
       @system_user ||= begin
         private_method_name = "#{Rails.current_env}_system_user".to_sym
