@@ -6,10 +6,16 @@
       width: 100%;
     }
   }
-  .cf-active {
-    border-bottom: 0;
+  .cf-tab.cf-active {
+    border-bottom: 1px solid #0071bc;
+    // needed for active tab's border to be on top of all other surrounding borders
+    position: relative;
+    z-index: 1;
   }
   .cf-tab-navigation button {
     margin-bottom: -1px;
+  }
+  .cf-active + .cf-tab {
+    border-left: 1px solid #aeb0b5;
   }
 }
