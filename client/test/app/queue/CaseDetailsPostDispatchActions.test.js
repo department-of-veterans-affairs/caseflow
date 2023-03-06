@@ -41,9 +41,9 @@ describe('Post Dispatch Actions', () => {
   describe('clicking cavc dashboard button', () => {
     it('redirects to cavc dashboard page', () => {
       renderCaseDetailsPostDispatchActions(appealWithDashboard, propToShowCavcDashboard);
-      fireEvent.click(screen.getByText(COPY.CAVC_DASHBOARD_BUTTON_TEXT));
+      fireEvent.click(screen.getByText(COPY.CAVC_DASHBOARD_BUTTON_TEXT, { redirectFromButton: true }));
       expect(mockHistoryPush).toBeCalledTimes(1);
-      expect(mockHistoryPush).toBeCalledWith(`/queue/appeals/${appealWithDashboard.externalId}/cavc_dashboard`);
+      expect(mockHistoryPush).toBeCalledWith(`/queue/appeals/${appealWithDashboard.externalId}/cavc_dashboard`, expect.objectContaining({ redirectFromButton: true }));
     });
   });
 });
