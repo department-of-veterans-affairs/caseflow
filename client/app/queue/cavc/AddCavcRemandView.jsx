@@ -211,9 +211,7 @@ const AddCavcRemandView = (props) => {
       }
 
       return COPY.CAVC_REMAND_CREATED_ON_HOLD_TITLE;
-    }
-
-    if (otherDismissalType() || affirmedType() || settlementType()) {
+    } else if (otherDismissalType() || affirmedType() || settlementType()) {
       return COPY.CAVC_DASHBOARD_ENTRY_CREATED_TITLE;
     }
 
