@@ -109,13 +109,11 @@
   border: 1px solid $color-primary;
   box-shadow: 0 1px 0 $color-white;
   border-bottom: 0;
-  border-right: 1.5px solid $color-primary;
   font-weight: 700;
 
   > span,
   > div {
     top: 1px;
-    background: $color-white;
     box-shadow: 0 2px 0 0 $color-primary inset;
 
     > span,
