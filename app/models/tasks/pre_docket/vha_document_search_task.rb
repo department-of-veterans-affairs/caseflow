@@ -24,8 +24,7 @@ class VhaDocumentSearchTask < Task
 
   VHA_CAMO_TASK_ACTIONS = [
     Constants.TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.to_h,
-    Constants.TASK_ACTIONS.VHA_RETURN_TO_BOARD_INTAKE.to_h,
-    Constants.TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.to_h
+    Constants.TASK_ACTIONS.VHA_RETURN_TO_BOARD_INTAKE.to_h
   ].freeze
 
   def self.label

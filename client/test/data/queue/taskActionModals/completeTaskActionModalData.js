@@ -164,16 +164,6 @@ const vhaDocumentSearchTaskData = {
         }
       },
       {
-        func: 'vha_send_to_board_intake',
-        label: 'Send to Board Intake',
-        value: 'modal/vha_send_to_board_intake',
-        data: {
-          modal_title: 'Send to Board Intake',
-          type: 'VhaDocumentSearchTask',
-          redirect_after: '/organizations/vha-camo'
-        }
-      },
-      {
         label: 'Return to Board Intake',
         func: 'vha_return_to_board_intake',
         value: 'modal/vha_return_to_board_intake',
