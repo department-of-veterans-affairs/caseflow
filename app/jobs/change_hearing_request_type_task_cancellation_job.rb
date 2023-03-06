@@ -6,7 +6,7 @@
 #              task is remopved from the prod
 
 # :nocov:
-class ChangeHearingRequestTypeTaskJobCancellationJob < CaseflowJob
+class ChangeHearingRequestTypeTaskCancellationJob < CaseflowJob
   queue_with_priority :low_priority
 
   # Desciption: Method to run the logic of the job
