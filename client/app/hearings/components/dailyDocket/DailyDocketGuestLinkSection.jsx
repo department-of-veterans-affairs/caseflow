@@ -37,12 +37,11 @@ export const DailyDocketGuestLinkSection = ({ linkInfo, requestType, hasAccess }
 
   return (
     <div style={containerStyle}>
-      <h3>Guest links for {hearingType[requestType]}</h3>
+      <h3>Guest links for {hearingType[requestType] || hearingType.V}</h3>
       <div style={roomInfoContainerStyle}>
         <h3>Conference Room:<span style={{ fontWeight: 'normal' }}>{alias}</span></h3>
         <h3>PIN:<span style={{ fontWeight: 'normal' }}>{guestPin}#</span></h3>
         {hasAccess && <h3><CopyTextButton {...CopyTextButtonProps} /></h3>}
-
       </div>
     </div>
   );
@@ -55,5 +54,5 @@ DailyDocketGuestLinkSection.propTypes = {
     alias: PropTypes.string,
   }),
   hasAccess: PropTypes.bool.isRequired,
-  hearingType: PropTypes.string
+  requestType: PropTypes.string
 };
