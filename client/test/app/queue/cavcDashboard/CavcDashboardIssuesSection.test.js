@@ -17,13 +17,12 @@ const createDashboardProp = (hasIssues) => {
       remand_request_issues: [{
         id: 1000,
         benefit_type: 'compensation',
-        decision_review_type: 'Appeal',
-        contested_issue_description: 'A description of issue',
+        description: 'Appeal - A description of issue'
       }],
       cavc_dashboard_issues: [{
         benefit_type: 'education',
         issue_category: 'Service Connection',
-        disposition: 'Reversed'
+        disposition: 'Reversed',
       }],
       cavc_dashboard_dispositions: [{
         request_issue_id: 1000,
@@ -54,10 +53,7 @@ describe('CavcDashboardIssuesSection', () => {
     const Issues = [...document.querySelectorAll('li')];
 
     expect(screen.getAllByText(dashboard.remand_request_issues[0].benefit_type, { exact: false })).toBeTruthy();
-    expect(screen.getAllByText(
-      // eslint-disable-next-line max-len
-      `${dashboard.remand_request_issues[0].decision_review_type } - ${ dashboard.remand_request_issues[0].contested_issue_description}`
-    )).toBeTruthy();
+    expect(screen.getAllByText(dashboard.remand_request_issues[0].description)).toBeTruthy();
     expect(Issues.length).toBe(2);
 
   });
