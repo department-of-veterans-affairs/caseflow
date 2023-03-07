@@ -67,10 +67,10 @@ module WarRoom
 
     def resolve_single_review(review_id, type)
       # retrieve the ClaimReview based on the ID and type passed in
-      if type == "hlr" do
-        review = HigherLevelReview.where(review_id)
+      if type == "hlr"
+        review = HigherLevelReview.where(id: review_id)
       else
-        review = SupplementalClaim.where(review_id)
+        review = SupplementalClaim.where(id: review_id)
       end
 
       veteran = review.veteran
