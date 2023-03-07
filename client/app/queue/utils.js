@@ -471,6 +471,7 @@ export const prepareAppealForStore = (appeals) => {
       veteranDateOfDeath: appeal.attributes.veteran_death_date,
       veteranGender: appeal.attributes.veteran_gender,
       veteranAddress: appeal.attributes.veteran_address,
+      veteranParticipantId: appeal.attributes.veteran_participant_id,
       closestRegionalOffice: appeal.attributes.closest_regional_office,
       closestRegionalOfficeLabel:
         appeal.attributes.closest_regional_office_label,
@@ -478,6 +479,7 @@ export const prepareAppealForStore = (appeals) => {
         appeal
       ),
       externalId: appeal.attributes.external_id,
+      efolderLink: appeal.attributes.efolder_link,
       status: appeal.attributes.status,
       decisionDate: appeal.attributes.decision_date,
       form9Date: appeal.attributes.form9_date,
