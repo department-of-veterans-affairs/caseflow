@@ -93,7 +93,7 @@ group :test, :development, :demo do
   gem "bundler-audit"
   # Testing tools
   gem "capybara"
-  gem "capybara-screenshot"
+  gem "capybara-screenshot", github: 'mattheworiordan/capybara-screenshot', branch: 'master'
   gem "danger", "~> 6.0"
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 5.2"
@@ -143,7 +143,7 @@ group :test do
   gem "knapsack_pro"
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
-  gem "webmock"
+  gem "webmock", require: false
 end
 # rubocop:enable Metrics/LineLength
 
