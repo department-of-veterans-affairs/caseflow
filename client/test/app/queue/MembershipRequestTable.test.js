@@ -1,16 +1,17 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createMockedMembershipRequests, mockedMembershipRequests } from '../../data/membershipRequests';
 import MembershipRequestTable from '../../../app/queue/MembershipRequestTable';
 import { axe } from 'jest-axe';
+import { select } from 'glamor';
 
 describe('MembershipRequestTable', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  const setup = (requests = []) => {
-    return render(<MembershipRequestTable requests={requests} />);
+  const setup = (requests = [], actionHandler = jest.fn) => {
+    return render(<MembershipRequestTable requests={requests} membershipRequestActionHandler={actionHandler} />);
   };
 
   it('renders the default state with no requests correctly', () => {
@@ -40,40 +41,44 @@ describe('MembershipRequestTable', () => {
     let button = screen.getAllByRole('button', { name: 'Show note' })[0];
 
     // The first note text should not be visible on the screen
-    expect(screen.queryByText(mockedMembershipRequests[0].note)).toBeNull();
-    button.click();
+    await expect(screen.queryByText(mockedMembershipRequests[0].note)).toBeNull();
+    // await button.click();
+    await fireEvent.click(button);
 
     button = screen.getAllByRole('button', { name: 'Show note' })[0];
 
     // These strings are based on the mocked data. This test assumes the first two mocked requests have notes.
     expect(button.getAttribute('aria-expanded')).toBe('true');
-    waitFor(() => expect(screen.getByText(mockedMembershipRequests[0].note).toBeInTheDocument()));
-    expect(screen.queryByText(mockedMembershipRequests[1].note)).toBeNull();
+    await waitFor(() => expect(screen.getByText(mockedMembershipRequests[0].note)).toBeInTheDocument());
+    await expect(screen.queryByText(mockedMembershipRequests[1].note)).toBeNull();
 
     // Click the button again and check for the text
-    button.click();
+    // await button.click();
+    await fireEvent.click(button);
     button = screen.getAllByRole('button', { name: 'Show note' })[0];
     expect(button.getAttribute('aria-expanded')).toBe('false');
-    waitFor(() => expect(screen.getByText(mockedMembershipRequests[0].note)).not.toBeInTheDocument());
+    // await waitFor(() => expect(screen.getByText(mockedMembershipRequests[0].note)).not.toBeInTheDocument());
+    await expect(screen.queryByText(mockedMembershipRequests[0].note)).toBeNull();
 
     // Get the second note expansion button
     button = screen.getAllByRole('button', { name: 'Show note' })[1];
 
-    button.click();
+    // await button.click();
+    await fireEvent.click(button);
 
     // Check for the second note text
-    waitFor(() => expect(screen.getByText(mockedMembershipRequests[1].note).toBeInTheDocument()));
+    await waitFor(() => expect(screen.getByText(mockedMembershipRequests[1].note)).toBeInTheDocument());
 
     expect(container).toMatchSnapshot();
 
   });
 
   it('displays the pagination controls when there are more than 10 membership requests correctly', async () => {
-    const extraMembershipRequests = createMockedMembershipRequests(10);
+    const extraMembershipRequests = createMockedMembershipRequests(12);
     const userName = 'Testy McGee';
     const lastRequest = {
       id: 999,
-      name: userName,
+      userNameWithCssId: userName,
       requestedDate: '2023-1-5'
     };
 
@@ -89,10 +94,35 @@ describe('MembershipRequestTable', () => {
 
     expect(screen.getByText(`View ${requests.length} pending requests`)).toBeVisible(true);
 
-    paginationButton.click();
+    await fireEvent.click(paginationButton);
+    await waitFor(() => expect(screen.getByText(userName)).toBeInTheDocument());
 
-    waitFor(() => expect(screen.getByText(userName)).toBeInTheDocument());
+  });
 
+  it('should call the membershipRequestActionHandler property with args when Approve is clicked', async () => {
+    const actionHandler = jest.fn();
+
+    setup(mockedMembershipRequests, actionHandler);
+
+    const selectActionButton = screen.getAllByRole('button', { name: 'Request actions' })[0];
+
+    selectActionButton.click();
+    await screen.getByText('Approve').click();
+
+    expect(actionHandler).toHaveBeenCalledWith('1-approved');
+  });
+
+  it('should call the membershipRequestActionHandler property with args when Deny is clicked', async () => {
+    const actionHandler = jest.fn();
+
+    setup(mockedMembershipRequests, actionHandler);
+
+    const selectActionButton = screen.getAllByRole('button', { name: 'Request actions' })[0];
+
+    selectActionButton.click();
+    await screen.getByText('Deny').click();
+
+    expect(actionHandler).toHaveBeenCalledWith('1-denied');
   });
 
 });
