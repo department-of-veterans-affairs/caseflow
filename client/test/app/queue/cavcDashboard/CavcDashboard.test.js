@@ -38,7 +38,14 @@ const renderCavcDashboard = async (appealData, shouldResolvePromise) => {
     fetchCavcSelectionBases: promiseResult,
     fetchInitialDashboardData: promiseResult,
     resetDashboardData: jest.fn(),
-    initialState
+    initialState,
+    history: {
+      location: {
+        state: {
+          redirectFromButton: true
+        }
+      }
+    }
   };
 
   return render(<CavcDashboard {...props} />);
