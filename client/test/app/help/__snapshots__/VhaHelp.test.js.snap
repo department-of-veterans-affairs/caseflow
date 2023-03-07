@@ -5,6 +5,13 @@ exports[`VhaHelp renders the help page 1`] = `
   <div
     class="cf-help-content"
   >
+    <p>
+      <a
+        href="/help"
+      >
+        Go Back
+      </a>
+    </p>
     <div>
       <h1
         id="#top"
