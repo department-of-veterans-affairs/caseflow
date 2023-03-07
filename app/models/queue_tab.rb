@@ -108,10 +108,6 @@ class QueueTab
 
   private
 
-  def assignee_is_org?
-    assignee.is_a?(Organization)
-  end
-
   def on_hold_tasks
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).on_hold
   end
