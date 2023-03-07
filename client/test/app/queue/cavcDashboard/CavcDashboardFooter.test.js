@@ -1,9 +1,6 @@
 import React from 'react';
-// import { render, screen } from '@testing-library/react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CavcDashboardFooter } from '../../../../app/queue/cavcDashboard/CavcDashboardFooter';
-// import { CavcDashboardTab } from '../../../../app/queue/cavcDashboard/CavcDashboardTab';
-// import CancelCavcDashboardChangeModal from '../../../../app/queue/cavcDashboard/CancelCavcDashboardChangeModal';
 
 const unmodifiedInitialState = {
   cavc_dashboards: [
@@ -98,45 +95,4 @@ describe('cavcDashboardFooter', () => {
     expect(screen.queryByText('CAVC appeals for')).toBeFalsy();
     expect(screen.queryByText('Currently active tasks')).toBeFalsy();
   });
-
-  // it('Cancel returns to Case Details if changes were not made, without cancel modal', () => {
-  //   // render(<CavcDashboardFooter />);
-  //   render(<CavcDashboardFooter {...setProps(null, true)} />);
-  //   const cancelButton = screen.getByText('Cancel');
-
-  //   fireEvent.click(cancelButton);
-  //   // expect(screen.getByText('Save Changes')).toBeDisabled();
-  //   expect(screen.queryByText('Your changes are not saved')).toBeNull();
-  //   // expect(screen.queryByText('CAVC appeals for')).toBeFalsy();
-  //   // expect(screen.queryByText('DOCKET')).toBeTruthy();
-  // });
-
-  // it('Canceling on the cancel modal returns to Cavc Dashboard', () => {
-  //   // render(<CavcDashboardTab {...setProps('reason', true)} />);
-  //   render(<CavcDashboardFooter {...setProps('reason', true)} />);
-  //   const cancelButton = screen.getByText('Cancel');
-
-  //   fireEvent.click(cancelButton);
-  //   expect(screen.queryByText('Your changes are not saved')).toBeTruthy();
-  //   // expect(screen.queryByText('Save Changes')).toBeTruthy();
-  //   const modalCancelButton = screen.queryAllByText('Cancel', 1);
-
-  //   fireEvent.click(modalCancelButton);
-  //   expect(screen.queryByText('Your changes are not saved')).toBeFalsy();
-  //   // expect(screen.queryByText('CAVC appeals for')).toBeTruthy();
-  //   // expect(screen.queryByText('Currently active tasks')).toBeFalsy();
-  // });
-
-  // it('Clicking Remove on the cancel modal returns to Case Details', () => {
-  //   render(<CavcDashboardFooter {...setProps('reason', true)} />);
-  //   const cancelButton = screen.getByText('Cancel');
-
-  //   fireEvent.click(cancelButton);
-  //   const modalRemoveButton = screen.getByText('Remove');
-
-  //   fireEvent.click(modalRemoveButton);
-  //   expect(screen.queryByText('Your changes are not saved')).toBeFalsy();
-  //   expect(screen.queryByText('CAVC appeals for')).toBeFalsy();
-  //   expect(screen.queryByText('Currently active tasks')).toBeTruthy();
-  // });
 });
