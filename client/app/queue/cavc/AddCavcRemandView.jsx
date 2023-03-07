@@ -197,6 +197,8 @@ const AddCavcRemandView = (props) => {
       return COPY.CAVC_REMAND_MANDATE_HOLD_CREATED_DETAIL;
     } else if (mdrSubtype()) {
       return COPY.CAVC_REMAND_MDR_CREATED_DETAIL;
+    } else if (otherDismissalType() || affirmedType() || settlementType()) {
+      return null;
     }
 
     return COPY.CAVC_REMAND_CREATED_DETAIL;
@@ -209,6 +211,8 @@ const AddCavcRemandView = (props) => {
       }
 
       return COPY.CAVC_REMAND_CREATED_ON_HOLD_TITLE;
+    } else if (otherDismissalType() || affirmedType() || settlementType()) {
+      return COPY.CAVC_DASHBOARD_ENTRY_CREATED_TITLE;
     }
 
     return COPY.CAVC_REMAND_CREATED_TITLE;

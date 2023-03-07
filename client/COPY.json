@@ -215,6 +215,7 @@
   "CAVC_INSTRUCTIONS_LABEL": "Provide context and instructions for this action",
   "CAVC_INSTRUCTIONS_ERROR": "Please provide context and instructions for the remand",
   "CAVC_REMAND_CREATED_TITLE": "You have successfully created a CAVC remand case",
+  "CAVC_DASHBOARD_ENTRY_CREATED_TITLE": "You have successfully created an entry in the CAVC dashboard",
   "CAVC_REMAND_CREATED_ON_HOLD_TITLE": "You have successfully created a CAVC Remand case and have put it on hold for 90-days",
   "CAVC_REMAND_CREATED_FOR_DISTRIBUTION_TITLE": "You have successfully created a CAVC Remand case and sent it to case distribution",
   "CAVC_REMAND_CREATED_DETAIL": "This has generated a 90-day letter task in your team's queue",
