@@ -2,7 +2,7 @@
 
 class MembershipRequestsController < ApplicationController
   # To create Membership Request
-  # e.g, for VHA Businessline request => POST /tasks,
+  # e.g, for VHA Businessline request => POST /membership_requests,
   # {
   #   organizationGroup: "VHA",
   #   membershipRequests: { "vhaAccess" => true },
@@ -31,8 +31,16 @@ class MembershipRequestsController < ApplicationController
     # TODO: send back appropriate errors?
   end
 
+  # To update the status of a Membership Request
+  # e.g, for VHA Businessline request => POST /membership_requests/#{membershipRequestId},
+  # {
+  #   organizationGroup: "VHA",
+  #   id: 55,
+  #   requestAction: "approved"
+  # }
   def update
     # TODO: Figure out why this is present in a lot of other update methods in other controllers
+    # TODO: Also check add the param for org type in here somehow since it defaults to VHA right now
     no_cache
 
     membership_request = MembershipRequest.find(request_action_params[:id])
