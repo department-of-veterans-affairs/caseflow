@@ -1,4 +1,4 @@
-# rails runner db/seeds/generate_duplicate_ep_data.rb to execute script.
+# rails runner db/seeds/duplicate_ep_data.rb to execute script.
 
 # Generate 5 HigherLevelReview records
 5.times do
