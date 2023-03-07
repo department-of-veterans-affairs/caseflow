@@ -149,6 +149,8 @@ const MarkTaskCompleteContestedClaimModal = ({ props, state, setState }) => {
                 styling={marginTop(1)}
                 maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
                 placeholder="This is a description of instuctions and context for this action."
+                errorMessage={props.highlightInvalid &&
+                  !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
               />}
           </div>
         )}
@@ -533,8 +535,10 @@ const MODAL_TYPE_ATTRS = {
 
       if (radio === 'custom') {
         isValid = validInstructionsForNumber(instructions) && validRadio(radio);
-      } else {
+      } else if (radio === '45') {
         isValid = validRadio(radio);
+      } else if (radio === '1') {
+        isValid = validInstructions(instructions) && validRadio(radio);
       }
 
       return !isValid;
@@ -547,7 +551,9 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.PROCEED_FINAL_NOTIFICATION_LETTER_TITLE,
     getContent: ProceedFinalNotificationLetterTaskModal,
-    buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON
+    buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON,
+    submitButtonClassNames: ['usa-button'],
+    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
   },
 
   resend_initial_notification_letter: {
