@@ -59,7 +59,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       expect(page).not_to have_content("Abandoned")
     end
 
-    it "user can edit CAVC remand details" do
+    it "user can edit and save CAVC remand details" do
       go_to_dashboard(cavc_remand.remand_appeal.uuid)
 
       page.find("button", text: "Edit").click
@@ -82,6 +82,13 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       expect(page).to have_content "01/01/21"
       expect(page).to have_content "21-1234"
       expect(page).to have_content "No"
+
+      dashboard = CavcDashboard.find_by(cavc_remand: cavc_remand)
+      expect(dashboard.board_decision_date).to eq "01/01/2021".to_date
+      expect(dashboard.board_docket_number).to eq "210101-1000"
+      expect(dashboard.cavc_decision_date).to eq "01/01/2021".to_date
+      expect(dashboard.cavc_docket_number).to eq "21-1234"
+      expect(dashboard.joint_motion_for_remand).to eq false
     end
 
     it "user can add issues, edit dispsositions, and save changes" do
