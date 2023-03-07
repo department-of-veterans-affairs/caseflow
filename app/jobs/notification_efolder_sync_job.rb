@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class NotificationEfolderSyncJob < ApplicationJob
+class NotificationEfolderSyncJob < CaseflowJob
   queue_with_priority :low_priority
 
   # * Query gives back a list of both Active  AMA and Legacy Appeals that have notifications
@@ -38,7 +38,7 @@ class NotificationEfolderSyncJob < ApplicationJob
           appeal.upload_notification_report!
         end
       rescue StandardError => error
-        Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
+        log_error(error)
         next
       end
     end
@@ -48,21 +48,27 @@ class NotificationEfolderSyncJob < ApplicationJob
   # * Checks if there is a vbms doc associated with the appeal exists. Will return true if it exists
   # * and will return false if one does not.
   def check_if_record_exists_in_vbms_uploaded_doc?(appeal)
-    docs = VbmsUploadedDocument
+      VbmsUploadedDocument
       .where(appeal_id: appeal.id, appeal_type: appeal.class.name, document_type: "BVA Case Notifications")
-    !docs.empty?
+      .present?
   end
 
-  # * Will return the last notification associated with the appel.
-  # * Finds the Notification by the appeals_id
+  # * Will return the last notification associated with the appeal.
+  # * Finds the Notification by the appeals_id orders by notified_at in descending order
+  # * and grabs the first one
   def last_notification_of_appeal(uuid)
-    Notification.where(appeals_id: uuid).last
+    Notification
+    .where(appeals_id: uuid).order(notified_at: :desc)
+    .first
   end
 
   # * Will get the latest finds the doc by its appeal_id. Will only return if
   # * the document_type = "BVA Case Notifications"
   def latest_vbms_uploaded_document(appeal_id)
-    VbmsUploadedDocument.where(appeal_id:appeal_id, document_type:"BVA Case Notifications").last
+    VbmsUploadedDocument
+    .where(appeal_id:appeal_id, document_type:"BVA Case Notifications")
+    .order(uploaded_to_vbms_at: :desc)
+    .first
   end
 
   # * Both Leagcy and AMA appeals have different associations with each table. This method
