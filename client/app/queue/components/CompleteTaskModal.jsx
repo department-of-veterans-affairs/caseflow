@@ -217,7 +217,8 @@ MarkTaskCompleteContestedClaimModal.propTypes = {
   setState: PropTypes.func,
   state: PropTypes.object,
   register: PropTypes.func,
-  highlightInvalid: PropTypes.bool
+  highlightInvalid: PropTypes.bool,
+  task: PropTypes.object
 };
 
 ProceedFinalNotificationLetterTaskModal.propTypes = {
@@ -788,13 +789,9 @@ class CompleteTaskModal extends React.Component {
     if (this.props.task.type === 'SendFinalNotificationLetterTask') {
       const radioValue = finalCompleteTaskRadio.find((option) => radio === option.value).value;
 
-      if (radioValue === '0') {
+      if (radioValue === '0' || radioValue === '1') {
         return formattedInstructions.join('');
       }
-
-      formattedInstructions.push(instructions);
-
-      return formattedInstructions[0];
     }
 
     if (this.props.task.type !== 'SendInitialNotificationLetterTask') {
@@ -889,6 +886,7 @@ class CompleteTaskModal extends React.Component {
         },
         select_opc: this.props.modalType,
         radio_value: this.formatRadio(),
+        instructions: this.state.instructions,
       }
     };
     const successMsg = MODAL_TYPE_ATTRS[this.props.modalType].buildSuccessMsg(

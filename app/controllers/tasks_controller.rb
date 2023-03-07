@@ -268,9 +268,13 @@ class TasksController < ApplicationController
   end
 
   def process_contested_claim_final_task
-    intruction = params["task"]["instructions"];
     radio_opc = params["radio_value"].to_i
-    binding.pry
+    if (radio_opc == 1)
+      rootTaskId = task.appeal.tasks.find_by(type: "RootTask").id
+      params[:parent_id] = rootTaskId
+      # params[:instructions] = params[:task][:instructions]
+      DocketSwitchMailTask.create_from_params(params, current_user)
+    end
   end
 
   def render_update_errors(errors)
@@ -365,6 +369,7 @@ class TasksController < ApplicationController
       :ihp_path,
       :select_opc,
       :radio_value,
+      :parent_id,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],
       business_payloads: [:description, values: {}]
     )
