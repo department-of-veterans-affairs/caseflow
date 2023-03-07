@@ -26,6 +26,28 @@ import {
   redText
 } from '../constants';
 
+export const claimantColumn = () => {
+  return {
+    header: COPY.CASE_LIST_TABLE_TASK_CLAIMANT_NAME_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.CLAIMANT_NAME.name,
+    backendCanSort: true,
+    valueFunction: (task) => {
+      return <a href={`/decision_reviews/${task.businessLine}/tasks/${task.id}`}>{task.claimant.name}</a>;
+    },
+    getSortValue: (task) => task.claimant.name
+  };
+};
+
+export const veteranSsnColumn = () => {
+  return {
+    header: COPY.CASE_LIST_TABLE_TASK_VETERAN_SSN_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.VETERAN_SSN.name,
+    backendCanSort: true,
+    valueFunction: (task) => task.veteranSSN,
+    getSortValue: (task) => task.veteranSSN
+  };
+};
+
 export const docketNumberColumn = (tasks, filterOptions, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,

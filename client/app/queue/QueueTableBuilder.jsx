@@ -33,7 +33,9 @@ import {
   taskOwnerColumn,
   taskCompletedDateColumn,
   typeColumn,
-  vamcOwnerColumn
+  vamcOwnerColumn,
+  claimantColumn,
+  veteranSsnColumn
 } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
@@ -146,6 +148,8 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions),
       [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_INTAKE.name]: daysSinceIntakeColumn(requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name]: receiptDateColumn(),
+      [QUEUE_CONFIG.COLUMNS.CLAIMANT_NAME.name]: claimantColumn(),
+      [QUEUE_CONFIG.COLUMNS.VETERAN_SSN.name]: veteranSsnColumn()
     };
 
     return functionForColumn[column.name];

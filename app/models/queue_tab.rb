@@ -167,8 +167,9 @@ class QueueTab
   end
 
   def task_includes
+    # I've had to shave down what's eager-loaded..
     [
-      { appeal: [:available_hearing_locations, :claimants, :work_mode, :latest_informal_hearing_presentation_task] },
+      { appeal: [:claimants] },
       :assigned_by,
       :assigned_to,
       :children,

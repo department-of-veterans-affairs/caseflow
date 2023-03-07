@@ -34,6 +34,31 @@ class BusinessLine < Organization
     QueryBuilder.new(query_type: :completed, parent: self).task_type_count
   end
 
+  # Queue Standardization Section
+  def queue_tabs
+    [
+      in_progress_tasks_tab,
+      completed_tasks_tab
+    ]
+  end
+
+  def in_progress_tasks_tab
+    ::BusinessLineInProgressTasksTab.new(assignee: self)
+  end
+
+  def completed_tasks_tab
+    ::BusinessLineCompletedTasksTab.new(assignee: self)
+  end
+
+  COLUMN_NAMES = [
+    Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
+    Constants.QUEUE_CONFIG.COLUMNS.CLAIMANT_NAME.name,
+    Constants.QUEUE_CONFIG.COLUMNS.VETERAN_SSN.name,
+    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
+    Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+    Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
+  ].compact
+
   class QueryBuilder
     attr_accessor :query_type, :parent, :query_params
 

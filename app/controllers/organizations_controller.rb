@@ -34,7 +34,7 @@ class OrganizationsController < ApplicationController
   end
 
   def verify_business_line
-    redirect_to "/decision_reviews/#{organization.url}" if organization.is_a?(::BusinessLine)
+    # redirect_to "/decision_reviews/#{organization.url}" if organization.is_a?(::BusinessLine)
   end
 
   def verify_role_access

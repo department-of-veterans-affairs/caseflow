@@ -297,6 +297,9 @@ export default class QueueTable extends React.PureComponent {
     const pageNumber = tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1 || 0;
 
     const currentPage = pageNumber + 1 > numberOfPages || pageNumber < 0 ? 0 : pageNumber;
+
+    console.dir(columns)
+
     const sortColName = columns.map((column) => column.name).includes(sortColumn) ? sortColumn : null;
 
     const querySearchText = tabPaginationOptions[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM];

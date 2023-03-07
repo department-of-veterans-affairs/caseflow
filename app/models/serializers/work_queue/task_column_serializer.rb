@@ -291,7 +291,7 @@ class WorkQueue::TaskColumnSerializer
     columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]
 
     if serialize_attribute?(params, columns)
-      task = object.appeal.latest_informal_hearing_presentation_task
+      task = object.appeal.is_a?(ClaimReview) ? nil : object.appeal.latest_informal_hearing_presentation_task
 
       task ? { requested_at: task.assigned_at, received_at: task.closed_at } : {}
     end
