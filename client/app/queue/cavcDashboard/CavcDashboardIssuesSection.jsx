@@ -120,10 +120,10 @@ const CavcDashboardIssue = (props) => {
     return false;
   };
 
-  if (!addedIssueSection) {
-    issueType = issue.description;
-  } else {
+  if (addedIssueSection) {
     issueType = issue.issue_category;
+  } else {
+    issueType = issue.description;
   }
 
   const toggleRemoveIssueModal = () => {
@@ -291,6 +291,7 @@ CavcDashboardIssue.propTypes = {
   issue: PropTypes.shape({
     benefit_type: PropTypes.string,
     description: PropTypes.string,
+    issue_category: PropTypes.string,
     id: PropTypes.number,
   }),
   dispositions: PropTypes.array,
