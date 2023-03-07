@@ -7,7 +7,7 @@ module WarRoom
       problem_hlrs = hlrs.select{ |hlr|
         hlr.veteran.end_products.select { |ep|
           ep.claim_type_code.include?("030") && ["CAN", "CLR"].include?(ep.status_type_code) &&
-          [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
+           [Date.today, 1.day.ago.to_date].include?(ep.last_action_date)
         }.empty?
       }
 
@@ -22,36 +22,6 @@ module WarRoom
       problem_reviews = problem_scs + problem_hlrs
     end
 
-    def process_claim(epe)
-      if epe.status_type_code == 'CAN'
-        process_cancelled_claim(epe)
-      else
-        process_cleared_claim(epe)
-      end
-    end
-
-    def process_cleared_claim(epe)
-      epe.update!(synced_status: 'CLR', last_synced_at: Time.zone.now)
-      # epe.send(:cancel!)
-      epe.reload
-    end
-
-    def process_cancelled_claim(epe)
-      epe.update!(synced_status: 'CAN', last_synced_at: Time.zone.now)
-      epe.send(:cancel!)
-      epe.reload
-    end
-
-    # go through each problem_review's EPEs and resolve the status
-    # that's causing a stuck EP
-    # def resolve_duplicate_eps(reviews)
-    #   reviews.each do |r|
-    #     r.end_product_establishments.each do |epe|
-    #       process_claim(epe)
-    #     end
-    #   end
-    # end
-
     def resolve_duplicate_eps(reviews)
       output = ""
 
@@ -62,8 +32,8 @@ module WarRoom
           next if epe.reference_id.present?
 
           # Check if active duplicate exists
-          # dupes = eps.select{ |ep| ep.claim_type_code == epe.code && ep.claim_date.to_date == epe.claim_date && EndProductEstablishment.where(reference_id: ep.claim_id).none? }
-          # next if dupes.any?
+          dupes = epe.select{ |ep| ep.claim_type_code == epe.code && ep.claim_date.to_date == epe.claim_date && EndProductEstablishment.where(reference_id: ep.claim_id).none? }
+          next if dupes.any?
 
           verb = "established"
           ep2e = epe.send(:end_product_to_establish)
@@ -79,7 +49,7 @@ module WarRoom
           epe.reload
         end
 
-        output_line = "| #{v.participant_id} | #{r.class.name} | #{r.id}"
+        output_line = "| Veteran participant ID: #{v.participant_id} | #{r.class.name} | Review ID: #{r.id}"
 
         begin
           DecisionReviewProcessJob.new.perform(r)
@@ -93,6 +63,47 @@ module WarRoom
       end
 
       puts output
+    end
+
+    def resolve_single_review(review_id, type)
+      # retrieve the ClaimReview based on the ID and type passed in
+      if type == "hlr" do
+        review = HigherLevelReview.where(review_id)
+      else
+        review = SupplementalClaim.where(review_id)
+      end
+
+      veteran = review.veteran
+
+      # getting end_product_establishments count
+      epe_count = review.end_product_establishments.count
+
+      if epe_count.positive?
+        # iterate through the EPE list
+        review.end_product_establishments.each do |epe_1|
+          # start remediation steps
+          # assign the EP to establish
+          ep2e_1 = epe_1.send(:end_product_to_establish)
+          # assign the EndProductModifierFinder
+          epmf_1 = EndProductModifierFinder.new(epe_1, veteran)
+          taken_1 = epmf_1.send(:taken_modifiers)
+          #Remediation: => []
+
+          # Mark place to start retrying
+          epmf_1.instance_variable_set(:@taken_modifiers, taken_1.push(ep2e_1.modifier))
+          ep2e_1.modifier = epmf_1.find
+          epe_1.instance_variable_set(:@end_product_to_establish, ep2e_1)
+          epe_1.establish!
+          epe_1.reload
+        end
+
+        DecisionReviewProcessJob.new.perform(review)
+        review.reload
+        review.establishment_error #should now be =>nil
+      else
+        puts "There are no EndProductEstablishments on this Review"
+        return false
+      end
     end
 
     def run()
@@ -109,12 +120,6 @@ module WarRoom
         puts 'No problem Supplemental Claims or Higher Level Reviews found.'
         return false
       end
-
-      # duplicate_ep_problem_claim, err_msg = get_problem_claim(get_UUID)
-      # if !duplicate_ep_problem_claim
-      #   put err_msg
-      #   return 0
-      # end
 
       ActiveRecord::Base.transaction do
         resolve_duplicate_eps(problem_reviews)

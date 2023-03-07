@@ -32,7 +32,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
     end
   end
 
-  context "there are old reviews with DuplicateEP errors" do
+  context "There are old reviews with DuplicateEP errors" do
     let(:setups) do
       [
         {
@@ -97,7 +97,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
     end
   end
 
-  context "there are only new reviews with DuplicateEP errors" do
+  context "There are only new reviews with DuplicateEP errors" do
     let(:setups) do
       [
         {
@@ -130,7 +130,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
     end
   end
 
-  context "there are no reviews with DuplicateEP errors" do
+  context "There are no reviews with DuplicateEP errors" do
     let(:setups) do
       [
         {
