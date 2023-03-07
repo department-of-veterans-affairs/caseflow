@@ -9,7 +9,8 @@
 # - Notify admins upon successful membership request submission
 
 class MembershipRequestMailer < ActionMailer::Base
-  default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
+  helper MembershipRequestHelper
+  default from: "VHABENEFITAPPEALS@va.gov"
   layout "membership_request_mailer"
 
   # Send requestor a confirmation email that membership request was received.
@@ -30,17 +31,16 @@ class MembershipRequestMailer < ActionMailer::Base
     mail(to: @recipient_info[:email], subject: "New membership request recieved.")
   end
 
-  # TODO: Replace these subject lines with the constants in copy.json
   def vha_business_line_approved
     @recipient = params[:requestor]
     @accessible_groups = params[:accessible_groups]
-    mail(to: @recipient&.email, subject: "Request approved - Do Not Reply")
+    mail(to: @recipient&.email, subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_APPROVED)
   end
 
   def vha_business_line_denied
     @recipient = params[:requestor]
     @accessible_groups = params[:accessible_groups]
-    mail(to: @recipient&.email, subject: "Request denied - Do Not Reply")
+    mail(to: @recipient&.email, subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_DENIED)
   end
 
   def vha_predocket_organization_approved
@@ -48,7 +48,7 @@ class MembershipRequestMailer < ActionMailer::Base
     @accessible_groups = params[:accessible_groups]
     @requesting_org_name = params[:organization_name]
     @pending_organization_request_names = params[:pending_organization_request_names]
-    mail(to: @recipient&.email, subject: "Request approved - Do Not Reply")
+    mail(to: @recipient&.email, subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_APPROVED)
   end
 
   def vha_predocket_organization_denied
@@ -56,6 +56,7 @@ class MembershipRequestMailer < ActionMailer::Base
     @accessible_groups = params[:accessible_groups]
     @requesting_org_name = params[:organization_name]
     @pending_organization_request_names = params[:pending_organization_request_names]
-    mail(to: @recipient&.email, subject: "Request denied - Do Not Reply")
+    @has_vha_access = params[:has_vha_access]
+    mail(to: @recipient&.email, subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_DENIED)
   end
 end

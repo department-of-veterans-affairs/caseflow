@@ -1382,5 +1382,9 @@
   "NOTIFICATION_TYPE_COLUMN_NAME": "Notification Type",
   "NOTIFICATION_RECIPIENT_INFORMATION": "Recipient Information",
   "NOTIFICATION_STATUS": "Status",
-  "NOTIFICATION_CONTENT_MESSAGE": "The following message was sent to the Appellant: "
+  "NOTIFICATION_CONTENT_MESSAGE": "The following message was sent to the Appellant: ",
+  "VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED": "Request recieved - Do Not Reply",
+  "VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_APPROVED": "Request approved - Do Not Reply",
+  "VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_DENIED": "Request denied - Do Not Reply",
+  "VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_VHA_ADMIN_REQUEST_RECEIVED": "You have a new request for access - Do Not Reply"
 }

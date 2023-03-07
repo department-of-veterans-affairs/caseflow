@@ -1,9 +1,7 @@
 <%= render "intro" %>
 
 <%= content_for :content do %>
-  <p>
-    At this time, we have denied your request for access to <%= @requesting_org_name %> pages in Caseflow.
-  </p>
+  <%= vha_predocket_rejection_header_content(@requesting_org_name, @has_vha_access, @pending_organization_request_names) %>
 
   <% if @pending_organization_request_names.present? %>
     <p>

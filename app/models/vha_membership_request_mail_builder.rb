@@ -52,7 +52,7 @@ class VhaMembershipRequestMailBuilder
 
   def send_organization_email(organization)
     recipient_info = guess_admin(organization)
-    # Create an array from the hash and flatten it since some organizations can have two emails
+    # Create an array from the hash and flatten it since organizations can have two emails
     admin_emails = [get_organization_admin_emails(organization.name)].flatten
 
     mailer_parameters = {
@@ -73,7 +73,7 @@ class VhaMembershipRequestMailBuilder
       requestor: requestor,
       accessible_groups: requestor_accessible_org_names,
       organization_name: single_request.organization.name,
-      pending_organization_request_names: requestor_pending_organization_request_names
+      pending_organization_request_names: requestor_vha_pending_organization_request_names
     }
     # TODO: Make this perform_later after development
     Memberships::SendMembershipRequestMailerJob.perform_now("VhaBusinessLineApproved",
@@ -85,7 +85,7 @@ class VhaMembershipRequestMailBuilder
       requestor: requestor,
       accessible_groups: requestor_accessible_org_names,
       organization_name: single_request.organization.name,
-      pending_organization_request_names: requestor_pending_organization_request_names
+      pending_organization_request_names: requestor_vha_pending_organization_request_names
     }
     # TODO: Make this perform_later after development
     Memberships::SendMembershipRequestMailerJob.perform_now("VhaPredocketApproved",
@@ -97,7 +97,7 @@ class VhaMembershipRequestMailBuilder
       requestor: requestor,
       accessible_groups: requestor_accessible_org_names,
       organization_name: single_request.organization.name,
-      pending_organization_request_names: requestor_pending_organization_request_names
+      pending_organization_request_names: requestor_vha_pending_organization_request_names
     }
     Memberships::SendMembershipRequestMailerJob.perform_now("VhaBusinessLineDenied",
                                                             mailer_parameters)
@@ -108,21 +108,37 @@ class VhaMembershipRequestMailBuilder
       requestor: requestor,
       accessible_groups: requestor_accessible_org_names,
       organization_name: single_request.organization.name,
-      pending_organization_request_names: requestor_pending_organization_request_names
+      pending_organization_request_names: requestor_vha_pending_organization_request_names,
+      has_vha_access: belongs_to_vha_org?
     }
     Memberships::SendMembershipRequestMailerJob.perform_now("VhaPredocketDenied",
                                                             mailer_parameters)
   end
 
+  # TODO: Should this show all orgs or just vha orgs?
   def requestor_accessible_org_names
     @requestor_accessible_org_names ||= requestor.organizations.map(&:name)
   end
 
-  def requestor_pending_organization_request_names
+  def requestor_vha_pending_organization_request_names
     pending_names = requestor.membership_requests.assigned.includes(:organization).map do |request|
-      request.organization.name
+      organization = request.organization
+      if organization_vha?(organization)
+        organization.name
+      end
     end
-    pending_names
+    pending_names.compact
+  end
+
+  # TODO: This needs to be done for organizations and for pending requests?
+  def organization_vha?(organization)
+    vha_organization_types = [VhaCamo, VhaCaregiverSupport, VhaProgramOffice, VhaRegionalOffice]
+    organization.url == "vha" || vha_organization_types.any? { |vha_org| organization.is_a?(vha_org) }
+  end
+
+  # TODO: I guess this should only check for general VHA access?
+  def belongs_to_vha_org?
+    requestor.organizations.any? { |org| org.url == "vha" }
   end
 
   def single_request
