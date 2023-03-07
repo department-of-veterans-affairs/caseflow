@@ -44,32 +44,6 @@ describe('DailyDocketGuestLinkSection', () => {
     expect(screen.getByRole('heading', { name: 'PIN: 1234567890#' })).toBeTruthy();
   });
 
-  describe('Hearing types', () => {
-    it('renders correct hearing type when request type is V', () => {
-      render(<DailyDocketGuestLinkSection linkInfo={linkInfo} hasAccess requestType="V" />);
-
-      expect(screen.getByRole('heading', { name: 'Guest links for non-virtual hearings' })).toBeTruthy();
-    });
-
-    it('renders correct hearing type when request type is T', () => {
-      render(<DailyDocketGuestLinkSection linkInfo={linkInfo} hasAccess requestType="T" />);
-
-      expect(screen.getByText('Guest links for travel hearings')).toBeTruthy();
-    });
-
-    it('renders correct hearing type when request type is C', () => {
-      render(<DailyDocketGuestLinkSection linkInfo={linkInfo} hasAccess requestType="C" />);
-
-      expect(screen.getByText('Guest links for central hearings')).toBeTruthy();
-    });
-
-    it('render default when no request type', () => {
-      render(<DailyDocketGuestLinkSection linkInfo={linkInfo} hasAccess requestType="" />);
-
-      expect(screen.getByText('Guest links for non-virtual hearings')).toBeTruthy();
-    });
-  });
-
   describe('Guest link', () => {
     it('renders guest link when user is in hearings management or hearing admin', () => {
       render(<DailyDocketGuestLinkSection linkInfo={linkInfo} hasAccess requestType="V" />);

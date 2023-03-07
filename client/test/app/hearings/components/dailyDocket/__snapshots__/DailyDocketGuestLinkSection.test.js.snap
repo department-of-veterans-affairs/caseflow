@@ -6,8 +6,7 @@ exports[`DailyDocketGuestLinkSection renders correctly for hearing admins and he
     style="display: grid; grid-template-columns: 1fr 1.8fr; background-color: rgb(241, 241, 241); padding: 1em 0px 0px 1em; margin-left: -40px; margin-right: -40px;"
   >
     <h3>
-      Guest links for 
-      non-virtual hearings
+      Guest links for non-virtual hearings
     </h3>
     <div
       style="display: flex; flex-wrap: wrap; font-size: 12px; justify-content: space-around;"
@@ -159,8 +158,7 @@ exports[`DailyDocketGuestLinkSection renders correctly for non hearing admins an
     style="display: grid; grid-template-columns: 1fr 1.8fr; background-color: rgb(241, 241, 241); padding: 1em 0px 0px 1em; margin-left: -40px; margin-right: -40px;"
   >
     <h3>
-      Guest links for 
-      non-virtual hearings
+      Guest links for non-virtual hearings
     </h3>
     <div
       style="display: flex; flex-wrap: wrap; font-size: 12px; justify-content: space-around;"

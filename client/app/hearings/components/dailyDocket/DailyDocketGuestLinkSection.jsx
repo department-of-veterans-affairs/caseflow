@@ -6,7 +6,7 @@ import CopyTextButton from '../../../components/CopyTextButton';
 export const DailyDocketGuestLinkSection = ({ linkInfo, hasAccess }) => {
 
   // Conference Link Information
-  const { alias, guestLink, guestPin } = linkInfo;
+  const { alias, guestLink, guestPin } = linkInfo || {};
 
   const containerStyle = {
     display: 'grid',
@@ -42,7 +42,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo, hasAccess }) => {
     return (
       <div style={roomInfoContainerStyle}>
         <h3>Conference Room:<span style={{ fontWeight: 'normal' }}>{conferenceRoom}</span></h3>
-        <h3>PIN:<span style={{ fontWeight: 'normal' }}>{pin}</span></h3>
+        <h3>PIN:<span style={{ fontWeight: 'normal' }}>{pin}#</span></h3>
         {roleAccess && <h3><CopyTextButton {...CopyTextButtonProps} /></h3>}
       </div>
     );
