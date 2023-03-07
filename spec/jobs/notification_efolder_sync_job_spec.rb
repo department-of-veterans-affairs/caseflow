@@ -19,7 +19,7 @@ describe NotificationEfolderSyncJob do
   # rubocop:disable Layout/LineLength
   let(:appeal_one) { create(:appeal) }
   let(:notification_one_appeal_one) { create(:notification, appeals_id: appeal_one.uuid, appeals_type: "Appeal", event_date: "2023-02-27 13:11:51.91467", event_type: "Appeal docketed", notification_type: "Email", notified_at: "2023-02-28 14:11:51.91467", email_notification_status: "Success", sms_notification_status: "Preferences Declined") }
-  let(:notification_two_appeal_one) { create(:notification, appeals_id: appeal_one.uuid, appeals_type: "Appeal", event_date: "2023-02-28 13:11:51.91467", event_type: "Hearing scheduled", notification_type: "Email" , notified_at: "2023-02-28 14:11:51.91467", email_notification_status: "Success", sms_notification_status: "Preferences Declined") }
+  let(:notification_two_appeal_one) { create(:notification, appeals_id: appeal_one.uuid, appeals_type: "Appeal", event_date: "2023-02-28 13:11:51.91467", event_type: "Hearing scheduled", notification_type: "Email" , notified_at: "2023-02-29 14:11:51.91467", email_notification_status: "Success", sms_notification_status: "Preferences Declined") }
   let(:document_one_appeal_one) { create(:vbms_uploaded_document, document_type: "BVA Case Notifications", appeal_id: appeal_one.id, appeal_type: "Appeal", created_at: "2023-02-27 13:11:51.91467", uploaded_to_vbms_at: "2023-02-27 13:11:51.91467") }
   let(:document_two_appeal_one) { create(:vbms_uploaded_document, document_type: "BVA Case Notifications", appeal_id: appeal_one.id, appeal_type: "Appeal", created_at: "2023-02-28 13:11:51.91467", uploaded_to_vbms_at: "2023-02-28 13:11:51.91467") }
 
@@ -84,6 +84,7 @@ describe NotificationEfolderSyncJob do
       appeal_one
       notification_one_appeal_one
       notification_two_appeal_one
+      byebug
       last_notification = subject.last_notification_of_appeal(appeal_one.uuid)
       expect(last_notification).to eq(notification_two_appeal_one)
     end
@@ -94,8 +95,8 @@ describe NotificationEfolderSyncJob do
       appeal_one
       document_one_appeal_one
       document_two_appeal_one
-      last_associated_document = subject.latest_vbms_uploaded_document(appeal_one.id)
-      expect(last_associated_document).to eq(document_two_appeal_one)
+      expect(subject.latest_vbms_uploaded_document(appeal_one.id))
+      .to eq(document_two_appeal_one)
     end
   end
 
