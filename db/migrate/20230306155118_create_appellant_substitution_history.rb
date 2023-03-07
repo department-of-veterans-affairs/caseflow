@@ -7,6 +7,8 @@ class CreateAppellantSubstitutionHistory < ActiveRecord::Migration[5.2]
       t.string     :current_appellant_substitute_participant_id, comment: "Current Appellant Substitute participant Id"
       t.string     :original_appellant_substitute_participant_id, comment: "Original Appellant Substitute participant Id"
       t.string     :current_appellant_veteran_participant_id, comment: "Current Appellant Veteran participant Id"
+      t.bigint     :created_by_id, comment: "Current user who created Appellant substitution"
+      t.timestamps
     end
   end
 end
