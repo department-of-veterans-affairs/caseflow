@@ -191,6 +191,14 @@ class WorkQueue::AppealSerializer
 
   attribute :veteran_file_number
 
+  attribute :veteran_participant_id do |object|
+    object&.veteran&.participant_id
+  end
+
+  attribute :efolder_link do
+    ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"]
+  end
+
   attribute :veteran_full_name do |object|
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
