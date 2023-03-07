@@ -54,7 +54,7 @@ class ChangeHearingRequestTypeTaskCancellationJob < CaseflowJob
         task&.update_from_params({ "status": "cancelled", "instructions": "" }, User.system_user)
         Rails.logger.info("Appeal:" + vacols_id + "CHRT closed")
       rescue StandardError => error
-        Rails.logger.info("Task: " + task.id + "Failed top be remdiated")
+        Rails.logger.info("Task: " + task.id.to_s + "Failed top be remdiated")
         log_error(error)
         next
       end
