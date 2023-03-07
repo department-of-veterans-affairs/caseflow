@@ -211,4 +211,54 @@ describe MembershipRequestMailer do
       end
     end
   end
+
+  context "vha predocket organization denied" do
+    let(:pending_org_request_names) { ["VHA Caregiver Support Program", "Prosthetics"] }
+    let(:mailer_parameters) do
+      {
+        requestor: requestor,
+        accessible_groups: requestor.organizations.map(&:name),
+        organization_name: camo_org.name,
+        pending_organization_request_names: pending_org_request_names
+      }
+    end
+    let(:mailer) do
+      MembershipRequestMailer.with(mailer_parameters)
+        .vha_predocket_organization_denied
+    end
+
+    it "has the correct from email address" do
+      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+    end
+
+    it "has the correct to email address" do
+      expect(mailer.to).to include(requestor.email)
+    end
+
+    it "has the correct subject line" do
+      expect(mailer.subject).to eq(COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_DENIED)
+    end
+
+    it "renders the correct body text" do
+      expect(mailer.body.encoded).to match("Dear #{requestor.full_name},")
+      expect(mailer.body.encoded).to match(
+        "We approved your request for Caseflow #{camo_org.name} pages,"\
+        " which also includes access to the VHA pages."
+      )
+      # Additional Org access list
+      expect(mailer.body.encoded).to have_selector("p", text: "New Org 1")
+      expect(mailer.body.encoded).to have_selector("p", text: "New Org 2")
+
+      # Pending requests list
+      expect(mailer.body.encoded).to match(
+        "This does not impact access you had prior to this decision,"\
+        " or your pending requests for other VHA Pre-Docket offices listed below."
+      )
+      expect(mailer.body.encoded).to have_selector("p", text: "VHA Caregiver Support Program")
+      expect(mailer.body.encoded).to have_selector("p", text: "Prosthetics")
+
+      # Signature line
+      expect(mailer.body.encoded).to have_selector("div", text: camo_org.name)
+    end
+  end
 end

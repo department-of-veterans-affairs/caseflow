@@ -19,7 +19,7 @@ module MembershipRequestHelper
       " please make a new request for VHA access by going to "\
       " #{link_to('http://www.appeals.cf.ds.va.gov/vha=help', 'http://www.appeals.cf.ds.va.gov/vha=help')} "\
       "and selecting only the VHA checkbox when re-submitting the form."
-    additional_message = (!has_vha_access && pending_requests.blank?) ? extra_message_content : nil
-    content_tag(:p, "#{content_string}#{additional_context}") + content_tag(:p, additional_message.html_safe)
+    additional_message = (!has_vha_access && pending_requests.blank?) ? extra_message_content.html_safe : nil
+    content_tag(:p, "#{content_string}#{additional_context}") + content_tag(:p, additional_message)
   end
 end
