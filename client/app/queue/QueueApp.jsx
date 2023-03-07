@@ -374,8 +374,12 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="proceed_final_notification_letter" {...props.match.params} />
   );
 
-  routedResendInitialNotificationLetterModal = (props) => (
-    <CompleteTaskModal modalType="resend_initial_notification_letter" {...props.match.params} />
+  routedResendInitialNotificationLetterPostHoldingModal = (props) => (
+    <CompleteTaskModal modalType="resend_initial_notification_letter_post_holding" {...props.match.params} />
+  );
+
+  routedResendInitialNotificationLetterFinalModal = (props) => (
+    <CompleteTaskModal modalType="resend_initial_notification_letter_final" {...props.match.params} />
   );
 
   routedResendFinalNotificationLetterModal = (props) => (
@@ -1158,10 +1162,18 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER.value
+                  TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING.value
                 }`}
               title="Resend Letter Task | Caseflow"
-              render={this.routedResendInitialNotificationLetterModal}
+              render={this.routedResendInitialNotificationLetterPostHoldingModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_FINAL.value
+                }`}
+              title="Resend Letter Task | Caseflow"
+              render={this.routedResendInitialNotificationLetterFinalModal}
             />
             <PageRoute
               exact

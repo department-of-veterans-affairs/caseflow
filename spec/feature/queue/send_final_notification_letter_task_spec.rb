@@ -59,9 +59,40 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       dropdown = find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
       dropdown.click
       expect(page).to have_content(Constants.TASK_ACTIONS.MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE.label)
-      expect(page).to have_content(Constants.TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER.label)
+      expect(page).to have_content(Constants.TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_FINAL.label)
       expect(page).to have_content(Constants.TASK_ACTIONS.RESEND_FINAL_NOTIFICATION_LETTER.label)
       expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_FINAL_LETTER_TASK.label)
+    end
+
+    it "resend initial notification letter action completes the task and displays it on the case timeline" do
+      initial_letter_task.completed!
+      post_initial_task.completed!
+
+      visit("/queue")
+      visit("/queue/appeals/#{final_letter_task.appeal.external_id}")
+
+      prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+      text = Constants.TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_FINAL.label
+      click_dropdown(prompt: prompt, text: text)
+
+      # check cancel modal content
+      expect(page).to have_content(format(COPY::RESEND_INITIAL_NOTIFICATION_LETTER_FINAL_COPY))
+
+      # fill out instructions
+      fill_in("completeTaskInstructions", with: "instructions")
+      click_button(format(COPY::RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON))
+
+      # expect success
+      expect(page).to have_content(format(COPY::RESEND_INITIAL_NOTIFICATION_LETTER_FINAL_TASK_SUCCESS))
+      expect(page.current_path).to eq("/organizations/clerk-of-the-board")
+
+      # navigate to queue to check case timeline
+      visit("/queue/appeals/#{final_letter_task.appeal.external_id}")
+
+      # check the screen output and model status
+      appeal_final_letter_task = root_task.appeal.tasks.find_by(type: "SendFinalNotificationLetterTask")
+      expect(page).to have_content(`#{appeal_final_letter_task.type} completed`)
+      expect(appeal_final_letter_task.status).to eq("completed")
     end
 
     it "resend final notification letter action completes the task and displays it on the case timeline" do
@@ -83,7 +114,7 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       click_button(format(COPY::RESEND_FINAL_NOTIFICATION_LETTER_BUTTON))
 
       # expect success
-      expect(page).to have_content(format(COPY::RESEND_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS, root_task.appeal.veteran.person.name))
+      expect(page).to have_content(format(COPY::RESEND_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS))
       expect(page.current_path).to eq("/organizations/clerk-of-the-board")
 
       # navigate to queue to check case timeline

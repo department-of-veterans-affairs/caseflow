@@ -372,10 +372,19 @@ class TaskActionRepository
       params
     end
 
-    def resend_initial_notification_letter_task_data(task, _user = nil)
+    def resend_initial_notification_letter_post_holding(task, _user = nil)
       params = {
         modal_title: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
-        modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_COPY
+        modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
+      }
+
+      params
+    end
+
+    def resend_initial_notification_letter_final(task, _user = nil)
+      params = {
+        modal_title: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
+        modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_FINAL_COPY
       }
 
       params
