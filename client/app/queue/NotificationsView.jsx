@@ -76,6 +76,7 @@ export const NotificationsView = (props) => {
           userCanAccessReader={props.userCanAccessReader}
           hideDocs
           hideDecisionDocument
+          showEfolderLink
         />
         <div {...sectionGap}>
           <p className="notification-text">
@@ -117,11 +118,13 @@ NotificationsView.propTypes = {
   stopPollingHearing: PropTypes.func,
   substituteAppellant: PropTypes.object,
   vsoVirtualOptIn: PropTypes.bool,
-  hideOTSection: PropTypes.bool
+  hideOTSection: PropTypes.bool,
+  showEfolderLink: PropTypes.bool
 };
 
 NotificationsView.defaultProps = {
-  hideOTSection: true
+  hideOTSection: true,
+  showEfolderLink: true
 };
 
 const mapStateToProps = (state) => ({
