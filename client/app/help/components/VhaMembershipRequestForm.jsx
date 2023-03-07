@@ -20,7 +20,7 @@ const checkboxDivStyling = css({
 
 const alertBoxStyling = css({
   marginBottom: '3rem',
-  '& .usa-alert': { 'background-position-y': 'center' },
+  '& .usa-alert': { backgroundPositionY: 'center' },
 });
 
 const VhaMembershipRequestForm = () => {
