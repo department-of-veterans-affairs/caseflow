@@ -93,7 +93,7 @@ group :test, :development, :demo do
   gem "bundler-audit"
   # Testing tools
   gem "capybara"
-  gem "capybara-screenshot", github: 'mattheworiordan/capybara-screenshot', branch: 'master'
+  gem "capybara-screenshot", "1.0.23"
   gem "danger", "~> 6.0"
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 5.2"

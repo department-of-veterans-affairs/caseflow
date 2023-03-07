@@ -74,15 +74,6 @@ GIT
       selenium-webdriver
 
 GIT
-  remote: https://github.com/mattheworiordan/capybara-screenshot.git
-  revision: 6b80ac24fafa1e92052168807cc1dff2fa471af6
-  branch: master
-  specs:
-    capybara-screenshot (1.0.26)
-      capybara (>= 1.0, < 4)
-      launchy
-
-GIT
   remote: https://github.com/senny/pdfjs_viewer-rails.git
   revision: a4249eacbf70175db63b57e9f364d0a9a79e2b43
   ref: a4249eacbf70175db63b57e9f364d0a9a79e2b43
@@ -193,6 +184,9 @@ GEM
       rack-test (>= 0.6.3)
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
+    capybara-screenshot (1.0.23)
+      capybara (>= 1.0, < 4)
+      launchy
     childprocess (1.0.1)
       rake (< 13.0)
     choice (0.2.0)
@@ -746,7 +740,7 @@ DEPENDENCIES
   bundler-audit
   business_time (~> 0.9.3)
   capybara
-  capybara-screenshot!
+  capybara-screenshot (= 1.0.23)
   caseflow!
   connect_mpi!
   connect_vbms!
