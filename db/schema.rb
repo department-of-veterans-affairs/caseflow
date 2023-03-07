@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_30_151429) do
+ActiveRecord::Schema.define(version: 2023_03_06_155118) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -150,6 +150,16 @@ ActiveRecord::Schema.define(version: 2023_01_30_151429) do
     t.index ["updated_at"], name: "index_appeals_on_updated_at"
     t.index ["uuid"], name: "index_appeals_on_uuid"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
+  end
+
+  create_table "appellant_substitution_histories", force: :cascade do |t|
+    t.bigint "appellant_substitution_id", comment: "Appellant substitution id of the last user that updated the CAVC record"
+    t.string "current_appellant_substitute_participant_id", comment: "Current Appellant Substitute participant Id"
+    t.string "current_appellant_veteran_participant_id", comment: "Current Appellant Veteran participant Id"
+    t.string "original_appellant_substitute_participant_id", comment: "Original Appellant Substitute participant Id"
+    t.string "original_appellant_veteran_participant_id", comment: "Original Appeallant Veteran Participant Id"
+    t.date "substitution_date", comment: "Timestamp of substitution granted date"
+    t.index ["appellant_substitution_id"], name: "index_appellant_sub_histories_on_appellant_substitution_id"
   end
 
   create_table "appellant_substitutions", comment: "Store appellant substitution form data", force: :cascade do |t|
