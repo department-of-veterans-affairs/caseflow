@@ -3,17 +3,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CopyTextButton from '../../../components/CopyTextButton';
 
-export const DailyDocketGuestLinkSection = ({ linkInfo, requestType, hasAccess }) => {
+export const DailyDocketGuestLinkSection = ({ linkInfo, hasAccess }) => {
 
   // Conference Link Information
   const { alias, guestLink, guestPin } = linkInfo;
-
-  // The hearing type that the guest link is for
-  const hearingType = {
-    C: 'central hearings',
-    V: 'non-virtual hearings',
-    T: 'travel hearings',
-  };
 
   const containerStyle = {
     display: 'grid',
@@ -49,7 +42,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo, requestType, hasAccess }
     return (
       <div style={roomInfoContainerStyle}>
         <h3>Conference Room:<span style={{ fontWeight: 'normal' }}>{conferenceRoom}</span></h3>
-        <h3>PIN:<span style={{ fontWeight: 'normal' }}>{pin}#</span></h3>
+        <h3>PIN:<span style={{ fontWeight: 'normal' }}>{pin}</span></h3>
         {roleAccess && <h3><CopyTextButton {...CopyTextButtonProps} /></h3>}
       </div>
     );
@@ -57,7 +50,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo, requestType, hasAccess }
 
   return (
     <div style={containerStyle}>
-      <h3>Guest links for {hearingType[requestType] || hearingType.V}</h3>
+      <h3>Guest links for non-virtual hearings</h3>
       {renderRoomInfo(alias, guestPin, hasAccess)}
     </div>
   );
@@ -69,6 +62,5 @@ DailyDocketGuestLinkSection.propTypes = {
     guestPin: PropTypes.string,
     alias: PropTypes.string,
   }),
-  hasAccess: PropTypes.bool.isRequired,
-  requestType: PropTypes.string
+  hasAccess: PropTypes.bool.isRequired
 };

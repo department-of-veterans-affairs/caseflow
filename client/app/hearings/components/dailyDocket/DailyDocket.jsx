@@ -303,7 +303,6 @@ export default class DailyDocket extends React.Component {
         </div>
         <DailyDocketGuestLinkSection
           hasAccess={user.userIsHearingManagement || user.userIsHearingAdmin}
-          requestType={dailyDocket.requestType}
           linkInfo={dailyDocket.conferenceLink} />
         <DailyDocketRows
           hearings={this.props.hearings}
