@@ -84,7 +84,6 @@ describe NotificationEfolderSyncJob do
       appeal_one
       notification_one_appeal_one
       notification_two_appeal_one
-      byebug
       last_notification = subject.last_notification_of_appeal(appeal_one.uuid)
       expect(last_notification).to eq(notification_two_appeal_one)
     end
