@@ -76,8 +76,8 @@ class VhaMembershipRequestMailBuilder
       pending_organization_request_names: requestor_vha_pending_organization_request_names
     }
     # TODO: Make this perform_later after development
-    Memberships::SendMembershipRequestMailerJob.perform_now("VhaBusinessLineApproved",
-                                                            mailer_parameters)
+    Memberships::SendMembershipRequestMailerJob.perform_later("VhaBusinessLineApproved",
+                                                              mailer_parameters)
   end
 
   def send_approved_predocket_organization_email
@@ -88,8 +88,8 @@ class VhaMembershipRequestMailBuilder
       pending_organization_request_names: requestor_vha_pending_organization_request_names
     }
     # TODO: Make this perform_later after development
-    Memberships::SendMembershipRequestMailerJob.perform_now("VhaPredocketApproved",
-                                                            mailer_parameters)
+    Memberships::SendMembershipRequestMailerJob.perform_later("VhaPredocketApproved",
+                                                              mailer_parameters)
   end
 
   def send_denied_vha_business_line_email
@@ -99,8 +99,8 @@ class VhaMembershipRequestMailBuilder
       organization_name: single_request.organization.name,
       pending_organization_request_names: requestor_vha_pending_organization_request_names
     }
-    Memberships::SendMembershipRequestMailerJob.perform_now("VhaBusinessLineDenied",
-                                                            mailer_parameters)
+    Memberships::SendMembershipRequestMailerJob.perform_later("VhaBusinessLineDenied",
+                                                              mailer_parameters)
   end
 
   def send_denied_predocket_organization_email
@@ -111,8 +111,8 @@ class VhaMembershipRequestMailBuilder
       pending_organization_request_names: requestor_vha_pending_organization_request_names,
       has_vha_access: belongs_to_vha_org?
     }
-    Memberships::SendMembershipRequestMailerJob.perform_now("VhaPredocketDenied",
-                                                            mailer_parameters)
+    Memberships::SendMembershipRequestMailerJob.perform_later("VhaPredocketDenied",
+                                                              mailer_parameters)
   end
 
   # TODO: Should this show all orgs or just vha orgs?

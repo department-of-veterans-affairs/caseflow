@@ -2,10 +2,6 @@
 
 module MembershipRequestHelper
   def vha_predocket_rejection_header_content(requesting_org_name, has_vha_access, pending_requests)
-    # puts "pending requests is: #{pending_requests}"
-    # puts "has_vha_access: #{has_vha_access}"
-    # puts "present? is: #{pending_requests.present?}"
-    # puts "boolean check should be: #{[has_vha_access, pending_requests.present?]}"
     additional_context = case [has_vha_access, pending_requests.present?]
                          when [true, false]
                            ". Your existing group membership did not change."
@@ -20,6 +16,9 @@ module MembershipRequestHelper
       " #{link_to('http://www.appeals.cf.ds.va.gov/vha=help', 'http://www.appeals.cf.ds.va.gov/vha=help')} "\
       "and selecting only the VHA checkbox when re-submitting the form."
     additional_message = (!has_vha_access && pending_requests.blank?) ? extra_message_content.html_safe : nil
-    content_tag(:p, "#{content_string}#{additional_context}") + content_tag(:p, additional_message)
+
+    html = content_tag(:p, "#{content_string}#{additional_context}")
+    html += content_tag(:p, additional_message) if additional_message
+    html
   end
 end

@@ -195,6 +195,7 @@ describe MembershipRequestMailer do
 
     context "with no pending requests" do
       let(:pending_org_request_names) { nil }
+
       it "renders the correct body text" do
         expect(mailer.body.encoded).to match("Dear #{requestor.full_name},")
         expect(mailer.body.encoded).to match(
@@ -242,8 +243,7 @@ describe MembershipRequestMailer do
     it "renders the correct body text" do
       expect(mailer.body.encoded).to match("Dear #{requestor.full_name},")
       expect(mailer.body.encoded).to match(
-        "We approved your request for Caseflow #{camo_org.name} pages,"\
-        " which also includes access to the VHA pages."
+        "At this time, we have denied your request for access to #{camo_org.name} pages in Caseflow."
       )
       # Additional Org access list
       expect(mailer.body.encoded).to have_selector("p", text: "New Org 1")
@@ -259,6 +259,58 @@ describe MembershipRequestMailer do
 
       # Signature line
       expect(mailer.body.encoded).to have_selector("div", text: camo_org.name)
+    end
+
+    context "with no pending requests and has VHA access" do
+      let(:pending_org_request_names) { nil }
+      let(:mailer) do
+        MembershipRequestMailer.with(mailer_parameters.merge(has_vha_access: true))
+          .vha_predocket_organization_denied
+      end
+
+      it "renders the correct body text" do
+        expect(mailer.body.encoded).to match("Dear #{requestor.full_name},")
+        expect(mailer.body.encoded).to match(
+          "At this time, we have denied your request for access to #{camo_org.name} pages in Caseflow."\
+          " Your existing group membership did not change."
+        )
+        # Additional Org access list
+        expect(mailer.body.encoded).to have_selector("p", text: "New Org 1")
+        expect(mailer.body.encoded).to have_selector("p", text: "New Org 2")
+        expect(mailer.body.encoded).to_not match(
+          "This does not impact access you had prior to this decision,"\
+          " or your pending requests for other VHA Pre-Docket offices listed below."
+        )
+      end
+    end
+
+    context "with no pending requests and has no VHA access" do
+      let(:pending_org_request_names) { nil }
+      let(:mailer) do
+        MembershipRequestMailer.with(mailer_parameters.merge(has_vha_access: false))
+          .vha_predocket_organization_denied
+      end
+
+      it "renders the correct body text" do
+        expect(mailer.body.encoded).to match("Dear #{requestor.full_name},")
+        expect(mailer.body.encoded).to match(
+          "At this time, we have denied your request for access to #{camo_org.name} pages"\
+          " in Caseflow and the VHA pages in general."
+        )
+        expect(mailer.body.encoded).to match(
+          "If you are in need of access to VHA pages without VHA CAMO specific pages, please make a"\
+          " new request for VHA access by going to "\
+          ' <a href="http://www.appeals.cf.ds.va.gov/vha=help">http://www.appeals.cf.ds.va.gov/vha=help</a> '\
+          "and selecting only the VHA checkbox when re-submitting the form."
+        )
+        # Additional Org access list
+        expect(mailer.body.encoded).to have_selector("p", text: "New Org 1")
+        expect(mailer.body.encoded).to have_selector("p", text: "New Org 2")
+        expect(mailer.body.encoded).to_not match(
+          "This does not impact access you had prior to this decision,"\
+          " or your pending requests for other VHA Pre-Docket offices listed below."
+        )
+      end
     end
   end
 end
