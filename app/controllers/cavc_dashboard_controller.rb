@@ -156,11 +156,11 @@ class CavcDashboardController < ApplicationController
                 CavcSelectionBasis.find_by(id: box[3]["value"])
               end
 
-      CavcDispositionsToReason.find_or_create_by(
+      cdtr = CavcDispositionsToReason.find_or_create_by(
         cavc_dashboard_disposition: cdd,
-        cavc_decision_reason_id: box[2],
-        cavc_selection_basis_id: basis&.id
+        cavc_decision_reason_id: box[2]
       )
+      cdtr.update!(cavc_selection_basis_id: basis.id) if basis&.id
     end
   end
 end
