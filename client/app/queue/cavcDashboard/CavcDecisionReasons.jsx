@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+/* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
 import { Accordion } from '../../components/Accordion';
 import Checkbox from '../../components/Checkbox';
@@ -9,11 +11,10 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import { setCheckedDecisionReasons,
   setInitialCheckedDecisionReasons,
-  fetchCavcSelectionBases,
   setSelectionBasisForReasonCheckbox,
   updateOtherFieldTextValue } from './cavcDashboardActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
-import { createFilter } from 'react-select';
+// import { createFilter } from 'react-select';
 import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
 
 const CavcDecisionReasons = (props) => {
@@ -52,7 +53,7 @@ const CavcDecisionReasons = (props) => {
   });
 
   const basisForSelectionStylingWithChildReadOnly = css({
-    paddingLeft: '9rem',
+    paddingLeft: '8rem',
     fontWeight: 'normal',
     '@media(min-width: 1200px)': { paddingLeft: '14rem' },
   });
@@ -73,7 +74,8 @@ const CavcDecisionReasons = (props) => {
     // get all children where parent.id === child.parent_decision_reason_id
     // then create an object for each child, stored into parent's children property as array
     const children = childReasons.filter((child) => child.parent_decision_reason_id === parent.id);
-    const parentSelectionBasisId = loadCheckedBoxes?.filter((box) => box.cavc_decision_reason_id === parent.id)[0]?.cavc_selection_basis_id
+    const parentSelectionBasisId = loadCheckedBoxes?.
+      filter((box) => box.cavc_decision_reason_id === parent.id)[0]?.cavc_selection_basis_id;
 
     obj[parent.id] = {
       ...parent,
@@ -87,7 +89,8 @@ const CavcDecisionReasons = (props) => {
         otherText: null
       },
       children: children.map((child) => {
-        const childSelectionBasisId = loadCheckedBoxes?.filter((box) => box.cavc_decision_reason_id === child.id)[0]?.cavc_selection_basis_id
+        const childSelectionBasisId = loadCheckedBoxes?.
+          filter((box) => box.cavc_decision_reason_id === child.id)[0]?.cavc_selection_basis_id;
 
         return {
           ...child,
@@ -112,7 +115,6 @@ const CavcDecisionReasons = (props) => {
 
   useEffect(() => {
     dispatch(setCheckedDecisionReasons(checkedReasons, uniqueId));
-    dispatch(fetchCavcSelectionBases);
     if (!initialCheckBoxesInStore && initialDispositionRequiresReasons) {
       dispatch(setInitialCheckedDecisionReasons(uniqueId));
     }
@@ -248,21 +250,18 @@ const CavcDecisionReasons = (props) => {
     input.length >= MIN_INPUT_LENGTH ?
       'No options' :
       'Search input must be at least 3 characters';
-  const filterOption = (candidate, input) => {
-    return (
-      // Min input length
-      input.length >= MIN_INPUT_LENGTH &&
-      // Use Select's default filtering for string matching by creating filter
-      createFilter({})(candidate, input)
-    );
-  };
+  // const filterOption = (candidate, input) => {
+  //   return (
+  //     // Min input length
+  //     input.length >= MIN_INPUT_LENGTH &&
+  //     // Use Select's default filtering for string matching by creating filter
+  //     createFilter({})(candidate, input)
+  //   );
+  // };
 
-  const [isOtherBasisSelected, setIsOtherBasisSelected] = useState(false);
   const [otherBasisSelectedByCheckboxId, setOtherBasisSelectedByCheckboxId] = useState(decisionReasons.map((reason) => {
     return { checkboxId: reason.id, checked: false };
   }));
-
-  console.log(otherBasisSelectedByCheckboxId)
 
   const handleOtherTextFieldChange = (value, reason, parentReason) => {
     const reasons = {
@@ -274,14 +273,15 @@ const CavcDecisionReasons = (props) => {
   };
 
   const renderBasisForSelectionsWithChild = (parent, child) => {
-    if (userCanEdit) {
-      const defaultSelectionValue = checkedReasons[parent.id]?.children.filter((box) => child.id === box.id)[0]?.basis_for_selection;
+    const defaultSelectionValue =
+      checkedReasons[parent.id]?.children.filter((box) => child.id === box.id)[0]?.basis_for_selection;
 
+    if (userCanEdit) {
       return (
         <div>
           <SearchableDropdown
             name={`decision-reason-basis-${child.id}`}
-            //filterOption={filterOption}
+            // filterOption={filterOption}
             label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
             placeholder="Type to search..."
             noOptionsMessage={noOptionsMessage}
@@ -305,7 +305,6 @@ const CavcDecisionReasons = (props) => {
                   return arr;
                 });
               }
-              // add dispatch action here for value
               dispatch(setSelectionBasisForReasonCheckbox(uniqueId, option));
             }
             }
@@ -321,8 +320,6 @@ const CavcDecisionReasons = (props) => {
             styling={basisForSelectionStylingWithChild}
             defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
           />
-          {/* if basis for selection category is ama_other display text field for custom reasoning */}
-          {/* eslint-disable-next-line */}
           {(otherBasisSelectedByCheckboxId.filter((basis) => basis.checkboxId === child.id)[0].checked) && (
             <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
               <TextField
@@ -342,22 +339,22 @@ const CavcDecisionReasons = (props) => {
       <div {...basisForSelectionStylingWithChildReadOnly}>
         <label>
           <strong>{DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}:</strong>{' '}
-          Should be replaced with actual selection or no value
+          {defaultSelectionValue?.label}
         </label>
       </div>
     );
   };
 
   const renderBasisForSelectionsForParent = (parent) => {
-    if (userCanEdit) {
-      const defaultSelectionValue = checkedReasons[parent.id]?.basis_for_selection;
+    const defaultSelectionValue = checkedReasons[parent.id]?.basis_for_selection;
 
+    if (userCanEdit) {
       return (
         <div>
           <SearchableDropdown
             name={`decision-reason-basis-${parent.id}`}
             label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
-            //filterOption={filterOption}
+            // filterOption={filterOption}
             options={selectionBases.
               filter((selection) => selection.category === parent.basis_for_selection_category).
               map((selection) => ({
@@ -385,7 +382,6 @@ const CavcDecisionReasons = (props) => {
                   return arr;
                 });
               }
-              // add dispatch action here for value
               dispatch(setSelectionBasisForReasonCheckbox(uniqueId, option));
             }
             }
@@ -397,7 +393,7 @@ const CavcDecisionReasons = (props) => {
             defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
           />
           {(otherBasisSelectedByCheckboxId.filter((basis) => basis.checkboxId === parent.id)[0].checked) && (
-            <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
+            <div style={{ paddingLeft: '7.5rem', paddingTop: '2.5rem' }}>
               <TextField
                 type="string"
                 label="New basis reason"
@@ -415,7 +411,7 @@ const CavcDecisionReasons = (props) => {
       <div {...basisForSelectionStylingNoChildReadOnly}>
         <label>
           <strong>{DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}:</strong>{' '}
-          Should be replaced with actual selection or no value
+          {defaultSelectionValue?.label}
         </label>
       </div>
     );
@@ -444,7 +440,6 @@ const CavcDecisionReasons = (props) => {
               </div>
             ))}
             {/* check if parent checkbox has basis category but no child, if so render dropdown */}
-            {/* eslint-disable-next-line */}
             {checkedReasons[parent.id]?.basis_for_selection_category && renderBasisForSelectionsForParent(parent)}
           </div>
         )}
