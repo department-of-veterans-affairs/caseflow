@@ -51,7 +51,6 @@ def generate_table_notifications(notifications)
       event_type: notification.event_type,
       event_date: notification.event_date
     }
-
     if notification.notification_type == 'Email and SMS'
       table_notifications.push(email_notification, sms_notification)
     elsif notification.notification_type == 'Email'

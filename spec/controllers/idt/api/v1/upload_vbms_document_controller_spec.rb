@@ -119,6 +119,8 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         let(:uploaded_document) { instance_double(VbmsUploadedDocument, id: 1) }
         let(:document_params) do
           {
+            appeal_id: appeal.id,
+            appeal_type: appeal.class.name,
             veteran_file_number: file_number,
             document_type: params[:document_type],
             file: params[:file],
