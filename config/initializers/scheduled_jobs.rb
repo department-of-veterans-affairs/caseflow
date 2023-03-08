@@ -40,5 +40,6 @@ SCHEDULED_JOBS = {
     "fetch_all_active_legacy_appeals_job" => FetchAllActiveLegacyAppealsJob,
     "retrieve_and_cache_reader_documents_job" => RetrieveAndCacheReaderDocumentsJob,
     "travel_board_hearing_sync_job" => Hearings::TravelBoardHearingSyncJob,
-    "notification_efolder_sync_job" => NotificationEfolderSyncJob
+    "notification_efolder_sync_job" => NotificationEfolderSyncJob,
+    "change_hearing_request_type_task_cancellation_job" => ChangeHearingRequestTypeTaskCancellationJob
 }.freeze
