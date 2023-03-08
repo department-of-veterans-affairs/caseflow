@@ -7,8 +7,11 @@ import { DECISION_REASON_LABELS } from './cavcDashboardConstants';
 import { useDispatch, useSelector } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import { setCheckedDecisionReasons, setInitialCheckedDecisionReasons } from './cavcDashboardActions';
+import { setCheckedDecisionReasons,
+  setInitialCheckedDecisionReasons,
+  fetchCavcSelectionBases } from './cavcDashboardActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import { createFilter } from 'react-select';
 import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
 
 const CavcDecisionReasons = (props) => {
@@ -56,7 +59,7 @@ const CavcDecisionReasons = (props) => {
   const decisionReasons = useSelector((state) => state.cavcDashboard.decision_reasons);
   const checkedBoxesInStore = useSelector((state) => state.cavcDashboard.checked_boxes[uniqueId]);
   const initialCheckBoxesInStore = useSelector((state) => state.cavcDashboard.initial_state.checked_boxes[uniqueId]);
-
+  const selectionBases = useSelector((state) => state.cavcDashboard.selection_bases);
   const parentReasons = decisionReasons.filter((parentReason) => !parentReason.parent_decision_reason_id).sort(
     (obj) => obj.order);
   const childReasons = decisionReasons.filter((childReason) => childReason.parent_decision_reason_id !== null).sort(
@@ -92,6 +95,7 @@ const CavcDecisionReasons = (props) => {
 
   useEffect(() => {
     dispatch(setCheckedDecisionReasons(checkedReasons, uniqueId));
+    dispatch(fetchCavcSelectionBases);
     if (!initialCheckBoxesInStore && initialDispositionRequiresReasons) {
       dispatch(setInitialCheckedDecisionReasons(uniqueId));
     }
@@ -218,21 +222,58 @@ const CavcDecisionReasons = (props) => {
     );
   };
 
+  // Logic section for searchable dropdowns that prevents searching prior to 3 characters being entered
+  // noOptionMessage is currently being overwritten by the default value set in searchabledropdown.jsx
+  const MIN_INPUT_LENGTH = 3;
+  const noOptionsMessage = (input) =>
+    input.length >= MIN_INPUT_LENGTH ?
+      'No options' :
+      'Search input must be at least 3 characters';
+  const filterOption = (candidate, input) => {
+    return (
+      // Min input length
+      input.length >= MIN_INPUT_LENGTH &&
+      // Use Select's default filtering for string matching by creating filter
+      createFilter({})(candidate, input)
+    );
+  };
+
+  const [isOtherBasisSelected, setIsOtherBasisSelected] = useState(false);
+
   const renderBasisForSelectionsWithChild = (parent, child) => {
     if (userCanEdit) {
       return (
         <div>
           <SearchableDropdown
             name={`decision-reason-basis-${child.id}`}
+            filterOption={filterOption}
             label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
             placeholder="Type to search..."
+            noOptionsMessage={noOptionsMessage}
+            onChange={(option) => {
+              if (option.label === 'Other') {
+                setIsOtherBasisSelected(true);
+              } else {
+                setIsOtherBasisSelected(false);
+              }
+            }
+            }
+            options={selectionBases.
+              filter((selection) => selection.category === child.basis_for_selection_category).
+              map((selection) => ({
+                label: selection.basis_for_selection,
+                value: selection.id
+              }))}
             styling={basisForSelectionStylingWithChild}
           />
           {/* if basis for selection category is ama_other display text field for custom reasoning */}
           {/* eslint-disable-next-line */}
-          {checkedReasons[parent.id]?.children.find((x) => x.basis_for_selection_category === 'ama_other') && (
+          {(isOtherBasisSelected) && (
             <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
-              <TextField type="string" label="New basis reason" />
+              <TextField type="string"
+                label="New basis reason"
+                inputProps={{ maxLength: 250 }}
+              />
             </div>
           )}
         </div>
@@ -252,13 +293,40 @@ const CavcDecisionReasons = (props) => {
   const renderBasisForSelectionsForParent = (parent) => {
     if (userCanEdit) {
       return (
-        <SearchableDropdown
-          name={`decision-reason-basis-${parent.id}`}
-          label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
-          placeholder="Type to search..."
-          styling={basisForSelectionStylingNoChild}
-          readOnly={!userCanEdit}
-        />
+        <div>
+          <SearchableDropdown
+            name={`decision-reason-basis-${parent.id}`}
+            label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
+            filterOption={filterOption}
+            options={selectionBases.
+              filter((selection) => selection.category === parent.basis_for_selection_category).
+              map((selection) => ({
+                label: selection.basis_for_selection,
+                value: selection.id
+              }))}
+            onChange={(option) => {
+              if (option.label === 'Other') {
+                setIsOtherBasisSelected(true);
+              } else {
+                setIsOtherBasisSelected(false);
+              }
+            }
+            }
+            placeholder="Type to search..."
+            creatable
+            noOptionsMessage={noOptionsMessage}
+            styling={basisForSelectionStylingNoChild}
+            readOnly={!userCanEdit}
+          />
+          {(isOtherBasisSelected) && (
+            <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
+              <TextField type="string"
+                label="New basis reason"
+                inputProps={{ maxLength: 250 }}
+              />
+            </div>
+          )}
+        </div>
       );
     }
 
@@ -325,6 +393,7 @@ CavcDecisionReasons.propTypes = {
   uniqueId: PropTypes.number,
   initialDispositionRequiresReasons: PropTypes.bool,
   dispositionIssueType: PropTypes.string,
+  fetchCavcSelectionBases: PropTypes.func,
   loadCheckedBoxes: PropTypes.shape({
     cavc_dashboard_disposition_id: PropTypes.number,
     cavc_decision_reason_id: PropTypes.number,
