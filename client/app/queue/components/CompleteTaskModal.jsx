@@ -184,6 +184,31 @@ const ProceedFinalNotificationLetterTaskModal = ({ props, state, setState }) => 
   );
 };
 
+const ResendFinalNotificationLetterTaskModal = ({ props, state, setState }) => {
+  const taskConfiguration = taskActionData(props);
+
+  return (
+    <React.Fragment>
+      {taskConfiguration && taskConfiguration.modal_body}
+      {taskConfiguration && taskConfiguration.modal_alert && (
+        <Alert message={taskConfiguration.modal_alert} type="info" />
+      )}
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        <TextareaField
+          label= "Provide instuctions and context for this action"
+          name= "instructions"
+          id= "completeTaskInstructions"
+          onChange={(value) => setState({ instructions: value })}
+          value={state.instructions}
+          styling={marginTop(4)}
+          maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+          placeholder="This is a description of instuctions and context for this action."
+        />
+      )}
+    </React.Fragment>
+  );
+};
+
 const ResendInitialNotificationLetterTaskModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
 
@@ -224,6 +249,12 @@ MarkTaskCompleteContestedClaimModal.propTypes = {
 };
 
 ProceedFinalNotificationLetterTaskModal.propTypes = {
+  props: PropTypes.object,
+  setState: PropTypes.func,
+  state: PropTypes.object
+};
+
+ResendFinalNotificationLetterTaskModal.propTypes = {
   props: PropTypes.object,
   setState: PropTypes.func,
   state: PropTypes.object
@@ -556,13 +587,31 @@ const MODAL_TYPE_ATTRS = {
     submitDisabled: ({ state }) => (!validInstructions(state.instructions))
   },
 
-  resend_initial_notification_letter: {
+  resend_initial_notification_letter_post_holding: {
     buildSuccessMsg: () => ({
-      title: sprintf(COPY.RESEND_INITIAL_NOTIFICATION_LETTER_TASK_SUCCESS),
+      title: sprintf(COPY.RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING_TASK_SUCCESS),
     }),
     title: () => COPY.RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
     getContent: ResendInitialNotificationLetterTaskModal,
     buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON
+  },
+
+  resend_initial_notification_letter_final: {
+    buildSuccessMsg: () => ({
+      title: sprintf(COPY.RESEND_INITIAL_NOTIFICATION_LETTER_FINAL_TASK_SUCCESS),
+    }),
+    title: () => COPY.RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
+    getContent: ResendInitialNotificationLetterTaskModal,
+    buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON
+  },
+
+  resend_final_notification_letter: {
+    buildSuccessMsg: () => ({
+      title: sprintf(COPY.RESEND_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS),
+    }),
+    title: () => COPY.RESEND_FINAL_NOTIFICATION_LETTER_TITLE,
+    getContent: ResendFinalNotificationLetterTaskModal,
+    buttonText: COPY.RESEND_FINAL_NOTIFICATION_LETTER_BUTTON
   },
 
   ready_for_review: {
@@ -884,10 +933,11 @@ class CompleteTaskModal extends React.Component {
 
   submit = () => {
     const { task, appeal } = this.props;
+    const statusValue = ((task.type === 'SendFinalNotificationLetterTask') && (MODAL_TYPE_ATTRS[this.props.modalType].title() === 'Resend initial notification letter') ? 'cancelled' : 'completed');
     const payload = {
       data: {
         task: {
-          status: 'completed',
+          status: statusValue,
           instructions: this.formatInstructions(),
         },
         select_opc: this.props.modalType,

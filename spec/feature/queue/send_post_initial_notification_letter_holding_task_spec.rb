@@ -50,7 +50,7 @@ RSpec.feature "Send Post Initial Notification Letter Holding Tasks", :all_dbs do
       dropdown = find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
       dropdown.click
       expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_POST_INITIAL_LETTER_TASK.label)
-      expect(page).to have_content(Constants.TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER.label)
+      expect(page).to have_content(Constants.TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING.label)
       expect(page).to have_content(Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER.label)
     end
 
@@ -60,11 +60,11 @@ RSpec.feature "Send Post Initial Notification Letter Holding Tasks", :all_dbs do
       visit("/queue/appeals/#{post_letter_task.appeal.external_id}")
 
       prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
-      text = Constants.TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER.label
+      text = Constants.TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING.label
       click_dropdown(prompt: prompt, text: text)
 
       # check modal content
-      expect(page).to have_content(format(COPY::RESEND_INITIAL_NOTIFICATION_LETTER_COPY))
+      expect(page).to have_content(format(COPY::RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING_COPY))
 
       # fill out instructions
       fill_in("instructions", with: "instructions")
@@ -75,7 +75,6 @@ RSpec.feature "Send Post Initial Notification Letter Holding Tasks", :all_dbs do
       expect(page.current_path).to eq("/organizations/clerk-of-the-board")
       appeal_initial_letter_holding_task = root_task.appeal.tasks.reload.find_by(type: "PostSendInitialNotificationLetterHoldingTask")
       expect(appeal_initial_letter_holding_task.status).to eq("completed")
-
     end
 
     it "cancel action cancels the task and displays it on the case timeline" do
@@ -106,6 +105,29 @@ RSpec.feature "Send Post Initial Notification Letter Holding Tasks", :all_dbs do
       appeal_initial_letter_task = root_task.appeal.tasks.find_by(type: "PostSendInitialNotificationLetterHoldingTask")
       expect(page).to have_content(`#{appeal_initial_letter_task.type} cancelled`)
       expect(appeal_initial_letter_task.status).to eq("cancelled")
+    end
+
+    it "the proceed to final letter action completes the post initial task" do
+      initial_letter_task.completed!
+      visit("/queue")
+      visit("/queue/appeals/#{post_letter_task.appeal.external_id}")
+
+      prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+      text = Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER.label
+      click_dropdown(prompt: prompt, text: text)
+
+      # check modal content
+      expect(page).to have_content(format(COPY::PROCEED_FINAL_NOTIFICATION_LETTER_TITLE))
+
+      # fill out instructions
+      fill_in("instructions", with: "instructions")
+      click_button(COPY::PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON)
+
+      # expect success
+      expect(page).to have_content(format(COPY::PROCEED_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS))
+      expect(page.current_path).to eq("/organizations/clerk-of-the-board")
+      appeal_initial_letter_holding_task = root_task.appeal.tasks.reload.find_by(type: "PostSendInitialNotificationLetterHoldingTask")
+      expect(appeal_initial_letter_holding_task.status).to eq("completed")
     end
   end
 end
