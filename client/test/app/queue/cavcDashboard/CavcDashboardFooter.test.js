@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { CavcDashboardFooter } from '../../../../app/queue/cavcDashboard/CavcDashboardFooter';
 
 const unmodifiedInitialState = {
@@ -58,7 +58,7 @@ const setProps = (modified, userCanEdit) => {
     cavcDashboards,
     checkedBoxes
   };
-}
+};
 
 describe('cavcDashboardFooter', () => {
   it('Has no save button if user cannot edit', () => {
@@ -84,5 +84,15 @@ describe('cavcDashboardFooter', () => {
     render(<CavcDashboardFooter {...setProps('reason', true)} />);
 
     expect(screen.getByText('Save Changes')).toBeEnabled();
+  });
+
+  it('Cancel brings up the cancel modal if changes were made', () => {
+    render(<CavcDashboardFooter {...setProps('reason', true)} />);
+    const cancelButton = screen.getByText('Cancel');
+
+    fireEvent.click(cancelButton);
+    expect(screen.queryByText('Your changes are not saved')).toBeTruthy();
+    expect(screen.queryByText('CAVC appeals for')).toBeFalsy();
+    expect(screen.queryByText('Currently active tasks')).toBeFalsy();
   });
 });
