@@ -95,7 +95,7 @@
     },
     "CLAIMANT_NAME": {
       "name": "claimantColumn",
-      "sorting_table": "",
+      "sorting_table": "claimants",
       "sorting_columns": ["claimant_name"]
     },
     "ISSUE_COUNT": {
@@ -108,7 +108,7 @@
     },
     "VETERAN_SSN": {
       "name": "veteranSsnColumn",
-      "sorting_table": "",
+      "sorting_table": "veterans",
       "sorting_columns": ["veteran_ssn"]
     },
     "READER_LINK_WITH_NEW_DOCS_ICON": {
