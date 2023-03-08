@@ -19,6 +19,7 @@ const CavcDashboardEditDetailsModal = ({ closeHandler, saveHandler, Details }) =
   const [jointMotionForRemand, setJointMotionForRemand] = useState(Details.jointMotionForRemand);
 
   const updatedData = {
+    id: Details.id,
     boardDecisionDateUpdate: boardDecisionDate,
     boardDocketNumberUpdate: boardDocketNumber,
     cavcDecisionDateUpdate: cavcDecisionDate,
@@ -137,6 +138,7 @@ CavcDashboardEditDetailsModal.propTypes = {
   closeHandler: PropTypes.func,
   saveHandler: PropTypes.func,
   Details: PropTypes.shape({
+    id: PropTypes.number,
     boardDecisionDate: PropTypes.string,
     boardDocketNumber: PropTypes.string,
     cavcDecisionDate: PropTypes.string,

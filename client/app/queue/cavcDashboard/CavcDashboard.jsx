@@ -29,18 +29,22 @@ export const CavcDashboard = (props) => {
 
   useEffect(() => {
     // need to reset data on page load or else returning to the dashboard after saving will always enable save button
-    props.resetDashboardData();
-    // define the promise inside useEffect so that the component doesn't infinitely rerender
-    const loadPromise = Promise.all([
-      props.fetchAppealDetails(appealId),
-      props.fetchCavcDecisionReasons(),
-      props.fetchCavcSelectionBases(),
-      props.fetchInitialDashboardData(appealId)
-    ]);
+    if (props.history.location.state && props.history.location.state.redirectFromButton) {
+      props.resetDashboardData();
+      // define the promise inside useEffect so that the component doesn't infinitely rerender
+      const loadPromise = Promise.all([
+        props.fetchAppealDetails(appealId),
+        props.fetchCavcDecisionReasons(),
+        props.fetchCavcSelectionBases(),
+        props.fetchInitialDashboardData(appealId)
+      ]);
 
-    loadPromise.
-      catch(() => setError(true)).
-      finally(() => setLoaded(true));
+      loadPromise.
+        catch(() => setError(true)).
+        finally(() => setLoaded(true));
+    } else {
+      props.history.goBack();
+    }
   }, []);
 
   useEffect(() => {
@@ -71,13 +75,17 @@ export const CavcDashboard = (props) => {
             message={COPY.CAVC_DASHBOARD_LOADING_SCREEN_TEXT}
           />}
         {loaded && !error &&
-          <>
+          <div className="cf-cavc-dashboard">
             <h1>CAVC appeals for {appealDetails?.appellantFullName}</h1>
 
-            <TabWindow tabs={tabs} tabPanelTabIndex={-1} alwaysShowTabs />
+            <TabWindow tabs={tabs}
+              tabPanelTabIndex={-1}
+              alwaysShowTabs
+              mountOnEnter={false}
+              unmountOnExit={false} />
             <hr />
             <CavcDashboardFooter {...props} />
-          </>
+          </div>
         }
         {loaded && error &&
           <StatusMessage

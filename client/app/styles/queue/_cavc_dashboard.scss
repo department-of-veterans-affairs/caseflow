@@ -1,0 +1,33 @@
+.cf-cavc-dashboard {
+  .cf-tab-navigation {
+    display: flex;
+    flex-wrap: wrap-reverse;
+
+    button {
+      flex: 0 0 250px;
+      margin-bottom: -1px;
+    }
+
+  }
+
+  .cf-tab {
+    width: 250px;
+    border-bottom: 1px solid #aeb0b5;
+
+    div {
+      width: 100%;
+    }
+
+    &.cf-active {
+      border-bottom: 1px solid #0071bc;
+      // needed for active tab's border to be on top of all other surrounding borders
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  .cf-active + .cf-tab {
+    border-left: 1px solid #aeb0b5;
+  }
+
+}

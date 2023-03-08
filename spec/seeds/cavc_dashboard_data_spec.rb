@@ -40,13 +40,13 @@ describe Seeds::CavcDashboardData do
 
       # 10 from create_cavc_dashboard_dispositions, 4 from create_appeals_with_multiple_cavc_remands,
       # 10 from create_cavc_dashboard_issues
-      expect(CavcRemand.count).to eq 24
+      expect(CavcRemand.count).to eq 25
       expect(CavcDashboardDisposition.count).to be >= 30
 
       # ensure creation of multiple remands with the same source appeal
       last_four_remands = CavcRemand.last(4)
       expect(last_four_remands.map(&:source_appeal_id).count).to eq 4
-      expect(last_four_remands.map(&:source_appeal_id).uniq.count).to eq 1
+      expect(last_four_remands.map(&:source_appeal_id).uniq.count).to eq 2
       expect(last_four_remands.map(&:remand_appeal_id).uniq.count).to eq 4
     end
 
