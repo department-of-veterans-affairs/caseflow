@@ -258,6 +258,11 @@ const CavcDecisionReasons = (props) => {
   };
 
   const [isOtherBasisSelected, setIsOtherBasisSelected] = useState(false);
+  const [otherBasisSelectedByCheckboxId, setOtherBasisSelectedByCheckboxId] = useState(decisionReasons.map((reason) => {
+    return { checkboxId: reason.id, checked: false };
+  }));
+
+  console.log(otherBasisSelectedByCheckboxId)
 
   const handleOtherTextFieldChange = (value, reason, parentReason) => {
     const reasons = {
@@ -281,11 +286,25 @@ const CavcDecisionReasons = (props) => {
             placeholder="Type to search..."
             noOptionsMessage={noOptionsMessage}
             onChange={(option) => {
-              // if (option.label === 'Other') {
-              //   setIsOtherBasisSelected(true);
-              // } else {
-              //   setIsOtherBasisSelected(false);
-              // }
+              if (option.label === 'Other') {
+                setOtherBasisSelectedByCheckboxId((prevState) => {
+                  const idx = otherBasisSelectedByCheckboxId.findIndex((basis) => basis.checkboxId === child.id);
+                  const arr = [...prevState];
+
+                  arr[idx] = { checkboxId: child.id, checked: true };
+
+                  return arr;
+                });
+              } else {
+                setOtherBasisSelectedByCheckboxId((prevState) => {
+                  const idx = otherBasisSelectedByCheckboxId.findIndex((basis) => basis.checkboxId === child.id);
+                  const arr = [...prevState];
+
+                  arr[idx] = { checkboxId: child.id, checked: false };
+
+                  return arr;
+                });
+              }
               // add dispatch action here for value
               dispatch(setSelectionBasisForReasonCheckbox(uniqueId, option));
             }
@@ -304,7 +323,7 @@ const CavcDecisionReasons = (props) => {
           />
           {/* if basis for selection category is ama_other display text field for custom reasoning */}
           {/* eslint-disable-next-line */}
-          {(defaultSelectionValue?.label === 'Other') && (
+          {(otherBasisSelectedByCheckboxId.filter((basis) => basis.checkboxId === child.id)[0].checked) && (
             <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
               <TextField
                 type="string"
@@ -347,11 +366,25 @@ const CavcDecisionReasons = (props) => {
                 checkboxId: parent.id
               }))}
             onChange={(option) => {
-              // if (option.label === 'Other') {
-              //   setIsOtherBasisSelected(true);
-              // } else {
-              //   setIsOtherBasisSelected(false);
-              // }
+              if (option.label === 'Other') {
+                setOtherBasisSelectedByCheckboxId((prevState) => {
+                  const idx = otherBasisSelectedByCheckboxId.findIndex((basis) => basis.checkboxId === parent.id);
+                  const arr = [...prevState];
+
+                  arr[idx] = { checkboxId: parent.id, checked: true };
+
+                  return arr;
+                });
+              } else {
+                setOtherBasisSelectedByCheckboxId((prevState) => {
+                  const idx = otherBasisSelectedByCheckboxId.findIndex((basis) => basis.checkboxId === parent.id);
+                  const arr = [...prevState];
+
+                  arr[idx] = { checkboxId: parent.id, checked: false };
+
+                  return arr;
+                });
+              }
               // add dispatch action here for value
               dispatch(setSelectionBasisForReasonCheckbox(uniqueId, option));
             }
@@ -363,7 +396,7 @@ const CavcDecisionReasons = (props) => {
             readOnly={!userCanEdit}
             defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
           />
-          {(defaultSelectionValue?.label === 'Other') && (
+          {(otherBasisSelectedByCheckboxId.filter((basis) => basis.checkboxId === parent.id)[0].checked) && (
             <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
               <TextField
                 type="string"
