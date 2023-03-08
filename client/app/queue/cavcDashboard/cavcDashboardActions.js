@@ -62,6 +62,16 @@ export const setSelectionBasisForReasonCheckbox = (uniqueId, option) => ({
   }
 });
 
+export const updateOtherFieldTextValue = (uniqueId, value, reasons) => ({
+  type: ACTIONS.UPDATE_OTHER_FIELD_TEXT_VALUE,
+  payload: {
+    issueId: uniqueId,
+    checkboxId: reasons.checkboxId,
+    parentCheckboxId: reasons.parentCheckboxId,
+    value
+  }
+});
+
 export const setInitialCheckedDecisionReasons = (uniqueId) => ({
   type: ACTIONS.SET_INITIAL_CHECKED_DECISION_REASONS,
   payload: {
@@ -115,7 +125,12 @@ export const saveDashboardData = (allCavcDashboards, checkedBoxes) => (dispatch)
     const selectedBoxes = allBoxes.filter((box) => box.checked);
     const idsAndTypes = selectedBoxes.map((box) => {
       if (box.basis_for_selection.value) {
-        return [box.issueType, box.id, box.basis_for_selection];
+        return [
+          box.issueType,
+          box.id,
+          box.basis_for_selection_category,
+          box.basis_for_selection
+        ];
       }
 
       return [box.issueType, box.id];

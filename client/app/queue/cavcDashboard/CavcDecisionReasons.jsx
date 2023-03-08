@@ -10,7 +10,8 @@ import PropTypes from 'prop-types';
 import { setCheckedDecisionReasons,
   setInitialCheckedDecisionReasons,
   fetchCavcSelectionBases,
-  setSelectionBasisForReasonCheckbox } from './cavcDashboardActions';
+  setSelectionBasisForReasonCheckbox,
+  updateOtherFieldTextValue } from './cavcDashboardActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { createFilter } from 'react-select';
 import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
@@ -82,7 +83,8 @@ const CavcDecisionReasons = (props) => {
       basis_for_selection: {
         checkboxId: parent.id,
         value: parentSelectionBasisId,
-        label: selectionBases?.filter((basis) => basis.id === parentSelectionBasisId)[0]?.basis_for_selection
+        label: selectionBases?.filter((basis) => basis.id === parentSelectionBasisId)[0]?.basis_for_selection,
+        otherText: null
       },
       children: children.map((child) => {
         const childSelectionBasisId = loadCheckedBoxes?.filter((box) => box.cavc_decision_reason_id === child.id)[0]?.cavc_selection_basis_id
@@ -95,7 +97,8 @@ const CavcDecisionReasons = (props) => {
             checkboxId: child.id,
             parentCheckboxId: parent.id,
             value: childSelectionBasisId,
-            label: selectionBases?.filter((basis) => basis.id === childSelectionBasisId)[0]?.basis_for_selection
+            label: selectionBases?.filter((basis) => basis.id === childSelectionBasisId)[0]?.basis_for_selection,
+            otherText: null
           }
         };
       })
@@ -256,6 +259,15 @@ const CavcDecisionReasons = (props) => {
 
   const [isOtherBasisSelected, setIsOtherBasisSelected] = useState(false);
 
+  const handleOtherTextFieldChange = (value, reason, parentReason) => {
+    const reasons = {
+      checkboxId: reason.id,
+      parentCheckboxId: parentReason?.id
+    };
+
+    dispatch(updateOtherFieldTextValue(uniqueId, value, reasons));
+  };
+
   const renderBasisForSelectionsWithChild = (parent, child) => {
     if (userCanEdit) {
       const defaultSelectionValue = checkedReasons[parent.id]?.children.filter((box) => child.id === box.id)[0]?.basis_for_selection;
@@ -269,11 +281,11 @@ const CavcDecisionReasons = (props) => {
             placeholder="Type to search..."
             noOptionsMessage={noOptionsMessage}
             onChange={(option) => {
-              if (option.label === 'Other') {
-                setIsOtherBasisSelected(true);
-              } else {
-                setIsOtherBasisSelected(false);
-              }
+              // if (option.label === 'Other') {
+              //   setIsOtherBasisSelected(true);
+              // } else {
+              //   setIsOtherBasisSelected(false);
+              // }
               // add dispatch action here for value
               dispatch(setSelectionBasisForReasonCheckbox(uniqueId, option));
             }
@@ -283,6 +295,7 @@ const CavcDecisionReasons = (props) => {
               map((selection) => ({
                 label: selection.basis_for_selection,
                 value: selection.id,
+                category: selection.category,
                 checkboxId: child.id,
                 parentCheckboxId: parent.id
               }))}
@@ -291,10 +304,13 @@ const CavcDecisionReasons = (props) => {
           />
           {/* if basis for selection category is ama_other display text field for custom reasoning */}
           {/* eslint-disable-next-line */}
-          {(isOtherBasisSelected) && (
+          {(defaultSelectionValue?.label === 'Other') && (
             <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
-              <TextField type="string"
+              <TextField
+                type="string"
                 label="New basis reason"
+                onChange={(value) => handleOtherTextFieldChange(value, child, parent)}
+                defaultValue={defaultSelectionValue?.otherText}
                 inputProps={{ maxLength: 250 }}
               />
             </div>
@@ -331,11 +347,11 @@ const CavcDecisionReasons = (props) => {
                 checkboxId: parent.id
               }))}
             onChange={(option) => {
-              if (option.label === 'Other') {
-                setIsOtherBasisSelected(true);
-              } else {
-                setIsOtherBasisSelected(false);
-              }
+              // if (option.label === 'Other') {
+              //   setIsOtherBasisSelected(true);
+              // } else {
+              //   setIsOtherBasisSelected(false);
+              // }
               // add dispatch action here for value
               dispatch(setSelectionBasisForReasonCheckbox(uniqueId, option));
             }
@@ -347,10 +363,13 @@ const CavcDecisionReasons = (props) => {
             readOnly={!userCanEdit}
             defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
           />
-          {(isOtherBasisSelected) && (
+          {(defaultSelectionValue?.label === 'Other') && (
             <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
-              <TextField type="string"
+              <TextField
+                type="string"
                 label="New basis reason"
+                onChange={(value) => handleOtherTextFieldChange(value, parent)}
+                defaultValue={defaultSelectionValue?.otherText}
                 inputProps={{ maxLength: 250 }}
               />
             </div>
