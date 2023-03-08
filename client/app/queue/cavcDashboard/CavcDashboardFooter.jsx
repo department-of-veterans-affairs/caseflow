@@ -19,13 +19,10 @@ export const CavcDashboardFooter = (props) => {
     checkedBoxes
   } = props;
 
-  const saveDisabled = _.isEqual(initialState.cavc_dashboards, cavcDashboards) &&
-                       _.isEqual(initialState.checked_boxes, checkedBoxes);
+  const saveAndCancelModalDisabled = _.isEqual(initialState.cavc_dashboards, cavcDashboards) &&
+                                     _.isEqual(initialState.checked_boxes, checkedBoxes);
 
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
-
-  const cancelModalDisabled = _.isEqual(initialState.cavc_dashboards, cavcDashboards) &&
-                              _.isEqual(initialState.checked_boxes, checkedBoxes);
 
   const closeHandler = () => {
     setCancelModalIsOpen(!cancelModalIsOpen);
@@ -42,9 +39,9 @@ export const CavcDashboardFooter = (props) => {
   if (userCanEdit) {
     return (
       <div {...buttonDivStyling}>
-        { !cancelModalDisabled && <Button linkStyling onClick={closeHandler} >Cancel</Button> }
-        { cancelModalDisabled && <Button linkStyling onClick={() => history.goBack()} >Cancel</Button> }
-        <Button onClick={save} disabled={saveDisabled} >Save Changes</Button>
+        { !saveAndCancelModalDisabled && <Button linkStyling onClick={closeHandler} >Cancel</Button> }
+        { saveAndCancelModalDisabled && <Button linkStyling onClick={() => history.goBack()} >Cancel</Button> }
+        <Button onClick={save} disabled={saveAndCancelModalDisabled} >Save Changes</Button>
         {
           (cancelModalIsOpen) &&
           <CancelCavcDashboardChangeModal closeHandler={closeHandler} {...props} />
