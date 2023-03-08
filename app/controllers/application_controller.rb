@@ -361,6 +361,4 @@ class ApplicationController < ApplicationBaseController
         Rails.env.development?
     end
   end
-
-  def
 end
