@@ -132,37 +132,51 @@ describe ConferenceLink do
     end
   end
 
-  describe "#guest_pin_long" do
+  describe "#guest_pin" do
     before do
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
     end
+    let(:hearing_day) { create(:hearing_day, id: 1) }
 
-    let(:nil_conference_link) do
+    let(:conference_link) do
       create(:conference_link,
-            hearing_day_id: 1,
+            hearing_day_id: hearing_day.id,
             guest_hearing_link: nil,
             guest_pin_long: nil)
     end
 
-    let(:link_service) { create(:link_service) }
+    let(:link_service) { create(:link_service.new) }
 
-    let(:conference_link_hash) do
+    let(:guest_pin_nil) do
       {
         guest_pin_long: nil
       }
     end
-    context "if guest_pin_long property already has a pin as a value" do
-      it "returns the guest_pin for the conference_link" do
-        allow(nil_conference_link).to receive(:guest_pin).and_return("7470125694")
-        expect(nil_conference_link.guest_pin_long).to eq("7470125694")
+
+    let(:guest_pin_value) do
+      {
+        guest_pin_long: "7470125694"
+      }
+    end
+
+    context "guest_pin_long property already has a pin as a value" do
+      it "Returns the guest_pin for the conference_link" do
+        allow(conference_link).to receive(:guest_pin).and_return("7470125694")
+        expect(conference_link.guest_pin_long).to eq("7470125694")
       end
     end
-    context "if guest_pin_long property has a value of nil" do
+    context "guest_pin_long property has a value of nil." do
       it "checks if property is nil" do
-        subject { nil_conference_link.update!(conference_link_hash) }
-        allow(subject).to receive(:guest_pin).and_return("123456789")
+        subject { conference_link.update!(guest_pin_nil) }
+        expect(subject.guest_pin_long).to eq(nil)
+      end
+      it "creates a pin for the guest_pin_long property using the link_service." do
+        subject { link_service }
+        allow(subject).to receive(:guest_pin).and_return("7470125694")
+        conference_link.update!(guest_pin_value)
+        expect(conference_link.guest_pin_long).to eq("7470125694")
       end
     end
   end
