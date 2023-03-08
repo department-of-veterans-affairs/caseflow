@@ -42,7 +42,20 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       oaiteam_organization.add_user(authorized_user)
     end
 
-    it "dashboard save button is disabled until changes made, cancel button returns to case details without saving" do
+    it "dashboard cancel button returns to case details if no changes have been made" do
+      go_to_dashboard(cavc_remand.remand_appeal.uuid)
+      expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
+      expect(page).to have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT)
+      expect(page).to have_content("Edit")
+
+      expect(page).to have_button("Save Changes", disabled: true)
+      expect(page).to have_button("Cancel")
+      click_button "Cancel"
+
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
+    end
+
+    it "dashboard save button is disabled until changes made, cancel button shows warning if clicked without saving" do
       go_to_dashboard(cavc_remand.remand_appeal.uuid)
       expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
       expect(page).to have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT)
@@ -54,9 +67,37 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       expect(page).to have_button("Save Changes", disabled: false)
       click_button "Cancel"
 
+      expect(page).to have_content(COPY::CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_HEADER)
+      expect(page).to have_button("Remove")
+      click_button "Remove"
+
       expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
       click_button "CAVC Dashboard"
       expect(page).not_to have_content("Abandoned")
+    end
+
+    it "cancel modal functions properly when changes have not been saved" do
+      go_to_dashboard(cavc_remand.remand_appeal.uuid)
+      expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
+      expect(page).to have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT)
+      expect(page).to have_content("Edit")
+      expect(page).to have_button("Save Changes", disabled: true)
+      expect(page).to have_button("Cancel")
+
+      page.all("div.cf-select__placeholder", exact_text: "Select option").first.click
+      page.find("div.cf-select__menu").find("div", exact_text: "Abandoned").click
+      click_button "Cancel"
+
+      expect(page).to have_content(COPY::CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_HEADER)
+      expect(page).to have_button("Cancel")
+      click_button "Cancel"
+
+      expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
+      click_button "Cancel"
+
+      expect(page).to have_button("Remove")
+      click_button "Remove"
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
     end
 
     it "user can edit and save CAVC remand details" do
