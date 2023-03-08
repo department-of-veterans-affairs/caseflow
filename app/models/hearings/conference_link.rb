@@ -38,6 +38,29 @@ class ConferenceLink < CaseflowRecord
     "pin=#{host_pin}&role=host"
   end
 
+  def guest_pin
+    if guest_pin_long.nil?
+      link_service = VirtualHearings::LinkService.new
+      update!(guest_pin_long: link_service.guest_pin)
+    else
+      guest_pin_long
+    end
+  end
+
+  def guest_link
+    if guest_hearing_link.nil?
+      if guest_pin_long.nil?
+        guest_pin
+      end
+      guest_hearing_url_with_pin = "#{ConferenceLink.base_url}?join=1&media=&escalate=1&" \
+      "conference=#{alias_with_host}&" \
+      "pin=#{guest_pin}&callType=video"
+      update!(guest_hearing_link: guest_hearing_url_with_pin)
+    else
+      guest_hearing_link
+    end
+  end
+
   private
 
   def generate_links_and_pins
@@ -49,10 +72,12 @@ class ConferenceLink < CaseflowRecord
       update!(
         host_link: link_service.host_link,
         host_pin_long: link_service.host_pin,
-        alias_with_host: link_service.alias_with_host
+        alias_with_host: link_service.alias_with_host,
+        guest_hearing_link: link_service.guest_link,
+        guest_pin_long: link_service.guest_pin
       )
     rescue VirtualHearings::LinkService::PINKeyMissingError,
-      VirtualHearings::LinkService::URLHostMissingError, 
+      VirtualHearings::LinkService::URLHostMissingError,
       VirtualHearings::LinkService::URLPathMissingError => error
       Raven.capture_exception(error: error)
       raise error

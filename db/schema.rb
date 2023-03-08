@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_15_202259) do
+ActiveRecord::Schema.define(version: 2023_02_28_211115) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -441,6 +441,8 @@ ActiveRecord::Schema.define(version: 2022_12_15_202259) do
     t.integer "conference_id", comment: "Id of the conference"
     t.datetime "created_at", null: false, comment: "Date and Time of creation"
     t.bigint "created_by_id", null: false, comment: "User id of the user who created the record. FK on User table"
+    t.string "guest_hearing_link", comment: "Guest link for hearing daily docket."
+    t.string "guest_pin_long", comment: "Pin provided for the guest, allowing them entry into the video conference."
     t.bigint "hearing_day_id", null: false, comment: "The associated hearing day id"
     t.string "host_link", comment: "Conference link generated from external conference service"
     t.integer "host_pin", comment: "Pin for the host of the conference to get into the conference"
