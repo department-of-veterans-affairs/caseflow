@@ -120,14 +120,10 @@ const CavcDashboardIssue = (props) => {
     return false;
   };
 
-  if (issue.decision_review_type && !addedIssueSection) {
-    if (issue.contested_issue_description) {
-      issueType = `${issue.decision_review_type} - ${issue.contested_issue_description}`;
-    } else {
-      issueType = `${issue.decision_review_type}`;
-    }
-  } else {
+  if (addedIssueSection) {
     issueType = issue.issue_category;
+  } else {
+    issueType = issue.description;
   }
 
   const toggleRemoveIssueModal = () => {
@@ -294,9 +290,8 @@ CavcDashboardIssue.propTypes = {
   index: PropTypes.number,
   issue: PropTypes.shape({
     benefit_type: PropTypes.string,
-    decision_review_type: PropTypes.string,
-    contested_issue_description: PropTypes.string,
-    issue_category: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+    description: PropTypes.string,
+    issue_category: PropTypes.string,
     id: PropTypes.number,
   }),
   dispositions: PropTypes.array,

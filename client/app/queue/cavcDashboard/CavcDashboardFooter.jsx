@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
+import CancelCavcDashboardChangeModal from './CancelCavcDashboardChangeModal';
 import { css } from 'glamor';
 import _ from 'lodash';
 
@@ -18,11 +19,13 @@ export const CavcDashboardFooter = (props) => {
     checkedBoxes
   } = props;
 
-  const saveDisabled = _.isEqual(initialState.cavc_dashboards, cavcDashboards) &&
-                       _.isEqual(initialState.checked_boxes, checkedBoxes);
+  const saveAndCancelModalDisabled = _.isEqual(initialState.cavc_dashboards, cavcDashboards) &&
+                                     _.isEqual(initialState.checked_boxes, checkedBoxes);
 
-  const cancel = () => {
-    history.goBack();
+  const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
+
+  const closeHandler = () => {
+    setCancelModalIsOpen(!cancelModalIsOpen);
   };
 
   const save = async () => {
@@ -36,8 +39,13 @@ export const CavcDashboardFooter = (props) => {
   if (userCanEdit) {
     return (
       <div {...buttonDivStyling}>
-        <Button linkStyling onClick={cancel}>Cancel</Button>
-        <Button onClick={save} disabled={saveDisabled} >Save Changes</Button>
+        { !saveAndCancelModalDisabled && <Button linkStyling onClick={closeHandler} >Cancel</Button> }
+        { saveAndCancelModalDisabled && <Button linkStyling onClick={() => history.goBack()} >Cancel</Button> }
+        <Button onClick={save} disabled={saveAndCancelModalDisabled} >Save Changes</Button>
+        {
+          (cancelModalIsOpen) &&
+          <CancelCavcDashboardChangeModal closeHandler={closeHandler} {...props} />
+        }
       </div>
     );
   }
@@ -55,6 +63,5 @@ CavcDashboardFooter.propTypes = {
   initialState: PropTypes.object,
   cavcDashboards: PropTypes.arrayOf(PropTypes.object),
   checkedBoxes: PropTypes.oneOfType([PropTypes.object, PropTypes.arrayOf(PropTypes.object)]),
-  // Router inherited props
   history: PropTypes.object
 };
