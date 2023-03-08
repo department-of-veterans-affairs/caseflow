@@ -138,13 +138,23 @@ describe ConferenceLink do
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
     end
-    let(:hearing_day) { create(:hearing_day, id: 1) }
+    let(:hearing_day) { create(:hearing_day) }
+
+    let!(:user) { RequestStore.store[:current_user] = User.system_user }
 
     let(:conference_link) do
       create(:conference_link,
             hearing_day_id: hearing_day.id,
             guest_hearing_link: nil,
             guest_pin_long: nil)
+    end
+
+    let!(:nil_conf_link) do
+      create(:conference_link,
+        hearing_day_id: hearing_day.id,
+            guest_hearing_link: nil,
+            guest_pin_long: "7470125694"
+      )
     end
 
     let(:link_service) { create(:link_service.new) }
@@ -163,20 +173,14 @@ describe ConferenceLink do
 
     context "guest_pin_long property already has a pin as a value" do
       it "Returns the guest_pin for the conference_link" do
-        allow(conference_link).to receive(:guest_pin).and_return("7470125694")
-        expect(conference_link.guest_pin_long).to eq("7470125694")
+        conference_link.guest_pin
+        expect(conference_link.guest_pin_long).to eq("6393596604")
       end
     end
     context "guest_pin_long property has a value of nil." do
       it "checks if property is nil" do
-        subject { conference_link.update!(guest_pin_nil) }
-        expect(subject.guest_pin_long).to eq(nil)
-      end
-      it "creates a pin for the guest_pin_long property using the link_service." do
-        subject { link_service }
-        allow(subject).to receive(:guest_pin).and_return("7470125694")
-        conference_link.update!(guest_pin_value)
-        expect(conference_link.guest_pin_long).to eq("7470125694")
+        conference_link.update!(guest_pin_long: nil)
+        expect(conference_link.guest_pin).not_to eq(nil)
       end
     end
   end

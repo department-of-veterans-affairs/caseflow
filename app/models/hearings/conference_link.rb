@@ -42,6 +42,7 @@ class ConferenceLink < CaseflowRecord
     if guest_pin_long.nil?
       link_service = VirtualHearings::LinkService.new
       update!(guest_pin_long: link_service.guest_pin)
+      guest_pin_long
     else
       guest_pin_long
     end
