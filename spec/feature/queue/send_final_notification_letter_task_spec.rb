@@ -95,4 +95,76 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       expect(appeal_initial_letter_task.status).to eq("cancelled")
     end
   end
+
+  describe "Mark final notification letter task as complete" do
+    let(:final_letter_task) do
+      SendFinalNotificationLetterTask.create!(
+        appeal: root_task.appeal,
+        parent: distribution_task,
+        assigned_to: cob_team
+      )
+    end
+    let(:params) { { appeal: root_task.appeal, parent_id: root_task.id, instructions: "foo bar" } }
+    subject { DocketSwitchMailTask.create_from_params(params, user) }
+
+    it "Finalice the process, select NO in the radio bottom option" do
+      initial_letter_task.completed!
+      post_initial_task.completed!
+
+      visit("/queue")
+      visit("/queue/appeals/#{final_letter_task.appeal.external_id}")
+
+      prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+      text = Constants.TASK_ACTIONS.MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE.label
+      click_dropdown(prompt: prompt, text: text)
+      expect(page).to have_content(format(COPY::MARK_AS_COMPLETE_FROM_SEND_FINAL_NOTIFICATION_LETTER_CONTESTED_CLAIM))
+
+      # Click radio buttom
+      radio_choices = page.all(".cf-form-radio-option > label")
+
+
+      expect(radio_choices[0]).to have_content("Yes")
+      expect(radio_choices[1]).to have_content("No")
+
+      radio_choices[1].click
+      click_button("Mark as complete")
+
+      visit("/queue")
+      visit("/queue/appeals/#{final_letter_task.appeal.external_id}")
+      expect(page).to have_content("SendFinalNotificationLetterTask completed")
+
+    end
+
+    it "Finalice the process, select Yes in the radio bottom option" do
+      initial_letter_task.completed!
+      post_initial_task.completed!
+
+      visit("/queue")
+      visit("/queue/appeals/#{final_letter_task.appeal.external_id}")
+
+      prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+      text = Constants.TASK_ACTIONS.MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE.label
+      click_dropdown(prompt: prompt, text: text)
+      expect(page).to have_content(format(COPY::MARK_AS_COMPLETE_FROM_SEND_FINAL_NOTIFICATION_LETTER_CONTESTED_CLAIM))
+
+      # Click radio buttom
+      radio_choices = page.all(".cf-form-radio-option > label")
+
+
+      expect(radio_choices[0]).to have_content("Yes")
+      expect(radio_choices[1]).to have_content("No")
+
+      radio_choices[0].click
+      fill_in("instructions", with: "Mark as complete for instructions")
+      click_button("Mark as complete")
+
+      subject
+      visit("/queue")
+      visit("/queue/appeals/#{final_letter_task.appeal.external_id}")
+
+      expect(page).to have_content("SendFinalNotificationLetterTask completed")
+      expect(page).to have_content("Docket Switch")
+    end
+
+  end
 end
