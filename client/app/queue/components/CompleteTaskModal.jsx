@@ -536,9 +536,18 @@ const MODAL_TYPE_ATTRS = {
     buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON
   },
 
-  resend_initial_notification_letter: {
+  resend_initial_notification_letter_post_holding: {
     buildSuccessMsg: () => ({
-      title: sprintf(COPY.RESEND_INITIAL_NOTIFICATION_LETTER_TASK_SUCCESS),
+      title: sprintf(COPY.RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING_TASK_SUCCESS),
+    }),
+    title: () => COPY.RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
+    getContent: ResendInitialNotificationLetterTaskModal,
+    buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON
+  },
+
+  resend_initial_notification_letter_final: {
+    buildSuccessMsg: () => ({
+      title: sprintf(COPY.RESEND_INITIAL_NOTIFICATION_LETTER_FINAL_TASK_SUCCESS),
     }),
     title: () => COPY.RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
     getContent: ResendInitialNotificationLetterTaskModal,
@@ -856,10 +865,11 @@ class CompleteTaskModal extends React.Component {
 
   submit = () => {
     const { task, appeal } = this.props;
+    const statusValue = ((task.type === 'SendFinalNotificationLetterTask') && (MODAL_TYPE_ATTRS[this.props.modalType].title() === 'Resend initial notification letter') ? 'cancelled' : 'completed');
     const payload = {
       data: {
         task: {
-          status: 'completed',
+          status: statusValue,
           instructions: this.formatInstructions(),
         },
         select_opc: this.props.modalType,

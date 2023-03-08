@@ -35,7 +35,7 @@ describe SendFinalNotificationLetterTask do
     let(:available_task_actions) do
       [
         Constants.TASK_ACTIONS.MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE.to_h,
-        Constants.TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER.to_h,
+        Constants.TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_FINAL.to_h,
         Constants.TASK_ACTIONS.RESEND_FINAL_NOTIFICATION_LETTER.to_h,
         Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_FINAL_LETTER_TASK.to_h
       ]
