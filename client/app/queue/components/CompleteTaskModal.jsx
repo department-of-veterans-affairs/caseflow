@@ -865,10 +865,11 @@ class CompleteTaskModal extends React.Component {
 
   submit = () => {
     const { task, appeal } = this.props;
+    const statusValue = ((task.type === 'SendFinalNotificationLetterTask') && (MODAL_TYPE_ATTRS[this.props.modalType].title() === 'Resend initial notification letter') ? 'cancelled' : 'completed');
     const payload = {
       data: {
         task: {
-          status: 'completed',
+          status: statusValue,
           instructions: this.formatInstructions(),
         },
         select_opc: this.props.modalType,

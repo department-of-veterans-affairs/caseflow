@@ -91,8 +91,7 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
 
       # check the screen output and model status
       appeal_final_letter_task = root_task.appeal.tasks.find_by(type: "SendFinalNotificationLetterTask")
-      expect(page).to have_content(`#{appeal_final_letter_task.type} completed`)
-      expect(appeal_final_letter_task.status).to eq("completed")
+      expect(appeal_final_letter_task.status).to eq("cancelled")
     end
 
     it "resend final notification letter action completes the task and displays it on the case timeline" do

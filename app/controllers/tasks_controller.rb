@@ -112,7 +112,6 @@ class TasksController < ApplicationController
       tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
       tasks_hash = json_tasks(tasks.uniq)
-
       if task.appeal.class != LegacyAppeal
         modified_task_contested_claim
       end
@@ -269,11 +268,13 @@ class TasksController < ApplicationController
 
   def process_contested_claim_final_task
     case task.status
+    when "cancelled"
+      if params["select_opc"] == "resend_initial_notification_letter_final"
+        send_initial_notification_letter
+      end
     when "completed"
       if params["select_opc"] == "resend_final_notification_letter"
         send_final_notification_letter
-      elsif params["select_opc"] == "resend_initial_notification_letter_final"
-        send_initial_notification_letter
       end
     end
   end
