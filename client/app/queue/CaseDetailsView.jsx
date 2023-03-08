@@ -191,7 +191,7 @@ export const CaseDetailsView = (props) => {
     ) && !appeal.hasPOA && props.featureToggles.edit_unrecognized_appellant_poa;
 
   const supportCavcRemand =
-    currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal;
+    currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal && appeal.issueCount;
 
   const supportCavcDashboard = canViewCavcDashboards && appealHasRemandWithDashboard;
 
