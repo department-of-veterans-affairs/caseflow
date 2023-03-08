@@ -144,17 +144,6 @@ class CavcDashboardController < ApplicationController
     end
   end
 
-  def create_new_dispositions_to_reasons(checkbox)
-    # checked_box format from cavcDashboardActions.js: [issue_id, issue_type, decision_reason_id]
-    cdd = if checkbox[1] == "request_issue"
-            CavcDashboardDisposition.find_by(request_issue_id: checkbox[0])
-          else
-            CavcDashboardDisposition.find_by(cavc_dashboard_issue_id: checkbox[0])
-          end
-
-    CavcDispositionsToReason.find_or_create_by(cavc_dashboard_disposition: cdd, cavc_decision_reason_id: checkbox[2])
-  end
-
   def delete_removed_dispositions_to_reasons(new_disp_to_reason_set)
     cdd_ids = new_disp_to_reason_set.map(&:cavc_dashboard_disposition_id).uniq
     all_dispositions_to_reasons = cdd_ids
@@ -164,4 +153,34 @@ class CavcDashboardController < ApplicationController
     reasons_to_delete = all_dispositions_to_reasons - new_disp_to_reason_set
     reasons_to_delete.map(&:destroy)
   end
+
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def create_new_dispositions_to_reasons(checked_boxes)
+    # checked_box format from cavcDashboardActions.js:
+    # [issue_id, issue_type, decision_reason_id, basis_for_selection_category, basis_for_selection]
+    # basis_for_selection: { checkboxId, value, label, otherText }
+    checked_boxes.each do |box|
+      cdd = if box[1] == "request_issue"
+              CavcDashboardDisposition.find_by(request_issue_id: box[0])
+            else
+              CavcDashboardDisposition.find_by(cavc_dashboard_issue_id: box[0])
+            end
+
+      basis = if box[4] && box[4]["otherText"]
+                CavcSelectionBasis.find_or_create_by(
+                  basis_for_selection: box[4]["otherText"],
+                  category: box[3]
+                )
+              elsif box[4] && box[4]["value"]
+                CavcSelectionBasis.find_by(id: box[4]["value"])
+              end
+
+      cdtr = CavcDispositionsToReason.find_or_create_by(
+        cavc_dashboard_disposition: cdd,
+        cavc_decision_reason_id: box[2]
+      )
+      cdtr.update!(cavc_selection_basis_id: basis.id) if basis&.id
+    end
+  end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end
