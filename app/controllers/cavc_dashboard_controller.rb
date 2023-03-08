@@ -140,6 +140,7 @@ class CavcDashboardController < ApplicationController
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def create_new_dispositions_to_reasons(checked_boxes)
     # checked_box format from cavcDashboardActions.js:
     # [issue_id, issue_type, decision_reason_id, basis_for_selection_category, basis_for_selection]
@@ -167,4 +168,5 @@ class CavcDashboardController < ApplicationController
       cdtr.update!(cavc_selection_basis_id: basis.id) if basis&.id
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end
