@@ -14,9 +14,7 @@ class ConferenceLink < CaseflowRecord
       ENV["VIRTUAL_HEARING_URL_HOST"] || "care.evn.va.gov"
     end
 
-    def formatted_alias(alias_name)
-      "BVA#{alias_name}@#{client_host_or_default}"
-    end
+
 
     def base_url
       "https://#{client_host_or_default}/bva-app/"
@@ -57,6 +55,7 @@ class ConferenceLink < CaseflowRecord
       "conference=#{alias_with_host}&" \
       "pin=#{guest_pin}&callType=video"
       update!(guest_hearing_link: guest_hearing_url_with_pin)
+      guest_hearing_link
     else
       guest_hearing_link
     end
@@ -83,14 +82,5 @@ class ConferenceLink < CaseflowRecord
       Raven.capture_exception(error: error)
       raise error
     end
-  end
-
-  def formatted_alias(alias_name)
-    "BVA#{alias_name}@#{client_host_or_default}"
-  end
-
-  # Returns a random host and guest pin
-  def generate_conference_pins
-    self.host_pin_long = "#{rand(1_000_000..9_999_999).to_s[0..9]}#"
   end
 end
