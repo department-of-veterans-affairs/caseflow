@@ -79,13 +79,12 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
     it "cancel modal functions properly when changes have not been saved" do
       go_to_dashboard(cavc_remand.remand_appeal.uuid)
       expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
-      expect(page).to have_content(COPY::ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT)
       expect(page).to have_content("Edit")
-      expect(page).to have_button("Save Changes", disabled: true)
-      expect(page).to have_button("Cancel")
 
       page.all("div.cf-select__placeholder", exact_text: "Select option").first.click
       page.find("div.cf-select__menu").find("div", exact_text: "Abandoned").click
+      expect(page).to have_button("Save Changes", disabled: false)
+      expect(page).to have_button("Cancel")
       click_button "Cancel"
 
       expect(page).to have_content(COPY::CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_HEADER)
