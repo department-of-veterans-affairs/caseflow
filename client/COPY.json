@@ -255,6 +255,8 @@
   "CAVC_DASHBOARD_REMOVE_ISSUE_UPPER_TEXT": "The issue you selected will be removed from the list of issues on the dashboard.",
   "CAVC_DASHBOARD_REMOVE_ISSUE_LOWER_TEXT": "Are you sure that you want to remove this issue?",
   "CAVC_DASHBOARD_EDIT_DETAILS_MODAL_TITLE": "Edit CAVC Details",
+  "CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_HEADER": "Your changes are not saved",
+  "CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_BODY": "Please save the changes",
 
   "ADD_CAVC_DATES_TITLE": "Add Court dates",
   "CORRECT_CAVC_REMAND_LINK": "Edit Remand",
