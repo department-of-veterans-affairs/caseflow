@@ -89,7 +89,8 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       expect(page).to have_content(COPY::CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_HEADER)
       expect(page).to have_button("Cancel")
-      click_button "Cancel"
+
+      page.find("button", id: "Your-changes-are-not-saved-button-id-0").click
 
       expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
       click_button "Cancel"
