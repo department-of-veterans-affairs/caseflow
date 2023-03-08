@@ -50,13 +50,12 @@ class ConferenceLink < CaseflowRecord
   def guest_link
     if guest_hearing_link.nil?
       if guest_pin_long.nil?
-         guest_pin
+        guest_pin
       end
-      url = "#{ConferenceLink.base_url}?join=1&media=&escalate=1&" \
+      guest_hearing_url_with_pin = "#{ConferenceLink.base_url}?join=1&media=&escalate=1&" \
       "conference=#{alias_with_host}&" \
       "pin=#{guest_pin}&callType=video"
-      byebug
-      update!(guest_hearing_link: url)
+      update!(guest_hearing_link: guest_hearing_url_with_pin)
     else
       guest_hearing_link
     end

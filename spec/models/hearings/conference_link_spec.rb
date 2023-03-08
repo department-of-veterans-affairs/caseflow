@@ -85,6 +85,8 @@ describe ConferenceLink do
       expect(subject.created_by_id).not_to eq(nil)
       expect(subject.host_pin).to eq(subject.host_pin_long)
       expect(subject.host_link).to eq(subject.host_link)
+      expect(subject.guest_hearing_link).to eq(subject.guest_hearing_link)
+      expect(subject.guest_pin_long).to eq(subject.guest_pin_long)
       expect(subject.updated_by_id).not_to eq(nil)
     end
   end
@@ -108,6 +110,7 @@ describe ConferenceLink do
       {
         host_pin: 12_345_678,
         host_pin_long: "12345678",
+        guest_pin_long: "123456789",
         created_at: DateTime.new(2022, 3, 15, 10, 15, 30),
         updated_at: DateTime.new(2022, 4, 27, 11, 20, 35)
       }
@@ -121,10 +124,46 @@ describe ConferenceLink do
       updated_conference_link = ConferenceLink.find(conference_link.id).reload
       expect(updated_conference_link.host_pin).to eq("12345678")
       expect(updated_conference_link.host_pin_long).to eq("12345678")
+      expect(updated_conference_link.guest_pin_long).to eq("123456789")
       expect(updated_conference_link.created_at).to eq(DateTime.new(2022, 3, 15, 10, 15, 30))
       expect(updated_conference_link.updated_at).to eq(DateTime.new(2022, 4, 27, 11, 20, 35))
       expect(updated_conference_link.updated_by_id).not_to eq(nil)
       expect(updated_conference_link.created_by_id).not_to eq(nil)
+    end
+  end
+
+  describe "#guest_pin_long" do
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    end
+
+    let(:nil_conference_link) do
+      create(:conference_link,
+            hearing_day_id: 1,
+            guest_hearing_link: nil,
+            guest_pin_long: nil)
+    end
+
+    let(:link_service) { create(:link_service) }
+
+    let(:conference_link_hash) do
+      {
+        guest_pin_long: nil
+      }
+    end
+    context "if guest_pin_long property already has a pin as a value" do
+      it "returns the guest_pin for the conference_link" do
+        allow(nil_conference_link).to receive(:guest_pin).and_return("7470125694")
+        expect(nil_conference_link.guest_pin_long).to eq("7470125694")
+      end
+    end
+    context "if guest_pin_long property has a value of nil" do
+      it "checks if property is nil" do
+        subject { nil_conference_link.update!(conference_link_hash) }
+        allow(subject).to receive(:guest_pin).and_return("123456789")
+      end
     end
   end
 end
