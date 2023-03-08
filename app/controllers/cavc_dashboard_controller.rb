@@ -141,7 +141,8 @@ class CavcDashboardController < ApplicationController
   end
 
   def create_new_dispositions_to_reasons(checked_boxes)
-    # checked_box format from cavcDashboardActions.js: [issue_id, issue_type, decision_reason_id]
+    # checked_box format from cavcDashboardActions.js: [issue_id, issue_type, decision_reason_id, basis_for_selection]
+    # basis_for_selection: { checkboxId, value, label, other }
     checked_boxes.each do |box|
       cdd = if box[1] == "request_issue"
               CavcDashboardDisposition.find_by(request_issue_id: box[0])
@@ -149,7 +150,17 @@ class CavcDashboardController < ApplicationController
               CavcDashboardDisposition.find_by(cavc_dashboard_issue_id: box[0])
             end
 
-      CavcDispositionsToReason.find_or_create_by(cavc_dashboard_disposition: cdd, cavc_decision_reason_id: box[2])
+      basis = if box[3] && box[3]["other"]
+                CavcSelectionBasis.find_or_create_by(basis_for_selection: box[3]["other"])
+              elsif box[3] && box[3]["value"]
+                CavcSelectionBasis.find_by(id: box[3]["value"])
+              end
+
+      CavcDispositionsToReason.find_or_create_by(
+        cavc_dashboard_disposition: cdd,
+        cavc_decision_reason_id: box[2],
+        cavc_selection_basis_id: basis&.id
+      )
     end
   end
 end
