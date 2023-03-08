@@ -258,6 +258,8 @@ const CavcDecisionReasons = (props) => {
 
   const renderBasisForSelectionsWithChild = (parent, child) => {
     if (userCanEdit) {
+      const defaultSelectionValue = checkedReasons[parent.id]?.children.filter((box) => child.id === box.id)[0]?.basis_for_selection;
+
       return (
         <div>
           <SearchableDropdown
@@ -285,7 +287,7 @@ const CavcDecisionReasons = (props) => {
                 parentCheckboxId: parent.id
               }))}
             styling={basisForSelectionStylingWithChild}
-            value={checkedReasons[parent.id]?.children.filter((box) => child.id === box.id)[0]?.basis_for_selection}
+            defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
           />
           {/* if basis for selection category is ama_other display text field for custom reasoning */}
           {/* eslint-disable-next-line */}
@@ -313,6 +315,8 @@ const CavcDecisionReasons = (props) => {
 
   const renderBasisForSelectionsForParent = (parent) => {
     if (userCanEdit) {
+      const defaultSelectionValue = checkedReasons[parent.id]?.basis_for_selection;
+
       return (
         <div>
           <SearchableDropdown
@@ -341,7 +345,7 @@ const CavcDecisionReasons = (props) => {
             noOptionsMessage={noOptionsMessage}
             styling={basisForSelectionStylingNoChild}
             readOnly={!userCanEdit}
-            value={checkedReasons[parent.id]?.basis_for_selection}
+            defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
           />
           {(isOtherBasisSelected) && (
             <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
