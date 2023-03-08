@@ -3,12 +3,20 @@ import React, { useMemo } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 
-import COPY from 'app/../COPY';
+// import COPY from 'app/../COPY';
 import { appealWithDetailSelector } from 'app/queue/selectors';
 import { getSupportedDecisionTypes, getSupportedRemandTypes } from './utils';
 import { EditCavcRemandForm } from './EditCavcRemandForm';
-import { requestPatch, showErrorMessage } from 'app/queue/uiReducer/uiActions';
-import { editAppeal } from '../QueueActions';
+// import { requestPatch, showErrorMessage } from 'app/queue/uiReducer/uiActions';
+// import { editAppeal } from '../QueueActions';
+
+import {
+  updateData,
+  // stepForward,
+  // fetchRelationships,
+  // cancel,
+  // refreshAppellantPoa,
+} from './editCavcRemand.slice';
 
 export const EditCavcRemandView = () => {
   /* eslint-disable camelcase */
@@ -70,6 +78,17 @@ export const EditCavcRemandView = () => {
       },
     };
 
+    dispatch(
+      updateData({
+        formData: {
+          ...formData
+        },
+      })
+    );
+    history.push(`/queue/appeals/${appealId}/edit_cavc_remand/tasks`, { payload });
+  };
+
+  /*
     if (!featureToggles.cavc_remand_granted_substitute_appellant) {
       const successMsg = {
         title: COPY.CAVC_REMAND_EDIT_SUCCESS_TITLE,
@@ -80,7 +99,7 @@ export const EditCavcRemandView = () => {
         const res = await dispatch(
           requestPatch(`/appeals/${appealId}/cavc_remand`, payload, successMsg)
         );
-        const updatedCavcRemand = res.body.cavc_remand;
+        const updatedCavcRemand = res.body.cavc_remand;b
 
         // Update Redux
         dispatch(editAppeal(appealId, { cavcRemand: updatedCavcRemand }));
@@ -98,9 +117,9 @@ export const EditCavcRemandView = () => {
         );
       }
     } else {
-      // TODO connect with new modify task page for new edit court remand workflow
-    }
+         }
   };
+  */
 
   return (
     <EditCavcRemandForm

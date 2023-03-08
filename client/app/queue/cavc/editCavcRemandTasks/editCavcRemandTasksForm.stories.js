@@ -3,7 +3,7 @@ import { sub } from 'date-fns';
 import { MemoryRouter } from 'react-router';
 import uuid from 'uuid';
 
-import { SubstituteAppellantTasksForm } from './SubstituteAppellantTasksForm';
+import { SubstituteAppellantTasksForm } from './editCavcRemandTasksForm';
 import {
   sampleTasksForDismissedEvidenceSubmissionDocket,
   sampleTasksForPendingEvidenceSubmissionDocket,

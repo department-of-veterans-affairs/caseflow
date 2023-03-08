@@ -28,7 +28,7 @@ const schema = yup.object().shape({
   openTaskIds: yup.array(yup.number()),
 });
 
-export const SubstituteAppellantTasksForm = ({
+export const EditCavcRemandTasksForm = ({
   appealId,
   existingValues,
   nodDate,
@@ -136,7 +136,7 @@ export const SubstituteAppellantTasksForm = ({
     </FormProvider>
   );
 };
-SubstituteAppellantTasksForm.propTypes = {
+EditCavcRemandTasksForm.propTypes = {
   appealId: PropTypes.string,
   existingValues: PropTypes.shape({}),
   nodDate: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
