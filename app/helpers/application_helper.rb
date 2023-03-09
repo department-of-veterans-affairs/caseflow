@@ -8,4 +8,10 @@ module ApplicationHelper
 
     ["", route[:controller], route[:action]].join("/")
   end
+
+  def flash_messages
+    flash.map do |type, title, text|
+      { id: text.object_id, type: type, title: title, text: text }
+    end
+  end
 end
