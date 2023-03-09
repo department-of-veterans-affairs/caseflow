@@ -3,6 +3,37 @@
 class WorkQueue::TaskColumnSerializer
   include FastJsonapi::ObjectSerializer
 
+  def self.decision_review(object)
+    object.appeal
+  end
+
+  def self.claimant_with_name(object)
+    decision_review(object).claimants.find { |claimant| claimant.name.present? }
+  end
+
+  def self.claimant_name(object)
+    if decision_review(object).veteran_is_not_claimant
+      # TODO: support multiple?
+      object[:claimant_name] || claimant_with_name(object).try(:name) || "claimant"
+    else
+      veteran_name = object[:claimant_name] || decision_review(object).veteran_full_name
+      veteran_name.presence ? veteran_name : "claimant"
+    end
+  end
+
+  def self.claimant_relationship(object)
+    return "self" unless decision_review(object).veteran_is_not_claimant
+
+    claimant = claimant_with_name(object)
+    return "Unknown" if claimant.nil?
+
+    claimant.relationship.presence || claimant.class.name.delete_suffix("Claimant")
+  end
+
+  def self.veteran(object)
+    decision_review(object).veteran
+  end
+
   def self.serialize_attribute?(params, columns)
     (params[:columns] & columns).any?
   end
@@ -413,5 +444,18 @@ class WorkQueue::TaskColumnSerializer
   end
   attribute :converted_on do
     nil
+  end
+
+  attribute :claimant do |object|
+    {
+      name: claimant_name(object),
+      # Cheat using an sql alias from the decision_review_queue query page to avoid
+      # serializing the relationship on the queue page since it isn't used in the table display
+      relationship: object[:claimant_name] || claimant_relationship(object)
+    }
+  end
+
+  attribute :veteran_ssn do |object|
+    object[:veteran_ssn] || veteran(object).ssn
   end
 end
