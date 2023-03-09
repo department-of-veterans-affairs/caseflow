@@ -27,8 +27,8 @@ class MembershipRequestsController < ApplicationController
       .map { |hash| hash[:attributes] }
 
     render json: { data: { newMembershipRequests: serialized_requests } }, status: :created
-
-    # TODO: send back appropriate errors?
+  rescue ActiveRecord::RecordInvalid => error
+    invalid_record_error(error.record)
   end
 
   private

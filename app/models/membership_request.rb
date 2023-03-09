@@ -18,18 +18,20 @@ class MembershipRequest < CaseflowRecord
   ############################################################################################
   ## class methods
   class << self
-    # TODO: Need to put a guard on this to make sure that they aren't a member of the organization already
-    # TODO: Also need to put a guard on it to make sure they don't already have a pending request to that org.
     def create_many_from_orgs(organizations, params, user)
-      # TODO: might need to compact this if one fails?
       created_requests = organizations.map do |org|
+        # Skip creating this request if the user is already a member of the Organization
+        # TODO: maybe create a sentry warning if this happens?
+        # I don't think this should be possible without programmer error.
+        next if user.member_of_organization?(org)
+
         create!(
           organization: org,
           requestor: user,
           note: params[:requestReason]
         )
       end
-      created_requests
+      created_requests.compact
     end
 
     def create_many_from_params_and_send_creation_emails(organizations, params, user)
