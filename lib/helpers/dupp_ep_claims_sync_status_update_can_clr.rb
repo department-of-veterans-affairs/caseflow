@@ -75,8 +75,6 @@ module WarRoom
         review = SupplementalClaim.find_by_id(review_id)
       end
 
-      # veteran = review.veteran
-      # veteran = Veteran.find_by_file_number_or_ssn(review.veteran_file_number)
       veteran = review.claim_veteran
 
       # getting end_product_establishments count
