@@ -1,3 +1,9 @@
+# This .rb file contains the methods to resolve stuck duplicateEP jobs that are tracked in Metabase
+# Use the manual remediation on the 20 remaining claims in UAT.
+# 'x= WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new' and ('x.run(***Insert ID***, "hlr")
+# for running the remediation for the the hlr **OR** 'x.run(***Insert ID***, "sc")') for a
+# SupplimentalClaim; until definitive final procedures are established i.e. a successful auto-remediation script.
+
 module WarRoom
   class DuppEpClaimsSyncStatusUpdateCanClr
 
