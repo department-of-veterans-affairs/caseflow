@@ -91,17 +91,17 @@ export const updateDashboardIssues = (dashboardIndex, issue, dashboardDispositio
   });
 };
 
-export const setDispositionValue = (dashboardIndex, dispositionId, dispositionOption) => (dispatch) => {
+export const setDispositionValue = (dashboardIndex, dispositionIssueId, dispositionOption) => (dispatch) => {
   dispatch({
     type: ACTIONS.SET_DISPOSITION_VALUE,
-    payload: { dashboardIndex, dispositionId, dispositionOption }
+    payload: { dashboardIndex, dispositionIssueId, dispositionOption }
   });
 };
 
-export const removeDashboardIssue = (dashboardIndex, issueIndex, dispositionIndex) => (dispatch) => {
+export const removeDashboardIssue = (dashboardIndex, issue) => (dispatch) => {
   dispatch({
     type: ACTIONS.REMOVE_DASHBOARD_ISSUE,
-    payload: { dashboardIndex, issueIndex, dispositionIndex }
+    payload: { dashboardIndex, issue }
   });
 };
 

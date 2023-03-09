@@ -162,18 +162,25 @@ export const cavcDashboardReducer = (state = initialState, action) => {
     });
   case ACTIONS.SET_DISPOSITION_VALUE: {
     // case block is wrapped in brackets to contain this constant in local scope
-    const dispositionIndex = state.
+    let dispositionIndex = state.
       cavc_dashboards[action.payload.dashboardIndex].
       cavc_dashboard_dispositions.
-      findIndex((dis) => dis.id === action.payload.dispositionId);
+      findIndex((dis) => dis.cavc_dashboard_issue_id === action.payload.dispositionIssueId);
+
+    if (dispositionIndex === -1) {
+      dispositionIndex = state.
+        cavc_dashboards[action.payload.dashboardIndex].
+        cavc_dashboard_dispositions.
+        findIndex((dis) => dis.request_issue_id === action.payload.dispositionIssueId);
+    }
 
     return update(state, {
       cavc_dashboards: {
         [action.payload.dashboardIndex]: {
           cavc_dashboard_dispositions: {
             [dispositionIndex]: {
-              $merge: {
-                disposition: action.payload.dispositionOption
+              disposition: {
+                $set: action.payload.dispositionOption
               }
             }
           }
@@ -181,19 +188,25 @@ export const cavcDashboardReducer = (state = initialState, action) => {
       }
     });
   }
-  case ACTIONS.REMOVE_DASHBOARD_ISSUE:
+  case ACTIONS.REMOVE_DASHBOARD_ISSUE: {
+    const cavcDashboardIssues = state.cavc_dashboards[action.payload.dashboardIndex].
+      cavc_dashboard_issues.filter((issue) => issue !== action.payload.issue);
+    const cavcDashboardDispositions = state.cavc_dashboards[action.payload.dashboardIndex].
+      cavc_dashboard_dispositions.filter((dis) => dis.cavc_dashboard_issue_id !== action.payload.issue.id);
+
     return update(state, {
       cavc_dashboards: {
         [action.payload.dashboardIndex]: {
           cavc_dashboard_issues: {
-            $splice: [[action.payload.issueIndex, 1]]
+            $set: cavcDashboardIssues
           },
           cavc_dashboard_dispositions: {
-            $splice: [[action.payload.dispositionIndex, 1]]
+            $set: cavcDashboardDispositions
           }
         }
       }
     });
+  }
   case ACTIONS.UPDATE_DASHBOARD_DATA:
     return update(state, {
       cavc_dashboards: {
