@@ -68,8 +68,8 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       click_button "Cancel"
 
       expect(page).to have_content(COPY::CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_HEADER)
-      expect(page).to have_button("Remove")
-      click_button "Remove"
+      expect(page).to have_button("Continue")
+      click_button "Continue"
 
       expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
       click_button "CAVC Dashboard"
@@ -95,8 +95,8 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
       click_button "Cancel"
 
-      expect(page).to have_button("Remove")
-      click_button "Remove"
+      expect(page).to have_button("Continue")
+      click_button "Continue"
       expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
     end
 
@@ -147,20 +147,20 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       click_button "Add issue"
       modal = page.find("div.cf-modal-body")
       within(modal) do
-        benefit_type_dropdown = page.find("div.cf-form-dropdown", text: "Benefit Type")
+        benefit_type_dropdown = page.find("div.cf-form-dropdown", text: "Benefit type")
         benefit_type_dropdown.find("div.cf-select").click
         benefit_type_dropdown.find("div.cf-select__menu").find("div", exact_text: "Compensation").click
 
-        issue_cat_dropdown = page.find("div.cf-form-dropdown", text: "Issue Category")
+        issue_cat_dropdown = page.find("div.cf-form-dropdown", text: "Issue category")
         issue_cat_dropdown.find("div.cf-select").click
         issue_cat_dropdown.find("div.cf-select__menu").find("div", exact_text: "Other Non-Rated").click
 
         disp_dropdown = page.find("div.cf-form-dropdown", text: "Disposition by Court")
         disp_dropdown.find("div.cf-select").click
         disp_dropdown.find("div.cf-select__menu").find("div", exact_text: "Affirmed").click
+        click_button "Add issue"
       end
 
-      click_button "Submit"
       click_button "Save Changes"
 
       expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
