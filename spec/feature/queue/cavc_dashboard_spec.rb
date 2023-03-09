@@ -147,11 +147,11 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       click_button "Add issue"
       modal = page.find("div.cf-modal-body")
       within(modal) do
-        benefit_type_dropdown = page.find("div.cf-form-dropdown", text: "Benefit Type")
+        benefit_type_dropdown = page.find("div.cf-form-dropdown", text: "Benefit type")
         benefit_type_dropdown.find("div.cf-select").click
         benefit_type_dropdown.find("div.cf-select__menu").find("div", exact_text: "Compensation").click
 
-        issue_cat_dropdown = page.find("div.cf-form-dropdown", text: "Issue Category")
+        issue_cat_dropdown = page.find("div.cf-form-dropdown", text: "Issue category")
         issue_cat_dropdown.find("div.cf-select").click
         issue_cat_dropdown.find("div.cf-select__menu").find("div", exact_text: "Other Non-Rated").click
 
