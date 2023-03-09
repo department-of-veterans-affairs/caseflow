@@ -64,13 +64,15 @@ class CavcDashboardController < ApplicationController
       dashboard_id = dash["id"]
       submitted_issues = dash["cavc_dashboard_issues"]
       submitted_dispositions = dash["cavc_dashboard_dispositions"]
-      new_issue_set = create_or_update_dashboard_issues(submitted_issues, submitted_dispositions)
+      new_issue_set = create_or_update_dashboard_issues(submitted_issues, submitted_dispositions, checked_boxes)
       # deleting removed issues cascades to their dispositions so deleting the dispositions manually isn't required
       delete_removed_dashboard_issues(dashboard_id, new_issue_set)
       create_or_update_dashboard_dispositions(submitted_dispositions)
     end
 
-    create_new_dispositions_to_reasons(checked_boxes)
+    new_disp_to_reason_set = create_new_dispositions_to_reasons(checked_boxes)
+
+    delete_removed_dispositions_to_reasons(new_disp_to_reason_set)
 
     render json: { successful: true }
   end
@@ -92,8 +94,8 @@ class CavcDashboardController < ApplicationController
 
   private
 
-  # rubocop:disable Metrics/MethodLength
-  def create_or_update_dashboard_issues(submitted_issues, submitted_dispositions)
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  def create_or_update_dashboard_issues(submitted_issues, submitted_dispositions, checked_boxes)
     submitted_issues.map do |issue|
       # this regex is how the front-end assigns a temporary ID value to a new issue
       if issue["id"].to_s.match?(/\d-\d/)
@@ -107,6 +109,8 @@ class CavcDashboardController < ApplicationController
         submitted_dispositions
           .filter { |disp| disp["cavc_dashboard_issue_id"] == issue["id"] }
           .first["cavc_dashboard_issue_id"] = new_issue.id
+        issue_box = checked_boxes&.filter { |box| box["issue_id"] == issue["id"] }&.first
+        issue_box["issue_id"] = new_issue.id if issue_box
         issue["id"] = new_issue.id
         new_issue
       else
@@ -120,7 +124,7 @@ class CavcDashboardController < ApplicationController
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def delete_removed_dashboard_issues(dashboard_id, new_issue_set)
     dashboard = CavcDashboard.find_by(id: dashboard_id)
@@ -140,12 +144,22 @@ class CavcDashboardController < ApplicationController
     end
   end
 
+  def delete_removed_dispositions_to_reasons(new_disp_to_reason_set)
+    all_dispositions_to_reasons = params[:cavc_dashboards].as_json
+      .map { |dash| dash["id"] }
+      .flat_map { |id| CavcDashboardDisposition.where(cavc_dashboard_id: id) }
+      .flat_map(&:cavc_dispositions_to_reasons)
+
+    reasons_to_delete = all_dispositions_to_reasons - new_disp_to_reason_set
+    reasons_to_delete.map(&:destroy)
+  end
+
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def create_new_dispositions_to_reasons(checked_boxes)
     # checked_box format from cavcDashboardActions.js:
     # {issue_id, issue_type, decision_reason_id, basis_for_selection_category, basis_for_selection}
     # basis_for_selection: { checkboxId, value, label, otherText }
-    checked_boxes.each do |box|
+    checked_boxes.map do |box|
       cdd = if box["issue_type"] == "request_issue"
               CavcDashboardDisposition.find_by(request_issue_id: box["issue_id"])
             else
@@ -161,11 +175,10 @@ class CavcDashboardController < ApplicationController
                 CavcSelectionBasis.find_by(id: box["basis_for_selection"]["value"])
               end
 
-      cdtr = CavcDispositionsToReason.find_or_create_by(
-        cavc_dashboard_disposition: cdd,
-        cavc_decision_reason_id: box["decision_reason_id"]
-      )
+      cdtr = CavcDispositionsToReason.find_or_create_by(cavc_dashboard_disposition: cdd,
+                                                        cavc_decision_reason_id: box["decision_reason_id"])
       cdtr.update!(cavc_selection_basis_id: basis.id) if basis&.id
+      cdtr
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
