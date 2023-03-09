@@ -8,19 +8,15 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
-import { useSelector } from 'react-redux';
 
-const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId }) => {
+const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId, addedIssuesCount }) => {
 
-  const cavcDashboard = useSelector(
-    (state) => state.cavcDashboard.cavc_dashboards.filter((dashboard) => dashboard.id === dashboardId)
-  );
   const [benefitType, setBenefitType] = useState(null);
   const [issueCategory, setIssueCategory] = useState(null);
   const [dispositionByCourt, setDispositionByCourt] = useState(null);
   const issue = {
     /* eslint-disable camelcase */
-    id: `${dashboardId}-${cavcDashboard[0]?.cavc_dashboard_issues.length}`,
+    id: `${dashboardId}-${addedIssuesCount}`,
     benefit_type: benefitType?.value,
     cavc_dashboard_id: dashboardId,
     issue_category: issueCategory
@@ -28,7 +24,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId }
   const dashboardDisposition = {
     id: null,
     cavc_dashboard_id: dashboardId,
-    cavc_dashboard_issue_id: `${dashboardId}-${cavcDashboard[0]?.cavc_dashboard_issues.length}`,
+    cavc_dashboard_issue_id: `${dashboardId}-${addedIssuesCount}`,
     request_issue_id: null,
     disposition: dispositionByCourt?.label,
     cavc_dispositions_to_reasons: []
@@ -106,7 +102,8 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId }
 AddCavcDashboardIssueModal.propTypes = {
   closeHandler: PropTypes.func,
   submitHandler: PropTypes.func,
-  dashboardId: PropTypes.number
+  dashboardId: PropTypes.number,
+  addedIssuesCount: PropTypes.number
 };
 
 export default AddCavcDashboardIssueModal;
