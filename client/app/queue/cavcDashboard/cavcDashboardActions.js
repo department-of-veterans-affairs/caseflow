@@ -123,20 +123,20 @@ export const saveDashboardData = (allCavcDashboards, checkedBoxes) => (dispatch)
     const childBoxes = parentBoxes.map((box) => box.children).flat();
     const allBoxes = parentBoxes.concat(childBoxes);
     const selectedBoxes = allBoxes.filter((box) => box.checked);
-    const idsAndTypes = selectedBoxes.map((box) => {
+
+    selectedBoxes.forEach((box) => {
       if (box.basis_for_selection.value) {
-        return [
-          box.issueType,
-          box.id,
-          box.basis_for_selection_category,
-          box.basis_for_selection
-        ];
+        checkedBoxesByIssueId.push({
+          issue_id: issueId,
+          issue_type: box.issueType,
+          decision_reason_id: box.id,
+          basis_for_selection_category: box.basis_for_selection_category,
+          basis_for_selection: box.basis_for_selection
+        });
       }
 
-      return [box.issueType, box.id];
+      checkedBoxesByIssueId.push({ issue_id: issueId, issue_type: box.issueType, decision_reason_id: box.id });
     });
-
-    idsAndTypes.map((idsAndType) => checkedBoxesByIssueId.push([issueId, ...idsAndType]));
   }
 
   return ApiUtil.post('/cavc_dashboard/save',
