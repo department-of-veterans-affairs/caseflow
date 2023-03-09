@@ -18,7 +18,7 @@ class BusinessLineTask < CaseflowRecord
 
   scope :assigned, -> { where(status: [:assigned]) }
 
-  scope :completed, -> { where(status: ["completed"]) }
+  scope :completed, -> { where(status: [:completed]) }
 
   scope :recently_completed, -> { completed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
 
