@@ -28,6 +28,8 @@ module WarRoom
       reviews.each do |r|
         v = r.veteran
         verb = "cleared"
+        # get the end products from the veteran
+        eps = v.end_products
         r.end_product_establishments.each do |epe|
           next if epe.reference_id.present?
 
