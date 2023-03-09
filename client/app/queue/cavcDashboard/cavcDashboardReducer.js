@@ -52,6 +52,85 @@ export const cavcDashboardReducer = (state = initialState, action) => {
         }
       }
     });
+  case ACTIONS.SET_BASIS_FOR_REASON_CHECKBOX:
+    if (action.payload.parentCheckboxId) {
+      const childCheckboxIndex =
+        state.checked_boxes[action.payload.issueId][action.payload.parentCheckboxId].children.
+          findIndex((child) => child.id === action.payload.checkboxId);
+
+      return update(state, {
+        checked_boxes: {
+          [action.payload.issueId]: {
+            [action.payload.parentCheckboxId]: {
+              children: {
+                [childCheckboxIndex]: {
+                  basis_for_selection: {
+                    $merge: {
+                      label: action.payload.label,
+                      value: action.payload.value,
+                      category: action.payload.category
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    return update(state, {
+      checked_boxes: {
+        [action.payload.issueId]: {
+          [action.payload.checkboxId]: {
+            basis_for_selection: {
+              $merge: {
+                label: action.payload.label,
+                value: action.payload.value
+              }
+            }
+          }
+        }
+      }
+    });
+  case ACTIONS.UPDATE_OTHER_FIELD_TEXT_VALUE:
+    if (action.payload.parentCheckboxId) {
+      const childCheckboxIndex =
+        state.checked_boxes[action.payload.issueId][action.payload.parentCheckboxId].children.
+          findIndex((child) => child.id === action.payload.checkboxId);
+
+      return update(state, {
+        checked_boxes: {
+          [action.payload.issueId]: {
+            [action.payload.parentCheckboxId]: {
+              children: {
+                [childCheckboxIndex]: {
+                  basis_for_selection: {
+                    $merge: {
+                      otherText: action.payload.value
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    return update(state, {
+      checked_boxes: {
+        [action.payload.issueId]: {
+          [action.payload.checkboxId]: {
+            basis_for_selection: {
+              $merge: {
+                otherText: action.payload.value
+              }
+            }
+          }
+        }
+      }
+    });
   case ACTIONS.SET_INITIAL_CHECKED_DECISION_REASONS:
     return update(state, {
       initial_state: {

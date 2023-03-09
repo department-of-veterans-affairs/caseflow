@@ -826,6 +826,13 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
   return timelineEvents;
 };
 
+export const formatSearchableDropdownOptions = (options) => {
+  return _.map(options, (value, key) => {
+    return { value: key,
+      label: value };
+  });
+};
+
 export const sortCaseTimelineEvents = (...eventArrays) => {
   // Combine disparate sets of timeline events into a single array
   const timelineEvents = [].concat(...eventArrays);
