@@ -17,7 +17,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fb6fa9658825c143eb8d202b87128f34ca7e210b"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "465aff43770c285ad21419b14d92093d22ef01af"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "43654a058d5a1d3f83f9bfdb832a19b4a9adea8b"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
@@ -46,6 +46,9 @@ gem "paranoia", "~> 2.2"
 # PDF Tools
 gem "pdf-forms"
 gem "pdfjs_viewer-rails", git: "https://github.com/department-of-veterans-affairs/pdfjs_viewer-rails-va.git", branch: "anusha/APPEALS-14211"
+# Used to build out PDF files on the backend
+# https://github.com/pdfkit/pdfkit
+gem "pdfkit"
 gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
@@ -77,6 +80,9 @@ gem "tzinfo"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
+#Used in conjuction with PDFKit
+#https://github.com/pdfkit/pdfkit
+gem "wkhtmltopdf-binary-edge"
 gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
