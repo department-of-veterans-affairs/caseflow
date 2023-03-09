@@ -6,8 +6,7 @@ class MembershipRequest < CaseflowRecord
   belongs_to :decider, class_name: "User", optional: true
 
   validates :status, :organization, :requestor, presence: true
-
-  # TODO: Do we want a uniqueness validation for status of assigned, organization, and requestor?
+  validates :status, uniqueness: { scope: [:organization_id, :requestor_id], if: :assigned? }
 
   enum status: {
     assigned: "assigned",

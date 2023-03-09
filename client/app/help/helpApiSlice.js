@@ -14,11 +14,6 @@ export const submitMembershipRequestForm = createAsyncThunk('form/submit', async
 
   const { message, newMembershipRequests } = await response.body.data;
 
-  // TODO: Figure out if this can ever happen because super agent should bubble an error?
-  if (response.status < 200 || response.status >= 300) {
-    return new Error('Response from the server failed');
-  }
-
   return { message, newMembershipRequests };
 });
 
