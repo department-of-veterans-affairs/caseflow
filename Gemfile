@@ -45,9 +45,9 @@ gem "parallel"
 gem "paranoia", "~> 2.2"
 # PDF Tools
 gem "pdf-forms"
-gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
-#Used to build out PDF files on the backend
-#https://github.com/pdfkit/pdfkit
+gem "pdfjs_viewer-rails", git: "https://github.com/department-of-veterans-affairs/pdfjs_viewer-rails-va.git", branch: "anusha/APPEALS-14211"
+# Used to build out PDF files on the backend
+# https://github.com/pdfkit/pdfkit
 gem "pdfkit"
 gem "pg", platforms: :ruby
 # Application server: Puma
