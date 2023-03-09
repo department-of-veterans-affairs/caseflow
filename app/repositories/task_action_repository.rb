@@ -337,7 +337,7 @@ class TaskActionRepository
       HearingAdminActionTask: COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL,
       SendCavcRemandProcessedLetterTask: COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_COMPLETE_MODAL_BODY,
       CavcRemandProcessedLetterResponseWindowTask: COPY::CAVC_REMAND_LETTER_RESPONSE_TASK_COMPLETE_MODAL_BODY,
-      PostSendInitialNotificationLetterHoldingTask: COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_COPY,
+      PostSendInitialNotificationLetterHoldingTask: COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY,
       SendInitialNotificationLetterTask: COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
     }.freeze
 
@@ -360,7 +360,7 @@ class TaskActionRepository
       }
 
       if task.type == "PostSendInitialNotificationLetterHoldingTask"
-        params[:modal_body] = COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_COPY
+        params[:modal_body] = COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
       else
         params[:modal_body] = COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
       end

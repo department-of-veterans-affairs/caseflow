@@ -28,7 +28,7 @@ RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
       dropdown = find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
       dropdown.click
       expect(page).to have_content(Constants.TASK_ACTIONS.MARK_TASK_AS_COMPLETE_CONTESTED_CLAIM.label)
-      expect(page).to have_content(Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER.label)
+      expect(page).to have_content(Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL.label)
       expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK.label)
     end
 
@@ -60,7 +60,7 @@ RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
       visit("/queue")
       visit("/queue/appeals/#{initial_letter_task.appeal.external_id}")
       prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
-      text = Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER.label
+      text = Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL.label
       click_dropdown(prompt: prompt, text: text)
 
       # check modal content

@@ -527,9 +527,18 @@ const MODAL_TYPE_ATTRS = {
     }
   },
 
-  proceed_final_notification_letter: {
+  proceed_final_notification_letter_initial: {
     buildSuccessMsg: () => ({
-      title: sprintf(COPY.PROCEED_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS),
+      title: sprintf(COPY.PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_TASK_SUCCESS),
+    }),
+    title: () => COPY.PROCEED_FINAL_NOTIFICATION_LETTER_TITLE,
+    getContent: ProceedFinalNotificationLetterTaskModal,
+    buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON
+  },
+
+  proceed_final_notification_letter_post_holding: {
+    buildSuccessMsg: () => ({
+      title: sprintf(COPY.PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_TASK_SUCCESS),
     }),
     title: () => COPY.PROCEED_FINAL_NOTIFICATION_LETTER_TITLE,
     getContent: ProceedFinalNotificationLetterTaskModal,
@@ -782,7 +791,7 @@ class CompleteTaskModal extends React.Component {
     }
 
     if (this.props.task.type !== 'SendInitialNotificationLetterTask') {
-      if ((this.props.modalType === 'proceed_final_notification_letter') ||
+      if ((this.props.modalType === 'proceed_final_notification_letter_post_holding') ||
         (this.props.modalType === 'resend_initial_notification_letter')) {
         const currentTaskID = this.props.task.taskId;
 

@@ -1021,7 +1021,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             instructions: instructions
           },
           id: send_initial_task.id.to_s,
-          select_opc: "proceed_final_notification_letter"
+          select_opc: "proceed_final_notification_letter_initial"
         }
       end
 
@@ -1299,7 +1299,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             instructions: instructions
           },
           id: send_initial_task.id.to_s,
-          select_opc: "proceed_final_notification_letter"
+          select_opc: "proceed_final_notification_letter_initial"
         }
       end
 

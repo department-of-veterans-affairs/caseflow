@@ -370,8 +370,12 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="task_complete_contested_claim" {...props.match.params} />
   );
 
-  routedProceedFinalNotificationLetterModal = (props) => (
-    <CompleteTaskModal modalType="proceed_final_notification_letter" {...props.match.params} />
+  routedProceedFinalNotificationLetterInitialModal = (props) => (
+    <CompleteTaskModal modalType="proceed_final_notification_letter_initial" {...props.match.params} />
+  );
+
+  routedProceedFinalNotificationLetterPostHoldingModal = (props) => (
+    <CompleteTaskModal modalType="proceed_final_notification_letter_post_holding" {...props.match.params} />
   );
 
   routedResendInitialNotificationLetterPostHoldingModal = (props) => (
@@ -1146,10 +1150,18 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER.value
+                  TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL.value
                 }`}
               title="Letter Task | Caseflow"
-              render={this.routedProceedFinalNotificationLetterModal}
+              render={this.routedProceedFinalNotificationLetterInitialModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING.value
+                }`}
+              title="Letter Task | Caseflow"
+              render={this.routedProceedFinalNotificationLetterPostHoldingModal}
             />
             <PageRoute
               exact
