@@ -256,7 +256,8 @@
   "CAVC_DASHBOARD_REMOVE_ISSUE_LOWER_TEXT": "Are you sure that you want to remove this issue?",
   "CAVC_DASHBOARD_EDIT_DETAILS_MODAL_TITLE": "Edit CAVC details",
   "CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_HEADER": "Your changes are not saved",
-  "CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_BODY": "Please save the changes",
+  "CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_BODY": "Would you like to continue?",
+  "CONTINUE_BUTTON_TEXT": "Continue",
 
   "ADD_CAVC_DATES_TITLE": "Add Court dates",
   "CORRECT_CAVC_REMAND_LINK": "Edit Remand",

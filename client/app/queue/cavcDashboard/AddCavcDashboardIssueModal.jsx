@@ -9,6 +9,7 @@ import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPO
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
 import { useSelector } from 'react-redux';
+import { css } from 'glamor';
 
 const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId }) => {
 
@@ -50,32 +51,40 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId }
     issueCategoryOptions = Object.keys(ISSUE_CATEGORIES[benefitType.value]).map(
       (value) => ({ value, label: ISSUE_CATEGORIES[benefitType.value][value] }));
   }
+  const benefitTypeOnChange = (benType) => {
+    setBenefitType(benType);
+    setIssueCategory(null);
+  };
+
+  const modalStyling = css({
+    marginBottom: '20px !important',
+  });
 
   const benefitTypeField = <SearchableDropdown
     options={benefitTypeOptions}
     label={COPY.CAVC_DASHBOARD_BENEFIT_TYPE_TEXT}
+    styling={modalStyling}
     name="judgement-date"
     value={benefitType}
-    onChange={(val) => setBenefitType(val)}
-    strongLabel
+    onChange={(val) => benefitTypeOnChange(val)}
   />;
 
   const issueCategoryField = <SearchableDropdown
     options={issueCategoryOptions}
     label={COPY.CAVC_DASHBOARD_ISSUE_CATEGORY_TEXT}
+    styling={modalStyling}
     name="mandate-date"
     value={issueCategory}
     onChange={(val) => setIssueCategory(val.label)}
-    strongLabel
   />;
 
   const dispositionByCourtField = <SearchableDropdown
     options={dispositionsOptions}
     label={COPY.CAVC_DASHBOARD_DISPOSITION_BY_COURT_TEXT}
+    styling={modalStyling}
     name="context-and-instructions-textBox"
     value={dispositionByCourt}
     onChange={(val) => setDispositionByCourt(val)}
-    strongLabel
   />;
 
   return (
@@ -89,7 +98,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId }
         },
         {
           classNames: ['usa-button'],
-          name: COPY.MODAL_SUBMIT_BUTTON,
+          name: COPY.ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT,
           disabled: (!benefitType || !issueCategory || !dispositionByCourt),
           onClick: submitIssue,
         }

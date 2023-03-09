@@ -68,8 +68,8 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       click_button "Cancel"
 
       expect(page).to have_content(COPY::CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_HEADER)
-      expect(page).to have_button("Remove")
-      click_button "Remove"
+      expect(page).to have_button("Continue")
+      click_button "Continue"
 
       expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
       click_button "CAVC Dashboard"
@@ -95,8 +95,8 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
       click_button "Cancel"
 
-      expect(page).to have_button("Remove")
-      click_button "Remove"
+      expect(page).to have_button("Continue")
+      click_button "Continue"
       expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
     end
 
@@ -160,7 +160,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
         disp_dropdown.find("div.cf-select__menu").find("div", exact_text: "Affirmed").click
       end
 
-      click_button "Submit"
+      click_button "Add issue"
       click_button "Save Changes"
 
       expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
