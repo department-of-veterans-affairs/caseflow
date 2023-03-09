@@ -68,13 +68,14 @@ module WarRoom
     def resolve_single_review(review_id, type)
       # retrieve the ClaimReview based on the ID and type passed in
       if type == "hlr"
-        review = HigherLevelReview.where(id: review_id)
+        review = HigherLevelReview.find_by_id(review_id)
       else
-        review = SupplementalClaim.where(id: review_id)
+        review = SupplementalClaim.find_by_id(review_id)
       end
 
       # veteran = review.veteran
-      veteran = Veteran.find_by_file_number_or_ssn(review.veteran_file_number)
+      # veteran = Veteran.find_by_file_number_or_ssn(review.veteran_file_number)
+      veteran = review.claim_veteran
 
       # getting end_product_establishments count
       epe_count = review.end_product_establishments.count
