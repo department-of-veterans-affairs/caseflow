@@ -754,139 +754,217 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
                               event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "Email",
                               email_notification_status: "No Claimant Found", sms_notification_status: nil),
         create(:notification, appeals_id: ama_appeal_without_participant_id.uuid, appeals_type: ama_appeals_type,
-                              event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS", 
+                              event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS",
                               email_notification_status: nil, sms_notification_status: "No Participant Id Found")
       ]
     end
 
-    context "when controller action #fetch_notification_list is made with a vacols_id" do
-      subject do
-        get :fetch_notification_list, params: { appeals_id: legacy_appeal.vacols_id }
+    context "when requesting json response" do
+      let(:request_format) { :json }
+
+      context "when controller action #fetch_notification_list is made with a vacols_id" do
+        subject do
+          get :fetch_notification_list, params: { appeals_id: legacy_appeal.vacols_id, format: request_format }
+        end
+        it "should return one notification" do
+          subject
+          response_body = JSON.parse(subject.body)
+          expect(response_body.count).to eq 1
+        end
+        it "should have the event type of 'Appeal docketed'" do
+          subject
+          response_body = JSON.parse(subject.body)
+          expect(response_body.first["attributes"]["event_type"]).to eq "Appeal docketed"
+        end
+        it "should return a successful response" do
+          subject
+          assert_response(:success)
+        end
       end
-      it "should return one notification" do
-        subject
-        response_body = JSON.parse(subject.body)
-        expect(response_body.count).to eq 1
+
+      context "when controller action #fetch_notification_list is made with a vacols_id that has no claimant" do
+        subject do
+          get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_claimant.vacols_id, format: request_format }
+        end
+        it "should return zero notifications" do
+          subject
+          response_body = JSON.parse(subject.body)
+          expect(response_body.count).to eq 0
+        end
+        it "should return an empty array" do
+          subject
+          response_body = JSON.parse(subject.body)
+          expect(response_body).to eq []
+        end
+        it "should return a successful response" do
+          subject
+          assert_response(:success)
+        end
       end
-      it "should have the event type of 'Appeal docketed'" do
-        subject
-        response_body = JSON.parse(subject.body)
-        expect(response_body.first["attributes"]["event_type"]).to eq "Appeal docketed"
+
+      context "when controller action #fetch_notification_list is made with a vacols_id that has no participant id" do
+        subject do
+          get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_participant_id.vacols_id, format: request_format }
+        end
+        it "should return zero notifications" do
+          subject
+          response_body = JSON.parse(subject.body)
+          expect(response_body.count).to eq 0
+        end
+        it "should return an empty array" do
+          subject
+          response_body = JSON.parse(subject.body)
+          expect(response_body).to eq []
+        end
+        it "should return a successful response" do
+          subject
+          assert_response(:success)
+        end
       end
-      it "should return a successful response" do
-        subject
-        assert_response(:success)
+
+      context "when controller action #fetch_notification_list is made with a uuid" do
+        subject do
+          get :fetch_notification_list, params: { appeals_id: ama_appeal.uuid, format: request_format }
+        end
+        it "should return one notification" do
+          subject
+          response_body = JSON.parse(subject.body)
+          expect(response_body.count).to eq 1
+        end
+        it "should have the event type of 'Hearing scheduled'" do
+          subject
+          response_body = JSON.parse(subject.body)
+          expect(response_body.first["attributes"]["event_type"]).to eq "Hearing scheduled"
+        end
+        it "should return a succesful response" do
+          subject
+          assert_response(:success)
+        end
+      end
+
+      context "when controller action #fetch_notification_list is made with a uuid that has no claimant" do
+        subject do
+          get :fetch_notification_list, params: { appeals_id: ama_appeal_without_claimant.uuid, format: request_format }
+        end
+        it "should return zero notifications" do
+          subject
+          response_body = JSON.parse(subject.body)
+          expect(response_body.count).to eq 0
+        end
+        it "should return an empty array" do
+          subject
+          response_body = JSON.parse(subject.body)
+          expect(response_body).to eq []
+        end
+        it "should return a succesful response" do
+          subject
+          assert_response(:success)
+        end
+      end
+
+      context "when controller action #fetch_notification_list is made with a uuid that has no participant id" do
+        subject do
+          get :fetch_notification_list, params: { appeals_id: ama_appeal_without_participant_id.uuid, format: request_format }
+        end
+        it "should return zero notifications" do
+          subject
+          response_body = JSON.parse(subject.body)
+          expect(response_body.count).to eq 0
+        end
+        it "should return an empty array" do
+          subject
+          response_body = JSON.parse(subject.body)
+          expect(response_body).to eq []
+        end
+        it "should return a succesful response" do
+          subject
+          assert_response(:success)
+        end
+      end
+
+      context "when controller action #fetch_notification_list is called with an appeals_id not in Notification Table" do
+        subject do
+          get :fetch_notification_list, params: { appeals_id: bad_appeals_id, format: request_format }
+        end
+        it "should return an empty array" do
+          subject
+          response_body = JSON.parse(subject.body)
+          expect(response_body).to eq []
+        end
       end
     end
 
-    context "when controller action #fetch_notification_list is made with a vacols_id that has no claimant" do
-      subject do
-        get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_claimant.vacols_id }
+    context "when requesting PDF response" do
+      let(:request_format) { :pdf }
+
+      context "when controller action #fetch_notification_list is made with a vacols_id" do
+        subject do
+          get :fetch_notification_list, params: { appeals_id: legacy_appeal.vacols_id, format: request_format }
+        end
+        it "should return pdf with vacols id in filename" do
+          subject
+          content_type = subject.headers["Content-Type"]
+          content_disposition = subject.headers["Content-Disposition"]
+          expect(content_type).to eq "application/pdf"
+          expect(content_disposition).to include(legacy_appeal.vacols_id)
+          expect(content_disposition).to include("Notification Report")
+        end
       end
-      it "should return zero notifications" do
-        subject
-        response_body = JSON.parse(subject.body)
-        expect(response_body.count).to eq 0
+
+      context "when controller action #fetch_notification_list is made with a uuid" do
+        subject do
+          get :fetch_notification_list, params: { appeals_id: ama_appeal.uuid, format: request_format }
+        end
+        it "should return pdf with uuid in filename" do
+          subject
+          content_type = subject.headers["Content-Type"]
+          content_disposition = subject.headers["Content-Disposition"]
+          expect(content_type).to eq "application/pdf"
+          expect(content_disposition).to include(ama_appeal.uuid)
+          expect(content_disposition).to include("Notification Report")
+        end
       end
-      it "should return an empty array" do
-        subject
-        response_body = JSON.parse(subject.body)
-        expect(response_body).to eq []
-      end
-      it "should return a successful response" do
-        subject
-        assert_response(:success)
+
+      context "when controller action #fetch_notification_list is called with an appeals_id not in Notification Table" do
+        subject do
+          get :fetch_notification_list, params: { appeals_id: bad_appeals_id, format: request_format }
+        end
+        it "should raise an error" do
+          expect { subject }.to raise_error do |error|
+            expect(error).to be_a(ActionController::RoutingError)
+            expect(error.to_s).to include("Appeal Not Found")
+          end
+        end
       end
     end
 
-    context "when controller action #fetch_notification_list is made with a vacols_id that has no participant id" do
+    context "when requesting CSV response" do
+      let(:request_format) { :csv }
+
+      context "when controller action #fetch_notification_list is called with csv format"
       subject do
-        get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_participant_id.vacols_id }
+        get :fetch_notification_list, params: { appeals_id: ama_appeal.uuid, format: request_format }
       end
-      it "should return zero notifications" do
-        subject
-        response_body = JSON.parse(subject.body)
-        expect(response_body.count).to eq 0
-      end
-      it "should return an empty array" do
-        subject
-        response_body = JSON.parse(subject.body)
-        expect(response_body).to eq []
-      end
-      it "should return a successful response" do
-        subject
-        assert_response(:success)
+      it "should raise an error" do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(ActionController::ParameterMissing)
+          expect(error.to_s).to include("Bad Format")
+        end
       end
     end
 
-    context "when controller action #fetch_notification_list is made with a uuid" do
-      subject do
-        get :fetch_notification_list, params: { appeals_id: ama_appeal.uuid }
-      end
-      it "should return one notification" do
-        subject
-        response_body = JSON.parse(subject.body)
-        expect(response_body.count).to eq 1
-      end
-      it "should have the event type of 'Hearing scheduled'" do
-        subject
-        response_body = JSON.parse(subject.body)
-        expect(response_body.first["attributes"]["event_type"]).to eq "Hearing scheduled"
-      end
-      it "should return a succesful response" do
-        subject
-        assert_response(:success)
-      end
-    end
+    context "when requesting html response" do
+      let(:request_format) { :html }
 
-    context "when controller action #fetch_notification_list is made with a uuid that has no claimant" do
+      context "when controller action #fetch_notification_list is called with html format"
       subject do
-        get :fetch_notification_list, params: { appeals_id: ama_appeal_without_claimant.uuid }
+        get :fetch_notification_list, params: { appeals_id: ama_appeal.uuid, format: request_format }
       end
-      it "should return zero notifications" do
-        subject
-        response_body = JSON.parse(subject.body)
-        expect(response_body.count).to eq 0
-      end
-      it "should return an empty array" do
-        subject
-        response_body = JSON.parse(subject.body)
-        expect(response_body).to eq []
-      end
-      it "should return a succesful response" do
-        subject
-        assert_response(:success)
-      end
-    end
-
-    context "when controller action #fetch_notification_list is made with a uuid that has no participant id" do
-      subject do
-        get :fetch_notification_list, params: { appeals_id: ama_appeal_without_participant_id.uuid }
-      end
-      it "should return zero notifications" do
-        subject
-        response_body = JSON.parse(subject.body)
-        expect(response_body.count).to eq 0
-      end
-      it "should return an empty array" do
-        subject
-        response_body = JSON.parse(subject.body)
-        expect(response_body).to eq []
-      end
-      it "should return a succesful response" do
-        subject
-        assert_response(:success)
-      end
-    end
-
-    context "when controller action #fetch_notification_list is called with an appeals_id not in Notification Table" do
-      subject do
-        get :fetch_notification_list, params: { appeals_id: bad_appeals_id }
-      end
-      it "should return an empty array" do
-        subject
-        response_body = JSON.parse(subject.body)
-        expect(response_body).to eq []
+      it "should raise an error" do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(ActionController::ParameterMissing)
+          expect(error.to_s).to include("Bad Format")
+        end
       end
     end
   end

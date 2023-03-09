@@ -1400,5 +1400,7 @@
   "NOTIFICATION_TYPE_COLUMN_NAME": "Notification Type",
   "NOTIFICATION_RECIPIENT_INFORMATION": "Recipient Information",
   "NOTIFICATION_STATUS": "Status",
-  "NOTIFICATION_CONTENT_MESSAGE": "The following message was sent to the Appellant: "
+  "NOTIFICATION_CONTENT_MESSAGE": "The following message was sent to the Appellant: ",
+  "PDF_GENERATION_ERROR_TITLE": "Unable to generate PDF",
+  "PDF_GENERATION_ERROR_MESSAGE": "There was an error generating the PDF for download. Please try again later."
 }
