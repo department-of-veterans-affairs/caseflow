@@ -254,7 +254,7 @@
   "CAVC_DASHBOARD_DISPOSITION_BY_COURT_TEXT": "Disposition by Court",
   "CAVC_DASHBOARD_REMOVE_ISSUE_UPPER_TEXT": "The issue you selected will be removed from the list of issues on the dashboard.",
   "CAVC_DASHBOARD_REMOVE_ISSUE_LOWER_TEXT": "Are you sure that you want to remove this issue?",
-  "CAVC_DASHBOARD_EDIT_DETAILS_MODAL_TITLE": "Edit CAVC details",
+  "CAVC_DASHBOARD_EDIT_DETAILS_MODAL_TITLE": "Edit CAVC Details",
   "CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_HEADER": "Your changes are not saved",
   "CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_BODY": "Would you like to continue?",
   "CONTINUE_BUTTON_TEXT": "Continue",
