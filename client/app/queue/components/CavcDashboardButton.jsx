@@ -12,7 +12,7 @@ export const CavcDashboardButton = ({ appealId }) => {
       <Button
         type="button"
         name="Cavc Dashboard"
-        classNames="usa-button-secondary"
+        classNames={['usa-button-secondary']}
         onClick={() => push(`/queue/appeals/${appealId}/cavc_dashboard`, { redirectFromButton: true })}
       >
         {COPY.CAVC_DASHBOARD_BUTTON_TEXT}

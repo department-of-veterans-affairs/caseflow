@@ -1403,5 +1403,7 @@
   "NOTIFICATION_STATUS": "Status",
   "NOTIFICATION_CONTENT_MESSAGE": "The following message was sent to the Appellant: ",
   "PDF_GENERATION_ERROR_TITLE": "Unable to generate PDF",
-  "PDF_GENERATION_ERROR_MESSAGE": "There was an error generating the PDF for download. Please try again later."
+  "PDF_GENERATION_ERROR_MESSAGE": "There was an error generating the PDF for download. Please try again later.",
+  "DATE_SELECTOR_FUTURE_DATE_ERROR": "Dates cannot be in the future",
+  "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date"
 }

@@ -10,7 +10,7 @@ import RadioField from '../../components/RadioField';
 import ValidatorsUtil from '../../util/ValidatorsUtil';
 
 const CavcDashboardEditDetailsModal = ({ closeHandler, saveHandler, Details }) => {
-  const { validDocketNum, dateValidator } = ValidatorsUtil;
+  const { validDocketNum, dateValidator, futureDate } = ValidatorsUtil;
 
   const [boardDecisionDate, setBoardDecisionDate] = useState(Details.boardDecisionDate);
   const [boardDocketNumber, setBoardDocketNumber] = useState(Details.boardDocketNumber);
@@ -35,9 +35,9 @@ const CavcDashboardEditDetailsModal = ({ closeHandler, saveHandler, Details }) =
 
   const validateForm = () => {
     return (
-      dateValidator(boardDecisionDate) &&
+      dateValidator(boardDecisionDate) && !futureDate(boardDecisionDate) &&
       validDocketNum(boardDocketNumber) &&
-       dateValidator(cavcDecisionDate) &&
+       dateValidator(cavcDecisionDate) && !futureDate(cavcDecisionDate) &&
         validCavcDocketNumber());
   };
 
