@@ -7,6 +7,8 @@
 class DecisionReviewTask < Task
   attr_reader :error_code
 
+  after_commit :update_business_line_tasks_view
+
   def label
     appeal_type.constantize.review_title
   end
@@ -56,5 +58,10 @@ class DecisionReviewTask < Task
     appeal.request_issues.active.map(&:id).sort == decision_issue_params.map do |decision_issue_param|
       decision_issue_param[:request_issue_id].to_i
     end.sort
+  end
+
+  # Tasks for decision review queues are housed in a materialized view, and it must be manually updated.
+  def update_business_line_tasks_view
+    Scenic.database.refresh_materialized_view("business_line_tasks", concurrently: false)
   end
 end
