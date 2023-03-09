@@ -146,39 +146,17 @@ describe ConferenceLink do
       create(:conference_link,
             hearing_day_id: hearing_day.id,
             guest_hearing_link: nil,
-            guest_pin_long: nil)
-    end
-
-    let!(:nil_conf_link) do
-      create(:conference_link,
-        hearing_day_id: hearing_day.id,
-            guest_hearing_link: nil,
-            guest_pin_long: "7470125694"
-      )
-    end
-
-    let(:link_service) { create(:link_service.new) }
-
-    let(:guest_pin_nil) do
-      {
-        guest_pin_long: nil
-      }
-    end
-
-    let(:guest_pin_value) do
-      {
-        guest_pin_long: "7470125694"
-      }
+            guest_pin_long: "7470125694")
     end
 
     context "guest_pin_long property already has a pin as a value" do
       it "Returns the guest_pin for the conference_link" do
         conference_link.guest_pin
-        expect(conference_link.guest_pin_long).to eq("6393596604")
+        expect(conference_link.guest_pin_long).to eq("7470125694")
       end
     end
     context "guest_pin_long property has a value of nil." do
-      it "checks if property is nil" do
+      it "checks if property is nil. If so, a new pin is created. " do
         conference_link.update!(guest_pin_long: nil)
         expect(conference_link.guest_pin).not_to eq(nil)
       end
@@ -202,8 +180,6 @@ describe ConferenceLink do
             guest_hearing_link: existing_url,
             guest_pin_long: nil)
     end
-
-    let(:link_service) { create(:link_service.new) }
 
     let(:existing_url) { "https://example.va.gov/sample/?" \
       "conference=BVA0000001@example.va.gov&" \
