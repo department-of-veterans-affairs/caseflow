@@ -32,7 +32,7 @@ module WarRoom
           next if epe.reference_id.present?
 
           # Check if active duplicate exists
-          dupes = epe.select{ |ep| ep.claim_type_code == epe.code && ep.claim_date.to_date == epe.claim_date && EndProductEstablishment.where(reference_id: ep.claim_id).none? }
+          dupes = eps.select{ |ep| ep.claim_type_code == epe.code && ep.claim_date.to_date == epe.claim_date && EndProductEstablishment.where(reference_id: ep.claim_id).none? }
           next if dupes.any?
 
           verb = "established"
@@ -73,7 +73,8 @@ module WarRoom
         review = SupplementalClaim.where(id: review_id)
       end
 
-      veteran = review.veteran
+      # veteran = review.veteran
+      veteran = Veteran.find_by_file_number_or_ssn(review.veteran_file_number)
 
       # getting end_product_establishments count
       epe_count = review.end_product_establishments.count
