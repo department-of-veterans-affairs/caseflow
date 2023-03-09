@@ -109,9 +109,8 @@ class CavcDashboardController < ApplicationController
         submitted_dispositions
           .filter { |disp| disp["cavc_dashboard_issue_id"] == issue["id"] }
           .first["cavc_dashboard_issue_id"] = new_issue.id
-        checked_boxes
-          .filter { |box| box["issue_id"] == issue["id"] }
-          .first["issue_id"] = new_issue.id
+        issue_box = checked_boxes&.filter { |box| box["issue_id"] == issue["id"] }&.first
+        issue_box["issue_id"] = new_issue.id if issue_box
         issue["id"] = new_issue.id
         new_issue
       else
