@@ -169,6 +169,40 @@
       "sorting_columns": ["type", "action", "created_at"]
     }
   },
+  "DECISION_REVIEW_QUEUE_COLUMNS": {
+    "CLAIMANT_NAME": {
+      "name": "claimantColumn",
+      "sorting_table": "business_line_tasks",
+      "sorting_columns": [
+        "claimant_name"
+      ]
+    },
+    "VETERAN_SSN": {
+      "name": "veteranSsnColumn",
+      "sorting_table": "business_line_tasks",
+      "sorting_columns": [
+        "veteran_ssn"
+      ]
+    },
+    "ISSUE_COUNT": {
+      "name": "issueCountColumn",
+      "sorting_table": "business_line_tasks",
+      "sorting_columns": [
+        "issue_count"
+      ]
+    },
+    "DAYS_WAITING": {
+      "name": "daysWaitingColumn",
+      "sorting_table": "business_line_tasks",
+      "sorting_columns": [
+        "assigned_at"
+      ]
+    },
+    "TASK_TYPE": {
+      "filterable": true,
+      "name": "taskColumn"
+    }
+  },
 
   "TAB_NAME_REQUEST_PARAM": "tab",
   "PAGE_NUMBER_REQUEST_PARAM": "page",

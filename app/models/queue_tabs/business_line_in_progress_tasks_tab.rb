@@ -16,7 +16,7 @@ class BusinessLineInProgressTasksTab < QueueTab
   end
 
   def tasks
-    active_tasks
+    BusinessLineTask.assigned_to(assignee).assigned
   end
 
   def column_names

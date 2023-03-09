@@ -16,14 +16,14 @@ class BusinessLineCompletedTasksTab < QueueTab
   end
 
   def tasks
-    recently_completed_tasks
+    BusinessLineTask.assigned_to(assignee).recently_completed
   end
 
   def column_names
     BusinessLine::COLUMN_NAMES.clone.tap do |columns|
       columns[
-        columns.find_index(Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name)
-      ] = Constants.QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name
+        columns.find_index(Constants.QUEUE_CONFIG.DECISION_REVIEW_QUEUE_COLUMNS.DAYS_WAITING.name)
+      ] = Constants.QUEUE_CONFIG.DECISION_REVIEW_QUEUE_COLUMNS.TASK_CLOSED_DATE.name
     end
   end
 end
