@@ -63,6 +63,7 @@ gem "request_store"
 gem "roo", "~> 2.7"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
+gem "scenic"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"

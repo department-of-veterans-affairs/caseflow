@@ -615,6 +615,9 @@ GEM
     sawyer (0.8.2)
       addressable (>= 2.3.5)
       faraday (> 0.8, < 2.0)
+    scenic (1.7.0)
+      activerecord (>= 4.0.0)
+      railties (>= 4.0.0)
     scss_lint (0.58.0)
       rake (>= 0.9, < 13)
       sass (~> 3.5, >= 3.5.5)
@@ -793,6 +796,7 @@ DEPENDENCIES
   ruby-oci8 (~> 2.2)
   ruby-prof (~> 1.4)
   sass-rails (~> 5.0)
+  scenic
   scss_lint
   sentry-raven
   shoryuken (= 3.1.11)
