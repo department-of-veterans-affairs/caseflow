@@ -85,7 +85,8 @@ class CavcRemandsController < ApplicationController
 
     render json: {
       cavc_remand: WorkQueue::CavcRemandSerializer.new(cavc_remand).serializable_hash[:data][:attributes],
-      cavc_appeal: cavc_appeal
+      cavc_appeal: cavc_appeal,
+      updated_appeal_attributes: updated_appeal_attributes(cavc_appeal)
     }, status: :ok
   end
 
@@ -115,14 +116,14 @@ class CavcRemandsController < ApplicationController
     appellant_substitution.histories.create!(
       substitution_date: params[:substitution_date],
       original_appellant_veteran_participant_id: source_appeal.veteran.participant_id,
-      current_appellant_substitute_participant_id: appellant_substitution.substitute_participant_id
+      current_appellant_substitute_participant_id: appellant_substitution.substitute_participant_id,
+      created_by_id: current_user.id
     )
-    binding.pry
     appellant_substitution
   end
 
-  def update_appellant_substitution_and_cavc_remand_appellant_substitution(cavc_appeal, new_cavc_remand, appellant_substitution)
-    # binding.pry
+  def update_appellant_substitution_and_cavc_remand_appellant_substitution(cavc_appeal, new_cavc_remand,
+    appellant_substitution)
     if params[:is_appellant_substituted] == "true"
       update_appellant_substitution_and_create_history(appellant_substitution)
     else
@@ -130,6 +131,7 @@ class CavcRemandsController < ApplicationController
       appellant_substitution.update(appellant_substitution_params(Date.current, cavc_appeal.veteran.participant_id))
       cavc_appeal.update(veteran_is_not_claimant: nil)
       appellant_substitution.histories.create(
+        created_by_id: current_user.id,
         original_appellant_substitute_participant_id: original_appellant_substitute_participant_id,
         current_appellant_veteran_participant_id: cavc_appeal.veteran.participant_id
       )
@@ -159,7 +161,7 @@ class CavcRemandsController < ApplicationController
     end
     appellant_substitution.update(appellant_substitution_params)
     if history_params.present?
-      appellant_substitution.histories.create(history_params)
+      appellant_substitution.histories.create(history_params.merge(created_by_id: current_user.id))
     end
   end
 
@@ -206,5 +208,17 @@ class CavcRemandsController < ApplicationController
     when Constants.CAVC_DECISION_TYPES.straight_reversal, Constants.CAVC_DECISION_TYPES.death_dismissal
       REMAND_REQUIRED_PARAMS
     end
+  end
+
+  def updated_appeal_attributes(cavc_appeal)
+    {
+      appellant_substitution: WorkQueue::AppellantSubstitutionSerializer.new(cavc_appeal.appellant_substitution)
+        .serializable_hash[:data][:attributes],
+      appellant_is_not_veteran: cavc_appeal.appellant_is_not_veteran,
+      appellant_full_name: cavc_appeal.claimant&.name,
+      appellant_address: cavc_appeal.claimant&.address,
+      appellant_relationship: cavc_appeal.appellant_relationship,
+      appellant_type: cavc_appeal.claimant&.type
+    }
   end
 end
