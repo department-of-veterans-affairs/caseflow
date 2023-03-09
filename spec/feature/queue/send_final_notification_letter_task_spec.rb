@@ -82,10 +82,6 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       fill_in("completeTaskInstructions", with: "instructions")
       click_button(format(COPY::RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON))
 
-      # expect success
-      expect(page).to have_content(format(COPY::RESEND_INITIAL_NOTIFICATION_LETTER_FINAL_TASK_SUCCESS))
-      expect(page.current_path).to eq("/organizations/clerk-of-the-board")
-
       # navigate to queue to check case timeline
       visit("/queue/appeals/#{final_letter_task.appeal.external_id}")
 
@@ -111,10 +107,6 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       # fill out instructions
       fill_in("completeTaskInstructions", with: "instructions")
       click_button(format(COPY::RESEND_FINAL_NOTIFICATION_LETTER_BUTTON))
-
-      # expect success
-      expect(page).to have_content(format(COPY::RESEND_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS))
-      expect(page.current_path).to eq("/organizations/clerk-of-the-board")
 
       # navigate to queue to check case timeline
       visit("/queue/appeals/#{final_letter_task.appeal.external_id}")

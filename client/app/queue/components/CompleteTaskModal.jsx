@@ -841,7 +841,7 @@ class CompleteTaskModal extends React.Component {
       return formattedInstructions[0];
     }
 
-    if (this.props.task.type === 'SendFinalNotificationLetterTask') {
+    if (this.props.task.type === 'SendFinalNotificationLetterTask' && this.props.modalType === 'task_complete_contested_claim') {
       const radioValue = finalCompleteTaskRadio.find((option) => radio === option.value).value;
 
       if (radioValue === '0' || radioValue === '1') {

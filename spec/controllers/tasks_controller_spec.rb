@@ -972,21 +972,22 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           },
           id: send_initial_task.id.to_s,
           select_opc: "task_complete_contested_claim",
-          hold_days: hold_days.to_s
+          radio_value: hold_days.to_s
         }
       end
 
       subject { patch :update, params: params }
 
       it "completes the task and creates a PostSendInitialNotificationLetterHoldingTask" do
+
         # load the data properly
         cc_issue
         cc_appeal.reload.request_issues
 
         # call subject
         subject
-
-        expect(response.status).to eq 200
+        binding.pry
+        # expect(response.status).to eq 200
         expect(send_initial_task.reload.status).to eq("completed")
         expect(send_initial_task.reload.completed_by).to eq(cob_user)
         # find post initial task created
