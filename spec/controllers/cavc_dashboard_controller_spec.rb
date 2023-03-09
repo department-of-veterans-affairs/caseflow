@@ -79,7 +79,11 @@ RSpec.describe CavcDashboardController, type: :controller do
             }
           ],
           checked_boxes: [
-            ["100", "request_issue", 1]
+            {
+              issue_id: "100",
+              issue_type: "request_issue",
+              decision_reason_id: 1
+            }
           ]
         }
 
@@ -135,7 +139,11 @@ RSpec.describe CavcDashboardController, type: :controller do
             }
           ],
           checked_boxes: [
-            ["100", "request_issue", 1]
+            {
+              issue_id: "100",
+              issue_type: "request_issue",
+              decision_reason_id: 1
+            }
           ]
         }
         post :save, params: save_params
@@ -164,7 +172,11 @@ RSpec.describe CavcDashboardController, type: :controller do
             }
           ],
           checked_boxes: [
-            ["100", "request_issue", 1]
+            {
+              issue_id: "100",
+              issue_type: "request_issue",
+              decision_reason_id: 1
+            }
           ]
         }
         post :save, params: update_params
