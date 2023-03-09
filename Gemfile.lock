@@ -694,7 +694,7 @@ GEM
     websocket-driver (0.7.3)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    wkhtmltopdf-binary-edge (0.12.4.0)
+    wkhtmltopdf-binary (0.12.6.5)
     xmldsig (0.3.2)
       nokogiri
     xmlenc (0.8.0)
@@ -815,7 +815,7 @@ DEPENDENCIES
   validates_email_format_of
   webdrivers
   webmock
-  wkhtmltopdf-binary-edge (~> 0.12.4.0)
+  wkhtmltopdf-binary (~> 0.12.6.5)
   ziptz
 
 BUNDLED WITH
