@@ -82,7 +82,7 @@ gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
 #Used in conjuction with PDFKit
 #https://github.com/pdfkit/pdfkit
-gem "wkhtmltopdf-binary-edge"
+gem "wkhtmltopdf-binary-edge", "~>0.12.4.0"
 gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
