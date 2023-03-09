@@ -56,6 +56,7 @@ class AppealsController < ApplicationController
         render json: results
       end
       format.pdf do
+        render 500
         request.headers["HTTP_PDF"]
         appeal = get_appeal_object(appeals_id)
         date = Time.zone.now.strftime("%Y-%m-%d %H.%M")
