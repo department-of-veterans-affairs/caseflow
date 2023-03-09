@@ -29,9 +29,7 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
       begin
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         # Close any Open Hearing Tasks and their children
-        appeal.reload.tasks.open.where(type: HearingTask.name).to_a.each do |hearing_task|
-          hearing_task.cancel_task_and_child_subtasks
-        end
+        appeal.reload.tasks.open.where(type: HearingTask.name).to_a.each(&:cancel_task_and_child_subtasks)
         # Create new Schedule Hearing task which will create a new Hearing Task parent
         ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
         # Move the appeal from location 57 to caseflow
