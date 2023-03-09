@@ -986,7 +986,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         # call subject
         subject
-        binding.pry
         # expect(response.status).to eq 200
         expect(send_initial_task.reload.status).to eq("completed")
         expect(send_initial_task.reload.completed_by).to eq(cob_user)
