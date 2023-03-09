@@ -23,7 +23,7 @@ const CancelCavcDashboardChangeModal = (props) => {
         },
         {
           classNames: ['usa-button'],
-          name: COPY.MODAL_REMOVE_BUTTON,
+          name: COPY.CONTINUE_BUTTON_TEXT,
           onClick: confirm,
         }
       ]}
