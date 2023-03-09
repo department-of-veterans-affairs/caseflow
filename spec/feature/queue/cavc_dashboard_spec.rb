@@ -174,6 +174,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
     it "user can set decision reasons for Vacated and Remanded or Reversed decision types and save" do
       Seeds::CavcDecisionReasonData.new.seed!
+      Seeds::CavcSelectionBasisData.new.seed!
 
       go_to_dashboard(cavc_remand.remand_appeal.uuid)
 
@@ -196,7 +197,12 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       v_and_r_section.click
       v_and_r_section.find("span", exact_text: "AMA specific remand?").click
       v_and_r_section.find("span", exact_text: "Issuing a decision before 90-day window closed").click
-      v_and_r_section.find("span", exact_text: "Failure to adopt favorable findings").click
+      v_and_r_section.find("span", exact_text: "Other").click
+      other_dropdown = page.find("div.cf-form-dropdown", text: "Type to search...")
+      other_dropdown.find("div.cf-select").click
+      other_dropdown.find("div.cf-select__menu").all("div", exact_text: "Other").last.click
+      v_and_r_section.find("input.cf-form-textinput").click.send_keys "Test New Basis"
+
       expect(page).to have_content "Decision Reasons (1)"
       v_and_r_section.find("div", exact_text: "Decision Reasons (1)").click
 
@@ -206,6 +212,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       expect(page).to have_content "Decision Reasons (2)"
       expect(page).to have_content "Decision Reasons (1)"
+      expect(CavcSelectionBasis.last.basis_for_selection).to eq "Test New Basis"
     end
   end
 end

@@ -178,6 +178,8 @@ module Seeds
         "Karnas", "Other"
       ]
 
+      other = ["Other"]
+
       odpp = other_due_process_protection.map{ |value| {basis_for_selection: value, category: "other_due_process_protection"} }
       CavcSelectionBasis.import(odpp, validate: false)
 
@@ -210,6 +212,9 @@ module Seeds
 
       misapplication_caselaw = caselaw.map { |value| { basis_for_selection: value, category: "misapplication_caselaw" } }
       CavcSelectionBasis.import(misapplication_caselaw, validate: false)
+
+      ama_other = other.map { |value| { basis_for_selection: value, category: "ama_other" } }
+      CavcSelectionBasis.import(ama_other, validate: false)
     end
   end
 end

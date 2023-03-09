@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+/* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
 import { Accordion } from '../../components/Accordion';
 import Checkbox from '../../components/Checkbox';
@@ -7,8 +9,12 @@ import { DECISION_REASON_LABELS } from './cavcDashboardConstants';
 import { useDispatch, useSelector } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import { setCheckedDecisionReasons, setInitialCheckedDecisionReasons } from './cavcDashboardActions';
+import { setCheckedDecisionReasons,
+  setInitialCheckedDecisionReasons,
+  setSelectionBasisForReasonCheckbox,
+  updateOtherFieldTextValue } from './cavcDashboardActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
+// import { createFilter } from 'react-select';
 import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
 
 const CavcDecisionReasons = (props) => {
@@ -47,7 +53,7 @@ const CavcDecisionReasons = (props) => {
   });
 
   const basisForSelectionStylingWithChildReadOnly = css({
-    paddingLeft: '9rem',
+    paddingLeft: '8rem',
     fontWeight: 'normal',
     '@media(min-width: 1200px)': { paddingLeft: '14rem' },
   });
@@ -56,7 +62,7 @@ const CavcDecisionReasons = (props) => {
   const decisionReasons = useSelector((state) => state.cavcDashboard.decision_reasons);
   const checkedBoxesInStore = useSelector((state) => state.cavcDashboard.checked_boxes[uniqueId]);
   const initialCheckBoxesInStore = useSelector((state) => state.cavcDashboard.initial_state.checked_boxes[uniqueId]);
-
+  const selectionBases = useSelector((state) => state.cavcDashboard.selection_bases);
   const parentReasons = decisionReasons.filter((parentReason) => !parentReason.parent_decision_reason_id).sort(
     (obj) => obj.order);
   const childReasons = decisionReasons.filter((childReason) => childReason.parent_decision_reason_id !== null).sort(
@@ -68,18 +74,35 @@ const CavcDecisionReasons = (props) => {
     // get all children where parent.id === child.parent_decision_reason_id
     // then create an object for each child, stored into parent's children property as array
     const children = childReasons.filter((child) => child.parent_decision_reason_id === parent.id);
+    const parentSelectionBasisId = loadCheckedBoxes?.
+      filter((box) => box.cavc_decision_reason_id === parent.id)[0]?.cavc_selection_basis_id;
 
     obj[parent.id] = {
       ...parent,
       checked: loadCheckedBoxesId?.includes(parent.id),
       issueId: uniqueId,
       issueType: dispositionIssueType,
+      basis_for_selection: {
+        checkboxId: parent.id,
+        value: parentSelectionBasisId,
+        label: selectionBases?.filter((basis) => basis.id === parentSelectionBasisId)[0]?.basis_for_selection,
+        otherText: null
+      },
       children: children.map((child) => {
+        const childSelectionBasisId = loadCheckedBoxes?.
+          filter((box) => box.cavc_decision_reason_id === child.id)[0]?.cavc_selection_basis_id;
 
         return {
           ...child,
           issueType: dispositionIssueType,
           checked: loadCheckedBoxesId?.includes(child.id),
+          basis_for_selection: {
+            checkboxId: child.id,
+            parentCheckboxId: parent.id,
+            value: childSelectionBasisId,
+            label: selectionBases?.filter((basis) => basis.id === childSelectionBasisId)[0]?.basis_for_selection,
+            otherText: null
+          }
         };
       })
     };
@@ -220,21 +243,92 @@ const CavcDecisionReasons = (props) => {
     );
   };
 
+  // Logic section for searchable dropdowns that prevents searching prior to 3 characters being entered
+  // noOptionMessage is currently being overwritten by the default value set in searchabledropdown.jsx
+  const MIN_INPUT_LENGTH = 3;
+  const noOptionsMessage = (input) =>
+    input.length >= MIN_INPUT_LENGTH ?
+      'No options' :
+      'Search input must be at least 3 characters';
+  // const filterOption = (candidate, input) => {
+  //   return (
+  //     // Min input length
+  //     input.length >= MIN_INPUT_LENGTH &&
+  //     // Use Select's default filtering for string matching by creating filter
+  //     createFilter({})(candidate, input)
+  //   );
+  // };
+
+  const [otherBasisSelectedByCheckboxId, setOtherBasisSelectedByCheckboxId] = useState(decisionReasons.map((reason) => {
+    return { checkboxId: reason.id, checked: false };
+  }));
+
+  const handleOtherTextFieldChange = (value, reason, parentReason) => {
+    const reasons = {
+      checkboxId: reason.id,
+      parentCheckboxId: parentReason?.id
+    };
+
+    dispatch(updateOtherFieldTextValue(uniqueId, value, reasons));
+  };
+
   const renderBasisForSelectionsWithChild = (parent, child) => {
+    const defaultSelectionValue =
+      checkedReasons[parent.id]?.children.filter((box) => child.id === box.id)[0]?.basis_for_selection;
+
     if (userCanEdit) {
       return (
         <div>
           <SearchableDropdown
             name={`decision-reason-basis-${child.id}`}
+            // filterOption={filterOption}
             label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
             placeholder="Type to search..."
+            noOptionsMessage={noOptionsMessage}
+            onChange={(option) => {
+              if (option.label === 'Other') {
+                setOtherBasisSelectedByCheckboxId((prevState) => {
+                  const idx = otherBasisSelectedByCheckboxId.findIndex((basis) => basis.checkboxId === child.id);
+                  const arr = [...prevState];
+
+                  arr[idx] = { checkboxId: child.id, checked: true };
+
+                  return arr;
+                });
+              } else {
+                setOtherBasisSelectedByCheckboxId((prevState) => {
+                  const idx = otherBasisSelectedByCheckboxId.findIndex((basis) => basis.checkboxId === child.id);
+                  const arr = [...prevState];
+
+                  arr[idx] = { checkboxId: child.id, checked: false };
+
+                  return arr;
+                });
+              }
+              dispatch(setSelectionBasisForReasonCheckbox(uniqueId, option));
+            }
+            }
+            options={selectionBases.
+              filter((selection) => selection.category === child.basis_for_selection_category).
+              map((selection) => ({
+                label: selection.basis_for_selection,
+                value: selection.id,
+                category: selection.category,
+                checkboxId: child.id,
+                parentCheckboxId: parent.id
+              }))}
             styling={basisForSelectionStylingWithChild}
+            defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
           />
-          {/* if basis for selection category is ama_other display text field for custom reasoning */}
-          {/* eslint-disable-next-line */}
-          {checkedReasons[parent.id]?.children.find((x) => x.basis_for_selection_category === 'ama_other') && (
+          {(otherBasisSelectedByCheckboxId.filter((basis) => basis.checkboxId === child.id)[0].checked) && (
             <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
-              <TextField type="string" label="New basis reason" />
+              <TextField
+                type="string"
+                label="New basis reason"
+                onChange={(value) => handleOtherTextFieldChange(value, child, parent)}
+                defaultValue={defaultSelectionValue?.otherText}
+                inputProps={{ maxLength: 250 }}
+              />
             </div>
           )}
         </div>
@@ -245,22 +339,71 @@ const CavcDecisionReasons = (props) => {
       <div {...basisForSelectionStylingWithChildReadOnly}>
         <label>
           <strong>{DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}:</strong>{' '}
-          Should be replaced with actual selection or no value
+          {defaultSelectionValue?.label}
         </label>
       </div>
     );
   };
 
   const renderBasisForSelectionsForParent = (parent) => {
+    const defaultSelectionValue = checkedReasons[parent.id]?.basis_for_selection;
+
     if (userCanEdit) {
       return (
-        <SearchableDropdown
-          name={`decision-reason-basis-${parent.id}`}
-          label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
-          placeholder="Type to search..."
-          styling={basisForSelectionStylingNoChild}
-          readOnly={!userCanEdit}
-        />
+        <div>
+          <SearchableDropdown
+            name={`decision-reason-basis-${parent.id}`}
+            label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
+            // filterOption={filterOption}
+            options={selectionBases.
+              filter((selection) => selection.category === parent.basis_for_selection_category).
+              map((selection) => ({
+                label: selection.basis_for_selection,
+                value: selection.id,
+                checkboxId: parent.id
+              }))}
+            onChange={(option) => {
+              if (option.label === 'Other') {
+                setOtherBasisSelectedByCheckboxId((prevState) => {
+                  const idx = otherBasisSelectedByCheckboxId.findIndex((basis) => basis.checkboxId === parent.id);
+                  const arr = [...prevState];
+
+                  arr[idx] = { checkboxId: parent.id, checked: true };
+
+                  return arr;
+                });
+              } else {
+                setOtherBasisSelectedByCheckboxId((prevState) => {
+                  const idx = otherBasisSelectedByCheckboxId.findIndex((basis) => basis.checkboxId === parent.id);
+                  const arr = [...prevState];
+
+                  arr[idx] = { checkboxId: parent.id, checked: false };
+
+                  return arr;
+                });
+              }
+              dispatch(setSelectionBasisForReasonCheckbox(uniqueId, option));
+            }
+            }
+            placeholder="Type to search..."
+            creatable
+            noOptionsMessage={noOptionsMessage}
+            styling={basisForSelectionStylingNoChild}
+            readOnly={!userCanEdit}
+            defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
+          />
+          {(otherBasisSelectedByCheckboxId.filter((basis) => basis.checkboxId === parent.id)[0].checked) && (
+            <div style={{ paddingLeft: '7.5rem', paddingTop: '2.5rem' }}>
+              <TextField
+                type="string"
+                label="New basis reason"
+                onChange={(value) => handleOtherTextFieldChange(value, parent)}
+                defaultValue={defaultSelectionValue?.otherText}
+                inputProps={{ maxLength: 250 }}
+              />
+            </div>
+          )}
+        </div>
       );
     }
 
@@ -268,7 +411,7 @@ const CavcDecisionReasons = (props) => {
       <div {...basisForSelectionStylingNoChildReadOnly}>
         <label>
           <strong>{DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}:</strong>{' '}
-          Should be replaced with actual selection or no value
+          {defaultSelectionValue?.label}
         </label>
       </div>
     );
@@ -297,7 +440,6 @@ const CavcDecisionReasons = (props) => {
               </div>
             ))}
             {/* check if parent checkbox has basis category but no child, if so render dropdown */}
-            {/* eslint-disable-next-line */}
             {checkedReasons[parent.id]?.basis_for_selection_category && renderBasisForSelectionsForParent(parent)}
           </div>
         )}
@@ -327,14 +469,13 @@ CavcDecisionReasons.propTypes = {
   uniqueId: PropTypes.number,
   initialDispositionRequiresReasons: PropTypes.bool,
   dispositionIssueType: PropTypes.string,
-  loadCheckedBoxes: PropTypes.arrayOf(
-    PropTypes.shape({
-      cavc_dashboard_disposition_id: PropTypes.number,
-      cavc_decision_reason_id: PropTypes.number,
-      cavc_selection_basis_id: PropTypes.number,
-      id: PropTypes.number
-    })
-  ),
+  fetchCavcSelectionBases: PropTypes.func,
+  loadCheckedBoxes: PropTypes.arrayOf(PropTypes.shape({
+    cavc_dashboard_disposition_id: PropTypes.number,
+    cavc_decision_reason_id: PropTypes.number,
+    cavc_selection_basis_id: PropTypes.number,
+    id: PropTypes.number
+  })),
   userCanEdit: PropTypes.bool
 };
 

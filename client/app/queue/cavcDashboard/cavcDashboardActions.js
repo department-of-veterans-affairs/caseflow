@@ -51,6 +51,27 @@ export const setCheckedDecisionReasons = (checkedReasons, issueId) => ({
   }
 });
 
+export const setSelectionBasisForReasonCheckbox = (uniqueId, option) => ({
+  type: ACTIONS.SET_BASIS_FOR_REASON_CHECKBOX,
+  payload: {
+    issueId: uniqueId,
+    checkboxId: option.checkboxId,
+    parentCheckboxId: option.parentCheckboxId,
+    label: option.label,
+    value: option.value
+  }
+});
+
+export const updateOtherFieldTextValue = (uniqueId, value, reasons) => ({
+  type: ACTIONS.UPDATE_OTHER_FIELD_TEXT_VALUE,
+  payload: {
+    issueId: uniqueId,
+    checkboxId: reasons.checkboxId,
+    parentCheckboxId: reasons.parentCheckboxId,
+    value
+  }
+});
+
 export const setInitialCheckedDecisionReasons = (uniqueId) => ({
   type: ACTIONS.SET_INITIAL_CHECKED_DECISION_REASONS,
   payload: {
@@ -102,9 +123,20 @@ export const saveDashboardData = (allCavcDashboards, checkedBoxes) => (dispatch)
     const childBoxes = parentBoxes.map((box) => box.children).flat();
     const allBoxes = parentBoxes.concat(childBoxes);
     const selectedBoxes = allBoxes.filter((box) => box.checked);
-    const idsAndTypes = selectedBoxes.map((box) => [box.issueType, box.id]);
 
-    idsAndTypes.map((idsAndType) => checkedBoxesByIssueId.push([issueId, ...idsAndType]));
+    selectedBoxes.forEach((box) => {
+      if (box.basis_for_selection.value) {
+        checkedBoxesByIssueId.push({
+          issue_id: issueId,
+          issue_type: box.issueType,
+          decision_reason_id: box.id,
+          basis_for_selection_category: box.basis_for_selection_category,
+          basis_for_selection: box.basis_for_selection
+        });
+      }
+
+      checkedBoxesByIssueId.push({ issue_id: issueId, issue_type: box.issueType, decision_reason_id: box.id });
+    });
   }
 
   return ApiUtil.post('/cavc_dashboard/save',
