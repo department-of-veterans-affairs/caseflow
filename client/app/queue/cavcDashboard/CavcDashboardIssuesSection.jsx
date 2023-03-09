@@ -85,11 +85,9 @@ const CavcDashboardIssue = (props) => {
 
   const [removeModalIsOpen, setRemoveModalIsOpen] = useState(false);
 
-  const initialDisposition = dispositions?.find(
+  const disposition = dispositions?.find(
     (dis) => dis.request_issue_id === issue.id ||
     dis.cavc_dashboard_issue_id === issue.id)?.disposition;
-
-  const [disposition, setDisposition] = useState(initialDisposition);
 
   const dispositionIssueType = dispositions?.find(
     (dis) => dis.request_issue_id === issue.id ||
@@ -136,8 +134,10 @@ const CavcDashboardIssue = (props) => {
   };
 
   const setDispositionOption = (option) => {
-    setDisposition(option);
-    dispatch(setDispositionValue(dashboardIndex, dispositions[0].id, option));
+    const dispositionIssueId =
+      dispositions[0].cavc_dashboard_issue_id || dispositions[0].request_issue_id;
+
+    dispatch(setDispositionValue(dashboardIndex, dispositionIssueId, option));
   };
 
   const renderDispositionDropdown = () => {
@@ -147,7 +147,7 @@ const CavcDashboardIssue = (props) => {
           name={`issue-dispositions-${index}`}
           label="Dispositions"
           placeholder={disposition}
-          value={disposition}
+          defaultValue={disposition}
           searchable
           hideLabel
           options={dispositionsOptions}
@@ -197,7 +197,7 @@ const CavcDashboardIssue = (props) => {
       {requireDecisionReason() && (
         <CavcDecisionReasons
           uniqueId={issue.id}
-          initialDispositionRequiresReasons={dispositionsRequiringReasons.includes(initialDisposition)}
+          initialDispositionRequiresReasons={dispositionsRequiringReasons.includes(disposition)}
           dispositionIssueType={dispositionIssueType}
           loadCheckedBoxes={loadCheckedBoxes}
           userCanEdit={userCanEdit}
@@ -216,9 +216,7 @@ const CavcDashboardIssuesSection = (props) => {
 
   // the handler is in this component because it needs the dashboardIndex prop that isn't passed down
   const removeIssueHandler = (issueIndex, issue) => {
-    const dispositionIndex = dashboardDispositions.findIndex((disp) => disp.cavc_dashboard_issue_id === issue.id);
-
-    removeDashboardIssue(dashboardIndex, issueIndex, dispositionIndex);
+    removeDashboardIssue(dashboardIndex, issue);
   };
 
   return (

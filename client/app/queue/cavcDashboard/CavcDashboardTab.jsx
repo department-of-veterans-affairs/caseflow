@@ -13,12 +13,14 @@ import { bindActionCreators } from 'redux';
 export const CavcDashboardTab = (props) => {
   const { userCanEdit, dashboardIndex, dashboardId } = props;
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [addedIssuesCount, setAddedIssuesCount] = useState(0);
 
   const closeHandler = () => {
     setModalIsOpen(!modalIsOpen);
   };
 
   const submitHandler = (issue, dashboardDisposition) => {
+    setAddedIssuesCount(addedIssuesCount + 1);
     props.updateDashboardIssues(dashboardIndex, issue, dashboardDisposition);
     setModalIsOpen(!modalIsOpen);
   };
@@ -44,6 +46,7 @@ export const CavcDashboardTab = (props) => {
           dashboardId={dashboardId}
           closeHandler={closeHandler}
           submitHandler={submitHandler}
+          addedIssuesCount={addedIssuesCount}
         />
       }
     </>
