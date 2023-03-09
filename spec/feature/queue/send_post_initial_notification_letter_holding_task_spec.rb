@@ -124,7 +124,7 @@ RSpec.feature "Send Post Initial Notification Letter Holding Tasks", :all_dbs do
       click_button(COPY::PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON)
 
       # expect success
-      expect(page).to have_content(format(COPY::PROCEED_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS))
+      expect(page).to have_content(format(COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_TASK_SUCCESS))
       expect(page.current_path).to eq("/organizations/clerk-of-the-board")
       appeal_initial_letter_holding_task = root_task.appeal.tasks.reload.find_by(type: "PostSendInitialNotificationLetterHoldingTask")
       expect(appeal_initial_letter_holding_task.status).to eq("completed")
