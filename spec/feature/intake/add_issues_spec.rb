@@ -147,7 +147,7 @@ feature "Intake Add Issues Page", :all_dbs do
           click_intake_no_matching_issues
           fill_in "Benefit type", with: "Veterans Health Administration"
           find("#issue-benefit-type").send_keys :enter
-          fill_in "Issue category", with: "Beneficiary Travel | Common Carrier"
+          fill_in "Issue category", with: "Beneficiary Travel"
           find("#issue-category").send_keys :enter
           fill_in "Issue description", with: "I am a VHA issue"
           fill_in "Decision date", with: 1.month.ago.mdY
