@@ -201,6 +201,13 @@
     "TASK_TYPE": {
       "filterable": true,
       "name": "taskColumn"
+    },
+    "TASK_CLOSED_DATE": {
+      "name": "completedDateColumn",
+      "sorting_table": "business_line_tasks",
+      "sorting_columns": [
+        "closed_at"
+      ]
     }
   },
 

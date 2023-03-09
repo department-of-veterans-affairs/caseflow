@@ -1,4 +1,26 @@
-SELECT *
+SELECT
+  id,
+  appeal_id,
+  appeal_type,
+  assigned_at,
+  assigned_to_id,
+  assigned_to_type,
+  assigned_by_id,
+  cancellation_reason,
+  cancelled_by_id,
+  closed_at,
+  created_at,
+  instructions,
+  parent_id,
+  placed_on_hold_at,
+  started_at,
+  status,
+  type AS task_type,
+  updated_at,
+  issue_count,
+  claimant_name,
+  veteran_participant_id,
+  veteran_ssn
 FROM (
     (
       (

@@ -24,12 +24,12 @@ class QueueTab
     tab
   end
 
-  def to_hash
+  def to_hash(assignee_is_business_line: false)
     {
       label: label,
       name: name,
       description: description,
-      columns: columns.map { |column| column.to_hash(tasks) },
+      columns: columns.map { |column| column.to_hash(tasks, assignee_is_business_line) },
       allow_bulk_assign: allow_bulk_assign?,
       contains_legacy_tasks: contains_legacy_tasks?,
       defaultSort: default_sorting_hash

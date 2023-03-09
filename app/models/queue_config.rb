@@ -45,7 +45,7 @@ class QueueConfig
     )
     endpoint = "task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
 
-    tab.to_hash.merge(
+    tab.to_hash(assignee_is_business_line: assignee.is_a?(BusinessLine)).merge(
       tasks: serialized_tasks_for_columns(task_pager.paged_tasks, tab.column_names),
       task_page_count: task_pager.task_page_count,
       total_task_count: task_pager.total_task_count,
@@ -56,12 +56,14 @@ class QueueConfig
   def serialized_tasks_for_columns(tasks, columns)
     return [] if tasks.empty?
 
-    primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+    # primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
 
-    WorkQueue::TaskColumnSerializer.new(
-      primed_tasks,
+    things = WorkQueue::TaskColumnSerializer.new(
+      tasks,
       is_collection: true,
       params: { columns: columns }
-    ).serializable_hash[:data]
+    )
+
+    things.serializable_hash[:data]
   end
 end
