@@ -14,8 +14,6 @@ class ConferenceLink < CaseflowRecord
       ENV["VIRTUAL_HEARING_URL_HOST"] || "care.evn.va.gov"
     end
 
-
-
     def base_url
       "https://#{client_host_or_default}/bva-app/"
     end
@@ -40,10 +38,8 @@ class ConferenceLink < CaseflowRecord
     if guest_pin_long.nil?
       link_service = VirtualHearings::LinkService.new
       update!(guest_pin_long: link_service.guest_pin)
-      guest_pin_long
-    else
-      guest_pin_long
     end
+    guest_pin_long
   end
 
   def guest_link
@@ -55,10 +51,8 @@ class ConferenceLink < CaseflowRecord
       "conference=#{alias_with_host}&" \
       "pin=#{guest_pin}&callType=video"
       update!(guest_hearing_link: guest_hearing_url_with_pin)
-      guest_hearing_link
-    else
-      guest_hearing_link
     end
+    guest_hearing_link
   end
 
   private
