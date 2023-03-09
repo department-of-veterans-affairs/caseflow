@@ -158,9 +158,9 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
         disp_dropdown = page.find("div.cf-form-dropdown", text: "Disposition by Court")
         disp_dropdown.find("div.cf-select").click
         disp_dropdown.find("div.cf-select__menu").find("div", exact_text: "Affirmed").click
+        click_button "Add issue"
       end
 
-      click_button "Add issue"
       click_button "Save Changes"
 
       expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
