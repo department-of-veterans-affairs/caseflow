@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BusinessLineTask
+module BusinessLineTaskConcern
   extend ActiveSupport::Concern
 
   def complete_with_payload!(_decision_issue_params, _decision_date)

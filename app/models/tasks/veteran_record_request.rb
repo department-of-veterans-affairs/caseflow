@@ -4,7 +4,7 @@
 # Created whenever an Appeal request issue has a benefit_type that is not compensation or pension.
 
 class VeteranRecordRequest < DecisionReviewTask
-  include BusinessLineTask
+  include BusinessLineTaskConcern
 
   def label
     "Record Request"

@@ -6,7 +6,7 @@
 # This task is created for the appropriate business lines based on the benefit types of the decision issues.
 
 class BoardGrantEffectuationTask < DecisionReviewTask
-  include BusinessLineTask
+  include BusinessLineTaskConcern
 
   def label
     "Board Grant"
