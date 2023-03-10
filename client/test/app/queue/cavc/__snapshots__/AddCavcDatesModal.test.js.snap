@@ -406,7 +406,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                               }
                               errorMessage={null}
                               label="What is the Court's judgement date?"
-                              max="2023-03-10"
+                              max="9999-12-31"
                               name="judgement-date"
                               onChange={[Function]}
                               optional={false}
@@ -444,7 +444,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                                     ]
                                   }
                                   id="judgement-date"
-                                  max="2023-03-10"
+                                  max="9999-12-31"
                                   name="judgement-date"
                                   onBlur={[Function]}
                                   onChange={[Function]}
@@ -472,7 +472,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                               }
                               errorMessage={null}
                               label="What is the Court's mandate date?"
-                              max="2023-03-10"
+                              max="9999-12-31"
                               name="mandate-date"
                               onChange={[Function]}
                               optional={false}
@@ -510,7 +510,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                                     ]
                                   }
                                   id="mandate-date"
-                                  max="2023-03-10"
+                                  max="9999-12-31"
                                   name="mandate-date"
                                   onBlur={[Function]}
                                   onChange={[Function]}
@@ -1047,7 +1047,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                               }
                               errorMessage={null}
                               label="What is the Court's judgement date?"
-                              max="2023-03-10"
+                              max="9999-12-31"
                               name="judgement-date"
                               onChange={[Function]}
                               optional={false}
@@ -1085,7 +1085,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                                     ]
                                   }
                                   id="judgement-date"
-                                  max="2023-03-10"
+                                  max="9999-12-31"
                                   name="judgement-date"
                                   onBlur={[Function]}
                                   onChange={[Function]}
@@ -1120,7 +1120,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                               }
                               errorMessage={null}
                               label="What is the Court's mandate date?"
-                              max="2023-03-10"
+                              max="9999-12-31"
                               name="mandate-date"
                               onChange={[Function]}
                               optional={false}
@@ -1158,7 +1158,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                                     ]
                                   }
                                   id="mandate-date"
-                                  max="2023-03-10"
+                                  max="9999-12-31"
                                   name="mandate-date"
                                   onBlur={[Function]}
                                   onChange={[Function]}

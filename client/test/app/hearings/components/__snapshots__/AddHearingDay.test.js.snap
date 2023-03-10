@@ -30,7 +30,7 @@ Object {
             <input
               class="hearing-day-date"
               id="hearingDate"
-              max="2023-03-10"
+              max="9999-12-31"
               name="hearingDate"
               placeholder="mm/dd/yyyy"
               type="date"
@@ -236,7 +236,7 @@ Object {
           <input
             class="hearing-day-date"
             id="hearingDate"
-            max="2023-03-10"
+            max="9999-12-31"
             name="hearingDate"
             placeholder="mm/dd/yyyy"
             type="date"
@@ -499,7 +499,7 @@ Object {
             <input
               class="hearing-day-date"
               id="hearingDate"
-              max="2023-03-10"
+              max="9999-12-31"
               name="hearingDate"
               placeholder="mm/dd/yyyy"
               type="date"
@@ -1106,7 +1106,7 @@ Object {
           <input
             class="hearing-day-date"
             id="hearingDate"
-            max="2023-03-10"
+            max="9999-12-31"
             name="hearingDate"
             placeholder="mm/dd/yyyy"
             type="date"
@@ -1770,7 +1770,7 @@ Object {
             <input
               class="hearing-day-date"
               id="hearingDate"
-              max="2023-03-10"
+              max="9999-12-31"
               name="hearingDate"
               placeholder="mm/dd/yyyy"
               type="date"
@@ -2377,7 +2377,7 @@ Object {
           <input
             class="hearing-day-date"
             id="hearingDate"
-            max="2023-03-10"
+            max="9999-12-31"
             name="hearingDate"
             placeholder="mm/dd/yyyy"
             type="date"
@@ -3038,7 +3038,7 @@ exports[`AddHearingDay Matches snapshot with default props 1`] = `
         <input
           class="hearing-day-date"
           id="hearingDate"
-          max="2023-03-10"
+          max="9999-12-31"
           name="hearingDate"
           placeholder="mm/dd/yyyy"
           type="date"

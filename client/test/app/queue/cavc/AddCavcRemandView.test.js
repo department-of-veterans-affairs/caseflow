@@ -12,7 +12,15 @@ import CheckboxGroup from 'app/components/CheckboxGroup';
 import COPY from 'COPY';
 
 describe('AddCavcRemandView', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date('9999-12-31'));
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
 
   const appealId = amaAppeal.externalId;
 
@@ -195,6 +203,7 @@ describe('AddCavcRemandView', () => {
       });
 
       it('shows error on future date selection', () => {
+        jest.useRealTimers();
         const cavcForm = setup({ appealId });
 
         cavcForm.find('input#decision-date').simulate('change', { target: { value: futureDate } });
@@ -222,6 +231,7 @@ describe('AddCavcRemandView', () => {
       });
 
       it('shows error on future date selection', () => {
+        jest.useRealTimers();
         const cavcForm = setup({ appealId });
 
         cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
@@ -254,6 +264,7 @@ describe('AddCavcRemandView', () => {
       });
 
       it('shows error on future date selection', () => {
+        jest.useRealTimers();
         const cavcForm = setup({ appealId });
 
         cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });

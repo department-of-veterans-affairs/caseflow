@@ -15,7 +15,7 @@ exports[`DateSelector renders correctly 1`] = `
     <input
       class="cf-form-textinput"
       id="date1"
-      max="2023-03-10"
+      max="9999-12-31"
       name="date1"
       placeholder="mm/dd/yyyy"
       type="text"
