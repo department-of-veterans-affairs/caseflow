@@ -236,7 +236,7 @@ class TasksController < ApplicationController
     opc = params["select_opc"]
     case opc
     when "task_complete_contested_claim"
-      days_on_hold = params["hold_days"].to_i
+      days_on_hold = params["radio_value"].to_i
       instructions = ""
       psi = PostSendInitialNotificationLetterHoldingTask.create!(
         appeal: task.appeal,
@@ -275,6 +275,14 @@ class TasksController < ApplicationController
     when "completed"
       if params["select_opc"] == "resend_final_notification_letter"
         send_final_notification_letter
+      elsif params["select_opc"] == "task_complete_contested_claim"
+        radio_opc = params["radio_value"].to_i
+        if radio_opc == 1
+          root_task_id = task.appeal.tasks.find_by(type: "RootTask").id
+          params[:parent_id] = root_task_id
+          # params[:instructions] = params[:task][:instructions]
+          DocketSwitchMailTask.create_from_params(params, current_user)
+        end
       end
     end
   end
@@ -370,7 +378,8 @@ class TasksController < ApplicationController
       :instructions,
       :ihp_path,
       :select_opc,
-      :hold_days,
+      :radio_value,
+      :parent_id,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],
       business_payloads: [:description, values: {}]
     )
