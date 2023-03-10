@@ -65,6 +65,11 @@ const daysTypeOpts = [
   { displayText: COPY.CUSTOM_CONTESTED_CLAIM, value: 'custom' }
 ];
 
+const finalCompleteTaskRadio = [
+  { displayText: 'Yes', value: '1' },
+  { displayText: 'No', value: '0' }
+];
+
 MarkTaskCompleteModal.propTypes = {
   props: PropTypes.object,
   setState: PropTypes.func,
@@ -74,6 +79,46 @@ MarkTaskCompleteModal.propTypes = {
 const MarkTaskCompleteContestedClaimModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
   const instructionsLabel = taskConfiguration && taskConfiguration.instructions_label;
+  const currentType = props.task.type;
+
+  if (currentType === 'SendInitialNotificationLetterTask') {
+    return (
+      <React.Fragment>
+        <div className="cc_mark_complete">
+          {taskConfiguration && StringUtil.nl2br(taskConfiguration.modal_body)}
+          {taskConfiguration && taskConfiguration.modal_alert && (
+            <Alert message={taskConfiguration.modal_alert} type="info" />
+          )}
+          {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+            <div>
+              <RadioField
+                id="45_days"
+                inputRef={props.register}
+                vertical
+                onChange={(value) => setState({ radio: value })}
+                value={state.radio}
+                options={daysTypeOpts}
+                errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.SELECT_RADIO_ERROR : null}
+                styling={marginTop(1)}
+              />
+              {state.radio === 'custom' &&
+                <TextareaField
+                  label={instructionsLabel || COPY.TEXTAREA_CONTESTED_CLAIM}
+                  name="instructions"
+                  id="completeTaskInstructions"
+                  onChange={(value) => setState({ instructions: value })}
+                  value={state.value}
+                  styling={marginTop(2)}
+                  textAreaStyling={slimHeight}
+                  pattern="[0-9]{2,3}"
+                  maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+                />}
+            </div>
+          )}
+        </div>
+      </React.Fragment>
+    );
+  }
 
   return (
     <React.Fragment>
@@ -85,26 +130,27 @@ const MarkTaskCompleteContestedClaimModal = ({ props, state, setState }) => {
         {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
           <div>
             <RadioField
-              id="45_days"
+              id="complete_task_final"
               inputRef={props.register}
               vertical
               onChange={(value) => setState({ radio: value })}
               value={state.radio}
-              options={daysTypeOpts}
+              options={finalCompleteTaskRadio}
               errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.SELECT_RADIO_ERROR : null}
               styling={marginTop(1)}
             />
-            {state.radio === 'custom' &&
+            {state.radio === '1' &&
               <TextareaField
-                label={instructionsLabel || COPY.TEXTAREA_CONTESTED_CLAIM}
-                name="instructions"
-                id="completeTaskInstructions"
+                label= "Provide instuctions and context for this action"
+                name= "instructions"
+                id= "completeTaskInstructions"
                 onChange={(value) => setState({ instructions: value })}
-                value={state.value}
-                styling={marginTop(2)}
-                textAreaStyling={slimHeight}
-                pattern="[0-9]{2,3}"
+                value={state.instructions}
+                styling={marginTop(1)}
                 maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+                placeholder="This is a description of instuctions and context for this action."
+                errorMessage={props.highlightInvalid &&
+                  !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
               />}
           </div>
         )}
@@ -198,7 +244,8 @@ MarkTaskCompleteContestedClaimModal.propTypes = {
   setState: PropTypes.func,
   state: PropTypes.object,
   register: PropTypes.func,
-  highlightInvalid: PropTypes.bool
+  highlightInvalid: PropTypes.bool,
+  task: PropTypes.object
 };
 
 ProceedFinalNotificationLetterTaskModal.propTypes = {
@@ -519,8 +566,10 @@ const MODAL_TYPE_ATTRS = {
 
       if (radio === 'custom') {
         isValid = validInstructionsForNumber(instructions) && validRadio(radio);
-      } else {
+      } else if (radio === '45') {
         isValid = validRadio(radio);
+      } else if (radio === '1') {
+        isValid = validInstructions(instructions) && validRadio(radio);
       }
 
       return !isValid;
@@ -542,7 +591,9 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.PROCEED_FINAL_NOTIFICATION_LETTER_TITLE,
     getContent: ProceedFinalNotificationLetterTaskModal,
-    buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON
+    buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON,
+    submitButtonClassNames: ['usa-button'],
+    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
   },
 
   resend_initial_notification_letter_post_holding: {
@@ -739,12 +790,20 @@ class CompleteTaskModal extends React.Component {
   formatRadio = () => {
     const { instructions, radio } = this.state;
 
-    if (this.props.modalType === 'task_complete_contested_claim') {
+    if (this.props.modalType === 'task_complete_contested_claim' &&
+    this.props.task.type === 'SendInitialNotificationLetterTask') {
       const radioValue = daysTypeOpts.find((option) => radio === option.value).value;
 
       if (radioValue === 'custom') {
         return instructions;
       }
+
+      return radioValue;
+    }
+
+    if (this.props.modalType === 'task_complete_contested_claim' &&
+    this.props.task.type === 'SendFinalNotificationLetterTask') {
+      const radioValue = finalCompleteTaskRadio.find((option) => radio === option.value).value;
 
       return radioValue;
     }
@@ -775,7 +834,8 @@ class CompleteTaskModal extends React.Component {
       return reviewNotes = null;
     });
 
-    if (this.props.modalType === 'task_complete_contested_claim') {
+    if (this.props.modalType === 'task_complete_contested_claim' &&
+    this.props.task.type === 'SendInitialNotificationLetterTask') {
       const radioValue = daysTypeOpts.find((option) => radio === option.value).value;
       let days;
 
@@ -788,6 +848,14 @@ class CompleteTaskModal extends React.Component {
       formattedInstructions.push(`\n Hold time: ${days} days\n\n`);
 
       return formattedInstructions[0];
+    }
+
+    if (this.props.task.type === 'SendFinalNotificationLetterTask' && this.props.modalType === 'task_complete_contested_claim') {
+      const radioValue = finalCompleteTaskRadio.find((option) => radio === option.value).value;
+
+      if (radioValue === '0' || radioValue === '1') {
+        return formattedInstructions.join('');
+      }
     }
 
     if (this.props.task.type !== 'SendInitialNotificationLetterTask') {
@@ -882,7 +950,8 @@ class CompleteTaskModal extends React.Component {
           instructions: this.formatInstructions(),
         },
         select_opc: this.props.modalType,
-        hold_days: this.formatRadio(),
+        radio_value: this.formatRadio(),
+        instructions: this.state.instructions,
       }
     };
     const successMsg = MODAL_TYPE_ATTRS[this.props.modalType].buildSuccessMsg(

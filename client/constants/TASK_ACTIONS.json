@@ -476,8 +476,8 @@
   },
   "MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE": {
     "label": "Mark task complete",
-    "value": "modal/cancel_task",
-    "func": "cancel_task_data"
+    "value": "modal/mark_task_complete_contested_claim",
+    "func": "mark_final_notification_letter"
   },
 
   "CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK": {
@@ -499,7 +499,7 @@
   "MARK_TASK_AS_COMPLETE_CONTESTED_CLAIM": {
     "label": "Mark task complete",
     "value": "modal/mark_task_complete_contested_claim",
-    "func": "task_conteted_claim"
+    "func": "mark_task_as_complete_cc"
   },
   "PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL": {
     "label": "Proceed to final notification letter",

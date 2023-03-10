@@ -23,10 +23,12 @@ class TaskActionRepository
       { options: valid_options }
     end
 
-    def task_conteted_claim(task, _user = nil)
-      {
-        modal_body: COPY::MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL
-      }
+    def mark_task_as_complete_cc(task, _user = nil)
+      { modal_body: COPY::MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL }
+    end
+
+    def mark_final_notification_letter(task, _user = nil)
+      { modal_body: COPY::MARK_AS_COMPLETE_FROM_SEND_FINAL_NOTIFICATION_LETTER_CONTESTED_CLAIM }
     end
 
     def cancel_task_data(task, _user = nil)
