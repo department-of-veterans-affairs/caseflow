@@ -2,10 +2,8 @@
 
 exports[`TabWindow Does not render tab content when a tab is disabled and clicked 1`] = `
 <TabWindow
-  alwaysShowTabs={false}
   defaultPage={0}
   fullPage={true}
-  mountOnEnter={true}
   tabs={
     Array [
       Object {
@@ -20,7 +18,6 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
       },
     ]
   }
-  unmountOnExit={true}
 >
   <Tabs
     active="0"
@@ -148,10 +145,8 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
 
 exports[`TabWindow Matches snapshot with default props 1`] = `
 <TabWindow
-  alwaysShowTabs={false}
   defaultPage={0}
   fullPage={false}
-  mountOnEnter={true}
   tabs={
     Array [
       Object {
@@ -166,7 +161,6 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
       },
     ]
   }
-  unmountOnExit={true}
 >
   <Tabs
     active="0"
@@ -305,10 +299,8 @@ exports[`TabWindow Renders an empty div when no tabs are passed 1`] = `
 
 exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
 <TabWindow
-  alwaysShowTabs={false}
   defaultPage={0}
   fullPage={true}
-  mountOnEnter={true}
   tabs={
     Array [
       Object {
@@ -323,7 +315,6 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
       },
     ]
   }
-  unmountOnExit={true}
 >
   <Tabs
     active="0"
@@ -451,10 +442,8 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
 
 exports[`TabWindow Renders tab content when a tab is selected 1`] = `
 <TabWindow
-  alwaysShowTabs={false}
   defaultPage={0}
   fullPage={true}
-  mountOnEnter={true}
   tabs={
     Array [
       Object {
@@ -469,7 +458,6 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
       },
     ]
   }
-  unmountOnExit={true}
 >
   <Tabs
     active="0"

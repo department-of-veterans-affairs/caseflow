@@ -14,8 +14,6 @@ import {
   setUserIsCobAdmin,
   setCanViewOvertimeStatus,
   setCanEditCavcRemands,
-  setCanEditCavcDashboards,
-  setCanViewCavcDashboards,
   setFeatureToggles,
   setUserId,
   setUserRole,
@@ -104,7 +102,6 @@ import { EditCavcRemandView } from './cavc/EditCavcRemandView';
 import EditAppellantInformation from './editAppellantInformation/EditAppellantInformation';
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
-import CavcDashboard from './cavcDashboard/CavcDashboard';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -112,8 +109,6 @@ class QueueApp extends React.PureComponent {
     this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
     this.props.setUserIsCobAdmin(this.props.userIsCobAdmin);
     this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
-    this.props.setCanEditCavcDashboards(this.props.canEditCavcDashboards);
-    this.props.setCanViewCavcDashboards(this.props.canViewCavcDashboards);
     this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserId(this.props.userId);
@@ -277,13 +272,6 @@ class QueueApp extends React.PureComponent {
   );
 
   routedEditCavcRemand = () => <EditCavcRemandView />;
-
-  routedCavcDashboard = (props) => (
-    <CavcDashboard
-      appealId={props.match.params.appealId}
-      history={props.history}
-    />
-  );
 
   routedAdvancedOnDocketMotion = (props) => (
     <AdvancedOnDocketMotionView {...props.match.params} />
@@ -816,12 +804,6 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
-              path="/queue/appeals/:appealId/cavc_dashboard"
-              title="CAVC Dashboard | Caseflow"
-              render={this.routedCavcDashboard}
-            />
-            <PageRoute
-              exact
               path="/organizations/:organization/users"
               title="Organization Users | Caseflow"
               render={this.routedOrganizationUsers}
@@ -1347,8 +1329,6 @@ QueueApp.propTypes = {
   setCanEditNodDate: PropTypes.func,
   setUserIsCobAdmin: PropTypes.func,
   setCanEditCavcRemands: PropTypes.func,
-  setCanEditCavcDashboards: PropTypes.func,
-  setCanViewCavcDashboards: PropTypes.func,
   canEditAod: PropTypes.bool,
   setFeatureToggles: PropTypes.func,
   featureToggles: PropTypes.object,
@@ -1373,8 +1353,6 @@ QueueApp.propTypes = {
   userCanViewEditNodDate: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
   canEditCavcRemands: PropTypes.bool,
-  canEditCavcDashboards: PropTypes.bool,
-  canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
 };
 
@@ -1389,8 +1367,6 @@ const mapDispatchToProps = (dispatch) =>
       setCanEditNodDate,
       setUserIsCobAdmin,
       setCanEditCavcRemands,
-      setCanEditCavcDashboards,
-      setCanViewCavcDashboards,
       setCanViewOvertimeStatus,
       setFeatureToggles,
       setUserId,

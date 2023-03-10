@@ -15,19 +15,14 @@ import { Tab } from './tabs/Tab';
  * - @name {string} used in each tab ID to differentiate multiple sets of tabs
  * on a page. This is for accessibility purposes.
  */
-const TabWindow = (props) => {
-  const {
-    fullPage = false,
-    defaultPage = 0,
-    name = 'main',
-    onChange,
-    tabs = [],
-    tabPanelTabIndex = null,
-    alwaysShowTabs,
-    mountOnEnter = true,
-    unmountOnExit = true,
-  } = props;
-
+const TabWindow = ({
+  fullPage = false,
+  defaultPage = 0,
+  name = 'main',
+  onChange,
+  tabs = [],
+  tabPanelTabIndex = null
+}) => {
   const tabContent = (tab) => (
     <span>
       {tab.icon ?? ''}
@@ -38,7 +33,7 @@ const TabWindow = (props) => {
 
   // If there's only one tab, avoid rendering out tabs and just display the content.
   // This avoids any weird accessibility issues of having a tabpanel w/o corresponding tab
-  if (tabs.length === 1 && !alwaysShowTabs) {
+  if (tabs.length === 1) {
     return tabs[0].page;
   }
 
@@ -48,8 +43,8 @@ const TabWindow = (props) => {
       idPrefix={name}
       active={defaultPage.toString()}
       onChange={onChange}
-      mountOnEnter={mountOnEnter}
-      unmountOnExit={unmountOnExit}
+      mountOnEnter
+      unmountOnExit
       tabPanelTabIndex={tabPanelTabIndex}
     >
       {tabs.map((item, idx) => (
@@ -80,18 +75,12 @@ TabWindow.propTypes = {
     })
   ),
   defaultPage: PropTypes.number,
-  tabPanelTabIndex: PropTypes.number,
-  alwaysShowTabs: PropTypes.bool,
-  mountOnEnter: PropTypes.bool,
-  unmountOnExit: PropTypes.bool,
+  tabPanelTabIndex: PropTypes.number
 };
 
 TabWindow.defaultProps = {
   defaultPage: 0,
   fullPage: false,
-  alwaysShowTabs: false,
-  mountOnEnter: true,
-  unmountOnExit: true,
 };
 
 export default TabWindow;
