@@ -9,10 +9,11 @@ exports[`DailyDocketGuestLinkSection renders correctly for hearing admins and he
       Guest links for non-virtual hearings
     </h3>
     <div
-      style="display: flex; flex-wrap: wrap; font-size: 12px; justify-content: space-around;"
+      style="display: flex; flex-wrap: wrap; justify-content: space-around;"
     >
       <h3>
-        Conference Room:
+        Conference Room
+        :
         <span
           style="font-weight: normal;"
         >
@@ -20,7 +21,8 @@ exports[`DailyDocketGuestLinkSection renders correctly for hearing admins and he
         </span>
       </h3>
       <h3>
-        PIN:
+        PIN
+        :
         <span
           style="font-weight: normal;"
         >
@@ -161,10 +163,11 @@ exports[`DailyDocketGuestLinkSection renders correctly for non hearing admins an
       Guest links for non-virtual hearings
     </h3>
     <div
-      style="display: flex; flex-wrap: wrap; font-size: 12px; justify-content: space-around;"
+      style="display: flex; flex-wrap: wrap; justify-content: space-around;"
     >
       <h3>
-        Conference Room:
+        Conference Room
+        :
         <span
           style="font-weight: normal;"
         >
@@ -172,7 +175,8 @@ exports[`DailyDocketGuestLinkSection renders correctly for non hearing admins an
         </span>
       </h3>
       <h3>
-        PIN:
+        PIN
+        :
         <span
           style="font-weight: normal;"
         >

@@ -13,19 +13,19 @@ describe('DailyDocketGuestLinkSection', () => {
   };
 
   it('renders correctly for hearing admins and hearing management users', () => {
-    const { container } = render(<DailyDocketGuestLinkSection linkInfo={linkInfo} hasAccess requestType="V" />);
+    const { container } = render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
 
     expect(container).toMatchSnapshot();
   });
 
   it('renders correctly for non hearing admins and hearing management users', () => {
-    const { container } = render(<DailyDocketGuestLinkSection linkInfo={linkInfo} hasAccess requestType="V" />);
+    const { container } = render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
 
     expect(container).toMatchSnapshot();
   });
 
   it('passes a11y testing', async () => {
-    const { container } = render(<DailyDocketGuestLinkSection linkInfo={linkInfo} hasAccess requestType="V" />);
+    const { container } = render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
 
     const results = await axe(container);
 
@@ -33,29 +33,14 @@ describe('DailyDocketGuestLinkSection', () => {
   });
 
   it('renders conference room correctly', () => {
-    render(<DailyDocketGuestLinkSection linkInfo={linkInfo} hasAccess requestType="V" />);
+    render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
 
     expect(screen.getByRole('heading', { name: 'Conference Room: BVA0000001@caseflow.va.gov' })).toBeTruthy();
   });
 
   it('renders guest pin correctly', () => {
-    render(<DailyDocketGuestLinkSection linkInfo={linkInfo} hasAccess requestType="V" />);
+    render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
 
     expect(screen.getByRole('heading', { name: 'PIN: 1234567890#' })).toBeTruthy();
-  });
-
-  describe('Guest link', () => {
-    it('renders guest link when user is in hearings management or hearing admin', () => {
-      render(<DailyDocketGuestLinkSection linkInfo={linkInfo} hasAccess requestType="V" />);
-
-      expect(screen.getByRole('button', { name: 'Copy Guest Link' })).toBeTruthy();
-    });
-
-    it('copies guest link when user clicks on button', async () => {
-      // eslint-disable-next-line max-len
-      const { container } = render(<DailyDocketGuestLinkSection linkInfo={linkInfo} hasAccess={false} requestType="V" />);
-
-      expect(container.querySelector('button')).toBe(null);
-    });
   });
 });
