@@ -26,7 +26,6 @@ def get_ecr_password() -> str:
     decoded_login_password = b64decode(encoded_login_password).decode('UTF-8')
     return decoded_login_password.split(':')[1]
 
-
 if __name__ == '__main__':
 
     get_public_key = requests.get('https://api.github.com/repos/department-of-veterans-affairs/caseflow/actions/secrets/public-key',
