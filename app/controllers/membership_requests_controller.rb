@@ -37,7 +37,6 @@ class MembershipRequestsController < ApplicationController
     params.permit(:requestReason, :organizationGroup, membershipRequests: {})
   end
 
-  # TODO: should this be somewhere else?
   def build_org_list(org_options, keys_to_org_name_hash)
     # Get all of the keys from the options that have values that are truthy
     key_names = org_options.select { |_, value| value }.keys
@@ -63,8 +62,6 @@ class MembershipRequestsController < ApplicationController
   end
 
   # This is a mapping of option values to the organization names
-  # Could also just pass down the Names from the client to avoid this.
-  # TODO: Probably should just send names everywhere
   def vha_org_mapping
     {
       "vhaAccess" => "Veterans Health Administration",

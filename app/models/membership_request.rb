@@ -21,8 +21,6 @@ class MembershipRequest < CaseflowRecord
     def create_many_from_orgs(organizations, params, user)
       created_requests = organizations.map do |org|
         # Skip creating this request if the user is already a member of the Organization
-        # TODO: maybe create a sentry warning if this happens?
-        # I don't think this should be possible without programmer error.
         next if user.member_of_organization?(org)
 
         create!(
