@@ -17,6 +17,16 @@ const FormWrapper = ({ children, defaultValues }) => {
   return <FormProvider {...methods}>{children}</FormProvider>;
 };
 
+beforeEach(() => {
+  jest.clearAllMocks();
+  jest.useFakeTimers('modern');
+  jest.setSystemTime(new Date('9999-12-31'));
+});
+
+afterEach(() => {
+  jest.useRealTimers();
+});
+
 describe('ClaimantForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -41,6 +51,7 @@ describe('ClaimantForm', () => {
   it('passes a11y testing', async () => {
     const { container } = setup();
 
+    jest.useRealTimers();
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();

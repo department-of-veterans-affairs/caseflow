@@ -82,7 +82,8 @@ module Seeds
                         cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
                         veteran: create_veteran)
         dashboard = CavcDashboard.create!(cavc_remand: remand)
-        CavcDashboardIssue.create(cavc_dashboard: dashboard)
+        issue = CavcDashboardIssue.create(cavc_dashboard: dashboard)
+        CavcDashboardDisposition.create(cavc_dashboard_issue: issue, cavc_dashboard: dashboard)
 
         @cavc_docket_number_last_four += 1
       end
