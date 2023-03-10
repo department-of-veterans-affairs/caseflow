@@ -258,7 +258,6 @@ class HearingDay < CaseflowRecord
     possibles_hash.each_key do |key|
       changed_hash[key] = possibles_hash[key] if saved_changes.key?(key)
     end
-
     changed_hash
   end
 

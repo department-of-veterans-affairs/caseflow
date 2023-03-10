@@ -132,37 +132,75 @@ describe ConferenceLink do
     end
   end
 
-  describe "#guest_pin_long" do
+  describe "#guest_pin" do
     before do
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
     end
 
-    let(:nil_conference_link) do
+    let(:hearing_day) { create(:hearing_day) }
+
+    let!(:user) { RequestStore.store[:current_user] = User.system_user }
+
+    let(:conference_link) do
       create(:conference_link,
-            hearing_day_id: 1,
+            hearing_day_id: hearing_day.id,
             guest_hearing_link: nil,
+            guest_pin_long: "7470125694")
+    end
+
+    context "guest_pin_long property already has a pin as a value" do
+      it "Returns the guest_pin for the conference_link" do
+        conference_link.guest_pin
+        expect(conference_link.guest_pin_long).to eq("7470125694")
+      end
+    end
+    context "guest_pin_long property has a value of nil." do
+      it "checks if property is nil. If so, a new pin is created. " do
+        conference_link.update!(guest_pin_long: nil)
+        expect(conference_link.guest_pin).not_to eq(nil)
+      end
+    end
+  end
+
+  describe "#guest_link" do
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    end
+
+    let(:hearing_day) { create(:hearing_day) }
+
+    let!(:user) { RequestStore.store[:current_user] = User.system_user }
+
+    let(:conference_link) do
+      create(:conference_link,
+            hearing_day_id: hearing_day.id,
+            guest_hearing_link: existing_url,
             guest_pin_long: nil)
     end
 
-    let(:link_service) { create(:link_service) }
+    let(:existing_url) { "https://example.va.gov/sample/?" \
+      "conference=BVA0000001@example.va.gov&" \
+      "pin=7470125694&callType=video" }
 
-    let(:conference_link_hash) do
-      {
-        guest_pin_long: nil
-      }
-    end
-    context "if guest_pin_long property already has a pin as a value" do
-      it "returns the guest_pin for the conference_link" do
-        allow(nil_conference_link).to receive(:guest_pin).and_return("7470125694")
-        expect(nil_conference_link.guest_pin_long).to eq("7470125694")
+    let(:created_url) { "https://example.va.gov/bva-app/?join=1&media=&escalate=1&" \
+      "conference=BVA0000001@example.va.gov&" \
+      "pin=7470125694&callType=video" }
+
+    context "guest_hearing_link property already has a link/string as a value" do
+      it "Returns the guest_pin for the conference_link" do
+        conference_link.guest_link
+        expect(conference_link.guest_hearing_link).to eq(existing_url)
       end
     end
-    context "if guest_pin_long property has a value of nil" do
-      it "checks if property is nil" do
-        subject { nil_conference_link.update!(conference_link_hash) }
-        allow(subject).to receive(:guest_pin).and_return("123456789")
+    context "guest_hearing_link property already has a nil value" do
+      it "creates and returns the updated guest_hearing_link property" do
+        conference_link.update!(guest_hearing_link: nil)
+        conference_link.guest_link
+        expect(conference_link.guest_hearing_link).to eq(created_url)
       end
     end
   end
