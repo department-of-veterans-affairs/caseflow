@@ -80,8 +80,6 @@ export const EditCavcRemandView = () => {
     //   },
     // };
 
-    dispatch(stepForward());
-
     dispatch(
       updateData({
         ...formData,
@@ -91,6 +89,8 @@ export const EditCavcRemandView = () => {
         claimantType: 'DependentClaimant'
       })
     );
+
+    dispatch(stepForward());
 
     history.push(`/queue/appeals/${appealId}/edit_cavc_remand/tasks`);
   };
