@@ -25,7 +25,7 @@ FactoryBot.define do
       after(:create) do |supplemental_claim, evaluator|
         create(:request_issue,
                benefit_type: "vha",
-               nonrating_issue_category: "Beneficiary Travel | Special Mode",
+               nonrating_issue_category: "Beneficiary Travel",
                nonrating_issue_description: "VHA issue description ",
                decision_review: supplemental_claim,
                decision_date: 1.month.ago)
