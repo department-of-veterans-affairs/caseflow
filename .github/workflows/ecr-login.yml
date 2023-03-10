@@ -14,8 +14,8 @@ jobs:
         uses: actions/checkout@v3
       - name: retrieve ecr password and store as secret
         run: |
-          pip3 install -r .github/requirements.txt
-          python3 .github/ecr_password_updater.py
+          pip3 install -r .github/workflows/requirements.txt
+          python3 .github/workflows/ecr_password_updater.py
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
