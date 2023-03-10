@@ -2,8 +2,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import CopyTextButton from '../../../components/CopyTextButton';
+import { GUEST_LINK_LABELS } from '../../constants';
 
-export const DailyDocketGuestLinkSection = ({ linkInfo, hasAccess }) => {
+export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
 
   // Conference Link Information
   const { alias, guestLink, guestPin } = linkInfo || {};
@@ -20,14 +21,13 @@ export const DailyDocketGuestLinkSection = ({ linkInfo, hasAccess }) => {
   const roomInfoContainerStyle = {
     display: 'flex',
     flexWrap: 'wrap',
-    fontSize: '12px',
     justifyContent: 'space-around'
   };
 
   // Props needed for the copy text button component
   const CopyTextButtonProps = {
-    text: 'Copy Guest Link',
-    label: 'Copy Guest Link',
+    text: GUEST_LINK_LABELS.COPY_GUEST_LINK,
+    label: GUEST_LINK_LABELS.COPY_GUEST_LINK,
     textToCopy: guestLink
   };
 
@@ -38,20 +38,20 @@ export const DailyDocketGuestLinkSection = ({ linkInfo, hasAccess }) => {
    * @param {roleAccess} - Boolean for if the current user has access to the guest link
    * @returns The room information
   */
-  const renderRoomInfo = (conferenceRoom, pin, roleAccess) => {
+  const renderRoomInfo = (conferenceRoom, pin) => {
     return (
       <div style={roomInfoContainerStyle}>
-        <h3>Conference Room:<span style={{ fontWeight: 'normal' }}>{conferenceRoom}</span></h3>
-        <h3>PIN:<span style={{ fontWeight: 'normal' }}>{pin}#</span></h3>
-        {roleAccess && <h3><CopyTextButton {...CopyTextButtonProps} /></h3>}
+        <h3>{GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:<span style={{ fontWeight: 'normal' }}>{conferenceRoom}</span></h3>
+        <h3>{GUEST_LINK_LABELS.GUEST_PIN}:<span style={{ fontWeight: 'normal' }}>{pin}#</span></h3>
+        <h3><CopyTextButton {...CopyTextButtonProps} /></h3>
       </div>
     );
   };
 
   return (
     <div style={containerStyle}>
-      <h3>Guest links for non-virtual hearings</h3>
-      {renderRoomInfo(alias, guestPin, hasAccess)}
+      <h3>{GUEST_LINK_LABELS.GUEST_LINK_SECTION_LABEL}</h3>
+      {renderRoomInfo(alias, guestPin)}
     </div>
   );
 };
@@ -62,5 +62,4 @@ DailyDocketGuestLinkSection.propTypes = {
     guestPin: PropTypes.string,
     alias: PropTypes.string,
   }),
-  hasAccess: PropTypes.bool.isRequired
 };
