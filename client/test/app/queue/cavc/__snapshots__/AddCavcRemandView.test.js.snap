@@ -3805,6 +3805,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     strongLabel={true}
                     type="date"
                     useAriaLabel={false}
+                    validationError={null}
                     value={null}
                   >
                     <div
