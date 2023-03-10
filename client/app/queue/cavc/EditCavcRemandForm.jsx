@@ -398,7 +398,11 @@ export const EditCavcRemandForm = ({
         />
       </AppSegment>
       <div className="controls cf-app-segment">
-        <Button type="button" name="continue" classNames={['cf-right-side']}>
+        <Button
+          type="submit"
+          name="continue"
+          classNames={['cf-right-side']}
+        >
           Continue
         </Button>
         {onCancel && (

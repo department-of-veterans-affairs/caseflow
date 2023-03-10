@@ -1,11 +1,11 @@
-import React, { useMemo }from 'react';
+import React, { useMemo } from 'react';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import ProgressBar from '../../components/ProgressBar';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router';
-import { EditCavcRemandView } from './editCavcRemandView';
+import { EditCavcRemandView } from './EditCavcRemandView';
 import { EditCavcRemandTasksView } from './editCavcRemandTasks/editCavcRemandTasksView';
 import { EditCavcRemandReview } from './editCavcRemandReview/editCavcRemandReview';
 
@@ -19,7 +19,7 @@ const sections = [
 export const EditCavcRemandContainer = () => {
   const { path, url } = useRouteMatch();
 
-  const step = useSelector((state) => state.substituteAppellant.step);
+  const step = useSelector((state) => state.cavcRemand.step);
 
   // Keep our progress bar updated based on current step
   const pbSections = useMemo(
@@ -36,7 +36,7 @@ export const EditCavcRemandContainer = () => {
       <ProgressBar sections={pbSections} />
       <Switch>
         <Redirect exact from={[url, `${url}/`]} to={`${url}/basics`} />
-        <Route path={`${path}`} title = "Edit Cavc Remand | Caseflow">
+        <Route path={`${path}/basics`} title = "Edit Cavc Remand | Caseflow">
           <EditCavcRemandView />
         </Route>
 

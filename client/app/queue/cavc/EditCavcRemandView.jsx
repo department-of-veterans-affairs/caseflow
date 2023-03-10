@@ -6,14 +6,14 @@ import { useDispatch, useSelector } from 'react-redux';
 // import COPY from 'app/../COPY';
 import { appealWithDetailSelector } from 'app/queue/selectors';
 import { getSupportedDecisionTypes, getSupportedRemandTypes } from './utils';
-import { EditCavcRemandForm } from './editCavcRemandForm';
+import { EditCavcRemandForm } from './EditCavcRemandForm';
 import { format } from 'date-fns';
 // import { requestPatch, showErrorMessage } from 'app/queue/uiReducer/uiActions';
 // import { editAppeal } from '../QueueActions';
 
 import {
   updateData,
-  // stepForward,
+  stepForward,
   // fetchRelationships,
   // cancel,
   // refreshAppellantPoa,
@@ -79,14 +79,18 @@ export const EditCavcRemandView = () => {
     //   },
     // };
 
-    // dispatch(
-    //   updateData({
-    //     ...formData,
-    //     // substitution_date: format(formData.substitutionDate, 'yyyy-MM-dd'),
-    //     // Currently hardcoding claimantType until future work where this is selectable
-    //     claimantType: 'DependentClaimant'
-    //   })
-    // );
+    dispatch(stepForward());
+
+    dispatch(
+      updateData({
+        ...formData,
+        substitution_date: format(formData.substitutionDate, 'yyyy-MM-dd'),
+        decision_date: format(formData.decision_date, 'yyyy-MM-dd'),
+        // Currently hardcoding claimantType until future work where this is selectable
+        claimantType: 'DependentClaimant'
+      })
+    );
+
     history.push(`/queue/appeals/${appealId}/edit_cavc_remand/tasks`);
   };
 
