@@ -50,8 +50,29 @@ class AppealsController < ApplicationController
 
   def fetch_notification_list
     appeals_id = params[:appeals_id]
-    results = find_notifications_by_appeals_id(appeals_id)
-    render json: results
+    respond_to do |format|
+      format.json do
+        results = find_notifications_by_appeals_id(appeals_id)
+        render json: results
+      end
+      format.pdf do
+        request.headers["HTTP_PDF"]
+        appeal = get_appeal_object(appeals_id)
+        date = Time.zone.now.strftime("%Y-%m-%d %H.%M")
+        if !appeal.nil?
+          pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
+          send_data pdf, filename: "Notification Report " + appeals_id + " " + date + ".pdf", type: "application/pdf", disposition: :attachment
+        else
+          raise ActionController::RoutingError.new('Appeal Not Found')
+        end
+      end
+      format.csv do
+        raise ActionController::ParameterMissing.new('Bad Format')
+      end
+      format.html do
+        raise ActionController::ParameterMissing.new('Bad Format')
+      end
+    end
   end
 
   def document_count
@@ -322,6 +343,19 @@ class AppealsController < ApplicationController
       []
     else
       WorkQueue::NotificationSerializer.new(@allowed_notifications).serializable_hash[:data]
+    end
+  end
+
+  # Notification report pdf template only accepts the Appeal or Legacy Appeal object
+  # Finds appeal object using appeals id passed through url params
+  def get_appeal_object(appeals_id)
+    type = Notification.find_by(appeals_id: appeals_id)&.appeals_type
+    if type == "LegacyAppeal"
+      LegacyAppeal.find_by(vacols_id: appeals_id)
+    elsif type == "Appeal"
+      Appeal.find_by(uuid: appeals_id)
+    elsif !type.nil?
+      nil
     end
   end
 end

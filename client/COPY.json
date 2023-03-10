@@ -198,6 +198,7 @@
   "CC_BADGE_TOOLTIP": "This is a Contested Claim and needs to be\nprocessed by the Specialty Case team. Please\n include all parties and POA in correspondence.",
   "JMR_SELECTION_ISSUE_INFO_BANNER": "For a JMR you must select all issues to proceed",
   "JMPR_SELECTION_ISSUE_INFO_BANNER": "For a JMPR you must select at least one issue to proceed",
+  "JMR_JMPR_SELECTION_ISSUE_INFO_BANNER": "For a JMR/JMPR you must select at least one issue to proceed",
   "MDR_SELECTION_ISSUE_INFO_BANNER": "For a MDR you must select at least one issue to proceed",
   "MDR_SELECTION_ALERT_BANNER": "Choosing MDR will set a 90-day hold on this case starting from the Court's decision date listed above. The hold is to wait for the Court's judgement and mandate dates. This remand case will be accessible in your organization's Assigned tab and will return to the team's Unassigned tab when the 90 days are over or the hold is manually ended, at which point the judgement and mandate dates can be entered.",
   "CAVC_REMAND_NO_MANDATE_TEXT": "This task will be put on hold for 90 days to wait for the Court's judgement and mandate dates. This case will be accessible in the Assigned tab and will return to the team's Unassigned tab when the 90 days has passed.",
@@ -214,6 +215,7 @@
   "CAVC_INSTRUCTIONS_LABEL": "Provide context and instructions for this action",
   "CAVC_INSTRUCTIONS_ERROR": "Please provide context and instructions for the remand",
   "CAVC_REMAND_CREATED_TITLE": "You have successfully created a CAVC remand case",
+  "CAVC_DASHBOARD_ENTRY_CREATED_TITLE": "You have successfully created an entry in the CAVC dashboard",
   "CAVC_REMAND_CREATED_ON_HOLD_TITLE": "You have successfully created a CAVC Remand case and have put it on hold for 90-days",
   "CAVC_REMAND_CREATED_FOR_DISTRIBUTION_TITLE": "You have successfully created a CAVC Remand case and sent it to case distribution",
   "CAVC_REMAND_CREATED_DETAIL": "This has generated a 90-day letter task in your team's queue",
@@ -238,6 +240,23 @@
   "CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_DETAIL": "You can find this case in the on hold tab of you team's queue",
   "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_TITLE": "You have denied extension",
   "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_DETAIL": "This task can be completed to distribute to a judge for further processing",
+
+  "CAVC_DASHBOARD_LOADING_SCREEN_TEXT": "Loading CAVC Dashboard...",
+  "CAVC_DASHBOARD_LOADING_FAILURE_TITLE": "Unable to load CAVC Dashboard",
+  "CAVC_DASHBOARD_LOADING_FAILURE_TEXT": "Caseflow was unable to load this CAVC Dashboard. Refresh the page to try again.",
+  "CAVC_DASHBOARD_BUTTON_TEXT": "CAVC Dashboard",
+  "ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT": "Add issue",
+  "REMOVE_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT": "Remove issue",
+  "REMOVE_CAVC_DASHBOARD_ISSUE_MODAL_TITLE": "Remove issue",
+  "ADD_CAVC_DASHBOARD_ISSUE_TEXT": "Add CAVC Issue",
+  "CAVC_DASHBOARD_BENEFIT_TYPE_TEXT": "Benefit Type",
+  "CAVC_DASHBOARD_ISSUE_CATEGORY_TEXT": "Issue Category",
+  "CAVC_DASHBOARD_DISPOSITION_BY_COURT_TEXT": "Disposition by Court",
+  "CAVC_DASHBOARD_REMOVE_ISSUE_UPPER_TEXT": "The issue you selected will be removed from the list of issues on the dashboard.",
+  "CAVC_DASHBOARD_REMOVE_ISSUE_LOWER_TEXT": "Are you sure that you want to remove this issue?",
+  "CAVC_DASHBOARD_EDIT_DETAILS_MODAL_TITLE": "Edit CAVC Details",
+  "CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_HEADER": "Your changes are not saved",
+  "CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_BODY": "Please save the changes",
 
   "ADD_CAVC_DATES_TITLE": "Add Court dates",
   "CORRECT_CAVC_REMAND_LINK": "Edit Remand",
@@ -503,6 +522,8 @@
   "MODAL_RETURN_BUTTON": "Return",
   "MODAL_MARK_TASK_IN_PROGRESS_BUTTON": "Mark in progress",
   "MODAL_SEND_BUTTON": "Send",
+  "MODAL_REMOVE_BUTTON": "Remove",
+  "MODAL_SAVE_BUTTON": "Save",
 
   "BULK_ASSIGN_BUTTON_TEXT": "Assign Tasks",
   "BULK_ASSIGN_MODAL_TITLE": "Bulk Assign Tasks",
@@ -529,6 +550,7 @@
   "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_ERROR_TITLE": "Could not cancel tasks and reassign to %s",
 
   "MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE": "Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930. Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding of clear and unmistakable error, which would result in a brand new docket number being assigned. An updated docket number format will need to be in place for legacy appeals by 2030 in order to ensure that docket numbers are sorted correctly.",
+  "BOARD_DOCKET_NUMBER_ERROR": "Please enter a valid docket number provided by the Board (123456-7).",
 
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
   "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to %s",
@@ -1378,5 +1400,7 @@
   "NOTIFICATION_TYPE_COLUMN_NAME": "Notification Type",
   "NOTIFICATION_RECIPIENT_INFORMATION": "Recipient Information",
   "NOTIFICATION_STATUS": "Status",
-  "NOTIFICATION_CONTENT_MESSAGE": "The following message was sent to the Appellant: "
+  "NOTIFICATION_CONTENT_MESSAGE": "The following message was sent to the Appellant: ",
+  "PDF_GENERATION_ERROR_TITLE": "Unable to generate PDF",
+  "PDF_GENERATION_ERROR_MESSAGE": "There was an error generating the PDF for download. Please try again later."
 }
