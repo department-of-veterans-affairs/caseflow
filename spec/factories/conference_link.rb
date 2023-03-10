@@ -2,7 +2,6 @@
 
 FactoryBot.define do
   factory :conference_link do
-    hearing_day_id { 6 }
     alias_name { nil }
     conference_id { nil }
     conference_deleted { false }
