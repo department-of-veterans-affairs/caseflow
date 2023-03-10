@@ -3796,7 +3796,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     }
                     errorMessage={null}
                     label="What is the Court's decision date?"
-                    max="9999-12-31"
+                    max="2023-03-10"
                     name="decision-date"
                     onChange={[Function]}
                     optional={false}
@@ -3805,6 +3805,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     strongLabel={true}
                     type="date"
                     useAriaLabel={false}
+                    validationError={null}
                     value={null}
                   >
                     <div
@@ -3833,7 +3834,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           ]
                         }
                         id="decision-date"
-                        max="9999-12-31"
+                        max="2023-03-10"
                         name="decision-date"
                         onBlur={[Function]}
                         onChange={[Function]}

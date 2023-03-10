@@ -249,7 +249,7 @@ Object {
                 <input
                   class="cf-form-textinput"
                   id="dateOfBirth"
-                  max="9999-12-31"
+                  max="2023-03-10"
                   name="dateOfBirth"
                   placeholder="mm/dd/yyyy"
                   type="date"
@@ -829,7 +829,7 @@ Object {
               <input
                 class="cf-form-textinput"
                 id="dateOfBirth"
-                max="9999-12-31"
+                max="2023-03-10"
                 name="dateOfBirth"
                 placeholder="mm/dd/yyyy"
                 type="date"

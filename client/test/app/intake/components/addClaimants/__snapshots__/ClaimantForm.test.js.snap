@@ -292,7 +292,7 @@ exports[`ClaimantForm default values prepopulates with default values 1`] = `
         <input
           class="cf-form-textinput"
           id="dateOfBirth"
-          max="9999-12-31"
+          max="2023-03-10"
           name="dateOfBirth"
           placeholder="mm/dd/yyyy"
           type="date"
@@ -1008,7 +1008,7 @@ exports[`HlrScClaimantForm renders child relationship state correctly 1`] = `
         <input
           class="cf-form-textinput"
           id="dateOfBirth"
-          max="9999-12-31"
+          max="2023-03-10"
           name="dateOfBirth"
           placeholder="mm/dd/yyyy"
           type="date"
@@ -2403,7 +2403,7 @@ exports[`HlrScClaimantForm renders spouse relationship state correctly 1`] = `
         <input
           class="cf-form-textinput"
           id="dateOfBirth"
-          max="9999-12-31"
+          max="2023-03-10"
           name="dateOfBirth"
           placeholder="mm/dd/yyyy"
           type="date"

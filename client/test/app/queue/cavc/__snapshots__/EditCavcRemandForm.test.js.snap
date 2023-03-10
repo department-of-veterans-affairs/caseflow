@@ -260,7 +260,7 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
         <input
           class="cf-form-textinput"
           id="decisionDate"
-          max="9999-12-31"
+          max="2023-03-10"
           name="decisionDate"
           placeholder="mm/dd/yyyy"
           type="date"
@@ -725,7 +725,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
         <input
           class="cf-form-textinput"
           id="decisionDate"
-          max="9999-12-31"
+          max="2023-03-10"
           name="decisionDate"
           placeholder="mm/dd/yyyy"
           type="date"
@@ -1204,7 +1204,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
         <input
           class="cf-form-textinput"
           id="decisionDate"
-          max="9999-12-31"
+          max="2023-03-10"
           name="decisionDate"
           placeholder="mm/dd/yyyy"
           type="date"
@@ -1683,7 +1683,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
         <input
           class="cf-form-textinput"
           id="decisionDate"
-          max="9999-12-31"
+          max="2023-03-10"
           name="decisionDate"
           placeholder="mm/dd/yyyy"
           type="date"
@@ -2161,7 +2161,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
         <input
           class="cf-form-textinput"
           id="decisionDate"
-          max="9999-12-31"
+          max="2023-03-10"
           name="decisionDate"
           placeholder="mm/dd/yyyy"
           type="date"
@@ -2610,7 +2610,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
         <input
           class="cf-form-textinput"
           id="decisionDate"
-          max="9999-12-31"
+          max="2023-03-10"
           name="decisionDate"
           placeholder="mm/dd/yyyy"
           type="date"
@@ -3007,7 +3007,7 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
         <input
           class="cf-form-textinput"
           id="decisionDate"
-          max="9999-12-31"
+          max="2023-03-10"
           name="decisionDate"
           placeholder="mm/dd/yyyy"
           type="date"

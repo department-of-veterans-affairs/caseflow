@@ -406,7 +406,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                               }
                               errorMessage={null}
                               label="What is the Court's judgement date?"
-                              max="9999-12-31"
+                              max="2023-03-10"
                               name="judgement-date"
                               onChange={[Function]}
                               optional={false}
@@ -415,6 +415,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                               strongLabel={true}
                               type="date"
                               useAriaLabel={false}
+                              validationError={null}
                               value={null}
                             >
                               <div
@@ -443,7 +444,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                                     ]
                                   }
                                   id="judgement-date"
-                                  max="9999-12-31"
+                                  max="2023-03-10"
                                   name="judgement-date"
                                   onBlur={[Function]}
                                   onChange={[Function]}
@@ -471,7 +472,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                               }
                               errorMessage={null}
                               label="What is the Court's mandate date?"
-                              max="9999-12-31"
+                              max="2023-03-10"
                               name="mandate-date"
                               onChange={[Function]}
                               optional={false}
@@ -480,6 +481,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                               strongLabel={true}
                               type="date"
                               useAriaLabel={false}
+                              validationError={null}
                               value={null}
                             >
                               <div
@@ -508,7 +510,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                                     ]
                                   }
                                   id="mandate-date"
-                                  max="9999-12-31"
+                                  max="2023-03-10"
                                   name="mandate-date"
                                   onBlur={[Function]}
                                   onChange={[Function]}
@@ -1045,7 +1047,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                               }
                               errorMessage={null}
                               label="What is the Court's judgement date?"
-                              max="9999-12-31"
+                              max="2023-03-10"
                               name="judgement-date"
                               onChange={[Function]}
                               optional={false}
@@ -1054,6 +1056,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                               strongLabel={true}
                               type="date"
                               useAriaLabel={false}
+                              validationError="Please select a valid date"
                               value="03/27/2020"
                             >
                               <div
@@ -1082,7 +1085,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                                     ]
                                   }
                                   id="judgement-date"
-                                  max="9999-12-31"
+                                  max="2023-03-10"
                                   name="judgement-date"
                                   onBlur={[Function]}
                                   onChange={[Function]}
@@ -1090,6 +1093,13 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                                   type="date"
                                   value="03/27/2020"
                                 />
+                                <div
+                                  className="cf-validation"
+                                >
+                                  <span>
+                                    Please select a valid date
+                                  </span>
+                                </div>
                               </div>
                             </TextField>
                           </DateSelector>
@@ -1110,7 +1120,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                               }
                               errorMessage={null}
                               label="What is the Court's mandate date?"
-                              max="9999-12-31"
+                              max="2023-03-10"
                               name="mandate-date"
                               onChange={[Function]}
                               optional={false}
@@ -1119,6 +1129,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                               strongLabel={true}
                               type="date"
                               useAriaLabel={false}
+                              validationError="Please select a valid date"
                               value="03/31/2019"
                             >
                               <div
@@ -1147,7 +1158,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                                     ]
                                   }
                                   id="mandate-date"
-                                  max="9999-12-31"
+                                  max="2023-03-10"
                                   name="mandate-date"
                                   onBlur={[Function]}
                                   onChange={[Function]}
@@ -1155,6 +1166,13 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                                   type="date"
                                   value="03/31/2019"
                                 />
+                                <div
+                                  className="cf-validation"
+                                >
+                                  <span>
+                                    Please select a valid date
+                                  </span>
+                                </div>
                               </div>
                             </TextField>
                           </DateSelector>

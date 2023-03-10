@@ -31,7 +31,7 @@ exports[`SubstituteAppellantBasicsForm with blank form renders default state cor
         <input
           class="cf-form-textinput"
           id="substitutionDate"
-          max="9999-12-31"
+          max="2023-03-10"
           name="substitutionDate"
           placeholder="mm/dd/yyyy"
           type="date"
@@ -147,7 +147,7 @@ exports[`SubstituteAppellantBasicsForm with existing form data renders default s
         <input
           class="cf-form-textinput"
           id="substitutionDate"
-          max="9999-12-31"
+          max="2023-03-10"
           name="substitutionDate"
           placeholder="mm/dd/yyyy"
           type="date"

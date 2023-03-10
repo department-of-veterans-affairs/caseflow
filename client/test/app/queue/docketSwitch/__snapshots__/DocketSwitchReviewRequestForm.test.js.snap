@@ -32,7 +32,7 @@ exports[`DocketSwitchReviewRequestForm default values full grant populates with 
         <input
           class="cf-form-textinput"
           id="receiptDate"
-          max="9999-12-31"
+          max="2023-03-10"
           name="receiptDate"
           placeholder="mm/dd/yyyy"
           type="date"
@@ -223,7 +223,7 @@ exports[`DocketSwitchReviewRequestForm default values partial grant populates wi
         <input
           class="cf-form-textinput"
           id="receiptDate"
-          max="9999-12-31"
+          max="2023-03-10"
           name="receiptDate"
           placeholder="mm/dd/yyyy"
           type="date"
@@ -455,7 +455,7 @@ exports[`DocketSwitchReviewRequestForm renders correctly 1`] = `
         <input
           class="cf-form-textinput"
           id="receiptDate"
-          max="9999-12-31"
+          max="2023-03-10"
           name="receiptDate"
           placeholder="mm/dd/yyyy"
           type="date"
