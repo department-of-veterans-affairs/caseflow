@@ -51,7 +51,8 @@ export const EditCavcRemandView = () => {
       remandAppealId: cavcRemand.remand_appeal_uuid,
       substitutionDate: cavcRemand.cavc_remands_appellant_substitution?.substitution_date,
       participantId: cavcRemand.cavc_remands_appellant_substitution?.participant_id,
-      isAppellantSubstituted: cavcRemand.cavc_remands_appellant_substitution?.is_appellant_substituted ? 'true' : 'false'
+      isAppellantSubstituted:
+        cavcRemand.cavc_remands_appellant_substitution?.is_appellant_substituted ? 'true' : 'false'
     };
   }, [cavcRemand]);
 
