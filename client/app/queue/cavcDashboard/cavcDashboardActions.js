@@ -115,7 +115,7 @@ export const setDispositionValue = (dashboardIndex, dispositionIssueId, disposit
     type: ACTIONS.SET_DISPOSITION_VALUE,
     payload: { dashboardIndex, dispositionIssueId, dispositionOption },
     meta: meta(
-      `Dashboard Index ${dashboardIndex}, Disposition Id ${dispositionId}, Disposition Option ${dispositionOption}`
+      `Dashboard Index ${dashboardIndex}, Disposition Id ${dispositionIssueId}, Disposition Option ${dispositionOption}`
     )
   });
 };
