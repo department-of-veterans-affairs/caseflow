@@ -246,7 +246,7 @@ class TasksController < ApplicationController
         end_date: Time.zone.now + days_on_hold.days
       )
       TimedHoldTask.create_from_parent(psi, days_on_hold: days_on_hold, instructions: instructions)
-    when "proceed_final_notification_letter"
+    when "proceed_final_notification_letter_initial"
       send_final_notification_letter
     end
   end
@@ -258,7 +258,7 @@ class TasksController < ApplicationController
       task.instructions[0].concat("\nHold time: #{task.days_on_hold}/#{task.max_hold_day_period} days")
       task.save!
     when "completed"
-      if params["select_opc"] == "proceed_final_notification_letter"
+      if params["select_opc"] == "proceed_final_notification_letter_post_holding"
         send_final_notification_letter
       elsif params["select_opc"] == "resend_initial_notification_letter_post_holding"
         send_initial_notification_letter
