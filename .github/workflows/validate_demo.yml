@@ -1,4 +1,4 @@
-name: Reusable workflow example
+name: Validate Demo
 
 on:
   workflow_dispatch:
