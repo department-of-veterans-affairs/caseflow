@@ -62,7 +62,7 @@ export class PdfFile extends React.PureComponent {
       withCredentials: true
     });
 
-    return this.loadingTask.
+    return this.loadingTask.promise.
       then((pdfDocument) => {
         if (this.loadingTask.destroyed) {
           pdfDocument.destroy();
