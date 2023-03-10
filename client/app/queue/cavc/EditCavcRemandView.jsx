@@ -6,7 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 // import COPY from 'app/../COPY';
 import { appealWithDetailSelector } from 'app/queue/selectors';
 import { getSupportedDecisionTypes, getSupportedRemandTypes } from './utils';
-import { EditCavcRemandForm } from './EditCavcRemandForm';
+import { EditCavcRemandForm } from './editCavcRemandForm';
+import { format } from 'date-fns';
 // import { requestPatch, showErrorMessage } from 'app/queue/uiReducer/uiActions';
 // import { editAppeal } from '../QueueActions';
 
@@ -57,35 +58,36 @@ export const EditCavcRemandView = () => {
   const handleCancel = () => history.push(`/queue/appeals/${appealId}`);
 
   const handleSubmit = async (formData) => {
-    const payload = {
-      data: {
-        judgement_date: formData.judgementDate ? formData.judgementDate : '',
-        mandate_date: formData.mandateDate ? formData.mandateDate : '',
-        source_appeal_id: cavcRemand.source_appeal_uuid,
-        remand_appeal_id: appealId,
-        cavc_docket_number: formData.docketNumber,
-        cavc_judge_full_name: formData.judge,
-        cavc_decision_type: formData.decisionType,
-        decision_date: formData.decisionDate,
-        remand_subtype: formData.remandType,
-        represented_by_attorney: formData.attorney === 'yes',
-        decision_issue_ids: formData.issueIds,
-        federal_circuit: formData.federalCircuit,
-        instructions: formData.instructions,
-        substitution_date: formData.substitutionDate,
-        participant_id: formData.participantId,
-        is_appellant_substituted: formData.isAppellantSubstituted
-      },
-    };
+    // const payload = {
+    //   formData: {
+    //     judgement_date: formData.judgementDate ? formData.judgementDate : '',
+    //     mandate_date: formData.mandateDate ? formData.mandateDate : '',
+    //     source_appeal_id: cavcRemand.source_appeal_uuid,
+    //     remand_appeal_id: appealId,
+    //     cavc_docket_number: formData.docketNumber,
+    //     cavc_judge_full_name: formData.judge,
+    //     cavc_decision_type: formData.decisionType,
+    //     decision_date: formData.decisionDate,
+    //     remand_subtype: formData.remandType,
+    //     represented_by_attorney: formData.attorney === 'yes',
+    //     decision_issue_ids: formData.issueIds,
+    //     federal_circuit: formData.federalCircuit,
+    //     instructions: formData.instructions,
+    //     substitution_date: formData.substitutionDate,
+    //     participant_id: formData.participantId,
+    //     is_appellant_substituted: formData.isAppellantSubstituted
+    //   },
+    // };
 
-    dispatch(
-      updateData({
-        formData: {
-          ...formData
-        },
-      })
-    );
-    history.push(`/queue/appeals/${appealId}/edit_cavc_remand/tasks`, { payload });
+    // dispatch(
+    //   updateData({
+    //     ...formData,
+    //     // substitution_date: format(formData.substitutionDate, 'yyyy-MM-dd'),
+    //     // Currently hardcoding claimantType until future work where this is selectable
+    //     claimantType: 'DependentClaimant'
+    //   })
+    // );
+    history.push(`/queue/appeals/${appealId}/edit_cavc_remand/tasks`);
   };
 
   /*

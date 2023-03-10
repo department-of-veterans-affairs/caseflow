@@ -38,7 +38,7 @@ const styles = {
   })
 };
 
-export const SubstituteAppellantReview = ({
+export const EditCavcRemandReview = ({
   tasksToCancel,
   taskstoReactivate,
   existingValues,
@@ -143,7 +143,7 @@ export const SubstituteAppellantReview = ({
     </>
   );
 };
-SubstituteAppellantReview.propTypes = {
+EditCavcRemandReview.propTypes = {
   tasksToMaintain: PropTypes.arrayOf(
     PropTypes.shape({
       taskId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),

@@ -17,7 +17,7 @@ import {
 import { prepOpenTaskDataForUi, prepTaskDataForUi } from './utils';
 import { isSubstitutionSameAppeal } from '../caseDetails/utils';
 
-export const editCavcRemandTasksView = () => {
+export const EditCavcRemandTasksView = () => {
   const { appealId } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();

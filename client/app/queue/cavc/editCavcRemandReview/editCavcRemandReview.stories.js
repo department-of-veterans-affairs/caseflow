@@ -1,7 +1,7 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 
-import { SubstituteAppellantReview } from './SubstituteAppellantReview';
+import { editCavcRemandReview } from './editCavcRemandReview';
 import { queueWrapper as Wrapper } from '../../../../test/data/stores/queueStore';
 import { sampleTasksForDismissedEvidenceSubmissionDocket } from 'test/data/queue/cavc/editremandtasks';
 import { prepTaskDataForUi } from 'app/queue/cavc/editCavcRemandTasks/utils';
@@ -13,8 +13,8 @@ const filteredEvidenceSubmissionTasks = prepTaskDataForUi({ taskData:
 );
 
 export default {
-  title: 'Queue/cavc/EditCavcRemandReview/Review',
-  component: SubstituteAppellantReview,
+  title: 'Queue/cavc/editCavcRemandReview/Review',
+  component: editCavcRemandReview,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -51,7 +51,7 @@ const storeArgs = {
 
 const Template = (args) => (
   <Wrapper {...storeArgs}>
-    <SubstituteAppellantReview {...args} />
+    <editCavcRemandReview {...args} />
   </Wrapper>
 );
 

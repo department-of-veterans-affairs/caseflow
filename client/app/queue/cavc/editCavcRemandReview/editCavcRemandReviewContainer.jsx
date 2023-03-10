@@ -4,16 +4,16 @@ import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { showSuccessMessage, showErrorMessage } from 'app/queue/uiReducer/uiActions';
-import { SubstituteAppellantReview } from './SubstituteAppellantReview';
+import { EditCavcRemandReview } from './editCavcRemandReview';
 import { calculateEvidenceSubmissionEndDate, openTasksToHide } from '../editCavcRemandTasks/utils';
 
-import { cancel, reset, stepBack, completeSubstituteAppellant } from '../editCavcRemandSubstitution.slice';
+import { cancel, reset, stepBack, completeEditCavcRemand } from '../editCavcRemand.slice';
 import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/selectors';
 import { fetchAppealDetails } from 'app/queue/QueueActions';
 
 import COPY from 'app/../COPY';
 
-export const SubstituteAppellantReviewContainer = () => {
+export const EditCavcRemandReviewContainer = () => {
   const { appealId } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -131,7 +131,7 @@ export const SubstituteAppellantReviewContainer = () => {
     };
 
     try {
-      const res = await dispatch(completeSubstituteAppellant(payload));
+      const res = await dispatch(completeEditCavcRemand(payload));
       const { targetAppeal } = res.payload;
 
       // Redirect to Case Details page... but maybe for new appeal...?
@@ -162,7 +162,7 @@ export const SubstituteAppellantReviewContainer = () => {
   };
 
   return (
-    <SubstituteAppellantReview
+    <EditCavcRemandReview
       selectedTasks={selectedTasks}
       existingValues={existingValues}
       evidenceSubmissionEndDate={evidenceSubmissionEndDate}
