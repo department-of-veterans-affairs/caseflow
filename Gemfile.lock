@@ -1,7 +1,7 @@
 GIT
-  remote: git@github.com:department-of-veterans-affairs/pdfjs_viewer-rails-va.git
+  remote: git@github.com:mikefinneran/pdfjs_viewer-rails-va.git
   revision: 517e77489b3c40553994ae8089b32d18f3181bab
-  branch: anusha/APPEALS-14211
+  ref: 517e77489b3c40553994ae8089b32d18f3181bab
   specs:
     pdfjs_viewer-rails (0.3.2)
       json (> 1.8.4)
@@ -358,7 +358,7 @@ GEM
       execjs (>= 1.4.0)
       multi_json (~> 1.0)
       therubyracer (~> 0.12.1)
-    json (2.3.0)
+    json (2.6.3)
     json_schemer (0.2.16)
       ecma-re-validator (~> 0.2)
       hana (~> 1.3)

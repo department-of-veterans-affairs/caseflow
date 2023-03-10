@@ -45,7 +45,7 @@ gem "parallel"
 gem "paranoia", "~> 2.2"
 # PDF Tools
 gem "pdf-forms"
-gem "pdfjs_viewer-rails", git: "https://github.com/department-of-veterans-affairs/pdfjs_viewer-rails-va.git", branch: "anusha/APPEALS-14211"
+gem "pdfjs_viewer-rails", git: "https://github.com/mikefinneran/pdfjs_viewer-rails-va.git", ref: "517e77489b3c40553994ae8089b32d18f3181bab"
 gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
