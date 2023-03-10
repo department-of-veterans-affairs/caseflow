@@ -1,10 +1,14 @@
 import React from 'react';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class QueueHelp extends React.Component {
 
   render() {
     /* eslint-disable max-len */
     return <div className="cf-help-content">
+
+      <p><Link href="/help">Go Back</Link></p>
+
       <h1 id="#top">Welcome to the Queue Help page!</h1>
       <p>Here you will find <a href="#training-videos"> Training Videos</a> and <a href="#faq"> Frequently Asked Questions (FAQs)</a> for Queue, as well as links to the Training Guide and the Quick Reference.
         These items are provided to assist you as you access and use Queue.
