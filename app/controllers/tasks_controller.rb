@@ -275,11 +275,11 @@ class TasksController < ApplicationController
     when "completed"
       if params["select_opc"] == "resend_final_notification_letter"
         send_final_notification_letter
-      elsif (params["select_opc"] == "task_complete_contested_claim")
+      elsif params["select_opc"] == "task_complete_contested_claim"
         radio_opc = params["radio_value"].to_i
-        if (radio_opc == 1)
-          rootTaskId = task.appeal.tasks.find_by(type: "RootTask").id
-          params[:parent_id] = rootTaskId
+        if radio_opc == 1
+          root_task_id = task.appeal.tasks.find_by(type: "RootTask").id
+          params[:parent_id] = root_task_id
           # params[:instructions] = params[:task][:instructions]
           DocketSwitchMailTask.create_from_params(params, current_user)
         end
