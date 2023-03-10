@@ -1095,7 +1095,7 @@ ActiveRecord::Schema.define(version: 2023_01_26_230602) do
     t.datetime "updated_at", null: false
     t.index ["organization_id"], name: "index_membership_requests_on_organization_id"
     t.index ["requestor_id"], name: "index_membership_requests_on_requestor_id"
-    t.index ["status","organization_id", "requestor_id"], name:"index_membership_requests_on_status_and_organization_id_and_requestor_id", unique: true, where: "status = 'assigned'"
+    t.index ["status","organization_id", "requestor_id"], name:"index_membership_requests_on_status_and_association_ids", unique: true, where: "status = 'assigned'"
   end
 
   create_table "messages", force: :cascade do |t|
