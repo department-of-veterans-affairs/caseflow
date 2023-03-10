@@ -1,5 +1,6 @@
 name: ecr-login
 on:
+  workflow_dispatch:
   # Every 6 hours, the password validity is 12 hours
   schedule:
     - cron:  '0 */6 * * *'
