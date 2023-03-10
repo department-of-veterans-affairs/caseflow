@@ -304,15 +304,29 @@ export default class OrganizationUsers extends React.PureComponent {
       const titleMessage = sprintf(COPY.MEMBERSHIP_REQUEST_ACTION_SUCCESS_TITLE, success.type, success.userName);
       const bodyMessage = sprintf(COPY.MEMBERSHIP_REQUEST_ACTION_SUCCESS_MESSAGE, success.type === 'approved' ? 'granted' : 'denied', success.organizationName);
 
-      this.setState({
-        organizationUsers: [...this.state.organizationUsers, updatedUser],
-        remainingUsers: this.state.remainingUsers.filter((user) => user.id !== updatedUser.id),
+      const newState = {
         membershipRequests: this.state.membershipRequests.filter((request) => request.id !== updatedRequestId),
         success: {
           title: titleMessage,
           body: bodyMessage,
         },
-      });
+      };
+
+      if (success.type === 'approved') {
+        newState.organizationUsers = [...this.state.organizationUsers, updatedUser];
+        newState.remainingUsers = this.state.remainingUsers.filter((user) => user.id !== updatedUser.id);
+      }
+
+      // this.setState({
+      //   organizationUsers: [...this.state.organizationUsers, updatedUser],
+      //   remainingUsers: this.state.remainingUsers.filter((user) => user.id !== updatedUser.id),
+      //   membershipRequests: this.state.membershipRequests.filter((request) => request.id !== updatedRequestId),
+      //   success: {
+      //     title: titleMessage,
+      //     body: bodyMessage,
+      //   },
+      // });
+      this.setState(newState);
 
     }, (error) => {
       this.setState({

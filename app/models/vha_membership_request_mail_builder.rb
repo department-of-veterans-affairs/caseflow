@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-# TODO: Make An abstract MembershipRequestMailBuilder class and inherit from it
-# Could also make it not abstract and implement nil methods
-class VhaMembershipRequestMailBuilder
+class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
   attr_accessor :membership_requests, :requestor
 
   def initialize(requests)
