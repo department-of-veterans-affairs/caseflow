@@ -14,6 +14,10 @@ class ConferenceLink < CaseflowRecord
       ENV["VIRTUAL_HEARING_URL_HOST"] || "care.evn.va.gov"
     end
 
+    def formatted_alias(alias_name)
+      "BVA#{alias_name}@#{client_host_or_default}"
+    end
+
     def base_url
       "https://#{client_host_or_default}/bva-app/"
     end
