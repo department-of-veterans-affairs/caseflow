@@ -28,7 +28,7 @@ export const LABELS = {
 
 export const DECISION_REASON_LABELS = {
   DECISION_REASON_TITLE: 'Decision Reasons',
-  DECISION_REASON_PROMPT: 'Select reasons why this issues decision was changed',
+  DECISION_REASON_PROMPT: 'Select reasons why this issue\'s decision was changed',
   DECISION_REASON_BASIS_LABEL: 'Basis for this selection'
 };
 
