@@ -200,6 +200,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       v_and_r_section.find("span", exact_text: "Other").click
       other_dropdown = page.find("div.cf-form-dropdown", text: "Type to search...")
       other_dropdown.find("div.cf-select").click
+      other_dropdown.find("input").send_keys "oth"
       other_dropdown.find("div.cf-select__menu").all("div", exact_text: "Other").last.click
       v_and_r_section.find("input.cf-form-textinput").click.send_keys "Test New Basis"
 
