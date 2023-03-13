@@ -75,8 +75,8 @@ GIT
 
 GIT
   remote: https://github.com/mikefinneran/pdfjs_viewer-rails-va.git
-  revision: 517e77489b3c40553994ae8089b32d18f3181bab
-  ref: 517e77489b3c40553994ae8089b32d18f3181bab
+  revision: 296d923eec7d0b2c66b5e340fb5261b780760f5d
+  ref: 296d923eec7d0b2c66b5e340fb5261b780760f5d
   specs:
     pdfjs_viewer-rails (0.3.2)
       json (> 1.8.4)
