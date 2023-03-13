@@ -6,6 +6,7 @@ RSpec.feature "VhaMembershipRequest" do
     camo_org.add_user(camo_user)
     caregiver_org
     FeatureToggle.enable!(:program_office_team_management)
+    ActiveJob::Base.queue_adapter.enqueued_jobs.clear
   end
 
   after do
@@ -134,6 +135,14 @@ RSpec.feature "VhaMembershipRequest" do
         expect(request.note).to eq(request_reason)
         expect(request.organization).to eq(VhaCaregiverSupport.singleton)
         expect(request.requestor).to eq(new_user)
+
+        # Verify the email jobs were queued successfully
+        jobs = ActiveJob::Base.queue_adapter.enqueued_jobs
+          .select { |job| job[:job] == Memberships::SendMembershipRequestMailerJob }
+        expect(jobs.first[:args]).to include("UserRequestCreated")
+        expect(jobs.last[:args]).to include("AdminRequestMade")
+        expect(jobs.length).to eq(2)
+        expect(jobs.map { |job| job[:queue] }).to all(eq "caseflow_test_low_priority")
       end
     end
   end
