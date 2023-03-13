@@ -1,3 +1,3 @@
 PDFKit.configure do |config|
-  config.wkhtmltopdf = '/usr/local/bin/wkhtmltopdf'
+  config.wkhtmltopdf = '/usr/bin/wkhtmltopdf'
 end
