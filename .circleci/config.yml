@@ -55,10 +55,10 @@ commands:
     steps:
       - run:
           name: apt install wkhtmltopdf
-          command: apt install wkhtmltopdf
+          command: sudo apt install wkhtmltopdf
       - run:
           name: move wkhtmltopdf
-          command: mv /usr/bin/wkhtmltopdf /usr/local/bin
+          command: sudo mv /usr/bin/wkhtmltopdf /usr/local/bin
 
   install_dockerize:
     description: "Install Dockerize"
