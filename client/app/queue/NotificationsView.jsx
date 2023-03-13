@@ -37,7 +37,10 @@ export const NotificationsView = (props) => {
     setModalState(false);
   };
 
-  const [alert, setAlert] = useState(false);
+  const [alert, setAlert] = useState([{
+    alertState: false,
+    alertMessage: ''
+  }]);
   const [loading, setLoading] = useState(false);
 
   const { push } = useHistory();
@@ -67,6 +70,7 @@ export const NotificationsView = (props) => {
 
   const errorCode = 'Error Code: ';
   const pdfURL = `/appeals/${appealId}/notifications.pdf`;
+  let errorUuid = '';
 
   //  Error handling to add alert message for PDF generation
   const generatePDF = () => {
@@ -76,8 +80,10 @@ export const NotificationsView = (props) => {
       setLoading(false);
     }).
       catch((error) => {
+
         if (error.status > 299 || error.status < 200) {
-          setAlert(true);
+          errorUuid = JSON.parse(error.response.text).errors[0].message;
+          setAlert({ alertState: true, alertMessage: errorUuid });
         }
         setLoading(false);
       });
@@ -89,7 +95,7 @@ export const NotificationsView = (props) => {
     <React.Fragment>
       <AppSegment filledBackground>
         <CaseTitle titleHeader = {`Case notifications for ${appeal.veteranFullName}`} appeal={appeal} hideCaseView />
-        {alert && <Alert type="error" title={COPY.PDF_GENERATION_ERROR_TITLE} styling={alertStyle}>{COPY.PDF_GENERATION_ERROR_MESSAGE}<br />{errorCode}{appealId}</Alert>}
+        {alert.alertState && <Alert type="error" title={COPY.PDF_GENERATION_ERROR_TITLE} styling={alertStyle}>{COPY.PDF_GENERATION_ERROR_MESSAGE}<br />{errorCode}{alert.alertMessage}</Alert>}
         {supportPendingAppealSubstitution && (
           <div {...sectionGap}>
             <Button
@@ -187,3 +193,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(NotificationsView);
+
