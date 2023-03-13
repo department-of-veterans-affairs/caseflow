@@ -83,6 +83,7 @@ class AppealsController < ApplicationController
   rescue StandardError => error
     uuid = SecureRandom.uuid
     Rails.logger.error(error.to_s + "Error ID: " + uuid)
+    Raven.capture_exception(error, extra: { error_uuid: uuid })
     render json: { "errors": ["message": uuid] }, status: :internal_server_error
   end
 
