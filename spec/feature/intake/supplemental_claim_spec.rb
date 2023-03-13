@@ -136,11 +136,12 @@ feature "Supplemental Claim Intake", :all_dbs do
 
     select_agree_to_withdraw_legacy_issues(false)
 
-    fill_in "What is the Receipt Date of this form?", with: (Time.zone.today + 1.day).mdY
-    click_intake_continue
-    expect(page).to have_content(
-      "Receipt date cannot be in the future."
-    )
+    # DateSelector component has been updated to not allow future dates to be selected at all
+    # fill_in "What is the Receipt Date of this form?", with: (Time.zone.today + 1.day).mdY
+    # click_intake_continue
+    # expect(page).to have_content(
+    #   "Receipt date cannot be in the future."
+    # )
     fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     click_intake_continue
