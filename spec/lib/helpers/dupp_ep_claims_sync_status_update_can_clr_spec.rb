@@ -161,4 +161,29 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
       end
     end
   end
+
+  context "There is only 1 Review with DuplicateEP errors" do
+    let(:setups) do
+      [
+        {
+          file_number: "000_000_001",
+          review_type: :higher_level_review,
+          status_type_code: "CAN",
+          last_action_date: 3.days.ago.mdY,
+          claim_type_code: "030BLAH",
+          error_text: error_text
+        }
+      ]
+    end
+
+    describe "#resolve_single_review" do
+      let(:initial_pr_count) { script.retrieve_problem_reviews.count }
+      let(:problem_reviews) { script.retrieve_problem_reviews }
+      it "can use the singlular resolve method" do
+        expect(initial_pr_count).to eq 1
+        script.resolve_single_review(1, "hlr")
+        expect(script.retrieve_problem_reviews.count).to eq 0
+      end
+    end
+  end
 end

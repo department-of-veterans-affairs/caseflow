@@ -75,43 +75,14 @@ module WarRoom
 
     def resolve_single_review(review_id, type)
       # retrieve the ClaimReview based on the ID and type passed in
+      # storing it as an Array of 1 to be able to re-use resolve_duplicate_eps()
       if type == "hlr"
-        review = HigherLevelReview.find_by_id(review_id)
+        review = HigherLevelReview.where(id: review_id)
       else
-        review = SupplementalClaim.find_by_id(review_id)
+        review = SupplementalClaim.where(id: review_id)
       end
 
-      veteran = review.claim_veteran
-
-      # getting end_product_establishments count
-      epe_count = review.end_product_establishments.count
-
-      if epe_count.positive?
-        # iterate through the EPE list
-        review.end_product_establishments.each do |epe_1|
-          # start remediation steps
-          # assign the EP to establish
-          ep2e_1 = epe_1.send(:end_product_to_establish)
-          # assign the EndProductModifierFinder
-          epmf_1 = EndProductModifierFinder.new(epe_1, veteran)
-          taken_1 = epmf_1.send(:taken_modifiers)
-          #Remediation: => []
-
-          # Mark place to start retrying
-          epmf_1.instance_variable_set(:@taken_modifiers, taken_1.push(ep2e_1.modifier))
-          ep2e_1.modifier = epmf_1.find
-          epe_1.instance_variable_set(:@end_product_to_establish, ep2e_1)
-          epe_1.establish!
-          epe_1.reload
-        end
-
-        DecisionReviewProcessJob.new.perform(review)
-        review.reload
-        review.establishment_error #should now be =>nil
-      else
-        puts "There are no EndProductEstablishments on this Review"
-        return false
-      end
+      resolve_duplicate_eps(review)
     end
 
     def run()
