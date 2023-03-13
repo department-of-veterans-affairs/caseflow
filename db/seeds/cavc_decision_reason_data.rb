@@ -33,7 +33,7 @@ module Seeds
         order: 16
       )
       CavcDecisionReason.create(decision_reason: "Improper medical conclusion [Colvin violation]", order: 17)
-      parent_6 = CavcDecisionReason.create(decision_reason: "AMA specific remand?", order: 18)
+      parent_6 = CavcDecisionReason.create(decision_reason: "AMA specific remand", order: 18)
 
       # decision reason children
       # Parent: Duty to assist

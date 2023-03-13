@@ -164,7 +164,7 @@ const CavcDashboardIssue = (props) => {
   };
 
   return (
-    <li key={index}>
+    <li key={index} className="dash-li">
       <div {...singleIssueStyling(userCanEdit)}>
         <div {...issueColumnStyling(userCanEdit)}>
           <div>
@@ -178,21 +178,6 @@ const CavcDashboardIssue = (props) => {
           {renderDispositionDropdown()}
         </div>
         <div />
-        {addedIssueSection && userCanEdit &&
-          <>
-            <Button
-              type="button"
-              name="Remove Issue Button"
-              classNames={['cf-push-right', 'cf-btn-link']}
-              onClick={toggleRemoveIssueModal}
-            >
-              <i className="fa fa-trash-o" aria-hidden="true"></i>  { COPY.REMOVE_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT }
-            </Button>
-            {removeModalIsOpen &&
-              <RemoveCavcDashboardIssueModal closeHandler={toggleRemoveIssueModal} submitHandler={removeIssue} />
-            }
-          </>
-        }
       </div>
       {requireDecisionReason() && (
         <CavcDecisionReasons
@@ -203,6 +188,21 @@ const CavcDashboardIssue = (props) => {
           userCanEdit={userCanEdit}
         />
       )}
+      {addedIssueSection && userCanEdit &&
+        <>
+          <Button
+            type="button"
+            name="Remove Issue Button"
+            classNames={['cf-btn-link', 'dash-button-remove']}
+            onClick={toggleRemoveIssueModal}
+          >
+            <i className="fa fa-trash-o" aria-hidden="true"></i>  { COPY.REMOVE_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT }
+          </Button>
+          {removeModalIsOpen &&
+            <RemoveCavcDashboardIssueModal closeHandler={toggleRemoveIssueModal} submitHandler={removeIssue} />
+          }
+        </>
+      }
     </li>
   );
 };
