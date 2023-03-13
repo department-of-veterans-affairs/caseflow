@@ -386,7 +386,6 @@ const CavcDecisionReasons = (props) => {
             }
             }
             placeholder="Type to search..."
-            creatable
             noOptionsMessage={noOptionsMessage}
             styling={basisForSelectionStylingNoChild}
             readOnly={!userCanEdit}
