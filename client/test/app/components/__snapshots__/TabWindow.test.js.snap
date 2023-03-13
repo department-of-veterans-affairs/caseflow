@@ -27,6 +27,7 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
     fullWidth={true}
     idPrefix="main"
     mountOnEnter={true}
+    tabPanelClassName={null}
     tabPanelTabIndex={null}
     unmountOnExit={true}
   >
@@ -109,6 +110,7 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
             className="cf-tab-window-body-full-screen tabContent"
           >
             <TabPanel
+              className={null}
               fullWidth={true}
               key="0"
               tabPanelTabIndex={null}
@@ -125,6 +127,7 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
               </div>
             </TabPanel>
             <TabPanel
+              className={null}
               fullWidth={true}
               key="1"
               tabPanelTabIndex={null}
@@ -173,6 +176,7 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
     fullWidth={false}
     idPrefix="main"
     mountOnEnter={true}
+    tabPanelClassName={null}
     tabPanelTabIndex={null}
     unmountOnExit={true}
   >
@@ -255,6 +259,7 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
             className="cf-tab-window-body-full-screen tabContent"
           >
             <TabPanel
+              className={null}
               fullWidth={false}
               key="0"
               tabPanelTabIndex={null}
@@ -271,6 +276,7 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
               </div>
             </TabPanel>
             <TabPanel
+              className={null}
               fullWidth={false}
               key="1"
               tabPanelTabIndex={null}
@@ -298,6 +304,7 @@ exports[`TabWindow Renders an empty div when no tabs are passed 1`] = `
   fullWidth={false}
   idPrefix="main"
   mountOnEnter={true}
+  tabPanelClassName={null}
   tabPanelTabIndex={null}
   unmountOnExit={true}
 />
@@ -330,6 +337,7 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
     fullWidth={true}
     idPrefix="main"
     mountOnEnter={true}
+    tabPanelClassName={null}
     tabPanelTabIndex={null}
     unmountOnExit={true}
   >
@@ -412,6 +420,7 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
             className="cf-tab-window-body-full-screen tabContent"
           >
             <TabPanel
+              className={null}
               fullWidth={true}
               key="0"
               tabPanelTabIndex={null}
@@ -428,6 +437,7 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
               </div>
             </TabPanel>
             <TabPanel
+              className={null}
               fullWidth={true}
               key="1"
               tabPanelTabIndex={null}
@@ -476,6 +486,7 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
     fullWidth={true}
     idPrefix="main"
     mountOnEnter={true}
+    tabPanelClassName={null}
     tabPanelTabIndex={null}
     unmountOnExit={true}
   >
@@ -558,6 +569,7 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
             className="cf-tab-window-body-full-screen tabContent"
           >
             <TabPanel
+              className={null}
               fullWidth={true}
               key="0"
               tabPanelTabIndex={null}
@@ -572,6 +584,7 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
               />
             </TabPanel>
             <TabPanel
+              className={null}
               fullWidth={true}
               key="1"
               tabPanelTabIndex={null}
