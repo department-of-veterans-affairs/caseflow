@@ -7,7 +7,7 @@ class MembershipRequest < ApplicationRecord
 
   validates :status, :organization, :requestor, presence: true
 
-  before_save :set_decided_at, if: :decider_id_changed?
+  before_save :set_decided_at
 
   enum status: {
     assigned: "assigned",
@@ -99,6 +99,10 @@ class MembershipRequest < ApplicationRecord
   private
 
   def set_decided_at
-    self.decided_at = Time.zone.now
+    # TODO: Figure out exactly when to update the decided at time? Should it require a decider?
+    # Or should it only care  when the status changes
+    if status_changed? && status_was == "assigned" && decider_id?
+      self.decided_at = Time.zone.now
+    end
   end
 end
