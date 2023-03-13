@@ -50,6 +50,16 @@ commands:
             - public/assets
             - tmp/cache/assets/sprockets
 
+  install_wkhtmltopdf:
+    description: Install wkhtmltopdf
+    steps:
+      - run:
+          name: apt install wkhtmltopdf
+          command: apt install wkhtmltopdf
+      - run:
+          name: move wkhtmltopdf
+          command: mv /usr/bin/wkhtmltopdf /usr/local/bin
+
   install_dockerize:
     description: "Install Dockerize"
     steps:
@@ -210,6 +220,8 @@ jobs:
           <<: *browser_versions
 
       - install_ruby_dependencies
+
+      - install_wkhtmltopdf
 
       - install_dockerize
 
