@@ -253,7 +253,7 @@ const CavcDecisionReasons = (props) => {
   const filterOption = (candidate, input) => {
     return (
       // Min input length
-      input.length >= MIN_INPUT_LENGTH &&
+      (input.length >= MIN_INPUT_LENGTH || input.length === 0) &&
       // Use Select's default filtering for string matching by creating filter
       createFilter({})(candidate, input)
     );
