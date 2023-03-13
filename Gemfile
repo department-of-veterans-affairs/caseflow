@@ -80,9 +80,6 @@ gem "tzinfo"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
-#Used in conjuction with PDFKit
-#https://github.com/pdfkit/pdfkit
-gem "wkhtmltopdf-binary-edge"
 gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do

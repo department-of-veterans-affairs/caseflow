@@ -76,7 +76,7 @@ export const NotificationsView = (props) => {
       setLoading(false);
     }).
       catch((error) => {
-        if (error.status === 404) {
+        if (error.status > 299 || error.status < 200) {
           setAlert(true);
         }
         setLoading(false);
