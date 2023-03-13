@@ -178,9 +178,10 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
 
     describe "#resolve_single_review" do
       let(:initial_pr_count) { script.retrieve_problem_reviews.count }
+      let(:problem_reviews) { script.retrieve_problem_reviews }
       it "can use the singlular resolve method" do
         expect(initial_pr_count).to eq 1
-        script.resolve_single_review(1, "hlr")
+        script.resolve_single_review(problem_reviews.first.id, "hlr")
         expect(script.retrieve_problem_reviews.count).to eq 0
       end
     end
