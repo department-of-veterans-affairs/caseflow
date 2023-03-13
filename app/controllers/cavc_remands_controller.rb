@@ -123,7 +123,7 @@ class CavcRemandsController < ApplicationController
   end
 
   def update_appellant_substitution_and_cavc_remand_appellant_substitution(cavc_appeal, new_cavc_remand,
-    appellant_substitution)
+                                                                           appellant_substitution)
     if params[:is_appellant_substituted] == "true"
       update_appellant_substitution_and_create_history(cavc_appeal, appellant_substitution)
     else

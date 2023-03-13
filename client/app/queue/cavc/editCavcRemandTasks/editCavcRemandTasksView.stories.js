@@ -3,7 +3,7 @@ import { sub } from 'date-fns';
 import { MemoryRouter } from 'react-router';
 import uuid from 'uuid';
 
-import { SubstituteAppellantTasksForm } from './SubstituteAppellantTasksForm';
+import { EditCavcRemandTasksForm } from './editCavcRemandTasksForm';
 import {
   sampleTasksForDismissedEvidenceSubmissionDocket,
   sampleTasksForPendingEvidenceSubmissionDocket,
@@ -27,8 +27,8 @@ const activeTasks = prepOpenTaskDataForUi({
 });
 
 export default {
-  title: 'Queue/cavc/editCavcRemandTasks/SubstituteAppellantTasksForm',
-  component: SubstituteAppellantTasksForm,
+  title: 'Queue/cavc/editCavcRemandTasks/EditCavcRemandTaksForm',
+  component: EditCavcRemandTasksForm,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -51,7 +51,7 @@ export default {
   },
 };
 
-const Template = (args) => <SubstituteAppellantTasksForm {...args} />;
+const Template = (args) => <EditCavcRemandTasksForm {...args} />;
 
 export const Full = Template.bind({});
 

@@ -7,18 +7,17 @@ import {
   appealWithDetailSelector,
   getAllTasksForAppeal,
 } from 'app/queue/selectors';
-import { SubstituteAppellantTasksForm } from './SubstituteAppellantTasksForm';
+import { EditCavcRemandTasksForm } from './editCavcRemandTasksForm';
 
 import {
-  stepForward,
   cancel,
   stepBack,
   updateData,
-} from '../EditCavcRemandSubstituteAppellant.slice';
+} from '../editCavcRemand.slice';
 import { prepOpenTaskDataForUi, prepTaskDataForUi } from './utils';
 import { isSubstitutionSameAppeal } from '../caseDetails/utils';
 
-export const SubstituteAppellantTasksView = () => {
+export const EditCavcRemandTasksView = () => {
   const { appealId } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -76,15 +75,12 @@ export const SubstituteAppellantTasksView = () => {
     // Here we'll dispatch updateData action to update Redux store with our form data
     dispatch(updateData({ formData }));
 
-    // Advance progressbar
-    dispatch(stepForward());
-
     // Move to next page
-    history.push(`/queue/appeals/${appealId}/cavc_remand/review`);
+    history.push(`/queue/appeals/${appealId}/edit_cavc_remand/review`);
   };
 
   return (
-    <SubstituteAppellantTasksForm
+    <EditCavcRemandTasksForm
       appealId={appealId}
       existingValues={existingValues}
       nodDate={nodDate}

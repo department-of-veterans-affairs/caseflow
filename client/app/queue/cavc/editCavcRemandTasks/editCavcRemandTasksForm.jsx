@@ -22,13 +22,28 @@ import { ScheduleHearingTaskAlert } from './ScheduleHearingTaskAlert';
 import { taskTypesSelected, disabledTasksBasedOnSelections, adjustOpenTasksBasedOnSelection } from './utils';
 import { TasksToCopy } from './TasksToCopy';
 import { TasksToCancel } from './TasksToCancel';
+import { isDate, max, parseISO } from 'date-fns';
 
 const schema = yup.object().shape({
+  substitutionDate: yup.
+    date().
+    required('Substitution Date is required').
+    nullable().
+    max(new Date(), 'Date cannot be in the future').
+    when(['$nodDate', '$dateOfDeath'], (date1, date2, currentSchema) => {
+      // We want to ensure that selected date is after the NOD and date of death
+      // Date of death may not actually be set, so we first filter out undefined from these values
+      // eslint-disable-next-line id-length
+      const dates = [date1, date2].filter(Boolean).map((d) => (isDate(d) ? d : parseISO(d)));
+
+      return currentSchema.min(max(dates), "Date cannot be earlier than the NOD date or the Veteran's date of death");
+    }).
+    transform((value, originalValue) => (originalValue === '' ? null : value)),
   closedTaskIds: yup.array(yup.number()),
   openTaskIds: yup.array(yup.number()),
 });
 
-export const SubstituteAppellantTasksForm = ({
+export const EditCavcRemandTasksForm = ({
   appealId,
   existingValues,
   nodDate,
@@ -136,7 +151,7 @@ export const SubstituteAppellantTasksForm = ({
     </FormProvider>
   );
 };
-SubstituteAppellantTasksForm.propTypes = {
+EditCavcRemandTasksForm.propTypes = {
   appealId: PropTypes.string,
   existingValues: PropTypes.shape({}),
   nodDate: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),

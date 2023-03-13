@@ -7,8 +7,17 @@ import COPY from 'app/../COPY';
 import { appealWithDetailSelector } from 'app/queue/selectors';
 import { getSupportedDecisionTypes, getSupportedRemandTypes } from './utils';
 import { EditCavcRemandForm } from './EditCavcRemandForm';
+import { format } from 'date-fns';
 import { requestPatch, showErrorMessage } from 'app/queue/uiReducer/uiActions';
 import { editAppeal } from '../QueueActions';
+
+import {
+  updateData,
+  stepForward,
+  // fetchRelationships,
+  // cancel,
+  // refreshAppellantPoa,
+} from './editCavcRemand.slice';
 
 export const EditCavcRemandView = () => {
   /* eslint-disable camelcase */
@@ -42,7 +51,8 @@ export const EditCavcRemandView = () => {
       remandAppealId: cavcRemand.remand_appeal_uuid,
       substitutionDate: cavcRemand.cavc_remands_appellant_substitution?.substitution_date,
       participantId: cavcRemand.cavc_remands_appellant_substitution?.participant_id,
-      isAppellantSubstituted: cavcRemand.cavc_remands_appellant_substitution?.is_appellant_substituted ? 'true' : 'false'
+      isAppellantSubstituted:
+        cavcRemand.cavc_remands_appellant_substitution?.is_appellant_substituted ? 'true' : 'false'
     };
   }, [cavcRemand]);
 
@@ -107,6 +117,19 @@ export const EditCavcRemandView = () => {
       }
     } else {
       // TODO connect with new modify task page for new edit court remand workflow
+      dispatch(
+        updateData({
+          ...formData,
+          substitution_date: format(formData.substitutionDate, 'yyyy-MM-dd'),
+          decision_date: format(formData.decision_date, 'yyyy-MM-dd'),
+          // Currently hardcoding claimantType until future work where this is selectable
+          claimantType: 'DependentClaimant'
+        })
+      );
+
+      dispatch(stepForward());
+
+      history.push(`/queue/appeals/${appealId}/edit_cavc_remand/tasks`);
     }
   };
 
