@@ -73,6 +73,10 @@ class AppealsController < ApplicationController
         raise ActionController::ParameterMissing.new('Bad Format')
       end
     end
+  rescue StandardError => error
+    uuid = SecureRandom.uuid
+    Rails.logger.error(error.to_s + "Error ID: " + uuid)
+    render json: { "errors": ["message": uuid] }, status: :internal_server_error
   end
 
   def document_count
@@ -359,3 +363,4 @@ class AppealsController < ApplicationController
     end
   end
 end
+
