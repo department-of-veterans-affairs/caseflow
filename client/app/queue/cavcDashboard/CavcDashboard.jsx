@@ -82,7 +82,8 @@ export const CavcDashboard = (props) => {
               tabPanelTabIndex={-1}
               alwaysShowTabs
               mountOnEnter={false}
-              unmountOnExit={false} />
+              unmountOnExit={false}
+              tabPanelClassName="cavc-tab-panel" />
             <hr />
             <CavcDashboardFooter {...props} />
           </div>

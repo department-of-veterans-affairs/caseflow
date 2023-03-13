@@ -9,6 +9,10 @@
     }
   }
 
+  .cavc-tab-panel:focus {
+    outline: none;
+  }
+
   .cf-tab {
     width: 250px;
     border-bottom: 1px solid $color-gray-light;
