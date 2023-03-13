@@ -14,7 +14,7 @@ import { setCheckedDecisionReasons,
   setSelectionBasisForReasonCheckbox,
   updateOtherFieldTextValue } from './cavcDashboardActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
-// import { createFilter } from 'react-select';
+import { createFilter } from 'react-select';
 import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
 
 const CavcDecisionReasons = (props) => {
@@ -250,14 +250,14 @@ const CavcDecisionReasons = (props) => {
     input.length >= MIN_INPUT_LENGTH ?
       'No options' :
       'Search input must be at least 3 characters';
-  // const filterOption = (candidate, input) => {
-  //   return (
-  //     // Min input length
-  //     input.length >= MIN_INPUT_LENGTH &&
-  //     // Use Select's default filtering for string matching by creating filter
-  //     createFilter({})(candidate, input)
-  //   );
-  // };
+  const filterOption = (candidate, input) => {
+    return (
+      // Min input length
+      input.length >= MIN_INPUT_LENGTH &&
+      // Use Select's default filtering for string matching by creating filter
+      createFilter({})(candidate, input)
+    );
+  };
 
   const [otherBasisSelectedByCheckboxId, setOtherBasisSelectedByCheckboxId] = useState(decisionReasons.map((reason) => {
     return { checkboxId: reason.id, checked: false };
@@ -281,7 +281,7 @@ const CavcDecisionReasons = (props) => {
         <div>
           <SearchableDropdown
             name={`decision-reason-basis-${child.id}`}
-            // filterOption={filterOption}
+            filterOption={filterOption}
             label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
             placeholder="Type to search..."
             noOptionsMessage={noOptionsMessage}
@@ -354,7 +354,7 @@ const CavcDecisionReasons = (props) => {
           <SearchableDropdown
             name={`decision-reason-basis-${parent.id}`}
             label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
-            // filterOption={filterOption}
+            filterOption={filterOption}
             options={selectionBases.
               filter((selection) => selection.category === parent.basis_for_selection_category).
               map((selection) => ({
@@ -386,7 +386,6 @@ const CavcDecisionReasons = (props) => {
             }
             }
             placeholder="Type to search..."
-            creatable
             noOptionsMessage={noOptionsMessage}
             styling={basisForSelectionStylingNoChild}
             readOnly={!userCanEdit}
