@@ -78,9 +78,10 @@ GIT
   revision: 296d923eec7d0b2c66b5e340fb5261b780760f5d
   ref: 296d923eec7d0b2c66b5e340fb5261b780760f5d
   specs:
-    pdfjs_viewer-rails (0.0.9)
+    pdfjs_viewer-rails (0.3.2)
+      json (> 1.8.4)
       rails (> 4.2.0)
-      sass-rails (~> 5.0)
+      sassc-rails (>= 2.1)
 
 GEM
   remote: https://rubygems.org/
@@ -606,6 +607,14 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
+    sassc (2.4.0)
+      ffi (~> 1.9)
+    sassc-rails (2.1.2)
+      railties (>= 4.0.0)
+      sassc (>= 2.0)
+      sprockets (> 3.0)
+      sprockets-rails
+      tilt
     savon (2.12.1)
       akami (~> 1.2)
       builder (>= 2.1.2)
