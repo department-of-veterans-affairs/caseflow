@@ -26,7 +26,7 @@ jobs:
         credentials:
           username: AWS
           password: ${{ secrets.ECR_PASSWORD }}
-        options:  --health-cmd "" --health-interval 60s --health-timeout 15s --health-retries 5
+        options:  --health-cmd "" --health-interval 300s --health-timeout 60s --health-retries 5
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
