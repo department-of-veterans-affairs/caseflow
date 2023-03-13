@@ -228,7 +228,7 @@ jest: ## Run jest tests
 one-jest:  ## run the jest test passed in (leave off client/)
 	cd client && yarn jest $(RUN_ARGS)
 
-one-jest-snaphot-update: ## Updated the snapshot of a jest test passed in
+one-jest-snapshot-update: ## Updated the snapshot of a jest test passed in
 	cd client && yarn jest $(RUN_ARGS) -u
 
 unsafe:  ## TODO
