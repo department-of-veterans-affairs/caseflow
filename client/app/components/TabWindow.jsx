@@ -23,6 +23,7 @@ const TabWindow = (props) => {
     onChange,
     tabs = [],
     tabPanelTabIndex = null,
+    tabPanelClassName = null,
     alwaysShowTabs,
     mountOnEnter = true,
     unmountOnExit = true,
@@ -51,6 +52,7 @@ const TabWindow = (props) => {
       mountOnEnter={mountOnEnter}
       unmountOnExit={unmountOnExit}
       tabPanelTabIndex={tabPanelTabIndex}
+      tabPanelClassName={tabPanelClassName}
     >
       {tabs.map((item, idx) => (
         <Tab
@@ -81,6 +83,7 @@ TabWindow.propTypes = {
   ),
   defaultPage: PropTypes.number,
   tabPanelTabIndex: PropTypes.number,
+  tabPanelClassName: PropTypes.string,
   alwaysShowTabs: PropTypes.bool,
   mountOnEnter: PropTypes.bool,
   unmountOnExit: PropTypes.bool,
@@ -92,6 +95,7 @@ TabWindow.defaultProps = {
   alwaysShowTabs: false,
   mountOnEnter: true,
   unmountOnExit: true,
+  tabPanelClassName: null,
 };
 
 export default TabWindow;
