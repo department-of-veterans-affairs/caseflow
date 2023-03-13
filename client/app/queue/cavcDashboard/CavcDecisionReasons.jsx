@@ -77,6 +77,9 @@ const CavcDecisionReasons = (props) => {
     const parentSelectionBasisId = loadCheckedBoxes?.
       filter((box) => box.cavc_decision_reason_id === parent.id)[0]?.cavc_selection_basis_id;
 
+    const parentSelectionBasisLabel = selectionBases?.
+      filter((basis) => basis.id === parentSelectionBasisId)[0]?.basis_for_selection;
+
     obj[parent.id] = {
       ...parent,
       checked: loadCheckedBoxesId?.includes(parent.id),
@@ -84,13 +87,15 @@ const CavcDecisionReasons = (props) => {
       issueType: dispositionIssueType,
       basis_for_selection: {
         checkboxId: parent.id,
-        value: parentSelectionBasisId,
-        label: selectionBases?.filter((basis) => basis.id === parentSelectionBasisId)[0]?.basis_for_selection,
+        value: parentSelectionBasisId ? parentSelectionBasisId : null,
+        label: parentSelectionBasisLabel ? parentSelectionBasisLabel : null,
         otherText: null
       },
       children: children.map((child) => {
         const childSelectionBasisId = loadCheckedBoxes?.
           filter((box) => box.cavc_decision_reason_id === child.id)[0]?.cavc_selection_basis_id;
+        const childSelectionBasisLabel = selectionBases?.
+          filter((basis) => basis.id === childSelectionBasisId)[0]?.basis_for_selection;
 
         return {
           ...child,
@@ -99,8 +104,8 @@ const CavcDecisionReasons = (props) => {
           basis_for_selection: {
             checkboxId: child.id,
             parentCheckboxId: parent.id,
-            value: childSelectionBasisId,
-            label: selectionBases?.filter((basis) => basis.id === childSelectionBasisId)[0]?.basis_for_selection,
+            value: childSelectionBasisId ? childSelectionBasisId : null,
+            label: childSelectionBasisLabel ? childSelectionBasisLabel : null,
             otherText: null
           }
         };
@@ -112,6 +117,9 @@ const CavcDecisionReasons = (props) => {
 
   // for tracking state of each checkbox
   const [checkedReasons, setCheckedReasons] = useState(checkedBoxesInStore || initialCheckboxes);
+  const [otherBasisSelectedByCheckboxId, setOtherBasisSelectedByCheckboxId] = useState(decisionReasons.map((reason) => {
+    return { checkboxId: reason.id, checked: false };
+  }));
 
   useEffect(() => {
     dispatch(setCheckedDecisionReasons(checkedReasons, uniqueId));
@@ -178,6 +186,61 @@ const CavcDecisionReasons = (props) => {
         };
       });
     }
+  };
+
+  // the parent checkboxes do not provide a "parent" arg, only the child boxes
+  const handleBasisChange = (option, box, parent) => {
+    if (parent) {
+      setCheckedReasons((prevState) => {
+        const updatedParent = {
+          ...prevState[parent.id],
+          children: prevState[parent.id].children.map((child) => {
+            if (child.id === box.id) {
+              return {
+                ...child,
+                basis_for_selection: {
+                  checkboxId: box.id,
+                  parentCheckboxId: parent.id,
+                  value: option.value,
+                  label: option.label,
+                  otherText: null
+                }
+              };
+            }
+
+            return child;
+          })
+        };
+
+        return {
+          ...prevState,
+          [parent.id]: updatedParent
+        };
+      });
+    } else {
+      setCheckedReasons((prevState) => ({
+        ...prevState,
+        [box.id]: {
+          ...prevState[box.id],
+          basis_for_selection: {
+            checkboxId: box.id,
+            value: option.value,
+            label: option.label,
+            otherText: null
+          }
+        }
+      }));
+    }
+
+    setOtherBasisSelectedByCheckboxId((prevState) => {
+      const idx = otherBasisSelectedByCheckboxId.findIndex((basis) => basis.checkboxId === box.id);
+      const arr = [...prevState];
+
+      arr[idx] = { checkboxId: box.id, checked: (option.label === 'Other') };
+
+      return arr;
+    });
+    dispatch(setSelectionBasisForReasonCheckbox(uniqueId, option));
   };
 
   const readOnlyDecisionReason = (label, styling, checked) => {
@@ -259,10 +322,6 @@ const CavcDecisionReasons = (props) => {
     );
   };
 
-  const [otherBasisSelectedByCheckboxId, setOtherBasisSelectedByCheckboxId] = useState(decisionReasons.map((reason) => {
-    return { checkboxId: reason.id, checked: false };
-  }));
-
   const handleOtherTextFieldChange = (value, reason, parentReason) => {
     const reasons = {
       checkboxId: reason.id,
@@ -285,29 +344,7 @@ const CavcDecisionReasons = (props) => {
             label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
             placeholder="Type to search..."
             noOptionsMessage={noOptionsMessage}
-            onChange={(option) => {
-              if (option.label === 'Other') {
-                setOtherBasisSelectedByCheckboxId((prevState) => {
-                  const idx = otherBasisSelectedByCheckboxId.findIndex((basis) => basis.checkboxId === child.id);
-                  const arr = [...prevState];
-
-                  arr[idx] = { checkboxId: child.id, checked: true };
-
-                  return arr;
-                });
-              } else {
-                setOtherBasisSelectedByCheckboxId((prevState) => {
-                  const idx = otherBasisSelectedByCheckboxId.findIndex((basis) => basis.checkboxId === child.id);
-                  const arr = [...prevState];
-
-                  arr[idx] = { checkboxId: child.id, checked: false };
-
-                  return arr;
-                });
-              }
-              dispatch(setSelectionBasisForReasonCheckbox(uniqueId, option));
-            }
-            }
+            onChange={(option) => handleBasisChange(option, child, parent)}
             options={selectionBases.
               filter((selection) => selection.category === child.basis_for_selection_category).
               map((selection) => ({
@@ -362,29 +399,7 @@ const CavcDecisionReasons = (props) => {
                 value: selection.id,
                 checkboxId: parent.id
               }))}
-            onChange={(option) => {
-              if (option.label === 'Other') {
-                setOtherBasisSelectedByCheckboxId((prevState) => {
-                  const idx = otherBasisSelectedByCheckboxId.findIndex((basis) => basis.checkboxId === parent.id);
-                  const arr = [...prevState];
-
-                  arr[idx] = { checkboxId: parent.id, checked: true };
-
-                  return arr;
-                });
-              } else {
-                setOtherBasisSelectedByCheckboxId((prevState) => {
-                  const idx = otherBasisSelectedByCheckboxId.findIndex((basis) => basis.checkboxId === parent.id);
-                  const arr = [...prevState];
-
-                  arr[idx] = { checkboxId: parent.id, checked: false };
-
-                  return arr;
-                });
-              }
-              dispatch(setSelectionBasisForReasonCheckbox(uniqueId, option));
-            }
-            }
+            onChange={(option) => handleBasisChange(option, parent)}
             placeholder="Type to search..."
             noOptionsMessage={noOptionsMessage}
             styling={basisForSelectionStylingNoChild}
