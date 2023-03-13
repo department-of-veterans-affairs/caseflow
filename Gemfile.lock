@@ -74,9 +74,9 @@ GIT
       selenium-webdriver
 
 GIT
-  remote: https://github.com/senny/pdfjs_viewer-rails.git
-  revision: a4249eacbf70175db63b57e9f364d0a9a79e2b43
-  ref: a4249eacbf70175db63b57e9f364d0a9a79e2b43
+  remote: https://github.com/mikefinneran/pdfjs_viewer-rails-va.git
+  revision: 296d923eec7d0b2c66b5e340fb5261b780760f5d
+  ref: 296d923eec7d0b2c66b5e340fb5261b780760f5d
   specs:
     pdfjs_viewer-rails (0.0.9)
       rails (> 4.2.0)
