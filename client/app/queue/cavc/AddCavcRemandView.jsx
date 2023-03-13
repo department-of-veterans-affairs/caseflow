@@ -446,6 +446,9 @@ const AddCavcRemandView = (props) => {
       {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
       {docketNumberField}
       {featureToggles.cavc_remand_granted_substitute_appellant && isAppellantSubstitutedField}
+      {featureToggles.cavc_remand_granted_substitute_appellant && !substituteAppellantClaimantOptions &&
+       <p>No existing relationships were found.</p>
+      }
       {featureToggles.cavc_remand_granted_substitute_appellant && isAppellantSubstituted === 'true' && appellantSubstitutionGrantedField}
       {featureToggles.cavc_remand_granted_substitute_appellant && isAppellantSubstituted === 'true' && substituteAppellantClaimantField}
       {representedField}
