@@ -195,7 +195,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       v_and_r_section = page.all("div.usa-accordion-bordered").last
       v_and_r_section.click
-      v_and_r_section.find("span", exact_text: "AMA specific remand?").click
+      v_and_r_section.find("span", exact_text: "AMA specific remand").click
       v_and_r_section.find("span", exact_text: "Issuing a decision before 90-day window closed").click
       v_and_r_section.find("span", exact_text: "Other").click
       other_dropdown = page.find("div.cf-form-dropdown", text: "Type to search...")
