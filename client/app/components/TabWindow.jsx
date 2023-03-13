@@ -95,6 +95,7 @@ TabWindow.defaultProps = {
   alwaysShowTabs: false,
   mountOnEnter: true,
   unmountOnExit: true,
+  tabPanelClassName: null,
 };
 
 export default TabWindow;

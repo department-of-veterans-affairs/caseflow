@@ -6,6 +6,7 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
   defaultPage={0}
   fullPage={true}
   mountOnEnter={true}
+  tabPanelClassName={null}
   tabs={
     Array [
       Object {
@@ -155,6 +156,7 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
   defaultPage={0}
   fullPage={false}
   mountOnEnter={true}
+  tabPanelClassName={null}
   tabs={
     Array [
       Object {
@@ -316,6 +318,7 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
   defaultPage={0}
   fullPage={true}
   mountOnEnter={true}
+  tabPanelClassName={null}
   tabs={
     Array [
       Object {
@@ -465,6 +468,7 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
   defaultPage={0}
   fullPage={true}
   mountOnEnter={true}
+  tabPanelClassName={null}
   tabs={
     Array [
       Object {
