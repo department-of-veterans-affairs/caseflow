@@ -46,7 +46,7 @@ jobs:
       - name: Install chrome test
         uses: browser-actions/setup-chrome@v1
         with:
-          chrome-version: 106.0.5249.61
+          chrome-version: 1060525
         id: setup-chrome
       - run: | 
           echo Installed chromium version: ${{ steps.setup-chrome.outputs.chrome-version }}
