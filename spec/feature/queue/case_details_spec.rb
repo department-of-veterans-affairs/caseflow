@@ -2129,63 +2129,6 @@ RSpec.feature "Case details", :all_dbs do
         it_behaves_like "the button is not shown"
       end
     end
-
-    describe "Add CAVC Dashboard button" do
-      let(:cavc_decision_type) do
-        [
-          Constants.CAVC_DECISION_TYPES.straight_reversal,
-          Constants.CAVC_DECISION_TYPES.death_dismissal
-        ].sample
-      end
-      let!(:cavc_remand) do
-        create(:cavc_remand,
-               cavc_decision_type: cavc_decision_type,
-               remand_subtype: nil,
-               judgement_date: 2.months.ago.to_date.mdY,
-               mandate_date: 2.months.ago.to_date.mdY)
-      end
-      let(:cavc_appeal) { cavc_remand.remand_appeal }
-
-      let(:non_occoai_user) { create(:user, css_id: "BVA_INTAKE_USER", station_id: "101") }
-      let(:occ_user) { create(:user, css_id: "TEST_OCC_USER", station_id: "101") }
-      let(:oai_user) { create(:user, css_id: "TEST_OAI_USER", station_id: "101") }
-
-      context "the button is not shown for non occ/oai user" do
-        before do
-          BvaIntake.singleton.add_user(non_occoai_user)
-          User.authenticate!(user: non_occoai_user)
-        end
-        it "the 'CAVC Dashboard' button is not visible on the page" do
-          visit "/queue/appeals/#{cavc_appeal.external_id}"
-          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
-          expect(page).to_not have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
-        end
-      end
-
-      context "the button is shown for OCC user" do
-        before do
-          OccTeam.singleton.add_user(occ_user)
-          User.authenticate!(user: occ_user)
-        end
-        it "the 'CAVC Dashboard' button is visible on the page" do
-          visit "/queue/appeals/#{cavc_appeal.external_id}"
-          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
-          expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
-        end
-      end
-
-      context "the button is shown for OAI user" do
-        before do
-          OaiTeam.singleton.add_user(oai_user)
-          User.authenticate!(user: oai_user)
-        end
-        it "the 'CAVC Dashboard' button is visible on the page" do
-          visit "/queue/appeals/#{cavc_appeal.external_id}"
-          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
-          expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
-        end
-      end
-    end
   end
 
   describe "task snapshot" do

@@ -11,14 +11,9 @@ import COPY from 'COPY';
 import * as uiActions from 'app/queue/uiReducer/uiActions';
 
 describe('AddCavcDatesModal', () => {
+
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('9999-12-31'));
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
   });
 
   const appealId = amaAppeal.externalId;
@@ -95,7 +90,6 @@ describe('AddCavcDatesModal', () => {
       });
 
       it('shows error on future date selection', () => {
-        jest.useRealTimers();
         const cavcModal = setup({ appealId });
 
         cavcModal.find('#judgement-date').simulate('change', { target: { value: futureDate } });
@@ -121,7 +115,6 @@ describe('AddCavcDatesModal', () => {
       });
 
       it('shows error on future date selection', () => {
-        jest.useRealTimers();
         const cavcModal = setup({ appealId });
 
         cavcModal.find('#mandate-date').simulate('change', { target: { value: futureDate } });

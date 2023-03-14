@@ -175,12 +175,13 @@ feature "Higher-Level Review", :all_dbs do
 
     select_agree_to_withdraw_legacy_issues(false)
 
-    # DateSelector component has been updated to not allow future dates to be selected at all
-    # fill_in "What is the Receipt Date of this form?", with: Time.zone.tomorrow.mdY
-    # click_intake_continue
-    # expect(page).to have_content(
-    #   "Receipt date cannot be in the future."
-    # )
+    fill_in "What is the Receipt Date of this form?", with: Time.zone.tomorrow.mdY
+
+    click_intake_continue
+
+    expect(page).to have_content(
+      "Receipt date cannot be in the future."
+    )
 
     fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 

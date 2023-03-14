@@ -18,7 +18,6 @@ export const Checkbox = (props) => {
     hideLabel,
     onChange,
     styling,
-    ariaLabel,
   } = props;
 
   const handleChange = (event) => onChange?.(event.target.checked, event);
@@ -42,7 +41,7 @@ export const Checkbox = (props) => {
           defaultChecked={defaultValue}
           checked={value}
           disabled={disabled}
-          aria-label={ariaLabel || name}
+          aria-label={name}
           ref={inputRef}
           {...inputProps}
         />
@@ -120,7 +119,6 @@ Checkbox.propTypes = {
    */
   value: PropTypes.bool,
   styling: PropTypes.object,
-  ariaLabel: PropTypes.string
 };
 
 export default Checkbox;

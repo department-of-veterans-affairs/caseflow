@@ -415,7 +415,6 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                               strongLabel={true}
                               type="date"
                               useAriaLabel={false}
-                              validationError={null}
                               value={null}
                             >
                               <div
@@ -481,7 +480,6 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                               strongLabel={true}
                               type="date"
                               useAriaLabel={false}
-                              validationError={null}
                               value={null}
                             >
                               <div
@@ -1056,7 +1054,6 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                               strongLabel={true}
                               type="date"
                               useAriaLabel={false}
-                              validationError="Please select a valid date"
                               value="03/27/2020"
                             >
                               <div
@@ -1093,13 +1090,6 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                                   type="date"
                                   value="03/27/2020"
                                 />
-                                <div
-                                  className="cf-validation"
-                                >
-                                  <span>
-                                    Please select a valid date
-                                  </span>
-                                </div>
                               </div>
                             </TextField>
                           </DateSelector>
@@ -1129,7 +1119,6 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                               strongLabel={true}
                               type="date"
                               useAriaLabel={false}
-                              validationError="Please select a valid date"
                               value="03/31/2019"
                             >
                               <div
@@ -1166,13 +1155,6 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                                   type="date"
                                   value="03/31/2019"
                                 />
-                                <div
-                                  className="cf-validation"
-                                >
-                                  <span>
-                                    Please select a valid date
-                                  </span>
-                                </div>
                               </div>
                             </TextField>
                           </DateSelector>
