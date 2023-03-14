@@ -7,6 +7,16 @@ import { amaAppeal } from '../../../data/appeals';
 import { render } from '@testing-library/react';
 
 describe('EditAppellantInformation', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date('9999-12-31'));
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   const setup = () => {
     return render(<EditAppellantInformation appealId={amaAppeal.externalId} />,
       {
