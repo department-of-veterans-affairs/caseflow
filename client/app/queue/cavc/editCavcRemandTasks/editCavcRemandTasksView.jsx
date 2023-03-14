@@ -26,8 +26,8 @@ export const EditCavcRemandTasksView = () => {
     appealWithDetailSelector(state, { appealId })
   );
 
-  const { formData: existingValues, poa } = useSelector(
-    (state) => state.substituteAppellant
+  const { formData: existingValues } = useSelector(
+    (state) => state.cavcRemand
   );
 
   const sameAppealSubstitution = isSubstitutionSameAppeal(appeal);
@@ -38,15 +38,13 @@ export const EditCavcRemandTasksView = () => {
 
   const activeTasks = useMemo(() => {
     return prepOpenTaskDataForUi({ taskData: allTasks,
-      claimantPoa: poa,
       isSubstitutionSameAppeal: sameAppealSubstitution });
-  }, [allTasks, poa]);
+  }, [allTasks]);
 
   const filteredTasks = useMemo(() => {
     return prepTaskDataForUi({ taskData: allTasks,
-      claimantPoa: poa,
       isSubstitutionSameAppeal: sameAppealSubstitution });
-  }, [allTasks, poa]);
+  }, [allTasks]);
 
   // These values will be used in the "key details" section
   const nodDate = useMemo(() => parseISO(appeal.nodDate), [appeal.nodDate]);
@@ -85,7 +83,6 @@ export const EditCavcRemandTasksView = () => {
       existingValues={existingValues}
       nodDate={nodDate}
       dateOfDeath={dateOfDeath}
-      pendingAppeal={sameAppealSubstitution}
       substitutionDate={substitutionDate}
       cancelledTasks={filteredTasks}
       activeTasks={activeTasks}

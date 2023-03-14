@@ -18,6 +18,7 @@ import {
   // cancel,
   // refreshAppellantPoa,
 } from './editCavcRemand.slice';
+import moment from 'moment';
 
 export const EditCavcRemandView = () => {
   /* eslint-disable camelcase */
@@ -119,11 +120,13 @@ export const EditCavcRemandView = () => {
       // TODO connect with new modify task page for new edit court remand workflow
       dispatch(
         updateData({
-          ...formData,
-          substitution_date: format(formData.substitutionDate, 'yyyy-MM-dd'),
-          decision_date: format(formData.decision_date, 'yyyy-MM-dd'),
-          // Currently hardcoding claimantType until future work where this is selectable
-          claimantType: 'DependentClaimant'
+          formData: {
+            ...formData,
+            substitutionDate: moment(formData.substitutionDate).format('YYYY-MM-DD'),
+            decisionDate: moment(formData.decisionDate).format('YYYY-MM-DD'),
+            // Currently hardcoding claimantType until future work where this is selectable
+            claimantType: 'DependentClaimant'
+          }
         })
       );
 

@@ -31,7 +31,7 @@ const initialState = {
 const resetState = () => ({ ...initialState });
 
 const editCavcRemandSlice = createSlice({
-  name: 'edit_cavc_remand',
+  name: 'editCavcRemand',
   initialState,
   reducers: {
     cancel: resetState,
