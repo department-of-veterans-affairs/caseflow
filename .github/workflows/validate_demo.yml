@@ -42,7 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: install node dependencies
-        uses: ./.github/utils/install_node_dependencies.yml
+        uses: ./.github/workflows/utils/install_node_dependencies.yml
       - name: Install chromium
         run: |
           CHROME_VERSION="106.0.5249.119-1"
