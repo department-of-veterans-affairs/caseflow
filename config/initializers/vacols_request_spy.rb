@@ -40,8 +40,8 @@ if DatabaseRequestCounter.valid_env?
 
   class ActiveRecord::ConnectionAdapters::OracleEnhancedAdapter
     def execute(*args)
-      # vacols_request_spy(args.first)
-      # super
+      vacols_request_spy(args.first)
+      super
     end
 
     def exec_query(*args)

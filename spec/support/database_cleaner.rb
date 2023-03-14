@@ -40,8 +40,8 @@ RSpec.configure do |config|
       # Driver is probably for an external browser with an app
       # under test that does *not* share a database connection with the
       # specs, so use truncation strategy.
-      # DatabaseCleaner[:active_record, { connection: vacols }].strategy =
-      #   :deletion, { except: vacols_tables_to_preserve }
+      DatabaseCleaner[:active_record, { connection: vacols }].strategy =
+        :deletion, { except: vacols_tables_to_preserve }
       DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :truncation
     end
   end
