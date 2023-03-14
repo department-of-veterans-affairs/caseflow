@@ -41,16 +41,8 @@ jobs:
           POSTGRES_USER: root
     steps:
       - uses: actions/checkout@v3
-      - name: Install dpackage
-        run: apt install dpkg
-      - name: Install chrome test
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: 1060525
-        id: setup-chrome
-      - run: |
-          echo Installed chromium version: ${{ steps.setup-chrome.outputs.chrome-version }}
-          chrome --version
+      - name: Install node dependencies
+]       uses: ./utils/install_node_dependencies.yml
       - name: Install chromium
         run: |
           CHROME_VERSION="106.0.5249.119-1"
