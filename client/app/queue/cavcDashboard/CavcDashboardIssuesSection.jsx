@@ -10,7 +10,7 @@ import CavcDecisionReasons from './CavcDecisionReasons';
 import Button from '../../components/Button';
 import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS';
 import RemoveCavcDashboardIssueModal from './RemoveCavcDashboardIssueModal';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { removeCheckedDecisionReason, setDispositionValue } from './cavcDashboardActions';
 
 const singleIssueStyling = (userCanEdit) => {
@@ -84,6 +84,7 @@ const CavcDashboardIssue = (props) => {
   } = props;
 
   const [removeModalIsOpen, setRemoveModalIsOpen] = useState(false);
+  const selectionBases = useSelector((state) => state.cavcDashboard.selection_bases);
 
   const disposition = dispositions?.find(
     (dis) => dis.request_issue_id === issue.id ||
@@ -179,7 +180,7 @@ const CavcDashboardIssue = (props) => {
         </div>
         <div />
       </div>
-      {requireDecisionReason() && (
+      {requireDecisionReason() && selectionBases.length > 0 &&
         <CavcDecisionReasons
           uniqueId={issue.id}
           initialDispositionRequiresReasons={dispositionsRequiringReasons.includes(disposition)}
@@ -187,7 +188,7 @@ const CavcDashboardIssue = (props) => {
           loadCheckedBoxes={loadCheckedBoxes}
           userCanEdit={userCanEdit}
         />
-      )}
+      }
       {addedIssueSection && userCanEdit &&
         <>
           <Button

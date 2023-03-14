@@ -8,7 +8,9 @@ jest.mock('../../../../app/queue/cavcDashboard/CavcDecisionReasons',
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
-  useDispatch: () => jest.fn().mockImplementation(() => Promise.resolve(true))
+  useDispatch: () => jest.fn().mockImplementation(() => Promise.resolve(true)),
+  // useSelector is only used to get state for selectionBases and see if array length is > 0
+  useSelector: () => jest.fn().mockImplementation(() => Promise.resolve([1, 2, 3]))
 }));
 
 const createDashboardProp = (hasIssues) => {
