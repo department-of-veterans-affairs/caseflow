@@ -52,5 +52,3 @@ jobs:
           && rm /tmp/chrome.deb
       - name: setup testfiles directory
         run: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
-      - name: install node dependencies
-        uses: ./.github/utils/install_node_dependencies
