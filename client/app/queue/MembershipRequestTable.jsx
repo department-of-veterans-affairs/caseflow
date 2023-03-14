@@ -93,7 +93,6 @@ const MembershipRequestTable = (props) => {
     });
   };
 
-  // TODO: Build this out for each request since the target will be based on the id for the MembershipRequest
   const dropdownOptions = [
     {
       title: 'Approve',
