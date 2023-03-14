@@ -10,7 +10,7 @@ const AppFrame = ({ children, wideApp }) =>
 
 AppFrame.propTypes = {
   children: PropTypes.node,
-  wideApp: PropTypes.string
+  wideApp: PropTypes.oneOfType([PropTypes.string, PropTypes.bool])
 };
 
 export default AppFrame;
