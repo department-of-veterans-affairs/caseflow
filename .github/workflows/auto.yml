@@ -55,7 +55,7 @@ jobs:
         ports:
         - 6379:6379
     steps:
-    - uses: actions/checkout@v3.3.0
+    - uses: actions/checkout@v3
     - name: Setup testfiles directory
       run: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
     - uses: "./.github/actions/install_node_dependencies"
@@ -70,15 +70,15 @@ jobs:
       run: ~/project/ci-bin/capture-log "make -f Makefile.example seed-dbs"
     - name: Assets Precompile
       run: ~/project/ci-bin/capture-log "bundle exec rake assets:precompile"
-    - uses: actions/upload-artifact@v3.1.1
+    - uses: actions/upload-artifact@v3
       with:
         path: "~/test-results"
-    - uses: actions/upload-artifact@v3.1.1
+    - uses: actions/upload-artifact@v3
       with:
         path: "~/logs"
   rspec:
     if: github.ref != 'refs/heads/gh-pages' && github.ref != 'refs/heads/main-gh-pages' && github.ref != 'refs/heads/gh-actions/make_docs-update_docs'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-8-cores-latest
     container:
       image: '008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/cimg-ruby:2.7.3-browsers'
       credentials:
@@ -109,7 +109,7 @@ jobs:
 #    needs:
 #    - build_workspace
     steps:
-    - uses: actions/download-artifact@v3.0.1
+    - uses: actions/download-artifact@v3
       with:
         path: "."
     - name: Setup testfiles directory
@@ -130,16 +130,16 @@ jobs:
         bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
       env:
         KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
-    - uses: actions/upload-artifact@v3.1.1
+    - uses: actions/upload-artifact@v3
       with:
         path: "~/test-results"
-    - uses: actions/upload-artifact@v3.1.1
+    - uses: actions/upload-artifact@v3
       with:
         path: "~/test-results"
-    - uses: actions/upload-artifact@v3.1.1
+    - uses: actions/upload-artifact@v3
       with:
         path: "~/coverage"
-    - uses: actions/upload-artifact@v3.1.1
+    - uses: actions/upload-artifact@v3
       with:
         path: "~/project/tmp/capybara"
     - uses: actions/upload-artifact@v3.1.1
@@ -153,15 +153,15 @@ jobs:
         path: "~/logs"
     - name: Verify code coverage
       run: ~/project/ci-bin/capture-log "bundle exec rake ci:circleci_verify_code_coverage"
-    - name: Concatenate all logs
-      run: "~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log"
-      if: always()
-    - uses: actions/upload-artifact@v3.1.1
-      with:
-        path: "~/all_logs.log"
-    - uses: actions/upload-artifact@v3.1.1
-      with:
-        path: "~/coverage/combined"
+#     - name: Concatenate all logs
+#       run: "~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log"
+#       if: always()
+#     - uses: actions/upload-artifact@v3.1.1
+#       with:
+#         path: "~/all_logs.log"
+#     - uses: actions/upload-artifact@v3.1.1
+#       with:
+#         path: "~/coverage/combined"
   js_tests:
     if: github.ref != 'refs/heads/gh-pages' && github.ref != 'refs/heads/main-gh-pages' && github.ref != 'refs/heads/gh-actions/make_docs-update_docs'
     runs-on: ubuntu-latest
@@ -175,7 +175,7 @@ jobs:
         JEST_JUNIT_OUTPUT_DIR: "/home/circleci/test-results/jest"
         COVERAGE_DIR: "/home/circleci/coverage"
     steps:
-    - uses: actions/checkout@v3.3.0
+    - uses: actions/checkout@v3
     - name: Install python-2 as a node-gyp@3.8.0 dependency
       run: |-
         sudo apt-get update
@@ -186,18 +186,18 @@ jobs:
         mkdir -p ~/test-results/jest
         pushd client
         ~/project/ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
-    - uses: actions/upload-artifact@v3.1.1
+    - uses: actions/upload-artifact@v3
       with:
         path: "~/test-results"
-    - uses: actions/upload-artifact@v3.1.1
+    - uses: actions/upload-artifact@v3
       with:
         path: "~/test-results"
-    - name: Concatenate all logs
-      run: "~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log"
-      if: always()
-    - uses: actions/upload-artifact@v3.1.1
-      with:
-        path: "~/all_logs.log"
+#     - name: Concatenate all logs
+#       run: "~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log"
+#       if: always()
+#     - uses: actions/upload-artifact@v3.1.1
+#       with:
+#         path: "~/all_logs.log"
   lint:
     if: github.ref != 'refs/heads/gh-pages' && github.ref != 'refs/heads/main-gh-pages' && github.ref != 'refs/heads/gh-actions/make_docs-update_docs'
     runs-on: ubuntu-latest
@@ -218,9 +218,9 @@ jobs:
       run: ~/project/ci-bin/capture-log "bundle exec rake lint"
     - name: Security
       run: ~/project/ci-bin/capture-log "bundle exec rake security"
-    - name: Concatenate all logs
-      run: "~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log"
-      if: always()
-    - uses: actions/upload-artifact@v3.1.1
-      with:
-        path: "~/all_logs.log"
+#     - name: Concatenate all logs
+#       run: "~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log"
+#       if: always()
+#     - uses: actions/upload-artifact@v3.1.1
+#       with:
+#         path: "~/all_logs.log"
