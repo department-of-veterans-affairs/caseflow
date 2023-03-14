@@ -36,7 +36,7 @@ describe Seeds::CavcDashboardData do
       expect(CavcDecisionReason.find_by(
         decision_reason: "Misapplication of statute/regulation/diagnostic code/caselaw"
       ).children.count).to eq 4
-      expect(CavcDecisionReason.find_by(decision_reason: "AMA specific remand?").children.count).to eq 7
+      expect(CavcDecisionReason.find_by(decision_reason: "AMA specific remand").children.count).to eq 7
 
       # 10 from create_cavc_dashboard_dispositions, 4 from create_appeals_with_multiple_cavc_remands,
       # 10 from create_cavc_dashboard_issues
