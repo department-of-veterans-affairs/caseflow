@@ -17,6 +17,15 @@ describe User, :all_dbs do
     Fakes::AuthenticationService.user_session = nil
   end
 
+  context ".first_time_logging_in" do
+    let!(:user) { create(:user, css_id: "NEWUSER") }
+
+    it "returns true unless user.last_login_at is false" do
+      expect(User.first_time_logging_in?(session)).to eq true
+    end
+
+  end
+
   context ".api_user" do
     it "returns the api user" do
       expect(User.api_user.station_id).to eq "101"
