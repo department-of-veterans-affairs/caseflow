@@ -300,32 +300,24 @@ export default class OrganizationUsers extends React.PureComponent {
     const data = { id: requestId, requestAction };
 
     ApiUtil.patch(`/membership_requests/${requestId}`, { data }).then((response) => {
-      const { success, updatedUser, updatedRequestId } = response.body;
-      const titleMessage = sprintf(COPY.MEMBERSHIP_REQUEST_ACTION_SUCCESS_TITLE, success.type, success.userName);
-      const bodyMessage = sprintf(COPY.MEMBERSHIP_REQUEST_ACTION_SUCCESS_MESSAGE, success.type === 'approved' ? 'granted' : 'denied', success.organizationName);
+      const { membershipRequest, updatedUser } = response.body;
+      const titleMessage = sprintf(COPY.MEMBERSHIP_REQUEST_ACTION_SUCCESS_TITLE, membershipRequest.status, membershipRequest.userName);
+      const bodyMessage = sprintf(COPY.MEMBERSHIP_REQUEST_ACTION_SUCCESS_MESSAGE, membershipRequest.status === 'approved' ? 'granted' : 'denied', membershipRequest.orgName);
 
       const newState = {
-        membershipRequests: this.state.membershipRequests.filter((request) => request.id !== updatedRequestId),
+        membershipRequests: this.state.membershipRequests.filter((request) => request.id !== membershipRequest.id),
         success: {
           title: titleMessage,
           body: bodyMessage,
         },
       };
 
-      if (success.type === 'approved') {
+      // Only update the list of organization users on the page if the request was approved
+      if (membershipRequest.status === 'approved') {
         newState.organizationUsers = [...this.state.organizationUsers, updatedUser];
         newState.remainingUsers = this.state.remainingUsers.filter((user) => user.id !== updatedUser.id);
       }
 
-      // this.setState({
-      //   organizationUsers: [...this.state.organizationUsers, updatedUser],
-      //   remainingUsers: this.state.remainingUsers.filter((user) => user.id !== updatedUser.id),
-      //   membershipRequests: this.state.membershipRequests.filter((request) => request.id !== updatedRequestId),
-      //   success: {
-      //     title: titleMessage,
-      //     body: bodyMessage,
-      //   },
-      // });
       this.setState(newState);
 
     }, (error) => {
