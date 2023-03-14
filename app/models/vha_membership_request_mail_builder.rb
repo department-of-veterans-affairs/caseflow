@@ -73,7 +73,6 @@ class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
       organization_name: single_request.organization.name,
       pending_organization_request_names: requestor_vha_pending_organization_request_names
     }
-    # TODO: Make this perform_later after development
     Memberships::SendMembershipRequestMailerJob.perform_later("VhaBusinessLineApproved",
                                                               mailer_parameters)
   end
@@ -85,7 +84,6 @@ class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
       organization_name: single_request.organization.name,
       pending_organization_request_names: requestor_vha_pending_organization_request_names
     }
-    # TODO: Make this perform_later after development
     Memberships::SendMembershipRequestMailerJob.perform_later("VhaPredocketApproved",
                                                               mailer_parameters)
   end

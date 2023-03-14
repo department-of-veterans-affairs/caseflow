@@ -119,8 +119,8 @@ exports[`VhaMembershipRequestForm renders the default state with the feature tog
       <button
         class="cf-submit usa-button-disabled usa-button"
         disabled=""
-        id="button-submit-request"
-        type="button"
+        id="submit-submit-request"
+        type="submit"
       >
         Submit
       </button>
@@ -318,8 +318,8 @@ exports[`VhaMembershipRequestForm renders the default state with the feature tog
       <button
         class="cf-submit usa-button-disabled usa-button"
         disabled=""
-        id="button-submit-request"
-        type="button"
+        id="submit-submit-request"
+        type="submit"
       >
         Submit
       </button>

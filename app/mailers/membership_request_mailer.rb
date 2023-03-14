@@ -13,22 +13,19 @@ class MembershipRequestMailer < ActionMailer::Base
   default from: "VHABENEFITAPPEALS@va.gov"
   layout "membership_request_mailer"
 
-  # Send requestor a confirmation email that membership request was received.
-  def membership_request_submitted
-    @recipient_info = params[:recipient_info]
-    mail(to: @recipient_info[:email], subject: "Membership request submitted.")
+  def user_request_created
+    @recipient = params[:recipient_info]
+    @requests = params[:requests]
+    @requesting_org_names = @requests&.map { |request| request.organization.name }
+    @subject = params[:subject]
+    mail(to: @recipient&.email, subject: @subject)
   end
 
-  # Send requestor an email with updated status of membership request.
-  def updated_membership_request_status
-    @recipient_info = params[:recipient_info]
-    mail(to: @recipient_info[:email], subject: "Membership request status updated.")
-  end
-
-  # Send admins an email when a membership request is successfully submitted
-  def membership_request_submission
-    @recipient_info = params[:recipient_info]
-    mail(to: @recipient_info[:email], subject: "New membership request recieved.")
+  def admin_request_made
+    @subject = params[:subject]
+    @to = params[:to]
+    @organization_name = params[:organization_name]
+    mail(to: @to, subject: @subject)
   end
 
   def vha_business_line_approved

@@ -65,4 +65,6 @@ describe('VhaMembershipRequestForm', () => {
     expect(screen.getByText(COPY.VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE)).toBeVisible();
   });
 
+  // TODO: add a test to test the submit button somehow?
+
 });

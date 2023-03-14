@@ -5,6 +5,7 @@ describe MembershipRequestMailer do
   let(:email) { "bob.schmidt@va.gov" }
   let(:requestor) { create(:user, email: email, full_name: "Mario Lebowski") }
   let(:camo_org) { VhaCamo.singleton }
+<<<<<<< HEAD
   # TODO: This might not work since they aren't VHA orgs?
   let(:user_orgs) do
     [
@@ -12,6 +13,8 @@ describe MembershipRequestMailer do
       create(:organization, name: "New Org 2", url: "new-org-2")
     ]
   end
+=======
+>>>>>>> TYLERB/APPEALS-13118
   let(:caregiver_support_org) { VhaCaregiverSupport.singleton }
   let(:membership_requests) do
     [
@@ -19,6 +22,7 @@ describe MembershipRequestMailer do
       create(:membership_request, organization: caregiver_support_org, requestor: requestor)
     ]
   end
+<<<<<<< HEAD
 
   before do
     user_orgs.each do |org|
@@ -26,6 +30,14 @@ describe MembershipRequestMailer do
       org.save
     end
   end
+
+  context "user request sent" do
+    let(:mailer) do
+      MembershipRequestMailer.with(recipient_info: requestor,
+                                   requests: membership_requests,
+                                   subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED)
+        .user_request_created
+=======
 
   context "user request sent" do
     let(:mailer) do
@@ -51,9 +63,32 @@ describe MembershipRequestMailer do
       # Verify that it inserts the user name and the requested org names into the email.
       expect(mailer.body.encoded).to match("Dear #{requestor.full_name},")
       expect(mailer.body.encoded).to match("VHA CAMO and VHA Caregiver Support Program")
+>>>>>>> TYLERB/APPEALS-13118
     end
   end
 
+<<<<<<< HEAD
+    it "has the correct from email address" do
+      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+    end
+
+    it "has the correct to email address" do
+      expect(mailer.to).to include(requestor.email)
+    end
+
+    it "has the correct subject line" do
+      expect(mailer.subject).to eq(COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED)
+    end
+
+    it "renders the correct body text" do
+      # Verify that it inserts the user name and the requested org names into the email.
+      expect(mailer.body.encoded).to match("Dear #{requestor.full_name},")
+      expect(mailer.body.encoded).to match("VHA CAMO and VHA Caregiver Support Program")
+    end
+  end
+
+=======
+>>>>>>> TYLERB/APPEALS-13118
   context "admin request made" do
     let(:mailer) do
       MembershipRequestMailer.with(recipient_info: requestor,
@@ -62,6 +97,7 @@ describe MembershipRequestMailer do
                                    subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_VHA_ADMIN_REQUEST_RECEIVED)
         .admin_request_made
     end
+<<<<<<< HEAD
 
     it "has the correct from email address" do
       expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
@@ -311,6 +347,26 @@ describe MembershipRequestMailer do
           " or your pending requests for other VHA Pre-Docket offices listed below."
         )
       end
+=======
+
+    it "has the correct from email address" do
+      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+    end
+
+    it "has the correct to email address" do
+      expect(mailer.to).to include(COPY::VHA_CAREGIVER_SUPPORT_EMAIL_ADDRESS)
+    end
+
+    it "has the correct subject line" do
+      expect(mailer.subject).to eq(COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_VHA_ADMIN_REQUEST_RECEIVED)
+    end
+
+    it "renders the correct body text" do
+      expect(mailer.body.encoded).to match("Dear #{caregiver_support_org.name} admin,")
+      expect(mailer.body.encoded).to match(
+        "You have received a new request for access to #{caregiver_support_org.name}."
+      )
+>>>>>>> TYLERB/APPEALS-13118
     end
   end
 end

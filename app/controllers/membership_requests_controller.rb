@@ -27,8 +27,8 @@ class MembershipRequestsController < ApplicationController
       .map { |hash| hash[:attributes] }
 
     render json: { data: { newMembershipRequests: serialized_requests } }, status: :created
-
-    # TODO: send back appropriate errors?
+  rescue ActiveRecord::RecordInvalid => error
+    invalid_record_error(error.record)
   end
 
   # To update the status of a Membership Request
@@ -39,8 +39,6 @@ class MembershipRequestsController < ApplicationController
   #   requestAction: "approved"
   # }
   def update
-    # TODO: Figure out why this is present in a lot of other update methods in other controllers
-    # TODO: Also check add the param for org type in here somehow since it defaults to VHA right now
     no_cache
 
     membership_request = MembershipRequest.find(request_action_params[:id])
@@ -60,6 +58,8 @@ class MembershipRequestsController < ApplicationController
     json_hash = { success: success_messsage_hash, updatedUser: json_user, updatedRequestId: membership_request.id }
 
     render json: json_hash, status: :ok
+  rescue ActiveRecord::RecordInvalid => error
+    invalid_record_error(error.record)
   end
 
   private
@@ -72,7 +72,6 @@ class MembershipRequestsController < ApplicationController
     params.permit(:id, :requestAction)
   end
 
-  # TODO: should this be somewhere else?
   def build_org_list(org_options, keys_to_org_name_hash)
     # Get all of the keys from the options that have values that are truthy
     key_names = org_options.select { |_, value| value }.keys
@@ -98,8 +97,6 @@ class MembershipRequestsController < ApplicationController
   end
 
   # This is a mapping of option values to the organization names
-  # Could also just pass down the Names from the client to avoid this.
-  # TODO: Probably should just send names everywhere
   def vha_org_mapping
     {
       "vhaAccess" => "Veterans Health Administration",
