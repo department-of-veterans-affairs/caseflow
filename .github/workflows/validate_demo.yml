@@ -45,8 +45,8 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
-        restore-keys:
-          dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          restore-keys:
+            dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
       - name: yarn install
         run: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
@@ -59,6 +59,8 @@ jobs:
             - ~/.cache/yarn
             - public/assets
             - tmp/cache/assets/sprockets
+          restore-keys:
+            dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
       - name: Install chromium
         run: |
