@@ -54,7 +54,7 @@ jobs:
             dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
       - name: Install Node Dependencies
-        run: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+        run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - name: Save Cache
         uses: actions/cache@v3
@@ -76,7 +76,7 @@ jobs:
           && rm /tmp/chrome.deb
 
       - name: setup testfiles directory
-        run: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
+        run: ./ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
 
 
