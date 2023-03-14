@@ -53,7 +53,4 @@ jobs:
       - name: setup testfiles directory
         run: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
       - name: install node dependencies
-        uses: ./utils/install_node_dependencies.yml
-
-
-
+        uses: ./.github/utils/install_node_dependencies
