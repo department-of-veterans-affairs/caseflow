@@ -48,12 +48,13 @@ jobs:
         with:
           chrome-version: 1060525
         id: setup-chrome
-      - run: | 
+      - run: |
           echo Installed chromium version: ${{ steps.setup-chrome.outputs.chrome-version }}
           chrome --version
       - name: Install chromium
         run: |
           CHROME_VERSION="106.0.5249.119-1"
+          apt-get update
           wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
           && apt install -y /tmp/chrome.deb \
           && rm /tmp/chrome.deb
