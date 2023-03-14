@@ -41,10 +41,15 @@ jobs:
           POSTGRES_USER: root
     steps:
       - uses: actions/checkout@v3
+
       - name: restore yarn cache
         uses: actions/cache/restore@v3
         with:
           key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          path: |
+            ~/.cache/yarn
+            public/assets
+            tmp/cache/assets/sprockets
           restore-keys:
             dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
