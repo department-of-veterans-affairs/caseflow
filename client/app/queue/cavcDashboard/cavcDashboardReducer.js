@@ -2,8 +2,8 @@ import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './cavcDashboardConstants';
 
 export const initialState = {
-  decision_reasons: {},
-  selection_bases: {},
+  decision_reasons: [],
+  selection_bases: [],
   initial_state: {
     cavc_dashboards: [],
     checked_boxes: {}
