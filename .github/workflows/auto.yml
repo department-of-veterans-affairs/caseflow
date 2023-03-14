@@ -5,26 +5,26 @@ on:
     - gh-actions-yida
 
 jobs:
-  build_workspace:
-    if: github.ref != 'refs/heads/gh-pages' && github.ref != 'refs/heads/main-gh-pages' && github.ref != 'refs/heads/gh-actions/make_docs-update_docs'
-    runs-on: ubuntu-8-cores-latest
-    container:
-      image: node:12.3.0
-      env:
-        DBUS_SESSION_BUS_ADDRESS: "/dev/null"
-        RAILS_ENV: test
-        NODE_ENV: test
-    steps:
-    - uses: actions/checkout@v3.3.0
-    - uses: "./.github/actions/install_node_dependencies"
-    - name: Build webpack
-      run: ~/project/ci-bin/capture-log "cd client && yarn build:test"
-    - uses: actions/upload-artifact@v3.1.1
-      with:
-        path: "./."
+#   build_workspace:
+#     if: github.ref != 'refs/heads/gh-pages' && github.ref != 'refs/heads/main-gh-pages' && github.ref != 'refs/heads/gh-actions/make_docs-update_docs'
+#     runs-on: ubuntu-8-cores-latest
+#     container:
+#       image: node:12.3.0
+#       env:
+#         DBUS_SESSION_BUS_ADDRESS: "/dev/null"
+#         RAILS_ENV: test
+#         NODE_ENV: test
+#     steps:
+#     - uses: actions/checkout@v3.3.0
+#     - uses: "./.github/actions/install_node_dependencies"
+#     - name: Build webpack
+#       run: ~/project/ci-bin/capture-log "cd client && yarn build:test"
+#     - uses: actions/upload-artifact@v3.1.1
+#       with:
+#         path: "./."
   demo:
     if: github.ref != 'refs/heads/gh-pages' && github.ref != 'refs/heads/main-gh-pages' && github.ref != 'refs/heads/gh-actions/make_docs-update_docs'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-8-cores-latest
     container:
       image: '008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/cimg-ruby:2.7.3-browsers'
       credentials:
