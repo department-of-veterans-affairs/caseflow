@@ -96,7 +96,7 @@ jobs:
       postgres:
         image: postgres:11.7
         env:
-        - POSTGRES_USER: root
+          POSTGRES_USER: root
           POSTGRES_PASSWORD: password
           POSTGRES_DB: caseflow_certification_test
       facols:
@@ -106,8 +106,8 @@ jobs:
           password: ${{ secrets.ECR_PASSWORD }}
       redis:
         image: redis:4.0.10
-    needs:
-    - build_workspace
+#    needs:
+#    - build_workspace
     steps:
     - uses: actions/download-artifact@v3.0.1
       with:
