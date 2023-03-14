@@ -3,9 +3,7 @@ on:
   push:
     branches:
     - gh-actions-yida
-env:
-  AWS_ACCESS_KEY_ID: AWS
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_PASSWORD }}
+
 jobs:
   build_workspace:
     if: github.ref != 'refs/heads/gh-pages' && github.ref != 'refs/heads/main-gh-pages' && github.ref != 'refs/heads/gh-actions/make_docs-update_docs'
@@ -13,9 +11,9 @@ jobs:
     container:
       image: node:12.3.0
       env:
-      - DBUS_SESSION_BUS_ADDRESS: "/dev/null"
-      - RAILS_ENV: test
-      - NODE_ENV: test
+        DBUS_SESSION_BUS_ADDRESS: "/dev/null"
+        RAILS_ENV: test
+        NODE_ENV: test
     steps:
     - uses: actions/checkout@v3.3.0
     - uses: "./.github/actions/install_node_dependencies"
@@ -33,18 +31,18 @@ jobs:
         username: AWS
         password: ${{ secrets.ECR_PASSWORD }}
       env:
-      - DBUS_SESSION_BUS_ADDRESS: "/dev/null"
-      - RAILS_ENV: test
-      - NODE_ENV: test
-      - BUNDLE_PATH: vendor/bundle
-      - COVERAGE_DIR: "/home/circleci/coverage"
-      - POSTGRES_HOST: localhost
-      - POSTGRES_USER: root
+        DBUS_SESSION_BUS_ADDRESS: "/dev/null"
+        RAILS_ENV: test
+        NODE_ENV: test
+        BUNDLE_PATH: vendor/bundle
+        COVERAGE_DIR: "/home/circleci/coverage"
+        POSTGRES_HOST: localhost
+        POSTGRES_USER: root
     services:
       postgres:
         image: postgres:11.7
         env:
-        - POSTGRES_USER: root
+          POSTGRES_USER: root
           POSTGRES_PASSWORD: password
           POSTGRES_DB: caseflow_certification_test
       facols:
@@ -87,13 +85,13 @@ jobs:
         username: AWS
         password: ${{ secrets.ECR_PASSWORD }}
       env:
-      - DBUS_SESSION_BUS_ADDRESS: "/dev/null"
-      - RAILS_ENV: test
-      - NODE_ENV: test
-      - BUNDLE_PATH: vendor/bundle
-      - COVERAGE_DIR: "/home/circleci/coverage"
-      - POSTGRES_HOST: localhost
-      - POSTGRES_USER: root
+        DBUS_SESSION_BUS_ADDRESS: "/dev/null"
+        RAILS_ENV: test
+        NODE_ENV: test
+        BUNDLE_PATH: vendor/bundle
+        COVERAGE_DIR: "/home/circleci/coverage"
+        POSTGRES_HOST: localhost
+        POSTGRES_USER: root
     services:
       postgres:
         image: postgres:11.7
@@ -170,12 +168,12 @@ jobs:
     container:
       image: cimg/ruby:2.7.3-browsers
       env:
-      - DBUS_SESSION_BUS_ADDRESS: "/dev/null"
-      - NODE_ENV: test
-      - JEST_DIR: "/home/circleci/test-results/jest"
-      - TEST_REPORTER: jest-junit
-      - JEST_JUNIT_OUTPUT_DIR: "/home/circleci/test-results/jest"
-      - COVERAGE_DIR: "/home/circleci/coverage"
+        DBUS_SESSION_BUS_ADDRESS: "/dev/null"
+        NODE_ENV: test
+        JEST_DIR: "/home/circleci/test-results/jest"
+        TEST_REPORTER: jest-junit
+        JEST_JUNIT_OUTPUT_DIR: "/home/circleci/test-results/jest"
+        COVERAGE_DIR: "/home/circleci/coverage"
     steps:
     - uses: actions/checkout@v3.3.0
     - name: Install python-2 as a node-gyp@3.8.0 dependency
@@ -209,7 +207,7 @@ jobs:
         username: AWS
         password: ${{ secrets.ECR_PASSWORD }}
       env:
-      - DBUS_SESSION_BUS_ADDRESS: "/dev/null"
+        DBUS_SESSION_BUS_ADDRESS: "/dev/null"
     steps:
     - uses: actions/checkout@v3.3.0
     - uses: "./.github/actions/install_ruby_dependencies"
