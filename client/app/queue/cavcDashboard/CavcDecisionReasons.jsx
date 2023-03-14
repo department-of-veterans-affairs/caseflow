@@ -26,6 +26,8 @@ const CavcDecisionReasons = (props) => {
     userCanEdit
   } = props;
 
+  const MIN_INPUT_LENGTH = 3;
+
   const checkboxStyling = css({
     paddingLeft: '2.5%',
     marginBlock: '0.75rem'
@@ -308,18 +310,12 @@ const CavcDecisionReasons = (props) => {
 
   // Logic section for searchable dropdowns that prevents searching prior to 3 characters being entered
   // noOptionMessage is currently being overwritten by the default value set in searchabledropdown.jsx
-  const MIN_INPUT_LENGTH = 3;
-  const noOptionsMessage = (input) =>
-    input.length >= MIN_INPUT_LENGTH ?
-      'No options' :
-      'Search input must be at least 3 characters';
   const filterOption = (candidate, input) => {
-    return (
-      // Min input length
-      (input.length >= MIN_INPUT_LENGTH || input.length === 0) &&
-      // Use Select's default filtering for string matching by creating filter
-      createFilter({})(candidate, input)
-    );
+    if (input.length < MIN_INPUT_LENGTH) {
+      return true;
+    }
+
+    return createFilter({})(candidate, input);
   };
 
   const handleOtherTextFieldChange = (value, reason, parentReason) => {
@@ -343,7 +339,6 @@ const CavcDecisionReasons = (props) => {
             filterOption={filterOption}
             label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
             placeholder="Type to search..."
-            noOptionsMessage={noOptionsMessage}
             onChange={(option) => handleBasisChange(option, child, parent)}
             options={selectionBases.
               filter((selection) => selection.category === child.basis_for_selection_category).
@@ -401,7 +396,6 @@ const CavcDecisionReasons = (props) => {
               }))}
             onChange={(option) => handleBasisChange(option, parent)}
             placeholder="Type to search..."
-            noOptionsMessage={noOptionsMessage}
             styling={basisForSelectionStylingNoChild}
             readOnly={!userCanEdit}
             defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
