@@ -41,8 +41,25 @@ jobs:
           POSTGRES_USER: root
     steps:
       - uses: actions/checkout@v3
-      - name: install node dependencies
-        uses: ./.github/workflows/utils/install_node_dependencies
+      - name: restore yarn cache
+        uses: actions/cache/restore@v3
+        with:
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+        restore-keys:
+          dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+
+      - name: yarn install
+        run: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+
+      - name: Save Cache
+        uses: actions/cache@v3
+        with:
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+            - public/assets
+            - tmp/cache/assets/sprockets
+
       - name: Install chromium
         run: |
           CHROME_VERSION="106.0.5249.119-1"
@@ -50,6 +67,7 @@ jobs:
           wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
           && apt install -y /tmp/chrome.deb \
           && rm /tmp/chrome.deb
+
       - name: setup testfiles directory
         run: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
