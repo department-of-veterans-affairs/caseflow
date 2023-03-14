@@ -56,6 +56,16 @@ export const nonAutomatedTasksToHide = [
   'ChangeHearingDispositionTask',
 ];
 
+export const openTaskTypes = [
+  'SendCavcRemandProcessedLetterTask',
+  'CavcRemandProcessedLetterResponseWindowTask',
+  'MdrTask',
+  'IhpColocatedTask',
+  'FoiaRequestMailTask',
+  'FoiaTask',
+  'FoiaColocatedTask',
+]
+
 export const closedTasksToHide = [...automatedTasks, ...nonAutomatedTasksToHide, ...mailTasks, ...hearingAdminActions];
 // This may be refined after user testing...
 export const openTasksToHide = [...nonAutomatedTasksToHide, ...automatedTasks];
@@ -149,7 +159,7 @@ export const disabledTasksBasedOnSelections = ({ tasks, selectedTaskIds }) => {
   return tasks.map((task) => {
     return ({
       ...task,
-      disabled: shouldDisable(task) || shouldDisableBasedOnTaskType(task.type, selectedTaskTypes)
+      disabled: true
     });
   });
 };
@@ -242,6 +252,10 @@ export const filterOpenTasks = (tasks) => tasks.filter((task) => {
   return ['assigned', 'on_hold'].includes(task.status);
 });
 
+export const filterCancelOrCompletedTasks = (tasks) => tasks.filter((task) => {
+  return ['completed', 'cancelled'].includes(task.status);
+});
+
 export const shouldHideOpen = (taskInfo, claimantPoa, allTasks) => {
   // Some tasks should always be hidden, regardless of additional context
   if (openTasksToHide.includes(taskInfo.type)) {
@@ -269,56 +283,34 @@ export const adjustOpenTasksBasedOnSelection = ({ tasks, selectedTaskIds }) => {
   }));
 };
 
-export const prepOpenTaskDataForUi = ({ taskData, /* claimantPoa,*/ isSubstitutionSameAppeal }) => {
+export const editCavcRemandSubstitutionOpenTaskDataForUi = ({ taskData }) => {
   const activeTasks = filterOpenTasks(taskData);
   const uniqTasks = filterTasks(activeTasks, { orgOnly: false, closedOnly: false });
 
   const sortedTasks = sortTasks(uniqTasks, 'createdAt');
 
-  const filteredBySubstitutionType = isSubstitutionSameAppeal ?
-    sortedTasks.filter((task) => task.type !== 'DistributionTask') :
-    sortedTasks;
+  const filteredBySubstitutionType = sortedTasks.filter((task) => {
+    return openTaskTypes.includes(task.type)
+  });
 
   return filteredBySubstitutionType.map((taskInfo) => ({
     ...taskInfo,
-    // hidden: shouldHideOpen(taskInfo, claimantPoa, taskData),
-    disabled: false,
-    selected: true,
+    disabled: true,
+    selected: false,
   }));
 };
 
-export const calculateEvidenceSubmissionEndDate = ({
-  substitutionDate: substitutionDateStr,
-  veteranDateOfDeath: veteranDateOfDeathStr,
-  selectedTasks,
-}) => {
-  const evidenceSubmissionTask = selectedTasks.find(
-    (task) => task.type === 'EvidenceSubmissionWindowTask'
-  );
+export const editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi = ({ taskData }) => {
+  const inActiveTasks = filterCancelOrCompletedTasks(taskData);
+  const uniqTasks = filterTasks(inActiveTasks);
 
-  if (!evidenceSubmissionTask?.timerEndsAt || !veteranDateOfDeathStr) {
-    console.error('Error: Either the evidence submission task timer end date or the veteran date of death is missing');
+  const sortedTasks = sortTasks(uniqTasks, 'closedAt');
 
-    return null;
-  }
+  const filteredBySubstitutionType = sortedTasks.filter((task) => ["SendCavcRemandProcessedLetterTask"].includes(task.type))
 
-  const substitutionDate = parseISO(substitutionDateStr);
-  const veteranDateOfDeath = parseISO(veteranDateOfDeathStr);
-
-  const timerEndsAt = evidenceSubmissionTask.timerEndsAt;
-  const timerEndsAtDate = parseISO(timerEndsAt);
-
-  let remainingTime = timerEndsAtDate.getTime() - veteranDateOfDeath.getTime();
-
-  // Convert days to milliseconds
-  const maxEvidenceSubmissionWindow = 90 * 86400000;
-
-  if (remainingTime > maxEvidenceSubmissionWindow) {
-    remainingTime = maxEvidenceSubmissionWindow;
-  }
-
-  const newEndTime = substitutionDate.getTime() + remainingTime;
-
-  // We want to specify midnight in user's time zone (likely Eastern)
-  return formatISO(startOfDay(new Date(newEndTime)));
+  return filteredBySubstitutionType.map((taskInfo) => ({
+    ...taskInfo,
+    disabled: true,
+    selected: true,
+  }));
 };

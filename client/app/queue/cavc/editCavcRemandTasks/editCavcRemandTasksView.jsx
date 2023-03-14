@@ -14,7 +14,7 @@ import {
   stepBack,
   updateData,
 } from '../editCavcRemand.slice';
-import { prepOpenTaskDataForUi, prepTaskDataForUi } from './utils';
+import { editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi, editCavcRemandSubstitutionOpenTaskDataForUi, prepOpenTaskDataForUi, prepTaskDataForUi } from './utils';
 import { isSubstitutionSameAppeal } from '../caseDetails/utils';
 
 export const EditCavcRemandTasksView = () => {
@@ -37,13 +37,11 @@ export const EditCavcRemandTasksView = () => {
   );
 
   const activeTasks = useMemo(() => {
-    return prepOpenTaskDataForUi({ taskData: allTasks,
-      isSubstitutionSameAppeal: sameAppealSubstitution });
+    return editCavcRemandSubstitutionOpenTaskDataForUi({ taskData: allTasks });
   }, [allTasks]);
 
-  const filteredTasks = useMemo(() => {
-    return prepTaskDataForUi({ taskData: allTasks,
-      isSubstitutionSameAppeal: sameAppealSubstitution });
+  const cancelledOrCompletedTasks = useMemo(() => {
+    return editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi({ taskData: allTasks });
   }, [allTasks]);
 
   // These values will be used in the "key details" section
@@ -73,6 +71,8 @@ export const EditCavcRemandTasksView = () => {
     // Here we'll dispatch updateData action to update Redux store with our form data
     dispatch(updateData({ formData }));
 
+    // Advance progressbar
+    dispatch(stepForward());
     // Move to next page
     history.push(`/queue/appeals/${appealId}/edit_cavc_remand/review`);
   };
@@ -84,7 +84,7 @@ export const EditCavcRemandTasksView = () => {
       nodDate={nodDate}
       dateOfDeath={dateOfDeath}
       substitutionDate={substitutionDate}
-      cancelledTasks={filteredTasks}
+      cancelledTasks={cancelledOrCompletedTasks}
       activeTasks={activeTasks}
       onBack={handleBack}
       onCancel={handleCancel}

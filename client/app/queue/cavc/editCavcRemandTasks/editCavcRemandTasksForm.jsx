@@ -52,7 +52,6 @@ export const EditCavcRemandTasksForm = ({
   onBack,
   onCancel,
   onSubmit,
-  pendingAppeal,
   cancelledTasks = [],
   activeTasks = []
 }) => {
@@ -118,11 +117,10 @@ export const EditCavcRemandTasksForm = ({
           <div className={sectionStyle}>
             <h2>{CAVC_REMAND_MODIFY_TASKS_APPEAL_TASKS_TITLE}</h2>
             <br></br>
-            {pendingAppeal && (
+            {(
               <div className={sectionStyle}>
                 <div><strong>{CAVC_REMAND_MODIFY_TASKS_ACTIVE_TITLE}</strong></div>
                 <div><ReactMarkdown source={CAVC_REMAND_MODIFY_TASKS_ACTIVE_DETAIL} /></div>
-                {shouldShowScheduleHearingTaskAlert && <ScheduleHearingTaskAlert /> }
                 <TasksToCancel tasks={adjustedOpenTasks} />
               </div>
             )}
@@ -130,7 +128,6 @@ export const EditCavcRemandTasksForm = ({
             <div className={sectionStyle}>
               <div><strong>{CAVC_REMAND_MODIFY_TASKS_CANCELLED_TITLE}</strong></div>
               <div><ReactMarkdown source={CAVC_REMAND_MODIFY_TASKS_CANCELLED_DETAIL} /></div>
-              {shouldShowScheduleHearingTaskAlert && <ScheduleHearingTaskAlert /> }
               <TasksToCopy tasks={adjustedTasks} />
             </div>
 
