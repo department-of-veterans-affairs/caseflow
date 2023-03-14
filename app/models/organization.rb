@@ -78,8 +78,8 @@ class Organization < CaseflowRecord
     users_membership_requests(user).each do |membership_request|
       membership_request.cancelled!
 
-      MembershpRequestMailer.vha_business_line_approval(membership_request)
-      MembershpRequestMailer.multiple_pd_approval(membership_request)
+      MembershipRequestMailer.vha_business_line_approval(membership_request)
+      MembershipRequestMailer.multiple_pd_approval(membership_request)
     end
   end
 
