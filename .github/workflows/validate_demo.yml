@@ -45,9 +45,10 @@ jobs:
         run: apt install dpkg
       - name: Install chromium
         run: |
-          VERSION_STRING="106.0.5249.119"
-          wget "https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${VERSION_STRING}_amd64.deb"
-          sudo dpkg -i "google-chrome-stable_${VERSION_STRING}_amd64.deb"
+          CHROME_VERSION="106.0.5249.119-1"
+          wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+          && apt install -y /tmp/chrome.deb \
+          && rm /tmp/chrome.deb
       - name: setup testfiles directory
         run: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
       - name: install node dependencies
