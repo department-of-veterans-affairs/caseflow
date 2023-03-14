@@ -29,7 +29,7 @@ describe MembershipRequestMailer do
 
   context "user request sent" do
     let(:mailer) do
-      MembershipRequestMailer.with(recipient_info: requestor,
+      MembershipRequestMailer.with(requestor: requestor,
                                    requests: membership_requests,
                                    subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED)
         .user_request_created
@@ -56,8 +56,7 @@ describe MembershipRequestMailer do
 
   context "admin request made" do
     let(:mailer) do
-      MembershipRequestMailer.with(recipient_info: requestor,
-                                   organization_name: caregiver_support_org.name,
+      MembershipRequestMailer.with(organization_name: caregiver_support_org.name,
                                    to: COPY::VHA_CAREGIVER_SUPPORT_EMAIL_ADDRESS,
                                    subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_VHA_ADMIN_REQUEST_RECEIVED)
         .admin_request_made

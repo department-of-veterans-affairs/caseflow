@@ -33,7 +33,7 @@ class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
 
   def send_requestor_email
     mailer_parameters = {
-      recipient_info: requestor,
+      requestor: requestor,
       requests: membership_requests,
       subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED
     }
@@ -49,12 +49,10 @@ class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
   end
 
   def send_organization_email(organization)
-    recipient_info = guess_admin(organization)
     # Create an array from the hash and flatten it since organizations can have two emails
     admin_emails = [get_organization_admin_emails(organization.name)].flatten
 
     mailer_parameters = {
-      recipient_info: recipient_info,
       organization_name: organization.name,
       subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_VHA_ADMIN_REQUEST_RECEIVED
     }
@@ -139,10 +137,6 @@ class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
 
   def single_request
     @single_request ||= membership_requests.first
-  end
-
-  def guess_admin(organization)
-    organization.admins.first
   end
 
   def get_organization_admin_emails(organization_name)

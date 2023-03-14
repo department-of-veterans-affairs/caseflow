@@ -14,7 +14,7 @@ class MembershipRequestMailer < ActionMailer::Base
   layout "membership_request_mailer"
 
   def user_request_created
-    @recipient = params[:recipient_info]
+    @recipient = params[:requestor]
     @requests = params[:requests]
     @requesting_org_names = @requests&.map { |request| request.organization.name }
     @subject = params[:subject]
