@@ -7,26 +7,25 @@ on:
 
 jobs:
   validate-demo:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-8-cores-latest
     services:
-      # postgres:
-      #   image: postgres:11.7
-      #   env:
-      #     POSTGRES_USER: root
-      #     POSTGRES_PASSWORD: password
-      #     POSTGRES_DB: caseflow_certification_test
-      #   ports:
-      #   - 5432:5432
-      # redis:
-      #   image: redis:4.0.10
-      #   ports:
-      #   - 6379:6379
+      postgres:
+        image: postgres:11.7
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: caseflow_certification_test
+        ports:
+        - 5432:5432
+      redis:
+        image: redis:4.0.10
+        ports:
+        - 6379:6379
       facols:
         image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
         credentials:
           username: AWS
           password: ${{ secrets.ECR_PASSWORD }}
-        options:  --health-cmd "" --health-interval 300s --health-timeout 60s --health-retries 5
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
