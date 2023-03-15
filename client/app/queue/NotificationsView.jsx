@@ -69,7 +69,7 @@ export const NotificationsView = (props) => {
   });
 
   const errorCode = 'Error Code: ';
-  const pdfURL = `/appeals/'badappeal'/notifications.pdf`;
+  const pdfURL = `/appeals/'${appealId}'/notifications.pdf`;
   let errorUuid = '';
 
   //  Error handling to add alert message for PDF generation
@@ -80,7 +80,7 @@ export const NotificationsView = (props) => {
       setLoading(false);
     }).
       catch((error) => {
-        console.log(error.response.text)
+
         if (error.status > 299 || error.status < 200) {
           errorUuid = JSON.parse(error.response.text).errors[0].message;
           setAlert({ alertState: true, alertMessage: errorUuid });
