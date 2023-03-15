@@ -94,11 +94,11 @@ jobs:
           echo 'one'
           BASH_ENV="Bash"
           echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> "$BASH_ENV"
-          export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")
           echo "$BASH_ENV"
-          echo "$BUNDLER_VERSION"
           echo 'two'
+          source $BASH_ENV
           echo 'three'
+          sudo chmod -R 777 /var/lib/gems
           gem install bundler
           echo 'four'
           bundle install --path vendor/bundle
