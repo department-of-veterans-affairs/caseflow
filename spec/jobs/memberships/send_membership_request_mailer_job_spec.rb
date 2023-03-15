@@ -4,6 +4,14 @@ describe Memberships::SendMembershipRequestMailerJob do
   let(:recipient_info) { { email: email } }
   let(:email) { "bob.schmidt@va.gov" }
 
+  let(:error) do
+    StandardError.new("Error")
+  end
+
+  before do
+    allow(Raven).to receive(:capture_exception) { @raven_called = true }
+  end
+
   subject { described_class.perform_now(type, recipient_info) }
 
   describe "#perform" do
@@ -41,6 +49,15 @@ describe Memberships::SendMembershipRequestMailerJob do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(ArgumentError)
         end
+      end
+    end
+
+    context "an error is thrown" do
+      it "rescues error and logs to sentry" do
+        let(:type) { "SendAdminsMembershipRequestSubmissionEmail" }
+        allow_any_instance_of(MembershipRequestMailer).to receive(:membership_request_submission).and_raise(error)
+        subject
+        expect(@raven_called).to eq(true)
       end
     end
   end
