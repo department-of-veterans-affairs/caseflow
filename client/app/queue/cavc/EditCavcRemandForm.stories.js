@@ -1,7 +1,7 @@
 import React from 'react';
 import { add, format, sub } from 'date-fns';
 
-import { EditCavcRemandForm } from './editCavcRemandForm';
+import { EditCavcRemandForm } from './EditCavcRemandForm';
 
 const decisionIssues = [
   { id: 1, description: 'Tinnitus, Left Ear' },
