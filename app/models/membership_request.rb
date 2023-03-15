@@ -8,9 +8,6 @@ class MembershipRequest < CaseflowRecord
   validates :status, :organization, :requestor, presence: true
   validates :status, uniqueness: { scope: [:organization_id, :requestor_id], if: :assigned? }
 
-  scope :by_organization_id, ->(organization_id) { where(organization_id: organization_id) }
-  scope :by_requestor_id, ->(requestor_id) { where(requestor_id: requestor_id) }
-
   enum status: {
     assigned: "assigned",
     approved: "approved",

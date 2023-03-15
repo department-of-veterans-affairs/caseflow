@@ -72,19 +72,17 @@ class Organization < CaseflowRecord
   end
 
   def add_user(user)
-    OrganizationsUser.find_or_create_by!(organization: self, user: user)
+    org_user = OrganizationsUser.find_or_create_by!(organization: self, user: user)
 
     # check if membership_requests exists for the user that is being added.
-    users_membership_requests(user).each do |membership_request|
+    user.membership_requests.where(organization_id: id).each do |membership_request|
       membership_request.cancelled!
 
-      MembershipRequestMailer.vha_business_line_approval(membership_request)
-      MembershipRequestMailer.multiple_pd_approval(membership_request)
+      MembershipRequestMailer.vha_business_line_approval(membership_request).deliver_now
+      MembershipRequestMailer.multiple_pd_approval(membership_request).deliver_now
     end
-  end
 
-  def users_membership_requests(requestor)
-    MembershipRequest.by_organization_id(id).by_requestor_id(requestor.id)
+    org_user
   end
 
   def admins
