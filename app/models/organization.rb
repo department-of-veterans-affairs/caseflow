@@ -81,8 +81,6 @@ class Organization < CaseflowRecord
       MembershipRequestMailer.vha_business_line_approval(membership_request).deliver_now
       MembershipRequestMailer.multiple_pd_approval(membership_request).deliver_now
     end
-    
-    org_user
 
     org_user
   end
