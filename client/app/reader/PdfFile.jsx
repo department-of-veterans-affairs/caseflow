@@ -13,7 +13,7 @@ import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH, PAGE_DIME
 import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError,
   setPageDimensions } from '../reader/Pdf/PdfActions';
 import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
-import ApiUtil from '../util/ApiUtil';
+// import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
 import * as PDFJS from 'pdfjs-dist';
 import { Grid, AutoSizer } from 'react-virtualized';
@@ -44,12 +44,12 @@ export class PdfFile extends React.PureComponent {
 
   componentDidMount = () => {
 
-    let requestOptions = {
-      cache: true,
-      withCredentials: true,
-      timeout: true,
-      responseType: 'arraybuffer'
-    };
+    // let requestOptions = {
+    //   cache: true,
+    //   withCredentials: true,
+    //   timeout: true,
+    //   responseType: 'arraybuffer'
+    // };
 
     window.addEventListener('keydown', this.keyListener);
 
@@ -57,16 +57,13 @@ export class PdfFile extends React.PureComponent {
 
     // We have to set withCredentials to true since we're requesting the file from a
     // different domain (eFolder), and still need to pass our credentials to authenticate.
-    return ApiUtil.get(this.props.file, requestOptions).
-      then((resp) => {
-        this.loadingTask = PDFJS.getDocument({ data: resp.body });
+    this.loadingTask = PDFJS.getDocument({
+      url: this.props.file,
+      withCredentials: true
+    });
 
-        return this.loadingTask.promise;
-      }).
+    return this.loadingTask.promise.
       then((pdfDocument) => {
-
-        this.setPageDimensions(pdfDocument);
-
         if (this.loadingTask.destroyed) {
           pdfDocument.destroy();
         } else {
@@ -75,6 +72,26 @@ export class PdfFile extends React.PureComponent {
           this.props.setPdfDocument(this.props.file, pdfDocument);
         }
       }).
+    // // We have to set withCredentials to true since we're requesting the file from a
+    // // different domain (eFolder), and still need to pass our credentials to authenticate.
+    // return ApiUtil.get(this.props.file, requestOptions).
+    //   then((resp) => {
+    //     this.loadingTask = PDFJS.getDocument({ data: resp.body });
+
+    //     return this.loadingTask.promise;
+    //   }).
+    //   then((pdfDocument) => {
+
+    //     this.setPageDimensions(pdfDocument);
+
+    //     if (this.loadingTask.destroyed) {
+    //       pdfDocument.destroy();
+    //     } else {
+    //       this.loadingTask = null;
+    //       this.pdfDocument = pdfDocument;
+    //       this.props.setPdfDocument(this.props.file, pdfDocument);
+    //     }
+    //   }).
       catch(() => {
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
