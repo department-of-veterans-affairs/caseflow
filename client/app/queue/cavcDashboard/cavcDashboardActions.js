@@ -77,17 +77,6 @@ export const setSelectionBasisForReasonCheckbox = (uniqueId, option) => ({
   meta: meta(`Issue Id ${uniqueId} ${option}`)
 });
 
-export const updateOtherFieldTextValue = (uniqueId, value, reasons) => ({
-  type: ACTIONS.UPDATE_OTHER_FIELD_TEXT_VALUE,
-  payload: {
-    issueId: uniqueId,
-    checkboxId: reasons.checkboxId,
-    parentCheckboxId: reasons.parentCheckboxId,
-    value
-  },
-  meta: meta(`Issue Id ${uniqueId} ${value} ${reasons}`)
-});
-
 export const setInitialCheckedDecisionReasons = (uniqueId) => ({
   type: ACTIONS.SET_INITIAL_CHECKED_DECISION_REASONS,
   payload: {
