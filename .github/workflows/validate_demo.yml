@@ -91,9 +91,13 @@ jobs:
       - name: Install Ruby Dependencies
         run: |
           ruby -v
+          echo 'one'
           echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
+          echo 'two'
           source $BASH_ENV
+          echo 'three'
           gem install bundler
+          echo 'four'
           bundle install --path vendor/bundle
 
 
