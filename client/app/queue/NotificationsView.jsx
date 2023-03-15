@@ -69,7 +69,7 @@ export const NotificationsView = (props) => {
   });
 
   const errorCode = 'Error Code: ';
-  const pdfURL = `/appeals/'${appealId}'/notifications.pdf`;
+  const pdfURL = `/appeals/${appealId}/notifications.pdf`;
   let errorUuid = '';
 
   //  Error handling to add alert message for PDF generation
