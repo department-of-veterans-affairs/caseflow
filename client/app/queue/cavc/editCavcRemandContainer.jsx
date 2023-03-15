@@ -7,8 +7,7 @@ import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router';
 import { EditCavcRemandView } from './EditCavcRemandView';
 import { EditCavcRemandTasksView } from './editCavcRemandTasks/editCavcRemandTasksView';
-import { EditCavcRemandReview } from './editCavcRemandReview/editCavcRemandReview';
-
+import { EditCavcRemandReviewContainer } from './editCavcRemandReview/editCavcRemandReviewContainer';
 
 const sections = [
   'Edit CAVC Remand',
@@ -45,7 +44,7 @@ export const EditCavcRemandContainer = () => {
         </Route>
 
         <Route path={`${path}/review`} title = "Edit Cavc Remand | Caseflow">
-          <EditCavcRemandReview />
+          <EditCavcRemandReviewContainer />
         </Route>
 
       </Switch>

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,9 +14,8 @@ import { editAppeal } from '../QueueActions';
 import {
   updateData,
   stepForward,
-  // fetchRelationships,
-  // cancel,
-  // refreshAppellantPoa,
+  fetchRelationships,
+  cancel
 } from './editCavcRemand.slice';
 import moment from 'moment';
 
@@ -135,6 +134,11 @@ export const EditCavcRemandView = () => {
       history.push(`/queue/appeals/${appealId}/edit_cavc_remand/tasks`);
     }
   };
+
+  // Load veteran relationships for this appeal
+  useEffect(() => {
+    dispatch(fetchRelationships({ appealId }));
+  }, []);
 
   return (
     <EditCavcRemandForm

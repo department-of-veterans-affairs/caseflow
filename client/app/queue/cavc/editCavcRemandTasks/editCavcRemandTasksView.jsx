@@ -12,10 +12,13 @@ import { EditCavcRemandTasksForm } from './editCavcRemandTasksForm';
 import {
   cancel,
   stepBack,
+  stepForward,
   updateData,
 } from '../editCavcRemand.slice';
-import { editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi, editCavcRemandSubstitutionOpenTaskDataForUi, prepOpenTaskDataForUi, prepTaskDataForUi } from './utils';
-import { isSubstitutionSameAppeal } from '../caseDetails/utils';
+import {
+  editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi,
+  editCavcRemandSubstitutionOpenTaskDataForUi
+} from './utils';
 
 export const EditCavcRemandTasksView = () => {
   const { appealId } = useParams();
@@ -30,8 +33,6 @@ export const EditCavcRemandTasksView = () => {
     (state) => state.cavcRemand
   );
 
-  const sameAppealSubstitution = isSubstitutionSameAppeal(appeal);
-
   const allTasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
   );
@@ -40,10 +41,13 @@ export const EditCavcRemandTasksView = () => {
     return editCavcRemandSubstitutionOpenTaskDataForUi({ taskData: allTasks });
   }, [allTasks]);
 
+  const cancelTaskIds = activeTasks.map( (task) => task.id );
+
   const cancelledOrCompletedTasks = useMemo(() => {
     return editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi({ taskData: allTasks });
   }, [allTasks]);
 
+  const reActivateTaskIds = cancelledOrCompletedTasks.map( (task) => task.id );
   // These values will be used in the "key details" section
   const nodDate = useMemo(() => parseISO(appeal.nodDate), [appeal.nodDate]);
   const dateOfDeath = useMemo(() => {
@@ -51,6 +55,7 @@ export const EditCavcRemandTasksView = () => {
 
     return dod ? parseISO(dod) : null;
   }, [appeal.veteranInfo]);
+
   const substitutionDate = useMemo(
     () => parseISO(existingValues.substitutionDate),
     [existingValues.substitutionDate]
@@ -69,7 +74,15 @@ export const EditCavcRemandTasksView = () => {
   };
   const handleSubmit = async (formData) => {
     // Here we'll dispatch updateData action to update Redux store with our form data
-    dispatch(updateData({ formData }));
+    dispatch(
+      updateData({
+        formData: {
+          ...existingValues,
+          reActivateTaskIds: reActivateTaskIds ? reActivateTaskIds : [],
+          cancelTaskIds: cancelTaskIds ? cancelTaskIds : []
+        }
+      })
+    );
 
     // Advance progressbar
     dispatch(stepForward());

@@ -40,9 +40,8 @@ const styles = {
 
 export const EditCavcRemandReview = ({
   tasksToCancel,
-  taskstoReactivate,
+  tasksToReActivate,
   existingValues,
-  evidenceSubmissionEndDate,
   relationship,
   onBack,
   onCancel,
@@ -108,10 +107,10 @@ export const EditCavcRemandReview = ({
         </section>
         <section className={styles.tableSection}>
           <h2>{CAVC_REMAND_REVIEW_TASKS_REACTIVATE_LABEL}</h2>
-          {taskstoReactivate.length > 0 && (
+          {tasksToReActivate.length > 0 && (
             <table className={`usa-table-borderless ${styles.mainTable}`}>
               <tbody>
-                {taskstoReactivate.map((task) => {
+                {tasksToReActivate.map((task) => {
                   return (
                     <tr className="task-detail" key={`${task.taskId}`}>
                       <td>

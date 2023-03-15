@@ -56,16 +56,18 @@ export const EditCavcRemandTasksForm = ({
   activeTasks = []
 }) => {
   const methods = useForm({
-    // Use this for repopulating form from redux when user navigates back
-    resolver: yupResolver(schema),
     defaultValues: {
       ...existingValues,
       closedTaskIds:
         // eslint-disable-next-line max-len
-        existingValues?.closedTaskIds?.length ? existingValues?.closedTaskIds : (cancelledTasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
+        existingValues?.closedTaskIds?.length ?
+          existingValues?.closedTaskIds :
+          (cancelledTasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
       openTaskIds:
         // eslint-disable-next-line max-len
-        existingValues?.openTaskIds?.length ? existingValues?.openTaskIds : (activeTasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
+        existingValues?.openTaskIds?.length ?
+          existingValues?.openTaskIds :
+          (activeTasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
     },
   });
 
@@ -90,13 +92,6 @@ export const EditCavcRemandTasksForm = ({
       }),
     [activeTasks, selectedOpenTaskIds]
   );
-
-  const shouldShowScheduleHearingTaskAlert = useMemo(() => {
-    return taskTypesSelected({
-      tasks: cancelledTasks,
-      selectedTaskIds: selectedClosedTaskIds,
-    }).includes('ScheduleHearingTask');
-  }, [cancelledTasks, selectedClosedTaskIds]);
 
   return (
     <FormProvider {...methods}>
@@ -186,7 +181,6 @@ EditCavcRemandTasksForm.propTypes = {
       type: PropTypes.string,
     })
   ),
-  pendingAppeal: PropTypes.bool,
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,

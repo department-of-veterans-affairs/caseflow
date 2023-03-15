@@ -1,6 +1,23 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import ApiUtil from 'app/util/ApiUtil';
+import { formatRelationships } from 'app/intake/util';
+
+export const fetchRelationships = createAsyncThunk(
+  'editCavcRemand/fetchRelationships',
+  async ({ appealId }) => {
+    try {
+      const res = await ApiUtil.get(`/appeals/${appealId}/veteran`, {
+        query: { relationships: true },
+      });
+
+      return res?.body?.veteran?.relationships;
+    } catch (error) {
+      console.error('Error fetching relationships', error);
+      throw error;
+    }
+  }
+);
 
 const initialState = {
   step: 0,
@@ -11,10 +28,9 @@ const initialState = {
   formData: {
     substitutionDate: null,
     participantId: null,
-    closedTaskIds: [],
-    openTaskIds: [],
+    reActivateTaskIds: [],
     // ids to cancel when options are unchecked
-    cancelledTaskIds: []
+    cancelTaskIds: []
   },
 
   /**
@@ -48,26 +64,23 @@ const editCavcRemandSlice = createSlice({
       };
     },
   },
-});
-
-// Submit to the backend
-export const completeEditCavcRemand = createAsyncThunk(
-  'edit_cavc_remand/submit',
-  async (data) => {
-    try {
-      const res = await ApiUtil.post(`/appeals/${data.source_appeal_id}/appellant_substitution`, { data });
-      const attrs = res.body;
-
-      return {
-        substitution: attrs?.substitution,
-        targetAppeal: attrs?.targetAppeal,
-      };
-    } catch (error) {
-      console.error('Error when creating appellant substitution', error);
-      throw error;
+  extraReducers: {
+    [fetchRelationships.pending]: (state) => {
+      state.loadingRelationships = true;
+    },
+    [fetchRelationships.fulfilled]: (state, action) => {
+      state.relationships = action.payload ?
+        formatRelationships(action.payload) :
+        null;
+      state.loadingRelationships = false;
+    },
+    [fetchRelationships.rejected]: (state) => {
+      // In case of error, empty relationships array (will display message re no relationships found)
+      state.relationships = null;
+      state.loadingRelationships = false;
     }
   }
-);
+});
 
 export const {
   cancel,
