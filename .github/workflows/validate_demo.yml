@@ -88,5 +88,12 @@ jobs:
         run: ./ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
 
+      - name: Install Ruby Dependencies
+        run: |
+          ruby -v
+          echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
+          source $BASH_ENV
+          gem install bundler
+          bundle install --path vendor/bundle
 
 
