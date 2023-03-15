@@ -15,6 +15,10 @@ class VirtualHearings::LinkService
     @conference_id = conference_id
   end
 
+  def conference_link
+    @conference_link
+  end
+
   def host_link
     link(host_pin)
   end
