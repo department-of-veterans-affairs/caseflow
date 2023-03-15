@@ -35,7 +35,19 @@ def generate_table_notifications(notifications)
   notifications.each do |notification|
 
     email_notification = {
-      status: notification.email_notification_status == 'Success' ? 'Sent' : notification.email_notification_status,
+      status: switch (notification.email_notification_status) {
+        case 'Sent' || 'Temporary-failure':
+          notificaton.email_notification_status == 'Pending Delivery';
+          break;
+        case 'Permanent-failure' || 'Techinical-failure':
+          notification.email_notification_status == 'Failed Deliver';
+          break;
+        case 'Preferences-declined':
+        notification.email_notification_status == 'Opted-out';
+        break;
+        default:
+          notification.email_notification_status == notification.email_notification_status;
+      }
       content: notification.email_notification_content,
       notification_type: 'Email',
       recipient_information: notification.recipient_email == nil ? '—' : notification.recipient_email,
