@@ -31,6 +31,7 @@ const CancelTaskModal = (props) => {
 
     return instructions.length > 0;
   };
+
   const submit = () => {
     const payload = {
       data: {
@@ -60,6 +61,40 @@ const CancelTaskModal = (props) => {
     return props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg);
   };
 
+  if (props.task.type === 'SendInitialNotificationLetterTask' ||
+  props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ||
+  props.task.type === 'SendFinalNotificationLetterTask') {
+    return (
+      <QueueFlowModal
+        title={taskData?.modal_title ?? ''}
+        button={taskData?.modal_button_text ?? COPY.MODAL_SUBMIT_CANCEL_BUTTON_CONTESTED_CLAIM}
+        pathAfterSubmit={taskData?.redirect_after ?? '/queue'}
+        submit={submit}
+        validateForm={validateForm}
+        submitButtonClassNames={['usa-button']}
+        submitDisabled= {!(instructions.length)}
+      >
+        {taskData?.modal_body &&
+          <React.Fragment>
+            <div dangerouslySetInnerHTML={{ __html: taskData.modal_body }} />
+            <br />
+          </React.Fragment>
+        }
+        {get(taskData, 'show_instructions', true) &&
+          <TextareaField
+            name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+            // errorMessage={highlightFormItems && instructions.length === 0 ?
+            //   COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
+            id="taskInstructions"
+            onChange={setInstructions}
+            placeholder="This is a description of instuctions and context for this action."
+            value={instructions}
+          />
+        }
+      </QueueFlowModal>
+    );
+  }
+
   return (
     <QueueFlowModal
       title={taskData?.modal_title ?? ''}
@@ -85,6 +120,7 @@ const CancelTaskModal = (props) => {
       }
     </QueueFlowModal>
   );
+
 };
 /* eslint-enable camelcase */
 
@@ -94,7 +130,8 @@ CancelTaskModal.propTypes = {
   }),
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
-    taskId: PropTypes.string
+    taskId: PropTypes.string,
+    type: PropTypes.string
   }),
   highlightFormItems: PropTypes.bool
 };

@@ -178,6 +178,8 @@ const ProceedFinalNotificationLetterTaskModal = ({ props, state, setState }) => 
           styling={marginTop(4)}
           maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
           placeholder="This is a description of instuctions and context for this action."
+          errorMessage={props.highlightInvalid &&
+            !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
         />
       )}
     </React.Fragment>
@@ -203,6 +205,8 @@ const ResendFinalNotificationLetterTaskModal = ({ props, state, setState }) => {
           styling={marginTop(4)}
           maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
           placeholder="This is a description of instuctions and context for this action."
+          errorMessage={props.highlightInvalid &&
+            !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
         />
       )}
     </React.Fragment>
@@ -228,6 +232,8 @@ const ResendInitialNotificationLetterTaskModal = ({ props, state, setState }) =>
           styling={marginTop(4)}
           maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
           placeholder="This is a description of instuctions and context for this action."
+          errorMessage={props.highlightInvalid &&
+            !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
         />
       )}
     </React.Fragment>
@@ -237,6 +243,7 @@ const ResendInitialNotificationLetterTaskModal = ({ props, state, setState }) =>
 ResendInitialNotificationLetterTaskModal.propTypes = {
   props: PropTypes.object,
   setState: PropTypes.func,
+  highlightInvalid: PropTypes.bool,
   state: PropTypes.object
 };
 MarkTaskCompleteContestedClaimModal.propTypes = {
@@ -251,12 +258,14 @@ MarkTaskCompleteContestedClaimModal.propTypes = {
 ProceedFinalNotificationLetterTaskModal.propTypes = {
   props: PropTypes.object,
   setState: PropTypes.func,
-  state: PropTypes.object
+  state: PropTypes.object,
+  highlightInvalid: PropTypes.bool
 };
 
 ResendFinalNotificationLetterTaskModal.propTypes = {
   props: PropTypes.object,
   setState: PropTypes.func,
+  highlightInvalid: PropTypes.bool,
   state: PropTypes.object
 };
 
@@ -570,6 +579,8 @@ const MODAL_TYPE_ATTRS = {
         isValid = validRadio(radio);
       } else if (radio === '1') {
         isValid = validInstructions(instructions) && validRadio(radio);
+      } else if (radio === '') {
+        isValid = validRadio(radio);
       }
 
       return !isValid;
@@ -582,7 +593,9 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.PROCEED_FINAL_NOTIFICATION_LETTER_TITLE,
     getContent: ProceedFinalNotificationLetterTaskModal,
-    buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON
+    buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON,
+    submitButtonClassNames: ['usa-button'],
+    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
   },
 
   proceed_final_notification_letter_post_holding: {
@@ -602,7 +615,9 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
     getContent: ResendInitialNotificationLetterTaskModal,
-    buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON
+    buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON,
+    submitButtonClassNames: ['usa-button'],
+    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
   },
 
   resend_initial_notification_letter_final: {
@@ -611,7 +626,9 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
     getContent: ResendInitialNotificationLetterTaskModal,
-    buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON
+    buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON,
+    submitButtonClassNames: ['usa-button'],
+    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
   },
 
   resend_final_notification_letter: {
@@ -620,7 +637,9 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.RESEND_FINAL_NOTIFICATION_LETTER_TITLE,
     getContent: ResendFinalNotificationLetterTaskModal,
-    buttonText: COPY.RESEND_FINAL_NOTIFICATION_LETTER_BUTTON
+    buttonText: COPY.RESEND_FINAL_NOTIFICATION_LETTER_BUTTON,
+    submitButtonClassNames: ['usa-button'],
+    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
   },
 
   ready_for_review: {
