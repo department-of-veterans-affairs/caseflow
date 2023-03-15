@@ -59,11 +59,18 @@ class AppealsController < ApplicationController
         request.headers["HTTP_PDF"]
         appeal = get_appeal_object(appeals_id)
         date = Time.zone.now.strftime("%Y-%m-%d %H.%M")
-        if !appeal.nil?
-          pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
-          send_data pdf, filename: "Notification Report " + appeals_id + " " + date + ".pdf", type: "application/pdf", disposition: :attachment
-        else
-          raise ActionController::RoutingError.new('Appeal Not Found')
+        begin
+          if !appeal.nil?
+            pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
+            send_data pdf, filename: "Notification Report " + appeals_id + " " + date + ".pdf", type: "application/pdf", disposition: :attachment
+          else
+            raise ActionController::RoutingError.new('Appeal Not Found')
+          end
+        rescue StandardError => error
+          uuid = SecureRandom.uuid
+          Rails.logger.error(error.to_s + "Error ID: " + uuid)
+          Raven.capture_exception(error, extra: { error_uuid: uuid })
+          render json: { "errors": ["message": uuid] }, status: :internal_server_error
         end
       end
       format.csv do
@@ -73,11 +80,6 @@ class AppealsController < ApplicationController
         raise ActionController::ParameterMissing.new('Bad Format')
       end
     end
-  rescue StandardError => error
-    uuid = SecureRandom.uuid
-    Rails.logger.error(error.to_s + "Error ID: " + uuid)
-    Raven.capture_exception(error, extra: { error_uuid: uuid })
-    render json: { "errors": ["message": uuid] }, status: :internal_server_error
   end
 
   def document_count
