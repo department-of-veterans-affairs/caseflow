@@ -18,9 +18,17 @@ end
 
 def get_notifications(appeal)
   if appeal.is_a?(Appeal)
-    Notification.where(appeals_id: appeal.uuid)
+    all_notifications = Notification.where(appeals_id: appeal.uuid)
+    allowed_notifications = all_notifications.where(email_notification_status: nil)
+      .or(all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .merge(all_notifications.where(sms_notification_status: nil)
+      .or(all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).order(event_date: :asc, id: :asc)
   elsif appeal.is_a?(LegacyAppeal)
-    Notification.where(appeals_id: appeal.vacols_id)
+    all_notifications = Notification.where(appeals_id: appeal.vacols_id)
+    allowed_notifications = all_notifications.where(email_notification_status: nil)
+      .or(all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .merge(all_notifications.where(sms_notification_status: nil)
+      .or(all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).order(event_date: :asc, id: :asc)
   end
 end
 
