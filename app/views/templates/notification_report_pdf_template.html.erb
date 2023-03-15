@@ -35,19 +35,16 @@ def generate_table_notifications(notifications)
   notifications.each do |notification|
 
     email_notification = {
-      status: switch (notification.email_notification_status) {
-        case 'Sent' || 'Temporary-failure':
-          notificaton.email_notification_status == 'Pending Delivery';
-          break;
-        case 'Permanent-failure' || 'Techinical-failure':
-          notification.email_notification_status == 'Failed Delivery';
-          break;
-        case 'Preferences-declined':
-        notification.email_notification_status == 'Opted-out';
-        break;
-        default:
-          notification.email_notification_status == notification.email_notification_status;
-      }
+      status: case notification.email_notification_status.downcase
+        when 'sent' , 'temporary-failure'
+          'Pending Delivery'
+        when 'permanent-failure' , 'techinical-failure'
+          'Failed Delivery'
+        when 'peferences-declined'
+          'Opted-out'
+        else
+          notification.email_notification_status
+        end,
       content: notification.email_notification_content,
       notification_type: 'Email',
       recipient_information: notification.recipient_email == nil ? '—' : notification.recipient_email,
@@ -56,19 +53,16 @@ def generate_table_notifications(notifications)
     }
 
     sms_notification = {
-      status: switch (notification.sms_notification_status) {
-        case 'Sent' || 'Temporary-failure':
-          notificaton.sms_notification_status == 'Pending Delivery';
-          break;
-        case 'Permanent-failure' || 'Techinical-failure':
-          notification.sms_notification_status == 'Failed Delivery';
-          break;
-        case 'Preferences-declined':
-        notification.sms_notification_status == 'Opted-out';
-        break;
-        default:
-          notification.sms_notification_status == notification.sms_notification_status;
-      }
+      status: case notification.sms_notification_status.downcase
+        when 'sent' , 'temporary-failure'
+          'Pending Delivery'
+        when 'permanent-failure' , 'techinical-failure'
+          'Failed Delivery'
+        when 'preferences-declined'
+          'Opted-out'
+        else
+          notification.sms_notification_status
+        end,
       content: notification.sms_notification_content,
       notification_type: 'Text',
       recipient_information: notification.recipient_phone_number == nil ? '—' : notification.recipient_phone_number,
@@ -231,4 +225,5 @@ end
   </style>
 
 </html>
+
 
