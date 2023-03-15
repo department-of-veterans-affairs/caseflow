@@ -4,8 +4,9 @@
 # MembershipRequestMailer will:
 # - Handle the selection of email templates
 # - Creation of job(s) to handle respective email notification scenarios including:
-# - Notify requestor upon successful vha business line approval
-# - Notify requestor upon successful vha multiple pd approval
+# - Notify requestor upon successful membership request submission
+# - Notify requestor upon change of status of membership request
+# - Notify admins upon successful membership request submission
 
 class MembershipRequestMailer < ActionMailer::Base
   default from: "VHABENEFITAPPEALS@va.gov"
