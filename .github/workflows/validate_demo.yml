@@ -75,6 +75,15 @@ jobs:
           && apt install -y /tmp/chrome.deb \
           && rm /tmp/chrome.deb
 
+      - name: Install firefox
+        run: |
+          FIREFOX_VERSION="106.0.1"
+          apt-get -y install libgtk2.0-0
+          wget https://ftp.mozilla.org/pub/firefox/releases/${FIREFOX_VERSION}/linux-x86_64/en-GB/firefox-${FIREFOX_VERSION}.tar.bz2
+          tar xvf firefox-45.0.2.tar.bz2
+          mv firefox/ /usr/lib/firefox
+          ln -s /usr/lib/firefox /usr/bin/firefox
+
       - name: setup testfiles directory
         run: ./ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
