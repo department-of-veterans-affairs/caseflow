@@ -521,6 +521,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       user = User.find_by_css_id(session["user"]["css_id"])
 
       return true unless user&.last_login_at
+
       false
     end
 

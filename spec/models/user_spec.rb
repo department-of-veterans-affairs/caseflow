@@ -23,7 +23,6 @@ describe User, :all_dbs do
     it "returns true unless user.last_login_at is false" do
       expect(User.first_time_logging_in?(session)).to eq true
     end
-
   end
 
   context ".api_user" do
