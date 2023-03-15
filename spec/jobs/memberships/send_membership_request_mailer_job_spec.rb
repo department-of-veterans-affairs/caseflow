@@ -53,8 +53,8 @@ describe Memberships::SendMembershipRequestMailerJob do
     end
 
     context "an error is thrown" do
+      let(:type) { "SendAdminsMembershipRequestSubmissionEmail" }
       it "rescues error and logs to sentry" do
-        let(:type) { "SendAdminsMembershipRequestSubmissionEmail" }
         allow_any_instance_of(MembershipRequestMailer).to receive(:membership_request_submission).and_raise(error)
         subject
         expect(@raven_called).to eq(true)
