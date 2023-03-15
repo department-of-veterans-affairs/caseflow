@@ -20,19 +20,19 @@ const Feedback = (props) => <BrowserRouter>
       }} />
     <AppFrame>
       <StatusMessage title="Having a technical difficulty?" messageTag="p" >
-      <p tabIndex={0}>
+        <p tabIndex={0}>
       Submit a ticket to the Caseflow team using <a href="https://yourIT.va.gov" target="_blank"
-          rel="noopener noreferrer">YourIT</a>. The YourIT link is also available on most VA issued workstations.
+            rel="noopener noreferrer">YourIT</a>. The YourIT link is also available on most VA issued workstations.
        To better assist, please ensure you provide the URL or web address associated to the issue in the ticket.
-       </p>
-      <p tabIndex={0}>
+        </p>
+        <p tabIndex={0}>
       The Caseflow Technical Support Team does not issue or manage access to Caseflow. Please do not submit a ticket
       through YourIT to the Caseflow team if you are looking for access to Caseflow or another VA product.
-      </p>
-      <p tabIndex={0}>
+        </p>
+        <p tabIndex={0}>
       Access is approved and granted via email through your management team and your local
       CSEM Information Security Officer (ISO). Please email your management team for access guidance.
-      </p>
+        </p>
       </StatusMessage>
     </AppFrame>
     <Footer
