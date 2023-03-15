@@ -38,9 +38,9 @@ def generate_table_notifications(notifications)
       status: case notification.email_notification_status.downcase
         when 'sent' , 'temporary-failure'
           'Pending Delivery'
-        when 'permanent-failure' , 'techinical-failure'
+        when 'permanent-failure' , 'technical-failure'
           'Failed Delivery'
-        when 'peferences-declined'
+        when 'preferences-declined'
           'Opted-out'
         else
           notification.email_notification_status
@@ -56,7 +56,7 @@ def generate_table_notifications(notifications)
       status: case notification.sms_notification_status.downcase
         when 'sent' , 'temporary-failure'
           'Pending Delivery'
-        when 'permanent-failure' , 'techinical-failure'
+        when 'permanent-failure' , 'technical-failure'
           'Failed Delivery'
         when 'preferences-declined'
           'Opted-out'
