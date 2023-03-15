@@ -93,13 +93,13 @@ jobs:
           ruby -v
           echo 'one'
           BASH_ENV="Bash"
-          sudo echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> "$BASH_ENV"
+          echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> "$BASH_ENV"
           echo "$BASH_ENV"
           echo 'two'
           source $BASH_ENV
           echo 'three'
-          gem install bundler
+          sudo gem install bundler
           echo 'four'
-          bundle install --path vendor/bundle
+          sudo bundle install --path vendor/bundle
 
 
