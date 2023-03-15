@@ -96,10 +96,10 @@ jobs:
           echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> "$BASH_ENV"
           echo "$BASH_ENV"
           echo 'two'
-          source $BASH_ENV
+         # source $BASH_ENV
           echo 'three'
-          sudo gem install bundler
+          gem install bundler
           echo 'four'
-          sudo bundle install --path vendor/bundle
+          bundle install --path vendor/bundle
 
 
