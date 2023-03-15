@@ -11,8 +11,8 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import { setCheckedDecisionReasons,
   setInitialCheckedDecisionReasons,
-  setSelectionBasisForReasonCheckbox,
-  updateOtherFieldTextValue } from './cavcDashboardActions';
+  setSelectionBasisForReasonCheckbox
+} from './cavcDashboardActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { createFilter } from 'react-select';
 import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
@@ -319,12 +319,49 @@ const CavcDecisionReasons = (props) => {
   };
 
   const handleOtherTextFieldChange = (value, reason, parentReason) => {
-    const reasons = {
-      checkboxId: reason.id,
-      parentCheckboxId: parentReason?.id
-    };
+    if (parentReason) {
+      setCheckedReasons((prevState) => {
+        const updatedParent = {
+          ...prevState[parentReason.id],
+          children: prevState[parentReason.id].children.map((child) => {
+            if (child.id === reason.id) {
+              const childBasis = child.basis_for_selection;
 
-    dispatch(updateOtherFieldTextValue(uniqueId, value, reasons));
+              return {
+                ...child,
+                basis_for_selection: {
+                  checkboxId: reason.id,
+                  parentCheckboxId: parentReason.id,
+                  value: childBasis.value,
+                  label: childBasis.label,
+                  otherText: value
+                }
+              };
+            }
+
+            return child;
+          })
+        };
+
+        return {
+          ...prevState,
+          [parentReason.id]: updatedParent
+        };
+      });
+    } else {
+      setCheckedReasons((prevState) => ({
+        ...prevState,
+        [reason.id]: {
+          ...prevState[reason.id],
+          basis_for_selection: {
+            checkboxId: reason.id,
+            value: prevState[reason.id].basis_for_selection.value,
+            label: prevState[reason.id].basis_for_selection.label,
+            otherText: value
+          }
+        }
+      }));
+    }
   };
 
   const renderBasisForSelectionsWithChild = (parent, child) => {

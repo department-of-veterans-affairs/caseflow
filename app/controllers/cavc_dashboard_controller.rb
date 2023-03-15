@@ -70,7 +70,7 @@ class CavcDashboardController < ApplicationController
       create_or_update_dashboard_dispositions(submitted_dispositions)
     end
 
-    new_disp_to_reason_set = create_new_dispositions_to_reasons(checked_boxes)
+    new_disp_to_reason_set = create_new_dispositions_to_reasons(checked_boxes).compact
 
     delete_removed_dispositions_to_reasons(new_disp_to_reason_set)
 
@@ -109,8 +109,8 @@ class CavcDashboardController < ApplicationController
         submitted_dispositions
           .filter { |disp| disp["cavc_dashboard_issue_id"] == issue["id"] }
           .first["cavc_dashboard_issue_id"] = new_issue.id
-        issue_box = checked_boxes&.filter { |box| box["issue_id"] == issue["id"] }&.first
-        issue_box["issue_id"] = new_issue.id if issue_box
+        issue_boxes = checked_boxes&.filter { |box| box["issue_id"] == issue["id"] }
+        issue_boxes.each { |box| box["issue_id"] = new_issue.id }
         issue["id"] = new_issue.id
         new_issue
       else
@@ -165,19 +165,17 @@ class CavcDashboardController < ApplicationController
             else
               CavcDashboardDisposition.find_by(cavc_dashboard_issue_id: box["issue_id"])
             end
-
       basis = if box["basis_for_selection"] && box["basis_for_selection"]["otherText"]
-                CavcSelectionBasis.find_or_create_by(
-                  basis_for_selection: box["basis_for_selection"]["otherText"],
-                  category: box["basis_for_selection_category"]
-                )
+                CavcSelectionBasis.find_or_create_by(basis_for_selection: box["basis_for_selection"]["otherText"],
+                                                     category: box["basis_for_selection_category"])
               elsif box["basis_for_selection"] && box["basis_for_selection"]["value"]
                 CavcSelectionBasis.find_by(id: box["basis_for_selection"]["value"])
               end
-
-      cdtr = CavcDispositionsToReason.find_or_create_by(cavc_dashboard_disposition: cdd,
-                                                        cavc_decision_reason_id: box["decision_reason_id"])
-      cdtr.update!(cavc_selection_basis_id: basis.id) if basis&.id
+      cdtr = if cdd
+               CavcDispositionsToReason.find_or_create_by(cavc_dashboard_disposition: cdd,
+                                                          cavc_decision_reason_id: box["decision_reason_id"])
+             end
+      cdtr.update!(cavc_selection_basis_id: basis.id) if cdtr && basis&.id
       cdtr
     end
   end
