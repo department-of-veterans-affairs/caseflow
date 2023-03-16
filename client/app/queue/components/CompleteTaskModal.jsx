@@ -46,6 +46,12 @@ const formatOtherInstructions = (state) => {
   return formattedInstructions;
 };
 
+const submitDisabled = ({ state }) => {
+  const { otherInstructions, radio } = state;
+
+  return !(radio === 'other' ? validRadio(otherInstructions) : validRadio(radio));
+};
+
 const MarkTaskCompleteModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
   const instructionsLabel = taskConfiguration && taskConfiguration.instructions_label;
@@ -314,6 +320,18 @@ const MODAL_TYPE_ATTRS = {
     getContent: MarkTaskCompleteModal,
     buttonText: COPY.MODAL_CONFIRM_BUTTON
   },
+  vha_documents_ready_for_bva_intake_for_review: {
+    buildSuccessMsg: (appeal) => ({
+      title: sprintf(
+        COPY.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE,
+        appeal.veteranFullName
+      )
+    }),
+    title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
+    getContent: ReadyForReviewModal,
+    buttonText: COPY.MODAL_SEND_BUTTON,
+    submitDisabled
+  },
   vha_return_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(COPY.VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION, appeal.veteranFullName)
@@ -371,7 +389,6 @@ const MODAL_TYPE_ATTRS = {
       return formatOtherInstructions(state);
     }
   },
-
   vha_caregiver_support_send_to_board_intake_for_review: {
     buildSuccessMsg: (appeal) => ({
       title: sprintf(
@@ -380,19 +397,7 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SEND_BUTTON,
-    submitDisabled: ({ state }) => {
-      const { otherInstructions, radio } = state;
-
-      let isValid = true;
-
-      if (radio === 'other') {
-        isValid = validInstructions(otherInstructions) && validRadio(radio);
-      } else {
-        isValid = validRadio(radio);
-      }
-
-      return !isValid;
-    }
+    submitDisabled
   },
 };
 

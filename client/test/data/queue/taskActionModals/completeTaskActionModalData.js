@@ -164,6 +164,30 @@ const vhaDocumentSearchTaskData = {
         }
       },
       {
+        label: 'Documents ready for Board Intake review',
+        func: 'vha_documents_ready_for_bva_intake_review',
+        value: 'modal/vha_documents_ready_for_bva_intake_review',
+        data: {
+          modal_title: 'Documents ready for Board Intake review',
+          type: 'VhaDocumentSearchTask',
+          redirect_after: '/organizations/vha-camo',
+          options: [
+            {
+              label: 'VBMS',
+              value: 'vbms'
+            },
+            {
+              label: 'Centralized Mail Portal',
+              value: 'centralized mail portal'
+            },
+            {
+              label: 'Other',
+              value: 'other'
+            },
+          ]
+        }
+      },
+      {
         label: 'Return to Board Intake',
         func: 'vha_return_to_board_intake',
         value: 'modal/vha_return_to_board_intake',

@@ -597,7 +597,11 @@ class QueueApp extends React.PureComponent {
       appealId={props.match.params.appealId}
       {...props.match.params}
     />
-  )
+  );
+
+  routedCamoDocumentsReadyForBvaIntake = (props) => (
+    <CompleteTaskModal modalType="vha_documents_ready_for_bva_intake_for_review" {...props.match.params} />
+  );
 
   routedCamoReturnToBoardIntake = (props) => (
     <CompleteTaskModal modalType="vha_return_to_board_intake" {...props.match.params} />
@@ -1083,6 +1087,12 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.CAVC_REMAND_RECEIVED_VLJ.value
                 }`}
               render={this.routedCavcRemandReceived}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.value
+                }`}
+              render={this.routedCamoDocumentsReadyForBvaIntake}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
