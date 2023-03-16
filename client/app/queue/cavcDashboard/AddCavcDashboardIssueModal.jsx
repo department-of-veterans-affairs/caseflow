@@ -24,7 +24,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId, 
     benefit_type: benefitType?.value,
     cavc_dashboard_id: dashboardId,
     issue_category: issueCategory,
-    issue_description: issueDescription
+    issue_description: issueDescription?.trim() === '' ? null : issueDescription?.trim()
   };
   const dashboardDisposition = {
     id: null,
