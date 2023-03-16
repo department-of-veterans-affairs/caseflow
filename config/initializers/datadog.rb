@@ -3,11 +3,11 @@ unless Rails.env.test?
     options = { analytics_enabled: true }
 
     c.tracing.analytics.enabled = true
-    c.tracing.instrument :rails, options
-    c.tracing.instrument :active_record, options
-    c.tracing.instrument :rack, options
-    c.tracing.instrument :redis, options
-    c.tracing.instrument :shoryuken, options
+    c.tracing.instrument :rails
+    c.tracing.instrument :active_record
+    c.tracing.instrument :rack
+    c.tracing.instrument :redis, service_name: 'cache'
+    c.tracing.instrument :shoryuken
 
     c.env = ENV['DEPLOY_ENV']
   end
