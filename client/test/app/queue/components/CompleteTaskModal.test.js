@@ -22,7 +22,8 @@ import {
   caregiverToIntakeData,
   emoToBvaIntakeData,
   rpoToBvaIntakeData,
-  vhaPOToCAMOData
+  vhaPOToCAMOData,
+  visnData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
 import * as uiActions from 'app/queue/uiReducer/uiActions';
 import CompleteTaskModal from 'app/queue/components/CompleteTaskModal';
@@ -146,7 +147,7 @@ describe('CompleteTaskModal', () => {
       enterModalRadioOptions('Correct documents have been successfully added');
 
       enterTextFieldOptions(
-        'Provide additional context and/or documents:',
+        'Provide additional context and/or documents',
         'Null test'
       );
 
@@ -162,7 +163,7 @@ describe('CompleteTaskModal', () => {
     });
   });
 
-  describe('ready_for_review', () => {
+  describe('Vha Po send to Vha Camo for review', () => {
     const taskType = 'AssessDocumentationTask';
     const buttonText = COPY.MODAL_SEND_BUTTON;
     const modalType = 'ready_for_review';
@@ -170,6 +171,11 @@ describe('CompleteTaskModal', () => {
     test('modal title is Ready for review', () => {
       renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
       expect(screen.getByText('Ready for review')).toBeTruthy();
+    });
+
+    test('modal text indicates appeal will be sent to VHA CAMO', () => {
+      renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
+      expect(screen.getByText('This appeal will be sent to VHA CAMO for review.Please select where the documents for this appeal are stored')).toBeTruthy();
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -232,6 +238,83 @@ describe('CompleteTaskModal', () => {
       );
     });
   });
+
+  describe('Vha Ro send to Vha Po for review', () => {
+    const taskType = 'AssessDocumentationTask';
+    const buttonText = COPY.MODAL_SEND_BUTTON;
+    const modalType = 'ready_for_review';
+
+    test('modal title is Ready for review', () => {
+      renderCompleteTaskModal(modalType, visnData, taskType);
+      expect(screen.getByText('Ready for review')).toBeTruthy();
+    });
+
+    test('modal text indicates appeal will be sent to VHA Program Office', () => {
+      renderCompleteTaskModal(modalType, visnData, taskType);
+      expect(screen.getByText('This appeal will be sent to VHA Program Office for review.Please select where the documents for this appeal are stored')).toBeTruthy();
+    });
+
+    test('Before Radio button is Chosen, button should be disabled', () => {
+      renderCompleteTaskModal(modalType, visnData, taskType);
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+    });
+
+    test('When Centralized Mail Portal is chosen in Modal', () => {
+      renderCompleteTaskModal(modalType, visnData, taskType);
+
+      enterModalRadioOptions(
+        'Centralized Mail Portal'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
+        'Provide details such as file structure or file path',
+        'VHA PO -> BVA Intake'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      clickSubmissionButton(buttonText);
+
+      expect(getReceivedInstructions()).toBe(
+        'Documents for this appeal are stored in Centralized Mail Portal.' +
+        '\n\n**Detail:**\n\nVHA PO -> BVA Intake\n'
+      );
+    });
+
+    test('When Other is Chosen in Modal', () => {
+      renderCompleteTaskModal(modalType, visnData, taskType);
+
+      enterModalRadioOptions(
+        'Other'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
+        'Provide details such as file structure or file path',
+        'PO -> CAMO'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
+        'Please indicate the source',
+        'Other Source'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      clickSubmissionButton(buttonText);
+
+      expect(getReceivedInstructions()).toBe(
+        'Documents for this appeal are stored in Other Source.' +
+        '\n\n**Detail:**\n\nPO -> CAMO\n'
+      );
+    });
+  });
+
 
   describe('vha_caregiver_support_send_to_board_intake_for_review', () => {
     const taskType = 'VhaDocumentSearchTask';

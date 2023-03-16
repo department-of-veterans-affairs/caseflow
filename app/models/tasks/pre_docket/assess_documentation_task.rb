@@ -11,16 +11,17 @@ class AssessDocumentationTask < Task
 
   # Actions that can be taken on both organization and user tasks
   DEFAULT_ACTIONS = [
-    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-    Constants.TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.to_h
+    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
   ].freeze
 
   PO_ACTIONS = [
-    Constants.TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.to_h
+    Constants.TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.to_h,
+    Constants.TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.to_h
   ].freeze
 
   RO_ACTIONS = [
-    Constants.TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.to_h
+    Constants.TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.to_h,
+    Constants.TASK_ACTIONS.VHA_VISN_SEND_TO_VHA_PO_FOR_REVIEW.to_h
   ].freeze
 
   def available_actions(user)

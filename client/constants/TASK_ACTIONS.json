@@ -208,6 +208,11 @@
     "value": "modal/ready_for_review",
     "func": "vha_complete_data"
   },
+  "VHA_VISN_SEND_TO_VHA_PO_FOR_REVIEW": {
+    "label": "Documents ready for VHA Program Office team review",
+    "value": "modal/ready_for_review",
+    "func": "vha_complete_data"
+  },
   "PLACE_TIMED_HOLD": {
     "label": "Put task on hold",
     "value": "modal/place_timed_hold"
@@ -403,7 +408,7 @@
     "func": "vha_program_office_return_to_camo"
   },
   "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE": {
-    "label": "Return to Program Office",
+    "label": "Return to VHA Program Office team",
     "value": "modal/return_to_program_office",
     "func": "vha_regional_office_return_to_program_office"
   },
