@@ -1251,7 +1251,7 @@
 
   "PRE_DOCKET_TASK_LABEL": "Pre-Docket",
   "DOCKET_APPEAL_MODAL_TITLE": "Docket appeal",
-  "DOCKET_APPEAL_MODAL_BODY": "Please confirm that the documents provided by %s are available in VBMS before docketing this appeal.",
+  "DOCKET_APPEAL_MODAL_BODY": "Please confirm that the documents provided by %s are available before docketing this appeal.",
   "DOCKET_APPEAL_MODAL_NOTICE": "Once you confirm, the appeal will be established. Please remember to send the docketing letter out to all parties and representatives.",
   "DOCKET_APPEAL_CONFIRMATION_TITLE": "You have successfully docketed this appeal.",
   "DOCKET_APPEAL_CONFIRMATION_DETAIL": "Please send the docketing letter out to all parties and representatives and upload it to VBMS.",
