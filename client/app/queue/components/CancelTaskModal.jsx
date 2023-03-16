@@ -68,6 +68,7 @@ const CancelTaskModal = (props) => {
     'AssessDocumentationTask',
     'EducationAssessDocumentationTask',
   ].includes(task?.type)) {
+    modalProps.submitButtonClassNames = ['usa-button'];
     modalProps.submitDisabled = !validateForm();
   }
 
