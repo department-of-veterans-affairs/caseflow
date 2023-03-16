@@ -70,7 +70,7 @@ feature "Intake Confirmation Page", :postgres do
         click_intake_continue
         click_intake_add_issue
 
-        add_intake_vha_issue(date: 2.days.ago, category: "Beneficiary Travel | Mileage")
+        add_intake_vha_issue(date: 2.days.ago, category: "Beneficiary Travel")
         click_intake_finish
 
         expect(page).to_not have_content("Intake completed")
