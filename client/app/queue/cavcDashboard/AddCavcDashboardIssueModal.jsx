@@ -88,6 +88,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId, 
   />;
 
   const issueDescriptionField = <TextField
+    name="Issue Description"
     label={LABELS.ADD_ISSUE_DESCRIPTION}
     onChange={(value) => setIssueDescription(value)}
     value={issueDescription}
