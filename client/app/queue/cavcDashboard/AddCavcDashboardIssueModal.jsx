@@ -4,23 +4,27 @@ import PropTypes from 'prop-types';
 
 import Modal from '../../components/Modal';
 import COPY from '../../../COPY';
+import { LABELS } from './cavcDashboardConstants';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import CAVC_DASHBOARD_DISPOSITIONS from '../../../constants/CAVC_DASHBOARD_DISPOSITIONS';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
 import { css } from 'glamor';
+import TextField from '../../components/TextField';
 
 const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId, addedIssuesCount }) => {
 
   const [benefitType, setBenefitType] = useState(null);
   const [issueCategory, setIssueCategory] = useState(null);
   const [dispositionByCourt, setDispositionByCourt] = useState(null);
+  const [issueDescription, setIssueDescription] = useState(null);
   const issue = {
     /* eslint-disable camelcase */
     id: `${dashboardId}-${addedIssuesCount}`,
     benefit_type: benefitType?.value,
     cavc_dashboard_id: dashboardId,
-    issue_category: issueCategory
+    issue_category: issueCategory,
+    issue_description: issueDescription
   };
   const dashboardDisposition = {
     id: null,
@@ -83,6 +87,13 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId, 
     onChange={(val) => setDispositionByCourt(val)}
   />;
 
+  const issueDescriptionField = <TextField
+    type="string"
+    label={LABELS.ADD_ISSUE_DESCRIPTION}
+    onChange={(value) => setIssueDescription(value)}
+    value={issueDescription}
+  />;
+
   return (
     <Modal
       title={COPY.ADD_CAVC_DASHBOARD_ISSUE_TEXT}
@@ -104,6 +115,7 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId, 
       {benefitTypeField}
       {issueCategoryField}
       {dispositionByCourtField}
+      {issueDescriptionField}
     </Modal>
   );
 };
