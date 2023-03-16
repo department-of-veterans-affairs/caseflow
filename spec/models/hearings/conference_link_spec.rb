@@ -81,7 +81,7 @@ describe ConferenceLink do
       expect(subject.host_link).not_to eq(nil)
       expect(subject.host_pin_long).not_to eq(nil)
       expect(subject.alias_with_host).not_to eq(nil)
-      expect(subject.alias_name).to eq(nil)
+      expect(subject.alias_name).not_to eq(nil)
       expect(subject.created_by_id).not_to eq(nil)
       expect(subject.host_pin).to eq(subject.host_pin_long)
       expect(subject.host_link).to eq(subject.host_link)
@@ -185,10 +185,6 @@ describe ConferenceLink do
       "conference=BVA0000001@example.va.gov&" \
       "pin=7470125694&callType=video" }
 
-    let(:created_url) { "https://example.va.gov/bva-app/?join=1&media=&escalate=1&" \
-      "conference=BVA0000001@example.va.gov&" \
-      "pin=7470125694&callType=video" }
-
     context "guest_hearing_link property already has a link/string as a value" do
       it "Returns the guest_pin for the conference_link" do
         conference_link.guest_link
@@ -199,9 +195,15 @@ describe ConferenceLink do
       it "creates and returns the updated guest_hearing_link property" do
         conference_link.update!(guest_hearing_link: nil)
         conference_link.guest_link
-        expect(conference_link.guest_hearing_link).to eq(created_url)
+        expect(conference_link.guest_hearing_link).to eq(existing_url)
       end
     end
-
+    context "If alias_name(aliased for the alias property) is nil AND guest_hearing_link is nil and alias_with_host is NOT nil" do
+      it "creates a guest_hearing_link updates the property and updates the alias property" do
+        conference_link.update!(alias: nil, guest_hearing_link: nil, alias_with_host: "BVA0000001@example.va.gov" )
+        conference_link.guest_link
+        expect(conference_link.guest_hearing_link).to eq(existing_url)
+      end
+    end
   end
 end

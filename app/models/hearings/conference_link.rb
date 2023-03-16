@@ -68,7 +68,7 @@ class ConferenceLink < CaseflowRecord
     begin
       link_service = VirtualHearings::LinkService.new
       update!(
-        alias: link_service.conference_link,
+        alias: link_service.conference_id,
         host_link: link_service.host_link,
         host_pin_long: link_service.host_pin,
         alias_with_host: link_service.alias_with_host,
