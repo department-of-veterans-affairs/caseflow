@@ -1247,6 +1247,8 @@
   "SAVE_UNSCHEDULED_NOTES_ERROR_DETAIL": "Refresh the page and try again. If the problem persists, please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT.",
 
   "VHA_CAMO_LABEL": "VHA",
+  "VHA_CAMO_ASSIGN_TO_PROGRAM_OFFICE_DROPDOWN_LABEL": "Program Office",
+  "VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL": "VISN/VA Medical Center",
   "VHA_CAREGIVER_LABEL": "CSP",
   "EDUCATION_LABEL": "Education Service",
 
@@ -1274,7 +1276,7 @@
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_APPEALABLE": "This issue might not be appealable to the Board",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_NO_VHA_DECISION": "A VHA decision has not been made",
   "VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_VHA_RELATED": "Appeal is not related to a VHA issue",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Provide additional context and/or documents:",
+  "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Provide additional context and/or documents",
   "SELECT_RADIO_ERROR": "Please select an option.",
   "EMPTY_INSTRUCTIONS_ERROR": "Text field cannot be blank.",
   "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review.",
@@ -1305,7 +1307,6 @@
   "ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked your task as in progress",
   "ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL": "This appeal will be visible in the \"In Progress\" tab of your Queue",
   "EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
-  "EMO_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "Provide instructions and context for this action",
   "EMO_RETURN_TO_BOARD_INTAKE_CONFIRMATION": "You have successfully returned %s's case to Board Intake",
   "EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO": "You have successfully sent %s's case to Board Intake for review.",
   "EMO_ASSIGN_TO_RPO_MODAL_TITLE": "Assign to RPO",
