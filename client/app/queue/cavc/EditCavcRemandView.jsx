@@ -33,28 +33,31 @@ export const EditCavcRemandView = () => {
 
   const supportedDecisionTypes = getSupportedDecisionTypes(featureToggles);
   const supportedRemandTypes = getSupportedRemandTypes(featureToggles);
+  const { formData: currentValues } = useSelector(
+    (state) => state.cavcRemand
+  );
 
   const existingValues = useMemo(() => {
     return {
-      decisionType: cavcRemand.cavc_decision_type,
-      docketNumber: cavcRemand.cavc_docket_number,
-      judge: cavcRemand.cavc_judge_full_name,
-      decisionDate: cavcRemand.decision_date,
-      issueIds: cavcRemand.decision_issue_ids,
-      federalCircuit: cavcRemand.federal_circuit,
-      instructions: cavcRemand.instructions,
-      judgementDate: cavcRemand.judgement_date,
-      mandateDate: cavcRemand.mandate_date,
-      remandType: cavcRemand.remand_subtype,
-      attorney: cavcRemand.represented_by_attorney ? 'yes' : 'no',
-      remandDatesProvided: (cavcRemand.judgement_date || cavcRemand.mandate_date) ? 'yes' : 'no',
-      remandAppealId: cavcRemand.remand_appeal_uuid,
-      substitutionDate: cavcRemand.cavc_remands_appellant_substitution?.substitution_date,
-      participantId: cavcRemand.cavc_remands_appellant_substitution?.participant_id,
+      decisionType: currentValues.decisionType || cavcRemand.cavc_decision_type,
+      docketNumber: currentValues.docketNumber || cavcRemand.cavc_docket_number,
+      judge: currentValues.judge || cavcRemand.cavc_judge_full_name,
+      decisionDate: currentValues.decisionDate || cavcRemand.decision_date,
+      issueIds: currentValues.issueIds || cavcRemand.decision_issue_ids,
+      federalCircuit: currentValues.federalCircuit || cavcRemand.federal_circuit,
+      instructions: currentValues.instructions || cavcRemand.instructions,
+      judgementDate: currentValues.judgementDate || cavcRemand.judgement_date,
+      mandateDate: currentValues.mandateDate || cavcRemand.mandate_date,
+      remandType: currentValues.remandType || cavcRemand.remand_subtype,
+      attorney: (currentValues.attorney || (cavcRemand.represented_by_attorney ? 'yes' : 'no')),
+      remandDatesProvided: currentValues.remandDatesProvided || (cavcRemand.judgement_date || cavcRemand.mandate_date) ? 'yes' : 'no',
+      remandAppealId: currentValues.remandAppealId || cavcRemand.remand_appeal_uuid,
+      substitutionDate: currentValues.substitutionDate || cavcRemand.cavc_remands_appellant_substitution?.substitution_date,
+      participantId: currentValues.participantId || cavcRemand.cavc_remands_appellant_substitution?.participant_id,
       isAppellantSubstituted:
-        cavcRemand.cavc_remands_appellant_substitution?.is_appellant_substituted ? 'true' : 'false'
+        (currentValues.isAppellantSubstituted || (cavcRemand.cavc_remands_appellant_substitution?.is_appellant_substituted ? 'true' : 'false'))
     };
-  }, [cavcRemand]);
+  }, [cavcRemand, currentValues]);
 
   const handleCancel = () => history.push(`/queue/appeals/${appealId}`);
 

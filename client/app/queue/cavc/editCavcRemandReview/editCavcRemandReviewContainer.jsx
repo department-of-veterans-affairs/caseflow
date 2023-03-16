@@ -11,6 +11,7 @@ import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/select
 
 import COPY from 'app/../COPY';
 import { requestPatch } from '../../uiReducer/uiActions';
+import { editAppeal } from '../../QueueActions';
 
 export const EditCavcRemandReviewContainer = () => {
   const { appealId } = useParams();
@@ -20,6 +21,8 @@ export const EditCavcRemandReviewContainer = () => {
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
+
+  const { cavcRemand } = appeal;
 
   const { formData: existingValues } = useSelector(
     (state) => state.cavcRemand
@@ -66,7 +69,7 @@ export const EditCavcRemandReviewContainer = () => {
       data: {
         judgement_date: existingValues.judgementDate ? existingValues.judgementDate : '',
         mandate_date: existingValues.mandateDate ? existingValues.mandateDate : '',
-        source_appeal_id: existingValues.source_appeal_uuid,
+        source_appeal_id: cavcRemand.source_appeal_uuid,
         remand_appeal_id: appealId,
         cavc_docket_number: existingValues.docketNumber,
         cavc_judge_full_name: existingValues.judge,

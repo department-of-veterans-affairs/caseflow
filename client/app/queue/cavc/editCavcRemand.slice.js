@@ -28,6 +28,21 @@ const initialState = {
   formData: {
     substitutionDate: null,
     participantId: null,
+    decisionType: null,
+    docketNumber: null,
+    judge: null,
+    decisionDate: null,
+    issueIds: null,
+    federalCircuit: null,
+    instructions: null,
+    judgementDate: null,
+    mandateDate: null,
+    remandType: null,
+    attorney: null,
+    remandDatesProvided: null,
+    remandAppealId: null,
+    isAppellantSubstituted: null,
+    // ids to reactivate tasks
     reActivateTaskIds: [],
     // ids to cancel when options are unchecked
     cancelTaskIds: []
