@@ -101,7 +101,8 @@ class CavcDashboardController < ApplicationController
       if issue["id"].to_s.match?(/\d-\d/)
         new_issue = CavcDashboardIssue.create!(benefit_type: issue["benefit_type"],
                                                cavc_dashboard_id: issue["cavc_dashboard_id"],
-                                               issue_category: issue["issue_category"])
+                                               issue_category: issue["issue_category"],
+                                               issue_description: issue["issue_description"])
         CavcDashboardDisposition.create!(cavc_dashboard_id: issue["cavc_dashboard_id"],
                                          cavc_dashboard_issue_id: new_issue.id)
 

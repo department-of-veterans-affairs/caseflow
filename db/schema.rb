@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_17_013023) do
+ActiveRecord::Schema.define(version: 2023_03_16_142745) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -334,6 +334,7 @@ ActiveRecord::Schema.define(version: 2023_02_17_013023) do
     t.datetime "created_at"
     t.bigint "created_by_id"
     t.string "issue_category"
+    t.string "issue_description"
     t.datetime "updated_at"
     t.bigint "updated_by_id"
     t.index ["cavc_dashboard_id"], name: "index_cavc_dashboard_issues_on_cavc_dashboard_id"
