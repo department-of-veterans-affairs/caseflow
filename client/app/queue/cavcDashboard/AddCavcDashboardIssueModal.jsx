@@ -114,8 +114,8 @@ const AddCavcDashboardIssueModal = ({ closeHandler, submitHandler, dashboardId, 
     >
       {benefitTypeField}
       {issueCategoryField}
-      {dispositionByCourtField}
       {issueDescriptionField}
+      {dispositionByCourtField}
     </Modal>
   );
 };
