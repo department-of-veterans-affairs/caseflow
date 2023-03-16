@@ -15,10 +15,6 @@ class VirtualHearings::LinkService
     @conference_id = conference_id
   end
 
-  def conference_link
-    @conference_link
-  end
-
   def host_link
     link(host_pin)
   end
@@ -39,6 +35,11 @@ class VirtualHearings::LinkService
     "BVA#{conference_id}@#{host}"
   end
 
+  def conference_id
+    @conference_id = VirtualHearings::SequenceConferenceId.next if @conference_id.blank?
+    @conference_id
+  end
+
   private
 
   def link(pin)
@@ -53,11 +54,6 @@ class VirtualHearings::LinkService
 
   def base_url
     "https://#{host}#{path}"
-  end
-
-  def conference_id
-    @conference_id = VirtualHearings::SequenceConferenceId.next if @conference_id.blank?
-    @conference_id
   end
 
   def pin_key

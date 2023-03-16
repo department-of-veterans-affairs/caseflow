@@ -39,6 +39,7 @@ class ConferenceLink < CaseflowRecord
   end
 
   def guest_pin
+    guest_pin_long if !guest_pin_long.nil?
     if guest_pin_long.nil?
       link_service = VirtualHearings::LinkService.new
       update!(guest_pin_long: link_service.guest_pin)
@@ -47,14 +48,13 @@ class ConferenceLink < CaseflowRecord
   end
 
   def guest_link
-    if guest_hearing_link.nil?
-      if guest_pin_long.nil?
-        guest_pin
-      end
-      guest_hearing_url_with_pin = "#{ConferenceLink.base_url}?" \
-      "conference=#{alias_with_host}&" \
-      "pin=#{guest_pin}&callType=video"
-      update!(guest_hearing_link: guest_hearing_url_with_pin)
+    guest_hearing_link if !guest_hearing_link.nil?
+    if !alias_name.nil? && guest_hearing_link.nil?
+      link_service = VirtualHearings::LinkService.new(alias_name)
+      update!(guest_hearing_link: link_service.guest_link)
+    elsif alias_name.nil? && guest_hearing_link.nil? && !alias_with_host.nil?
+      link_service = VirtualHearings::LinkService.new(alias_with_host.split("@")[0].split("A")[1])
+      update!(guest_hearing_link: link_service.guest_link, alias: link_service.conference_id)
     end
     guest_hearing_link
   end
@@ -68,6 +68,7 @@ class ConferenceLink < CaseflowRecord
     begin
       link_service = VirtualHearings::LinkService.new
       update!(
+        alias: link_service.conference_link,
         host_link: link_service.host_link,
         host_pin_long: link_service.host_pin,
         alias_with_host: link_service.alias_with_host,
