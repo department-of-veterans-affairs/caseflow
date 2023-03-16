@@ -7,12 +7,21 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
   TYPE_LABEL = "Send Membership Request notification email"
 
   def perform(email_type, recipient_info)
-    MembershipRequestMailer.with(recipient_info: recipient_info).send(
-      email_to_send(email_type)
-    ).deliver_now!
+    # send_email(email_for_recipient(email_type, recipient_info))
+    send_email(
+      MembershipRequestMailer.with(recipient_info: recipient_info).send(
+        email_to_send(email_type)
+      )
+    )
   end
 
   private
+
+  def email_for_recipient(recipient_info, email_type)
+    MembershipRequestMailer.with(recipient_info: recipient_info).send(
+      email_to_send(email_type)
+    )
+  end
 
   def email_to_send(email_type)
     case email_type
