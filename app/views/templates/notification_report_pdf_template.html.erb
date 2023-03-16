@@ -18,9 +18,17 @@ end
 
 def get_notifications(appeal)
   if appeal.is_a?(Appeal)
-    Notification.where(appeals_id: appeal.uuid)
+    all_notifications = Notification.where(appeals_id: appeal.uuid)
+    allowed_notifications = all_notifications.where(email_notification_status: nil)
+      .or(all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .merge(all_notifications.where(sms_notification_status: nil)
+      .or(all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).order(event_date: :asc, id: :asc)
   elsif appeal.is_a?(LegacyAppeal)
-    Notification.where(appeals_id: appeal.vacols_id)
+    all_notifications = Notification.where(appeals_id: appeal.vacols_id)
+    allowed_notifications = all_notifications.where(email_notification_status: nil)
+      .or(all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .merge(all_notifications.where(sms_notification_status: nil)
+      .or(all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).order(event_date: :asc, id: :asc)
   end
 end
 
@@ -35,7 +43,16 @@ def generate_table_notifications(notifications)
   notifications.each do |notification|
 
     email_notification = {
-      status: notification.email_notification_status == 'Success' ? 'Sent' : notification.email_notification_status,
+      status: case notification.email_notification_status.downcase
+        when 'sent' , 'temporary-failure'
+          'Pending Delivery'
+        when 'permanent-failure' , 'technical-failure'
+          'Failed Delivery'
+        when 'preferences-declined'
+          'Opted-out'
+        else
+          notification.email_notification_status
+        end,
       content: notification.email_notification_content,
       notification_type: 'Email',
       recipient_information: notification.recipient_email == nil ? '—' : notification.recipient_email,
@@ -44,7 +61,16 @@ def generate_table_notifications(notifications)
     }
 
     sms_notification = {
-      status: notification.sms_notification_status == 'Success' ? 'Sent' : notification.sms_notification_status,
+      status: case notification.sms_notification_status.downcase
+        when 'sent' , 'temporary-failure'
+          'Pending Delivery'
+        when 'permanent-failure' , 'technical-failure'
+          'Failed Delivery'
+        when 'preferences-declined'
+          'Opted-out'
+        else
+          notification.sms_notification_status
+        end,
       content: notification.sms_notification_content,
       notification_type: 'Text',
       recipient_information: notification.recipient_phone_number == nil ? '—' : notification.recipient_phone_number,
@@ -207,4 +233,5 @@ end
   </style>
 
 </html>
+
 
