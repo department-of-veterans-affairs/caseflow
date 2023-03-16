@@ -1,4 +1,5 @@
-const uiData = {
+/* eslint-disable max-lines */
+export const uiData = {
   ui: {
     highlightFormItems: false,
     messages: {
@@ -9,7 +10,9 @@ const uiData = {
       savePending: false,
       saveSuccessful: null
     },
-    featureToggles: {}
+    featureToggles: {
+      vha_irregular_appeals: true
+    }
   }
 };
 
@@ -88,7 +91,6 @@ const caregiverActions = [
     }
   }
 ];
-/* eslint-enable max-len */
 
 const vhaDocumentSearchTaskData = {
   7119: {
@@ -158,7 +160,7 @@ const vhaDocumentSearchTaskData = {
             }
           ],
           modal_title: 'Assign to Program Office',
-          modal_body: 'Provide instructions and context for this action:',
+          modal_body: 'Provide instructions and context for this action',
           modal_button_text: 'Assign',
           modal_selector_placeholder: 'Select Program Office',
           type: 'AssessDocumentationTask',
@@ -250,8 +252,9 @@ const educationDocumentSearchTaskData = {
             }
           ],
           modal_title: 'Assign to RPO',
-          modal_body: 'Provide instructions and context for this action:',
+          modal_body: 'Provide instructions and context for this action',
           modal_selector_placeholder: 'Select RPO',
+          modal_button_text: 'Assign',
           type: 'EducationAssessDocumentationTask',
           redirect_after: '/organizations/edu-emo',
           body_optional: true
@@ -293,7 +296,373 @@ const educationDocumentSearchTaskData = {
   }
 };
 
-const EducationAssessDocumentationTaskData = {
+const preDocketTaskData = {
+  7123: {
+    uniqueId: '7123',
+    isLegacy: false,
+    type: 'PreDocketTask',
+    appealType: 'Appeal',
+    addedByCssId: null,
+    appealId: 1634,
+    externalAppealId: '06daf6cb-f638-4d13-8c9a-5dbe7feab70f',
+    assignedOn: '2022-09-09T09:41:17.554-04:00',
+    closestRegionalOffice: null,
+    createdAt: '2022-09-08T14:16:50.774-04:00',
+    closedAt: null,
+    startedAt: null,
+    assigneeName: 'BVA Intake',
+    assignedTo: {
+      cssId: null,
+      name: 'BVA Intake',
+      id: 4,
+      isOrganization: true,
+      type: 'BvaIntake'
+    },
+    assignedBy: {
+      firstName: 'Deborah',
+      lastName: 'Wise',
+      cssId: 'BVADWISE',
+      pgId: 17
+    },
+    cancelledBy: {
+      cssId: null
+    },
+    cancelReason: null,
+    convertedBy: {
+      cssId: null
+    },
+    convertedOn: null,
+    taskId: '7123',
+    parentId: 7122,
+    label: 'Pre-Docket',
+    documentId: null,
+    externalHearingId: null,
+    workProduct: null,
+    previousTaskAssignedOn: null,
+    placedOnHoldAt: '2022-09-08T14:16:50.819-04:00',
+    status: 'assigned',
+    onHoldDuration: null,
+    instructions: [],
+    decisionPreparedBy: null,
+    availableActions: [
+      {
+        func: 'docket_appeal_data',
+        label: 'Docket appeal',
+        value: 'modal/docket_appeal',
+        data: {
+          modal_title: 'Docket appeal',
+          modal_body: 'Please confirm that the documents provided by VHA are available in VBMS before docketing this appeal.',
+          modal_alert: 'Once you confirm, the appeal will be established. Please remember to send the docketing letter out to all parties and representatives.',
+          instructions_label: 'Provide instructions and context for this action',
+          redirect_after: '/organizations/bva-intake'
+        }
+      },
+      {
+        func: 'bva_intake_return_to_camo',
+        label: 'Return appeal to VHA',
+        value: 'modal/bva_intake_return_to_camo',
+        data: {
+          selected: {
+            id: 31,
+            accepts_priority_pushed_cases: null,
+            ama_only_push: false,
+            ama_only_request: false,
+            created_at: '2022-09-08T13:29:34.629-04:00',
+            name: 'VHA CAMO',
+            participant_id: null,
+            role: null,
+            status: 'active',
+            status_updated_at: null,
+            updated_at: '2022-09-08T13:29:34.629-04:00',
+            url: 'vha-camo'
+          },
+          options: [
+            {
+              label: 'VHA CAMO',
+              value: 31
+            }
+          ],
+          modal_title: 'Return appeal to VHA',
+          modal_button_text: 'Return',
+          modal_body: 'If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA.',
+          message_title: 'You have successfully returned Bob Smithhettinger\'s case to VHA',
+          type: 'VhaDocumentSearchTask',
+          redirect_after: '/organizations/bva-intake'
+        }
+      },
+      {
+        func: 'bva_intake_return_to_caregiver',
+        label: 'Return appeal to VHA Caregiver Support Program',
+        value: 'modal/bva_intake_return_to_caregiver',
+        data: {
+          selected: {
+            id: 32,
+            accepts_priority_pushed_cases: null,
+            ama_only_push: false,
+            ama_only_request: false,
+            created_at: '2022-09-08T13:29:34.779-04:00',
+            name: 'VHA Caregiver Support Program',
+            participant_id: null,
+            role: null,
+            status: 'active',
+            status_updated_at: null,
+            updated_at: '2022-09-08T13:29:34.779-04:00',
+            url: 'vha-csp'
+          },
+          options: [
+            {
+              label: 'VHA Caregiver Support Program',
+              value: 32
+            }
+          ],
+          modal_title: 'Return appeal to VHA Caregiver Support Program',
+          modal_button_text: 'Return',
+          modal_body: 'If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA Caregiver Support Program.',
+          message_title: 'You have successfully returned Bob Smithwuckert\'s case to Caregiver Support Program',
+          type: 'VhaDocumentSearchTask',
+          redirect_after: '/organizations/bva-intake'
+        }
+      },
+      {
+        func: 'bva_intake_return_to_emo',
+        label: 'Return appeal to Education Service',
+        value: 'modal/bva_intake_return_to_emo',
+        data: {
+          selected: {
+            id: 56,
+            accepts_priority_pushed_cases: null,
+            ama_only_push: false,
+            ama_only_request: false,
+            created_at: '2022-09-08T13:31:28.398-04:00',
+            name: 'Executive Management Office',
+            participant_id: null,
+            role: null,
+            status: 'active',
+            status_updated_at: null,
+            updated_at: '2022-09-08T13:31:28.398-04:00',
+            url: 'edu-emo'
+          },
+          options: [
+            {
+              label: 'Executive Management Office',
+              value: 56
+            }
+          ],
+          modal_title: 'Return appeal to Education Service',
+          modal_button_text: 'Return',
+          modal_body: 'If you are unable to docket this appeal due to insufficient documentation, you may return this to Education Service.',
+          message_title: 'You have successfully returned Bob Smithhettinger\'s case to Education Service',
+          type: 'EducationDocumentSearchTask',
+          redirect_after: '/organizations/bva-intake'
+        }
+      }
+    ],
+    timelineTitle: 'PreDocketTask completed',
+    hideFromQueueTableView: false,
+    hideFromTaskSnapshot: false,
+    hideFromCaseTimeline: false,
+    availableHearingLocations: [],
+    latestInformalHearingPresentationTask: {},
+    canMoveOnDocketSwitch: false,
+    timerEndsAt: null,
+    unscheduledHearingNotes: {}
+  },
+};
+
+const assessDocumentationTaskData = {
+  7159: {
+    uniqueId: '7159',
+    isLegacy: false,
+    type: 'AssessDocumentationTask',
+    appealType: 'Appeal',
+    addedByCssId: null,
+    appealId: 1641,
+    externalAppealId: '629afccf-1eeb-456c-87d6-48aa59a9b1ab',
+    assignedOn: '2022-09-14T13:11:07.484-04:00',
+    closestRegionalOffice: null,
+    createdAt: '2022-09-14T13:11:07.484-04:00',
+    closedAt: null,
+    startedAt: null,
+    assigneeName: 'Prosthetics',
+    assignedTo: {
+      cssId: null,
+      name: 'Prosthetics',
+      id: 37,
+      isOrganization: true,
+      type: 'VhaProgramOffice'
+    },
+    assignedBy: {
+      firstName: 'Greg',
+      lastName: 'Camo',
+      cssId: 'CAMOUSER',
+      pgId: 4201
+    },
+    cancelledBy: {
+      cssId: null
+    },
+    cancelReason: null,
+    convertedBy: {
+      cssId: null
+    },
+    convertedOn: null,
+    taskId: '7159',
+    parentId: 7148,
+    label: 'Assess Documentation',
+    documentId: null,
+    externalHearingId: null,
+    workProduct: null,
+    previousTaskAssignedOn: null,
+    placedOnHoldAt: null,
+    status: 'assigned',
+    onHoldDuration: null,
+    instructions: [],
+    decisionPreparedBy: null,
+    availableActions: [
+      {
+        label: 'Put task on hold',
+        value: 'modal/place_timed_hold',
+        modal_button_text: 'Put task on hold'
+      },
+      {
+        func: 'vha_complete_data',
+        label: 'Ready for Review',
+        value: 'modal/ready_for_review',
+        data: {
+          modal_title: 'Where were documents regarding this appeal stored?',
+          modal_button_text: 'Send',
+          instructions: [],
+          type: 'AssessDocumentationTask',
+          redirect_after: '/organizations/prosthetics'
+        }
+      },
+      {
+        func: 'vha_assign_to_regional_office_data',
+        label: 'Assign to VISN',
+        value: 'modal/assign_to_regional_office',
+        data: {
+          options: [
+            {
+              label: 'VA New England Healthcare System',
+              value: 38
+            },
+            {
+              label: 'New York/New Jersey VA Health Care Network',
+              value: 39
+            },
+            {
+              label: 'VA Healthcare',
+              value: 40
+            },
+            {
+              label: 'VA Capitol Health Care Network',
+              value: 41
+            },
+            {
+              label: 'VA Mid-Atlantic Health Care Network',
+              value: 42
+            },
+            {
+              label: 'VA Southeast Network',
+              value: 43
+            },
+            {
+              label: 'VA Sunshine Healthcare Network',
+              value: 44
+            },
+            {
+              label: 'VA MidSouth Healthcare Network',
+              value: 45
+            },
+            {
+              label: 'VA Healthcare System',
+              value: 46
+            },
+            {
+              label: 'VA Great Lakes Health Care System',
+              value: 47
+            },
+            {
+              label: 'VA Heartland Network',
+              value: 48
+            },
+            {
+              label: 'South Central VA Health Care Network',
+              value: 49
+            },
+            {
+              label: 'VA Heart of Texas Health Care Network',
+              value: 50
+            },
+            {
+              label: 'Rocky Mountain Network',
+              value: 51
+            },
+            {
+              label: 'Northwest Network',
+              value: 52
+            },
+            {
+              label: 'Sierra Pacific Network',
+              value: 53
+            },
+            {
+              label: 'Desert Pacific Healthcare Network',
+              value: 54
+            },
+            {
+              label: 'VA Midwest Health Care Network',
+              value: 55
+            }
+          ],
+          modal_title: 'Assign to VISN/VA Medical Center',
+          modal_body: 'Provide instructions and context for this action',
+          modal_button_text: 'Assign',
+          modal_selector_placeholder: 'Select VISN/VA Medical Center',
+          instructions: [],
+          type: 'AssessDocumentationTask',
+          redirect_after: '/organizations/prosthetics'
+        }
+      },
+      {
+        func: 'vha_program_office_return_to_camo',
+        label: 'Return to CAMO team',
+        value: 'modal/return_to_camo',
+        data: {
+          modal_title: 'Return to CAMO team',
+          message_title: 'You have successfully returned this appeal to the CAMO team',
+          modal_button_text: 'Return',
+          message_detail: 'This appeal will be removed from your Queue and placed in the CAMO team\'s Queue',
+          type: 'AssessDocumentationTask',
+          redirect_after: '/organizations/prosthetics'
+        }
+      },
+      {
+        func: 'vha_mark_task_in_progress',
+        label: 'Mark task in progress',
+        value: 'modal/mark_task_in_progress',
+        data: {
+          modal_title: 'Mark task in progress',
+          modal_body: 'Please confirm that you are actively working on collecting documents for this appeal.  Once confirmed, other members of your organization will no longer be able to mark this task in progress.',
+          message_title: 'You have successfully marked your task as in progress',
+          message_detail: 'This appeal will be visible in the "In Progress" tab of your Queue',
+          type: 'AssessDocumentationTask',
+          redirect_after: '/organizations/prosthetics'
+        }
+      }
+    ],
+    timelineTitle: 'AssessDocumentationTask completed',
+    hideFromQueueTableView: false,
+    hideFromTaskSnapshot: false,
+    hideFromCaseTimeline: false,
+    availableHearingLocations: [],
+    latestInformalHearingPresentationTask: {},
+    canMoveOnDocketSwitch: true,
+    timerEndsAt: null,
+    unscheduledHearingNotes: {}
+  }
+};
+
+const educationAssessDocumentationTaskData = {
   7168: {
     uniqueId: '7168',
     isLegacy: false,
@@ -365,8 +734,7 @@ const EducationAssessDocumentationTaskData = {
           modal_button_text: 'Send',
           type: 'EducationAssessDocumentationTask',
           body_optional: true,
-          redirect_after: '/organizations/buffalo-rpo',
-          modal_button_text: 'Send'
+          redirect_after: '/organizations/buffalo-rpo'
         }
       },
       {
@@ -395,11 +763,42 @@ const EducationAssessDocumentationTaskData = {
     unscheduledHearingNotes: {}
   }
 };
+/* eslint-enable max-len */
 
 export const camoToBvaIntakeData = {
   queue: {
     amaTasks: {
       ...vhaDocumentSearchTaskData
+    },
+    appeals: {
+      '419ce568-387c-4ac6-a5f5-00a1554cea36': {
+        id: '1632',
+        externalId: '419ce568-387c-4ac6-a5f5-00a1554cea36'
+      }
+    }
+  },
+  ...uiData
+};
+
+export const returnToOrgData = {
+  queue: {
+    amaTasks: {
+      ...preDocketTaskData
+    },
+    appeals: {
+      '419ce568-387c-4ac6-a5f5-00a1554cea36': {
+        id: '1632',
+        externalId: '419ce568-387c-4ac6-a5f5-00a1554cea36'
+      }
+    }
+  },
+  ...uiData
+};
+
+export const vhaPOToCAMOData = {
+  queue: {
+    amaTasks: {
+      ...assessDocumentationTaskData
     },
     appeals: {
       '419ce568-387c-4ac6-a5f5-00a1554cea36': {
@@ -429,7 +828,7 @@ export const emoToBvaIntakeData = {
 export const rpoToBvaIntakeData = {
   queue: {
     amaTasks: {
-      ...EducationAssessDocumentationTaskData
+      ...educationAssessDocumentationTaskData
     },
     appeals: {
       '419ce568-387c-4ac6-a5f5-00a1554cea36': {
@@ -543,3 +942,4 @@ export const camoToProgramOfficeToCamoData = {
   },
   ...uiData
 };
+/* eslint-enable max-lines */

@@ -1,43 +1,33 @@
+/* eslint-disable max-lines */
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore, compose } from 'redux';
 import thunk from 'redux-thunk';
 import COPY from '../../../../COPY';
-
+import {
+  createQueueReducer,
+  getAppealId,
+  getTaskId,
+  enterTextFieldOptions,
+  enterModalRadioOptions,
+  selectFromDropdown,
+  clickSubmissionButton
+} from './modalUtils';
 import {
   postData,
   camoToBvaIntakeData,
   camoToProgramOfficeToCamoData,
   caregiverToIntakeData,
   emoToBvaIntakeData,
-  rpoToBvaIntakeData
-} from '../../../data/queue/taskActionModals/completeTaskActionModalData';
+  rpoToBvaIntakeData,
+  vhaPOToCAMOData
+} from '../../../data/queue/taskActionModals/taskActionModalData';
 import * as uiActions from 'app/queue/uiReducer/uiActions';
 import CompleteTaskModal from 'app/queue/components/CompleteTaskModal';
 
 let requestPatchSpy;
-
-const createQueueReducer = (storeValues) => {
-  return function (state = storeValues) {
-
-    return state;
-  };
-};
-
-const getAppealId = (storeValues) => {
-  return Object.keys(storeValues.queue.appeals)[0];
-};
-
-const getTaskId = (storeValues, taskType) => {
-  const tasks = storeValues.queue.amaTasks;
-
-  return Object.keys(tasks).find((key) => (
-    tasks[key].type === taskType
-  ));
-};
 
 const renderCompleteTaskModal = (modalType, storeValues, taskType) => {
   const appealId = getAppealId(storeValues);
@@ -55,36 +45,11 @@ const renderCompleteTaskModal = (modalType, storeValues, taskType) => {
     <Provider store={store}>
       <MemoryRouter initialEntries={[path]}>
         <Route component={(props) => {
-          return <CompleteTaskModal {...props} modalType={modalType} appealId={appealId} taskId={taskId} />;
-        }} path={path} />
+          return <CompleteTaskModal {...props.match.params} modalType={modalType} />;
+        }} path={`/queue/appeals/:appealId/tasks/:taskId/modal/${modalType}`} />
       </MemoryRouter>
     </Provider>
   );
-};
-
-const enterModalRadioOptions = (radioSelection, instructionsFieldName, instructions, buttonText, otherSource) => {
-  const radioFieldToSelect = screen.getByLabelText(radioSelection);
-  const instructionsField = screen.getByRole('textbox', { name: instructionsFieldName });
-
-  userEvent.click(radioFieldToSelect);
-  userEvent.type(instructionsField, instructions);
-  if (otherSource) {
-    const otherSourceField = screen.getByRole('textbox', { name: 'Please indicate the source' });
-
-    userEvent.type(otherSourceField, otherSource);
-  }
-
-  userEvent.click(screen.getByRole('button', { name: buttonText }));
-};
-
-const selectFromDropdown = async (
-  dropdownName, dropdownSelection
-) => {
-  const dropdown = screen.getByRole('combobox', { name: dropdownName });
-
-  userEvent.click(dropdown);
-
-  userEvent.click(screen.getByRole('option', { name: dropdownSelection }));
 };
 
 const getReceivedInstructions = () => requestPatchSpy.mock.calls[0][1].data.task.instructions;
@@ -118,11 +83,19 @@ describe('CompleteTaskModal', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
       enterModalRadioOptions(
-        'Correct documents have been successfully added',
-        'Provide additional context and/or documents:',
-        'CAMO -> BVA Intake',
-        buttonText
+        'Correct documents have been successfully added'
       );
+
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
+        'Provide additional context and/or documents:',
+        'CAMO -> BVA Intake'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
         '\n**Status:** Correct documents have been successfully added\n\n' +
@@ -134,11 +107,19 @@ describe('CompleteTaskModal', () => {
       renderCompleteTaskModal(modalType, camoToProgramOfficeToCamoData, taskType);
 
       enterModalRadioOptions(
-        'Correct documents have been successfully added',
-        'Provide additional context and/or documents:',
-        'CAMO -> BVA Intake',
-        buttonText
+        'Correct documents have been successfully added'
       );
+
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
+        'Provide additional context and/or documents:',
+        'CAMO -> BVA Intake'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
         '\n**Status:** Correct documents have been successfully added\n\n' +
@@ -162,12 +143,14 @@ describe('CompleteTaskModal', () => {
 
       renderCompleteTaskModal(modalType, taskDataWithNullInstructions, taskType);
 
-      enterModalRadioOptions(
-        'Correct documents have been successfully added',
+      enterModalRadioOptions('Correct documents have been successfully added');
+
+      enterTextFieldOptions(
         'Provide additional context and/or documents:',
-        'Null test',
-        buttonText
+        'Null test'
       );
+
+      clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
         '\n**Status:** Correct documents have been successfully added' +
@@ -175,6 +158,77 @@ describe('CompleteTaskModal', () => {
         '\n**Program Office Notes:** Documents for this appeal are stored in VBMS.' +
         '\n\n**Detail:**' +
         '\n\n PO back to CAMO!\n\n'
+      );
+    });
+  });
+
+  describe('ready_for_review', () => {
+    const taskType = 'AssessDocumentationTask';
+    const buttonText = COPY.MODAL_SEND_BUTTON;
+    const modalType = 'ready_for_review';
+
+    test('modal title is Ready for review', () => {
+      renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
+      expect(screen.getByText('Ready for review')).toBeTruthy();
+    });
+
+    test('Before Radio button is Chosen, button should be disabled', () => {
+      renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+    });
+
+    test('When Centralized Mail Portal is chosen in Modal', () => {
+      renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
+
+      enterModalRadioOptions(
+        'Centralized Mail Portal'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
+        'Provide details such as file structure or file path',
+        'VHA PO -> BVA Intake'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      clickSubmissionButton(buttonText);
+
+      expect(getReceivedInstructions()).toBe(
+        'Documents for this appeal are stored in Centralized Mail Portal.' +
+        '\n\n**Detail:**\n\nVHA PO -> BVA Intake\n'
+      );
+    });
+
+    test('When Other is Chosen in Modal', () => {
+      renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
+
+      enterModalRadioOptions(
+        'Other'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
+        'Provide details such as file structure or file path',
+        'PO -> CAMO'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
+        'Please indicate the source',
+        'Other Source'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      clickSubmissionButton(buttonText);
+
+      expect(getReceivedInstructions()).toBe(
+        'Documents for this appeal are stored in Other Source.' +
+        '\n\n**Detail:**\n\nPO -> CAMO\n'
       );
     });
   });
@@ -193,11 +247,18 @@ describe('CompleteTaskModal', () => {
       renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
 
       enterModalRadioOptions(
-        'VBMS',
-        'Provide details such as file structure or file path Optional',
-        'CAREGIVER -> BVA Intake',
-        buttonText
+        'VBMS'
       );
+
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      enterTextFieldOptions(
+        'Provide details such as file structure or file path Optional',
+        'CAREGIVER -> BVA Intake'
+      );
+
+      clickSubmissionButton(buttonText);
+
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in VBMS.' +
         '\n\n**Detail:**\n\nCAREGIVER -> BVA Intake\n'
@@ -208,12 +269,27 @@ describe('CompleteTaskModal', () => {
       renderCompleteTaskModal(modalType, caregiverToIntakeData, taskType);
 
       enterModalRadioOptions(
-        'Other',
+        'Other'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
         'Provide details such as file structure or file path Optional',
-        'CAREGIVER -> BVA Intake',
-        buttonText,
+        'CAREGIVER -> BVA Intake'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
+        'Please indicate the source',
         'Other Source'
       );
+
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      clickSubmissionButton(buttonText);
+
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in Other Source.' +
         '\n\n**Detail:**\n\nCAREGIVER -> BVA Intake\n'
@@ -235,11 +311,18 @@ describe('CompleteTaskModal', () => {
       renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
 
       enterModalRadioOptions(
-        'Centralized Mail Portal',
-        'Provide details such as file structure or file path Optional',
-        'EMO -> BVA Intake',
-        buttonText
+        'Centralized Mail Portal'
       );
+
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      enterTextFieldOptions(
+        'Provide details such as file structure or file path Optional',
+        'EMO -> BVA Intake'
+      );
+
+      clickSubmissionButton(buttonText);
+
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in Centralized Mail Portal.' +
         '\n\n**Detail:**\n\nEMO -> BVA Intake\n'
@@ -250,12 +333,27 @@ describe('CompleteTaskModal', () => {
       renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
 
       enterModalRadioOptions(
-        'Other',
+        'Other'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
         'Provide details such as file structure or file path Optional',
-        'EMO -> BVA Intake',
-        buttonText,
+        'EMO -> BVA Intake'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
+        'Please indicate the source',
         'Other Source'
       );
+
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      clickSubmissionButton(buttonText);
+
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in Other Source.' +
         '\n\n**Detail:**\n\nEMO -> BVA Intake\n'
@@ -277,11 +375,18 @@ describe('CompleteTaskModal', () => {
       renderCompleteTaskModal(modalType, rpoToBvaIntakeData, taskType);
 
       enterModalRadioOptions(
-        'Centralized Mail Portal',
-        'Provide details such as file structure or file path Optional',
-        'RPO -> BVA Intake',
-        buttonText
+        'Centralized Mail Portal'
       );
+
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      enterTextFieldOptions(
+        'Provide details such as file structure or file path Optional',
+        'RPO -> BVA Intake'
+      );
+
+      clickSubmissionButton(buttonText);
+
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in Centralized Mail Portal.' +
         '\n\n**Detail:**\n\nRPO -> BVA Intake\n'
@@ -292,15 +397,59 @@ describe('CompleteTaskModal', () => {
       renderCompleteTaskModal(modalType, rpoToBvaIntakeData, taskType);
 
       enterModalRadioOptions(
-        'Other',
+        'Other'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
         'Provide details such as file structure or file path Optional',
-        'RPO -> BVA Intake',
-        buttonText,
+        'RPO -> BVA Intake'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
+        'Please indicate the source',
         'Other Source'
       );
+
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      clickSubmissionButton(buttonText);
+
       expect(getReceivedInstructions()).toBe(
         'Documents for this appeal are stored in Other Source.' +
         '\n\n**Detail:**\n\nRPO -> BVA Intake\n'
+      );
+    });
+  });
+
+  describe('emo_return_to_board_intake', () => {
+    const taskType = 'EducationDocumentSearchTask';
+    const buttonText = COPY.MODAL_RETURN_BUTTON;
+    const modalType = 'emo_return_to_board_intake';
+
+    test('modal title is Return to Board Intake', () => {
+      renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
+      expect(screen.getByText('Return to Board Intake')).toBeTruthy();
+    });
+
+    test('When mandatory text box is empty, button should be disabled', () => {
+      renderCompleteTaskModal(modalType, emoToBvaIntakeData, taskType);
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
+        'Provide instructions and context for this action',
+        'EMO Return to Board Intake'
+      );
+
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      clickSubmissionButton(buttonText);
+
+      expect(getReceivedInstructions()).toBe(
+        'EMO Return to Board Intake'
       );
     });
   });
@@ -323,7 +472,9 @@ describe('CompleteTaskModal', () => {
         'Not PCAFC related'
       );
 
-      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
         '\n**Reason for return:**\nNot PCAFC related'
@@ -338,13 +489,14 @@ describe('CompleteTaskModal', () => {
         'Not PCAFC related'
       );
 
-      const optionalTextArea = screen.getByRole(
-        'textbox', { name: 'Provide additional context for this action Optional' }
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+
+      enterTextFieldOptions(
+        'Provide additional context for this action Optional',
+        'Additional context'
       );
 
-      userEvent.type(optionalTextArea, 'Additional context');
-
-      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
+      clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
         '\n**Reason for return:**\nNot PCAFC related' +
@@ -360,13 +512,16 @@ describe('CompleteTaskModal', () => {
         'Other'
       );
 
-      const otherTextArea = screen.getByRole(
-        'textbox', { name: 'Please provide the reason for return' }
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
+        'Please provide the reason for return',
+        'Reasoning for the return'
       );
 
-      userEvent.type(otherTextArea, 'Reasoning for the return');
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
 
-      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
+      clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
         '\n**Reason for return:**\nOther - Reasoning for the return'
@@ -381,19 +536,21 @@ describe('CompleteTaskModal', () => {
         'Other'
       );
 
-      const otherTextArea = screen.getByRole(
-        'textbox', { name: 'Please provide the reason for return' }
+      expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+      enterTextFieldOptions(
+        'Please provide the reason for return',
+        'Reasoning for the return'
       );
 
-      userEvent.type(otherTextArea, 'Reasoning for the return');
+      expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
 
-      const optionalTextArea = screen.getByRole(
-        'textbox', { name: 'Provide additional context for this action Optional' }
+      enterTextFieldOptions(
+        'Provide additional context for this action Optional',
+        'Additional context'
       );
 
-      userEvent.type(optionalTextArea, 'Additional context');
-
-      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
+      clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
         '\n**Reason for return:**\nOther - Reasoning for the return' +
@@ -402,3 +559,4 @@ describe('CompleteTaskModal', () => {
     });
   });
 });
+/* eslint-enable max-lines */

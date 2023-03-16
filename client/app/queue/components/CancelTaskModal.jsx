@@ -41,6 +41,7 @@ const CancelTaskModal = (props) => {
         }
       }
     };
+
     const hearingScheduleLink = taskData?.back_to_hearing_schedule ?
       <p>
         <Link href={`/hearings/schedule/assign?regional_office_key=${hearingDay.regionalOffice}`}>
@@ -62,13 +63,13 @@ const CancelTaskModal = (props) => {
 
   // Additional properties - should be removed later once generic submit buttons are styled the same across all modals
   const modalProps = {};
-  const getModalTitle = get(taskData, 'modal_title');
 
-  if (
-    getModalTitle === COPY.EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE ||
-    getModalTitle === COPY.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE
-  ) {
+  if ([
+    'AssessDocumentationTask',
+    'EducationAssessDocumentationTask',
+  ].includes(task?.type)) {
     modalProps.submitButtonClassNames = ['usa-button'];
+    modalProps.submitDisabled = !validateForm();
   }
 
   return (
@@ -106,7 +107,8 @@ CancelTaskModal.propTypes = {
   }),
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
-    taskId: PropTypes.string
+    taskId: PropTypes.string,
+    type: PropTypes.string
   }),
   highlightFormItems: PropTypes.bool
 };
