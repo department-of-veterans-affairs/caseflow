@@ -615,7 +615,7 @@ class CompleteTaskModal extends React.Component {
         title={taskData.modal_title || (modalAttributes.title && modalAttributes.title(this.getContentArgs()))}
         /* eslint-disable-next-line camelcase */
         button={taskData?.modal_button_text}
-        submitDisabled={this.validateForm()}
+        submitDisabled={!this.validateForm()}
         validateForm={this.validateForm}
         submit={this.submit}
         pathAfterSubmit={taskData.redirect_after || '/queue'}
