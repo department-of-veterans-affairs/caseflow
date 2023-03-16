@@ -35,6 +35,14 @@
 
   .cf-form-textinput {
     font-weight: normal;
+    color: inherit;
+    margin-bottom: 0;
+
+    // the <TextField component assigns .cf-form-textinput to both the parent div and input element,
+    // so nesting the class within itself is required to fix the double margin
+    .cf-form-textinput {
+      margin-bottom: 20px;
+    }
   }
 
   .dash-li {

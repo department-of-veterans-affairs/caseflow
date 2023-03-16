@@ -25,6 +25,7 @@ const createDashboardProp = (hasIssues) => {
         benefit_type: 'education',
         issue_category: 'Service Connection',
         disposition: 'Reversed',
+        issue_description: 'Test Issue Description'
       }],
       cavc_dashboard_dispositions: [{
         request_issue_id: 1000,
@@ -68,6 +69,7 @@ describe('CavcDashboardIssuesSection', () => {
 
     expect(screen.getByText(dashboard.cavc_dashboard_issues[0].benefit_type, { exact: false })).toBeTruthy();
     expect(screen.getByText(dashboard.cavc_dashboard_issues[0].issue_category)).toBeTruthy();
+    expect(screen.getByText(dashboard.cavc_dashboard_issues[0].issue_description, { exact: false })).toBeTruthy();
     expect(Issues.length).toBe(2);
   });
 

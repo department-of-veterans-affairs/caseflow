@@ -172,7 +172,10 @@ const CavcDashboardIssue = (props) => {
             <strong> Benefit type: </strong> {BENEFIT_TYPES[issue.benefit_type]}
           </div>
           <div>
-            <strong>Issue: </strong> {issueType}
+            <strong>Issue: </strong>
+            {issueType}
+            {issue.issue_description &&
+              <span> - {issue.issue_description}</span>}
           </div>
         </div>
         <div {...dispositionColumnStyling(userCanEdit)}>
@@ -291,6 +294,7 @@ CavcDashboardIssue.propTypes = {
     benefit_type: PropTypes.string,
     description: PropTypes.string,
     issue_category: PropTypes.string,
+    issue_description: PropTypes.string,
     id: PropTypes.number,
   }),
   dispositions: PropTypes.array,
