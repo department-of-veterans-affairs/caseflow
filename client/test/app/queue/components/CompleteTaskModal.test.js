@@ -440,7 +440,7 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
       enterTextFieldOptions(
-        'Provide instructions and context for this action:',
+        'Provide instructions and context for this action',
         'EMO Return to Board Intake'
       );
 

@@ -402,7 +402,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
           find(".cf-select__control", text: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER).click
           find("div", class: "cf-select__option", text: program_office.name).click
-          fill_in("Provide instructions and context for this action:", with: po_instructions)
+          fill_in("Provide instructions and context for this action", with: po_instructions)
           find("button", class: "usa-button", text: COPY::MODAL_ASSIGN_BUTTON).click
 
           expect(page).to have_current_path("/organizations/#{camo.url}?tab=camo_assigned&#{default_query_params}")
@@ -460,7 +460,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
           find(".cf-select__control", text: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER).click
           find("div", class: "cf-select__option", text: regional_office.name).click
-          fill_in("Provide instructions and context for this action:", with: ro_instructions)
+          fill_in("Provide instructions and context for this action", with: ro_instructions)
           find("button", class: "usa-button", text: COPY::MODAL_ASSIGN_BUTTON).click
 
           expect(page).to have_current_path("/organizations/#{program_office.url}"\

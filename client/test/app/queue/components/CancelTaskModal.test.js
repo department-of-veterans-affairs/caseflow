@@ -11,7 +11,7 @@ import {
   getAppealId,
   getTaskId,
   enterTextFieldOptions
- 
+
 } from './modalUtils';
 import CancelTaskModal from 'app/queue/components/CancelTaskModal';
 import {
@@ -51,7 +51,7 @@ describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
     expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
-      'Provide instructions and context for this action:',
+      'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 
@@ -68,7 +68,7 @@ describe('Whenever RPO returns an appeal to EMO', () => {
     expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
-      'Provide instructions and context for this action:',
+      'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 

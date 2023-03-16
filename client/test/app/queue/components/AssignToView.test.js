@@ -53,7 +53,7 @@ describe('Whenever BVA Intake returns an appeal to', () => {
     expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
-      'Provide instructions and context for this action:',
+      'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 
@@ -66,7 +66,7 @@ describe('Whenever BVA Intake returns an appeal to', () => {
     expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
-      'Provide instructions and context for this action:',
+      'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 
@@ -79,7 +79,7 @@ describe('Whenever BVA Intake returns an appeal to', () => {
     expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
-      'Provide instructions and context for this action:',
+      'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 
@@ -118,7 +118,7 @@ describe('Whenever VHA CAMO assigns an appeal to a Program Office', () => {
     expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
-      'Provide instructions and context for this action:',
+      'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 
@@ -142,7 +142,7 @@ describe('Whenever a VHA Program Office assigns an appeal to a VISN/Regional Off
     expect(screen.getByText(COPY.MODAL_ASSIGN_BUTTON).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
-      'Provide instructions and context for this action:',
+      'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 
