@@ -2,39 +2,49 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import ApiUtil from 'app/util/ApiUtil';
 import { combineReducers } from 'redux';
 
-export const submitForm = createAsyncThunk('form/submit', async (formData) => {
-  // TODO: Update this url to work with the form submission implementation
-  const response = await ApiUtil.post('/help/submitOrganizationMembershipRequest', formData);
-  const data = await response.json;
+export const submitMembershipRequestForm = createAsyncThunk('form/submit', async (formData) => {
+  const response = await ApiUtil.
+    post('/membership_requests', formData).
+    catch((error) => {
+      const errorMessage = error.response?.body?.errors?.at(0)?.detail || error.message;
+      const customError = new Error(errorMessage);
 
-  if (response.status < 200 || response.status >= 300) {
-    // TODO: Figure out how to handle errors for this.
-    return 'It died do something';
-  }
+      throw customError;
+    });
 
-  return data;
+  const { message, newMembershipRequests } = await response.body.data;
+
+  return { message, newMembershipRequests };
 });
 
 export const initialState = {
   featureToggles: {},
   userOrganizations: [],
   organizationMembershipRequests: [],
+  messages: {
+    success: null,
+    error: null
+  },
 };
 
 const formSlice = createSlice({
   name: 'form',
-  initialState: { formData: {}, status: 'idle', error: null },
-  reducers: {},
+  initialState: { message: null, status: 'idle', error: null, requestedOrgNames: [] },
+  reducers: {
+    resetFormSuccessMessage: (state) => {
+      state.message = null;
+    },
+  },
   extraReducers: (builder) => {
     builder.
-      addCase(submitForm.pending, (state) => {
+      addCase(submitMembershipRequestForm.pending, (state) => {
         state.status = 'loading';
       }).
-      addCase(submitForm.fulfilled, (state, action) => {
+      addCase(submitMembershipRequestForm.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.formData = action.payload;
+        state.message = action.payload.message;
       }).
-      addCase(submitForm.rejected, (state, action) => {
+      addCase(submitMembershipRequestForm.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
@@ -54,11 +64,31 @@ const helpSlice = createSlice({
     setOrganizationMembershipRequests: (state, action) => {
       state.organizationMembershipRequests = action.payload;
     },
+    setSuccessMessage: (state, action) => {
+      state.messages.success = action.payload;
+    },
+    setErrorMessage: (state, action) => {
+      state.messages.error = action.payload;
+    },
+    resetSuccessMessage: (state) => {
+      state.messages.success = null;
+    },
+    resetErrorMessage: (state) => {
+      state.messages.error = null;
+    }
   },
 });
 
 const helpReducers = combineReducers({ help: helpSlice.reducer, form: formSlice.reducer });
 
-export const { setFeatureToggles, setUserOrganizations, setOrganizationMembershipRequests } = helpSlice.actions;
+export const { setFeatureToggles,
+  setUserOrganizations,
+  setOrganizationMembershipRequests,
+  setSuccessMessage,
+  resetSuccessMessage,
+  setErrorMessage,
+  resetErrorMessage } = helpSlice.actions;
+
+export const { resetFormSuccessMessage } = formSlice.actions;
 
 export default helpReducers;

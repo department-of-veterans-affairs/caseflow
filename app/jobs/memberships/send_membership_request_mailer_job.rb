@@ -6,13 +6,10 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
   LOG_PREFIX = "SendMembershipRequest"
   TYPE_LABEL = "Send Membership Request notification email"
 
-  def perform(email_type, recipient_info)
-    # send_email(email_for_recipient(email_type, recipient_info))
-    send_email(
-      MembershipRequestMailer.with(recipient_info: recipient_info).send(
-        email_to_send(email_type)
-      )
-    )
+  def perform(email_type, mailer_parameters)
+    MembershipRequestMailer.with(mailer_parameters).send(
+      email_to_send(email_type)
+    ).deliver_now!
   end
 
   private
@@ -24,16 +21,16 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
   end
 
   def email_to_send(email_type)
-    case email_type
-    when "SendMembershipRequestSubmittedEmail"
-      :membership_request_submitted
-    when "SendAdminsMembershipRequestSubmissionEmail"
-      :membership_request_submission
-    when "SendUpdatedMembershipRequestStatusEmail"
-      :updated_membership_request_status
-    else
-      fail ArgumentError, "Unable to send email `#{email_type}`"
-    end
+    email_method_mapping_hash = {
+      "UserRequestCreated": :user_request_created,
+      "AdminRequestMade": :admin_request_made
+    }
+
+    method_name = email_method_mapping_hash[email_type&.to_sym]
+
+    fail(ArgumentError, "Unable to send email `#{email_type}`") unless method_name
+
+    method_name
   end
 
   def external_message_id(msg)
