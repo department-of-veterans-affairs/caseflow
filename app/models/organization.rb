@@ -75,11 +75,8 @@ class Organization < CaseflowRecord
     org_user = OrganizationsUser.find_or_create_by!(organization: self, user: user)
 
     # check if membership_requests exists for the user that is being added.
-    user.membership_requests.where(organization_id: id).each do |membership_request|
-      membership_request.cancelled!
-
-      MembershipRequestMailer.vha_business_line_approval(membership_request).deliver_now
-      MembershipRequestMailer.multiple_pd_approval(membership_request).deliver_now
+    user.membership_requests.where(organization_id: id).assigned.each do |membership_request|
+      membership_request.cancel_and_email
     end
 
     org_user

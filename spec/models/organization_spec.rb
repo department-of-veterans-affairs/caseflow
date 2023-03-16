@@ -37,19 +37,16 @@ describe Organization, :postgres do
 
     subject { org.add_user(user) }
 
-    context "without membership_requests" do
-      it "adds the user to the organization" do
-        subject
+    it "adds the user to the organization" do
+      subject
 
-        expect(org.users.first).to eq user
-      end
+      expect(org.users.first).to eq user
     end
 
     context "with membership_request" do
       let!(:membership_request) do
         user.membership_requests.create(
-          requestor_id: user.id,
-          organization_id: org.id
+          organization: org
         )
       end
 
@@ -57,7 +54,7 @@ describe Organization, :postgres do
         subject
         membership_request.reload
 
-        expect(membership_request.status).to eq 'cancelled'
+        expect(membership_request.status).to eq "cancelled"
       end
     end
   end
