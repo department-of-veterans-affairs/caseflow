@@ -1,8 +1,10 @@
 # This .rb file contains the methods to resolve stuck duplicateEP jobs that are tracked in Metabase
 # Use the manual remediation on the 20 remaining claims in UAT.
-# 'x= WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new' and ('x.run(***Insert ID***, "hlr")
-# for running the remediation for the the hlr **OR** 'x.run(***Insert ID***, "sc")') for a
-# SupplimentalClaim; until definitive final procedures are established i.e. a successful auto-remediation script.
+# 'x= WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new' and ('x.resolve_single_review(***Insert ID***, "hlr")
+# for running the remediation for the the hlr **OR** 'x.resolve_single_review(***Insert ID***, "sc")') for a
+# SupplimentalClaim.
+# To execute a array of IDS. Execute in the rake task method i.e.  execute rake reviews:resolve_multiple_reviews[type],
+# where type is either 'hlr' or 'sc' depending on the type of review you want to resolve.
 
 module WarRoom
   class DuppEpClaimsSyncStatusUpdateCanClr
@@ -83,6 +85,14 @@ module WarRoom
       end
 
       resolve_duplicate_eps(review)
+    end
+
+    def resolve_multiple_reviews(problem_reviews)
+      # Executed in the rake task method i.e.  execute rake reviews:resolve_multiple_reviews[type],
+      # where type is either 'hlr' or 'sc' depending on the type of review you want to resolve.
+      reviews = type == 'hlr' ? HigherLevelReview.where(id: problem_reviews.pluck(:id)) : SupplementalClaim.where(id: problem_reviews.pluck(:id))
+
+      resolve_duplicate_eps(reviews)
     end
 
     def run()
