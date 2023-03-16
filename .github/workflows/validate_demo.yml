@@ -93,7 +93,7 @@ jobs:
           ruby -v
           BASH_ENV="Bash"
           echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> "$BASH_ENV"
-          source $BASH_ENV
+          export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")
           sudo chmod -R 777 /var/lib/gems
           gem install bundler
           bundle install --path vendor/bundle
