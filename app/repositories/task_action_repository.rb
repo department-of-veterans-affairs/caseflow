@@ -552,6 +552,7 @@ class TaskActionRepository
         message_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
         message_detail: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
         instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
@@ -637,6 +638,7 @@ class TaskActionRepository
         modal_title: COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
         instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}"
       }
