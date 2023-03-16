@@ -26,19 +26,19 @@ jobs:
     #     credentials:
     #       username: AWS
     #       password: ${{ secrets.ECR_PASSWORD }}
-    # container:
-    #   image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
-    #   credentials:
-    #     username: AWS
-    #     password: ${{ secrets.ECR_PASSWORD }}
-    #   env:
-    #       DBUS_SESSION_BUS_ADDRESS: /dev/null
-    #       RAILS_ENV: test
-    #       NODE_ENV: test
-    #       BUNDLE_PATH: vendor/bundle
-    #       COVERAGE_DIR: /home/circleci/coverage
-    #       POSTGRES_HOST: localhost
-    #       POSTGRES_USER: root
+      container:
+        image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+        credentials:
+          username: AWS
+          password: ${{ secrets.ECR_PASSWORD }}
+        env:
+          DBUS_SESSION_BUS_ADDRESS: /dev/null
+          RAILS_ENV: test
+          NODE_ENV: test
+          BUNDLE_PATH: vendor/bundle
+          COVERAGE_DIR: /home/circleci/coverage
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: root
     steps:
       - uses: actions/checkout@v3
 
@@ -91,16 +91,11 @@ jobs:
       - name: Install Ruby Dependencies
         run: |
           ruby -v
-          echo 'one'
           BASH_ENV="Bash"
           echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> "$BASH_ENV"
-          echo "$BASH_ENV"
-          echo 'two'
           source $BASH_ENV
-          echo 'three'
           sudo chmod -R 777 /var/lib/gems
           gem install bundler
-          echo 'four'
           bundle install --path vendor/bundle
 
 
