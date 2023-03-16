@@ -64,10 +64,34 @@ describe Memberships::SendMembershipRequestMailerJob do
 
     context "an error is thrown" do
       let(:type) { "UserRequestCreated" }
+      it "rescues error and DataDog is called" do
+        allow_any_instance_of(MembershipRequestMailer).to receive(:user_request_created).and_raise(error)
+        subject do
+          expect(DataDogService).to receive(:emit_gauge).with(
+            app_name: Constants.DATADOG_METRICS.DISPATCH.APP_NAME,
+            metric_group: Constants.DATADOG_METRICS.DISPATCH.OUTCODE_GROUP_NAME,
+            metric_name: "email.error"
+          ).once
+        end
+      end
+    end
+
+    context "an error is thrown" do
+      let(:type) { "UserRequestCreated" }
       it "rescues error and logs to sentry" do
         allow_any_instance_of(MembershipRequestMailer).to receive(:user_request_created).and_raise(error)
         subject do
           expect(@raven_called).to eq(true)
+        end
+      end
+    end
+
+    context "an error is thrown" do
+      let(:type) { "UserRequestCreated" }
+      it "rescues error and logs it with the Rails Logger" do
+        allow_any_instance_of(MembershipRequestMailer).to receive(:user_request_created).and_raise(error)
+        subject do
+          expect(Rails.logger).to have_received(:warn).with("Error").once
         end
       end
     end
