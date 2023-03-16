@@ -36,7 +36,7 @@ describe VANotifyStatusUpdateJob, type: :job do
            appeals_type: "Appeal",
            event_type: "Hearing scheduled",
            event_date: Time.zone.today,
-           notification_type: "Email",
+           notification_type: "Email and SMS",
            email_notification_status: "Success",
            sms_notification_status: "Success")
   end
@@ -72,6 +72,23 @@ describe VANotifyStatusUpdateJob, type: :job do
       it "sends to VA Notify when no errors are present" do
         expect(Rails.logger).not_to receive(:error)
         expect { VANotifyStatusUpdateJob.perform_now.to receive(:send_to_va_notify) }
+      end
+
+      it "defaults to 650 for the query limit if environment variable not found or invalid" do
+        stub_const("VANotifyStatusUpdateJob::QUERY_LIMIT", nil)
+        expect(Rails.logger).to receive(:info)
+          .with("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable. \
+         Defaulting to 650.")
+        VANotifyStatusUpdateJob.perform_now
+      end
+
+      it "logs out an error to Raven when email type that is not Email or SMS is found" do
+        external_id = SecureRandom.uuid
+        email_only.update!(email_notification_external_id: external_id)
+        job_instance = VANotifyStatusUpdateJob.new
+        external_id = SecureRandom.uuid
+        result = job_instance.send(:get_current_status, external_id, "None")
+        expect(result).to eq(false)
       end
     end
 
@@ -117,6 +134,14 @@ describe VANotifyStatusUpdateJob, type: :job do
           job.perform_now
           expect(email_and_sms.sms_notification_status && email_and_sms.email_notification_status).to eq("No External Id")
         end
+
+        it "updates the email and sms notification status if an external id is found" do
+          email_and_sms.update!(sms_notification_external_id: SecureRandom.uuid,
+                                email_notification_external_id: SecureRandom.uuid)
+          job.perform_now
+          notification = Notification.first
+          expect(notification.email_notification_status && notification.sms_notification_status).to eq("created")
+        end
       end
     end
   end
@@ -128,7 +153,7 @@ describe VANotifyStatusUpdateJob, type: :job do
       email_and_sms.email_notification_external_id = SecureRandom.uuid
       allow(job).to receive(:notifications_not_processed).and_return([email_and_sms])
       allow(VANotifyService).to receive(:get_status).and_raise(Caseflow::Error::VANotifyNotFoundError)
-      expect(job).to receive(:log_error).with(/VA Notify API returned error/)
+      expect(job).to receive(:log_error).with(/VA Notify API returned error/).exactly(2).times
       job.perform_now
     end
   end
