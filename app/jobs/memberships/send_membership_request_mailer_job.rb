@@ -61,6 +61,18 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
     end
   end
 
+  def email_nil?(email)
+    if email.nil?
+      log = log_message(mailer_parameters).merge(
+        status: "error", message: "No #{TYPE_LABEL} was sent because no email address is defined"
+      )
+      Rails.logger.info("#{LOG_PREFIX} #{log}")
+      false
+    else
+      true
+    end
+  end
+
   # :nocov:
   def send_email(email, mailer_parameters)
     # Why are we using `deliver_now!`? The documentation mentions that it ignores the flags:
@@ -85,11 +97,7 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
     # The benefit of using `deliver_now!` is that it returns the actual response from
     # GovDelivery. The actual web response gives Caseflow the ability to track
     # the email after it has been accepted by GovDelivery.
-    if email.nil?
-      log = log_message(mailer_parameters).merge(status: "error", message: "No #{TYPE_LABEL} was sent because no email address is defined")
-      Rails.logger.info("#{LOG_PREFIX} #{log}")
-      return false
-    end
+    email_nil?(email)
 
     log = log_message(mailer_parameters).merge(status: "info", message: "Sending #{TYPE_LABEL} to #{mailer_parameters[:recipient_info]} ...")
     Rails.logger.info("#{LOG_PREFIX} #{log}")
@@ -97,7 +105,9 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
   rescue StandardError, Savon::Error, BGS::ShareError => error
     # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS endpoints\
     Raven.capture_exception(error)
-    log = log_message(mailer_parameters).merge(status: "error", message: "Failed to send #{TYPE_LABEL} to #{mailer_parameters[:recipient_info]} : #{error}")
+    log = log_message(mailer_parameters).merge(
+      status: "error", message: "Failed to send #{TYPE_LABEL} to #{mailer_parameters[:recipient_info]} : #{error}"
+    )
     Rails.logger.warn("#{LOG_PREFIX} #{log}")
     Rails.logger.warn(error.backtrace.join($INPUT_RECORD_SEPARATOR))
     false
