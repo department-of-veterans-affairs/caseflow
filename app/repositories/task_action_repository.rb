@@ -305,7 +305,8 @@ class TaskActionRepository
 
     def complete_data(task, _user = nil)
       params = {
-        modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym]
+        modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym],
+        modal_button_text: COPY::MARK_TASK_COMPLETE_BUTTON
       }
       params[:modal_body] = COPY::MARK_TASK_COMPLETE_COPY if params[:modal_body].nil?
 
@@ -355,6 +356,7 @@ class TaskActionRepository
     def complete_transcription_data(_task, _user)
       {
         modal_body: COPY::COMPLETE_TRANSCRIPTION_BODY,
+        modal_button_text: COPY::MARK_TASK_COMPLETE_BUTTON,
         modal_hide_instructions: true
       }
     end
@@ -484,8 +486,8 @@ class TaskActionRepository
     def vha_send_to_board_intake(*)
       {
         modal_title: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
-        type: VhaDocumentSearchTask.name,
         modal_button_text: COPY::MODAL_SEND_BUTTON,
+        type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
       }
     end
@@ -721,6 +723,18 @@ class TaskActionRepository
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{VhaCaregiverSupport.singleton.url}?tab=#{completed_tab_name}",
         body_optional: true
+      }
+    end
+
+    def send_colocated_task(*)
+      {
+        modal_button_text: COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
+      }
+    end
+
+    def mark_task_complete_data(*)
+      {
+        modal_button_text: COPY::MARK_TASK_COMPLETE_BUTTON
       }
     end
 
