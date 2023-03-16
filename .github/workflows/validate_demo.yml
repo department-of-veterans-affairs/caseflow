@@ -103,3 +103,9 @@ jobs:
           wget https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
           && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
           && rm dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
+
+      - name: "Wait for database"
+        run: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - name: "Wait for FACOLS"
+        run: ./ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
