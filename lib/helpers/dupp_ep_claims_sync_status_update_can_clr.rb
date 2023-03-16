@@ -4,13 +4,19 @@
 # for running the remediation for the the hlr **OR** 'x.resolve_single_review(***Insert ID***, "sc")') for a
 # SupplimentalClaim.
 # To execute a array of IDS. Execute in the rake task method i.e.  execute rake reviews:resolve_multiple_reviews[type],
-# where type is either 'hlr' or 'sc' depending on the type of review you want to resolve.
+# where type is either hlr or sc depending on the type of review you want to resolve.
 
 module WarRoom
   class DuppEpClaimsSyncStatusUpdateCanClr
 
     # finding reviews that potentially need resolution
     def retrieve_problem_reviews
+      RequestStore[:current_user] = OpenStruct.new(
+        ip_address: '127.0.0.1',
+        station_id: '283',
+        css_id: 'CSFLOW',
+        regional_office: 'DSUSER'
+      )
       hlrs = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
       problem_hlrs = hlrs.select{ |hlr|
         hlr.veteran.end_products.select { |ep|
@@ -85,14 +91,6 @@ module WarRoom
       end
 
       resolve_duplicate_eps(review)
-    end
-
-    def resolve_multiple_reviews(problem_reviews)
-      # Executed in the rake task method i.e.  execute rake reviews:resolve_multiple_reviews[type],
-      # where type is either 'hlr' or 'sc' depending on the type of review you want to resolve.
-      reviews = type == 'hlr' ? HigherLevelReview.where(id: problem_reviews.pluck(:id)) : SupplementalClaim.where(id: problem_reviews.pluck(:id))
-
-      resolve_duplicate_eps(reviews)
     end
 
     def run()
