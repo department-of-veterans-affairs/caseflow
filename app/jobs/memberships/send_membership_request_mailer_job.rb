@@ -71,7 +71,7 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
     log = log_message.merge(status: "info", message: "Sending #{TYPE_LABEL} to #{recipient_info} ...")
     Rails.logger.info("#{LOG_PREFIX} #{log}")
     msg = email.deliver_now!
-  rescue StandardError,Savon::Error, BGS::ShareError => error
+  rescue StandardError, Savon::Error, BGS::ShareError => error
     # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS endpoints\
     Raven.capture_exception(error)
     log = log_message.merge(status: "error", message: "Failed to send #{TYPE_LABEL} to #{recipient_info} : #{error}")
