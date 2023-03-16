@@ -268,6 +268,7 @@ const educationDocumentSearchTaskData = {
           modal_title: 'Return to Board Intake',
           modal_button_text: 'Return',
           type: 'EducationDocumentSearchTask',
+          instructions_label: 'Provide instructions and context for this action',
           redirect_after: '/organizations/edu-emo'
         }
       },

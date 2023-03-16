@@ -33,7 +33,7 @@ let requestPatchSpy;
 const renderCompleteTaskModal = (modalType, storeValues, taskType) => {
   const appealId = getAppealId(storeValues);
   const taskId = getTaskId(storeValues, taskType);
-  
+
   const queueReducer = createQueueReducer(storeValues);
   const store = createStore(
     queueReducer,
@@ -147,7 +147,7 @@ describe('CompleteTaskModal', () => {
       enterModalRadioOptions('Correct documents have been successfully added');
 
       enterTextFieldOptions(
-        'Provide additional context and/or documents:',
+        'Provide additional context and/or documents',
         'Null test'
       );
 
