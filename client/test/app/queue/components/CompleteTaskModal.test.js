@@ -143,12 +143,14 @@ describe('CompleteTaskModal', () => {
 
       renderCompleteTaskModal(modalType, taskDataWithNullInstructions, taskType);
 
-      enterModalRadioOptions(
-        'Correct documents have been successfully added',
+      enterModalRadioOptions('Correct documents have been successfully added');
+
+      enterTextFieldOptions(
         'Provide additional context and/or documents:',
-        'Null test',
-        buttonText
+        'Null test'
       );
+
+      clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
         '\n**Status:** Correct documents have been successfully added' +
