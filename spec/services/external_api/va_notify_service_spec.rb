@@ -16,6 +16,7 @@ describe ExternalApi::VANotifyService do
   let(:phone_number) { "+19876543210" }
   let(:status) { "in-progress" }
   let(:first_name) { "Bob" }
+  let(:docket_number) { "1234567" }
   let(:success_response) do
     HTTPI::Response.new(200, {}, notification_response_body)
   end
@@ -48,7 +49,7 @@ describe ExternalApi::VANotifyService do
     describe "email" do
       subject do
         ExternalApi::VANotifyService.send_email_notifications(
-          participant_id, notification_id, email_template_id, first_name, status
+          participant_id, notification_id, email_template_id, first_name, docket_number, status
         )
       end
       it "email sent successfully" do
@@ -67,7 +68,7 @@ describe ExternalApi::VANotifyService do
     describe "sms" do
       subject do
         ExternalApi::VANotifyService.send_sms_notifications(
-          participant_id, notification_id, sms_template_id, first_name, status
+          participant_id, notification_id, sms_template_id, first_name, docket_number, status
         )
       end
       it "sms sent successfully" do

@@ -96,9 +96,10 @@ export const statusColumn = (notifications) => {
     tableData: notifications,
     valueName: 'Status',
     valueFunction: (notification) => {
-      const status = notification.status;
+      const { status } = notification;
 
-      return status.charAt(0).toUpperCase() + status.slice(1);
+      return NOTIFICATION_CONFIG.STATUSES[status.toUpperCase()] || status.charAt(0).toUpperCase() + status.slice(1);
     }
   };
 };
+
