@@ -8,7 +8,7 @@ import { get } from 'lodash';
 
 import { taskById } from '../selectors';
 import { requestPatch } from '../uiReducer/uiActions';
-import { taskActionData } from '../utils';
+import { taskActionData, currentDaysOnHold } from '../utils';
 import TextareaField from '../../components/TextareaField';
 import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
@@ -33,11 +33,13 @@ const CancelTaskModal = (props) => {
   };
 
   const submit = () => {
+    const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
+    `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : instructions);
     const payload = {
       data: {
         task: {
           status: TASK_STATUSES.cancelled,
-          instructions,
+          instructions: currentInstruction,
           ...(taskData?.business_payloads && { business_payloads: taskData?.business_payloads })
         }
       }
@@ -131,7 +133,8 @@ CancelTaskModal.propTypes = {
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
     taskId: PropTypes.string,
-    type: PropTypes.string
+    type: PropTypes.string,
+    onHoldDuration: PropTypes.number
   }),
   highlightFormItems: PropTypes.bool
 };

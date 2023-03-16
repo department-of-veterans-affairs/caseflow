@@ -869,7 +869,8 @@ class CompleteTaskModal extends React.Component {
       return formattedInstructions[0];
     }
 
-    if (this.props.task.type === 'SendFinalNotificationLetterTask' && this.props.modalType === 'task_complete_contested_claim') {
+    if (this.props.task.type === 'SendFinalNotificationLetterTask' &&
+     this.props.modalType === 'task_complete_contested_claim') {
       const radioValue = finalCompleteTaskRadio.find((option) => radio === option.value).value;
 
       if (radioValue === '0' || radioValue === '1') {
@@ -961,7 +962,9 @@ class CompleteTaskModal extends React.Component {
 
   submit = () => {
     const { task, appeal } = this.props;
-    const statusValue = ((task.type === 'SendFinalNotificationLetterTask') && (MODAL_TYPE_ATTRS[this.props.modalType].title() === 'Resend initial notification letter') ? 'cancelled' : 'completed');
+    const statusValue = ((task.type === 'SendFinalNotificationLetterTask') &&
+     (MODAL_TYPE_ATTRS[this.props.modalType].title() === 'Resend initial notification letter') ?
+      'cancelled' : 'completed');
     const payload = {
       data: {
         task: {
