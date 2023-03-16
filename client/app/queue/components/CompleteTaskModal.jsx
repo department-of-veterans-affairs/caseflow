@@ -408,9 +408,7 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: VhaCaregiverSupportReturnToBoardIntakeModal,
-    submitDisabled: ({ state }) => (
-      !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
-    ),
+    submitButtonClassNames: ['usa-button'],
     customValidation: ({ state }) => (
       state.dropdown === 'other' ? validInstructions(state.otherInstructions) && validDropdown(state.dropdown) :
         validDropdown(state.dropdown)
@@ -439,19 +437,6 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
-    submitDisabled: ({ state }) => {
-      const { otherInstructions, radio } = state;
-
-      let isValid = true;
-
-      if (radio === 'other') {
-        isValid = validInstructions(otherInstructions) && validRadio(radio);
-      } else {
-        isValid = validRadio(radio);
-      }
-
-      return !isValid;
-    }
   }
 };
 
@@ -571,15 +556,23 @@ class CompleteTaskModal extends React.Component {
 
      let isValid = true;
 
-     if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
+     if (modalType === 'vha_send_to_board_intake') {
        isValid = validInstructions(instructions) && validRadio(radio);
+     }
+
+     if (modalType === ('ready_for_review')) {
+       if (radio === 'other') {
+         isValid = validInstructions(otherInstructions) && validRadio(radio) && validInstructions(instructions);
+       } else {
+         isValid = validRadio(radio) && validInstructions(instructions);
+       }
      }
 
      if (modalType === 'emo_return_to_board_intake') {
        isValid = validInstructions(instructions);
      }
 
-     if (modalType === 'emo_send_to_board_intake_for_review' || modalType === 'rpo_send_to_board_intake_for_review') {
+     if (modalType.includes('send_to_board_intake_for_review')) {
        if (radio === 'other') {
          isValid = validInstructions(otherInstructions) && validRadio(radio);
        } else {
@@ -624,7 +617,7 @@ class CompleteTaskModal extends React.Component {
         title={modalAttributes.title(this.getContentArgs())}
         /* eslint-disable-next-line camelcase */
         button={taskData?.modal_button_text}
-        submitDisabled={modalAttributes.submitDisabled?.(this.getContentArgs())}
+        submitDisabled={!this.validateForm()}
         validateForm={this.validateForm}
         submit={this.submit}
         pathAfterSubmit={this.getTaskConfiguration().redirect_after || '/queue'}
