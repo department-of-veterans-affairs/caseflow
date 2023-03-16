@@ -26,12 +26,12 @@ jobs:
     #     credentials:
     #       username: AWS
     #       password: ${{ secrets.ECR_PASSWORD }}
-      container:
-        image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
-        credentials:
-          username: AWS
-          password: ${{ secrets.ECR_PASSWORD }}
-        env:
+    container:
+      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      credentials:
+        username: AWS
+        password: ${{ secrets.ECR_PASSWORD }}
+      env:
           DBUS_SESSION_BUS_ADDRESS: /dev/null
           RAILS_ENV: test
           NODE_ENV: test
