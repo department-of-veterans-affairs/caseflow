@@ -82,7 +82,7 @@ module Seeds
                         cavc_docket_number: format("%<y>2d-%<n>4d", y: @year, n: @cavc_docket_number_last_four),
                         veteran: create_veteran)
         dashboard = CavcDashboard.create!(cavc_remand: remand)
-        issue = CavcDashboardIssue.create(cavc_dashboard: dashboard)
+        issue = CavcDashboardIssue.create(cavc_dashboard: dashboard, issue_description: "Test")
         CavcDashboardDisposition.create(cavc_dashboard_issue: issue, cavc_dashboard: dashboard)
 
         @cavc_docket_number_last_four += 1
@@ -122,7 +122,8 @@ module Seeds
         cavc_issue = CavcDashboardIssue.create(
           cavc_dashboard: dashboard,
           benefit_type: 'compensation',
-          issue_category: 'Unknown Issue Category'
+          issue_category: 'Unknown Issue Category',
+          issue_description: "Lorem ipsum dolor sit amet"
         )
         disposition = CavcDashboardDisposition.create(
           cavc_dashboard_issue: cavc_issue,
@@ -188,7 +189,8 @@ module Seeds
       cavc_issue = CavcDashboardIssue.create(
         cavc_dashboard: dashboard,
         benefit_type: 'compensation',
-        issue_category: 'Unknown Issue Category'
+        issue_category: 'Unknown Issue Category',
+        issue_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
       )
       disposition = CavcDashboardDisposition.create(
         cavc_dashboard_issue: cavc_issue,
