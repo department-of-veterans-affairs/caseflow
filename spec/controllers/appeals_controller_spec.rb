@@ -929,11 +929,10 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         subject do
           get :fetch_notification_list, params: { appeals_id: bad_appeals_id, format: request_format }
         end
-        it "should raise an error" do
-          expect { subject }.to raise_error do |error|
-            expect(error).to be_a(ActionController::RoutingError)
-            expect(error.to_s).to include("Appeal Not Found")
-          end
+        it "should send error uuid and 500 status" do
+          subject
+          expect(subject.status).to eq 500
+          expect(subject.body).to include("errors" && "message")
         end
       end
     end
