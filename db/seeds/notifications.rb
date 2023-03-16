@@ -22,7 +22,7 @@ module Seeds
       create_ninth_ama_appeal
       create_notifications
     end
-  
+
     private
 
     def initial_participant_id
@@ -225,326 +225,247 @@ module Seeds
         claimants: [create(:claimant, participant_id: claimant_participant_id)]
       )
     end
-  
+
+    def notification_content
+      {
+        appeal_docketed: <<-content.squish,
+        Your appeal at the Board of Veteran's Appeals has been docketed. We must work cases in the
+        order your VA Form 9 substantive appeal (for Legacy) or VA Form 10182 (for AMA) was received.
+        We will update you with any progress. If you have any questions please reach out to your Veterans
+        Service Organization or representative or log onto VA.gov for additional information.
+        content
+        hearing_scheduled: <<-content.squish,
+        Your hearing has been scheduled with a Veterans Law Judge at the Board of Veterans' Appeals.
+        You will be notified of the details in writing shortly.
+        content
+        privacy_act_pending: <<-content.squish,
+        You or your representative filed a Privacy Act request. The Board placed your appeal on hold until
+        this request is satisfied.
+        content
+        privacy_act_complete: <<-content.squish,
+        The Privacy Act request has been satisfied and the Board will continue processing your appeal at
+        this time.  The Board must work cases in docket order (the order received). If you have any
+        questions please reach out to your Veterans Service Organization or representative, if you have
+        one, or log onto VA.gov for additional information
+        content
+        hearing_withdrawn: <<-content.squish,
+        You or your representative have requested to withdraw your hearing request. The Board will
+        continue processing your appeal, but it must work cases in docket order (the order received).  For
+        more information please reach out to your Veterans Service Organization or representative, if you
+        have one, or contact the hearing coordinator for your region. For a list of hearing coordinators by
+        region with contact information, please visit https://www.bva.va.gov.
+        content
+        vso_ihp_pending: <<-content.squish,
+        You filed an appeal with the Board of Veterans' Appeals. Your case has been assigned to your
+        Veterans Service Organization to provide written argument. Once the argument has been received,
+        the Board of Veterans' Appeals will resume processing of your appeal.
+        content
+        vso_ihp_complete: <<-content.squish,
+        The Board of Veterans' Appeals received the written argument from your Veterans Service
+        Organization. The Board will continue processing your appeal, but it must work cases in docket
+        order (the order received). If you have any questions please reach out to your Veterans Service
+        Organization or log onto VA.gov for additional information.
+        content
+        appeal_decision_mailed_non_contested: <<-content.squish
+        The Board of Veterans' Appeals issued a decision on your appeal that will be sent to you and to
+        your representative, if you have one, shortly.
+        content
+      }
+    end
+
     def create_notifications
       # Multiple Notifications for Legacy Appeal 2226048
       Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "delivered", sms_notification_status: "delivered",
-        notification_content: "Your appeal at the Board of Veteran's Appeals has been docketed. We must work cases in the "\
-        "order your VA Form 9 substantive appeal (for Legacy) or VA Form 10182 (for AMA) was received. "\
-        "We will update you with any progress. If you have any questions please reach out to your Veterans "\
-        "Service Organization or representative or log onto VA.gov for additional information.")
+        notification_content: notification_content[:appeal_docketed])
       Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 7.days.ago, event_type: "Hearing scheduled", notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-        notification_content: "Your hearing has been scheduled with a Veterans Law Judge at the Board of Veterans' Appeals. "\
-        "You will be notified of the details in writing shortly.")
+        notification_content: notification_content[:hearing_scheduled])
       Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 6.days.ago, event_type: "Privacy Act request pending", notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-        notification_content: "You or your representative filed a Privacy Act request. The Board placed your appeal on hold until "\
-        "this request is satisfied.")
+        notification_content: notification_content[:privacy_act_pending])
       Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 5.days.ago, event_type: "Privacy Act request complete", notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-        notification_content: "The Privacy Act request has been satisfied and the Board will continue processing your appeal at "\
-        "this time.  The Board must work cases in docket order (the order received). If you have any "\
-        "questions please reach out to your Veterans Service Organization or representative, if you have "\
-        "one, or log onto VA.gov for additional information")
+        notification_content: notification_content[:privacy_act_complete])
       Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 4.days.ago, event_type: "Withdrawal of hearing", notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",  sms_notification_status: "temporary-failure",
-        notification_content: "You or your representative have requested to withdraw your hearing request. The Board will "\
-        "continue processing your appeal, but it must work cases in docket order (the order received).  For "\
-        "more information please reach out to your Veterans Service Organization or representative, if you "\
-        "have one, or contact the hearing coordinator for your region. For a list of hearing coordinators by "\
-        "region with contact information, please visit https://www.bva.va.gov.")
+        notification_content: notification_content[:hearing_withdrawn])
       Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 3.days.ago, event_type: "VSO IHP pending", notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-        notification_content: "You filed an appeal with the Board of Veterans' Appeals. Your case has been assigned to your "\
-        "Veterans Service Organization to provide written argument. Once the argument has been received, "\
-        "the Board of Veterans' Appeals will resume processing of your appeal.")
+        notification_content: notification_content[:vso_ihp_pending])
       Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 2.days.ago, event_type: "VSO IHP complete", notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-        notification_content: "The Board of Veterans' Appeals received the written argument from your Veterans Service "\
-        "Organization. The Board will continue processing your appeal, but it must work cases in docket "\
-        "order (the order received). If you have any questions please reach out to your Veterans Service "\
-        "Organization or log onto VA.gov for additional information.")
+        notification_content: notification_content[:vso_ihp_complete])
       Notification.create(appeals_id: "2226048", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: "Appeal decision mailed (Non-contested claims)",
         notification_type: "Email and SMS", recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
-        notification_content: "The Board of Veterans' Appeals issued a decision on your appeal that will be sent to you and to "\
-        "your representative, if you have one, shortly.",
+        notification_content: notification_content[:appeal_decision_mailed_non_contested],
         sms_notification_status: "permanent-failure")
 
       # Multiple Notifications for Legacy Appeal 2309289
       Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "delivered", sms_notification_status: "delivered",
-        notification_content: "Your appeal at the Board of Veteran's Appeals has been docketed. We must work cases in the "\
-        "order your VA Form 9 substantive appeal (for Legacy) or VA Form 10182 (for AMA) was received. "\
-        "We will update you with any progress. If you have any questions please reach out to your Veterans "\
-        "Service Organization or representative or log onto VA.gov for additional information.")
+        notification_content: notification_content[:appeal_docketed])
       Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 7.days.ago, event_type: "Hearing scheduled", notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-        notification_content: "Your hearing has been scheduled with a Veterans Law Judge at the Board of Veterans' Appeals. "\
-        "You will be notified of the details in writing shortly.")
+        notification_content: notification_content[:hearing_scheduled])
       Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 6.days.ago, event_type: "Privacy Act request pending", notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-        notification_content: "You or your representative filed a Privacy Act request. The Board placed your appeal on hold until "\
-        "this request is satisfied.")
+        notification_content: notification_content[:privacy_act_pending])
       Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 5.days.ago, event_type: "Privacy Act request complete", notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-        notification_content: "The Privacy Act request has been satisfied and the Board will continue processing your appeal at "\
-        "this time.  The Board must work cases in docket order (the order received). If you have any "\
-        "questions please reach out to your Veterans Service Organization or representative, if you have "\
-        "one, or log onto VA.gov for additional information")
+        notification_content: notification_content[:privacy_act_complete])
       Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 4.days.ago, event_type: "Withdrawal of hearing", notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",  sms_notification_status: "temporary-failure",
-        notification_content: "You or your representative have requested to withdraw your hearing request. The Board will "\
-        "continue processing your appeal, but it must work cases in docket order (the order received).  For "\
-        "more information please reach out to your Veterans Service Organization or representative, if you "\
-        "have one, or contact the hearing coordinator for your region. For a list of hearing coordinators by "\
-        "region with contact information, please visit https://www.bva.va.gov.")
+        notification_content: notification_content[:hearing_withdrawn])
       Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 3.days.ago, event_type: "VSO IHP pending", notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-        notification_content: "You filed an appeal with the Board of Veterans' Appeals. Your case has been assigned to your "\
-        "Veterans Service Organization to provide written argument. Once the argument has been received, "\
-        "the Board of Veterans' Appeals will resume processing of your appeal.")
+        notification_content: notification_content[:vso_ihp_pending])
       Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 2.days.ago, event_type: "VSO IHP complete", notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-        notification_content: "The Board of Veterans' Appeals received the written argument from your Veterans Service "\
-        "Organization. The Board will continue processing your appeal, but it must work cases in docket "\
-        "order (the order received). If you have any questions please reach out to your Veterans Service "\
-        "Organization or log onto VA.gov for additional information.")
+        notification_content: notification_content[:vso_ihp_complete])
       Notification.create(appeals_id: "2309289", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: "Appeal decision mailed (Non-contested claims)",
         notification_type: "Email and SMS", recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
-        notification_content: "The Board of Veterans' Appeals issued a decision on your appeal that will be sent to you and to "\
-        "your representative, if you have one, shortly.",
+        notification_content: notification_content[:appeal_decision_mailed_non_contested],
         sms_notification_status: "permanent-failure")
 
       # Multiple Notifications for Legacy Appeal 2362049
       Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "delivered", sms_notification_status: "delivered",
-        notification_content: "Your appeal at the Board of Veteran's Appeals has been docketed. We must work cases in the "\
-        "order your VA Form 9 substantive appeal (for Legacy) or VA Form 10182 (for AMA) was received. "\
-        "We will update you with any progress. If you have any questions please reach out to your Veterans "\
-        "Service Organization or representative or log onto VA.gov for additional information.")
+        notification_content: notification_content[:appeal_docketed])
       Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 7.days.ago, event_type: "Hearing scheduled", notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-        notification_content: "Your hearing has been scheduled with a Veterans Law Judge at the Board of Veterans' Appeals. "\
-        "You will be notified of the details in writing shortly.")
+        notification_content: notification_content[:hearing_scheduled])
       Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 6.days.ago, event_type: "Privacy Act request pending", notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-        notification_content: "You or your representative filed a Privacy Act request. The Board placed your appeal on hold until "\
-        "this request is satisfied.")
+        notification_content: notification_content[:privacy_act_pending])
       Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 5.days.ago, event_type: "Privacy Act request complete", notification_type: "Email and SMS",
         recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-        notification_content: "The Privacy Act request has been satisfied and the Board will continue processing your appeal at "\
-        "this time.  The Board must work cases in docket order (the order received). If you have any "\
-        "questions please reach out to your Veterans Service Organization or representative, if you have "\
-        "one, or log onto VA.gov for additional information")
+        notification_content: notification_content[:privacy_act_complete])
       Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 4.days.ago, event_type: "Withdrawal of hearing", notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",  sms_notification_status: "temporary-failure",
-        notification_content: "You or your representative have requested to withdraw your hearing request. The Board will "\
-        "continue processing your appeal, but it must work cases in docket order (the order received).  For "\
-        "more information please reach out to your Veterans Service Organization or representative, if you "\
-        "have one, or contact the hearing coordinator for your region. For a list of hearing coordinators by "\
-        "region with contact information, please visit https://www.bva.va.gov.")
+        notification_content: notification_content[:hearing_withdrawn])
       Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 3.days.ago, event_type: "VSO IHP pending", notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-        notification_content: "You filed an appeal with the Board of Veterans' Appeals. Your case has been assigned to your "\
-        "Veterans Service Organization to provide written argument. Once the argument has been received, "\
-        "the Board of Veterans' Appeals will resume processing of your appeal.")
+        notification_content: notification_content[:vso_ihp_pending])
       Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 2.days.ago, event_type: "VSO IHP complete", notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-        notification_content: "The Board of Veterans' Appeals received the written argument from your Veterans Service "\
-        "Organization. The Board will continue processing your appeal, but it must work cases in docket "\
-        "order (the order received). If you have any questions please reach out to your Veterans Service "\
-        "Organization or log onto VA.gov for additional information.")
+        notification_content: notification_content[:vso_ihp_complete])
       Notification.create(appeals_id: "2362049", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: "Appeal decision mailed (Non-contested claims)",
         notification_type: "Email and SMS", recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
-        notification_content: "The Board of Veterans' Appeals issued a decision on your appeal that will be sent to you and to "\
-        "your representative, if you have one, shortly.",
+        notification_content: notification_content[:appeal_decision_mailed_non_contested],
         sms_notification_status: "permanent-failure")
 
       # Single Notification for Legacy Appeal 2591483
       Notification.create(appeals_id: "2591483", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-        notification_content: "Your appeal at the Board of Veteran's Appeals has been docketed. We must work cases in the "\
-        "order your VA Form 9 substantive appeal (for Legacy) or VA Form 10182 (for AMA) was received. "\
-        "We will update you with any progress. If you have any questions please reach out to your Veterans "\
-        "Service Organization or representative or log onto VA.gov for additional information.")
-        
+        notification_content: notification_content[:appeal_docketed])
+
       # Single Notification for Legacy Appeal 2687879
       Notification.create(appeals_id: "2687879", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-        notification_content: "Your appeal at the Board of Veteran's Appeals has been docketed. We must work cases in the "\
-        "order your VA Form 9 substantive appeal (for Legacy) or VA Form 10182 (for AMA) was received. "\
-        "We will update you with any progress. If you have any questions please reach out to your Veterans "\
-        "Service Organization or representative or log onto VA.gov for additional information.")
+        notification_content: notification_content[:appeal_docketed])
 
       # Single Notification for Legacy Appeal 2727431
       Notification.create(appeals_id: "2727431", appeals_type: "LegacyAppeal", event_date: 1.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
         recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-        notification_content: "Your appeal at the Board of Veteran's Appeals has been docketed. We must work cases in the "\
-        "order your VA Form 9 substantive appeal (for Legacy) or VA Form 10182 (for AMA) was received. "\
-        "We will update you with any progress. If you have any questions please reach out to your Veterans "\
-        "Service Organization or representative or log onto VA.gov for additional information.")
+        notification_content: notification_content[:appeal_docketed])
 
       # Multiple Notifications for AMA Appeal d31d7f91-91a0-46f8-b4bc-c57e139cee72
       Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "delivered", sms_notification_status: "delivered",
-          notification_content: "Your appeal at the Board of Veteran's Appeals has been docketed. We must work cases in the "\
-          "order your VA Form 9 substantive appeal (for Legacy) or VA Form 10182 (for AMA) was received. "\
-          "We will update you with any progress. If you have any questions please reach out to your Veterans "\
-          "Service Organization or representative or log onto VA.gov for additional information.")
+          notification_content: notification_content[:appeal_docketed])
       Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 7.days.ago, event_type: "Hearing scheduled", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-          notification_content: "Your hearing has been scheduled with a Veterans Law Judge at the Board of Veterans' Appeals. "\
-          "You will be notified of the details in writing shortly.")
+          notification_content: notification_content[:hearing_scheduled])
       Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 6.days.ago, event_type: "Privacy Act request pending", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-          notification_content: "You or your representative filed a Privacy Act request. The Board placed your appeal on hold until "\
-          "this request is satisfied.")
+          notification_content: notification_content[:privacy_act_pending])
       Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 5.days.ago, event_type: "Privacy Act request complete", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-          notification_content: "The Privacy Act request has been satisfied and the Board will continue processing your appeal at "\
-          "this time.  The Board must work cases in docket order (the order received). If you have any "\
-          "questions please reach out to your Veterans Service Organization or representative, if you have "\
-          "one, or log onto VA.gov for additional information")
+          notification_content: notification_content[:privacy_act_complete])
       Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 4.days.ago, event_type: "Withdrawal of hearing", notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",  sms_notification_status: "temporary-failure",
-          notification_content: "You or your representative have requested to withdraw your hearing request. The Board will "\
-          "continue processing your appeal, but it must work cases in docket order (the order received).  For "\
-          "more information please reach out to your Veterans Service Organization or representative, if you "\
-          "have one, or contact the hearing coordinator for your region. For a list of hearing coordinators by "\
-          "region with contact information, please visit https://www.bva.va.gov.")
+          notification_content: notification_content[:hearing_withdrawn])
       Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 3.days.ago, event_type: "VSO IHP pending", notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-          notification_content: "You filed an appeal with the Board of Veterans' Appeals. Your case has been assigned to your "\
-          "Veterans Service Organization to provide written argument. Once the argument has been received, "\
-          "the Board of Veterans' Appeals will resume processing of your appeal.")
+          notification_content: notification_content[:vso_ihp_pending])
       Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 2.days.ago, event_type: "VSO IHP complete", notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-          notification_content: "The Board of Veterans' Appeals received the written argument from your Veterans Service "\
-          "Organization. The Board will continue processing your appeal, but it must work cases in docket "\
-          "order (the order received). If you have any questions please reach out to your Veterans Service "\
-          "Organization or log onto VA.gov for additional information.")
+          notification_content: notification_content[:vso_ihp_complete])
       Notification.create(appeals_id: "d31d7f91-91a0-46f8-b4bc-c57e139cee72", appeals_type: "Appeal", event_date: 1.days.ago, event_type: "Appeal decision mailed (Non-contested claims)",
           notification_type: "Email and SMS", recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
-          notification_content: "The Board of Veterans' Appeals issued a decision on your appeal that will be sent to you and to "\
-          "your representative, if you have one, shortly.",
+          notification_content: notification_content[:appeal_decision_mailed_non_contested],
           sms_notification_status: "permanent-failure")
 
       # Multiple Notifications for AMA Appeal 25c4857b-3cc5-4497-a066-25be73aa4b6b
       Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "delivered", sms_notification_status: "delivered",
-          notification_content: "Your appeal at the Board of Veteran's Appeals has been docketed. We must work cases in the "\
-          "order your VA Form 9 substantive appeal (for Legacy) or VA Form 10182 (for AMA) was received. "\
-          "We will update you with any progress. If you have any questions please reach out to your Veterans "\
-          "Service Organization or representative or log onto VA.gov for additional information.")
+          notification_content: notification_content[:appeal_docketed])
       Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 7.days.ago, event_type: "Hearing scheduled", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-          notification_content: "Your hearing has been scheduled with a Veterans Law Judge at the Board of Veterans' Appeals. "\
-          "You will be notified of the details in writing shortly.")
+          notification_content: notification_content[:hearing_scheduled])
       Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 6.days.ago, event_type: "Privacy Act request pending", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-          notification_content: "You or your representative filed a Privacy Act request. The Board placed your appeal on hold until "\
-          "this request is satisfied.")
+          notification_content: notification_content[:privacy_act_pending])
       Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 5.days.ago, event_type: "Privacy Act request complete", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-          notification_content: "The Privacy Act request has been satisfied and the Board will continue processing your appeal at "\
-          "this time.  The Board must work cases in docket order (the order received). If you have any "\
-          "questions please reach out to your Veterans Service Organization or representative, if you have "\
-          "one, or log onto VA.gov for additional information")
+          notification_content: notification_content[:privacy_act_complete])
       Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 4.days.ago, event_type: "Withdrawal of hearing", notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",  sms_notification_status: "temporary-failure",
-          notification_content: "You or your representative have requested to withdraw your hearing request. The Board will "\
-          "continue processing your appeal, but it must work cases in docket order (the order received).  For "\
-          "more information please reach out to your Veterans Service Organization or representative, if you "\
-          "have one, or contact the hearing coordinator for your region. For a list of hearing coordinators by "\
-          "region with contact information, please visit https://www.bva.va.gov.")
+          notification_content: notification_content[:hearing_withdrawn])
       Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 3.days.ago, event_type: "VSO IHP pending", notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-          notification_content: "You filed an appeal with the Board of Veterans' Appeals. Your case has been assigned to your "\
-          "Veterans Service Organization to provide written argument. Once the argument has been received, "\
-          "the Board of Veterans' Appeals will resume processing of your appeal.")
+          notification_content: notification_content[:vso_ihp_pending])
       Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 2.days.ago, event_type: "VSO IHP complete", notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-          notification_content: "The Board of Veterans' Appeals received the written argument from your Veterans Service "\
-          "Organization. The Board will continue processing your appeal, but it must work cases in docket "\
-          "order (the order received). If you have any questions please reach out to your Veterans Service "\
-          "Organization or log onto VA.gov for additional information.")
+          notification_content: notification_content[:vso_ihp_complete])
       Notification.create(appeals_id: "25c4857b-3cc5-4497-a066-25be73aa4b6b", appeals_type: "Appeal", event_date: 1.days.ago, event_type: "Appeal decision mailed (Non-contested claims)",
           notification_type: "Email and SMS", recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
-          notification_content: "The Board of Veterans' Appeals issued a decision on your appeal that will be sent to you and to "\
-          "your representative, if you have one, shortly.",
+          notification_content: notification_content[:appeal_decision_mailed_non_contested],
           sms_notification_status: "permanent-failure")
 
       # Multiple Notifications for AMA Appeal 7a060e04-1143-4e42-9ede-bdc42877f4f8
       Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: "555-555-5555", email_notification_status: "delivered", sms_notification_status: "delivered",
-          notification_content: "Your appeal at the Board of Veteran's Appeals has been docketed. We must work cases in the "\
-          "order your VA Form 9 substantive appeal (for Legacy) or VA Form 10182 (for AMA) was received. "\
-          "We will update you with any progress. If you have any questions please reach out to your Veterans "\
-          "Service Organization or representative or log onto VA.gov for additional information.")
+          notification_content: notification_content[:appeal_docketed])
       Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 7.days.ago, event_type: "Hearing scheduled", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-          notification_content: "Your hearing has been scheduled with a Veterans Law Judge at the Board of Veterans' Appeals. "\
-          "You will be notified of the details in writing shortly.")
+          notification_content: notification_content[:hearing_scheduled])
       Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 6.days.ago, event_type: "Privacy Act request pending", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-          notification_content: "You or your representative filed a Privacy Act request. The Board placed your appeal on hold until "\
-          "this request is satisfied.")
+          notification_content: notification_content[:privacy_act_pending])
       Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 5.days.ago, event_type: "Privacy Act request complete", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered",  sms_notification_status: "temporary-failure",
-          notification_content: "The Privacy Act request has been satisfied and the Board will continue processing your appeal at "\
-          "this time.  The Board must work cases in docket order (the order received). If you have any "\
-          "questions please reach out to your Veterans Service Organization or representative, if you have "\
-          "one, or log onto VA.gov for additional information")
+          notification_content: notification_content[:privacy_act_complete])
       Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 4.days.ago, event_type: "Withdrawal of hearing", notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",  sms_notification_status: "temporary-failure",
-          notification_content: "You or your representative have requested to withdraw your hearing request. The Board will "\
-          "continue processing your appeal, but it must work cases in docket order (the order received).  For "\
-          "more information please reach out to your Veterans Service Organization or representative, if you "\
-          "have one, or contact the hearing coordinator for your region. For a list of hearing coordinators by "\
-          "region with contact information, please visit https://www.bva.va.gov.")
+          notification_content: notification_content[:hearing_withdrawn])
       Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 3.days.ago, event_type: "VSO IHP pending", notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-          notification_content: "You filed an appeal with the Board of Veterans' Appeals. Your case has been assigned to your "\
-          "Veterans Service Organization to provide written argument. Once the argument has been received, "\
-          "the Board of Veterans' Appeals will resume processing of your appeal.")
+          notification_content: notification_content[:vso_ihp_pending])
       Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 2.days.ago, event_type: "VSO IHP complete", notification_type: "Email and SMS",
           recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success", sms_notification_status: "Success",
-          notification_content: "The Board of Veterans' Appeals received the written argument from your Veterans Service "\
-          "Organization. The Board will continue processing your appeal, but it must work cases in docket "\
-          "order (the order received). If you have any questions please reach out to your Veterans Service "\
-          "Organization or log onto VA.gov for additional information.")
+          notification_content: notification_content[:vso_ihp_complete])
       Notification.create(appeals_id: "7a060e04-1143-4e42-9ede-bdc42877f4f8", appeals_type: "Appeal", event_date: 1.days.ago, event_type: "Appeal decision mailed (Non-contested claims)",
           notification_type: "Email and SMS", recipient_email: nil, recipient_phone_number: nil, email_notification_status: "Success",
-          notification_content: "The Board of Veterans' Appeals issued a decision on your appeal that will be sent to you and to "\
-          "your representative, if you have one, shortly.",
+          notification_content: notification_content[:appeal_decision_mailed_non_contested],
           sms_notification_status: "permanent-failure")
 
       # Single Notification for AMA Appeal 952b6490-a10a-484b-a29b-31489e9a6e5a
       Notification.create(appeals_id: "952b6490-a10a-484b-a29b-31489e9a6e5a", appeals_type: "Appeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered", sms_notification_status: "permanent-failure",
-          notification_content: "Your appeal at the Board of Veteran's Appeals has been docketed. We must work cases in the "\
-          "order your VA Form 9 substantive appeal (for Legacy) or VA Form 10182 (for AMA) was received. "\
-          "We will update you with any progress. If you have any questions please reach out to your Veterans "\
-          "Service Organization or representative or log onto VA.gov for additional information.")
+          notification_content: notification_content[:appeal_docketed])
 
       # Single Notification for AMA Appeal fb3b029f-f07e-45bf-9277-809b44f7451a
       Notification.create(appeals_id: "fb3b029f-f07e-45bf-9277-809b44f7451a", appeals_type: "Appeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered", sms_notification_status: "permanent-failure",
-          notification_content: "Your appeal at the Board of Veteran's Appeals has been docketed. We must work cases in the "\
-          "order your VA Form 9 substantive appeal (for Legacy) or VA Form 10182 (for AMA) was received. "\
-          "We will update you with any progress. If you have any questions please reach out to your Veterans "\
-          "Service Organization or representative or log onto VA.gov for additional information.")
+          notification_content: notification_content[:appeal_docketed])
 
       # Single Notification for AMA Appeal 2b3afced-f698-4abe-84f9-6d44f26d20d4
       Notification.create(appeals_id: "2b3afced-f698-4abe-84f9-6d44f26d20d4", appeals_type: "Appeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
           recipient_email: "example@example.com", recipient_phone_number: nil, email_notification_status: "delivered", sms_notification_status: "permanent-failure",
-          notification_content: "Your appeal at the Board of Veteran's Appeals has been docketed. We must work cases in the "\
-          "order your VA Form 9 substantive appeal (for Legacy) or VA Form 10182 (for AMA) was received. "\
-          "We will update you with any progress. If you have any questions please reach out to your Veterans "\
-          "Service Organization or representative or log onto VA.gov for additional information.")
-      
+          notification_content: notification_content[:appeal_docketed])
+
       # Notifications of No Participant Id Found, No Claimant Found, and No External Id for Legacy Appeal 3565723
       3565723
       Notification.create(appeals_id: "3565723", appeals_type: "LegacyAppeal", event_date: 8.days.ago, event_type: "Appeal docketed", notification_type: "Email and SMS",
