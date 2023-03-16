@@ -203,7 +203,7 @@ const SendToBoardIntakeModal = ({ props, state, setState }) => {
             errorMessage={props.highlightInvalid && !validRadio(state.radio) ? COPY.SELECT_RADIO_ERROR : null}
           />
           <TextareaField
-            label={COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY}
+            label={taskConfiguration.instructions_label || COPY.VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY}
             name="instructions"
             id="vhaSendToBoardIntakeInstructions"
             onChange={(value) => setState({ instructions: value })}
