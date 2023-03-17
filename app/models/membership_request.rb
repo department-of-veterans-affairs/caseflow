@@ -45,11 +45,10 @@ class MembershipRequest < CaseflowRecord
   ############################################################################################
 
   ## Instance methods
-  def cancel_and_email(admin_user)
+  def cancel_and_send_email(admin_user)
     update!(status: 'cancelled', decider: admin_user)
 
-    MembershipRequestMailer.vha_business_line_approval(self).deliver_now
-    MembershipRequestMailer.multiple_pd_approval(self).deliver_now
+    # add mailers here.
   end
   ##
 end

@@ -30,22 +30,6 @@ class MembershipRequestMailer < ActionMailer::Base
     mail(to: @recipient_info[:email], subject: "New membership request recieved.")
   end
 
-  def vha_business_line_approval(membership_request)
-    @user = membership_request.requestor
-    @accessible_groups = membership_request.requestor.organizations.pluck(:name)
-
-    mail(to: @user.email, subject: "Request approved - Do Not Reply")
-  end
-
-  def multiple_pd_approval(membership_request)
-    @user = membership_request.requestor
-    @accessible_groups = @user.organizations.pluck(:name)
-    @requested_groups = @user.membership_requests.map(&:organization).map(&:name)
-    @requesting_org_name = membership_request.organization.name
-
-    mail(to: @user.email, subject: "Request approved - Do Not Reply")
-  end
-
   # New methods with the email templates
   def user_request_created
     @recipient_info = params[:recipient_info]
