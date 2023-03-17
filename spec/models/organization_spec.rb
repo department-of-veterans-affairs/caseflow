@@ -55,6 +55,7 @@ describe Organization, :postgres do
         membership_request.reload
 
         expect(membership_request.status).to eq "cancelled"
+        expect(org.users.first).to eq user
       end
     end
   end
