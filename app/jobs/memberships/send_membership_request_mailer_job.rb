@@ -113,7 +113,8 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
   def log_message(mailer_parameters)
     {
       class: self.class,
-      mailer_parameters: mailer_parameters
+      recipient_info: mailer_parameters[:recipient_info],
+      requests: mailer_parameters[:requests]
     }
   end
 end
