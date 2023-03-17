@@ -58,7 +58,7 @@ afterEach(() => {
 
 describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
   const taskType = 'AssessDocumentationTask';
-  const buttonText = COPY.MODAL_SUBMIT_BUTTON;
+  const buttonText = COPY.MODAL_RETURN_BUTTON;
   const additionalContextText = 'This appeal has been sent to the wrong program office. Please review.';
 
   test('Submission button has correct CSS class', () => {
@@ -75,10 +75,7 @@ describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
 
     expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
-    enterTextFieldOptions(
-      'Provide instructions and context for this action:',
-      additionalContextText
-    );
+    enterTextFieldOptions(COPY.PRE_DOCKET_MODAL_BODY, additionalContextText);
 
     expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
   });
@@ -86,10 +83,7 @@ describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
   test('Resultant case timeline entry labels reason for cancellation', () => {
     renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaPOToCAMOData, taskType);
 
-    enterTextFieldOptions(
-      'Provide instructions and context for this action:',
-      additionalContextText
-    );
+    enterTextFieldOptions(COPY.PRE_DOCKET_MODAL_BODY, additionalContextText);
 
     clickSubmissionButton(buttonText);
 
@@ -118,10 +112,7 @@ describe('Whenever RPO returns an appeal to EMO', () => {
 
     expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
-    enterTextFieldOptions(
-      'Provide instructions and context for this action:',
-      additionalContextText
-    );
+    enterTextFieldOptions(COPY.PRE_DOCKET_MODAL_BODY, additionalContextText);
 
     expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
   });
@@ -129,10 +120,7 @@ describe('Whenever RPO returns an appeal to EMO', () => {
   test('Resultant case timeline entry labels reason for cancellation', () => {
     renderCancelTaskModal(TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.value, rpoToBvaIntakeData, taskType);
 
-    enterTextFieldOptions(
-      'Provide instructions and context for this action:',
-      additionalContextText
-    );
+    enterTextFieldOptions(COPY.PRE_DOCKET_MODAL_BODY, additionalContextText);
 
     clickSubmissionButton(buttonText);
 
