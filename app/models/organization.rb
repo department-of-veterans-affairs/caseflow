@@ -71,12 +71,12 @@ class Organization < CaseflowRecord
     true
   end
 
-  def add_user(user)
+  def add_user(user, admin_user = nil)
     org_user = OrganizationsUser.find_or_create_by!(organization: self, user: user)
 
     # check if membership_requests exists for the user that is being added.
     user.membership_requests.where(organization_id: id).assigned.each do |membership_request|
-      membership_request.cancel_and_email
+      membership_request.cancel_and_email(admin_user)
     end
 
     org_user
