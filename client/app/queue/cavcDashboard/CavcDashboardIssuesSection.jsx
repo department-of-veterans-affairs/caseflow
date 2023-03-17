@@ -72,6 +72,10 @@ const olStyling = css({
   paddingLeft: '1em'
 });
 
+const issueDescriptionStyling = css({
+  overflowWrap: 'anywhere',
+});
+
 const CavcDashboardIssue = (props) => {
   const {
     issue,
@@ -175,7 +179,7 @@ const CavcDashboardIssue = (props) => {
             <strong>Issue: </strong>
             {issueType}
             {issue.issue_description &&
-              <span> - {issue.issue_description}</span>}
+              <span {...issueDescriptionStyling}> - {issue.issue_description}</span>}
           </div>
         </div>
         <div {...dispositionColumnStyling(userCanEdit)}>
