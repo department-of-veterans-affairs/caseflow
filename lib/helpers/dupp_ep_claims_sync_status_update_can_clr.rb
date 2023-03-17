@@ -3,20 +3,15 @@
 # 'x= WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new' and ('x.resolve_single_review(***Insert ID***, "hlr")
 # for running the remediation for the the hlr **OR** 'x.resolve_single_review(***Insert ID***, "sc")') for a
 # SupplimentalClaim.
-# To execute a array of IDS. Execute in the rake task method i.e.  execute rake reviews:resolve_multiple_reviews[type],
-# where type is either hlr or sc depending on the type of review you want to resolve.
+# To execute the entire array of problem claims with the duplicateEP error. Execute in the rake task method i.e.
+# execute bundle exec rake reviews:resolve_multiple_reviews[type],
+# where type is either hlr or sc to cancel all problem claims.
 
 module WarRoom
   class DuppEpClaimsSyncStatusUpdateCanClr
 
     # finding reviews that potentially need resolution
     def retrieve_problem_reviews
-      RequestStore[:current_user] = OpenStruct.new(
-        ip_address: '127.0.0.1',
-        station_id: '283',
-        css_id: 'CSFLOW',
-        regional_office: 'DSUSER'
-      )
       hlrs = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
       problem_hlrs = hlrs.select{ |hlr|
         hlr.veteran.end_products.select { |ep|
