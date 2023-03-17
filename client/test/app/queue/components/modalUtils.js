@@ -1,5 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
+import * as uiActions from 'app/queue/uiReducer/uiActions';
 
 /**
  * Creates a reducer for Redux testing in Queue components
@@ -95,3 +96,21 @@ export const clickSubmissionButton = (buttonText) => {
  * @returns {string} -- Returns the modalType from "modal/<modalType>"
  */
 export const trimTaskActionValue = (taskActionValue) => taskActionValue.split('/').pop();
+
+/**
+ * Returns a Jest mock for the uiActions.requestPatch method. Can be used to test
+ * payload values (like instructions) that are assembled upon modal form submission.
+ * @param {object} postData -- Request body data. Used to satisfy reducer actions' params expectations.
+ * @returns {object} -- a Jest mock for the uiActions.requestPatch method.
+ *  Commonly used to post submission data to backend in modals.
+ */
+export const createSpyRequestPatch = (postData) => {
+  return jest.spyOn(uiActions, 'requestPatch').
+    mockImplementation(() => jest.fn(() => Promise.resolve(
+      {
+        body: {
+          ...postData
+        }
+      }
+    )));
+};

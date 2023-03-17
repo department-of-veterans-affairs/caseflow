@@ -10,14 +10,18 @@ import {
   createQueueReducer,
   getAppealId,
   getTaskId,
-  enterTextFieldOptions
-
+  enterTextFieldOptions,
+  clickSubmissionButton,
+  createSpyRequestPatch
 } from './modalUtils';
 import CancelTaskModal from 'app/queue/components/CancelTaskModal';
 import {
   rpoToBvaIntakeData,
-  vhaPOToCAMOData
+  vhaPOToCAMOData,
+  postData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
+
+let requestPatchSpy;
 
 const renderCancelTaskModal = (modalType, storeValues, taskType) => {
   const appealId = getAppealId(storeValues);
@@ -42,37 +46,87 @@ const renderCancelTaskModal = (modalType, storeValues, taskType) => {
   );
 };
 
+const getReceivedInstructions = () => requestPatchSpy.mock.calls[0][1].data.task.instructions;
+
+beforeEach(() => {
+  requestPatchSpy = createSpyRequestPatch(postData);
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
 describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
   const taskType = 'AssessDocumentationTask';
+  const buttonText = COPY.MODAL_RETURN_BUTTON;
+  const additionalContextText = 'This appeal has been sent to the wrong program office. Please review.';
+
+  test('Submission button has correct CSS class', () => {
+    renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaPOToCAMOData, taskType);
+
+    const submissionButton = screen.getByText(buttonText).closest('button');
+
+    expect(submissionButton).toHaveClass('usa-button');
+    expect(submissionButton).not.toHaveClass('usa-button-secondary');
+  });
 
   test('Button Disabled until text field is populated', () => {
     renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaPOToCAMOData, taskType);
 
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
-    enterTextFieldOptions(
-      'Provide instructions and context for this action',
-      'Here is the context that you have requested.'
+    enterTextFieldOptions(COPY.PRE_DOCKET_MODAL_BODY, additionalContextText);
+
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+  });
+
+  test('Resultant case timeline entry labels reason for cancellation', () => {
+    renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaPOToCAMOData, taskType);
+
+    enterTextFieldOptions(COPY.PRE_DOCKET_MODAL_BODY, additionalContextText);
+
+    clickSubmissionButton(buttonText);
+
+    expect(getReceivedInstructions()).toBe(
+      `##### REASON FOR CANCELLATION:\n${additionalContextText}`
     );
-
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).not.toBeDisabled();
   });
 });
 
 describe('Whenever RPO returns an appeal to EMO', () => {
   const taskType = 'EducationAssessDocumentationTask';
+  const buttonText = COPY.MODAL_RETURN_BUTTON;
+  const additionalContextText = 'This appeal has been sent to the wrong RPO. Please review.';
+
+  test('Submission button has correct CSS class', () => {
+    renderCancelTaskModal(TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.value, rpoToBvaIntakeData, taskType);
+
+    const submissionButton = screen.getByText(buttonText).closest('button');
+
+    expect(submissionButton).toHaveClass('usa-button');
+    expect(submissionButton).not.toHaveClass('usa-button-secondary');
+  });
 
   test('Button Disabled until text field is populated', () => {
     renderCancelTaskModal(TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.value, rpoToBvaIntakeData, taskType);
 
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
-    enterTextFieldOptions(
-      'Provide instructions and context for this action',
-      'Here is the context that you have requested.'
+    enterTextFieldOptions(COPY.PRE_DOCKET_MODAL_BODY, additionalContextText);
+
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+  });
+
+  test('Resultant case timeline entry labels reason for cancellation', () => {
+    renderCancelTaskModal(TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.value, rpoToBvaIntakeData, taskType);
+
+    enterTextFieldOptions(COPY.PRE_DOCKET_MODAL_BODY, additionalContextText);
+
+    clickSubmissionButton(buttonText);
+
+    expect(getReceivedInstructions()).toBe(
+      `##### REASON FOR CANCELLATION:\n${additionalContextText}`
     );
-
-    expect(screen.getByText(COPY.MODAL_RETURN_BUTTON).closest('button')).not.toBeDisabled();
   });
 });
 
