@@ -733,7 +733,7 @@ DEPENDENCIES
   connect_vbms!
   console_tree_renderer!
   countries
-  danger (~> 6.0)
+  danger (~> 6.3)
   database_cleaner
   ddtrace
   debase
