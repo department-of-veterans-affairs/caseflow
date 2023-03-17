@@ -44,7 +44,7 @@ def generate_table_notifications(notifications)
 
     email_notification = {
       status: case notification.email_notification_status&.downcase
-        when 'sent' , 'temporary-failure'
+        when 'success' , 'temporary-failure'
           'Pending Delivery'
         when 'permanent-failure' , 'technical-failure'
           'Failed Delivery'
@@ -62,7 +62,7 @@ def generate_table_notifications(notifications)
 
     sms_notification = {
       status: case notification.sms_notification_status&.downcase
-        when 'sent' , 'temporary-failure'
+        when 'success' , 'temporary-failure'
           'Pending Delivery'
         when 'permanent-failure' , 'technical-failure'
           'Failed Delivery'
