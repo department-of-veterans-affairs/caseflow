@@ -12,6 +12,10 @@ import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/select
 import COPY from 'app/../COPY';
 import { requestPatch } from '../../uiReducer/uiActions';
 import { editAppeal } from '../../QueueActions';
+import {
+  editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi,
+  editCavcRemandSubstitutionOpenTaskDataForUi
+} from '../editCavcRemandTasks/utils';
 
 export const EditCavcRemandReviewContainer = () => {
   const { appealId } = useParams();
@@ -32,11 +36,19 @@ export const EditCavcRemandReviewContainer = () => {
     getAllTasksForAppeal(state, { appealId })
   );
 
-  const tasksToCancel = allTasks.filter((task) => {
+  const activeTasks = useMemo(() => {
+    return editCavcRemandSubstitutionOpenTaskDataForUi({ taskData: allTasks });
+  }, [allTasks]);
+
+  const cancelledOrCompletedTasks = useMemo(() => {
+    return editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi({ taskData: allTasks });
+  }, [allTasks]);
+
+  const tasksToCancel = activeTasks.filter((task) => {
     return (existingValues.cancelTaskIds.includes(task.id));
   });
 
-  const tasksToReActivate = allTasks.filter((task) => {
+  const tasksToReActivate = cancelledOrCompletedTasks.filter((task) => {
     return (existingValues.reActivateTaskIds.includes(task.id));
   })
 

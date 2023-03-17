@@ -108,23 +108,25 @@ export const EditCavcRemandTasksForm = ({
             dateOfDeath={dateOfDeath}
             substitutionDate={substitutionDate}
           />
-
           <div className={sectionStyle}>
-            <h2>{CAVC_REMAND_MODIFY_TASKS_APPEAL_TASKS_TITLE}</h2>
-            <br></br>
-            {(
+            { adjustedOpenTasks?.length > 0 && (
               <div className={sectionStyle}>
-                <div><strong>{CAVC_REMAND_MODIFY_TASKS_ACTIVE_TITLE}</strong></div>
-                <div><ReactMarkdown source={CAVC_REMAND_MODIFY_TASKS_ACTIVE_DETAIL} /></div>
-                <TasksToCancel tasks={adjustedOpenTasks} />
+                <h2>{CAVC_REMAND_MODIFY_TASKS_APPEAL_TASKS_TITLE}</h2>
+                <br></br>
+                <div className={sectionStyle}>
+                  <div><strong>{CAVC_REMAND_MODIFY_TASKS_ACTIVE_TITLE}</strong></div>
+                  <div><ReactMarkdown source={CAVC_REMAND_MODIFY_TASKS_ACTIVE_DETAIL} /></div>
+                  <TasksToCancel tasks={adjustedOpenTasks} />
+                </div>
               </div>
             )}
-
-            <div className={sectionStyle}>
-              <div><strong>{CAVC_REMAND_MODIFY_TASKS_CANCELLED_TITLE}</strong></div>
-              <div><ReactMarkdown source={CAVC_REMAND_MODIFY_TASKS_CANCELLED_DETAIL} /></div>
-              <TasksToCopy tasks={adjustedTasks} />
-            </div>
+            { adjustedTasks?.length > 0 && (
+              <div className={sectionStyle}>
+                <div><strong>{CAVC_REMAND_MODIFY_TASKS_CANCELLED_TITLE}</strong></div>
+                <div><ReactMarkdown source={CAVC_REMAND_MODIFY_TASKS_CANCELLED_DETAIL} /></div>
+                <TasksToCopy tasks={adjustedTasks} />
+              </div>
+            )}
 
             <div className={sectionStyle}>
               <div>{CAVC_REMAND_MODIFY_TASKS_OTHER_TASKS}</div>

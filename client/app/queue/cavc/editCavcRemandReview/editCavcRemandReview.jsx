@@ -80,9 +80,9 @@ export const EditCavcRemandReview = ({
             </tbody>
           </table>
         </section>
-        <section className={styles.tableSection}>
-          <h2>{CAVC_REMAND_REVIEW_TASKS_CANCEL_LABEL}</h2>
-          {tasksToCancel.length > 0 && (
+        {tasksToCancel.length > 0 && (
+          <section className={styles.tableSection}>
+            <h2>{CAVC_REMAND_REVIEW_TASKS_CANCEL_LABEL}</h2>
             <table className={`usa-table-borderless ${styles.mainTable}`}>
               <tbody>
                 {tasksToCancel.map((task) => {
@@ -103,11 +103,11 @@ export const EditCavcRemandReview = ({
                 })}
               </tbody>
             </table>
-          )}
-        </section>
-        <section className={styles.tableSection}>
-          <h2>{CAVC_REMAND_REVIEW_TASKS_REACTIVATE_LABEL}</h2>
-          {tasksToReActivate.length > 0 && (
+          </section>
+        )}
+        { tasksToReActivate.length > 0 && (
+          <section className={styles.tableSection}>
+            <h2>{CAVC_REMAND_REVIEW_TASKS_REACTIVATE_LABEL}</h2>
             <table className={`usa-table-borderless ${styles.mainTable}`}>
               <tbody>
                 {tasksToReActivate.map((task) => {
@@ -128,8 +128,8 @@ export const EditCavcRemandReview = ({
                 })}
               </tbody>
             </table>
-          )}
-        </section>
+          </section>
+        )}
       </AppSegment>
       <div className="controls cf-app-segment">
         <CheckoutButtons

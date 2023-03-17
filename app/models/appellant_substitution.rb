@@ -21,7 +21,7 @@ class AppellantSubstitution < CaseflowRecord
             :task_params,
             presence: true, allow_blank: true
 
-  attr_accessor :cancelled_task_ids, :cavc_remand_appeal_substitution
+  attr_accessor :cancelled_task_ids, :cavc_remand_appeal_substitution, :skip_cancel_tasks
 
   before_create :establish_substitution_on_same_appeal, if: :same_appeal_substitution_allowed?
   before_create :establish_separate_appeal_stream, unless: :same_appeal_substitution_allowed?
@@ -124,7 +124,8 @@ class AppellantSubstitution < CaseflowRecord
     SameAppealSubstitutionTasksFactory.new(target_appeal,
                                            task_ids,
                                            created_by,
-                                           task_params).create_substitute_tasks!
+                                           task_params,
+                                           skip_cancel_tasks).create_substitute_tasks!
   end
 
   def find_or_create_power_of_attorney_for(unassociated_claimant)

@@ -6,11 +6,12 @@
 class SameAppealSubstitutionTasksFactory
   include TasksFactoryConcern
 
-  def initialize(appeal, task_ids, created_by, task_params)
+  def initialize(appeal, task_ids, created_by, task_params, skip_cancel_tasks = false)
     @appeal = appeal
     @task_ids = task_ids
     @created_by = created_by
     @task_params = task_params
+    @skip_cancel_tasks = skip_cancel_tasks
   end
 
   def create_substitute_tasks!
@@ -19,7 +20,19 @@ class SameAppealSubstitutionTasksFactory
     else
       create_selected_tasks
     end
-    cancel_unselected_tasks
+    cancel_unselected_tasks unless @skip_cancel_tasks
+  end
+
+  def cancel_unselected_tasks
+    cancel_tasks = Task.where(id: @task_ids[:cancelled])
+    cancel_tasks.each do |task|
+      task.update!(
+        status: Constants.TASK_STATUSES.cancelled,
+        cancellation_reason: Constants.TASK_CANCELLATION_REASONS.substitution,
+        cancelled_by_id: RequestStore[:current_user]&.id,
+        closed_at: Time.zone.now
+      )
+    end
   end
 
   def create_tasks_for_distributed_appeal
@@ -115,18 +128,6 @@ class SameAppealSubstitutionTasksFactory
     if @appeal.tasks.of_type(:AttorneyTask).open.empty? &&
        @appeal.tasks.of_type(:JudgeDecisionReviewTask).open.empty?
       copy_task(last_cancelled_attorney_task) if last_cancelled_attorney_task
-    end
-  end
-
-  def cancel_unselected_tasks
-    cancel_tasks = Task.where(id: @task_ids[:cancelled])
-    cancel_tasks.each do |task|
-      task.update!(
-        status: Constants.TASK_STATUSES.cancelled,
-        cancellation_reason: Constants.TASK_CANCELLATION_REASONS.substitution,
-        cancelled_by_id: RequestStore[:current_user]&.id,
-        closed_at: Time.zone.now
-      )
     end
   end
 

@@ -40,14 +40,20 @@ export const EditCavcRemandTasksView = () => {
   const activeTasks = useMemo(() => {
     return editCavcRemandSubstitutionOpenTaskDataForUi({ taskData: allTasks });
   }, [allTasks]);
-
+  const openSendCavcRemandProcessedLetterTask = activeTasks.find((task) => task.type === 'SendCavcRemandProcessedLetterTask');
   const cancelTaskIds = activeTasks.map( (task) => task.id );
 
   const cancelledOrCompletedTasks = useMemo(() => {
     return editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi({ taskData: allTasks });
   }, [allTasks]);
 
+  const cancelSendCavcRemandProcessedLetterTask = cancelledOrCompletedTasks.find((task) => task.type === 'SendCavcRemandProcessedLetterTask');
   const reActivateTaskIds = cancelledOrCompletedTasks.map( (task) => task.id );
+  // Reactivate when only one task present and try to cancell.
+  if(!cancelSendCavcRemandProcessedLetterTask && openSendCavcRemandProcessedLetterTask) {
+    reActivateTaskIds.push(openSendCavcRemandProcessedLetterTask.id)
+  }
+
   // These values will be used in the "key details" section
   const nodDate = useMemo(() => parseISO(appeal.nodDate), [appeal.nodDate]);
   const dateOfDeath = useMemo(() => {

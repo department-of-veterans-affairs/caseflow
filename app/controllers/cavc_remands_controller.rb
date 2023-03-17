@@ -156,6 +156,7 @@ class CavcRemandsController < ApplicationController
   end
 
   def update_appellant_substitution_and_create_history(cavc_appeal, appellant_substitution)
+    cancel_unselected_tasks(appellant_substitution)
     history_params = {}
     if appellant_substitution.substitution_date != params[:substitution_date].to_date
       history_params[:substitution_date] = params[:substitution_date]
@@ -229,5 +230,16 @@ class CavcRemandsController < ApplicationController
       appellant_relationship: cavc_appeal.appellant_relationship,
       appellant_type: cavc_appeal.claimant&.type
     }
+  end
+
+  def cancel_unselected_tasks(appellant_substitution)
+    return if params[:cancelled_task_ids].empty?
+
+    appellant_substitution.skip_cancel_tasks = true
+    task_ids = { cancelled: params[:cancelled_task_ids] }
+    SameAppealSubstitutionTasksFactory.new(appellant_substitution.target_appeal,
+                                           task_ids,
+                                           appellant_substitution.created_by,
+                                           {}).cancel_unselected_tasks
   end
 end
