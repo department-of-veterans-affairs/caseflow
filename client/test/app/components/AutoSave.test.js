@@ -8,6 +8,8 @@ import AutoSave from 'app/components/AutoSave';
 describe('AutoSave', () => {
   const defaultSave = jest.fn();
 
+  // Dont mind me. Just creating a diff.
+
   const defaultProps = {
     save: defaultSave,
     isSaving: true,
