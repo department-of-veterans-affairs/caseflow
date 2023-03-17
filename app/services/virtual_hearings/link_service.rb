@@ -15,6 +15,10 @@ class VirtualHearings::LinkService
     @conference_id = conference_id
   end
 
+  def get_conference_id
+    conference_id
+  end
+
   def host_link
     link(host_pin)
   end
@@ -35,12 +39,12 @@ class VirtualHearings::LinkService
     "BVA#{conference_id}@#{host}"
   end
 
+  private
+
   def conference_id
     @conference_id = VirtualHearings::SequenceConferenceId.next if @conference_id.blank?
     @conference_id
   end
-
-  private
 
   def link(pin)
     fail PINMustBePresentError if pin.blank?
