@@ -2,16 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 import Alert from '../../components/Alert';
+import COPY from '../../../COPY';
 import { css } from 'glamor';
 
-export const VHAOrgJoinInfo = () => {
+export const VhaJoinOrgAlert = () => {
 
   const VHAOrgJoinInfoObject = {
-    title: 'VHA Team Access',
-    text: 'If you are a VHA team member, you will need access to VHA-specific' +
-    ' pages to perform your duties. Press the “Request access” button below to' +
-    ' be redirected to the VHA section within the Help page, where you can' +
-    ' submit a form for access.'
+    title: COPY.VHA_FIRST_LOGIN_INFO_ALERT_TITLE,
+    text: COPY.VHA_FIRST_LOGIN_INFO_ALERT_BODY
   };
 
   const requestAccessButtonStyling = css({
@@ -37,6 +35,6 @@ export const VHAOrgJoinInfo = () => {
   );
 };
 
-VHAOrgJoinInfo.propTypes = {
+VhaJoinOrgAlert.propTypes = {
   VHAOrgJoinInfoCode: PropTypes.string,
 };

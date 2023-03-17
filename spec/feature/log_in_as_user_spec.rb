@@ -79,8 +79,8 @@ RSpec.feature "Log in as User", :postgres do
 
     scenario "The VHA Info Banner should appear the first time an existing user logs in" do
       visit "/"
-      expect(page).to have_content("VHA Team Access")
-      expect(page).to have_content(vha_body_text)
+      expect(page).to have_content(COPY::VHA_FIRST_LOGIN_INFO_ALERT_TITLE)
+      expect(page).to have_content(COPY::VHA_FIRST_LOGIN_INFO_ALERT_BODY)
       click_button("Request access")
       expect(current_path).to eq("/vha/help")
     end
@@ -99,8 +99,8 @@ RSpec.feature "Log in as User", :postgres do
         expect(User.find_by_css_id("BRAND NEW USER")).to be_nil
         visit "/"
         expect(User.find_by_css_id("BRAND NEW USER")).to_not be_nil
-        expect(page).to have_content("VHA Team Access")
-        expect(page).to have_content(vha_body_text)
+        expect(page).to have_content(COPY::VHA_FIRST_LOGIN_INFO_ALERT_TITLE)
+        expect(page).to have_content(COPY::VHA_FIRST_LOGIN_INFO_ALERT_BODY)
         click_button("Request access")
         expect(current_path).to eq("/vha/help")
       end
