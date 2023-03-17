@@ -7,11 +7,9 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
   TYPE_LABEL = "Send Membership Request notification email"
 
   def perform(email_type, mailer_parameters)
-    send_email(
-      MembershipRequestMailer.with(mailer_parameters).send(
-        email_to_send(email_type)
-      ), mailer_parameters
-    )
+    email_subject = email_to_send(email_type)
+    email = MembershipRequestMailer.with(mailer_parameters).send(email_subject)
+    send_email(email, mailer_parameters)
   end
 
   private
@@ -93,21 +91,20 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
     # the email after it has been accepted by GovDelivery.
     email_nil?(email)
 
-    log = log_message(mailer_parameters).merge(status: "info", message: "Sending #{TYPE_LABEL} to #{mailer_parameters[:recipient_info]} ...")
+    email_address = mailer_parameters[:recipient_info]
+    log = log_message(mailer_parameters).merge(status: "info", message: "Sending #{TYPE_LABEL} to #{email_address} ...")
     Rails.logger.info("#{LOG_PREFIX} #{log}")
     msg = email.deliver_now!
   rescue StandardError, Savon::Error, BGS::ShareError => error
     # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS endpoints\
     Raven.capture_exception(error)
-    log = log_message(mailer_parameters).merge(
-      status: "error", message: "Failed to send #{TYPE_LABEL} to #{mailer_parameters[:recipient_info]} : #{error}"
-    )
+    log = log_message(mailer_parameters).merge(status: "error", message: "Failed to send #{TYPE_LABEL} to #{email_address} : #{error}")
     Rails.logger.warn("#{LOG_PREFIX} #{log}")
     Rails.logger.warn(error.backtrace.join($INPUT_RECORD_SEPARATOR))
     false
   else
     message_id = external_message_id(msg)
-    message = "Requested GovDelivery to send #{TYPE_LABEL} to #{mailer_parameters[:recipient_info]} - #{message_id}"
+    message = "Requested GovDelivery to send #{TYPE_LABEL} to #{email_address} - #{message_id}"
     log = log_message(mailer_parameters).merge(status: "success", gov_delivery_id: message_id, message: message)
     Rails.logger.info("#{LOG_PREFIX} #{log}")
     true
