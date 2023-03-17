@@ -16,12 +16,6 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
 
   private
 
-  def email_for_recipient(recipient_info, email_type)
-    MembershipRequestMailer.with(recipient_info: recipient_info).send(
-      email_to_send(email_type)
-    )
-  end
-
   def email_to_send(email_type)
     email_method_mapping_hash = {
       "UserRequestCreated": :user_request_created,
