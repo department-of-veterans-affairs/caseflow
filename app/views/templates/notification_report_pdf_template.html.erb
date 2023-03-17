@@ -43,7 +43,7 @@ def generate_table_notifications(notifications)
   notifications.each do |notification|
 
     email_notification = {
-      status: case notification.email_notification_status.downcase
+      status: case notification.email_notification_status&.downcase
         when 'sent' , 'temporary-failure'
           'Pending Delivery'
         when 'permanent-failure' , 'technical-failure'
@@ -61,7 +61,7 @@ def generate_table_notifications(notifications)
     }
 
     sms_notification = {
-      status: case notification.sms_notification_status.downcase
+      status: case notification.sms_notification_status&.downcase
         when 'sent' , 'temporary-failure'
           'Pending Delivery'
         when 'permanent-failure' , 'technical-failure'
