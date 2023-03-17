@@ -64,7 +64,9 @@ class NotificationEfolderSyncJob < CaseflowJob
   # * the document_type = "BVA Case Notifications" uploaded at is not nil and
   # * returns the list in descending order and gets the first record in that list
   def latest_vbms_uploaded_document(appeal_id)
-    VbmsUploadedDocument.where(appeal_id: appeal_id, document_type: "BVA Case Notifications").where.not(attempted_at: nil).order(uploaded_to_vbms_at: :desc).first
+    VbmsUploadedDocument.where(appeal_id: appeal_id, document_type: "BVA Case Notifications")
+      .where.not(attempted_at: nil)
+      .order(uploaded_to_vbms_at: :desc).first
   end
 
   # * Both Leagcy and AMA appeals have different associations with each table. This method

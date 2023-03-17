@@ -20,8 +20,8 @@ describe NotificationEfolderSyncJob do
   let(:appeal_one) { create(:appeal) }
   let(:notification_one_appeal_one) { create(:notification, appeals_id: appeal_one.uuid, appeals_type: "Appeal", event_date: "2023-02-27 13:11:51.91467", event_type: "Appeal docketed", notification_type: "Email", notified_at: "2023-02-28 14:11:51.91467", email_notification_status: "Success", sms_notification_status: "Preferences Declined") }
   let(:notification_two_appeal_one) { create(:notification, appeals_id: appeal_one.uuid, appeals_type: "Appeal", event_date: "2023-02-28 13:11:51.91467", event_type: "Hearing scheduled", notification_type: "Email" , notified_at: "2023-02-29 14:11:51.91467", email_notification_status: "Success", sms_notification_status: "Preferences Declined") }
-  let(:document_one_appeal_one) { create(:vbms_uploaded_document, document_type: "BVA Case Notifications", appeal_id: appeal_one.id, appeal_type: "Appeal", created_at: "2023-02-27 13:11:51.91467", uploaded_to_vbms_at: "2023-02-27 13:11:51.91467") }
-  let(:document_two_appeal_one) { create(:vbms_uploaded_document, document_type: "BVA Case Notifications", appeal_id: appeal_one.id, appeal_type: "Appeal", created_at: "2023-02-28 13:11:51.91467", uploaded_to_vbms_at: "2023-02-28 13:11:51.91467") }
+  let(:document_one_appeal_one) { create(:vbms_uploaded_document, document_type: "BVA Case Notifications", appeal_id: appeal_one.id, appeal_type: "Appeal", created_at: "2023-02-27 13:11:51.91467", uploaded_to_vbms_at: "2023-02-27 13:11:51.91467", attempted_at:"2023-02-27 13:11:51.91467") }
+  let(:document_two_appeal_one) { create(:vbms_uploaded_document, document_type: "BVA Case Notifications", appeal_id: appeal_one.id, appeal_type: "Appeal", created_at: "2023-02-28 13:11:51.91467", uploaded_to_vbms_at: "2023-02-28 13:11:51.91467", attempted_at:"2023-02-28 13:11:51.91467") }
 
   # *appeal_two will not have notification ** Will not be in list **
   let(:appeal_two) { create(:appeal) }
@@ -33,7 +33,7 @@ describe NotificationEfolderSyncJob do
   let(:document_one_legacy_appeal_one) { create(:vbms_uploaded_document, document_type: "BVA Case Notifications", appeal_id: legacy_appeal_one.id, appeal_type: "LegacyAppeal", created_at: "2023-02-27 13:11:51.91467", uploaded_to_vbms_at: "2023-02-27 13:11:51.91467") }
   let(:document_two_legacy_appeal_one) { create(:vbms_uploaded_document, document_type: "BVA Case Notifications", appeal_id: legacy_appeal_one.id, appeal_type: "LegacyAppeal", created_at: "2023-02-28 13:11:51.91467", uploaded_to_vbms_at: "2023-02-27 13:11:51.91467") }
   let(:old_notification) { create(:notification, appeals_id: appeal_one.uuid, appeals_type: "Appeal", event_date: "2023-02-27 13:11:51.91467", event_type: "Appeal docketed", notification_type: "Email", notified_at: "2023-02-27 14:11:51.91467", email_notification_status: "Success", sms_notification_status: "Preferences Declined") }
-  let(:old_document) { create(:vbms_uploaded_document, document_type: "BVA Case Notifications", appeal_id: appeal_one.id, appeal_type: "Appeal", created_at: "2023-02-27 13:11:51.91467", uploaded_to_vbms_at: "2023-02-28 14:11:51.91467") }
+  let(:old_document) { create(:vbms_uploaded_document, document_type: "BVA Case Notifications", appeal_id: appeal_one.id, appeal_type: "Appeal", created_at: "2023-02-27 13:11:51.91467", uploaded_to_vbms_at: "2023-02-28 14:11:51.91467", attempted_at: "2023-02-27 15:11:51.91467") }
   let(:new_notification) { create(:notification, appeals_id: appeal_one.uuid, appeals_type: "Appeal", event_date: "2023-02-27 13:11:51.91467", event_type: "Appeal docketed", notification_type: "Email", notified_at: "2023-02-29 14:11:51.91467", email_notification_status: "Success", sms_notification_status: "Preferences Declined") }
   let(:error_notification) { create(:notification, appeals_id: appeal_one.uuid, appeals_type: "Appeal", event_date: "2023-02-27 13:11:51.91467", event_type: "Appeal docketed", notification_type: "Email", notified_at: "2023-02-27 14:11:51.91467") }
 
@@ -117,7 +117,7 @@ describe NotificationEfolderSyncJob do
       expect(VbmsUploadedDocument.count).to eq(1)
     end
 
-    it "Expects to create no new VbmsSUploadedDocuments when no new notifications" do
+    it "Expects to create no new VbmsUploadedDocuments when no new notifications" do
       appeal_one
       old_notification
       old_document
