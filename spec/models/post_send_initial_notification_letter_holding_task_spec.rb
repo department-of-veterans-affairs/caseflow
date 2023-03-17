@@ -207,7 +207,7 @@ describe PostSendInitialNotificationLetterHoldingTask do
 
     context "The TaskTimer for the hold period was not created yet" do
       it "returns the end date period" do
-        expect(post_task.max_hold_day_period).to eq(hold_days)
+        expect((post_task.timer_ends_at - post_task.created_at.prev_day).to_i / 1.day).to eq(hold_days)
       end
     end
 
@@ -223,11 +223,11 @@ describe PostSendInitialNotificationLetterHoldingTask do
       it "returns the same max hold period using the TaskTimer dates" do
         tt = TaskTimer.find_by(task_id: post_task.id)
         expect(tt.task_id).to eq(post_task.id)
-        expect(post_task.max_hold_day_period).to eq(hold_days)
+        expect((post_task.timer_ends_at - post_task.created_at.prev_day).to_i / 1.day).to eq(hold_days)
 
         # confirm the values are being pulled from the TaskTimer
         calculate_max_hold = (tt.submitted_at - post_task.created_at.prev_day).to_i / 1.day
-        expect(post_task.max_hold_day_period).to eq(calculate_max_hold)
+        expect((post_task.timer_ends_at - post_task.created_at.prev_day).to_i / 1.day).to eq(calculate_max_hold)
       end
     end
   end
