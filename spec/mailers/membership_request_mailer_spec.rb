@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 describe MembershipRequestMailer do
+  let(:email_recipient_info) { { email: email } }
   let(:email) { "bob.schmidt@va.gov" }
   let(:requestor) { create(:user, email: email, full_name: "Mario Lebowski") }
   let(:camo_org) { VhaCamo.singleton }
