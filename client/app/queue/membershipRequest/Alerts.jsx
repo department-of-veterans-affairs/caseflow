@@ -30,7 +30,7 @@ export const VHAOrgJoinInfo = () => {
           window.location.href = '/vha/help';
         }}
         dangerStyling>
-          Request Access
+          Request access
         </Button>
       </div>
     </Alert>
