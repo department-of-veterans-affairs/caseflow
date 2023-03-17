@@ -22,7 +22,8 @@ jobs:
         image: redis:4.0.10
         ports:
         - 6379:6379
-      facols:
+      localhost:
+      #THIS IS THE FACOLS SERVICE. LABEL IS LOCALHOST DUE TO ENVIRONMENT SETUP REQUIRING LOCALHOST CONNECTION
         image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
         credentials:
           username: AWS
