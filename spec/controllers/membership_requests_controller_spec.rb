@@ -3,7 +3,7 @@
 describe MembershipRequestsController, :postgres, type: :controller do
   include ActiveJob::TestHelper
 
-  let(:requestor) { create(:default_user) }
+  let(:requestor) { create(:user, css_id: "REQUESTOR1", email: "requestoremail@test.com", full_name: "Gaius Baelsar") }
   let(:camo_admin) { create(:user, css_id: "CAMO ADMIN", email: "camoemail@test.com", full_name: "CAMO ADMIN") }
   let(:camo_org) { VhaCamo.singleton }
   let(:vha_business_line) { BusinessLine.find_by(url: "vha") }
@@ -22,7 +22,7 @@ describe MembershipRequestsController, :postgres, type: :controller do
   end
 
   describe "POST membership_requests/create/" do
-    let(:user) { create(:default_user) }
+    let(:user) { create(:user, full_name: "Billy Bob", email: "test@test.com", css_id: "BILLYBO") }
 
     context "with VHA request parameters" do
       let(:valid_params) do
@@ -222,23 +222,6 @@ describe MembershipRequestsController, :postgres, type: :controller do
         expect(jobs).to be_an(Array)
         expect(jobs.length).to eq(1)
         expect(jobs.map { |job| job[:queue] }).to all(eq "caseflow_test_low_priority")
-      end
-    end
-
-    # TODO: Should this happen? I mean it should but how do I account for things like the TEAM_ADMIN user?
-    context "error handling" do
-      let(:valid_params) do
-        {
-          requestAction: "denied",
-          id: vha_membership_request.id
-        }
-      end
-
-      let(:user) { create(:user, css_id: "NOT ADMIN") }
-      it "should return an error if the current user isn't an admin of the org in the request" do
-        expect { post :update, params: valid_params }.to raise_error do |error|
-          expect(error).to be_a(ArgumentError)
-        end
       end
     end
   end

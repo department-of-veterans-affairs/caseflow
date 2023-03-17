@@ -7,7 +7,7 @@ describe Memberships::SendMembershipRequestMailerJob do
   let(:membership_requests) { [create(:membership_request, requestor: requestor, organization: organization)] }
   let(:mailer_parameters) do
     {
-      recipient_info: requestor,
+      requestor: requestor,
       requests: membership_requests,
       subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED
     }
