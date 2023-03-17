@@ -165,11 +165,12 @@ describe('CompleteTaskModal', () => {
       clickSubmissionButton(buttonText);
 
       expect(getReceivedInstructions()).toBe(
-        '\n**Status:** Correct documents have been successfully added' +
-        '\n\n**CAMO Notes:** Null test\n' +
-        '\n**Program Office Notes:** Documents for this appeal are stored in VBMS.' +
-        '\n\n**Detail:**' +
-        '\n\n PO back to CAMO!\n\n'
+        '### CAMO Notes:' +
+        '\n\n##### STATUS:\nCorrect documents have been successfully added' +
+        '\n\n##### DETAILS:\nNull test' +
+        '\n\n### Program Office Notes:' +
+        '\n##### STATUS:\nDocuments for this appeal are stored in VBMS.' +
+        '\n\n##### DETAILS:\n PO back to CAMO!\n\n'
       );
     });
   });
@@ -186,7 +187,8 @@ describe('CompleteTaskModal', () => {
 
     test('modal text indicates appeal will be sent to VHA CAMO', () => {
       renderCompleteTaskModal(modalType, vhaPOToCAMOData, taskType);
-      expect(screen.getByText('This appeal will be sent to VHA CAMO for review.Please select where the documents for this appeal are stored')).toBeTruthy();
+      expect(screen.getByText('This appeal will be sent to VHA CAMO for review.' +
+        'Please select where the documents for this appeal are stored')).toBeTruthy();
     });
 
     test('Submission button has correct CSS class', () => {
@@ -271,7 +273,8 @@ describe('CompleteTaskModal', () => {
 
     test('modal text indicates appeal will be sent to VHA Program Office', () => {
       renderCompleteTaskModal(modalType, visnData, taskType);
-      expect(screen.getByText('This appeal will be sent to VHA Program Office for review.Please select where the documents for this appeal are stored')).toBeTruthy();
+      expect(screen.getByText('This appeal will be sent to VHA Program Office for review.' +
+        'Please select where the documents for this appeal are stored')).toBeTruthy();
     });
 
     test('Before Radio button is Chosen, button should be disabled', () => {
@@ -334,7 +337,6 @@ describe('CompleteTaskModal', () => {
       );
     });
   });
-
 
   describe('vha_caregiver_support_send_to_board_intake_for_review', () => {
     const taskType = 'VhaDocumentSearchTask';
