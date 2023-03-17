@@ -50,21 +50,21 @@ class MembershipRequest < CaseflowRecord
     # TODO: Might need to wrap this in a transaction and if adding the user to the org fails roll it back?
     update!(status: new_status, decider: user)
 
-    if approved?
-      organization.add_user(requestor)
-      # If the User is requesting VHA sub organization access, also add them to the VHA Businessline
-      if requesting_vha_predocket_access?
-        vha_business_line = BusinessLine.find_by(url: "vha")
+    mailer_method = if approved?
+                      organization.add_user(requestor)
+                      # If the User is requesting VHA sub organization access, also add them to the VHA Businessline
+                      if requesting_vha_predocket_access?
+                        vha_business_line = BusinessLine.find_by(url: "vha")
 
-        vha_business_line.add_user(requestor)
-      end
-
-      MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(self).send_email_request_approved
-    elsif denied?
-      MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(self).send_email_request_denied
-    elsif cancelled?
-      MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(self).send_email_request_cancelled
-    end
+                        vha_business_line.add_user(requestor)
+                      end
+                      :send_email_request_approved
+                    elsif denied?
+                      :send_email_request_denied
+                    elsif cancelled?
+                      :send_email_request_cancelled
+                    end
+    MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(self).send(mailer_method)
   end
 
   def requesting_vha_predocket_access?
