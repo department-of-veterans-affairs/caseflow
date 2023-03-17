@@ -31,6 +31,12 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
     textToCopy: guestLink
   };
 
+  // Takes pin from guestLink
+  const usePinFromLink = () => guestLink?.match(/pin=\d+/)[0]?.split('=')[1];
+
+  // Takes alias from guestLink
+  const useAliasFromLink = () => guestLink?.split('&')[0]?.match(/conference=.+/)[0]?.split('=')[1];
+
   /**
    * Render information about the guest link
    * @param {conferenceRoom} - The conference link alias
@@ -41,8 +47,8 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
   const renderRoomInfo = (conferenceRoom, pin) => {
     return (
       <div style={roomInfoContainerStyle}>
-        <h3>{GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:<span style={{ fontWeight: 'normal' }}>{conferenceRoom}</span></h3>
-        <h3>{GUEST_LINK_LABELS.GUEST_PIN}:<span style={{ fontWeight: 'normal' }}>{pin}#</span></h3>
+        <h3>{GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:<span style={{ fontWeight: 'normal' }}>{ alias || useAliasFromLink()}</span></h3>
+        <h3>{GUEST_LINK_LABELS.GUEST_PIN}:<span style={{ fontWeight: 'normal' }}>{pin || usePinFromLink()}#</span></h3>
         <h3><CopyTextButton {...CopyTextButtonProps} /></h3>
       </div>
     );
