@@ -29,6 +29,10 @@ class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
     end
   end
 
+  def send_email_request_cancelled
+    send_email_request_approved
+  end
+
   private
 
   def send_requestor_email

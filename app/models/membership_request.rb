@@ -48,7 +48,7 @@ class MembershipRequest < CaseflowRecord
 
   def update_status_and_send_email(new_status, user, org_type = "VHA")
     # TODO: Might need to wrap this in a transaction and if adding the user to the org fails roll it back?
-    update(status: new_status, decider: user)
+    update!(status: new_status, decider: user)
 
     if approved?
       organization.add_user(requestor)
@@ -62,6 +62,8 @@ class MembershipRequest < CaseflowRecord
       MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(self).send_email_request_approved
     elsif denied?
       MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(self).send_email_request_denied
+    elsif cancelled?
+      MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(self).send_email_request_cancelled
     end
   end
 
