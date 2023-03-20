@@ -530,14 +530,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     end
 
     def first_time_logging_in?(session)
-      # TODO: Figure out why this is the case for from_session.
       user_session = session["user"] ||= authentication_service.default_user_session
 
       unless user_session
         return false
       end
 
-      # TODO: I don't really like adding two database calls every time this method is called
       user = find_by_pg_user_id!(user_session["pg_user_id"], session) || User.find_by_css_id(user_session["id"])
 
       if user&.last_login_at
