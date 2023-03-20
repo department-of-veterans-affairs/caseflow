@@ -112,6 +112,7 @@ export default class OrganizationUsers extends React.PureComponent {
       this.setState({
         organizationUsers: [...this.state.organizationUsers, response.body.users.data[0]],
         remainingUsers: this.state.remainingUsers.filter((user) => user.id !== value.id),
+        membershipRequests: this.state.membershipRequests.filter((mr) => parseInt(mr.userId, 10) !== parseInt(value.id, 10)),
         addingUser: null
       });
     }, (error) => {

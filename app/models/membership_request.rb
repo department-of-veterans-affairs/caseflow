@@ -82,4 +82,12 @@ class MembershipRequest < CaseflowRecord
       self.decided_at = Time.zone.now
     end
   end
+
+  ## Instance methods
+  def cancel_and_send_email(admin_user)
+    update!(status: "cancelled", decider: admin_user)
+
+    # add mailers here.
+  end
+  ##
 end
