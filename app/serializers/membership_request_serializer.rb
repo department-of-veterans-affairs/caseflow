@@ -25,4 +25,8 @@ class MembershipRequestSerializer
   attribute :userNameWithCssId do |object|
     "#{object.requestor.full_name} (#{object.requestor.css_id})"
   end
+
+  attribute :userId do |object|
+    object.requestor&.id
+  end
 end
