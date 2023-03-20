@@ -69,7 +69,7 @@ development_vacols:
   username: VACOLS_DEV
   password: VACOLS_DEV
   <% if ! ENV['DOCKERIZED'] %>
-  host: <%= ENV['VACOLS_DEV_HOST'] || 'localhost' %>
+  host: localhost
   port: 1521
   <% end %>
   database: <%= ENV['DEMO_DB'] || "BVAP" %>
@@ -127,7 +127,7 @@ test_vacols:
   username: VACOLS_TEST
   password: VACOLS_TEST
   database: "(DESCRIPTION=
-    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=localhost)(PORT=1521)))
+    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=facols_db)(PORT=1521)))
     (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
     (CONNECT_DATA=(SID=BVAP))
   )"
