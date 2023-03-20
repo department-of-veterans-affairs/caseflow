@@ -7,5 +7,4 @@ class CavcReasonsToBasis < CaseflowRecord
   belongs_to :cavc_selection_basis
 
   validates :cavc_dispositions_to_reason, presence: true
-
 end

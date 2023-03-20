@@ -176,6 +176,9 @@ class CavcDashboardController < ApplicationController
                CavcDispositionsToReason.find_or_create_by(cavc_dashboard_disposition: cdd,
                                                           cavc_decision_reason_id: box["decision_reason_id"])
              end
+      # if CDTR => create new CRTB w/ basis.id
+      # CRTB << cdtr.crtb (add new crtb to cdtr)
+      # delete old CRTB's for each CDTR
       cdtr.update!(cavc_selection_basis_id: basis.id) if cdtr && basis&.id
       cdtr
     end

@@ -1,10 +1,8 @@
-/* eslint-disable max-lines */
 /* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
 import { Accordion } from '../../components/Accordion';
 import Checkbox from '../../components/Checkbox';
 import AccordionSection from 'app/components/AccordionSection';
-import TextField from '../../components/TextField';
 import { DECISION_REASON_LABELS } from './cavcDashboardConstants';
 import { useDispatch, useSelector } from 'react-redux';
 import { css } from 'glamor';
@@ -13,9 +11,8 @@ import { setCheckedDecisionReasons,
   setInitialCheckedDecisionReasons,
   setSelectionBasisForReasonCheckbox
 } from './cavcDashboardActions';
-import SearchableDropdown from '../../components/SearchableDropdown';
-import { createFilter } from 'react-select';
 import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
+import CavcSelectionBasis from './CavcSelectionBasis';
 
 const CavcDecisionReasons = (props) => {
   const {
@@ -26,8 +23,6 @@ const CavcDecisionReasons = (props) => {
     userCanEdit
   } = props;
 
-  const MIN_INPUT_LENGTH = 3;
-
   const checkboxStyling = css({
     paddingLeft: '2.5%',
     marginBlock: '0.75rem'
@@ -36,28 +31,6 @@ const CavcDecisionReasons = (props) => {
   const childCheckboxStyling = css({
     paddingLeft: '5%',
     marginBlock: '0.5rem'
-  });
-
-  const basisForSelectionStylingNoChild = css({
-    paddingLeft: '7.5rem',
-    fontWeight: 'normal'
-  });
-
-  const basisForSelectionStylingNoChildReadOnly = css({
-    paddingLeft: '6.5rem',
-    fontWeight: 'normal',
-    '@media(min-width: 1200px)': { paddingLeft: '8.5rem' },
-  });
-
-  const basisForSelectionStylingWithChild = css({
-    paddingLeft: '10rem',
-    fontWeight: 'normal',
-  });
-
-  const basisForSelectionStylingWithChildReadOnly = css({
-    paddingLeft: '8rem',
-    fontWeight: 'normal',
-    '@media(min-width: 1200px)': { paddingLeft: '14rem' },
   });
 
   const loadCheckedBoxesId = loadCheckedBoxes?.map((box) => box.cavc_decision_reason_id);
@@ -308,16 +281,6 @@ const CavcDecisionReasons = (props) => {
     );
   };
 
-  // Logic section for searchable dropdowns that prevents searching prior to 3 characters being entered
-  // noOptionMessage is currently being overwritten by the default value set in searchabledropdown.jsx
-  const filterOption = (candidate, input) => {
-    if (input.length < MIN_INPUT_LENGTH) {
-      return true;
-    }
-
-    return createFilter({})(candidate, input);
-  };
-
   const handleOtherTextFieldChange = (value, reason, parentReason) => {
     if (parentReason) {
       setCheckedReasons((prevState) => {
@@ -364,104 +327,6 @@ const CavcDecisionReasons = (props) => {
     }
   };
 
-  const renderBasisForSelectionsWithChild = (parent, child) => {
-    const defaultSelectionValue =
-      checkedReasons[parent.id]?.children.filter((box) => child.id === box.id)[0]?.basis_for_selection;
-
-    if (userCanEdit) {
-      return (
-        <div>
-          <SearchableDropdown
-            name={`decision-reason-basis-${child.id}`}
-            filterOption={filterOption}
-            label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
-            placeholder="Type to search..."
-            onChange={(option) => handleBasisChange(option, child, parent)}
-            options={selectionBases.
-              filter((selection) => selection.category === child.basis_for_selection_category).
-              map((selection) => ({
-                label: selection.basis_for_selection,
-                value: selection.id,
-                category: selection.category,
-                checkboxId: child.id,
-                parentCheckboxId: parent.id
-              }))}
-            styling={basisForSelectionStylingWithChild}
-            defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
-          />
-          {(otherBasisSelectedByCheckboxId.filter((basis) => basis.checkboxId === child.id)[0].checked) && (
-            <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
-              <TextField
-                type="string"
-                label="New basis reason"
-                onChange={(value) => handleOtherTextFieldChange(value, child, parent)}
-                defaultValue={defaultSelectionValue?.otherText}
-                inputProps={{ maxLength: 250 }}
-              />
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    return (
-      <div {...basisForSelectionStylingWithChildReadOnly}>
-        <label>
-          <strong>{DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}:</strong>{' '}
-          {defaultSelectionValue?.label}
-        </label>
-      </div>
-    );
-  };
-
-  const renderBasisForSelectionsForParent = (parent) => {
-    const defaultSelectionValue = checkedReasons[parent.id]?.basis_for_selection;
-
-    if (userCanEdit) {
-      return (
-        <div>
-          <SearchableDropdown
-            name={`decision-reason-basis-${parent.id}`}
-            label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
-            filterOption={filterOption}
-            options={selectionBases.
-              filter((selection) => selection.category === parent.basis_for_selection_category).
-              map((selection) => ({
-                label: selection.basis_for_selection,
-                value: selection.id,
-                checkboxId: parent.id
-              }))}
-            onChange={(option) => handleBasisChange(option, parent)}
-            placeholder="Type to search..."
-            styling={basisForSelectionStylingNoChild}
-            readOnly={!userCanEdit}
-            defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
-          />
-          {(otherBasisSelectedByCheckboxId.filter((basis) => basis.checkboxId === parent.id)[0].checked) && (
-            <div style={{ paddingLeft: '7.5rem', paddingTop: '2.5rem' }}>
-              <TextField
-                type="string"
-                label="New basis reason"
-                onChange={(value) => handleOtherTextFieldChange(value, parent)}
-                defaultValue={defaultSelectionValue?.otherText}
-                inputProps={{ maxLength: 250 }}
-              />
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    return (
-      <div {...basisForSelectionStylingNoChildReadOnly}>
-        <label>
-          <strong>{DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}:</strong>{' '}
-          {defaultSelectionValue?.label}
-        </label>
-      </div>
-    );
-  };
-
   const reasons = parentReasons.map((parent) => {
     const childrenOfParent = childReasons.filter((child) => child.parent_decision_reason_id === parent.id);
 
@@ -480,12 +345,32 @@ const CavcDecisionReasons = (props) => {
                   (childToFind) => childToFind.id === child.id &&
                     childToFind.basis_for_selection_category &&
                       childToFind.checked) &&
-                      renderBasisForSelectionsWithChild(parent, child)
+                      <CavcSelectionBasis
+                        type="child"
+                        parent={parent}
+                        child={child}
+                        userCanEdit
+                        checkedReasons={checkedReasons}
+                        handleBasisChange={handleBasisChange}
+                        selectionBases={selectionBases}
+                        otherBasisSelectedByCheckboxId={otherBasisSelectedByCheckboxId}
+                        handleOtherTextFieldChange={handleOtherTextFieldChange}
+                      />
                 }
               </div>
             ))}
             {/* check if parent checkbox has basis category but no child, if so render dropdown */}
-            {checkedReasons[parent.id]?.basis_for_selection_category && renderBasisForSelectionsForParent(parent)}
+            {checkedReasons[parent.id]?.basis_for_selection_category &&
+              <CavcSelectionBasis
+                type="parent"
+                parent={parent}
+                userCanEdit
+                checkedReasons={checkedReasons}
+                handleBasisChange={handleBasisChange}
+                selectionBases={selectionBases}
+                otherBasisSelectedByCheckboxId={otherBasisSelectedByCheckboxId}
+                handleOtherTextFieldChange={handleOtherTextFieldChange}
+              />}
           </div>
         )}
       </div>
