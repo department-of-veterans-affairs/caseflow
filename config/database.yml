@@ -69,10 +69,10 @@ development_vacols:
   username: VACOLS_DEV
   password: VACOLS_DEV
   <% if ! ENV['DOCKERIZED'] %>
-  host: <%= ENV['VACOLS_DEV_HOST'] || 'localhost' %>
+  host: localhost
   port: 1521
   <% end %>
-  database: <%= ENV['DEMO_DB'] || "BVAP" %>
+  database: <%= ENV['VACOLS_DEV_DB'] || ENV['DEMO_DB'] || "BVAP" %>
 
 demo_vacols:
   adapter: sqlite3
