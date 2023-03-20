@@ -56,7 +56,7 @@ export const nonAutomatedTasksToHide = [
   'ChangeHearingDispositionTask',
 ];
 
-export const openTaskTypes = [
+export const CavcAppealTaskTypes = [
   'SendCavcRemandProcessedLetterTask',
   'CavcRemandProcessedLetterResponseWindowTask',
   'MdrTask',
@@ -150,7 +150,7 @@ export const shouldDisableBasedOnTaskType = (taskType, selectedTaskTypes) => {
 export const alwaysDisabled = ['DistributionTask'];
 
 export const shouldDisable = (taskInfo) => {
-  return alwaysDisabled.includes(taskInfo.type);
+  return CavcAppealTaskTypes.includes(taskInfo.type);
 };
 
 export const disabledTasksBasedOnSelections = ({ tasks, selectedTaskIds }) => {
@@ -193,7 +193,7 @@ export const shouldHide = (taskInfo, claimantPoa, allTasks) => {
 };
 
 export const shouldAutoSelect = (taskInfo) => {
-  return ['DistributionTask'].includes(taskInfo.type);
+  return !(CavcAppealTaskTypes.includes(taskInfo.type));
 };
 
 // Takes an array of tasks and filters it down to a list of most recent of each type
@@ -275,11 +275,8 @@ export const adjustOpenTasksBasedOnSelection = ({ tasks, selectedTaskIds }) => {
   return tasks.map((task) => ({
     ...task,
     disabled:
-      task.disabled || deselectedTaskIds.includes(Number(task.parentId)),
-    selected:
-      (selectedTaskIds.includes(Number(task.taskId)) &&
-        !deselectedTaskIds.includes(Number(task.parentId))) ||
-      task.selected,
+      task.disabled,
+    selected: task.selected,
   }));
 };
 
@@ -288,15 +285,10 @@ export const editCavcRemandSubstitutionOpenTaskDataForUi = ({ taskData }) => {
   const uniqTasks = filterTasks(activeTasks, { orgOnly: false, closedOnly: false });
 
   const sortedTasks = sortTasks(uniqTasks, 'createdAt');
-
-  const filteredBySubstitutionType = sortedTasks.filter((task) => {
-    return openTaskTypes.includes(task.type)
-  });
-
-  return filteredBySubstitutionType.map((taskInfo) => ({
+  return sortedTasks.map((taskInfo) => ({
     ...taskInfo,
-    disabled: true,
-    selected: false,
+    disabled: shouldDisable(taskInfo),
+    selected: shouldAutoSelect(taskInfo),
   }));
 };
 

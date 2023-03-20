@@ -52,27 +52,24 @@ export const EditCavcRemandTasksForm = ({
   onBack,
   onCancel,
   onSubmit,
+  setSelectedCancelTaskIds,
   cancelledTasks = [],
   activeTasks = []
 }) => {
   const methods = useForm({
     defaultValues: {
       ...existingValues,
-      closedTaskIds:
+      cancelTaskIds:
         // eslint-disable-next-line max-len
-        existingValues?.closedTaskIds?.length ?
-          existingValues?.closedTaskIds :
-          (cancelledTasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
-      openTaskIds:
+        existingValues?.cancelTaskIds,
+      reActivateTaskIds:
         // eslint-disable-next-line max-len
-        existingValues?.openTaskIds?.length ?
-          existingValues?.openTaskIds :
-          (activeTasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
+        existingValues?.reActivateTaskIds,
     },
   });
 
   const { handleSubmit, watch } = methods;
-  const selectedClosedTaskIds = watch('closedTaskIds');
+  const selectedClosedTaskIds = watch('reActivateTaskIds');
 
   const adjustedTasks = useMemo(
     () =>
@@ -83,7 +80,7 @@ export const EditCavcRemandTasksForm = ({
     [cancelledTasks, selectedClosedTaskIds]
   );
 
-  const selectedOpenTaskIds = watch('openTaskIds');
+  const selectedOpenTaskIds = watch('cancelTaskIds');
   const adjustedOpenTasks = useMemo(
     () =>
       adjustOpenTasksBasedOnSelection({
@@ -107,6 +104,7 @@ export const EditCavcRemandTasksForm = ({
             nodDate={nodDate}
             dateOfDeath={dateOfDeath}
             substitutionDate={substitutionDate}
+            isAppellantSubstituted={existingValues.isAppellantSubstituted}
           />
           <div className={sectionStyle}>
             { adjustedOpenTasks?.length > 0 && (
@@ -116,7 +114,7 @@ export const EditCavcRemandTasksForm = ({
                 <div className={sectionStyle}>
                   <div><strong>{CAVC_REMAND_MODIFY_TASKS_ACTIVE_TITLE}</strong></div>
                   <div><ReactMarkdown source={CAVC_REMAND_MODIFY_TASKS_ACTIVE_DETAIL} /></div>
-                  <TasksToCancel tasks={adjustedOpenTasks} />
+                  <TasksToCancel tasks={adjustedOpenTasks} existingValues={existingValues} setSelectedCancelTaskIds={setSelectedCancelTaskIds}/>
                 </div>
               </div>
             )}
@@ -186,4 +184,5 @@ EditCavcRemandTasksForm.propTypes = {
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
+  setSelectedCancelTaskIds: PropTypes.func,
 };

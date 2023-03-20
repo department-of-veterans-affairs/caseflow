@@ -43,9 +43,8 @@ export const EditCavcRemandReviewContainer = () => {
   const cancelledOrCompletedTasks = useMemo(() => {
     return editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi({ taskData: allTasks });
   }, [allTasks]);
-
   const tasksToCancel = activeTasks.filter((task) => {
-    return (existingValues.cancelTaskIds.includes(task.id));
+    return (existingValues.cancelTaskIds.includes(Number(task.id)));
   });
 
   const tasksToReActivate = cancelledOrCompletedTasks.filter((task) => {

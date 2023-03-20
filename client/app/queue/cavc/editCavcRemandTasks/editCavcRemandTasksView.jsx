@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { parseISO } from 'date-fns';
@@ -33,6 +33,8 @@ export const EditCavcRemandTasksView = () => {
     (state) => state.cavcRemand
   );
 
+  const [selectedCancelTaskIds, setSelectedCancelTaskIds] = useState(existingValues?.cancelTaskIds || [])
+
   const allTasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
   );
@@ -40,19 +42,26 @@ export const EditCavcRemandTasksView = () => {
   const activeTasks = useMemo(() => {
     return editCavcRemandSubstitutionOpenTaskDataForUi({ taskData: allTasks });
   }, [allTasks]);
+
   const openSendCavcRemandProcessedLetterTask = activeTasks.find((task) => task.type === 'SendCavcRemandProcessedLetterTask');
-  const cancelTaskIds = activeTasks.map( (task) => task.id );
+  const cancelTaskIds = activeTasks.filter((task) => task.disabled).map((disTask) => disTask.id);
 
   const cancelledOrCompletedTasks = useMemo(() => {
     return editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi({ taskData: allTasks });
   }, [allTasks]);
 
+  const getReActivateTaksIds = (() => {
+    if (cancelSendCavcRemandProcessedLetterTask) {
+      return [cancelSendCavcRemandProcessedLetterTask.id]
+    } else if (openSendCavcRemandProcessedLetterTask) {
+      return [openSendCavcRemandProcessedLetterTask.id]
+    } else {
+      return []
+    }
+  })
+
   const cancelSendCavcRemandProcessedLetterTask = cancelledOrCompletedTasks.find((task) => task.type === 'SendCavcRemandProcessedLetterTask');
-  const reActivateTaskIds = cancelledOrCompletedTasks.map( (task) => task.id );
-  // Reactivate when only one task present and try to cancell.
-  if(!cancelSendCavcRemandProcessedLetterTask && openSendCavcRemandProcessedLetterTask) {
-    reActivateTaskIds.push(openSendCavcRemandProcessedLetterTask.id)
-  }
+  const reActivateTaskIds = getReActivateTaksIds();
 
   // These values will be used in the "key details" section
   const nodDate = useMemo(() => parseISO(appeal.nodDate), [appeal.nodDate]);
@@ -78,14 +87,14 @@ export const EditCavcRemandTasksView = () => {
     // Redirect to Case Details page
     history.push(`/queue/appeals/${appealId}`);
   };
-  const handleSubmit = async (formData) => {
+  const handleSubmit = async (_formData) => {
     // Here we'll dispatch updateData action to update Redux store with our form data
     dispatch(
       updateData({
         formData: {
           ...existingValues,
           reActivateTaskIds: reActivateTaskIds ? reActivateTaskIds : [],
-          cancelTaskIds: cancelTaskIds ? cancelTaskIds : []
+          cancelTaskIds: selectedCancelTaskIds.map((taskId) => Number(taskId)),
         }
       })
     );
@@ -99,7 +108,7 @@ export const EditCavcRemandTasksView = () => {
   return (
     <EditCavcRemandTasksForm
       appealId={appealId}
-      existingValues={existingValues}
+      existingValues={{...existingValues, reActivateTaskIds: reActivateTaskIds, cancelTaskIds: cancelTaskIds}}
       nodDate={nodDate}
       dateOfDeath={dateOfDeath}
       substitutionDate={substitutionDate}
@@ -108,6 +117,7 @@ export const EditCavcRemandTasksView = () => {
       onBack={handleBack}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
+      setSelectedCancelTaskIds={setSelectedCancelTaskIds}
     />
   );
 };
