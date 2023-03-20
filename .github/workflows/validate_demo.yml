@@ -43,7 +43,6 @@ jobs:
           POSTGRES_HOST: postgres
           POSTGRES_USER: root
           POSTGRES_PASSWORD: password
-          VACOLS_DEV_HOST: facols_db
     steps:
       - uses: actions/checkout@v3
 
@@ -111,8 +110,6 @@ jobs:
 
       - name: "Wait for database"
         run: dockerize -wait tcp://postgres:5432 -timeout 1m
-
-      - name: "Database Setup"
-        run: |
-            ./ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
-            ./ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
+    
+      - name: "Wait for FACOLS"
+        run: ./ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
