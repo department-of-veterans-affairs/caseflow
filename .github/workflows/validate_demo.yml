@@ -27,6 +27,8 @@ jobs:
         credentials:
           username: AWS
           password: ${{ secrets.ECR_PASSWORD }}
+        env:
+          VACOLS_DEV_HOST: facols
         ports:
         - 1521:1521
     container:
