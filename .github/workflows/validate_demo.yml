@@ -42,6 +42,7 @@ jobs:
           COVERAGE_DIR: /home/circleci/coverage
           POSTGRES_HOST: postgres
           POSTGRES_USER: root
+          POSTGRES_PASSWORD: password
           VACOLS_DEV_HOST: facols_db
     steps:
       - uses: actions/checkout@v3
