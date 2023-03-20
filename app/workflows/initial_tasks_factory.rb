@@ -154,10 +154,7 @@ class InitialTasksFactory
     when Constants.CAVC_REMAND_SUBTYPES.mdr
       MdrTask.create_with_hold(cavc_task)
     when Constants.CAVC_REMAND_SUBTYPES.jmr, Constants.CAVC_REMAND_SUBTYPES.jmpr
-      cavc_remand_appeal_substitution = @cavc_remand.cavc_remands_appellant_substitution
-      if cavc_remand_appeal_substitution.blank? || cavc_remand_appeal_substitution.remand_source == "Add"
-        SendCavcRemandProcessedLetterTask.create!(appeal: @appeal, parent: cavc_task)
-      end
+      SendCavcRemandProcessedLetterTask.create!(appeal: @appeal, parent: cavc_task)
     else
       fail "Unsupported remand subtype: #{@cavc_remand.remand_subtype}"
     end
