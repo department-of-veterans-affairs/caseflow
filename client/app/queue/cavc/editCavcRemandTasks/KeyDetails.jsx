@@ -51,14 +51,19 @@ export const KeyDetails = (props) => {
           <strong>Notice of disagreement received</strong>
           <span>{nodDate}</span>
         </li>
-        <li>
-          <strong>Veteran date of death</strong>
-          <span>{dateOfDeath}</span>
-        </li>
-        <li>
-          <strong>Substitution granted by the RO</strong>
-          <span>{substitutionDate}</span>
-        </li>
+
+        { props.isAppellantSubstituted === 'true' && (
+          <>
+            <li>
+              <strong>Veteran date of death</strong>
+              <span>{dateOfDeath}</span>
+            </li>
+            <li>
+              <strong>Substitution granted by the RO</strong>
+              <span>{substitutionDate}</span>
+            </li>
+          </>
+        )}
       </ul>
       <div className={styles.caseDetails}>
         <Link to={`/queue/appeals/${props.appealId}`} target="_blank">
@@ -80,4 +85,5 @@ KeyDetails.propTypes = {
     PropTypes.instanceOf(Date),
     PropTypes.string,
   ]),
+  isAppellantSubstituted: PropTypes.string
 };

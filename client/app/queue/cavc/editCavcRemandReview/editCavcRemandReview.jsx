@@ -39,6 +39,7 @@ const styles = {
 };
 
 export const EditCavcRemandReview = ({
+  appeal,
   tasksToCancel,
   tasksToReActivate,
   existingValues,
@@ -63,19 +64,27 @@ export const EditCavcRemandReview = ({
           <h2>{CAVC_REMAND_REVIEW_ABOUT_APPELLANT_LABEL}</h2>
           <table className={`usa-table-borderless ${styles.mainTable}`}>
             <tbody>
-              <tr>
-                <td className="appellant-detail">
-                  Substitution granted by the RO
-                </td>
-                <td>{existingValues.substitutionDate && substitutionDate}</td>
-              </tr>
+              { existingValues.isAppellantSubstituted === 'true' && (
+                <>
+                  <tr>
+                    <td className="appellant-detail">
+                      Substitution granted by the RO
+                    </td>
+                    <td>{existingValues.substitutionDate && substitutionDate}</td>
+                  </tr>
+                </>
+              )}
               <tr>
                 <td className="appellant-detail">Name</td>
-                <td>{relationship && relationship.fullName}</td>
+                <td>
+                {existingValues.isAppellantSubstituted === 'true' ? relationship && relationship.fullName : appeal.veteranFullName}
+                </td>
               </tr>
               <tr>
                 <td className="appellant-detail">Relation to Veteran</td>
-                <td>{relationship && relationship.relationshipType}</td>
+                <td>
+                  {existingValues.isAppellantSubstituted === 'true' ? relationship && relationship.relationshipType : "Veteran"}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -165,6 +174,7 @@ EditCavcRemandReview.propTypes = {
     substitutionDate: PropTypes.string,
     participantId: PropTypes.string,
     taskIds: PropTypes.array,
+    isAppellantSubstituted: PropTypes.string
   }),
   evidenceSubmissionEndDate: PropTypes.string,
   relationship: PropTypes.shape({
