@@ -22,13 +22,13 @@ jobs:
         image: redis:4.0.10
         ports:
         - 6379:6379
-      facols:
+      facols_db:
         image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
         credentials:
           username: AWS
           password: ${{ secrets.ECR_PASSWORD }}
         env:
-          VACOLS_DEV_HOST: facols
+          VACOLS_DEV_HOST: facols_db
         ports:
         - 1521:1521
     container:
@@ -114,5 +114,8 @@ jobs:
 
       - name: "Wait for FACOLS"
         run: |
-          VACOLS_DEV_HOST="facols"
+          VACOLS_DEV_HOST="facols_db"
+          export $VACOLS_DEV_HOST
+          echo $VACOLS_DEV_HOST
+          sleep 180
           ./ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
