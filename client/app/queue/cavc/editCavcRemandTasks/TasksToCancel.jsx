@@ -38,7 +38,6 @@ export const TasksToCancel = ({ tasks, existingValues, setSelectedCancelTaskIds 
       control={control}
       onCheckChange={handleCheck}
       tasks={formattedTasks}
-      selectedTaskIds={selectedTaskIds}
       selectionField={fieldName}
       selectedCancelTaskIds={cancelTaskIds}
     />
