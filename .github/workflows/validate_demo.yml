@@ -113,4 +113,6 @@ jobs:
         run: dockerize -wait tcp://postgres:5432 -timeout 1m
 
       - name: "Wait for FACOLS"
-        run: ./ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+        run: |
+          VACOLS_DEV_HOST="facols"
+          ./ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
