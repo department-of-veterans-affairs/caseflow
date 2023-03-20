@@ -42,7 +42,7 @@ jobs:
           COVERAGE_DIR: /home/circleci/coverage
           POSTGRES_HOST: postgres
           POSTGRES_USER: root
-          VACOLS_DEV_DB: (DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=facols_db)(PORT=1521)))(RECV_TIMEOUT=120)(SEND_TIMEOUT=5)(CONNECT_DATA=(SID=BVAP)))
+          VACOLS_DEV_HOST: facols_db
     steps:
       - uses: actions/checkout@v3
 
@@ -112,9 +112,4 @@ jobs:
         run: dockerize -wait tcp://postgres:5432 -timeout 1m
 
       - name: "Wait for FACOLS"
-        run: |
-          VACOLS_DEV_DB="facols_db"
-          export $VACOLS_DEV_DB
-          echo $VACOLS_DEV_DB
-          sleep 180
-          ./ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+        run: ./ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
