@@ -19,6 +19,8 @@ const CavcDecisionReasons = (props) => {
     uniqueId,
     initialDispositionRequiresReasons,
     dispositionIssueType,
+    // loadCheckedBoxes => array cavc_dashboard_dispositions.cavc_dispositions_to_reasons in redux
+    // { id (disposition_to_reason), dashboard disposition id, decision reason id, reasons to basis array}
     loadCheckedBoxes,
     userCanEdit
   } = props;
@@ -49,40 +51,82 @@ const CavcDecisionReasons = (props) => {
     // get all children where parent.id === child.parent_decision_reason_id
     // then create an object for each child, stored into parent's children property as array
     const children = childReasons.filter((child) => child.parent_decision_reason_id === parent.id);
-    const parentSelectionBasisId = loadCheckedBoxes?.
-      filter((box) => box.cavc_decision_reason_id === parent.id)[0]?.cavc_selection_basis_id;
 
-    const parentSelectionBasisLabel = selectionBases?.
-      filter((basis) => basis.id === parentSelectionBasisId)[0]?.basis_for_selection;
+    let nullBasis = [];
+
+    if (parent.basis_for_selection_category) {
+      nullBasis = [{
+        checkboxId: null,
+        dispositions_to_reason_id: null,
+        value: null,
+        label: null,
+        otherText: null
+      }];
+    }
+
+    // array of dispositions to reasons
+    const parentDispositionsToReason = loadCheckedBoxes?.
+      filter((box) => box.cavc_decision_reason_id === parent.id)[0];
+
+    const parentReasonsToBases = parentDispositionsToReason?.cavc_reasons_to_bases;
+
+    const formattedParentSelectionBases = parentReasonsToBases?.map((rtb) => {
+      const selectionBasisLabel = selectionBases?.
+        filter((basis) => basis.id === rtb.cavc_selection_basis_id)[0].basis_for_selection;
+
+      return {
+        checkboxId: parent.id,
+        dispositions_to_reason_id: rtb.cavc_dispositions_to_reason_id,
+        value: rtb.cavc_selection_basis_id ? rtb.cavc_selection_basis_id : null,
+        label: selectionBasisLabel ? selectionBasisLabel : null,
+        otherText: null
+      };
+    });
 
     obj[parent.id] = {
       ...parent,
       checked: loadCheckedBoxesId?.includes(parent.id),
       issueId: uniqueId,
       issueType: dispositionIssueType,
-      basis_for_selection: {
-        checkboxId: parent.id,
-        value: parentSelectionBasisId ? parentSelectionBasisId : null,
-        label: parentSelectionBasisLabel ? parentSelectionBasisLabel : null,
-        otherText: null
-      },
+      selection_bases: parentReasonsToBases ? formattedParentSelectionBases : nullBasis,
       children: children.map((child) => {
-        const childSelectionBasisId = loadCheckedBoxes?.
-          filter((box) => box.cavc_decision_reason_id === child.id)[0]?.cavc_selection_basis_id;
-        const childSelectionBasisLabel = selectionBases?.
-          filter((basis) => basis.id === childSelectionBasisId)[0]?.basis_for_selection;
+        if (child.basis_for_selection_category) {
+          nullBasis = [{
+            checkboxId: null,
+            dispositions_to_reason_id: null,
+            value: null,
+            label: null,
+            otherText: null
+          }];
+        } else {
+          nullBasis = [];
+        }
+
+        const childDispositionsToReasons = loadCheckedBoxes?.
+          filter((box) => box.cavc_decision_reason_id === child.id)[0];
+
+        const childReasonsToBases = childDispositionsToReasons?.map((dtr) => {
+          return dtr.cavc_reasons_to_bases;
+        });
+
+        const formattedChildSelectionBases = childReasonsToBases?.map((rtb) => {
+          const selectionBasisLabel = selectionBases?.
+            filter((basis) => basis.id === rtb.cavc_selection_basis_id)[0].basis_for_selection;
+
+          return {
+            checkboxId: parent.id,
+            dispositions_to_reason_id: rtb.cavc_dispositions_to_reason_id,
+            value: rtb.cavc_selection_basis_id ? rtb.cavc_selection_basis_id : null,
+            label: selectionBasisLabel ? selectionBasisLabel : null,
+            otherText: null
+          };
+        });
 
         return {
           ...child,
           issueType: dispositionIssueType,
           checked: loadCheckedBoxesId?.includes(child.id),
-          basis_for_selection: {
-            checkboxId: child.id,
-            parentCheckboxId: parent.id,
-            value: childSelectionBasisId ? childSelectionBasisId : null,
-            label: childSelectionBasisLabel ? childSelectionBasisLabel : null,
-            otherText: null
-          }
+          selection_bases: childReasonsToBases ? formattedChildSelectionBases : nullBasis
         };
       })
     };
@@ -164,8 +208,20 @@ const CavcDecisionReasons = (props) => {
   };
 
   // the parent checkboxes do not provide a "parent" arg, only the child boxes
-  const handleBasisChange = (option, box, parent) => {
+  const handleBasisChange = (option, selectionBasesIndex, box, parent) => {
     if (parent) {
+      const childIndex = checkedReasons[parent.id].children.findIndex((child) => child.id === box.id);
+      const newSelectionBases = new Array(checkedReasons[parent.id]?.children[childIndex].selection_bases);
+
+      newSelectionBases[selectionBasesIndex] = {
+        checkboxId: box.id,
+        parentCheckboxId: parent.id,
+        dispositions_to_reason_id: null,
+        value: option.value,
+        label: option.label,
+        otherText: null
+      };
+
       setCheckedReasons((prevState) => {
         const updatedParent = {
           ...prevState[parent.id],
@@ -173,13 +229,7 @@ const CavcDecisionReasons = (props) => {
             if (child.id === box.id) {
               return {
                 ...child,
-                basis_for_selection: {
-                  checkboxId: box.id,
-                  parentCheckboxId: parent.id,
-                  value: option.value,
-                  label: option.label,
-                  otherText: null
-                }
+                selection_bases: newSelectionBases
               };
             }
 
@@ -193,16 +243,21 @@ const CavcDecisionReasons = (props) => {
         };
       });
     } else {
+      const newSelectionBases = new Array(checkedReasons[box.id].selection_bases);
+
+      newSelectionBases[selectionBasesIndex] = {
+        checkboxId: box.id,
+        dispositions_to_reason_id: null,
+        value: option.value,
+        label: option.label,
+        otherText: null
+      };
+
       setCheckedReasons((prevState) => ({
         ...prevState,
         [box.id]: {
           ...prevState[box.id],
-          basis_for_selection: {
-            checkboxId: box.id,
-            value: option.value,
-            label: option.label,
-            otherText: null
-          }
+          selection_bases: newSelectionBases
         }
       }));
     }
@@ -215,7 +270,7 @@ const CavcDecisionReasons = (props) => {
 
       return arr;
     });
-    dispatch(setSelectionBasisForReasonCheckbox(uniqueId, option));
+    dispatch(setSelectionBasisForReasonCheckbox(uniqueId, selectionBasesIndex, option));
   };
 
   const readOnlyDecisionReason = (label, styling, checked) => {
@@ -281,24 +336,30 @@ const CavcDecisionReasons = (props) => {
     );
   };
 
-  const handleOtherTextFieldChange = (value, reason, parentReason) => {
+  const handleOtherTextFieldChange = (value, selectionBasesIndex, reason, parentReason) => {
     if (parentReason) {
+      const childIndex = checkedReasons[parentReason.id].children.findIndex((child) => child.id === reason.id);
+      const newSelectionBases = new Array(checkedReasons[parentReason.id].children[childIndex].selection_bases);
+
       setCheckedReasons((prevState) => {
         const updatedParent = {
           ...prevState[parentReason.id],
           children: prevState[parentReason.id].children.map((child) => {
             if (child.id === reason.id) {
-              const childBasis = child.basis_for_selection;
+              const childBasis = child.selection_bases[selectionBasesIndex];
+
+              newSelectionBases[selectionBasesIndex] = {
+                checkboxId: reason.id,
+                parentCheckboxId: parentReason.id,
+                dispositions_to_reason_id: null,
+                value: childBasis.value,
+                label: childBasis.label,
+                otherText: value
+              };
 
               return {
                 ...child,
-                basis_for_selection: {
-                  checkboxId: reason.id,
-                  parentCheckboxId: parentReason.id,
-                  value: childBasis.value,
-                  label: childBasis.label,
-                  otherText: value
-                }
+                selection_bases: newSelectionBases
               };
             }
 
@@ -312,18 +373,25 @@ const CavcDecisionReasons = (props) => {
         };
       });
     } else {
-      setCheckedReasons((prevState) => ({
-        ...prevState,
-        [reason.id]: {
-          ...prevState[reason.id],
-          basis_for_selection: {
-            checkboxId: reason.id,
-            value: prevState[reason.id].basis_for_selection.value,
-            label: prevState[reason.id].basis_for_selection.label,
-            otherText: value
+      const newSelectionBases = new Array(checkedReasons[reason.id].selection_bases);
+
+      setCheckedReasons((prevState) => {
+        newSelectionBases[selectionBasesIndex] = {
+          checkboxId: reason.id,
+          dispositions_to_reason_id: null,
+          value: prevState[reason.id].selection_bases[selectionBasesIndex].value,
+          label: prevState[reason.id].selection_bases[selectionBasesIndex].label,
+          otherText: value
+        };
+
+        return {
+          ...prevState,
+          [reason.id]: {
+            ...prevState[reason.id],
+            selection_bases: newSelectionBases
           }
-        }
-      }));
+        };
+      });
     }
   };
 
@@ -344,33 +412,55 @@ const CavcDecisionReasons = (props) => {
                 {checkedReasons[parent.id]?.children?.find(
                   (childToFind) => childToFind.id === child.id &&
                     childToFind.basis_for_selection_category &&
-                      childToFind.checked) &&
-                      <CavcSelectionBasis
-                        type="child"
-                        parent={parent}
-                        child={child}
-                        userCanEdit
-                        checkedReasons={checkedReasons}
-                        handleBasisChange={handleBasisChange}
-                        selectionBases={selectionBases}
-                        otherBasisSelectedByCheckboxId={otherBasisSelectedByCheckboxId}
-                        handleOtherTextFieldChange={handleOtherTextFieldChange}
-                      />
+                      childToFind.checked)?.selection_bases?.map((basis, idx) => {
+                        return (
+                          <CavcSelectionBasis
+                            type="child"
+                            parent={parent}
+                            child={child}
+                            userCanEdit
+                            basis={basis}
+                            selectionBasesIndex={idx}
+                            checkedReasons={checkedReasons}
+                            handleBasisChange={handleBasisChange}
+                            selectionBases={selectionBases}
+                            otherBasisSelectedByCheckboxId={otherBasisSelectedByCheckboxId}
+                            handleOtherTextFieldChange={handleOtherTextFieldChange}
+                          />
+                        );
+                      })
                 }
               </div>
             ))}
             {/* check if parent checkbox has basis category but no child, if so render dropdown */}
             {checkedReasons[parent.id]?.basis_for_selection_category &&
-              <CavcSelectionBasis
-                type="parent"
-                parent={parent}
-                userCanEdit
-                checkedReasons={checkedReasons}
-                handleBasisChange={handleBasisChange}
-                selectionBases={selectionBases}
-                otherBasisSelectedByCheckboxId={otherBasisSelectedByCheckboxId}
-                handleOtherTextFieldChange={handleOtherTextFieldChange}
-              />}
+              (checkedReasons[parent.id].selection_bases?.length > 0 ?
+                checkedReasons[parent.id].selection_bases?.map((basis, idx) => (
+                  <CavcSelectionBasis
+                    type="parent"
+                    parent={parent}
+                    userCanEdit
+                    basis={basis}
+                    selectionBasesIndex={idx}
+                    checkedReasons={checkedReasons}
+                    handleBasisChange={handleBasisChange}
+                    selectionBases={selectionBases}
+                    otherBasisSelectedByCheckboxId={otherBasisSelectedByCheckboxId}
+                    handleOtherTextFieldChange={handleOtherTextFieldChange}
+                  />
+                )) :
+                <CavcSelectionBasis
+                  type="parent"
+                  parent={parent}
+                  userCanEdit
+                  selectionBasesIndex={0}
+                  checkedReasons={checkedReasons}
+                  handleBasisChange={handleBasisChange}
+                  selectionBases={selectionBases}
+                  otherBasisSelectedByCheckboxId={otherBasisSelectedByCheckboxId}
+                  handleOtherTextFieldChange={handleOtherTextFieldChange}
+                />)
+            }
           </div>
         )}
       </div>

@@ -47,7 +47,8 @@ const CavcSelectionBasis = (props) => {
     parent,
     child,
     userCanEdit,
-    checkedReasons,
+    basis,
+    selectionBasesIndex,
     handleBasisChange,
     selectionBases,
     otherBasisSelectedByCheckboxId,
@@ -56,7 +57,7 @@ const CavcSelectionBasis = (props) => {
 
   const renderBasisForSelectionsWithChild = () => {
     const defaultSelectionValue =
-    checkedReasons[parent.id]?.children.filter((box) => child.id === box.id)[0]?.basis_for_selection;
+      basis?.children?.filter((box) => child.id === box.id)[0]?.basis_for_selection;
 
     if (userCanEdit) {
       return (
@@ -66,7 +67,7 @@ const CavcSelectionBasis = (props) => {
             filterOption={filterOption}
             label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
             placeholder="Type to search..."
-            onChange={(option) => handleBasisChange(option, child, parent)}
+            onChange={(option) => handleBasisChange(option, selectionBasesIndex, child, parent)}
             options={selectionBases.
               filter((selection) => selection.category === child.basis_for_selection_category).
               map((selection) => ({
@@ -79,12 +80,12 @@ const CavcSelectionBasis = (props) => {
             styling={basisForSelectionStylingWithChild}
             defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
           />
-          {(otherBasisSelectedByCheckboxId.filter((basis) => basis.checkboxId === child.id)[0].checked) && (
+          {(otherBasisSelectedByCheckboxId.filter((otherBasis) => otherBasis.checkboxId === child.id)[0].checked) && (
             <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
               <TextField
                 type="string"
                 label="New basis reason"
-                onChange={(value) => handleOtherTextFieldChange(value, child, parent)}
+                onChange={(value) => handleOtherTextFieldChange(value, selectionBasesIndex, child, parent)}
                 defaultValue={defaultSelectionValue?.otherText}
                 inputProps={{ maxLength: 250 }}
               />
@@ -105,7 +106,7 @@ const CavcSelectionBasis = (props) => {
   };
 
   const renderBasisForSelectionsForParent = () => {
-    const defaultSelectionValue = checkedReasons[parent.id]?.basis_for_selection;
+    const defaultSelectionValue = basis?.label ? { label: basis.label, value: basis.value } : null;
 
     if (userCanEdit) {
       return (
@@ -121,18 +122,18 @@ const CavcSelectionBasis = (props) => {
                 value: selection.id,
                 checkboxId: parent.id
               }))}
-            onChange={(option) => handleBasisChange(option, parent)}
+            onChange={(option) => handleBasisChange(option, selectionBasesIndex, parent)}
             placeholder="Type to search..."
             styling={basisForSelectionStylingNoChild}
             readOnly={!userCanEdit}
             defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
           />
-          {(otherBasisSelectedByCheckboxId.filter((basis) => basis.checkboxId === parent.id)[0].checked) && (
+          {(otherBasisSelectedByCheckboxId.filter((otherBasis) => otherBasis.checkboxId === parent.id)[0].checked) && (
             <div style={{ paddingLeft: '7.5rem', paddingTop: '2.5rem' }}>
               <TextField
                 type="string"
                 label="New basis reason"
-                onChange={(value) => handleOtherTextFieldChange(value, parent)}
+                onChange={(value) => handleOtherTextFieldChange(value, selectionBasesIndex, parent)}
                 defaultValue={defaultSelectionValue?.otherText}
                 inputProps={{ maxLength: 250 }}
               />
@@ -164,7 +165,8 @@ CavcSelectionBasis.propTypes = {
   parent: PropTypes.object,
   child: PropTypes.object,
   userCanEdit: PropTypes.bool,
-  checkedReasons: PropTypes.object,
+  basis: PropTypes.object,
+  selectionBasesIndex: PropTypes.number,
   handleBasisChange: PropTypes.func,
   selectionBases: PropTypes.arrayOf(PropTypes.object),
   otherBasisSelectedByCheckboxId: PropTypes.arrayOf(PropTypes.object),

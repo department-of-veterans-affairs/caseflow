@@ -65,10 +65,11 @@ export const setCheckedDecisionReasons = (checkedReasons, issueId) => ({
   meta: meta(`Issue Id ${issueId}`)
 });
 
-export const setSelectionBasisForReasonCheckbox = (uniqueId, option) => ({
+export const setSelectionBasisForReasonCheckbox = (uniqueId, selectionBasesIndex, option) => ({
   type: ACTIONS.SET_BASIS_FOR_REASON_CHECKBOX,
   payload: {
     issueId: uniqueId,
+    selectionBasesIndex,
     checkboxId: option.checkboxId,
     parentCheckboxId: option.parentCheckboxId,
     label: option.label,

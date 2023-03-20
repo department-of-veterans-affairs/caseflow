@@ -83,10 +83,12 @@ export const cavcDashboardReducer = (state = initialState, action) => {
       checked_boxes: {
         [action.payload.issueId]: {
           [action.payload.checkboxId]: {
-            basis_for_selection: {
-              $merge: {
-                label: action.payload.label,
-                value: action.payload.value
+            selection_bases: {
+              [action.payload.selectionBasesIndex]: {
+                $merge: {
+                  label: action.payload.label,
+                  value: action.payload.value
+                }
               }
             }
           }
