@@ -138,6 +138,7 @@ describe ConferenceLink do
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
     end
+
     let(:hearing_day) { create(:hearing_day) }
 
     let!(:user) { RequestStore.store[:current_user] = User.system_user }
