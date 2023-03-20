@@ -32,7 +32,8 @@ class NotificationEfolderSyncJob < CaseflowJob
           unique_identifier = unique_identifier(appeal)
           latest_appeal_notification = last_notification_of_appeal(unique_identifier)
           latest_vbms_doc = latest_vbms_uploaded_document(appeal.id)
-          if latest_appeal_notification.notified_at > latest_vbms_doc.uploaded_to_vbms_at
+          notification_timestamp = latest_appeal_notification.notified_at || latest_appeal_notification.updated_at
+          if notification_timestamp > latest_vbms_doc.attempted_at
             appeal.upload_notification_report!
           end
         else
@@ -49,27 +50,23 @@ class NotificationEfolderSyncJob < CaseflowJob
   # * Checks if there is a vbms doc associated with the appeal exists. Will return true if it exists
   # * and will return false if one does not.
   def check_if_record_exists_in_vbms_uploaded_doc?(appeal)
-      VbmsUploadedDocument
-      .where(appeal_id: appeal.id, appeal_type: appeal.class.name, document_type: "BVA Case Notifications")
-      .present?
+    VbmsUploadedDocument.where(appeal_id: appeal.id, appeal_type: appeal.class.name, document_type: "BVA Case Notifications").present?
   end
 
   # * Will return the last notification associated with the appeal.
   # * Finds the Notification by the appeals_id orders by notified_at in descending order
   # * and grabs the first one
   def last_notification_of_appeal(uuid)
-    Notification
-    .where(appeals_id: uuid).order(notified_at: :desc)
-    .first
+    Notification.where(appeals_id: uuid).order(notified_at: :desc).first
   end
 
   # * Will get the latest finds the doc by its appeal_id. Will only return if
-  # * the document_type = "BVA Case Notifications"
+  # * the document_type = "BVA Case Notifications" uploaded at is not nil and
+  # * returns the list in descending order and gets the first record in that list
   def latest_vbms_uploaded_document(appeal_id)
-    VbmsUploadedDocument
-    .where(appeal_id:appeal_id, document_type:"BVA Case Notifications")
-    .order(uploaded_to_vbms_at: :desc)
-    .first
+    VbmsUploadedDocument.where(appeal_id: appeal_id, document_type: "BVA Case Notifications")
+      .where.not(attempted_at: nil)
+      .order(uploaded_to_vbms_at: :desc).first
   end
 
   # * Both Leagcy and AMA appeals have different associations with each table. This method
