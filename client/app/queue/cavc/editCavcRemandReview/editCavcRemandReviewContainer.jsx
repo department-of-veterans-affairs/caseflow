@@ -3,18 +3,18 @@ import React, { useMemo } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { showSuccessMessage, showErrorMessage } from 'app/queue/uiReducer/uiActions';
+import { showErrorMessage } from 'app/queue/uiReducer/uiActions';
 import { EditCavcRemandReview } from './editCavcRemandReview';
 
-import { cancel, reset, stepBack } from '../editCavcRemand.slice';
+import { cancel, stepBack } from '../editCavcRemand.slice';
 import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/selectors';
 
 import COPY from 'app/../COPY';
 import { requestPatch } from '../../uiReducer/uiActions';
 import { editAppeal } from '../../QueueActions';
 import {
-  editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi,
-  editCavcRemandSubstitutionOpenTaskDataForUi
+  cancelledOrCompletedTasksDataForUi,
+  openTaskDataForUi
 } from '../editCavcRemandTasks/utils';
 
 export const EditCavcRemandReviewContainer = () => {
@@ -37,18 +37,18 @@ export const EditCavcRemandReviewContainer = () => {
   );
 
   const activeTasks = useMemo(() => {
-    return editCavcRemandSubstitutionOpenTaskDataForUi({ taskData: allTasks });
+    return openTaskDataForUi({ taskData: allTasks });
   }, [allTasks]);
 
   const cancelledOrCompletedTasks = useMemo(() => {
-    return editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi({ taskData: allTasks });
+    return cancelledOrCompletedTasksDataForUi({ taskData: allTasks });
   }, [allTasks]);
   const tasksToCancel = activeTasks.filter((task) => {
     return (existingValues.cancelTaskIds.includes(Number(task.id)));
   });
 
   const tasksToReActivate = cancelledOrCompletedTasks.filter((task) => {
-    return (existingValues.reActivateTaskIds.includes(task.id));
+    return (existingValues.reActivateTaskIds.includes(Number(task.id)));
   })
 
   const { relationships } = useSelector((state) => state.cavcRemand);
@@ -98,7 +98,8 @@ export const EditCavcRemandReviewContainer = () => {
         selected_task_ids: existingValues.reActivateTaskIds,
         // these are the task ids to be cancelled
         cancelled_task_ids: existingValues.cancelTaskIds,
-        task_params: buildTaskCreationParameters()
+        task_params: buildTaskCreationParameters(),
+        remand_source: 'Edit'
       },
     };
 

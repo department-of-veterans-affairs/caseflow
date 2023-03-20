@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import { capitalize } from 'lodash';
 import format from 'date-fns/format';
 import parseISO from 'date-fns/parseISO';
-import { TaskSelectionTable } from './TaskSelectionTable';
+import { TasksToCancelSelectionTable } from './TasksToCancelSelectionTable';
 
 export const TasksToCancel = ({ tasks, existingValues, setSelectedCancelTaskIds }) => {
   const { control } = useFormContext();
@@ -22,7 +22,6 @@ export const TasksToCancel = ({ tasks, existingValues, setSelectedCancelTaskIds 
 
   setSelectedCancelTaskIds(cancelTaskIds)
 
-  // Code from https://github.com/react-hook-form/react-hook-form/issues/1517#issuecomment-662386647
   const handleCheck = (changedId, checked) => {
     if (checked) {
       setCancelTaskIds(cancelTaskIds.filter((taskId) => taskId !== changedId))
@@ -34,7 +33,7 @@ export const TasksToCancel = ({ tasks, existingValues, setSelectedCancelTaskIds 
   };
 
   return (
-    <TaskSelectionTable
+    <TasksToCancelSelectionTable
       control={control}
       onCheckChange={handleCheck}
       tasks={formattedTasks}

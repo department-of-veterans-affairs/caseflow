@@ -94,18 +94,9 @@ export const EditCavcRemandView = () => {
           requestPatch(`/appeals/${appealId}/cavc_remand`, payload, successMsg)
         );
         const updatedCavcRemand = res.body.cavc_remand;
-        const updatedAppealAttributes = res.body.updated_appeal_attributes;
 
         // Update Redux
-        dispatch(editAppeal(appealId, {
-          cavcRemand: updatedCavcRemand,
-          appellantSubstitution: updatedAppealAttributes.appellant_substitution,
-          appellantIsNotVeteran: updatedAppealAttributes.appellant_is_not_veteran,
-          appellantFullName: updatedAppealAttributes.appellant_full_name,
-          appellantAddress: updatedAppealAttributes.appellant_address,
-          appellantRelationship: updatedAppealAttributes.appellant_relationship,
-          appellantType: updatedAppealAttributes.appellant_type,
-        }));
+        dispatch(editAppeal(appealId, {cavcRemand: updatedCavcRemand}));
         // Redirect back to case details for remand appeal
         // EditCavcTodo: Force a refresh in case issue selection changed
         history.push(`/queue/appeals/${appealId}`);

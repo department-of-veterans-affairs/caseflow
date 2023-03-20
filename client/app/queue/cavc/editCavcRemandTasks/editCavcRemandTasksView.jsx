@@ -16,8 +16,8 @@ import {
   updateData,
 } from '../editCavcRemand.slice';
 import {
-  editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi,
-  editCavcRemandSubstitutionOpenTaskDataForUi
+  cancelledOrCompletedTasksDataForUi,
+  openTaskDataForUi
 } from './utils';
 
 export const EditCavcRemandTasksView = () => {
@@ -28,31 +28,30 @@ export const EditCavcRemandTasksView = () => {
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
-
   const { formData: existingValues } = useSelector(
     (state) => state.cavcRemand
   );
 
-  const [selectedCancelTaskIds, setSelectedCancelTaskIds] = useState(existingValues?.cancelTaskIds || [])
+  const [selectedCancelTaskIds, setSelectedCancelTaskIds] = useState(existingValues?.cancelTaskIds || []);
+  const [selectedReActivateTaskIds, setSelectedReActivateTaskIds] = useState(existingValues?.reActivateTaskIds || []);
 
   const allTasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
   );
-
   const activeTasks = useMemo(() => {
-    return editCavcRemandSubstitutionOpenTaskDataForUi({ taskData: allTasks });
+    return openTaskDataForUi({ taskData: allTasks });
   }, [allTasks]);
 
   const openSendCavcRemandProcessedLetterTask = activeTasks.find((task) => task.type === 'SendCavcRemandProcessedLetterTask');
   const cancelTaskIds = activeTasks.filter((task) => task.disabled).map((disTask) => disTask.id);
 
   const cancelledOrCompletedTasks = useMemo(() => {
-    return editCavcRemandSubstitutionCancelOrCompletedTaskDataForUi({ taskData: allTasks });
+    return cancelledOrCompletedTasksDataForUi({ taskData: allTasks });
   }, [allTasks]);
 
   const getReActivateTaksIds = (() => {
-    if (cancelSendCavcRemandProcessedLetterTask) {
-      return [cancelSendCavcRemandProcessedLetterTask.id]
+    if (cancelledOrCompletedSendCavcRemandProcessedLetterTask) {
+      return [cancelledOrCompletedSendCavcRemandProcessedLetterTask.id]
     } else if (openSendCavcRemandProcessedLetterTask) {
       return [openSendCavcRemandProcessedLetterTask.id]
     } else {
@@ -60,7 +59,7 @@ export const EditCavcRemandTasksView = () => {
     }
   })
 
-  const cancelSendCavcRemandProcessedLetterTask = cancelledOrCompletedTasks.find((task) => task.type === 'SendCavcRemandProcessedLetterTask');
+  const cancelledOrCompletedSendCavcRemandProcessedLetterTask = cancelledOrCompletedTasks.find((task) => task.type === 'SendCavcRemandProcessedLetterTask');
   const reActivateTaskIds = getReActivateTaksIds();
 
   // These values will be used in the "key details" section
@@ -89,11 +88,12 @@ export const EditCavcRemandTasksView = () => {
   };
   const handleSubmit = async (_formData) => {
     // Here we'll dispatch updateData action to update Redux store with our form data
+    console.log("2222222222", selectedReActivateTaskIds);
     dispatch(
       updateData({
         formData: {
           ...existingValues,
-          reActivateTaskIds: reActivateTaskIds ? reActivateTaskIds : [],
+          reActivateTaskIds: selectedReActivateTaskIds.map((taskId) => Number(taskId)),
           cancelTaskIds: selectedCancelTaskIds.map((taskId) => Number(taskId)),
         }
       })
@@ -112,12 +112,13 @@ export const EditCavcRemandTasksView = () => {
       nodDate={nodDate}
       dateOfDeath={dateOfDeath}
       substitutionDate={substitutionDate}
-      cancelledTasks={cancelledOrCompletedTasks}
+      cancelledOrCompletedTasks={cancelledOrCompletedTasks}
       activeTasks={activeTasks}
       onBack={handleBack}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
       setSelectedCancelTaskIds={setSelectedCancelTaskIds}
+      setSelectedReActivateTaskIds={setSelectedReActivateTaskIds}
     />
   );
 };

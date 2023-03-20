@@ -1,8 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import ReactMarkdown from 'react-markdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
@@ -18,30 +16,8 @@ import {
 import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
 import { KeyDetails } from './KeyDetails';
 import { pageHeader, sectionStyle } from '../styles';
-import { ScheduleHearingTaskAlert } from './ScheduleHearingTaskAlert';
-import { taskTypesSelected, disabledTasksBasedOnSelections, adjustOpenTasksBasedOnSelection } from './utils';
-import { TasksToCopy } from './TasksToCopy';
+import { TasksToReActivate } from './TasksToReActivate';
 import { TasksToCancel } from './TasksToCancel';
-import { isDate, max, parseISO } from 'date-fns';
-
-const schema = yup.object().shape({
-  substitutionDate: yup.
-    date().
-    required('Substitution Date is required').
-    nullable().
-    max(new Date(), 'Date cannot be in the future').
-    when(['$nodDate', '$dateOfDeath'], (date1, date2, currentSchema) => {
-      // We want to ensure that selected date is after the NOD and date of death
-      // Date of death may not actually be set, so we first filter out undefined from these values
-      // eslint-disable-next-line id-length
-      const dates = [date1, date2].filter(Boolean).map((d) => (isDate(d) ? d : parseISO(d)));
-
-      return currentSchema.min(max(dates), "Date cannot be earlier than the NOD date or the Veteran's date of death");
-    }).
-    transform((value, originalValue) => (originalValue === '' ? null : value)),
-  closedTaskIds: yup.array(yup.number()),
-  openTaskIds: yup.array(yup.number()),
-});
 
 export const EditCavcRemandTasksForm = ({
   appealId,
@@ -53,42 +29,19 @@ export const EditCavcRemandTasksForm = ({
   onCancel,
   onSubmit,
   setSelectedCancelTaskIds,
-  cancelledTasks = [],
+  setSelectedReActivateTaskIds,
+  cancelledOrCompletedTasks = [],
   activeTasks = []
 }) => {
   const methods = useForm({
     defaultValues: {
       ...existingValues,
-      cancelTaskIds:
-        // eslint-disable-next-line max-len
-        existingValues?.cancelTaskIds,
-      reActivateTaskIds:
-        // eslint-disable-next-line max-len
-        existingValues?.reActivateTaskIds,
+      cancelTaskIds: existingValues?.cancelTaskIds,
+      reActivateTaskIds: existingValues?.reActivateTaskIds,
     },
   });
 
-  const { handleSubmit, watch } = methods;
-  const selectedClosedTaskIds = watch('reActivateTaskIds');
-
-  const adjustedTasks = useMemo(
-    () =>
-      disabledTasksBasedOnSelections({
-        tasks: cancelledTasks,
-        selectedTaskIds: selectedClosedTaskIds,
-      }),
-    [cancelledTasks, selectedClosedTaskIds]
-  );
-
-  const selectedOpenTaskIds = watch('cancelTaskIds');
-  const adjustedOpenTasks = useMemo(
-    () =>
-      adjustOpenTasksBasedOnSelection({
-        tasks: activeTasks,
-        selectedTaskIds: selectedOpenTaskIds,
-      }),
-    [activeTasks, selectedOpenTaskIds]
-  );
+  const { handleSubmit } = methods;
 
   return (
     <FormProvider {...methods}>
@@ -107,22 +60,30 @@ export const EditCavcRemandTasksForm = ({
             isAppellantSubstituted={existingValues.isAppellantSubstituted}
           />
           <div className={sectionStyle}>
-            { adjustedOpenTasks?.length > 0 && (
+            { activeTasks?.length > 0 && (
               <div className={sectionStyle}>
                 <h2>{CAVC_REMAND_MODIFY_TASKS_APPEAL_TASKS_TITLE}</h2>
                 <br></br>
                 <div className={sectionStyle}>
                   <div><strong>{CAVC_REMAND_MODIFY_TASKS_ACTIVE_TITLE}</strong></div>
                   <div><ReactMarkdown source={CAVC_REMAND_MODIFY_TASKS_ACTIVE_DETAIL} /></div>
-                  <TasksToCancel tasks={adjustedOpenTasks} existingValues={existingValues} setSelectedCancelTaskIds={setSelectedCancelTaskIds}/>
+                  <TasksToCancel
+                    tasks={activeTasks}
+                    existingValues={existingValues}
+                    setSelectedCancelTaskIds={setSelectedCancelTaskIds}
+                  />
                 </div>
               </div>
             )}
-            { adjustedTasks?.length > 0 && (
+            { cancelledOrCompletedTasks?.length > 0 && (
               <div className={sectionStyle}>
                 <div><strong>{CAVC_REMAND_MODIFY_TASKS_CANCELLED_TITLE}</strong></div>
                 <div><ReactMarkdown source={CAVC_REMAND_MODIFY_TASKS_CANCELLED_DETAIL} /></div>
-                <TasksToCopy tasks={adjustedTasks} />
+                <TasksToReActivate
+                  tasks={cancelledOrCompletedTasks}
+                  existingValues={existingValues}
+                  setSelectedReActivateTaskIds={setSelectedReActivateTaskIds}
+                />
               </div>
             )}
 
@@ -155,7 +116,7 @@ EditCavcRemandTasksForm.propTypes = {
     PropTypes.instanceOf(Date),
     PropTypes.string,
   ]),
-  cancelledTasks: PropTypes.arrayOf(
+  cancelledOrCompletedTasks: PropTypes.arrayOf(
     PropTypes.shape({
       appealId: PropTypes.number,
       closedAt: PropTypes.oneOfType([
