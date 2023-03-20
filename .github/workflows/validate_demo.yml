@@ -28,7 +28,7 @@ jobs:
           username: AWS
           password: ${{ secrets.ECR_PASSWORD }}
         env:
-          VACOLS_DEV_HOST: facols_db
+          VACOLS_DEV_DB: (DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=facols_db)(PORT=1521)))(RECV_TIMEOUT=120)(SEND_TIMEOUT=5)(CONNECT_DATA=(SID=BVAP)))
         ports:
         - 1521:1521
     container:
@@ -114,8 +114,8 @@ jobs:
 
       - name: "Wait for FACOLS"
         run: |
-          VACOLS_DEV_HOST="facols_db"
-          export $VACOLS_DEV_HOST
-          echo $VACOLS_DEV_HOST
+          VACOLS_DEV_DB="facols_db"
+          export $VACOLS_DEV_DB
+          echo $VACOLS_DEV_DB
           sleep 180
           ./ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
