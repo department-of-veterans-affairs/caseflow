@@ -75,8 +75,8 @@ namespace :reviews do
           output = "#{output_line}\n#{output}"
         end
 
-        # Wait for 7 seconds before performing the next transaction
-        sleep(7)
+        # Wait for 15 seconds before performing the next transaction
+        sleep(15)
       end
 
       puts output
