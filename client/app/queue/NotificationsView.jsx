@@ -95,7 +95,8 @@ export const NotificationsView = (props) => {
     <React.Fragment>
       <AppSegment filledBackground>
         <CaseTitle titleHeader = {`Case notifications for ${appeal.veteranFullName}`} appeal={appeal} hideCaseView />
-        {alert.alertState && <Alert type="error" title={COPY.PDF_GENERATION_ERROR_TITLE} styling={alertStyle}>{COPY.PDF_GENERATION_ERROR_MESSAGE}<br />{errorCode}{alert.alertMessage}</Alert>}
+        {alert.alertState && <Alert type="error" title={COPY.PDF_GENERATION_ERROR_TITLE} styling={alertStyle}
+        >{COPY.PDF_GENERATION_ERROR_MESSAGE}<br />{errorCode}{alert.alertMessage}</Alert>}
         {supportPendingAppealSubstitution && (
           <div {...sectionGap}>
             <Button
@@ -121,7 +122,8 @@ export const NotificationsView = (props) => {
             <p className="notification-text">
               VA Notify sent these status notifications to the Appellant about their case.
             </p>
-            <Button id = "download-button" classNames={['usa-button-secondary']} onClick={() => generatePDF()} loading={loading} >Download</Button>
+            <Button id = "download-button" classNames={['usa-button-secondary']} onClick={() =>
+              generatePDF()} loading={loading} >Download</Button>
           </div>
 
           <div className="notification-table">
