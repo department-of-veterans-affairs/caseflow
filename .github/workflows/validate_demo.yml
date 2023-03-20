@@ -27,8 +27,6 @@ jobs:
         credentials:
           username: AWS
           password: ${{ secrets.ECR_PASSWORD }}
-        env:
-          VACOLS_DEV_DB: (DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=facols_db)(PORT=1521)))(RECV_TIMEOUT=120)(SEND_TIMEOUT=5)(CONNECT_DATA=(SID=BVAP)))
         ports:
         - 1521:1521
     container:
@@ -42,8 +40,9 @@ jobs:
           NODE_ENV: test
           BUNDLE_PATH: vendor/bundle
           COVERAGE_DIR: /home/circleci/coverage
-          POSTGRES_HOST: localhost
+          POSTGRES_HOST: postgres
           POSTGRES_USER: root
+          VACOLS_DEV_DB: (DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=facols_db)(PORT=1521)))(RECV_TIMEOUT=120)(SEND_TIMEOUT=5)(CONNECT_DATA=(SID=BVAP)))
     steps:
       - uses: actions/checkout@v3
 
