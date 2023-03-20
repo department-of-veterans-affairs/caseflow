@@ -69,7 +69,7 @@ development_vacols:
   username: VACOLS_DEV
   password: VACOLS_DEV
   <% if ! ENV['DOCKERIZED'] %>
-  host: <%= ENV['FACOLS_HOST'] || 'localhost' %>
+  host: <%= ENV['VACOLS_DEV_HOST'] || 'localhost' %>
   port: 1521
   <% end %>
   database: <%= ENV['DEMO_DB'] || "BVAP" %>
