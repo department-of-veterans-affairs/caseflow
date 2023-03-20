@@ -28,7 +28,7 @@ jobs:
           username: AWS
           password: ${{ secrets.ECR_PASSWORD }}
         ports:
-        - 1542:1542
+        - 1521:1521
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
