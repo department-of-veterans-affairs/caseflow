@@ -52,12 +52,17 @@ export const KeyDetails = (props) => {
           <span>{nodDate}</span>
         </li>
 
-        { props.isAppellantSubstituted === 'true' && (
+        { props.dateOfDeath !== null && props.isAppellantSubstituted === 'true' && (
           <>
             <li>
               <strong>Veteran date of death</strong>
               <span>{dateOfDeath}</span>
             </li>
+          </>
+        )}
+
+        {props.isAppellantSubstituted === 'true' && (
+          <>
             <li>
               <strong>Substitution granted by the RO</strong>
               <span>{substitutionDate}</span>
