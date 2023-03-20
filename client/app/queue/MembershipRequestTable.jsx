@@ -82,6 +82,10 @@ const MembershipRequestTable = (props) => {
     updatePaginatedData();
   }, [expanded]);
 
+  useEffect(() => {
+    setPaginatedRequests(initializePaginatedData(getRowObjects(requests)));
+  }, [requests]);
+
   const toggleExpanded = (id) => {
     setExpanded({
       ...expanded,
