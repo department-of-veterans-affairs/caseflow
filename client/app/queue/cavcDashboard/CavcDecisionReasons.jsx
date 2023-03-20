@@ -105,9 +105,7 @@ const CavcDecisionReasons = (props) => {
         const childDispositionsToReasons = loadCheckedBoxes?.
           filter((box) => box.cavc_decision_reason_id === child.id)[0];
 
-        const childReasonsToBases = childDispositionsToReasons?.map((dtr) => {
-          return dtr.cavc_reasons_to_bases;
-        });
+        const childReasonsToBases = childDispositionsToReasons?.cavc_reasons_to_bases;
 
         const formattedChildSelectionBases = childReasonsToBases?.map((rtb) => {
           const selectionBasisLabel = selectionBases?.
@@ -216,7 +214,8 @@ const CavcDecisionReasons = (props) => {
       newSelectionBases[selectionBasesIndex] = {
         checkboxId: box.id,
         parentCheckboxId: parent.id,
-        dispositions_to_reason_id: null,
+        dispositions_to_reason_id: checkedReasons[parent.id]?.children[childIndex].
+          selection_bases[selectionBasesIndex].dispositions_to_reason_id,
         value: option.value,
         label: option.label,
         otherText: null
@@ -247,7 +246,8 @@ const CavcDecisionReasons = (props) => {
 
       newSelectionBases[selectionBasesIndex] = {
         checkboxId: box.id,
-        dispositions_to_reason_id: null,
+        dispositions_to_reason_id:
+          checkedReasons[box.id].selection_bases[selectionBasesIndex].dispositions_to_reason_id,
         value: option.value,
         label: option.label,
         otherText: null
@@ -351,7 +351,7 @@ const CavcDecisionReasons = (props) => {
               newSelectionBases[selectionBasesIndex] = {
                 checkboxId: reason.id,
                 parentCheckboxId: parentReason.id,
-                dispositions_to_reason_id: null,
+                dispositions_to_reason_id: childBasis.dispositions_to_reason_id,
                 value: childBasis.value,
                 label: childBasis.label,
                 otherText: value
@@ -378,7 +378,8 @@ const CavcDecisionReasons = (props) => {
       setCheckedReasons((prevState) => {
         newSelectionBases[selectionBasesIndex] = {
           checkboxId: reason.id,
-          dispositions_to_reason_id: null,
+          dispositions_to_reason_id:
+            prevState[reason.id].selection_bases[selectionBasesIndex].dispositions_to_reason_id,
           value: prevState[reason.id].selection_bases[selectionBasesIndex].value,
           label: prevState[reason.id].selection_bases[selectionBasesIndex].label,
           otherText: value
@@ -420,8 +421,8 @@ const CavcDecisionReasons = (props) => {
                             child={child}
                             userCanEdit
                             basis={basis}
+                            issueId={uniqueId}
                             selectionBasesIndex={idx}
-                            checkedReasons={checkedReasons}
                             handleBasisChange={handleBasisChange}
                             selectionBases={selectionBases}
                             otherBasisSelectedByCheckboxId={otherBasisSelectedByCheckboxId}
@@ -441,8 +442,8 @@ const CavcDecisionReasons = (props) => {
                     parent={parent}
                     userCanEdit
                     basis={basis}
+                    issueId={uniqueId}
                     selectionBasesIndex={idx}
-                    checkedReasons={checkedReasons}
                     handleBasisChange={handleBasisChange}
                     selectionBases={selectionBases}
                     otherBasisSelectedByCheckboxId={otherBasisSelectedByCheckboxId}
@@ -453,8 +454,8 @@ const CavcDecisionReasons = (props) => {
                   type="parent"
                   parent={parent}
                   userCanEdit
+                  issueId={uniqueId}
                   selectionBasesIndex={0}
-                  checkedReasons={checkedReasons}
                   handleBasisChange={handleBasisChange}
                   selectionBases={selectionBases}
                   otherBasisSelectedByCheckboxId={otherBasisSelectedByCheckboxId}

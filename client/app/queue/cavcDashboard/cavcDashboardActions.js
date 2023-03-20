@@ -134,21 +134,22 @@ export const saveDashboardData = (allCavcDashboards, checkedBoxes) => (dispatch)
   for (const [issueId, value] of Object.entries(checkedBoxes)) {
     const parentBoxes = Object.values(value);
     const childBoxes = parentBoxes.map((box) => box.children).flat();
+    // consolidate these two into one line?
     const allBoxes = parentBoxes.concat(childBoxes);
     const selectedBoxes = allBoxes.filter((box) => box.checked);
 
     selectedBoxes.forEach((box) => {
-      if (box.basis_for_selection.value) {
+      if (box.selection_bases.length > 0) {
         checkedBoxesByIssueId.push({
           issue_id: issueId,
           issue_type: box.issueType,
           decision_reason_id: box.id,
           basis_for_selection_category: box.basis_for_selection_category,
-          basis_for_selection: box.basis_for_selection
+          selection_bases: box.selection_bases
         });
+      } else {
+        checkedBoxesByIssueId.push({ issue_id: issueId, issue_type: box.issueType, decision_reason_id: box.id });
       }
-
-      checkedBoxesByIssueId.push({ issue_id: issueId, issue_type: box.issueType, decision_reason_id: box.id });
     });
   }
 

@@ -48,6 +48,7 @@ const CavcSelectionBasis = (props) => {
     child,
     userCanEdit,
     basis,
+    issueId,
     selectionBasesIndex,
     handleBasisChange,
     selectionBases,
@@ -56,14 +57,13 @@ const CavcSelectionBasis = (props) => {
   } = props;
 
   const renderBasisForSelectionsWithChild = () => {
-    const defaultSelectionValue =
-      basis?.children?.filter((box) => child.id === box.id)[0]?.basis_for_selection;
+    const defaultSelectionValue = basis?.label ? { label: basis.label, value: basis.value } : null;
 
     if (userCanEdit) {
       return (
         <div>
           <SearchableDropdown
-            name={`decision-reason-basis-${child.id}`}
+            name={`decision-reason-basis-${issueId}-${child.id}`}
             filterOption={filterOption}
             label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
             placeholder="Type to search..."
@@ -112,7 +112,7 @@ const CavcSelectionBasis = (props) => {
       return (
         <div>
           <SearchableDropdown
-            name={`decision-reason-basis-${parent.id}`}
+            name={`decision-reason-basis-${issueId}-${parent.id}`}
             label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
             filterOption={filterOption}
             options={selectionBases.
@@ -166,6 +166,7 @@ CavcSelectionBasis.propTypes = {
   child: PropTypes.object,
   userCanEdit: PropTypes.bool,
   basis: PropTypes.object,
+  issueId: PropTypes.number,
   selectionBasesIndex: PropTypes.number,
   handleBasisChange: PropTypes.func,
   selectionBases: PropTypes.arrayOf(PropTypes.object),
