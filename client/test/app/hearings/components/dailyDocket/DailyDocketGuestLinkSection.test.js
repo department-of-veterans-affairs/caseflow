@@ -9,7 +9,7 @@ describe('DailyDocketGuestLinkSection', () => {
   const linkInfo = {
     alias: 'BVA0000001@caseflow.va.gov',
     guestLink: 'https://example.va.gov/sample/?conference=BVA0000001@example.va.gov&pin=3998472&callType=video',
-    guestPin: '1234567890',
+    guestPin: '3998472',
   };
 
   it('renders correctly for hearing admins and hearing management users', () => {
@@ -41,6 +41,6 @@ describe('DailyDocketGuestLinkSection', () => {
   it('renders guest pin correctly', () => {
     render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
 
-    expect(screen.getByRole('heading', { name: 'PIN: 1234567890#' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'PIN: 3998472#' })).toBeTruthy();
   });
 });
