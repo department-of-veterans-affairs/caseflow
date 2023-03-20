@@ -4,7 +4,7 @@
 # for running the remediation for the the hlr **OR** 'x.resolve_single_review(***Insert ID***, "sc")') for a
 # SupplimentalClaim.
 # To execute the entire array of problem claims with the duplicateEP error. Execute in the rake task method i.e.
-# execute bundle exec rake reviews:resolve_multiple_reviews[type],
+# execute 'sudo su -c "source /opt/caseflow-certification/caseflow-certification_env.sh; cd /opt/caseflow-certification/src; bundle exec rake reviews:resolve_multiple_reviews[type]',
 # where type is either hlr or sc to cancel all problem claims.
 
 module WarRoom
