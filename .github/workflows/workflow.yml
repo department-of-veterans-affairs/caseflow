@@ -8,9 +8,9 @@ on:
 jobs:
   validate_demo:
     uses: ./.github/workflows/validate_demo.yml
-  # rspec:
-  #   uses: ./github/workflows/rspec.yml
+  rspec:
+    uses: ./github/workflows/rspec.yml
   # js_tests:
   #   uses: ./github/workflows/js_tests.yml
-  # lint:
-  #   uses: ./github/workflows/lint.yml
+   lint:
+     uses: ./github/workflows/lint.yml

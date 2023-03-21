@@ -14,13 +14,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Ruby install
-        run: bundle install
+       - name: Install Ruby Dependencies
+        run: |
+          ruby -v
+          BASH_ENV="Bash"
+          echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> "$BASH_ENV"
+          export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")
+          gem install bundler
+          bundle install --path vendor/bundle
 
-      - name: Node Install
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
+      - name: Install Node Dependencies
+        run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - name: Danger
         run: ~/project/ci-bin/capture-log "bundle exec danger"
