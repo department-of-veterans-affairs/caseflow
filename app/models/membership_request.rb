@@ -53,15 +53,14 @@ class MembershipRequest < CaseflowRecord
     mailer_method = if approved?
                       organization.add_user(requestor)
                       # If the User is requesting VHA sub organization access, also add them to the VHA Businessline
-                      if requesting_vha_predocket_access?
-                        vha_business_line = BusinessLine.find_by(url: "vha")
-
-                        vha_business_line.add_user(requestor)
-                      end
+                      check_request_for_automatic_addition_to_vha_businessline
                       :send_email_request_approved
                     elsif denied?
                       :send_email_request_denied
                     elsif cancelled?
+                      # If the User is cancelling a VHA sub organization request, also add them to the VHA Businessline
+                      # This is typically triggered using the add_user functionality on a team management page
+                      check_request_for_automatic_addition_to_vha_businessline
                       :send_email_request_cancelled
                     end
     MembershipRequestMailBuilderFactory.get_mail_builder(org_type).new(self).send(mailer_method)
@@ -71,6 +70,14 @@ class MembershipRequest < CaseflowRecord
     # TODO: Does this need VhaRegionalOffice as well?
     vha_organization_types = [VhaCamo, VhaCaregiverSupport, VhaProgramOffice, VhaRegionalOffice]
     vha_organization_types.any? { |vha_org| organization.is_a?(vha_org) }
+  end
+
+  def check_request_for_automatic_addition_to_vha_businessline
+    if requesting_vha_predocket_access?
+      vha_business_line = BusinessLine.find_by(url: "vha")
+
+      vha_business_line.add_user(requestor)
+    end
   end
 
   private
