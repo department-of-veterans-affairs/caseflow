@@ -132,8 +132,8 @@ jobs:
           mkdir -p ./test-results/rspec
           export RAILS_ENV=test
           make -f Makefile.example test | tee ./test-results/rspec/rspec.out
-        # Testing without knapsack
-        # bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
+          Testing without knapsack
+          bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
         env:
           POSTGRES_HOST: postgres
           KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
