@@ -134,7 +134,6 @@ export const saveDashboardData = (allCavcDashboards, checkedBoxes) => (dispatch)
   for (const [issueId, value] of Object.entries(checkedBoxes)) {
     const parentBoxes = Object.values(value);
     const childBoxes = parentBoxes.map((box) => box.children).flat();
-    // consolidate these two into one line?
     const allBoxes = parentBoxes.concat(childBoxes);
     const selectedBoxes = allBoxes.filter((box) => box.checked);
 

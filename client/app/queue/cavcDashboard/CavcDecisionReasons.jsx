@@ -76,7 +76,6 @@ const CavcDecisionReasons = (props) => {
       }];
     }
 
-    // array of dispositions to reasons
     const parentDispositionsToReason = loadCheckedBoxes?.
       filter((box) => box.cavc_decision_reason_id === parent.id)[0];
 

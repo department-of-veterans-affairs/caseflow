@@ -166,13 +166,6 @@ class CavcDashboardController < ApplicationController
             else
               CavcDashboardDisposition.find_by(cavc_dashboard_issue_id: box["issue_id"])
             end
-      # remove this basis assignment and iterate as written below
-      # basis = if box["basis_for_selection"] && box["basis_for_selection"]["otherText"]
-      #           CavcSelectionBasis.find_or_create_by(basis_for_selection: box["basis_for_selection"]["otherText"],
-      #                                                category: box["basis_for_selection_category"])
-      #         elsif box["basis_for_selection"] && box["basis_for_selection"]["value"]
-      #           CavcSelectionBasis.find_by(id: box["basis_for_selection"]["value"])
-      #         end
       cdtr = if cdd
                CavcDispositionsToReason.find_or_create_by(cavc_dashboard_disposition: cdd,
                                                           cavc_decision_reason_id: box["decision_reason_id"])
@@ -195,10 +188,6 @@ class CavcDashboardController < ApplicationController
         crtbs_to_delete = all_crtbs - submitted_crtbs
         crtbs_to_delete.map(&:destroy)
       end
-      # if CDTR => create new CRTB w/ basis.id
-      # CRTB << cdtr.crtb (add new crtb to cdtr)
-      # delete old CRTB's for each CDTR
-      # cdtr.update!(cavc_selection_basis_id: basis.id) if cdtr && basis&.id
       cdtr.reload
     end
   end
