@@ -121,8 +121,8 @@ jobs:
           # bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
           env:
             KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
-            - store_test_results:
-          name: Store test results as summary
+
+      - uses: actions/upload-artifact@v3
           path: ./test-results
 
       - uses: actions/upload-artifact@v3
