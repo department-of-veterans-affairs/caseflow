@@ -51,7 +51,7 @@ jobs:
           POSTGRES_PASSWORD: password
           REDIS_URL_CACHE: "redis://redis:6379/0/cache/"
           KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
-          KNAPSACK_PRO_TEST_SUITE_GH_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_GH_TOKEN_RSPEC }}
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
           KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
           KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
           KNAPSACK_PRO_LOG_LEVEL: info
