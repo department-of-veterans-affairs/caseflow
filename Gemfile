@@ -142,7 +142,7 @@ group :test do
   gem "knapsack_pro", '~> 3.8'
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
-  gem "webmock", require: false
+  gem "webmock"
 end
 # rubocop:enable Metrics/LineLength
 
