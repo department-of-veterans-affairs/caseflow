@@ -1,11 +1,12 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import TextField from '../../components/TextField';
-import { DECISION_REASON_LABELS } from './cavcDashboardConstants';
+import { LABELS, DECISION_REASON_LABELS } from './cavcDashboardConstants';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { createFilter } from 'react-select';
+import Button from '../../components/Button';
 
 const MIN_INPUT_LENGTH = 3;
 
@@ -48,12 +49,13 @@ const CavcSelectionBasis = (props) => {
     child,
     userCanEdit,
     basis,
-    issueId,
+    name,
     selectionBasesIndex,
     handleBasisChange,
     selectionBases,
     otherBasisSelectedByCheckboxId,
     handleOtherTextFieldChange,
+    handleRemoveBasis
   } = props;
 
   const renderBasisForSelectionsWithChild = () => {
@@ -63,7 +65,7 @@ const CavcSelectionBasis = (props) => {
       return (
         <div>
           <SearchableDropdown
-            name={`decision-reason-basis-${issueId}-${child.id}`}
+            name={name}
             filterOption={filterOption}
             label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
             placeholder="Type to search..."
@@ -78,7 +80,7 @@ const CavcSelectionBasis = (props) => {
                 parentCheckboxId: parent.id
               }))}
             styling={basisForSelectionStylingWithChild}
-            defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
+            value={defaultSelectionValue?.label ? defaultSelectionValue : null}
           />
           {(otherBasisSelectedByCheckboxId.filter((otherBasis) => otherBasis.checkboxId === child.id)[0].checked) && (
             <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
@@ -91,6 +93,12 @@ const CavcSelectionBasis = (props) => {
               />
             </div>
           )}
+          <Button
+            linkStyling
+            onClick={() => handleRemoveBasis(basis, child, parent)}
+          >
+            {LABELS.REMOVE_BASIS_BUTTON_LABEL}
+          </Button>
         </div>
       );
     }
@@ -112,7 +120,7 @@ const CavcSelectionBasis = (props) => {
       return (
         <div>
           <SearchableDropdown
-            name={`decision-reason-basis-${issueId}-${parent.id}`}
+            name={name}
             label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
             filterOption={filterOption}
             options={selectionBases.
@@ -126,8 +134,14 @@ const CavcSelectionBasis = (props) => {
             placeholder="Type to search..."
             styling={basisForSelectionStylingNoChild}
             readOnly={!userCanEdit}
-            defaultValue={defaultSelectionValue?.label ? defaultSelectionValue : null}
+            value={defaultSelectionValue?.label ? defaultSelectionValue : null}
           />
+          <Button
+            linkStyling
+            onClick={() => handleRemoveBasis(basis, parent)}
+          >
+            {LABELS.REMOVE_BASIS_BUTTON_LABEL}
+          </Button>
           {(otherBasisSelectedByCheckboxId.filter((otherBasis) => otherBasis.checkboxId === parent.id)[0].checked) && (
             <div style={{ paddingLeft: '7.5rem', paddingTop: '2.5rem' }}>
               <TextField
@@ -166,12 +180,13 @@ CavcSelectionBasis.propTypes = {
   child: PropTypes.object,
   userCanEdit: PropTypes.bool,
   basis: PropTypes.object,
-  issueId: PropTypes.number,
+  name: PropTypes.string,
   selectionBasesIndex: PropTypes.number,
   handleBasisChange: PropTypes.func,
   selectionBases: PropTypes.arrayOf(PropTypes.object),
   otherBasisSelectedByCheckboxId: PropTypes.arrayOf(PropTypes.object),
   handleOtherTextFieldChange: PropTypes.func,
+  handleRemoveBasis: PropTypes.func
 };
 
 export default CavcSelectionBasis;
