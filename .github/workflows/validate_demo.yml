@@ -148,7 +148,6 @@ jobs:
         run: |
           mkdir -p ./test-results/rspec
           export RAILS_ENV=test
-          make -f Makefile.example test | tee ./test-results/rspec/rspec.out
           bundle exec rake "knapsack_pro:queue:rspec[--require rails_helper]"
 
       - uses: actions/upload-artifact@v3
