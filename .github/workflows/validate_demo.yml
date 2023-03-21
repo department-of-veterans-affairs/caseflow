@@ -110,6 +110,41 @@ jobs:
 
       - name: "Wait for database"
         run: dockerize -wait tcp://postgres:5432 -timeout 1m
-    
+
       - name: "Wait for FACOLS"
         run: ./ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+
+      - name: RSpec via knapsack_pro Queue Mode
+        run: |
+            mkdir -p ./test-results/rspec
+            export RAILS_ENV=test
+          # bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
+          env:
+            KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
+            - store_test_results:
+          name: Store test results as summary
+          path: ./test-results
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./test-results
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./coverage
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./project/tmp/capybara
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./project/log/test.log
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./project/log/bullet.log
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./logs
