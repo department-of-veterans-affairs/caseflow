@@ -61,7 +61,7 @@ export const KeyDetails = (props) => {
           </>
         )}
 
-        {props.isAppellantSubstituted === 'true' && (
+        { props.isAppellantSubstituted === 'true' && (
           <>
             <li>
               <strong>Substitution granted by the RO</strong>

@@ -178,7 +178,7 @@
   "ADD_CAVC_PAGE_TITLE": "Add a Court remand",
   "EDIT_CAVC_PAGE_TITLE": "Edit a Court remand",
   "CAVC_SUBSTITUTE_APPELLANT_LABEL": "Is there a substitue appellant?",
-  "CAVC_SUBSTITUTE_APPELLANT_DATE_LABEL": "when was substitution granted for this appellant?",
+  "CAVC_SUBSTITUTE_APPELLANT_DATE_LABEL": "When was substitution granted for this appellant?",
   "CAVC_SUBSTITUTE_APPELLANT_CLAIMANTS_LABEL": "Please select the substitute from the following claimants",
   "ADD_CAVC_DESCRIPTION": "Complete the details below to intake this Court remand for further processing",
   "CAVC_DOCKET_NUMBER_LABEL": "What is the court docket number?",
