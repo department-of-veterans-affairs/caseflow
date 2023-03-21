@@ -88,7 +88,7 @@ storybook: ## run Storybook
 	cd client && yarn storybook
 
 test: clean  ## Run test suite
-	bundle exec rake ci:all
+	bundle exec rake
 
 clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -f log/vacols.log
