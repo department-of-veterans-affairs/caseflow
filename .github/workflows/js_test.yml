@@ -56,8 +56,7 @@ jobs:
       - name: jest
         run: |
           mkdir -p ~/test-results/jest
-          pushd client
-          ./project/ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
+          ./ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
 
       - name: store_test_results
         uses: actions/upload-artifact@v3
@@ -67,7 +66,7 @@ jobs:
 
       - name: Concatenate all logs
         run: |
-          ~.project/ci-bin/concatenate-log.rb >> ./all_logs.log
+          ./ci-bin/concatenate-log.rb >> ./all_logs.log
 
       - name: store logs
         uses: actions/upload-artifact@v3
