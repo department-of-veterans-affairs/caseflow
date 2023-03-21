@@ -73,13 +73,18 @@
     }
   }
 
+  div.dash-text-input {
+    width: 46rem;
+    margin-bottom: 4rem;
+  }
+
   .dash-basis-group {
     display: flex;
     align-items: end;
     margin-bottom: 2rem;
 
     .cf-form-dropdown {
-      min-width: 46rem;
+      width: 46rem;
     }
 
     button {

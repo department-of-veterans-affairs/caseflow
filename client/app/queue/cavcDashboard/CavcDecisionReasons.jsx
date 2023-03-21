@@ -17,11 +17,13 @@ import CavcSelectionBasis from './CavcSelectionBasis';
 import Button from '../../components/Button';
 
 const addBasisButtonForParentStyle = css({
-  paddingLeft: '7.5rem'
+  padding: '0 2rem 0 7.5rem',
+  marginBottom: '2rem'
 });
 
 const addBasisButtonForChildStyle = css({
-  paddingLeft: '10rem'
+  padding: '0 2rem 0 10rem',
+  marginBottom: '2rem'
 });
 
 const CavcDecisionReasons = (props) => {

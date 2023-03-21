@@ -62,27 +62,35 @@ const CavcSelectionBasis = (props) => {
 
     if (userCanEdit) {
       return (
-        <div className="dash-basis-group">
-          <SearchableDropdown
-            name={name}
-            filterOption={filterOption}
-            label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
-            placeholder="Type to search..."
-            onChange={(option) => handleBasisChange(option, selectionBasesIndex, child, parent)}
-            options={selectionBases.
-              filter((selection) => selection.category === child.basis_for_selection_category).
-              map((selection) => ({
-                label: selection.basis_for_selection,
-                value: selection.id,
-                category: selection.category,
-                checkboxId: child.id,
-                parentCheckboxId: parent.id
-              }))}
-            styling={basisForSelectionStylingWithChild}
-            value={defaultSelectionValue?.label ? defaultSelectionValue : null}
-          />
+        <>
+          <div className="dash-basis-group">
+            <SearchableDropdown
+              name={name}
+              filterOption={filterOption}
+              label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
+              placeholder="Type to search..."
+              onChange={(option) => handleBasisChange(option, selectionBasesIndex, child, parent)}
+              options={selectionBases.
+                filter((selection) => selection.category === child.basis_for_selection_category).
+                map((selection) => ({
+                  label: selection.basis_for_selection,
+                  value: selection.id,
+                  category: selection.category,
+                  checkboxId: child.id,
+                  parentCheckboxId: parent.id
+                }))}
+              styling={basisForSelectionStylingWithChild}
+              value={defaultSelectionValue?.label ? defaultSelectionValue : null}
+            />
+            <Button
+              linkStyling
+              onClick={() => handleRemoveBasis(basis, child, parent)}
+            >
+              <i className="fa fa-trash-o" aria-hidden="true"></i> {LABELS.REMOVE_BASIS_BUTTON_LABEL}
+            </Button>
+          </div>
           {defaultSelectionValue?.label === 'Other' && (
-            <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
+            <div className="dash-text-input" style={{ paddingLeft: '10rem' }}>
               <TextField
                 type="string"
                 label="New basis reason"
@@ -92,13 +100,7 @@ const CavcSelectionBasis = (props) => {
               />
             </div>
           )}
-          <Button
-            linkStyling
-            onClick={() => handleRemoveBasis(basis, child, parent)}
-          >
-            <i className="fa fa-trash-o" aria-hidden="true"></i> {LABELS.REMOVE_BASIS_BUTTON_LABEL}
-          </Button>
-        </div>
+        </>
       );
     }
 
@@ -117,26 +119,34 @@ const CavcSelectionBasis = (props) => {
 
     if (userCanEdit) {
       return (
-        <div className="dash-basis-group">
-          <SearchableDropdown
-            name={name}
-            label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
-            filterOption={filterOption}
-            options={selectionBases.
-              filter((selection) => selection.category === parent.basis_for_selection_category).
-              map((selection) => ({
-                label: selection.basis_for_selection,
-                value: selection.id,
-                checkboxId: parent.id
-              }))}
-            onChange={(option) => handleBasisChange(option, selectionBasesIndex, parent)}
-            placeholder="Type to search..."
-            styling={basisForSelectionStylingNoChild}
-            readOnly={!userCanEdit}
-            value={defaultSelectionValue?.label ? defaultSelectionValue : null}
-          />
+        <>
+          <div className="dash-basis-group">
+            <SearchableDropdown
+              name={name}
+              label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
+              filterOption={filterOption}
+              options={selectionBases.
+                filter((selection) => selection.category === parent.basis_for_selection_category).
+                map((selection) => ({
+                  label: selection.basis_for_selection,
+                  value: selection.id,
+                  checkboxId: parent.id
+                }))}
+              onChange={(option) => handleBasisChange(option, selectionBasesIndex, parent)}
+              placeholder="Type to search..."
+              styling={basisForSelectionStylingNoChild}
+              readOnly={!userCanEdit}
+              value={defaultSelectionValue?.label ? defaultSelectionValue : null}
+            />
+            <Button
+              linkStyling
+              onClick={() => handleRemoveBasis(basis, parent)}
+            >
+              <i className="fa fa-trash-o" aria-hidden="true"></i> {LABELS.REMOVE_BASIS_BUTTON_LABEL}
+            </Button>
+          </div>
           {defaultSelectionValue?.label === 'Other' && (
-            <div style={{ paddingLeft: '7.5rem', paddingTop: '2.5rem' }}>
+            <div className="dash-text-input" style={{ paddingLeft: '7.5rem' }}>
               <TextField
                 type="string"
                 label="New basis reason"
@@ -146,13 +156,7 @@ const CavcSelectionBasis = (props) => {
               />
             </div>
           )}
-          <Button
-            linkStyling
-            onClick={() => handleRemoveBasis(basis, parent)}
-          >
-            <i className="fa fa-trash-o" aria-hidden="true"></i> {LABELS.REMOVE_BASIS_BUTTON_LABEL}
-          </Button>
-        </div>
+        </>
       );
     }
 
