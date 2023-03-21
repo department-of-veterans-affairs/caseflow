@@ -56,8 +56,8 @@ RSpec.configure do |config|
 
   config.filter_run focus: true
   # https://docs.knapsackpro.com/ruby/rspec/#some-of-my-test-files-are-not-executed
-  # config.run_all_when_everything_filtered = true
-  config.filter_run_when_matching :focus
+  config.run_all_when_everything_filtered = true
+  # config.filter_run_when_matching :focus
   
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
