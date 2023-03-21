@@ -9,7 +9,6 @@ jobs:
     # TODO: Change image if needed
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
