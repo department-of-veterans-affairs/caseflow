@@ -77,17 +77,9 @@ class MembershipRequest < CaseflowRecord
 
   def set_decided_at
     # TODO: Figure out exactly when to update the decided at time? Should it require a decider?
-    # Or should it only care  when the status changes
+    # Or should it only care when the status changes
     if status_changed? && status_was == "assigned" && decider_id?
       self.decided_at = Time.zone.now
     end
   end
-
-  ## Instance methods
-  def cancel_and_send_email(admin_user)
-    update!(status: "cancelled", decider: admin_user)
-
-    # add mailers here.
-  end
-  ##
 end
