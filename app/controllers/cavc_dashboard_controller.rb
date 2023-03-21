@@ -184,10 +184,10 @@ class CavcDashboardController < ApplicationController
           CavcReasonsToBasis.create(cavc_dispositions_to_reason_id: cdtr.id,
                                     cavc_selection_basis_id: new_basis.id)
         end
-        all_crtbs = cdtr.reload.cavc_reasons_to_bases
-        crtbs_to_delete = all_crtbs - submitted_crtbs
-        crtbs_to_delete.map(&:destroy)
       end
+      all_crtbs = cdtr.reload.cavc_reasons_to_bases
+      crtbs_to_delete = all_crtbs - submitted_crtbs.to_a
+      crtbs_to_delete.map(&:destroy)
       cdtr.reload
     end
   end
