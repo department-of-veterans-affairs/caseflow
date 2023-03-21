@@ -152,7 +152,6 @@ jobs:
           mkdir -p ./test-results/rspec
           export RAILS_ENV=test
           make -f Makefile.example test | tee ./test-results/rspec/rspec.out
-          Testing without knapsack
           bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
 
       - uses: actions/upload-artifact@v3
