@@ -8,6 +8,11 @@ on:
 jobs:
   validate-demo:
     runs-on: ubuntu-8-cores-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ci_node_total: [12]
+        ci_node_index: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     services:
       postgres:
         image: postgres:11.7
@@ -22,6 +27,7 @@ jobs:
         image: redis:4.0.10
         ports:
         - 6379:6379
+        options: --entrypoint redis-server
       facols_db:
         image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
         credentials:
@@ -43,9 +49,20 @@ jobs:
           POSTGRES_HOST: postgres
           POSTGRES_USER: root
           POSTGRES_PASSWORD: password
+          REDIS_URL_CACHE: "redis://redis:6379/0/cache/"
+          KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
+          KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
+          KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
+          KNAPSACK_PRO_LOG_LEVEL: info
     steps:
       - uses: actions/checkout@v3
-
+      
+      - name: Install redis-server
+        run: |
+          apt-get update
+          apt install -y redis-server
+      
       - name: restore yarn cache
         uses: actions/cache/restore@v3
         with:
@@ -91,7 +108,7 @@ jobs:
       - name: setup testfiles directory
         run: ./ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
-
+  
       - name: Install Ruby Dependencies
         run: |
           ruby -v
@@ -113,16 +130,16 @@ jobs:
 
       - name: "Wait for FACOLS"
         run: ./ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
-        
+
       - name: Database setup
         run: |
           ./ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
           ./ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
-          
+
       - name: make seed-dbs
         run: |
           ./ci-bin/capture-log "make -f Makefile.example seed-dbs"
-        
+
       - name: Assets Precompile
         run: |
           ./ci-bin/capture-log "bundle exec rake assets:precompile"
@@ -132,14 +149,7 @@ jobs:
           mkdir -p ./test-results/rspec
           export RAILS_ENV=test
           make -f Makefile.example test | tee ./test-results/rspec/rspec.out
-          Testing without knapsack
           bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
-        env:
-          POSTGRES_HOST: postgres
-          KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
-          KNAPSACK_PRO_TEST_SUITE_TOKEN_CHROME_FEATURE_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_CHROME_FEATURE_RSPEC }}
-          KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
-          REDIS_URL_CACHE: "redis://redis:6379/0/cache/"
 
       - uses: actions/upload-artifact@v3
         with:

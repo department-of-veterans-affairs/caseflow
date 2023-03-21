@@ -7,6 +7,9 @@ REDIS_NAMESPACES = [
   "test_#{ENV['TEST_SUBCATEGORY']}"
 ].freeze
 
+CONFIG = { url: "redis://redis:6379/0/cache/" }
+ 
+
 FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || 'all'}"
 
 RSpec.configure do |config|
@@ -25,6 +28,6 @@ RSpec.configure do |config|
 end
 
 def delete_matched(namespace:)
-  redis = Redis.current
+  redis = Redis.new(CONFIG)
   redis.scan_each(match: "#{namespace}:*") { |key| redis.del(key) }
 end
