@@ -85,6 +85,20 @@ RSpec.configure do |config|
     RequestStore[:application] = nil
   end
 
+  # If some tests are failing due to requests to the Knapsack Pro API,
+  # you may have some code that reconfigures WebMock/FakeWeb.
+  # The usual suspects are calls to WebMock.reset! or an issue with webmock/rspec.
+  # In the latter case, you can solve the problem with:
+  # https://docs.knapsackpro.com/knapsack_pro-ruby/guide/?rails=yes&test-runner=rspec&vcr=yes&ci=github-actions
+  config.after(:suite) do
+    WebMock.disable_net_connect!(
+      allow_localhost: true,
+      allow: [
+        'api.knapsackpro.com',
+      ],
+    )
+  end
+
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
