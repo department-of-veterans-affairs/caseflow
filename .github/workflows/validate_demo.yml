@@ -43,6 +43,7 @@ jobs:
           POSTGRES_HOST: postgres
           POSTGRES_USER: root
           POSTGRES_PASSWORD: password
+          REDIS_URL_CACHE: "redis://redis:6379/0/cache/"
     steps:
       - uses: actions/checkout@v3
 
@@ -139,7 +140,6 @@ jobs:
           KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
           KNAPSACK_PRO_TEST_SUITE_TOKEN_CHROME_FEATURE_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_CHROME_FEATURE_RSPEC }}
           KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
-          REDIS_URL_CACHE: "redis://redis:6379/0/cache/"
 
       - uses: actions/upload-artifact@v3
         with:
