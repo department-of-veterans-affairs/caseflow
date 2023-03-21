@@ -30,8 +30,8 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
   # :nocov:
   def external_message_id(msg)
     if msg.is_a?(GovDelivery::TMS::EmailMessage)
-      response = msg.response
-      response_external_url = response.body.dig("_link", "self")
+      response_msg = msg.response
+      response_external_url = response_msg.body.dig("_link", "self")
 
       DataDogService.increment_counter(\
         app_name: Constants.DATADOG_METRICS.VHA.APP_NAME,
@@ -44,9 +44,9 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
       )
 
       log = log_message.merge(
-        status: response.status,
+        status: response_msg.status,
         gov_delivery_id: response_external_url,
-        message: "GovDelivery returned (code: #{response.status}) (external url: #{response_external_url})"
+        message: "GovDelivery returned (code: #{response_msg.status}) (external url: #{response_external_url})"
       )
       Rails.logger.info("#{LOG_PREFIX} #{log}")
 
@@ -97,7 +97,6 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
     Rails.logger.info("#{LOG_PREFIX} #{log}")
     msg = email.deliver_now!
   rescue StandardError => error
-    # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS endpoints\
     Raven.capture_exception(error)
     log = log_message(mailer_parameters).merge(
       status: "error", message: "Failed to send #{TYPE_LABEL} to #{email_address} : #{error}"
