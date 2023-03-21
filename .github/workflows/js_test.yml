@@ -41,6 +41,7 @@ jobs:
           tar xvf firefox-${FIREFOX_VERSION}.tar.bz2
           mv firefox/ /usr/lib/firefox
           ln -s /usr/lib/firefox /usr/bin/firefox
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -69,6 +70,6 @@ jobs:
           ~.project/ci-bin/concatenate-log.rb >> ./all_logs.log
 
       - name: store logs
-        ses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3
         with:
           path: ./all_logs.log
