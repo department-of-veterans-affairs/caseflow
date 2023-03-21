@@ -47,7 +47,6 @@ export const EditDocket = (props) => {
     judgeId: props?.docket?.judgeId?.toString(),
     bvaPoc: props?.docket?.bvaPoc,
     notes: props?.docket?.notes,
-    conferenceLink: props?.docket?.conferenceLink
   });
 
   // These fields need their own state since the DocketStartTimes component updates two fields
@@ -95,7 +94,6 @@ export const EditDocket = (props) => {
         const editedHearingDay = {
           ...ApiUtil.convertToCamelCase(response.body),
           requestType: fields.requestType,
-          conferenceLink: fields.conferenceLink
         };
 
         // Refresh the docket data and set the update to true so we receive the success banner
