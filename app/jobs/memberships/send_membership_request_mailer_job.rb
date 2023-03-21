@@ -34,11 +34,12 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
       response_external_url = response.body.dig("_link", "self")
 
       DataDogService.increment_counter(\
-        app_name: Constants.DATADOG_METRICS.DISPATCH.APP_NAME,
-        metric_group: Constants.DATADOG_METRICS.DISPATCH.OUTCODE_GROUP_NAME,
+        app_name: Constants.DATADOG_METRICS.VHA.APP_NAME,
+        metric_group: Constants.DATADOG_METRICS.VHA.MEMBERSHIP_REQUESTS_GROUP_NAME,
         metric_name: "email.error",
         attrs: {
-          email_type: type
+          recipient_info: mailer_parameters[:recipient_info],
+          requests: mailer_parameters[:requests]
         }
       )
 
@@ -95,7 +96,7 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
     log = log_message(mailer_parameters).merge(status: "info", message: "Sending #{TYPE_LABEL} to #{email_address} ...")
     Rails.logger.info("#{LOG_PREFIX} #{log}")
     msg = email.deliver_now!
-  rescue StandardError, Savon::Error, BGS::ShareError => error
+  rescue StandardError => error
     # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS endpoints\
     Raven.capture_exception(error)
     log = log_message(mailer_parameters).merge(
