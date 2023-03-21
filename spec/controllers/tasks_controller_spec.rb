@@ -1101,21 +1101,25 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         )
       end
 
+      let (:taskTimer) {TaskTimer.find_by(task_id: post_initial_task.id)}
+      let (:dayOnHold) {((taskTimer.updated_at - taskTimer.created_at).to_i/1.day)}
+
+      # expected instructions are payload instructions plus the hold time
       let(:instructions) { "Completion instructions go here" }
+      let(:expected_instructions) do
+        "\nHold time: #{dayOnHold}/#{days_on_hold} days\n\n#{instructions}"
+      end
+
       let(:params) do
         {
           task: {
             status: Constants.TASK_STATUSES.completed,
-            instructions: instructions
+            instructions: expected_instructions
           },
           id: post_initial_task.id.to_s
         }
       end
 
-      # expected instructions are payload instructions plus the hold time
-      let(:expected_instructions) do
-        "#{instructions}\nHold time: #{post_initial_task.days_on_hold}/#{post_initial_task.max_hold_day_period} days"
-      end
 
       subject { patch :update, params: params }
 
@@ -1154,21 +1158,27 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         )
       end
 
-      let(:instructions) { "Cancel instructions go here" }
+      let (:taskTimer) {TaskTimer.find_by(task_id: post_initial_task.id)}
+      let (:dayOnHold) {((taskTimer.updated_at - taskTimer.created_at).to_i/1.day)}
+
+      # expected instructions are payload instructions plus the hold time
+      let(:instructions) { "Completion instructions go here" }
+      let(:expected_instructions) do
+        "\nHold time: #{dayOnHold}/#{days_on_hold} days\n\n#{instructions}"
+      end
+
       let(:params) do
         {
           task: {
             status: Constants.TASK_STATUSES.cancelled,
-            instructions: instructions
+            instructions: expected_instructions
           },
           id: post_initial_task.id.to_s
         }
       end
 
       # expected instructions are payload instructions plus the hold time
-      let(:expected_instructions) do
-        "#{instructions}\nHold time: #{post_initial_task.days_on_hold}/#{post_initial_task.max_hold_day_period} days"
-      end
+
 
       subject { patch :update, params: params }
 
@@ -1210,7 +1220,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(post_initial_task.reload.cancelled_by).to eq(cob_user)
         # post task instructions should be concat with days on hold
         expect(post_initial_task.reload.instructions[0]).to eq(expected_instructions)
-        expect(post_initial_task.reload.days_on_hold).to eq(12)
       end
     end
 

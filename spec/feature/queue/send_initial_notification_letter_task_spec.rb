@@ -90,7 +90,7 @@ RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
 
       # fill out instructions
       fill_in("taskInstructions", with: "instructions")
-      click_button("Submit")
+      find('#Cancel-task-button-id-1:enabled').click
 
       # expect success
       expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, root_task.appeal.veteran.person.name))

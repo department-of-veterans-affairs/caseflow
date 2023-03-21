@@ -36,19 +36,4 @@ class PostSendInitialNotificationLetterHoldingTask < LetterTask
     task_timer = TaskTimer.find_by(task: self)
     return task_timer.submitted_at if task_timer
   end
-
-  def days_on_hold
-    # if closed out, set the time to be the difference between created_at and closed_at
-    # otherwise, calculate from now if the timer is still going
-    if !closed_at.nil?
-      (closed_at - created_at).to_i / 1.day
-    else
-      (Time.zone.now - created_at).to_i / 1.day
-    end
-  end
-
-  # created_at offset by 1 day to compensate for day difference rounding down.
-  def max_hold_day_period
-    (timer_ends_at - created_at.prev_day).to_i / 1.day
-  end
 end
