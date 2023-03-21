@@ -57,12 +57,12 @@ jobs:
           KNAPSACK_PRO_LOG_LEVEL: debug
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Install redis-server
         run: |
           apt-get update
           apt install -y redis-server
-      
+
       - name: restore yarn cache
         uses: actions/cache/restore@v3
         with:
@@ -108,7 +108,7 @@ jobs:
       - name: setup testfiles directory
         run: ./ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
-  
+
       - name: Install Ruby Dependencies
         run: |
           ruby -v
@@ -149,7 +149,7 @@ jobs:
           mkdir -p ./test-results/rspec
           export RAILS_ENV=test
           make -f Makefile.example test | tee ./test-results/rspec/rspec.out
-          bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
+          bundle exec rake "knapsack_pro:queue:rspec[--require rails_helper]"
 
       - uses: actions/upload-artifact@v3
         with:
