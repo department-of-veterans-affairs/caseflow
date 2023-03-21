@@ -139,6 +139,7 @@ jobs:
           KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
           KNAPSACK_PRO_TEST_SUITE_TOKEN_CHROME_FEATURE_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_CHROME_FEATURE_RSPEC }}
           KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
+          REDIS_URL_CACHE: "redis://redis:6379/0/cache/"
 
       - uses: actions/upload-artifact@v3
         with:
