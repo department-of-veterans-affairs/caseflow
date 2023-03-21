@@ -116,13 +116,14 @@ jobs:
 
       - name: RSpec via knapsack_pro Queue Mode
         run: |
-            mkdir -p ./test-results/rspec
-            export RAILS_ENV=test
-          # bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
-          env:
-            KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
+          mkdir -p ./test-results/rspec
+          export RAILS_ENV=test
+        # bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
+        # env:
+        #   KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
 
       - uses: actions/upload-artifact@v3
+        with:
           path: ./test-results
 
       - uses: actions/upload-artifact@v3
