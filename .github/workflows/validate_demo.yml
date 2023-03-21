@@ -22,6 +22,7 @@ jobs:
         image: redis:4.0.10
         ports:
         - 6379:6379
+        options: --entrypoint redis-server
       facols_db:
         image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
         credentials:
@@ -46,7 +47,12 @@ jobs:
           REDIS_URL_CACHE: "redis://redis:6379/0/cache/"
     steps:
       - uses: actions/checkout@v3
-
+      
+      - name: Install redis-server
+        run: |
+          apt-get update
+          apt-install -y redis-server
+      
       - name: restore yarn cache
         uses: actions/cache/restore@v3
         with:
@@ -92,7 +98,7 @@ jobs:
       - name: setup testfiles directory
         run: ./ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
-
+  
       - name: Install Ruby Dependencies
         run: |
           ruby -v
