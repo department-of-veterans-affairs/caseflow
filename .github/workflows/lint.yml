@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-       - name: Install Ruby Dependencies
+      - name: Install Ruby Dependencies
         run: |
           ruby -v
           BASH_ENV="Bash"
