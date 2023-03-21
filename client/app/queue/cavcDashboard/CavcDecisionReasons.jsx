@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
 import { Accordion } from '../../components/Accordion';
@@ -136,9 +137,6 @@ const CavcDecisionReasons = (props) => {
 
   // for tracking state of each checkbox
   const [checkedReasons, setCheckedReasons] = useState(checkedBoxesInStore || initialCheckboxes);
-  const [otherBasisSelectedByCheckboxId, setOtherBasisSelectedByCheckboxId] = useState(decisionReasons.map((reason) => {
-    return { checkboxId: reason.id, checked: false };
-  }));
 
   useEffect(() => {
     dispatch(setCheckedDecisionReasons(checkedReasons, uniqueId));
@@ -264,14 +262,6 @@ const CavcDecisionReasons = (props) => {
       }));
     }
 
-    setOtherBasisSelectedByCheckboxId((prevState) => {
-      const idx = otherBasisSelectedByCheckboxId.findIndex((basis) => basis.checkboxId === box.id);
-      const arr = [...prevState];
-
-      arr[idx] = { checkboxId: box.id, checked: (option.label === 'Other') };
-
-      return arr;
-    });
     dispatch(setSelectionBasisForReasonCheckbox(uniqueId, selectionBasesIndex, option));
   };
 
@@ -518,7 +508,6 @@ const CavcDecisionReasons = (props) => {
                             selectionBasesIndex={idx}
                             handleBasisChange={handleBasisChange}
                             selectionBases={selectionBases}
-                            otherBasisSelectedByCheckboxId={otherBasisSelectedByCheckboxId}
                             handleOtherTextFieldChange={handleOtherTextFieldChange}
                             handleRemoveBasis={handleRemoveBasis}
                           />
@@ -549,7 +538,6 @@ const CavcDecisionReasons = (props) => {
                     selectionBasesIndex={idx}
                     handleBasisChange={handleBasisChange}
                     selectionBases={selectionBases}
-                    otherBasisSelectedByCheckboxId={otherBasisSelectedByCheckboxId}
                     handleOtherTextFieldChange={handleOtherTextFieldChange}
                     handleRemoveBasis={handleRemoveBasis}
                   />

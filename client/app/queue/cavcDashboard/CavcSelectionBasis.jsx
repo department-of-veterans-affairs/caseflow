@@ -53,7 +53,6 @@ const CavcSelectionBasis = (props) => {
     selectionBasesIndex,
     handleBasisChange,
     selectionBases,
-    otherBasisSelectedByCheckboxId,
     handleOtherTextFieldChange,
     handleRemoveBasis
   } = props;
@@ -82,7 +81,7 @@ const CavcSelectionBasis = (props) => {
             styling={basisForSelectionStylingWithChild}
             value={defaultSelectionValue?.label ? defaultSelectionValue : null}
           />
-          {(otherBasisSelectedByCheckboxId.filter((otherBasis) => otherBasis.checkboxId === child.id)[0].checked) && (
+          {defaultSelectionValue?.label === 'Other' && (
             <div style={{ paddingLeft: '10rem', paddingTop: '2.5rem' }}>
               <TextField
                 type="string"
@@ -136,13 +135,7 @@ const CavcSelectionBasis = (props) => {
             readOnly={!userCanEdit}
             value={defaultSelectionValue?.label ? defaultSelectionValue : null}
           />
-          <Button
-            linkStyling
-            onClick={() => handleRemoveBasis(basis, parent)}
-          >
-            {LABELS.REMOVE_BASIS_BUTTON_LABEL}
-          </Button>
-          {(otherBasisSelectedByCheckboxId.filter((otherBasis) => otherBasis.checkboxId === parent.id)[0].checked) && (
+          {defaultSelectionValue?.label === 'Other' && (
             <div style={{ paddingLeft: '7.5rem', paddingTop: '2.5rem' }}>
               <TextField
                 type="string"
@@ -153,6 +146,12 @@ const CavcSelectionBasis = (props) => {
               />
             </div>
           )}
+          <Button
+            linkStyling
+            onClick={() => handleRemoveBasis(basis, parent)}
+          >
+            {LABELS.REMOVE_BASIS_BUTTON_LABEL}
+          </Button>
         </div>
       );
     }
@@ -184,7 +183,6 @@ CavcSelectionBasis.propTypes = {
   selectionBasesIndex: PropTypes.number,
   handleBasisChange: PropTypes.func,
   selectionBases: PropTypes.arrayOf(PropTypes.object),
-  otherBasisSelectedByCheckboxId: PropTypes.arrayOf(PropTypes.object),
   handleOtherTextFieldChange: PropTypes.func,
   handleRemoveBasis: PropTypes.func
 };
