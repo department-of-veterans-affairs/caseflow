@@ -55,6 +55,7 @@ jobs:
 
       - name: jest
         run: |
+          npm install --save-dev jest
           mkdir -p ~/test-results/jest
           ./ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
 
