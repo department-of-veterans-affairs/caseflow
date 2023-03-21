@@ -8,6 +8,10 @@ class PostSendInitialNotificationLetterHoldingTask < LetterTask
     super(args&.except(:end_date))
   end
 
+  def label
+    "Post-Send Initial Notification Letter Holding Period"
+  end
+
   def available_actions(user)
     if assigned_to.user_has_access?(user) &&
        FeatureToggle.enabled?(:cc_appeal_workflow)
