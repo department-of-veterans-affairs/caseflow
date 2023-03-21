@@ -1,0 +1,74 @@
+name: js_tests
+
+
+# on:
+#   workflow_call:
+on:
+  workflow_dispatch:
+  push:
+    branches: f-gh-migration-full
+
+jobs:
+  js_tests:
+    runs-on: ubuntu-latest
+    container:
+      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      credentials:
+          username: AWS
+          password: ${{ secrets.ECR_PASSWORD }}
+      env:
+          DBUS_SESSION_BUS_ADDRESS: /dev/null
+          RAILS_ENV: test
+          NODE_ENV: test
+          JEST_DIR: /home/circleci/test-results/jest
+          TEST_REPORTER: jest-junit
+          JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest
+          COVERAGE_DIR: /home/circleci/coverage
+    steps:
+      - name: Install chromium
+        run: |
+          CHROME_VERSION="106.0.5249.119-1"
+          apt-get update
+          wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+          && apt install -y /tmp/chrome.deb \
+          && rm /tmp/chrome.deb
+
+      - name: Install firefox
+        run: |
+          FIREFOX_VERSION="106.0.1"
+          apt-get -y install libgtk2.0-0
+          wget https://ftp.mozilla.org/pub/firefox/releases/${FIREFOX_VERSION}/linux-x86_64/en-GB/firefox-${FIREFOX_VERSION}.tar.bz2
+          tar xvf firefox-${FIREFOX_VERSION}.tar.bz2
+          mv firefox/ /usr/lib/firefox
+          ln -s /usr/lib/firefox /usr/bin/firefox
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Python-2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python2
+
+      - name: install_node_dependencies
+        run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+
+      - name: jest
+        run: |
+          mkdir -p ~/test-results/jest
+          pushd client
+          ./project/ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
+
+      - name: store_test_results
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./test-results
+
+
+      - name: Concatenate all logs
+        run: |
+          ~.project/ci-bin/concatenate-log.rb >> ./all_logs.log
+
+      - name: store logs
+        ses: actions/upload-artifact@v3
+        with:
+          path: ./all_logs.log
