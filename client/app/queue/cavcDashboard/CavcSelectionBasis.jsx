@@ -62,7 +62,7 @@ const CavcSelectionBasis = (props) => {
 
     if (userCanEdit) {
       return (
-        <div>
+        <div className="dash-basis-group">
           <SearchableDropdown
             name={name}
             filterOption={filterOption}
@@ -96,7 +96,7 @@ const CavcSelectionBasis = (props) => {
             linkStyling
             onClick={() => handleRemoveBasis(basis, child, parent)}
           >
-            {LABELS.REMOVE_BASIS_BUTTON_LABEL}
+            <i className="fa fa-trash-o" aria-hidden="true"></i> {LABELS.REMOVE_BASIS_BUTTON_LABEL}
           </Button>
         </div>
       );
@@ -117,7 +117,7 @@ const CavcSelectionBasis = (props) => {
 
     if (userCanEdit) {
       return (
-        <div>
+        <div className="dash-basis-group">
           <SearchableDropdown
             name={name}
             label={DECISION_REASON_LABELS.DECISION_REASON_BASIS_LABEL}
@@ -150,7 +150,7 @@ const CavcSelectionBasis = (props) => {
             linkStyling
             onClick={() => handleRemoveBasis(basis, parent)}
           >
-            {LABELS.REMOVE_BASIS_BUTTON_LABEL}
+            <i className="fa fa-trash-o" aria-hidden="true"></i> {LABELS.REMOVE_BASIS_BUTTON_LABEL}
           </Button>
         </div>
       );

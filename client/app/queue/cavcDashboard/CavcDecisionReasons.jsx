@@ -16,6 +16,14 @@ import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
 import CavcSelectionBasis from './CavcSelectionBasis';
 import Button from '../../components/Button';
 
+const addBasisButtonForParentStyle = css({
+  paddingLeft: '7.5rem'
+});
+
+const addBasisButtonForChildStyle = css({
+  paddingLeft: '10rem'
+});
+
 const CavcDecisionReasons = (props) => {
   const {
     uniqueId,
@@ -518,6 +526,7 @@ const CavcDecisionReasons = (props) => {
                   childToFind.basis_for_selection_category && childToFind.checked) &&
                     <Button
                       linkStyling
+                      styling={addBasisButtonForChildStyle}
                       onClick={() => handleAddBasis(child, parent)}
                     >
                       {LABELS.ADD_BASIS_BUTTON_LABEL}
@@ -544,6 +553,7 @@ const CavcDecisionReasons = (props) => {
                 )))}
                 <Button
                   linkStyling
+                  styling={addBasisButtonForParentStyle}
                   onClick={() => handleAddBasis(parent)}
                 >
                   {LABELS.ADD_BASIS_BUTTON_LABEL}
