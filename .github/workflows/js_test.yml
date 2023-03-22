@@ -60,7 +60,7 @@ jobs:
           pwd
           mkdir -p ./test-results/jest
           pushd client
-          ./ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
+          ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
 
       - name: store_test_results
         uses: actions/upload-artifact@v3
