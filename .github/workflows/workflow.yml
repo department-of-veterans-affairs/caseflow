@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
   pull_request:
     types: [opened, reopened, edited, synchronize]
-      
-# Use this flag to turn on/off RSpec.  Please go to the lint & js_test job to disable the boolean      
+
+# Use this flag to turn on/off RSpec.  Please go to the lint & js_test job to disable the boolean
 env:
   rspec_active: false
 
@@ -58,7 +58,7 @@ jobs:
           KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
           KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
           KNAPSACK_PRO_LOG_LEVEL: info
-  
+
     steps:
       - uses: actions/checkout@v3
 
@@ -94,7 +94,7 @@ jobs:
           wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
           && apt install -y /tmp/chrome.deb \
           && rm /tmp/chrome.deb
-          
+
       - name: Install Chromedriver
         run: |
           apt-get install -y xvfb libxi6 libgconf-2-4
@@ -192,7 +192,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           path: ./logs
-  caseflow_jess_job:
+  caseflow_jest_job:
     # This job will run the jest, change the value below to false if you wish to turn it off.
     if: true
     runs-on: ubuntu-latest
@@ -272,7 +272,9 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
 
       - name: Install Ruby Dependencies
         run: |
@@ -292,12 +294,11 @@ jobs:
 
       - name: Lint
         run:  ./ci-bin/capture-log "bundle exec rake lint"
-        if: ${{ always() }}  
+        if: ${{ always() }}
 
       - name: Security
         run:  ./ci-bin/capture-log "bundle exec rake security"
-        if: ${{ always() }}  
-
+        if: ${{ always() }}
 
 #       - name: Concatenate all logs
 #         run: ./ci-bin/concatenate-log.rb >> ./all_logs.log
@@ -305,4 +306,3 @@ jobs:
       # TODO: Not sure if this is needed with GH Actions
       - name: Store concatenated logs
         run: ./all_logs.log
-    
