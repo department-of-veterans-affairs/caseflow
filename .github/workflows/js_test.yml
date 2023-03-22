@@ -6,7 +6,7 @@ name: js_tests
 on:
   workflow_call:
   push:
-    branches: f-gh-migration-full
+    branches: turn-this-off
 
 jobs:
   js_tests:
