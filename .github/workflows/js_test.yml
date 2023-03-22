@@ -66,10 +66,10 @@ jobs:
         with:
           path: ./test-results
 
-
-      - name: Concatenate all logs
-        run: |
-          ./ci-bin/concatenate-log.rb >> ./all_logs.log
+      # Commenting out as this points to a circlCI URL
+#       - name: Concatenate all logs
+#         run: |
+#           ./ci-bin/concatenate-log.rb >> ./all_logs.log
 
       - name: store logs
         uses: actions/upload-artifact@v3
