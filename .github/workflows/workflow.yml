@@ -1,4 +1,4 @@
-ame: RSpec Jest Lint Workflow
+name: RSpec Jest Lint Workflow
 
 on:
   workflow_dispatch:
