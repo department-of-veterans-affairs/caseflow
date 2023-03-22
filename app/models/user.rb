@@ -529,6 +529,22 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       )
     end
 
+    def first_time_logging_in?(session)
+      user_session = session["user"] ||= authentication_service.default_user_session
+
+      unless user_session
+        return false
+      end
+
+      user = find_by_pg_user_id!(user_session["pg_user_id"], session) || User.find_by_css_id(user_session["id"])
+
+      if user&.last_login_at
+        false
+      else
+        true
+      end
+    end
+
     def from_session(session)
       user_session = session["user"] ||= authentication_service.default_user_session
 
