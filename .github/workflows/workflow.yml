@@ -1,16 +1,19 @@
 name: Caller workflow for Caseflow Repo
 
+# Modify branches when merged
+
 on:
   workflow_dispatch:
+  push:
     branches:
-      - f-gh-migration
+      - f-gh-migration-full
 
 jobs:
   validate_demo:
     uses: ./.github/workflows/validate_demo.yml
   rspec:
     uses: ./.github/workflows/rspec.yml
-  # js_tests:
-  #   uses: ./github/workflows/js_tests.yml
+  js_tests:
+    uses: ./.github/workflows/js_test.yml
   lint:
     uses: ./.github/workflows/lint.yml
