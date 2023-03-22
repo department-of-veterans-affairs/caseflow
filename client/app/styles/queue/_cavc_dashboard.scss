@@ -57,24 +57,24 @@
   }
 
   // the following two rules are very specific for the "remove basis" button in decision reasons
-  // left padding + margin should equal 10rem
+  // left padding + margin should equal 7.5rem
   div.usa-accordion-content > div > div > div > .dash-basis-group {
     @media screen and (max-width: 899px) {
       button {
         padding: 0 2rem;
         margin: 1rem 0;
-        margin-left: 8rem;
+        margin-left: 5.5rem;
       }
     }
   }
 
-  // left padding + margin should equal 7.5rem
+  // left padding + margin should equal 5rem
   div.usa-accordion-content > div > div > .dash-basis-group {
     @media screen and (max-width: 899px) {
       button {
         padding: 0 2rem;
         margin: 1rem 0;
-        margin-left: 5.5rem;
+        margin-left: 3rem;
       }
     }
   }

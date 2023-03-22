@@ -11,25 +11,23 @@ import Button from '../../components/Button';
 const MIN_INPUT_LENGTH = 3;
 
 const basisForSelectionStylingNoChild = css({
-  paddingLeft: '7.5rem',
+  paddingLeft: '5rem',
   fontWeight: 'normal'
 });
 
 const basisForSelectionStylingNoChildReadOnly = css({
-  paddingLeft: '6.5rem',
-  fontWeight: 'normal',
-  '@media(min-width: 1200px)': { paddingLeft: '8.5rem' },
+  paddingLeft: '6rem',
+  fontWeight: 'normal'
 });
 
 const basisForSelectionStylingWithChild = css({
-  paddingLeft: '10rem',
+  paddingLeft: '7.5rem',
   fontWeight: 'normal',
 });
 
 const basisForSelectionStylingWithChildReadOnly = css({
-  paddingLeft: '8rem',
-  fontWeight: 'normal',
-  '@media(min-width: 1200px)': { paddingLeft: '14rem' },
+  paddingLeft: '8.5rem',
+  fontWeight: 'normal'
 });
 
 // Logic section for searchable dropdowns that prevents searching prior to 3 characters being entered

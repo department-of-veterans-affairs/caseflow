@@ -16,18 +16,18 @@ import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
 import CavcSelectionBasis from './CavcSelectionBasis';
 import Button from '../../components/Button';
 
-// left padding + margin should equal 7.5rem
+// left padding + margin should equal 5rem
 const addBasisButtonForParentStyle = css({
   padding: '0 2rem',
   marginBottom: '2rem',
-  marginLeft: '5.5rem'
+  marginLeft: '3rem'
 });
 
-// left padding + margin should equal 10rem
+// left padding + margin should equal 7.5rem
 const addBasisButtonForChildStyle = css({
   padding: '0 2rem',
   marginBottom: '2rem',
-  marginLeft: '8rem'
+  marginLeft: '5.5rem'
 });
 
 const CavcDecisionReasons = (props) => {
@@ -42,12 +42,12 @@ const CavcDecisionReasons = (props) => {
   } = props;
 
   const checkboxStyling = css({
-    paddingLeft: '2.5%',
+    paddingLeft: '2.5rem',
     marginBlock: '0.75rem'
   });
 
   const childCheckboxStyling = css({
-    paddingLeft: '5%',
+    paddingLeft: '5rem',
     marginBlock: '0.5rem'
   });
 
