@@ -34,6 +34,11 @@ jobs:
           password: ${{ secrets.ECR_PASSWORD }}
         ports:
         - 1521:1521
+    strategy:
+      fail-fast: false
+      matrix:
+        ci_node_total: [12]
+        ci_node_index: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
@@ -48,6 +53,12 @@ jobs:
           POSTGRES_HOST: postgres
           POSTGRES_USER: root
           POSTGRES_PASSWORD: password
+          KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
+          KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
+          KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
+          KNAPSACK_PRO_LOG_LEVEL: info
+  
     steps:
       - uses: actions/checkout@v3
 
@@ -153,14 +164,10 @@ jobs:
         run: |
           mkdir -p ./test-results/rspec
           export RAILS_ENV=test
-          bundle exec rake "knapsack_pro:queue:rspec[--require rails_helper]"
+          # bundle exec rake "knapsack_pro:queue:rspec[--require rails_helper]"
+          bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
         # Only runs RSpec if flag is true
         if: ${{ env.rspec_active == 'true' }}
-        env:
-          POSTGRES_HOST: postgres
-          KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
-          KNAPSACK_PRO_TEST_SUITE_TOKEN_CHROME_FEATURE_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_CHROME_FEATURE_RSPEC }}
-          KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
 
       - uses: actions/upload-artifact@v3
         with:
