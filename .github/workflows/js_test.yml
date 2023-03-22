@@ -4,7 +4,7 @@ name: js_tests
 # on:
 #   workflow_call:
 on:
-  workflow_dispatch:
+  workflow_call:
   push:
     branches: f-gh-migration-full
 
