@@ -1,4 +1,4 @@
-name: Caller workflow for Caseflow Repo
+name: RSpec Jest Lint Workflow
 
 on:
   workflow_dispatch:
