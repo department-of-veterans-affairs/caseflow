@@ -231,9 +231,11 @@ jobs:
         run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - name: jest
+        shell: bash
         run: |
           npm install --save-dev jest
           mkdir -p ~/test-results/jest
+          pushd client
           ./ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
 
       - name: store_test_results
