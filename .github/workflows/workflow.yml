@@ -234,9 +234,9 @@ jobs:
         shell: bash
         run: |
           npm install --save-dev jest
-          mkdir -p ~/test-results/jest
+          mkdir -p ./test-results/jest
           pushd client
-          ./ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
+          ../ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
 
       - name: store_test_results
         uses: actions/upload-artifact@v3
@@ -244,9 +244,9 @@ jobs:
           path: ./test-results
 
 
-      - name: Concatenate all logs
-        run: |
-          ./ci-bin/concatenate-log.rb >> ./all_logs.log
+#       - name: Concatenate all logs
+#         run: |
+#           ./ci-bin/concatenate-log.rb >> ./all_logs.log
 
       - name: store logs
         uses: actions/upload-artifact@v3
@@ -284,8 +284,8 @@ jobs:
       - name: Security
         run:  ./ci-bin/capture-log "bundle exec rake security"
 
-      - name: Concatenate all logs
-        run: ./ci-bin/concatenate-log.rb >> ./all_logs.log
+#       - name: Concatenate all logs
+#         run: ./ci-bin/concatenate-log.rb >> ./all_logs.log
 
       # TODO: Not sure if this is needed with GH Actions
       - name: Store concatenated logs
