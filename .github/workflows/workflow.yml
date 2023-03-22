@@ -269,6 +269,7 @@ jobs:
       credentials:
           username: AWS
           password: ${{ secrets.ECR_PASSWORD }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -286,6 +287,8 @@ jobs:
 
       - name: Danger
         run: ./ci-bin/capture-log "bundle exec danger"
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
 
       - name: Lint
         run:  ./ci-bin/capture-log "bundle exec rake lint"
