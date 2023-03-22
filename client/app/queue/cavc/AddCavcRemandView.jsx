@@ -70,10 +70,19 @@ const subTypeOptions = _.map(_.keys(CAVC_REMAND_SUBTYPE_NAMES), (key) => ({
  *  - @param {Object}   featureToggles   Which cavc decision types and remand subtypes are supported
  */
 const AddCavcRemandView = (props) => {
-  const { appealId, decisionIssues, substituteAppellantClaimantOptions, error, highlightInvalid, history, featureToggles, ...otherProps } = props;
+  const {
+    appealId,
+    decisionIssues,
+    substituteAppellantClaimantOptions,
+    error,
+    highlightInvalid,
+    history,
+    featureToggles,
+    ...otherProps
+  } = props;
   const [docketNumber, setDocketNumber] = useState(null);
   const [attorney, setAttorney] = useState('1');
-  const [isAppellantSubstituted, setIsAppellantSubstituted] = useState('false')
+  const [isAppellantSubstituted, setIsAppellantSubstituted] = useState('false');
   const [appellantSubstitutionGrantedDate, setAppellantSubstitutionGrantedDate] = useState(null);
   const [participantId, setParticipantId] = useState(null);
   const [judge, setJudge] = useState(null);
@@ -111,7 +120,7 @@ const AddCavcRemandView = (props) => {
     { displayText: 'Yes',
       value: 'true',
       disabled: !substituteAppellantClaimantOptions
-     },
+    },
     { displayText: 'No',
       value: 'false' }
   ];
@@ -171,16 +180,25 @@ const AddCavcRemandView = (props) => {
     (Boolean(mandateDate) && validateDateNotInFuture(mandateDate)) || !mandateAvailable();
 
   const validAppellantSubstitutionGrantedDateDate = () =>
-    (!featureToggles.cavc_remand_granted_substitute_appellant || isAppellantSubstituted === 'false' || (isAppellantSubstituted === 'true' && Boolean(appellantSubstitutionGrantedDate) && validateDateNotInFuture(appellantSubstitutionGrantedDate)));
+    (!featureToggles.cavc_remand_granted_substitute_appellant ||
+      isAppellantSubstituted === 'false' ||
+      (isAppellantSubstituted === 'true' && Boolean(appellantSubstitutionGrantedDate) &&
+        validateDateNotInFuture(appellantSubstitutionGrantedDate)
+      )
+    );
 
   const validSubstituteAppellantClaimant = () =>
-    (!featureToggles.cavc_remand_granted_substitute_appellant || isAppellantSubstituted === 'false' || (isAppellantSubstituted === 'true' && Boolean(participantId)));
+    (!featureToggles.cavc_remand_granted_substitute_appellant ||
+      isAppellantSubstituted === 'false' ||
+      (isAppellantSubstituted === 'true' && Boolean(participantId))
+    );
 
   const validInstructions = () => instructions && instructions.length > 0;
 
   const validateForm = () => {
-    return validDocketNumber() && validJudge() && validDecisionDate() && validJudgementDate() && validMandateDate() &&
-      validInstructions() && validDecisionIssues() && validAppellantSubstitutionGrantedDateDate() && validSubstituteAppellantClaimant();
+    return validDocketNumber() && validJudge() && validDecisionDate() &&
+    validJudgementDate() && validMandateDate() && validInstructions() &&
+    validDecisionIssues() && validAppellantSubstitutionGrantedDateDate() && validSubstituteAppellantClaimant();
   };
 
   const mandateDatesPopulated = () => mandateAvailable() && Boolean(judgementDate) && Boolean(mandateDate);
@@ -214,7 +232,8 @@ const AddCavcRemandView = (props) => {
   const submit = () => {
     const payload = {
       data: {
-        judgement_date: ((remandType() && mdrSubtype()) || !mandateAvailable()) ? null : judgementDate,
+        judgement_date:
+          ((remandType() && mdrSubtype()) || !mandateAvailable()) ? null : judgementDate,
         mandate_date: ((remandType() && mdrSubtype()) || !mandateAvailable()) ? null : mandateDate,
         source_appeal_id: appealId,
         cavc_docket_number: docketNumber,
@@ -223,10 +242,12 @@ const AddCavcRemandView = (props) => {
         decision_date: decisionDate,
         remand_subtype: remandType() ? subType : null,
         represented_by_attorney: attorney === '1',
-        is_appellant_substituted: featureToggles.cavc_remand_granted_substitute_appellant ? isAppellantSubstituted : null,
+        is_appellant_substituted:
+          featureToggles.cavc_remand_granted_substitute_appellant ? isAppellantSubstituted : null,
         participant_id: featureToggles.cavc_remand_granted_substitute_appellant ? participantId : null,
-        substitution_date: featureToggles.cavc_remand_granted_substitute_appellant ? appellantSubstitutionGrantedDate : null,
-        remand_source: "Add",
+        substitution_date:
+          featureToggles.cavc_remand_granted_substitute_appellant ? appellantSubstitutionGrantedDate : null,
+        remand_source: 'Add',
         decision_issue_ids: selectedIssueIds,
         federal_circuit: mdrSubtype() ? federalCircuit : null,
         instructions
@@ -247,7 +268,7 @@ const AddCavcRemandView = (props) => {
     setIsAppellantSubstituted(value);
     setAppellantSubstitutionGrantedDate(null);
     setParticipantId(null);
-  }
+  };
 
   const docketNumberField = <TextField
     label={COPY.CAVC_DOCKET_NUMBER_LABEL}
@@ -263,7 +284,7 @@ const AddCavcRemandView = (props) => {
     name="is-appellant-substituted"
     options={isAppellantSubstitutedOptions}
     value={isAppellantSubstituted}
-    onChange={(val) => handleChangeIsAppellantSubstituted(val) }
+    onChange={(val) => handleChangeIsAppellantSubstituted(val)}
     strongLabel
   />;
 
@@ -273,7 +294,8 @@ const AddCavcRemandView = (props) => {
     name="appellant-substitution-granted-date"
     value={appellantSubstitutionGrantedDate}
     onChange={(val) => setAppellantSubstitutionGrantedDate(val)}
-    errorMessage={highlightInvalid && !validAppellantSubstitutionGrantedDateDate() ? COPY.CAVC_APPELLANT_SUBSTITUTION_GRANTED_DATE_ERROR : null}
+    errorMessage={highlightInvalid &&
+      !validAppellantSubstitutionGrantedDateDate() ? COPY.CAVC_APPELLANT_SUBSTITUTION_GRANTED_DATE_ERROR : null}
     strongLabel
   />;
 
@@ -283,7 +305,8 @@ const AddCavcRemandView = (props) => {
     options={substituteAppellantClaimantOptions}
     value={participantId}
     onChange={(val) => setParticipantId(val)}
-    errorMessage={highlightInvalid && !validSubstituteAppellantClaimant() ? COPY.CAVC_SUBSTITUTE_APPELLANT_CLAIMANTS_ERROR : null}
+    errorMessage={highlightInvalid &&
+      !validSubstituteAppellantClaimant() ? COPY.CAVC_SUBSTITUTE_APPELLANT_CLAIMANTS_ERROR : null}
     strongLabel
   />;
 
@@ -446,8 +469,15 @@ const AddCavcRemandView = (props) => {
       {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
       {docketNumberField}
       {featureToggles.cavc_remand_granted_substitute_appellant && isAppellantSubstitutedField}
-      {featureToggles.cavc_remand_granted_substitute_appellant && isAppellantSubstituted === 'true' && appellantSubstitutionGrantedField}
-      {featureToggles.cavc_remand_granted_substitute_appellant && isAppellantSubstituted === 'true' && substituteAppellantClaimantField}
+      {featureToggles.cavc_remand_granted_substitute_appellant && !substituteAppellantClaimantOptions &&
+       <p>No existing relationships were found.</p>
+      }
+      {featureToggles.cavc_remand_granted_substitute_appellant &&
+        isAppellantSubstituted === 'true' &&
+        appellantSubstitutionGrantedField}
+      {featureToggles.cavc_remand_granted_substitute_appellant &&
+        isAppellantSubstituted === 'true' &&
+        substituteAppellantClaimantField}
       {representedField}
       {judgeField}
       {typeField}
@@ -479,7 +509,8 @@ AddCavcRemandView.propTypes = {
   featureToggles: PropTypes.shape({
     mdr_cavc_remand: PropTypes.bool,
     reversal_cavc_remand: PropTypes.bool,
-    dismissal_cavc_remand: PropTypes.bool
+    dismissal_cavc_remand: PropTypes.bool,
+    cavc_remand_granted_substitute_appellant: PropTypes.bool
   }),
   highlightInvalid: PropTypes.bool,
   history: PropTypes.object
