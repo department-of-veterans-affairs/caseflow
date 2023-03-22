@@ -149,7 +149,7 @@ jobs:
           Testing without knapsack
           bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
         # Only runs RSpec if flag is true
-        if: ${{ env.rspec_active == true }}
+        if: env.rspec_active == 'true'
         env:
           POSTGRES_HOST: postgres
           KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
@@ -180,7 +180,7 @@ jobs:
         with:
           path: ./logs
   js_tests:
-    if: ${{ env.js_test_active == true }}
+    if: env.js_test_active == 'true'
     runs-on: ubuntu-latest
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
