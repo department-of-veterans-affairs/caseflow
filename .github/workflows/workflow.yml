@@ -11,6 +11,7 @@ env:
   rspec_active: false
 
 jobs:
+  # This job runs the main deployment of caseflow
   demo:
     runs-on: ubuntu-8-cores-latest
     services:
@@ -186,6 +187,7 @@ jobs:
         with:
           path: ./logs
   js_tests:
+    # This job will run the jest, change the value below to false if you wish to turn it off.
     if: true
     runs-on: ubuntu-latest
     container:
@@ -253,6 +255,7 @@ jobs:
         with:
           path: ./all_logs.log
   lint:
+    # This job will run the security lint checker, change the value below to false if you wish to turn it off.
     if: true
     runs-on: ubuntu-latest
     container:
