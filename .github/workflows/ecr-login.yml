@@ -1,4 +1,4 @@
-name: ecr-login
+name: ECR Login Token Refresh
 on:
   workflow_dispatch:
   # Every 6 hours, the password validity is 12 hours
@@ -23,6 +23,7 @@ jobs:
   test:
     needs: login
     runs-on: ubuntu-latest
+    timeout-minutes: 1
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
