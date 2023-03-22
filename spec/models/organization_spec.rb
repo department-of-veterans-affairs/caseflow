@@ -42,6 +42,22 @@ describe Organization, :postgres do
 
       expect(org.users.first).to eq user
     end
+
+    context "with membership_request" do
+      let!(:membership_request) do
+        user.membership_requests.create(
+          organization: org
+        )
+      end
+
+      it "marks the membership_request as cancelled" do
+        subject
+        membership_request.reload
+
+        expect(membership_request.status).to eq "cancelled"
+        expect(org.users.first).to eq user
+      end
+    end
   end
 
   describe ".status" do
