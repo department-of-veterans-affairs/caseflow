@@ -3,6 +3,10 @@
 class SendFinalNotificationLetterTask < LetterTask
   validates :parent, presence: true
 
+  def label
+    "Send Final Notification Letter"
+  end
+
   def available_actions(user)
     if assigned_to.user_has_access?(user) &&
       FeatureToggle.enabled?(:cc_appeal_workflow)
