@@ -29,6 +29,8 @@ class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
     end
   end
 
+  # In cases of an admin user bypassing a user initiated request in favor of the traditional add user functionality
+  # We still want to notify the requestor that they've been added to the organization
   def send_email_request_cancelled
     send_email_request_approved
   end
@@ -114,7 +116,6 @@ class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
                                                               mailer_parameters)
   end
 
-  # TODO: Should this show all orgs or just vha orgs?
   def requestor_accessible_org_names
     @requestor_accessible_org_names ||= requestor.organizations.map(&:name)
   end
@@ -129,13 +130,11 @@ class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
     pending_names.compact
   end
 
-  # TODO: This needs to be done for organizations and for pending requests?
   def organization_vha?(organization)
     vha_organization_types = [VhaCamo, VhaCaregiverSupport, VhaProgramOffice, VhaRegionalOffice]
     organization.url == "vha" || vha_organization_types.any? { |vha_org| organization.is_a?(vha_org) }
   end
 
-  # TODO: I guess this should only check for general VHA access for the member of vha check?
   def belongs_to_vha_org?
     requestor.organizations.any? { |org| org.url == "vha" }
   end

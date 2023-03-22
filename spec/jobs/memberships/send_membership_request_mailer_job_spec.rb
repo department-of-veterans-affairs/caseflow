@@ -12,6 +12,14 @@ describe Memberships::SendMembershipRequestMailerJob do
       subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED
     }
   end
+  let(:approved_and_denied_params) do
+    {
+      requestor: requestor,
+      accessible_groups: requestor.organizations.map(&:name),
+      organization_name: camo_org.name,
+      pending_organization_request_names: ["Org 1", "Org 2"]
+    }
+  end
 
   subject { described_class.perform_now(type, mailer_parameters) }
 
@@ -46,14 +54,7 @@ describe Memberships::SendMembershipRequestMailerJob do
 
     context "the type is VhaBusinessLineApproved" do
       let(:type) { "VhaBusinessLineApproved" }
-      let(:mailer_parameters) do
-        {
-          requestor: requestor,
-          accessible_groups: requestor.organizations.map(&:name),
-          organization_name: camo_org.name,
-          pending_organization_request_names: ["Org 1", "Org 2"]
-        }
-      end
+      let(:mailer_parameters) { approved_and_denied_params }
 
       it "sends a request status approved email to the requestor" do
         expect { subject }.to change {
@@ -64,14 +65,7 @@ describe Memberships::SendMembershipRequestMailerJob do
 
     context "the type is VhaBusinessLineDenied" do
       let(:type) { "VhaBusinessLineDenied" }
-      let(:mailer_parameters) do
-        {
-          requestor: requestor,
-          accessible_groups: requestor.organizations.map(&:name),
-          organization_name: camo_org.name,
-          pending_organization_request_names: ["Org 1", "Org 2"]
-        }
-      end
+      let(:mailer_parameters) { approved_and_denied_params }
 
       it "sends a request status denied email to the requestor" do
         expect { subject }.to change {
@@ -82,14 +76,7 @@ describe Memberships::SendMembershipRequestMailerJob do
 
     context "the type is VhaPredocketApproved" do
       let(:type) { "VhaPredocketApproved" }
-      let(:mailer_parameters) do
-        {
-          requestor: requestor,
-          accessible_groups: requestor.organizations.map(&:name),
-          organization_name: camo_org.name,
-          pending_organization_request_names: ["Org 1", "Org 2"]
-        }
-      end
+      let(:mailer_parameters) { approved_and_denied_params }
 
       it "sends a request status approved email to the requestor" do
         expect { subject }.to change {
@@ -100,14 +87,7 @@ describe Memberships::SendMembershipRequestMailerJob do
 
     context "the type is VhaPredocketDenied" do
       let(:type) { "VhaPredocketDenied" }
-      let(:mailer_parameters) do
-        {
-          requestor: requestor,
-          accessible_groups: requestor.organizations.map(&:name),
-          organization_name: camo_org.name,
-          pending_organization_request_names: ["Org 1", "Org 2"]
-        }
-      end
+      let(:mailer_parameters) { approved_and_denied_params }
 
       it "sends a request status denied email to the requestor" do
         expect { subject }.to change {

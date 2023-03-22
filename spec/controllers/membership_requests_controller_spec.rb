@@ -85,7 +85,6 @@ describe MembershipRequestsController, :postgres, type: :controller do
   end
 
   describe "POST membership_requests/update/" do
-    # TODO: This should error if they aren't the admin of the org and they somehow get here
     let(:user) { camo_admin }
 
     context "with the request action approved parameter and a predocket membership request id" do

@@ -5,7 +5,6 @@ describe MembershipRequestMailer do
   let(:email) { "bob.schmidt@va.gov" }
   let(:requestor) { create(:user, email: email, full_name: "Mario Lebowski") }
   let(:camo_org) { VhaCamo.singleton }
-  # TODO: This might not work since they aren't VHA orgs if we change it to only show other vha orgs
   let(:user_orgs) do
     [
       create(:organization, name: "New Org 1", url: "new-org-1"),

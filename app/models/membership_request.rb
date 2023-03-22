@@ -47,7 +47,6 @@ class MembershipRequest < CaseflowRecord
   ############################################################################################
 
   def update_status_and_send_email(new_status, user, org_type = "VHA")
-    # TODO: Might need to wrap this in a transaction and if adding the user to the org fails roll it back?
     update!(status: new_status, decider: user)
 
     mailer_method = if approved?
@@ -83,8 +82,6 @@ class MembershipRequest < CaseflowRecord
   private
 
   def set_decided_at
-    # TODO: Figure out exactly when to update the decided at time? Should it require a decider?
-    # Or should it only care when the status changes
     if status_changed? && status_was == "assigned" && decider_id?
       self.decided_at = Time.zone.now
     end
