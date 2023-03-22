@@ -42,6 +42,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
   let(:emo_user) { create(:user) }
   let(:education_rpo_user) { create(:user) }
   let(:program_office_user) { create(:user) }
+  let(:default_query_params) { "page=1&sort_by=typeColumn&order=asc" }
+  let(:default_bva_query_params) { "page=1&sort_by=receiptDateColumn&order=asc" }
 
   let(:veteran) { create(:veteran) }
   let(:po_instructions) { "Please look for this veteran's documents." }
@@ -120,7 +122,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             )
           )
           in_progress_tab_name = VhaCaregiverSupportInProgressTasksTab.tab_name
-          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{in_progress_tab_name}&page=1"
+          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{in_progress_tab_name}&#{default_query_params}"
           expect(page).to have_current_path(expected_url)
 
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.in_progress
@@ -212,7 +214,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           )
 
           completed_tab_name = VhaCaregiverSupportCompletedTasksTab.tab_name
-          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{completed_tab_name}&page=1"
+          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{completed_tab_name}&#{default_query_params}"
           expect(page).to have_current_path(expected_url)
 
           # Some quick data checks to verify that everything saved successfully
@@ -267,7 +269,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           )
 
           completed_tab_name = VhaCaregiverSupportCompletedTasksTab.tab_name
-          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{completed_tab_name}&page=1"
+          expected_url = "/organizations/#{vha_caregiver.url}?tab=#{completed_tab_name}&#{default_query_params}"
           expect(page).to have_current_path(expected_url)
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
         end
@@ -292,7 +294,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           find("button", text: COPY::MODAL_RETURN_BUTTON).click
 
-          expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&page=1")
+          expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&#{default_bva_query_params}")
 
           expect(page).to have_content(
             format(COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_CONFIRMATION_TITLE, appeal.veteran_full_name)
@@ -335,7 +337,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           click_intake_add_issue
           fill_in "Benefit type", with: "Veterans Health Administration"
           find("#issue-benefit-type").send_keys :enter
-          fill_in "Issue category", with: "Beneficiary Travel | Common Carrier"
+          fill_in "Issue category", with: "Beneficiary Travel"
           find("#issue-category").send_keys :enter
           fill_in "Issue description", with: "I am a VHA issue"
           fill_in "Decision date", with: 1.month.ago.mdY
@@ -401,7 +403,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           fill_in("Provide instructions and context for this action:", with: po_instructions)
           find("button", class: "usa-button", text: "Submit").click
 
-          expect(page).to have_current_path("/organizations/#{camo.url}?tab=camo_assigned&page=1")
+          expect(page).to have_current_path("/organizations/#{camo.url}?tab=camo_assigned&#{default_query_params}")
           expect(page).to have_content("Task assigned to #{program_office.name}")
 
           expect(AssessDocumentationTask.last).to have_attributes(
@@ -419,7 +421,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           click_on("Switch views")
           click_on("#{program_office.name} team cases")
 
-          expect(page).to have_current_path("/organizations/#{program_office.url}?tab=po_assigned&page=1")
+          expect(page).to have_current_path("/organizations/#{program_office.url}"\
+            "?tab=po_assigned&#{default_query_params}")
           expect(page).to have_content("Assess Documentation")
 
           find_link("#{veteran.name} (#{veteran.file_number})").click
@@ -436,7 +439,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
           find("button", class: "usa-button", text: "Submit").click
 
-          expect(page).to have_current_path("/organizations/#{program_office.url}?tab=po_assigned&page=1")
+          expect(page).to have_current_path("/organizations/#{program_office.url}"\
+            "?tab=po_assigned&#{default_query_params}")
           expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
         end
 
@@ -457,7 +461,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           fill_in("Provide instructions and context for this action:", with: ro_instructions)
           find("button", class: "usa-button", text: "Submit").click
 
-          expect(page).to have_current_path("/organizations/#{program_office.url}?tab=po_assigned&page=1")
+          expect(page).to have_current_path("/organizations/#{program_office.url}"\
+            "?tab=po_assigned&#{default_query_params}")
           expect(page).to have_content("Task assigned to #{regional_office.name}")
         end
 
@@ -468,7 +473,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           click_on("Switch views")
           click_on("#{regional_office.name} team cases")
 
-          expect(page).to have_current_path("/organizations/#{regional_office.url}?tab=unassignedTab&page=1")
+          expect(page).to have_current_path("/organizations/#{regional_office.url}"\
+            "?tab=unassignedTab&#{default_query_params}")
           expect(page).to have_content("Assess Documentation")
 
           find_link("#{veteran.name} (#{veteran.file_number})").click
@@ -485,7 +491,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE)
           find("button", class: "usa-button", text: "Submit").click
 
-          expect(page).to have_current_path("/organizations/#{regional_office.url}?tab=unassignedTab&page=1")
+          expect(page).to have_current_path("/organizations/#{regional_office.url}"\
+            "?tab=unassignedTab&#{default_query_params}")
           expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
         end
 
@@ -558,7 +565,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           find("button", text: COPY::MODAL_SUBMIT_BUTTON).click
 
-          expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&page=1")
+          expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&#{default_bva_query_params}")
 
           expect(page).to have_content(
             format(COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE, appeal.veteran_full_name)
@@ -604,7 +611,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         click_intake_add_issue
         fill_in "Benefit type", with: "Veterans Health Administration"
         find("#issue-benefit-type").send_keys :enter
-        fill_in "Issue category", with: "Beneficiary Travel | Common Carrier"
+        fill_in "Issue category", with: "Beneficiary Travel"
         find("#issue-category").send_keys :enter
         fill_in "Issue description", with: "I am a VHA issue"
         fill_in "Decision date", with: 1.month.ago.mdY
@@ -749,7 +756,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find("div", class: "cf-select__option", text: education_rpo.name).click
         find("button", class: "usa-button", text: "Submit").click
 
-        expect(page).to have_current_path("/organizations/#{emo.url}?tab=education_emo_unassigned&page=1")
+        expect(page).to have_current_path("/organizations/#{emo.url}"\
+          "?tab=education_emo_unassigned&#{default_query_params}")
         expect(page).to have_content("Task assigned to #{education_rpo.name}")
 
         expect(EducationDocumentSearchTask.last).to have_attributes(
@@ -768,9 +776,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
 
       step "Task appears in EMO's assigned tab" do
-        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_unassigned&page=1")
+        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_unassigned&#{default_query_params}")
         find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE.split.first.chomp).click
-        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_assigned&page=1")
+        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_assigned&#{default_query_params}")
         expect(page).to have_content(COPY::ASSESS_DOCUMENTATION_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
@@ -897,9 +905,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       end
 
       step "Task now appears in the EMO org's assigned tab" do
-        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_unassigned&page=1")
+        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_unassigned&#{default_query_params}")
         find("button", text: COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE.split.first.chomp).click
-        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_assigned&page=1")
+        expect(page).to have_current_path("/organizations/edu-emo?tab=education_emo_assigned&#{default_query_params}")
         expect(page).to have_content(COPY::PRE_DOCKET_TASK_LABEL)
         expect(page).to have_content("#{appeal.veteran.name} (#{appeal.veteran.file_number})")
       end
@@ -960,14 +968,14 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
 
         find("button", text: COPY::MODAL_RETURN_BUTTON).click
-        expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
+        expect(page).to have_content(COPY::INSTRUCTIONS_ERROR_FIELD_REQUIRED)
 
         instructions_textarea = find("textarea", id: "taskInstructions")
         instructions_textarea.send_keys("Incorrect RPO. Please review.")
         find("button", class: "usa-button-secondary", text: COPY::MODAL_RETURN_BUTTON).click
 
         expect(page).to have_current_path(
-          "/organizations/#{education_rpo.url}?tab=education_rpo_assigned&page=1"
+          "/organizations/#{education_rpo.url}?tab=education_rpo_assigned&#{default_query_params}"
         )
       end
 
@@ -1085,7 +1093,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
       find("button", text: COPY::MODAL_SUBMIT_BUTTON).click
 
-      expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&page=1")
+      expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&#{default_bva_query_params}")
 
       expect(page).to have_content(
         format(COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE, emo_task.appeal.veteran_full_name)

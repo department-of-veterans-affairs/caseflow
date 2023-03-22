@@ -67,7 +67,7 @@ feature "Nonrating Request Issue Modal", :postgres do
       test_issue_categories(
         decision_review_type: "higher_level_review",
         benefit_type: "vha",
-        included_category: "Eligibility for Treatment | Dental",
+        included_category: "Eligibility for Dental Treatment",
         excluded_category: "Entitlement to Services"
       )
 

@@ -14,9 +14,10 @@ class WorkQueue::DecisionReviewTaskSerializer
   def self.claimant_name(object)
     if decision_review(object).veteran_is_not_claimant
       # TODO: support multiple?
-      claimant_with_name(object).try(:name) || "claimant"
+      object[:claimant_name] || claimant_with_name(object).try(:name) || "claimant"
     else
-      decision_review(object).veteran_full_name
+      veteran_name = object[:claimant_name] || decision_review(object).veteran_full_name
+      veteran_name.presence ? veteran_name : "claimant"
     end
   end
 
@@ -44,7 +45,9 @@ class WorkQueue::DecisionReviewTaskSerializer
   attribute :claimant do |object|
     {
       name: claimant_name(object),
-      relationship: claimant_relationship(object)
+      # Cheat using an sql alias from the decision_review_queue query page to avoid
+      # serializing the relationship on the queue page since it isn't used in the table display
+      relationship: object[:claimant_name] || claimant_relationship(object)
     }
   end
 
@@ -61,6 +64,10 @@ class WorkQueue::DecisionReviewTaskSerializer
     }
   end
 
+  attribute :issue_count do |object|
+    issue_count(object)
+  end
+
   attribute :tasks_url do |object|
     object.assigned_to.tasks_url
   end
@@ -69,15 +76,26 @@ class WorkQueue::DecisionReviewTaskSerializer
   attribute :created_at
 
   attribute :veteran_participant_id do |object|
-    veteran(object).participant_id
+    object[:veteran_participant_id] || veteran(object).participant_id
+  end
+
+  attribute :veteran_ssn do |object|
+    object[:veteran_ssn] || veteran(object).ssn
   end
 
   attribute :assigned_on, &:assigned_at
+  attribute :assigned_at
 
   attribute :closed_at
   attribute :started_at
 
   attribute :type do |object|
     decision_review(object).is_a?(Appeal) ? "Board Grant" : decision_review(object).class.review_title
+  end
+
+  attribute :business_line do |object|
+    assignee = object.assigned_to
+
+    assignee.is_a?(BusinessLine) ? assignee.url : nil
   end
 end
