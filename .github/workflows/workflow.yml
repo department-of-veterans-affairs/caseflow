@@ -7,6 +7,11 @@ on:
   push:
     branches:
       - f-gh-migration-full
+      
+env:
+  rspec_active: false
+  lint_active: true
+  js_test_active: true
 
 jobs:
   validate_demo:
@@ -15,5 +20,7 @@ jobs:
     uses: ./.github/workflows/rspec.yml
   js_tests:
     uses: ./.github/workflows/js_test.yml
+    if: ${{ env.js_test_active == true }}
   lint:
     uses: ./.github/workflows/lint.yml
+    if: ${{ env.lint_active == true }}
