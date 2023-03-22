@@ -3,9 +3,7 @@ name: 'Linter'
 # on:
 #   workflow_call:
 on:
-  workflow_dispatch:
-  push:
-    branches: f-gh-migration-full
+  workflow_call:
 
 jobs:
   linter:
