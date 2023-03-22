@@ -39,8 +39,8 @@ import TeamAssignTaskListView from './TeamAssignTaskListView';
 import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
 import BlockedAdvanceToJudgeView from './BlockedAdvanceToJudgeView';
-import AddCavcRemandView from './AddCavcRemandView';
-import AddCavcDatesModal from './AddCavcDatesModal';
+import AddCavcRemandView from './cavc/AddCavcRemandView';
+import AddCavcDatesModal from './cavc/AddCavcDatesModal';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
@@ -683,7 +683,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={['/search', '/cases/:caseflowVeteranIds']}
-              title="Caseflow"
+              title="Search Cases | Caseflow"
               render={this.routedSearchResults}
             />
             <PageRoute

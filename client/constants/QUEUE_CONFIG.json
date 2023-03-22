@@ -62,8 +62,10 @@
     },
     "RECEIPT_DATE_INTAKE": {
       "name": "receiptDateColumn",
-      "sorting_table": "tasks",
-      "sorting_columns": ["assigned_at"]
+      "sorting_table": "appeals",
+      "sorting_columns": [
+        "receipt_date"
+      ]
     },
     "DAYS_WAITING": {
       "name": "daysWaitingColumn",
@@ -88,10 +90,19 @@
     "BADGES": {
       "name": "badgesColumn"
     },
+    "CLAIMANT_NAME": {
+      "name": "claimantColumn"
+    },
     "ISSUE_COUNT": {
       "name": "issueCountColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["issue_count"]
+    },
+    "VETERAN_PARTICIPANT_ID": {
+      "name": "veteranParticipantIdColumn"
+    },
+    "VETERAN_SSN": {
+      "name": "veteranSsnColumn"
     },
     "READER_LINK_WITH_NEW_DOCS_ICON": {
       "name": "readerLinkWithNewDocIconColumn"
@@ -157,9 +168,13 @@
   "SORT_COLUMN_REQUEST_PARAM": "sort_by",
   "SORT_DIRECTION_REQUEST_PARAM": "order",
   "FILTER_COLUMN_REQUEST_PARAM": "filter",
+  "SEARCH_QUERY_REQUEST_PARAM": "search_query",
 
   "COLUMN_SORT_ORDER_ASC": "asc",
   "COLUMN_SORT_ORDER_DESC": "desc",
+
+  "DEFAULT_SORTING_COLUMN_KEY": "sortColName",
+  "DEFAULT_SORTING_DIRECTION_KEY": "sortAscending",
 
   "FILTER_OPTIONS": {
     "IS_AOD": {

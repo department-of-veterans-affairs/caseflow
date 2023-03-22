@@ -41,7 +41,7 @@ class EndProductUpdate < CaseflowRecord
       new_code: new_code
     )
 
-    if response[:return_message] != "A benefit claim has been changed"
+    unless Constants::BGS_SUCCESS_STATUS_CODES.include?(response[:return_code])
       fail UpdateClaimFailedInVBMS, response[:return_message]
     end
   end

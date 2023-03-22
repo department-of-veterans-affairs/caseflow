@@ -82,11 +82,17 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:business_line_url) { "decision_reviews/nca" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
     let(:arbitrary_decision_date) { "01/01/2019" }
+
+    let(:vet_id_column_value) { veteran.ssn }
+
     before do
       User.stub = user
       non_comp_org.add_user(user)
       setup_prior_claim_with_payee_code(decision_review, veteran, "00")
+      FeatureToggle.enable!(:decision_review_queue_ssn_column)
     end
+
+    after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
 
     context "decision_review is a Supplemental Claim" do
       let(:decision_review) do
@@ -131,7 +137,39 @@ feature "NonComp Dispositions Task Page", :postgres do
       visit dispositions_url
 
       click_on "Cancel"
-      expect(page).to have_current_path("/#{business_line_url}")
+      expect(page).to have_current_path("/#{business_line_url}", ignore_query: true)
+    end
+
+    context "the complete button enables only after a decision date and disposition are set" do
+      before do
+        visit dispositions_url
+      end
+
+      scenario "neither disposition nor date is set" do
+        expect(page).to have_button("Complete", disabled: true)
+      end
+
+      scenario "only date is set" do
+        fill_in "decision-date", with: arbitrary_decision_date
+        expect(page).to have_button("Complete", disabled: true)
+      end
+
+      scenario "only disposition is set" do
+        fill_in_disposition(0, "Granted")
+        fill_in_disposition(1, "DTA Error", "test description")
+        fill_in_disposition(2, "Denied", "denied")
+
+        expect(page).to have_button("Complete", disabled: true)
+      end
+
+      scenario "both disposition and date are set" do
+        fill_in "decision-date", with: arbitrary_decision_date
+        fill_in_disposition(0, "Granted")
+        fill_in_disposition(1, "DTA Error", "test description")
+        fill_in_disposition(2, "Denied", "denied")
+
+        expect(page).to have_button("Complete", disabled: false)
+      end
     end
 
     scenario "saves decision issues for eligible request issues" do
@@ -154,7 +192,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_content("Decision Completed")
       # should redirect to business line's completed tab
       expect(page.current_path).to eq "/#{business_line_url}"
-      expect(page).to have_content(veteran.participant_id)
+      expect(page).to have_content(vet_id_column_value)
 
       # verify database updated
       dissues = decision_review.reload.decision_issues
@@ -189,6 +227,7 @@ feature "NonComp Dispositions Task Page", :postgres do
         fill_in_disposition(0, "Granted")
         fill_in_disposition(1, "Granted", "test description")
         fill_in_disposition(2, "Denied", "denied")
+        fill_in "decision-date", with: arbitrary_decision_date
 
         click_on "Complete"
         expect(page).to have_content("Something went wrong")

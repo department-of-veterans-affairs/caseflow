@@ -101,4 +101,72 @@ describe DecisionReviewTask, :postgres do
       end
     end
   end
+
+  shared_context "decision review task assigned to business line" do
+    let(:veteran) { create(:veteran) }
+    let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+    let(:business_line) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
+
+    let(:decision_review_task) { create(:higher_level_review_task, appeal: hlr, assigned_to: business_line) }
+  end
+
+  describe "#ui_hash" do
+    include_context "decision review task assigned to business line"
+
+    subject { decision_review_task.ui_hash }
+
+    it "includes only key-values within serialize_task[:data][:attributes]" do
+      serialized_hash = {
+        appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+        started_at: decision_review_task.started_at,
+        tasks_url: business_line.tasks_url,
+        id: decision_review_task.id,
+        created_at: decision_review_task.created_at,
+        veteran_participant_id: veteran.participant_id,
+        veteran_ssn: veteran.ssn,
+        closed_at: decision_review_task.closed_at,
+        assigned_on: decision_review_task.assigned_at,
+        assigned_at: decision_review_task.assigned_at,
+        issue_count: 0,
+        type: "Higher-Level Review",
+        claimant: { name: hlr.veteran_full_name, relationship: "self" },
+        business_line: business_line.url
+      }
+
+      expect(subject).to eq serialized_hash
+      expect(subject.key?(:attributes)).to eq false
+    end
+  end
+
+  describe "#serialize_task" do
+    include_context "decision review task assigned to business line"
+
+    subject { decision_review_task.serialize_task }
+
+    it "includes all key-values within serialize_task[:data]" do
+      serialized_hash = {
+        id: decision_review_task.id.to_s,
+        type: :decision_review_task,
+        attributes: {
+          claimant: { name: hlr.veteran_full_name, relationship: "self" },
+          appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+          veteran_participant_id: veteran.participant_id,
+          veteran_ssn: veteran.ssn,
+          assigned_on: decision_review_task.assigned_at,
+          assigned_at: decision_review_task.assigned_at,
+          closed_at: decision_review_task.closed_at,
+          started_at: decision_review_task.started_at,
+          tasks_url: business_line.tasks_url,
+          id: decision_review_task.id,
+          created_at: decision_review_task.created_at,
+          issue_count: 0,
+          type: "Higher-Level Review",
+          business_line: business_line.url
+        }
+      }
+
+      expect(subject).to eq serialized_hash
+      expect(subject.key?(:attributes)).to eq true
+    end
+  end
 end

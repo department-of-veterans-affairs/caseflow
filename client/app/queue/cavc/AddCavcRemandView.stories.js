@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { queueWrapper as Wrapper } from '../../test/data/stores/queueStore';
-import { amaAppeal } from '../../test/data/appeals';
+import { queueWrapper as Wrapper } from '../../../test/data/stores/queueStore';
+import { amaAppeal } from '../../../test/data/appeals';
 
 import AddCavcRemandView from './AddCavcRemandView';
 
