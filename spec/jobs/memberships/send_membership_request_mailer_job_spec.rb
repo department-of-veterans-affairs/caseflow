@@ -67,11 +67,13 @@ describe Memberships::SendMembershipRequestMailerJob do
       it "rescues error and DataDog is called" do
         allow_any_instance_of(MembershipRequestMailer).to receive(:user_request_created).and_raise(error)
         subject do
-          expect(DataDogService).to receive(:emit_gauge).with(
-            app_name: Constants.DATADOG_METRICS.VHA.APP_NAME,
-            metric_group: Constants.DATADOG_METRICS.VHA.MEMBERSHIP_REQUESTS_GROUP_NAME,
-            metric_name: "email.error"
-          ).once
+          expect(DataDogService).to receive(:increment_counter).with(
+            hash_including(
+              app_name: Constants.DATADOG_METRICS.VHA.APP_NAME,
+              metric_group: Constants.DATADOG_METRICS.VHA.MEMBERSHIP_REQUESTS_GROUP_NAME,
+              metric_name: "email.error"
+            )
+          )
         end
       end
     end
