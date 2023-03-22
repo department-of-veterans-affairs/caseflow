@@ -23,11 +23,11 @@ class TaskActionRepository
       { options: valid_options }
     end
 
-    def mark_task_as_complete_cc(task, _user = nil)
+    def mark_task_as_complete_cc(_task, _user = nil)
       { modal_body: COPY::MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL }
     end
 
-    def mark_final_notification_letter(task, _user = nil)
+    def mark_final_notification_letter(_task, _user = nil)
       { modal_body: COPY::MARK_AS_COMPLETE_FROM_SEND_FINAL_NOTIFICATION_LETTER_CONTESTED_CLAIM }
     end
 
@@ -361,10 +361,10 @@ class TaskActionRepository
         modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym]
       }
 
-      if task.type == "PostSendInitialNotificationLetterHoldingTask"
-        params[:modal_body] = COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
+      params[:modal_body] = if task.type == "PostSendInitialNotificationLetterHoldingTask"
+        COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
       else
-        params[:modal_body] = COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
+        COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
       end
 
       if defined? task.completion_contact
@@ -374,7 +374,7 @@ class TaskActionRepository
       params
     end
 
-    def resend_initial_notification_letter_post_holding(task, _user = nil)
+    def resend_initial_notification_letter_post_holding(_task, _user = nil)
       params = {
         modal_title: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
         modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
@@ -383,7 +383,7 @@ class TaskActionRepository
       params
     end
 
-    def resend_initial_notification_letter_final(task, _user = nil)
+    def resend_initial_notification_letter_final(_task, _user = nil)
       params = {
         modal_title: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
         modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_FINAL_COPY
@@ -392,7 +392,7 @@ class TaskActionRepository
       params
     end
 
-    def resend_final_notification_letter_task_data(task, _user = nil)
+    def resend_final_notification_letter_task_data(_task, _user = nil)
       params = {
         modal_title: COPY::RESEND_FINAL_NOTIFICATION_LETTER_TITLE,
         modal_body: COPY::RESEND_FINAL_NOTIFICATION_LETTER_COPY

@@ -133,7 +133,7 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
 
       # fill out instructions
       fill_in("taskInstructions", with: "instructions")
-      find('#Cancel-task-button-id-1:enabled').click
+      find("#Cancel-task-button-id-1:enabled").click
 
       # expect success
       expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, root_task.appeal.veteran.person.name))
@@ -175,7 +175,6 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       # Click radio buttom
       radio_choices = page.all(".cf-form-radio-option > label")
 
-
       expect(radio_choices[0]).to have_content("Yes")
       expect(radio_choices[1]).to have_content("No")
 
@@ -187,7 +186,6 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       expect(page).to have_content("SendFinalNotificationLetterTask completed")
 
     end
-
     it "Finalice the process, select Yes in the radio bottom option" do
       initial_letter_task.completed!
       post_initial_task.completed!
@@ -202,7 +200,6 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
 
       # Click radio buttom
       radio_choices = page.all(".cf-form-radio-option > label")
-
 
       expect(radio_choices[0]).to have_content("Yes")
       expect(radio_choices[1]).to have_content("No")
