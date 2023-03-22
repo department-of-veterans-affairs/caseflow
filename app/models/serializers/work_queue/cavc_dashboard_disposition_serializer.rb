@@ -8,5 +8,9 @@ class WorkQueue::CavcDashboardDispositionSerializer
   attribute :cavc_dashboard_issue_id
   attribute :request_issue_id
   attribute :disposition
-  attribute :cavc_dispositions_to_reasons
+  attribute :cavc_dispositions_to_reasons do |object|
+    object.cavc_dispositions_to_reasons.map do |cdtr|
+      WorkQueue::CavcDispositionsToReasonSerializer.new(cdtr).serializable_hash[:data][:attributes]
+    end
+  end
 end

@@ -65,9 +65,12 @@ module Seeds
         dashboard.cavc_dashboard_dispositions.map do |disp|
           disp.disposition = "reversed"
           disp.save!
-          CavcDispositionsToReason.create!(
+          cdr = CavcDispositionsToReason.create!(
             cavc_dashboard_disposition: disp,
-            cavc_decision_reason: CavcDecisionReason.find_by(decision_reason: "Other due process protection"),
+            cavc_decision_reason: CavcDecisionReason.find_by(decision_reason: "Other due process protection")
+          )
+          CavcReasonsToBasis.create!(
+            cavc_dispositions_to_reason: cdr,
             cavc_selection_basis: CavcSelectionBasis.find_by(basis_for_selection: "AMA Opt-in")
           )
         end
@@ -132,11 +135,19 @@ module Seeds
         )
 
         other_due_process_protection = CavcDecisionReason.where(decision_reason: 'Other due process protection').first
-        other_due_basis = CavcSelectionBasis.where(category: other_due_process_protection.basis_for_selection_category).first
-        CavcDispositionsToReason.create(
+        other_due_basis_first = CavcSelectionBasis.where(category: other_due_process_protection.basis_for_selection_category).first
+        other_due_basis_second = CavcSelectionBasis.where(category: other_due_process_protection.basis_for_selection_category)[1]
+        other_due_cdr = CavcDispositionsToReason.create(
           cavc_decision_reason: other_due_process_protection,
-          cavc_dashboard_disposition: disposition,
-          cavc_selection_basis: other_due_basis
+          cavc_dashboard_disposition: disposition
+        )
+        CavcReasonsToBasis.create!(
+          cavc_dispositions_to_reason: other_due_cdr,
+          cavc_selection_basis: other_due_basis_first
+        )
+        CavcReasonsToBasis.create!(
+          cavc_dispositions_to_reason: other_due_cdr,
+          cavc_selection_basis: other_due_basis_second
         )
 
         misapplication = CavcDecisionReason.where(decision_reason: 'Misapplication of statute/regulation/diagnostic code/caselaw').first
@@ -147,9 +158,12 @@ module Seeds
 
         misapplication_regulation = CavcDecisionReason.where(decision_reason: 'Regulation', basis_for_selection_category: "misapplication_regulation").first
         mis_reg_basis = CavcSelectionBasis.where(category: misapplication_regulation.basis_for_selection_category).first
-        CavcDispositionsToReason.create(
+        mis_reg_cdr = CavcDispositionsToReason.create(
           cavc_decision_reason: misapplication_regulation,
-          cavc_dashboard_disposition: disposition,
+          cavc_dashboard_disposition: disposition
+        )
+        CavcReasonsToBasis.create!(
+          cavc_dispositions_to_reason: mis_reg_cdr,
           cavc_selection_basis: mis_reg_basis
         )
 
