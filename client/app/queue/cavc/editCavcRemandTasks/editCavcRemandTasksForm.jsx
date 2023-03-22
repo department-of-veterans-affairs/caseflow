@@ -1,8 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import ReactMarkdown from 'react-markdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
@@ -18,17 +16,10 @@ import {
 import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
 import { KeyDetails } from './KeyDetails';
 import { pageHeader, sectionStyle } from '../styles';
-import { ScheduleHearingTaskAlert } from './ScheduleHearingTaskAlert';
-import { taskTypesSelected, disabledTasksBasedOnSelections, adjustOpenTasksBasedOnSelection } from './utils';
-import { TasksToCopy } from './TasksToCopy';
+import { TasksToReActivate } from './TasksToReActivate';
 import { TasksToCancel } from './TasksToCancel';
 
-const schema = yup.object().shape({
-  closedTaskIds: yup.array(yup.number()),
-  openTaskIds: yup.array(yup.number()),
-});
-
-export const SubstituteAppellantTasksForm = ({
+export const EditCavcRemandTasksForm = ({
   appealId,
   existingValues,
   nodDate,
@@ -37,52 +28,20 @@ export const SubstituteAppellantTasksForm = ({
   onBack,
   onCancel,
   onSubmit,
-  pendingAppeal,
-  cancelledTasks = [],
+  setSelectedCancelTaskIds,
+  setSelectedReActivateTaskIds,
+  cancelledOrCompletedTasks = [],
   activeTasks = []
 }) => {
   const methods = useForm({
-    // Use this for repopulating form from redux when user navigates back
-    resolver: yupResolver(schema),
     defaultValues: {
       ...existingValues,
-      closedTaskIds:
-        // eslint-disable-next-line max-len
-        existingValues?.closedTaskIds?.length ? existingValues?.closedTaskIds : (cancelledTasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
-      openTaskIds:
-        // eslint-disable-next-line max-len
-        existingValues?.openTaskIds?.length ? existingValues?.openTaskIds : (activeTasks?.filter((task) => task.selected)).map((task) => parseInt(task.taskId, 10)),
+      cancelTaskIds: existingValues?.cancelTaskIds,
+      reActivateTaskIds: existingValues?.reActivateTaskIds,
     },
   });
 
-  const { handleSubmit, watch } = methods;
-  const selectedClosedTaskIds = watch('closedTaskIds');
-
-  const adjustedTasks = useMemo(
-    () =>
-      disabledTasksBasedOnSelections({
-        tasks: cancelledTasks,
-        selectedTaskIds: selectedClosedTaskIds,
-      }),
-    [cancelledTasks, selectedClosedTaskIds]
-  );
-
-  const selectedOpenTaskIds = watch('openTaskIds');
-  const adjustedOpenTasks = useMemo(
-    () =>
-      adjustOpenTasksBasedOnSelection({
-        tasks: activeTasks,
-        selectedTaskIds: selectedOpenTaskIds,
-      }),
-    [activeTasks, selectedOpenTaskIds]
-  );
-
-  const shouldShowScheduleHearingTaskAlert = useMemo(() => {
-    return taskTypesSelected({
-      tasks: cancelledTasks,
-      selectedTaskIds: selectedClosedTaskIds,
-    }).includes('ScheduleHearingTask');
-  }, [cancelledTasks, selectedClosedTaskIds]);
+  const { handleSubmit } = methods;
 
   return (
     <FormProvider {...methods}>
@@ -98,26 +57,35 @@ export const SubstituteAppellantTasksForm = ({
             nodDate={nodDate}
             dateOfDeath={dateOfDeath}
             substitutionDate={substitutionDate}
+            isAppellantSubstituted={existingValues.isAppellantSubstituted}
           />
-
           <div className={sectionStyle}>
-            <h2>{CAVC_REMAND_MODIFY_TASKS_APPEAL_TASKS_TITLE}</h2>
-            <br></br>
-            {pendingAppeal && (
+            { activeTasks?.length > 0 && (
               <div className={sectionStyle}>
-                <div><strong>{CAVC_REMAND_MODIFY_TASKS_ACTIVE_TITLE}</strong></div>
-                <div><ReactMarkdown source={CAVC_REMAND_MODIFY_TASKS_ACTIVE_DETAIL} /></div>
-                {shouldShowScheduleHearingTaskAlert && <ScheduleHearingTaskAlert /> }
-                <TasksToCancel tasks={adjustedOpenTasks} />
+                <h2>{CAVC_REMAND_MODIFY_TASKS_APPEAL_TASKS_TITLE}</h2>
+                <br></br>
+                <div className={sectionStyle}>
+                  <div><strong>{CAVC_REMAND_MODIFY_TASKS_ACTIVE_TITLE}</strong></div>
+                  <div><ReactMarkdown source={CAVC_REMAND_MODIFY_TASKS_ACTIVE_DETAIL} /></div>
+                  <TasksToCancel
+                    tasks={activeTasks}
+                    existingValues={existingValues}
+                    setSelectedCancelTaskIds={setSelectedCancelTaskIds}
+                  />
+                </div>
               </div>
             )}
-
-            <div className={sectionStyle}>
-              <div><strong>{CAVC_REMAND_MODIFY_TASKS_CANCELLED_TITLE}</strong></div>
-              <div><ReactMarkdown source={CAVC_REMAND_MODIFY_TASKS_CANCELLED_DETAIL} /></div>
-              {shouldShowScheduleHearingTaskAlert && <ScheduleHearingTaskAlert /> }
-              <TasksToCopy tasks={adjustedTasks} />
-            </div>
+            { cancelledOrCompletedTasks?.length > 0 && (
+              <div className={sectionStyle}>
+                <div><strong>{CAVC_REMAND_MODIFY_TASKS_CANCELLED_TITLE}</strong></div>
+                <div><ReactMarkdown source={CAVC_REMAND_MODIFY_TASKS_CANCELLED_DETAIL} /></div>
+                <TasksToReActivate
+                  tasks={cancelledOrCompletedTasks}
+                  existingValues={existingValues}
+                  setSelectedReActivateTaskIds={setSelectedReActivateTaskIds}
+                />
+              </div>
+            )}
 
             <div className={sectionStyle}>
               <div>{CAVC_REMAND_MODIFY_TASKS_OTHER_TASKS}</div>
@@ -136,7 +104,7 @@ export const SubstituteAppellantTasksForm = ({
     </FormProvider>
   );
 };
-SubstituteAppellantTasksForm.propTypes = {
+EditCavcRemandTasksForm.propTypes = {
   appealId: PropTypes.string,
   existingValues: PropTypes.shape({}),
   nodDate: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
@@ -148,7 +116,7 @@ SubstituteAppellantTasksForm.propTypes = {
     PropTypes.instanceOf(Date),
     PropTypes.string,
   ]),
-  cancelledTasks: PropTypes.arrayOf(
+  cancelledOrCompletedTasks: PropTypes.arrayOf(
     PropTypes.shape({
       appealId: PropTypes.number,
       closedAt: PropTypes.oneOfType([
@@ -174,8 +142,8 @@ SubstituteAppellantTasksForm.propTypes = {
       type: PropTypes.string,
     })
   ),
-  pendingAppeal: PropTypes.bool,
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
+  setSelectedCancelTaskIds: PropTypes.func,
 };

@@ -38,7 +38,7 @@ class CavcRemandsController < ApplicationController
     selected_task_ids: [],
     cancelled_task_ids: [],
     task_params: {}
-  ]
+  ].freeze
 
   MDR_REQUIRED_PARAMS = [
     :federal_circuit
@@ -66,6 +66,7 @@ class CavcRemandsController < ApplicationController
     render json: { cavc_remand: new_cavc_remand, cavc_appeal: cavc_appeal }, status: :created
   end
 
+  # rubocop:disable Metrics/MethodLength
   def update
     cavc_appeal = cavc_remand.remand_appeal
     if params["source_form"] == "add_cavc_dates_modal" # EditCavcTodo: replace all occurrences with a constant
@@ -78,7 +79,8 @@ class CavcRemandsController < ApplicationController
           create_appellant_substitution_and_cavc_remand_appellant_substitution(cavc_appeal, cavc_remand)
         else
           appellant_substitution.cavc_remand_appeal_substitution = true
-          update_appellant_substitution_and_cavc_remand_appellant_substitution(cavc_appeal, cavc_remand, appellant_substitution)
+          update_appellant_substitution_and_cavc_remand_appellant_substitution(cavc_appeal, cavc_remand,
+                                                                               appellant_substitution)
         end
       end
     end
@@ -89,6 +91,7 @@ class CavcRemandsController < ApplicationController
       updated_appeal_attributes: updated_appeal_attributes(cavc_appeal)
     }, status: :ok
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
@@ -122,8 +125,9 @@ class CavcRemandsController < ApplicationController
     appellant_substitution
   end
 
-  def update_appellant_substitution_and_cavc_remand_appellant_substitution(cavc_appeal, new_cavc_remand,
-    appellant_substitution)
+  def update_appellant_substitution_and_cavc_remand_appellant_substitution(cavc_appeal,
+                                                                           new_cavc_remand,
+                                                                           appellant_substitution)
     if params[:is_appellant_substituted] == "true"
       update_appellant_substitution_and_create_history(cavc_appeal, appellant_substitution)
     else
@@ -147,10 +151,12 @@ class CavcRemandsController < ApplicationController
   def appellant_substitution_params(substitution_date = params[:substitution_date],
                                     substitute_participant_id = params[:participant_id])
     params.permit(EDIT_CAVC_APPELLANT_SUBSTITUTION_PARAMS).merge!(
-      substitution_date: substitution_date, substitute_participant_id: substitute_participant_id)
+      substitution_date: substitution_date, substitute_participant_id: substitute_participant_id
+    )
   end
 
   def update_appellant_substitution_and_create_history(cavc_appeal, appellant_substitution)
+    cancel_unselected_tasks(appellant_substitution)
     history_params = {}
     if appellant_substitution.substitution_date != params[:substitution_date].to_date
       history_params[:substitution_date] = params[:substitution_date]
@@ -224,5 +230,16 @@ class CavcRemandsController < ApplicationController
       appellant_relationship: cavc_appeal.appellant_relationship,
       appellant_type: cavc_appeal.claimant&.type
     }
+  end
+
+  def cancel_unselected_tasks(appellant_substitution)
+    return if params[:cancelled_task_ids].empty?
+
+    appellant_substitution.skip_cancel_tasks = true
+    task_ids = { cancelled: params[:cancelled_task_ids] }
+    SameAppealSubstitutionTasksFactory.new(appellant_substitution.target_appeal,
+                                           task_ids,
+                                           appellant_substitution.created_by,
+                                           {}).cancel_unselected_tasks
   end
 end
