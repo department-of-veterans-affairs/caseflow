@@ -68,8 +68,8 @@ describe Memberships::SendMembershipRequestMailerJob do
         allow_any_instance_of(MembershipRequestMailer).to receive(:user_request_created).and_raise(error)
         subject do
           expect(DataDogService).to receive(:emit_gauge).with(
-            app_name: Constants.DATADOG_METRICS.DISPATCH.APP_NAME,
-            metric_group: Constants.DATADOG_METRICS.DISPATCH.OUTCODE_GROUP_NAME,
+            app_name: Constants.DATADOG_METRICS.VHA.APP_NAME,
+            metric_group: Constants.DATADOG_METRICS.VHA.MEMBERSHIP_REQUESTS_GROUP_NAME,
             metric_name: "email.error"
           ).once
         end
