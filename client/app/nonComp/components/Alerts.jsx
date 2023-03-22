@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Alert from '../../components/Alert';
-import VhaJoinOrgAlert from '../../queue/membershipRequest/VhaJoinOrgAlert';
+import { VhaJoinOrgAlert } from '../../queue/membershipRequest/VhaJoinOrgAlert';
 
 export class ErrorAlert extends React.PureComponent {
   render() {
