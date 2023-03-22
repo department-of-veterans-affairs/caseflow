@@ -180,6 +180,7 @@ jobs:
         with:
           path: ./logs
   js_tests:
+    if: ${{ env.js_test_active == true }}
     runs-on: ubuntu-latest
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
@@ -243,8 +244,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: ./all_logs.log
-    if: ${{ env.js_test_active == true }}
   lint:
+    if: ${{ env.lint_active == true }}
     runs-on: ubuntu-latest
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
@@ -281,4 +282,4 @@ jobs:
       # TODO: Not sure if this is needed with GH Actions
       - name: Store concatenated logs
         run: ./all_logs.log
-    if: ${{ env.lint_active == true }}
+    
