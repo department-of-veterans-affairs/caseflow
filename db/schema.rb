@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_16_142745) do
+ActiveRecord::Schema.define(version: 2023_03_17_164013) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -365,14 +365,23 @@ ActiveRecord::Schema.define(version: 2023_03_16_142745) do
   create_table "cavc_dispositions_to_reasons", force: :cascade do |t|
     t.bigint "cavc_dashboard_disposition_id", comment: "ID of the associated CAVC Dashboard Disposition"
     t.bigint "cavc_decision_reason_id", comment: "ID of the associated CAVC Decision Reason"
-    t.bigint "cavc_selection_basis_id", comment: "ID of the associated CAVC Basis for Selection"
     t.datetime "created_at", null: false
     t.bigint "created_by_id", comment: "The ID for the user that created the record"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "The ID for the user that most recently changed the record"
     t.index ["cavc_dashboard_disposition_id"], name: "cavc_disp_to_reason_cavc_dash_disp_id"
     t.index ["cavc_decision_reason_id"], name: "index_cavc_dispositions_to_reasons_on_cavc_decision_reason_id"
-    t.index ["cavc_selection_basis_id"], name: "index_cavc_dispositions_to_reasons_on_cavc_selection_basis_id"
+  end
+
+  create_table "cavc_reasons_to_bases", force: :cascade do |t|
+    t.bigint "cavc_dispositions_to_reason_id", comment: "ID of the associated CAVC Decision Reason"
+    t.bigint "cavc_selection_basis_id", comment: "ID of the associated CAVC Basis for Selection"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "The ID for the user that created the record"
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id", comment: "The ID for the user that most recently changed the record"
+    t.index ["cavc_dispositions_to_reason_id"], name: "index_cavc_reasons_to_bases_on_cavc_dispositions_to_reason_id"
+    t.index ["cavc_selection_basis_id"], name: "index_cavc_reasons_to_bases_on_cavc_selection_basis_id"
   end
 
   create_table "cavc_remands", force: :cascade do |t|
@@ -1904,9 +1913,12 @@ ActiveRecord::Schema.define(version: 2023_03_16_142745) do
   add_foreign_key "cavc_decision_reasons", "cavc_decision_reasons", column: "parent_decision_reason_id"
   add_foreign_key "cavc_dispositions_to_reasons", "cavc_dashboard_dispositions"
   add_foreign_key "cavc_dispositions_to_reasons", "cavc_decision_reasons"
-  add_foreign_key "cavc_dispositions_to_reasons", "cavc_selection_bases"
   add_foreign_key "cavc_dispositions_to_reasons", "users", column: "created_by_id", name: "cavc_dispositions_to_reasons_created_by_id_fk"
   add_foreign_key "cavc_dispositions_to_reasons", "users", column: "updated_by_id", name: "cavc_dispositions_to_reasons_updated_by_id_fk"
+  add_foreign_key "cavc_reasons_to_bases", "cavc_dispositions_to_reasons"
+  add_foreign_key "cavc_reasons_to_bases", "cavc_selection_bases"
+  add_foreign_key "cavc_reasons_to_bases", "users", column: "created_by_id", name: "cavc_reasons_to_bases_created_by_id_fk"
+  add_foreign_key "cavc_reasons_to_bases", "users", column: "updated_by_id", name: "cavc_reasons_to_bases_updated_by_id_fk"
   add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
   add_foreign_key "cavc_remands", "users", column: "created_by_id"

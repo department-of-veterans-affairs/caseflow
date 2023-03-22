@@ -155,30 +155,41 @@ class CavcDashboardController < ApplicationController
     reasons_to_delete.map(&:destroy)
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/AbcSize
   def create_new_dispositions_to_reasons(checked_boxes)
     # checked_box format from cavcDashboardActions.js:
-    # {issue_id, issue_type, decision_reason_id, basis_for_selection_category, basis_for_selection}
-    # basis_for_selection: { checkboxId, value, label, otherText }
+    # {issue_id, issue_type, decision_reason_id, basis_for_selection_category, selection_bases}
+    # selection_bases: [{ checkboxId, dispositions_to_reason_id, value, label, otherText }, ...{}]
     checked_boxes.map do |box|
       cdd = if box["issue_type"] == "request_issue"
               CavcDashboardDisposition.find_by(request_issue_id: box["issue_id"])
             else
               CavcDashboardDisposition.find_by(cavc_dashboard_issue_id: box["issue_id"])
             end
-      basis = if box["basis_for_selection"] && box["basis_for_selection"]["otherText"]
-                CavcSelectionBasis.find_or_create_by(basis_for_selection: box["basis_for_selection"]["otherText"],
-                                                     category: box["basis_for_selection_category"])
-              elsif box["basis_for_selection"] && box["basis_for_selection"]["value"]
-                CavcSelectionBasis.find_by(id: box["basis_for_selection"]["value"])
-              end
       cdtr = if cdd
                CavcDispositionsToReason.find_or_create_by(cavc_dashboard_disposition: cdd,
                                                           cavc_decision_reason_id: box["decision_reason_id"])
              end
-      cdtr.update!(cavc_selection_basis_id: basis.id) if cdtr && basis&.id
-      cdtr
+      if cdtr && !box["selection_bases"].nil?
+        new_bases = box["selection_bases"]
+        submitted_crtbs = new_bases.map do |basis|
+          next if basis["value"].nil? && basis["otherText"].nil?
+
+          new_basis = if basis["otherText"]
+                        CavcSelectionBasis.find_or_create_by(basis_for_selection: basis["otherText"],
+                                                             category: box["basis_for_selection_category"])
+                      elsif basis["value"]
+                        CavcSelectionBasis.find_by(id: basis["value"])
+                      end
+          CavcReasonsToBasis.create(cavc_dispositions_to_reason_id: cdtr.id,
+                                    cavc_selection_basis_id: new_basis.id)
+        end
+      end
+      all_crtbs = cdtr.reload.cavc_reasons_to_bases
+      crtbs_to_delete = all_crtbs - submitted_crtbs.to_a
+      crtbs_to_delete.map(&:destroy)
+      cdtr.reload
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/AbcSize
 end

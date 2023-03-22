@@ -51,6 +51,10 @@ RSpec.describe CavcDashboardController, type: :controller do
     end
 
     context "#save" do
+      before do
+        CavcDecisionReason.create(decision_reason: "Duty to notify", order: 1)
+      end
+
       it "saves new issues and dispositions" do
         remand = create(:cavc_remand)
         dashboard = CavcDashboard.create!(cavc_remand: remand)
@@ -80,9 +84,9 @@ RSpec.describe CavcDashboardController, type: :controller do
           ],
           checked_boxes: [
             {
-              issue_id: "100",
+              issue_id: dashboard.remand_request_issues.first.id,
               issue_type: "request_issue",
-              decision_reason_id: 1
+              decision_reason_id: CavcDecisionReason.first.id
             }
           ]
         }
@@ -140,9 +144,9 @@ RSpec.describe CavcDashboardController, type: :controller do
           ],
           checked_boxes: [
             {
-              issue_id: "100",
+              issue_id: dashboard.remand_request_issues.first.id,
               issue_type: "request_issue",
-              decision_reason_id: 1
+              decision_reason_id: CavcDecisionReason.first.id
             }
           ]
         }
@@ -173,9 +177,9 @@ RSpec.describe CavcDashboardController, type: :controller do
           ],
           checked_boxes: [
             {
-              issue_id: "100",
+              issue_id: dashboard.remand_request_issues.first.id,
               issue_type: "request_issue",
-              decision_reason_id: 1
+              decision_reason_id: CavcDecisionReason.first.id
             }
           ]
         }
