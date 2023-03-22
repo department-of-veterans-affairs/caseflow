@@ -245,7 +245,7 @@ jobs:
         with:
           path: ./all_logs.log
   lint:
-    if: ${{ env.lint_active == true }}
+    if: env.lint_active == 'true'
     runs-on: ubuntu-latest
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
