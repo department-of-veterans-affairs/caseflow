@@ -2,9 +2,8 @@ name: Caller workflow for Caseflow Repo
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - f-gh-migration-full
+  pull_request:
+    types: [opened, reopened, edited]
       
 # Use this flag to turn on/off RSpec.  Please go to the lint & js_test job to disable the boolean      
 env:
