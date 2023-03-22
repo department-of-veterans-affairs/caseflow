@@ -9,12 +9,12 @@ import Checkbox from 'app/components/Checkbox';
 const tableStyles = css({});
 const centerCheckboxPadding = css({ paddingTop: 'inherit' });
 
-export const TaskSelectionTable = ({
+export const TasksToReActivateSelectionTable = ({
   control,
   onCheckChange,
   selectionField,
-  selectedTaskIds,
   tasks,
+  selectedReActivateTaskIds,
 }) => {
   // Error handling that should never be needed with real production data
   if (!tasks.length) {
@@ -43,8 +43,8 @@ export const TaskSelectionTable = ({
                 <tr key={task.taskId}>
                   <td {...centerCheckboxPadding}>
                     <Checkbox
-                      onChange={() => onChange(onCheckChange(task.taskId))}
-                      value={selectedTaskIds?.includes(task.taskId)}
+                      onChange={(checked) => onChange(onCheckChange(task.taskId, checked))}
+                      value={task.disabled || selectedReActivateTaskIds?.includes(task.taskId)}
                       name={`${selectionField}[${task.taskId}]`}
                       disabled={task.disabled}
                       label={
@@ -70,10 +70,10 @@ export const TaskSelectionTable = ({
   );
 };
 
-TaskSelectionTable.propTypes = {
+TasksToReActivateSelectionTable.propTypes = {
   control: PropTypes.object,
   onCheckChange: PropTypes.func,
   tasks: PropTypes.array,
-  selectedTaskIds: PropTypes.array,
   selectionField: PropTypes.string,
+  selectedReActivateTaskIds: PropTypes.array,
 };

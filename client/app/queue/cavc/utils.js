@@ -68,7 +68,8 @@ export const generateSchema = ({ maxIssues }) => {
       min(new Date(2018, 0, 1), CAVC_DECISION_DATE_PAST).
       max(new Date(), CAVC_DECISION_DATE_ERROR).
       required(),
-    mandateSame: yup.boolean(), // EditCavcTodo: remove if not needed; see remandDatesProvided
+    // EditCavcTodo: remove if not needed; see remandDatesProvided
+    mandateSame: yup.boolean(),
     judgementDate: yup.mixed().when('remandDatesProvided', {
       is: 'yes',
       then: requireValidDate,
