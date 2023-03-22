@@ -16,14 +16,18 @@ import { CheckIcon } from '../../components/icons/fontAwesome/CheckIcon';
 import CavcSelectionBasis from './CavcSelectionBasis';
 import Button from '../../components/Button';
 
+// left padding + margin should equal 7.5rem
 const addBasisButtonForParentStyle = css({
-  padding: '0 2rem 0 7.5rem',
-  marginBottom: '2rem'
+  padding: '0 2rem',
+  marginBottom: '2rem',
+  marginLeft: '5.5rem'
 });
 
+// left padding + margin should equal 10rem
 const addBasisButtonForChildStyle = css({
-  padding: '0 2rem 0 10rem',
-  marginBottom: '2rem'
+  padding: '0 2rem',
+  marginBottom: '2rem',
+  marginLeft: '8rem'
 });
 
 const CavcDecisionReasons = (props) => {
@@ -503,6 +507,7 @@ const CavcDecisionReasons = (props) => {
                 {checkedReasons[parent.id]?.children?.find((childToFind) => childToFind.id === child.id &&
                   childToFind.basis_for_selection_category && childToFind.checked) && userCanEdit &&
                     <Button
+                      name={`add-basis-${uniqueId}-${child.id}`}
                       linkStyling
                       styling={addBasisButtonForChildStyle}
                       onClick={() => handleAddBasis(child, parent)}
@@ -531,6 +536,7 @@ const CavcDecisionReasons = (props) => {
                 )))}
                 {userCanEdit &&
                   <Button
+                    name={`add-basis-${uniqueId}-${parent.id}`}
                     linkStyling
                     styling={addBasisButtonForParentStyle}
                     onClick={() => handleAddBasis(parent)}
