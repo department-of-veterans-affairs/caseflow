@@ -9,7 +9,7 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
   def perform(email_type, mailer_parameters)
     email_subject = email_to_send(email_type)
     email = MembershipRequestMailer.with(mailer_parameters).send(email_subject)
-    send_email(email, mailer_parameters)
+    send_email(email, mailer_parameters, email_type)
   end
 
   private
@@ -33,7 +33,7 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
       response_msg = msg.response
       response_external_url = response_msg.body.dig("_link", "self")
 
-      DataDogService.increment_counter(\
+      DataDogService.increment_counter(
         app_name: Constants.DATADOG_METRICS.VHA.APP_NAME,
         metric_group: Constants.DATADOG_METRICS.VHA.MEMBERSHIP_REQUESTS_GROUP_NAME,
         metric_name: "email.error",
@@ -67,7 +67,7 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
   end
 
   # :nocov:
-  def send_email(email, mailer_parameters)
+  def send_email(email, mailer_parameters, email_type)
     # Why are we using `deliver_now!`? The documentation mentions that it ignores the flags:
     #
     #   * `perform_deliveries`
@@ -92,14 +92,14 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
     # the email after it has been accepted by GovDelivery.
     email_nil?(email)
 
-    email_address = mailer_parameters[:recipient_info]
+    email_address = mailer_parameters[:recipient_info] || mailer_parameters[:to]
     log = log_message(mailer_parameters).merge(status: "info", message: "Sending #{TYPE_LABEL} to #{email_address} ...")
     Rails.logger.info("#{LOG_PREFIX} #{log}")
     msg = email.deliver_now!
   rescue StandardError => error
     Raven.capture_exception(error)
     log = log_message(mailer_parameters).merge(
-      status: "error", message: "Failed to send #{TYPE_LABEL} to #{email_address} : #{error}"
+      status: "error", message: "Failed to send #{email_type} to #{email_address} : #{error}"
     )
     Rails.logger.warn("#{LOG_PREFIX} #{log}")
     Rails.logger.warn(error.backtrace.join($INPUT_RECORD_SEPARATOR))
