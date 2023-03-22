@@ -16,6 +16,12 @@ describe('DateSelector', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date('9999-12-31'));
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   const setup = (props = {}) => {
@@ -41,6 +47,7 @@ describe('DateSelector', () => {
   it('passes a11y testing', async () => {
     const { container } = setup();
 
+    jest.useRealTimers();
     const results = await axe(container);
 
     expect(results).toHaveNoViolations();
