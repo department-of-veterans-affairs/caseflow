@@ -50,6 +50,7 @@ const appeal = {
   docketNumber: '220715-1987',
   veteranFullName: 'Bob Smithschumm',
   veteranFileNumber: '200000161',
+  veteranParticipantId: '826209',
   hearings: [],
 };
 const state = {
