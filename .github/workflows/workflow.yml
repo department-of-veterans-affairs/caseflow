@@ -11,7 +11,7 @@ env:
 
 jobs:
   # This job runs the main deployment of caseflow
-  demo:
+  caseflow_rspec_job:
     runs-on: ubuntu-8-cores-latest
     services:
       postgres:
@@ -192,7 +192,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           path: ./logs
-  js_tests:
+  caseflow_jess_job:
     # This job will run the jest, change the value below to false if you wish to turn it off.
     if: true
     runs-on: ubuntu-latest
@@ -260,7 +260,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: ./all_logs.log
-  lint:
+  caseflow_lint_job:
     # This job will run the security lint checker, change the value below to false if you wish to turn it off.
     if: true
     runs-on: ubuntu-latest
