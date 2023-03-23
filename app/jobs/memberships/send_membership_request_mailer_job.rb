@@ -28,7 +28,7 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
   end
 
   # :nocov:
-  def external_message_id(msg)
+  def external_message_id(msg, mailer_parameters)
     if msg.is_a?(GovDelivery::TMS::EmailMessage)
       response_msg = msg.response
       response_external_url = response_msg.body.dig("_link", "self")
@@ -43,7 +43,7 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
         }
       )
 
-      log = log_message.merge(
+      log = log_message(mailer_parameters).merge(
         status: response_msg.status,
         gov_delivery_id: response_external_url,
         message: "GovDelivery returned (code: #{response_msg.status}) (external url: #{response_external_url})"
@@ -105,7 +105,7 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
     Rails.logger.warn(error.backtrace.join($INPUT_RECORD_SEPARATOR))
     false
   else
-    message_id = external_message_id(msg)
+    message_id = external_message_id(msg, mailer_parameters)
     message = "Requested GovDelivery to send #{TYPE_LABEL} to #{email_address} - #{message_id}"
     log = log_message(mailer_parameters).merge(status: "success", gov_delivery_id: message_id, message: message)
     Rails.logger.info("#{LOG_PREFIX} #{log}")
