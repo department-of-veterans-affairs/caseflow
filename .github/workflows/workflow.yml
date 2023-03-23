@@ -58,6 +58,7 @@ jobs:
           KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
           KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
           KNAPSACK_PRO_LOG_LEVEL: info
+          DEBUG: true
 
     steps:
       - uses: actions/checkout@v3
@@ -133,14 +134,6 @@ jobs:
         run: |
           ./ci-bin/capture-log "bundle exec rake assets:precompile"
 
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./test-results
-
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./logs
-
       - name: RSpec via knapsack_pro Queue Mode
         run: |
           mkdir -p ./test-results/rspec
@@ -150,23 +143,28 @@ jobs:
         # Only runs RSpec if flag is true
         # if: ${{ env.rspec_active == 'true' }}
 
-      - uses: actions/upload-artifact@v3
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
         with:
           path: ./test-results
 
-      - uses: actions/upload-artifact@v3
+      - name: Upload SimpleCov Code Coverage Report
+        uses: actions/upload-artifact@v3
         with:
           path: ./coverage
 
-      - uses: actions/upload-artifact@v3
+      - name: Upload Capybara Artifacts
+        uses: actions/upload-artifact@v3
         with:
           path: ./tmp/capybara
 
-      - uses: actions/upload-artifact@v3
+      - name: Upload Test Logs
+        uses: actions/upload-artifact@v3
         with:
           path: ./log/test.log
 
-      - uses: actions/upload-artifact@v3
+      - name: Upload Bullet logs
+        uses: actions/upload-artifact@v3
         with:
           path: ./log/bullet.log
 
