@@ -11,7 +11,7 @@ class NotificationEfolderSyncJob < CaseflowJob
 
   # rubocop:disable Metrics/MethodLength
   def perform
-    RequestStore[:current_store] = User.system_user
+    RequestStore[:current_user] = User.system_user
     appeals_with_notifications = "select appeals.* from appeals
     inner join (select distinct(notifications.appeals_id)
     from notifications where notifications.appeals_type = 'Appeal')
