@@ -228,24 +228,11 @@ exports[`NotificationsTest matches snapshot 1`] = `
     <div
       data-css-48ja=""
     >
-      <div
-        style="display: flex; justify-content: space-between; align-items: center;"
+      <p
+        class="notification-text"
       >
-        <p
-          class="notification-text"
-        >
-          VA Notify sent these status notifications to the Appellant about their case.
-        </p>
-        <span>
-          <button
-            class="usa-button-secondary usa-button"
-            id="download-button"
-            type="button"
-          >
-            Download
-          </button>
-        </span>
-      </div>
+        VA Notify sent these status notifications to the Appellant about their case.
+      </p>
       <div
         class="notification-table"
       >

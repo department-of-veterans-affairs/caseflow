@@ -655,7 +655,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={['/search', '/cases/:caseflowVeteranIds']}
-              title="Search Cases | Caseflow"
+              title="Caseflow"
               render={this.routedSearchResults}
             />
             <PageRoute

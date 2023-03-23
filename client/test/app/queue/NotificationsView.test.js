@@ -83,16 +83,6 @@ describe('NotificationsTest', () => {
     expect(description).toBe('VA Notify sent these status notifications to the Appellant about their case.');
   });
 
-  it('renders download button', () => {
-    const { container } = setup(state);
-    const downloadButton = container.querySelector('#download-button');
-    const downloadButtonText = container.querySelector('#download-button').innerHTML;
-
-    expect(downloadButton).toBeInTheDocument();
-    expect(downloadButtonText).toBe('Download');
-  });
-
-
   it('matches snapshot', () => {
     const { container } = setup(state);
 

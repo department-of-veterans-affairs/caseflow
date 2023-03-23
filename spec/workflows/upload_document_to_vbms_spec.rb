@@ -49,18 +49,6 @@ describe UploadDocumentToVbms, :postgres do
     end
   end
 
-  describe "#s3_location" do
-    context "fetches a bucket name based on document type" do
-      it "changes based on specific document types" do
-        document.document_type = "BVA Case Notifications"
-        expect(doc_to_upload.send(:s3_location)).to include("notification-reports")
-      end
-      it "defaults to idt-uploaded-documents" do
-        expect(doc_to_upload.send(:s3_location)).to include("idt-uploaded-documents")
-      end
-    end
-  end
-
   context "#call" do
     subject { doc_to_upload.call }
 
