@@ -89,8 +89,15 @@ export const ACTIONS = {
   SET_WORKSHEET_SAVE_FAILED_STATUS: 'SET_WORKSHEET_SAVE_FAILED_STATUS',
   SET_WORKSHEET_EDITED_FLAG_TO_FALSE: 'SET_WORKSHEET_EDITED_FLAG_TO_FALSE',
   HANDLE_CONFERENCE_LINK_ERROR: 'HANDLE_CONFERENCE_LINK_ERROR'
-
 };
+
+// Labels for guest link
+export const GUEST_LINK_LABELS = {
+  COPY_GUEST_LINK: 'Copy Guest Link',
+  GUEST_LINK_SECTION_LABEL: 'Guest links for non-virtual hearings',
+  GUEST_CONFERENCE_ROOM: 'Conference Room',
+  GUEST_PIN: 'PIN',
+}
 
 export const SPREADSHEET_TYPES = {
   RoSchedulePeriod: {
