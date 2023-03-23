@@ -5,6 +5,7 @@ on:
   push:
     branches:
     - jr-gha-migration-rspec
+    - MattT-gha-migration-spec
 
 # Use this flag to turn on/off RSpec.  Please go to the lint & js_test job to disable the boolean
 env:
