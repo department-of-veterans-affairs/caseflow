@@ -1,6 +1,6 @@
 # NOTE: Once we are no longer using the default Ruby environment, we should upgrade
 # our base container to something more recent.
-FROM cimg/ruby:2.7.3-browsers
+FROM 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
 
 #USER root
 
