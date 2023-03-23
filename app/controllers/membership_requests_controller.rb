@@ -2,7 +2,7 @@
 
 class MembershipRequestsController < ApplicationController
   # To create Membership Request
-  # e.g, for VHA Businessline request => POST /tasks,
+  # e.g, for VHA Businessline request => POST /membership_requests,
   # {
   #   organizationGroup: "VHA",
   #   membershipRequests: { "vhaAccess" => true },
@@ -31,10 +31,42 @@ class MembershipRequestsController < ApplicationController
     invalid_record_error(error.record)
   end
 
+  # To update the status of a Membership Request
+  # e.g, for VHA Businessline request => POST /membership_requests/#{membershipRequestId},
+  # {
+  #   organizationGroup: "VHA",
+  #   id: 55,
+  #   requestAction: "approved"
+  # }
+  def update
+    no_cache
+
+    membership_request = MembershipRequest.find(request_action_params[:id])
+    membership_request.update_status_and_send_email(request_action_params[:requestAction], current_user)
+
+    membership_request_hash = MembershipRequestSerializer.new(membership_request)
+      .serializable_hash[:data][:attributes]
+
+    json_user = ::WorkQueue::AdministeredUserSerializer.new(
+      membership_request.requestor,
+      params: { organization: membership_request.organization }
+    ).serializable_hash[:data]
+
+    json_hash = { membershipRequest: membership_request_hash, updatedUser: json_user }
+
+    render json: json_hash, status: :ok
+  rescue ActiveRecord::RecordInvalid => error
+    invalid_record_error(error.record)
+  end
+
   private
 
   def safe_params
     params.permit(:requestReason, :organizationGroup, membershipRequests: {})
+  end
+
+  def request_action_params
+    params.permit(:id, :requestAction)
   end
 
   def build_org_list(org_options, keys_to_org_name_hash)

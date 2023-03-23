@@ -56,6 +56,7 @@ export default class OrganizationUsers extends React.PureComponent {
       membershipRequests: [],
       loading: true,
       error: null,
+      success: null,
       addingUser: null,
       changingAdminRights: {},
       removingUser: {},
@@ -295,6 +296,41 @@ export default class OrganizationUsers extends React.PureComponent {
     </React.Fragment>;
   }
 
+  membershipRequestHandler = (value) => {
+    const [requestId, requestAction] = value.split('-');
+    const data = { id: requestId, requestAction };
+
+    ApiUtil.patch(`/membership_requests/${requestId}`, { data }).then((response) => {
+      const { membershipRequest, updatedUser } = response.body;
+      const titleMessage = sprintf(COPY.MEMBERSHIP_REQUEST_ACTION_SUCCESS_TITLE, membershipRequest.status, membershipRequest.userName);
+      const bodyMessage = sprintf(COPY.MEMBERSHIP_REQUEST_ACTION_SUCCESS_MESSAGE, membershipRequest.status === 'approved' ? 'granted' : 'denied', membershipRequest.orgName);
+
+      const newState = {
+        membershipRequests: this.state.membershipRequests.filter((request) => request.id !== membershipRequest.id),
+        success: {
+          title: titleMessage,
+          body: bodyMessage,
+        },
+      };
+
+      // Only update the list of organization users on the page if the request was approved
+      if (membershipRequest.status === 'approved') {
+        newState.organizationUsers = [...this.state.organizationUsers, updatedUser];
+        newState.remainingUsers = this.state.remainingUsers.filter((user) => user.id !== updatedUser.id);
+      }
+
+      this.setState(newState);
+
+    }, (error) => {
+      this.setState({
+        error: {
+          title: `Failed to take action for the users request to join ${this.state.organizationName}`,
+          body: error.message
+        }
+      });
+    });
+  };
+
   render = () => <LoadingDataDisplay
     createLoadPromise={this.loadingPromise}
     loadingComponentProps={{
@@ -304,6 +340,9 @@ export default class OrganizationUsers extends React.PureComponent {
     failStatusMessageProps={{
       title: COPY.USER_MANAGEMENT_INITIAL_LOAD_ERROR_TITLE
     }}>
+    { this.state.success && <Alert title={this.state.success.title} type="success">
+      {this.state.success.body}
+    </Alert>}
     <AppSegment filledBackground>
       { this.state.error && <Alert title={this.state.error.title} type="error">
         {this.state.error.body}
@@ -313,7 +352,7 @@ export default class OrganizationUsers extends React.PureComponent {
           this.state.dvcTeam ? sprintf(COPY.USER_MANAGEMENT_DVC_TEAM_PAGE_TITLE, this.state.organizationName) :
             sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName) }</h1>
         {this.state.isVhaOrg && (<>
-          <MembershipRequestTable requests={this.state.membershipRequests} />
+          <MembershipRequestTable requests={this.state.membershipRequests} membershipRequestActionHandler={this.membershipRequestHandler} />
           <div style={{ paddingBottom: '7rem' }}></div>
         </>
         )}

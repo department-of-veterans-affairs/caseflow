@@ -13,17 +13,13 @@
     <p> <%= accessible_group %> </p>
   <% end %>
 
-  <p style="padding-top:20px">
-    You still have pending requests for other Pre-docket offices. You'll get a separate decision email from each Pre-docket office listed below.
-  </p>
-
-  <p>
-    <b> Your pending requests: </b>
-  </p>
-
-  <% @requested_groups.each do |requested_group| %>
-    <p> <%= requested_group %> </p>
+  <% if @pending_organization_request_names.present? %>
+    <p style="padding-top:20px">
+      You still have pending requests for other Pre-docket offices. You'll get a separate decision email from each Pre-docket office listed below.
+    </p>
+    <%= render "pending_requests" %>
   <% end %>
+
 <% end %>
 
 <%= render "help" %>

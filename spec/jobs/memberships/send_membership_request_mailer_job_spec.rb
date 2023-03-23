@@ -7,9 +7,17 @@ describe Memberships::SendMembershipRequestMailerJob do
   let(:membership_requests) { [create(:membership_request, requestor: requestor, organization: organization)] }
   let(:mailer_parameters) do
     {
-      recipient_info: requestor,
+      requestor: requestor,
       requests: membership_requests,
       subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED
+    }
+  end
+  let(:approved_and_denied_params) do
+    {
+      requestor: requestor,
+      accessible_groups: requestor.organizations.map(&:name),
+      organization_name: camo_org.name,
+      pending_organization_request_names: ["Org 1", "Org 2"]
     }
   end
 
@@ -38,6 +46,50 @@ describe Memberships::SendMembershipRequestMailerJob do
       end
 
       it "sends a status update email to the camo admin" do
+        expect { subject }.to change {
+          ActionMailer::Base.deliveries.count
+        }.by 1
+      end
+    end
+
+    context "the type is VhaBusinessLineApproved" do
+      let(:type) { "VhaBusinessLineApproved" }
+      let(:mailer_parameters) { approved_and_denied_params }
+
+      it "sends a request status approved email to the requestor" do
+        expect { subject }.to change {
+          ActionMailer::Base.deliveries.count
+        }.by 1
+      end
+    end
+
+    context "the type is VhaBusinessLineDenied" do
+      let(:type) { "VhaBusinessLineDenied" }
+      let(:mailer_parameters) { approved_and_denied_params }
+
+      it "sends a request status denied email to the requestor" do
+        expect { subject }.to change {
+          ActionMailer::Base.deliveries.count
+        }.by 1
+      end
+    end
+
+    context "the type is VhaPredocketApproved" do
+      let(:type) { "VhaPredocketApproved" }
+      let(:mailer_parameters) { approved_and_denied_params }
+
+      it "sends a request status approved email to the requestor" do
+        expect { subject }.to change {
+          ActionMailer::Base.deliveries.count
+        }.by 1
+      end
+    end
+
+    context "the type is VhaPredocketDenied" do
+      let(:type) { "VhaPredocketDenied" }
+      let(:mailer_parameters) { approved_and_denied_params }
+
+      it "sends a request status denied email to the requestor" do
         expect { subject }.to change {
           ActionMailer::Base.deliveries.count
         }.by 1
