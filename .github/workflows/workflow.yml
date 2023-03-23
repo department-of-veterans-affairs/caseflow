@@ -62,6 +62,7 @@ jobs:
           KNAPSACK_PRO_LOG_LEVEL: info
           DEBUG: true
           WD_INSTALL_DIR: .webdrivers
+          CI: true
 
     steps:
       - uses: actions/checkout@v3
