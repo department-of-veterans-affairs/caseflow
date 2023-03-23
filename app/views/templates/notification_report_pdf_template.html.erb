@@ -1,0 +1,237 @@
+<%
+
+def handle_appeal(appeal)
+  if appeal.is_a?(Appeal) || appeal.is_a?(LegacyAppeal)
+    appeal
+  else
+    raise Caseflow::Error::AppealNotFound
+  end
+end
+
+def get_hearing_type(appeal)
+  if appeal&.current_hearing_request_type == nil
+    "-"
+  else
+    appeal&.readable_current_hearing_request_type
+  end
+end
+
+def get_notifications(appeal)
+  if appeal.is_a?(Appeal)
+    all_notifications = Notification.where(appeals_id: appeal.uuid)
+    allowed_notifications = all_notifications.where(email_notification_status: nil)
+      .or(all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .merge(all_notifications.where(sms_notification_status: nil)
+      .or(all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).order(event_date: :asc, id: :asc)
+  elsif appeal.is_a?(LegacyAppeal)
+    all_notifications = Notification.where(appeals_id: appeal.vacols_id)
+    allowed_notifications = all_notifications.where(email_notification_status: nil)
+      .or(all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .merge(all_notifications.where(sms_notification_status: nil)
+      .or(all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).order(event_date: :asc, id: :asc)
+  end
+end
+
+def handle_notifications(notifications)
+  if notifications.empty?
+    raise ActiveRecord::RecordNotFound
+  end
+end
+
+def generate_table_notifications(notifications)
+  table_notifications = Array.new
+  notifications.each do |notification|
+
+    email_notification = {
+      status: case notification.email_notification_status&.downcase
+        when 'success' , 'sent' , 'temporary-failure'
+          'Pending Delivery'
+        when 'permanent-failure' , 'technical-failure'
+          'Failed Delivery'
+        when 'preferences-declined'
+          'Opted-out'
+        else
+          notification.email_notification_status
+        end,
+      content: notification.email_notification_content,
+      notification_type: 'Email',
+      recipient_information: notification.recipient_email == nil ? '—' : notification.recipient_email,
+      event_type: notification.event_type,
+      event_date: notification.event_date
+    }
+
+    sms_notification = {
+      status: case notification.sms_notification_status&.downcase
+        when 'success' , 'sent' , 'temporary-failure'
+          'Pending Delivery'
+        when 'permanent-failure' , 'technical-failure'
+          'Failed Delivery'
+        when 'preferences-declined'
+          'Opted-out'
+        else
+          notification.sms_notification_status
+        end,
+      content: notification.sms_notification_content,
+      notification_type: 'Text',
+      recipient_information: notification.recipient_phone_number == nil ? '—' : notification.recipient_phone_number,
+      event_type: notification.event_type,
+      event_date: notification.event_date
+    }
+    if notification.notification_type == 'Email and SMS'
+      table_notifications.push(email_notification, sms_notification)
+    elsif notification.notification_type == 'Email'
+      table_notifications.push(email_notification)
+    else
+      table_notifications.push(sms_notification)
+    end
+  end
+  table_notifications
+end
+
+ appeal = handle_appeal(appeal)
+ hearing_type = get_hearing_type(appeal)
+ notifications = get_notifications(appeal)
+ handle_notifications(notifications)
+ table_notifications = generate_table_notifications(notifications)
+
+ %>
+
+<html>
+  <body class="cf-app-queue">
+    <div class="cf-content">
+      <div class="cf-content-inside full-page"></div>
+    </div>
+    <div id="Queue-react-component-328b930a-dffe-4c42-b850-ac07c64ab413">
+      <div>
+        <main data-css-35ly83="" role="main" id="Main">
+          <div class="cf-wide-app">
+            <div class="cf-flash-messages"></div>
+            <div class="usa-grid">
+              <section class="cf-app-segment cf-app-segment--alt">
+                <div data-css-bui2vg="">
+                  <h1 data-css-10hc4to="">Case notifications for <%=appeal&.veteran_first_name%> <%=appeal&.veteran_last_name%></h1>
+                  <div data-css-7o0e0w="">
+                    <div data-css-p21ib3="">Veteran ID:&nbsp;
+                      <button type="submit" class="cf-apppeal-id" data-css-cjlnsd="" style="width: auto; white-space: nowrap;"><%=appeal&.veteran_file_number%></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div data-css-7v4y9j="" id="caseTitleDetailsSubheader">
+                  <div data-css-1atuorp="">
+                    <div data-css-1yy2eo1="">
+                      <p>Docket Number</p>
+                      <div>
+                        <span data-css-1iid9v3="">
+                          <span data-css-2moai0=""><%=appeal.docket_name&.first&.upcase%></span>
+                          <%=appeal&.docket_number%>
+                        </span>
+                      </div>
+                    </div>
+                    <div data-css-1yy2eo1="">
+                      <p>Appeal Stream Type</p>
+                      <div>
+                        <span><%=appeal&.type%></span>
+                      </div>
+                    </div>
+                    <div data-css-1yy2eo1="">
+                      <p>Hearing Type</p>
+                      <div><%=hearing_type%></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div data-css-48ja="">
+                  <span>
+                    <p class="notification-text">VA Notify sent these status notifications to the Appellant about their case.</p>
+                  </span>
+                  <div class="notification-table">
+                    <div class="cf-table-wrapper">
+                      <table id="case-table-description" class="usa-table-borderless undefined">
+                        <thead>
+                          <tr role="row">
+                            <th aria-labelledby="header-eventType" role="columnheader" scope="col" >
+                              <span data-css-9shxm7="" aria-label="Event">
+                                <span id="header-eventType">Event</span>
+                              </span>
+                            </th>
+                            <th aria-sort="ascending" aria-labelledby="header-eventDate" role="columnheader" scope="col" >
+                              <span data-css-9shxm7="" aria-label="Notification Date">
+                                <span id="header-eventDate">Notification Date</span>
+                              </span>
+                            </th>
+                            <th aria-labelledby="header-notificationType" role="columnheader" scope="col" >
+                              <span data-css-9shxm7="" aria-label="Notification Type">
+                                <span id="header-notificationType">Notification Type</span>
+                              </span>
+                            </th>
+                            <th aria-labelledby="header-recipientInformation" role="columnheader" scope="col" >
+                              <span data-css-9shxm7="" aria-label="Recipient Information">
+                                <span id="header-recipientInformation">Recipient Information</span>
+                              </span>
+                            </th>
+                            <th aria-labelledby="header-status" role="columnheader" scope="col" >
+                              <span data-css-9shxm7="" aria-label="Status">
+                                <span id="header-status">Status</span>
+                              </span>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody >
+                        <% table_notifications.each_with_index do |notification, i|%>
+                          <tr id=<%="table-row-"+ i.to_s%> class='top<%=i.even? == true ? " row-even" : ""%>' role="row">
+                            <td role="cell" colspan="1">
+                              <span>
+                                <span style="font-weight: bold; cursor: pointer;">
+                                  <a><%=notification[:event_type]%></a>
+                                </span>
+                              </span>
+                            </td>
+                            <td role="cell" colspan="1"><%=notification[:event_date].strftime('%m/%d/%Y')%></td>
+                            <td role="cell" colspan="1"><%=notification[:notification_type]%></td>
+                            <td role="cell" colspan="1"><%=notification[:recipient_information]%></td>
+                            <td role="cell" colspan="1"><%=notification[:status].titleize%></td>
+                          </tr>
+                          <tr id=<%="table-row-"+ i.to_s + "a"%> class=<%=i.even? == true ? "row-even" : ""%> role="row">
+                            <td role="cell" colspan="5">
+                              <span><%=notification[:content]%></span>
+                            </td>
+                          </tr>
+                        <%end%>
+                        </tbody>
+                        <tfoot></tfoot>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+
+  <style>
+    .row-even {
+      background-color: #f9f9f9;
+    }
+
+    td {
+      background-color: inherit;
+    }
+
+    td a {
+      color: inherit;
+    }
+
+    .top {
+      border-bottom: hidden;
+    }
+  </style>
+
+</html>
+
+
