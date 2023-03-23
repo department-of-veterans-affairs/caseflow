@@ -119,6 +119,8 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         let(:uploaded_document) { instance_double(VbmsUploadedDocument, id: 1) }
         let(:document_params) do
           {
+            appeal_id: appeal.id,
+            appeal_type: appeal.class.name,
             veteran_file_number: file_number,
             document_type: params[:document_type],
             file: params[:file],
@@ -141,7 +143,8 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
             expect(VbmsUploadedDocument).to receive(:create).with(document_params).and_return(uploaded_document)
             expect(UploadDocumentToVbmsJob).to receive(:perform_later).with(
               document_id: uploaded_document.id,
-              initiator_css_id: user.css_id
+              initiator_css_id: user.css_id,
+              application: anything
             )
             expect(uploaded_document).to receive(:cache_file)
 
