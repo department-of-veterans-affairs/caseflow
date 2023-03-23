@@ -88,6 +88,10 @@ jobs:
           restore-keys:
             dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
+      - name: Install Selenium
+        run: |
+            sudo gem install selenium-webdriver
+
       - name: Install chromium
         run: |
           CHROME_VERSION="106.0.5249.119-1"

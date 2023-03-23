@@ -117,11 +117,11 @@ group :test, :development, :demo do
   gem "scss_lint", require: false
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "single_cov"
-  gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
+  gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git", :branch => 'gha-migration-rspec'
   gem "sql_tracker"
   gem "test-prof"
   gem "timecop"
-  gem "webdrivers"
+  gem "webdrivers", '~> 5.0', require: false
 end
 
 group :development do
