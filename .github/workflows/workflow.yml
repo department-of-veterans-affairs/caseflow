@@ -2,8 +2,9 @@ name: RSpec Jest Lint Workflow
 
 on:
   workflow_dispatch:
-  pull_request:
-    types: [opened, reopened, edited, synchronize]
+  push:
+    branches:
+    - jr-gha-migration-rspec
 
 # Use this flag to turn on/off RSpec.  Please go to the lint & js_test job to disable the boolean
 env:
@@ -163,9 +164,9 @@ jobs:
       - name: RSpec via knapsack_pro Queue Mode
         run: |
           mkdir -p ./test-results/rspec
+          chmod -R 777 ./test-results
           export RAILS_ENV=test
-          # bundle exec rake "knapsack_pro:queue:rspec[--require rails_helper]"
-          bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
+          runuser -l circleci -c 'bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"'
         # Only runs RSpec if flag is true
         if: ${{ env.rspec_active == 'true' }}
 
