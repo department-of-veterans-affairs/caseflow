@@ -147,7 +147,7 @@ jobs:
       - name: Open Folder Permissions to circleci User
         run: |
           mkdir -p tmp/knapsack_pro
-          chmod -R tmp 757
+          chmod -R 757 tmp
           find .. -type d -exec chmod 755 {} \;
           find .. -type f -exec chmod 644 {} \;
 
