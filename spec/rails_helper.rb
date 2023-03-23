@@ -11,7 +11,7 @@ require "timeout"
 require "knapsack_pro"
 
 TMP_RSPEC_XML_REPORT = "tmp/rspec.xml"
-FINAL_RSPEC_XML_REPORT = "#{Dir.home}/test-results/rspec/rspec.xml"
+FINAL_RSPEC_XML_REPORT = "test-results/rspec/rspec.xml"
 
 KnapsackPro::Adapters::RSpecAdapter.bind
 KnapsackPro::Hooks::Queue.after_subset_queue do |_queue_id, _subset_queue_id|
