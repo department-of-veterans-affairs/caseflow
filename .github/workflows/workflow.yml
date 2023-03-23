@@ -148,6 +148,7 @@ jobs:
         run: |
           mkdir -p tmp/knapsack_pro
           chmod -R 777 tmp
+          chmod -R 777 log
 
 
       - name: RSpec via knapsack_pro Queue Mode
