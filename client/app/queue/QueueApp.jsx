@@ -98,7 +98,7 @@ import HearingTypeConversionContainer from '../hearings/components/HearingTypeCo
 import HearingTypeConversionModal from '../hearings/components/HearingTypeConversionModal';
 import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
 import { PrivateRoute } from '../components/PrivateRoute';
-import { EditCavcRemandView } from './cavc/EditCavcRemandView';
+import { editCavcRemandRoutes } from './cavc/editCavcRemandRoutes';
 import EditAppellantInformation from './editAppellantInformation/EditAppellantInformation';
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
@@ -270,8 +270,6 @@ class QueueApp extends React.PureComponent {
   routedAddCavcRemand = (props) => (
     <AddCavcRemandView {...props.match.params} />
   );
-
-  routedEditCavcRemand = () => <EditCavcRemandView />;
 
   routedAdvancedOnDocketMotion = (props) => (
     <AdvancedOnDocketMotionView {...props.match.params} />
@@ -796,12 +794,7 @@ class QueueApp extends React.PureComponent {
               title="Add Cavc Remand | Caseflow"
               render={this.routedAddCavcRemand}
             />
-            <PageRoute
-              exact
-              path="/queue/appeals/:appealId/edit_cavc_remand"
-              title="Edit Cavc Remand | Caseflow"
-              render={this.routedEditCavcRemand}
-            />
+
             <PageRoute
               exact
               path="/organizations/:organization/users"
@@ -844,6 +837,8 @@ class QueueApp extends React.PureComponent {
             {docketSwitchRoutes.page}
 
             {substituteAppellantRoutes.page}
+
+            {editCavcRemandRoutes.page}
           </Switch>
 
           {/* Modal routes are in their own Switch so they will display above the base routes */}

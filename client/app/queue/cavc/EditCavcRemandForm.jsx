@@ -1,7 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
+import COPY from '../../../COPY';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { isDate, max, parseISO } from 'date-fns';
 import { isEmpty } from 'lodash';
 
 import { css } from 'glamor';
@@ -55,6 +59,9 @@ const radioLabelStyling = css({ marginTop: '2.5rem' });
 const issueListStyling = css({ marginTop: '0rem' });
 const buttonStyling = css({ paddingLeft: '0' });
 
+export const subDateMinErrorMsg =
+  "Date cannot be earlier than the NOD date or the Veteran's date of death";
+
 /**
  * @param {Object} props
  *  - @param {Object[]} decisionIssues   Issues pulled from state to allow the user to select which are being remanded
@@ -69,6 +76,7 @@ export const EditCavcRemandForm = ({
   existingValues = {},
   supportedDecisionTypes = [],
   supportedRemandTypes = [],
+  substituteAppellantClaimantOptions,
   onCancel,
   onSubmit,
 }) => {
@@ -78,7 +86,24 @@ export const EditCavcRemandForm = ({
 
   const schema = useMemo(
     () => generateSchema({ maxIssues: decisionIssues.length }),
-    [decisionIssues]
+    [decisionIssues],
+    yup.object().shape({
+      substitutionDate: yup.
+        date().
+        required('Substitution Date is required').
+        nullable().
+        max(new Date(), 'Date cannot be in the future').
+        when(['$nodDate', '$dateOfDeath'], (date1, date2, currentSchema) => {
+          // We want to ensure that selected date is after the NOD and date of death
+          // Date of death may not actually be set, so we first filter out undefined from these values
+          // eslint-disable-next-line id-length
+          const dates = [date1, date2].filter(Boolean).map((d) => (isDate(d) ? d : parseISO(d)));
+
+          return currentSchema.min(max(dates), subDateMinErrorMsg);
+        }).
+        transform((value, originalValue) => (originalValue === '' ? null : value)),
+      participantId: yup.string().required('You must select a claimant'),
+    })
   );
 
   const { control, errors, handleSubmit, register, setValue, watch } = useForm({
@@ -146,6 +171,17 @@ export const EditCavcRemandForm = ({
     setValue('issueIds', [...allIssueIds]);
   };
 
+  const featureToggles = useSelector((state) => state.ui.featureToggles);
+  const isAppellantSubstitutedOptions = [
+    { displayText: 'Yes',
+      value: 'true',
+      disabled: !substituteAppellantClaimantOptions
+     },
+    { displayText: 'No',
+      value: 'false' }
+  ];
+
+
   // Handle prepopulating issue checkboxes if defaultValues are present
   useEffect(() => {
     if (existingValues?.issueIds?.length) {
@@ -180,6 +216,9 @@ export const EditCavcRemandForm = ({
     [watchRemandType, watchRemandDatesProvided]
   );
 
+  const [isAppellantSubstitutedValue, setIsAppellantSubstitutedValue] = useState(existingValues?.isAppellantSubstituted)
+  const isAppellantSubstitutedYes = isAppellantSubstitutedValue === 'true';
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <AppSegment filledBackground>
@@ -195,6 +234,40 @@ export const EditCavcRemandForm = ({
           errorMessage={errors?.docketNumber && CAVC_DOCKET_NUMBER_ERROR}
           strongLabel
         />
+
+        { featureToggles.cavc_remand_granted_substitute_appellant &&
+          <RadioField
+            errorMessage={errors?.isAppellantSubstituted?.message}
+            inputRef={register}
+            label={COPY.CAVC_SUBSTITUTE_APPELLANT_LABEL}
+            name="isAppellantSubstituted"
+            options={isAppellantSubstitutedOptions}
+            onChange={(val) => setIsAppellantSubstitutedValue(val) }
+            strongLabel
+          />
+        }
+
+        { featureToggles.cavc_remand_granted_substitute_appellant && isAppellantSubstitutedYes &&
+          <DateSelector
+            inputRef={register}
+            label={COPY.CAVC_SUBSTITUTE_APPELLANT_DATE_LABEL}
+            type="date"
+            name="substitutionDate"
+            errorMessage={errors?.substitutionDate?.message}
+            strongLabel
+          />
+        }
+
+        { featureToggles.cavc_remand_granted_substitute_appellant && isAppellantSubstitutedYes && substituteAppellantClaimantOptions &&
+          <RadioField
+            label={COPY.CAVC_SUBSTITUTE_APPELLANT_CLAIMANTS_LABEL}
+            inputRef={register}
+            name="participantId"
+            errorMessage={errors?.participantId?.message}
+            options={substituteAppellantClaimantOptions}
+            strongLabel
+          />
+        }
 
         <RadioField
           errorMessage={errors?.attorney?.message}
@@ -398,8 +471,12 @@ export const EditCavcRemandForm = ({
         />
       </AppSegment>
       <div className="controls cf-app-segment">
-        <Button type="submit" name="submit" classNames={['cf-right-side']}>
-          Submit
+        <Button
+          type="submit"
+          name="continue"
+          classNames={['cf-right-side']}
+        >
+          Continue
         </Button>
         {onCancel && (
           <Button
@@ -441,6 +518,9 @@ EditCavcRemandForm.propTypes = {
       PropTypes.string,
       PropTypes.arrayOf(PropTypes.string),
     ]),
+    substitutionDate: PropTypes.string,
+    participantId: PropTypes.string,
+    isAppellantSubstituted: PropTypes.string
   }),
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
