@@ -121,7 +121,7 @@ group :test, :development, :demo do
   gem "sql_tracker"
   gem "test-prof"
   gem "timecop"
-  gem "webdrivers"
+  gem "webdrivers", "~> 5.2"
 end
 
 group :development do
