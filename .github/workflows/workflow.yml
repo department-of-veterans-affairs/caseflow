@@ -59,6 +59,8 @@ jobs:
           KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
           KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
           KNAPSACK_PRO_LOG_LEVEL: info
+          DEBUG: true
+          WD_INSTALL_DIR: .webdrivers
 
     steps:
       - uses: actions/checkout@v3
@@ -88,7 +90,7 @@ jobs:
           restore-keys:
             dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
-      - name: Install chromium
+      - name: Install Chrome
         run: |
           CHROME_VERSION="106.0.5249.119-1"
           apt-get update
@@ -105,18 +107,8 @@ jobs:
           sudo chown root:root /usr/bin/chromedriver
           sudo chmod +x /usr/bin/chromedriver
 
-      - name: Install firefox
-        run: |
-          FIREFOX_VERSION="106.0.1"
-          apt-get -y install libgtk2.0-0
-          wget https://ftp.mozilla.org/pub/firefox/releases/${FIREFOX_VERSION}/linux-x86_64/en-GB/firefox-${FIREFOX_VERSION}.tar.bz2
-          tar xvf firefox-${FIREFOX_VERSION}.tar.bz2
-          mv firefox/ /usr/lib/firefox
-          ln -s /usr/lib/firefox /usr/bin/firefox
-
       - name: setup testfiles directory
         run: ./ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
-
 
       - name: Install Ruby Dependencies
         run: |
@@ -153,22 +145,15 @@ jobs:
         run: |
           ./ci-bin/capture-log "bundle exec rake assets:precompile"
 
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./test-results
-
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./logs
-
       - name: RSpec via knapsack_pro Queue Mode
         run: |
           mkdir -p ./test-results/rspec
+          mkdir .webdrivers
           chmod -R 777 ${GITHUB_WORKSPACE}
           export RAILS_ENV=test
           runuser -u circleci bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color ]"
         # Only runs RSpec if flag is true
-        if: ${{ env.rspec_active == 'true' }}
+        # if: ${{ env.rspec_active == 'true' }}
 
       - uses: actions/upload-artifact@v3
         with:
@@ -180,15 +165,15 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          path: ./project/tmp/capybara
+          path: ./tmp/capybara
 
       - uses: actions/upload-artifact@v3
         with:
-          path: ./project/log/test.log
+          path: ./log/test.log
 
       - uses: actions/upload-artifact@v3
         with:
-          path: ./project/log/bullet.log
+          path: ./log/bullet.log
 
       - uses: actions/upload-artifact@v3
         with:
