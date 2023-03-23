@@ -160,19 +160,16 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          path: ./project/tmp/capybara
+          path: ./tmp/capybara
 
       - uses: actions/upload-artifact@v3
         with:
-          path: ./project/log/test.log
+          path: ./log/test.log
 
       - uses: actions/upload-artifact@v3
         with:
-          path: ./project/log/bullet.log
+          path: ./log/bullet.log
 
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./logs
   caseflow_jest_job:
     # This job will run the jest, change the value below to false if you wish to turn it off.
     if: true
