@@ -70,7 +70,7 @@ jobs:
           WD_INSTALL_DIR: .webdrivers
           CI: true
           STANDALONE_CHROME: true
-          SELENIUM_HOST: http://standalone-chrome/
+          SELENIUM_HOST: http://standalone-chrome
 
     steps:
       - uses: actions/checkout@v3

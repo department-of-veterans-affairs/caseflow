@@ -50,9 +50,13 @@ Capybara.register_driver(:sniffybara_headless) do |app|
   chrome_options.add_preference(:browser,
                                 disk_cache_dir: cache_directory)
 
-  chrome_options.args << "--headless"
-  chrome_options.args << "--disable-gpu"
-  chrome_options.args << "--window-size=1200,1200"
+    options.add_argument("--headless")
+    options.add_argument("--window-size=1400,1400")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument('--disable-gpu')
+    options.add_argument("disable-infobars")
+    options.add_argument("--disable-extensions")
 
   options = {
     service: ::Selenium::WebDriver::Service.chrome(args: { port: 51_674 }),
@@ -92,6 +96,9 @@ if ENV["STANDALONE_CHROME"]
     options.add_argument("--window-size=1400,1400")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
+    options.add_argument('--disable-gpu')
+    options.add_argument("disable-infobars")
+    options.add_argument("--disable-extensions")
 
     Capybara::Selenium::Driver.new(
       app,
