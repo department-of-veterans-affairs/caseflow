@@ -166,7 +166,7 @@ jobs:
           mkdir -p ./test-results/rspec
           chmod -R 777 ./test-results
           export RAILS_ENV=test
-          runuser -l circleci -c 'bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"'
+          runuser -u circleci -- 'bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"'
         # Only runs RSpec if flag is true
         if: ${{ env.rspec_active == 'true' }}
 
