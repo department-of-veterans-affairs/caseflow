@@ -8,7 +8,7 @@ on:
 
 # Use this flag to turn on/off RSpec.  Please go to the lint & js_test job to disable the boolean
 env:
-  rspec_active: false
+  rspec_active: true
 
 jobs:
   # This job runs the main deployment of caseflow
