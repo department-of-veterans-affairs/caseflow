@@ -146,10 +146,10 @@ jobs:
 
       - name: Open Folder Permissions to circleci User
         run: |
-          mkdir -p tmp/knapsack_pro
-          chmod -R 757 tmp
+          mkdir -p tmp/knapsack_pro/slow_test_file_determiner
           find .. -type d -exec chmod 755 {} \;
           find .. -type f -exec chmod 644 {} \;
+
 
       - name: RSpec via knapsack_pro Queue Mode
         run: |
