@@ -149,6 +149,7 @@ jobs:
           mkdir -p tmp/knapsack_pro
           chmod -R 777 tmp
           chmod -R 777 log
+          mkdir -p test-results
           chmod -R 777 test-results
 
 
