@@ -164,7 +164,8 @@ jobs:
       - name: RSpec via knapsack_pro Queue Mode
         run: |
           mkdir -p ./test-results/rspec
-          chmod -R 777 /github/workspace
+          pwd
+          chmod -R 777 ${GITHUB_WORKSPACE}
           export RAILS_ENV=test
           runuser -u circleci bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color ]"
         # Only runs RSpec if flag is true
