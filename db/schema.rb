@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_17_013023) do
+ActiveRecord::Schema.define(version: 2023_03_17_164013) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2023_02_17_013023) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2023_02_17_013023) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at"
+    t.datetime "updated_at", comment: "Date and time the record was last updated"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -334,6 +334,7 @@ ActiveRecord::Schema.define(version: 2023_02_17_013023) do
     t.datetime "created_at"
     t.bigint "created_by_id"
     t.string "issue_category"
+    t.string "issue_description"
     t.datetime "updated_at"
     t.bigint "updated_by_id"
     t.index ["cavc_dashboard_id"], name: "index_cavc_dashboard_issues_on_cavc_dashboard_id"
@@ -364,14 +365,23 @@ ActiveRecord::Schema.define(version: 2023_02_17_013023) do
   create_table "cavc_dispositions_to_reasons", force: :cascade do |t|
     t.bigint "cavc_dashboard_disposition_id", comment: "ID of the associated CAVC Dashboard Disposition"
     t.bigint "cavc_decision_reason_id", comment: "ID of the associated CAVC Decision Reason"
-    t.bigint "cavc_selection_basis_id", comment: "ID of the associated CAVC Basis for Selection"
     t.datetime "created_at", null: false
     t.bigint "created_by_id", comment: "The ID for the user that created the record"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "The ID for the user that most recently changed the record"
     t.index ["cavc_dashboard_disposition_id"], name: "cavc_disp_to_reason_cavc_dash_disp_id"
     t.index ["cavc_decision_reason_id"], name: "index_cavc_dispositions_to_reasons_on_cavc_decision_reason_id"
-    t.index ["cavc_selection_basis_id"], name: "index_cavc_dispositions_to_reasons_on_cavc_selection_basis_id"
+  end
+
+  create_table "cavc_reasons_to_bases", force: :cascade do |t|
+    t.bigint "cavc_dispositions_to_reason_id", comment: "ID of the associated CAVC Decision Reason"
+    t.bigint "cavc_selection_basis_id", comment: "ID of the associated CAVC Basis for Selection"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "The ID for the user that created the record"
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id", comment: "The ID for the user that most recently changed the record"
+    t.index ["cavc_dispositions_to_reason_id"], name: "index_cavc_reasons_to_bases_on_cavc_dispositions_to_reason_id"
+    t.index ["cavc_selection_basis_id"], name: "index_cavc_reasons_to_bases_on_cavc_selection_basis_id"
   end
 
   create_table "cavc_remands", force: :cascade do |t|
@@ -508,6 +518,8 @@ ActiveRecord::Schema.define(version: 2023_02_17_013023) do
     t.integer "conference_id", comment: "Id of the conference"
     t.datetime "created_at", null: false, comment: "Date and Time of creation"
     t.bigint "created_by_id", null: false, comment: "User id of the user who created the record. FK on User table"
+    t.string "guest_hearing_link", comment: "Guest link for hearing daily docket."
+    t.string "guest_pin_long", comment: "Pin provided for the guest, allowing them entry into the video conference."
     t.bigint "hearing_day_id", null: false, comment: "The associated hearing day id"
     t.string "host_link", comment: "Conference link generated from external conference service"
     t.integer "host_pin", comment: "Pin for the host of the conference to get into the conference"
@@ -1903,9 +1915,12 @@ ActiveRecord::Schema.define(version: 2023_02_17_013023) do
   add_foreign_key "cavc_decision_reasons", "cavc_decision_reasons", column: "parent_decision_reason_id"
   add_foreign_key "cavc_dispositions_to_reasons", "cavc_dashboard_dispositions"
   add_foreign_key "cavc_dispositions_to_reasons", "cavc_decision_reasons"
-  add_foreign_key "cavc_dispositions_to_reasons", "cavc_selection_bases"
   add_foreign_key "cavc_dispositions_to_reasons", "users", column: "created_by_id", name: "cavc_dispositions_to_reasons_created_by_id_fk"
   add_foreign_key "cavc_dispositions_to_reasons", "users", column: "updated_by_id", name: "cavc_dispositions_to_reasons_updated_by_id_fk"
+  add_foreign_key "cavc_reasons_to_bases", "cavc_dispositions_to_reasons"
+  add_foreign_key "cavc_reasons_to_bases", "cavc_selection_bases"
+  add_foreign_key "cavc_reasons_to_bases", "users", column: "created_by_id", name: "cavc_reasons_to_bases_created_by_id_fk"
+  add_foreign_key "cavc_reasons_to_bases", "users", column: "updated_by_id", name: "cavc_reasons_to_bases_updated_by_id_fk"
   add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
   add_foreign_key "cavc_remands", "users", column: "created_by_id"

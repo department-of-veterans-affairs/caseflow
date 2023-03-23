@@ -133,6 +133,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
     end
 
     it "user can add issues, edit dispsositions, and save changes" do
+      issue_description = "Test Issue Description"
       Seeds::CavcDecisionReasonData.new.seed!
 
       go_to_dashboard(cavc_remand.remand_appeal.uuid)
@@ -158,6 +159,9 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
         disp_dropdown = page.find("div.cf-form-dropdown", text: "Disposition by Court")
         disp_dropdown.find("div.cf-select").click
         disp_dropdown.find("div.cf-select__menu").find("div", exact_text: "Affirmed").click
+
+        fill_in(name: "Issue Description", with: issue_description)
+
         click_button "Add issue"
       end
 
@@ -168,6 +172,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       abandoned = page.all("div.cf-select__value-container", exact_text: "Abandoned")
       affirmed = page.all("div.cf-select__value-container", exact_text: "Affirmed")
+      expect(page).to have_content issue_description
       expect(abandoned.count).to eq 3
       expect(affirmed.count).to eq 1
     end

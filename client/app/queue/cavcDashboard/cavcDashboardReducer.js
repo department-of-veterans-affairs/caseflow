@@ -64,11 +64,13 @@ export const cavcDashboardReducer = (state = initialState, action) => {
             [action.payload.parentCheckboxId]: {
               children: {
                 [childCheckboxIndex]: {
-                  basis_for_selection: {
-                    $merge: {
-                      label: action.payload.label,
-                      value: action.payload.value,
-                      category: action.payload.category
+                  selection_bases: {
+                    [action.payload.selectionBasesIndex]: {
+                      $merge: {
+                        label: action.payload.label,
+                        value: action.payload.value,
+                        category: action.payload.category
+                      }
                     }
                   }
                 }
@@ -83,48 +85,12 @@ export const cavcDashboardReducer = (state = initialState, action) => {
       checked_boxes: {
         [action.payload.issueId]: {
           [action.payload.checkboxId]: {
-            basis_for_selection: {
-              $merge: {
-                label: action.payload.label,
-                value: action.payload.value
-              }
-            }
-          }
-        }
-      }
-    });
-  case ACTIONS.UPDATE_OTHER_FIELD_TEXT_VALUE:
-    if (action.payload.parentCheckboxId) {
-      const childCheckboxIndex =
-        state.checked_boxes[action.payload.issueId][action.payload.parentCheckboxId].children.
-          findIndex((child) => child.id === action.payload.checkboxId);
-
-      return update(state, {
-        checked_boxes: {
-          [action.payload.issueId]: {
-            [action.payload.parentCheckboxId]: {
-              children: {
-                [childCheckboxIndex]: {
-                  basis_for_selection: {
-                    $merge: {
-                      otherText: action.payload.value
-                    }
-                  }
+            selection_bases: {
+              [action.payload.selectionBasesIndex]: {
+                $merge: {
+                  label: action.payload.label,
+                  value: action.payload.value
                 }
-              }
-            }
-          }
-        }
-      });
-    }
-
-    return update(state, {
-      checked_boxes: {
-        [action.payload.issueId]: {
-          [action.payload.checkboxId]: {
-            basis_for_selection: {
-              $merge: {
-                otherText: action.payload.value
               }
             }
           }
