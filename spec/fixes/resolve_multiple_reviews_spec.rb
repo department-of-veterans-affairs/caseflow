@@ -1,19 +1,22 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
+require 'rake'
 
-RSpec.describe 'reviews:resolve_multiple_reviews' do
-  let(:user) do
-    OpenStruct.new(
-      ip_address: '127.0.0.1',
-      station_id: '283',
-      css_id: 'CSFLOW',
-      regional_office: 'DSUSER'
+RSpec.describe "resolve_multiple_reviews[task]" do
+
+  include_context "rake"
+
+  # create a test ep
+  def new_ep(veteran_file_number, status_type_code, last_action_date, claim_type_code)
+    Generators::EndProduct.build(
+      veteran_file_number: veteran_file_number,
+      bgs_attrs: {
+        claim_type_code: claim_type_code,
+        last_action_date: last_action_date,
+        status_type_code: status_type_code
+      }
     )
-  end
-
-  #Not sure if I'm suppose to do both here for the subject
-  subject do
-    Rake::Task['reviews:resolve_multiple_reviews'].invoke('hlr')
-    Rake::Task['reviews:resolve_multiple_reviews'].invoke('sc')
   end
 
   # create a test review
@@ -70,14 +73,15 @@ RSpec.describe 'reviews:resolve_multiple_reviews' do
       ]
     end
 
+    it "resolves the duplicate EPs for the given type of reviews" do
+      # Invoke the resolve_multiple_reviews task for HLRS
+      run(rake resolve_multiple_reviews[hlr])
 
-    describe "when type is hlr with duplicateEP error it is remediated" do
-      # Run the Rake task with the HLR type argument
-      Rake::Task['reviews:resolve_multiple_reviews'].invoke('hlr')
+      # Expect both problem_hlrs to have been resolved
+      expect(hlr.reload.establishment_error).to be_nil
 
-      it "Remediates hlr to be empty" do
-        expect(hlrs).to be_empty
-      end
+      # Expect the output to include lines indicating that the EPs were established/cleared
+      expect(output).to include("cleared")
     end
   end
 end
