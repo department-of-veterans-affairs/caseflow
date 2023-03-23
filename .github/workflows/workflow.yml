@@ -69,7 +69,7 @@ jobs:
         run: |
           echo "User: $(whoami)"
           echo "PWD: $(pwd)"
-          mdkir tmp
+          mkdir tmp
           echo "Project dir info: $(ls -a)"
           echo "Home dir info: $(ls ~)"
 
