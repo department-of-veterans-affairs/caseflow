@@ -69,7 +69,7 @@ jobs:
         run: |
           echo "User: $(whoami)"
           echo "PWD: $(pwd)"
-          la -a
+          ls -a
 
       - name: restore yarn cache
         uses: actions/cache/restore@v3
