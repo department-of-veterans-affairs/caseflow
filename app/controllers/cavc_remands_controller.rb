@@ -132,6 +132,7 @@ class CavcRemandsController < ApplicationController
       update_appellant_substitution_and_create_history(cavc_appeal, appellant_substitution)
     else
       original_appellant_substitute_participant_id = appellant_substitution.substitute_participant_id
+      cancel_unselected_tasks(appellant_substitution)
       appellant_substitution.update(appellant_substitution_params(Date.current, cavc_appeal.veteran.participant_id))
       cavc_appeal.update(veteran_is_not_claimant: nil)
       appellant_substitution.histories.create(
