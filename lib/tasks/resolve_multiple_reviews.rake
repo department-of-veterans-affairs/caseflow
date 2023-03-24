@@ -27,6 +27,11 @@ namespace :reviews do
 
     problem_reviews = problem_scs + problem_hlrs
 
+    if problem_reviews.count.zero?
+      puts 'No problem Supplemental Claims or Higher Level Reviews found.'
+      exit 0
+    end
+
     if problem_reviews.any?
       resolve_duplicate_eps(problem_reviews)
     end
