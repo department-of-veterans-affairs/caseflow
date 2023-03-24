@@ -83,9 +83,44 @@ end
 
 Capybara.javascript_driver = :logging_selenium_chrome
 
-Capybara.default_driver = ENV["CI"] ? :sniffybara_headless : :parallel_sniffybara
+if ENV["STANDALONE_CHROME"]
+  Capybara.register_driver :remote_selenium_headless do |app|
+    options = Selenium::WebDriver::Chrome::Options.new
+    options.add_argument("--headless")
+    options.add_argument("--window-size=1400,1400")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+
+    Capybara::Selenium::Driver.new(
+      app,
+      browser: :chrome,
+      url: "http://#{ENV["SELENIUM_HOST"]}:4444/wd/hub",
+      options: options,
+    )
+  end
+
+  Capybara.default_driver = :remote_selenium_headless
+
+  selenium_app_host = ENV.fetch("SELENIUM_APP_HOST") do
+    Socket.ip_address_list
+          .find(&:ipv4_private?)
+          .ip_address
+  end
+
+  Capybara.configure do |config|
+    config.server = :puma, { Silent: true }
+    config.server_host = selenium_app_host
+    config.server_port = 4000
+  end
+else
+  Capybara.default_driver = ENV["CI"] ? :sniffybara_headless : :parallel_sniffybara
+end
+
 # the default default_max_wait_time is 2 seconds
 Capybara.default_max_wait_time = 5
 # Capybara uses puma by default, but for some reason, some of our tests don't
 # pass with puma. See: https://github.com/teamcapybara/capybara/issues/2170
 Capybara.server = :webrick
+
+
+

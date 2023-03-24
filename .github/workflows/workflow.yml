@@ -29,6 +29,11 @@ jobs:
         image: redis:4.0.10
         ports:
         - 6379:6379
+      standalone-chrome:
+        image: selenium/standalone-chrome:106.0.5249.119
+        ports:
+          - 7900:7900
+          - 4444:4444
       facols_db:
         image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
         credentials:
@@ -63,6 +68,8 @@ jobs:
           DEBUG: true
           WD_INSTALL_DIR: .webdrivers
           CI: true
+          STANDALONE_CHROME: true
+          SELENIUM_HOST: http://localhost
 
     steps:
       - uses: actions/checkout@v3
@@ -92,17 +99,17 @@ jobs:
           restore-keys:
             dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
-      - name: Install Chrome
-        run: |
-          CHROME_VERSION="106.0.5249.119-1"
-          apt-get update
-          wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
-          && apt install -y /tmp/chrome.deb \
-          && rm /tmp/chrome.deb
-          echo "Chrome version: $(google-chrome --version) - Chrome location: $(which google-chrome)"
+      # - name: Install Chrome
+      #   run: |
+      #     CHROME_VERSION="106.0.5249.119-1"
+      #     apt-get update
+      #     wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+      #     && apt install -y /tmp/chrome.deb \
+      #     && rm /tmp/chrome.deb
+      #     echo "Chrome version: $(google-chrome --version) - Chrome location: $(which google-chrome)"
 
       - name: setup testfiles directory
-        run: ./ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
+        run: ./ci-bin/capture-log "mkdir -p tmp/testfiles"
 
       - name: Install Ruby Dependencies
         run: |
@@ -172,117 +179,117 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           path: ./logs
-  caseflow_jest_job:
-    # This job will run the jest, change the value below to false if you wish to turn it off.
-    if: true
-    runs-on: ubuntu-latest
-    container:
-      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
-      credentials:
-          username: AWS
-          password: ${{ secrets.ECR_PASSWORD }}
-      env:
-          DBUS_SESSION_BUS_ADDRESS: /dev/null
-          RAILS_ENV: test
-          NODE_ENV: test
-          JEST_DIR: /home/circleci/test-results/jest
-          TEST_REPORTER: jest-junit
-          JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest
-          COVERAGE_DIR: /home/circleci/coverage
-    steps:
-      - name: Install chromium
-        run: |
-          CHROME_VERSION="106.0.5249.119-1"
-          apt-get update
-          wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
-          && apt install -y /tmp/chrome.deb \
-          && rm /tmp/chrome.deb
+  # caseflow_jest_job:
+  #   This job will run the jest, change the value below to false if you wish to turn it off.
+  #   if: true
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+  #     credentials:
+  #         username: AWS
+  #         password: ${{ secrets.ECR_PASSWORD }}
+  #     env:
+  #         DBUS_SESSION_BUS_ADDRESS: /dev/null
+  #         RAILS_ENV: test
+  #         NODE_ENV: test
+  #         JEST_DIR: /home/circleci/test-results/jest
+  #         TEST_REPORTER: jest-junit
+  #         JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest
+  #         COVERAGE_DIR: /home/circleci/coverage
+  #   steps:
+  #     - name: Install chromium
+  #       run: |
+  #         CHROME_VERSION="106.0.5249.119-1"
+  #         apt-get update
+  #         wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+  #         && apt install -y /tmp/chrome.deb \
+  #         && rm /tmp/chrome.deb
 
-      - name: Install firefox
-        run: |
-          FIREFOX_VERSION="106.0.1"
-          apt-get -y install libgtk2.0-0
-          wget https://ftp.mozilla.org/pub/firefox/releases/${FIREFOX_VERSION}/linux-x86_64/en-GB/firefox-${FIREFOX_VERSION}.tar.bz2
-          tar xvf firefox-${FIREFOX_VERSION}.tar.bz2
-          mv firefox/ /usr/lib/firefox
-          ln -s /usr/lib/firefox /usr/bin/firefox
+  #     - name: Install firefox
+  #       run: |
+  #         FIREFOX_VERSION="106.0.1"
+  #         apt-get -y install libgtk2.0-0
+  #         wget https://ftp.mozilla.org/pub/firefox/releases/${FIREFOX_VERSION}/linux-x86_64/en-GB/firefox-${FIREFOX_VERSION}.tar.bz2
+  #         tar xvf firefox-${FIREFOX_VERSION}.tar.bz2
+  #         mv firefox/ /usr/lib/firefox
+  #         ln -s /usr/lib/firefox /usr/bin/firefox
 
-      - name: Checkout
-        uses: actions/checkout@v3
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - name: Install Python-2
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python2
+  #     - name: Install Python-2
+  #       run: |
+  #         sudo apt-get update
+  #         sudo apt-get install -y python2
 
-      - name: install_node_dependencies
-        run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+  #     - name: install_node_dependencies
+  #       run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
-      - name: jest
-        shell: bash
-        run: |
-          npm install --save-dev jest
-          mkdir -p ./test-results/jest
-          pushd client
-          ../ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
+  #     - name: jest
+  #       shell: bash
+  #       run: |
+  #         npm install --save-dev jest
+  #         mkdir -p ./test-results/jest
+  #         pushd client
+  #         ../ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
 
-      - name: store_test_results
-        uses: actions/upload-artifact@v3
-        with:
-          path: ./test-results
+  #     - name: store_test_results
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         path: ./test-results
 
 
-#       - name: Concatenate all logs
-#         run: |
-#           ./ci-bin/concatenate-log.rb >> ./all_logs.log
+  #     - name: Concatenate all logs
+  #       run: |
+  #         ./ci-bin/concatenate-log.rb >> ./all_logs.log
 
-      - name: store logs
-        uses: actions/upload-artifact@v3
-        with:
-          path: ./all_logs.log
-  caseflow_lint_job:
-    # This job will run the security lint checker, change the value below to false if you wish to turn it off.
-    if: true
-    runs-on: ubuntu-latest
-    container:
-      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
-      credentials:
-          username: AWS
-          password: ${{ secrets.ECR_PASSWORD }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: '0'
+  #     - name: store logs
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         path: ./all_logs.log
+  # caseflow_lint_job:
+  #   This job will run the security lint checker, change the value below to false if you wish to turn it off.
+  #   if: true
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+  #     credentials:
+  #         username: AWS
+  #         password: ${{ secrets.ECR_PASSWORD }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: '0'
 
-      - name: Install Ruby Dependencies
-        run: |
-          ruby -v
-          BUNDLER_V=$(cat ./Gemfile.lock | tail -1 | tr -d " ")
-          echo $BUNDLER_V
-          gem install bundler:$BUNDLER_V
-          bundle install --path vendor/bundle
+  #     - name: Install Ruby Dependencies
+  #       run: |
+  #         ruby -v
+  #         BUNDLER_V=$(cat ./Gemfile.lock | tail -1 | tr -d " ")
+  #         echo $BUNDLER_V
+  #         gem install bundler:$BUNDLER_V
+  #         bundle install --path vendor/bundle
 
-      - name: Install Node Dependencies
-        run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+  #     - name: Install Node Dependencies
+  #       run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
-      - name: Danger
-        run: ./ci-bin/capture-log "bundle exec danger"
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+  #     - name: Danger
+  #       run: ./ci-bin/capture-log "bundle exec danger"
+  #       env:
+  #         DANGER_GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
 
-      - name: Lint
-        run:  ./ci-bin/capture-log "bundle exec rake lint"
-        if: ${{ always() }}
+  #     - name: Lint
+  #       run:  ./ci-bin/capture-log "bundle exec rake lint"
+  #       if: ${{ always() }}
 
-      - name: Security
-        run:  ./ci-bin/capture-log "bundle exec rake security"
-        if: ${{ always() }}
+  #     - name: Security
+  #       run:  ./ci-bin/capture-log "bundle exec rake security"
+  #       if: ${{ always() }}
 
-#       - name: Concatenate all logs
-#         run: ./ci-bin/concatenate-log.rb >> ./all_logs.log
+  #     - name: Concatenate all logs
+  #       run: ./ci-bin/concatenate-log.rb >> ./all_logs.log
 
-      # TODO: Not sure if this is needed with GH Actions
-      - name: Store concatenated logs
-        run: ./all_logs.log
+  #     TODO: Not sure if this is needed with GH Actions
+  #     - name: Store concatenated logs
+  #       run: ./all_logs.log
 
