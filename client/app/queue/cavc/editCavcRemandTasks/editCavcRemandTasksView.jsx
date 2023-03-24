@@ -32,8 +32,7 @@ export const EditCavcRemandTasksView = () => {
     (state) => state.cavcRemand
   );
 
-  const [selectedCancelTaskIds, setSelectedCancelTaskIds] = useState(existingValues?.cancelTaskIds || []);
-  const [selectedReActivateTaskIds, setSelectedReActivateTaskIds] = useState(existingValues?.reActivateTaskIds || []);
+
 
   const allTasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
@@ -62,6 +61,9 @@ export const EditCavcRemandTasksView = () => {
   const cancelledOrCompletedSendCavcRemandProcessedLetterTask = cancelledOrCompletedTasks.find((task) => task.type === 'SendCavcRemandProcessedLetterTask');
   const reActivateTaskIds = getReActivateTaksIds();
 
+  const [selectedCancelTaskIds, setSelectedCancelTaskIds] = useState(existingValues?.cancelTaskIds || []);
+  const [selectedReActivateTaskIds, setSelectedReActivateTaskIds] = useState(reActivateTaskIds);
+
   // These values will be used in the "key details" section
   const nodDate = useMemo(() => parseISO(appeal.nodDate), [appeal.nodDate]);
   const dateOfDeath = useMemo(() => {
@@ -88,7 +90,6 @@ export const EditCavcRemandTasksView = () => {
   };
   const handleSubmit = async (_formData) => {
     // Here we'll dispatch updateData action to update Redux store with our form data
-    console.log("2222222222", selectedReActivateTaskIds);
     dispatch(
       updateData({
         formData: {
