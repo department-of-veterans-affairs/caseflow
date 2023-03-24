@@ -17,6 +17,7 @@ class Appeal < DecisionReview
   include HasTaskHistory
   include AppealAvailableHearingLocations
   include HearingRequestTypeConcern
+  include AppealNotificationReportConcern
   prepend AppealDocketed
 
   has_many :appeal_views, as: :appeal
