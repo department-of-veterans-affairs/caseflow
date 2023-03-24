@@ -34,6 +34,10 @@ class WorkQueue::TaskSerializer
     }
   end
 
+  attribute :completed_by do |object|
+    object.try(:completed_by).try(:css_id) unless object.appeal.is_a?(LegacyAppeal)
+  end
+
   attribute :assigned_to do |object|
     assignee = object.try(:unscoped_assigned_to)
 
