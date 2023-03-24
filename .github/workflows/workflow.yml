@@ -128,7 +128,7 @@ jobs:
 
       - name: Install wkhtmltopdf
         run: |
-          apt-get -y install libssl3
+          apt install libssl3
           wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb
           sudo apt install ./wkhtmltox_0.12.6.1-2.jammy_amd64.deb
           sudo mv /usr/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
