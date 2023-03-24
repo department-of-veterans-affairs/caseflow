@@ -1,8 +1,6 @@
 namespace :reviews do
   desc "Resolve multiple reviews"
-  task :resolve_multiple_reviews, [:type] => :environment do |t, args|
-    # Retrieve the type argument passed to the rake task (either "hlr" or "sc")
-    type = args[:type]
+  task :resolve_multiple_reviews => :environment do |t|
 
     # finding reviews that potentially need resolution
     RequestStore[:current_user] = OpenStruct.new(
