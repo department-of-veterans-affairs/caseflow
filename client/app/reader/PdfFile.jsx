@@ -59,7 +59,10 @@ export class PdfFile extends React.PureComponent {
     // different domain (eFolder), and still need to pass our credentials to authenticate.
     this.loadingTask = PDFJS.getDocument({
       url: this.props.file,
-      withCredentials: true
+      withCredentials: true,
+      disableStream: true,
+      disableRange: false,
+      disableAutoFetch: false
     });
 
     return this.loadingTask.promise.
