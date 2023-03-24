@@ -141,14 +141,14 @@ const MarkTaskCompleteContestedClaimModal = ({ props, state, setState }) => {
             />
             {state.radio === '1' &&
               <TextareaField
-                label= "Provide instuctions and context for this action"
+                label= "Provide instructions and context for this action"
                 name= "instructions"
                 id= "completeTaskInstructions"
                 onChange={(value) => setState({ instructions: value })}
                 value={state.instructions}
                 styling={marginTop(1)}
                 maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-                placeholder="This is a description of instuctions and context for this action."
+                placeholder="This is a description of instructions and context for this action."
                 errorMessage={props.highlightInvalid &&
                   !validInstructions(state.instructions) ? COPY.EMPTY_INSTRUCTIONS_ERROR : null}
               />}
@@ -170,7 +170,7 @@ const ProceedFinalNotificationLetterTaskModal = ({ props, state, setState }) => 
       )}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <TextareaField
-          label= "Provide instuctions and context for this action"
+          label= "Provide instructions and context for this action"
           name= "instructions"
           id= "completeTaskInstructions"
           onChange={(value) => setState({ instructions: value })}
@@ -197,7 +197,7 @@ const ResendFinalNotificationLetterTaskModal = ({ props, state, setState }) => {
       )}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <TextareaField
-          label= "Provide instuctions and context for this action"
+          label= "Provide instructions and context for this action"
           name= "instructions"
           id= "completeTaskInstructions"
           onChange={(value) => setState({ instructions: value })}
@@ -224,7 +224,7 @@ const ResendInitialNotificationLetterTaskModal = ({ props, state, setState }) =>
       )}
       {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
         <TextareaField
-          label= "Provide instuctions and context for this action"
+          label= "Provide instructions and context for this action"
           name= "instructions"
           id= "completeTaskInstructions"
           onChange={(value) => setState({ instructions: value })}
