@@ -13,7 +13,7 @@ import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH, PAGE_DIME
 import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError,
   setPageDimensions } from '../reader/Pdf/PdfActions';
 import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
-import ApiUtil from '../util/ApiUtil';
+// import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
 import * as PDFJS from 'pdfjs-dist';
 import { Grid, AutoSizer } from 'react-virtualized';
