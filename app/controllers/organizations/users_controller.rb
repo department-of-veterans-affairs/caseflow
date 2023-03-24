@@ -12,7 +12,7 @@ class Organizations::UsersController < OrganizationsController
           judge_team: organization.type == JudgeTeam.name,
           dvc_team: organization.type == DvcTeam.name,
           organization_users: json_administered_users(organization_users),
-          membership_requests: membership_requests,
+          membership_requests: pending_membership_requests,
           isVhaOrg: vha_organization?
         }
       end
@@ -71,10 +71,10 @@ class Organizations::UsersController < OrganizationsController
     params[:organization_url]
   end
 
-  def membership_requests
+  def pending_membership_requests
     # Serialize the Membership Requests and extract the attributes
     if vha_organization?
-      MembershipRequestSerializer.new(organization.membership_requests.includes(:requestor).assigned,
+      MembershipRequestSerializer.new(organization.membership_requests.includes(:requestor).assigned.order(:created_at),
                                       is_collection: true)
         .serializable_hash[:data]
         .map { |hash| hash[:attributes] }

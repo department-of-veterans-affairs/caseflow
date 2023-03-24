@@ -66,7 +66,9 @@ exports[`MembershipRequestTable renders the default state with mocked membership
         <td
           class=""
           colspan="1"
-        />
+        >
+          John Doe
+        </td>
         <td
           class=""
           colspan="1"
@@ -160,7 +162,9 @@ exports[`MembershipRequestTable renders the default state with mocked membership
         <td
           class=""
           colspan="1"
-        />
+        >
+          Jane Smith
+        </td>
         <td
           class=""
           colspan="1"
@@ -254,7 +258,9 @@ exports[`MembershipRequestTable renders the default state with mocked membership
         <td
           class=""
           colspan="1"
-        />
+        >
+          William Brown
+        </td>
         <td
           class=""
           colspan="1"
@@ -341,7 +347,9 @@ exports[`MembershipRequestTable renders the default state with mocked membership
         <td
           class=""
           colspan="1"
-        />
+        >
+          Emma Wilson
+        </td>
         <td
           class=""
           colspan="1"
@@ -428,7 +436,9 @@ exports[`MembershipRequestTable renders the default state with mocked membership
         <td
           class=""
           colspan="1"
-        />
+        >
+          Micheal Johnson
+        </td>
         <td
           class=""
           colspan="1"
@@ -668,7 +678,9 @@ exports[`MembershipRequestTable shows the request note when the expansion button
         <td
           class=""
           colspan="1"
-        />
+        >
+          John Doe
+        </td>
         <td
           class=""
           colspan="1"
@@ -762,7 +774,9 @@ exports[`MembershipRequestTable shows the request note when the expansion button
         <td
           class=""
           colspan="1"
-        />
+        >
+          Jane Smith
+        </td>
         <td
           class=""
           colspan="1"
@@ -850,13 +864,35 @@ exports[`MembershipRequestTable shows the request note when the expansion button
         </td>
       </tr>
       <tr
+        class="membership-request-expanded-note-row"
+        id="table-row-2-note"
+      >
+        <td
+          class=""
+          colspan="4"
+        >
+          <div
+            class="expanded-note"
+          >
+            <strong>
+              REQUEST NOTE:
+            </strong>
+            <p>
+              This request can be postponed for now.
+            </p>
+          </div>
+        </td>
+      </tr>
+      <tr
         class="membership-request-row"
         id="table-row-3"
       >
         <td
           class=""
           colspan="1"
-        />
+        >
+          William Brown
+        </td>
         <td
           class=""
           colspan="1"
@@ -943,7 +979,9 @@ exports[`MembershipRequestTable shows the request note when the expansion button
         <td
           class=""
           colspan="1"
-        />
+        >
+          Emma Wilson
+        </td>
         <td
           class=""
           colspan="1"
@@ -1030,7 +1068,9 @@ exports[`MembershipRequestTable shows the request note when the expansion button
         <td
           class=""
           colspan="1"
-        />
+        >
+          Micheal Johnson
+        </td>
         <td
           class=""
           colspan="1"

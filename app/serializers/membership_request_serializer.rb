@@ -4,6 +4,7 @@ class MembershipRequestSerializer
   include FastJsonapi::ObjectSerializer
   attribute :id
   attribute :note
+  attribute :status
   attribute :requestedDate, &:created_at
 
   attribute :name do |object|
@@ -20,6 +21,14 @@ class MembershipRequestSerializer
 
   attribute :orgId do |object|
     object.organization.try(:id)
+  end
+
+  attribute :orgName do |object|
+    object.organization.try(:name)
+  end
+
+  attribute :userName do |object|
+    object.requestor.try(:full_name)
   end
 
   attribute :userNameWithCssId do |object|

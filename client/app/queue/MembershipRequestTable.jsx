@@ -44,7 +44,6 @@ const MembershipRequestTable = (props) => {
     return updatedRequests;
   };
 
-  // Testing a new version of this to remove exisiting notes because it keeps adding them for paginated rows
   // Since we are modifying the current page paginated rows instead of all of them now
   const getPaginatedRowObjects = (rows) => {
     // Guard clause for empty rows.
@@ -82,6 +81,7 @@ const MembershipRequestTable = (props) => {
     updatePaginatedData();
   }, [expanded]);
 
+  // Update the state if the requests prop changes.
   useEffect(() => {
     setPaginatedRequests(initializePaginatedData(getRowObjects(requests)));
   }, [requests]);
@@ -93,15 +93,22 @@ const MembershipRequestTable = (props) => {
     });
   };
 
-  // TODO: Build this out for each request since the target will be based on the id for the MembershipRequest
   const dropdownOptions = [
     {
       title: 'Approve',
-      target: '/approve' },
+      action: 'approved',
+    },
     {
       title: 'Deny',
-      target: '/deny' },
+      action: 'denied',
+    },
   ];
+
+  const buildDropdownActions = (request) => {
+    return dropdownOptions.map((obj) => {
+      return { ...obj, value: `${request.id}-${obj.action}` };
+    });
+  };
 
   const MembershipRequestDropDown = () => <div>
     <span> Select action </span>
@@ -120,10 +127,12 @@ const MembershipRequestTable = (props) => {
     },
     {
       header: 'Actions',
-      valueFunction: () => {
+      valueFunction: (request) => {
         return <DropdownButton
-          lists={dropdownOptions}
-          label="Request actions">
+          lists={buildDropdownActions(request)}
+          label="Request actions"
+          onClick={props.membershipRequestActionHandler}
+        >
           <MembershipRequestDropDown />
         </DropdownButton>;
       }
@@ -212,6 +221,7 @@ const MembershipRequestTable = (props) => {
 MembershipRequestTable.propTypes = {
   requests: PropTypes.array,
   enablePagination: PropTypes.bool,
+  membershipRequestActionHandler: PropTypes.func.isRequired,
 };
 
 export default MembershipRequestTable;

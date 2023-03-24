@@ -328,7 +328,7 @@ Rails.application.routes.draw do
   get '/organizations/:url/modal(*rest)', to: 'organizations#show'
   get '/organizations(*rest)', to: 'organizations#org_index'
 
-  resources :membership_requests, only: [:create]
+  resources :membership_requests, only: [:create, :update]
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
   patch '/case_reviews/:id', to: 'case_reviews#update'

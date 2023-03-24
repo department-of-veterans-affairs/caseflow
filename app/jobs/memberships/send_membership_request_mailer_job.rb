@@ -17,7 +17,11 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
   def email_to_send(email_type)
     email_method_mapping_hash = {
       "UserRequestCreated": :user_request_created,
-      "AdminRequestMade": :admin_request_made
+      "AdminRequestMade": :admin_request_made,
+      "VhaBusinessLineApproved": :vha_business_line_approved,
+      "VhaBusinessLineDenied": :vha_business_line_denied,
+      "VhaPredocketApproved": :vha_predocket_organization_approved,
+      "VhaPredocketDenied": :vha_predocket_organization_denied
     }
 
     method_name = email_method_mapping_hash[email_type&.to_sym]

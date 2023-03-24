@@ -76,7 +76,7 @@ class Organization < CaseflowRecord
 
     # check if membership_requests exists for the user that is being added.
     user.membership_requests.where(organization_id: id).assigned.each do |membership_request|
-      membership_request.cancel_and_send_email(admin_user)
+      membership_request.update_status_and_send_email("cancelled", admin_user)
     end
 
     org_user

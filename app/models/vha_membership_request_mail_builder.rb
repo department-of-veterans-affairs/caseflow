@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
-# TODO: Make An abstract MembershipRequestMailBuilder class and inherit from it
-# Could also make it not abstract and implement nil methods
-class VhaMembershipRequestMailBuilder
+class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
   attr_accessor :membership_requests, :requestor
 
   def initialize(requests)
-    @membership_requests = requests
+    @membership_requests = [requests].flatten
     @requestor = membership_requests.first.requestor
   end
 
@@ -15,11 +13,33 @@ class VhaMembershipRequestMailBuilder
     send_organization_emails
   end
 
+  def send_email_request_approved
+    if single_request.requesting_vha_predocket_access?
+      send_approved_predocket_organization_email
+    else
+      send_approved_vha_business_line_email
+    end
+  end
+
+  def send_email_request_denied
+    if single_request.requesting_vha_predocket_access?
+      send_denied_predocket_organization_email
+    else
+      send_denied_vha_business_line_email
+    end
+  end
+
+  # In cases of an admin user bypassing a user initiated request in favor of the traditional add user functionality
+  # We still want to notify the requestor that they've been added to the organization
+  def send_email_request_cancelled
+    send_email_request_approved
+  end
+
   private
 
   def send_requestor_email
     mailer_parameters = {
-      recipient_info: requestor,
+      requestor: requestor,
       requests: membership_requests,
       subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED
     }
@@ -35,11 +55,17 @@ class VhaMembershipRequestMailBuilder
   end
 
   def send_organization_email(organization)
-    # Create an array from the hash and flatten it since some organizations can have two emails
-    admin_emails = [get_organization_admin_emails(organization.name)].flatten
+    org_name = organization.name
+    # Create an array from the hash and flatten it since organizations can have multiple emails
+    # Set the admin emails to the same email address in UAT for testing
+    admin_emails = if Rails.deploy_env?(:uat)
+                     ["BID_Appeals_UAT@bah.com"]
+                   else
+                     [get_organization_admin_emails(org_name)].flatten
+                   end
 
     mailer_parameters = {
-      organization_name: organization.name,
+      organization_name: org_name,
       subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_VHA_ADMIN_REQUEST_RECEIVED
     }
 
@@ -48,6 +74,78 @@ class VhaMembershipRequestMailBuilder
       Memberships::SendMembershipRequestMailerJob.perform_later("AdminRequestMade",
                                                                 mailer_parameters.merge(to: admin_email))
     end
+  end
+
+  def send_approved_vha_business_line_email
+    mailer_parameters = {
+      requestor: requestor,
+      accessible_groups: requestor_accessible_org_names,
+      organization_name: single_request.organization.name,
+      pending_organization_request_names: requestor_vha_pending_organization_request_names
+    }
+    Memberships::SendMembershipRequestMailerJob.perform_later("VhaBusinessLineApproved",
+                                                              mailer_parameters)
+  end
+
+  def send_approved_predocket_organization_email
+    mailer_parameters = {
+      requestor: requestor,
+      accessible_groups: requestor_accessible_org_names,
+      organization_name: single_request.organization.name,
+      pending_organization_request_names: requestor_vha_pending_organization_request_names
+    }
+    Memberships::SendMembershipRequestMailerJob.perform_later("VhaPredocketApproved",
+                                                              mailer_parameters)
+  end
+
+  def send_denied_vha_business_line_email
+    mailer_parameters = {
+      requestor: requestor,
+      accessible_groups: requestor_accessible_org_names,
+      organization_name: single_request.organization.name,
+      pending_organization_request_names: requestor_vha_pending_organization_request_names
+    }
+    Memberships::SendMembershipRequestMailerJob.perform_later("VhaBusinessLineDenied",
+                                                              mailer_parameters)
+  end
+
+  def send_denied_predocket_organization_email
+    mailer_parameters = {
+      requestor: requestor,
+      accessible_groups: requestor_accessible_org_names,
+      organization_name: single_request.organization.name,
+      pending_organization_request_names: requestor_vha_pending_organization_request_names,
+      has_vha_access: belongs_to_vha_org?
+    }
+    Memberships::SendMembershipRequestMailerJob.perform_later("VhaPredocketDenied",
+                                                              mailer_parameters)
+  end
+
+  def requestor_accessible_org_names
+    @requestor_accessible_org_names ||= requestor.organizations.map(&:name)
+  end
+
+  def requestor_vha_pending_organization_request_names
+    pending_names = requestor.membership_requests.assigned.includes(:organization).map do |request|
+      organization = request.organization
+      if organization_vha?(organization)
+        organization.name
+      end
+    end
+    pending_names.compact
+  end
+
+  def organization_vha?(organization)
+    vha_organization_types = [VhaCamo, VhaCaregiverSupport, VhaProgramOffice, VhaRegionalOffice]
+    organization.url == "vha" || vha_organization_types.any? { |vha_org| organization.is_a?(vha_org) }
+  end
+
+  def belongs_to_vha_org?
+    requestor.organizations.any? { |org| org.url == "vha" }
+  end
+
+  def single_request
+    @single_request ||= membership_requests.first
   end
 
   def get_organization_admin_emails(organization_name)
