@@ -21,6 +21,8 @@ import {
   setHearingDay,
 } from './uiReducer/uiActions';
 import CaseTitleDetails from './CaseTitleDetails';
+import Alert from '../components/Alert';
+import ApiUtil from '../util/ApiUtil';
 
 const sectionGap = css({ marginTop: '3.5rem' });
 
@@ -34,6 +36,13 @@ export const NotificationsView = (props) => {
   const closeModal = () => {
     setModalState(false);
   };
+
+  const [alert, setAlert] = useState([{
+    alertState: false,
+    alertMessage: ''
+  }]);
+  const [loading, setLoading] = useState(false);
+
   const { push } = useHistory();
   const { appealId, featureToggles } = props;
   const appeal = useSelector((state) =>
@@ -54,10 +63,40 @@ export const NotificationsView = (props) => {
     userIsCobAdmin
   });
 
+  const alertStyle = css({
+    marginBottom: '30px',
+    marginTop: '0px'
+  });
+
+  const errorCode = 'Error Code: ';
+  const pdfURL = `/appeals/${appealId}/notifications.pdf`;
+  let errorUuid = '';
+
+  //  Error handling to add alert message for PDF generation
+  const generatePDF = () => {
+    setLoading(true);
+    const status = ApiUtil.get(pdfURL).then(() => {
+      window.location.href = pdfURL;
+      setLoading(false);
+    }).
+      catch((error) => {
+
+        if (error.status > 299 || error.status < 200) {
+          errorUuid = JSON.parse(error.response.text).errors[0].message;
+          setAlert({ alertState: true, alertMessage: errorUuid });
+        }
+        setLoading(false);
+      });
+
+    return status;
+  };
+
   return (
     <React.Fragment>
       <AppSegment filledBackground>
         <CaseTitle titleHeader = {`Case notifications for ${appeal.veteranFullName}`} appeal={appeal} hideCaseView />
+        {alert.alertState && <Alert type="error" title={COPY.PDF_GENERATION_ERROR_TITLE} styling={alertStyle}
+        >{COPY.PDF_GENERATION_ERROR_MESSAGE}<br />{errorCode}{alert.alertMessage}</Alert>}
         {supportPendingAppealSubstitution && (
           <div {...sectionGap}>
             <Button
@@ -78,10 +117,15 @@ export const NotificationsView = (props) => {
           hideDecisionDocument
           showEfolderLink
         />
-        <div {...sectionGap}>
-          <p className="notification-text">
-            VA Notify sent these status notifications to the Appellant about their case.
-          </p>
+        <div {...sectionGap} >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <p className="notification-text">
+              VA Notify sent these status notifications to the Appellant about their case.
+            </p>
+            <Button id = "download-button" classNames={['usa-button-secondary']} onClick={() =>
+              generatePDF()} loading={loading} >Download</Button>
+          </div>
+
           <div className="notification-table">
             <NotificationTable
               appealId={appealId}
@@ -151,3 +195,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(NotificationsView);
+
