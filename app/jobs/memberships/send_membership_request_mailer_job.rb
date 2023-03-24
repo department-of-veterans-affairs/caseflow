@@ -42,7 +42,7 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
         metric_group: Constants.DATADOG_METRICS.VHA.MEMBERSHIP_REQUESTS_GROUP_NAME,
         metric_name: "email.error",
         attrs: {
-          recipient_info: mailer_parameters[:recipient_info],
+          requestor: mailer_parameters[:requestor],
           requests: mailer_parameters[:requests]
         }
       )
@@ -96,8 +96,8 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
     # the email after it has been accepted by GovDelivery.
     email_nil?(email)
 
-    email_address = mailer_parameters[:recipient_info] || mailer_parameters[:to]
-    log = log_message(mailer_parameters).merge(status: "info", message: "Sending #{TYPE_LABEL} to #{email_address} ...")
+    email_address = mailer_parameters[:requestor] || mailer_parameters[:to]
+    log = log_message(mailer_parameters).merge(status: "info", message: "Sending #{email_type} to #{email_address} ...")
     Rails.logger.info("#{LOG_PREFIX} #{log}")
     msg = email.deliver_now!
   rescue StandardError => error
@@ -110,7 +110,7 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
     false
   else
     message_id = external_message_id(msg, mailer_parameters)
-    message = "Requested GovDelivery to send #{TYPE_LABEL} to #{email_address} - #{message_id}"
+    message = "Requested GovDelivery to send #{email_type} to #{email_address} - #{message_id}"
     log = log_message(mailer_parameters).merge(status: "success", gov_delivery_id: message_id, message: message)
     Rails.logger.info("#{LOG_PREFIX} #{log}")
     true
@@ -119,7 +119,7 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
   def log_message(mailer_parameters)
     {
       class: self.class,
-      recipient_info: mailer_parameters[:recipient_info],
+      recipient_info: mailer_parameters[:requestor],
       requests: mailer_parameters[:requests]
     }
   end
