@@ -1,10 +1,11 @@
 # This .rb file contains the methods to resolve stuck duplicateEP jobs that are tracked in Metabase
 # Use the manual remediation on the 20 remaining claims in UAT.
-# 'x= WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new' and ('x.resolve_single_review(***Insert ID***, "hlr")
+# 'x = WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new' and ('x.resolve_single_review(***Insert ID***, "hlr")
 # for running the remediation for the the hlr **OR** 'x.resolve_single_review(***Insert ID***, "sc")') for a
 # SupplimentalClaim.
 # To execute the entire array of problem claims with the duplicateEP error. Execute in the rake task method i.e.
 # execute 'sudo su -c "source /opt/caseflow-certification/caseflow-certification_env.sh; cd /opt/caseflow-certification/src; bundle exec rake reviews:resolve_multiple_reviews'
+# Another way to run multiple reviews can be performed by 'x = WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new' & 'x.run'
 
 module WarRoom
   class DuppEpClaimsSyncStatusUpdateCanClr
