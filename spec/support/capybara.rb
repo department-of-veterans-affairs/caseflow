@@ -84,6 +84,8 @@ end
 Capybara.javascript_driver = :logging_selenium_chrome
 
 if ENV["STANDALONE_CHROME"]
+  Webdrivers::ChromeDriver.required_version = ENV["CHROME_VERSION"] || '106.0.5249.61'
+
   Capybara.register_driver :remote_selenium_headless do |app|
     options = Selenium::WebDriver::Chrome::Options.new
     options.add_argument("--headless")
