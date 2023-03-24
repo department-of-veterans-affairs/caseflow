@@ -979,7 +979,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       subject { patch :update, params: params }
 
       it "completes the task and creates a PostSendInitialNotificationLetterHoldingTask" do
-
         # load the data properly
         cc_issue
         cc_appeal.reload.request_issues
@@ -1101,8 +1100,8 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         )
       end
 
-      let (:taskTimer) {TaskTimer.find_by(task_id: post_initial_task.id)}
-      let (:dayOnHold) {((taskTimer.updated_at - taskTimer.created_at).to_i/1.day)}
+      let (:taskTimer) { TaskTimer.find_by(task_id: post_initial_task.id) }
+      let (:dayOnHold) { ((taskTimer.updated_at - taskTimer.created_at).to_i / 1.day) }
 
       # expected instructions are payload instructions plus the hold time
       let(:instructions) { "Completion instructions go here" }
@@ -1119,7 +1118,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           id: post_initial_task.id.to_s
         }
       end
-
 
       subject { patch :update, params: params }
 
@@ -1158,8 +1156,8 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         )
       end
 
-      let (:taskTimer) {TaskTimer.find_by(task_id: post_initial_task.id)}
-      let (:dayOnHold) {((taskTimer.updated_at - taskTimer.created_at).to_i/1.day)}
+      let (:taskTimer) { TaskTimer.find_by(task_id: post_initial_task.id) }
+      let (:dayOnHold) { ((taskTimer.updated_at - taskTimer.created_at).to_i / 1.day) }
 
       # expected instructions are payload instructions plus the hold time
       let(:instructions) { "Completion instructions go here" }
@@ -1178,7 +1176,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       end
 
       # expected instructions are payload instructions plus the hold time
-
 
       subject { patch :update, params: params }
 

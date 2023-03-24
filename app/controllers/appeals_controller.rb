@@ -178,13 +178,12 @@ class AppealsController < ApplicationController
   end
 
   def update
-
     if request_issues_update.perform!
       # if cc appeal, create SendInitialNotificationLetterTask
       if appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
         # check if an existing letter task is open
-        existing_letter_task_open = appeal.tasks.any? do
-          |task| task.class == SendInitialNotificationLetterTask && task.status == "assigned"
+        existing_letter_task_open = appeal.tasks.any? do |task|
+          task.class == SendInitialNotificationLetterTask && task.status == "assigned"
         end
         # create SendInitialNotificationLetterTask unless one is open
         send_initial_notification_letter unless existing_letter_task_open

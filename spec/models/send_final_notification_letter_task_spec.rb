@@ -13,7 +13,7 @@ describe SendFinalNotificationLetterTask do
   end
 
   describe ".verify_user_can_create" do
-    let(:params) { { appeal: root_task.appeal, parent_id: distribution_task_id, type: task_class.name} }
+    let(:params) { { appeal: root_task.appeal, parent_id: distribution_task_id, type: task_class.name } }
     let(:distribution_task_id) { distribution_task.id }
 
     context "when no distribution_task exists for appeal" do
@@ -120,7 +120,6 @@ describe SendFinalNotificationLetterTask do
       task_complete = Task.find_by(type: "SendFinalNotificationLetterTask")
       expect(task_complete.appeal_id).to eq(post_initial_task.appeal_id)
       expect(task_complete.status).to eq("completed")
-
     end
 
     it "Finalice the process, select Yes in the radio bottom option" do
@@ -132,7 +131,6 @@ describe SendFinalNotificationLetterTask do
       expect(DocketSwitchMailTask.assigned_to_any_org).to exist
       expect(DocketSwitchMailTask.assigned_to_any_user).to exist
       expect(subject.parent.parent.type).to eq DistributionTask.name
-
     end
   end
 end

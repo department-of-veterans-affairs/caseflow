@@ -8,14 +8,12 @@ class SendFinalNotificationLetterTask < LetterTask
   end
 
   def available_actions(user)
-    if assigned_to.user_has_access?(user) &&
-      FeatureToggle.enabled?(:cc_appeal_workflow)
+    if assigned_to.user_has_access?(user) && FeatureToggle.enabled?(:cc_appeal_workflow)
       SEND_FINAL_NOTIFICATION_LETTER_TASK_ACTIONS
     else
       []
     end
   end
-
 
   SEND_FINAL_NOTIFICATION_LETTER_TASK_ACTIONS = [
     Constants.TASK_ACTIONS.MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE.to_h,
