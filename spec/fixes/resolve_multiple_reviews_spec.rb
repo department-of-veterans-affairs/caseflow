@@ -1,44 +1,31 @@
-require 'rake'
-require 'rails_helper'
+RSpec.describe "Reviews" do
+  describe "resolve_multiple_reviews" do
+    it "prints the expected output" do
+      # create some test data
+      veteran = create(:veteran, participant_id: "12345")
+      hlrs = create_list(:higher_level_review, 2, veteran: veteran)
+      scs = create_list(:supplemental_claim, 2, veteran: veteran)
 
-describe 'Resolve multiple reviews' do
-  before(:all) do
-    # Load the Rakefile
-    Rake.application.load_rakefile
-  end
+      # set up the test environment
+      allow(RequestStore).to receive(:[]).with(:current_user).and_return(
+        OpenStruct.new(
+          ip_address: '127.0.0.1',
+          station_id: '283',
+          css_id: 'CSFLOW',
+          regional_office: 'DSUSER'
+        )
+      )
 
-  let (:type) {hlr}
+      # call the method we're testing
+      output = capture(:stdout) do
+        Reviews.resolve_duplicate_eps(hlrs + scs)
+      end
 
-  describe 'rake reviews:resolve_multiple_reviews[type]' do
-    it 'runs the resolve_multiple_reviews task' do
-      expect_any_instance_of(rake reviews:resolve_multiple_reviews[type]).to receive(:type)
-      Rake.application.invoke_task(reviews:resolve_multiple_reviews[type])
+      # assert that the expected output was printed
+      expect(output).to include("| Veteran participant ID: 12345 | HigherLevelReview | Review ID: #{hlrs.first.id}")
+      expect(output).to include("| Veteran participant ID: 12345 | HigherLevelReview | Review ID: #{hlrs.last.id}")
+      expect(output).to include("| Veteran participant ID: 12345 | SupplementalClaim | Review ID: #{scs.first.id}")
+      expect(output).to include("| Veteran participant ID: 12345 | SupplementalClaim | Review ID: #{scs.last.id}")
     end
-  end
-
-  describe 'resolve_duplicate_eps' do
-    let(:review_ids) { '1,2,3' }
-
-    it 'resolves duplicate end products for a list of reviews' do
-      # Mock the reviews
-      reviews = [double('HigherLevelReview'), double('SupplementalClaim')]
-      allow(HigherLevelReview).to receive(:find_by).with(id: 1).and_return(reviews[0])
-      allow(SupplementalClaim).to receive(:find_by).with(id: 2).and_return(reviews[1])
-      allow(HigherLevelReview).to receive(:find_by).with(id: 3).and_return(nil)
-
-      expect_any_instance_of(rake reviews:resolve_multiple_reviews[type]).to receive(:resolve_duplicate_eps).with(reviews)
-      Rake.application.invoke_task(reviews:resolve_multiple_reviews[hlr])
-    end
-  end
-
-  describe 'war_room:resolve_single_review' do
-    let(:review_id) { 1 }
-    let(:type) { 'hlr' }
-
-    it 'resolves duplicate end products for a single review' do
-      expect_any_instance_of(rake reviews:resolve_multiple_reviews[type]).to receive(:resolve_duplicate_eps).with(review_id, type)
-      Rake.application.invoke_task(reviews:resolve_multiple_reviews[hlr])
-    end
-
   end
 end
