@@ -7,7 +7,7 @@ import COPY from 'app/../COPY';
 import { appealWithDetailSelector } from 'app/queue/selectors';
 import { getSupportedDecisionTypes, getSupportedRemandTypes } from './utils';
 import { EditCavcRemandForm } from './EditCavcRemandForm';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { requestPatch, showErrorMessage } from 'app/queue/uiReducer/uiActions';
 import { editAppeal } from '../QueueActions';
 
@@ -36,6 +36,14 @@ export const EditCavcRemandView = () => {
   const { formData: currentValues } = useSelector(
     (state) => state.cavcRemand
   );
+
+  // These values will be used in the "key details" section
+  const nodDate = useMemo(() => parseISO(cavcAppeal.nodDate), [cavcAppeal.nodDate]);
+  const dateOfDeath = useMemo(() => {
+    const dod = cavcAppeal.veteranDateOfDeath;
+
+    return dod ? parseISO(dod) : null;
+  }, [cavcAppeal.veteranInfo]);
 
   const existingValues = useMemo(() => {
     return {
@@ -115,8 +123,11 @@ export const EditCavcRemandView = () => {
         updateData({
           formData: {
             ...formData,
-            substitutionDate: moment(formData.substitutionDate).format('YYYY-MM-DD'),
+            substitutionDate:
+              formData.isAppellantSubstituted === 'true' ? moment(formData.substitutionDate).format('YYYY-MM-DD') : null,
             decisionDate: moment(formData.decisionDate).format('YYYY-MM-DD'),
+            participantId:
+              formData.isAppellantSubstituted === 'true' ? formData.participantId : null,
             // Currently hardcoding claimantType until future work where this is selectable
             claimantType: 'DependentClaimant'
           }
@@ -141,6 +152,8 @@ export const EditCavcRemandView = () => {
       supportedDecisionTypes={supportedDecisionTypes}
       supportedRemandTypes={supportedRemandTypes}
       substituteAppellantClaimantOptions={substituteAppellantClaimantOptions}
+      nodDate={nodDate}
+      dateOfDeath={dateOfDeath}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
     />

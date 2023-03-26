@@ -34,7 +34,7 @@ export const KeyDetails = (props) => {
     const formatted = {};
 
     ['nodDate', 'dateOfDeath', 'substitutionDate'].forEach((key) => {
-      formatted[key] = props[key] ? format(
+      formatted[key] = props[key] !== null ? format(
         isDate(props[key]) ? props[key] : parseISO(props[key]),
         'M/d/y'
       ) : 'Value not set';

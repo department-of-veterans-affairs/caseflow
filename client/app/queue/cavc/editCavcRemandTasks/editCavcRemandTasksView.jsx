@@ -32,8 +32,6 @@ export const EditCavcRemandTasksView = () => {
     (state) => state.cavcRemand
   );
 
-
-
   const allTasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
   );
@@ -72,10 +70,11 @@ export const EditCavcRemandTasksView = () => {
     return dod ? parseISO(dod) : null;
   }, [appeal.veteranInfo]);
 
-  const substitutionDate = useMemo(
-    () => parseISO(existingValues.substitutionDate),
-    [existingValues.substitutionDate]
-  );
+  const substitutionDate = useMemo(() => {
+    const subDate = existingValues.substitutionDate;
+
+    return subDate ? parseISO(subDate) : null;
+  }, [existingValues.substitutionDate]);
 
   const handleBack = () => {
     dispatch(stepBack());
