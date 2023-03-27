@@ -1447,8 +1447,6 @@
   "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date",
   "PDF_GENERATION_ERROR_TITLE": "Unable to generate PDF",
   "PDF_GENERATION_ERROR_MESSAGE": "There was an error generating the PDF for download. Please try again later.",
-  "DATE_SELECTOR_FUTURE_DATE_ERROR": "Dates cannot be in the future",
-  "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date",
   "VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_SUBMITTED": "Request received - Do Not Reply",
   "VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_APPROVED": "Request approved - Do Not Reply",
   "VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_DENIED": "Request denied - Do Not Reply",
