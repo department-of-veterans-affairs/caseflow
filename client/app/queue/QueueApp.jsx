@@ -14,6 +14,8 @@ import {
   setUserIsCobAdmin,
   setCanViewOvertimeStatus,
   setCanEditCavcRemands,
+  setCanEditCavcDashboards,
+  setCanViewCavcDashboards,
   setFeatureToggles,
   setUserId,
   setUserRole,
@@ -102,6 +104,7 @@ import { EditCavcRemandView } from './cavc/EditCavcRemandView';
 import EditAppellantInformation from './editAppellantInformation/EditAppellantInformation';
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
 import NotificationsView from './NotificationsView';
+import CavcDashboard from './cavcDashboard/CavcDashboard';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -109,6 +112,8 @@ class QueueApp extends React.PureComponent {
     this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
     this.props.setUserIsCobAdmin(this.props.userIsCobAdmin);
     this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
+    this.props.setCanEditCavcDashboards(this.props.canEditCavcDashboards);
+    this.props.setCanViewCavcDashboards(this.props.canViewCavcDashboards);
     this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserId(this.props.userId);
@@ -272,6 +277,13 @@ class QueueApp extends React.PureComponent {
   );
 
   routedEditCavcRemand = () => <EditCavcRemandView />;
+
+  routedCavcDashboard = (props) => (
+    <CavcDashboard
+      appealId={props.match.params.appealId}
+      history={props.history}
+    />
+  );
 
   routedAdvancedOnDocketMotion = (props) => (
     <AdvancedOnDocketMotionView {...props.match.params} />
@@ -625,10 +637,14 @@ class QueueApp extends React.PureComponent {
       appealId={props.match.params.appealId}
       {...props.match.params}
     />
-  )
+  );
 
-  routedCamoSendToBoardIntake = (props) => (
-    <CompleteTaskModal modalType="vha_send_to_board_intake" {...props.match.params} />
+  routedCamoDocumentsReadyForBvaIntake = (props) => (
+    <CompleteTaskModal modalType="vha_documents_ready_for_bva_intake_for_review" {...props.match.params} />
+  );
+
+  routedCamoReturnToBoardIntake = (props) => (
+    <CompleteTaskModal modalType="vha_return_to_board_intake" {...props.match.params} />
   );
 
   routedEMOReturnToBoardIntake = (props) => (
@@ -829,6 +845,12 @@ class QueueApp extends React.PureComponent {
               path="/queue/appeals/:appealId/edit_cavc_remand"
               title="Edit Cavc Remand | Caseflow"
               render={this.routedEditCavcRemand}
+            />
+            <PageRoute
+              exact
+              path="/queue/appeals/:appealId/cavc_dashboard"
+              title="CAVC Dashboard | Caseflow"
+              render={this.routedCavcDashboard}
             />
             <PageRoute
               exact
@@ -1114,9 +1136,15 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.value
+                  TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.value
                 }`}
-              render={this.routedCamoSendToBoardIntake}
+              render={this.routedCamoDocumentsReadyForBvaIntake}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_RETURN_TO_BOARD_INTAKE.value
+                }`}
+              render={this.routedCamoReturnToBoardIntake}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
@@ -1440,6 +1468,8 @@ QueueApp.propTypes = {
   setCanEditNodDate: PropTypes.func,
   setUserIsCobAdmin: PropTypes.func,
   setCanEditCavcRemands: PropTypes.func,
+  setCanEditCavcDashboards: PropTypes.func,
+  setCanViewCavcDashboards: PropTypes.func,
   canEditAod: PropTypes.bool,
   setFeatureToggles: PropTypes.func,
   featureToggles: PropTypes.object,
@@ -1464,6 +1494,8 @@ QueueApp.propTypes = {
   userCanViewEditNodDate: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
   canEditCavcRemands: PropTypes.bool,
+  canEditCavcDashboards: PropTypes.bool,
+  canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
 };
 
@@ -1478,6 +1510,8 @@ const mapDispatchToProps = (dispatch) =>
       setCanEditNodDate,
       setUserIsCobAdmin,
       setCanEditCavcRemands,
+      setCanEditCavcDashboards,
+      setCanViewCavcDashboards,
       setCanViewOvertimeStatus,
       setFeatureToggles,
       setUserId,
