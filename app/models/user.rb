@@ -12,6 +12,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
+  has_many :membership_requests, foreign_key: :requestor_id
+  has_many :decided_membership_requests, class_name: "MembershipRequest", foreign_key: :decider_id
   has_many :messages
   has_many :unrecognized_appellants, foreign_key: :created_by_id
   has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
@@ -532,6 +534,22 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
         css_id: "APIUSER",
         full_name: "API User"
       )
+    end
+
+    def first_time_logging_in?(session)
+      user_session = session["user"] ||= authentication_service.default_user_session
+
+      unless user_session
+        return false
+      end
+
+      user = find_by_pg_user_id!(user_session["pg_user_id"], session) || User.find_by_css_id(user_session["id"])
+
+      if user&.last_login_at
+        false
+      else
+        true
+      end
     end
 
     def from_session(session)
