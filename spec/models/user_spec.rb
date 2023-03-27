@@ -17,6 +17,14 @@ describe User, :all_dbs do
     Fakes::AuthenticationService.user_session = nil
   end
 
+  context ".first_time_logging_in" do
+    let!(:user) { create(:user, css_id: "NEWUSER") }
+
+    it "returns true unless user.last_login_at is false" do
+      expect(User.first_time_logging_in?(session)).to eq true
+    end
+  end
+
   context ".api_user" do
     it "returns the api user" do
       expect(User.api_user.station_id).to eq "101"
@@ -760,6 +768,56 @@ describe User, :all_dbs do
     context "when current user is NOT a member of VHA org" do
       it "returns false" do
         expect(subject).to eq(false)
+      end
+    end
+  end
+
+  describe ".membership_requests" do
+    let(:user) { create(:user) }
+
+    subject { user.membership_requests }
+
+    it "should return an empty list" do
+      expect(subject).to eq([])
+    end
+
+    context "When the user has membership requests" do
+      let(:membership_requests) { create_list(:membership_request, 5) }
+
+      before do
+        membership_requests.each do |request|
+          request.requestor = user
+          request.save
+        end
+      end
+
+      it "should include those membership requests" do
+        expect(subject).to include(*membership_requests)
+      end
+    end
+  end
+
+  describe ".decided_membership_requests" do
+    let(:user) { create(:user) }
+
+    subject { user.decided_membership_requests }
+
+    it "should return an empty list" do
+      expect(subject).to eq([])
+    end
+
+    context "When the user has membership requests" do
+      let(:membership_requests) { create_list(:membership_request, 5) }
+
+      before do
+        membership_requests.each do |request|
+          request.decider = user
+          request.save
+        end
+      end
+
+      it "should include those membership requests" do
+        expect(subject).to include(*membership_requests)
       end
     end
   end
