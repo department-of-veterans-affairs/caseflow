@@ -88,7 +88,7 @@ const CavcSelectionBasis = (props) => {
             </Button>
           </div>
           {defaultSelectionValue?.label === 'Other' && (
-            <div className="dash-text-input" style={{ paddingLeft: '7.5rem' }}>
+            <div className="dash-text-input" style={{ paddingLeft: '10rem' }}>
               <TextField
                 type="string"
                 label="New basis reason"
@@ -144,7 +144,7 @@ const CavcSelectionBasis = (props) => {
             </Button>
           </div>
           {defaultSelectionValue?.label === 'Other' && (
-            <div className="dash-text-input" style={{ paddingLeft: '5rem' }}>
+            <div className="dash-text-input" style={{ paddingLeft: '7.5rem' }}>
               <TextField
                 type="string"
                 label="New basis reason"
