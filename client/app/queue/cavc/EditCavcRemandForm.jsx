@@ -28,7 +28,8 @@ import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
 import CAVC_DECISION_TYPE_NAMES from 'constants/CAVC_DECISION_TYPE_NAMES';
 
 import {
-  JmrJmprIssuesBanner,
+  JmprIssuesBanner,
+  JmrIssuesBanner,
   MdrBanner,
   MdrIssuesBanner,
   NoMandateBanner,
@@ -167,6 +168,10 @@ export const EditCavcRemandForm = ({
 
   const isRemandType = (type) =>
     watchDecisionType?.includes('remand') && watchRemandType?.includes(type);
+  const allIssuesSelected = useMemo(
+    () => watchIssueIds?.length === decisionIssues?.length,
+    [watchIssueIds, decisionIssues]
+  );
 
   const mandateDatesAvailable = useMemo(
     () =>
@@ -368,8 +373,8 @@ export const EditCavcRemandForm = ({
           </React.Fragment>
         }
 
-        {(isRemandType('jmr_jmpr') || isRemandType('jmr') || isRemandType('jmpr')) &&
-        !watchIssueIds?.length && <JmrJmprIssuesBanner />}
+        {isRemandType('jmr') && !allIssuesSelected && <JmrIssuesBanner />}
+        {isRemandType('jmpr') && !watchIssueIds?.length && <JmprIssuesBanner />}
         {isRemandType('mdr') && !watchIssueIds?.length && <MdrIssuesBanner />}
         {isRemandType('mdr') && (
           <React.Fragment>

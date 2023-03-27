@@ -1,13 +1,10 @@
 import React from 'react';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class IntakeHelp extends React.Component {
 
   render() {
     /* eslint-disable max-len */
     return <div className="cf-help-content">
-
-      <p><Link href="/help">Go Back</Link></p>
 
       <h1 id="#top">Welcome to the Intake Help page!</h1>
 
@@ -99,7 +96,7 @@ class IntakeHelp extends React.Component {
       <h3>Users may require Documents Submission (If requested)</h3>
       <p>
       Users not currently in CSEM may require documentation which includes TMS Certificates, access forms, and/or
-      Credentialing Information. Have your group's POC alert the users.
+      Credentialing Information. Have your group’s POC alert the users.
       </p>
 
       <p className="cf-red-text">

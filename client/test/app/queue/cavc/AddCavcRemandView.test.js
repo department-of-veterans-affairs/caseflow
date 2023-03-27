@@ -12,15 +12,7 @@ import CheckboxGroup from 'app/components/CheckboxGroup';
 import COPY from 'COPY';
 
 describe('AddCavcRemandView', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('9999-12-31'));
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
+  beforeEach(() => jest.clearAllMocks());
 
   const appealId = amaAppeal.externalId;
 
@@ -51,9 +43,9 @@ describe('AddCavcRemandView', () => {
     const cavcForm = setup({ appealId, reversalToggled: true });
 
     it('hides remand subtypes if decision type is not "remand"', () => {
-      expect(cavcForm.find('#sub-type-options_jmr_jmpr').length).toBe(1);
+      expect(cavcForm.find('#sub-type-options_jmr').length).toBe(1);
       cavcForm.find('#type-options_straight_reversal').simulate('change', { target: { checked: true } });
-      expect(cavcForm.find('#sub-type-options_jmr_jmpr').length).toBe(0);
+      expect(cavcForm.find('#sub-type-options_jmr').length).toBe(0);
     });
   });
 
@@ -203,7 +195,6 @@ describe('AddCavcRemandView', () => {
       });
 
       it('shows error on future date selection', () => {
-        jest.useRealTimers();
         const cavcForm = setup({ appealId });
 
         cavcForm.find('input#decision-date').simulate('change', { target: { value: futureDate } });
@@ -231,7 +222,6 @@ describe('AddCavcRemandView', () => {
       });
 
       it('shows error on future date selection', () => {
-        jest.useRealTimers();
         const cavcForm = setup({ appealId });
 
         cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
@@ -264,7 +254,6 @@ describe('AddCavcRemandView', () => {
       });
 
       it('shows error on future date selection', () => {
-        jest.useRealTimers();
         const cavcForm = setup({ appealId });
 
         cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
@@ -287,12 +276,12 @@ describe('AddCavcRemandView', () => {
     describe('issue selection validations', () => {
       const error = COPY.CAVC_ALL_ISSUES_ERROR;
 
-      it('does not show error when any issue is not selected', () => {
+      it('shows error when any issue is not selected', () => {
         const cavcForm = setup({ appealId });
 
         cavcForm.find('input[id="2"]').simulate('change', { target: { checked: false } });
 
-        expect(validationErrorShows(cavcForm, error)).toBeFalsy();
+        expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
     });
 

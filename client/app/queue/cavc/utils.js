@@ -120,9 +120,8 @@ export const getSupportedDecisionTypes = (featureToggles) => {
 
 export const getSupportedRemandTypes = (featureToggles) => {
   const toggledRemandTypes = {
-    [CAVC_REMAND_SUBTYPES.jmr]: false,
-    [CAVC_REMAND_SUBTYPES.jmpr]: false,
-    [CAVC_REMAND_SUBTYPES.jmr_jmpr]: true,
+    [CAVC_REMAND_SUBTYPES.jmr]: true,
+    [CAVC_REMAND_SUBTYPES.jmpr]: true,
     [CAVC_REMAND_SUBTYPES.mdr]: featureToggles.mdr_cavc_remand,
   };
 

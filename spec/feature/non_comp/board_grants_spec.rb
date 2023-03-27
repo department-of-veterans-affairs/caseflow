@@ -2,13 +2,8 @@
 
 feature "NonComp Board Grant Task Page", :postgres do
   before do
-    User.stub = user
-    nca_org.add_user(user)
     Timecop.freeze(post_ama_start_date)
-    FeatureToggle.enable!(:decision_review_queue_ssn_column)
   end
-
-  after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
 
   def submit_form
     find("label[for=isEffectuated]").click
@@ -49,7 +44,11 @@ feature "NonComp Board Grant Task Page", :postgres do
 
   let(:business_line_url) { "decision_reviews/nca" }
   let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
-  let(:vet_id_column_value) { appeal.veteran.ssn }
+
+  before do
+    User.stub = user
+    nca_org.add_user(user)
+  end
 
   scenario "cancel returns back to business line" do
     visit dispositions_url
@@ -77,7 +76,7 @@ feature "NonComp Board Grant Task Page", :postgres do
     expect(page).to have_content("Decision Completed")
     # should redirect to business line's completed tab
     expect(page.current_path).to eq "/#{business_line_url}"
-    expect(page).to have_content(vet_id_column_value)
+    expect(page).to have_content(appeal.claimant.participant_id)
     in_progress_task.reload
     expect(in_progress_task.status).to eq("completed")
     expect(in_progress_task.closed_at).to eq(Time.zone.now)

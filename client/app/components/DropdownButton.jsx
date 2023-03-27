@@ -97,27 +97,28 @@ export default class DropdownButton extends React.Component {
     return list.target ? this.dropdownLink(list) : this.dropdownAction(list);
   }
   dropdownButtonList = () => {
-    return <ul role="listbox" className="cf-dropdown-menu active" {...dropdownList}>
+    return <ul className="cf-dropdown-menu active" {...dropdownList}>
       {this.props.lists.map((list, index) =>
-        <li role="option" key={index}>
+        <li key={index}>
           {this.renderLiBody(list)}
         </li>)}
     </ul>;
   };
 
   render() {
-    const { label, children } = this.props;
+    const { label } = this.props;
 
     return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer} >
       <button {...dropdownBtn}
-        role="button"
+        role="dropdown-button"
+        id="dropdown-button"
         aria-label={label || 'dropdown-button'}
-        aria-haspopup="listbox"
+        aria-haspopup="true"
         aria-expanded={this.state.menu}
         aria-pressed={this.state.menu}
         onClick={this.onMenuClick}
         className="cf-dropdown-trigger usa-button usa-button-secondary">
-        {children || label}
+        {label}
       </button>
       {this.state.menu && this.dropdownButtonList() }
     </div>;
@@ -137,6 +138,5 @@ DropdownButton.propTypes = {
   ])),
   onClick: PropTypes.func,
   label: PropTypes.string.isRequired,
-  lists: PropTypes.array.isRequired,
-  children: PropTypes.node,
+  lists: PropTypes.array.isRequired
 };

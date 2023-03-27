@@ -15,7 +15,6 @@ class DecisionReviewsController < ApplicationController
   SORT_COLUMN_MAPPINGS = {
     "claimantColumn" => "claimant_name",
     "veteranParticipantIdColumn" => "veteran_participant_id",
-    "veteranSsnColumn" => "veteran_ssn",
     "issueCountColumn" => "issue_count",
     "daysWaitingColumn" => "tasks.assigned_at",
     "completedDateColumn" => "tasks.closed_at"

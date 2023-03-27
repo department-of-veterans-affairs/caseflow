@@ -332,8 +332,7 @@ describe AppellantNotification do
         it "the appellant will be notified that their hearing has been postponed" do
           old_appeal_state = AppealState.find_by(appeal_id: hearing.appeal.id, appeal_type: hearing.appeal.class.to_s)
           expect(old_appeal_state.hearing_postponed).to eq(false)
-          expect(AppellantNotification).to receive(:notify_appellant)
-          hearing_update_form.update_hearing
+          hearing.update(disposition: "postponed")
           new_appeal_state = AppealState.find_by(appeal_id: hearing.appeal.id, appeal_type: hearing.appeal.class.to_s)
           expect(new_appeal_state.hearing_postponed).to eq(true)
         end

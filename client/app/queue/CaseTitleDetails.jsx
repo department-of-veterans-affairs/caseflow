@@ -16,7 +16,6 @@ import {
 } from './selectors';
 import { PencilIcon } from '../components/icons/PencilIcon';
 import { ClockIcon } from '../components/icons/ClockIcon';
-import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { renderLegacyAppealType } from './utils';
 import { requestPatch } from './uiReducer/uiActions';
 import Button from '../components/Button';
@@ -123,11 +122,11 @@ export class CaseTitleDetails extends React.PureComponent {
       legacyAttorneyTasks,
       userCssId,
       userRole,
-      hideOTSection,
-      showEfolderLink
+      hideOTSection
     } = this.props;
 
     const { highlightModal, documentIdError } = this.state;
+
     // eslint-disable-next-line camelcase
     const userIsAssignedAmaJudge = appeal?.assignedJudge?.css_id === userCssId;
     // is there a legacy judge task assigned to the user or legacy attorney task assigned by the user
@@ -139,9 +138,6 @@ export class CaseTitleDetails extends React.PureComponent {
     // we need to check if the request type is any of threee :central, video, travel or null
     const showHearingRequestType = appeal?.docketName === 'hearing' ||
       (appeal?.docketName === 'legacy' && appeal?.readableHearingRequestType);
-    const link = appeal.veteranParticipantId ?
-      appeal.efolderLink + '/veteran/' + appeal.veteranParticipantId :
-      appeal.efolderLink;
 
     return (
       <TitleDetailsSubheader id="caseTitleDetailsSubheader">
@@ -250,17 +246,6 @@ export class CaseTitleDetails extends React.PureComponent {
             </Button>
           </TitleDetailsSubheaderSection>
         )}
-        {showEfolderLink && (
-          <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_EFOLDER_LINK}>
-
-            <a href={link} target="_blank" rel="noopener noreferrer">
-              {this.props.appeal.veteranParticipantId ? 'Open eFolder ' : 'Go to eFolder Search '}
-              <span {...css({ position: 'relative', top: '3px' })}>
-                <ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} />
-              </span>
-            </a>
-          </TitleDetailsSubheaderSection>
-        )}
       </TitleDetailsSubheader>
     );
   };
@@ -288,13 +273,11 @@ CaseTitleDetails.propTypes = {
   hideOTSection: PropTypes.bool,
   hasNotifications: PropTypes.bool,
   hideDocs: PropTypes.bool,
-  hideDecisionDocument: PropTypes.bool,
-  showEfolderLink: PropTypes.bool
+  hideDecisionDocument: PropTypes.bool
 };
 
 CaseTitleDetails.defaultProps = {
-  hideOTSection: false,
-  showEfolderLink: false
+  hideOTSection: false
 };
 
 const mapStateToProps = (state, ownProps) => {

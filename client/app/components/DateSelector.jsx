@@ -1,14 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TextField from '../components/TextField';
-import ValidatorsUtil from '../util/ValidatorsUtil';
-import COPY from '../../COPY';
 
 const DEFAULT_TEXT = 'mm/dd/yyyy';
 
 export const DateSelector = (props) => {
-  const { dateValidator, futureDate } = ValidatorsUtil;
-
   const {
     errorMessage,
     label,
@@ -23,23 +19,6 @@ export const DateSelector = (props) => {
     ...passthroughProps
   } = props;
 
-  const maxDateOfNowString = new Date().toISOString().
-    split('T')[0];
-
-  const dateValidationError = (date) => {
-    if (value) {
-      if (!dateValidator(date)) {
-        return COPY.DATE_SELECTOR_INVALID_DATE_ERROR;
-      }
-
-      if (futureDate(date)) {
-        return COPY.DATE_SELECTOR_FUTURE_DATE_ERROR;
-      }
-    }
-
-    return validationError ? validationError(date) : null;
-  };
-
   return (
     <TextField
       errorMessage={errorMessage}
@@ -48,12 +27,12 @@ export const DateSelector = (props) => {
       readOnly={readOnly}
       type={type}
       value={value}
-      validationError={dateValidationError(value)}
+      validationError={validationError}
       onChange={onChange}
       placeholder={DEFAULT_TEXT}
       required={required}
       {...passthroughProps}
-      max={maxDateOfNowString}
+      max="9999-12-31"
       dateErrorMessage={dateErrorMessage}
     />
   );

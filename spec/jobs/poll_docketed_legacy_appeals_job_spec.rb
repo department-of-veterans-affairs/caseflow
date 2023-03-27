@@ -9,9 +9,6 @@ describe PollDocketedLegacyAppealsJob, type: :job do
       Seeds::NotificationEvents.new.seed!
     end
 
-    let!(:today) { Time.now.utc.iso8601 }
-    let!(:yesterday) { 1.day.ago.getutc.iso8601 }
-
     let(:vacols_ids) { %w[12340 12341 12342 12343 12344 12345 12346 12347 12348 12349] }
     let(:bfac_codes) { %w[1 3 7] }
 
@@ -30,7 +27,7 @@ describe PollDocketedLegacyAppealsJob, type: :job do
     let(:claim_histories) {
       create_list(:priorloc, 10) do |claim_history, i|
         locstto = (i == 3) ? "02" : "01"
-        locdout = i.even? ? today : yesterday
+        locdout = i.even? ? Time.zone.today : Time.zone.yesterday
         claim_history.update!(lockey: vacols_ids[i], locstto: locstto, locdout: locdout)
       end
     }
@@ -38,10 +35,10 @@ describe PollDocketedLegacyAppealsJob, type: :job do
       create(:notification,
              appeals_id: "12342",
              appeals_type: "LegacyAppeal",
-             event_date: today,
+             event_date: Time.zone.today,
              event_type: "Appeal docketed",
              notification_type: "Email",
-             notified_at: today)
+             notified_at: Time.zone.today)
     }
     let(:filtered_claim_histories) {
       claim_histories_copy = claim_histories.dup

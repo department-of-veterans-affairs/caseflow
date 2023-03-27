@@ -45,16 +45,13 @@ gem "parallel"
 gem "paranoia", "~> 2.2"
 # PDF Tools
 gem "pdf-forms"
-gem "pdfjs_viewer-rails", git: "https://github.com/mikefinneran/pdfjs_viewer-rails-va.git", ref: "296d923eec7d0b2c66b5e340fb5261b780760f5d"
-# Used to build out PDF files on the backend
-# https://github.com/pdfkit/pdfkit
-gem "pdfkit"
+gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
 gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
-gem "puma", "5.6.4"
-gem "rack", "~> 2.2.6.2"
+gem "puma", "~> 5"
+gem "rack", "~> 2.2.3"
 gem "rails", "5.2.4.6"
 # Used to colorize output for rake tasks
 gem "rainbow"
@@ -76,7 +73,7 @@ gem "strong_migrations"
 gem "therubyracer", platforms: :ruby
 # print trees
 gem "tty-tree"
-gem "tzinfo", "1.2.10"
+gem "tzinfo"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
@@ -96,7 +93,7 @@ group :test, :development, :demo do
   # Testing tools
   gem "capybara"
   gem "capybara-screenshot"
-  gem "danger", "~> 6.2.2"
+  gem "danger", "~> 6.0"
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"

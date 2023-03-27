@@ -66,16 +66,6 @@ const fillStatic = async () => {
 };
 
 describe('EditCavcRemandForm', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('9999-12-31'));
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   const onCancel = jest.fn();
   const onSubmit = jest.fn();
   const defaults = {
@@ -103,7 +93,6 @@ describe('EditCavcRemandForm', () => {
       });
 
       it('passes a11y testing', async () => {
-        jest.useRealTimers();
         const { container } = setup();
 
         const results = await axe(container);
@@ -205,7 +194,6 @@ describe('EditCavcRemandForm', () => {
       });
 
       it('passes a11y testing', async () => {
-        jest.useRealTimers();
         const { container } = setup({ existingValues });
 
         const results = await axe(container);
@@ -225,7 +213,6 @@ describe('EditCavcRemandForm', () => {
 
   describe('submitting invalid dates', () => {
     it('displays an error message for a future decision date', async () => {
-      jest.useRealTimers();
       setup({ existingValues });
       const decisionDateInput = screen.getByLabelText(/What is the Court's decision date?/i);
       const invalidDate = format(add(new Date(), { days: 7 }), 'yyyy-MM-dd');

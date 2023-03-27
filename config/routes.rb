@@ -214,7 +214,7 @@ Rails.application.routes.draw do
   get 'hearing_prep/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
   get 'queue/help' => 'help#queue'
-  get 'vha/help' => 'help#vha'
+
 
   root 'home#index'
 
@@ -281,25 +281,9 @@ Rails.application.routes.draw do
     get '/', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
-    get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'
     get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
-  end
-
-  # requests to CAVC Dashboard that don't require an appeal_id should go here
-  scope path: "/cavc_dashboard" do
-    get "/cavc_decision_reasons", to: "cavc_dashboard#cavc_decision_reasons"
-    get "/cavc_selection_bases", to: "cavc_dashboard#cavc_selection_bases"
-    patch "/update", to: "cavc_dashboard#update_data"
-    post "/save", to: "cavc_dashboard#save"
-  end
-
-  # allow requests for CAVC Dashboard to go through /cavc_dashboard/:appeal_id/* to declutter the queue path above
-  resources :cavc_dashboard, param: :appeal_id do
-    member do
-      get "/", to: "cavc_dashboard#index"
-    end
   end
 
   resources :team_management, only: [:index, :update]
@@ -343,8 +327,6 @@ Rails.application.routes.draw do
   end
   get '/organizations/:url/modal(*rest)', to: 'organizations#show'
   get '/organizations(*rest)', to: 'organizations#org_index'
-
-  resources :membership_requests, only: [:create, :update]
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
   patch '/case_reviews/:id', to: 'case_reviews#update'

@@ -364,7 +364,3 @@ export const splitAppeal1 = {
   remandJudgeName: null
 };
 
-export const appealWithDashboard = {
-  ...amaAppeal,
-  cavcRemandsWithDashboard: 5
-};

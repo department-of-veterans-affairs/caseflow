@@ -3,7 +3,6 @@
 class WorkQueue::CavcRemandSerializer
   include FastJsonapi::ObjectSerializer
 
-  attribute :id
   attribute :cavc_decision_type
   attribute :cavc_docket_number
   attribute :cavc_judge_full_name

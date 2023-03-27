@@ -5,7 +5,6 @@ class Organization < CaseflowRecord
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users
-  has_many :membership_requests
   has_many :non_admin_users, -> { non_admin }, class_name: "OrganizationsUser"
   require_dependency "dvc_team"
 
@@ -71,15 +70,8 @@ class Organization < CaseflowRecord
     true
   end
 
-  def add_user(user, admin_user = nil)
-    org_user = OrganizationsUser.find_or_create_by!(organization: self, user: user)
-
-    # check if membership_requests exists for the user that is being added.
-    user.membership_requests.where(organization_id: id).assigned.each do |membership_request|
-      membership_request.update_status_and_send_email("cancelled", admin_user)
-    end
-
-    org_user
+  def add_user(user)
+    OrganizationsUser.find_or_create_by!(organization: self, user: user)
   end
 
   def admins

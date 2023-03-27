@@ -559,15 +559,6 @@
       "zip" : "57105",
       "timezone" : "America/Chicago"
    },
-   "vba_438a" : {
-      "address_1" : "910 5th St",
-      "address_2" : "Suite 105",
-      "address_3" : null,
-      "city" : "Rapid City",
-      "state" : "SD",
-      "zip" : "57701",
-      "timezone" : "America/Denver"
-   },
    "vba_442" : {
       "address_1" : "2360 E. Pershing Blvd.",
       "address_2" : null,
