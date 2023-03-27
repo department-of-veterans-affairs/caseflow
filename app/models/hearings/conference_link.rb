@@ -47,7 +47,7 @@ class ConferenceLink < CaseflowRecord
   end
 
   def guest_link
-    return guest_hearing_link if !guest_hearing_link.nil?
+    return guest_hearing_link if !guest_hearing_link.empty?
 
     if !alias_name.nil?
       link_service = VirtualHearings::LinkService.new(alias_name)
