@@ -75,11 +75,11 @@ feature "Appeal Intake", :all_dbs do
     click_on "Search"
     expect(page).to have_current_path("/intake/review_request")
 
-    fill_in "What is the Receipt Date of this form?", with: future_date.mdY
-    click_intake_continue
-
-    expect(page).to have_content("Receipt date cannot be in the future.")
-    expect(page).to have_content("Please select an option.")
+    # DateSelector component has been updated to not allow future dates to be selected at all
+    # fill_in "What is the Receipt Date of this form?", with: future_date.mdY
+    # click_intake_continue
+    # expect(page).to have_content("Receipt date cannot be in the future.")
+    #expect(page).to have_content("Please select an option.")
 
     fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
