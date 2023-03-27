@@ -778,27 +778,27 @@ class CompleteTaskModal extends React.Component {
   formatInstructions = () => {
     const { instructions, radio, otherInstructions } = this.state;
     const formattedInstructions = [];
-    let reviewNotes;
-    const previousInstructions = this.props.tasks.map((task) => {
-      // Skip if there are no previous instructions
-      if (task.instructions?.[1]) {
-        if (task.assignedTo.type === 'VhaProgramOffice') {
-          reviewNotes = 'Program Office';
+    // let reviewNotes;
+    // const previousInstructions = this.props.tasks.map((task) => {
+    //   // Skip if there are no previous instructions
+    //   if (task.instructions?.[1]) {
+    //     if (task.assignedTo.type === 'VhaProgramOffice') {
+    //       reviewNotes = 'Program Office';
 
-          return task && task.instructions[1];
-        } else if (task.assignedTo.type === 'VhaRegionalOffice') {
-          reviewNotes = 'VISN';
+    //       return task && task.instructions[1];
+    //     } else if (task.assignedTo.type === 'VhaRegionalOffice') {
+    //       reviewNotes = 'VISN';
 
-          return task && task.instructions[1];
-        } else if (task.assignedTo.type === 'VhaCamo' && task.instructions.length > 0) {
-          reviewNotes = 'CAMO';
+    //       return task && task.instructions[1];
+    //     } else if (task.assignedTo.type === 'VhaCamo' && task.instructions.length > 0) {
+    //       reviewNotes = 'CAMO';
 
-          return task && task.instructions[1];
-        }
-      }
+    //       return task && task.instructions[1];
+    //     }
+    //   }
 
-      return reviewNotes = null;
-    });
+    //   return reviewNotes = null;
+    // });
 
     if (this.props.modalType === 'task_complete_contested_claim' &&
     this.props.task.type === 'SendInitialNotificationLetterTask') {
@@ -841,8 +841,8 @@ class CompleteTaskModal extends React.Component {
       }
     }
 
-    if (this.props.modalType === 'vha_send_to_board_intake') {
-      const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
+    // if (this.props.modalType === 'vha_send_to_board_intake') {
+    //   const locationLabel = sendToBoardOpts.find((option) => radio === option.value).displayText;
 
     if (this.props.modalType.includes('for_review')) {
       const locationLabel = locationTypeOpts.find((option) => radio === option.value).displayText;
