@@ -215,10 +215,15 @@ describe User, :all_dbs do
       it { is_expected.to eq("America/New_York") }
     end
 
+    # for VSO users with multiple RO's
+    # regional_office will default to nil, but selected_regional_office will not
     context "when ro isn't set" do
       subject { user.timezone }
-      before { user.regional_office = nil }
-      it { is_expected.to eq("America/Chicago") }
+      before do
+        user.regional_office = nil
+        user.selected_regional_office = "RO27"
+      end
+      it { is_expected.to eq("America/Kentucky/Louisville") }
     end
   end
 
