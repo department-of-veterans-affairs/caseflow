@@ -21,6 +21,14 @@ describe Memberships::SendMembershipRequestMailerJob do
     }
   end
 
+  let(:error) do
+    StandardError.new("Error")
+  end
+
+  before do
+    allow(Raven).to receive(:capture_exception) { @raven_called = true }
+  end
+
   subject { described_class.perform_now(type, mailer_parameters) }
 
   describe "#perform" do
@@ -102,6 +110,48 @@ describe Memberships::SendMembershipRequestMailerJob do
       it "throws an error" do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(ArgumentError)
+        end
+      end
+    end
+
+    context "a Datadog metric is captured" do
+      let(:type) { "UserRequestCreated" }
+      let(:email_message) { instance_double(GovDelivery::TMS::EmailMessage) }
+      let(:response) { instance_double("Response") }
+
+      it "Calls the DataDogService in the external_message_id method" do
+        allow_any_instance_of(ActionMailer::Parameterized::MessageDelivery).to receive(:deliver_now!)
+          .and_return(email_message)
+        allow(email_message).to receive(:is_a?).with(GovDelivery::TMS::EmailMessage).and_return(true)
+        allow(email_message).to receive(:response).and_return(response)
+        allow(response).to receive(:body).and_return({})
+        allow(response).to receive(:status).and_return("200 Good")
+        expect(DataDogService).to receive(:emit_gauge).with(
+          app_name: "caseflow_job",
+          metric_group: Memberships::SendMembershipRequestMailerJob.name.underscore,
+          metric_name: "runtime",
+          metric_value: anything
+        ).once
+        subject
+      end
+    end
+
+    context "an error is thrown" do
+      let(:type) { "UserRequestCreated" }
+      it "rescues error and logs to sentry" do
+        allow_any_instance_of(MembershipRequestMailer).to receive(:user_request_created).and_raise(error)
+        subject do
+          expect(@raven_called).to eq(true)
+        end
+      end
+    end
+
+    context "an error is thrown" do
+      let(:type) { "UserRequestCreated" }
+      it "rescues error and logs it with the Rails Logger" do
+        allow_any_instance_of(MembershipRequestMailer).to receive(:user_request_created).and_raise(error)
+        subject do
+          expect(Rails.logger).to have_received(:warn).with("Error").once
         end
       end
     end
