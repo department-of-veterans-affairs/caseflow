@@ -7,7 +7,7 @@ import COPY from '../../COPY';
 const DEFAULT_TEXT = 'mm/dd/yyyy';
 
 export const DateSelector = (props) => {
-  const { dateValidator, futureDate } = ValidatorsUtil;
+  const { dateValidator } = ValidatorsUtil;
 
   const {
     errorMessage,
@@ -20,20 +20,14 @@ export const DateSelector = (props) => {
     validationError,
     value,
     dateErrorMessage,
+    maxDateOfNowString,
     ...passthroughProps
   } = props;
 
-  const maxDateOfNowString = new Date().toISOString().
-    split('T')[0];
-
   const dateValidationError = (date) => {
-    if (value) {
+    if (date) {
       if (!dateValidator(date)) {
         return COPY.DATE_SELECTOR_INVALID_DATE_ERROR;
-      }
-
-      if (futureDate(date)) {
-        return COPY.DATE_SELECTOR_FUTURE_DATE_ERROR;
       }
     }
 
@@ -53,7 +47,7 @@ export const DateSelector = (props) => {
       placeholder={DEFAULT_TEXT}
       required={required}
       {...passthroughProps}
-      max={maxDateOfNowString}
+      max={maxDateOfNowString || '9999-12-31'}
       dateErrorMessage={dateErrorMessage}
     />
   );
@@ -125,6 +119,11 @@ DateSelector.propTypes = {
    * The value of the `input` element; required for a controlled component
    */
   value: PropTypes.string,
+
+  /**
+   * A string representing the max date allowed to be selected, format should be '9999-12-31'
+   */
+  maxDateOfNowString: PropTypes.string,
 };
 
 export default DateSelector;
