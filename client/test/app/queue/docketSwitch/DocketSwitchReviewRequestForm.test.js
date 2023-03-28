@@ -13,16 +13,6 @@ import { sprintf } from 'sprintf-js';
 import { add, format } from 'date-fns';
 
 describe('DocketSwitchReviewRequestForm', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('9999-12-31'));
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
   const appellantName = 'Claimant 1';
@@ -35,6 +25,10 @@ describe('DocketSwitchReviewRequestForm', () => {
 
   const setup = (props) =>
     render(<DocketSwitchReviewRequestForm {...defaults} {...props} />);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it('renders correctly', () => {
     const { container } = setup();
@@ -100,7 +94,6 @@ describe('DocketSwitchReviewRequestForm', () => {
     });
 
     it('throws error for receipt date in future', async () => {
-      jest.useRealTimers();
       render(<DocketSwitchReviewRequestForm {...defaults} />);
 
       await fireEvent.change(screen.getByLabelText(/receipt date/i), {
