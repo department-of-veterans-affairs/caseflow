@@ -9,7 +9,7 @@ import { sprintf } from 'sprintf-js';
 
 describe('VhaHelp', () => {
 
-  const setup = (state = {}) => {
+  const setup = (state = { userLoggedIn: true }) => {
     const helpState = { ...initialState, ...state };
     const store = createStore(helpReducers, { help: { ...helpState } });
 

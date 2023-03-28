@@ -16,6 +16,10 @@ const VhaHelp = () => {
     (state) => state.help.messages.error
   );
 
+  const userIsLoggedIn = useSelector(
+    (state) => state.help.userLoggedIn
+  );
+
   const BackToHelpLink = () => {
     return <p><Link href="/help">Go Back</Link></p>;
   };
@@ -78,7 +82,7 @@ const VhaHelp = () => {
     <HelpDivider />
     <FrequentlyAskedQuestions />
     <HelpDivider />
-    <VhaMembershipRequestForm />
+    { userIsLoggedIn && <VhaMembershipRequestForm /> }
   </div>;
 };
 

@@ -17,6 +17,7 @@ import ReduxBase from '../components/ReduxBase';
 import helpReducers, {
   setFeatureToggles,
   setOrganizationMembershipRequests,
+  setUserLoggedIn,
   setUserOrganizations } from './helpApiSlice';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
@@ -48,6 +49,10 @@ const HelpApp = (props) => {
   useEffect(() => {
     dispatch(setOrganizationMembershipRequests(props.organizationMembershipRequests));
   }, [dispatch, props.organizationMembershipRequests]);
+
+  useEffect(() => {
+    dispatch(setUserLoggedIn(props.userLoggedIn));
+  }, [dispatch, props.userLoggedIn]);
 
   return (
     <div>
@@ -116,6 +121,7 @@ HelpApp.propTypes = {
   userOrganizations: PropTypes.array,
   organizationMembershipRequests: PropTypes.array,
   featureToggles: PropTypes.object,
+  userLoggedIn: PropTypes.bool,
 };
 
 export default Help;

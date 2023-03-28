@@ -192,4 +192,12 @@ RSpec.feature "VhaMembershipRequest" do
       expect(page).to have_button("Submit", disabled: false)
     end
   end
+
+  context("Vha Membership Form for a user that is not authenticated") do
+    scenario "A user that has not logged in should not be able to see the Vha membership request form" do
+      visit "/vha/help"
+      expect(page).to_not have_content("1. How do I access the VHA team?")
+      expect(page).to_not have_button("Submit")
+    end
+  end
 end
