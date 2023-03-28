@@ -28,7 +28,7 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
     if total > 0
       contention_ids = get_contention_ids(rius)
       remediate!(rius, contention_ids, total)
-      store_logs_in_s3
+      store_logs_in_s3_bucket
       puts @logs
     end
   end
@@ -39,11 +39,9 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
     while index < total
       begin
         affected_request_issue = find_removed_or_withdrawn_request_issue(rius[index], contention_ids[index])
-        epe = affected_request_issue.end_product_establishment
-        ep = epe.result
         reset_ri_closed_status_and_closed_at!(affected_request_issue, rius[index], index)
         maybe_cancel_or_reprocess_request_issues_update!(affected_request_issue, rius[index], index)
-        sync_epe!(epe, ep, rius[index], affected_request_issue, index)
+        sync_epe!(rius[index], affected_request_issue, index)
         @remediated_request_issues_update_ids.push("RIU ID: #{rius[index].id}, RI ID: #{affected_request_issue.id}")
         index += 1
       rescue StandardError => error
@@ -154,7 +152,9 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
   end
 
   # Reset End Product Establishment synced_status and re-sync with VBMS
-  def sync_epe!(end_product_establishment, end_product, request_issues_update, request_issue, index)
+  def sync_epe!(request_issues_update, request_issue, index)
+    end_product_establishment = request_issue.end_product_establishment
+    end_product = end_product_establishment.result
     prev_status = end_product_establishment.synced_status
     end_product_establishment.update!(synced_status: nil)
     end_product_establishment.sync!
@@ -165,8 +165,9 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
   end
 
   # Save Logs to S3 Bucket
-  def store_logs_in_s3
+  def store_logs_in_s3_bucket
     # Set Client Resources for AWS
+    Aws.config.update(region: "us-gov-west-1")
     s3client = Aws::S3::Client.new
     s3resource = Aws::S3::Resource.new(client: s3client)
     s3bucket = s3resource.bucket("data-remediation-output")
