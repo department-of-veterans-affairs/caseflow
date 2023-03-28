@@ -187,3 +187,67 @@ exports[`VhaHelp renders the help page 1`] = `
   </div>
 </div>
 `;
+
+exports[`VhaHelp renders the help page for a user that is not logged in 1`] = `
+<div>
+  <div
+    class="cf-help-content"
+  >
+    <p>
+      <a
+        href="/help"
+      >
+        Go Back
+      </a>
+    </p>
+    <div>
+      <h1
+        id="#top"
+      >
+         Welcome to the VHA Help page! 
+      </h1>
+      <p>
+        Here you will find
+        <a
+          href="#training-videos"
+        >
+           Training Videos 
+        </a>
+        and
+        <a
+          href="#faq"
+        >
+           Frequently Asked Questions (FAQs) 
+        </a>
+        for VHA, as well as links to the Training Guide and the Quick Reference Guide 
+      </p>
+    </div>
+    <div
+      class="cf-help-divider"
+    />
+    <div>
+      <h1
+        id="training-videos"
+      >
+         Training Videos
+      </h1>
+      <p>
+         Training video for business lines 
+      </p>
+    </div>
+    <div
+      class="cf-help-divider"
+    />
+    <div>
+      <h1
+        id="faq"
+      >
+         Frequently Asked Questions 
+      </h1>
+    </div>
+    <div
+      class="cf-help-divider"
+    />
+  </div>
+</div>
+`;

@@ -24,6 +24,12 @@ describe('VhaHelp', () => {
     expect(container).toMatchSnapshot();
   });
 
+  it('renders the help page for a user that is not logged in', () => {
+    const { container } = setup({ userLoggedIn: false });
+
+    expect(container).toMatchSnapshot();
+  });
+
   it('renders the success banner when redux store contains a message', async () => {
     const messageText = sprintf(VHA_MEMBERSHIP_REQUEST_FORM_SUBMIT_SUCCESS_MESSAGE, 'VHA group');
     const successMessageState = {
