@@ -17,7 +17,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fb6fa9658825c143eb8d202b87128f34ca7e210b"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "7e299cb288869c5c5e719c67975896d4f80ae8f1"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "43654a058d5a1d3f83f9bfdb832a19b4a9adea8b"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
@@ -45,7 +45,9 @@ gem "parallel"
 gem "paranoia", "~> 2.2"
 # PDF Tools
 gem "pdf-forms"
-gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
+gem "pdfjs_viewer-rails", git: "https://github.com/mikefinneran/pdfjs_viewer-rails-va.git", ref: "296d923eec7d0b2c66b5e340fb5261b780760f5d"
+# Used to build out PDF files on the backend
+# https://github.com/pdfkit/pdfkit
 gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
