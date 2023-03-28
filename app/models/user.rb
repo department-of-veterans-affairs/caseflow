@@ -52,7 +52,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   # If RO is ambiguous from station_office, use the user-defined RO. Otherwise, use the unambigous RO.
   def regional_office
     upcase = ->(str) { str ? str.upcase : str }
-
     ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
   end
 
@@ -134,6 +133,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     CavcLitigationSupport.singleton.admins.include?(self)
   end
 
+  def can_edit_cavc_dashboards?
+    OaiTeam.singleton.users.include?(self)
+  end
+
+  def can_view_cavc_dashboards?
+    OaiTeam.singleton.users.include?(self) || OccTeam.singleton.users.include?(self)
+  end
+
   def can_intake_appeals?
     BvaIntake.singleton.users.include?(self)
   end
@@ -199,7 +206,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def timezone
-    (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
+    RegionalOffice::CITIES[users_regional_office][:timezone]
   end
 
   # If user has never logged in, we might not have their full name in Caseflow DB.
