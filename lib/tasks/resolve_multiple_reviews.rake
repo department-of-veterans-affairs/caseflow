@@ -85,6 +85,7 @@ namespace :reviews do
       end
 
       puts output
+      return output
     end
 
     @logs = ["Duplicate EP Error Remediation Log: #{Time.zone.now}", output]
