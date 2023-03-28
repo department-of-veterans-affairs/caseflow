@@ -5,6 +5,10 @@ describe AssignHearingTab do
   let(:cache_ama_appeals) { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
   let(:cache_legacy_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
+  def encode_url(value)
+    ERB::Util.url_encode(value)
+  end
+
   describe ".tasks" do
     context "Legacy Appeal cases" do
       let(:number_of_cases) { 10 }
@@ -196,7 +200,7 @@ describe AssignHearingTab do
       it "returns correct options" do
         cache_ama_appeals
 
-        expect(subject.first[:value]).to eq(ERB::Util.url_encode(ERB::Util.url_encode(appeal.representative_name)))
+        expect(subject.first[:value]).to eq(encode_url(encode_url(appeal.representative_name)))
         expect(subject.first[:displayText]).to eq("#{appeal.representative_name} (2)")
       end
     end
@@ -207,7 +211,7 @@ describe AssignHearingTab do
       it "returns correct options" do
         cache_ama_appeals
 
-        expect(subject.first[:value]).to eq(ERB::Util.url_encode(ERB::Util.url_encode(hearing_location1.formatted_location)))
+        expect(subject.first[:value]).to eq(encode_url(encode_url(hearing_location1.formatted_location)))
         expect(subject.first[:displayText]).to eq("#{hearing_location1.formatted_location} (2)")
       end
     end
