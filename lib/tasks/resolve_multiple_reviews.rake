@@ -38,11 +38,12 @@ namespace :reviews do
   end
 
   def resolve_duplicate_eps(problem_reviews)
+    s3client=Aws::S3::Client.new;
+    s3resource=Aws::S3::Resource.new(client: s3client);
+    s3bucket=s3resource.bucket("data-remediation-output");
+    file_name = "duplicate-ep-remediation-logs/duplicate-ep-remediation-log-#{Time.zone.now}";
+
     ActiveRecord::Base.transaction do
-      s3client=Aws::S3::Client.new;
-      s3resource=Aws::S3::Resource.new(client: s3client);
-      s3bucket=s3resource.bucket("data-remediation-output");
-      file_name = "duplicate-ep-remediation-logs/duplicate-ep-remediation-log-#{Time.zone.now}";
       output = ""
       problem_reviews.each do |r|
         v = r.veteran
@@ -84,15 +85,16 @@ namespace :reviews do
       end
 
       puts output
-      @logs = ["Duplicate EP Error Remediation Log: #{Time.zone.now}", output]
-      @logs.push("#{Time.zone.now} DuplicateEP::Log", output)
-      content=@logs.join("\n");
-      temporary_file=Tempfile.new("cdc-log.txt");
-      filepath=temporary_file.path;
-      temporary_file.write(content);
-      temporary_file.flush;
-      s3bucket.object(file_name).upload_file(filepath, acl: "private", server_side_encryption: "AES256");
-      temporary_file.close!;
     end
+
+    @logs = ["Duplicate EP Error Remediation Log: #{Time.zone.now}", output]
+    @logs.push("#{Time.zone.now} DuplicateEP::Log", output)
+    content=@logs.join("\n");
+    temporary_file=Tempfile.new("cdc-log.txt");
+    filepath=temporary_file.path;
+    temporary_file.write(content);
+    temporary_file.flush;
+    s3bucket.object(file_name).upload_file(filepath, acl: "private", server_side_encryption: "AES256");
+    temporary_file.close!;
   end
 end
