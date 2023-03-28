@@ -8,6 +8,16 @@ import { EditNodDateModal } from 'app/queue/components/EditNodDateModal';
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('EditNodDateModal', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date('9999-12-31'));
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
   const defaultNodDate = '2020-10-31';
