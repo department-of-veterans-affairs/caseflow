@@ -33,9 +33,13 @@ export const DateSelector = (props) => {
       if (noFutureDates && futureDate(date)) {
         return COPY.DATE_SELECTOR_FUTURE_DATE_ERROR;
       }
+
+      if (validationError) {
+        return validationError(date);
+      }
     }
 
-    return validationError ? validationError(date) : null;
+    return null;
   };
 
   let max = '9999-12-31';
