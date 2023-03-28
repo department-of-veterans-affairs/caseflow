@@ -121,14 +121,6 @@ describe CavcRemand do
       end
     end
 
-    context "when JMR is missing issues" do
-      let(:decision_issue_ids) { decision_issues.map(&:id).pop(2) }
-
-      it "raises an error" do
-        expect { subject }.to raise_error(Caseflow::Error::JmrAppealDecisionIssueMismatch)
-      end
-    end
-
     shared_examples "works for all remand subtypes" do
       context "when remand subtype is MDR" do
         let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.mdr }
@@ -149,6 +141,14 @@ describe CavcRemand do
 
       context "when remand subtype is JMPR" do
         let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmpr }
+
+        it "raises an error" do
+          expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        end
+      end
+
+      context "when remand subtype is JMR/JMPR" do
+        let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmr_jmpr }
 
         it "raises an error" do
           expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
@@ -185,7 +185,7 @@ describe CavcRemand do
 
     subject { cavc_remand.add_cavc_dates(params) }
 
-    context "on a JMR appeal" do
+    context "on a JMR/JMPR appeal" do
       let(:cavc_remand) { create(:cavc_remand) }
       it "throws an error" do
         expect { subject }.to raise_error(Caseflow::Error::CannotUpdateMandatedRemands)
@@ -296,7 +296,7 @@ describe CavcRemand do
     subject { cavc_remand.update(params) }
 
     context "removes decision issue ids" do
-      let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmr }
+      let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmr_jmpr }
       let(:remaining_decision_issue_id) { cavc_remand.decision_issue_ids.first }
       let(:updated_decision_issue_ids) { [remaining_decision_issue_id] }
 
@@ -311,7 +311,7 @@ describe CavcRemand do
     end
 
     context "adds decision issue ids" do
-      let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmr }
+      let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmr_jmpr }
       let(:updated_decision_issue_ids) { cavc_remand.source_appeal.decision_issue_ids }
 
       it "successfully adds decision issue ids that should be added" do
