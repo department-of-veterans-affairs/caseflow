@@ -7,7 +7,7 @@ import COPY from '../../COPY';
 const DEFAULT_TEXT = 'mm/dd/yyyy';
 
 export const DateSelector = (props) => {
-  const { dateValidator } = ValidatorsUtil;
+  const { dateValidator, futureDate } = ValidatorsUtil;
 
   const {
     errorMessage,
@@ -20,7 +20,7 @@ export const DateSelector = (props) => {
     validationError,
     value,
     dateErrorMessage,
-    maxDateOfNowString,
+    noFutureDates = false,
     ...passthroughProps
   } = props;
 
@@ -29,10 +29,21 @@ export const DateSelector = (props) => {
       if (!dateValidator(date)) {
         return COPY.DATE_SELECTOR_INVALID_DATE_ERROR;
       }
+
+      if (noFutureDates && futureDate(date)) {
+        return COPY.DATE_SELECTOR_FUTURE_DATE_ERROR;
+      }
     }
 
     return validationError ? validationError(date) : null;
   };
+
+  let max = '9999-12-31';
+
+  if (noFutureDates) {
+    max = new Date().toISOString().
+      split('T')[0];
+  }
 
   return (
     <TextField
@@ -47,7 +58,7 @@ export const DateSelector = (props) => {
       placeholder={DEFAULT_TEXT}
       required={required}
       {...passthroughProps}
-      max={maxDateOfNowString || '9999-12-31'}
+      max={max}
       dateErrorMessage={dateErrorMessage}
     />
   );
@@ -121,9 +132,9 @@ DateSelector.propTypes = {
   value: PropTypes.string,
 
   /**
-   * A string representing the max date allowed to be selected, format should be '9999-12-31'
+   * Disables future dates from being selected or entered
    */
-  maxDateOfNowString: PropTypes.string,
+  noFutureDates: PropTypes.bool
 };
 
 export default DateSelector;

@@ -56,30 +56,12 @@ const CavcDashboardEditDetailsModal = ({ closeHandler, saveHandler, Details }) =
     marginBottom: '1rem !important'
   });
 
-  const dateValidationError = (date) => {
-
-    if (!dateValidator(date)) {
-      return COPY.CAVC_DECISION_DATE_ERROR;
-    }
-
-    if (futureDate(date)) {
-      return COPY.DATE_SELECTOR_FUTURE_DATE_ERROR;
-    }
-
-    return null;
-  };
-
-  const maxDateOfNowString = new Date().toISOString().
-    split('T')[0];
-
   const boardDecisionDateField = <DateSelector
     name={LABELS.BOARD_DECISION_DATE}
     type="date"
     onChange={(date) => (setBoardDecisionDate(date))}
     value={boardDecisionDate}
-    dateErrorMessage={dateValidationError(boardDecisionDate)}
     label={LABELS.BOARD_DECISION_DATE}
-    maxDateOfNowString={maxDateOfNowString}
   />;
 
   const boardDocketNumberField = <TextField
@@ -96,9 +78,7 @@ const CavcDashboardEditDetailsModal = ({ closeHandler, saveHandler, Details }) =
     type="date"
     onChange={(date) => setCavcDecisionDate(date)}
     value={cavcDecisionDate}
-    dateErrorMessage={dateValidationError(cavcDecisionDate)}
     label={LABELS.CAVC_DECISION_DATE}
-    maxDateOfNowString={maxDateOfNowString}
   />;
 
   const cavcDocketNumberField = <TextField
