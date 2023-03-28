@@ -12,6 +12,8 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
     @remediated_request_issues_update_ids = []
   end
 
+  # rubocop:disable all
+
   # Purpose: Find Request Issue Updates with CannotDeleteContention Errors
   # and un-remove/un-withdraw affected Request Issue from Request Issues Update
   # so that DecisionReviewProcessJob can finish
@@ -25,14 +27,15 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
     total = rius.count
     if total > 0
       contention_ids = get_contention_ids(rius)
-      index = 0
-      remediate!(rius, contention_ids, index, total)
+      remediate!(rius, contention_ids, total)
       store_logs_in_s3
+      puts @logs
     end
   end
 
   # Main method to loop through and remediate all CannotDeleteContention Request Issues Updates
-  def remediate!(rius, contention_ids, index, total)
+  def remediate!(rius, contention_ids, total)
+    index = 0
     while index < total
       begin
         affected_request_issue = find_removed_or_withdrawn_request_issue(rius[index], contention_ids[index])
@@ -58,6 +61,8 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
     "IDs of request issues updates and correlated request issues with attempted remediation: ")
     @logs.push(@remediated_request_issues_update_ids)
   end
+
+  # rubocop:enable all
 
   private
 
