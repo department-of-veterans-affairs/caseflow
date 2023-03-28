@@ -62,6 +62,7 @@ const CavcDashboardEditDetailsModal = ({ closeHandler, saveHandler, Details }) =
     onChange={(date) => (setBoardDecisionDate(date))}
     value={boardDecisionDate}
     label={LABELS.BOARD_DECISION_DATE}
+    noFutureDates
   />;
 
   const boardDocketNumberField = <TextField
@@ -79,6 +80,7 @@ const CavcDashboardEditDetailsModal = ({ closeHandler, saveHandler, Details }) =
     onChange={(date) => setCavcDecisionDate(date)}
     value={cavcDecisionDate}
     label={LABELS.CAVC_DECISION_DATE}
+    noFutureDates
   />;
 
   const cavcDocketNumberField = <TextField
