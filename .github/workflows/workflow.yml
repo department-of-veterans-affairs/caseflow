@@ -11,6 +11,7 @@ on:
 # Use this flag to turn on/off RSpec.  Please go to the lint & js_test job to disable the boolean
 env:
   rspec_active: true
+  FORCE_COLOR: "1"
 
 jobs:
   # This job runs the main deployment of caseflow
@@ -71,7 +72,6 @@ jobs:
           KNAPSACK_PRO_LOG_LEVEL: info
           WD_INSTALL_DIR: .webdrivers
           CI: true
-          FORCE_COLOR: "1"
 
     steps:
       - uses: actions/checkout@v3
@@ -192,23 +192,13 @@ jobs:
           touch log/selenium-chrome.log
           chmod -R 777 ${GITHUB_WORKSPACE}
           export GHA_NODE_INDEX=${{matrix.ci_node_index}}
-          runuser -u circleci bundle exec rake "knapsack_pro:queue:rspec[-r rspec_junit_formatter --format documentation --format RspecJunitFormatter --format RSpec::Github::Formatter --tty --out tmp/rspec_${{matrix.ci_node_index}}.xml]"
-
-      - uses: actions/upload-artifact@v3
-        if: success() || failure()
-        with:
-          path: rspec_final_results_${{matrix.ci_node_index}}.xml
+          runuser -u circleci bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RSpec::Github::Formatter --tty]"
 
       - run: (cd /home/circleci && tar -zcvf coverage-${{matrix.ci_node_index}}.tar.gz coverage-${{matrix.ci_node_index}})
       - uses: actions/upload-artifact@v3
         if: success()
         with:
           path: /home/circleci/coverage-${{matrix.ci_node_index}}.tar.gz
-
-      - uses: actions/upload-artifact@v3
-        if: success() || failure()
-        with:
-          path: rspec-${{matrix.ci_node_index}}.xml
 
       - uses: actions/upload-artifact@v3
         # Run even if there is a failure in the previous steps, but not if the run is cancelled
