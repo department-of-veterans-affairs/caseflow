@@ -51,7 +51,6 @@ require "rspec/rails"
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
-  config.include EncodingHelpers
 
   # Allows us to use shorthand FactoryBot methods.
   config.include FactoryBot::Syntax::Methods
