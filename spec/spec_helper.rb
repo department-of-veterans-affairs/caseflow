@@ -25,10 +25,6 @@ if ENV["CI"]
       ex.run_with_retry retry: 2
     end
 
-    # force colors on during CI for better readability, since GitHub Actions supports it
-    config.color_mode = :on
-    config.color = true
-
     #Github Actions Formatter
     config.add_formatter RSpec::Github::Formatter
   end
