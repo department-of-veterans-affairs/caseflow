@@ -19,11 +19,17 @@ class HelpController < ApplicationController
     return [] unless user
 
     # Serialize the Membership Requests and extract the attributes
-    MembershipRequestSerializer.new(user.membership_requests.includes(:organization).assigned,
+    MembershipRequestSerializer.new(user.membership_requests.includes(:organization, :requestor).assigned,
                                     is_collection: true)
       .serializable_hash[:data]
       .map { |hash| hash[:attributes] }
   end
 
-  helper_method :feature_toggle_ui_hash, :user_organizations, :pending_membership_requests
+  def user_logged_in?(user = current_user)
+    return false unless user
+
+    user.authenticated?
+  end
+
+  helper_method :feature_toggle_ui_hash, :user_organizations, :pending_membership_requests, :user_logged_in?
 end
