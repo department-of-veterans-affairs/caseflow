@@ -51,6 +51,8 @@ require "rspec/rails"
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
+  config.include EncodingHelpers
+
   # Allows us to use shorthand FactoryBot methods.
   config.include FactoryBot::Syntax::Methods
 
@@ -145,4 +147,7 @@ RSpec.configure do |config|
   # The different available types are documented in the features, such as in
   # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
+
+  # force colors on during CI for better readability, since GitHub Actions supports it
+  config.color_mode = :on if ENV['CI']
 end

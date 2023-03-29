@@ -22,13 +22,17 @@ jobs:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: password
           POSTGRES_DB: caseflow_certification_test
+
         ports:
         - 5432:5432
+
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
       redis:
         image: redis:4.0.10
         ports:
         - 6379:6379
+
       facols_db:
         image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
         credentials:
@@ -36,17 +40,20 @@ jobs:
           password: ${{ secrets.ECR_PASSWORD }}
         ports:
         - 1521:1521
+
     strategy:
       fail-fast: false
       matrix:
         ci_node_total: [12]
         ci_node_index: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       options: --privileged
       credentials:
         username: AWS
         password: ${{ secrets.ECR_PASSWORD }}
+
       env:
           DBUS_SESSION_BUS_ADDRESS: /dev/null
           RAILS_ENV: test
@@ -91,6 +98,7 @@ jobs:
             ~/.cache/yarn
             public/assets
             tmp/cache/assets/sprockets
+
       - name: setup testfiles directory
         run: ./ci-bin/capture-log "mkdir -p tmp/testfiles"
 
@@ -103,6 +111,7 @@ jobs:
           && rm /tmp/chrome.deb
           echo "Chrome exe name: $(ls /usr/bin | chrome)"
           echo "Chrome version: $(google-chrome --version)"
+
       - name: Restore wkhtmltopdf
         id: cache-wkhtmltopdf
         uses: actions/cache/restore@v3
@@ -140,6 +149,7 @@ jobs:
           export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")
           gem install bundler
           bundle install --path vendor/bundle
+
       - name: Cache Ruby Dependencies
         if: steps.cache-ruby-dependencies.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
@@ -153,6 +163,7 @@ jobs:
           wget https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
           && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
           && rm dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
+
       - name: "Wait for database"
         run: dockerize -wait tcp://postgres:5432 -timeout 1m
 
@@ -163,12 +174,15 @@ jobs:
         run: |
           ./ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
           ./ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
+
       - name: make seed-dbs
         run: |
           ./ci-bin/capture-log "make -f Makefile.example seed-dbs"
+
       - name: Assets Precompile
         run: |
           ./ci-bin/capture-log "bundle exec rake assets:precompile"
+
       - name: RSpec via knapsack_pro Queue Mode
         run: |
           mkdir -p ./test-results/rspec
@@ -177,6 +191,7 @@ jobs:
           chmod -R 777 ${GITHUB_WORKSPACE}
           export GHA_NODE_INDEX=${{matrix.ci_node_index}}
           runuser -u circleci bundle exec rake "knapsack_pro:queue:rspec[-r rspec_junit_formatter --format documentation --format RspecJunitFormatter --out tmp/rspec_${{matrix.ci_node_index}}.xml]"
+
       - uses: actions/upload-artifact@v3
         if: success() || failure()
         with:
@@ -233,6 +248,7 @@ jobs:
           TEST_REPORTER: jest-junit
           JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest
           COVERAGE_DIR: /home/circleci/coverage
+
     steps:
       - name: Install chromium
         run: |
@@ -248,6 +264,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y python2
+
       - name: install_node_dependencies
         run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
@@ -258,6 +275,7 @@ jobs:
           mkdir -p ./test-results/jest
           pushd client
           ../ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
+
       - name: store_test_results
         uses: actions/upload-artifact@v3
         with:
@@ -267,6 +285,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: ./all_logs.log
+
   caseflow_lint_job:
     # This job will run the security lint checker, change the value below to false if you wish to turn it off.
     if: true
@@ -276,6 +295,7 @@ jobs:
       credentials:
           username: AWS
           password: ${{ secrets.ECR_PASSWORD }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
