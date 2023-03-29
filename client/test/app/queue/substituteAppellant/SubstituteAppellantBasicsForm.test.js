@@ -43,12 +43,9 @@ describe('SubstituteAppellantBasicsForm', () => {
 
   describe('with blank form', () => {
     it('renders default state correctly', () => {
-      jest.useFakeTimers('modern');
-      jest.setSystemTime(new Date('9999-12-31'));
       const { container } = setup();
 
       expect(container).toMatchSnapshot();
-      jest.useRealTimers();
     });
 
     it('passes a11y testing', async () => {
@@ -150,12 +147,9 @@ describe('SubstituteAppellantBasicsForm', () => {
     };
 
     it('renders default state correctly', () => {
-      jest.useFakeTimers('modern');
-      jest.setSystemTime(new Date('9999-12-31'));
       const { container } = setup({ existingValues });
 
       expect(container).toMatchSnapshot();
-      jest.useRealTimers();
     });
 
     it('passes a11y testing', async () => {
