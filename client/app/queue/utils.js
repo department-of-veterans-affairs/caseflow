@@ -433,6 +433,7 @@ export const prepareAppealForStore = (appeals) => {
       readableOriginalHearingRequestType:
         appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type,
+      cavcRemandsWithDashboard: appeal.attributes.cavc_remands_with_dashboard,
     };
 
     return accumulator;
@@ -823,6 +824,13 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
   }
 
   return timelineEvents;
+};
+
+export const formatSearchableDropdownOptions = (options) => {
+  return _.map(options, (value, key) => {
+    return { value: key,
+      label: value };
+  });
 };
 
 export const sortCaseTimelineEvents = (...eventArrays) => {
