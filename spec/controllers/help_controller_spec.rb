@@ -30,5 +30,17 @@ describe HelpController, type: :controller do
         expect(controller.send(:pending_membership_requests).length).to eq(7)
       end
     end
+
+    context "user_logged_in?" do
+      it "should return true if the user is authenticated" do
+        expect(controller.send(:user_logged_in?)).to eq(true)
+      end
+
+      it "should return false if the user is not authenticated" do
+        # Set the station_id to nil since that's how the user is authenticated
+        user.station_id = nil
+        expect(controller.send(:user_logged_in?)).to eq(false)
+      end
+    end
   end
 end

@@ -9,7 +9,7 @@ import { sprintf } from 'sprintf-js';
 
 describe('VhaHelp', () => {
 
-  const setup = (state = {}) => {
+  const setup = (state = { userLoggedIn: true }) => {
     const helpState = { ...initialState, ...state };
     const store = createStore(helpReducers, { help: { ...helpState } });
 
@@ -20,6 +20,12 @@ describe('VhaHelp', () => {
 
   it('renders the help page', () => {
     const { container } = setup();
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders the help page for a user that is not logged in', () => {
+    const { container } = setup({ userLoggedIn: false });
 
     expect(container).toMatchSnapshot();
   });

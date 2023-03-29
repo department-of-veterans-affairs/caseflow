@@ -21,6 +21,7 @@ export const initialState = {
   featureToggles: {},
   userOrganizations: [],
   organizationMembershipRequests: [],
+  userLoggedIn: false,
   messages: {
     success: null,
     error: null
@@ -64,6 +65,9 @@ const helpSlice = createSlice({
     setOrganizationMembershipRequests: (state, action) => {
       state.organizationMembershipRequests = action.payload;
     },
+    setUserLoggedIn: (state, action) => {
+      state.userLoggedIn = action.payload;
+    },
     setSuccessMessage: (state, action) => {
       state.messages.success = action.payload;
     },
@@ -84,6 +88,7 @@ const helpReducers = combineReducers({ help: helpSlice.reducer, form: formSlice.
 export const { setFeatureToggles,
   setUserOrganizations,
   setOrganizationMembershipRequests,
+  setUserLoggedIn,
   setSuccessMessage,
   resetSuccessMessage,
   setErrorMessage,
