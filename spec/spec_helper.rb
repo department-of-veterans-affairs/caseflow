@@ -22,6 +22,10 @@ if ENV["CI"]
     config.around :each, type: :feature do |ex|
       ex.run_with_retry retry: 2
     end
+
+    # force colors on during CI for better readability, since GitHub Actions supports it
+    config.color_mode = :on
+    config.color = true
   end
 end
 require File.expand_path("../config/environment", __dir__)
@@ -146,7 +150,4 @@ RSpec.configure do |config|
   # The different available types are documented in the features, such as in
   # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
-
-  # force colors on during CI for better readability, since GitHub Actions supports it
-  config.color_mode = :on if ENV['CI']
 end
