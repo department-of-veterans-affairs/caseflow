@@ -28,6 +28,7 @@
   userIsJudge: current_user.judge?,
   userIsDvc: current_user.can_view_judge_team_management?,
   userIsHearingManagement: current_user.in_hearing_management_team?,
-  userIsBoardAttorney: current_user.attorney?
+  userIsBoardAttorney: current_user.attorney?,
+  userIsHearingAdmin: current_user.in_hearing_admin_team?
 }) %>
 <% end %>
