@@ -2,12 +2,14 @@ name: RSpec Jest Lint Workflow
 
 on:
   workflow_dispatch:
-  pull_request:
-    types: [opened, reopened, edited, synchronize]
+  push:
+    branches:
+    - jr-gha-migration-rspec
+    - MattT-gha-migration-spec-2
 
 # Use this flag to turn on/off RSpec.  Please go to the lint & js_test job to disable the boolean
 env:
-  rspec_active: false
+  rspec_active: true
 
 jobs:
   # This job runs the main deployment of caseflow
@@ -41,6 +43,7 @@ jobs:
         ci_node_index: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      options: --privileged
       credentials:
         username: AWS
         password: ${{ secrets.ECR_PASSWORD }}
@@ -49,7 +52,7 @@ jobs:
           RAILS_ENV: test
           NODE_ENV: test
           BUNDLE_PATH: vendor/bundle
-          COVERAGE_DIR: /home/circleci/coverage
+          COVERAGE_DIR: /home/circleci/coverage-${{matrix.ci_node_index}}
           POSTGRES_HOST: postgres
           POSTGRES_USER: root
           POSTGRES_PASSWORD: password
@@ -58,11 +61,14 @@ jobs:
           KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
           KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
           KNAPSACK_PRO_LOG_LEVEL: info
+          WD_INSTALL_DIR: .webdrivers
+          CI: true
 
     steps:
       - uses: actions/checkout@v3
 
       - name: restore yarn cache
+        id: cache-yarn-cache
         uses: actions/cache/restore@v3
         with:
           key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
@@ -76,48 +82,57 @@ jobs:
       - name: Install Node Dependencies
         run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
-      - name: Save Cache
-        uses: actions/cache@v3
+      - name: Save Yarn Cache
+        if: steps.cache-yarn-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
         with:
           key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
           path: |
             ~/.cache/yarn
             public/assets
             tmp/cache/assets/sprockets
-          restore-keys:
-            dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+      - name: setup testfiles directory
+        run: ./ci-bin/capture-log "mkdir -p tmp/testfiles"
 
-      - name: Install chromium
+      - name: Install Chrome
         run: |
           CHROME_VERSION="106.0.5249.119-1"
           apt-get update
           wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
           && apt install -y /tmp/chrome.deb \
           && rm /tmp/chrome.deb
+          echo "Chrome exe name: $(ls /usr/bin | chrome)"
+          echo "Chrome version: $(google-chrome --version)"
+      - name: Restore wkhtmltopdf
+        id: cache-wkhtmltopdf
+        uses: actions/cache/restore@v3
+        with:
+          key: ${{ runner.os }}-wkhtmltopdf
+          path: wkhtmltox_0.12.6-1.focal_amd64.deb
 
-      - name: Install Chromedriver
-        run: |
-          apt-get install -y xvfb libxi6 libgconf-2-4
-          wget https://chromedriver.storage.googleapis.com/106.0.5249.61/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/bin/chromedriver
-          sudo chown root:root /usr/bin/chromedriver
-          sudo chmod +x /usr/bin/chromedriver
+      - name: Download wkhtmltopdf
+        if: steps.cache-wkhtmltopdf.outputs.cache-hit != 'true'
+        run: wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb
 
-      - name: Install firefox
-        run: |
-          FIREFOX_VERSION="106.0.1"
-          apt-get -y install libgtk2.0-0
-          wget https://ftp.mozilla.org/pub/firefox/releases/${FIREFOX_VERSION}/linux-x86_64/en-GB/firefox-${FIREFOX_VERSION}.tar.bz2
-          tar xvf firefox-${FIREFOX_VERSION}.tar.bz2
-          mv firefox/ /usr/lib/firefox
-          ln -s /usr/lib/firefox /usr/bin/firefox
+      - name: Install wkhtmltopdf
+        run: apt install ./wkhtmltox_0.12.6-1.focal_amd64.deb
 
-      - name: setup testfiles directory
-        run: ./ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
+      - name: Cache wkhtmltopdf
+        if: steps.cache-wkhtmltopdf.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+        with:
+          key: ${{ runner.os }}-wkhtmltopdf
+          path: wkhtmltox_0.12.6-1.focal_amd64.deb
 
+      - name: Restore Ruby Dependencies
+        id: cache-ruby-dependencies
+        uses: actions/cache/restore@v3
+        with:
+          key: bundler-gems
+          path: vendor/bundle
+          restore-keys: bundler-gems
 
-      - name: Install Ruby Dependencies
+      - name: Install/Update Ruby Dependencies
         run: |
           ruby -v
           BASH_ENV="Bash"
@@ -125,6 +140,12 @@ jobs:
           export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")
           gem install bundler
           bundle install --path vendor/bundle
+      - name: Cache Ruby Dependencies
+        if: steps.cache-ruby-dependencies.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+        with:
+          key: bundler-gems
+          path: vendor/bundle
 
       - name: Install Dockerize
         run: |
@@ -132,7 +153,6 @@ jobs:
           wget https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
           && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
           && rm dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
-
       - name: "Wait for database"
         run: dockerize -wait tcp://postgres:5432 -timeout 1m
 
@@ -143,55 +163,59 @@ jobs:
         run: |
           ./ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
           ./ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
-
       - name: make seed-dbs
         run: |
           ./ci-bin/capture-log "make -f Makefile.example seed-dbs"
-
       - name: Assets Precompile
         run: |
           ./ci-bin/capture-log "bundle exec rake assets:precompile"
-
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./test-results
-
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./logs
-
       - name: RSpec via knapsack_pro Queue Mode
         run: |
           mkdir -p ./test-results/rspec
-          export RAILS_ENV=test
-          # bundle exec rake "knapsack_pro:queue:rspec[--require rails_helper]"
-          bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
-        # Only runs RSpec if flag is true
-        if: ${{ env.rspec_active == 'true' }}
+          mkdir .webdrivers
+          touch log/selenium-chrome.log
+          chmod -R 777 ${GITHUB_WORKSPACE}
+          export GHA_NODE_INDEX=${{matrix.ci_node_index}}
+          runuser -u circleci bundle exec rake "knapsack_pro:queue:rspec[-r rspec_junit_formatter --format documentation --format RspecJunitFormatter --out tmp/rspec_${{matrix.ci_node_index}}.xml]"
+      - uses: actions/upload-artifact@v3
+        if: success() || failure()
+        with:
+          path: rspec_final_results_${{matrix.ci_node_index}}.xml
+
+      - run: (cd /home/circleci && tar -zcvf coverage-${{matrix.ci_node_index}}.tar.gz coverage-${{matrix.ci_node_index}})
+      - uses: actions/upload-artifact@v3
+        if: success()
+        with:
+          path: /home/circleci/coverage-${{matrix.ci_node_index}}.tar.gz
 
       - uses: actions/upload-artifact@v3
+        if: success() || failure()
         with:
-          path: ./test-results
+          path: rspec-${{matrix.ci_node_index}}.xml
 
       - uses: actions/upload-artifact@v3
+        # Run even if there is a failure in the previous steps, but not if the run is cancelled
+        if: success() || failure()
+        name: capybara-artifacts
         with:
-          path: ./coverage
+          path: ./tmp/capybara
 
+      - name: Compress test logs
+        if: failure()
+        run: tar -czvf ./log/test-${{matrix.ci_node_index}}.log.tar.gz ./log/test.log
       - uses: actions/upload-artifact@v3
+        if: failure()
+        name: Upload test logs if failure
         with:
-          path: ./project/tmp/capybara
+          path: ./log/test-${{matrix.ci_node_index}}.log.tar.gz
 
+      - run: cp ./log/bullet.log ./log/bullet-${{matrix.ci_node_index}}.log
       - uses: actions/upload-artifact@v3
+        if: success() || failure()
+        name: bullet-${{matrix.ci_node_index}}.log
         with:
-          path: ./project/log/test.log
+          path: ./log/bullet-${{matrix.ci_node_index}}.log
 
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./project/log/bullet.log
-
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./logs
   caseflow_jest_job:
     # This job will run the jest, change the value below to false if you wish to turn it off.
     if: true
@@ -217,16 +241,6 @@ jobs:
           wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
           && apt install -y /tmp/chrome.deb \
           && rm /tmp/chrome.deb
-
-      - name: Install firefox
-        run: |
-          FIREFOX_VERSION="106.0.1"
-          apt-get -y install libgtk2.0-0
-          wget https://ftp.mozilla.org/pub/firefox/releases/${FIREFOX_VERSION}/linux-x86_64/en-GB/firefox-${FIREFOX_VERSION}.tar.bz2
-          tar xvf firefox-${FIREFOX_VERSION}.tar.bz2
-          mv firefox/ /usr/lib/firefox
-          ln -s /usr/lib/firefox /usr/bin/firefox
-
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -234,7 +248,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y python2
-
       - name: install_node_dependencies
         run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
@@ -245,16 +258,10 @@ jobs:
           mkdir -p ./test-results/jest
           pushd client
           ../ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
-
       - name: store_test_results
         uses: actions/upload-artifact@v3
         with:
           path: ./test-results
-
-
-#       - name: Concatenate all logs
-#         run: |
-#           ./ci-bin/concatenate-log.rb >> ./all_logs.log
 
       - name: store logs
         uses: actions/upload-artifact@v3
@@ -282,7 +289,6 @@ jobs:
           echo $BUNDLER_V
           gem install bundler:$BUNDLER_V
           bundle install --path vendor/bundle
-
       - name: Install Node Dependencies
         run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
@@ -298,11 +304,4 @@ jobs:
       - name: Security
         run:  ./ci-bin/capture-log "bundle exec rake security"
         if: ${{ always() }}
-
-#       - name: Concatenate all logs
-#         run: ./ci-bin/concatenate-log.rb >> ./all_logs.log
-
-      # TODO: Not sure if this is needed with GH Actions
-      - name: Store concatenated logs
-        run: ./all_logs.log
 
