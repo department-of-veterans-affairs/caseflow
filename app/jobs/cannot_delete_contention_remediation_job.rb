@@ -27,7 +27,7 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
     if total > 0
       contention_ids = get_contention_ids(rius)
       remediate!(rius, contention_ids, total)
-      #store_logs_in_s3_bucket
+      store_logs_in_s3_bucket
       puts @logs
     end
   end
