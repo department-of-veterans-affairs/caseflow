@@ -12,6 +12,8 @@ else
 end
 if ENV["CI"]
   require "rspec/retry"
+  require 'rspec/github' #GitHub Action Formatter
+
   # Repeat all failed feature tests in CI twice
   RSpec.configure do |config|
     # show retry status in spec process
@@ -26,8 +28,12 @@ if ENV["CI"]
     # force colors on during CI for better readability, since GitHub Actions supports it
     config.color_mode = :on
     config.color = true
+
+    #Github Actions Formatter
+    config.add_formatter RSpec::Github::Formatter
   end
 end
+
 require File.expand_path("../config/environment", __dir__)
 require "rspec/rails"
 
