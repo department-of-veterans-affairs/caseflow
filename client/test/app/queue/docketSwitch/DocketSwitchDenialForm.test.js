@@ -22,9 +22,6 @@ describe('DocketSwitchDenialForm', () => {
   });
 
   it('renders correctly', () => {
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('9999-12-31'));
-
     const { container } = render(<DocketSwitchDenialForm {...defaults} />);
 
     expect(container).toMatchSnapshot();
@@ -35,7 +32,6 @@ describe('DocketSwitchDenialForm', () => {
     expect(
       screen.getByText(DOCKET_SWITCH_DENIAL_INSTRUCTIONS)
     ).toBeInTheDocument();
-    jest.useRealTimers();
   });
 
   it('fires onCancel', async () => {
