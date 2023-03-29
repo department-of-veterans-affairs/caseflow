@@ -7,7 +7,6 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
   queue_with_priority :low_priority
 
   def initialize
-    @closed_status = ""
     @logs = ["\nVBMS::CannotDeleteContention Remediation Log"]
     @remediated_request_issues_update_ids = []
   end
@@ -28,7 +27,7 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
     if total > 0
       contention_ids = get_contention_ids(rius)
       remediate!(rius, contention_ids, total)
-      store_logs_in_s3_bucket
+      #store_logs_in_s3_bucket
       puts @logs
     end
   end
@@ -46,13 +45,13 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
         index += 1
       rescue StandardError => error
         @logs.push("#{Time.zone.now} CannotDeleteContentionRemediation::Error - Number: #{index} "\
-            " RIU ID: #{rius[i].id}.  RI ID: #{affected_request_issue&.id}.  #{error.message}.")
+            " RIU ID: #{rius[index].id}.  RI ID: #{affected_request_issue&.id}.  #{error.message}.")
         index += 1
         next
       end
     end
     remaining_ruis_w_error = find_cannot_delete_contention_request_issues_updates
-    @logs.push("CannotDeleteContentionRemediation::Log - Summary Report.  Total number of Request Issues Updates"\
+    @logs.push("\nCannotDeleteContentionRemediation::Log - Summary Report.  Total number of Request Issues Updates"\
     " with 'VBMS::CannotDeleteContention' error: #{total}.  Total number of Request Issues Updates"\
     " with attempted remediation: #{@remediated_request_issues_update_ids.count}.  Total number of Request Issues Updates"\
     " with VBMS::CannotDeleteContention errors remaining: #{remaining_ruis_w_error.count}.\n"\
@@ -79,7 +78,7 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
 
   # Find affected Request Issue using the contention id from the Cannot Delete Contention Error
   def find_removed_or_withdrawn_request_issue(request_issues_update, contention_id)
-    affected_request_issue = request_issues_update.all_updated_issues.find do |ri|
+    affected_request_issue = request_issues_update.removed_or_withdrawn_issues.find do |ri|
       ri.contention_reference_id == contention_id
     end
 
@@ -88,13 +87,13 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
 
   # Resets closed_at and closed_status values to nil
   def reset_ri_closed_status_and_closed_at!(request_issue, request_issues_update, index)
-    @closed_status = request_issue.closed_status
-    closed_at = request_issue.closed_at
+    prev_closed_status = request_issue.closed_status
+    prev_closed_at = request_issue.closed_at
     request_issue.update!(closed_status: nil, closed_at: nil)
     @logs.push("#{Time.zone.now} CannotDeleteContentionRemediation::Log - Number: #{index}"\
       " RIU ID: #{request_issues_update.id}.  RI ID: #{request_issue.id}."\
       "  Setting the Request Issue closed_status & closed_at to null."\
-      "  Previous closed_status was #{@closed_status}.  Previous closed_at was #{closed_at}.")
+      "  Previous closed_status was #{prev_closed_status}.  Previous closed_at was #{prev_closed_at}.")
   end
 
   # Cancel the Request Issues Update
@@ -133,10 +132,10 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
 
   # Method that will either un-remove or un-withdraw affected Request Issue ID from Request Issues Update
   def update_and_reprocess_request_issues_update!(request_issue, request_issues_update, index)
-    if @closed_status == "removed"
-      unremove_request_issue!(request_issue, request_issues_update, index)
-    elsif @closed_status == "withdrawn"
+    if request_issues_update.withdrawn_issues.include?(request_issue)
       unwithdraw_request_issue!(request_issue, request_issues_update, index)
+    elsif request_issues_update.removed_issues.include?(request_issue)
+      unremove_request_issue!(request_issue, request_issues_update, index)
     end
     reprocess_request_issues_update!(request_issue, request_issues_update, index)
   end
