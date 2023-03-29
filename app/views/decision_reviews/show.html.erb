@@ -11,9 +11,6 @@
       taskFilterDetails: task_filter_details,
       task: task.ui_hash,
       appeal: task.appeal_ui_hash,
-      featureToggles: {
-        decisionReviewQueueSsnColumn: FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user)
-      }
     }
   }) %>
 <% end %>
