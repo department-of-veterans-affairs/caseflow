@@ -36,7 +36,10 @@ class MembershipRequest < CaseflowRecord
 
     def create_many_from_params_and_send_creation_emails(organizations, params, user)
       created_requests = create_many_from_orgs(organizations, params, user)
-      send_creation_emails(created_requests)
+      # Only send emails if there are created requests.
+      if created_requests.present?
+        send_creation_emails(created_requests)
+      end
       created_requests
     end
 
