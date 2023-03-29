@@ -39,26 +39,30 @@ export const EditCavcRemandTasksView = () => {
     return openTaskDataForUi({ taskData: allTasks });
   }, [allTasks]);
 
-  const openSendCavcRemandProcessedLetterTask = activeTasks.find((task) => task.type === 'SendCavcRemandProcessedLetterTask');
-  const cancelTaskIds = activeTasks.filter((task) => task.disabled).map((disTask) => disTask.id);
-
   const cancelledOrCompletedTasks = useMemo(() => {
     return cancelledOrCompletedTasksDataForUi({ taskData: allTasks });
   }, [allTasks]);
 
+  const openSendCavcRemandProcessedLetterTask = activeTasks.find(
+    (task) => task.type === 'SendCavcRemandProcessedLetterTask');
+  const openMdrTask = activeTasks.find((task) => task.type === 'MdrTask');
+  const closedSendCavcRemandProcessedLetterTask = cancelledOrCompletedTasks.find(
+    (task) => task.type === 'SendCavcRemandProcessedLetterTask');
+  const closedMdrTask = cancelledOrCompletedTasks.find(
+    (task) => task.type === 'MdrTask');
+  const cancelTaskIds = activeTasks.filter((task) => task.disabled).map((disTask) => disTask.id);
+
   const getReActivateTaksIds = (() => {
-    if (cancelledOrCompletedSendCavcRemandProcessedLetterTask) {
-      return [cancelledOrCompletedSendCavcRemandProcessedLetterTask.id]
-    } else if (openSendCavcRemandProcessedLetterTask) {
-      return [openSendCavcRemandProcessedLetterTask.id]
+    if (closedSendCavcRemandProcessedLetterTask || closedMdrTask) {
+      return [closedSendCavcRemandProcessedLetterTask?.id, closedMdrTask?.id]
+    } else if (openSendCavcRemandProcessedLetterTask || openMdrTask) {
+      return [openSendCavcRemandProcessedLetterTask?.id, openMdrTask?.id]
     } else {
       return []
     }
   })
 
-  const cancelledOrCompletedSendCavcRemandProcessedLetterTask = cancelledOrCompletedTasks.find((task) => task.type === 'SendCavcRemandProcessedLetterTask');
-  const reActivateTaskIds = getReActivateTaksIds();
-
+  const reActivateTaskIds = getReActivateTaksIds().filter((id) => id !== undefined);
   const [selectedCancelTaskIds, setSelectedCancelTaskIds] = useState(existingValues?.cancelTaskIds || []);
   const [selectedReActivateTaskIds, setSelectedReActivateTaskIds] = useState(reActivateTaskIds);
 

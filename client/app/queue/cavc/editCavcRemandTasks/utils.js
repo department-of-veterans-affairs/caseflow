@@ -75,14 +75,14 @@ export const shouldDisable = (taskInfo) => {
 };
 
 export const shouldDisableCancelOrCompleted = (taskInfo) => {
-  return ['SendCavcRemandProcessedLetterTask'].includes(taskInfo.type);
+  return ['SendCavcRemandProcessedLetterTask', 'MdrTask'].includes(taskInfo.type);
 };
 
 export const shouldAutoSelect = (taskInfo) => {
   return !(CavcAppealTaskTypes.includes(taskInfo.type));
 };
 export const shouldAutoSelectCancelOrCompleted = (taskInfo) => {
-  return ['SendCavcRemandProcessedLetterTask'].includes(taskInfo.type);
+  return ['SendCavcRemandProcessedLetterTask', 'MdrTask'].includes(taskInfo.type);
 };
 
 // Takes an array of tasks and filters it down to a list of most recent of each type
