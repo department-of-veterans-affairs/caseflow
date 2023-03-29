@@ -44,7 +44,7 @@ export const TasksToCancelSelectionTable = ({
                   <td {...centerCheckboxPadding}>
                     <Checkbox
                       onChange={(checked) => onChange(onCheckChange(task.taskId, checked))}
-                      value={task.disabled ? false : !selectedCancelTaskIds?.includes(task.taskId)}
+                      value={(task.disabled && task.type !== 'MdrTask') ? false : !selectedCancelTaskIds?.includes(task.taskId)}
                       name={`${selectionField}[${task.taskId}]`}
                       disabled={task.disabled}
                       label={

@@ -45,24 +45,21 @@ export const EditCavcRemandTasksView = () => {
 
   const openSendCavcRemandProcessedLetterTask = activeTasks.find(
     (task) => task.type === 'SendCavcRemandProcessedLetterTask');
-  const openMdrTask = activeTasks.find((task) => task.type === 'MdrTask');
   const closedSendCavcRemandProcessedLetterTask = cancelledOrCompletedTasks.find(
     (task) => task.type === 'SendCavcRemandProcessedLetterTask');
-  const closedMdrTask = cancelledOrCompletedTasks.find(
-    (task) => task.type === 'MdrTask');
-  const cancelTaskIds = activeTasks.filter((task) => task.disabled).map((disTask) => disTask.id);
+  const cancelTaskIds = activeTasks.filter((task) => task.disabled && task.type !== 'MdrTask').map((disTask) => disTask.id);
 
   const getReActivateTaksIds = (() => {
-    if (closedSendCavcRemandProcessedLetterTask || closedMdrTask) {
-      return [closedSendCavcRemandProcessedLetterTask?.id, closedMdrTask?.id]
-    } else if (openSendCavcRemandProcessedLetterTask || openMdrTask) {
-      return [openSendCavcRemandProcessedLetterTask?.id, openMdrTask?.id]
+    if (closedSendCavcRemandProcessedLetterTask) {
+      return [closedSendCavcRemandProcessedLetterTask.id]
+    } else if (openSendCavcRemandProcessedLetterTask) {
+      return [openSendCavcRemandProcessedLetterTask.id]
     } else {
       return []
     }
-  })
+  });
 
-  const reActivateTaskIds = getReActivateTaksIds().filter((id) => id !== undefined);
+  const reActivateTaskIds = getReActivateTaksIds();
   const [selectedCancelTaskIds, setSelectedCancelTaskIds] = useState(existingValues?.cancelTaskIds || []);
   const [selectedReActivateTaskIds, setSelectedReActivateTaskIds] = useState(reActivateTaskIds);
 

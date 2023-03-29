@@ -44,7 +44,7 @@ export const TasksToReActivateSelectionTable = ({
                   <td {...centerCheckboxPadding}>
                     <Checkbox
                       onChange={(checked) => onChange(onCheckChange(task.taskId, checked))}
-                      value={task.disabled || selectedReActivateTaskIds?.includes(task.taskId)}
+                      value={(task.disabled && task.type !== 'MdrTask') || selectedReActivateTaskIds?.includes(task.taskId)}
                       name={`${selectionField}[${task.taskId}]`}
                       disabled={task.disabled}
                       label={

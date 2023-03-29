@@ -56,7 +56,6 @@ export const nonAutomatedTasksToHide = [
 export const CavcAppealTaskTypes = [
   'SendCavcRemandProcessedLetterTask',
   'CavcRemandProcessedLetterResponseWindowTask',
-  'MdrTask',
   'IhpColocatedTask',
   'FoiaRequestMailTask',
   'FoiaTask',
@@ -71,7 +70,7 @@ export const taskTypesSelected = ({ tasks, selectedTaskIds }) => {
 export const alwaysDisabled = ['DistributionTask'];
 
 export const shouldDisable = (taskInfo) => {
-  return CavcAppealTaskTypes.includes(taskInfo.type);
+  return (CavcAppealTaskTypes.includes(taskInfo.type) || taskInfo.type === 'MdrTask');
 };
 
 export const shouldDisableCancelOrCompleted = (taskInfo) => {
@@ -82,7 +81,7 @@ export const shouldAutoSelect = (taskInfo) => {
   return !(CavcAppealTaskTypes.includes(taskInfo.type));
 };
 export const shouldAutoSelectCancelOrCompleted = (taskInfo) => {
-  return ['SendCavcRemandProcessedLetterTask', 'MdrTask'].includes(taskInfo.type);
+  return ['SendCavcRemandProcessedLetterTask'].includes(taskInfo.type);
 };
 
 // Takes an array of tasks and filters it down to a list of most recent of each type
