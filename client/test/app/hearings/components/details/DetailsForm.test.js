@@ -10,16 +10,6 @@ import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDrop
 import { anyUser, amaHearing, defaultHearing } from 'test/data';
 
 describe('DetailsForm', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('9999-12-31'));
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   test('Matches snapshot with default props when passed in', () => {
     const form = mount(
       <DetailsForm
