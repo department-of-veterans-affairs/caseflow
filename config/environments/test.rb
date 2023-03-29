@@ -107,4 +107,9 @@ Rails.application.configure do
 
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
+
+  # Notifications page eFolder link
+  ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] ||= "https://vefs-claimevidence-ui-uat.stage8.bip.va.gov"
+
+  ENV['TEST_VACOLS_HOST'] ||= "localhost"
 end

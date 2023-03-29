@@ -1,10 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TextField from '../components/TextField';
+import ValidatorsUtil from '../util/ValidatorsUtil';
+import COPY from '../../COPY';
 
 const DEFAULT_TEXT = 'mm/dd/yyyy';
 
 export const DateSelector = (props) => {
+  const { dateValidator, futureDate } = ValidatorsUtil;
+
   const {
     errorMessage,
     label,
@@ -16,8 +20,34 @@ export const DateSelector = (props) => {
     validationError,
     value,
     dateErrorMessage,
+    noFutureDates = false,
     ...passthroughProps
   } = props;
+
+  const dateValidationError = (date) => {
+    if (date) {
+      if (!dateValidator(date)) {
+        return COPY.DATE_SELECTOR_INVALID_DATE_ERROR;
+      }
+
+      if (noFutureDates && futureDate(date)) {
+        return COPY.DATE_SELECTOR_FUTURE_DATE_ERROR;
+      }
+
+      if (validationError) {
+        return validationError(date);
+      }
+    }
+
+    return null;
+  };
+
+  let max = '9999-12-31';
+
+  if (noFutureDates) {
+    max = new Date().toISOString().
+      split('T')[0];
+  }
 
   return (
     <TextField
@@ -27,12 +57,12 @@ export const DateSelector = (props) => {
       readOnly={readOnly}
       type={type}
       value={value}
-      validationError={validationError}
+      validationError={dateValidationError(value)}
       onChange={onChange}
       placeholder={DEFAULT_TEXT}
       required={required}
       {...passthroughProps}
-      max="9999-12-31"
+      max={max}
       dateErrorMessage={dateErrorMessage}
     />
   );
@@ -104,6 +134,11 @@ DateSelector.propTypes = {
    * The value of the `input` element; required for a controlled component
    */
   value: PropTypes.string,
+
+  /**
+   * Disables future dates from being selected or entered
+   */
+  noFutureDates: PropTypes.bool
 };
 
 export default DateSelector;

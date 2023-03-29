@@ -39,6 +39,7 @@
   "CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE": "Date Completed",
   "CASE_LIST_TABLE_TASK_ISSUE_COUNT_COLUMN_TITLE": "Issues",
   "CASE_LIST_TABLE_TASK_VETERAN_PARTICIPANT_ID_COLUMN_TITLE": "Veteran Participant Id",
+  "CASE_LIST_TABLE_TASK_VETERAN_SSN_COLUMN_TITLE": "Veteran SSN",
   "CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE": "Sent to",
   "CASE_LIST_TABLE_TASKS_COLUMN_TITLE": "Tasks",
   "CASE_LIST_TABLE_TASK_ASSIGNED_BY_COLUMN_TITLE": "Assigned By",
@@ -80,6 +81,7 @@
   "TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL": "Hearing Type",
   "TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Appeal Stream Type",
   "TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL": "Veteran Documents",
+  "TASK_SNAPSHOT_ABOUT_BOX_EFOLDER_LINK": "Link to efolder",
   "TASK_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL": "Days waiting",
   "TASK_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL": "Docket",
   "TASK_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE": "Task information",
@@ -196,6 +198,7 @@
   "CC_BADGE_TOOLTIP": "This is a Contested Claim and needs to be\nprocessed by the Specialty Case team. Please\n include all parties and POA in correspondence.",
   "JMR_SELECTION_ISSUE_INFO_BANNER": "For a JMR you must select all issues to proceed",
   "JMPR_SELECTION_ISSUE_INFO_BANNER": "For a JMPR you must select at least one issue to proceed",
+  "JMR_JMPR_SELECTION_ISSUE_INFO_BANNER": "For a JMR/JMPR you must select at least one issue to proceed",
   "MDR_SELECTION_ISSUE_INFO_BANNER": "For a MDR you must select at least one issue to proceed",
   "MDR_SELECTION_ALERT_BANNER": "Choosing MDR will set a 90-day hold on this case starting from the Court's decision date listed above. The hold is to wait for the Court's judgement and mandate dates. This remand case will be accessible in your organization's Assigned tab and will return to the team's Unassigned tab when the 90 days are over or the hold is manually ended, at which point the judgement and mandate dates can be entered.",
   "CAVC_REMAND_NO_MANDATE_TEXT": "This task will be put on hold for 90 days to wait for the Court's judgement and mandate dates. This case will be accessible in the Assigned tab and will return to the team's Unassigned tab when the 90 days has passed.",
@@ -212,6 +215,7 @@
   "CAVC_INSTRUCTIONS_LABEL": "Provide context and instructions for this action",
   "CAVC_INSTRUCTIONS_ERROR": "Please provide context and instructions for the remand",
   "CAVC_REMAND_CREATED_TITLE": "You have successfully created a CAVC remand case",
+  "CAVC_DASHBOARD_ENTRY_CREATED_TITLE": "You have successfully created an entry in the CAVC dashboard",
   "CAVC_REMAND_CREATED_ON_HOLD_TITLE": "You have successfully created a CAVC Remand case and have put it on hold for 90-days",
   "CAVC_REMAND_CREATED_FOR_DISTRIBUTION_TITLE": "You have successfully created a CAVC Remand case and sent it to case distribution",
   "CAVC_REMAND_CREATED_DETAIL": "This has generated a 90-day letter task in your team's queue",
@@ -236,6 +240,24 @@
   "CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_DETAIL": "You can find this case in the on hold tab of you team's queue",
   "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_TITLE": "You have denied extension",
   "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_DETAIL": "This task can be completed to distribute to a judge for further processing",
+
+  "CAVC_DASHBOARD_LOADING_SCREEN_TEXT": "Loading CAVC Dashboard...",
+  "CAVC_DASHBOARD_LOADING_FAILURE_TITLE": "Unable to load CAVC Dashboard",
+  "CAVC_DASHBOARD_LOADING_FAILURE_TEXT": "Caseflow was unable to load this CAVC Dashboard. Refresh the page to try again.",
+  "CAVC_DASHBOARD_BUTTON_TEXT": "CAVC Dashboard",
+  "ADD_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT": "Add issue",
+  "REMOVE_CAVC_DASHBOARD_ISSUE_BUTTON_TEXT": "Remove issue",
+  "REMOVE_CAVC_DASHBOARD_ISSUE_MODAL_TITLE": "Remove issue",
+  "ADD_CAVC_DASHBOARD_ISSUE_TEXT": "Add CAVC issue",
+  "CAVC_DASHBOARD_BENEFIT_TYPE_TEXT": "Benefit type",
+  "CAVC_DASHBOARD_ISSUE_CATEGORY_TEXT": "Issue category",
+  "CAVC_DASHBOARD_DISPOSITION_BY_COURT_TEXT": "Disposition by Court",
+  "CAVC_DASHBOARD_REMOVE_ISSUE_UPPER_TEXT": "The issue you selected will be removed from the list of issues on the dashboard.",
+  "CAVC_DASHBOARD_REMOVE_ISSUE_LOWER_TEXT": "Are you sure that you want to remove this issue?",
+  "CAVC_DASHBOARD_EDIT_DETAILS_MODAL_TITLE": "Edit CAVC Details",
+  "CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_HEADER": "Your changes are not saved",
+  "CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_BODY": "Would you like to continue?",
+  "CONTINUE_BUTTON_TEXT": "Continue",
 
   "ADD_CAVC_DATES_TITLE": "Add Court dates",
   "CORRECT_CAVC_REMAND_LINK": "Edit Remand",
@@ -501,6 +523,8 @@
   "MODAL_RETURN_BUTTON": "Return",
   "MODAL_MARK_TASK_IN_PROGRESS_BUTTON": "Mark in progress",
   "MODAL_SEND_BUTTON": "Send",
+  "MODAL_REMOVE_BUTTON": "Remove",
+  "MODAL_SAVE_BUTTON": "Save",
 
   "BULK_ASSIGN_BUTTON_TEXT": "Assign Tasks",
   "BULK_ASSIGN_MODAL_TITLE": "Bulk Assign Tasks",
@@ -527,6 +551,7 @@
   "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_ERROR_TITLE": "Could not cancel tasks and reassign to %s",
 
   "MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE": "Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930. Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding of clear and unmistakable error, which would result in a brand new docket number being assigned. An updated docket number format will need to be in place for legacy appeals by 2030 in order to ensure that docket numbers are sorted correctly.",
+  "BOARD_DOCKET_NUMBER_ERROR": "Please enter a valid docket number provided by the Board (123456-7).",
 
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
   "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to %s",
@@ -1249,7 +1274,7 @@
 
   "PRE_DOCKET_TASK_LABEL": "Pre-Docket",
   "DOCKET_APPEAL_MODAL_TITLE": "Docket appeal",
-  "DOCKET_APPEAL_MODAL_BODY": "Please confirm that the documents provided by %s are available in VBMS before docketing this appeal.",
+  "DOCKET_APPEAL_MODAL_BODY": "Please confirm that the documents provided by %s are available before docketing this appeal.",
   "DOCKET_APPEAL_MODAL_NOTICE": "Once you confirm, the appeal will be established. Please remember to send the docketing letter out to all parties and representatives.",
   "DOCKET_APPEAL_CONFIRMATION_TITLE": "You have successfully docketed this appeal.",
   "DOCKET_APPEAL_CONFIRMATION_DETAIL": "Please send the docketing letter out to all parties and representatives and upload it to VBMS.",
@@ -1267,16 +1292,44 @@
   "VHA_COMPLETE_TASK_MODAL_BODY": "Provide details such as file structure or file path",
   "VHA_COMPLETE_TASK_CONFIRMATION_PO": "Appeal has been marked as ready for review and sent to the CAMO team for review.",
   "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review.",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL": "What is the status of this appeal?",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS": "Correct documents have been successfully added",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_APPEALABLE": "This issue might not be appealable to the Board",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_NO_VHA_DECISION": "A VHA decision has not been made",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_VHA_RELATED": "Appeal is not related to a VHA issue",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Provide additional context and/or documents:",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL": "Why is this appeal being returned?",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "This appeal will be returned to Board Intake.",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS": {
+    "DUPLICATE": {
+      "LABEL": "Duplicate",
+      "VALUE": "duplicate"
+    },
+    "HLR_PENDING": {
+      "LABEL": "HLR Pending",
+      "VALUE": "hlr pending"
+    },
+    "SC_PENDING": {
+      "LABEL": "SC Pending",
+      "VALUE": "sc pending"
+    },
+    "NOT_VHA_RELATED": {
+      "LABEL": "Not VHA related",
+      "VALUE": "not vha related"
+    },
+      "CLARIFICATION_NEEDED": {
+      "LABEL": "Clarification needed from appellant",
+      "VALUE": "clarification needed from appellant"
+    },
+    "NO_VHA_DECISION": {
+      "LABEL": "No VHA decision",
+      "VALUE": "no vha decision"
+    },
+    "OTHER": {
+      "LABEL": "Other",
+      "VALUE": "other"
+    }
+  },
+  "VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL": "Please provide the reason for return",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_INSTRUCTIONS_LABEL": "Provide additional context for this action",
+  "VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION": "You have successfully returned %s's case to Board Intake",
   "SELECT_RADIO_ERROR": "Please select an option.",
   "EMPTY_INSTRUCTIONS_ERROR": "Text field cannot be blank.",
-  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review.",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the CAMO team's Queue",
@@ -1284,7 +1337,7 @@
   "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY": "By marking task as in progress, you are confirming that you are actively working on collecting documents for this appeal.\n\nOnce marked, other members of your organization will no longer be able to mark this task as in progress.",
   "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked %s's case as in progress",
   "VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE": "You have successfully sent %s's case to Board Intake for review",
-  "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY": "This appeal will be sent to Board Intake for review.\n\nPlease select where the documents for this appeal are stored",
+  "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY": "This appeal will be sent to Board Intake for review.\n\nPlease select where the documents for this appeal were returned",
   "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE": "Ready for review",
   "BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE": "Return appeal to VHA",
   "BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY": "If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA.",
@@ -1376,5 +1429,9 @@
   "NOTIFICATION_TYPE_COLUMN_NAME": "Notification Type",
   "NOTIFICATION_RECIPIENT_INFORMATION": "Recipient Information",
   "NOTIFICATION_STATUS": "Status",
-  "NOTIFICATION_CONTENT_MESSAGE": "The following message was sent to the Appellant: "
+  "NOTIFICATION_CONTENT_MESSAGE": "The following message was sent to the Appellant: ",
+  "PDF_GENERATION_ERROR_TITLE": "Unable to generate PDF",
+  "PDF_GENERATION_ERROR_MESSAGE": "There was an error generating the PDF for download. Please try again later.",
+  "DATE_SELECTOR_FUTURE_DATE_ERROR": "Dates cannot be in the future",
+  "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date"
 }
