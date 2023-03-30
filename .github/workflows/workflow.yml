@@ -275,6 +275,9 @@ jobs:
         with:
           fetch-depth: '0'
 
+      - name: Update rubygems
+        run: gem update --system
+
       - name: Install Ruby Dependencies
         run: |
           ruby -v
