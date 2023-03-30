@@ -167,11 +167,6 @@ class BusinessLine < Organization
       "LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id"
     end
 
-    # These values reflect the number of searchable fields in search_all_clause for where interpolation later
-    def number_of_search_fields
-      FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: RequestStore[:current_user]) ? 4 : 2
-    end
-
     def search_ssn_and_file_number_clause
       +"OR veterans.ssn LIKE ? "\
       "OR veterans.file_number LIKE ? "
@@ -183,9 +178,7 @@ class BusinessLine < Organization
       clause = +"veterans.participant_id LIKE ? "\
                "OR #{claimant_name} ILIKE ? "
 
-      if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: RequestStore[:current_user])
-        clause << search_ssn_and_file_number_clause
-      end
+      clause << search_ssn_and_file_number_clause
 
       clause
     end
@@ -199,7 +192,7 @@ class BusinessLine < Organization
     # Uses an array to insert the searched text into all of the searchable fields since it's the same text for all
     def search_values
       searching_text = "%#{query_params[:search_query]}%"
-      Array.new(number_of_search_fields, searching_text)
+      Array.new(4, searching_text)
     end
 
     def higher_level_reviews_on_request_issues
