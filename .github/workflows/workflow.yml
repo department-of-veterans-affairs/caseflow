@@ -61,7 +61,7 @@ jobs:
           RAILS_ENV: test
           NODE_ENV: test
           BUNDLE_PATH: vendor/bundle
-          COVERAGE_DIR: /home/gha/coverage-${{matrix.ci_node_index}}
+          COVERAGE_DIR: /home/circleci/coverage-${{matrix.ci_node_index}} #circleci is the USER
           POSTGRES_HOST: postgres
           POSTGRES_USER: root
           POSTGRES_PASSWORD: password
@@ -194,17 +194,18 @@ jobs:
           touch log/selenium-chrome.log
           chmod -R 777 ${GITHUB_WORKSPACE}
           export GHA_NODE_INDEX=${{matrix.ci_node_index}}
-          runuser -u gha bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RSpec::Github::Formatter --tty]"
+          runuser -u circleci bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RSpec::Github::Formatter --tty]"
       # --format RSpec::Github::Formatter use in Rspec-github gem, adds more detailed info to GHA "Annotations"
       # --tty forces Rspec to produce color
+      # circleci is the USER
 
 
-    # Artifacts
-      - run: (cd /home/gha && tar -zcvf coverage-${{matrix.ci_node_index}}.tar.gz coverage-${{matrix.ci_node_index}})
+    # Artifacts --- circleci is the USER
+      - run: (cd /home/circleci && tar -zcvf coverage-${{matrix.ci_node_index}}.tar.gz coverage-${{matrix.ci_node_index}})
       - uses: actions/upload-artifact@v3
         if: success()
         with:
-          path: /home/gha/coverage-${{matrix.ci_node_index}}.tar.gz
+          path: /home/circleci/coverage-${{matrix.ci_node_index}}.tar.gz #circleci is the USER
 
       - uses: actions/upload-artifact@v3
         # Run even if there is a failure in the previous steps, but not if the run is cancelled
@@ -244,10 +245,10 @@ jobs:
           DBUS_SESSION_BUS_ADDRESS: /dev/null
           RAILS_ENV: test
           NODE_ENV: test
-          JEST_DIR: /home/gha/test-results/jest
+          JEST_DIR: /home/circleci/test-results/jest #circleci is the USER
           TEST_REPORTER: jest-junit
-          JEST_JUNIT_OUTPUT_DIR: /home/gha/test-results/jest
-          COVERAGE_DIR: /home/gha/coverage
+          JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest #circleci is the USER
+          COVERAGE_DIR: /home/circleci/coverage #circleci is the USER
 
     steps:
       - name: Install chromium
