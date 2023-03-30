@@ -31,7 +31,10 @@ gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
 gem "kaminari"
+# execjs runtime
+gem "libv8-node", "16.10.0.0"
 gem "logstasher"
+gem "mini_racer"
 gem "moment_timezone-rails"
 # Rails 6 has native support for multiple dbs, so prefer that over multiverse after upgrade.
 # https://github.com/ankane/multiverse#upgrading-to-rails-6
@@ -46,8 +49,8 @@ gem "paranoia", "~> 2.2"
 # PDF Tools
 gem "pdf-forms"
 gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
-#Used to build out PDF files on the backend
-#https://github.com/pdfkit/pdfkit
+# Used to build out PDF files on the backend
+# https://github.com/pdfkit/pdfkit
 gem "pdfkit"
 gem "pg", platforms: :ruby
 # Application server: Puma
@@ -72,9 +75,6 @@ gem "shoryuken", "3.1.11"
 gem "stringex", require: false
 # catch problematic migrations at development/test time
 gem "strong_migrations"
-# execjs runtime
-gem 'libv8-node', '16.10.0.0'
-gem 'mini_racer'
 # print trees
 gem "tty-tree"
 gem "tzinfo", "1.2.10"
