@@ -433,6 +433,7 @@ export const prepareAppealForStore = (appeals) => {
       readableOriginalHearingRequestType:
         appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type,
+      cavcRemandsWithDashboard: appeal.attributes.cavc_remands_with_dashboard,
     };
 
     return accumulator;
@@ -470,6 +471,7 @@ export const prepareAppealForStore = (appeals) => {
       veteranDateOfDeath: appeal.attributes.veteran_death_date,
       veteranGender: appeal.attributes.veteran_gender,
       veteranAddress: appeal.attributes.veteran_address,
+      veteranParticipantId: appeal.attributes.veteran_participant_id,
       closestRegionalOffice: appeal.attributes.closest_regional_office,
       closestRegionalOfficeLabel:
         appeal.attributes.closest_regional_office_label,
@@ -477,6 +479,7 @@ export const prepareAppealForStore = (appeals) => {
         appeal
       ),
       externalId: appeal.attributes.external_id,
+      efolderLink: appeal.attributes.efolder_link,
       status: appeal.attributes.status,
       decisionDate: appeal.attributes.decision_date,
       form9Date: appeal.attributes.form9_date,
@@ -821,6 +824,13 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
   }
 
   return timelineEvents;
+};
+
+export const formatSearchableDropdownOptions = (options) => {
+  return _.map(options, (value, key) => {
+    return { value: key,
+      label: value };
+  });
 };
 
 export const sortCaseTimelineEvents = (...eventArrays) => {
