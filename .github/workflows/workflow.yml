@@ -2,11 +2,8 @@ name: RSpec Jest Lint Workflow
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-    - jr-gha-migration-rspec
-    - MattT-gha-migration-spec-2
-    - AlecK/APPEALS-18882
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
 
 # Use this flag to turn on/off RSpec.  Please go to the lint & js_test job to disable the boolean
 env:
