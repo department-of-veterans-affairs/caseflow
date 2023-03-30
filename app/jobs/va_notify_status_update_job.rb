@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 class VANotifyStatusUpdateJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
@@ -57,8 +56,7 @@ class VANotifyStatusUpdateJob < CaseflowJob
 
   private
 
-  # Description: Method that applies a query limit to the list of notification records that
-  # will get the status checked for.
+  # Description: Method that applies a query limit to the list of notification records that will get the status checked for
   # them from VA Notiufy
   #
   # Params: None
@@ -68,35 +66,22 @@ class VANotifyStatusUpdateJob < CaseflowJob
     if !QUERY_LIMIT.nil? && QUERY_LIMIT.is_a?(String)
       find_notifications_not_processed.first(QUERY_LIMIT.to_i)
     else
-      log_info("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable.\
-        Defaulting to 650.")
+      log_info("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable. \
+         Defaulting to 650.")
       find_notifications_not_processed.first(650)
     end
   end
 
-  # Description: Method to query the Notification database for Notififcation
-  # records that have not been updated with a VA Notify Status
+  # Description: Method to query the Notification database for Notififcation records that have not been updated with a VA Notify Status
   #
   # Params: None
   #
   # Retuns: Lits of Notification Active Record associations meeting the where condition
   def find_notifications_not_processed
-    Notification.where("
-      (notification_type = 'Email' AND email_notification_status IN ('Success', 'temporary-failure',
-        'technical-failure', 'sending', 'created'))
-    OR
-      (notification_type = 'SMS' AND sms_notification_status IN ('Success', 'temporary-failure', 'technical-failure',
-        'sending', 'created'))
-    OR
-      (
-        notification_type = 'Email and SMS'
-      AND
-        (
-          email_notification_status IN ('Success', 'temporary-failure', 'technical-failure', 'sending', 'created')
-        OR
-          sms_notification_status IN ('Success', 'temporary-failure', 'technical-failure', 'sending', 'created')
-        )
-      )")
+    Notification.where("(notification_type = 'Email' AND email_notification_status = 'Success') \
+      OR (notification_type = 'SMS' AND sms_notification_status = 'Success') \
+      OR (notification_type = 'Email and SMS' AND \
+         (sms_notification_status = 'Success' OR email_notification_status = 'Success'))")
   end
 
   # Description: Method to be called when an error message need to be logged
@@ -132,8 +117,7 @@ class VANotifyStatusUpdateJob < CaseflowJob
       if type == "Email"
         { "email_notification_status" => response.body["status"], "recipient_email" => response.body["email_address"] }
       elsif type == "SMS"
-        { "sms_notification_status" => response.body["status"], "recipient_phone_number" =>
-          response.body["phone_number"] }
+        { "sms_notification_status" => response.body["status"], "recipient_phone_number" => response.body["phone_number"] }
       else
         message = "Type neither email nor sms"
         log_error("VA Notify API returned error for notificiation " + notification_id + " with type " + type)
