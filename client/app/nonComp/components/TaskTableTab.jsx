@@ -7,7 +7,6 @@ import { TaskTableUnconnected } from '../../queue/components/TaskTable';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import {
   claimantColumn,
-  veteranParticipantIdColumn,
   veteranSsnColumn,
   decisionReviewTypeColumn
 } from './TaskTableColumns';
@@ -59,9 +58,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
         this.enabledTaskFilters()
       )
     },
-    this.props.featureToggles.decisionReviewQueueSsnColumn ?
-      veteranSsnColumn() :
-      veteranParticipantIdColumn()
+    veteranSsnColumn(),
   ];
 
   enabledTaskFilters = () => extractEnabledTaskFilters(
@@ -77,9 +74,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
         <SearchBar
           id="searchBar"
           size="small"
-          title={this.props.featureToggles.decisionReviewQueueSsnColumn ?
-            'Search by Claimant Name, Veteran Participant ID, File Number or SSN' :
-            ''}
+          title="Search by Claimant Name, Veteran Participant ID, File Number or SSN"
           onChange={this.onChange}
           recordSearch={this.onSearch}
           placeholder="Type to search..."
@@ -106,9 +101,6 @@ TaskTableTabUnconnected.propTypes = {
   description: PropTypes.node,
   predefinedColumns: PropTypes.object,
   tasks: PropTypes.array,
-  featureToggles: PropTypes.shape({
-    decisionReviewQueueSsnColumn: PropTypes.bool,
-  }),
   baseTasksUrl: PropTypes.string,
   tabPaginationOptions: PropTypes.shape({
     [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: PropTypes.string,
