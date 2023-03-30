@@ -60,6 +60,31 @@ export class SearchableDropdown extends React.Component {
       value: props.value,
       isExpanded: false
     };
+
+    this.wrapperRef = null;
+  }
+
+  componentDidMount = () => {
+    document.addEventListener('keydown', this.onClickOutside);
+    document.addEventListener('mousedown', this.onClickOutside);
+  }
+
+  componentWillUnmount = () => {
+    document.removeEventListener('keydown', this.onClickOutside);
+    document.removeEventListener('mousedown', this.onClickOutside);
+  }
+  setWrapperRef = (node) => this.wrapperRef = node
+
+  onClickOutside = (event) => {
+    // event.composedPath() is [html, document, Window] when clicking the scroll bar and more when clicking content
+    // this stops the menu from closing if a user clicks to use the scroll bar with the menu open
+    if ((this.wrapperRef && !this.wrapperRef.contains(event.target) &&
+     event.composedPath()[2] !== window && this.state.isExpanded) || event.key === 'Escape') {
+      this.setState({
+        isExpanded: true
+      });
+      event.preventDefault();
+    }
   }
 
   // eslint-disable-next-line camelcase
@@ -211,7 +236,7 @@ export class SearchableDropdown extends React.Component {
       noResultsText ?? (creatable ? null : NO_RESULTS_TEXT);
 
     return (
-      <div className={errorMessage ? 'usa-input-error' : ''}>
+      <div className={errorMessage ? 'usa-input-error' : ''} ref={this.setWrapperRef}>
         <div className={dropdownClasses} {...dropdownStyling}>
           <label className={labelClasses} htmlFor={`${kebabCase(name)}`} id={`${kebabCase(name)}-label`}>
             {strongLabel ? <strong>{labelContents}</strong> : labelContents}

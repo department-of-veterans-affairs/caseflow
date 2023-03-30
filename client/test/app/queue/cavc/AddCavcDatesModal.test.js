@@ -11,11 +11,6 @@ import COPY from 'COPY';
 import * as uiActions from 'app/queue/uiReducer/uiActions';
 
 describe('AddCavcDatesModal', () => {
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   const appealId = amaAppeal.externalId;
 
   const setup = ({ appealId: id }) => {
