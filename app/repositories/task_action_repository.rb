@@ -479,10 +479,21 @@ class TaskActionRepository
       }
     end
 
-    def vha_send_to_board_intake(*)
+    def vha_return_to_board_intake(*)
+      dropdown_options = downcase_keys(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS)
       {
-        modal_title: COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE,
+        modal_title: COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
         type: VhaDocumentSearchTask.name,
+        redirect_after: "/organizations/#{VhaCamo.singleton.url}",
+        options: dropdown_options
+      }
+    end
+
+    def vha_documents_ready_for_bva_intake_for_review(*)
+      {
+        modal_title: COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
+        type: VhaDocumentSearchTask.name,
+        body_optional: true,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
       }
     end
@@ -680,9 +691,7 @@ class TaskActionRepository
     def vha_caregiver_support_return_to_board_intake(*)
       completed_tab_name = VhaCaregiverSupportCompletedTasksTab.tab_name
       queue_url = "/organizations/#{VhaCaregiverSupport.singleton.url}?tab=#{completed_tab_name}"
-      dropdown_options = COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS.map do |_, value|
-        value.transform_keys(&:downcase)
-      end
+      dropdown_options = downcase_keys(COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS)
       {
         modal_title: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
         modal_body: COPY::VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE_MODAL_BODY,
@@ -761,6 +770,12 @@ class TaskActionRepository
         task.parent.assigned_to.users.active.reject { |check_user| check_user == task.assigned_to }
       else
         []
+      end
+    end
+
+    def downcase_keys(options)
+      options.map do |_, value|
+        value.transform_keys(&:downcase)
       end
     end
   end
