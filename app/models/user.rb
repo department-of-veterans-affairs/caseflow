@@ -441,6 +441,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     member_of_organization?(HearingsManagement.singleton)
   end
 
+  # Purpose: Checks if current user is a hearing admin user
+  # Returns: Boolean for whether or not the user is a hearing admin
+  def in_hearing_admin_team?
+    member_of_organization?(HearingAdmin.singleton)
+  end
+
   def can_view_judge_team_management?
     DvcTeam.for_dvc(self).present?
   end
