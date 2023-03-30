@@ -228,8 +228,8 @@ describe MembershipRequestsController, :postgres, type: :controller do
   private
 
   def create_vha_orgs
-    create(:business_line, name: "Veterans Health Administration", url: "vha")
     VhaCamo.singleton
+    create(:business_line, name: "Veterans Health Administration", url: "vha")
     VhaCaregiverSupport.singleton
     create(:vha_program_office,
            name: "Community Care - Veteran and Family Members Program",
