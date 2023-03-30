@@ -258,7 +258,6 @@ class HearingDay < CaseflowRecord
     possibles_hash.each_key do |key|
       changed_hash[key] = possibles_hash[key] if saved_changes.key?(key)
     end
-
     changed_hash
   end
 
@@ -286,7 +285,6 @@ class HearingDay < CaseflowRecord
     if conference_link.nil?
       conference_link = ConferenceLink.create(hearing_day_id: id)
     end
-
     conference_link
   end
 

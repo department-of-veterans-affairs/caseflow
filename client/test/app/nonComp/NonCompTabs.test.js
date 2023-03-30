@@ -13,7 +13,10 @@ const basicProps = {
   baseTasksUrl: '/decision_reviews/vha',
   selectedTask: null,
   decisionIssuesStatus: {},
-  taskFilterDetails
+  taskFilterDetails,
+  featureToggles: {
+    decisionReviewQueueSsnColumn: true
+  },
 };
 
 beforeEach(() => {
