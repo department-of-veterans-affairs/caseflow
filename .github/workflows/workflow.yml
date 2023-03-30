@@ -11,7 +11,7 @@ on:
 # Use this flag to turn on/off RSpec.  Please go to the lint & js_test job to disable the boolean
 env:
   rspec_active: true
-  FORCE_COLOR: "1"
+  FORCE_COLOR: "1" #Forces color within GHA - Note RSPEC still won't use color see line 199 --tty for rspec color
 
 jobs:
   # This job runs the main deployment of caseflow
@@ -51,7 +51,7 @@ jobs:
 
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
-      options: --privileged
+      options: --privileged # Necessary for Rspec to run with our configuration within GHA
       credentials:
         username: AWS
         password: ${{ secrets.ECR_PASSWORD }}
@@ -61,7 +61,7 @@ jobs:
           RAILS_ENV: test
           NODE_ENV: test
           BUNDLE_PATH: vendor/bundle
-          COVERAGE_DIR: /home/circleci/coverage-${{matrix.ci_node_index}}
+          COVERAGE_DIR: /home/gha/coverage-${{matrix.ci_node_index}}
           POSTGRES_HOST: postgres
           POSTGRES_USER: root
           POSTGRES_PASSWORD: password
@@ -114,6 +114,7 @@ jobs:
           echo "Chrome exe name: $(ls /usr/bin | chrome)"
           echo "Chrome version: $(google-chrome --version)"
 
+      # wkhtmltopdf is a required library for certain rspec tests to pass
       - name: Restore wkhtmltopdf
         id: cache-wkhtmltopdf
         uses: actions/cache/restore@v3
@@ -185,6 +186,7 @@ jobs:
         run: |
           ./ci-bin/capture-log "bundle exec rake assets:precompile"
 
+      # Changing the user and permissions as Chrome/Chromedriver can't run as root
       - name: RSpec via knapsack_pro Queue Mode
         run: |
           mkdir -p ./test-results/rspec
@@ -192,13 +194,17 @@ jobs:
           touch log/selenium-chrome.log
           chmod -R 777 ${GITHUB_WORKSPACE}
           export GHA_NODE_INDEX=${{matrix.ci_node_index}}
-          runuser -u circleci bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RSpec::Github::Formatter --tty]"
+          runuser -u gha bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RSpec::Github::Formatter --tty]"
+      # --format RSpec::Github::Formatter use in Rspec-github gem, adds more detailed info to GHA "Annotations"
+      # --tty forces Rspec to produce color
 
-      - run: (cd /home/circleci && tar -zcvf coverage-${{matrix.ci_node_index}}.tar.gz coverage-${{matrix.ci_node_index}})
+
+    # Artifacts
+      - run: (cd /home/gha && tar -zcvf coverage-${{matrix.ci_node_index}}.tar.gz coverage-${{matrix.ci_node_index}})
       - uses: actions/upload-artifact@v3
         if: success()
         with:
-          path: /home/circleci/coverage-${{matrix.ci_node_index}}.tar.gz
+          path: /home/gha/coverage-${{matrix.ci_node_index}}.tar.gz
 
       - uses: actions/upload-artifact@v3
         # Run even if there is a failure in the previous steps, but not if the run is cancelled
@@ -223,6 +229,8 @@ jobs:
         with:
           path: ./log/bullet-${{matrix.ci_node_index}}.log
 
+
+
   caseflow_jest_job:
     # This job will run the jest, change the value below to false if you wish to turn it off.
     if: true
@@ -236,10 +244,10 @@ jobs:
           DBUS_SESSION_BUS_ADDRESS: /dev/null
           RAILS_ENV: test
           NODE_ENV: test
-          JEST_DIR: /home/circleci/test-results/jest
+          JEST_DIR: /home/gha/test-results/jest
           TEST_REPORTER: jest-junit
-          JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest
-          COVERAGE_DIR: /home/circleci/coverage
+          JEST_JUNIT_OUTPUT_DIR: /home/gha/test-results/jest
+          COVERAGE_DIR: /home/gha/coverage
 
     steps:
       - name: Install chromium
@@ -277,6 +285,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: ./all_logs.log
+
+
 
   caseflow_lint_job:
     # This job will run the security lint checker, change the value below to false if you wish to turn it off.
