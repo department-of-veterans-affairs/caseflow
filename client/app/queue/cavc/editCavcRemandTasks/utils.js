@@ -74,7 +74,7 @@ export const shouldDisable = (taskInfo) => {
 };
 
 export const shouldDisableCancelOrCompleted = (taskInfo) => {
-  return ['SendCavcRemandProcessedLetterTask', 'MdrTask'].includes(taskInfo.type);
+  return [...CavcAppealTaskTypes, 'MdrTask'].includes(taskInfo.type);
 };
 
 export const shouldAutoSelect = (taskInfo) => {
@@ -126,8 +126,13 @@ export const filterCancelOrCompletedTasks = (tasks) => tasks.filter((task) => {
   return ['completed', 'cancelled'].includes(task.status);
 });
 
+export const filterByCavcTasks = (tasks) => tasks.filter((task) => {
+  return [...CavcAppealTaskTypes, 'MdrTask'].includes(task.type);
+});
+
 export const openTaskDataForUi = ({ taskData }) => {
-  const activeTasks = filterOpenTasks(taskData);
+  const tasks = filterByCavcTasks(taskData);
+  const activeTasks = filterOpenTasks(tasks);
   const uniqTasks = filterTasks(activeTasks, { orgOnly: false, closedOnly: false });
 
   const sortedTasks = sortTasks(uniqTasks, 'createdAt');
@@ -139,7 +144,8 @@ export const openTaskDataForUi = ({ taskData }) => {
 };
 
 export const cancelledOrCompletedTasksDataForUi = ({ taskData }) => {
-  const inActiveTasks = filterCancelOrCompletedTasks(taskData);
+  const tasks = filterByCavcTasks(taskData);
+  const inActiveTasks = filterCancelOrCompletedTasks(tasks);
   const uniqTasks = filterTasks(inActiveTasks);
   const sortedTasks = sortTasks(uniqTasks, 'closedAt');
 
