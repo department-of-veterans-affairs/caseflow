@@ -100,7 +100,8 @@ class SameAppealSubstitutionTasksFactory
   end
 
   ATTRIBUTES_EXCLUDED_FROM_TASK_COPY = %w[id created_at updated_at
-                                          status closed_at placed_on_hold_at].freeze
+                                          status closed_at placed_on_hold_at
+                                          cancelled_by_id cancellation_reason].freeze
 
   def copy_task(task)
     new_task_attributes = task.attributes

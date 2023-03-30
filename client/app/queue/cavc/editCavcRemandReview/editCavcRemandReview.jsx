@@ -48,11 +48,6 @@ export const EditCavcRemandReview = ({
   onCancel,
   onSubmit,
 }) => {
-  const substitutionDate = format(
-    parseISO(existingValues.substitutionDate),
-    'MM/dd/yyyy'
-  );
-
   return (
     <>
       <AppSegment filledBackground>
@@ -70,7 +65,10 @@ export const EditCavcRemandReview = ({
                     <td className="appellant-detail">
                       Substitution granted by the RO
                     </td>
-                    <td>{existingValues.substitutionDate && substitutionDate}</td>
+                    <td>
+                      {existingValues.substitutionDate &&
+                       format(parseISO(existingValues.substitutionDate), 'MM/dd/yyyy')}
+                    </td>
                   </tr>
                 </>
               )}

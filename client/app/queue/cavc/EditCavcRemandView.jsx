@@ -58,7 +58,6 @@ export const EditCavcRemandView = () => {
       mandateDate: currentValues.mandateDate || cavcRemand.mandate_date,
       remandType: currentValues.remandType || cavcRemand.remand_subtype,
       attorney: (currentValues.attorney || (cavcRemand.represented_by_attorney ? 'yes' : 'no')),
-      remandDatesProvided: currentValues.remandDatesProvided || (cavcRemand.judgement_date || cavcRemand.mandate_date) ? 'yes' : 'no',
       remandAppealId: currentValues.remandAppealId || cavcRemand.remand_appeal_uuid,
       substitutionDate: currentValues.substitutionDate || cavcRemand.cavc_remands_appellant_substitution?.substitution_date,
       participantId: currentValues.participantId || cavcRemand.cavc_remands_appellant_substitution?.participant_id,

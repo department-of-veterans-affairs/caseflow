@@ -98,6 +98,16 @@ export const EditCavcRemandForm = ({
     },
   });
 
+  // Ensure dates not set for MDR remand type
+  // For MDR, dates will be set after hold expires via AddCavcDatesModal
+  useEffect(() => {
+    if (existingValues?.remandType?.includes('mdr')) {
+      setValue('remandDatesProvided', 'no');
+      setValue('judgementDate', '');
+      setValue('mandateDate', '');
+    }
+  }, [existingValues.remandType]);
+
   const filteredDecisionTypes = useMemo(
     () =>
       allDecisionTypeOpts.filter((item) =>

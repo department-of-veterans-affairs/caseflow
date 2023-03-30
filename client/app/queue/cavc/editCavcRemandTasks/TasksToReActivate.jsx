@@ -23,7 +23,6 @@ export const TasksToReActivate = ({ tasks, existingValues, setSelectedReActivate
   setSelectedReActivateTaskIds(reActivateTaskIds);
 
   const handleCheck = (changedId, checked) => {
-    debugger
     if (checked) {
       setReActivateTaskIds([...reActivateTaskIds, changedId]);
     } else {
