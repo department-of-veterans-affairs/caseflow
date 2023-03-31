@@ -89,10 +89,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       User.stub = user
       non_comp_org.add_user(user)
       setup_prior_claim_with_payee_code(decision_review, veteran, "00")
-      FeatureToggle.enable!(:decision_review_queue_ssn_column)
     end
-
-    after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
 
     context "decision_review is a Supplemental Claim" do
       let(:decision_review) do
