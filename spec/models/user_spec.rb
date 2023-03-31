@@ -217,15 +217,24 @@ describe User, :all_dbs do
   end
 
   context "#timezone" do
+    let!(:vso_user) { create(:user, :vso_role) }
     context "when ro is set" do
       subject { user.timezone }
       before { user.regional_office = "RO84" }
       it { is_expected.to eq("America/New_York") }
     end
 
+    context "when ro isn't set" do
+      subject { user.timezone }
+      before do
+        user.regional_office = nil
+      end
+      it { is_expected.to eq("America/Chicago") }
+    end
+
     # for VSO users with multiple RO's
     # regional_office will default to nil, but selected_regional_office will not
-    context "when ro isn't set" do
+    context "when ro isn't set for VSO user" do
       subject { user.timezone }
       before do
         user.regional_office = nil
