@@ -1,11 +1,11 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 
-import { AppealHasSubstitutionAlert } from './AppealHasSubstitutionAlert';
+import { CavcAppealHasSubstitutionAlert } from './CavcAppealHasSubstitutionAlert';
 
 export default {
-  title: 'Queue/cavc/caseDetails/AppealHasSubstitutionAlert',
-  component: AppealHasSubstitutionAlert,
+  title: 'Queue/cavc/caseDetails/CavcAppealHasSubstitutionAlert',
+  component: CavcAppealHasSubstitutionAlert,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -16,13 +16,12 @@ export default {
   parameters: {},
   args: {
     targetAppealId: 'abc123',
-    hasSameAppealSubstitution: false,
   },
   argTypes: {},
 };
 
 const Template = (args) => (
-  <AppealHasSubstitutionAlert {...args} />
+  <CavcAppealHasSubstitutionAlert {...args} />
 );
 
 export const Basic = Template.bind({});
