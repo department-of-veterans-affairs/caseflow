@@ -60,7 +60,7 @@
     "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#12a7d3f",
     "@fortawesome/fontawesome-free": "^5.3.1",
     "@hookform/resolvers": "^2.0.0-beta.5",
-    "@reduxjs/toolkit": "^1.4.0",
+    "@reduxjs/toolkit": "^1.9.3",
     "@storybook/addon-a11y": "^6.3.8",
     "@storybook/addon-actions": "^6.3.8",
     "@storybook/addon-controls": "^6.3.8",
