@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { css } from 'glamor';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+import { format, isDate, max, parseISO } from 'date-fns';
 import COPY from '../../../COPY';
 import CAVC_JUDGE_FULL_NAMES from '../../../constants/CAVC_JUDGE_FULL_NAMES';
 import CAVC_REMAND_SUBTYPES from '../../../constants/CAVC_REMAND_SUBTYPES';
@@ -24,6 +25,8 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import StringUtil from '../../util/StringUtil';
 import Alert from '../../components/Alert';
 import { withRouter } from 'react-router';
+import { SUBSTITUTE_DATE_ERRORS } from '../../intake/constants';
+import { appealWithDetailSelector } from '../selectors';
 
 const radioLabelStyling = css({ marginTop: '2.5rem' });
 const buttonStyling = css({ paddingLeft: '0' });
@@ -116,6 +119,18 @@ const AddCavcRemandView = (props) => {
     label: decisionIssue.description
   }));
 
+  const appeal = useSelector((state) =>
+    appealWithDetailSelector(state, { appealId })
+  );
+
+  // These values will be used in the "key details" section
+  const nodDate = useMemo(() => parseISO(appeal.nodDate), [appeal.nodDate]);
+  const dateOfDeath = useMemo(() => {
+    const dod = appeal.veteranDateOfDeath;
+
+    return dod ? parseISO(dod) : null;
+  }, [appeal.veteranInfo]);
+
   const isAppellantSubstitutedOptions = [
     { displayText: 'Yes',
       value: 'true',
@@ -178,14 +193,41 @@ const AddCavcRemandView = (props) => {
     (Boolean(judgementDate) && validateDateNotInFuture(judgementDate)) || !mandateAvailable();
   const validMandateDate = () =>
     (Boolean(mandateDate) && validateDateNotInFuture(mandateDate)) || !mandateAvailable();
+  const dates = [nodDate, dateOfDeath].filter(Boolean).map((d) => (isDate(d) ? d : parseISO(d)));
+  const [minSubstitutionDateError, setMinSubstitutionDateError] = useState(false);
+  const [futureSubstitutionDateError, setFutureSubstitutionDateError] = useState(false);
 
-  const validAppellantSubstitutionGrantedDateDate = () =>
-    (!featureToggles.cavc_remand_granted_substitute_appellant ||
+  const onSubstitutionDateChange = (val) => {
+    setAppellantSubstitutionGrantedDate(val);
+
+    if (!validateDateNotInPriorNodOrDod(val)) {
+      setMinSubstitutionDateError(true)
+      setFutureSubstitutionDateError(false)
+    } else if (!validateDateNotInFuture(val)) {
+      setMinSubstitutionDateError(false)
+      setFutureSubstitutionDateError(true);
+    } else {
+      setMinSubstitutionDateError(false)
+      setFutureSubstitutionDateError(false);
+    }
+  };
+
+  const validateDateNotInPriorNodOrDod = ((date) => {
+    if (parseISO(date) < max(dates)) {
+      return false;
+    }
+
+    return true;
+  });
+
+  const validAppellantSubstitutionGrantedDateDate = () => {
+    return (!featureToggles.cavc_remand_granted_substitute_appellant ||
       isAppellantSubstituted === 'false' ||
       (isAppellantSubstituted === 'true' && Boolean(appellantSubstitutionGrantedDate) &&
-        validateDateNotInFuture(appellantSubstitutionGrantedDate)
+        !futureSubstitutionDateError && !minSubstitutionDateError
       )
     );
+  }
 
   const validSubstituteAppellantClaimant = () =>
     (!featureToggles.cavc_remand_granted_substitute_appellant ||
@@ -228,6 +270,16 @@ const AddCavcRemandView = (props) => {
 
     return COPY.CAVC_REMAND_CREATED_TITLE;
   };
+
+  const substitutionDateErrormsg = () => {
+    if (minSubstitutionDateError) {
+      return SUBSTITUTE_DATE_ERRORS.min_date_error + ` - ${format(new Date(max(dates)), 'MM/dd/yyyy')}`;
+    } else if (futureSubstitutionDateError) {
+      return SUBSTITUTE_DATE_ERRORS.in_future;
+    } else {
+      return SUBSTITUTE_DATE_ERRORS.invalid
+    }
+  }
 
   const submit = () => {
     const payload = {
@@ -293,9 +345,9 @@ const AddCavcRemandView = (props) => {
     type="date"
     name="appellant-substitution-granted-date"
     value={appellantSubstitutionGrantedDate}
-    onChange={(val) => setAppellantSubstitutionGrantedDate(val)}
+    onChange={(val) => onSubstitutionDateChange(val)}
     errorMessage={highlightInvalid &&
-      !validAppellantSubstitutionGrantedDateDate() ? COPY.CAVC_APPELLANT_SUBSTITUTION_GRANTED_DATE_ERROR : null}
+      !validAppellantSubstitutionGrantedDateDate() ? substitutionDateErrormsg() : null}
     strongLabel
   />;
 
