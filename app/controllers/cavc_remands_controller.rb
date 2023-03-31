@@ -224,7 +224,7 @@ class CavcRemandsController < ApplicationController
   def updated_appeal_attributes(cavc_appeal)
     return {} unless FeatureToggle.enabled?(:cavc_remand_granted_substitute_appellant)
 
-    if cavc_appeal.appellant_substitution
+    if cavc_appeal.reload.appellant_substitution
       appellant_substitution_data = WorkQueue::AppellantSubstitutionSerializer.new(
         cavc_appeal.appellant_substitution).serializable_hash[:data][:attributes]
     end
