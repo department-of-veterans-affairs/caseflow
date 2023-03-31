@@ -198,7 +198,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def timezone
-    RegionalOffice::CITIES[users_regional_office][:timezone]
+    if vso_employee?
+      RegionalOffice::CITIES[users_regional_office][:timezone]
+    else
+      (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
+    end
   end
 
   # If user has never logged in, we might not have their full name in Caseflow DB.
