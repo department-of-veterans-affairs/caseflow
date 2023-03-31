@@ -18,7 +18,6 @@ import { setOrganizationMembershipRequests,
   setSuccessMessage,
   submitMembershipRequestForm,
   setErrorMessage } from '../helpApiSlice';
-import { unwrapResult } from '@reduxjs/toolkit';
 import { sprintf } from 'sprintf-js';
 
 const checkboxDivStyling = css({
@@ -146,8 +145,7 @@ const VhaMembershipRequestForm = () => {
     // Setup the form data in a typical json data format.
     const formData = { data: { membershipRequests, requestReason, organizationGroup: 'VHA' } };
 
-    // TODO: Update unwrapResult to .unwrap() if the Redux Toolkit version is updated.
-    dispatch(submitMembershipRequestForm(formData)).then(unwrapResult).
+    dispatch(submitMembershipRequestForm(formData)).unwrap().
       then((values) => {
         const requestedOrgs = values.newMembershipRequests;
         const newOrgs = [...organizationMembershipRequests, ...requestedOrgs];
