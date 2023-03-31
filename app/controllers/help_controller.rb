@@ -26,9 +26,7 @@ class HelpController < ApplicationController
   end
 
   def user_logged_in?(user = current_user)
-    return false unless user
-
-    user.authenticated?
+    user&.authenticated? || false
   end
 
   helper_method :feature_toggle_ui_hash, :user_organizations, :pending_membership_requests, :user_logged_in?
