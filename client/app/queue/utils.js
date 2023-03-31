@@ -500,6 +500,7 @@ export const prepareAppealForStore = (appeals) => {
         appeal.attributes.substitutions?.[0]?.target_appeal_uuid ===
         appeal.attributes.substitutions?.[0]?.source_appeal_uuid,
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
+      showPostCavcStreamMsg: appeal.attributes.show_post_cavc_stream_msg,
       remandJudgeName: appeal.attributes.remand_judge_name,
       hasNotifications: appeal.attributes.has_notifications,
       locationHistory: prepareLocationHistoryForStore(appeal),

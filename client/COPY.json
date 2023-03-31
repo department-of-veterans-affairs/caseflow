@@ -247,7 +247,7 @@
   "CAVC_REMAND_REVIEW_SUCCESS_TITLE": "You have successfully added a substitute appellant",
   "CAVC_REMAND_REVIEW_SUCCESS_DETAIL": "Any necessary tasks have been created and assigned for further processing.",
   "CAVC_REMAND_REVIEW_SCHEDULE_HEARING_TASK_ALERT_TEXT": "When Schedule Hearing task is selected, Transcription and Evidence Submission tasks will automatically be included and cannot be unselected.",
-  "CAVC_REMAND_REVIEW_SOURCE_APPEAL_ALERT_DESCRIPTION": "This appeal has been reactivated for a substitute appellant.",
+  "CAVC_REMAND_REVIEW_SOURCE_APPEAL_ALERT_DESCRIPTION": "Post CAVC appeal stream has been established.",
 
   "CAVC_EXTENSION_REQUEST_TITLE": "Review extension request",
   "CAVC_EXTENSION_REQUEST_DECISION_LABEL": "How will you proceed?",

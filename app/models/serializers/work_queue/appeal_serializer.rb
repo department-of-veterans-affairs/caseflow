@@ -175,6 +175,11 @@ class WorkQueue::AppealSerializer
     end
   end
 
+  attribute :show_post_cavc_stream_msg do |object|
+    cavc_remand = CavcRemand.find_by(source_appeal_id: object.id)
+    cavc_remand.present? && cavc_remand.cavc_remands_appellant_substitution.present?
+  end
+
   attribute :remand_source_appeal_id do |appeal|
     appeal.cavc_remand&.source_appeal&.uuid
   end
