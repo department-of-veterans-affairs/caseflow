@@ -59,7 +59,7 @@ class Memberships::SendMembershipRequestMailerJob < CaseflowJob
   end
 
   def email_nil?(email)
-    if email.nil?
+    if email.try(:to).nil?
       message = "No #{TYPE_LABEL} was sent because no email address is defined"
       log = log_message(mailer_parameters).merge(
         status: "error", message: message
