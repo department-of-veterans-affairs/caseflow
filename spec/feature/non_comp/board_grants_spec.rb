@@ -5,10 +5,7 @@ feature "NonComp Board Grant Task Page", :postgres do
     User.stub = user
     nca_org.add_user(user)
     Timecop.freeze(post_ama_start_date)
-    FeatureToggle.enable!(:decision_review_queue_ssn_column)
   end
-
-  after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
 
   def submit_form
     find("label[for=isEffectuated]").click
