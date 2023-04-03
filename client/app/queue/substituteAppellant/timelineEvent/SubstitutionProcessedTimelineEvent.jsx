@@ -47,14 +47,30 @@ export const SubstitutionProcessedTimelineEvent = ({ timelineEvent }) => {
             <span>Completed by:</span>
             {timelineEvent.createdBy}
           </div>
-          <div>
-            <span>Original appellant (veteran):</span>
-            {timelineEvent.originalAppellantFullName}
-          </div>
-          <div>
-            <span>Current appellant (substitution):</span>
-            {timelineEvent.substituteFullName}
-          </div>
+          { timelineEvent.originalAppellantFullName &&
+            <div>
+              <span>Original appellant (veteran):</span>
+              {timelineEvent.originalAppellantFullName}
+            </div>
+          }
+          { timelineEvent.originalAppellantSubstituteFullName &&
+            <div>
+              <span>Original appellant (substitution):</span>
+              {timelineEvent.originalAppellantSubstituteFullName}
+            </div>
+          }
+          { timelineEvent.currentAppellantSubstituteFullName &&
+            <div>
+              <span>Current appellant (substitution):</span>
+              {timelineEvent.currentAppellantSubstituteFullName}
+            </div>
+          }
+          { timelineEvent.currentAppellantFullName &&
+            <div>
+              <span>Current appellant (veteran):</span>
+              {timelineEvent.currentAppellantFullName}
+            </div>
+          }
         </div>
       </td>
     </tr>
@@ -67,7 +83,9 @@ SubstitutionProcessedTimelineEvent.propTypes = {
       PropTypes.instanceOf(Date),
     ]),
     createdBy: PropTypes.string,
-    substituteFullName: PropTypes.string,
     originalAppellantFullName: PropTypes.string,
+    currentAppellantSubstituteFullName: PropTypes.string,
+    originalAppellantSubstituteFullName: PropTypes.string,
+    currentAppellantFullName: PropTypes.string
   }),
 };
