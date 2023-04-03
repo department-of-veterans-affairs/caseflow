@@ -29,15 +29,11 @@ jobs:
 
       redis:
         image: redis:4.0.10
-        env:
-          REDIS_URL_CACHE: redis://redis:6379/0/cache/
         ports:
         - 6379:6379
 
       facols_db:
         image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
-        env:
-          TEST_VACOLS_HOST: facols_db
         credentials:
           username: AWS
           password: ${{ secrets.ECR_PASSWORD }}
@@ -74,6 +70,7 @@ jobs:
           WD_INSTALL_DIR: .webdrivers
           CI: true
           REDIS_URL_CACHE: redis://redis:6379/0/cache/
+          TEST_VACOLS_HOST: facols_db
 
     steps:
       - uses: actions/checkout@v3
