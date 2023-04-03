@@ -126,16 +126,8 @@ test_vacols:
   adapter: oracle_enhanced
   username: VACOLS_TEST
   password: VACOLS_TEST
-  <% if ENV['TEST_VACOLS_HOST'] %>
   database: "(DESCRIPTION=
-    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=facols_db)(PORT=1521)))
+    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=<%= ENV['TEST_VACOLS_HOST'] || 'localhost' %>)(PORT=1521)))
     (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
     (CONNECT_DATA=(SID=BVAP))
   )"
-  <% else %>
-  database: "(DESCRIPTION=
-    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=localhost)(PORT=1521)))
-    (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
-    (CONNECT_DATA=(SID=BVAP))
-  )"
-  <% end %>
