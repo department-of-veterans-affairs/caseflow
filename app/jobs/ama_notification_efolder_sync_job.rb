@@ -9,7 +9,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # * notification datetime is after the vbms uploaded doc uploaded_datetime. If no record exists it will
   # * also return the appeal.
 
-  BATCH_LIMIT = ENV["AMA_NOTIFICATION_REPORT_SYNC_LIMIT"] || 500
+  BATCH_LIMIT = ENV["AMA_NOTIFICATION_REPORT_SYNC_LIMIT"] || 50_000
 
   def perform
     RequestStore[:current_user] = User.system_user
@@ -22,9 +22,12 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # A list of Appeals that have been outcoded within the last 24 hours
   def appeals_recently_outcoded
     Appeal
-      .where(id: BvaDispatchTask.where(BvaDispatchTask.arel_table[:closed_at].gt(1.day.ago))
-      .where(appeal_type: "Appeal", status: "completed")
-      .pluck(:appeal_id)
+      .where(vacols_id: Notification.where(
+        notified_at: 1.day.ago..Time.zone.now,
+        appeals_type: "LegacyAppeal",
+        event_type: ["Appeal decision mailed (Non-contested claims)", "Appeal decision mailed (Contested claims)"]
+      )
+      .pluck(:appeals_id)
       .uniq)
   end
 
@@ -75,10 +78,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
 
         latest_notification_report = latest_vbms_uploaded_document(appeal)
         notification_timestamp = latest_appeal_notification.notified_at || latest_appeal_notification.created_at
-        if latest_notification_report.nil?
-          appeal.upload_notification_report!
-          gen_count += 1
-        elsif notification_timestamp > latest_notification_report.attempted_at
+        if latest_notification_report.nil? || notification_timestamp > latest_notification_report.attempted_at
           appeal.upload_notification_report!
           gen_count += 1
         end
