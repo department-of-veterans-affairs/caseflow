@@ -9,6 +9,7 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
   def initialize
     @logs = ["\nVBMS::CannotDeleteContention Remediation Log"]
     @remediated_request_issues_update_ids = []
+    super
   end
 
   # rubocop:disable all
