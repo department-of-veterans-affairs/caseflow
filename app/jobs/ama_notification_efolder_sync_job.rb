@@ -9,10 +9,12 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # * notification datetime is after the vbms uploaded doc uploaded_datetime. If no record exists it will
   # * also return the appeal.
 
+  BATCH_LIMIT = ENV["AMA_NOTIFICATION_REPORT_SYNC_LIMIT"] || 500
+
   def perform
     RequestStore[:current_user] = User.system_user
-    sync_without_checking(appeals_recently_outcoded + appeals_never_synced)
-    check_then_sync(previously_synced_appeals)
+    all_active_ama_appeals = appeals_recently_outcoded + appeals_never_synced + previously_synced_appeals
+    sync_notification_reports(all_active_ama_appeals.first(BATCH_LIMIT))
   end
 
   # A list of Appeals that have been outcoded within the last 24 hours
@@ -24,6 +26,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       .uniq)
   end
 
+  # A list of appeals that have never had notification reports uploaded
   def appeals_never_synced
     # A list of unique appeal ids (Primary Key) that exist in VBMSUploadedDocument and are of type BVA Case Notification
     appeal_ids_synced = VbmsUploadedDocument.distinct
@@ -35,6 +38,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
     Appeal.active.where.not(id: appeal_ids_synced)
   end
 
+  # A list of appeals that already have notification reports uploaded
   def previously_synced_appeals
     # Ids for the latest Notification Report for every AMA Appeal ordered from oldest to newest
     previously_synced_appeal_ids = VbmsUploadedDocument
@@ -54,42 +58,34 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
         nil
       end
     end
-
     filter_out_inactive_appeals.compact
   end
 
   # Purpose: Syncs the notification reports in VBMS with the notification table for each appeal
-  # Params: appeals -
-  def check_then_sync(appeals)
-    Rails.logger.info("Starting to sync previously synced AMA appeals")
+  # Params: appeals - Appeals records in need of a new notification report to be generated
+  def sync_notification_reports(appeals)
+    Rails.logger.info("Starting to sync notification reports for AMA appeals")
+    gen_count = 0
     appeals.each do |appeal|
       begin
         latest_appeal_notification = last_notification_of_appeal(appeal.uuid)
-        latest_notification_report = latest_vbms_uploaded_document(appeal.id)
+        next if latest_appeal_notification.nil?
+
+        latest_notification_report = latest_vbms_uploaded_document(appeal)
         notification_timestamp = latest_appeal_notification.notified_at || latest_appeal_notification.created_at
-        if notification_timestamp > latest_notification_report.attempted_at
+        if latest_notification_report.nil?
           appeal.upload_notification_report!
+          gen_count += 1
+        elsif notification_timestamp > latest_notification_report.attempted_at
+          appeal.upload_notification_report!
+          gen_count += 1
         end
       rescue StandardError => error
         log_error(error)
         next
       end
     end
-  end
-
-  def sync_without_checking(appeals)
-    Rails.logger.info("Starting to sync outcoded and unsynced appeals")
-    error_counter = 0
-    appeals.each do |appeal|
-      begin
-        appeal.upload_notification_report!
-      rescue StandardError => error
-        log_error(error)
-        error_counter += 1
-        next
-      end
-    end
-    Rails.logger.info("Finished generating #{appeals.count - error_counter} notification reports for recently outcoded and unsynced appeals")
+    Rails.logger.info("Finished generating #{gen_count} notification reports for AMA appeals")
   end
 
   # Purpose: Will return the most recent notification associated with the appeal
