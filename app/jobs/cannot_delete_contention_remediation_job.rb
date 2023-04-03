@@ -24,11 +24,12 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
     RequestStore[:current_user] = User.system_user
     rius = find_cannot_delete_contention_request_issues_updates
     total = rius.count
+    Rails.logger.info("CannotDeleteContentionRemediationJob::Log - Found #{total} CannotDeleteContention Request Issues Updates")
     if total > 0
       contention_ids = get_contention_ids(rius)
       remediate!(rius, contention_ids, total)
-      store_logs_in_s3_bucket
       puts @logs
+      store_logs_in_s3_bucket
     end
   end
 
@@ -46,6 +47,7 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
       rescue StandardError => error
         @logs.push("#{Time.zone.now} CannotDeleteContentionRemediation::Error - Number: #{index} "\
             " RIU ID: #{rius[index].id}.  RI ID: #{affected_request_issue&.id}.  #{error.message}.")
+        log_error(error)
         index += 1
         next
       end
