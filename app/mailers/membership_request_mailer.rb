@@ -19,14 +19,7 @@ class MembershipRequestMailer < ActionMailer::Base
     @requests = params[:requests]
     @requesting_org_names = @requests&.map { |request| request.organization.name }
     @subject = params[:subject]
-    # This has to be set here rather than changing the users email address in the database for UAT
-    # Because the email address is automatically updated on user login.
-    email_address = if Rails.deploy_env?(:uat)
-                      "BID_Appeals_UAT@bah.com"
-                    else
-                      @recipient&.email
-                    end
-    mail(to: email_address, subject: @subject)
+    mail(to: requestor_email_address(@recipient), subject: @subject)
   end
 
   def admin_request_made
@@ -39,13 +32,13 @@ class MembershipRequestMailer < ActionMailer::Base
   def vha_business_line_approved
     @recipient = params[:requestor]
     @accessible_groups = params[:accessible_groups]
-    mail(to: @recipient&.email, subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_APPROVED)
+    mail(to: requestor_email_address(@recipient), subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_APPROVED)
   end
 
   def vha_business_line_denied
     @recipient = params[:requestor]
     @accessible_groups = params[:accessible_groups]
-    mail(to: @recipient&.email, subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_DENIED)
+    mail(to: requestor_email_address(@recipient), subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_DENIED)
   end
 
   def vha_predocket_organization_approved
@@ -53,7 +46,7 @@ class MembershipRequestMailer < ActionMailer::Base
     @accessible_groups = params[:accessible_groups]
     @requesting_org_name = params[:organization_name]
     @pending_organization_request_names = params[:pending_organization_request_names]
-    mail(to: @recipient&.email, subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_APPROVED)
+    mail(to: requestor_email_address(@recipient), subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_APPROVED)
   end
 
   def vha_predocket_organization_denied
@@ -62,6 +55,16 @@ class MembershipRequestMailer < ActionMailer::Base
     @requesting_org_name = params[:organization_name]
     @pending_organization_request_names = params[:pending_organization_request_names]
     @has_vha_access = params[:has_vha_access]
-    mail(to: @recipient&.email, subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_DENIED)
+    mail(to: requestor_email_address(@recipient), subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_DENIED)
+  end
+
+  def requestor_email_address(recipient)
+    # This has to be set here rather than changing the users email address in the database for UAT
+    # Because the email address is automatically updated on user login.
+    if Rails.deploy_env?(:uat)
+      "BID_Appeals_UAT@bah.com"
+    else
+      recipient&.email
+    end
   end
 end
