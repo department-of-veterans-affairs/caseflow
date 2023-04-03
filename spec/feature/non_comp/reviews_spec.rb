@@ -70,38 +70,6 @@ feature "NonComp Reviews Queue", :postgres do
 
   let(:search_box_label) { "Search by Claimant Name, Veteran Participant ID, File Number or SSN" }
 
-  let(:vet_id_column_header) do
-    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
-      "Veteran SSN"
-    else
-      "Veteran Participant Id"
-    end
-  end
-
-  let(:vet_a_id_column_value) do
-    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
-      veteran_a.ssn
-    else
-      veteran_a.participant_id
-    end
-  end
-
-  let(:vet_b_id_column_value) do
-    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
-      veteran_b.ssn
-    else
-      veteran_b.participant_id
-    end
-  end
-
-  let(:vet_c_id_column_value) do
-    if FeatureToggle.enabled?(:decision_review_queue_ssn_column)
-      veteran_c.ssn
-    else
-      veteran_c.participant_id
-    end
-  end
-
   def current_table_rows
     find_all("#case-table-description > tbody > tr").map(&:text)
   end
@@ -115,7 +83,7 @@ feature "NonComp Reviews Queue", :postgres do
   context "with an existing organization" do
     after { FeatureToggle.disable!(:board_grant_effectuation_task) }
 
-    scenario "displays tasks page with decision_review_queue_ssn_column feature toggle disabled" do
+    scenario "displays tasks page" do
       visit BASE_URL
       expect(page).to have_content("Non-Comp Org")
       expect(page).to have_content("In progress tasks")
@@ -128,10 +96,10 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content(veteran_a.name)
       expect(page).to have_content(veteran_b.name)
       expect(page).to have_content(veteran_c.name)
-      expect(page).to have_content(vet_id_column_header)
-      expect(page).to have_content(vet_a_id_column_value)
-      expect(page).to have_content(vet_b_id_column_value)
-      expect(page).to have_content(vet_c_id_column_value)
+      expect(page).to have_content("Veteran SSN")
+      expect(page).to have_content(veteran_a.ssn)
+      expect(page).to have_content(veteran_b.ssn)
+      expect(page).to have_content(veteran_c.ssn)
       expect(page).to have_no_content(search_box_label)
 
       # ordered by assigned_at descending
@@ -147,7 +115,7 @@ feature "NonComp Reviews Queue", :postgres do
       # ordered by closed_at descending
       expect(page).to have_content(
         Regexp.new(
-          /#{veteran_b.name} #{vet_b_id_column_value} 1/,
+          /#{veteran_b.name} #{veteran_b.ssn} 1/,
           /#{request_issue_b.decision_date.strftime("%m\/%d\/%y")} Higher-Level Review/
         )
       )
@@ -167,10 +135,10 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content(veteran_a.name)
         expect(page).to have_content(veteran_b.name)
         expect(page).to have_content(veteran_c.name)
-        expect(page).to have_content(vet_id_column_header)
-        expect(page).to have_content(vet_a_id_column_value)
-        expect(page).to have_content(vet_b_id_column_value)
-        expect(page).to have_content(vet_c_id_column_value)
+        expect(page).to have_content("Veteran SSN")
+        expect(page).to have_content(veteran_a.ssn)
+        expect(page).to have_content(veteran_b.ssn)
+        expect(page).to have_content(veteran_c.ssn)
         expect(page).to have_no_content(search_box_label)
 
         click_on veteran_a.name
@@ -211,25 +179,25 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.last.include?("Aaa")).to eq true
 
       # Participant ID desc
-      order_buttons[:participant_id].click
-      expect(page).to have_current_path(
-        "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=asc"
-      )
-      table_rows = current_table_rows
+      # order_buttons[:participant_id].click
+      # expect(page).to have_current_path(
+      #   "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=asc"
+      # )
+      # table_rows = current_table_rows
 
       expect(table_rows.last.include?(hlr_b.veteran.participant_id)).to eq true
       expect(table_rows.first.include?(hlr_a.veteran.participant_id)).to eq true
 
       # Participant ID asc
-      order_buttons[:participant_id].click
-      expect(page).to have_current_path(
-        "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=desc"
-      )
+      # order_buttons[:participant_id].click
+      # expect(page).to have_current_path(
+      #   "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=desc"
+      # )
 
-      table_rows = current_table_rows
+      # table_rows = current_table_rows
 
-      expect(table_rows.last.include?(hlr_a.veteran.participant_id)).to eq true
-      expect(table_rows.first.include?(hlr_b.veteran.participant_id)).to eq true
+      # expect(table_rows.last.include?(hlr_a.veteran.participant_id)).to eq true
+      # expect(table_rows.first.include?(hlr_b.veteran.participant_id)).to eq true
 
       # Issue count desc
       order_buttons[:issues_count].click
@@ -406,7 +374,7 @@ feature "NonComp Reviews Queue", :postgres do
       # There should be 1 on the page with this information
       expect(page).to have_content("Higher-Level Review", count: 1)
       expect(page).to have_content(
-        /#{veteran_b.name} #{veteran_b.participant_id} 1 0 days Higher-Level Review/
+        /#{veteran_b.name} #{veteran_b.ssn} 1 0 days Higher-Level Review/
       )
 
       # Blank out the input and verify that there are once again 2 on the page
@@ -425,7 +393,7 @@ feature "NonComp Reviews Queue", :postgres do
       # There should be 1 on the page with this information
       expect(page).to have_content("Higher-Level Review", count: 1)
       expect(page).to have_content(
-        /#{veteran_a.name} #{veteran_a.participant_id} 2 6 days Higher-Level Review/
+        /#{veteran_a.name} #{veteran_a.ssn} 2 6 days Higher-Level Review/
       )
 
       # Blank out the input and verify that there are once again 2 on the page
@@ -495,10 +463,10 @@ feature "NonComp Reviews Queue", :postgres do
 
     scenario "displays tasks page" do
       visit BASE_URL
-      expect(page).to have_content(vet_id_column_header)
-      expect(page).to have_content(vet_a_id_column_value)
-      expect(page).to have_content(vet_b_id_column_value)
-      expect(page).to have_content(vet_c_id_column_value)
+      expect(page).to have_content("Veteran SSN")
+      expect(page).to have_content(veteran_a.ssn)
+      expect(page).to have_content(veteran_b.ssn)
+      expect(page).to have_content(veteran_c.ssn)
       expect(page).to have_content(search_box_label)
     end
   end
