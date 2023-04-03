@@ -4,5 +4,7 @@ class ConferenceLinkSerializer
   include FastJsonapi::ObjectSerializer
   attribute :host_pin
   attribute :host_link, &:host_link
-  attribute :alias
+  attribute :alias, &:alias_with_host
+  attribute :guest_pin, &:guest_pin
+  attribute :guest_link, &:guest_link
 end
