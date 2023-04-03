@@ -17,6 +17,8 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
     sync_notification_reports(all_active_ama_appeals.first(BATCH_LIMIT))
   end
 
+  private
+
   # A list of Appeals that have been outcoded within the last 24 hours
   def appeals_recently_outcoded
     Appeal
