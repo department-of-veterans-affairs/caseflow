@@ -24,28 +24,30 @@ class ContentionNotFoundRemediationJob < CaseflowJob
     RequestStore[:current_user] = User.system_user
     rius = find_contention_not_found_request_issues_updates
     total = rius.count
+    Rails.logger.info("ContentionNotFoundRemediationJob::Log - Found #{total} ContentionNotFound Request Issues Updates")
     if total > 0
       contention_ids = get_contention_ids(rius)
       remediate!(rius, contention_ids, total)
-      store_logs_in_s3_bucket
       puts @logs
+      store_logs_in_s3_bucket
     end
   end
 
   # Main method to loop through and remediate all CannotDeleteContention Request Issues Updates
-  def remediate!(rius, contention_ids, total)
+  def remediate!(request_issues_updates, contention_ids, total)
     index = 0
     while index < total
       begin
-        affected_request_issue = find_edited_request_issue(rius[index], contention_ids[index])
-        maybe_cancel_or_reprocess_request_issues_update!(affected_request_issue, rius[index], index)
-        sync_epe!(rius[index], affected_request_issue, index)
-        @remediated_request_issues_update_ids.push("RIU ID: #{rius[index].id}, RI ID: #{affected_request_issue.id}")
+        affected_request_issue = find_edited_request_issue(request_issues_updates[index], contention_ids[index])
+        maybe_cancel_or_reprocess_request_issues_update!(affected_request_issue, request_issues_updates[index], index)
+        sync_epe!(request_issues_updates[index], affected_request_issue, index)
+        @remediated_request_issues_update_ids.push("RIU ID: #{request_issues_updates[index].id}, RI ID: #{affected_request_issue.id}")
         index += 1
       rescue StandardError => error
         @logs.push("#{Time.zone.now} ContentionNotFoundRemediation::Error - Number: #{index} "\
-            " RIU ID: #{rius[index].id}.  RI ID: #{affected_request_issue&.id}.  #{error.message}.")
+            " RIU ID: #{request_issues_updates[index].id}.  RI ID: #{affected_request_issue&.id}.  #{error.message}.")
         index += 1
+        log_error(error)
         next
       end
     end
