@@ -44,14 +44,14 @@ class CavcRemandsController < ApplicationController
     :federal_circuit
   ].freeze
 
-  JMR_REQUIRED_PARAMS = [
+  JMR_JMPR_REQUIRED_PARAMS = [
     :judgement_date,
     :mandate_date
   ].freeze
 
   PERMITTED_PARAMS = [
     REMAND_REQUIRED_PARAMS,
-    JMR_REQUIRED_PARAMS,
+    JMR_JMPR_REQUIRED_PARAMS,
     MDR_REQUIRED_PARAMS,
     :remand_subtype,
     :source_form
@@ -59,7 +59,7 @@ class CavcRemandsController < ApplicationController
 
   def create
     new_cavc_remand = CavcRemand.create!(creation_params)
-    cavc_appeal = new_cavc_remand.remand_appeal.reload
+    cavc_appeal = new_cavc_remand.remand_appeal&.reload
     if FeatureToggle.enabled?(:cavc_remand_granted_substitute_appellant)
       create_appellant_substitution_and_cavc_remand_appellant_substitution(cavc_appeal, new_cavc_remand)
     end
@@ -214,9 +214,14 @@ class CavcRemandsController < ApplicationController
       when Constants.CAVC_REMAND_SUBTYPES.mdr
         REMAND_REQUIRED_PARAMS + MDR_REQUIRED_PARAMS
       else
-        REMAND_REQUIRED_PARAMS + JMR_REQUIRED_PARAMS
+        REMAND_REQUIRED_PARAMS + JMR_JMPR_REQUIRED_PARAMS
       end
     when Constants.CAVC_DECISION_TYPES.straight_reversal, Constants.CAVC_DECISION_TYPES.death_dismissal
+      REMAND_REQUIRED_PARAMS
+    when Constants.CAVC_DECISION_TYPES.other_dismissal, Constants.CAVC_DECISION_TYPES.affirmed,
+      Constants.CAVC_DECISION_TYPES.settlement
+      REMAND_REQUIRED_PARAMS
+    else
       REMAND_REQUIRED_PARAMS
     end
   end

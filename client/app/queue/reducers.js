@@ -22,6 +22,7 @@ import editCavRemandReducer from './cavc/editCavcRemand.slice';
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 
 import editClaimantReducer from './editAppellantInformation/editAppellantInformationSlice';
+import cavcDashboardReducer from './cavcDashboard/cavcDashboardReducer';
 
 export const initialState = {
   judges: {},
@@ -803,7 +804,8 @@ const rootReducer = combineReducers({
   mtv: mtvReducer,
   substituteAppellant: substituteAppellantReducer,
   cavcRemand: editCavRemandReducer,
-  editClaimantReducer
+  editClaimantReducer,
+  cavcDashboard: cavcDashboardReducer
 });
 
 export default timeFunction(

@@ -205,6 +205,14 @@ class WorkQueue::AppealSerializer
 
   attribute :veteran_file_number
 
+  attribute :veteran_participant_id do |object|
+    object&.veteran&.participant_id
+  end
+
+  attribute :efolder_link do
+    ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"]
+  end
+
   attribute :veteran_full_name do |object|
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
@@ -294,5 +302,14 @@ class WorkQueue::AppealSerializer
       .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
       .merge(@all_notifications.where(sms_notification_status: nil)
       .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).any?
+  end
+
+  attribute :cavc_remands_with_dashboard do |appeal|
+    @remands_with_dashboard = CavcRemand.where(source_appeal_id: appeal.id, cavc_decision_type:
+    [
+      Constants.CAVC_DECISION_TYPES.other_dismissal,
+      Constants.CAVC_DECISION_TYPES.affirmed,
+      Constants.CAVC_DECISION_TYPES.settlement
+    ]).count
   end
 end

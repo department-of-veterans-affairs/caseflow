@@ -377,7 +377,7 @@
     "timezone": "America/Chicago",
     "hold_hearings": true,
     "facility_locator_id": "vba_438",
-    "alternate_locations": ["vha_568", "vha_568A4"]
+    "alternate_locations": ["vha_568", "vha_568A4", "vba_438a"]
   },
   "RO39": {
     "label": "Denver regional office",

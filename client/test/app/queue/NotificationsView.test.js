@@ -50,6 +50,7 @@ const appeal = {
   docketNumber: '220715-1987',
   veteranFullName: 'Bob Smithschumm',
   veteranFileNumber: '200000161',
+  veteranParticipantId: '826209',
   hearings: [],
 };
 const state = {
@@ -81,6 +82,16 @@ describe('NotificationsTest', () => {
 
     expect(description).toBe('VA Notify sent these status notifications to the Appellant about their case.');
   });
+
+  it('renders download button', () => {
+    const { container } = setup(state);
+    const downloadButton = container.querySelector('#download-button');
+    const downloadButtonText = container.querySelector('#download-button').innerHTML;
+
+    expect(downloadButton).toBeInTheDocument();
+    expect(downloadButtonText).toBe('Download');
+  });
+
 
   it('matches snapshot', () => {
     const { container } = setup(state);

@@ -8,6 +8,7 @@ module Seeds
 
     def seed!
       create_limbo_appeals
+      create_appeal_no_issues
     end
 
     private
@@ -69,6 +70,13 @@ module Seeds
       person = appeal.claimants.first.person
       person.date_of_birth = nil
       person.save!
+    end
+
+    def create_appeal_no_issues
+      appeal = create(:appeal,
+                      :dispatched,
+                      issue_count: 0,
+                      veteran: create_veteran)
     end
   end
 end
