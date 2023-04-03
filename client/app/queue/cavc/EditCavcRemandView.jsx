@@ -155,6 +155,7 @@ export const EditCavcRemandView = () => {
       dateOfDeath={dateOfDeath}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
+      featureToggles={featureToggles}
     />
   );
 };

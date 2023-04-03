@@ -74,6 +74,7 @@ export const EditCavcRemandForm = ({
   substituteAppellantClaimantOptions,
   nodDate,
   dateOfDeath,
+  featureToggles,
   onCancel,
   onSubmit,
 }) => {
@@ -162,7 +163,6 @@ export const EditCavcRemandForm = ({
     setValue('issueIds', [...allIssueIds]);
   };
 
-  const featureToggles = useSelector((state) => state.ui.featureToggles);
   const isAppellantSubstitutedOptions = [
     { displayText: 'Yes',
       value: 'true',
@@ -464,10 +464,10 @@ export const EditCavcRemandForm = ({
       <div className="controls cf-app-segment">
         <Button
           type="submit"
-          name="continue"
+          name={ featureToggles.cavc_remand_granted_substitute_appellant ? "continue" : "submit" }
           classNames={['cf-right-side']}
         >
-          Continue
+          { featureToggles.cavc_remand_granted_substitute_appellant ? "Continue" : "Submit" }
         </Button>
         {onCancel && (
           <Button
