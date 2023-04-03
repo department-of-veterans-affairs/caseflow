@@ -637,10 +637,14 @@ class QueueApp extends React.PureComponent {
       appealId={props.match.params.appealId}
       {...props.match.params}
     />
-  )
+  );
 
-  routedCamoSendToBoardIntake = (props) => (
-    <CompleteTaskModal modalType="vha_send_to_board_intake" {...props.match.params} />
+  routedCamoDocumentsReadyForBvaIntake = (props) => (
+    <CompleteTaskModal modalType="vha_documents_ready_for_bva_intake_for_review" {...props.match.params} />
+  );
+
+  routedCamoReturnToBoardIntake = (props) => (
+    <CompleteTaskModal modalType="vha_return_to_board_intake" {...props.match.params} />
   );
 
   routedEMOReturnToBoardIntake = (props) => (
@@ -1129,9 +1133,15 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.value
+                  TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.value
                 }`}
-              render={this.routedCamoSendToBoardIntake}
+              render={this.routedCamoDocumentsReadyForBvaIntake}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_RETURN_TO_BOARD_INTAKE.value
+                }`}
+              render={this.routedCamoReturnToBoardIntake}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
