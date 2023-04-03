@@ -73,6 +73,7 @@ jobs:
           KNAPSACK_PRO_LOG_LEVEL: info
           WD_INSTALL_DIR: .webdrivers
           CI: true
+          REDIS_URL_CACHE: redis://redis:6379/0/cache/
 
     steps:
       - uses: actions/checkout@v3
