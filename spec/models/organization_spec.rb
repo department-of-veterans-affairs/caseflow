@@ -42,6 +42,22 @@ describe Organization, :postgres do
 
       expect(org.users.first).to eq user
     end
+
+    context "with membership_request" do
+      let!(:membership_request) do
+        user.membership_requests.create(
+          organization: org
+        )
+      end
+
+      it "marks the membership_request as cancelled" do
+        subject
+        membership_request.reload
+
+        expect(membership_request.status).to eq "cancelled"
+        expect(org.users.first).to eq user
+      end
+    end
   end
 
   describe ".status" do
@@ -247,6 +263,31 @@ describe Organization, :postgres do
           OrganizationCompletedTasksTab
         ]
       )
+    end
+  end
+
+  describe ".membership_requests" do
+    let(:org) { create(:organization) }
+
+    subject { org.membership_requests }
+
+    it "should return an empty list" do
+      expect(subject).to eq([])
+    end
+
+    context "When the organization has membership requests" do
+      let(:membership_requests) { create_list(:membership_request, 5) }
+
+      before do
+        membership_requests.each do |request|
+          request.organization = org
+          request.save
+        end
+      end
+
+      it "should include those membership requests" do
+        expect(subject).to include(*membership_requests)
+      end
     end
   end
 
