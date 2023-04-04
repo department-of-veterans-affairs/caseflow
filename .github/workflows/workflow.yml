@@ -69,6 +69,8 @@ jobs:
           KNAPSACK_PRO_LOG_LEVEL: info
           WD_INSTALL_DIR: .webdrivers
           CI: true
+          REDIS_URL_CACHE: redis://redis:6379/0/cache/
+          TEST_VACOLS_HOST: facols_db
 
     steps:
       - uses: actions/checkout@v3
