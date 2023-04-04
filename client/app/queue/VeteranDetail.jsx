@@ -11,13 +11,19 @@ import { getAppealValue } from './QueueActions';
 import Address from './components/Address';
 import BareList from '../components/BareList';
 import { AppealHasSubstitutionAlert } from './substituteAppellant/caseDetails/AppealHasSubstitutionAlert';
+import { CavcAppealHasSubstitutionAlert } from './cavc/caseDetails/CavcAppealHasSubstitutionAlert';
 import COPY from '../../COPY';
 
 /**
  * A component to display various details about the veteran including name, gender, date of birth, date of death,
  * address and email.
  */
-export const VeteranDetail = ({ veteran, substitutionAppealId, hasSameAppealSubstitution, stateOnly }) => {
+export const VeteranDetail = ({
+  veteran,
+  substitutionAppealId,
+  hasSameAppealSubstitution,
+  showPostCavcStreamMsg,
+  stateOnly }) => {
   const {
     address,
     full_name: fullName,
@@ -85,7 +91,11 @@ export const VeteranDetail = ({ veteran, substitutionAppealId, hasSameAppealSubs
       <div {...detailListStyling}>
         <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
         <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}</em></p>
-        {!hasSameAppealSubstitution && (
+        {showPostCavcStreamMsg &&
+         <CavcAppealHasSubstitutionAlert targetAppealId={substitutionAppealId} />
+        }
+
+        {!showPostCavcStreamMsg && !hasSameAppealSubstitution && (
           <AppealHasSubstitutionAlert
             targetAppealId={substitutionAppealId}
             hasSameAppealSubstitution={hasSameAppealSubstitution}
@@ -103,6 +113,7 @@ VeteranDetail.propTypes = {
    */
   substitutionAppealId: PropTypes.string,
   hasSameAppealSubstitution: PropTypes.bool,
+  showPostCavcStreamMsg: PropTypes.bool,
 
   /**
    * Veteran object returned from the back end
@@ -137,6 +148,7 @@ const mapStateToProps = (state, ownProps) => {
     veteranInfo: appeal?.veteranInfo,
     substitutions: appeal?.substitutions,
     hasSameAppealSubstitution: appeal?.hasSameAppealSubstitution,
+    showPostCavcStreamMsg: appeal?.showPostCavcStreamMsg,
     loading: !appeal,
     error: loadingVeteranInfo?.error
   };
@@ -162,6 +174,7 @@ const wrapVeteranDetailComponent = (WrappedComponent) => (
       veteranInfo: PropTypes.object,
       substitutions: PropTypes.arrayOf(PropTypes.object),
       hasSameAppealSubstitution: PropTypes.bool,
+      showPostCavcStreamMsg: PropTypes.bool,
       stateOnly: PropTypes.bool
     }
 
@@ -189,6 +202,7 @@ const wrapVeteranDetailComponent = (WrappedComponent) => (
           stateOnly={this.props.stateOnly}
           substitutionAppealId={this.props.substitutions?.[0]?.target_appeal_uuid} // eslint-disable-line camelcase
           hasSameAppealSubstitution={this.props.hasSameAppealSubstitution}
+          showPostCavcStreamMsg={this.props.showPostCavcStreamMsg}
           {...this.props.veteranInfo}
         />
       );

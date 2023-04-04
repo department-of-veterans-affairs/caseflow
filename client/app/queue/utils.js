@@ -448,6 +448,7 @@ export const prepareAppealForStore = (appeals) => {
         appeal.attributes['completed_hearing_on_previous_appeal?'],
       issues: prepareAppealIssuesForStore(appeal),
       decisionIssues: appeal.attributes.decision_issues,
+      substituteAppellantClaimantOptions: appeal.attributes.substitute_appellant_claimant_options,
       canEditRequestIssues: appeal.attributes.can_edit_request_issues,
       canEditCavcRemands: appeal.attributes.can_edit_cavc_remands,
       unrecognizedAppellantId: appeal.attributes.unrecognized_appellant_id,
@@ -503,6 +504,7 @@ export const prepareAppealForStore = (appeals) => {
         appeal.attributes.substitutions?.[0]?.target_appeal_uuid ===
         appeal.attributes.substitutions?.[0]?.source_appeal_uuid,
       remandSourceAppealId: appeal.attributes.remand_source_appeal_id,
+      showPostCavcStreamMsg: appeal.attributes.show_post_cavc_stream_msg,
       remandJudgeName: appeal.attributes.remand_judge_name,
       hasNotifications: appeal.attributes.has_notifications,
       locationHistory: prepareLocationHistoryForStore(appeal),
@@ -798,19 +800,41 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
 
   // Possibly add appellant substitution
   if (appeal.appellantSubstitution) {
-    timelineEvents.push({
-      type: 'substitutionDate',
-      createdAt: appeal.appellantSubstitution.substitution_date,
-    });
+    if (appeal.appellantSubstitution.histories) {
+      appeal.appellantSubstitution.histories.map( appellantSubstitutionHistory => {
+        if (appellantSubstitutionHistory.substitution_date) {
+          timelineEvents.push({
+            type: 'substitutionDate',
+            createdAt: appellantSubstitutionHistory.substitution_date,
+          });
+        }
 
-    timelineEvents.push({
-      type: 'substitutionProcessed',
-      createdAt: appeal.appellantSubstitution.created_at,
-      createdBy: appeal.appellantSubstitution.created_by,
-      originalAppellantFullName:
-        appeal.appellantSubstitution.original_appellant_full_name,
-      substituteFullName: appeal.appellantSubstitution.substitute_full_name,
-    });
+        timelineEvents.push({
+          type: 'substitutionProcessed',
+          createdAt: appellantSubstitutionHistory.created_at,
+          createdBy: appellantSubstitutionHistory.created_by,
+          originalAppellantFullName: appellantSubstitutionHistory.original_appellant_full_name,
+          originalAppellantSubstituteFullName: appellantSubstitutionHistory.original_appellant_substitute_full_name,
+          currentAppellantSubstituteFullName: appellantSubstitutionHistory.current_appellant_substitute_full_name,
+          currentAppellantFullName: appellantSubstitutionHistory.current_appellant_full_name
+        });
+      });
+    }
+    else {
+      timelineEvents.push({
+        type: 'substitutionDate',
+        createdAt: appeal.appellantSubstitution.substitution_date,
+      });
+
+      timelineEvents.push({
+        type: 'substitutionProcessed',
+        createdAt: appeal.appellantSubstitution.created_at,
+        createdBy: appeal.appellantSubstitution.created_by,
+        originalAppellantFullName:
+          appeal.appellantSubstitution.original_appellant_full_name,
+        currentAppellantSubstituteFullName: appeal.appellantSubstitution.substitute_full_name,
+      });
+    }
   }
 
   // Add any edits of NOD date
