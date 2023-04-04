@@ -100,7 +100,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content(veteran_a.ssn)
       expect(page).to have_content(veteran_b.ssn)
       expect(page).to have_content(veteran_c.ssn)
-      expect(page).to have_no_content(search_box_label)
+      expect(page).to have_content(search_box_label)
 
       # ordered by assigned_at descending
 
@@ -139,19 +139,19 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content(veteran_a.ssn)
         expect(page).to have_content(veteran_b.ssn)
         expect(page).to have_content(veteran_c.ssn)
-        expect(page).to have_no_content(search_box_label)
+        expect(page).to have_content(search_box_label)
 
         click_on veteran_a.name
         expect(page).to have_content("Form created by")
       end
     end
 
-    scenario "ordering reviews with participate id visable" do
+    scenario "ordering reviews" do
       visit BASE_URL
 
       order_buttons = {
         claimant_name: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[1]/span/span[2]'),
-        participant_id: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[2]/span/span[2]'),
+        ssn: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[2]/span/span[2]'),
         issues_count: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[3]/span/span[2]'),
         days_waiting: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span[1]/span[2]'),
         date_completed: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
@@ -178,26 +178,27 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.first.include?("Ccc")).to eq true
       expect(table_rows.last.include?("Aaa")).to eq true
 
-      # Participant ID desc
-      # order_buttons[:participant_id].click
-      # expect(page).to have_current_path(
-      #   "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=asc"
-      # )
-      # table_rows = current_table_rows
+      # Veteran SSN descending
+      order_buttons[:ssn].click
+      expect(page).to have_current_path(
+        "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=asc"
+      )
 
-      expect(table_rows.last.include?(hlr_b.veteran.participant_id)).to eq true
-      expect(table_rows.first.include?(hlr_a.veteran.participant_id)).to eq true
+      table_rows = current_table_rows
 
-      # Participant ID asc
-      # order_buttons[:participant_id].click
-      # expect(page).to have_current_path(
-      #   "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=desc"
-      # )
+      expect(table_rows.first.include?(hlr_b.veteran.ssn)).to be == true
+      expect(table_rows.last.include?(hlr_c.veteran.ssn)).to be == true
 
-      # table_rows = current_table_rows
+      # Veteran SSN ascending
+      order_buttons[:ssn].click
+      expect(page).to have_current_path(
+        "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=asc"
+      )
 
-      # expect(table_rows.last.include?(hlr_a.veteran.participant_id)).to eq true
-      # expect(table_rows.first.include?(hlr_b.veteran.participant_id)).to eq true
+      table_rows = current_table_rows
+
+      expect(table_rows.first.include?(hlr_c.veteran.ssn)).to be == true
+      expect(table_rows.last.include?(hlr_b.veteran.ssn)).to be == true
 
       # Issue count desc
       order_buttons[:issues_count].click
