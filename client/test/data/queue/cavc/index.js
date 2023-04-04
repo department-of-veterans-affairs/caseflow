@@ -33,3 +33,9 @@ export const supportedDecisionTypes = [
   'death_dismissal',
 ];
 export const supportedRemandTypes = ['jmr', 'jmpr', 'mdr'];
+
+export const nodDate = '2022-04-29T10:33:06.895-04:00';
+export const dateOfDeath = '2021-04-29T10:33:06.895-04:00';
+export const featureToggles = {
+  cavc_remand_granted_substitute_appellant: false
+};
