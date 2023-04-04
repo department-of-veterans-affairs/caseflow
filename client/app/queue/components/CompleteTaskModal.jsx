@@ -688,19 +688,7 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SEND_BUTTON,
-    submitDisabled: ({ state }) => {
-      const { otherInstructions, radio } = state;
-
-      let isValid = true;
-
-      if (radio === 'other') {
-        isValid = validInstructions(otherInstructions) && validRadio(radio);
-      } else {
-        isValid = validRadio(radio);
-      }
-
-      return !isValid;
-    }
+    submitDisabled
   }
 };
 
@@ -848,7 +836,7 @@ class CompleteTaskModal extends React.Component {
 
     let isValid = true;
 
-    if (modalType === 'vha_send_to_board_intake' || modalType === 'ready_for_review') {
+    if (modalType === 'ready_for_review') {
       isValid = validInstructions(instructions) && validRadio(radio);
     }
 
