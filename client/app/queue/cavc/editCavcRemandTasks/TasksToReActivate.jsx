@@ -9,7 +9,7 @@ import { TasksToReActivateSelectionTable } from './TasksToReActivateSelectionTab
 export const TasksToReActivate = ({ tasks, existingValues, setSelectedReActivateTaskIds }) => {
   const { control } = useFormContext();
   const fieldName = 'reActivateTaskIds';
-  const [reActivateTaskIds, setReActivateTaskIds] = useState(existingValues?.reActivateTaskIds || [])
+  const [reActivateTaskIds, setReActivateTaskIds] = useState(existingValues?.reActivateTaskIds || []);
 
   const formattedTasks = useMemo(() => {
     return tasks.map((task) => ({
@@ -29,6 +29,7 @@ export const TasksToReActivate = ({ tasks, existingValues, setSelectedReActivate
       setReActivateTaskIds(reActivateTaskIds.filter((taskId) => taskId !== changedId));
     }
     setSelectedReActivateTaskIds(reActivateTaskIds);
+
     return reActivateTaskIds;
   };
 

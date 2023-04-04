@@ -49,15 +49,15 @@ export const EditCavcRemandTasksView = () => {
     (task) => task.type === 'SendCavcRemandProcessedLetterTask');
   const cancelTaskIds = activeTasks.filter((task) => task.disabled && task.type !== 'MdrTask').map((disTask) => disTask.id);
 
-  const getReActivateTaksIds = (() => {
+  const getReActivateTaksIds = () => {
     if (closedSendCavcRemandProcessedLetterTask) {
-      return [closedSendCavcRemandProcessedLetterTask.id]
+      return [closedSendCavcRemandProcessedLetterTask.id];
     } else if (openSendCavcRemandProcessedLetterTask) {
-      return [openSendCavcRemandProcessedLetterTask.id]
-    } else {
-      return []
+      return [openSendCavcRemandProcessedLetterTask.id];
     }
-  });
+
+    return [];
+  };
 
   const reActivateTaskIds = getReActivateTaksIds();
   const [selectedCancelTaskIds, setSelectedCancelTaskIds] = useState(existingValues?.cancelTaskIds || []);
