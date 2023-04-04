@@ -104,7 +104,11 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # Params: appeal - The associated appeal record
   # Returns: The most recent notification report for this appeal
   def latest_vbms_uploaded_document(appeal)
-    VbmsUploadedDocument.where(appeal_id: appeal.id, appeal_type: appeal.class.name, document_type: "BVA Case Notifications")
+    VbmsUploadedDocument.where(
+      appeal_id: appeal.id,
+      appeal_type: appeal.class.name,
+      document_type: "BVA Case Notifications"
+    )
       .where.not(attempted_at: nil)
       .order(attempted_at: :desc)
       .first

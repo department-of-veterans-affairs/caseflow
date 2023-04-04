@@ -26,12 +26,14 @@ describe AmaNotificationEfolderSyncJob, type: :job do
         )
       end
     }
+    # rubocop:disable convention:Layout/LineLength
     let(:make_appeals_outcoded) {
       BvaDispatchTask.find(appeal_id: 6, assigned_to_type: "User").update!(status: "completed", closed_at: 2.days.ago)
       BvaDispatchTask.find(appeal_id: 6, assigned_to_type: "Organization").update!(status: "completed", closed_at: 2.days.ago)
-      BvaDispatchTask.find(appeal_id: 7, assigned_to_type: "User").update!(status: "completed", closed_at: today )
+      BvaDispatchTask.find(appeal_id: 7, assigned_to_type: "User").update!(status: "completed", closed_at: today)
       BvaDispatchTask.find(appeal_id: 7, assigned_to_type: "Organization").update!(status: "completed", closed_at: today)
     }
+    # rubocop:enable convention:Layout/LineLength
     let(:first_run_outcoded_appeals) { [Appeal.find(7)] }
     let(:second_run_outcoded_appeals) { [Appeal.find(7)] }
     let(:first_run_never_synced_appeals) { Appeal.first(5) + Appeal.last(2) }
@@ -40,6 +42,7 @@ describe AmaNotificationEfolderSyncJob, type: :job do
     let(:second_run_prev_synced_appeals) { Appeal.first(5) }
     let(:first_run_vbms_documents) { Appeal.first(5) }
     let(:second_run_vbms_documents) { first_run_vbms_documents + Appeal.last(2) }
+    # rubocop:enable Style/BlockDelimiters
 
     before do
       AmaNotificationEfolderSyncJob::BATCH_LIMIT = 5

@@ -40,7 +40,12 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
       .pluck(:appeal_id)
 
     # A list of Appeals that have never had notification reports generated and synced with VBMS
-    LegacyAppeal.where(id: RootTask.active.where(appeal_type: "LegacyAppeal").pluck(:appeal_id)).where.not(id: appeal_ids_synced)
+    LegacyAppeal.where(
+      id: RootTask.active
+      .where(appeal_type: "LegacyAppeal")
+      .pluck(:appeal_id)
+    )
+      .where.not(id: appeal_ids_synced)
   end
 
   # A list of appeals that already have notification reports uploaded
@@ -104,7 +109,11 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   # Params: appeal - The associated appeal record
   # Returns: The most recent notification report for this appeal
   def latest_vbms_uploaded_document(appeal)
-    VbmsUploadedDocument.where(appeal_id: appeal.id, appeal_type: appeal.class.name, document_type: "BVA Case Notifications")
+    VbmsUploadedDocument.where(
+      appeal_id: appeal.id,
+      appeal_type: appeal.class.name,
+      document_type: "BVA Case Notifications"
+    )
       .where.not(attempted_at: nil)
       .order(attempted_at: :desc)
       .first
