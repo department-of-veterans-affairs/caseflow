@@ -9,6 +9,7 @@ class ContentionNotFoundRemediationJob < CaseflowJob
   def initialize
     @logs = ["\nVBMS::ContentionNotFound Remediation Log"]
     @remediated_request_issues_update_ids = []
+    super
   end
 
   # rubocop:disable all
