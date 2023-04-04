@@ -21,6 +21,9 @@ module Seeds
       create_tasks
       create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
       create_attorney_case_review_for_legacy_appeals
+      create_vha_camo_queue_assigned
+      create_vha_camo_queue_in_progress
+      create_vha_camo_queue_completed
     end
 
     private
@@ -1132,6 +1135,28 @@ module Seeds
         )
       end
     end
+
+    def create_vha_camo_queue_assigned
+      5.times do
+        create(:vha_document_search_task_with_assigned_to)
+      end
+    end
+
+    def create_vha_camo_queue_in_progress
+      5.times do
+        appeal = create(:appeal)
+        root_task = create(:task, appeal: appeal,assigned_to: VhaCamo.singleton)
+        pre_docket_task = FactoryBot.create(:pre_docket_task,:in_progress,assigned_to: VhaCamo.singleton, appeal: appeal, parent: root_task)
+        create(:task,:in_progress,assigned_to: VhaCamo.singleton, appeal: appeal, parent: pre_docket_task)
+      end
+    end
+
+    def create_vha_camo_queue_completed
+      task_list = create_list(:vha_document_search_task,5)
+      appeal_ids = task_list.map{ |k,v| k['appeal_id']}
+      Task.where(appeal_id: appeal_ids).update_all(closed_at: Time.zone.now, status: Constants.TASK_STATUSES.completed)
+    end
+
   end
   # rubocop:enable Metrics/ClassLength
   # rubocop:enable Metrics/AbcSize
