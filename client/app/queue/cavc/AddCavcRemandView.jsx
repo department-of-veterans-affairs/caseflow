@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React, { useState, useEffect, useMemo } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect, useSelector } from 'react-redux';
@@ -215,32 +216,32 @@ const AddCavcRemandView = (props) => {
     (Boolean(judgementDate) && validateDateNotInFuture(judgementDate)) || !mandateAvailable();
   const validMandateDate = () =>
     (Boolean(mandateDate) && validateDateNotInFuture(mandateDate)) || !mandateAvailable();
-  const dates = [nodDate, dateOfDeath].filter(Boolean).map((d) => (isDate(d) ? d : parseISO(d)));
+  const dates = [nodDate, dateOfDeath].filter(Boolean).map((date) => (isDate(date) ? date : parseISO(date)));
   const [minSubstitutionDateError, setMinSubstitutionDateError] = useState(false);
   const [futureSubstitutionDateError, setFutureSubstitutionDateError] = useState(false);
 
-  const onSubstitutionDateChange = (val) => {
-    setAppellantSubstitutionGrantedDate(val);
-
-    if (!validateDateNotInPriorNodOrDod(val)) {
-      setMinSubstitutionDateError(true)
-      setFutureSubstitutionDateError(false)
-    } else if (!validateDateNotInFuture(val)) {
-      setMinSubstitutionDateError(false)
-      setFutureSubstitutionDateError(true);
-    } else {
-      setMinSubstitutionDateError(false)
-      setFutureSubstitutionDateError(false);
-    }
-  };
-
-  const validateDateNotInPriorNodOrDod = ((date) => {
+  const validateDateNotInPriorNodOrDod = (date) => {
     if (parseISO(date) < max(dates)) {
       return false;
     }
 
     return true;
-  });
+  };
+
+  const onSubstitutionDateChange = (val) => {
+    setAppellantSubstitutionGrantedDate(val);
+
+    if (!validateDateNotInPriorNodOrDod(val)) {
+      setMinSubstitutionDateError(true);
+      setFutureSubstitutionDateError(false);
+    } else if (!validateDateNotInFuture(val)) {
+      setMinSubstitutionDateError(false);
+      setFutureSubstitutionDateError(true);
+    } else {
+      setMinSubstitutionDateError(false);
+      setFutureSubstitutionDateError(false);
+    }
+  };
 
   const validAppellantSubstitutionGrantedDateDate = () => {
     return (!featureToggles.cavc_remand_granted_substitute_appellant ||
@@ -249,7 +250,7 @@ const AddCavcRemandView = (props) => {
         !futureSubstitutionDateError && !minSubstitutionDateError
       )
     );
-  }
+  };
 
   const validSubstituteAppellantClaimant = () =>
     (!featureToggles.cavc_remand_granted_substitute_appellant ||
@@ -299,13 +300,13 @@ const AddCavcRemandView = (props) => {
 
   const substitutionDateErrormsg = () => {
     if (minSubstitutionDateError) {
-      return SUBSTITUTE_DATE_ERRORS.min_date_error + ` - ${format(new Date(max(dates)), 'MM/dd/yyyy')}`;
+      return `${SUBSTITUTE_DATE_ERRORS.min_date_error} - ${format(new Date(max(dates)), 'MM/dd/yyyy')}`;
     } else if (futureSubstitutionDateError) {
       return SUBSTITUTE_DATE_ERRORS.in_future;
-    } else {
-      return SUBSTITUTE_DATE_ERRORS.invalid
     }
-  }
+
+    return SUBSTITUTE_DATE_ERRORS.invalid;
+  };
 
   const submit = () => {
     const payload = {
@@ -597,3 +598,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddCavcRemandView));
+/* eslint-enable max-lines */

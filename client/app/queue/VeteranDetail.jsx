@@ -18,7 +18,12 @@ import COPY from '../../COPY';
  * A component to display various details about the veteran including name, gender, date of birth, date of death,
  * address and email.
  */
-export const VeteranDetail = ({ veteran, substitutionAppealId, hasSameAppealSubstitution, showPostCavcStreamMsg, stateOnly }) => {
+export const VeteranDetail = ({
+  veteran,
+  substitutionAppealId,
+  hasSameAppealSubstitution,
+  showPostCavcStreamMsg,
+  stateOnly }) => {
   const {
     address,
     full_name: fullName,
