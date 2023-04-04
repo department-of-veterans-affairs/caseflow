@@ -4,6 +4,10 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
   include ActiveJob::TestHelper
   let(:current_user) { create(:user, roles: ["System Admin"]) }
 
+  before do
+    Seeds::NotificationEvents.new.seed!
+  end
+
   describe "perform" do
     # rubocop:disable Style/BlockDelimiters
     let(:today) { Time.now.utc.iso8601 }
