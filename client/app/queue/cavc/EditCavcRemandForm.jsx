@@ -162,10 +162,12 @@ export const EditCavcRemandForm = ({
     setValue('issueIds', [...allIssueIds]);
   };
 
+
+  const claimantOptionsExists = Array.isArray(substituteAppellantClaimantOptions) && substituteAppellantClaimantOptions.length > 0;
   const isAppellantSubstitutedOptions = [
     { displayText: 'Yes',
       value: 'true',
-      disabled: !substituteAppellantClaimantOptions
+      disabled: !claimantOptionsExists
      },
     { displayText: 'No',
       value: 'false' }
@@ -231,6 +233,10 @@ export const EditCavcRemandForm = ({
             onChange={(val) => setIsAppellantSubstitutedValue(val) }
             strongLabel
           />
+        }
+
+        {featureToggles.cavc_remand_granted_substitute_appellant && !claimantOptionsExists &&
+          <p>No existing relationships were found.</p>
         }
 
         { featureToggles.cavc_remand_granted_substitute_appellant && isAppellantSubstitutedYes &&

@@ -142,10 +142,12 @@ const AddCavcRemandView = (props) => {
     return dod ? parseISO(dod) : null;
   }, [appeal.veteranInfo]);
 
+  const claimantOptionsExists = Array.isArray(substituteAppellantClaimantOptions) && substituteAppellantClaimantOptions.length > 0;
+
   const isAppellantSubstitutedOptions = [
     { displayText: 'Yes',
       value: 'true',
-      disabled: !substituteAppellantClaimantOptions
+      disabled: !claimantOptionsExists
     },
     { displayText: 'No',
       value: 'false' }
@@ -534,7 +536,7 @@ const AddCavcRemandView = (props) => {
       {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
       {docketNumberField}
       {featureToggles.cavc_remand_granted_substitute_appellant && isAppellantSubstitutedField}
-      {featureToggles.cavc_remand_granted_substitute_appellant && !substituteAppellantClaimantOptions &&
+      {featureToggles.cavc_remand_granted_substitute_appellant && !claimantOptionsExists &&
        <p>No existing relationships were found.</p>
       }
       {featureToggles.cavc_remand_granted_substitute_appellant &&
