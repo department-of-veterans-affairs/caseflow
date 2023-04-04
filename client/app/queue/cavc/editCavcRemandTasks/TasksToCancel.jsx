@@ -9,7 +9,7 @@ import { TasksToCancelSelectionTable } from './TasksToCancelSelectionTable';
 export const TasksToCancel = ({ tasks, existingValues, setSelectedCancelTaskIds }) => {
   const { control } = useFormContext();
   const fieldName = 'cancelTaskIds';
-  const [cancelTaskIds, setCancelTaskIds] = useState(existingValues?.cancelTaskIds || [])
+  const [cancelTaskIds, setCancelTaskIds] = useState(existingValues?.cancelTaskIds || []);
 
   const formattedTasks = useMemo(() => {
     return tasks.map((task) => ({
@@ -20,15 +20,16 @@ export const TasksToCancel = ({ tasks, existingValues, setSelectedCancelTaskIds 
     }));
   }, [tasks]);
 
-  setSelectedCancelTaskIds(cancelTaskIds)
+  setSelectedCancelTaskIds(cancelTaskIds);
 
   const handleCheck = (changedId, checked) => {
     if (checked) {
-      setCancelTaskIds(cancelTaskIds.filter((taskId) => taskId !== changedId))
+      setCancelTaskIds(cancelTaskIds.filter((taskId) => taskId !== changedId));
     } else {
-      setCancelTaskIds([...cancelTaskIds, changedId])
+      setCancelTaskIds([...cancelTaskIds, changedId]);
     }
-    setSelectedCancelTaskIds(cancelTaskIds)
+    setSelectedCancelTaskIds(cancelTaskIds);
+
     return cancelTaskIds;
   };
 

@@ -141,12 +141,9 @@ class CavcRemandsController < ApplicationController
         current_appellant_veteran_participant_id: cavc_appeal.veteran.participant_id
       )
     end
-    cavc_remands_appellant_substitution = new_cavc_remand.cavc_remands_appellant_substitution
-    cavc_remands_appellant_substitution.update(
-      cavc_remand_appellant_substitution_params
-      .merge!(substitute_participant_id: params[:participant_id])
-      .except(:created_by_id)
-    )
+    remands_substitution_params = cavc_remand_appellant_substitution_params.except(:created_by_id)
+    remands_substitution_params[:substitute_participant_id] = params[:participant_id]
+    new_cavc_remand.cavc_remands_appellant_substitution.update(remands_substitution_params)
   end
 
   def appellant_substitution_params(substitution_date = params[:substitution_date],
@@ -230,8 +227,8 @@ class CavcRemandsController < ApplicationController
     return {} unless FeatureToggle.enabled?(:cavc_remand_granted_substitute_appellant)
 
     if cavc_appeal.reload.appellant_substitution
-      appellant_substitution_data = WorkQueue::AppellantSubstitutionSerializer.new(
-        cavc_appeal.appellant_substitution).serializable_hash[:data][:attributes]
+      appellant_substitution_data = WorkQueue::AppellantSubstitutionSerializer.new(cavc_appeal.appellant_substitution)
+        .serializable_hash[:data][:attributes]
     end
 
     {
