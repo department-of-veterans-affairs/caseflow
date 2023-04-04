@@ -5,6 +5,10 @@ describe AmaNotificationEfolderSyncJob, type: :job do
   let(:current_user) { create(:user, roles: ["System Admin"]) }
 
   describe "perform" do
+    before do
+      Seeds::NotificationEvents.new.seed!
+    end
+
     # rubocop:disable Style/BlockDelimiters
     let(:today) { Time.now.utc.iso8601 }
     let(:appeals) {

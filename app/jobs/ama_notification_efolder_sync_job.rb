@@ -22,12 +22,9 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # A list of Appeals that have been outcoded within the last 24 hours
   def appeals_recently_outcoded
     Appeal
-      .where(vacols_id: Notification.where(
-        notified_at: 1.day.ago..Time.zone.now,
-        appeals_type: "LegacyAppeal",
-        event_type: ["Appeal decision mailed (Non-contested claims)", "Appeal decision mailed (Contested claims)"]
-      )
-      .pluck(:appeals_id)
+      .where(id: BvaDispatchTask.where(closed_at: 1.day.ago..Time.zone.now)
+      .where(appeal_type: "Appeal", status: "completed")
+      .pluck(:appeal_id)
       .uniq)
   end
 
