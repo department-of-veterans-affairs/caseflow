@@ -22,12 +22,12 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   # A list of Appeals that have been outcoded within the last 24 hours
   def appeals_recently_outcoded
     LegacyAppeal
-      .where(vacols_id: Notification.where(
-        notified_at: 1.day.ago..Time.zone.now,
-        appeals_type: "LegacyAppeal",
-        event_type: ["Appeal decision mailed (Non-contested claims)", "Appeal decision mailed (Contested claims)"]
+      .where(id: RootTask.where(
+        appeal_type: "LegacyAppeal",
+        status: "completed",
+        closed_at: 1.day.ago..Time.zone.now
       )
-      .pluck(:appeals_id)
+      .pluck(:appeal_id)
       .uniq)
   end
 
@@ -40,11 +40,8 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
       .pluck(:appeal_id)
 
     # A list of Appeals that have never had notification reports generated and synced with VBMS
-    LegacyAppeal.where(
-      id: RootTask.active
-      .where(appeal_type: "LegacyAppeal")
-      .pluck(:appeal_id)
-    )
+    LegacyAppeal
+      .where(id: RootTask.active.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
       .where.not(id: appeal_ids_synced)
   end
 
@@ -99,7 +96,8 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   # Params: vacols_id - The vacols_id of the appeal record that the notification is associated
   # Returns: The most recent notification record
   def last_notification_of_appeal(vacols_id)
-    Notification.where(appeals_id: vacols_id)
+    Notification
+      .where(appeals_id: vacols_id)
       .where.not(notified_at: nil)
       .order(notified_at: :desc)
       .first
@@ -109,11 +107,8 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   # Params: appeal - The associated appeal record
   # Returns: The most recent notification report for this appeal
   def latest_vbms_uploaded_document(appeal)
-    VbmsUploadedDocument.where(
-      appeal_id: appeal.id,
-      appeal_type: appeal.class.name,
-      document_type: "BVA Case Notifications"
-    )
+    VbmsUploadedDocument
+      .where(appeal_id: appeal.id, appeal_type: appeal.class.name, document_type: "BVA Case Notifications")
       .where.not(attempted_at: nil)
       .order(attempted_at: :desc)
       .first
