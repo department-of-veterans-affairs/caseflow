@@ -17,14 +17,14 @@ module Seeds
     end
 
     def seed!
-      # create_ama_appeals
-      # create_tasks
-      # create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
-      # create_attorney_case_review_for_legacy_appeals
-      # create_vha_camo_queue_assigned
-      # create_vha_camo_queue_in_progress
-      # create_vha_camo_queue_completed
-      # create_vha_caregiver_queue_assigned
+      create_ama_appeals
+      create_tasks
+      create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
+      create_attorney_case_review_for_legacy_appeals
+      create_vha_camo_queue_assigned
+      create_vha_camo_queue_in_progress
+      create_vha_camo_queue_completed
+      create_vha_caregiver_queue_assigned
       create_vha_caregiver_queue_in_progress
       create_vha_caregiver_queue_completed
     end
