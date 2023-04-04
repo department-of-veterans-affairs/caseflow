@@ -17,13 +17,16 @@ module Seeds
     end
 
     def seed!
-      create_ama_appeals
-      create_tasks
-      create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
-      create_attorney_case_review_for_legacy_appeals
-      create_vha_camo_queue_assigned
-      create_vha_camo_queue_in_progress
-      create_vha_camo_queue_completed
+      # create_ama_appeals
+      # create_tasks
+      # create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
+      # create_attorney_case_review_for_legacy_appeals
+      # create_vha_camo_queue_assigned
+      # create_vha_camo_queue_in_progress
+      # create_vha_camo_queue_completed
+      # create_vha_caregiver_queue_assigned
+      create_vha_caregiver_queue_in_progress
+      create_vha_caregiver_queue_completed
     end
 
     private
@@ -1138,7 +1141,7 @@ module Seeds
 
     def create_vha_camo_queue_assigned
       5.times do
-        create(:vha_document_search_task_with_assigned_to)
+        create(:vha_document_search_task_with_assigned_to,assigned_to: VhaCamo.Singleton)
       end
     end
 
@@ -1152,11 +1155,28 @@ module Seeds
     end
 
     def create_vha_camo_queue_completed
-      task_list = create_list(:vha_document_search_task,5)
-      appeal_ids = task_list.map{ |k,v| k['appeal_id']}
-      Task.where(appeal_id: appeal_ids).update_all(closed_at: Time.zone.now, status: Constants.TASK_STATUSES.completed)
+      5.times do
+        create(:vha_document_search_task_with_assigned_to,:completed, assigned_to: VhaCamo.singleton)
+      end
     end
 
+    def create_vha_caregiver_queue_assigned
+      5.times do
+        create(:vha_document_search_task_with_assigned_to,assigned_to: VhaCaregiverSupport.singleton)
+      end
+    end
+
+    def create_vha_caregiver_queue_in_progress
+      5.times do
+        create(:vha_document_search_task_with_assigned_to,:in_progress, assigned_to: VhaCaregiverSupport.singleton)
+      end
+    end
+
+    def create_vha_caregiver_queue_completed
+      5.times do
+        create(:vha_document_search_task_with_assigned_to,:completed, assigned_to: VhaCaregiverSupport.singleton)
+      end
+    end
   end
   # rubocop:enable Metrics/ClassLength
   # rubocop:enable Metrics/AbcSize

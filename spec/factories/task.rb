@@ -526,8 +526,8 @@ FactoryBot.define do
       end
 
       factory :vha_document_search_task_with_assigned_to, class: VhaDocumentSearchTask do
-        parent { create(:pre_docket_task, assigned_to: VhaCamo.singleton, appeal: appeal) }
-        assigned_to { VhaCamo.singleton }
+        parent { create(:pre_docket_task, assigned_to: assigned_to, appeal: appeal) }
+        assigned_to { :assigned_to }
         assigned_by { nil }
       end
 
