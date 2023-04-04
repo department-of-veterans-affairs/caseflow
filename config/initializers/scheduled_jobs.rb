@@ -42,5 +42,6 @@ SCHEDULED_JOBS = {
     "travel_board_hearing_sync_job" => Hearings::TravelBoardHearingSyncJob,
     "notification_efolder_sync_job" => NotificationEfolderSyncJob,
     "change_hearing_request_type_task_cancellation_job" => ChangeHearingRequestTypeTaskCancellationJob,
-    "cannot_delete_contention_remediation_job" => CannotDeleteContentionRemediationJob
+    "cannot_delete_contention_remediation_job" => CannotDeleteContentionRemediationJob,
+    "contention_not_found_remediation_job" => ContentionNotFoundRemediationJob
 }.freeze
