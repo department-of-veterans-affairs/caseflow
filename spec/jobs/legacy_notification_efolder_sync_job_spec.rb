@@ -37,7 +37,7 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
     }
 
     let(:first_run_outcoded_appeals) { [LegacyAppeal.find(7)] }
-    let(:second_run_outcoded_appeals) { [LegacyAppeal.find(7)] }
+    let(:second_run_outcoded_appeals) { [] }
     let(:first_run_never_synced_appeals) { LegacyAppeal.first(5) + LegacyAppeal.last(2) }
     let(:second_run_never_synced_appeals) { LegacyAppeal.last(2) }
     let(:first_run_prev_synced_appeals) { [] }
@@ -71,6 +71,9 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
     end
 
     context "second run" do
+      before do
+        RootTask.find(appeal_id: 7).update!(closed_at: 25.hours.ago)
+      end
       it "get all ama appeals that have been recently outcoded" do
         expect((job.send(:appeals_recently_outcoded).to eq(second_run_outcoded_appeals)))
       end

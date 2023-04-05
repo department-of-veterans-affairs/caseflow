@@ -60,11 +60,11 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
       .reverse.pluck(:appeal_id)
 
     # Appeals for all the previously synced reports from oldest to newest
-    filter_out_inactive_appeals(previously_synced_appeal_ids)
+    get_appeals_from_prev_synced_ids(previously_synced_appeal_ids).compact
   end
 
-  def filter_out_inactive_appeals(appeal_ids)
-    appeal_ids.select do |appeal_id|
+  def get_appeals_from_prev_synced_ids(appeal_ids)
+    appeal_ids.map do |appeal_id|
       begin
         appeal = LegacyAppeal.find(appeal_id)
         if appeal.active?
@@ -72,7 +72,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
           latest_notification_report = latest_vbms_uploaded_document(appeal)
           notification_timestamp = latest_appeal_notification.notified_at || latest_appeal_notification.created_at
 
-          notification_timestamp > latest_notification_report.attempted_at
+          (notification_timestamp > latest_notification_report.attempted_at?) ? appeal : nil
         end
       rescue StandardError => error
         log_error(error)

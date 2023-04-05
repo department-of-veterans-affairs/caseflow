@@ -39,7 +39,7 @@ describe AmaNotificationEfolderSyncJob, type: :job do
     }
     # rubocop:enable Layout/LineLength
     let(:first_run_outcoded_appeals) { [Appeal.find(7)] }
-    let(:second_run_outcoded_appeals) { [Appeal.find(7)] }
+    let(:second_run_outcoded_appeals) { [] }
     let(:first_run_never_synced_appeals) { Appeal.first(5) + Appeal.last(2) }
     let(:second_run_never_synced_appeals) { Appeal.last(2) }
     let(:first_run_prev_synced_appeals) { [] }
@@ -73,6 +73,10 @@ describe AmaNotificationEfolderSyncJob, type: :job do
     end
 
     context "second run" do
+      before do
+        BvaDispatchTask.find(appeal_id: 7, assigned_to_type: "User").update!(closed_at: 25.hours.ago)
+        BvaDispatchTask.find(appeal_id: 7, assigned_to_type: "Organization").update!(closed_at: 25.hours.ago)
+      end
       it "get all ama appeals that have been recently outcoded" do
         expect((job.send(:appeals_recently_outcoded).to eq(second_run_outcoded_appeals)))
       end
