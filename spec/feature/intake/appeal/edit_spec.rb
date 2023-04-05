@@ -347,6 +347,212 @@ feature "Appeal Edit issues", :all_dbs do
     end
   end
 
+  def add_contested_claim_issue
+    click_intake_add_issue
+    click_intake_no_matching_issues
+
+    # add the cc issue
+    dropdown_select_string = "Select or enter..."
+    benefit_text = "Insurance"
+
+    # Select the benefit type
+    all(".cf-select__control", text: dropdown_select_string).first.click
+    find("div", class: "cf-select__option", text: benefit_text).click
+
+    # Select the issue category
+    find(".cf-select__control", text: dropdown_select_string).click
+    find("div", class: "cf-select__option", text: "Contested Death Claim | Intent of Insured").click
+
+    # fill in date and issue description
+    fill_in "Decision date", with: 1.day.ago.to_date.mdY.to_s
+    fill_in "Issue description", with: "CC Instructions"
+
+    # click buttons
+    click_on "Add this issue"
+    click_on "Save"
+    click_on "Yes, save"
+  end
+
+  context "A contested claim is added to an evidence submission appeal" do
+    let!(:cc_appeal) do
+      create(:appeal,
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.evidence_submission,
+             veteran_is_not_claimant: false,
+             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+    end
+
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:cc_appeal_workflow)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      ClerkOfTheBoard.singleton
+    end
+
+    scenario "the cc_appeal_workflow feature toggle is not enabled" do
+      FeatureToggle.disable!(:cc_appeal_workflow)
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      assert page.has_content?("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be true
+    end
+
+    scenario "a cc issue is assigned to an evidence submission appeal" do
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      assert page.has_content?("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
+      ).to eql(cc_appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask"))
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
+      ).to eql(ClerkOfTheBoard.singleton)
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_by
+      ).to eql(current_user)
+    end
+  end
+
+  context "A contested claim is added to an hearing appeal" do
+    let!(:cc_appeal) do
+      create(:appeal,
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.hearing,
+             veteran_is_not_claimant: false,
+             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+    end
+
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:cc_appeal_workflow)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      ClerkOfTheBoard.singleton
+    end
+
+    scenario "a cc issue is assigned to a hearing appeal" do
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      assert page.has_content?("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
+      ).to eql(cc_appeal.tasks.find_by(type: "ScheduleHearingTask"))
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
+      ).to eql(ClerkOfTheBoard.singleton)
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_by
+      ).to eql(current_user)
+    end
+  end
+
+  context "A contested claim is added to a direct review appeal" do
+    let!(:cc_appeal) do
+      create(:appeal,
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             veteran_is_not_claimant: false,
+             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+    end
+
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:cc_appeal_workflow)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      ClerkOfTheBoard.singleton
+    end
+
+    scenario "a cc issue is assigned to a direct review appeal" do
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      assert page.has_content?("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
+      ).to eql(cc_appeal.tasks.find_by(type: "DistributionTask"))
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
+      ).to eql(ClerkOfTheBoard.singleton)
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_by
+      ).to eql(current_user)
+    end
+  end
+
+  context "A cc issue is added to a cc appeal with the initial letter task" do
+    let!(:cc_appeal) do
+      create(:appeal,
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             veteran_is_not_claimant: false,
+             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+    end
+
+    let(:initial_letter_task) do
+      SendInitialNotificationLetterTask.create!(
+        appeal: cc_appeal,
+        parent: appeal.tasks.find_by(type: "DistributionTask"),
+        assigned_to: ClerkOfTheBoard.singleton,
+        assigned_by: current_user
+      )
+    end
+
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:cc_appeal_workflow)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      ClerkOfTheBoard.singleton
+    end
+
+    scenario "if the first task is open, a 2nd SendInitialNotificationLetterTask is not created" do
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      assert page.has_content?("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 1
+      # expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask")).to be initial_letter_task
+    end
+
+    scenario "if the first task is completed, a new SendInitialNotificationLetterTask is created" do
+      initial_letter_task.completed!
+
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      assert page.has_content?("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 2
+      expect(cc_appeal.reload.tasks.where(
+        type: "SendInitialNotificationLetterTask"
+      ).where(status: "assigned").count).to eq 1
+    end
+
+    scenario "if the first task is cancelled, a new SendInitialNotificationLetterTask is created" do
+      initial_letter_task.cancelled!
+
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      assert page.has_content?("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 2
+      expect(cc_appeal.reload.tasks.where(
+        type: "SendInitialNotificationLetterTask"
+      ).where(status: "assigned").count).to eq 1
+    end
+  end
+
   context "User is a member of the Supervisory Senior Council" do
     let!(:organization) { SupervisorySeniorCouncil.singleton }
     let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
