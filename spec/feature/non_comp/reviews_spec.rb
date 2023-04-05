@@ -273,39 +273,6 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.first.include?(later_date)).to eq true
     end
 
-    context "with veteran ssn visable" do
-      before { FeatureToggle.enable!(:decision_review_queue_ssn_column) }
-      after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
-
-      scenario "ordering reviews" do
-        visit BASE_URL
-
-        ssn = find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[2]/span/span[2]')
-
-        # Veteran SSN ascending
-        ssn.click
-        expect(page).to have_current_path(
-          "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=asc"
-        )
-
-        table_rows = current_table_rows
-
-        expect(table_rows.last.include?(hlr_b.veteran.ssn)).to be == true
-        expect(table_rows.first.include?(hlr_c.veteran.ssn)).to be == true
-
-        # Veteran SSN descending
-        ssn.click
-        expect(page).to have_current_path(
-          "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=desc"
-        )
-
-        table_rows = current_table_rows
-
-        expect(table_rows.last.include?(hlr_c.veteran.ssn)).to be == true
-        expect(table_rows.first.include?(hlr_b.veteran.ssn)).to be == true
-      end
-    end
-
     context("veteran with null first and last name") do
       let(:veteran_b) do
         create(:veteran, first_name: "", last_name: "", participant_id: "601111772")
@@ -316,7 +283,7 @@ feature "NonComp Reviews Queue", :postgres do
 
         order_buttons = {
           claimant_name: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[1]/span/span[2]'),
-          participant_id: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[2]/span/span[2]'),
+          ssn: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[2]/span/span[2]'),
           issues_count: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[3]/span/span[2]'),
           days_waiting: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span[1]/span[2]'),
           date_completed: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
@@ -383,13 +350,13 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Higher-Level Review", count: 2)
     end
 
-    scenario "searching reviews by participant id" do
-      visit BASE_URL
+    scenario "searching reviews by ssn" do
+      visit "decision_reviews/nco"
 
       # There should be 2 on the page
       expect(page).to have_content("Higher-Level Review", count: 2)
 
-      fill_in "search", with: veteran_a.participant_id
+      fill_in "search", with: veteran_a.ssn
 
       # There should be 1 on the page with this information
       expect(page).to have_content("Higher-Level Review", count: 1)
@@ -402,47 +369,23 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content("Higher-Level Review", count: 2)
     end
 
-    context "with decision_review_queue_ssn_column feature toggle enabled" do
-      before { FeatureToggle.enable!(:decision_review_queue_ssn_column) }
-      after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
+    scenario "searching reviews by file number" do
+      visit "decision_reviews/nco"
 
-      scenario "searching reviews by ssn" do
-        visit "decision_reviews/nco"
+      # There should be 2 on the page
+      expect(page).to have_content("Higher-Level Review", count: 2)
 
-        # There should be 2 on the page
-        expect(page).to have_content("Higher-Level Review", count: 2)
+      fill_in "search", with: veteran_a.file_number
 
-        fill_in "search", with: veteran_a.ssn
+      # There should be 1 on the page with this information
+      expect(page).to have_content("Higher-Level Review", count: 1)
+      expect(page).to have_content(
+        /#{veteran_a.name} #{veteran_a.ssn} 2 6 days Higher-Level Review/
+      )
 
-        # There should be 1 on the page with this information
-        expect(page).to have_content("Higher-Level Review", count: 1)
-        expect(page).to have_content(
-          /#{veteran_a.name} #{veteran_a.ssn} 2 6 days Higher-Level Review/
-        )
-
-        # Blank out the input and verify that there are once again 2 on the page
-        fill_in("search", with: nil, fill_options: { clear: :backspace })
-        expect(page).to have_content("Higher-Level Review", count: 2)
-      end
-
-      scenario "searching reviews by file number" do
-        visit "decision_reviews/nco"
-
-        # There should be 2 on the page
-        expect(page).to have_content("Higher-Level Review", count: 2)
-
-        fill_in "search", with: veteran_a.file_number
-
-        # There should be 1 on the page with this information
-        expect(page).to have_content("Higher-Level Review", count: 1)
-        expect(page).to have_content(
-          /#{veteran_a.name} #{veteran_a.ssn} 2 6 days Higher-Level Review/
-        )
-
-        # Blank out the input and verify that there are once again 2 on the page
-        fill_in("search", with: nil, fill_options: { clear: :backspace })
-        expect(page).to have_content("Higher-Level Review", count: 2)
-      end
+      # Blank out the input and verify that there are once again 2 on the page
+      fill_in("search", with: nil, fill_options: { clear: :backspace })
+      expect(page).to have_content("Higher-Level Review", count: 2)
     end
 
     context "with user enabled for intake" do
@@ -455,20 +398,6 @@ feature "NonComp Reviews Queue", :postgres do
         click_on "Intake new form"
         expect(page).to have_current_path("/intake")
       end
-    end
-  end
-
-  context "with decision_review_queue_ssn_column feature toggle enabled" do
-    before { FeatureToggle.enable!(:decision_review_queue_ssn_column) }
-    after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
-
-    scenario "displays tasks page" do
-      visit BASE_URL
-      expect(page).to have_content("Veteran SSN")
-      expect(page).to have_content(veteran_a.ssn)
-      expect(page).to have_content(veteran_b.ssn)
-      expect(page).to have_content(veteran_c.ssn)
-      expect(page).to have_content(search_box_label)
     end
   end
 end
