@@ -19,14 +19,7 @@ class MembershipRequestMailer < ActionMailer::Base
     @requests = params[:requests]
     @requesting_org_names = @requests&.map { |request| request.organization.name }
     @subject = params[:subject]
-    # This has to be set here rather than changing the users email address in the database for UAT
-    # Because the email address is automatically updated on user login.
-    email_address = if Rails.deploy_env?(:uat)
-                      "BID_Appeals_UAT@bah.com"
-                    else
-                      @recipient&.email
-                    end
-    mail(to: email_address, subject: @subject)
+    mail(to: @recipient&.email, subject: @subject)
   end
 
   def admin_request_made

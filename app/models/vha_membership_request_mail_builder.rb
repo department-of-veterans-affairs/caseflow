@@ -57,12 +57,7 @@ class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
   def send_organization_email(organization)
     org_name = organization.name
     # Create an array from the hash and flatten it since organizations can have multiple emails
-    # Set the admin emails to the same email address in UAT for testing
-    admin_emails = if Rails.deploy_env?(:uat)
-                     ["BID_Appeals_UAT@bah.com"]
-                   else
-                     [get_organization_admin_emails(org_name)].flatten
-                   end
+    admin_emails = [get_organization_admin_emails(org_name)].flatten
 
     mailer_parameters = {
       organization_name: org_name,
