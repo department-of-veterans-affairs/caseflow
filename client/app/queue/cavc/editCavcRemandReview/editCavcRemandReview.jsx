@@ -75,13 +75,15 @@ export const EditCavcRemandReview = ({
               <tr>
                 <td className="appellant-detail">Name</td>
                 <td>
-                {existingValues.isAppellantSubstituted === 'true' ? relationship && relationship.fullName : appeal.veteranFullName}
+                {existingValues.isAppellantSubstituted === 'true' ?
+                  relationship && relationship.fullName : appeal.veteranFullName}
                 </td>
               </tr>
               <tr>
                 <td className="appellant-detail">Relation to Veteran</td>
                 <td>
-                  {existingValues.isAppellantSubstituted === 'true' ? relationship && relationship.relationshipType : "Veteran"}
+                  {existingValues.isAppellantSubstituted === 'true' ?
+                    relationship && relationship.relationshipType : 'Veteran'}
                 </td>
               </tr>
             </tbody>
@@ -97,13 +99,6 @@ export const EditCavcRemandReview = ({
                     <tr className="task-detail" key={`${task.taskId}`}>
                       <td>
                         {task.label.replace('Task', '')}
-                      </td>
-                      <td>
-                        {task.type === 'EvidenceSubmissionWindowTask' && (
-                          <span className="bolded-header">End date: </span>
-                        )}
-                        {task.type === 'EvidenceSubmissionWindowTask' &&
-                          formatDateStr(evidenceSubmissionEndDate, 'YYYY-MM-DD', 'MM/DD/YYYY')}
                       </td>
                     </tr>
                   );
@@ -122,13 +117,6 @@ export const EditCavcRemandReview = ({
                     <tr className="task-detail" key={`${task.taskId}`}>
                       <td>
                         {task.label.replace('Task', '')}
-                      </td>
-                      <td>
-                        {task.type === 'EvidenceSubmissionWindowTask' && (
-                          <span className="bolded-header">End date: </span>
-                        )}
-                        {task.type === 'EvidenceSubmissionWindowTask' &&
-                          formatDateStr(evidenceSubmissionEndDate, 'YYYY-MM-DD', 'MM/DD/YYYY')}
                       </td>
                     </tr>
                   );
@@ -182,4 +170,5 @@ EditCavcRemandReview.propTypes = {
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
+  appeal: PropTypes.object,
 };

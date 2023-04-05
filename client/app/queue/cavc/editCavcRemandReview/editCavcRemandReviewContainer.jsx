@@ -3,14 +3,13 @@ import React, { useMemo } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { showErrorMessage } from 'app/queue/uiReducer/uiActions';
+import { showErrorMessage, requestPatch } from 'app/queue/uiReducer/uiActions';
 import { EditCavcRemandReview } from './editCavcRemandReview';
 
 import { cancel, stepBack } from '../editCavcRemand.slice';
 import { getAllTasksForAppeal, appealWithDetailSelector } from 'app/queue/selectors';
 
 import COPY from 'app/../COPY';
-import { requestPatch } from '../../uiReducer/uiActions';
 import { editAppeal } from '../../QueueActions';
 import {
   cancelledOrCompletedTasksDataForUi,
@@ -49,7 +48,7 @@ export const EditCavcRemandReviewContainer = () => {
 
   const tasksToReActivate = cancelledOrCompletedTasks.filter((task) => {
     return (existingValues.reActivateTaskIds.includes(Number(task.id)));
-  })
+  });
 
   const { relationships } = useSelector((state) => state.cavcRemand);
   const relationship = useMemo(() => {

@@ -143,7 +143,8 @@ const AddCavcRemandView = (props) => {
     return dod ? parseISO(dod) : null;
   }, [appeal.veteranInfo]);
 
-  const claimantOptionsExists = Array.isArray(substituteAppellantClaimantOptions) && substituteAppellantClaimantOptions.length > 0;
+  const claimantOptionsExists =
+    Array.isArray(substituteAppellantClaimantOptions) && substituteAppellantClaimantOptions.length > 0;
 
   const isAppellantSubstitutedOptions = [
     { displayText: 'Yes',

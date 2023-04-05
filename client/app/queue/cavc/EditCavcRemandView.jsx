@@ -92,14 +92,17 @@ export const EditCavcRemandView = () => {
       },
     };
 
-    if (featureToggles.cavc_remand_granted_substitute_appellant) {
+    if (featureToggles.cavc_remand_granted_substitute_appellant &&
+        Array.isArray(substituteAppellantClaimantOptions) &&
+        substituteAppellantClaimantOptions.length > 0) {
       // TODO connect with new modify task page for new edit court remand workflow
       const substitutionDate = isAppellantSubstituted ? moment(formData.substitutionDate).format('YYYY-MM-DD') : null;
+
       dispatch(
         updateData({
           formData: {
             ...formData,
-            substitutionDate: substitutionDate,
+            substitutionDate,
             decisionDate: moment(formData.decisionDate).format('YYYY-MM-DD'),
             participantId: isAppellantSubstituted ? formData.participantId : null,
             // Currently hardcoding claimantType until future work where this is selectable

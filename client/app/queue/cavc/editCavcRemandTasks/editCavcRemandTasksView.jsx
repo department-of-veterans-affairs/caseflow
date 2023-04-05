@@ -47,7 +47,8 @@ export const EditCavcRemandTasksView = () => {
     (task) => task.type === 'SendCavcRemandProcessedLetterTask');
   const closedSendCavcRemandProcessedLetterTask = cancelledOrCompletedTasks.find(
     (task) => task.type === 'SendCavcRemandProcessedLetterTask');
-  const cancelTaskIds = activeTasks.filter((task) => task.disabled && task.type !== 'MdrTask').map((disTask) => disTask.id);
+  const cancelTaskIds = activeTasks.filter((task) => task.disabled && task.type !== 'MdrTask').map(
+    (disTask) => disTask.id);
 
   const getReActivateTaksIds = () => {
     if (closedSendCavcRemandProcessedLetterTask) {
@@ -88,7 +89,7 @@ export const EditCavcRemandTasksView = () => {
     // Redirect to Case Details page
     history.push(`/queue/appeals/${appealId}`);
   };
-  const handleSubmit = async (_formData) => {
+  const handleSubmit = async () => {
     // Here we'll dispatch updateData action to update Redux store with our form data
     dispatch(
       updateData({
@@ -109,7 +110,7 @@ export const EditCavcRemandTasksView = () => {
   return (
     <EditCavcRemandTasksForm
       appealId={appealId}
-      existingValues={{...existingValues, reActivateTaskIds: reActivateTaskIds, cancelTaskIds: cancelTaskIds}}
+      existingValues={{ ...existingValues, reActivateTaskIds, cancelTaskIds }}
       nodDate={nodDate}
       dateOfDeath={dateOfDeath}
       substitutionDate={substitutionDate}

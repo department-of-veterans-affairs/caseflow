@@ -41,7 +41,6 @@ import {
   generateSchema,
   parseDateFieldErrors
 } from './utils';
-import { featureToggles } from '../../../test/data/queue/cavc';
 
 const YesNoOpts = [
   { displayText: 'Yes', value: 'yes' },
@@ -163,7 +162,8 @@ export const EditCavcRemandForm = ({
     setValue('issueIds', [...allIssueIds]);
   };
 
-  const claimantOptionsExists = Array.isArray(substituteAppellantClaimantOptions) && substituteAppellantClaimantOptions.length > 0;
+  const claimantOptionsExists =
+    Array.isArray(substituteAppellantClaimantOptions) && substituteAppellantClaimantOptions.length > 0;
   const isAppellantSubstitutedOptions = [
     { displayText: 'Yes', value: 'true', disabled: !claimantOptionsExists },
     { displayText: 'No', value: 'false' }
@@ -463,10 +463,14 @@ export const EditCavcRemandForm = ({
       <div className="controls cf-app-segment">
         <Button
           type="submit"
-          name={featureToggles.cavc_remand_granted_substitute_appellant ? 'continue' : 'submit'}
+          name={(featureToggles.cavc_remand_granted_substitute_appellant &&
+                 Array.isArray(substituteAppellantClaimantOptions) &&
+                substituteAppellantClaimantOptions.length > 0) ? 'continue' : 'submit'}
           classNames={['cf-right-side']}
         >
-          {featureToggles.cavc_remand_granted_substitute_appellant ? 'Continue' : 'Submit'}
+          {(featureToggles.cavc_remand_granted_substitute_appellant &&
+             Array.isArray(substituteAppellantClaimantOptions) &&
+            substituteAppellantClaimantOptions.length > 0) ? 'Continue' : 'Submit'}
         </Button>
         {onCancel && (
           <Button
