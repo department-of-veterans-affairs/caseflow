@@ -96,7 +96,7 @@ class VANotifyStatusUpdateJob < CaseflowJob
         OR
           sms_notification_status IN ('Success', 'temporary-failure', 'technical-failure', 'sending', 'created')
         )
-      )")
+      )").order(created_at: :desc)
   end
 
   # Description: Method to be called when an error message need to be logged
