@@ -72,7 +72,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
           latest_notification_report = latest_vbms_uploaded_document(appeal)
           notification_timestamp = latest_appeal_notification.notified_at || latest_appeal_notification.created_at
 
-          (notification_timestamp > latest_notification_report.attempted_at?) ? appeal : nil
+          (notification_timestamp > latest_notification_report.attempted_at) ? appeal : nil
         end
       rescue StandardError => error
         log_error(error)
