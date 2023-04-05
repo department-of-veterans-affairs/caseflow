@@ -44,6 +44,12 @@ class QuarterlyNotificationsJob < CaseflowJob
     Rails.logger.error(error_message)
   end
 
+  # Purpose: Raises and logs errors whenever an appeal (AMA or Legacy) for an AppealState record cannot be located.
+  #
+  # Params: appeal_state (AppealState instance) - AppealState model object whose attribute will be used to populate the
+  #                                                 error message with additional context.
+  #
+  # Response: None
   def log_appeal_not_found(appeal_state)
     begin
       fail Caseflow::Error::AppealNotFound, "Standard Error ID: " + SecureRandom.uuid + " The appeal was unable "\
@@ -54,10 +60,21 @@ class QuarterlyNotificationsJob < CaseflowJob
     end
   end
 
+  # Purpose: Locates AppealStates for appeals needing notifications
+  #
+  # Params: None
+  #
+  # Response: ActiveRecord relation pertaining to AppealStates that will be used to determine which appeals need
+  #             notifications sent to their appellants.
   def appeal_states_of_interest
     AppealState.where(decision_mailed: false, appeal_cancelled: false)
   end
 
+  # Purpose: Method to spawn a job that will send a notification to an appellant
+  #
+  # Params: appeal, status
+  #
+  # Response: SendNotificationJob queued to send_notification SQS queue
   def send_appellant_notifcation(appeal, status)
     AppellantNotification.notify_appellant(appeal, "Quarterly Notification", status)
   end
@@ -137,11 +154,11 @@ class QuarterlyNotificationsJob < CaseflowJob
   end
 
   # Purpose: Method to check appeal state for statuses and send out a notification based on
-  # which statuses are turned on in the appeal state
+  #           which statuses are turned on in the appeal state
   #
   # Params: appeal state, appeal
   #
-  # Response: SendNotificationJob queued to send_notification SQS queue
+  # Response: None
   def send_quarterly_notifications(appeal_state, appeal)
     # If either there's a hearing postponed or a hearing scheduled in error
     if hearing_postponed_or_scheduled_in_error?(appeal_state)
