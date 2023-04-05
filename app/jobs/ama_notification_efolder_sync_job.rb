@@ -9,11 +9,11 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # * notification datetime is after the vbms uploaded doc uploaded_datetime. If no record exists it will
   # * also return the appeal.
 
-  BATCH_LIMIT = ENV["AMA_NOTIFICATION_REPORT_SYNC_LIMIT"] || 50_000
+  BATCH_LIMIT = ENV["AMA_NOTIFICATION_REPORT_SYNC_LIMIT"] || 500
 
   def perform
     RequestStore[:current_user] = User.system_user
-    all_active_ama_appeals = appeals_recently_outcoded + appeals_never_synced + previously_synced_appeals
+    all_active_ama_appeals = appeals_recently_outcoded + appeals_never_synced + ready_for_resync
     sync_notification_reports(all_active_ama_appeals.first(BATCH_LIMIT))
   end
 
@@ -37,11 +37,15 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       .pluck(:appeal_id)
 
     # A list of Appeals that have never had notification reports generated and synced with VBMS
-    Appeal.active.where.not(id: appeal_ids_synced)
+    appeals_without_reports = Appeal.active.where.not(id: appeal_ids_synced)
+
+    appeals_without_reports.select do |appeal|
+      last_notification_of_appeal(appeal.uuid)
+    end
   end
 
   # A list of appeals that already have notification reports uploaded
-  def previously_synced_appeals
+  def ready_for_resync
     # Ids for the latest Notification Report for every AMA Appeal ordered from oldest to newest
     previously_synced_appeal_ids = VbmsUploadedDocument
       .where(appeal_type: "Appeal", document_type: "BVA Case Notifications")
@@ -51,16 +55,26 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       .reverse.pluck(:appeal_id)
 
     # Appeals for all the previously synced reports from oldest to newest
-    filter_out_inactive_appeals = previously_synced_appeal_ids.map do |appeal_id|
+    get_appeals_from_prev_synced_ids(previously_synced_appeal_ids)
+  end
+
+  def get_appeals_from_prev_synced_ids(appeal_ids)
+    active_appeals = appeal_ids.map do |appeal_id|
       begin
         appeal = Appeal.find(appeal_id)
-        appeal.active? ? appeal : nil
+        if appeal.active?
+          latest_appeal_notification = last_notification_of_appeal(appeal.uuid)
+          latest_notification_report = latest_vbms_uploaded_document(appeal)
+          notification_timestamp = latest_appeal_notification.notified_at || latest_appeal_notification.created_at
+
+          appeal if notification_timestamp > latest_notification_report.attempted_at
+        end
       rescue StandardError => error
         log_error(error)
         nil
       end
     end
-    filter_out_inactive_appeals.compact
+    active_appeals.compact
   end
 
   # Purpose: Syncs the notification reports in VBMS with the notification table for each appeal
@@ -70,15 +84,8 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
     gen_count = 0
     appeals.each do |appeal|
       begin
-        latest_appeal_notification = last_notification_of_appeal(appeal.uuid)
-        next if latest_appeal_notification.nil?
-
-        latest_notification_report = latest_vbms_uploaded_document(appeal)
-        notification_timestamp = latest_appeal_notification.notified_at || latest_appeal_notification.created_at
-        if latest_notification_report.nil? || notification_timestamp > latest_notification_report.attempted_at
-          appeal.upload_notification_report!
-          gen_count += 1
-        end
+        appeal.upload_notification_report!
+        gen_count += 1
       rescue StandardError => error
         log_error(error)
         next
