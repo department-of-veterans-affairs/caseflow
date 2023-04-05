@@ -21,12 +21,9 @@ module Seeds
       create_tasks
       create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
       create_attorney_case_review_for_legacy_appeals
-      create_vha_camo_queue_assigned
-      create_vha_camo_queue_in_progress
-      create_vha_camo_queue_completed
-      create_vha_caregiver_queue_assigned
-      create_vha_caregiver_queue_in_progress
-      create_vha_caregiver_queue_completed
+      create_vha_camo
+      create_vha_caregiver
+      create_vha_program_office
     end
 
     private
@@ -226,6 +223,22 @@ module Seeds
       create_veteran_record_request_tasks
     end
 
+    def create_vha_camo
+      create_vha_camo_queue_assigned
+      create_vha_camo_queue_in_progress
+      create_vha_camo_queue_completed
+    end
+
+    def create_vha_caregiver
+      create_vha_caregiver_queue_assigned
+      create_vha_caregiver_queue_in_progress
+      create_vha_caregiver_queue_completed
+    end
+
+    def create_vha_program_office
+      create_vha_program_office_task
+      create_vha_program_office_task_ready_for_review
+    end
     def create_ama_distribution_tasks
       veteran = create_veteran(first_name: "Julius", last_name: "Hodge")
       appeal = create(:appeal, veteran: veteran, docket_type: Constants.AMA_DOCKETS.evidence_submission)
@@ -1175,6 +1188,23 @@ module Seeds
     def create_vha_caregiver_queue_completed
       5.times do
         create(:vha_document_search_task_with_assigned_to,:completed, assigned_to: VhaCaregiverSupport.singleton)
+      end
+    end
+
+    def create_vha_program_office_task
+      tabs = [:assigned, :in_progress, :on_hold, :completed]
+      program_offices = Organization.where(type: 'VhaProgramOffice')
+      tabs.each do |status|
+        program_offices.each do |program_office|
+          create_list(:vha_document_search_task_with_assigned_to,5,status,assigned_to: program_office)
+        end
+      end
+    end
+
+    def create_vha_program_office_task_ready_for_review
+      program_offices = Organization.where(type: 'VhaProgramOffice')
+      program_offices.each do |program_office|
+        create_list(:assess_documentation_task_predocket,5,:completed, :ready_for_review, assigned_to: program_office)
       end
     end
   end

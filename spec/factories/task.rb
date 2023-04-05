@@ -45,6 +45,12 @@ FactoryBot.define do
       end
     end
 
+    trait :ready_for_review do
+      after(:create) do |task|
+        task.parent.update_columns(status: Constants.TASK_STATUSES.assigned)
+      end
+    end
+
     trait :on_hold do
       started_at { rand(20..30).days.ago }
       placed_on_hold_at { rand(1..10).days.ago }
@@ -516,6 +522,11 @@ FactoryBot.define do
 
       factory :assess_documentation_task, class: AssessDocumentationTask do
         parent { create(:vha_document_search_task, appeal: appeal) }
+        assigned_by { nil }
+      end
+
+      factory :assess_documentation_task_predocket, class: AssessDocumentationTask do
+        parent { create(:pre_docket_task, assigned_to: assigned_to, appeal: appeal) }
         assigned_by { nil }
       end
 
