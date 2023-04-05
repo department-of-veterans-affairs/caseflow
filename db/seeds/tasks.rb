@@ -1141,7 +1141,7 @@ module Seeds
 
     def create_vha_camo_queue_assigned
       5.times do
-        create(:vha_document_search_task_with_assigned_to,assigned_to: VhaCamo.Singleton)
+        create(:vha_document_search_task_with_assigned_to,assigned_to: VhaCamo.singleton)
       end
     end
 
