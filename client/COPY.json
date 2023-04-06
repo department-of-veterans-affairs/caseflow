@@ -92,6 +92,7 @@
   "TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL": "Assigned on",
   "TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL": "Completed on",
   "TASK_SNAPSHOT_TASK_CANCELLED_DATE_LABEL": "Cancelled on",
+  "TASK_SNAPSHOT_TASK_COMPLETED_BY_LABEL": "Completed by",
   "TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL": "withdrawn on",
   "TASK_SNAPSHOT_HEARING_REQUEST_CONVERTED_ON_LABEL": "Converted on",
   "TASK_SNAPSHOT_HEARING_REQUEST_CONVERTER_LABEL": "Converted by",
@@ -539,6 +540,32 @@
   "MARK_TASK_COMPLETE_CONFIRMATION": "The task for %s's case has been marked complete",
   "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you have made a mistake, please email %s to manage any changes.",
 
+  "MARK_TASK_COMPLETE_TITLE_CONTESTED_CLAIM": "Mark task as complete",
+  "MARK_TASK_COMPLETE_BUTTON_CONTESTED_CLAIM": "Mark as complete",
+  "DAYS_CONTESTED_CLAIM": "45 days",
+  "CUSTOM_CONTESTED_CLAIM": "Custom",
+  "TEXTAREA_CONTESTED_CLAIM": "Number of days (Value must be between 45 and 364)",
+
+  "PROCEED_FINAL_NOTIFICATION_LETTER_TITLE": "Proceed to final notification letter",
+  "PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY": "The \"Post-Send Initial Notification Letter Holding Period\" task will be marked as complete and a new \"Send Final Notification Letter\" task will be created.",
+  "PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY": "The \"Send Initial Notification Letter\" task will be marked complete and a new \"Final Notification Letter\" task will be created.",
+  "PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON": "Proceed to final letter",
+  "PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_TASK_SUCCESS": "Post Send Initial Notification Letter Holding Period task completed",
+  "PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_TASK_SUCCESS": "Send Initial Notification Letter task completed",
+
+  "RESEND_INITIAL_NOTIFICATION_LETTER_TITLE": "Resend initial notification letter",
+  "RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING_COPY": "The \"Post-Send Initial Notification Letter Holding Period\" task will be marked as complete and a new \"Send Initial Notification Letter\" task will be created.",
+  "RESEND_INITIAL_NOTIFICATION_LETTER_FINAL_COPY": "The \"Send Final Notification Letter\" task will be cancelled and a new \"Send Initial Notification Letter\" task will be created.",
+  "RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON": "Resend notification letter",
+  "RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING_TASK_SUCCESS": "Post Send Initial Notification Letter Holding task completed",
+  "RESEND_INITIAL_NOTIFICATION_LETTER_FINAL_TASK_SUCCESS": "Send Final Notification Letter task is cancelled",
+
+  "RESEND_FINAL_NOTIFICATION_LETTER_TITLE": "Resend final notification letter",
+  "RESEND_FINAL_NOTIFICATION_LETTER_COPY": "The \"Send Final Notification Letter\" task will be marked as complete and a new \"Send Final Notification Letter\" task will be created.",
+  "RESEND_FINAL_NOTIFICATION_LETTER_BUTTON": "Resend notification letter",
+  "RESEND_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS": "Send Final Notification Letter task completed",
+
+  "MODAL_SUBMIT_CANCEL_BUTTON_CONTESTED_CLAIM": "Cancel task",
   "MODAL_SUBMIT_BUTTON": "Submit",
   "MODAL_CANCEL_BUTTON": "Cancel",
   "MODAL_CLOSE_BUTTON": "Close",
@@ -578,10 +605,18 @@
 
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
   "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to %s",
+  "MARK_AS_COMPLETE_CONTESTED_CLAIM_TITLE": "Complete task",
+  "MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL": "By marking this task as complete, you are confirming that initial notification letter(s) have been sent.\n\nPlease select the number of days to put this task on hold to allow time for the letter(s) to be delivered.",
   "CANCEL_TASK_CONFIRMATION": "Task for %s's case has been cancelled",
   "CANCEL_TASK_CONFIRMATION_DETAIL": "Task for %s's case has been cancelled",
 
   "CANCEL_TASK_CONTACT_LIT_SUPPORT": "the Litigation Support team",
+
+  "MARK_AS_COMPLETE_FROM_SEND_FINAL_NOTIFICATION_LETTER_CONTESTED_CLAIM": "The case will be released from the Clerk of the Board queue for reactivation of any pending email or hearing tasks and distribution.\n\nDoes the contesting claimant request a different type of review option than the one selected by the appellant?",
+
+  "CANCEL_INITIAL_NOTIFICATION_LETTER_TASK_DETAIL": "The case will be released from the Clerk of the Board queue for reactivation of any pending mail or hearing tasks and distribution.",
+  "CANCEL_POST_INITIAL_NOTIFICATION_LETTER_TASK_DETAIL": "The 'Send Initial Notification Letter Holding Period' task will be cancelled and this case will be released for distribution.",
+  "CANCEL_FINAL_NOTIFICATION_LETTER_TASK_DETAIL": "The 'Send Final Notification Letter' task will be cancelled and this case will be released for distribution.",
 
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_TITLE": "Assign Regional Office",
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_DETAIL": "Assigning a Regional Office will place this case in the list of Veterans to be scheduled for the RO you choose. You will need to choose a location for the hearing when you schedule the Veteran.",
