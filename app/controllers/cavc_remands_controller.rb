@@ -97,6 +97,7 @@ class CavcRemandsController < ApplicationController
 
   def create_appellant_substitution_and_cavc_remand_appellant_substitution(cavc_appeal, new_cavc_remand)
     if params[:participant_id].present?
+      cancel_unselected_tasks(cavc_appeal, current_user)
       appellant_substitution = create_appellant_substitution_and_history(cavc_appeal)
     end
     CavcRemandsAppellantSubstitution.create(
@@ -132,7 +133,7 @@ class CavcRemandsController < ApplicationController
       update_appellant_substitution_and_create_history(cavc_appeal, appellant_substitution)
     else
       original_appellant_substitute_participant_id = appellant_substitution.substitute_participant_id
-      cancel_unselected_tasks(appellant_substitution)
+      cancel_unselected_tasks(appellant_substitution.target_appeal, appellant_substitution.created_by)
       appellant_substitution.update(appellant_substitution_params(Date.current, cavc_appeal.veteran.participant_id))
       cavc_appeal.update(veteran_is_not_claimant: nil)
       appellant_substitution.histories.create(
@@ -149,12 +150,15 @@ class CavcRemandsController < ApplicationController
   def appellant_substitution_params(substitution_date = params[:substitution_date],
                                     substitute_participant_id = params[:participant_id])
     params.permit(EDIT_CAVC_APPELLANT_SUBSTITUTION_PARAMS).merge!(
-      substitution_date: substitution_date, substitute_participant_id: substitute_participant_id
+      substitution_date: substitution_date,
+      substitute_participant_id: substitute_participant_id,
+      skip_cancel_tasks: true
     )
   end
 
+  # rubocop:disable Metrics/AbcSize
   def update_appellant_substitution_and_create_history(cavc_appeal, appellant_substitution)
-    cancel_unselected_tasks(appellant_substitution)
+    cancel_unselected_tasks(appellant_substitution.target_appeal, appellant_substitution.created_by)
     history_params = {}
     if appellant_substitution.substitution_date != params[:substitution_date].to_date
       history_params[:substitution_date] = params[:substitution_date]
@@ -172,6 +176,7 @@ class CavcRemandsController < ApplicationController
       appellant_substitution.histories.create(history_params.merge(created_by_id: current_user.id))
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   def source_appeal
     @source_appeal ||= Appeal.find_by_uuid(params[:source_appeal_id])
@@ -241,14 +246,13 @@ class CavcRemandsController < ApplicationController
     }
   end
 
-  def cancel_unselected_tasks(appellant_substitution)
-    return if params[:cancelled_task_ids].empty?
+  def cancel_unselected_tasks(target_appeal, created_by)
+    return if params[:cancelled_task_ids].blank? || params[:cancelled_task_ids].empty?
 
-    appellant_substitution.skip_cancel_tasks = true
     task_ids = { cancelled: params[:cancelled_task_ids] }
-    SameAppealSubstitutionTasksFactory.new(appellant_substitution.target_appeal,
+    SameAppealSubstitutionTasksFactory.new(target_appeal,
                                            task_ids,
-                                           appellant_substitution.created_by,
+                                           created_by,
                                            {}).cancel_unselected_tasks
   end
 end

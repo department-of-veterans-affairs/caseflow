@@ -114,7 +114,7 @@ class AppellantSubstitution < CaseflowRecord
   end
 
   def initialize_tasks
-    InitialTasksFactory.new(target_appeal).create_root_and_sub_tasks!
+    InitialTasksFactory.new(target_appeal).create_root_and_sub_tasks! unless cavc_remand_appeal_substitution
   end
 
   def create_substitute_tasks
