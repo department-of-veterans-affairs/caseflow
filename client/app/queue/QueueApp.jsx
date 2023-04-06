@@ -276,8 +276,6 @@ class QueueApp extends React.PureComponent {
     <AddCavcRemandView {...props.match.params} />
   );
 
-  routedEditCavcRemand = () => <EditCavcRemandView />;
-
   routedCavcDashboard = (props) => (
     <CavcDashboard
       appealId={props.match.params.appealId}

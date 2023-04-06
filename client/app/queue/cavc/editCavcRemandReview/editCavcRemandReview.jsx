@@ -13,7 +13,6 @@ import CheckoutButtons from 'app/queue/docketSwitch/grant/CheckoutButtons';
 import { pageHeader } from '../styles';
 import { format, parseISO } from 'date-fns';
 import { css } from 'glamor';
-import { formatDateStr } from '../../../util/DateUtil';
 
 const styles = {
   mainTable: css({
@@ -75,8 +74,8 @@ export const EditCavcRemandReview = ({
               <tr>
                 <td className="appellant-detail">Name</td>
                 <td>
-                {existingValues.isAppellantSubstituted === 'true' ?
-                  relationship && relationship.fullName : appeal.veteranFullName}
+                  {existingValues.isAppellantSubstituted === 'true' ?
+                    relationship && relationship.fullName : appeal.veteranFullName}
                 </td>
               </tr>
               <tr>
