@@ -14,9 +14,6 @@ const basicProps = {
   selectedTask: null,
   decisionIssuesStatus: {},
   taskFilterDetails,
-  featureToggles: {
-    decisionReviewQueueSsnColumn: true
-  },
 };
 
 beforeEach(() => {
