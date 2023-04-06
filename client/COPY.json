@@ -1309,7 +1309,7 @@
 
   "PRE_DOCKET_TASK_LABEL": "Pre-Docket",
   "DOCKET_APPEAL_MODAL_TITLE": "Docket appeal",
-  "DOCKET_APPEAL_MODAL_BODY": "Please confirm that the documents provided by %s are available in VBMS before docketing this appeal.",
+  "DOCKET_APPEAL_MODAL_BODY": "Please confirm that the documents provided by %s are available before docketing this appeal.",
   "DOCKET_APPEAL_MODAL_NOTICE": "Once you confirm, the appeal will be established. Please remember to send the docketing letter out to all parties and representatives.",
   "DOCKET_APPEAL_CONFIRMATION_TITLE": "You have successfully docketed this appeal.",
   "DOCKET_APPEAL_CONFIRMATION_DETAIL": "Please send the docketing letter out to all parties and representatives and upload it to VBMS.",
@@ -1327,16 +1327,46 @@
   "VHA_COMPLETE_TASK_MODAL_BODY": "Provide details such as file structure or file path",
   "VHA_COMPLETE_TASK_CONFIRMATION_PO": "Appeal has been marked as ready for review and sent to the CAMO team for review.",
   "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review.",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL": "What is the status of this appeal?",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS": "Correct documents have been successfully added",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_APPEALABLE": "This issue might not be appealable to the Board",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_NO_VHA_DECISION": "A VHA decision has not been made",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_VHA_RELATED": "Appeal is not related to a VHA issue",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Provide additional context and/or documents:",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL": "Why is this appeal being returned?",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "This appeal will be returned to Board Intake.",
+  "VHA_RETURN_TO_BOARD_INTAKE_RETURN_REASON_DROPDOWN_DETAIL": "You must select a reason for returning to intake",
+  "VHA_RETURN_TO_BOARD_INTAKE_RETURN_REASON_TEXTAREA_DETAIL": "Return reason field is required",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS": {
+    "DUPLICATE": {
+      "LABEL": "Duplicate",
+      "VALUE": "duplicate"
+    },
+    "HLR_PENDING": {
+      "LABEL": "HLR Pending",
+      "VALUE": "hlr pending"
+    },
+    "SC_PENDING": {
+      "LABEL": "SC Pending",
+      "VALUE": "sc pending"
+    },
+    "NOT_VHA_RELATED": {
+      "LABEL": "Not VHA related",
+      "VALUE": "not vha related"
+    },
+      "CLARIFICATION_NEEDED": {
+      "LABEL": "Clarification needed from appellant",
+      "VALUE": "clarification needed from appellant"
+    },
+    "NO_VHA_DECISION": {
+      "LABEL": "No VHA decision",
+      "VALUE": "no vha decision"
+    },
+    "OTHER": {
+      "LABEL": "Other",
+      "VALUE": "other"
+    }
+  },
+  "VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL": "Please provide the reason for return",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_INSTRUCTIONS_LABEL": "Provide additional context for this action",
+  "VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION": "You have successfully returned %s's case to Board Intake",
   "SELECT_RADIO_ERROR": "Please select an option.",
   "EMPTY_INSTRUCTIONS_ERROR": "Text field cannot be blank.",
-  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review.",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the CAMO team's Queue",
@@ -1344,7 +1374,7 @@
   "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY": "By marking task as in progress, you are confirming that you are actively working on collecting documents for this appeal.\n\nOnce marked, other members of your organization will no longer be able to mark this task as in progress.",
   "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked %s's case as in progress",
   "VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE": "You have successfully sent %s's case to Board Intake for review",
-  "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY": "This appeal will be sent to Board Intake for review.\n\nPlease select where the documents for this appeal are stored",
+  "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY": "This appeal will be sent to Board Intake for review.\n\nPlease select where the documents for this appeal were returned",
   "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE": "Ready for review",
   "BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE": "Return appeal to VHA",
   "BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY": "If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA.",
