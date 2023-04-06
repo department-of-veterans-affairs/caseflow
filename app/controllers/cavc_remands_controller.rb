@@ -96,7 +96,7 @@ class CavcRemandsController < ApplicationController
   private
 
   def create_appellant_substitution_and_cavc_remand_appellant_substitution(cavc_appeal, new_cavc_remand)
-    if params[:participant_id].present?
+    if params[:participant_id].present? && cavc_appeal
       cancel_unselected_tasks(cavc_appeal, current_user)
       appellant_substitution = create_appellant_substitution_and_history(cavc_appeal)
     end
