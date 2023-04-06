@@ -765,6 +765,8 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
 </div>
 `;
 
+exports[`MTVJudgeDisposition with granted disposition selected passes a11y 1`] = `<div />`;
+
 exports[`MTVJudgeDisposition with granted disposition selected renders correctly 1`] = `
 <div>
   <div
