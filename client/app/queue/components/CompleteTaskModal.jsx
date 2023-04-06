@@ -689,7 +689,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SEND_BUTTON,
     submitDisabled
-  },
+  }
 };
 
 class CompleteTaskModal extends React.Component {
