@@ -103,7 +103,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   end
 
   # Purpose: Syncs the notification reports in VBMS with the notification table for each appeal
-  # Params: appeals - LegacyAppeals records in need of a new notification report to be generated
+  # Params: appeals - AMA appeals records in need of a new notification report to be generated
   # Return: none
   def sync_notification_reports(appeals)
     Rails.logger.info("Starting to sync notification reports for AMA appeals")
@@ -121,7 +121,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   end
 
   # Purpose: Will return the most recent notification associated with the appeal
-  # Params: vacols_id - The vacols_id of the appeal record that the notification is associated
+  # Params: uuid - The uuid of the appeal record that the notification is associated
   # Returns: The most recent notification record for the given appeal
   def last_notification_of_appeal(uuid)
     Notification.where(appeals_id: uuid)
