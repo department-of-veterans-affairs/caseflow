@@ -17,10 +17,11 @@ module Seeds
     end
 
     def seed!
-      create_ama_appeals
-      create_tasks
-      create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
-      create_attorney_case_review_for_legacy_appeals
+      # create_ama_appeals
+      # create_tasks
+      # create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
+      # create_attorney_case_review_for_legacy_appeals
+      create_vha_visn_pre_docket_queue
     end
 
     private
@@ -1130,6 +1131,17 @@ module Seeds
           task_id: task_id,
           note: Faker::Lorem.sentence
         )
+      end
+    end
+
+    def create_vha_visn_pre_docket_queue
+      tabs = [:assigned, :completed]
+      # tabs = [:on_hold]
+      vha_regional_offices = Organization.where(type: 'VhaRegionalOffice')
+      tabs.each do |status|
+        vha_regional_offices.each do  |regional_office|
+          create(:pre_docket_task, status, assigned_to: regional_office)
+        end
       end
     end
   end
