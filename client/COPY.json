@@ -1330,6 +1330,8 @@
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL": "Why is this appeal being returned?",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "This appeal will be returned to Board Intake.",
+  "VHA_RETURN_TO_BOARD_INTAKE_RETURN_REASON_DROPDOWN_DETAIL": "You must select a reason for returning to intake",
+  "VHA_RETURN_TO_BOARD_INTAKE_RETURN_REASON_TEXTAREA_DETAIL": "Return reason field is required",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS": {
     "DUPLICATE": {
       "LABEL": "Duplicate",

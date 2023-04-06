@@ -40,7 +40,7 @@ export const VhaReturnToBoardIntakeModal = (props) => {
             value={state.dropdown}
             options={dropdownOptions}
             errorMessage={props.highlightInvalid &&
-              !validDropdown(state.dropdown) ? 'You must select a reason for returning to intake' : null}
+              !validDropdown(state.dropdown) ? COPY.VHA_RETURN_TO_BOARD_INTAKE_RETURN_REASON_DETAIL : null}
           />
           {state.dropdown === 'other' &&
             <TextareaField
@@ -52,7 +52,10 @@ export const VhaReturnToBoardIntakeModal = (props) => {
               styling={marginTop(2)}
               textAreaStyling={setHeight(4.5)}
               errorMessage={props.highlightInvalid &&
-                !validInstructions(state.otherInstructions) ? 'Return reason field is required' : null}
+                !validInstructions(state.otherInstructions) ?
+                  COPY.VHA_RETURN_TO_BOARD_INTAKE_RETURN_REASON_TEXTAREA_DETAIL :
+                  null
+              }
             />}
           <TextareaField
             label={props.instructionsLabel}
