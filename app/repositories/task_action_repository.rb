@@ -568,7 +568,7 @@ class TaskActionRepository
       {
         modal_title: COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
         type: VhaDocumentSearchTask.name,
-        redirect_after: "/organizations/#{VhaCamo.singleton.url}",
+        redirect_after: "/organizations/#{VhaCamo.singleton.url}?tab=#{VhaCamoCompletedTasksTab.tab_name}",
         options: dropdown_options
       }
     end
@@ -578,7 +578,7 @@ class TaskActionRepository
         modal_title: COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
         type: VhaDocumentSearchTask.name,
         body_optional: true,
-        redirect_after: "/organizations/#{VhaCamo.singleton.url}"
+        redirect_after: "/organizations/#{VhaCamo.singleton.url}?tab=#{VhaCamoCompletedTasksTab.tab_name}"
       }
     end
 
