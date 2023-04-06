@@ -11,6 +11,12 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
 
   BATCH_LIMIT = ENV["AMA_NOTIFICATION_REPORT_SYNC_LIMIT"] || 500
 
+  # Purpose: Determines which appeals need a notification report generated and uploaded to efolder,
+  #          then uploads reports for those appeals
+  #
+  # Params: none
+  #
+  # Return: Array of appeals that were attempted to upload notification reports to efolder
   def perform
     RequestStore[:current_user] = User.system_user
     all_active_ama_appeals = appeals_recently_outcoded + appeals_never_synced + ready_for_resync
@@ -19,7 +25,12 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
 
   private
 
-  # A list of Appeals that have been outcoded within the last 24 hours
+  # Purpose: Determines a list of appeals that have been closed in the last day
+  #          These would not be found by other queries and are most important to be synced fist
+  #
+  # Params: none
+  #
+  # Return: Array of appeals that were closed within the last 24 hours
   def appeals_recently_outcoded
     Appeal
       .where(id: BvaDispatchTask.where(closed_at: 1.day.ago..Time.zone.now)
@@ -28,7 +39,11 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       .uniq)
   end
 
-  # A list of appeals that have never had notification reports uploaded
+  # Purpose: Determines which appeals have never had a notification report uploaded to efolder
+  #
+  # Params: none
+  #
+  # Return: Array of appeals that have never been synced and meet all requirements for syncing
   def appeals_never_synced
     # A list of unique appeal ids (Primary Key) that exist in VBMSUploadedDocument and are of type BVA Case Notification
     appeal_ids_synced = VbmsUploadedDocument.distinct
@@ -44,7 +59,11 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
     end
   end
 
-  # A list of appeals that already have notification reports uploaded
+  # Purpose: Determines which appeals need a NEW notification report uploaded to efolder
+  #
+  # Params: none
+  #
+  # Return: Array of appeals that are ready for a new notification report
   def ready_for_resync
     # Ids for the latest Notification Report for every AMA Appeal ordered from oldest to newest
     previously_synced_appeal_ids = VbmsUploadedDocument
@@ -58,6 +77,12 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
     get_appeals_from_prev_synced_ids(previously_synced_appeal_ids)
   end
 
+  # Purpose: Determines if a new notification has happened since the last time a
+  #          notification report was uploaded to efolder
+  #
+  # Params: Array of appeal ids (primary key)
+  #
+  # Return: Array of active appeals and nil values (if inactive or failed checks)
   def get_appeals_from_prev_synced_ids(appeal_ids)
     active_appeals = appeal_ids.map do |appeal_id|
       begin
@@ -78,7 +103,8 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   end
 
   # Purpose: Syncs the notification reports in VBMS with the notification table for each appeal
-  # Params: appeals - Appeals records in need of a new notification report to be generated
+  # Params: appeals - LegacyAppeals records in need of a new notification report to be generated
+  # Return: none
   def sync_notification_reports(appeals)
     Rails.logger.info("Starting to sync notification reports for AMA appeals")
     gen_count = 0
@@ -95,8 +121,8 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   end
 
   # Purpose: Will return the most recent notification associated with the appeal
-  # Params: uuid - The UUID of the appeal record that the notification is associated
-  # Returns: The most recent notification record
+  # Params: vacols_id - The vacols_id of the appeal record that the notification is associated
+  # Returns: The most recent notification record for the given appeal
   def last_notification_of_appeal(uuid)
     Notification.where(appeals_id: uuid)
       .where.not(notified_at: nil)
