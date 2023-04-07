@@ -68,6 +68,10 @@ class WorkQueue::DecisionReviewTaskSerializer
     issue_count(object)
   end
 
+  attribute :issue_types do |object|
+    object[:issue_types] || request_issues(object).active.pluck(:nonrating_issue_category).join(",")
+  end
+
   attribute :tasks_url do |object|
     object.assigned_to.tasks_url
   end

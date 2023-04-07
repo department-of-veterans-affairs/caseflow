@@ -98,12 +98,25 @@ class BusinessLine < Organization
     end
 
     def union_select_statements
-      [Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id_alias, veteran_ssn_alias]
+      [
+        Task.arel_table[Arel.star],
+        issue_count,
+        claimant_name_alias,
+        participant_id_alias,
+        veteran_ssn_alias,
+        issue_types
+      ]
     end
 
     def issue_count
       # Issue count alias for sorting and serialization
       "COUNT(request_issues.id) AS issue_count"
+    end
+
+    # Alias for the issue_categories on request issues for sorting and serialization
+    # This is Postgres specific since it uses STRING_AGG vs GROUP_CONCAT
+    def issue_types
+      "STRING_AGG(request_issues.nonrating_issue_category, ',') AS issue_types"
     end
 
     # Alias for claimant_name for sorting and serialization

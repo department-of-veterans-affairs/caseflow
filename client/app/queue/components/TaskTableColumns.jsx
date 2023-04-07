@@ -250,6 +250,21 @@ export const issueCountColumn = (requireDasRecord) => {
   };
 };
 
+export const issueTypesColumn = (filterOptions) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_CATEGORIES_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name,
+    backendCanSort: true,
+    enableFilter: true,
+    filterOptions,
+    columnName: 'appeal.issueTypes',
+    valueFunction: (task) => {
+      return task.appeal.issueTypes;
+    },
+    getSortValue: (task) => task.appeal.issueTypes
+  };
+};
+
 export const typeColumn = (tasks, filterOptions, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
