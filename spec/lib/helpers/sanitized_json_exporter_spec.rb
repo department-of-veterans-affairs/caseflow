@@ -231,7 +231,7 @@ describe "SanitizedJsonExporter/Importer" do
         AppealIntake => ["user_id"],
         JudgeCaseReview => %w[judge_id attorney_id],
         AttorneyCaseReview => %w[reviewing_judge_id attorney_id],
-        Task => %w[assigned_by_id cancelled_by_id],
+        Task => %w[assigned_by_id cancelled_by_id completed_by_id],
         CavcRemand => %w[updated_by_id created_by_id],
         Hearing => %w[updated_by_id judge_id created_by_id],
         HearingDay => %w[updated_by_id judge_id created_by_id],

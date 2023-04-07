@@ -52,6 +52,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   # If RO is ambiguous from station_office, use the user-defined RO. Otherwise, use the unambigous RO.
   def regional_office
     upcase = ->(str) { str ? str.upcase : str }
+
     ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
   end
 
@@ -206,7 +207,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def timezone
-    RegionalOffice::CITIES[users_regional_office][:timezone]
+    (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
   end
 
   # If user has never logged in, we might not have their full name in Caseflow DB.
@@ -436,6 +437,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def in_hearing_management_team?
     member_of_organization?(HearingsManagement.singleton)
+  end
+
+  # Purpose: Checks if current user is a hearing admin user
+  # Returns: Boolean for whether or not the user is a hearing admin
+  def in_hearing_admin_team?
+    member_of_organization?(HearingAdmin.singleton)
   end
 
   def can_view_judge_team_management?

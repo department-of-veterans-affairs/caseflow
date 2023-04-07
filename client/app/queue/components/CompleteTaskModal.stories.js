@@ -65,11 +65,18 @@ DocketAppeal.args = {
   modalType: trimTaskActionValue(TASK_ACTIONS.DOCKET_APPEAL.value)
 };
 
-export const VhaCamoToBoardIntake = Template.bind({});
-VhaCamoToBoardIntake.args = {
+export const VhaCamoToBoardIntakeForReview = Template.bind({});
+VhaCamoToBoardIntakeForReview.args = {
   storeValues: camoToBvaIntakeData,
   taskType: 'VhaDocumentSearchTask',
-  modalType: trimTaskActionValue(TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.value)
+  modalType: trimTaskActionValue(TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.value)
+};
+
+export const VhaCamoReturnToBoardIntake = Template.bind({});
+VhaCamoReturnToBoardIntake.args = {
+  storeValues: camoToBvaIntakeData,
+  taskType: 'VhaDocumentSearchTask',
+  modalType: trimTaskActionValue(TASK_ACTIONS.VHA_RETURN_TO_BOARD_INTAKE.value)
 };
 
 export const VhaPoToVhaCamo = Template.bind({});

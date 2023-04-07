@@ -46,15 +46,6 @@ const detailButtonsTest = (node) => {
 };
 
 describe('Details', () => {
-  beforeEach(() => {
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('9999-12-31'));
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   test('Matches snapshot with default props', () => {
     const details = mount(
       <Details

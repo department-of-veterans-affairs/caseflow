@@ -61,8 +61,8 @@ const CavcDashboardEditDetailsModal = ({ closeHandler, saveHandler, Details }) =
     type="date"
     onChange={(date) => (setBoardDecisionDate(date))}
     value={boardDecisionDate}
-    dateErrorMessage={dateValidator(boardDecisionDate) ? null : COPY.CAVC_DECISION_DATE_ERROR}
     label={LABELS.BOARD_DECISION_DATE}
+    noFutureDates
   />;
 
   const boardDocketNumberField = <TextField
@@ -79,8 +79,8 @@ const CavcDashboardEditDetailsModal = ({ closeHandler, saveHandler, Details }) =
     type="date"
     onChange={(date) => setCavcDecisionDate(date)}
     value={cavcDecisionDate}
-    dateErrorMessage={dateValidator(cavcDecisionDate) ? null : COPY.CAVC_DECISION_DATE_ERROR}
     label={LABELS.CAVC_DECISION_DATE}
+    noFutureDates
   />;
 
   const cavcDocketNumberField = <TextField

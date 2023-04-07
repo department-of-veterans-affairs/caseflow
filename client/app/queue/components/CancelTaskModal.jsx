@@ -8,7 +8,7 @@ import { get } from 'lodash';
 
 import { taskById } from '../selectors';
 import { requestPatch } from '../uiReducer/uiActions';
-import { taskActionData } from '../utils';
+import { taskActionData, currentDaysOnHold } from '../utils';
 import TextareaField from '../../components/TextareaField';
 import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
@@ -41,11 +41,13 @@ const CancelTaskModal = (props) => {
   };
 
   const submit = () => {
+    const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
+      `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : formatInstructions());
     const payload = {
       data: {
         task: {
           status: TASK_STATUSES.cancelled,
-          instructions: formatInstructions(),
+          instructions: currentInstruction,
           ...(taskData?.business_payloads && { business_payloads: taskData?.business_payloads })
         }
       }
@@ -81,6 +83,40 @@ const CancelTaskModal = (props) => {
     modalProps.submitDisabled = !validateForm();
   }
 
+  if (props.task.type === 'SendInitialNotificationLetterTask' ||
+    props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ||
+    props.task.type === 'SendFinalNotificationLetterTask') {
+    return (
+      <QueueFlowModal
+        title={taskData?.modal_title ?? ''}
+        button={taskData?.modal_button_text ?? COPY.MODAL_SUBMIT_CANCEL_BUTTON_CONTESTED_CLAIM}
+        pathAfterSubmit={taskData?.redirect_after ?? '/queue'}
+        submit={submit}
+        validateForm={validateForm}
+        submitButtonClassNames={['usa-button']}
+        submitDisabled={!(instructions.length)}
+      >
+        {taskData?.modal_body &&
+          <React.Fragment>
+            <div dangerouslySetInnerHTML={{ __html: taskData.modal_body }} />
+            <br />
+          </React.Fragment>
+        }
+        {get(taskData, 'show_instructions', true) &&
+          <TextareaField
+            name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+            // errorMessage={highlightFormItems && instructions.length === 0 ?
+            //   COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
+            id="taskInstructions"
+            onChange={setInstructions}
+            placeholder="This is a description of instuctions and context for this action."
+            value={instructions}
+          />
+        }
+      </QueueFlowModal>
+    );
+  }
+
   return (
     <QueueFlowModal
       {...modalProps}
@@ -107,6 +143,7 @@ const CancelTaskModal = (props) => {
       }
     </QueueFlowModal>
   );
+
 };
 /* eslint-enable camelcase */
 
@@ -117,7 +154,8 @@ CancelTaskModal.propTypes = {
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
     taskId: PropTypes.string,
-    type: PropTypes.string
+    type: PropTypes.string,
+    onHoldDuration: PropTypes.number
   }),
   highlightFormItems: PropTypes.bool
 };
