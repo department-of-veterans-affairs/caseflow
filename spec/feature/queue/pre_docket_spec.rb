@@ -58,8 +58,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
       it "intaking VHA issues creates pre-docket tasks instead of regular docketing tasks" do
         step "BVA Intake user intakes a VHA case" do
+          User.authenticate!(user: bva_intake_user)
           categories.each do |category|
-            User.authenticate!(user: bva_intake_user)
             start_appeal(veteran, intake_user: bva_intake_user)
             visit "/intake"
             expect(page).to have_current_path("/intake/review_request")
@@ -527,17 +527,20 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           User.authenticate!(user: camo_user)
           visit "/queue/appeals/#{appeal.uuid}"
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-          find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.label).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.label
+          ).click
 
-          expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE)
-          expect(page).to have_content(COPY::VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY)
-
-          find("label", text: "Correct documents have been successfully added").click
-          fill_in("Provide additional context and/or documents:", with: "This appeal is ready to be docketed.")
-          find("button", class: "usa-button", text: "Submit").click
+          expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
+          expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
+          page.all(".cf-form-radio-option > label")[0].click
+          find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
 
           expect(page).to have_content(
-            COPY::VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION.gsub("%s", appeal.veteran.person.name)
+            COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE
+            .gsub("%s", appeal.veteran.person.name)
           )
           expect(camo_task.reload.status).to eq Constants.TASK_STATUSES.completed
           expect(bva_intake_task.reload.status).to eq Constants.TASK_STATUSES.assigned

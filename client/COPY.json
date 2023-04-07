@@ -180,12 +180,17 @@
   "ADD_CAVC_BUTTON": "+ Add CAVC Remand",
   "ADD_CAVC_PAGE_TITLE": "Add a Court remand",
   "EDIT_CAVC_PAGE_TITLE": "Edit a Court remand",
+  "CAVC_SUBSTITUTE_APPELLANT_LABEL": "Is there a substitute appellant?",
+  "CAVC_SUBSTITUTE_APPELLANT_DATE_LABEL": "When was substitution granted for this appellant?",
+  "CAVC_SUBSTITUTE_APPELLANT_CLAIMANTS_LABEL": "Please select the substitute from the following claimants",
   "ADD_CAVC_DESCRIPTION": "Complete the details below to intake this Court remand for further processing",
   "CAVC_DOCKET_NUMBER_LABEL": "What is the court docket number?",
   "CAVC_DOCKET_NUMBER_ERROR": "Please enter a valid docket number provided by CAVC (12-3456).",
   "CAVC_ATTORNEY_LABEL": "Was the appellant represented by an attorney?",
   "CAVC_JUDGE_LABEL": "What is the CAVC judge's name?",
+  "CAVC_APPELLANT_SUBSTITUTION_GRANTED_DATE_ERROR": "Please select appellant substitution granted date.",
   "CAVC_JUDGE_ERROR": "Please select a judge. Contact support if the judge is not listed below.",
+  "CAVC_SUBSTITUTE_APPELLANT_CLAIMANTS_ERROR": "Please select a substitute claimants.",
   "CAVC_TYPE_LABEL": "How are you proceeding?",
   "CAVC_DEATH_DISMISSAL_DESC": "e.g., if the veteran has passed away with no substitution",
   "CAVC_SUB_TYPE_LABEL": "What type of remand is this?",
@@ -230,6 +235,24 @@
   "CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION": "Same as Court's decision date",
   "CAVC_REMAND_EDIT_SUCCESS_TITLE": "You have successfully edited this CAVC Remand",
   "CAVC_REMAND_EDIT_SUCCESS_DETAIL": "These changes are reflected in the CAVC Remand section.",
+  "CAVC_REMAND_MODIFY_TASKS_TITLE": "Modify tasks",
+  "CAVC_REMAND_MODIFY_TASKS_SUBHEAD": "Complete the details below to create a substitute for this appeal.",
+  "CAVC_REMAND_MODIFY_TASKS_KEY_DETAILS": "Procedural details",
+  "CAVC_REMAND_MODIFY_TASKS_APPEAL_TASKS_TITLE": "Tasks on this appeal",
+  "CAVC_REMAND_MODIFY_TASKS_ACTIVE_TITLE": "Active Tasks",
+  "CAVC_REMAND_MODIFY_TASKS_ACTIVE_DETAIL": "Selected tasks will be maintained on the appeal.  If an active task is no longer needed, you can unselect it and the task will be cancelled.",
+  "CAVC_REMAND_MODIFY_TASKS_CANCELLED_TITLE": "Cancelled and completed tasks",
+  "CAVC_REMAND_MODIFY_TASKS_CANCELLED_DETAIL": "Select tasks that need to be re-activated for a substitute appellant.  No action will be taken on unselected tasks.",
+  "CAVC_REMAND_MODIFY_TASKS_OTHER_TASKS": "Any other tasks needed to ensure the successful processing of the appeal will be automatically created.",
+  "CAVC_REMAND_REVIEW_TITLE": "Review and confirm",
+  "CAVC_REMAND_REVIEW_SUBHEAD": "Review the details below to make sure the information is correct before submitting. If you need to make changes, please go back to the associated section.",
+  "CAVC_REMAND_REVIEW_ABOUT_APPELLANT_LABEL": "About the Appellant",
+  "CAVC_REMAND_REVIEW_TASKS_CANCEL_LABEL": "Tasks to Cancel",
+  "CAVC_REMAND_REVIEW_TASKS_REACTIVATE_LABEL": "Tasks to Re-Activate",
+  "CAVC_REMAND_REVIEW_SUCCESS_TITLE": "You have successfully added a substitute appellant",
+  "CAVC_REMAND_REVIEW_SUCCESS_DETAIL": "Any necessary tasks have been created and assigned for further processing.",
+  "CAVC_REMAND_REVIEW_SCHEDULE_HEARING_TASK_ALERT_TEXT": "When Schedule Hearing task is selected, Transcription and Evidence Submission tasks will automatically be included and cannot be unselected.",
+  "CAVC_REMAND_REVIEW_SOURCE_APPEAL_ALERT_DESCRIPTION": "Post CAVC appeal stream has been established.",
 
   "CAVC_EXTENSION_REQUEST_TITLE": "Review extension request",
   "CAVC_EXTENSION_REQUEST_DECISION_LABEL": "How will you proceed?",
@@ -1322,7 +1345,7 @@
 
   "PRE_DOCKET_TASK_LABEL": "Pre-Docket",
   "DOCKET_APPEAL_MODAL_TITLE": "Docket appeal",
-  "DOCKET_APPEAL_MODAL_BODY": "Please confirm that the documents provided by %s are available in VBMS before docketing this appeal.",
+  "DOCKET_APPEAL_MODAL_BODY": "Please confirm that the documents provided by %s are available before docketing this appeal.",
   "DOCKET_APPEAL_MODAL_NOTICE": "Once you confirm, the appeal will be established. Please remember to send the docketing letter out to all parties and representatives.",
   "DOCKET_APPEAL_CONFIRMATION_TITLE": "You have successfully docketed this appeal.",
   "DOCKET_APPEAL_CONFIRMATION_DETAIL": "Please send the docketing letter out to all parties and representatives and upload it to VBMS.",
@@ -1340,16 +1363,46 @@
   "VHA_COMPLETE_TASK_MODAL_BODY": "Provide details such as file structure or file path",
   "VHA_COMPLETE_TASK_CONFIRMATION_PO": "Appeal has been marked as ready for review and sent to the CAMO team for review.",
   "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review.",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL": "What is the status of this appeal?",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS": "Correct documents have been successfully added",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_APPEALABLE": "This issue might not be appealable to the Board",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_NO_VHA_DECISION": "A VHA decision has not been made",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_VHA_RELATED": "Appeal is not related to a VHA issue",
-  "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Provide additional context and/or documents:",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL": "Why is this appeal being returned?",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "This appeal will be returned to Board Intake.",
+  "VHA_RETURN_TO_BOARD_INTAKE_RETURN_REASON_DROPDOWN_DETAIL": "You must select a reason for returning to intake",
+  "VHA_RETURN_TO_BOARD_INTAKE_RETURN_REASON_TEXTAREA_DETAIL": "Return reason field is required",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS": {
+    "DUPLICATE": {
+      "LABEL": "Duplicate",
+      "VALUE": "duplicate"
+    },
+    "HLR_PENDING": {
+      "LABEL": "HLR Pending",
+      "VALUE": "hlr pending"
+    },
+    "SC_PENDING": {
+      "LABEL": "SC Pending",
+      "VALUE": "sc pending"
+    },
+    "NOT_VHA_RELATED": {
+      "LABEL": "Not VHA related",
+      "VALUE": "not vha related"
+    },
+      "CLARIFICATION_NEEDED": {
+      "LABEL": "Clarification needed from appellant",
+      "VALUE": "clarification needed from appellant"
+    },
+    "NO_VHA_DECISION": {
+      "LABEL": "No VHA decision",
+      "VALUE": "no vha decision"
+    },
+    "OTHER": {
+      "LABEL": "Other",
+      "VALUE": "other"
+    }
+  },
+  "VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL": "Please provide the reason for return",
+  "VHA_RETURN_TO_BOARD_INTAKE_MODAL_INSTRUCTIONS_LABEL": "Provide additional context for this action",
+  "VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION": "You have successfully returned %s's case to Board Intake",
   "SELECT_RADIO_ERROR": "Please select an option.",
   "EMPTY_INSTRUCTIONS_ERROR": "Text field cannot be blank.",
-  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review.",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the CAMO team's Queue",
@@ -1357,7 +1410,7 @@
   "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY": "By marking task as in progress, you are confirming that you are actively working on collecting documents for this appeal.\n\nOnce marked, other members of your organization will no longer be able to mark this task as in progress.",
   "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked %s's case as in progress",
   "VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE": "You have successfully sent %s's case to Board Intake for review",
-  "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY": "This appeal will be sent to Board Intake for review.\n\nPlease select where the documents for this appeal are stored",
+  "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY": "This appeal will be sent to Board Intake for review.\n\nPlease select where the documents for this appeal were returned",
   "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE": "Ready for review",
   "BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE": "Return appeal to VHA",
   "BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY": "If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA.",

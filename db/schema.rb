@@ -152,6 +152,19 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
+  create_table "appellant_substitution_histories", force: :cascade do |t|
+    t.bigint "appellant_substitution_id", comment: "Appellant substitution id of the last user that updated the CAVC record"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "Current user who created Appellant substitution"
+    t.string "current_appellant_substitute_participant_id", comment: "Current Appellant Substitute participant Id"
+    t.string "current_appellant_veteran_participant_id", comment: "Current Appellant Veteran participant Id"
+    t.string "original_appellant_substitute_participant_id", comment: "Original Appellant Substitute participant Id"
+    t.string "original_appellant_veteran_participant_id", comment: "Original Appeallant Veteran Participant Id"
+    t.date "substitution_date", comment: "Timestamp of substitution granted date"
+    t.datetime "updated_at", null: false
+    t.index ["appellant_substitution_id"], name: "index_appellant_sub_histories_on_appellant_substitution_id"
+  end
+
   create_table "appellant_substitutions", comment: "Store appellant substitution form data", force: :cascade do |t|
     t.string "claimant_type", null: false, comment: "Claimant type of substitute; needed to create Claimant record"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
@@ -404,6 +417,24 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.bigint "updated_by_id", comment: "User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
     t.index ["remand_appeal_id"], name: "index_cavc_remands_on_remand_appeal_id"
     t.index ["source_appeal_id"], name: "index_cavc_remands_on_source_appeal_id"
+  end
+
+  create_table "cavc_remands_appellant_substitutions", force: :cascade do |t|
+    t.bigint "appellant_substitution_id", comment: "Appellant Substitution this is tied to"
+    t.bigint "cavc_remand_id", comment: "Cavc Remand this is tied to"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "Current user who created substitution"
+    t.boolean "is_appellant_substituted", comment: "Y/N Boolean for active substitution"
+    t.string "participant_id", comment: "Claimant Participant Id"
+    t.string "remand_source", comment: "Source of Remand - From Add or Edit"
+    t.string "substitute_participant_id", comment: "Appellant Substitute participant Id"
+    t.date "substitution_date", comment: "Timestamp of substitution"
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id", comment: "Current user who updated substitution"
+    t.index ["appellant_substitution_id"], name: "index_on_appellant_substitution_id"
+    t.index ["cavc_remand_id"], name: "index_on_cavc_remand_id"
+    t.index ["participant_id"], name: "index_on_participant_id"
+    t.index ["substitute_participant_id"], name: "index_on_substitute_participant_id"
   end
 
   create_table "cavc_selection_bases", force: :cascade do |t|
@@ -1940,6 +1971,10 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
   add_foreign_key "cavc_remands", "users", column: "created_by_id"
   add_foreign_key "cavc_remands", "users", column: "updated_by_id"
+  add_foreign_key "cavc_remands_appellant_substitutions", "appellant_substitutions"
+  add_foreign_key "cavc_remands_appellant_substitutions", "cavc_remands"
+  add_foreign_key "cavc_remands_appellant_substitutions", "users", column: "created_by_id"
+  add_foreign_key "cavc_remands_appellant_substitutions", "users", column: "updated_by_id"
   add_foreign_key "certification_cancellations", "certifications"
   add_foreign_key "certifications", "users"
   add_foreign_key "claim_establishments", "dispatch_tasks", column: "task_id"

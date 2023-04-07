@@ -404,10 +404,15 @@
     "value": "modal/return_to_program_office",
     "func": "vha_regional_office_return_to_program_office"
   },
-  "VHA_SEND_TO_BOARD_INTAKE": {
-    "label": "Send to Board Intake",
-    "value": "modal/vha_send_to_board_intake",
-    "func": "vha_send_to_board_intake"
+  "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW": {
+    "label": "Documents ready for Board Intake review",
+    "value": "modal/vha_documents_ready_for_bva_intake_for_review",
+    "func": "vha_documents_ready_for_bva_intake_for_review"
+  },
+  "VHA_RETURN_TO_BOARD_INTAKE": {
+    "label": "Return to Board Intake",
+    "value": "modal/vha_return_to_board_intake",
+    "func": "vha_return_to_board_intake"
   },
   "VHA_MARK_TASK_IN_PROGRESS": {
     "label": "Mark task in progress",
