@@ -16,7 +16,7 @@ class OrganizationOnHoldTasksTab < QueueTab
   end
 
   def tasks
-    on_hold_task_children_and_timed_hold_parents
+    on_hold_task_children_and_timed_hold_parents_on_hold_tab
   end
 
   # rubocop:disable Metrics/AbcSize
