@@ -33,7 +33,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # Return: Array of appeals that were closed within the last 24 hours
   def appeals_recently_outcoded
     Appeal
-      .where(id: BvaDispatchTask.where(closed_at: 1.day.ago..Time.zone.now)
+      .where(id: RootTask.where(closed_at: 1.day.ago..Time.zone.now)
       .where(appeal_type: "Appeal", status: "completed")
       .pluck(:appeal_id)
       .uniq)
@@ -72,7 +72,6 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       .order(attempted_at: :desc)
       .uniq(&:appeal_id)
       .reverse.pluck(:appeal_id)
-
     # Appeals for all the previously synced reports from oldest to newest
     get_appeals_from_prev_synced_ids(previously_synced_appeal_ids)
   end
