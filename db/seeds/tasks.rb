@@ -21,7 +21,9 @@ module Seeds
       # create_tasks
       # create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
       # create_attorney_case_review_for_legacy_appeals
-      create_vha_visn_pre_docket_queue
+      # create_vha_visn_pre_docket_queue
+      # create_high_level_reviews
+      create_supplemental_claims
     end
 
     private
@@ -1144,6 +1146,21 @@ module Seeds
         end
       end
     end
+
+    def create_high_level_reviews
+      business_line_list = Organization.where(type: 'BusinessLine')
+      business_line_list.each do |bussiness_line|
+        higher_level_review = create(:higher_level_review_vha_task, assigned_to: bussiness_line)
+      end
+    end
+
+    def create_supplemental_claims
+      business_line_list = Organization.where(type: 'BusinessLine', name: 'Veterans Health Administration')
+      business_line_list.each do |bussiness_line|
+        create_list(:supplemental_claim_vha_task,5, assigned_to: bussiness_line)
+      end
+    end
+
   end
   # rubocop:enable Metrics/ClassLength
   # rubocop:enable Metrics/AbcSize

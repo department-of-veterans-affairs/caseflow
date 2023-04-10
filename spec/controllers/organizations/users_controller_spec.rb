@@ -2,7 +2,9 @@
 
 describe Organizations::UsersController, :postgres, type: :controller do
   describe "GET /organizations/:business_line/users" do
-    subject { get :index, params: { organization_url: non_comp_org.url }, format: :json }
+    include_context :business_line, "National Cemetery Administration", "nca"
+    include_context :add_user_to_business_line
+    subject { get :index, params: { organization_url: business_line.url }, format: :json }
 
     let(:non_admin_user) do
       User.authenticate!(roles: ["VSO"])
@@ -16,7 +18,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
       create(:user).tap { |bva_admin| Bva.singleton.add_user(bva_admin) }
     end
 
-    let(:non_comp_org) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
+    # let(:non_comp_org) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
 
     context "non-admin user" do
       before { User.stub = non_admin_user }
@@ -32,11 +34,11 @@ describe Organizations::UsersController, :postgres, type: :controller do
     shared_examples "can view org" do
       render_views
 
-      let(:user) { create(:user) }
+      # let(:user) { create(:user) }
 
-      before do
-        non_comp_org.add_user(user)
-      end
+      # before do
+      #   business_line.add_user(user)
+      # end
 
       it "returns 200 and users in org" do
         subject
