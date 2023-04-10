@@ -182,7 +182,7 @@ class BusinessLine < Organization
 
     # These values reflect the number of searchable fields in search_all_clause for where interpolation later
     def number_of_search_fields
-      FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: RequestStore[:current_user]) ? 4 : 2
+      FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: RequestStore[:current_user]) ? 5 : 3
     end
 
     def search_ssn_and_file_number_clause
@@ -194,7 +194,8 @@ class BusinessLine < Organization
       return "" if query_params[:search_query].blank?
 
       clause = +"veterans.participant_id LIKE ? "\
-               "OR #{claimant_name} ILIKE ? "
+               "OR #{claimant_name} ILIKE ? "\
+               "OR request_issues.nonrating_issue_category ILIKE ? "
 
       if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: RequestStore[:current_user])
         clause << search_ssn_and_file_number_clause

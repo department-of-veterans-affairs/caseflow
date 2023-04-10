@@ -259,7 +259,21 @@ export const issueTypesColumn = (filterOptions) => {
     filterOptions,
     columnName: 'appeal.issueTypes',
     valueFunction: (task) => {
-      return task.appeal.issueTypes;
+      const commaDelimitedIssueTypes = task.appeal.issueTypes;
+
+      // Remove duplicates from the comma delimited list of issues
+      const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes.split(','))];
+
+      // return uniqueIssueTypes.map((type) => (<span> {type} <br /> </span>));
+
+      // return uniqueIssueTypes.map((type) => (<p key={type}> {type} </p>));
+
+      // TODO: Might change this to be something other than p tags.
+      return uniqueIssueTypes.length > 1 ?
+        uniqueIssueTypes.map((type) => (<p key={type}> {type} </p>)) :
+        uniqueIssueTypes[0];
+
+      // return uniqueIssueTypes.join(',');
     },
     getSortValue: (task) => task.appeal.issueTypes
   };
