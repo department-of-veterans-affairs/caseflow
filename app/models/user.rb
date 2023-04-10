@@ -133,6 +133,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     CavcLitigationSupport.singleton.admins.include?(self)
   end
 
+  def can_edit_cavc_dashboards?
+    OaiTeam.singleton.users.include?(self)
+  end
+
+  def can_view_cavc_dashboards?
+    OaiTeam.singleton.users.include?(self) || OccTeam.singleton.users.include?(self)
+  end
+
   def can_intake_appeals?
     BvaIntake.singleton.users.include?(self)
   end
@@ -432,6 +440,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def in_hearing_management_team?
     member_of_organization?(HearingsManagement.singleton)
+  end
+
+  # Purpose: Checks if current user is a hearing admin user
+  # Returns: Boolean for whether or not the user is a hearing admin
+  def in_hearing_admin_team?
+    member_of_organization?(HearingAdmin.singleton)
   end
 
   def can_view_judge_team_management?

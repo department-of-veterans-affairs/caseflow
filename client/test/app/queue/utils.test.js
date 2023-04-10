@@ -46,7 +46,7 @@ describe('timelineEventsFromAppeal', () => {
       createdBy: appeal.appellantSubstitution.created_by,
       originalAppellantFullName:
         appeal.appellantSubstitution.original_appellant_full_name,
-      substituteFullName: appeal.appellantSubstitution.substitute_full_name,
+      currentAppellantSubstituteFullName: appeal.appellantSubstitution.substitute_full_name,
     });
 
     expect(res).toMatchSnapshot();

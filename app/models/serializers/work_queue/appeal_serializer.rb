@@ -64,6 +64,15 @@ class WorkQueue::AppealSerializer
     end
   end
 
+  attribute :substitute_appellant_claimant_options do |object|
+    object.veteran&.relationships.map do |relation|
+      {
+        displayText: "#{relation.first_name} #{relation.last_name}, #{relation.relationship_type}",
+        value: relation.participant_id
+      }
+    end
+  end
+
   attribute :nod_date_updates do |object|
     object.nod_date_updates.map do |nod_date_update|
       WorkQueue::NodDateUpdateSerializer.new(nod_date_update).serializable_hash[:data][:attributes]
@@ -164,6 +173,11 @@ class WorkQueue::AppealSerializer
     if object.cavc_remand
       WorkQueue::CavcRemandSerializer.new(object.cavc_remand).serializable_hash[:data][:attributes]
     end
+  end
+
+  attribute :show_post_cavc_stream_msg do |object|
+    cavc_remand = CavcRemand.find_by(source_appeal_id: object.id)
+    cavc_remand.present? && cavc_remand.cavc_remands_appellant_substitution.present?
   end
 
   attribute :remand_source_appeal_id do |appeal|
@@ -288,5 +302,14 @@ class WorkQueue::AppealSerializer
       .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
       .merge(@all_notifications.where(sms_notification_status: nil)
       .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).any?
+  end
+
+  attribute :cavc_remands_with_dashboard do |appeal|
+    @remands_with_dashboard = CavcRemand.where(source_appeal_id: appeal.id, cavc_decision_type:
+    [
+      Constants.CAVC_DECISION_TYPES.other_dismissal,
+      Constants.CAVC_DECISION_TYPES.affirmed,
+      Constants.CAVC_DECISION_TYPES.settlement
+    ]).count
   end
 end

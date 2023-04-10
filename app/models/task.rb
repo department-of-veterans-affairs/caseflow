@@ -20,6 +20,7 @@ class Task < CaseflowRecord
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :cancelled_by, class_name: "User"
+  belongs_to :completed_by, class_name: "User"
 
   include BelongsToPolymorphicAppealConcern
   belongs_to_polymorphic_appeal :appeal, include_decision_review_classes: true
@@ -423,7 +424,7 @@ class Task < CaseflowRecord
   end
 
   def on_timed_hold?
-    !active_child_timed_hold_task.nil?
+    !active_child_timed_hold_task.nil? || type == PostSendInitialNotificationLetterHoldingTask.name
   end
 
   def active_child_timed_hold_task
@@ -516,6 +517,11 @@ class Task < CaseflowRecord
   def update_with_instructions(params)
     params[:instructions] = flattened_instructions(params)
     update!(params)
+
+    # if completing a letter task, update completed_by to current user.
+    if completed? && is_a?(LetterTask) && completed_by.nil?
+      update!(completed_by: RequestStore[:current_user])
+    end
   end
 
   def flattened_instructions(params)
