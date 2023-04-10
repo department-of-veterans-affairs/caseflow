@@ -228,7 +228,7 @@ module Seeds
 
     def create_vha_camo
       create_vha_camo_queue_assigned
-      # create_vha_camo_queue_in_progress
+      create_vha_camo_queue_in_progress
       create_vha_camo_queue_completed
     end
 
