@@ -15,6 +15,7 @@ end
 
 RSpec.shared_context :add_user_to_business_line do
   let(:add_user_to_business_line) { create(:add_user_to_business_line) }
+
   before do
     business_line.add_user(add_user_to_business_line)
   end
