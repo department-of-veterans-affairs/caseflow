@@ -94,6 +94,8 @@ module Seeds
       create_hearings_user
       create_build_and_edit_hearings_users
       create_non_admin_hearing_coordinator_user
+      add_mail_intake_to_all_bva_intake_users
+      add_vha_user_to_be_vha_business_line_member
     end
 
     def create_team_admin
@@ -422,6 +424,32 @@ module Seeds
                              roles: ["Hearing Prep"])
       SupervisorySeniorCouncil.singleton.add_user(ussccr2)
       CaseReview.singleton.add_user(ussccr2)
+    end
+
+    def add_mail_intake_to_all_bva_intake_users
+      bva_intake = BvaIntake.singleton
+      new_role = 'Mail Intake'
+      bva_intake.users.each do |user|
+        user_roles = user.roles
+        unless user_roles.include?(new_role)
+          new_roles = user_roles << new_role
+          user.update!(roles: new_roles)
+        end
+      end
+    end
+
+    #Ensure all VHA users are made members of the VHA Business Line.
+    def add_vha_user_to_be_vha_business_line_member
+      #Get list of all the users who are the members of VHA Camo, Vha Program Office and VISN
+      # basically any organization whose type starts with Vha%
+      user_list = User.joins("INNER JOIN Organizations_users ou On Users.id = Ou.user_id INNER JOIN Organizations o on o.id = ou.organization_id")
+                  .where("o.type like ?",'Vha%')
+                  .distinct
+      # organization = BusinessLine.where(name:)
+      organization = Organization.find_by_name_or_url('Veterans Health Administration')
+      user_list.each do |user|
+          organization.add_user(user)
+      end
     end
   end
   # rubocop:enable Metrics/AbcSize

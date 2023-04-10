@@ -536,12 +536,6 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
-      factory :vha_document_search_task_with_assigned_to, class: VhaDocumentSearchTask do
-        parent { create(:pre_docket_task, assigned_to: assigned_to, appeal: appeal) }
-        assigned_to { :assigned_to }
-        assigned_by { nil }
-      end
-
       factory :education_document_search_task, class: EducationDocumentSearchTask do
         parent { create(:pre_docket_task, appeal: appeal, assigned_to: BvaIntake.singleton) }
         assigned_to { EducationEmo.singleton }

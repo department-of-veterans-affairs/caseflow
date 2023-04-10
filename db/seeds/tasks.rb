@@ -24,6 +24,9 @@ module Seeds
       create_vha_camo
       create_vha_caregiver
       create_vha_program_office
+      create_vha_visn_pre_docket_queue
+      create_high_level_reviews
+      create_supplemental_claims
     end
 
     private
@@ -225,7 +228,7 @@ module Seeds
 
     def create_vha_camo
       create_vha_camo_queue_assigned
-      create_vha_camo_queue_in_progress
+      # create_vha_camo_queue_in_progress
       create_vha_camo_queue_completed
     end
 
@@ -1154,7 +1157,7 @@ module Seeds
 
     def create_vha_camo_queue_assigned
       5.times do
-        create(:vha_document_search_task_with_assigned_to,assigned_to: VhaCamo.singleton)
+        create(:vha_document_search_task,assigned_to: VhaCamo.singleton)
       end
     end
 
@@ -1169,25 +1172,25 @@ module Seeds
 
     def create_vha_camo_queue_completed
       5.times do
-        create(:vha_document_search_task_with_assigned_to,:completed, assigned_to: VhaCamo.singleton)
+        create(:vha_document_search_task,:completed, assigned_to: VhaCamo.singleton)
       end
     end
 
     def create_vha_caregiver_queue_assigned
       5.times do
-        create(:vha_document_search_task_with_assigned_to,assigned_to: VhaCaregiverSupport.singleton)
+        create(:vha_document_search_task,assigned_to: VhaCaregiverSupport.singleton)
       end
     end
 
     def create_vha_caregiver_queue_in_progress
       5.times do
-        create(:vha_document_search_task_with_assigned_to,:in_progress, assigned_to: VhaCaregiverSupport.singleton)
+        create(:vha_document_search_task,:in_progress, assigned_to: VhaCaregiverSupport.singleton)
       end
     end
 
     def create_vha_caregiver_queue_completed
       5.times do
-        create(:vha_document_search_task_with_assigned_to,:completed, assigned_to: VhaCaregiverSupport.singleton)
+        create(:vha_document_search_task,:completed, assigned_to: VhaCaregiverSupport.singleton)
       end
     end
 
@@ -1196,7 +1199,7 @@ module Seeds
       program_offices = Organization.where(type: 'VhaProgramOffice')
       tabs.each do |status|
         program_offices.each do |program_office|
-          create_list(:vha_document_search_task_with_assigned_to,5,status,assigned_to: program_office)
+          create_list(:vha_document_search_task,5,status,assigned_to: program_office)
         end
       end
     end
@@ -1205,6 +1208,30 @@ module Seeds
       program_offices = Organization.where(type: 'VhaProgramOffice')
       program_offices.each do |program_office|
         create_list(:assess_documentation_task_predocket,5,:completed, :ready_for_review, assigned_to: program_office)
+      end
+    end
+
+    def create_vha_visn_pre_docket_queue
+      tabs = [:assigned, :completed]
+      vha_regional_offices = Organization.where(type: 'VhaRegionalOffice')
+      tabs.each do |status|
+        vha_regional_offices.each do  |regional_office|
+          create(:pre_docket_task, status, assigned_to: regional_office)
+        end
+      end
+    end
+
+    def create_high_level_reviews
+      business_line_list = Organization.where(type: 'BusinessLine')
+      business_line_list.each do |bussiness_line|
+        higher_level_review = create(:higher_level_review_vha_task, assigned_to: bussiness_line)
+      end
+    end
+
+    def create_supplemental_claims
+      business_line_list = Organization.where(type: 'BusinessLine')
+      business_line_list.each do |bussiness_line|
+        create_list(:supplemental_claim_vha_task,5, assigned_to: bussiness_line)
       end
     end
   end
