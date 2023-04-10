@@ -10,8 +10,7 @@
 
 class MembershipRequestMailer < ActionMailer::Base
   helper MembershipRequestHelper
-  # default from: "VHABENEFITAPPEALS@va.gov"
-  default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
+  default from: "VHA Benefit Appeals <vhabenefitappeals@messages.va.gov>"
   layout "membership_request_mailer"
 
   def user_request_created
