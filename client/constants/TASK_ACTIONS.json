@@ -404,10 +404,15 @@
     "value": "modal/return_to_program_office",
     "func": "vha_regional_office_return_to_program_office"
   },
-  "VHA_SEND_TO_BOARD_INTAKE": {
-    "label": "Send to Board Intake",
-    "value": "modal/vha_send_to_board_intake",
-    "func": "vha_send_to_board_intake"
+  "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW": {
+    "label": "Documents ready for Board Intake review",
+    "value": "modal/vha_documents_ready_for_bva_intake_for_review",
+    "func": "vha_documents_ready_for_bva_intake_for_review"
+  },
+  "VHA_RETURN_TO_BOARD_INTAKE": {
+    "label": "Return to Board Intake",
+    "value": "modal/vha_return_to_board_intake",
+    "func": "vha_return_to_board_intake"
   },
   "VHA_MARK_TASK_IN_PROGRESS": {
     "label": "Mark task in progress",
@@ -458,5 +463,57 @@
     "label": "Return to Board Intake",
     "value": "modal/vha_caregiver_support_return_to_board_intake",
     "func": "vha_caregiver_support_return_to_board_intake"
+  },
+  "RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING": {
+    "label": "Resend initial notification letter",
+    "value": "modal/resend_initial_notification_letter_post_holding",
+    "func": "resend_initial_notification_letter_post_holding"
+  },
+  "RESEND_INITIAL_NOTIFICATION_LETTER_FINAL": {
+    "label": "Resend initial notification letter",
+    "value": "modal/resend_initial_notification_letter_final",
+    "func": "resend_initial_notification_letter_final"
+  },
+  "RESEND_FINAL_NOTIFICATION_LETTER": {
+    "label": "Resend final notification letter",
+    "value": "modal/resend_final_notification_letter",
+    "func": "resend_final_notification_letter_task_data"
+  },
+  "MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE": {
+    "label": "Mark task complete",
+    "value": "modal/mark_task_complete_contested_claim",
+    "func": "mark_final_notification_letter"
+  },
+
+  "CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK": {
+    "label": "Cancel task",
+    "value": "modal/cancel_initial_letter_task",
+    "func": "cancel_initial_letter_task_data"
+  },
+  "CANCEL_CONTESTED_CLAIM_POST_INITIAL_LETTER_TASK": {
+    "label": "Cancel task",
+    "value": "modal/cancel_post_letter_task",
+    "func": "cancel_post_initial_letter_task_data"
+  },
+  "CANCEL_CONTESTED_CLAIM_FINAL_LETTER_TASK": {
+    "label": "Cancel task",
+    "value": "modal/cancel_final_letter_task",
+    "func": "cancel_final_letter_task_data"
+  },
+
+  "MARK_TASK_AS_COMPLETE_CONTESTED_CLAIM": {
+    "label": "Mark task complete",
+    "value": "modal/mark_task_complete_contested_claim",
+    "func": "mark_task_as_complete_cc"
+  },
+  "PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL": {
+    "label": "Proceed to final notification letter",
+    "value": "modal/proceed_final_notification_letter_initial",
+    "func": "proceed_final_notification_letter_data"
+  },
+  "PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING": {
+    "label": "Proceed to final notification letter",
+    "value": "modal/proceed_final_notification_letter_post_holding",
+    "func": "proceed_final_notification_letter_data"
   }
 }
