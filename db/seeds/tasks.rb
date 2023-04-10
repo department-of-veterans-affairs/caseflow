@@ -1165,8 +1165,13 @@ module Seeds
       5.times do
         appeal = create(:appeal)
         root_task = create(:task, appeal: appeal,assigned_to: VhaCamo.singleton)
-        pre_docket_task = FactoryBot.create(:pre_docket_task,:in_progress,assigned_to: VhaCamo.singleton, appeal: appeal, parent: root_task)
-        create(:task,:in_progress,assigned_to: VhaCamo.singleton, appeal: appeal, parent: pre_docket_task)
+        pre_docket_task = FactoryBot.create(
+                                            :pre_docket_task,
+                                            :in_progress,
+                                            assigned_to: VhaCamo.singleton,
+                                            appeal: appeal,
+                                            parent: root_task)
+        create(:task, :in_progress,assigned_to: VhaCamo.singleton, appeal: appeal, parent: pre_docket_task)
       end
     end
 
