@@ -276,7 +276,7 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
               for="newTasks[0].instructions"
             >
               <span>
-                Provide instructions and context for this action:
+                Provide instructions and context for this action
               </span>
             </label>
             <textarea

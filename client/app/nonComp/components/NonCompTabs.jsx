@@ -44,7 +44,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
         baseTasksUrl={`${this.props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=completed`}
         tabPaginationOptions={tabPaginationOptions}
         filterableTaskTypes={this.props.taskFilterDetails.completed}
-        description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
+        description={COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION}
         predefinedColumns={{ includeCompletedDate: true,
           defaultSortIdx: 3 }} />
     }];

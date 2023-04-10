@@ -18,7 +18,8 @@ import {
   marginTop,
   CUSTOM_HOLD_DURATION_TEXT,
   COLOCATED_HOLD_DURATIONS,
-  VHA_HOLD_DURATIONS
+  VHA_HOLD_DURATIONS,
+  marginBottom
 } from '../constants';
 import { withRouter } from 'react-router-dom';
 import {
@@ -30,7 +31,6 @@ import {
 import { css } from 'glamor';
 
 const labelTextStyling = css({
-  marginTop: '3rem',
   marginBottom: 0
 });
 
@@ -50,6 +50,8 @@ class StartHoldModal extends React.Component {
     this.props.resetErrorMessages();
   };
 
+  isVHAHold = () => Boolean(this.props.task.type === 'AssessDocumentationTask');
+
   holdLength = () => this.state.hold === CUSTOM_HOLD_DURATION_TEXT ? this.state.customHold : this.state.hold;
 
   validateForm = () => {
@@ -57,7 +59,7 @@ class StartHoldModal extends React.Component {
     const hasHoldLength = Boolean(Number(this.holdLength()));
     const customHoldIsValid = Boolean(this.state.customHold < 31);
 
-    if (this.props.task.type === 'AssessDocumentationTask') {
+    if (this.isVHAHold()) {
       return hasInstructions && hasHoldLength && customHoldIsValid;
     }
 
@@ -95,8 +97,15 @@ class StartHoldModal extends React.Component {
 
     const invalidDate = this.state.customHold > 30;
 
+    const durationTimes = this.isVHAHold() ? VHA_HOLD_DURATIONS : COLOCATED_HOLD_DURATIONS;
+
+    const holdOptions = durationTimes.map((value) => ({
+      label: Number(value) ? `${value} days` : value,
+      value
+    }));
+
     const handleError = () => {
-      if (this.props.task.type === 'AssessDocumentationTask' && invalidDate) {
+      if (this.isVHAHold() && invalidDate) {
 
         return highlightFormItems ? COPY.VHA_PLACE_CUSTOM_HOLD_INVALID_VALUE : null;
       }
@@ -108,34 +117,24 @@ class StartHoldModal extends React.Component {
 
     return <QueueFlowModal
       title={TASK_ACTIONS.PLACE_TIMED_HOLD.label}
+      button={COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON}
       pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
+      submitDisabled={this.isVHAHold() && !this.validateForm()}
       validateForm={this.validateForm}
+      submitButtonClassNames={['usa-button']}
       submit={this.submit}
     >
-      {this.props.task.type === 'AssessDocumentationTask' ?
-        <SearchableDropdown
-          name={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
-          searchable={false}
-          errorMessage={highlightFormItems && !this.state.hold ? 'Choose one' : null}
-          placeholder={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
-          value={this.state.hold}
-          onChange={(option) => option && this.setState({ hold: option.value })}
-          options={VHA_HOLD_DURATIONS.map((value) => ({
-            label: Number(value) ? `${value} days` : value,
-            value
-          }))} /> :
-        <SearchableDropdown
-          name={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
-          searchable={false}
-          errorMessage={highlightFormItems && !this.state.hold ? 'Choose one' : null}
-          placeholder={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
-          value={this.state.hold}
-          onChange={(option) => option && this.setState({ hold: option.value })}
-          options={COLOCATED_HOLD_DURATIONS.map((value) => ({
-            label: Number(value) ? `${value} days` : value,
-            value
-          }))} />}
-      { this.state.hold === CUSTOM_HOLD_DURATION_TEXT && <TextField
+      <SearchableDropdown
+        name={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
+        searchable={false}
+        errorMessage={highlightFormItems && !this.state.hold ? 'Choose one' : null}
+        placeholder={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
+        value={this.state.hold}
+        onChange={(option) => option && this.setState({ hold: option.value })}
+        options={holdOptions}
+        styling={marginBottom(2)}
+      />
+      {this.state.hold === CUSTOM_HOLD_DURATION_TEXT && <TextField
         name={COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY}
         type="number"
         value={this.state.customHold}
@@ -146,7 +145,7 @@ class StartHoldModal extends React.Component {
       <TextareaField
         value={this.state.instructions}
         name="instructions"
-        label="Notes:"
+        label="Notes"
         errorMessage={highlightFormItems && !this.state.instructions ? COPY.NOTES_ERROR_FIELD_REQUIRED : null}
         onChange={(instructions) => this.setState({ instructions })}
         styling={marginTop(2)} />

@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
-
 import COPY from '../../COPY';
 
 import { taskById, appealWithDetailSelector } from './selectors';
@@ -185,6 +184,7 @@ class AssignToView extends React.Component {
     }
 
     return COPY.ASSIGN_TO_USER_DROPDOWN;
+
   };
 
   render = () => {
@@ -201,7 +201,7 @@ class AssignToView extends React.Component {
     const modalProps = {
       title: this.determineTitle(this.props, action, isPulacCerullo, actionData),
       pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
-
+      ...(actionData.modal_button_text && { button: actionData.modal_button_text }),
       submit: this.submit,
       validateForm: isPulacCerullo ?
         () => {
@@ -214,10 +214,14 @@ class AssignToView extends React.Component {
       modalProps.button = 'Notify';
     }
 
-    if (modalProps.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
-      modalProps.submitButtonClassNames = ['usa-button', 'usa-button-warning'];
-      modalProps.button = 'Return';
+    if ([
+      'PreDocketTask',
+      'VhaDocumentSearchTask',
+      'EducationDocumentSearchTask',
+      'AssessDocumentationTask'
+    ].includes(task.type)) {
       modalProps.submitDisabled = !this.validateForm();
+      modalProps.submitButtonClassNames = ['usa-button'];
     }
 
     return (
@@ -228,7 +232,8 @@ class AssignToView extends React.Component {
             <SearchableDropdown
               name="Assign to selector"
               searchable
-              hideLabel
+              hideLabel={actionData.drop_down_label ? null : true}
+              label={actionData.drop_down_label}
               errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
               placeholder={this.determinePlaceholder(this.props, actionData)}
               value={this.state.selectedValue}
@@ -240,7 +245,8 @@ class AssignToView extends React.Component {
         )}
         {!isPulacCerullo && (
           <TextareaField
-            name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+            name="Task instructions"
+            label={actionData.instructions_label || COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
             errorMessage={highlightFormItems && !actionData.body_optional && !this.state.instructions ?
               COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
             id="taskInstructions"

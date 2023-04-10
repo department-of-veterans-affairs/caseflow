@@ -24,6 +24,14 @@ const CancelTaskModal = (props) => {
 
   const [instructions, setInstructions] = useState('');
 
+  const formatInstructions = () => {
+    if (instructions.length > 0) {
+      return `##### REASON FOR CANCELLATION:\n${instructions}`;
+    }
+
+    return instructions;
+  };
+
   const validateForm = () => {
     if (!shouldShowTaskInstructions) {
       return true;
@@ -34,7 +42,7 @@ const CancelTaskModal = (props) => {
 
   const submit = () => {
     const currentInstruction = (props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ?
-    `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : instructions);
+      `\nHold time: ${currentDaysOnHold(task)}/${task.onHoldDuration} days\n\n ${instructions}` : formatInstructions());
     const payload = {
       data: {
         task: {
@@ -44,6 +52,7 @@ const CancelTaskModal = (props) => {
         }
       }
     };
+
     const hearingScheduleLink = taskData?.back_to_hearing_schedule ?
       <p>
         <Link href={`/hearings/schedule/assign?regional_office_key=${hearingDay.regionalOffice}`}>
@@ -63,9 +72,20 @@ const CancelTaskModal = (props) => {
     return props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg);
   };
 
+  // Additional properties - should be removed later once generic submit buttons are styled the same across all modals
+  const modalProps = {};
+
+  if ([
+    'AssessDocumentationTask',
+    'EducationAssessDocumentationTask',
+  ].includes(task?.type)) {
+    modalProps.submitButtonClassNames = ['usa-button'];
+    modalProps.submitDisabled = !validateForm();
+  }
+
   if (props.task.type === 'SendInitialNotificationLetterTask' ||
-  props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ||
-  props.task.type === 'SendFinalNotificationLetterTask') {
+    props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ||
+    props.task.type === 'SendFinalNotificationLetterTask') {
     return (
       <QueueFlowModal
         title={taskData?.modal_title ?? ''}
@@ -74,7 +94,7 @@ const CancelTaskModal = (props) => {
         submit={submit}
         validateForm={validateForm}
         submitButtonClassNames={['usa-button']}
-        submitDisabled= {!(instructions.length)}
+        submitDisabled={!(instructions.length)}
       >
         {taskData?.modal_body &&
           <React.Fragment>
@@ -99,6 +119,7 @@ const CancelTaskModal = (props) => {
 
   return (
     <QueueFlowModal
+      {...modalProps}
       title={taskData?.modal_title ?? ''}
       button={taskData?.modal_button_text ?? COPY.MODAL_SUBMIT_BUTTON}
       pathAfterSubmit={taskData?.redirect_after ?? '/queue'}
@@ -111,10 +132,10 @@ const CancelTaskModal = (props) => {
           <br />
         </React.Fragment>
       }
-      {get(taskData, 'show_instructions', true) &&
+      {shouldShowTaskInstructions &&
         <TextareaField
-          name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-          errorMessage={highlightFormItems && instructions.length === 0 ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
+          name={taskData?.instructions_label ?? COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+          errorMessage={highlightFormItems && instructions.length === 0 ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
           id="taskInstructions"
           onChange={setInstructions}
           value={instructions}
