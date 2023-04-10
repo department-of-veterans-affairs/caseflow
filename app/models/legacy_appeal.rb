@@ -6,6 +6,7 @@
 # The source of truth for legacy appeals is VACOLS, but legacy appeals may also be worked in Caseflow.
 # Legacy appeals have VACOLS and BGS as dependencies.
 
+# rubocop:disable Metrics/ClassLength
 class LegacyAppeal < CaseflowRecord
   include AppealConcern
   include AssociatedVacolsModel
@@ -17,6 +18,7 @@ class LegacyAppeal < CaseflowRecord
   include HasTaskHistory
   include AppealAvailableHearingLocations
   include HearingRequestTypeConcern
+  include AppealNotificationReportConcern
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -1223,3 +1225,4 @@ class LegacyAppeal < CaseflowRecord
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

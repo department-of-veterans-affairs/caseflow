@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -13,7 +14,8 @@ import { ADD_CAVC_PAGE_TITLE, CAVC_ATTORNEY_LABEL, CAVC_COURT_DECISION_DATE,
   CAVC_JUDGEMENT_DATE, CAVC_INSTRUCTIONS_ERROR, CAVC_INSTRUCTIONS_LABEL, CAVC_ISSUES_LABEL,
   CAVC_MANDATE_DATE, CAVC_REMAND_MANDATE_DATES_LABEL, CAVC_REMAND_MANDATE_QUESTION,
   CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION, CAVC_SUB_TYPE_LABEL, CAVC_TYPE_LABEL,
-  EDIT_CAVC_PAGE_TITLE } from 'app/../COPY';
+  EDIT_CAVC_PAGE_TITLE, CAVC_SUBSTITUTE_APPELLANT_LABEL, CAVC_SUBSTITUTE_APPELLANT_DATE_LABEL,
+  CAVC_SUBSTITUTE_APPELLANT_CLAIMANTS_LABEL } from 'app/../COPY';
 import TextField from 'app/components/TextField';
 import TextareaField from 'app/components/TextareaField';
 import RadioField from 'app/components/RadioField';
@@ -28,8 +30,7 @@ import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
 import CAVC_DECISION_TYPE_NAMES from 'constants/CAVC_DECISION_TYPE_NAMES';
 
 import {
-  JmprIssuesBanner,
-  JmrIssuesBanner,
+  JmrJmprIssuesBanner,
   MdrBanner,
   MdrIssuesBanner,
   NoMandateBanner,
@@ -69,6 +70,10 @@ export const EditCavcRemandForm = ({
   existingValues = {},
   supportedDecisionTypes = [],
   supportedRemandTypes = [],
+  substituteAppellantClaimantOptions,
+  nodDate,
+  dateOfDeath,
+  featureToggles,
   onCancel,
   onSubmit,
 }) => {
@@ -77,12 +82,13 @@ export const EditCavcRemandForm = ({
   ]);
 
   const schema = useMemo(
-    () => generateSchema({ maxIssues: decisionIssues.length }),
+    () => generateSchema({ maxIssues: decisionIssues.length, nodDate, dateOfDeath }),
     [decisionIssues]
   );
 
   const { control, errors, handleSubmit, register, setValue, watch } = useForm({
     resolver: yupResolver(schema),
+    context: { nodDate, dateOfDeath },
     reValidateMode: 'onChange',
     defaultValues: {
       issueIds: decisionIssues.map((issue) => issue.id),
@@ -91,6 +97,16 @@ export const EditCavcRemandForm = ({
       ...existingValues,
     },
   });
+
+  // Ensure dates not set for MDR remand type
+  // For MDR, dates will be set after hold expires via AddCavcDatesModal
+  useEffect(() => {
+    if (existingValues?.remandType?.includes('mdr')) {
+      setValue('remandDatesProvided', 'no');
+      setValue('judgementDate', '');
+      setValue('mandateDate', '');
+    }
+  }, [existingValues.remandType]);
 
   const filteredDecisionTypes = useMemo(
     () =>
@@ -146,6 +162,13 @@ export const EditCavcRemandForm = ({
     setValue('issueIds', [...allIssueIds]);
   };
 
+  const claimantOptionsExists =
+    Array.isArray(substituteAppellantClaimantOptions) && substituteAppellantClaimantOptions.length > 0;
+  const isAppellantSubstitutedOptions = [
+    { displayText: 'Yes', value: 'true', disabled: !claimantOptionsExists },
+    { displayText: 'No', value: 'false' }
+  ];
+
   // Handle prepopulating issue checkboxes if defaultValues are present
   useEffect(() => {
     if (existingValues?.issueIds?.length) {
@@ -168,10 +191,6 @@ export const EditCavcRemandForm = ({
 
   const isRemandType = (type) =>
     watchDecisionType?.includes('remand') && watchRemandType?.includes(type);
-  const allIssuesSelected = useMemo(
-    () => watchIssueIds?.length === decisionIssues?.length,
-    [watchIssueIds, decisionIssues]
-  );
 
   const mandateDatesAvailable = useMemo(
     () =>
@@ -179,6 +198,10 @@ export const EditCavcRemandForm = ({
       watchRemandDatesProvided === 'yes',
     [watchRemandType, watchRemandDatesProvided]
   );
+
+  const [isAppellantSubstitutedValue, setIsAppellantSubstitutedValue] =
+    useState(existingValues?.isAppellantSubstituted);
+  const isAppellantSubstitutedYes = isAppellantSubstitutedValue === 'true';
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -195,6 +218,46 @@ export const EditCavcRemandForm = ({
           errorMessage={errors?.docketNumber && CAVC_DOCKET_NUMBER_ERROR}
           strongLabel
         />
+
+        { featureToggles.cavc_remand_granted_substitute_appellant &&
+          <RadioField
+            errorMessage={errors?.isAppellantSubstituted?.message}
+            inputRef={register}
+            label={CAVC_SUBSTITUTE_APPELLANT_LABEL}
+            name="isAppellantSubstituted"
+            options={isAppellantSubstitutedOptions}
+            onChange={(val) => setIsAppellantSubstitutedValue(val)}
+            strongLabel
+          />
+        }
+
+        {featureToggles.cavc_remand_granted_substitute_appellant && !claimantOptionsExists &&
+          <p>No existing relationships were found.</p>
+        }
+
+        { featureToggles.cavc_remand_granted_substitute_appellant && isAppellantSubstitutedYes &&
+          <DateSelector
+            inputRef={register}
+            label={CAVC_SUBSTITUTE_APPELLANT_DATE_LABEL}
+            type="date"
+            name="substitutionDate"
+            errorMessage={errors?.substitutionDate && errors.substitutionDate?.message}
+            strongLabel
+          />
+        }
+
+        { featureToggles.cavc_remand_granted_substitute_appellant &&
+          isAppellantSubstitutedYes &&
+          substituteAppellantClaimantOptions &&
+          <RadioField
+            label={CAVC_SUBSTITUTE_APPELLANT_CLAIMANTS_LABEL}
+            inputRef={register}
+            name="participantId"
+            errorMessage={errors?.participantId?.message}
+            options={substituteAppellantClaimantOptions}
+            strongLabel
+          />
+        }
 
         <RadioField
           errorMessage={errors?.attorney?.message}
@@ -373,8 +436,8 @@ export const EditCavcRemandForm = ({
           </React.Fragment>
         }
 
-        {isRemandType('jmr') && !allIssuesSelected && <JmrIssuesBanner />}
-        {isRemandType('jmpr') && !watchIssueIds?.length && <JmprIssuesBanner />}
+        {(isRemandType('jmr_jmpr') || isRemandType('jmr') || isRemandType('jmpr')) &&
+        !watchIssueIds?.length && <JmrJmprIssuesBanner />}
         {isRemandType('mdr') && !watchIssueIds?.length && <MdrIssuesBanner />}
         {isRemandType('mdr') && (
           <React.Fragment>
@@ -398,8 +461,16 @@ export const EditCavcRemandForm = ({
         />
       </AppSegment>
       <div className="controls cf-app-segment">
-        <Button type="submit" name="submit" classNames={['cf-right-side']}>
-          Submit
+        <Button
+          type="submit"
+          name={(featureToggles.cavc_remand_granted_substitute_appellant &&
+                 Array.isArray(substituteAppellantClaimantOptions) &&
+                substituteAppellantClaimantOptions.length > 0) ? 'continue' : 'submit'}
+          classNames={['cf-right-side']}
+        >
+          {(featureToggles.cavc_remand_granted_substitute_appellant &&
+             Array.isArray(substituteAppellantClaimantOptions) &&
+            substituteAppellantClaimantOptions.length > 0) ? 'Continue' : 'Submit'}
         </Button>
         {onCancel && (
           <Button
@@ -441,10 +512,18 @@ EditCavcRemandForm.propTypes = {
       PropTypes.string,
       PropTypes.arrayOf(PropTypes.string),
     ]),
+    substitutionDate: PropTypes.string,
+    participantId: PropTypes.string,
+    isAppellantSubstituted: PropTypes.string
   }),
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   supportedDecisionTypes: PropTypes.arrayOf(PropTypes.string),
   supportedRemandTypes: PropTypes.arrayOf(PropTypes.string),
   readOnly: PropTypes.bool,
+  substituteAppellantClaimantOptions: PropTypes.array,
+  nodDate: PropTypes.any,
+  dateOfDeath: PropTypes.any,
+  featureToggles: PropTypes.object
 };
+/* eslint-enable max-lines */

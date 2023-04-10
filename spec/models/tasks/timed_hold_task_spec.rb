@@ -51,6 +51,46 @@ describe TimedHoldTask, :postgres do
       end
     end
 
+    context "with a parent task that isn't PostSendInitialNotificationLetterTask" do
+      let(:days_on_hold_out_of_scope) { 121 }
+      let(:initial_args) do
+        { appeal: appeal,
+          assigned_to: create(:user),
+          days_on_hold: days_on_hold_out_of_scope,
+          parent: parent }
+      end
+      let(:args) { initial_args }
+
+      it "doesn't allow a task to be created with more than a 120 day hold period" do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+
+    context "with a parent task that is PostSendInitialNotificationLetterTask" do
+      let(:cob_team) { ClerkOfTheBoard.singleton }
+      let(:root_task) { create(:root_task) }
+      let(:distribution_task) { create(:distribution_task, parent: root_task) }
+      let(:end_date) { Time.zone.now + 125.days }
+      let(:post_task) do
+        PostSendInitialNotificationLetterHoldingTask.create!(
+          appeal: distribution_task.appeal,
+          parent_id: distribution_task.id,
+          assigned_to: cob_team,
+          end_date: end_date
+        )
+      end
+      let(:args) do
+        { appeal: distribution_task.appeal,
+          assigned_to: create(:user),
+          days_on_hold: 125,
+          parent: post_task }
+      end
+
+      it "allows the timer to be created with a day above 120" do
+        expect(subject).to be_an_instance_of(TimedHoldTask)
+      end
+    end
+
     describe "after_create(:cancel_active_siblings)" do
       let(:args) { initial_args }
 

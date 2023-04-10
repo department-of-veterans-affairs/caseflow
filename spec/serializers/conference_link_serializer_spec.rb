@@ -35,7 +35,7 @@ describe ConferenceLinkSerializer, :all_dbs do
     end
 
     it "calling serializable_hash return alias" do
-      expect(subject.serializable_hash[:data][:attributes][:alias]).to eq(conference_link.alias)
+      expect(subject.serializable_hash[:data][:attributes][:alias]).to eq(conference_link.alias_with_host)
     end
   end
 

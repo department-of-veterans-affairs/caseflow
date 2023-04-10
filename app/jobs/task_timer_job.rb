@@ -8,7 +8,6 @@ class TaskTimerJob < CaseflowJob
 
   def perform
     RequestStore.store[:current_user] = User.system_user
-
     TaskTimer.requires_processing.each do |task_timer|
       # TODO: if this job's runtime gets too long, spawn individual jobs for each task timer.
       process(task_timer)
