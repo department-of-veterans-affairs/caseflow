@@ -1,1 +1,1 @@
-ClaimEvidenceService = (!ApplicationController.dependencies_faked? ? ExternalApi::ClaimsEvidenceApi : Fakes::ClaimsEvidenceApi)
+ClaimEvidenceService = (!ApplicationController.dependencies_faked? ? ExternalApi::ClaimsEvidenceService : Fakes::ClaimsEvidenceService)

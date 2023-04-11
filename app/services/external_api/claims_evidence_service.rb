@@ -21,6 +21,6 @@ class ClaimsEvidenceCaseflowLogger
 end
   # :nocov:
 
-class ExternalApi::ClaimsEvidenceApi
+class ExternalApi::ClaimsEvidenceService
 
 end

@@ -21,7 +21,7 @@ class ClaimsEvidenceCaseflowLogger
 end
   # :nocov:
 
-class Fakes::ClaimsEvidenceApi
+class Fakes::ClaimsEvidenceService
 
   def self.document_types
     JSON.parse(IO.binread(File.join(Rails.root, "lib", "fakes", "data", "DOCUMENT_TYPES.json")))["documentTypes"]
