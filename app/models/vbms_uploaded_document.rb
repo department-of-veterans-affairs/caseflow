@@ -5,6 +5,10 @@ class VbmsUploadedDocument < CaseflowRecord
 
   attribute :file, :string
 
+  # rubocop:disable Layout/LineLength
+  scope :successfully_uploaded, -> { where(error: nil) & where.not(uploaded_to_vbms_at: nil) & where.not(attempted_at: nil) & where.not(processed_at: nil) }
+  # rubocop:enable Layout/LineLength
+
   def cache_file
     UploadDocumentToVbms.new(document: self).cache_file
   end

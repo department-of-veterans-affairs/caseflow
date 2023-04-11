@@ -48,7 +48,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
     # A list of unique appeal ids (Primary Key) that exist in VBMSUploadedDocument and are of type BVA Case Notification
     appeal_ids_synced = VbmsUploadedDocument.distinct
       .where(appeal_type: "Appeal", document_type: "BVA Case Notifications")
-      .where.not(attempted_at: nil)
+      .successfully_uploaded
       .pluck(:appeal_id)
 
     # A list of Appeals that have never had notification reports generated and synced with VBMS
@@ -68,7 +68,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
     # Ids for the latest Notification Report for every AMA Appeal ordered from oldest to newest
     previously_synced_appeal_ids = VbmsUploadedDocument
       .where(appeal_type: "Appeal", document_type: "BVA Case Notifications")
-      .where.not(attempted_at: nil)
+      .successfully_uploaded
       .order(attempted_at: :desc)
       .uniq(&:appeal_id)
       .reverse.pluck(:appeal_id)
@@ -138,7 +138,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       appeal_type: appeal.class.name,
       document_type: "BVA Case Notifications"
     )
-      .where.not(attempted_at: nil)
+      .successfully_uploaded
       .order(attempted_at: :desc)
       .first
   end

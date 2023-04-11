@@ -44,7 +44,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   def appeals_never_synced
     appeal_ids_synced = VbmsUploadedDocument.distinct
       .where(appeal_type: "LegacyAppeal", document_type: "BVA Case Notifications")
-      .where.not(attempted_at: nil)
+      .successfully_uploaded
       .pluck(:appeal_id)
 
     appeals_without_reports = LegacyAppeal
@@ -64,12 +64,12 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   def ready_for_resync
     previously_synced_appeal_ids = VbmsUploadedDocument
       .where(appeal_type: "LegacyAppeal", document_type: "BVA Case Notifications")
-      .where.not(attempted_at: nil)
+      .successfully_uploaded
       .order(attempted_at: :desc)
       .uniq(&:appeal_id)
       .reverse.pluck(:appeal_id)
 
-    get_appeals_from_prev_synced_ids(previously_synced_appeal_ids).compact
+    get_appeals_from_prev_synced_ids(previously_synced_appeal_ids)
   end
 
   # Purpose: Determines if a new notification has happened since the last time a
@@ -79,7 +79,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   #
   # Return: Array of active appeals and nil values (if inactive or failed checks)
   def get_appeals_from_prev_synced_ids(appeal_ids)
-    appeal_ids.map do |appeal_id|
+    active_appeals = appeal_ids.map do |appeal_id|
       begin
         appeal = LegacyAppeal.find(appeal_id)
         if appeal.active?
@@ -94,6 +94,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
         nil
       end
     end
+    active_appeals.compact
   end
 
   # Purpose: Syncs the notification reports in VBMS with the notification table for each appeal
@@ -131,7 +132,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   def latest_vbms_uploaded_document(appeal)
     VbmsUploadedDocument
       .where(appeal_id: appeal.id, appeal_type: appeal.class.name, document_type: "BVA Case Notifications")
-      .where.not(attempted_at: nil)
+      .successfully_uploaded
       .order(attempted_at: :desc)
       .first
   end
