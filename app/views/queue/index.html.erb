@@ -51,7 +51,7 @@
       split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
       cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
       cavc_dashboard_workflow: FeatureToggle.enabled?(:cavc_dashboard_workflow, user: current_user),
+      mst_pact_identification: FeatureToggle.enabled?(:mst_pact_identification, user: current_user),
       das_case_timeline: FeatureToggle.enabled?(:das_case_timeline, user: current_user)
-    }
   }) %>
 <% end %>
