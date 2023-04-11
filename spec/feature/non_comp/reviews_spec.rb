@@ -12,11 +12,25 @@ feature "NonComp Reviews Queue", :postgres do
   let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
   let(:appeal) { create(:appeal, veteran: veteran_c) }
 
-  let!(:request_issue_a) { create(:request_issue, :rating, decision_review: hlr_a) }
-  let!(:request_issue_aa) { create(:request_issue, :rating, decision_review: hlr_a) }
-  let!(:request_issue_b) { create(:request_issue, :rating, decision_review: hlr_b) }
-  let!(:request_issue_c) { create(:request_issue, :rating, :removed, decision_review: hlr_c) }
-  let!(:request_issue_d) { create(:request_issue, :rating, decision_review: appeal, closed_at: 1.day.ago) }
+  let!(:request_issue_a) do
+    create(:request_issue, :nonrating, nonrating_issue_category: "Caregiver | Other", decision_review: hlr_a)
+  end
+  let!(:request_issue_aa) do
+    create(:request_issue, :nonrating, nonrating_issue_category: "CHAMPVA", decision_review: hlr_a)
+  end
+  let!(:request_issue_b) do
+    create(:request_issue, :nonrating, nonrating_issue_category: "Camp Lejune Family Member", decision_review: hlr_b)
+  end
+  let!(:request_issue_c) do
+    create(:request_issue, :nonrating, :removed, decision_review: hlr_c)
+  end
+  let!(:request_issue_d) do
+    create(:request_issue,
+           :nonrating,
+           nonrating_issue_category: "Camp Lejune Family Member",
+           decision_review: appeal,
+           closed_at: 1.day.ago)
+  end
 
   let(:today) { Time.zone.now }
   let(:last_week) { Time.zone.now - 7.days }
@@ -178,18 +192,19 @@ feature "NonComp Reviews Queue", :postgres do
       end
     end
 
-    scenario "ordering reviews with participate id visable" do
+    scenario "ordering reviews with participate id visible" do
       visit BASE_URL
 
       order_buttons = {
         claimant_name: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[1]/span/span[2]'),
         participant_id: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[2]/span/span[2]'),
         issues_count: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[3]/span/span[2]'),
-        days_waiting: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span[1]/span[2]'),
-        date_completed: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
+        issues_type: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]'),
+        days_waiting: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[5]/span[1]/span[2]'),
+        date_completed: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[5]/span/span[2]')
       }
 
-      # Claimant name desc
+      # Claimant name asc
       order_buttons[:claimant_name].click
       expect(page).to have_current_path(
         "#{BASE_URL}?tab=in_progress&page=1&sort_by=claimantColumn&order=asc"
@@ -200,7 +215,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.first.include?("Aaa")).to eq true
       expect(table_rows.last.include?("Ccc")).to eq true
 
-      # Claimant name asc
+      # Claimant name desc
       order_buttons[:claimant_name].click
       expect(page).to have_current_path(
         "#{BASE_URL}?tab=in_progress&page=1&sort_by=claimantColumn&order=desc"
@@ -210,7 +225,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.first.include?("Ccc")).to eq true
       expect(table_rows.last.include?("Aaa")).to eq true
 
-      # Participant ID desc
+      # Participant ID asc
       order_buttons[:participant_id].click
       expect(page).to have_current_path(
         "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=asc"
@@ -220,7 +235,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.last.include?(hlr_b.veteran.participant_id)).to eq true
       expect(table_rows.first.include?(hlr_a.veteran.participant_id)).to eq true
 
-      # Participant ID asc
+      # Participant ID desc
       order_buttons[:participant_id].click
       expect(page).to have_current_path(
         "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranParticipantIdColumn&order=desc"
@@ -231,17 +246,17 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.last.include?(hlr_a.veteran.participant_id)).to eq true
       expect(table_rows.first.include?(hlr_b.veteran.participant_id)).to eq true
 
-      # Issue count desc
+      # Issue count asc
       order_buttons[:issues_count].click
       expect(page).to have_current_path(
         "#{BASE_URL}?tab=in_progress&page=1&sort_by=issueCountColumn&order=asc"
       )
       table_rows = current_table_rows
 
-      expect(table_rows.last.include?(" 2 ")).to eq true
+      expect(table_rows.last.include?(" 2\n")).to eq true
       expect(table_rows.first.include?(" 1 ")).to eq true
 
-      # Issue count asc
+      # Issue count desc
       order_buttons[:issues_count].click
       expect(page).to have_current_path(
         "#{BASE_URL}?tab=in_progress&page=1&sort_by=issueCountColumn&order=desc"
@@ -249,9 +264,31 @@ feature "NonComp Reviews Queue", :postgres do
       table_rows = current_table_rows
 
       expect(table_rows.last.include?(" 1 ")).to eq true
-      expect(table_rows.first.include?(" 2 ")).to eq true
+      expect(table_rows.first.include?(" 2\n")).to eq true
 
-      # Days waiting desc
+      # Issue Types asc
+      order_buttons[:issues_type].click
+      expect(page).to have_current_path(
+        "#{BASE_URL}?tab=in_progress&page=1&sort_by=issueTypesColumn&order=asc"
+      )
+      table_rows = current_table_rows
+
+      puts table_rows.inspect
+      expect(table_rows.last.include?("CHAMPVA\nCaregiver | Other")).to eq true
+      expect(table_rows.first.include?(" Camp Lejune Family Member ")).to eq true
+
+      # Issue Types desc
+      order_buttons[:issues_type].click
+      expect(page).to have_current_path(
+        "#{BASE_URL}?tab=in_progress&page=1&sort_by=issueTypesColumn&order=desc"
+      )
+      table_rows = current_table_rows
+
+      puts table_rows.inspect
+      expect(table_rows.last.include?(" Camp Lejune Family Member ")).to eq true
+      expect(table_rows.first.include?("CHAMPVA\nCaregiver | Other")).to eq true
+
+      # Days waiting asc
       order_buttons[:days_waiting].click
       expect(page).to have_current_path(
         "#{BASE_URL}?tab=in_progress&page=1&sort_by=daysWaitingColumn&order=asc"
@@ -274,7 +311,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.first.include?("0 days")).to eq true
       expect(table_rows.last.include?("6 days")).to eq true
 
-      # Date Completed desc
+      # Date Completed asc
       # Currently swapping tabs does not correctly populate get params.
       # These statements will need to updated when that is fixed
       click_button("tasks-organization-queue-tab-1")
@@ -292,7 +329,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.last.include?(later_date)).to eq true
       expect(table_rows.first.include?(earlier_date)).to eq true
 
-      # Date Completed asc
+      # Date Completed desc
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
         "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=desc"
@@ -353,7 +390,7 @@ feature "NonComp Reviews Queue", :postgres do
           date_completed: find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
         }
 
-        # Claimant name desc
+        # Claimant name asc
         order_buttons[:claimant_name].click
         expect(page).to have_current_path(
           "#{BASE_URL}?tab=in_progress&page=1&sort_by=claimantColumn&order=asc"
@@ -364,7 +401,7 @@ feature "NonComp Reviews Queue", :postgres do
         expect(table_rows.last.include?("claimant")).to eq true
         expect(table_rows.first.include?("Aaa")).to eq true
 
-        # Claimant name asc
+        # Claimant name desc
         order_buttons[:claimant_name].click
         expect(page).to have_current_path(
           "#{BASE_URL}?tab=in_progress&page=1&sort_by=claimantColumn&order=desc"
@@ -406,7 +443,7 @@ feature "NonComp Reviews Queue", :postgres do
       # There should be 1 on the page with this information
       expect(page).to have_content("Higher-Level Review", count: 1)
       expect(page).to have_content(
-        /#{veteran_b.name} #{veteran_b.participant_id} 1 0 days Higher-Level Review/
+        /#{veteran_b.name} #{veteran_b.participant_id} 1 Camp Lejune Family Member 0 days Higher-Level Review/
       )
 
       # Blank out the input and verify that there are once again 2 on the page
@@ -425,7 +462,26 @@ feature "NonComp Reviews Queue", :postgres do
       # There should be 1 on the page with this information
       expect(page).to have_content("Higher-Level Review", count: 1)
       expect(page).to have_content(
-        /#{veteran_a.name} #{veteran_a.participant_id} 2 6 days Higher-Level Review/
+        /#{veteran_a.name} #{veteran_a.participant_id} 2\nCHAMPVA\nCaregiver | Other\n 6 days Higher-Level Review/
+      )
+
+      # Blank out the input and verify that there are once again 2 on the page
+      fill_in("search", with: nil, fill_options: { clear: :backspace })
+      expect(page).to have_content("Higher-Level Review", count: 2)
+    end
+
+    scenario "searching reviews by issue type" do
+      visit BASE_URL
+
+      # There should be 2 on the page
+      expect(page).to have_content("Higher-Level Review", count: 2)
+
+      fill_in "search", with: "Camp"
+
+      # There should be 1 on the page with this information
+      expect(page).to have_content("Higher-Level Review", count: 1)
+      expect(page).to have_content(
+        /#{veteran_b.name} #{veteran_b.participant_id} 1 Camp Lejune Family Member 0 days Higher-Level Review/
       )
 
       # Blank out the input and verify that there are once again 2 on the page
@@ -448,7 +504,7 @@ feature "NonComp Reviews Queue", :postgres do
         # There should be 1 on the page with this information
         expect(page).to have_content("Higher-Level Review", count: 1)
         expect(page).to have_content(
-          /#{veteran_a.name} #{veteran_a.ssn} 2 6 days Higher-Level Review/
+          /#{veteran_a.name} #{veteran_a.ssn} 2\nCHAMPVA\nCaregiver | Other\n 6 days Higher-Level Review/
         )
 
         # Blank out the input and verify that there are once again 2 on the page
@@ -467,7 +523,7 @@ feature "NonComp Reviews Queue", :postgres do
         # There should be 1 on the page with this information
         expect(page).to have_content("Higher-Level Review", count: 1)
         expect(page).to have_content(
-          /#{veteran_a.name} #{veteran_a.ssn} 2 6 days Higher-Level Review/
+          /#{veteran_a.name} #{veteran_a.ssn} 2\nCHAMPVA\nCaregiver | Other\n 6 days Higher-Level Review/
         )
 
         # Blank out the input and verify that there are once again 2 on the page
