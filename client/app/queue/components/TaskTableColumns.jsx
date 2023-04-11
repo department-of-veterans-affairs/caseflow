@@ -262,7 +262,7 @@ export const issueTypesColumn = (filterOptions) => {
       const commaDelimitedIssueTypes = task.appeal.issueTypes;
 
       // Remove duplicates from the comma delimited list of issues
-      const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes.split(','))];
+      const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes?.split(','))];
 
       // return uniqueIssueTypes.map((type) => (<span> {type} <br /> </span>));
 
