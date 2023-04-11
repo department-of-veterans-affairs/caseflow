@@ -2,8 +2,6 @@
 
 # create tasks and their related appeals
 # to do: split this up more logically for legacy, AMA, etc.
-
-# rubocop:disable Metrics/ModuleLength
 module Seeds
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -242,6 +240,7 @@ module Seeds
       create_vha_program_office_task
       create_vha_program_office_task_ready_for_review
     end
+
     def create_ama_distribution_tasks
       veteran = create_veteran(first_name: "Julius", last_name: "Hodge")
       appeal = create(:appeal, veteran: veteran, docket_type: Constants.AMA_DOCKETS.evidence_submission)
@@ -482,10 +481,10 @@ module Seeds
       appeal.tasks.where(type: "BvaDispatchTask").map(&:completed!)
     end
 
-    def create_task_at_quality_review(
+    def create_task_at_quality_review
       # created Code Climate issue for unused variable.
       # judge_name = "Madhu Judge_CaseAtQR Burnham", attorney_name = "Bailey Attorney_CaseAtQR Eoin"
-    )
+
       vet = create(
         :veteran,
         file_number: vet_file_number,
@@ -1157,86 +1156,87 @@ module Seeds
 
     def create_vha_camo_queue_assigned
       5.times do
-        create(:vha_document_search_task,assigned_to: VhaCamo.singleton)
+        create(:vha_document_search_task, assigned_to: VhaCamo.singleton)
       end
     end
 
     def create_vha_camo_queue_in_progress
       5.times do
         appeal = create(:appeal)
-        root_task = create(:task, appeal: appeal,assigned_to: VhaCamo.singleton)
+        root_task = create(:task, appeal: appeal, assigned_to: VhaCamo.singleton)
         pre_docket_task = FactoryBot.create(
-                                            :pre_docket_task,
-                                            :in_progress,
-                                            assigned_to: VhaCamo.singleton,
-                                            appeal: appeal,
-                                            parent: root_task)
-        create(:task, :in_progress,assigned_to: VhaCamo.singleton, appeal: appeal, parent: pre_docket_task)
+          :pre_docket_task,
+          :in_progress,
+          assigned_to: VhaCamo.singleton,
+          appeal: appeal,
+          parent: root_task
+        )
+        create(:task, :in_progress, assigned_to: VhaCamo.singleton, appeal: appeal, parent: pre_docket_task)
       end
     end
 
     def create_vha_camo_queue_completed
       5.times do
-        create(:vha_document_search_task,:completed, assigned_to: VhaCamo.singleton)
+        create(:vha_document_search_task, :completed, assigned_to: VhaCamo.singleton)
       end
     end
 
     def create_vha_caregiver_queue_assigned
       5.times do
-        create(:vha_document_search_task,assigned_to: VhaCaregiverSupport.singleton)
+        create(:vha_document_search_task, assigned_to: VhaCaregiverSupport.singleton)
       end
     end
 
     def create_vha_caregiver_queue_in_progress
       5.times do
-        create(:vha_document_search_task,:in_progress, assigned_to: VhaCaregiverSupport.singleton)
+        create(:vha_document_search_task, :in_progress, assigned_to: VhaCaregiverSupport.singleton)
       end
     end
 
     def create_vha_caregiver_queue_completed
       5.times do
-        create(:vha_document_search_task,:completed, assigned_to: VhaCaregiverSupport.singleton)
+        create(:vha_document_search_task, :completed, assigned_to: VhaCaregiverSupport.singleton)
       end
     end
 
     def create_vha_program_office_task
       tabs = [:assigned, :in_progress, :on_hold, :completed]
-      program_offices = Organization.where(type: 'VhaProgramOffice')
+      program_offices = Organization.where(type: "VhaProgramOffice")
       tabs.each do |status|
         program_offices.each do |program_office|
-          create_list(:vha_document_search_task,5,status,assigned_to: program_office)
+          create_list(:vha_document_search_task, 5, status, assigned_to: program_office)
         end
       end
     end
 
     def create_vha_program_office_task_ready_for_review
-      program_offices = Organization.where(type: 'VhaProgramOffice')
+      program_offices = Organization.where(type: "VhaProgramOffice")
       program_offices.each do |program_office|
-        create_list(:assess_documentation_task_predocket,5,:completed, :ready_for_review, assigned_to: program_office)
+        create_list(:assess_documentation_task_predocket, 5, :completed, :ready_for_review, assigned_to: program_office)
       end
     end
 
     def create_vha_visn_pre_docket_queue
       tabs = [:assigned, :completed]
-      vha_regional_offices = Organization.where(type: 'VhaRegionalOffice')
+      vha_regional_offices = Organization.where(type: "VhaRegionalOffice")
       tabs.each do |status|
-        vha_regional_offices.each do  |regional_office|
+        vha_regional_offices.each do |regional_office|
           create(:pre_docket_task, status, assigned_to: regional_office)
         end
       end
     end
 
     def create_high_level_reviews
-      business_line_list = Organization.where(type: 'BusinessLine')
+      business_line_list = Organization.where(type: "BusinessLine")
       business_line_list.each do |bussiness_line|
-        higher_level_review = create(:higher_level_review_vha_task, assigned_to: bussiness_line)
+        create(:higher_level_review_vha_task, assigned_to: bussiness_line)
       end
     end
 
     def create_supplemental_claims
-      business_line_list = Organization.where(type: 'BusinessLine')
+      business_line_list = Organization.where(type: "BusinessLine")
       business_line_list.each do |bussiness_line|
-        create_list(:supplemental_claim_vha_task,5, assigned_to: bussiness_line)
+        create_list(:supplemental_claim_vha_task, 5, assigned_to: bussiness_line)
       end
     end
   end
@@ -1246,4 +1246,3 @@ module Seeds
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
 end
-# rubocop:enable Metrics/ModuleLength

@@ -428,7 +428,7 @@ module Seeds
 
     def add_mail_intake_to_all_bva_intake_users
       bva_intake = BvaIntake.singleton
-      new_role = 'Mail Intake'
+      new_role = "Mail Intake"
       bva_intake.users.each do |user|
         user_roles = user.roles
         unless user_roles.include?(new_role)
@@ -438,17 +438,18 @@ module Seeds
       end
     end
 
-    #Ensure all VHA users are made members of the VHA Business Line.
+    # Ensure all VHA users are made members of the VHA Business Line.
     def add_vha_user_to_be_vha_business_line_member
-      #Get list of all the users who are the members of VHA Camo, Vha Program Office and VISN
+      # Get list of all the users who are the members of VHA Camo, Vha Program Office and VISN
       # basically any organization whose type starts with Vha%
-      user_list = User.joins("INNER JOIN Organizations_users ou On Users.id = Ou.user_id INNER JOIN Organizations o on o.id = ou.organization_id")
-                  .where("o.type like ?",'Vha%')
-                  .distinct
+      user_list = User.joins("INNER JOIN Organizations_users ou On Users.id = Ou.user_id
+        INNER JOIN Organizations o on o.id = ou.organization_id")
+        .where("o.type like ?", "Vha%")
+        .distinct
       # organization = BusinessLine.where(name:)
-      organization = Organization.find_by_name_or_url('Veterans Health Administration')
+      organization = Organization.find_by_name_or_url("Veterans Health Administration")
       user_list.each do |user|
-          organization.add_user(user)
+        organization.add_user(user)
       end
     end
   end
