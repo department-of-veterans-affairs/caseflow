@@ -275,6 +275,9 @@ directories:
   "app/jobs":
     UtilityFunction:
       enabled: false
+  "app/mailers":
+    InstanceVariableAssumption:
+      enabled: false
 
 ### Excluding directories
 # Directories and files below will not be scanned at all
