@@ -81,10 +81,6 @@ class VANotifyStatusUpdateJob < CaseflowJob
   #
   # Retuns: Lits of Notification Active Record associations meeting the where condition
   def find_notifications_not_processed
-    today = Time.zone.now + 1.day
-
-    four_day_range = today - 5.days
-
     Notification.where("
       (notification_type = 'Email' AND email_notification_status IN ('Success', 'temporary-failure',
         'technical-failure', 'sending', 'created'))
@@ -100,7 +96,7 @@ class VANotifyStatusUpdateJob < CaseflowJob
         OR
           sms_notification_status IN ('Success', 'temporary-failure', 'technical-failure', 'sending', 'created')
         )
-      )").where("created_at BETWEEN ? AND ?", four_day_range, today).order(created_at: :desc)
+      )").where(created_at: 4.days.ago..Time.zone.now).order(created_at: :desc)
   end
 
   # Description: Method to be called when an error message need to be logged
