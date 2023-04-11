@@ -79,25 +79,7 @@ class ExternalApi::VANotifyService
     #
     # Return: token needed for authentication
     def generate_token
-      jwt_secret = CLIENT_SECRET
-      header = {
-        typ: "JWT",
-        alg: TOKEN_ALG
-      }
-      current_timestamp = DateTime.now.strftime("%Q").to_i / 1000.floor
-      data = {
-        iss: SERVICE_ID,
-        iat: current_timestamp
-      }
-      stringified_header = header.to_json.encode("UTF-8")
-      encoded_header = base64url(stringified_header)
-      stringified_data = data.to_json.encode("UTF-8")
-      encoded_data = base64url(stringified_data)
-      token = "#{encoded_header}.#{encoded_data}"
-      signature = OpenSSL::HMAC.digest("SHA256", jwt_secret, token)
-      signature = base64url(signature)
-      signed_token = "#{token}.#{signature}"
-      signed_token
+      ExternalApi::JwtToken.generate_token(CLIENT_SECRET, TOKEN_ALG, SERVICE_ID)
     end
 
     # Purpose: Remove any illegal characters and keeps source at proper format
