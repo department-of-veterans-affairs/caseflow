@@ -155,8 +155,8 @@ describe VANotifyStatusUpdateJob, type: :job do
       it "defaults to 650 for the query limit if environment variable not found or invalid" do
         stub_const("VANotifyStatusUpdateJob::QUERY_LIMIT", nil)
         expect(Rails.logger).to receive(:info)
-          .with("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable. \
-         Defaulting to 650.")
+          .with("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable.\
+        Defaulting to 650.")
         VANotifyStatusUpdateJob.perform_now
       end
 
