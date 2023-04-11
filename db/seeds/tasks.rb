@@ -481,10 +481,10 @@ module Seeds
       appeal.tasks.where(type: "BvaDispatchTask").map(&:completed!)
     end
 
-    def create_task_at_quality_review
+    def create_task_at_quality_review(
       # created Code Climate issue for unused variable.
       # judge_name = "Madhu Judge_CaseAtQR Burnham", attorney_name = "Bailey Attorney_CaseAtQR Eoin"
-
+    )
       vet = create(
         :veteran,
         file_number: vet_file_number,
