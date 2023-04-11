@@ -757,7 +757,6 @@ DEPENDENCIES
   dry-schema (~> 1.4)
   factory_bot_rails (~> 5.2)
   faker
-  faraday
   fast_jsonapi
   fasterer
   foreman
