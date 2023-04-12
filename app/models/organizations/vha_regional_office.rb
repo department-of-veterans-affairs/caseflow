@@ -35,8 +35,9 @@ class VhaRegionalOffice < Organization
     Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
     Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
     Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name,
+    Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
     Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name,
     Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
-    Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name
+    Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name
   ].compact
 end
