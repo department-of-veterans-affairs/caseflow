@@ -35,6 +35,11 @@ RSpec.feature "Help" do
     expect(page).to have_content("Welcome to the Hearings Help page!")
   end
 
+  scenario "user goes to the VHA Help Page" do
+    visit "/vha/help"
+    expect(page).to have_content("Welcome to the VHA Help page!")
+  end
+
   scenario "logo properly goes to homepage" do
     visit "/help"
     find(".cf-application-title").click
