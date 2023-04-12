@@ -1,0 +1,1169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MembershipRequestTable renders the default state with mocked membership requests correctly 1`] = `
+<div>
+  <h2>
+    View 5 pending requests
+  </h2>
+  <div
+    class="cf-pagination"
+  >
+    <div
+      class="cf-pagination-summary"
+    >
+      Viewing 1-5 of 5 total
+    </div>
+    <div
+      class="cf-pagination-pages"
+    />
+  </div>
+  <table
+    class="usa-table-borderless membership-request-table"
+  >
+    <thead
+      class=""
+    >
+      <tr>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            User name
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            Date requested
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            Actions
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      class=""
+    >
+      <tr
+        class="membership-request-row"
+        id="table-row-1"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          John Doe
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          12/05/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="listbox"
+              aria-label="Request actions"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              role="button"
+            >
+              <div>
+                <span>
+                   Select action 
+                </span>
+                <svg
+                  class="table-icon"
+                  height="17"
+                  version="1.1"
+                  viewBox="0 0 13 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill-rule="nonzero"
+                    >
+                      <g
+                        fill="#323a45"
+                        transform="translate(2.000000, 1.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                      <g
+                        fill="#323a45"
+                        transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <button
+            aria-expanded="false"
+            aria-label="Show note"
+            class="usa-accordion-button"
+            style="background-color: inherit;"
+          />
+        </td>
+      </tr>
+      <tr
+        class="membership-request-row"
+        id="table-row-2"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          Jane Smith
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          11/27/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="listbox"
+              aria-label="Request actions"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              role="button"
+            >
+              <div>
+                <span>
+                   Select action 
+                </span>
+                <svg
+                  class="table-icon"
+                  height="17"
+                  version="1.1"
+                  viewBox="0 0 13 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill-rule="nonzero"
+                    >
+                      <g
+                        fill="#323a45"
+                        transform="translate(2.000000, 1.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                      <g
+                        fill="#323a45"
+                        transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <button
+            aria-expanded="false"
+            aria-label="Show note"
+            class="usa-accordion-button"
+            style="background-color: inherit;"
+          />
+        </td>
+      </tr>
+      <tr
+        class="membership-request-row"
+        id="table-row-3"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          William Brown
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          12/01/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="listbox"
+              aria-label="Request actions"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              role="button"
+            >
+              <div>
+                <span>
+                   Select action 
+                </span>
+                <svg
+                  class="table-icon"
+                  height="17"
+                  version="1.1"
+                  viewBox="0 0 13 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill-rule="nonzero"
+                    >
+                      <g
+                        fill="#323a45"
+                        transform="translate(2.000000, 1.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                      <g
+                        fill="#323a45"
+                        transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        />
+      </tr>
+      <tr
+        class="membership-request-row"
+        id="table-row-4"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          Emma Wilson
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          11/20/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="listbox"
+              aria-label="Request actions"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              role="button"
+            >
+              <div>
+                <span>
+                   Select action 
+                </span>
+                <svg
+                  class="table-icon"
+                  height="17"
+                  version="1.1"
+                  viewBox="0 0 13 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill-rule="nonzero"
+                    >
+                      <g
+                        fill="#323a45"
+                        transform="translate(2.000000, 1.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                      <g
+                        fill="#323a45"
+                        transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        />
+      </tr>
+      <tr
+        class="membership-request-row"
+        id="table-row-5"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          Micheal Johnson
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          11/30/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="listbox"
+              aria-label="Request actions"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              role="button"
+            >
+              <div>
+                <span>
+                   Select action 
+                </span>
+                <svg
+                  class="table-icon"
+                  height="17"
+                  version="1.1"
+                  viewBox="0 0 13 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill-rule="nonzero"
+                    >
+                      <g
+                        fill="#323a45"
+                        transform="translate(2.000000, 1.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                      <g
+                        fill="#323a45"
+                        transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        />
+      </tr>
+    </tbody>
+    <tfoot />
+  </table>
+  <div
+    class="cf-pagination"
+  >
+    <div
+      class="cf-pagination-summary"
+    >
+      Viewing 1-5 of 5 total
+    </div>
+    <div
+      class="cf-pagination-pages"
+    />
+  </div>
+</div>
+`;
+
+exports[`MembershipRequestTable renders the default state with no requests correctly 1`] = `
+<div>
+  <h2>
+    View 0 pending requests
+  </h2>
+  <div
+    class="cf-pagination"
+  >
+    <div
+      class="cf-pagination-summary"
+    >
+      Viewing 0-0 of 0 total
+    </div>
+    <div
+      class="cf-pagination-pages"
+    />
+  </div>
+  <table
+    class="usa-table-borderless membership-request-table"
+  >
+    <thead
+      class=""
+    >
+      <tr>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            User name
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            Date requested
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            Actions
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      class=""
+    />
+    <tfoot />
+  </table>
+  <div
+    class="cf-pagination"
+  >
+    <div
+      class="cf-pagination-summary"
+    >
+      Viewing 0-0 of 0 total
+    </div>
+    <div
+      class="cf-pagination-pages"
+    />
+  </div>
+</div>
+`;
+
+exports[`MembershipRequestTable shows the request note when the expansion button is selected 1`] = `
+<div>
+  <h2>
+    View 5 pending requests
+  </h2>
+  <div
+    class="cf-pagination"
+  >
+    <div
+      class="cf-pagination-summary"
+    >
+      Viewing 1-5 of 5 total
+    </div>
+    <div
+      class="cf-pagination-pages"
+    />
+  </div>
+  <table
+    class="usa-table-borderless membership-request-table"
+  >
+    <thead
+      class=""
+    >
+      <tr>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            User name
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            Date requested
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span>
+            Actions
+          </span>
+        </th>
+        <th
+          class=""
+          scope="col"
+        >
+          <span />
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      class=""
+    >
+      <tr
+        class="membership-request-row"
+        id="table-row-1"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          John Doe
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          12/05/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="listbox"
+              aria-label="Request actions"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              role="button"
+            >
+              <div>
+                <span>
+                   Select action 
+                </span>
+                <svg
+                  class="table-icon"
+                  height="17"
+                  version="1.1"
+                  viewBox="0 0 13 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill-rule="nonzero"
+                    >
+                      <g
+                        fill="#323a45"
+                        transform="translate(2.000000, 1.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                      <g
+                        fill="#323a45"
+                        transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <button
+            aria-expanded="false"
+            aria-label="Show note"
+            class="usa-accordion-button"
+            style="background-color: inherit;"
+          />
+        </td>
+      </tr>
+      <tr
+        class="membership-request-row"
+        id="table-row-2"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          Jane Smith
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          11/27/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="listbox"
+              aria-label="Request actions"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              role="button"
+            >
+              <div>
+                <span>
+                   Select action 
+                </span>
+                <svg
+                  class="table-icon"
+                  height="17"
+                  version="1.1"
+                  viewBox="0 0 13 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill-rule="nonzero"
+                    >
+                      <g
+                        fill="#323a45"
+                        transform="translate(2.000000, 1.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                      <g
+                        fill="#323a45"
+                        transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <button
+            aria-expanded="true"
+            aria-label="Show note"
+            class="usa-accordion-button"
+            style="background-color: inherit;"
+          />
+        </td>
+      </tr>
+      <tr
+        class="membership-request-expanded-note-row"
+        id="table-row-2-note"
+      >
+        <td
+          class=""
+          colspan="4"
+        >
+          <div
+            class="expanded-note"
+          >
+            <strong>
+              REQUEST NOTE:
+            </strong>
+            <p>
+              This request can be postponed for now.
+            </p>
+          </div>
+        </td>
+      </tr>
+      <tr
+        class="membership-request-row"
+        id="table-row-3"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          William Brown
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          12/01/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="listbox"
+              aria-label="Request actions"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              role="button"
+            >
+              <div>
+                <span>
+                   Select action 
+                </span>
+                <svg
+                  class="table-icon"
+                  height="17"
+                  version="1.1"
+                  viewBox="0 0 13 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill-rule="nonzero"
+                    >
+                      <g
+                        fill="#323a45"
+                        transform="translate(2.000000, 1.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                      <g
+                        fill="#323a45"
+                        transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        />
+      </tr>
+      <tr
+        class="membership-request-row"
+        id="table-row-4"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          Emma Wilson
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          11/20/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="listbox"
+              aria-label="Request actions"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              role="button"
+            >
+              <div>
+                <span>
+                   Select action 
+                </span>
+                <svg
+                  class="table-icon"
+                  height="17"
+                  version="1.1"
+                  viewBox="0 0 13 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill-rule="nonzero"
+                    >
+                      <g
+                        fill="#323a45"
+                        transform="translate(2.000000, 1.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                      <g
+                        fill="#323a45"
+                        transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        />
+      </tr>
+      <tr
+        class="membership-request-row"
+        id="table-row-5"
+      >
+        <td
+          class=""
+          colspan="1"
+        >
+          Micheal Johnson
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          11/30/2022
+        </td>
+        <td
+          class=""
+          colspan="1"
+        >
+          <div
+            class="cf-dropdown"
+            data-css-fp8ian=""
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="listbox"
+              aria-label="Request actions"
+              aria-pressed="false"
+              class="cf-dropdown-trigger usa-button usa-button-secondary"
+              data-css-x1q03x=""
+              role="button"
+            >
+              <div>
+                <span>
+                   Select action 
+                </span>
+                <svg
+                  class="table-icon"
+                  height="17"
+                  version="1.1"
+                  viewBox="0 0 13 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill-rule="nonzero"
+                    >
+                      <g
+                        fill="#323a45"
+                        transform="translate(2.000000, 1.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                      <g
+                        fill="#323a45"
+                        transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                      >
+                        <g
+                          transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                        >
+                          <path
+                            d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                          />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </button>
+          </div>
+        </td>
+        <td
+          class=""
+          colspan="1"
+        />
+      </tr>
+    </tbody>
+    <tfoot />
+  </table>
+  <div
+    class="cf-pagination"
+  >
+    <div
+      class="cf-pagination-summary"
+    >
+      Viewing 1-5 of 5 total
+    </div>
+    <div
+      class="cf-pagination-pages"
+    />
+  </div>
+</div>
+`;
