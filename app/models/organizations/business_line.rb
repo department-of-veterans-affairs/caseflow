@@ -116,7 +116,8 @@ class BusinessLine < Organization
     # Alias for the issue_categories on request issues for sorting and serialization
     # This is Postgres specific since it uses STRING_AGG vs GROUP_CONCAT
     def issue_types
-      "STRING_AGG(request_issues.nonrating_issue_category, ',') AS issue_types"
+      "STRING_AGG(request_issues.nonrating_issue_category, ',' ORDER BY request_issues.nonrating_issue_category)"\
+        " AS issue_types"
     end
 
     # Alias for claimant_name for sorting and serialization
@@ -182,7 +183,7 @@ class BusinessLine < Organization
 
     # These values reflect the number of searchable fields in search_all_clause for where interpolation later
     def number_of_search_fields
-      FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: RequestStore[:current_user]) ? 5 : 3
+      FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: RequestStore[:current_user]) ? 4 : 2
     end
 
     def search_ssn_and_file_number_clause
@@ -195,7 +196,6 @@ class BusinessLine < Organization
 
       clause = +"veterans.participant_id LIKE ? "\
                "OR #{claimant_name} ILIKE ? "\
-               "OR request_issues.nonrating_issue_category ILIKE ? "
 
       if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: RequestStore[:current_user])
         clause << search_ssn_and_file_number_clause

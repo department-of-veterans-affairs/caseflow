@@ -273,8 +273,7 @@ feature "NonComp Reviews Queue", :postgres do
       )
       table_rows = current_table_rows
 
-      puts table_rows.inspect
-      expect(table_rows.last.include?("CHAMPVA\nCaregiver | Other")).to eq true
+      expect(table_rows.last.include?("Caregiver | Other\nCHAMPVA\n")).to eq true
       expect(table_rows.first.include?(" Camp Lejune Family Member ")).to eq true
 
       # Issue Types desc
@@ -284,9 +283,8 @@ feature "NonComp Reviews Queue", :postgres do
       )
       table_rows = current_table_rows
 
-      puts table_rows.inspect
       expect(table_rows.last.include?(" Camp Lejune Family Member ")).to eq true
-      expect(table_rows.first.include?("CHAMPVA\nCaregiver | Other")).to eq true
+      expect(table_rows.first.include?("Caregiver | Other\nCHAMPVA")).to eq true
 
       # Days waiting asc
       order_buttons[:days_waiting].click
@@ -462,26 +460,7 @@ feature "NonComp Reviews Queue", :postgres do
       # There should be 1 on the page with this information
       expect(page).to have_content("Higher-Level Review", count: 1)
       expect(page).to have_content(
-        /#{veteran_a.name} #{veteran_a.participant_id} 2\nCHAMPVA\nCaregiver | Other\n 6 days Higher-Level Review/
-      )
-
-      # Blank out the input and verify that there are once again 2 on the page
-      fill_in("search", with: nil, fill_options: { clear: :backspace })
-      expect(page).to have_content("Higher-Level Review", count: 2)
-    end
-
-    scenario "searching reviews by issue type" do
-      visit BASE_URL
-
-      # There should be 2 on the page
-      expect(page).to have_content("Higher-Level Review", count: 2)
-
-      fill_in "search", with: "Camp"
-
-      # There should be 1 on the page with this information
-      expect(page).to have_content("Higher-Level Review", count: 1)
-      expect(page).to have_content(
-        /#{veteran_b.name} #{veteran_b.participant_id} 1 Camp Lejune Family Member 0 days Higher-Level Review/
+        /#{veteran_a.name} #{veteran_a.participant_id} 2\nCaregiver | Other\nCHAMPVA\n 6 days Higher-Level Review/
       )
 
       # Blank out the input and verify that there are once again 2 on the page
@@ -504,7 +483,7 @@ feature "NonComp Reviews Queue", :postgres do
         # There should be 1 on the page with this information
         expect(page).to have_content("Higher-Level Review", count: 1)
         expect(page).to have_content(
-          /#{veteran_a.name} #{veteran_a.ssn} 2\nCHAMPVA\nCaregiver | Other\n 6 days Higher-Level Review/
+          /#{veteran_a.name} #{veteran_a.ssn} 2\nCaregiver | Other\nCHAMPVA\n 6 days Higher-Level Review/
         )
 
         # Blank out the input and verify that there are once again 2 on the page
@@ -523,7 +502,7 @@ feature "NonComp Reviews Queue", :postgres do
         # There should be 1 on the page with this information
         expect(page).to have_content("Higher-Level Review", count: 1)
         expect(page).to have_content(
-          /#{veteran_a.name} #{veteran_a.ssn} 2\nCHAMPVA\nCaregiver | Other\n 6 days Higher-Level Review/
+          /#{veteran_a.name} #{veteran_a.ssn} 2\nCaregiver | Other\nCHAMPVA\n 6 days Higher-Level Review/
         )
 
         # Blank out the input and verify that there are once again 2 on the page
