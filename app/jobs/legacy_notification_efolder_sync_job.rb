@@ -5,7 +5,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
 
   BATCH_LIMIT = ENV["LEGACY_NOTIFICATION_REPORT_SYNC_LIMIT"] || 500
 
-  # Purpose: Determines which appeals need a notificatino report generated and uploaded to efolder,
+  # Purpose: Determines which appeals need a notification report generated and uploaded to efolder,
   #          then uploads reports for those appeals
   #
   # Params: none
@@ -77,7 +77,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   #
   # Params: Array of appeal ids (primary key)
   #
-  # Return: Array of active appeals and nil values (if inactive or failed checks)
+  # Return: Array of active appeals
   def get_appeals_from_prev_synced_ids(appeal_ids)
     active_appeals = appeal_ids.map do |appeal_id|
       begin
@@ -87,7 +87,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
           latest_notification_report = latest_vbms_uploaded_document(appeal)
           notification_timestamp = latest_appeal_notification.notified_at || latest_appeal_notification.created_at
 
-          (notification_timestamp > latest_notification_report.attempted_at) ? appeal : nil
+          appeal if notification_timestamp > latest_notification_report.attempted_at
         end
       rescue StandardError => error
         log_error(error)

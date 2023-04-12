@@ -81,7 +81,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   #
   # Params: Array of appeal ids (primary key)
   #
-  # Return: Array of active appeals and nil values (if inactive or failed checks)
+  # Return: Array of active appeals
   def get_appeals_from_prev_synced_ids(appeal_ids)
     active_appeals = appeal_ids.map do |appeal_id|
       begin
