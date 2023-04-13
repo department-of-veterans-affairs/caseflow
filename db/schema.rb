@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_17_164013) do
+ActiveRecord::Schema.define(version: 2023_04_12_154615) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -150,6 +150,19 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.index ["updated_at"], name: "index_appeals_on_updated_at"
     t.index ["uuid"], name: "index_appeals_on_uuid"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
+  end
+
+  create_table "appellant_substitution_histories", force: :cascade do |t|
+    t.bigint "appellant_substitution_id", comment: "Appellant substitution id of the last user that updated the CAVC record"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "Current user who created Appellant substitution"
+    t.string "current_appellant_substitute_participant_id", comment: "Current Appellant Substitute participant Id"
+    t.string "current_appellant_veteran_participant_id", comment: "Current Appellant Veteran participant Id"
+    t.string "original_appellant_substitute_participant_id", comment: "Original Appellant Substitute participant Id"
+    t.string "original_appellant_veteran_participant_id", comment: "Original Appeallant Veteran Participant Id"
+    t.date "substitution_date", comment: "Timestamp of substitution granted date"
+    t.datetime "updated_at", null: false
+    t.index ["appellant_substitution_id"], name: "index_appellant_sub_histories_on_appellant_substitution_id"
   end
 
   create_table "appellant_substitutions", comment: "Store appellant substitution form data", force: :cascade do |t|
@@ -404,6 +417,24 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.bigint "updated_by_id", comment: "User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
     t.index ["remand_appeal_id"], name: "index_cavc_remands_on_remand_appeal_id"
     t.index ["source_appeal_id"], name: "index_cavc_remands_on_source_appeal_id"
+  end
+
+  create_table "cavc_remands_appellant_substitutions", force: :cascade do |t|
+    t.bigint "appellant_substitution_id", comment: "Appellant Substitution this is tied to"
+    t.bigint "cavc_remand_id", comment: "Cavc Remand this is tied to"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "Current user who created substitution"
+    t.boolean "is_appellant_substituted", comment: "Y/N Boolean for active substitution"
+    t.string "participant_id", comment: "Claimant Participant Id"
+    t.string "remand_source", comment: "Source of Remand - From Add or Edit"
+    t.string "substitute_participant_id", comment: "Appellant Substitute participant Id"
+    t.date "substitution_date", comment: "Timestamp of substitution"
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id", comment: "Current user who updated substitution"
+    t.index ["appellant_substitution_id"], name: "index_on_appellant_substitution_id"
+    t.index ["cavc_remand_id"], name: "index_on_cavc_remand_id"
+    t.index ["participant_id"], name: "index_on_participant_id"
+    t.index ["substitute_participant_id"], name: "index_on_substitute_participant_id"
   end
 
   create_table "cavc_selection_bases", force: :cascade do |t|
@@ -1163,6 +1194,20 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.index ["request_issue_id"], name: "index_legacy_issues_on_request_issue_id"
   end
 
+  create_table "membership_requests", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "decided_at", comment: "The date and time when the deider user made a decision about the membership request"
+    t.bigint "decider_id", comment: "The user who decides the status of the membership request"
+    t.string "note", comment: "A note that provides additional context from the requestor about their request for access to the organization"
+    t.bigint "organization_id", comment: "The organization that the membership request is asking to join"
+    t.bigint "requestor_id", comment: "The User that is requesting access to the organization"
+    t.string "status", default: "assigned", null: false, comment: "The status of the membership request at any given point of time"
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_membership_requests_on_organization_id"
+    t.index ["requestor_id"], name: "index_membership_requests_on_requestor_id"
+    t.index ["status", "organization_id", "requestor_id"], name: "index_membership_requests_on_status_and_association_ids", unique: true, where: "((status)::text = 'assigned'::text)"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "detail_id", comment: "ID of the related object"
@@ -1424,10 +1469,11 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.string "ineligible_reason", comment: "The reason for a Request Issue being ineligible. If a Request Issue has an ineligible_reason, it is still captured, but it will not get a contention in VBMS or a decision."
     t.boolean "is_predocket_needed", comment: "Indicates whether or not an issue has been selected to go to the pre-docket queue opposed to normal docketing."
     t.boolean "is_unidentified", comment: "Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
-    t.boolean "mst_status", comment: "Indicates if issue is related to Military Sexual Trauam (MST)"
+    t.boolean "mst_status", default: false, comment: "Indicates if issue is related to Military Sexual Trauma (MST)"
     t.string "nonrating_issue_category", comment: "The category selected for nonrating request issues. These vary by business line."
     t.string "nonrating_issue_description", comment: "The user entered description if the issue is a nonrating issue"
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
+    t.boolean "pact_status", default: false, comment: "Indicates if issue is related to Promise to Address Comprehensive Toxics (PACT) Act"
     t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
     t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its contested rating issue are associated in VBMS."
     t.string "split_issue_status", comment: "If a request issue is part of a split, on_hold status applies to the original request issues while active are request issues on splitted appeals"
@@ -1927,6 +1973,10 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
   add_foreign_key "cavc_remands", "users", column: "created_by_id"
   add_foreign_key "cavc_remands", "users", column: "updated_by_id"
+  add_foreign_key "cavc_remands_appellant_substitutions", "appellant_substitutions"
+  add_foreign_key "cavc_remands_appellant_substitutions", "cavc_remands"
+  add_foreign_key "cavc_remands_appellant_substitutions", "users", column: "created_by_id"
+  add_foreign_key "cavc_remands_appellant_substitutions", "users", column: "updated_by_id"
   add_foreign_key "certification_cancellations", "certifications"
   add_foreign_key "certifications", "users"
   add_foreign_key "claim_establishments", "dispatch_tasks", column: "task_id"
@@ -1977,6 +2027,9 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
   add_foreign_key "legacy_issue_optins", "legacy_issues"
   add_foreign_key "legacy_issue_optins", "request_issues"
   add_foreign_key "legacy_issues", "request_issues"
+  add_foreign_key "membership_requests", "organizations"
+  add_foreign_key "membership_requests", "users", column: "decider_id"
+  add_foreign_key "membership_requests", "users", column: "requestor_id"
   add_foreign_key "messages", "users"
   add_foreign_key "mpi_update_person_events", "api_keys"
   add_foreign_key "nod_date_updates", "appeals"
