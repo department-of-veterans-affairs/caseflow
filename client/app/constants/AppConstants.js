@@ -29,6 +29,7 @@ export const COLORS = {
   GREEN_LIGHTER: '#94BFA2',
   GREY: '#5b616b',
   GREY_BACKGROUND: '#f9f9f9',
+  GRAY: '#21827E',
   PRIMARY: '#0071bc',
   PURPLE: '#844E9F',
   RED: '#E31C3D',
