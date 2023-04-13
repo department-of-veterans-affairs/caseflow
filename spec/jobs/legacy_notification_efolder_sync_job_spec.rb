@@ -10,22 +10,25 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
       Seeds::NotificationEvents.new.seed!
     end
 
-    # rubocop:disable Style/BlockDelimiters
     let(:today) { Time.now.utc.iso8601 }
-    let(:cases) {
+
+    let(:cases) do
       create_list(:case, 10) do |vacols_case, i|
         vacols_case.update!(bfkey: "70023000#{i}", bfcorlid: "10000010#{i}")
       end
-    }
-    let(:create_appeals) {
+    end
+
+    let(:create_appeals) do
       cases.each do |vacols_case|
         create(:legacy_appeal, :with_root_task, :with_veteran, vacols_case: vacols_case)
       end
-    }
+    end
+
     let(:appeals) { LegacyAppeal.first(10) }
-    let(:notifications) {
+
+    let(:notifications) do
       appeals.each do |appeal|
-        if appeal.id == 4 || appeal.id == 8
+        if appeal.id == appeals[3].id || appeal.id == appeals[7].id
           next
         end
 
@@ -39,20 +42,21 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
           email_notification_status: "delivered"
         )
       end
-    }
-    let(:make_appeals_outcoded) {
-      RootTask.find_by(appeal_id: 6).update!(status: "completed", closed_at: 2.days.ago)
-      RootTask.find_by(appeal_id: 7).update!(status: "completed", closed_at: today)
-    }
-    let(:first_run_outcoded_appeals) { [LegacyAppeal.find(7)] }
+    end
+
+    let(:make_appeals_outcoded) do
+      RootTask.find_by(appeal_id: appeals[5].id).update!(status: "completed", closed_at: 2.days.ago)
+      RootTask.find_by(appeal_id: appeals[6].id).update!(status: "completed", closed_at: today)
+    end
+
+    let(:first_run_outcoded_appeals) { [appeals[6]] }
     let(:second_run_outcoded_appeals) { [] }
-    let(:first_run_never_synced_appeals) { LegacyAppeal.first(3) + LegacyAppeal.where(id: 5) + LegacyAppeal.last(2) }
-    let(:second_run_never_synced_appeals) { LegacyAppeal.last(2) }
+    let(:first_run_never_synced_appeals) { appeals.first(3) + [appeals[4]] + appeals.last(2) }
+    let(:second_run_never_synced_appeals) { appeals.last(2) }
     let(:first_run_ready_for_resync) { [] }
-    let(:second_run_ready_for_resync) { LegacyAppeal.where(id: 7) + LegacyAppeal.first(3) + LegacyAppeal.where(id: 5) }
-    let(:first_run_vbms_document_ids) { [7, 1, 2, 3, 5] }
-    let(:second_run_vbms_document_ids) { first_run_vbms_document_ids + [9, 10, 5] }
-    # rubocop:enable Style/BlockDelimiters
+    let(:second_run_ready_for_resync) { appeals[6] + appeals.first(3) + appeals[4] }
+    let(:first_run_vbms_document_ids) { [appeals[6].id, appeals[0].id, appeals[1].id, appeals[2].id, appeals[4].id] }
+    let(:second_run_vbms_document_ids) { first_run_vbms_document_ids + [appeals[8].id, appeals[9].id, appeals[4].id] }
 
     before do
       LegacyNotificationEfolderSyncJob::BATCH_LIMIT = 5
@@ -89,7 +93,7 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
         perform_enqueued_jobs do
           LegacyNotificationEfolderSyncJob.perform_now
         end
-        RootTask.find_by(appeal_id: 7).update!(closed_at: 25.hours.ago)
+        RootTask.find_by(appeal_id: appeals[6].id).update!(closed_at: 25.hours.ago)
       end
 
       it "get all legacy appeals that have been recently outcoded" do
@@ -98,7 +102,7 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
 
       it "get all legacy appeals that have never been synced yet" do
         Notification.create!(
-          appeals_id: LegacyAppeal.find(5).vacols_id,
+          appeals_id: appeals[4].vacols_id,
           appeals_type: "LegacyAppeal",
           event_date: today,
           event_type: "Appeal docketed",
@@ -111,7 +115,7 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
 
       it "get all legacy appeals that must be resynced" do
         Notification.create!(
-          appeals_id: LegacyAppeal.find(5).vacols_id,
+          appeals_id: appeals[4].vacols_id,
           appeals_type: "LegacyAppeal",
           event_date: today,
           event_type: "Appeal docketed",
@@ -119,12 +123,12 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
           notified_at: Time.zone.now,
           email_notification_status: "delivered"
         )
-        expect(job.send(:ready_for_resync)).to eq([LegacyAppeal.find(5)])
+        expect(job.send(:ready_for_resync)).to eq([appeals[4]])
       end
 
       it "running the perform" do
         Notification.create!(
-          appeals_id: LegacyAppeal.find(5).vacols_id,
+          appeals_id: appeals[4].vacols_id,
           appeals_type: "LegacyAppeal",
           event_date: today,
           event_type: "Appeal docketed",
