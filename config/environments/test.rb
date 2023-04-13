@@ -111,4 +111,5 @@ Rails.application.configure do
   # Notifications page eFolder link
   ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] ||= "https://vefs-claimevidence-ui-uat.stage8.bip.va.gov"
 
+  ENV['TEST_VACOLS_HOST'] ||= "localhost"
 end
