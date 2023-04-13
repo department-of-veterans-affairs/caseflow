@@ -2,6 +2,7 @@
   <%= react_component("IntakeEdit", props: {
     userDisplayName: current_user.display_name,
     userCanWithdrawIssues: current_user.can_withdraw_issues?,
+    userCanEditIntakeIssues: current_user.can_edit_intake_issues?,
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,
