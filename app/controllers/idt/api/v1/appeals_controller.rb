@@ -86,4 +86,8 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   def json_appeals(appeals)
     ::Idt::V1::AppealSerializer.new(appeals, is_collection: true)
   end
+
+  def validate(address)
+    VADotGovService.validate_address(address)
+  end
 end
