@@ -52,11 +52,18 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       .pluck(:appeal_id)
 
     # A list of Appeals that have never had notification reports generated and synced with VBMS
-    appeals_without_reports = Appeal.active.where.not(id: appeal_ids_synced)
+    Appeal.joins("JOIN notifications ON \
+        notifications.appeals_id = appeals.\"uuid\"::text AND \
+        notifications.appeals_type = 'Appeal'")
+      .active
+      .where.not(id: appeal_ids_synced)
+      .group(:id)
 
-    appeals_without_reports.select do |appeal|
-      last_notification_of_appeal(appeal.uuid)
-    end
+    # appeals_without_reports = Appeal.active.where.not(id: appeal_ids_synced)
+
+    # appeals_without_reports.select do |appeal|
+    #   last_notification_of_appeal(appeal.uuid)
+    # end
   end
 
   # Purpose: Determines which appeals need a NEW notification report uploaded to efolder
@@ -82,23 +89,71 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # Params: Array of appeal ids (primary key)
   #
   # Return: Array of active appeals
-  def get_appeals_from_prev_synced_ids(appeal_ids)
-    active_appeals = appeal_ids.map do |appeal_id|
-      begin
-        appeal = Appeal.find(appeal_id)
-        if appeal.active?
-          latest_appeal_notification = last_notification_of_appeal(appeal.uuid)
-          latest_notification_report = latest_vbms_uploaded_document(appeal)
-          notification_timestamp = latest_appeal_notification.notified_at || latest_appeal_notification.created_at
+  # def get_appeals_from_prev_synced_ids(appeal_ids)
+  #   active_appeals = appeal_ids.map do |appeal_id|
+  #     begin
+  #       appeal = Appeal.find(appeal_id)
+  #       if appeal.active?
+  #         latest_appeal_notification = last_notification_of_appeal(appeal.uuid)
+  #         latest_notification_report = latest_vbms_uploaded_document(appeal)
+  #         notification_timestamp = latest_appeal_notification.notified_at || latest_appeal_notification.created_at
 
-          appeal if notification_timestamp > latest_notification_report.attempted_at
-        end
-      rescue StandardError => error
-        log_error(error)
-        nil
-      end
-    end
-    active_appeals.compact
+  #         appeal if notification_timestamp > latest_notification_report.attempted_at
+  #       end
+  #     rescue StandardError => error
+  #       log_error(error)
+  #       nil
+  #     end
+  #   end
+  #   active_appeals.compact
+  # end
+
+  def get_appeals_from_prev_synced_ids(appeal_ids)
+    Appeal.active.find_by_sql(
+      <<-SQL
+        SELECT appeals.*
+        FROM appeals
+        JOIN (#{appeals_on_latest_notifications(appeal_ids)}) AS notifs ON
+          notifs.appeals_id = appeals."uuid"::text AND notifs.appeals_type = 'Appeal'
+        JOIN (#{appeals_on_latest_doc_uploads(appeal_ids)}) AS vbms_uploads ON
+          vbms_uploads.appeal_id = appeals.id AND vbms_uploads.appeal_type = 'Appeal'
+        WHERE
+          notifs.notified_at > vbms_uploads.attempted_at
+        OR
+          notifs.created_at > vbms_uploads.attempted_at
+        GROUP BY appeals.id
+      SQL
+    )
+  end
+
+  def appeals_on_latest_notifications(appeal_ids)
+    <<-SQL
+      SELECT n1.* FROM appeals a
+      JOIN notifications n1 on n1.appeals_id = a."uuid"::text AND n1.appeals_type = 'Appeal'
+      LEFT OUTER JOIN notifications n2 ON (n2.appeals_id = a."uuid"::text AND n1.appeals_type = 'Appeal' AND
+          (n1.notified_at < n2.notified_at OR (n1.notified_at = n2.notified_at AND n1.id < n2.id)))
+      WHERE n2.id IS NULL
+      #{format_appeal_ids_sql_list(appeal_ids)}
+    SQL
+  end
+
+  def appeals_on_latest_doc_uploads(appeal_ids)
+    <<-SQL
+      SELECT doc1.* FROM appeals a
+      JOIN vbms_uploaded_documents doc1 on doc1.appeal_id = a.id AND doc1.appeal_type = 'Appeal'
+      LEFT OUTER JOIN vbms_uploaded_documents doc2 ON (doc2.appeal_id = a.id AND doc1.appeal_type = 'Appeal' AND
+          (doc1.attempted_at < doc2.attempted_at OR (doc1.attempted_at = doc2.attempted_at AND doc1.id < doc2.id)))
+      WHERE doc2.id IS NULL
+      #{format_appeal_ids_sql_list(appeal_ids)}
+    SQL
+  end
+
+  def format_appeal_ids_sql_list(appeal_ids)
+    return "" if appeal_ids.empty?
+
+    return "a.id = #{appeal_ids.first}" if appeal_ids.one?
+
+    "AND a.id IN (#{appeal_ids.join(',').chomp(',')})"
   end
 
   # Purpose: Syncs the notification reports in VBMS with the notification table for each appeal

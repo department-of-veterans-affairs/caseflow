@@ -47,13 +47,21 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
       .successfully_uploaded
       .pluck(:appeal_id)
 
-    appeals_without_reports = LegacyAppeal
+    # appeals_without_reports = LegacyAppeal
+    #   .where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
+    #   .where.not(id: appeal_ids_synced)
+
+    # appeals_without_reports.select do |appeal|
+    #   last_notification_of_appeal(appeal.vacols_id)
+    # end
+
+    LegacyAppeal.joins("JOIN notifications ON \
+        notifications.appeals_id = legacy_appeals.vacols_id AND \
+        notifications.appeals_type = 'LegacyAppeal'")
       .where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
       .where.not(id: appeal_ids_synced)
-
-    appeals_without_reports.select do |appeal|
-      last_notification_of_appeal(appeal.vacols_id)
-    end
+      .group(:id)
+      .to_a
   end
 
   # Purpose: Determines which appeals need a NEW notification report uploaded to efolder
