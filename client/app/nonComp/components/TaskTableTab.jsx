@@ -9,7 +9,8 @@ import {
   claimantColumn,
   veteranParticipantIdColumn,
   veteranSsnColumn,
-  decisionReviewTypeColumn
+  decisionReviewTypeColumn,
+  customIssueTypesColumn
 } from './TaskTableColumns';
 import {
   buildDecisionReviewFilterInformation,
@@ -50,6 +51,18 @@ class TaskTableTabUnconnected extends React.PureComponent {
     this.setState({ searchText: '', searchValue: '' });
   };
 
+  parseIssueTypeFilterOptions = (issueTypeCounts) =>
+    Object.entries(issueTypeCounts).map(([key, issueTypeCount]) => {
+      let taskInfo;
+
+      taskInfo = {
+        value: key,
+        displayText: `${key} (${issueTypeCount})`
+      };
+
+      return { ...taskInfo, checked: false };
+    });
+
   getTableColumns = () => [
     claimantColumn(),
     {
@@ -58,6 +71,12 @@ class TaskTableTabUnconnected extends React.PureComponent {
         this.props.filterableTaskTypes,
         this.enabledTaskFilters()
       )
+    },
+    {
+      ...customIssueTypesColumn(),
+      ...{
+        filterOptions: this.parseIssueTypeFilterOptions(this.props.filterableTaskIssueTypes)
+      },
     },
     this.props.featureToggles.decisionReviewQueueSsnColumn ?
       veteranSsnColumn() :
@@ -93,7 +112,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
           getKeyForRow={(row, object) => object.id}
           customColumns={this.getTableColumns()}
           includeIssueCount
-          includeIssueTypes
+          // includeIssueTypes
           tasks={[]}
           taskPagesApiEndpoint={this.props.baseTasksUrl}
           useTaskPagesApi

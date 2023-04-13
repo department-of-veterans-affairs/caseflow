@@ -28,6 +28,8 @@ class NonCompTabsUnconnected extends React.PureComponent {
     const findTab = tabArray.findIndex((tabName) => tabName === currentTabName);
     const getTabByIndex = findTab === -1 ? 0 : findTab;
 
+    console.log(this.props.taskFilterDetails.testing);
+
     const tabs = [{
       label: 'In progress tasks',
       page: <TaskTableTab
@@ -35,6 +37,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
         baseTasksUrl={`${this.props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=in_progress`}
         tabPaginationOptions={tabPaginationOptions}
         filterableTaskTypes={this.props.taskFilterDetails.in_progress}
+        filterableTaskIssueTypes={this.props.taskFilterDetails.testing}
         predefinedColumns={{ includeDaysWaiting: true,
           defaultSortIdx: 3 }} />
     }, {

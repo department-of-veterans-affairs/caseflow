@@ -34,6 +34,14 @@ class BusinessLine < Organization
     QueryBuilder.new(query_type: :completed, parent: self).task_type_count
   end
 
+  def in_progress_tasks_issue_type_counts
+    QueryBuilder.new(query_type: :in_progress, parent: self).issue_type_count
+  end
+
+  def completed_tasks_issue_type_counts
+    QueryBuilder.new(query_type: :completed, parent: self).issue_type_count
+  end
+
   class QueryBuilder
     attr_accessor :query_type, :parent, :query_params
 
@@ -67,6 +75,8 @@ class BusinessLine < Organization
       @parent = parent
       @query_params = query_params
 
+      puts query_params.inspect
+
       # Initialize default sorting
       query_params[:sort_by] ||= DEFAULT_ORDERING_HASH[query_type][:sort_by]
       query_params[:sort_order] ||= "desc"
@@ -85,6 +95,32 @@ class BusinessLine < Organization
         .from(combined_decision_review_tasks_query)
         .group(Task.arel_table[:type], Task.arel_table[:appeal_type])
         .count
+    end
+
+    def issue_type_count
+      # Task.select(Arel.star)
+      #   .from(combined_decision_review_tasks_query)
+      #   .group(RequestIssue.arel_table[:nonrating_issue_category])
+      #   .count
+      {
+        "Apportionment" => 18,
+        "Beneficiary Travel" => 2,
+        "Camp Lejune Family Member" => 8,
+        "Caregiver | Eligibility" => 8,
+        "Caregiver | Other" => 56,
+        "Caregiver | Revocation/Discharge" => 6,
+        "Caregiver | Tier Level" => 6,
+        "CHAMPVA" => 4,
+        "Clothing Allowance" => 7,
+        "Continuing Eligibility/Income Verification Match (IVM)" => 6,
+        "Eligibility for Dental Treatment" => 5,
+        "Foreign Medical Program" => 4,
+        "Initial Eligibility and Enrollment in VHA Healthcare" => 9,
+        "Medical and Dental Care Reimbursement" => 7,
+        "Other" => 11,
+        "Prosthetics | Other (not clothing allowance)" => 5,
+        "Spina Bifida Treatment (Non-Compensation)" => 5
+      }
     end
 
     private
@@ -241,6 +277,7 @@ class BusinessLine < Organization
 
     # Specific case for BoardEffectuationGrantTasks to include them in the result set
     # if the :board_grant_effectuation_task FeatureToggle is enabled for the current user.
+    # TODO: Refactor this stupid method again because the Abc size is too high
     def board_grant_effectuation_tasks
       Task.select(union_select_statements)
         .send(TASKS_QUERY_TYPE[query_type])
@@ -253,6 +290,7 @@ class BusinessLine < Organization
         .joins(bgs_attorneys_join)
         .where(board_grant_effectuation_task_constraints)
         .where(search_all_clause, *search_values)
+        .where(issue_type_filter_predicate(query_params[:filters]))
         .group(group_by_columns)
         .arel
     end
@@ -267,8 +305,9 @@ class BusinessLine < Organization
         .joins(unrecognized_appellants_join)
         .joins(party_details_join)
         .joins(bgs_attorneys_join)
-        .where(query_constaints)
+        .where(query_constraints)
         .where(search_all_clause, *search_values)
+        .where(issue_type_filter_predicate(query_params[:filters]))
         .group(group_by_columns)
         .arel
     end
@@ -285,7 +324,7 @@ class BusinessLine < Organization
       Arel::Nodes::As.new(union_query, Task.arel_table)
     end
 
-    def query_constaints
+    def query_constraints
       {
         in_progress: {
           # Don't retrieve any tasks with closed issues or issues with ineligible reasons for in progress
@@ -351,8 +390,52 @@ class BusinessLine < Organization
     def locate_task_filter(filters)
       parsed_filters = parse_filters(filters)
 
+      puts "in locate task filter"
+
+      puts parsed_filters.inspect
+
+      # It looks like this [{"col"=>["issueTypesColumn"], "val"=>["Apportionment|CHAMPVA"]}]
+      # It looks like this with both types of filters
+      # [{"col"=>["issueTypesColumn"], "val"=>["Apportionment|CHAMPVA"]}, {"col"=>["decisionReviewType"], "val"=>["HigherLevelReview"]}]
+
       parsed_filters.find do |filter|
         filter["col"].include?("decisionReviewType")
+      end
+    end
+
+    # TODO: Refactor this if I can since it's so similar to the task filter but a little different.
+    # It would be nice to only have one filter so it's easier to add new filters in the future.
+    def issue_type_filter_predicate(filters)
+      return "" unless filters
+
+      task_filter = locate_issue_type_filter(filters)
+
+      return "" unless task_filter
+
+      # ex: "val"=>["SupplementalClaim|HigherLevelReview"]
+      tasks_to_include = task_filter["val"].first.split("|")
+
+      build_issue_type_filter_predicates(tasks_to_include) || ""
+    end
+
+    def build_issue_type_filter_predicates(tasks_to_include)
+      first_task_name, *remaining_task_names = tasks_to_include
+
+      # filter = TASK_FILTER_PREDICATES[first_task_name]
+      filter = RequestIssue.arel_table[:nonrating_issue_category].eq(first_task_name)
+
+      remaining_task_names.each do |task_name|
+        filter = filter.or(RequestIssue.arel_table[:nonrating_issue_category].eq(task_name))
+      end
+
+      filter
+    end
+
+    def locate_issue_type_filter(filters)
+      parse_filters = parse_filters(filters)
+
+      parse_filters.find do |filter|
+        filter["col"].include?("issueTypesColumn")
       end
     end
   end
