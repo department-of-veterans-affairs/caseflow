@@ -33,7 +33,11 @@ class DistributionTask < Task
   end
 
   def special_case_movement_task(user)
-    SpecialCaseMovementTeam.singleton.user_has_access?(user) && appeal.ready_for_distribution?
+    if appeal.is_a?(Appeal)
+      SpecialCaseMovementTeam.singleton.user_has_access?(user) && appeal.ready_for_distribution?
+    else
+      SpecialCaseMovementTeam.singleton.user_has_access?(user)
+    end
   end
 
   def blocked_special_case_movement(user)
