@@ -162,6 +162,8 @@ class BodyRows extends React.PureComponent {
         const key = getKeyForRow(rowNumber, object);
 
         return <Row
+          tabIndex={-1}
+          role="gridcell"
           rowObject={object}
           columns={columns}
           rowClassNames={rowClassNames}
