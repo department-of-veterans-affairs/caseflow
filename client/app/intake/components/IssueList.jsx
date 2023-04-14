@@ -43,16 +43,16 @@ export default class IssuesList extends React.Component {
             value: 'withdraw' }
         );
       }
+      options.push(
+        { displayText: 'Remove issue',
+          value: 'remove' }
+      );
       if (userCanEditIntakeIssues) {
         options.push(
           { displayText: 'Edit issue',
             value: 'edit' }
         );
       }
-      options.push(
-        { displayText: 'Remove issue',
-          value: 'remove' }
-      );
     }
 
     return options;
