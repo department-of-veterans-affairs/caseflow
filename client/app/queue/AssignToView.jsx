@@ -5,11 +5,13 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import COPY from '../../COPY';
+import VHA_VAMCS from '../../constants/VHA_VAMCS.json';
 
 import { taskById, appealWithDetailSelector } from './selectors';
 
 import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime } from './QueueActions';
 
+import RadioField from '../components/RadioField';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
@@ -50,6 +52,7 @@ class AssignToView extends React.Component {
 
     this.state = {
       selectedValue: action ? action.value : null,
+      assignToVHARegionalOfficeSelection: 'visn',
       instructions: existingInstructions
     };
   }
@@ -79,6 +82,7 @@ class AssignToView extends React.Component {
     const actionData = taskActionData(this.props);
     const taskType = actionData.type || 'Task';
 
+
     const payload = {
       data: {
         tasks: [
@@ -86,7 +90,7 @@ class AssignToView extends React.Component {
             type: taskType,
             external_id: appeal.externalId,
             parent_id: actionData.parent_id || task.taskId,
-            assigned_to_id: this.state.selectedValue,
+            assigned_to_id: this.isVHAAssignToRegional() ? this.getVisnFromVamc().value : this.state.selectedValue,
             assigned_to_type: isTeamAssign ? 'Organization' : 'User',
             instructions: this.state.instructions
           }
@@ -118,6 +122,10 @@ class AssignToView extends React.Component {
 
   getAssignee = () => {
     let assignee = 'person';
+
+    if (this.isVHAAssignToRegional()) {
+      return this.getVisnFromVamc().label
+    }
 
     taskActionData(this.props).options.forEach((opt) => {
       if (opt.value === this.state.selectedValue) {
@@ -159,6 +167,27 @@ class AssignToView extends React.Component {
     });
   };
 
+  isVHAAssignToRegional = () => {
+    const actionData = taskActionData(this.props);
+    return actionData.modal_title === COPY.VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE;
+  };
+
+  determineOptions = (actionData) => {
+    if (this.isVHAAssignToRegional()) {
+      return actionData.options[this.state.assignToVHARegionalOfficeSelection]
+    }
+
+    return actionData.options
+  };
+
+  determineDropDownLabel = (actionData) => {
+    if (this.isVHAAssignToRegional()) {
+      return actionData.drop_down_label[this.state.assignToVHARegionalOfficeSelection]
+    }
+
+    return actionData.drop_down_label
+  };
+
   determineTitle = (props, action, isPulacCerullo, actionData) => {
     if (actionData.modal_title) {
       return actionData.modal_title;
@@ -186,6 +215,25 @@ class AssignToView extends React.Component {
     return COPY.ASSIGN_TO_USER_DROPDOWN;
 
   };
+
+  getVisnFromVamc = () => {
+    const actionData = taskActionData(this.props);
+
+    const vamc_name = actionData.options.vamc[this.state.selectedValue].label
+    const visn_name = VHA_VAMCS.find(element => element.name === vamc_name).visn
+
+    const visn_option = actionData.options.visn.find(element=> element.label.includes(visn_name))
+
+    
+    return visn_option
+  }
+
+  assignToVHARegionalOfficeRadioOptions = [
+    { displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VAMC,
+    value: 'vamc' },
+  { displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VISN,
+    value: 'visn' }
+  ]
 
   render = () => {
     const { assigneeAlreadySelected, highlightFormItems, task } = this.props;
@@ -229,17 +277,33 @@ class AssignToView extends React.Component {
         <p>{actionData.modal_body ? actionData.modal_body : ''}</p>
         {!assigneeAlreadySelected && (
           <React.Fragment>
+            {this.isVHAAssignToRegional() && (
+                <RadioField
+                          name="Find the VISN by:"
+                          options={this.assignToVHARegionalOfficeRadioOptions}
+                          value={this.state.assignToVHARegionalOfficeSelection}
+                          onChange={(option) => this.setState({ assignToVHARegionalOfficeSelection: option})}
+                />
+            )}
             <SearchableDropdown
               name="Assign to selector"
               searchable
               hideLabel={actionData.drop_down_label ? null : true}
-              label={actionData.drop_down_label}
+              label={this.determineDropDownLabel(actionData)}
               errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
               placeholder={this.determinePlaceholder(this.props, actionData)}
               value={this.state.selectedValue}
               onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
-              options={taskActionData(this.props).options}
+              options={this.determineOptions(actionData)}
             />
+            {this.isVHAAssignToRegional() &&
+            this.state.assignToVHARegionalOfficeSelection === 'vamc' &&
+            (this.state.selectedValue !== null) && (
+                  <div>
+                    <u>VISN</u>
+                    <div>{ this.getVisnFromVamc(actionData).label }</div>
+                  </div>
+            )}
             <br />
           </React.Fragment>
         )}
