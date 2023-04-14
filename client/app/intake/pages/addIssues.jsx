@@ -208,6 +208,7 @@ class AddIssuesPage extends React.Component {
       editPage,
       addingIssue,
       userCanWithdrawIssues,
+      userCanEditIntakeIssues,
       userCanSplitAppeal
     } = this.props;
     const intakeData = intakeForms[formType];
@@ -394,6 +395,7 @@ class AddIssuesPage extends React.Component {
               formType={formType}
               featureToggles={featureToggles}
               userCanWithdrawIssues={userCanWithdrawIssues}
+              userCanEditIntakeIssues={userCanEditIntakeIssues}
               editPage={editPage}
             />
             {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}
@@ -562,6 +564,7 @@ AddIssuesPage.propTypes = {
   veteran: PropTypes.object,
   withdrawIssue: PropTypes.func,
   userCanWithdrawIssues: PropTypes.bool,
+  userCanEditIntakeIssues: PropTypes.bool,
   userCanSplitAppeal: PropTypes.bool
 };
 
@@ -611,6 +614,7 @@ export const EditAddIssuesPage = connect(
     activeIssue: state.activeIssue,
     addingIssue: state.addingIssue,
     userCanWithdrawIssues: state.userCanWithdrawIssues,
+    userCanEditIntakeIssues: state.userCanEditIntakeIssues,
     userCanSplitAppeal: state.userCanSplitAppeal
 
   }),
