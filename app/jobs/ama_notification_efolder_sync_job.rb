@@ -3,12 +3,6 @@
 class AmaNotificationEfolderSyncJob < CaseflowJob
   queue_with_priority :low_priority
 
-  # * Query gives back a list of active AMA Appeals that have notifications
-  # * and has a VBMS uploaded document associated with the appeal and has the
-  # * document_type = "BVA Case Notifications" and the last notification associated with the Appeal
-  # * notification datetime is after the vbms uploaded doc uploaded_datetime. If no record exists it will
-  # * also return the appeal.
-
   BATCH_LIMIT = ENV["AMA_NOTIFICATION_REPORT_SYNC_LIMIT"] || 500
 
   # Purpose: Determines which appeals need a notification report generated and uploaded to efolder,
@@ -33,8 +27,11 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # Return: Array of appeals that were closed within the last 24 hours
   def appeals_recently_outcoded
     Appeal
-      .where(id: RootTask.where(closed_at: 1.day.ago..Time.zone.now)
-      .where(appeal_type: "Appeal", status: "completed")
+      .where(id: RootTask.where(
+        appeal_type: "Appeal",
+        status: "completed",
+        closed_at: 1.day.ago..Time.zone.now
+      )
       .pluck(:appeal_id)
       .uniq)
   end
@@ -58,12 +55,6 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       .active
       .where.not(id: appeal_ids_synced)
       .group(:id)
-
-    # appeals_without_reports = Appeal.active.where.not(id: appeal_ids_synced)
-
-    # appeals_without_reports.select do |appeal|
-    #   last_notification_of_appeal(appeal.uuid)
-    # end
   end
 
   # Purpose: Determines which appeals need a NEW notification report uploaded to efolder
@@ -79,6 +70,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       .order(attempted_at: :desc)
       .uniq(&:appeal_id)
       .reverse.pluck(:appeal_id)
+
     # Appeals for all the previously synced reports from oldest to newest
     get_appeals_from_prev_synced_ids(previously_synced_appeal_ids)
   end
@@ -89,25 +81,6 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # Params: Array of appeal ids (primary key)
   #
   # Return: Array of active appeals
-  # def get_appeals_from_prev_synced_ids(appeal_ids)
-  #   active_appeals = appeal_ids.map do |appeal_id|
-  #     begin
-  #       appeal = Appeal.find(appeal_id)
-  #       if appeal.active?
-  #         latest_appeal_notification = last_notification_of_appeal(appeal.uuid)
-  #         latest_notification_report = latest_vbms_uploaded_document(appeal)
-  #         notification_timestamp = latest_appeal_notification.notified_at || latest_appeal_notification.created_at
-
-  #         appeal if notification_timestamp > latest_notification_report.attempted_at
-  #       end
-  #     rescue StandardError => error
-  #       log_error(error)
-  #       nil
-  #     end
-  #   end
-  #   active_appeals.compact
-  # end
-
   def get_appeals_from_prev_synced_ids(appeal_ids)
     Appeal.active.find_by_sql(
       <<-SQL

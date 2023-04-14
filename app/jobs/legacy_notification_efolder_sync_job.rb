@@ -47,21 +47,12 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
       .successfully_uploaded
       .pluck(:appeal_id)
 
-    # appeals_without_reports = LegacyAppeal
-    #   .where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
-    #   .where.not(id: appeal_ids_synced)
-
-    # appeals_without_reports.select do |appeal|
-    #   last_notification_of_appeal(appeal.vacols_id)
-    # end
-
     LegacyAppeal.joins("JOIN notifications ON \
         notifications.appeals_id = legacy_appeals.vacols_id AND \
         notifications.appeals_type = 'LegacyAppeal'")
       .where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
       .where.not(id: appeal_ids_synced)
       .group(:id)
-      .to_a
   end
 
   # Purpose: Determines which appeals need a NEW notification report uploaded to efolder
@@ -87,22 +78,52 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   #
   # Return: Array of active appeals
   def get_appeals_from_prev_synced_ids(appeal_ids)
-    active_appeals = appeal_ids.map do |appeal_id|
-      begin
-        appeal = LegacyAppeal.find(appeal_id)
-        if appeal.active?
-          latest_appeal_notification = last_notification_of_appeal(appeal.vacols_id)
-          latest_notification_report = latest_vbms_uploaded_document(appeal)
-          notification_timestamp = latest_appeal_notification.notified_at || latest_appeal_notification.created_at
+    LegacyAppeal.where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
+      .find_by_sql(
+        <<-SQL
+          SELECT la.*
+          FROM legacy_appeals la
+          JOIN (#{appeals_on_latest_notifications(appeal_ids)}) AS notifs ON
+            notifs.appeals_id = la.vacols_id AND notifs.appeals_type = 'LegacyAppeal'
+          JOIN (#{appeals_on_latest_doc_uploads(appeal_ids)}) AS vbms_uploads ON
+            vbms_uploads.appeal_id = la.id AND vbms_uploads.appeal_type = 'LegacyAppeal'
+          WHERE
+            notifs.notified_at > vbms_uploads.attempted_at
+          OR
+            notifs.created_at > vbms_uploads.attempted_at
+          GROUP BY la.id
+        SQL
+      )
+  end
 
-          appeal if notification_timestamp > latest_notification_report.attempted_at
-        end
-      rescue StandardError => error
-        log_error(error)
-        nil
-      end
-    end
-    active_appeals.compact
+  def appeals_on_latest_notifications(appeal_ids)
+    <<-SQL
+      SELECT n1.* FROM legacy_appeals a
+      JOIN notifications n1 on n1.appeals_id = a.vacols_id AND n1.appeals_type = 'LegacyAppeal'
+      LEFT OUTER JOIN notifications n2 ON (n2.appeals_id = a.vacols_id AND n1.appeals_type = 'LegacyAppeal' AND
+          (n1.notified_at < n2.notified_at OR (n1.notified_at = n2.notified_at AND n1.id < n2.id)))
+      WHERE n2.id IS NULL
+      #{format_appeal_ids_sql_list(appeal_ids)}
+    SQL
+  end
+
+  def appeals_on_latest_doc_uploads(appeal_ids)
+    <<-SQL
+      SELECT doc1.* FROM legacy_appeals a
+      JOIN vbms_uploaded_documents doc1 on doc1.appeal_id = a.id AND doc1.appeal_type = 'LegacyAppeal'
+      LEFT OUTER JOIN vbms_uploaded_documents doc2 ON (doc2.appeal_id = a.id AND doc1.appeal_type = 'LegacyAppeal' AND
+          (doc1.attempted_at < doc2.attempted_at OR (doc1.attempted_at = doc2.attempted_at AND doc1.id < doc2.id)))
+      WHERE doc2.id IS NULL
+      #{format_appeal_ids_sql_list(appeal_ids)}
+    SQL
+  end
+
+  def format_appeal_ids_sql_list(appeal_ids)
+    return "" if appeal_ids.empty?
+
+    return "a.id = #{appeal_ids.first}" if appeal_ids.one?
+
+    "AND a.id IN (#{appeal_ids.join(',').chomp(',')})"
   end
 
   # Purpose: Syncs the notification reports in VBMS with the notification table for each appeal
