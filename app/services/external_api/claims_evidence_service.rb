@@ -24,6 +24,7 @@ end
 class ExternalApi::ClaimsEvidenceService
   SERVICE_ID = ENV["CLAIM_EVIDENCE_SERVICE_ID"]
   TOKEN_ALG = ENV["CLAIM_EVIDENCE_TOKEN_ALG"]
+  JWT_JTI = ENV["CLAIM_EVIDENCE_JWT_JTI"]
   SERVER = "/api/v1/rest"
   DOCUMENT_TYPES_ENDPOINT = "/documenttypes"
   HEADERS = {
@@ -49,6 +50,10 @@ class ExternalApi::ClaimsEvidenceService
     end
 
     def generate_token
+      payload = {
+        jti: JWT_JTI,
+        applicationID: SERVICE_ID
+      }
       ExternalApi::JwtToken.generate_token(ENV["SSL_CERT_FILE"], TOKEN_ALG, SERVICE_ID)
     end
 

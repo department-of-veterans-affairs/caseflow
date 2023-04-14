@@ -5,7 +5,7 @@ class ExternalApi::JwtToken
     # Params: none
     #
     # Return: token needed for authentication
-    def self.generate_token(client_secret, token_alg, service_id)
+    def self.generate_token(client_secret, token_alg, service_id, payload = {})
       jwt_secret = client_secret
       header = {
         typ: "JWT",
@@ -15,7 +15,8 @@ class ExternalApi::JwtToken
       data = {
         iss: service_id,
         iat: current_timestamp
-      }
+      }.merge(payload)
+
       stringified_header = header.to_json.encode("UTF-8")
       encoded_header = base64url(stringified_header)
       stringified_data = data.to_json.encode("UTF-8")
