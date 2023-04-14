@@ -12,6 +12,7 @@ import {
   decisionReviewTypeColumn,
 } from './TaskTableColumns';
 import {
+  issueCountColumn,
   issueTypesColumn
 } from '../../queue/components/TaskTableColumns';
 import {
@@ -74,16 +75,14 @@ class TaskTableTabUnconnected extends React.PureComponent {
         this.enabledTaskFilters()
       )
     },
-    {
-      ...issueTypesColumn(),
-      ...{
-        filterOptions: this.parseIssueTypeFilterOptions(this.props.filterableTaskIssueTypes),
-        order: 2,
-      },
-    },
     this.props.featureToggles.decisionReviewQueueSsnColumn ?
       veteranSsnColumn() :
-      veteranParticipantIdColumn()
+      veteranParticipantIdColumn(),
+    issueCountColumn(),
+    {
+      ...issueTypesColumn(),
+      filterOptions: this.parseIssueTypeFilterOptions(this.props.filterableTaskIssueTypes)
+    },
   ];
 
   enabledTaskFilters = () => extractEnabledTaskFilters(
@@ -114,7 +113,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
           {...this.state.predefinedColumns}
           getKeyForRow={(row, object) => object.id}
           customColumns={this.getTableColumns()}
-          includeIssueCount
+          // includeIssueCount
           // includeIssueTypes
           tasks={[]}
           taskPagesApiEndpoint={this.props.baseTasksUrl}
