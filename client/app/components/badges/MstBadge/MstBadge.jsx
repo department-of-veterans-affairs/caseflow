@@ -15,7 +15,7 @@ const MstBadge = (props) => {
     return null;
   }
 
-  const tooltipText = "";
+  const tooltipText = "Appeal has issue(s) related to Military Sexual Trauma";
 
   return <Badge
     name="mst"

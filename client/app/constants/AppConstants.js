@@ -34,6 +34,7 @@ export const COLORS = {
   PURPLE: '#844E9F',
   RED: '#E31C3D',
   RED_DARK: '#cd2026',
+  ORANGE: '#BD5727'
 };
 
 export const LOGO_COLORS = {

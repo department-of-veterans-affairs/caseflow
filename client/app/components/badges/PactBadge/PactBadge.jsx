@@ -15,12 +15,12 @@ const PactBadge = (props) => {
     return null;
   }
 
-  const tooltipText = "";
+  const tooltipText = "Appeal has issue(s) related to Promise to Address Comprehensive Toxics (PACT) Act.";
 
   return <Badge
     name="pact"
     displayName="PACT"
-    color={COLORS.GRAY}
+    color={COLORS.ORANGE}
     tooltipText={tooltipText}
     id={`pact-${appeal.id}`}
     ariaLabel="pact"
