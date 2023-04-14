@@ -28,8 +28,6 @@ class NonCompTabsUnconnected extends React.PureComponent {
     const findTab = tabArray.findIndex((tabName) => tabName === currentTabName);
     const getTabByIndex = findTab === -1 ? 0 : findTab;
 
-    console.log(this.props.taskFilterDetails.testing);
-
     const tabs = [{
       label: 'In progress tasks',
       page: <TaskTableTab
@@ -37,7 +35,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
         baseTasksUrl={`${this.props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=in_progress`}
         tabPaginationOptions={tabPaginationOptions}
         filterableTaskTypes={this.props.taskFilterDetails.in_progress}
-        filterableTaskIssueTypes={this.props.taskFilterDetails.testing}
+        filterableTaskIssueTypes={this.props.taskFilterDetails.in_progress_issue_types}
         predefinedColumns={{ includeDaysWaiting: true,
           defaultSortIdx: 3 }} />
     }, {
@@ -47,6 +45,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
         baseTasksUrl={`${this.props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=completed`}
         tabPaginationOptions={tabPaginationOptions}
         filterableTaskTypes={this.props.taskFilterDetails.completed}
+        filterableTaskIssueTypes={this.props.taskFilterDetails.completed_issue_types}
         description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
         predefinedColumns={{ includeCompletedDate: true,
           defaultSortIdx: 3 }} />
@@ -65,7 +64,9 @@ NonCompTabsUnconnected.propTypes = {
   baseTasksUrl: PropTypes.string,
   taskFilterDetails: PropTypes.shape({
     in_progress: PropTypes.object,
-    completed: PropTypes.object
+    in_progress_issue_types: PropTypes.object,
+    completed: PropTypes.object,
+    completed_issue_types: PropTypes.object,
   })
 };
 
