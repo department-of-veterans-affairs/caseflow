@@ -45,13 +45,13 @@ class ExternalApi::ClaimEvidenceService
         case method
         when :get
           response = HTTPI.get(request)
-          service_response = ExternalApi::VANotifyService::Response.new(response)
+          service_response = ExternalApi::ClaimEvidenceService::Response.new(response)
           fail service_response.error if service_response.error.present?
 
           service_response
         when :post
           response = HTTPI.post(request)
-          service_response = ExternalApi::VANotifyService::Response.new(response)
+          service_response = ExternalApi::ClaimEvidenceService::Response.new(response)
           fail service_response.error if service_response.error.present?
 
           service_response
