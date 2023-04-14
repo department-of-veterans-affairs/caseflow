@@ -186,8 +186,8 @@ feature "NonComp Reviews Queue", :postgres do
 
       table_rows = current_table_rows
 
-      expect(table_rows.first.include?(hlr_c.veteran.ssn)).to be == true
-      expect(table_rows.last.include?(hlr_b.veteran.ssn)).to be == true
+      expect(table_rows.first.include?(hlr_c.veteran.ssn)).to eq true
+      expect(table_rows.last.include?(hlr_b.veteran.ssn)).to eq true
 
       # Veteran SSN ascending
       order_buttons[:ssn].click
@@ -197,8 +197,8 @@ feature "NonComp Reviews Queue", :postgres do
 
       table_rows = current_table_rows
 
-      expect(table_rows.first.include?(hlr_b.veteran.ssn)).to be == true
-      expect(table_rows.last.include?(hlr_c.veteran.ssn)).to be == true
+      expect(table_rows.first.include?(hlr_b.veteran.ssn)).to eq true
+      expect(table_rows.last.include?(hlr_c.veteran.ssn)).to eq true
 
       # Issue count desc
       order_buttons[:issues_count].click
