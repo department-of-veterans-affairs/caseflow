@@ -164,7 +164,6 @@ class AppealsController < ApplicationController
 
   def edit
     # only AMA appeals may call /
-    @can_edit_intake_issues = true
     return not_found if appeal.is_a?(LegacyAppeal)
   end
 
