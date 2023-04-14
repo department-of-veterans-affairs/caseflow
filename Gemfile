@@ -3,8 +3,6 @@
 # rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
-gem "rails", "5.2.4.6"
-
 # State machine
 gem "aasm", "4.11.0"
 gem "activerecord-import"
@@ -57,6 +55,7 @@ gem "pg", platforms: :ruby
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "5.6.4"
 gem "rack", "~> 2.2.6.2"
+gem "rails", "5.2.4.6"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -143,10 +142,11 @@ group :development do
 end
 
 group :test do
-  gem "knapsack_pro"
+  gem "knapsack_pro", "~> 3.8"
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
   gem "webmock"
+  gem "rspec-github", require: false
 end
 # rubocop:enable Metrics/LineLength
 

@@ -1,29 +1,8 @@
 # frozen_string_literal: true
 
-# :nocov:
-class ClaimsEvidenceCaseflowLogger
-  def log(event, data)
-    case event
-    when :request
-      status = data[:response_code]
-
-      if status != 200
-        Rails.logger.error(
-          "ClaimsEvidence HTTP Error #{status} (#{data.pretty_inspect})"
-        )
-      else
-        Rails.logger.info(
-          "ClaimsEvidence HTTP Success #{status} (#{data.pretty_inspect})"
-        )
-      end
-    end
-  end
-end
-# :nocov:
-
-class ExternalApi::ClaimsEvidenceService
+class ExternalApi::ClaimEvidenceService
   JWT_TOKEN = ENV["CLAIM_EVIDENCE_JWT_TOKEN"]
-
+  BASE_URL = ENV["CLAIM_EVIDENCE_API_URL"]
   SERVER = "/api/v1/rest"
   DOCUMENT_TYPES_ENDPOINT = "/documenttypes"
   HEADERS = {
@@ -60,8 +39,8 @@ class ExternalApi::ClaimsEvidenceService
       request.headers = headers.merge(Authorization: "Bearer " + JWT_TOKEN)
 
       sleep 1
-      MetricsService.record("api.notifications.claims.evidence #{method.to_s.upcase} request to #{url}",
-                            service: :claims_evidence,
+      MetricsService.record("api.notifications.claim.evidence #{method.to_s.upcase} request to #{url}",
+                            service: :claim_evidence,
                             name: endpoint) do
         case method
         when :get
