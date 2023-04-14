@@ -22,12 +22,14 @@ end
   # :nocov:
 
 class Fakes::ClaimsEvidenceService
+  class << self
 
-  def self.document_types
-    JSON.parse(IO.binread(File.join(Rails.root, "lib", "fakes", "data", "DOCUMENT_TYPES.json")))["documentTypes"]
-  end
+    def document_types
+      JSON.parse(IO.binread(File.join(Rails.root, "lib", "fakes", "data", "DOCUMENT_TYPES.json")))["documentTypes"]
+    end
 
-  def self.alt_document_types
-    JSON.parse(IO.binread(File.join(Rails.root, "lib", "fakes", "data", "DOCUMENT_TYPES.json")))["alternativeDocumentTypes"]
+    def alt_document_types
+      JSON.parse(IO.binread(File.join(Rails.root, "lib", "fakes", "data", "DOCUMENT_TYPES.json")))["alternativeDocumentTypes"]
+    end
   end
 end
