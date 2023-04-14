@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TaskActionRepository
+class TaskActionRepository # rubocop:disable Metrics/ClassLength
   class << self
     def assign_to_organization_data(task, _user = nil)
       organizations = Organization.assignable(task).map do |organization|
@@ -362,11 +362,12 @@ class TaskActionRepository
         modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym]
       }
 
-      params[:modal_body] = if task.type == "PostSendInitialNotificationLetterHoldingTask"
-        COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
-      else
-        COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
-      end
+      params[:modal_body] =
+        if task.type == "PostSendInitialNotificationLetterHoldingTask"
+          COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
+        else
+          COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
+        end
 
       if defined? task.completion_contact
         params[:contact] = task.completion_contact
