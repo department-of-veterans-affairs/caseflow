@@ -224,6 +224,11 @@ class Fakes::BGSServiceRecordMaker
     sc
   end
 
+  def generate_mst_and_pact_contentions(veteran)
+    has_hlr_with_mst_contention(veteran)
+    has_hlr_with_pact_contention(veteran)
+  end
+
   def has_hlr_with_mst_contention(veteran)
     claim_id = "600118959"
     mst_contention = Generators::Contention.build_mst_contention(
