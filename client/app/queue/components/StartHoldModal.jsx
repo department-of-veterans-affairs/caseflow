@@ -57,7 +57,9 @@ class StartHoldModal extends React.Component {
   validateForm = () => {
     const hasInstructions = Boolean(this.state.instructions);
     const hasHoldLength = Boolean(Number(this.holdLength()));
-    const customHoldIsValid = Boolean(this.state.customHold < 31);
+    const customHoldIsValid = this.isVHAHold() ?
+      Boolean(this.state.customHold < 46) :
+      Boolean(this.state.customHold < 31);
 
     if (this.isVHAHold()) {
       return hasInstructions && hasHoldLength && customHoldIsValid;
