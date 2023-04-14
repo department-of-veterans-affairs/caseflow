@@ -10,7 +10,7 @@ export default {
   },
   args: {
     appeal: {
-      mstClaim: true,
+      mst: true,
     }
   }
 };

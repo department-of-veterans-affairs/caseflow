@@ -10,7 +10,7 @@ export default {
   },
   args: {
     appeal: {
-      pactClaim: true,
+      pact: true,
     }
   }
 };
