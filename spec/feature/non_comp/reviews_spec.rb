@@ -4,9 +4,9 @@ feature "NonComp Reviews Queue", :postgres do
   let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
   let(:user) { create(:default_user) }
 
-  let(:veteran_a) { create(:veteran, first_name: "Aaa", ssn: "140261454") }
-  let(:veteran_b) { create(:veteran, first_name: "Bbb", ssn: "191097395") }
-  let(:veteran_c) { create(:veteran, first_name: "Ccc", ssn: "128455943") }
+  let(:veteran_a) { create(:veteran, first_name: "Aaa", participant_id: "12345", ssn: "140261454") }
+  let(:veteran_b) { create(:veteran, first_name: "Bbb", participant_id: "601111772",  ssn: "191097395") }
+  let(:veteran_c) { create(:veteran, first_name: "Ccc", participant_id: "1002345", ssn: "128455943") }
   let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
   let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
   let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
