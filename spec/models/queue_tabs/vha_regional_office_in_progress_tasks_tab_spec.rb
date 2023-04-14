@@ -63,7 +63,14 @@ describe VhaRegionalOfficeInProgressTasksTab, :postgres do
   describe ".tasks" do
     subject { tab.tasks }
     context "when there are task assigned" do
-      let!(:assignee_in_progress_tasks) { create_list(:assess_documentation_task, 4, :in_progress, assigned_to: assignee) }
+      let!(:assignee_in_progress_tasks) do
+        create_list(
+          :assess_documentation_task,
+          4,
+          :in_progress,
+          assigned_to: assignee
+        )
+      end
       it "Number of task with assigned status should match the number of task present in tab" do
         expect(assignee_in_progress_tasks.count { |task| task.status = "in_progress" }).to be tab.tasks.length
       end
