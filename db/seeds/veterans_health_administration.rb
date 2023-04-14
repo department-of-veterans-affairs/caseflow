@@ -17,6 +17,14 @@ module Seeds
       setup_caregiver_org
       setup_program_offices!
       create_visn_org_teams!
+      create_vha_camo
+      create_vha_caregiver
+      create_vha_program_office
+      create_vha_visn_pre_docket_queue
+      create_high_level_reviews
+      create_supplemental_claims
+      create_high_level_reviews_other_claimants
+      create_supplemental_claims_dependent_claimants
     end
 
     private
@@ -57,6 +65,177 @@ module Seeds
         visn = VhaRegionalOffice.create!(name: name, url: name)
         visn.add_user(regular_user)
         OrganizationsUser.make_user_admin(admin_user, visn)
+      end
+    end
+
+    def create_vha_camo
+      create_vha_camo_queue_assigned
+      create_vha_camo_queue_in_progress
+      create_vha_camo_queue_completed
+    end
+
+    def create_vha_caregiver
+      create_vha_caregiver_queue_assigned
+      create_vha_caregiver_queue_in_progress
+      create_vha_caregiver_queue_completed
+    end
+
+    def create_supplemental_claims
+      business_line_list = Organization.where(type: "BusinessLine")
+      business_line_list.each do |bussiness_line|
+        create_list(:supplemental_claim_vha_task, 5, assigned_to: bussiness_line)
+      end
+    end
+
+    def create_supplemental_claims_dependent_claimants
+      in_process_sc_to_create = 10
+      veterans = Veteran.limit(10).where.not(participant_id: nil)
+      dependents = DependentClaimant.limit(512).where.not(participant_id: nil)
+      dependent_in_progress_scs = Array.new(in_process_sc_to_create).map do
+        veteran = veterans[rand(0...veterans.size)]
+        dependent = dependents[rand(0...dependents.size)]
+        sc = SupplementalClaim.create!(
+          veteran_file_number: veteran.file_number,
+          receipt_date: Time.zone.now,
+          benefit_type: "vha",
+          veteran_is_not_claimant: true
+          )
+
+        DependentClaimant.create!(
+          decision_review: sc,
+          participant_id: dependent.participant_id,
+          payee_code: "10"
+        )
+
+        RequestIssue.create!(
+          decision_review: sc,
+          nonrating_issue_category: "Beneficiary Travel | Special Mode",
+          nonrating_issue_description: "This is a test",
+          benefit_type: "vha",
+          decision_date: 1.month.ago
+          )
+        sc
+      end
+      dependent_in_progress_scs.each do |sc|
+        sc.submit_for_processing!
+        sc.create_business_line_tasks!
+      end
+    end
+
+    def create_high_level_reviews
+      business_line_list = BusinessLine.all
+      business_line_list.each do |bussiness_line|
+        create_list(:higher_level_review_vha_task, 5, assigned_to: bussiness_line)
+      end
+    end
+
+    def create_high_level_reviews_other_claimants
+      in_process_hlr_to_create = 10
+      veterans = Veteran.limit(10).where.not(participant_id: nil)
+      dependents = DependentClaimant.limit(5).where.not(participant_id: nil)
+
+      dependent_in_progress_hlrs = Array.new(in_process_hlr_to_create).map do
+        veteran = veterans[rand(0...veterans.size)]
+        dependent = dependents[rand(0...dependents.size)]
+        hlr = HigherLevelReview.create(
+          veteran_file_number: veteran.file_number,
+          receipt_date: Time.zone.now,
+          benefit_type: "vha",
+          informal_conference: false,
+          same_office: false,
+          veteran_is_not_claimant: false
+        )
+
+        DependentClaimant.create(
+          decision_review: hlr,
+          participant_id: dependent.participant_id,
+          payee_code: "10"
+        )
+
+        RequestIssue.create(
+          decision_review: hlr,
+          nonrating_issue_category: "Beneficiary Travel | Special Mode",
+          nonrating_issue_description: "Travel Benefits",
+          benefit_type: "vha",
+          decision_date: 1.month.ago
+        )
+        hlr
+      end
+      dependent_in_progress_hlrs.each do |hlr|
+        hlr.submit_for_processing!
+        hlr.create_business_line_tasks!
+      end
+    end
+
+    def create_vha_visn_pre_docket_queue
+      tabs = [:assigned, :completed, :in_progress, :on_hold]
+      vha_regional_offices = VhaRegionalOffice.all
+      tabs.each do |status|
+        vha_regional_offices.each do |regional_office|
+          create_list(:pre_docket_task, 5, status, assigned_to: regional_office) unless status == :on_hold
+          create_list(:assess_documentation_task_predocket, 5, :on_hold, assigned_to: regional_office) if status == :on_hold
+        end
+      end
+    end
+
+    def create_vha_camo_queue_assigned
+      5.times do
+        create(:vha_document_search_task, assigned_to: VhaCamo.singleton)
+      end
+    end
+
+    def create_vha_camo_queue_in_progress
+      5.times do
+        appeal = create(:appeal)
+        root_task = create(:task, appeal: appeal, assigned_to: VhaCamo.singleton)
+        pre_docket_task = FactoryBot.create(
+          :pre_docket_task,
+          :in_progress,
+          assigned_to: VhaCamo.singleton,
+          appeal: appeal,
+          parent: root_task
+        )
+        create(:task, :in_progress, assigned_to: VhaCamo.singleton, appeal: appeal, parent: pre_docket_task)
+      end
+    end
+
+    def create_vha_camo_queue_completed
+      5.times do
+        create(:vha_document_search_task, :completed, assigned_to: VhaCamo.singleton)
+      end
+    end
+
+    def create_vha_caregiver_queue_assigned
+      5.times do
+        create(:vha_document_search_task, assigned_to: VhaCaregiverSupport.singleton)
+      end
+    end
+
+    def create_vha_caregiver_queue_in_progress
+      5.times do
+        create(:vha_document_search_task, :in_progress, assigned_to: VhaCaregiverSupport.singleton)
+      end
+    end
+
+    def create_vha_caregiver_queue_completed
+      5.times do
+        create(:vha_document_search_task, :completed, assigned_to: VhaCaregiverSupport.singleton)
+      end
+    end
+
+    def create_vha_program_office
+      tabs = [:assigned, :in_progress, :on_hold, :ready_for_review, :completed]
+      program_offices = VhaProgramOffice.all
+      tabs.each do |status|
+        program_offices.each do |program_office|
+          if status == :on_hold
+            create_list(:assess_documentation_task_predocket, 5, :on_hold, assigned_to: program_office)
+          elsif status == :ready_for_review
+            create_list(:assess_documentation_task_predocket, 5, :completed, :ready_for_review, assigned_to: program_office)
+          else
+            create_list(:vha_document_search_task, 5, status, assigned_to: program_office)
+          end
+        end
       end
     end
   end

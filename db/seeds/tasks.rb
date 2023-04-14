@@ -20,12 +20,6 @@ module Seeds
       create_tasks
       create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
       create_attorney_case_review_for_legacy_appeals
-      create_vha_camo
-      create_vha_caregiver
-      create_vha_program_office
-      create_vha_visn_pre_docket_queue
-      create_high_level_reviews
-      create_supplemental_claims
     end
 
     private
@@ -223,23 +217,6 @@ module Seeds
       create_ama_tasks
       create_board_grant_tasks
       create_veteran_record_request_tasks
-    end
-
-    def create_vha_camo
-      create_vha_camo_queue_assigned
-      create_vha_camo_queue_in_progress
-      create_vha_camo_queue_completed
-    end
-
-    def create_vha_caregiver
-      create_vha_caregiver_queue_assigned
-      create_vha_caregiver_queue_in_progress
-      create_vha_caregiver_queue_completed
-    end
-
-    def create_vha_program_office
-      create_vha_program_office_task
-      create_vha_program_office_task_ready_for_review
     end
 
     def create_ama_distribution_tasks
@@ -1151,92 +1128,6 @@ module Seeds
           task_id: task_id,
           note: Faker::Lorem.sentence
         )
-      end
-    end
-
-    def create_vha_camo_queue_assigned
-      5.times do
-        create(:vha_document_search_task, assigned_to: VhaCamo.singleton)
-      end
-    end
-
-    def create_vha_camo_queue_in_progress
-      5.times do
-        appeal = create(:appeal)
-        root_task = create(:task, appeal: appeal, assigned_to: VhaCamo.singleton)
-        pre_docket_task = FactoryBot.create(
-          :pre_docket_task,
-          :in_progress,
-          assigned_to: VhaCamo.singleton,
-          appeal: appeal,
-          parent: root_task
-        )
-        create(:task, :in_progress, assigned_to: VhaCamo.singleton, appeal: appeal, parent: pre_docket_task)
-      end
-    end
-
-    def create_vha_camo_queue_completed
-      5.times do
-        create(:vha_document_search_task, :completed, assigned_to: VhaCamo.singleton)
-      end
-    end
-
-    def create_vha_caregiver_queue_assigned
-      5.times do
-        create(:vha_document_search_task, assigned_to: VhaCaregiverSupport.singleton)
-      end
-    end
-
-    def create_vha_caregiver_queue_in_progress
-      5.times do
-        create(:vha_document_search_task, :in_progress, assigned_to: VhaCaregiverSupport.singleton)
-      end
-    end
-
-    def create_vha_caregiver_queue_completed
-      5.times do
-        create(:vha_document_search_task, :completed, assigned_to: VhaCaregiverSupport.singleton)
-      end
-    end
-
-    def create_vha_program_office_task
-      tabs = [:assigned, :in_progress, :on_hold, :completed]
-      program_offices = Organization.where(type: "VhaProgramOffice")
-      tabs.each do |status|
-        program_offices.each do |program_office|
-          create_list(:vha_document_search_task, 5, status, assigned_to: program_office)
-        end
-      end
-    end
-
-    def create_vha_program_office_task_ready_for_review
-      program_offices = Organization.where(type: "VhaProgramOffice")
-      program_offices.each do |program_office|
-        create_list(:assess_documentation_task_predocket, 5, :completed, :ready_for_review, assigned_to: program_office)
-      end
-    end
-
-    def create_vha_visn_pre_docket_queue
-      tabs = [:assigned, :completed]
-      vha_regional_offices = Organization.where(type: "VhaRegionalOffice")
-      tabs.each do |status|
-        vha_regional_offices.each do |regional_office|
-          create(:pre_docket_task, status, assigned_to: regional_office)
-        end
-      end
-    end
-
-    def create_high_level_reviews
-      business_line_list = Organization.where(type: "BusinessLine")
-      business_line_list.each do |bussiness_line|
-        create(:higher_level_review_vha_task, assigned_to: bussiness_line)
-      end
-    end
-
-    def create_supplemental_claims
-      business_line_list = Organization.where(type: "BusinessLine")
-      business_line_list.each do |bussiness_line|
-        create_list(:supplemental_claim_vha_task, 5, assigned_to: bussiness_line)
       end
     end
   end
