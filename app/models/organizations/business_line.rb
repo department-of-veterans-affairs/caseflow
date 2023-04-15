@@ -98,29 +98,25 @@ class BusinessLine < Organization
     end
 
     def issue_type_count
-      # Task.select(Arel.star)
-      #   .from(combined_decision_review_tasks_query)
-      #   .group(RequestIssue.arel_table[:nonrating_issue_category])
-      #   .count
-      {
-        "Apportionment" => 18,
-        "Beneficiary Travel" => 2,
-        "Camp Lejune Family Member" => 8,
-        "Caregiver | Eligibility" => 8,
-        "Caregiver | Other" => 56,
-        "Caregiver | Revocation/Discharge" => 6,
-        "Caregiver | Tier Level" => 6,
-        "CHAMPVA" => 4,
-        "Clothing Allowance" => 7,
-        "Continuing Eligibility/Income Verification Match (IVM)" => 6,
-        "Eligibility for Dental Treatment" => 5,
-        "Foreign Medical Program" => 4,
-        "Initial Eligibility and Enrollment in VHA Healthcare" => 9,
-        "Medical and Dental Care Reimbursement" => 7,
-        "Other" => 11,
-        "Prosthetics | Other (not clothing allowance)" => 5,
-        "Spina Bifida Treatment (Non-Compensation)" => 5
-      }
+      # TODO: Refactor this so it doesn't suck so much. I shouldn't need 3 queries for this
+      # TODO: It's also currently counting the number of each issue types on these tasks
+      # When it should be counting than the number of tasks that are associated to that issue type
+      hlr_issue_type_counts = Task.send(TASKS_QUERY_TYPE[query_type]).joins(higher_level_review: :request_issues)
+        .select("*").where(query_constraints).group("request_issues.nonrating_issue_category").count
+      sc_issue_type_counts = Task.send(TASKS_QUERY_TYPE[query_type]).joins(supplemental_claim: :request_issues)
+        .select("*").where(query_constraints).group("request_issues.nonrating_issue_category").count
+      appeal_issue_type_counts = Task.send(TASKS_QUERY_TYPE[query_type]).joins(ama_appeal: :request_issues)
+        .select("*").where(query_constraints).group("request_issues.nonrating_issue_category").count
+
+      # Merge the hashes together to get a total count for all 3 types of decision reviews
+      total_issue_type_counts = hlr_issue_type_counts.merge(sc_issue_type_counts) do |_key, old_value, new_value|
+        old_value + new_value
+      end
+      total_issue_type_counts = total_issue_type_counts.merge(appeal_issue_type_counts) do |_key, old_value, new_value|
+        old_value + new_value
+      end
+
+      total_issue_type_counts
     end
 
     private
@@ -390,14 +386,6 @@ class BusinessLine < Organization
     def locate_task_filter(filters)
       parsed_filters = parse_filters(filters)
 
-      puts "in locate task filter"
-
-      puts parsed_filters.inspect
-
-      # It looks like this [{"col"=>["issueTypesColumn"], "val"=>["Apportionment|CHAMPVA"]}]
-      # It looks like this with both types of filters
-      # [{"col"=>["issueTypesColumn"], "val"=>["Apportionment|CHAMPVA"]}, {"col"=>["decisionReviewType"], "val"=>["HigherLevelReview"]}]
-
       parsed_filters.find do |filter|
         filter["col"].include?("decisionReviewType")
       end
@@ -413,7 +401,17 @@ class BusinessLine < Organization
       return "" unless task_filter
 
       # ex: "val"=>["SupplementalClaim|HigherLevelReview"]
-      tasks_to_include = task_filter["val"].first.split("|")
+      # tasks_to_include = task_filter["val"].first.split("|")
+      # tasks_to_include = task_filter["val"].first.split(/\s*\|\s*/)
+      # tasks_to_include = task_filter["val"].first.split(/\s*\|\s*(?=\S)/)
+      # tasks_to_include = task_filter["val"].first.split(/\s*\|\s*(?=[^|]+)/)
+      # tasks_to_include = task_filter["val"].first.split(/\s*\|\s*(?=[^\s|])/)
+      # tasks_to_include = task_filter["val"].first.split(/\s*\|\s*(?=[^|]*$)/)
+      tasks_to_include = task_filter["val"].first.split(/(?<!\s)\|(?!\s)/)
+
+      # TODO: This is boned.
+      puts "This is going to be wrong because it's split on pipes but the string has pipes"
+      puts tasks_to_include.inspect
 
       build_issue_type_filter_predicates(tasks_to_include) || ""
     end
@@ -432,9 +430,17 @@ class BusinessLine < Organization
     end
 
     def locate_issue_type_filter(filters)
-      parse_filters = parse_filters(filters)
+      parsed_filters = parse_filters(filters)
 
-      parse_filters.find do |filter|
+      puts "in locate issue_type filter"
+
+      puts parsed_filters.inspect
+
+      # It looks like this [{"col"=>["issueTypesColumn"], "val"=>["Apportionment|CHAMPVA"]}]
+      # It looks like this with both types of filters
+      # [{"col"=>["issueTypesColumn"], "val"=>["Apportionment|CHAMPVA"]}, {"col"=>["decisionReviewType"], "val"=>["HigherLevelReview"]}]
+
+      parsed_filters.find do |filter|
         filter["col"].include?("issueTypesColumn")
       end
     end

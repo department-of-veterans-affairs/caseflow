@@ -113,8 +113,6 @@ class TaskTableTabUnconnected extends React.PureComponent {
           {...this.state.predefinedColumns}
           getKeyForRow={(row, object) => object.id}
           customColumns={this.getTableColumns()}
-          // includeIssueCount
-          // includeIssueTypes
           tasks={[]}
           taskPagesApiEndpoint={this.props.baseTasksUrl}
           useTaskPagesApi
