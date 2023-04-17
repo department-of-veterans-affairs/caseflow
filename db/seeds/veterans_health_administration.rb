@@ -210,7 +210,7 @@ module Seeds
     def create_high_level_reviews_other_claimants(benefit_type)
       veterans = Veteran.limit(10).where.not(participant_id: nil)
       dependents = DependentClaimant.limit(5).where.not(participant_id: nil)
-      dependent_in_progress_hlrs = Array.new(IN_Process_HLR_TO_CREATE).map do
+      dependent_in_progress_hlrs = Array.new(IN_PROCESS_HLR_TO_CREATE).map do
         veteran = veterans[rand(0...veterans.size)]
         dependent = dependents[rand(0...dependents.size)]
         hlr = HigherLevelReview.create(
