@@ -35,7 +35,7 @@ describe MembershipRequestMailer do
     end
 
     it "has the correct from email address" do
-      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+      expect(mailer.from).to include("vhabenefitappeals@messages.va.gov")
     end
 
     it "has the correct to email address" do
@@ -62,7 +62,7 @@ describe MembershipRequestMailer do
     end
 
     it "has the correct from email address" do
-      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+      expect(mailer.from).to include("vhabenefitappeals@messages.va.gov")
     end
 
     it "has the correct to email address" do
@@ -89,7 +89,7 @@ describe MembershipRequestMailer do
     end
 
     it "has the correct from email address" do
-      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+      expect(mailer.from).to include("vhabenefitappeals@messages.va.gov")
     end
 
     it "has the correct to email address" do
@@ -119,7 +119,7 @@ describe MembershipRequestMailer do
     end
 
     it "has the correct from email address" do
-      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+      expect(mailer.from).to include("vhabenefitappeals@messages.va.gov")
     end
 
     it "has the correct to email address" do
@@ -158,7 +158,7 @@ describe MembershipRequestMailer do
     end
 
     it "has the correct from email address" do
-      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+      expect(mailer.from).to include("vhabenefitappeals@messages.va.gov")
     end
 
     it "has the correct to email address" do
@@ -227,7 +227,7 @@ describe MembershipRequestMailer do
     end
 
     it "has the correct from email address" do
-      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+      expect(mailer.from).to include("vhabenefitappeals@messages.va.gov")
     end
 
     it "has the correct to email address" do
