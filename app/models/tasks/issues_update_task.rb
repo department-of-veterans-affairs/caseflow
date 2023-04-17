@@ -7,17 +7,26 @@ class IssuesUpdateTask < Task
     "Issues Update Task"
   end
 
-  def format_instructions(issue_category, original_mst, original_pact, edit_mst, edit_pact)
-    comment_header = "Edited Issue:"
-
-    # format original
-    original_comment = "\nORIGINAL:\n#{issue_category}#{format_special_issues_text(original_mst, original_pact)}"
+  def format_instructions(issue_category, original_mst, original_pact, edit_mst, edit_pact, edit_reason)
+    # format the instructions by loading an array and adding it to the instructions
+    edit_issue_format = []
+    edit_issue_format << "Edited Issue:"
+    # format original and add
+    edit_issue_format << "ORIGINAL:"
+    original_comment = "#{issue_category}#{format_special_issues_text(original_mst, original_pact)}"
+    edit_issue_format << original_comment
 
     # format edit
-    updated_comment = "\nUPDATED:\n#{issue_category}#{format_special_issues_text(edit_mst, edit_pact)}"
+    edit_issue_format << "UPDATED:"
+    updated_comment = "#{issue_category}#{format_special_issues_text(edit_mst, edit_pact)}"
+    binding.pry
+    edit_issue_format << updated_comment
 
-    # concat the strings into the instructions
-    instructions << comment_header + original_comment + updated_comment
+    # add edit reason on the end
+    edit_issue_format << edit_reason
+
+    # add edit_issue_format into the instructions array for the task
+    instructions << edit_issue_format
     save!
   end
 
@@ -29,7 +38,8 @@ class IssuesUpdateTask < Task
 
     return s + " None" if !mst_status && !pact_status
 
-    s + " MST" if mst_status
-    s + " PACT" if pact_status
+    return s + " MST" if mst_status
+    return s + " PACT" if pact_status
+    return s + " MST, PACT" if mst_status && pact_status
   end
 end
