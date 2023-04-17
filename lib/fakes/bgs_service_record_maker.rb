@@ -235,6 +235,15 @@ class Fakes::BGSServiceRecordMaker
       claim_id: claim_id
     )
     contention_reference_id = mst_contention.id
+
+    # if contention ID is already linked to a RequestIssue, generate a new contention
+    while !RequestIssue.find_by(contention_reference_id: contention_reference_id).nil?
+      mst_contention = Generators::Contention.build_mst_contention(
+        claim_id: claim_id
+      )
+      contention_reference_id = mst_contention.id
+    end
+
     hlr = HigherLevelReview.find_or_create_by!(
       veteran_file_number: veteran.file_number
     )
@@ -274,6 +283,13 @@ class Fakes::BGSServiceRecordMaker
       claim_id: claim_id
     )
     contention_reference_id = pact.id
+    # if contention ID is already linked to a RequestIssue, generate a new contention
+    while !RequestIssue.find_by(contention_reference_id: contention_reference_id).nil?
+      mst_contention = Generators::Contention.build_mst_contention(
+        claim_id: claim_id
+      )
+      contention_reference_id = mst_contention.id
+    end
     hlr = HigherLevelReview.find_or_create_by!(
       veteran_file_number: veteran.file_number
     )
