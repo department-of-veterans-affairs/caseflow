@@ -76,6 +76,8 @@ class BusinessLine < Organization
       @query_params = query_params
 
       puts query_params.inspect
+      puts "filters are:"
+      puts query_params[:filters]
 
       # Initialize default sorting
       query_params[:sort_by] ||= DEFAULT_ORDERING_HASH[query_type][:sort_by]
@@ -100,7 +102,7 @@ class BusinessLine < Organization
     def issue_type_count
       # TODO: Refactor this so it doesn't suck so much. I shouldn't need 3 queries for this
       # TODO: It's also currently counting the number of each issue types on these tasks
-      # When it should be counting than the number of tasks that are associated to that issue type
+      # When it should be counting than the number of tasks that are associated to that issue type I think
       hlr_issue_type_counts = Task.send(TASKS_QUERY_TYPE[query_type]).joins(higher_level_review: :request_issues)
         .select("*").where(query_constraints).group("request_issues.nonrating_issue_category").count
       sc_issue_type_counts = Task.send(TASKS_QUERY_TYPE[query_type]).joins(supplemental_claim: :request_issues)
@@ -116,6 +118,7 @@ class BusinessLine < Organization
         old_value + new_value
       end
 
+      puts total_issue_type_counts.inspect
       total_issue_type_counts
     end
 
@@ -410,8 +413,8 @@ class BusinessLine < Organization
       tasks_to_include = task_filter["val"].first.split(/(?<!\s)\|(?!\s)/)
 
       # TODO: This is boned.
-      puts "This is going to be wrong because it's split on pipes but the string has pipes"
-      puts tasks_to_include.inspect
+      # puts "This is going to be wrong because it's split on pipes but the string has pipes"
+      # puts tasks_to_include.inspect
 
       build_issue_type_filter_predicates(tasks_to_include) || ""
     end
@@ -419,22 +422,54 @@ class BusinessLine < Organization
     def build_issue_type_filter_predicates(tasks_to_include)
       first_task_name, *remaining_task_names = tasks_to_include
 
-      # filter = TASK_FILTER_PREDICATES[first_task_name]
       filter = RequestIssue.arel_table[:nonrating_issue_category].eq(first_task_name)
 
       remaining_task_names.each do |task_name|
         filter = filter.or(RequestIssue.arel_table[:nonrating_issue_category].eq(task_name))
       end
 
-      filter
+      # filtered_subquery = decision_review_requests_union_subquery(filter)
+      filtered_ids = decision_review_requests_union_subquery(filter)
+
+      # puts "my filtered subquery"
+      # puts filtered_subquery.inspect
+      # filtered_subquery
+      # where("tasks.id IN (?)", filtered_subquery)
+      # Using ids for now since Active record really really is not liking my corelated subquery
+      # TODO: Benchmark this vs a ilike having clause on the issue_types aggregate string field.
+      ["tasks.id IN (?)", filtered_ids]
+    end
+
+    # TODO: Abc crap again even though there's really no branching in this method at all
+    # TODO: this currently also probably doesn't work on board effectuation tasks but it shouldn't matter
+    def decision_review_requests_union_subquery(filter)
+      base_query = Task.select("tasks.id").send(TASKS_QUERY_TYPE[query_type])
+      union_query = Arel::Nodes::UnionAll.new(
+        Arel::Nodes::UnionAll.new(
+          # TODO: Use Arel for this id column even though it should probably never change from tasks.id
+          base_query
+            .joins(higher_level_review: :request_issues).where(query_constraints).where(filter).arel,
+          base_query
+            .joins(supplemental_claim: :request_issues).where(query_constraints).where(filter).arel
+        ),
+        base_query.joins(ama_appeal: :request_issues)
+          .where(query_constraints)
+          .where(filter)
+          .arel
+      )
+
+      # puts union_query.to_sql
+      # Grab all the ids and use it in the where clause
+      # TODO: This is gross. I should be able to use a correlated subquery, but ActiveRecord is stupid.
+      Task.from(Arel::Nodes::As.new(union_query, Task.arel_table)).pluck(:id)
     end
 
     def locate_issue_type_filter(filters)
       parsed_filters = parse_filters(filters)
 
-      puts "in locate issue_type filter"
+      # puts "in locate issue_type filter"
 
-      puts parsed_filters.inspect
+      # puts parsed_filters.inspect
 
       # It looks like this [{"col"=>["issueTypesColumn"], "val"=>["Apportionment|CHAMPVA"]}]
       # It looks like this with both types of filters
