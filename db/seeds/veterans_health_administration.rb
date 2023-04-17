@@ -107,7 +107,8 @@ module Seeds
 
     def create_claims_with_dependent_claimants(benefit_type, claim_type)
       veterans = Veteran.limit(10).where.not(participant_id: nil)
-      dependents = DependentClaimant.limit(512).where.not(participant_id: nil)
+      participant_id = rand(1_000_000...999_999_999)
+      dependents = create_list(:claimant, 20, type: "DependentClaimant", participant_id: participant_id.to_s)
       dependent_in_progress_scs = Array.new(IN_PROCESS_SC_TO_CREATE).map do
         veteran = veterans[rand(0...veterans.size)]
         dependent = dependents[rand(0...dependents.size)]
@@ -130,7 +131,8 @@ module Seeds
 
     def create_claims_with_attorney_claimants(benefit_type, claim_type = "supplemental")
       veterans = Veteran.limit(10).where.not(participant_id: nil)
-      dependents = BgsAttorney.limit(512).where.not(participant_id: nil)
+      participant_id = rand(1_000_000...999_999_999)
+      dependents = create_list(:bgs_attorney, 20)
       dependent_in_progress_scs = Array.new(IN_PROCESS_SC_TO_CREATE).map do
         veteran = veterans[rand(0...veterans.size)]
         dependent = dependents[rand(0...dependents.size)]
