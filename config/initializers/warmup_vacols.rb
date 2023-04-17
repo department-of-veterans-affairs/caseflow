@@ -3,10 +3,10 @@
 
 # configure timeouts, in seconds, for underlying socket in environments that use Oracle
 if defined? OCI8
-  OCI8.properties[:tcp_connect_timeout] = 10
-  OCI8.properties[:connect_timeout] = 10
-  OCI8.properties[:send_timeout] = 10
-  OCI8.properties[:recv_timeout] = 300
+  OCI8.properties[:tcp_connect_timeout] = 60
+  OCI8.properties[:connect_timeout] = 60
+  OCI8.properties[:send_timeout] = 60
+  OCI8.properties[:recv_timeout] = 60
 end
 
 WARMUP_TABLES = ["vacols.brieff", "vacols.corres", "vacols.folder"]
