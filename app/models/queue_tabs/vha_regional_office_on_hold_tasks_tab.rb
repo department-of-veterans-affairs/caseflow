@@ -20,7 +20,7 @@ class VhaRegionalOfficeOnHoldTasksTab < QueueTab
   end
 
   def parents_with_child_assess_documentation_task_ids
-    on_hold_task_children.where(type: AssessDocumentationTask.name)
+    on_hold_task_children.where(type: :AssessDocumentationTask)
       .pluck(:parent_id).uniq
   end
 
