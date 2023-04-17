@@ -70,6 +70,10 @@ const isCancelled = (task) => {
   return task.status === TASK_STATUSES.cancelled;
 };
 
+const issueUpdateTask = (task) =>{
+  return task.type === 'IssuesUpdateTask';
+}
+
 const tdClassNames = (timeline, task) => {
   const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
   const closedAtClass = task.closedAt ? null : <span className="greyDotTimelineStyling"></span>;
