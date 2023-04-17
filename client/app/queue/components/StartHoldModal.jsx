@@ -135,7 +135,10 @@ class StartHoldModal extends React.Component {
         styling={marginBottom(2)}
       />
       {this.state.hold === CUSTOM_HOLD_DURATION_TEXT && <TextField
-        name={COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY}
+        name={this.isVHAHold() ?
+          COPY.VHA_ACTION_PLACE_CUSTOM_HOLD_COPY :
+          COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY
+        }
         type="number"
         value={this.state.customHold}
         onChange={(customHold) => this.setState({ customHold })}
