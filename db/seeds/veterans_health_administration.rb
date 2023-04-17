@@ -90,7 +90,7 @@ module Seeds
         create_supplemental_claims_attorney_claimants(bussiness_line.url.underscore)
         create_supplemental_claims_other_claimants(bussiness_line.url.underscore)
       end
-      create_supplemental_claims_HealthCare_claimants
+      create_supplemental_claims_health_care_claimants
     end
 
     def create_supplemental_claims_dependent_claimants(benefit_type)
