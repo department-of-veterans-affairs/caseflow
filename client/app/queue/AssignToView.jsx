@@ -224,7 +224,7 @@ class AssignToView extends React.Component {
 
     const visn_option = actionData.options.visn.find(element=> element.label.includes(visn_name))
 
-    
+
     return visn_option
   }
 
@@ -283,6 +283,7 @@ class AssignToView extends React.Component {
                           options={this.assignToVHARegionalOfficeRadioOptions}
                           value={this.state.assignToVHARegionalOfficeSelection}
                           onChange={(option) => this.setState({ assignToVHARegionalOfficeSelection: option})}
+                          vertical
                 />
             )}
             <SearchableDropdown
@@ -299,7 +300,7 @@ class AssignToView extends React.Component {
             {this.isVHAAssignToRegional() &&
             this.state.assignToVHARegionalOfficeSelection === 'vamc' &&
             (this.state.selectedValue !== null) && (
-                  <div>
+                  <div className="assign-vamc-visn-display">
                     <u>VISN</u>
                     <div>{ this.getVisnFromVamc(actionData).label }</div>
                   </div>
