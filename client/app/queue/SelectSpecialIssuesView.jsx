@@ -24,10 +24,6 @@ const flexColumn = css({
   width: '50%'
 });
 
-const specialIssuesBannerText = <div style={{ fontSize: '17px' }}>
-  {COPY.SPECIAL_ISSUES_BANNER_TEXT}
-</div>;
-
 class SelectSpecialIssuesView extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -142,7 +138,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
       <p>
         {this.getPageNote()}
       </p>
-      <Alert type="info" message={specialIssuesBannerText} />
+      <Alert type="info" title=" " message={COPY.SPECIAL_ISSUES_BANNER_TEXT} />
       {error && <Alert type="error" title={error.title} message={error.detail} />}
       <div {...flexContainer}>
         <div {...flexColumn}>
