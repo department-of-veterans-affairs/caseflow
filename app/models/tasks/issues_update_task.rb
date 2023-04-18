@@ -10,16 +10,13 @@ class IssuesUpdateTask < Task
   def format_instructions(issue_category, original_mst, original_pact, edit_mst, edit_pact, edit_reason)
     # format the instructions by loading an array and adding it to the instructions
     edit_issue_format = []
-    edit_issue_format << "Edited Issue:"
-    # format original and add
-    edit_issue_format << "ORIGINAL:"
-    original_comment = "#{issue_category}#{format_special_issues_text(original_mst, original_pact)}"
+    edit_issue_format << issue_category
+    original_comment = "#{format_special_issues_text(original_mst, original_pact)}"
     edit_issue_format << original_comment
 
     # format edit
-    edit_issue_format << "UPDATED:"
-    updated_comment = "#{issue_category}#{format_special_issues_text(edit_mst, edit_pact)}"
-    binding.pry
+    edit_issue_format << issue_category
+    updated_comment = "#{format_special_issues_text(edit_mst, edit_pact)}"
     edit_issue_format << updated_comment
 
     # add edit reason on the end
@@ -34,7 +31,7 @@ class IssuesUpdateTask < Task
 
   def format_special_issues_text(mst_status, pact_status)
     # format the special issues comment to display the change in the special issues status(es)
-    s = "\nSpecial Issues:"
+    s = "Special Issues:"
 
     return s + " None" if !mst_status && !pact_status
 
