@@ -83,96 +83,96 @@ module Seeds
     end
 
     def create_high_level_reviews
-      claim_type = "HLR"
       business_line_list = BusinessLine.all
       business_line_list.each do |bussiness_line|
+        benefit_claim_type = { benefit_type: bussiness_line.url.underscore, claim_type: "HLR" }
         create_list(:higher_level_review_vha_task, 5, assigned_to: bussiness_line)
-        create_claims_with_dependent_claimants(bussiness_line.url.underscore, claim_type)
-        create_claims_with_attorney_claimants(bussiness_line.url.underscore, claim_type)
-        create_claims_with_other_claimants(bussiness_line.url.underscore, claim_type)
+        create_claims_with_dependent_claimants(benefit_claim_type)
+        create_claims_with_attorney_claimants(benefit_claim_type)
+        create_claims_with_other_claimants(benefit_claim_type)
       end
-      create_claims_with_health_care_claimants(claim_type)
+      create_claims_with_health_care_claimants("HLR")
     end
 
     def create_supplemental_claims
       business_line_list = Organization.where(type: "BusinessLine")
-      claim_type = "supplemental"
       business_line_list.each do |bussiness_line|
+        benefit_claim_type = { benefit_type: bussiness_line.url.underscore, claim_type: "supplemental" }
         create_list(:supplemental_claim_vha_task, 5, assigned_to: bussiness_line)
-        create_claims_with_dependent_claimants(bussiness_line.url.underscore, claim_type)
-        create_claims_with_attorney_claimants(bussiness_line.url.underscore, claim_type)
-        create_claims_with_other_claimants(bussiness_line.url.underscore, claim_type)
+        create_claims_with_dependent_claimants(benefit_claim_type)
+        create_claims_with_attorney_claimants(benefit_claim_type)
+        create_claims_with_other_claimants(benefit_claim_type)
       end
-      create_claims_with_health_care_claimants(claim_type)
+      create_claims_with_health_care_claimants("supplemental")
     end
 
-    def create_claims_with_dependent_claimants(benefit_type, claim_type)
+    def create_claims_with_dependent_claimants(arg = {})
       veterans = Veteran.limit(10).where.not(participant_id: nil)
       participant_id = rand(1_000_000...999_999_999)
       dependents = create_list(:claimant, 20, type: "DependentClaimant", participant_id: participant_id.to_s)
       dependent_in_progress_scs = Array.new(IN_PROCESS_SC_TO_CREATE).map do
         veteran = veterans[rand(0...veterans.size)]
         dependent = dependents[rand(0...dependents.size)]
-        sc = create_claim(benefit_type, claim_type, veteran)
+        sc = create_claim(arg[:benefit_type], arg[:claim_type], veteran)
 
         DependentClaimant.create!(decision_review: sc, participant_id: dependent.participant_id, payee_code: "10")
         RequestIssue.create!(
           decision_review: sc,
           nonrating_issue_category: "Beneficiary Travel | Special Mode",
-          nonrating_issue_description: benefit_type.to_s,
-          benefit_type: benefit_type,
+          nonrating_issue_description: arg[:benefit_type].to_s,
+          benefit_type: arg[:benefit_type],
           decision_date: 1.month.ago
         )
         sc
       end
-      name = (claim_type == "supplemental") ? SupplementalClaim.name : HigherLevelReview.name
+      name = (arg[:claim_type] == "supplemental") ? SupplementalClaim.name : HigherLevelReview.name
       submit_claims_to_process_and_create_task(dependent_in_progress_scs)
       change_claim_status_to_complete(dependent_in_progress_scs, name)
     end
 
-    def create_claims_with_attorney_claimants(benefit_type, claim_type = "supplemental")
+    def create_claims_with_attorney_claimants(benefit_and_claim = {})
       veterans = Veteran.limit(10).where.not(participant_id: nil)
       dependents = create_list(:bgs_attorney, 20)
       dependent_in_progress_scs = Array.new(IN_PROCESS_SC_TO_CREATE).map do
         veteran = veterans[rand(0...veterans.size)]
         dependent = dependents[rand(0...dependents.size)]
 
-        sc = create_claim(benefit_type, claim_type, veteran)
+        sc = create_claim(benefit_and_claim[:benefit_type], benefit_and_claim[:claim_type], veteran)
 
         AttorneyClaimant.create!(decision_review: sc, participant_id: dependent.participant_id, payee_code: "15")
         RequestIssue.create!(
           decision_review: sc,
           nonrating_issue_category: "Beneficiary Travel | Special Mode",
-          nonrating_issue_description: "Attorney Claimant #{benefit_type}",
-          benefit_type: benefit_type,
+          nonrating_issue_description: "Attorney Claimant #{benefit_and_claim[:benefit_type]}",
+          benefit_type: benefit_and_claim[:benefit_type],
           decision_date: 1.month.ago
         )
         sc
       end
-      name = (claim_type == "supplemental") ? SupplementalClaim.name : HigherLevelReview.name
+      name = (benefit_and_claim[:claim_type] == "supplemental") ? SupplementalClaim.name : HigherLevelReview.name
       submit_claims_to_process_and_create_task(dependent_in_progress_scs)
       change_claim_status_to_complete(dependent_in_progress_scs, name)
     end
 
-    def create_claims_with_other_claimants(benefit_type, claim_type = "supplemental")
+    def create_claims_with_other_claimants(benefit_and_claim_arg = {})
       veterans = Veteran.limit(10).where.not(participant_id: nil)
       dependents = create_list(:claimant, 10, :with_unrecognized_appellant_detail, type: "OtherClaimant")
       dependent_in_progress_scs = Array.new(IN_PROCESS_SC_TO_CREATE).map do
         veteran = veterans[rand(0...veterans.size)]
         dependent = dependents[rand(0...dependents.size)]
-        sc = create_claim(benefit_type, claim_type, veteran)
+        sc = create_claim(benefit_and_claim_arg[:benefit_type], benefit_and_claim_arg[:claim_type], veteran)
 
         OtherClaimant.create!(decision_review: sc, participant_id: dependent.participant_id, payee_code: "20")
         RequestIssue.create!(
           decision_review: sc,
           nonrating_issue_category: "Beneficiary Travel | Special Mode",
-          nonrating_issue_description: "Other Claimant #{benefit_type}",
-          benefit_type: benefit_type,
+          nonrating_issue_description: "Other Claimant #{benefit_and_claim_arg[:benefit_type]}",
+          benefit_type: benefit_and_claim_arg[:benefit_type],
           decision_date: 1.month.ago
         )
         sc
       end
-      name = (claim_type == "supplemental") ? SupplementalClaim.name : HigherLevelReview.name
+      name = (benefit_and_claim_arg[:claim_type] == "supplemental") ? SupplementalClaim.name : HigherLevelReview.name
       submit_claims_to_process_and_create_task(dependent_in_progress_scs)
       change_claim_status_to_complete(dependent_in_progress_scs, name)
     end
@@ -218,19 +218,19 @@ module Seeds
       end
     end
 
-    def create_claim(benefit_type, claim_type, veteran)
-      sc = if claim_type.casecmp("supplemental").zero?
+    def create_claim(*arg)
+      sc = if arg[1].casecmp("supplemental").zero?
              SupplementalClaim.create!(
-               veteran_file_number: veteran.file_number,
+               veteran_file_number: arg[2].file_number,
                receipt_date: Time.zone.now,
-               benefit_type: benefit_type,
+               benefit_type: arg[0],
                veteran_is_not_claimant: true
              )
            else
              HigherLevelReview.create(
-               veteran_file_number: veteran.file_number,
+               veteran_file_number: arg[2].file_number,
                receipt_date: Time.zone.now,
-               benefit_type: benefit_type,
+               benefit_type: arg[0],
                informal_conference: false,
                same_office: false,
                veteran_is_not_claimant: true
