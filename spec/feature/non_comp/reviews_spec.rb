@@ -415,9 +415,9 @@ feature "NonComp Reviews Queue", :postgres do
       end
     end
 
-    scenario "filtering reviews" do
+    scenario "filtering reviews by appeal type" do
       visit BASE_URL
-      find(".unselected-filter-icon").click
+      find("[aria-label='Filter by type']").click
 
       # Check that task counts are being transmitted correctly from backend
       expect(page).to have_content("Board Grant (1)")
@@ -428,6 +428,22 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to_not have_content("Board Grant")
       find(".cf-clear-filters-link").click
       expect(page).to have_content("Board Grant")
+    end
+
+    scenario "filtering reviews by issue type" do
+      visit BASE_URL
+      find("[aria-label='Filter by issue type']").click
+
+      # Check that task counts are being transmitted correctly from backend
+      expect(page).to have_content("Caregiver | Other (1)")
+      expect(page).to have_content("Camp Lejune Family Member (1)")
+      expect(page).to have_content("CHAMPVA (1)")
+
+      find("label", text: "Caregiver | Other").click
+      expect(page).to have_content("Caregiver | Other")
+      expect(page).to_not have_content("Camp Lejune Family Member")
+      find(".cf-clear-filters-link").click
+      expect(page).to have_content("Camp Lejune Family Member")
     end
 
     scenario "searching reviews by name" do
