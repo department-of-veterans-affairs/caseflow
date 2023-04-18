@@ -59,8 +59,11 @@ module ByDocketDateDistribution
       nonpriority_counts[sym] = docket.count(priority: false, ready: true)
     end
 
-    priority_counts[:legacy_hearing_tied_to] = legacy_hearing_priority_count(judge)
-    nonpriority_counts[:legacy_hearing_tied_to] = legacy_hearing_nonpriority_count(judge)
+    unless FeatureToggle.enabled?(:acd_disable_legacy_distributions, user: RequestStore.store[:current_user])
+      priority_counts[:legacy_hearing_tied_to] = legacy_hearing_priority_count(judge)
+      nonpriority_counts[:legacy_hearing_tied_to] = legacy_hearing_nonpriority_count(judge)
+    end
+
     nonpriority_counts[:iterations] = @nonpriority_iterations
 
     {

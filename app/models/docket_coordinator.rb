@@ -10,7 +10,7 @@ class DocketCoordinator
     }
 
     if FeatureToggle.enabled?(:acd_disable_legacy_distributions, user: RequestStore.store[:current_user])
-      all_dockets.delete(legacy)
+      all_dockets.delete(:legacy)
     end
 
     @dockets ||= all_dockets
