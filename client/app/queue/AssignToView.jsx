@@ -90,7 +90,7 @@ class AssignToView extends React.Component {
             type: taskType,
             external_id: appeal.externalId,
             parent_id: actionData.parent_id || task.taskId,
-            assigned_to_id: this.isVHAAssignToRegional() ? this.getVisnFromVamc().value : this.state.selectedValue,
+            assigned_to_id: this.isVHAAssignToRegional() ? this.getVisn().value : this.state.selectedValue,
             assigned_to_type: isTeamAssign ? 'Organization' : 'User',
             instructions: this.state.instructions
           }
@@ -124,7 +124,7 @@ class AssignToView extends React.Component {
     let assignee = 'person';
 
     if (this.isVHAAssignToRegional()) {
-      return this.getVisnFromVamc().label
+      return this.getVisn().label
     }
 
     taskActionData(this.props).options.forEach((opt) => {
@@ -216,14 +216,19 @@ class AssignToView extends React.Component {
 
   };
 
-  getVisnFromVamc = () => {
+  getVisn = () => {
+    // this needs to not search for visn->visn? I think that's what's happening, break time
+
     const actionData = taskActionData(this.props);
+
+    if (this.state.assignToVHARegionalOfficeSelection === 'visn') {
+      return actionData.options.visn.find(element=> element.value === this.state.selectedValue)
+    };
 
     const vamc_name = actionData.options.vamc[this.state.selectedValue].label
     const visn_name = VHA_VAMCS.find(element => element.name === vamc_name).visn
 
     const visn_option = actionData.options.visn.find(element=> element.label.includes(visn_name))
-
 
     return visn_option
   }
@@ -279,7 +284,7 @@ class AssignToView extends React.Component {
           <React.Fragment>
             {this.isVHAAssignToRegional() && (
                 <RadioField
-                          name="Find the VISN by:"
+                          name={COPY.VHA_ASSIGN_TO_REGIONAL_OFFICE_RADIO_LABEL}
                           options={this.assignToVHARegionalOfficeRadioOptions}
                           value={this.state.assignToVHARegionalOfficeSelection}
                           onChange={(option) => this.setState({ assignToVHARegionalOfficeSelection: option})}
@@ -302,7 +307,7 @@ class AssignToView extends React.Component {
             (this.state.selectedValue !== null) && (
                   <div className="assign-vamc-visn-display">
                     <u>VISN</u>
-                    <div>{ this.getVisnFromVamc(actionData).label }</div>
+                    <div>{ this.getVisn().label }</div>
                   </div>
             )}
             <br />
