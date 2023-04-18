@@ -67,8 +67,10 @@ module ByDocketDateDistribution
     nonpriority_counts[:iterations] = @nonpriority_iterations
 
     settings = {}
-    settings[:acd_disable_legacy_distributions] = FeatureToggle.enabled?(:acd_disable_legacy_distributions, user: RequestStore.store[:current_user])
-    settings[:acd_disable_nonpriority_distributions] = FeatureToggle.enabled?(:acd_disable_nonpriority_distributions, user: RequestStore.store[:current_user])
+    feature_toggles = [:acd_disable_legacy_distributions, :acd_disable_nonpriority_distributions]
+    feature_toggles.each do |sym|
+      settings[sym] = FeatureToggle.enabled?(sym, user: RequestStore.store[:current_user])
+    end
 
     {
       batch_size: @appeals.count,
