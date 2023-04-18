@@ -50,6 +50,12 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.TOGGLE_EDIT_INTAKE_ISSUES_MODAL] = () => {
+    return update(state, {
+      $toggle: ['editIntakeIssuesModalVisible']
+    });
+  };
+
   actionsMap[ACTIONS.TOGGLE_CORRECTION_TYPE_MODAL] = () => {
     return update(state, {
       $toggle: ['correctIssueModalVisible'],
