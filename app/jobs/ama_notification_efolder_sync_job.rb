@@ -106,6 +106,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       LEFT OUTER JOIN notifications n2 ON (n2.appeals_id = a."uuid"::text AND n1.appeals_type = 'Appeal' AND
           (n1.notified_at < n2.notified_at OR (n1.notified_at = n2.notified_at AND n1.id < n2.id)))
       WHERE n2.id IS NULL
+        AND n1.id IS NOT NULL
       #{format_appeal_ids_sql_list(appeal_ids)}
     SQL
   end
@@ -117,6 +118,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       LEFT OUTER JOIN vbms_uploaded_documents doc2 ON (doc2.appeal_id = a.id AND doc1.appeal_type = 'Appeal' AND
           (doc1.attempted_at < doc2.attempted_at OR (doc1.attempted_at = doc2.attempted_at AND doc1.id < doc2.id)))
       WHERE doc2.id IS NULL
+        AND doc1.id IS NOT NULL
       #{format_appeal_ids_sql_list(appeal_ids)}
     SQL
   end
