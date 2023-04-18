@@ -16,7 +16,7 @@ const nonEditableIssueStyling = css({
 });
 
 export default class IssuesList extends React.Component {
-  generateIssueActionOptions = (issue, userCanWithdrawIssues, isDtaError) => {
+  generateIssueActionOptions = (issue, userCanWithdrawIssues, userCanEditIntakeIssues, isDtaError) => {
     let options = [];
 
     if (issue.correctionType && issue.endProductCleared) {
@@ -27,6 +27,12 @@ export default class IssuesList extends React.Component {
         { displayText: 'Remove issue',
           value: 'remove' }
       );
+      if (userCanEditIntakeIssues) {
+        options.push(
+          { displayText: 'Edit issue',
+            value: 'edit' }
+        );
+      }
     } else if (issue.endProductCleared) {
       options.push({ displayText: 'Correct issue',
         value: 'correct' });
@@ -41,6 +47,12 @@ export default class IssuesList extends React.Component {
         { displayText: 'Remove issue',
           value: 'remove' }
       );
+      if (userCanEditIntakeIssues) {
+        options.push(
+          { displayText: 'Edit issue',
+            value: 'edit' }
+        );
+      }
     }
 
     return options;
@@ -54,6 +66,7 @@ export default class IssuesList extends React.Component {
       onClickIssueAction,
       withdrawReview,
       userCanWithdrawIssues,
+      userCanEditIntakeIssues,
       editPage
     } = this.props;
 
@@ -70,7 +83,7 @@ export default class IssuesList extends React.Component {
             editableIssueProperties);
 
           const issueActionOptions = this.generateIssueActionOptions(
-            issue, userCanWithdrawIssues, intakeData.isDtaError
+            issue, userCanWithdrawIssues, userCanEditIntakeIssues, intakeData.isDtaError
           );
 
           return <div className="issue-container" key={`issue-container-${issue.index}`}>
@@ -127,5 +140,6 @@ IssuesList.propTypes = {
   onClickIssueAction: PropTypes.func,
   withdrawReview: PropTypes.bool,
   userCanWithdrawIssues: PropTypes.bool,
+  userCanEditIntakeIssues: PropTypes.bool,
   editPage: PropTypes.bool
 };
