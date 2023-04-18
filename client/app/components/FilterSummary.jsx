@@ -29,7 +29,7 @@ const FilterSummary = ({ filteredByList, clearFilteredByList }) => {
   if (!_.isEmpty(filteredByList)) {
     for (const filter in filteredByList) { // eslint-disable-line guard-for-in
       // This condition might be met if filters were added and then later removed,
-      // as there could still bea key in the filteredByList object pointing to an empty array.
+      // as there could still be a key in the filteredByList object pointing to an empty array.
       if (filteredByList[filter].length > 0) {
         const filterContent = (<span
           key={filter}> {ALTERNATE_COLUMN_NAMES[filter] ? ALTERNATE_COLUMN_NAMES[filter] : filter} (
