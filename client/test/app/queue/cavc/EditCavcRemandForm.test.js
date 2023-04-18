@@ -20,6 +20,9 @@ import {
   remandDatesProvided,
   supportedDecisionTypes,
   supportedRemandTypes,
+  nodDate,
+  dateOfDeath,
+  featureToggles
 } from 'test/data/queue/cavc';
 import { add, format } from 'date-fns';
 
@@ -72,6 +75,9 @@ describe('EditCavcRemandForm', () => {
     decisionIssues,
     supportedDecisionTypes,
     supportedRemandTypes,
+    nodDate,
+    dateOfDeath,
+    featureToggles,
     onCancel,
     onSubmit,
   };
