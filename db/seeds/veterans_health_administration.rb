@@ -26,6 +26,7 @@ module Seeds
       create_vha_visn_pre_docket_queue
       create_high_level_reviews
       create_supplemental_claims
+      add_vha_user_to_be_vha_business_line_member
     end
 
     private
@@ -131,7 +132,6 @@ module Seeds
 
     def create_claims_with_attorney_claimants(benefit_type, claim_type = "supplemental")
       veterans = Veteran.limit(10).where.not(participant_id: nil)
-      participant_id = rand(1_000_000...999_999_999)
       dependents = create_list(:bgs_attorney, 20)
       dependent_in_progress_scs = Array.new(IN_PROCESS_SC_TO_CREATE).map do
         veteran = veterans[rand(0...veterans.size)]
@@ -312,6 +312,21 @@ module Seeds
             create_list(:assess_documentation_task_predocket, 5, status, assigned_to: program_office)
           end
         end
+      end
+    end
+
+    # Ensure all VHA users are made members of the VHA Business Line.
+    def add_vha_user_to_be_vha_business_line_member
+      # Get list of all the users who are the members of VHA Camo, Vha Program Office and VISN
+      # basically any organization whose type starts with Vha%
+      user_list = User.joins("INNER JOIN Organizations_users ou On Users.id = Ou.user_id
+        INNER JOIN Organizations o on o.id = ou.organization_id")
+        .where("o.type like ?", "Vha%")
+        .distinct
+      # organization = BusinessLine.where(name:)
+      organization = Organization.find_by_name_or_url("Veterans Health Administration")
+      user_list.each do |user|
+        organization.add_user(user)
       end
     end
   end
