@@ -34,9 +34,8 @@ class IssuesUpdateTask < Task
     s = "Special Issues:"
 
     return s + " None" if !mst_status && !pact_status
-
+    return s + " MST, PACT" if mst_status && pact_status
     return s + " MST" if mst_status
     return s + " PACT" if pact_status
-    return s + " MST, PACT" if mst_status && pact_status
   end
 end
