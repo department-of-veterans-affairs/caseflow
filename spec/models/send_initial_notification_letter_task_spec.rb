@@ -28,10 +28,9 @@ describe SendInitialNotificationLetterTask do
   end
 
   describe ".available_actions" do
-    let(:send_initial_notification_letter_task) {
-      task_class.create!
-      (appeal: distribution_task.appeal, parent_id: distribution_task.id, assigned_to: cob_team)
-    }
+    let(:send_initial_notification_letter_task) do
+      task_class.create!(appeal: distribution_task.appeal, parent_id: distribution_task.id, assigned_to: cob_team)
+    end
 
     let(:available_task_actions) do
       [
