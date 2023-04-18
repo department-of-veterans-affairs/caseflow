@@ -4,7 +4,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
-  skip_before_action :verify_authenticity_token, only: [:outcode]
+  skip_before_action :verify_authenticity_token, only: [:outcode, :validate]
 
   rescue_from BGS::AccountLocked do |_e|
     account_locked_error_msg = "Your account is locked. " \
@@ -30,6 +30,19 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     return render json: { message: "Success!" } if result.success?
 
     render json: { message: result.errors[0] }, status: :bad_request
+  end
+
+  def validate
+    body = params.require(:requestAddress).permit!.to_h
+    body.deep_transform_keys!(&:underscore)
+    body.deep_transform_keys! { |key| key.gsub("e1", "e_1") }
+    body.deep_transform_keys! { |key| key.gsub("e2", "e_2") }
+    body.deep_transform_keys! { |key| key.gsub("e3", "e_3") }
+    body.deep_transform_keys! { |key| key.gsub("e4", "e_4") }
+    body.deep_transform_keys! { |key| key.gsub("e5", "e_5") }
+    address = OpenStruct.new(body)
+
+    VADotGovService.validate_address(address)
   end
 
   private
@@ -87,7 +100,4 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     ::Idt::V1::AppealSerializer.new(appeals, is_collection: true)
   end
 
-  def validate(address)
-    VADotGovService.validate_address(address)
-  end
 end

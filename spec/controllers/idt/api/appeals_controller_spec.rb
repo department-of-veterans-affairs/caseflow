@@ -725,4 +725,24 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
     end
   end
+
+  # describe "POST /idt/api/v1/services/address_validation/v1/validate", :postgres do
+  #   let(:user) { create(:user) }
+
+  #   context "create address and response" do
+  #   let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
+  #   let(:mock_va_dot_gov_address) {nil}
+
+  #     context "VADotGovService is responsive" do
+  #       before do
+  #         valid_address_response = ExternalApi::VADotGovService::AddressValidationResponse.new(mock_response)
+  #         allow(valid_address_response).to recieve(:data).and_return(mock_va_dot_gov_address)
+  #         allow(VADotGovService).to recieve(:validate_address).and_return(valid_address_response)
+  #       end
+
+  #       context "the service returns the entire response body including message code"
+
+  #     end
+  #   end
+  # end
 end
