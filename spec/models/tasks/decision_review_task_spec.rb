@@ -128,6 +128,7 @@ describe DecisionReviewTask, :postgres do
         assigned_on: decision_review_task.assigned_at,
         assigned_at: decision_review_task.assigned_at,
         issue_count: 0,
+        issue_types: "",
         type: "Higher-Level Review",
         claimant: { name: hlr.veteran_full_name, relationship: "self" },
         business_line: business_line.url
@@ -160,6 +161,7 @@ describe DecisionReviewTask, :postgres do
           id: decision_review_task.id,
           created_at: decision_review_task.created_at,
           issue_count: 0,
+          issue_types: "",
           type: "Higher-Level Review",
           business_line: business_line.url
         }

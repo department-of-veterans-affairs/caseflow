@@ -26,6 +26,7 @@ describe WorkQueue::VeteranRecordRequestSerializer, :postgres do
           id: task.id,
           created_at: task.created_at,
           issue_count: 0,
+          issue_types: "",
           type: "Record Request",
           business_line: non_comp_org.url
 
