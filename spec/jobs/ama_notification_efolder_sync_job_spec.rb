@@ -42,11 +42,8 @@ describe AmaNotificationEfolderSyncJob, type: :job do
     let(:second_run_outcoded_appeals) { [] }
     let(:first_run_never_synced_appeals) { appeals.first(3) + [appeals[4]] + appeals.last(2) }
     let(:second_run_never_synced_appeals) { appeals.last(2) }
-    let(:first_run_ready_for_resync) { [] }
-    let(:second_run_ready_for_resync) { appeals[6] + appeals.first(3) + appeals[4] }
     let(:first_run_vbms_document_ids) { [appeals[6].id, appeals[0].id, appeals[1].id, appeals[2].id, appeals[4].id] }
     let(:second_run_vbms_document_ids) { first_run_vbms_document_ids + [appeals[8].id, appeals[9].id, appeals[4].id] }
-    let(:run_job) { AmaNotificationEfolderSyncJob.perform_now }
 
     before do
       AmaNotificationEfolderSyncJob::BATCH_LIMIT = 5
@@ -68,7 +65,7 @@ describe AmaNotificationEfolderSyncJob, type: :job do
       end
 
       it "get all ama appeals that must be resynced" do
-        expect(job.send(:ready_for_resync)).to eq(first_run_ready_for_resync)
+        expect(job.send(:ready_for_resync)).to eq([])
       end
 
       it "running the perform" do
@@ -99,6 +96,7 @@ describe AmaNotificationEfolderSyncJob, type: :job do
           notified_at: Time.zone.now,
           email_notification_status: "delivered"
         )
+        create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "Appeal")
         expect(job.send(:appeals_never_synced)).to eq(second_run_never_synced_appeals)
       end
 
@@ -112,6 +110,7 @@ describe AmaNotificationEfolderSyncJob, type: :job do
           notified_at: Time.zone.now,
           email_notification_status: "delivered"
         )
+        create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "Appeal")
         expect(job.send(:ready_for_resync)).to eq([appeals[4]])
       end
 
@@ -125,8 +124,9 @@ describe AmaNotificationEfolderSyncJob, type: :job do
           notified_at: Time.zone.now,
           email_notification_status: "delivered"
         )
+        create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "Appeal")
         AmaNotificationEfolderSyncJob.perform_now
-        expect(VbmsUploadedDocument.pluck(:appeal_id)).to eq(second_run_vbms_document_ids)
+        expect(VbmsUploadedDocument.where(document_type: "BVA Case Notifications").pluck(:appeal_id)).to eq(second_run_vbms_document_ids)
       end
     end
   end

@@ -114,8 +114,13 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   def appeals_on_latest_doc_uploads(appeal_ids)
     <<-SQL
       SELECT doc1.* FROM appeals a
-      JOIN vbms_uploaded_documents doc1 on doc1.appeal_id = a.id AND doc1.appeal_type = 'Appeal'
-      LEFT OUTER JOIN vbms_uploaded_documents doc2 ON (doc2.appeal_id = a.id AND doc1.appeal_type = 'Appeal' AND
+      JOIN vbms_uploaded_documents doc1 on doc1.appeal_id = a.id
+        AND doc1.appeal_type = 'Appeal'
+        AND doc1.document_type = 'BVA Case Notifications'
+      LEFT OUTER JOIN vbms_uploaded_documents doc2 ON (
+        doc2.appeal_id = a.id AND
+        doc2.appeal_type = 'Appeal' AND
+        doc2.document_type = 'BVA Case Notifications' AND
           (doc1.attempted_at < doc2.attempted_at OR (doc1.attempted_at = doc2.attempted_at AND doc1.id < doc2.id)))
       WHERE doc2.id IS NULL
         AND doc1.id IS NOT NULL
@@ -147,29 +152,5 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       end
     end
     Rails.logger.info("Finished generating #{gen_count} notification reports for AMA appeals")
-  end
-
-  # Purpose: Will return the most recent notification associated with the appeal
-  # Params: uuid - The uuid of the appeal record that the notification is associated
-  # Returns: The most recent notification record for the given appeal
-  def last_notification_of_appeal(uuid)
-    Notification.where(appeals_id: uuid)
-      .where.not(notified_at: nil)
-      .order(notified_at: :desc)
-      .first
-  end
-
-  # Purpose: Will get the latest notification report associated with the appeal
-  # Params: appeal - The associated appeal record
-  # Returns: The most recent notification report for this appeal
-  def latest_vbms_uploaded_document(appeal)
-    VbmsUploadedDocument.where(
-      appeal_id: appeal.id,
-      appeal_type: appeal.class.name,
-      document_type: "BVA Case Notifications"
-    )
-      .successfully_uploaded
-      .order(attempted_at: :desc)
-      .first
   end
 end
