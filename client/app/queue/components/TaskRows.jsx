@@ -310,14 +310,14 @@ class TaskRows extends React.PureComponent {
 
     // formatting used for IssueUpdate task instructions.
     const formatIssueUpdateBreaks = (text = '') => {
-      const divStyle = {marginTop: '1rem'}
-      const hStyle = {marginTop: '1rem', marginBottom: '0rem'};
+      const divStyle = { marginTop: '1rem'}
+      const hStyle = { marginTop: '30px', marginBottom: '0rem', fontWeight: 'bold' };
 
       if (Array.isArray(text)) {
         return (
           <div style={divStyle}>
             <b>Edited Issue:</b>
-            <h5 style={hStyle}>Original</h5>
+            <h5 style={hStyle}>Original:</h5>
             <small>{text[0]}</small>
             <br />
             <small>{text[1]}</small>
