@@ -49,8 +49,7 @@ describe VANotifyStatusUpdateJob, type: :job do
            notification_type: "Email",
            email_notification_external_id: "0",
            sms_notification_external_id: nil,
-           email_notification_status: "Success",
-           created_at: Time.zone.now)
+           email_notification_status: "Success")
     create(:notification,
            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
            appeals_type: "Appeal",
@@ -59,8 +58,7 @@ describe VANotifyStatusUpdateJob, type: :job do
            notification_type: "SMS",
            email_notification_external_id: nil,
            sms_notification_external_id: "0",
-           sms_notification_status: "temporary-failure",
-           created_at: Time.zone.now)
+           sms_notification_status: "temporary-failure")
     create(:notification,
            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
            appeals_type: "Appeal",
@@ -69,8 +67,7 @@ describe VANotifyStatusUpdateJob, type: :job do
            notification_type: "SMS",
            email_notification_external_id: nil,
            sms_notification_external_id: "1",
-           sms_notification_status: "created",
-           created_at: Time.zone.now)
+           sms_notification_status: "created")
     create(:notification,
            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
            appeals_type: "Appeal",
@@ -79,8 +76,7 @@ describe VANotifyStatusUpdateJob, type: :job do
            notification_type: "Email",
            email_notification_external_id: "1",
            sms_notification_external_id: nil,
-           email_notification_status: "technical-failure",
-           created_at: Time.zone.now)
+           email_notification_status: "technical-failure")
     create(:notification,
            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
            appeals_type: "Appeal",
@@ -90,8 +86,7 @@ describe VANotifyStatusUpdateJob, type: :job do
            email_notification_external_id: "2",
            sms_notification_external_id: "2",
            email_notification_status: "temporary-failure",
-           sms_notification_status: "temporary-failure",
-           created_at: Time.zone.now - 5.days)
+           sms_notification_status: "temporary-failure")
     create(:notification,
            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
            appeals_type: "Appeal",
@@ -101,8 +96,7 @@ describe VANotifyStatusUpdateJob, type: :job do
            email_notification_external_id: "3",
            sms_notification_external_id: "3",
            email_notification_status: "delivered",
-           sms_notification_status: "delivered",
-           created_at: Time.zone.now - 5.days)
+           sms_notification_status: "delivered")
     create(:notification,
            appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1577",
            appeals_type: "Appeal",
@@ -112,8 +106,7 @@ describe VANotifyStatusUpdateJob, type: :job do
            email_notification_external_id: "4",
            sms_notification_external_id: "4",
            email_notification_status: "delivered",
-           sms_notification_status: "delivered",
-           created_at: Time.zone.now - 5.days)
+           sms_notification_status: "delivered")
   end
 
   let(:collect) { Notification.where(id: [1, 2, 3, 4, 5]) }
@@ -155,8 +148,8 @@ describe VANotifyStatusUpdateJob, type: :job do
       it "defaults to 650 for the query limit if environment variable not found or invalid" do
         stub_const("VANotifyStatusUpdateJob::QUERY_LIMIT", nil)
         expect(Rails.logger).to receive(:info)
-          .with("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable.\
-        Defaulting to 650.")
+          .with("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable. \
+         Defaulting to 650.")
         VANotifyStatusUpdateJob.perform_now
       end
 
