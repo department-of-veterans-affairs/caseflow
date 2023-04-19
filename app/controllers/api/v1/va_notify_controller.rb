@@ -1,17 +1,6 @@
 # frozen_string_literal: true
 
 class Api::V1::VaNotifyController < Api::ApplicationController
-  # Purpose: Log error in Rails logger and gives 500 error
-  #
-  # Params:  Notification type string, either "email" or "SMS"
-  #
-  # Response: json error message with uuid and 500 error
-  def log_error(type)
-    uuid = SecureRandom.uuid
-    error_msg = "An " + type + "notification with id " + params["id"] + " could not be found. " + "Error ID: " + uuid
-    Rails.logger.error(error_msg)
-    render json: { message: error_msg }, status: :internal_server_error
-  end
 
   # Purpose: POST request to VA Notify API to update status for a Notification entry
   #
@@ -24,6 +13,20 @@ class Api::V1::VaNotifyController < Api::ApplicationController
     elsif params["type"] == "sms"
       sms_update
     end
+  end
+
+  private
+
+  # Purpose: Log error in Rails logger and gives 500 error
+  #
+  # Params:  Notification type string, either "email" or "SMS"
+  #
+  # Response: json error message with uuid and 500 error
+  def log_error(type)
+    uuid = SecureRandom.uuid
+    error_msg = "An " + type + "notification with id " + params["id"] + " could not be found. " + "Error ID: " + uuid
+    Rails.logger.error(error_msg)
+    render json: { message: error_msg }, status: :internal_server_error
   end
 
   # Purpose: Finds and updates notification if type is email
