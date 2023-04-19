@@ -63,10 +63,10 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
 
   SELECT_READY_APPEALS = "
     SELECT BRIEFF.BFKEY, BRIEFF.BFCORLID, BRIEFF.BFMPRO,
-      BRIEFF.BFCURLOC, BRIEFF.BFAC,BRIEFF.BFD19,
-      BRIEFF.BFORGTIC, BRIEFF.BFHINES, FOLDER.TINUM,
-      CORRES.SNAMEL,CORRES.SNAMEF,
-      vacols_dev.prev_vlj(bfcorlid, tinum),
+      BRIEFF.BFCURLOC, BRIEFF.BFAC, BRIEFF.BFD19,
+      BRIEFF.BFDLOOUT, BRIEFF.BFORGTIC, BRIEFF.BFHINES,
+      FOLDER.TINUM, CORRES.SNAMEL,CORRES.SNAMEF,
+      vacols_dev.prev_vlj(titrnum, tinum) VLJ_HEARINGS,
       vacols_dev.hearing_date(bfcorlid, tinum),
       vacols_dev.aod_cnt(bfkey) as AOD
     FROM BRIEFF, FOLDER, CORRES
@@ -99,12 +99,12 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
     select BFKEY, BFDLOOUT, VLJ
       from (
         select BFKEY, BFDLOOUT,
-          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS end VLJ
         from (
           #{SELECT_READY_APPEALS}
           order by BFDLOOUT
-        ) where (BFAC = '7' or AOD = '1') BRIEFF
-        #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        ) BRIEFF
+        where (BFAC = '7' or AOD = '1')
       )
     "
 
@@ -112,13 +112,12 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
     select BFKEY, BFD19, BFDLOOUT, VLJ
       from (
         select BFKEY, BFD19, BFDLOOUT,
-          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS end VLJ
         from (
           #{SELECT_READY_APPEALS}
-            and (BFAC = '7' or AOD = '1')
           order by BFDLOOUT
         ) BRIEFF
-        #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        where (BFAC = '7' or AOD = '1')
         order by BFD19
       )
     "
@@ -127,7 +126,7 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
     select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX
     from (
       select BFKEY, BFDLOOUT, rownum DOCKET_INDEX,
-        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS end VLJ
       from (
         #{SELECT_READY_APPEALS}
           and BFAC <> '7' and AOD = '0'
@@ -141,7 +140,7 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
     select BFKEY, BFD19, BFDLOOUT, VLJ, DOCKET_INDEX
     from (
       select BFKEY, BFD19, BFDLOOUT, rownum DOCKET_INDEX,
-        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS end VLJ
       from (
         #{SELECT_READY_APPEALS}
           and BFAC <> '7' and AOD = '0'
