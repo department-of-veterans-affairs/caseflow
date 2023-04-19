@@ -87,7 +87,6 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
     )
   "
 
-  # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
     query = <<-SQL
       select count(*) N, PRIORITY, READY
@@ -413,29 +412,5 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
 
   def self.use_by_docket_date?
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
-  end
-
-  def self.test_vacols_functions
-    test_query = <<-SQL
-    SELECT BRIEFF.BFKEY,
-            BRIEFF.BFCORLID, BRIEFF.BFMPRO, BRIEFF.BFCURLOC, BRIEFF.BFAC,
-        BRIEFF.BFD19, BRIEFF.BFORGTIC, BRIEFF.BFHINES,
-            FOLDER.TINUM,
-            CORRES.SNAMEL,CORRES.SNAMEF,
-            prev_vlj(bfcorlid, tinum),
-            hearing_date(bfcorlid, tinum),
-            aod_cnt(bfkey)
-        FROM BRIEFF, FOLDER, CORRES
-        WHERE ( BRIEFF.BFKEY = FOLDER.TICKNUM ) and
-            ( BRIEFF.BFCORKEY = CORRES.STAFKEY ) and
-            ( ( bfcurloc in ('81', '83') ) AND
-            ( bfmpro = 'ACT' ) AND
-            ( bfd19 is not null ) AND
-            ( mail_cnt_loc81(bfkey) = 0 ) AND
-            ( diary_cnt_hold(bfkey) = 0 ) AND
-            ( bfbox is null ) )
-    SQL
-
-    connection.select_all(test_query).to_a
   end
 end
