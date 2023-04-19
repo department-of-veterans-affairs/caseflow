@@ -5,8 +5,8 @@ import StringUtil from './StringUtil';
 import _ from 'lodash';
 import { timeFunctionPromise } from '../util/PerfDebug';
 
-export const STANDARD_API_TIMEOUT_MILLISECONDS = 20 * 60 * 1000;
-export const RESPONSE_COMPLETE_LIMIT_MILLISECONDS = 20 * 60 * 1000;
+export const STANDARD_API_TIMEOUT_MILLISECONDS = 60 * 1000;
+export const RESPONSE_COMPLETE_LIMIT_MILLISECONDS = 5 * 60 * 1000;
 
 const defaultTimeoutSettings = {
   response: STANDARD_API_TIMEOUT_MILLISECONDS,
