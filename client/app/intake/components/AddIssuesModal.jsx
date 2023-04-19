@@ -5,24 +5,46 @@ import { map, findIndex, uniq } from 'lodash';
 
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
-import RadioField from '../../components/RadioField';
+import IntakeRadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import { issueByIndex } from '../util/issues';
 
+
+
 class AddIssuesModal extends React.Component {
+  
   constructor(props) {
     super(props);
 
     this.state = {
       approxDecisionDate: '',
       selectedContestableIssueIndex: '',
-      notes: ''
+      notes: '',
+      mstCheckbox: false
     };
   }
 
-  radioOnChange = (selectedContestableIssueIndex) => this.setState({ selectedContestableIssueIndex });
+  setMstStatus = () => {
+    this.state.mstCheckbox = !this.state.mstCheckbox;
+    console.log(this.state.mstCheckbox)
+  }
+
+  getMstStatus = () => {
+    return this.state.mstCheckbox;
+  }
+
+  mstOnChange = (mstToggleState) => {
+    this.setState({ mstToggleState})
+  }
+
+ 
+
+  radioOnChange = (selectedContestableIssueIndex) =>  {
+    this.setState({ selectedContestableIssueIndex });
+  }
 
   notesOnChange = (notes) => this.setState({ notes });
+
 
   onAddIssue = () => {
     const { selectedContestableIssueIndex, notes } = this.state;
@@ -39,18 +61,24 @@ class AddIssuesModal extends React.Component {
       currentIssue: {
         ...currentIssue,
         notes
-      }
+        ,
+        testData:"test"
+      } 
     });
   };
 
   getContestableIssuesSections() {
+
     const { intakeData } = this.props;
 
     const addedIssues = intakeData.addedIssues ? intakeData.addedIssues : [];
 
     return map(intakeData.contestableIssues, (contestableIssuesByIndex, approxDecisionDate) => {
+      let hasMst;
       const radioOptions = map(contestableIssuesByIndex, (issue) => {
         const foundIndex = findIndex(addedIssues, { index: issue.index });
+        hasMst = contestableIssuesByIndex[issue.index].mstOrPact.mst
+        console.log(hasMst)
         let text =
           foundIndex === -1 ? issue.description : `${issue.description} (already selected for issue ${foundIndex + 1})`;
 
@@ -80,7 +108,7 @@ class AddIssuesModal extends React.Component {
       });
 
       return (
-        <RadioField
+        <IntakeRadioField
           vertical
           label={<h3>Past decisions from {formatDateStr(approxDecisionDate)}</h3>}
           name="rating-radio"
@@ -88,11 +116,17 @@ class AddIssuesModal extends React.Component {
           key={approxDecisionDate}
           value={this.state.selectedContestableIssueIndex}
           onChange={this.radioOnChange}
+          renderCheckboxes={true}
+
+          defaultMst = {hasMst}
+          setMst={this.setMstStatus}
+          getMst={this.getMstStatus}
         />
       );
     });
   }
 
+  
   getModalButtons() {
     const btns = [
       {

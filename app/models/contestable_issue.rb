@@ -80,7 +80,9 @@ class ContestableIssue
       sourceReviewType: source_review_type,
       timely: timely?,
       latestIssuesInChain: serialize_latest_decision_issues,
-      isRating: is_rating
+      isRating: is_rating,
+      hasMst:true,
+      hasPact:true
     }
   end
 
@@ -110,6 +112,12 @@ class ContestableIssue
 
   def timely?
     approx_decision_date && contesting_decision_review.timely_issue?(approx_decision_date)
+  end
+
+  def mst_or_pact
+    #dummy method because i'm out of time
+    {"mst":true,
+    "pact":true}
   end
 
   private
