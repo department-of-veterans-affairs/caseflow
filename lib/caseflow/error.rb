@@ -403,6 +403,7 @@ module Caseflow::Error
 
   class IdtApiError < StandardError; end
   class InvalidOneTimeKey < IdtApiError; end
+  class LighthouseApiError < StandardError; end
 
   class PexipApiError < SerializableError; end
   class PexipNotFoundError < PexipApiError; end

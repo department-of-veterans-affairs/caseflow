@@ -34,15 +34,15 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def validate
     body = params.require(:requestAddress).permit!.to_h
-    body.deep_transform_keys!(&:underscore)
-    body.deep_transform_keys! { |key| key.gsub("e1", "e_1") }
-    body.deep_transform_keys! { |key| key.gsub("e2", "e_2") }
-    body.deep_transform_keys! { |key| key.gsub("e3", "e_3") }
-    body.deep_transform_keys! { |key| key.gsub("e4", "e_4") }
-    body.deep_transform_keys! { |key| key.gsub("e5", "e_5") }
     address = OpenStruct.new(body)
-
-    VADotGovService.validate_address(address)
+    response = VADotGovService.validate_address(address)
+    response.response.raw_body = JSON.parse(response.response.raw_body)
+    case status
+    when 401 || 403 || 429
+      fail Caseflow::Error::LighthouseApiError
+    else
+      render json: response
+    end
   end
 
   private
