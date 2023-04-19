@@ -712,7 +712,7 @@ class AppealRepository
       MetricsService.record("VACOLS: docket_counts_by_priority_and_readiness",
                             name: "docket_counts_by_priority_and_readiness",
                             service: :vacols) do
-        CaseDocket.counts_by_priority_and_readiness
+        vacols_case_docket.counts_by_priority_and_readiness
       end
     end
 
@@ -720,7 +720,7 @@ class AppealRepository
       MetricsService.record("VACOLS: genpop_priority_count",
                             name: "genpop_priority_count",
                             service: :vacols) do
-        CaseDocket.genpop_priority_count
+        vacols_case_docket.genpop_priority_count
       end
     end
 
@@ -728,7 +728,7 @@ class AppealRepository
       MetricsService.record("VACOLS: not_genpop_priority_count",
                             name: "not_genpop_priority_count",
                             service: :vacols) do
-        CaseDocket.not_genpop_priority_count
+        vacols_case_docket.not_genpop_priority_count
       end
     end
 
@@ -736,7 +736,7 @@ class AppealRepository
       MetricsService.record("VACOLS: priority_ready_appeal_vacols_ids",
                             name: "priority_ready_appeal_vacols_ids",
                             service: :vacols) do
-        CaseDocket.priority_ready_appeal_vacols_ids
+        vacols_case_docket.priority_ready_appeal_vacols_ids
       end
     end
 
@@ -744,7 +744,7 @@ class AppealRepository
       MetricsService.record("VACOLS: nod_count",
                             name: "nod_count",
                             service: :vacols) do
-        CaseDocket.nod_count
+        vacols_case_docket.nod_count
       end
     end
 
@@ -752,7 +752,7 @@ class AppealRepository
       MetricsService.record("VACOLS: regular_non_aod_docket_count",
                             name: "regular_non_aod_docket_count",
                             service: :vacols) do
-        CaseDocket.regular_non_aod_docket_count
+        vacols_case_docket.regular_non_aod_docket_count
       end
     end
 
@@ -760,7 +760,7 @@ class AppealRepository
       result = MetricsService.record("VACOLS: latest_docket_month",
                                      name: "latest_docket_month",
                                      service: :vacols) do
-        CaseDocket.docket_date_of_nth_appeal_in_case_storage(7000)
+        vacols_case_docket.docket_date_of_nth_appeal_in_case_storage(7000)
       end
 
       result.beginning_of_month
@@ -770,7 +770,7 @@ class AppealRepository
       MetricsService.record("VACOLS: docket_counts_by_month",
                             name: "docket_counts_by_month",
                             service: :vacols) do
-        CaseDocket.docket_counts_by_month
+        vacols_case_docket.docket_counts_by_month
       end
     end
 
@@ -778,7 +778,7 @@ class AppealRepository
       MetricsService.record("VACOLS: age_of_n_oldest_genpop_priority_appeals",
                             name: "age_of_n_oldest_genpop_priority_appeals",
                             service: :vacols) do
-        CaseDocket.age_of_n_oldest_genpop_priority_appeals(num)
+        vacols_case_docket.age_of_n_oldest_genpop_priority_appeals(num)
       end
     end
 
@@ -786,7 +786,7 @@ class AppealRepository
       MetricsService.record("VACOLS: age_of_n_oldest_nonpriority_appeals_available_to_judge",
                             name: "age_of_n_oldest_nonpriority_appeals_available_to_judge",
                             service: :vacols) do
-        CaseDocket.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
+        vacols_case_docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
       end
     end
 
@@ -794,7 +794,7 @@ class AppealRepository
       MetricsService.record("VACOLS: age_of_oldest_priority_appeal",
                             name: "age_of_oldest_priority_appeal",
                             service: :vacols) do
-        CaseDocket.age_of_oldest_priority_appeal
+        vacols_case_docket.age_of_oldest_priority_appeal
       end
     end
 
@@ -802,7 +802,7 @@ class AppealRepository
       MetricsService.record("VACOLS: age_of_oldest_priority_appeal",
                             name: "age_of_oldest_priority_appeal",
                             service: :vacols) do
-        CaseDocket.age_of_oldest_priority_appeal_by_docket_date
+        vacols_case_docket.age_of_oldest_priority_appeal_by_docket_date
       end
     end
 
@@ -810,7 +810,7 @@ class AppealRepository
       MetricsService.record("VACOLS: age_of_n_oldest_priority_appeals_available_to_judge",
                             name: "age_of_n_oldest_priority_appeals_available_to_judge",
                             service: :vacols) do
-        CaseDocket.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
+        vacols_case_docket.age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
       end
     end
 
@@ -818,7 +818,7 @@ class AppealRepository
       MetricsService.record("VACOLS: nonpriority_decisions_per_year",
                             name: "nonpriority_decisions_per_year",
                             service: :vacols) do
-        CaseDocket.nonpriority_decisions_per_year
+        vacols_case_docket.nonpriority_decisions_per_year
       end
     end
 
@@ -826,7 +826,7 @@ class AppealRepository
       MetricsService.record("VACOLS: distribute_priority_appeals",
                             name: "distribute_priority_appeals",
                             service: :vacols) do
-        CaseDocket.distribute_priority_appeals(judge, genpop, limit)
+        vacols_case_docket.distribute_priority_appeals(judge, genpop, limit)
       end
     end
 
@@ -834,15 +834,15 @@ class AppealRepository
       MetricsService.record("VACOLS: distribute_nonpriority_appeals",
                             name: "distribute_nonpriority_appeals",
                             service: :vacols) do
-        CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog)
+        vacols_case_docket.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog)
       end
     end
 
-    def case_docket
-      if FeatureToggle.enabled?(:acd_enable_case_docket_v2, user: RequestStore.store[:current_user])
+    def vacols_case_docket
+      if FeatureToggle.enabled?(:acd_enable_vacols_case_docket_v2, user: RequestStore.store[:current_user])
         VACOLS::CaseDocketV2
       else
-        VACOlS::CaseDocket
+        VACOLS::CaseDocket
       end
     end
 
