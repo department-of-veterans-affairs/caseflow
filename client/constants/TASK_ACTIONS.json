@@ -236,6 +236,11 @@
     "value": "distribute_to_judge",
     "func": "blocked_special_case_movement_data"
   },
+  "BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY": {
+    "label": "Case Movement: Cancel blocking tasks and advance to judge",
+    "value": "distribute_to_judge",
+    "func": "blocked_special_case_movement_data"
+  },
   "TOGGLE_TIMED_HOLD": {
     "func": "toggle_timed_hold"
   },
