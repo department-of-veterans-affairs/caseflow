@@ -29,7 +29,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
       # log external id if notification doesn't exist
       else
         uuid = SecureRandom.uuid
-        error_msg = "An SMS notification with id " + params["id"] + " could not be found.c" + "Error ID: " + uuid
+        error_msg = "An SMS notification with id " + params["id"] + " could not be found. " + "Error ID: " + uuid
         Rails.logger.error(error_msg)
         render json: { message: error_msg}, status: :internal_server_error
       end
