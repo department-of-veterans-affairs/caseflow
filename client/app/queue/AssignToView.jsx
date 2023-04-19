@@ -217,8 +217,6 @@ class AssignToView extends React.Component {
   };
 
   getVisn = () => {
-    // this needs to not search for visn->visn? I think that's what's happening, break time
-
     const actionData = taskActionData(this.props);
 
     if (this.state.assignToVHARegionalOfficeSelection === 'visn') {
