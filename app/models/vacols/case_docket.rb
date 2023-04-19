@@ -192,27 +192,9 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(query).to_hash.count
   end
 
-  def self.genpop_nonpriority_count
-    query = <<-SQL
-      #{SELECT_NONPRIORITY_APPEALS}
-      where VLJ is null
-    SQL
-
-    connection.exec_query(query).to_hash.count
-  end
-
   def self.not_genpop_priority_count
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
-      where VLJ is not null
-    SQL
-
-    connection.exec_query(query).to_hash.count
-  end
-
-  def self.not_genpop_nonpriority_count
-    query = <<-SQL
-      #{SELECT_NONPRIORITY_APPEALS}
       where VLJ is not null
     SQL
 
