@@ -135,7 +135,7 @@ class DocketCoordinator
   end
 
   def vacols_case_docket
-    if FeatureToggle.enabled?(:acd_enable_case_docket_v2, user: RequestStore.store[:current_user])
+    if FeatureToggle.enabled?(:acd_enable_vacols_case_docket_v2, user: RequestStore.store[:current_user])
       VACOLS::CaseDocketV2
     else
       VACOLS::CaseDocket
