@@ -8,9 +8,9 @@ class Api::V1::VaNotifyController < Api::ApplicationController
         notif.update!(email_notification_status: params["status"])
       else
         uuid = SecureRandom.uuid
-        Rails.logger.error("An email notification with id " + params["id"] + " could not be found." + "Error ID: " + uuid)
-        # Raven.capture_exception(error, extra: { error_uuid: uuid })
-        fail
+        error_msg = "An email notification with id " + params["id"] + " could not be found. " + "Error ID: " + uuid
+        Rails.logger.error(error_msg)
+        render json: { message: error_msg}, status: :internal_server_error
       end
     elsif params["type"] == "sms"
       notif = Notification.find_by(sms_notification_external_id: params["id"])
@@ -18,9 +18,9 @@ class Api::V1::VaNotifyController < Api::ApplicationController
         notif.update!(sms_notification_status: params["status"])
       else
         uuid = SecureRandom.uuid
-        Rails.logger.error("An SMS notification with id " + params["id"] + " could not be found." + "Error ID: " + uuid)
-        # Raven.capture_exception(error, extra: { error_uuid: uuid })
-        fail
+        error_msg = "An SMS notification with id " + params["id"] + " could not be found.c" + "Error ID: " + uuid
+        Rails.logger.error(error_msg)
+        render json: { message: error_msg}, status: :internal_server_error
       end
     end
   end
