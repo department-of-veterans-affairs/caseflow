@@ -884,7 +884,7 @@ class TaskActionRepository
     end
 
     def visns_to_options
-      VhaRegionalOffice.all.map  do |org|
+      VhaRegionalOffice.all.map do |org|
         {
           label: prepend_visn_id(org.name),
           value: org.id
@@ -893,14 +893,12 @@ class TaskActionRepository
     end
 
     def vamcs_to_options
-      visns = VhaRegionalOffice.all.pluck(:id, :name).to_h.invert
-
-      i = -1
+      value = -1
       Constants::VHA_VAMCS.map do |office|
-        i = i + 1
+        value += 1
         {
-          label: office['name'],
-          value: i
+          label: office["name"],
+          value: value
         }
       end
     end
