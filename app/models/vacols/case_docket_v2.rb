@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class VACOLS::CaseDocket < VACOLS::Record
+class VACOLS::CaseDocketV2 < VACOLS::Record
   # :nocov:
   self.table_name = "brieff"
 
@@ -14,95 +14,45 @@ class VACOLS::CaseDocket < VACOLS::Record
     for update
   "
 
-  # Distribution should be blocked by pending mail, with the exception of:
-  #
-  # 02 - Congressional interest
-  # 05 - Evidence or argument (because the attorney will pick this up)
-  # 08 - Motion to advance on the docket
-  # 13 - Status inquiry
-
-  JOIN_MAIL_BLOCKS_DISTRIBUTION = "
-    left join (
-      select BRIEFF.BFKEY MAILKEY,
-        (case when nvl(MAIL.CNT, 0) > 0 then 1 else 0 end) MAIL_BLOCKS_DISTRIBUTION
-      from BRIEFF
-
-      left join (
-        select MLFOLDER, count(*) CNT
-        from MAIL
-        where MLCOMPDATE is null and MLTYPE not in ('02', '05', '08', '13')
-        group by MLFOLDER
-      ) MAIL
-      on MAIL.MLFOLDER = BRIEFF.BFKEY
-    )
-    on MAILKEY = BFKEY
-  "
-
-  # Distribution should be blocked by a pending diary of one of the following types:
-  #
-  # EXT - Extension request
-  # HCL - Hearing clarification
-  # POA - Power of attorney clarification
-
-  JOIN_DIARY_BLOCKS_DISTRIBUTION = "
-    left join (
-      select BRIEFF.BFKEY DIARYKEY,
-        (case when nvl(DIARIES.CNT, 0) > 0 then 1 else 0 end) DIARY_BLOCKS_DISTRIBUTION
-      from BRIEFF
-
-      left join (
-        select TSKTKNM, count(*) CNT
-        from ASSIGN
-        where TSKDCLS is null and TSKACTCD in ('EXT', 'HCL', 'POA')
-        group by TSKTKNM
-      ) DIARIES
-      on DIARIES.TSKTKNM = BRIEFF.BFKEY
-    )
-    on DIARYKEY = BFKEY
-  "
+  VACOLS_FUNCTION_QUERY_PREPEND =
+    case Rails.env
+    when "development"
+      "vacols_dev"
+    when "test"
+      "vacols_test"
+    else
+      "vacols"
+    end
 
   SELECT_READY_APPEALS = "
-    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
-    from BRIEFF
-    #{VACOLS::Case::JOIN_AOD}
-    #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
-    #{JOIN_DIARY_BLOCKS_DISTRIBUTION}
-    inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
-    where BRIEFF.BFMPRO = 'ACT'
-      and BRIEFF.BFCURLOC in ('81', '83')
-      and BRIEFF.BFBOX is null
-      and BRIEFF.BFAC is not null
-      and BRIEFF.BFD19 is not null
-      and MAIL_BLOCKS_DISTRIBUTION = 0
-      and DIARY_BLOCKS_DISTRIBUTION = 0
-  "
-
-  # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
-
-  JOIN_ASSOCIATED_VLJS_BY_HEARINGS = "
-    left join (
-      select distinct TITRNUM, TINUM,
-        first_value(BOARD_MEMBER) over (partition by TITRNUM, TINUM order by HEARING_DATE desc) VLJ
-      from HEARSCHED
-      inner join FOLDER on FOLDER.TICKNUM = HEARSCHED.FOLDER_NR
-      where HEARING_TYPE in ('C', 'T', 'V', 'R') and HEARING_DISP = 'H'
-    ) VLJ_HEARINGS
-      on VLJ_HEARINGS.VLJ not in ('000', '888', '999')
-        and VLJ_HEARINGS.TITRNUM = BRIEFF.TITRNUM
-        and (VLJ_HEARINGS.TINUM is null or VLJ_HEARINGS.TINUM = BRIEFF.TINUM)
+    SELECT BRIEFF.BFKEY, BRIEFF.BFCORLID, BRIEFF.BFMPRO,
+      BRIEFF.BFCURLOC, BRIEFF.BFAC, BRIEFF.BFD19,
+      BRIEFF.BFDLOOUT, BRIEFF.BFORGTIC, BRIEFF.BFHINES,
+      FOLDER.TINUM, CORRES.SNAMEL,CORRES.SNAMEF,
+      #{VACOLS_FUNCTION_QUERY_PREPEND}.prev_vlj(titrnum, tinum) VLJ_HEARINGS,
+      #{VACOLS_FUNCTION_QUERY_PREPEND}.hearing_date(bfcorlid, tinum),
+      #{VACOLS_FUNCTION_QUERY_PREPEND}.aod_cnt(bfkey) as AOD
+    FROM BRIEFF, FOLDER, CORRES
+    WHERE ( BRIEFF.BFKEY = FOLDER.TICKNUM ) and
+      ( BRIEFF.BFCORKEY = CORRES.STAFKEY ) and
+      ( ( bfcurloc in ('81', '83') ) AND
+      ( bfmpro = 'ACT' ) AND
+      ( bfd19 is not null ) AND
+      ( #{VACOLS_FUNCTION_QUERY_PREPEND}.mail_cnt_loc81(bfkey) = 0 ) AND
+      ( #{VACOLS_FUNCTION_QUERY_PREPEND}.diary_cnt_hold(bfkey) = 0 ) AND
+      ( bfbox is null ) )
   "
 
   SELECT_PRIORITY_APPEALS = "
     select BFKEY, BFDLOOUT, VLJ
       from (
         select BFKEY, BFDLOOUT,
-          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS end VLJ
         from (
           #{SELECT_READY_APPEALS}
-            and (BFAC = '7' or AOD = '1')
           order by BFDLOOUT
         ) BRIEFF
-        #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        where (BFAC = '7' or AOD = '1')
       )
     "
 
@@ -110,13 +60,12 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFKEY, BFD19, BFDLOOUT, VLJ
       from (
         select BFKEY, BFD19, BFDLOOUT,
-          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+          case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS end VLJ
         from (
           #{SELECT_READY_APPEALS}
-            and (BFAC = '7' or AOD = '1')
           order by BFDLOOUT
         ) BRIEFF
-        #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        where (BFAC = '7' or AOD = '1')
         order by BFD19
       )
     "
@@ -125,13 +74,12 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX
     from (
       select BFKEY, BFDLOOUT, rownum DOCKET_INDEX,
-        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS end VLJ
       from (
         #{SELECT_READY_APPEALS}
-          and BFAC <> '7' and AOD = '0'
         order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
-      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      where BFAC <> '7' and AOD = '0'
     )
   "
 
@@ -139,41 +87,26 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFKEY, BFD19, BFDLOOUT, VLJ, DOCKET_INDEX
     from (
       select BFKEY, BFD19, BFDLOOUT, rownum DOCKET_INDEX,
-        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS end VLJ
       from (
         #{SELECT_READY_APPEALS}
-          and BFAC <> '7' and AOD = '0'
         order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
-      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      where BFAC <> '7' and AOD = '0'
       order by BFD19
     )
   "
 
-  # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
     query = <<-SQL
       select count(*) N, PRIORITY, READY
       from (
-        select case when BFAC = '7' or nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0) > 0 then 1 else 0 end as PRIORITY,
-          case when BFCURLOC in ('81', '83') and MAIL_BLOCKS_DISTRIBUTION = 0 and DIARY_BLOCKS_DISTRIBUTION = 0
-            then 1 else 0 end as READY
+        select case when BFAC = '7' or aod_cnt(bfkey) > 0 then 1 else 0 end as PRIORITY,
+          case when BFCURLOC in ('81', '83') and
+            #{VACOLS_FUNCTION_QUERY_PREPEND}.mail_cnt_loc81(bfkey) = 0 and
+            #{VACOLS_FUNCTION_QUERY_PREPEND}.diary_cnt_hold(bfkey) = 0
+          then 1 else 0 end as READY
         from BRIEFF
-        #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
-        #{JOIN_DIARY_BLOCKS_DISTRIBUTION}
-        left join (
-          select TSKTKNM, count(*) CNT
-          from ASSIGN
-          where TSKACTCD in ('B', 'B1', 'B2')
-          group by TSKTKNM
-        ) AOD_DIARIES on AOD_DIARIES.TSKTKNM = BFKEY
-        left join (
-          select FOLDER_NR, count(*) CNT
-          from HEARSCHED
-          where HEARING_TYPE IN ('C', 'T', 'V', 'R')
-            AND AOD IN ('G', 'Y')
-          group by FOLDER_NR
-        ) AOD_HEARINGS on AOD_HEARINGS.FOLDER_NR = BFKEY
         where BFMPRO <> 'HIS' and BFD19 is not null
       )
       group by PRIORITY, READY
@@ -181,7 +114,6 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     connection.exec_query(query).to_hash
   end
-  # rubocop:enable Metrics/MethodLength
 
   def self.genpop_priority_count
     query = <<-SQL
