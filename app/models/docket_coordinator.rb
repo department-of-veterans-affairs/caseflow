@@ -127,11 +127,11 @@ class DocketCoordinator
   end
 
   def legacy_hearing_nonpriority_count(judge)
-    vacols_case_docket.nonpriority_hearing_cases_for_judge_count(judge)
+    case_docket.nonpriority_hearing_cases_for_judge_count(judge)
   end
 
   def legacy_hearing_priority_count(judge)
-    vacols_case_docket.priority_hearing_cases_for_judge_count(judge)
+    case_docket.priority_hearing_cases_for_judge_count(judge)
   end
 
   def vacols_case_docket
