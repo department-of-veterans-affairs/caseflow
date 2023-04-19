@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe Api::V1::VaNotifyController, type: :controller do
+  before do
+    Seeds::NotificationEvents.new.seed!
+  end
   let!(:appeal) { create(:appeal) }
   let(:notification_email) { create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: "2023-02-27 13:11:51.91467", event_type: "Quarterly Notification", notification_type: "Email", notified_at: "2023-02-28 14:11:51.91467", email_notification_external_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", email_notification_status: "No Claimant Found") }
   let(:notification_sms) { create(:notification, appeals_id: appeal.uuid, appeals_type: "Appeal", event_date: "2023-02-27 13:11:51.91467", event_type: "Quarterly Notification", notification_type: "Email", notified_at: "2023-02-28 14:11:51.91467", sms_notification_external_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", sms_notification_status: "Preferences Declined") }
@@ -39,7 +42,8 @@ describe Api::V1::VaNotifyController, type: :controller do
     it "updates status of notification" do
       byebug
       post :notifications_update, params: payload_email
-      expect(notification_email.status).to eq("created")
+      byebug
+      expect(notification_email.email_notification_status).to eq("created")
     end
   end
 
@@ -83,7 +87,7 @@ describe Api::V1::VaNotifyController, type: :controller do
     end
     it "updates status of notification" do
       post :notifications_update, params: payload_sms
-      expect(notification_email.status).to eq("created")
+      expect(notification_email.sms_notification_status).to eq("created")
     end
   end
   context "notification does not exist" do
