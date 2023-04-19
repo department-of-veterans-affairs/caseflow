@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { EditIntakeIssuesModal } from './EditIntakeIssuesModal';
+import { EditIntakeIssueModal } from './EditIntakeIssueModal';
 
 export default {
   title: 'Intake/Edit Issues/Edit Intake Issues',
-  component: EditIntakeIssuesModal,
+  component: EditIntakeIssueModal,
   decorators: [],
   parameters: {},
   args: {
@@ -15,7 +15,7 @@ export default {
   },
 };
 
-const Template = (args) => <EditIntakeIssuesModal {...args} />;
+const Template = (args) => <EditIntakeIssueModal {...args} />;
 
 export const Basic = Template.bind({});
 

@@ -45,7 +45,7 @@ import { editEpClaimLabel } from '../../intakeEdit/actions/edit';
 import COPY from '../../../COPY';
 import { EditClaimLabelModal } from '../../intakeEdit/components/EditClaimLabelModal';
 import { ConfirmClaimLabelModal } from '../../intakeEdit/components/ConfirmClaimLabelModal';
-import { EditIntakeIssuesModal } from '../../intakeEdit/components/EditIntakeIssuesModal';
+import { EditIntakeIssueModal } from '../../intakeEdit/components/EditIntakeIssueModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -93,13 +93,10 @@ class AddIssuesPage extends React.Component {
       this.props.undoCorrection(index);
       break;
     case 'edit':
-      if (this.props.toggleEditIntakeIssueModal) {
-        //plz edit
-        this.setState({
-          issueEditIndex: index
-        });
-        this.props.toggleEditIntakeIssueModal();
-      }
+      this.setState({
+        issueIndex: index
+      });
+      this.props.toggleEditIntakeIssueModal({ index });
       break;
     default:
       this.props.undoCorrection(index);
@@ -520,15 +517,19 @@ class AddIssuesPage extends React.Component {
             loading={this.state.loading}
           />
         )}
-        {intakeData.editIntakeIssuesModalVisible && (
-          <EditIntakeIssuesModal
-            issueIndex={this.props.activeIssue}
+        {intakeData.editIntakeIssueModalVisible && (
+          <EditIntakeIssueModal
+            issueIndex={this.state.issueIndex}
             intakeData={intakeData}
             onCancel={() => {
               this.props.toggleEditIntakeIssueModal();
             }}
             onSubmit={() => {
+              // TO-DO: Logic to update table and state for MST and Pact changes
+              // this.props.mstUpdate({ mstStatus });
+              // this.props.pactUpdate({ pactStatus });
               this.props.toggleEditIntakeIssueModal();
+
             }}
           />
         )}
