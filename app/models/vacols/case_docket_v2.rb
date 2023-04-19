@@ -8,6 +8,8 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
 
   HEARING_BACKLOG_LIMIT = 30
 
+  FUNCTION_OWNER = ENV["VACOLS_FUNCTION_OWNER"] || "vacols"
+
   LOCK_READY_APPEALS = "
     select BFCURLOC from BRIEFF
     where BRIEFF.BFMPRO = 'ACT' and BRIEFF.BFCURLOC in ('81', '83')
@@ -19,17 +21,17 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
       BRIEFF.BFCURLOC, BRIEFF.BFAC, BRIEFF.BFD19,
       BRIEFF.BFDLOOUT, BRIEFF.BFORGTIC, BRIEFF.BFHINES,
       FOLDER.TINUM, CORRES.SNAMEL,CORRES.SNAMEF,
-      prev_vlj(titrnum, tinum) VLJ_HEARINGS,
-      hearing_date(bfcorlid, tinum),
-      aod_cnt(bfkey) as AOD
+      #{FUNCTION_OWNER}.prev_vlj(titrnum, tinum) VLJ_HEARINGS,
+      #{FUNCTION_OWNER}.hearing_date(bfcorlid, tinum),
+      #{FUNCTION_OWNER}.aod_cnt(bfkey) as AOD
     FROM BRIEFF, FOLDER, CORRES
     WHERE ( BRIEFF.BFKEY = FOLDER.TICKNUM ) and
       ( BRIEFF.BFCORKEY = CORRES.STAFKEY ) and
       ( ( bfcurloc in ('81', '83') ) AND
       ( bfmpro = 'ACT' ) AND
       ( bfd19 is not null ) AND
-      ( mail_cnt_loc81(bfkey) = 0 ) AND
-      ( diary_cnt_hold(bfkey) = 0 ) AND
+      ( #{FUNCTION_OWNER}.mail_cnt_loc81(bfkey) = 0 ) AND
+      ( #{FUNCTION_OWNER}.diary_cnt_hold(bfkey) = 0 ) AND
       ( bfbox is null ) )
   "
 
@@ -93,8 +95,8 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
       from (
         select case when BFAC = '7' or aod_cnt(bfkey) > 0 then 1 else 0 end as PRIORITY,
           case when BFCURLOC in ('81', '83') and
-            mail_cnt_loc81(bfkey) = 0 and
-            diary_cnt_hold(bfkey) = 0
+            #{FUNCTION_OWNER}.mail_cnt_loc81(bfkey) = 0 and
+            #{FUNCTION_OWNER}.diary_cnt_hold(bfkey) = 0
           then 1 else 0 end as READY
         from BRIEFF
         where BFMPRO <> 'HIS' and BFD19 is not null
