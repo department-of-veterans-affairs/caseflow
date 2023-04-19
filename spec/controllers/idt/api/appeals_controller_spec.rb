@@ -726,23 +726,47 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     end
   end
 
-  # describe "POST /idt/api/v1/services/address_validation/v1/validate", :postgres do
-  #   let(:user) { create(:user) }
+  describe "POST /idt/api/v1/services/address_validation/v1/validate", :postgres do
+    let(:user) { create(:user) }
+    let(:params) do
+      {
+        "requestAddress": {
+          "address_line_1": "string",
+          "address_line_2": "string",
+          "address_line_3": "string",
+          "city": "string",
+          "zip_code_5": "string",
+          "zip_code_4": "string",
+          "international_postal_code": "string",
+          "state_province": {
+            "name": "string",
+            "code": "string"
+          },
+          "request_country": {
+            "country_name": "string",
+            "country_code": "string"
+          },
+          "address_POU": "RESIDENCE/CHOICE"
+        }
+      }
+    end
 
-  #   context "create address and response" do
-  #   let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
-  #   let(:mock_va_dot_gov_address) {nil}
 
-  #     context "VADotGovService is responsive" do
-  #       before do
-  #         valid_address_response = ExternalApi::VADotGovService::AddressValidationResponse.new(mock_response)
-  #         allow(valid_address_response).to recieve(:data).and_return(mock_va_dot_gov_address)
-  #         allow(VADotGovService).to recieve(:validate_address).and_return(valid_address_response)
-  #       end
+    subject { post :validate, params: params }
 
-  #       context "the service returns the entire response body including message code"
+    context "VADotGovService is responsive" do
+      let(:response) { Fakes::VADotGovService.fake_address_data }
+      let(:status) { 200 }
+      it "should send back a valid address" do
+        subject
+        # byebug
+        expect(status).to eq(200)
+      end
+    end
 
-  #     end
-  #   end
-  # end
+    # context "the service returns the entire response body including message code" do
+
+    # end
+  end
+
 end
