@@ -19,17 +19,17 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
       BRIEFF.BFCURLOC, BRIEFF.BFAC, BRIEFF.BFD19,
       BRIEFF.BFDLOOUT, BRIEFF.BFORGTIC, BRIEFF.BFHINES,
       FOLDER.TINUM, CORRES.SNAMEL,CORRES.SNAMEF,
-      vacols_dev.prev_vlj(titrnum, tinum) VLJ_HEARINGS,
-      vacols_dev.hearing_date(bfcorlid, tinum),
-      vacols_dev.aod_cnt(bfkey) as AOD
+      prev_vlj(titrnum, tinum) VLJ_HEARINGS,
+      hearing_date(bfcorlid, tinum),
+      aod_cnt(bfkey) as AOD
     FROM BRIEFF, FOLDER, CORRES
     WHERE ( BRIEFF.BFKEY = FOLDER.TICKNUM ) and
       ( BRIEFF.BFCORKEY = CORRES.STAFKEY ) and
       ( ( bfcurloc in ('81', '83') ) AND
       ( bfmpro = 'ACT' ) AND
       ( bfd19 is not null ) AND
-      ( vacols_dev.mail_cnt_loc81(bfkey) = 0 ) AND
-      ( vacols_dev.diary_cnt_hold(bfkey) = 0 ) AND
+      ( mail_cnt_loc81(bfkey) = 0 ) AND
+      ( diary_cnt_hold(bfkey) = 0 ) AND
       ( bfbox is null ) )
   "
 
@@ -91,10 +91,10 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
     query = <<-SQL
       select count(*) N, PRIORITY, READY
       from (
-        select case when BFAC = '7' or vacols_dev.aod_cnt(bfkey) > 0 then 1 else 0 end as PRIORITY,
+        select case when BFAC = '7' or aod_cnt(bfkey) > 0 then 1 else 0 end as PRIORITY,
           case when BFCURLOC in ('81', '83') and
-            vacols_dev.mail_cnt_loc81(bfkey) = 0 and
-            vacols_dev.diary_cnt_hold(bfkey) = 0
+            mail_cnt_loc81(bfkey) = 0 and
+            diary_cnt_hold(bfkey) = 0
           then 1 else 0 end as READY
         from BRIEFF
         where BFMPRO <> 'HIS' and BFD19 is not null
@@ -104,7 +104,6 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
 
     connection.exec_query(query).to_hash
   end
-  # rubocop:enable Metrics/MethodLength
 
   def self.genpop_priority_count
     query = <<-SQL
