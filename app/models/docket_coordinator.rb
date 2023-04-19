@@ -134,8 +134,6 @@ class DocketCoordinator
     case_docket.priority_hearing_cases_for_judge_count(judge)
   end
 
-  private
-
   def vacols_case_docket
     if FeatureToggle.enabled?(:acd_enable_case_docket_v2, user: RequestStore.store[:current_user])
       VACOLS::CaseDocketV2
@@ -143,6 +141,8 @@ class DocketCoordinator
       VACOLS::CaseDocket
     end
   end
+
+  private
 
   def docket_margin_net_of_priority
     [total_batch_size - priority_count, 0].max
