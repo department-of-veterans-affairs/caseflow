@@ -482,17 +482,17 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
         BRIEFF.BFD19, BRIEFF.BFORGTIC, BRIEFF.BFHINES,
             FOLDER.TINUM,
             CORRES.SNAMEL,CORRES.SNAMEF,
-            vacols_dev.prev_vlj(bfcorlid, tinum),
-            vacols_dev.hearing_date(bfcorlid, tinum),
-            vacols_dev.aod_cnt(bfkey)
+            prev_vlj(bfcorlid, tinum),
+            hearing_date(bfcorlid, tinum),
+            aod_cnt(bfkey)
         FROM BRIEFF, FOLDER, CORRES
         WHERE ( BRIEFF.BFKEY = FOLDER.TICKNUM ) and
             ( BRIEFF.BFCORKEY = CORRES.STAFKEY ) and
             ( ( bfcurloc in ('81', '83') ) AND
             ( bfmpro = 'ACT' ) AND
             ( bfd19 is not null ) AND
-            ( vacols_dev.mail_cnt_loc81(bfkey) = 0 ) AND
-            ( vacols_dev.diary_cnt_hold(bfkey) = 0 ) AND
+            ( mail_cnt_loc81(bfkey) = 0 ) AND
+            ( diary_cnt_hold(bfkey) = 0 ) AND
             ( bfbox is null ) )
     SQL
 
