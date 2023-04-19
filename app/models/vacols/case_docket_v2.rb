@@ -62,19 +62,22 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
   "
 
   SELECT_READY_APPEALS = "
-    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
-    from BRIEFF
-    #{VACOLS::Case::JOIN_AOD}
-    #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
-    #{JOIN_DIARY_BLOCKS_DISTRIBUTION}
-    inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
-    where BRIEFF.BFMPRO = 'ACT'
-      and BRIEFF.BFCURLOC in ('81', '83')
-      and BRIEFF.BFBOX is null
-      and BRIEFF.BFAC is not null
-      and BRIEFF.BFD19 is not null
-      and MAIL_BLOCKS_DISTRIBUTION = 0
-      and DIARY_BLOCKS_DISTRIBUTION = 0
+    SELECT BRIEFF.BFKEY, BRIEFF.BFCORLID, BRIEFF.BFMPRO,
+      BRIEFF.BFCURLOC, BRIEFF.BFAC,BRIEFF.BFD19,
+      BRIEFF.BFORGTIC, BRIEFF.BFHINES, FOLDER.TINUM,
+      CORRES.SNAMEL,CORRES.SNAMEF,
+      vacols_dev.prev_vlj(bfcorlid, tinum),
+      vacols_dev.hearing_date(bfcorlid, tinum),
+      vacols_dev.aod_cnt(bfkey) as AOD
+    FROM BRIEFF, FOLDER, CORRES
+    WHERE ( BRIEFF.BFKEY = FOLDER.TICKNUM ) and
+      ( BRIEFF.BFCORKEY = CORRES.STAFKEY ) and
+      ( ( bfcurloc in ('81', '83') ) AND
+      ( bfmpro = 'ACT' ) AND
+      ( bfd19 is not null ) AND
+      ( vacols_dev.mail_cnt_loc81(bfkey) = 0 ) AND
+      ( vacols_dev.diary_cnt_hold(bfkey) = 0 ) AND
+      ( bfbox is null ) )
   "
 
   # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
@@ -99,9 +102,8 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
           case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
         from (
           #{SELECT_READY_APPEALS}
-            and (BFAC = '7' or AOD = '1')
           order by BFDLOOUT
-        ) BRIEFF
+        ) where (BFAC = '7' or AOD = '1') BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
       )
     "
@@ -471,5 +473,29 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
 
   def self.use_by_docket_date?
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+  end
+
+  def self.test_vacols_functions
+    test_query = <<-SQL
+    SELECT BRIEFF.BFKEY,
+            BRIEFF.BFCORLID, BRIEFF.BFMPRO, BRIEFF.BFCURLOC, BRIEFF.BFAC,
+        BRIEFF.BFD19, BRIEFF.BFORGTIC, BRIEFF.BFHINES,
+            FOLDER.TINUM,
+            CORRES.SNAMEL,CORRES.SNAMEF,
+            vacols_dev.prev_vlj(bfcorlid, tinum),
+            vacols_dev.hearing_date(bfcorlid, tinum),
+            vacols_dev.aod_cnt(bfkey)
+        FROM BRIEFF, FOLDER, CORRES
+        WHERE ( BRIEFF.BFKEY = FOLDER.TICKNUM ) and
+            ( BRIEFF.BFCORKEY = CORRES.STAFKEY ) and
+            ( ( bfcurloc in ('81', '83') ) AND
+            ( bfmpro = 'ACT' ) AND
+            ( bfd19 is not null ) AND
+            ( vacols_dev.mail_cnt_loc81(bfkey) = 0 ) AND
+            ( vacols_dev.diary_cnt_hold(bfkey) = 0 ) AND
+            ( bfbox is null ) )
+    SQL
+
+    connection.select_all(test_query).to_a
   end
 end
