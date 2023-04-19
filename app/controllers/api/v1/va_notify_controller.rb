@@ -40,6 +40,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
     # update notification if it exists
     if notif
       notif.update!(email_notification_status: params["status"])
+      render json: { message: "Email notification successfully updated: ID " + params["id"] }
     # log external id if notification doesn't exist
     else
       log_error(params["type"])
@@ -57,6 +58,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
     # update notification if it exists
     if notif
       notif.update!(sms_notification_status: params["status"])
+      render json: { message: "SMS notification successfully updated: ID " + params["id"] }
     # log external id if notification doesn't exist
     else
       log_error(params["type"])
