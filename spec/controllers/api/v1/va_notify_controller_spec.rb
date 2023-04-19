@@ -134,7 +134,7 @@ describe Api::V1::VaNotifyController, type: :controller do
     it "updates status of notification" do
       request.headers["Authorization"] = "Bearer #{api_key}"
       post :notifications_update, params: payload_fake
-      expect(Rails.logger).to receive(:error)
+      expect(response.status).to eq(500)
     end
   end
 end
