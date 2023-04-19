@@ -80,21 +80,6 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
       ( bfbox is null ) )
   "
 
-  # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
-
-  JOIN_ASSOCIATED_VLJS_BY_HEARINGS = "
-    left join (
-      select distinct TITRNUM, TINUM,
-        first_value(BOARD_MEMBER) over (partition by TITRNUM, TINUM order by HEARING_DATE desc) VLJ
-      from HEARSCHED
-      inner join FOLDER on FOLDER.TICKNUM = HEARSCHED.FOLDER_NR
-      where HEARING_TYPE in ('C', 'T', 'V', 'R') and HEARING_DISP = 'H'
-    ) VLJ_HEARINGS
-      on VLJ_HEARINGS.VLJ not in ('000', '888', '999')
-        and VLJ_HEARINGS.TITRNUM = BRIEFF.TITRNUM
-        and (VLJ_HEARINGS.TINUM is null or VLJ_HEARINGS.TINUM = BRIEFF.TINUM)
-  "
-
   SELECT_PRIORITY_APPEALS = "
     select BFKEY, BFDLOOUT, VLJ
       from (
@@ -129,10 +114,9 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
         case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS end VLJ
       from (
         #{SELECT_READY_APPEALS}
-          and BFAC <> '7' and AOD = '0'
         order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
-      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      where BFAC <> '7' and AOD = '0'
     )
   "
 
@@ -143,10 +127,9 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
         case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS end VLJ
       from (
         #{SELECT_READY_APPEALS}
-          and BFAC <> '7' and AOD = '0'
         order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
       ) BRIEFF
-      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      where BFAC <> '7' and AOD = '0'
       order by BFD19
     )
   "
@@ -156,25 +139,12 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
     query = <<-SQL
       select count(*) N, PRIORITY, READY
       from (
-        select case when BFAC = '7' or nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0) > 0 then 1 else 0 end as PRIORITY,
-          case when BFCURLOC in ('81', '83') and MAIL_BLOCKS_DISTRIBUTION = 0 and DIARY_BLOCKS_DISTRIBUTION = 0
-            then 1 else 0 end as READY
+        select case when BFAC = '7' or vacols_dev.aod_cnt(bfkey) > 0 then 1 else 0 end as PRIORITY,
+          case when BFCURLOC in ('81', '83') and
+            vacols_dev.mail_cnt_loc81(bfkey) = 0 and
+            vacols_dev.diary_cnt_hold(bfkey) = 0
+          then 1 else 0 end as READY
         from BRIEFF
-        #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
-        #{JOIN_DIARY_BLOCKS_DISTRIBUTION}
-        left join (
-          select TSKTKNM, count(*) CNT
-          from ASSIGN
-          where TSKACTCD in ('B', 'B1', 'B2')
-          group by TSKTKNM
-        ) AOD_DIARIES on AOD_DIARIES.TSKTKNM = BFKEY
-        left join (
-          select FOLDER_NR, count(*) CNT
-          from HEARSCHED
-          where HEARING_TYPE IN ('C', 'T', 'V', 'R')
-            AND AOD IN ('G', 'Y')
-          group by FOLDER_NR
-        ) AOD_HEARINGS on AOD_HEARINGS.FOLDER_NR = BFKEY
         where BFMPRO <> 'HIS' and BFD19 is not null
       )
       group by PRIORITY, READY
@@ -193,9 +163,27 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
     connection.exec_query(query).to_hash.count
   end
 
+  def self.genpop_nonpriority_count
+    query = <<-SQL
+      #{SELECT_NONPRIORITY_APPEALS}
+      where VLJ is null
+    SQL
+
+    connection.exec_query(query).to_hash.count
+  end
+
   def self.not_genpop_priority_count
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
+      where VLJ is not null
+    SQL
+
+    connection.exec_query(query).to_hash.count
+  end
+
+  def self.not_genpop_nonpriority_count
+    query = <<-SQL
+      #{SELECT_NONPRIORITY_APPEALS}
       where VLJ is not null
     SQL
 
