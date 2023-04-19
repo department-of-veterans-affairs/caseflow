@@ -1,6 +1,18 @@
 # frozen_string_literal: true
 
 class Api::V1::VaNotifyController < Api::ApplicationController
+  # Purpose: Log error in Rails logger and gives 500 error
+  #
+  # Params:  Notification type string, either "email" or "SMS"
+  #
+  # Response: json error message with uuid and 500 error
+  def log_error(type)
+    uuid = SecureRandom.uuid
+    error_msg = "An " + type + "notification with id " + params["id"] + " could not be found. " + "Error ID: " + uuid
+    Rails.logger.error(error_msg)
+    render json: { message: error_msg }, status: :internal_server_error
+  end
+
   # Purpose: POST request to VA Notify API to update status for a Notification entry
   #
   # Params: Params content can be found at https://vajira.max.gov/browse/APPEALS-21021
@@ -27,10 +39,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
       notif.update!(email_notification_status: params["status"])
     # log external id if notification doesn't exist
     else
-      uuid = SecureRandom.uuid
-      error_msg = "An email notification with id " + params["id"] + " could not be found. " + "Error ID: " + uuid
-      Rails.logger.error(error_msg)
-      render json: { message: error_msg}, status: :internal_server_error
+      log_error(params["type"])
     end
   end
 
@@ -47,10 +56,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
       notif.update!(sms_notification_status: params["status"])
     # log external id if notification doesn't exist
     else
-      uuid = SecureRandom.uuid
-      error_msg = "An SMS notification with id " + params["id"] + " could not be found. " + "Error ID: " + uuid
-      Rails.logger.error(error_msg)
-      render json: { message: error_msg}, status: :internal_server_error
+      log_error(params["type"])
     end
   end
 end
