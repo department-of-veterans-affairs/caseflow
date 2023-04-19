@@ -14,53 +14,6 @@ class VACOLS::CaseDocketV2 < VACOLS::Record
     for update
   "
 
-  # Distribution should be blocked by pending mail, with the exception of:
-  #
-  # 02 - Congressional interest
-  # 05 - Evidence or argument (because the attorney will pick this up)
-  # 08 - Motion to advance on the docket
-  # 13 - Status inquiry
-
-  JOIN_MAIL_BLOCKS_DISTRIBUTION = "
-    left join (
-      select BRIEFF.BFKEY MAILKEY,
-        (case when nvl(MAIL.CNT, 0) > 0 then 1 else 0 end) MAIL_BLOCKS_DISTRIBUTION
-      from BRIEFF
-
-      left join (
-        select MLFOLDER, count(*) CNT
-        from MAIL
-        where MLCOMPDATE is null and MLTYPE not in ('02', '05', '08', '13')
-        group by MLFOLDER
-      ) MAIL
-      on MAIL.MLFOLDER = BRIEFF.BFKEY
-    )
-    on MAILKEY = BFKEY
-  "
-
-  # Distribution should be blocked by a pending diary of one of the following types:
-  #
-  # EXT - Extension request
-  # HCL - Hearing clarification
-  # POA - Power of attorney clarification
-
-  JOIN_DIARY_BLOCKS_DISTRIBUTION = "
-    left join (
-      select BRIEFF.BFKEY DIARYKEY,
-        (case when nvl(DIARIES.CNT, 0) > 0 then 1 else 0 end) DIARY_BLOCKS_DISTRIBUTION
-      from BRIEFF
-
-      left join (
-        select TSKTKNM, count(*) CNT
-        from ASSIGN
-        where TSKDCLS is null and TSKACTCD in ('EXT', 'HCL', 'POA')
-        group by TSKTKNM
-      ) DIARIES
-      on DIARIES.TSKTKNM = BRIEFF.BFKEY
-    )
-    on DIARYKEY = BFKEY
-  "
-
   SELECT_READY_APPEALS = "
     SELECT BRIEFF.BFKEY, BRIEFF.BFCORLID, BRIEFF.BFMPRO,
       BRIEFF.BFCURLOC, BRIEFF.BFAC, BRIEFF.BFD19,
