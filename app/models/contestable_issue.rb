@@ -115,11 +115,11 @@ class ContestableIssue
   end
 
   def mst_available? 
-    contested_by_request_issue&.contention.special_issues[:code].upcase == 'MST' ? true : false
+    contested_by_request_issue&.contention&.special_issues[:code].upcase == 'MST' ? true : false
   end
 
   def pact_available?
-    contested_by_request_issue&.contention.special_issues[:code].upcase == 'PACT' ? true : false
+    contested_by_request_issue&.contention&.special_issues[:code].upcase == 'PACT' ? true : false
   end 
 
   private
