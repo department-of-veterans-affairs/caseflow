@@ -32,33 +32,37 @@ describe Api::V1::VaNotifyController, type: :controller do
       sms_notification_status: "Preferences Declined"
     )
   end
-
+  let(:default_payload) do
+    {
+      id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      body: "string",
+      completed_at: "2023-04-17T12:38:48.699Z",
+      created_at: "2023-04-17T12:38:48.699Z",
+      created_by_name: "string",
+      email_address: "user@example.com",
+      line_1: "string",
+      line_2: "string",
+      line_3: "string",
+      line_4: "string",
+      line_5: "string",
+      line_6: "string",
+      phone_number: "+16502532222",
+      postage: "string",
+      postcode: "string",
+      reference: "string",
+      scheduled_for: "2023-04-17T12:38:48.699Z",
+      sent_at: "2023-04-17T12:38:48.699Z",
+      sent_by: "string",
+      status: "created",
+      subject: "string",
+      type: ""
+    }
+  end
   context "email notification status is changed" do
     let(:payload_email) do
-      {
-        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        body: "string",
-        completed_at: "2023-04-17T12:38:48.699Z",
-        created_at: "2023-04-17T12:38:48.699Z",
-        created_by_name: "string",
-        email_address: "user@example.com",
-        line_1: "string",
-        line_2: "string",
-        line_3: "string",
-        line_4: "string",
-        line_5: "string",
-        line_6: "string",
-        phone_number: "+16502532222",
-        postage: "string",
-        postcode: "string",
-        reference: "string",
-        scheduled_for: "2023-04-17T12:38:48.699Z",
-        sent_at: "2023-04-17T12:38:48.699Z",
-        sent_by: "string",
-        status: "created",
-        subject: "string",
-        type: "email"
-      }
+      default_payload.deep_dup.tap do |payload|
+        payload[:type] = "email"
+      end
     end
     it "updates status of notification" do
       request.headers["Authorization"] = "Bearer #{api_key}"
@@ -70,41 +74,9 @@ describe Api::V1::VaNotifyController, type: :controller do
 
   context "sms notification status is changed" do
     let(:payload_sms) do
-      {
-        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        "body": "string",
-        "completed_at": "2023-04-17T12:38:48.699Z",
-        "created_at": "2023-04-17T12:38:48.699Z",
-        "created_by_name": "string",
-        "email_address": "user@example.com",
-        "line_1": "string",
-        "line_2": "string",
-        "line_3": "string",
-        "line_4": "string",
-        "line_5": "string",
-        "line_6": "string",
-        "phone_number": "+16502532222",
-        "postage": "string",
-        "postcode": "string",
-        "recipient_identifiers": [
-          {
-            "id_type": "VAPROFILEID",
-            "id_value": "string"
-          }
-        ],
-        "reference": "string",
-        "scheduled_for": "2023-04-17T12:38:48.699Z",
-        "sent_at": "2023-04-17T12:38:48.699Z",
-        "sent_by": "string",
-        "status": "created",
-        "subject": "string",
-        "template": {
-          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "uri": "string",
-          "version": 0
-        },
-        "type": "sms"
-      }
+      default_payload.deep_dup.tap do |payload|
+        payload[:type] = "sms"
+      end
     end
     it "updates status of notification" do
       request.headers["Authorization"] = "Bearer #{api_key}"
