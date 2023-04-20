@@ -29,11 +29,13 @@ import {
 } from '../uiReducer/uiActions';
 
 import { css } from 'glamor';
+import { taskActionData } from '../utils';
 
 const labelTextStyling = css({
   marginBottom: 0
 });
 
+/* eslint-disable camelcase */
 class StartHoldModal extends React.Component {
   constructor(props) {
     super(props);
@@ -94,6 +96,7 @@ class StartHoldModal extends React.Component {
 
   render = () => {
     const { highlightFormItems } = this.props;
+    const taskData = taskActionData(this.props);
 
     const invalidDate = this.state.customHold > 30;
 
@@ -118,7 +121,7 @@ class StartHoldModal extends React.Component {
     return <QueueFlowModal
       title={TASK_ACTIONS.PLACE_TIMED_HOLD.label}
       button={COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON}
-      pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
+      pathAfterSubmit={taskData?.redirect_after ?? `/queue/appeals/${this.props.appealId}`}
       submitDisabled={this.isVHAHold() && !this.validateForm()}
       validateForm={this.validateForm}
       submitButtonClassNames={['usa-button']}
