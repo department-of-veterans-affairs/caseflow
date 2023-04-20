@@ -283,4 +283,13 @@ describe Hearing, :postgres do
       expect(hearing.hearing_day_regional_office).to eq(nil)
     end
   end
+
+  context "aod?" do
+    let(:unrecognized_appellant) { create(:claimant, type: "OtherClaimant") }
+    let(:appeal) { create(:appeal, claimants: [unrecognized_appellant]) }
+    let!(:hearing) { create(:hearing, appeal: appeal) }
+    it "returns nil if the appeals claimant is an unrecognized claimant" do
+      expect(hearing.aod?).to eq(false)
+    end
+  end
 end
