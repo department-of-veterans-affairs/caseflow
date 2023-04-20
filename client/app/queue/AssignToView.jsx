@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import COPY from '../../COPY';
-import VHA_VAMCS from '../../constants/VHA_VAMCS.json';
+import VHA_VAMCS from '../../constants/VHA_VAMCS';
 
 import { taskById, appealWithDetailSelector } from './selectors';
 
@@ -82,7 +82,6 @@ class AssignToView extends React.Component {
     const actionData = taskActionData(this.props);
     const taskType = actionData.type || 'Task';
 
-
     const payload = {
       data: {
         tasks: [
@@ -124,7 +123,7 @@ class AssignToView extends React.Component {
     let assignee = 'person';
 
     if (this.isVHAAssignToRegional()) {
-      return this.getVisn().label
+      return this.getVisn().label;
     }
 
     taskActionData(this.props).options.forEach((opt) => {
@@ -169,23 +168,24 @@ class AssignToView extends React.Component {
 
   isVHAAssignToRegional = () => {
     const actionData = taskActionData(this.props);
+
     return actionData.modal_title === COPY.VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE;
   };
 
   determineOptions = (actionData) => {
     if (this.isVHAAssignToRegional()) {
-      return actionData.options[this.state.assignToVHARegionalOfficeSelection]
+      return actionData.options[this.state.assignToVHARegionalOfficeSelection];
     }
 
-    return actionData.options
+    return actionData.options;
   };
 
   determineDropDownLabel = (actionData) => {
     if (this.isVHAAssignToRegional()) {
-      return actionData.drop_down_label[this.state.assignToVHARegionalOfficeSelection]
+      return actionData.drop_down_label[this.state.assignToVHARegionalOfficeSelection];
     }
 
-    return actionData.drop_down_label
+    return actionData.drop_down_label;
   };
 
   determineTitle = (props, action, isPulacCerullo, actionData) => {
@@ -220,26 +220,26 @@ class AssignToView extends React.Component {
     const actionData = taskActionData(this.props);
 
     if (this.state.assignToVHARegionalOfficeSelection === 'visn') {
-      return actionData.options.visn.find(element=> element.value === this.state.selectedValue)
-    };
+      return actionData.options.visn.find((element) => element.value === this.state.selectedValue);
+    }
 
-    const vamc_name = actionData.options.vamc[this.state.selectedValue].label
-    const visn_name = VHA_VAMCS.find(element => element.name === vamc_name).visn
+    const VamcName = actionData.options.vamc[this.state.selectedValue].label;
+    const VisnName = VHA_VAMCS.find((element) => element.name === VamcName).visn;
 
-    const visn_option = actionData.options.visn.find(element=> element.label.includes(visn_name))
+    const VisnOption = actionData.options.visn.find((element) => element.label.includes(VisnName));
 
-    return visn_option
+    return VisnOption;
   }
 
   assignToVHARegionalOfficeRadioOptions = [
     { displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VAMC,
-    value: 'vamc' },
-  { displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VISN,
-    value: 'visn' }
+      value: 'vamc' },
+    { displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VISN,
+      value: 'visn' }
   ]
 
   assignToVHARegionalOfficeRadioChanged = (option) => {
-    this.setState({ selectedValue: null, assignToVHARegionalOfficeSelection: option});
+    this.setState({ selectedValue: null, assignToVHARegionalOfficeSelection: option });
   }
 
   shouldDropDownShow = () => {
@@ -293,34 +293,34 @@ class AssignToView extends React.Component {
         {!assigneeAlreadySelected && (
           <React.Fragment>
             {this.isVHAAssignToRegional() && (
-                <RadioField
-                          name={COPY.VHA_ASSIGN_TO_REGIONAL_OFFICE_RADIO_LABEL}
-                          options={this.assignToVHARegionalOfficeRadioOptions}
-                          value={this.state.assignToVHARegionalOfficeSelection}
-                          onChange={(option) => this.assignToVHARegionalOfficeRadioChanged(option)}
-                          vertical
-                />
+              <RadioField
+                name={COPY.VHA_ASSIGN_TO_REGIONAL_OFFICE_RADIO_LABEL}
+                options={this.assignToVHARegionalOfficeRadioOptions}
+                value={this.state.assignToVHARegionalOfficeSelection}
+                onChange={(option) => this.assignToVHARegionalOfficeRadioChanged(option)}
+                vertical
+              />
             )}
             {this.shouldDropDownShow() && (
               <SearchableDropdown
-              name="Assign to selector"
-              searchable
-              hideLabel={actionData.drop_down_label ? null : true}
-              label={this.determineDropDownLabel(actionData)}
-              errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
-              placeholder={this.determinePlaceholder(this.props, actionData)}
-              value={this.state.selectedValue}
-              onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
-              options={this.determineOptions(actionData)}
-            />
+                name="Assign to selector"
+                searchable
+                hideLabel={actionData.drop_down_label ? null : true}
+                label={this.determineDropDownLabel(actionData)}
+                errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
+                placeholder={this.determinePlaceholder(this.props, actionData)}
+                value={this.state.selectedValue}
+                onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
+                options={this.determineOptions(actionData)}
+              />
             )}
             {this.isVHAAssignToRegional() &&
             this.state.assignToVHARegionalOfficeSelection === 'vamc' &&
             this.state.selectedValue !== null && (
-                  <div className="assign-vamc-visn-display">
-                    <u>VISN</u>
-                    <div>{ this.getVisn().label }</div>
-                  </div>
+              <div className="assign-vamc-visn-display">
+                <u>VISN</u>
+                <div>{ this.getVisn().label }</div>
+              </div>
             )}
             <br />
           </React.Fragment>
