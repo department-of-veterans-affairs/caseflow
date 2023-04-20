@@ -293,7 +293,7 @@ class AssignToView extends React.Component {
                           vertical
                 />
             )}
-            {(this.isVHAAssignToRegional() && this.state.assignToVHARegionalOfficeSelection !== null && (
+            {this.isVHAAssignToRegional() && this.state.assignToVHARegionalOfficeSelection !== null && (
               <SearchableDropdown
               name="Assign to selector"
               searchable
@@ -305,7 +305,7 @@ class AssignToView extends React.Component {
               onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
               options={this.determineOptions(actionData)}
             />
-            ))}
+            )}
             {this.isVHAAssignToRegional() &&
             this.state.assignToVHARegionalOfficeSelection === 'vamc' &&
             this.state.selectedValue !== null && (
