@@ -4,7 +4,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
-  skip_before_action :verify_authenticity_token, only: [:outcode]
+  skip_before_action :verify_authenticity_token, only: [:outcode, :validate]
 
   rescue_from BGS::AccountLocked do |_e|
     account_locked_error_msg = "Your account is locked. " \
@@ -30,6 +30,19 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     return render json: { message: "Success!" } if result.success?
 
     render json: { message: result.errors[0] }, status: :bad_request
+  end
+
+  def validate
+    body = params.require(:requestAddress).permit!.to_h
+    address = OpenStruct.new(body)
+    response = VADotGovService.validate_address(address)
+    response.response.raw_body = JSON.parse(response.response.raw_body)
+    case status
+    when 401, 403, 429
+      fail Caseflow::Error::LighthouseApiError
+    else
+      render json: response
+    end
   end
 
   private
@@ -86,4 +99,5 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   def json_appeals(appeals)
     ::Idt::V1::AppealSerializer.new(appeals, is_collection: true)
   end
+
 end

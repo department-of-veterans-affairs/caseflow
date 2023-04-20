@@ -725,4 +725,46 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
     end
   end
+
+  describe "POST /idt/api/v1/services/address_validation/v1/validate", :postgres do
+    let(:user) { create(:user) }
+    let(:params) do
+      {
+        "requestAddress": {
+          "address_line_1": "string",
+          "address_line_2": "string",
+          "address_line_3": "string",
+          "city": "string",
+          "zip_code_5": "string",
+          "zip_code_4": "string",
+          "international_postal_code": "string",
+          "state_province": {
+            "name": "string",
+            "code": "string"
+          },
+          "request_country": {
+            "country_name": "string",
+            "country_code": "string"
+          },
+          "address_POU": "RESIDENCE/CHOICE"
+        }
+      }
+    end
+
+    context "VADotGovService is responsive" do
+      let(:user) { create(:user) }
+      before do
+        BvaDispatch.singleton.add_user(user)
+        key, t = Idt::Token.generate_one_time_key_and_proposed_token
+        Idt::Token.activate_proposed_token(key, user.css_id)
+        request.headers["TOKEN"] = t
+      end
+      it "should send back a valid address" do
+        allow(controller).to receive(:verify_access).and_return(true)
+        post :validate, params: params
+        expect(response.status).to eq(200)
+        expect(OpenStruct.new(OpenStruct.new(JSON.parse(response.body)).response).raw_body.to_json).to eq(Fakes::VADotGovService.fake_address_data.to_json)
+      end
+    end
+  end
 end
