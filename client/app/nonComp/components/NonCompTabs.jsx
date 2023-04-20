@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -6,25 +6,12 @@ import TabWindow from '../../components/TabWindow';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import COPY from '../../../COPY';
 import TaskTableTab from './TaskTableTab';
-
-// TODO: Move this hook to a new file and renamed it useLocalStorageFilter or something
-const useLocalStorage = (key, defaultValue) => {
-  const [value, setValue] = useState(() => {
-    const storedValue = localStorage.getItem(key);
-
-    return storedValue === null || storedValue === 'null' || storedValue === '' ? defaultValue : [storedValue];
-  });
-
-  useEffect(() => {
-    localStorage.setItem(key, value);
-  }, [key, value]);
-
-  return [value, setValue];
-};
+import useLocalFilterStorage from '../hooks/useLocalFilterStorage';
 
 const NonCompTabsUnconnected = (props) => {
-  const [localFilter, setFilter] = useLocalStorage('nonCompFilter', []);
+  const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
 
+  // A callback function to send down to QueueTable to add filters to local storage when the get parameters are updated
   const onHistoryUpdate = (urlString) => {
     const url = new URL(urlString);
     const params = new URLSearchParams(url.search);
