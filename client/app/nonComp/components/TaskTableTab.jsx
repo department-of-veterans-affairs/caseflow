@@ -54,6 +54,9 @@ class TaskTableTabUnconnected extends React.PureComponent {
     this.setState({ searchText: '', searchValue: '' });
   };
 
+  // TODO: Move this to the index file.
+  // This one is actually very generic and should work for any filter where the values match up
+  // With the database field values
   parseIssueTypeFilterOptions = (issueTypeCounts) =>
     Object.entries(issueTypeCounts).map(([key, issueTypeCount]) => {
       let taskInfo;
@@ -92,6 +95,8 @@ class TaskTableTabUnconnected extends React.PureComponent {
   render = () => {
     this.props.tabPaginationOptions[QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM] = this.state.searchValue;
 
+    console.log(this.props);
+
     return <React.Fragment>
       {this.props.description && <div className="cf-noncomp-queue-completed-task">{this.props.description}</div>}
       <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
@@ -112,6 +117,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
         <TaskTableUnconnected
           {...this.state.predefinedColumns}
           getKeyForRow={(row, object) => object.id}
+          onHistoryUpdate={this.props.onHistoryUpdate}
           customColumns={this.getTableColumns()}
           tasks={[]}
           taskPagesApiEndpoint={this.props.baseTasksUrl}
@@ -140,12 +146,13 @@ TaskTableTabUnconnected.propTypes = {
   }),
   filterableTaskTypes: PropTypes.object,
   filterableTaskIssueTypes: PropTypes.object,
+  onHistoryUpdate: PropTypes.func,
 };
 
 const TaskTableTab = connect(
   (state) => ({
     featureToggles: state.featureToggles
-  })
+  }),
 )(TaskTableTabUnconnected);
 
 export default TaskTableTab;

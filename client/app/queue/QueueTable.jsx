@@ -459,6 +459,9 @@ export default class QueueTable extends React.PureComponent {
   updateAddressBar = () => {
     if (this.props.useTaskPagesApi) {
       history.pushState('', '', this.deepLink());
+      if (this.props.onHistoryUpdate) {
+        this.props.onHistoryUpdate(this.deepLink());
+      }
     }
   };
 
@@ -748,7 +751,8 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
     [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string),
     [QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]: PropTypes.string,
     onPageLoaded: PropTypes.func
-  })
+  }),
+  onHistoryUpdate: PropTypes.func,
 };
 
 /* eslint-enable max-lines */
