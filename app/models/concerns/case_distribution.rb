@@ -11,7 +11,6 @@ module CaseDistribution
            :total_batch_size,
            :legacy_hearing_priority_count,
            :legacy_hearing_nonpriority_count,
-           :vacols_case_docket,
            to: :docket_coordinator
 
   private

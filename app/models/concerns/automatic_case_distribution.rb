@@ -93,7 +93,7 @@ module AutomaticCaseDistribution
       total_batch_size: total_batch_size,
       priority_count: priority_count,
       direct_review_due_count: direct_review_due_count,
-      legacy_hearing_backlog_count: vacols_case_docket.nonpriority_hearing_cases_for_judge_count(judge),
+      legacy_hearing_backlog_count: VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge),
       legacy_proportion: docket_proportions[:legacy],
       direct_review_proportion: docket_proportions[:direct_review],
       evidence_submission_proportion: docket_proportions[:evidence_submission],

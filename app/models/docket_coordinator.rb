@@ -127,19 +127,11 @@ class DocketCoordinator
   end
 
   def legacy_hearing_nonpriority_count(judge)
-    vacols_case_docket.nonpriority_hearing_cases_for_judge_count(judge)
+    VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge)
   end
 
   def legacy_hearing_priority_count(judge)
-    vacols_case_docket.priority_hearing_cases_for_judge_count(judge)
-  end
-
-  def vacols_case_docket
-    if FeatureToggle.enabled?(:acd_enable_vacols_case_docket_v2, user: RequestStore.store[:current_user])
-      VACOLS::CaseDocketV2
-    else
-      VACOLS::CaseDocket
-    end
+    VACOLS::CaseDocket.priority_hearing_cases_for_judge_count(judge)
   end
 
   private
