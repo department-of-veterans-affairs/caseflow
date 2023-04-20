@@ -26,6 +26,7 @@ Rails.application.routes.draw do
       resources :appeals, only: :index
       resources :jobs, only: :create
       post 'mpi', to: 'mpi#veteran_updates'
+      post 'va_notify_update', to: 'va_notify#notifications_update'
     end
     namespace :v2 do
       resources :appeals, only: :index
