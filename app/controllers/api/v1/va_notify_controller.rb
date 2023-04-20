@@ -37,14 +37,12 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   def email_update
     # find notification through external id
     notif = Notification.find_by(email_notification_external_id: params["id"])
-    # update notification if it exists
-    if notif
-      notif.update!(email_notification_status: params["status"])
-      render json: { message: "Email notification successfully updated: ID " + params["id"] }
     # log external id if notification doesn't exist
-    else
-      log_error(params["type"])
-    end
+    return log_error(params["type"]) unless notif
+
+    # update notification if it exists
+    notif.update!(email_notification_status: params["status"])
+    render json: { message: "Email notification successfully updated: ID " + params["id"] }
   end
 
   # Purpose: Finds and updates notification if type is SMS
@@ -55,13 +53,11 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   def sms_update
     # find notification through external id
     notif = Notification.find_by(sms_notification_external_id: params["id"])
-    # update notification if it exists
-    if notif
-      notif.update!(sms_notification_status: params["status"])
-      render json: { message: "SMS notification successfully updated: ID " + params["id"] }
     # log external id if notification doesn't exist
-    else
-      log_error(params["type"])
-    end
+    return log_error(params["type"]) unless notif
+
+    # update notification if it exists
+    notif.update!(sms_notification_status: params["status"])
+    render json: { message: "SMS notification successfully updated: ID " + params["id"] }
   end
 end
