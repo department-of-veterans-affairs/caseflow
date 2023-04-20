@@ -284,11 +284,21 @@ describe Hearing, :postgres do
     end
   end
 
+  context "claimant_id" do
+    let(:unrecognized_appellant) { create(:claimant, type: "OtherClaimant") }
+    let(:appeal) { create(:appeal, claimants: [unrecognized_appellant]) }
+    let!(:hearing) { create(:hearing, appeal: appeal) }
+
+    it "returns nil if there is no claimant or if the claimant/appellant is unrecognized" do
+      expect(hearing.claimant_id).to eq(nil)
+    end
+  end
+
   context "aod?" do
     let(:unrecognized_appellant) { create(:claimant, type: "OtherClaimant") }
     let(:appeal) { create(:appeal, claimants: [unrecognized_appellant]) }
     let!(:hearing) { create(:hearing, appeal: appeal) }
-    it "returns nil if the appeals claimant is an unrecognized claimant" do
+    it "returns false if the appeals claimant is an unrecognized claimant" do
       expect(hearing.aod?).to eq(false)
     end
   end
