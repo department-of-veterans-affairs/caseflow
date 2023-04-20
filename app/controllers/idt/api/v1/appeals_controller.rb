@@ -38,7 +38,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     response = VADotGovService.validate_address(address)
     response.response.raw_body = JSON.parse(response.response.raw_body)
     case status
-    when 401 || 403 || 429
+    when 401, 403, 429
       fail Caseflow::Error::LighthouseApiError
     else
       render json: response

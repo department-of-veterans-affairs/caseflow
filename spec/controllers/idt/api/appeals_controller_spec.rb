@@ -751,22 +751,20 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       }
     end
 
-
-    subject { post :validate, params: params }
-
     context "VADotGovService is responsive" do
-      let(:response) { Fakes::VADotGovService.fake_address_data }
-      let(:status) { 200 }
+      let(:user) { create(:user) }
+      before do
+        BvaDispatch.singleton.add_user(user)
+        key, t = Idt::Token.generate_one_time_key_and_proposed_token
+        Idt::Token.activate_proposed_token(key, user.css_id)
+        request.headers["TOKEN"] = t
+      end
       it "should send back a valid address" do
-        subject
-        # byebug
-        expect(status).to eq(200)
+        allow(controller).to receive(:verify_access).and_return(true)
+        post :validate, params: params
+        expect(response.status).to eq(200)
+        expect(OpenStruct.new(OpenStruct.new(JSON.parse(response.body)).response).raw_body).to eq(Fakes::VADotGovService.fake_address_data)
       end
     end
-
-    # context "the service returns the entire response body including message code" do
-
-    # end
   end
-
 end
