@@ -16,6 +16,7 @@ import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
 import { validateDateNotInFuture, isTimely } from '../util/issues';
 import { formatDateStr } from 'app/util/DateUtil';
 import { VHA_PRE_DOCKET_ISSUE_BANNER } from 'app/../COPY';
+import Checkbox from '../../components/Checkbox';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -47,6 +48,7 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleReason: null,
       decisionReviewTitle: null,
       isPreDocketNeeded: null,
+      // mstChecked: null,
       dateError: ''
     };
   }
@@ -67,6 +69,12 @@ class NonratingRequestIssueModal extends React.Component {
       isPreDocketNeeded
     });
   };
+
+  // isMstChecked = (mstChecked) => {
+  //   this.setState({
+  //     mstChecked
+  //   });
+  // };
 
   categoryOnChange = (value) => {
     this.setState({
@@ -274,10 +282,42 @@ class NonratingRequestIssueModal extends React.Component {
     );
   }
 
+  // getSpecialIssues() {
+  //   // const { decisionDate, description } = this.state;
+
+  //   return (
+  //     <React.Fragment>
+  //       <div className="special-issues-selection" label="Select any special issues that apply">
+  //         <Checkbox
+  //           name="mst-pact-checkbox"
+  //           label="Military Secual Trauma (MST)"
+  //           value="Military Secual Trauma (MST)"
+  //           onChange={this.mstChecked = true}
+  //         />
+  //       </div>
+  //     </React.Fragment>
+  //   );
+  // }
+
+  getSpecialIssues() {
+    return (
+      <div className="special-issues-selection">
+        <label><b>Select any special issues that apply</b></label>
+        <Checkbox
+          name="mst-pact-checkbox"
+          label="Military Secual Trauma (MST)"
+          value="Military Secual Trauma (MST)"
+          onChange={this.mstChecked = true}
+        />
+      </div>
+    );
+  }
+
   render() {
     const { formType, intakeData, onCancel, featureToggles } = this.props;
     const { benefitType, category, selectedNonratingIssueId, isPreDocketNeeded } = this.state;
     const eduPreDocketAppeals = featureToggles.eduPreDocketAppeals;
+    const mstPactIdentification = featureToggles.mstPactIdentification;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -301,6 +341,10 @@ class NonratingRequestIssueModal extends React.Component {
     const preDocketRadioFields =
       formType === 'appeal' ? <PreDocketRadioField value={isPreDocketNeeded}
         onChange={this.isPreDocketNeededOnChange} /> : null;
+
+    const getSpecialIssues =
+      mstPactIdentification ?
+        this.getSpecialIssues() : null;
 
     return (
       <div className="intake-add-issues">
@@ -331,6 +375,17 @@ class NonratingRequestIssueModal extends React.Component {
             </div>
             {(isPreDocketNeeded === 'true' && showPreDocketBanner) &&
               <Alert message={VHA_PRE_DOCKET_ISSUE_BANNER} type="info" />}
+            <div className="get-special-issues">
+              {getSpecialIssues}
+            </div>
+
+            {/* { (mst_pact_identification === 'true') &&
+              <Checkbox
+                name="mst-pact-checkbox"
+                label="MST PACT Checkbox"
+                value={category}
+                onChange={this.categoryOnChange} />
+            } */}
           </div>
         </Modal>
       </div>

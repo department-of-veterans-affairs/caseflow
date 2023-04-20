@@ -20,6 +20,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     eduPreDocketAppeals: {
       $set: Boolean(featureToggles.eduPreDocketAppeals)
     },
+    mstPactIdentification: {
+      $set: Boolean(featureToggles.mstPactIdentification)
+    },
     updatedAppealForm: {
       $set: Boolean(featureToggles.updatedAppealForm)
     },
@@ -40,6 +43,7 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       filedByVaGovHlr: false,
       updatedIntakeForms: false,
       eduPreDocketAppeals: false,
+      mstPactIdentification: false,
       updatedAppealForm: false,
       hlrScUnrecognizedClaimants: false,
       vhaClaimReviewEstablishment: false
