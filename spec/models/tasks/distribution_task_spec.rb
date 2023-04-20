@@ -5,12 +5,22 @@ describe DistributionTask, :postgres do
   let(:scm_user) { create(:user) }
   let(:scm_org) { SpecialCaseMovementTeam.singleton }
   let(:root_task) { create(:root_task) }
+  let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks) }
+  let(:root_task_legacy) { create(:root_task, :legacy_appeal) }
   let(:distribution_task) do
     DistributionTask.create!(
       appeal: root_task.appeal,
       assigned_to: Bva.singleton
     )
   end
+  let(:distribution_task_legacy) do
+    DistributionTask.create!(
+      appeal: root_task_legacy.appeal,
+      assigned_to: Bva.singleton
+    )
+  end
+
+  let(:distribution_task_legacy) { legacy_appeal.tasks.find { |task| task.type == "DistributionTask" } }
 
   before do
     MailTeam.singleton.add_user(user)
@@ -60,6 +70,10 @@ describe DistributionTask, :postgres do
           Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.to_h
         )
       end
+    end
+
+    it "with legacy case" do
+      expect(distribution_task.available_actions(scm_user).count).to eq(1)
     end
   end
 
