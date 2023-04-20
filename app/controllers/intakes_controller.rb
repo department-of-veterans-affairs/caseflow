@@ -10,7 +10,6 @@ class IntakesController < ApplicationController
 
   def index
     no_cache
-
     respond_to do |format|
       format.html { render(:index) }
     end
@@ -43,6 +42,7 @@ class IntakesController < ApplicationController
   def review
     if intake.review!(params)
       render json: intake.ui_hash
+
     else
       render json: { error_codes: intake.review_errors }, status: :unprocessable_entity
     end

@@ -89,7 +89,6 @@ export const addIssue = (currentIssue) => (dispatch) => {
 
 export const addContestableIssue = (args) => (dispatch) => {
   const currentIssue = args.currentIssue || issueByIndex(args.contestableIssues, args.contestableIssueIndex);
-
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {

@@ -116,8 +116,8 @@ class ContestableIssue
 
   def mst_or_pact
     #dummy method because i'm out of time
-    {"mst":true,
-    "pact":true}
+    {"mst":false,
+    "pact":false}
   end
 
   private

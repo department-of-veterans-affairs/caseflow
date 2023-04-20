@@ -12,7 +12,9 @@ class Generators::BgsContention
         medical_indicator: "1",
         orig_source_type_code: "APP",
         begin_date: Time.zone.today,
-        claim_id: generate_external_id
+        claim_id: generate_external_id,
+        mst:"true",
+        pact:"true"
       }
     end
 

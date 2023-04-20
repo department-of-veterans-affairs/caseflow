@@ -128,6 +128,7 @@ export const setFormType = (formType) => ({
   }
 });
 
+
 export const clearSearchErrors = () => ({
   type: ACTIONS.CLEAR_SEARCH_ERRORS,
   meta: { analytics }

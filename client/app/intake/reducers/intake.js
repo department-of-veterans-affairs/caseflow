@@ -221,12 +221,13 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
         $set: REQUEST_STATE.SUCCEEDED
       }
     });
-  case ACTIONS.SPLIT_APPEAL_FAILURE:
-    return update(state, {
-      splitAppeal: {
-        $set: REQUEST_STATE.FAILED
-      }
-    });
+    case ACTIONS.SPLIT_APPEAL_FAILURE:
+      return update(state, {
+        splitAppeal: {
+          $set: REQUEST_STATE.FAILED
+        }
+      });
+    
   default:
     return state;
   }
