@@ -52,7 +52,7 @@ class AssignToView extends React.Component {
 
     this.state = {
       selectedValue: action ? action.value : null,
-      assignToVHARegionalOfficeSelection: 'visn',
+      assignToVHARegionalOfficeSelection: null,
       instructions: existingInstructions
     };
   }
@@ -238,6 +238,10 @@ class AssignToView extends React.Component {
     value: 'visn' }
   ]
 
+  assignToVHARegionalOfficeRadioChanged = (option) => {
+    this.setState({ selectedValue: null, assignToVHARegionalOfficeSelection: option});
+  }
+
   render = () => {
     const { assigneeAlreadySelected, highlightFormItems, task } = this.props;
 
@@ -285,11 +289,12 @@ class AssignToView extends React.Component {
                           name={COPY.VHA_ASSIGN_TO_REGIONAL_OFFICE_RADIO_LABEL}
                           options={this.assignToVHARegionalOfficeRadioOptions}
                           value={this.state.assignToVHARegionalOfficeSelection}
-                          onChange={(option) => this.setState({ assignToVHARegionalOfficeSelection: option})}
+                          onChange={(option) => this.assignToVHARegionalOfficeRadioChanged(option)}
                           vertical
                 />
             )}
-            <SearchableDropdown
+            {(this.isVHAAssignToRegional() && this.state.assignToVHARegionalOfficeSelection !== null && (
+              <SearchableDropdown
               name="Assign to selector"
               searchable
               hideLabel={actionData.drop_down_label ? null : true}
@@ -300,9 +305,10 @@ class AssignToView extends React.Component {
               onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
               options={this.determineOptions(actionData)}
             />
+            ))}
             {this.isVHAAssignToRegional() &&
             this.state.assignToVHARegionalOfficeSelection === 'vamc' &&
-            (this.state.selectedValue !== null) && (
+            this.state.selectedValue !== null && (
                   <div className="assign-vamc-visn-display">
                     <u>VISN</u>
                     <div>{ this.getVisn().label }</div>
