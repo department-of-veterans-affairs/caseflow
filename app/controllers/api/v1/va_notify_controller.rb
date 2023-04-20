@@ -8,14 +8,22 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   #
   # Response: Update corresponding Notification status
   def notifications_update
-    if params["type"] == "email"
+    if required_params["type"] == "email"
       email_update
-    elsif params["type"] == "sms"
+    elsif required_params["type"] == "sms"
       sms_update
     end
   end
 
   private
+
+  def required_params
+    params.require(
+      :id,
+      :type,
+      :status
+    )
+  end
 
   # Purpose: Log error in Rails logger and gives 500 error
   #
