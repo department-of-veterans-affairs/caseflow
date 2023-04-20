@@ -763,7 +763,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         allow(controller).to receive(:verify_access).and_return(true)
         post :validate, params: params
         expect(response.status).to eq(200)
-        expect(OpenStruct.new(OpenStruct.new(JSON.parse(response.body)).response).raw_body).to eq(Fakes::VADotGovService.fake_address_data)
+        expect(OpenStruct.new(OpenStruct.new(JSON.parse(response.body)).response).raw_body.to_json).to eq(Fakes::VADotGovService.fake_address_data.to_json)
       end
     end
   end
