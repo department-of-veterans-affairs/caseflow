@@ -242,6 +242,14 @@ class AssignToView extends React.Component {
     this.setState({ selectedValue: null, assignToVHARegionalOfficeSelection: option});
   }
 
+  shouldDropDownShow = () => {
+    if (!this.isVHAAssignToRegional()) {
+      return true;
+    }
+
+    return this.state.assignToVHARegionalOfficeSelection !== null;
+  }
+
   render = () => {
     const { assigneeAlreadySelected, highlightFormItems, task } = this.props;
 
@@ -293,7 +301,7 @@ class AssignToView extends React.Component {
                           vertical
                 />
             )}
-            {this.isVHAAssignToRegional() && this.state.assignToVHARegionalOfficeSelection !== null && (
+            {this.shouldDropDownShow() && (
               <SearchableDropdown
               name="Assign to selector"
               searchable
