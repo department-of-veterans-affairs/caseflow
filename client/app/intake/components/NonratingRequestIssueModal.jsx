@@ -48,7 +48,7 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleReason: null,
       decisionReviewTitle: null,
       isPreDocketNeeded: null,
-      // mstChecked: null,
+      mstChecked: null,
       dateError: ''
     };
   }
@@ -70,11 +70,11 @@ class NonratingRequestIssueModal extends React.Component {
     });
   };
 
-  // isMstChecked = (mstChecked) => {
-  //   this.setState({
-  //     mstChecked
-  //   });
-  // };
+  isMstChecked = (mstChecked) => {
+    this.setState({
+      mstChecked
+    });
+  };
 
   categoryOnChange = (value) => {
     this.setState({
@@ -305,9 +305,9 @@ class NonratingRequestIssueModal extends React.Component {
         <label><b>Select any special issues that apply</b></label>
         <Checkbox
           name="mst-pact-checkbox"
-          label="Military Secual Trauma (MST)"
-          value="Military Secual Trauma (MST)"
-          onChange={this.mstChecked = true}
+          label="Military Sexual Trauma (MST)"
+          value={this.mstChecked}
+          onChange={this.isMstChecked}
         />
       </div>
     );
@@ -405,6 +405,7 @@ NonratingRequestIssueModal.propTypes = {
   activeNonratingRequestIssues: PropTypes.object,
   receiptDate: PropTypes.string,
   addedIssues: PropTypes.array,
+  mstChecked: PropTypes.bool,
   featureToggles: PropTypes.object
 };
 
