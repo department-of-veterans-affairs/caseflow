@@ -538,7 +538,15 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       action = Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
       action = Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h if task.on_timed_hold?
 
-      TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
+      task_helper = TaskActionHelper.build_hash(action, task, user).merge(
+        returns_complete_hash: true
+      )
+
+      return task_helper if task.assigned_to.is_a?(User)
+
+      task_helper.merge(
+        data: { redirect_after: "/organizations/#{task.assigned_to.url}?tab=on_hold&page=1" }
+      )
     end
 
     def review_decision_draft(task, user)
