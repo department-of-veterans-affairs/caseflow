@@ -93,6 +93,7 @@ const taskAttributesFromRawTask = (task) => {
     closedAt: task.attributes.closed_at,
     startedAt: task.attributes.started_at,
     assigneeName: task.attributes.assignee_name,
+    // issueTypes: task.attributes.issue_types,
     assignedTo: {
       cssId: task.attributes.assigned_to?.css_id,
       name: task.attributes.assigned_to?.name,

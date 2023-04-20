@@ -18,6 +18,7 @@ class WorkQueue::TaskSerializer
     object.instructions.presence || object.default_instructions.presence || []
   end
   attribute :appeal_type
+  # attribute :issue_types
   attribute :parent_id
   attribute :timeline_title
   attribute :hide_from_queue_table_view

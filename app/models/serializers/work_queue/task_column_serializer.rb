@@ -7,6 +7,10 @@ class WorkQueue::TaskColumnSerializer
     (params[:columns] & columns).any?
   end
 
+  # attribute :issue_types do |object|
+  #     object.issue_types.type(:issue_types)
+  # end
+
   attribute :instructions do |object|
     object.instructions.is_a?(Array) ? object.instructions : [object.instructions]
   end
