@@ -24,7 +24,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   def log_error(type)
     uuid = SecureRandom.uuid
     error_msg = "An " + type + "notification with id " + required_params[:id] +
-      " could not be found. " + "Error ID: " + uuid
+                " could not be found. " + "Error ID: " + uuid
     Rails.logger.error(error_msg)
     render json: { message: error_msg }, status: :internal_server_error
   end
