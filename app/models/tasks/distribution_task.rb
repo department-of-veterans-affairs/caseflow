@@ -21,7 +21,11 @@ class DistributionTask < Task
   def available_actions(user)
     return [] unless user
 
-    if special_case_movement_task(user)
+    if !appeal.is_a?(Appeal)
+      if !any_active_distribution_task_legacy()
+        return [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.to_h]
+      end
+    elsif special_case_movement_task(user)
       return [Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.to_h]
     elsif SpecialCaseMovementTeam.singleton.user_has_access?(user) && blocked_special_case_movement(user)
       return [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.to_h]
@@ -32,11 +36,14 @@ class DistributionTask < Task
     []
   end
 
+  def any_active_distribution_task_legacy()
+    tasks = Task.where(appeal_type: "LegacyAppeal", appeal_id: appeal.id)
+    tasks.active.of_type(:DistributionTask).any?
+  end
+
   def special_case_movement_task(user)
     if appeal.is_a?(Appeal)
       SpecialCaseMovementTeam.singleton.user_has_access?(user) && appeal.ready_for_distribution?
-    else
-      SpecialCaseMovementTeam.singleton.user_has_access?(user)
     end
   end
 
