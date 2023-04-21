@@ -16,16 +16,21 @@ class AddIssuesModal extends React.Component {
     this.state = {
       approxDecisionDate: '',
       selectedContestableIssueIndex: '',
-      notes: ''
+      notes: '',
+      mstCheckboxValue: false,
+      pactCheckboxValue: false
     };
   }
+
+  mstCheckboxChange = (checked) => this.setState({ mstCheckboxValue: checked });
+  pactCheckboxChange = (checked) => this.setState({ pactCheckboxValue: checked });
 
   radioOnChange = (selectedContestableIssueIndex) => this.setState({ selectedContestableIssueIndex });
 
   notesOnChange = (notes) => this.setState({ notes });
 
   onAddIssue = () => {
-    const { selectedContestableIssueIndex, notes } = this.state;
+    const { selectedContestableIssueIndex, notes, mstCheckboxValue, pactCheckboxValue } = this.state;
     const currentIssue = issueByIndex(this.props.intakeData.contestableIssues, selectedContestableIssueIndex);
 
     if (selectedContestableIssueIndex && !currentIssue.index) {
@@ -38,14 +43,15 @@ class AddIssuesModal extends React.Component {
     this.props.onSubmit({
       currentIssue: {
         ...currentIssue,
-        notes
+        notes,
+        mstCheckboxValue,
+        pactCheckboxValue,
       }
     });
   };
 
   getContestableIssuesSections() {
     const { intakeData } = this.props;
-
     const addedIssues = intakeData.addedIssues ? intakeData.addedIssues : [];
 
     return map(intakeData.contestableIssues, (contestableIssuesByIndex, approxDecisionDate) => {
@@ -88,6 +94,11 @@ class AddIssuesModal extends React.Component {
           key={approxDecisionDate}
           value={this.state.selectedContestableIssueIndex}
           onChange={this.radioOnChange}
+          renderMstAndPact={this.props.featureToggles.mstPactIdentification}
+          mstCheckboxValue={this.state.mstCheckboxValue}
+          setMstCheckboxFunction={this.mstCheckboxChange}
+          pactCheckboxValue={this.state.pactCheckboxValue}
+          setPactCheckboxFunction={this.pactCheckboxChange}
         />
       );
     });
@@ -150,7 +161,8 @@ AddIssuesModal.propTypes = {
   cancelText: PropTypes.string,
   onSkip: PropTypes.func,
   skipText: PropTypes.string,
-  intakeData: PropTypes.object
+  intakeData: PropTypes.object,
+  featureToggles: PropTypes.object
 };
 
 AddIssuesModal.defaultProps = {
