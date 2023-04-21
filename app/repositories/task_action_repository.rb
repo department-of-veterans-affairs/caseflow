@@ -724,7 +724,7 @@ class TaskActionRepository
       task_url = task.assigned_to.url
       {
         modal_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
-        modal_body: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_BODY,
+        modal_body: COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY,
         message_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
         message_detail: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
         modal_button_text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON,
@@ -778,7 +778,7 @@ class TaskActionRepository
       queue_url = org.url
       {
         modal_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
-        modal_body: COPY::EDUCATION_MARK_TASK_IN_PROGRESS_MODAL_BODY,
+        modal_body: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_BODY,
         message_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
         message_detail: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
         modal_button_text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON,
