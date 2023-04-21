@@ -52,7 +52,6 @@ class AddIssueManager extends React.Component {
         featureToggles,
         intakeData,
         formType,
-        featureToggles,
         onCancel: () => this.cancel(),
         onSubmit: ({ selectedContestableIssueIndex, currentIssue, notes }) => {
           this.setState(
