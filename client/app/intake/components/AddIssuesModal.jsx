@@ -54,7 +54,6 @@ class AddIssuesModal extends React.Component {
   };
 
   getContestableIssuesSections() {
-
     const { intakeData } = this.props;
 
     const addedIssues = intakeData.addedIssues ? intakeData.addedIssues : [];

@@ -152,7 +152,7 @@ class IntakesController < ApplicationController
       updatedAppealForm: FeatureToggle.enabled?(:updated_appeal_form, user: current_user),
       hlrScUnrecognizedClaimants: FeatureToggle.enabled?(:hlr_sc_unrecognized_claimants, user: current_user),
       vhaClaimReviewEstablishment: FeatureToggle.enabled?(:vha_claim_review_establishment, user: current_user),
-      mstOrPactCheckboxes: FeatureToggle.enabled?(:mst_or_pact_checkboxes, user: current_user)
+      mstPactIdentification: FeatureToggle.enabled?(:mst_pact_identification, user: current_user)
     }
   end
 
