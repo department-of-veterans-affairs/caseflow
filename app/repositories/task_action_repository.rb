@@ -545,7 +545,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       return task_helper if task.assigned_to.is_a?(User)
 
       task_helper.merge(
-        data: { redirect_after: "/organizations/#{task.assigned_to.url}?tab=on_hold&page=1" }
+        data: { redirect_after: "/organizations/#{task.assigned_to.url}?tab=#{on_hold_tab_url(task.assigned_to)}&page=1" }
       )
     end
 
@@ -914,6 +914,12 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       options.map do |_, value|
         value.transform_keys(&:downcase)
       end
+    end
+
+    def on_hold_tab_url(organization)
+      return "on_hold" unless organization.is_a?(VhaProgramOffice)
+
+      "po_on_hold"
     end
   end
 end
