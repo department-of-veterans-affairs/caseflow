@@ -1047,6 +1047,8 @@
   "INTAKE_EDIT_ISSUE_LABEL": "Issue: ",
   "INTAKE_EDIT_ISSUE_BENEFIT_TYPE": "Benefit type: ",
   "INTAKE_EDIT_ISSUE_DECISION_DATE": "Decision date: ",
+  "INTAKE_EDIT_ISSUE_MST_LABEL": "Military Sexual Trauma (MST)",
+  "INTAKE_EDIT_ISSUE_PACT_LABEL": "PACT Act",
   "INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT": "Only VHA team members can establish High Level Reviews and Supplemental Claims with VHA issues. If you have a VHA claim, please return the packet to the main “VHA” queue in the Centralized Mail Portal or send downloaded documents to %s.",
   "VHA_BENEFIT_EMAIL_ADDRESS": "VHABENEFITAPPEALS@va.gov",
   "VHA_CAREGIVER_SUPPORT_EMAIL_ADDRESS": "VHA.CSPAppeals@va.gov",
