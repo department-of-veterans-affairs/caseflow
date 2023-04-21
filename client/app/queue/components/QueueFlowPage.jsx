@@ -71,7 +71,7 @@ class QueueFlowPage extends React.PureComponent {
       callback: this.goToNextStep,
       loading: this.props.savePending,
       name: 'next-button',
-      disabled: (this.props.disableNext || this.props.isContinueButtonDisabled),
+      disabled: this.props.disableNext,
       displayText: this.props.continueBtnText,
       loadingText: 'Submitting...',
       styling: css({ marginLeft: '1rem' })
@@ -206,8 +206,7 @@ QueueFlowPage.propTypes = {
   showModal: PropTypes.func,
   hideModal: PropTypes.func,
   checkoutStagedAppeal: PropTypes.func,
-  resetDecisionOptions: PropTypes.func,
-  isContinueButtonDisabled: PropTypes.bool
+  resetDecisionOptions: PropTypes.func
 };
 
 QueueFlowPage.defaultProps = {
@@ -218,8 +217,7 @@ QueueFlowPage.defaultProps = {
   goToNextStep: null,
   goToPrevStep: null,
   getNextStepUrl: null,
-  getPrevStepUrl: null,
-  isContinueButtonDisabled: false
+  getPrevStepUrl: null
 };
 
 const mapStateToProps = (state, props) => {
