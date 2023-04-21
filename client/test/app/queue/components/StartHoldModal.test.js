@@ -55,7 +55,7 @@ describe('Whenever VHA PO places a task on hold for set number of days', () => {
     renderStartHoldModal(TASK_ACTIONS.TOGGLE_TIMED_HOLD.value, vhaPOToCAMOData, taskType);
 
     selectFromDropdown(
-      'Select number of days',
+      COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL,
       '15 days'
     );
 
@@ -84,14 +84,14 @@ describe('Whenever VHA PO places a task on hold for custom number of days', () =
     renderStartHoldModal(TASK_ACTIONS.TOGGLE_TIMED_HOLD.value, vhaPOToCAMOData, taskType);
 
     selectFromDropdown(
-      'Select number of days',
+      COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL,
       'Custom'
     );
 
     expect(screen.getByRole('button', { name: COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON })).toBeDisabled();
 
     selectCustomDays(
-      'Enter a custom number of days for the hold (Value must be between 1 and 45 for VHA users)',
+      COPY.VHA_ACTION_PLACE_CUSTOM_HOLD_COPY,
       '6'
     );
 
@@ -104,12 +104,12 @@ describe('Whenever VHA PO places a task on hold for custom number of days', () =
       renderStartHoldModal(TASK_ACTIONS.TOGGLE_TIMED_HOLD.value, vhaPOToCAMOData, taskType);
 
       selectFromDropdown(
-        'Select number of days',
+        COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL,
         'Custom'
       );
 
       selectCustomDays(
-        'Enter a custom number of days for the hold (Value must be between 1 and 45 for VHA users)',
+        COPY.VHA_ACTION_PLACE_CUSTOM_HOLD_COPY,
         '46'
       );
 
@@ -125,12 +125,12 @@ describe('Whenever VHA PO places a task on hold for custom number of days', () =
     renderStartHoldModal(TASK_ACTIONS.TOGGLE_TIMED_HOLD.value, vhaPOToCAMOData, taskType);
 
     selectFromDropdown(
-      'Select number of days',
+      COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL,
       'Custom'
     );
 
     selectCustomDays(
-      'Enter a custom number of days for the hold (Value must be between 1 and 45 for VHA users)',
+      COPY.VHA_ACTION_PLACE_CUSTOM_HOLD_COPY,
       '6'
     );
 
