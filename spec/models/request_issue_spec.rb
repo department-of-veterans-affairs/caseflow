@@ -1365,6 +1365,108 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "#mst_status_available?, #pact_status_available?" do
+    context "when mst is available and pact is not available" do
+       let(:mst_request_issue) do
+        create(:request_issue,
+          id: 12345,
+          claim_id: 12345,
+          text: "Generic contention with MST",
+          start_date: Time.zone.today,
+          submit_date: 5.days.ago,
+          special_issues: {
+            issue_id: 12345,
+            narrative: "Military Sexual Trauma (MST)",
+            code: "MST"
+          }
+        )
+      end 
+
+      it "mst_status_available? is true" do 
+        expect(mst_request_issue.mst_status_available?).to be true
+      end 
+      
+      it "pact_status_available? is false" do 
+        expect(mst_request_issue.mst_status_available?).to be false 
+      end 
+    end 
+
+    context "when pact is available and mst is not available" do
+      let(:pact_request_issue) do
+       create(:request_issue,
+         id: 12345,
+         claim_id: 12345,
+         text: "Generic contention",
+         start_date: Time.zone.today,
+         submit_date: 5.days.ago,
+         special_issues: {
+           issue_id: 12345,
+           narrative: "PACT",
+           code: "PACT"
+         }
+       )
+     end 
+     
+     it "mst_status_available? is false" do 
+       expect(mst_request_issue.mst_status_available?).to be false
+     end 
+     
+     it "pact_status_available? is true" do 
+       expect(mst_request_issue.mst_status_available?).to be true
+     end 
+   end 
+
+    context "when pact and mst are available" do
+      let(:mst_pact_request_issue) do
+      create(:request_issue,
+        id: 12345,
+        claim_id: 12345,
+        text: "Generic contention",
+        start_date: Time.zone.today,
+        submit_date: 5.days.ago,
+        special_issues: {
+          issue_id: 12345,
+          narrative: "PACT",
+          code: "PACT"
+        }, {
+          issue_id: 12345,
+          narrative: "MST", 
+          code: "MST"
+        }
+      )
+    end 
+    
+    it "mst_status_available? is true" do 
+      expect(mst_request_issue.mst_status_available?).to be true
+    end 
+    
+    it "pact_status_available? is true" do 
+      expect(mst_request_issue.mst_status_available?).to be true
+    end 
+    end 
+
+    context "when neither pact and mst are available" do
+      let(:no_mst_pact_request_issue) do
+      create(:request_issue,
+        id: 12345,
+        claim_id: 12345,
+        text: "Generic contention",
+        start_date: Time.zone.today,
+        submit_date: 5.days.ago,
+        special_issues: {
+        }
+    end 
+    
+    it "mst_status_available? is false" do 
+      expect(mst_request_issue.mst_status_available?).to be false
+    end 
+    
+    it "pact_status_available? is false" do 
+      expect(mst_request_issue.mst_status_available?).to be false
+    end 
+    end 
+  end
+  
   context "#valid?" do
     subject { request_issue.valid? }
     let(:request_issue) do
