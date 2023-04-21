@@ -44,11 +44,11 @@ class AddIssueManager extends React.Component {
   }
 
   setupAddIssuesModal = () => {
-    const { intakeData, formType } = this.props;
-
+    const { intakeData, formType, featureToggles } = this.props;
     return {
       component: AddIssuesModal,
       props: {
+        featureToggles: this.props.featureToggles,
         intakeData,
         formType,
         onCancel: () => this.cancel(),

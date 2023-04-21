@@ -208,12 +208,17 @@ class AddIssuesPage extends React.Component {
       editPage,
       addingIssue,
       userCanWithdrawIssues,
+      userCanEditIntakeIssues,
       userCanSplitAppeal
     } = this.props;
     const intakeData = intakeForms[formType];
     const appealInfo = intakeForms.appeal;
     const { useAmaActivationDate, hlrScUnrecognizedClaimants } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
+
+    //THIS IS HERE FOR DEBUG ONLY. THIS SHOULD BE FLAGGED BY THE FEATURE TOGGLE!
+    this.props.featureToggles.mst_pact_identification = true;
+
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
       return this.redirect(intakeData, hasClearedEp);
@@ -394,6 +399,8 @@ class AddIssuesPage extends React.Component {
               formType={formType}
               featureToggles={featureToggles}
               userCanWithdrawIssues={userCanWithdrawIssues}
+              userCanEditIntakeIssues={userCanEditIntakeIssues && this.props.featureToggles.mst_pact_identification}
+
               editPage={editPage}
             />
             {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}
@@ -562,6 +569,7 @@ AddIssuesPage.propTypes = {
   veteran: PropTypes.object,
   withdrawIssue: PropTypes.func,
   userCanWithdrawIssues: PropTypes.bool,
+  userCanEditIntakeIssues: PropTypes.bool,
   userCanSplitAppeal: PropTypes.bool
 };
 
@@ -611,6 +619,7 @@ export const EditAddIssuesPage = connect(
     activeIssue: state.activeIssue,
     addingIssue: state.addingIssue,
     userCanWithdrawIssues: state.userCanWithdrawIssues,
+    userCanEditIntakeIssues: state.userCanEditIntakeIssues,
     userCanSplitAppeal: state.userCanSplitAppeal
 
   }),

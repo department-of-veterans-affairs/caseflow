@@ -47,7 +47,8 @@ export const RadioField = (props) => {
     toggleMstStatus,
     getMstCheckboxValue,
     togglePactStatus,
-    getPactCheckboxValue
+    getPactCheckboxValue,
+    featureToggles
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -96,12 +97,14 @@ export const RadioField = (props) => {
 
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);
 
+  //Requires the Feature toggle for mstOrPactCheckboxes = true
   const displayMSTorPactInfo = (issueId, indexId) => {
-    if(issueId === indexId && props.renderMstAndPactCheckboxes)
+    if(issueId === indexId && props.featureToggles.mstOrPactCheckboxes)
       return true;
 
     return false;
   }
+
 
   return (
     <fieldset className={radioClass.join(' ')} {...styling}>
@@ -116,7 +119,6 @@ export const RadioField = (props) => {
       <div className="cf-form-radio-options">
         {options.map((option, i) => {
           const optionDisabled = isDisabled(option);
-
           const radioField = (<div
             className="cf-form-radio-option"
             key={`${idPart}-${option.value}-${i}`}

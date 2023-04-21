@@ -15,7 +15,7 @@ class AddIssuesModal extends React.Component {
 
   constructor(props) {
     super(props);
-
+    const {featureToggles} = props
     this.state = {
       approxDecisionDate: '',
       selectedContestableIssueIndex: '',
@@ -121,8 +121,7 @@ class AddIssuesModal extends React.Component {
           key={approxDecisionDate}
           value={this.state.selectedContestableIssueIndex}
           onChange={this.radioOnChange}
-
-          renderMstAndPactCheckboxes={true}
+          featureToggles={this.props.featureToggles}
           toggleMstStatus={this.toggleMstStatus}
           getMst={this.getMstStatus}
           togglePactStatus={this.togglePactStatus}
