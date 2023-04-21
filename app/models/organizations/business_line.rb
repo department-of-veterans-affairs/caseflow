@@ -263,6 +263,13 @@ class BusinessLine < Organization
       decision_reviews_on_request_issues(ama_appeal: :request_issues)
     end
 
+    # Specific case for BoardEffectuationGrantTasks to include them in the result set
+    # if the :board_grant_effectuation_task FeatureToggle is enabled for the current user.
+    def board_grant_effectuation_tasks
+      decision_reviews_on_request_issues(board_grant_effectuation_task_appeals_requests_join,
+                                         board_grant_effectuation_task_constraints)
+    end
+
     def ama_appeals_query
       if FeatureToggle.enabled?(:board_grant_effectuation_task, user: RequestStore[:current_user])
         return Arel::Nodes::UnionAll.new(
@@ -274,27 +281,7 @@ class BusinessLine < Organization
       appeals_on_request_issues
     end
 
-    # Specific case for BoardEffectuationGrantTasks to include them in the result set
-    # if the :board_grant_effectuation_task FeatureToggle is enabled for the current user.
-    # TODO: Refactor this stupid method again because the Abc size is too high
-    def board_grant_effectuation_tasks
-      Task.select(union_select_statements)
-        .send(TASKS_QUERY_TYPE[query_type])
-        .joins(board_grant_effectuation_task_appeals_requests_join)
-        .joins(veterans_join)
-        .joins(claimants_join)
-        .joins(people_join)
-        .joins(unrecognized_appellants_join)
-        .joins(party_details_join)
-        .joins(bgs_attorneys_join)
-        .where(board_grant_effectuation_task_constraints)
-        .where(search_all_clause, *search_values)
-        .where(issue_type_filter_predicate(query_params[:filters]))
-        .group(group_by_columns)
-        .arel
-    end
-
-    def decision_reviews_on_request_issues(join_constraint)
+    def decision_reviews_on_request_issues(join_constraint, where_constraints = query_constraints)
       Task.select(union_select_statements)
         .send(TASKS_QUERY_TYPE[query_type])
         .joins(join_constraint)
@@ -304,7 +291,7 @@ class BusinessLine < Organization
         .joins(unrecognized_appellants_join)
         .joins(party_details_join)
         .joins(bgs_attorneys_join)
-        .where(query_constraints)
+        .where(where_constraints)
         .where(search_all_clause, *search_values)
         .where(issue_type_filter_predicate(query_params[:filters]))
         .group(group_by_columns)
@@ -394,27 +381,16 @@ class BusinessLine < Organization
       end
     end
 
-    # TODO: Refactor this if I can since it's so similar to the task filter but a little different.
-    # It would be nice to only have one filter so it's easier to add new filters in the future.
+    # TODO: Might be able to refactor this to work for all filters if the where clause is placed in the union queries
     def issue_type_filter_predicate(filters)
       return "" unless filters
 
-      task_filter = locate_issue_type_filter(filters)
+      issue_type_filter = locate_issue_type_filter(filters)
 
-      return "" unless task_filter
+      return "" unless issue_type_filter
 
-      # ex: "val"=>["SupplementalClaim|HigherLevelReview"]
-      # tasks_to_include = task_filter["val"].first.split("|")
-      # tasks_to_include = task_filter["val"].first.split(/\s*\|\s*/)
-      # tasks_to_include = task_filter["val"].first.split(/\s*\|\s*(?=\S)/)
-      # tasks_to_include = task_filter["val"].first.split(/\s*\|\s*(?=[^|]+)/)
-      # tasks_to_include = task_filter["val"].first.split(/\s*\|\s*(?=[^\s|])/)
-      # tasks_to_include = task_filter["val"].first.split(/\s*\|\s*(?=[^|]*$)/)
-      tasks_to_include = task_filter["val"].first.split(/(?<!\s)\|(?!\s)/)
-
-      # TODO: This is boned.
-      # puts "This is going to be wrong because it's split on pipes but the string has pipes"
-      # puts tasks_to_include.inspect
+      # ex: "val"=>["Caregiver | Other|Beneficiary Travel"]
+      tasks_to_include = issue_type_filter["val"].first.split(/(?<!\s)\|(?!\s)/)
 
       build_issue_type_filter_predicates(tasks_to_include) || ""
     end
@@ -442,20 +418,17 @@ class BusinessLine < Organization
 
     # TODO: Abc crap again even though there's really no branching in this method at all
     # TODO: this currently also probably doesn't work on board effectuation tasks but it shouldn't matter
+    # Since that additional query exists for tasks without request issues in the first place
     def decision_review_requests_union_subquery(filter)
       base_query = Task.select("tasks.id").send(TASKS_QUERY_TYPE[query_type])
       union_query = Arel::Nodes::UnionAll.new(
         Arel::Nodes::UnionAll.new(
-          # TODO: Use Arel for this id column even though it should probably never change from tasks.id
           base_query
             .joins(higher_level_review: :request_issues).where(query_constraints).where(filter).arel,
           base_query
             .joins(supplemental_claim: :request_issues).where(query_constraints).where(filter).arel
         ),
-        base_query.joins(ama_appeal: :request_issues)
-          .where(query_constraints)
-          .where(filter)
-          .arel
+        base_query.joins(ama_appeal: :request_issues).where(query_constraints).where(filter).arel
       )
 
       # puts union_query.to_sql
