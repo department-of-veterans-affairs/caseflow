@@ -98,12 +98,26 @@ class BusinessLine < Organization
     end
 
     def union_select_statements
-      [Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id_alias, veteran_ssn_alias]
+      [
+        Task.arel_table[Arel.star],
+        issue_count,
+        claimant_name_alias,
+        participant_id_alias,
+        veteran_ssn_alias,
+        issue_types
+      ]
     end
 
     def issue_count
       # Issue count alias for sorting and serialization
       "COUNT(request_issues.id) AS issue_count"
+    end
+
+    # Alias for the issue_categories on request issues for sorting and serialization
+    # This is Postgres specific since it uses STRING_AGG vs GROUP_CONCAT
+    def issue_types
+      "STRING_AGG(request_issues.nonrating_issue_category, ',' ORDER BY request_issues.nonrating_issue_category)"\
+        " AS issue_types"
     end
 
     # Alias for claimant_name for sorting and serialization
@@ -181,7 +195,7 @@ class BusinessLine < Organization
       return "" if query_params[:search_query].blank?
 
       clause = +"veterans.participant_id LIKE ? "\
-               "OR #{claimant_name} ILIKE ? "
+               "OR #{claimant_name} ILIKE ? "\
 
       if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: RequestStore[:current_user])
         clause << search_ssn_and_file_number_clause

@@ -17,6 +17,7 @@ import {
   detailsColumn,
   daysWaitingColumn,
   issueCountColumn,
+  issueTypesColumn,
   typeColumn,
   readerLinkColumn,
   taskCompletedDateColumn,
@@ -79,6 +80,10 @@ export class TaskTableUnconnected extends React.PureComponent {
     return this.props.includeIssueCount ? issueCountColumn(this.props.requireDasRecord) : null;
   }
 
+  caseIssueTypesColumn = () => {
+    return this.props.includeIssueTypes ? issueTypesColumn() : null;
+  }
+
   caseDaysWaitingColumn = () => {
     return this.props.includeDaysWaiting ? daysWaitingColumn(this.props.requireDasRecord) : null;
   }
@@ -102,6 +107,7 @@ export class TaskTableUnconnected extends React.PureComponent {
         this.caseTypeColumn(),
         this.caseDocketNumberColumn(),
         this.caseIssueCountColumn(),
+        this.caseIssueTypesColumn(),
         this.caseDaysWaitingColumn(),
         this.completedDateColumn(),
         this.caseReaderLinkColumn()
@@ -148,6 +154,7 @@ TaskTableUnconnected.propTypes = {
   includeType: PropTypes.bool,
   includeDocketNumber: PropTypes.bool,
   includeIssueCount: PropTypes.bool,
+  includeIssueTypes: PropTypes.bool,
   includeDaysWaiting: PropTypes.bool,
   includeCompletedDate: PropTypes.bool,
   userIsVsoEmployee: PropTypes.bool,
