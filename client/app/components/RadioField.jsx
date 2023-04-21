@@ -11,6 +11,7 @@ import Checkbox from './Checkbox';
 
 const RadioFieldHelpText = ({ help, className }) => {
   const helpClasses = classNames('cf-form-radio-help', helpText, className);
+
   return <div className={helpClasses}>{help}</div>;
 };
 
@@ -25,7 +26,6 @@ RadioFieldHelpText.propTypes = {
  * See StyleGuideRadioField.jsx for usage examples.
  *
  */
-
 
 export const RadioField = (props) => {
   const {
@@ -77,13 +77,13 @@ export const RadioField = (props) => {
       return (
         <div>
           <Checkbox
-            label="MST"
+            label="Issue is related to Military Sexual Trauma (MST)"
             name="MST"
             value={mstCheckboxValue}
             onChange={(checked) => setMstCheckboxFunction(checked)}
           />
           <Checkbox
-            label="Pact"
+            label="Issue is related to PACT act"
             name="Pact"
             value={pactCheckboxValue}
             onChange={(checked) => setPactCheckboxFunction(checked)}
@@ -114,20 +114,9 @@ export const RadioField = (props) => {
 
   const isDisabled = (option) => Boolean(option.disabled);
 
-
   const handleChange = (event) => onChange?.(event.target.value);
 
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);
-
-  //Requires the Feature toggle for mstOrPactCheckboxes = true
-  // props.featureToggles.mstOrPactCheckboxes
-  const displayMSTorPactInfo = (issueId, indexId) => {
-    if(issueId === indexId && true)
-      return true;
-
-    return false;
-  }
-
 
   return (
     <fieldset className={radioClass.join(' ')} {...styling}>
@@ -191,6 +180,7 @@ RadioField.propTypes = {
   setMstCheckboxFunction: PropTypes.func,
   pactCheckboxValue: PropTypes.bool,
   setPactCheckboxFunction: PropTypes.func,
+
   /**
    * Pass a ref to the `input` element
    */
@@ -260,6 +250,5 @@ RadioField.propTypes = {
   hideLabel: PropTypes.bool,
   styling: PropTypes.object
 };
-
 
 export default RadioField;

@@ -9,8 +9,6 @@ import IntakeRadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import { issueByIndex } from '../util/issues';
 
-
-
 class AddIssuesModal extends React.Component {
 
   constructor(props) {
@@ -28,32 +26,11 @@ class AddIssuesModal extends React.Component {
   mstCheckboxChange = (checked) => this.setState({ mstCheckboxValue: checked });
   pactCheckboxChange = (checked) => this.setState({ pactCheckboxValue: checked });
 
-  toggleMstStatus = () => {
-    this.state.mstCheckboxValue = !this.state.mstCheckboxValue;
-  }
-
-  getMstStatus = () => {
-    return this.state.mstCheckboxValue;
-  }
-
-  togglePactStatus = () => {
-    this.state.pactCheckbox = !this.state.pactCheckbox
-  }
-
-  getPactStatus = () => {
-    return this.state.pactCheckbox
-  }
-
-
-
-
-
-  radioOnChange = (selectedContestableIssueIndex) =>  {
+  radioOnChange = (selectedContestableIssueIndex) => {
     this.setState({ selectedContestableIssueIndex });
   }
 
   notesOnChange = (notes) => this.setState({ notes });
-
 
   onAddIssue = () => {
     const { selectedContestableIssueIndex, notes, mstCheckboxValue, pactCheckboxValue } = this.state;
@@ -123,7 +100,7 @@ class AddIssuesModal extends React.Component {
           key={approxDecisionDate}
           value={this.state.selectedContestableIssueIndex}
           onChange={this.radioOnChange}
-          renderMstAndPact
+          renderMstAndPact={this.props.featureToggles.mst_pact_identification}
           mstCheckboxValue={this.state.mstCheckboxValue}
           setMstCheckboxFunction={this.mstCheckboxChange}
           pactCheckboxValue={this.state.pactCheckboxValue}
@@ -132,7 +109,6 @@ class AddIssuesModal extends React.Component {
       );
     });
   }
-
 
   getModalButtons() {
     const btns = [
@@ -161,7 +137,6 @@ class AddIssuesModal extends React.Component {
   }
 
   render() {
-    console.log(this.props)
     const { intakeData, onCancel } = this.props;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
@@ -192,7 +167,8 @@ AddIssuesModal.propTypes = {
   cancelText: PropTypes.string,
   onSkip: PropTypes.func,
   skipText: PropTypes.string,
-  intakeData: PropTypes.object
+  intakeData: PropTypes.object,
+  featureToggles: PropTypes.object
 };
 
 AddIssuesModal.defaultProps = {
