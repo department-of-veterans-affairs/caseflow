@@ -52,8 +52,7 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
       selectedAssignee: null,
       selectedReason: null,
       showModal: false,
-      isRadioButtonSelected: false,
-      isTextFieldSelected: false
+      disableButton: true
     };
   }
 
@@ -81,6 +80,17 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
     });
 
     return assignee;
+  };
+
+  setOnChangeValue = (stateValue, value) => {
+    this.setState({ [stateValue]: value }, function () {
+      if ((this.state.selectedReason !== null && this.state.cancellationInstructions !== '')) {
+        this.setState({ disableButton: false });
+      }
+      if ((this.state.cancellationInstructions === '' && this.state.selectedReason !== null)) {
+        this.setState({ disableButton: true });
+      }
+    });
   };
 
   submit = () => {
@@ -220,7 +230,7 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
         validateForm={this.validatePage}
         appealId={appeal.externalId}
         hideCancelButton
-        isContinueButtonDisabled={!(this.state.isRadioButtonSelected && this.state.isTextFieldSelected)}
+        disableNext={this.state.disableButton}
       >
         <h1>{sprintf(COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_TITLE, appeal.veteranFullName)}</h1>
         <div className="cf-sg-subsection" {...caseInfoStyling} {...bottomBorderStyling}>
@@ -239,7 +249,7 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
           })}
           id="advancementReason"
           value={this.state.selectedReason}
-          onChange={(value) => this.setState({ selectedReason: value, isRadioButtonSelected: true })}
+          onChange={(value) => this.setOnChangeValue('selectedReason', value)}
           vertical={false}
         />
         <TextareaField
@@ -248,7 +258,7 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
             highlightFormItems && !this.validCancellationInstructions() ? 'Instructions field is required' : null
           }
           id="cancellationInstructions"
-          onChange={(value) => this.setState({ cancellationInstructions: value, isTextFieldSelected: true })}
+          onChange={(value) => this.setOnChangeValue('cancellationInstructions', value)}
           value={this.state.cancellationInstructions}
         />
       </QueueFlowPage>
