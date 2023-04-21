@@ -71,6 +71,8 @@ feature "Intake Add Issues Page", :all_dbs do
     end
   end
 
+
+
   context "check for correct time zone" do
     scenario "when rating is added" do
       start_higher_level_review(veteran)

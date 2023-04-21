@@ -216,6 +216,10 @@ class AddIssuesPage extends React.Component {
     const { useAmaActivationDate, hlrScUnrecognizedClaimants } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
+    //THIS IS HERE FOR DEBUG ONLY. THIS SHOULD BE FLAGGED BY THE FEATURE TOGGLE!
+    this.props.featureToggles.mst_pact_identification = true;
+
+
     if (this.willRedirect(intakeData, hasClearedEp)) {
       return this.redirect(intakeData, hasClearedEp);
     }
@@ -396,6 +400,7 @@ class AddIssuesPage extends React.Component {
               featureToggles={featureToggles}
               userCanWithdrawIssues={userCanWithdrawIssues}
               userCanEditIntakeIssues={userCanEditIntakeIssues && this.props.featureToggles.mst_pact_identification}
+
               editPage={editPage}
             />
             {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}

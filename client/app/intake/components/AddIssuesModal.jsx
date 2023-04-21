@@ -5,11 +5,12 @@ import { map, findIndex, uniq } from 'lodash';
 
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
-import RadioField from '../../components/RadioField';
+import IntakeRadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import { issueByIndex } from '../util/issues';
 
 class AddIssuesModal extends React.Component {
+
   constructor(props) {
     super(props);
 
@@ -57,6 +58,7 @@ class AddIssuesModal extends React.Component {
     return map(intakeData.contestableIssues, (contestableIssuesByIndex, approxDecisionDate) => {
       const radioOptions = map(contestableIssuesByIndex, (issue) => {
         const foundIndex = findIndex(addedIssues, { index: issue.index });
+
         let text =
           foundIndex === -1 ? issue.description : `${issue.description} (already selected for issue ${foundIndex + 1})`;
 
@@ -86,7 +88,7 @@ class AddIssuesModal extends React.Component {
       });
 
       return (
-        <RadioField
+        <IntakeRadioField
           vertical
           label={<h3>Past decisions from {formatDateStr(approxDecisionDate)}</h3>}
           name="rating-radio"

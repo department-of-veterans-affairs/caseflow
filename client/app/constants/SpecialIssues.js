@@ -347,6 +347,16 @@ export const AMA_SPECIAL_ISSUES = [
     isAmaRelevant: true
   },
   {
+    display: 'Military Sexual Trauma (MST)',
+    queueDisplay: 'Military Sexual Trauma (MST)',
+    specialIssue: 'militarySexualTrauma',
+    snakeCase: 'military_sexual_trauma',
+    unhandled: null,
+    queueSection: 'issuesOnAppeal',
+    queueSectionOrder: 5,
+    isAmaRelevant: true
+  },
+  {
     display: 'Blue Water',
     queueDisplay: 'Blue Water',
     specialIssue: 'blueWater',

@@ -49,6 +49,7 @@ class AddIssueManager extends React.Component {
     return {
       component: AddIssuesModal,
       props: {
+        featureToggles,
         intakeData,
         formType,
         featureToggles,

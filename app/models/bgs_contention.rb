@@ -8,9 +8,11 @@ class BgsContention
 
   attr_accessor :reference_id, :text, :type_code, :classification_id,
                 :classification_text, :medical_indicator, :orig_source_type_code, :begin_date, :claim_id,
-                :special_issues
+                :special_issues, :mst, :pact
+
 
   class << self
+
     def fetch_all(claim_id)
       response = BGSService.new.find_contentions_by_claim_id(claim_id)
 

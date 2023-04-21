@@ -14,7 +14,6 @@
   applicationUrls: application_urls,
   feedbackUrl: feedback_url,
   buildDate: build_date,
-  mstPactIdentification: FeatureToggle.enabled?(:mst_pact_identification, user: current_user),
   userCanAddVirtualHearingDays: FeatureToggle.enabled?(:national_vh_queue, user: current_user),
   userCanAssignHearingSchedule: current_user.can_assign_hearing_schedule?,
   userCanBuildHearingSchedule: current_user.can?('Build HearSched'),

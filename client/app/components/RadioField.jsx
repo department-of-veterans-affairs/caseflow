@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -115,6 +115,7 @@ export const RadioField = (props) => {
   const isDisabled = (option) => Boolean(option.disabled);
 
   const handleChange = (event) => onChange?.(event.target.value);
+
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);
 
   return (
@@ -130,7 +131,6 @@ export const RadioField = (props) => {
       <div className="cf-form-radio-options">
         {options.map((option, i) => {
           const optionDisabled = isDisabled(option);
-
           const radioField = (<div
             className="cf-form-radio-option"
             key={`${idPart}-${option.value}-${i}`}

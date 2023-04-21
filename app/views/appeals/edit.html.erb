@@ -3,7 +3,6 @@
     userDisplayName: current_user.display_name,
     userCanWithdrawIssues: current_user.can_withdraw_issues?,
     userCanSplitAppeal: current_user.can_split_appeal?(appeal),
-    userCanEditIntakeIssues: current_user.can_edit_intake_issues?,
     appeal: appeal,
     hearings: appeal.hearings,
     hearingDayDate: appeal.hearing_day_if_schedueled,
@@ -19,7 +18,6 @@
       covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
       split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
       cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
-      mst_pact_identification: FeatureToggle.enabled?(:mst_pact_identification, user: current_user),
       vhaPreDocketAppeals: false
     }
   }) %>
