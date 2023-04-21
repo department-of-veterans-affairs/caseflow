@@ -248,12 +248,12 @@ class RequestIssue < CaseflowRecord
 
   def mst_contention_status?
     return false if contention.nil?
-    contention&.special_issues[:code].upcase == 'MST' ? true : false
+    contention&.special_issues.has_value?("MST") ? true : false
   end
 
   def pact_contention_status?
     return false if contention.nil?
-    contention&.special_issues[:code].upcase == 'PACT' ? true : false
+    contention&.special_issues.has_value?("PACT") ? true : false
   end
 
   def rating?
