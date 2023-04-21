@@ -44,11 +44,11 @@ export const RadioField = (props) => {
     hideLabel,
     styling,
     vertical,
-    toggleMstStatus,
-    getMstCheckboxValue,
-    togglePactStatus,
-    getPactCheckboxValue,
-    featureToggles
+    renderMstAndPact,
+    mstCheckboxValue,
+    setMstCheckboxFunction,
+    pactCheckboxValue,
+    setPactCheckboxFunction
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -70,6 +70,28 @@ export const RadioField = (props) => {
       {label || name} {required && <RequiredIndicator />}
     </span>
   );
+
+  const maybeAddMstAndPactCheckboxes = (option) => {
+    if (renderMstAndPact && (option.value === props.value)) {
+
+      return (
+        <div>
+          <Checkbox
+            label="MST"
+            name="MST"
+            value={mstCheckboxValue}
+            onChange={(checked) => setMstCheckboxFunction(checked)}
+          />
+          <Checkbox
+            label="Pact"
+            name="Pact"
+            value={pactCheckboxValue}
+            onChange={(checked) => setPactCheckboxFunction(checked)}
+          />
+        </div>
+      );
+    }
+  };
 
   const maybeAddTooltip = (option, radioField) => {
     if (option.tooltipText) {
@@ -98,8 +120,9 @@ export const RadioField = (props) => {
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);
 
   //Requires the Feature toggle for mstOrPactCheckboxes = true
+  // props.featureToggles.mstOrPactCheckboxes
   const displayMSTorPactInfo = (issueId, indexId) => {
-    if(issueId === indexId && props.featureToggles.mstOrPactCheckboxes)
+    if(issueId === indexId && true)
       return true;
 
     return false;
@@ -141,10 +164,7 @@ export const RadioField = (props) => {
             >
               {option.displayText || option.displayElem}
               {props.onChange}
-              {displayMSTorPactInfo(option.value, props.value) && <Checkbox label="Issue is related to Military Sexual Trauma (MST)"
-              defaultValue={getMstCheckboxValue}  onChange={toggleMstStatus} name='MST'/>}
-             {displayMSTorPactInfo(option.value, props.value) && <Checkbox label="Issue is related to PACT Act"
-             defaultValue={getPactCheckboxValue} onChange={togglePactStatus} name='PACT'/>}
+              {maybeAddMstAndPactCheckboxes(option)}
             </label>
             {option.help && <RadioFieldHelpText help={option.help} />}
           </div>
@@ -166,6 +186,11 @@ RadioField.propTypes = {
   id: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
   required: PropTypes.bool,
+  renderMstAndPact: PropTypes.bool,
+  mstCheckboxValue: PropTypes.bool,
+  setMstCheckboxFunction: PropTypes.func,
+  pactCheckboxValue: PropTypes.bool,
+  setPactCheckboxFunction: PropTypes.func,
   /**
    * Pass a ref to the `input` element
    */

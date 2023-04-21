@@ -28,9 +28,6 @@ const updateFromServerFeatures = (state, featureToggles) => {
     },
     vhaClaimReviewEstablishment: {
       $set: Boolean(featureToggles.vhaClaimReviewEstablishment)
-    },
-    mstOrPactCheckboxes: {
-      $set: Boolean(featureToggles.mstOrPactCheckboxes)
     }
   });
 };
@@ -46,7 +43,6 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       updatedAppealForm: false,
       hlrScUnrecognizedClaimants: false,
       vhaClaimReviewEstablishment: false,
-      mstOrPactCheckboxes: false
     },
     data.featureToggles
   );

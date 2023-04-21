@@ -15,7 +15,7 @@ class AddIssuesModal extends React.Component {
 
   constructor(props) {
     super(props);
-    const {featureToggles} = props
+
     this.state = {
       approxDecisionDate: '',
       selectedContestableIssueIndex: '',
@@ -24,6 +24,9 @@ class AddIssuesModal extends React.Component {
       pactCheckboxValue: false
     };
   }
+
+  mstCheckboxChange = (checked) => this.setState({ mstCheckboxValue: checked });
+  pactCheckboxChange = (checked) => this.setState({ pactCheckboxValue: checked });
 
   toggleMstStatus = () => {
     this.state.mstCheckboxValue = !this.state.mstCheckboxValue;
@@ -53,7 +56,7 @@ class AddIssuesModal extends React.Component {
 
 
   onAddIssue = () => {
-    const { selectedContestableIssueIndex, notes, mstCheckbox, pactCheckbox } = this.state;
+    const { selectedContestableIssueIndex, notes, mstCheckboxValue, pactCheckboxValue } = this.state;
     const currentIssue = issueByIndex(this.props.intakeData.contestableIssues, selectedContestableIssueIndex);
 
     if (selectedContestableIssueIndex && !currentIssue.index) {
@@ -67,8 +70,8 @@ class AddIssuesModal extends React.Component {
       currentIssue: {
         ...currentIssue,
         notes,
-        mstCheckbox,
-        pactCheckbox
+        mstCheckboxValue,
+        pactCheckboxValue,
       }
     });
   };
@@ -82,8 +85,7 @@ class AddIssuesModal extends React.Component {
     return map(intakeData.contestableIssues, (contestableIssuesByIndex, approxDecisionDate) => {
       const radioOptions = map(contestableIssuesByIndex, (issue) => {
         const foundIndex = findIndex(addedIssues, { index: issue.index });
-        this.mstCheckbox = contestableIssuesByIndex[issue.index].hasMst
-        this.pactCheckbox = contestableIssuesByIndex[issue.index].hasPact
+
         let text =
           foundIndex === -1 ? issue.description : `${issue.description} (already selected for issue ${foundIndex + 1})`;
 
@@ -121,11 +123,11 @@ class AddIssuesModal extends React.Component {
           key={approxDecisionDate}
           value={this.state.selectedContestableIssueIndex}
           onChange={this.radioOnChange}
-          featureToggles={this.props.featureToggles}
-          toggleMstStatus={this.toggleMstStatus}
-          getMst={this.getMstStatus}
-          togglePactStatus={this.togglePactStatus}
-          getPact={this.getPactStatus}
+          renderMstAndPact
+          mstCheckboxValue={this.state.mstCheckboxValue}
+          setMstCheckboxFunction={this.mstCheckboxChange}
+          pactCheckboxValue={this.state.pactCheckboxValue}
+          setPactCheckboxFunction={this.pactCheckboxChange}
         />
       );
     });
@@ -159,6 +161,7 @@ class AddIssuesModal extends React.Component {
   }
 
   render() {
+    console.log(this.props)
     const { intakeData, onCancel } = this.props;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
