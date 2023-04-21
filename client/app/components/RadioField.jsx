@@ -7,6 +7,7 @@ import StringUtil from '../util/StringUtil';
 import Tooltip from './Tooltip';
 
 import { helpText } from './RadioField.module.scss';
+import Checkbox from './Checkbox';
 
 const RadioFieldHelpText = ({ help, className }) => {
   const helpClasses = classNames('cf-form-radio-help', helpText, className);
@@ -42,7 +43,12 @@ export const RadioField = (props) => {
     strongLabel,
     hideLabel,
     styling,
-    vertical
+    vertical,
+    renderMstAndPact,
+    mstCheckboxValue,
+    setMstCheckboxFunction,
+    pactCheckboxValue,
+    setPactCheckboxFunction
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -64,6 +70,28 @@ export const RadioField = (props) => {
       {label || name} {required && <RequiredIndicator />}
     </span>
   );
+
+  const maybeAddMstAndPactCheckboxes = (option) => {
+    if (renderMstAndPact && (option.value === props.value)) {
+
+      return (
+        <div>
+          <Checkbox
+            label="Issue is related to Military Sexual Trauma (MST)"
+            name="MST"
+            value={mstCheckboxValue}
+            onChange={(checked) => setMstCheckboxFunction(checked)}
+          />
+          <Checkbox
+            label="Issue is related to PACT act"
+            name="Pact"
+            value={pactCheckboxValue}
+            onChange={(checked) => setPactCheckboxFunction(checked)}
+          />
+        </div>
+      );
+    }
+  };
 
   const maybeAddTooltip = (option, radioField) => {
     if (option.tooltipText) {
@@ -124,6 +152,8 @@ export const RadioField = (props) => {
               htmlFor={`${idPart}_${option.value}`}
             >
               {option.displayText || option.displayElem}
+              {props.onChange}
+              {maybeAddMstAndPactCheckboxes(option)}
             </label>
             {option.help && <RadioFieldHelpText help={option.help} />}
           </div>
@@ -145,6 +175,11 @@ RadioField.propTypes = {
   id: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
   required: PropTypes.bool,
+  renderMstAndPact: PropTypes.bool,
+  mstCheckboxValue: PropTypes.bool,
+  setMstCheckboxFunction: PropTypes.func,
+  pactCheckboxValue: PropTypes.bool,
+  setPactCheckboxFunction: PropTypes.func,
 
   /**
    * Pass a ref to the `input` element
