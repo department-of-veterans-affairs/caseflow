@@ -366,7 +366,7 @@ class TaskActionRepository
                               COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
                             else
                               COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
-      end
+                            end
 
       if defined? task.completion_contact
         params[:contact] = task.completion_contact
