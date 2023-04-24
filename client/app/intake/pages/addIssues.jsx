@@ -526,8 +526,6 @@ class AddIssuesPage extends React.Component {
             }}
             onSubmit={() => {
               // TO-DO: Logic to update table and state for MST and Pact changes
-              // this.props.mstUpdate({ mstStatus });
-              // this.props.pactUpdate({ pactStatus });
               this.props.toggleEditIntakeIssueModal();
 
             }}

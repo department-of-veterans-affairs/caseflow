@@ -67,8 +67,6 @@ export class EditIntakeIssueModal extends React.Component {
             name: 'Save',
             onClick: () => {
               this.props.onSubmit();
-            //  this.props.mstUpdate(mst_status);
-            //  this.props.pactUpdate(pact_status);
             }
           }
         ]}
