@@ -261,9 +261,7 @@ export const issueTypesColumn = (tasks, filterOptions) => {
     filterOptions,
     label: 'Filter by issue type',
     columnName: 'issueTypesColumn',
-    // columnName: 'Issue Type',
-    // valueName: 'issueTypesColumn',
-    valueName: 'is this used for anything but clear filter label?',
+    valueName: 'Issue Type',
     tableData: tasks,
     valueFunction: (task) => {
       const commaDelimitedIssueTypes = task.appeal.issueTypes;
