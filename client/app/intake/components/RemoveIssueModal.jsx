@@ -34,8 +34,6 @@ class RemoveIssueModal extends React.PureComponent {
     } = this.props;
 
     return <div className="intake-remove-issue">
-      {console.log(`wut is this: ${JSON.stringify(removeIndex)}`)}
-
       <Modal
         buttons={[
           { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
