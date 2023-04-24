@@ -49,6 +49,7 @@ class NonratingRequestIssueModal extends React.Component {
       decisionReviewTitle: null,
       isPreDocketNeeded: null,
       mstChecked: null,
+      pactChecked: null,
       dateError: ''
     };
   }
@@ -73,6 +74,11 @@ class NonratingRequestIssueModal extends React.Component {
   isMstChecked = (mstChecked) => {
     this.setState({
       mstChecked
+    });
+  };
+  isPactChecked = (pactChecked) => {
+    this.setState({
+      pactChecked
     });
   };
 
@@ -282,32 +288,21 @@ class NonratingRequestIssueModal extends React.Component {
     );
   }
 
-  // getSpecialIssues() {
-  //   // const { decisionDate, description } = this.state;
-
-  //   return (
-  //     <React.Fragment>
-  //       <div className="special-issues-selection" label="Select any special issues that apply">
-  //         <Checkbox
-  //           name="mst-pact-checkbox"
-  //           label="Military Secual Trauma (MST)"
-  //           value="Military Secual Trauma (MST)"
-  //           onChange={this.mstChecked = true}
-  //         />
-  //       </div>
-  //     </React.Fragment>
-  //   );
-  // }
-
   getSpecialIssues() {
     return (
       <div className="special-issues-selection">
         <label><b>Select any special issues that apply</b></label>
         <Checkbox
-          name="mst-pact-checkbox"
+          name="mst-checkbox"
           label="Military Sexual Trauma (MST)"
           value={this.mstChecked}
           onChange={this.isMstChecked}
+        />
+        <Checkbox
+          name="pact-checkbox"
+          label="Issue is related to PACT act"
+          value={this.pactChecked}
+          onChange={this.isPactChecked}
         />
       </div>
     );
@@ -378,14 +373,6 @@ class NonratingRequestIssueModal extends React.Component {
             <div className="get-special-issues">
               {getSpecialIssues}
             </div>
-
-            {/* { (mst_pact_identification === 'true') &&
-              <Checkbox
-                name="mst-pact-checkbox"
-                label="MST PACT Checkbox"
-                value={category}
-                onChange={this.categoryOnChange} />
-            } */}
           </div>
         </Modal>
       </div>
@@ -406,6 +393,7 @@ NonratingRequestIssueModal.propTypes = {
   receiptDate: PropTypes.string,
   addedIssues: PropTypes.array,
   mstChecked: PropTypes.bool,
+  pactChecked: PropTypes.bool,
   featureToggles: PropTypes.object
 };
 
