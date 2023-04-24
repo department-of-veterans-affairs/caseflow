@@ -75,10 +75,6 @@ class BusinessLine < Organization
       @parent = parent
       @query_params = query_params
 
-      puts query_params.inspect
-      puts "filters are:"
-      puts query_params[:filters]
-
       # Initialize default sorting
       query_params[:sort_by] ||= DEFAULT_ORDERING_HASH[query_type][:sort_by]
       query_params[:sort_order] ||= "desc"
@@ -99,28 +95,60 @@ class BusinessLine < Organization
         .count
     end
 
+    # rubocop:disable Metrics/MethodLength
     def issue_type_count
-      # TODO: Refactor this so it doesn't suck so much. I shouldn't need 3 queries for this
-      # TODO: It's also currently counting the number of each issue types on these tasks
-      # When it should be counting than the number of tasks that are associated to that issue type I think
-      hlr_issue_type_counts = Task.send(TASKS_QUERY_TYPE[query_type]).joins(higher_level_review: :request_issues)
-        .select("*").where(query_constraints).group("request_issues.nonrating_issue_category").count
-      sc_issue_type_counts = Task.send(TASKS_QUERY_TYPE[query_type]).joins(supplemental_claim: :request_issues)
-        .select("*").where(query_constraints).group("request_issues.nonrating_issue_category").count
-      appeal_issue_type_counts = Task.send(TASKS_QUERY_TYPE[query_type]).joins(ama_appeal: :request_issues)
-        .select("*").where(query_constraints).group("request_issues.nonrating_issue_category").count
+      query_type_predicate = if query_type == :in_progress
+                               "AND tasks.status IN ('assigned', 'in_progress', 'on_hold')
+                               AND request_issues.closed_at IS NULL
+                               AND request_issues.ineligible_reason IS NULL"
+                             else
+                               "AND tasks.status = 'completed'
+                                AND #{Task.arel_table[:closed_at].between(7.days.ago..Time.zone.now).to_sql}"
+                             end
 
-      # Merge the hashes together to get a total count for all 3 types of decision reviews
-      total_issue_type_counts = hlr_issue_type_counts.merge(sc_issue_type_counts) do |_key, old_value, new_value|
-        old_value + new_value
-      end
-      total_issue_type_counts = total_issue_type_counts.merge(appeal_issue_type_counts) do |_key, old_value, new_value|
-        old_value + new_value
-      end
+      nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
+        WITH task_review_issues AS (
+          SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
+          FROM tasks
+          INNER JOIN higher_level_reviews ON tasks.appeal_id = higher_level_reviews.id
+        AND tasks.appeal_type = 'HigherLevelReview'
+          INNER JOIN request_issues ON higher_level_reviews.id = request_issues.decision_review_id
+        AND request_issues.decision_review_type = 'HigherLevelReview'
+          WHERE request_issues.nonrating_issue_category IS NOT NULL
+        AND tasks.assigned_to_id = #{business_line_id}
+        AND tasks.assigned_to_type = 'Organization'
+        #{query_type_predicate}
+        UNION ALL
+        SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
+          FROM tasks
+          INNER JOIN supplemental_claims ON tasks.appeal_id = supplemental_claims.id
+        AND tasks.appeal_type = 'SupplementalClaim'
+          INNER JOIN request_issues ON supplemental_claims.id = request_issues.decision_review_id
+        AND request_issues.decision_review_type = 'SupplementalClaim'
+        WHERE tasks.assigned_to_id = #{business_line_id}
+        AND tasks.assigned_to_type = 'Organization'
+        #{query_type_predicate}
+        UNION ALL
+        SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
+          FROM tasks
+          INNER JOIN appeals ON tasks.appeal_id = appeals.id
+        AND tasks.appeal_type = 'Appeal'
+          INNER JOIN request_issues ON appeals.id = request_issues.decision_review_id
+        AND request_issues.decision_review_type = 'Appeal'
+        WHERE tasks.assigned_to_id = #{business_line_id}
+        AND tasks.assigned_to_type = 'Organization'
+        #{query_type_predicate}
+        )
+        SELECT issue_category, COUNT(issue_category) AS nonrating_issue_count
+        FROM task_review_issues
+        GROUP BY issue_category;
+      SQL
 
-      puts total_issue_type_counts.inspect
-      total_issue_type_counts
+      nonrating_issue_count.reduce({}) do |acc, hash|
+        acc.merge(hash["issue_category"] => hash["nonrating_issue_count"])
+      end
     end
+    # rubocop:enable Metrics/MethodLength
 
     private
 
@@ -381,7 +409,6 @@ class BusinessLine < Organization
       end
     end
 
-    # TODO: Might be able to refactor this to work for all filters if the where clause is placed in the union queries
     def issue_type_filter_predicate(filters)
       return "" unless filters
 
@@ -404,21 +431,12 @@ class BusinessLine < Organization
         filter = filter.or(RequestIssue.arel_table[:nonrating_issue_category].eq(task_name))
       end
 
-      # filtered_subquery = decision_review_requests_union_subquery(filter)
       filtered_ids = decision_review_requests_union_subquery(filter)
 
-      # puts "my filtered subquery"
-      # puts filtered_subquery.inspect
-      # filtered_subquery
-      # where("tasks.id IN (?)", filtered_subquery)
-      # Using ids for now since Active record really really is not liking my corelated subquery
       # TODO: Benchmark this vs a ilike having clause on the issue_types aggregate string field.
       ["tasks.id IN (?)", filtered_ids]
     end
 
-    # TODO: Abc crap again even though there's really no branching in this method at all
-    # TODO: this currently also probably doesn't work on board effectuation tasks but it shouldn't matter
-    # Since that additional query exists for tasks without request issues in the first place
     def decision_review_requests_union_subquery(filter)
       base_query = Task.select("tasks.id").send(TASKS_QUERY_TYPE[query_type])
       union_query = Arel::Nodes::UnionAll.new(
@@ -431,22 +449,16 @@ class BusinessLine < Organization
         base_query.joins(ama_appeal: :request_issues).where(query_constraints).where(filter).arel
       )
 
-      # puts union_query.to_sql
       # Grab all the ids and use it in the where clause
-      # TODO: This is gross. I should be able to use a correlated subquery, but ActiveRecord is stupid.
+      # TODO: This is gross. I should be able to use a correlated subquery, but ActiveRecord is silly.
       Task.from(Arel::Nodes::As.new(union_query, Task.arel_table)).pluck(:id)
     end
 
     def locate_issue_type_filter(filters)
+      # Example filter:
+      # [{"col"=>["issueTypesColumn"], "val"=>["Apportionment|CHAMPVA"]},
+      # {"col"=>["decisionReviewType"], "val"=>["HigherLevelReview"]}]
       parsed_filters = parse_filters(filters)
-
-      # puts "in locate issue_type filter"
-
-      # puts parsed_filters.inspect
-
-      # It looks like this [{"col"=>["issueTypesColumn"], "val"=>["Apportionment|CHAMPVA"]}]
-      # It looks like this with both types of filters
-      # [{"col"=>["issueTypesColumn"], "val"=>["Apportionment|CHAMPVA"]}, {"col"=>["decisionReviewType"], "val"=>["HigherLevelReview"]}]
 
       parsed_filters.find do |filter|
         filter["col"].include?("issueTypesColumn")

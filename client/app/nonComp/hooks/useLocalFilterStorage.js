@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-// TODO: Move this hook to a new file and renamed it useLocalStorageFilter or something
 const useLocalFilterStorage = (key, defaultValue) => {
   const [value, setValue] = useState(() => {
     const storedValue = localStorage.getItem(key);
