@@ -651,7 +651,7 @@ class TaskActionRepository
         instructions_label: COPY::CANCEL_TASK_INSTRUCTIONS_LABEL,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: AssessDocumentationTask.name,
-        redirect_after: "/organizations/#{queue_url}"
+        redirect_after: "/organizations/#{queue_url}?tab=po_completed"
       }
     end
 
