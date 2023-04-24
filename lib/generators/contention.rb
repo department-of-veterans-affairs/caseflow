@@ -51,7 +51,7 @@ class Generators::Contention
         text: "Generic contention",
         start_date: Time.zone.today,
         submit_date: 5.days.ago,
-        special_issues: {
+        special_issues: [{
           issue_id: generate_external_id,
           narrative: "Military Sexual Trauma (MST)",
           code: "MST"
@@ -59,7 +59,7 @@ class Generators::Contention
           issue_id: generate_external_id,
           narrative: "PACT",
           code: "PACT"
-        }
+        }]
       }
     end
 
