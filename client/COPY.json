@@ -1345,5 +1345,6 @@
   "PDF_GENERATION_ERROR_TITLE": "Unable to generate PDF",
   "PDF_GENERATION_ERROR_MESSAGE": "There was an error generating the PDF for download. Please try again later.",
   "DATE_SELECTOR_FUTURE_DATE_ERROR": "Dates cannot be in the future",
-  "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date"
+  "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date",
+  "CANCEL_TASK_INSTRUCTIONS_LABEL": "Why are you returning? Provide any important context"
 }
