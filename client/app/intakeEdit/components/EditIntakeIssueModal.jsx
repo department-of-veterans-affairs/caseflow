@@ -30,13 +30,13 @@ export class EditIntakeIssueModal extends React.Component {
   }
 
   handleMstCheckboxChange = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       mstCheckboxValue: !prevState.mstCheckboxValue
     }));
   }
 
   handlePactCheckboxChange = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       pactCheckboxValue: !prevState.pactCheckboxValue
     }));
   }
@@ -78,7 +78,7 @@ export class EditIntakeIssueModal extends React.Component {
           <strong>
             { INTAKE_EDIT_ISSUE_LABEL }
           </strong>
-          { currentIssueCategory ? currentIssueCategory + " - " + currentIssueDescription : currentIssueDescription}
+          { currentIssueCategory ? currentIssueCategory + ' - ' + currentIssueDescription : currentIssueDescription}
         </div>
 
         <div>
@@ -160,6 +160,12 @@ EditIntakeIssueModal.propTypes = {
   setMstCheckboxFunction: PropTypes.func,
   pactCheckboxValue: PropTypes.bool,
   setPactCheckboxFunction: PropTypes.func,
+  intakeData: PropTypes.object,
+  currentIssue: PropTypes.object,
+  currentIssueCategory: PropTypes.string,
+  currentIssueDescription: PropTypes.string,
+  currentIssueBenefitType: PropTypes.string,
+  currentIssueDecisionDate: PropTypes.string
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditIntakeIssueModal);
