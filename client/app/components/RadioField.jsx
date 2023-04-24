@@ -48,7 +48,9 @@ export const RadioField = (props) => {
     mstCheckboxValue,
     setMstCheckboxFunction,
     pactCheckboxValue,
-    setPactCheckboxFunction
+    setPactCheckboxFunction,
+    preExistingMST,
+    preExistingPACT
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -90,6 +92,22 @@ export const RadioField = (props) => {
     return radioField;
   };
 
+  const returnMstOrCheckboxValue = () => {
+    if (preExistingMST) {
+      return preExistingMST;
+    }
+
+    return mstCheckboxValue;
+  };
+
+  const returnPactOrCheckboxValue = () => {
+    if (preExistingPACT) {
+      return preExistingPACT;
+    }
+
+    return pactCheckboxValue;
+  };
+
   const maybeAddMstAndPactCheckboxes = (option) => {
     if (renderMstAndPact && (option.value === props.value)) {
 
@@ -98,13 +116,15 @@ export const RadioField = (props) => {
           <Checkbox
             label="Issue is related to Military Sexual Trauma (MST)"
             name="MST"
-            value={mstCheckboxValue}
+            value={returnMstOrCheckboxValue()}
+            disabled={preExistingMST}
             onChange={(checked) => setMstCheckboxFunction(checked)}
           />
           <Checkbox
             label="Issue is related to PACT act"
             name="Pact"
-            value={pactCheckboxValue}
+            value={returnPactOrCheckboxValue()}
+            disabled={preExistingPACT}
             onChange={(checked) => setPactCheckboxFunction(checked)}
           />
         </div>
@@ -249,6 +269,8 @@ RadioField.propTypes = {
   setMstCheckboxFunction: PropTypes.func,
   pactCheckboxValue: PropTypes.bool,
   setPactCheckboxFunction: PropTypes.func,
+  preExistingMST: PropTypes.bool,
+  preExistingPACT: PropTypes.bool
 };
 
 export default RadioField;

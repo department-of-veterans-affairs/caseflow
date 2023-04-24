@@ -80,7 +80,9 @@ class ContestableIssue
       sourceReviewType: source_review_type,
       timely: timely?,
       latestIssuesInChain: serialize_latest_decision_issues,
-      isRating: is_rating
+      isRating: is_rating,
+      mst:true,
+      pact:false
     }
   end
 

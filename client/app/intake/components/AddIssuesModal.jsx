@@ -54,6 +54,8 @@ class AddIssuesModal extends React.Component {
     const { intakeData } = this.props;
 
     const addedIssues = intakeData.addedIssues ? intakeData.addedIssues : [];
+    let preExistingMST;
+    let preExistingPACT;
 
     return map(intakeData.contestableIssues, (contestableIssuesByIndex, approxDecisionDate) => {
       const radioOptions = map(contestableIssuesByIndex, (issue) => {
@@ -78,6 +80,8 @@ class AddIssuesModal extends React.Component {
 
           text = `${text} (Please select the most recent decision on ${dates})`;
         }
+        preExistingMST = contestableIssuesByIndex[issue.index].mst;
+        preExistingPACT = contestableIssuesByIndex[issue.index].pact;
 
         return {
           displayText: text,
@@ -100,6 +104,8 @@ class AddIssuesModal extends React.Component {
           setMstCheckboxFunction={this.mstCheckboxChange}
           pactCheckboxValue={this.state.pactCheckboxValue}
           setPactCheckboxFunction={this.pactCheckboxChange}
+          preExistingMST={preExistingMST}
+          preExistingPACT={preExistingPACT}
         />
       );
     });
@@ -133,7 +139,6 @@ class AddIssuesModal extends React.Component {
 
   render() {
     const { intakeData, onCancel } = this.props;
-
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
     return (
@@ -163,7 +168,7 @@ AddIssuesModal.propTypes = {
   onSkip: PropTypes.func,
   skipText: PropTypes.string,
   intakeData: PropTypes.object,
-  featureToggle: PropTypes.object
+  featureToggles: PropTypes.object
 };
 
 AddIssuesModal.defaultProps = {

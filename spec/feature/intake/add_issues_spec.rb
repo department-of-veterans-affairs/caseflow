@@ -68,7 +68,11 @@ feature "Intake Add Issues Page", :all_dbs do
       choose('rating-radio_0', allow_label_click:true)
       expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
       expect(page).to have_content("Issue is related to PACT Act")
+      sleep(10000)
     end
+
+
+
   end
 
   context "check for correct time zone" do
