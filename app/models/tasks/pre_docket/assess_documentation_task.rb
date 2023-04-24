@@ -44,10 +44,16 @@ class AssessDocumentationTask < Task
       task_actions.concat([Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.to_h].freeze)
     end
 
-    task_actions
+    sort_actions(task_actions)
   end
 
   def self.label
     COPY::ASSESS_DOCUMENTATION_TASK_LABEL
+  end
+
+  def sort_actions(task_actions)
+    return task_actions unless task_actions.all? { |h| h[:sort_order] }
+
+    task_actions.sort_by { |k, _v| k[:sort_order] }
   end
 end
