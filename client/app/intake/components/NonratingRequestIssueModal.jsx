@@ -150,6 +150,8 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleReason,
       decisionReviewTitle,
       isPreDocketNeeded,
+      mstChecked,
+      pactChecked,
     } = this.state;
 
     const currentIssue = {
@@ -162,6 +164,8 @@ class NonratingRequestIssueModal extends React.Component {
       decisionReviewTitle,
       isRating: false,
       isPreDocketNeeded,
+      mstChecked,
+      pactChecked,
       timely: isTimely(formType, decisionDate, intakeData.receiptDate)
     };
 
