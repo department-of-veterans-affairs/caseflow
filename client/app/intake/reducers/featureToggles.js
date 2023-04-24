@@ -28,6 +28,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     },
     vhaClaimReviewEstablishment: {
       $set: Boolean(featureToggles.vhaClaimReviewEstablishment)
+    },
+    mstPactIdentification: {
+      $set: Boolean(featureToggles.mstPactIdentification)
     }
   });
 };
@@ -42,7 +45,8 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       eduPreDocketAppeals: false,
       updatedAppealForm: false,
       hlrScUnrecognizedClaimants: false,
-      vhaClaimReviewEstablishment: false
+      vhaClaimReviewEstablishment: false,
+      mstPactIdentification: false
     },
     data.featureToggles
   );
