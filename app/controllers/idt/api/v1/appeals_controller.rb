@@ -33,15 +33,35 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def validate
-    body = params.require(:requestAddress).permit!.to_h
+    body = params.require(:request_address).permit!.to_h
     address = OpenStruct.new(body)
-    response = VADotGovService.validate_address(address)
-    response.response.raw_body = JSON.parse(response.response.raw_body)
-    case status
+    formatted_address = Address.new(
+      address_line_1: address.address_line_1,
+      address_line_2: address.address_line_2,
+      address_line_3: address.address_line_3,
+      city: address.city,
+      state: address.state_province[:code],
+      zip: address.zip_code_5,
+      zip4: address.zip_code_4,
+      country: address.request_country[:country_code],
+      international_postal_code: address.international_postal_code,
+      state_name: address.state_province[:name],
+      country_name: address.request_country[:country_name],
+      address_POU: address.address_POU
+    )
+    response = VADotGovService.validate_address(formatted_address)
+    formatted_response = JSON.parse(response.response.raw_body)
+    formatted_response.deep_transform_keys!(&:underscore)
+    formatted_response.deep_transform_keys! { |key| key.gsub("e1", "e_1") }
+    formatted_response.deep_transform_keys! { |key| key.gsub("e2", "e_2") }
+    formatted_response.deep_transform_keys! { |key| key.gsub("e3", "e_3") }
+    formatted_response.deep_transform_keys! { |key| key.gsub("e4", "e_4") }
+    formatted_response.deep_transform_keys! { |key| key.gsub("e5", "e_5") }
+    case response.code
     when 401, 403, 429
       fail Caseflow::Error::LighthouseApiError
     else
-      render json: response
+      render json: formatted_response
     end
   end
 
