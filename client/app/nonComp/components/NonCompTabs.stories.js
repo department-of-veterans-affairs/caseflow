@@ -19,7 +19,27 @@ const ReduxDecorator = (Story, options) => {
           '["DecisionReviewTask", "SupplementalClaim"]': 3,
           '["VeteranRecordRequest", "Appeal"]': 1
         },
-        completed: {}
+        completed: {},
+        in_progress_issue_types: {
+          Apportionment: 18,
+          'Beneficiary Travel': 14,
+          'Camp Lejune Family Member': 13,
+          'Caregiver | Eligibility': 13,
+          'Caregiver | Other': 12,
+          'Caregiver | Revocation/Discharge': 15,
+          'Caregiver | Tier Level': 13,
+          CHAMPVA: 17,
+          'Clothing Allowance': 7,
+          'Continuing Eligibility/Income Verification Match (IVM)': 14,
+          'Eligibility for Dental Treatment': 14,
+          'Foreign Medical Program': 12,
+          'Initial Eligibility and Enrollment in VHA Healthcare': 15,
+          'Medical and Dental Care Reimbursement': 7,
+          Other: 21,
+          'Prosthetics | Other (not clothing allowance)': 12,
+          'Spina Bifida Treatment (Non-Compensation)': 10
+        },
+        completed_issue_types: {}
       }
     }
   };
