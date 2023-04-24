@@ -4,7 +4,7 @@ class Address
   ZIP5_REGEX = /[0-9]{5}/.freeze
   ZIP_CODE_REGEX = /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/.freeze
 
-  attr_reader :country, :city, :zip, :address_line_1, :address_line_2, :address_line_3, :state
+  attr_reader :country, :city, :zip, :address_line_1, :address_line_2, :address_line_3, :state, :zip4, :international_postal_code, :state_name, :country_name, :address_POU
 
   class << self
     # Validates a 5-digit US zip code.

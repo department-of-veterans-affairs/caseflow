@@ -49,7 +49,16 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
       country_name: address.request_country[:country_name],
       address_POU: address.address_POU
     )
-    response = VADotGovService.validate_address(formatted_address)
+    begin
+      response = VADotGovService.validate_address(formatted_address)
+    rescue StandardError => error
+      case error.code
+      when 401, 403, 429
+        raise Caseflow::Error::LighthouseApiError
+      else
+        raise
+      end
+    end
     formatted_response = JSON.parse(response.response.raw_body)
     formatted_response.deep_transform_keys!(&:underscore)
     formatted_response.deep_transform_keys! { |key| key.gsub("e1", "e_1") }
@@ -57,12 +66,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     formatted_response.deep_transform_keys! { |key| key.gsub("e3", "e_3") }
     formatted_response.deep_transform_keys! { |key| key.gsub("e4", "e_4") }
     formatted_response.deep_transform_keys! { |key| key.gsub("e5", "e_5") }
-    case response.code
-    when 401, 403, 429
-      fail Caseflow::Error::LighthouseApiError
-    else
-      render json: formatted_response
-    end
+    render json: formatted_response
   end
 
   private

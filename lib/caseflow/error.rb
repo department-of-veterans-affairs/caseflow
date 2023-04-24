@@ -42,6 +42,8 @@ module Caseflow::Error
   class VaDotGovNullAddressError < StandardError; end
   class VaDotGovForeignVeteranError < StandardError; end
 
+  # class TestError < SerializableError; end
+
   class FetchHearingLocationsJobError < SerializableError; end
 
   class ActionForbiddenError < SerializableError
