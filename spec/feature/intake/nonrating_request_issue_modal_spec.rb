@@ -36,7 +36,10 @@ feature "Nonrating Request Issue Modal", :postgres do
     click_intake_continue
     click_intake_add_issue
     click_intake_nonrating_category_dropdown
-    expect(page).to have_content(included_category)
+    expect(page).to have_content(
+      included_category,
+      "Military Sexual Trauma (MST)",
+      "Issue is related to PACT act")
     expect(page).to_not have_content(excluded_category)
     add_intake_nonrating_issue(
       category: included_category,
