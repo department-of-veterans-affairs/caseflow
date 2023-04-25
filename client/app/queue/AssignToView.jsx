@@ -174,7 +174,16 @@ class AssignToView extends React.Component {
 
   determineOptions = (actionData) => {
     if (this.isVHAAssignToRegional()) {
-      return actionData.options[this.state.assignToVHARegionalOfficeSelection];
+      return actionData.options[this.state.assignToVHARegionalOfficeSelection].sort((optA, optB) => {
+        if (optA.label < optB.label) {
+          return -1;
+        }
+        if (optA.label > optB.label) {
+          return 1;
+        }
+
+        return 0;
+      });
     }
 
     return actionData.options;
