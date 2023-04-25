@@ -67,8 +67,19 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       choose('rating-radio_0', allow_label_click:true)
       expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
-      expect(page).to have_content("Issue is related to PACT Act")
-      sleep(10000)
+      expect(page).to have_content("Issue is related to PACT act")
+    end
+
+    scenario "MST and PACT checkboxes are disabled if they already exist in the model" do
+      start_higher_level_review(veteran)
+      FeatureToggle.enable!(:mst_pact_identification)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      choose('rating-radio_0', allow_label_click:true)
+      sleep(1)
+      expect(page).to have_field("Issue is related to Military Sexual Trauma (MST)", visible: false, disabled: true)
+      expect(page).to have_field("Issue is related to PACT act", visible: false, disabled: true)
     end
 
 

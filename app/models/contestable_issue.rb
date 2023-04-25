@@ -66,6 +66,7 @@ class ContestableIssue
     end
   end
 
+
   def serialize
     {
       ratingIssueReferenceId: rating_issue_reference_id,
@@ -81,8 +82,11 @@ class ContestableIssue
       timely: timely?,
       latestIssuesInChain: serialize_latest_decision_issues,
       isRating: is_rating,
-      mst:true,
-      pact:false
+      mst: true,
+      pact: true
+
+      #test uses a gui in some ways it performs
+
     }
   end
 
