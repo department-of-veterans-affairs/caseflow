@@ -38,4 +38,8 @@ class HearingEmailRecipient < CaseflowRecord
   def roles
     fail Caseflow::Error::MustImplementInSubclass
   end
+
+  def stale?
+    !email_sent && created_at < 2.days.ago
+  end
 end
