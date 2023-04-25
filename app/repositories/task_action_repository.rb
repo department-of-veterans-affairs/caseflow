@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TaskActionRepository
+class TaskActionRepository # rubocop:disable Metrics/ClassLength
   class << self
     def assign_to_organization_data(task, _user = nil)
       organizations = Organization.assignable(task).map do |organization|
@@ -362,11 +362,12 @@ class TaskActionRepository
         modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym]
       }
 
-      params[:modal_body] = if task.type == "PostSendInitialNotificationLetterHoldingTask"
-        COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
-      else
-        COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
-      end
+      params[:modal_body] =
+        if task.type == "PostSendInitialNotificationLetterHoldingTask"
+          COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
+        else
+          COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
+        end
 
       if defined? task.completion_contact
         params[:contact] = task.completion_contact
@@ -537,7 +538,15 @@ class TaskActionRepository
       action = Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
       action = Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h if task.on_timed_hold?
 
-      TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
+      task_helper = TaskActionHelper.build_hash(action, task, user).merge(
+        returns_complete_hash: true
+      )
+
+      return task_helper if task.assigned_to.is_a?(User)
+
+      task_helper.merge(
+        data: { redirect_after: "/organizations/#{task.assigned_to.url}?tab=#{on_hold_tab_url(task.assigned_to)}&page=1" }
+      )
     end
 
     def review_decision_draft(task, user)
@@ -629,13 +638,20 @@ class TaskActionRepository
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
-        options: organizations_to_options(VhaRegionalOffice.all),
+        options: {
+          vamc: vamcs_to_options,
+          visn: visns_to_options
+        },
         modal_title: COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE,
         modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
         modal_selector_placeholder: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER,
+        body_optional: true,
         instructions: [],
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
-        drop_down_label: COPY::VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL,
+        instructions_label: COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_INSTRUCTIONS_LABEL,
+        drop_down_label: {
+          vamc: COPY::VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VAMC,
+          visn: COPY::VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VISN
+        },
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
@@ -872,6 +888,30 @@ class TaskActionRepository
       task.assigned_by&.full_name || "the assigner"
     end
 
+    def prepend_visn_id(visn)
+      "VISN #{Constants::VISNS_NUMBERED[visn]} - #{visn}"
+    end
+
+    def visns_to_options
+      VhaRegionalOffice.all.map do |org|
+        {
+          label: prepend_visn_id(org.name),
+          value: org.id
+        }
+      end
+    end
+
+    def vamcs_to_options
+      value = -1
+      Constants::VHA_VAMCS.map do |office|
+        value += 1
+        {
+          label: office["name"],
+          value: value
+        }
+      end
+    end
+
     def organizations_to_options(organizations)
       organizations&.map do |org|
         {
@@ -911,6 +951,12 @@ class TaskActionRepository
       return organization.completed_tasks_tab.name if organization.respond_to?(:completed_tasks_tab)
 
       "completed"
+    end
+
+    def on_hold_tab_url(organization)
+      return "on_hold" unless organization.is_a?(VhaProgramOffice)
+
+      "po_on_hold"
     end
   end
 end

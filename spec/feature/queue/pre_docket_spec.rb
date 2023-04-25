@@ -450,22 +450,27 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           appeal = Appeal.last
           visit "/queue/appeals/#{appeal.external_id}"
 
+          dropdown_visn_text = "VISN #{Constants::VISNS_NUMBERED[regional_office.name]} - #{regional_office.name}"
+
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find(
             "div",
             class: "cf-select__option",
             text: Constants.TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.label
           ).click
+
+          expect(page).to have_content(COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_RADIO_LABEL)
           expect(page).to have_content(COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE)
-          expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
+          expect(page).to have_content(COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_INSTRUCTIONS_LABEL)
+
           find(".cf-select__control", text: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER).click
-          find("div", class: "cf-select__option", text: regional_office.name).click
-          fill_in(COPY::PRE_DOCKET_MODAL_BODY, with: ro_instructions)
+          find("div", class: "cf-select__option", text: dropdown_visn_text).click
+          fill_in(COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_INSTRUCTIONS_LABEL, with: ro_instructions)
           find("button", class: "usa-button", text: COPY::MODAL_ASSIGN_BUTTON).click
 
           expect(page).to have_current_path("/organizations/#{program_office.url}"\
             "?tab=po_assigned&#{default_query_params}")
-          expect(page).to have_content("Task assigned to #{regional_office.name}")
+          expect(page).to have_content("Task assigned to #{dropdown_visn_text}")
           expect(page).to have_content(format(COPY::ORGANIZATIONAL_QUEUE_ON_HOLD_TAB_TITLE, 1))
         end
 
