@@ -29,11 +29,13 @@ import {
 } from '../uiReducer/uiActions';
 
 import { css } from 'glamor';
+import { taskActionData } from '../utils';
 
 const labelTextStyling = css({
   marginBottom: 0
 });
 
+/* eslint-disable camelcase */
 class StartHoldModal extends React.Component {
   constructor(props) {
     super(props);
@@ -57,7 +59,7 @@ class StartHoldModal extends React.Component {
   validateForm = () => {
     const hasInstructions = Boolean(this.state.instructions);
     const hasHoldLength = Boolean(Number(this.holdLength()));
-    const customHoldIsValid = Boolean(this.state.customHold < 31);
+    const customHoldIsValid = Boolean(this.state.customHold < 46);
 
     if (this.isVHAHold()) {
       return hasInstructions && hasHoldLength && customHoldIsValid;
@@ -94,6 +96,7 @@ class StartHoldModal extends React.Component {
 
   render = () => {
     const { highlightFormItems } = this.props;
+    const taskData = taskActionData(this.props);
 
     const invalidDate = this.state.customHold > 30;
 
@@ -118,7 +121,7 @@ class StartHoldModal extends React.Component {
     return <QueueFlowModal
       title={TASK_ACTIONS.PLACE_TIMED_HOLD.label}
       button={COPY.MODAL_PUT_TASK_ON_HOLD_BUTTON}
-      pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
+      pathAfterSubmit={taskData?.redirect_after ?? `/queue/appeals/${this.props.appealId}`}
       submitDisabled={this.isVHAHold() && !this.validateForm()}
       validateForm={this.validateForm}
       submitButtonClassNames={['usa-button']}
@@ -135,7 +138,10 @@ class StartHoldModal extends React.Component {
         styling={marginBottom(2)}
       />
       {this.state.hold === CUSTOM_HOLD_DURATION_TEXT && <TextField
-        name={COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY}
+        name={this.isVHAHold() ?
+          COPY.VHA_ACTION_PLACE_CUSTOM_HOLD_COPY :
+          COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY
+        }
         type="number"
         value={this.state.customHold}
         onChange={(customHold) => this.setState({ customHold })}
