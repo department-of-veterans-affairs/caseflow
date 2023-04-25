@@ -64,7 +64,7 @@ Please explain the changes you made here.
 #### Auditing
 - [ ] Are user actions being logged for audit purposes?
 - [ ] Are changes to critical data being tracked ?
-- [ ] Are logs being securely stored and protected from tampering?
+- [ ] Are logs being securely stored and protected from tampering or exposing protected data?
 
 #### Error Handling
 - [ ] Are errors being caught and handled gracefully?
