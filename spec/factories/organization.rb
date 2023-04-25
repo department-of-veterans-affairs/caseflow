@@ -54,7 +54,8 @@ FactoryBot.define do
     end
 
     factory :vha_regional_office do
-      type { VhaRegionalOffice.name }
+      type { VhaRegionalOffice }
+      name { Constants.VISN_ORG_NAMES.visn_orgs.name.sample }
     end
 
     factory :education_emo do

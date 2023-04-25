@@ -10,6 +10,7 @@ import {
   createQueueReducer,
   getAppealId,
   getTaskId,
+  enterModalRadioOptions,
   enterTextFieldOptions,
   selectFromDropdown
 } from './modalUtils';
@@ -20,6 +21,8 @@ import {
   camoToProgramOfficeToCamoData,
   vhaPOToCAMOData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
+import userEvent from '@testing-library/user-event';
+
 
 const renderAssignToView = (modalType, storeValues, taskType) => {
   const appealId = getAppealId(storeValues);
@@ -183,19 +186,33 @@ describe('Whenever a VHA Program Office assigns an appeal to a VISN/Regional Off
 
     expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
-    selectFromDropdown(
-      'Assign to selector',
-      'Sierra Pacific Network'
+    userEvent.click(
+      screen.getByRole('radio', { name: 'VISN' })
     );
 
     expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
-    enterTextFieldOptions(
-      'Provide instructions and context for this action',
-      'Here is the context that you have requested.'
+    selectFromDropdown(
+      'VISN',
+      'VISN 21 - Sierra Pacific Network'
     );
 
     expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+  });
+
+  it('displays visn if a vamc is selected', () => {
+    renderAssignToView(TASK_ACTIONS.VHA_ASSIGN_TO_REGIONAL_OFFICE.value, vhaPOToCAMOData, taskType);
+
+    userEvent.click(
+      screen.getByRole('radio', { name: 'VA Medical Center' })
+    );
+
+    selectFromDropdown(
+      'VA Medical Center',
+      'South Texas Veterans Health Care System'
+    );
+
+    expect(screen.getByText('VISN 17 - VA Heart of Texas Health Care Network')).toBeInTheDocument();
   });
 
   test('Submission button has correct CSS class', () => {
