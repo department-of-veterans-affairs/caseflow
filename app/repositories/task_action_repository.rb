@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TaskActionRepository
+class TaskActionRepository # rubocop:disable Metrics/ClassLength
   class << self
     def assign_to_organization_data(task, _user = nil)
       organizations = Organization.assignable(task).map do |organization|
@@ -362,11 +362,12 @@ class TaskActionRepository
         modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym]
       }
 
-      params[:modal_body] = if task.type == "PostSendInitialNotificationLetterHoldingTask"
-        COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
-      else
-        COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
-      end
+      params[:modal_body] =
+        if task.type == "PostSendInitialNotificationLetterHoldingTask"
+          COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
+        else
+          COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
+        end
 
       if defined? task.completion_contact
         params[:contact] = task.completion_contact
@@ -537,7 +538,15 @@ class TaskActionRepository
       action = Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
       action = Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h if task.on_timed_hold?
 
-      TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
+      task_helper = TaskActionHelper.build_hash(action, task, user).merge(
+        returns_complete_hash: true
+      )
+
+      return task_helper if task.assigned_to.is_a?(User)
+
+      task_helper.merge(
+        data: { redirect_after: "/organizations/#{task.assigned_to.url}?tab=#{on_hold_tab_url(task.assigned_to)}&page=1" }
+      )
     end
 
     def review_decision_draft(task, user)
@@ -936,6 +945,12 @@ class TaskActionRepository
       options.map do |_, value|
         value.transform_keys(&:downcase)
       end
+    end
+
+    def on_hold_tab_url(organization)
+      return "on_hold" unless organization.is_a?(VhaProgramOffice)
+
+      "po_on_hold"
     end
   end
 end
