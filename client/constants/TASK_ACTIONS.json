@@ -408,7 +408,7 @@
     "func": "vha_program_office_return_to_camo"
   },
   "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE": {
-    "label": "Return to VHA Program Office team",
+    "label": "Return to Program Office",
     "value": "modal/return_to_program_office",
     "func": "vha_regional_office_return_to_program_office"
   },
