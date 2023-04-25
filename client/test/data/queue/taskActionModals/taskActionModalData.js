@@ -594,91 +594,648 @@ const assessDocumentationTaskData = {
         }
       },
       {
-        func: 'vha_assign_to_regional_office_data',
-        label: 'Assign to VISN',
-        value: 'modal/assign_to_regional_office',
+        label: "Assign to VISN",
+        func: "vha_assign_to_regional_office_data",
+        value: "modal/assign_to_regional_office",
         data: {
-          options: [
-            {
-              label: 'VA New England Healthcare System',
-              value: 38
-            },
-            {
-              label: 'New York/New Jersey VA Health Care Network',
-              value: 39
-            },
-            {
-              label: 'VA Healthcare',
-              value: 40
-            },
-            {
-              label: 'VA Capitol Health Care Network',
-              value: 41
-            },
-            {
-              label: 'VA Mid-Atlantic Health Care Network',
-              value: 42
-            },
-            {
-              label: 'VA Southeast Network',
-              value: 43
-            },
-            {
-              label: 'VA Sunshine Healthcare Network',
-              value: 44
-            },
-            {
-              label: 'VA MidSouth Healthcare Network',
-              value: 45
-            },
-            {
-              label: 'VA Healthcare System',
-              value: 46
-            },
-            {
-              label: 'VA Great Lakes Health Care System',
-              value: 47
-            },
-            {
-              label: 'VA Heartland Network',
-              value: 48
-            },
-            {
-              label: 'South Central VA Health Care Network',
-              value: 49
-            },
-            {
-              label: 'VA Heart of Texas Health Care Network',
-              value: 50
-            },
-            {
-              label: 'Rocky Mountain Network',
-              value: 51
-            },
-            {
-              label: 'Northwest Network',
-              value: 52
-            },
-            {
-              label: 'Sierra Pacific Network',
-              value: 53
-            },
-            {
-              label: 'Desert Pacific Healthcare Network',
-              value: 54
-            },
-            {
-              label: 'VA Midwest Health Care Network',
-              value: 55
-            }
-          ],
-          modal_title: 'Assign to VISN/VA Medical Center',
-          modal_body: 'Provide instructions and context for this action:',
-          modal_button_text: 'Assign',
-          modal_selector_placeholder: 'Select VISN/VA Medical Center',
+          options: {
+            vamc: [
+              {
+                label: "Edith Nourse Rogers Memorial Veterans Hospital",
+                value: 0
+              },
+              {
+                label: "Manchester VA Medical Center",
+                value: 1
+              },
+              {
+                label: "Providence VA Medical Center",
+                value: 2
+              },
+              {
+                label: "VA Boston Healthcare System",
+                value: 3
+              },
+              {
+                label: "VA Central Western Massachusetts Healthcare System",
+                value: 4
+              },
+              {
+                label: "VA Connecticut Healthcare System",
+                value: 5
+              },
+              {
+                label: "VA Maine Healthcare System",
+                value: 6
+              },
+              {
+                label: "White River Junction VA Medical Center",
+                value: 7
+              },
+              {
+                label: "Albany Stratton VA Medical Center",
+                value: 8
+              },
+              {
+                label: "Bronx VA Medical Center",
+                value: 9
+              },
+              {
+                label: "Northport VA Medical Center",
+                value: 10
+              },
+              {
+                label: "Syracuse VA Medical Center",
+                value: 11
+              },
+              {
+                label: "VA Finger Lakes Healthcare System",
+                value: 12
+              },
+              {
+                label: "VA Hudson Valley Health Care System",
+                value: 13
+              },
+              {
+                label: "VA New Jersey Health Care System",
+                value: 14
+              },
+              {
+                label: "VA New York Harbor Healthcare System",
+                value: 15
+              },
+              {
+                label: "VA Western NY Healthcare system",
+                value: 16
+              },
+              {
+                label: "Altoona, PA VAMC",
+                value: 17
+              },
+              {
+                label: "Butler, PA VAMC",
+                value: 18
+              },
+              {
+                label: "Coatesville, PA VAMC",
+                value: 19
+              },
+              {
+                label: "Erie, PA VAMC",
+                value: 20
+              },
+              {
+                label: "Lebanon, PA VAMC",
+                value: 21
+              },
+              {
+                label: "Pittsburgh, PA VAMC",
+                value: 22
+              },
+              {
+                label: "Philadelphia, PA VAMC",
+                value: 23
+              },
+              {
+                label: "Wilkes-Barre, PA VAMC",
+                value: 24
+              },
+              {
+                label: "Wilmington, DE VAMC",
+                value: 25
+              },
+              {
+                label: "Baltimore VAMC",
+                value: 26
+              },
+              {
+                label: "Beckley VAMC",
+                value: 27
+              },
+              {
+                label: "Huntington VAMC",
+                value: 28
+              },
+              {
+                label: "Loch Raven VA Community Living and Rehabilitation Center",
+                value: 29
+              },
+              {
+                label: "Louis A. Johnson AMC",
+                value: 30
+              },
+              {
+                label: "Martinsburg VAMC",
+                value: 31
+              },
+              {
+                label: "Perry Point VAMC",
+                value: 32
+              },
+              {
+                label: "Washington DC VAMC",
+                value: 33
+              },
+              {
+                label: "Asheville VAMC",
+                value: 34
+              },
+              {
+                label: "Durham VAMC",
+                value: 35
+              },
+              {
+                label: "Fayetteville VAMC",
+                value: 36
+              },
+              {
+                label: "Hampton VAMC",
+                value: 37
+              },
+              {
+                label: "Richmond VAMC",
+                value: 38
+              },
+              {
+                label: "Salem VAMC",
+                value: 39
+              },
+              {
+                label: "Salisbury VAMC",
+                value: 40
+              },
+              {
+                label: "Atlanta VAMC",
+                value: 41
+              },
+              {
+                label: "Birmingham VAMC",
+                value: 42
+              },
+              {
+                label: "Central Alabama Health Care System - East",
+                value: 43
+              },
+              {
+                label: "Central Alabama Health Care System - West",
+                value: 44
+              },
+              {
+                label: "Charlie Norwood VAMC",
+                value: 45
+              },
+              {
+                label: "Carl Vinson VAMC",
+                value: 46
+              },
+              {
+                label: "Tuscaloosa VAMC",
+                value: 47
+              },
+              {
+                label: "Ralph H. Johnson VAMC",
+                value: 48
+              },
+              {
+                label: "Jennings Bryan Dorn VAMC",
+                value: 49
+              },
+              {
+                label: "Bay Pines Health System",
+                value: 50
+              },
+              {
+                label: "James A. Haley Veterans’ Hospital",
+                value: 51
+              },
+              {
+                label: "Miami VA Healthcare System",
+                value: 52
+              },
+              {
+                label: "North Florida/South Georgia Veterans Health System",
+                value: 53
+              },
+              {
+                label: "Orlando VAMC – Lake Nona",
+                value: 54
+              },
+              {
+                label: "VA Caribbean Healthcare System",
+                value: 55
+              },
+              {
+                label: "West Palm Beach VA Healthcare System",
+                value: 56
+              },
+              {
+                label: "Lexington VAMC",
+                value: 57
+              },
+              {
+                label: "Memphis VAMC",
+                value: 58
+              },
+              {
+                label: "Mountain Home VAMC",
+                value: 59
+              },
+              {
+                label: "Louisville VAMC",
+                value: 60
+              },
+              {
+                label: "Tennessee Valley Healthcare System",
+                value: 61
+              },
+              {
+                label: "Aleda E. Lutz VAMC",
+                value: 62
+              },
+              {
+                label: "Battle Creek VAMC",
+                value: 63
+              },
+              {
+                label: "Chalmers P. Wylie VA Ambulatory Care Center",
+                value: 64
+              },
+              {
+                label: "Chillicothe VAMC",
+                value: 65
+              },
+              {
+                label: "Cincinnati VANC",
+                value: 66
+              },
+              {
+                label: "Dayton VAMC",
+                value: 67
+              },
+              {
+                label: "John D. Dingell VAMC",
+                value: 68
+              },
+              {
+                label: "Louis Stokes Cleveland VAMC",
+                value: 69
+              },
+              {
+                label: "Richard L. Roudebush VAMC",
+                value: 70
+              },
+              {
+                label: "VA Ann Arbor Healthcare System",
+                value: 71
+              },
+              {
+                label: "VA Northern Indiana Healthcare System – Marion Campus",
+                value: 72
+              },
+              {
+                label: "VA Northern Indiana Healthcare System – Fort Wayne Campus",
+                value: 73
+              },
+              {
+                label: "Jesse Brown VA Medical Center",
+                value: 74
+              },
+              {
+                label: "Edward Hines Jr. VA Hospital",
+                value: 75
+              },
+              {
+                label: "Oscar G. Johnson VA Medical Center",
+                value: 76
+              },
+              {
+                label: "James A. Lovell FHCC",
+                value: 77
+              },
+              {
+                label: "William S. Middleton Memorial Veterans Hospital",
+                value: 78
+              },
+              {
+                label: "Tomah VA Medical Center",
+                value: 79
+              },
+              {
+                label: "Clement J. Zablocki VA Medical Center",
+                value: 80
+              },
+              {
+                label: "VA Illiana Health Care System",
+                value: 81
+              },
+              {
+                label: "Louis VA Health Care System",
+                value: 82
+              },
+              {
+                label: "Kansas City VA Medical Center",
+                value: 83
+              },
+              {
+                label: "Harry S. Truman Memorial Veterans’ Hospital",
+                value: 84
+              },
+              {
+                label: "Eastern Kansas Health Care System",
+                value: 85
+              },
+              {
+                label: "Robert J. Dole VA Medical Center",
+                value: 86
+              },
+              {
+                label: "Marion VA Medical Center",
+                value: 87
+              },
+              {
+                label: "John J. Pershing VA Medical Center",
+                value: 88
+              },
+              {
+                label: "Alexandria VA Health Care System",
+                value: 89
+              },
+              {
+                label: "Central Arkansas Veterans Healthcare System",
+                value: 90
+              },
+              {
+                label: "V. (Sonny) Montgomery VA Medical Center",
+                value: 91
+              },
+              {
+                label: "Gulf Coast Veterans Health Care System",
+                value: 92
+              },
+              {
+                label: "Michael E. DeBakey VA Medical Center",
+                value: 93
+              },
+              {
+                label: "Overton Brooks VA Medical Center",
+                value: 94
+              },
+              {
+                label: "Southeast Louisiana Veterans Health Care System",
+                value: 95
+              },
+              {
+                label: "Veterans Health Care System of the Ozarks",
+                value: 96
+              },
+              {
+                label: "Amarillo VA Health Care System",
+                value: 97
+              },
+              {
+                label: "Central Texas Veteran Health Care System",
+                value: 98
+              },
+              {
+                label: "El Paso VA Health Care System",
+                value: 99
+              },
+              {
+                label: "South Texas Veterans Health Care System",
+                value: 100
+              },
+              {
+                label: "VA North Texas Health Care System",
+                value: 101
+              },
+              {
+                label: "VA Texas Valley Coastal Bend Health Care System",
+                value: 102
+              },
+              {
+                label: "West Texas VA Health Care System",
+                value: 103
+              },
+              {
+                label: "VA Eastern Colorado Health Care System",
+                value: 104
+              },
+              {
+                label: "VA Eastern Oklahoma Health Care System",
+                value: 105
+              },
+              {
+                label: "VA Oklahoma City Health Care System",
+                value: 106
+              },
+              {
+                label: "VA Montana Health Care System",
+                value: 107
+              },
+              {
+                label: "VA Salt Lake City Health Care System",
+                value: 108
+              },
+              {
+                label: "Cheyenne VA Medical Center",
+                value: 109
+              },
+              {
+                label: "VA Western Colorado Health Care System",
+                value: 110
+              },
+              {
+                label: "Sheridan VA Medical Center",
+                value: 111
+              },
+              {
+                label: "VA Northwest Network",
+                value: 112
+              },
+              {
+                label: "Central California Health Care System",
+                value: 113
+              },
+              {
+                label: "Manila Outpatient Clinic",
+                value: 114
+              },
+              {
+                label: "Northern California Health Care System",
+                value: 115
+              },
+              {
+                label: "Pacific Islands Health Care System",
+                value: 116
+              },
+              {
+                label: "Palo Alto Health Care System",
+                value: 117
+              },
+              {
+                label: "San Francisco VA Health Care System",
+                value: 118
+              },
+              {
+                label: "Sierra Nevada Health Care System",
+                value: 119
+              },
+              {
+                label: "VA Southern Nevada Healthcare System",
+                value: 120
+              },
+              {
+                label: "VA Greater Los Angeles Health Care System",
+                value: 121
+              },
+              {
+                label: "VA Loma Linda Healthcare System",
+                value: 122
+              },
+              {
+                label: "VA Long Beach Healthcare System",
+                value: 123
+              },
+              {
+                label: "New Mexico VA Health Care System",
+                value: 124
+              },
+              {
+                label: "Northern Arizona VA Health Care System",
+                value: 125
+              },
+              {
+                label: "Phoenix VA Health Care System",
+                value: 126
+              },
+              {
+                label: "VA San Diego Healthcare System",
+                value: 127
+              },
+              {
+                label: "Southern Arizona VA Health Care System",
+                value: 128
+              },
+              {
+                label: "Fargo VA Health Care System",
+                value: 129
+              },
+              {
+                label: "Iowa City VA Health Care System",
+                value: 130
+              },
+              {
+                label: "Minneapolis VA Health Care System",
+                value: 131
+              },
+              {
+                label: "VA Nebraska-Western Iowa Health Care System",
+                value: 132
+              },
+              {
+                label: "Sioux Falls VA Health Care System",
+                value: 133
+              },
+              {
+                label: "Cloud VA Health Care System",
+                value: 134
+              },
+              {
+                label: "VA Black Hills Health Care System",
+                value: 135
+              },
+              {
+                label: "VA Central Iowa Health Care System",
+                value: 136
+              }
+            ],
+            visn: [
+              {
+                label: "VISN 1 - VA New England Healthcare System",
+                value: 44
+              },
+              {
+                label: "VISN 2 - New York/New Jersey VA Health Care Network",
+                value: 45
+              },
+              {
+                label: "VISN 4 - VA Healthcare",
+                value: 46
+              },
+              {
+                label: "VISN 5 - VA Capitol Health Care Network",
+                value: 47
+              },
+              {
+                label: "VISN 6 - VA Mid-Atlantic Health Care Network",
+                value: 48
+              },
+              {
+                label: "VISN 7 - VA Southeast Network",
+                value: 49
+              },
+              {
+                label: "VISN 8 - VA Sunshine Healthcare Network",
+                value: 50
+              },
+              {
+                label: "VISN 9 - VA MidSouth Healthcare Network",
+                value: 51
+              },
+              {
+                label: "VISN 10 - VA Healthcare System",
+                value: 52
+              },
+              {
+                label: "VISN 12 - VA Great Lakes Health Care System",
+                value: 53
+              },
+              {
+                label: "VISN 15 - VA Heartland Network",
+                value: 54
+              },
+              {
+                label: "VISN 16 - South Central VA Health Care Network",
+                value: 55
+              },
+              {
+                label: "VISN 17 - VA Heart of Texas Health Care Network",
+                value: 56
+              },
+              {
+                label: "VISN 19 - Rocky Mountain Network",
+                value: 57
+              },
+              {
+                label: "VISN 20 - Northwest Network",
+                value: 58
+              },
+              {
+                label: "VISN 21 - Sierra Pacific Network",
+                value: 59
+              },
+              {
+                label: "VISN 22 - Desert Pacific Healthcare Network",
+                value: 60
+              },
+              {
+                label: "VISN 23 - VA Midwest Health Care Network",
+                value: 61
+              }
+            ]
+          },
+          modal_title: "Assign to VAMC/VISN",
+          modal_button_text: "Assign",
+          modal_selector_placeholder: "Select VISN/VA Medical Center",
+          body_optional: true,
           instructions: [],
-          type: 'AssessDocumentationTask',
-          redirect_after: '/organizations/prosthetics'
+          instructions_label: "Provide additional context for this action",
+          drop_down_label: {
+            vamc: "VA Medical Center",
+            visn: "VISN"
+          },
+          type: "AssessDocumentationTask",
+          redirect_after: "/organizations/community-care-payment-operations-management"
         }
       },
       {
