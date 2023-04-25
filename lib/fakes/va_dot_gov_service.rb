@@ -28,53 +28,57 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
     end
   end
 
-  def self.error_message
-    {
-      data: [
-        {
-          "message": "something went wrong"
-        }
-      ]
-    }
-  end
-
   def self.fake_address_data
     {
+      "messages": [
+        {
+          "code": "string",
+          "key": "string",
+          "text": "string",
+          "severity": "INFO",
+          "potentiallySelfCorrectingOnRetry": true
+        }
+      ],
       "address": {
+        "addressLine1": "string",
+        "addressLine2": "string",
+        "addressLine3": "string",
+        "city": "string",
+        "zipCode5": "string",
+        "zipCode4": "string",
+        "internationalPostalCode": "string",
         "county": {
-          "name": "Deltona",
-          "countyFipsCode": "32738"
+          "name": "string",
+          "countyFipsCode": "string"
         },
         "stateProvince": {
-          "name": "Florida",
-          "code": "FL"
+          "name": "string",
+          "code": "string"
         },
         "country": {
-          "name": "United States",
-          "code": "USA",
-          "fipsCode": "US",
-          "iso2Code": "US",
-          "iso3Code": "USA"
-        },
-        "addressLine1": "8633 Fordham St.",
-        "addressLine2": "",
-        "addressLine3": "",
-        "city": "Deltona",
-        "zipCode5": "32738",
-        "zipCode4": "2434"
+          "name": "string",
+          "code": "string",
+          "fipsCode": "string",
+          "iso2Code": "string",
+          "iso3Code": "string"
+        }
       },
       "geocode": {
-        "calcDate": "2019-01-03T17:33:57+00:00",
-        "locationPrecision": 31.0,
-        "latitude": 38.768185,
-        "longitude": -77.450033
+        "calcDate": "2023-04-25T17:26:05.854Z",
+        "locationPrecision": 0,
+        "latitude": 0,
+        "longitude": 0
       },
+      "usCongressionalDistrict": "string",
       "addressMetaData": {
-        "confidenceScore": 100.0,
-        "addressType": "Domestic",
+        "confidenceScore": 0,
+        "addressType": "string",
         "deliveryPointValidation": "CONFIRMED",
         "residentialDeliveryIndicator": "RESIDENTIAL",
-        "validationKey": 113_008_568
+        "nonPostalInputData": [
+          "string"
+        ],
+        "validationKey": 0
       }
     }
   end

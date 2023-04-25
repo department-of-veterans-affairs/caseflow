@@ -42,6 +42,11 @@ class ExternalApi::VADotGovService::Response
         code: code,
         message: "An unexpected error occured when attempting to map veteran."
       )
+    when 500
+      Caseflow::Error::VaDotGovRequestError.new(
+        code: code,
+        message: "Could not connect to the Lighthouse Address Validation API, please try again later."
+      )
     else
       Caseflow::Error::VaDotGovServerError.new(
         code: code,

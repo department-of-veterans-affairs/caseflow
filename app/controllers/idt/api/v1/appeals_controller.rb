@@ -36,8 +36,12 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     body = params.require(:request_address).permit!.to_h
     address = OpenStruct.new(body)
     response = VADotGovService.validate_address(format_address(address))
-    fail Caseflow::Error::LighthouseApiError if [401, 403, 429].include? response.code
-
+    byebug
+    # specific error handling occurs in va_dot_gov_service/response.rb
+    if response.error.present?
+      log_error(response.error)
+      fail response.error
+    end
     render json: format_response(response), status: response.code
   end
 
