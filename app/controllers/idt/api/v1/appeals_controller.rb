@@ -35,28 +35,10 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   def validate
     body = params.require(:request_address).permit!.to_h
     address = OpenStruct.new(body)
-    formatted_address = Address.new(
-      address_line_1: address.address_line_1,
-      address_line_2: address.address_line_2,
-      address_line_3: address.address_line_3,
-      city: address.city,
-      state: address.state_province[:code],
-      zip: address.zip_code_5,
-      zip4: address.zip_code_4,
-      country: address.request_country[:country_code],
-      international_postal_code: address.international_postal_code,
-      state_name: address.state_province[:name],
-      country_name: address.request_country[:country_name],
-      address_pou: address.address_pou
-    )
-    response = VADotGovService.validate_address(formatted_address)
+    response = VADotGovService.validate_address(format_address(address))
     fail Caseflow::Error::LighthouseApiError if [401, 403, 429].include? response.code
 
-    formatted_response = JSON.parse(response.response.raw_body)
-    formatted_response.deep_transform_keys! do |key|
-      key.underscore.gsub(/e(\d)/, 'e_\1')
-    end
-    render json: formatted_response, status: response.code
+    render json: format_response(response), status: response.code
   end
 
   private
@@ -114,4 +96,26 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     ::Idt::V1::AppealSerializer.new(appeals, is_collection: true)
   end
 
+  def format_address(address)
+    Address.new(
+      address_line_1: address.address_line_1,
+      address_line_2: address.address_line_2,
+      address_line_3: address.address_line_3,
+      city: address.city,
+      state: address.state_province[:code],
+      zip: address.zip_code_5,
+      zip4: address.zip_code_4,
+      country: address.request_country[:country_code],
+      international_postal_code: address.international_postal_code,
+      state_name: address.state_province[:name],
+      country_name: address.request_country[:country_name],
+      address_pou: address.address_pou
+    )
+  end
+
+  def format_response(response)
+    JSON.parse(response.response.raw_body).deep_transform_keys! do |key|
+      key.underscore.gsub(/e(\d)/, 'e_\1')
+    end
+  end
 end
