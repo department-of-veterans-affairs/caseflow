@@ -18,7 +18,6 @@ class WorkQueue::TaskSerializer
     object.instructions.presence || object.default_instructions.presence || []
   end
   attribute :appeal_type
-  attribute :issue_types
   attribute :parent_id
   attribute :timeline_title
   attribute :hide_from_queue_table_view
@@ -37,6 +36,12 @@ class WorkQueue::TaskSerializer
 
   attribute :completed_by do |object|
     object.try(:completed_by).try(:css_id) unless object.appeal.is_a?(LegacyAppeal)
+  end
+
+  attribute :issue_types do |object|
+    object.appeal.request_issues.map do |request_issue|
+      request_issue.nonrating_issue_category
+    end.join(',');
   end
 
   attribute :assigned_to do |object|

@@ -8,7 +8,9 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :issue_types do |object|
-      object.issue_types.type(:issue_types)
+    object.appeal.request_issues.map do |request_issue|
+      request_issue.nonrating_issue_category
+    end.join(',');
   end
 
   attribute :instructions do |object|
