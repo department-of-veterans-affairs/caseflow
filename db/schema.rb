@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_17_164013) do
+ActiveRecord::Schema.define(version: 2023_04_25_171045) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at"
+    t.datetime "updated_at", comment: "Date and time the record was last updated"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -1275,7 +1275,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
     t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
-    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
+    t.string "sms_notification_external_id"
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
@@ -1577,7 +1577,6 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "national_cemetery_administration", default: false
     t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
-    t.boolean "pact_act", default: false, comment: "The Sergeant First Class (SFC) Heath Robinson Honoring our Promise to Address Comprehensive Toxics (PACT) Act"
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
     t.boolean "radiation", default: false
@@ -1787,6 +1786,48 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.index ["css_id"], name: "index_users_on_css_id", unique: true
     t.index ["status"], name: "index_users_on_status"
     t.index ["updated_at"], name: "index_users_on_updated_at"
+  end
+
+  create_table "vbms_communication_packages", force: :cascade do |t|
+    t.string "comm_package_name", null: false
+    t.datetime "created_at", null: false
+    t.bigint "document_referenced", default: [], array: true
+    t.string "file_number"
+    t.string "status"
+    t.datetime "updated_at"
+  end
+
+  create_table "vbms_distrobution_destinations", force: :cascade do |t|
+    t.string "address_line_1", null: false
+    t.string "address_line_2", null: false
+    t.string "address_line_3", null: false
+    t.string "address_line_4"
+    t.string "address_line_5"
+    t.string "address_line_6"
+    t.string "city", null: false
+    t.string "country_code", null: false
+    t.string "country_name", null: false
+    t.datetime "created_at", null: false
+    t.string "email_address", null: false
+    t.string "phone_number", null: false
+    t.string "postal_code", null: false
+    t.string "state", null: false
+    t.boolean "treat_line_2_as_addressee", null: false
+    t.boolean "treat_line_3_as_addressee"
+    t.string "type", null: false
+    t.datetime "updated_at"
+  end
+
+  create_table "vbms_distrobutions", force: :cascade do |t|
+    t.string "claimant_station_oc_jurisdiction", null: false
+    t.datetime "created_at", null: false
+    t.string "last_name", null: false
+    t.string "middle_name"
+    t.string "name", null: false
+    t.string "participant_id"
+    t.string "poa_code", null: false
+    t.string "type", null: false
+    t.datetime "updated_at"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
