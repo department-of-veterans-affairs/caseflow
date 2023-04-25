@@ -20,11 +20,11 @@ class ExternalApi::ClaimEvidenceService
     end
 
     def document_types
-      send_ce_api_request(document_types_request)["documentTypes"]
+      send_ce_api_request(document_types_request).body["documentTypes"]
     end
 
     def alt_document_types
-      send_ce_api_request(document_types_request)["alternativeDocumentTypes"]
+      send_ce_api_request(document_types_request).body["alternativeDocumentTypes"]
     end
 
     def send_ce_api_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
