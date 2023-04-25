@@ -137,6 +137,8 @@ feature "NonComp Reviews Queue", :postgres do
 
       # default is the in progress page
       expect(page).to have_content("Days Waiting")
+      expect(page).to have_content("Issues")
+      expect(page).to have_content("Issue Type")
       expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to have_content("Board Grant")
       expect(page).to have_content(veteran_a.name)
@@ -176,6 +178,8 @@ feature "NonComp Reviews Queue", :postgres do
 
         # default is the in progress page
         expect(page).to have_content("Days Waiting")
+        expect(page).to have_content("Issues")
+        expect(page).to have_content("Issue Type")
         expect(page).to have_content("Higher-Level Review", count: 2)
         expect(page).to have_content("Board Grant")
         expect(page).to have_content(veteran_a.name)
@@ -489,7 +493,7 @@ feature "NonComp Reviews Queue", :postgres do
       after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
 
       scenario "searching reviews by ssn" do
-        visit "decision_reviews/nco"
+        visit BASE_URL
 
         # There should be 2 on the page
         expect(page).to have_content("Higher-Level Review", count: 2)
@@ -508,7 +512,7 @@ feature "NonComp Reviews Queue", :postgres do
       end
 
       scenario "searching reviews by file number" do
-        visit "decision_reviews/nco"
+        visit BASE_URL
 
         # There should be 2 on the page
         expect(page).to have_content("Higher-Level Review", count: 2)
@@ -551,6 +555,163 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content(vet_b_id_column_value)
       expect(page).to have_content(vet_c_id_column_value)
       expect(page).to have_content(search_box_label)
+    end
+  end
+
+  context "Issue Type filtering and sorting edge cases" do
+    before { FeatureToggle.enable!(:decision_review_queue_ssn_column) }
+    after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
+    let(:veteran_a) { create(:veteran, first_name: "A Veteran", participant_id: "55555", ssn: "140261454") }
+    let(:veteran_b) { create(:veteran, first_name: "B Veteran", participant_id: "66666", ssn: "140261455") }
+    let(:veteran_c) { create(:veteran, first_name: "C Veteran", participant_id: "77777", ssn: "140261456") }
+    let(:veteran_d) { create(:veteran, first_name: "D Veteran", participant_id: "88888", ssn: "140261457") }
+    let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
+    let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
+    let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
+    let(:sc_a) { create(:supplemental_claim, veteran_file_number: veteran_d.file_number) }
+
+    let!(:hlr_a_request_issues) do
+      [
+        create(:request_issue, :nonrating, nonrating_issue_category: "Other", decision_review: hlr_a),
+        create(:request_issue, :nonrating, nonrating_issue_category: "Clothing Allowance", decision_review: hlr_a),
+        create(:request_issue, :nonrating, nonrating_issue_category: "Beneficiary Travel", decision_review: hlr_a)
+      ]
+    end
+
+    let!(:hlr_b_request_issues) do
+      [
+        create(:request_issue, :nonrating,
+               nonrating_issue_category: "Spina Bifida Treatment (Non-Compensation)", decision_review: hlr_b),
+        create(:request_issue, :nonrating, nonrating_issue_category: "Other", decision_review: hlr_b)
+      ]
+    end
+
+    let!(:hlr_c_request_issues) do
+      [
+        create(:request_issue, :nonrating,
+               nonrating_issue_category: "Eligibility for Dental Treatment", decision_review: hlr_c),
+        create(:request_issue, :nonrating, nonrating_issue_category: "Beneficiary Travel", decision_review: hlr_c),
+        create(:request_issue, :nonrating, nonrating_issue_category: "Beneficiary Travel", decision_review: hlr_c)
+      ]
+    end
+
+    let!(:sc_a_request_issues) do
+      [
+        create(:request_issue, :nonrating,
+               nonrating_issue_category: "Foreign Medical Program", decision_review: sc_a),
+        create(:request_issue, :nonrating, nonrating_issue_category: "Camp Lejune Family Member", decision_review: sc_a)
+      ]
+    end
+
+    let!(:in_progress_tasks) do
+      [
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: hlr_a,
+               assigned_to: non_comp_org,
+               assigned_at: last_week),
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: hlr_b,
+               assigned_to: non_comp_org,
+               assigned_at: last_week),
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: hlr_c,
+               assigned_to: non_comp_org,
+               assigned_at: last_week),
+        create(:supplemental_claim_task,
+               :in_progress,
+               appeal: sc_a,
+               assigned_to: non_comp_org,
+               assigned_at: last_week)
+      ]
+    end
+
+    # rubocop:disable Layout/LineLength
+    scenario "Duplicate issue types like Beneficiary Travel should be removed from the visible list of issue types" do
+      visit BASE_URL
+      hlr_c_regex = /#{veteran_c.name} #{veteran_c.ssn} 3\nBeneficiary Travel\nEligibility for Dental Treatment\n6 days Higher-Level Review/
+      expect(page).to have_content(
+        hlr_c_regex
+      )
+    end
+    # rubocop:enable Layout/LineLength
+
+    scenario "Ordering issue types should ignore duplicates when ordering" do
+      visit BASE_URL
+
+      issues_type_sort_button = find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
+
+      issues_type_sort_button.click
+
+      expect(page).to have_current_path(
+        "#{BASE_URL}?tab=in_progress&page=1&sort_by=issueTypesColumn&order=asc"
+      )
+
+      table_rows = current_table_rows
+
+      expect(table_rows.last.include?("B Veteran")).to eq true
+      expect(table_rows[1].include?("C Veteran")).to eq true
+      expect(table_rows.first.include?("A Veteran")).to eq true
+
+      issues_type_sort_button.click
+
+      table_rows = current_table_rows
+
+      expect(page).to have_current_path(
+        "#{BASE_URL}?tab=in_progress&page=1&sort_by=issueTypesColumn&order=desc"
+      )
+
+      expect(table_rows.last.include?("A Veteran")).to eq true
+      expect(table_rows[1].include?("D Veteran")).to eq true
+      expect(table_rows.first.include?("B Veteran")).to eq true
+    end
+
+    scenario "The Issue type column should orderable and filterable at the same time" do
+      visit BASE_URL
+      issues_type_sort_button = find(:xpath, '//*[@id="case-table-description"]/thead/tr/th[4]/span/span[2]')
+
+      # Filter by Beneficiary Travel
+      find("[aria-label='Filter by issue type']").click
+      find("label", text: "Beneficiary Travel").click
+      expect(page).to have_content("Beneficiary Travel")
+      expect(page).to_not have_content("Foreign Medical Program")
+
+      # Filter by Foreign Medical Program
+      # Need a *= matcher because the aria-label is appended with all the filtered types for some reason.
+      find("[aria-label*='Filter by issue type']").click
+      find("label", text: "Foreign Medical Program").click
+
+      expect(page).to have_content("Beneficiary Travel")
+      expect(page).to_not have_content("Spina Bifida Treatment (Non-Compensation)")
+      expect(page).to have_content("Foreign Medical Program")
+
+      table_rows = current_table_rows
+
+      expect(table_rows.first.include?("A Veteran")).to eq true
+      expect(table_rows.last.include?("D Veteran")).to eq true
+
+      issues_type_sort_button.click
+
+      table_rows = current_table_rows
+
+      expect(table_rows.first.include?("A Veteran")).to eq true
+      expect(table_rows.last.include?("D Veteran")).to eq true
+
+      issues_type_sort_button.click
+
+      table_rows = current_table_rows
+
+      expect(table_rows.first.include?("D Veteran")).to eq true
+      expect(table_rows.last.include?("A Veteran")).to eq true
+
+      find(".cf-clear-filters-link").click
+      expect(page).to have_content("Spina Bifida Treatment (Non-Compensation)")
+
+      table_rows = current_table_rows
+      expect(table_rows.first.include?("B Veteran")).to eq true
+      expect(table_rows.last.include?("A Veteran")).to eq true
     end
   end
 end
