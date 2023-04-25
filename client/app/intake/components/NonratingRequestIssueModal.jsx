@@ -304,7 +304,7 @@ class NonratingRequestIssueModal extends React.Component {
         />
         <Checkbox
           name="pact-checkbox"
-          label="Issue is related to PACT act"
+          label="PACT Act"
           value={this.pactChecked}
           onChange={this.isPactChecked}
         />
