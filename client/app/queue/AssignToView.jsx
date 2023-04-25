@@ -174,20 +174,27 @@ class AssignToView extends React.Component {
 
   determineOptions = (actionData) => {
     if (this.isVHAAssignToRegional()) {
-      return actionData.options[this.state.assignToVHARegionalOfficeSelection].sort((optA, optB) => {
-        if (optA.label < optB.label) {
-          return -1;
-        }
-        if (optA.label > optB.label) {
-          return 1;
-        }
+      const actionDataOptions = actionData.options[this.state.assignToVHARegionalOfficeSelection];
 
-        return 0;
-      });
+      return this.state.assignToVHARegionalOfficeSelection === 'visn' ?
+        actionDataOptions : this.sortVisns(actionDataOptions);
     }
 
     return actionData.options;
   };
+
+  sortVisns = (options) => {
+    return options.sort((optA, optB) => {
+      if (optA.label < optB.label) {
+        return -1;
+      }
+      if (optA.label > optB.label) {
+        return 1;
+      }
+
+      return 0;
+    });
+  }
 
   determineDropDownLabel = (actionData) => {
     if (this.isVHAAssignToRegional()) {
@@ -232,7 +239,7 @@ class AssignToView extends React.Component {
       return actionData.options.visn.find((element) => element.value === this.state.selectedValue);
     }
 
-    const VamcName = actionData.options.vamc[this.state.selectedValue].label;
+    const VamcName = actionData.options.vamc.find((element) => element.value === this.state.selectedValue).label;
     const VisnName = VHA_VAMCS.find((element) => element.name === VamcName).visn;
 
     const VisnOption = actionData.options.visn.find((element) => element.label.includes(VisnName));
