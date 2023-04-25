@@ -629,13 +629,20 @@ class TaskActionRepository
       org = Organization.find(task.assigned_to_id)
       queue_url = org.url
       {
-        options: organizations_to_options(VhaRegionalOffice.all),
+        options: {
+          vamc: vamcs_to_options,
+          visn: visns_to_options
+        },
         modal_title: COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE,
         modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
         modal_selector_placeholder: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER,
+        body_optional: true,
         instructions: [],
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
-        drop_down_label: COPY::VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL,
+        instructions_label: COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_INSTRUCTIONS_LABEL,
+        drop_down_label: {
+          vamc: COPY::VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VAMC,
+          visn: COPY::VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VISN
+        },
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}"
       }
@@ -870,6 +877,30 @@ class TaskActionRepository
 
     def task_assigner_name(task)
       task.assigned_by&.full_name || "the assigner"
+    end
+
+    def prepend_visn_id(visn)
+      "VISN #{Constants::VISNS_NUMBERED[visn]} - #{visn}"
+    end
+
+    def visns_to_options
+      VhaRegionalOffice.all.map do |org|
+        {
+          label: prepend_visn_id(org.name),
+          value: org.id
+        }
+      end
+    end
+
+    def vamcs_to_options
+      value = -1
+      Constants::VHA_VAMCS.map do |office|
+        value += 1
+        {
+          label: office["name"],
+          value: value
+        }
+      end
     end
 
     def organizations_to_options(organizations)
