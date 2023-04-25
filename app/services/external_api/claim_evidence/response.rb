@@ -5,7 +5,7 @@ class ExternalApi::ClaimEvidenceService::Response
 
   def initialize(resp)
     @resp = resp
-    @code = @resp.code
+    @code = @resp.try(:code) || @resp.try(:status)
   end
 
   def data; end
@@ -17,15 +17,19 @@ class ExternalApi::ClaimEvidenceService::Response
 
   # Checks if there is no error
   def success?
-    !resp.error?
+    !!resp.try(:error?) || resp.try(:success?)
   end
 
   # Parses response body to an object
   def body
-    @body ||= begin
-      JSON.parse(resp.body)
-              rescue JSON::ParserError
-                {}
+    if resp.is_a?(Faraday::Response)
+      resp.body
+    else
+      @body ||= begin
+        JSON.parse(resp.body)
+                rescue JSON::ParserError
+                  {}
+      end
     end
   end
 
@@ -37,7 +41,8 @@ class ExternalApi::ClaimEvidenceService::Response
     403 => Caseflow::Error::ClaimEvidenceForbiddenError,
     404 => Caseflow::Error::ClaimEvidenceNotFoundError,
     429 => Caseflow::Error::ClaimEvidenceRateLimitError,
-    500 => Caseflow::Error::ClaimEvidenceInternalServerError
+    500 => Caseflow::Error::ClaimEvidenceInternalServerError,
+    503 => Caseflow::Error::ClaimEvidenceNotFoundError,
   }.freeze
 
   # Checks for error and returns if found
