@@ -54,10 +54,11 @@ class AssessDocumentationTask < Task
   private
 
   def sort_task_actions(task_actions)
-    if task_actions.all? { |task| task[:sort_order] }
-      task_actions.sort_by { |task| task[:sort_order] }
-    else
-      task_actions
+    sorted_task_actions = []
+    task_actions.each_with_index do |action, index|
+      new_index = action.key?(:sort_order) ? action[:sort_order] : index
+      sorted_task_actions.insert(new_index, action)
     end
+    sorted_task_actions.compact!
   end
 end
