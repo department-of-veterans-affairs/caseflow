@@ -23,9 +23,6 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
       HTTPI::Response.new 200, {}, fake_facilities.to_json
     elsif endpoint == VADotGovService::ADDRESS_VALIDATION_ENDPOINT
       HTTPI::Response.new 200, {}, fake_address_data.to_json
-      # HTTPI::Response.new 404, {}, error_message.to_json
-      # fail StandardError
-      # fail Caseflow::Error::TestError.new(code: 404)
     elsif endpoint == VADotGovService::FACILITY_IDS_ENDPOINT
       HTTPI::Response.new 200, {}, fake_facilities_ids_data.to_json
     end
