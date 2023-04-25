@@ -58,9 +58,27 @@ module HasHearingEmailRecipientsConcern
   end
 
   def all_emails_sent?
-    appellant_recipient&.email_sent &&
-      (judge_recipient&.email_address.nil? || judge_recipient&.email_sent) &&
-      (representative_recipient&.email_address.nil? || representative_recipient&.email_sent)
+    appellant_recipient_email_sent? &&
+      judge_recipient_email_sent? &&
+      representative_recipient_email_sent?
+  end
+
+  def appellant_recipient_email_sent?
+    appellant_recipient&.email_sent || email_stale?(appellant_recipient)
+  end
+
+  def representative_recipient_email_sent?
+    judge_recipient&.email_address.nil? ||
+      (judge_recipient&.email_sent || email_stale?(judge_recipient))
+  end
+
+  def judge_recipient_email_sent?
+    representative_recipient&.email_address.nil? ||
+      (representative_recipient&.email_sent || email_stale?(judge_recipient))
+  end
+
+  def email_stale?(recipient)
+    recipient.created_at < 2.days.ago
   end
 
   def cancellation_emails_sent?
