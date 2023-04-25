@@ -53,7 +53,7 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
       selectedReason: null,
       showModal: false,
       disableButton: true,
-      modaldisableButton: true
+      modalDisableButton: true
     };
   }
 
@@ -96,10 +96,10 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
 
   setModalOnChangeValue = (stateValue, value) => {
     this.setState({ [stateValue]: value }, function () {
-      if(this.state.selectedAssignee !== null && this.state.instructions !== ''){
-        this.setState({ modaldisableButton: false });
-      } else{
-        this.setState({ modaldisableButton: true });
+      if (this.state.selectedAssignee !== null && this.state.instructions !== '') {
+        this.setState({ modalDisableButton: false });
+      } else {
+        this.setState({ modalDisableButton: true });
       }
     });
   };
@@ -197,7 +197,7 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
         }, {
           classNames: ['usa-button-hover', 'usa-button-warning'],
           name: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_SUBMIT,
-          disabled: this.state.modaldisableButton,
+          disabled: this.state.modalDisableButton,
           onClick: this.submit
         }]}
         closeHandler={() => this.setState({ showModal: false })}
