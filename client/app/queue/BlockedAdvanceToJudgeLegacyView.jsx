@@ -52,7 +52,8 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
       selectedAssignee: null,
       selectedReason: null,
       showModal: false,
-      disableButton: true
+      disableButton: true,
+      modalDisableButton: true
     };
   }
 
@@ -89,6 +90,16 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
       }
       if ((this.state.cancellationInstructions === '' && this.state.selectedReason !== null)) {
         this.setState({ disableButton: true });
+      }
+    });
+  }
+
+  setModalOnChangeValue = (stateValue, value) => {
+    this.setState({ [stateValue]: value }, function () {
+      if (this.state.selectedAssignee !== null && this.state.instructions !== '') {
+        this.setState({ modalDisableButton: false });
+      } else {
+        this.setState({ modalDisableButton: true });
       }
     });
   };
@@ -178,18 +189,18 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
 
     return <div className="cf-modal-scroll">
       <Modal
-        title={COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_TITLE}
+        title={COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY_MODAL_TITLE}
         buttons={[{
           classNames: ['usa-button', 'cf-btn-link'],
-          name: 'Close',
+          name: 'Cancel',
           onClick: () => this.setState({ showModal: false })
         }, {
-          classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
+          classNames: ['usa-button-hover', 'usa-button-warning'],
           name: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_SUBMIT,
+          disabled: this.state.modalDisableButton,
           onClick: this.submit
         }]}
         closeHandler={() => this.setState({ showModal: false })}
-        icon="warning"
       >
         {this.modalAlert()}
         <div {...bottomBorderStyling}>
@@ -203,7 +214,7 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
           hideLabel
           errorMessage={this.props.highlightFormItems && !this.validAssignee() ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
           value={this.state.selectedAssignee}
-          onChange={(option) => this.setState({ selectedAssignee: option ? option.value : null })}
+          onChange={(option) => this.setModalOnChangeValue('selectedAssignee', option ? option.value : null)}
           options={options}
         />
         <h3>{sprintf(COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_INSTRUCTIONS_HEADER, selectedJudgeName)}</h3>
@@ -211,7 +222,7 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
           required
           errorMessage={highlightFormItems && !this.validInstructions() ? 'Judge instructions field is required' : null}
           id="judgeInstructions"
-          onChange={(value) => this.setState({ instructions: value })}
+          onChange={(value) => this.setModalOnChangeValue('instructions', value)}
           value={this.state.instructions}
         />
       </Modal>
