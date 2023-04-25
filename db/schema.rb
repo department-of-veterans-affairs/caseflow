@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_25_171045) do
+ActiveRecord::Schema.define(version: 2023_04_25_190546) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1797,7 +1797,7 @@ ActiveRecord::Schema.define(version: 2023_04_25_171045) do
     t.datetime "updated_at"
   end
 
-  create_table "vbms_distrobution_destinations", force: :cascade do |t|
+  create_table "vbms_distribution_destinations", force: :cascade do |t|
     t.string "address_line_1", null: false
     t.string "address_line_2", null: false
     t.string "address_line_3", null: false
@@ -1818,7 +1818,7 @@ ActiveRecord::Schema.define(version: 2023_04_25_171045) do
     t.datetime "updated_at"
   end
 
-  create_table "vbms_distrobutions", force: :cascade do |t|
+  create_table "vbms_distributions", force: :cascade do |t|
     t.string "claimant_station_oc_jurisdiction", null: false
     t.datetime "created_at", null: false
     t.string "last_name", null: false
