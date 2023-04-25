@@ -434,7 +434,6 @@ class BusinessLine < Organization
 
       filtered_ids = decision_review_requests_union_subquery(filter)
 
-      # TODO: Benchmark this vs a ilike having clause on the issue_types aggregate string field.
       ["tasks.id IN (?)", filtered_ids]
     end
 
@@ -451,7 +450,6 @@ class BusinessLine < Organization
       )
 
       # Grab all the ids and use it in the where clause
-      # TODO: This is gross. I should be able to use a correlated subquery, but ActiveRecord is silly.
       Task.from(Arel::Nodes::As.new(union_query, Task.arel_table)).pluck(:id)
     end
 
