@@ -184,3 +184,23 @@ export const PAGE_TITLES = {
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
 export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, CUSTOM_HOLD_DURATION_TEXT];
 export const VHA_HOLD_DURATIONS = [15, 30, CUSTOM_HOLD_DURATION_TEXT];
+
+export const DECISION_SPECIAL_ISSUES = [
+  {
+    id: '1',
+    label: 'Blue Water',
+  },
+  {
+    id: '2',
+    label: 'Burn Put',
+  },
+  {
+    id: '3',
+    label: 'Military Sexual Trauma',
+  },
+  {
+    id: '4',
+    label: 'PACT Act',
+  },
+]
+

@@ -23,13 +23,15 @@ import {
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import {
   VACOLS_DISPOSITIONS,
-  ISSUE_DISPOSITIONS
+  ISSUE_DISPOSITIONS,
+  DECISION_SPECIAL_ISSUES,
 } from './constants';
 
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS';
 import uuid from 'uuid';
 import QueueFlowPage from './components/QueueFlowPage';
+import CheckboxGroup from '../components/CheckboxGroup';
 
 const connectedIssueDiv = css({
   display: 'flex',
@@ -46,6 +48,18 @@ const exampleDiv = css({
 
 const textAreaStyle = css({
   maxWidth: '100%'
+});
+
+const specialIssuesCheckboxStyling = css({
+  columnCount: '2',
+  marginTop: '2%',
+  maxWidth: '70%',
+  '& legend': {
+    marginBottom: '2%',
+  },
+  '& .checkbox': {
+    marginTop: '0',
+  },
 });
 
 class SelectDispositionsView extends React.PureComponent {
@@ -123,6 +137,8 @@ class SelectDispositionsView extends React.PureComponent {
     const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).program;
     const diagnosticCode = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).diagnostic_code;
     const closedStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).closed_status;
+    const mstStatus = false;
+    const pactStatus = false;
 
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
@@ -130,7 +146,9 @@ class SelectDispositionsView extends React.PureComponent {
       disposition: closedStatus,
       benefit_type: benefitType,
       diagnostic_code: diagnosticCode,
-      request_issue_ids: [requestIssueId]
+      request_issue_ids: [requestIssueId],
+      mstCheckboxValue: mstStatus,
+      pactCheckboxValue: pactStatus,
     };
 
     this.setState({
@@ -381,6 +399,13 @@ class SelectDispositionsView extends React.PureComponent {
             }
           })}
         />
+        <CheckboxGroup
+          name="Select any special issues that apply"
+          options={DECISION_SPECIAL_ISSUES}
+          styling={specialIssuesCheckboxStyling}
+          value={DECISION_SPECIAL_ISSUES.forEach((item) => item.id)}
+          // onChange={}
+        />
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</h3>
         <p {...exampleDiv} {...paragraphH3SiblingStyle}>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}</p>
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_TITLE}</h3>
@@ -458,3 +483,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectDispositionsView);
+
