@@ -47,7 +47,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
       international_postal_code: address.international_postal_code,
       state_name: address.state_province[:name],
       country_name: address.request_country[:country_name],
-      address_POU: address.address_POU
+      address_pou: address.address_pou
     )
     response = VADotGovService.validate_address(formatted_address)
     fail Caseflow::Error::LighthouseApiError if [401, 403, 429].include? response.code

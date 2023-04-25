@@ -746,7 +746,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             "country_name": "string",
             "country_code": "string"
           },
-          "address_POU": "RESIDENCE/CHOICE"
+          "address_pou": "RESIDENCE/CHOICE"
         }
       }
     end
