@@ -179,8 +179,9 @@ class BusinessLine < Organization
     # Alias for the issue_categories on request issues for sorting and serialization
     # This is Postgres specific since it uses STRING_AGG vs GROUP_CONCAT
     def issue_types
-      "STRING_AGG(request_issues.nonrating_issue_category, ',' ORDER BY request_issues.nonrating_issue_category)"\
-        " AS issue_types"
+      "STRING_AGG(DISTINCT request_issues.nonrating_issue_category, ','"\
+      " ORDER BY request_issues.nonrating_issue_category)"\
+      " AS issue_types"
     end
 
     # Alias for claimant_name for sorting and serialization
