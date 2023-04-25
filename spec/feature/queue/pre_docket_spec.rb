@@ -477,7 +477,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           click_on("#{regional_office.name} team cases")
 
           expect(page).to have_current_path("/organizations/#{regional_office.url}"\
-            "?tab=unassignedTab&#{default_query_params}")
+            "?tab=po_assigned&#{default_query_params}")
           expect(page).to have_content("Assess Documentation")
 
           find_link("#{veteran.name} (#{veteran.file_number})").click
@@ -495,7 +495,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           find("button", class: "usa-button", text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON).click
 
           expect(page).to have_current_path("/organizations/#{regional_office.url}"\
-            "?tab=unassignedTab&#{default_query_params}")
+            "?tab=po_assigned&#{default_query_params}")
           expect(page).to have_content(COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE)
         end
 
@@ -515,6 +515,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           fill_in(COPY::VHA_COMPLETE_TASK_MODAL_BODY, with: ro_review_instructions)
           find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
           expect(page).to have_content(COPY::VHA_COMPLETE_TASK_CONFIRMATION_VISN)
+          expect(page).to have_current_path("/organizations/#{regional_office.url}"\
+            "?tab=po_completed&#{default_query_params}")
 
           appeal = Appeal.last
           visit "/queue/appeals/#{appeal.external_id}"
