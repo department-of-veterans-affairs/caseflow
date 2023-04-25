@@ -63,14 +63,14 @@ Please explain the changes you made here.
 
 #### Auditing
 - [ ] Are user actions being logged for audit purposes?
-- [ ] Are changes to critical data being tracked (e.g., with Rails' `audited` gem)?
+- [ ] Are changes to critical data being tracked ?
 - [ ] Are logs being securely stored and protected from tampering?
 
 #### Error Handling
 - [ ] Are errors being caught and handled gracefully?
 - [ ] Are appropriate error messages being displayed to users?
-- [ ] Are critical errors being reported to an error tracking system (e.g., Sentry, Rollbar)?
-- [ ] Are unhandled exceptions being caught at the application level (e.g., using `rescue_from`)?
+- [ ] Are critical errors being reported to an error tracking system (e.g., Sentry, ELK)?
+- [ ] Are unhandled exceptions being caught at the application level ?
 
 #### Exception Handling
 - [ ] Are custom exceptions defined and used where appropriate?
