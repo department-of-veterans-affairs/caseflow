@@ -277,7 +277,6 @@ describe BusinessLine do
   def add_veteran_and_request_issues_to_decision_reviews(tasks)
     tasks.each do |task|
       task.appeal.update!(veteran_file_number: veteran.file_number)
-      # create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: business_line.url)
       rand(1..4).times do
         create(:request_issue, :nonrating,
                nonrating_issue_category: Constants.ISSUE_CATEGORIES.vha.sample,
