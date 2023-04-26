@@ -257,12 +257,16 @@ class SelectDispositionsView extends React.PureComponent {
   }
 
   onCheckboxChange = (event, decision) => {
-    this.setState({
-      decisionIssue: {
-        ...decision,
-        [event.target.getAttribute('id')]: event.target.checked,
-      }
-    });
+    const checkboxId = event.target.getAttribute('id');
+
+    if (checkboxId === 'mstStatus' || checkboxId === 'pactStatus') {
+      this.setState({
+        decisionIssue: {
+          ...decision,
+          [checkboxId]: event.target.checked,
+        }
+      });
+    }
   };
 
   render = () => {
@@ -407,7 +411,7 @@ class SelectDispositionsView extends React.PureComponent {
           })}
         />
         <CheckboxGroup
-          name="Select any special issues that apply"
+          name={COPY.INTAKE_EDIT_ISSUE_SELECT_SPECIAL_ISSUES}
           options={DECISION_SPECIAL_ISSUES}
           styling={specialIssuesCheckboxStyling}
           onChange={(event) => this.onCheckboxChange(event, decisionIssue)}
