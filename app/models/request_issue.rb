@@ -246,6 +246,30 @@ class RequestIssue < CaseflowRecord
     end_product_establishment.status_active?
   end
 
+  def mst_contention_status?
+    return false if contention.nil?
+    status = false
+    contention&.special_issues&.each do |issue|
+      if issue[:code].upcase == "MST"
+        status = true
+        break
+      end 
+    end
+    status
+  end
+
+  def pact_contention_status?
+    return false if contention.nil?
+    status = false
+    contention&.special_issues&.each do |issue|
+      if issue[:code].upcase == "PACT"
+        status = true
+        break
+      end 
+    end
+    status
+  end
+
   def rating?
     !!associated_rating_issue? ||
       !!previous_rating_issue? ||
@@ -609,7 +633,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def contention
-    end_product_establishment.contention_for_object(self)
+    end_product_establishment&.contention_for_object(self)
   end
 
   def bgs_contention
