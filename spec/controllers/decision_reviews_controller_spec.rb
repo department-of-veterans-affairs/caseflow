@@ -256,6 +256,9 @@ describe DecisionReviewsController, :postgres, type: :controller do
         task.appeal.update!(veteran_file_number: veteran.file_number)
         create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: non_comp_org.url)
 
+        # Generate some random request issues for testing issue type filters
+        generate_request_issues(task, non_comp_org)
+
         task
       end
     end
@@ -269,6 +272,9 @@ describe DecisionReviewsController, :postgres, type: :controller do
         )
         task.appeal.update!(veteran_file_number: veteran.file_number)
         create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: non_comp_org.url)
+
+        # Generate some random request issues for testing issue type filters
+        generate_request_issues(task, non_comp_org)
 
         task
       end
@@ -287,8 +293,11 @@ describe DecisionReviewsController, :postgres, type: :controller do
         task.closed_at = Time.zone.now - (2 * task_num).hours
         task.appeal.update!(veteran_file_number: veteran.file_number)
         create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: non_comp_org.url)
-        task.save
 
+        # Generate some random request issues for testing issue type filters
+        generate_request_issues(task, non_comp_org)
+
+        task.save
         # Attempt to reload after save to avoid potential test flakiness
         task.reload
       end
@@ -307,6 +316,9 @@ describe DecisionReviewsController, :postgres, type: :controller do
         task.closed_at = Time.zone.now - (2 * task_num).hours
         task.appeal.update!(veteran_file_number: veteran.file_number)
         create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: non_comp_org.url)
+
+        # Generate some random request issues for testing issue type filters
+        generate_request_issues(task, non_comp_org)
 
         task.save
         # Attempt to reload after save to avoid potential test flakiness
@@ -354,6 +366,44 @@ describe DecisionReviewsController, :postgres, type: :controller do
       end
     end
 
+    shared_examples "issue type query filtering" do
+      it "Only Tasks with request issues with the type Beneficiary Travel are shown when filtered" do
+        get :index,
+            params: query_params.merge(
+              filter: ["col=issueTypesColumn&val=Beneficiary Travel"],
+              page: 1
+            ),
+            format: :json
+
+        response_body = JSON.parse(response.body)
+
+        expect(
+          response_body["tasks"]["data"].all? do |task|
+            task["attributes"]["issue_types"].include?("Beneficiary Travel")
+          end
+        ).to be true
+      end
+
+      it "Only Tasks with request issues and with decision review type HigherLevel Review are shown when filtered" do
+        get :index,
+            params: query_params.merge(
+              filter: ["col=issueTypesColumn&val=Beneficiary Travel", "col=decisionReviewType&val=HigherLevelReview"],
+              page: 1
+            ),
+            format: :json
+
+        response_body = JSON.parse(response.body)
+
+        expect(
+          response_body["tasks"]["data"].all? do |task|
+            task["attributes"]["issue_types"].include?("Beneficiary Travel") &&
+            task["type"] == "decision_review_task" &&
+            task["attributes"]["type"] == "Higher-Level Review"
+          end
+        ).to be true
+      end
+    end
+
     context "in_progress_tasks" do
       let(:query_params) do
         {
@@ -365,6 +415,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
       let(:in_progress_tasks) { in_progress_hlr_tasks + in_progress_sc_tasks }
 
       include_examples "task query filtering"
+      include_examples "issue type query filtering"
 
       it "page 1 displays first 15 tasks" do
         query_params[:page] = 1
@@ -412,6 +463,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
       let(:completed_tasks) { completed_sc_tasks + completed_hlr_tasks }
 
       include_examples "task query filtering"
+      include_examples "issue type query filtering"
 
       it "page 1 displays first 15 tasks" do
         query_params[:page] = 1
@@ -474,5 +526,15 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
   def task_ids_from_seed(tasks, range, sorted_by)
     tasks.sort_by(&sorted_by).reverse[range].pluck(:id)
+  end
+
+  # Generate a few request issues with random issue categories
+  def generate_request_issues(task, org)
+    num_objects = rand(1..4)
+    num_objects.times do
+      create(:request_issue, :nonrating,
+             nonrating_issue_category: Constants.ISSUE_CATEGORIES.vha.sample,
+             decision_review: task.appeal, benefit_type: org.url)
+    end
   end
 end
