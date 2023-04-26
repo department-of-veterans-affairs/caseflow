@@ -3,14 +3,14 @@ Resolves #{jira issue link}
 # Description
 Please explain the changes you made here.
 
-## Test Driven Development
+### Test Driven Development
 Did you include any test coverage for your code? Check below:
 - [ ] RSpec
 - [ ] Jest
 - [ ] Other
-## Code Climate
-Your code does not add new code climate issues. If it does please explain?
-- [ ] No new code climate issues
+### Code Climate
+Your code does not add new code climate issues?
+- [ ] No new code climate issues added
 ## Acceptance Criteria
 - [ ] Code compiles correctly
 
