@@ -33,18 +33,22 @@ Please explain the changes you made here.
 * [ ] Have your migration classes inherit from `Caseflow::Migration`, especially when adding indexes (use `add_safe_index`) (see [Writing DB migrations](https://github.com/department-of-veterans-affairs/caseflow/wiki/Writing-DB-migrations))
 * [ ] Verify that `migrate:rollback` works as desired ([`change` supported functions](https://edgeguides.rubyonrails.org/active_record_migrations.html#using-the-change-method))
 * [ ] Perform query profiling (eyeball Rails log, check bullet and fasterer output)
+* [ ] For queries using raw sql was an explain plan run by System Team
 * [ ] Add appropriate indexes (especially for foreign keys, polymorphic columns, unique constraints, and Rails scopes)
 * [ ] Run `make check-fks`; add any missing foreign keys or add to `config/initializers/immigrant.rb` (see [Record associations and Foreign Keys](https://github.com/department-of-veterans-affairs/caseflow/wiki/Record-associations-and-Foreign-Keys))
 * [ ] Add `belongs_to` for associations to enable the [schema diagrams](https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/schema_diagrams) to be automatically updated
-* [ ] Post this PR in #appeals-schema with a summary
 * [ ] Document any non-obvious semantics or logic useful for interpreting database data at [Caseflow Data Model and Dictionary](https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Data-Model-and-Dictionary)
 
 ## Integrations: Adding endpoints for external APIs
 * [ ] Check that Caseflow's external API code for the endpoint matches the code in the relevant integration repo
   * [ ] Request: Service name, method name, input field names
   * [ ] Response: Check expected data structure
+  * [ ] Check that calls are wrapped in MetricService record block
+* [ ] Check that all configuration is coming from ENV variables
+  * [ ] Listed all new ENV variables in description
+  * [ ] Worked with or notified System Team that new ENV variables need to be set
 * [ ] Update Fakes
-* [ ] Integrations impacting functionality are tested in Caseflow UAT
+* [ ] For feature branches: Was this tested in Caseflow UAT
 
 # Best practices
 ## Code Documentation Updates
