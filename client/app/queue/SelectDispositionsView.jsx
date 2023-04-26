@@ -137,8 +137,6 @@ class SelectDispositionsView extends React.PureComponent {
     const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).program;
     const diagnosticCode = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).diagnostic_code;
     const closedStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).closed_status;
-    const mstStatus = false;
-    const pactStatus = false;
 
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
@@ -147,8 +145,8 @@ class SelectDispositionsView extends React.PureComponent {
       benefit_type: benefitType,
       diagnostic_code: diagnosticCode,
       request_issue_ids: [requestIssueId],
-      mstCheckboxValue: mstStatus,
-      pactCheckboxValue: pactStatus,
+      mstStatus: false,
+      pactStatus: false,
     };
 
     this.setState({
@@ -257,6 +255,15 @@ class SelectDispositionsView extends React.PureComponent {
       return issue.id !== idToFilter;
     });
   }
+
+  onCheckboxChange = (event, decision) => {
+    this.setState({
+      decisionIssue: {
+        ...decision,
+        [event.target.getAttribute('id')]: event.target.checked,
+      }
+    });
+  };
 
   render = () => {
     const { appeal, highlight, ...otherProps } = this.props;
@@ -403,8 +410,7 @@ class SelectDispositionsView extends React.PureComponent {
           name="Select any special issues that apply"
           options={DECISION_SPECIAL_ISSUES}
           styling={specialIssuesCheckboxStyling}
-          value={DECISION_SPECIAL_ISSUES.forEach((item) => item.id)}
-          // onChange={}
+          onChange={(event) => this.onCheckboxChange(event, decisionIssue)}
         />
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</h3>
         <p {...exampleDiv} {...paragraphH3SiblingStyle}>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}</p>

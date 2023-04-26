@@ -187,20 +187,20 @@ export const VHA_HOLD_DURATIONS = [15, 30, CUSTOM_HOLD_DURATION_TEXT];
 
 export const DECISION_SPECIAL_ISSUES = [
   {
-    id: '1',
+    id: 'blueWater',
     label: 'Blue Water',
   },
   {
-    id: '2',
-    label: 'Burn Put',
+    id: 'burnPit',
+    label: 'Burn Pit',
   },
   {
-    id: '3',
-    label: 'Military Sexual Trauma',
+    id: 'mstStatus',
+    label: 'Military Sexual Trauma (MST)',
   },
   {
-    id: '4',
+    id: 'pactStatus',
     label: 'PACT Act',
   },
-]
+];
 
