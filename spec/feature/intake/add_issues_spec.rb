@@ -59,6 +59,16 @@ feature "Intake Add Issues Page", :all_dbs do
       add_intake_rating_issue(rating_decision_text)
       expect(page).to have_content("1. #{rating_decision_text}\nDecision date: #{promulgation_date.mdY}")
     end
+
+    scenario "MST and PACT checkboxes appear after selecting decision" do
+      start_higher_level_review(veteran)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      choose('rating-radio_0', allow_label_click:true)
+      expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
+      expect(page).to have_content("Issue is related to PACT Act")
+    end
   end
 
   context "check for correct time zone" do

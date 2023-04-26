@@ -38,12 +38,14 @@ import {
   toggleUnidentifiedIssuesModal,
   toggleIssueRemoveModal,
   toggleLegacyOptInModal,
-  toggleCorrectionTypeModal
+  toggleCorrectionTypeModal,
+  toggleEditIntakeIssueModal
 } from '../actions/addIssues';
 import { editEpClaimLabel } from '../../intakeEdit/actions/edit';
 import COPY from '../../../COPY';
 import { EditClaimLabelModal } from '../../intakeEdit/components/EditClaimLabelModal';
 import { ConfirmClaimLabelModal } from '../../intakeEdit/components/ConfirmClaimLabelModal';
+import { EditIntakeIssueModal } from '../../intakeEdit/components/EditIntakeIssueModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -89,6 +91,12 @@ class AddIssuesPage extends React.Component {
       break;
     case 'undo_correction':
       this.props.undoCorrection(index);
+      break;
+    case 'edit':
+      this.setState({
+        issueIndex: index
+      });
+      this.props.toggleEditIntakeIssueModal({ index });
       break;
     default:
       this.props.undoCorrection(index);
@@ -509,6 +517,20 @@ class AddIssuesPage extends React.Component {
             loading={this.state.loading}
           />
         )}
+        {intakeData.editIntakeIssueModalVisible && (
+          <EditIntakeIssueModal
+            issueIndex={this.state.issueIndex}
+            intakeData={intakeData}
+            onCancel={() => {
+              this.props.toggleEditIntakeIssueModal();
+            }}
+            onSubmit={() => {
+              // TO-DO: Logic to update table and state for MST and Pact changes
+              this.props.toggleEditIntakeIssueModal();
+
+            }}
+          />
+        )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
 
         {requestState === REQUEST_STATE.FAILED && (
@@ -560,6 +582,7 @@ AddIssuesPage.propTypes = {
   toggleNonratingRequestIssueModal: PropTypes.func,
   toggleUnidentifiedIssuesModal: PropTypes.func,
   toggleUntimelyExemptionModal: PropTypes.func,
+  toggleEditIntakeIssueModal: PropTypes.func,
   undoCorrection: PropTypes.func,
   veteran: PropTypes.object,
   withdrawIssue: PropTypes.func,
@@ -624,6 +647,7 @@ export const EditAddIssuesPage = connect(
         toggleAddingIssue,
         toggleIssueRemoveModal,
         toggleCorrectionTypeModal,
+        toggleEditIntakeIssueModal,
         removeIssue,
         withdrawIssue,
         setIssueWithdrawalDate,

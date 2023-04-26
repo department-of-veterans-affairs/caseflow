@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import Checkbox from './Checkbox';
 
 import RequiredIndicator from './RequiredIndicator';
 import StringUtil from '../util/StringUtil';
@@ -42,7 +43,12 @@ export const RadioField = (props) => {
     strongLabel,
     hideLabel,
     styling,
-    vertical
+    vertical,
+    renderMstAndPact,
+    mstCheckboxValue,
+    setMstCheckboxFunction,
+    pactCheckboxValue,
+    setPactCheckboxFunction
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -82,6 +88,28 @@ export const RadioField = (props) => {
     }
 
     return radioField;
+  };
+
+  const maybeAddMstAndPactCheckboxes = (option) => {
+    if (renderMstAndPact && (option.value === props.value)) {
+
+      return (
+        <div>
+          <Checkbox
+            label="Issue is related to Military Sexual Trauma (MST)"
+            name="MST"
+            value={mstCheckboxValue}
+            onChange={(checked) => setMstCheckboxFunction(checked)}
+          />
+          <Checkbox
+            label="Issue is related to PACT act"
+            name="Pact"
+            value={pactCheckboxValue}
+            onChange={(checked) => setPactCheckboxFunction(checked)}
+          />
+        </div>
+      );
+    }
   };
 
   const isDisabled = (option) => Boolean(option.disabled);
@@ -124,6 +152,8 @@ export const RadioField = (props) => {
               htmlFor={`${idPart}_${option.value}`}
             >
               {option.displayText || option.displayElem}
+              {props.onChange}
+              {maybeAddMstAndPactCheckboxes(option)}
             </label>
             {option.help && <RadioFieldHelpText help={option.help} />}
           </div>
@@ -213,7 +243,12 @@ RadioField.propTypes = {
   errorMessage: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  renderMstAndPact: PropTypes.bool,
+  mstCheckboxValue: PropTypes.bool,
+  setMstCheckboxFunction: PropTypes.func,
+  pactCheckboxValue: PropTypes.bool,
+  setPactCheckboxFunction: PropTypes.func,
 };
 
 export default RadioField;

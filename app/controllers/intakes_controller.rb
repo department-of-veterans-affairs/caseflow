@@ -10,7 +10,6 @@ class IntakesController < ApplicationController
 
   def index
     no_cache
-
     respond_to do |format|
       format.html { render(:index) }
     end
@@ -43,6 +42,7 @@ class IntakesController < ApplicationController
   def review
     if intake.review!(params)
       render json: intake.ui_hash
+
     else
       render json: { error_codes: intake.review_errors }, status: :unprocessable_entity
     end
@@ -152,7 +152,8 @@ class IntakesController < ApplicationController
       mstPactIdentification: FeatureToggle.enabled?(:mst_pact_identification, user: current_user),
       updatedAppealForm: FeatureToggle.enabled?(:updated_appeal_form, user: current_user),
       hlrScUnrecognizedClaimants: FeatureToggle.enabled?(:hlr_sc_unrecognized_claimants, user: current_user),
-      vhaClaimReviewEstablishment: FeatureToggle.enabled?(:vha_claim_review_establishment, user: current_user)
+      vhaClaimReviewEstablishment: FeatureToggle.enabled?(:vha_claim_review_establishment, user: current_user),
+      mstPactIdentification: FeatureToggle.enabled?(:mst_pact_identification, user: current_user)
     }
   end
 
