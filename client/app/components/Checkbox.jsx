@@ -42,7 +42,7 @@ export const Checkbox = (props) => {
           defaultChecked={defaultValue}
           checked={value}
           disabled={disabled}
-          aria-label={ariaLabel || name}
+          aria-label={ariaLabel}
           ref={inputRef}
           {...inputProps}
         />
