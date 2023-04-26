@@ -9,7 +9,7 @@ Did you include any test coverage for your code? Check below:
 - [ ] Jest
 - [ ] Other
 ### Code Climate
-Your code does not add new code climate issues?
+Your code does not add any new code climate offenses? If so why?
 - [ ] No new code climate issues added
 ## Acceptance Criteria
 - [ ] Code compiles correctly
