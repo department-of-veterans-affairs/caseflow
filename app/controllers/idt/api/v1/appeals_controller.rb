@@ -105,13 +105,13 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
       address_line_2: address.address_line_2,
       address_line_3: address.address_line_3,
       city: address.city,
-      state: address.state_province[:code],
+      state: address.dig(:state_province, :code),
       zip: address.zip_code_5,
       zip4: address.zip_code_4,
-      country: address.request_country[:country_code],
+      country: address.dig(:request_country, :country_code),
       international_postal_code: address.international_postal_code,
-      state_name: address.state_province[:name],
-      country_name: address.request_country[:country_name],
+      state_name: address.dig(:state_province, :name),
+      country_name: address.dig(:request_country, :country_name),
       address_pou: address.address_pou
     )
   end
