@@ -49,9 +49,9 @@ module AppealNotificationReportConcern
   # Returns: The document name
   def notification_document_name
     if is_a?(Appeal)
-      "notification-report_#{uuid}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
+      "notification-report_#{uuid}"
     elsif is_a?(LegacyAppeal)
-      "notification-report_#{vacols_id}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
+      "notification-report_#{vacols_id}"
     end
   end
 
