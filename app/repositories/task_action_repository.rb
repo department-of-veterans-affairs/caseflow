@@ -545,7 +545,9 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       return task_helper if task.assigned_to.is_a?(User)
 
       task_helper.merge(
-        data: { redirect_after: "/organizations/#{task.assigned_to.url}?tab=#{on_hold_tab_url(task.assigned_to)}&page=1" }
+        data: {
+          redirect_after: "/organizations/#{task.assigned_to.url}?tab=#{on_hold_tab_url(task.assigned_to)}&page=1"
+        }
       )
     end
 
@@ -948,9 +950,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def completed_tab_url(organization)
-      return organization.completed_tasks_tab.name if organization.respond_to?(:completed_tasks_tab)
-
-      "completed"
+      organization.completed_tasks_tab.name
     end
 
     def on_hold_tab_url(organization)
