@@ -48,8 +48,8 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleReason: null,
       decisionReviewTitle: null,
       isPreDocketNeeded: null,
-      mstChecked: null,
-      pactChecked: null,
+      mstChecked: false,
+      pactChecked: false,
       dateError: ''
     };
   }
