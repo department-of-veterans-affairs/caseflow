@@ -33,16 +33,15 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def validate
-    body = params.require(:requestAddress).permit!.to_h
+    body = params.require(:request_address).permit!.to_h
     address = OpenStruct.new(body)
-    response = VADotGovService.validate_address(address)
-    response.response.raw_body = JSON.parse(response.response.raw_body)
-    case status
-    when 401, 403, 429
-      fail Caseflow::Error::LighthouseApiError
-    else
-      render json: response
+    response = VADotGovService.validate_address(format_address(address))
+    # specific error handling occurs in va_dot_gov_service/response.rb
+    if response.error.present?
+      log_error(response.error)
+      fail response.error
     end
+    render json: format_response(response), status: response.code
   end
 
   private
@@ -100,4 +99,26 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     ::Idt::V1::AppealSerializer.new(appeals, is_collection: true)
   end
 
+  def format_address(address)
+    Address.new(
+      address_line_1: address.address_line_1,
+      address_line_2: address.address_line_2,
+      address_line_3: address.address_line_3,
+      city: address.city,
+      state: address.state_province[:code],
+      zip: address.zip_code_5,
+      zip4: address.zip_code_4,
+      country: address.request_country[:country_code],
+      international_postal_code: address.international_postal_code,
+      state_name: address.state_province[:name],
+      country_name: address.request_country[:country_name],
+      address_pou: address.address_pou
+    )
+  end
+
+  def format_response(response)
+    JSON.parse(response.response.raw_body).deep_transform_keys! do |key|
+      key.underscore.gsub(/e(\d)/, 'e_\1')
+    end
+  end
 end

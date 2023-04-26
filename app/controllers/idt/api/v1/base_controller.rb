@@ -21,13 +21,6 @@ class Idt::Api::V1::BaseController < ActionController::Base
   end
   # :nocov:
 
-  rescue_from Caseflow::Error::LighthouseApiError do |error|
-    log_error(error)
-    uuid = SecureRandom.uuid
-    Rails.logger.error("Lighthouse API Error: " + uuid)
-    render json: { message: "Lighthouse API Error ID: " + uuid + " An unexpected error occurred, please try again." }, status: :internal_server_error
-  end
-
   rescue_from ActiveRecord::RecordNotFound do |error|
     log_error(error)
     uuid = SecureRandom.uuid
@@ -103,6 +96,6 @@ class Idt::Api::V1::BaseController < ActionController::Base
   def log_error(error)
     Raven.capture_exception(error)
     Rails.logger.error(error)
-    Rails.logger.error(error.backtrace.join("\n"))
+    Rails.logger.error(error&.backtrace&.join("\n"))
   end
 end

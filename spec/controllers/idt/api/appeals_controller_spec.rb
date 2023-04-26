@@ -727,10 +727,10 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
   end
 
   describe "POST /idt/api/v1/services/address_validation/v1/validate", :postgres do
-    let(:user) { create(:user) }
+    let(:user) { create(:user, roles: ["Mail Intake"]) }
     let(:params) do
       {
-        "requestAddress": {
+        "request_address": {
           "address_line_1": "string",
           "address_line_2": "string",
           "address_line_3": "string",
@@ -746,24 +746,65 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             "country_name": "string",
             "country_code": "string"
           },
-          "address_POU": "RESIDENCE/CHOICE"
+          "address_pou": "RESIDENCE/CHOICE"
         }
       }
     end
 
+    before do
+      key, t = Idt::Token.generate_one_time_key_and_proposed_token
+      Idt::Token.activate_proposed_token(key, user.css_id)
+      request.headers["TOKEN"] = t
+    end
+
+    subject { post :validate, params: params }
+
     context "VADotGovService is responsive" do
-      let(:user) { create(:user) }
-      before do
-        BvaDispatch.singleton.add_user(user)
-        key, t = Idt::Token.generate_one_time_key_and_proposed_token
-        Idt::Token.activate_proposed_token(key, user.css_id)
-        request.headers["TOKEN"] = t
-      end
       it "should send back a valid address" do
-        allow(controller).to receive(:verify_access).and_return(true)
-        post :validate, params: params
+        subject
+
         expect(response.status).to eq(200)
-        expect(OpenStruct.new(OpenStruct.new(JSON.parse(response.body)).response).raw_body.to_json).to eq(Fakes::VADotGovService.fake_address_data.to_json)
+        expect(
+          JSON.parse(response.body)["address"]["city"]
+        ).to eq(
+          Fakes::VADotGovService.fake_address_data[:address][:city]
+        )
+      end
+    end
+
+    context "VADotGovService status check" do
+      let(:expected_lighthouse_response) do
+        OpenStruct.new(
+          code: expected_status_code,
+          response: OpenStruct.new(
+            raw_body: "{\"json\":\"jsoff\"}"
+          )
+        )
+      end
+
+      before do
+        allow(ExternalApi::VADotGovService).to receive(:validate_address)
+          .and_return(expected_lighthouse_response)
+      end
+
+      context "Lighthouse returns a 404" do
+        let!(:expected_status_code) { 404 }
+
+        it "Caseflow returns a 404 as well" do
+          subject
+
+          expect(response.status).to eq(expected_status_code)
+        end
+      end
+
+      context "Lighthouse returns a 500" do
+        let!(:expected_status_code) { 500 }
+
+        it "Caseflow returns a 500" do
+          subject
+
+          expect(response.status).to eq(500)
+        end
       end
     end
   end
