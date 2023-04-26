@@ -50,7 +50,7 @@ class ExternalApi::VADotGovService::Response
     else
       Caseflow::Error::VaDotGovServerError.new(
         code: code,
-        message: "An unexpected error occured when attempting to map veteran."
+        message: "An unexpected error occurred when attempting to map veteran."
       )
     end
   end
